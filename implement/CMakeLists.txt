@@ -16,12 +16,16 @@ add_definitions (
   )
 
 include_directories(
-  /usr/local/include
   .
   ${DAL_SOURCE_DIR}/implement
+  ${HDF5_INCLUDES}
+  ${CFITSIO_INCLUDES}
   )
 
-link_directories(/usr/local/lib)
+link_directories(
+  ${HDF5_LIBRARIES}
+  ${CFITSIO_LIBRARIES}
+  )
 
 
 add_library(dal STATIC

@@ -25,13 +25,13 @@
 #include <vector>
 #include <iostream>
 #include <cstdio>
-#include "H5LT.h"
+#include <H5LT.h>
 
-#include "H5Cpp.h"
+#include <H5Cpp.h>
 
 extern "C" {
 //#include "hdf5.h"
-#include "fitsio.h"
+#include <fitsio.h>
 }
 
 using namespace std;

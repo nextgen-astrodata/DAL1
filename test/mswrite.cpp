@@ -28,15 +28,15 @@
 #endif
 
 #ifndef DAL_H
-#include "dal.h"
+#include <dal.h>
 #endif
 
 #ifndef DALDATASET_H
-#include "dalDataset.h"
+#include <dalDataset.h>
 #endif
 
 #ifndef DALGROUP_H
-#include "dalGroup.h"
+#include <dalGroup.h>
 #endif
 
 /*! doxygen comment in dal.cpp */
@@ -166,9 +166,9 @@ for ( int uu=0 ; uu < LOOPMAX; uu++)
  data[4].a=5;
  
  tableA->setAttribute("attrTEST", data, attrSize );
-
-  delete tableA;
-
+ 
+ delete tableA;
+ 
 
   // define the structure of an image
   // define the data to go in the image

@@ -32,11 +32,11 @@
 #endif
 
 #ifndef DALDATASET_H
-#include "dalDataset.h"
+#include <dalDataset.h>
 #endif
 
 #ifndef DALGROUP_H
-#include "dalGroup.h"
+#include <dalGroup.h>
 #endif
 
 /*! doxygen comment in dal.cpp */

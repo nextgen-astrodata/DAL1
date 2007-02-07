@@ -5,29 +5,45 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 
-add_definitions(-DMPICH_IGNORE_CXX_SEEK -D_BSD_SOURCE -D_POSIX_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE)
+add_definitions(
+  -DMPICH_IGNORE_CXX_SEEK
+  -D_BSD_SOURCE
+  -D_POSIX_SOURCE
+  -D_FILE_OFFSET_BITS=64
+  -D_LARGEFILE64_SOURCE
+  -D_LARGEFILE_SOURCE
+  )
+
+## location of the header files
 
 include_directories(
-  /usr/local/include
   .
   ${DAL_SOURCE_DIR}/implement
+  ${HDF5_INCLUDES}
+  ${CFITSIO_INCLUDES}
   )
 
-link_directories(/usr/local/lib)
+## ------------------------------------------------------------------------------
+## Build the test programs
 
 set (tests
+  time_series
   msread
   mswrite
-  time_series
   )
 
-#add_executable(msread msread.cpp)
-#add_executable(mswrite mswrite.cpp)
-add_executable(time_series time_series.cpp)
+foreach (src ${tests})
+  ## executable and its source
+  add_executable(${src} ${src}.cpp)
+  ## libraries against which to link
+  target_link_libraries(${src}
+    dal
+    ${HDF5_LIBRARIES}
+    )
+endforeach (src)
 
-#target_link_libraries(msread dal)
-#target_link_libraries(mswrite dal)
-target_link_libraries(time_series dal)
+## ------------------------------------------------------------------------------
+## Testing
 
 enable_testing()
 add_test(test1 ${CMAKE_CURRENT_BINARY_DIR}/mswrite foo.h5)
