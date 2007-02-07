@@ -28,7 +28,7 @@
 #endif
 
 #ifndef DAL_H
-#include <dal.h>
+#include "dal.h"
 #endif
 
 #ifndef DALDATASET_H
@@ -62,26 +62,25 @@ int main(int argc, char *argv[])
   // create the Station group
   dalGroup * stationGroup = dataset->createGroup( "Station" );
 
-  typedef struct dstct {
-  	int a;
-  } dstct;
-
-  dstct telescope[1], observer[1], project[1], observation_id[1], observation_mode[1],
-		trigger_type[1], trigger_offset[1], triggered_antennas[1], beam_direction[1],
-		station_id[1], sample_freq[1], data_length[1], nyquist_zone[1] = { 1 };
-  stationGroup->setAttribute("TELESCOPE", telescope, 1, dal_INT );
-  stationGroup->setAttribute("OBSERVER", observer, 1, dal_INT );
-  stationGroup->setAttribute("PROJECT", project, 1, dal_INT );
-  stationGroup->setAttribute("OBSERVATION_ID", observation_id, 1, dal_INT );
-  stationGroup->setAttribute("OBSERVATION_MODE", observation_mode, 1, dal_INT );
-  stationGroup->setAttribute("TRIGGER_TYPE", trigger_type, 1, dal_INT );
-  stationGroup->setAttribute("TRIGGER_OFFSET", trigger_offset, 1, dal_INT );
-  stationGroup->setAttribute("TRIGGERED_ANTENNAS", triggered_antennas, 1, dal_INT );
-  stationGroup->setAttribute("BEAM_DIRECTION", beam_direction, 1, dal_INT );
-  stationGroup->setAttribute("STATION_ID", station_id, 1, dal_INT );
-  stationGroup->setAttribute("SAMPLE_FREQ", sample_freq, 1, dal_INT );
-  stationGroup->setAttribute("DATA_LENGTH", data_length, 1, dal_INT );
-  stationGroup->setAttribute("NYQUIST_ZONE", nyquist_zone, 1, dal_INT );
+  string telescope = "LOFAR";
+  string observer = "Iba User";
+  string project = "Transients";
+  string observation_id = "1287";
+  string observation_mode = "Standard";
+  string trigger_type = "Unknown";
+  double trigger_offset[1] = { 0 };
+  int triggered_antennas[1] = { 0 };
+  double beam_direction[1] = { 0 };
+  
+  stationGroup->setAttribute_string("TELESCOPE", telescope );
+  stationGroup->setAttribute_string("OBSERVER", observer );
+  stationGroup->setAttribute_string("PROJECT", project );
+  stationGroup->setAttribute_string("OBSERVATION_ID", observation_id );
+  stationGroup->setAttribute_string("OBSERVATION_MODE", observation_mode );
+  stationGroup->setAttribute_string("TRIGGER_TYPE", trigger_type );
+  stationGroup->setAttribute_double("TRIGGER_OFFSET", trigger_offset );
+  stationGroup->setAttribute_int("TRIGGERED_ANTENNAS", triggered_antennas );
+  stationGroup->setAttribute_double("BEAM_DIRECTION", beam_direction );
 
   // create ANTENNA table
   dalTable * tableA = dataset->createTable( "ANTENNA", "Station" );

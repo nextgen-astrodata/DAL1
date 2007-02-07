@@ -27,7 +27,7 @@
 #define DALTABLE_H
 
 #ifndef DAL_H
-#include <dal.h>
+#include "dal.h"
 #endif
 
 #ifndef DALATTRIBUTE_H
@@ -89,7 +89,7 @@ class dalTable{
 	void appendRow( void * data );
 	void appendRows( void * data, long number_of_rows );
 	void readRows( void * data_out, long start, long stop );
-	void setAttribute( string attrname, void * data, int size );
+	void setAttribute( string attrname, void * data, int size, string datatype );
 	int getNumberOfColumns();  /// return the number of columns in a table
 	int getNumberOfRows();  /// return the number of rows within a table
 	int setRowNumber();  /// advance to a row by its index

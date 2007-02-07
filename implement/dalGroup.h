@@ -62,7 +62,10 @@ class dalGroup{
 	int remove(); // delete a group
 	int listAttributes(); // return a list of group attributes
 	int getAttribute(); // return a dalAttribute object retrieved by name
-    void setAttribute( string attrname, void * data, int size, string coltype );
+    void setAttribute( string attrname, void * data, string coltype );
+    void setAttribute_string( string attrname, string data );
+    void setAttribute_int( string attrname, int * data );
+    void setAttribute_double( string attrname, double * data );
 };
 
 #endif

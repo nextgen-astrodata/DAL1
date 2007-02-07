@@ -56,20 +56,34 @@ string dalGroup::getName () {
    return name;
 }
 
-void dalGroup::setAttribute( string attrname, void * data, int size, string coltype )
+/*
+void dalGroup::setAttribute( string attrname, void * data, string coltype )
 {
-	//H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
-	//status = H5LTget_dataset_info( file_id, name.c_str(), NULL, NULL, NULL );
+	const int size = 1;
 	if ( dal_INT == coltype ) {
 			status = H5LTset_attribute_int( file_id, name.c_str(), attrname.c_str(), (const int*)data, size );
 	}
 	else if ( dal_FLOAT == coltype ) {
 			status = H5LTset_attribute_float( file_id, name.c_str(), attrname.c_str(), (const float*)data, size );
 	}
-	else if ( dal_FLOAT == coltype ) {
+	else if ( dal_DOUBLE == coltype ) {
 			status = H5LTset_attribute_double( file_id, name.c_str(), attrname.c_str(), (const double*)data, size );
 	}
 	else {
 			cout << "ERROR: datatype " << coltype << " not supported for setAttribute." << endl;
 	}			
+}
+*/
+void dalGroup::setAttribute_string( string attrname, string data ) {
+	status = H5LTset_attribute_string( file_id, name.c_str(), attrname.c_str(), data.c_str() );
+}
+
+void dalGroup::setAttribute_int( string attrname, int * data ) {
+	const int size = 1;
+	status = H5LTset_attribute_int( file_id, name.c_str(), attrname.c_str(), data, size );
+}
+
+void dalGroup::setAttribute_double( string attrname, double * data ) {
+	const int size = 1;
+	status = H5LTset_attribute_double( file_id, name.c_str(), attrname.c_str(), data, size );
 }

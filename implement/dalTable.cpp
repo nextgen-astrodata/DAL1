@@ -441,10 +441,15 @@ void dalTable::appendRows( void * data, long row_count )
 	free( size_out );
 }
 
-void dalTable::setAttribute( string attrname, void * data, int size )
+void dalTable::setAttribute( string attrname, void * data, int size, string datatype )
 {
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
-	status = H5LTset_attribute_int( file_id, name.c_str(), attrname.c_str(), (const int*)data, size );
+	if ( dal_INT == datatype )
+	{
+		status = H5LTset_attribute_int( file_id, name.c_str(), attrname.c_str(), (const int*)data, size );
+	}
+	else
+		cout << "unknown datatype" << endl;
 }
 
 void dalTable::readRows( void * data_out, long nstart, long numberRecs )
