@@ -1,0 +1,476 @@
+/***************************************************************************
+ *   Copyright (C) 2006 by Joseph Masters                                  *
+ *   jmasters@science.uva.nl                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+/**
+ * \file dalTable.cpp
+ * \author Joseph Masters
+ * \date 12-04-06
+ */
+ 
+#ifndef DALTABLE_H
+#include "dalTable.h"
+#endif
+
+// for high-level table interface (written in C)
+#include "H5TA.h"
+
+using namespace H5;
+
+dalTable::dalTable()
+{
+ 	columns.clear();  // clear the coulumns vector
+ 	firstrecord = true;
+}
+
+void dalTable::openTable( void * voidfile, string tablename, string groupname )
+{
+	name = groupname + '/' + tablename;
+	H5::H5File * lclfile = (H5::H5File*)voidfile; // H5File object
+	file = lclfile;
+	file_id = lclfile->getLocId();  // get the file handle
+}
+dalTable::~dalTable()
+{
+	/* broken in HDF5 library itself! */
+	//  	if ( nrecords > 1 )
+	//		H5TBdelete_record (file_id, name.c_str(), 0, 1);
+}
+
+void dalTable::printColumns()
+{
+	// Print the column list by iterating through the global column vector
+	cout << "Columns vector list:" << endl;
+	for (unsigned int ii=0; ii < columns.size(); ii++)
+		cout << columns[ii].getName() << " " << endl;
+}
+
+void dalTable::createTable( void * voidfile, string tablename, string groupname )
+{
+	/* It is necessary to have at least one column for table creation
+	 * so we create a dummy column that will be deleted when real
+	 * columns are added
+	 */
+	
+	int					dummy_col;
+	name = groupname + '/' + tablename;  // set the private class variable: name
+	
+	// cast the voidfile to an hdf5 file
+	H5::H5File * lclfile = (H5::H5File*)voidfile; // H5File object
+	file = lclfile;
+	file_id = lclfile->getLocId();  // get the file handle
+
+	const unsigned int	NFIELDS = 1;
+	const unsigned long	NRECORDS = 1;
+	size_t				dst_size =  sizeof(dummy_col);
+	const char			*lclfield_names[NFIELDS] = { "000dummy000" };//colname.c_str() };
+	size_t				dst_offset[NFIELDS] = { 0 };
+		
+	hid_t				field_type[NFIELDS] = { H5T_NATIVE_INT };	
+	hsize_t				chunk_size = CHUNK_SIZE;
+	int					fill_data[NFIELDS] = { -1 };
+	int					compress  = 1;  // 0=off 1=on
+
+	typedef struct Particle {
+			int		dummy;
+	} Particle;
+	Particle data[NFIELDS] = { 0 };
+
+	dst_size = sizeof( Particle );
+	dst_offset[0] = HOFFSET( Particle, dummy );
+
+	tablename = groupname + '/' + tablename;
+	//cout << tablename << endl;
+	status = H5TBmake_table( "Table Title", file_id, tablename.c_str(), NFIELDS, NRECORDS,
+								dst_size, lclfield_names, dst_offset, field_type, chunk_size,
+								fill_data, compress, data );
+}
+
+
+
+void dalTable::addColumn( string colname, string coltype )
+{
+	// make sure the column name isn't blank
+	if ( 0 == colname.length() ) {
+		cout << "WARNING: Trying to add column without a name.  Skipping." << endl;
+		return;
+	}
+
+
+	// retrieve table information
+	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
+	
+
+	// allocate space for the column/field names and retrieve them from the table
+	field_names = (char**)malloc( nfields * sizeof(char*) );
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+	}
+	status = H5TBget_field_info( file_id, name.c_str(), field_names, NULL, NULL, NULL );
+
+	// check to make sure column doesn't already exist
+	bool removedummy = false;
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		if (0 == strcmp(colname.c_str(),field_names[ii])) {
+			cout << "WARNING: Cannot create column \'" << colname.c_str() <<
+					"\'. Column already exists." << endl;
+			return;
+		}
+		else if (0 == strcmp("000dummy000",field_names[ii])) {
+			removedummy = true;
+		}
+	}
+
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		free(field_names[ii]);
+	}
+	
+	// set the column type
+	hid_t	field_type_new;	
+	if ( dal_INT == coltype ) 
+		field_type_new = H5T_NATIVE_INT;
+	else if ( dal_FLOAT == coltype )
+		field_type_new = H5T_NATIVE_FLOAT;
+	else if ( dal_DOUBLE == coltype )
+		field_type_new = H5T_NATIVE_DOUBLE;
+	else {
+		cout << "ERROR: column type is not supported." << endl;
+		exit(99);
+	}
+	
+	// set additional required fields for new column call
+	hsize_t	position = nfields;
+	int		data[1] = {0}; 
+
+	// create the new column
+	status = H5TBinsert_field(	file_id, name.c_str(), colname.c_str(), field_type_new,
+								position, NULL, data );
+
+	if ( removedummy )
+		removeColumn("000dummy000");
+	
+	// if successful, add corresponding column object to list
+	if ( 0 == status ) {
+	  	dalColumn * lc = new dalColumn( colname, dal_INT /*coltype*/ );
+		
+		// add new dalColumn to the 'columns' vector
+	  	columns.push_back( *lc );
+	
+	 	lc->addMember( "a_member", coltype );
+	}
+
+}
+
+void dalTable::addArrayColumn( string colname, string coltype, int indims )
+{
+	// make sure the column name isn't blank
+	if ( 0 == colname.length() ) {
+		cout << "WARNING: Trying to add column without a name.  Skipping." << endl;
+		return;
+	}
+
+
+	// retrieve table information
+	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
+	
+
+	// allocate space for the column/field names and retrieve them from the table
+	field_names = (char**)malloc( nfields * sizeof(char*) );
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+	}
+	status = H5TBget_field_info( file_id, name.c_str(), field_names, NULL, NULL, NULL );
+
+	// check to make sure column doesn't already exist
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		if (0 == strcmp(colname.c_str(),field_names[ii])) {
+			cout << "WARNING: Cannot create column \'" << colname.c_str() <<
+					"\'. Column already exists." << endl;
+			return;
+		}
+	}
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		free(field_names[ii]);
+	}
+		
+	// set the column type
+	hsize_t dd = indims;
+	hsize_t * dims = &dd;
+	hid_t	field_type;	
+	if ( dal_INT == coltype ) 
+		field_type = H5Tarray_create( H5T_NATIVE_INT, 1, dims, NULL);
+	else if ( dal_FLOAT == coltype )
+		field_type = H5Tarray_create( H5T_NATIVE_FLOAT, 1, dims, NULL);
+	else if ( dal_DOUBLE == coltype )
+		field_type = H5Tarray_create( H5T_NATIVE_DOUBLE, 1, dims, NULL);
+	else {
+		cout << "ERROR: column type is not supported." << endl;
+		exit(99);
+	}
+
+	// set additional required fields for new column call
+	hsize_t	position = nfields;
+	int		fill_data[indims];
+	int		data[indims]; 
+	// create the new column
+	status = H5TBinsert_field(	file_id, name.c_str(), colname.c_str(), field_type,
+								position, fill_data, data );
+								
+	// if successful, add corresponding column object to list
+	if ( 0 == status ) {
+	  	dalColumn * lc = new dalColumn( colname, "foo" );
+		
+		// add new dalColumn to the 'columns' vector
+	  	columns.push_back( *lc );
+	
+	 	lc->addMember( "a_member", dal_INT );
+	}
+
+}
+
+void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
+									int subfields )
+{
+	size_t sz = 0;
+	
+	// compute the size of the compound column
+	for ( unsigned int ii=0; ii<foo.size(); ii++) {
+		//cout << "subcolumn name is " << foo[ii].getName() 
+		//	 << ". Type is " << foo[ii].getType() << endl;
+		sz += foo[ii].getSize();
+	}
+
+	// create a compound type that can hold each field
+	hid_t fieldtype = H5Tcreate( H5T_COMPOUND, sz );
+
+	size_t offset = 0;
+	for ( unsigned int ii=0; ii<foo.size(); ii++) {
+		
+		if (0==ii)
+			offset=0;
+		else
+			offset += foo[ii-1].getSize();
+			
+
+		if ( dal_INT == foo[ii].getType() ) {
+			H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset, H5T_NATIVE_INT);
+		}
+		else if ( dal_FLOAT == foo[ii].getType() ) {
+			H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset, H5T_NATIVE_FLOAT);
+		}
+		else if ( dal_DOUBLE == foo[ii].getType() ) {
+			H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset, H5T_NATIVE_DOUBLE);
+		}
+	}
+
+	// retrieve table information
+	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
+
+	// set additional required fields for new column call
+	hsize_t	position = nfields;
+	int		fill_data[subfields];
+	int		data[subfields]; 
+
+	// create the new column
+	status = H5TBinsert_field(	file_id,
+								name.c_str(),
+								compname.c_str(),
+								fieldtype,
+								position,
+								fill_data,
+								data );	
+
+	// if successful, add corresponding column object to list
+	if ( 0 == status ) {
+	  	dalColumn * lc = new dalColumn( compname, "foo" /*H5_COMPOUND*/ );
+		
+		// add new dalColumn to the 'columns' vector
+	  	columns.push_back( *lc );
+
+	 	lc->addMember( "a_member", dal_INT );
+	}
+
+}
+
+void dalTable::removeColumn(string colname)
+{	
+	status = H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
+	if ( nfields < 2 ) {
+			cout << "WARNING: Cannot delete last column." << endl;
+			return;
+	}
+	
+	field_names = (char**)malloc( nfields * sizeof(char*) );
+	for (unsigned int ii=0; ii<nfields; ii++)
+	{
+		field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+	}
+	
+	
+	status = H5TBget_field_info( file_id, name.c_str(), field_names, NULL, NULL, NULL );
+
+	if ( 0 == status )
+		{
+			//columns.pop_back();
+		}
+
+	bool columnpresent = false;					
+	for (unsigned int ii=0; ii < nfields; ii++) {
+		
+		if (0 == strcmp(colname.c_str(),field_names[ii])) {
+			status = H5TBdelete_field( file_id, name.c_str(), field_names[ii]);
+			status = H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
+			columnpresent = true;
+			break;
+		}
+	}
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		free(field_names[ii]);
+	}
+	
+	if ( !columnpresent )
+		cout << "WARNING: Column \'" << colname.c_str() <<
+				"\' not present.  Cannot delete." << endl;
+}
+
+void dalTable::writeDataByColNum( void * data, int index, int rownum )
+{
+	
+	/*
+	 * Cleanup to make more efficient.  Check the last three fields for
+	 * H5TBget_field_info();
+	 */	
+	int num_fields 			= 1;		// number of fields to overwrite
+	const int inum			= index;		// column number to overwrite
+	const int * index_num	= &inum;	// pointer to column number to overwrite
+	hsize_t start			= hsize_t(rownum);		// record index to start at
+	hsize_t numrecords		= 1;		// number of records to write
+
+	
+	const size_t size = sizeof( data );
+	const size_t field_offsets[1] = { 0 };
+	const size_t dst_sizes[1] = { sizeof( int ) }; //(update)
+	
+  	status = H5TBwrite_fields_index (file_id, name.c_str(), num_fields, index_num, 
+                      start, numrecords, size, field_offsets, dst_sizes, data);                      
+}
+
+void dalTable::appendRow( void * data )
+{
+	hsize_t recs2write = 1; // number of records to append
+	size_t * field_sizes;
+	size_t * field_offsets;
+	size_t * size_out;
+	
+	// retrieve the input fields needed for the append_records call
+	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
+	
+	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
+	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
+	size_out = (size_t*)malloc( sizeof(size_t) );
+
+	status = H5TBget_field_info( file_id, name.c_str(), NULL, field_sizes,
+									field_offsets, size_out );
+	
+	if ( firstrecord ) {
+		hsize_t start = 0;
+		hsize_t numrows = 1;
+		status = H5TBwrite_records( file_id, name.c_str(), start, numrows,
+									*size_out, field_offsets, field_sizes, data);
+		firstrecord = false;
+	}
+	else {
+		status = H5TBappend_records ( file_id, name.c_str(), recs2write,
+									*size_out, field_offsets, field_sizes, data );
+	}
+	free( field_sizes );
+	free( field_offsets );
+	free( size_out );
+}
+
+void dalTable::appendRows( void * data, long row_count )
+{
+	hsize_t recs2write = row_count; // number of records to append
+	size_t * field_sizes;
+	size_t * field_offsets;
+	size_t * size_out;
+		
+	// retrieve the input fields needed for the append_records call
+	H5TBget_table_info( file_id, name.c_str(), &nfields, &nrecords );
+	
+	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
+	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
+	size_out = (size_t*)malloc( sizeof(size_t) );
+
+	status = H5TBget_field_info( file_id, name.c_str(), NULL, field_sizes,
+									field_offsets, size_out );
+	
+	if ( firstrecord ) {
+		hsize_t start = 0;
+		char fakedata[row_count];
+		for (long ii=0; ii<row_count; ii++) {
+			fakedata[ii] = 0;
+		}
+		status = H5TBappend_records ( file_id, name.c_str(), recs2write-1,
+									*size_out, field_offsets, field_sizes, fakedata );
+		status = H5TBwrite_records( file_id, name.c_str(), start, recs2write,
+									*size_out, field_offsets, field_sizes, data);
+		firstrecord = false;
+	}
+	else {
+		status = H5TBappend_records ( file_id, name.c_str(), recs2write,
+									*size_out, field_offsets, field_sizes, data );
+	}
+	free( field_sizes );
+	free( field_offsets );
+	free( size_out );
+}
+
+void dalTable::setAttribute( string attrname, void * data, int size )
+{
+	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
+	status = H5LTset_attribute_int( file_id, name.c_str(), attrname.c_str(), (const int*)data, size );
+}
+
+void dalTable::readRows( void * data_out, long nstart, long numberRecs )
+{
+	size_t * field_sizes;
+	size_t * field_offsets;
+	size_t * size_out;
+ 	
+	// retrieve the input fields needed for the append_records call
+	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
+	
+	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
+	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
+	size_out = (size_t*)malloc( sizeof(size_t) );
+	
+	status = H5TBget_field_info( file_id, name.c_str(), NULL, field_sizes,
+									field_offsets, size_out );	
+ 	hsize_t start = nstart;
+ 	hsize_t nrecs = numberRecs;
+ 	
+	status = H5TBread_records( file_id, name.c_str(), start, nrecs,
+					  size_out[0], field_offsets, field_sizes, data_out );
+	
+	if (status < 0) {
+		cout << "Problem reading records. Row buffer may be too big. " <<
+			 "Make sure the buffer is smaller than the size of the table." << endl;
+		exit(897);
+	}
+}
