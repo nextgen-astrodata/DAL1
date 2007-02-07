@@ -28,7 +28,7 @@
 #endif
 
 #ifndef DAL_H
-#include "dal.h"
+#include <dal.h>
 #endif
 
 #ifndef DALDATASET_H

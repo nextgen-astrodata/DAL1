@@ -1,5 +1,3 @@
-PROJECT(DAL)
-
 set(CMAKE_CXX_FLAGS "-W -Wall")
 message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 if(NOT CMAKE_BUILD_TYPE)
@@ -8,12 +6,20 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 
 add_definitions(-DMPICH_IGNORE_CXX_SEEK -D_BSD_SOURCE -D_POSIX_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE)
-include_directories(/usr/local/include)
+
+include_directories(
+  /usr/local/include
+  .
+  ${DAL_SOURCE_DIR}/implement
+  )
+
 link_directories(/usr/local/lib)
 
-
-add_library(dal STATIC dalDataset.cpp dalTable.cpp dalGroup.cpp dalColumn.cpp dalRow.cpp l_member.cpp )
-target_link_libraries(dal hdf5 hdf5_cpp hdf5_hl z m cfitsio)
+set (tests
+  msread
+  mswrite
+  time_series
+  )
 
 #add_executable(msread msread.cpp)
 #add_executable(mswrite mswrite.cpp)

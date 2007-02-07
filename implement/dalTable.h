@@ -27,7 +27,7 @@
 #define DALTABLE_H
 
 #ifndef DAL_H
-#include "dal.h"
+#include <dal.h>
 #endif
 
 #ifndef DALATTRIBUTE_H
