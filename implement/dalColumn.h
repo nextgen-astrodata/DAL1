@@ -17,6 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #ifndef DALCOLUMN_H
 #define DALCOLUMN_H
 
@@ -32,6 +33,15 @@
 #include "dalFilter.h"
 #endif
 
+/*!
+  \class calColumn
+
+  \ingroup DAL
+
+  \brief t.b.w.
+
+  \author Joseph Masters
+ */
 class dalColumn {
 
 	string name; /// column name
@@ -42,20 +52,80 @@ class dalColumn {
 	vector<dalAttribute> attributes; /// list of column attributes
 	dalFilter filter; /// filter associated with column
 	
-public:
+	  public:
+	
+	/*!
+	  \brief Default constructor 
+	*/
 	dalColumn();
+	/*!
+	  \brief Argumented constructor
+
+	  \param colname -- 
+	  \param coltype -- 
+	*/
 	dalColumn( string colname, string coltype );
+	/*!
+	  \brief Argumented constructor
+	  
+	  \brief complexcolname -- 
+	*/
 	dalColumn( string complexcolname/*, void * dataformat*/ );
+	/*!
+	  \brief Add a member to a column
+
+	  \param member_name -- 
+	  \param type        -- 
+	*/
 	void addMember( string member_name, string type );
+	/*!
+	  \brief Get the name of the column
+
+	  \return name -- The name of the column
+	*/
 	string getName();
+	/*!
+	  \brief Get the type in the column
+
+	  \return type -- The type in the column
+	*/
 	string getType();
+	/*!
+	  \brief Get the size of the column
+
+	  \return size -- The size of the column
+	*/
 	int getSize();
 
-	int getNumber();  /// return the index of a column
+	/*!
+	  \brief Get the index of a column
+
+	  \return number -- The index of a column
+	*/
+	int getNumber();
+	/*!
+	  \brief Add an array to the column
+	*/
 	void addArray();
-	int insertAfter(); /// insert a new column after column specified by name or number
-	int insertBefore(); /// insert a new column before column specified by name or number
-	int replace(); /// replace a column with a new one
-	int remove();  /// remove a column
+	/*!
+	  \brief Insert a new column after column specified by name or number
+	  
+	  \return status -- Status/error code of the operation
+	*/
+	int insertAfter();
+	/*!
+	  \brief Insert a new column before column specified by name or number
+	  
+	  \return status -- Status/error code of the operation
+	*/
+	int insertBefore();
+	/*!
+	  \brief Replace a column with a new one
+	*/
+	int replace();
+	/*!
+	  \brief Remove a column
+	*/
+	int remove();
 };
 #endif
