@@ -87,7 +87,7 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 	int					compress  = 1;  // 0=off 1=on
 
 	typedef struct Particle {
-			int		dummy;
+		int		dummy;
 	} Particle;
 	Particle data[NFIELDS] = { 0 };
 
@@ -103,15 +103,37 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 
 
 
-void dalTable::addColumn( string colname, string coltype )
+void dalTable::addColumn( string colname, string coltype, unsigned int size )
 {
+	
 	// make sure the column name isn't blank
 	if ( 0 == colname.length() ) {
 		cout << "WARNING: Trying to add column without a name.  Skipping." << endl;
 		return;
 	}
 
+	if ( size > 1 ) {
+		addArrayColumn( colname, coltype, size );
+		return;
+	}
+	
+	if ( ( dal_COMPLEX == coltype ) || ( dal_DCOMPLEX == coltype ) ) 
+	{
+		vector<dalColumn> cv;
+		string component_type;
+		
+		component_type = dal_DOUBLE;
+			
+		dalColumn col_a( "r", component_type );  // real component
+		dalColumn col_b( "i", component_type );  // imaginary component
 
+		cv.push_back( col_a );
+		cv.push_back( col_b );
+
+		addComplexColumn( colname, cv, 2 );
+		return;
+	}
+	
 	// retrieve table information
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
 	
@@ -142,20 +164,34 @@ void dalTable::addColumn( string colname, string coltype )
 	
 	// set the column type
 	hid_t	field_type_new;	
-	if ( dal_INT == coltype ) 
+	if ( dal_INT == coltype )
 		field_type_new = H5T_NATIVE_INT;
+		
+	else if ( dal_UINT == coltype )
+		field_type_new = H5T_NATIVE_UINT;
+
+	else if ( dal_SHORT == coltype )
+		field_type_new = H5T_NATIVE_SHORT;
+
 	else if ( dal_FLOAT == coltype )
 		field_type_new = H5T_NATIVE_FLOAT;
+
 	else if ( dal_DOUBLE == coltype )
 		field_type_new = H5T_NATIVE_DOUBLE;
+		
+	else if ( dal_STRING == coltype ) {
+		field_type_new = H5Tcopy( H5T_C_S1 );
+		H5Tset_size( field_type_new, 16 );
+	}
+	
 	else {
-		cout << "ERROR: column type is not supported." << endl;
+		cout << "ERROR: column type " << coltype << " is not supported." << endl;
 		exit(99);
 	}
 	
 	// set additional required fields for new column call
 	hsize_t	position = nfields;
-	int		data[1] = {0}; 
+	void * data; 
 
 	// create the new column
 	status = H5TBinsert_field(	file_id, name.c_str(), colname.c_str(), field_type_new,
@@ -163,6 +199,8 @@ void dalTable::addColumn( string colname, string coltype )
 
 	if ( removedummy )
 		removeColumn("000dummy000");
+	
+	return;
 	
 	// if successful, add corresponding column object to list
 	if ( 0 == status ) {
@@ -176,7 +214,7 @@ void dalTable::addColumn( string colname, string coltype )
 
 }
 
-void dalTable::addArrayColumn( string colname, string coltype, int indims )
+void dalTable::addArrayColumn( string colname, string coltype, unsigned int indims )
 {
 	// make sure the column name isn't blank
 	if ( 0 == colname.length() ) {
@@ -212,21 +250,37 @@ void dalTable::addArrayColumn( string colname, string coltype, int indims )
 	hsize_t dd = indims;
 	hsize_t * dims = &dd;
 	hid_t	field_type;	
-	if ( dal_INT == coltype ) 
-		field_type = H5Tarray_create( H5T_NATIVE_INT, 1, dims, NULL);
+	hid_t   h5type;
+	
+	if ( dal_INT == coltype )
+		h5type =  H5T_NATIVE_INT;
+	
+	else if ( dal_UINT == coltype )
+		h5type = H5T_NATIVE_UINT;
+	
+	else if ( dal_SHORT == coltype )
+		h5type = H5T_NATIVE_SHORT;
+	
 	else if ( dal_FLOAT == coltype )
-		field_type = H5Tarray_create( H5T_NATIVE_FLOAT, 1, dims, NULL);
+		h5type = H5T_NATIVE_FLOAT;
+	
 	else if ( dal_DOUBLE == coltype )
-		field_type = H5Tarray_create( H5T_NATIVE_DOUBLE, 1, dims, NULL);
+		h5type = H5T_NATIVE_DOUBLE;
+	
+	else if ( dal_STRING == coltype )
+		h5type = H5T_NATIVE_CHAR;
+	
 	else {
-		cout << "ERROR: column type is not supported." << endl;
+		cout << "ERROR: column type " << coltype << " is not supported." << endl;
 		exit(99);
 	}
+	field_type = H5Tarray_create( h5type, 1, dims, NULL);
 
 	// set additional required fields for new column call
 	hsize_t	position = nfields;
 	int		fill_data[indims];
 	int		data[indims]; 
+	
 	// create the new column
 	status = H5TBinsert_field(	file_id, name.c_str(), colname.c_str(), field_type,
 								position, fill_data, data );
@@ -295,6 +349,7 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 								fill_data,
 								data );	
 
+	return;
 	// if successful, add corresponding column object to list
 	if ( 0 == status ) {
 	  	dalColumn * lc = new dalColumn( compname, "foo" /*H5_COMPOUND*/ );
@@ -324,10 +379,10 @@ void dalTable::removeColumn(string colname)
 	
 	status = H5TBget_field_info( file_id, name.c_str(), field_names, NULL, NULL, NULL );
 
-	if ( 0 == status )
-		{
+	//if ( 0 == status )
+		//{
 			//columns.pop_back();
-		}
+	//	}
 
 	bool columnpresent = false;					
 	for (unsigned int ii=0; ii < nfields; ii++) {
@@ -441,6 +496,7 @@ void dalTable::appendRows( void * data, long row_count )
 	free( size_out );
 }
 
+
 void dalTable::setAttribute( string attrname, void * data, int size, string datatype )
 {
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
@@ -450,6 +506,22 @@ void dalTable::setAttribute( string attrname, void * data, int size, string data
 	}
 	else
 		cout << "unknown datatype" << endl;
+}
+
+void dalTable::setAttribute_string( string attrname, string data ) {
+	status = H5LTset_attribute_string( file_id, name.c_str(), attrname.c_str(), data.c_str() );
+}
+
+void dalTable::setAttribute_int( string attrname, int * data, int size ) {
+	status = H5LTset_attribute_int( file_id, name.c_str(), attrname.c_str(), data, size );
+}
+
+void dalTable::setAttribute_uint( string attrname, unsigned int * data, int size ) {
+	status = H5LTset_attribute_uint( file_id, name.c_str(), attrname.c_str(), data, size );
+}
+
+void dalTable::setAttribute_double( string attrname, double * data, int size ) {
+	status = H5LTset_attribute_double( file_id, name.c_str(), attrname.c_str(), data, size );
 }
 
 void dalTable::readRows( void * data_out, long nstart, long numberRecs )

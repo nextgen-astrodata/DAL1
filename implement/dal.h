@@ -25,16 +25,19 @@
 #include <vector>
 #include <iostream>
 #include <cstdio>
-#include <H5LT.h>
+#include "H5LT.h"
 
-#include <H5Cpp.h>
+#include "H5Cpp.h"
 
 extern "C" {
 //#include "hdf5.h"
-#include <fitsio.h>
+#include "fitsio.h"
 }
 
 using namespace std;
+
+#include <complex>
+using std::complex;
 
 const int SUCCESS = 0;
 const int FAIL = 1;
@@ -45,10 +48,19 @@ const string dal_CHAR = "dalCHAR";
 const string dal_STRING = "dalSTRING";
 
 const string dal_INT = "dalINT";
+const string dal_UINT = "dalINT";
 const string dal_SHORT = "dalSHORT";
 const string dal_LONG = "dalLONG";
 
 const string dal_FLOAT = "dalFLOAT";
 const string dal_DOUBLE = "dalDOUBLE";
+
+const string dal_COMPLEX = "dalCOMPLEX";
+const string dal_DCOMPLEX = "dalDCOMPLEX";
+
+typedef struct dalcomplex {
+	double r;  // real
+	double i;  // imaginary
+} dalcomplex;
 
 #endif

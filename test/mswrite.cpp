@@ -165,10 +165,10 @@ for ( int uu=0 ; uu < LOOPMAX; uu++)
  data[3].a=4;
  data[4].a=5;
  
- tableA->setAttribute("attrTEST", data, attrSize );
- 
- delete tableA;
- 
+ tableA->setAttribute("attrTEST", data, attrSize, dal_INT );
+
+  delete tableA;
+
 
   // define the structure of an image
   // define the data to go in the image

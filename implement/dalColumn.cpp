@@ -75,6 +75,14 @@ void dalColumn::addMember( string member_name, string member_type )
 			H5::CompType mtype1( sizeof(int) );
 			mtype1.insertMember( member_name, 0, H5::PredType::NATIVE_INT);
 	}
+	else if ( member_type == dal_UINT )	{
+			H5::CompType mtype1( sizeof(unsigned int) );
+			mtype1.insertMember( member_name, 0, H5::PredType::NATIVE_UINT);
+	}
+	else if ( member_type == dal_SHORT )	{
+			H5::CompType mtype1( sizeof(short) );
+			mtype1.insertMember( member_name, 0, H5::PredType::NATIVE_SHORT);
+	}
 	else if ( member_type == dal_FLOAT )	{
 			H5::CompType mtype1( sizeof(float) );
 			mtype1.insertMember( member_name, 0, H5::PredType::NATIVE_FLOAT);
@@ -82,6 +90,10 @@ void dalColumn::addMember( string member_name, string member_type )
 	else if ( member_type == dal_DOUBLE )	{
 			H5::CompType mtype1( sizeof(double) );
 			mtype1.insertMember( member_name, 0, H5::PredType::NATIVE_DOUBLE);
+	}
+	else if ( member_type == dal_STRING )	{
+			H5::CompType mtype1( sizeof(H5T_C_S1));
+			mtype1.insertMember( member_name, 0, H5T_C_S1);
 	}
 	else {					     
 			cout << "ERROR: addMember " << member_name << " " << member_type << " not supported." << endl;

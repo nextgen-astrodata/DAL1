@@ -78,12 +78,14 @@ void dalGroup::setAttribute_string( string attrname, string data ) {
 	status = H5LTset_attribute_string( file_id, name.c_str(), attrname.c_str(), data.c_str() );
 }
 
-void dalGroup::setAttribute_int( string attrname, int * data ) {
-	const int size = 1;
+void dalGroup::setAttribute_int( string attrname, int * data, int size ) {
 	status = H5LTset_attribute_int( file_id, name.c_str(), attrname.c_str(), data, size );
 }
 
-void dalGroup::setAttribute_double( string attrname, double * data ) {
-	const int size = 1;
+void dalGroup::setAttribute_uint( string attrname, unsigned int * data, int size ) {
+	status = H5LTset_attribute_uint( file_id, name.c_str(), attrname.c_str(), data, size );
+}
+
+void dalGroup::setAttribute_double( string attrname, double * data, int size ) {
 	status = H5LTset_attribute_double( file_id, name.c_str(), attrname.c_str(), data, size );
 }

@@ -28,16 +28,18 @@
 #endif
 
 #ifndef DAL_H
-#include "dal.h"
+#include <dal.h>
 #endif
 
 #ifndef DALDATASET_H
-#include "dalDataset.h"
+#include <dalDataset.h>
 #endif
 
 #ifndef DALGROUP_H
-#include "dalGroup.h"
+#include <dalGroup.h>
 #endif
+
+//#include <mpi.h>       /* Include the MPI definitions */
 
 const long BSIZE = 10000;
 const int LOOPMAX = 10000;
