@@ -24,8 +24,8 @@
 
 dalGroup::dalGroup() {
     H5::Group group;
-    hid_t foo = group.getLocId();
-    cout << "group id == " << foo << endl;
+//    hid_t foo = group.getLocId();
+//    cout << "group id == " << foo << endl;
 }
 
 dalGroup::dalGroup( void * voidfile, string gname ) {
@@ -34,9 +34,9 @@ dalGroup::dalGroup( void * voidfile, string gname ) {
 	file = lclfile;
 	file_id = lclfile->getLocId();  // get the file handle
 
-    name = gname;
-    H5::Group * lclgroup = new H5::Group( lclfile->createGroup( "/" + gname ));
-    group = lclgroup;  // set local to global
+	name = gname;
+	H5::Group * lclgroup = new H5::Group( lclfile->createGroup( "/" + gname ));
+	group = lclgroup;  // set local to global
 }
 
 bool dalGroup::setName ( string gname ) {
@@ -54,6 +54,58 @@ bool dalGroup::setName ( string gname ) {
 
 string dalGroup::getName () {
    return name;
+}
+
+void dalGroup::open( void * voidfile, string groupname ) {
+	name = groupname;
+
+	H5::H5File * lclfile = (H5::H5File*)voidfile; // H5File object
+	file = lclfile;
+	file_id = lclfile->getLocId();  // get the file handle
+	
+	string fullgroupname = "/" + groupname;
+	group_id = H5Gopen( file_id, fullgroupname.c_str() );
+}
+
+void dalGroup::setAttribute_string( string attrname, string data ) {
+	status = H5LTset_attribute_string( file_id, name.c_str(), attrname.c_str(), data.c_str() );
+}
+
+void dalGroup::setAttribute_int( string attrname, int * data, int size ) {
+	status = H5LTset_attribute_int( file_id, name.c_str(),
+			attrname.c_str(), data, size );
+}
+
+void dalGroup::setAttribute_uint( string attrname, unsigned int * data, int size ) {
+	status = H5LTset_attribute_uint( file_id, name.c_str(), attrname.c_str(), data, size );
+}
+
+void dalGroup::setAttribute_double( string attrname, double * data, int size ) {
+	status = H5LTset_attribute_double( file_id, name.c_str(), attrname.c_str(), data, size );
+}
+
+void dalGroup::getAttribute_int( string attrname ) {
+	int data[1] = {-1};
+	string fullname = "/" + name;
+	H5LTget_attribute_int(file_id, fullname.c_str(), attrname.c_str(), data);
+	cout << attrname << " = " << data[0] << endl;
+}
+
+void dalGroup::getAttribute_double( string attrname ) {
+	double data[1] = {-1};
+	string fullname = "/" + name;
+	H5LTget_attribute_double(file_id, fullname.c_str(), attrname.c_str(), data);
+	cout << attrname << " = " << data[0] << endl;
+}
+
+void dalGroup::getAttribute_string( string attrname ) {
+	char* data;
+	string fullname = "/" + name;
+	int rank;
+	H5LTget_attribute_ndims(file_id, fullname.c_str(), attrname.c_str(), &rank );
+	data = (char *)malloc(rank * sizeof(char));
+	H5LTget_attribute_string( file_id, fullname.c_str(), attrname.c_str(), data);
+	cout << attrname << " = " << data << endl;
 }
 
 /*
@@ -74,18 +126,3 @@ void dalGroup::setAttribute( string attrname, void * data, string coltype )
 	}			
 }
 */
-void dalGroup::setAttribute_string( string attrname, string data ) {
-	status = H5LTset_attribute_string( file_id, name.c_str(), attrname.c_str(), data.c_str() );
-}
-
-void dalGroup::setAttribute_int( string attrname, int * data, int size ) {
-	status = H5LTset_attribute_int( file_id, name.c_str(), attrname.c_str(), data, size );
-}
-
-void dalGroup::setAttribute_uint( string attrname, unsigned int * data, int size ) {
-	status = H5LTset_attribute_uint( file_id, name.c_str(), attrname.c_str(), data, size );
-}
-
-void dalGroup::setAttribute_double( string attrname, double * data, int size ) {
-	status = H5LTset_attribute_double( file_id, name.c_str(), attrname.c_str(), data, size );
-}

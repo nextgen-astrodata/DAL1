@@ -17,26 +17,20 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+/**
+ * \file dalAttribute.cpp
+ * \author Joseph Masters
+ * \date 12-04-06
+ */
+ 
 #ifndef DALATTRIBUTE_H
-#define DALATTRIBUTE_H
-
-#ifndef DAL_H
-#include "dal.h"
+#include "dalAttribute.h"
 #endif
 
-class dalAttribute {
+// for high-level Attribute interface (written in C)
+#include "H5TA.h"
 
-	string name; // attribute name
-	string units; // attribute units
-	string description; // column description
-	
-  public:
-	dalAttribute();
-	string getName(); // return the attribute name
-	int getUnits(); // return the attribute units
-	int getDescription(); // return the attribute description
-	void setName(); // set the attribute name
-	int setUnits(); // set the attribute units
-	int setDescription(); // set the attribute description
-};
-#endif
+using namespace H5;
+
+dalAttribute::dalAttribute()
+{}

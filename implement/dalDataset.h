@@ -91,7 +91,7 @@ class dalDataset{
 	int rename();  /// rename the dataset
 	dalTable * openTable( string tablename );  /// return a dalTable object
 	dalTable * openTable( string tablename, string groupname );
-	int openGroup();  /// return a dalGroup object
+	dalGroup * openGroup( string groupname );  /// return a dalGroup object
 	int listGroups();  /// return a list of groups within the dataset
 	/// return a list of tables not contained in any groups
 	int listTables();

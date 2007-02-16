@@ -286,6 +286,19 @@ dalTable * dalDataset::openTable( string tablename, string groupname )
    	return NULL;
 }
 
+dalGroup * dalDataset::openGroup( string groupname )
+{
+   if ( type == H5TYPE )
+   {
+	   dalGroup * group = new dalGroup();
+	   //cout << "Trying to open group " << groupname << endl; 
+	   group->open( file, groupname );
+	   return group;
+   }
+   else
+   	return NULL;
+}
+
 string dalDataset::getType()
 {
 	return type;

@@ -29,6 +29,7 @@ link_directories(
 
 
 add_library(dal STATIC
+  dalAttribute.cpp
   dalDataset.cpp
   dalTable.cpp
   dalGroup.cpp

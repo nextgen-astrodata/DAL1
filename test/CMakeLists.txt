@@ -27,6 +27,7 @@ include_directories(
 ## Build the test programs
 
 set (tests
+  tsread
   time_series
   msread
   mswrite
