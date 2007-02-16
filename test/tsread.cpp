@@ -79,14 +79,16 @@ int main(int argc, char *argv[])
   dalGroup * stationGroup = dataset->openGroup("Station");
 
   cout << endl << "Station Group Attributes:" << endl;
-  stationGroup->getAttribute_string("TELESCOPE");
-  stationGroup->getAttribute_string("OBSERVER");
-  stationGroup->getAttribute_string("PROJECT");
-  stationGroup->getAttribute_string("OBSERVATION_ID");
-  stationGroup->getAttribute_string("OBSERVATION_MODE");
-  stationGroup->getAttribute_string("TRIGGER_TYPE");
-  stationGroup->getAttribute_double("TRIGGER_OFFSET");
-  stationGroup->getAttribute_int("TRIGGERED_ANTENNAS");
+
+  stationGroup->getAttribute("TELESCOPE");
+  stationGroup->getAttribute("OBSERVER");
+  stationGroup->getAttribute("PROJECT");
+  stationGroup->getAttribute("OBSERVATION_ID");
+  stationGroup->getAttribute("OBSERVATION_MODE");
+  stationGroup->getAttribute("TRIGGER_TYPE");
+  stationGroup->getAttribute("TRIGGER_OFFSET");
+  stationGroup->getAttribute("MISSING");
+  stationGroup->getAttribute("TRIGGERED_ANTENNAS");
   //stationGroup->getAttribute_double("BEAM_DIRECTION", beam_direction, 2 );
 
   cout << endl;

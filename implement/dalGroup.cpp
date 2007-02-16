@@ -84,21 +84,57 @@ void dalGroup::setAttribute_double( string attrname, double * data, int size ) {
 	status = H5LTset_attribute_double( file_id, name.c_str(), attrname.c_str(), data, size );
 }
 
-void dalGroup::getAttribute_int( string attrname ) {
-	int data[1] = {-1};
-	string fullname = "/" + name;
-	H5LTget_attribute_int(file_id, fullname.c_str(), attrname.c_str(), data);
-	cout << attrname << " = " << data[0] << endl;
-}
+void dalGroup::getAttribute( string attrname ) {
 
-void dalGroup::getAttribute_double( string attrname ) {
-	double data[1] = {-1};
+	hsize_t * dims;
+	H5T_class_t type_class;
+	size_t type_size;
+
+	// Check if attribute exists
+	if ( H5LT_find_attribute(group_id, attrname.c_str()) <= 0 ) {
+		cout << "Attribute " << attrname << " not found." << endl;
+		return;
+	}
+	
 	string fullname = "/" + name;
-	H5LTget_attribute_double(file_id, fullname.c_str(), attrname.c_str(), data);
-	cout << attrname << " = " << data[0] << endl;
+
+	int rank;
+	H5LTget_attribute_ndims(file_id, fullname.c_str(), attrname.c_str(), &rank );
+
+	dims = (hsize_t *)malloc(rank * sizeof(hsize_t));
+
+	H5LTget_attribute_info( file_id, fullname.c_str(), attrname.c_str(),
+				dims, &type_class, &type_size );
+
+	if ( H5T_FLOAT == type_class ) {
+		double data[1] = {-1};
+		H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
+			 H5T_NATIVE_DOUBLE, data);
+		cout << attrname << " = " << data[0] << endl;
+	}
+	else if ( H5T_INTEGER == type_class ) {
+		int data[1] = {-1};
+		H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
+			 H5T_NATIVE_INT, data);
+		cout << attrname << " = " << data[0] << endl;
+	}
+	else if ( H5T_STRING == type_class ) {
+		char* data;
+		string fullname = "/" + name;
+		data = (char *)malloc(rank * sizeof(char));
+		H5LTget_attribute_string( file_id, fullname.c_str(), attrname.c_str(),data);
+		cout << attrname << " = " << data << endl;
+	}
 }
 
 void dalGroup::getAttribute_string( string attrname ) {
+
+	// Check if attribute exists
+	if ( H5LT_find_attribute(group_id, attrname.c_str()) <= 0 ) {
+		cout << "Attribute " << attrname << " not found." << endl;
+		return;
+	}
+	
 	char* data;
 	string fullname = "/" + name;
 	int rank;
