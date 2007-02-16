@@ -66,7 +66,7 @@ class dalGroup{
 	int getAttribute(); /// return a dalAttribute object retrieved by name
 
 	void getAttribute( string attrname );
-	void getAttribute_string( string attrname );
+
     void setAttribute( string attrname, void * data, string coltype );
     void setAttribute_string( string attrname, string data );
     void setAttribute_int( string attrname, int * data, int size=1 );

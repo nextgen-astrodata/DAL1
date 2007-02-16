@@ -125,23 +125,9 @@ void dalGroup::getAttribute( string attrname ) {
 		H5LTget_attribute_string( file_id, fullname.c_str(), attrname.c_str(),data);
 		cout << attrname << " = " << data << endl;
 	}
-}
-
-void dalGroup::getAttribute_string( string attrname ) {
-
-	// Check if attribute exists
-	if ( H5LT_find_attribute(group_id, attrname.c_str()) <= 0 ) {
-		cout << "Attribute " << attrname << " not found." << endl;
-		return;
+	else {
+		cout << "Attribute " << attrname << " type unknown." << endl;
 	}
-	
-	char* data;
-	string fullname = "/" + name;
-	int rank;
-	H5LTget_attribute_ndims(file_id, fullname.c_str(), attrname.c_str(), &rank );
-	data = (char *)malloc(rank * sizeof(char));
-	H5LTget_attribute_string( file_id, fullname.c_str(), attrname.c_str(), data);
-	cout << attrname << " = " << data << endl;
 }
 
 /*
