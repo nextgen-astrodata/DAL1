@@ -28,7 +28,7 @@ include_directories(
 
 set (tests
   tsread
-  time_series
+  tswrite
   msread
   mswrite
   )
