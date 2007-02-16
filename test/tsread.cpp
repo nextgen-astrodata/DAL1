@@ -99,11 +99,11 @@ int main(int argc, char *argv[])
   // define the structure of an image
   // define the data to go in the image
   // create the image in the file or group
-//   dataset.createImage();
-  
+  //   dataset.createImage();
+
 
   delete dataset;
-  
+
   cout << "SUCCESS" << endl;
   return SUCCESS;
 }
