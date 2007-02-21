@@ -23,7 +23,7 @@
  * \date 06-Feb-07
  */
 
- #ifdef HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
@@ -42,7 +42,7 @@
 /*! doxygen comment in dal.cpp */
 int main(int argc, char *argv[])
 {
-  
+
   // parameter check
   if ( argc < 2 )
   {
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 	  dataset = new dalDataset( argv[1] );
   else
 	  dataset = new dalDataset( argv[1], argv[2] );
-  
+
   //
   /////////////////////////////////////////
   // create the "Station" group
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
   double trigger_offset[1] = { 0 };
   int triggered_antennas[1] = { 0 };
   double beam_direction[2] = { 0, 0 };
-  
+
   // Add attributes to "Station" group
   stationGroup->setAttribute_string("TELESCOPE", telescope );
   stationGroup->setAttribute_string("OBSERVER", observer );
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
   /////////////////////////////////////////
   //
   dalTable * AntennaTable = dataset->createTable( "ANTENNA", "Station" );
-  
+
   // add attributes to ANTENNA table
   unsigned int station_id[1] = { 0 };
   double sample_freq[1] = { 0 };
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
   AntennaTable->setAttribute_uint("STATION_ID", station_id );
   AntennaTable->setAttribute_double("SAMPLE_FREQ", sample_freq );
   AntennaTable->setAttribute_uint("DATA_LENGTH", data_length );
-  
+
   // add columns to ANTENNA table
   AntennaTable->addColumn( "RSP_ID", dal_UINT );  // simple column
   AntennaTable->addColumn( "RCU_ID", dal_UINT );  // simple column
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
   AntennaTable->addColumn( "FEED", dal_STRING );
   AntennaTable->addColumn( "ANT_POSITION", dal_DOUBLE, 3 );
   AntennaTable->addColumn( "ANT_ORIENTATION", dal_DOUBLE, 3 );
-  
+
   // Fill ANTENNA table with data
   const long BufferSIZE = 10;
   typedef struct AntennaStruct {
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
   AntennaStruct antenna[BufferSIZE];
   const int LOOPMAX = 1;
   for ( int uu=0 ; uu < LOOPMAX; uu++)
-  {	
+  {
 	for (long row=0; row<BufferSIZE; row++) {
 		antenna[row].rsp_id = 0;
 		antenna[row].rcu_id = 0;
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
 	}
 	AntennaTable->appendRows( antenna, BufferSIZE );
   }  
-  
+
   //
   /////////////////////////////////////////
   // create CALIBRATION table
@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
   CalibrationTable->addColumn( "BEAM_FREQUENCIES", dal_DOUBLE );
   CalibrationTable->addColumn( "NOISE_CURVE", dal_COMPLEX );
   CalibrationTable->addColumn( "NOISE_FREQUENCIES", dal_DOUBLE );
-    
+
   // Fill CALIBRATION table with data
   const long CALBufferSIZE = 10;
   typedef struct CalStruct {
@@ -179,13 +179,13 @@ int main(int argc, char *argv[])
   		double beam_directions;
   		double beam_frequencies;
   		dalcomplex noise_curve;
-  		double noise_frequencies;  		
+  		double noise_frequencies;
   } CalStruct;
 
   CalStruct calibration[CALBufferSIZE];
   const int calLOOPMAX = 1;
   for ( int uu=0 ; uu < calLOOPMAX; uu++)
-  {	
+  {
 	for (long row=0; row<CALBufferSIZE; row++) {
 		calibration[row].adc2voltage = 0;
 		calibration[row].gain_curve.r = 0;
@@ -200,14 +200,14 @@ int main(int argc, char *argv[])
 		calibration[row].noise_frequencies = 0;
 	}
 	CalibrationTable->appendRows( calibration, CALBufferSIZE );
-  }  
+  }
 
   delete AntennaTable;
   delete CalibrationTable;
 
   delete stationGroup;
   delete dataset;
-  
+
   cout << "SUCCESS" << endl;
   return SUCCESS;
 }

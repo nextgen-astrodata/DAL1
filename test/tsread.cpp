@@ -60,8 +60,10 @@ int main(int argc, char *argv[])
   	exit(FAIL);
   }
 
+  // Open Station group
   dalGroup * stationGroup = dataset->openGroup("Station");
 
+  // Read Station group attributes
   cout << endl << "Station Group Attributes:" << endl;
 
   stationGroup->getAttribute("TELESCOPE");
@@ -76,6 +78,58 @@ int main(int argc, char *argv[])
   stationGroup->getAttribute("BEAM_DIRECTION");
 
   cout << endl;
+
+  // Open ANTENNA table in Station group
+  dalTable * antennaTable = dataset->openTable("ANTENNA","Station");
+  typedef struct AntennaStruct {
+	unsigned int rsp_id;
+	unsigned int rcu_id;
+	unsigned int time;
+	unsigned int sample_nr;
+	unsigned int samples_per_frame;
+	short data;
+	char feed[16];
+	double ant_position[ 3 ];
+	double ant_orientation[ 3 ];
+  } AntennaStruct;
+
+  // define a structure to read the data into
+  //   in this case it's AntennaStruct (defined above)
+  const int NUMBERROWS = 1;
+  long startRow = 0;
+  AntennaStruct data_out[NUMBERROWS];
+
+  long maximum = 10;
+
+  cout << "ANTENNA table data:" << endl;
+  for ( long ii = 0; ii < maximum; ii ++ ) {
+
+	antennaTable->readRows( data_out, startRow, NUMBERROWS);
+
+	// print some values from the read
+	for (int gg=0; gg < NUMBERROWS; gg++)
+	{
+		cout << data_out[gg].rsp_id << ',';
+		cout << data_out[gg].rcu_id << ',';
+		cout << data_out[gg].time << ',';
+		cout << data_out[gg].sample_nr << ',';
+		cout << data_out[gg].samples_per_frame << ',';
+		cout << data_out[gg].data << ',';
+		cout << data_out[gg].feed << ',';
+		cout << '[';
+		cout << data_out[gg].ant_position[0] << ',';
+		cout << data_out[gg].ant_position[1] << ',';
+		cout << data_out[gg].ant_position[2] << "],";
+		cout << '[';
+		cout << data_out[gg].ant_orientation[0] << ',';
+		cout << data_out[gg].ant_orientation[1] << ',';
+		cout << data_out[gg].ant_orientation[2] << ']' << endl;
+	}
+	
+	startRow += NUMBERROWS;
+  }
+  cout << endl;
+  delete antennaTable;
 
   delete stationGroup;
   delete dataset;

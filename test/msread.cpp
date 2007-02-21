@@ -47,7 +47,7 @@ const int LOOPMAX = 10000;
 /*! doxygen comment in dal.cpp */
 int main(int argc, char *argv[])
 {
-  
+
   // parameter check
   if ( argc < 2 )
   {
@@ -66,13 +66,13 @@ int main(int argc, char *argv[])
   else
 	  dataset = new dalDataset( argv[1], argv[2] );
   */
-  
+
   if ( 0 != dataset->open( argv[1] ) )
   {
   	cout << "Problem opening dataset: " << argv[1] << '.' << " Quiting." << endl;
   	exit(FAIL);
   }
-   
+
   // define the structure of a table
   // define the data to go in the table
   // create the table in the file or group
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
   		int x;
   		int y;
   } skycol;
-  
+
   // describe and fill data, and provide offsets and types
   // describe the data or structure of the table
 	typedef struct MainTable {
@@ -105,7 +105,6 @@ int main(int argc, char *argv[])
 		skycol sky;
 	} MainTable;
 
- 
 // define a structure to read the data into
 //   in this case it's MainTable (defined above)
  const int NUMBERROWS = 1;
@@ -118,7 +117,7 @@ int main(int argc, char *argv[])
  cout << maximum << endl;
  //for ( long ii = 0; ii < maximum; ii += NUMBERROWS ) {
   for ( long ii = 0; ii < 10; ii ++ ) {
-  	 	
+
 	tableA->readRows( data_out, startRow, NUMBERROWS);
 
 	// print some values from the read
@@ -131,7 +130,7 @@ int main(int argc, char *argv[])
 	}
 	
 	startRow += NUMBERROWS;
- }
+  }
   delete tableA;
 
 
@@ -139,10 +138,10 @@ int main(int argc, char *argv[])
   // define the data to go in the image
   // create the image in the file or group
 //   dataset.createImage();
-  
+
 
   delete dataset;
-  
+
   cout << "SUCCESS" << endl;
   return SUCCESS;
 }
