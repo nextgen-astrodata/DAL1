@@ -39,15 +39,9 @@
 #include <dalGroup.h>
 #endif
 
-//#include <mpi.h>       /* Include the MPI definitions */
-
-const long BSIZE = 10000;
-const int LOOPMAX = 10000;
-
 /*! doxygen comment in dal.cpp */
 int main(int argc, char *argv[])
 {
-  
   // parameter check
   if ( argc < 2 )
   {
@@ -58,24 +52,14 @@ int main(int argc, char *argv[])
      return FAIL;
   }
 
-
   dalDataset * dataset = new dalDataset();
-/*
-  if ( NULL == argv[2] )
-	  dataset = new dalDataset( argv[1] );
-  else
-	  dataset = new dalDataset( argv[1], argv[2] );
-  */
-  
+
   if ( 0 != dataset->open( argv[1] ) )
   {
   	cout << "Problem opening dataset: " << argv[1] << '.' << " Quiting." << endl;
   	exit(FAIL);
   }
-   
-  // define the structure of a table
-  // define the data to go in the table
-  // create the table in the file or group
+
   dalGroup * stationGroup = dataset->openGroup("Station");
 
   cout << endl << "Station Group Attributes:" << endl;
@@ -94,13 +78,6 @@ int main(int argc, char *argv[])
   cout << endl;
 
   delete stationGroup;
-
-
-  // define the structure of an image
-  // define the data to go in the image
-  // create the image in the file or group
-  //   dataset.createImage();
-
   delete dataset;
 
   cout << "SUCCESS" << endl;

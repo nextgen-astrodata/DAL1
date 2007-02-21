@@ -89,7 +89,7 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 	typedef struct Particle {
 		int		dummy;
 	} Particle;
-	Particle data[NFIELDS] = { 0 };
+	Particle data[NFIELDS];
 
 	dst_size = sizeof( Particle );
 	dst_offset[0] = HOFFSET( Particle, dummy );
@@ -97,8 +97,8 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 	tablename = groupname + '/' + tablename;
 	//cout << tablename << endl;
 	status = H5TBmake_table( "Table Title", file_id, tablename.c_str(), NFIELDS, NRECORDS,
-								dst_size, lclfield_names, dst_offset, field_type, chunk_size,
-								fill_data, compress, data );
+				dst_size, lclfield_names, dst_offset, field_type, chunk_size,
+				fill_data, compress, data );
 }
 
 
@@ -549,5 +549,65 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs )
 		cout << "Problem reading records. Row buffer may be too big. " <<
 			 "Make sure the buffer is smaller than the size of the table." << endl;
 		exit(897);
+	}
+}
+
+void dalTable::getAttribute( string attrname ) {
+
+	hsize_t * dims;
+	H5T_class_t type_class;
+	size_t type_size;
+
+	// Check if attribute exists
+	if ( H5LT_find_attribute(file_id, attrname.c_str()) <= 0 ) {
+		cout << "Attribute " << attrname << " not found." << endl;
+		return;
+	}
+	
+	string fullname = "/" + name;
+
+	int rank;
+	H5LTget_attribute_ndims(file_id, fullname.c_str(), attrname.c_str(), &rank );
+
+	dims = (hsize_t *)malloc(rank * sizeof(hsize_t));
+
+	H5LTget_attribute_info( file_id, fullname.c_str(), attrname.c_str(),
+				dims, &type_class, &type_size );
+
+	if ( H5T_FLOAT == type_class ) {
+		double data[*dims];
+		H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
+			 H5T_NATIVE_DOUBLE, data);
+		cout << attrname << " = ";
+		for (unsigned int ii=0; ii<*dims; ii++) {
+		  cout << data[ii];
+		  if (ii < (*dims)-1)
+		    cout << ',';
+		  else
+		    cout << endl;
+		}
+	}
+	else if ( H5T_INTEGER == type_class ) {
+		int data[*dims];
+		H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
+			 H5T_NATIVE_INT, data);
+		cout << attrname << " = ";
+		for (unsigned int ii=0; ii<*dims; ii++) {
+		  cout << data[ii];
+		  if (ii < (*dims)-1)
+		    cout << ',';
+		  else
+		    cout << endl;
+		}
+	}
+	else if ( H5T_STRING == type_class ) {
+		char* data;
+		string fullname = "/" + name;
+		data = (char *)malloc(rank * sizeof(char));
+		H5LTget_attribute_string( file_id, fullname.c_str(), attrname.c_str(),data);
+		cout << attrname << " = " << data << endl;
+	}
+	else {
+		cout << "Attribute " << attrname << " type unknown." << endl;
 	}
 }
