@@ -107,16 +107,30 @@ void dalGroup::getAttribute( string attrname ) {
 				dims, &type_class, &type_size );
 
 	if ( H5T_FLOAT == type_class ) {
-		double data[1] = {-1};
+		double data[*dims];
 		H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
 			 H5T_NATIVE_DOUBLE, data);
-		cout << attrname << " = " << data[0] << endl;
+		cout << attrname << " = ";
+		for (unsigned int ii=0; ii<*dims; ii++) {
+		  cout << data[ii];
+		  if (ii < (*dims)-1)
+		    cout << ',';
+		  else
+		    cout << endl;
+		}
 	}
 	else if ( H5T_INTEGER == type_class ) {
-		int data[1] = {-1};
+		int data[*dims];
 		H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
 			 H5T_NATIVE_INT, data);
-		cout << attrname << " = " << data[0] << endl;
+		cout << attrname << " = ";
+		for (unsigned int ii=0; ii<*dims; ii++) {
+		  cout << data[ii];
+		  if (ii < (*dims)-1)
+		    cout << ',';
+		  else
+		    cout << endl;
+		}
 	}
 	else if ( H5T_STRING == type_class ) {
 		char* data;

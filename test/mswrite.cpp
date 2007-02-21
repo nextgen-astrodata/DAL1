@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
   
   // describe and fill data, and provide offsets and types
   // describe the data or structure of the table
-	const long BSIZE = 10000;
+	const long BSIZE = 1000;
 	typedef struct MainTable {
 		double time;
 		int antenna1;

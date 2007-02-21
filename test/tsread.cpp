@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
   stationGroup->getAttribute("TRIGGER_OFFSET");
   stationGroup->getAttribute("MISSING");
   stationGroup->getAttribute("TRIGGERED_ANTENNAS");
-  //stationGroup->getAttribute_double("BEAM_DIRECTION", beam_direction, 2 );
+  stationGroup->getAttribute("BEAM_DIRECTION");
 
   cout << endl;
 
@@ -100,7 +100,6 @@ int main(int argc, char *argv[])
   // define the data to go in the image
   // create the image in the file or group
   //   dataset.createImage();
-
 
   delete dataset;
 
