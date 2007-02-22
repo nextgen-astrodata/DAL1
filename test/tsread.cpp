@@ -66,6 +66,9 @@ int main(int argc, char *argv[])
   // Read Station group attributes
   cout << endl << "Station Group Attributes:" << endl;
 
+  stationGroup->getAttributes();  // iterate over all group attributes
+
+  /*
   stationGroup->getAttribute("TELESCOPE");
   stationGroup->getAttribute("OBSERVER");
   stationGroup->getAttribute("PROJECT");
@@ -76,6 +79,7 @@ int main(int argc, char *argv[])
   stationGroup->getAttribute("MISSING");
   stationGroup->getAttribute("TRIGGERED_ANTENNAS");
   stationGroup->getAttribute("BEAM_DIRECTION");
+  */
 
   cout << endl;
 
@@ -101,6 +105,7 @@ int main(int argc, char *argv[])
 
   long maximum = 10;
 
+  antennaTable->listColumns(data_out, startRow, NUMBERROWS);
   cout << "ANTENNA table data:" << endl;
   for ( long ii = 0; ii < maximum; ii ++ ) {
 
@@ -109,17 +114,17 @@ int main(int argc, char *argv[])
 	// print some values from the read
 	for (int gg=0; gg < NUMBERROWS; gg++)
 	{
-		cout << data_out[gg].rsp_id << ',';
-		cout << data_out[gg].rcu_id << ',';
-		cout << data_out[gg].time << ',';
-		cout << data_out[gg].sample_nr << ',';
-		cout << data_out[gg].samples_per_frame << ',';
-		cout << data_out[gg].data << ',';
-		cout << data_out[gg].feed << ',';
+		cout << setw(10) << data_out[gg].rsp_id;
+		cout << setw(10) << data_out[gg].rcu_id;
+		cout << setw(10) << data_out[gg].time;
+		cout << setw(10) << data_out[gg].sample_nr;
+		cout << setw(10) << data_out[gg].samples_per_frame;
+		cout << setw(10) << data_out[gg].data;
+		cout << setw(10) << data_out[gg].feed;
 		cout << '[';
 		cout << data_out[gg].ant_position[0] << ',';
 		cout << data_out[gg].ant_position[1] << ',';
-		cout << data_out[gg].ant_position[2] << "],";
+		cout << data_out[gg].ant_position[2] << "]\t";
 		cout << '[';
 		cout << data_out[gg].ant_orientation[0] << ',';
 		cout << data_out[gg].ant_orientation[1] << ',';

@@ -446,12 +446,12 @@ void dalTable::appendRow( void * data )
 		hsize_t start = 0;
 		hsize_t numrows = 1;
 		status = H5TBwrite_records( file_id, name.c_str(), start, numrows,
-									*size_out, field_offsets, field_sizes, data);
+						*size_out, field_offsets, field_sizes, data);
 		firstrecord = false;
 	}
 	else {
 		status = H5TBappend_records ( file_id, name.c_str(), recs2write,
-									*size_out, field_offsets, field_sizes, data );
+						*size_out, field_offsets, field_sizes, data );
 	}
 	free( field_sizes );
 	free( field_offsets );
@@ -482,14 +482,14 @@ void dalTable::appendRows( void * data, long row_count )
 			fakedata[ii] = 0;
 		}
 		status = H5TBappend_records ( file_id, name.c_str(), recs2write-1,
-									*size_out, field_offsets, field_sizes, fakedata );
+						*size_out, field_offsets, field_sizes, fakedata );
 		status = H5TBwrite_records( file_id, name.c_str(), start, recs2write,
-									*size_out, field_offsets, field_sizes, data);
+						*size_out, field_offsets, field_sizes, data);
 		firstrecord = false;
 	}
 	else {
 		status = H5TBappend_records ( file_id, name.c_str(), recs2write,
-									*size_out, field_offsets, field_sizes, data );
+						*size_out, field_offsets, field_sizes, data );
 	}
 	free( field_sizes );
 	free( field_offsets );
@@ -502,7 +502,8 @@ void dalTable::setAttribute( string attrname, void * data, int size, string data
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
 	if ( dal_INT == datatype )
 	{
-		status = H5LTset_attribute_int( file_id, name.c_str(), attrname.c_str(), (const int*)data, size );
+		status = H5LTset_attribute_int( file_id, name.c_str(), attrname.c_str(),
+						(const int*)data, size );
 	}
 	else
 		cout << "unknown datatype" << endl;
@@ -524,6 +525,36 @@ void dalTable::setAttribute_double( string attrname, double * data, int size ) {
 	status = H5LTset_attribute_double( file_id, name.c_str(), attrname.c_str(), data, size );
 }
 
+void dalTable::listColumns( void * data_out, long nstart, long numberRecs )
+{
+	char** field_names;
+	size_t * field_sizes;
+	size_t * field_offsets;
+	size_t * size_out;
+ 	
+	// retrieve the input fields needed for the append_records call
+	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
+	
+	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
+	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
+	size_out = (size_t*)malloc( sizeof(size_t) );
+
+	/* Alocate space */ 
+	field_names = (char**)malloc( sizeof(char*) * (size_t)nfields );
+	for ( int i = 0; i < nfields; i++) { 
+	 	  field_names[i] = (char*)malloc( sizeof(char) * HLTB_MAX_FIELD_LEN );
+ 	 }
+	status = H5TBget_field_info( file_id, name.c_str(), field_names, field_sizes,
+					field_offsets, size_out );
+ 	hsize_t start = nstart;
+ 	hsize_t nrecs = numberRecs;
+
+	for (int ii=0; ii<nfields; ii++) {
+		cout << setw(10) << field_names[ii];
+	}
+	cout << endl;
+}
+
 void dalTable::readRows( void * data_out, long nstart, long numberRecs )
 {
 	size_t * field_sizes;
@@ -536,12 +567,12 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs )
 	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
 	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
 	size_out = (size_t*)malloc( sizeof(size_t) );
-	
-	status = H5TBget_field_info( file_id, name.c_str(), NULL, field_sizes,
-									field_offsets, size_out );	
+
+	status = H5TBget_field_info( file_id, name.c_str(), field_names, field_sizes,
+					field_offsets, size_out );
  	hsize_t start = nstart;
  	hsize_t nrecs = numberRecs;
- 	
+
 	status = H5TBread_records( file_id, name.c_str(), start, nrecs,
 					  size_out[0], field_offsets, field_sizes, data_out );
 	

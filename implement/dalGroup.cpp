@@ -21,7 +21,7 @@
 #ifndef dalGROUP_H
 #include "dalGroup.h"
 #endif
-
+herr_t attr_info(hid_t loc_id, const char *name, void *opdata);
 dalGroup::dalGroup() {
     H5::Group group;
 //    hid_t foo = group.getLocId();
@@ -67,22 +67,42 @@ void dalGroup::open( void * voidfile, string groupname ) {
 	group_id = H5Gopen( file_id, fullgroupname.c_str() );
 }
 
-int dalGroup::setAttribute_string( string attrname, string data ) {
-	status = H5LTset_attribute_string( file_id, name.c_str(), attrname.c_str(), data.c_str() );
-	return status;
+void dalGroup::setAttribute_string( string attrname, string data ) {
+	if ( H5LTset_attribute_string( file_id, name.c_str(),
+					attrname.c_str(), data.c_str() ) < 0 ) {
+		cout << "ERROR: could not set attribute " << attrname << endl;
+	}
 }
 
 void dalGroup::setAttribute_int( string attrname, int * data, int size ) {
-	status = H5LTset_attribute_int( file_id, name.c_str(),
-			attrname.c_str(), data, size );
+	if ( H5LTset_attribute_int( file_id, name.c_str(),
+					attrname.c_str(), data, size ) < 0 ) {
+		cout << "ERROR: could not set attribute " << attrname << endl;
+	}
 }
 
 void dalGroup::setAttribute_uint( string attrname, unsigned int * data, int size ) {
-	status = H5LTset_attribute_uint( file_id, name.c_str(), attrname.c_str(), data, size );
+	if ( H5LTset_attribute_uint( file_id, name.c_str(),
+					attrname.c_str(), data, size ) < 0 ) {
+		cout << "ERROR: could not set attribute " << attrname << endl;
+	}
 }
 
 void dalGroup::setAttribute_double( string attrname, double * data, int size ) {
-	status = H5LTset_attribute_double( file_id, name.c_str(), attrname.c_str(), data, size );
+	if ( H5LTset_attribute_double( file_id, name.c_str(),
+					attrname.c_str(), data, size ) < 0 ) {
+		cout << "ERROR: could not set attribute " << attrname << endl;
+	}
+}
+
+void dalGroup::getAttributes() {
+
+   //status = H5Aget_num_attrs(group_id);
+   //printf ("H5Aget_num_attrs returns: %i\n", status);
+
+   status = H5Aiterate(group_id,NULL ,attr_info, NULL);
+   //printf ("\nH5Aiterate returns: %i\n", status);
+
 }
 
 void dalGroup::getAttribute( string attrname ) {
@@ -143,6 +163,90 @@ void dalGroup::getAttribute( string attrname ) {
 	else {
 		cout << "Attribute " << attrname << " type unknown." << endl;
 	}
+}
+
+
+/*
+ * Operator function.
+ */
+herr_t 
+attr_info(hid_t loc_id, const char *name, void *opdata)
+{
+    hid_t attr, atype, aspace;  /* Attribute, datatype, dataspace identifiers */
+    int   rank;
+    hsize_t sdim[64]; 
+    herr_t ret;
+    int i;
+    size_t size;
+    size_t npoints;             /* Number of elements in the array attribute. */ 
+    int point_out;    
+    float *float_array;         /* Pointer to the array attribute. */
+    H5S_class_t  type_class;
+
+    /* avoid warnings */
+    opdata = opdata;
+
+    /*  Open the attribute using its name.  */    
+    attr = H5Aopen_name(loc_id, name);
+
+    /*  Display attribute name.  */
+    //printf("\nName : ");
+    //puts(name);
+
+    /* Get attribute datatype, dataspace, rank, and dimensions.  */
+    atype  = H5Aget_type(attr);
+    aspace = H5Aget_space(attr);
+    rank = H5Sget_simple_extent_ndims(aspace);
+    ret = H5Sget_simple_extent_dims(aspace, sdim, NULL);
+
+    /* Get dataspace type */
+    type_class = H5Sget_simple_extent_type (aspace);
+    //printf ("H5Sget_simple_extent_type (aspace) returns: %i\n", type_class);
+
+    /* Display rank and dimension sizes for the array attribute.  */
+    if(rank > 0) {
+       //printf("Rank : %d \n", rank); 
+       //printf("Dimension sizes : ");
+       //for (i=0; i< rank; i++) printf("%d ", (int)sdim[i]);
+       //printf("\n");
+    }
+
+    if (H5T_INTEGER == H5Tget_class(atype)) {
+       //printf("Type : INTEGER \n");
+       ret  = H5Aread(attr, atype, &point_out);
+       //printf("The value of the attribute \"Integer attribute\" is %d \n", 
+         //      point_out);
+	cout << name << " = " << point_out << endl;
+    }
+
+    if (H5T_FLOAT == H5Tget_class(atype)) {
+       //printf("Type : FLOAT \n"); 
+       npoints = H5Sget_simple_extent_npoints(aspace);
+       float_array = (float *)malloc(sizeof(float)*(int)npoints); 
+       ret = H5Aread(attr, atype, float_array);
+       //printf("Values : ");
+	cout << name << " = ";
+       for( i = 0; i < (int)npoints; i++) printf("%f ", float_array[i]); 
+       printf("\n");
+       free(float_array);
+    }
+
+    if (H5T_STRING == H5Tget_class (atype)) {
+      //printf ("Type: STRING \n");
+      size = H5Tget_size (atype);
+
+	char* data;
+	data = (char *)malloc(rank * sizeof(char));
+      	ret = H5Aread(attr, atype, data);
+	cout << name << " = " << data << endl;
+
+    }
+
+    ret = H5Tclose(atype);
+    ret = H5Sclose(aspace);
+    ret = H5Aclose(attr);
+
+    return 0;
 }
 
 /*

@@ -42,7 +42,6 @@
 /*! doxygen comment in dal.cpp */
 int main(int argc, char *argv[])
 {
-
   // parameter check
   if ( argc < 2 )
   {

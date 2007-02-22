@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <iomanip>  // for cout field width
 #include <cstdio>
 #include "H5LT.h"
 

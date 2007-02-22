@@ -85,6 +85,7 @@ class dalTable{
 	void writeDataByColName( void * structure, string colname );
 	void appendRow( void * data );
 	void appendRows( void * data, long number_of_rows );
+	void listColumns( void * data_out, long start, long stop );
 	void readRows( void * data_out, long start, long stop );
 
 	void getAttribute( string attrname );
