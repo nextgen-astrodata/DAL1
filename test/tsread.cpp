@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
 		cout << data_out[gg].ant_orientation[1] << ',';
 		cout << data_out[gg].ant_orientation[2] << ']' << endl;
 	}
-	
+
 	startRow += NUMBERROWS;
   }
   cout << endl;

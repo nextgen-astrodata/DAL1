@@ -67,8 +67,9 @@ void dalGroup::open( void * voidfile, string groupname ) {
 	group_id = H5Gopen( file_id, fullgroupname.c_str() );
 }
 
-void dalGroup::setAttribute_string( string attrname, string data ) {
+int dalGroup::setAttribute_string( string attrname, string data ) {
 	status = H5LTset_attribute_string( file_id, name.c_str(), attrname.c_str(), data.c_str() );
+	return status;
 }
 
 void dalGroup::setAttribute_int( string attrname, int * data, int size ) {

@@ -22,7 +22,7 @@
  * \author Joseph Masters
  * \date 12-04-06
  */
- 
+
 #ifndef DALTABLE_H
 #define DALTABLE_H
 
@@ -48,32 +48,29 @@ a dataset.
 */
 class dalTable{
 
-	void * 					file;		/// can be HDF5File, FITS, MS
+	void * 				file;		/// can be HDF5File, FITS, MS
 
 	// HDF5-specific variables
-	hid_t					file_id; 	/// hdf5 file_id
-	hsize_t					nfields;	/// hdf5 field count
-	hsize_t					nrecords;	/// hdf5 record count
-	herr_t					status;		/// hdf5 return status
-	char					**field_names;  /// hdf5 list of columns
-//	size_t					field_sizes;
-//	size_t					field_offsets;
-//	size_t					type_size;
+	hid_t				file_id; 	/// hdf5 file_id
+	hsize_t				nfields;	/// hdf5 field count
+	hsize_t				nrecords;	/// hdf5 record count
+	herr_t				status;		/// hdf5 return status
+	char				**field_names;  /// hdf5 list of columns
 
-	bool					firstrecord;
-	string 					name; 		/// table name
-	vector<dalAttribute> 	attributes; /// list of table attributes
-	dalFilter 			filter;		/// filter associated with table
-	vector<dalColumn> 	columns; 	/// list of table columns
+	bool				firstrecord;
+	string 				name; 		/// table name
+	vector<dalAttribute>		attributes; 	/// list of table attributes
+	dalFilter 			filter; 	/// filter associated with table
+	vector<dalColumn> 		columns; 	/// list of table columns
 
 	long nrows; /// number of table rows
 	int ncols; /// number of table columns
-	
+
   public:
-  
-    dalTable(); /// Constructor
-    ~dalTable(); /// Destructor
-    
+
+	dalTable(); /// Constructor
+	~dalTable(); /// Destructor
+
 	void printColumns();  /// list the columns contained within a table
 	void openTable( void * voidfile, string tablename, string groupname );
 	
@@ -81,7 +78,7 @@ class dalTable{
 	void addColumn( string colname, string coltype, unsigned int size=1 );  /// add a simple column
 	void addArrayColumn( string colname, string coltype, unsigned int dims );  /// add an array column
 	void addComplexColumn( string compname, vector<dalColumn>,
-							int subfields );  /// add a compound column
+				int subfields );  /// add a compound column
 	void removeColumn( string colname );  /// remove a column
 	void writeDataByColNum( void * structure, int index, int rownum );
 	
@@ -92,10 +89,10 @@ class dalTable{
 
 	void getAttribute( string attrname );
 	void setAttribute( string attrname, void * data, int size, string datatype );
-    void setAttribute_string( string attrname, string data );
-    void setAttribute_int( string attrname, int * data, int size=1 );
-    void setAttribute_uint( string attrname, unsigned int * data, int size=1 );
-    void setAttribute_double( string attrname, double * data, int size=1 );
+	void setAttribute_string( string attrname, string data );
+	void setAttribute_int( string attrname, int * data, int size=1 );
+	void setAttribute_uint( string attrname, unsigned int * data, int size=1 );
+	void setAttribute_double( string attrname, double * data, int size=1 );
 
 	int getNumberOfColumns();  /// return the number of columns in a table
 	int getNumberOfRows();  /// return the number of rows within a table
