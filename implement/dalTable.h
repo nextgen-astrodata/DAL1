@@ -85,7 +85,7 @@ class dalTable{
 	void writeDataByColName( void * structure, string colname );
 	void appendRow( void * data );
 	void appendRows( void * data, long number_of_rows );
-	void listColumns( void * data_out, long start, long stop );
+	void listColumns( /*void * data_out, long start, long stop*/ );
 	void readRows( void * data_out, long start, long stop );
 
 	void getAttribute( string attrname );
@@ -96,7 +96,7 @@ class dalTable{
 	void setAttribute_double( string attrname, double * data, int size=1 );
 
 	int getNumberOfColumns();  /// return the number of columns in a table
-	int getNumberOfRows();  /// return the number of rows within a table
+	long getNumberOfRows();  /// return the number of rows within a table
 	int setRowNumber();  /// advance to a row by its index
 	int advanceRow();  /// advance one row
 	int getName();  /// return the name of the table

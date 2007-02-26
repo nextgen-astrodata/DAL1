@@ -525,7 +525,7 @@ void dalTable::setAttribute_double( string attrname, double * data, int size ) {
 	status = H5LTset_attribute_double( file_id, name.c_str(), attrname.c_str(), data, size );
 }
 
-void dalTable::listColumns( void * data_out, long nstart, long numberRecs )
+void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
 {
 	char** field_names;
 	size_t * field_sizes;
@@ -541,18 +541,22 @@ void dalTable::listColumns( void * data_out, long nstart, long numberRecs )
 
 	/* Alocate space */ 
 	field_names = (char**)malloc( sizeof(char*) * (size_t)nfields );
-	for ( int i = 0; i < nfields; i++) { 
+	for ( unsigned int i = 0; i < nfields; i++) { 
 	 	  field_names[i] = (char*)malloc( sizeof(char) * HLTB_MAX_FIELD_LEN );
  	 }
 	status = H5TBget_field_info( file_id, name.c_str(), field_names, field_sizes,
 					field_offsets, size_out );
- 	hsize_t start = nstart;
- 	hsize_t nrecs = numberRecs;
 
-	for (int ii=0; ii<nfields; ii++) {
-		cout << setw(10) << field_names[ii];
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		cout << setw(11) << field_names[ii];
 	}
 	cout << endl;
+}
+
+long dalTable::getNumberOfRows()
+{
+	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
+	return nrecords;
 }
 
 void dalTable::readRows( void * data_out, long nstart, long numberRecs )

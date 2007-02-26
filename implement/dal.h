@@ -64,4 +64,13 @@ typedef struct dalcomplex {
 	double i;  // imaginary
 } dalcomplex;
 
+template<typename T>
+inline string stringify(const T& x)
+ {
+   ostringstream o;
+   if (!(o << x))
+     cout << "ERROR in stringify function." << endl;
+   return o.str();
+ }
+
 #endif

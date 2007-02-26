@@ -68,19 +68,6 @@ int main(int argc, char *argv[])
 
   stationGroup->getAttributes();  // iterate over all group attributes
 
-  /*
-  stationGroup->getAttribute("TELESCOPE");
-  stationGroup->getAttribute("OBSERVER");
-  stationGroup->getAttribute("PROJECT");
-  stationGroup->getAttribute("OBSERVATION_ID");
-  stationGroup->getAttribute("OBSERVATION_MODE");
-  stationGroup->getAttribute("TRIGGER_TYPE");
-  stationGroup->getAttribute("TRIGGER_OFFSET");
-  stationGroup->getAttribute("MISSING");
-  stationGroup->getAttribute("TRIGGERED_ANTENNAS");
-  stationGroup->getAttribute("BEAM_DIRECTION");
-  */
-
   cout << endl;
 
   // Open ANTENNA table in Station group
@@ -103,10 +90,12 @@ int main(int argc, char *argv[])
   long startRow = 0;
   AntennaStruct data_out[NUMBERROWS];
 
-  long maximum = 10;
+  long maximum = antennaTable->getNumberOfRows();
 
-  antennaTable->listColumns(data_out, startRow, NUMBERROWS);
-  cout << "ANTENNA table data:" << endl;
+  antennaTable->listColumns();
+
+  string antpos, antorient;
+  //cout << "ANTENNA table data:" << endl;
   for ( long ii = 0; ii < maximum; ii ++ ) {
 
 	antennaTable->readRows( data_out, startRow, NUMBERROWS);
@@ -114,21 +103,24 @@ int main(int argc, char *argv[])
 	// print some values from the read
 	for (int gg=0; gg < NUMBERROWS; gg++)
 	{
-		cout << setw(10) << data_out[gg].rsp_id;
-		cout << setw(10) << data_out[gg].rcu_id;
-		cout << setw(10) << data_out[gg].time;
-		cout << setw(10) << data_out[gg].sample_nr;
-		cout << setw(10) << data_out[gg].samples_per_frame;
-		cout << setw(10) << data_out[gg].data;
-		cout << setw(10) << data_out[gg].feed;
-		cout << '[';
-		cout << data_out[gg].ant_position[0] << ',';
-		cout << data_out[gg].ant_position[1] << ',';
-		cout << data_out[gg].ant_position[2] << "]\t";
-		cout << '[';
-		cout << data_out[gg].ant_orientation[0] << ',';
-		cout << data_out[gg].ant_orientation[1] << ',';
-		cout << data_out[gg].ant_orientation[2] << ']' << endl;
+		cout << setw(11) << data_out[gg].rsp_id;
+		cout << setw(11) << data_out[gg].rcu_id;
+		cout << setw(11) << data_out[gg].time;
+		cout << setw(11) << data_out[gg].sample_nr;
+		cout << setw(11) << data_out[gg].samples_per_frame;
+		cout << setw(11) << data_out[gg].data;
+		cout << setw(11) << data_out[gg].feed;
+		antpos = '[' +
+			 stringify(data_out[gg].ant_position[0]) + ',' +
+			 stringify(data_out[gg].ant_position[1]) + ',' +
+			 stringify(data_out[gg].ant_position[2]) + ']';
+		cout << setw(11) << antpos;
+		antorient = '[' +
+			    stringify(data_out[gg].ant_orientation[0]) + ',' +
+			    stringify(data_out[gg].ant_orientation[1]) + ',' +
+			    stringify(data_out[gg].ant_orientation[2]) + ']';
+		cout << setw(11) << antorient;
+		cout << endl;
 	}
 
 	startRow += NUMBERROWS;

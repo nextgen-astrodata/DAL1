@@ -42,6 +42,7 @@
 /*! doxygen comment in dal.cpp */
 int main(int argc, char *argv[])
 {
+
   // parameter check
   if ( argc < 2 )
   {
@@ -106,12 +107,12 @@ int main(int argc, char *argv[])
   AntennaTable->addColumn( "RSP_ID", dal_UINT );  // simple column
   AntennaTable->addColumn( "RCU_ID", dal_UINT );  // simple column
   AntennaTable->addColumn( "TIME", dal_UINT );  // simple column
-  AntennaTable->addColumn( "SAMPLE_NR", dal_UINT );  // simple column
-  AntennaTable->addColumn( "SAMPLES_PER_FRAME", dal_UINT );  // simple column
+  AntennaTable->addColumn( "SAMP_NR", dal_UINT );  // simple column
+  AntennaTable->addColumn( "SAMP_FRAME", dal_UINT );  // simple column
   AntennaTable->addColumn( "DATA", dal_SHORT);//, data_length[0] );
   AntennaTable->addColumn( "FEED", dal_STRING );
-  AntennaTable->addColumn( "ANT_POSITION", dal_DOUBLE, 3 );
-  AntennaTable->addColumn( "ANT_ORIENTATION", dal_DOUBLE, 3 );
+  AntennaTable->addColumn( "ANT_POS", dal_DOUBLE, 3 );
+  AntennaTable->addColumn( "ANT_ORIENT", dal_DOUBLE, 3 );
 
   // Fill ANTENNA table with data
   const long BufferSIZE = 10;
@@ -159,14 +160,14 @@ int main(int argc, char *argv[])
   // add attributes to CALIBRATION table
 
   // add columns to CALIBRATION table
-  CalibrationTable->addColumn( "ADC2VOLTAGE", dal_DOUBLE );  // simple column
+  CalibrationTable->addColumn( "ADC2VOLT", dal_DOUBLE );  // simple column
   CalibrationTable->addColumn( "GAIN_CURVE", dal_COMPLEX );
-  CalibrationTable->addColumn( "GAIN_FREQUENCIES", dal_DOUBLE );
+  CalibrationTable->addColumn( "GAIN_FREQS", dal_DOUBLE );
   CalibrationTable->addColumn( "BEAM_SHAPE", dal_COMPLEX );
-  CalibrationTable->addColumn( "BEAM_DIRECTIONS", dal_DOUBLE );
-  CalibrationTable->addColumn( "BEAM_FREQUENCIES", dal_DOUBLE );
-  CalibrationTable->addColumn( "NOISE_CURVE", dal_COMPLEX );
-  CalibrationTable->addColumn( "NOISE_FREQUENCIES", dal_DOUBLE );
+  CalibrationTable->addColumn( "BEAM_DIRS", dal_DOUBLE );
+  CalibrationTable->addColumn( "BEAM_FREQS", dal_DOUBLE );
+  CalibrationTable->addColumn( "NOISE_CURV", dal_COMPLEX );
+  CalibrationTable->addColumn( "NOISE_FREQ", dal_DOUBLE );
 
   // Fill CALIBRATION table with data
   const long CALBufferSIZE = 10;
