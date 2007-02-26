@@ -67,7 +67,7 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 	 * columns are added
 	 */
 	
-	int					dummy_col;
+	int			dummy_col;
 	name = groupname + '/' + tablename;  // set the private class variable: name
 	
 	// cast the voidfile to an hdf5 file
@@ -77,14 +77,14 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 
 	const unsigned int	NFIELDS = 1;
 	const unsigned long	NRECORDS = 1;
-	size_t				dst_size =  sizeof(dummy_col);
-	const char			*lclfield_names[NFIELDS] = { "000dummy000" };//colname.c_str() };
-	size_t				dst_offset[NFIELDS] = { 0 };
+	size_t			dst_size =  sizeof(dummy_col);
+	const char		*lclfield_names[NFIELDS] = { "000dummy000" };
+	size_t			dst_offset[NFIELDS] = { 0 };
 		
-	hid_t				field_type[NFIELDS] = { H5T_NATIVE_INT };	
-	hsize_t				chunk_size = CHUNK_SIZE;
-	int					fill_data[NFIELDS] = { -1 };
-	int					compress  = 1;  // 0=off 1=on
+	hid_t			field_type[NFIELDS] = { H5T_NATIVE_INT };	
+	hsize_t			chunk_size = CHUNK_SIZE;
+	int			fill_data[NFIELDS] = { -1 };
+	int			compress  = 0;  // 0=off 1=on
 
 	typedef struct Particle {
 		int		dummy;
@@ -282,9 +282,9 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 	int		data[indims]; 
 	
 	// create the new column
-	status = H5TBinsert_field(	file_id, name.c_str(), colname.c_str(), field_type,
-								position, fill_data, data );
-								
+	status = H5TBinsert_field( file_id, name.c_str(), colname.c_str(), field_type,
+				   position, fill_data, data );
+
 	// if successful, add corresponding column object to list
 	if ( 0 == status ) {
 	  	dalColumn * lc = new dalColumn( colname, "foo" );

@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
   AntennaTable->addColumn( "ANT_ORIENT", dal_DOUBLE, 3 );
 
   // Fill ANTENNA table with data
-  const long BufferSIZE = 10;
+  const long BufferSIZE = 10000;
   typedef struct AntennaStruct {
 	unsigned int rsp_id;
 	unsigned int rcu_id;
@@ -128,7 +128,12 @@ int main(int argc, char *argv[])
 	double ant_orientation[ 3 ];
   } AntennaStruct;
 
-  AntennaStruct antenna[BufferSIZE];
+//long total = BufferSIZE * sizeof(AntennaStruct);
+//cout << total << endl;
+
+
+  AntennaStruct antenna[ BufferSIZE ];
+
   const int LOOPMAX = 1;
   for ( int uu=0 ; uu < LOOPMAX; uu++)
   {
