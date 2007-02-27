@@ -92,10 +92,12 @@ int main(int argc, char *argv[])
 
   long maximum = antennaTable->getNumberOfRows();
 
+cout << "Number of ANTENNA table rows: " << maximum << endl << endl;
+
   antennaTable->listColumns();
 
   string antpos, antorient;
-  //cout << "ANTENNA table data:" << endl;
+
   for ( long ii = 0; ii < maximum; ii ++ ) {
 
 	antennaTable->readRows( data_out, startRow, NUMBERROWS);

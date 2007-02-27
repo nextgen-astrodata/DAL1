@@ -460,11 +460,10 @@ void dalTable::appendRow( void * data )
 
 void dalTable::appendRows( void * data, long row_count )
 {
-	hsize_t recs2write = row_count; // number of records to append
 	size_t * field_sizes;
 	size_t * field_offsets;
 	size_t * size_out;
-		
+
 	// retrieve the input fields needed for the append_records call
 	H5TBget_table_info( file_id, name.c_str(), &nfields, &nrecords );
 	
@@ -473,22 +472,18 @@ void dalTable::appendRows( void * data, long row_count )
 	size_out = (size_t*)malloc( sizeof(size_t) );
 
 	status = H5TBget_field_info( file_id, name.c_str(), NULL, field_sizes,
-									field_offsets, size_out );
+					field_offsets, size_out );
 	
 	if ( firstrecord ) {
 		hsize_t start = 0;
-		char fakedata[row_count];
-		for (long ii=0; ii<row_count; ii++) {
-			fakedata[ii] = 0;
-		}
-		status = H5TBappend_records ( file_id, name.c_str(), recs2write-1,
-						*size_out, field_offsets, field_sizes, fakedata );
-		status = H5TBwrite_records( file_id, name.c_str(), start, recs2write,
-						*size_out, field_offsets, field_sizes, data);
+		status = H5TBappend_records ( file_id, name.c_str(), (hsize_t)row_count-1,
+						*size_out, field_offsets, field_sizes, data );
+		status = H5TBwrite_records( file_id, name.c_str(), start, (hsize_t)row_count,
+						*size_out, field_offsets, field_sizes, data );
 		firstrecord = false;
 	}
 	else {
-		status = H5TBappend_records ( file_id, name.c_str(), recs2write,
+		status = H5TBappend_records ( file_id, name.c_str(), (hsize_t)row_count,
 						*size_out, field_offsets, field_sizes, data );
 	}
 	free( field_sizes );

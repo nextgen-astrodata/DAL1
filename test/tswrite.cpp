@@ -114,8 +114,11 @@ int main(int argc, char *argv[])
   AntennaTable->addColumn( "ANT_POS", dal_DOUBLE, 3 );
   AntennaTable->addColumn( "ANT_ORIENT", dal_DOUBLE, 3 );
 
-  // Fill ANTENNA table with data
-  const long BufferSIZE = 10000;
+  /*
+    The AntennaStruct is ~88 bytes.  I use a buffer of 1,000,000
+    so that the writebuffer will be (88 * 1e6) or 88mb.
+  */
+  const long BufferSIZE = 1000000;
   typedef struct AntennaStruct {
 	unsigned int rsp_id;
 	unsigned int rcu_id;
@@ -128,34 +131,44 @@ int main(int argc, char *argv[])
 	double ant_orientation[ 3 ];
   } AntennaStruct;
 
-//long total = BufferSIZE * sizeof(AntennaStruct);
-//cout << total << endl;
+  typedef struct writebuffer {
+	AntennaStruct antenna[ BufferSIZE ];
+  } writebuffer;
 
+  writebuffer * wb;
+  if (( wb = (writebuffer *) malloc( sizeof(writebuffer) ) ) == NULL) {
+    cout << "ERROR ALLOCATING mybuffer" << endl;
+    exit(8);
+  }
 
-  AntennaStruct antenna[ BufferSIZE ];
+  /*long wbsize = sizeof(writebuffer)/1000000;  // in megabytes
+  cout << "size of write buffer: " << wbsize << " mb";*/
 
-  const int LOOPMAX = 1;
+  const int LOOPMAX = 10;
+  //cout << " * " << LOOPMAX << " = " << (wbsize * LOOPMAX) << " mb" << endl;
+
+  // Fill ANTENNA table with data
   for ( int uu=0 ; uu < LOOPMAX; uu++)
   {
 	for (long row=0; row<BufferSIZE; row++) {
-		antenna[row].rsp_id = 0;
-		antenna[row].rcu_id = 0;
-		antenna[row].time = 0;
-		antenna[row].sample_nr = 0;
-		antenna[row].samples_per_frame = 0;
-		antenna[row].data = 0;
-		strcpy(antenna[row].feed,"hello");
-		antenna[row].ant_position[0] = 1;
-		antenna[row].ant_position[1] = 2;
-		antenna[row].ant_position[2] = 3;
-		antenna[row].ant_orientation[0] = 1;
-		antenna[row].ant_orientation[1] = 2;
-		antenna[row].ant_orientation[2] = 3;
+		wb->antenna[row].rsp_id = 0;
+		wb->antenna[row].rcu_id = 0;
+		wb->antenna[row].time = 0;
+		wb->antenna[row].sample_nr = 0;
+		wb->antenna[row].samples_per_frame = 0;
+		wb->antenna[row].data = 0;
+		strcpy(wb->antenna[row].feed,"hello");
+		wb->antenna[row].ant_position[0] = 1;
+		wb->antenna[row].ant_position[1] = 2;
+		wb->antenna[row].ant_position[2] = 3;
+		wb->antenna[row].ant_orientation[0] = 1;
+		wb->antenna[row].ant_orientation[1] = 2;
+		wb->antenna[row].ant_orientation[2] = 3;
 	}
-	AntennaTable->appendRows( antenna, BufferSIZE );
-  }  
+	AntennaTable->appendRows( wb->antenna, BufferSIZE );
+  }
+  free(wb);  // free the write buffer (~88 mb)
 
-  //
   /////////////////////////////////////////
   // create CALIBRATION table
   /////////////////////////////////////////
