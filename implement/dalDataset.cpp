@@ -292,8 +292,11 @@ dalGroup * dalDataset::openGroup( string groupname )
    {
 	   dalGroup * group = new dalGroup();
 	   //cout << "Trying to open group " << groupname << endl; 
-	   group->open( file, groupname );
-	   return group;
+	   int retval = group->open( file, groupname );
+	   if ( retval < 0 )
+		return NULL;
+	   else
+	   	return group;
    }
    else
    	return NULL;

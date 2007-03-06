@@ -40,7 +40,7 @@
 #endif
 
 void get_args( int argc, char** argv, long* start_value, long* stop_value,
-	       char** table_value)
+	       char** table_value, char** group_value )
 {
     int i;
 
@@ -95,6 +95,21 @@ void get_args( int argc, char** argv, long* start_value, long* stop_value,
 				}
 				break;
 
+		case 'g':	if ( strlen(argv[i]) > 2 ) {
+				char* goo;
+				goo = (char*)malloc( sizeof(char) * 100 );
+				for (unsigned int jj=2;jj<strlen(argv[i]);jj++) {
+				   goo += argv[i][jj];
+				}
+				cout << goo << endl;
+				*group_value = (char*)goo;
+				cout << *group_value << endl;
+				}
+				else {
+				  *group_value = argv[++i];
+				}
+				break;
+
 		default:	fprintf(stderr,
 				"Unknown switch %s\n", argv[i]);
 	    }
@@ -122,8 +137,9 @@ int main(int argc, char *argv[])
   long start =0;
   long stop = 0;// read a table starting/stopping at these vals
   char *table = "ANTENNA";
+  char *group = "Station";
 
-  get_args(argc, argv, &start, &stop, &table);
+  get_args(argc, argv, &start, &stop, &table, &group);
 
   dalDataset * dataset = new dalDataset();
 
@@ -135,17 +151,21 @@ int main(int argc, char *argv[])
   }
 
   // Open Station group
-  dalGroup * stationGroup = dataset->openGroup("Station");
+  dalGroup * stationGroup = dataset->openGroup( group );
+  if ( NULL == stationGroup ) {
+	cout << "Could not open group " << group << '.' << endl;
+	exit(7);
+  }
 
   // Read Station group attributes
-  cout << endl << "Station Group Attributes:" << endl << endl;
+  cout << endl << group << " Group Attributes:" << endl << endl;
 
   stationGroup->getAttributes();  // iterate over all group attributes
 
   cout << endl;
 
   // Open ANTENNA table in Station group
-  dalTable * antennaTable = dataset->openTable(table,"Station");
+  dalTable * antennaTable = dataset->openTable( table, group );
   long maximum = antennaTable->getNumberOfRows();
   if ( maximum <= 0 ) {
 	cout << table << " table contains no rows." << endl;

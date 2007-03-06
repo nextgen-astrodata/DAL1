@@ -35,7 +35,8 @@ dalGroup::dalGroup( void * voidfile, string gname ) {
 	file_id = lclfile->getLocId();  // get the file handle
 
 	name = gname;
-	H5::Group * lclgroup = new H5::Group( lclfile->createGroup( "/" + gname ));
+	H5::Group * lclgroup =
+	    new H5::Group( lclfile->createGroup( "/" + gname ));
 	group = lclgroup;  // set local to global
 }
 
@@ -56,7 +57,7 @@ string dalGroup::getName () {
    return name;
 }
 
-void dalGroup::open( void * voidfile, string groupname ) {
+int dalGroup::open( void * voidfile, string groupname ) {
 	name = groupname;
 
 	H5::H5File * lclfile = (H5::H5File*)voidfile; // H5File object
@@ -65,6 +66,7 @@ void dalGroup::open( void * voidfile, string groupname ) {
 	
 	string fullgroupname = "/" + groupname;
 	group_id = H5Gopen( file_id, fullgroupname.c_str() );
+	return( group_id );
 }
 
 void dalGroup::setAttribute_string( string attrname, string data ) {
@@ -120,7 +122,8 @@ void dalGroup::getAttribute( string attrname ) {
 	string fullname = "/" + name;
 
 	int rank;
-	H5LTget_attribute_ndims(file_id, fullname.c_str(), attrname.c_str(), &rank );
+	H5LTget_attribute_ndims(file_id, fullname.c_str(), attrname.c_str(),
+				&rank );
 
 	dims = (hsize_t *)malloc(rank * sizeof(hsize_t));
 
@@ -157,7 +160,8 @@ void dalGroup::getAttribute( string attrname ) {
 		char* data;
 		string fullname = "/" + name;
 		data = (char *)malloc(rank * sizeof(char));
-		H5LTget_attribute_string( file_id, fullname.c_str(), attrname.c_str(),data);
+		H5LTget_attribute_string( file_id, fullname.c_str(), 
+					  attrname.c_str(),data);
 		cout << attrname << " = " << data << endl;
 	}
 	else {
