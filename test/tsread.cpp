@@ -56,13 +56,43 @@ void get_args( int argc, char** argv, long* start_value, long* stop_value,
 
 	    switch (argv[i][1]) {
 
-		case 's':	*start_value = atol(argv[++i]);
+		case 's':	if ( strlen(argv[i]) > 2 ) {
+				string goo;
+				for (unsigned int jj=2;jj<strlen(argv[i]);jj++) {
+				   goo += argv[i][jj];
+				}
+				*start_value = atol(goo.c_str());
+				}
+				else {
+				  *start_value = atol(argv[++i]);
+				}
 				break;
 
-		case 'S':	*stop_value = atol(argv[++i]);
+		case 'S':	if ( strlen(argv[i]) > 2 ) {
+				string goo;
+				for (unsigned int jj=2;jj<strlen(argv[i]);jj++) {
+				   goo += argv[i][jj];
+				}
+				*stop_value = atol(goo.c_str());
+				}
+				else {
+				  *stop_value = atol(argv[++i]);
+				}
 				break;
 
-		case 't':	*table_value = argv[++i];
+		case 't':	if ( strlen(argv[i]) > 2 ) {
+				char* goo;
+				goo = (char*)malloc( sizeof(char) * 100 );
+				for (unsigned int jj=2;jj<strlen(argv[i]);jj++) {
+				   goo += argv[i][jj];
+				}
+				cout << goo << endl;
+				*table_value = (char*)goo;
+				cout << *table_value << endl;
+				}
+				else {
+				  *table_value = argv[++i];
+				}
 				break;
 
 		default:	fprintf(stderr,
