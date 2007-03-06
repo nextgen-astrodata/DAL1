@@ -39,7 +39,8 @@
 #include <dalGroup.h>
 #endif
 
-void get_args(int argc, char** argv, long* start_value, long* stop_value)
+void get_args( int argc, char** argv, long* start_value, long* stop_value,
+	       char** table_value)
 {
     int i;
 
@@ -59,6 +60,9 @@ void get_args(int argc, char** argv, long* start_value, long* stop_value)
 				break;
 
 		case 'S':	*stop_value = atol(argv[++i]);
+				break;
+
+		case 't':	*table_value = argv[++i];
 				break;
 
 		default:	fprintf(stderr,
@@ -84,6 +88,13 @@ int main(int argc, char *argv[])
      return FAIL;
   }
 
+  /* Set defaults for all parameters: */
+  long start =0;
+  long stop = 0;// read a table starting/stopping at these vals
+  char *table = "ANTENNA";
+
+  get_args(argc, argv, &start, &stop, &table);
+
   dalDataset * dataset = new dalDataset();
 
   if ( 0 != dataset->open( argv[1] ) )
@@ -104,7 +115,13 @@ int main(int argc, char *argv[])
   cout << endl;
 
   // Open ANTENNA table in Station group
-  dalTable * antennaTable = dataset->openTable("ANTENNA","Station");
+  dalTable * antennaTable = dataset->openTable(table,"Station");
+  long maximum = antennaTable->getNumberOfRows();
+  if ( maximum <= 0 ) {
+	cout << table << " table contains no rows." << endl;
+	exit(2);
+  }
+
   typedef struct AntennaStruct {
 	unsigned int rsp_id;
 	unsigned int rcu_id;
@@ -123,14 +140,6 @@ int main(int argc, char *argv[])
   long startRow = 0;
   AntennaStruct data_out[NUMBERROWS];
 
-  long maximum = antennaTable->getNumberOfRows();
-
-  /* Set defaults for all parameters: */
-  long start =0;
-  long stop = 0;// read a table starting/stopping at these vals
-
-  get_args(argc, argv, &start, &stop);
-
   if (!stop) stop=maximum;
 
   if (start >= stop) {
@@ -143,7 +152,7 @@ int main(int argc, char *argv[])
   cout << "stop = " << stop << endl;
   */
 
-  cout << "Number of ANTENNA table rows: " << maximum
+  cout << "Number of " << table << " table rows: " << maximum
      << " (i.e. 0:" << maximum-1 << ')' << endl << endl;
 
   if (stop > maximum-1) {

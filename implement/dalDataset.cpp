@@ -204,7 +204,7 @@ dalDataset::dalDataset( char * name, string filetype )
    type = filetype;  // set the global class variable: type
    if ( filetype == H5TYPE )
    {
-      
+
         H5::H5File* lclfile = new H5::H5File( name, H5F_ACC_TRUNC );
 		file = (H5::H5File*)lclfile;
 		// 	cout << (H5::H5File*)file.getFileName() << endl;
@@ -213,7 +213,7 @@ dalDataset::dalDataset( char * name, string filetype )
    	cout << "Data format \'" << type << "\' not supported." << endl;
    	exit(99);
    }
-   	
+
 }
 
 /**
