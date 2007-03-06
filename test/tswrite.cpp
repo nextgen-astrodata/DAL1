@@ -136,34 +136,33 @@ int main(int argc, char *argv[])
   } writebuffer;
 
   writebuffer * wb;
+  long wbsize = sizeof(writebuffer)/1000000;  // in megabytes
+  //cout << "size of write buffer: " << wbsize << " mb";
   if (( wb = (writebuffer *) malloc( sizeof(writebuffer) ) ) == NULL) {
-    cout << "ERROR ALLOCATING mybuffer" << endl;
+    cout << "ERROR ALLOCATING writebuffer of size " << wbsize << " mb." << endl;
     exit(8);
   }
 
-  /*long wbsize = sizeof(writebuffer)/1000000;  // in megabytes
-  cout << "size of write buffer: " << wbsize << " mb";*/
-
-  const int LOOPMAX = 10;
+  const int LOOPMAX = 13;
   //cout << " * " << LOOPMAX << " = " << (wbsize * LOOPMAX) << " mb" << endl;
 
   // Fill ANTENNA table with data
   for ( int uu=0 ; uu < LOOPMAX; uu++)
   {
 	for (long row=0; row<BufferSIZE; row++) {
-		wb->antenna[row].rsp_id = 0;
-		wb->antenna[row].rcu_id = 0;
-		wb->antenna[row].time = 0;
-		wb->antenna[row].sample_nr = 0;
-		wb->antenna[row].samples_per_frame = 0;
-		wb->antenna[row].data = 0;
+		wb->antenna[row].rsp_id = (uu*BufferSIZE)+row;
+		wb->antenna[row].rcu_id = 1;
+		wb->antenna[row].time = 2;
+		wb->antenna[row].sample_nr = 3;
+		wb->antenna[row].samples_per_frame = 4;
+		wb->antenna[row].data = 5;
 		strcpy(wb->antenna[row].feed,"hello");
-		wb->antenna[row].ant_position[0] = 1;
-		wb->antenna[row].ant_position[1] = 2;
-		wb->antenna[row].ant_position[2] = 3;
-		wb->antenna[row].ant_orientation[0] = 1;
-		wb->antenna[row].ant_orientation[1] = 2;
-		wb->antenna[row].ant_orientation[2] = 3;
+		wb->antenna[row].ant_position[0] = 6;
+		wb->antenna[row].ant_position[1] = 7;
+		wb->antenna[row].ant_position[2] = 8;
+		wb->antenna[row].ant_orientation[0] = 9;
+		wb->antenna[row].ant_orientation[1] = 10;
+		wb->antenna[row].ant_orientation[2] = 11;
 	}
 	AntennaTable->appendRows( wb->antenna, BufferSIZE );
   }
@@ -206,16 +205,16 @@ int main(int argc, char *argv[])
   {
 	for (long row=0; row<CALBufferSIZE; row++) {
 		calibration[row].adc2voltage = 0;
-		calibration[row].gain_curve.r = 0;
-		calibration[row].gain_curve.i = 0;
-		calibration[row].gain_frequencies = 0;
-		calibration[row].beam_shape.r = 0;
-		calibration[row].beam_shape.i = 0;
-		calibration[row].beam_directions = 0;
-		calibration[row].beam_frequencies = 0;
-		calibration[row].noise_curve.r = 1;
-		calibration[row].noise_curve.i = 1;
-		calibration[row].noise_frequencies = 0;
+		calibration[row].gain_curve.r = 1;
+		calibration[row].gain_curve.i = 2;
+		calibration[row].gain_frequencies = 3;
+		calibration[row].beam_shape.r = 4;
+		calibration[row].beam_shape.i = 5;
+		calibration[row].beam_directions = 6;
+		calibration[row].beam_frequencies = 7;
+		calibration[row].noise_curve.r = 8;
+		calibration[row].noise_curve.i = 9;
+		calibration[row].noise_frequencies = 10;
 	}
 	CalibrationTable->appendRows( calibration, CALBufferSIZE );
   }

@@ -39,15 +39,47 @@
 #include <dalGroup.h>
 #endif
 
+void get_args(int argc, char** argv, long* start_value, long* stop_value)
+{
+    int i;
+
+    /* Start at i = 1 to skip the command name. */
+
+    for (i = 1; i < argc; i++) {
+
+	/* Check for a switch (leading "-"). */
+
+	if (argv[i][0] == '-') {
+
+	    /* Use the next character to decide what to do. */
+
+	    switch (argv[i][1]) {
+
+		case 's':	*start_value = atol(argv[++i]);
+				break;
+
+		case 'S':	*stop_value = atol(argv[++i]);
+				break;
+
+		default:	fprintf(stderr,
+				"Unknown switch %s\n", argv[i]);
+	    }
+	}
+    }
+}
+
+
 /*! doxygen comment in dal.cpp */
 int main(int argc, char *argv[])
 {
+
   // parameter check
   if ( argc < 2 )
   {
      cout << endl << "Too few parameters..." << endl << endl;
      cout << "The first parameter is the dataset name." << endl;
-     cout << "The second parameter is the filetype. (optional)" << endl;
+     cout << "The second parameter is the row start value." << endl;
+     cout << "The third parameter is the row stop value." << endl;
      cout << endl;
      return FAIL;
   }
@@ -56,7 +88,8 @@ int main(int argc, char *argv[])
 
   if ( 0 != dataset->open( argv[1] ) )
   {
-  	cout << "Problem opening dataset: " << argv[1] << '.' << " Quiting." << endl;
+  	cout << "Problem opening dataset: " << argv[1] << '.' << " Quiting."
+	     << endl;
   	exit(FAIL);
   }
 
@@ -64,7 +97,7 @@ int main(int argc, char *argv[])
   dalGroup * stationGroup = dataset->openGroup("Station");
 
   // Read Station group attributes
-  cout << endl << "Station Group Attributes:" << endl;
+  cout << endl << "Station Group Attributes:" << endl << endl;
 
   stationGroup->getAttributes();  // iterate over all group attributes
 
@@ -92,15 +125,38 @@ int main(int argc, char *argv[])
 
   long maximum = antennaTable->getNumberOfRows();
 
-cout << "Number of ANTENNA table rows: " << maximum << endl << endl;
+  /* Set defaults for all parameters: */
+  long start =0;
+  long stop = 0;// read a table starting/stopping at these vals
 
+  get_args(argc, argv, &start, &stop);
+
+  if (!stop) stop=maximum;
+
+  if (start >= stop) {
+	cout << "ERROR: start value must be less than stop." << endl;
+	exit(7);
+  }
+
+  /*
+  cout << "start = " << start << endl;
+  cout << "stop = " << stop << endl;
+  */
+
+  cout << "Number of ANTENNA table rows: " << maximum
+     << " (i.e. 0:" << maximum-1 << ')' << endl << endl;
+
+  if (stop > maximum-1) {
+	cout << "Stop value larger than table. Reset to table maximum." << endl;
+	stop = maximum-1;
+  }
   antennaTable->listColumns();
 
   string antpos, antorient;
 
-  for ( long ii = 0; ii < maximum; ii ++ ) {
+  for ( long ii = start; ii <= stop; ii ++ ) {
 
-	antennaTable->readRows( data_out, startRow, NUMBERROWS);
+	antennaTable->readRows( data_out, ii, /*startRow,*/ NUMBERROWS);
 
 	// print some values from the read
 	for (int gg=0; gg < NUMBERROWS; gg++)
