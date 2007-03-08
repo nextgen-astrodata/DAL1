@@ -49,10 +49,10 @@ plot(data(1,:))
 xlabel('sample nr')
 ylabel('ADC level')
 grid on
-title(['TBB data van ' filename_r ]);
+title(['TBB data from file ' filename_r ]);
 subplot(2,1,2)
 plot(fas, 20*log10(abs(fdata_m((fft_length/2)+1:end))));
 xlabel('Frequency MHz')
 ylabel('Power dB_{adc unit}')
 grid on
-title(['Gemiddelde Spectrum van ' int2str(blocks) ' x ' int2str(fft_length) ' samples'  ]);
+title(['Averaged Spectrum of ' int2str(blocks) ' x ' int2str(fft_length) ' samples'  ]);
