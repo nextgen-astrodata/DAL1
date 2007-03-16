@@ -52,6 +52,7 @@ class dalTable{
 
 	// HDF5-specific variables
 	hid_t				file_id; 	/// hdf5 file_id
+	hid_t				table_id;	/// hdf5 table id
 	hsize_t				nfields;	/// hdf5 field count
 	hsize_t				nrecords;	/// hdf5 record count
 	herr_t				status;		/// hdf5 return status
@@ -71,6 +72,7 @@ class dalTable{
 	dalTable(); /// Constructor
 	~dalTable(); /// Destructor
 
+	void getAttributes();
 	void printColumns();  /// list the columns contained within a table
 	void openTable( void * voidfile, string tablename, string groupname );
 	
@@ -89,7 +91,7 @@ class dalTable{
 	void readRows( void * data_out, long start, long stop );
 
 	void getAttribute( string attrname );
-	void setAttribute( string attrname, void * data, int size, string datatype );
+	//void setAttribute( string attrname, void * data, int size, string datatype );
 	void setAttribute_string( string attrname, string data );
 	void setAttribute_int( string attrname, int * data, int size=1 );
 	void setAttribute_uint( string attrname, unsigned int * data, int size=1 );

@@ -44,20 +44,20 @@ int main(int argc, char *argv[])
 {
 
   // parameter check
-  if ( argc < 2 )
+  if ( argc < 3 )
   {
      cout << endl << "Too few parameters..." << endl << endl;
-     cout << "The first parameter is the dataset name." << endl;
-     //cout << "The second parameter is the filetype. (optional)" << endl;
+     cout << "The first parameter is the raw TBB input file name." << endl;
+     cout << "The second parameter is the dataset name." << endl;
      cout << endl;
      return FAIL;
   }
 
   dalDataset * dataset;
   if ( NULL == argv[2] )
-	  dataset = new dalDataset( argv[1] );
+	  dataset = new dalDataset( argv[2] );
   else
-	  dataset = new dalDataset( argv[1], argv[2] );
+	  dataset = new dalDataset( argv[2], argv[3] );
 
   //
   /////////////////////////////////////////
@@ -94,15 +94,6 @@ int main(int argc, char *argv[])
   //
   dalTable * AntennaTable = dataset->createTable( "ANTENNA", "Station" );
 
-  // add attributes to ANTENNA table
-  unsigned int station_id[1] = { 0 };
-  double sample_freq[1] = { 0 };
-  unsigned int data_length[1] = { 96 };
-
-  AntennaTable->setAttribute_uint("STATION_ID", station_id );
-  AntennaTable->setAttribute_double("SAMPLE_FREQ", sample_freq );
-  AntennaTable->setAttribute_uint("DATA_LENGTH", data_length );
-
   // add columns to ANTENNA table
   AntennaTable->addColumn( "RSP_ID", dal_UINT );  // simple column
   AntennaTable->addColumn( "RCU_ID", dal_UINT );  // simple column
@@ -114,11 +105,158 @@ int main(int argc, char *argv[])
   AntennaTable->addColumn( "ANT_POS", dal_DOUBLE, 3 );
   AntennaTable->addColumn( "ANT_ORIENT", dal_DOUBLE, 3 );
 
+
+  //
+  /////////////////////////////////////////
+  // read the RAW TBB input data
+  /////////////////////////////////////////
+  //
+	const Int32 ETHEREAL_HEADER_LENGTH = 46;
+	const Int32 FIRST_EXTRA_HDR_LENGTH = 40;
+	const Int32 EXTRA_HDR_LENGTH = 16;
+
+	ifstream::pos_type size=0;		// buffer size
+
+	// define memory buffers
+	unsigned char * memblock=NULL;
+
+	typedef struct TBB_Header {
+		unsigned char stationid;
+		unsigned char rspid;
+		unsigned char rcuid;
+		unsigned char sample_freq;
+		UInt32 seqnr;
+		Int32 time;
+		UInt32 sample_nr;
+		UInt16 n_samples_per_frame;
+		UInt16 n_freq_bands;
+		char bandsel[64];
+		Int16 spare;
+		UInt16 crc;
+	};
+
+	typedef struct TransientSample {
+		Int16 value;
+	};
+
+	typedef struct SpectralSample {
+		complex<Int16> value;
+	};
+
+	UInt32 payload_crc;
+
+	// declare handle for the input file
+	fstream file (argv[1], ios::binary|ios::in);
+
+	bool first_sample = true;
+	bool bigendian = BigEndian();
+
+	if (file.is_open())
+	{
+		TransientSample tran_sample;
+		SpectralSample spec_sample;
+		TBB_Header header;
+		size = ETHEREAL_HEADER_LENGTH;
+		memblock = new unsigned char [size];
+		file.seekg (0, ios::beg);
+		int counter=0;
+
+		// loop through the file
+		while ( !file.eof() ) {
+			counter++;
+			// skip 46-byte ethereal header (temporary)
+			//   we shouldn't need to do this with the next
+			//   tbb data revision
+			size = ETHEREAL_HEADER_LENGTH;
+			file.read((char*)memblock, size);
+
+			// skip "extra" first 40-byte header (temporary)
+			//   we shouldn't need to do this with the next
+			//   tbb data revision
+			if ( first_sample ) {
+				size = FIRST_EXTRA_HDR_LENGTH;
+				file.read((char*)memblock, size);
+			} else {
+				size = EXTRA_HDR_LENGTH;
+				file.read((char*)memblock, size);
+			}
+			
+			//
+			// read 88-byte TBB frame header
+			//
+			file.read(reinterpret_cast<char *>(&header), sizeof(header));
+
+			// reverse fields if big endian
+			if ( bigendian ) {
+				header.seqnr = Int32Swap( header.seqnr );
+				header.sample_nr = Int32Swap( header.sample_nr );
+				header.n_samples_per_frame = 
+					Int16Swap( header.n_samples_per_frame);
+				header.n_freq_bands = Int16Swap( header.n_freq_bands );
+			}
+			
+			// set the STATION_ID, SAMPLE_FREQ and DATA_LENGTH attributes
+			//    for the ANTENNA table
+			if ( first_sample ) {
+			
+				unsigned int foo[] = { (unsigned int)header.stationid };
+				AntennaTable->setAttribute_uint("STATION_ID", foo );
+				
+				double sf[] = { (double)header.sample_freq };
+				AntennaTable->setAttribute_double("SAMPLE_FREQ", sf );
+				
+				foo[0] = (unsigned int)header.n_samples_per_frame;
+				AntennaTable->setAttribute_uint("DATA_LENGTH", foo );
+				
+				first_sample = false;
+			}
+			
+			// compute time
+			tm *time=localtime( reinterpret_cast<time_t*>(&header.time) );
+			
+			// Read Payload
+			if ( 0==header.n_freq_bands ) {
+				for (unsigned int ii=0; ii < header.n_samples_per_frame; ii++) {
+					file.read( reinterpret_cast<char *>(&tran_sample),
+							   sizeof(tran_sample) );
+					// reverse fields if big endian
+					if ( bigendian )
+						tran_sample.value = Int16Swap( tran_sample.value );
+					//printf( "%hd,", tran_sample.value );
+				}
+			} else {
+				Int16 real_part;
+				Int16 imag_part;
+				for (unsigned int ii=0; ii < header.n_samples_per_frame; ii++) {
+					file.read( reinterpret_cast<char *>(&spec_sample),
+							   sizeof(spec_sample) );
+					// reverse fields if big endian
+					if ( bigendian ) {
+						real_part = Int16Swap( real(spec_sample.value) );
+						imag_part = Int16Swap( imag(spec_sample.value) );
+					}
+					else
+					{
+						real_part = real(spec_sample.value);
+						imag_part = imag(spec_sample.value);
+					}
+				}
+			}
+						
+			file.read( reinterpret_cast<char *>(&payload_crc),
+					   sizeof(payload_crc) );
+		}
+		
+		file.close();
+		delete[] memblock;
+	}
+	else cout << "Unable to open file" << argv[1] << endl;
+
   /*
     The AntennaStruct is ~88 bytes.  I use a buffer of 1,000,000
     so that the writebuffer will be (88 * 1e6) or 88mb.
   */
-  const long BufferSIZE = 1000000;
+  const long BufferSIZE = 10; //1000000;
   typedef struct AntennaStruct {
 	unsigned int rsp_id;
 	unsigned int rcu_id;

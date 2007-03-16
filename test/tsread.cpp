@@ -118,7 +118,7 @@ void get_args( int argc, char** argv, long* start_value, long* stop_value,
 }
 
 
-/*! doxygen comment in dal.cpp */
+/*! sample doxygen comment in dal.cpp */
 int main(int argc, char *argv[])
 {
 
@@ -166,6 +166,14 @@ int main(int argc, char *argv[])
 
   // Open ANTENNA table in Station group
   dalTable * antennaTable = dataset->openTable( table, group );
+  
+  cout << "ANTENNA Table attributes:" << endl << endl;
+  //antennaTable->getAttributes();
+  antennaTable->getAttribute("STATION_ID");
+  antennaTable->getAttribute("SAMPLE_FREQ");
+  antennaTable->getAttribute("DATA_LENGTH");
+  cout << endl;
+  
   long maximum = antennaTable->getNumberOfRows();
   if ( maximum <= 0 ) {
 	cout << table << " table contains no rows." << endl;
@@ -196,11 +204,6 @@ int main(int argc, char *argv[])
 	cout << "ERROR: start value must be less than stop." << endl;
 	exit(7);
   }
-
-  /*
-  cout << "start = " << start << endl;
-  cout << "stop = " << stop << endl;
-  */
 
   cout << "Number of " << table << " table rows: " << maximum
      << " (i.e. 0:" << maximum-1 << ')' << endl << endl;

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Joseph Masters                                  *
+ *   Copyright (C) 2007 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -17,56 +17,33 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-#ifndef DAL_H
-#define DAL_H
-
-#include <string>
-#include <vector>
-#include <iostream>
-#include <iomanip>  // for cout field width
-#include <cstdio>
-#include "H5LT.h"
-
-#include "H5Cpp.h"
-
-extern "C" {
-#include "fitsio.h"
-}
-
-#include "convert.h"  // for stringify function
-
+/**
+ * \file dalBaseTypes.cpp
+ * \author Joseph Masters
+ * \date 15-Mar-07
+ */
+ 
 #ifndef DALBASETYPES_H
-#include "dalBaseTypes.h"
-#endif
+#define DALBASETYPES_H
+ 
+ // reading a complete binary file
+#include <iostream> // for cout
+#include <iomanip>  // for cout field width
+#include <fstream>  // for file handle
+#include <complex>  // for complex datatypes
+#include <time.h>		// for local time conversion
 
 using namespace std;
-
-#include <complex>
 using std::complex;
 
-const int SUCCESS = 0;
-const int FAIL = 1;
-const int CHUNK_SIZE = 5000;
-const short MAX_COL_NAME_SIZE = 256;
+typedef unsigned int UInt32;
+typedef unsigned short UInt16;
+typedef short Int16;
+typedef int Int32;
+typedef float Float32;
 
-const string dal_CHAR = "dalCHAR";
-const string dal_STRING = "dalSTRING";
-
-const string dal_INT = "dalINT";
-const string dal_UINT = "dalINT";
-const string dal_SHORT = "dalSHORT";
-const string dal_LONG = "dalLONG";
-
-const string dal_FLOAT = "dalFLOAT";
-const string dal_DOUBLE = "dalDOUBLE";
-
-const string dal_COMPLEX = "dalCOMPLEX";
-const string dal_DCOMPLEX = "dalDCOMPLEX";
-
-typedef struct dalcomplex {
-	double r;  // real
-	double i;  // imaginary
-} dalcomplex;
+bool BigEndian( void );
+Int32 Int32Swap ( int i );
+short Int16Swap( short s );
 
 #endif

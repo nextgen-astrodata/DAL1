@@ -44,7 +44,9 @@ void dalTable::openTable( void * voidfile, string tablename, string groupname )
 	H5::H5File * lclfile = (H5::H5File*)voidfile; // H5File object
 	file = lclfile;
 	file_id = lclfile->getLocId();  // get the file handle
+    table_id = H5Dopen ( file_id, name.c_str() );
 }
+
 dalTable::~dalTable()
 {
 	/* broken in HDF5 library itself! */
@@ -96,7 +98,7 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 
 	tablename = groupname + '/' + tablename;
 	//cout << tablename << endl;
-	status = H5TBmake_table( "Table Title", file_id, tablename.c_str(),
+	status = H5TBmake_table( "My Table Title", file_id, tablename.c_str(),
 				 NFIELDS, NRECORDS, dst_size, lclfield_names,
 				 dst_offset, field_type, chunk_size,
 				 fill_data, compress, data );
@@ -217,6 +219,15 @@ void dalTable::addColumn( string colname, string coltype, unsigned int size )
 	
 	 	lc->addMember( "a_member", coltype );
 	}
+
+}
+herr_t attr_info(hid_t loc_id, const char *name, void *opdata);
+void dalTable::getAttributes() {
+
+   //status = H5Aget_num_attrs(group_id);
+   //printf ("H5Aget_num_attrs returns: %i\n", status);
+   status = H5Aiterate( table_id, NULL, attr_info, NULL );
+   //printf ("\nH5Aiterate returns: %i\n", status);
 
 }
 
@@ -514,8 +525,35 @@ void dalTable::appendRows( void * data, long row_count )
 	free( size_out );
 }
 
+void dalTable::setAttribute_string( string attrname, string data ) {
+	if ( H5LTset_attribute_string( file_id, name.c_str(),
+					attrname.c_str(), data.c_str() ) < 0 ) {
+		cout << "ERROR: could not set attribute " << attrname << endl;
+	}
+}
 
-void dalTable::setAttribute( string attrname, void * data, int size, string datatype )
+void dalTable::setAttribute_int( string attrname, int * data, int size ) {
+	if ( H5LTset_attribute_int( file_id, name.c_str(),
+					attrname.c_str(), data, size ) < 0 ) {
+		cout << "ERROR: could not set attribute " << attrname << endl;
+	}
+}
+
+void dalTable::setAttribute_uint( string attrname, unsigned int * data, int size ) {
+	if ( H5LTset_attribute_uint( file_id, name.c_str(),
+					attrname.c_str(), data, size ) < 0 ) {
+		cout << "ERROR: could not set attribute " << attrname << endl;
+	}
+}
+
+void dalTable::setAttribute_double( string attrname, double * data, int size ) {
+	if ( H5LTset_attribute_double( file_id, name.c_str(),
+					attrname.c_str(), data, size ) < 0 ) {
+		cout << "ERROR: could not set attribute " << attrname << endl;
+	}
+}
+
+/*void dalTable::setAttribute( string attrname, void * data, int size, string datatype )
 {
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
 	if ( dal_INT == datatype )
@@ -526,27 +564,7 @@ void dalTable::setAttribute( string attrname, void * data, int size, string data
 	}
 	else
 		cout << "unknown datatype" << endl;
-}
-
-void dalTable::setAttribute_string( string attrname, string data ) {
-	status = H5LTset_attribute_string( file_id, name.c_str(),
-					   attrname.c_str(), data.c_str() );
-}
-
-void dalTable::setAttribute_int( string attrname, int * data, int size ) {
-	status = H5LTset_attribute_int( file_id, name.c_str(), attrname.c_str(),
-					data, size );
-}
-
-void dalTable::setAttribute_uint( string attrname, unsigned int * data, int size ) {
-	status = H5LTset_attribute_uint( file_id, name.c_str(), attrname.c_str(),
-					 data, size );
-}
-
-void dalTable::setAttribute_double( string attrname, double * data, int size ) {
-	status = H5LTset_attribute_double( file_id, name.c_str(),
-					   attrname.c_str(), data, size );
-}
+}*/
 
 void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
 {
@@ -619,7 +637,7 @@ void dalTable::getAttribute( string attrname ) {
 	size_t type_size;
 
 	// Check if attribute exists
-	if ( H5LT_find_attribute(file_id, attrname.c_str()) <= 0 ) {
+	if ( H5LT_find_attribute( table_id, attrname.c_str() ) <= 0 ) {
 		cout << "Attribute " << attrname << " not found." << endl;
 		return;
 	}
@@ -649,15 +667,21 @@ void dalTable::getAttribute( string attrname ) {
 	}
 	else if ( H5T_INTEGER == type_class ) {
 		int data[*dims];
-		H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
-			 H5T_NATIVE_INT, data);
-		cout << attrname << " = ";
-		for (unsigned int ii=0; ii<*dims; ii++) {
-		  cout << data[ii];
-		  if (ii < (*dims)-1)
-		    cout << ',';
-		  else
-		    cout << endl;
+		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
+									H5T_NATIVE_INT, data) )
+		{
+			cout << attrname << " not found" << endl;
+		}
+		else
+		{
+			cout << attrname << " = ";
+			for (unsigned int ii=0; ii<*dims; ii++) {
+			  cout << data[ii];
+			  if (ii < (*dims)-1)
+				cout << ',';
+			  else
+				cout << endl;
+			}
 		}
 	}
 	else if ( H5T_STRING == type_class ) {

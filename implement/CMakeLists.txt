@@ -34,7 +34,8 @@ add_library(dal STATIC
   dalTable.cpp
   dalGroup.cpp
   dalColumn.cpp
-  dalRow.cpp 
+  dalRow.cpp
+  dalBaseTypes.cpp 
 #  l_member.cpp
   )
 
