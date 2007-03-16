@@ -161,6 +161,18 @@ int main(int argc, char *argv[])
 		file.seekg (0, ios::beg);
 		int counter=0;
 
+		typedef struct AntennaStruct {
+			unsigned int rsp_id;
+			unsigned int rcu_id;
+			unsigned int time;
+			unsigned int sample_nr;
+			unsigned int samples_per_frame;
+			short data;
+			char feed[16];
+			double ant_position[ 3 ];
+			double ant_orientation[ 3 ];
+		} AntennaStruct;
+		
 		// loop through the file
 		while ( !file.eof() ) {
 			counter++;
@@ -210,19 +222,50 @@ int main(int argc, char *argv[])
 				
 				first_sample = false;
 			}
-			
+
+			unsigned int foo[] = { (unsigned int)header.stationid };
+			AntennaTable->setAttribute_uint("STATION_ID", foo );
+
 			// compute time
 			tm *time=localtime( reinterpret_cast<time_t*>(&header.time) );
+			/*
+			The AntennaStruct is ~88 bytes.  I use a buffer of 1,000,000
+			so that the writebuffer will be (88 * 1e6) or 88mb.
+			*/
+			const long BufferSIZE = header.n_samples_per_frame;
+	
+			typedef struct writebuffer {
+				AntennaStruct antenna;
+			} writebuffer;
 			
+			long wbsize = sizeof(writebuffer);  // in megabytes
+			//cout << "size of write buffer: " << wbsize << " mb" << endl;
+			writebuffer wb[1];
+
 			// Read Payload
 			if ( 0==header.n_freq_bands ) {
-				for (unsigned int ii=0; ii < header.n_samples_per_frame; ii++) {
+				for (unsigned int ii=0; ii < 10/*header.n_samples_per_frame*/; ii++) {
 					file.read( reinterpret_cast<char *>(&tran_sample),
 							   sizeof(tran_sample) );
 					// reverse fields if big endian
 					if ( bigendian )
 						tran_sample.value = Int16Swap( tran_sample.value );
 					//printf( "%hd,", tran_sample.value );
+
+					wb[0].antenna.rsp_id = (unsigned int)header.rspid;
+					wb[0].antenna.rcu_id = (unsigned int)header.rcuid;
+					wb[0].antenna.time = (unsigned int)header.time;
+					wb[0].antenna.sample_nr = (unsigned int)header.time;
+					wb[0].antenna.samples_per_frame = header.n_samples_per_frame;
+					wb[0].antenna.data = 5;
+					strcpy(wb[0].antenna.feed,"hello");
+					wb[0].antenna.ant_position[0] = 6;
+					wb[0].antenna.ant_position[1] = 7;
+					wb[0].antenna.ant_position[2] = 8;
+					wb[0].antenna.ant_orientation[0] = 9;
+					wb[0].antenna.ant_orientation[1] = 10;
+					wb[0].antenna.ant_orientation[2] = ii;
+					AntennaTable->appendRows( wb, 1 );
 				}
 			} else {
 				Int16 real_part;
@@ -251,60 +294,6 @@ int main(int argc, char *argv[])
 		delete[] memblock;
 	}
 	else cout << "Unable to open file" << argv[1] << endl;
-
-  /*
-    The AntennaStruct is ~88 bytes.  I use a buffer of 1,000,000
-    so that the writebuffer will be (88 * 1e6) or 88mb.
-  */
-  const long BufferSIZE = 10; //1000000;
-  typedef struct AntennaStruct {
-	unsigned int rsp_id;
-	unsigned int rcu_id;
-	unsigned int time;
-	unsigned int sample_nr;
-	unsigned int samples_per_frame;
-	short data;
-	char feed[16];
-	double ant_position[ 3 ];
-	double ant_orientation[ 3 ];
-  } AntennaStruct;
-
-  typedef struct writebuffer {
-	AntennaStruct antenna[ BufferSIZE ];
-  } writebuffer;
-
-  writebuffer * wb;
-  long wbsize = sizeof(writebuffer)/1000000;  // in megabytes
-  //cout << "size of write buffer: " << wbsize << " mb";
-  if (( wb = (writebuffer *) malloc( sizeof(writebuffer) ) ) == NULL) {
-    cout << "ERROR ALLOCATING writebuffer of size " << wbsize << " mb." << endl;
-    exit(8);
-  }
-
-  const int LOOPMAX = 13;
-  //cout << " * " << LOOPMAX << " = " << (wbsize * LOOPMAX) << " mb" << endl;
-
-  // Fill ANTENNA table with data
-  for ( int uu=0 ; uu < LOOPMAX; uu++)
-  {
-	for (long row=0; row<BufferSIZE; row++) {
-		wb->antenna[row].rsp_id = (uu*BufferSIZE)+row;
-		wb->antenna[row].rcu_id = 1;
-		wb->antenna[row].time = 2;
-		wb->antenna[row].sample_nr = 3;
-		wb->antenna[row].samples_per_frame = 4;
-		wb->antenna[row].data = 5;
-		strcpy(wb->antenna[row].feed,"hello");
-		wb->antenna[row].ant_position[0] = 6;
-		wb->antenna[row].ant_position[1] = 7;
-		wb->antenna[row].ant_position[2] = 8;
-		wb->antenna[row].ant_orientation[0] = 9;
-		wb->antenna[row].ant_orientation[1] = 10;
-		wb->antenna[row].ant_orientation[2] = 11;
-	}
-	AntennaTable->appendRows( wb->antenna, BufferSIZE );
-  }
-  free(wb);  // free the write buffer (~88 mb)
 
   /////////////////////////////////////////
   // create CALIBRATION table

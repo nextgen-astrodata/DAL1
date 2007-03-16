@@ -493,36 +493,31 @@ void dalTable::appendRows( void * data, long row_count )
 {
 	size_t * field_sizes;
 	size_t * field_offsets;
-	size_t * size_out;
+	size_t size_out;
 
 	// retrieve the input fields needed for the append_records call
 	H5TBget_table_info( file_id, name.c_str(), &nfields, &nrecords );
 	
-	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
-	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
-	size_out = (size_t*)malloc( sizeof(size_t) );
+	field_sizes  = (size_t *)malloc((size_t)nfields * sizeof(size_t));
+	field_offsets = (size_t *)malloc((size_t)nfields * sizeof(size_t));
 
 	status = H5TBget_field_info( file_id, name.c_str(), NULL, field_sizes,
-					field_offsets, size_out );
+					field_offsets, &size_out );
 	
 	if ( firstrecord ) {
 		hsize_t start = 0;
-		status = H5TBappend_records ( file_id, name.c_str(),
-					      (hsize_t)row_count-1, *size_out,
-					      field_offsets, field_sizes, data );
 		status = H5TBwrite_records( file_id, name.c_str(), start,
-					    (hsize_t)row_count, *size_out,
+					    (hsize_t)row_count, size_out,
 					    field_offsets, field_sizes, data );
 		firstrecord = false;
 	}
 	else {
 		status = H5TBappend_records ( file_id, name.c_str(),
-					      (hsize_t)row_count, *size_out,
+					      (hsize_t)row_count, size_out,
 					      field_offsets, field_sizes, data );
 	}
 	free( field_sizes );
 	free( field_offsets );
-	free( size_out );
 }
 
 void dalTable::setAttribute_string( string attrname, string data ) {
@@ -552,19 +547,6 @@ void dalTable::setAttribute_double( string attrname, double * data, int size ) {
 		cout << "ERROR: could not set attribute " << attrname << endl;
 	}
 }
-
-/*void dalTable::setAttribute( string attrname, void * data, int size, string datatype )
-{
-	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
-	if ( dal_INT == datatype )
-	{
-		status = H5LTset_attribute_int( file_id, name.c_str(),
-						attrname.c_str(),
-						(const int*)data, size );
-	}
-	else
-		cout << "unknown datatype" << endl;
-}*/
 
 void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
 {
