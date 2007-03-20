@@ -530,6 +530,13 @@ void dalTable::setAttribute_string( string attrname, string data ) {
 	}
 }
 
+void dalTable::setAttribute_char( string attrname, char * data, int size ) {
+	if ( H5LTset_attribute_char( file_id, name.c_str(),
+					attrname.c_str(), data, size ) < 0 ) {
+		cout << "ERROR: could not set attribute " << attrname << endl;
+	}
+}
+
 void dalTable::setAttribute_int( string attrname, int * data, int size ) {
 	if ( H5LTset_attribute_int( file_id, name.c_str(),
 					attrname.c_str(), data, size ) < 0 ) {
