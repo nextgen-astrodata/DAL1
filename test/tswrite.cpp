@@ -104,11 +104,10 @@ int main(int argc, char *argv[])
   AntennaTable->addColumn( "TIME", dal_UINT );  // simple column
   AntennaTable->addColumn( "SAMP_NR", dal_UINT );  // simple column
   AntennaTable->addColumn( "SAMP_FRAME", dal_UINT );  // simple column
-  AntennaTable->addColumn( "DATA", dal_SHORT);//, data_length[0] );
+  AntennaTable->addColumn( "DATA", dal_SHORT, 1024 );
   AntennaTable->addColumn( "FEED", dal_STRING );
   AntennaTable->addColumn( "ANT_POS", dal_DOUBLE, 3 );
   AntennaTable->addColumn( "ANT_ORIENT", dal_DOUBLE, 3 );
-
 
   //
   /////////////////////////////////////////
@@ -210,33 +209,54 @@ int main(int argc, char *argv[])
 			
 			long wbsize = sizeof(writebuffer);  // in megabytes
 			//cout << "size of write buffer: " << wbsize << " mb" << endl;
-			writebuffer wb[ header.n_samples_per_frame ];
+			writebuffer wb[1];
+
+			// initialize writebuffer
+			wb[0].antenna.rsp_id = 0;
+			wb[0].antenna.rcu_id = 0;
+			wb[0].antenna.time = 0;
+			wb[0].antenna.sample_nr = 0;
+			wb[0].antenna.samples_per_frame = 0;
+			//wb[0].antenna.data.clear();
+			strcpy(wb[0].antenna.feed, "");
+			wb[0].antenna.ant_position[0] = 0;
+			wb[0].antenna.ant_position[1] = 0;
+			wb[0].antenna.ant_position[2] = 0;
+			wb[0].antenna.ant_orientation[0] = 0;
+			wb[0].antenna.ant_orientation[1] = 0;
+			wb[0].antenna.ant_orientation[2] = 0;
+
+			//wb[0].antenna.data = (short*)malloc( header.n_samples_per_frame * sizeof(short) );
+			//memset(wb[0].antenna.data, 0, sizeof(Int16)*header.n_samples_per_frame);
 
 			// Read Payload
 			if ( 0==header.n_freq_bands ) {
-				for (unsigned int ii=0; ii < header.n_samples_per_frame; ii++) {
-					file.read( reinterpret_cast<char *>(&tran_sample),
-							   sizeof(tran_sample) );
-					// reverse fields if big endian
-					if ( bigendian )
-						tran_sample.value = Int16Swap( tran_sample.value );
-					//printf( "%hd,", tran_sample.value );
 
-					wb[ii].antenna.rsp_id = (unsigned int)header.rspid;
-					wb[ii].antenna.rcu_id = (unsigned int)header.rcuid;
-					wb[ii].antenna.time = (unsigned int)header.time;
-					wb[ii].antenna.sample_nr = (unsigned int)header.sample_nr;
-					wb[ii].antenna.samples_per_frame = header.n_samples_per_frame;
-					wb[ii].antenna.data = tran_sample.value;
-					strcpy(wb[ii].antenna.feed,"none");
-					wb[ii].antenna.ant_position[0] = 6;
-					wb[ii].antenna.ant_position[1] = 7;
-					wb[ii].antenna.ant_position[2] = 8;
-					wb[ii].antenna.ant_orientation[0] = 9;
-					wb[ii].antenna.ant_orientation[1] = 10;
-					wb[ii].antenna.ant_orientation[2] = ii;
+
+				wb[0].antenna.rsp_id = (unsigned int)header.rspid;
+				wb[0].antenna.rcu_id = (unsigned int)header.rcuid;
+				wb[0].antenna.time = (unsigned int)header.time;
+				wb[0].antenna.sample_nr = (unsigned int)header.sample_nr;
+				wb[0].antenna.samples_per_frame = header.n_samples_per_frame;
+
+				for (short zz=0; zz < 1024/*header.n_samples_per_frame*/; zz++) {
+
+					file.read( reinterpret_cast<char *>(&tran_sample),
+						sizeof(tran_sample) );
+					if ( bigendian )  // reverse fields if big endian
+						tran_sample.value = Int16Swap( tran_sample.value );
+
+					wb[0].antenna.data[zz] = (short)tran_sample.value;
 				}
-				AntennaTable->appendRows( wb, header.n_samples_per_frame );
+
+				strcpy(wb[0].antenna.feed,"none");
+				wb[0].antenna.ant_position[0] = 6;
+				wb[0].antenna.ant_position[1] = 7;
+				wb[0].antenna.ant_position[2] = 8;
+				wb[0].antenna.ant_orientation[0] = 3;
+				wb[0].antenna.ant_orientation[1] = 2;
+				wb[0].antenna.ant_orientation[2] = 1;
+				AntennaTable->appendRows( wb, 1 );
 			} else {
 				Int16 real_part;
 				Int16 imag_part;
@@ -258,6 +278,7 @@ int main(int argc, char *argv[])
 						
 			file.read( reinterpret_cast<char *>(&payload_crc),
 					   sizeof(payload_crc) );
+			//free( wb[0].antenna.data );
 		}
 		
 		file.close();

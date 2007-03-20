@@ -29,6 +29,8 @@
 #include <dalBaseTypes.h>
 #endif
 
+#include <vector>
+
 const Int32 ETHEREAL_HEADER_LENGTH = 46;
 const Int32 FIRST_EXTRA_HDR_LENGTH = 40;
 const Int32 EXTRA_HDR_LENGTH = 16;
@@ -39,7 +41,7 @@ typedef struct AntennaStruct {
 	unsigned int time;
 	unsigned int sample_nr;
 	unsigned int samples_per_frame;
-	short data;
+	short data[1024];
 	char feed[16];
 	double ant_position[ 3 ];
 	double ant_orientation[ 3 ];
