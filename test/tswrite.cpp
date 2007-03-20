@@ -98,17 +98,6 @@ int main(int argc, char *argv[])
   //
   dalTable * AntennaTable = dataset->createTable( "ANTENNA", "Station" );
 
-  // add columns to ANTENNA table
-  AntennaTable->addColumn( "RSP_ID", dal_UINT );  // simple column
-  AntennaTable->addColumn( "RCU_ID", dal_UINT );  // simple column
-  AntennaTable->addColumn( "TIME", dal_UINT );  // simple column
-  AntennaTable->addColumn( "SAMP_NR", dal_UINT );  // simple column
-  AntennaTable->addColumn( "SAMP_FRAME", dal_UINT );  // simple column
-  AntennaTable->addColumn( "DATA", dal_SHORT, 1024 );
-  AntennaTable->addColumn( "FEED", dal_STRING );
-  AntennaTable->addColumn( "ANT_POS", dal_DOUBLE, 3 );
-  AntennaTable->addColumn( "ANT_ORIENT", dal_DOUBLE, 3 );
-
   //
   /////////////////////////////////////////
   // read the RAW TBB input data
@@ -138,7 +127,7 @@ int main(int argc, char *argv[])
 		file.seekg (0, ios::beg);
 		int counter=0;
 
-		unsigned int sid[1];
+		char sid[1];
 		double sf[1];
 		unsigned int spf[1];
 
@@ -180,15 +169,26 @@ int main(int argc, char *argv[])
 			//    for the ANTENNA table
 			if ( first_sample ) {
 			
-				sid[0] = (unsigned int)header.stationid;
-				AntennaTable->setAttribute_uint("STATION_ID", sid );
+				sid[0] = (char)header.stationid;
+				AntennaTable->setAttribute_char("STATION_ID", sid, 1 );
 				
 				sf[0] = (double)header.sample_freq;
 				AntennaTable->setAttribute_double("SAMPLE_FREQ", sf );
-				
+
 				spf[0] = (unsigned int)header.n_samples_per_frame;
 				AntennaTable->setAttribute_uint("DATA_LENGTH", spf );
 				
+				// add columns to ANTENNA table
+				AntennaTable->addColumn( "RSP_ID", dal_UINT );  // simple column
+				AntennaTable->addColumn( "RCU_ID", dal_UINT );  // simple column
+				AntennaTable->addColumn( "TIME", dal_UINT );  // simple column
+				AntennaTable->addColumn( "SAMP_NR", dal_UINT );  // simple column
+				AntennaTable->addColumn( "SAMP_FRAME", dal_UINT );  // simple column
+				AntennaTable->addColumn( "DATA", dal_SHORT, header.n_samples_per_frame );
+				AntennaTable->addColumn( "FEED", dal_STRING );
+				AntennaTable->addColumn( "ANT_POS", dal_DOUBLE, 3 );
+				AntennaTable->addColumn( "ANT_ORIENT", dal_DOUBLE, 3 );
+
 				first_sample = false;
 			}
 
