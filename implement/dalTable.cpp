@@ -506,6 +506,9 @@ void dalTable::appendRows( void * data, long row_count )
 	
 	if ( firstrecord ) {
 		hsize_t start = 0;
+		status = H5TBappend_records ( file_id, name.c_str(),
+					      (hsize_t)row_count, size_out,
+					      field_offsets, field_sizes, data );
 		status = H5TBwrite_records( file_id, name.c_str(), start,
 					    (hsize_t)row_count, size_out,
 					    field_offsets, field_sizes, data );

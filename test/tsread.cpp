@@ -39,6 +39,10 @@
 #include <dalGroup.h>
 #endif
 
+#ifndef TIMESERIES_H
+#include <timeseries.h>
+#endif
+
 void get_args( int argc, char** argv, long* start_value, long* stop_value,
 	       char** table_value, char** group_value )
 {
@@ -179,18 +183,6 @@ int main(int argc, char *argv[])
 	cout << table << " table contains no rows." << endl;
 	exit(2);
   }
-
-  typedef struct AntennaStruct {
-	unsigned int rsp_id;
-	unsigned int rcu_id;
-	unsigned int time;
-	unsigned int sample_nr;
-	unsigned int samples_per_frame;
-	short data;
-	char feed[16];
-	double ant_position[ 3 ];
-	double ant_orientation[ 3 ];
-  } AntennaStruct;
 
   // define a structure to read the data into
   //   in this case it's AntennaStruct (defined above)

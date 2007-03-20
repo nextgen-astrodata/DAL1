@@ -39,6 +39,10 @@
 #include "dalGroup.h"
 #endif
 
+#ifndef TIMESERIES_H
+#include <timeseries.h>
+#endif
+
 /*! doxygen comment in dal.cpp */
 int main(int argc, char *argv[])
 {
@@ -54,7 +58,7 @@ int main(int argc, char *argv[])
   }
 
   dalDataset * dataset;
-  if ( NULL == argv[2] )
+  if ( NULL == argv[3] )
 	  dataset = new dalDataset( argv[2] );
   else
 	  dataset = new dalDataset( argv[2], argv[3] );
@@ -111,37 +115,11 @@ int main(int argc, char *argv[])
   // read the RAW TBB input data
   /////////////////////////////////////////
   //
-	const Int32 ETHEREAL_HEADER_LENGTH = 46;
-	const Int32 FIRST_EXTRA_HDR_LENGTH = 40;
-	const Int32 EXTRA_HDR_LENGTH = 16;
 
 	ifstream::pos_type size=0;		// buffer size
 
 	// define memory buffers
 	unsigned char * memblock=NULL;
-
-	typedef struct TBB_Header {
-		unsigned char stationid;
-		unsigned char rspid;
-		unsigned char rcuid;
-		unsigned char sample_freq;
-		UInt32 seqnr;
-		Int32 time;
-		UInt32 sample_nr;
-		UInt16 n_samples_per_frame;
-		UInt16 n_freq_bands;
-		char bandsel[64];
-		Int16 spare;
-		UInt16 crc;
-	};
-
-	typedef struct TransientSample {
-		Int16 value;
-	};
-
-	typedef struct SpectralSample {
-		complex<Int16> value;
-	};
 
 	UInt32 payload_crc;
 
@@ -161,18 +139,10 @@ int main(int argc, char *argv[])
 		file.seekg (0, ios::beg);
 		int counter=0;
 
-		typedef struct AntennaStruct {
-			unsigned int rsp_id;
-			unsigned int rcu_id;
-			unsigned int time;
-			unsigned int sample_nr;
-			unsigned int samples_per_frame;
-			short data;
-			char feed[16];
-			double ant_position[ 3 ];
-			double ant_orientation[ 3 ];
-		} AntennaStruct;
-		
+		unsigned int sid[1];
+		double sf[1];
+		unsigned int spf[1];
+
 		// loop through the file
 		while ( !file.eof() ) {
 			counter++;
@@ -211,14 +181,14 @@ int main(int argc, char *argv[])
 			//    for the ANTENNA table
 			if ( first_sample ) {
 			
-				unsigned int foo[] = { (unsigned int)header.stationid };
-				AntennaTable->setAttribute_uint("STATION_ID", foo );
+				sid[0] = (unsigned int)header.stationid;
+				AntennaTable->setAttribute_uint("STATION_ID", sid );
 				
-				double sf[] = { (double)header.sample_freq };
+				sf[0] = (double)header.sample_freq;
 				AntennaTable->setAttribute_double("SAMPLE_FREQ", sf );
 				
-				foo[0] = (unsigned int)header.n_samples_per_frame;
-				AntennaTable->setAttribute_uint("DATA_LENGTH", foo );
+				spf[0] = (unsigned int)header.n_samples_per_frame;
+				AntennaTable->setAttribute_uint("DATA_LENGTH", spf );
 				
 				first_sample = false;
 			}
@@ -233,18 +203,18 @@ int main(int argc, char *argv[])
 			so that the writebuffer will be (88 * 1e6) or 88mb.
 			*/
 			const long BufferSIZE = header.n_samples_per_frame;
-	
+
 			typedef struct writebuffer {
 				AntennaStruct antenna;
 			} writebuffer;
 			
 			long wbsize = sizeof(writebuffer);  // in megabytes
 			//cout << "size of write buffer: " << wbsize << " mb" << endl;
-			writebuffer wb[1];
+			writebuffer wb[ header.n_samples_per_frame ];
 
 			// Read Payload
 			if ( 0==header.n_freq_bands ) {
-				for (unsigned int ii=0; ii < 10/*header.n_samples_per_frame*/; ii++) {
+				for (unsigned int ii=0; ii < header.n_samples_per_frame; ii++) {
 					file.read( reinterpret_cast<char *>(&tran_sample),
 							   sizeof(tran_sample) );
 					// reverse fields if big endian
@@ -252,21 +222,21 @@ int main(int argc, char *argv[])
 						tran_sample.value = Int16Swap( tran_sample.value );
 					//printf( "%hd,", tran_sample.value );
 
-					wb[0].antenna.rsp_id = (unsigned int)header.rspid;
-					wb[0].antenna.rcu_id = (unsigned int)header.rcuid;
-					wb[0].antenna.time = (unsigned int)header.time;
-					wb[0].antenna.sample_nr = (unsigned int)header.time;
-					wb[0].antenna.samples_per_frame = header.n_samples_per_frame;
-					wb[0].antenna.data = 5;
-					strcpy(wb[0].antenna.feed,"hello");
-					wb[0].antenna.ant_position[0] = 6;
-					wb[0].antenna.ant_position[1] = 7;
-					wb[0].antenna.ant_position[2] = 8;
-					wb[0].antenna.ant_orientation[0] = 9;
-					wb[0].antenna.ant_orientation[1] = 10;
-					wb[0].antenna.ant_orientation[2] = ii;
-					AntennaTable->appendRows( wb, 1 );
+					wb[ii].antenna.rsp_id = (unsigned int)header.rspid;
+					wb[ii].antenna.rcu_id = (unsigned int)header.rcuid;
+					wb[ii].antenna.time = (unsigned int)header.time;
+					wb[ii].antenna.sample_nr = (unsigned int)header.sample_nr;
+					wb[ii].antenna.samples_per_frame = header.n_samples_per_frame;
+					wb[ii].antenna.data = tran_sample.value;
+					strcpy(wb[ii].antenna.feed,"none");
+					wb[ii].antenna.ant_position[0] = 6;
+					wb[ii].antenna.ant_position[1] = 7;
+					wb[ii].antenna.ant_position[2] = 8;
+					wb[ii].antenna.ant_orientation[0] = 9;
+					wb[ii].antenna.ant_orientation[1] = 10;
+					wb[ii].antenna.ant_orientation[2] = ii;
 				}
+				AntennaTable->appendRows( wb, header.n_samples_per_frame );
 			} else {
 				Int16 real_part;
 				Int16 imag_part;
@@ -326,7 +296,7 @@ int main(int argc, char *argv[])
   		double noise_frequencies;
   } CalStruct;
 
-  CalStruct calibration[CALBufferSIZE];
+  CalStruct calibration[ CALBufferSIZE ];
   const int calLOOPMAX = 1;
   for ( int uu=0 ; uu < calLOOPMAX; uu++)
   {
