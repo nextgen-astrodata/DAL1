@@ -77,7 +77,7 @@ class dalTable{
 	void openTable( void * voidfile, string tablename, string groupname );
 	
 	void createTable( void * voidfile, string tablename, string groupname );
-	void addColumn( string colname, string coltype, unsigned int size=1 );  /// add a simple column
+	void addColumn( string colname, string coltype, int size=1 );  /// add a simple column
 	void addArrayColumn( string colname, string coltype, unsigned int dims );  /// add an array column
 	void addComplexColumn( string compname, vector<dalColumn>,
 				int subfields );  /// add a compound column
@@ -89,7 +89,6 @@ class dalTable{
 	void appendRows( void * data, long number_of_rows );
 	void listColumns( /*void * data_out, long start, long stop*/ );
 	void readRows( void * data_out, long start, long stop );
-void writeVLColumn( string colname, void * databuf, long row_count );
 	void getAttribute( string attrname );
 	//void setAttribute( string attrname, void * data, int size, string datatype );
 	void setAttribute_string( string attrname, string data );

@@ -188,20 +188,20 @@ int main(int argc, char *argv[])
 				AntennaTable->addColumn( "FEED", dal_STRING );
 				AntennaTable->addColumn( "ANT_POS", dal_DOUBLE, 3 );
 				AntennaTable->addColumn( "ANT_ORIENT", dal_DOUBLE, 3 );
-				AntennaTable->addColumn( "DATA", dal_SHORT, header.n_samples_per_frame );
+				AntennaTable->addColumn( "DATA", dal_SHORT, -1/*header.n_samples_per_frame*/ );
 
 				unsigned int foo[] = { (unsigned int)header.stationid };
 				AntennaTable->setAttribute_uint("STATION_ID", foo );
 	
 				// compute time
-				tm *time=localtime( reinterpret_cast<time_t*>(&header.time) );
+//				tm *time=localtime( reinterpret_cast<time_t*>(&header.time) );
 				/*
 				The AntennaStruct is ~88 bytes.  I use a buffer of 1,000,000
 				so that the writebuffer will be (88 * 1e6) or 88mb.
 				*/
-				const long BufferSIZE = header.n_samples_per_frame;
+//				const long BufferSIZE = header.n_samples_per_frame;
 	
-				long wbsize = sizeof(writebuffer);  // in megabytes
+//				long wbsize = sizeof(writebuffer);  // in megabytes
 				//cout << "size of write buffer: " << wbsize << " mb" << endl;
 
 				wb.antenna.data[0].p = malloc((header.n_samples_per_frame)*sizeof(short));
@@ -252,7 +252,7 @@ int main(int argc, char *argv[])
 				wb.antenna.ant_orientation[0] = 3;
 				wb.antenna.ant_orientation[1] = 2;
 				wb.antenna.ant_orientation[2] = 1;
-				AntennaTable->appendRows( &wb, 1 );
+				AntennaTable->appendRow(&wb);
 			} else {
 				Int16 real_part;
 				Int16 imag_part;

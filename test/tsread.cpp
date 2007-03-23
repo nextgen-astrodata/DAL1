@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
 
   for ( long ii = start; ii <= stop; ii ++ ) {
 
-	antennaTable->readRows( data_out, ii, /*startRow,*/ NUMBERROWS);
+	antennaTable->readRows( &data_out, ii, /*startRow,*/ NUMBERROWS);
 
 	// print some values from the read
 	for (int gg=0; gg < NUMBERROWS; gg++)
@@ -220,7 +220,6 @@ int main(int argc, char *argv[])
 		cout << setw(11) << data_out[gg].time;
 		cout << setw(11) << data_out[gg].sample_nr;
 		cout << setw(11) << data_out[gg].samples_per_frame;
-		//cout << setw(11) << data_out[gg].data[0];
 		cout << setw(11) << data_out[gg].feed;
 		antpos = '[' +
 			 stringify(data_out[gg].ant_position[0]) + ',' +
@@ -231,7 +230,13 @@ int main(int argc, char *argv[])
 			    stringify(data_out[gg].ant_orientation[0]) + ',' +
 			    stringify(data_out[gg].ant_orientation[1]) + ',' +
 			    stringify(data_out[gg].ant_orientation[2]) + ']';
-		cout << setw(11) << antorient;
+		cout << setw(11) << antorient << '\t';
+
+		// print data
+		for (unsigned int cc=0; cc<data_out[gg].samples_per_frame; cc++) {
+			cout << *( (short*)(data_out[gg].data[0].p) + cc ) << ',';
+		}
+		cout << '\b';
 		cout << endl;
 	}
 

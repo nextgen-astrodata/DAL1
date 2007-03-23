@@ -44,7 +44,6 @@ typedef struct AntennaStruct {
 	char feed[16];
 	double ant_position[ 3 ];
 	double ant_orientation[ 3 ];
-	//	Int16 * data;
 	hvl_t data[1];
 } AntennaStruct;
 

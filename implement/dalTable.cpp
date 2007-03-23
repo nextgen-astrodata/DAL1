@@ -106,33 +106,8 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 
 
 
-void dalTable::addColumn( string colname, string coltype, unsigned int size )
+void dalTable::addColumn( string colname, string coltype, int size )
 {
-
-
-if ( "DATA" == colname )
-{
-	// retrieve table information
-	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
-	
-	
-	// allocate space for the column/field names and retrieve them from
-	// the table
-	field_names = (char**)malloc( nfields * sizeof(char*) );
-	for (unsigned int ii=0; ii<nfields; ii++) {
-		field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
-	}
-	status = H5TBget_field_info( file_id, name.c_str(), field_names, NULL,
-					NULL, NULL );
-	
-	hid_t tid1 = H5Tvlen_create (H5T_NATIVE_SHORT);
-	hsize_t	position = nfields;
-	void * data; 
-	status = H5TBinsert_field( file_id, name.c_str(), "DATA",
-				tid1, position, NULL, data );
-	return;
-}
-	
 
 
 	// make sure the column name isn't blank
@@ -196,31 +171,54 @@ if ( "DATA" == colname )
 	}
 	
 	// set the column type
-	hid_t	field_type_new;	
-	if ( dal_INT == coltype )
-		field_type_new = H5T_NATIVE_INT;
-		
-	else if ( dal_UINT == coltype )
-		field_type_new = H5T_NATIVE_UINT;
-
-	else if ( dal_SHORT == coltype )
-		field_type_new = H5T_NATIVE_SHORT;
-
-	else if ( dal_FLOAT == coltype )
-		field_type_new = H5T_NATIVE_FLOAT;
-
-	else if ( dal_DOUBLE == coltype )
-		field_type_new = H5T_NATIVE_DOUBLE;
-		
-	else if ( dal_STRING == coltype ) {
-		field_type_new = H5Tcopy( H5T_C_S1 );
-		H5Tset_size( field_type_new, 16 );
-	}
+	hid_t	field_type_new;
+	if ( -1 == size )  // -1 for variable length data
+	{
+		if ( dal_INT == coltype )
+			field_type_new = H5Tvlen_create (H5T_NATIVE_INT);
+			
+		else if ( dal_UINT == coltype )
+			field_type_new = H5Tvlen_create (H5T_NATIVE_UINT);
 	
-	else {
-		cout << "ERROR: column type " << coltype << " is not supported."
-		     << endl;
-		exit(99);
+		else if ( dal_SHORT == coltype )
+			field_type_new = H5Tvlen_create (H5T_NATIVE_SHORT);
+	
+		else if ( dal_FLOAT == coltype )
+			field_type_new = H5Tvlen_create (H5T_NATIVE_FLOAT);
+	
+		else if ( dal_DOUBLE == coltype )
+			field_type_new = H5Tvlen_create (H5T_NATIVE_DOUBLE);
+			
+		else {
+			cout << "ERROR: column type " << coltype << " is not supported."
+			<< endl;
+			exit(98);
+		}
+	} else {
+		if ( dal_INT == coltype )
+			field_type_new = H5T_NATIVE_INT;
+			
+		else if ( dal_UINT == coltype )
+			field_type_new = H5T_NATIVE_UINT;
+	
+		else if ( dal_SHORT == coltype )
+			field_type_new = H5T_NATIVE_SHORT;
+	
+		else if ( dal_FLOAT == coltype )
+			field_type_new = H5T_NATIVE_FLOAT;
+	
+		else if ( dal_DOUBLE == coltype )
+			field_type_new = H5T_NATIVE_DOUBLE;
+			
+		else if ( dal_STRING == coltype ) {
+			field_type_new = H5Tcopy( H5T_C_S1 );
+			H5Tset_size( field_type_new, 16 );
+		}
+		else {
+			cout << "ERROR: column type " << coltype << " is not supported."
+			<< endl;
+			exit(99);
+		}
 	}
 	
 	// set additional required fields for new column call
@@ -547,29 +545,6 @@ void dalTable::appendRows( void * data, long row_count )
 	}
 	free( field_sizes );
 	free( field_offsets );
-}
-
-void dalTable::writeVLColumn( string colname, void * databuf, long row_count ){
-	size_t * field_sizes;
-	size_t * field_offsets;
-	size_t size_out;
-
-	size_t start = getNumberOfRows() - 1;
-	
-	// retrieve the input fields needed for the append_records call
-	H5TBget_table_info( file_id, name.c_str(), &nfields, &nrecords );
-	
-	field_sizes  = (size_t *)malloc((size_t)nfields * sizeof(size_t));
-	field_offsets = (size_t *)malloc((size_t)nfields * sizeof(size_t));
-
-	status = H5TBget_field_info( file_id, name.c_str(), NULL, field_sizes,
-							     field_offsets, &size_out );
-
-/*	AntennaStruct blah;
-	blah.data = 0;
-	status = H5TBwrite_fields_name( file_id, name.c_str(), "DATA", 1,
-					1, 1, field_offsets,field_sizes, &blah );
-*/
 }
 
 void dalTable::setAttribute_string( string attrname, string data ) {
