@@ -108,7 +108,33 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 
 void dalTable::addColumn( string colname, string coltype, unsigned int size )
 {
+
+
+if ( "DATA" == colname )
+{
+	// retrieve table information
+	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
 	
+	
+	// allocate space for the column/field names and retrieve them from
+	// the table
+	field_names = (char**)malloc( nfields * sizeof(char*) );
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+	}
+	status = H5TBget_field_info( file_id, name.c_str(), field_names, NULL,
+					NULL, NULL );
+	
+	hid_t tid1 = H5Tvlen_create (H5T_NATIVE_SHORT);
+	hsize_t	position = nfields;
+	void * data; 
+	status = H5TBinsert_field( file_id, name.c_str(), "DATA",
+				tid1, position, NULL, data );
+	return;
+}
+	
+
+
 	// make sure the column name isn't blank
 	if ( 0 == colname.length() ) {
 		cout << "WARNING: Trying to add column without a name.  Skipping."
@@ -538,13 +564,12 @@ void dalTable::writeVLColumn( string colname, void * databuf, long row_count ){
 
 	status = H5TBget_field_info( file_id, name.c_str(), NULL, field_sizes,
 							     field_offsets, &size_out );
-	
-	Int16 blah[ 1024 ];
-	for (int ja=0; ja<1024; ja++)
-		blah[ja]=1;
-	status = H5TBwrite_fields_name( file_id, name.c_str(), "DATA", 0,
-								    1, 1024, field_offsets,
-								    field_sizes, blah );
+
+/*	AntennaStruct blah;
+	blah.data = 0;
+	status = H5TBwrite_fields_name( file_id, name.c_str(), "DATA", 1,
+					1, 1, field_offsets,field_sizes, &blah );
+*/
 }
 
 void dalTable::setAttribute_string( string attrname, string data ) {

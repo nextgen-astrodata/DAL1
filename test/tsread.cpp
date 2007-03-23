@@ -220,7 +220,7 @@ int main(int argc, char *argv[])
 		cout << setw(11) << data_out[gg].time;
 		cout << setw(11) << data_out[gg].sample_nr;
 		cout << setw(11) << data_out[gg].samples_per_frame;
-		cout << setw(11) << data_out[gg].data[0];
+		//cout << setw(11) << data_out[gg].data[0];
 		cout << setw(11) << data_out[gg].feed;
 		antpos = '[' +
 			 stringify(data_out[gg].ant_position[0]) + ',' +

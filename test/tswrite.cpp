@@ -103,7 +103,6 @@ int main(int argc, char *argv[])
   // read the RAW TBB input data
   /////////////////////////////////////////
   //
-
 	ifstream::pos_type size=0;		// buffer size
 
 	// define memory buffers
@@ -130,6 +129,8 @@ int main(int argc, char *argv[])
 		char sid[1];
 		double sf[1];
 		unsigned int spf[1];
+
+		writebuffer wb;
 
 		// loop through the file
 		while ( !file.eof() ) {
@@ -189,35 +190,34 @@ int main(int argc, char *argv[])
 				AntennaTable->addColumn( "ANT_ORIENT", dal_DOUBLE, 3 );
 				AntennaTable->addColumn( "DATA", dal_SHORT, header.n_samples_per_frame );
 
+				unsigned int foo[] = { (unsigned int)header.stationid };
+				AntennaTable->setAttribute_uint("STATION_ID", foo );
+	
+				// compute time
+				tm *time=localtime( reinterpret_cast<time_t*>(&header.time) );
+				/*
+				The AntennaStruct is ~88 bytes.  I use a buffer of 1,000,000
+				so that the writebuffer will be (88 * 1e6) or 88mb.
+				*/
+				const long BufferSIZE = header.n_samples_per_frame;
+	
+				long wbsize = sizeof(writebuffer);  // in megabytes
+				//cout << "size of write buffer: " << wbsize << " mb" << endl;
+
+				wb.antenna.data[0].p = malloc((header.n_samples_per_frame)*sizeof(short));
+				wb.antenna.data[0].len = header.n_samples_per_frame;
+				//wb.antenna.data = new Int16[ header.n_samples_per_frame ];
+				//memset(wb.antenna.data, 0, sizeof(Int16)*header.n_samples_per_frame);
+
 				first_sample = false;
 			}
 
-			unsigned int foo[] = { (unsigned int)header.stationid };
-			AntennaTable->setAttribute_uint("STATION_ID", foo );
-
-			// compute time
-			tm *time=localtime( reinterpret_cast<time_t*>(&header.time) );
-			/*
-			The AntennaStruct is ~88 bytes.  I use a buffer of 1,000,000
-			so that the writebuffer will be (88 * 1e6) or 88mb.
-			*/
-			const long BufferSIZE = header.n_samples_per_frame;
-
-			typedef struct writebuffer {
-				AntennaStruct antenna;
-			} writebuffer;
-			
-			long wbsize = sizeof(writebuffer);  // in megabytes
-			//cout << "size of write buffer: " << wbsize << " mb" << endl;
-			writebuffer wb;
-
-			// initialize writebuffer
+			// (re)initialize writebuffer
 			wb.antenna.rsp_id = 0;
 			wb.antenna.rcu_id = 0;
 			wb.antenna.time = 0;
 			wb.antenna.sample_nr = 0;
 			wb.antenna.samples_per_frame = 0;
-			//wb.antenna.data.clear();
 			strcpy(wb.antenna.feed, "");
 			wb.antenna.ant_position[0] = 0;
 			wb.antenna.ant_position[1] = 0;
@@ -225,9 +225,6 @@ int main(int argc, char *argv[])
 			wb.antenna.ant_orientation[0] = 0;
 			wb.antenna.ant_orientation[1] = 0;
 			wb.antenna.ant_orientation[2] = 0;
-
-			wb.antenna.data = (short*)malloc( header.n_samples_per_frame * sizeof(short) );
-			memset(wb.antenna.data, 0, sizeof(Int16)*header.n_samples_per_frame);
 
 			// Read Payload
 			if ( 0==header.n_freq_bands ) {
@@ -245,8 +242,7 @@ int main(int argc, char *argv[])
 						sizeof(tran_sample) );
 					if ( bigendian )  // reverse fields if big endian
 						tran_sample.value = Int16Swap( tran_sample.value );
-
-					wb.antenna.data[zz] = (short)tran_sample.value;
+					((short *)wb.antenna.data[0].p)[zz] = tran_sample.value;
 				}
 
 				strcpy(wb.antenna.feed,"none");
@@ -257,7 +253,6 @@ int main(int argc, char *argv[])
 				wb.antenna.ant_orientation[1] = 2;
 				wb.antenna.ant_orientation[2] = 1;
 				AntennaTable->appendRows( &wb, 1 );
-				//AntennaTable->writeVLColumn( "DATA", wb.antenna.data, 1 );
 			} else {
 				Int16 real_part;
 				Int16 imag_part;
@@ -279,9 +274,10 @@ int main(int argc, char *argv[])
 						
 			file.read( reinterpret_cast<char *>(&payload_crc),
 					   sizeof(payload_crc) );
-			free( wb.antenna.data );
 		}
-		
+		if (wb.antenna.data[0].p)
+			free(wb.antenna.data[0].p);
+ 
 		file.close();
 		delete[] memblock;
 	}

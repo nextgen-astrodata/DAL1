@@ -44,8 +44,13 @@ typedef struct AntennaStruct {
 	char feed[16];
 	double ant_position[ 3 ];
 	double ant_orientation[ 3 ];
-	short * data;
+	//	Int16 * data;
+	hvl_t data[1];
 } AntennaStruct;
+
+typedef struct writebuffer {
+	AntennaStruct antenna;
+} writebuffer;
 
 typedef struct TBB_Header {
 	unsigned char stationid;
