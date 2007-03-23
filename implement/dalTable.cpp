@@ -523,6 +523,30 @@ void dalTable::appendRows( void * data, long row_count )
 	free( field_offsets );
 }
 
+void dalTable::writeVLColumn( string colname, void * databuf, long row_count ){
+	size_t * field_sizes;
+	size_t * field_offsets;
+	size_t size_out;
+
+	size_t start = getNumberOfRows() - 1;
+	
+	// retrieve the input fields needed for the append_records call
+	H5TBget_table_info( file_id, name.c_str(), &nfields, &nrecords );
+	
+	field_sizes  = (size_t *)malloc((size_t)nfields * sizeof(size_t));
+	field_offsets = (size_t *)malloc((size_t)nfields * sizeof(size_t));
+
+	status = H5TBget_field_info( file_id, name.c_str(), NULL, field_sizes,
+							     field_offsets, &size_out );
+	
+	Int16 blah[ 1024 ];
+	for (int ja=0; ja<1024; ja++)
+		blah[ja]=1;
+	status = H5TBwrite_fields_name( file_id, name.c_str(), "DATA", 0,
+								    1, 1024, field_offsets,
+								    field_sizes, blah );
+}
+
 void dalTable::setAttribute_string( string attrname, string data ) {
 	if ( H5LTset_attribute_string( file_id, name.c_str(),
 					attrname.c_str(), data.c_str() ) < 0 ) {

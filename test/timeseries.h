@@ -41,10 +41,10 @@ typedef struct AntennaStruct {
 	unsigned int time;
 	unsigned int sample_nr;
 	unsigned int samples_per_frame;
-	short data[1024];
 	char feed[16];
 	double ant_position[ 3 ];
 	double ant_orientation[ 3 ];
+	short * data;
 } AntennaStruct;
 
 typedef struct TBB_Header {
