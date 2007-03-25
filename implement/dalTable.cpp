@@ -223,11 +223,10 @@ void dalTable::addColumn( string colname, string coltype, int size )
 	
 	// set additional required fields for new column call
 	hsize_t	position = nfields;
-	void * data; 
 
 	// create the new column
 	status = H5TBinsert_field( file_id, name.c_str(), colname.c_str(),
-				   field_type_new, position, NULL, data );
+				   field_type_new, position, NULL, NULL );
 
 	if ( removedummy )
 		removeColumn("000dummy000");
