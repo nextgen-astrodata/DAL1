@@ -173,12 +173,14 @@ int main(int argc, char *argv[])
   
   cout << "ANTENNA Table attributes:" << endl << endl;
   //antennaTable->getAttributes();
-  if ( double * sample_freq = reinterpret_cast<double*>(antennaTable->getAttribute("SAMPLE_FREQ")) )
+double * sample_freq;
+unsigned int * data_length;
+  /*if (*/ (sample_freq = reinterpret_cast<double*>(antennaTable->getAttribute("SAMPLE_FREQ"))) ;//)
     cout << "Sample Freq = " << *sample_freq << " Mhz" << endl;
-  if ( unsigned int * data_length = reinterpret_cast<unsigned int*>(antennaTable->getAttribute("DATA_LENGTH")) )
+  /*if (*/ (data_length = reinterpret_cast<unsigned int*>(antennaTable->getAttribute("DATA_LENGTH"))) ;//)
     cout << "Data length = " << *data_length << " frames" << endl;
   cout << endl;
-  
+
   long maximum = antennaTable->getNumberOfRows();
   if ( maximum <= 0 ) {
 	cout << table << " table contains no rows." << endl;
@@ -221,10 +223,11 @@ int main(int argc, char *argv[])
 		/* compute time */
 		time_t mytime = data_out[gg].time;
                 tm *time=localtime( reinterpret_cast<time_t*>(&mytime) );
-                string time_str = ' ' + stringify(time->tm_year+1900) + '/' +
-			stringify(time->tm_mon+1) + '/' +
+                string time_str = stringify(time->tm_mon+1) + '/' +
 			stringify(time->tm_mday) + ' ' +
-			stringify(time->tm_hour) + ':' + stringify(time->tm_min);
+			stringify(time->tm_hour) + ':' +
+			stringify(time->tm_min) + ':' +
+			stringify(time->tm_sec);
 		cout << setw(17) << time_str;
 		cout << setw(17) << data_out[gg].sample_nr;
 		cout << setw(17) << data_out[gg].samples_per_frame;
