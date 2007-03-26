@@ -175,11 +175,7 @@ int main(int argc, char *argv[])
 				AntennaTable->addColumn( "FEED", dal_STRING );
 				AntennaTable->addColumn( "ANT_POS", dal_DOUBLE, 3 );
 				AntennaTable->addColumn( "ANT_ORIENT", dal_DOUBLE, 3 );
-				if ( 0==header.n_freq_bands ) {
-					AntennaTable->addColumn( "DATA", dal_SHORT, -1 );
-				} else {
-					AntennaTable->addColumn( "DATA", dal_INT, -1 );
-				}
+				AntennaTable->addColumn( "DATA", dal_SHORT, -1 );
 
 				unsigned int foo[] = { (unsigned int)header.stationid };
 				AntennaTable->setAttribute_uint("STATION_ID", foo );
@@ -192,12 +188,15 @@ int main(int argc, char *argv[])
 
 				if ( 0!=header.n_freq_bands ) {
 					stationGroup->setAttribute_string("OBS_MODE", "Sub-band" );
+					wb.antenna.data[0].p =
+					malloc((header.n_samples_per_frame*2)*sizeof(short));
+					wb.antenna.data[0].len = header.n_samples_per_frame*2;
 				}
-
-				wb.antenna.data[0].p =
-				 malloc((header.n_samples_per_frame)*sizeof(short));
-				wb.antenna.data[0].len = header.n_samples_per_frame;
-
+				else {
+					wb.antenna.data[0].p =
+					malloc((header.n_samples_per_frame)*sizeof(short));
+					wb.antenna.data[0].len = header.n_samples_per_frame;
+				}
 				first_sample = false;
 			}
 
@@ -244,7 +243,7 @@ int main(int argc, char *argv[])
 				AntennaTable->appendRow(&wb);
 			} else {
 				Int16 real_part, imag_part;
-				for (unsigned int ii=0; ii < header.n_samples_per_frame; ii++) {
+				for (int ii=0; ii < (header.n_samples_per_frame*2); ii+=2) {
 					file.read( reinterpret_cast<char *>(&spec_sample),
 							   sizeof(spec_sample) );
 					// reverse fields if big endian
@@ -257,6 +256,8 @@ int main(int argc, char *argv[])
 						real_part = real(spec_sample.value);
 						imag_part = imag(spec_sample.value);
 					}
+					((short *)wb.antenna.data[0].p)[ii] = real_part;
+					((short *)wb.antenna.data[0].p)[ii+1] = imag_part;
 				}
 
 				wb.antenna.sample_nr = (unsigned int)header.sample_nr;
