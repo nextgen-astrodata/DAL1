@@ -71,10 +71,10 @@ int main(int argc, char *argv[])
   dalGroup * stationGroup = dataset->createGroup( "Station" );
 
   string telescope = "LOFAR";
-  string observer = "Iba User";
+  string observer = "J.S. Masters";
   string project = "Transients";
   string observation_id = "1287";
-  string observation_mode = "Standard";
+  string observation_mode = "TransientDetection";
   string trigger_type = "Unknown";
   double trigger_offset[1] = { 0 };
   int triggered_antennas[1] = { 0 };
@@ -84,12 +84,12 @@ int main(int argc, char *argv[])
   stationGroup->setAttribute_string("TELESCOPE", telescope );
   stationGroup->setAttribute_string("OBSERVER", observer );
   stationGroup->setAttribute_string("PROJECT", project );
-  stationGroup->setAttribute_string("OBSERVATION_ID", observation_id );
-  stationGroup->setAttribute_string("OBSERVATION_MODE", observation_mode );
-  stationGroup->setAttribute_string("TRIGGER_TYPE", trigger_type );
-  stationGroup->setAttribute_double("TRIGGER_OFFSET", trigger_offset );
-  stationGroup->setAttribute_int("TRIGGERED_ANTENNAS", triggered_antennas );
-  stationGroup->setAttribute_double("BEAM_DIRECTION", beam_direction, 2 );
+  stationGroup->setAttribute_string("OBS_ID", observation_id );
+  stationGroup->setAttribute_string("OBS_MODE", observation_mode );
+  stationGroup->setAttribute_string("TRIG_TYPE", trigger_type );
+  stationGroup->setAttribute_double("TRIG_OFST", trigger_offset );
+  stationGroup->setAttribute_int(   "TRIG_ANTS", triggered_antennas );
+  stationGroup->setAttribute_double("BEAM_DIR", beam_direction, 2 );
 
   //
   /////////////////////////////////////////
@@ -125,10 +125,6 @@ int main(int argc, char *argv[])
 		memblock = new unsigned char [size];
 		file.seekg (0, ios::beg);
 		int counter=0;
-
-		char sid[1];
-		double sf[1];
-		unsigned int spf[1];
 
 		writebuffer wb;
 
@@ -170,15 +166,6 @@ int main(int argc, char *argv[])
 			//    for the ANTENNA table
 			if ( first_sample ) {
 			
-				sid[0] = (char)header.stationid;
-				AntennaTable->setAttribute_char("STATION_ID", sid, 1 );
-				
-				sf[0] = (double)header.sample_freq;
-				AntennaTable->setAttribute_double("SAMPLE_FREQ", sf );
-
-				spf[0] = (unsigned int)header.n_samples_per_frame;
-				AntennaTable->setAttribute_uint("DATA_LENGTH", spf );
-				
 				// add columns to ANTENNA table
 				AntennaTable->addColumn( "RSP_ID", dal_UINT );  // simple column
 				AntennaTable->addColumn( "RCU_ID", dal_UINT );  // simple column
@@ -188,26 +175,28 @@ int main(int argc, char *argv[])
 				AntennaTable->addColumn( "FEED", dal_STRING );
 				AntennaTable->addColumn( "ANT_POS", dal_DOUBLE, 3 );
 				AntennaTable->addColumn( "ANT_ORIENT", dal_DOUBLE, 3 );
-				AntennaTable->addColumn( "DATA", dal_SHORT, -1/*header.n_samples_per_frame*/ );
+				if ( 0==header.n_freq_bands ) {
+					AntennaTable->addColumn( "DATA", dal_SHORT, -1 );
+				} else {
+					AntennaTable->addColumn( "DATA", dal_INT, -1 );
+				}
 
 				unsigned int foo[] = { (unsigned int)header.stationid };
 				AntennaTable->setAttribute_uint("STATION_ID", foo );
 	
-				// compute time
-//				tm *time=localtime( reinterpret_cast<time_t*>(&header.time) );
-				/*
-				The AntennaStruct is ~88 bytes.  I use a buffer of 1,000,000
-				so that the writebuffer will be (88 * 1e6) or 88mb.
-				*/
-//				const long BufferSIZE = header.n_samples_per_frame;
-	
-//				long wbsize = sizeof(writebuffer);  // in megabytes
-				//cout << "size of write buffer: " << wbsize << " mb" << endl;
+				double sf[] = { (double)header.sample_freq };
+				AntennaTable->setAttribute_double("SAMPLE_FREQ", sf );
 
-				wb.antenna.data[0].p = malloc((header.n_samples_per_frame)*sizeof(short));
+				unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
+				AntennaTable->setAttribute_uint("DATA_LENGTH", spf );
+
+				if ( 0!=header.n_freq_bands ) {
+					stationGroup->setAttribute_string("OBS_MODE", "Sub-band" );
+				}
+
+				wb.antenna.data[0].p =
+				 malloc((header.n_samples_per_frame)*sizeof(short));
 				wb.antenna.data[0].len = header.n_samples_per_frame;
-				//wb.antenna.data = new Int16[ header.n_samples_per_frame ];
-				//memset(wb.antenna.data, 0, sizeof(Int16)*header.n_samples_per_frame);
 
 				first_sample = false;
 			}
@@ -226,13 +215,13 @@ int main(int argc, char *argv[])
 			wb.antenna.ant_orientation[1] = 0;
 			wb.antenna.ant_orientation[2] = 0;
 
+			wb.antenna.rsp_id = (unsigned int)header.rspid;
+			wb.antenna.rcu_id = (unsigned int)header.rcuid;
+			wb.antenna.time = (unsigned int)header.time;
+
 			// Read Payload
 			if ( 0==header.n_freq_bands ) {
 
-
-				wb.antenna.rsp_id = (unsigned int)header.rspid;
-				wb.antenna.rcu_id = (unsigned int)header.rcuid;
-				wb.antenna.time = (unsigned int)header.time;
 				wb.antenna.sample_nr = (unsigned int)header.sample_nr;
 				wb.antenna.samples_per_frame = header.n_samples_per_frame;
 
@@ -254,8 +243,7 @@ int main(int argc, char *argv[])
 				wb.antenna.ant_orientation[2] = 1;
 				AntennaTable->appendRow(&wb);
 			} else {
-				Int16 real_part;
-				Int16 imag_part;
+				Int16 real_part, imag_part;
 				for (unsigned int ii=0; ii < header.n_samples_per_frame; ii++) {
 					file.read( reinterpret_cast<char *>(&spec_sample),
 							   sizeof(spec_sample) );
@@ -270,6 +258,18 @@ int main(int argc, char *argv[])
 						imag_part = imag(spec_sample.value);
 					}
 				}
+
+				wb.antenna.sample_nr = (unsigned int)header.sample_nr;
+				wb.antenna.samples_per_frame = header.n_samples_per_frame;
+
+				strcpy(wb.antenna.feed,"none");
+				wb.antenna.ant_position[0] = 6;
+				wb.antenna.ant_position[1] = 7;
+				wb.antenna.ant_position[2] = 8;
+				wb.antenna.ant_orientation[0] = 3;
+				wb.antenna.ant_orientation[1] = 2;
+				wb.antenna.ant_orientation[2] = 1;
+				AntennaTable->appendRow(&wb);
 			}
 						
 			file.read( reinterpret_cast<char *>(&payload_crc),

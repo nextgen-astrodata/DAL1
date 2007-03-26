@@ -173,9 +173,10 @@ int main(int argc, char *argv[])
   
   cout << "ANTENNA Table attributes:" << endl << endl;
   //antennaTable->getAttributes();
-  antennaTable->getAttribute("STATION_ID");
-  antennaTable->getAttribute("SAMPLE_FREQ");
-  antennaTable->getAttribute("DATA_LENGTH");
+  if ( double * sample_freq = reinterpret_cast<double*>(antennaTable->getAttribute("SAMPLE_FREQ")) )
+    cout << "Sample Freq = " << *sample_freq << " Mhz" << endl;
+  if ( unsigned int * data_length = reinterpret_cast<unsigned int*>(antennaTable->getAttribute("DATA_LENGTH")) )
+    cout << "Data length = " << *data_length << " frames" << endl;
   cout << endl;
   
   long maximum = antennaTable->getNumberOfRows();
@@ -215,28 +216,46 @@ int main(int argc, char *argv[])
 	// print some values from the read
 	for (int gg=0; gg < NUMBERROWS; gg++)
 	{
-		cout << setw(11) << data_out[gg].rsp_id;
-		cout << setw(11) << data_out[gg].rcu_id;
-		cout << setw(11) << data_out[gg].time;
-		cout << setw(11) << data_out[gg].sample_nr;
-		cout << setw(11) << data_out[gg].samples_per_frame;
-		cout << setw(11) << data_out[gg].feed;
+		cout << setw(17) << data_out[gg].rsp_id;
+		cout << setw(17) << data_out[gg].rcu_id;
+		/* compute time */
+		time_t mytime = data_out[gg].time;
+                tm *time=localtime( reinterpret_cast<time_t*>(&mytime) );
+                string time_str = ' ' + stringify(time->tm_year+1900) + '/' +
+			stringify(time->tm_mon+1) + '/' +
+			stringify(time->tm_mday) + ' ' +
+			stringify(time->tm_hour) + ':' + stringify(time->tm_min);
+		cout << setw(17) << time_str;
+		cout << setw(17) << data_out[gg].sample_nr;
+		cout << setw(17) << data_out[gg].samples_per_frame;
+		cout << setw(17) << data_out[gg].feed;
 		antpos = '[' +
 			 stringify(data_out[gg].ant_position[0]) + ',' +
 			 stringify(data_out[gg].ant_position[1]) + ',' +
 			 stringify(data_out[gg].ant_position[2]) + ']';
-		cout << setw(11) << antpos;
+		cout << setw(17) << antpos;
 		antorient = '[' +
 			    stringify(data_out[gg].ant_orientation[0]) + ',' +
 			    stringify(data_out[gg].ant_orientation[1]) + ',' +
 			    stringify(data_out[gg].ant_orientation[2]) + ']';
-		cout << setw(11) << antorient << '\t';
+		cout << setw(17) << antorient << '\t';
 
 		// print data
-		for (unsigned int cc=0; cc<data_out[gg].samples_per_frame; cc++) {
-			cout << *( (short*)(data_out[gg].data[0].p) + cc ) << ',';
+		char * mystr = reinterpret_cast<char*>(stationGroup->getAttribute("OBS_MODE"));
+		if ( 0 == strcmp("Sub-band",mystr) ) {
+			for (unsigned int cc=0; cc<data_out[gg].samples_per_frame; cc+=2) {
+				cout << '(';
+				cout << *( (short*)(data_out[gg].data[0].p) + cc ) << ',';
+				cout << *( (short*)(data_out[gg].data[0].p) + (cc+1) );
+				cout << "),";
+			}
+			cout << '\b';
+		} else {
+			for (unsigned int cc=0; cc<data_out[gg].samples_per_frame; cc++) {
+				cout << *( (short*)(data_out[gg].data[0].p) + cc ) << ',';
+			}
+			cout << '\b';
 		}
-		cout << '\b';
 		cout << endl;
 	}
 

@@ -30,6 +30,7 @@
 #endif
 
 #include <vector>
+#include <time.h> // for local time conversion
 
 const Int32 ETHEREAL_HEADER_LENGTH = 46;
 const Int32 FIRST_EXTRA_HDR_LENGTH = 40;

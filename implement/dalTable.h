@@ -89,14 +89,15 @@ class dalTable{
 	void appendRows( void * data, long number_of_rows );
 	void listColumns( /*void * data_out, long start, long stop*/ );
 	void readRows( void * data_out, long start, long stop );
-	void getAttribute( string attrname );
+	void * getAttribute( string attrname );
+	void printAttribute( string attrname );
 	//void setAttribute( string attrname, void * data, int size, string datatype );
 	void setAttribute_string( string attrname, string data );
 	void setAttribute_char( string attrname, char * data, int size=1 );
 	void setAttribute_int( string attrname, int * data, int size=1 );
 	void setAttribute_uint( string attrname, unsigned int * data, int size=1 );
 	void setAttribute_double( string attrname, double * data, int size=1 );
-
+	bool findAttribute( string attrname );
 	int getNumberOfColumns();  /// return the number of columns in a table
 	long getNumberOfRows();  /// return the number of rows within a table
 	int setRowNumber();  /// advance to a row by its index

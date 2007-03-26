@@ -604,7 +604,7 @@ void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
 				     field_sizes, field_offsets, size_out );
 
 	for (unsigned int ii=0; ii<nfields; ii++) {
-		cout << setw(11) << field_names[ii];
+		cout << setw(17) << field_names[ii];
 	}
 	cout << endl;
 }
@@ -645,7 +645,17 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs )
 	}
 }
 
-void dalTable::getAttribute( string attrname ) {
+bool dalTable::findAttribute( string attrname )
+{
+	if ( H5LT_find_attribute( table_id, attrname.c_str() ) <= 0 ) {
+		cout << "Attribute " << attrname << " not found." << endl;
+		return false;
+	} else {
+		return true;
+	}
+}
+
+void dalTable::printAttribute( string attrname ) {
 
 	hsize_t * dims;
 	H5T_class_t type_class;
@@ -709,5 +719,58 @@ void dalTable::getAttribute( string attrname ) {
 	}
 	else {
 		cout << "Attribute " << attrname << " type unknown." << endl;
+	}
+}
+
+void * dalTable::getAttribute( string attrname ) {
+
+	hsize_t * dims;
+	H5T_class_t type_class;
+	size_t type_size;
+
+	// Check if attribute exists
+	if ( H5LT_find_attribute( table_id, attrname.c_str() ) <= 0 ) {
+		return NULL;
+	}
+	
+	string fullname = "/" + name;
+
+	int rank;
+	H5LTget_attribute_ndims(file_id,fullname.c_str(),attrname.c_str(),&rank );
+
+	dims = (hsize_t *)malloc(rank * sizeof(hsize_t));
+
+	H5LTget_attribute_info( file_id, fullname.c_str(), attrname.c_str(),
+				dims, &type_class, &type_size );
+
+	if ( H5T_FLOAT == type_class ) {
+		double data[*dims];
+		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
+			 H5T_NATIVE_DOUBLE, data) )
+		  return NULL;
+		else
+		  return data;
+	}
+	else if ( H5T_INTEGER == type_class ) {
+		int data[*dims];
+		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
+			H5T_NATIVE_INT, data) )
+		  return NULL;
+		else
+		  return data;
+	}
+	else if ( H5T_STRING == type_class ) {
+		char* data;
+		string fullname = "/" + name;
+		data = (char *)malloc(rank * sizeof(char));
+		if ( 0 < H5LTget_attribute_string( file_id, fullname.c_str(),
+			  attrname.c_str(),data) )
+		  return NULL;
+		else
+		  return data;
+	}
+	else
+	{
+		return NULL;
 	}
 }
