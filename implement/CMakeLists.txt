@@ -39,7 +39,7 @@ add_library(dal STATIC
 #  l_member.cpp
   )
 
-target_link_libraries(dal hdf5 hdf5_cpp hdf5_hl z m cfitsio)
+target_link_libraries(dal hdf5 hdf5_cpp hdf5_hl z m ${CFITSIO_LIBRARIES})
 
 #add_executable(msread msread.cpp)
 #add_executable(mswrite mswrite.cpp)
