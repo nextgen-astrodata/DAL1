@@ -10,7 +10,13 @@ subdirs (
   test
 )
 
-## search for required external components
+## ------------------------------------------------------------------------------
+## External dependencies
 
-include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindHDF5.cmake)
-include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindCFITSIO.cmake)
+if (NOT HAVE_HDF5)
+  include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindHDF5.cmake)
+endif (NOT HAVE_HDF5)
+
+if (NOT HAVE_CFITSIO)
+  include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindCFITSIO.cmake)
+endif (NOT HAVE_CFITSIO)
