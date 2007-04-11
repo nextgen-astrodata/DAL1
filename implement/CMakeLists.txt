@@ -20,11 +20,13 @@ include_directories(
   ${DAL_SOURCE_DIR}/implement
   ${HDF5_INCLUDES}
   ${CFITSIO_INCLUDES}
+  ${BLITZ_INCLUDES}
   )
 
 link_directories(
   ${HDF5_LIBRARIES}
   ${CFITSIO_LIBRARIES}
+  ${BLITZ_LIBRARIES}
   )
 
 

@@ -20,3 +20,7 @@ endif (NOT HAVE_HDF5)
 if (NOT HAVE_CFITSIO)
   include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindCFITSIO.cmake)
 endif (NOT HAVE_CFITSIO)
+
+if (NOT HAVE_BLITZ)
+  include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindBlitz.cmake)
+endif (NOT HAVE_BLITZ)
