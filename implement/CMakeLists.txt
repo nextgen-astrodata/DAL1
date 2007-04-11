@@ -37,6 +37,7 @@ add_library(dal STATIC
   dalRow.cpp
   dalBaseTypes.cpp 
 #  l_member.cpp
+dalLopesEvent.cpp
   )
 
 target_link_libraries(dal hdf5 hdf5_cpp hdf5_hl z m ${CFITSIO_LIBRARIES})
