@@ -24,6 +24,7 @@
 #define LOPESEVENTIN_H
 
 #include <string>
+#include <iostream>
 #include <blitz/array.h>
 
 // Custom header files
@@ -38,183 +39,175 @@ using blitz::neverDeleteData;
 using blitz::Range;
 using blitz::shape;
 
-namespace CR { // Namespace CR -- begin
-  
-  //! Not more than 30 antennas available (yet).
+//! Not more than 30 antennas available (yet).
 #define MAX_NUM_ANTENNAS 31
-  //! LOPES et al. have a (fixed) samplerate of 80 MSPS
+//! LOPES et al. have a (fixed) samplerate of 80 MSPS
 #define LOPES_SAMPLERATE 80e6 
-  //! LOPES and LORUN work in the 2nd Nyquist zone.
+//! LOPES and LORUN work in the 2nd Nyquist zone.
 #define LOPES_NYQUIST_ZONE 2
-    
+
+/*!
+  \class dalLopesEvent
+  
+  \brief Read in LOPES event files
+  
+  \author Andreas Horneffer, Lars B&auml;hren
+  
+  \date 2006/12/14
+  
+  \test tdalLopesEvent.cc
+  
+  <h3>Prerequisite</h3>
+  
+  <h3>Synopsis</h3>
+  
+  This is a port of Andreas Horneffer's original LopesEventIn class as
+  distributed with the LOPES-Tools software package. The main difference
+  w.r.t. the original implementation is, that (a) there is no longer any
+  dependency on the DataReader class and (b) the usage of CASA arrays has
+  been replaced by the corresponding objects of the Blitz library.
+  
+  <h3>Example(s)</h3>
+  
+*/  
+class dalLopesEvent {
+  
+ public:
+  
+  // --------------------------------------------------------------- Data
+  
   /*!
-    \class dalLopesEvent
-    
-    \brief Read in LOPES event files
-    
-    \author Andreas Horneffer, Lars B&auml;hren
-    
-    \date 2006/12/14
-    
-    \test tdalLopesEvent.cc
-    
-    <h3>Prerequisite</h3>
-    
-    <h3>Synopsis</h3>
-    
-    This is a port of Andreas Horneffer's original LopesEventIn class as
-    distributed with the LOPES-Tools software package. The main difference
-    w.r.t. the original implementation is, that (a) there is no longer any
-    dependency on the DataReader class and (b) the usage of CASA arrays has
-    been replaced by the corresponding objects of the Blitz library.
-
-    <h3>Example(s)</h3>
-    
-  */  
-  class dalLopesEvent {
-    
-  public:
-    
-    // ------------------------------------------------------------- Data
-    
-    /*!
-      \brief Type of event for which the data have been stored
+    \brief Type of event for which the data have been stored
+  */
+  enum EvType {
+    //! Unspecified event
+    Unspecified,
+    //! Cosmic ray
+    Cosmic,
+    //! Simulation output
+    Simulation,
+    //! Test event
+    Test,
+    //! Solar flare event
+    SolarFlare,
+    //! Other, not further specified event
+    Other
+  };
+  
+  /*!
+    \brief List of observatories from which to expect data
+  */
+  enum Observatory {
+    //! LOFAR Prototype Station
+    LOPES,
+    //! LOFAR at Radboud Universiteit Nijmegen
+    LORUN
+  };
+  
+ private:
+  
+  //! filename (incl. path) of the file to be read
+  string filename_p;
+  
+  //! Is this object attached to a file?
+  bool attached_p;
+  
+  //! Pointer to the (header-)data
+  lopesevent *headerpoint_p;
+  
+  //! Number of antennas in the event
+  int NumAntennas_p;
+  
+  //! Matrix with the data itself
+  Array<short,2> channeldata_p;
+  
+  //! Vector with the antenna IDs
+  Array<int,1> AntennaIDs_p;
+  
+ public:
+  
+  // --------------------------------------------------------------- Construction
+  
+  /*!
+    \brief Default constructor
     */
-    enum EvType {
-      //! Unspecified event
-      Unspecified,
-      //! Cosmic ray
-      Cosmic,
-      //! Simulation output
-      Simulation,
-      //! Test event
-      Test,
-      //! Solar flare event
-      SolarFlare,
-      //! Other, not further specified event
-      Other
-    };
+  dalLopesEvent();
+  
+  /*!
+    \brief Augmented constructor
     
-    /*!
-      \brief List of observatories from which to expect data
-    */
-    enum Observatory {
-      //! LOFAR Prototype Station
-      LOPES,
-      //! LOFAR at Radboud Universiteit Nijmegen
-      LORUN
-    };
+    \param filename -- name (incl. path) of the lopes-eventfile to be read.
+  */
+  dalLopesEvent(string filename);
+  
+  // ---------------------------------------------------------------- Destruction
+  
+  /*!
+    \brief Destructor
+  */
+  virtual ~dalLopesEvent();
+  
+  // ------------------------------------------------------------------ Operators
+  
+  // -------------------------------------------------------------------- Methods
+  
+  /*!
+    \brief Attach to a (another) lopes-eventfile
     
-
-  private:
-
-    //! filename (incl. path) of the file to be read
-    string filename_p;
-
-    //! Is this object attached to a file?
-    bool attached_p;
+    \param filename -- name (incl. path) of the lopes-eventfile to be read.
     
-    //! Pointer to the (header-)data
-    lopesevent *headerpoint_p;
-
-    //! Number of antennas in the event
-    int NumAntennas_p;
+    \return ok -- True if successfull
+  */
+  bool attachFile (string filename);
+  
+  // ----------------------------------------------------------------- Parameters
+  
+  /*!
+    \brief Get the name of the data file.
     
-    //! Matrix with the data itself
-    Array<short,2> channeldata_p;
-
-    //! Vector with the antenna IDs
-    Array<int,1> AntennaIDs_p;
+    \return filename -- Name of the data file 
+  */
+  inline string  filename() {
+    return filename_p;
+  }
+  
+  /*!
+    \brief Get the samplerate of the A/D conversion
     
-  public:
-
-    // ------------------------------------------------------------- Construction
+    \return samplerate -- The samplerate of the A/D conversion, [Hz]
+  */
+  inline double samplerate () {
+    return LOPES_SAMPLERATE;
+  }
+  
+  /*!
+    \brief Get the Nyquist zone in which the data are sampled
     
-    /*!
-      \brief Default constructor
-    */
-    dalLopesEvent();
-
-    /*!
-      \brief Augmented constructor
-
-      \param filename -- name (incl. path) of the lopes-eventfile to be read.
-    */
-    dalLopesEvent(string filename);
-        
-    // -------------------------------------------------------------- Destruction
-
-    /*!
-      \brief Destructor
-    */
-    virtual ~dalLopesEvent();
+    \return nyquistZone -- The Nyquist zone in which the data are sampled
+  */
+  inline unsigned int nyquistZone () {
+    return LOPES_NYQUIST_ZONE;
+  }
+  
+  /*!
+    \brief Get the length of the data set (in bytes)
     
-    // ---------------------------------------------------------------- Operators
-           
-    // ------------------------------------------------------------------ Methods
+    \return length -- The length of the data set (in bytes)
+  */
+  inline unsigned int length () {
+    return headerpoint_p->length;
+  }
+  
+  /*!
+    \brief Get the channel data
     
-    /*!
-      \brief Attach to a (another) lopes-eventfile
-      
-      \param filename -- name (incl. path) of the lopes-eventfile to be read.
+    \return channeldata -- Data for thhe individual channels, i.e. dipoles
+  */
+  inline Array<short,2> channeldata () {
+    return channeldata_p;
+  }
 
-      \return ok -- True if successfull
-    */
-    bool attachFile (string filename);
-
-    /*!
-      \brief return the raw ADC time series, in ADC-counts
-      
-      \return Matrix with the data
-    */
-/*     Array<double,2> fx(); */
-    
-    // --------------------------------------------------------------- Parameters
-    
-    /*!
-      \brief Get the name of the data file.
-      
-      \return filename -- Name of the data file 
-    */
-    inline string  filename() {
-      return filename_p;
-    }
-
-    /*!
-      \brief Get the samplerate of the A/D conversion
-
-      \return samplerate -- The samplerate of the A/D conversion, [Hz]
-    */
-    inline double samplerate () {
-      return LOPES_SAMPLERATE;
-    }
-
-    /*!
-      \brief Get the Nyquist zone in which the data are sampled
-      
-      \return nyquistZone -- The Nyquist zone in which the data are sampled
-    */
-    inline unsigned int nyquistZone () {
-      return LOPES_NYQUIST_ZONE;
-    }
-
-    /*!
-      \brief Get the length of the data set (in bytes)
-
-      \return length -- The length of the data set (in bytes)
-    */
-    inline unsigned int length () {
-      return headerpoint_p->length;
-    }
-
-    /*!
-      \brief Get the channel data
-
-      \return channeldata -- Data for thhe individual channels, i.e. dipoles
-     */
-    inline Array<short,2> channeldata () {
-      return channeldata_p;
-    }
+  // ------------------------------------------------------------------- Feedback
 
     /*!
       \brief Get the name of the class
@@ -225,6 +218,19 @@ namespace CR { // Namespace CR -- begin
       return "dalLopesEvent";
     }
 
+    /*!
+      \brief Provide a summary of the objects's internal data
+    */
+    inline void summary () {
+      summary (std::cout);
+    }
+
+    /*!
+      \brief Provide a summary of the objects's internal data
+      
+      \param os -- Output stream to which the summary is written.
+    */
+    void summary (std::ostream &os);
 
   protected:
     
@@ -255,7 +261,5 @@ namespace CR { // Namespace CR -- begin
     
   };
   
-} // Namespace CR -- end
-
 #endif /* LOPESEVENTIN_H */
   
