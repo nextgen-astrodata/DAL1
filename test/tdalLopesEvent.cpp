@@ -26,6 +26,8 @@
 
 /*!
   \file tdalLopesEvent.cpp
+
+  \ingroup DAL
   
   \brief A collection of tests for the dalLopesEvent class
 						
@@ -34,7 +36,14 @@
   \date 2007/04/12
 */
 
-int test_constructors ()
+// ------------------------------------------------------------------------------
+
+/*!
+  \brief Test constructors for a new dalLopesEvent object
+
+  \return nofFailedTests -- The number of failed tests
+*/
+int test_constructors (std::string const &filename)
 {
   int nofFailedTests (0);
 
@@ -46,15 +55,63 @@ int test_constructors ()
     std::cerr << message << std::endl;
   }
 
-  return nofFailedTests;
-  
+  std::cout << "[2] Testing argumented constructor..." << std::endl;
+  try {
+    dalLopesEvent event (filename);
+    event.summary();
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+  }
+
+  return nofFailedTests;  
 }
 
-int main ()
+// ------------------------------------------------------------------------------
+
+/*!
+  \brief Test retrieving and working with the channeldata
+  
+  \return nofFailedTests -- The number of failed tests
+*/
+int test_channeldata (std::string const &filename)
 {
   int nofFailedTests (0);
 
-  nofFailedTests += test_constructors ();
+  std::cout << "[1] Testing access to data..." << std::endl;
+  try {
+    std::cout << "-- Opening file << " << filename << " ..." << std::endl;
+    dalLopesEvent event (filename);
+    std::cout << "-- Retrieving data ..." << std::endl;
+    blitz::Array<short,2> data = event.channeldata();
+    std::cout << "-- Shape of the data array = " << data.shape() << std::endl;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+  }
+  
+  return nofFailedTests;  
+}
 
+// ------------------------------------------------------------------------------
+
+/*!
+  \brief main routines of the test program
+  
+  \return nofFailedTests -- The number of failed tests
+*/
+int main (int argc, char *argv[])
+{
+  int nofFailedTests (0);
+  std::string filename ("UNDEFINED");
+  
+  if (argc < 2) {
+    cerr << "[tLopesEvent] Missing name of event file!" << endl;
+  } else {
+    filename = argv[1];
+  }
+
+  nofFailedTests += test_constructors (filename);
+
+  nofFailedTests += test_channeldata (filename);
+  
   return nofFailedTests;
 }

@@ -2,6 +2,8 @@
 /*!
   \file lopesevent.h
   
+  \ingroup DAL
+  
   \brief Include-file with the descriptions of the lopesevent datastructure
 */
 

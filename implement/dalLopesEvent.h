@@ -49,13 +49,15 @@ using blitz::shape;
 /*!
   \class dalLopesEvent
   
+  \ingroup DAL
+  
   \brief Read in LOPES event files
   
   \author Andreas Horneffer, Lars B&auml;hren
   
   \date 2006/12/14
   
-  \test tdalLopesEvent.cc
+  \test tdalLopesEvent.cpp
   
   <h3>Prerequisite</h3>
   
@@ -69,6 +71,12 @@ using blitz::shape;
   
   <h3>Example(s)</h3>
   
+  Here is a simple example fro creating a an dalLopesEvent object to read in
+  the data stored in a file:
+  \code
+  dalLopesEvent event (filename);                    // Create new object
+  blitz::Array<short,2> data = event.channeldata();  // Retrieve the data
+  \endcode
 */  
 class dalLopesEvent {
   
@@ -190,6 +198,26 @@ class dalLopesEvent {
   }
   
   /*!
+    \brief Get the channel data
+    
+    \return channeldata -- Data for thhe individual channels, i.e. dipoles
+  */
+  inline Array<short,2> channeldata () {
+    return channeldata_p;
+  }
+
+  // ---------------------------------------------------------------- Header data
+  
+  /*!
+    \brief Get the LOPES-Event version
+    
+    \return version -- The LOPES-Event version
+  */
+  inline unsigned int version () {
+    return headerpoint_p->version;
+  }
+  
+  /*!
     \brief Get the length of the data set (in bytes)
     
     \return length -- The length of the data set (in bytes)
@@ -199,14 +227,51 @@ class dalLopesEvent {
   }
   
   /*!
-    \brief Get the channel data
+    \brief Get the size of one channel of data
     
-    \return channeldata -- Data for thhe individual channels, i.e. dipoles
+    \return blocksize -- Size of one channel (number of shorts)
   */
-  inline Array<short,2> channeldata () {
-    return channeldata_p;
+  inline unsigned int blocksize () {
+    return headerpoint_p->blocksize;
   }
-
+  
+  /*!
+    \brief Get the presync of the first entry w.r.t. the sync signal 
+    
+    \return presync -- First entry is presync before the sync signal
+  */
+  inline int presync () {
+    return headerpoint_p->presync;
+  }
+  
+  /*!
+    \brief Get the type of data stored in the file
+    
+    \return evclass -- The type of data stored in the file (currently only TIM-40
+                       supported)
+  */
+  inline unsigned int dataType () {
+    return headerpoint_p->type;
+  }
+  
+  /*!
+    \brief Get the type of the stored event
+    
+    \return evclass -- The type of the stored event 
+  */
+  inline unsigned int eventClass () {
+    return headerpoint_p->evclass;
+  }
+  
+  /*!
+    \brief Get the ID of the observatory
+    
+    \return observatory -- The ID of the observatory
+  */
+  inline unsigned int observatory () {
+    return headerpoint_p->observatory;
+  }
+  
   // ------------------------------------------------------------------- Feedback
 
     /*!

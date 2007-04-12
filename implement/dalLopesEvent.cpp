@@ -166,21 +166,22 @@ bool dalLopesEvent::attachFile (string filename)
 void dalLopesEvent::summary (std::ostream &os)
 {
   // data available as individual data elements
-  os << "-- Filename                        : " << filename_p              << endl;
-  os << "-- Object attached to file?          " << attached_p              << endl;
-  os << "-- nof. antennas in the file       : " << NumAntennas_p           << endl;
-  os << "-- Antenna IDs                     : " << AntennaIDs_p            << endl;
+  os << "-- Filename                        : " << filename_p            << endl;
+  os << "-- Object attached to file?          " << attached_p            << endl;
+  os << "-- nof. antennas in the file       : " << NumAntennas_p         << endl;
+  os << "-- Antenna IDs                     : " << AntennaIDs_p          << endl;
+  os << "-- Shape of the channel data array : " << channeldata_p.shape() << endl;
 
   // data stored within the header-data structure
-  os << "-- LOPES-Event version             : " << headerpoint_p->version   << endl;
-  os << "-- Length of the dataset [Bytes]   : " << headerpoint_p->length    << endl;
-  os << "-- Timestamp (KASCADE)             : " << headerpoint_p->JDR       << endl;
-  os << "                                   : " << headerpoint_p->TL        << endl;
-  os << "-- Type of data                    : " << headerpoint_p->type      << endl;
-  os << "-- Type of stored event            : " << headerpoint_p->evclass   << endl;
-  os << "-- Size of one channel             : " << headerpoint_p->blocksize << endl;
-  os << "-- Presync                         : " << headerpoint_p->presync   << endl;
-  os << "-- Timestamp from the manable card : " << headerpoint_p->LTL       << endl;
-  os << "-- ID of the observatory           : " << headerpoint_p->observatory << endl;
+  os << "-- LOPES-Event version             : " << version()              << endl;
+  os << "-- Length of the dataset [Bytes]   : " << length()               << endl;
+  os << "-- Timestamp (KASCADE)             : " << headerpoint_p->JDR     << endl;
+  os << "                                   : " << headerpoint_p->TL      << endl;
+  os << "-- Type of data                    : " << dataType()             << endl;
+  os << "-- Type of stored event            : " << eventClass()           << endl;
+  os << "-- Size of one channel             : " << blocksize()            << endl;
+  os << "-- Presync                         : " << presync()              << endl;
+  os << "-- Timestamp from the manable card : " << headerpoint_p->LTL     << endl;
+  os << "-- ID of the observatory           : " << observatory()          << endl;
 
 }
