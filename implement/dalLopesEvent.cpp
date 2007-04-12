@@ -41,7 +41,7 @@ dalLopesEvent::dalLopesEvent (string filename)
 
 void dalLopesEvent::init()
 {
-  NumAntennas_p = 0;
+  nofAntennas_p = 0;
   filename_p    = "";
   attached_p    = false;
   headerpoint_p = (lopesevent_v1*)malloc(LOPESEV_HEADERSIZE);
@@ -97,7 +97,7 @@ bool dalLopesEvent::attachFile (string filename)
     fclose(fd);
     return false;
   };
-  NumAntennas_p =0;
+  nofAntennas_p =0;
   fread(&tmpchan, 1, sizeof(unsigned int), fd);
   while (!feof(fd)){
     fread(&tmplen, 1, sizeof(unsigned int), fd); 
@@ -119,14 +119,14 @@ bool dalLopesEvent::attachFile (string filename)
       fclose(fd);
       return false;
     };
-    NumAntennas_p++;
+    nofAntennas_p++;
     
      //this will trigger eof condition after last channel;
     fread(&tmpchan, 1, sizeof(unsigned int), fd);
   };
   try {
-    AntennaIDs_p.resize(NumAntennas_p);
-    channeldata_p.resize(headerpoint_p->blocksize,NumAntennas_p);
+    AntennaIDs_p.resize(nofAntennas_p);
+    channeldata_p.resize(headerpoint_p->blocksize,nofAntennas_p);
     tmppoint = (short*)malloc(headerpoint_p->blocksize*sizeof(short));
     if (tmppoint == NULL) {
       cerr << "LOPESEventIn:attachFile: Error while allocating temporary memory " << endl;
@@ -138,7 +138,7 @@ bool dalLopesEvent::attachFile (string filename)
     
     // this should reset the eof condition
     fseek(fd,LOPESEV_HEADERSIZE,SEEK_SET);
-    for (i=0;i<NumAntennas_p;i++){
+    for (i=0;i<nofAntennas_p;i++){
       fread(&tmpchan, 1, sizeof(unsigned int), fd); 
       fread(&tmplen, 1, sizeof(unsigned int), fd); 
       AntennaIDs_p(i) = (int)tmpchan;
@@ -168,20 +168,20 @@ void dalLopesEvent::summary (std::ostream &os)
   // data available as individual data elements
   os << "-- Filename                        : " << filename_p            << endl;
   os << "-- Object attached to file?          " << attached_p            << endl;
-  os << "-- nof. antennas in the file       : " << NumAntennas_p         << endl;
+  os << "-- nof. antennas in the file       : " << nofAntennas()         << endl;
   os << "-- Antenna IDs                     : " << AntennaIDs_p          << endl;
   os << "-- Shape of the channel data array : " << channeldata_p.shape() << endl;
 
   // data stored within the header-data structure
   os << "-- LOPES-Event version             : " << version()              << endl;
   os << "-- Length of the dataset [Bytes]   : " << length()               << endl;
-  os << "-- Timestamp (KASCADE)             : " << headerpoint_p->JDR     << endl;
-  os << "                                   : " << headerpoint_p->TL      << endl;
+  os << "-- Timestamp (KASCADE)         JDR : " << timestampJDR()         << endl;
+  os << "                                TL : " << timestampTL()          << endl;
   os << "-- Type of data                    : " << dataType()             << endl;
   os << "-- Type of stored event            : " << eventClass()           << endl;
   os << "-- Size of one channel             : " << blocksize()            << endl;
   os << "-- Presync                         : " << presync()              << endl;
-  os << "-- Timestamp from the manable card : " << headerpoint_p->LTL     << endl;
+  os << "-- Timestamp from the manable card : " << timestampLTL()         << endl;
   os << "-- ID of the observatory           : " << observatory()          << endl;
 
 }

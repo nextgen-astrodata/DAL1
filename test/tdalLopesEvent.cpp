@@ -22,6 +22,7 @@
 #include <config.h>
 #endif
 
+#include <fstream>
 #include <dalLopesEvent.h>
 
 /*!
@@ -76,18 +77,38 @@ int test_constructors (std::string const &filename)
 int test_channeldata (std::string const &filename)
 {
   int nofFailedTests (0);
+//   std::ofstream outfile;
 
-  std::cout << "[1] Testing access to data..." << std::endl;
+  std::cout << "[1] Get all data as Blitz array..." << std::endl;
   try {
-    std::cout << "-- Opening file << " << filename << " ..." << std::endl;
+    std::cout << "-- Opening file " << filename << " ..." << std::endl;
     dalLopesEvent event (filename);
     std::cout << "-- Retrieving data ..." << std::endl;
     blitz::Array<short,2> data = event.channeldata();
     std::cout << "-- Shape of the data array = " << data.shape() << std::endl;
+//     std::cout << "-- Exporting data ..." << std::endl;
+//     outfile.open("lopesevent.data");
+//     outfile << data << std::endl;
+//     outfile.close();
   } catch (std::string message) {
     std::cerr << message << std::endl;
   }
   
+  std::cout << "[2] Get data per antenna as Blitz array..." << std::endl;
+  try {
+    std::cout << "-- Opening file " << filename << " ..." << std::endl;
+    dalLopesEvent event (filename);
+    unsigned int nofAntennas (event.nofAntennas());
+    blitz::Array<short,1> data (nofAntennas);
+    std::cout << "-- Retrieving data for individual antennas ..." << std::endl;
+    for (unsigned int ant(0); ant<nofAntennas; ant++) {
+      std::cout << ant << " .. " << std::flush;
+      data = event.channeldata (ant);
+    }
+    std::cout << std::endl;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+  }
   return nofFailedTests;  
 }
 

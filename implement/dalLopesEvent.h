@@ -124,7 +124,7 @@ class dalLopesEvent {
   lopesevent *headerpoint_p;
   
   //! Number of antennas in the event
-  int NumAntennas_p;
+  int nofAntennas_p;
   
   //! Matrix with the data itself
   Array<short,2> channeldata_p;
@@ -196,14 +196,34 @@ class dalLopesEvent {
   inline unsigned int nyquistZone () {
     return LOPES_NYQUIST_ZONE;
   }
+
+  /*!
+    \brief Get the number of antennas in the data set
+
+    \return nofAntennas -- The number of antennas in the data set
+  */
+  inline int nofAntennas () {
+    return nofAntennas_p;
+  }
   
   /*!
     \brief Get the channel data
     
-    \return channeldata -- Data for thhe individual channels, i.e. dipoles
+    \return channeldata -- [sample,antenna] Data for the individual channels, i.e. dipoles
   */
   inline Array<short,2> channeldata () {
     return channeldata_p;
+  }
+
+  /*!
+    \brief Get the channel data
+
+    \param channel -- Channel/Antenna for which to return the data
+    
+    \return channeldata -- Data for thhe individual channels, i.e. dipoles
+  */
+  inline Array<short,1> channeldata (unsigned int const &channel) {
+    return channeldata_p(Range(Range::all()),channel);
   }
 
   // ---------------------------------------------------------------- Header data
@@ -270,6 +290,33 @@ class dalLopesEvent {
   */
   inline unsigned int observatory () {
     return headerpoint_p->observatory;
+  }
+  
+  /*!
+    \brief KASCADE-style timestamp (JDR)
+    
+    \return JDR -- KASCADE-style timestamp (JDR)
+  */
+  inline unsigned int timestampJDR () {
+    return headerpoint_p->JDR;
+  }
+  
+  /*!
+    \brief KASCADE-style timestamp (TL)
+    
+    \return TL -- KASCADE-style timestamp (TL)
+  */
+  inline unsigned int timestampTL () {
+    return headerpoint_p->TL;
+  }
+  
+  /*!
+    \brief Get the 40MHz timestamp from menable card
+    
+    \return LTL -- 40MHz timestamp from menable card 
+  */
+  inline unsigned int timestampLTL () {
+    return headerpoint_p->LTL;
   }
   
   // ------------------------------------------------------------------- Feedback
