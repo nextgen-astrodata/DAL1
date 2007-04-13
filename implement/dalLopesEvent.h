@@ -77,6 +77,14 @@ using blitz::shape;
   dalLopesEvent event (filename);                    // Create new object
   blitz::Array<short,2> data = event.channeldata();  // Retrieve the data
   \endcode
+  If you do not want to retrieve the data themselves in the form of a Blitz
+  array, you can use the following:
+  \code 
+  short *data;                              // array for the extracted data  
+  data = new short[event.nofDatapoints()];  // adjust array size
+  data = event.data();                      // get the data from the object
+  \endcode
+  
 */  
 class dalLopesEvent {
   
@@ -207,6 +215,19 @@ class dalLopesEvent {
   }
   
   /*!
+    \brief Get the number of data points stored
+
+    \return nofDatapoints -- The number of data points: \f$ N_{\rm Antennas} \cdot
+                             N_{\rm Blocksize} \f$, where \f$ N_{\rm Antennas} \f$
+			     is the number of antennas in the data set and 
+			     \f$ N_{\rm Blocksize} \f$ is the number of samples
+			     per antenna
+  */
+  inline unsigned int nofDatapoints () {
+    return channeldata_p.numElements();
+  }
+  
+  /*!
     \brief Get the channel data
     
     \return channeldata -- [sample,antenna] Data for the individual channels, i.e. dipoles
@@ -226,6 +247,27 @@ class dalLopesEvent {
     return channeldata_p(Range(Range::all()),channel);
   }
 
+  /*!
+    \brief Get the channel data
+
+    \code 
+    dalLopesEvent event (filename);           // new dalLopesEvent object
+    short *data;                              // array for the extracted data
+
+    data = new short[event.nofDatapoints()];  // adjust array size
+
+    data = event.data();                      // get the data from the object
+    \endcode
+    
+    \return data        -- Pointer to the array data; the number of elements in
+                           the array is given by \f$ N_{\rm Antennas} \cdot
+			   N_{\rm Blocksize} \f$, where \f$ N_{\rm Antennas} \f$
+			   is the number of antennas in the data set and 
+			   \f$ N_{\rm Blocksize} \f$ is the number of samples
+			   per antenna
+  */
+  short* data ();
+  
   // ---------------------------------------------------------------- Header data
   
   /*!
