@@ -189,6 +189,32 @@ int test_channeldata (std::string const &filename)
     nofFailedTests++;
   }
   
+  std::cout << "[4] Get data per antenna as C++ array..." << std::endl;
+  try {
+    short *data;
+    unsigned int nofAntennas (0);
+    unsigned int blocksize (0);
+
+    std::cout << "-- Opening file " << filename << " ..." << std::endl;
+    dalLopesEvent event (filename);
+    nofAntennas = event.nofAntennas();
+    blocksize   = event.blocksize();
+    std::cout << "-- Adjusting array to receive data ..." << std::endl;
+    data = new short[blocksize];
+    std::cout << "-- Retrieving data ..." << std::endl;
+    for (unsigned int antenna(0); antenna<nofAntennas; antenna++) {
+      data = event.data(antenna);
+      std::cout << "\t(" << antenna << ")\t"
+		<< data[0] << " (" << &data[0] << ") .. "
+		<< data[1] << " (" << &data[1] << ") .. "
+		<< data[2] << " (" << &data[2] << ") "
+		<< std::endl;
+    }
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;  
 }
 

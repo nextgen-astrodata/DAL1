@@ -175,6 +175,24 @@ short* dalLopesEvent::data ()
   return data;
 }
 
+// ------------------------------------------------------------------------- data
+
+short* dalLopesEvent::data (unsigned int const &channel)
+{
+  Array<short,1> channeldata = dalLopesEvent::channeldata(channel);
+  unsigned int nofElements   = channeldata.numElements();
+  short *data;
+  
+  try {
+    data = new short[nofElements];
+    data = channeldata.data();
+  } catch (std::string message) {
+    std::cerr << "[dalLopesEvent::channeldata] " << message << std::endl;
+  }
+  
+  return data;
+}
+
 // ============================================================================
 //
 //  Parameters

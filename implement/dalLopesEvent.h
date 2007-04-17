@@ -241,7 +241,7 @@ class dalLopesEvent {
 
     \param channel -- Channel/Antenna for which to return the data
     
-    \return channeldata -- Data for thhe individual channels, i.e. dipoles
+    \return channeldata -- Data for the individual channels, i.e. dipoles
   */
   inline Array<short,1> channeldata (unsigned int const &channel) {
     return channeldata_p(Range(Range::all()),channel);
@@ -267,6 +267,15 @@ class dalLopesEvent {
 			   per antenna
   */
   short* data ();
+
+  /*!
+    \brief Get the channel data
+
+    \param channel -- Channel/Antenna for which to return the data
+    
+    \return data -- Pointer to the array of data for antenna <i>channel</i>
+  */
+  short* data (unsigned int const &channel);
   
   // ---------------------------------------------------------------- Header data
   
