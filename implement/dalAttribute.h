@@ -17,12 +17,21 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #ifndef DALATTRIBUTE_H
 #define DALATTRIBUTE_H
 
 #ifndef DAL_H
 #include "dal.h"
 #endif
+
+/*!
+  \class dalAttribute
+
+  \ingroup DAL
+
+  \author Joseph Masters
+*/
 
 class dalAttribute {
 

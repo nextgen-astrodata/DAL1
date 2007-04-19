@@ -24,7 +24,15 @@
 #include "dal.h"
 #endif
 
-// (superclass of dalDSFilter, dalColumnFilter, dalTableFilter)
+\*!
+  \class dalFilter
+  
+  \brief Superclass of dalDSFilter, dalColumnFilter, dalTableFilter)
+  
+  \ingroup DAL
+  
+  \author Joseph Masters
+*/
 class dalFilter {
 
   public:

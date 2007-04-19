@@ -32,6 +32,13 @@
 #include "dalFilter.h"
 #endif
 
+/*!
+  \class dalColumn
+  
+  \ingroup DAL
+  
+  \author Joseph Masters
+*/
 class dalColumn {
 
 	string name; /// column name

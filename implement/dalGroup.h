@@ -37,6 +37,13 @@
 #include "dalFilter.h"
 #endif
 
+/*!
+  \class dalGroup
+  
+  \ingroup DAL
+  
+  \author Joseph Masters
+*/
 class dalGroup{
 
 	void * file; /// can be HDF5File, FITS, MS

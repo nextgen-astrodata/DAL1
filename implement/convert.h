@@ -1,4 +1,10 @@
-// File: convert.h
+
+/*!
+  \file convert.h
+
+  \ingroup DAL
+*/
+
 #include <iostream>
 #include <sstream>
 #include <string>

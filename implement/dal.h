@@ -18,6 +18,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+/*!
+  \file dal.h
+
+  \brief Common header file for the Data Access Library (DAL)
+
+  \defgroup DAL
+
+  \author Joseph Masters
+*/
+
 #ifndef DAL_H
 #define DAL_H
 

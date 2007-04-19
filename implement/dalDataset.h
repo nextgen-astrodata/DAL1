@@ -17,12 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-/**
- * \file dalDataset.h
- * \author Joseph Masters
- * \date 12-04-06
- */
- 
+
 #ifndef DALDATASET_H
 #define DALDATASET_H
 
@@ -46,9 +41,17 @@ const string H5TYPE = "HDF5";
 const string FITSTYPE = "FITS";
 
 /*!
-The dalDataset is the highest level container for dalData.  It may
-consist of one or more files on disk, each of which contain multiple tables, 
-images and attributes.  These tables and images can be gruoped.
+  \class dalDataset
+  
+  \ingroup DAL
+
+  \author Joseph Masters
+
+  \date 12-04-06
+
+  The dalDataset is the highest level container for dalData.  It may
+  consist of one or more files on disk, each of which contain multiple tables, 
+  images and attributes.  These tables and images can be gruoped.
 */
 class dalDataset{
 

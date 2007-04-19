@@ -17,11 +17,16 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-/**
- * \file dalBaseTypes.cpp
- * \author Joseph Masters
- * \date 15-Mar-07
- */
+
+/*!
+  \file dalBaseTypes.h
+  
+  \ingroup DAL
+
+  \author Joseph Masters
+
+  \date 15-Mar-07
+*/
  
 #ifndef DALBASETYPES_H
 #define DALBASETYPES_H
