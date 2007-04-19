@@ -24,7 +24,7 @@
 #include "dal.h"
 #endif
 
-\*!
+/*!
   \class dalFilter
   
   \brief Superclass of dalDSFilter, dalColumnFilter, dalTableFilter)

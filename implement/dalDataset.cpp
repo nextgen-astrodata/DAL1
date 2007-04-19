@@ -17,12 +17,14 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-/**
- * \file dalDataset.cpp
- * \author Joseph Masters
- * \date 12-04-06
- */
- 
+
+/*!
+  \file dalDataset.cpp
+  \ingroup DAL
+  \author Joseph Masters
+  \date 12-04-06
+*/
+
 #ifndef DALDATASET_H
 #include "dalDataset.h"
 #endif

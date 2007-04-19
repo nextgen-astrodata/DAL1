@@ -17,11 +17,16 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-/**
- * \file dal.cpp
- * \author Joseph Masters
- * \date 12-04-06
- */
+
+/*!
+  \file mswrite.cpp
+  
+  \ingroup DAL
+
+  \author Joseph Masters
+
+  \date 12-04-06
+*/
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
