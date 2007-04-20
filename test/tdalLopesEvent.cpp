@@ -94,6 +94,34 @@ void export_data (std::string const &filename,
 // ------------------------------------------------------------------------------
 
 /*!
+  \brief Element-by-element comparison of the data in the two arrays
+
+  \param array1D -- Data contained in a 1-dim Blitz++ array
+  \param data    -- Data contained in a C++ array
+*/
+void compare_data (blitz::Array<short,1> const &array1D,
+		   short *data)
+{
+  unsigned int nelem (array1D.numElements());
+  unsigned int nofDifferent (0);
+
+  // Element-by-element comparison of the two arrays
+  for (unsigned int sample(0); sample<nelem; sample++) {
+    if (array1D(sample) != data[sample]) {
+      nofDifferent++;
+    }
+  }
+
+  // Summary of the check
+  if (nofDifferent) {
+    cout << "-- Found " << nofDifferent << "/" << nelem << " different values." << endl;
+    cout << "   This corresponds to " << (100.0*nofDifferent)/nelem << "% of the data." << endl;
+  }
+}
+
+// ------------------------------------------------------------------------------
+
+/*!
   \brief Test constructors for a new dalLopesEvent object
 
   \return nofFailedTests -- The number of failed tests
@@ -203,58 +231,49 @@ int test_channeldata (std::string const &filename)
     data = new short[blocksize];
     std::cout << "-- Retrieving data ..." << std::endl;
     for (unsigned int antenna(0); antenna<nofAntennas; antenna++) {
-      data = event.data(antenna);
-      std::cout << "\t(" << antenna << ")\t"
-		<< data[0] << " (" << &data[0] << ") .. "
-		<< data[1] << " (" << &data[1] << ") .. "
-		<< data[2] << " (" << &data[2] << ") "
-		<< std::endl;
+      event.data(data,antenna);
+//       std::cout << "\t(" << antenna << ")\t"
+// 		<< data[0] << " (" << &data[0] << ") .. "
+// 		<< data[1] << " (" << &data[1] << ") .. "
+// 		<< data[2] << " (" << &data[2] << ") "
+// 		<< std::endl;
     }
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
-  
-  std::cout << "[5] Compare data retrival using C++ and Blitz++ array..." << std::endl;
+
+  std::cout << "[5] Compare retrieval using C++ and Blitz++ arrays..." << std::endl;
   try {
-    unsigned int sample (0);
+    short *data;
     unsigned int nofAntennas (0);
     unsigned int blocksize (0);
-    unsigned int nofSamples (0);
-    unsigned int nofDifferent (0);
 
     std::cout << "-- Opening file " << filename << " ..." << std::endl;
     dalLopesEvent event (filename);
     nofAntennas = event.nofAntennas();
     blocksize   = event.blocksize();
-    std::cout << "-- Adjusting arrays to receive data ..." << std::endl;
-    short *data_cpp;
-    data_cpp = new short[blocksize];
-    blitz::Array<short,1> data_blitz (blocksize);
+    std::cout << "-- Adjusting array to receive data ..." << std::endl;
+    data = new short[blocksize];
+    Array<short,1> channeldata (blocksize);
     std::cout << "-- Retrieving data ..." << std::endl;
     for (unsigned int antenna(0); antenna<nofAntennas; antenna++) {
-      nofSamples   = 0;
-      nofDifferent = 0;
-      data_cpp   = event.data(antenna);
-      data_blitz = event.channeldata(antenna);
-      for (sample=0; sample<blocksize; sample++) {
-	if (data_cpp[sample] != data_blitz(sample)) {
-	  nofDifferent++;
-	}
-	nofSamples++;
-      }
-      std::cout << "\t" << antenna
-		<< "\t" << nofDifferent << "/" << nofSamples
-		<< "\t" << (100.0*nofDifferent)/nofSamples << "%"
-		<< std::endl;
+      channeldata = event.channeldata (antenna);
+      event.data(data,antenna);
+      //
+      cout << " ant=" << antenna
+	   << "\t" << channeldata(0) << " .. " << data[0]
+	   << "\t" << channeldata(1) << " .. " << data[1]
+	   << "\t" << channeldata(2) << " .. " << data[2]
+	   << endl;
+      //
+      compare_data (channeldata,data);
     }
-    // release allocated memory
-    delete [] data_cpp;
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
-  
+
   return nofFailedTests;  
 }
 // ------------------------------------------------------------------------------

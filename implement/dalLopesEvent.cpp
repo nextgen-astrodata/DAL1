@@ -177,22 +177,20 @@ short* dalLopesEvent::data ()
 
 // ------------------------------------------------------------------------- data
 
-short* dalLopesEvent::data (unsigned int const &channel)
+void dalLopesEvent::data (short *data,
+			  unsigned int const &channel)
 {
   // Retrieve the data for the selected channel
   Array<short,1> channeldata = dalLopesEvent::channeldata(channel);
-  // Get the number of data samples per channel
-  unsigned int nofSamples   = channeldata.numElements();
-  short *data;
   
-  try {
-    data = new short[nofSamples];
-    data = channeldata.data();
-  } catch (std::string message) {
-    std::cerr << "[dalLopesEvent::channeldata] " << message << std::endl;
+  unsigned int nofSamples (channeldata.numElements());
+
+  for (unsigned int sample(0); sample<nofSamples; sample++) {
+    data[sample] = channeldata(sample);
   }
-  
-  return data;
+
+  // Copy the data values over to the returned array
+//   data = channeldata.data();
 }
 
 // ============================================================================

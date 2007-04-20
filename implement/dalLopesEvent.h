@@ -271,11 +271,27 @@ class dalLopesEvent {
   /*!
     \brief Get the channel data
 
-    \param channel -- Channel/Antenna for which to return the data
+    Keep in mind that memory has to be alloacted properly in advance:
+    \code
+    dalLopesEvent event (filename);                // new object for data file
+
+    unsigned int blocksize (event.blocksize());    // the nof. sampler per antenna
+    unsigned int nofAntennas (event.nofAntennas()) // nof. antennas in the data set
+
+    short *data;
+    data = new short [blocksize];
+
+    for (unsigned int antenna(0); antenna<nofAntennas; antenna++) {
+      event.data (data,antenna);  // retreive the data for this antenna
+    }
     
-    \return data -- Pointer to the array of data for antenna <i>channel</i>
+    \endcode
+
+    \retval data   -- Pointer to the array of data for antenna <i>channel</i>
+    \param channel -- Channel/Antenna for which to return the data
   */
-  short* data (unsigned int const &channel);
+  void data (short *data,
+	     unsigned int const &channel);
   
   // ---------------------------------------------------------------- Header data
   
