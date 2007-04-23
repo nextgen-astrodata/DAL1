@@ -140,7 +140,7 @@ int main (int argc, char *argv[])
 	stationGroup->setAttribute_uint("NUMSAMPS", samps );
 
     data = new short[ blocksize ];
-  
+
     for (unsigned int antenna(0); antenna<nofAntennas; antenna++) {
 
 	  string antName = "ANTENNA" + stringify(antenna);
@@ -148,12 +148,10 @@ int main (int argc, char *argv[])
 	  int ri[] = { 1 };
 	  AntennaTable->setAttribute_int("RSP_ID", ri );
 	  AntennaTable->addColumn( "DATA", dal_SHORT );
-	  
-	  data = event.data(antenna);
 
+	  event.data(data,antenna);
 	  int jj=0;
-//blitz::Array<short,1> bdata (nofAntennas);
-//bdata = event.channeldata (antenna);	  
+
 	  // for all of the datapoint for an antenna
 	  while (jj < blocksize)
 	  {
@@ -164,7 +162,6 @@ int main (int argc, char *argv[])
 			   (ii < BUFSIZE) && ((jj+ii)<blocksize);
 			   ii++ ) {
 			wb.cr[ii].data = data[jj+ii];
-//wb.cr[ii].data = bdata(jj+ii);
 		  }
 		  // write the data buffer to the output file
 		  AntennaTable->appendRows(&wb,ii);
