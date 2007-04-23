@@ -215,10 +215,13 @@ unsigned int * data_length;
   antennaTable->listColumns();
 
   string antpos, antorient;
-
+  
+  long bufsize = sizeof(AntennaStruct) + (1034*sizeof(short));
+  //cout << bufsize << endl;
+  //exit(2);
   for ( long ii = start; ii <= stop; ii ++ ) {
 
-	antennaTable->readRows( &data_out, ii, /*startRow,*/ NUMBERROWS);
+	antennaTable->readRows( &data_out, ii, /*startRow,*/ NUMBERROWS, bufsize);
 
 	// print some values from the read
 	for (int gg=0; gg < NUMBERROWS; gg++)
@@ -249,8 +252,8 @@ unsigned int * data_length;
 		cout << setw(17) << antorient << '\t';
 
 		// print data
-		char * mystr = reinterpret_cast<char*>(stationGroup->getAttribute("OBS_MODE"));
-		if ( 0 == strcmp("Sub-band",mystr) ) {
+//		char * mystr = (char*)(stationGroup->getAttribute("OBS_MODE"));
+/*		if ( 0 == strcmp("Sub-band",mystr) ) {
 			for (unsigned int cc=0; cc<data_out[gg].samples_per_frame; cc+=2) {
 				cout << '(';
 				cout << *( (short*)(data_out[gg].data[0].p) + cc ) << ',';
@@ -259,11 +262,13 @@ unsigned int * data_length;
 			}
 			cout << '\b';
 		} else {
+*/
+// ASSUME NORMAL TRANSIENT MODE
 			for (unsigned int cc=0; cc<data_out[gg].samples_per_frame; cc++) {
 				cout << *( (short*)(data_out[gg].data[0].p) + cc ) << ',';
 			}
 			cout << '\b';
-		}
+//		}
 		cout << endl;
 	}
 

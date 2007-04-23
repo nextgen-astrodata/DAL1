@@ -172,6 +172,7 @@ int main(int argc, char *argv[])
 			if ( first_sample ) {
 			
 				// add columns to ANTENNA table
+AntennaTable->addColumn("FNUMBER", dal_UINT);
 				AntennaTable->addColumn( "RSP_ID", dal_UINT );  // simple column
 				AntennaTable->addColumn( "RCU_ID", dal_UINT );  // simple column
 				AntennaTable->addColumn( "TIME", dal_UINT );  // simple column
@@ -218,7 +219,7 @@ int main(int argc, char *argv[])
 			wb.antenna.ant_orientation[0] = 0;
 			wb.antenna.ant_orientation[1] = 0;
 			wb.antenna.ant_orientation[2] = 0;
-
+wb.antenna.frameno = counter;
 			wb.antenna.rsp_id = (unsigned int)header.rspid;
 			wb.antenna.rcu_id = (unsigned int)header.rcuid;
 			wb.antenna.time = (unsigned int)header.time;

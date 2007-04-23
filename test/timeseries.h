@@ -37,6 +37,7 @@ const Int32 FIRST_EXTRA_HDR_LENGTH = 40;
 const Int32 EXTRA_HDR_LENGTH = 16;
 
 typedef struct AntennaStruct {
+unsigned int frameno;
 	unsigned int rsp_id;
 	unsigned int rcu_id;
 	unsigned int time;
@@ -74,5 +75,10 @@ typedef struct TransientSample {
 typedef struct SpectralSample {
 	complex<Int16> value;
 };
+
+typedef struct CosmicRayStruct {
+	//int nofDatapoints;
+	Int16 data;
+} CosmicRayStruct;
 
 #endif
