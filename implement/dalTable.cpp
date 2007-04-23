@@ -583,7 +583,6 @@ void dalTable::setAttribute_double( string attrname, double * data, int size ) {
 
 void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
 {
-	char** field_names;
 	size_t * field_sizes;
 	size_t * field_offsets;
 	size_t * size_out;
@@ -615,7 +614,7 @@ long dalTable::getNumberOfRows()
 	return nrecords;
 }
 
-void dalTable::readRows( void * data_out, long nstart, long numberRecs )
+void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buffersize )
 {
 	size_t * field_sizes;
 	size_t * field_offsets;
@@ -627,16 +626,29 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs )
 	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
 	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
 	size_out = (size_t*)malloc( sizeof(size_t) );
+	field_names = (char**)malloc( nfields * sizeof(char*) );
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+	}
 
-	status = H5TBget_field_info( file_id, name.c_str(), field_names,
+	status = H5TBget_field_info( file_id, name.c_str(), /*NULL, NULL, NULL, NULL);*/field_names,
 				     field_sizes, field_offsets, size_out );
+
  	hsize_t start = nstart;
  	hsize_t nrecs = numberRecs;
 
+	if (buffersize > 0)
+		size_out[0] = buffersize;
 	status = H5TBread_records( file_id, name.c_str(), start, nrecs,
 				   size_out[0], field_offsets, field_sizes,
 				   data_out );
-	
+
+free(field_sizes);
+free(field_offsets);
+free(size_out);
+for (unsigned int ii=0; ii<nfields; ii++) {
+	free(field_names[ii]);
+}
 	if (status < 0) {
 		cout << "Problem reading records. Row buffer may be too big. "
 		     << "Make sure the buffer is smaller than the size of the "
