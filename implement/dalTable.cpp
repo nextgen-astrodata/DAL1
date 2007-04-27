@@ -327,16 +327,6 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 	status = H5TBinsert_field( file_id, name.c_str(), colname.c_str(),
 				   field_type, position, fill_data, data );
 
-	// if successful, add corresponding column object to list
-// 	if ( 0 == status ) {
-// 	  	dalColumn * lc = new dalColumn( colname, "foo" );
-		
-		// add new dalColumn to the 'columns' vector
-// 	  	columns.push_back( *lc );
-	
-// 	 	lc->addMember( "a_member", dal_INT );
-// 	}
-
 }
 
 void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
