@@ -70,7 +70,9 @@ int dalColumn::getSize()
 
 void dalColumn::addMember( string member_name, string member_type )
 {
-
+/*    array_tid = H5Tarray_create(H5T_NATIVE_CHAR, ARRAY_RANK,
+		    array_dim, NULL);
+*/
 	if ( member_type == dal_INT )	{
 		status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_INT );
 	}

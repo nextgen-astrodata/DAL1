@@ -328,14 +328,14 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 				   field_type, position, fill_data, data );
 
 	// if successful, add corresponding column object to list
-	if ( 0 == status ) {
-	  	dalColumn * lc = new dalColumn( colname, "foo" );
+// 	if ( 0 == status ) {
+// 	  	dalColumn * lc = new dalColumn( colname, "foo" );
 		
 		// add new dalColumn to the 'columns' vector
-	  	columns.push_back( *lc );
+// 	  	columns.push_back( *lc );
 	
-	 	lc->addMember( "a_member", dal_INT );
-	}
+// 	 	lc->addMember( "a_member", dal_INT );
+// 	}
 
 }
 
