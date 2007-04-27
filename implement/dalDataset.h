@@ -56,6 +56,7 @@ const string FITSTYPE = "FITS";
 class dalDataset{
 
 	void * file;  /// can be HDF5File, FITS, MS
+	hid_t h5fh;   /// hdf5 file handle
 	string type;  /// "HDF5", "MS" or "FITS"; for example
 	string name;  /// dataset name
 	vector<string> files;  /// list of files
@@ -89,7 +90,7 @@ class dalDataset{
 	/// create a new table in a specified group
 	dalTable * createTable( string tablename, string groupname );
 		int createImage();  /// create a new table outside of a group
-	dalGroup * createGroup( string groupname );  /// create a new group
+	dalGroup * createGroup( char* groupname );  /// create a new group
 	int getName();  /// retrieve the name of the dataset
 	int rename();  /// rename the dataset
 	dalTable * openTable( string tablename );  /// return a dalTable object

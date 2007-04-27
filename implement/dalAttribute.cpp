@@ -30,7 +30,5 @@
 // for high-level Attribute interface (written in C)
 #include "H5TA.h"
 
-using namespace H5;
-
 dalAttribute::dalAttribute()
 {}

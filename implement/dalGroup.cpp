@@ -23,21 +23,19 @@
 #endif
 herr_t attr_info(hid_t loc_id, const char *name, void *opdata);
 dalGroup::dalGroup() {
-    H5::Group group;
-//    hid_t foo = group.getLocId();
-//    cout << "group id == " << foo << endl;
 }
 
-dalGroup::dalGroup( void * voidfile, string gname ) {
+dalGroup::dalGroup( void * voidfile, char* gname ) {
 
-	H5::H5File * lclfile = (H5::H5File*)voidfile; // H5File object
+
+	hid_t * lclfile = (hid_t*)voidfile; // H5File object
 	file = lclfile;
-	file_id = lclfile->getLocId();  // get the file handle
+	file_id = *lclfile;  // get the file handle
 
 	name = gname;
-	H5::Group * lclgroup =
-	    new H5::Group( lclfile->createGroup( "/" + gname ));
-	group = lclgroup;  // set local to global
+	string fullgroupname = "/" + stringify(gname);
+	hid_t grp = H5Gcreate(*(hid_t*)file, fullgroupname.c_str(), 0);
+
 }
 
 bool dalGroup::setName ( string gname ) {
@@ -60,9 +58,9 @@ string dalGroup::getName () {
 int dalGroup::open( void * voidfile, string groupname ) {
 	name = groupname;
 
-	H5::H5File * lclfile = (H5::H5File*)voidfile; // H5File object
+	hid_t * lclfile = (hid_t*)voidfile; // H5File object
 	file = lclfile;
-	file_id = lclfile->getLocId();  // get the file handle
+	file_id = *lclfile;  // get the file handle
 	
 	string fullgroupname = "/" + groupname;
 	group_id = H5Gopen( file_id, fullgroupname.c_str() );

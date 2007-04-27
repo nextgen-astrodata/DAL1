@@ -65,58 +65,14 @@ int openFITS( char * fname )
  * @param fname 
  * @return 
  */
-void* openHDF5( char * fname )
+hid_t openHDF5( char * fname )
 {
-	//cout << "Try to open HDF5... ";
-
-	try {
-	 
-	 /*
-          * Turn off the auto-printing when failure occurs so that we can
-          * handle the errors appropriately
-          */
-	  H5::Exception::dontPrint();
-	  
-	  // Try to open the file as HDF5
-	  H5::H5File* file = new H5::H5File( fname, H5F_ACC_RDWR );
-	  
-	  if ( (*file).isHdf5( fname )  )
-	  {
-	    //cout << "YES - is HDF5." << endl;
-	    //cout << "success" << endl;
-	    return (H5::H5File*)file;
-	  }
-	  else
-	  {
-	    //cout << "NO - is not HDF5." << endl;
-	    //cout << "failed" << endl;
-	    return NULL;
-	  }
-	  
-	  /*
-	  string h5name = (*file).getFileName();
-	  cout << "Name: " << h5name << endl;
-	  hsize_t h5size = (*file).getFileSize();
-	  cout << "Size: " << h5size << endl;
-	  int obcount = (*file).getObjCount();
-	  cout << "Object count: " << obcount << endl;
-
-	  H5::Group root = (*file).openGroup( "/" );
-	  H5::Group sub = (*file).createGroup( "sub2" );  // careful!
-	  
-  	  H5::FileAccPropList plist = (*file).getAccessPlist();
-	  
-	 */
-	 }
-
-	 // catch failure caused by the H5File operations
-	catch( H5::FileIException error )
-	{
-	  error.printError();
-	  return NULL;
-	}
-	
-	return NULL;
+	// the following return an integer file handle
+	hid_t fh = H5Fopen(fname, H5F_ACC_RDWR, H5P_DEFAULT);
+	if (fh >= 0)
+		return fh;
+	else
+		return -1;
 }
 
 /**
@@ -134,10 +90,10 @@ int dalDataset::open( char * filename )
     //cout << " opened FITS!" << endl;
     file = (fitsfile*)myfile;
     lcltype = FITSTYPE;
-  } else if ( NULL != (myfile = openHDF5( filename )) ) {
-    //cout << " opened HDF5!" << endl;
-    file = (H5::H5File*)myfile;
-	lcltype = H5TYPE;
+  } else if ( (h5fh = openHDF5( filename )) >= 0 ) {
+//     cout << " opened HDF5!" << endl;
+     file = &h5fh;
+     lcltype = H5TYPE;
 	//cout << "returning " << SUCCESS << endl;
   }
   else
@@ -155,25 +111,13 @@ int dalDataset::close()
    if ( type == H5TYPE )
    {
       //cout << "Try to close HDF5... ";
-      try {
-  	  /* Turn off the auto-printing when failure occurs so that we can
-          * handle the errors appropriately
-          */
-	  H5::Exception::dontPrint();
-	  
-	  H5::H5File * f = (H5::H5File*)file;
-	  (*f).close();
-	  //cout << "success" << endl;
-	  
-      }
-      catch( H5::FileIException error )
-	{
-	  //cout << "failed" << endl;
-	  error.printError();
-	  return -1;
-	}
+
+       if ( H5Fclose(*(hid_t*)file ) >= 0 )
+        return 0;
+      else
+	return -1;
     }
-    return 0;
+    return -2;
 }
 
 /**
@@ -181,11 +125,11 @@ int dalDataset::close()
  * @param gname 
  * @return 
  */
-dalGroup * dalDataset::createGroup( string gname )
+dalGroup * dalDataset::createGroup( char* gname )
 {
     if ( type == H5TYPE )
    {
-   	   H5::H5File* lclfile = (H5::H5File*)file;
+	hid_t * lclfile = &h5fh;
 	   dalGroup * lg = new dalGroup( lclfile, gname);
 	   return lg;
    }
@@ -207,15 +151,14 @@ dalDataset::dalDataset( char * name, string filetype )
    if ( filetype == H5TYPE )
    {
 
-        H5::H5File* lclfile = new H5::H5File( name, H5F_ACC_TRUNC );
-		file = (H5::H5File*)lclfile;
-		// 	cout << (H5::H5File*)file.getFileName() << endl;
-   }
-   else {
+	h5fh = H5Fcreate(name, H5F_ACC_TRUNC, H5P_DEFAULT,
+				   H5P_DEFAULT);
+        file = &h5fh;
+	
+   } else {
    	cout << "Data format \'" << type << "\' not supported." << endl;
    	exit(99);
    }
-
 }
 
 /**
@@ -224,11 +167,6 @@ dalDataset::dalDataset( char * name, string filetype )
  */
 dalDataset::~dalDataset()
 {
-   if ( type == H5TYPE )
-   {
-      H5::H5File * lclfile = (H5::H5File*)file;
-      delete lclfile;
-   }
 }
 
 /**

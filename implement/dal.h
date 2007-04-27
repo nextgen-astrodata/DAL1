@@ -38,8 +38,6 @@
 #include <cstdio>
 #include "H5LT.h"
 
-#include "H5Cpp.h"
-
 extern "C" {
 #include "fitsio.h"
 }

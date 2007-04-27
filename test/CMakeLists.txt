@@ -33,6 +33,7 @@ set (tests
   mswrite
   tdalLopesEvent
   leread
+  tdal
   )
 
 foreach (src ${tests})

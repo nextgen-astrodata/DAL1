@@ -44,15 +44,17 @@ class dalColumn {
 	string name; /// column name
 	string datatype;  /// column datatype
 	int size; /// datatype size
-//	hsize_t size;  /// hdf5 size
-	
+	int totsize; /// total column size
+	hid_t coltype;
 	vector<dalAttribute> attributes; /// list of column attributes
 	dalFilter filter; /// filter associated with column
+	herr_t  status;  /// hdf5 call return status
+
 	
 public:
 	dalColumn();
 	dalColumn( string colname, string coltype );
-	dalColumn( string complexcolname/*, void * dataformat*/ );
+	dalColumn( string complexcolname );
 	void addMember( string member_name, string type );
 	string getName();
 	string getType();

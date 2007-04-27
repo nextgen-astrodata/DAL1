@@ -30,8 +30,6 @@
 // for high-level table interface (written in C)
 #include "H5TA.h"
 
-using namespace H5;
-
 dalTable::dalTable()
 {
  	columns.clear();  // clear the coulumns vector
@@ -41,9 +39,9 @@ dalTable::dalTable()
 void dalTable::openTable( void * voidfile, string tablename, string groupname )
 {
 	name = groupname + '/' + tablename;
-	H5::H5File * lclfile = (H5::H5File*)voidfile; // H5File object
+	hid_t * lclfile = (hid_t*)voidfile; // H5File object
 	file = lclfile;
-	file_id = lclfile->getLocId();  // get the file handle
+	file_id = *lclfile;  // get the file handle
     table_id = H5Dopen ( file_id, name.c_str() );
 }
 
@@ -73,9 +71,9 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 	name = groupname + '/' + tablename;// set the private class variable: name
 	
 	// cast the voidfile to an hdf5 file
-	H5::H5File * lclfile = (H5::H5File*)voidfile; // H5File object
+	hid_t * lclfile = (hid_t*)voidfile; // H5File object
 	file = lclfile;
-	file_id = lclfile->getLocId();  // get the file handle
+	file_id = *lclfile;  // get the file handle
 
 	const unsigned int	NFIELDS = 1;
 	const unsigned long	NRECORDS = 1;
@@ -103,7 +101,6 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 				 dst_offset, field_type, chunk_size,
 				 fill_data, compress, data );
 }
-
 
 
 void dalTable::addColumn( string colname, string coltype, int size )

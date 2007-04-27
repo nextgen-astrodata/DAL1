@@ -72,31 +72,26 @@ void dalColumn::addMember( string member_name, string member_type )
 {
 
 	if ( member_type == dal_INT )	{
-			H5::CompType mtype1( sizeof(int) );
-			mtype1.insertMember( member_name, 0, H5::PredType::NATIVE_INT);
+		status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_INT );
 	}
 	else if ( member_type == dal_UINT )	{
-			H5::CompType mtype1( sizeof(unsigned int) );
-			mtype1.insertMember( member_name, 0, H5::PredType::NATIVE_UINT);
+		status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_UINT );
 	}
 	else if ( member_type == dal_SHORT )	{
-			H5::CompType mtype1( sizeof(short) );
-			mtype1.insertMember( member_name, 0, H5::PredType::NATIVE_SHORT);
+		status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_SHORT );
 	}
 	else if ( member_type == dal_FLOAT )	{
-			H5::CompType mtype1( sizeof(float) );
-			mtype1.insertMember( member_name, 0, H5::PredType::NATIVE_FLOAT);
+		status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_FLOAT );
 	}
 	else if ( member_type == dal_DOUBLE )	{
-			H5::CompType mtype1( sizeof(double) );
-			mtype1.insertMember( member_name, 0, H5::PredType::NATIVE_DOUBLE);
+		status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_DOUBLE );
 	}
 	else if ( member_type == dal_STRING )	{
-			H5::CompType mtype1( sizeof(H5T_C_S1));
-			mtype1.insertMember( member_name, 0, H5T_C_S1);
+		status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_C_S1 );
 	}
 	else {					     
-			cout << "ERROR: addMember " << member_name << " " << member_type << " not supported." << endl;
+		cout << "ERROR: addMember " << member_name << " "
+			<< member_type << " not supported." << endl;
 	}
-//	cout << "addMember " << member_name << " " << member_type << " to " << name << endl;
+	cout << "addMember " << member_name << " " << member_type << " to " << name << endl;
 }

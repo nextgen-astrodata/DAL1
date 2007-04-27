@@ -48,7 +48,7 @@ class dalGroup{
 
 	void * file; /// can be HDF5File, FITS, MS
 	string name; /// group name
-	H5::Group * group;
+	void * group;
 	vector<dalTable> tables; /// list of tables within groups
 	vector<dalAttribute> attributes; /// list of group attributes
 	dalFilter filter; /// filter associated with group
@@ -59,7 +59,7 @@ class dalGroup{
  public:
  	
 	dalGroup();  /// constructor
-	dalGroup( void * file, string groupname );/// constructor with group name
+	dalGroup( void * file, char* groupname );/// constructor with group name
 	int open( void * file, string groupname ); /// open an existing group
 	string getName(); /// get group name
 	bool setName( string ); /// set group name
