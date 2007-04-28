@@ -41,11 +41,11 @@ class dalAttribute {
 	
   public:
 	dalAttribute();
-	string getName(); // return the attribute name
+/*	string getName(); // return the attribute name
 	int getUnits(); // return the attribute units
 	int getDescription(); // return the attribute description
 	void setName(); // set the attribute name
 	int setUnits(); // set the attribute units
-	int setDescription(); // set the attribute description
+	int setDescription(); // set the attribute description*/
 };
 #endif

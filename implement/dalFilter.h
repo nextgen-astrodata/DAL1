@@ -36,9 +36,9 @@
 class dalFilter {
 
   public:
-	int check(); // see if the filter can be applied to a table, dataset or group
+/*	int check(); // see if the filter can be applied to a table, dataset or group
 	int set(); // define the filter
 	int reset(); // redefine the filter
-	int print(); // return the filter string
+	int print(); // return the filter string*/
 };
 #endif

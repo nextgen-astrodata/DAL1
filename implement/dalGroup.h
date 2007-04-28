@@ -63,19 +63,19 @@ class dalGroup{
 	int open( void * file, string groupname ); /// open an existing group
 	string getName(); /// get group name
 	bool setName( string ); /// set group name
-	void listTables();  /// print a list of table names within the group
-	int getTable();  /// retrieve a dalTable by name
-	int getTableNumber(); /// retrieve a dalTable by index
-	int advanceTable(); /// sequentially step through the tables in a group
-	int rename();  /// rename a group
-	int remove(); /// delete a group
-	void listAttributes(); /// return a list of group attributes
-	int getAttribute(); /// return a dalAttribute object retrieved by name
+//	void listTables();  /// print a list of table names within the group
+//	int getTable();  /// retrieve a dalTable by name
+//	int getTableNumber(); /// retrieve a dalTable by index
+//	int advanceTable(); /// sequentially step through the tables in a group
+//	int rename();  /// rename a group
+//	int remove(); /// delete a group
+//	void listAttributes(); /// return a list of group attributes
+//	int getAttribute(); /// return a dalAttribute object retrieved by name
 	void getAttributes();
 	void printAttribute( string attrname );
 	void * getAttribute( string attrname );
 
-	void setAttribute( string attrname, void * data, string coltype );
+//	void setAttribute( string attrname, void * data, string coltype );
 	void setAttribute_string( string attrname, string data );
 	void setAttribute_int( string attrname, int * data, int size=1 );
 	void setAttribute_uint( string attrname, unsigned int * data,

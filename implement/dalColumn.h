@@ -60,11 +60,11 @@ public:
 	string getType();
 	int getSize();
 
-	int getNumber();  /// return the index of a column
-	void addArray();
-	int insertAfter(); /// insert a new column after column specified by name or number
-	int insertBefore(); /// insert a new column before column specified by name or number
-	int replace(); /// replace a column with a new one
-	int remove();  /// remove a column
+//	int getNumber();  /// return the index of a column
+// 	void addArray();
+//	int insertAfter(); /// insert a new column after column specified by name or number
+//	int insertBefore(); /// insert a new column before column specified by name or number
+//	int replace(); /// replace a column with a new one
+//	int remove();  /// remove a column
 };
 #endif

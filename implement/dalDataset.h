@@ -81,31 +81,31 @@ class dalDataset{
 	int open( char * datasetname ); /// open the dataset
 	int close(); /// close the dataset
 	 /// return a list of filenames contained within the dataset
-	int getfiles();
-	int checkaccess(); /// check read/write access of specified file
-	int copy(); /// create an exact copy of the data
-	int create();  /// define basic characteristics of a new dataset
+//	int getfiles();
+//	int checkaccess(); /// check read/write access of specified file
+//	int copy(); /// create an exact copy of the data
+//	int create();  /// define basic characteristics of a new dataset
 	/// create a new table in the root group
 	dalTable * createTable( string tablename );
 	/// create a new table in a specified group
 	dalTable * createTable( string tablename, string groupname );
-		int createImage();  /// create a new table outside of a group
+//	int createImage();  /// create a new table outside of a group
 	dalGroup * createGroup( char* groupname );  /// create a new group
-	int getName();  /// retrieve the name of the dataset
-	int rename();  /// rename the dataset
+//	int getName();  /// retrieve the name of the dataset
+//	int rename();  /// rename the dataset
 	dalTable * openTable( string tablename );  /// return a dalTable object
 	dalTable * openTable( string tablename, string groupname );
 	dalGroup * openGroup( string groupname );  /// return a dalGroup object
-	int listGroups();  /// return a list of groups within the dataset
+//	int listGroups();  /// return a list of groups within the dataset
 	/// return a list of tables not contained in any groups
-	int listTables();
+//	int listTables();
 	/// list general attributes attached to the dataset
-	int listAttributes();;
-	int remove();  /// delete the file and all data within it
-	int advanceTable();  /// sequentially step through the dataset tables
-	int advanceGroup();  /// sequentially step through the dataset groups
-	int getTableNumber();  /// return a dalTable by index
-	int getGroupNumber(); /// return a dalGroup by index
+//	int listAttributes();;
+//	int remove();  /// delete the file and all data within it
+//	int advanceTable();  /// sequentially step through the dataset tables
+//	int advanceGroup();  /// sequentially step through the dataset groups
+//	int getTableNumber();  /// return a dalTable by index
+//	int getGroupNumber(); /// return a dalGroup by index
 	string getType(); /// retrieve the dataset type
     
 };

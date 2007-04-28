@@ -77,7 +77,7 @@ class dalTable{
 	dalTable(); /// Constructor
 	~dalTable(); /// Destructor
 
-	void getAttributes();
+ 	void getAttributes();
 	void printColumns();  /// list the columns contained within a table
 	void openTable( void * voidfile, string tablename, string groupname );
 	
@@ -89,7 +89,7 @@ class dalTable{
 	void removeColumn( string colname );  /// remove a column
 	void writeDataByColNum( void * structure, int index, int rownum );
 	
-	void writeDataByColName( void * structure, string colname );
+// 	void writeDataByColName( void * structure, string colname );
 	void appendRow( void * data );
 	void appendRows( void * data, long number_of_rows );
 	void listColumns( /*void * data_out, long start, long stop*/ );
@@ -103,20 +103,20 @@ class dalTable{
 	void setAttribute_uint( string attrname, unsigned int * data, int size=1 );
 	void setAttribute_double( string attrname, double * data, int size=1 );
 	bool findAttribute( string attrname );
-	int getNumberOfColumns();  /// return the number of columns in a table
+//	int getNumberOfColumns();  /// return the number of columns in a table
 	long getNumberOfRows();  /// return the number of rows within a table
-	int setRowNumber();  /// advance to a row by its index
-	int advanceRow();  /// advance one row
-	int getName();  /// return the name of the table
-	int setName();  /// set the name of the table
-	int insertRow();  /// insert a row at current location
-	int removeRow();  /// remove a row at current location
-	int getColumn();  /// retrieve a dalColumn by name
-	int getColumnNumber();  /// retrieve a dalColumn by index
-	int listAttributes(); /// return a list of group attributes
-	int getAttribute();  /// return a dalAttribute object retrieved by name
-	int size(); /// return number of table rows
-	int writeColVal(); /// write a value or set of
+//	int setRowNumber();  /// advance to a row by its index
+//	int advanceRow();  /// advance one row
+//	int getName();  /// return the name of the table
+//	int setName();  /// set the name of the table
+//	int insertRow();  /// insert a row at current location
+//	int removeRow();  /// remove a row at current location
+//	int getColumn();  /// retrieve a dalColumn by name
+//	int getColumnNumber();  /// retrieve a dalColumn by index
+//	int listAttributes(); /// return a list of group attributes
+//	int getAttribute();  /// return a dalAttribute object retrieved by name
+//	int size(); /// return number of table rows
+//	int writeColVal(); /// write a value or set of
 };
 
 #endif
