@@ -77,10 +77,9 @@ class dalGroup{
 
 //	void setAttribute( string attrname, void * data, string coltype );
 	void setAttribute_string( string attrname, string data );
-	void setAttribute_int( string attrname, int * data, int size=1 );
-	void setAttribute_uint( string attrname, unsigned int * data,
-				int size=1 );
-	void setAttribute_double( string attrname, double * data, int size=1 );
+	void setAttribute_int( string attrname, int data/*, int size=1*/ );
+	void setAttribute_uint( string attrname, unsigned int data/*,int size=1*/ );
+	void setAttribute_double( string attrname, double data/*, int size=1*/ );
 };
 
 #endif
