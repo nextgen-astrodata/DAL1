@@ -1,4 +1,7 @@
+#! /usr/bin/env python
+
 import dal
+from pylab import *
 
 ds = dal.dalDataset("foo.h5")
 
@@ -25,13 +28,18 @@ for x in range(100):
 outdata = dal.intp() # pointer to data
 
 # read some values
+vals = []
 for x in range(10,30,2): # 10 to 30, step 2
 	t2.readRows(outdata,x,1)
-	print outdata.value()
+	#print outdata.value()
+	vals.append( outdata.value() )
 
 g1.setAttribute_int("intAttr",5)
 g1.setAttribute_string("strAttr","teststring")
 g1.setAttribute_uint("uintAttr",6)
 g1.setAttribute_double("doubleAttr",4.321)
+
+#plot([1,2,3,4,5,6,7,8,9,10],vals)
+#show()
 
 ds.close()
