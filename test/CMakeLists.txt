@@ -32,7 +32,7 @@ set (tests
   msread
   mswrite
   tdalLopesEvent
-  leread
+  lewrite
   tdal
   )
 
