@@ -150,7 +150,7 @@ int main (int argc, char *argv[])
 	  AntennaTable->addColumn( "DATA", dal_SHORT );
 
 	  event.data(data,antenna);
-	  int jj=0;
+	  unsigned int jj=0;
 
 	  // for all of the datapoint for an antenna
 	  while (jj < blocksize)
