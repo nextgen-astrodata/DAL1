@@ -34,7 +34,8 @@ dalGroup::dalGroup( void * voidfile, char* gname ) {
 
 	name = gname;
 	string fullgroupname = "/" + stringify(gname);
-	hid_t grp = H5Gcreate(*(hid_t*)file, fullgroupname.c_str(), 0);
+	hid_t grp;
+	grp = H5Gcreate(*(hid_t*)file, fullgroupname.c_str(), 0);
 
 }
 
@@ -75,28 +76,28 @@ void dalGroup::setAttribute_string( string attrname, string data )
 	}
 }
 
-void dalGroup::setAttribute_int( string attrname, int data/*, int size*/ )
+void dalGroup::setAttribute_int( string attrname, int * data, int size )
 {
-	int size=1;
+// 	int size=1;
 	if ( H5LTset_attribute_int( file_id, name.c_str(),
-		attrname.c_str(), &data, size ) < 0 ) {
+		attrname.c_str(), /*&*/data, size ) < 0 ) {
 		cout << "ERROR: could not set attribute " << attrname << endl;
 	}
 }
 
-void dalGroup::setAttribute_uint( string attrname, unsigned int data/*, int size*/ ) {
-	int size=1;
+void dalGroup::setAttribute_uint( string attrname, unsigned int * data, int size ) {
+// 	int size=1;
 	if ( H5LTset_attribute_uint( file_id, name.c_str(),
-					attrname.c_str(), &data, size ) < 0 ) {
+					attrname.c_str(), /*&*/data, size ) < 0 ) {
 		cout << "ERROR: could not set attribute " << attrname << endl;
 	}
 }
 
-void dalGroup::setAttribute_double( string attrname, double data/*, int size*/ )
+void dalGroup::setAttribute_double( string attrname, double * data, int size )
 {
-	int size=1;
+// 	int size=1;
 	if ( H5LTset_attribute_double( file_id, name.c_str(),
-					attrname.c_str(), &data, size ) < 0 ) {
+					attrname.c_str(), /*&*/data, size ) < 0 ) {
 		cout << "ERROR: could not set attribute " << attrname << endl;
 	}
 }
