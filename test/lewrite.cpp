@@ -18,6 +18,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+/*!
+  \brief Convert LopesEvent format data to HDF5-based time-series format
+
+  \author Joseph Masters
+
+  <h3>Usage</h3>
+
+  In order to convert a data stored in a LopesEvent data file to the time-series
+  data format defined for the DAL use:
+  \verbatim
+  ./lewrite <LopesEvent file> <HDF5 file>
+  \endverbatim
+*/
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -92,6 +106,7 @@ int main (int argc, char *argv[])
   // create the "Station" group
   /////////////////////////////////////////
   //
+
   dalGroup * stationGroup = dataset->createGroup( "Station" );
 
   string telescope = "LOFAR";
