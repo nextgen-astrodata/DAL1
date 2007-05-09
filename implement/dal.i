@@ -6,6 +6,7 @@
 /* Includes the header in the wrapper code */
 #include "uvw.h"
 #include "ms.h"
+#include "lffe.h"
 #include "dal.h"
 #include "dalAttribute.h"
 #include "dalColumn.h"
@@ -18,6 +19,7 @@
 /* Parse the header file to generate wrappers */
 %include "uvw.h"
 %include "ms.h"
+%include "lffe.h"
 %include "dal.h"
 %include "dalAttribute.h"
 %include "dalColumn.h"
@@ -35,3 +37,4 @@
 %pointer_class(float, floatp);
 %pointer_class(UVW, uvwp);
 %pointer_class(MS, msp);
+%pointer_class(LFFE, lffep);
