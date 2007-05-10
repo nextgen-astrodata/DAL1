@@ -24,3 +24,7 @@ endif (NOT HAVE_CFITSIO)
 if (NOT HAVE_BLITZ)
   include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindBlitz.cmake)
 endif (NOT HAVE_BLITZ)
+
+if (NOT HAVE_SWIG)
+  include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindSWIG.cmake)
+endif (NOT HAVE_SWIG)
