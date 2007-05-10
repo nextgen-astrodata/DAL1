@@ -4,7 +4,7 @@ print "-- Importing modules..."
 
 import sys,dal,ROOT
 from pylab import *
-from ROOT import gRandom,TCanvas,TH1F,TGraph
+from ROOT import gRandom,TCanvas,TH1F,TGraph,TVirtualFFT,TH2F
 
 ## ------------------------------------------------------------------------------
 ## Working with DAL functionality
@@ -25,6 +25,8 @@ ant3 = ds.openTable( "ANTENNA3", "Station" );
 tabs = ( ant0, ant1, ant2, ant3 );
 table = ant0;
 outdata = dal.shortp();
+
+nofAntennas = 4;
 blocksize = table.getNumberOfRows();
 
 print "-- Fill antenna data into vector..."
@@ -41,16 +43,25 @@ minVal = min(vals)
 ## ------------------------------------------------------------------------------
 ## Start piping data into ROOT
 
-c1 = TCanvas ('c1','Example',200,10,700,500)
-ts = TH1F ('ts','TimeSeries',100,minVal,maxVal);
+ts   = TH1F ('ts',"Time series",blocksize,0,blocksize);
+hist = TH1F ('hist','TimeSeries',100,minVal,maxVal);
 
 print "-- Filling data into histogram..."
 
-for x in range(len(vals)):
-	ts.Fill(vals[x])
+for sample in range(len(vals)):
+	ts.SetBinContent(sample,vals[sample])
+	hist.Fill(vals[sample])
 
-ts.Fit("gaus")
+c1 = TCanvas ('c1','Example',100,10,1000,500)
+c1.Divide(2,1)
+c1.cd(1)
 ts.Draw()
+c1.cd(2)
+hist.SetFillColor(32)
+hist.Fit("gaus")
+hist.Draw()
 c1.Update()
+
+## Prevent Python from exiting before we are done
 
 raw_input('Please press return to exit...\n')
