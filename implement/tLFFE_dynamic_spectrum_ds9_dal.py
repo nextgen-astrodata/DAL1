@@ -4,9 +4,9 @@ import dal
 from pylab import *
 import numpy
 import sys
-#import RO.DS9
+import RO.DS9
 import numarray
-#ds9Win = RO.DS9.DS9Win()
+ds9Win = RO.DS9.DS9Win()
 
 # for congrid
 import numpy as n
@@ -114,13 +114,13 @@ nd2 =  nd.reshape( nd.shape[0]/128, 128 )
 nd3 = congrid( nd2, (1000,128), method='linear', minusone=False, centre=False)
 #print type(nd3)
 #print nd3.shape
-#imshow(nd2[:1000])
-imshow(nd3)
-xlabel('Channel')
-ylabel('Sample No.')
-title('Dynamic Spectrum')
-show()
-#ds9Win.showArray(nd3)
+#ilffehow(nd2[:1000])
+#imshow(nd3)
+#xlabel('Channel')
+#ylabel('Sample No.')
+#title('Dynamic Spectrum')
+#show()
+ds9Win.showArray(nd3)
 raw_input('Please press return to exit...\n')
 
 

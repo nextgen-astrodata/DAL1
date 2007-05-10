@@ -1,11 +1,11 @@
 #include "dal.h"
 
 /*
-class LFFE {
+class CS1 {
 private:
 	int ant1;
 	int ant2;
-	dalcomplex data[4][128];
+	dalcomplex data[4][256];
 	double time;
 	double u;
 	double v;
@@ -15,25 +15,25 @@ public:
 	int get_ant2();
 	dalcomplex get_data(int polarization, int channel);
 	double get_time();
-	double get_u(int n);
+	double get_u();
 	double get_v();
 	double get_w();
 };
 */
 
-typedef struct LFFE_ROW {
+typedef struct CS1_ROW {
 	int ant1;
 	int ant2;
-	dalcomplex data[4][128];
+	dalcomplex data[4][256];
 	double time;
 	double u;
 	double v;
 	double w;
-} LFFE_ROW;
+} CS1_ROW;
 
-class LFFE {
+class CS1 {
 private:
-	LFFE_ROW row[500];
+	CS1_ROW row[50];
 public:
 	int get_ant1(int n);
 	int get_ant2(int n);

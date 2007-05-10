@@ -5,9 +5,10 @@
 %{
 /* Includes the header in the wrapper code */
 #include "uvw.h"
-#include "ms.h"
+#include "cs1.h"
 #include "lffe.h"
 #include "dal.h"
+//#include "lffe_buf.h"
 #include "dalAttribute.h"
 #include "dalColumn.h"
 #include "dalFilter.h"
@@ -18,9 +19,10 @@
 
 /* Parse the header file to generate wrappers */
 %include "uvw.h"
-%include "ms.h"
+%include "cs1.h"
 %include "lffe.h"
 %include "dal.h"
+//%include "lffe_buf.h"
 %include "dalAttribute.h"
 %include "dalColumn.h"
 %include "dalFilter.h"
@@ -36,5 +38,6 @@
 %pointer_class(double, doublep);
 %pointer_class(float, floatp);
 %pointer_class(UVW, uvwp);
-%pointer_class(MS, msp);
+%pointer_class(CS1, cs1p);
 %pointer_class(LFFE, lffep);
+//%pointer_class(LFFE_BUF, lffebufp);
