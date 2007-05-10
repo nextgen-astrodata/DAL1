@@ -12,7 +12,8 @@ ylabel('Amplitude', font)
 
 ds = dal.dalDataset()
 
-ret = ds.open("/home/jmasters/data/h5/lopes.h5")
+#ret = ds.open("/home/jmasters/data/h5/lopes.h5")
+ret = ds.open("/home/lars/data/lopes/2007-01-31/2007.01.31.23:59:33.960.hdf5")
 
 # stationGroup = ds.openGroup("Station")
 
