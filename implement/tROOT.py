@@ -43,8 +43,8 @@ minVal = min(vals)
 ## ------------------------------------------------------------------------------
 ## Start piping data into ROOT
 
-ts   = TH1F ('ts',"Time series",blocksize,0,blocksize);
-hist = TH1F ('hist','TimeSeries',100,minVal,maxVal);
+ts   = TH1F ('ts',"ADC time series",blocksize,0,blocksize);
+hist = TH1F ('hist','Distribution of ADC values',100,minVal,maxVal);
 
 print "-- Filling data into histogram..."
 
