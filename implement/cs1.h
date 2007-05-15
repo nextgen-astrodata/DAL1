@@ -31,6 +31,13 @@ typedef struct CS1_ROW {
 	double w;
 } CS1_ROW;
 
+/*!
+  \class CS1
+  
+  \ingroup DAL
+  
+  \author Joseph Masters
+*/
 class CS1 {
 private:
 	CS1_ROW row[50];

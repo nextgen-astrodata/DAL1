@@ -11,6 +11,13 @@
 #include <typeinfo>
 #include <stdexcept>
 
+/*!
+  \class BadConversion
+  
+  \ingroup DAL
+  
+  \author Joseph Masters
+*/
 class BadConversion : public std::runtime_error {
 public:
   BadConversion(const std::string& s)

@@ -31,6 +31,13 @@ typedef struct LFFE_ROW {
 	double w;
 } LFFE_ROW;
 
+/*!
+  \class LFFE
+  
+  \ingroup DAL
+  
+  \author Joseph Masters
+*/
 class LFFE {
 private:
 	LFFE_ROW row[500];

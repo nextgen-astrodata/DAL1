@@ -17,11 +17,17 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-/**
- * \file dal.cpp
- * \author Joseph Masters
- * \date 03-20-07
- */
+
+/*!
+  \file timeseries.h
+  
+  \ingroup DAL
+ 
+  \author Lars B&auml;hren
+
+  \date 2007/03/20
+*/
+
 #ifndef TIMESERIES_H
 #define TIMESERIES_H
 

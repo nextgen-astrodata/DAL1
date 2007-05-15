@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+## \file tLFFE_time_vs_inensity_dal.py
+## \brief Plot WSRT LFFE intensity as function of time
+## \ingroup DAL
+
 import dal
 from pylab import *
 import numpy

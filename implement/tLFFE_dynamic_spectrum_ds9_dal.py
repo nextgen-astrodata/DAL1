@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+## \file tLFFE_dynamic_spectrum_ds9_dal.py
+## \brief Python script for passing WSRT LFFE data dynamic spectrum to DS9
+## \ingroup DAL
+
 import dal
 from pylab import *
 import numpy

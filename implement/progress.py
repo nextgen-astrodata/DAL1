@@ -1,5 +1,9 @@
 import sys
 
+## \class progressBar
+## \brief A simple progress bar drawn on the standard output
+## \ingroup DAL
+
 class progressBar:
     """ Creates a text-based progress bar. Call the object with the `print'
         command to see the progress bar, which looks something like this:

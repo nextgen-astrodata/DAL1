@@ -19,6 +19,10 @@
  ***************************************************************************/
 
 /*!
+  \file lewrite.cpp
+  
+  \ingroup DAL
+
   \brief Convert LopesEvent format data to HDF5-based time-series format
 
   \author Joseph Masters

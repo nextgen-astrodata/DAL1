@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+## \file tLFFE_dynamic_spectrum_buf_dal.py
+## \brief Python script fro creating a dynamic spectrum from WSRT LFFE data
+## \ingroup DAL
+
 import dal # data access library
 from pylab import * # for plotting
 import numpy # for arrays

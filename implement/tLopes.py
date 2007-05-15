@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+## \file tLopes.py
+## \brief Read in and plot LOPES raw time-series data
+## \ingroup DAL
+
 print "-- Importing modules..."
 
 import dal

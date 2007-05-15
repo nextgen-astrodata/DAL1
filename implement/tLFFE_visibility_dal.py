@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+## \file tLFFE_visibility_dal.py
+## \brief Plot visibilities of WSRT LFFE data
+## \ingroup DAL
+
 import dal
 from pylab import *
 import numpy

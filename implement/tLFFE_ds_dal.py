@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+## \file tLFFE_ds_dal.py
+## \brief A Python script for reading in WSRT LFFE data via the DAL
+## \ingroup DAL
+
 import dal
 from pylab import *
 import numpy

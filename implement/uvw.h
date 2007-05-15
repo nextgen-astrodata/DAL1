@@ -1,3 +1,10 @@
+/*!
+  \class UVW
+  
+  \ingroup DAL
+  
+  \author Joseph Masters
+*/
 class UVW {
 private:
 	double u;
