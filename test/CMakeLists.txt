@@ -34,6 +34,7 @@ set (tests
   tdalLopesEvent
   lewrite
   tdal
+  tdal_fits
   )
 
 foreach (src ${tests})
