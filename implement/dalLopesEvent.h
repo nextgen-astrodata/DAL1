@@ -1,6 +1,9 @@
-/***************************************************************************
- *   Copyright (C) 2006                                                    *
- *   Andreas Horneffer (<mail>)                                            *
+/*-------------------------------------------------------------------------*
+ | $Id::                                                                 $ |
+ *-------------------------------------------------------------------------*
+ ***************************************************************************
+ *   Copyright (C) 2007 by Lars B"ahren                                    *
+ *   bahren@astron.nl                                                      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,8 +20,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-/* $Id: dalLopesEvent.h,v 1.2 2007/04/04 18:45:38 bahren Exp $*/
 
 #ifndef LOPESEVENTIN_H
 #define LOPESEVENTIN_H
