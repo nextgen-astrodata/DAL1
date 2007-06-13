@@ -26,7 +26,7 @@
 
   \brief Common header file for the Data Access Library (DAL)
 
-  \defgroup DAL
+  \defgroup DAL Data Access Library (DAL)
 
   \author Joseph Masters
 */
