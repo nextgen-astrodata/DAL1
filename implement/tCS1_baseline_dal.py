@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+## \file tCS1_baseline_dal.py
+## \brief Read and plot intensity as function of baseline for CS-1 data
+## \ingroup DAL
+
 import dal
 from pylab import *
 import numpy

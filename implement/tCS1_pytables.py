@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+## \file tCS1_pytables.py
+## \brief Use pyTables to read and plot antenna data from CS-1 data set
+## \ingroup DAL
+
 import tables
 from pylab import *
 h5 = tables.openFile("/home/jmasters/sb0-1.h5")

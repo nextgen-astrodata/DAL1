@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+## \file tCS1_visibility_dal.py
+## \brief Read and plot visibilities of a CS-1 data set
+## \ingroup DAL
+
 import dal
 from pylab import *
 import numpy

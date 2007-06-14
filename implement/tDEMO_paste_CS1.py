@@ -1,3 +1,8 @@
+
+## \file tDEMO_paste_CS1.py
+## \brief Read and plot data from a CS-1 data set
+## \ingroup DAL
+
 import dal
 from pylab import *
 import numpy

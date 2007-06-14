@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+## \file tDEMO_plotting_CS1.py
+## \brief Read, pre-process and plot data from a CS-1 data set
+## \ingroup DAL
+
 import dal
 from pylab import *
 import numpy

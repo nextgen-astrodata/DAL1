@@ -1,8 +1,8 @@
-import sys
-
 ## \class progressBar
 ## \brief A simple progress bar drawn on the standard output
 ## \ingroup DAL
+
+import sys
 
 class progressBar:
     """ Creates a text-based progress bar. Call the object with the `print'
@@ -63,7 +63,7 @@ class progressBar:
         return str(self.progBar)
 
     def __call__(self, value):
-        """ Updates the amount, and writes to stdout. Prints a carriage return
+        """Updates the amount, and writes to stdout. Prints a carriage return
             first, so it will overwrite the current line in stdout."""
         print '\r',
         self.updateAmount(value)

@@ -1,3 +1,8 @@
+
+## \file tDEMO_paste_LFFE.py
+## \brief Read and plot data from a WSRT LFFE data set
+## \ingroup DAL
+
 import dal
 from pylab import *
 import numpy
