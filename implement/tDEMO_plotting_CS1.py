@@ -42,7 +42,7 @@ bufsize = 50
 # -----   read data into memory (python arrays)  --------
 
 pb = progress.progressBar(0,total_rows)
-print "Reading and filtering data for multiple baselines..."
+print "Reading and filtering data for a single baseline..."
 for x in range(0,total_rows,bufsize):
 	if (total_rows - already_read) < bufsize:
 		bufsize = total_rows - already_read
