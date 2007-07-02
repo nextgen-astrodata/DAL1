@@ -92,7 +92,7 @@ hid_t openHDF5( char * fname )
 int dalDataset::open( char * filename )
 {
   string lcltype;
-  void * myfile;
+//  void * myfile;
   
   if ( 0 == openFITS( filename ) )
   {
@@ -185,6 +185,26 @@ dalDataset::dalDataset( char * name, string filetype )
  */
 dalDataset::~dalDataset()
 {
+}
+
+/**
+ * 
+ * @param arrayname 
+ */
+dalArray * dalDataset::createArray( string arrayname )
+{
+   if ( type == H5TYPE )
+   {
+	   dalArray * la = new dalArray( file, arrayname );
+	   return la;
+   }
+   else if ( type == FITSTYPE )
+   {
+	cout << "dalDataset::createArray FITS Type" << endl;
+	return NULL;
+   }
+   else
+   	return NULL;
 }
 
 /**

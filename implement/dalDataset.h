@@ -28,6 +28,10 @@
 #include "dal.h"
 #endif
 
+#ifndef DALARRAY_H
+#include "dalArray.h"
+#endif
+
 #ifndef DALTABLE_H
 #include "dalTable.h"
 #endif
@@ -88,6 +92,8 @@ class dalDataset{
 //	int checkaccess(); /// check read/write access of specified file
 //	int copy(); /// create an exact copy of the data
 //	int create();  /// define basic characteristics of a new dataset
+	/// create a new array in the root group
+	dalArray * createArray( string arrayname );
 	/// create a new table in the root group
 	dalTable * createTable( string tablename );
 	/// create a new table in a specified group
