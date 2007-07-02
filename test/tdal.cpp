@@ -56,30 +56,18 @@ int main()
 
 // create a dataset
 
-   dalDataset * dataset1;
-   dataset1 = new dalDataset( FILENAME );
+   dalDataset * ds;
+   ds = new dalDataset( FILENAME );
 
-// close dataset
-   dataset1->close();
+   dalGroup * groupA = ds->createGroup( "groupA" );
+   dalGroup * groupB = ds->createGroup( "groupB" );
+   dalGroup * groupC = ds->createGroup( "groupC" );
 
+   dalTable * table1 = ds->createTable( "table1", "groupA" );
+   dalTable * table2 = ds->createTable( "table2", "groupA" );
+   dalTable * table3 = ds->createTable( "table3", "groupB" );
 
-   dalDataset * dataset2;
-   dataset2 = new dalDataset();
-   if ( 0 != dataset2->open( FILENAME ) )
-   {
-	cout << "Problem opening dataset: " << FILENAME << '.' << " Quiting."
-	     << endl;
-   	exit(FAIL);
-   }
-
-   dalGroup * groupA = dataset2->createGroup( "groupA" );
-   dalGroup * groupB = dataset2->createGroup( "groupB" );
-   dalGroup * groupC = dataset2->createGroup( "groupC" );
-
-   dalTable * table1 = dataset2->createTable( "table1", "groupA" );
-   dalTable * table2 = dataset2->createTable( "table2", "groupA" );
-   dalTable * table3 = dataset2->createTable( "table3", "groupB" );
-
+   dalArray * array = ds->createArray( "array1" );
 
    table1->addColumn( "col1", dal_INT );
    table1->addColumn( "col2", dal_SHORT );
@@ -93,16 +81,16 @@ int main()
    table3->addColumn( "col2", dal_INT );
    table3->addColumn( "col3", dal_INT );
 
-   dataset2->close();
+   ds->close();
 
    delete table1;
    delete table2;
    delete table3;
+   delete array;
    delete groupA;
    delete groupB;
    delete groupC;
-   delete dataset1;
-   delete dataset2;
+   delete ds;
 
    cout << "SUCCESS" << endl;
    return SUCCESS;
