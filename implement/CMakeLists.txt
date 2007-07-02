@@ -31,13 +31,14 @@ link_directories(
 
 
 add_library(dal STATIC
+  dalArray.cpp
   dalAttribute.cpp
-  dalDataset.cpp
-  dalTable.cpp
-  dalGroup.cpp
-  dalColumn.cpp
-  dalRow.cpp
   dalBaseTypes.cpp 
+  dalColumn.cpp
+  dalDataset.cpp
+  dalGroup.cpp
+  dalRow.cpp
+  dalTable.cpp
 #  l_member.cpp
 dalLopesEvent.cpp
   )
