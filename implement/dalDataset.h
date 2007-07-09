@@ -93,7 +93,7 @@ class dalDataset{
 //	int copy(); /// create an exact copy of the data
 //	int create();  /// define basic characteristics of a new dataset
 	/// create a new array in the root group
-	dalArray * createArray( string arrayname );
+	dalIntArray * createIntArray( string arrayname, vector<int> dims, int data[]);
 	/// create a new table in the root group
 	dalTable * createTable( string tablename );
 	/// create a new table in a specified group

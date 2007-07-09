@@ -67,7 +67,27 @@ int main()
    dalTable * table2 = ds->createTable( "table2", "groupA" );
    dalTable * table3 = ds->createTable( "table3", "groupB" );
 
-   dalArray * array = ds->createArray( "array1" );
+   vector<int> dims;
+//    dims.push_back(256);
+//    dims.push_back(876);
+//    dims.push_back(120);
+   dims.push_back(4);
+   dims.push_back(5);
+   dims.push_back(6);
+
+//    vector< vector< vector<float> > > data;
+// 
+//    int ii, jj, kk;
+//    for(ii=0; ii < dims[0]; ii++)
+//       for(jj=0; jj < dims[1]; jj++)
+// 	 for(kk=0; kk < dims[2]; kk++)
+//             data[ii][jj][kk] = ii + jj + kk;
+
+   int data[4*5*6];
+   for (int gg=0; gg<(4*5*6); gg++)
+	data[gg] = gg;
+
+   dalIntArray * array = ds->createIntArray( "array1", dims, data );
 
    table1->addColumn( "col1", dal_INT );
    table1->addColumn( "col2", dal_SHORT );

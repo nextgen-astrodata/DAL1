@@ -21,8 +21,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DALARRAY_H
-#define DALARRAY_H
+#ifndef dalArray_H
+#define dalArray_H
 
 #ifndef DAL_H
 #include "dal.h"
@@ -33,7 +33,7 @@
 #endif
 
 /*!
-  \class dalArray
+  \class dalIntArray
   
   \ingroup DAL
 
@@ -41,18 +41,19 @@
 
   \date 07-02-07
 
-  The dalArray object holds an n-dimensional array of a single datatype.
+  The dalIntArray object holds an n-dimensional array of a single datatype.
 */
 
-class dalArray{
+class dalIntArray{
 
 	int rank; // number of dimensions
 	string datatype;
 	string name;
   
   public:
-	dalArray( void*, string /*rank,dims,type*/);
-	~dalArray();
+	dalIntArray( void* voidfile, string arrayname, vector<int> dims, int data[]);
+//	createIntArray( void* voidfile, string arrayname, vector<int> dims, int data[]);
+	~dalIntArray();
 };
 
 #endif

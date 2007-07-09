@@ -191,11 +191,11 @@ dalDataset::~dalDataset()
  * 
  * @param arrayname 
  */
-dalArray * dalDataset::createArray( string arrayname )
+dalIntArray * dalDataset::createIntArray( string arrayname, vector<int> dims, int data[])
 {
    if ( type == H5TYPE )
    {
-	   dalArray * la = new dalArray( file, arrayname );
+	   dalIntArray * la = new dalIntArray( file, arrayname, dims, data );
 	   return la;
    }
    else if ( type == FITSTYPE )

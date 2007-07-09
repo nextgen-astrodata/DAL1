@@ -18,21 +18,33 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DALARRAY_H
+#ifndef dalArray_H
 #include "dalArray.h"
 #endif
 
-dalArray::dalArray( void * voidfile, string arrayname ) {
+dalIntArray::dalIntArray( void * voidfile, string arrayname, vector<int> dims, int data[] ) {
 	hid_t * lclfile = (hid_t*)voidfile;
 	hid_t file_id = *lclfile;  // get the file handle
 	hid_t array, datatype, dataspace;
-	hsize_t dims[2];
-	dims[0] = 3;
-	dims[1] = 4;
-	dataspace = H5Screate_simple(2,dims,NULL);
+//	hsize_t dims[rank];
+/*	dims[0] = 3;
+	dims[1] = 4;*/
+	hsize_t mydims[dims.size()];
+	for (unsigned int ii=0; ii<dims.size(); ii++)
+		mydims[ii] = dims[ii];
+
+//	float mydata[3];
+
+// 	for (int ii=0; ii<dims[0]; ii++)
+// 	  for (int jj=0; jj<dims[1]; jj++)
+// 	    for (int kk=0; kk<dims[2]; kk++)
+// 		mydata[ii][jj][kk] = ii + jj + kk;
+
+	dataspace = H5Screate_simple(dims.size(),mydims,NULL);
 	datatype = H5Tcopy(H5T_NATIVE_INT);
-	array = H5Dcreate( file_id, "fooArray", datatype, dataspace, H5P_DEFAULT);
+	array = H5Dcreate( file_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
+	H5Dwrite(array, datatype, dataspace, dataspace, H5P_DEFAULT, data);
 }
 
-dalArray::~dalArray() {
+dalIntArray::~dalIntArray() {
 }
