@@ -311,6 +311,57 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 	else if ( dal_STRING == coltype )
 		h5type = H5T_NATIVE_CHAR;
 	
+	else if ( dal_COMPLEX == coltype )
+	{
+		vector<dalColumn> cv;
+		string component_type;
+		
+		component_type = dal_DOUBLE;
+			
+		dalColumn col_a( "r", component_type );  // real component
+		dalColumn col_b( "i", component_type );  // imaginary component
+
+		cv.push_back( col_a );
+		cv.push_back( col_b );
+
+		size_t sz = 0;
+		
+		// compute the size of the compound column
+		for ( unsigned int ii=0; ii<cv.size(); ii++) {
+			//cout << "subcolumn name is " << foo[ii].getName() 
+			//	 << ". Type is " << foo[ii].getType() << endl;
+			sz += cv[ii].getSize();
+		}
+	
+		// create a compound type that can hold each field
+		h5type = H5Tcreate( H5T_COMPOUND, sz );
+	
+		size_t offset = 0;
+		for ( unsigned int ii=0; ii<cv.size(); ii++) {
+			
+			if (0==ii)
+				offset=0;
+			else
+				offset += cv[ii-1].getSize();
+				
+	
+			if ( dal_INT == cv[ii].getType() ) {
+				H5Tinsert( h5type,
+					cv[ii].getName().c_str(), offset,
+					H5T_NATIVE_INT);
+			}
+			else if ( dal_FLOAT == cv[ii].getType() ) {
+				H5Tinsert( h5type,
+					cv[ii].getName().c_str(), offset,
+					H5T_NATIVE_FLOAT);
+			}
+			else if ( dal_DOUBLE == cv[ii].getType() ) {
+				H5Tinsert( h5type,
+					cv[ii].getName().c_str(), offset,
+					H5T_NATIVE_DOUBLE);
+			}
+		}
+	}	
 	else {
 		cout << "ERROR: column type " << coltype << " is not supported." 
 		     << endl;
@@ -330,8 +381,39 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 }
 
 void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
-									int subfields )
+				int subfields )
 {
+	// retrieve table information
+	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
+	
+
+	// allocate space for the column/field names and retrieve them from
+	// the table
+	field_names = (char**)malloc( nfields * sizeof(char*) );
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+	}
+	status = H5TBget_field_info( file_id, name.c_str(), field_names, NULL,
+				     NULL, NULL );
+
+	// check to make sure column doesn't already exist
+	bool removedummy = false;
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		if (0 == strcmp(compname.c_str(),field_names[ii])) {
+			cout << "WARNING: Cannot create column \'"
+			     << compname.c_str()
+			     <<	"\'. Column already exists." << endl;
+			return;
+		}
+		else if (0 == strcmp("000dummy000",field_names[ii])) {
+			removedummy = true;
+		}
+	}
+
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		free(field_names[ii]);
+	}
+
 	size_t sz = 0;
 	
 	// compute the size of the compound column
@@ -376,15 +458,16 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 	int		data[subfields]; 
 
 	// create the new column
-	status = H5TBinsert_field(	file_id,
-								name.c_str(),
-								compname.c_str(),
-								fieldtype,
-								position,
-								fill_data,
-								data );	
+	status = H5TBinsert_field( file_id, name.c_str(), compname.c_str(),
+					fieldtype, position,
+					fill_data, data );	
+
+
+	if ( removedummy )
+		removeColumn("000dummy000");
 
 	return;
+
 	// if successful, add corresponding column object to list
 	if ( 0 == status ) {
 	  	dalColumn * lc = new dalColumn( compname, "foo" /*H5_COMPOUND*/ );

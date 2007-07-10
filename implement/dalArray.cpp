@@ -48,3 +48,20 @@ dalIntArray::dalIntArray( void * voidfile, string arrayname, vector<int> dims, i
 
 dalIntArray::~dalIntArray() {
 }
+
+dalFloatArray::dalFloatArray( void * voidfile, string arrayname, vector<int> dims, float data[] ) {
+	hid_t * lclfile = (hid_t*)voidfile;
+	hid_t file_id = *lclfile;  // get the file handle
+	hid_t array, datatype, dataspace;
+	hsize_t mydims[dims.size()];
+	for (unsigned int ii=0; ii<dims.size(); ii++)
+		mydims[ii] = dims[ii];
+
+	dataspace = H5Screate_simple(dims.size(),mydims,NULL);
+	datatype = H5Tcopy(H5T_NATIVE_FLOAT);
+	array = H5Dcreate( file_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
+	H5Dwrite(array, datatype, dataspace, dataspace, H5P_DEFAULT, data);
+}
+
+dalFloatArray::~dalFloatArray() {
+}

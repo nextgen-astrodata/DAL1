@@ -25,7 +25,7 @@ herr_t attr_info(hid_t loc_id, const char *name, void *opdata);
 dalGroup::dalGroup() {
 }
 
-dalGroup::dalGroup( void * voidfile, char* gname ) {
+dalGroup::dalGroup( char* gname, void * voidfile ) {
 
 
 	hid_t * lclfile = (hid_t*)voidfile; // H5File object
@@ -34,9 +34,16 @@ dalGroup::dalGroup( void * voidfile, char* gname ) {
 
 	name = gname;
 	string fullgroupname = "/" + stringify(gname);
-	hid_t grp;
-	grp = H5Gcreate(*(hid_t*)file, fullgroupname.c_str(), 0);
+	group_id = H5Gcreate(*(hid_t*)file, fullgroupname.c_str(), 0);
 
+}
+
+dalGroup::dalGroup( hid_t group_id, char* gname ) {
+	group_id = H5Gcreate(group_id, gname, 0);
+}
+
+hid_t dalGroup::getId() {
+	return group_id;
 }
 
 bool dalGroup::setName ( string gname ) {

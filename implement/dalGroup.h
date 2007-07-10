@@ -50,6 +50,7 @@
 */
 class dalGroup{
 
+ protected:
 	void * file; /// can be HDF5File, FITS, MS
 	string name; /// group name
 	void * group;
@@ -59,14 +60,29 @@ class dalGroup{
 	hid_t file_id; /// hdf5 file_id
 	hid_t group_id; /// hdf5 group_id
 	herr_t	status; /// hdf5 return status
+
+	dalGroup * subgroup;
 	
  public:
- 	
-	dalGroup();  /// constructor
-	dalGroup( void * file, char* groupname );/// constructor with group name
-	int open( void * file, string groupname ); /// open an existing group
-	string getName(); /// get group name
-	bool setName( string ); /// set group name
+
+	/// constructor
+	dalGroup();
+
+	/// constructor with group name
+	dalGroup( char* groupname, void * file );
+	dalGroup( hid_t group_id, char* gname );
+
+	/// open an existing group
+	int open( void * file, string groupname );
+
+	/// get group name
+	string getName();
+
+	/// set group name
+	bool setName( string );
+
+	/// return the group id
+	hid_t getId();
 //	void listTables();  /// print a list of table names within the group
 //	int getTable();  /// retrieve a dalTable by name
 //	int getTableNumber(); /// retrieve a dalTable by index

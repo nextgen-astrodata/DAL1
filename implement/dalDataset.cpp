@@ -140,7 +140,7 @@ dalGroup * dalDataset::createGroup( char* gname )
     if ( type == H5TYPE )
    {
 	hid_t * lclfile = &h5fh;
-	   dalGroup * lg = new dalGroup( lclfile, gname);
+	   dalGroup * lg = new dalGroup( gname, lclfile );
 	   return lg;
    }
    else
@@ -191,11 +191,27 @@ dalDataset::~dalDataset()
  * 
  * @param arrayname 
  */
-dalIntArray * dalDataset::createIntArray( string arrayname, vector<int> dims, int data[])
+dalArray * dalDataset::createArray( string arrayname, vector<int> dims, int data[])
 {
    if ( type == H5TYPE )
    {
 	   dalIntArray * la = new dalIntArray( file, arrayname, dims, data );
+	   return la;
+   }
+   else if ( type == FITSTYPE )
+   {
+	cout << "dalDataset::createArray FITS Type" << endl;
+	return NULL;
+   }
+   else
+   	return NULL;
+}
+
+dalArray * dalDataset::createArray( string arrayname, vector<int> dims, float data[])
+{
+   if ( type == H5TYPE )
+   {
+	   dalFloatArray * la = new dalFloatArray( file, arrayname, dims, data );
 	   return la;
    }
    else if ( type == FITSTYPE )

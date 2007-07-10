@@ -35,6 +35,7 @@ set (tests
   lewrite
   tdal
   tdal_fits
+  tpulsar_dal
   )
 
 foreach (src ${tests})

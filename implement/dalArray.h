@@ -44,16 +44,25 @@
   The dalIntArray object holds an n-dimensional array of a single datatype.
 */
 
-class dalIntArray{
+class dalArray{
 
 	int rank; // number of dimensions
 	string datatype;
 	string name;
+};
+
+class dalIntArray: public dalArray {
   
   public:
 	dalIntArray( void* voidfile, string arrayname, vector<int> dims, int data[]);
-//	createIntArray( void* voidfile, string arrayname, vector<int> dims, int data[]);
 	~dalIntArray();
+};
+
+class dalFloatArray: public dalArray {
+  
+  public:
+	dalFloatArray( void* voidfile, string arrayname, vector<int> dims, float data[]);
+	~dalFloatArray();
 };
 
 #endif
