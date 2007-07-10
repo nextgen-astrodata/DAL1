@@ -275,12 +275,16 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 				     NULL, NULL );
 
 	// check to make sure column doesn't already exist
+	bool removedummy = false;
 	for (unsigned int ii=0; ii<nfields; ii++) {
 		if (0 == strcmp(colname.c_str(),field_names[ii])) {
 			cout << "WARNING: Cannot create column \'"
 			     << colname.c_str()
 			     << "\'. Column already exists." << endl;
 			return;
+		}
+		else if (0 == strcmp("000dummy000",field_names[ii])) {
+			removedummy = true;
 		}
 	}
 	for (unsigned int ii=0; ii<nfields; ii++) {
@@ -378,6 +382,9 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 	status = H5TBinsert_field( file_id, name.c_str(), colname.c_str(),
 				   field_type, position, fill_data, data );
 
+	if ( removedummy )
+		removeColumn("000dummy000");
+	
 }
 
 void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
