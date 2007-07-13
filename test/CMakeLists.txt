@@ -1,9 +1,9 @@
 set(CMAKE_CXX_FLAGS "-W -Wall")
 message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Debug")
-endif(NOT CMAKE_BUILD_TYPE)
 
+#if(NOT CMAKE_BUILD_TYPE)
+#    set(CMAKE_BUILD_TYPE "Debug")
+#endif(NOT CMAKE_BUILD_TYPE)
 
 add_definitions(
   -DMPICH_IGNORE_CXX_SEEK
@@ -54,3 +54,14 @@ endforeach (src)
 enable_testing()
 add_test(test1 ${CMAKE_CURRENT_BINARY_DIR}/mswrite foo.h5)
 add_test(test2 ${CMAKE_CURRENT_BINARY_DIR}/mswrite)
+
+## ------------------------------------------------------------------------------
+## Installation
+
+## test programs
+
+install (TARGETS ${tests}
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  )

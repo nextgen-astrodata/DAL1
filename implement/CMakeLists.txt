@@ -2,9 +2,9 @@ set(CMAKE_CXX_FLAGS "-W -Wall")
 
 message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Debug")
-endif(NOT CMAKE_BUILD_TYPE)
+#if(NOT CMAKE_BUILD_TYPE)
+#    set(CMAKE_BUILD_TYPE "Debug")
+#endif(NOT CMAKE_BUILD_TYPE)
 
 add_definitions (
   -DMPICH_IGNORE_CXX_SEEK
@@ -56,3 +56,23 @@ target_link_libraries(dal hdf5 hdf5_cpp hdf5_hl z m ${CFITSIO_LIBRARIES})
 #enable_testing()
 #add_test(test1 ${CMAKE_CURRENT_BINARY_DIR}/mswrite foo.h5)
 #add_test(test2 ${CMAKE_CURRENT_BINARY_DIR}/mswrite)
+
+## ------------------------------------------------------------------------------
+## Installation
+
+## installation of libraries
+
+install (
+  TARGETS dal
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  )
+
+## installation of header files
+
+file (GLOB dal_headers *.h)
+
+install (FILES ${dal_headers}
+  DESTINATION include/dal
+  )
