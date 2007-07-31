@@ -13,19 +13,11 @@ add_definitions (
   -D_FILE_OFFSET_BITS=64
   -D_LARGEFILE64_SOURCE
   -D_LARGEFILE_SOURCE
-  )
-
-include_directories(
-  .
-  ${DAL_SOURCE_DIR}/implement
-  ${HDF5_INCLUDES}
-  ${CFITSIO_INCLUDES}
-  ${BLITZ_INCLUDES}
+  -fPIC
   )
 
 link_directories(
   ${HDF5_LIBRARIES}
-  ${CFITSIO_LIBRARIES}
   ${BLITZ_LIBRARIES}
   )
 
@@ -43,7 +35,7 @@ add_library(dal STATIC
 dalLopesEvent.cpp
   )
 
-target_link_libraries(dal hdf5 hdf5_cpp hdf5_hl z m ${CFITSIO_LIBRARIES})
+target_link_libraries(dal hdf5 hdf5_cpp hdf5_hl z m ${CFITSIO_LIBRARIES} ${BOOST_LIBRARIES} ${PYTHON_LIBRARIES})
 
 #add_executable(msread msread.cpp)
 #add_executable(mswrite mswrite.cpp)

@@ -25,9 +25,42 @@ if (NOT HAVE_BLITZ)
   include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindBlitz.cmake)
 endif (NOT HAVE_BLITZ)
 
+if (NOT HAVE_BOOST)
+  include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindBoost.cmake)
+endif (NOT HAVE_BOOST)
+
 if (NOT HAVE_SWIG)
   include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindSWIG.cmake)
 endif (NOT HAVE_SWIG)
+
+if (NOT HAVE_CASACORE)
+  include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindCASACORE.cmake)
+endif (NOT HAVE_CASACORE)
+
+include (FindPythonLibs)
+
+if (libboost_python)
+  list (APPEND PYTHON_LIBRARIES ${libboost_python})
+endif (libboost_python)
+
+message (STATUS "Boost includes        = ${BOOST_INCLUDES}")
+message (STATUS "Boost library         = ${BOOST_LIBRARIES}")
+message (STATUS "Python includes       = ${PYTHON_INCLUDE_PATH}")
+message (STATUS "Python library        = ${PYTHON_LIBRARIES}")
+
+## ------------------------------------------------------------------------------
+## Location of header files
+
+include_directories(
+  .
+  ${DAL_SOURCE_DIR}/implement
+  ${DAL_SOURCE_DIR}/test
+  ${HDF5_INCLUDES}
+  ${CFITSIO_INCLUDES}
+  ${BLITZ_INCLUDES}
+  ${BOOST_INCLUDES}
+  ${PYTHON_INCLUDE_PATH}
+  )
 
 ## ------------------------------------------------------------------------------
 ## Installation

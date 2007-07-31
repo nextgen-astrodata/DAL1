@@ -14,15 +14,6 @@ add_definitions(
   -D_LARGEFILE_SOURCE
   )
 
-## location of the header files
-
-include_directories(
-  .
-  ${DAL_SOURCE_DIR}/implement
-  ${HDF5_INCLUDES}
-  ${CFITSIO_INCLUDES}
-  )
-
 ## ------------------------------------------------------------------------------
 ## Build the test programs
 
