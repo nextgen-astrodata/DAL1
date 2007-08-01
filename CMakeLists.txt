@@ -55,9 +55,9 @@ endif (dal_cmake)
 
 include (FindPythonLibs)
 
-if (libboost_python)
-  list (APPEND PYTHON_LIBRARIES ${libboost_python})
-endif (libboost_python)
+if (BOOST_LIBRARIES)
+  list (APPEND PYTHON_LIBRARIES ${BOOST_LIBRARIES})
+endif (BOOST_LIBRARIES)
 
 message (STATUS "Boost includes        = ${BOOST_INCLUDES}")
 message (STATUS "Boost library         = ${BOOST_LIBRARIES}")

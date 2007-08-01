@@ -36,6 +36,7 @@ foreach (src ${tests})
   target_link_libraries(${src}
     dal
     ${HDF5_LIBRARIES}
+    ${PYTHON_LIBRARIES}
     )
 endforeach (src)
 
