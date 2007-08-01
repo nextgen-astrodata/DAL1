@@ -13,29 +13,45 @@ subdirs (
 ## ------------------------------------------------------------------------------
 ## External dependencies
 
-if (NOT HAVE_HDF5)
-  include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindHDF5.cmake)
-endif (NOT HAVE_HDF5)
+## check where to find the CMake scripts
 
-if (NOT HAVE_CFITSIO)
-  include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindCFITSIO.cmake)
-endif (NOT HAVE_CFITSIO)
+find_path (dal_cmake template_FindXX.cmake 
+  PATHS 
+  ${DAL_SOURCE_DIR}
+  ${DAL_SOURCE_DIR}/..
+  ${DAL_SOURCE_DIR}/../..
+  PATH_SUFFIXES
+  devel_common/cmake
+  )
 
-if (NOT HAVE_BLITZ)
-  include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindBlitz.cmake)
-endif (NOT HAVE_BLITZ)
-
-if (NOT HAVE_BOOST)
-  include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindBoost.cmake)
-endif (NOT HAVE_BOOST)
-
-if (NOT HAVE_SWIG)
-  include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindSWIG.cmake)
-endif (NOT HAVE_SWIG)
-
-if (NOT HAVE_CASACORE)
-  include (${DAL_SOURCE_DIR}/../../devel_common/cmake/FindCASACORE.cmake)
-endif (NOT HAVE_CASACORE)
+if (dal_cmake)
+  ## HDF5
+  if (NOT HAVE_HDF5)
+    include (${dal_cmake}/FindHDF5.cmake)
+  endif (NOT HAVE_HDF5)
+  ## CFITSIO
+  if (NOT HAVE_CFITSIO)
+    include (${dal_cmake}/FindCFITSIO.cmake)
+  endif (NOT HAVE_CFITSIO)
+  ## BLITZ++
+  if (NOT HAVE_BLITZ)
+    include (${dal_cmake}/FindBlitz.cmake)
+  endif (NOT HAVE_BLITZ)
+  ## BOOST
+  if (NOT HAVE_BOOST)
+    include (${dal_cmake}/FindBoost.cmake)
+  endif (NOT HAVE_BOOST)
+  ## SWIG
+  if (NOT HAVE_SWIG)
+    include (${dal_cmake}/FindSWIG.cmake)
+  endif (NOT HAVE_SWIG)
+  ## casacore
+  if (NOT HAVE_CASACORE)
+    include (${dal_cmake}/FindCASACORE.cmake)
+  endif (NOT HAVE_CASACORE)
+elseif (dal_cmake)
+  message (SEND_ERROR "Unable to locate additional CMake scripts!")
+endif (dal_cmake)
 
 include (FindPythonLibs)
 
