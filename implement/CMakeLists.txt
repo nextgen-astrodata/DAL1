@@ -14,6 +14,7 @@ add_definitions (
   -D_LARGEFILE64_SOURCE
   -D_LARGEFILE_SOURCE
   -fPIC
+  -ftemplate-depth-100
   )
 
 link_directories(
@@ -35,7 +36,7 @@ add_library(dal STATIC
 dalLopesEvent.cpp
   )
 
-target_link_libraries(dal hdf5 hdf5_cpp hdf5_hl z m ${CFITSIO_LIBRARIES} ${BOOST_LIBRARIES} ${PYTHON_LIBRARIES})
+target_link_libraries(dal hdf5 hdf5_hl z m ${CFITSIO_LIBRARIES} ${BOOST_LIBRARIES} ${PYTHON_LIBRARIES})
 
 #add_executable(msread msread.cpp)
 #add_executable(mswrite mswrite.cpp)
