@@ -98,7 +98,7 @@ class dalDataset{
 	/// create a new table in the root group
 	dalTable * createTable( string tablename );
 	/// create a new table in a specified group
-	dalTable * createTable( string tablename, string groupname );
+	dalTable * createTableInGroup( string tablename, string groupname );
 //	int createImage();  /// create a new table outside of a group
 	dalGroup * createGroup( char* groupname );  /// create a new group
 //	int getName();  /// retrieve the name of the dataset

@@ -244,7 +244,7 @@ dalTable * dalDataset::createTable( string tablename )
    	return NULL;
 }
 
-dalTable * dalDataset::createTable( string tablename, string groupname )
+dalTable * dalDataset::createTableInGroup( string tablename, string groupname )
 {
    if ( type == H5TYPE )
    {
