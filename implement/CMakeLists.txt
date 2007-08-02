@@ -1,3 +1,14 @@
+
+## ------------------------------------------------------------------------------
+## TODO:
+## 
+## - translate the following build instructions to CMake settings:
+##    g++ -c *.cpp -ftemplate-depth-100 -fPIC -I/usr/include/python2.4 -I.
+##    g++ *.o -lboost_python -lcfitsio -lhdf5 -lhdf5_hl -lhdf5_cpp -lz -lm -o dal.so -shared
+
+## ------------------------------------------------------------------------------
+## Compiler flags
+
 set(CMAKE_CXX_FLAGS "-W -Wall")
 
 message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
@@ -17,13 +28,15 @@ add_definitions (
   -ftemplate-depth-100
   )
 
-link_directories(
-  ${HDF5_LIBRARIES}
-  ${BLITZ_LIBRARIES}
-  )
+#link_directories(
+#  ${HDF5_LIBRARIES}
+#  ${BLITZ_LIBRARIES}
+#  )
 
+## ------------------------------------------------------------------------------
+## Build the library
 
-add_library(dal STATIC
+set (dal_sources
   dalArray.cpp
   dalAttribute.cpp
   dalBaseTypes.cpp 
@@ -33,10 +46,22 @@ add_library(dal STATIC
   dalRow.cpp
   dalTable.cpp
 #  l_member.cpp
-dalLopesEvent.cpp
+  dalLopesEvent.cpp
   )
 
-target_link_libraries(dal hdf5 hdf5_hl z m ${CFITSIO_LIBRARIES} ${BOOST_LIBRARIES} ${PYTHON_LIBRARIES})
+add_library(dal STATIC
+  ${dal_sources}
+  )
+
+target_link_libraries(dal
+  hdf5
+  hdf5_hl
+  z
+  m
+  ${CFITSIO_LIBRARIES}
+  ${BOOST_LIBRARIES}
+  ${PYTHON_LIBRARIES}
+  )
 
 #add_executable(msread msread.cpp)
 #add_executable(mswrite mswrite.cpp)
