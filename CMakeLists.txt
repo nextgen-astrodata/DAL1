@@ -3,15 +3,10 @@
 
 project (DAL)
 
-## subdirectories to process
-
-subdirs (
-  implement
-  test
-)
-
 ## ------------------------------------------------------------------------------
 ## External dependencies
+
+include (CPack)
 
 ## check where to find the CMake scripts
 
@@ -59,12 +54,7 @@ if (BOOST_LIBRARIES)
   list (APPEND PYTHON_LIBRARIES ${BOOST_LIBRARIES})
 endif (BOOST_LIBRARIES)
 
-message (STATUS "Boost includes        = ${BOOST_INCLUDES}")
-message (STATUS "Boost library         = ${BOOST_LIBRARIES}")
-message (STATUS "Python includes       = ${PYTHON_INCLUDE_PATH}")
-message (STATUS "Python library        = ${PYTHON_LIBRARIES}")
-
-## ------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 ## Location of header files
 
 include_directories(
@@ -78,10 +68,16 @@ include_directories(
   ${PYTHON_INCLUDE_PATH}
   )
 
-## ------------------------------------------------------------------------------
-## Installation
+## -----------------------------------------------------------------------------
+## Subdirectories
 
-include (CPack)
+subdirs (
+  implement
+  test
+)
+
+## -----------------------------------------------------------------------------
+## Installation
 
 find_path (prefix release_area.txt
   PATHS
@@ -96,3 +92,11 @@ if (prefix)
   message (STATUS "Installation area located for package DAL.")
   set (CMAKE_INSTALL_PREFIX ${prefix}) 
 endif (prefix)
+
+## -----------------------------------------------------------------------------
+## Feedback
+
+#message (STATUS "Boost includes  = ${BOOST_INCLUDES}")
+#message (STATUS "Boost library   = ${BOOST_LIBRARIES}")
+#message (STATUS "Python includes = ${PYTHON_INCLUDE_PATH}")
+#message (STATUS "Python library  = ${PYTHON_LIBRARIES}")
