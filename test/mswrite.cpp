@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
   // define the data to go in the table
   // create the table in the file or group
   dalGroup * group = dataset->createGroup( "Sub" );
-  dalTable * tableA = dataset->createTable( "MAIN", "Sub" );
+  dalTable * tableA = dataset->createTableInGroup( "MAIN", "Sub" );
 
   // add columns to the measurement set
   tableA->addColumn( "time", dal_DOUBLE );  // simple column

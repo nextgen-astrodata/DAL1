@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
   // create ANTENNA table
   /////////////////////////////////////////
   //
-  dalTable * AntennaTable = dataset->createTable( "ANTENNA", "Station" );
+  dalTable * AntennaTable = dataset->createTableInGroup( "ANTENNA", "Station" );
 
   //
   /////////////////////////////////////////
@@ -294,7 +294,7 @@ wb.antenna.frameno = counter;
   // create CALIBRATION table
   /////////////////////////////////////////
   //
-  dalTable * CalibrationTable = dataset->createTable( "CALIBRATION", "Station" );
+  dalTable * CalibrationTable = dataset->createTableInGroup( "CALIBRATION", "Station" );
 
   // add attributes to CALIBRATION table
 

@@ -63,9 +63,9 @@ int main()
    dalGroup * groupB = ds->createGroup( "groupB" );
    dalGroup * groupC = ds->createGroup( "groupC" );
 
-   dalTable * table1 = ds->createTable( "table1", "groupA" );
-   dalTable * table2 = ds->createTable( "table2", "groupA" );
-   dalTable * table3 = ds->createTable( "table3", "groupB" );
+   dalTable * table1 = ds->createTableInGroup( "table1", "groupA" );
+   dalTable * table2 = ds->createTableInGroup( "table2", "groupA" );
+   dalTable * table3 = ds->createTableInGroup( "table3", "groupB" );
 
 
    // define dimensions of array

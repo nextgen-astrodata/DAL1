@@ -163,7 +163,7 @@ int main (int argc, char *argv[])
     for (unsigned int antenna(0); antenna<nofAntennas; antenna++) {
 
 	  string antName = "ANTENNA" + stringify(antenna);
-	  dalTable * AntennaTable = dataset->createTable( antName, "Station" );
+	  dalTable * AntennaTable = dataset->createTableInGroup( antName, "Station" );
 	  int ri[] = { 1 };
 	  AntennaTable->setAttribute_int("RSP_ID", ri );
 	  AntennaTable->addColumn( "DATA", dal_SHORT );
