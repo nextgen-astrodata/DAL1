@@ -6,7 +6,13 @@
 
 project (DAL)
 
-## ------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
+## User defined build/install options
+
+option (DAL_BUILD_TESTS "Build the test programs?" 1)
+option (DAL_DEBUGGING_MESSAGES "Print debugging information?" 0)
+
+## -----------------------------------------------------------------------------
 ## External dependencies
 
 include (CPack)
@@ -74,10 +80,11 @@ include_directories(
 ## -----------------------------------------------------------------------------
 ## Subdirectories
 
-subdirs (
-  implement
-  test
-)
+ADD_SUBDIRECTORY (implement)
+
+if (DAL_BUILD_TESTS)
+  ADD_SUBDIRECTORY (test)
+endif (DAL_BUILD_TESTS)
 
 ## -----------------------------------------------------------------------------
 ## Installation
@@ -99,7 +106,11 @@ endif (prefix)
 ## -----------------------------------------------------------------------------
 ## Feedback
 
-#message (STATUS "Boost includes  = ${BOOST_INCLUDES}")
-#message (STATUS "Boost library   = ${BOOST_LIBRARIES}")
-#message (STATUS "Python includes = ${PYTHON_INCLUDE_PATH}")
-#message (STATUS "Python library  = ${PYTHON_LIBRARIES}")
+if (DAL_DEBUGGING_MESSAGES)
+  message (STATUS "HDF5 includes   = ${HDF5_INCLUDES}")
+  message (STATUS "HDF5 library    = ${HDF5_LIBRARIES}")
+  message (STATUS "Boost includes  = ${BOOST_INCLUDES}")
+  message (STATUS "Boost library   = ${BOOST_LIBRARIES}")
+  message (STATUS "Python includes = ${PYTHON_INCLUDE_PATH}")
+  message (STATUS "Python library  = ${PYTHON_LIBRARIES}")
+endif (DAL_DEBUGGING_MESSAGES)
