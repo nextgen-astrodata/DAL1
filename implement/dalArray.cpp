@@ -25,46 +25,120 @@
 #include "dalArray.h"
 #endif
 
-dalIntArray::dalIntArray( void * voidfile, string arrayname, vector<int> dims, int data[] ) {
+dalIntArray::dalIntArray(){}
+
+dalIntArray::dalIntArray( void * voidfile, string arrayname, vector<int> dims,
+			  int data[], vector<int> chnkdims ) {
 	hid_t * lclfile = (hid_t*)voidfile;
 	hid_t file_id = *lclfile;  // get the file handle
 	hid_t array, datatype, dataspace;
-//	hsize_t dims[rank];
-/*	dims[0] = 3;
-	dims[1] = 4;*/
-	hsize_t mydims[dims.size()];
-	for (unsigned int ii=0; ii<dims.size(); ii++)
+	int rank = dims.size();
+	hsize_t mydims[rank];
+	hsize_t maxdims[rank];
+
+	hsize_t chunk_dims[ rank ];
+	for (unsigned int ii=0; ii<rank; ii++)
+	{
 		mydims[ii] = dims[ii];
+		maxdims[ii] = H5S_UNLIMITED;
+	}
 
-//	float mydata[3];
+	for (unsigned int ii=0; ii<chnkdims.size(); ii++)
+	{
+		chunk_dims[ii] = chnkdims[ii];
+	}
 
-// 	for (int ii=0; ii<dims[0]; ii++)
-// 	  for (int jj=0; jj<dims[1]; jj++)
-// 	    for (int kk=0; kk<dims[2]; kk++)
-// 		mydata[ii][jj][kk] = ii + jj + kk;
-
-	dataspace = H5Screate_simple(dims.size(),mydims,NULL);
 	datatype = H5Tcopy(H5T_NATIVE_INT);
-	array = H5Dcreate( file_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
+	if ( chnkdims.size()>0 )
+	{
+	   dataspace = H5Screate_simple(rank,mydims,maxdims);
+	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
+	   hid_t status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
+	   array = H5Dcreate( file_id, arrayname.c_str(), datatype, dataspace, cparms);
+	}
+	else
+	{
+	   dataspace = H5Screate_simple(rank,mydims,NULL);
+	   array = H5Dcreate( file_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
+	}
+
 	H5Dwrite(array, datatype, dataspace, dataspace, H5P_DEFAULT, data);
+	H5Sclose( dataspace );
+	H5Tclose( datatype );
+	H5Dclose( array );
 }
 
 dalIntArray::~dalIntArray() {
 }
 
-dalFloatArray::dalFloatArray( void * voidfile, string arrayname, vector<int> dims, float data[] ) {
+dalFloatArray::dalFloatArray( void * voidfile, string arrayname,
+		 vector<int> dims, float data[], vector<int> chnkdims ) {
 	hid_t * lclfile = (hid_t*)voidfile;
 	hid_t file_id = *lclfile;  // get the file handle
 	hid_t array, datatype, dataspace;
-	hsize_t mydims[dims.size()];
-	for (unsigned int ii=0; ii<dims.size(); ii++)
+	int rank = dims.size();
+	hsize_t mydims[rank];
+	hsize_t maxdims[rank];
+	hsize_t chunk_dims[ rank ];
+	for (unsigned int ii=0; ii<rank; ii++)
+	{
 		mydims[ii] = dims[ii];
+		maxdims[ii] = H5S_UNLIMITED;
+	}
 
-	dataspace = H5Screate_simple(dims.size(),mydims,NULL);
+	for (unsigned int ii=0; ii<chnkdims.size(); ii++)
+	{
+		chunk_dims[ii] = chnkdims[ii];
+	}
+
 	datatype = H5Tcopy(H5T_NATIVE_FLOAT);
-	array = H5Dcreate( file_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
+	if ( chnkdims.size()>0 )
+	{
+	   dataspace = H5Screate_simple(rank,mydims,maxdims);
+	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
+	   hid_t status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
+	   array = H5Dcreate( file_id, arrayname.c_str(), datatype, dataspace, cparms);
+	}
+	else
+	{
+	   dataspace = H5Screate_simple(rank,mydims,NULL);
+	   array = H5Dcreate( file_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
+	}
+
 	H5Dwrite(array, datatype, dataspace, dataspace, H5P_DEFAULT, data);
+	H5Sclose( dataspace );
+	H5Tclose( datatype );
+	H5Dclose( array );
 }
 
 dalFloatArray::~dalFloatArray() {
+}
+
+int * dalIntArray::readIntArray( void * voidfile, string arrayname )
+{
+	hid_t * lclfile = (hid_t*)voidfile;
+	hid_t file_id = *lclfile;  // get the file handle
+	hid_t array, datatype, dataspace;
+	herr_t      status;
+
+	// get the dataspace
+	hid_t filespace = H5Dget_space(file_id);
+
+	// what is the rank of the array?
+	hid_t data_rank = H5Sget_simple_extent_ndims(filespace);
+	hsize_t dims[ data_rank ];
+	status = H5Sget_simple_extent_dims(filespace, dims, NULL);
+
+	int size = 1;
+	for (int ii=0; ii<data_rank; ii++)
+	  size *= dims[0];	
+	int * data = NULL;
+	data = new int[size];
+
+	status = H5LTread_dataset_int( file_id, arrayname.c_str(), data );
+	hid_t memspace = H5Screate_simple (data_rank,dims,NULL);
+	status = H5Dread (file_id, H5T_NATIVE_INT, memspace, filespace,
+		H5P_DEFAULT, data);
+
+	return data;
 }

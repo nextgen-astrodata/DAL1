@@ -54,14 +54,18 @@ class dalArray{
 class dalIntArray: public dalArray {
   
   public:
-	dalIntArray( void* voidfile, string arrayname, vector<int> dims, int data[]);
+	dalIntArray();
+	dalIntArray( void* voidfile, string arrayname, vector<int> dims,
+			int data[], vector<int>chnkdims);
+	int * readIntArray( void * voidfile, string arrayname );
 	~dalIntArray();
 };
 
 class dalFloatArray: public dalArray {
   
   public:
-	dalFloatArray( void* voidfile, string arrayname, vector<int> dims, float data[]);
+	dalFloatArray( void* voidfile, string arrayname, vector<int> dims,
+			 float data[], vector<int>chnkdims);
 	~dalFloatArray();
 };
 

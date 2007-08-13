@@ -96,7 +96,7 @@ class dalTable{
 	void appendRow( void * data );
 	void appendRows( void * data, long number_of_rows );
 	void listColumns( /*void * data_out, long start, long stop*/ );
-	void readRows( void * data_out, long start, long stop, long buffersize=0 );
+	void * readRows( long start, long stop, long buffersize=0 );
 	void * getAttribute( string attrname );
 	void printAttribute( string attrname );
 	//void setAttribute( string attrname, void * data, int size, string datatype );

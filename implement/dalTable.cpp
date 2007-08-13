@@ -695,11 +695,12 @@ long dalTable::getNumberOfRows()
 	return nrecords;
 }
 
-void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buffersize )
+void * dalTable::readRows( long nstart, long numberRecs, long buffersize )
 {
 	size_t * field_sizes;
 	size_t * field_offsets;
 	size_t * size_out;
+	void   * data_out;
  	
 	// retrieve the input fields needed for the append_records call
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
@@ -720,22 +721,27 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buf
 
 	if (buffersize > 0)
 		size_out[0] = buffersize;
+cout << "buffer size is " << buffersize << endl;
 	status = H5TBread_records( file_id, name.c_str(), start, nrecs,
 				   size_out[0], field_offsets, field_sizes,
 				   data_out );
 
-free(field_sizes);
-free(field_offsets);
-free(size_out);
-for (unsigned int ii=0; ii<nfields; ii++) {
-	free(field_names[ii]);
-}
+	free(field_sizes);
+	free(field_offsets);
+	free(size_out);
+	
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		free(field_names[ii]);
+	}
+
 	if (status < 0) {
 		cout << "Problem reading records. Row buffer may be too big. "
 		     << "Make sure the buffer is smaller than the size of the "
 		     << "table." << endl;
-		exit(897);
+//		exit(897);
 	}
+
+	return data_out;
 }
 
 bool dalTable::findAttribute( string attrname )

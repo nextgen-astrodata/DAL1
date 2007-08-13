@@ -44,6 +44,15 @@
 #include "dalAttribute.h"
 #endif
 
+// #include <boost/python.hpp>
+// #include <boost/python/list.hpp>
+// namespace bpl = boost::python;
+#include <boost/python.hpp>
+#include <boost/python/object.hpp>
+#include <boost/python/list.hpp>
+#include <boost/python/extract.hpp>
+namespace bpl = boost::python;
+
 const string H5TYPE = "HDF5";
 const string FITSTYPE = "FITS";
 
@@ -93,18 +102,44 @@ class dalDataset{
 //	int copy(); /// create an exact copy of the data
 //	int create();  /// define basic characteristics of a new dataset
 	/// create a new array in the root group
-	dalArray * createArray( string arrayname, vector<int> dims, int data[]);
-	dalArray * createArray( string arrayname, vector<int> dims, float data[]);
+	dalArray * createIntArray( string arrayname, vector<int> dims, int data[], vector<int>cdims);
+	dalArray * createFloatArray( string arrayname, vector<int> dims, float data[], vector<int>cdims);
+
+	// create[]Array wrappers
+	dalArray * cia_boost( string arrayname, bpl::list dims, bpl::list data,
+				 bpl::list cdims );
+	dalArray * cia_boost_numarray( string arrayname, bpl::list dims,
+			bpl::numeric::array data, bpl::list cdims );
+	dalArray * cfa_boost( string arrayname, bpl::list dims, bpl::list data,
+				 bpl::list cdims );
+	dalArray * cfa_boost_numarray( string arrayname, bpl::list dims,
+			 bpl::numeric::array data, bpl::list cdims );
+	void sfe(bpl::numeric::array& y, int value);
+
+// 	int * readIntArray( string arrayname );
+	bpl::numeric::array ria_boost( string arrayname );
+	bpl::numeric::array rfa_boost( string arrayname );
+
 	/// create a new table in the root group
 	dalTable * createTable( string tablename );
 	/// create a new table in a specified group
-	dalTable * createTableInGroup( string tablename, string groupname );
+	dalTable * createTable( string tablename, string groupname );
+
+	// createTable wrappers
+	dalTable * ct1_boost( string tablename );
+	dalTable * ct2_boost( string tablename, string groupname );
+
 //	int createImage();  /// create a new table outside of a group
 	dalGroup * createGroup( char* groupname );  /// create a new group
 //	int getName();  /// retrieve the name of the dataset
 //	int rename();  /// rename the dataset
 	dalTable * openTable( string tablename );  /// return a dalTable object
 	dalTable * openTable( string tablename, string groupname );
+
+	// openTable wrappers
+	dalTable * ot1_boost( string tablename );
+	dalTable * ot2_boost( string tablename, string groupname );
+
 	dalGroup * openGroup( string groupname );  /// return a dalGroup object
 //	int listGroups();  /// return a list of groups within the dataset
 	/// return a list of tables not contained in any groups
@@ -117,6 +152,5 @@ class dalDataset{
 //	int getTableNumber();  /// return a dalTable by index
 //	int getGroupNumber(); /// return a dalGroup by index
 	string getType(); /// retrieve the dataset type
-    
 };
 #endif

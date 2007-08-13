@@ -49,7 +49,7 @@ int openFITS( char * fname )
 	if (status)          /* print any error messages */
 	{
 	  //fits_report_error(stderr, status);
-	  cout << " failed" << endl;
+// 	  cout << " failed" << endl;
 	  return status;
 	}
 	else
@@ -94,6 +94,7 @@ int dalDataset::open( char * filename )
   string lcltype;
 //  void * myfile;
   
+// cout << "trying to open fits..." << endl;
   if ( 0 == openFITS( filename ) )
   {
 //     file = (fitsfile*)myfile;
@@ -101,7 +102,7 @@ int dalDataset::open( char * filename )
     cout << lcltype << " opened FITS!" << endl;
 	exit(10);
   } else if ( (h5fh = openHDF5( filename )) >= 0 ) {
-//     cout << " opened HDF5!" << endl;
+//      cout << " opened HDF5!" << endl;
      file = &h5fh;
      lcltype = H5TYPE;
 	//cout << "returning " << SUCCESS << endl;
@@ -120,9 +121,11 @@ int dalDataset::close()
 {
    if ( type == H5TYPE )
    {
-      //cout << "Try to close HDF5... ";
+      // << "Try to close HDF5... ";
 
-       if ( H5Fclose(*(hid_t*)file ) >= 0 )
+//       if ( H5Fclose(*(hid_t*)file ) > 0 )
+// cout << "h5fh: " << h5fh << endl;
+      if ( H5Fclose( h5fh ) > 0 )
         return 0;
       else
 	return -1;
@@ -191,11 +194,12 @@ dalDataset::~dalDataset()
  * 
  * @param arrayname 
  */
-dalArray * dalDataset::createArray( string arrayname, vector<int> dims, int data[])
+dalArray * dalDataset::createIntArray( string arrayname, vector<int> dims, int data[], vector<int> cdims)
 {
    if ( type == H5TYPE )
    {
-	   dalIntArray * la = new dalIntArray( file, arrayname, dims, data );
+// cout << "file: " << file << endl;
+	   dalIntArray * la = new dalIntArray( file, arrayname, dims, data, cdims );
 	   return la;
    }
    else if ( type == FITSTYPE )
@@ -207,11 +211,11 @@ dalArray * dalDataset::createArray( string arrayname, vector<int> dims, int data
    	return NULL;
 }
 
-dalArray * dalDataset::createArray( string arrayname, vector<int> dims, float data[])
+dalArray * dalDataset::createFloatArray( string arrayname, vector<int> dims, float data[], vector<int> cdims)
 {
    if ( type == H5TYPE )
    {
-	   dalFloatArray * la = new dalFloatArray( file, arrayname, dims, data );
+	   dalFloatArray * la = new dalFloatArray( file, arrayname, dims, data, cdims );
 	   return la;
    }
    else if ( type == FITSTYPE )
@@ -244,7 +248,7 @@ dalTable * dalDataset::createTable( string tablename )
    	return NULL;
 }
 
-dalTable * dalDataset::createTableInGroup( string tablename, string groupname )
+dalTable * dalDataset::createTable( string tablename, string groupname )
 {
    if ( type == H5TYPE )
    {
@@ -327,4 +331,253 @@ dalGroup * dalDataset::openGroup( string groupname )
 string dalDataset::getType()
 {
 	return type;
+}
+
+/************************************************************************
+ *
+ * The following functions are boost wrappers to allow some previously
+ *   defined functions to be easily called from a python prompt.
+ *
+ ************************************************************************/
+
+/******************************************************
+ * wrappers for createTable
+ ******************************************************/
+
+dalTable * dalDataset::ct1_boost(string a) {
+	dalTable * ret;
+	ret = dalDataset::createTable(a);
+	return ret;
+}
+
+dalTable * dalDataset::ct2_boost(string a, string b) {
+	dalTable * ret;
+	ret = dalDataset::createTable(a,b);
+	return ret;
+}
+
+/******************************************************
+ * wrappers for openTable
+ ******************************************************/
+
+dalTable * dalDataset::ot1_boost(string a) {
+	dalTable * ret;
+	ret = dalDataset::openTable(a);
+	return ret;
+}
+
+dalTable * dalDataset::ot2_boost(string a, string b) {
+	dalTable * ret;
+	ret = dalDataset::openTable(a,b);
+	return ret;
+}
+
+/******************************************************
+ * wrappers for createIntArray
+ ******************************************************/
+
+dalArray * dalDataset::cia_boost( string arrayname, bpl::list pydims,
+				  bpl::list pydata, bpl::list cdims ){
+
+  vector<int> dims;
+  vector<int> chnkdims;
+
+  for(int ii=0; ii<bpl::len(pydims); ii++)
+    dims.push_back(bpl::extract<int>(pydims[ii]));
+
+  for(int ii=0; ii<bpl::len(cdims); ii++)
+    chnkdims.push_back(bpl::extract<int>(cdims[ii]));
+
+  long size = bpl::len(pydata);
+  int * data = NULL;
+  data = new int[size];
+
+  for(int ii=0; ii<size; ii++)
+    data[ii] = bpl::extract<int>(pydata[ii]);
+
+  dalArray * array = dalDataset::createIntArray(arrayname, dims, data, chnkdims);
+
+  delete [] data;
+
+  return array;
+}
+
+dalArray * dalDataset::cia_boost_numarray( string arrayname, 
+	bpl::list pydims,
+	bpl::numeric::array pydata, bpl::list cdims ){
+
+  vector<int> dims;
+
+  for(int ii=0; ii<bpl::len(pydims); ii++)
+    dims.push_back(bpl::extract<int>(pydims[ii]));
+
+  long size = bpl::len(pydata);
+  int * data = NULL;
+  data = new int[size];
+
+// cout << "cia_boost_numarray "<< pydata.nelements() << endl;
+  pydata.setshape( pydata.nelements() );
+  bpl::object flat_data = pydata.getflat();
+  bpl::list list_data( flat_data );
+
+  dalArray * array = dalDataset::cia_boost(arrayname, pydims, list_data, cdims);
+
+  return array;
+}
+
+/******************************************************
+ * wrappers for createFloatArray
+ ******************************************************/
+dalArray * dalDataset::cfa_boost( string arrayname, bpl::list pydims, bpl::list pydata, bpl::list cdims ){
+
+  vector<int> dims;
+  vector<int> chnkdims;
+
+  for(int ii=0; ii<bpl::len(pydims); ii++)
+    dims.push_back(bpl::extract<int>(pydims[ii]));
+
+  for(int ii=0; ii<bpl::len(cdims); ii++)
+    chnkdims.push_back(bpl::extract<int>(cdims[ii]));
+
+  long size = bpl::len(pydata);
+  float * data = NULL;
+  data = new float[size];
+
+  for(int ii=0; ii<size; ii++)
+    data[ii] = bpl::extract<float>(pydata[ii]);
+
+  dalArray * array = dalDataset::createFloatArray(arrayname, dims, data, chnkdims);
+
+  delete [] data;
+
+  return array;
+}
+
+dalArray * dalDataset::cfa_boost_numarray( string arrayname, 
+	bpl::list pydims,
+	bpl::numeric::array pydata, bpl::list cdims ){
+
+  vector<int> dims;
+
+  for(int ii=0; ii<bpl::len(pydims); ii++)
+    dims.push_back(bpl::extract<int>(pydims[ii]));
+
+  long size = bpl::len(pydata);
+  float * data = NULL;
+  data = new float[size];
+
+// cout << "cia_boost_numarray "<< pydata.nelements() << endl;
+  pydata.setshape( pydata.nelements() );
+  bpl::object flat_data = pydata.getflat();
+  bpl::list list_data( flat_data );
+
+  dalArray * array = dalDataset::cfa_boost(arrayname, pydims, list_data, cdims);
+
+  return array;
+}
+
+void dalDataset::sfe(bpl::numeric::array& y, int value)
+{
+    y[bpl::make_tuple(0,0)] = value;
+}
+
+/******************************************************
+ * wrapper for readIntArray
+ ******************************************************/
+
+bpl::numeric::array dalDataset::ria_boost( string arrayname )
+{
+	hid_t lclfile;
+	hid_t datatype, dataspace, status;
+
+	// get the dataspace
+	lclfile = H5Dopen(h5fh, arrayname.c_str());
+	hid_t filespace = H5Dget_space(lclfile);
+
+	// what is the rank of the array?
+	hid_t data_rank = H5Sget_simple_extent_ndims(filespace);
+	hsize_t dims[ data_rank ];
+// cout << "data rank: " << data_rank << endl;
+	status = H5Sget_simple_extent_dims(filespace, dims, NULL);
+
+	int size = 1;
+	bpl::list dims_list;
+	for (int ii=0; ii<data_rank; ii++)
+	{
+// cout << "dims["  << ii << "]: " << dims[ii] << endl;
+	  size *= dims[ii];
+	  dims_list.append(dims[ii]);
+	}
+// cout << "size: " << size << endl;
+
+	int * data = NULL;
+	data = new int[size];
+
+	status = H5LTread_dataset_int( h5fh, arrayname.c_str(), data );
+// 	for (int ii=0; ii<size; ii++)
+// 	{
+// 	  cout << data[ii] << endl;
+// 	}
+
+	bpl::list data_list;
+	// for each dimension
+	for (int ii=0; ii<size; ii++)
+	{
+	    data_list.append(data[ii]);
+	}
+	bpl::numeric::array nadata(
+          bpl::make_tuple(
+	    bpl::make_tuple(data_list)
+	  )
+	);
+// 	dims_list.reverse();
+	nadata.setshape(dims_list);
+	return nadata;
+}
+
+/******************************************************
+ * wrapper for readFloatArray
+ ******************************************************/
+
+bpl::numeric::array dalDataset::rfa_boost( string arrayname )
+{
+	hid_t lclfile;
+	hid_t datatype, dataspace, status;
+
+	// get the dataspace
+	lclfile = H5Dopen(h5fh, arrayname.c_str());
+	hid_t filespace = H5Dget_space(lclfile);
+
+	// what is the rank of the array?
+	hid_t data_rank = H5Sget_simple_extent_ndims(filespace);
+	hsize_t dims[ data_rank ];
+
+	status = H5Sget_simple_extent_dims(filespace, dims, NULL);
+
+	int size = 1;
+	bpl::list dims_list;
+	for (int ii=0; ii<data_rank; ii++)
+	{
+	  size *= dims[ii];
+	  dims_list.append(dims[ii]);
+	}
+
+	float * data = NULL;
+	data = new float[size];
+
+	status = H5LTread_dataset_float( h5fh, arrayname.c_str(), data );
+
+	bpl::list data_list;
+	// for each dimension
+	for (int ii=0; ii<size; ii++)
+	{
+	    data_list.append(data[ii]);
+	}
+	bpl::numeric::array nadata(
+          bpl::make_tuple(
+	    bpl::make_tuple(data_list)
+	  )
+	);
+	nadata.setshape(dims_list);
+	return nadata;
 }
