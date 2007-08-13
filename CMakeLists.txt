@@ -19,7 +19,7 @@ include (CPack)
 
 ## check where to find the CMake scripts
 
-find_path (dal_cmake template_FindXX.cmake 
+find_path (dal_cmake FindHDF5.cmake FindCASACORE.cmake
   PATHS 
   ${DAL_SOURCE_DIR}
   ${DAL_SOURCE_DIR}/..
@@ -66,14 +66,15 @@ endif (BOOST_LIBRARIES)
 ## -----------------------------------------------------------------------------
 ## Location of header files
 
-include_directories(
+include_directories (
   .
   ${DAL_SOURCE_DIR}/implement
   ${DAL_SOURCE_DIR}/test
-  ${HDF5_INCLUDES}
-  ${CFITSIO_INCLUDES}
   ${BLITZ_INCLUDES}
   ${BOOST_INCLUDES}
+  ${CASA_INCLUDES}
+  ${CFITSIO_INCLUDES}
+  ${HDF5_INCLUDES}
   ${PYTHON_INCLUDE_PATH}
   )
 
@@ -113,4 +114,5 @@ if (DAL_DEBUGGING_MESSAGES)
   message (STATUS "Boost library   = ${BOOST_LIBRARIES}")
   message (STATUS "Python includes = ${PYTHON_INCLUDE_PATH}")
   message (STATUS "Python library  = ${PYTHON_LIBRARIES}")
+  message (STATUS "casacore        = ${HAVE_CASACORE}")
 endif (DAL_DEBUGGING_MESSAGES)

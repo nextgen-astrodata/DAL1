@@ -41,6 +41,16 @@ foreach (src ${tests})
 endforeach (src)
 
 ## ------------------------------------------------------------------------------
+## Tests for working with external components
+
+if (HAVE_CASA OR HAVE_CASACORE)
+  add_executable (tMeasurementSets tMeasurementSets.cpp)
+  target_link_libraries (tMeasurementSets dal ${CASA_LIBRARIES} ${libm})
+else (HAVE_CASA OR HAVE_CASACORE)
+  message (STATUS "Skipping test program tMeasurementSets")
+endif (HAVE_CASA OR HAVE_CASACORE)
+
+## ------------------------------------------------------------------------------
 ## Testing
 
 enable_testing()
