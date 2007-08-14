@@ -104,6 +104,7 @@ class dalDataset{
 	/// create a new array in the root group
 	dalArray * createIntArray( string arrayname, vector<int> dims, int data[], vector<int>cdims);
 	dalArray * createFloatArray( string arrayname, vector<int> dims, float data[], vector<int>cdims);
+	dalArray * createComplexArray( string arrayname, vector<int> dims, dalcomplex data[], vector<int>cdims);
 
 	// create[]Array wrappers
 	dalArray * cia_boost( string arrayname, bpl::list dims, bpl::list data,

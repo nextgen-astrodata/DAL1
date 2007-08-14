@@ -69,4 +69,11 @@ class dalFloatArray: public dalArray {
 	~dalFloatArray();
 };
 
+class dalComplexArray: public dalArray {
+  
+  public:
+	dalComplexArray( void* voidfile, string arrayname, vector<int> dims,
+			 dalcomplex data[], vector<int>chnkdims);
+	~dalComplexArray();
+};
 #endif

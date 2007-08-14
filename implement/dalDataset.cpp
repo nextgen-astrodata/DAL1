@@ -204,7 +204,7 @@ dalArray * dalDataset::createIntArray( string arrayname, vector<int> dims, int d
    }
    else if ( type == FITSTYPE )
    {
-	cout << "dalDataset::createArray FITS Type" << endl;
+	cout << "dalDataset::createIntArray FITS Type" << endl;
 	return NULL;
    }
    else
@@ -220,12 +220,29 @@ dalArray * dalDataset::createFloatArray( string arrayname, vector<int> dims, flo
    }
    else if ( type == FITSTYPE )
    {
-	cout << "dalDataset::createArray FITS Type" << endl;
+	cout << "dalDataset::createFloatArray FITS Type" << endl;
 	return NULL;
    }
    else
    	return NULL;
 }
+
+dalArray * dalDataset::createComplexArray( string arrayname, vector<int> dims, dalcomplex data[], vector<int> cdims)
+{
+   if ( type == H5TYPE )
+   {
+	   dalComplexArray * la = new dalComplexArray( file, arrayname, dims, data, cdims );
+	   return la;
+   }
+   else if ( type == FITSTYPE )
+   {
+	cout << "dalDataset::createComplexArray FITS Type" << endl;
+	return NULL;
+   }
+   else
+   	return NULL;
+}
+
 
 /**
  * 
