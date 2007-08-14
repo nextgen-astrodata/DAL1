@@ -67,7 +67,7 @@ endif (BOOST_LIBRARIES)
 ## Location of header files
 
 include_directories (
-  .
+  ${DAL_SOURCE_DIR}
   ${DAL_SOURCE_DIR}/implement
   ${DAL_SOURCE_DIR}/test
   ${BLITZ_INCLUDES}
