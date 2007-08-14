@@ -36,6 +36,7 @@
 
 #include <string>
 #include <vector>
+#include <complex>
 #include <iostream>
 #include <iomanip>  // for cout field width
 #include <cstdio>
@@ -53,8 +54,16 @@ extern "C" {
 
 using namespace std;
 
-#include <complex>
-// using std::complex;
+// casacore includes
+// #include <casa/aips.h>
+// #include <tables/Tables.h>
+// #include <tables/Tables/Table.h>
+// #include <ms/MeasurementSets.h>
+// #include <ms/MeasurementSets/MSReader.h>
+// #include <iostream>
+// #include <casa/aipstype.h>
+// #include <casa/complex.h>
+// #include <casa/BasicMath/Math.h>
 
 const int SUCCESS = 0;
 const int FAIL = 1;

@@ -32,9 +32,10 @@ dalIntArray::dalIntArray( void * voidfile, string arrayname, vector<int> dims,
 	hid_t * lclfile = (hid_t*)voidfile;
 	hid_t file_id = *lclfile;  // get the file handle
 	hid_t array, datatype, dataspace;
-	int rank = dims.size();
+	unsigned int rank = dims.size();
 	hsize_t mydims[rank];
 	hsize_t maxdims[rank];
+	hid_t status_lcl;
 
 	hsize_t chunk_dims[ rank ];
 	for (unsigned int ii=0; ii<rank; ii++)
@@ -53,7 +54,7 @@ dalIntArray::dalIntArray( void * voidfile, string arrayname, vector<int> dims,
 	{
 	   dataspace = H5Screate_simple(rank,mydims,maxdims);
 	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
-	   hid_t status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
+	   status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
 	   array = H5Dcreate( file_id, arrayname.c_str(), datatype, dataspace, cparms);
 	}
 	else
@@ -80,7 +81,8 @@ dalFloatArray::dalFloatArray( void * voidfile, string arrayname,
 	hsize_t mydims[rank];
 	hsize_t maxdims[rank];
 	hsize_t chunk_dims[ rank ];
-	for (unsigned int ii=0; ii<rank; ii++)
+	hid_t status_lcl;
+	for (int ii=0; ii<rank; ii++)
 	{
 		mydims[ii] = dims[ii];
 		maxdims[ii] = H5S_UNLIMITED;
@@ -96,7 +98,7 @@ dalFloatArray::dalFloatArray( void * voidfile, string arrayname,
 	{
 	   dataspace = H5Screate_simple(rank,mydims,maxdims);
 	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
-	   hid_t status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
+	   status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
 	   array = H5Dcreate( file_id, arrayname.c_str(), datatype, dataspace, cparms);
 	}
 	else
@@ -118,7 +120,7 @@ int * dalIntArray::readIntArray( void * voidfile, string arrayname )
 {
 	hid_t * lclfile = (hid_t*)voidfile;
 	hid_t file_id = *lclfile;  // get the file handle
-	hid_t array, datatype, dataspace;
+// 	hid_t array, datatype, dataspace;
 	herr_t      status;
 
 	// get the dataspace

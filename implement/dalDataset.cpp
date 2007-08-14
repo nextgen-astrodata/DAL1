@@ -488,7 +488,8 @@ void dalDataset::sfe(bpl::numeric::array& y, int value)
 bpl::numeric::array dalDataset::ria_boost( string arrayname )
 {
 	hid_t lclfile;
-	hid_t datatype, dataspace, status;
+	hid_t  status;
+// 	hid_t datatype, dataspace;
 
 	// get the dataspace
 	lclfile = H5Dopen(h5fh, arrayname.c_str());
@@ -542,7 +543,8 @@ bpl::numeric::array dalDataset::ria_boost( string arrayname )
 bpl::numeric::array dalDataset::rfa_boost( string arrayname )
 {
 	hid_t lclfile;
-	hid_t datatype, dataspace, status;
+	hid_t status;
+// 	hid_t datatype, dataspace;
 
 	// get the dataspace
 	lclfile = H5Dopen(h5fh, arrayname.c_str());
