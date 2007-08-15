@@ -70,7 +70,7 @@ int main()
 /* Beam 0 -------------------------------------------------------*/
 
    dalGroup * beam000 = ds->createGroup( "beam000" );
-   dalTable * b0_sb0 = ds->createTableInGroup( "sb0", "beam000" );
+   dalTable * b0_sb0 = ds->createTable( "sb0", "beam000" );
    b0_sb0->addColumn( "data", dal_FLOAT, 256 );
    for (long row=0; row<BUFSIZE; row++) {
 	for (int channel=0; channel<256; channel++)
@@ -80,7 +80,7 @@ int main()
    }
    b0_sb0->appendRows( data, BUFSIZE );
 
-   dalTable * b0_sb1 = ds->createTableInGroup( "sb1", "beam000" );
+   dalTable * b0_sb1 = ds->createTable( "sb1", "beam000" );
    b0_sb1->addColumn( "data", dal_FLOAT, 256 );
    for (long row=0; row<BUFSIZE; row++) {
 	for (int channel=0; channel<256; channel++)
@@ -90,7 +90,7 @@ int main()
    }
    b0_sb1->appendRows( data, BUFSIZE );
 
-   dalTable * b0_sb2 = ds->createTableInGroup( "sb2", "beam000" );
+   dalTable * b0_sb2 = ds->createTable( "sb2", "beam000" );
    b0_sb2->addColumn( "data", dal_FLOAT, 256 );
    for (long row=0; row<BUFSIZE; row++) {
 	for (int channel=0; channel<256; channel++)
@@ -104,7 +104,7 @@ int main()
 /* Beam 1 -------------------------------------------------------*/
 
    dalGroup * beam001 = ds->createGroup( "beam001" );
-   dalTable * b1_sb0 = ds->createTableInGroup( "sb0", "beam001" );
+   dalTable * b1_sb0 = ds->createTable( "sb0", "beam001" );
    b1_sb0->addColumn( "data", dal_FLOAT, 256 );
    for (long row=0; row<BUFSIZE; row++) {
 	for (int channel=0; channel<256; channel++)
@@ -114,7 +114,7 @@ int main()
    }
    b1_sb0->appendRows( data, BUFSIZE );
 
-   dalTable * b1_sb1 = ds->createTableInGroup( "sb1", "beam001" );
+   dalTable * b1_sb1 = ds->createTable( "sb1", "beam001" );
    b1_sb1->addColumn( "data", dal_FLOAT, 256 );
    for (long row=0; row<BUFSIZE; row++) {
 	for (int channel=0; channel<256; channel++)
@@ -124,7 +124,7 @@ int main()
    }
    b1_sb1->appendRows( data, BUFSIZE );
 
-   dalTable * b1_sb2 = ds->createTableInGroup( "sb2", "beam001" );
+   dalTable * b1_sb2 = ds->createTable( "sb2", "beam001" );
    b1_sb2->addColumn( "data", dal_FLOAT, 256 );
    for (long row=0; row<BUFSIZE; row++) {
 	for (int channel=0; channel<256; channel++)
@@ -138,7 +138,7 @@ int main()
 /* Beam 2 -------------------------------------------------------*/
 
    dalGroup * beam002 = ds->createGroup( "beam002" );
-   dalTable * b2_sb0 = ds->createTableInGroup( "sb0", "beam002" );
+   dalTable * b2_sb0 = ds->createTable( "sb0", "beam002" );
    b2_sb0->addColumn( "data", dal_FLOAT, 256 );
    for (long row=0; row<BUFSIZE; row++) {
 	for (int channel=0; channel<256; channel++)
@@ -148,7 +148,7 @@ int main()
    }
    b2_sb0->appendRows( data, BUFSIZE );
 
-   dalTable * b2_sb1 = ds->createTableInGroup( "sb1", "beam002" );
+   dalTable * b2_sb1 = ds->createTable( "sb1", "beam002" );
    b2_sb1->addColumn( "data", dal_FLOAT, 256 );
    for (long row=0; row<BUFSIZE; row++) {
 	for (int channel=0; channel<256; channel++)
@@ -158,7 +158,7 @@ int main()
    }
    b2_sb1->appendRows( data, BUFSIZE );
 
-   dalTable * b2_sb2 = ds->createTableInGroup( "sb2", "beam002" );
+   dalTable * b2_sb2 = ds->createTable( "sb2", "beam002" );
    b2_sb2->addColumn( "data", dal_FLOAT, 256 );
    for (long row=0; row<BUFSIZE; row++) {
 	for (int channel=0; channel<256; channel++)
@@ -169,9 +169,9 @@ int main()
    b2_sb2->appendRows( data, BUFSIZE );
 
 
-/*   dalTable * table1 = ds->createTableInGroup( "table1", "groupA" );
-   dalTable * table2 = ds->createTableInGroup( "table2", "groupA" );*/
-//    dalTable * table3 = ds->createTableInGroup( "table3", "groupB" );
+/*   dalTable * table1 = ds->createTable( "table1", "groupA" );
+   dalTable * table2 = ds->createTable( "table2", "groupA" );*/
+//    dalTable * table3 = ds->createTable( "table3", "groupB" );
 
 
    // define dimensions of array
