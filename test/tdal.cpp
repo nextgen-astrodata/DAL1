@@ -63,9 +63,9 @@ int main()
    dalGroup * groupB = ds->createGroup( "groupB" );
    dalGroup * groupC = ds->createGroup( "groupC" );
 
-   dalTable * table1 = ds->createTableInGroup( "table1", "groupA" );
-   dalTable * table2 = ds->createTableInGroup( "table2", "groupA" );
-   dalTable * table3 = ds->createTableInGroup( "table3", "groupB" );
+   dalTable * table1 = ds->createTable( "table1", "groupA" );
+   dalTable * table2 = ds->createTable( "table2", "groupA" );
+   dalTable * table3 = ds->createTable( "table3", "groupB" );
 
 
    // define dimensions of array
@@ -77,12 +77,21 @@ int main()
    int idata[4*5*6];
    for (int gg=0; gg<(4*5*6); gg++)
 	idata[gg] = gg;
-   dalArray * iarray = ds->createArray( "int_array", dims, idata );
+
+   vector<int> cdims;
+   dalArray * iarray = ds->createIntArray( "int_array", dims, idata, cdims );
 
    float fdata[4*5*6];
    for (int gg=0; gg<(4*5*6); gg++)
 	fdata[gg] = rand();
-   dalArray * farray = ds->createArray( "float_array", dims, fdata );
+   dalArray * farray = ds->createFloatArray( "float_array", dims, fdata, cdims );
+
+   dalcomplex cdata[4*5*6];
+   for (int gg=0; gg<(4*5*6); gg++) {
+	cdata[gg].r = 0;
+	cdata[gg].i = 0;
+   }
+   dalArray * carray = ds->createComplexArray( "complex_array", dims, cdata, cdims );
 
    table1->addColumn( "col1", dal_INT );
    table1->addColumn( "col2", dal_SHORT );
@@ -103,6 +112,7 @@ int main()
    delete table3;
    delete iarray;
    delete farray;
+   delete carray;
    delete groupA;
    delete groupB;
    delete groupC;
