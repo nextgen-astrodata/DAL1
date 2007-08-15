@@ -2,15 +2,18 @@
 ## $Id:: CMakeLists.txt 494 2007-08-02 09:39:15Z baehren                       $
 ##------------------------------------------------------------------------------
 
-## Project name
-
+## Name of the project
 project (DAL)
+
+## Minimum required version of CMake to configure the project
+cmake_minimum_required (VERSION 2.4)
 
 ## -----------------------------------------------------------------------------
 ## User defined build/install options
 
 option (DAL_BUILD_TESTS "Build the test programs?" 1)
 option (DAL_DEBUGGING_MESSAGES "Print debugging information?" 0)
+option (DAL_VERBOSE_CONFIGURE "Verbose output during configuration?" 0)
 
 ## -----------------------------------------------------------------------------
 ## External dependencies
@@ -28,15 +31,20 @@ find_path (dal_cmake FindHDF5.cmake FindCASACORE.cmake
   devel_common/cmake
   )
 
+## take into account the current verbose mode
+
+if (NOT DAL_VERBOSE_CONFIGURE)
+  set (BLITZ_FIND_QUIETLY 1)
+  set (BOOST_FIND_QUIETLY 1)
+  set (CASACORE_FIND_QUIETLY 1)
+  set (CFITSIO_FIND_QUIETLY 1)
+  set (HDF5_FIND_QUIETLY 1)
+  set (SWIG_FIND_QUIETLY 1)
+endif (NOT DAL_VERBOSE_CONFIGURE)
+
+## check for the external packages
+
 if (dal_cmake)
-  ## HDF5
-  if (NOT HAVE_HDF5)
-    include (${dal_cmake}/FindHDF5.cmake)
-  endif (NOT HAVE_HDF5)
-  ## CFITSIO
-  if (NOT HAVE_CFITSIO)
-    include (${dal_cmake}/FindCFITSIO.cmake)
-  endif (NOT HAVE_CFITSIO)
   ## BLITZ++
   if (NOT HAVE_BLITZ)
     include (${dal_cmake}/FindBlitz.cmake)
@@ -45,14 +53,22 @@ if (dal_cmake)
   if (NOT HAVE_BOOST)
     include (${dal_cmake}/FindBoost.cmake)
   endif (NOT HAVE_BOOST)
-  ## SWIG
-  if (NOT HAVE_SWIG)
-    include (${dal_cmake}/FindSWIG.cmake)
-  endif (NOT HAVE_SWIG)
   ## casacore
   if (NOT HAVE_CASACORE)
     include (${dal_cmake}/FindCASACORE.cmake)
   endif (NOT HAVE_CASACORE)
+  ## CFITSIO
+  if (NOT HAVE_CFITSIO)
+    include (${dal_cmake}/FindCFITSIO.cmake)
+  endif (NOT HAVE_CFITSIO)
+  ## HDF5
+  if (NOT HAVE_HDF5)
+    include (${dal_cmake}/FindHDF5.cmake)
+  endif (NOT HAVE_HDF5)
+  ## SWIG
+  if (NOT HAVE_SWIG)
+    include (${dal_cmake}/FindSWIG.cmake)
+  endif (NOT HAVE_SWIG)
 elseif (dal_cmake)
   message (SEND_ERROR "Unable to locate additional CMake scripts!")
 endif (dal_cmake)
@@ -107,7 +123,7 @@ endif (prefix)
 ## -----------------------------------------------------------------------------
 ## Feedback
 
-if (DAL_DEBUGGING_MESSAGES)
+if (DAL_VERBOSE_CONFIGURE)
   message (STATUS "HDF5 includes   = ${HDF5_INCLUDES}")
   message (STATUS "HDF5 library    = ${HDF5_LIBRARIES}")
   message (STATUS "Boost includes  = ${BOOST_INCLUDES}")
@@ -115,4 +131,4 @@ if (DAL_DEBUGGING_MESSAGES)
   message (STATUS "Python includes = ${PYTHON_INCLUDE_PATH}")
   message (STATUS "Python library  = ${PYTHON_LIBRARIES}")
   message (STATUS "casacore        = ${HAVE_CASACORE}")
-endif (DAL_DEBUGGING_MESSAGES)
+endif (DAL_VERBOSE_CONFIGURE)
