@@ -53,9 +53,10 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 ## ------------------------------------------------------------------------------
 ## Testing
 
-enable_testing()
-add_test(test1 ${CMAKE_CURRENT_BINARY_DIR}/mswrite foo.h5)
-add_test(test2 ${CMAKE_CURRENT_BINARY_DIR}/mswrite)
+if (DAL_ENABLE_TESTING)
+  add_test(test1 ${CMAKE_CURRENT_BINARY_DIR}/mswrite foo.h5)
+  add_test(test2 ${CMAKE_CURRENT_BINARY_DIR}/mswrite)
+endif (DAL_ENABLE_TESTING)
 
 ## ------------------------------------------------------------------------------
 ## Installation

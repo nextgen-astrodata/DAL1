@@ -121,23 +121,23 @@ int main(int argc, char *argv[])
  long maximum = BSIZE * LOOPMAX;
  cout << maximum << endl;
  //for ( long ii = 0; ii < maximum; ii += NUMBERROWS ) {
-  for ( long ii = 0; ii < 10; ii ++ ) {
-
-	tableA->readRows( data_out, startRow, NUMBERROWS);
-
-	// print some values from the read
-	for (int gg=0; gg < NUMBERROWS; gg++)
-	{
-		cout << data_out[gg].time << ',';
-		cout << data_out[gg].antenna1 << ',';
-		cout << data_out[gg].antenna2 << ',';
-		cout << data_out[gg].feed1 << endl;
-	}
-	
-	startRow += NUMBERROWS;
-  }
-  delete tableA;
-
+ for ( long ii = 0; ii < 10; ii ++ ) {
+   
+   tableA->readRows( data_out, startRow, NUMBERROWS);
+   
+   // print some values from the read
+   for (int gg=0; gg < NUMBERROWS; gg++)
+     {
+       cout << data_out[gg].time << ',';
+       cout << data_out[gg].antenna1 << ',';
+       cout << data_out[gg].antenna2 << ',';
+       cout << data_out[gg].feed1 << endl;
+     }
+   
+   startRow += NUMBERROWS;
+ }
+ delete tableA;
+ 
 
   // define the structure of an image
   // define the data to go in the image
