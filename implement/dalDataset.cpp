@@ -227,7 +227,7 @@ dalArray * dalDataset::createFloatArray( string arrayname, vector<int> dims, flo
    	return NULL;
 }
 
-dalArray * dalDataset::createComplexArray( string arrayname, vector<int> dims, dalcomplex data[], vector<int> cdims)
+dalArray * dalDataset::createComplexArray( string arrayname, vector<int> dims, vector< complex<float> > data/*dalcomplex data[]*/, vector<int> cdims)
 {
    if ( type == H5TYPE )
    {
@@ -350,6 +350,7 @@ string dalDataset::getType()
 	return type;
 }
 
+#ifdef PYTHON
 /************************************************************************
  *
  * The following functions are boost wrappers to allow some previously
@@ -600,3 +601,4 @@ bpl::numeric::array dalDataset::rfa_boost( string arrayname )
 	nadata.setshape(dims_list);
 	return nadata;
 }
+#endif

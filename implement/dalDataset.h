@@ -44,6 +44,7 @@
 #include "dalAttribute.h"
 #endif
 
+#ifdef PYTHON
 // #include <boost/python.hpp>
 // #include <boost/python/list.hpp>
 // namespace bpl = boost::python;
@@ -52,9 +53,11 @@
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>
 namespace bpl = boost::python;
+#endif
 
 const string H5TYPE = "HDF5";
 const string FITSTYPE = "FITS";
+const string MSCASATYPE = "MSCASA";
 
 /*!
   \class dalDataset
@@ -104,8 +107,10 @@ class dalDataset{
 	/// create a new array in the root group
 	dalArray * createIntArray( string arrayname, vector<int> dims, int data[], vector<int>cdims);
 	dalArray * createFloatArray( string arrayname, vector<int> dims, float data[], vector<int>cdims);
-	dalArray * createComplexArray( string arrayname, vector<int> dims, dalcomplex data[], vector<int>cdims);
+	dalArray * createComplexArray( string arrayname, vector<int> dims,
+		vector< complex<float> > data, vector<int>cdims);
 
+#ifdef PYTHON
 	// create[]Array wrappers
 	dalArray * cia_boost( string arrayname, bpl::list dims, bpl::list data,
 				 bpl::list cdims );
@@ -117,18 +122,20 @@ class dalDataset{
 			 bpl::numeric::array data, bpl::list cdims );
 	void sfe(bpl::numeric::array& y, int value);
 
-// 	int * readIntArray( string arrayname );
 	bpl::numeric::array ria_boost( string arrayname );
 	bpl::numeric::array rfa_boost( string arrayname );
+#endif
 
 	/// create a new table in the root group
 	dalTable * createTable( string tablename );
 	/// create a new table in a specified group
 	dalTable * createTable( string tablename, string groupname );
 
+#ifdef PYTHON
 	// createTable wrappers
 	dalTable * ct1_boost( string tablename );
 	dalTable * ct2_boost( string tablename, string groupname );
+#endif
 
 //	int createImage();  /// create a new table outside of a group
 	dalGroup * createGroup( char* groupname );  /// create a new group
@@ -137,9 +144,11 @@ class dalDataset{
 	dalTable * openTable( string tablename );  /// return a dalTable object
 	dalTable * openTable( string tablename, string groupname );
 
+#ifdef PYTHON
 	// openTable wrappers
 	dalTable * ot1_boost( string tablename );
 	dalTable * ot2_boost( string tablename, string groupname );
+#endif
 
 	dalGroup * openGroup( string groupname );  /// return a dalGroup object
 //	int listGroups();  /// return a list of groups within the dataset
