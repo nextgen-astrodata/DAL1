@@ -46,8 +46,11 @@ endforeach (src)
 if (HAVE_CASA OR HAVE_CASACORE)
   add_executable (tMeasurementSets tMeasurementSets.cpp)
   target_link_libraries (tMeasurementSets dal ${CASA_LIBRARIES} ${libm})
+  add_executable (tMS_dal tMS_dal.cpp)
+  target_link_libraries (tMS_dal dal ${CASA_LIBRARIES} ${libm})
 else (HAVE_CASA OR HAVE_CASACORE)
   message (STATUS "Skipping test program tMeasurementSets")
+  message (STATUS "Skipping test program tMS_dal")
 endif (HAVE_CASA OR HAVE_CASACORE)
 
 ## ------------------------------------------------------------------------------
