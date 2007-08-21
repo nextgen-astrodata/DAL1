@@ -225,13 +225,13 @@ int * dalIntArray::readIntArray( void * voidfile, string arrayname )
  *    voidfile (I) - dataset file handle
  *    arrayname (I) - name of the array to create
  *    dims (I) - vector of the array dimensions
- *    data (I) - array of data to write
+ *    data (I) - complex<float> vector of data to write
  *    chnkdims (I) - resizing (chunking) dimensions. Empty vector
  *      if the size of the array is fixed.
  *
  ********************************************************************/
 dalComplexArray::dalComplexArray( void * voidfile, string arrayname, vector<int> dims,
-			  vector< complex<float> > data/*dalcomplex data[]*/, vector<int> chnkdims ) {
+			  vector< complex<float> > data, vector<int> chnkdims ) {
 	hid_t * lclfile = (hid_t*)voidfile;
 	hid_t file_id = *lclfile;  // get the file handle
 	hid_t array, datatype, dataspace;  // declare a few h5 variables
