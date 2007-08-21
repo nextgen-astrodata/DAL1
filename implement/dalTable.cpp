@@ -597,34 +597,36 @@ void dalTable::appendRows( void * data, long row_count )
 {
 	size_t * field_sizes;
 	size_t * field_offsets;
-	size_t size_out;
+	size_t * size_out;
 
 	// retrieve the input fields needed for the append_records call
 	H5TBget_table_info( file_id, name.c_str(), &nfields, &nrecords );
 	
 	field_sizes  = (size_t *)malloc((size_t)nfields * sizeof(size_t));
 	field_offsets = (size_t *)malloc((size_t)nfields * sizeof(size_t));
+	size_out = (size_t*)malloc( sizeof(size_t) );
 
 	status = H5TBget_field_info( file_id, name.c_str(), NULL, field_sizes,
-					field_offsets, &size_out );
+					field_offsets, size_out );
 	
 	if ( firstrecord ) {
 		hsize_t start = 0;
 		status = H5TBappend_records ( file_id, name.c_str(),
-					      (hsize_t)row_count, size_out,
+					      (hsize_t)row_count, *size_out,
 					      field_offsets, field_sizes, data );
 		status = H5TBwrite_records( file_id, name.c_str(), start,
-					    (hsize_t)row_count, size_out,
+					    (hsize_t)row_count, *size_out,
 					    field_offsets, field_sizes, data );
 		firstrecord = false;
 	}
 	else {
 		status = H5TBappend_records ( file_id, name.c_str(),
-					      (hsize_t)row_count, size_out,
+					      (hsize_t)row_count, *size_out,
 					      field_offsets, field_sizes, data );
 	}
 	free( field_sizes );
 	free( field_offsets );
+	free( size_out );
 }
 
 void dalTable::setAttribute_string( string attrname, string data ) {
@@ -695,53 +697,48 @@ long dalTable::getNumberOfRows()
 	return nrecords;
 }
 
-void * dalTable::readRows( long nstart, long numberRecs, long buffersize )
+void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buffersize )
 {
-	size_t * field_sizes;
-	size_t * field_offsets;
-	size_t * size_out;
-	void   * data_out;
- 	
-	// retrieve the input fields needed for the append_records call
-	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
-	
-	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
-	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
-	size_out = (size_t*)malloc( sizeof(size_t) );
-	field_names = (char**)malloc( nfields * sizeof(char*) );
-	for (unsigned int ii=0; ii<nfields; ii++) {
-		field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
-	}
+        size_t * field_sizes;
+        size_t * field_offsets;
+        size_t * size_out;
 
-	status = H5TBget_field_info( file_id, name.c_str(), /*NULL, NULL, NULL, NULL);*/field_names,
-				     field_sizes, field_offsets, size_out );
+        // retrieve the input fields needed for the append_records call
+        H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
 
- 	hsize_t start = nstart;
- 	hsize_t nrecs = numberRecs;
+        field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
+        field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
+        size_out = (size_t*)malloc( sizeof(size_t) );
+        field_names = (char**)malloc( nfields * sizeof(char*) );
+        for (unsigned int ii=0; ii<nfields; ii++) {
+                field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+        }
 
-	if (buffersize > 0)
-		size_out[0] = buffersize;
-cout << "buffer size is " << buffersize << endl;
-	status = H5TBread_records( file_id, name.c_str(), start, nrecs,
-				   size_out[0], field_offsets, field_sizes,
-				   data_out );
+        status = H5TBget_field_info( file_id, name.c_str(), field_names,
+                                     field_sizes, field_offsets, size_out );
+
+        hsize_t start = nstart;
+        hsize_t nrecs = numberRecs;
+
+        if (buffersize > 0)
+                size_out[0] = buffersize;
+        status = H5TBread_records( file_id, name.c_str(), start, nrecs,
+                                   size_out[0], field_offsets, field_sizes,
+                                   data_out );
 
 	free(field_sizes);
 	free(field_offsets);
 	free(size_out);
-	
 	for (unsigned int ii=0; ii<nfields; ii++) {
 		free(field_names[ii]);
 	}
 
-	if (status < 0) {
-		cout << "Problem reading records. Row buffer may be too big. "
-		     << "Make sure the buffer is smaller than the size of the "
-		     << "table." << endl;
-//		exit(897);
-	}
-
-	return data_out;
+        if (status < 0) {
+                cout << "Problem reading records. Row buffer may be too big. "
+                     << "Make sure the buffer is smaller than the size of the "
+                     << "table." << endl;
+                exit(897);
+        }
 }
 
 bool dalTable::findAttribute( string attrname )
