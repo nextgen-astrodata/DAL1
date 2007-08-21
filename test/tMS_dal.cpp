@@ -32,13 +32,20 @@
 
 using namespace casa;
 
-#define FILENAME "./mtMS_dal.h5"
-
-int main()
+int main(int argc, char *argv[])
 {
+	// parameter check
+	if ( argc < 3 )
+	{
+	  cout << endl << "Too few parameters..." << endl << endl;
+	  cout << "The first parameter is the input casa measurement set." << endl;
+	  cout << "The second parameter is the output hdf5 file." << endl;
+	  cout << endl;
+	  return FAIL;
+	}
 
 	// First open the measurement set
-	MeasurementSet MS("/mnt/disk2/data/cs1/L2007_01585_SB8-9.MS");
+	MeasurementSet MS( argv[1] );
 
 	// create a msreader object
         MSReader reader(MS);
@@ -92,7 +99,7 @@ int main()
 	cout << time_data[0] << endl << time_data[1] << endl << time_data[2] << endl;
 
 	// print out what the first row of the data array *should* look like
-	Array<Complex> darray ( msc.data()(0) );
+	Array<Complex> darray ( msc.data()(1) );
 	cout << darray << endl;
 
 	// get the data column
@@ -112,7 +119,7 @@ int main()
 	    Slicer slicer (start, length, stride);
 	    data_column.getSlice(row, slicer, data_column_polarization);
 	    data_column_polarization.tovector( data_data );
-	    for (int goo=0; goo<data_data.size(); goo++)
+	    for (unsigned int goo=0; goo<data_data.size(); goo++)
 	      data_row.push_back( data_data[goo] );
 /*	    for (int gg=0; gg<9; gg++)
 	      cout << data_data[gg];
@@ -156,9 +163,9 @@ int main()
 // cout << stl_vec[5] << endl;
 // Complex * data_array_storage = data_array.getStorage( False );
 
-	int first_axis = 1;
-	int second_axis = 0;
-	int idx = (first_axis*4) + second_axis;
+// int first_axis = 1;
+// int second_axis = 0;
+// int idx = (first_axis*4) + second_axis;
 
 // cout << "Second element of data array = " << data_array_storage[idx] << endl;
 //cout << msc.uvw()(1).get(0,foo) << endl;
@@ -169,38 +176,23 @@ int main()
 
 	// create a new hdf5 dataset
 	dalDataset * ds;
-	ds = new dalDataset( FILENAME );
+	ds = new dalDataset( argv[2] );
 
 	// define dimensions of array
 	vector<int> dims;
 	dims.push_back( 4 );
-	dims.push_back( 256 );
 	dims.push_back( 10/*numSamples*/ );
+	dims.push_back( 256 );
 	// define a vector for chunking dimensions
 	vector<int> cdims;
 
-// int idata[4*5*6];
-// for (int gg=0; gg<(4*5*6); gg++)
-//   data[gg] = gg;
-// dalArray * iarray = ds->createIntArray( "int_array", dims, idata, cdims );
-// float fdata[4*5*6];
-// for (int gg=0; gg<(4*5*6); gg++)
-//   fdata[gg] = rand();
-// dalArray * farray = ds->createFloatArray( "float_array", dims, fdata, cdims );
-// dalcomplex cdata[4*5*6];
-// for (int gg=0; gg<(4*5*6); gg++) {
-//  cdata[gg].r = 0;
-//  cdata[gg].i = 0;
-// }
-// dalArray * carray = ds->createComplexArray( "complex_array", dims, cdata, cdims );
-// dalArray * dataarray = ds->createComplexArray( "dataarray", dims, data_array_storage, cdims );
-
-	dalArray * dataarray = ds->createComplexArray( "dataarray", dims, data_row, cdims );
+	dalArray * dataarray;
+	dataarray = ds->createComplexArray( "dataarray", dims, data_row, cdims );
 	ds->close();
 
+	delete dataarray;
 	delete ds;
 
 	cout << "SUCCESS" << endl;
 	return SUCCESS;
 }
-
