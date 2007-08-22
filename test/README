@@ -1,0 +1,29 @@
+rebin.py
+tCS1_baseline_dal.py
+tCS1_pytables.py
+tCS1_visibility_dal.py
+tdal.cpp  --  small program for testing DAL library functionality
+tdal_fits.cpp
+tdalLopesEvent.cpp
+tdal.py  --  python2.5 test script for DAL boost python bindings
+tDEMO_paste_CS1.py
+tDEMO_paste_LFFE.py
+tDEMO_plotting_CS1.py
+tDEMO_plotting_LFFE.py
+timeseries.h
+tLFFE_ds_dal.py
+tLFFE_dynamic_spectrum_buf_dal.py
+tLFFE_dynamic_spectrum_dal.py
+tLFFE_dynamic_spectrum_ds9_dal.py
+tLFFE_time_v_inensity_dal.py
+tLFFE_visibility_dal.py
+tLopes.py
+tMeasurementSets.cpp
+tMS_0.py
+tMS_dal.cpp  --  code for test program using DAL and CASACORE libraries
+tMS_dal.py
+tMS_pytables.py
+tpulsar_dal.cpp
+tROOT.py
+tsread.cpp
+tswrite.cpp
