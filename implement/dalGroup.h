@@ -91,6 +91,11 @@ class dalGroup{
 				vector<int> dims,
 				int data[],
 				vector<int>cdims);
+	dalArray * createFloatArray(
+				string arrayname,
+				vector<int> dims,
+				float data[],
+				vector<int>cdims);
 
 	/// return the group id
 	hid_t getId();
@@ -115,6 +120,12 @@ class dalGroup{
 #ifdef PYTHON
 	dalArray * cia_boost( string arrayname, bpl::list dims, bpl::list data,
 				 bpl::list cdims );
+	dalArray * cia_boost_numarray( string arrayname, bpl::list dims,
+			bpl::numeric::array data, bpl::list cdims );
+	dalArray * cfa_boost( string arrayname, bpl::list dims, bpl::list data,
+				 bpl::list cdims );
+	dalArray * cfa_boost_numarray( string arrayname, bpl::list dims,
+			 bpl::numeric::array data, bpl::list cdims );
 	bpl::numeric::array ria_boost( string arrayname );
 #endif
 };

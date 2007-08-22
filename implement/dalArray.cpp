@@ -141,10 +141,10 @@ dalIntArray::~dalIntArray() {
  *      if the size of the array is fixed.
  *
  ********************************************************************/
-dalFloatArray::dalFloatArray( void * voidfile, string arrayname,
+dalFloatArray::dalFloatArray( hid_t obj_id, string arrayname,
 		 vector<int> dims, float data[], vector<int> chnkdims ) {
-	hid_t * lclfile = (hid_t*)voidfile;
-	file_id = *lclfile;  // get the file handle
+/*	hid_t * lclfile = (hid_t*)voidfile;
+	file_id = *lclfile;  // get the file handle*/
 	hid_t datatype, dataspace;  // declare a few h5 variables
 
 	// determine the rank from the size of the dimensions vector
@@ -177,13 +177,13 @@ dalFloatArray::dalFloatArray( void * voidfile, string arrayname,
 	   dataspace = H5Screate_simple(rank,mydims,maxdims);
 	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
 	   status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
-	   array_id = H5Dcreate( file_id, arrayname.c_str(), datatype, dataspace, cparms);
+	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype, dataspace, cparms);
 	}
         // otherwise, write the data this way
 	else
 	{
 	   dataspace = H5Screate_simple(rank,mydims,NULL);
-	   array_id = H5Dcreate( file_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
+	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
 	}
 
         // write the data

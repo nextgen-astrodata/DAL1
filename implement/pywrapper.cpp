@@ -195,6 +195,12 @@ BOOST_PYTHON_MODULE(dal)
 		bpl::return_value_policy<bpl::return_opaque_pointer>())
 	.def("createIntArray", &dalGroup::cia_boost,
 		bpl::return_value_policy<bpl::manage_new_object>())
+	.def("createIntArray", &dalGroup::cia_boost_numarray,
+		bpl::return_value_policy<bpl::manage_new_object>())
+	.def("createFloatArray", &dalGroup::cfa_boost,
+		bpl::return_value_policy<bpl::manage_new_object>())
+	.def("createFloatArray", &dalGroup::cfa_boost_numarray,
+		bpl::return_value_policy<bpl::manage_new_object>())
 	.def("readIntArray", &dalGroup::ria_boost)
     ;
     bpl::class_<dalTable>("dalTable")

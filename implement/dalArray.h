@@ -83,7 +83,7 @@ class dalIntArray: public dalArray {
 class dalFloatArray: public dalArray {
 
   public:
-	dalFloatArray( void* voidfile, string arrayname, vector<int> dims,
+	dalFloatArray( hid_t obj_id, string arrayname, vector<int> dims,
 			 float data[], vector<int>chnkdims);
 	~dalFloatArray();
 };

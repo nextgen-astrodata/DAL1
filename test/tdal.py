@@ -39,7 +39,7 @@ int_array_list = array_group.createIntArray(arrayname,dims,data,cdims)
 #attrval = 1.234
 #int_array_list.setAttribute_double(attrname,attrval)
 
-#print ds.readIntArray(arrayname)
+print array_group.readIntArray(arrayname)
 
 #----------------------
 
@@ -47,9 +47,9 @@ print "Creating an INT array from a numarray array..."
 
 arrayname = "intarray_numarray"
 data = numarray.array([[1,1],[2,2]]) # array data
-int_array_numarray = ds.createIntArray(arrayname,dims,data,cdims)
+int_array_numarray = array_group.createIntArray(arrayname,dims,data,cdims)
 
-print ds.readIntArray(arrayname)
+print array_group.readIntArray(arrayname)
 
 #----------------------
 
@@ -59,7 +59,7 @@ arrayname = "floatarray_list"
 dims = [2,2] # array dimensions
 data = [1,1,2,2] # array data
 cdims = [] # no chunk dims, array size will be fixed
-int_array_list = ds.createFloatArray(arrayname,dims,data,cdims)
+int_array_list = array_group.createFloatArray(arrayname,dims,data,cdims)
 
 #----------------------
 
@@ -67,7 +67,7 @@ print "Creating a FLOAT array from a numarray array..."
 
 arrayname = "floatarray_numarray"
 data = numarray.array([[1,1],[2,2]]) # array data
-float_array_numarray = ds.createFloatArray(arrayname,dims,data,cdims)
+float_array_numarray = array_group.createFloatArray(arrayname,dims,data,cdims)
 
 #----------------------
 

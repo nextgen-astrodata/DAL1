@@ -190,8 +190,7 @@ dalArray * dalDataset::createIntArray( string arrayname, vector<int> dims, int d
 {
    if ( type == H5TYPE )
    {
-// 	cout << "file_id: " << h5fh << endl;
-	   dalIntArray * la = new dalIntArray( h5fh/*file*/, arrayname, dims, data, cdims );
+	   dalIntArray * la = new dalIntArray( h5fh, arrayname, dims, data, cdims );
 	   return la;
    }
    else if ( type == FITSTYPE )
@@ -207,7 +206,7 @@ dalArray * dalDataset::createFloatArray( string arrayname, vector<int> dims, flo
 {
    if ( type == H5TYPE )
    {
-	   dalFloatArray * la = new dalFloatArray( file, arrayname, dims, data, cdims );
+	   dalFloatArray * la = new dalFloatArray( h5fh, arrayname, dims, data, cdims );
 	   return la;
    }
    else if ( type == FITSTYPE )
