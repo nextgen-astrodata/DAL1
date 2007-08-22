@@ -44,17 +44,6 @@
 #include "dalAttribute.h"
 #endif
 
-#ifdef PYTHON
-// #include <boost/python.hpp>
-// #include <boost/python/list.hpp>
-// namespace bpl = boost::python;
-#include <boost/python.hpp>
-#include <boost/python/object.hpp>
-#include <boost/python/list.hpp>
-#include <boost/python/extract.hpp>
-namespace bpl = boost::python;
-#endif
-
 const string H5TYPE = "HDF5";
 const string FITSTYPE = "FITS";
 const string MSCASATYPE = "MSCASA";
@@ -105,10 +94,47 @@ class dalDataset{
 //	int copy(); /// create an exact copy of the data
 //	int create();  /// define basic characteristics of a new dataset
 	/// create a new array in the root group
-	dalArray * createIntArray( string arrayname, vector<int> dims, int data[], vector<int>cdims);
-	dalArray * createFloatArray( string arrayname, vector<int> dims, float data[], vector<int>cdims);
-	dalArray * createComplexArray( string arrayname, vector<int> dims,
-		vector< complex<float> > data, vector<int>cdims);
+	dalArray * createIntArray(
+				string arrayname,
+				vector<int> dims,
+				int data[],
+				vector<int>cdims);
+	dalArray * createFloatArray(
+				string arrayname,
+				vector<int> dims,
+				float data[],
+				vector<int>cdims);
+	dalArray * createComplexArray(
+				string arrayname,
+				vector<int> dims,
+				vector< complex<float> > data,
+				vector<int>cdims);
+
+
+	/// create a new table in the root group
+	dalTable * createTable( string tablename );
+	/// create a new table in a specified group
+	dalTable * createTable( string tablename, string groupname );
+
+//	int createImage();  /// create a new table outside of a group
+	dalGroup * createGroup( char* groupname );  /// create a new group
+//	int getName();  /// retrieve the name of the dataset
+//	int rename();  /// rename the dataset
+	dalTable * openTable( string tablename );  /// return a dalTable object
+	dalTable * openTable( string tablename, string groupname );
+
+	dalGroup * openGroup( string groupname );  /// return a dalGroup object
+//	int listGroups();  /// return a list of groups within the dataset
+	/// return a list of tables not contained in any groups
+//	int listTables();
+	/// list general attributes attached to the dataset
+//	int listAttributes();;
+//	int remove();  /// delete the file and all data within it
+//	int advanceTable();  /// sequentially step through the dataset tables
+//	int advanceGroup();  /// sequentially step through the dataset groups
+//	int getTableNumber();  /// return a dalTable by index
+//	int getGroupNumber(); /// return a dalGroup by index
+	string getType(); /// retrieve the dataset type
 
 #ifdef PYTHON
 	// create[]Array wrappers
@@ -124,43 +150,14 @@ class dalDataset{
 
 	bpl::numeric::array ria_boost( string arrayname );
 	bpl::numeric::array rfa_boost( string arrayname );
-#endif
 
-	/// create a new table in the root group
-	dalTable * createTable( string tablename );
-	/// create a new table in a specified group
-	dalTable * createTable( string tablename, string groupname );
-
-#ifdef PYTHON
 	// createTable wrappers
 	dalTable * ct1_boost( string tablename );
 	dalTable * ct2_boost( string tablename, string groupname );
-#endif
 
-//	int createImage();  /// create a new table outside of a group
-	dalGroup * createGroup( char* groupname );  /// create a new group
-//	int getName();  /// retrieve the name of the dataset
-//	int rename();  /// rename the dataset
-	dalTable * openTable( string tablename );  /// return a dalTable object
-	dalTable * openTable( string tablename, string groupname );
-
-#ifdef PYTHON
 	// openTable wrappers
 	dalTable * ot1_boost( string tablename );
 	dalTable * ot2_boost( string tablename, string groupname );
 #endif
-
-	dalGroup * openGroup( string groupname );  /// return a dalGroup object
-//	int listGroups();  /// return a list of groups within the dataset
-	/// return a list of tables not contained in any groups
-//	int listTables();
-	/// list general attributes attached to the dataset
-//	int listAttributes();;
-//	int remove();  /// delete the file and all data within it
-//	int advanceTable();  /// sequentially step through the dataset tables
-//	int advanceGroup();  /// sequentially step through the dataset groups
-//	int getTableNumber();  /// return a dalTable by index
-//	int getGroupNumber(); /// return a dalGroup by index
-	string getType(); /// retrieve the dataset type
 };
 #endif
