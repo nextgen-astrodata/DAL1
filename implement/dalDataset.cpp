@@ -155,7 +155,7 @@ dalDataset::dalDataset()
 /**
  * 
  * @param name 
- * @param type 
+ * @param filetype 
  * @return 
  */
 dalDataset::dalDataset( char * name, string filetype )
@@ -182,24 +182,16 @@ dalDataset::dalDataset( char * name, string filetype )
    }
 }
 
-/**
- * 
- * @return 
- */
 dalDataset::~dalDataset()
 {
 }
 
-/**
- * 
- * @param arrayname 
- */
 dalArray * dalDataset::createIntArray( string arrayname, vector<int> dims, int data[], vector<int> cdims)
 {
    if ( type == H5TYPE )
    {
-// cout << "file: " << file << endl;
-	   dalIntArray * la = new dalIntArray( file, arrayname, dims, data, cdims );
+// 	cout << "file_id: " << h5fh << endl;
+	   dalIntArray * la = new dalIntArray( h5fh/*file*/, arrayname, dims, data, cdims );
 	   return la;
    }
    else if ( type == FITSTYPE )

@@ -50,6 +50,7 @@ class dalArray{
 	string datatype;  // array datatype identifier
 
   protected:
+	hid_t array_id; /// hdf5 object id for array
 	hid_t file_id; /// hdf5 file_id
 	string name;      // name of the array
 
@@ -58,7 +59,7 @@ class dalArray{
 // 	void printAttribute( string attrname );
 // 	void * getAttribute( string attrname );
 
-	void setAttribute_string( string attrname, string data );
+/*	void setAttribute_string( string attrname, string data );
 	void setAttribute_int( string attrname, int * data, int size=1 );
 // 	void setAttribute_uint( string attrname, unsigned int * data,int size=1 );
 	void setAttribute_double( string attrname, double * data, int size=1 );
@@ -66,16 +67,16 @@ class dalArray{
 #ifdef PYTHON
 	void sai_boost( string attrname, int data );
 	void sad_boost( string attrname, double data );
-#endif
+#endif*/
 };
 
 class dalIntArray: public dalArray {
 
   public:
 	dalIntArray();
-	dalIntArray( void* voidfile, string arrayname, vector<int> dims,
+	dalIntArray( hid_t obj_id, string arrayname, vector<int> dims,
 			int data[], vector<int>chnkdims);
-	int * readIntArray( void * voidfile, string arrayname );
+	int * readIntArray( hid_t obj_id, string arrayname );
 	~dalIntArray();
 };
 

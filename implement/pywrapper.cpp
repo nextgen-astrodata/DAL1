@@ -193,6 +193,7 @@ BOOST_PYTHON_MODULE(dal)
         .def("setAttribute_double", &dalGroup::setAttribute_double)
 	.def("getAttribute", &dalGroup::getAttribute,
 		bpl::return_value_policy<bpl::return_opaque_pointer>())
+	.def("readIntArray", &dalGroup::ria_boost)
     ;
     bpl::class_<dalTable>("dalTable")
         .def("getAttributes", &dalTable::getAttributes)
@@ -221,9 +222,9 @@ BOOST_PYTHON_MODULE(dal)
     ;
 
     bpl::class_<dalArray>("dalArray")
-	.def("setAttribute_string", &dalArray::setAttribute_string)
+/*	.def("setAttribute_string", &dalArray::setAttribute_string)
 	.def("setAttribute_int", &dalArray::sai_boost)
-	.def("setAttribute_double", &dalArray::sad_boost)
+	.def("setAttribute_double", &dalArray::sad_boost)*/
     ;
 
     bpl::class_<dalIntArray,bpl::bases<dalArray> >("dalIntArray")

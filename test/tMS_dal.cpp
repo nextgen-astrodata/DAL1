@@ -188,9 +188,23 @@ int main(int argc, char *argv[])
 
 	dalArray * dataarray;
 	dataarray = ds->createComplexArray( "dataarray", dims, data_row, cdims );
+
+ dalGroup * arraygroup;
+ arraygroup = ds->createGroup( "Arrays" );
+ dims.clear();
+ dims.push_back(4);
+ dims.push_back(5);
+ dims.push_back(6);
+ int idata[4*5*6];
+ for (int gg=0; gg<(4*5*6); gg++)
+   idata[gg] = gg;
+ dalArray * iarray;
+ iarray = arraygroup->createIntArray( "int_array", dims, idata, cdims );
+
 	ds->close();
 
 	delete dataarray;
+	delete arraygroup;
 	delete ds;
 
 	cout << "SUCCESS" << endl;

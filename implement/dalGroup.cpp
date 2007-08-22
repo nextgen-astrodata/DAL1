@@ -35,7 +35,7 @@ dalGroup::dalGroup( char* gname, void * voidfile ) {
 	name = gname;
 	string fullgroupname = "/" + stringify(gname);
 	group_id = H5Gcreate(*(hid_t*)file, fullgroupname.c_str(), 0);
-
+// cout << "group_id " << group_id << endl;
 }
 
 dalGroup::dalGroup( hid_t group_id, char* gname ) {
@@ -57,6 +57,14 @@ bool dalGroup::setName ( string gname ) {
      cout << "Error:  Group name must not be empty." << endl;
      return FAIL;
    }
+}
+
+dalArray * dalGroup::createIntArray( string arrayname, vector<int> dims, int data[], vector<int> cdims)
+{
+cout << "group_id: " << group_id << endl;
+	   dalIntArray * la;
+	   la = new dalIntArray( group_id, arrayname, dims, data, cdims );
+	   return la;
 }
 
 string dalGroup::getName () {
@@ -318,6 +326,62 @@ attr_info(hid_t loc_id, const char *name, void *opdata)
     return 0;
 }
 
+#ifdef PYTHON
+/******************************************************
+ * wrapper for readIntArray
+ ******************************************************/
+
+bpl::numeric::array dalGroup::ria_boost( string arrayname )
+{
+	hid_t lclfile;
+	hid_t  status;
+// 	hid_t datatype, dataspace;
+
+	// get the dataspace
+	lclfile = H5Dopen( group_id, arrayname.c_str() );
+	hid_t filespace = H5Dget_space(lclfile);
+
+	// what is the rank of the array?
+	hid_t data_rank = H5Sget_simple_extent_ndims(filespace);
+	hsize_t dims[ data_rank ];
+// cout << "data rank: " << data_rank << endl;
+	status = H5Sget_simple_extent_dims(filespace, dims, NULL);
+
+	int size = 1;
+	bpl::list dims_list;
+	for (int ii=0; ii<data_rank; ii++)
+	{
+// cout << "dims["  << ii << "]: " << dims[ii] << endl;
+	  size *= dims[ii];
+	  dims_list.append(dims[ii]);
+	}
+// cout << "size: " << size << endl;
+
+	int * data = NULL;
+	data = new int[size];
+
+	status = H5LTread_dataset_int( group_id, arrayname.c_str(), data );
+// 	for (int ii=0; ii<size; ii++)
+// 	{
+// 	  cout << data[ii] << endl;
+// 	}
+
+	bpl::list data_list;
+	// for each dimension
+	for (int ii=0; ii<size; ii++)
+	{
+	    data_list.append(data[ii]);
+	}
+	bpl::numeric::array nadata(
+          bpl::make_tuple(
+	    bpl::make_tuple(data_list)
+	  )
+	);
+// 	dims_list.reverse();
+	nadata.setshape(dims_list);
+	return nadata;
+}
+#endif
 /*
 void dalGroup::setAttribute( string attrname, void * data, string coltype )
 {

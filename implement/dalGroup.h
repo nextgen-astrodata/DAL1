@@ -41,6 +41,10 @@
 #include "dalFilter.h"
 #endif
 
+#ifndef DALARRAY_H
+#include "dalArray.h"
+#endif
+
 /*!
   \class dalGroup
   
@@ -81,6 +85,13 @@ class dalGroup{
 	/// set group name
 	bool setName( string );
 
+	/// create a new array in the group
+	dalArray * createIntArray(
+				string arrayname,
+				vector<int> dims,
+				int data[],
+				vector<int>cdims);
+
 	/// return the group id
 	hid_t getId();
 //	void listTables();  /// print a list of table names within the group
@@ -100,6 +111,10 @@ class dalGroup{
 	void setAttribute_int( string attrname, int * data, int size=1 );
 	void setAttribute_uint( string attrname, unsigned int * data,int size=1 );
 	void setAttribute_double( string attrname, double * data, int size=1 );
+
+#ifdef PYTHON
+	bpl::numeric::array ria_boost( string arrayname );
+#endif
 };
 
 #endif

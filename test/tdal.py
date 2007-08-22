@@ -6,11 +6,7 @@ import numarray
 
 ds = dal.dalDataset("foo.h5")
 
-g1 = ds.createGroup("GroupA")
-g2 = ds.createGroup("GroupB")
-
-t1 = ds.createTable("table1","GroupA")
-t2 = ds.createTable("table2","GroupB")
+g1 = ds.createGroup("Arrays")
 
 #----------------------
 
@@ -22,20 +18,20 @@ data = [1,1,2,2] # array data
 cdims = [] # no chunk dims, array size will be fixed
 int_array_list = ds.createIntArray(arrayname,dims,data,cdims)
 
-print "Creating a STRING attribute..."
-attrname = "test_string_attribute"
-attrval = "foo"
-int_array_list.setAttribute_string(attrname,attrval)
+#print "Creating a STRING attribute..."
+#attrname = "test_string_attribute"
+#attrval = "foo"
+#int_array_list.setAttribute_string(attrname,attrval)
 
-print "Creating an INT attribute..."
-attrname = "test_int_attribute"
-attrval = 5
-int_array_list.setAttribute_int(attrname,attrval)
+#print "Creating an INT attribute..."
+#attrname = "test_int_attribute"
+#attrval = 5
+#int_array_list.setAttribute_int(attrname,attrval)
 
-print "Creating a DOUBLE attribute..."
-attrname = "test_float_attribute"
-attrval = 1.234
-int_array_list.setAttribute_double(attrname,attrval)
+#print "Creating a DOUBLE attribute..."
+#attrname = "test_float_attribute"
+#attrval = 1.234
+#int_array_list.setAttribute_double(attrname,attrval)
 
 print ds.readIntArray(arrayname)
 
@@ -92,6 +88,9 @@ float_array_numarray = ds.createFloatArray(arrayname,dims,data,cdims)
 
 #--------------------------------------
 #--------------------------------------
+
+#t1 = ds.createTable("table1","GroupA")
+#t2 = ds.createTable("table2","GroupB")
 
 #t1.addColumn("col1", dal.dal_INT )
 #t1.addColumn("col2", dal.dal_FLOAT )
