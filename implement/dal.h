@@ -53,16 +53,16 @@ extern "C" {
 
 using namespace std;
 
-// casacore includes
-// #include <casa/aips.h>
-// #include <tables/Tables.h>
-// #include <tables/Tables/Table.h>
-// #include <ms/MeasurementSets.h>
-// #include <ms/MeasurementSets/MSReader.h>
-// #include <iostream>
-// #include <casa/aipstype.h>
-// #include <casa/complex.h>
-// #include <casa/BasicMath/Math.h>
+#ifdef PYTHON
+// #include <boost/python.hpp>
+// #include <boost/python/list.hpp>
+// namespace bpl = boost::python;
+#include <boost/python.hpp>
+#include <boost/python/object.hpp>
+#include <boost/python/list.hpp>
+#include <boost/python/extract.hpp>
+namespace bpl = boost::python;
+#endif
 
 const int SUCCESS = 0;
 const int FAIL = 1;
