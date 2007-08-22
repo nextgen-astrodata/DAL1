@@ -22,6 +22,21 @@ data = [1,1,2,2] # array data
 cdims = [] # no chunk dims, array size will be fixed
 int_array_list = ds.createIntArray(arrayname,dims,data,cdims)
 
+print "Creating a STRING attribute..."
+attrname = "test_string_attribute"
+attrval = "foo"
+int_array_list.setAttribute_string(attrname,attrval)
+
+print "Creating an INT attribute..."
+attrname = "test_int_attribute"
+attrval = 5
+int_array_list.setAttribute_int(attrname,attrval)
+
+print "Creating a DOUBLE attribute..."
+attrname = "test_float_attribute"
+attrval = 1.234
+int_array_list.setAttribute_double(attrname,attrval)
+
 print ds.readIntArray(arrayname)
 
 #----------------------

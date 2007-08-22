@@ -221,6 +221,9 @@ BOOST_PYTHON_MODULE(dal)
     ;
 
     bpl::class_<dalArray>("dalArray")
+	.def("setAttribute_string", &dalArray::setAttribute_string)
+	.def("setAttribute_int", &dalArray::sai_boost)
+	.def("setAttribute_double", &dalArray::sad_boost)
     ;
 
     bpl::class_<dalIntArray,bpl::bases<dalArray> >("dalIntArray")

@@ -25,6 +25,33 @@
 #include "dalArray.h"
 #endif
 
+
+void dalArray::setAttribute_string( string attrname, string data )
+{
+	if ( H5LTset_attribute_string( file_id, name.c_str(),
+					attrname.c_str(), data.c_str() ) < 0 ) {
+		cout << "ERROR: could not set attribute " << attrname << endl;
+	}
+}
+
+void dalArray::setAttribute_int( string attrname, int * data, int size )
+{
+// 	int size=1;
+	if ( H5LTset_attribute_int( file_id, name.c_str(),
+		attrname.c_str(), /*&*/data, size ) < 0 ) {
+		cout << "ERROR: could not set attribute " << attrname << endl;
+	}
+}
+
+void dalArray::setAttribute_double( string attrname, double * data, int size )
+{
+// 	int size=1;
+	if ( H5LTset_attribute_double( file_id, name.c_str(),
+					attrname.c_str(), /*&*/data, size ) < 0 ) {
+		cout << "ERROR: could not set attribute " << attrname << endl;
+	}
+}
+
 dalIntArray::dalIntArray(){}
 
 /********************************************************************
@@ -43,8 +70,10 @@ dalIntArray::dalIntArray(){}
 dalIntArray::dalIntArray( void * voidfile, string arrayname, vector<int> dims,
 			  int data[], vector<int> chnkdims ) {
 	hid_t * lclfile = (hid_t*)voidfile;
-	hid_t file_id = *lclfile;  // get the file handle
+	file_id = *lclfile;  // get the file handle
 	hid_t array, datatype, dataspace;  // declare a few h5 variables
+
+	name = arrayname;  // set the private name variable to the array name
 
 	// determine the rank from the size of the dimensions vector
 	unsigned int rank = dims.size();
@@ -114,7 +143,7 @@ dalIntArray::~dalIntArray() {
 dalFloatArray::dalFloatArray( void * voidfile, string arrayname,
 		 vector<int> dims, float data[], vector<int> chnkdims ) {
 	hid_t * lclfile = (hid_t*)voidfile;
-	hid_t file_id = *lclfile;  // get the file handle
+	file_id = *lclfile;  // get the file handle
 	hid_t array, datatype, dataspace;  // declare a few h5 variables
 
 	// determine the rank from the size of the dimensions vector
@@ -182,7 +211,7 @@ dalFloatArray::~dalFloatArray() {
 int * dalIntArray::readIntArray( void * voidfile, string arrayname )
 {
 	hid_t * lclfile = (hid_t*)voidfile;
-	hid_t file_id = *lclfile;  // get the file handle
+	file_id = *lclfile;  // get the file handle
 	herr_t      lcl_status;
 
 	hid_t filespace = H5Dget_space(file_id); // get the dataspace
@@ -233,7 +262,7 @@ int * dalIntArray::readIntArray( void * voidfile, string arrayname )
 dalComplexArray::dalComplexArray( void * voidfile, string arrayname, vector<int> dims,
 			  vector< complex<float> > data, vector<int> chnkdims ) {
 	hid_t * lclfile = (hid_t*)voidfile;
-	hid_t file_id = *lclfile;  // get the file handle
+	file_id = *lclfile;  // get the file handle
 	hid_t array, datatype, dataspace;  // declare a few h5 variables
 
         // determine the rank from the size of the dimensions vector
@@ -299,3 +328,28 @@ dalComplexArray::dalComplexArray( void * voidfile, string arrayname, vector<int>
 	H5Tclose( datatype );
 	H5Dclose( array );
 }
+
+#ifdef PYTHON
+/************************************************************************
+ *
+ * The following functions are boost wrappers to allow some previously
+ *   defined functions to be easily called from a python prompt.
+ *
+ ************************************************************************/
+
+/******************************************************
+ * wrapper for setAttribute_int
+ ******************************************************/
+void dalArray::sai_boost( string attrname, int data )
+{
+	setAttribute_int( attrname, &data, 1 );
+}
+
+/******************************************************
+ * wrapper for setAttribute_double
+ ******************************************************/
+void dalArray::sad_boost( string attrname, double data )
+{
+	setAttribute_double( attrname, &data, 1 );
+}
+#endif
