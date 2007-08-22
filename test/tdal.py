@@ -4,9 +4,15 @@ import dal
 import numarray
 #from pylab import *
 
-ds = dal.dalDataset("foo.h5")
+ds = dal.dalDataset("daltest.h5")
 
-g1 = ds.createGroup("Arrays")
+groupname = "Arrays"
+print "Creating group: " + groupname
+array_group = ds.createGroup( groupname )
+
+groupname = "Tables"
+print "Creating group: " + groupname
+table_group = ds.createGroup( groupname )
 
 #----------------------
 
@@ -16,7 +22,7 @@ arrayname = "intarray_list"
 dims = [2,2] # array dimensions
 data = [1,1,2,2] # array data
 cdims = [] # no chunk dims, array size will be fixed
-int_array_list = ds.createIntArray(arrayname,dims,data,cdims)
+int_array_list = array_group.createIntArray(arrayname,dims,data,cdims)
 
 #print "Creating a STRING attribute..."
 #attrname = "test_string_attribute"
@@ -33,7 +39,7 @@ int_array_list = ds.createIntArray(arrayname,dims,data,cdims)
 #attrval = 1.234
 #int_array_list.setAttribute_double(attrname,attrval)
 
-print ds.readIntArray(arrayname)
+#print ds.readIntArray(arrayname)
 
 #----------------------
 

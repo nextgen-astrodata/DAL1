@@ -61,7 +61,7 @@ bool dalGroup::setName ( string gname ) {
 
 dalArray * dalGroup::createIntArray( string arrayname, vector<int> dims, int data[], vector<int> cdims)
 {
-cout << "group_id: " << group_id << endl;
+// cout << "group_id: " << group_id << endl;
 	   dalIntArray * la;
 	   la = new dalIntArray( group_id, arrayname, dims, data, cdims );
 	   return la;
@@ -327,6 +327,43 @@ attr_info(hid_t loc_id, const char *name, void *opdata)
 }
 
 #ifdef PYTHON
+/************************************************************************
+ *
+ * The following functions are boost wrappers to allow some previously
+ *   defined functions to be easily called from a python prompt.
+ *
+ ************************************************************************/
+
+/******************************************************
+ * wrappers for createIntArray
+ ******************************************************/
+
+dalArray * dalGroup::cia_boost( string arrayname, bpl::list pydims,
+				  bpl::list pydata, bpl::list cdims ){
+
+  vector<int> dims;
+  vector<int> chnkdims;
+
+  for(int ii=0; ii<bpl::len(pydims); ii++)
+    dims.push_back(bpl::extract<int>(pydims[ii]));
+
+  for(int ii=0; ii<bpl::len(cdims); ii++)
+    chnkdims.push_back(bpl::extract<int>(cdims[ii]));
+
+  long size = bpl::len(pydata);
+  int * data = NULL;
+  data = new int[size];
+
+  for(int ii=0; ii<size; ii++)
+    data[ii] = bpl::extract<int>(pydata[ii]);
+
+  dalArray * array = dalGroup::createIntArray(arrayname, dims, data, chnkdims);
+
+  delete [] data;
+
+  return array;
+}
+
 /******************************************************
  * wrapper for readIntArray
  ******************************************************/

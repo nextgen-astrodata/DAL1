@@ -113,6 +113,8 @@ class dalGroup{
 	void setAttribute_double( string attrname, double * data, int size=1 );
 
 #ifdef PYTHON
+	dalArray * cia_boost( string arrayname, bpl::list dims, bpl::list data,
+				 bpl::list cdims );
 	bpl::numeric::array ria_boost( string arrayname );
 #endif
 };
