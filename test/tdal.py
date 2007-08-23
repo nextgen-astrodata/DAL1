@@ -15,6 +15,9 @@ groupname = "Tables"
 print "Creating group: " + groupname
 table_group = ds.createGroup( groupname )
 
+
+#----------------------
+# INT Arrays
 #----------------------
 
 print "Creating an INT array from a list..."
@@ -24,6 +27,18 @@ dims = [2,2] # array dimensions
 data = [1,1,2,2] # array data
 cdims = [] # no chunk dims, array size will be fixed
 int_array_list = array_group.createIntArray(arrayname,dims,data,cdims)
+print array_group.readIntArray(arrayname)
+
+print "Creating an INT array from a numarray array..."
+
+arrayname = "intarray_numarray"
+data = numarray.array([[1,1],[2,2]]) # array data
+int_array_numarray = array_group.createIntArray(arrayname,dims,data,cdims)
+print array_group.readIntArray(arrayname)
+
+#----------------------
+#  ATTRIBUTES
+#----------------------
 
 print "Creating a STRING attribute..."
 attrname = "test_string_attribute"
@@ -42,18 +57,6 @@ int_array_list.setAttribute_float(attrname,attrval)
 
 print "Getting attributes of: " + arrayname
 int_array_list.getAttributes()
-
-print array_group.readIntArray(arrayname)
-
-#----------------------
-
-print "Creating an INT array from a numarray array..."
-
-arrayname = "intarray_numarray"
-data = numarray.array([[1,1],[2,2]]) # array data
-int_array_numarray = array_group.createIntArray(arrayname,dims,data,cdims)
-
-print array_group.readIntArray(arrayname)
 
 #----------------------
 
