@@ -35,11 +35,13 @@ attrname = "test_int_attribute"
 attrval = 5
 int_array_list.setAttribute_int(attrname,attrval)
 
-print "Creating a DOUBLE attribute..."
-attrname = "test_double_attribute"
+print "Creating a FLOAT attribute..."
+attrname = "test_float_attribute"
 attrval = 1.234
-int_array_list.setAttribute_double(attrname,attrval)
-sys.exit(9)
+int_array_list.setAttribute_float(attrname,attrval)
+
+print "Getting attributes of: " + arrayname
+int_array_list.getAttributes()
 
 print array_group.readIntArray(arrayname)
 

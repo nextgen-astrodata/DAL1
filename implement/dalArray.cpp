@@ -26,6 +26,16 @@
 #endif
 
 
+herr_t attr_info(hid_t loc_id, const char *name, void *opdata);
+void dalArray::getAttributes() {
+
+   //status = H5Aget_num_attrs(group_id);
+   //printf ("H5Aget_num_attrs returns: %i\n", status);
+   status = H5Aiterate( array_id, NULL, attr_info, NULL );
+   //printf ("\nH5Aiterate returns: %i\n", status);
+
+}
+
 void dalArray::setAttribute_string( string attrname, string data )
 {
    /* Create string attribute.  */
@@ -43,7 +53,7 @@ void dalArray::setAttribute_string( string attrname, string data )
      cout << "ERROR: could not set attribute " << attrname << endl;
 }
  
-void dalArray::setAttribute_int( string attrname, int * data, int size )
+void dalArray::setAttribute_int( string attrname, int * data/*, int size*/ )
 {
    /* Create scalar attribute.  */
    hid_t   attr1; /* Attribute identifier */
@@ -56,15 +66,15 @@ void dalArray::setAttribute_int( string attrname, int * data, int size )
      cout << "ERROR: could not set attribute " << attrname << endl;
 }
 
-void dalArray::setAttribute_double( string attrname, double * data, int size )
+void dalArray::setAttribute_float( string attrname, float * data/*, int size*/ )
 {
    /* Create scalar attribute.  */
    hid_t   attr1; /* Attribute identifier */
    hid_t   aid1;  /* Attribute dataspace identifier */
    herr_t  ret;   /* Return value */
    aid1  = H5Screate(H5S_SCALAR);
-   attr1 = H5Acreate(array_id, attrname.c_str(), H5T_NATIVE_DOUBLE, aid1, H5P_DEFAULT);
-   ret = H5Awrite(attr1, H5T_NATIVE_DOUBLE, data);
+   attr1 = H5Acreate(array_id, attrname.c_str(), H5T_NATIVE_FLOAT, aid1, H5P_DEFAULT);
+   ret = H5Awrite(attr1, H5T_NATIVE_FLOAT, data);
    if (ret < 0)
      cout << "ERROR: could not set attribute " << attrname << endl;
 }
@@ -360,14 +370,14 @@ dalComplexArray::dalComplexArray( void * voidfile, string arrayname, vector<int>
  ******************************************************/
 void dalArray::sai_boost( string attrname, int data )
 {
-	setAttribute_int( attrname, &data, 1 );
+	setAttribute_int( attrname, &data/*, 1*/ );
 }
  
 /******************************************************
- * wrapper for setAttribute_double
+ * wrapper for setAttribute_float
  ******************************************************/
-void dalArray::sad_boost( string attrname, double data )
+void dalArray::saf_boost( string attrname, float data )
 {
-	setAttribute_double( attrname, &data, 1 );
+	setAttribute_float( attrname, &data/*, 1*/ );
 }
 #endif

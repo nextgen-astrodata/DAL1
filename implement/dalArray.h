@@ -46,27 +46,27 @@
 
 class dalArray{
 
-	int rank;         // number of dimensions
-	string datatype;  // array datatype identifier
-
+	int rank;        /// number of dimensions
+	string datatype; /// array datatype identifier
+	herr_t status;   /// hdf5 return status
   protected:
-	hid_t array_id; /// hdf5 object id for array
-	hid_t file_id; /// hdf5 file_id
-	string name;      // name of the array
+	hid_t array_id;  /// hdf5 object id for array
+	hid_t file_id;   /// hdf5 file_id
+	string name;     /// name of the array
 
   public:
-// 	void getAttributes();
+	void getAttributes();
 // 	void printAttribute( string attrname );
 // 	void * getAttribute( string attrname );
 
 	void setAttribute_string( string attrname, string data );
-	void setAttribute_int( string attrname, int * data, int size=1 );
+	void setAttribute_int( string attrname, int * data/*, int size=1*/ );
 // 	void setAttribute_uint( string attrname, unsigned int * data,int size=1 );
-	void setAttribute_double( string attrname, double * data, int size=1 );
+	void setAttribute_float( string attrname, float * data/*, int size=1*/ );
 
 #ifdef PYTHON
 	void sai_boost( string attrname, int data );
-	void sad_boost( string attrname, double data );
+	void saf_boost( string attrname, float data );
 #endif
 };
 
