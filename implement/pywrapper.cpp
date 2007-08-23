@@ -163,9 +163,13 @@ BOOST_PYTHON_MODULE(dal)
 		bpl::return_value_policy<bpl::manage_new_object>())
 	.def("openGroup", &dalDataset::openGroup,
 		bpl::return_value_policy<bpl::manage_new_object>())
-	.def("createIntArray", &dalDataset::cia_boost,
+	.def("createIntArray", &dalDataset::cia_boost1,
 		bpl::return_value_policy<bpl::manage_new_object>())
-	.def("createIntArray", &dalDataset::cia_boost_numarray,
+	.def("createIntArray", &dalDataset::cia_boost2,
+		bpl::return_value_policy<bpl::manage_new_object>())
+	.def("createIntArray", &dalDataset::cia_boost_numarray1,
+		bpl::return_value_policy<bpl::manage_new_object>())
+	.def("createIntArray", &dalDataset::cia_boost_numarray2,
 		bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createFloatArray", &dalDataset::cfa_boost,
 		bpl::return_value_policy<bpl::manage_new_object>())
@@ -195,10 +199,18 @@ BOOST_PYTHON_MODULE(dal)
         .def("setAttribute_double", &dalGroup::setAttribute_double)
 	.def("getAttribute", &dalGroup::getAttribute,
 		bpl::return_value_policy<bpl::return_opaque_pointer>())
-	.def("createIntArray", &dalGroup::cia_boost,
+	.def("createIntArray", &dalGroup::cia_boost1,
+		bpl::return_value_policy<bpl::manage_new_object>())
+	.def("createIntArray", &dalGroup::cia_boost2,
+		bpl::return_value_policy<bpl::manage_new_object>())
+	.def("createIntArray", &dalGroup::cia_boost_numarray1,
+		bpl::return_value_policy<bpl::manage_new_object>())
+	.def("createIntArray", &dalGroup::cia_boost_numarray2,
+		bpl::return_value_policy<bpl::manage_new_object>())
+/*	.def("createIntArray", &dalGroup::cia_boost,
 		bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createIntArray", &dalGroup::cia_boost_numarray,
-		bpl::return_value_policy<bpl::manage_new_object>())
+		bpl::return_value_policy<bpl::manage_new_object>())*/
 	.def("createFloatArray", &dalGroup::cfa_boost,
 		bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createFloatArray", &dalGroup::cfa_boost_numarray,

@@ -385,8 +385,24 @@ dalTable * dalDataset::ot2_boost(string a, string b) {
  * wrappers for createIntArray
  ******************************************************/
 
-dalArray * dalDataset::cia_boost( string arrayname, bpl::list pydims,
-				  bpl::list pydata, bpl::list cdims ){
+dalArray * dalDataset::cia_boost1( string arrayname, bpl::list pydims,
+				  bpl::list pydata ){
+  bpl::list cdims;
+
+  for(int ii=0; ii<bpl::len(pydims); ii++)
+     cdims.append(10);
+
+  dalArray * array;
+  array = cia_boost2( arrayname, pydims, pydata, cdims );
+
+  return array;
+}
+
+dalArray * dalDataset::cia_boost2(
+	string arrayname,
+	bpl::list pydims,
+	bpl::list pydata,
+	bpl::list cdims ){
 
   vector<int> dims;
   vector<int> chnkdims;
@@ -404,16 +420,34 @@ dalArray * dalDataset::cia_boost( string arrayname, bpl::list pydims,
   for(int ii=0; ii<size; ii++)
     data[ii] = bpl::extract<int>(pydata[ii]);
 
-  dalArray * array = dalDataset::createIntArray(arrayname, dims, data, chnkdims);
+  dalArray * array = createIntArray(arrayname, dims, data, chnkdims);
 
   delete [] data;
 
   return array;
 }
 
-dalArray * dalDataset::cia_boost_numarray( string arrayname, 
+dalArray * dalDataset::cia_boost_numarray1(
+	string arrayname, 
 	bpl::list pydims,
-	bpl::numeric::array pydata, bpl::list cdims ){
+	bpl::numeric::array pydata ){
+
+  bpl::list cdims;
+
+  for(int ii=0; ii<bpl::len(pydims); ii++)
+     cdims.append(10);
+
+  dalArray * array;
+  array = cia_boost_numarray2(arrayname, pydims, pydata, cdims);
+
+  return array;
+}
+
+dalArray * dalDataset::cia_boost_numarray2(
+	string arrayname, 
+	bpl::list pydims,
+	bpl::numeric::array pydata,
+	bpl::list cdims ){
 
   vector<int> dims;
 
@@ -429,7 +463,7 @@ dalArray * dalDataset::cia_boost_numarray( string arrayname,
   bpl::object flat_data = pydata.getflat();
   bpl::list list_data( flat_data );
 
-  dalArray * array = dalDataset::cia_boost(arrayname, pydims, list_data, cdims);
+  dalArray * array = cia_boost2(arrayname, pydims, list_data, cdims);
 
   return array;
 }

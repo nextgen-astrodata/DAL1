@@ -346,8 +346,24 @@ attr_info(hid_t loc_id, const char *name, void *opdata)
  * wrappers for createIntArray
  ******************************************************/
 
-dalArray * dalGroup::cia_boost( string arrayname, bpl::list pydims,
-				  bpl::list pydata, bpl::list cdims ){
+dalArray * dalGroup::cia_boost1( string arrayname, bpl::list pydims,
+				  bpl::list pydata ){
+  bpl::list cdims;
+
+  for(int ii=0; ii<bpl::len(pydims); ii++)
+     cdims.append(10);
+
+  dalArray * array;
+  array = cia_boost2( arrayname, pydims, pydata, cdims );
+
+  return array;
+}
+
+dalArray * dalGroup::cia_boost2(
+	string arrayname,
+	bpl::list pydims,
+	bpl::list pydata,
+	bpl::list cdims ){
 
   vector<int> dims;
   vector<int> chnkdims;
@@ -372,9 +388,27 @@ dalArray * dalGroup::cia_boost( string arrayname, bpl::list pydims,
   return array;
 }
 
-dalArray * dalGroup::cia_boost_numarray( string arrayname, 
+dalArray * dalGroup::cia_boost_numarray1(
+	string arrayname, 
 	bpl::list pydims,
-	bpl::numeric::array pydata, bpl::list cdims ){
+	bpl::numeric::array pydata ){
+
+  bpl::list cdims;
+
+  for(int ii=0; ii<bpl::len(pydims); ii++)
+     cdims.append(10);
+
+  dalArray * array;
+  array = cia_boost_numarray2(arrayname, pydims, pydata, cdims);
+
+  return array;
+}
+
+dalArray * dalGroup::cia_boost_numarray2(
+	string arrayname, 
+	bpl::list pydims,
+	bpl::numeric::array pydata,
+	bpl::list cdims ){
 
   vector<int> dims;
 
@@ -390,10 +424,59 @@ dalArray * dalGroup::cia_boost_numarray( string arrayname,
   bpl::object flat_data = pydata.getflat();
   bpl::list list_data( flat_data );
 
-  dalArray * array = cia_boost(arrayname, pydims, list_data, cdims);
+  dalArray * array = cia_boost2(arrayname, pydims, list_data, cdims);
 
   return array;
 }
+
+// dalArray * dalGroup::cia_boost( string arrayname, bpl::list pydims,
+// 				  bpl::list pydata, bpl::list cdims ){
+// 
+//   vector<int> dims;
+//   vector<int> chnkdims;
+// 
+//   for(int ii=0; ii<bpl::len(pydims); ii++)
+//     dims.push_back(bpl::extract<int>(pydims[ii]));
+// 
+//   for(int ii=0; ii<bpl::len(cdims); ii++)
+//     chnkdims.push_back(bpl::extract<int>(cdims[ii]));
+// 
+//   long size = bpl::len(pydata);
+//   int * data = NULL;
+//   data = new int[size];
+// 
+//   for(int ii=0; ii<size; ii++)
+//     data[ii] = bpl::extract<int>(pydata[ii]);
+// 
+//   dalArray * array = createIntArray(arrayname, dims, data, chnkdims);
+// 
+//   delete [] data;
+// 
+//   return array;
+// }
+// 
+// dalArray * dalGroup::cia_boost_numarray( string arrayname, 
+// 	bpl::list pydims,
+// 	bpl::numeric::array pydata, bpl::list cdims ){
+// 
+//   vector<int> dims;
+// 
+//   for(int ii=0; ii<bpl::len(pydims); ii++)
+//     dims.push_back(bpl::extract<int>(pydims[ii]));
+// 
+//   long size = bpl::len(pydata);
+//   int * data = NULL;
+//   data = new int[size];
+// 
+// // cout << "cia_boost_numarray "<< pydata.nelements() << endl;
+//   pydata.setshape( pydata.nelements() );
+//   bpl::object flat_data = pydata.getflat();
+//   bpl::list list_data( flat_data );
+// 
+//   dalArray * array = cia_boost(arrayname, pydims, list_data, cdims);
+// 
+//   return array;
+// }
 
 /******************************************************
  * wrapper for readIntArray

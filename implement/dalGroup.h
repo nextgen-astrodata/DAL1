@@ -118,9 +118,12 @@ class dalGroup{
 	void setAttribute_double( string attrname, double * data, int size=1 );
 
 #ifdef PYTHON
-	dalArray * cia_boost( string arrayname, bpl::list dims, bpl::list data,
+	dalArray * cia_boost1(string arrayname, bpl::list dims, bpl::list data);
+	dalArray * cia_boost2(string arrayname, bpl::list dims, bpl::list data,
 				 bpl::list cdims );
-	dalArray * cia_boost_numarray( string arrayname, bpl::list dims,
+	dalArray * cia_boost_numarray1( string arrayname, bpl::list dims,
+			bpl::numeric::array data );
+	dalArray * cia_boost_numarray2( string arrayname, bpl::list dims,
 			bpl::numeric::array data, bpl::list cdims );
 	dalArray * cfa_boost( string arrayname, bpl::list dims, bpl::list data,
 				 bpl::list cdims );

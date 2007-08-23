@@ -97,6 +97,10 @@ class dalDataset{
 	dalArray * createIntArray(
 				string arrayname,
 				vector<int> dims,
+				int data[]);
+	dalArray * createIntArray(
+				string arrayname,
+				vector<int> dims,
 				int data[],
 				vector<int>cdims);
 	dalArray * createFloatArray(
@@ -138,9 +142,12 @@ class dalDataset{
 
 #ifdef PYTHON
 	// create[]Array wrappers
-	dalArray * cia_boost( string arrayname, bpl::list dims, bpl::list data,
+	dalArray * cia_boost1(string arrayname, bpl::list dims, bpl::list data);
+	dalArray * cia_boost2(string arrayname, bpl::list dims, bpl::list data,
 				 bpl::list cdims );
-	dalArray * cia_boost_numarray( string arrayname, bpl::list dims,
+	dalArray * cia_boost_numarray1( string arrayname, bpl::list dims,
+			bpl::numeric::array data );
+	dalArray * cia_boost_numarray2( string arrayname, bpl::list dims,
 			bpl::numeric::array data, bpl::list cdims );
 	dalArray * cfa_boost( string arrayname, bpl::list dims, bpl::list data,
 				 bpl::list cdims );

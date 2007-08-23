@@ -75,7 +75,9 @@ class dalIntArray: public dalArray {
   public:
 	dalIntArray();
 	dalIntArray( hid_t obj_id, string arrayname, vector<int> dims,
-			int data[], vector<int>chnkdims);
+		     int data[] );
+	dalIntArray( hid_t obj_id, string arrayname, vector<int> dims,
+		     int data[], vector<int>chnkdims);
 	int * readIntArray( hid_t obj_id, string arrayname );
 	~dalIntArray();
 };

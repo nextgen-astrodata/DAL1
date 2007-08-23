@@ -81,6 +81,71 @@ void dalArray::setAttribute_float( string attrname, float * data/*, int size*/ )
 
 dalIntArray::dalIntArray(){}
 
+dalIntArray::dalIntArray( hid_t obj_id, string arrayname,
+			  vector<int> dims, int data[] )
+{
+   vector<int> chnkdims;
+
+   for( unsigned int ii=0; ii < dims.size(); ii++)
+      chnkdims.push_back(10);
+
+// 	hid_t * lclfile = (hid_t*)voidfile;
+// 	file_id = *lclfile;  // get the file handle
+
+	hid_t datatype, dataspace;  // declare a few h5 variables
+
+	name = arrayname;  // set the private name variable to the array name
+
+	// determine the rank from the size of the dimensions vector
+	unsigned int rank = dims.size();
+
+	hsize_t mydims[rank];  // declare a dimensions c-array
+	hsize_t maxdims[rank]; // declare a maximum dimensions c-array
+	hid_t status_lcl;  // declare a local return status
+
+	hsize_t chunk_dims[ rank ];  // declare chunk dimensions c-array
+
+	// set the c-array dimensions and maxiumum dimensions
+	for (unsigned int ii=0; ii<rank; ii++)
+	{
+		mydims[ii] = dims[ii];  // vector to c-array
+		maxdims[ii] = H5S_UNLIMITED;
+	}
+
+	// set the c-array chunk dimensions from the chunk dims vector
+	for (unsigned int ii=0; ii<chnkdims.size(); ii++)
+	{
+		chunk_dims[ii] = chnkdims[ii];
+	}
+
+	// set the datatype to write
+	datatype = H5Tcopy(H5T_NATIVE_INT);
+
+	// if there are chunk dimensions, write the data this way
+	if ( chnkdims.size()>0 )
+	{
+	   dataspace = H5Screate_simple(rank,mydims,maxdims);
+	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
+	   status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
+	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype, dataspace, cparms);
+	}
+	// otherwise, write the data this way
+	else
+	{
+	   dataspace = H5Screate_simple(rank,mydims,NULL);
+	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
+	}
+
+	// write the data
+	H5Dwrite(array_id, datatype, dataspace, dataspace, H5P_DEFAULT, data);
+
+	// close local hdf5 objects
+	H5Sclose( dataspace );
+	H5Tclose( datatype );
+// 	H5Dclose( array );
+
+}
+
 /********************************************************************
  *  dalIntArray constructor creates an n-dimensional
  *    array of Integers.
@@ -94,8 +159,9 @@ dalIntArray::dalIntArray(){}
  *      if the size of the array is fixed.
  *
  ********************************************************************/
-dalIntArray::dalIntArray( hid_t obj_id/*void * voidfile*/, string arrayname, vector<int> dims,
-			  int data[], vector<int> chnkdims ) {
+dalIntArray::dalIntArray( hid_t obj_id/*void * voidfile*/, string arrayname,
+			  vector<int> dims, int data[], vector<int> chnkdims )
+{
 // 	hid_t * lclfile = (hid_t*)voidfile;
 // 	file_id = *lclfile;  // get the file handle
 
