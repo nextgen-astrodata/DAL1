@@ -146,7 +146,8 @@ class dalDataset{
 				 bpl::list cdims );
 	dalArray * cfa_boost_numarray( string arrayname, bpl::list dims,
 			 bpl::numeric::array data, bpl::list cdims );
-	void sfe(bpl::numeric::array& y, int value);
+
+// 	void sfe(bpl::numeric::array& y, int value);
 
 	bpl::numeric::array ria_boost( string arrayname );
 	bpl::numeric::array rfa_boost( string arrayname );

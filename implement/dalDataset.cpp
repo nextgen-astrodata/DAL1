@@ -485,10 +485,10 @@ dalArray * dalDataset::cfa_boost_numarray( string arrayname,
   return array;
 }
 
-void dalDataset::sfe(bpl::numeric::array& y, int value)
-{
-    y[bpl::make_tuple(0,0)] = value;
-}
+// void dalDataset::sfe(bpl::numeric::array& y, int value)
+// {
+//     y[bpl::make_tuple(0,0)] = value;
+// }
 
 /******************************************************
  * wrapper for readIntArray

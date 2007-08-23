@@ -45,7 +45,7 @@ void dalArray::setAttribute_string( string attrname, string data )
    hsize_t  dims[1] = {1};
    aid1  = H5Screate_simple (1, dims, NULL);
    atype = H5Tcopy(H5T_C_S1);
-   ret = H5Tset_size(atype, attrname.length());
+   ret = H5Tset_size(atype, data.length());
    ret = H5Tset_strpad(atype,H5T_STR_NULLTERM);
    hid_t attr1 = H5Acreate(array_id, attrname.c_str(), atype, aid1, H5P_DEFAULT);
    ret = H5Awrite(attr1, atype, data.c_str());

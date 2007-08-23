@@ -56,49 +56,49 @@ namespace bpl = boost::python;
 typedef struct opaque_ *opaque;
 BOOST_PYTHON_OPAQUE_SPECIALIZED_TYPE_ID(opaque_)
 
-struct X // a container element
-{
-    std::string s;
-    X():s("default") {}
-    X(std::string s):s(s) {}
-    std::string repr() const { return s; }
-    void reset() { s = "reset"; }
-    void foo() { s = "foo"; }
-    bool operator==(X const& x) const { return s == x.s; }
-    bool operator!=(X const& x) const { return s != x.s; }
-};
+// struct X // a container element
+// {
+//     std::string s;
+//     X():s("default") {}
+//     X(std::string s):s(s) {}
+//     std::string repr() const { return s; }
+//     void reset() { s = "reset"; }
+//     void foo() { s = "foo"; }
+//     bool operator==(X const& x) const { return s == x.s; }
+//     bool operator!=(X const& x) const { return s != x.s; }
+// };
+// 
+// long goo(bpl::list a)
+// {
+// 	return bpl::len(a);
+// }
+// 
+// std::string x_value(X const& x)
+// {
+//     return "gotya " + x.s;
+// }
 
-long goo(bpl::list a)
-{
-	return bpl::len(a);
-}
-
-std::string x_value(X const& x)
-{
-    return "gotya " + x.s;
-}
-
-void foo() {
-    cout << "none" << endl;
-}
-void foo(int a) {
-    cout << "arg is " << a << endl;
-}
-void foo(int a, int b) {
-    cout << "args are " << a << " and " << b << endl;
-}
-void foo(int a, float b) {
-    cout << "args are " << a << " and " << b << endl;
-}
-void f2(int a, float b) { foo(a,b); }
+// void foo() {
+//     cout << "none" << endl;
+// }
+// void foo(int a) {
+//     cout << "arg is " << a << endl;
+// }
+// void foo(int a, int b) {
+//     cout << "args are " << a << " and " << b << endl;
+// }
+// void foo(int a, float b) {
+//     cout << "args are " << a << " and " << b << endl;
+// }
+// void f2(int a, float b) { foo(a,b); }
 
 #include <boost/python/numeric.hpp>
 #include <boost/python/tuple.hpp>
 // sets the first element in a 2d numeric array
-void set_first_element(bpl::numeric::array& y, int value)
-{
-    y[bpl::make_tuple(0,0)] = value;
-}
+// void set_first_element(bpl::numeric::array& y, int value)
+// {
+//     y[bpl::make_tuple(0,0)] = value;
+// }
 
 // BOOST_PYTHON_MODULE(vector_indexing_suite_ext)
 // {    
@@ -130,20 +130,20 @@ void set_first_element(bpl::numeric::array& y, int value)
 // 
 // }
 
-bpl::object f(bpl::object x, bpl::object y) {
-    x.slice(3,7) = "bar";
-    return x;
-}
+// bpl::object f(bpl::object x, bpl::object y) {
+//     x.slice(3,7) = "bar";
+//     return x;
+// }
 
-BOOST_PYTHON_FUNCTION_OVERLOADS(foo_overloads, foo, 0, 2)
+// BOOST_PYTHON_FUNCTION_OVERLOADS(foo_overloads, foo, 0, 2)
 
 BOOST_PYTHON_MODULE(dal)
 {
 //     bpl::numeric::array::set_module_and_type("numpy", "ndarray");
-    bpl::def("foo", (void(*)(int,int,int))0, foo_overloads());
-    bpl::def("foo", f2); // two arguments
-    bpl::def("f", f);
-    bpl::def("goo", goo);
+//     bpl::def("foo", (void(*)(int,int,int))0, foo_overloads());
+//     bpl::def("foo", f2); // two arguments
+//     bpl::def("f", f);
+//     bpl::def("goo", goo);
 
     bpl::class_<dalDataset>("dalDataset")
 	.def(bpl::init<char*>())
@@ -171,13 +171,15 @@ BOOST_PYTHON_MODULE(dal)
 		bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createFloatArray", &dalDataset::cfa_boost_numarray,
 		bpl::return_value_policy<bpl::manage_new_object>())
+// 	.def("createComplexArray", &dalDataset::cca_boost,
+// 		bpl::return_value_policy<bpl::manage_new_object>())
 	.def("readIntArray", &dalDataset::ria_boost)
 	.def("readFloatArray", &dalDataset::rfa_boost)
-	.def("sfe", &dalDataset::sfe)
+// 	.def("sfe", &dalDataset::sfe)
     ;
 
-    bpl::def("set_first_element",set_first_element)
-    ;
+//     bpl::def("set_first_element",set_first_element)
+//     ;
 
     bpl::class_<dalGroup>("dalGroup")
 	.def(bpl::init<>())
