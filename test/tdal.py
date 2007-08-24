@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
-import dal
+import libpydal as dal
+#import dal
 import numarray
 import sys
 #from pylab import *
@@ -22,7 +23,7 @@ table_group = ds.createGroup( groupname )
 
 print "\nCreating an INT array from a list..."
 arrayname = "intarray_list"
-dims = [2,2] # array dimensions
+dims = [2,2] # array dimensions (row-major)
 data = [1,1,2,2] # array data
 cdims = [] # no chunk dims, array size will be fixed
 int_array_list = array_group.createIntArray(arrayname,dims,data,cdims)
@@ -31,7 +32,7 @@ print array_group.readIntArray(arrayname)
 print "\nCreating an INT array from a numarray array..."
 arrayname = "intarray_numarray"
 data = numarray.array([[1,1],[2,2]]) # array data
-dims = [2,2] # array dimensions
+dims = [2,2] # array dimensions (row-major)
 # create the array with initial dimensions
 int_array_numarray = array_group.createIntArray(arrayname,dims,data)
 #int_array_numarray.extend( newdims )
@@ -40,12 +41,18 @@ print array_group.readIntArray(arrayname)
 print "\nCreating an INT array from a numarray array (including chunk dims)..."
 arrayname = "intarray_numarray_cdims"
 data = numarray.array([[1,1],[2,2]]) # array data
-dims = [2,2] # array dimensions
+dims = [2,2] # array dimensions (row-major)
 cdims = [5,5] # rank can not be greater than data rank
 # create the array with initial dimensions
 int_array_numarray = array_group.createIntArray(arrayname,dims,data,cdims)
-newdims = [10,2]
+newdims = [4,2]
+print "Extending the " + arrayname + " array."
 int_array_numarray.extend( newdims )
+print "Writing data to the new " + arrayname + " dimensions."
+offset = [2,0] # define the offset (row-major)
+write_dims = [2,2] # define the write dimensions (row-major)
+data = numarray.array([[1,1],[2,2]]) # array data
+#int_array_numarray.write( offset, write_dims, data )
 print array_group.readIntArray(arrayname)
 
 #----------------------
