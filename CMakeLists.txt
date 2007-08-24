@@ -71,9 +71,9 @@ if (dal_cmake)
     include (${dal_cmake}/FindHDF5.cmake)
   endif (NOT HAVE_HDF5)
   ## SWIG
-  if (NOT HAVE_SWIG)
-    include (${dal_cmake}/FindSWIG.cmake)
-  endif (NOT HAVE_SWIG)
+#   if (NOT HAVE_SWIG)
+#     include (${dal_cmake}/FindSWIG.cmake)
+#   endif (NOT HAVE_SWIG)
   ##----------------------------------------------------------
   ## optional external packages (required for Python bindings)
   if (DAL_PYTHON_BINDINGS)
