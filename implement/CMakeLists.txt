@@ -76,22 +76,27 @@ set (dal_link_libraries
 
 if (DAL_PYTHON_BINDINGS)
   list (APPEND dal_link_libraries ${BOOST_LIBRARIES} ${PYTHON_LIBRARIES})
+#   message ("BOOST libraries: " ${BOOST_LIBRARIES})
+#   message ("PYTHON libraries: " ${PYTHON_LIBRARIES})
 endif (DAL_PYTHON_BINDINGS)
 
 ## [3] Build the library
 
 add_library(dal STATIC ${dal_sources})
+target_link_libraries(dal
+  ${dal_link_libraries}
+  )
 
 if (DAL_PYTHON_BINDINGS)
   add_library(pydal SHARED ${dal_sources})
+  target_link_libraries(pydal
+    ${dal_link_libraries}
+  )
 #   SET_TARGET_PROPERTIES (pydal
 #     PROPERTIES CMAKE_SHARED_LINKER_FLAGS_RELEASE "-o pydal"
 #   )
 endif (DAL_PYTHON_BINDINGS)
 
-target_link_libraries(dal
-  ${dal_link_libraries}
-  )
 
 #add_executable(msread msread.cpp)
 #add_executable(mswrite mswrite.cpp)
