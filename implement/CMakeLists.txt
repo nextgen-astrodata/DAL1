@@ -31,6 +31,12 @@ add_definitions (
   -ftemplate-depth-100
   )
 
+if (DAL_PYTHON_BINDINGS)
+  add_definitions (
+    -DPYTHON
+  )
+endif (DAL_PYTHON_BINDINGS)
+
 #link_directories(
 #  ${HDF5_LIBRARIES}
 #  ${BLITZ_LIBRARIES}
@@ -38,6 +44,8 @@ add_definitions (
 
 ## ------------------------------------------------------------------------------
 ## Build the library
+
+## [1] list of source files
 
 set (dal_sources
   dalArray.cpp
@@ -52,18 +60,37 @@ set (dal_sources
   dalLopesEvent.cpp
   )
 
-add_library(dal STATIC
-  ${dal_sources}
-  )
+if (DAL_PYTHON_BINDINGS)
+  list (APPEND dal_sources pywrapper.cpp)
+endif (DAL_PYTHON_BINDINGS)
 
-target_link_libraries(dal
+## [2] List of external libraries against which to link
+
+set (dal_link_libraries
   hdf5
   hdf5_hl
   z
   m
   ${CFITSIO_LIBRARIES}
-  ${BOOST_LIBRARIES}
-  ${PYTHON_LIBRARIES}
+)
+
+if (DAL_PYTHON_BINDINGS)
+  list (APPEND dal_link_libraries ${BOOST_LIBRARIES} ${PYTHON_LIBRARIES})
+endif (DAL_PYTHON_BINDINGS)
+
+## [3] Build the library
+
+add_library(dal STATIC ${dal_sources})
+
+if (DAL_PYTHON_BINDINGS)
+  add_library(pydal SHARED ${dal_sources})
+#   SET_TARGET_PROPERTIES (pydal
+#     PROPERTIES CMAKE_SHARED_LINKER_FLAGS_RELEASE "-o pydal"
+#   )
+endif (DAL_PYTHON_BINDINGS)
+
+target_link_libraries(dal
+  ${dal_link_libraries}
   )
 
 #add_executable(msread msread.cpp)
@@ -88,6 +115,11 @@ install (
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
+  )
+
+install (
+  TARGETS pydal
+  LIBRARY DESTINATION lib
   )
 
 ## installation of header files

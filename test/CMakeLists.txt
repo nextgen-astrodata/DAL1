@@ -5,14 +5,14 @@ message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 #    set(CMAKE_BUILD_TYPE "Debug")
 #endif(NOT CMAKE_BUILD_TYPE)
 
-add_definitions(
-  -DMPICH_IGNORE_CXX_SEEK
-  -D_BSD_SOURCE
-  -D_POSIX_SOURCE
-  -D_FILE_OFFSET_BITS=64
-  -D_LARGEFILE64_SOURCE
-  -D_LARGEFILE_SOURCE
-  )
+#add_definitions(
+#  -DMPICH_IGNORE_CXX_SEEK
+#  -D_BSD_SOURCE
+#  -D_POSIX_SOURCE
+#  -D_FILE_OFFSET_BITS=64
+#  -D_LARGEFILE64_SOURCE
+#  -D_LARGEFILE_SOURCE
+#  )
 
 ## ------------------------------------------------------------------------------
 ## Build the test programs
@@ -33,11 +33,7 @@ foreach (src ${tests})
   ## executable and its source
   add_executable(${src} ${src}.cpp)
   ## libraries against which to link
-  target_link_libraries(${src}
-    dal
-    ${HDF5_LIBRARIES}
-    ${PYTHON_LIBRARIES}
-    )
+  target_link_libraries(${src} dal)
 endforeach (src)
 
 ## ------------------------------------------------------------------------------
@@ -69,5 +65,12 @@ endif (DAL_ENABLE_TESTING)
 install (TARGETS ${tests}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
+#   ARCHIVE DESTINATION lib
   )
+
+## python scripts
+
+install (FILES tdal.py
+  DESTINATION bin
+  PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE OWNER_READ GROUP_READ WORLD_READ
+)

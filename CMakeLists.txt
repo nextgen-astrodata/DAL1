@@ -13,6 +13,7 @@ cmake_minimum_required (VERSION 2.4)
 
 option (DAL_BUILD_TESTS "Build the test programs?" 1)
 option (DAL_ENABLE_TESTING "Build the test programs?" 1)
+option (DAL_PYTHON_BINDINGS "Create python bindings?" 1)
 option (DAL_DEBUGGING_MESSAGES "Print debugging information?" 0)
 option (DAL_VERBOSE_CONFIGURE "Verbose output during configuration?" 0)
 
@@ -57,10 +58,6 @@ if (dal_cmake)
   if (NOT HAVE_BLITZ)
     include (${dal_cmake}/FindBlitz.cmake)
   endif (NOT HAVE_BLITZ)
-  ## BOOST
-  if (NOT HAVE_BOOST)
-    include (${dal_cmake}/FindBoost.cmake)
-  endif (NOT HAVE_BOOST)
   ## casacore
   if (NOT HAVE_CASACORE)
     include (${dal_cmake}/FindCASACORE.cmake)
@@ -77,6 +74,14 @@ if (dal_cmake)
   if (NOT HAVE_SWIG)
     include (${dal_cmake}/FindSWIG.cmake)
   endif (NOT HAVE_SWIG)
+  ##----------------------------------------------------------
+  ## optional external packages (required for Python bindings)
+  if (DAL_PYTHON_BINDINGS)
+    ## BOOST
+    if (NOT HAVE_BOOST)
+      include (${dal_cmake}/FindBoost.cmake)
+    endif (NOT HAVE_BOOST)
+  endif (DAL_PYTHON_BINDINGS)
 elseif (dal_cmake)
   message (SEND_ERROR "Unable to locate additional CMake scripts!")
 endif (dal_cmake)
