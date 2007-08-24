@@ -122,10 +122,12 @@ install (
   ARCHIVE DESTINATION lib
   )
 
+if (DAL_PYTHON_BINDINGS)
 install (
   TARGETS pydal
   LIBRARY DESTINATION lib
   )
+endif (DAL_PYTHON_BINDINGS)
 
 ## installation of header files
 
