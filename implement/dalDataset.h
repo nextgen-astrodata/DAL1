@@ -140,6 +140,12 @@ class dalDataset{
 //	int getGroupNumber(); /// return a dalGroup by index
 	string getType(); /// retrieve the dataset type
 
+/************************************************************************
+ *
+ * The following functions are boost wrappers to allow some previously
+ *   defined functions to be easily called from a python prompt.
+ *
+ ************************************************************************/
 #ifdef PYTHON
 	// create[]Array wrappers
 	dalArray * cia_boost1(string arrayname, bpl::list dims, bpl::list data);

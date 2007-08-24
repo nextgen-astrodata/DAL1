@@ -117,6 +117,12 @@ class dalGroup{
 	void setAttribute_uint( string attrname, unsigned int * data,int size=1 );
 	void setAttribute_double( string attrname, double * data, int size=1 );
 
+/************************************************************************
+ *
+ * The following functions are boost wrappers to allow some previously
+ *   defined functions to be easily called from a python prompt.
+ *
+ ************************************************************************/
 #ifdef PYTHON
 	dalArray * cia_boost1(string arrayname, bpl::list dims, bpl::list data);
 	dalArray * cia_boost2(string arrayname, bpl::list dims, bpl::list data,

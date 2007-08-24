@@ -44,7 +44,8 @@ dims = [2,2] # array dimensions
 cdims = [5,5] # rank can not be greater than data rank
 # create the array with initial dimensions
 int_array_numarray = array_group.createIntArray(arrayname,dims,data,cdims)
-#int_array_numarray.extend( newdims )
+newdims = [10,2]
+int_array_numarray.extend( newdims )
 print array_group.readIntArray(arrayname)
 
 #----------------------

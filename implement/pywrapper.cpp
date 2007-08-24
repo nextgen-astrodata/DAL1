@@ -248,6 +248,7 @@ BOOST_PYTHON_MODULE(dal)
 	.def("setAttribute_string", &dalArray::setAttribute_string)
 	.def("setAttribute_int", &dalArray::sai_boost)
 	.def("setAttribute_float", &dalArray::saf_boost)
+	.def("extend", &dalArray::extend_boost)
     ;
 
     bpl::class_<dalIntArray,bpl::bases<dalArray> >("dalIntArray")

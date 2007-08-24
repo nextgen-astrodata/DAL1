@@ -63,10 +63,18 @@ class dalArray{
 	void setAttribute_int( string attrname, int * data/*, int size=1*/ );
 // 	void setAttribute_uint( string attrname, unsigned int * data,int size=1 );
 	void setAttribute_float( string attrname, float * data/*, int size=1*/ );
+	void extend( vector<int> dims );
 
+/************************************************************************
+ *
+ * The following functions are boost wrappers to allow some previously
+ *   defined functions to be easily called from a python prompt.
+ *
+ ************************************************************************/
 #ifdef PYTHON
 	void sai_boost( string attrname, int data );
 	void saf_boost( string attrname, float data );
+	void extend_boost( bpl::list pydims );
 #endif
 };
 

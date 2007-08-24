@@ -25,9 +25,19 @@
 #include "dalArray.h"
 #endif
 
+void dalArray::extend( vector<int> newdims )
+{
+   unsigned int rank = newdims.size();
+   hsize_t lcldims[ rank ];
+   for ( unsigned int ii=0; ii < rank; ii++ )
+      lcldims[ ii ] = newdims[ ii ];
+
+   status = H5Dextend( array_id, lcldims );
+}
 
 herr_t attr_info(hid_t loc_id, const char *name, void *opdata);
-void dalArray::getAttributes() {
+void dalArray::getAttributes()
+{
 
    //status = H5Aget_num_attrs(group_id);
    //printf ("H5Aget_num_attrs returns: %i\n", status);
@@ -436,7 +446,7 @@ dalComplexArray::dalComplexArray( void * voidfile, string arrayname, vector<int>
  ******************************************************/
 void dalArray::sai_boost( string attrname, int data )
 {
-	setAttribute_int( attrname, &data/*, 1*/ );
+   setAttribute_int( attrname, &data/*, 1*/ );
 }
  
 /******************************************************
@@ -444,6 +454,19 @@ void dalArray::sai_boost( string attrname, int data )
  ******************************************************/
 void dalArray::saf_boost( string attrname, float data )
 {
-	setAttribute_float( attrname, &data/*, 1*/ );
+   setAttribute_float( attrname, &data/*, 1*/ );
+}
+
+/******************************************************
+ * wrapper for extend
+ ******************************************************/
+void dalArray::extend_boost( bpl::list pydims )
+{
+  vector<int> dims;
+
+  for(int ii=0; ii<bpl::len(pydims); ii++)
+    dims.push_back(bpl::extract<int>(pydims[ii]));
+
+  extend( dims );
 }
 #endif
