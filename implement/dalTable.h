@@ -95,11 +95,11 @@ class dalTable{
 	  casa::MSReader * reader );
 #endif
 	void createTable( void * voidfile, string tablename, string groupname );
-	void addColumn( string colname, string coltype, int size=1 );  /// add a simple column
-	void addArrayColumn( string colname, string coltype, unsigned int dims );  /// add an array column
+	void addColumn( string colname, string coltype, int size=1 );
+	void addArrayColumn( string colname, string coltype, unsigned int dims);
 	void addComplexColumn( string compname, vector<dalColumn>,
-				int subfields );  /// add a compound column
-	void removeColumn( string colname );  /// remove a column
+				int subfields );
+	void removeColumn( string colname );
 	void writeDataByColNum( void * structure, int index, int rownum );
 	
 // 	void writeDataByColName( void * structure, string colname );

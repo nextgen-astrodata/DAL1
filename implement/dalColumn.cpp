@@ -37,15 +37,13 @@ dalColumn::dalColumn()
 dalColumn::dalColumn( string colname, string type )
 {
 	name = colname;
- 	datatype = type;
-
+	datatype = type;
 }
 
 dalColumn::dalColumn( string complexcolname/*, void * dataformat*/ )
 {
 	name = complexcolname;
- 	datatype = "dal_COMPLEX";
-
+	datatype = "dal_COMPLEX";
 }
 
 string dalColumn::getName()
