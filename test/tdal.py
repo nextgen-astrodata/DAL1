@@ -1,7 +1,6 @@
 #! /usr/bin/env python2.5
 
 import libpydal as dal
-#import dal
 import numarray
 import sys
 #from pylab import *

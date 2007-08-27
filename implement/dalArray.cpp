@@ -228,6 +228,11 @@ dalIntArray::dalIntArray( hid_t obj_id/*void * voidfile*/, string arrayname,
 // 	H5Dclose( array );
 }
 
+// void dalIntArray::write( vector<int> offset, vector<int> write_dims, int * data)
+// {
+//    cout << "dalIntArray::write()" << endl;
+// }
+
 dalIntArray::~dalIntArray() {
 }
 
@@ -442,7 +447,7 @@ dalComplexArray::dalComplexArray( void * voidfile, string arrayname, vector<int>
  ************************************************************************/
  
 /******************************************************
- * wrapper for setAttribute_int
+ * wrapper for dalArray::setAttribute_int
  ******************************************************/
 void dalArray::sai_boost( string attrname, int data )
 {
@@ -450,7 +455,7 @@ void dalArray::sai_boost( string attrname, int data )
 }
  
 /******************************************************
- * wrapper for setAttribute_float
+ * wrapper for dalArray::setAttribute_float
  ******************************************************/
 void dalArray::saf_boost( string attrname, float data )
 {
@@ -458,7 +463,7 @@ void dalArray::saf_boost( string attrname, float data )
 }
 
 /******************************************************
- * wrapper for extend
+ * wrapper for dalArray::extend
  ******************************************************/
 void dalArray::extend_boost( bpl::list pydims )
 {
@@ -469,4 +474,13 @@ void dalArray::extend_boost( bpl::list pydims )
 
   extend( dims );
 }
+
+/******************************************************
+ * wrapper for dalIntArray::write
+ ******************************************************/
+// void dalIntArray::write( bpl::list pyoffset, bpl::list pywrite_dims, int data)
+// {
+// 
+// }
+
 #endif

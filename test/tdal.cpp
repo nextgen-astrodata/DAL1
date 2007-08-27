@@ -57,7 +57,7 @@ int main()
 // create a dataset
 
    dalDataset * ds;
-   ds = new dalDataset( FILENAME );
+   ds = new dalDataset( FILENAME, "HDF5" );
 
    dalGroup * groupA = ds->createGroup( "groupA" );
    dalGroup * groupB = ds->createGroup( "groupB" );

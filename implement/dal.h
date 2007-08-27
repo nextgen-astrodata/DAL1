@@ -53,6 +53,9 @@ extern "C" {
 
 using namespace std;
 
+/*
+   if creating python bindings
+*/
 #ifdef PYTHON
 // #include <boost/python.hpp>
 // #include <boost/python/list.hpp>
@@ -63,6 +66,26 @@ using namespace std;
 #include <boost/python/extract.hpp>
 namespace bpl = boost::python;
 #endif
+
+/*
+   if there is a casa installation
+*/
+#ifdef WITH_CASA
+#include <casa/aips.h>
+#include <tables/Tables.h>
+#include <tables/Tables/Table.h>
+#include <ms/MeasurementSets.h>
+#include <ms/MeasurementSets/MSReader.h>
+#include <iostream>
+#include <casa/aipstype.h>
+#include <casa/complex.h>
+#include <casa/BasicMath/Math.h>
+#endif
+
+
+const string H5TYPE = "HDF5";
+const string FITSTYPE = "FITS";
+const string MSCASATYPE = "MSCASA";
 
 const int SUCCESS = 0;
 const int FAIL = 1;

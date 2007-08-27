@@ -44,10 +44,6 @@
 #include "dalAttribute.h"
 #endif
 
-const string H5TYPE = "HDF5";
-const string FITSTYPE = "FITS";
-const string MSCASATYPE = "MSCASA";
-
 /*!
   \class dalDataset
   
@@ -64,8 +60,7 @@ const string MSCASATYPE = "MSCASA";
 class dalDataset{
 
 	void * file;  /// can be HDF5File, FITS, MS
-	hid_t h5fh;   /// hdf5 file handle
-	string type;  /// "HDF5", "MS" or "FITS"; for example
+	string type;  /// "HDF5", "MSCASA" or "FITS"; for example
 	string name;  /// dataset name
 	vector<string> files;  /// list of files
 	vector<dalTable> tables; /// list of tables
@@ -73,7 +68,17 @@ class dalDataset{
 	vector<dalAttribute> attrs;  /// list of attributes
 	
 	dalFilter filter;	/// dataset filter
-  
+
+	// hdf5-specific variables
+	hid_t h5fh;   /// hdf5 file handle
+
+#ifdef WITH_CASA
+	// casa-specific variables
+	casa::MeasurementSet * ms;
+	casa::MSReader * ms_reader;
+	casa::Vector<casa::String> ms_tables;
+#endif
+
   public:
   	/// The constructor
   	dalDataset();
@@ -129,9 +134,9 @@ class dalDataset{
 
 	dalGroup * openGroup( string groupname );  /// return a dalGroup object
 //	int listGroups();  /// return a list of groups within the dataset
-	/// return a list of tables not contained in any groups
-//	int listTables();
-	/// list general attributes attached to the dataset
+// return a list of tables not contained in any groups
+	void listTables();
+// list general attributes attached to the dataset
 //	int listAttributes();;
 //	int remove();  /// delete the file and all data within it
 //	int advanceTable();  /// sequentially step through the dataset tables

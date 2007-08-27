@@ -20,15 +20,6 @@
 
 #include <dal.h>
 #include <dalDataset.h>
-#include <casa/aips.h>
-#include <tables/Tables.h>
-#include <tables/Tables/Table.h>
-#include <ms/MeasurementSets.h>
-#include <ms/MeasurementSets/MSReader.h>
-#include <iostream>
-#include <casa/aipstype.h>
-#include <casa/complex.h>
-#include <casa/BasicMath/Math.h>
 
 using namespace casa;
 
@@ -43,6 +34,16 @@ int main(int argc, char *argv[])
 	  cout << endl;
 	  return FAIL;
 	}
+
+// First open the measurement set
+dalDataset * msds;
+msds = new dalDataset( argv[1], "MSCASA" );
+msds->listTables();
+dalTable * maintable;
+maintable = msds->openTable( "MAIN" );
+maintable->getName();
+msds->close();  // close the casa MeasurementSet
+delete msds;
 
 	// First open the measurement set
 	MeasurementSet MS( argv[1] );
@@ -176,7 +177,7 @@ int main(int argc, char *argv[])
 
 	// create a new hdf5 dataset
 	dalDataset * ds;
-	ds = new dalDataset( argv[2] );
+	ds = new dalDataset( argv[2], "HDF5" );
 
 	// define dimensions of array
 	vector<int> dims;
@@ -201,7 +202,7 @@ int main(int argc, char *argv[])
  dalArray * iarray;
  iarray = arraygroup->createIntArray( "int_array", dims, idata, cdims );
 
-	ds->close();
+	ds->close();    // close the hdf5 file
 
 	delete dataarray;
 	delete arraygroup;

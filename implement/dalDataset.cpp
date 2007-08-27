@@ -32,7 +32,7 @@
 /**
  * 
  * @param fname 
- * @return 
+ * @return int
  */
 int openFITS( char * fname )
 {
@@ -72,7 +72,7 @@ int openFITS( char * fname )
 /**
  * 
  * @param fname 
- * @return 
+ * @return hid_t
  */
 hid_t openHDF5( char * fname )
 {
@@ -87,7 +87,7 @@ hid_t openHDF5( char * fname )
 /**
  * 
  * @param filename 
- * @return 
+ * @return int
  */
 int dalDataset::open( char * filename )
 {
@@ -119,7 +119,18 @@ int dalDataset::open( char * filename )
 
 int dalDataset::close()
 {
-   if ( type == H5TYPE )
+   if ( type == MSCASATYPE )
+   {
+#ifdef WITH_CASA
+// 	delete ms_reader;
+	delete ms;
+	cout << "closed MS" << endl;
+#else
+	cout << "CASA support not enabled." << endl;
+	exit(-1);
+#endif
+   }
+   else if ( type == H5TYPE )
    {
       // << "Try to close HDF5... ";
 
@@ -133,11 +144,6 @@ int dalDataset::close()
     return -2;
 }
 
-/**
- * 
- * @param gname 
- * @return 
- */
 dalGroup * dalDataset::createGroup( char* gname )
 {
     if ( type == H5TYPE )
@@ -152,16 +158,39 @@ dalGroup * dalDataset::createGroup( char* gname )
 dalDataset::dalDataset()
 {}
 
-/**
- * 
- * @param name 
- * @param filetype 
- * @return 
- */
+void dalDataset::listTables()
+{
+   if ( type == MSCASATYPE )
+   {
+#ifdef WITH_CASA
+	ms_tables = ms_reader->tables();
+
+	// list the names of the tables
+	cout << ms_tables << endl;
+#else
+	cout << "CASA support not enabled." << endl;
+	exit(-1);
+#endif
+   }
+   else
+   {
+	cout << "This operation is not supported for filetype " << type << endl;
+   }
+}
+
 dalDataset::dalDataset( char * name, string filetype )
 {
    type = filetype;  // set the global class variable: type
-   if ( filetype == H5TYPE )
+   if ( filetype == MSCASATYPE )
+   {
+#ifdef WITH_CASA
+	ms = new casa::MeasurementSet( name );
+	file = &ms;
+	ms_reader = new casa::MSReader( *ms );
+#else
+	cout << "CASA support not enabled." << endl;
+#endif
+   } else if ( filetype == H5TYPE )
    {
 
 	h5fh = H5Fcreate(name, H5F_ACC_TRUNC, H5P_DEFAULT,
@@ -172,7 +201,6 @@ dalDataset::dalDataset( char * name, string filetype )
    {
 	fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
 	int status;
-	cout << "dalDataset::dalDataset FITS Type" << endl;
 	fits_create_file(&fptr, name, &status); /*create new file*/
 // h5fh = fits_create_file(fitsfile **fptr, char *filename, > int *status);
    }
@@ -190,12 +218,12 @@ dalArray * dalDataset::createIntArray( string arrayname, vector<int> dims, int d
 {
    if ( type == H5TYPE )
    {
-	   dalIntArray * la = new dalIntArray( h5fh, arrayname, dims, data, cdims );
-	   return la;
+	dalIntArray * la = new dalIntArray( h5fh, arrayname, dims, data, cdims );
+	return la;
    }
    else if ( type == FITSTYPE )
    {
-	cout << "dalDataset::createIntArray FITS Type" << endl;
+	cout << "dalDataset::createIntArray FITS Type not yet supported." << endl;
 	return NULL;
    }
    else
@@ -206,12 +234,13 @@ dalArray * dalDataset::createFloatArray( string arrayname, vector<int> dims, flo
 {
    if ( type == H5TYPE )
    {
-	   dalFloatArray * la = new dalFloatArray( h5fh, arrayname, dims, data, cdims );
-	   return la;
+	dalFloatArray * la =
+	   new dalFloatArray( h5fh, arrayname, dims, data, cdims );
+	return la;
    }
    else if ( type == FITSTYPE )
    {
-	cout << "dalDataset::createFloatArray FITS Type" << endl;
+	cout << "dalDataset::createFloatArray FITS Type not yet supported." << endl;
 	return NULL;
    }
    else
@@ -222,34 +251,31 @@ dalArray * dalDataset::createComplexArray( string arrayname, vector<int> dims, v
 {
    if ( type == H5TYPE )
    {
-	   dalComplexArray * la = new dalComplexArray( file, arrayname, dims, data, cdims );
-	   return la;
+	dalComplexArray * la = new dalComplexArray(
+	   file, arrayname, dims, data, cdims );
+	return la;
    }
    else if ( type == FITSTYPE )
    {
-	cout << "dalDataset::createComplexArray FITS Type" << endl;
+	cout << "dalDataset::createComplexArray FITS Type not yet supported."
+	  << endl;
 	return NULL;
    }
    else
    	return NULL;
 }
 
-
-/**
- * 
- * @param tablename 
- */
 dalTable * dalDataset::createTable( string tablename )
 {
    if ( type == H5TYPE )
    {
-	   dalTable * lt = new dalTable();
+	   dalTable * lt = new dalTable( H5TYPE );
 	   lt->createTable( file, tablename, "/" );
 	   return lt;
    }
    else if ( type == FITSTYPE )
    {
-	cout << "dalDataset::createTable FITS Type" << endl;
+	cout << "dalDataset::createTable FITS Type not yet supported." << endl;
 	return NULL;
    }
    else
@@ -260,13 +286,13 @@ dalTable * dalDataset::createTable( string tablename, string groupname )
 {
    if ( type == H5TYPE )
    {
-	   dalTable * lt = new dalTable();
+	   dalTable * lt = new dalTable( H5TYPE );
 	   lt->createTable( file, tablename, '/' + groupname );
 	   return lt;
    }
    else if ( type == FITSTYPE )
    {
-	cout << "dalDataset::createTable FITS Type" << endl;
+	cout << "dalDataset::createTable FITS Type not yet supported." << endl;
 	return NULL;
    }
    else
@@ -279,29 +305,52 @@ dalTable * dalDataset::createTable( string tablename, string groupname )
  */
 dalTable * dalDataset::openTable( string tablename )
 {
-   if ( type == H5TYPE )
+   if ( type == MSCASATYPE )
    {
-	   dalTable * lt = new dalTable();
+#ifdef WITH_CASA
+// 	ms_reader = new MSReader( *ms );
+	dalTable * lt = new dalTable( MSCASATYPE );
+	lt->openTable( file, tablename, ms_reader );
+// 	lt->casa_table_handle = ms_reader->table( "MAIN" );
+	return lt;
+#else
+	cout << "CASA support not enabled." << endl;
+	exit(-1);
+#endif
+// 	ms = new MeasurementSet( name );
+   }
+   else if ( type == H5TYPE )
+   {
+	   dalTable * lt = new dalTable( H5TYPE );
 	   lt->openTable( file, tablename, "/" );
 	   return lt;
    }
    else if ( type == FITSTYPE )
    {
-	cout << "dalDataset::openTable FITS Type" << endl;
+	cout << "dalDataset::openTable FITS Type not yet supported." << endl;
 	return NULL;
    }
    else
+   {
+	cout << "openTable operation not supported for filetype "
+	  << type << endl;
    	return NULL;
+   }
 }
 
 dalTable * dalDataset::openTable( string tablename, string groupname )
 {
-   if ( type == H5TYPE )
-   {
-	   dalTable * lt = new dalTable();
-	   //cout << "Trying to open table " << endl; 
-	   lt->openTable( file, tablename, '/' + groupname );
-	   return lt;
+  if ( type == MSCASATYPE )
+  {
+	cout << "dalDataset::openTable MSCASA Type not yet supported." << endl;
+	return NULL;
+  }
+  else if ( type == H5TYPE )
+  {
+	dalTable * lt = new dalTable( H5TYPE );
+	//cout << "Trying to open table " << endl; 
+	lt->openTable( file, tablename, '/' + groupname );
+	return lt;
    }
    else if ( type == FITSTYPE )
    {

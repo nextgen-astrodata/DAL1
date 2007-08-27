@@ -87,6 +87,7 @@ class dalIntArray: public dalArray {
 	dalIntArray( hid_t obj_id, string arrayname, vector<int> dims,
 		     int data[], vector<int>chnkdims);
 	int * readIntArray( hid_t obj_id, string arrayname );
+// 	void write( vector<int> offset, vector<int> write_dims, int * data);
 	~dalIntArray();
 };
 

@@ -56,34 +56,43 @@ a dataset.
 */
 class dalTable{
 
-	void * 				file;		/// can be HDF5File, FITS, MS
+	void * file;		/// can be HDF5File, FITS, MS
 
 	// HDF5-specific variables
-	hid_t				file_id; 	/// hdf5 file_id
-	hid_t				table_id;	/// hdf5 table id
-	hsize_t				nfields;	/// hdf5 field count
-	hsize_t				nrecords;	/// hdf5 record count
-	herr_t				status;		/// hdf5 return status
-	char				**field_names;  /// hdf5 list of columns
+	hid_t file_id; 	/// hdf5 file_id
+	hid_t table_id;	/// hdf5 table id
+	hsize_t nfields; /// hdf5 field count
+	hsize_t nrecords; /// hdf5 record count
+	herr_t status; /// hdf5 return status
+	char **field_names;  /// hdf5 list of columns
 
-	bool				firstrecord;
-	string 				name; 		/// table name
-	vector<dalAttribute>		attributes; 	/// list of table attributes
-	dalFilter 			filter; 	/// filter associated with table
-	vector<dalColumn> 		columns; 	/// list of table columns
+	bool firstrecord;
+	string name; /// table name
+	string type;  /// "HDF5", "MSCASA" or "FITS"; for example
+	vector<dalAttribute> attributes; /// list of table attributes
+	dalFilter filter; /// filter associated with table
+	vector<dalColumn> columns; /// list of table columns
 
 	long nrows; /// number of table rows
 	int ncols; /// number of table columns
 
+#ifdef WITH_CASA
+	// casa-specific variables
+	casa::Table * casa_table_handle;
+#endif
+
   public:
 
-	dalTable(); /// Constructor
+	dalTable( string filetype ); /// Constructor
 	~dalTable(); /// Destructor
 
  	void getAttributes();
 	void printColumns();  /// list the columns contained within a table
 	void openTable( void * voidfile, string tablename, string groupname );
-	
+#ifdef WITH_CASA
+	void openTable( void * voidfile, string tablename,
+	  casa::MSReader * reader );
+#endif
 	void createTable( void * voidfile, string tablename, string groupname );
 	void addColumn( string colname, string coltype, int size=1 );  /// add a simple column
 	void addArrayColumn( string colname, string coltype, unsigned int dims );  /// add an array column
@@ -110,7 +119,7 @@ class dalTable{
 	long getNumberOfRows();  /// return the number of rows within a table
 //	int setRowNumber();  /// advance to a row by its index
 //	int advanceRow();  /// advance one row
-//	int getName();  /// return the name of the table
+	void getName();  /// return the name of the table
 //	int setName();  /// set the name of the table
 //	int insertRow();  /// insert a row at current location
 //	int removeRow();  /// remove a row at current location

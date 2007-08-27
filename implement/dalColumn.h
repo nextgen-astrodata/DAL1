@@ -49,12 +49,18 @@ class dalColumn {
 	string datatype;  /// column datatype
 	int size; /// datatype size
 	int totsize; /// total column size
-	hid_t coltype;
 	vector<dalAttribute> attributes; /// list of column attributes
 	dalFilter filter; /// filter associated with column
+
+	// hdf5-specific variables
+	hid_t coltype;
 	herr_t  status;  /// hdf5 call return status
 
-	
+#ifdef WITH_CASA
+	// casa-specific variables
+	casa::ROTableColumn * casa_column;
+#endif
+
 public:
 	dalColumn();
 	dalColumn( string colname, string coltype );

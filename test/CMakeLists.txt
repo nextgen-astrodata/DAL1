@@ -33,13 +33,20 @@ foreach (src ${tests})
   ## executable and its source
   add_executable(${src} ${src}.cpp)
   ## libraries against which to link
-  target_link_libraries(${src} dal)
+  if (HAVE_CASA OR HAVE_CASACORE)
+     target_link_libraries(${src} dal ${CASA_LIBRARIES})
+  else (HAVE_CASA OR HAVE_CASACORE)
+     target_link_libraries(${src} dal)
+  endif (HAVE_CASA OR HAVE_CASACORE)
 endforeach (src)
 
 ## ------------------------------------------------------------------------------
 ## Tests for working with external components
 
 if (HAVE_CASA OR HAVE_CASACORE)
+  add_definitions (
+    -DWITH_CASA
+  )
   add_executable (tMeasurementSets tMeasurementSets.cpp)
   target_link_libraries (tMeasurementSets dal ${CASA_LIBRARIES} ${libm})
   add_executable (tMS_dal tMS_dal.cpp)

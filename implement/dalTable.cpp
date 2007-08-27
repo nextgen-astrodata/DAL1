@@ -34,19 +34,73 @@
 // for high-level table interface (written in C)
 #include "H5TA.h"
 
-dalTable::dalTable()
+void dalTable::getName()
 {
+   if ( type == MSCASATYPE )
+   {
+	// print the name of the table
+#ifdef WITH_CASA
+	cout << "CASA table name: " << casa_table_handle->tableName() << endl;
+#else
+	cout << "CASA support not enabled." << endl;
+#endif
+   }
+   else
+   {
+	cout << "dalTable::getName operation not supported for type "
+	  << type << endl;
+   }
+}
+
+dalTable::dalTable( string filetype )
+{
+	type = filetype;
  	columns.clear();  // clear the coulumns vector
  	firstrecord = true;
+
+   if ( type == MSCASATYPE )
+   {
+#ifdef WITH_CASA
+	casa_table_handle = new casa::Table();
+#else
+	cout << "CASA support not enabled." << endl;
+#endif
+   }
 }
+
+#ifdef WITH_CASA
+void dalTable::openTable( void * voidfile, string tablename,
+   casa::MSReader * reader )
+{
+   if ( type == MSCASATYPE )
+   {
+	cout << "dalTable::openTable " << type << endl;
+	*casa_table_handle = reader->table( tablename );
+   }
+   else
+   {
+	cout << "dalTable::openTable operation not supported for type "
+	  << type << endl;
+   }
+}
+#endif
 
 void dalTable::openTable( void * voidfile, string tablename, string groupname )
 {
+   if ( type == H5TYPE )
+   {
 	name = groupname + '/' + tablename;
 	hid_t * lclfile = (hid_t*)voidfile; // H5File object
 	file = lclfile;
 	file_id = *lclfile;  // get the file handle
-    table_id = H5Dopen ( file_id, name.c_str() );
+
+	table_id = H5Dopen ( file_id, name.c_str() );
+   }
+   else
+   {
+	cout << "dalTable::openTable operation not supported for type "
+	  << type << endl;
+   }
 }
 
 dalTable::~dalTable()
@@ -191,8 +245,8 @@ void dalTable::addColumn( string colname, string coltype, int size )
 			field_type_new = H5Tvlen_create (H5T_NATIVE_DOUBLE);
 			
 		else {
-			cout << "ERROR: column type " << coltype << " is not supported."
-			<< endl;
+			cout << "ERROR: column type " << coltype <<
+			  " is not supported." << endl;
 			exit(98);
 		}
 	} else {
@@ -216,8 +270,8 @@ void dalTable::addColumn( string colname, string coltype, int size )
 			H5Tset_size( field_type_new, 16 );
 		}
 		else {
-			cout << "ERROR: column type " << coltype << " is not supported."
-			<< endl;
+			cout << "ERROR: column type " << coltype <<
+			  " is not supported." << endl;
 			exit(99);
 		}
 	}

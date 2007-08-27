@@ -31,6 +31,12 @@ add_definitions (
   -ftemplate-depth-100
   )
 
+if (HAVE_CASA OR HAVE_CASACORE)
+  add_definitions (
+    -DWITH_CASA
+  )
+endif (HAVE_CASA OR HAVE_CASACORE)
+
 if (DAL_PYTHON_BINDINGS)
   add_definitions (
     -DPYTHON

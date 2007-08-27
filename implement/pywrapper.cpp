@@ -218,6 +218,7 @@ BOOST_PYTHON_MODULE(libpydal)
 	.def("readIntArray", &dalGroup::ria_boost)
     ;
     bpl::class_<dalTable>("dalTable")
+	.def(bpl::init<char*>())
         .def("getAttributes", &dalTable::getAttributes)
 	.def("openTable", &dalTable::openTable)
 	.def("createTable", &dalTable::createTable)
