@@ -82,6 +82,11 @@ set (dal_link_libraries
 
 if (DAL_PYTHON_BINDINGS)
   list (APPEND dal_link_libraries ${BOOST_LIBRARIES} ${PYTHON_LIBRARIES})
+  if (HAVE_CASA OR HAVE_CASACORE)
+    list (APPEND dal_link_libraries dal ${CASA_LIBRARIES} ${libm})
+  endif (HAVE_CASA OR HAVE_CASACORE)
+endif (HAVE_CASA OR HAVE_CASACORE)
+
 #   message ("BOOST libraries: " ${BOOST_LIBRARIES})
 #   message ("PYTHON libraries: " ${PYTHON_LIBRARIES})
 endif (DAL_PYTHON_BINDINGS)

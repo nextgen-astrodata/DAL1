@@ -34,6 +34,8 @@
 // for high-level table interface (written in C)
 #include "H5TA.h"
 
+dalTable::dalTable() {}
+
 void dalTable::getName()
 {
    if ( type == MSCASATYPE )
@@ -924,3 +926,22 @@ void * dalTable::getAttribute( string attrname ) {
 		return NULL;
 	}
 }
+
+/************************************************************************
+ *
+ * The following functions are boost wrappers to allow some previously
+ *   defined functions to be easily called from a python prompt.
+ *
+ ************************************************************************/
+#ifdef PYTHON
+void dalTable::ot_hdf5( void * voidfile, string tablename, string groupname )
+{
+   openTable( voidfile, tablename, groupname );
+}
+#ifdef WITH_CASA
+void dalTable::ot_ms(void * voidfile, string tablename, casa::MSReader * reader)
+{
+   openTable( voidfile, tablename, reader );
+}
+#endif
+#endif

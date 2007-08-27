@@ -36,6 +36,7 @@
 #include <boost/python/class.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/numeric.hpp>
+#include <boost/python/tuple.hpp>
 
 //using namespace boost;
 namespace bpl = boost::python;
@@ -92,8 +93,6 @@ BOOST_PYTHON_OPAQUE_SPECIALIZED_TYPE_ID(opaque_)
 // }
 // void f2(int a, float b) { foo(a,b); }
 
-#include <boost/python/numeric.hpp>
-#include <boost/python/tuple.hpp>
 // sets the first element in a 2d numeric array
 // void set_first_element(bpl::numeric::array& y, int value)
 // {
@@ -220,7 +219,7 @@ BOOST_PYTHON_MODULE(libpydal)
     bpl::class_<dalTable>("dalTable")
 	.def(bpl::init<char*>())
         .def("getAttributes", &dalTable::getAttributes)
-	.def("openTable", &dalTable::openTable)
+	.def("openTable", &dalTable::ot_hdf5)
 	.def("createTable", &dalTable::createTable)
 	.def("addColumn", &dalTable::addColumn)
 	.def("addArrayColumn", &dalTable::addArrayColumn)

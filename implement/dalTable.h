@@ -83,6 +83,7 @@ class dalTable{
 
   public:
 
+	dalTable();
 	dalTable( string filetype ); /// Constructor
 	~dalTable(); /// Destructor
 
@@ -129,6 +130,18 @@ class dalTable{
 //	int getAttribute();  /// return a dalAttribute object retrieved by name
 //	int size(); /// return number of table rows
 //	int writeColVal(); /// write a value or set of
+/************************************************************************
+ *
+ * The following functions are boost wrappers to allow some previously
+ *   defined functions to be easily called from a python prompt.
+ *
+ ************************************************************************/
+#ifdef PYTHON
+	void ot_hdf5( void * voidfile, string tablename, string groupname );
+#ifdef WITH_CASA
+	void ot_ms( void * voidfile, string tablename, casa::MSReader * reader);
+#endif
+#endif
 };
 
 #endif
