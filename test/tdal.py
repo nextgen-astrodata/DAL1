@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python2.5
 
 import libpydal as dal
 #import dal
@@ -6,98 +6,141 @@ import numarray
 import sys
 #from pylab import *
 
-ds = dal.dalDataset("daltest.h5")
+def create_dataset( filename ):
+	ds = dal.dalDataset( filename )
+	return ds
 
-groupname = "Arrays"
-print "\nCreating group: " + groupname
-array_group = ds.createGroup( groupname )
+#----------------------
+# Groups
+#----------------------
 
-groupname = "Tables"
-print "\nCreating group: " + groupname
-table_group = ds.createGroup( groupname )
+def create_arrays_group( ds ):
+	groupname = "Arrays"
+	print "\nCreating group: " + groupname
+	array_group = ds.createGroup( groupname )
+	return array_group
 
+def create_table_group( ds ):
+	groupname = "Tables"
+	print "\nCreating group: " + groupname
+	table_group = ds.createGroup( groupname )
+	return table_group
 
 #----------------------
 # INT Arrays
 #----------------------
 
-print "\nCreating an INT array from a list..."
-arrayname = "intarray_list"
-dims = [2,2] # array dimensions (row-major)
-data = [1,1,2,2] # array data
-cdims = [] # no chunk dims, array size will be fixed
-int_array_list = array_group.createIntArray(arrayname,dims,data,cdims)
-print array_group.readIntArray(arrayname)
+def create_int_array_from_list( array_group ):
+	print "\nCreating an INT array from a list..."
+	arrayname = "intarray_list"
+	dims = [2,2] # array dimensions (row-major)
+	data = [1,1,2,2] # array data
+	cdims = [] # no chunk dims, array size will be fixed
+	int_array_list = array_group.createIntArray(arrayname,dims,data,cdims)
+	print array_group.readIntArray(arrayname)
 
-print "\nCreating an INT array from a numarray array..."
-arrayname = "intarray_numarray"
-data = numarray.array([[1,1],[2,2]]) # array data
-dims = [2,2] # array dimensions (row-major)
-# create the array with initial dimensions
-int_array_numarray = array_group.createIntArray(arrayname,dims,data)
-#int_array_numarray.extend( newdims )
-print array_group.readIntArray(arrayname)
+	#----------------------
+	#  ATTRIBUTES
+	#----------------------
+	
+	print "\nCreating a STRING attribute..."
+	attrname = "test_string_attribute"
+	attrval = "foo"
+	int_array_list.setAttribute_string(attrname,attrval)
+	
+	print "\nCreating an INT attribute..."
+	attrname = "test_int_attribute"
+	attrval = 5
+	int_array_list.setAttribute_int(attrname,attrval)
+	
+	print "\nCreating a FLOAT attribute..."
+	attrname = "test_float_attribute"
+	attrval = 1.234
+	int_array_list.setAttribute_float(attrname,attrval)
+	
+	print "\nGetting attributes of: " + arrayname
+	int_array_list.getAttributes()
 
-print "\nCreating an INT array from a numarray array (including chunk dims)..."
-arrayname = "intarray_numarray_cdims"
-data = numarray.array([[1,1],[2,2]]) # array data
-dims = [2,2] # array dimensions (row-major)
-cdims = [5,5] # rank can not be greater than data rank
-# create the array with initial dimensions
-int_array_numarray = array_group.createIntArray(arrayname,dims,data,cdims)
-newdims = [4,2]
-print "Extending the " + arrayname + " array."
-int_array_numarray.extend( newdims )
-print "Writing data to the new " + arrayname + " dimensions."
-offset = [2,0] # define the offset (row-major)
-write_dims = [2,2] # define the write dimensions (row-major)
-data = numarray.array([[1,1],[2,2]]) # array data
-#int_array_numarray.write( offset, write_dims, data )
-print array_group.readIntArray(arrayname)
+def create_int_array_from_numarray( array_group ):
+	print "\nCreating an INT array from a numarray array..."
+	arrayname = "intarray_numarray"
+	data = numarray.array([[1,1],[2,2]]) # array data
+	dims = [2,2] # array dimensions (row-major)
+	# create the array with initial dimensions
+	int_array_numarray = array_group.createIntArray(arrayname,dims,data)
+	#int_array_numarray.extend( newdims )
+	print array_group.readIntArray(arrayname)
 
-#----------------------
-#  ATTRIBUTES
-#----------------------
+def create_int_array_from_numarray_including_dims( array_group ):
+	print "\nCreating an INT array from a numarray array " \
+	  + "(including chunk dims)..."
+	arrayname = "intarray_numarray_cdims"
+	data = numarray.array([[1,1],[2,2]]) # array data
+	dims = [2,2] # array dimensions (row-major)
+	cdims = [5,5] # rank can not be greater than data rank
+	# create the array with initial dimensions
+	int_array_numarray = \
+	  array_group.createIntArray(arrayname,dims,data,cdims)
+	newdims = [4,2]
+	print "Extending the " + arrayname + " array."
+	int_array_numarray.extend( newdims )
+	print "Writing data to the new " + arrayname + " dimensions."
+	offset = [2,0] # define the offset (row-major)
+	write_dims = [2,2] # define the write dimensions (row-major)
+	data = numarray.array([[1,1],[2,2]]) # array data
+	#int_array_numarray.write( offset, write_dims, data )
+	print array_group.readIntArray(arrayname)
 
-print "\nCreating a STRING attribute..."
-attrname = "test_string_attribute"
-attrval = "foo"
-int_array_list.setAttribute_string(attrname,attrval)
-
-print "\nCreating an INT attribute..."
-attrname = "test_int_attribute"
-attrval = 5
-int_array_list.setAttribute_int(attrname,attrval)
-
-print "\nCreating a FLOAT attribute..."
-attrname = "test_float_attribute"
-attrval = 1.234
-int_array_list.setAttribute_float(attrname,attrval)
-
-print "\nGetting attributes of: " + arrayname
-int_array_list.getAttributes()
 
 #----------------------
 # FLOAT Arrays
 #----------------------
 
+def create_float_array_from_list( array_group ):
+	print "\nCreating a FLOAT array from a list..."
+	arrayname = "floatarray_list"
+	dims = [2,2] # array dimensions
+	data = [1,1,2,2] # array data
+	cdims = [] # no chunk dims, array size will be fixed
+	int_array_list = array_group.createFloatArray(arrayname,dims,data,cdims)
+
+def create_float_array_from_numarray( array_group ):
+	print "\nCreating a FLOAT array from a numarray array..."
+	arrayname = "floatarray_numarray"
+	dims = [2,2] # array dimensions
+	cdims = [] # no chunk dims, array size will be fixed
+	data = numarray.array([[1,1],[2,2]]) # array data
+	float_array_numarray = \
+	 array_group.createFloatArray(arrayname,dims,data,cdims)
+
+def close_dataset( ds ):
+	print "\nClosing dataset..."
+	ds.close()
+
+#----------------------
+# MAIN
 #----------------------
 
-print "\nCreating a FLOAT array from a list..."
-arrayname = "floatarray_list"
-dims = [2,2] # array dimensions
-data = [1,1,2,2] # array data
-cdims = [] # no chunk dims, array size will be fixed
-int_array_list = array_group.createFloatArray(arrayname,dims,data,cdims)
+# create the file
+filename = "daltest.h5"
+ds = create_dataset( filename )
 
-#----------------------
+# groups
+array_group = create_arrays_group( ds )
+table_group = create_table_group( ds )
 
-print "\nCreating a FLOAT array from a numarray array..."
-arrayname = "floatarray_numarray"
-data = numarray.array([[1,1],[2,2]]) # array data
-float_array_numarray = array_group.createFloatArray(arrayname,dims,data,cdims)
+# int arrays
+create_int_array_from_list( array_group )
+create_int_array_from_numarray( array_group )
+create_int_array_from_numarray_including_dims( array_group )
 
-#----------------------
+# float arrays
+create_float_array_from_list( array_group )
+create_float_array_from_numarray( array_group )
+
+close_dataset( ds )
+
+
 
 
 #----------------------
@@ -119,10 +162,6 @@ float_array_numarray = array_group.createFloatArray(arrayname,dims,data,cdims)
 #arrayname = "complexarray_numarray"
 #data = numarray.array([[1,1],[2,2]]) # array data
 #float_array_numarray = ds.createComplexArray(arrayname,dims,data,cdims)
-
-
-
-
 
 
 #--------------------------------------
@@ -161,6 +200,3 @@ float_array_numarray = array_group.createFloatArray(arrayname,dims,data,cdims)
 
 #plot([1,2,3,4,5,6,7,8,9,10],vals)
 #show()
-
-print "\nClosing dataset..."
-ds.close()
