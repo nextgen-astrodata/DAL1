@@ -1,5 +1,5 @@
 ##------------------------------------------------------------------------------
-## $Id:: CMakeLists.txt 494 2007-08-02 09:39:15Z baehren                       $
+## $Id:: CMakeLists.txt 600 2007-08-22 11:40:47Z baehren                       $
 ##------------------------------------------------------------------------------
 
 ## -----------------------------------------------------------------------------
@@ -16,14 +16,10 @@ set(CMAKE_CXX_FLAGS "-W -Wall")
 
 message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 
-#if(NOT CMAKE_BUILD_TYPE)
-#    set(CMAKE_BUILD_TYPE "Debug")
-#endif(NOT CMAKE_BUILD_TYPE)
-
 add_definitions (
   -DMPICH_IGNORE_CXX_SEEK
-  -D_BSD_SOURCE
-  -D_POSIX_SOURCE 
+#  -D_BSD_SOURCE
+#  -D_POSIX_SOURCE 
   -D_FILE_OFFSET_BITS=64
   -D_LARGEFILE64_SOURCE
   -D_LARGEFILE_SOURCE
@@ -34,19 +30,42 @@ add_definitions (
 if (HAVE_CASA OR HAVE_CASACORE)
   add_definitions (
     -DWITH_CASA
-  )
+    # -- compiler flags utilized in the source code --
+    -DAIPS_STDLIB
+    -DAIPS_AUTO_STL
+    -DAIPS_NO_LEA_MALLOC
+    )
+  IF (APPLE)
+    ## definition common to apple architectures
+    add_definitions (
+      -DAIPS_DARWIN
+      )
+  ELSE (APPLE)
+    ADD_DEFINITIONS (-DAIPS_LINUX)
+  ENDIF (APPLE)
+  ## Platform test 32/64 bit ------------------------------
+  set (CMAKE_SYSTEM_64BIT 0)
+  if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES i386)
+    if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES i686)
+      if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES powerpc)
+        set (CMAKE_SYSTEM_64BIT 1)
+        add_definitions (-DAIPS_64B)
+      endif (NOT CMAKE_SYSTEM_PROCESSOR MATCHES powerpc)
+    endif (NOT CMAKE_SYSTEM_PROCESSOR MATCHES i686)
+  endif (NOT CMAKE_SYSTEM_PROCESSOR MATCHES i386)
+  if (APPLE)
+    if (NOT CMAKE_SYSTEM_PROCESSOR MATCHES powerpc)
+      set (CMAKE_SYSTEM_64BIT 1)
+      add_definitions (-DAIPS_64B)
+    endif (NOT CMAKE_SYSTEM_PROCESSOR MATCHES powerpc)
+  endif (APPLE)
 endif (HAVE_CASA OR HAVE_CASACORE)
 
 if (DAL_PYTHON_BINDINGS)
   add_definitions (
     -DPYTHON
-  )
+    )
 endif (DAL_PYTHON_BINDINGS)
-
-#link_directories(
-#  ${HDF5_LIBRARIES}
-#  ${BLITZ_LIBRARIES}
-#  )
 
 ## ------------------------------------------------------------------------------
 ## Build the library
