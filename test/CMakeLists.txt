@@ -22,8 +22,6 @@ set (tests
   tswrite
   msread
   mswrite
-  tdalLopesEvent
-  lewrite
   tdal
   tdal_fits
   tpulsar_dal
@@ -41,7 +39,19 @@ foreach (src ${tests})
 endforeach (src)
 
 ## ------------------------------------------------------------------------------
-## Tests for working with external components
+## Test which require additional external libraries (and thereby should be
+## considered optional)
+
+## [1] Blitz++
+
+if (HAVE_BLITZ)
+  foreach (src tdalLopesEvent lewrite)
+    add_executable(${src} ${src}.cpp)
+    target_link_libraries(${src} dal ${BLITZ_LIBRARIES})
+    endforeach (src)
+endif (HAVE_BLITZ)
+
+## [2] casacore
 
 if (HAVE_CASA OR HAVE_CASACORE)
   add_definitions (

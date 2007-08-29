@@ -99,13 +99,16 @@ include_directories (
   ${DAL_SOURCE_DIR}
   ${DAL_SOURCE_DIR}/implement
   ${DAL_SOURCE_DIR}/test
-  ${BLITZ_INCLUDES}
   ${BOOST_INCLUDES}
   ${CASA_INCLUDES}
   ${CFITSIO_INCLUDES}
   ${HDF5_INCLUDES}
   ${PYTHON_INCLUDE_PATH}
   )
+
+if (HAVE_BLITZ)
+  include_directories (${BLITZ_INCLUDES})
+endif (HAVE_BLITZ)
 
 ## -----------------------------------------------------------------------------
 ## Subdirectories
