@@ -128,18 +128,6 @@ if (DAL_PYTHON_BINDINGS)
 endif (DAL_PYTHON_BINDINGS)
 
 
-#add_executable(msread msread.cpp)
-#add_executable(mswrite mswrite.cpp)
-#add_executable(time_series time_series.cpp)
-
-#target_link_libraries(msread dal)
-#target_link_libraries(mswrite dal)
-#target_link_libraries(time_series dal)
-
-#enable_testing()
-#add_test(test1 ${CMAKE_CURRENT_BINARY_DIR}/mswrite foo.h5)
-#add_test(test2 ${CMAKE_CURRENT_BINARY_DIR}/mswrite)
-
 ## ------------------------------------------------------------------------------
 ## Installation
 
