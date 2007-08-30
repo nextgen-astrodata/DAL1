@@ -128,7 +128,7 @@ def close_dataset( ds ):
 #----------------------
 
 #check the version of python
-check_pyversion()
+#check_pyversion()
 import libpydal as dal
 
 # create the file
