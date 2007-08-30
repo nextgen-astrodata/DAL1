@@ -93,9 +93,9 @@ class dalTable{
 	void printColumns();  /// list the columns contained within a table
 	void openTable( void * voidfile, string tablename, string groupname );
 #ifdef WITH_CASA
-	void openTable( void * voidfile, string tablename,
+	void openTable( /*void * voidfile,*/ string tablename,
 	  casa::MSReader * reader );
-	void openTable( void * voidfile, string tablename,
+	void openTable( /*void * voidfile,*/ string tablename,
 	  casa::MSReader * reader, string parse_string );
 #endif
 	void createTable( void * voidfile, string tablename, string groupname );
@@ -144,7 +144,7 @@ class dalTable{
 #ifdef PYTHON
 	void ot_hdf5( void * voidfile, string tablename, string groupname );
 #ifdef WITH_CASA
-	void ot_ms( void * voidfile, string tablename, casa::MSReader * reader);
+	void ot_ms( /*void * voidfile,*/ string tablename, casa::MSReader * reader);
 #endif
 #endif
 };

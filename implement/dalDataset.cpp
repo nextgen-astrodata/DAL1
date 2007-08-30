@@ -365,7 +365,7 @@ dalTable * dalDataset::openTable( string tablename )
 #ifdef WITH_CASA
 // 	ms_reader = new MSReader( *ms );
 	dalTable * lt = new dalTable( MSCASATYPE );
-	lt->openTable( file, tablename, ms_reader );
+	lt->openTable( /*file,*/ tablename, ms_reader );
 // 	lt->casa_table_handle = ms_reader->table( "MAIN" );
 	return lt;
 #else
@@ -404,7 +404,7 @@ dalTable * dalDataset::openFilteredTable( string tablename, string parse_string 
    if ( type == MSCASATYPE )
    {
 	dalTable * lt = new dalTable( MSCASATYPE );
-	lt->openTable( file, tablename, ms_reader, parse_string );
+	lt->openTable( /*file,*/ tablename, ms_reader, parse_string );
 	return lt;
    }
    else

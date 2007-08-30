@@ -34,8 +34,16 @@
 // for high-level table interface (written in C)
 #include "H5TA.h"
 
+/****************************************************************
+ *  Default constructor
+ *
+ *****************************************************************/
 dalTable::dalTable() {}
 
+/****************************************************************
+ *  (experimental)  Return the column data
+ *
+ *****************************************************************/
 void * dalTable::getColumnData( string colname )
 {
    if ( type == MSCASATYPE )
@@ -45,7 +53,8 @@ void * dalTable::getColumnData( string colname )
 	column = casa_table_handle->getColumn( colname );
 	return column;*/
 
-	casa::uInt nrow = casa_table_handle->nrow();
+	casa::uInt nrow;
+	nrow = casa_table_handle->nrow();
 
 /*
 	// Specific column handling
@@ -298,6 +307,10 @@ void * dalTable::getColumnData( string colname )
    }
 }
 
+/****************************************************************
+ *  (experimental) Print the name of the table
+ *
+ *****************************************************************/
 void dalTable::getName()
 {
    if ( type == MSCASATYPE )
@@ -316,6 +329,10 @@ void dalTable::getName()
    }
 }
 
+/****************************************************************
+ *  Create a new table object
+ *
+ *****************************************************************/
 dalTable::dalTable( string filetype )
 {
 	type = filetype;
@@ -333,10 +350,13 @@ dalTable::dalTable( string filetype )
 }
 
 #ifdef WITH_CASA
-void dalTable::openTable( void * voidfile, string tablename,
+/****************************************************************
+ *  Open a CASA table
+ *
+ *****************************************************************/
+void dalTable::openTable( /*void * voidfile,*/ string tablename,
    casa::MSReader * reader )
 {
-cout << "AAAAAAAAAAAAAA" << endl;
    if ( type == MSCASATYPE )
    {
 	cout << "dalTable::openTable " << type << endl;
@@ -348,10 +368,14 @@ cout << "AAAAAAAAAAAAAA" << endl;
 	  << type << endl;
    }
 }
-void dalTable::openTable( void * voidfile, string tablename,
+
+/****************************************************************
+ *  Open a filtered CASA table
+ *
+ *****************************************************************/
+void dalTable::openTable( /*void * voidfile,*/ string tablename,
    casa::MSReader * reader, string parse_string )
 {
-cout << "BBBBBBBBBBBBBB" << endl;
    if ( type == MSCASATYPE )
    {
 	cout << "dalTable::openTable " << type << endl;
@@ -366,6 +390,10 @@ cout << "BBBBBBBBBBBBBB" << endl;
 }
 #endif
 
+/****************************************************************
+ *  Open a table (mainly for hdf5)
+ *
+ *****************************************************************/
 void dalTable::openTable( void * voidfile, string tablename, string groupname )
 {
    if ( type == H5TYPE )
@@ -384,6 +412,10 @@ void dalTable::openTable( void * voidfile, string tablename, string groupname )
    }
 }
 
+/****************************************************************
+ *  Default destructor
+ *
+ *****************************************************************/
 dalTable::~dalTable()
 {
 	/* broken in HDF5 library itself! */
@@ -391,6 +423,10 @@ dalTable::~dalTable()
 	//		H5TBdelete_record (file_id, name.c_str(), 0, 1);
 }
 
+/****************************************************************
+ *  print the columns in the table
+ *
+ *****************************************************************/
 void dalTable::printColumns()
 {
 	// Print the column list by iterating through the global column vector
@@ -399,6 +435,10 @@ void dalTable::printColumns()
 		cout << columns[ii].getName() << " " << endl;
 }
 
+/****************************************************************
+ *  (currently assumes HDF5) Create a table in a group
+ *
+ *****************************************************************/
 void dalTable::createTable( void * voidfile, string tablename, string groupname )
 {
 	/* It is necessary to have at least one column for table creation
@@ -442,6 +482,10 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 }
 
 
+/****************************************************************
+ *  (currently assumes HDF5) Add a column to a table
+ *
+ *****************************************************************/
 void dalTable::addColumn( string colname, string coltype, int size )
 {
 
@@ -580,6 +624,11 @@ void dalTable::addColumn( string colname, string coltype, int size )
 	}
 
 }
+
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 herr_t attr_info(hid_t loc_id, const char *name, void *opdata);
 void dalTable::getAttributes() {
 
@@ -590,6 +639,10 @@ void dalTable::getAttributes() {
 
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 void dalTable::addArrayColumn( string colname, string coltype, unsigned int indims )
 {
 	// make sure the column name isn't blank
@@ -726,6 +779,10 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 	
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 				int subfields )
 {
@@ -826,6 +883,10 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 void dalTable::removeColumn(string colname)
 {	
 	status = H5TBget_table_info( file_id, name.c_str(), &nfields, &nrecords );
@@ -870,6 +931,10 @@ void dalTable::removeColumn(string colname)
 				"\' not present.  Cannot delete." << endl;
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 void dalTable::writeDataByColNum( void * data, int index, int rownum )
 {
 	
@@ -893,6 +958,10 @@ void dalTable::writeDataByColNum( void * data, int index, int rownum )
 					field_offsets, dst_sizes, data);
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 void dalTable::appendRow( void * data )
 {
 	hsize_t recs2write = 1; // number of records to append
@@ -928,6 +997,10 @@ void dalTable::appendRow( void * data )
 	free( size_out );
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 void dalTable::appendRows( void * data, long row_count )
 {
 	size_t * field_sizes;
@@ -964,6 +1037,10 @@ void dalTable::appendRows( void * data, long row_count )
 	free( size_out );
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 void dalTable::setAttribute_string( string attrname, string data ) {
 	if ( H5LTset_attribute_string( file_id, name.c_str(),
 					attrname.c_str(), data.c_str() ) < 0 ) {
@@ -971,6 +1048,10 @@ void dalTable::setAttribute_string( string attrname, string data ) {
 	}
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 void dalTable::setAttribute_char( string attrname, char * data, int size ) {
 	if ( H5LTset_attribute_char( file_id, name.c_str(),
 					attrname.c_str(), data, size ) < 0 ) {
@@ -978,6 +1059,10 @@ void dalTable::setAttribute_char( string attrname, char * data, int size ) {
 	}
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 void dalTable::setAttribute_int( string attrname, int * data, int size ) {
 	if ( H5LTset_attribute_int( file_id, name.c_str(),
 					attrname.c_str(), data, size ) < 0 ) {
@@ -985,6 +1070,10 @@ void dalTable::setAttribute_int( string attrname, int * data, int size ) {
 	}
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 void dalTable::setAttribute_uint( string attrname, unsigned int * data, int size ) {
 	if ( H5LTset_attribute_uint( file_id, name.c_str(),
 					attrname.c_str(), data, size ) < 0 ) {
@@ -992,6 +1081,10 @@ void dalTable::setAttribute_uint( string attrname, unsigned int * data, int size
 	}
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 void dalTable::setAttribute_double( string attrname, double * data, int size ) {
 	if ( H5LTset_attribute_double( file_id, name.c_str(),
 					attrname.c_str(), data, size ) < 0 ) {
@@ -999,6 +1092,10 @@ void dalTable::setAttribute_double( string attrname, double * data, int size ) {
 	}
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
 {
 	size_t * field_sizes;
@@ -1026,12 +1123,20 @@ void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
 	cout << endl;
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 long dalTable::getNumberOfRows()
 {
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
 	return nrecords;
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buffersize )
 {
         size_t * field_sizes;
@@ -1076,6 +1181,10 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buf
         }
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 bool dalTable::findAttribute( string attrname )
 {
 	if ( H5LT_find_attribute( table_id, attrname.c_str() ) <= 0 ) {
@@ -1086,6 +1195,10 @@ bool dalTable::findAttribute( string attrname )
 	}
 }
 
+/****************************************************************
+ *  
+ *
+ *****************************************************************/
 void dalTable::printAttribute( string attrname ) {
 
 	hsize_t * dims;
@@ -1153,6 +1266,10 @@ void dalTable::printAttribute( string attrname ) {
 	}
 }
 
+/****************************************************************
+ *  (currently assumes hdf5) return the value of the (scalar) attribute
+ *
+ *****************************************************************/
 void * dalTable::getAttribute( string attrname ) {
 
 	hsize_t * dims;
@@ -1175,7 +1292,7 @@ void * dalTable::getAttribute( string attrname ) {
 				dims, &type_class, &type_size );
 
 	if ( H5T_FLOAT == type_class ) {
-		double data[*dims];
+		double data[ *dims ];
 		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
 			 H5T_NATIVE_DOUBLE, data) )
 		  return NULL;
@@ -1213,14 +1330,25 @@ void * dalTable::getAttribute( string attrname ) {
  *
  ************************************************************************/
 #ifdef PYTHON
+
+/****************************************************************
+ *  wrapper for openTable (hdf5)
+ *
+ *****************************************************************/
 void dalTable::ot_hdf5( void * voidfile, string tablename, string groupname )
 {
    openTable( voidfile, tablename, groupname );
 }
+
 #ifdef WITH_CASA
-void dalTable::ot_ms(void * voidfile, string tablename, casa::MSReader * reader)
+/****************************************************************
+ *  wrapper for openTable (casa)
+ *
+ *****************************************************************/
+void dalTable::ot_ms(/*void * voidfile,*/ string tablename, casa::MSReader * reader)
 {
-   openTable( voidfile, tablename, reader );
+   openTable( /*voidfile,*/ tablename, reader );
 }
 #endif
+
 #endif
