@@ -1,12 +1,13 @@
 #! /usr/bin/env python
 
-import dal
+import libpydal as dal
 from pylab import *
-import numpy
+import numarray
+#import numpy
 import sys
 
 ds= dal.dalDataset()
-ds.open(sys.argv[1])
+ds.open(sys.argv[1], "MSCASA")
 table = ds.openTable("MAIN","/")
 ms = dal.msp()
 row = ms.value()

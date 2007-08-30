@@ -181,6 +181,9 @@ class dalDataset{
 	// openTable wrappers
 	dalTable * ot1_boost( string tablename );
 	dalTable * ot2_boost( string tablename, string groupname );
+
+	// openFilteredTable wrappers
+	dalTable * oft_boost( string tablename, string parse_string );
 #endif
 };
 #endif

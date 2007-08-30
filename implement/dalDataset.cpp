@@ -511,15 +511,27 @@ dalTable * dalDataset::ct2_boost(string a, string b) {
 
 dalTable * dalDataset::ot1_boost(string a) {
 	dalTable * ret;
-	ret = dalDataset::openTable(a);
+	ret = openTable(a);
 	return ret;
 }
 
 dalTable * dalDataset::ot2_boost(string a, string b) {
 	dalTable * ret;
-	ret = dalDataset::openTable(a,b);
+	ret = openTable(a,b);
 	return ret;
 }
+
+/******************************************************
+ * wrappers for openFilteredTable
+ ******************************************************/
+#ifdef WITH_CASA
+dalTable * dalDataset::oft_boost( string tablename, string parse_string )
+{
+   dalTable * ret;
+   ret = openFilteredTable( tablename, parse_string );
+   return ret;
+}
+#endif
 
 /******************************************************
  * wrappers for createIntArray
@@ -710,12 +722,13 @@ bpl::numeric::array dalDataset::ria_boost( string arrayname )
 	    data_list.append(data[ii]);
 	}
 	bpl::numeric::array nadata(
-          bpl::make_tuple(
+//           bpl::make_tuple(
 	    bpl::make_tuple(data_list)
-	  )
+// 	  )
 	);
 // 	dims_list.reverse();
 	nadata.setshape(dims_list);
+	delete data;
 	return nadata;
 }
 

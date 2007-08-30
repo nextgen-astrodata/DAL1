@@ -10,7 +10,7 @@ def check_pyversion():
 		print "\nSorry: Python version must be at least 2.5\n"
 		sys.exit(-1)
 
-#from pylab import *
+from pylab import *
 
 def create_dataset( filename ):
 	ds = dal.dalDataset( filename )

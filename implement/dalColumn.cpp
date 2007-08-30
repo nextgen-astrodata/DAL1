@@ -46,6 +46,62 @@ dalColumn::dalColumn( string complexcolname/*, void * dataformat*/ )
 	datatype = "dal_COMPLEX";
 }
 
+#ifdef WITH_CASA
+dalColumn::dalColumn(casa::Table table, string colname)
+{
+	casa_column = new casa::ROTableColumn( table, colname );
+	casa_col_desc = casa_column->columnDesc();
+}
+#endif
+
+void dalColumn::close()
+{
+#ifdef WITH_CASA
+	delete casa_column;
+#endif
+}
+
+void dalColumn::type()
+{
+#ifdef WITH_CASA
+	cout << casa_col_desc.dataType() << endl;
+#endif
+}
+
+int dalColumn::isScalar()
+{
+#ifdef WITH_CASA
+   if ( casa_col_desc.isScalar() )
+      return 1;
+   else
+      return 0;
+#endif
+}
+
+int dalColumn::isArray()
+{
+#ifdef WITH_CASA
+   if ( casa_col_desc.isArray() )
+      return 1;
+   else
+      return 0;
+#endif
+}
+
+void dalColumn::shape()
+{
+#ifdef WITH_CASA
+   cout << casa_column->shape(1);
+#endif
+}
+
+void dalColumn::ndims()
+{
+#ifdef WITH_CASA
+   cout << casa_column->ndim(1);
+#endif
+}
+
 string dalColumn::getName()
 {
   return name;

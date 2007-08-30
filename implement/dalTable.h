@@ -99,6 +99,7 @@ class dalTable{
 	  casa::MSReader * reader, string parse_string );
 #endif
 	void createTable( void * voidfile, string tablename, string groupname );
+	dalColumn * getColumn( string colname );
 	void addColumn( string colname, string coltype, int size=1 );
 	void addArrayColumn( string colname, string coltype, unsigned int dims);
 	void addComplexColumn( string compname, vector<dalColumn>,
@@ -143,9 +144,14 @@ class dalTable{
  ************************************************************************/
 #ifdef PYTHON
 	void ot_hdf5( void * voidfile, string tablename, string groupname );
+
 #ifdef WITH_CASA
-	void ot_ms( /*void * voidfile,*/ string tablename, casa::MSReader * reader);
+	void ot_ms1( string tablename, casa::MSReader * reader);
+	void ot_ms2( string tablename, casa::MSReader * reader,
+	  string parse_string );
+// 	bpl::numeric::array gcd_boost( string arrayname );
 #endif
+
 #endif
 };
 

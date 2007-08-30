@@ -59,16 +59,26 @@ class dalColumn {
 #ifdef WITH_CASA
 	// casa-specific variables
 	casa::ROTableColumn * casa_column;
+	casa::ColumnDesc casa_col_desc;
+	
 #endif
 
 public:
 	dalColumn();
 	dalColumn( string colname, string coltype );
+	dalColumn( casa::Table table, string colname );
 	dalColumn( string complexcolname );
 	void addMember( string member_name, string type );
 	string getName();
 	string getType();
 	int getSize();
+	void close();
+	void type();
+// 	void data();
+	int isArray();
+	int isScalar();
+	void shape();
+	void ndims();
 
 //	int getNumber();  /// return the index of a column
 // 	void addArray();

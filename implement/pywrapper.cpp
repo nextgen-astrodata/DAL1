@@ -179,6 +179,10 @@ BOOST_PYTHON_MODULE(libpydal)
 	.def("readIntArray", &dalDataset::ria_boost)
 	.def("readFloatArray", &dalDataset::rfa_boost)
 // 	.def("sfe", &dalDataset::sfe)
+#ifdef WITH_CASA
+	.def("openFilteredTable", &dalDataset::oft_boost,
+		bpl::return_value_policy<bpl::manage_new_object>())
+#endif
     ;
 
 //     bpl::def("set_first_element",set_first_element)
@@ -241,6 +245,10 @@ BOOST_PYTHON_MODULE(libpydal)
         .def("setAttribute_double", &dalTable::setAttribute_double)
 	.def("findAttribute", &dalTable::findAttribute)
 	.def("getNumberOfRows", &dalTable::getNumberOfRows)
+#ifdef WITH_CASA
+	.def("openTable", &dalTable::ot_ms1)
+	.def("openTable", &dalTable::ot_ms2)
+#endif
     ;
 
     bpl::class_<dalArray>("dalArray")

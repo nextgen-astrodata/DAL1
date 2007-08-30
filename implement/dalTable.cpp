@@ -44,6 +44,34 @@ dalTable::dalTable() {}
  *  (experimental)  Return the column data
  *
  *****************************************************************/
+dalColumn * dalTable::getColumn( string colname )
+{
+   if ( type == MSCASATYPE )
+   {
+#ifdef WITH_CASA
+/*	casa::ROTableColumn column;
+	column = casa_table_handle->getColumn( colname );
+	return column;*/
+
+// using the dalColumn class
+	dalColumn * lclcol;
+	lclcol = new dalColumn( *casa_table_handle, colname );
+	lclcol->type();
+	if ( lclcol->isScalar() )
+	  cout << "SCALAR" << endl;
+	if ( lclcol->isArray() )
+	  cout << "ARRAY" << endl;
+	return lclcol;
+   }
+   else
+	return NULL;
+#endif
+}
+
+/****************************************************************
+ *  (experimental)  Return the column data
+ *
+ *****************************************************************/
 void * dalTable::getColumnData( string colname )
 {
    if ( type == MSCASATYPE )
@@ -53,58 +81,18 @@ void * dalTable::getColumnData( string colname )
 	column = casa_table_handle->getColumn( colname );
 	return column;*/
 
+// using the dalColumn class
+	dalColumn lclcol;
+	lclcol = dalColumn( *casa_table_handle, colname );
+	lclcol.type();
+	if ( lclcol.isScalar() )
+	  cout << "SCALAR" << endl;
+	if ( lclcol.isArray() )
+	  cout << "ARRAY" << endl;
+
+exit(2);
 	casa::uInt nrow;
 	nrow = casa_table_handle->nrow();
-
-/*
-	// Specific column handling
-	if ( "TIME" == colname )
-	{
-		casa::ROScalarColumn<double>
-		  timeColumn( *casa_table_handle, colname );
-		double val;
-		for( casa::uInt ii=0; ii<2; ii++)
-		{
-			timeColumn.get(ii,val);
-			cout << val << endl;
-		}
-	}
-	if ( "DATA" == colname )
-	{
-		casa::ROArrayColumn< casa::Complex >
-		  dataColumn( *casa_table_handle, colname );
-		casa::Array< casa::Complex > cval;
-		casa::uInt row = 1;
-		dataColumn.get(row,cval,casa::False);
-// 		cout << cval << endl;
-		std::vector< casa::Complex > cval_data;
-		cval.tovector( cval_data );
-		cout << cval_data.size() << endl;
-		cout << cval_data[0] << cval_data[1] << cval_data[4] << endl;
-		casa::Array< casa::Complex > data_column_polarization;
-		std::vector< casa::Complex > data_data;
-		std::vector< complex<float> > data_row;
-		for (int row=0; row < 1; row++)
-		{
-		  for (int polarization=0; polarization<1; polarization++)
-		  {
-		    casa::IPosition
-			start (2,polarization,0),
-			length (2,1,255),
-			stride (2,1,1);
-		    casa::Slicer slicer (start, length, stride);
-		    data_column_polarization = dataColumn.getSlice(row, slicer);
-		    data_column_polarization.tovector( data_data );
-// 		    for (unsigned int goo=0; goo<data_data.size(); goo++)
-// 		      data_row.push_back( data_data[goo] );
-		    }
-		  }
-
-		cout << "Some data:" << endl;
-		for (int jk=0; jk<2; jk++)
-		  cout << data_data[jk] << endl;
-	}
-*/
 
 	// create a column object
 	casa::ROTableColumn column( *casa_table_handle, colname );
@@ -118,12 +106,8 @@ void * dalTable::getColumnData( string colname )
 	if ( casa::True == isarray )
 	{
 	  cout << "YES" << endl;
-// 	  casa::uInt nrrow = column.nrow();
-// 	  casa::uInt ndims = column.ndim(1);
 	  casa::uInt ndimcol = column.ndimColumn();
 	  casa::IPosition shape = column.shape(1);
-// 	  cout << "  Number or rows: " << nrrow << endl;
-// 	  cout << "  Number of dims: " << ndims << endl;
 	  cout << "  Number of global dims: " << ndimcol << endl;
 	  cout << "  Shape: " << shape << endl;
 	  switch ( col_desc.dataType() )
@@ -181,14 +165,7 @@ void * dalTable::getColumnData( string colname )
 	      array_vals_dbl.tovector( valvec );
 	      cout << "vector size: " << valvec.size() << endl;
 	      cout << "Data from cell number: " << cell << endl;
-/*	      for (int op=0; op<10; op++)
-	        cout << valvec[op] << endl;*/
-// 	      exit(12);
-// 	      return valvec;
-//               double * data_p = vals.data();
-// 	      cout << data_p << ' ' << data_p[0] << ' ' << data_p[5] << endl;
 	      return array_vals_dbl.data();
-// 	      return NULL;
 	    }
 	    break;
 	    case casa::TpString:
@@ -205,18 +182,6 @@ void * dalTable::getColumnData( string colname )
               return value;
 	    }
 	    break;
-/*	  case casa::TpArrayShort:
-	  cout << "Data type is ArrayShort." << endl;
-	  break;
-	  case casa::TpArrayDouble:
-	  cout << "Data type is ArrayDouble." << endl;
-	  break;
-	  case casa::TpArrayComplex:
-	  cout << "Data type is ArrayComplex." << endl;
-	  break;
-	  case casa::TpTable:
-	  cout << "Data type is Table." << endl;
-	  break;*/
 	    default:
 	      cout << "Datatype not recognized." << endl;
 	  }
@@ -1340,15 +1305,95 @@ void dalTable::ot_hdf5( void * voidfile, string tablename, string groupname )
    openTable( voidfile, tablename, groupname );
 }
 
-#ifdef WITH_CASA
 /****************************************************************
- *  wrapper for openTable (casa)
+ *  wrapper for getColumnData
  *
  *****************************************************************/
-void dalTable::ot_ms(/*void * voidfile,*/ string tablename, casa::MSReader * reader)
+// bpl::numeric::array dalTable::gcd_boost( string arrayname )
+// {
+
+/*double * mytime_data = new double[ 100 ];
+mytime_data = (double *)maintable->getColumnData( "TIME" );
+for (int ii=0; ii<10; ii++)
+  cout << "TIME data out: " << mytime_data[ii] << endl;
+delete mytime_data;
+
+double * myuvw;
+myuvw = (double *)maintable->getColumnData( "UVW" );
+// cout << myuvw << endl;
+for (int ii=0; ii<30; ii++)
+   cout << "UVW data out: " << myuvw[ii] << endl;
+
+complex<float> * data;
+data = (complex<float> *)maintable->getColumnData( "DATA" );
+for (int ii=0; ii<30; ii++)
+   cout << "DATA out: " << data[ii] << endl;
+
+	hid_t lclfile;
+	hid_t  status;
+// 	hid_t datatype, dataspace;
+
+	// get the dataspace
+	lclfile = H5Dopen(h5fh, arrayname.c_str());
+	hid_t filespace = H5Dget_space(lclfile);
+
+	// what is the rank of the array?
+	hid_t data_rank = H5Sget_simple_extent_ndims(filespace);
+	hsize_t dims[ data_rank ];
+// cout << "data rank: " << data_rank << endl;
+	status = H5Sget_simple_extent_dims(filespace, dims, NULL);
+
+	int size = 1;
+	bpl::list dims_list;
+	for (int ii=0; ii<data_rank; ii++)
+	{
+// cout << "dims["  << ii << "]: " << dims[ii] << endl;
+	  size *= dims[ii];
+	  dims_list.append(dims[ii]);
+	}
+// cout << "size: " << size << endl;
+
+	int * data = NULL;
+	data = new int[size];
+
+	status = H5LTread_dataset_int( h5fh, arrayname.c_str(), data );
+// 	for (int ii=0; ii<size; ii++)
+// 	{
+// 	  cout << data[ii] << endl;
+// 	}
+
+	bpl::list data_list;
+	// for each dimension
+	for (int ii=0; ii<size; ii++)
+	{
+	    data_list.append(data[ii]);
+	}
+	bpl::numeric::array nadata(
+//           bpl::make_tuple(
+	    bpl::make_tuple(data_list)
+// 	  )
+	);
+// 	dims_list.reverse();
+	nadata.setshape(dims_list);
+	delete data;
+	return nadata;*/
+// }
+
+#ifdef WITH_CASA
+/****************************************************************
+ *  wrappers for openTable (casa)
+ *
+ *****************************************************************/
+void dalTable::ot_ms1( string tablename, casa::MSReader * reader)
 {
-   openTable( /*voidfile,*/ tablename, reader );
+   openTable( tablename, reader );
 }
+void dalTable::ot_ms2( string tablename, casa::MSReader * reader,
+  string parse_string )
+{
+   openTable( tablename, reader, parse_string );
+}
+
 #endif
 
 #endif
