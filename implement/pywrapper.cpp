@@ -248,6 +248,8 @@ BOOST_PYTHON_MODULE(libpydal)
 #ifdef WITH_CASA
 	.def("openTable", &dalTable::ot_ms1)
 	.def("openTable", &dalTable::ot_ms2)
+	.def("getColumn", &dalTable::getColumn,
+		bpl::return_value_policy<bpl::manage_new_object>())
 #endif
     ;
 
@@ -270,5 +272,7 @@ BOOST_PYTHON_MODULE(libpydal)
 	.def("getName", &dalColumn::getName)
 	.def("getType", &dalColumn::getType)
 	.def("getSize", &dalColumn::getSize)
+	.def("ndims", &dalColumn::ndims)
+	.def("shape", &dalColumn::shape)
     ;
 }
