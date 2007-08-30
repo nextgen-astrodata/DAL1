@@ -34,6 +34,10 @@
  * @param fname 
  * @return int
  */
+/****************************************************************
+ *  Sub-routine to open a FITS file
+ *
+ *****************************************************************/
 int openFITS( char * fname )
 {
 	fitsfile * fptr;
@@ -74,6 +78,10 @@ int openFITS( char * fname )
  * @param fname 
  * @return hid_t
  */
+/****************************************************************
+ *  Sub-routine to open a HDF5 file
+ *
+ *****************************************************************/
 hid_t openHDF5( char * fname )
 {
 	// the following return an integer file handle
@@ -89,6 +97,10 @@ hid_t openHDF5( char * fname )
  * @param filename 
  * @return int
  */
+/****************************************************************
+ *  Opens a dataset (file)
+ *
+ *****************************************************************/
 int dalDataset::open( char * filename )
 {
   string lcltype;
@@ -117,6 +129,10 @@ int dalDataset::open( char * filename )
   return SUCCESS;
 }
 
+/****************************************************************
+ *  Closes a dataset (file)
+ *
+ *****************************************************************/
 int dalDataset::close()
 {
    if ( type == MSCASATYPE )
@@ -144,6 +160,10 @@ int dalDataset::close()
     return -2;
 }
 
+/****************************************************************
+ *  Creates a group (mainly for hdf5)
+ *
+ *****************************************************************/
 dalGroup * dalDataset::createGroup( char* gname )
 {
     if ( type == H5TYPE )
@@ -155,9 +175,18 @@ dalGroup * dalDataset::createGroup( char* gname )
    else
    	return NULL;  
 }
+
+/****************************************************************
+ *  Default constructor
+ *
+ *****************************************************************/
 dalDataset::dalDataset()
 {}
 
+/****************************************************************
+ *  List tables in a dataset (file)
+ *
+ *****************************************************************/
 void dalDataset::listTables()
 {
    if ( type == MSCASATYPE )
@@ -178,6 +207,10 @@ void dalDataset::listTables()
    }
 }
 
+/****************************************************************
+ *  Constructor for a new dataset (file)
+ *
+ *****************************************************************/
 dalDataset::dalDataset( char * name, string filetype )
 {
    type = filetype;  // set the global class variable: type
@@ -205,15 +238,23 @@ dalDataset::dalDataset( char * name, string filetype )
 // h5fh = fits_create_file(fitsfile **fptr, char *filename, > int *status);
    }
    else {
-   	cout << "Data format \'" << type << "\' not supported." << endl;
+   	cout << "dalDataset::dalDataset data format \'" << type << "\' not supported." << endl;
    	exit(99);
    }
 }
 
+/****************************************************************
+ *  Default destructor
+ *
+ *****************************************************************/
 dalDataset::~dalDataset()
 {
 }
 
+/****************************************************************
+ *  Create an Integer array of N dimensions
+ *
+ *****************************************************************/
 dalArray * dalDataset::createIntArray( string arrayname, vector<int> dims, int data[], vector<int> cdims)
 {
    if ( type == H5TYPE )
@@ -230,6 +271,10 @@ dalArray * dalDataset::createIntArray( string arrayname, vector<int> dims, int d
    	return NULL;
 }
 
+/****************************************************************
+ *  Create an Float array of N dimensions
+ *
+ *****************************************************************/
 dalArray * dalDataset::createFloatArray( string arrayname, vector<int> dims, float data[], vector<int> cdims)
 {
    if ( type == H5TYPE )
@@ -247,6 +292,10 @@ dalArray * dalDataset::createFloatArray( string arrayname, vector<int> dims, flo
    	return NULL;
 }
 
+/****************************************************************
+ *  Create an Copmlex array of N dimensions
+ *
+ *****************************************************************/
 dalArray * dalDataset::createComplexArray( string arrayname, vector<int> dims, vector< complex<float> > data/*dalcomplex data[]*/, vector<int> cdims)
 {
    if ( type == H5TYPE )
@@ -265,6 +314,10 @@ dalArray * dalDataset::createComplexArray( string arrayname, vector<int> dims, v
    	return NULL;
 }
 
+/****************************************************************
+ *  Creates a table at the highest level of a dataset
+ *
+ *****************************************************************/
 dalTable * dalDataset::createTable( string tablename )
 {
    if ( type == H5TYPE )
@@ -273,15 +326,18 @@ dalTable * dalDataset::createTable( string tablename )
 	   lt->createTable( file, tablename, "/" );
 	   return lt;
    }
-   else if ( type == FITSTYPE )
-   {
-	cout << "dalDataset::createTable FITS Type not yet supported." << endl;
-	return NULL;
-   }
    else
+   {
+	cout << "dalDataset::createTable operation not supported for filetype "
+	  << type << endl;
    	return NULL;
+   }
 }
 
+/****************************************************************
+ *  Creates a table in a group (mainly for hdf5)
+ *
+ *****************************************************************/
 dalTable * dalDataset::createTable( string tablename, string groupname )
 {
    if ( type == H5TYPE )
@@ -290,19 +346,18 @@ dalTable * dalDataset::createTable( string tablename, string groupname )
 	   lt->createTable( file, tablename, '/' + groupname );
 	   return lt;
    }
-   else if ( type == FITSTYPE )
-   {
-	cout << "dalDataset::createTable FITS Type not yet supported." << endl;
-	return NULL;
-   }
    else
+   {
+	cout << "dalDataset::createTable (in group) operation not supported for filetype "
+	  << type << endl;
    	return NULL;
+   }
 }
 
-/**
- * 
- * @param tablename 
- */
+/****************************************************************
+ *  Opens a table at the higest level of a dataset.
+ *
+ *****************************************************************/
 dalTable * dalDataset::openTable( string tablename )
 {
    if ( type == MSCASATYPE )
@@ -338,6 +393,11 @@ dalTable * dalDataset::openTable( string tablename )
    }
 }
 
+/****************************************************************
+ *  Opens a filtered table in a group (mainly for casa
+ *    using Table Query Language (TaQL)
+ *
+ *****************************************************************/
 #ifdef WITH_CASA
 dalTable * dalDataset::openFilteredTable( string tablename, string parse_string )
 {
@@ -356,6 +416,10 @@ dalTable * dalDataset::openFilteredTable( string tablename, string parse_string 
 }
 #endif
 
+/****************************************************************
+ *  Opens a table in a group (mainly for hdf5)
+ *
+ *****************************************************************/
 dalTable * dalDataset::openTable( string tablename, string groupname )
 {
   if ( type == MSCASATYPE )
@@ -379,6 +443,10 @@ dalTable * dalDataset::openTable( string tablename, string groupname )
    	return NULL;
 }
 
+/****************************************************************
+ *  Opens a group (mainly for hdf5)
+ *
+ *****************************************************************/
 dalGroup * dalDataset::openGroup( string groupname )
 {
    if ( type == H5TYPE )
@@ -403,6 +471,11 @@ dalGroup * dalDataset::openGroup( string groupname )
    }
 }
 
+/****************************************************************
+ *  Return the type of file the dataset represents
+ *    (HDF5, FITS, CASA, etc.)
+ *
+ *****************************************************************/
 string dalDataset::getType()
 {
 	return type;
