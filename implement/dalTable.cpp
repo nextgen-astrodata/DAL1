@@ -36,6 +36,247 @@
 
 dalTable::dalTable() {}
 
+void * dalTable::getColumnData( string colname )
+{
+   if ( type == MSCASATYPE )
+   {
+#ifdef WITH_CASA
+/*	casa::ROTableColumn column;
+	column = casa_table_handle->getColumn( colname );
+	return column;*/
+
+	casa::uInt nrow = casa_table_handle->nrow();
+
+/*
+	// Specific column handling
+	if ( "TIME" == colname )
+	{
+		casa::ROScalarColumn<double>
+		  timeColumn( *casa_table_handle, colname );
+		double val;
+		for( casa::uInt ii=0; ii<2; ii++)
+		{
+			timeColumn.get(ii,val);
+			cout << val << endl;
+		}
+	}
+	if ( "DATA" == colname )
+	{
+		casa::ROArrayColumn< casa::Complex >
+		  dataColumn( *casa_table_handle, colname );
+		casa::Array< casa::Complex > cval;
+		casa::uInt row = 1;
+		dataColumn.get(row,cval,casa::False);
+// 		cout << cval << endl;
+		std::vector< casa::Complex > cval_data;
+		cval.tovector( cval_data );
+		cout << cval_data.size() << endl;
+		cout << cval_data[0] << cval_data[1] << cval_data[4] << endl;
+		casa::Array< casa::Complex > data_column_polarization;
+		std::vector< casa::Complex > data_data;
+		std::vector< complex<float> > data_row;
+		for (int row=0; row < 1; row++)
+		{
+		  for (int polarization=0; polarization<1; polarization++)
+		  {
+		    casa::IPosition
+			start (2,polarization,0),
+			length (2,1,255),
+			stride (2,1,1);
+		    casa::Slicer slicer (start, length, stride);
+		    data_column_polarization = dataColumn.getSlice(row, slicer);
+		    data_column_polarization.tovector( data_data );
+// 		    for (unsigned int goo=0; goo<data_data.size(); goo++)
+// 		      data_row.push_back( data_data[goo] );
+		    }
+		  }
+
+		cout << "Some data:" << endl;
+		for (int jk=0; jk<2; jk++)
+		  cout << data_data[jk] << endl;
+	}
+*/
+
+	// create a column object
+	casa::ROTableColumn column( *casa_table_handle, colname );
+
+	// get the column descriptor
+	casa::ColumnDesc col_desc = column.columnDesc();
+
+	cout << "-------\n" << col_desc.name() << "\n-------" << endl;
+	cout << "Is the column an array? ";
+	casa::Bool isarray = col_desc.isArray();
+	if ( casa::True == isarray )
+	{
+	  cout << "YES" << endl;
+// 	  casa::uInt nrrow = column.nrow();
+// 	  casa::uInt ndims = column.ndim(1);
+	  casa::uInt ndimcol = column.ndimColumn();
+	  casa::IPosition shape = column.shape(1);
+// 	  cout << "  Number or rows: " << nrrow << endl;
+// 	  cout << "  Number of dims: " << ndims << endl;
+	  cout << "  Number of global dims: " << ndimcol << endl;
+	  cout << "  Shape: " << shape << endl;
+	  switch ( col_desc.dataType() )
+	  {
+	    case casa::TpComplex:
+	      cout << "Data type is Complex." << endl;
+	    break;
+	    case casa::TpBool:
+	      cout << "Data type is Boolean." << endl;
+	    break;
+	    case casa::TpChar:
+	      cout << "Data type is Char." << endl;
+	    break;
+	    case casa::TpShort:
+	      cout << "Data type is Short." << endl;
+	    break;
+	    case casa::TpFloat:
+	      cout << "Data type is Float." << endl;
+	    break;
+	    case casa::TpDouble:
+	    {
+	      cout << "Data type is Double." << endl;
+	      casa::ROArrayColumn<casa::Double>
+	        arcolumn( *casa_table_handle, colname );
+	      int cell = 0;
+	      casa::IPosition start (1,cell)/*, length (1,1)*/;
+	      casa::Slicer slicer (start/*, length*/);
+	      array_vals_dbl = arcolumn.getColumn( slicer );
+// 	      if ( "UVW" == colname ) cout << vals << endl;
+	      cout << "number of dims: " << array_vals_dbl.ndim() << endl;
+	      cout << "shape: " << array_vals_dbl.shape() << endl;
+	      cout << "size: " << array_vals_dbl.size() << endl;
+	      vector<double> valvec;
+	      array_vals_dbl.tovector( valvec );
+	      cout << "vector size: " << valvec.size() << endl;
+	      cout << "Data from cell number: " << cell << endl;
+/*	      for (int op=0; op<10; op++)
+	        cout << valvec[op] << endl;*/
+// 	      exit(12);
+// 	      return valvec;
+//               double * data_p = vals.data();
+// 	      cout << data_p << ' ' << data_p[0] << ' ' << data_p[5] << endl;
+	      return array_vals_dbl.data();
+// 	      return NULL;
+	    }
+	    break;
+	    case casa::TpString:
+	      cout << "Data type is String." << endl;
+	    break;
+	    case casa::TpInt:
+	    {
+	      cout << "Data type is Int." << endl;
+	      int * value = new int[100];
+	      for (int ii=0; ii<100; ii++)
+	        {
+		  column.getScalar(ii,value[ii]);
+	        }
+              return value;
+	    }
+	    break;
+/*	  case casa::TpArrayShort:
+	  cout << "Data type is ArrayShort." << endl;
+	  break;
+	  case casa::TpArrayDouble:
+	  cout << "Data type is ArrayDouble." << endl;
+	  break;
+	  case casa::TpArrayComplex:
+	  cout << "Data type is ArrayComplex." << endl;
+	  break;
+	  case casa::TpTable:
+	  cout << "Data type is Table." << endl;
+	  break;*/
+	    default:
+	      cout << "Datatype not recognized." << endl;
+	  }
+	}
+	else
+	  cout << "NO" << endl;
+
+	if (col_desc.isScalar())
+	{
+	  cout << "isScalar" << endl;
+	  switch ( col_desc.dataType() )
+	  {
+	    case casa::TpComplex:
+	      cout << "Data type is Complex." << endl;
+	    break;
+	    case casa::TpBool:
+	      cout << "Data type is Boolean." << endl;
+	    break;
+	    case casa::TpChar:
+	      cout << "Data type is Char." << endl;
+	    break;
+	    case casa::TpShort:
+	      cout << "Data type is Short." << endl;
+	    break;
+	    case casa::TpFloat:
+	      cout << "Data type is Float." << endl;
+	    break;
+	    case casa::TpDouble:
+	    {
+	      cout << "Data type is Double." << endl;
+	      double * value = new double[100];
+	      for (int ii=0; ii<100; ii++)
+	        {
+		  column.getScalar(ii,value[ii]);
+	        }
+              return value;
+	    }
+	    break;
+	    case casa::TpString:
+	      cout << "Data type is String." << endl;
+	    break;
+	    case casa::TpInt:
+	    {
+	      cout << "Data type is Int." << endl;
+	      int * value = new int[100];
+	      for (int ii=0; ii<100; ii++)
+	        {
+		  column.getScalar(ii,value[ii]);
+	        }
+              return value;
+	    }
+	    break;
+/*	  case casa::TpArrayShort:
+	  cout << "Data type is ArrayShort." << endl;
+	  break;
+	  case casa::TpArrayDouble:
+	  cout << "Data type is ArrayDouble." << endl;
+	  break;
+	  case casa::TpArrayComplex:
+	  cout << "Data type is ArrayComplex." << endl;
+	  break;
+	  case casa::TpTable:
+	  cout << "Data type is Table." << endl;
+	  break;*/
+	    default:
+	      cout << "Datatype not recognized." << endl;
+	  }
+	}
+	else if (col_desc.isTable())
+	{
+		cout << "isTable" << endl;
+	}
+
+	casa::TableRecord table_rec = column.keywordSet();
+// 	cout << "Number of fields: " << table_rec.nfields() << endl;
+// 	cout << "Datatype: " << col_desc.dataType() << endl;
+	return NULL;
+#else
+	cout << "CASA support not enabled." << endl;
+	return NULL;
+#endif
+    }
+   else
+   {
+	cout << "dalTable::openColumn operation not supported for type "
+	  << type << endl;
+	return NULL;
+   }
+}
+
 void dalTable::getName()
 {
    if ( type == MSCASATYPE )

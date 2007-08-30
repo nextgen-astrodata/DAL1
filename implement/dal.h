@@ -80,6 +80,7 @@ namespace bpl = boost::python;
 #include <casa/aipstype.h>
 #include <casa/complex.h>
 #include <casa/BasicMath/Math.h>
+#include <tables/Tables/ScalarColumn.h>
 #endif
 
 

@@ -79,6 +79,7 @@ class dalTable{
 #ifdef WITH_CASA
 	// casa-specific variables
 	casa::Table * casa_table_handle;
+	casa::Array<casa::Double> array_vals_dbl;
 #endif
 
   public:
@@ -124,7 +125,8 @@ class dalTable{
 //	int setName();  /// set the name of the table
 //	int insertRow();  /// insert a row at current location
 //	int removeRow();  /// remove a row at current location
-//	int getColumn();  /// retrieve a dalColumn by name
+	/// retrieve a dalColumn by name
+	void * getColumnData( string colname );
 //	int getColumnNumber();  /// retrieve a dalColumn by index
 //	int listAttributes(); /// return a list of group attributes
 //	int getAttribute();  /// return a dalAttribute object retrieved by name

@@ -35,15 +35,49 @@ int main(int argc, char *argv[])
 	  return FAIL;
 	}
 
-// First open the measurement set
+// create a dataset object of type MSCASA
 dalDataset * msds;
 msds = new dalDataset( argv[1], "MSCASA" );
+// print out a list of tables in the dataset
 msds->listTables();
+// open a table in the dataset
 dalTable * maintable;
 maintable = msds->openTable( "MAIN" );
+// print the name of the table [ doesn't seem to work ]
 maintable->getName();
-msds->close();  // close the casa MeasurementSet
+// open a column in the table
+// dalColumn * timecol;
+void * foo;
+double * mytime_data = new double[ 100 ];
+mytime_data = (double *)maintable->getColumnData( "TIME" );
+for (int ii=0; ii<10; ii++)
+  cout << "TIME data out: " << mytime_data[ii] << endl;
+delete mytime_data;
+
+int * ant1_data = new int[ 100 ];
+ant1_data = (int *)maintable->getColumnData( "ANTENNA1" );
+for (int ii=0; ii<10; ii++)
+  cout << "ANTENNA1 data out: " << ant1_data[ii] << endl;
+delete ant1_data;
+
+int * ant2_data = new int[ 100 ];
+ant2_data = (int *)maintable->getColumnData( "ANTENNA2" );
+for (int ii=0; ii<10; ii++)
+  cout << "ANTENNA2 data out: " << ant2_data[ii] << endl;
+delete ant2_data;
+
+double * myuvw;
+myuvw = (double *)maintable->getColumnData( "UVW" );
+// cout << myuvw << endl;
+for (int ii=0; ii<30; ii++)
+   cout << "UVW data out: " << myuvw[ii] << endl;
+
+foo = maintable->getColumnData( "DATA" );
+
+// close the dataset
+msds->close();
 delete msds;
+exit(10);
 
 	// First open the measurement set
 	MeasurementSet MS( argv[1] );

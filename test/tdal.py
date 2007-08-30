@@ -1,8 +1,15 @@
-#! /usr/bin/env python2.5
+#! /usr/bin/env python
 
-import libpydal as dal
-import numarray
 import sys
+import string
+import numarray
+
+def check_pyversion():
+	version = string.split(string.split(sys.version)[0], ".")
+	if map(int, version) < [2, 5, 0]:
+		print "\nSorry: Python version must be at least 2.5\n"
+		sys.exit(-1)
+
 #from pylab import *
 
 def create_dataset( filename ):
@@ -120,8 +127,12 @@ def close_dataset( ds ):
 # MAIN
 #----------------------
 
+#check the version of python
+check_pyversion()
+import libpydal as dal
+
 # create the file
-filename = "daltest.h5"
+filename = "tpydal.h5"
 ds = create_dataset( filename )
 
 # groups
