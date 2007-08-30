@@ -42,12 +42,12 @@ msds = new dalDataset( argv[1], "MSCASA" );
 msds->listTables();
 // open a table in the dataset
 dalTable * maintable;
-maintable = msds->openTable( "MAIN" );
+maintable = msds->openFilteredTable( "MAIN", "Select UVW, TIME, ANTENNA1, ANTENNA2, DATA from $1 where ANTENNA1 = 1 AND ANTENNA2 = 1" );
 // print the name of the table [ doesn't seem to work ]
 maintable->getName();
 // open a column in the table
 // dalColumn * timecol;
-void * foo;
+
 double * mytime_data = new double[ 100 ];
 mytime_data = (double *)maintable->getColumnData( "TIME" );
 for (int ii=0; ii<10; ii++)
@@ -72,7 +72,10 @@ myuvw = (double *)maintable->getColumnData( "UVW" );
 for (int ii=0; ii<30; ii++)
    cout << "UVW data out: " << myuvw[ii] << endl;
 
-foo = maintable->getColumnData( "DATA" );
+complex<float> * data;
+data = (complex<float> *)maintable->getColumnData( "DATA" );
+for (int ii=0; ii<30; ii++)
+   cout << "DATA out: " << data[ii] << endl;
 
 // close the dataset
 msds->close();

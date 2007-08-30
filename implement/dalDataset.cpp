@@ -338,6 +338,24 @@ dalTable * dalDataset::openTable( string tablename )
    }
 }
 
+#ifdef WITH_CASA
+dalTable * dalDataset::openFilteredTable( string tablename, string parse_string )
+{
+   if ( type == MSCASATYPE )
+   {
+	dalTable * lt = new dalTable( MSCASATYPE );
+	lt->openTable( file, tablename, ms_reader, parse_string );
+	return lt;
+   }
+   else
+   {
+	cout << "openTable operation not supported for filetype "
+	  << type << endl;
+   	return NULL;
+   }
+}
+#endif
+
 dalTable * dalDataset::openTable( string tablename, string groupname )
 {
   if ( type == MSCASATYPE )

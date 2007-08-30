@@ -80,6 +80,7 @@ class dalTable{
 	// casa-specific variables
 	casa::Table * casa_table_handle;
 	casa::Array<casa::Double> array_vals_dbl;
+	casa::Array<casa::Complex> array_vals_comp;
 #endif
 
   public:
@@ -94,6 +95,8 @@ class dalTable{
 #ifdef WITH_CASA
 	void openTable( void * voidfile, string tablename,
 	  casa::MSReader * reader );
+	void openTable( void * voidfile, string tablename,
+	  casa::MSReader * reader, string parse_string );
 #endif
 	void createTable( void * voidfile, string tablename, string groupname );
 	void addColumn( string colname, string coltype, int size=1 );

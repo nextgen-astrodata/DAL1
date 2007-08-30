@@ -120,7 +120,28 @@ void * dalTable::getColumnData( string colname )
 	  switch ( col_desc.dataType() )
 	  {
 	    case casa::TpComplex:
+	    {
 	      cout << "Data type is Complex." << endl;
+	      casa::ROArrayColumn<casa::Complex>
+	        arcolumn( *casa_table_handle, colname );
+	      int polarization = 0;
+	      casa::IPosition start (2,polarization,0)/*, length (1,1)*/;
+	      casa::Slicer slicer (start/*, length*/);
+	      array_vals_comp = arcolumn.getColumn( slicer );
+// 	      if ( "UVW" == colname ) cout << vals << endl;
+	      cout << "number of dims: " << array_vals_comp.ndim() << endl;
+	      cout << "shape: " << array_vals_comp.shape() << endl;
+	      cout << "size: " << array_vals_comp.size() << endl;
+	      vector< complex< float > > valvec;
+	      array_vals_comp.tovector( valvec );
+	      cout << valvec[0] << valvec[1] << valvec[2] << endl;
+	      cout << "vector size: " << valvec.size() << endl;
+	      cout << "Polarization number: " << polarization << endl;
+	      return array_vals_comp.data();
+	    }
+	    break;
+	    case casa::TpDComplex:
+	      cout << "Data type is DComplex." << endl;
 	    break;
 	    case casa::TpBool:
 	      cout << "Data type is Boolean." << endl;
@@ -315,10 +336,27 @@ dalTable::dalTable( string filetype )
 void dalTable::openTable( void * voidfile, string tablename,
    casa::MSReader * reader )
 {
+cout << "AAAAAAAAAAAAAA" << endl;
    if ( type == MSCASATYPE )
    {
 	cout << "dalTable::openTable " << type << endl;
 	*casa_table_handle = reader->table( tablename );
+   }
+   else
+   {
+	cout << "dalTable::openTable operation not supported for type "
+	  << type << endl;
+   }
+}
+void dalTable::openTable( void * voidfile, string tablename,
+   casa::MSReader * reader, string parse_string )
+{
+cout << "BBBBBBBBBBBBBB" << endl;
+   if ( type == MSCASATYPE )
+   {
+	cout << "dalTable::openTable " << type << endl;
+	*casa_table_handle = reader->table( tablename );
+	*casa_table_handle = casa::tableCommand( parse_string, *casa_table_handle );
    }
    else
    {

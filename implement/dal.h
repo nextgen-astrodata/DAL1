@@ -81,6 +81,8 @@ namespace bpl = boost::python;
 #include <casa/complex.h>
 #include <casa/BasicMath/Math.h>
 #include <tables/Tables/ScalarColumn.h>
+#include <tables/Tables/TableParse.h>
+#include <tables/Tables/TableKeyword.h>
 #endif
 
 

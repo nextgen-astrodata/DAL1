@@ -130,6 +130,10 @@ class dalDataset{
 //	int getName();  /// retrieve the name of the dataset
 //	int rename();  /// rename the dataset
 	dalTable * openTable( string tablename );  /// return a dalTable object
+
+#ifdef WITH_CASA
+	dalTable * openFilteredTable( string tablename, string parse_string );
+#endif
 	dalTable * openTable( string tablename, string groupname );
 
 	dalGroup * openGroup( string groupname );  /// return a dalGroup object
