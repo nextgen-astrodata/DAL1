@@ -56,7 +56,7 @@ dalColumn * dalTable::getColumn( string colname )
 // using the dalColumn class
 	dalColumn * lclcol;
 	lclcol = new dalColumn( *casa_table_handle, colname );
-	lclcol->type();
+	lclcol->getType();
 	if ( lclcol->isScalar() )
 	  cout << "SCALAR" << endl;
 	if ( lclcol->isArray() )
@@ -84,7 +84,7 @@ void * dalTable::getColumnData( string colname )
 // using the dalColumn class
 	dalColumn lclcol;
 	lclcol = dalColumn( *casa_table_handle, colname );
-	lclcol.type();
+	lclcol.getType();
 	if ( lclcol.isScalar() )
 	  cout << "SCALAR" << endl;
 	if ( lclcol.isArray() )

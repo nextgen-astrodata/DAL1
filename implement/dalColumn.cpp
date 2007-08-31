@@ -61,10 +61,10 @@ void dalColumn::close()
 #endif
 }
 
-void dalColumn::type()
+void dalColumn::getDataType()
 {
 #ifdef WITH_CASA
-	/*cout << */casa_col_desc.dataType()/* << endl*/;
+	cout << casa_col_desc.dataType() << endl;
 #endif
 }
 

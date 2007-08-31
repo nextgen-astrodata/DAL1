@@ -70,10 +70,10 @@ public:
 	dalColumn( string complexcolname );
 	void addMember( string member_name, string type );
 	string getName();
-	string getType();
+	void getDataType();
 	int getSize();
 	void close();
-	void type();
+	string getType();
 // 	void data();
 	int isArray();
 	int isScalar();
