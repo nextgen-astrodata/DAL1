@@ -88,7 +88,7 @@ install (TARGETS ${tests}
 
 ## python scripts
 
-install (FILES tdal.py
+install (FILES tdal.py tMS_dal.py
   DESTINATION bin
   PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE OWNER_READ GROUP_READ WORLD_READ
 )
