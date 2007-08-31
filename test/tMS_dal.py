@@ -25,6 +25,9 @@ print '\n'
 print "UVW number of dims: "
 uvw_col.ndims()
 print '\n'
+print "UVW datatype: "
+uvw_col.getType()
+print '\n'
 
 data_col = maintable.getColumn("DATA")
 print "DATA shape: "
@@ -32,6 +35,9 @@ data_col.shape()
 print '\n'
 print "DATA number of dims: "
 data_col.ndims()
+print '\n'
+print "DATA datatype: "
+data_col.getType()
 print '\n'
 
 #ms = dal.msp()
