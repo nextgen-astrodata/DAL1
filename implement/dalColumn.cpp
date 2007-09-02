@@ -49,6 +49,7 @@ dalColumn::dalColumn( string complexcolname/*, void * dataformat*/ )
 #ifdef WITH_CASA
 dalColumn::dalColumn(casa::Table table, string colname)
 {
+    type = "MSCASA";
 	casa_column = new casa::ROTableColumn( table, colname );
 	casa_col_desc = casa_column->columnDesc();
 }
@@ -88,17 +89,35 @@ int dalColumn::isArray()
 #endif
 }
 
-void dalColumn::shape()
+vector<int> dalColumn::shape()
 {
+  vector<int> shape_vals;
 #ifdef WITH_CASA
-   cout << casa_column->shape(1);
+  if ( isArray() )
+  {
+    //cout << casa_column->shapeColumn();
+	casa::IPosition ipos = casa_column->shapeColumn();
+	casa::Vector<casa::Int> col_shape = ipos.asVector();
+	col_shape.tovector( shape_vals );
+	return shape_vals;
+  }
+  else
+  {
+    cout << "column is not an array" << endl;
+    return shape_vals;
+  }
 #endif
 }
 
-void dalColumn::ndims()
+unsigned int dalColumn::ndims()
 {
 #ifdef WITH_CASA
-   cout << casa_column->ndim(1);
+  if ( isArray() )
+   return casa_column->ndimColumn();
+  else
+  {
+	return 0;
+  }
 #endif
 }
 
@@ -107,9 +126,65 @@ string dalColumn::getName()
   return name;
 }
 
+unsigned int dalColumn::nrows()
+{
+  if ( "MSCASA" == type )
+  {
+#ifdef WITH_CASA
+    num_of_rows = casa_column->nrow();
+	return num_of_rows;
+#endif
+  }
+  else
+  {
+    cout << "dalColumn::nrows() File type " << type << " not yet supported."; 
+    return 0;
+  }
+}
+
 string dalColumn::getType()
 {
   return datatype;
+}
+
+void dalColumn::data()
+{
+  if ( "MSCASA" == type )
+  {
+    if ( isScalar() )
+    {
+      switch ( casa_col_desc.dataType() )
+      {
+	     case casa::TpDouble:
+		 {
+		    double * value = new double[ num_of_rows ];
+			for (unsigned int ii=0; ii < num_of_rows; ii++ )
+			{	
+			  casa_column->getScalar( ii, value[ii] );
+			}
+		  }
+		  break;
+		 
+		  default:
+		   cout << "dalColumn::data() Column type not yet supported.";
+	    }
+	  }
+      else
+	  {
+	    vector<int> lclshape;
+		lclshape = shape();
+        int lclndims;
+		lclndims = ndims();
+		for (unsigned int ii=0; ii < lclshape.size(); ii++ )
+		{
+		  int cell = lclshape[ ii ];
+		  casa::IPosition start (1,cell);
+		  casa::Slicer slicer (start);
+		  double * values = new double[ num_of_rows ];
+//		  casa_column->getColumnSlice( slicer, (double *) values );
+		}
+	  }	  
+    }	
 }
 
 int dalColumn::getSize()

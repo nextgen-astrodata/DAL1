@@ -56,16 +56,18 @@ dalColumn * dalTable::getColumn( string colname )
 // using the dalColumn class
 	dalColumn * lclcol;
 	lclcol = new dalColumn( *casa_table_handle, colname );
+/*
 	lclcol->getType();
 	if ( lclcol->isScalar() )
-	  cout << "SCALAR" << endl;
+	  cout << colname << " is SCALAR" << endl;
 	if ( lclcol->isArray() )
-	  cout << "ARRAY" << endl;
+	  cout << colname << " is ARRAY" << endl;
+*/
 	return lclcol;
+#endif
    }
    else
 	return NULL;
-#endif
 }
 
 /****************************************************************
@@ -86,11 +88,10 @@ void * dalTable::getColumnData( string colname )
 	lclcol = dalColumn( *casa_table_handle, colname );
 	lclcol.getType();
 	if ( lclcol.isScalar() )
-	  cout << "SCALAR" << endl;
+	  cout << colname << " is SCALAR" << endl;
 	if ( lclcol.isArray() )
-	  cout << "ARRAY" << endl;
+	  cout << colname << " is ARRAY" << endl;
 
-exit(2);
 	casa::uInt nrow;
 	nrow = casa_table_handle->nrow();
 

@@ -45,12 +45,14 @@
 */
 class dalColumn {
 
+	string type;  /// "HDF5", "MSCASA" or "FITS"; for example
 	string name; /// column name
 	string datatype;  /// column datatype
 	int size; /// datatype size
 	int totsize; /// total column size
 	vector<dalAttribute> attributes; /// list of column attributes
 	dalFilter filter; /// filter associated with column
+	unsigned int num_of_rows;  /// number of rows in the column
 
 	// hdf5-specific variables
 	hid_t coltype;
@@ -66,7 +68,9 @@ class dalColumn {
 public:
 	dalColumn();
 	dalColumn( string colname, string coltype );
+#ifdef WITH_CASA
 	dalColumn( casa::Table table, string colname );
+#endif
 	dalColumn( string complexcolname );
 	void addMember( string member_name, string type );
 	string getName();
@@ -77,8 +81,10 @@ public:
 // 	void data();
 	int isArray();
 	int isScalar();
-	void shape();
-	void ndims();
+	vector<int> shape();
+	unsigned int ndims();
+	unsigned int nrows();
+	void data();
 
 //	int getNumber();  /// return the index of a column
 // 	void addArray();
