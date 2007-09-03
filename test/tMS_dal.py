@@ -11,33 +11,48 @@ msds= dal.dalDataset(sys.argv[1], "MSCASA")
 tablename = "MAIN";
 #msds = dal.dalTable(tablename)
 filter_string = "Select UVW, TIME, ANTENNA1, ANTENNA2, DATA from $1 where ANTENNA1 = 1 AND ANTENNA2 = 1"
-#maintable = msds.openFilteredTable( tablename, filter_string );
-maintable = msds.openTable( tablename );
+maintable = msds.openFilteredTable( tablename, filter_string );
+#maintable = msds.openTable( tablename );
 #maintable.listColumns()
 #maintable.getName()
 
+print "-"*5 + "\nTIME\n" + "-"*5
 time_col = maintable.getColumn("TIME")
+if ( time_col.isScalar() ):
+	print "SCALAR"
+if ( time_col.isArray() ):
+	print "ARRAY"
+print "shape: " + str(time_col.shape())
+print "number of dims: " + str(time_col.ndims())
+print "datatype: " + str(time_col.getDataType())
+time_data = time_col.data()
+print time_data.shape
+for i in range(5):
+	print time_data[i]
+print '\n'
 
+print "-"*5 + "\nUVW\n" + "-"*5
 uvw_col = maintable.getColumn("UVW")
-print "UVW shape: "
-uvw_col.shape()
-print '\n'
-print "UVW number of dims: "
-uvw_col.ndims()
-print '\n'
-print "UVW datatype: "
-uvw_col.getDataType()
+if ( uvw_col.isScalar() ):
+	print "SCALAR"
+if ( uvw_col.isArray() ):
+	print "ARRAY"
+print "shape: " + str(uvw_col.shape())
+print "number of dims: " + str(uvw_col.ndims())
+print "datatype: " + str(uvw_col.getDataType())
+#uvw_col.data()
 print '\n'
 
+print "-"*5 + "\nDATA\n" + "-"*5
 data_col = maintable.getColumn("DATA")
-print "DATA shape: "
-data_col.shape()
-print '\n'
-print "DATA number of dims: "
-data_col.ndims()
-print '\n'
-print "DATA datatype: "
-data_col.getDataType()
+if ( data_col.isScalar() ):
+	print "SCALAR"
+if ( data_col.isArray() ):
+	print "ARRAY"
+print "shape: " + str(data_col.shape())
+print "number of dims: " + str(data_col.ndims())
+print "datatype: " + str(data_col.getDataType())
+#data_col.data()
 print '\n'
 
 #ms = dal.msp()

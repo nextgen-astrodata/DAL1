@@ -64,7 +64,10 @@ if ( foo1->isScalar() )
 if ( foo1->isArray() )
   cout << "ARRAY" << endl;
 cout << "Number of rows: " << foo1->nrows() << endl;
-foo1->data();
+double * foo1_data;
+foo1_data = (double *)foo1->data();
+for (int ii=0; ii<5; ii++)
+  cout << "TIME data out: " << foo1_data[ii] << endl;
 delete foo1;
 
 cout << "-------\n" << "UVW" << "\n-------" << endl;
@@ -81,7 +84,10 @@ if ( foo2->isScalar() )
   cout << "SCALAR" << endl;
 if ( foo2->isArray() )
   cout << "ARRAY" << endl;
-foo2->data();
+double * foo2_data;
+foo2_data = (double *)foo2->data();
+for (int ii=0; ii<5; ii++)
+  cout << "UVW data out: " << foo2_data[ii] << endl;
 delete foo2;
 
 cout << "-------\n" << "DATA" << "\n-------" << endl;
@@ -98,12 +104,17 @@ if ( foo3->isScalar() )
   cout << "SCALAR" << endl;
 if ( foo3->isArray() )
   cout << "ARRAY" << endl;
-foo3->data();
+complex<float> * foo3_data;
+foo3_data = (complex<float> *)foo3->data();
+for (int ii=0; ii<5; ii++)
+   cout << "DATA out: " << foo3_data[ii] << endl;
 delete foo3;
 
 
 
+
 exit(8);
+
 
 
 

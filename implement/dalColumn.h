@@ -60,9 +60,28 @@ class dalColumn {
 
 #ifdef WITH_CASA
 	// casa-specific variables
-	casa::ROTableColumn * casa_column;
+
 	casa::ColumnDesc casa_col_desc;
-	
+	casa::ROTableColumn * casa_column;
+
+	// COLUMNs
+	casa::ROArrayColumn<int> * roac_int;
+	casa::ROArrayColumn<double> * roac_dbl;
+	casa::ROArrayColumn< complex< float > > * roac_comp;
+
+	casa::ROScalarColumn<int> * rosc_int;
+	casa::ROScalarColumn<double> * rosc_dbl;
+	casa::ROScalarColumn< complex< float > > * rosc_comp;
+
+	// ARRAYs
+	casa::Array<casa::Double> array_vals_dbl;
+	casa::Array<casa::Complex> array_vals_comp;
+	casa::Array<casa::Int> array_vals_int;
+
+	// VECTORs
+	casa::Vector<casa::Double> scalar_vals_dbl;
+	casa::Vector<casa::Complex> scalar_vals_comp;
+	casa::Vector<casa::Int> scalar_vals_int;
 #endif
 
 public:
@@ -74,7 +93,7 @@ public:
 	dalColumn( string complexcolname );
 	void addMember( string member_name, string type );
 	string getName();
-	void getDataType();
+	string getDataType();
 	int getSize();
 	void close();
 	string getType();
@@ -84,7 +103,7 @@ public:
 	vector<int> shape();
 	unsigned int ndims();
 	unsigned int nrows();
-	void data();
+	void * data();
 
 //	int getNumber();  /// return the index of a column
 // 	void addArray();
@@ -92,5 +111,15 @@ public:
 //	int insertBefore(); /// insert a new column before column specified by name or number
 //	int replace(); /// replace a column with a new one
 //	int remove();  /// remove a column
+/************************************************************************
+ *
+ * The following functions are boost wrappers to allow some previously
+ *   defined functions to be easily called from a python prompt.
+ *
+ ************************************************************************/
+#ifdef PYTHON
+	bpl::tuple shape_boost();
+	bpl::numeric::array data_boost();
+#endif
 };
 #endif

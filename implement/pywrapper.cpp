@@ -274,6 +274,11 @@ BOOST_PYTHON_MODULE(libpydal)
 	.def("getDataType", &dalColumn::getDataType)
 	.def("getSize", &dalColumn::getSize)
 	.def("ndims", &dalColumn::ndims)
-	.def("shape", &dalColumn::shape)
+	.def("shape", &dalColumn::shape_boost)
+	.def("isScalar", &dalColumn::isScalar)
+	.def("isArray", &dalColumn::isArray)
+#ifdef WITH_CASA
+	.def("data", &dalColumn::data_boost)
+#endif
     ;
 }

@@ -948,9 +948,9 @@ void dalTable::appendRow( void * data )
 	if ( firstrecord ) {
 		hsize_t start = 0;
 		hsize_t numrows = 1;
-		status = H5TBwrite_records( file_id, name.c_str(), start, numrows,
-					    *size_out, field_offsets, field_sizes,
-					    data);
+		status = H5TBwrite_records( file_id, name.c_str(), start,
+			   numrows, *size_out, field_offsets, field_sizes,
+			   data);
 		firstrecord = false;
 	}
 	else {
@@ -987,7 +987,7 @@ void dalTable::appendRows( void * data, long row_count )
 		hsize_t start = 0;
 		status = H5TBappend_records ( file_id, name.c_str(),
 					      (hsize_t)row_count, *size_out,
-					      field_offsets, field_sizes, data );
+					      field_offsets, field_sizes, data);
 		status = H5TBwrite_records( file_id, name.c_str(), start,
 					    (hsize_t)row_count, *size_out,
 					    field_offsets, field_sizes, data );
@@ -996,7 +996,7 @@ void dalTable::appendRows( void * data, long row_count )
 	else {
 		status = H5TBappend_records ( file_id, name.c_str(),
 					      (hsize_t)row_count, *size_out,
-					      field_offsets, field_sizes, data );
+					      field_offsets, field_sizes, data);
 	}
 	free( field_sizes );
 	free( field_offsets );
@@ -1040,7 +1040,8 @@ void dalTable::setAttribute_int( string attrname, int * data, int size ) {
  *  
  *
  *****************************************************************/
-void dalTable::setAttribute_uint( string attrname, unsigned int * data, int size ) {
+void dalTable::setAttribute_uint(string attrname, unsigned int * data, int size)
+{
 	if ( H5LTset_attribute_uint( file_id, name.c_str(),
 					attrname.c_str(), data, size ) < 0 ) {
 		cout << "ERROR: could not set attribute " << attrname << endl;
@@ -1117,7 +1118,7 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buf
         size_out = (size_t*)malloc( sizeof(size_t) );
         field_names = (char**)malloc( nfields * sizeof(char*) );
         for (unsigned int ii=0; ii<nfields; ii++) {
-                field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+                field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE*sizeof(char));
         }
 
         status = H5TBget_field_info( file_id, name.c_str(), field_names,
@@ -1180,7 +1181,8 @@ void dalTable::printAttribute( string attrname ) {
 	string fullname = "/" + name;
 
 	int rank;
-	H5LTget_attribute_ndims(file_id,fullname.c_str(),attrname.c_str(),&rank );
+	H5LTget_attribute_ndims( file_id, fullname.c_str(),
+	  attrname.c_str(), &rank );
 
 	dims = (hsize_t *)malloc(rank * sizeof(hsize_t));
 
@@ -1202,8 +1204,8 @@ void dalTable::printAttribute( string attrname ) {
 	}
 	else if ( H5T_INTEGER == type_class ) {
 		int data[*dims];
-		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
-									H5T_NATIVE_INT, data) )
+		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), 
+		  attrname.c_str(), H5T_NATIVE_INT, data) )
 		{
 			cout << attrname << " not found" << endl;
 		}
@@ -1250,7 +1252,8 @@ void * dalTable::getAttribute( string attrname ) {
 	string fullname = "/" + name;
 
 	int rank;
-	H5LTget_attribute_ndims(file_id,fullname.c_str(),attrname.c_str(),&rank );
+	H5LTget_attribute_ndims( file_id, fullname.c_str(),
+	  attrname.c_str(), &rank );
 
 	dims = (hsize_t *)malloc(rank * sizeof(hsize_t));
 
@@ -1259,7 +1262,8 @@ void * dalTable::getAttribute( string attrname ) {
 
 	if ( H5T_FLOAT == type_class ) {
 		double data[ *dims ];
-		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
+		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), 
+		  attrname.c_str(),
 			 H5T_NATIVE_DOUBLE, data) )
 		  return NULL;
 		else
@@ -1267,7 +1271,8 @@ void * dalTable::getAttribute( string attrname ) {
 	}
 	else if ( H5T_INTEGER == type_class ) {
 		int data[*dims];
-		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
+		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(),
+		  attrname.c_str(),
 			H5T_NATIVE_INT, data) )
 		  return NULL;
 		else
