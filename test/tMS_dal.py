@@ -40,7 +40,10 @@ if ( uvw_col.isArray() ):
 print "shape: " + str(uvw_col.shape())
 print "number of dims: " + str(uvw_col.ndims())
 print "datatype: " + str(uvw_col.getDataType())
-#uvw_col.data()
+uvw_data = uvw_col.data()
+print uvw_data.shape
+print uvw_data[0][0]
+print uvw_data[1][10]
 print '\n'
 
 print "-"*5 + "\nDATA\n" + "-"*5

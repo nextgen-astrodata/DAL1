@@ -47,7 +47,7 @@ class dalColumn {
 
 	string type;  /// "HDF5", "MSCASA" or "FITS"; for example
 	string name; /// column name
-	string datatype;  /// column datatype
+	string dal_datatype;  /// column datatype
 	int size; /// datatype size
 	int totsize; /// total column size
 	vector<dalAttribute> attributes; /// list of column attributes
@@ -60,6 +60,8 @@ class dalColumn {
 
 #ifdef WITH_CASA
 	// casa-specific variables
+
+	string casa_datatype;  /// column datatype
 
 	casa::ColumnDesc casa_col_desc;
 	casa::ROTableColumn * casa_column;

@@ -37,13 +37,13 @@ dalColumn::dalColumn()
 dalColumn::dalColumn( string colname, string type )
 {
 	name = colname;
-	datatype = type;
+	dal_datatype = type;
 }
 
 dalColumn::dalColumn( string complexcolname/*, void * dataformat*/ )
 {
 	name = complexcolname;
-	datatype = "dal_COMPLEX";
+	dal_datatype = "dal_COMPLEX";
 }
 
 #ifdef WITH_CASA
@@ -52,6 +52,7 @@ dalColumn::dalColumn(casa::Table table, string colname)
     type = "MSCASA";
     casa_column = new casa::ROTableColumn( table, colname );
     casa_col_desc = casa_column->columnDesc();
+    casa_datatype = getDataType();
 }
 #endif
 
@@ -80,18 +81,18 @@ string dalColumn::getDataType()
   switch ( casa_col_desc.dataType() )
   {
     case ( casa::TpDouble ):
-	datatype = "double";
+	casa_datatype = "double";
     break;
     case ( casa::TpComplex ):
-	datatype = "complex";
+	casa_datatype = "complex";
     break;
     case ( casa::TpInt ):
-	datatype = "int";
+	casa_datatype = "int";
     break;
     default:
-      datatype = "Unsupported type";
+      casa_datatype = "Unsupported type";
   }
-  return datatype;
+  return casa_datatype;
 #endif
 }
 
@@ -170,7 +171,7 @@ unsigned int dalColumn::nrows()
 
 string dalColumn::getType()
 {
-  return datatype;
+  return dal_datatype;
 }
 
 void * dalColumn::data()
@@ -206,11 +207,14 @@ void * dalColumn::data()
 	  case casa::TpDouble:
 	  {
 	    roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
-	    vector<int> lclshape;
-	    lclshape = shape();
-            int lclndims;
-	    lclndims = ndims();
-	    for (unsigned int ii=0; ii < lclshape.size(); ii++ )
+            array_vals_dbl = roac_dbl->getColumn();
+	    return array_vals_dbl.data();
+
+// 	    vector<int> lclshape;
+// 	    lclshape = shape();
+//             int lclndims;
+// 	    lclndims = ndims();
+/*	    for (unsigned int ii=0; ii < lclshape.size(); ii++ )
 	    {
 	      for ( int jj=0; jj < lclshape[ ii ]; jj++ )
 	      {
@@ -222,13 +226,16 @@ void * dalColumn::data()
 	        cout << "Data from cell number: " << cell << endl;
 	        return array_vals_dbl.data();
 	       }
-	     }
+	     }*/
 	    }
 	    break;
 	  case casa::TpComplex:
 	  {
 	    roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
-	    vector<int> lclshape;
+            array_vals_comp = roac_comp->getColumn();
+	    return array_vals_comp.data();
+
+/*	    vector<int> lclshape;
 	    lclshape = shape();
             int lclndims;
 	    lclndims = ndims();
@@ -242,7 +249,7 @@ void * dalColumn::data()
 	        cout << "Data from cell number: 0" << endl;
 	        return array_vals_comp.data();
 	       }
-	     }
+	     }*/
 	    }
 	    break;
 /************************************
@@ -340,7 +347,7 @@ bpl::numeric::array dalColumn::data_boost()
   bpl::list data_list;
   if ( isScalar() )
   {
-    if ( "double" == datatype )
+    if ( "double" == casa_datatype )
       {
         double * lcl_data;
         lcl_data = (double *)data();
@@ -358,37 +365,38 @@ bpl::numeric::array dalColumn::data_boost()
       {
 	for (int ii=0; ii<1; ii++)
 		data_list.append(0);
-		bpl::numeric::array nadata(
-		bpl::make_tuple(
-		bpl::make_tuple(data_list)
-		)
-		);
+		bpl::numeric::array nadata( data_list );
 	return nadata;
       }
   }
   else if ( isArray() )
   {
-    bpl::tuple dims = shape_boost();
-    if ( "double" == datatype )
+    vector<int> dims = shape();
+    if ( "double" == casa_datatype )
     {
-	for (int ii=0; ii<1; ii++)
-		data_list.append(0);
-		bpl::numeric::array nadata(
-		bpl::make_tuple(
-		bpl::make_tuple(data_list)
-		)
-		);
-	return nadata;
+        double * lcl_data;
+        lcl_data = (double *)data();
+	for ( unsigned int ii=0; ii<dims.size(); ii++)
+	   for ( int dd=0; dd<dims[ii]; dd++ )
+             for ( unsigned int row=0; row<nrows(); row++ )
+             {
+               data_list.append( lcl_data[row] );
+             }
+        bpl::numeric::array nadata( data_list );
+
+	bpl::list dims_list;
+	for ( unsigned int ii=0; ii<dims.size(); ii++)
+          dims_list.append( dims[ii] );
+
+        dims_list.append( nrows() );
+        nadata.setshape( dims_list );
+        return nadata;
     }
     else
     {
 	for (int ii=0; ii<1; ii++)
 		data_list.append(0);
-		bpl::numeric::array nadata(
-		bpl::make_tuple(
-		bpl::make_tuple(data_list)
-		)
-		);
+		bpl::numeric::array nadata( data_list );
 	return nadata;
     }
   }
@@ -396,11 +404,7 @@ bpl::numeric::array dalColumn::data_boost()
   {
 	for (int ii=0; ii<1; ii++)
 		data_list.append(0);
-		bpl::numeric::array nadata(
-		bpl::make_tuple(
-		bpl::make_tuple(data_list)
-		)
-		);
+		bpl::numeric::array nadata( data_list );
 	return nadata;
   }
 }
