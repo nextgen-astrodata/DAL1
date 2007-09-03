@@ -233,6 +233,9 @@ void * dalColumn::data()
 	  {
 	    roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
             array_vals_comp = roac_comp->getColumn();
+#ifdef DEBUG
+	    cout << "ARRAY SIZE " << array_vals_comp.size() << endl;
+#endif
 	    return array_vals_comp.data();
 
 /*	    vector<int> lclshape;
@@ -376,12 +379,20 @@ bpl::numeric::array dalColumn::data_boost()
     {
         double * lcl_data;
         lcl_data = (double *)data();
+	long loops=1;
 	for ( unsigned int ii=0; ii<dims.size(); ii++)
+	  loops *= dims[ii];
+
+	for ( int dd=0; dd<loops; dd++ )
+          for ( unsigned int row=0; row<nrows(); row++ )
+               data_list.append( lcl_data[row] );
+/*	for ( unsigned int ii=0; ii<dims.size(); ii++)
 	   for ( int dd=0; dd<dims[ii]; dd++ )
              for ( unsigned int row=0; row<nrows(); row++ )
              {
                data_list.append( lcl_data[row] );
-             }
+             }*/
+
         bpl::numeric::array nadata( data_list );
 
 	bpl::list dims_list;
@@ -389,6 +400,28 @@ bpl::numeric::array dalColumn::data_boost()
           dims_list.append( dims[ii] );
 
         dims_list.append( nrows() );
+        nadata.setshape( dims_list );
+        return nadata;
+    }
+    else if ( "complex" == casa_datatype )
+    {
+        complex<float> * lcl_data;
+        lcl_data = (complex<float> *)data();
+	long loops=1;
+	for ( unsigned int ii=0; ii<dims.size(); ii++)
+	  loops *= dims[ii];
+
+	for ( int dd=0; dd<loops; dd++ )
+          for ( unsigned int row=0; row<nrows(); row++ )
+               data_list.append( lcl_data[row] );
+
+        bpl::numeric::array nadata( data_list );
+
+	bpl::list dims_list;
+	for ( unsigned int ii=0; ii<dims.size(); ii++)
+          {dims_list.append( dims[ii] ); cout << "appending " << dims[ii] <<endl;}
+
+        dims_list.append( nrows() ); cout << "appending " << nrows() << endl;
         nadata.setshape( dims_list );
         return nadata;
     }

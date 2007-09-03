@@ -55,7 +55,9 @@ if ( data_col.isArray() ):
 print "shape: " + str(data_col.shape())
 print "number of dims: " + str(data_col.ndims())
 print "datatype: " + str(data_col.getDataType())
-#data_col.data()
+mydata = data_col.data()
+print mydata.transpose().shape
+mydata[0][1][0]
 print '\n'
 
 #ms = dal.msp()
