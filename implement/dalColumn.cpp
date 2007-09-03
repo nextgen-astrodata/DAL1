@@ -411,9 +411,9 @@ bpl::numeric::array dalColumn::data_boost()
 	for ( unsigned int ii=0; ii<dims.size(); ii++)
 	  loops *= dims[ii];
 
-	for ( int dd=0; dd<loops; dd++ )
-          for ( unsigned int row=0; row<nrows(); row++ )
-               data_list.append( lcl_data[row] );
+	for ( unsigned int row=0; row<nrows(); row++ )
+	  for ( int dd=0; dd<loops; dd++ )
+            data_list.append( lcl_data[row] );
 
         bpl::numeric::array nadata( data_list );
 
