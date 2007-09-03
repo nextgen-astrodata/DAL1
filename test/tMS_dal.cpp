@@ -38,62 +38,103 @@ int main(int argc, char *argv[])
 // create a dataset object of type MSCASA
 dalDataset * msds;
 msds = new dalDataset( argv[1], "MSCASA" );
+
 // print out a list of tables in the dataset
 msds->listTables();
+
 // open a table in the dataset
 dalTable * maintable;
 string tablename = "MAIN";
 string filter_string =
   "Select UVW, TIME, ANTENNA1, ANTENNA2, DATA from $1 where ANTENNA1 = 1 AND ANTENNA2 = 1";
+	
 maintable = msds->openFilteredTable( tablename, filter_string );
+
 // print the name of the table [ doesn't seem to work ]
 maintable->getName();
+
 // open a column in the table
 // dalColumn * timecol;
+cout << "-------\n" << "TIME" << "\n-------" << endl;
 dalColumn * foo1 = new dalColumn();
 foo1 = maintable->getColumn("TIME");
+foo1->getDataType();
+if ( foo1->isScalar() )
+  cout << "SCALAR" << endl;
+if ( foo1->isArray() )
+  cout << "ARRAY" << endl;
+cout << "Number of rows: " << foo1->nrows() << endl;
+foo1->data();
 delete foo1;
 
+cout << "-------\n" << "UVW" << "\n-------" << endl;
 dalColumn * foo2 = new dalColumn();
 foo2 = maintable->getColumn("UVW");
-cout << "shape: "; foo2->shape(); cout << endl;
-cout << "ndims: "; foo2->ndims(); cout << endl;
+vector<int> shape2 = foo2->shape();
+cout << "shape: ";
+for (unsigned int uu=0; uu<shape2.size(); uu++)
+  cout << shape2[uu] << ", ";
+cout << endl;
+cout << "ndims: " << foo2->ndims() << endl;
+foo2->getDataType();
+if ( foo2->isScalar() )
+  cout << "SCALAR" << endl;
+if ( foo2->isArray() )
+  cout << "ARRAY" << endl;
+foo2->data();
 delete foo2;
 
+cout << "-------\n" << "DATA" << "\n-------" << endl;
 dalColumn * foo3 = new dalColumn();
 foo3 = maintable->getColumn("DATA");
-cout << "shape: "; foo3->shape(); cout << endl;
-cout << "ndims: "; foo3->ndims(); cout << endl;
+vector<int> shape3 = foo3->shape();
+cout << "shape: ";
+for (unsigned int uu=0; uu<shape3.size(); uu++)
+  cout << shape3[uu] << ", ";
+cout << endl;
+cout << "ndims: " << foo3->ndims() << endl;
+foo3->getDataType();
+if ( foo3->isScalar() )
+  cout << "SCALAR" << endl;
+if ( foo3->isArray() )
+  cout << "ARRAY" << endl;
+foo3->data();
 delete foo3;
-exit(5);
+
+
+
+exit(8);
+
+
+
 
 double * mytime_data = new double[ 100 ];
 mytime_data = (double *)maintable->getColumnData( "TIME" );
-for (int ii=0; ii<10; ii++)
+for (int ii=0; ii<5; ii++)
   cout << "TIME data out: " << mytime_data[ii] << endl;
 delete mytime_data;
 
 int * ant1_data = new int[ 100 ];
 ant1_data = (int *)maintable->getColumnData( "ANTENNA1" );
-for (int ii=0; ii<10; ii++)
+for (int ii=0; ii<5; ii++)
   cout << "ANTENNA1 data out: " << ant1_data[ii] << endl;
 delete ant1_data;
 
 int * ant2_data = new int[ 100 ];
 ant2_data = (int *)maintable->getColumnData( "ANTENNA2" );
-for (int ii=0; ii<10; ii++)
+for (int ii=0; ii<5; ii++)
   cout << "ANTENNA2 data out: " << ant2_data[ii] << endl;
 delete ant2_data;
 
 double * myuvw;
 myuvw = (double *)maintable->getColumnData( "UVW" );
 // cout << myuvw << endl;
-for (int ii=0; ii<30; ii++)
+for (int ii=0; ii<5; ii++)
    cout << "UVW data out: " << myuvw[ii] << endl;
 
 complex<float> * data;
 data = (complex<float> *)maintable->getColumnData( "DATA" );
-for (int ii=0; ii<30; ii++)
+for (int ii=0; ii<5; ii++)
    cout << "DATA out: " << data[ii] << endl;
 
 // close the dataset
