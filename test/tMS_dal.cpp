@@ -98,16 +98,79 @@ cout << "shape: ";
 for (unsigned int uu=0; uu<shape3.size(); uu++)
   cout << shape3[uu] << ", ";
 cout << endl;
-cout << "ndims: " << foo3->ndims() << endl;
+unsigned int ndims3 = foo3->ndims();
+cout << "ndims: " << ndims3 << endl;
+
 foo3->getDataType();
 if ( foo3->isScalar() )
   cout << "SCALAR" << endl;
 if ( foo3->isArray() )
   cout << "ARRAY" << endl;
-complex<float> * foo3_data;
-foo3_data = (complex<float> *)foo3->data();
-for (int ii=0; ii<5; ii++)
-   cout << "DATA out: " << foo3_data[ii] << endl;
+unsigned int nrows3 = foo3->nrows();
+cout << "Number of rows: " << nrows3 << endl;
+
+/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+
+/*complex<float> * foo3_data =
+   new complex<float>[ nrows3 * shape3[0] * shape3[1] ];*/
+complex<float> * foo3_data_sb_chan;
+complex<float> sum;
+// for (int polarization=0; polarization<shape3[0]; polarization++)
+// {
+//   for (int channel=0; channel<shape3[1]; channel++)
+//   {
+    foo3_data_sb_chan = (complex<float> *)foo3->data(/*polarization,channel*/);
+// long idx = (*8670) + (*256) + (*4)
+// for (unsigned int ii=0; ii<nrows3; ii++)
+// {
+   
+// }
+// cout << foo3_data_sb_chan[ idx ] << endl;
+
+//     for (unsigned int ii=0; ii<nrows3; ii++)
+//        sum += foo3_data[ii];
+//     cout << "SUM[" << polarization << "][" << channel << "]: " << sum << endl;
+//     sum=0;
+//   }
+// }
+/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+
+
+// for each row
+for (unsigned int lclstart=0; lclstart<(1024*4); lclstart+=4)
+{
+  for (unsigned int p=lclstart; p<(nrows3*1024); p+=1024)
+    {
+       sum += foo3_data_sb_chan[ p ];
+    }
+  // skip the next 3 polarizations of 256 channels
+  cout  << "SUM: " << sum << endl;
+  sum=0;
+}
+
+// for (unsigned int r=0; r<20; r++)
+//   cout << foo3_data_sb_chan[r] << endl;
+
+// for (int ii=3; ii<7; ii+=1024)
+// {
+//   sum += foo3_data_sb_chan[ii];
+// }
+// cout  << "SUM: " << sum << endl;
+
+// for (int ii=0; ii<nrows3; ii+=1024)
+// {
+//   sum += foo3_data_sb_chan[ii];
+// }
+// cout  << "SUM: " << sum << endl;
+// for (int ii=0; ii<nrows3; ii+=1024)
+// {
+//   sum += foo3_data_sb_chan[ii];
+// }
+// cout  << "SUM: " << sum << endl;
+
+//    cout << "DATA out[" << ii << "]: " << foo3_data_sb_chan[ii] << endl;
+// for (int ii=8670; ii>8665; ii--)
+//    cout << "DATA out[" << ii << "]: " << foo3_data_sb_chan[ii] << endl;
 delete foo3;
 
 
