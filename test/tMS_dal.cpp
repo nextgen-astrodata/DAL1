@@ -137,7 +137,13 @@ complex<float> sum;
 
 
 // for each row
-for (unsigned int lclstart=0; lclstart<(1024*4); lclstart+=4)
+unsigned int polarization = 2; // 0,1,2, or 3
+unsigned int channel = 45; // up to 256 (channel*4)
+unsigned int row=345; // up to 8670 (row*1024)
+unsigned int index = (polarization) + (channel*4/*first dim*/) + (row*(4*256/*first dim x second dim*/));
+cout << foo3_data_sb_chan[ index ] << endl;
+exit(7);
+for (unsigned int lclstart=polarization; lclstart<(1024*4); lclstart+=4)
 {
   for (unsigned int p=lclstart; p<(nrows3*1024); p+=1024)
     {
