@@ -77,6 +77,7 @@ set (dal_sources
   dalAttribute.cpp
   dalBaseTypes.cpp 
   dalColumn.cpp
+  dalData.cpp
   dalDataset.cpp
   dalGroup.cpp
   dalRow.cpp

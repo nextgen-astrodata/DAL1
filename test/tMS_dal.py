@@ -59,7 +59,12 @@ mydata = data_col.data()
 print mydata.shape
 import numpy
 na = numpy.array(mydata)
-print na
+#for i in range(100):
+#print "data[" + str(i) + "]: " + str(na[:][0][0])
+#print "data[:][0][0] " + str(na[:][0][0])
+print "sum data[:][0][0] " + str(na[:][1][0].sum())
+print "sum data[:][1][1] " + str(na[:][1][1].sum())
+print "sum data[:][1][2] " + str(na[:][1][2].sum())
 print '\n'
 
 #ms = dal.msp()

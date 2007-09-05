@@ -30,6 +30,7 @@
 #ifndef DALCOLUMN_H
 #include "dalColumn.h"
 #endif
+// #include <test.tcc>
 
 dalColumn::dalColumn()
 {}
@@ -50,6 +51,7 @@ dalColumn::dalColumn( string complexcolname/*, void * dataformat*/ )
 dalColumn::dalColumn(casa::Table table, string colname)
 {
     type = "MSCASA";
+//     data_object = new dalData( type );
     casa_column = new casa::ROTableColumn( table, colname );
     casa_col_desc = casa_column->columnDesc();
     casa_datatype = getDataType();
@@ -174,7 +176,7 @@ string dalColumn::getType()
   return dal_datatype;
 }
 
-void * dalColumn::data()
+void * dalColumn::data(int cell1, int cell2, int cell3)
 {
   if ( "MSCASA" == type )
   {
@@ -231,12 +233,13 @@ void * dalColumn::data()
 	    break;
 	  case casa::TpComplex:
 	  {
+	    vector< complex< float > > ret_valvec;
+            vector<int> dims = shape();
 	    roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
-            array_vals_comp = roac_comp->getColumn();
-#ifdef DEBUG
-	    cout << "ARRAY SIZE " << array_vals_comp.size() << endl;
-#endif
-	    return array_vals_comp.data();
+	    casa::IPosition start (2,cell1,cell2);
+	    casa::Slicer slicer (start);
+            array_vals_comp = roac_comp->getColumn(/*slicer*/);
+	    return array_vals_comp.getStorage(deleteIt);
 
 /*	    vector<int> lclshape;
 	    lclshape = shape();
@@ -328,6 +331,20 @@ void dalColumn::addMember( string member_name, string member_type )
  *
  ************************************************************************/
 #ifdef PYTHON
+//   template <>
+//   bpl::object makePyArrayObject (casa::Array<casa::String> const& arr)
+//   {
+//     bpl::object a = bpl::to_list< casa::Array<casa::String> >::makeobject (arr);
+//     if (arr.ndim() == 1) {
+//       return a;
+//     }
+//     bpl::dict d;
+//     d.setdefault (std::string("shape"),
+// 		  bpl::to_list<casa::IPosition>::makeobject (arr.shape()));
+//     d.setdefault (std::string("array"), a);
+//     return d;
+//   }
+
 bpl::tuple dalColumn::shape_boost()
 {
   vector<int> lclvals;
@@ -345,7 +362,105 @@ bpl::tuple dalColumn::shape_boost()
    return lcl_tuple;
 }
 
-bpl::numeric::array dalColumn::data_boost()
+bpl::numeric::array dalColumn::data_boost2(int cell1)
+{
+  bpl::list data_list;
+  if ( isScalar() )
+  {
+    if ( "double" == casa_datatype )
+      {
+        double * lcl_data;
+        lcl_data = (double *)data();
+        for (unsigned int ii=0; ii<nrows(); ii++)
+        {
+           data_list.append( lcl_data[ii] );
+        }
+        bpl::numeric::array nadata(
+            bpl::make_tuple(data_list)
+        );
+        nadata.setshape( bpl::make_tuple(nrows()) );
+        return nadata;
+      }
+    else
+      {
+	for (int ii=0; ii<1; ii++)
+		data_list.append(0);
+		bpl::numeric::array nadata( data_list );
+	return nadata;
+      }
+  }
+  else if ( isArray() )
+  {
+    vector<int> dims = shape();
+    if ( "double" == casa_datatype )
+    {
+        double * lcl_data;
+        lcl_data = (double *)data(cell1);
+	long loops=1;
+	for ( unsigned int ii=0; ii<dims.size(); ii++)
+	  loops *= dims[ii];
+
+	for ( int dd=0; dd<loops; dd++ )
+          for ( unsigned int row=0; row<nrows(); row++ )
+               data_list.append( lcl_data[row] );
+/*	for ( unsigned int ii=0; ii<dims.size(); ii++)
+	   for ( int dd=0; dd<dims[ii]; dd++ )
+             for ( unsigned int row=0; row<nrows(); row++ )
+             {
+               data_list.append( lcl_data[row] );
+             }*/
+
+        bpl::numeric::array nadata( data_list );
+
+	bpl::list dims_list;
+	for ( unsigned int ii=0; ii<dims.size(); ii++)
+          dims_list.append( dims[ii] );
+
+        dims_list.append( nrows() );
+        nadata.setshape( dims_list );
+        return nadata;
+    }
+    else if ( "complex" == casa_datatype )
+    {
+        complex<float> * lcl_data;
+        lcl_data = (complex<float> *)data(cell1);
+	long loops=1;
+	for ( unsigned int ii=0; ii<dims.size(); ii++)
+	  loops *= dims[ii];
+
+	for ( unsigned int row=0; row<nrows(); row++ )
+	  for ( int dd=0; dd<loops; dd++ )
+            data_list.append( lcl_data[dd] );
+
+        bpl::numeric::array nadata( data_list );
+
+	bpl::list dims_list;
+/*	for ( unsigned int ii=0; ii<dims.size(); ii++)
+          {dims_list.append( dims[ii] ); cout << "appending " << dims[ii] <<endl;}
+
+        dims_list.append( nrows() ); cout << "appending " << nrows() << endl;
+*/
+        nadata.setshape( nrows()*4*256/*dims_list*/ );
+        return nadata;
+    }
+    else
+    {
+	for (int ii=0; ii<1; ii++)
+		data_list.append(0);
+		bpl::numeric::array nadata( data_list );
+	return nadata;
+    }
+  }
+  else
+  {
+	for (int ii=0; ii<1; ii++)
+		data_list.append(0);
+		bpl::numeric::array nadata( data_list );
+	return nadata;
+  }
+}
+
+bpl::numeric::array dalColumn::data_boost1()
 {
   bpl::list data_list;
   if ( isScalar() )
@@ -386,12 +501,6 @@ bpl::numeric::array dalColumn::data_boost()
 	for ( int dd=0; dd<loops; dd++ )
           for ( unsigned int row=0; row<nrows(); row++ )
                data_list.append( lcl_data[row] );
-/*	for ( unsigned int ii=0; ii<dims.size(); ii++)
-	   for ( int dd=0; dd<dims[ii]; dd++ )
-             for ( unsigned int row=0; row<nrows(); row++ )
-             {
-               data_list.append( lcl_data[row] );
-             }*/
 
         bpl::numeric::array nadata( data_list );
 
@@ -413,7 +522,7 @@ bpl::numeric::array dalColumn::data_boost()
 
 	for ( unsigned int row=0; row<nrows(); row++ )
 	  for ( int dd=0; dd<loops; dd++ )
-            data_list.append( lcl_data[row] );
+            data_list.append( lcl_data[dd] );
 
         bpl::numeric::array nadata( data_list );
 
@@ -422,6 +531,10 @@ bpl::numeric::array dalColumn::data_boost()
           {dims_list.append( dims[ii] ); cout << "appending " << dims[ii] <<endl;}
 
         dims_list.append( nrows() ); cout << "appending " << nrows() << endl;
+/*cout << "AAAAA" << endl;
+	bpl::numeric::array foo = makePyArrayObject(array_vals_comp);
+cout << "BBBBB" << endl;*/
+	dims_list.reverse();
         nadata.setshape( dims_list );
         return nadata;
     }
@@ -441,5 +554,6 @@ bpl::numeric::array dalColumn::data_boost()
 	return nadata;
   }
 }
+
 #endif
 

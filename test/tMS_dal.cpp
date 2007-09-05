@@ -20,6 +20,7 @@
 
 #include <dal.h>
 #include <dalDataset.h>
+#include <dalData.h>
 
 using namespace casa;
 
@@ -140,8 +141,12 @@ complex<float> sum;
 unsigned int polarization = 2; // 0,1,2, or 3
 unsigned int channel = 45; // up to 256 (channel*4)
 unsigned int row=345; // up to 8670 (row*1024)
-unsigned int index = (polarization) + (channel*4/*first dim*/) + (row*(4*256/*first dim x second dim*/));
+unsigned int index =
+  (polarization) + (channel*shape3[0]/*4*/) + (row*(shape3[0]*shape3[1]/*4*256*/));
 cout << foo3_data_sb_chan[ index ] << endl;
+cout << "Creating new dalData object." << endl;
+dalData * data_object = new dalData();
+cout << "Created new dalData object." << endl;
 exit(7);
 for (unsigned int lclstart=polarization; lclstart<(1024*4); lclstart+=4)
 {

@@ -32,6 +32,10 @@
 #include "dalAttribute.h"
 #endif
 
+#ifndef DALDATA_H
+#include "dalData.h"
+#endif
+
 #ifndef DALFILTER_H
 #include "dalFilter.h"
 #endif
@@ -57,6 +61,8 @@ class dalColumn {
 	// hdf5-specific variables
 	hid_t coltype;
 	herr_t  status;  /// hdf5 call return status
+
+	dalData * data_object;  /// object to hold column data
 
 #ifdef WITH_CASA
 	// casa-specific variables
@@ -84,6 +90,9 @@ class dalColumn {
 	casa::Vector<casa::Double> scalar_vals_dbl;
 	casa::Vector<casa::Complex> scalar_vals_comp;
 	casa::Vector<casa::Int> scalar_vals_int;
+	vector< complex< float > > stl_vec_comp;
+
+	casa::Bool deleteIt;
 #endif
 
 public:
@@ -105,7 +114,8 @@ public:
 	vector<int> shape();
 	unsigned int ndims();
 	unsigned int nrows();
-	void * data();
+ 	void * data(int cell1=0, int cell2=0, int cell3=0);
+// 	dalData * data(int cell1=0, int cell2=0, int cell3=0);
 
 //	int getNumber();  /// return the index of a column
 // 	void addArray();
@@ -120,8 +130,24 @@ public:
  *
  ************************************************************************/
 #ifdef PYTHON
+// template <typename T>
+// bpl::object makeobject( casa::Array<T> const& arr);
+// template <>
+// bpl::PyObject* convert( casa::Array<T> const& c);
+
+
+/*template <typename T>
+struct casa_array_to_python
+{
+  static bpl::object makeobject( casa::Array<T> const& arr)
+  {  return makePyArrayObject( arr ); }*/
+//   static bpl::PyObject* convert( casa::Array<T> const& c)
+//   {  return bpl::incref( makeobject(c).ptr() ); }
+// };
+
 	bpl::tuple shape_boost();
-	bpl::numeric::array data_boost();
+	bpl::numeric::array data_boost1();
+	bpl::numeric::array data_boost2(int cell1);
 #endif
 };
 #endif
