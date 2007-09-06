@@ -10,11 +10,40 @@ msds= dal.dalDataset(sys.argv[1], "MSCASA")
 #msds.listTables()
 tablename = "MAIN";
 #msds = dal.dalTable(tablename)
-filter_string = "Select UVW, TIME, ANTENNA1, ANTENNA2, DATA from $1 where ANTENNA1 = 1 AND ANTENNA2 = 1"
+#filter_string = "Select UVW, TIME, ANTENNA1, ANTENNA2 from $1 where ANTENNA1 = 1 AND ANTENNA2 = 2"
+filter_string = "SELECT UVW from $1"
 maintable = msds.openFilteredTable( tablename, filter_string );
 #maintable = msds.openTable( tablename );
 #maintable.listColumns()
 #maintable.getName()
+
+
+
+
+print "-"*5 + "\nUVW\n" + "-"*5
+uvw_col = maintable.getColumn("UVW")
+if ( uvw_col.isScalar() ):
+	print "SCALAR"
+if ( uvw_col.isArray() ):
+	print "ARRAY"
+print "shape: " + str(uvw_col.shape())
+print "number of dims: " + str(uvw_col.ndims())
+print "datatype: " + str(uvw_col.getDataType())
+uvw_data = uvw_col.data()
+#print uvw_data.shape
+#print uvw_data[0][0]
+#print uvw_data[1][10]
+foo = uvw_data.get()
+plot(foo[0], foo[1], "k.")
+show()
+for p in range(5):
+	print foo[0][p]
+print '\n'
+
+
+
+
+sys.exit(8)
 
 print "-"*5 + "\nTIME\n" + "-"*5
 time_col = maintable.getColumn("TIME")
@@ -35,23 +64,8 @@ foo = time_data.get()
 
 print '\n'
 
-print "-"*5 + "\nUVW\n" + "-"*5
-uvw_col = maintable.getColumn("UVW")
-if ( uvw_col.isScalar() ):
-	print "SCALAR"
-if ( uvw_col.isArray() ):
-	print "ARRAY"
-print "shape: " + str(uvw_col.shape())
-print "number of dims: " + str(uvw_col.ndims())
-print "datatype: " + str(uvw_col.getDataType())
-uvw_data = uvw_col.data()
-#print uvw_data.shape
-#print uvw_data[0][0]
-#print uvw_data[1][10]
-foo = uvw_data.get()
-for p in range(5):
-	print foo[0][p]
-print '\n'
+
+
 
 print "-"*5 + "\nDATA\n" + "-"*5
 data_col = maintable.getColumn("DATA")

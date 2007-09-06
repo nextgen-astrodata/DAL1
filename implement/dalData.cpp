@@ -108,8 +108,7 @@ dalData::dalData(string lclfiletype, string lcldatatype,
 bpl::numeric::array dalData::get_boost()
 {
   bpl::list data_list;
-  {
-    if ( 1 == shape.size() ) // SCALAR
+  if ( 1 == shape.size() ) // SCALAR
     {
       if ( dal_DOUBLE == datatype )
       {
@@ -122,7 +121,7 @@ bpl::numeric::array dalData::get_boost()
         );
         bpl::list lcl_dims;
         for (unsigned int hh=0; hh<shape.size(); hh++)
-        { cout << "   " << shape[hh] << endl;  lcl_dims.append(shape[hh]);}
+        { lcl_dims.append(shape[hh]);}
 
         nadata.setshape( lcl_dims );
         return nadata;
@@ -141,15 +140,15 @@ bpl::numeric::array dalData::get_boost()
       {
         if ( 2 == shape.size() ) // 2D case
         {
-  	  for ( unsigned int xx=0; xx<shape[0]; xx++)
-  	    for ( unsigned int yy=0; yy<shape[1]; yy++)
+  	  for ( int xx=0; xx<shape[0]; xx++)
+  	    for ( int yy=0; yy<shape[1]; yy++)
               data_list.append( (*((double*)get(xx,yy))) );
         }
         else if ( 3 == shape.size() ) // 3D case
         {
-  	  for ( unsigned int xx=0; xx<shape[0]; xx++)
-  	    for ( unsigned int yy=0; yy<shape[1]; yy++)
-  	      for ( unsigned int zz=0; zz<shape[2]; zz++)
+  	  for ( int xx=0; xx<shape[0]; xx++)
+  	    for ( int yy=0; yy<shape[1]; yy++)
+  	      for ( int zz=0; zz<shape[2]; zz++)
                 data_list.append( (*((double*)get(xx,yy,zz))) );
         }
  
@@ -167,16 +166,16 @@ bpl::numeric::array dalData::get_boost()
         complex<float> * tmp_comp;
         if ( 2 == shape.size() ) // 2D case
         {
-  	  for ( unsigned int xx=0; xx<shape[0]; xx++)
-  	    for ( unsigned int yy=0; yy<shape[1]; yy++)
+  	  for (int xx=0; xx<shape[0]; xx++)
+  	    for (int yy=0; yy<shape[1]; yy++)
               data_list.append( (*((complex<float>*)get(xx,yy))) );
         }
         else if ( 3 == shape.size() ) // 3D case
         {
 long count=0;
-  	  for ( unsigned int xx=0; xx<shape[0]; xx++)
-  	    for ( unsigned int yy=0; yy<shape[1]; yy++)
-  	      for ( unsigned int zz=0; zz<shape[2]; zz++)
+  	  for (int xx=0; xx<shape[0]; xx++)
+  	    for ( int yy=0; yy<shape[1]; yy++)
+  	      for (int zz=0; zz<shape[2]; zz++)
               {
 //   complex<float> * value3;
 //   value3 = (complex<float>*)data_object3->get(2,45,xx);
@@ -197,6 +196,9 @@ long count=0;
         return nadata;
       }
     }
-  }
+    for (int ii=0; ii<1; ii++)
+	data_list.append(0);
+    bpl::numeric::array nadata( data_list );
+    return nadata;
 }
 #endif
