@@ -58,15 +58,16 @@ public:
 // 	complex<float> * data;
 	void * data;
 	vector<int> shape;
+	long nrows;
 
 	dalData();  /// default constructor
-	dalData(string, string, vector<int>);  /// constructor with a specific file type
+	dalData(string, string, vector<int>, long);  /// constructor with a specific file type
 // 	void * get(long);
 // 	void * get(long, long);
 	void * get(long idx1=-1, long idx=-1, long idx3=-1);
 	void setData(void *);
 #ifdef PYTHON
-//    bpl::numeric:array get_boost();
+	bpl::numeric::array get_boost();
 #endif
 };
 #endif

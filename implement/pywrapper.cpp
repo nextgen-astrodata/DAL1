@@ -278,8 +278,14 @@ BOOST_PYTHON_MODULE(libpydal)
 	.def("isScalar", &dalColumn::isScalar)
 	.def("isArray", &dalColumn::isArray)
 #ifdef WITH_CASA
-	.def("data", &dalColumn::data_boost1)
+ 	.def("data", &dalColumn::data/*_boost1*/,
+		bpl::return_value_policy<bpl::manage_new_object>())
 // 	.def("data", &dalColumn::data_boost2)
 #endif
+    ;
+
+    bpl::class_<dalData>("dalData")
+	.def(bpl::init<>())
+	.def("get", &dalData::get_boost)
     ;
 }

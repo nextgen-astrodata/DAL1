@@ -26,9 +26,13 @@ print "shape: " + str(time_col.shape())
 print "number of dims: " + str(time_col.ndims())
 print "datatype: " + str(time_col.getDataType())
 time_data = time_col.data()
-print time_data.shape
-for i in range(5):
-	print time_data[i]
+#print time_data.shape
+#print type(time_data)
+foo = time_data.get()
+#plot(foo)
+#show()
+#close()
+
 print '\n'
 
 print "-"*5 + "\nUVW\n" + "-"*5
@@ -41,9 +45,12 @@ print "shape: " + str(uvw_col.shape())
 print "number of dims: " + str(uvw_col.ndims())
 print "datatype: " + str(uvw_col.getDataType())
 uvw_data = uvw_col.data()
-print uvw_data.shape
-print uvw_data[0][0]
-print uvw_data[1][10]
+#print uvw_data.shape
+#print uvw_data[0][0]
+#print uvw_data[1][10]
+foo = uvw_data.get()
+for p in range(5):
+	print foo[0][p]
 print '\n'
 
 print "-"*5 + "\nDATA\n" + "-"*5
@@ -55,17 +62,24 @@ if ( data_col.isArray() ):
 print "shape: " + str(data_col.shape())
 print "number of dims: " + str(data_col.ndims())
 print "datatype: " + str(data_col.getDataType())
-mydata = data_col.data()
-print mydata.shape
-import numpy
-na = numpy.array(mydata)
-#for i in range(100):
-#print "data[" + str(i) + "]: " + str(na[:][0][0])
-#print "data[:][0][0] " + str(na[:][0][0])
-print "sum data[:][0][0] " + str(na[:][1][0].sum())
-print "sum data[:][1][1] " + str(na[:][1][1].sum())
-print "sum data[:][1][2] " + str(na[:][1][2].sum())
+data_data = data_col.data()
+foo = data_data.get()
+print foo.shape
+for p in range(340,345):
+	print foo[2][45][p]
 print '\n'
+
+#mydata = data_col.data()
+#print mydata.shape
+#import numpy
+#na = numpy.array(mydata)
+##for i in range(100):
+##print "data[" + str(i) + "]: " + str(na[:][0][0])
+##print "data[:][0][0] " + str(na[:][0][0])
+#print "sum data[:][0][0] " + str(na[:][1][0].sum())
+#print "sum data[:][1][1] " + str(na[:][1][1].sum())
+#print "sum data[:][1][2] " + str(na[:][1][2].sum())
+#print '\n'
 
 #ms = dal.msp()
 #row = ms.value()

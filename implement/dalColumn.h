@@ -129,7 +129,7 @@ public:
  ************************************************************************/
 #ifdef PYTHON
 	bpl::tuple shape_boost();
-	bpl::numeric::array data_boost1();
+// 	bpl::numeric::array data_boost1();
 // 	bpl::numeric::array data_boost2(/*int cell1*/);
 #endif
 };
