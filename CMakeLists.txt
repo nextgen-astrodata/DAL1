@@ -54,7 +54,7 @@ find_path (dal_cmake FindHDF5.cmake FindCASACORE.cmake
 ## check for the external packages
 
 if (dal_cmake)
-  ## BLITZ++
+  ## Blitz++
   if (NOT HAVE_BLITZ)
     include (${dal_cmake}/FindBlitz.cmake)
   endif (NOT HAVE_BLITZ)
@@ -100,8 +100,6 @@ include_directories (
   ${DAL_SOURCE_DIR}/implement
   ${DAL_SOURCE_DIR}/test
   ${BOOST_INCLUDES}
-  ${CASA_INCLUDES}
-  ${CFITSIO_INCLUDES}
   ${HDF5_INCLUDES}
   ${PYTHON_INCLUDE_PATH}
   )
@@ -109,6 +107,14 @@ include_directories (
 if (HAVE_BLITZ)
   include_directories (${BLITZ_INCLUDES})
 endif (HAVE_BLITZ)
+
+if (HAVE_CASACORE)
+  include_directories (${CASACORE_INCLUDES})
+endif (HAVE_CASACORE)
+
+if (HAVE_CFITSIO)
+  include_directories (${CFITSIO_INCLUDES})
+endif (HAVE_CFITSIO)
 
 ## -----------------------------------------------------------------------------
 ## Subdirectories
