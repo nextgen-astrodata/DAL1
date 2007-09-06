@@ -131,7 +131,6 @@ vector<int> dalColumn::shape()
   }
   else
   {
-    cout << "column is not an array" << endl;
     return shape_vals;
   }
 #endif
@@ -188,7 +187,9 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 	   rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
 	   scalar_vals_dbl = rosc_dbl->getColumn();
 // 	   return &(scalar_vals_dbl[0]);
-	   return NULL;
+	   data_object = new dalData( filetype, dal_DOUBLE, shape() );
+	   data_object->data = (double *)scalar_vals_dbl.getStorage(deleteIt);
+	   return data_object;
          }
 	 break;
 /************************************
@@ -211,7 +212,9 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 	    roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
             array_vals_dbl = roac_dbl->getColumn();
 // 	    return array_vals_dbl.data();
-	    return NULL;
+	    data_object = new dalData( filetype, dal_DOUBLE, shape() );
+	    data_object->data = (double *)array_vals_dbl.getStorage(deleteIt);
+	    return data_object;
 
 // 	    vector<int> lclshape;
 // 	    lclshape = shape();

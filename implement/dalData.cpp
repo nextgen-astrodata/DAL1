@@ -47,13 +47,20 @@ void * dalData::get( long idx1, long idx2, long idx3 )
 {
    vector<long> indices;
 //    vector<long>::iterator it;
-   if( idx1>0 )
+   if( idx1>-1 )
      indices.push_back( idx1 );
-   if( idx2>0 )
+   if( idx2>-1 )
      indices.push_back( idx2 );
-   if( idx3>0 )
+   if( idx3>-1 )
      indices.push_back( idx3 );
 
+   if (indices.size() != (shape.size()+1) )
+   {
+      cout << "ERROR: Number of indices do not match shape of column." << endl;
+      exit(-1);
+   }
+// cout << "ind size: " << indices.size() << endl;
+// cout << "shape size: " << shape.size() << endl;
    unsigned long index = 0;
    long bb = 1;
 
@@ -74,8 +81,9 @@ void * dalData::get( long idx1, long idx2, long idx3 )
 
      if ( dal_COMPLEX == datatype )
         return (&(((complex<float>*)data)[ index ]));
-//    else if float:
-//   else if int:
+
+     else if ( dal_DOUBLE == datatype )
+        return (&(((double*)data)[ index ]));
    }
    return NULL;
 }

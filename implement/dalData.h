@@ -63,7 +63,7 @@ public:
 	dalData(string, string, vector<int>);  /// constructor with a specific file type
 // 	void * get(long);
 // 	void * get(long, long);
-	void * get(long, long, long);
+	void * get(long idx1=-1, long idx=-1, long idx3=-1);
 	void setData(void *);
 #ifdef PYTHON
 //    bpl::numeric:array get_boost();

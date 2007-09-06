@@ -69,6 +69,13 @@ double * foo1_data;
 /*foo1_data = (double *)foo1->data();
 for (int ii=0; ii<5; ii++)
   cout << "TIME data out: " << foo1_data[ii] << endl;*/
+dalData * data_object1 = foo1->data();
+double * value1;
+for(unsigned int xx=0; xx<13; xx++)
+{
+  value1 = (double*)data_object1->get(xx);  // WORKS
+  cout << *value1 << endl;
+}
 delete foo1;
 
 cout << "-------\n" << "UVW" << "\n-------" << endl;
@@ -85,10 +92,17 @@ if ( foo2->isScalar() )
   cout << "SCALAR" << endl;
 if ( foo2->isArray() )
   cout << "ARRAY" << endl;
-double * foo2_data;
+//double * foo2_data;
 /*foo2_data = (double *)foo2->data();
 for (int ii=0; ii<5; ii++)
   cout << "UVW data out: " << foo2_data[ii] << endl;*/
+dalData * data_object2 = foo2->data();
+double * value2;
+for(unsigned int xx=0; xx<5; xx++)
+{
+  value2 = (double*)data_object2->get(xx,0);  // WORKS
+  cout << *value2 << endl;
+}
 delete foo2;
 
 cout << "-------\n" << "DATA" << "\n-------" << endl;
@@ -115,13 +129,15 @@ unsigned int channel = 45;
 unsigned int row=345;
 unsigned int index =  (polarization) + (channel*shape3[0]) + (row*(shape3[0]*shape3[1]));*/
 // cout << foo3_data[ index ] << endl;
-dalData * data_object = foo3->data();
+dalData * data_object3 = foo3->data();
 // cout << (complex<float>*)data_object.get(2,45,345) << endl;
 /*complex<float> * foo3_data = (complex<float>*)*/
-complex<float> * goo = (complex<float>*)data_object->get(2,45,345);  // WORKS
-cout << *goo << endl;
-/*data_object->get(2,45,346);
-data_object->get(2,45,347);*/
+complex<float> * value3;
+for(unsigned int xx=300; xx<320; xx++)
+{
+  value3 = (complex<float>*)data_object3->get(2,45,xx);  // WORKS
+  cout << *value3 << endl;
+}
 delete foo3;
 
 
