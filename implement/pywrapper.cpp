@@ -279,7 +279,7 @@ BOOST_PYTHON_MODULE(libpydal)
 	.def("isArray", &dalColumn::isArray)
 #ifdef WITH_CASA
 	.def("data", &dalColumn::data_boost1)
-	.def("data", &dalColumn::data_boost2)
+// 	.def("data", &dalColumn::data_boost2)
 #endif
     ;
 }

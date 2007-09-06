@@ -35,9 +35,65 @@
 #include "dalData.h"
 #endif
 
-void get_element( long idx1, long idx2, long idx3 )
+/*void * dalData::get( long idx1 )
 {
-/*    unsigned int index =
-      (idx1) + (idx2 * shape3[0]) + (idx3 * (shape3[0]*shape3[1]) );
-    cout << data[ index ] << endl;*/
+  return NULL;
 }
+void * dalData::get( long idx1 )
+{
+  return NULL;
+}*/
+void * dalData::get( long idx1, long idx2, long idx3 )
+{
+   vector<long> indices;
+//    vector<long>::iterator it;
+   if( idx1>0 )
+     indices.push_back( idx1 );
+   if( idx2>0 )
+     indices.push_back( idx2 );
+   if( idx3>0 )
+     indices.push_back( idx3 );
+
+   unsigned long index = 0;
+   long bb = 1;
+
+   if ( "MSCASA" == filetype )
+   {
+//      it = shape.begin();
+     shape.insert( shape.begin(), 1 );
+     for (unsigned int dim=0; dim<shape.size(); dim++)
+     {
+//         index = idx1 + (idx2*shape[0]) + (idx3*(shape[0]*shape[1]));
+        for (unsigned int ss=dim; ss>0; ss--)
+	   bb *= shape[ ss ];
+
+        index += indices[dim]*bb;
+	bb=1;
+     }
+     shape.erase( shape.begin() );
+
+     if ( dal_COMPLEX == datatype )
+        return (&(((complex<float>*)data)[ index ]));
+//    else if float:
+//   else if int:
+   }
+   return NULL;
+}
+
+dalData::dalData() {}
+
+dalData::dalData(string lclfiletype, string lcldatatype,
+   vector<int> lclshape)
+{
+    filetype = lclfiletype;
+    datatype = lcldatatype;
+    shape = lclshape;
+}
+
+// void dalData::setData(void * lcldata)
+// {
+//    data = lcldata;
+// }
+
+#ifdef PYTHON
+#endif

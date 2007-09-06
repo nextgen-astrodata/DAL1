@@ -49,7 +49,7 @@
 */
 class dalColumn {
 
-	string type;  /// "HDF5", "MSCASA" or "FITS"; for example
+	string filetype;  /// "HDF5", "MSCASA" or "FITS"; for example
 	string name; /// column name
 	string dal_datatype;  /// column datatype
 	int size; /// datatype size
@@ -108,14 +108,12 @@ public:
 	int getSize();
 	void close();
 	string getType();
-// 	void data();
 	int isArray();
 	int isScalar();
 	vector<int> shape();
 	unsigned int ndims();
 	unsigned int nrows();
- 	void * data(int cell1=0, int cell2=0, int cell3=0);
-// 	dalData * data(int cell1=0, int cell2=0, int cell3=0);
+ 	dalData * data(/*int cell1=0, int cell2=0, int cell3=0*/);
 
 //	int getNumber();  /// return the index of a column
 // 	void addArray();
@@ -130,24 +128,9 @@ public:
  *
  ************************************************************************/
 #ifdef PYTHON
-// template <typename T>
-// bpl::object makeobject( casa::Array<T> const& arr);
-// template <>
-// bpl::PyObject* convert( casa::Array<T> const& c);
-
-
-/*template <typename T>
-struct casa_array_to_python
-{
-  static bpl::object makeobject( casa::Array<T> const& arr)
-  {  return makePyArrayObject( arr ); }*/
-//   static bpl::PyObject* convert( casa::Array<T> const& c)
-//   {  return bpl::incref( makeobject(c).ptr() ); }
-// };
-
 	bpl::tuple shape_boost();
 	bpl::numeric::array data_boost1();
-	bpl::numeric::array data_boost2(int cell1);
+// 	bpl::numeric::array data_boost2(/*int cell1*/);
 #endif
 };
 #endif

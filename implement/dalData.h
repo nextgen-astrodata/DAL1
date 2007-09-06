@@ -50,9 +50,23 @@ There will also be a way for the developer to get access to the c-array,
 exactly as it is stored.
 */
 class dalData{
-	void * data;
+	string datatype;  /// i.e. "dal_COMPLEX", "dal_INT", "dal_FLOAT"
+	string filetype;  /// i.e. "MSCASA", "FITS", "HDF5"
 
 public:
+	//void * data;  /// pointer to the actual c-array data
+// 	complex<float> * data;
+	void * data;
+	vector<int> shape;
 
+	dalData();  /// default constructor
+	dalData(string, string, vector<int>);  /// constructor with a specific file type
+// 	void * get(long);
+// 	void * get(long, long);
+	void * get(long, long, long);
+	void setData(void *);
+#ifdef PYTHON
+//    bpl::numeric:array get_boost();
+#endif
 };
 #endif

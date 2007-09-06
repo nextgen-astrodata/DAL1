@@ -66,9 +66,9 @@ if ( foo1->isArray() )
   cout << "ARRAY" << endl;
 cout << "Number of rows: " << foo1->nrows() << endl;
 double * foo1_data;
-foo1_data = (double *)foo1->data();
+/*foo1_data = (double *)foo1->data();
 for (int ii=0; ii<5; ii++)
-  cout << "TIME data out: " << foo1_data[ii] << endl;
+  cout << "TIME data out: " << foo1_data[ii] << endl;*/
 delete foo1;
 
 cout << "-------\n" << "UVW" << "\n-------" << endl;
@@ -86,9 +86,9 @@ if ( foo2->isScalar() )
 if ( foo2->isArray() )
   cout << "ARRAY" << endl;
 double * foo2_data;
-foo2_data = (double *)foo2->data();
+/*foo2_data = (double *)foo2->data();
 for (int ii=0; ii<5; ii++)
-  cout << "UVW data out: " << foo2_data[ii] << endl;
+  cout << "UVW data out: " << foo2_data[ii] << endl;*/
 delete foo2;
 
 cout << "-------\n" << "DATA" << "\n-------" << endl;
@@ -101,7 +101,6 @@ for (unsigned int uu=0; uu<shape3.size(); uu++)
 cout << endl;
 unsigned int ndims3 = foo3->ndims();
 cout << "ndims: " << ndims3 << endl;
-
 foo3->getDataType();
 if ( foo3->isScalar() )
   cout << "SCALAR" << endl;
@@ -109,79 +108,20 @@ if ( foo3->isArray() )
   cout << "ARRAY" << endl;
 unsigned int nrows3 = foo3->nrows();
 cout << "Number of rows: " << nrows3 << endl;
-
-/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-
-/*complex<float> * foo3_data =
-   new complex<float>[ nrows3 * shape3[0] * shape3[1] ];*/
-complex<float> * foo3_data_sb_chan;
-complex<float> sum;
-// for (int polarization=0; polarization<shape3[0]; polarization++)
-// {
-//   for (int channel=0; channel<shape3[1]; channel++)
-//   {
-    foo3_data_sb_chan = (complex<float> *)foo3->data(/*polarization,channel*/);
-// long idx = (*8670) + (*256) + (*4)
-// for (unsigned int ii=0; ii<nrows3; ii++)
-// {
-   
-// }
-// cout << foo3_data_sb_chan[ idx ] << endl;
-
-//     for (unsigned int ii=0; ii<nrows3; ii++)
-//        sum += foo3_data[ii];
-//     cout << "SUM[" << polarization << "][" << channel << "]: " << sum << endl;
-//     sum=0;
-//   }
-// }
-/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-
-
-// for each row
-unsigned int polarization = 2; // 0,1,2, or 3
-unsigned int channel = 45; // up to 256 (channel*4)
-unsigned int row=345; // up to 8670 (row*1024)
-unsigned int index =
-  (polarization) + (channel*shape3[0]/*4*/) + (row*(shape3[0]*shape3[1]/*4*256*/));
-cout << foo3_data_sb_chan[ index ] << endl;
-cout << "Creating new dalData object." << endl;
-dalData * data_object = new dalData();
-cout << "Created new dalData object." << endl;
-exit(7);
-for (unsigned int lclstart=polarization; lclstart<(1024*4); lclstart+=4)
-{
-  for (unsigned int p=lclstart; p<(nrows3*1024); p+=1024)
-    {
-       sum += foo3_data_sb_chan[ p ];
-    }
-  // skip the next 3 polarizations of 256 channels
-  cout  << "SUM: " << sum << endl;
-  sum=0;
-}
-
-// for (unsigned int r=0; r<20; r++)
-//   cout << foo3_data_sb_chan[r] << endl;
-
-// for (int ii=3; ii<7; ii+=1024)
-// {
-//   sum += foo3_data_sb_chan[ii];
-// }
-// cout  << "SUM: " << sum << endl;
-
-// for (int ii=0; ii<nrows3; ii+=1024)
-// {
-//   sum += foo3_data_sb_chan[ii];
-// }
-// cout  << "SUM: " << sum << endl;
-// for (int ii=0; ii<nrows3; ii+=1024)
-// {
-//   sum += foo3_data_sb_chan[ii];
-// }
-// cout  << "SUM: " << sum << endl;
-
-//    cout << "DATA out[" << ii << "]: " << foo3_data_sb_chan[ii] << endl;
-// for (int ii=8670; ii>8665; ii--)
-//    cout << "DATA out[" << ii << "]: " << foo3_data_sb_chan[ii] << endl;
+// complex<float> * foo3_data;
+// foo3_data= foo3->data();
+/*unsigned int polarization = 2;
+unsigned int channel = 45;
+unsigned int row=345;
+unsigned int index =  (polarization) + (channel*shape3[0]) + (row*(shape3[0]*shape3[1]));*/
+// cout << foo3_data[ index ] << endl;
+dalData * data_object = foo3->data();
+// cout << (complex<float>*)data_object.get(2,45,345) << endl;
+/*complex<float> * foo3_data = (complex<float>*)*/
+complex<float> * goo = (complex<float>*)data_object->get(2,45,345);  // WORKS
+cout << *goo << endl;
+/*data_object->get(2,45,346);
+data_object->get(2,45,347);*/
 delete foo3;
 
 
