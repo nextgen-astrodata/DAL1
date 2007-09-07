@@ -325,7 +325,7 @@ void dalTable::openTable( /*void * voidfile,*/ string tablename,
 {
    if ( type == MSCASATYPE )
    {
-	cout << "dalTable::openTable " << type << endl;
+// 	cout << "dalTable::openTable " << type << endl;
 	*casa_table_handle = reader->table( tablename );
    }
    else
@@ -344,7 +344,7 @@ void dalTable::openTable( /*void * voidfile,*/ string tablename,
 {
    if ( type == MSCASATYPE )
    {
-	cout << "dalTable::openTable " << type << endl;
+// 	cout << "dalTable::openTable " << type << endl;
 	*casa_table_handle = reader->table( tablename );
 	*casa_table_handle = casa::tableCommand( parse_string, *casa_table_handle );
    }

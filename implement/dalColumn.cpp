@@ -184,13 +184,30 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
     {
       switch ( casa_col_desc.dataType() )
       {
+	 case casa::TpInt:
+	 {
+	   rosc_int = new casa::ROScalarColumn<casa::Int>( *casa_column );
+	   scalar_vals_int = rosc_int->getColumn();
+	   data_object = new dalData( filetype, dal_INT, shape(), nrows() );
+	   data_object->data = (int *)scalar_vals_int.getStorage(deleteIt);
+	   return data_object;
+         }
+	 break;
 	 case casa::TpDouble:
 	 {
 	   rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
 	   scalar_vals_dbl = rosc_dbl->getColumn();
-// 	   return &(scalar_vals_dbl[0]);
 	   data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
 	   data_object->data = (double *)scalar_vals_dbl.getStorage(deleteIt);
+	   return data_object;
+         }
+	 break;
+	 case casa::TpComplex:
+	 {
+	   rosc_comp = new casa::ROScalarColumn<casa::Complex>( *casa_column );
+	   scalar_vals_comp = rosc_comp->getColumn();
+	   data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
+	   data_object->data = (complex<float> *)scalar_vals_comp.getStorage(deleteIt);
 	   return data_object;
          }
 	 break;
@@ -209,32 +226,22 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
      {
         switch ( casa_col_desc.dataType() )
         {
+	  case casa::TpInt:
+	  {
+	    roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
+            array_vals_int = roac_int->getColumn();
+	    data_object = new dalData( filetype, dal_INT, shape(), nrows() );
+	    data_object->data = (int *)array_vals_int.getStorage(deleteIt);
+	    return data_object;
+	    }
+	    break;
 	  case casa::TpDouble:
 	  {
 	    roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
             array_vals_dbl = roac_dbl->getColumn();
-// 	    return array_vals_dbl.data();
 	    data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
 	    data_object->data = (double *)array_vals_dbl.getStorage(deleteIt);
 	    return data_object;
-
-// 	    vector<int> lclshape;
-// 	    lclshape = shape();
-//             int lclndims;
-// 	    lclndims = ndims();
-/*	    for (unsigned int ii=0; ii < lclshape.size(); ii++ )
-	    {
-	      for ( int jj=0; jj < lclshape[ ii ]; jj++ )
-	      {
-	        int cell = jj;
-	        cout << "Cell position: " << cell << endl;
-	        casa::IPosition start (1,cell);
-	        casa::Slicer slicer (start);
-	        array_vals_dbl = roac_dbl->getColumn( slicer );
-	        cout << "Data from cell number: " << cell << endl;
-	        return array_vals_dbl.data();
-	       }
-	     }*/
 	    }
 	    break;
 	  case casa::TpComplex:
@@ -243,28 +250,12 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 // 	    casa::Slicer slicer (start);
 	    dal_datatype = dal_COMPLEX;
 	    vector< complex< float > > ret_valvec;
-//             vector<int> dims = shape();
 	    roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
             array_vals_comp = roac_comp->getColumn(/*slicer*/);
 	    data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
 	    data_object->data = (complex<float> *)array_vals_comp.getStorage(deleteIt);
 	    return data_object;
 
-/*	    vector<int> lclshape;
-	    lclshape = shape();
-            int lclndims;
-	    lclndims = ndims();
-	    for (unsigned int ii=0; ii < lclshape.size(); ii++ )
-	    {
-	      for ( int jj=0; jj < lclshape[ ii ]; jj++ )
-	      {
-	        casa::IPosition start (2,0,0);
-	        casa::Slicer slicer (start);
-	        array_vals_comp = roac_comp->getColumn( slicer );
-	        cout << "Data from cell number: 0" << endl;
-	        return array_vals_comp.data();
-	       }
-	     }*/
 	    }
 	    break;
 /************************************
@@ -329,8 +320,6 @@ void dalColumn::addMember( string member_name, string member_type )
     cout << "ERROR: addMember " << member_name << " "
       << member_type << " not supported." << endl;
   }
-// cout << "addMember " << member_name << " " << member_type << " to "
-//   << name << endl;
 }
 
 /************************************************************************
@@ -340,20 +329,6 @@ void dalColumn::addMember( string member_name, string member_type )
  *
  ************************************************************************/
 #ifdef PYTHON
-//   template <>
-//   bpl::object makePyArrayObject (casa::Array<casa::String> const& arr)
-//   {
-//     bpl::object a = bpl::to_list< casa::Array<casa::String> >::makeobject (arr);
-//     if (arr.ndim() == 1) {
-//       return a;
-//     }
-//     bpl::dict d;
-//     d.setdefault (std::string("shape"),
-// 		  bpl::to_list<casa::IPosition>::makeobject (arr.shape()));
-//     d.setdefault (std::string("array"), a);
-//     return d;
-//   }
-
 bpl::tuple dalColumn::shape_boost()
 {
   vector<int> lclvals;
@@ -370,199 +345,4 @@ bpl::tuple dalColumn::shape_boost()
 
    return lcl_tuple;
 }
-
-// bpl::numeric::array dalColumn::data_boost2(/*int cell1*/)
-// {
-//   bpl::list data_list;
-//   if ( isScalar() )
-//   {
-//     if ( "double" == casa_datatype )
-//       {
-//         double * lcl_data;
-//         lcl_data = (double *)data();
-//         for (unsigned int ii=0; ii<nrows(); ii++)
-//         {
-//            data_list.append( lcl_data[ii] );
-//         }
-//         bpl::numeric::array nadata(
-//             bpl::make_tuple(data_list)
-//         );
-//         nadata.setshape( bpl::make_tuple(nrows()) );
-//         return nadata;
-//       }
-//     else
-//       {
-// 	for (int ii=0; ii<1; ii++)
-// 		data_list.append(0);
-// 		bpl::numeric::array nadata( data_list );
-// 	return nadata;
-//       }
-//   }
-//   else if ( isArray() )
-//   {
-//     vector<int> dims = shape();
-//     if ( "double" == casa_datatype )
-//     {
-//         double * lcl_data;
-//         lcl_data = (double *)data(/*cell1*/);
-// 	long loops=1;
-// 	for ( unsigned int ii=0; ii<dims.size(); ii++)
-// 	  loops *= dims[ii];
-// 
-// 	for ( int dd=0; dd<loops; dd++ )
-//           for ( unsigned int row=0; row<nrows(); row++ )
-//                data_list.append( lcl_data[row] );
-// /*	for ( unsigned int ii=0; ii<dims.size(); ii++)
-// 	   for ( int dd=0; dd<dims[ii]; dd++ )
-//              for ( unsigned int row=0; row<nrows(); row++ )
-//              {
-//                data_list.append( lcl_data[row] );
-//              }*/
-// 
-//         bpl::numeric::array nadata( data_list );
-// 
-// 	bpl::list dims_list;
-// 	for ( unsigned int ii=0; ii<dims.size(); ii++)
-//           dims_list.append( dims[ii] );
-// 
-//         dims_list.append( nrows() );
-//         nadata.setshape( dims_list );
-//         return nadata;
-//     }
-//     else if ( "complex" == casa_datatype )
-//     {
-//         complex<float> * lcl_data;
-//         lcl_data = (complex<float> *)data(/*cell1*/);
-// 	long loops=1;
-// 	for ( unsigned int ii=0; ii<dims.size(); ii++)
-// 	  loops *= dims[ii];
-// 
-// 	for ( unsigned int row=0; row<nrows(); row++ )
-// 	  for ( int dd=0; dd<loops; dd++ )
-//             data_list.append( lcl_data[dd] );
-// 
-//         bpl::numeric::array nadata( data_list );
-// 
-// 	bpl::list dims_list;
-// /*	for ( unsigned int ii=0; ii<dims.size(); ii++)
-//           {dims_list.append( dims[ii] ); cout << "appending " << dims[ii] <<endl;}
-// 
-//         dims_list.append( nrows() ); cout << "appending " << nrows() << endl;
-// */
-//         nadata.setshape( nrows()*4*256/*dims_list*/ );
-//         return nadata;
-//     }
-//     else
-//     {
-// 	for (int ii=0; ii<1; ii++)
-// 		data_list.append(0);
-// 		bpl::numeric::array nadata( data_list );
-// 	return nadata;
-//     }
-//   }
-//   else
-//   {
-// 	for (int ii=0; ii<1; ii++)
-// 		data_list.append(0);
-// 		bpl::numeric::array nadata( data_list );
-// 	return nadata;
-//   }
-// }
-
-// bpl::numeric::array dalColumn::data_boost1()
-// {
-//   bpl::list data_list;
-//   if ( isScalar() )
-//   {
-//     if ( "double" == casa_datatype )
-//       {
-//         double * lcl_data;
-//         lcl_data = (double *)data();
-//         for (unsigned int ii=0; ii<nrows(); ii++)
-//         {
-//            data_list.append( lcl_data[ii] );
-//         }
-//         bpl::numeric::array nadata(
-//             bpl::make_tuple(data_list)
-//         );
-//         nadata.setshape( bpl::make_tuple(nrows()) );
-//         return nadata;
-//       }
-//     else
-//       {
-// 	for (int ii=0; ii<1; ii++)
-// 		data_list.append(0);
-// 		bpl::numeric::array nadata( data_list );
-// 	return nadata;
-//       }
-//   }
-//   else if ( isArray() )
-//   {
-//     vector<int> dims = shape();
-//     if ( "double" == casa_datatype )
-//     {
-//         double * lcl_data;
-//         lcl_data = (double *)data();
-// 	long loops=1;
-// 	for ( unsigned int ii=0; ii<dims.size(); ii++)
-// 	  loops *= dims[ii];
-// 
-// 	for ( int dd=0; dd<loops; dd++ )
-//           for ( unsigned int row=0; row<nrows(); row++ )
-//                data_list.append( lcl_data[row] );
-// 
-//         bpl::numeric::array nadata( data_list );
-// 
-// 	bpl::list dims_list;
-// 	for ( unsigned int ii=0; ii<dims.size(); ii++)
-//           dims_list.append( dims[ii] );
-// 
-//         dims_list.append( nrows() );
-//         nadata.setshape( dims_list );
-//         return nadata;
-//     }
-//     else if ( "complex" == casa_datatype )
-//     {
-//         complex<float> * lcl_data;
-//         lcl_data = (complex<float> *)data();
-// 	long loops=1;
-// 	for ( unsigned int ii=0; ii<dims.size(); ii++)
-// 	  loops *= dims[ii];
-// 
-// 	for ( unsigned int row=0; row<nrows(); row++ )
-// 	  for ( int dd=0; dd<loops; dd++ )
-//             data_list.append( lcl_data[dd] );
-// 
-//         bpl::numeric::array nadata( data_list );
-// 
-// 	bpl::list dims_list;
-// 	for ( unsigned int ii=0; ii<dims.size(); ii++)
-//           {dims_list.append( dims[ii] ); cout << "appending " << dims[ii] <<endl;}
-// 
-//         dims_list.append( nrows() ); cout << "appending " << nrows() << endl;
-// /*cout << "AAAAA" << endl;
-// 	bpl::numeric::array foo = makePyArrayObject(array_vals_comp);
-// cout << "BBBBB" << endl;*/
-// 	dims_list.reverse();
-//         nadata.setshape( dims_list );
-//         return nadata;
-//     }
-//     else
-//     {
-// 	for (int ii=0; ii<1; ii++)
-// 		data_list.append(0);
-// 		bpl::numeric::array nadata( data_list );
-// 	return nadata;
-//     }
-//   }
-//   else
-//   {
-// 	for (int ii=0; ii<1; ii++)
-// 		data_list.append(0);
-// 		bpl::numeric::array nadata( data_list );
-// 	return nadata;
-//   }
-// }
-
 #endif
-
