@@ -129,6 +129,22 @@ bpl::numeric::array dalData::get_boost()
         nadata.setshape( lcl_dims );
         return nadata;
       }
+      else if ( dal_DOUBLE == datatype )
+      {
+        for (unsigned int ii=0; ii<nrows; ii++)
+        {
+           data_list.append( (*((double*)get(ii))) );
+        }
+        bpl::numeric::array nadata(
+            bpl::make_tuple(data_list)
+        );
+        bpl::list lcl_dims;
+        for (unsigned int hh=0; hh<shape.size(); hh++)
+        { lcl_dims.append(shape[hh]);}
+
+        nadata.setshape( lcl_dims );
+        return nadata;
+      }
       else 
       {
 	for (int ii=0; ii<1; ii++)
