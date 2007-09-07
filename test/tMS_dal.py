@@ -11,7 +11,7 @@ msds= dal.dalDataset(sys.argv[1], "MSCASA")
 tablename = "MAIN";
 #msds = dal.dalTable(tablename)
 #filter_string = "Select UVW, TIME, ANTENNA1, ANTENNA2 from $1 where ANTENNA1 = 1 AND ANTENNA2 = 2"
-filter_string = "SELECT UVW from $1"
+filter_string = "SELECT TIME, DATA from $1 where ANTENNA1 = 1 AND ANTENNA2 = 2"
 maintable = msds.openFilteredTable( tablename, filter_string );
 #maintable = msds.openTable( tablename );
 #maintable.listColumns()
@@ -20,47 +20,43 @@ maintable = msds.openFilteredTable( tablename, filter_string );
 
 
 
-print "-"*5 + "\nUVW\n" + "-"*5
-uvw_col = maintable.getColumn("UVW")
-if ( uvw_col.isScalar() ):
-	print "SCALAR"
-if ( uvw_col.isArray() ):
-	print "ARRAY"
-print "shape: " + str(uvw_col.shape())
-print "number of dims: " + str(uvw_col.ndims())
-print "datatype: " + str(uvw_col.getDataType())
-uvw_data = uvw_col.data()
-#print uvw_data.shape
-#print uvw_data[0][0]
-#print uvw_data[1][10]
-foo = uvw_data.get()
-plot(foo[0], foo[1], "k.")
-show()
-for p in range(5):
-	print foo[0][p]
-print '\n'
-
-
-
-
-sys.exit(8)
-
-print "-"*5 + "\nTIME\n" + "-"*5
-time_col = maintable.getColumn("TIME")
-if ( time_col.isScalar() ):
-	print "SCALAR"
-if ( time_col.isArray() ):
-	print "ARRAY"
-print "shape: " + str(time_col.shape())
-print "number of dims: " + str(time_col.ndims())
-print "datatype: " + str(time_col.getDataType())
-time_data = time_col.data()
-#print time_data.shape
-#print type(time_data)
-foo = time_data.get()
-#plot(foo)
+#print "-"*5 + "\nUVW\n" + "-"*5
+#uvw_col = maintable.getColumn("UVW")
+#if ( uvw_col.isScalar() ):
+	#print "SCALAR"
+#if ( uvw_col.isArray() ):
+	#print "ARRAY"
+#print "shape: " + str(uvw_col.shape())
+#print "number of dims: " + str(uvw_col.ndims())
+#print "datatype: " + str(uvw_col.getDataType())
+#uvw_data = uvw_col.data()
+#foo = uvw_data.get()
+#print foo.shape
+#plot(foo[0],foo[1],'r.',-(foo[0]),-(foo[1]),'b.')
 #show()
-#close()
+#for p in range(5):
+	#print foo[0][p]
+#print '\n'
+
+
+
+
+#print "-"*5 + "\nTIME\n" + "-"*5
+#time_col = maintable.getColumn("TIME")
+#if ( time_col.isScalar() ):
+	#print "SCALAR"
+#if ( time_col.isArray() ):
+	#print "ARRAY"
+#print "shape: " + str(time_col.shape())
+#print "number of dims: " + str(time_col.ndims())
+#print "datatype: " + str(time_col.getDataType())
+#time_data = time_col.data()
+##print time_data.shape
+##print type(time_data)
+#foo = time_data.get()
+##plot(foo)
+##show()
+##close()
 
 print '\n'
 
@@ -79,9 +75,19 @@ print "datatype: " + str(data_col.getDataType())
 data_data = data_col.data()
 foo = data_data.get()
 print foo.shape
-for p in range(340,345):
-	print foo[2][45][p]
+#for p in range(340,345):
+	#print foo[2][45][p]
+#for p in range(340,345):
+	#print abs(foo[2][45][p])
+foo[0].shape
+
+imshow( abs(foo[0]) )
+show()
 print '\n'
+
+sys.exit(8)
+
+
 
 #mydata = data_col.data()
 #print mydata.shape
