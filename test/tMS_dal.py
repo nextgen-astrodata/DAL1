@@ -17,8 +17,6 @@ maintable = msds.openFilteredTable( tablename, filter_string );
 #maintable.getName()
 
 
-
-
 print "-"*5 + "\nUVW\n" + "-"*5
 uvw_col = maintable.getColumn("UVW")
 if ( uvw_col.isScalar() ):
@@ -31,8 +29,8 @@ print "datatype: " + str(uvw_col.getDataType())
 uvw_data = uvw_col.data()
 foo = uvw_data.get()
 print foo.shape
-plot(foo[0],foo[1],'r.',-(foo[0]),-(foo[1]),'b.')
-show()
+#plot(foo[0],foo[1],'r.',-(foo[0]),-(foo[1]),'b.')
+#show()
 for p in range(5):
 	print foo[0][p]
 print '\n'
@@ -52,8 +50,8 @@ print "datatype: " + str(time_col.getDataType())
 time_data = time_col.data()
 print type(time_data)
 foo = time_data.get()
-plot(foo)
-show()
+#plot(foo)
+#show()
 print '\n'
 
 print "-"*5 + "\nANTENNA1\n" + "-"*5
