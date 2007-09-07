@@ -4,12 +4,30 @@ import libpydal as dal
 from pylab import *
 import numarray
 
+# check usage
+if ( len(sys.argv) < 2 ) or ( len(sys.argv) > 4 ):
+	print "Usage:"
+	print "\tbaseline_intensity.py <file> [antenna1] [antenna2]"
+	print "\t<> required"
+	print "\t[] optional"
+	print ""
+	sys.exit(1)
+
 # open the file
 msds= dal.dalDataset(sys.argv[1], "MSCASA")
 
-# open the table
 tablename = "MAIN";
-filter_string = "SELECT UVW from $1"
+
+if ( 3 == len(sys.argv) ):  # if a single antenna value is given
+	filter_string = "SELECT UVW from $1 where ANTENNA1 = " + sys.argv[2]
+
+elif ( 4 == len(sys.argv) ):  # if two antenna values are given
+	filter_string = "SELECT UVW from $1 where ANTENNA1 = " + sys.argv[2] \
+  	  + " AND ANTENNA2 = " + sys.argv[3]
+  
+else:  # if no antenna values are given
+	filter_string = "SELECT UVW from $1"
+
 maintable = msds.openFilteredTable( tablename, filter_string );
 
 # get the UVW column
