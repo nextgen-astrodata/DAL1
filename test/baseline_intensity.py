@@ -5,9 +5,10 @@ from pylab import *
 import numarray
 	
 # check usage
-if len(sys.argv) < 5:
+if len(sys.argv) < 5 or len(sys.argv) > 6:
 	print "Usage:"
-	print "\tbaseline_intensity.py <file> <antenna1> <antenna2> <sub-band> [channel]"
+	print "\tbaseline_intensity.py <file> <antenna1> <antenna2> " + \
+	      "<sub-band> [channel]"
 	print "\t<> required"
 	print "\t[] optional"
 	print ""

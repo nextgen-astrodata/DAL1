@@ -20,13 +20,18 @@ tablename = "MAIN";
 
 if ( 3 == len(sys.argv) ):  # if a single antenna value is given
 	filter_string = "SELECT UVW from $1 where ANTENNA1 = " + sys.argv[2]
+	title("UV coverage for" + sys.argv[1] + "\nAntenna(" + sys.argv[2] \
+	  + ")")
 
 elif ( 4 == len(sys.argv) ):  # if two antenna values are given
 	filter_string = "SELECT UVW from $1 where ANTENNA1 = " + sys.argv[2] \
   	  + " AND ANTENNA2 = " + sys.argv[3]
+	title("UV coverage for" + sys.argv[1] + "\nAntenna pair(" + sys.argv[2] \
+	  + "," + sys.argv[3] + ")")
   
 else:  # if no antenna values are given
 	filter_string = "SELECT UVW from $1"
+	title("UV coverage for" + sys.argv[1] )
 
 maintable = msds.openFilteredTable( tablename, filter_string );
 
@@ -40,7 +45,6 @@ uvw_data_object = uvw_column.data()
 data = uvw_data_object.get()
 
 # plot the data
-title("UV coverage for" + sys.argv[1])
 xlabel("U(-U)")
 ylabel("V(-V)")
 plot(data[0],data[1],'r.',-(data[0]),-(data[1]),'b.')
