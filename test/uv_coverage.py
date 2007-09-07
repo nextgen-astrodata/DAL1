@@ -7,7 +7,7 @@ import numarray
 # check usage
 if ( len(sys.argv) < 2 ) or ( len(sys.argv) > 4 ):
 	print "Usage:"
-	print "\tbaseline_intensity.py <file> [antenna1] [antenna2]"
+	print "\tuv_coverage.py <file> [antenna1] [antenna2]"
 	print "\t<> required"
 	print "\t[] optional"
 	print ""
