@@ -65,7 +65,6 @@ if ( foo1->isScalar() )
 if ( foo1->isArray() )
   cout << "ARRAY" << endl;
 cout << "Number of rows: " << foo1->nrows() << endl;
-double * foo1_data;
 /*foo1_data = (double *)foo1->data();
 for (int ii=0; ii<5; ii++)
   cout << "TIME data out: " << foo1_data[ii] << endl;*/
@@ -136,216 +135,126 @@ complex<float> * value3;
 for(unsigned int xx=300; xx<320; xx++)
 {
   value3 = (complex<float>*)data_object3->get(2,45,xx);  // WORKS
-  cout << *value3 << endl;
+  cout << "[2][45][" << xx << "]: " << *value3 << endl;
 }
+//   value3 = (complex<float>*)data_object3->get(1,45,300);  // WORKS
+//   cout << *value3 << endl;
+// exit(1);
+
+
+// exit(8);
+
+
+
+
+
+// double * mytime_data = new double[ 100 ];
+// mytime_data = (double *)maintable->getColumnData( "TIME" );
+// for (int ii=0; ii<5; ii++)
+//   cout << "TIME data out: " << mytime_data[ii] << endl;
+// delete mytime_data;
+// 
+// int * ant1_data = new int[ 100 ];
+// ant1_data = (int *)maintable->getColumnData( "ANTENNA1" );
+// for (int ii=0; ii<5; ii++)
+//   cout << "ANTENNA1 data out: " << ant1_data[ii] << endl;
+// delete ant1_data;
+// 
+// int * ant2_data = new int[ 100 ];
+// ant2_data = (int *)maintable->getColumnData( "ANTENNA2" );
+// for (int ii=0; ii<5; ii++)
+//   cout << "ANTENNA2 data out: " << ant2_data[ii] << endl;
+// delete ant2_data;
+// 
+// double * myuvw;
+// myuvw = (double *)maintable->getColumnData( "UVW" );
+// // cout << myuvw << endl;
+// for (int ii=0; ii<5; ii++)
+//    cout << "UVW data out: " << myuvw[ii] << endl;
+// 
+// complex<float> * data;
+// data = (complex<float> *)maintable->getColumnData( "DATA" );
+// for (int ii=0; ii<5; ii++)
+//    cout << "DATA out: " << data[ii] << endl;
+// 
+// // close the dataset
+// msds->close();
+// delete msds;
+
+// exit(10);
+
+// create a new hdf5 dataset
+dalDataset * ds;
+ds = new dalDataset( argv[2], "HDF5" );
+
+// define a vector for chunking dimensions
+vector<int> cdims;
+long indx;
+// complex<float> total=0;
+dalArray * dataarray;
+complex<float> * cdata;
+long mysize = shape3[0] * shape3[1] * shape3[2];
+cdata = new complex<float>[ mysize ];
+long ccount=0;
+for(int xx=0; xx<shape3[0]; xx++)
+  for(int yy=0; yy<shape3[1]; yy++)
+    for(int zz=0; zz<shape3[2]; zz++)
+{
+    ccount+=1;
+    value3 = (complex<float>*)data_object3->get(xx,yy,zz);
+// cout << *value3 << ',';
+     indx = xx*256*8670 + yy*8670 + zz;  // YES!
+     indx = xx*shape3[1]*shape3[2] + yy*shape3[2] + zz;  // YES!
+     cdata[ indx ] = *value3;
+//  if (8680 == ccount) exit(4);
+//     cdata[ indx ] = ccount;
+// total += *value3;
+}
+/*for(unsigned int xx=300; xx<320; xx++)
+{
+  value3 = (complex<float>*)data_object3->get(2,45,xx);  // WORKS
+  cout << "[2][45][" << xx << "]: " << *value3 << endl;
+}*/
+// cout << total << endl;
+// exit(9);
+// cout << "Creating complex array of data in HDF5..." << endl;
+// // dataarray = ds->createComplexArray( "dataarray", shape3, (complex<float>*)data_object3->data, cdims );
+dataarray = ds->createComplexArray( "dataarray", shape3, cdata, cdims );
+
+vector<int> dims;
+// dims.push_back(2);
+// dims.push_back(3);
+// dims.push_back(4);
+// complex<float> * adata;
+// adata = new complex<float>[ 2*3*4 ];
+// adata[ 11 ] = 11;
+// // adata[ 0 + (1*3) + (1*3*4)] = 1;
+// dataarray = ds->createComplexArray( "dataarray", dims/*shape3*/, adata/*cdata*/, cdims );
+// free(adata);
+
+free(cdata);
 delete foo3;
 
+dalGroup * arraygroup;
+arraygroup = ds->createGroup( "Arrays" );
+// define dimensions of array
+dims.clear();
+dims.push_back(4);
+dims.push_back(5);
+dims.push_back(6);
+int idata[4*5*6];
+for (int gg=0; gg<(4*5*6); gg++)
+  idata[gg] = gg;
+dalArray * iarray;
+cout << "Creating integer array of data in HDF5..." << endl;
+iarray = arraygroup->createIntArray( "int_array", dims, idata, cdims );
 
+ds->close();    // close the hdf5 file
 
+// delete dataarray;
+// delete arraygroup;
+// delete ds;
 
-exit(8);
-
-
-
-
-
-double * mytime_data = new double[ 100 ];
-mytime_data = (double *)maintable->getColumnData( "TIME" );
-for (int ii=0; ii<5; ii++)
-  cout << "TIME data out: " << mytime_data[ii] << endl;
-delete mytime_data;
-
-int * ant1_data = new int[ 100 ];
-ant1_data = (int *)maintable->getColumnData( "ANTENNA1" );
-for (int ii=0; ii<5; ii++)
-  cout << "ANTENNA1 data out: " << ant1_data[ii] << endl;
-delete ant1_data;
-
-int * ant2_data = new int[ 100 ];
-ant2_data = (int *)maintable->getColumnData( "ANTENNA2" );
-for (int ii=0; ii<5; ii++)
-  cout << "ANTENNA2 data out: " << ant2_data[ii] << endl;
-delete ant2_data;
-
-double * myuvw;
-myuvw = (double *)maintable->getColumnData( "UVW" );
-// cout << myuvw << endl;
-for (int ii=0; ii<5; ii++)
-   cout << "UVW data out: " << myuvw[ii] << endl;
-
-complex<float> * data;
-data = (complex<float> *)maintable->getColumnData( "DATA" );
-for (int ii=0; ii<5; ii++)
-   cout << "DATA out: " << data[ii] << endl;
-
-// close the dataset
-msds->close();
-delete msds;
-exit(10);
-
-	// First open the measurement set
-	MeasurementSet MS( argv[1] );
-
-	// create a msreader object
-        MSReader reader(MS);
-
-	// create a vector that will hold the table names
-	Vector<String> ms_tables;
-	ms_tables = reader.tables();
-
-	// list the names of the tables
-	cout << ms_tables << endl;
-
-	// create an object for the main table and open a pointer
-	Table main_table = reader.table( "MAIN" );
-
-	// print the name of the main table
-	cout << main_table.tableName() << endl;
-
-	// point to the UVW column
-	ROTableColumn uvw_column = ROTableColumn( main_table, "UVW" );
-
-	// print the shape of the UVW column
-	cout << "shape of uvw column: " << uvw_column.shapeColumn() << endl;
-	
-// ROTableColumn time_column = ROTableColumn( main_table, "TIME" );
-// cout << "shape of time column: " << time_column.shapeColumn() << endl;
-
-	// print the number of samples in the MS
-	int numSamples = MS.nrow();
-	cout << numSamples << endl;
-
-	// print the number of fields in the MAIN table
-	MSField fields = MS.field();
-	int numFields  = fields.nrow();
-	cout << numFields << endl;
-
-	// create a read-only measurement set table columns object
-	ROMSMainColumns msc(MS);
-
-	// open the TIME column
-	ROScalarColumn< Double > time_column = msc.time();
-
-	// get the TIME column data
-	Vector< Double > time_column_data = time_column.getColumn();
-	cout << "TIME column shape " << time_column_data.shape() << endl;
-	cout << "TIME column dims " << time_column_data.ndim() << endl;
-
-	// pipe the TIME column data into a STL vector
-	std::vector< double > time_data;
-	time_column_data.tovector( time_data );
-	cout << "TIME vector size " << time_data.size() << endl;
-	cout << time_data[0] << endl << time_data[1] << endl << time_data[2] << endl;
-
-	// print out what the first row of the data array *should* look like
-	Array<Complex> darray ( msc.data()(1) );
-	cout << darray << endl;
-
-	// get the data column
-	ROArrayColumn< Complex > data_column = msc.data();
-	cout << "DATA column shape " << data_column.shape(1) << endl;
-	cout << "DATA column dims " << data_column.ndim(1) << endl;
-	Array< Complex > data_column_row;
-
-	Array< Complex > data_column_polarization;
-	std::vector< Complex > data_data;
-	std::vector< complex<float> > data_row;
-	for (int row=0; row < 10/*numSamples*/; row++)
-	{
-	  for (int polarization=0; polarization<4; polarization++)
-	  {
-	    IPosition start (2,polarization,0), length (2,1,256), stride (2,1,1);
-	    Slicer slicer (start, length, stride);
-	    data_column.getSlice(row, slicer, data_column_polarization);
-	    data_column_polarization.tovector( data_data );
-	    for (unsigned int goo=0; goo<data_data.size(); goo++)
-	      data_row.push_back( data_data[goo] );
-/*	    for (int gg=0; gg<9; gg++)
-	      cout << data_data[gg];
-	    cout << endl;*/
-	  }
-	}
-
-// pipe the DATA column data into a STL vector
-// for (int ii=0; ii<1/*numSamples*/; ii++)
-// {
-//   data_column.get( ii, data_column_row );
-//   data_column_row.tovector( data_data );
-// }
-// cout << data_column_row << endl;
-// cout << data_data << endl;
-// cout << "DATA vector size " << data_data.size() << endl;
-// for (int ii=0; ii<data_data.size(); ii++)
-//   cout << data_data[ii];
-// cout << endl;
-
-	// print shape and number of dimensions for the UVW column
-	cout << "UVW column shape " << msc.uvw()(1).shape() << endl;
-	cout << "UVW column dims  " << msc.uvw()(1).ndim() << endl;
-	
-	// put the first row of the UVW column into a vector
-	//std::vector<double> uvw_data;
-	//msc.uvw()(1).tovector( uvw_data );
-	//cout << uvw_data[0] << endl << uvw_data[1] << endl << uvw_data[2] << endl;
-	//cout << msc.uvw()(1) << endl;
-
-// Array< Complex > data_array ( msc.data()(numSamples-1) );
-// cout << data_array << endl;
-// cout << "Shape of DATA array = " << data_array.shape() << endl;
-// Vector<uInt> time_array ( msc.time()(1) );
-// cout << "Shape of TIME array = " << msc.time()(1).shape() << endl;
-// cout << "TIME column dims  " << msc.time()(1).ndim() << endl;
-// cout << data_array << endl;
-// std::vector< std::complex<float> > stl_vec;
-// data_array.tovector(stl_vec);
-// msc.data()(1).tovector( stl_vec );
-// cout << stl_vec[5] << endl;
-// Complex * data_array_storage = data_array.getStorage( False );
-
-// int first_axis = 1;
-// int second_axis = 0;
-// int idx = (first_axis*4) + second_axis;
-
-// cout << "Second element of data array = " << data_array_storage[idx] << endl;
-//cout << msc.uvw()(1).get(0,foo) << endl;
-// for ( int ii=0; ii<2; ii++) {
-//   cout << msc.uvw()(ii) << endl;
-//   cout << msc.data()(ii) << endl;
-// }
-
-	// create a new hdf5 dataset
-	dalDataset * ds;
-	ds = new dalDataset( argv[2], "HDF5" );
-
-	// define dimensions of array
-	vector<int> dims;
-	dims.push_back( 4 );
-	dims.push_back( 10/*numSamples*/ );
-	dims.push_back( 256 );
-	// define a vector for chunking dimensions
-	vector<int> cdims;
-
-	dalArray * dataarray;
-	dataarray = ds->createComplexArray( "dataarray", dims, data_row, cdims );
-
- dalGroup * arraygroup;
- arraygroup = ds->createGroup( "Arrays" );
- dims.clear();
- dims.push_back(4);
- dims.push_back(5);
- dims.push_back(6);
- int idata[4*5*6];
- for (int gg=0; gg<(4*5*6); gg++)
-   idata[gg] = gg;
- dalArray * iarray;
- iarray = arraygroup->createIntArray( "int_array", dims, idata, cdims );
-
-	ds->close();    // close the hdf5 file
-
-	delete dataarray;
-	delete arraygroup;
-	delete ds;
-
-	cout << "SUCCESS" << endl;
-	return SUCCESS;
+cout << "SUCCESS" << endl;
+return SUCCESS;
 }
