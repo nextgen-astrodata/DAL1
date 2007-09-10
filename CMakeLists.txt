@@ -106,10 +106,14 @@ include_directories (
 
 if (HAVE_BLITZ)
   include_directories (${BLITZ_INCLUDES})
+else (HAVE_BLITZ)
+  message (SEND_ERROR "[dal] Missing Blitz++ header files!")
 endif (HAVE_BLITZ)
 
 if (HAVE_CASACORE)
   include_directories (${CASACORE_INCLUDES})
+else (HAVE_CASACORE)
+  message (SEND_ERROR "[dal] Missing casacore header files!")
 endif (HAVE_CASACORE)
 
 if (HAVE_CFITSIO)
