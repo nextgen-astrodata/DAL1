@@ -63,9 +63,9 @@ int main()
    dalGroup * groupB = ds->createGroup( "groupB" );
    dalGroup * groupC = ds->createGroup( "groupC" );
 
-   dalTable * table1 = ds->createTable( "table1", "groupA" );
-   dalTable * table2 = ds->createTable( "table2", "groupA" );
-   dalTable * table3 = ds->createTable( "table3", "groupB" );
+//   dalTable * table1 = ds->createTable( "table1", "groupA" );
+//   dalTable * table2 = ds->createTable( "table2", "groupA" );
+//   dalTable * table3 = ds->createTable( "table3", "groupB" );
 
 
    // define dimensions of array
@@ -91,9 +91,9 @@ int main()
 	cdata[ gg ] = 0;
    }
    dalArray * carray = ds->createComplexArray( "complex_array", dims, cdata, cdims );
-
    delete cdata;
 
+/*
    table1->addColumn( "col1", dal_INT );
    table1->addColumn( "col2", dal_SHORT );
    table1->addColumn( "col3", dal_FLOAT );
@@ -105,12 +105,13 @@ int main()
    table3->addColumn( "col1", dal_INT );
    table3->addColumn( "col2", dal_INT );
    table3->addColumn( "col3", dal_INT );
-
+*/
    ds->close();
-
+/*
    delete table1;
    delete table2;
    delete table3;
+*/
    delete iarray;
    delete farray;
    delete carray;

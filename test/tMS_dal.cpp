@@ -152,7 +152,6 @@ for(int xx=0; xx<shape3[0]; xx++)
 cout << "Creating complex array of data in HDF5..." << endl;
 dalArray * dataarray = ds->createComplexArray( "dataarray", shape3, cdata, cdims );
 // dalArray * dataarray = ds->createArray( "dataarray", data_object );
-free(cdata);
 delete data_col;
 
 dalGroup * arraygroup;
