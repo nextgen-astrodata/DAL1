@@ -85,11 +85,18 @@ int openFITS( char * fname )
 hid_t openHDF5( char * fname )
 {
 	// the following return an integer file handle
+	// Turn off error reporting since we expect failure in cases
+	//   where the file is not hdf5
+	H5Eset_auto(NULL, NULL);
 	hid_t fh = H5Fopen(fname, H5F_ACC_RDWR, H5P_DEFAULT);
 	if (fh >= 0)
+	{
 		return fh;
+	}
 	else
+	{
 		return -1;
+	}
 }
 
 /**
@@ -111,22 +118,34 @@ int dalDataset::open( char * filename )
   {
 //     file = (fitsfile*)myfile;
     lcltype = FITSTYPE;
-    cout << lcltype << " opened FITS!" << endl;
+    type = lcltype;
+    cout << lcltype << " file opened, but other FITS operations are not "
+      << "yet supported.  Sorry." << endl;
 	exit(10);
   } else if ( (h5fh = openHDF5( filename )) >= 0 ) {
-//      cout << " opened HDF5!" << endl;
      file = &h5fh;
      lcltype = H5TYPE;
-	//cout << "returning " << SUCCESS << endl;
-  }
-  else
-  {
-    cout << "Unable to open file \"" << filename << "\"."
-    	 << endl << "Please check permissions and file type." << endl;  
+     type = lcltype;
+     return SUCCESS;
+  } else {
+#ifdef WITH_CASA
+     try {
+        lcltype = MSCASATYPE;
+        type = lcltype;
+        ms = new casa::MeasurementSet( filename );
+        file = &ms;
+        ms_reader = new casa::MSReader( *ms );
+        return SUCCESS;
+     } catch (casa::AipsError x) {
+//         cout << "ERROR: " << x.getMesg() << endl;
+        cout << "Unable to open file \"" << filename << "\"."
+    	  << endl << "Please check file name, permissions and type.\n" << endl;  
 	return FAIL;
+     }
+#else
+     return FAIL;
+#endif
   }
-  type = lcltype;
-  return SUCCESS;
 }
 
 /****************************************************************
@@ -296,7 +315,7 @@ dalArray * dalDataset::createFloatArray( string arrayname, vector<int> dims, flo
  *  Create an Copmlex array of N dimensions
  *
  *****************************************************************/
-dalArray * dalDataset::createComplexArray( string arrayname, vector<int> dims, vector< complex<float> > data/*dalcomplex data[]*/, vector<int> cdims)
+dalArray * dalDataset::createComplexArray( string arrayname, vector<int> dims, /*vector< complex<float> >*/complex<float> data[]/*dalcomplex data[]*/, vector<int> cdims)
 {
    if ( type == H5TYPE )
    {
