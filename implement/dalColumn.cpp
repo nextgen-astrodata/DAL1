@@ -51,7 +51,13 @@ dalColumn::dalColumn( string complexcolname/*, void * dataformat*/ )
 dalColumn::dalColumn(casa::Table table, string colname)
 {
     filetype = "MSCASA";
-    casa_column = new casa::ROTableColumn( table, colname );
+    try
+    {
+       casa_column = new casa::ROTableColumn( table, colname );
+    } catch (casa::AipsError x) {
+       cout << "ERROR: " << x.getMesg() << endl;
+       exit(-4);
+    }
     casa_col_desc = casa_column->columnDesc();
     casa_datatype = getDataType();
 }
@@ -124,11 +130,18 @@ vector<int> dalColumn::shape()
   if ( isArray() )
   {
     //cout << casa_column->shapeColumn();
+
+      try
+      {
 	casa::IPosition ipos = casa_column->shapeColumn();
 	casa::Vector<casa::Int> col_shape = ipos.asVector();
-	col_shape.tovector( shape_vals );
+        col_shape.tovector( shape_vals );
         shape_vals.push_back( nrows() );
-	return shape_vals;
+      } catch (casa::AipsError x) {
+         cout << "ERROR: " << x.getMesg() << endl;
+         exit(-4);
+      }
+      return shape_vals;
   }
   else
   {
@@ -180,6 +193,8 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 {
   if ( "MSCASA" == filetype )
   {
+   try
+   {
     if ( isScalar() )
     {
       switch ( casa_col_desc.dataType() )
@@ -250,7 +265,13 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 // 	    casa::Slicer slicer (start);
 	    dal_datatype = dal_COMPLEX;
 	    vector< complex< float > > ret_valvec;
-	    roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
+	    try
+	    {
+	       roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
+            } catch (casa::AipsError x) {
+               cout << "ERROR: " << x.getMesg() << endl;
+	       exit(-4);
+            }
             array_vals_comp = roac_comp->getColumn(/*slicer*/);
 	    data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
 	    data_object->data = (complex<float> *)array_vals_comp.getStorage(deleteIt);
@@ -275,6 +296,10 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 	   << "Do not know how to handle." << endl;
          return NULL;
        }
+    } catch (casa::AipsError x) {
+       cout << "ERROR: " << x.getMesg() << endl;
+       exit(-4);
+    }
    }
    return NULL;
 }

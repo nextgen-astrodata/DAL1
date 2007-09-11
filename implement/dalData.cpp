@@ -69,13 +69,15 @@ void * dalData::get( long idx1, long idx2, long idx3 )
    unsigned long index = 0;
    long bb = 1;
 
-   if ( "MSCASA" == filetype )
+   //
+   // Determine the correct index value, depending on the order
+   //   of the underlying array (determined by the filetype)
+   //
+   if ( MSCASATYPE == filetype )
    {
-//      it = shape.begin();
      shape.insert( shape.begin(), 1 );
      for (unsigned int dim=0; dim<shape.size()-1; dim++)
      {
-//         index = idx1 + (idx2*shape[0]) + (idx3*(shape[0]*shape[1]));
         for (unsigned int ss=dim; ss>0; ss--)
 	   bb *= shape[ ss ];
 
@@ -84,15 +86,30 @@ void * dalData::get( long idx1, long idx2, long idx3 )
      }
      shape.erase( shape.begin() );
 
-     if ( dal_COMPLEX == datatype )
-        return (&(((complex<float>*)data)[ index ]));
-
-     else if ( dal_DOUBLE == datatype )
-        return (&(((double*)data)[ index ]));
-
-     else if ( dal_INT == datatype )
-        return (&(((int*)data)[ index ]));
    }
+   else if (H5TYPE == filetype)
+   {
+     return NULL;
+   }
+   
+   if ( dal_COMPLEX == datatype )
+      return (&(((complex<float>*)data)[ index ]));
+
+   else if ( dal_DOUBLE == datatype )
+      return (&(((double*)data)[ index ]));
+
+   else if ( dal_INT == datatype )
+      return (&(((int*)data)[ index ]));
+
+   if ( dal_COMPLEX == datatype )
+      return (&(((complex<float>*)data)[ index ]));
+
+   else if ( dal_DOUBLE == datatype )
+      return (&(((double*)data)[ index ]));
+
+   else if ( dal_INT == datatype )
+      return (&(((int*)data)[ index ]));
+
    return NULL;
 }
 

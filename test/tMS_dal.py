@@ -6,7 +6,11 @@ import numarray
 #import numpy
 import sys
 
-msds= dal.dalDataset(sys.argv[1], "MSCASA")
+#msds= dal.dalDataset(sys.argv[1], "MSCASA")
+msds= dal.dalDataset()
+if ( msds.open(sys.argv[1]) ):
+	sys.exit(1)
+
 #msds.listTables()
 tablename = "MAIN";
 #msds = dal.dalTable(tablename)
@@ -84,44 +88,10 @@ data_data = data_col.data()
 foo = data_data.get()
 print foo.shape
 foo[0].shape
-imshow( abs(foo[0]) )
-show()
+for i in range(3):
+	print foo[i][0][0]
+#imshow( abs(foo[0]) )
+#show()
 print '\n'
 
-sys.exit(8)
-
-
-
-#mydata = data_col.data()
-#print mydata.shape
-#import numpy
-#na = numpy.array(mydata)
-##for i in range(100):
-##print "data[" + str(i) + "]: " + str(na[:][0][0])
-##print "data[:][0][0] " + str(na[:][0][0])
-#print "sum data[:][0][0] " + str(na[:][1][0].sum())
-#print "sum data[:][1][1] " + str(na[:][1][1].sum())
-#print "sum data[:][1][2] " + str(na[:][1][2].sum())
-#print '\n'
-
-#ms = dal.msp()
-#row = ms.value()
-#d = []
-#t = []
-
-## perhaps 256 below can be stored/replaced with a table keyword NCHANNELS
-#for x in range(table.getNumberOfRows()):
-	#table.readRows(ms,x,1)
-	#row = ms.value()
-	#if (row.get_ant1()==0 and row.get_ant2()==1):
-		#t.append(row.get_time())
-		#for i in range(256):
-			#d.append(abs(row.get_data(0,i).r))
-
-#nd = numpy.array(d)
-##nd2 =  nd.reshape(736768/256,256)
-#nd2 =  nd.reshape( nd.shape[0]/256, 256 )
-
-##imshow(nd2[:1000])
-#imshow(nd2)
-#show()
+print "SUCCESS"

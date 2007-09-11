@@ -15,7 +15,9 @@ if len(sys.argv) < 5 or len(sys.argv) > 6:
 	sys.exit(1)
 
 # open file
-msds= dal.dalDataset(sys.argv[1], "MSCASA")
+msds= dal.dalDataset()
+if ( msds.open(sys.argv[1]) ):
+	sys.exit(1)
 
 # open table
 tablename = "MAIN";

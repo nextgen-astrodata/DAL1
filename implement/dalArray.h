@@ -103,7 +103,7 @@ class dalComplexArray: public dalArray {
   
   public:
 	dalComplexArray( void* voidfile, string arrayname, vector<int> dims,
-			 vector< complex<float> > data, vector<int>chnkdims);
+			 /*vector< complex<float> >*/complex<float> data[], vector<int>chnkdims);
 	~dalComplexArray();
 };
 #endif

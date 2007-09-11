@@ -369,14 +369,14 @@ int * dalIntArray::readIntArray( hid_t obj_id, string arrayname )
  *
  ********************************************************************/
 dalComplexArray::dalComplexArray( void * voidfile, string arrayname, vector<int> dims,
-			  vector< complex<float> > data, vector<int> chnkdims ) {
+			  /*vector< complex<float> >*/complex<float> data[], vector<int> chnkdims ) {
 	hid_t * lclfile = (hid_t*)voidfile;
 	file_id = *lclfile;  // get the file handle
 	hid_t datatype, dataspace;  // declare a few h5 variables
 
         // determine the rank from the size of the dimensions vector
 	unsigned int rank = dims.size();
-
+// cout << "RANK IS " << rank << endl;
 	hsize_t mydims[rank];  // declare a dimensions c-array
 	hsize_t maxdims[rank]; // declare a maximum dimensions c-array
 	hid_t status_lcl;  // declare a local return status
@@ -386,6 +386,7 @@ dalComplexArray::dalComplexArray( void * voidfile, string arrayname, vector<int>
 	// set the c-array dimensions and maxiumum dimensions
 	for (unsigned int ii=0; ii<rank; ii++)
 	{
+// cout << "    " << dims[ii] << endl;
 		mydims[ii] = dims[ii];
 		maxdims[ii] = H5S_UNLIMITED;
 	}
@@ -430,7 +431,7 @@ dalComplexArray::dalComplexArray( void * voidfile, string arrayname, vector<int>
 	}
 
 	// write the data
-	H5Dwrite(array_id, datatype, dataspace, dataspace, H5P_DEFAULT, &data[0]);
+	H5Dwrite(array_id, datatype, dataspace, dataspace, H5P_DEFAULT, data/*&data[0]*/);
 
 	// close local hdf5 objects
 	H5Sclose( dataspace );

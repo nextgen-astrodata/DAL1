@@ -116,7 +116,8 @@ class dalDataset{
 	dalArray * createComplexArray(
 				string arrayname,
 				vector<int> dims,
-				vector< complex<float> > data,
+// 				vector< complex<float> > data,
+				complex<float> data[],
 				vector<int>cdims);
 
 
