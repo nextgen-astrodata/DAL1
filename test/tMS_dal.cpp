@@ -37,161 +37,103 @@ int main(int argc, char *argv[])
 	}
 
 // create a dataset object of type MSCASA
-dalDataset * msds;
-msds = new dalDataset( argv[1], "MSCASA" );
+dalDataset * msds = new dalDataset( argv[1], "MSCASA" );
 
 // print out a list of tables in the dataset
 msds->listTables();
 
 // open a table in the dataset
-dalTable * maintable;
 string tablename = "MAIN";
 string filter_string =
   "Select UVW, TIME, ANTENNA1, ANTENNA2, DATA from $1 where ANTENNA1 = 1 AND ANTENNA2 = 1";
-	
-maintable = msds->openFilteredTable( tablename, filter_string );
+
+dalTable * maintable = msds->openFilteredTable( tablename, filter_string );
 
 // print the name of the table [ doesn't seem to work ]
 maintable->getName();
 
-// open a column in the table
-// dalColumn * timecol;
-cout << "-------\n" << "TIME" << "\n-------" << endl;
-dalColumn * foo1 = new dalColumn();
-foo1 = maintable->getColumn("TIME");
-foo1->getDataType();
-if ( foo1->isScalar() )
-  cout << "SCALAR" << endl;
-if ( foo1->isArray() )
-  cout << "ARRAY" << endl;
-cout << "Number of rows: " << foo1->nrows() << endl;
-/*foo1_data = (double *)foo1->data();
-for (int ii=0; ii<5; ii++)
-  cout << "TIME data out: " << foo1_data[ii] << endl;*/
-dalData * data_object1 = foo1->data();
+//
+// get data from the TIME column
+//
+cout << "-------\n";
+cout << "TIME\n";
+cout << "-------\n";
+dalColumn * time_col = maintable->getColumn("TIME");
+cout << time_col->getDataType() << endl;
+if ( time_col->isScalar() ) cout << "SCALAR" << endl;
+if ( time_col->isArray() ) cout << "ARRAY" << endl;
+cout << "Number of rows: " << time_col->nrows() << endl;
+dalData * data_object = time_col->data();
 double * value1;
 for(unsigned int xx=0; xx<13; xx++)
 {
-  value1 = (double*)data_object1->get(xx);  // WORKS
+  value1 = (double*)data_object->get(xx);  // WORKS
   cout << *value1 << endl;
 }
-delete foo1;
+delete time_col;
 
-cout << "-------\n" << "UVW" << "\n-------" << endl;
-dalColumn * foo2 = new dalColumn();
-foo2 = maintable->getColumn("UVW");
-vector<int> shape2 = foo2->shape();
+//
+// get data from the UVW column
+//
+cout << "-------\n";
+cout << "UVW\n";
+cout << "-------\n";
+dalColumn * uvw_col = maintable->getColumn("UVW");
+vector<int> shape2 = uvw_col->shape();
 cout << "shape: ";
 for (unsigned int uu=0; uu<shape2.size(); uu++)
   cout << shape2[uu] << ", ";
 cout << endl;
-cout << "ndims: " << foo2->ndims() << endl;
-foo2->getDataType();
-if ( foo2->isScalar() )
-  cout << "SCALAR" << endl;
-if ( foo2->isArray() )
-  cout << "ARRAY" << endl;
-//double * foo2_data;
-/*foo2_data = (double *)foo2->data();
-for (int ii=0; ii<5; ii++)
-  cout << "UVW data out: " << foo2_data[ii] << endl;*/
-dalData * data_object2 = foo2->data();
+cout << "ndims: " << uvw_col->ndims() << endl;
+uvw_col->getDataType();
+if ( uvw_col->isScalar() )  cout << "SCALAR" << endl;
+if ( uvw_col->isArray() )  cout << "ARRAY" << endl;
+data_object = uvw_col->data();
 double * value2;
 for(unsigned int xx=0; xx<5; xx++)
 {
-  value2 = (double*)data_object2->get(xx,0);  // WORKS
+  value2 = (double*)data_object->get(xx,0);  // WORKS
   cout << *value2 << endl;
 }
-delete foo2;
+delete uvw_col;
 
-cout << "-------\n" << "DATA" << "\n-------" << endl;
-dalColumn * foo3 = new dalColumn();
-foo3 = maintable->getColumn("DATA");
-vector<int> shape3 = foo3->shape();
+//
+// get data from the DATA column
+//
+cout << "-------\n";
+cout << "DATA\n";
+cout << "-------\n";
+dalColumn * data_col = maintable->getColumn("DATA");
+vector<int> shape3 = data_col->shape();
 cout << "shape: ";
 for (unsigned int uu=0; uu<shape3.size(); uu++)
   cout << shape3[uu] << ", ";
 cout << endl;
-unsigned int ndims3 = foo3->ndims();
+unsigned int ndims3 = data_col->ndims();
 cout << "ndims: " << ndims3 << endl;
-foo3->getDataType();
-if ( foo3->isScalar() )
-  cout << "SCALAR" << endl;
-if ( foo3->isArray() )
-  cout << "ARRAY" << endl;
-unsigned int nrows3 = foo3->nrows();
+data_col->getDataType();
+if ( data_col->isScalar() )  cout << "SCALAR" << endl;
+if ( data_col->isArray() )  cout << "ARRAY" << endl;
+unsigned int nrows3 = data_col->nrows();
 cout << "Number of rows: " << nrows3 << endl;
-// complex<float> * foo3_data;
-// foo3_data= foo3->data();
-/*unsigned int polarization = 2;
-unsigned int channel = 45;
-unsigned int row=345;
-unsigned int index =  (polarization) + (channel*shape3[0]) + (row*(shape3[0]*shape3[1]));*/
-// cout << foo3_data[ index ] << endl;
-dalData * data_object3 = foo3->data();
-// cout << (complex<float>*)data_object.get(2,45,345) << endl;
-/*complex<float> * foo3_data = (complex<float>*)*/
+data_object = data_col->data();
 complex<float> * value3;
-for(unsigned int xx=300; xx<320; xx++)
+for(unsigned int xx=300; xx<310; xx++)
 {
-  value3 = (complex<float>*)data_object3->get(2,45,xx);  // WORKS
+  value3 = (complex<float>*)data_object->get(2,45,xx);  // WORKS
   cout << "[2][45][" << xx << "]: " << *value3 << endl;
 }
-//   value3 = (complex<float>*)data_object3->get(1,45,300);  // WORKS
-//   cout << *value3 << endl;
-// exit(1);
+//   value3 = (complex<float>*)data_object->get(1,45,300);  // WORKS
 
 
-// exit(8);
-
-
-
-
-
-// double * mytime_data = new double[ 100 ];
-// mytime_data = (double *)maintable->getColumnData( "TIME" );
-// for (int ii=0; ii<5; ii++)
-//   cout << "TIME data out: " << mytime_data[ii] << endl;
-// delete mytime_data;
-// 
-// int * ant1_data = new int[ 100 ];
-// ant1_data = (int *)maintable->getColumnData( "ANTENNA1" );
-// for (int ii=0; ii<5; ii++)
-//   cout << "ANTENNA1 data out: " << ant1_data[ii] << endl;
-// delete ant1_data;
-// 
-// int * ant2_data = new int[ 100 ];
-// ant2_data = (int *)maintable->getColumnData( "ANTENNA2" );
-// for (int ii=0; ii<5; ii++)
-//   cout << "ANTENNA2 data out: " << ant2_data[ii] << endl;
-// delete ant2_data;
-// 
-// double * myuvw;
-// myuvw = (double *)maintable->getColumnData( "UVW" );
-// // cout << myuvw << endl;
-// for (int ii=0; ii<5; ii++)
-//    cout << "UVW data out: " << myuvw[ii] << endl;
-// 
-// complex<float> * data;
-// data = (complex<float> *)maintable->getColumnData( "DATA" );
-// for (int ii=0; ii<5; ii++)
-//    cout << "DATA out: " << data[ii] << endl;
-// 
-// // close the dataset
-// msds->close();
-// delete msds;
-
-// exit(10);
-
+//
 // create a new hdf5 dataset
-dalDataset * ds;
-ds = new dalDataset( argv[2], "HDF5" );
+//
+dalDataset * ds = new dalDataset( argv[2], "HDF5" );
 
 // define a vector for chunking dimensions
 vector<int> cdims;
 long indx;
-// complex<float> total=0;
-dalArray * dataarray;
 complex<float> * cdata;
 long mysize = shape3[0] * shape3[1] * shape3[2];
 cdata = new complex<float>[ mysize ];
@@ -201,44 +143,23 @@ for(int xx=0; xx<shape3[0]; xx++)
     for(int zz=0; zz<shape3[2]; zz++)
 {
     ccount+=1;
-    value3 = (complex<float>*)data_object3->get(xx,yy,zz);
-// cout << *value3 << ',';
-     indx = xx*256*8670 + yy*8670 + zz;  // YES!
+    value3 = (complex<float>*)data_object->get(xx,yy,zz);
+//      indx = xx*256*8670 + yy*8670 + zz;  // YES!
      indx = xx*shape3[1]*shape3[2] + yy*shape3[2] + zz;  // YES!
      cdata[ indx ] = *value3;
-//  if (8680 == ccount) exit(4);
-//     cdata[ indx ] = ccount;
-// total += *value3;
 }
-/*for(unsigned int xx=300; xx<320; xx++)
-{
-  value3 = (complex<float>*)data_object3->get(2,45,xx);  // WORKS
-  cout << "[2][45][" << xx << "]: " << *value3 << endl;
-}*/
-// cout << total << endl;
-// exit(9);
-// cout << "Creating complex array of data in HDF5..." << endl;
-// // dataarray = ds->createComplexArray( "dataarray", shape3, (complex<float>*)data_object3->data, cdims );
-dataarray = ds->createComplexArray( "dataarray", shape3, cdata, cdims );
 
-vector<int> dims;
-// dims.push_back(2);
-// dims.push_back(3);
-// dims.push_back(4);
-// complex<float> * adata;
-// adata = new complex<float>[ 2*3*4 ];
-// adata[ 11 ] = 11;
-// // adata[ 0 + (1*3) + (1*3*4)] = 1;
-// dataarray = ds->createComplexArray( "dataarray", dims/*shape3*/, adata/*cdata*/, cdims );
-// free(adata);
-
+cout << "Creating complex array of data in HDF5..." << endl;
+dalArray * dataarray = ds->createComplexArray( "dataarray", shape3, cdata, cdims );
+// dalArray * dataarray = ds->createArray( "dataarray", data_object );
 free(cdata);
-delete foo3;
+delete data_col;
 
 dalGroup * arraygroup;
 arraygroup = ds->createGroup( "Arrays" );
 // define dimensions of array
-dims.clear();
+vector<int> dims;
+// dims.clear();
 dims.push_back(4);
 dims.push_back(5);
 dims.push_back(6);

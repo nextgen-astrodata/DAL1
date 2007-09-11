@@ -86,11 +86,13 @@ int main()
 	fdata[gg] = rand();
    dalArray * farray = ds->createFloatArray( "float_array", dims, fdata, cdims );
 
-   vector< complex<float> > cdata;
+   complex<float> * cdata = new complex<float>[ 4*5*6 ];
    for (int gg=0; gg<(4*5*6); gg++) {
-	cdata.push_back(0);
+	cdata[ gg ] = 0;
    }
    dalArray * carray = ds->createComplexArray( "complex_array", dims, cdata, cdims );
+
+   delete cdata;
 
    table1->addColumn( "col1", dal_INT );
    table1->addColumn( "col2", dal_SHORT );

@@ -52,6 +52,7 @@ exactly as it is stored.
 class dalData{
 	string datatype;  /// i.e. "dal_COMPLEX", "dal_INT", "dal_FLOAT"
 	string filetype;  /// i.e. "MSCASA", "FITS", "HDF5"
+        string array_order; /// i.e. "fortran", "c"
 
 public:
 	//void * data;  /// pointer to the actual c-array data
@@ -61,7 +62,10 @@ public:
 	long nrows;
 
 	dalData();  /// default constructor
-	dalData(string, string, vector<int>, long);  /// constructor with a specific file type
+
+	/// constructor with a specific file type
+	dalData(string, string, vector<int>, long);
+
 // 	void * get(long);
 // 	void * get(long, long);
 	void * get(long idx1=-1, long idx=-1, long idx3=-1);

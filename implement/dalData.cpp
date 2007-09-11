@@ -46,20 +46,13 @@ void * dalData::get( long idx1 )
 void * dalData::get( long idx1, long idx2, long idx3 )
 {
    vector<long> indices;
-//    vector<long>::iterator it;
+
    if( idx1>-1 )
      indices.push_back( idx1 );
    if( idx2>-1 )
      indices.push_back( idx2 );
    if( idx3>-1 )
      indices.push_back( idx3 );
-
-// cout << "ind size: " << indices.size() << endl;
-// for (unsigned int dim=0; dim<indices.size(); dim++)
-//   cout << "   " << indices[ dim ] << endl;
-// cout << "shape size: " << shape.size() << endl;
-// for (unsigned int dim=0; dim<shape.size(); dim++)
-//   cout << "   " << shape[ dim ] << endl;
 
    if (indices.size() != (shape.size()) )
    {
@@ -89,6 +82,7 @@ void * dalData::get( long idx1, long idx2, long idx3 )
    }
    else if (H5TYPE == filetype)
    {
+     // whatever is necessary here
      return NULL;
    }
    
@@ -119,12 +113,17 @@ dalData::dalData(string lclfiletype, string lcldatatype,
    vector<int> lclshape, long lclnrows)
 {
     filetype = lclfiletype;
+    if ( MSCASATYPE == lclfiletype )
+       array_order = "fortran";
+    else if ( H5TYPE == lclfiletype )
+       array_order = "c";
     datatype = lcldatatype;
     shape = lclshape;
     nrows = lclnrows;
 }
 
 #ifdef PYTHON
+// gets the whole column arrays
 bpl::numeric::array dalData::get_boost()
 {
   bpl::list data_list;

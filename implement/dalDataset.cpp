@@ -270,6 +270,12 @@ dalDataset::~dalDataset()
 {
 }
 
+dalArray * dalDataset::createArray( string arrayname, dalData * data_object )
+{
+   return NULL;
+}
+
+
 /****************************************************************
  *  Create an Integer array of N dimensions
  *
