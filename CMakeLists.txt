@@ -53,6 +53,8 @@ find_path (dal_cmake FindHDF5.cmake FindCASACORE.cmake
 
 ## check for the external packages
 
+set (NO_CMAKE_ENVIRONMENT_PATH 1)
+
 if (dal_cmake)
   ## Blitz++
   if (NOT HAVE_BLITZ)
