@@ -72,19 +72,27 @@ void * dalData::get( long idx1, long idx2, long idx3 )
      for (unsigned int dim=0; dim<shape.size()-1; dim++)
      {
         for (unsigned int ss=dim; ss>0; ss--)
-	   bb *= shape[ ss ];
+          bb *= shape[ ss ];
 
         index += indices[dim]*bb;
-	bb=1;
+        bb=1;
      }
      shape.erase( shape.begin() );
 
    }
-   else if (H5TYPE == filetype)
+   else if ( H5TYPE == filetype )
    {
-     // whatever is necessary here
-     return NULL;
-   }
+//   cout << "HDF5 HDF5 HDF5 HDF5 HDF5 HDF5" << endl;
+     // indx = xx*shape3[1]*shape3[2] + yy*shape3[2] + zz;
+     for (unsigned int dim = 0; dim < shape.size(); dim++)
+	 {
+        for (unsigned int ss = shape.size()-1; ss > dim; ss--)
+           bb *= shape[ ss ];
+
+	    index += indices[dim]*bb;
+	    bb=1;
+      }
+	}
    
    if ( dal_COMPLEX == datatype )
       return (&(((complex<float>*)data)[ index ]));

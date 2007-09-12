@@ -135,20 +135,47 @@ dalDataset * ds = new dalDataset( argv[2], "HDF5" );
 vector<int> cdims;
 long indx;
 complex<float> * cdata;
-long mysize = shape3[0] * shape3[1] * shape3[2];
+long mysize = 1;
+for (int ll=0; ll<shape3.size(); ll++)
+  mysize *= shape3[ll];
+//long mysize = shape3[0] * shape3[1] * shape3[2];
+//cout << "mysize " << mysize << endl;
 cdata = new complex<float>[ mysize ];
 long ccount=0;
+
+////////////////////////////
+long a=2;
+long b=45;
+long c=135;
+//indx = a*shape3[1]*shape3[2] + b*shape3[2] + c;
+//long bb=1;
+//indx =0;
+//vector<int> indices;
+//indices.push_back(2);
+//indices.push_back(45);
+//indices.push_back(135);
+//for (unsigned int dim = 0; dim < shape3.size(); dim++)
+//{
+//  for (unsigned int ss = shape3.size()-1; ss > dim; ss--)
+//    bb *= shape3[ ss ];
+//
+//  indx += indices[dim]*bb;
+//  bb=1;
+//}
+//exit(9);
+////////////////////////////
+
 for(int xx=0; xx<shape3[0]; xx++)
   for(int yy=0; yy<shape3[1]; yy++)
     for(int zz=0; zz<shape3[2]; zz++)
 {
     ccount+=1;
     value3 = (complex<float>*)data_object->get(xx,yy,zz);
-//      indx = xx*256*8670 + yy*8670 + zz;  // YES!
-     indx = xx*shape3[1]*shape3[2] + yy*shape3[2] + zz;  // YES!
-     cdata[ indx ] = *value3;
+//    indx = xx*256*8670 + yy*8670 + zz;  // YES!
+    indx = xx*shape3[1]*shape3[2] + yy*shape3[2] + zz;  // YES!
+//cout << indx << ',';
+    cdata[ indx ] = *value3;
 }
-
 cout << "Creating complex array of data in HDF5..." << endl;
 dalArray * dataarray = ds->createComplexArray( "dataarray", shape3, cdata, cdims );
 // dalArray * dataarray = ds->createArray( "dataarray", data_object );

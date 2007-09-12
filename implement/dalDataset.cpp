@@ -748,7 +748,7 @@ bpl::numeric::array dalDataset::ria_boost( string arrayname )
 	}
 	bpl::numeric::array nadata(
 //           bpl::make_tuple(
-	    bpl::make_tuple(data_list)
+	    data_list
 // 	  )
 	);
 // 	dims_list.reverse();
