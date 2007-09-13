@@ -32,7 +32,7 @@ if (NOT DAL_VERBOSE_CONFIGURE)
   set (CASACORE_FIND_QUIETLY 1)
   set (CFITSIO_FIND_QUIETLY 1)
   set (HDF5_FIND_QUIETLY 1)
-  set (SWIG_FIND_QUIETLY 1)
+  set (PYTHON_FIND_QUIETLY 1)
 endif (NOT DAL_VERBOSE_CONFIGURE)
 
 ## -----------------------------------------------------------------------------
@@ -53,7 +53,7 @@ find_path (dal_cmake FindHDF5.cmake FindCASACORE.cmake
 
 ## check for the external packages
 
-set (NO_CMAKE_ENVIRONMENT_PATH 1)
+set (NO_DEFAULT_PATH 1)
 
 if (dal_cmake)
   ## Blitz++
@@ -72,10 +72,10 @@ if (dal_cmake)
   if (NOT HAVE_HDF5)
     include (${dal_cmake}/FindHDF5.cmake)
   endif (NOT HAVE_HDF5)
-  ## SWIG
-#   if (NOT HAVE_SWIG)
-#     include (${dal_cmake}/FindSWIG.cmake)
-#   endif (NOT HAVE_SWIG)
+  ## PYTHON
+   if (NOT HAVE_PYTHON)
+     include (${dal_cmake}/FindPython.cmake)
+   endif (NOT HAVE_PYTHON)
   ##----------------------------------------------------------
   ## optional external packages (required for Python bindings)
   if (DAL_PYTHON_BINDINGS)
@@ -88,7 +88,7 @@ elseif (dal_cmake)
   message (SEND_ERROR "Unable to locate additional CMake scripts!")
 endif (dal_cmake)
 
-include (FindPythonLibs)
+#include (FindPythonLibs)
 
 if (BOOST_LIBRARIES)
   list (APPEND PYTHON_LIBRARIES ${BOOST_LIBRARIES})
