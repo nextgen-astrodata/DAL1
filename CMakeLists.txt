@@ -73,9 +73,9 @@ if (dal_cmake)
     include (${dal_cmake}/FindHDF5.cmake)
   endif (NOT HAVE_HDF5)
   ## PYTHON
-   if (NOT HAVE_PYTHON)
-     include (${dal_cmake}/FindPython.cmake)
-   endif (NOT HAVE_PYTHON)
+#  if (NOT HAVE_PYTHON)
+#    include (${dal_cmake}/FindPython.cmake)
+#  endif (NOT HAVE_PYTHON)
   ##----------------------------------------------------------
   ## optional external packages (required for Python bindings)
   if (DAL_PYTHON_BINDINGS)
@@ -88,7 +88,7 @@ elseif (dal_cmake)
   message (SEND_ERROR "Unable to locate additional CMake scripts!")
 endif (dal_cmake)
 
-#include (FindPythonLibs)
+include (FindPythonLibs)
 
 if (BOOST_LIBRARIES)
   list (APPEND PYTHON_LIBRARIES ${BOOST_LIBRARIES})
