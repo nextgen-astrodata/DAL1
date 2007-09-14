@@ -55,18 +55,23 @@ class dalData{
         string array_order; /// i.e. "fortran", "c"
 
 public:
+
+	unsigned long fortran_index(long idx1, long idx2, long idx3);
+	unsigned long c_index(long idx1, long idx2, long idx3);
+
 	//void * data;  /// pointer to the actual c-array data
 // 	complex<float> * data;
 	void * data;
 	vector<int> shape;
 	long nrows;
+        string get_datatype();
 
 	dalData();  /// default constructor
 
 	/// constructor with a specific file type
 	dalData(string, string, vector<int>, long);
 
-// 	void * get(long);
+//	void * get(long);
 // 	void * get(long, long);
 	void * get(long idx1=-1, long idx=-1, long idx3=-1);
 	void setData(void *);

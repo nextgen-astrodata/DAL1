@@ -237,7 +237,7 @@ dalDataset::dalDataset( char * name, string filetype )
    {
 #ifdef WITH_CASA
 	ms = new casa::MeasurementSet( name );
-	file = &ms;
+cout<<"Here!\n";	file = &ms;
 	ms_reader = new casa::MSReader( *ms );
 #else
 	cout << "CASA support not enabled." << endl;
@@ -272,7 +272,28 @@ dalDataset::~dalDataset()
 
 dalArray * dalDataset::createArray( string arrayname, dalData * data_object )
 {
-   return NULL;
+  vector<int> cdims;
+  complex<float> * cdata;
+  long indx;
+  long mysize = 1;
+
+  for (int ll=0; ll<data_object->shape.size(); ll++)
+     mysize *= data_object->shape[ll];
+
+  cdata = new complex<float>[ mysize ];
+  for(int xx=0; xx<data_object->shape[0]; xx++)
+    for(int yy=0; yy<data_object->shape[1]; yy++)
+      for(int zz=0; zz<data_object->shape[2]; zz++)
+      {
+        indx = data_object->c_index(xx,yy,zz);
+        cdata[ indx ] = *( (complex<float>*)data_object->get(xx,yy,zz) );
+      }
+
+   if ( dal_COMPLEX == data_object->get_datatype() )
+      return createComplexArray( arrayname, data_object->shape, cdata, cdims);
+   else
+// ADD MORE DATATYPES HERE!
+      return NULL;
 }
 
 

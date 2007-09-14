@@ -43,7 +43,7 @@ void * dalData::get( long idx1 )
 {
   return NULL;
 }*/
-void * dalData::get( long idx1, long idx2, long idx3 )
+unsigned long dalData::fortran_index(long idx1, long idx2, long idx3)
 {
    vector<long> indices;
 
@@ -59,16 +59,11 @@ void * dalData::get( long idx1, long idx2, long idx3 )
       cout << "ERROR: Number of indices do not match shape of column." << endl;
       exit(-1);
    }
-   unsigned long index = 0;
-   long bb = 1;
 
-   //
-   // Determine the correct index value, depending on the order
-   //   of the underlying array (determined by the filetype)
-   //
-   if ( MSCASATYPE == filetype )
-   {
-     shape.insert( shape.begin(), 1 );
+    unsigned long index = 0;
+    long bb = 1;
+
+    shape.insert( shape.begin(), 1 );
      for (unsigned int dim=0; dim<shape.size()-1; dim++)
      {
         for (unsigned int ss=dim; ss>0; ss--)
@@ -78,21 +73,65 @@ void * dalData::get( long idx1, long idx2, long idx3 )
         bb=1;
      }
      shape.erase( shape.begin() );
+     return index;
+}
 
+unsigned long dalData::c_index(long idx1, long idx2, long idx3)
+{
+   vector<long> indices;
+
+   if( idx1>-1 )
+     indices.push_back( idx1 );
+   if( idx2>-1 )
+     indices.push_back( idx2 );
+   if( idx3>-1 )
+     indices.push_back( idx3 );
+
+   if (indices.size() != (shape.size()) )
+   {
+      cout << "ERROR: Number of indices do not match shape of column." << endl;
+      exit(-1);
+   }
+
+     unsigned long index = 0;
+     long bb = 1;
+
+     //   cout << "HDF5 HDF5 HDF5 HDF5 HDF5 HDF5" << endl;
+     // indx = xx*shape3[1]*shape3[2] + yy*shape3[2] + zz;
+     for (unsigned int dim = 0; dim < shape.size(); dim++)
+     {
+       for (unsigned int ss = shape.size()-1; ss > dim; ss--)
+       {
+         bb *= shape[ ss ];
+       }
+
+       index += indices[dim]*bb;
+       bb=1;
+     }
+     return index;
+}
+
+string dalData::get_datatype()
+{
+   return datatype;
+}
+
+void * dalData::get( long idx1, long idx2, long idx3 )
+{
+   unsigned long index = 0;
+
+   //
+   // Determine the correct index value, depending on the order
+   //   of the underlying array (determined by the filetype)
+   //
+   if ( MSCASATYPE == filetype )
+   {
+      index = fortran_index( idx1, idx2, idx3 );
    }
    else if ( H5TYPE == filetype )
    {
-//   cout << "HDF5 HDF5 HDF5 HDF5 HDF5 HDF5" << endl;
-     // indx = xx*shape3[1]*shape3[2] + yy*shape3[2] + zz;
-     for (unsigned int dim = 0; dim < shape.size(); dim++)
-	 {
-        for (unsigned int ss = shape.size()-1; ss > dim; ss--)
-           bb *= shape[ ss ];
-
-	    index += indices[dim]*bb;
-	    bb=1;
-      }
-	}
+      index = c_index( idx1, idx2, idx3 );
+   }
    
    if ( dal_COMPLEX == datatype )
       return (&(((complex<float>*)data)[ index ]));
