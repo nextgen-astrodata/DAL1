@@ -178,6 +178,8 @@ BOOST_PYTHON_MODULE(libpydal)
 // 		bpl::return_value_policy<bpl::manage_new_object>())
 	.def("readIntArray", &dalDataset::ria_boost)
 	.def("readFloatArray", &dalDataset::rfa_boost)
+	.def("createArray", &dalDataset::createArray,
+		bpl::return_value_policy<bpl::manage_new_object>())
 // 	.def("sfe", &dalDataset::sfe)
 #ifdef WITH_CASA
 	.def("openFilteredTable", &dalDataset::oft_boost,

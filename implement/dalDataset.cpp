@@ -159,7 +159,7 @@ int dalDataset::close()
 #ifdef WITH_CASA
 // 	delete ms_reader;
 	delete ms;
-	cout << "closed MS" << endl;
+// 	cout << "closed MS" << endl;
 #else
 	cout << "CASA support not enabled." << endl;
 	exit(-1);
@@ -257,7 +257,8 @@ cout<<"Here!\n";	file = &ms;
 // h5fh = fits_create_file(fitsfile **fptr, char *filename, > int *status);
    }
    else {
-   	cout << "dalDataset::dalDataset data format \'" << type << "\' not supported." << endl;
+   	cout << "(dalDataset::dalDataset) Data format \'" << type
+             << "\' not supported." << endl;
    	exit(99);
    }
 }
@@ -277,7 +278,7 @@ dalArray * dalDataset::createArray( string arrayname, dalData * data_object )
   long indx;
   long mysize = 1;
 
-  for (int ll=0; ll<data_object->shape.size(); ll++)
+  for (unsigned int ll=0; ll<data_object->shape.size(); ll++)
      mysize *= data_object->shape[ll];
 
   cdata = new complex<float>[ mysize ];
@@ -292,8 +293,13 @@ dalArray * dalDataset::createArray( string arrayname, dalData * data_object )
    if ( dal_COMPLEX == data_object->get_datatype() )
       return createComplexArray( arrayname, data_object->shape, cdata, cdims);
    else
+   {
 // ADD MORE DATATYPES HERE!
+      cout << "(dalDataset::createArray) This datatype is not yet supported."
+           << endl;
+      exit(99);
       return NULL;
+   }
 }
 
 
@@ -314,7 +320,11 @@ dalArray * dalDataset::createIntArray( string arrayname, vector<int> dims, int d
 	return NULL;
    }
    else
-   	return NULL;
+   {
+   	cout << "(dalDataset::createIntArray) Data format \'" << type
+             << "\' not supported." << endl;
+   	exit(97);
+   }
 }
 
 /****************************************************************
@@ -329,13 +339,13 @@ dalArray * dalDataset::createFloatArray( string arrayname, vector<int> dims, flo
 	   new dalFloatArray( h5fh, arrayname, dims, data, cdims );
 	return la;
    }
-   else if ( type == FITSTYPE )
+   else
    {
-	cout << "dalDataset::createFloatArray FITS Type not yet supported." << endl;
+	cout << "(dalDataset::createFloatArray) Filetype \'" << type
+             << "\' not yet supported."
+             << endl;
 	return NULL;
    }
-   else
-   	return NULL;
 }
 
 /****************************************************************
@@ -350,14 +360,13 @@ dalArray * dalDataset::createComplexArray( string arrayname, vector<int> dims, /
 	   file, arrayname, dims, data, cdims );
 	return la;
    }
-   else if ( type == FITSTYPE )
+   else
    {
-	cout << "dalDataset::createComplexArray FITS Type not yet supported."
-	  << endl;
+	cout << "(dalDataset::createComplexArray) Filetype \'" << type
+             << "\' not yet supported."
+             << endl;
 	return NULL;
    }
-   else
-   	return NULL;
 }
 
 /****************************************************************
@@ -374,9 +383,10 @@ dalTable * dalDataset::createTable( string tablename )
    }
    else
    {
-	cout << "dalDataset::createTable operation not supported for filetype "
-	  << type << endl;
-   	return NULL;
+	cout << "(dalDataset::createTable) Filetype \'" << type
+             << "\' not yet supported."
+             << endl;
+	return NULL;
    }
 }
 
@@ -394,9 +404,10 @@ dalTable * dalDataset::createTable( string tablename, string groupname )
    }
    else
    {
-	cout << "dalDataset::createTable (in group) operation not supported for filetype "
-	  << type << endl;
-   	return NULL;
+	cout << "(dalDataset::createTable) Filetype \'" << type
+             << "\' not yet supported."
+             << endl;
+	return NULL;
    }
 }
 

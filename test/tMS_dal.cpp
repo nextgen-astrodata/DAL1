@@ -138,8 +138,6 @@ complex<float> * cdata;
 long mysize = 1;
 for (int ll=0; ll<shape3.size(); ll++)
   mysize *= shape3[ll];
-//long mysize = shape3[0] * shape3[1] * shape3[2];
-//cout << "mysize " << mysize << endl;
 cdata = new complex<float>[ mysize ];
 
 for(int xx=0; xx<shape3[0]; xx++)
@@ -156,9 +154,9 @@ delete data_col;
 
 dalGroup * arraygroup;
 arraygroup = ds->createGroup( "Arrays" );
+
 // define dimensions of array
 vector<int> dims;
-// dims.clear();
 dims.push_back(4);
 dims.push_back(5);
 dims.push_back(6);
@@ -170,10 +168,6 @@ cout << "Creating integer array of data in HDF5..." << endl;
 iarray = arraygroup->createIntArray( "int_array", dims, idata, cdims );
 
 ds->close();    // close the hdf5 file
-
-// delete dataarray;
-// delete arraygroup;
-// delete ds;
 
 cout << "SUCCESS" << endl;
 return SUCCESS;

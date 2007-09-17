@@ -2,7 +2,6 @@
 
 import libpydal as dal
 from pylab import *
-import numarray
 
 # check usage
 if ( len(sys.argv) < 2 ) or ( len(sys.argv) > 4 ):
