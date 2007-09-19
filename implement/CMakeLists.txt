@@ -68,12 +68,6 @@ if (HAVE_CASA OR HAVE_CASACORE)
   endif (APPLE)
 endif (HAVE_CASA OR HAVE_CASACORE)
 
-if (DAL_PYTHON_BINDINGS)
-  add_definitions (
-    -DPYTHON
-    )
-endif (DAL_PYTHON_BINDINGS)
-
 ## ------------------------------------------------------------------------------
 ## Build the library
 
@@ -122,13 +116,17 @@ target_link_libraries(dal
   )
 
 if (DAL_PYTHON_BINDINGS)
+  ## compiler instructions
+  add_definitions (-DPYTHON -fPIC)
   add_library(pydal SHARED ${dal_sources})
+  ## linker instructions
   target_link_libraries(pydal
     ${dal_link_libraries}
-  )
-#   SET_TARGET_PROPERTIES (pydal
-#     PROPERTIES CMAKE_SHARED_LINKER_FLAGS_RELEASE "-o pydal"
-#   )
+    )
+#  SET_TARGET_PROPERTIES (pydal
+#    PROPERTIES
+#    CMAKE_SHARED_LINKER_FLAGS_RELEASE "-o pydal"
+#    )
 endif (DAL_PYTHON_BINDINGS)
 
 
