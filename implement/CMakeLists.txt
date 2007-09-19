@@ -27,6 +27,13 @@ add_definitions (
   -ftemplate-depth-100
   )
 
+if (APPLE)
+  add_definitions (
+    -flat_namespace
+    -bundle
+    )
+endif (APPLE)
+
 if (HAVE_CASA OR HAVE_CASACORE)
   add_definitions (
     -DWITH_CASA
