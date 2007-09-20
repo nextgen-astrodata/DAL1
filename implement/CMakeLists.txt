@@ -27,13 +27,6 @@ add_definitions (
   -ftemplate-depth-100
   )
 
-if (APPLE)
-  add_definitions (
-    -flat_namespace
-    -bundle
-    )
-endif (APPLE)
-
 if (HAVE_CASA OR HAVE_CASACORE)
   add_definitions (
     -DWITH_CASA
@@ -121,6 +114,12 @@ target_link_libraries(dal
 if (DAL_PYTHON_BINDINGS)
   ## compiler instructions
   add_definitions (-DPYTHON)
+  if (APPLE)
+    add_definitions (
+      -flat_namespace
+      -bundle
+      )
+  endif (APPLE)
   add_library(pydal SHARED ${dal_sources})
   ## linker instructions
   target_link_libraries(pydal
