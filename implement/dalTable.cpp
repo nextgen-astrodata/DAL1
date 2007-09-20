@@ -395,10 +395,15 @@ dalTable::~dalTable()
  *****************************************************************/
 void dalTable::printColumns()
 {
+   if ( type == H5TYPE )
+   {
 	// Print the column list by iterating through the global column vector
 	cout << "Columns vector list:" << endl;
 	for (unsigned int ii=0; ii < columns.size(); ii++)
 		cout << columns[ii].getName() << " " << endl;
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -407,6 +412,8 @@ void dalTable::printColumns()
  *****************************************************************/
 void dalTable::createTable( void * voidfile, string tablename, string groupname )
 {
+   if ( type == H5TYPE )
+   {
 	/* It is necessary to have at least one column for table creation
 	 * so we create a dummy column that will be deleted when real
 	 * columns are added
@@ -445,6 +452,9 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 				 NFIELDS, NRECORDS, dst_size, lclfield_names,
 				 dst_offset, field_type, chunk_size,
 				 fill_data, compress, data );
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 
@@ -455,6 +465,8 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 void dalTable::addColumn( string colname, string coltype, int size )
 {
 
+   if ( type == H5TYPE )
+   {
 
 	// make sure the column name isn't blank
 	if ( 0 == colname.length() ) {
@@ -589,6 +601,9 @@ void dalTable::addColumn( string colname, string coltype, int size )
 	 	lc->addMember( "a_member", coltype );
 	}
 
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -597,12 +612,17 @@ void dalTable::addColumn( string colname, string coltype, int size )
  *****************************************************************/
 herr_t attr_info(hid_t loc_id, const char *name, void *opdata);
 void dalTable::getAttributes() {
+   if ( type == H5TYPE )
+   {
 
    //status = H5Aget_num_attrs(group_id);
    //printf ("H5Aget_num_attrs returns: %i\n", status);
    status = H5Aiterate( table_id, NULL, attr_info, NULL );
    //printf ("\nH5Aiterate returns: %i\n", status);
 
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -611,6 +631,8 @@ void dalTable::getAttributes() {
  *****************************************************************/
 void dalTable::addArrayColumn( string colname, string coltype, unsigned int indims )
 {
+   if ( type == H5TYPE )
+   {
 	// make sure the column name isn't blank
 	if ( 0 == colname.length() ) {
 		cout << "WARNING: Trying to add column without a name.  Skipping."
@@ -743,6 +765,9 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 	if ( removedummy )
 		removeColumn("000dummy000");
 	
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -752,6 +777,8 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 				int subfields )
 {
+   if ( type == H5TYPE )
+   {
 	// retrieve table information
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
 	
@@ -846,6 +873,9 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 
 	 	lc->addMember( "a_member", dal_INT );
 	}
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 
 }
 
@@ -855,6 +885,8 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
  *****************************************************************/
 void dalTable::removeColumn(string colname)
 {	
+   if ( type == H5TYPE )
+   {
 	status = H5TBget_table_info( file_id, name.c_str(), &nfields, &nrecords );
 	if ( nfields < 2 ) {
 			cout << "WARNING: Cannot delete last column." << endl;
@@ -895,6 +927,9 @@ void dalTable::removeColumn(string colname)
 	if ( !columnpresent )
 		cout << "WARNING: Column \'" << colname.c_str() <<
 				"\' not present.  Cannot delete." << endl;
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -903,6 +938,8 @@ void dalTable::removeColumn(string colname)
  *****************************************************************/
 void dalTable::writeDataByColNum( void * data, int index, int rownum )
 {
+   if ( type == H5TYPE )
+   {
 	
 	/*
 	 * Cleanup to make more efficient.  Check the last three fields for
@@ -922,6 +959,9 @@ void dalTable::writeDataByColNum( void * data, int index, int rownum )
   	status = H5TBwrite_fields_index(file_id, name.c_str(), num_fields,
 					index_num, start, numrecords, size,
 					field_offsets, dst_sizes, data);
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -930,6 +970,8 @@ void dalTable::writeDataByColNum( void * data, int index, int rownum )
  *****************************************************************/
 void dalTable::appendRow( void * data )
 {
+   if ( type == H5TYPE )
+   {
 	hsize_t recs2write = 1; // number of records to append
 	size_t * field_sizes;
 	size_t * field_offsets;
@@ -961,6 +1003,9 @@ void dalTable::appendRow( void * data )
 	free( field_sizes );
 	free( field_offsets );
 	free( size_out );
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -969,6 +1014,8 @@ void dalTable::appendRow( void * data )
  *****************************************************************/
 void dalTable::appendRows( void * data, long row_count )
 {
+   if ( type == H5TYPE )
+   {
 	size_t * field_sizes;
 	size_t * field_offsets;
 	size_t * size_out;
@@ -1001,6 +1048,9 @@ void dalTable::appendRows( void * data, long row_count )
 	free( field_sizes );
 	free( field_offsets );
 	free( size_out );
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -1008,10 +1058,15 @@ void dalTable::appendRows( void * data, long row_count )
  *
  *****************************************************************/
 void dalTable::setAttribute_string( string attrname, string data ) {
+   if ( type == H5TYPE )
+   {
 	if ( H5LTset_attribute_string( file_id, name.c_str(),
 					attrname.c_str(), data.c_str() ) < 0 ) {
 		cout << "ERROR: could not set attribute " << attrname << endl;
 	}
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -1019,10 +1074,15 @@ void dalTable::setAttribute_string( string attrname, string data ) {
  *
  *****************************************************************/
 void dalTable::setAttribute_char( string attrname, char * data, int size ) {
+   if ( type == H5TYPE )
+   {
 	if ( H5LTset_attribute_char( file_id, name.c_str(),
 					attrname.c_str(), data, size ) < 0 ) {
 		cout << "ERROR: could not set attribute " << attrname << endl;
 	}
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -1030,10 +1090,15 @@ void dalTable::setAttribute_char( string attrname, char * data, int size ) {
  *
  *****************************************************************/
 void dalTable::setAttribute_int( string attrname, int * data, int size ) {
+   if ( type == H5TYPE )
+   {
 	if ( H5LTset_attribute_int( file_id, name.c_str(),
 					attrname.c_str(), data, size ) < 0 ) {
 		cout << "ERROR: could not set attribute " << attrname << endl;
 	}
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -1042,10 +1107,15 @@ void dalTable::setAttribute_int( string attrname, int * data, int size ) {
  *****************************************************************/
 void dalTable::setAttribute_uint(string attrname, unsigned int * data, int size)
 {
+   if ( type == H5TYPE )
+   {
 	if ( H5LTset_attribute_uint( file_id, name.c_str(),
 					attrname.c_str(), data, size ) < 0 ) {
 		cout << "ERROR: could not set attribute " << attrname << endl;
 	}
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -1053,10 +1123,15 @@ void dalTable::setAttribute_uint(string attrname, unsigned int * data, int size)
  *
  *****************************************************************/
 void dalTable::setAttribute_double( string attrname, double * data, int size ) {
+   if ( type == H5TYPE )
+   {
 	if ( H5LTset_attribute_double( file_id, name.c_str(),
 					attrname.c_str(), data, size ) < 0 ) {
 		cout << "ERROR: could not set attribute " << attrname << endl;
 	}
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -1065,7 +1140,9 @@ void dalTable::setAttribute_double( string attrname, double * data, int size ) {
  *****************************************************************/
 void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
 {
-	size_t * field_sizes;
+   if ( type == H5TYPE )
+   {
+    size_t * field_sizes;
 	size_t * field_offsets;
 	size_t * size_out;
  	
@@ -1088,6 +1165,11 @@ void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
 		cout << setw(17) << field_names[ii];
 	}
 	cout << endl;
+   }
+   else 
+   {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -1096,8 +1178,15 @@ void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
  *****************************************************************/
 long dalTable::getNumberOfRows()
 {
+   if ( type == H5TYPE )
+   {
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
 	return nrecords;
+
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+	 return(-1);
+   }
 }
 
 /****************************************************************
@@ -1106,6 +1195,8 @@ long dalTable::getNumberOfRows()
  *****************************************************************/
 void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buffersize )
 {
+   if ( type == H5TYPE )
+   {
         size_t * field_sizes;
         size_t * field_offsets;
         size_t * size_out;
@@ -1146,6 +1237,9 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buf
                      << "table." << endl;
                 exit(897);
         }
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -1154,12 +1248,18 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buf
  *****************************************************************/
 bool dalTable::findAttribute( string attrname )
 {
+   if ( type == H5TYPE )
+   {
 	if ( H5LT_find_attribute( table_id, attrname.c_str() ) <= 0 ) {
 		cout << "Attribute " << attrname << " not found." << endl;
 		return false;
 	} else {
 		return true;
 	}
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+	 return false;
+   }
 }
 
 /****************************************************************
@@ -1168,6 +1268,8 @@ bool dalTable::findAttribute( string attrname )
  *****************************************************************/
 void dalTable::printAttribute( string attrname ) {
 
+   if ( type == H5TYPE )
+   {
 	hsize_t * dims;
 	H5T_class_t type_class;
 	size_t type_size;
@@ -1232,6 +1334,9 @@ void dalTable::printAttribute( string attrname ) {
 	else {
 		cout << "Attribute " << attrname << " type unknown." << endl;
 	}
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
 }
 
 /****************************************************************
@@ -1240,6 +1345,8 @@ void dalTable::printAttribute( string attrname ) {
  *****************************************************************/
 void * dalTable::getAttribute( string attrname ) {
 
+   if ( type == H5TYPE )
+   {
 	hsize_t * dims;
 	H5T_class_t type_class;
 	size_t type_size;
@@ -1292,6 +1399,10 @@ void * dalTable::getAttribute( string attrname ) {
 	{
 		return NULL;
 	}
+   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     return NULL;
+   }
 }
 
 /************************************************************************

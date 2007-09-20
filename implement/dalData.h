@@ -52,19 +52,18 @@ exactly as it is stored.
 class dalData{
 	string datatype;  /// i.e. "dal_COMPLEX", "dal_INT", "dal_FLOAT"
 	string filetype;  /// i.e. "MSCASA", "FITS", "HDF5"
-        string array_order; /// i.e. "fortran", "c"
+    string array_order; /// i.e. "fortran", "c"
 
 public:
 
 	unsigned long fortran_index(long idx1, long idx2, long idx3);
 	unsigned long c_index(long idx1, long idx2, long idx3);
 
-	//void * data;  /// pointer to the actual c-array data
-// 	complex<float> * data;
-	void * data;
+	void * data;  // pointer to the actual c-array data
+	void * data2;  // used to convert one datatype to another
 	vector<int> shape;
 	long nrows;
-        string get_datatype();
+	string get_datatype();
 
 	dalData();  /// default constructor
 
@@ -75,6 +74,9 @@ public:
 // 	void * get(long, long);
 	void * get(long idx1=-1, long idx=-1, long idx3=-1);
 	void setData(void *);
+	
+	void toFloat();  /// converts array values to floats
+	
 #ifdef PYTHON
 	bpl::numeric::array get_boost();
 #endif

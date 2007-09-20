@@ -116,6 +116,28 @@ string dalData::get_datatype()
    return datatype;
 }
 
+void dalData::toFloat()
+{
+   if ( dal_COMPLEX == datatype )
+   {
+      long length = 1;
+      for ( unsigned int hh=0; hh < shape.size(); hh++ )
+      {
+	     length *= shape[ hh ];
+	  }
+	  data2 = new float[ length ];
+	  float lclval;
+      for ( unsigned int cell=0; cell < length; cell++ )
+      {
+	     cout << abs(*(&(((complex<float>*)data)[ cell ]))) << endl;
+	     lclval = abs(*(&(((complex<float>*)data)[ cell ])));
+		 exit(2);
+	  }
+	  cout << "length: " << length << endl;
+	  exit(45);
+   }
+
+}
 void * dalData::get( long idx1, long idx2, long idx3 )
 {
    unsigned long index = 0;
@@ -222,15 +244,15 @@ bpl::numeric::array dalData::get_boost()
       {
         if ( 2 == shape.size() ) // 2D case
         {
-  	  for ( int xx=0; xx<shape[0]; xx++)
-  	    for ( int yy=0; yy<shape[1]; yy++)
+  	      for ( int xx=0; xx<shape[0]; xx++)
+  	        for ( int yy=0; yy<shape[1]; yy++)
               data_list.append( (*((double*)get(xx,yy))) );
         }
         else if ( 3 == shape.size() ) // 3D case
         {
-  	  for ( int xx=0; xx<shape[0]; xx++)
-  	    for ( int yy=0; yy<shape[1]; yy++)
-  	      for ( int zz=0; zz<shape[2]; zz++)
+  	      for ( int xx=0; xx<shape[0]; xx++)
+  	        for ( int yy=0; yy<shape[1]; yy++)
+  	          for ( int zz=0; zz<shape[2]; zz++)
                 data_list.append( (*((double*)get(xx,yy,zz))) );
         }
  
@@ -247,16 +269,16 @@ bpl::numeric::array dalData::get_boost()
       {
         if ( 2 == shape.size() ) // 2D case
         {
-  	  for ( int xx=0; xx<shape[0]; xx++)
-  	    for ( int yy=0; yy<shape[1]; yy++)
-              data_list.append( (*((double*)get(xx,yy))) );
-        }
+  	      for ( int xx=0; xx<shape[0]; xx++)
+  	        for ( int yy=0; yy<shape[1]; yy++)
+               data_list.append( (*((double*)get(xx,yy))) );
+		}
         else if ( 3 == shape.size() ) // 3D case
         {
-  	  for ( int xx=0; xx<shape[0]; xx++)
-  	    for ( int yy=0; yy<shape[1]; yy++)
-  	      for ( int zz=0; zz<shape[2]; zz++)
-                data_list.append( (*((double*)get(xx,yy,zz))) );
+	       for ( int xx=0; xx<shape[0]; xx++)
+  	         for ( int yy=0; yy<shape[1]; yy++)
+			   for ( int zz=0; zz<shape[2]; zz++)
+                 data_list.append( (*((double*)get(xx,yy,zz))) );
         }
  
         bpl::numeric::array nadata( data_list );
@@ -273,17 +295,17 @@ bpl::numeric::array dalData::get_boost()
         complex<float> * tmp_comp;
         if ( 2 == shape.size() ) // 2D case
         {
-  	  for (int xx=0; xx<shape[0]; xx++)
-  	    for (int yy=0; yy<shape[1]; yy++)
+  	      for (int xx=0; xx<shape[0]; xx++)
+  	        for (int yy=0; yy<shape[1]; yy++)
               data_list.append( (*((complex<float>*)get(xx,yy))) );
         }
         else if ( 3 == shape.size() ) // 3D case
         {
-  	  for (int xx=0; xx<shape[0]; xx++)
-  	    for ( int yy=0; yy<shape[1]; yy++)
-  	      for (int zz=0; zz<shape[2]; zz++)
+  	      for (int xx=0; xx<shape[0]; xx++)
+  	        for ( int yy=0; yy<shape[1]; yy++)
+  	         for (int zz=0; zz<shape[2]; zz++)
               {
-		tmp_comp = (complex<float>*)get(xx,yy,zz);
+		        tmp_comp = (complex<float>*)get(xx,yy,zz);
                 data_list.append( *tmp_comp );
               }
         }

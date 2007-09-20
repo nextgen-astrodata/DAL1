@@ -63,6 +63,13 @@ cout << time_col->getDataType() << endl;
 if ( time_col->isScalar() ) cout << "SCALAR" << endl;
 if ( time_col->isArray() ) cout << "ARRAY" << endl;
 cout << "Number of rows: " << time_col->nrows() << endl;
+
+if ( time_col->nrows() <= 0 )
+{
+  cout << "ERROR:  No rows within filtered file." << endl;
+  exit(2);
+}
+
 dalData * data_object = time_col->data();
 double * value1;
 for(unsigned int xx=0; xx<13; xx++)

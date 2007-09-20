@@ -237,7 +237,7 @@ dalDataset::dalDataset( char * name, string filetype )
    {
 #ifdef WITH_CASA
 	ms = new casa::MeasurementSet( name );
-cout<<"Here!\n";	file = &ms;
+	file = &ms;
 	ms_reader = new casa::MSReader( *ms );
 #else
 	cout << "CASA support not enabled." << endl;
