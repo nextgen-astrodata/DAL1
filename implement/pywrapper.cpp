@@ -136,7 +136,7 @@ BOOST_PYTHON_OPAQUE_SPECIALIZED_TYPE_ID(opaque_)
 
 // BOOST_PYTHON_FUNCTION_OVERLOADS(foo_overloads, foo, 0, 2)
 
-BOOST_PYTHON_MODULE(libpydal)
+BOOST_PYTHON_MODULE(pydal)
 {
 //     bpl::numeric::array::set_module_and_type("numpy", "ndarray");
 //     bpl::def("foo", (void(*)(int,int,int))0, foo_overloads());
