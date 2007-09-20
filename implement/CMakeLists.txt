@@ -108,14 +108,9 @@ target_link_libraries(dal
 if (DAL_PYTHON_BINDINGS)
   ## compiler instructions
   add_definitions (-DPYTHON)
-  if (APPLE)
-    add_definitions (
-      -flat_namespace
-      -bundle
-      )
-  endif (APPLE)
+  remove_definitions (-dynamiclib -install_name)
   ## Source files entering the library
-  add_library(pydal SHARED
+  add_library(pydal MODULE
     ${dal_sources}
     pywrapper.cpp
     )
@@ -124,12 +119,21 @@ if (DAL_PYTHON_BINDINGS)
     ${dal_link_libraries}
     )
   ## additional target properties
-  set_target_properties (pydal
-    PROPERTIES
-    PREFIX ""
-    SUFFIX .so
-    LINK_FLAGS -fPIC
-    )
+  if (APPLE)
+    set_target_properties (pydal
+      PROPERTIES
+      PREFIX ""
+      SUFFIX .so
+      LINK_FLAGS "-fPIC -flat_namespace"
+      )
+  else (APPLE)
+    set_target_properties (pydal
+      PROPERTIES
+      PREFIX ""
+      SUFFIX .so
+      LINK_FLAGS -fPIC -shared
+      )
+  endif (APPLE)
 endif (DAL_PYTHON_BINDINGS)
 
 ## ------------------------------------------------------------------------------
