@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import libpydal as dal
+import pydal as dal
 from pylab import *
 
 # check usage
