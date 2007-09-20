@@ -131,7 +131,7 @@ if (DAL_PYTHON_BINDINGS)
       PROPERTIES
       PREFIX ""
       SUFFIX .so
-      LINK_FLAGS -fPIC -shared
+      LINK_FLAGS "-fPIC -shared"
       )
   endif (APPLE)
 endif (DAL_PYTHON_BINDINGS)
