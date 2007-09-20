@@ -120,7 +120,7 @@ target_link_libraries(dal
 
 if (DAL_PYTHON_BINDINGS)
   ## compiler instructions
-  add_definitions (-DPYTHON -fPIC)
+  add_definitions (-DPYTHON)
   add_library(pydal SHARED ${dal_sources})
   ## linker instructions
   target_link_libraries(pydal
@@ -129,7 +129,9 @@ if (DAL_PYTHON_BINDINGS)
   ## additional target properties
   set_target_properties (pydal
     PROPERTIES
-    SUFFIX .so)
+    SUFFIX .so
+    LINK_FLAGS -fPIC
+    )
 endif (DAL_PYTHON_BINDINGS)
 
 ## ------------------------------------------------------------------------------
