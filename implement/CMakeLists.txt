@@ -69,7 +69,7 @@ if (HAVE_CASA OR HAVE_CASACORE)
 endif (HAVE_CASA OR HAVE_CASACORE)
 
 ## ------------------------------------------------------------------------------
-## Build the library
+## Build the library, "libdal"
 
 ## [1] list of source files
 
@@ -115,6 +115,9 @@ target_link_libraries(dal
   ${dal_link_libraries}
   )
 
+## ------------------------------------------------------------------------------
+## Build the library for the Python bindings, "libpydal"
+
 if (DAL_PYTHON_BINDINGS)
   ## compiler instructions
   add_definitions (-DPYTHON -fPIC)
@@ -123,12 +126,11 @@ if (DAL_PYTHON_BINDINGS)
   target_link_libraries(pydal
     ${dal_link_libraries}
     )
-#  SET_TARGET_PROPERTIES (pydal
-#    PROPERTIES
-#    CMAKE_SHARED_LINKER_FLAGS_RELEASE "-o pydal"
-#    )
+  ## additional target properties
+  set_target_properties (pydal
+    PROPERTIES
+    SUFFIX .so)
 endif (DAL_PYTHON_BINDINGS)
-
 
 ## ------------------------------------------------------------------------------
 ## Installation

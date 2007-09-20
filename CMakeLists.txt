@@ -101,8 +101,6 @@ include_directories (
   ${DAL_SOURCE_DIR}
   ${DAL_SOURCE_DIR}/implement
   ${DAL_SOURCE_DIR}/test
-  ${BOOST_INCLUDES}
-  ${HDF5_INCLUDES}
   ${PYTHON_INCLUDE_PATH}
   )
 
@@ -112,6 +110,12 @@ else (HAVE_BLITZ)
   message (SEND_ERROR "[dal] Missing Blitz++ header files!")
 endif (HAVE_BLITZ)
 
+if (HAVE_BOOST)
+  include_directories (${BOOST_INCLUDES})
+else (HAVE_BOOST)
+  message (SEND_ERROR "[dal] Missing Boost header files!")
+endif (HAVE_BOOST)
+
 if (HAVE_CASACORE)
   include_directories (${CASACORE_INCLUDES})
 else (HAVE_CASACORE)
@@ -120,7 +124,15 @@ endif (HAVE_CASACORE)
 
 if (HAVE_CFITSIO)
   include_directories (${CFITSIO_INCLUDES})
+else (HAVE_CFITSIO)
+  message (SEND_ERROR "[dal] Missing CFITSIO header files!")
 endif (HAVE_CFITSIO)
+
+if (HAVE_HDF5)
+  include_directories (${HDF5_INCLUDES})
+else (HAVE_HDF5)
+  message (SEND_ERROR "[dal] Missing HDF5 header files!")
+endif (HAVE_HDF5)
 
 ## -----------------------------------------------------------------------------
 ## Subdirectories

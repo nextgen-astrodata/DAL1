@@ -46,25 +46,32 @@ endforeach (src)
 
 if (HAVE_BLITZ)
   foreach (src tdalLopesEvent lewrite)
+    ## compiler instructions
     add_executable(${src} ${src}.cpp)
+    ## linker instructions
     target_link_libraries(${src} dal ${BLITZ_LIBRARIES})
-    endforeach (src)
+    ## installation
+    list (APPEND tests ${src})
+  endforeach (src)
 endif (HAVE_BLITZ)
 
 ## [2] casacore
 
 if (HAVE_CASA OR HAVE_CASACORE)
+  ## additional compiler flags
   add_definitions (
     -DWITH_CASA
-  )
-  add_executable (tMeasurementSets tMeasurementSets.cpp)
-  target_link_libraries (tMeasurementSets dal ${CASA_LIBRARIES} ${libm})
-  add_executable (tMS_dal tMS_dal.cpp)
-  target_link_libraries (tMS_dal dal ${CASA_LIBRARIES} ${libm})
-  list (APPEND tests tMeasurementSets tMS_dal)
+    )
+  foreach (src tMeasurementSets tMS_dal)
+    ## compiler instructions
+    add_executable (${src} ${src}.cpp)
+    ## linker instructions
+    target_link_libraries (${src} dal ${CASA_LIBRARIES} ${libm})
+    ## installation
+    list (APPEND tests ${src})
+  endforeach (src)
 else (HAVE_CASA OR HAVE_CASACORE)
-  message (STATUS "Skipping test program tMeasurementSets")
-  message (STATUS "Skipping test program tMS_dal")
+  message (STATUS "Skipping test programs that require casacore!")
 endif (HAVE_CASA OR HAVE_CASACORE)
 
 ## ------------------------------------------------------------------------------
@@ -83,7 +90,6 @@ endif (DAL_ENABLE_TESTING)
 install (TARGETS ${tests}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
-#   ARCHIVE DESTINATION lib
   )
 
 ## python scripts
