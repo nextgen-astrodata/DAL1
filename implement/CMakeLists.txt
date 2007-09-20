@@ -129,6 +129,7 @@ if (DAL_PYTHON_BINDINGS)
   ## additional target properties
   set_target_properties (pydal
     PROPERTIES
+    PREFIX ""
     SUFFIX .so
     LINK_FLAGS -fPIC
     )
