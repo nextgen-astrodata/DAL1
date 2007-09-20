@@ -80,25 +80,19 @@ set (dal_sources
   dalLopesEvent.cpp
   )
 
-if (DAL_PYTHON_BINDINGS)
-  list (APPEND dal_sources pywrapper.cpp)
-endif (DAL_PYTHON_BINDINGS)
-
 ## [2] List of external libraries against which to link
 
 set (dal_link_libraries
   hdf5
   hdf5_hl
   z
-  m
   ${CFITSIO_LIBRARIES}
+  ${CASA_LIBRARIES}
+  ${libm}
 )
 
 if (DAL_PYTHON_BINDINGS)
   list (APPEND dal_link_libraries ${BOOST_LIBRARIES} ${PYTHON_LIBRARIES})
-  if (HAVE_CASA OR HAVE_CASACORE)
-    list (APPEND dal_link_libraries dal ${CASA_LIBRARIES} ${libm})
-  endif (HAVE_CASA OR HAVE_CASACORE)
 endif (DAL_PYTHON_BINDINGS)
 
 ## [3] Build the library
@@ -120,7 +114,11 @@ if (DAL_PYTHON_BINDINGS)
       -bundle
       )
   endif (APPLE)
-  add_library(pydal SHARED ${dal_sources})
+  ## Source files entering the library
+  add_library(pydal SHARED
+    ${dal_sources}
+    pywrapper.cpp
+    )
   ## linker instructions
   target_link_libraries(pydal
     ${dal_link_libraries}
