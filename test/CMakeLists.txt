@@ -78,8 +78,32 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 ## Testing
 
 if (DAL_ENABLE_TESTING)
+
+  ## [1] simple tests which do not require sample data
+
   add_test(test1 ${CMAKE_CURRENT_BINARY_DIR}/mswrite foo.h5)
   add_test(test2 ${CMAKE_CURRENT_BINARY_DIR}/mswrite)
+
+  ## [2] Processing tests which require sample datasets
+  
+  ## search for MS files to process
+  
+  find_path (ms_dataset table.dat table.info
+    PATHS
+    ${DAL_SOURCE_DIR}/data
+    ${DAL_SOURCE_DIR}/../data
+    ${DAL_SOURCE_DIR}/../../data
+    PATH_SUFFIXES
+    10602381_S0_T20.MS
+    10602381_S0_T21.MS
+    )
+  
+  if (ms_dataset)
+    add_test (tMS_dal tMS_dal ${ms_dataset} ${ms_dataset}.h5)
+  else (ms_dataset)
+    message (STATUS "Unable to find MS for testing.")
+  endif (ms_dataset)
+  
 endif (DAL_ENABLE_TESTING)
 
 ## ------------------------------------------------------------------------------
