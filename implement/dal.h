@@ -59,7 +59,6 @@ using namespace std;
 #ifdef PYTHON
 // #include <boost/python.hpp>
 // #include <boost/python/list.hpp>
-// namespace bpl = boost::python;
 #include <boost/python.hpp>
 #include <boost/python/object.hpp>
 #include <boost/python/list.hpp>

@@ -101,7 +101,7 @@ if (DAL_ENABLE_TESTING)
   if (ms_dataset)
     add_test (tMS_dal tMS_dal ${ms_dataset} ${ms_dataset}.h5)
   else (ms_dataset)
-    message (STATUS "Unable to find MS for testing.")
+    message (STATUS "Unable to find MS dataset; skipping tests requiring input data.")
   endif (ms_dataset)
   
 endif (DAL_ENABLE_TESTING)
