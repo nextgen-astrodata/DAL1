@@ -67,7 +67,7 @@ class dalDataset{
 	vector<dalGroup> groups; /// list of groups
 	vector<dalAttribute> attrs;  /// list of attributes
 	
-	dalFilter filter;	/// dataset filter
+	dalFilter * filter;	/// dataset filter
 
 	// hdf5-specific variables
 	hid_t h5fh;   /// hdf5 file handle
@@ -89,7 +89,7 @@ class dalDataset{
 	/**	\param a A charachter string
 		\param b Another string
 	*/
-  	dalDataset( char * name, string filetype="HDF5" );
+  	dalDataset( char * name, string filetype );
 	
 	int open( char * datasetname ); /// open the dataset
 	int close(); /// close the dataset
@@ -134,7 +134,8 @@ class dalDataset{
 //	int getName();  /// retrieve the name of the dataset
 //	int rename();  /// rename the dataset
 	dalTable * openTable( string tablename );  /// return a dalTable object
-
+	void setFilter( string columns );
+	void setFilter( string columns, string conditions );
 #ifdef WITH_CASA
 	dalTable * openFilteredTable( string tablename, string parse_string );
 #endif
@@ -188,6 +189,9 @@ class dalDataset{
 
 	// openFilteredTable wrappers
 	dalTable * oft_boost( string tablename, string parse_string );
+
+	void setFilter_boost1(string);
+	void setFilter_boost2(string,string);
 #endif
 };
 #endif

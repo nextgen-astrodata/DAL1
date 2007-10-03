@@ -129,7 +129,7 @@ def close_dataset( ds ):
 
 #check the version of python
 #check_pyversion()
-import libpydal as dal
+import pydal as dal
 
 # create the file
 filename = "tpydal.h5"

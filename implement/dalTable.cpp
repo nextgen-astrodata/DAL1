@@ -340,13 +340,14 @@ void dalTable::openTable( /*void * voidfile,*/ string tablename,
  *
  *****************************************************************/
 void dalTable::openTable( /*void * voidfile,*/ string tablename,
-   casa::MSReader * reader, string parse_string )
+   casa::MSReader * reader, dalFilter * filter/*string parse_string*/ )
 {
    if ( type == MSCASATYPE )
    {
 // 	cout << "dalTable::openTable " << type << endl;
 	*casa_table_handle = reader->table( tablename );
-	*casa_table_handle = casa::tableCommand( parse_string, *casa_table_handle );
+        *casa_table_handle = casa::tableCommand( filter->get(),
+            *casa_table_handle );
    }
    else
    {
@@ -941,6 +942,19 @@ void dalTable::writeDataByColNum( void * data, int index, int rownum )
    if ( type == H5TYPE )
    {
 	
+	size_t * field_sizes;
+	size_t * field_offsets;
+	size_t * size_out;
+	
+	// retrieve the input fields needed for the append_records call
+	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
+	
+	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
+	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
+	size_out = (size_t*)malloc( sizeof(size_t) );
+
+	status = H5TBget_field_info( file_id, name.c_str(), NULL, field_sizes,
+				     field_offsets, size_out );
 	/*
 	 * Cleanup to make more efficient.  Check the last three fields for
 	 * H5TBget_field_info();
@@ -953,12 +967,12 @@ void dalTable::writeDataByColNum( void * data, int index, int rownum )
 
 	
 	const size_t size = sizeof( data );
-	const size_t field_offsets[1] = { 0 };
-	const size_t dst_sizes[1] = { sizeof( int ) }; //(update)
+// 	const size_t field_offsets[1] = { 0 };
+// 	const size_t dst_sizes[1] = { sizeof( int ) }; //(update)
 	
   	status = H5TBwrite_fields_index(file_id, name.c_str(), num_fields,
 					index_num, start, numrecords, size,
-					field_offsets, dst_sizes, data);
+					field_offsets, field_sizes, data);
    } else {
      cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
@@ -1166,10 +1180,16 @@ void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
 	}
 	cout << endl;
    }
-   else 
+   else if ( type == MSCASATYPE )
+   {
+     casa::TableDesc td = casa_table_handle->tableDesc();
+     cout << td.columnNames() << endl;
+   }
+   else
    {
      cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
+
 }
 
 /****************************************************************
@@ -1423,6 +1443,15 @@ void dalTable::ot_hdf5( void * voidfile, string tablename, string groupname )
 }
 
 /****************************************************************
+ *  wrapper for appendRow (hdf5)
+ *
+ *****************************************************************/
+void dalTable::append_row_boost( bpl::object data )
+{
+  appendRow(&data);
+}
+
+/****************************************************************
  *  wrapper for getColumnData
  *
  *****************************************************************/
@@ -1505,11 +1534,11 @@ void dalTable::ot_ms1( string tablename, casa::MSReader * reader)
 {
    openTable( tablename, reader );
 }
-void dalTable::ot_ms2( string tablename, casa::MSReader * reader,
-  string parse_string )
-{
-   openTable( tablename, reader, parse_string );
-}
+// void dalTable::ot_ms2( string tablename, casa::MSReader * reader,
+//   string parse_string )
+// {
+//    openTable( tablename, reader, parse_string );
+// }
 
 #endif
 

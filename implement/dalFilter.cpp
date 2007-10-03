@@ -1,8 +1,5 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
- *   Copyright (C) 2007 by Joseph Masters                                  *
+/***************************************************************************
+ *   Copyright (C) 2006 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -20,36 +17,48 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #ifndef DALFILTER_H
-#define DALFILTER_H
-
-#ifndef DAL_H
-#include "dal.h"
+#include "dalFilter.h"
 #endif
+dalFilter::dalFilter()
+{
+   is_set = false;
+}
 
-/*!
-  \class dalFilter
-  
-  \brief Superclass of dalDSFilter, dalColumnFilter, dalTableFilter)
-  
-  \ingroup DAL
-  
-  \author Joseph Masters
-*/
-class dalFilter {
-	string filterstring;  // Table filter string
-	string filetype;  // MSCASA, HDF5, FITS, etc.
-	bool is_set;
-  public:
-	dalFilter();
-	void set( string columns );
-	void set( string columns, string conditions );
-	void setFiletype( string type );
-	bool isSet();
-	string get();
-/*	int check(); // see if the filter can be applied to a table, dataset or group
-	int set(); // define the filter
-	int reset(); // redefine the filter
-	int print(); // return the filter string*/
-};
-#endif
+void dalFilter::set( string cols ) {
+  if ( filetype == MSCASATYPE )
+  {
+    filterstring = "Select " + cols + " from $1";
+    is_set = true;
+  }
+  else
+    cout << "Operation not yet supported for type: " + filetype + ". Sorry.\n";
+}
+
+void dalFilter::set( string cols, string conditions ) {
+  if ( filetype == MSCASATYPE )
+  {
+    filterstring = "Select " + cols + " from $1 where " + conditions;
+    is_set = true;
+  }
+  else
+    cout << "Operation not yet supported for type: " + filetype + ". Sorry.\n";
+}
+void dalFilter::setFiletype( string type )
+{
+   filetype = type;
+}
+
+bool dalFilter::isSet()
+{
+  if (is_set)
+    return true;
+  else
+    return false;
+}
+
+string dalFilter::get()
+{
+   return filterstring;
+}

@@ -73,6 +73,7 @@ set (dal_sources
   dalColumn.cpp
   dalData.cpp
   dalDataset.cpp
+  dalFilter.cpp
   dalGroup.cpp
   dalRow.cpp
   dalTable.cpp

@@ -53,7 +53,7 @@ int main()
 // create a dataset
 
    dalDataset * ds;
-   ds = new dalDataset( FILENAME );
+   ds = new dalDataset( FILENAME, "HDF5" );
 
 //    dalGroup * beam001 = ds->createGroup( "beam001" );
 //    dalGroup * b001_sb0 = new dalGroup( beam001->getId(), "sb0" );

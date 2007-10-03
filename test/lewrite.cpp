@@ -101,7 +101,7 @@ int main (int argc, char *argv[])
 
   dalDataset * dataset;
   if ( NULL == argv[3] )
-	  dataset = new dalDataset( argv[2] );
+	  dataset = new dalDataset( argv[2], "HDF5" );
   else
 	  dataset = new dalDataset( argv[2], argv[3] );
 

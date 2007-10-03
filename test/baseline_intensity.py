@@ -20,9 +20,9 @@ if ( msds.open(sys.argv[1]) ):
 
 # open table
 tablename = "MAIN";
-filter_string = "SELECT TIME, DATA from $1 where " \
-  + "ANTENNA1 = 1 AND ANTENNA2 = 2 AND DATA_DESC_ID = " + sys.argv[4]
-maintable = msds.openFilteredTable( tablename, filter_string );
+msds.setFilter("TIME, DATA", \
+	"ANTENNA1 = 1 AND ANTENNA2 = 2 AND DATA_DESC_ID = " + sys.argv[4])
+maintable = msds.openTable( tablename );
 
 # get times
 time_col = maintable.getColumn("TIME")
@@ -47,7 +47,7 @@ if (6 == len(sys.argv)):
 # otherwise, plot all channels
 elif (5 == len(sys.argv)):
 	# plot intensity of each channel vs. time
-	for channel in range(data.shape[1]):
+	for channel in range( nchannels ):
 		plot( time, abs(data[0][channel]), "." )
 	title("Time vs. Amplitude, Baseline " + \
 	  sys.argv[2] + '-' + sys.argv[3] + ", Sub-band(" + sys.argv[4] + ") " + \

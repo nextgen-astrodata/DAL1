@@ -6,6 +6,14 @@ import numarray
 #import numpy
 import sys
 
+if len(sys.argv) < 2:
+	print "Usage:"
+	print "\tMS_dal.py <infile>"
+	print "\t<> required"
+	print "\t[] optional"
+	print ""
+	sys.exit(1)
+
 #msds= dal.dalDataset(sys.argv[1], "MSCASA")
 msds= dal.dalDataset()
 if ( msds.open(sys.argv[1]) ):
@@ -14,8 +22,8 @@ if ( msds.open(sys.argv[1]) ):
 #msds.listTables()
 tablename = "MAIN";
 #msds = dal.dalTable(tablename)
-filter_string = "SELECT UVW, TIME, DATA, ANTENNA1, ANTENNA2 from $1 where ANTENNA1 = 1 AND ANTENNA2 = 2"
-maintable = msds.openFilteredTable( tablename, filter_string );
+msds.setFilter("UVW,TIME,DATA,ANTENNA1,ANTENNA2","ANTENNA1 = 1 AND ANTENNA2 = 2")
+maintable = msds.openTable( tablename );
 #maintable = msds.openTable( tablename );
 #maintable.listColumns()
 #maintable.getName()

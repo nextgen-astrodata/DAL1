@@ -55,7 +55,7 @@ class dalColumn {
 	int size; /// datatype size
 	int totsize; /// total column size
 	vector<dalAttribute> attributes; /// list of column attributes
-	dalFilter filter; /// filter associated with column
+//	dalFilter filter; /// filter associated with column
 	unsigned int num_of_rows;  /// number of rows in the column
 
 	// hdf5-specific variables

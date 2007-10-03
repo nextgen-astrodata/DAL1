@@ -44,11 +44,17 @@
 #include <dalGroup.h>
 #endif
 
-#ifndef TIMESERIES_H
-#include <timeseries.h>
-#endif
-
 #define FILENAME "./tdal_test.h5"
+
+typedef struct rowStruct {
+	float time;
+	float uvw[3];
+	float antenna1;
+} rowStruct;
+
+typedef struct writebuffer {
+	rowStruct rs[3];
+} writebuffer;
 
 /*! sample doxygen comment in dal.cpp */
 int main()
@@ -59,11 +65,12 @@ int main()
    dalDataset * ds;
    ds = new dalDataset( FILENAME, "HDF5" );
 
+//    ds->setFilter("A,B,C","where B=1");
    dalGroup * groupA = ds->createGroup( "groupA" );
    dalGroup * groupB = ds->createGroup( "groupB" );
    dalGroup * groupC = ds->createGroup( "groupC" );
 
-//   dalTable * table1 = ds->createTable( "table1", "groupA" );
+   dalTable * table1 = ds->createTable( "table1", "groupA" );
 //   dalTable * table2 = ds->createTable( "table2", "groupA" );
 //   dalTable * table3 = ds->createTable( "table3", "groupB" );
 
@@ -93,19 +100,37 @@ int main()
    dalArray * carray = ds->createComplexArray( "complex_array", dims, cdata, cdims );
    delete cdata;
 
-/*
-   table1->addColumn( "col1", dal_INT );
-   table1->addColumn( "col2", dal_SHORT );
-   table1->addColumn( "col3", dal_FLOAT );
+   table1->addColumn( "TIME", dal_FLOAT );
+   table1->addColumn( "UVW", dal_FLOAT, 3 );
+   table1->addColumn( "ANTENNA1", dal_FLOAT );
 
-   table2->addColumn( "col1", dal_UINT );
-   table2->addColumn( "col2", dal_STRING );
+   rowStruct rs;
+
+   rs.time = 1;
+   rs.uvw[0] = 1;
+   rs.uvw[1] = 1;
+   rs.uvw[2] = 1;
+   rs.antenna1 = 1;
+   table1->appendRow(&rs);
+   table1->appendRow(&rs);
+   table1->appendRow(&rs);
+   table1->appendRow(&rs);
+   table1->appendRow(&rs);
+   table1->appendRow(&rs);
+   float md = 3;
+   float mi = 5;
+   table1->writeDataByColNum( &md, 0, 0 );
+   table1->writeDataByColNum( &md, 0, 1 );
+   table1->writeDataByColNum( &md, 0, 2 );
+   table1->writeDataByColNum( &mi, 2, 0 );
+   table1->writeDataByColNum( &mi, 2, 1 );
+   table1->writeDataByColNum( &mi, 2, 2 );
+/*   table2->addColumn( "col1", dal_UINT );   table2->addColumn( "col2", dal_STRING );
    table2->addColumn( "col3", dal_DOUBLE );
 
    table3->addColumn( "col1", dal_INT );
    table3->addColumn( "col2", dal_INT );
-   table3->addColumn( "col3", dal_INT );
-*/
+   table3->addColumn( "col3", dal_INT );*/
    ds->close();
 /*
    delete table1;

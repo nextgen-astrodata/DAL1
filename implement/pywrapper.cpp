@@ -145,13 +145,14 @@ BOOST_PYTHON_MODULE(pydal)
 //     bpl::def("goo", goo);
 
     bpl::class_<dalDataset>("dalDataset")
-	.def(bpl::init<char*>())
 	.def(bpl::init<char*, string>())
-        .def("open", &dalDataset::open)
-        .def("close", &dalDataset::close)
-        .def("getType", &dalDataset::getType)
+        .def("open", &dalDataset::open, bpl::arg("datasetname"),
+		"Opens a dataset.")
+        .def("close", &dalDataset::close, "Closes a dataset.")
+        .def("getType", &dalDataset::getType, "Get the file type of dataset.")
 	.def("createTable", &dalDataset::ct1_boost,
-		bpl::return_value_policy<bpl::manage_new_object>())
+		bpl::return_value_policy<bpl::manage_new_object>(),
+		"Create a new table in the dataset.")
 	.def("createTable", &dalDataset::ct2_boost,
 		bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createGroup", &dalDataset::createGroup,
@@ -179,16 +180,11 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("readIntArray", &dalDataset::ria_boost)
 	.def("readFloatArray", &dalDataset::rfa_boost)
 	.def("createArray", &dalDataset::createArray,
-		bpl::return_value_policy<bpl::manage_new_object>())
-// 	.def("sfe", &dalDataset::sfe)
-#ifdef WITH_CASA
-	.def("openFilteredTable", &dalDataset::oft_boost,
-		bpl::return_value_policy<bpl::manage_new_object>())
-#endif
+		bpl::return_value_policy<bpl::manage_new_object>(),
+		"Create an array from a dalData object")
+	.def("setFilter", &dalDataset::setFilter_boost1)
+	.def("setFilter", &dalDataset::setFilter_boost2)
     ;
-
-//     bpl::def("set_first_element",set_first_element)
-//     ;
 
     bpl::class_<dalGroup>("dalGroup")
 	.def(bpl::init<>())
@@ -232,8 +228,7 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("addComplexColumn", &dalTable::addComplexColumn)
 	.def("removeColumn", &dalTable::removeColumn)
 	.def("writeDataByColNum", &dalTable::writeDataByColNum)
-	.def("appendRow", &dalTable::appendRow,
-		bpl::return_value_policy<bpl::return_opaque_pointer>())
+	.def("appendRow", &dalTable::append_row_boost)
 	.def("appendRows", &dalTable::appendRows)
 	.def("listColumns", &dalTable::listColumns)
 	.def("readRows", &dalTable::readRows,
@@ -249,7 +244,7 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("getNumberOfRows", &dalTable::getNumberOfRows)
 #ifdef WITH_CASA
 	.def("openTable", &dalTable::ot_ms1)
-	.def("openTable", &dalTable::ot_ms2)
+// 	.def("openTable", &dalTable::ot_ms2)
 	.def("getColumn", &dalTable::getColumn,
 		bpl::return_value_policy<bpl::manage_new_object>())
 #endif

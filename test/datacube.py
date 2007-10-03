@@ -22,9 +22,8 @@ h5ds = dal.dalDataset(sys.argv[2], "HDF5")
 
 # open table
 tablename = "MAIN";
-filter_string = "SELECT TIME, DATA from $1 where " \
-  + "ANTENNA1 = 1 AND ANTENNA2 = 2 AND DATA_DESC_ID = " + sys.argv[5]
-maintable = msds.openFilteredTable( tablename, filter_string );
+msds.setFilter("TIME, DATA","ANTENNA1 = 1 AND ANTENNA2 = 2 AND DATA_DESC_ID = " + sys.argv[5])
+maintable = msds.openTable( tablename );
 
 # get data
 data_col = maintable.getColumn("DATA")

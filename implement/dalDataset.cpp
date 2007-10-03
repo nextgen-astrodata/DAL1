@@ -200,7 +200,9 @@ dalGroup * dalDataset::createGroup( char* gname )
  *
  *****************************************************************/
 dalDataset::dalDataset()
-{}
+{
+    filter = new dalFilter;
+}
 
 /****************************************************************
  *  List tables in a dataset (file)
@@ -233,12 +235,14 @@ void dalDataset::listTables()
 dalDataset::dalDataset( char * name, string filetype )
 {
    type = filetype;  // set the global class variable: type
+   filter = new dalFilter;
    if ( filetype == MSCASATYPE )
    {
 #ifdef WITH_CASA
-	ms = new casa::MeasurementSet( name );
+        cout << "Support to create new CASA MS not available. Sorry." << endl;
+/*	ms = new casa::MeasurementSet( name );
 	file = &ms;
-	ms_reader = new casa::MSReader( *ms );
+	ms_reader = new casa::MSReader( *ms );*/
 #else
 	cout << "CASA support not enabled." << endl;
 #endif
@@ -269,6 +273,19 @@ dalDataset::dalDataset( char * name, string filetype )
  *****************************************************************/
 dalDataset::~dalDataset()
 {
+}
+
+void dalDataset::setFilter( string columns )
+{
+    filter = new dalFilter;
+    filter->setFiletype( type );
+    filter->set(columns);
+}
+
+void dalDataset::setFilter( string columns, string conditions )
+{
+    filter->setFiletype( type );
+    filter->set(columns,conditions);
 }
 
 dalArray * dalDataset::createArray( string arrayname, dalData * data_object )
@@ -422,7 +439,10 @@ dalTable * dalDataset::openTable( string tablename )
 #ifdef WITH_CASA
 // 	ms_reader = new MSReader( *ms );
 	dalTable * lt = new dalTable( MSCASATYPE );
-	lt->openTable( /*file,*/ tablename, ms_reader );
+	if ( filter->isSet() )
+	  lt->openTable( /*file,*/ tablename, ms_reader, filter );
+        else
+	  lt->openTable( /*file,*/ tablename, ms_reader );
 // 	lt->casa_table_handle = ms_reader->table( "MAIN" );
 	return lt;
 #else
@@ -461,7 +481,7 @@ dalTable * dalDataset::openFilteredTable( string tablename, string parse_string 
    if ( type == MSCASATYPE )
    {
 	dalTable * lt = new dalTable( MSCASATYPE );
-	lt->openTable( /*file,*/ tablename, ms_reader, parse_string );
+	lt->openTable( /*file,*/ tablename, ms_reader/*, parse_string*/ );
 	return lt;
    }
    else
@@ -835,5 +855,18 @@ bpl::numeric::array dalDataset::rfa_boost( string arrayname )
 	);
 	nadata.setshape(dims_list);
 	return nadata;
+}
+
+/******************************************************
+ * wrappers for setFilter
+ ******************************************************/
+void dalDataset::setFilter_boost1( string columns )
+{
+   setFilter( columns );
+}
+
+void dalDataset::setFilter_boost2( string columns, string conditions )
+{
+   setFilter( columns, conditions );
 }
 #endif

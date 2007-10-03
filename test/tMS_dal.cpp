@@ -147,6 +147,7 @@ for (int ll=0; ll<shape3.size(); ll++)
   mysize *= shape3[ll];
 cdata = new complex<float>[ mysize ];
 
+#pragma omp parallel for
 for(int xx=0; xx<shape3[0]; xx++)
   for(int yy=0; yy<shape3[1]; yy++)
     for(int zz=0; zz<shape3[2]; zz++)

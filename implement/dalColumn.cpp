@@ -133,7 +133,7 @@ vector<int> dalColumn::shape()
 
       try
       {
-	casa::IPosition ipos = casa_column->shapeColumn();
+	casa::IPosition ipos = casa_column->shape(0);
 	casa::Vector<casa::Int> col_shape = ipos.asVector();
         col_shape.tovector( shape_vals );
         shape_vals.push_back( nrows() );

@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef dalGROUP_H
+#ifndef DALGROUP_H
 #include "dalGroup.h"
 #endif
 herr_t attr_info(hid_t loc_id, const char *name, void *opdata);
