@@ -18,6 +18,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+/*!
+  \file tMS_dal.cpp
+
+  \ingroup DAL
+
+  \author Joseph Masters
+
+  <h3>Usage</h3>
+
+  \verbatim
+  tMS_dal <input MS file> <output HDF5 file>
+  \endverbatim
+*/
+
 #include <dal.h>
 #include <dalDataset.h>
 #include <dalData.h>
