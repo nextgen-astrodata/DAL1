@@ -28,7 +28,6 @@ maintable = msds.openTable( tablename );
 # get data
 data_col = maintable.getColumn("DATA")
 data_object = data_col.data()
-#data = data_object.get()
 
 dataarray = h5ds.createArray( "data", data_object );
 

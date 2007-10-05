@@ -239,10 +239,9 @@ dalDataset::dalDataset( char * name, string filetype )
    if ( filetype == MSCASATYPE )
    {
 #ifdef WITH_CASA
-        cout << "Support to create new CASA MS not available. Sorry." << endl;
-/*	ms = new casa::MeasurementSet( name );
+	ms = new casa::MeasurementSet( name );
 	file = &ms;
-	ms_reader = new casa::MSReader( *ms );*/
+	ms_reader = new casa::MSReader( *ms );
 #else
 	cout << "CASA support not enabled." << endl;
 #endif

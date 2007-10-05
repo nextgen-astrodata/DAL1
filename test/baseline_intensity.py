@@ -39,7 +39,7 @@ nchannels = data.shape[1] # second element of the data shape i.e. (4,256,nrows)
 #  plot for this channel
 if (6 == len(sys.argv)):
 	# plot intensity of given channel vs. time
-	plot( time, abs(data[0][int(sys.argv[5])]), "." )
+	plot( time, abs(data[0][int(sys.argv[5])]), "," )
 	title("Time vs. Amplitude, Baseline " + \
 	  sys.argv[2] + '-' + sys.argv[3] + ", Sub-band(" + sys.argv[4] + ") " + \
 	  " Channel(" + sys.argv[5] + ")\n" + sys.argv[1] )
@@ -48,7 +48,7 @@ if (6 == len(sys.argv)):
 elif (5 == len(sys.argv)):
 	# plot intensity of each channel vs. time
 	for channel in range( nchannels ):
-		plot( time, abs(data[0][channel]), "." )
+		plot( time, abs(data[0][channel]), "," )
 	title("Time vs. Amplitude, Baseline " + \
 	  sys.argv[2] + '-' + sys.argv[3] + ", Sub-band(" + sys.argv[4] + ") " + \
 	  str(data.shape[1]) + " channels" + '\n' + sys.argv[1] )
