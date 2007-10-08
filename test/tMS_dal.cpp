@@ -40,62 +40,64 @@ using namespace casa;
 
 int main(int argc, char *argv[])
 {
-	// parameter check
-	if ( argc < 3 )
-	{
-	  cout << endl << "Too few parameters..." << endl << endl;
-	  cout << "The first parameter is the input casa measurement set." << endl;
-	  cout << "The second parameter is the output hdf5 file." << endl;
-	  cout << endl;
-	  return FAIL;
-	}
-
-// create a dataset object of type MSCASA
-dalDataset * msds = new dalDataset( argv[1], "MSCASA" );
-
-// print out a list of tables in the dataset
-msds->listTables();
-
-// open a table in the dataset
-string tablename = "MAIN";
-string filter_string =
-  "Select UVW, TIME, ANTENNA1, ANTENNA2, DATA from $1 where ANTENNA1 = 1 AND ANTENNA2 = 1";
-
-dalTable * maintable = msds->openFilteredTable( tablename, filter_string );
-
-// print the name of the table [ doesn't seem to work ]
-maintable->getName();
-
-//
-// get data from the TIME column
-//
-cout << "-------\n";
-cout << "TIME\n";
-cout << "-------\n";
-dalColumn * time_col = maintable->getColumn("TIME");
-cout << time_col->getDataType() << endl;
-if ( time_col->isScalar() ) cout << "SCALAR" << endl;
-if ( time_col->isArray() ) cout << "ARRAY" << endl;
-cout << "Number of rows: " << time_col->nrows() << endl;
-
-if ( time_col->nrows() <= 0 )
-{
-  cout << "ERROR:  No rows within filtered file." << endl;
-  exit(2);
-}
-
-dalData * data_object = time_col->data();
-double * value1;
-for(unsigned int xx=0; xx<13; xx++)
-{
-  value1 = (double*)data_object->get(xx);  // WORKS
-  cout << *value1 << endl;
-}
-delete time_col;
-
-//
-// get data from the UVW column
-//
+  // parameter check
+  if ( argc < 3 )
+    {
+      cout << endl << "Too few parameters..." << endl << endl;
+      cout << "The first parameter is the input casa measurement set." << endl;
+      cout << "The second parameter is the output hdf5 file." << endl;
+      cout << endl;
+      return FAIL;
+    }
+  
+  // create a dataset object of type MSCASA
+  cout << " -- Creating a dataset object of type MSCASA ..." << endl;
+  dalDataset * msds = new dalDataset( argv[1], "MSCASA" );
+  
+  // print out a list of tables in the dataset
+  msds->listTables();
+  
+  // open a table in the dataset
+  cout << " -- Opening table in the dataset ..." << endl;
+  string tablename = "MAIN";
+  string filter_string =
+    "Select UVW, TIME, ANTENNA1, ANTENNA2, DATA from $1 where ANTENNA1 = 1 AND ANTENNA2 = 1";
+  
+  dalTable * maintable = msds->openFilteredTable( tablename, filter_string );
+  
+  // print the name of the table [ doesn't seem to work ]
+  maintable->getName();
+  
+  //
+  // get data from the TIME column
+  //
+  cout << "-------\n";
+  cout << "TIME\n";
+  cout << "-------\n";
+  dalColumn * time_col = maintable->getColumn("TIME");
+  cout << time_col->getDataType() << endl;
+  if ( time_col->isScalar() ) cout << "SCALAR" << endl;
+  if ( time_col->isArray() ) cout << "ARRAY" << endl;
+  cout << "Number of rows: " << time_col->nrows() << endl;
+  
+  if ( time_col->nrows() <= 0 )
+    {
+      cout << "ERROR:  No rows within filtered file." << endl;
+      exit(2);
+    }
+  
+  dalData * data_object = time_col->data();
+  double * value1;
+  for(unsigned int xx=0; xx<13; xx++)
+    {
+      value1 = (double*)data_object->get(xx);  // WORKS
+      cout << *value1 << endl;
+    }
+  delete time_col;
+  
+  //
+  // get data from the UVW column
+  //
 cout << "-------\n";
 cout << "UVW\n";
 cout << "-------\n";
