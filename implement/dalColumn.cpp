@@ -179,7 +179,8 @@ unsigned int dalColumn::nrows()
   }
   else
   {
-    cout << "dalColumn::nrows() File type " << filetype << " not yet supported."; 
+    cout << "dalColumn::nrows() File type " << filetype
+	  << " not yet supported."; 
     return 0;
   }
 }
@@ -222,7 +223,8 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 	   rosc_comp = new casa::ROScalarColumn<casa::Complex>( *casa_column );
 	   scalar_vals_comp = rosc_comp->getColumn();
 	   data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
-	   data_object->data = (complex<float> *)scalar_vals_comp.getStorage(deleteIt);
+	   data_object->data =
+	     (complex<float> *)scalar_vals_comp.getStorage(deleteIt);
 	   return data_object;
          }
 	 break;
@@ -274,7 +276,8 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
             }
             array_vals_comp = roac_comp->getColumn(/*slicer*/);
 	    data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
-	    data_object->data = (complex<float> *)array_vals_comp.getStorage(deleteIt);
+	    data_object->data =
+		  (complex<float> *)array_vals_comp.getStorage(deleteIt);
 	    return data_object;
 
 	    }
