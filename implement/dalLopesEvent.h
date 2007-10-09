@@ -29,6 +29,7 @@
 
 #include <casa/aips.h>
 #include <casa/Arrays/Array.h>
+#include <casa/Arrays/ArrayIO.h>
 #include <casa/Arrays/Matrix.h>
 #include <casa/Arrays/Vector.h>
 
