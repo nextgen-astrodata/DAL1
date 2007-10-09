@@ -42,27 +42,14 @@ endforeach (src)
 ## Test which require additional external libraries (and thereby should be
 ## considered optional)
 
-## [1] Blitz++
-
-if (HAVE_BLITZ)
-  foreach (src tdalLopesEvent lewrite)
-    ## compiler instructions
-    add_executable(${src} ${src}.cpp)
-    ## linker instructions
-    target_link_libraries(${src} dal ${BLITZ_LIBRARIES})
-    ## installation
-    list (APPEND tests ${src})
-  endforeach (src)
-endif (HAVE_BLITZ)
-
-## [2] casacore
+## [1] casacore
 
 if (HAVE_CASA OR HAVE_CASACORE)
   ## additional compiler flags
   add_definitions (
     -DWITH_CASA
     )
-  foreach (src tMeasurementSets tMS_dal)
+  foreach (src tMeasurementSets tMS_dal tdalLopesEvent lewrite)
     ## compiler instructions
     add_executable (${src} ${src}.cpp)
     ## linker instructions
@@ -86,7 +73,7 @@ if (DAL_ENABLE_TESTING)
 
   ## [2] Processing tests which require sample datasets
   
-  ## search for MS files to process
+  ## Tests using MS datasets
   
   find_path (ms_dataset table.dat table.info
     PATHS
@@ -102,8 +89,26 @@ if (DAL_ENABLE_TESTING)
   if (ms_dataset)
     add_test (tMS_dal tMS_dal ${ms_dataset} ${ms_dataset}.h5)
   else (ms_dataset)
-    message (STATUS "Unable to find MS dataset; skipping tests requiring input data.")
+    message (STATUS "Unable to find MS dataset; skipping tests.")
   endif (ms_dataset)
+
+  ## [3] Tests using LopesEvent datasets
+
+  find_file (lopes_dataset 2007.01.31.23:59:33.960.event
+    PATHS
+    ${DAL_SOURCE_DIR}/data
+    ${DAL_SOURCE_DIR}/../data
+    ${DAL_SOURCE_DIR}/../../data
+    PATH_SUFFIXES
+    lopes
+    LOPES
+    )
+  
+  if (lopes_dataset)
+    add_test (tdalLopesEvent tdalLopesEvent ${lopes_dataset})
+  else (lopes_dataset)
+    message (STATUS "Unable to find LopesEvent dataset; skipping tests.")
+  endif (lopes_dataset)
   
 endif (DAL_ENABLE_TESTING)
 

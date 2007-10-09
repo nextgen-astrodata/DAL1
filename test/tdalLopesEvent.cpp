@@ -66,13 +66,15 @@
                      original LOPES-Event file
  */
 void export_data (std::string const &filename,
-		  blitz::Array<short,2> const &data)
+		  casa::Matrix<short> const &data)
 {
   std::ofstream outfile;
-  int nofAntennas (data.columns());
-  int nofSamples (data.rows());
+  int nofAntennas (0);
+  int nofSamples (0);
   int antenna (0);
   int sample (0);
+
+  data.shape(nofSamples,nofAntennas);
 
   std::cout << "-- Name of output file      = " << filename     << std::endl;
   std::cout << "-- Shape of the data array  = " << data.shape() << std::endl;
@@ -105,10 +107,10 @@ void export_data (std::string const &filename,
   set ylabel 'ADC counts'
   plot 'lopesevent_cpp.data' u 1 t 'Antenna 1' w l, 'lopesevent_cpp.data' u 2 t 'Antenna 2' w l
   \endverbatim
-  In order to compare this to the output from the Blitz++ array, also run the
+  In order to compare this to the output from the CASA array, also run the
   following:
   \code
-  plot 'lopesevent.data' u 1 t 'Antenna 1 (Blitz++)' w l, 'lopesevent_cpp.data' u 1 t 'Antenna 1 (C++)' w l
+  plot 'lopesevent.data' u 1 t 'Antenna 1 (CASA)' w l, 'lopesevent_cpp.data' u 1 t 'Antenna 1 (C++)' w l
   \endcode
   
   \param filename    -- Name of the output file to which the data will be written
@@ -150,13 +152,13 @@ void export_data (std::string const &filename,
 /*!
   \brief Element-by-element comparison of the data in the two arrays
 
-  \param array1D -- Data contained in a 1-dim Blitz++ array
+  \param array1D -- Data contained in a 1-dim CASA array
   \param data    -- Data contained in a C++ array
 */
-void compare_data (blitz::Array<short,1> const &array1D,
+void compare_data (casa::Vector<short> const &array1D,
 		   short *data)
 {
-  unsigned int nelem (array1D.numElements());
+  unsigned int nelem (array1D.nelements());
   unsigned int nofDifferent (0);
 
   // Element-by-element comparison of the two arrays
@@ -222,12 +224,12 @@ int test_channeldata (std::string const &filename)
   unsigned int nofAntennas (0);
   unsigned int blocksize (0);
 
-  std::cout << "[1] Get all data as Blitz array..." << std::endl;
+  std::cout << "[1] Get all data as casa::Matrix ..." << std::endl;
   try {
     std::cout << "-- Opening file " << filename << " ..." << std::endl;
     dalLopesEvent event (filename);
     std::cout << "-- Retrieving data ..." << std::endl;
-    blitz::Array<short,2> data = event.channeldata();
+    casa::Matrix<short> data = event.channeldata();
     // export data to file
     export_data ("lopesevent.data",data);
   } catch (std::string message) {
@@ -235,12 +237,12 @@ int test_channeldata (std::string const &filename)
     nofFailedTests++;
   }
   
-  std::cout << "[2] Get data per antenna as Blitz array..." << std::endl;
+  std::cout << "[2] Get data per antenna as casa::Vector ..." << std::endl;
   try {
     std::cout << "-- Opening file " << filename << " ..." << std::endl;
     dalLopesEvent event (filename);
     nofAntennas = event.nofAntennas();
-    blitz::Array<short,1> data (nofAntennas);
+    casa::Vector<short> data;
     std::cout << "-- Retrieving data for individual antennas ..." << std::endl;
     for (unsigned int ant(0); ant<nofAntennas; ant++) {
       data = event.channeldata (ant);
@@ -296,7 +298,7 @@ int test_channeldata (std::string const &filename)
     nofFailedTests++;
   }
 
-  std::cout << "[5] Compare retrieval using C++ and Blitz++ arrays..." << std::endl;
+  std::cout << "[5] Compare retrieval using C++ and CASA arrays..." << std::endl;
   try {
     short *data;
     unsigned int nofAntennas (0);
@@ -308,7 +310,7 @@ int test_channeldata (std::string const &filename)
     blocksize   = event.blocksize();
     std::cout << "-- Adjusting array to receive data ..." << std::endl;
     data = new short[blocksize];
-    Array<short,1> channeldata (blocksize);
+    casa::Vector<short> channeldata (blocksize);
     std::cout << "-- Retrieving data ..." << std::endl;
     for (unsigned int antenna(0); antenna<nofAntennas; antenna++) {
       channeldata = event.channeldata (antenna);
@@ -347,7 +349,7 @@ int test_channeldata (std::string const &filename)
  */
 int test_statistics (std::string const &filename)
 {
-  std::cout << "\n[test_channeldata]\n" << std::endl;
+  std::cout << "\n[test_statistics]\n" << std::endl;
 
   int nofFailedTests (0);
   std::ofstream outfile;
@@ -357,7 +359,7 @@ int test_statistics (std::string const &filename)
   // get the number of antenna in the data set
   unsigned int nofAntennas (event.nofAntennas());
   // Array for taking up the data
-  blitz::Array<short,1> data (nofAntennas);
+  casa::Vector<short> data;
   
   std::cout << "-- Generating and exporting statistics ..." << std::endl;
   outfile.open("lopesevent_statistics.data");
@@ -365,11 +367,11 @@ int test_statistics (std::string const &filename)
     data = event.channeldata (ant);
     // generate statistics and report them
     outfile << ant << "\t"
-	    << min(data) << "\t"
-	    << mean(data) << "\t"
-	    << max(data) << "\t"
-	    << sum(data) << "\t"
-	    << count(data > 0.25*max(data)) << "\t"
+// 	    << min(data) << "\t"
+// 	    << mean(data) << "\t"
+// 	    << max(data) << "\t"
+// 	    << sum(data) << "\t"
+// 	    << count(data > 0.25*max(data)) << "\t"
 	    << std::endl;
   }
   outfile.close();

@@ -1,6 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2006                                                    *
  *   Andreas Horneffer (<mail>)                                            *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -84,7 +85,8 @@ bool dalLopesEvent::attachFile (string filename)
 {
   int i (0);
   unsigned int ui (0);
-  unsigned int tmpchan,tmplen;
+  unsigned int tmpchan (0);
+  unsigned int tmplen (0);
   short *tmppoint;
   
   FILE *fd = fopen(filename.c_str(),"r");
@@ -137,17 +139,21 @@ bool dalLopesEvent::attachFile (string filename)
       
     };
     //    clearerr(fd);
+
+    int antenna (0);
+    unsigned int sample (0);
     
     // this should reset the eof condition
     fseek(fd,LOPESEV_HEADERSIZE,SEEK_SET);
-    for (i=0;i<nofAntennas_p;i++){
+    for (antenna=0; antenna<nofAntennas_p; antenna++){
       fread(&tmpchan, 1, sizeof(unsigned int), fd); 
       fread(&tmplen, 1, sizeof(unsigned int), fd); 
-      AntennaIDs_p(i) = (int)tmpchan;
+      AntennaIDs_p(antenna) = (int)tmpchan;
       fread(tmppoint, sizeof(short),headerpoint_p->blocksize , fd); 
-      // channel data for antenna i go into column i
-      // 	channeldata_p(Range(Range::all()),i) = Array<short,1>(IPosition(1,headerpoint_p->blocksize),tmppoint,SHARE);
-      channeldata_p(Range(Range::all()),i) = Array<short,1>(tmppoint,shape(headerpoint_p->blocksize),neverDeleteData);
+      // channel data for antenna i go into column i of the data array
+      for (sample=0; sample<headerpoint_p->blocksize; sample++) {
+	channeldata_p(sample,antenna) = tmppoint[sample];
+      }
     };
     filename_p = filename;
     attached_p = true;
@@ -163,7 +169,7 @@ bool dalLopesEvent::attachFile (string filename)
 short* dalLopesEvent::data ()
 {
   short *data;
-  unsigned int nofElements = channeldata_p.numElements();
+  unsigned int nofElements = channeldata_p.nelements();
   
   try {
     data = new short[nofElements];
@@ -181,16 +187,13 @@ void dalLopesEvent::data (short *data,
 			  unsigned int const &channel)
 {
   // Retrieve the data for the selected channel
-  Array<short,1> channeldata = dalLopesEvent::channeldata(channel);
+  casa::Vector<short> channeldata = dalLopesEvent::channeldata(channel);
   
-  unsigned int nofSamples (channeldata.numElements());
+  unsigned int nofSamples (channeldata.nelements());
 
   for (unsigned int sample(0); sample<nofSamples; sample++) {
     data[sample] = channeldata(sample);
   }
-
-  // Copy the data values over to the returned array
-//   data = channeldata.data();
 }
 
 // ============================================================================

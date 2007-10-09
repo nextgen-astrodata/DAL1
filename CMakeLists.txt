@@ -27,7 +27,6 @@ endif (DAL_ENABLE_TESTING)
 ## Handle option: verbose mode during configuration on/off
 
 if (NOT DAL_VERBOSE_CONFIGURE)
-  set (BLITZ_FIND_QUIETLY 1)
   set (BOOST_FIND_QUIETLY 1)
   set (CASACORE_FIND_QUIETLY 1)
   set (CFITSIO_FIND_QUIETLY 1)
@@ -56,10 +55,6 @@ find_path (dal_cmake FindHDF5.cmake FindCASACORE.cmake
 set (NO_DEFAULT_PATH 1)
 
 if (dal_cmake)
-  ## Blitz++
-  if (NOT HAVE_BLITZ)
-    include (${dal_cmake}/FindBlitz.cmake)
-  endif (NOT HAVE_BLITZ)
   ## casacore
   if (NOT HAVE_CASACORE)
     include (${dal_cmake}/FindCASACORE.cmake)
@@ -103,12 +98,6 @@ include_directories (
   ${DAL_SOURCE_DIR}/test
   ${PYTHON_INCLUDES}
   )
-
-if (HAVE_BLITZ)
-  include_directories (${BLITZ_INCLUDES})
-else (HAVE_BLITZ)
-  message (SEND_ERROR "[dal] Missing Blitz++ header files!")
-endif (HAVE_BLITZ)
 
 if (HAVE_BOOST)
   include_directories (${BOOST_INCLUDES})

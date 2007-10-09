@@ -26,7 +26,11 @@
 
 #include <string>
 #include <iostream>
-#include <blitz/array.h>
+
+#include <casa/aips.h>
+#include <casa/Arrays/Array.h>
+#include <casa/Arrays/Matrix.h>
+#include <casa/Arrays/Vector.h>
 
 // Custom header files
 #include <lopesevent.h>
@@ -35,10 +39,6 @@ using std::cerr;
 using std::cout;
 using std::endl;
 using std::string;
-using blitz::Array;
-using blitz::neverDeleteData;
-using blitz::Range;
-using blitz::shape;
 
 //! Not more than 30 antennas available (yet).
 #define MAX_NUM_ANTENNAS 31
@@ -66,9 +66,8 @@ using blitz::shape;
   
   This is a port of Andreas Horneffer's original LopesEventIn class as
   distributed with the LOPES-Tools software package. The main difference
-  w.r.t. the original implementation is, that (a) there is no longer any
-  dependency on the DataReader class and (b) the usage of CASA arrays has
-  been replaced by the corresponding objects of the Blitz library.
+  w.r.t. the original implementation is, that there is no longer any
+  dependency on the DataReader class.
   
   <h3>Example(s)</h3>
   
@@ -76,9 +75,9 @@ using blitz::shape;
   the data stored in a file:
   \code
   dalLopesEvent event (filename);                    // Create new object
-  blitz::Array<short,2> data = event.channeldata();  // Retrieve the data
+  casa::Matrix<short> data = event.channeldata();    // Retrieve the data
   \endcode
-  If you do not want to retrieve the data themselves in the form of a Blitz
+  If you do not want to retrieve the data themselves in the form of a CASA
   array, you can use the following:
   \code 
   short *data;                              // array for the extracted data  
@@ -136,10 +135,10 @@ class dalLopesEvent {
   int nofAntennas_p;
   
   //! Matrix with the data itself
-  Array<short,2> channeldata_p;
+  casa::Matrix<short> channeldata_p;
   
   //! Vector with the antenna IDs
-  Array<int,1> AntennaIDs_p;
+  casa::Vector<int> AntennaIDs_p;
   
  public:
   
@@ -147,7 +146,7 @@ class dalLopesEvent {
   
   /*!
     \brief Default constructor
-    */
+  */
   dalLopesEvent();
   
   /*!
@@ -225,15 +224,16 @@ class dalLopesEvent {
 			     per antenna
   */
   inline unsigned int nofDatapoints () {
-    return channeldata_p.numElements();
+    return channeldata_p.nelements();
   }
   
   /*!
     \brief Get the channel data
     
-    \return channeldata -- [sample,antenna] Data for the individual channels, i.e. dipoles
+    \return channeldata -- [sample,antenna] Data for the individual channels,
+	                       i.e. dipoles
   */
-  inline Array<short,2> channeldata () {
+  inline casa::Matrix<short> channeldata () {
     return channeldata_p;
   }
 
@@ -244,8 +244,8 @@ class dalLopesEvent {
     
     \return channeldata -- Data for the individual channels, i.e. dipoles
   */
-  inline Array<short,1> channeldata (unsigned int const &channel) {
-    return channeldata_p(Range(Range::all()),channel);
+  inline casa::Vector<short> channeldata (unsigned int const &channel) {
+    return channeldata_p.column(channel);
   }
 
   /*!

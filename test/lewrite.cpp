@@ -25,7 +25,7 @@
 
   \brief Convert LopesEvent format data to HDF5-based time-series format
 
-  \author Joseph Masters
+  \author Joseph Masters, Lars B&auml;hren
 
   <h3>Usage</h3>
 
@@ -60,13 +60,15 @@
 #include <dalLopesEvent.h>
 
 void export_data (std::string const &filename,
-		  blitz::Array<short,2> const &data)
+		  casa::Matrix<short> const &data)
 {
   std::ofstream outfile;
-  int nofAntennas (data.columns());
-  int nofSamples (data.rows());
+  int nofAntennas (0);
+  int nofSamples (0);
   int antenna (0);
   int sample (0);
+
+  data.shape(nofSamples,nofAntennas);
 
   std::cout << "-- Name of output file      = " << filename     << std::endl;
   std::cout << "-- Shape of the data array  = " << data.shape() << std::endl;
