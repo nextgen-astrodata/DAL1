@@ -39,6 +39,20 @@ endif (NOT DAL_VERBOSE_CONFIGURE)
 
 include (CPack)
 
+set (lib_locations
+  /lib
+  /usr/lib
+  /usr/local/lib
+  /opt/lib
+  /sw/lib
+  )
+
+## system libraries
+
+find_library (libm m ${lib_locations})
+find_library (libdl dl ${lib_locations})
+find_library (libutil util ${lib_locations})
+
 ## check where to find the CMake scripts
 
 find_path (dal_cmake FindHDF5.cmake FindCASACORE.cmake
@@ -67,7 +81,7 @@ if (dal_cmake)
   if (NOT HAVE_HDF5)
     include (${dal_cmake}/FindHDF5.cmake)
   endif (NOT HAVE_HDF5)
-  ## PYTHON
+  ## PYTHON (we use custom module in place of FindPythonLibs)
   if (NOT HAVE_PYTHON)
     include (${dal_cmake}/FindPython.cmake)
   endif (NOT HAVE_PYTHON)
@@ -83,14 +97,12 @@ elseif (dal_cmake)
   message (SEND_ERROR "Unable to locate additional CMake scripts!")
 endif (dal_cmake)
 
-#include (FindPythonLibs)
-
 if (BOOST_LIBRARIES)
   list (APPEND PYTHON_LIBRARIES ${BOOST_LIBRARIES})
 endif (BOOST_LIBRARIES)
 
 ## -----------------------------------------------------------------------------
-## Location of header files
+## Include directories
 
 include_directories (
   ${DAL_SOURCE_DIR}

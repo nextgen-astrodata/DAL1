@@ -89,12 +89,26 @@ set (dal_link_libraries
   z
   ${CFITSIO_LIBRARIES}
   ${CASA_LIBRARIES}
-  ${libm}
 )
 
 if (DAL_PYTHON_BINDINGS)
-  list (APPEND dal_link_libraries ${BOOST_LIBRARIES} ${PYTHON_LIBRARIES})
+  list (APPEND dal_link_libraries
+    ${PYTHON_LIBRARIES}
+    ${BOOST_LIBRARIES}
+    )
 endif (DAL_PYTHON_BINDINGS)
+
+if (libm)
+  list (APPEND dal_link_libraries ${libm})
+endif (libm)
+
+if (libdl)
+  list (APPEND dal_link_libraries ${libdl})
+endif (libdl)
+
+if (libutil)
+  list (APPEND dal_link_libraries ${libutil})
+endif (libutil)
 
 ## [3] Build the library
 
