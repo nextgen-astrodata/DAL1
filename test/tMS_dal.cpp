@@ -159,7 +159,7 @@ vector<int> cdims;
 long indx;
 complex<float> * cdata;
 long mysize = 1;
-for (int ll=0; ll<shape3.size(); ll++)
+for (unsigned int ll=0; ll<shape3.size(); ll++)
   mysize *= shape3[ll];
 cdata = new complex<float>[ mysize ];
 
