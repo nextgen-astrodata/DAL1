@@ -98,13 +98,17 @@ if (DAL_PYTHON_BINDINGS)
     )
 endif (DAL_PYTHON_BINDINGS)
 
+if (libdl)
+  list (APPEND dal_link_libraries ${libdl})
+endif (libdl)
+
 if (libm)
   list (APPEND dal_link_libraries ${libm})
 endif (libm)
 
-if (libdl)
-  list (APPEND dal_link_libraries ${libdl})
-endif (libdl)
+if (libpthread)
+  list (APPEND dal_link_libraries ${libpthread})
+endif (libpthread)
 
 if (libutil)
   list (APPEND dal_link_libraries ${libutil})

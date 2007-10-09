@@ -49,8 +49,9 @@ set (lib_locations
 
 ## system libraries
 
-find_library (libm m ${lib_locations})
 find_library (libdl dl ${lib_locations})
+find_library (libm m ${lib_locations})
+find_library (libpthread pthread ${lib_locations})
 find_library (libutil util ${lib_locations})
 
 ## check where to find the CMake scripts
