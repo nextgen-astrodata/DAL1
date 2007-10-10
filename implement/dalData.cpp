@@ -127,7 +127,7 @@ void dalData::toFloat()
 	  }
 	  data2 = new float[ length ];
 	  float lclval;
-      for ( unsigned int cell=0; cell < length; cell++ )
+      for ( int cell=0; cell < length; cell++ )
       {
 	     cout << abs(*(&(((complex<float>*)data)[ cell ]))) << endl;
 	     lclval = abs(*(&(((complex<float>*)data)[ cell ])));
@@ -200,7 +200,7 @@ bpl::numeric::array dalData::get_boost()
     {
       if ( dal_INT == datatype )
       {
-        for (unsigned int ii=0; ii<nrows; ii++)
+        for (int ii=0; ii<nrows; ii++)
         {
            data_list.append( (*((int*)get(ii))) );
         }
@@ -216,7 +216,7 @@ bpl::numeric::array dalData::get_boost()
       }
       else if ( dal_DOUBLE == datatype )
       {
-        for (unsigned int ii=0; ii<nrows; ii++)
+        for (int ii=0; ii<nrows; ii++)
         {
            data_list.append( (*((double*)get(ii))) );
         }

@@ -60,10 +60,10 @@ int main(int argc, char *argv[])
   // open a table in the dataset
   cout << " -- Opening table in the dataset ..." << endl;
   string tablename = "MAIN";
-  string filter_string =
-    "Select UVW, TIME, ANTENNA1, ANTENNA2, DATA from $1 where ANTENNA1 = 1 AND ANTENNA2 = 1";
-  
-  dalTable * maintable = msds->openFilteredTable( tablename, filter_string );
+  string filter_cols = "UVW, TIME, ANTENNA1, ANTENNA2, DATA";
+  string filter_conditions = "ANTENNA1 = 1 AND ANTENNA2 = 1";
+  msds->setFilter( filter_cols, filter_conditions );
+  dalTable * maintable = msds->openTable( tablename );
   
   // print the name of the table [ doesn't seem to work ]
   maintable->getName();
@@ -173,7 +173,8 @@ for(int xx=0; xx<shape3[0]; xx++)
     cdata[ indx ] = *value3;
 }
 cout << "Creating complex array of data in HDF5..." << endl;
-dalArray * dataarray = ds->createArray( "comparray", data_object );
+dalArray * dataarray;
+dataarray = ds->createArray( "comparray", data_object );
 delete data_col;
 
 dalGroup * arraygroup;

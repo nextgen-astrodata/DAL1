@@ -470,29 +470,6 @@ dalTable * dalDataset::openTable( string tablename )
 }
 
 /****************************************************************
- *  Opens a filtered table in a group (mainly for casa
- *    using Table Query Language (TaQL)
- *
- *****************************************************************/
-#ifdef WITH_CASA
-dalTable * dalDataset::openFilteredTable( string tablename, string parse_string )
-{
-   if ( type == MSCASATYPE )
-   {
-	dalTable * lt = new dalTable( MSCASATYPE );
-	lt->openTable( /*file,*/ tablename, ms_reader/*, parse_string*/ );
-	return lt;
-   }
-   else
-   {
-	cout << "openTable operation not supported for filetype "
-	  << type << endl;
-   	return NULL;
-   }
-}
-#endif
-
-/****************************************************************
  *  Opens a table in a group (mainly for hdf5)
  *
  *****************************************************************/
@@ -596,18 +573,6 @@ dalTable * dalDataset::ot2_boost(string a, string b) {
 	ret = openTable(a,b);
 	return ret;
 }
-
-/******************************************************
- * wrappers for openFilteredTable
- ******************************************************/
-#ifdef WITH_CASA
-dalTable * dalDataset::oft_boost( string tablename, string parse_string )
-{
-   dalTable * ret;
-   ret = openFilteredTable( tablename, parse_string );
-   return ret;
-}
-#endif
 
 /******************************************************
  * wrappers for createIntArray

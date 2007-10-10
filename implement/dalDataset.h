@@ -136,9 +136,6 @@ class dalDataset{
 	dalTable * openTable( string tablename );  /// return a dalTable object
 	void setFilter( string columns );
 	void setFilter( string columns, string conditions );
-#ifdef WITH_CASA
-	dalTable * openFilteredTable( string tablename, string parse_string );
-#endif
 	dalTable * openTable( string tablename, string groupname );
 
 	dalGroup * openGroup( string groupname );  /// return a dalGroup object
@@ -186,9 +183,6 @@ class dalDataset{
 	// openTable wrappers
 	dalTable * ot1_boost( string tablename );
 	dalTable * ot2_boost( string tablename, string groupname );
-
-	// openFilteredTable wrappers
-	dalTable * oft_boost( string tablename, string parse_string );
 
 	void setFilter_boost1(string);
 	void setFilter_boost2(string,string);
