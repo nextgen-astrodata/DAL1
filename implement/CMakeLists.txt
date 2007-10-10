@@ -168,10 +168,10 @@ install (
   )
 
 if (DAL_PYTHON_BINDINGS)
-install (
-  TARGETS pydal
-  LIBRARY DESTINATION lib
-  )
+  install (
+    TARGETS pydal
+    LIBRARY DESTINATION lib/python
+    )
 endif (DAL_PYTHON_BINDINGS)
 
 ## installation of header files

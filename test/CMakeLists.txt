@@ -109,6 +109,12 @@ if (DAL_ENABLE_TESTING)
   else (lopes_dataset)
     message (STATUS "Unable to find LopesEvent dataset; skipping tests.")
   endif (lopes_dataset)
+
+  ## [4] Python scripts
+
+  if (ms_dataset)
+    add_test (baseline_intensity baseline_intensity.py ${ms_dataset} 1 2 1)
+  endif (ms_dataset)
   
 endif (DAL_ENABLE_TESTING)
 
