@@ -53,7 +53,7 @@ if (HAVE_CASA OR HAVE_CASACORE)
     ## compiler instructions
     add_executable (${src} ${src}.cpp)
     ## linker instructions
-    target_link_libraries (${src} dal ${CASA_LIBRARIES} ${libm})
+    target_link_libraries (${src}  dal ${dal_link_libraries})
     ## installation
     list (APPEND tests ${src})
   endforeach (src)

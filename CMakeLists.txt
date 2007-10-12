@@ -89,9 +89,9 @@ if (dal_cmake)
   ##----------------------------------------------------------
   ## optional external packages (required for Python bindings)
   if (DAL_PYTHON_BINDINGS)
-    ## BOOST
+    ## BOOST 
+    set (BOOST_pythonOnly 1)
     if (NOT HAVE_BOOST)
-      set (BOOST_pythonOnly 1)
       include (${dal_cmake}/FindBoost.cmake)
     endif (NOT HAVE_BOOST)
   endif (DAL_PYTHON_BINDINGS)
