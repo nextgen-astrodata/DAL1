@@ -91,6 +91,7 @@ if (dal_cmake)
   if (DAL_PYTHON_BINDINGS)
     ## BOOST
     if (NOT HAVE_BOOST)
+      set (BOOST_pythonOnly 1)
       include (${dal_cmake}/FindBoost.cmake)
     endif (NOT HAVE_BOOST)
   endif (DAL_PYTHON_BINDINGS)
