@@ -27,11 +27,11 @@ endif (DAL_ENABLE_TESTING)
 ## Handle option: verbose mode during configuration on/off
 
 if (NOT DAL_VERBOSE_CONFIGURE)
-  set (BOOST_FIND_QUIETLY 1)
-  set (CASACORE_FIND_QUIETLY 1)
-  set (CFITSIO_FIND_QUIETLY 1)
-  set (HDF5_FIND_QUIETLY 1)
-  set (PYTHON_FIND_QUIETLY 1)
+  set (BOOST_FIND_QUIETLY ON)
+  set (CASACORE_FIND_QUIETLY ON)
+  set (CFITSIO_FIND_QUIETLY ON)
+  set (HDF5_FIND_QUIETLY ON)
+  set (PYTHON_FIND_QUIETLY ON)
 endif (NOT DAL_VERBOSE_CONFIGURE)
 
 ## -----------------------------------------------------------------------------
@@ -90,7 +90,8 @@ if (dal_cmake)
   ## optional external packages (required for Python bindings)
   if (DAL_PYTHON_BINDINGS)
     ## BOOST 
-    set (BOOST_pythonOnly 1)
+    set (BOOST_pythonOnly ON)
+    set (BOOST_test_exec_monitor OFF)
     if (NOT HAVE_BOOST)
       include (${dal_cmake}/FindBoost.cmake)
     endif (NOT HAVE_BOOST)
@@ -106,12 +107,19 @@ endif (BOOST_LIBRARIES)
 ## -----------------------------------------------------------------------------
 ## Include directories
 
+## header files of the DAL itself
+
 include_directories (
   ${DAL_SOURCE_DIR}
   ${DAL_SOURCE_DIR}/implement
   ${DAL_SOURCE_DIR}/test
-  ${PYTHON_INCLUDES}
   )
+
+## header files of external packages
+
+if (PYTHON_INCLUDES)
+  include_directories (${PYTHON_INCLUDES})
+endif (PYTHON_INCLUDES)
 
 if (HAVE_BOOST)
   include_directories (${BOOST_INCLUDES})
@@ -140,10 +148,10 @@ endif (HAVE_HDF5)
 ## -----------------------------------------------------------------------------
 ## Subdirectories
 
-ADD_SUBDIRECTORY (implement)
+add_subdirectory (implement)
 
 if (DAL_BUILD_TESTS)
-  ADD_SUBDIRECTORY (test)
+  add_subdirectory (test)
 endif (DAL_BUILD_TESTS)
 
 ## -----------------------------------------------------------------------------
