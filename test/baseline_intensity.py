@@ -28,7 +28,7 @@ maintable = msds.openTable( tablename );
 
 # get times
 time_col = maintable.getColumn("TIME")
-time = time_data.data()
+time = time_col.data()
 
 # get data
 data_col = maintable.getColumn("DATA")
