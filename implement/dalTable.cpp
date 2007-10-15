@@ -317,6 +317,23 @@ dalTable::dalTable( string filetype )
 
 #ifdef WITH_CASA
 /****************************************************************
+ *  Open a CASA table (not in a MS)
+ *
+ *****************************************************************/
+void dalTable::openTable( string tablename )
+{
+   if ( type == MSCASATYPE )
+   {
+	*casa_table_handle = casa::Table( tablename );
+   }
+   else
+   {
+	cout << "dalTable::openTable operation not supported for type "
+	  << type << endl;
+   }
+}
+
+/****************************************************************
  *  Open a CASA table
  *
  *****************************************************************/
@@ -1527,13 +1544,22 @@ for (int ii=0; ii<30; ii++)
 
 #ifdef WITH_CASA
 /****************************************************************
+ *  wrapper for openTable (hdf5)
+ *
+ *****************************************************************/
+void dalTable::ot_nonMStable( string tablename )
+{
+   openTable( tablename );
+}
+
+/****************************************************************
  *  wrappers for openTable (casa)
  *
  *****************************************************************/
-void dalTable::ot_ms1( string tablename, casa::MSReader * reader)
+/*void dalTable::ot_ms1( string tablename, casa::MSReader * reader)
 {
    openTable( tablename, reader );
-}
+}*/
 // void dalTable::ot_ms2( string tablename, casa::MSReader * reader,
 //   string parse_string )
 // {

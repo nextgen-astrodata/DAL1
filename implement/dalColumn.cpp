@@ -235,7 +235,7 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 	 {
 	   cout << "dalColumn::data() Column type not yet supported."
 	     << endl;
-	   return NULL;
+           return NULL;
 	 }
        }
      }
@@ -289,7 +289,7 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 	    {
 		cout << "dalColumn::data() Column type not yet supported."
 		  << endl;
-		return NULL;
+                return NULL;
             }
            }	
        }
@@ -304,6 +304,7 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
        exit(-4);
     }
    }
+
    return NULL;
 }
 
@@ -373,4 +374,135 @@ bpl::tuple dalColumn::shape_boost()
 
    return lcl_tuple;
 }
+
+bpl::numeric::array dalColumn::data_boost()
+{
+  if ( "MSCASA" == filetype )
+  {
+   try
+   {
+    if ( isScalar() )
+    {
+      switch ( casa_col_desc.dataType() )
+      {
+	 case casa::TpInt:
+	 {
+	   rosc_int = new casa::ROScalarColumn<casa::Int>( *casa_column );
+	   scalar_vals_int = rosc_int->getColumn();
+	   data_object = new dalData( filetype, dal_INT, shape(), nrows() );
+	   data_object->data = (int *)scalar_vals_int.getStorage(deleteIt);
+	   return data_object->get_boost();
+         }
+	 break;
+	 case casa::TpDouble:
+	 {
+	   rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
+	   scalar_vals_dbl = rosc_dbl->getColumn();
+	   data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
+	   data_object->data = (double *)scalar_vals_dbl.getStorage(deleteIt);
+	   return data_object->get_boost();
+         }
+	 break;
+	 case casa::TpComplex:
+	 {
+	   rosc_comp = new casa::ROScalarColumn<casa::Complex>( *casa_column );
+	   scalar_vals_comp = rosc_comp->getColumn();
+	   data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
+	   data_object->data =
+	     (complex<float> *)scalar_vals_comp.getStorage(deleteIt);
+	   return data_object->get_boost();
+         }
+	 break;
+/************************************
+ * ADD MORE TYPES HERES
+ ************************************/
+	 default:
+	 {
+	   cout << "dalColumn::data() Column type not yet supported."
+	     << endl;
+           bpl::list tmp_list;
+           tmp_list.append(0);
+           bpl::numeric::array nadata(tmp_list);
+           return nadata;
+	 }
+       }
+     }
+     else if ( isArray() )
+     {
+        switch ( casa_col_desc.dataType() )
+        {
+	  case casa::TpInt:
+	  {
+	    roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
+            array_vals_int = roac_int->getColumn();
+	    data_object = new dalData( filetype, dal_INT, shape(), nrows() );
+	    data_object->data = (int *)array_vals_int.getStorage(deleteIt);
+	    return data_object->get_boost();
+	    }
+	    break;
+	  case casa::TpDouble:
+	  {
+	    roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
+            array_vals_dbl = roac_dbl->getColumn();
+	    data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
+	    data_object->data = (double *)array_vals_dbl.getStorage(deleteIt);
+	    return data_object->get_boost();
+	    }
+	    break;
+	  case casa::TpComplex:
+	  {
+// 	    casa::IPosition start (2,cell1,cell2);
+// 	    casa::Slicer slicer (start);
+	    dal_datatype = dal_COMPLEX;
+	    vector< complex< float > > ret_valvec;
+	    try
+	    {
+	       roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
+            } catch (casa::AipsError x) {
+               cout << "ERROR: " << x.getMesg() << endl;
+	       exit(-4);
+            }
+            array_vals_comp = roac_comp->getColumn(/*slicer*/);
+	    data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
+	    data_object->data =
+		  (complex<float> *)array_vals_comp.getStorage(deleteIt);
+	    return data_object->get_boost();
+
+	    }
+	    break;
+/************************************
+ * ADD MORE TYPES HERES
+ ************************************/
+	    default:
+	    {
+		cout << "dalColumn::data() Column type not yet supported."
+		  << endl;
+                bpl::list tmp_list;
+                tmp_list.append(0);
+                bpl::numeric::array nadata(tmp_list);
+                return nadata;
+            }
+           }	
+       }
+       else
+       {
+	 cout << "dalColumn::data() Column is neither scalar nor array.  "
+	   << "Do not know how to handle." << endl;
+         bpl::list tmp_list;
+         tmp_list.append(0);
+         bpl::numeric::array nadata(tmp_list);
+         return nadata;
+       }
+    } catch (casa::AipsError x) {
+       cout << "ERROR: " << x.getMesg() << endl;
+       exit(-4);
+    }
+   }
+
+   bpl::list tmp_list;
+   tmp_list.append(0);
+   bpl::numeric::array nadata(tmp_list);
+   return nadata;
+}
+
 #endif

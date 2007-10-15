@@ -28,13 +28,11 @@ maintable = msds.openTable( tablename );
 
 # get times
 time_col = maintable.getColumn("TIME")
-time_data = time_col.data()
-time = time_data.get()
+time = time_data.data()
 
 # get data
 data_col = maintable.getColumn("DATA")
-data_data = data_col.data()
-data = data_data.get()
+data = data_col.data()
 nchannels = data.shape[1] # second element of the data shape i.e. (4,256,nrows)
 
 # this will be used to determine whether or not to make a log plot

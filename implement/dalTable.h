@@ -93,6 +93,7 @@ class dalTable{
 	void printColumns();  /// list the columns contained within a table
 	void openTable( void * voidfile, string tablename, string groupname );
 #ifdef WITH_CASA
+	void openTable( string tablename );
 	void openTable( /*void * voidfile,*/ string tablename,
 	  casa::MSReader * reader );
 	void openTable( /*void * voidfile,*/ string tablename,
@@ -147,7 +148,8 @@ class dalTable{
 	void append_row_boost( bpl::object data );
 
 #ifdef WITH_CASA
-	void ot_ms1( string tablename, casa::MSReader * reader);
+	void ot_nonMStable( string tablename );
+//	void ot_ms1( string tablename, casa::MSReader * reader);
 /*	void ot_ms2( string tablename, casa::MSReader * reader,
 	  string parse_string );*/
 // 	bpl::numeric::array gcd_boost( string arrayname );

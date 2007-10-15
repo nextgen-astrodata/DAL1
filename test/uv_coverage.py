@@ -32,18 +32,15 @@ elif ( 4 == len(sys.argv) ):  # if two antenna values are given
   
 else:  # if no antenna values are given
 	msds.setFilter("UVW")
-	title("UV coverage for" + sys.argv[1] )
+	title("UV coverage for\n" + sys.argv[1] )
 
 maintable = msds.openTable( tablename )
 
 # get the UVW column
 uvw_column = maintable.getColumn("UVW")
 
-# get the column data object
-uvw_data_object = uvw_column.data()
-
-# get the data from the data object
-data = uvw_data_object.get()
+# get the data from the column
+data = uvw_column.data()
 
 # plot the data
 xlabel("U(-U)")

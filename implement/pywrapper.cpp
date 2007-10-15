@@ -28,6 +28,7 @@
 */
 
 #include <boost/python.hpp>
+// #include <num_util.h>
 
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/module.hpp>
@@ -57,92 +58,11 @@ namespace bpl = boost::python;
 typedef struct opaque_ *opaque;
 BOOST_PYTHON_OPAQUE_SPECIALIZED_TYPE_ID(opaque_)
 
-// struct X // a container element
-// {
-//     std::string s;
-//     X():s("default") {}
-//     X(std::string s):s(s) {}
-//     std::string repr() const { return s; }
-//     void reset() { s = "reset"; }
-//     void foo() { s = "foo"; }
-//     bool operator==(X const& x) const { return s == x.s; }
-//     bool operator!=(X const& x) const { return s != x.s; }
-// };
-// 
-// long goo(bpl::list a)
-// {
-// 	return bpl::len(a);
-// }
-// 
-// std::string x_value(X const& x)
-// {
-//     return "gotya " + x.s;
-// }
-
-// void foo() {
-//     cout << "none" << endl;
-// }
-// void foo(int a) {
-//     cout << "arg is " << a << endl;
-// }
-// void foo(int a, int b) {
-//     cout << "args are " << a << " and " << b << endl;
-// }
-// void foo(int a, float b) {
-//     cout << "args are " << a << " and " << b << endl;
-// }
-// void f2(int a, float b) { foo(a,b); }
-
-// sets the first element in a 2d numeric array
-// void set_first_element(bpl::numeric::array& y, int value)
-// {
-//     y[bpl::make_tuple(0,0)] = value;
-// }
-
-// BOOST_PYTHON_MODULE(vector_indexing_suite_ext)
-// {    
-//     bpl::class_<X>("X")
-//         .def(bpl::init<>())
-//         .def(bpl::init<X>())
-//         .def(bpl::init<std::string>())
-//         .def("__repr__", &X::repr)
-//         .def("reset", &X::reset)
-//         .def("foo", &X::foo)
-//     ;
-// 
-//     bpl::def("x_value", x_value);
-//     bpl::implicitly_convertible<std::string, X>();
-//     
-//     bpl::class_<std::vector<X> >("XVec")
-//         .def(bpl::vector_indexing_suite<std::vector<X> >())
-//     ;
-//         
-//     // Compile check only...
-//     bpl::class_<std::vector<float> >("FloatVec")
-//         .def(bpl::vector_indexing_suite<std::vector<float> >())
-//     ;
-//     
-//     // Compile check only...
-//     bpl::class_<std::vector<bool> >("BoolVec")
-//         .def(bpl::vector_indexing_suite<std::vector<bool> >())
-//     ;
-// 
-// }
-
-// bpl::object f(bpl::object x, bpl::object y) {
-//     x.slice(3,7) = "bar";
-//     return x;
-// }
-
-// BOOST_PYTHON_FUNCTION_OVERLOADS(foo_overloads, foo, 0, 2)
-
 BOOST_PYTHON_MODULE(pydal)
 {
-//     bpl::numeric::array::set_module_and_type("numpy", "ndarray");
-//     bpl::def("foo", (void(*)(int,int,int))0, foo_overloads());
-//     bpl::def("foo", f2); // two arguments
-//     bpl::def("f", f);
-//     bpl::def("goo", goo);
+//     bpl::import_array();
+//     numeric::array::set_module_and_type("numpy", "ndarray");
+
 
     bpl::class_<dalDataset>("dalDataset")
 	.def(bpl::init<char*, string>())
@@ -222,6 +142,7 @@ BOOST_PYTHON_MODULE(pydal)
 	.def(bpl::init<char*>())
         .def("getAttributes", &dalTable::getAttributes)
 	.def("openTable", &dalTable::ot_hdf5)
+	.def("openTable", &dalTable::ot_nonMStable)
 	.def("createTable", &dalTable::createTable)
 	.def("addColumn", &dalTable::addColumn)
 	.def("addArrayColumn", &dalTable::addArrayColumn)
@@ -243,7 +164,7 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("findAttribute", &dalTable::findAttribute)
 	.def("getNumberOfRows", &dalTable::getNumberOfRows)
 #ifdef WITH_CASA
-	.def("openTable", &dalTable::ot_ms1)
+//	.def("openTable", &dalTable::ot_ms1)
 // 	.def("openTable", &dalTable::ot_ms2)
 	.def("getColumn", &dalTable::getColumn,
 		bpl::return_value_policy<bpl::manage_new_object>())
@@ -274,9 +195,7 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("isScalar", &dalColumn::isScalar)
 	.def("isArray", &dalColumn::isArray)
 #ifdef WITH_CASA
- 	.def("data", &dalColumn::data/*_boost1*/,
-		bpl::return_value_policy<bpl::manage_new_object>())
-// 	.def("data", &dalColumn::data_boost2)
+ 	.def("data", &dalColumn::data_boost)
 #endif
     ;
 

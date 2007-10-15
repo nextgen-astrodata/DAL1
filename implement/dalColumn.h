@@ -113,8 +113,8 @@ public:
 	vector<int> shape();
 	unsigned int ndims();
 	unsigned int nrows();
- 	dalData * data(/*int cell1=0, int cell2=0, int cell3=0*/);
-
+	dalData * data();
+//  	dalData * data(/*int cell1=0, int cell2=0, int cell3=0*/);
 //	int getNumber();  /// return the index of a column
 // 	void addArray();
 //	int insertAfter(); /// insert a new column after column specified by name or number
@@ -129,6 +129,7 @@ public:
  ************************************************************************/
 #ifdef PYTHON
 	bpl::tuple shape_boost();
+	bpl::numeric::array data_boost();
 // 	bpl::numeric::array data_boost1();
 // 	bpl::numeric::array data_boost2(/*int cell1*/);
 #endif
