@@ -141,12 +141,18 @@ unsigned int nrows3 = data_col->nrows();
 cout << "Number of rows: " << nrows3 << endl;
 data_object = data_col->data();
 complex<float> * value3;
-for(unsigned int xx=300; xx<310; xx++)
+int pol = 0;
+int chan = 3;
+int xx_min = 79;
+int xx_max = 89;
+if ( pol < shape3[0] && chan < shape3[1] && xx_max < shape3[2] )
 {
-  value3 = (complex<float>*)data_object->get(2,45,xx);  // WORKS
-  cout << "[2][45][" << xx << "]: " << *value3 << endl;
+ for(int xx = xx_min; xx < xx_max; xx++)
+ {
+  value3 = (complex<float>*)data_object->get(pol,chan,xx);
+  cout << "[" << pol << "][" << chan << "][" << xx << "]: " << *value3 << endl;
+ }
 }
-//   value3 = (complex<float>*)data_object->get(1,45,300);  // WORKS
 
 
 //
@@ -163,7 +169,7 @@ for (unsigned int ll=0; ll<shape3.size(); ll++)
   mysize *= shape3[ll];
 cdata = new complex<float>[ mysize ];
 
-#pragma omp parallel for
+//#pragma omp parallel for
 for(int xx=0; xx<shape3[0]; xx++)
   for(int yy=0; yy<shape3[1]; yy++)
     for(int zz=0; zz<shape3[2]; zz++)
