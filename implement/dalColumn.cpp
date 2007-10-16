@@ -50,7 +50,7 @@ dalColumn::dalColumn( string complexcolname/*, void * dataformat*/ )
 #ifdef WITH_CASA
 dalColumn::dalColumn(casa::Table table, string colname)
 {
-    filetype = "MSCASA";
+    filetype = MSCASATYPE;
     try
     {
        casa_column = new casa::ROTableColumn( table, colname );
@@ -84,6 +84,8 @@ void dalColumn::close()
 //               };
 string dalColumn::getDataType()
 {
+  if ( MSCASATYPE == filetype )
+  {
 #ifdef WITH_CASA
   switch ( casa_col_desc.dataType() )
   {
@@ -101,40 +103,67 @@ string dalColumn::getDataType()
   }
   return casa_datatype;
 #endif
+  }
+  else
+  {
+    cout << "dalColumn::getDataType not yet supported for filetype " <<
+	  filetype << endl;
+	return "";
+  }
 }
 
 int dalColumn::isScalar()
 {
+  if ( MSCASATYPE == filetype )
+  {
 #ifdef WITH_CASA
    if ( casa_col_desc.isScalar() )
       return 1;
    else
       return 0;
 #endif
+  }
+  else
+  {
+    cout << "dalColumn::isScalar not yet supported for filetype " <<
+	  filetype << endl;
+	return -1;
+  }
 }
 
 int dalColumn::isArray()
 {
+  if ( MSCASATYPE == filetype )
+  {
 #ifdef WITH_CASA
    if ( casa_col_desc.isArray() )
       return 1;
    else
       return 0;
 #endif
+  }
+  else
+  {
+    cout << "dalColumn::isArray not yet supported for filetype " <<
+	  filetype << endl;
+	return -1;
+  }
 }
 
 vector<int> dalColumn::shape()
 {
   vector<int> shape_vals;
-#ifdef WITH_CASA
-  if ( isArray() )
+  if ( MSCASATYPE == filetype )
   {
-    //cout << casa_column->shapeColumn();
+#ifdef WITH_CASA
+    if ( isArray() )
+    {
+      //cout << casa_column->shapeColumn();
 
       try
       {
-	casa::IPosition ipos = casa_column->shape(0);
-	casa::Vector<casa::Int> col_shape = ipos.asVector();
+	    casa::IPosition ipos = casa_column->shape(0);
+	    casa::Vector<casa::Int> col_shape = ipos.asVector();
         col_shape.tovector( shape_vals );
         shape_vals.push_back( nrows() );
       } catch (casa::AipsError x) {
@@ -142,25 +171,41 @@ vector<int> dalColumn::shape()
          exit(-4);
       }
       return shape_vals;
+    }
+    else
+    {
+      shape_vals.push_back( nrows() );
+      return shape_vals;
+    }
+#endif
   }
   else
   {
-    shape_vals.push_back( nrows() );
-    return shape_vals;
+    cout << "dalColumn::shape not yet supported for filetype " <<
+	  filetype << endl;
+	return shape_vals;
   }
-#endif
 }
 
 unsigned int dalColumn::ndims()
 {
+  if ( MSCASATYPE == filetype )
+  {
 #ifdef WITH_CASA
-  if ( isArray() )
-   return casa_column->ndimColumn();
+    if ( isArray() )
+     return casa_column->ndimColumn();
+    else
+    {
+	  return 0;
+    }
+#endif
+  }
   else
   {
-	return 0;
+    cout << "dalColumn::ndims not yet supported for filetype " <<
+	  filetype << endl;
+	return -1;
   }
-#endif
 }
 
 string dalColumn::getName()
@@ -170,7 +215,7 @@ string dalColumn::getName()
 
 unsigned int dalColumn::nrows()
 {
-  if ( "MSCASA" == filetype )
+  if ( MSCASATYPE == filetype )
   {
 #ifdef WITH_CASA
     num_of_rows = casa_column->nrow();
@@ -192,7 +237,7 @@ string dalColumn::getType()
 
 dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 {
-  if ( "MSCASA" == filetype )
+  if ( MSCASATYPE == filetype )
   {
    try
    {
@@ -327,27 +372,35 @@ void dalColumn::addMember( string member_name, string member_type )
 /*    array_tid = H5Tarray_create(H5T_NATIVE_CHAR, ARRAY_RANK,
 		    array_dim, NULL);
 */
-  if ( member_type == dal_INT )	{
-    status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_INT );
+  if ( H5TYPE == filetype )
+  {
+    if ( member_type == dal_INT )	{
+      status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_INT );
+    }
+    else if ( member_type == dal_UINT )	{
+      status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_UINT );
+    }
+    else if ( member_type == dal_SHORT )	{
+      status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_SHORT );
+    }
+    else if ( member_type == dal_FLOAT )	{
+      status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_FLOAT );
+    }
+    else if ( member_type == dal_DOUBLE )	{
+      status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_DOUBLE );
+    }
+    else if ( member_type == dal_STRING )	{
+      status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_C_S1 );
+    }
+    else {					     
+      cout << "ERROR: addMember " << member_name << " "
+        << member_type << " not supported." << endl;
+    }
   }
-  else if ( member_type == dal_UINT )	{
-    status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_UINT );
-  }
-  else if ( member_type == dal_SHORT )	{
-    status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_SHORT );
-  }
-  else if ( member_type == dal_FLOAT )	{
-    status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_FLOAT );
-  }
-  else if ( member_type == dal_DOUBLE )	{
-    status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_DOUBLE );
-  }
-  else if ( member_type == dal_STRING )	{
-    status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_C_S1 );
-  }
-  else {					     
-    cout << "ERROR: addMember " << member_name << " "
-      << member_type << " not supported." << endl;
+  else
+  {
+     cout << "dalColumn::addMember not yet supported for filetype " <<
+	   filetype << endl;
   }
 }
 
@@ -377,7 +430,7 @@ bpl::tuple dalColumn::shape_boost()
 
 bpl::numeric::array dalColumn::data_boost()
 {
-  if ( "MSCASA" == filetype )
+  if ( MSCASATYPE == filetype )
   {
    try
    {
