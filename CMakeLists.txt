@@ -100,9 +100,23 @@ elseif (dal_cmake)
   message (SEND_ERROR "Unable to locate additional CMake scripts!")
 endif (dal_cmake)
 
+## We need to be a bit careful with the Boost and Python libraries; appending
+## the Boost libraries only makes sense, if there is already a list of Python
+## libraries
+
 if (BOOST_LIBRARIES)
-  list (APPEND PYTHON_LIBRARIES ${BOOST_LIBRARIES})
+  if (PYTHON_LIBRARIES)
+    list (APPEND PYTHON_LIBRARIES ${BOOST_LIBRARIES})
+  else (PYTHON_LIBRARIES)
+    set (PYTHON_LIBRARIES ${BOOST_LIBRARIES})
+  endif (PYTHON_LIBRARIES)
 endif (BOOST_LIBRARIES)
+
+## Effect of dependencies on build options
+
+if (NOT HAVE_PYTHON OR NOT HAVE_BOOST)
+  set (DAL_PYTHON_BINDINGS OFF)
+endif (NOT HAVE_PYTHON OR NOT HAVE_BOOST)
 
 ## -----------------------------------------------------------------------------
 ## Include directories
@@ -124,25 +138,25 @@ endif (PYTHON_INCLUDES)
 if (HAVE_BOOST)
   include_directories (${BOOST_INCLUDES})
 else (HAVE_BOOST)
-  message (SEND_ERROR "[dal] Missing Boost header files!")
+  message (STATUS "[dal] Missing Boost header files!")
 endif (HAVE_BOOST)
 
 if (HAVE_CASACORE)
   include_directories (${CASACORE_INCLUDES})
 else (HAVE_CASACORE)
-  message (SEND_ERROR "[dal] Missing casacore header files!")
+  message (STATUS "[dal] Missing casacore header files!")
 endif (HAVE_CASACORE)
 
 if (HAVE_CFITSIO)
   include_directories (${CFITSIO_INCLUDES})
 else (HAVE_CFITSIO)
-  message (SEND_ERROR "[dal] Missing CFITSIO header files!")
+  message (STATUS "[dal] Missing CFITSIO header files!")
 endif (HAVE_CFITSIO)
 
 if (HAVE_HDF5)
   include_directories (${HDF5_INCLUDES})
 else (HAVE_HDF5)
-  message (SEND_ERROR "[dal] Missing HDF5 header files!")
+  message (STATUS "[dal] Missing HDF5 header files!")
 endif (HAVE_HDF5)
 
 ## -----------------------------------------------------------------------------
@@ -175,11 +189,15 @@ endif (prefix)
 ## Feedback
 
 if (DAL_VERBOSE_CONFIGURE)
-  message (STATUS "HDF5 includes   = ${HDF5_INCLUDES}")
-  message (STATUS "HDF5 library    = ${HDF5_LIBRARIES}")
-  message (STATUS "Boost includes  = ${BOOST_INCLUDES}")
-  message (STATUS "Boost library   = ${BOOST_LIBRARIES}")
-  message (STATUS "Python includes = ${PYTHON_INCLUDE_PATH}")
-  message (STATUS "Python library  = ${PYTHON_LIBRARIES}")
-  message (STATUS "casacore        = ${HAVE_CASACORE}")
+  message (STATUS "+============================================================+")
+  message (STATUS "| DAL: Summary of configuration settings                     |")
+  message (STATUS "+------------------------------------------------------------+")
+  message (STATUS " HDF5 includes   = ${HDF5_INCLUDES}")
+  message (STATUS " HDF5 library    = ${HDF5_LIBRARIES}")
+  message (STATUS " Boost includes  = ${BOOST_INCLUDES}")
+  message (STATUS " Boost library   = ${BOOST_LIBRARIES}")
+  message (STATUS " Python includes = ${PYTHON_INCLUDE_PATH}")
+  message (STATUS " Python library  = ${PYTHON_LIBRARIES}")
+  message (STATUS " casacore        = ${HAVE_CASACORE}")
+  message (STATUS "+------------------------------------------------------------+")
 endif (DAL_VERBOSE_CONFIGURE)
