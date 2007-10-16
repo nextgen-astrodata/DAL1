@@ -82,11 +82,9 @@ if (DAL_ENABLE_TESTING)
     ${DAL_SOURCE_DIR}/../../data
     PATH_SUFFIXES
     L2007_01810_SB18-20_OB20.MS
-    cs1/L2007_01810_SB18-20_OB20.MS
+    lofar/cs1/L2007_01810_SB18-20_OB20.MS
     10602381_S0_T20.MS
-    lffe/10602381_S0_T20.MS
-    10602381_S0_T21.MS
-    lffe/10602381_S0_T21.MS
+    wsrt/lffe/10602381_S0_T20.MS
     )
   
   if (ms_dataset)
@@ -104,7 +102,6 @@ if (DAL_ENABLE_TESTING)
     ${DAL_SOURCE_DIR}/../../data
     PATH_SUFFIXES
     lopes
-    LOPES
     )
   
   if (lopes_dataset)
