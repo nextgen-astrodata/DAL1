@@ -436,19 +436,16 @@ dalTable * dalDataset::openTable( string tablename )
    if ( type == MSCASATYPE )
    {
 #ifdef WITH_CASA
-// 	ms_reader = new MSReader( *ms );
 	dalTable * lt = new dalTable( MSCASATYPE );
 	if ( filter->isSet() )
-	  lt->openTable( /*file,*/ tablename, ms_reader, filter );
+	  lt->openTable( tablename, ms_reader, filter );
         else
-	  lt->openTable( /*file,*/ tablename, ms_reader );
-// 	lt->casa_table_handle = ms_reader->table( "MAIN" );
+	  lt->openTable( tablename, ms_reader );
 	return lt;
 #else
 	cout << "CASA support not enabled." << endl;
 	exit(-1);
 #endif
-// 	ms = new MeasurementSet( name );
    }
    else if ( type == H5TYPE )
    {

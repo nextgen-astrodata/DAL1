@@ -65,12 +65,13 @@ class dalTable{
 	hsize_t nrecords; /// hdf5 record count
 	herr_t status; /// hdf5 return status
 	char **field_names;  /// hdf5 list of columns
+	
+	dalFilter * filter; /// table filter
 
 	bool firstrecord;
 	string name; /// table name
 	string type;  /// "HDF5", "MSCASA" or "FITS"; for example
 	vector<dalAttribute> attributes; /// list of table attributes
-	dalFilter filter; /// filter associated with table
 	vector<dalColumn> columns; /// list of table columns
 
 	long nrows; /// number of table rows
@@ -108,6 +109,10 @@ class dalTable{
 	void removeColumn( string colname );
 	void writeDataByColNum( void * structure, int index, int rownum );
 	
+	
+	void setFilter( string columns );
+	void setFilter( string columns, string conditions );
+
 // 	void writeDataByColName( void * structure, string colname );
 	void appendRow( void * data );
 	void appendRows( void * data, long number_of_rows );
@@ -149,6 +154,8 @@ class dalTable{
 
 #ifdef WITH_CASA
 	void ot_nonMStable( string tablename );
+	void setFilter_boost1(string);
+	void setFilter_boost2(string,string);
 //	void ot_ms1( string tablename, casa::MSReader * reader);
 /*	void ot_ms2( string tablename, casa::MSReader * reader,
 	  string parse_string );*/

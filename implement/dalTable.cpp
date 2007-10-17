@@ -38,7 +38,10 @@
  *  Default constructor
  *
  *****************************************************************/
-dalTable::dalTable() {}
+dalTable::dalTable()
+{
+    filter = new dalFilter;
+}
 
 /****************************************************************
  *  (experimental)  Return the column data
@@ -68,6 +71,19 @@ dalColumn * dalTable::getColumn( string colname )
    }
    else
 	return NULL;
+}
+
+void dalTable::setFilter( string columns )
+{
+    filter = new dalFilter;
+    filter->setFiletype( type );
+    filter->set(columns);
+}
+
+void dalTable::setFilter( string columns, string conditions )
+{
+    filter->setFiletype( type );
+    filter->set(columns,conditions);
 }
 
 /****************************************************************
@@ -301,6 +317,8 @@ void dalTable::getName()
  *****************************************************************/
 dalTable::dalTable( string filetype )
 {
+    filter = new dalFilter;
+
 	type = filetype;
  	columns.clear();  // clear the coulumns vector
  	firstrecord = true;
@@ -324,7 +342,21 @@ void dalTable::openTable( string tablename )
 {
    if ( type == MSCASATYPE )
    {
-	*casa_table_handle = casa::Table( tablename );
+#ifdef WITH_CASA
+   	if ( filter->isSet() )
+	{
+	  *casa_table_handle = casa::Table( tablename );
+	  *casa_table_handle = casa::tableCommand( filter->get(),
+            *casa_table_handle );
+	}
+	else
+	{
+	  *casa_table_handle = casa::Table( tablename );
+	}
+#else
+	cout << "CASA support not enabled." << endl;
+	exit(-1);
+#endif
    }
    else
    {
@@ -337,12 +369,10 @@ void dalTable::openTable( string tablename )
  *  Open a CASA table
  *
  *****************************************************************/
-void dalTable::openTable( /*void * voidfile,*/ string tablename,
-   casa::MSReader * reader )
+void dalTable::openTable( string tablename, casa::MSReader * reader )
 {
    if ( type == MSCASATYPE )
    {
-// 	cout << "dalTable::openTable " << type << endl;
 	*casa_table_handle = reader->table( tablename );
    }
    else
@@ -356,14 +386,13 @@ void dalTable::openTable( /*void * voidfile,*/ string tablename,
  *  Open a filtered CASA table
  *
  *****************************************************************/
-void dalTable::openTable( /*void * voidfile,*/ string tablename,
-   casa::MSReader * reader, dalFilter * filter/*string parse_string*/ )
+void dalTable::openTable( string tablename,
+   casa::MSReader * reader, dalFilter * filter )
 {
    if ( type == MSCASATYPE )
    {
-// 	cout << "dalTable::openTable " << type << endl;
 	*casa_table_handle = reader->table( tablename );
-        *casa_table_handle = casa::tableCommand( filter->get(),
+	*casa_table_handle = casa::tableCommand( filter->get(),
             *casa_table_handle );
    }
    else
@@ -1565,6 +1594,18 @@ void dalTable::ot_nonMStable( string tablename )
 // {
 //    openTable( tablename, reader, parse_string );
 // }
+/******************************************************
+ * wrappers for setFilter
+ ******************************************************/
+void dalTable::setFilter_boost1( string columns )
+{
+   setFilter( columns );
+}
+
+void dalTable::setFilter_boost2( string columns, string conditions )
+{
+   setFilter( columns, conditions );
+}
 
 #endif
 

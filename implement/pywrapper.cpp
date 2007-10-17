@@ -166,6 +166,8 @@ BOOST_PYTHON_MODULE(pydal)
 #ifdef WITH_CASA
 //	.def("openTable", &dalTable::ot_ms1)
 // 	.def("openTable", &dalTable::ot_ms2)
+	.def("setFilter", &dalTable::setFilter_boost1)
+	.def("setFilter", &dalTable::setFilter_boost2)
 	.def("getColumn", &dalTable::getColumn,
 		bpl::return_value_policy<bpl::manage_new_object>())
 #endif
