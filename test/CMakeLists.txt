@@ -113,7 +113,12 @@ if (DAL_ENABLE_TESTING)
   ## [4] Python scripts
 
   if (ms_dataset)
-    add_test (baseline_intensity baseline_intensity.py ${ms_dataset} 1 2 1)
+    ## show the coverage in the (u,v) plane
+    add_test (uv_coverage uv_coverage.py ${ms_dataset})
+    ## auto-correlated intensity in the first frequency band
+    add_test (baseline_intensity1 baseline_intensity.py ${ms_dataset} 1 1 0)
+    ## auto-correlated intensity in the first frequency band, channel 0
+    add_test (baseline_intensity2 baseline_intensity.py ${ms_dataset} 1 1 0 0)
   endif (ms_dataset)
   
 endif (DAL_ENABLE_TESTING)
