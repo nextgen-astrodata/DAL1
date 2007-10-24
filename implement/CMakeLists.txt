@@ -81,15 +81,24 @@ set (dal_sources
   dalLopesEvent.cpp
   )
 
-## [2] List of external libraries against which to link
+## [2] List of external libraries against which to link; even though we really
+##     need the external libraries listed here, we should be a bit careful when
+##     dealing with the related CMake variables - check first if the variable is
+##     set before adding it to the list of link libraries.
 
 set (dal_link_libraries
   hdf5
   hdf5_hl
   z
-  ${CFITSIO_LIBRARIES}
-  ${CASA_LIBRARIES}
 )
+
+if (CFITSIO_LIBRARIES)
+  list (APPEND dal_link_libraries ${CFITSIO_LIBRARIES})
+endif (CFITSIO_LIBRARIES)
+
+if (CASA_LIBRARIES)
+  list (APPEND dal_link_libraries ${CASA_LIBRARIES})
+endif (CASA_LIBRARIES)
 
 if (DAL_PYTHON_BINDINGS)
   list (APPEND dal_link_libraries

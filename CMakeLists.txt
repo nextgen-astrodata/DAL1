@@ -124,7 +124,7 @@ endif (NOT HAVE_PYTHON OR NOT HAVE_BOOST)
 ## header files of the DAL itself
 
 include_directories (
-  ${DAL_SOURCE_DIR}
+#  ${DAL_SOURCE_DIR}
   ${DAL_SOURCE_DIR}/implement
   ${DAL_SOURCE_DIR}/test
   )
