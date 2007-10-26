@@ -67,7 +67,7 @@ find_path (dal_cmake FindHDF5.cmake FindCASACORE.cmake
 
 ## check for the external packages
 
-set (NO_DEFAULT_PATH 1)
+set (NO_DEFAULT_PATH ON)
 
 if (dal_cmake)
   ## casacore
