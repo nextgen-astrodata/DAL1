@@ -21,6 +21,8 @@
 /*!
   \file tMS_dal.cpp
 
+  \brief Test program for reading CASA measurement sets.
+
   \ingroup DAL
 
   \author Joseph Masters

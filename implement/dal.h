@@ -29,6 +29,96 @@
   \defgroup DAL Data Access Library (DAL)
 
   \author Joseph Masters
+
+  <h3>Synopsis</h3>
+  The Data Access Library (DAL) is a library that abstracts the underlying
+  file format from the user when working with radio astronomy data.  Underlying
+  formats may include HDF5, AIPS++/CASA tables, FITS or specific raw formats.
+  This library is available to both the C/C++ developer and the Python user via
+  the pydal module.
+
+  <h3>Examples</h3>
+  Typical C++ usage of the <b><i>DAL</i></b> would look something like the
+  following:
+  <br/>
+  \code
+  #include <dal.h>
+  #include <dalDataset.h>
+  #include <dalData.h>
+
+  using namespace casa;
+
+  int main(int argc, char *argv[])
+  {
+    // create a dataset object of type MSCASA
+    cout << " -- Creating a dataset object of type MSCASA ..." << endl;
+    dalDataset * msds = new dalDataset( argv[1], "MSCASA" );
+  
+    // print out a list of tables in the dataset
+    msds->listTables();
+  
+    // open a table in the dataset
+    cout << " -- Opening table in the dataset ..." << endl;
+    string tablename = "MAIN";
+    string filter_cols = "UVW, TIME, ANTENNA1, ANTENNA2, DATA";
+    string filter_conditions = "ANTENNA1 = 1 AND ANTENNA2 = 1";
+    msds->setFilter( filter_cols, filter_conditions );
+    dalTable * maintable = msds->openTable( tablename );
+  
+    //
+    // get data from the TIME column
+    //
+    dalColumn * time_col = maintable->getColumn("TIME");
+    cout << time_col->getDataType() << endl;
+    if ( time_col->isScalar() ) cout << "SCALAR" << endl;
+    if ( time_col->isArray() ) cout << "ARRAY" << endl;
+    cout << "Number of rows: " << time_col->nrows() << endl;
+
+    dalData * data_object = time_col->data();
+    double * value1;
+    for(unsigned int xx=0; xx<13; xx++)
+    {
+      value1 = (double*)data_object->get(xx);
+      cout << *value1 << endl;
+    }
+    delete time_col;
+
+    ds->close();    // close the hdf5 file
+
+    return SUCCESS;
+  }
+  \endcode
+
+  Typical python usage of the <b><i>pydal</i></b> module might look like this:
+  <br/>
+  \code
+  import sys
+  import pydal as dal
+  from pylab import *
+
+  msds= dal.dalDataset()
+  if ( msds.open(sys.argv[1]) ):
+	sys.exit(1)
+
+  tablename = "MAIN";
+
+  msds.setFilter("UVW")
+  title("UV coverage for\n" + sys.argv[1] )
+
+  maintable = msds.openTable( tablename )
+
+  # get the UVW column
+  uvw_column = maintable.getColumn("UVW")
+
+  # get the data from the column
+  data = uvw_column.data()
+
+  # plot the data
+  xlabel("U(-U)")
+  ylabel("V(-V)")
+  plot(data[0],data[1],'r,',-(data[0]),-(data[1]),'b,')
+  show()
+  \endcode
 */
 
 #ifndef DAL_H
@@ -57,8 +147,6 @@ using namespace std;
    if creating python bindings
 */
 #ifdef PYTHON
-// #include <boost/python.hpp>
-// #include <boost/python/list.hpp>
 #include <boost/python.hpp>
 #include <boost/python/object.hpp>
 #include <boost/python/list.hpp>
@@ -91,7 +179,9 @@ const string MSCASATYPE = "MSCASA";
 
 const int SUCCESS = 0;
 const int FAIL = 1;
+// CHUNK_SIZE arbitrarily chosen, more research needed on this feature
 const int CHUNK_SIZE = 5000;
+
 const short MAX_COL_NAME_SIZE = 256;
 
 const string dal_CHAR = "dalCHAR";

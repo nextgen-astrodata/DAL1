@@ -21,16 +21,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*!
-  \file dalData.h
-  
-  \ingroup DAL
-
-  \author Joseph Masters
-
-  \date 09-05-07
-*/
-
 #ifndef DALDATA_H
 #include "dalData.h"
 #endif

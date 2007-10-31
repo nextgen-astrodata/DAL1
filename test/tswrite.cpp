@@ -23,6 +23,8 @@
   
   \ingroup DAL
 
+  \brief Test program to write time-series data into an HDF5 file.
+
   \author Joseph Masters
 
   \date 06-Feb-07

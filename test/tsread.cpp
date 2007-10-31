@@ -23,6 +23,8 @@
   
   \ingroup DAL
  
+  \brief Test program read time-series data from an HDF5 file.
+
   \author Joseph Masters
 
   \date 12-04-06

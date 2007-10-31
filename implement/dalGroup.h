@@ -49,6 +49,8 @@
   \class dalGroup
   
   \ingroup DAL
+
+  \brief Represents a group of tables, arrays or sub-groups.
   
   \author Joseph Masters
 */

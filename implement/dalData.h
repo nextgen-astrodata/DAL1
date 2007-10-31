@@ -22,9 +22,11 @@
  ***************************************************************************/
 
 /*!
-  \file dalData.h
+  \class dalData
   
   \ingroup DAL
+
+  \brief Object holding data from a header key, table, column or array.
 
   \author Joseph Masters
 

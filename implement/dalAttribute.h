@@ -31,6 +31,8 @@
 /*!
   \class dalAttribute
 
+  \brief Represents a header keyword or attribute.
+
   \ingroup DAL
 
   \author Joseph Masters

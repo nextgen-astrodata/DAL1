@@ -18,16 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*!
-  \file timeseries.h
-  
-  \ingroup DAL
- 
-  \author Lars B&auml;hren
-
-  \date 2007/03/20
-*/
-
 #ifndef TIMESERIES_H
 #define TIMESERIES_H
 

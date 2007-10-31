@@ -25,6 +25,9 @@
 #include "dalArray.h"
 #endif
 
+/*!
+  \brief Extend an array.
+*/
 void dalArray::extend( vector<int> newdims )
 {
    unsigned int rank = newdims.size();

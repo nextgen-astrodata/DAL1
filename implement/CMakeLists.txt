@@ -77,7 +77,6 @@ set (dal_sources
   dalGroup.cpp
   dalRow.cpp
   dalTable.cpp
-#  l_member.cpp
   dalLopesEvent.cpp
   )
 

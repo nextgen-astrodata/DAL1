@@ -44,6 +44,8 @@
   \class dalColumn
   
   \ingroup DAL
+
+  \brief Represents a table column.
   
   \author Joseph Masters
 */

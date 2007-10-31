@@ -21,12 +21,6 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-/*!
-	\file pywrapper.cpp
-	\ingroup DAL
-	\author Joseph Masters
-*/
-
 #include <boost/python.hpp>
 // #include <num_util.h>
 

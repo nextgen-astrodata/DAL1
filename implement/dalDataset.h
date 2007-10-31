@@ -49,9 +49,13 @@
   
   \ingroup DAL
 
+  \brief Represents the file containing all sub-structures (tables, arrays, etc.)
+
   \author Joseph Masters
 
   \date 12-04-06
+
+  <h3>Synopsis</h3>
 
   The dalDataset is the highest level container for dalData.  It may
   consist of one or more files on disk, each of which contain multiple tables, 

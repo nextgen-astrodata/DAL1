@@ -33,9 +33,11 @@
 #endif
 
 /*!
-  \class dalIntArray
+  \class dalArray
   
   \ingroup DAL
+
+  \brief Represents an n-dimensional array.
 
   \author Joseph Masters
 

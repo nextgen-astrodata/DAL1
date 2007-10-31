@@ -22,9 +22,9 @@
  ***************************************************************************/
 
 /*!
-  \file dalBaseTypes.h
-  
   \ingroup DAL
+
+  \brief Basic type definitions and byte swapping routines.
 
   \author Joseph Masters
 

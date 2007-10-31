@@ -23,6 +23,8 @@
   
   \ingroup DAL
 
+  \brief Test program for writing measurement set data into an HDF5 file.
+
   \author Joseph Masters
 
   \date 12-04-06

@@ -22,9 +22,13 @@
  ***************************************************************************/
 
 /*!
-  \file convert.h
-
+  \class BadConversion
+  
   \ingroup DAL
+  
+  \author Joseph Masters
+
+  \brief Error class for failure when converting a variable into a string.
 */
 
 #include <iostream>
@@ -34,11 +38,11 @@
 #include <stdexcept>
 
 /*!
-  \class BadConversion
-  
-  \ingroup DAL
-  
-  \author Joseph Masters
+*/
+
+/*!
+  Represents an object that is thrown when the stringify function fails to
+  turn a variable into a string.
 */
 class BadConversion : public std::runtime_error {
 public:
@@ -47,6 +51,10 @@ public:
     { }
 };
 
+/*!
+  Stringify is a templated function that attemps to turn a variable
+  into a string.
+*/
 template<typename T>
 inline std::string stringify(const T& x)
 {

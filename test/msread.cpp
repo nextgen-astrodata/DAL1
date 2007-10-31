@@ -23,6 +23,8 @@
   
   \ingroup DAL
 
+  \brief Test program for reading in measurement set data stored as HDF5.
+
   \author Joseph Masters
 
   \date 12-04-06

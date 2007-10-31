@@ -32,13 +32,6 @@
 #include "dalFilter.h"
 #endif
 
-/*!
-  \class dalRow
-  
-  \ingroup DAL
-  
-  \author Joseph Masters
-*/
 class dalRow {
 
 	long index; /// row name

@@ -23,6 +23,8 @@
   
   \ingroup DAL
  
+  \brief Test program for basic DAL functionality.
+
   \author Joseph Masters
 
   \date 12-04-06

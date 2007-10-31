@@ -22,9 +22,9 @@
  ***************************************************************************/
 
 /*!
-  \file dalTable.h
-  
   \ingroup DAL
+
+  \brief Object representing a table within a dataset.
 
   \author Joseph Masters
 
