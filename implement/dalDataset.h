@@ -128,13 +128,29 @@ class dalDataset{
 				vector<int>cdims);
 
 
-	/// create a new table in the root group
+	/*!
+	  \brief create a new table in the root group
+	  
+	  \param tablename -- 
+
+	  \return dalTable -- 
+	*/
 	dalTable * createTable( string tablename );
-	/// create a new table in a specified group
+	/*!
+	  \brief create a new table in a specified group
+	  \param tablename -- 
+	  \param groupname -- 
+	  \return dalTable -- 
+	*/
 	dalTable * createTable( string tablename, string groupname );
 
 //	int createImage();  /// create a new table outside of a group
-	dalGroup * createGroup( char* groupname );  /// create a new group
+	/*!
+	  \brief Create a new group
+	  \param groupname -- 
+	  \return dalGroup -- 
+	*/
+	dalGroup * createGroup( char* groupname );
 //	int getName();  /// retrieve the name of the dataset
 //	int rename();  /// rename the dataset
 	dalTable * openTable( string tablename );  /// return a dalTable object
