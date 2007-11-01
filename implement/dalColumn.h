@@ -51,25 +51,25 @@
 */
 class dalColumn {
 
-	string filetype;  /// "HDF5", "MSCASA" or "FITS"; for example
-	string name; /// column name
-	string dal_datatype;  /// column datatype
-	int size; /// datatype size
-	int totsize; /// total column size
-	vector<dalAttribute> attributes; /// list of column attributes
-//	dalFilter filter; /// filter associated with column
-	unsigned int num_of_rows;  /// number of rows in the column
+	string filetype;  //!< "HDF5", "MSCASA" or "FITS"; for example
+	string name; //!< column name
+	string dal_datatype;  //!< column datatype
+	int size; //!< datatype size
+	int totsize; //!< total column size
+	vector<dalAttribute> attributes; //!< list of column attributes
+//	dalFilter filter; //!< filter associated with column
+	unsigned int num_of_rows;  //!< number of rows in the column
 
 	// hdf5-specific variables
 	hid_t coltype;
-	herr_t  status;  /// hdf5 call return status
+	herr_t  status;  //!< hdf5 call return status
 
-	dalData * data_object;  /// object to hold column data
+	dalData * data_object;  //!< object to hold column data
 
 #ifdef WITH_CASA
 	// casa-specific variables
 
-	string casa_datatype;  /// column datatype
+	string casa_datatype;  //!< column datatype
 
 	casa::ColumnDesc casa_col_desc;
 	casa::ROTableColumn * casa_column;
@@ -117,12 +117,12 @@ public:
 	unsigned int nrows();
 	dalData * data();
 //  	dalData * data(/*int cell1=0, int cell2=0, int cell3=0*/);
-//	int getNumber();  /// return the index of a column
+//	int getNumber();  //!< return the index of a column
 // 	void addArray();
-//	int insertAfter(); /// insert a new column after column specified by name or number
-//	int insertBefore(); /// insert a new column before column specified by name or number
-//	int replace(); /// replace a column with a new one
-//	int remove();  /// remove a column
+//	int insertAfter(); //!< insert a new column after column specified by name or number
+//	int insertBefore(); //!< insert a new column before column specified by name or number
+//	int replace(); //!< replace a column with a new one
+//	int remove();  //!< remove a column
 /************************************************************************
  *
  * The following functions are boost wrappers to allow some previously

@@ -57,15 +57,15 @@
 class dalGroup{
 
  protected:
-	void * file; /// can be HDF5File, FITS, MS
-	string name; /// group name
+	void * file; //!< can be HDF5File, FITS, MS
+	string name; //!< group name
 	void * group;
-	vector<dalTable> tables; /// list of tables within groups
-	vector<dalAttribute> attributes; /// list of group attributes
-	dalFilter filter; /// filter associated with group
-	hid_t file_id; /// hdf5 file_id
-	hid_t group_id; /// hdf5 group_id
-	herr_t	status; /// hdf5 return status
+	vector<dalTable> tables; //!< list of tables within groups
+	vector<dalAttribute> attributes; //!< list of group attributes
+	dalFilter filter; //!< filter associated with group
+	hid_t file_id; //!< hdf5 file_id
+	hid_t group_id; //!< hdf5 group_id
+	herr_t	status; //!< hdf5 return status
 
 	dalGroup * subgroup;
 	
@@ -101,14 +101,14 @@ class dalGroup{
 
 	/// return the group id
 	hid_t getId();
-//	void listTables();  /// print a list of table names within the group
-//	int getTable();  /// retrieve a dalTable by name
-//	int getTableNumber(); /// retrieve a dalTable by index
-//	int advanceTable(); /// sequentially step through the tables in a group
-//	int rename();  /// rename a group
-//	int remove(); /// delete a group
-//	void listAttributes(); /// return a list of group attributes
-//	int getAttribute(); /// return a dalAttribute object retrieved by name
+//	void listTables();  //!< print a list of table names within the group
+//	int getTable();  //!< retrieve a dalTable by name
+//	int getTableNumber(); //!< retrieve a dalTable by index
+//	int advanceTable(); //!< sequentially step through the tables in a group
+//	int rename();  //!< rename a group
+//	int remove(); //!< delete a group
+//	void listAttributes(); //!< return a list of group attributes
+//	int getAttribute(); //!< return a dalAttribute object retrieved by name
 	void getAttributes();
 	void printAttribute( string attrname );
 	void * getAttribute( string attrname );

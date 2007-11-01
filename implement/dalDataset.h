@@ -63,18 +63,18 @@
 */
 class dalDataset{
 
-	void * file;  /// can be HDF5File, FITS, MS
-	string type;  /// "HDF5", "MSCASA" or "FITS"; for example
-	string name;  /// dataset name
-	vector<string> files;  /// list of files
-	vector<dalTable> tables; /// list of tables
-	vector<dalGroup> groups; /// list of groups
-	vector<dalAttribute> attrs;  /// list of attributes
+	void * file;  //!< can be HDF5File, FITS, MS
+	string type;  //!< "HDF5", "MSCASA" or "FITS"; for example
+	string name;  //!< dataset name
+	vector<string> files;  //!< list of files
+	vector<dalTable> tables; //!< list of tables
+	vector<dalGroup> groups; //!< list of groups
+	vector<dalAttribute> attrs;  //!< list of attributes
 	
-	dalFilter * filter;	/// dataset filter
+	dalFilter * filter;	//!< dataset filter
 
 	// hdf5-specific variables
-	hid_t h5fh;   /// hdf5 file handle
+	hid_t h5fh;   //!< hdf5 file handle
 
 #ifdef WITH_CASA
 	// casa-specific variables
@@ -95,13 +95,13 @@ class dalDataset{
 	*/
   	dalDataset( char * name, string filetype );
 	
-	int open( char * datasetname ); /// open the dataset
-	int close(); /// close the dataset
+	int open( char * datasetname ); //!< open the dataset
+	int close(); //!< close the dataset
 	 /// return a list of filenames contained within the dataset
 //	int getfiles();
-//	int checkaccess(); /// check read/write access of specified file
-//	int copy(); /// create an exact copy of the data
-//	int create();  /// define basic characteristics of a new dataset
+//	int checkaccess(); //!< check read/write access of specified file
+//	int copy(); //!< create an exact copy of the data
+//	int create();  //!< define basic characteristics of a new dataset
 	/// create a new array in the root group
 	dalArray * createArray(
 				string arrayname,
@@ -144,32 +144,32 @@ class dalDataset{
 	*/
 	dalTable * createTable( string tablename, string groupname );
 
-//	int createImage();  /// create a new table outside of a group
+//	int createImage();  //!< create a new table outside of a group
 	/*!
 	  \brief Create a new group
 	  \param groupname -- 
 	  \return dalGroup -- 
 	*/
 	dalGroup * createGroup( char* groupname );
-//	int getName();  /// retrieve the name of the dataset
-//	int rename();  /// rename the dataset
-	dalTable * openTable( string tablename );  /// return a dalTable object
+//	int getName();  //!< retrieve the name of the dataset
+//	int rename();  //!< rename the dataset
+	dalTable * openTable( string tablename );  //!< return a dalTable object
 	void setFilter( string columns );
 	void setFilter( string columns, string conditions );
 	dalTable * openTable( string tablename, string groupname );
 
-	dalGroup * openGroup( string groupname );  /// return a dalGroup object
-//	int listGroups();  /// return a list of groups within the dataset
+	dalGroup * openGroup( string groupname );  //!< return a dalGroup object
+//	int listGroups();  //!< return a list of groups within the dataset
 // return a list of tables not contained in any groups
 	void listTables();
 // list general attributes attached to the dataset
 //	int listAttributes();;
-//	int remove();  /// delete the file and all data within it
-//	int advanceTable();  /// sequentially step through the dataset tables
-//	int advanceGroup();  /// sequentially step through the dataset groups
-//	int getTableNumber();  /// return a dalTable by index
-//	int getGroupNumber(); /// return a dalGroup by index
-	string getType(); /// retrieve the dataset type
+//	int remove();  //!< delete the file and all data within it
+//	int advanceTable();  //!< sequentially step through the dataset tables
+//	int advanceGroup();  //!< sequentially step through the dataset groups
+//	int getTableNumber();  //!< return a dalTable by index
+//	int getGroupNumber(); //!< return a dalGroup by index
+	string getType(); //!< retrieve the dataset type
 
 /************************************************************************
  *

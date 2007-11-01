@@ -48,13 +48,13 @@
 
 class dalArray{
 
-	int rank;        /// number of dimensions
-	string datatype; /// array datatype identifier
-	herr_t status;   /// hdf5 return status
+	int rank;        //!< number of dimensions
+	string datatype; //!< array datatype identifier
+	herr_t status;   //!< hdf5 return status
   protected:
-	hid_t array_id;  /// hdf5 object id for array
-	hid_t file_id;   /// hdf5 file_id
-	string name;     /// name of the array
+	hid_t array_id;  //!< hdf5 object id for array
+	hid_t file_id;   //!< hdf5 file_id
+	string name;     //!< name of the array
 
   public:
 	void getAttributes();

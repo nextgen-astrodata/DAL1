@@ -34,11 +34,11 @@
 
 class dalRow {
 
-	long index; /// row name
-	dalFilter filter; /// filter associated with row
+	long index; //!< row name
+	dalFilter filter; //!< filter associated with row
 	
 public:
-	void setIndex();  /// set row index
-	void getIndex();  /// get row index
+	void setIndex();  //!< set row index
+	void getIndex();  //!< get row index
 };
 #endif

@@ -52,9 +52,9 @@ There will also be a way for the developer to get access to the c-array,
 exactly as it is stored.
 */
 class dalData{
-	string datatype;  /// i.e. "dal_COMPLEX", "dal_INT", "dal_FLOAT"
-	string filetype;  /// i.e. "MSCASA", "FITS", "HDF5"
-    string array_order; /// i.e. "fortran", "c"
+	string datatype;  //!< i.e. "dal_COMPLEX", "dal_INT", "dal_FLOAT"
+	string filetype;  //!< i.e. "MSCASA", "FITS", "HDF5"
+    string array_order; //!< i.e. "fortran", "c"
 
 public:
 
@@ -67,7 +67,7 @@ public:
 	long nrows;
 	string get_datatype();
 
-	dalData();  /// default constructor
+	dalData();  //!< default constructor
 
 	/// constructor with a specific file type
 	dalData(string, string, vector<int>, long);
@@ -77,7 +77,7 @@ public:
 	void * get(long idx1=-1, long idx=-1, long idx3=-1);
 	void setData(void *);
 	
-	void toFloat();  /// converts array values to floats
+	void toFloat();  //!< converts array values to floats
 	
 #ifdef PYTHON
 	bpl::numeric::array get_boost();
