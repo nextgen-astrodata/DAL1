@@ -38,8 +38,7 @@ if ( uvw_col.isArray() ):
 print "shape: " + str(uvw_col.shape())
 print "number of dims: " + str(uvw_col.ndims())
 print "datatype: " + str(uvw_col.getDataType())
-uvw_data = uvw_col.data()
-foo = uvw_data.get()
+foo = uvw_col.data()
 print foo.shape
 #plot(foo[0],foo[1],'r.',-(foo[0]),-(foo[1]),'b.')
 #show()
@@ -61,7 +60,6 @@ print "number of dims: " + str(time_col.ndims())
 print "datatype: " + str(time_col.getDataType())
 time_data = time_col.data()
 print type(time_data)
-foo = time_data.get()
 #plot(foo)
 #show()
 print '\n'
@@ -76,10 +74,8 @@ print "shape: " + str(a1_col.shape())
 print "number of dims: " + str(a1_col.ndims())
 print "datatype: " + str(a1_col.getDataType())
 a1_data = a1_col.data()
-print type(a1_data)
-foo = a1_data.get()
 for p in range(5):
-	print foo[p]
+	print a1_data[p]
 print '\n'
 
 
@@ -92,8 +88,7 @@ if ( data_col.isArray() ):
 print "shape: " + str(data_col.shape())
 print "number of dims: " + str(data_col.ndims())
 print "datatype: " + str(data_col.getDataType())
-data_data = data_col.data()
-foo = data_data.get()
+foo = data_col.data()
 print foo.shape
 foo[0].shape
 for i in range(3):

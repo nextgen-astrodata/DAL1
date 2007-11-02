@@ -1413,7 +1413,7 @@ void * dalTable::getAttribute( string attrname ) {
 
    if ( type == H5TYPE )
    {
-	hsize_t * dims;
+	hsize_t dims;
 	H5T_class_t type_class;
 	size_t type_size;
 
@@ -1428,28 +1428,26 @@ void * dalTable::getAttribute( string attrname ) {
 	H5LTget_attribute_ndims( file_id, fullname.c_str(),
 	  attrname.c_str(), &rank );
 
-	dims = (hsize_t *)malloc(rank * sizeof(hsize_t));
-
 	H5LTget_attribute_info( file_id, fullname.c_str(), attrname.c_str(),
-				dims, &type_class, &type_size );
+				&dims, &type_class, &type_size );
 
 	if ( H5T_FLOAT == type_class ) {
-		double data[ *dims ];
+		void * data;
 		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), 
 		  attrname.c_str(),
 			 H5T_NATIVE_DOUBLE, data) )
 		  return NULL;
 		else
-		  return data;
+		  return reinterpret_cast<double*>(data);
 	}
 	else if ( H5T_INTEGER == type_class ) {
-		int data[*dims];
+		void * data;
 		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(),
 		  attrname.c_str(),
 			H5T_NATIVE_INT, data) )
 		  return NULL;
 		else
-		  return data;
+		  return reinterpret_cast<int*>(data);
 	}
 	else if ( H5T_STRING == type_class ) {
 		char* data;
