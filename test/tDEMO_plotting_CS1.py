@@ -4,7 +4,7 @@
 ## \brief Read, pre-process and plot data from a CS-1 data set
 ## \ingroup DAL
 
-import dal
+import pydal as dal
 from pylab import *
 import numpy
 from rebin import *
