@@ -311,10 +311,14 @@ void dalTable::getName()
    }
 }
 
-/****************************************************************
+/**************************************************************************//*!
+ *
  *  Create a new table object
  *
- *****************************************************************/
+ *  @param filetype The type to work with.
+ *         Typically "MSCASA" for this function.
+ *
+ *****************************************************************************/
 dalTable::dalTable( string filetype )
 {
     filter = new dalFilter;

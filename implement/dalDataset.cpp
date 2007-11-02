@@ -216,24 +216,16 @@ void dalDataset::listTables()
    }
 }
 
-/****************************************************************
- *  Constructor for a new dataset (file)
+/*!
  *
- *****************************************************************/
+ *  Create a a new dataset (file)
+ */
 dalDataset::dalDataset( char * name, string filetype )
 {
    type = filetype;  // set the global class variable: type
    filter = new dalFilter;
-   if ( filetype == MSCASATYPE )
-   {
-#ifdef WITH_CASA
-	ms = new casa::MeasurementSet( name );
-	file = &ms;
-	ms_reader = new casa::MSReader( *ms );
-#else
-	cout << "CASA support not enabled." << endl;
-#endif
-   } else if ( filetype == H5TYPE )
+
+   if ( filetype == H5TYPE )
    {
 
 	h5fh = H5Fcreate(name, H5F_ACC_TRUNC, H5P_DEFAULT,
@@ -249,8 +241,7 @@ dalDataset::dalDataset( char * name, string filetype )
    }
    else {
    	cout << "(dalDataset::dalDataset) Data format \'" << type
-             << "\' not supported." << endl;
-   	exit(99);
+             << "\' not supported for this operation." << endl;
    }
 }
 
