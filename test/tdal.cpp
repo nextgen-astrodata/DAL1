@@ -46,7 +46,7 @@
 #include <dalGroup.h>
 #endif
 
-#define FILENAME "./tdal_test.h5"
+#define FILENAME "tdal_test.h5"
 
 typedef struct rowStruct {
 	float time;
@@ -54,9 +54,6 @@ typedef struct rowStruct {
 	float antenna1;
 } rowStruct;
 
-typedef struct writebuffer {
-	rowStruct rs[3];
-} writebuffer;
 
 /*! sample doxygen comment in dal.cpp */
 int main()
@@ -65,17 +62,22 @@ int main()
 // create a dataset
 
    dalDataset * ds;
+   cout << "Creating a new HDF5 dataset called " << FILENAME << "... ";
    ds = new dalDataset( FILENAME, "HDF5" );
+   cout << "done." << endl;
 
 //    ds->setFilter("A,B,C","where B=1");
+   cout << "\nCreating groupA... ";
    dalGroup * groupA = ds->createGroup( "groupA" );
+   cout << "done." << endl;
+
+   cout << "Creating groupB... ";
    dalGroup * groupB = ds->createGroup( "groupB" );
+   cout << "done." << endl;
+
+   cout << "Creating groupC... ";
    dalGroup * groupC = ds->createGroup( "groupC" );
-
-   dalTable * table1 = ds->createTable( "table1", "groupA" );
-//   dalTable * table2 = ds->createTable( "table2", "groupA" );
-//   dalTable * table3 = ds->createTable( "table3", "groupB" );
-
+   cout << "done." << endl;
 
    // define dimensions of array
    vector<int> dims;
@@ -88,23 +90,47 @@ int main()
 	idata[gg] = gg;
 
    vector<int> cdims;
-   dalArray * iarray = ds->createIntArray( "int_array", dims, idata, cdims );
 
+   cout << "\nCreating an integer array with dimensions 4x5x6... ";
+   dalArray * iarray = ds->createIntArray( "int_array", dims, idata, cdims );
+   cout << "done." << endl;
+
+   cout << "Creating an floating point array with dimensions 4x5x6... ";
    float fdata[4*5*6];
    for (int gg=0; gg<(4*5*6); gg++)
 	fdata[gg] = rand();
    dalArray * farray = ds->createFloatArray( "float_array", dims, fdata, cdims );
+   cout << "done." << endl;
 
+   cout << "Creating a complex floating point array with dimensions 4x5x6... ";
    complex<float> * cdata = new complex<float>[ 4*5*6 ];
    for (int gg=0; gg<(4*5*6); gg++) {
 	cdata[ gg ] = 0;
    }
    dalArray * carray = ds->createComplexArray( "complex_array", dims, cdata, cdims );
    delete cdata;
+   cout << "done." << endl;
 
-   table1->addColumn( "TIME", dal_FLOAT );
-   table1->addColumn( "UVW", dal_FLOAT, 3 );
-   table1->addColumn( "ANTENNA1", dal_FLOAT );
+   cout << "\nCreating table 1 in groupA... ";
+   dalTable * table1 = ds->createTable( "table1", "groupA" );
+   cout << "done." << endl;
+
+   string colname;
+
+   colname = "TIME";
+   cout << "Adding float column " << colname << " to table1... ";
+   table1->addColumn( colname, dal_FLOAT );
+   cout << "done." << endl;
+
+   colname = "UVW";
+   cout << "Adding float array column " << colname << " to table1... ";
+   table1->addColumn( colname, dal_FLOAT, 3 );
+   cout << "done." << endl;
+
+   colname = "ANTENNA1";
+   cout << "Adding float column " << colname << " to table1... ";
+   table1->addColumn( colname, dal_FLOAT );
+   cout << "done." << endl;
 
    rowStruct rs;
 
@@ -113,32 +139,35 @@ int main()
    rs.uvw[1] = 1;
    rs.uvw[2] = 1;
    rs.antenna1 = 1;
-   table1->appendRow(&rs);
-   table1->appendRow(&rs);
-   table1->appendRow(&rs);
-   table1->appendRow(&rs);
-   table1->appendRow(&rs);
-   table1->appendRow(&rs);
+
+   int count = 5;
+   cout << "Appending " << count << " rows to table1... ";
+   for (int xx=0; xx<count; xx++)
+     table1->appendRow(&rs);
+   cout << "done." << endl;
+
    float md = 3;
    float mi = 5;
-   table1->writeDataByColNum( &md, 0, 0 );
-   table1->writeDataByColNum( &md, 0, 1 );
-   table1->writeDataByColNum( &md, 0, 2 );
-   table1->writeDataByColNum( &mi, 2, 0 );
-   table1->writeDataByColNum( &mi, 2, 1 );
-   table1->writeDataByColNum( &mi, 2, 2 );
-/*   table2->addColumn( "col1", dal_UINT );   table2->addColumn( "col2", dal_STRING );
-   table2->addColumn( "col3", dal_DOUBLE );
+   count = 3;
+   int colnum = 0;
+   cout << "Overwriting first " << count << " rows of column " <<
+     colnum << " in table1... ";
+   for (int xx=0; xx<count; xx++)
+     table1->writeDataByColNum( &md, colnum, xx );
+   cout << "done." << endl;
 
-   table3->addColumn( "col1", dal_INT );
-   table3->addColumn( "col2", dal_INT );
-   table3->addColumn( "col3", dal_INT );*/
+   count = 3;
+   colnum = 2;
+   cout << "Overwriting first " << count << " rows of column " <<
+     colnum << " in table1... ";
+   for (int xx=0; xx<count; xx++)
+     table1->writeDataByColNum( &mi, 2, 0 );
+   cout << "done." << endl;
+
+   cout << "\nClosing dataset... ";
    ds->close();
-/*
-   delete table1;
-   delete table2;
-   delete table3;
-*/
+   cout << "done." << endl;
+
    delete iarray;
    delete farray;
    delete carray;
@@ -147,7 +176,7 @@ int main()
    delete groupC;
    delete ds;
 
-   cout << "SUCCESS" << endl;
+   cout << "\nSUCCESS" << endl;
    return SUCCESS;
 }
 
