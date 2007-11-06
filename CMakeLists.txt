@@ -124,7 +124,6 @@ endif (NOT HAVE_PYTHON OR NOT HAVE_BOOST)
 ## header files of the DAL itself
 
 include_directories (
-#  ${DAL_SOURCE_DIR}
   ${DAL_SOURCE_DIR}/implement
   ${DAL_SOURCE_DIR}/test
   )
@@ -133,31 +132,33 @@ include_directories (
 
 if (PYTHON_INCLUDES)
   include_directories (${PYTHON_INCLUDES})
+else (PYTHON_INCLUDES)
+  message (STATUS "[DAL] Missing Python header files!")
 endif (PYTHON_INCLUDES)
 
-if (HAVE_BOOST)
+if (BOOST_INCLUDES)
   include_directories (${BOOST_INCLUDES})
-else (HAVE_BOOST)
-  message (STATUS "[dal] Missing Boost header files!")
-endif (HAVE_BOOST)
+else (BOOST_INCLUDES)
+  message (STATUS "[DAL] Missing Boost header files!")
+endif (BOOST_INCLUDES)
 
-if (HAVE_CASACORE)
+if (CASACORE_INCLUDES)
   include_directories (${CASACORE_INCLUDES})
-else (HAVE_CASACORE)
-  message (STATUS "[dal] Missing casacore header files!")
-endif (HAVE_CASACORE)
+else (CASACORE_INCLUDES)
+  message (STATUS "[DAL] Missing casacore header files!")
+endif (CASACORE_INCLUDES)
 
-if (HAVE_CFITSIO)
+if (CFITSIO_INCLUDES)
   include_directories (${CFITSIO_INCLUDES})
-else (HAVE_CFITSIO)
-  message (STATUS "[dal] Missing CFITSIO header files!")
-endif (HAVE_CFITSIO)
+else (CFITSIO_INCLUDES)
+  message (STATUS "[DAL] Missing CFITSIO header files!")
+endif (CFITSIO_INCLUDES)
 
-if (HAVE_HDF5)
+if (HDF5_INCLUDES)
   include_directories (${HDF5_INCLUDES})
-else (HAVE_HDF5)
-  message (STATUS "[dal] Missing HDF5 header files!")
-endif (HAVE_HDF5)
+else (HDF5_INCLUDES)
+  message (STATUS "[DAL] Missing HDF5 header files!")
+endif (HDF5_INCLUDES)
 
 ## -----------------------------------------------------------------------------
 ## Subdirectories
