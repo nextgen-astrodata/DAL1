@@ -25,6 +25,7 @@ set (tests
   tdal
   tdal_fits
   tpulsar_dal
+  tbb_reader
   )
 
 foreach (src ${tests})

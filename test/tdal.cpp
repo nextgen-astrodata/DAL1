@@ -55,7 +55,6 @@ typedef struct rowStruct {
 } rowStruct;
 
 
-/*! sample doxygen comment in dal.cpp */
 int main()
 {
 
@@ -161,7 +160,7 @@ int main()
    cout << "Overwriting first " << count << " rows of column " <<
      colnum << " in table1... ";
    for (int xx=0; xx<count; xx++)
-     table1->writeDataByColNum( &mi, 2, 0 );
+     table1->writeDataByColNum( &mi, colnum, xx );
    cout << "done." << endl;
 
    cout << "\nClosing dataset... ";
