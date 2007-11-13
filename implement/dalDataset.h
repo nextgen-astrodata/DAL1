@@ -49,11 +49,10 @@
   
   \ingroup DAL
 
-  \brief Represents the file containing all sub-structures (tables, arrays, etc.)
+  \brief Represents the file containing all sub-structures
+         (tables, arrays, etc.)
 
   \author Joseph Masters
-
-  \date 12-04-06
 
   <h3>Synopsis</h3>
 
@@ -73,103 +72,183 @@ class dalDataset{
 	
 	dalFilter * filter;	//!< dataset filter
 
-	// hdf5-specific variables
 	hid_t h5fh;   //!< hdf5 file handle
 
 #ifdef WITH_CASA
-	// casa-specific variables
-	casa::MeasurementSet * ms;
-	casa::MSReader * ms_reader;
-	casa::Vector<casa::String> ms_tables;
+	casa::MeasurementSet * ms; //!< CASA measurement set pointer
+	casa::MSReader * ms_reader; //!< CASA measurement set reader pointer
+	casa::Vector<casa::String> ms_tables; //!< vector of CASA MS tables
 #endif
 
   public:
-  	/// The constructor
+  	/*!
+	  \brief The dataset object constructor
+	 */
   	dalDataset();
-	/// The destructor
+
+	/*!
+	  \brief The dataset object destructor
+	 */
 	~dalDataset();
 	
-	/// Another constructor with two arguments
-	/**	\param a A charachter string
-		\param b Another string
+	/*!
+	  \brief Another constructor with two arguments.
+      \param name The name of the dataset to open.
+	  \param filetype Type of file to open ("HDF5", "MSCASA", etc.).
 	*/
   	dalDataset( char * name, string filetype );
 	
-	int open( char * datasetname ); //!< open the dataset
-	int close(); //!< close the dataset
-	 /// return a list of filenames contained within the dataset
-//	int getfiles();
-//	int checkaccess(); //!< check read/write access of specified file
-//	int copy(); //!< create an exact copy of the data
-//	int create();  //!< define basic characteristics of a new dataset
-	/// create a new array in the root group
+	/*!
+	  \brief Open the dataset.
+	  \return Zero if successful.  Non-zero on failure.
+     */
+	int open( char * datasetname );
+
+	/*!
+	  \brief Close the dataset.
+	  \return Zero if successful.  Non-zero on failure.
+     */
+	int close();
+
+	/*!
+	  \brief Create a new array in the root group.
+	  \param arrayname The name of the array you want to create.
+      \param data_object A pointer to a data object containing the intitial
+						 data you want to include in the array.
+	  \return dalArray * pointer to an array object.
+     */
 	dalArray * createArray(
 				string arrayname,
 				dalData * data_object);
+				
+	/*!
+	  \brief Create a new static integer array in the root group.
+	  \param arrayname The name of the array you want to create.
+      \param dims A vector containing the dimensions of the array.
+	  \param data An array of integer values.
+	  \return dalArray * pointer to an array object.
+     */
 	dalArray * createIntArray(
 				string arrayname,
 				vector<int> dims,
 				int data[]);
+
+	/*!
+	  \brief Create a new extendible integer array in the root group.
+	  \param arrayname The name of the array you want to create.
+      \param dims A vector containing the dimensions of the array.
+	  \param data An array of integer values.
+      \param cdims A vector a chunk dimensions (necessary for extending an
+	               hdf5 dataset).
+	  \return dalArray * pointer to an array object.
+     */
 	dalArray * createIntArray(
 				string arrayname,
 				vector<int> dims,
 				int data[],
 				vector<int>cdims);
+
+	/*!
+	  \brief Create a new extendible floating point array in the root group.
+	  \param arrayname The name of the array you want to create.
+      \param dims A vector containing the dimensions of the array.
+	  \param data An array of floating point values.
+      \param cdims A vector a chunk dimensions (necessary for extending an
+	               hdf5 dataset).
+	  \return dalArray * pointer to an array object.
+     */
 	dalArray * createFloatArray(
 				string arrayname,
 				vector<int> dims,
 				float data[],
 				vector<int>cdims);
+
+	/*!
+	  \brief Create a new extendible complex floating point array in the
+	         root group.
+	  \param arrayname The name of the array you want to create.
+      \param dims A vector containing the dimensions of the array.
+	  \param data An array of complex floating point values.
+      \param cdims A vector a chunk dimensions (necessary for extending an
+	               hdf5 dataset).
+	  \return dalArray * pointer to an array object.
+     */
 	dalArray * createComplexArray(
 				string arrayname,
 				vector<int> dims,
-// 				vector< complex<float> > data,
 				complex<float> data[],
 				vector<int>cdims);
 
-
 	/*!
 	  \brief create a new table in the root group
-	  
-	  \param tablename -- 
-
-	  \return dalTable -- 
+	  \param tablename
+	  \return dalTable
 	*/
 	dalTable * createTable( string tablename );
+
 	/*!
 	  \brief create a new table in a specified group
-	  \param tablename -- 
-	  \param groupname -- 
-	  \return dalTable -- 
+	  \param tablename 
+	  \param groupname 
+	  \return dalTable 
 	*/
 	dalTable * createTable( string tablename, string groupname );
 
-//	int createImage();  //!< create a new table outside of a group
 	/*!
 	  \brief Create a new group
-	  \param groupname -- 
-	  \return dalGroup -- 
+	  \param groupname 
+	  \return dalGroup 
 	*/
 	dalGroup * createGroup( char* groupname );
-//	int getName();  //!< retrieve the name of the dataset
-//	int rename();  //!< rename the dataset
-	dalTable * openTable( string tablename );  //!< return a dalTable object
+
+    /*!
+	  \brief Open a table (that's not in a group) by name.
+      \param tablename The name of the table you want to open
+	  \return dalTable * A pointer to a table object.
+     */
+	dalTable * openTable( string tablename );
+
+    /*!
+	  \brief Set table filter
+	  \param columns A string containing a comma-separated list of columns to
+	                 include in a filtered dataset.
+	 */
 	void setFilter( string columns );
-	void setFilter( string columns, string conditions );
+
+    /*!
+	  \brief Set table filter
+	  \param columns A string containing a comma-separated list of columns to
+	                 include in a filtered dataset.
+	  \param conditions A string describing restraints on which rows are
+	                 included in an opened dataset.  For example: "time>100".
+	 */
+	void setFilter( string columns, string conditions ); //!< set table filter
+	
+	/*!
+	  \brief Open a table in a group.
+	  \param tablename The name of the table to open.
+	  \param groupname The name of the group containing the table.
+	  \return dalTable * A pointer to a table object.
+	 */
 	dalTable * openTable( string tablename, string groupname );
 
-	dalGroup * openGroup( string groupname );  //!< return a dalGroup object
-//	int listGroups();  //!< return a list of groups within the dataset
-// return a list of tables not contained in any groups
+	/*!
+	  \brief Open a group in a dataset
+	  \param groupname The name of the group to open
+	  \return dalGroup * A pointer to a group object.
+	 */
+	dalGroup * openGroup( string groupname );
+	
+	/*!
+	  \brief List the tables in a dataset.
+	 */
 	void listTables();
-// list general attributes attached to the dataset
-//	int listAttributes();;
-//	int remove();  //!< delete the file and all data within it
-//	int advanceTable();  //!< sequentially step through the dataset tables
-//	int advanceGroup();  //!< sequentially step through the dataset groups
-//	int getTableNumber();  //!< return a dalTable by index
-//	int getGroupNumber(); //!< return a dalGroup by index
-	string getType(); //!< retrieve the dataset type
+
+	/*!
+	  \brief Retrieve the dataset type ("HDF5", "MSCASA", etc.)
+	  \return A string describing the file format ("HDF5", "MSCASA", etc.)
+     */
+	string getType();
 
 /************************************************************************
  *
@@ -178,6 +257,7 @@ class dalDataset{
  *
  ************************************************************************/
 #ifdef PYTHON
+
 	// create[]Array wrappers
 	dalArray * cia_boost1(string arrayname, bpl::list dims, bpl::list data);
 	dalArray * cia_boost2(string arrayname, bpl::list dims, bpl::list data,
@@ -190,8 +270,6 @@ class dalDataset{
 				 bpl::list cdims );
 	dalArray * cfa_boost_numarray( string arrayname, bpl::list dims,
 			 bpl::numeric::array data, bpl::list cdims );
-
-// 	void sfe(bpl::numeric::array& y, int value);
 
 	bpl::numeric::array ria_boost( string arrayname );
 	bpl::numeric::array rfa_boost( string arrayname );
