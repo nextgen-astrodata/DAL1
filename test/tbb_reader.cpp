@@ -1,268 +1,157 @@
-/******************************************************************************
- *
- *  This file represents a Lofar Transient Buffer Board (TBB) data reader.
- * 
- *  Usage is:  tbb_reader <filename>
- *  Example:   tbb_reader tbb_cep_data_512_frames_rw.dat
- *
- *
- *  Sample output (transient mode):
- *
- *     Station Id:     11
- *     RSP Id:         0
- *     RCU Id:         0
- *     Sample Freq:    160 MHz
- *     Seq Number:     261632
- *     Time (s1970):   1171535717
- *     Sample Number:  61685760
- *     No. of Samps:   1024
- *     No. of Freqs.:  0
- *     CRC:            42269
- *     Samples (1):
- *     1,-1,5,1,1,10,1,2,-2,-4,-1,1,-5,10,11,-7,11,-3,0,-1,-1,4,4,0,6,10,-4,
- *     -2,1,-4,9,6,0,1,6,-2,-6,6,-4,6,12,-2,-3,12,-2,-6,7,-7,4,8,-5, ...
- *     Payload CRC: 3153134066
- *
- *  The program was tested on little-endian machines only.
- *
- *  Author:  Joseph Masters <jmasters at science dot uva dot nl>
- *  Created:  March 2007
- *
- ******************************************************************************/
+/***************************************************************************
+ *   Copyright (C) 2007 by Joseph Masters                                  *
+ *   jmasters@science.uva.nl                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 
-// hdf5 include files
+/*!
+  \file tswrite.cpp
+  
+  \ingroup DAL
+
+  \brief Test program to write time-series data into an HDF5 file.
+
+  \author Joseph Masters
+
+  \date 06-Feb-07
+*/
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
 #ifndef DAL_H
-#include <dal.h>
+#include "dal.h"
 #endif
 
 #ifndef DALDATASET_H
-#include <dalDataset.h>
+#include "dalDataset.h"
 #endif
 
 #ifndef DALGROUP_H
-#include <dalGroup.h>
+#include "dalGroup.h"
 #endif
 
-#define FILENAME "./tbb_output.h5"
+#ifndef TIMESERIES_H
+#include <timeseries.h>
+#endif
 
-// reading a complete binary file
-#include <iostream> // for cout
-#include <iomanip>  // for cout field width
-#include <fstream>  // for file handle
-#include <complex>  // for complex datatypes
-#include <time.h>   // for local time conversion
-
-// declare namespaces
-using namespace std;
-using std::complex;
-
-// define some global datatypes
-typedef unsigned int   UInt32;
-typedef unsigned short UInt16;
-typedef short           Int16;
-typedef int             Int32;
-typedef float         Float32;
-
-/****************************************************
- *
- * Function:  BigEndian()
- *
- * Returns:   bool
- * Purpose:   Determines if a system is big-endian.
- *
- ***************************************************/
-bool BigEndian( void )
+/*! doxygen comment in dal.cpp */
+int main(int argc, char *argv[])
 {
-  unsigned char SwapTest[2] = { 1, 0 };
 
-  if( *(short *) SwapTest == 1 ) {
-    //little endian
-    return false;
-  } else {
-    //big endian
-    return true;
+  // parameter check
+  if ( argc < 3 )
+  {
+     cout << endl << "Too few parameters..." << endl << endl;
+     cout << "The first parameter is the raw TBB input file name." << endl;
+     cout << "The second parameter is the dataset name." << endl;
+     cout << endl;
+     return FAIL;
   }
-}
 
-/****************************************************
- *
- * Function:  Int32Swap()
- *
- * Returns:   Int32
- * Purpose:   Reverses the bytes in a 32-bit integer.
- *
- ***************************************************/
-Int32 Int32Swap (int i)
-{
-  unsigned char b1, b2, b3, b4;
+  dalDataset * dataset;
+  if ( NULL == argv[3] )
+	  dataset = new dalDataset( argv[2], "HDF5" );
+  else
+	  dataset = new dalDataset( argv[2], argv[3] );
 
-  b1 = i & 255;
-  b2 = ( i >> 8 ) & 255;
-  b3 = ( i>>16 ) & 255;
-  b4 = ( i>>24 ) & 255;
+  //
+  /////////////////////////////////////////
+  // create the "Station" group
+  /////////////////////////////////////////
+  //
+  dalGroup * stationGroup = dataset->createGroup( "Station" );
 
-  return ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
-}
+  string telescope = "LOFAR";
+  string observer = "J.S. Masters";
+  string project = "Transients";
+  string observation_id = "1287";
+  string observation_mode = "TransientDetection";
+  string trigger_type = "Unknown";
+  double trigger_offset[1] = { 0 };
+  int triggered_antennas[1] = { 0 };
+  double beam_direction[2] = { 0, 0 };
 
-/****************************************************
- *
- * Function:  IntI6Swap()
- *
- * Returns:   short
- * Purpose:   Reverses the bytes in a 16-bit integer.
- *
- ***************************************************/
-short Int16Swap( short s )
-{
-  unsigned char b1, b2;
-  
-  b1 = s & 255;
-  b2 = (s >> 8) & 255;
+  // Add attributes to "Station" group
+  stationGroup->setAttribute_string("TELESCOPE", telescope );
+  stationGroup->setAttribute_string("OBSERVER", observer );
+  stationGroup->setAttribute_string("PROJECT", project );
+  stationGroup->setAttribute_string("OBS_ID", observation_id );
+  stationGroup->setAttribute_string("OBS_MODE", observation_mode );
+  stationGroup->setAttribute_string("TRIG_TYPE", trigger_type );
+  stationGroup->setAttribute_double("TRIG_OFST", trigger_offset );
+  stationGroup->setAttribute_int(   "TRIG_ANTS", triggered_antennas );
+  stationGroup->setAttribute_double("BEAM_DIR", beam_direction, 2 );
 
-  return (b1 << 8) + b2;
-}
+  //
+  /////////////////////////////////////////
+  // create ANTENNA table
+  /////////////////////////////////////////
+  //
+  dalTable * AntennaTable = dataset->createTable( "ANTENNA", "Station" );
 
-/****************************************************
- *
- * Function:  main(int argc, char* argv[])
- *
- * Returns:   int
- *            0 if success
- *            non-zero if failure
- *
- * Purpose:   MAIN
- *
- ***************************************************/
-int
-main (int argc, char *argv[])
-{
+  //
+  /////////////////////////////////////////
+  // read the RAW TBB input data
+  /////////////////////////////////////////
+  //
+	ifstream::pos_type size=0;		// buffer size
 
-	// declare an hdf5 file to store the tbb data
-	dalDataset * ds;
-	ds = new dalDataset( FILENAME, "HDF5" );
-
-	// If less than two arguments provided, print usage.
-	if ( 2 != argc )
-	{
-		cout << "Usage:  tbb_reader <filename>" << endl << endl;
-		exit(1);
-	}
-
-	// define some constants describing packet header sizes
-	const Int32 ETHEREAL_HEADER_LENGTH = 46;
-	const Int32 FIRST_EXTRA_HDR_LENGTH = 40;
-	const Int32 EXTRA_HDR_LENGTH = 16;
-
-	//
-	// Define something to hold the current buffer size.
-	// This will change before each read into memblock.
-	//
-	ifstream::pos_type size=0;
-	
-	// define a memory buffer
+	// define memory buffers
 	unsigned char * memblock=NULL;
 
-	// define a structure describing the TBB header
-	typedef struct TBB_Header {
-		unsigned char stationid;
-		unsigned char rspid;
-		unsigned char rcuid;
-		unsigned char sample_freq;
-		UInt32 seqnr;
-		Int32 time;
-		UInt32 sample_nr;
-		UInt16 n_samples_per_frame;
-		UInt16 n_freq_bands;
-		char bandsel[64];
-		Int16 spare;
-		UInt16 crc;
-	};
-	
-	// define a structure describing samples in
-	//   "transient mode"
-	typedef struct TransientSample {
-		Int16 value;
-	};
-
-	// define a structure describing samples in
-	//   "spectral mode"
-	typedef struct SpectralSample {
-		complex<Int16> value;
-	};
-
 	UInt32 payload_crc;
-	
+
 	// declare handle for the input file
 	fstream file (argv[1], ios::binary|ios::in);
 
-	// flag for the first sample in a packet
 	bool first_sample = true;
-
-	// endianness flag
 	bool bigendian = BigEndian();
-	
-	// begin reading the file
+
 	if (file.is_open())
 	{
-		// declare a few structure variables
 		TransientSample tran_sample;
-		SpectralSample 	spec_sample;
-		TBB_Header	header;
-		
+		SpectralSample spec_sample;
+		TBB_Header header;
 		size = ETHEREAL_HEADER_LENGTH;
-
-		// set the size of the memory block
 		memblock = new unsigned char [size];
-
-		// make sure to start at the beginning of the file
 		file.seekg (0, ios::beg);
+		int counter=0;
 
-		//if (DEBUG)
-		//  cout << "Size of header is " << sizeof(header) << " bytes." << endl;
-
-		int counter=0;  // initialize a loop counter
+		writebuffer wb;
 
 		// loop through the file
-		while ( !file.eof() )
-		{
-			counter++;  // increase the loop counter
-
+		while ( !file.eof() ) {
+			counter++;
 			// skip 46-byte ethereal header (temporary)
 			//   we shouldn't need to do this with the next
 			//   tbb data revision
 			size = ETHEREAL_HEADER_LENGTH;
-
-			//if (DEBUG)
-			//  cout << "*** Reading " << size << " byte ETHEREAL header." << endl;
-
-			// read the first block of memory, in this case skipping the
-			//   ethereal header
 			file.read((char*)memblock, size);
 
-			//
 			// skip "extra" first 40-byte header (temporary)
 			//   we shouldn't need to do this with the next
 			//   tbb data revision
-			//
-			if ( first_sample )
-			{
+			if ( first_sample ) {
 				size = FIRST_EXTRA_HDR_LENGTH;
-
-				//if (DEBUG) cout << "*** Reading " << size << " bytes" << endl;
-
 				file.read((char*)memblock, size);
-				first_sample = false;
-			}
-			else
-			{
+			} else {
 				size = EXTRA_HDR_LENGTH;
-
-				//cout << "*** Reading " << size << " bytes" << endl;
-
 				file.read((char*)memblock, size);
 			}
 			
@@ -272,8 +161,7 @@ main (int argc, char *argv[])
 			file.read(reinterpret_cast<char *>(&header), sizeof(header));
 
 			// reverse fields if big endian
-			if ( bigendian )
-			{
+			if ( bigendian ) {
 				header.seqnr = Int32Swap( header.seqnr );
 				header.sample_nr = Int32Swap( header.sample_nr );
 				header.n_samples_per_frame = 
@@ -281,73 +169,93 @@ main (int argc, char *argv[])
 				header.n_freq_bands = Int16Swap( header.n_freq_bands );
 			}
 			
-			//
-			// these print statements should become hdf5 writes
-			//
-			printf("Station Id:   \t%u\n",header.stationid);
-			printf("RSP Id:       \t%u\n",header.rspid);
-			printf("RCU Id:       \t%u\n",header.rcuid);
-			printf("Sample Freq:  \t%u MHz\n",header.sample_freq);
-			printf("Seq Number:   \t%u\n",header.seqnr);
+			// set the STATION_ID, SAMPLE_FREQ and DATA_LENGTH attributes
+			//    for the ANTENNA table
+			if ( first_sample ) {
 			
-			/* compute time
-			tm *time=localtime( reinterpret_cast<time_t*>(&header.time) );
-			printf("Date:          \t%d/%02d/%02d\n", time->tm_year+1900,
-					time->tm_mon+1, time->tm_mday);
-			printf("Time:          \t%02d:%02d\n", time->tm_hour, time->tm_min);*/
-			printf("Time (s1970):  \t%u\n",header.time );
+				// add columns to ANTENNA table
+				AntennaTable->addColumn("FNUMBER", dal_UINT);
+				AntennaTable->addColumn( "RSP_ID", dal_UINT );  // simple column
+				AntennaTable->addColumn( "RCU_ID", dal_UINT );  // simple column
+				AntennaTable->addColumn( "TIME", dal_UINT );  // simple column
+				AntennaTable->addColumn( "SAMP_NR", dal_UINT );  // simple column
+				AntennaTable->addColumn( "SAMP_FRAME", dal_UINT );  // simple column
+				AntennaTable->addColumn( "FEED", dal_STRING );
+				AntennaTable->addColumn( "ANT_POS", dal_DOUBLE, 3 );
+				AntennaTable->addColumn( "ANT_ORIENT", dal_DOUBLE, 3 );
+				AntennaTable->addColumn( "DATA", dal_SHORT, -1 );
 
-			printf("Sample Number: \t%u\n",header.sample_nr );			
-			printf("No. of Samps:  \t%u\n",header.n_samples_per_frame );
-			printf("No. of Freqs.: \t%u\n",header.n_freq_bands );
-			printf("CRC:           \t%u\n",header.crc );
-			
-			// Read Payload
-			printf("Samples (%d):\n",counter);
+				unsigned int foo[] = { (unsigned int)header.stationid };
+				AntennaTable->setAttribute_uint("STATION_ID", foo );
+	
+				double sf[] = { (double)header.sample_freq };
+				AntennaTable->setAttribute_double("SAMPLE_FREQ", sf );
 
-			//
-			// If there are 0 frequency bands, then we're in transient mode.
-			//   Otherwise, we're in spectral mode.
-			//
-			if ( 0==header.n_freq_bands )
-			{
-				//
-				// for each sample:
-				//   - read into the buffer
-				//   - reverse if necessary
-				//   - print to screen (or write to hdf5)
-				//
-				for (unsigned int ii=0; ii < header.n_samples_per_frame; ii++)
-				{
-					file.read( reinterpret_cast<char *>(&tran_sample),
-						   sizeof(tran_sample) );
+				unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
+				AntennaTable->setAttribute_uint("DATA_LENGTH", spf );
 
-					// reverse fields if big endian
-					if ( bigendian )
-						tran_sample.value = Int16Swap( tran_sample.value );
-
-					printf( "%hd,", tran_sample.value );
+				if ( 0!=header.n_freq_bands ) {
+					stationGroup->setAttribute_string("OBS_MODE", "Sub-band" );
+					wb.antenna.data[0].p =
+					malloc((header.n_samples_per_frame*2)*sizeof(short));
+					wb.antenna.data[0].len = header.n_samples_per_frame*2;
 				}
+				else {
+					wb.antenna.data[0].p =
+					malloc((header.n_samples_per_frame)*sizeof(short));
+					wb.antenna.data[0].len = header.n_samples_per_frame;
+				}
+				first_sample = false;
 			}
-			else
-			{
-				// define real and imaginary components of spectral sample
-				Int16 real_part;
-				Int16 imag_part;
-				//
-				// for each sample:
-				//   - read into the buffer
-				//   - reverse if necessary
-				//   - print to screen (or write to hdf5)
-				//
-				for (unsigned int ii=0; ii < header.n_samples_per_frame; ii++)
-				{
-					file.read( reinterpret_cast<char *>(&spec_sample),
-						   sizeof(spec_sample) );
 
+			// (re)initialize writebuffer
+			wb.antenna.rsp_id = 0;
+			wb.antenna.rcu_id = 0;
+			wb.antenna.time = 0;
+			wb.antenna.sample_nr = 0;
+			wb.antenna.samples_per_frame = 0;
+			strcpy(wb.antenna.feed, "");
+			wb.antenna.ant_position[0] = 0;
+			wb.antenna.ant_position[1] = 0;
+			wb.antenna.ant_position[2] = 0;
+			wb.antenna.ant_orientation[0] = 0;
+			wb.antenna.ant_orientation[1] = 0;
+			wb.antenna.ant_orientation[2] = 0;
+			wb.antenna.frameno = counter;
+			wb.antenna.rsp_id = (unsigned int)header.rspid;
+			wb.antenna.rcu_id = (unsigned int)header.rcuid;
+			wb.antenna.time = (unsigned int)header.time;
+
+			// Read Payload
+			if ( 0==header.n_freq_bands ) {
+
+				wb.antenna.sample_nr = (unsigned int)header.sample_nr;
+				wb.antenna.samples_per_frame = header.n_samples_per_frame;
+
+				for (short zz=0; zz < header.n_samples_per_frame; zz++) {
+
+					file.read( reinterpret_cast<char *>(&tran_sample),
+						sizeof(tran_sample) );
+					if ( bigendian )  // reverse fields if big endian
+						tran_sample.value = Int16Swap( tran_sample.value );
+					((short *)wb.antenna.data[0].p)[zz] = tran_sample.value;
+				}
+
+				strcpy(wb.antenna.feed,"none");
+				wb.antenna.ant_position[0] = 6;
+				wb.antenna.ant_position[1] = 7;
+				wb.antenna.ant_position[2] = 8;
+				wb.antenna.ant_orientation[0] = 3;
+				wb.antenna.ant_orientation[1] = 2;
+				wb.antenna.ant_orientation[2] = 1;
+				AntennaTable->appendRow(&wb);
+			} else {
+				Int16 real_part, imag_part;
+				for (int ii=0; ii < (header.n_samples_per_frame*2); ii+=2) {
+					file.read( reinterpret_cast<char *>(&spec_sample),
+							   sizeof(spec_sample) );
 					// reverse fields if big endian
-					if ( bigendian )
-					{
+					if ( bigendian ) {
 						real_part = Int16Swap( real(spec_sample.value) );
 						imag_part = Int16Swap( imag(spec_sample.value) );
 					}
@@ -356,32 +264,91 @@ main (int argc, char *argv[])
 						real_part = real(spec_sample.value);
 						imag_part = imag(spec_sample.value);
 					}
-
-					printf( "(%hd,%hd),", real_part, imag_part );
+					((short *)wb.antenna.data[0].p)[ii] = real_part;
+					((short *)wb.antenna.data[0].p)[ii+1] = imag_part;
 				}
+
+				wb.antenna.sample_nr = (unsigned int)header.sample_nr;
+				wb.antenna.samples_per_frame = header.n_samples_per_frame;
+
+				strcpy(wb.antenna.feed,"none");
+				wb.antenna.ant_position[0] = 6;
+				wb.antenna.ant_position[1] = 7;
+				wb.antenna.ant_position[2] = 8;
+				wb.antenna.ant_orientation[0] = 3;
+				wb.antenna.ant_orientation[1] = 2;
+				wb.antenna.ant_orientation[2] = 1;
+				AntennaTable->appendRow(&wb);
 			}
-			
-			// read the "payload crc" field			
+						
 			file.read( reinterpret_cast<char *>(&payload_crc),
 					   sizeof(payload_crc) );
-			printf("\b\n");
-
-			// print to screen (or write to hdf5)
-			printf("Payload CRC: %u\n\n",payload_crc);
-
 		}
-		
-		file.close();	// close the tbb input file
-		ds->close();	// close the hdf5 output dataset
-
-		// cleanup the memory block
+		if (wb.antenna.data[0].p)
+			free(wb.antenna.data[0].p);
+ 
+		file.close();
 		delete[] memblock;
 	}
-	else
-	{
-	   // print an error if unable to open the file
-	   cout << "Unable to open file" << argv[1] << endl;
-	   return -1;
+	else cout << "Unable to open file" << argv[1] << endl;
+
+  /////////////////////////////////////////
+  // create CALIBRATION table
+  /////////////////////////////////////////
+  //
+  dalTable * CalibrationTable = dataset->createTable( "CALIBRATION", "Station" );
+
+  // add attributes to CALIBRATION table
+
+  // add columns to CALIBRATION table
+  CalibrationTable->addColumn( "ADC2VOLT", dal_DOUBLE );  // simple column
+  CalibrationTable->addColumn( "GAIN_CURVE", dal_COMPLEX );
+  CalibrationTable->addColumn( "GAIN_FREQS", dal_DOUBLE );
+  CalibrationTable->addColumn( "BEAM_SHAPE", dal_COMPLEX );
+  CalibrationTable->addColumn( "BEAM_DIRS", dal_DOUBLE );
+  CalibrationTable->addColumn( "BEAM_FREQS", dal_DOUBLE );
+  CalibrationTable->addColumn( "NOISE_CURV", dal_COMPLEX );
+  CalibrationTable->addColumn( "NOISE_FREQ", dal_DOUBLE );
+
+  // Fill CALIBRATION table with data
+  const long CALBufferSIZE = 10;
+  typedef struct CalStruct {
+  		double adc2voltage;
+  		dalcomplex gain_curve;
+  		double gain_frequencies;
+  		dalcomplex beam_shape;
+  		double beam_directions;
+  		double beam_frequencies;
+  		dalcomplex noise_curve;
+  		double noise_frequencies;
+  } CalStruct;
+
+  CalStruct calibration[ CALBufferSIZE ];
+  const int calLOOPMAX = 1;
+  for ( int uu=0 ; uu < calLOOPMAX; uu++)
+  {
+	for (long row=0; row<CALBufferSIZE; row++) {
+		calibration[row].adc2voltage = 0;
+		calibration[row].gain_curve.r = 1;
+		calibration[row].gain_curve.i = 2;
+		calibration[row].gain_frequencies = 3;
+		calibration[row].beam_shape.r = 4;
+		calibration[row].beam_shape.i = 5;
+		calibration[row].beam_directions = 6;
+		calibration[row].beam_frequencies = 7;
+		calibration[row].noise_curve.r = 8;
+		calibration[row].noise_curve.i = 9;
+		calibration[row].noise_frequencies = 10;
 	}
-	return 0;
+	CalibrationTable->appendRows( calibration, CALBufferSIZE );
+  }
+
+  delete AntennaTable;
+  delete CalibrationTable;
+
+  delete stationGroup;
+  delete dataset;
+
+  cout << "SUCCESS" << endl;
+  return SUCCESS;
 }
