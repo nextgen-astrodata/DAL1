@@ -41,7 +41,7 @@ dalColumn::dalColumn( string colname, string type )
 	dal_datatype = type;
 }
 
-dalColumn::dalColumn( string complexcolname/*, void * dataformat*/ )
+dalColumn::dalColumn( string complexcolname )
 {
 	name = complexcolname;
 	dal_datatype = dal_COMPLEX;

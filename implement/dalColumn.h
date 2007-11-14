@@ -57,17 +57,14 @@ class dalColumn {
 	int size; //!< datatype size
 	int totsize; //!< total column size
 	vector<dalAttribute> attributes; //!< list of column attributes
-//	dalFilter filter; //!< filter associated with column
 	unsigned int num_of_rows;  //!< number of rows in the column
 
-	// hdf5-specific variables
 	hid_t coltype;
 	herr_t  status;  //!< hdf5 call return status
 
 	dalData * data_object;  //!< object to hold column data
 
 #ifdef WITH_CASA
-	// casa-specific variables
 
 	string casa_datatype;  //!< column datatype
 
@@ -98,31 +95,150 @@ class dalColumn {
 #endif
 
 public:
+
+    /*!
+	  \brief Default constructor.
+
+	  Default constructor.
+	 */
 	dalColumn();
+	
+    /*!
+	  \brief Create a new complex column.
+	
+	  Create a new column with a complex floating point datatype.
+	  
+	  \param complexname Name of the column you want to create.
+	 */
+	dalColumn( string complexcolname );
+
+	/*!
+	  \brief Create a new column object.
+	  
+	  Create a new column object.
+	  
+	  \param colname The name of the column you want to create.
+	  \param coltype The datatype of the column you want to craete (i.e.
+	                 dalINT, dalFLOAT, dalSTRING, etc.)
+	 */
 	dalColumn( string colname, string coltype );
+
 #ifdef WITH_CASA
+
 	dalColumn( casa::Table table, string colname );
 #endif
-	dalColumn( string complexcolname );
+
+    /*!
+	 \brief Add a member to a compound column.
+	 
+	 Add a member to a compound column.  A compound column is made up of
+	 several simple datatypes.  For example a compound column might be two
+	 integers and a floating point.
+	 
+	 \param member_name The name of the member you want to add.
+	 \param type The datatype of the column member you  want to add.
+	 */
 	void addMember( string member_name, string type );
+	
+	/*!
+	  \brief Get the name of the column.
+	  
+	  Retrieve the name of the column.
+	  
+	  \return The name of the column.
+	 */
 	string getName();
+	
+	/*!
+	  \brief Get the column datatype.
+	  
+	  Get the datatype of the column.
+	  
+	  \return A string describing the datatype of the column.
+	 */
 	string getDataType();
+	
+	/*!
+	  \brief Get the size of the column.
+	  
+	  Get the size of the column, in bytes.
+	  
+	  \return An integer describing the size, in bytes, of the column.
+	 */
 	int getSize();
+	
+	/*!
+	  \brief Close the column.
+	  
+	  Close the column.
+	  
+	 */
 	void close();
+	
+	/*!
+	  \brief Get the data type.
+	  
+	  Retrieve the datatype of the column.
+	  
+	  \return A string describing the column datatype.
+	 */
 	string getType();
+	
+	/*!
+	  \brief Is the column an array?
+	  
+	  Check to see if the column is an array.
+	  
+	  \return Non-zero if the column is an array.
+	 */
 	int isArray();
+	
+	/*!
+	  \brief Is the column a scalar?
+	  
+	  Check to see if the column is scalar.
+	  
+	  \return Non-zero if the column is scalar.
+	 */
 	int isScalar();
+	
+	/*!
+	  \brief Get the shape of the column.
+	  
+	  Get the shape of the column.
+	  
+	  \return A vector of integers specifying the shape of the column.
+	 */
 	vector<int> shape();
+	
+	/*!
+	  \brief Get the number of dimensions of the column.
+	  
+	  Get the number of dimensions of the column.
+	  
+	  \return A integer specifying the number of column dimensions.
+	 */
 	unsigned int ndims();
+	
+	
+	/*!
+	  \brief Get the number of rows in the column.
+	  
+	  Get the number of rows in the column.
+	  
+	  \return A number specifying the number of column rows.
+	 */
 	unsigned int nrows();
+
+	/*!
+	  \brief Get column data.
+	  
+	  Get the data object for the column.
+	  
+	  \return A dalData object containing the column data.
+	 */
 	dalData * data();
-//  	dalData * data(/*int cell1=0, int cell2=0, int cell3=0*/);
-//	int getNumber();  //!< return the index of a column
-// 	void addArray();
-//	int insertAfter(); //!< insert a new column after column specified by name or number
-//	int insertBefore(); //!< insert a new column before column specified by name or number
-//	int replace(); //!< replace a column with a new one
-//	int remove();  //!< remove a column
+
 /************************************************************************
  *
  * The following functions are boost wrappers to allow some previously
@@ -130,10 +246,11 @@ public:
  *
  ************************************************************************/
 #ifdef PYTHON
+
 	bpl::tuple shape_boost();
 	bpl::numeric::array data_boost();
-// 	bpl::numeric::array data_boost1();
-// 	bpl::numeric::array data_boost2(/*int cell1*/);
+
 #endif
 };
+
 #endif

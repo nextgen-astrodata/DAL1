@@ -22,13 +22,13 @@
  ***************************************************************************/
 
 /*!
-  \file dal.h
-
-  \brief Common header file for the Data Access Library (DAL)
-
   \defgroup DAL Data Access Library (DAL)
 
+  \file dal.h
+
   \author Joseph Masters
+
+  Common header file for the Data Access Library (DAL)
 
   <h3>Synopsis</h3>
   The Data Access Library (DAL) is a library that abstracts the underlying

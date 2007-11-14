@@ -41,9 +41,7 @@
 
   \author Joseph Masters
 
-  \date 07-02-07
-
-  The dalIntArray object holds an n-dimensional array of a single datatype.
+  The dalArray object holds an n-dimensional array of a single datatype.
 */
 
 class dalArray{
@@ -51,20 +49,59 @@ class dalArray{
 	int rank;        //!< number of dimensions
 	string datatype; //!< array datatype identifier
 	herr_t status;   //!< hdf5 return status
+	
   protected:
 	hid_t array_id;  //!< hdf5 object id for array
 	hid_t file_id;   //!< hdf5 file_id
 	string name;     //!< name of the array
 
   public:
-	void getAttributes();
-// 	void printAttribute( string attrname );
-// 	void * getAttribute( string attrname );
 
+    /*!
+	  \brief Print the attributes of the array.
+	  
+	  Print the attributes of the array.
+	 */
+	void getAttributes();
+	
+	/*!
+	  \brief Add a string attribute.
+	  
+	  Add a string attribute to the array.
+	  
+	  \param attrname The name of the attribute you want to add.
+	  \param data The value of the attribute you want to add.
+	 */
 	void setAttribute_string( string attrname, string data );
-	void setAttribute_int( string attrname, int * data/*, int size=1*/ );
-// 	void setAttribute_uint( string attrname, unsigned int * data,int size=1 );
-	void setAttribute_float( string attrname, float * data/*, int size=1*/ );
+
+	/*!
+	  \brief Add an integer attribute.
+	  
+	  Add an integer attribute to the array.
+	  
+	  \param attrname The name of the attribute you want to add.
+	  \param data The value of the attribute you want to add.
+	 */
+	void setAttribute_int( string attrname, int * data );
+
+	/*!
+	  \brief Add a floating point attribute.
+	  
+	  Add an floating point attribute to the array.
+	  
+	  \param attrname The name of the attribute you want to add.
+	  \param data The value of the attribute you want to add.
+	 */
+	void setAttribute_float( string attrname, float * data );
+
+	/*!
+	  \brief Extend an array.
+	  
+	  Increase the dimensions of the array.
+	  
+	  \param dims The new desired dimensions of the array.  The extend method
+	              should normally be followed by a write.
+	 */
 	void extend( vector<int> dims );
 
 /************************************************************************
@@ -74,38 +111,131 @@ class dalArray{
  *
  ************************************************************************/
 #ifdef PYTHON
+
 	void sai_boost( string attrname, int data );
 	void saf_boost( string attrname, float data );
 	void extend_boost( bpl::list pydims );
+
 #endif
 };
 
 class dalIntArray: public dalArray {
 
   public:
+  
+    /*!
+	  \brief Default constructor.
+	  
+	  Default constructor.
+	 */
 	dalIntArray();
+	
+    /*!
+	  \brief Default destructor.
+	  
+	  Default destructor.
+	 */
+	~dalIntArray();
+	
+	/*!
+	  \brief Constructor for a fixed-size integer array.
+	  
+	  Constructor for a fixed-size integer array.  This is usually called from
+	  the dataset object and not directly by the developer.
+	  
+	  \param obj_id An identifier for the dataset object.
+	  \param arrayname The name of the array you want to create.
+	  \param dims The dimensions of the array you want to create.
+	  \param data A structure containing the data you want to write to the
+	              array.  The size of the structure should match the dimensions
+				  of the array.
+	 */
 	dalIntArray( hid_t obj_id, string arrayname, vector<int> dims,
 		     int data[] );
+
+	/*!
+	  \brief Constructor for extendible integer array.
+	  
+	  Constructor for an extendible integer array.  This is usually called from
+	  the dataset object and not directly by the developer.
+	  
+	  \param obj_id An identifier for the dataset object.
+	  \param arrayname The name of the array you want to create.
+	  \param dims The dimensions of the array you want to create.
+	  \param data A structure containing the data you want to write to the
+	              array.  The size of the structure should match the dimensions
+				  of the array.
+	  \param chnkdims Specifies the chunk size for extendible arrays.
+	 */
 	dalIntArray( hid_t obj_id, string arrayname, vector<int> dims,
 		     int data[], vector<int>chnkdims);
+
+    /*!
+	  \brief Read an integer array.
+	  
+	  Read the values from an array of integers.  This is usually called from
+	  the dataset object and not directly by the developer.
+	  
+	  \param obj_id An identifier for the dataset object.
+	  \param arrayname The name of the array you want to read.
+	 */
 	int * readIntArray( hid_t obj_id, string arrayname );
-// 	void write( vector<int> offset, vector<int> write_dims, int * data);
-	~dalIntArray();
 };
 
 class dalFloatArray: public dalArray {
 
   public:
+    /*!
+	  \brief Default destructor.
+	  
+	  Default destructor.
+	 */
+	~dalFloatArray();
+
+	/*!
+	  \brief Constructor for extendible floating point array.
+	  
+	  Constructor for an extendible floating point array.  This is usually
+	  called from the dataset object and not directly by the developer.
+	  
+	  \param obj_id An identifier for the dataset object.
+	  \param arrayname The name of the array you want to create.
+	  \param dims The dimensions of the array you want to create.
+	  \param data A structure containing the data you want to write to the
+	              array.  The size of the structure should match the dimensions
+				  of the array.
+	  \param chnkdims Specifies the chunk size for extendible arrays.
+	 */
 	dalFloatArray( hid_t obj_id, string arrayname, vector<int> dims,
 			 float data[], vector<int>chnkdims);
-	~dalFloatArray();
 };
 
 class dalComplexArray: public dalArray {
   
   public:
-	dalComplexArray( void* voidfile, string arrayname, vector<int> dims,
-			 /*vector< complex<float> >*/complex<float> data[], vector<int>chnkdims);
+    /*!
+	  \brief Default destructor.
+	  
+	  Default destructor.
+	 */
 	~dalComplexArray();
+
+	/*!
+	  \brief Constructor for extendible complex floating point array.
+	  
+	  Constructor for an extendible complex floating point array.  This is
+	  usually called from the dataset object and not directly by the developer.
+	  
+	  \param obj_id An identifier for the dataset object.
+	  \param arrayname The name of the array you want to create.
+	  \param dims The dimensions of the array you want to create.
+	  \param data A structure containing the data you want to write to the
+	              array.  The size of the structure should match the dimensions
+				  of the array.
+	  \param chnkdims Specifies the chunk size for extendible arrays.
+	 */
+	dalComplexArray( void* voidfile, string arrayname, vector<int> dims,
+			 complex<float> data[], vector<int>chnkdims);
 };
+
 #endif
