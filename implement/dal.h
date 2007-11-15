@@ -22,13 +22,13 @@
  ***************************************************************************/
 
 /*!
-  \defgroup DAL Data Access Library (DAL)
-
   \file dal.h
 
-  \author Joseph Masters
+  \brief Common header file for the Data Access Library (DAL)
 
-  Common header file for the Data Access Library (DAL)
+  \defgroup DAL Data Access Library (DAL)
+
+  \author Joseph Masters
 
   <h3>Synopsis</h3>
   The Data Access Library (DAL) is a library that abstracts the underlying
@@ -179,6 +179,7 @@ const string MSCASATYPE = "MSCASA";
 
 const int SUCCESS = 0;
 const int FAIL = 1;
+
 // CHUNK_SIZE arbitrarily chosen, more research needed on this feature
 const int CHUNK_SIZE = 5000;
 
