@@ -21,18 +21,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*!
-  \class dalData
-  
-  \ingroup DAL
-
-  \brief Object holding data from a header key, table, column or array.
-
-  \author Joseph Masters
-
-  \date 09-05-07
-*/
-
 #ifndef DALDATA_H
 #define DALDATA_H
 

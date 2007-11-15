@@ -18,16 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*!
-  \file tdal.cpp
-  
-  \ingroup DAL
- 
-  \author Joseph Masters
-
-  \date 12-04-06
-*/
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

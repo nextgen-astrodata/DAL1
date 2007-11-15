@@ -21,14 +21,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*!
-  \file lopesevent.h
-  
-  \ingroup DAL
-  
-  \brief Include-file with the descriptions of the lopesevent datastructure
-*/
-
 #ifndef LOPESEVENT_H
 #define LOPESEVENT_H
 

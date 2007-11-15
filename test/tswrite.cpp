@@ -18,18 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*!
-  \file tswrite.cpp
-  
-  \ingroup DAL
-
-  \brief Test program to write time-series data into an HDF5 file.
-
-  \author Joseph Masters
-
-  \date 06-Feb-07
-*/
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -50,7 +38,6 @@
 #include <timeseries.h>
 #endif
 
-/*! doxygen comment in dal.cpp */
 int main(int argc, char *argv[])
 {
 

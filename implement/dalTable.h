@@ -213,8 +213,7 @@ class dalTable{
 	  \param colname Name of the column you want to add.
 	  \param coltype Datatype of the column you want to add (i.e. dalINT,
 	                 dalFLOAT, dalSTRING, etc.)
-	  \param size Optional parameter that specifies the array size of the
-	              column.  The default is 1, meaning the column will be scalar.
+	  \param dims Number of dimensions of the column you want to add.
 	 */
 	void addArrayColumn( string colname, string coltype, unsigned int dims);
 
@@ -225,14 +224,14 @@ class dalTable{
 	  addColumn method when the addColumn datatype is dalCOMPLEX, and not by the
 	  developer.
 	  
-	  \param colname Name of the column you want to add.
-	  \param coltype Datatype of the column you want to add (i.e. dalINT,
-	                 dalFLOAT, dalSTRING, etc.)
+	  \param compname Name of the column you want to add.
+	  \param ri The real and imaginary column components, as represented by
+	            dalColumn objects.
 	  \param subfields This is the dimensionality of the complex column type
 	                   and should always be 2.
 	 */
     void addComplexColumn( string compname,
-	                       vector<dalColumn>,
+	                       vector<dalColumn> ri,
 				           int subfields );
 				
     /*!
@@ -275,7 +274,7 @@ class dalTable{
 	  
 	  \param columns A comma-separated list of columns you wish read from the
 	                 table.
-	  \param condition The condition you wish to apply to the columns in the
+	  \param conditions The condition you wish to apply to the columns in the
 	                   filter.  For example: "TIME>100".
 	 */
 	void setFilter( string columns, string conditions );
@@ -409,7 +408,7 @@ class dalTable{
 	  
 	  Look for the prescence of an attribute.
 	  
-	  \param The name of the attribute you want to find.
+	  \param attrname The name of the attribute you want to find.
 	  \return True if found.  False if not found.
 	 */
 	bool findAttribute( string attrname );

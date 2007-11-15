@@ -226,7 +226,7 @@ class dalComplexArray: public dalArray {
 	  Constructor for an extendible complex floating point array.  This is
 	  usually called from the dataset object and not directly by the developer.
 	  
-	  \param obj_id An identifier for the dataset object.
+	  \param voidfile An pointer to the file.
 	  \param arrayname The name of the array you want to create.
 	  \param dims The dimensions of the array you want to create.
 	  \param data A structure containing the data you want to write to the

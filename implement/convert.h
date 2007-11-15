@@ -21,24 +21,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*!
-  \class BadConversion
-  
-  \ingroup DAL
-  
-  \author Joseph Masters
-
-  \brief Error class for failure when converting a variable into a string.
-*/
-
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <typeinfo>
 #include <stdexcept>
-
-/*!
-*/
 
 /*!
   Represents an object that is thrown when the stringify function fails to

@@ -108,7 +108,7 @@ public:
 	
 	  Create a new column with a complex floating point datatype.
 	  
-	  \param complexname Name of the column you want to create.
+	  \param complexcolname Name of the column you want to create.
 	 */
 	dalColumn( string complexcolname );
 
