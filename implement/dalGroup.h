@@ -71,52 +71,186 @@ class dalGroup{
 	
  public:
 
-	/// constructor
+	/*!
+          \brief Default constructor.
+
+          Default constructor.
+         */
 	dalGroup();
 
-	/// constructor with group name
+	/*!
+          \brief Create a group in a certain file.
+
+          Create a group in a certain file.
+
+          \param groupname The name of the group to create.
+          \param file A pointer to the file where you want to create the group.
+         */
 	dalGroup( char* groupname, void * file );
+
+	/*!
+          \brief Create a subgroup.
+
+          Create a subgroup in an existing group.
+
+          \param group_id The parent group identifier.
+          \param gname The name of the subgroup.
+         */
 	dalGroup( hid_t group_id, char* gname );
 
-	/// open an existing group
+	/*!
+          \brief Open an existing group.
+
+          Open an existing group.
+
+          \param file A pointer to the file.
+          \param groupname The name of the group you want to open.
+
+          \return An identifier for the new group.
+         */
 	int open( void * file, string groupname );
 
-	/// get group name
+	/*!
+          \brief Get group name.
+
+          Retrieve the name of the group object.
+
+          \return The name of the group.
+         */
 	string getName();
 
-	/// set group name
-	bool setName( string );
+	/*!
+          \brief Set group name.
 
-	/// create a new array in the group
+          Set the name of the group.
+
+          \param gname The name of the group.
+
+          \return Zero on success. Non-zero on failure.
+         */
+	bool setName( string gname );
+
+        /*!
+          \brief Create an array of integers within the group.
+
+          Create an array of integers with any dimensions.  This is usually
+          called from the dataset object and not from the developer.
+
+          \param arrayname A string containing he name of the array.
+          \param dims A vector specifying the array dimensions.
+          \param data A structure containing the data to be written.  The size
+                      of the data must match the provided dimensions.
+          \param cdims The chunk dimensions for an extendible array.
+
+          \return dalArray * A pointer to an array object.
+        */
 	dalArray * createIntArray(
 				string arrayname,
 				vector<int> dims,
 				int data[],
 				vector<int>cdims);
+
+        /*!
+          \brief Create an array of floating point values within the group.
+
+          Create an array of floating point values with any dimensions.  This
+          is usually called from the dataset object and not from the developer.
+
+          \param arrayname A string containing he name of the array.
+          \param dims A vector specifying the array dimensions.
+          \param data A structure containing the data to be written.  The size
+                      of the data must match the provided dimensions.
+          \param cdims The chunk dimensions for an extendible array.
+
+          \return dalArray * A pointer to an array object.
+        */
 	dalArray * createFloatArray(
 				string arrayname,
 				vector<int> dims,
 				float data[],
 				vector<int>cdims);
+        /*!
+          \brief Get the group ID.
 
-	/// return the group id
+          Retrieve the identifier for the group.
+
+          \return The group identifier as an integer.
+        */
 	hid_t getId();
-//	void listTables();  //!< print a list of table names within the group
-//	int getTable();  //!< retrieve a dalTable by name
-//	int getTableNumber(); //!< retrieve a dalTable by index
-//	int advanceTable(); //!< sequentially step through the tables in a group
-//	int rename();  //!< rename a group
-//	int remove(); //!< delete a group
-//	void listAttributes(); //!< return a list of group attributes
-//	int getAttribute(); //!< return a dalAttribute object retrieved by name
+
+        /*!
+          \brief Print the group attributes.
+
+          Print the group attributes.
+        */
 	void getAttributes();
+
+        /*!
+          \brief Print the value of a specified attribute.
+
+          Print the value of a specified attribute.
+
+          \param attrname The name of the attribute you want to print.
+        */
 	void printAttribute( string attrname );
+
+        /*!
+          \brief Get the value of an attribute.
+
+          Get the value of an attribute.  This is different from printAttribute
+          because the value of the attribute is returned into a structure
+          instead of simply printing.
+
+          \param attrname The name of the attribute you want to retrieve.
+
+          \return void * A pointer to the data in the attribute. 
+        */
 	void * getAttribute( string attrname );
 
-//	void setAttribute( string attrname, void * data, string coltype );
+        /*!
+          \brief Define a string attribute.
+
+          Define a string attribute.
+
+          \param attrname The name of the attribute you want to create.
+          \param data The value of the attribute you want to create.
+        */
 	void setAttribute_string( string attrname, string data );
+
+        /*!
+          \brief Define a integer attribute.
+
+          Define a integer attribute.
+
+          \param attrname The name of the attribute you want to create.
+          \param data The value of the attribute you want to create.
+          \param size Optional parameter specifying the array size of the
+                      attribute.  Default is scalar.
+        */
 	void setAttribute_int( string attrname, int * data, int size=1 );
-	void setAttribute_uint( string attrname, unsigned int * data,int size=1 );
+
+        /*!
+          \brief Define an unsigned integer attribute.
+
+          Define an unsigned integer attribute.
+
+          \param attrname The name of the attribute you want to create.
+          \param data The value of the attribute you want to create.
+          \param size Optional parameter specifying the array size of the
+                      attribute.  Default is scalar.
+        */
+	void setAttribute_uint(string attrname, unsigned int * data,int size=1);
+
+        /*!
+          \brief Define a double precision floating point attribute.
+
+          Define a double precision floating point attribute.
+
+          \param attrname The name of the attribute you want to create.
+          \param data The value of the attribute you want to create.
+          \param size Optional parameter specifying the array size of the
+                      attribute.  Default is scalar.
+        */
 	void setAttribute_double( string attrname, double * data, int size=1 );
 
 /************************************************************************

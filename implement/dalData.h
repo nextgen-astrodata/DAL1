@@ -30,24 +30,31 @@
 
 
 /*!
-The dalData object represents an n-dimensional array of data regardless of
-the underlying format.  In the case of CASA measurement sets, the data
-is stored in row-major (FORTRAN) order.  For HDF5, and probably FITS, the
-data is stored in column-major (C) order.  The dalData object abstracts this
-away from the user and developer.
+  \class dalData
 
-There will also be a way for the developer to get access to the c-array,
-exactly as it is stored.
+  \brief Represents container of data.
+
+  \ingroup DAL
+
+  \author Joseph Masters
+
+  <h3>Synopsis</h3>
+  The dalData object represents an n-dimensional array of data regardless of
+  the underlying format.  In the case of CASA measurement sets, the data
+  is stored in row-major (FORTRAN) order.  For HDF5, and probably FITS, the
+  data is stored in column-major (C) order.  The dalData object abstracts this
+  away from the user and developer.  The data object might hold data for a
+  single table column, or perhaps another data structure.
+
+  There will also be a way for the developer to get access to the c-array,
+  exactly as it is stored.
 */
 class dalData{
 	string datatype;  //!< i.e. "dal_COMPLEX", "dal_INT", "dal_FLOAT"
 	string filetype;  //!< i.e. "MSCASA", "FITS", "HDF5"
-    string array_order; //!< i.e. "fortran", "c"
+        string array_order; //!< i.e. "fortran", "c"
 
 public:
-
-	unsigned long fortran_index(long idx1, long idx2, long idx3);
-	unsigned long c_index(long idx1, long idx2, long idx3);
 
 	void * data;  // pointer to the actual c-array data
 	void * data2;  // used to convert one datatype to another
@@ -55,17 +62,80 @@ public:
 	long nrows;
 	string get_datatype();
 
-	dalData();  //!< default constructor
+	/*!
+          \brief Default constructor.
 
-	/// constructor with a specific file type
-	dalData(string, string, vector<int>, long);
+          Defulat data object constructor.
+         */
+        dalData();
 
-//	void * get(long);
-// 	void * get(long, long);
-	void * get(long idx1=-1, long idx=-1, long idx3=-1);
-	void setData(void *);
-	
-	void toFloat();  //!< converts array values to floats
+	/*!
+          \brief Constructor with a specific file type.
+
+          Constructor with a specific file type.
+
+          \param lclfiletype The file type (i.e. "MSCASA", "HDF5", etc.)
+          \param lcldatatype The data type this instance of the class will
+                             contain.
+          \param lclshape The shape of the data object.
+          \param lclnrows The number of rows in the data object.
+         */
+        dalData(string lclfiletype, string lcldatatype,
+                vector<int> lclshape, long lclnrows);
+
+        /*!
+          \brief Get the fortran index value of a three-dimensional array.
+
+          This is a helper function that is usually called by the dataset
+          object and not by the developer.  Its purpose is to find a single
+          index value within a multi-dimensional array, but that index depends
+          on the storage method of the underlying file.  CASA arrays are stored
+          in FORTAN order.  HDF5 arrays are stored in C order.
+
+          \param idx1 Specifies the first index.
+          \param idx2 Specifies the second index.
+          \param idx3 Specifies the third index.
+
+          \return A single value index for the multi-dimensional array.
+         */
+	unsigned long fortran_index(long idx1, long idx2, long idx3);
+
+        /*!
+          \brief Get the C index value of a three-dimensional array.
+
+          This is a helper function that is usually called by the dataset
+          object and not by the developer.  Its purpose is to find a single
+          index value within a multi-dimensional array, but that index depends
+          on the storage method of the underlying file.  CASA arrays are stored
+          in FORTAN order.  HDF5 arrays are stored in C order.
+
+          \param idx1 Specifies the first index.
+          \param idx2 Specifies the second index.
+          \param idx3 Specifies the third index.
+
+          \return A single value index for the multi-dimensional array.
+         */
+	unsigned long c_index(long idx1, long idx2, long idx3);
+
+        /*!
+          \brief Get the data.
+
+          Retrieve the data out of the object.
+
+          \param idx1 Optional parameter specifying the first index.
+          \param idx2 Optional parameter specifying the second index.
+          \param idx3 Optional parameter specifying the third index.
+
+          \return void * Pointer to an arbitrary data structure.
+         */
+	void * get(long idx1=-1, long idx2=-1, long idx3=-1);
+
+         /*!
+          \brief Converts array values to floating point values.
+
+          Converts array values to floating point values.
+         */
+	void toFloat();
 	
 #ifdef PYTHON
 	bpl::numeric::array get_boost();

@@ -41,15 +41,61 @@ class dalFilter {
 	string filetype;  // MSCASA, HDF5, FITS, etc.
 	bool is_set;
   public:
+
+        /*!
+          \brief Default constructor.
+
+          Default constructor.
+         */
 	dalFilter();
+
+        /*!
+          \brief Restrict to certain columns.
+
+          Restrict the opening of a table to particular columns.
+
+          \param columns A comma-separated list of the column names that you
+                         want to pass the filter (i.e. "TIME,DATA,ANTENNA").
+         */
 	void set( string columns );
+
+        /*!
+          \brief Restrict to certain columns and conditions.
+
+          Restrict the opening of a table to particular columns and conditions.
+
+          \param columns A comma-separated list of the column names that you
+                         want to pass the filter (i.e. "TIME,DATA,ANTENNA").
+          \param conditions A list of the conditions you want to apply.
+                            (i.e. "ANTENNA1=1 AND ANTENNA2=10")
+         */
 	void set( string columns, string conditions );
+
+        /*!
+          \brief Declare the type of the file.
+
+          Declare the type of the file (i.e. "MSCAS", "HDF5", etc.)
+
+          \param type The type of the file (i.e. "MSCAS", "HDF5", etc.)
+         */
 	void setFiletype( string type );
+
+        /*!
+          \brief Check to see if the filter is defined.
+
+          Check to see if the filter is defined.
+
+          \return True if the filter is set.  False if filter is not set.
+         */
 	bool isSet();
+
+        /*!
+          \brief Retrieve the filter string.
+
+          Retrieve the filter string.
+
+          \return A string representing the filter.
+         */
 	string get();
-/*	int check(); // see if the filter can be applied to a table, dataset or group
-	int set(); // define the filter
-	int reset(); // redefine the filter
-	int print(); // return the filter string*/
 };
 #endif
