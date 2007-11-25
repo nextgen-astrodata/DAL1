@@ -103,6 +103,13 @@ class dalArray{
 	              should normally be followed by a write.
 	 */
 	void extend( vector<int> dims );
+	
+	/*!
+	  \brief Write data to an array.
+	  
+	  Write data to an array, usually after extending it's dimensions.
+	 */
+	void write(int offset, int data[], int arraysize);
 
 /************************************************************************
  *

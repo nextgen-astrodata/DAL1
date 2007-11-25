@@ -19,15 +19,14 @@
  ***************************************************************************/
 
 /*!
-  \file tswrite.cpp
+  \file tbb_reader.cpp
   
   \ingroup DAL
 
-  \brief Test program to write time-series data into an HDF5 file.
+  \brief Write TBB time-series data into an HDF5 file.
 
   \author Joseph Masters
 
-  \date 06-Feb-07
 */
 
 #ifdef HAVE_CONFIG_H
@@ -50,7 +49,6 @@
 #include <timeseries.h>
 #endif
 
-/*! doxygen comment in dal.cpp */
 int main(int argc, char *argv[])
 {
 
@@ -76,7 +74,15 @@ int main(int argc, char *argv[])
   /////////////////////////////////////////
   //
   dalGroup * stationGroup = dataset->createGroup( "Station" );
+dalArray * iarray;
+vector<int> cdims;
 
+cdims.push_back(5000);
+   // define dimensions of array
+   vector<int> dims;
+   dims.push_back(0);
+   
+int offset=0;
   string telescope = "LOFAR";
   string observer = "J.S. Masters";
   string project = "Transients";
@@ -141,20 +147,20 @@ int main(int argc, char *argv[])
 			// skip 46-byte ethereal header (temporary)
 			//   we shouldn't need to do this with the next
 			//   tbb data revision
-			size = ETHEREAL_HEADER_LENGTH;
+/*			size = ETHEREAL_HEADER_LENGTH;
 			file.read((char*)memblock, size);
-
+*/
 			// skip "extra" first 40-byte header (temporary)
 			//   we shouldn't need to do this with the next
 			//   tbb data revision
-			if ( first_sample ) {
+/*			if ( first_sample ) {
 				size = FIRST_EXTRA_HDR_LENGTH;
 				file.read((char*)memblock, size);
 			} else {
 				size = EXTRA_HDR_LENGTH;
 				file.read((char*)memblock, size);
 			}
-			
+*/			
 			//
 			// read 88-byte TBB frame header
 			//
@@ -168,11 +174,10 @@ int main(int argc, char *argv[])
 					Int16Swap( header.n_samples_per_frame);
 				header.n_freq_bands = Int16Swap( header.n_freq_bands );
 			}
-			
 			// set the STATION_ID, SAMPLE_FREQ and DATA_LENGTH attributes
 			//    for the ANTENNA table
 			if ( first_sample ) {
-			
+//cout << "FIRST SAMPLE." << endl;			
 				// add columns to ANTENNA table
 				AntennaTable->addColumn("FNUMBER", dal_UINT);
 				AntennaTable->addColumn( "RSP_ID", dal_UINT );  // simple column
@@ -204,6 +209,14 @@ int main(int argc, char *argv[])
 					wb.antenna.data[0].p =
 					malloc((header.n_samples_per_frame)*sizeof(short));
 					wb.antenna.data[0].len = header.n_samples_per_frame;
+					
+int uniqueid =
+  header.rspid*1000 + header.rcuid;
+vector<int> firstdims;
+firstdims.push_back( 0 );
+int nodata[0];
+iarray = dataset->createIntArray( stringify(uniqueid),
+  firstdims, nodata, cdims );
 				}
 				first_sample = false;
 			}
@@ -226,12 +239,18 @@ int main(int argc, char *argv[])
 			wb.antenna.rcu_id = (unsigned int)header.rcuid;
 			wb.antenna.time = (unsigned int)header.time;
 
+
+//cout << "The count is: " << counter << endl;
+
+   int idata[ header.n_samples_per_frame];
 			// Read Payload
 			if ( 0==header.n_freq_bands ) {
+//cout << "THIS IS RAW DATA.  GOOD!" << endl;
 
 				wb.antenna.sample_nr = (unsigned int)header.sample_nr;
 				wb.antenna.samples_per_frame = header.n_samples_per_frame;
 
+//cout << "nsamples: " << header.n_samples_per_frame << endl;
 				for (short zz=0; zz < header.n_samples_per_frame; zz++) {
 
 					file.read( reinterpret_cast<char *>(&tran_sample),
@@ -239,8 +258,10 @@ int main(int argc, char *argv[])
 					if ( bigendian )  // reverse fields if big endian
 						tran_sample.value = Int16Swap( tran_sample.value );
 					((short *)wb.antenna.data[0].p)[zz] = tran_sample.value;
-				}
+				
+				    idata[zz] = tran_sample.value;
 
+				}
 				strcpy(wb.antenna.feed,"none");
 				wb.antenna.ant_position[0] = 6;
 				wb.antenna.ant_position[1] = 7;
@@ -249,7 +270,14 @@ int main(int argc, char *argv[])
 				wb.antenna.ant_orientation[1] = 2;
 				wb.antenna.ant_orientation[2] = 1;
 				AntennaTable->appendRow(&wb);
+
+dims[0] += header.n_samples_per_frame;
+iarray->extend(dims);
+int arraysize = 1024;
+iarray->write(offset, idata, arraysize );
+offset += header.n_samples_per_frame;
 			} else {
+//cout << "UH OH.  HOW DID WE GET HERE? Num. Freq. Bands: " << header.n_freq_bands << endl;
 				Int16 real_part, imag_part;
 				for (int ii=0; ii < (header.n_samples_per_frame*2); ii+=2) {
 					file.read( reinterpret_cast<char *>(&spec_sample),
@@ -287,6 +315,7 @@ int main(int argc, char *argv[])
 		if (wb.antenna.data[0].p)
 			free(wb.antenna.data[0].p);
  
+//cout << "MADE IS THIS FAR.  FHWEW!" << endl;
 		file.close();
 		delete[] memblock;
 	}

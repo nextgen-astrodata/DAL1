@@ -25,9 +25,26 @@
 #include "dalArray.h"
 #endif
 
-/*!
-  \brief Extend an array.
-*/
+void dalArray::write( int offset,
+                      int data[],
+					  int arraysize )
+{
+hsize_t      dims[1] = { arraysize /*1024*/ };
+int rank=1;
+hsize_t off[1] = { offset };
+    /* Select a hyperslab  */
+    hid_t filespace = H5Dget_space( array_id );
+    status = H5Sselect_hyperslab( filespace, H5S_SELECT_SET, off, NULL,
+                                  dims, NULL);  
+
+    /* Define memory space */
+    hid_t dataspace = H5Screate_simple (rank, dims, NULL); 
+
+    /* Write the data to the hyperslab  */
+    status = H5Dwrite (array_id, H5T_NATIVE_INT, dataspace, filespace,
+                       H5P_DEFAULT, data);
+}
+
 void dalArray::extend( vector<int> newdims )
 {
    unsigned int rank = newdims.size();
