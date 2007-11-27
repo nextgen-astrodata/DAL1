@@ -85,14 +85,34 @@ class dalArray{
 	void setAttribute_int( string attrname, int * data );
 
 	/*!
+	  \brief Add an unsigned integer attribute.
+	  
+	  Add an unsigned integer attribute to the array.
+	  
+	  \param attrname The name of the attribute you want to add.
+	  \param data The value of the attribute you want to add.
+	 */
+	void setAttribute_uint( string attrname, unsigned int * data );
+
+	/*!
 	  \brief Add a floating point attribute.
 	  
-	  Add an floating point attribute to the array.
+	  Add a floating point attribute to the array.
 	  
 	  \param attrname The name of the attribute you want to add.
 	  \param data The value of the attribute you want to add.
 	 */
 	void setAttribute_float( string attrname, float * data );
+
+	/*!
+	  \brief Add a double-precision floating point attribute.
+	  
+	  Add a double-precision floating point attribute to the array.
+	  
+	  \param attrname The name of the attribute you want to add.
+	  \param data The value of the attribute you want to add.
+	 */
+	void setAttribute_double( string attrname, double * data );
 
 	/*!
 	  \brief Extend an array.

@@ -510,6 +510,39 @@ string dalDataset::getType()
 	return type;
 }
 
+
+void dalDataset::read_tbb(string id, int start, int length, int data_out[])
+{
+  
+  hid_t dataset = H5Dopen( h5fh, id.c_str() );
+  hid_t filespace = H5Dget_space( dataset );
+  int rank = H5Sget_simple_extent_ndims( filespace );
+  
+  hsize_t dimsr[1];
+  
+  herr_t status_lcl = H5Sget_simple_extent_dims (filespace, dimsr, NULL);
+
+  dimsr[0]=length;
+
+  hid_t memspace = H5Screate_simple (rank,dimsr,NULL);
+
+  hsize_t     offset[1];
+  hsize_t     offset_out[1];         /* hyperslab offset in memory */
+  offset[0] = start;
+  status_lcl = H5Sselect_hyperslab (filespace, H5S_SELECT_SET, offset, NULL, 
+                                dimsr, NULL);
+
+  offset_out[0] = 0;
+  status_lcl = H5Sselect_hyperslab (memspace, H5S_SELECT_SET, offset_out, NULL, 
+                                dimsr, NULL);
+
+
+  status_lcl = H5Dread (dataset, H5T_NATIVE_INT, memspace, filespace,
+                    H5P_DEFAULT, data_out);
+
+}
+
+
 #ifdef PYTHON
 /************************************************************************
  *

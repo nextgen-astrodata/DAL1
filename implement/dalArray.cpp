@@ -96,6 +96,19 @@ void dalArray::setAttribute_int( string attrname, int * data/*, int size*/ )
      cout << "ERROR: could not set attribute " << attrname << endl;
 }
 
+void dalArray::setAttribute_uint( string attrname, unsigned int * data/*, int size*/ )
+{
+   /* Create scalar attribute.  */
+   hid_t   attr1; /* Attribute identifier */
+   hid_t   aid1;  /* Attribute dataspace identifier */
+   herr_t  ret;   /* Return value */
+   aid1  = H5Screate(H5S_SCALAR);
+   attr1 = H5Acreate(array_id, attrname.c_str(), H5T_NATIVE_UINT, aid1, H5P_DEFAULT);
+   ret = H5Awrite(attr1, H5T_NATIVE_UINT, data);
+   if (ret < 0)
+     cout << "ERROR: could not set attribute " << attrname << endl;
+}
+
 void dalArray::setAttribute_float( string attrname, float * data/*, int size*/ )
 {
    /* Create scalar attribute.  */
@@ -105,6 +118,19 @@ void dalArray::setAttribute_float( string attrname, float * data/*, int size*/ )
    aid1  = H5Screate(H5S_SCALAR);
    attr1 = H5Acreate(array_id, attrname.c_str(), H5T_NATIVE_FLOAT, aid1, H5P_DEFAULT);
    ret = H5Awrite(attr1, H5T_NATIVE_FLOAT, data);
+   if (ret < 0)
+     cout << "ERROR: could not set attribute " << attrname << endl;
+}
+
+void dalArray::setAttribute_double( string attrname, double * data/*, int size*/ )
+{
+   /* Create scalar attribute.  */
+   hid_t   attr1; /* Attribute identifier */
+   hid_t   aid1;  /* Attribute dataspace identifier */
+   herr_t  ret;   /* Return value */
+   aid1  = H5Screate(H5S_SCALAR);
+   attr1 = H5Acreate(array_id, attrname.c_str(), H5T_NATIVE_DOUBLE, aid1, H5P_DEFAULT);
+   ret = H5Awrite(attr1, H5T_NATIVE_DOUBLE, data);
    if (ret < 0)
      cout << "ERROR: could not set attribute " << attrname << endl;
 }

@@ -249,6 +249,28 @@ class dalDataset{
 	  \return A string describing the file format ("HDF5", "MSCASA", etc.)
      */
 	string getType();
+	
+	/*!
+	  \brief Read TBB data.
+	  
+	  Read the transient buffer board (TBB) data out of a file that is in
+	  a predefined format.  This format is described in the Time Series
+	  Interface Control Document.
+	  
+	  \param id A unique identifier for a particular antenna.  The identifier
+	            is a string that is 9 characters long.  From left to right,
+				the first three characters represent the station id.  The next
+				three characters represent the rsp id.  The last three
+				characters represent the rcu id.  For example, if the station
+				number is 11, the rsp id is 5 and the rcu id is 6, the id
+				string will be "011005006".
+	  \param start The starting position to read from within the tbb for a
+	               certain antenna.
+	  \param length The number of samples to read from the tbb antenna data,
+	                starting at the specified start value.
+	  \return A pointer to a structure containing the block of data.
+	 */
+	void read_tbb(string id, int start, int length, int data_out[]);
 
 /************************************************************************
  *

@@ -164,28 +164,6 @@ cdims.push_back(5000);
 			//    for the ANTENNA table
 			if ( first_sample )
 			{
-				// add columns to ANTENNA table
-/*				AntennaTable->addColumn("FNUMBER", dal_UINT);
-				AntennaTable->addColumn( "RSP_ID", dal_UINT );  // simple column
-				AntennaTable->addColumn( "RCU_ID", dal_UINT );  // simple column
-				AntennaTable->addColumn( "TIME", dal_UINT );  // simple column
-				AntennaTable->addColumn( "SAMP_NR", dal_UINT );  // simple column
-				AntennaTable->addColumn( "SAMP_FRAME", dal_UINT );  // simple column
-				AntennaTable->addColumn( "FEED", dal_STRING );
-				AntennaTable->addColumn( "ANT_POS", dal_DOUBLE, 3 );
-				AntennaTable->addColumn( "ANT_ORIENT", dal_DOUBLE, 3 );
-				AntennaTable->addColumn( "DATA", dal_SHORT, -1 );
-
-				unsigned int foo[] = { (unsigned int)header.stationid };
-				AntennaTable->setAttribute_uint("STATION_ID", foo );
-
-				double sf[] = { (double)header.sample_freq };
-				AntennaTable->setAttribute_double("SAMPLE_FREQ", sf );
-
-				unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
-				AntennaTable->setAttribute_uint("DATA_LENGTH", spf );
-*/	
-
 				if ( 0!=header.n_freq_bands )
 				{
 //					stationGroup->setAttribute_string("OBS_MODE", "Sub-band" );
@@ -206,6 +184,45 @@ cdims.push_back(5000);
 					firstdims.push_back( 0 );
 					int nodata[0];
 					iarray = dataset->createIntArray( uniqueid, firstdims, nodata, cdims );
+
+
+/*  string telescope = "LOFAR";
+  string observer = "J.S. Masters";
+  string project = "Transients";
+  string observation_id = "1287";
+  string observation_mode = "TransientDetection";
+  string trigger_type = "Unknown";
+  double trigger_offset[1] = { 0 };
+  int triggered_antennas[1] = { 0 };
+  double beam_direction[2] = { 0, 0 };
+*/
+  // Add attributes to "Station" group
+/*  stationGroup->setAttribute_string("TELESCOPE", telescope );
+  stationGroup->setAttribute_string("OBSERVER", observer );
+  stationGroup->setAttribute_string("PROJECT", project );
+  stationGroup->setAttribute_string("OBS_ID", observation_id );
+  stationGroup->setAttribute_string("OBS_MODE", observation_mode );
+  stationGroup->setAttribute_string("TRIG_TYPE", trigger_type );
+  stationGroup->setAttribute_double("TRIG_OFST", trigger_offset );
+  stationGroup->setAttribute_int(   "TRIG_ANTS", triggered_antennas );
+  stationGroup->setAttribute_double("BEAM_DIR", beam_direction, 2 );
+*/
+
+					// add antenna attributes
+//					iarray->setAttribute_( "TIME", dal_UINT );  // simple column
+//					iarray->setAttribute_( "SAMP_NR", dal_UINT );  // simple column
+//					iarray->setAttribute_( "SAMP_FRAME", dal_UINT );  // simple column
+//					iarray->setAttribute_( "FEED", dal_STRING );
+//					iarray->setAttribute_int( "ANT_POS", apos );
+//					iarray->setAttribute_( "ANT_ORIENT", dal_DOUBLE, 3 );
+//					unsigned int foo[] = { (unsigned int)header.stationid };
+//					iarray->setAttribute_uint("STATION_ID", foo );
+
+					double sf[] = { (double)header.sample_freq };
+					iarray->setAttribute_double("SAMPLE_FREQ", sf );
+
+					unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
+					iarray->setAttribute_uint("DATA_LENGTH", spf );
 			    }
 				
 				first_sample = false;
