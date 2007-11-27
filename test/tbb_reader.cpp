@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
   // create the "Station" group
   /////////////////////////////////////////
   //
-  dalGroup * stationGroup = dataset->createGroup( "Station" );
+//  dalGroup * stationGroup = dataset->createGroup( "Station" );
 dalArray * iarray;
 vector<int> cdims;
 
@@ -82,8 +82,9 @@ cdims.push_back(5000);
    vector<int> dims;
    dims.push_back(0);
    
-int offset=0;
-  string telescope = "LOFAR";
+   int offset=0;
+
+/*  string telescope = "LOFAR";
   string observer = "J.S. Masters";
   string project = "Transients";
   string observation_id = "1287";
@@ -92,9 +93,9 @@ int offset=0;
   double trigger_offset[1] = { 0 };
   int triggered_antennas[1] = { 0 };
   double beam_direction[2] = { 0, 0 };
-
+*/
   // Add attributes to "Station" group
-  stationGroup->setAttribute_string("TELESCOPE", telescope );
+/*  stationGroup->setAttribute_string("TELESCOPE", telescope );
   stationGroup->setAttribute_string("OBSERVER", observer );
   stationGroup->setAttribute_string("PROJECT", project );
   stationGroup->setAttribute_string("OBS_ID", observation_id );
@@ -103,13 +104,13 @@ int offset=0;
   stationGroup->setAttribute_double("TRIG_OFST", trigger_offset );
   stationGroup->setAttribute_int(   "TRIG_ANTS", triggered_antennas );
   stationGroup->setAttribute_double("BEAM_DIR", beam_direction, 2 );
-
+*/
   //
   /////////////////////////////////////////
   // create ANTENNA table
   /////////////////////////////////////////
   //
-  dalTable * AntennaTable = dataset->createTable( "ANTENNA", "Station" );
+//  dalTable * AntennaTable = dataset->createTable( "ANTENNA", "Station" );
 
   //
   /////////////////////////////////////////
@@ -144,23 +145,7 @@ int offset=0;
 		// loop through the file
 		while ( !file.eof() ) {
 			counter++;
-			// skip 46-byte ethereal header (temporary)
-			//   we shouldn't need to do this with the next
-			//   tbb data revision
-/*			size = ETHEREAL_HEADER_LENGTH;
-			file.read((char*)memblock, size);
-*/
-			// skip "extra" first 40-byte header (temporary)
-			//   we shouldn't need to do this with the next
-			//   tbb data revision
-/*			if ( first_sample ) {
-				size = FIRST_EXTRA_HDR_LENGTH;
-				file.read((char*)memblock, size);
-			} else {
-				size = EXTRA_HDR_LENGTH;
-				file.read((char*)memblock, size);
-			}
-*/			
+
 			//
 			// read 88-byte TBB frame header
 			//
@@ -174,12 +159,13 @@ int offset=0;
 					Int16Swap( header.n_samples_per_frame);
 				header.n_freq_bands = Int16Swap( header.n_freq_bands );
 			}
+
 			// set the STATION_ID, SAMPLE_FREQ and DATA_LENGTH attributes
 			//    for the ANTENNA table
-			if ( first_sample ) {
-//cout << "FIRST SAMPLE." << endl;			
+			if ( first_sample )
+			{
 				// add columns to ANTENNA table
-				AntennaTable->addColumn("FNUMBER", dal_UINT);
+/*				AntennaTable->addColumn("FNUMBER", dal_UINT);
 				AntennaTable->addColumn( "RSP_ID", dal_UINT );  // simple column
 				AntennaTable->addColumn( "RCU_ID", dal_UINT );  // simple column
 				AntennaTable->addColumn( "TIME", dal_UINT );  // simple column
@@ -192,32 +178,36 @@ int offset=0;
 
 				unsigned int foo[] = { (unsigned int)header.stationid };
 				AntennaTable->setAttribute_uint("STATION_ID", foo );
-	
+
 				double sf[] = { (double)header.sample_freq };
 				AntennaTable->setAttribute_double("SAMPLE_FREQ", sf );
 
 				unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
 				AntennaTable->setAttribute_uint("DATA_LENGTH", spf );
+*/	
 
-				if ( 0!=header.n_freq_bands ) {
-					stationGroup->setAttribute_string("OBS_MODE", "Sub-band" );
+				if ( 0!=header.n_freq_bands )
+				{
+//					stationGroup->setAttribute_string("OBS_MODE", "Sub-band" );
 					wb.antenna.data[0].p =
 					malloc((header.n_samples_per_frame*2)*sizeof(short));
 					wb.antenna.data[0].len = header.n_samples_per_frame*2;
 				}
-				else {
+				else
+				{
 					wb.antenna.data[0].p =
 					malloc((header.n_samples_per_frame)*sizeof(short));
 					wb.antenna.data[0].len = header.n_samples_per_frame;
 					
-int uniqueid =
-  header.rspid*1000 + header.rcuid;
-vector<int> firstdims;
-firstdims.push_back( 0 );
-int nodata[0];
-iarray = dataset->createIntArray( stringify(uniqueid),
-  firstdims, nodata, cdims );
-				}
+					char uid[10];
+					sprintf(uid,"%03d%03d%03d",header.stationid,header.rspid,header.rcuid);
+					string uniqueid = string(uid);
+					vector<int> firstdims;
+					firstdims.push_back( 0 );
+					int nodata[0];
+					iarray = dataset->createIntArray( uniqueid, firstdims, nodata, cdims );
+			    }
+				
 				first_sample = false;
 			}
 
@@ -240,17 +230,12 @@ iarray = dataset->createIntArray( stringify(uniqueid),
 			wb.antenna.time = (unsigned int)header.time;
 
 
-//cout << "The count is: " << counter << endl;
-
    int idata[ header.n_samples_per_frame];
+
 			// Read Payload
 			if ( 0==header.n_freq_bands ) {
-//cout << "THIS IS RAW DATA.  GOOD!" << endl;
-
 				wb.antenna.sample_nr = (unsigned int)header.sample_nr;
 				wb.antenna.samples_per_frame = header.n_samples_per_frame;
-
-//cout << "nsamples: " << header.n_samples_per_frame << endl;
 				for (short zz=0; zz < header.n_samples_per_frame; zz++) {
 
 					file.read( reinterpret_cast<char *>(&tran_sample),
@@ -269,7 +254,7 @@ iarray = dataset->createIntArray( stringify(uniqueid),
 				wb.antenna.ant_orientation[0] = 3;
 				wb.antenna.ant_orientation[1] = 2;
 				wb.antenna.ant_orientation[2] = 1;
-				AntennaTable->appendRow(&wb);
+//				AntennaTable->appendRow(&wb);
 
 dims[0] += header.n_samples_per_frame;
 iarray->extend(dims);
@@ -277,7 +262,6 @@ int arraysize = 1024;
 iarray->write(offset, idata, arraysize );
 offset += header.n_samples_per_frame;
 			} else {
-//cout << "UH OH.  HOW DID WE GET HERE? Num. Freq. Bands: " << header.n_freq_bands << endl;
 				Int16 real_part, imag_part;
 				for (int ii=0; ii < (header.n_samples_per_frame*2); ii+=2) {
 					file.read( reinterpret_cast<char *>(&spec_sample),
@@ -306,7 +290,7 @@ offset += header.n_samples_per_frame;
 				wb.antenna.ant_orientation[0] = 3;
 				wb.antenna.ant_orientation[1] = 2;
 				wb.antenna.ant_orientation[2] = 1;
-				AntennaTable->appendRow(&wb);
+//				AntennaTable->appendRow(&wb);
 			}
 						
 			file.read( reinterpret_cast<char *>(&payload_crc),
@@ -315,7 +299,6 @@ offset += header.n_samples_per_frame;
 		if (wb.antenna.data[0].p)
 			free(wb.antenna.data[0].p);
  
-//cout << "MADE IS THIS FAR.  FHWEW!" << endl;
 		file.close();
 		delete[] memblock;
 	}
@@ -325,7 +308,7 @@ offset += header.n_samples_per_frame;
   // create CALIBRATION table
   /////////////////////////////////////////
   //
-  dalTable * CalibrationTable = dataset->createTable( "CALIBRATION", "Station" );
+  dalTable * CalibrationTable = dataset->createTable( "CALIBRATION" );
 
   // add attributes to CALIBRATION table
 
@@ -372,10 +355,10 @@ offset += header.n_samples_per_frame;
 	CalibrationTable->appendRows( calibration, CALBufferSIZE );
   }
 
-  delete AntennaTable;
+//  delete AntennaTable;
   delete CalibrationTable;
 
-  delete stationGroup;
+//  delete stationGroup;
   delete dataset;
 
   cout << "SUCCESS" << endl;
