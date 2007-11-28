@@ -30,31 +30,34 @@
 #include <dalDataset.h>
 #endif
 
-#ifndef DALARRAY_H
-#include <dalArray.h>
-#endif
-
-#ifndef DALGROUP_H
-#include <dalGroup.h>
-#endif
-
-#define FILENAME "rw.h5"
-
-int main()
+int main(int argc, char *argv[])
 {
+   // parameter check
+   if ( argc < 3 )
+   {
+     cout << endl << "Too few parameters..." << endl << endl;
+     cout << "The first parameter is the tbb dataset name." << endl;
+     cout << "The second parameter is the dipole itentifier. "
+	      << "(i.e. \"001002003\").\n" << "  The first 3 characters are the "
+		  << "station id.\n  The next 3 are the rsp id.\n  The last 3 are the "
+		  << "rcu id." << endl;
+     cout << endl;
+     return FAIL;
+   }
+
    dalDataset * ds = new dalDataset();
    int ret;
-   ret = ds->open( FILENAME );
+   ret = ds->open( argv[1] );
 
-   string id = "001000004";
+   string id = argv[2];
    int start = 25;
-   int len = 25;
-   int data[len];
-   ds->read_tbb(id, start, len, data);
+   int length = 20;
+   int data[length];
+   ds->read_tbb(id, start, length, data);
 
    printf("\n");
    printf("Dataset: \n");
-   for (int jj = 0; jj < len; jj++)
+   for (int jj = 0; jj < length; jj++)
    {
       printf("%d ", data[jj]);
       printf("\n");

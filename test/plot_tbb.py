@@ -9,6 +9,6 @@ ds.open( sys.argv[1] )
 
 a1 = ds.readIntArray( sys.argv[2] )
 
-plot(a1[25:50],"b+")
+plot(a1,"b,")
 
 show()

@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 /*!
-  \file tbb_reader.cpp
+  \file tbb2h5.cpp
   
   \ingroup DAL
 
@@ -41,12 +41,8 @@
 #include "dalDataset.h"
 #endif
 
-#ifndef DALGROUP_H
-#include "dalGroup.h"
-#endif
-
 #ifndef TIMESERIES_H
-#include <timeseries.h>
+#include "timeseries.h"
 #endif
 
 int main(int argc, char *argv[])
@@ -73,44 +69,17 @@ int main(int argc, char *argv[])
   // create the "Station" group
   /////////////////////////////////////////
   //
-//  dalGroup * stationGroup = dataset->createGroup( "Station" );
-dalArray * iarray;
-vector<int> cdims;
+  //  dalGroup * stationGroup = dataset->createGroup( "Station" );
 
-cdims.push_back(5000);
+   dalArray * iarray;
+   vector<int> cdims;
+   cdims.push_back(5000);
+   
    // define dimensions of array
    vector<int> dims;
    dims.push_back(0);
    
    int offset=0;
-
-/*  string telescope = "LOFAR";
-  string observer = "J.S. Masters";
-  string project = "Transients";
-  string observation_id = "1287";
-  string observation_mode = "TransientDetection";
-  string trigger_type = "Unknown";
-  double trigger_offset[1] = { 0 };
-  int triggered_antennas[1] = { 0 };
-  double beam_direction[2] = { 0, 0 };
-*/
-  // Add attributes to "Station" group
-/*  stationGroup->setAttribute_string("TELESCOPE", telescope );
-  stationGroup->setAttribute_string("OBSERVER", observer );
-  stationGroup->setAttribute_string("PROJECT", project );
-  stationGroup->setAttribute_string("OBS_ID", observation_id );
-  stationGroup->setAttribute_string("OBS_MODE", observation_mode );
-  stationGroup->setAttribute_string("TRIG_TYPE", trigger_type );
-  stationGroup->setAttribute_double("TRIG_OFST", trigger_offset );
-  stationGroup->setAttribute_int(   "TRIG_ANTS", triggered_antennas );
-  stationGroup->setAttribute_double("BEAM_DIR", beam_direction, 2 );
-*/
-  //
-  /////////////////////////////////////////
-  // create ANTENNA table
-  /////////////////////////////////////////
-  //
-//  dalTable * AntennaTable = dataset->createTable( "ANTENNA", "Station" );
 
   //
   /////////////////////////////////////////
@@ -247,10 +216,11 @@ cdims.push_back(5000);
 			wb.antenna.time = (unsigned int)header.time;
 
 
-   int idata[ header.n_samples_per_frame];
+			int idata[ header.n_samples_per_frame];
 
 			// Read Payload
-			if ( 0==header.n_freq_bands ) {
+			if ( 0==header.n_freq_bands )
+			{
 				wb.antenna.sample_nr = (unsigned int)header.sample_nr;
 				wb.antenna.samples_per_frame = header.n_samples_per_frame;
 				for (short zz=0; zz < header.n_samples_per_frame; zz++) {
@@ -264,6 +234,7 @@ cdims.push_back(5000);
 				    idata[zz] = tran_sample.value;
 
 				}
+				
 				strcpy(wb.antenna.feed,"none");
 				wb.antenna.ant_position[0] = 6;
 				wb.antenna.ant_position[1] = 7;
@@ -271,16 +242,19 @@ cdims.push_back(5000);
 				wb.antenna.ant_orientation[0] = 3;
 				wb.antenna.ant_orientation[1] = 2;
 				wb.antenna.ant_orientation[2] = 1;
-//				AntennaTable->appendRow(&wb);
 
-dims[0] += header.n_samples_per_frame;
-iarray->extend(dims);
-int arraysize = 1024;
-iarray->write(offset, idata, arraysize );
-offset += header.n_samples_per_frame;
-			} else {
+				dims[0] += header.n_samples_per_frame;
+				iarray->extend(dims);
+				int arraysize = 1024;
+				iarray->write(offset, idata, arraysize );
+				offset += header.n_samples_per_frame;
+			
+			}
+			else
+			{
 				Int16 real_part, imag_part;
-				for (int ii=0; ii < (header.n_samples_per_frame*2); ii+=2) {
+				for (int ii=0; ii < (header.n_samples_per_frame*2); ii+=2)
+				{
 					file.read( reinterpret_cast<char *>(&spec_sample),
 							   sizeof(spec_sample) );
 					// reverse fields if big endian
@@ -295,19 +269,18 @@ offset += header.n_samples_per_frame;
 					}
 					((short *)wb.antenna.data[0].p)[ii] = real_part;
 					((short *)wb.antenna.data[0].p)[ii+1] = imag_part;
-				}
+				 }
 
-				wb.antenna.sample_nr = (unsigned int)header.sample_nr;
-				wb.antenna.samples_per_frame = header.n_samples_per_frame;
+				 wb.antenna.sample_nr = (unsigned int)header.sample_nr;
+				 wb.antenna.samples_per_frame = header.n_samples_per_frame;
 
-				strcpy(wb.antenna.feed,"none");
-				wb.antenna.ant_position[0] = 6;
-				wb.antenna.ant_position[1] = 7;
-				wb.antenna.ant_position[2] = 8;
-				wb.antenna.ant_orientation[0] = 3;
-				wb.antenna.ant_orientation[1] = 2;
-				wb.antenna.ant_orientation[2] = 1;
-//				AntennaTable->appendRow(&wb);
+				 strcpy(wb.antenna.feed,"none");
+				 wb.antenna.ant_position[0] = 6;
+				 wb.antenna.ant_position[1] = 7;
+				 wb.antenna.ant_position[2] = 8;
+				 wb.antenna.ant_orientation[0] = 3;
+				 wb.antenna.ant_orientation[1] = 2;
+				 wb.antenna.ant_orientation[2] = 1;
 			}
 						
 			file.read( reinterpret_cast<char *>(&payload_crc),
@@ -372,7 +345,6 @@ offset += header.n_samples_per_frame;
 	CalibrationTable->appendRows( calibration, CALBufferSIZE );
   }
 
-//  delete AntennaTable;
   delete CalibrationTable;
 
 //  delete stationGroup;
