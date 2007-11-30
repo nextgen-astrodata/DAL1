@@ -1,4 +1,7 @@
-/***************************************************************************
+/*-------------------------------------------------------------------------*
+ | $Id:: tUseMeasures.cc 511 2007-08-05 13:14:48Z baehren                $ |
+ *-------------------------------------------------------------------------*
+ ***************************************************************************
  *   Copyright (C) 2007 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -17,6 +20,16 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
+/**
+  \file tswrite.cpp
+  
+  \ingroup DAL
+
+  \brief Test program for writing data to time-series data format
+
+  \author Joseph Masters
+*/
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
