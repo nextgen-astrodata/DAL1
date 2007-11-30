@@ -513,13 +513,17 @@ string dalDataset::getType()
 
 void dalDataset::read_tbb(string id, int start, int length, int data_out[])
 {
-  
-  hid_t dataset = H5Dopen( h5fh, id.c_str() );
+
+  char stid[3]; // station id
+  sscanf(id.c_str(),"%3c%*6c",stid);
+  char datasetname[18];
+  sprintf( datasetname, "Station%c%c%c/%s", stid[0],stid[1],stid[2],id.c_str());
+  hid_t dataset = H5Dopen( h5fh, datasetname );
   hid_t filespace = H5Dget_space( dataset );
   int rank = H5Sget_simple_extent_ndims( filespace );
-  
+
   hsize_t dimsr[1];
-  
+
   herr_t status_lcl = H5Sget_simple_extent_dims (filespace, dimsr, NULL);
 
   dimsr[0]=length;

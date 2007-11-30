@@ -124,7 +124,7 @@ class dalDataset{
 	/*!
 	  \brief Create a new static integer array in the root group.
 	  \param arrayname The name of the array you want to create.
-      \param dims A vector containing the dimensions of the array.
+	  \param dims A vector containing the dimensions of the array.
 	  \param data An array of integer values.
 	  \return dalArray * pointer to an array object.
      */
@@ -136,9 +136,9 @@ class dalDataset{
 	/*!
 	  \brief Create a new extendible integer array in the root group.
 	  \param arrayname The name of the array you want to create.
-      \param dims A vector containing the dimensions of the array.
+	  \param dims A vector containing the dimensions of the array.
 	  \param data An array of integer values.
-      \param cdims A vector a chunk dimensions (necessary for extending an
+          \param cdims A vector a chunk dimensions (necessary for extending an
 	               hdf5 dataset).
 	  \return dalArray * pointer to an array object.
      */
@@ -151,9 +151,9 @@ class dalDataset{
 	/*!
 	  \brief Create a new extendible floating point array in the root group.
 	  \param arrayname The name of the array you want to create.
-      \param dims A vector containing the dimensions of the array.
+	  \param dims A vector containing the dimensions of the array.
 	  \param data An array of floating point values.
-      \param cdims A vector a chunk dimensions (necessary for extending an
+	  \param cdims A vector a chunk dimensions (necessary for extending an
 	               hdf5 dataset).
 	  \return dalArray * pointer to an array object.
      */
@@ -167,9 +167,9 @@ class dalDataset{
 	  \brief Create a new extendible complex floating point array in the
 	         root group.
 	  \param arrayname The name of the array you want to create.
-      \param dims A vector containing the dimensions of the array.
+	  \param dims A vector containing the dimensions of the array.
 	  \param data An array of complex floating point values.
-      \param cdims A vector a chunk dimensions (necessary for extending an
+	  \param cdims A vector a chunk dimensions (necessary for extending an
 	               hdf5 dataset).
 	  \return dalArray * pointer to an array object.
      */
@@ -195,7 +195,10 @@ class dalDataset{
 	dalTable * createTable( string tablename, string groupname );
 
 	/*!
-	  \brief Create a new group
+	  \brief Create a new group.
+
+	  Create a new group.
+
 	  \param groupname 
 	  \return dalGroup 
 	*/
@@ -203,20 +206,29 @@ class dalDataset{
 
     /*!
 	  \brief Open a table (that's not in a group) by name.
-      \param tablename The name of the table you want to open
+
+	  Open a table (that's not in a group) by name.
+
+	  \param tablename The name of the table you want to open
 	  \return dalTable * A pointer to a table object.
      */
 	dalTable * openTable( string tablename );
 
     /*!
-	  \brief Set table filter
+	  \brief Set table filter.
+
+	  Set table filter.
+
 	  \param columns A string containing a comma-separated list of columns to
 	                 include in a filtered dataset.
 	 */
 	void setFilter( string columns );
 
     /*!
-	  \brief Set table filter
+	  \brief Set table filter.
+
+	  Set table filter.
+
 	  \param columns A string containing a comma-separated list of columns to
 	                 include in a filtered dataset.
 	  \param conditions A string describing restraints on which rows are
@@ -226,6 +238,9 @@ class dalDataset{
 	
 	/*!
 	  \brief Open a table in a group.
+
+	  Open a table in a group.
+
 	  \param tablename The name of the table to open.
 	  \param groupname The name of the group containing the table.
 	  \return dalTable * A pointer to a table object.
@@ -233,7 +248,10 @@ class dalDataset{
 	dalTable * openTable( string tablename, string groupname );
 
 	/*!
-	  \brief Open a group in a dataset
+	  \brief Open a group in a dataset.
+
+	  Open a group in a dataset.
+
 	  \param groupname The name of the group to open
 	  \return dalGroup * A pointer to a group object.
 	 */
@@ -241,11 +259,16 @@ class dalDataset{
 	
 	/*!
 	  \brief List the tables in a dataset.
+
+	  List the tables in a dataset.
 	 */
 	void listTables();
 
 	/*!
-	  \brief Retrieve the dataset type ("HDF5", "MSCASA", etc.)
+	  \brief Retrieve the dataset type ("HDF5", "MSCASA", etc.).
+
+	  Retrieve the dataset type ("HDF5", "MSCASA", etc.).
+
 	  \return A string describing the file format ("HDF5", "MSCASA", etc.)
      */
 	string getType();
@@ -258,12 +281,12 @@ class dalDataset{
 	  Interface Control Document.
 	  
 	  \param id A unique identifier for a particular antenna.  The identifier
-	            is a string that is 9 characters long.  From left to right,
-				the first three characters represent the station id.  The next
-				three characters represent the rsp id.  The last three
-				characters represent the rcu id.  For example, if the station
-				number is 11, the rsp id is 5 and the rcu id is 6, the id
-				string will be "011005006".
+		    is a string that is 9 characters long.  From left to right,
+		    the first three characters represent the station id.  The next
+		    three characters represent the rsp id.  The last three
+		    characters represent the rcu id.  For example, if the station
+		    number is 11, the rsp id is 5 and the rcu id is 6, the id
+		    string will be "011005006".
 	  \param start The starting position to read from within the tbb for a
 	               certain antenna.
 	  \param length The number of samples to read from the tbb antenna data,

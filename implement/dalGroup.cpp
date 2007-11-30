@@ -59,7 +59,10 @@ bool dalGroup::setName ( string gname ) {
    }
 }
 
-dalArray * dalGroup::createIntArray( string arrayname, vector<int> dims, int data[], vector<int> cdims)
+dalArray * dalGroup::createIntArray( string arrayname,
+				     vector<int> dims,
+				     int data[],
+				     vector<int> cdims )
 {
 // cout << "group_id: " << group_id << endl;
 	   dalIntArray * la;

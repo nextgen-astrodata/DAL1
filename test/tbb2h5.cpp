@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: tUseMeasures.cc 511 2007-08-05 13:14:48Z baehren                $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2007 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -48,6 +45,16 @@
 #include "timeseries.h"
 #endif
 
+bool new_station( vector<int> vec, int station )
+{
+  for( unsigned int ss = 0; ss < vec.size(); ss++ )
+  {
+    if ( station == vec[ss] )
+      return false;
+  }
+  return true;
+}
+
 int main(int argc, char *argv[])
 {
 
@@ -55,247 +62,213 @@ int main(int argc, char *argv[])
   if ( argc < 3 )
   {
      cout << endl << "Too few parameters..." << endl << endl;
-     cout << "The first parameter is the raw TBB input file name." << endl;
-     cout << "The second parameter is the dataset name." << endl;
+     cout << "The first parameter is the output dataset name.\n";
+     cout << "The remaining parameters are the raw TBB input file names.\n";
      cout << endl;
      return FAIL;
   }
 
   dalDataset * dataset;
-  if ( NULL == argv[3] )
-	  dataset = new dalDataset( argv[2], "HDF5" );
-  else
-	  dataset = new dalDataset( argv[2], argv[3] );
-
-  //
-  /////////////////////////////////////////
-  // create the "Station" group
-  /////////////////////////////////////////
-  //
-  //  dalGroup * stationGroup = dataset->createGroup( "Station" );
-
-   dalArray * iarray;
-   vector<int> cdims;
-   cdims.push_back(5000);
-   
-   // define dimensions of array
-   vector<int> dims;
-   dims.push_back(0);
-   
-   int offset=0;
+  dataset = new dalDataset( argv[1], "HDF5" );
 
   //
   /////////////////////////////////////////
   // read the RAW TBB input data
   /////////////////////////////////////////
   //
-	ifstream::pos_type size=0;		// buffer size
+  ifstream::pos_type size=0;		// buffer size
 
-	// define memory buffers
-	unsigned char * memblock=NULL;
+  UInt32 payload_crc;
 
-	UInt32 payload_crc;
+  vector<string> myfiles;
 
-	// declare handle for the input file
-	fstream file (argv[1], ios::binary|ios::in);
+  for ( int tbb=2; tbb<argc; tbb++)
+  {
+    myfiles.push_back( argv[tbb] );
+  }
+  vector<int> stations;
+  dalGroup * stationGroup;
 
-	bool first_sample = true;
-	bool bigendian = BigEndian();
+  bool bigendian = BigEndian();
 
-	if (file.is_open())
+  for( unsigned int cc = 0; cc < myfiles.size(); cc++ )
+  {
+
+   // declare handle for the input file
+   fstream file (myfiles[cc].c_str(), ios::binary|ios::in);
+
+   bool first_sample = true;
+
+   if (file.is_open())
+   {
+    TransientSample tran_sample;
+    SpectralSample spec_sample;
+    TBB_Header header;
+    file.seekg (0, ios::beg);
+    int counter=0;
+    int offset=0;
+
+    dalArray * iarray;
+    vector<int> cdims;
+    cdims.push_back(CHUNK_SIZE);
+
+    // define dimensions of array
+    vector<int> dims;
+    dims.push_back(0);
+
+    // loop through the file
+    while ( !file.eof() )
+    {
+      counter++;
+
+      //
+      // read 88-byte TBB frame header
+      //
+      file.read(reinterpret_cast<char *>(&header), sizeof(header));
+
+      // reverse fields if big endian
+      if ( bigendian )
+      {
+	header.seqnr = Int32Swap( header.seqnr );
+	header.sample_nr = Int32Swap( header.sample_nr );
+	header.n_samples_per_frame = 
+	Int16Swap( header.n_samples_per_frame);
+	header.n_freq_bands = Int16Swap( header.n_freq_bands );
+      }
+
+      if ( new_station( stations, header.stationid ) )
+      {
+        stations.push_back( header.stationid );
+	char stationstr[10];
+	sprintf( stationstr, "Station%03d", header.stationid );
+        stationGroup = dataset->createGroup( stationstr );
+	cout << "CREATED New station group: " << string(stationstr) << endl;
+      }
+
+      // set the STATION_ID, SAMPLE_FREQ and DATA_LENGTH attributes
+      //    for the ANTENNA table
+      if ( first_sample )
+      {
+	if ( 0!=header.n_freq_bands )
 	{
-		TransientSample tran_sample;
-		SpectralSample spec_sample;
-		TBB_Header header;
-		size = ETHEREAL_HEADER_LENGTH;
-		memblock = new unsigned char [size];
-		file.seekg (0, ios::beg);
-		int counter=0;
-
-		writebuffer wb;
-
-		// loop through the file
-		while ( !file.eof() ) {
-			counter++;
-
-			//
-			// read 88-byte TBB frame header
-			//
-			file.read(reinterpret_cast<char *>(&header), sizeof(header));
-
-			// reverse fields if big endian
-			if ( bigendian ) {
-				header.seqnr = Int32Swap( header.seqnr );
-				header.sample_nr = Int32Swap( header.sample_nr );
-				header.n_samples_per_frame = 
-					Int16Swap( header.n_samples_per_frame);
-				header.n_freq_bands = Int16Swap( header.n_freq_bands );
-			}
-
-			// set the STATION_ID, SAMPLE_FREQ and DATA_LENGTH attributes
-			//    for the ANTENNA table
-			if ( first_sample )
-			{
-				if ( 0!=header.n_freq_bands )
-				{
-//					stationGroup->setAttribute_string("OBS_MODE", "Sub-band" );
-					wb.antenna.data[0].p =
-					malloc((header.n_samples_per_frame*2)*sizeof(short));
-					wb.antenna.data[0].len = header.n_samples_per_frame*2;
-				}
-				else
-				{
-					wb.antenna.data[0].p =
-					malloc((header.n_samples_per_frame)*sizeof(short));
-					wb.antenna.data[0].len = header.n_samples_per_frame;
-					
-					char uid[10];
-					sprintf(uid,"%03d%03d%03d",header.stationid,header.rspid,header.rcuid);
-					string uniqueid = string(uid);
-					vector<int> firstdims;
-					firstdims.push_back( 0 );
-					int nodata[0];
-					iarray = dataset->createIntArray( uniqueid, firstdims, nodata, cdims );
-
-
-/*  string telescope = "LOFAR";
-  string observer = "J.S. Masters";
-  string project = "Transients";
-  string observation_id = "1287";
-  string observation_mode = "TransientDetection";
-  string trigger_type = "Unknown";
-  double trigger_offset[1] = { 0 };
-  int triggered_antennas[1] = { 0 };
-  double beam_direction[2] = { 0, 0 };
-*/
-  // Add attributes to "Station" group
-/*  stationGroup->setAttribute_string("TELESCOPE", telescope );
-  stationGroup->setAttribute_string("OBSERVER", observer );
-  stationGroup->setAttribute_string("PROJECT", project );
-  stationGroup->setAttribute_string("OBS_ID", observation_id );
-  stationGroup->setAttribute_string("OBS_MODE", observation_mode );
-  stationGroup->setAttribute_string("TRIG_TYPE", trigger_type );
-  stationGroup->setAttribute_double("TRIG_OFST", trigger_offset );
-  stationGroup->setAttribute_int(   "TRIG_ANTS", triggered_antennas );
-  stationGroup->setAttribute_double("BEAM_DIR", beam_direction, 2 );
-*/
-
-					// add antenna attributes
-//					iarray->setAttribute_( "TIME", dal_UINT );  // simple column
-//					iarray->setAttribute_( "SAMP_NR", dal_UINT );  // simple column
-//					iarray->setAttribute_( "SAMP_FRAME", dal_UINT );  // simple column
-//					iarray->setAttribute_( "FEED", dal_STRING );
-//					iarray->setAttribute_int( "ANT_POS", apos );
-//					iarray->setAttribute_( "ANT_ORIENT", dal_DOUBLE, 3 );
-//					unsigned int foo[] = { (unsigned int)header.stationid };
-//					iarray->setAttribute_uint("STATION_ID", foo );
-
-					double sf[] = { (double)header.sample_freq };
-					iarray->setAttribute_double("SAMPLE_FREQ", sf );
-
-					unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
-					iarray->setAttribute_uint("DATA_LENGTH", spf );
-			    }
-				
-				first_sample = false;
-			}
-
-			// (re)initialize writebuffer
-			wb.antenna.rsp_id = 0;
-			wb.antenna.rcu_id = 0;
-			wb.antenna.time = 0;
-			wb.antenna.sample_nr = 0;
-			wb.antenna.samples_per_frame = 0;
-			strcpy(wb.antenna.feed, "");
-			wb.antenna.ant_position[0] = 0;
-			wb.antenna.ant_position[1] = 0;
-			wb.antenna.ant_position[2] = 0;
-			wb.antenna.ant_orientation[0] = 0;
-			wb.antenna.ant_orientation[1] = 0;
-			wb.antenna.ant_orientation[2] = 0;
-			wb.antenna.frameno = counter;
-			wb.antenna.rsp_id = (unsigned int)header.rspid;
-			wb.antenna.rcu_id = (unsigned int)header.rcuid;
-			wb.antenna.time = (unsigned int)header.time;
-
-
-			int idata[ header.n_samples_per_frame];
-
-			// Read Payload
-			if ( 0==header.n_freq_bands )
-			{
-				wb.antenna.sample_nr = (unsigned int)header.sample_nr;
-				wb.antenna.samples_per_frame = header.n_samples_per_frame;
-				for (short zz=0; zz < header.n_samples_per_frame; zz++) {
-
-					file.read( reinterpret_cast<char *>(&tran_sample),
-						sizeof(tran_sample) );
-					if ( bigendian )  // reverse fields if big endian
-						tran_sample.value = Int16Swap( tran_sample.value );
-					((short *)wb.antenna.data[0].p)[zz] = tran_sample.value;
-				
-				    idata[zz] = tran_sample.value;
-
-				}
-				
-				strcpy(wb.antenna.feed,"none");
-				wb.antenna.ant_position[0] = 6;
-				wb.antenna.ant_position[1] = 7;
-				wb.antenna.ant_position[2] = 8;
-				wb.antenna.ant_orientation[0] = 3;
-				wb.antenna.ant_orientation[1] = 2;
-				wb.antenna.ant_orientation[2] = 1;
-
-				dims[0] += header.n_samples_per_frame;
-				iarray->extend(dims);
-				int arraysize = 1024;
-				iarray->write(offset, idata, arraysize );
-				offset += header.n_samples_per_frame;
-			
-			}
-			else
-			{
-				Int16 real_part, imag_part;
-				for (int ii=0; ii < (header.n_samples_per_frame*2); ii+=2)
-				{
-					file.read( reinterpret_cast<char *>(&spec_sample),
-							   sizeof(spec_sample) );
-					// reverse fields if big endian
-					if ( bigendian ) {
-						real_part = Int16Swap( real(spec_sample.value) );
-						imag_part = Int16Swap( imag(spec_sample.value) );
-					}
-					else
-					{
-						real_part = real(spec_sample.value);
-						imag_part = imag(spec_sample.value);
-					}
-					((short *)wb.antenna.data[0].p)[ii] = real_part;
-					((short *)wb.antenna.data[0].p)[ii+1] = imag_part;
-				 }
-
-				 wb.antenna.sample_nr = (unsigned int)header.sample_nr;
-				 wb.antenna.samples_per_frame = header.n_samples_per_frame;
-
-				 strcpy(wb.antenna.feed,"none");
-				 wb.antenna.ant_position[0] = 6;
-				 wb.antenna.ant_position[1] = 7;
-				 wb.antenna.ant_position[2] = 8;
-				 wb.antenna.ant_orientation[0] = 3;
-				 wb.antenna.ant_orientation[1] = 2;
-				 wb.antenna.ant_orientation[2] = 1;
-			}
-						
-			file.read( reinterpret_cast<char *>(&payload_crc),
-					   sizeof(payload_crc) );
-		}
-		if (wb.antenna.data[0].p)
-			free(wb.antenna.data[0].p);
- 
-		file.close();
-		delete[] memblock;
 	}
-	else cout << "Unable to open file" << argv[1] << endl;
+	else
+	{
+	  char uid[10];
+	  sprintf(uid, "%03d%03d%03d",
+                  header.stationid, header.rspid, header.rcuid);
+	  vector<int> firstdims;
+	  firstdims.push_back( 0 );
+	  int nodata[0];
+	  iarray =
+	    stationGroup->createIntArray( string(uid),firstdims,nodata,cdims );
+
+	  string telescope = "LOFAR";
+	  string observer = "J.S. Masters";
+	  string project = "Transients";
+	  string observation_id = "1287";
+	  string observation_mode = "TransientDetection";
+	  string trigger_type = "Unknown";
+	  double trigger_offset[1] = { 0 };
+	  int triggered_antennas[1] = { 0 };
+	  double beam_direction[2] = { 0, 0 };
+
+	  // Add attributes to "Station" group
+	  stationGroup->setAttribute_string("TELESCOPE", telescope );
+	  stationGroup->setAttribute_string("OBSERVER", observer );
+	  stationGroup->setAttribute_string("PROJECT", project );
+	  stationGroup->setAttribute_string("OBS_ID", observation_id );
+	  stationGroup->setAttribute_string("OBS_MODE", observation_mode );
+	  stationGroup->setAttribute_string("TRIG_TYPE", trigger_type );
+	  stationGroup->setAttribute_double("TRIG_OFST", trigger_offset );
+	  stationGroup->setAttribute_int(   "TRIG_ANTS", triggered_antennas );
+	  stationGroup->setAttribute_double("BEAM_DIR", beam_direction, 2 );
+
+	  unsigned int sid[] = { (unsigned int)(header.stationid) };
+	  unsigned int rsp[] = { (unsigned int)(header.rspid) };
+	  unsigned int rcu[] = { (unsigned int)(header.rcuid) };
+	  double sf[] = { (double)header.sample_freq };
+	  unsigned int time[] = { (unsigned int)(header.time) };
+	  unsigned int samp_num[] = { (unsigned int)(header.sample_nr) };
+	  unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
+	  unsigned int datalen[] = { (unsigned int)0 };
+	  unsigned int nyquist_zone[] = { (unsigned int)0 };
+	  string feed = "NONE";
+	  double apos[] = { (double)0 };
+	  double aorient[] = { (double)0 };
+
+	  iarray->setAttribute_uint("STATION_ID", sid );
+	  iarray->setAttribute_uint("RSP_ID", rsp );
+	  iarray->setAttribute_uint("RCU_ID", rcu );
+	  iarray->setAttribute_double("SAMPLE_FREQ", sf );
+	  iarray->setAttribute_uint("TIME", time );
+	  iarray->setAttribute_uint("SAMPLE_NR", samp_num );
+	  iarray->setAttribute_uint("SAMPLES_PER_FRAME", spf );
+	  iarray->setAttribute_uint("DATA_LENGTH", datalen );
+	  iarray->setAttribute_uint("NYQUIST_ZONE", nyquist_zone );
+	  iarray->setAttribute_string("FEED", feed );
+	  iarray->setAttribute_double("ANT_POSITION", apos );
+	  iarray->setAttribute_double("ANT_ORIENTATION", aorient );
+	}
+
+	first_sample = false;
+      }
+
+      int idata[ header.n_samples_per_frame];
+
+      // Read Payload
+      if ( 0==header.n_freq_bands )
+      {
+	for (short zz=0; zz < header.n_samples_per_frame; zz++)
+        {
+	  file.read(reinterpret_cast<char *>(&tran_sample),sizeof(tran_sample));
+	  if ( bigendian )  // reverse fields if big endian
+		tran_sample.value = Int16Swap( tran_sample.value );
+
+	  idata[zz] = tran_sample.value;
+
+	}
+				
+	dims[0] += header.n_samples_per_frame;
+	iarray->extend(dims);
+	int arraysize = header.n_samples_per_frame;
+	iarray->write(offset, idata, arraysize );
+	offset += header.n_samples_per_frame;
+			
+      }
+      else
+      {
+	Int16 real_part, imag_part;
+	for (int ii=0; ii < (header.n_samples_per_frame*2); ii+=2)
+	{
+	  file.read(reinterpret_cast<char *>(&spec_sample),sizeof(spec_sample));
+	  // reverse fields if big endian
+	  if ( bigendian )
+          {
+	    real_part = Int16Swap( real(spec_sample.value) );
+	    imag_part = Int16Swap( imag(spec_sample.value) );
+	  }
+	  else
+	  {
+	    real_part = real(spec_sample.value);
+	    imag_part = imag(spec_sample.value);
+	  }
+	}
+
+      }
+						
+      file.read( reinterpret_cast<char *>(&payload_crc), sizeof(payload_crc) );
+    } // end while()
+ 
+    file.close();
+
+   } // end file.is_open()
+   else
+   {
+     cout << "Unable to open file " << myfiles[cc] << endl;
+   }
+
+  } // end loop over files
 
   /////////////////////////////////////////
   // create CALIBRATION table
@@ -350,7 +323,6 @@ int main(int argc, char *argv[])
 
   delete CalibrationTable;
 
-//  delete stationGroup;
   delete dataset;
 
   cout << "SUCCESS" << endl;
