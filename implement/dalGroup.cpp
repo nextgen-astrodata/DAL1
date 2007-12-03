@@ -59,12 +59,22 @@ bool dalGroup::setName ( string gname ) {
    }
 }
 
+dalArray * dalGroup::createShortArray( string arrayname,
+				     vector<int> dims,
+				     short data[],
+				     vector<int> cdims )
+{
+	   dalShortArray * la;
+	   la = new dalShortArray( group_id, arrayname, dims, data, cdims );
+	   return la;
+}
+
+
 dalArray * dalGroup::createIntArray( string arrayname,
 				     vector<int> dims,
 				     int data[],
 				     vector<int> cdims )
 {
-// cout << "group_id: " << group_id << endl;
 	   dalIntArray * la;
 	   la = new dalIntArray( group_id, arrayname, dims, data, cdims );
 	   return la;

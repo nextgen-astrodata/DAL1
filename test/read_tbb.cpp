@@ -38,9 +38,9 @@ int main(int argc, char *argv[])
      cout << endl << "Too few parameters..." << endl << endl;
      cout << "The first parameter is the tbb dataset name." << endl;
      cout << "The second parameter is the dipole itentifier. "
-	      << "(i.e. \"001002003\").\n" << "  The first 3 characters are the "
-		  << "station id.\n  The next 3 are the rsp id.\n  The last 3 are the "
-		  << "rcu id." << endl;
+	  << "(i.e. \"001002003\").\n" << "  The first 3 characters are the "
+	  << "station id.\n  The next 3 are the rsp id.\n  The last 3 are the "
+	  << "rcu id." << endl;
      cout << endl;
      return FAIL;
    }
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
    string id = argv[2];
    int start = 25;
    int length = 20;
-   int data[length];
+   short data[length];
    ds->read_tbb(id, start, length, data);
 
    printf("\n");
@@ -62,9 +62,10 @@ int main(int argc, char *argv[])
       printf("%d ", data[jj]);
       printf("\n");
    }
-    
+
    ds->close();
-   
+   delete ds;
+
    cout << "\nSUCCESS" << endl;
    return SUCCESS;
 }

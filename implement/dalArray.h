@@ -125,12 +125,18 @@ class dalArray{
 	void extend( vector<int> dims );
 	
 	/*!
-	  \brief Write data to an array.
+	  \brief Write short data to an array.
+	  
+	  Write data to an array, usually after extending it's dimensions.
+	 */
+	void write(int offset, short data[], int arraysize);
+
+	/*!
+	  \brief Write int to an array.
 	  
 	  Write data to an array, usually after extending it's dimensions.
 	 */
 	void write(int offset, int data[], int arraysize);
-
 /************************************************************************
  *
  * The following functions are boost wrappers to allow some previously
@@ -144,6 +150,69 @@ class dalArray{
 	void extend_boost( bpl::list pydims );
 
 #endif
+};
+
+class dalShortArray: public dalArray {
+
+  public:
+  
+    /*!
+	  \brief Default constructor.
+	  
+	  Default constructor.
+	 */
+	dalShortArray();
+	
+    /*!
+	  \brief Default destructor.
+	  
+	  Default destructor.
+	 */
+	~dalShortArray();
+	
+	/*!
+	  \brief Constructor for a fixed-size integer array.
+	  
+	  Constructor for a fixed-size integer array.  This is usually called from
+	  the dataset object and not directly by the developer.
+	  
+	  \param obj_id An identifier for the dataset object.
+	  \param arrayname The name of the array you want to create.
+	  \param dims The dimensions of the array you want to create.
+	  \param data A structure containing the data you want to write to the
+	              array.  The size of the structure should match the dimensions
+				  of the array.
+	 */
+	dalShortArray( hid_t obj_id, string arrayname, vector<int> dims,
+		     short data[] );
+
+	/*!
+	  \brief Constructor for extendible integer array.
+	  
+	  Constructor for an extendible integer array.  This is usually called from
+	  the dataset object and not directly by the developer.
+	  
+	  \param obj_id An identifier for the dataset object.
+	  \param arrayname The name of the array you want to create.
+	  \param dims The dimensions of the array you want to create.
+	  \param data A structure containing the data you want to write to the
+	              array.  The size of the structure should match the dimensions
+				  of the array.
+	  \param chnkdims Specifies the chunk size for extendible arrays.
+	 */
+	dalShortArray( hid_t obj_id, string arrayname, vector<int> dims,
+		     short data[], vector<int>chnkdims);
+
+    /*!
+	  \brief Read an integer array.
+	  
+	  Read the values from an array of integers.  This is usually called from
+	  the dataset object and not directly by the developer.
+	  
+	  \param obj_id An identifier for the dataset object.
+	  \param arrayname The name of the array you want to read.
+	 */
+	short * readShortArray( hid_t obj_id, string arrayname );
 };
 
 class dalIntArray: public dalArray {

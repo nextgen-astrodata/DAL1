@@ -511,7 +511,7 @@ string dalDataset::getType()
 }
 
 
-void dalDataset::read_tbb(string id, int start, int length, int data_out[])
+void dalDataset::read_tbb(string id, int start, int length, short data_out[])
 {
 
   char stid[3]; // station id
@@ -541,7 +541,7 @@ void dalDataset::read_tbb(string id, int start, int length, int data_out[])
                                 dimsr, NULL);
 
 
-  status_lcl = H5Dread (dataset, H5T_NATIVE_INT, memspace, filespace,
+  status_lcl = H5Dread (dataset, H5T_NATIVE_SHORT, memspace, filespace,
                     H5P_DEFAULT, data_out);
 
 }

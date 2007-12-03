@@ -46,7 +46,7 @@
 
 /*!
   \class dalDataset
-  
+
   \ingroup DAL
 
   \brief Represents the file containing all sub-structures
@@ -293,7 +293,7 @@ class dalDataset{
 	                starting at the specified start value.
 	  \return A pointer to a structure containing the block of data.
 	 */
-	void read_tbb(string id, int start, int length, int data_out[]);
+	void read_tbb(string id, int start, int length, short data_out[]);
 
 /************************************************************************
  *

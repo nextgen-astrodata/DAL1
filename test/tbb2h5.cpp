@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
     int counter=0;
     int offset=0;
 
-    dalArray * iarray;
+    dalArray * sarray;
     vector<int> cdims;
     cdims.push_back(CHUNK_SIZE);
 
@@ -159,9 +159,9 @@ int main(int argc, char *argv[])
                   header.stationid, header.rspid, header.rcuid);
 	  vector<int> firstdims;
 	  firstdims.push_back( 0 );
-	  int nodata[0];
-	  iarray =
-	    stationGroup->createIntArray( string(uid),firstdims,nodata,cdims );
+	  short nodata[0];
+	  sarray =
+	    stationGroup->createShortArray( string(uid),firstdims,nodata,cdims );
 
 	  string telescope = "LOFAR";
 	  string observer = "J.S. Masters";
@@ -197,24 +197,24 @@ int main(int argc, char *argv[])
 	  double apos[] = { (double)0 };
 	  double aorient[] = { (double)0 };
 
-	  iarray->setAttribute_uint("STATION_ID", sid );
-	  iarray->setAttribute_uint("RSP_ID", rsp );
-	  iarray->setAttribute_uint("RCU_ID", rcu );
-	  iarray->setAttribute_double("SAMPLE_FREQ", sf );
-	  iarray->setAttribute_uint("TIME", time );
-	  iarray->setAttribute_uint("SAMPLE_NR", samp_num );
-	  iarray->setAttribute_uint("SAMPLES_PER_FRAME", spf );
-	  iarray->setAttribute_uint("DATA_LENGTH", datalen );
-	  iarray->setAttribute_uint("NYQUIST_ZONE", nyquist_zone );
-	  iarray->setAttribute_string("FEED", feed );
-	  iarray->setAttribute_double("ANT_POSITION", apos );
-	  iarray->setAttribute_double("ANT_ORIENTATION", aorient );
+	  sarray->setAttribute_uint("STATION_ID", sid );
+	  sarray->setAttribute_uint("RSP_ID", rsp );
+	  sarray->setAttribute_uint("RCU_ID", rcu );
+	  sarray->setAttribute_double("SAMPLE_FREQ", sf );
+	  sarray->setAttribute_uint("TIME", time );
+	  sarray->setAttribute_uint("SAMPLE_NR", samp_num );
+	  sarray->setAttribute_uint("SAMPLES_PER_FRAME", spf );
+	  sarray->setAttribute_uint("DATA_LENGTH", datalen );
+	  sarray->setAttribute_uint("NYQUIST_ZONE", nyquist_zone );
+	  sarray->setAttribute_string("FEED", feed );
+	  sarray->setAttribute_double("ANT_POSITION", apos );
+	  sarray->setAttribute_double("ANT_ORIENTATION", aorient );
 	}
 
 	first_sample = false;
       }
 
-      int idata[ header.n_samples_per_frame];
+      short sdata[ header.n_samples_per_frame];
 
       // Read Payload
       if ( 0==header.n_freq_bands )
@@ -225,14 +225,14 @@ int main(int argc, char *argv[])
 	  if ( bigendian )  // reverse fields if big endian
 		tran_sample.value = Int16Swap( tran_sample.value );
 
-	  idata[zz] = tran_sample.value;
+	  sdata[zz] = tran_sample.value;
 
 	}
 				
 	dims[0] += header.n_samples_per_frame;
-	iarray->extend(dims);
+	sarray->extend(dims);
 	int arraysize = header.n_samples_per_frame;
-	iarray->write(offset, idata, arraysize );
+	sarray->write(offset, sdata, arraysize );
 	offset += header.n_samples_per_frame;
 			
       }

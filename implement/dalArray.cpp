@@ -25,13 +25,12 @@
 #include "dalArray.h"
 #endif
 
-void dalArray::write( int offset,
-                      int data[],
-					  int arraysize )
+void dalArray::write( int offset, int data[], int arraysize )
 {
-hsize_t      dims[1] = { arraysize /*1024*/ };
-int rank=1;
-hsize_t off[1] = { offset };
+    hsize_t      dims[1] = { arraysize };
+    int rank=1;
+    hsize_t off[1] = { offset };
+
     /* Select a hyperslab  */
     hid_t filespace = H5Dget_space( array_id );
     status = H5Sselect_hyperslab( filespace, H5S_SELECT_SET, off, NULL,
@@ -42,6 +41,25 @@ hsize_t off[1] = { offset };
 
     /* Write the data to the hyperslab  */
     status = H5Dwrite (array_id, H5T_NATIVE_INT, dataspace, filespace,
+                       H5P_DEFAULT, data);
+}
+
+void dalArray::write( int offset, short data[], int arraysize )
+{
+    hsize_t      dims[1] = { arraysize };
+    int rank=1;
+    hsize_t off[1] = { offset };
+
+    /* Select a hyperslab  */
+    hid_t filespace = H5Dget_space( array_id );
+    status = H5Sselect_hyperslab( filespace, H5S_SELECT_SET, off, NULL,
+                                  dims, NULL);
+
+    /* Define memory space */
+    hid_t dataspace = H5Screate_simple (rank, dims, NULL);
+
+    /* Write the data to the hyperslab  */
+    status = H5Dwrite (array_id, H5T_NATIVE_SHORT, dataspace, filespace,
                        H5P_DEFAULT, data);
 }
 
@@ -135,7 +153,69 @@ void dalArray::setAttribute_double( string attrname, double * data/*, int size*/
      cout << "ERROR: could not set attribute " << attrname << endl;
 }
 
+dalShortArray::dalShortArray(){}
 dalIntArray::dalIntArray(){}
+
+dalShortArray::dalShortArray( hid_t obj_id, string arrayname,
+			  vector<int> dims, short data[] )
+{
+   vector<int> chnkdims;
+
+   for( unsigned int ii=0; ii < dims.size(); ii++)
+      chnkdims.push_back(10);
+
+	hid_t datatype, dataspace;  // declare a few h5 variables
+
+	name = arrayname;  // set the private name variable to the array name
+
+	// determine the rank from the size of the dimensions vector
+	unsigned int rank = dims.size();
+
+	hsize_t mydims[rank];  // declare a dimensions c-array
+	hsize_t maxdims[rank]; // declare a maximum dimensions c-array
+	hid_t status_lcl;  // declare a local return status
+
+	hsize_t chunk_dims[ rank ];  // declare chunk dimensions c-array
+
+	// set the c-array dimensions and maxiumum dimensions
+	for (unsigned int ii=0; ii<rank; ii++)
+	{
+		mydims[ii] = dims[ii];  // vector to c-array
+		maxdims[ii] = H5S_UNLIMITED;
+	}
+
+	// set the c-array chunk dimensions from the chunk dims vector
+	for (unsigned int ii=0; ii<chnkdims.size(); ii++)
+	{
+		chunk_dims[ii] = chnkdims[ii];
+	}
+
+	// set the datatype to write
+	datatype = H5Tcopy(H5T_NATIVE_SHORT);
+
+	// if there are chunk dimensions, write the data this way
+	if ( chnkdims.size()>0 )
+	{
+	   dataspace = H5Screate_simple(rank,mydims,maxdims);
+	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
+	   status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
+	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype, dataspace, cparms);
+	}
+	// otherwise, write the data this way
+	else
+	{
+	   dataspace = H5Screate_simple(rank,mydims,NULL);
+	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+			dataspace, H5P_DEFAULT);
+	}
+
+	// write the data
+	H5Dwrite(array_id, datatype, dataspace, dataspace, H5P_DEFAULT, data);
+
+	// close local hdf5 objects
+	H5Sclose( dataspace );
+	H5Tclose( datatype );
+}
 
 dalIntArray::dalIntArray( hid_t obj_id, string arrayname,
 			  vector<int> dims, int data[] )
@@ -203,6 +283,76 @@ dalIntArray::dalIntArray( hid_t obj_id, string arrayname,
 }
 
 /********************************************************************
+ *  dalShortArray constructor creates an n-dimensional
+ *    array of Integers.
+ *
+ *  arguments:
+ *    voidfile (I) - dataset file handle
+ *    arrayname (I) - name of the array to create
+ *    dims (I) - vector of the array dimensions
+ *    data (I) - array of data to write
+ *    chnkdims (I) - resizing (chunking) dimensions. Empty vector
+ *      if the size of the array is fixed.
+ *
+ ********************************************************************/
+dalShortArray::dalShortArray( hid_t obj_id, string arrayname,
+			vector<int> dims, short data[], vector<int> chnkdims )
+{
+	hid_t datatype, dataspace;  // declare a few h5 variables
+
+	name = arrayname;  // set the private name variable to the array name
+
+	// determine the rank from the size of the dimensions vector
+	unsigned int rank = dims.size();
+
+	hsize_t mydims[rank];  // declare a dimensions c-array
+	hsize_t maxdims[rank]; // declare a maximum dimensions c-array
+	hid_t status_lcl;  // declare a local return status
+
+	hsize_t chunk_dims[ rank ];  // declare chunk dimensions c-array
+
+	// set the c-array dimensions and maxiumum dimensions
+	for (unsigned int ii=0; ii<rank; ii++)
+	{
+		mydims[ii] = dims[ii];  // vector to c-array
+		maxdims[ii] = H5S_UNLIMITED;
+	}
+
+	// set the c-array chunk dimensions from the chunk dims vector
+	for (unsigned int ii=0; ii<chnkdims.size(); ii++)
+	{
+		chunk_dims[ii] = chnkdims[ii];
+	}
+
+	// set the datatype to write
+	datatype = H5Tcopy(H5T_NATIVE_SHORT);
+
+	// if there are chunk dimensions, write the data this way
+	if ( chnkdims.size()>0 )
+	{
+	   dataspace = H5Screate_simple(rank,mydims,maxdims);
+	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
+	   status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
+	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+				dataspace, cparms);
+	}
+	// otherwise, write the data this way
+	else
+	{
+	   dataspace = H5Screate_simple(rank,mydims,NULL);
+	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+			dataspace, H5P_DEFAULT);
+	}
+
+	// write the data
+	H5Dwrite(array_id, datatype, dataspace, dataspace, H5P_DEFAULT, data);
+
+	// close local hdf5 objects
+	H5Sclose( dataspace );
+	H5Tclose( datatype );
+}
+
+/********************************************************************
  *  dalIntArray constructor creates an n-dimensional
  *    array of Integers.
  *
@@ -256,13 +406,15 @@ dalIntArray::dalIntArray( hid_t obj_id/*void * voidfile*/, string arrayname,
 	   dataspace = H5Screate_simple(rank,mydims,maxdims);
 	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
 	   status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
-	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype, dataspace, cparms);
+	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+				dataspace, cparms);
 	}
 	// otherwise, write the data this way
 	else
 	{
 	   dataspace = H5Screate_simple(rank,mydims,NULL);
-	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
+	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+			dataspace, H5P_DEFAULT);
 	}
 
 	// write the data
@@ -271,16 +423,11 @@ dalIntArray::dalIntArray( hid_t obj_id/*void * voidfile*/, string arrayname,
 	// close local hdf5 objects
 	H5Sclose( dataspace );
 	H5Tclose( datatype );
-// 	H5Dclose( array );
 }
 
-// void dalIntArray::write( vector<int> offset, vector<int> write_dims, int * data)
-// {
-//    cout << "dalIntArray::write()" << endl;
-// }
+dalIntArray::~dalIntArray() {}
 
-dalIntArray::~dalIntArray() {
-}
+dalShortArray::~dalShortArray() {}
 
 /********************************************************************
  *  dalFloatArray constructor creates an n-dimensional
@@ -350,6 +497,46 @@ dalFloatArray::dalFloatArray( hid_t obj_id, string arrayname,
 }
 
 dalFloatArray::~dalFloatArray() {
+}
+
+/********************************************************************
+ *  readShortArray reads an array of Shorts.
+ *
+ *  arguments:
+ *    obj_id (I) - file or group ID
+ *    arrayname (I) - name of the array to read
+ *
+ *  returns:
+ *    pointer to an short array
+ *
+ ********************************************************************/
+short * dalShortArray::readShortArray( hid_t obj_id, string arrayname )
+{
+	herr_t      lcl_status;
+
+	hid_t filespace = H5Dget_space(obj_id); // get the dataspace
+
+	// retrieve the rank of the array
+	hid_t data_rank = H5Sget_simple_extent_ndims(filespace);
+
+	hsize_t dims[ data_rank ];  // create a dims c-array using the rank
+
+	// retrieve the dimensions of the array
+	lcl_status = H5Sget_simple_extent_dims(filespace, dims, NULL);
+
+	long size = 1;  // the size of the array
+
+	// from the dimensions, compute the full size of the array
+	for (int ii=0; ii<data_rank; ii++)
+	  size *= dims[ii];
+
+	short * data = NULL;  // declare a pointer to the data
+	data = new short[size];  // allocate space for the data
+
+	// read the data into the local array
+	lcl_status = H5LTread_dataset_short( obj_id, arrayname.c_str(), data );
+
+	return data;  // return the data pointer
 }
 
 /********************************************************************
