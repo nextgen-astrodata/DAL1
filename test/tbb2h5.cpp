@@ -139,10 +139,11 @@ int main(int argc, char *argv[])
       if ( new_station( stations, header.stationid ) )
       {
         stations.push_back( header.stationid );
-	char stationstr[10];
+	char * stationstr = new char[10];
 	sprintf( stationstr, "Station%03d", header.stationid );
         stationGroup = dataset->createGroup( stationstr );
 	cout << "CREATED New station group: " << string(stationstr) << endl;
+	delete [] stationstr;
       }
 
       // set the STATION_ID, SAMPLE_FREQ and DATA_LENGTH attributes
