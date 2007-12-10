@@ -511,9 +511,11 @@ string dalDataset::getType()
 }
 
 
-void dalDataset::read_tbb(string id, int start, int length, short data_out[])
+void dalDataset::read_tbb (string id,
+			   int start,
+			   int length,
+			   short data_out[])
 {
-
   char stid[3]; // station id
   sscanf(id.c_str(),"%3c%*6c",stid);
   char datasetname[18];
@@ -537,13 +539,19 @@ void dalDataset::read_tbb(string id, int start, int length, short data_out[])
                                 dimsr, NULL);
 
   offset_out[0] = 0;
-  status_lcl = H5Sselect_hyperslab (memspace, H5S_SELECT_SET, offset_out, NULL, 
-                                dimsr, NULL);
+  status_lcl = H5Sselect_hyperslab (memspace,
+				    H5S_SELECT_SET,
+				    offset_out,
+				    NULL, 
+				    dimsr,
+				    NULL);
 
-
-  status_lcl = H5Dread (dataset, H5T_NATIVE_SHORT, memspace, filespace,
-                    H5P_DEFAULT, data_out);
-
+  status_lcl = H5Dread (dataset,
+			H5T_NATIVE_SHORT,
+			memspace,
+			filespace,
+			H5P_DEFAULT,
+			data_out);
 }
 
 

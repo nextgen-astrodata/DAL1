@@ -164,15 +164,15 @@ int main(int argc, char *argv[])
 	  sarray =
 	    stationGroup->createShortArray( string(uid),firstdims,nodata,cdims );
 
-	  string telescope = "LOFAR";
-	  string observer = "J.S. Masters";
-	  string project = "Transients";
-	  string observation_id = "1287";
-	  string observation_mode = "TransientDetection";
-	  string trigger_type = "Unknown";
-	  double trigger_offset[1] = { 0 };
+	  string telescope          = "LOFAR";
+	  string observer           = "J.S. Masters";
+	  string project            = "Transients";
+	  string observation_id     = "1234";
+	  string observation_mode   = "TransientDetection";
+	  string trigger_type       = "Unknown";
+	  double trigger_offset[1]  = { 0 };
 	  int triggered_antennas[1] = { 0 };
-	  double beam_direction[2] = { 0, 0 };
+	  double beam_direction[2]  = { 0, 0 };
 
 	  // Add attributes to "Station" group
 	  stationGroup->setAttribute_string("TELESCOPE", telescope );

@@ -138,12 +138,13 @@ if (DAL_PYTHON_BINDINGS)
   remove_definitions (-dynamiclib -install_name)
   ## Source files entering the library
   add_library(pydal MODULE
-#    ${dal_sources}
+    ${dal_sources}
     pywrapper.cpp
     )
   ## linker instructions
   target_link_libraries(pydal
-    dal
+    ${PYTHON_LIBRARIES}
+    ${BOOST_LIBRARIES}
     ${dal_link_libraries}
     )
   ## additional target properties
