@@ -20,9 +20,17 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifdef PYTHON
+#define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
+#define NO_IMPORT_ARRAY
+#endif
 
 #ifndef DALDATASET_H
 #include "dalDataset.h"
+#endif
+
+#ifdef PYTHON
+#include <num_util.h>
 #endif
 
 /****************************************************************
@@ -192,6 +200,9 @@ dalGroup * dalDataset::createGroup( char* gname )
  *****************************************************************/
 dalDataset::dalDataset()
 {
+#ifdef PYTHON
+    Py_Initialize();
+#endif
     filter = new dalFilter;
 }
 

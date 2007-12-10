@@ -45,5 +45,5 @@ data = uvw_column.data()
 # plot the data
 xlabel("U(-U)")
 ylabel("V(-V)")
-plot(data[0],data[1],'r,',-(data[0]),-(data[1]),'b,')
+plot(data[:,0],data[:,1],'r,',-data[:,0],-data[:,1],'b,')
 show()

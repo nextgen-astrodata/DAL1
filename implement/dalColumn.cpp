@@ -30,7 +30,10 @@
 #ifndef DALCOLUMN_H
 #include "dalColumn.h"
 #endif
-// #include <test.tcc>
+
+#ifdef PYTHON
+#include <num_util.h>
+#endif
 
 dalColumn::dalColumn()
 {}
@@ -98,6 +101,9 @@ string dalColumn::getDataType()
     case ( casa::TpInt ):
 	casa_datatype = "int";
     break;
+    case ( casa::TpString ):
+	casa_datatype = "string";
+    break;
     default:
       casa_datatype = "Unsupported type";
   }
@@ -164,8 +170,9 @@ vector<int> dalColumn::shape()
       {
 	    casa::IPosition ipos = casa_column->shape(0);
 	    casa::Vector<casa::Int> col_shape = ipos.asVector();
-        col_shape.tovector( shape_vals );
-        shape_vals.push_back( nrows() );
+	    col_shape.tovector( shape_vals );
+	    shape_vals.push_back( nrows() );
+	    std::reverse(shape_vals.begin(), shape_vals.end());
       } catch (casa::AipsError x) {
          cout << "ERROR: " << x.getMesg() << endl;
          exit(-4);
@@ -273,6 +280,16 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 	   return data_object;
          }
 	 break;
+	 case casa::TpString:
+	 {
+	   rosc_string = new casa::ROScalarColumn<casa::String>( *casa_column );
+	   scalar_vals_string = rosc_string->getColumn();
+	   data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
+	   data_object->data =
+	     (string *)scalar_vals_string.getStorage(deleteIt);
+	   return data_object;
+         }
+	 break;
 /************************************
  * ADD MORE TYPES HERES
  ************************************/
@@ -295,8 +312,8 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 	    data_object = new dalData( filetype, dal_INT, shape(), nrows() );
 	    data_object->data = (int *)array_vals_int.getStorage(deleteIt);
 	    return data_object;
-	    }
-	    break;
+	  }
+	  break;
 	  case casa::TpDouble:
 	  {
 	    roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
@@ -304,8 +321,8 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 	    data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
 	    data_object->data = (double *)array_vals_dbl.getStorage(deleteIt);
 	    return data_object;
-	    }
-	    break;
+	  }
+	  break;
 	  case casa::TpComplex:
 	  {
 // 	    casa::IPosition start (2,cell1,cell2);
@@ -325,8 +342,17 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 		  (complex<float> *)array_vals_comp.getStorage(deleteIt);
 	    return data_object;
 
-	    }
-	    break;
+	  }
+	  break;
+	  case casa::TpString:
+	  {
+	    roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
+	    array_vals_string = roac_string->getColumn();
+	    data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
+	    data_object->data = (string *)array_vals_string.getStorage(deleteIt);
+	    return data_object;
+	  }
+	  break;
 /************************************
  * ADD MORE TYPES HERES
  ************************************/

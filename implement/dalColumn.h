@@ -75,20 +75,24 @@ class dalColumn {
 	casa::ROArrayColumn<int> * roac_int;
 	casa::ROArrayColumn<double> * roac_dbl;
 	casa::ROArrayColumn< complex< float > > * roac_comp;
+	casa::ROArrayColumn<casa::String> * roac_string;
 
 	casa::ROScalarColumn<int> * rosc_int;
 	casa::ROScalarColumn<double> * rosc_dbl;
 	casa::ROScalarColumn< complex< float > > * rosc_comp;
+	casa::ROScalarColumn<casa::String> * rosc_string;
 
 	// ARRAYs
 	casa::Array<casa::Double> array_vals_dbl;
 	casa::Array<casa::Complex> array_vals_comp;
 	casa::Array<casa::Int> array_vals_int;
+	casa::Array<casa::String> array_vals_string;
 
 	// VECTORs
 	casa::Vector<casa::Double> scalar_vals_dbl;
 	casa::Vector<casa::Complex> scalar_vals_comp;
 	casa::Vector<casa::Int> scalar_vals_int;
+	casa::Vector<casa::String> scalar_vals_string;
 	vector< complex< float > > stl_vec_comp;
 
 	casa::Bool deleteIt;

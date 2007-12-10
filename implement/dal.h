@@ -149,6 +149,7 @@ using namespace std;
    if creating python bindings
 */
 #ifdef PYTHON
+#include <Python.h>
 #include <boost/python.hpp>
 #include <boost/python/object.hpp>
 #include <boost/python/list.hpp>

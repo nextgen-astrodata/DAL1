@@ -20,21 +20,8 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
+#define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 
-#include <boost/python.hpp>
-// #include <num_util.h>
-
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include <boost/python/module.hpp>
-#include <boost/python/def.hpp>
-#include <boost/python/implicit.hpp>
-#include <boost/python/class.hpp>
-#include <boost/python/list.hpp>
-#include <boost/python/numeric.hpp>
-#include <boost/python/tuple.hpp>
-
-//using namespace boost;
-namespace bpl = boost::python;
 #include <vector>
 
 #include "dal.h"
@@ -43,20 +30,17 @@ namespace bpl = boost::python;
 #include "dalGroup.h"
 #include "dalAttribute.h"
 #include "dalDataset.h"
+#include <num_util.h>
 
-// BOOST_PYTHON_FUNCTION_OVERLOADS(
-// 	ct_overloads,
-// 	dalDataset::createTable,
-// 	1, 2
-// )
-typedef struct opaque_ *opaque;
-BOOST_PYTHON_OPAQUE_SPECIALIZED_TYPE_ID(opaque_)
+namespace { const char* rcsid = "$Id: pywrapper.cpp 39 2007-02-01 02:54:54Z joe $"; }
+using namespace boost::python;
 
 BOOST_PYTHON_MODULE(pydal)
 {
-//     bpl::import_array();
-//     numeric::array::set_module_and_type("numpy", "ndarray");
+    scope().attr("__doc__") =  "Routines for pydal.";
 
+    import_array();
+    bpl::numeric::array::set_module_and_type("numpy", "ndarray");
 
     bpl::class_<dalDataset>("dalDataset")
 	.def(bpl::init<char*, string>())
@@ -89,8 +73,6 @@ BOOST_PYTHON_MODULE(pydal)
 		bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createFloatArray", &dalDataset::cfa_boost_numarray,
 		bpl::return_value_policy<bpl::manage_new_object>())
-// 	.def("createComplexArray", &dalDataset::cca_boost,
-// 		bpl::return_value_policy<bpl::manage_new_object>())
 	.def("readIntArray", &dalDataset::ria_boost)
 	.def("readFloatArray", &dalDataset::rfa_boost)
 	.def("createArray", &dalDataset::createArray,
@@ -122,10 +104,6 @@ BOOST_PYTHON_MODULE(pydal)
 		bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createIntArray", &dalGroup::cia_boost_numarray2,
 		bpl::return_value_policy<bpl::manage_new_object>())
-/*	.def("createIntArray", &dalGroup::cia_boost,
-		bpl::return_value_policy<bpl::manage_new_object>())
-	.def("createIntArray", &dalGroup::cia_boost_numarray,
-		bpl::return_value_policy<bpl::manage_new_object>())*/
 	.def("createFloatArray", &dalGroup::cfa_boost,
 		bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createFloatArray", &dalGroup::cfa_boost_numarray,
@@ -150,7 +128,6 @@ BOOST_PYTHON_MODULE(pydal)
 		bpl::return_value_policy<bpl::return_opaque_pointer>())
 	.def("getAttribute", &dalTable::getAttribute,
 		bpl::return_value_policy<bpl::return_opaque_pointer>())
-//         .def("printColumns", &dalTable::printColumns)
         .def("setAttribute_string", &dalTable::setAttribute_string)
         .def("setAttribute_int", &dalTable::setAttribute_int)
         .def("setAttribute_uint", &dalTable::setAttribute_uint)
@@ -158,8 +135,6 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("findAttribute", &dalTable::findAttribute)
 	.def("getNumberOfRows", &dalTable::getNumberOfRows)
 #ifdef WITH_CASA
-//	.def("openTable", &dalTable::ot_ms1)
-// 	.def("openTable", &dalTable::ot_ms2)
 	.def("setFilter", &dalTable::setFilter_boost1)
 	.def("setFilter", &dalTable::setFilter_boost2)
 	.def("getColumn", &dalTable::getColumn,

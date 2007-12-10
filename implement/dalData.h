@@ -136,6 +136,15 @@ public:
           Converts array values to floating point values.
          */
 	void toFloat();
+
+         /*!
+          \brief Get file type ("MSCASA", "FITS", "HDF5", etc.)
+
+          Get file type ("MSCASA", "FITS", "HDF5", etc.)
+
+	  \return string -- filetype
+         */
+	string getFileType();
 	
 #ifdef PYTHON
 	bpl::numeric::array get_boost();

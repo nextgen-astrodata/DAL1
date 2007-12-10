@@ -20,19 +20,19 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifdef PYTHON
+#define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
+#define NO_IMPORT_ARRAY
+#endif
 
 #ifndef DALDATA_H
 #include "dalData.h"
 #endif
 
-/*void * dalData::get( long idx1 )
-{
-  return NULL;
-}
-void * dalData::get( long idx1 )
-{
-  return NULL;
-}*/
+#ifdef PYTHON
+#include <num_util.h>
+#endif
+
 unsigned long dalData::fortran_index(long idx1, long idx2, long idx3)
 {
    vector<long> indices;
@@ -144,15 +144,6 @@ void * dalData::get( long idx1, long idx2, long idx3 )
    {
       index = c_index( idx1, idx2, idx3 );
    }
-   
-   if ( dal_COMPLEX == datatype )
-      return (&(((complex<float>*)data)[ index ]));
-
-   else if ( dal_DOUBLE == datatype )
-      return (&(((double*)data)[ index ]));
-
-   else if ( dal_INT == datatype )
-      return (&(((int*)data)[ index ]));
 
    if ( dal_COMPLEX == datatype )
       return (&(((complex<float>*)data)[ index ]));
@@ -162,6 +153,18 @@ void * dalData::get( long idx1, long idx2, long idx3 )
 
    else if ( dal_INT == datatype )
       return (&(((int*)data)[ index ]));
+
+   if ( dal_COMPLEX == datatype )
+      return (&(((complex<float>*)data)[ index ]));
+
+   else if ( dal_DOUBLE == datatype )
+      return (&(((double*)data)[ index ]));
+
+   else if ( dal_INT == datatype )
+      return (&(((int*)data)[ index ]));
+
+   else if ( dal_STRING == datatype )
+      return (&(((string*)data)[ index ]));
 
    return NULL;
 }
@@ -186,134 +189,39 @@ dalData::dalData(string lclfiletype, string lcldatatype,
 bpl::numeric::array dalData::get_boost()
 {
   bpl::list data_list;
-  if ( 1 == shape.size() ) // SCALAR
-    {
+  vector<int> mydims;
       if ( dal_INT == datatype )
       {
-        for (int ii=0; ii<nrows; ii++)
-        {
-           data_list.append( (*((int*)get(ii))) );
-        }
-        bpl::numeric::array nadata(
-            bpl::make_tuple(data_list)
-        );
-        bpl::list lcl_dims;
         for (unsigned int hh=0; hh<shape.size(); hh++)
-        { lcl_dims.append(shape[hh]);}
-
-        nadata.setshape( lcl_dims );
-        return nadata;
+	{ mydims.push_back(shape[hh]); }
+	bpl::numeric::array narray = num_util::makeNum((int*)data,mydims);
+	narray.transpose(narray);
+	return narray;
       }
       else if ( dal_DOUBLE == datatype )
       {
-        for (int ii=0; ii<nrows; ii++)
-        {
-           data_list.append( (*((double*)get(ii))) );
-        }
-        bpl::numeric::array nadata(
-            bpl::make_tuple(data_list)
-        );
-        bpl::list lcl_dims;
         for (unsigned int hh=0; hh<shape.size(); hh++)
-        { lcl_dims.append(shape[hh]);}
-
-        nadata.setshape( lcl_dims );
-        return nadata;
+	{ mydims.push_back(shape[hh]); }
+	bpl::numeric::array narray = num_util::makeNum((double*)data,mydims);
+	vector<int> fshape = num_util::shape(narray);
+	return narray;
+      }
+      else if ( dal_STRING == datatype )
+      {
+        for (unsigned int hh=0; hh<shape.size(); hh++)
+	{ mydims.push_back(shape[hh]); }
+	bpl::numeric::array narray = num_util::makeNum((string*)data,mydims);
+	narray.transpose(narray);
+	return narray;
       }
       else 
       {
+	cout << "ERROR:  Datatype not yet supported.  (dalData::get_boost)\n";
 	for (int ii=0; ii<1; ii++)
 		data_list.append(0);
 		bpl::numeric::array nadata( data_list );
 	return nadata;
       }
-    }
-    else  // ARRAY
-    {
-      if ( dal_DOUBLE == datatype )
-      {
-        if ( 2 == shape.size() ) // 2D case
-        {
-  	      for ( int xx=0; xx<shape[0]; xx++)
-  	        for ( int yy=0; yy<shape[1]; yy++)
-              data_list.append( (*((double*)get(xx,yy))) );
-        }
-        else if ( 3 == shape.size() ) // 3D case
-        {
-  	      for ( int xx=0; xx<shape[0]; xx++)
-  	        for ( int yy=0; yy<shape[1]; yy++)
-  	          for ( int zz=0; zz<shape[2]; zz++)
-                data_list.append( (*((double*)get(xx,yy,zz))) );
-        }
- 
-        bpl::numeric::array nadata( data_list );
- 
-        bpl::list lcl_dims;
-        for (unsigned int hh=0; hh<shape.size(); hh++)
-          lcl_dims.append(shape[hh]);
- 
-        nadata.setshape( lcl_dims );
-        return nadata;
-      }
-      else if ( dal_DOUBLE == datatype )
-      {
-        if ( 2 == shape.size() ) // 2D case
-        {
-  	      for ( int xx=0; xx<shape[0]; xx++)
-  	        for ( int yy=0; yy<shape[1]; yy++)
-               data_list.append( (*((double*)get(xx,yy))) );
-		}
-        else if ( 3 == shape.size() ) // 3D case
-        {
-	       for ( int xx=0; xx<shape[0]; xx++)
-  	         for ( int yy=0; yy<shape[1]; yy++)
-			   for ( int zz=0; zz<shape[2]; zz++)
-                 data_list.append( (*((double*)get(xx,yy,zz))) );
-        }
- 
-        bpl::numeric::array nadata( data_list );
- 
-        bpl::list lcl_dims;
-        for (unsigned int hh=0; hh<shape.size(); hh++)
-          lcl_dims.append(shape[hh]);
- 
-        nadata.setshape( lcl_dims );
-        return nadata;
-      }
-      else if ( dal_COMPLEX == datatype )
-      {
-        complex<float> * tmp_comp;
-        if ( 2 == shape.size() ) // 2D case
-        {
-  	      for (int xx=0; xx<shape[0]; xx++)
-  	        for (int yy=0; yy<shape[1]; yy++)
-              data_list.append( (*((complex<float>*)get(xx,yy))) );
-        }
-        else if ( 3 == shape.size() ) // 3D case
-        {
-  	      for (int xx=0; xx<shape[0]; xx++)
-  	        for ( int yy=0; yy<shape[1]; yy++)
-  	         for (int zz=0; zz<shape[2]; zz++)
-              {
-		        tmp_comp = (complex<float>*)get(xx,yy,zz);
-                data_list.append( *tmp_comp );
-              }
-        }
-        bpl::numeric::array nadata( data_list );
- 
-        bpl::list lcl_dims;
-        for (unsigned int hh=0; hh<shape.size(); hh++)
-        {  lcl_dims.append(shape[hh]); }
-        nadata.setshape( lcl_dims );
-        return nadata;
-      }
-      else
-      {
-	 cout << "ERROR:  Datatype not yet supported.  (dalData::get_boost)"
-	   << endl;
-         exit(-3);
-      }
-    }
     bpl::list tmp_list;
     tmp_list.append(0);
     bpl::numeric::array nadata(tmp_list);

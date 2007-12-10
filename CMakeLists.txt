@@ -130,14 +130,24 @@ include_directories (
 
 ## header files of external packages
 
-if (PYTHON_INCLUDES)
-  include_directories (${PYTHON_INCLUDES})
-else (PYTHON_INCLUDES)
-  message (STATUS "[DAL] Missing Python header files!")
-endif (PYTHON_INCLUDES)
+if (DAL_PYTHON_BINDINGS)
+
+  if (PYTHON_INCLUDES)
+    include_directories (${PYTHON_INCLUDES})
+  else (PYTHON_INCLUDES)
+    message (STATUS "[DAL] Missing Python header files!")
+  endif (PYTHON_INCLUDES)
+
+  if (NUMPY_INCLUDES)
+    include_directories (${NUMPY_INCLUDES})
+  else (NUMPY_INCLUDES)
+    message (STATUS "[DAL] Missing numpy header files!")
+  endif (NUMPY_INCLUDES)
+
+endif (DAL_PYTHON_BINDINGS)
 
 if (BOOST_INCLUDES)
-  include_directories (${BOOST_INCLUDES})
+  include_directories (${BOOST_INCLUDES} ${BOOST_INCLUDES}/boost)
 else (BOOST_INCLUDES)
   message (STATUS "[DAL] Missing Boost header files!")
 endif (BOOST_INCLUDES)
@@ -197,7 +207,8 @@ if (DAL_VERBOSE_CONFIGURE)
   message (STATUS " HDF5 library    = ${HDF5_LIBRARIES}")
   message (STATUS " Boost includes  = ${BOOST_INCLUDES}")
   message (STATUS " Boost library   = ${BOOST_LIBRARIES}")
-  message (STATUS " Python includes = ${PYTHON_INCLUDE_PATH}")
+  message (STATUS " Python includes = ${PYTHON_INCLUDES}")
+  message (STATUS " Numpy includes  = ${NUMPY_INCLUDES}")
   message (STATUS " Python library  = ${PYTHON_LIBRARIES}")
   message (STATUS " casacore        = ${HAVE_CASACORE}")
   message (STATUS "+------------------------------------------------------------+")

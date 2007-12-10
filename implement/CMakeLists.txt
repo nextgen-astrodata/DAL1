@@ -140,11 +140,19 @@ if (DAL_PYTHON_BINDINGS)
     ${dal_sources}
     pywrapper.cpp
     )
+  include_directories (
+    ${BOOST_INCLUDES}
+    ${BOOST_INCLUDES}/boost
+    ${PYTHON_INCLUDES}
+    ${NUM_UTIL_INCLUDES}
+    ${NUMPY_INCLUDES}
+    )
   ## linker instructions
   target_link_libraries(pydal
     ${PYTHON_LIBRARIES}
     ${BOOST_LIBRARIES}
     ${dal_link_libraries}
+    num_util
     )
   ## additional target properties
   if (APPLE)
