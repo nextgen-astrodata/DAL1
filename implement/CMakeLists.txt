@@ -99,12 +99,12 @@ if (CASA_LIBRARIES)
   list (APPEND dal_link_libraries ${CASA_LIBRARIES})
 endif (CASA_LIBRARIES)
 
-if (DAL_PYTHON_BINDINGS)
-  list (APPEND dal_link_libraries
-    ${PYTHON_LIBRARIES}
-    ${BOOST_LIBRARIES}
-    )
-endif (DAL_PYTHON_BINDINGS)
+#if (DAL_PYTHON_BINDINGS)
+#  list (APPEND dal_link_libraries
+#    ${PYTHON_LIBRARIES}
+#    ${BOOST_LIBRARIES}
+#    )
+#endif (DAL_PYTHON_BINDINGS)
 
 if (libdl)
   list (APPEND dal_link_libraries ${libdl})
@@ -134,7 +134,6 @@ target_link_libraries(dal
 
 if (DAL_PYTHON_BINDINGS)
   ## compiler instructions
-  add_definitions (-DPYTHON)
   remove_definitions (-dynamiclib -install_name)
   ## Source files entering the library
   add_library(pydal MODULE
@@ -153,6 +152,7 @@ if (DAL_PYTHON_BINDINGS)
       PROPERTIES
       PREFIX ""
       SUFFIX .so
+      COMPILE_FLAGS -DPYTHON
       LINK_FLAGS "-fPIC -flat_namespace"
       )
   else (APPLE)

@@ -38,9 +38,12 @@ foreach (src ${tests})
   add_executable(${src} ${src}.cpp)
   ## libraries against which to link
   if (HAVE_CASA OR HAVE_CASACORE)
-     target_link_libraries(${src} dal ${dal_link_libraries})
+    target_link_libraries(${src}
+      dal
+      ${dal_link_libraries}
+      )
   else (HAVE_CASA OR HAVE_CASACORE)
-     target_link_libraries(${src} dal)
+    target_link_libraries(${src} dal)
   endif (HAVE_CASA OR HAVE_CASACORE)
 endforeach (src)
 
