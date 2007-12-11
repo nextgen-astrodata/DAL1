@@ -112,11 +112,20 @@ if (BOOST_LIBRARIES)
   endif (PYTHON_LIBRARIES)
 endif (BOOST_LIBRARIES)
 
-## Effect of dependencies on build options
+## Effect of dependencies on build options; if we are unable to locate all the
+## required components to generate the Python bindings to the DAL, we have to 
+## disable this option - otherwise we won't be able to properly build the test
+## programs and applications.
 
 if (NOT HAVE_PYTHON OR NOT HAVE_BOOST)
   set (DAL_PYTHON_BINDINGS OFF)
+  message (STATUS "[DAL] Unable to generate Python bindings!")
 endif (NOT HAVE_PYTHON OR NOT HAVE_BOOST)
+
+if (NOT NUMPY_INCLUDES) 
+  set (DAL_PYTHON_BINDINGS OFF)
+  message (STATUS "[DAL] Unable to generate Python bindings!")
+endif (NOT NUMPY_INCLUDES)
 
 ## -----------------------------------------------------------------------------
 ## Include directories
@@ -143,7 +152,7 @@ if (DAL_PYTHON_BINDINGS)
   else (NUMPY_INCLUDES)
     message (STATUS "[DAL] Missing numpy header files!")
   endif (NUMPY_INCLUDES)
-
+  
 endif (DAL_PYTHON_BINDINGS)
 
 if (BOOST_INCLUDES)

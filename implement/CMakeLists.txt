@@ -99,13 +99,6 @@ if (CASA_LIBRARIES)
   list (APPEND dal_link_libraries ${CASA_LIBRARIES})
 endif (CASA_LIBRARIES)
 
-#if (DAL_PYTHON_BINDINGS)
-#  list (APPEND dal_link_libraries
-#    ${PYTHON_LIBRARIES}
-#    ${BOOST_LIBRARIES}
-#    )
-#endif (DAL_PYTHON_BINDINGS)
-
 if (libdl)
   list (APPEND dal_link_libraries ${libdl})
 endif (libdl)
@@ -141,11 +134,11 @@ if (DAL_PYTHON_BINDINGS)
     pywrapper.cpp
     )
   include_directories (
-    ${BOOST_INCLUDES}
-    ${BOOST_INCLUDES}/boost
-    ${PYTHON_INCLUDES}
+#    ${BOOST_INCLUDES}
+#    ${BOOST_INCLUDES}/boost
+#    ${PYTHON_INCLUDES}
     ${NUM_UTIL_INCLUDES}
-    ${NUMPY_INCLUDES}
+#    ${NUMPY_INCLUDES}
     )
   ## linker instructions
   target_link_libraries(pydal
