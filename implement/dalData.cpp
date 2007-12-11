@@ -206,6 +206,14 @@ bpl::numeric::array dalData::get_boost()
 	vector<int> fshape = num_util::shape(narray);
 	return narray;
       }
+      else if ( dal_COMPLEX == datatype )
+      {
+        for (unsigned int hh=0; hh<shape.size(); hh++)
+	{ mydims.push_back(shape[hh]); }
+	bpl::numeric::array narray = num_util::makeNum((complex<float>*)data,mydims);
+	vector<int> fshape = num_util::shape(narray);
+	return narray;
+      }
       else if ( dal_STRING == datatype )
       {
         for (unsigned int hh=0; hh<shape.size(); hh++)
@@ -216,7 +224,7 @@ bpl::numeric::array dalData::get_boost()
       }
       else 
       {
-	cout << "ERROR:  Datatype not yet supported.  (dalData::get_boost)\n";
+	cout << "ERROR:  Datatype '" << datatype << "' not yet supported.  (dalData::get_boost)\n";
 	for (int ii=0; ii<1; ii++)
 		data_list.append(0);
 		bpl::numeric::array nadata( data_list );
