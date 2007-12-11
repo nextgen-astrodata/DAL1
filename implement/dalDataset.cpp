@@ -536,21 +536,46 @@ void dalDataset::read_tbb (string id,
   sprintf( datasetname, "Station%c%c%c/%s", stid[0],stid[1],stid[2],id.c_str());
   hid_t dataset = H5Dopen( h5fh, datasetname );
   hid_t filespace = H5Dget_space( dataset );
+  if (filespace < 0)
+    {
+      cout << "ERROR: could not get filespace.(dalDataset::read_tbb)\n";
+      exit(9);
+    }
   int rank = H5Sget_simple_extent_ndims( filespace );
+  if (rank < 0)
+    {
+      cout << "ERROR: could not get filespace rank.(dalDataset::read_tbb)\n";
+      exit(9);
+    }
 
   hsize_t dimsr[1];
 
   herr_t status_lcl = H5Sget_simple_extent_dims (filespace, dimsr, NULL);
+  if (status_lcl < 0)
+    {
+      cout << "ERROR: could not get filespace dims.(dalDataset::read_tbb)\n";
+      exit(9);
+    }
 
   dimsr[0]=length;
 
   hid_t memspace = H5Screate_simple (rank,dimsr,NULL);
+  if (memspace < 0)
+    {
+      cout << "ERROR: could not create memory space.(dalDataset::read_tbb)\n";
+      exit(9);
+    }
 
   hsize_t     offset[1];
   hsize_t     offset_out[1];         /* hyperslab offset in memory */
   offset[0] = start;
   status_lcl = H5Sselect_hyperslab (filespace, H5S_SELECT_SET, offset, NULL, 
                                 dimsr, NULL);
+  if (status_lcl < 0)
+    {
+      cout << "ERROR: could not select hyperslab.(dalDataset::read_tbb)\n";
+      exit(9);
+    }
 
   offset_out[0] = 0;
   status_lcl = H5Sselect_hyperslab (memspace,
@@ -559,6 +584,11 @@ void dalDataset::read_tbb (string id,
 				    NULL, 
 				    dimsr,
 				    NULL);
+  if (status_lcl < 0)
+    {
+      cout << "ERROR: could not select hyperslab.(dalDataset::read_tbb)\n";
+      exit(10);
+    }
 
   status_lcl = H5Dread (dataset,
 			H5T_NATIVE_SHORT,
@@ -566,6 +596,11 @@ void dalDataset::read_tbb (string id,
 			filespace,
 			H5P_DEFAULT,
 			data_out);
+  if (status_lcl < 0)
+    {
+      cout << "ERROR: could not read array.(dalDataset::read_tbb)\n";
+      exit(9);
+    }
 }
 
 
