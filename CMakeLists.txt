@@ -117,15 +117,25 @@ endif (BOOST_LIBRARIES)
 ## disable this option - otherwise we won't be able to properly build the test
 ## programs and applications.
 
-if (NOT HAVE_PYTHON OR NOT HAVE_BOOST)
+if (NOT BOOST_INCLUDES) 
   set (DAL_PYTHON_BINDINGS OFF)
-  message (STATUS "[DAL] Unable to generate Python bindings!")
-endif (NOT HAVE_PYTHON OR NOT HAVE_BOOST)
+  message (STATUS "[DAL] Unable to generate Python bindings; missing Boost++ headers!")
+endif (NOT BOOST_INCLUDES)
 
-if (NOT NUMPY_INCLUDES OR NOT NUM_UTIL_INCLUDES) 
+if (NOT PYTHON_INCLUDES) 
   set (DAL_PYTHON_BINDINGS OFF)
-  message (STATUS "[DAL] Unable to generate Python bindings!")
-endif (NOT NUMPY_INCLUDES OR NOT NUM_UTIL_INCLUDES)
+  message (STATUS "[DAL] Unable to generate Python bindings; missing Python headers!")
+endif (NOT PYTHON_INCLUDES)
+
+if (NOT NUMPY_INCLUDES) 
+  set (DAL_PYTHON_BINDINGS OFF)
+  message (STATUS "[DAL] Unable to generate Python bindings; missing NumPy headers!")
+endif (NOT NUMPY_INCLUDES)
+
+if (NOT NUM_UTIL_INCLUDES) 
+  set (DAL_PYTHON_BINDINGS OFF)
+  message (STATUS "[DAL] Unable to generate Python bindings; missing num_util headers!")
+endif (NOT NUM_UTIL_INCLUDES)
 
 ## -----------------------------------------------------------------------------
 ## Include directories
