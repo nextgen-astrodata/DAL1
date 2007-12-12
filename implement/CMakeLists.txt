@@ -153,7 +153,7 @@ if (DAL_PYTHON_BINDINGS)
       PROPERTIES
       PREFIX ""
       SUFFIX .so
-      COMPILE_FLAGS -DPYTHON
+      COMPILE_FLAGS "-DPYTHON -fpermissive"
       LINK_FLAGS "-fPIC -flat_namespace"
       )
   else (APPLE)
