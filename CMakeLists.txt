@@ -122,10 +122,10 @@ if (NOT HAVE_PYTHON OR NOT HAVE_BOOST)
   message (STATUS "[DAL] Unable to generate Python bindings!")
 endif (NOT HAVE_PYTHON OR NOT HAVE_BOOST)
 
-if (NOT NUMPY_INCLUDES) 
+if (NOT NUMPY_INCLUDES OR NOT NUM_UTIL_INCLUDES) 
   set (DAL_PYTHON_BINDINGS OFF)
   message (STATUS "[DAL] Unable to generate Python bindings!")
-endif (NOT NUMPY_INCLUDES)
+endif (NOT NUMPY_INCLUDES OR NOT NUM_UTIL_INCLUDES)
 
 ## -----------------------------------------------------------------------------
 ## Include directories
