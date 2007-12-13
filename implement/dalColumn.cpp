@@ -492,6 +492,16 @@ bpl::numeric::array dalColumn::data_boost()
 	   return data_object->get_boost();
          }
 	 break;
+	 case casa::TpString:
+	 {
+	   rosc_string = new casa::ROScalarColumn<casa::String>( *casa_column );
+	   scalar_vals_string = rosc_string->getColumn();
+	   data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
+	   data_object->data =
+	     (string *)scalar_vals_string.getStorage(deleteIt);
+	   return data_object->get_boost();
+         }
+	 break;
 /************************************
  * ADD MORE TYPES HERES
  ************************************/
@@ -547,6 +557,15 @@ bpl::numeric::array dalColumn::data_boost()
 		  (complex<float> *)array_vals_comp.getStorage(deleteIt);
 	    return data_object->get_boost();
 
+	    }
+	    break;
+	  case casa::TpString:
+	  {
+	    roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
+            array_vals_string = roac_string->getColumn();
+	    data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
+	    data_object->data = (string *)array_vals_string.getStorage(deleteIt);
+	    return data_object->get_boost();
 	    }
 	    break;
 /************************************

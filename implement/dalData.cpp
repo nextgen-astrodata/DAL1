@@ -217,7 +217,33 @@ bpl::numeric::array dalData::get_boost()
       {
         for (unsigned int hh=0; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((string*)data,mydims);
+	bpl::list data_list;
+	if ( 1 == shape.size() ) // 1D case
+	{
+          for (int ii=0; ii<nrows; ii++)
+          {
+             data_list.append( (*((string*)get(ii))) );
+          }
+	}
+	else if ( 2 == shape.size() ) // 2D case
+        {
+                for ( int xx=0; xx<shape[0]; xx++)
+                  for ( int yy=0; yy<shape[1]; yy++)
+              data_list.append( (*((string*)get(xx,yy))) );
+        }
+        else if ( 3 == shape.size() ) // 3D case
+        {
+                for ( int xx=0; xx<shape[0]; xx++)
+                  for ( int yy=0; yy<shape[1]; yy++)
+                    for ( int zz=0; zz<shape[2]; zz++)
+                data_list.append( (*((string*)get(xx,yy,zz))) );
+        }
+	else
+	{
+	  cout << "ERROR: string array rank > 3 not supported. dalData::get_boost()\n";
+	}
+
+	bpl::numeric::array narray = num_util::makeNum(data_list);
 	return narray;
       }
       else 
