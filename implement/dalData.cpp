@@ -195,7 +195,6 @@ bpl::numeric::array dalData::get_boost()
         for (unsigned int hh=0; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
 	bpl::numeric::array narray = num_util::makeNum((int*)data,mydims);
-	narray.transpose(narray);
 	return narray;
       }
       else if ( dal_DOUBLE == datatype )
@@ -219,7 +218,6 @@ bpl::numeric::array dalData::get_boost()
         for (unsigned int hh=0; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
 	bpl::numeric::array narray = num_util::makeNum((string*)data,mydims);
-	narray.transpose(narray);
 	return narray;
       }
       else 
@@ -230,9 +228,5 @@ bpl::numeric::array dalData::get_boost()
 		bpl::numeric::array nadata( data_list );
 	return nadata;
       }
-    bpl::list tmp_list;
-    tmp_list.append(0);
-    bpl::numeric::array nadata(tmp_list);
-    return nadata;
 }
 #endif
