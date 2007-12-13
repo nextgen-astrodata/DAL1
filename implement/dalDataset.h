@@ -270,8 +270,26 @@ class dalDataset{
 	  Retrieve the dataset type ("HDF5", "MSCASA", etc.).
 
 	  \return A string describing the file format ("HDF5", "MSCASA", etc.)
-     */
+	*/
 	string getType();
+
+	/*!
+	  \brief Retrieve the name of the data set
+
+	  \return name -- A string holding the name of the data set.
+	 */
+	inline string getName () const {
+	  return name;
+	}
+
+	/*!
+	  \brief Retrieve the list of files
+
+	  \return files -- List of files
+	*/
+	inline vector<string> getFiles () const {
+	  return files;
+	}
 	
 	/*!
 	  \brief Read TBB data.

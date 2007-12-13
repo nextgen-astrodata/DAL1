@@ -200,6 +200,8 @@ dalGroup * dalDataset::createGroup( char* gname )
  *****************************************************************/
 dalDataset::dalDataset()
 {
+  type = "UNDEFINED";
+  name = "UNDEFINED";
 #ifdef PYTHON
     Py_Initialize();
 #endif
