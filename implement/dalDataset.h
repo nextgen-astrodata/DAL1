@@ -260,7 +260,9 @@ class dalDataset{
 	/*!
 	  \brief List the tables in a dataset.
 
-	  List the tables in a dataset.
+	  List the tables in a dataset; keep in mind, that this operation only is
+	  supported for data set of appropriate internal structure, such e.g. 
+	  MeasurementSets.
 	 */
 	void listTables();
 
@@ -289,6 +291,16 @@ class dalDataset{
 	*/
 	inline vector<string> getFiles () const {
 	  return files;
+	}
+
+	/*!
+	  \brief Get the HDF5 file handle identifier.
+
+	  \return h5fh -- File handle identifier to communicate with the HDF5
+	          file through the HDF5 library.
+	 */
+	inline hid_t getFileHandle () const {
+	  return h5fh;
 	}
 	
 	/*!
