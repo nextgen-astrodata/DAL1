@@ -33,7 +33,6 @@ if (HAVE_CASA OR HAVE_CASACORE)
     # -- compiler flags utilized in the source code --
     -DAIPS_STDLIB
     -DAIPS_AUTO_STL
-    -DAIPS_NO_LEA_MALLOC
     )
   IF (APPLE)
     ## definition common to apple architectures
