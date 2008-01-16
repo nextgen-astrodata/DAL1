@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
 	  << "(i.e. \"001002003\").\n" << "  The first 3 characters are the "
 	  << "station id.\n  The next 3 are the rsp id.\n  The last 3 are the "
 	  << "rcu id." << endl;
+     cout << "The third parameter is the station group itentifier." << endl;
      cout << endl;
      return FAIL;
    }
@@ -62,6 +63,23 @@ int main(int argc, char *argv[])
       printf("%d ", data[jj]);
       printf("\n");
    }
+
+    ds->getGroupNames();
+
+    dalArray * myarray = ds->openArray(argv[2],argv[3]);
+
+    cout << "\nGetting TIME attribute from array...";
+    unsigned int * time;
+    time = reinterpret_cast<unsigned int*>( myarray->getAttribute("TIME") );
+    if (time) cout << *(unsigned int*)time << " ...done."; else   cout << "FAILED.";
+
+    cout << "\nGetting SAMPLE_NR attribute from array...";
+    unsigned int * sample_nr;
+    sample_nr = reinterpret_cast<unsigned int*>( myarray->getAttribute("SAMPLE_NR") );
+    if (sample_nr) cout << *(unsigned int*)sample_nr << " ...done."; else   cout << "FAILED.";
+
+    cout << "\n\nClosing integer array... ";
+    if ( 0==myarray->close() ) cout << "done." << endl; else  cout << "FAILED.";
 
    ds->close();
    delete ds;

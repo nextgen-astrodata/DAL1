@@ -25,6 +25,27 @@
 #include "dalArray.h"
 #endif
 
+dalArray::dalArray() {}
+
+int dalArray::open( void * voidfile, string arrayname ) {
+	name = arrayname;
+
+	hid_t * lclfile = (hid_t*)voidfile; // H5File object
+	file_id = *lclfile;  // get the file handle
+	
+	string fullarrayname = arrayname;
+	array_id = H5Dopen( file_id, fullarrayname.c_str() );
+	return( array_id );
+}
+
+int dalArray::close()
+{
+	status = H5Dclose(array_id);
+	if ( status < 0 )
+	  cout << "ERROR: dalArray::close() failed.\n";
+	return status;
+}
+
 void dalArray::write( int offset, int data[], int arraysize )
 {
     hsize_t      dims[1] = { arraysize };
@@ -82,6 +103,69 @@ void dalArray::getAttributes()
    status = H5Aiterate( array_id, NULL, attr_info, NULL );
    //printf ("\nH5Aiterate returns: %i\n", status);
 
+}
+
+/****************************************************************
+ *  (currently assumes hdf5) return the value of the (scalar) attribute
+ *
+ *****************************************************************/
+void * dalArray::getAttribute( string attrname ) {
+
+/*   if ( type == H5TYPE )
+   {*/
+	hsize_t dims;
+	H5T_class_t type_class;
+	size_t type_size;
+
+	// Check if attribute exists
+	if ( H5LT_find_attribute( array_id, attrname.c_str() ) <= 0 ) {
+		return NULL;
+	}
+	
+	string fullname = name;
+	int rank;
+	H5LTget_attribute_ndims( file_id, fullname.c_str(),
+	  attrname.c_str(), &rank );
+	H5LTget_attribute_info( file_id, fullname.c_str(), attrname.c_str(),
+				&dims, &type_class, &type_size );
+
+	if ( H5T_FLOAT == type_class ) {
+		void * data;
+		data = malloc(sizeof(float));
+		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), 
+		  attrname.c_str(), H5T_NATIVE_FLOAT, data) )
+		  return NULL;
+		else{
+		  return reinterpret_cast<float*>(data);}
+	}
+	else if ( H5T_INTEGER == type_class ) {
+		void * data;
+		data = malloc(sizeof(int));
+		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(),
+		  attrname.c_str(),
+			H5T_NATIVE_INT, data) )
+		  return NULL;
+		else
+		  return reinterpret_cast<int*>(data);
+	}
+	else if ( H5T_STRING == type_class ) {
+		char* data;
+		string fullname = "/" + name;
+		data = (char *)malloc(rank * sizeof(char));
+		if ( 0 < H5LTget_attribute_string( file_id, fullname.c_str(),
+			  attrname.c_str(),data) )
+		  return NULL;
+		else
+		  return data;
+	}
+	else
+	{
+		return NULL;
+	}
+/*   } else {
+     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     return NULL;
+   }*/
 }
 
 void dalArray::setAttribute_string( string attrname, string data )

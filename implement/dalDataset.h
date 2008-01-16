@@ -248,6 +248,36 @@ class dalDataset{
 	dalTable * openTable( string tablename, string groupname );
 
 	/*!
+	  \brief Open a array.
+
+	  Open a array.
+
+	  \param arrayname The name of the array to open.
+	  \return dalArray * A pointer to a array object.
+	 */
+	dalArray * openArray( string arrayname );
+
+	/*!
+	  \brief Open an array in a group.
+
+	  Open an array in a group.
+
+	  \param arrayname The name of the array to open.
+	  \param groupname The name of the group containing the array.
+	  \return dalArray * A pointer to a array object.
+	 */
+	dalArray * openArray( string arrayname, string groupname );
+
+	/*!
+	  \brief Get a list of groups in the dataset.
+
+	  Get a list of groups in the dataset.
+
+	  \return A vector of group names.
+	 */
+	vector<string> getGroupNames();
+
+	/*!
 	  \brief Open a group in a dataset.
 
 	  Open a group in a dataset.

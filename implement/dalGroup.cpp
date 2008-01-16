@@ -49,6 +49,40 @@ hid_t dalGroup::getId() {
 	return group_id;
 }
 
+/*
+ * Operator function.
+ */
+herr_t dalGroup_file_info(hid_t loc_id, const char *name, void *opdata)
+{
+    H5G_stat_t statbuf;
+    string myname;
+
+    /*
+     * Get type of the object and display its name and type.
+     * The name of the object is passed to this function by 
+     * the Library. Some magic :-)
+     */
+    H5Gget_objinfo(loc_id, name, FALSE, &statbuf);
+    switch (statbuf.type) {
+    case H5G_DATASET: 
+         myname = string(name);
+         (*(vector<string>*)opdata).push_back( myname );
+         break;
+    case H5G_GROUP:
+    case H5G_TYPE: 
+    default:
+         break;
+    }
+    return 0;
+ }
+
+vector<string> dalGroup::getMemberNames()
+{
+  vector<string> member_names;
+  H5Giterate(group_id, "/", NULL, dalGroup_file_info, &member_names);
+  return member_names;
+}
+
 bool dalGroup::setName ( string gname ) {
    if ( gname.length() > 0 )
    {
@@ -105,6 +139,14 @@ int dalGroup::open( void * voidfile, string groupname ) {
 	string fullgroupname = "/" + groupname;
 	group_id = H5Gopen( file_id, fullgroupname.c_str() );
 	return( group_id );
+}
+
+int dalGroup::close()
+{
+	status = H5Gclose(group_id);
+	if ( status < 0 )
+	  cout << "ERROR: dalGroup::close() failed.\n";
+	return status;
 }
 
 void dalGroup::setAttribute_string( string attrname, string data )

@@ -111,6 +111,14 @@ class dalGroup{
 	int open( void * file, string groupname );
 
 	/*!
+          \brief Close an existing group.
+
+          Close an existing group.
+
+         */
+	int close();
+
+	/*!
           \brief Get group name.
 
           Retrieve the name of the group object.
@@ -197,6 +205,15 @@ class dalGroup{
           \return The group identifier as an integer.
         */
 	hid_t getId();
+
+        /*!
+          \brief Retrieve the array or table member names.
+
+          Retrief the array or table member names from the group.
+
+          \return A vector of strings representing the member names.
+         */
+        vector<string> getMemberNames();
 
         /*!
           \brief Print the group attributes.

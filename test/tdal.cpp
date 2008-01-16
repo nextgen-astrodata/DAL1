@@ -69,6 +69,11 @@ int main()
    cout << "done." << endl;
 
 //    ds->setFilter("A,B,C","where B=1");
+
+   /*****************************************************
+    *  Create groups
+    *
+    ****************************************************/
    cout << "\nCreating groupA... ";
    dalGroup * groupA = ds->createGroup( "groupA" );
    cout << "done." << endl;
@@ -93,8 +98,26 @@ int main()
 
    vector<int> cdims;
 
-   cout << "\nCreating an integer array with dimensions 4x5x6... ";
-   dalArray * iarray = ds->createIntArray( "int_array", dims, idata, cdims );
+
+   /*****************************************************
+    *  Create arrays
+    *
+    ****************************************************/
+   cout << "\nCreating an integer array with dimensions 4x5x6 (in groupA)... ";
+   dalArray * iarray = groupA->createIntArray( "int_array", dims, idata, cdims );
+   cout << "done." << endl;
+
+        /*****************************************************
+         *  Create attributes
+         *
+         ****************************************************/
+   cout << "Creating attributes for integer array... ";
+   float sid[] = { (float)1 };
+   double sf[] = { (double)2 };
+   string feed = "NONE";
+   iarray->setAttribute_float("STATION_ID", sid );
+   iarray->setAttribute_double("SAMPLE_FREQ", sf );
+   iarray->setAttribute_string("FEED", feed );
    cout << "done." << endl;
 
    cout << "Creating an floating point array with dimensions 4x5x6... ";
@@ -113,6 +136,10 @@ int main()
    delete cdata;
    cout << "done." << endl;
 
+   /*****************************************************
+    *  Create tables
+    *
+    ****************************************************/
    cout << "\nCreating table 1 in groupA... ";
    dalTable * table1 = ds->createTable( "table1", "groupA" );
    cout << "done." << endl;
@@ -165,6 +192,61 @@ int main()
    for (int xx=0; xx<count; xx++)
      table1->writeDataByColNum( &mi, colnum, xx );
    cout << "done." << endl;
+
+   /*****************************************************
+    *  Close arrays
+    *
+    ****************************************************/
+   cout << "\nClosing integer array... ";
+   if ( 0==iarray->close() )
+     cout << "done." << endl; else  cout << "FAILED.";
+   cout << "Closing float array... ";
+   if ( 0==farray->close() )
+     cout << "done." << endl; else  cout << "FAILED.";
+   cout << "Closing complex array... ";
+   if ( 0==carray->close() )
+     cout << "done." << endl; else  cout << "FAILED.";
+
+
+   /*****************************************************
+    *  Open arrays to get attribute data
+    *
+    ****************************************************/
+   cout << "\nOpening integer array...";
+   dalArray * iarray2 = ds->openArray("int_array","groupA");
+   if (iarray2) cout << "done." << endl; else  cout << "FAILED.";
+
+   cout << "Calling getAttributes...";
+   iarray2->getAttributes();
+
+   cout << "Getting STATION_ID attribute from array...";
+   float * station_id;
+   station_id = reinterpret_cast<float*>( iarray2->getAttribute("STATION_ID") );
+   if (station_id) cout << *(float*)station_id << " ...done."; else   cout << "FAILED.";
+   cout << "\nClosing integer array... ";
+   if ( 0==iarray2->close() ) cout << "done." << endl; else  cout << "FAILED.";
+
+   cout << "Getting list of groups in file...\n";
+   vector<string> groupnames = ds->getGroupNames();
+   for (unsigned int jj=0; jj<groupnames.size(); jj++)
+     cout << groupnames[jj] << endl;
+
+   if( groupnames.size() > 0 )
+   {
+      cout << "\nOpening group " << groupnames[0] << "... ";
+      dalGroup * mygroup = ds->openGroup( groupnames[0] );
+      if (NULL != mygroup)
+      {
+        cout << "done." << endl;
+        cout << "Getting group member names...\n";
+        vector<string> memnames = mygroup->getMemberNames();
+        for (unsigned int jj=0; jj<memnames.size(); jj++)
+           cout << memnames[jj] << endl;
+
+      }
+     else
+       cout << "FAILED.";
+   }
 
    cout << "\nClosing dataset... ";
    ds->close();

@@ -481,11 +481,106 @@ dalTable * dalDataset::openTable( string tablename, string groupname )
    }
    else if ( type == FITSTYPE )
    {
-	cout << "dalDataset::openTable FITS Type" << endl;
+	cout << "dalDataset::openTable FITS Type not yet supported." << endl;
 	return NULL;
    }
    else
    	return NULL;
+}
+
+/****************************************************************
+ *  Opens an array at the higest level of a dataset.
+ *
+ *****************************************************************/
+dalArray * dalDataset::openArray( string arrayname )
+{
+  if ( type == MSCASATYPE )
+  {
+	cout << "dalDataset::openArray MSCASA Type not yet supported." << endl;
+	return NULL;
+  }
+  else if ( type == H5TYPE )
+  {
+	dalArray * la = new dalArray();
+	la->open( file, arrayname );
+	return la;
+   }
+   else if ( type == FITSTYPE )
+   {
+	cout << "dalDataset::openArray FITS Type not yet supported." << endl;
+	return NULL;
+   }
+   else
+   	return NULL;
+}
+
+/****************************************************************
+ *  Opens an array in a group.
+ *
+ *****************************************************************/
+dalArray * dalDataset::openArray( string arrayname, string groupname )
+{
+  if ( type == MSCASATYPE )
+  {
+	cout << "dalDataset::openArray MSCASA Type not yet supported." << endl;
+	return NULL;
+  }
+  else if ( type == H5TYPE )
+  {
+	dalArray * la = new dalArray();
+	la->open( file, '/' + groupname + '/' + arrayname );
+	return la;
+   }
+   else if ( type == FITSTYPE )
+   {
+	cout << "dalDataset::openArray FITS Type not yet supported." << endl;
+	return NULL;
+   }
+   else
+   	return NULL;
+}
+
+
+/*
+ * Operator function.
+ */
+herr_t dalDataset_file_info(hid_t loc_id, const char *name, void *opdata)
+{
+    H5G_stat_t statbuf;
+    string myname;
+
+    /*
+     * Get type of the object and display its name and type.
+     * The name of the object is passed to this function by 
+     * the Library. Some magic :-)
+     */
+    H5Gget_objinfo(loc_id, name, FALSE, &statbuf);
+    switch (statbuf.type) {
+    case H5G_GROUP:
+         myname = string(name);
+         (*(vector<string>*)opdata).push_back( myname );
+         break;
+    case H5G_DATASET: 
+    case H5G_TYPE: 
+    default:
+         break;
+    }
+    return 0;
+ }
+
+vector<string> dalDataset::getGroupNames()
+{
+  vector<string> group_names;
+  if ( type == H5TYPE )
+  {
+    H5Giterate(h5fh, "/", NULL, dalDataset_file_info, &group_names);
+    return group_names;
+  }
+  else
+  {
+    cout << "dalDataset::getGroupNames Filetype not supported." << endl;
+    return group_names;
+  }
 }
 
 /****************************************************************

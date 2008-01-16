@@ -57,13 +57,51 @@ class dalArray{
 
   public:
 
-    /*!
+	/*!
+          \brief Default constructor.
+
+          Default constructor.
+         */
+	dalArray();
+
+	/*!
+          \brief Open an existing array.
+
+          Open an existing array.
+
+          \param file A pointer to the file.
+          \param arrayname The name of the array you want to open.
+
+          \return An identifier for the array.
+         */
+	int open( void * file, string arrayname );
+
+	/*!
+          \brief Close an existing array.
+
+          Close an existing array.
+
+         */
+	int close();
+
+        /*!
 	  \brief Print the attributes of the array.
 	  
 	  Print the attributes of the array.
 	 */
 	void getAttributes();
 	
+        /*!
+          \brief Get the value of an attribute.
+
+          Get the value of an attribute.
+
+          \param attrname The name of the attribute you want to retrieve.
+
+          \return void * A pointer to the data in the attribute. 
+        */
+	void * getAttribute( string attrname );
+
 	/*!
 	  \brief Add a string attribute.
 	  
