@@ -73,6 +73,7 @@ class dalDataset{
 	dalFilter * filter;	//!< dataset filter
 
 	hid_t h5fh;   //!< hdf5 file handle
+	herr_t status;
 
 #ifdef WITH_CASA
 	casa::MeasurementSet * ms; //!< CASA measurement set pointer
@@ -109,6 +110,81 @@ class dalDataset{
 	  \return Zero if successful.  Non-zero on failure.
      */
 	int close();
+
+        /*!
+          \brief Print the group attributes.
+
+          Print the group attributes.
+        */
+	void getAttributes();
+
+        /*!
+          \brief Print the value of a specified attribute.
+
+          Print the value of a specified attribute.
+
+          \param attrname The name of the attribute you want to print.
+        */
+	void printAttribute( string attrname );
+
+        /*!
+          \brief Get the value of an attribute.
+
+          Get the value of an attribute.  This is different from printAttribute
+          because the value of the attribute is returned into a structure
+          instead of simply printing.
+
+          \param attrname The name of the attribute you want to retrieve.
+
+          \return void * A pointer to the data in the attribute. 
+        */
+	void * getAttribute( string attrname );
+
+        /*!
+          \brief Define a string attribute.
+
+          Define a string attribute.
+
+          \param attrname The name of the attribute you want to create.
+          \param data The value of the attribute you want to create.
+        */
+	void setAttribute_string( string attrname, string data );
+
+        /*!
+          \brief Define a integer attribute.
+
+          Define a integer attribute.
+
+          \param attrname The name of the attribute you want to create.
+          \param data The value of the attribute you want to create.
+          \param size Optional parameter specifying the array size of the
+                      attribute.  Default is scalar.
+        */
+	void setAttribute_int( string attrname, int * data, int size=1 );
+
+        /*!
+          \brief Define an unsigned integer attribute.
+
+          Define an unsigned integer attribute.
+
+          \param attrname The name of the attribute you want to create.
+          \param data The value of the attribute you want to create.
+          \param size Optional parameter specifying the array size of the
+                      attribute.  Default is scalar.
+        */
+	void setAttribute_uint(string attrname, unsigned int * data,int size=1);
+
+        /*!
+          \brief Define a double precision floating point attribute.
+
+          Define a double precision floating point attribute.
+
+          \param attrname The name of the attribute you want to create.
+          \param data The value of the attribute you want to create.
+          \param size Optional parameter specifying the array size of the
+                      attribute.  Default is scalar.
+        */
+	void setAttribute_double( string attrname, double * data, int size=1 );
 
 	/*!
 	  \brief Create a new array in the root group.
