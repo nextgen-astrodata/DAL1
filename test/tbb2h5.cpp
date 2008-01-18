@@ -195,8 +195,8 @@ int main(int argc, char *argv[])
 	  unsigned int datalen[] = { (unsigned int)0 };
 	  unsigned int nyquist_zone[] = { (unsigned int)0 };
 	  string feed = "NONE";
-	  double apos[] = { (double)0 };
-	  double aorient[] = { (double)0 };
+	  double apos[3]    = { 0, 0, 0 };
+	  double aorient[3] = { 0, 0, 0 };
 
 	  sarray->setAttribute_uint("STATION_ID", sid );
 	  sarray->setAttribute_uint("RSP_ID", rsp );
