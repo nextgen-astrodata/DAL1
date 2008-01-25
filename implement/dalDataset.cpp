@@ -156,9 +156,8 @@ int dalDataset::close()
    if ( type == MSCASATYPE )
    {
 #ifdef WITH_CASA
-// 	delete ms_reader;
 	delete ms;
-// 	cout << "closed MS" << endl;
+	return (0);
 #else
 	cout << "CASA support not enabled." << endl;
 	exit(-1);
@@ -166,16 +165,9 @@ int dalDataset::close()
    }
    else if ( type == H5TYPE )
    {
-      // << "Try to close HDF5... ";
-
-//       if ( H5Fclose(*(hid_t*)file ) > 0 )
-// cout << "h5fh: " << h5fh << endl;
-      if ( H5Fclose( h5fh ) > 0 )
-        return 0;
-      else
-	return -1;
-    }
-    return -2;
+      return H5Fclose( h5fh );
+   }
+   return -2;
 }
 
 /*
@@ -393,9 +385,28 @@ void dalDataset::setAttribute_string( string attrname, string data )
 	}
 }
 
+void dalDataset::setAttribute_string( string attrname, vector<string> data )
+{
+  hid_t aid, atype, att;
+  int size = data.size();
+
+   const char *string_att[ size ];
+   for (int ii=0; ii<size; ii++)
+     string_att[ii] = (data[ii]).c_str();
+
+   hsize_t dims[] = { size };
+   aid  = H5Screate_simple (1, dims, NULL);
+   atype = H5Tcopy(H5T_C_S1);
+   status = H5Tset_size(atype, H5T_VARIABLE);
+   hid_t root = H5Gopen( h5fh, "/");
+   att = H5Acreate(root, attrname.c_str(), atype, aid, H5P_DEFAULT);
+   status = H5Awrite(att, atype, string_att );
+   if ( status < 0 )
+     cout << "ERROR: could not set attribute " << attrname << endl;
+}
+
 void dalDataset::setAttribute_int( string attrname, int * data, int size )
 {
-// 	int size=1;
 	if ( H5LTset_attribute_int( h5fh, "/",
 		attrname.c_str(), /*&*/data, size ) < 0 ) {
 		cout << "ERROR: could not set attribute " << attrname << endl;
@@ -403,7 +414,6 @@ void dalDataset::setAttribute_int( string attrname, int * data, int size )
 }
 
 void dalDataset::setAttribute_uint( string attrname, unsigned int * data, int size ) {
-// 	int size=1;
 	if ( H5LTset_attribute_uint( h5fh, "/",
 					attrname.c_str(), /*&*/data, size ) < 0 ) {
 		cout << "ERROR: could not set attribute " << attrname << endl;
@@ -412,7 +422,6 @@ void dalDataset::setAttribute_uint( string attrname, unsigned int * data, int si
 
 void dalDataset::setAttribute_double( string attrname, double * data, int size )
 {
-// 	int size=1;
 	if ( H5LTset_attribute_double( h5fh, "/",
 					attrname.c_str(), /*&*/data, size ) < 0 ) {
 		cout << "ERROR: could not set attribute " << attrname << endl;

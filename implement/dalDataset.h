@@ -151,6 +151,16 @@ class dalDataset{
 	void setAttribute_string( string attrname, string data );
 
         /*!
+          \brief Define a string attribute.
+
+          Define a string attribute.
+
+          \param attrname The name of the attribute you want to create.
+          \param data The values of the attributes you want to create.
+        */
+	void setAttribute_string( string attrname, vector<string> data );
+
+        /*!
           \brief Define a integer attribute.
 
           Define a integer attribute.
