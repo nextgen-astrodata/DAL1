@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
 	  string trigger_type = "Unknown";
 	  double trigger_offset[1] = { 0 };
 	  int triggered_antennas[1] = { 0 };
-	  double beam_direction[2] = { 0, 0 };
+	  double beam_direction[2] = { 0, 90 };
 
 	  // Add attributes to "Station" group
 	  stationGroup->setAttribute_string("TELESCOPE", telescope );
