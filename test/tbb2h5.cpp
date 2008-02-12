@@ -27,6 +27,19 @@
 
   \author Joseph Masters
 
+  <h4>Usage</h4>
+
+  In order to write the data distributed over a set of dumps from raw TBB
+  data into a HDF5 time-series dataset:
+  \verbatim
+  tbb2h5 <outfile> <infile1 infile2 ...>
+  \endverbatim
+  where 
+  <ul>
+    <li><tt>outfile</tt> is the name of the created HDF5 output file
+    <li><tt>infile1 infile2 ...</tt> is a list of input files containing the
+    dump of the raw TBB data
+  </ul>
 */
 
 #ifdef HAVE_CONFIG_H

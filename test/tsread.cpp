@@ -31,6 +31,10 @@
   \author Joseph Masters
 
   \date 12-04-06
+
+  <h4>Usage</h4>
+
+  
 */
 
 #ifdef HAVE_CONFIG_H
@@ -53,10 +57,24 @@
 #include <timeseries.h>
 #endif
 
-void get_args( int argc, char** argv, long* start_value, long* stop_value,
-	       char** table_value, char** group_value )
+/*!
+  \brief Parse the input from the command line to extract the arguments
+
+  \param argc         -- 
+  \param argv         -- 
+  \retval start_value -- 
+  \retval stop_value  -- 
+  \retval table_value -- 
+  \retval group_value -- 
+*/
+void get_args( int argc,
+	       char** argv,
+	       long* start_value,
+	       long* stop_value,
+	       char** table_value,
+	       char** group_value)
 {
-    int i;
+  int i (0);
 
     /* Start at i = 1 to skip the command name. */
 
