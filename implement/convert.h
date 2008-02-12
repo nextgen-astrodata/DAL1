@@ -28,11 +28,23 @@
 #include <stdexcept>
 
 /*!
+  \file convert.h
+  
+  \ingroup DAL
+
+  \brief A collection of methods for the conversion of variables
+*/
+
+/*!
+  \class BadConversion
+
+  \ingroup DAL
+
   Represents an object that is thrown when the stringify function fails to
   turn a variable into a string.
 */
 class BadConversion : public std::runtime_error {
-public:
+ public:
   BadConversion(const std::string& s)
     : std::runtime_error(s)
     { }
@@ -41,14 +53,17 @@ public:
 /*!
   Stringify is a templated function that attemps to turn a variable
   into a string.
+
+  \param x -- Variable to be turned into a string
+
+  \return string -- Stringified version of the provided input variable
 */
 template<typename T>
 inline std::string stringify(const T& x)
 {
   std::ostringstream o;
   if (!(o << x))
-   throw BadConversion(std::string("stringify(")
-		       + typeid(x).name() + ")");
-   return o.str();
+    throw BadConversion(std::string("stringify(")
+			+ typeid(x).name() + ")");
+  return o.str();
 }
-
