@@ -32,6 +32,7 @@ set (tests
   tbb2h5
   bf2h5
   read_tbb
+  tBeamFormed
   )
 
 foreach (src ${tests})

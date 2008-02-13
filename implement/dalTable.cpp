@@ -75,8 +75,8 @@ dalColumn * dalTable::getColumn( string colname )
 	lclcol = new dalColumn();
 	lclcol->setName( colname );
 	hsize_t start = 0;
-	H5TBread_fields_name(file_id, name.c_str(), colname.c_str(), start, hsize_t nrecords, size_t type_size,  const size_t *field_offset, const size_t *field_sizes, void  *data);
-/*dst_size, dst_offset, 0, NRECORDS-1, p_data_out);/*
+//	H5TBread_fields_name(file_id, name.c_str(), colname.c_str(), start, hsize_t nrecords, size_t type_size,  const size_t *field_offset, const size_t *field_sizes, void  *data);
+/*dst_size, dst_offset, 0, NRECORDS-1, p_data_out);*/
 	return lclcol;
    }
    return NULL;

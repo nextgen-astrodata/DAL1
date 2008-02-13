@@ -180,8 +180,12 @@ const string H5TYPE = "HDF5";
 const string FITSTYPE = "FITS";
 const string MSCASATYPE = "MSCASA";
 
-const int SUCCESS = 0;
-const int FAIL = 1;
+namespace DAL {
+
+  const int SUCCESS = 0;
+  const int FAIL = 1;
+
+};
 
 // CHUNK_SIZE arbitrarily chosen, more research needed on this feature
 const int CHUNK_SIZE = 5000;

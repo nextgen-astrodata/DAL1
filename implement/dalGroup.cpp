@@ -87,12 +87,12 @@ bool dalGroup::setName ( string gname ) {
    if ( gname.length() > 0 )
    {
      name = gname;
-     return SUCCESS;
+     return DAL::SUCCESS;
    }
    else
    {
      cout << "Error:  Group name must not be empty." << endl;
-     return FAIL;
+     return DAL::FAIL;
    }
 }
 
