@@ -215,6 +215,16 @@ unsigned int dalColumn::ndims()
   }
 }
 
+void dalColumn::open()
+{
+  
+}
+
+void dalColumn::setName(string colname)
+{
+  name = colname;
+}
+
 string dalColumn::getName()
 {
   return name;
@@ -381,7 +391,10 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 
 int dalColumn::getSize()
 {
-	if ( dal_INT == getType() ) {
+	if ( dal_CHAR== getType() ) {
+		return sizeof(char);
+	}
+	else if ( dal_INT == getType() ) {
 		return sizeof(int);
 	}
 	else if ( dal_FLOAT == getType() ) {
@@ -400,7 +413,10 @@ void dalColumn::addMember( string member_name, string member_type )
 */
   if ( H5TYPE == filetype )
   {
-    if ( member_type == dal_INT )	{
+    if ( member_type == dal_CHAR )	{
+      status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_CHAR );
+    }
+    else if ( member_type == dal_INT )	{
       status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_INT );
     }
     else if ( member_type == dal_UINT )	{

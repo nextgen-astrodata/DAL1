@@ -201,10 +201,16 @@ const string dal_DOUBLE = "dalDOUBLE";
 
 const string dal_COMPLEX = "dalCOMPLEX";
 const string dal_DCOMPLEX = "dalDCOMPLEX";
+const string dal_COMPLEX_CHAR = "dalCOMPLEX_CHAR";
 
 typedef struct dalcomplex {
 	double r;  // real
 	double i;  // imaginary
 } dalcomplex;
+
+typedef struct dalcomplex_char {
+	char r;  // real
+	char i;  // imaginary
+} dalcomplex_char;
 
 #endif

@@ -84,6 +84,34 @@ void dalArray::write( int offset, short data[], int arraysize )
                        H5P_DEFAULT, data);
 }
 
+void dalArray::write( int offset, complex<float> data[], int arraysize )
+{
+    hsize_t      dims[1] = { arraysize };
+    int rank=1;
+    hsize_t off[1] = { offset };
+
+    /* Select a hyperslab  */
+    hid_t filespace = H5Dget_space( array_id );
+    status = H5Sselect_hyperslab( filespace, H5S_SELECT_SET, off, NULL,
+                                  dims, NULL);
+
+    /* Define memory space */
+	typedef struct {
+	double re;   /*real part*/
+	double im;   /*imaginary part*/
+	} complex_t;
+	
+	hid_t complex_id = H5Tcreate (H5T_COMPOUND, sizeof(complex_t));
+	H5Tinsert (complex_id, "real", HOFFSET(complex_t,re),
+		H5T_NATIVE_DOUBLE);
+	H5Tinsert (complex_id, "imaginary", HOFFSET(complex_t,im),
+		H5T_NATIVE_DOUBLE);
+		
+
+    /* Write the data to the hyperslab  */
+    status = H5Dwrite (array_id, complex_id, filespace, filespace, H5P_DEFAULT, data);
+}
+
 void dalArray::extend( vector<int> newdims )
 {
    unsigned int rank = newdims.size();

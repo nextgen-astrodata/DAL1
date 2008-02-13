@@ -175,6 +175,14 @@ class dalArray{
 	  Write data to an array, usually after extending it's dimensions.
 	 */
 	void write(int offset, int data[], int arraysize);
+
+	/*!
+	  \brief Write complex to an array.
+	  
+	  Write data to an array, usually after extending it's dimensions.
+	 */
+	void write(int offset, complex<float> data[], int arraysize);
+
 /************************************************************************
  *
  * The following functions are boost wrappers to allow some previously

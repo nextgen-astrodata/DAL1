@@ -183,88 +183,21 @@ main (int argc, char *argv[]) {
 	dataTable0->setAttribute_double( "BANDWIDTH", dataBandwidth );
 	dataTable0->setAttribute_double( "CHANNEL_BANDWIDTH", channel_bandwidth );
 	dataTable0->setAttribute_double( "CHANNEL_CENTER_FREQUENCY", channel_center_freq, 3 );
-	dataTable0->addColumn( "CHANNEL001", dal_DOUBLE );
-	dataTable0->addColumn( "CHANNEL002", dal_DOUBLE );
-	dataTable0->addColumn( "CHANNEL003", dal_DOUBLE );
-	dataTable0->addColumn( "CHANNEL004", dal_DOUBLE );
-	dataTable0->addColumn( "CHANNEL005", dal_DOUBLE );
-	dataTable0->addColumn( "CHANNEL006", dal_DOUBLE );
-	dataTable0->addColumn( "CHANNEL007", dal_DOUBLE );
-	dataTable0->addColumn( "CHANNEL008", dal_DOUBLE );
-	dataTable0->addColumn( "CHANNEL009", dal_DOUBLE );
-	dataTable0->addColumn( "CHANNEL010", dal_DOUBLE );
- 
-	beam_number = 1;
-	sprintf( beamstr, "beam%03d", beam_number );
-        beamGroup = dataset->createGroup( beamstr );
-	beamGroup->setAttribute_string( "RA", "14:12:34.2342" );
-	beamGroup->setAttribute_string( "DEC", "14:12:34.2342" );
-	cout << "CREATED New beam group: " << string(beamstr) << endl;
-	dalTable * dataTable1 = dataset->createTable( "SUB0", beamstr );
-	dataTable1->setAttribute_int( "CENTER_FREQUENCY", center_frequency );
-	dataTable1->setAttribute_double( "BANDWIDTH", dataBandwidth );
-	dataTable1->setAttribute_double( "CHANNEL_BANDWIDTH", channel_bandwidth );
-	dataTable1->setAttribute_double( "CHANNEL_CENTER_FREQUENCY", channel_center_freq, 3 );
-	dataTable1->addColumn( "CHANNEL001", dal_DOUBLE );
-	dataTable1->addColumn( "CHANNEL002", dal_DOUBLE );
-	dataTable1->addColumn( "CHANNEL003", dal_DOUBLE );
-	dataTable1->addColumn( "CHANNEL004", dal_DOUBLE );
-	dataTable1->addColumn( "CHANNEL005", dal_DOUBLE );
-	dataTable1->addColumn( "CHANNEL006", dal_DOUBLE );
-	dataTable1->addColumn( "CHANNEL007", dal_DOUBLE );
-	dataTable1->addColumn( "CHANNEL008", dal_DOUBLE );
-	dataTable1->addColumn( "CHANNEL009", dal_DOUBLE );
-	dataTable1->addColumn( "CHANNEL010", dal_DOUBLE );
+	dataTable0->addColumn( "X", dal_COMPLEX_CHAR );
+	dataTable0->addColumn( "Y", dal_COMPLEX_CHAR );
 
-	beam_number = 2;
-	sprintf( beamstr, "beam%03d", beam_number );
-        beamGroup = dataset->createGroup( beamstr );
-	beamGroup->setAttribute_string( "RA", "14:12:34.2342" );
-	beamGroup->setAttribute_string( "DEC", "14:12:34.2342" );
-	cout << "CREATED New beam group: " << string(beamstr) << endl;
-	dalTable * dataTable2 = dataset->createTable( "SUB0", beamstr );
-	dataTable2->setAttribute_int( "CENTER_FREQUENCY", center_frequency );
-	dataTable2->setAttribute_double( "BANDWIDTH", dataBandwidth );
-	dataTable2->setAttribute_double( "CHANNEL_BANDWIDTH", channel_bandwidth );
-	dataTable2->setAttribute_double( "CHANNEL_CENTER_FREQUENCY", channel_center_freq, 3 );
-	dataTable2->addColumn( "CHANNEL001", dal_DOUBLE );
-	dataTable2->addColumn( "CHANNEL002", dal_DOUBLE );
-	dataTable2->addColumn( "CHANNEL003", dal_DOUBLE );
-	dataTable2->addColumn( "CHANNEL004", dal_DOUBLE );
-	dataTable2->addColumn( "CHANNEL005", dal_DOUBLE );
-	dataTable2->addColumn( "CHANNEL006", dal_DOUBLE );
-	dataTable2->addColumn( "CHANNEL007", dal_DOUBLE );
-	dataTable2->addColumn( "CHANNEL008", dal_DOUBLE );
-	dataTable2->addColumn( "CHANNEL009", dal_DOUBLE );
-	dataTable2->addColumn( "CHANNEL010", dal_DOUBLE );
- 
+	const long BufferSIZE = 1000;
+	typedef struct dataStruct {
+		dalcomplex_char xx;
+		dalcomplex_char yy;
+	} dataStruct;
+
+	dataStruct data_s[ BufferSIZE ];
 	delete [] beamstr;
 
-   // define dimensions of array
-   vector<int> dims;
-   dims.push_back(4);
-   dims.push_back(5);
-   dims.push_back(6);
-
-   int idata[4*5*6];
-   for (int gg=0; gg<(4*5*6); gg++)
-	idata[gg] = gg;
-
-   vector<int> cdims;
-
-	cout << "Creating a complex floating point array with dimensions 4x5x6... ";
-	complex<float> * cdata = new complex<float>[ 4*5*6 ];
-	for (int gg=0; gg<(4*5*6); gg++) {
-	  cdata[ gg ] = 0;
-	}
-	dalArray * carray = dataset->createComplexArray( "complex_array", dims, cdata, cdims );
-	delete cdata;
-	cout << "done." << endl;
-
 	// define memory buffers
-	unsigned char * memblock=NULL;
 	typedef struct Polarization {
-		complex<unsigned char> val;
+		complex<char> val;
 	};
 	typedef struct Sample {
 		Polarization X;
@@ -273,37 +206,47 @@ main (int argc, char *argv[]) {
 
 	// define memory buffers
 	char header[4096];
-	unsigned char buffer[1];
-	Sample p_Data[1];
-	int size = sizeof(Sample);
-	memblock = new unsigned char [size];
+	Sample p_Data[ BufferSIZE ];
+	int size = sizeof(Sample) * BufferSIZE;
 
 	// declare handle for the input file
+	cout << "Reading from the data file: " << argv[1] << endl;
 	ifstream myFile (argv[1], ios::in | ios::binary);
 
 	cout << "read pointer position: " << myFile.tellg() << endl;
 	if (!myFile.read (header, sizeof(header) ))
 	{
-	   cout << "ERROR: problem with read." << endl;
+	   cout << "ERROR: problem with read (3)." << endl;
+	   cout << "read pointer position: " << myFile.tellg() << endl;
 	   exit(3);
 	}
 	myFile.clear();
+	int counter = 0;
 	if (myFile.is_open())
 	{
-		while ( !myFile.eof() )
+		while ( !myFile.eof()/* && counter < 100000*/ )
 		{
 		  if ( !myFile.read (reinterpret_cast<char *>(&p_Data), size) )
 		  {
-		     cout << "ERROR: problem with read." << endl;
+		     cout << "ERROR: problem with read (2)." << endl;
+		     cout << "read pointer position: " << myFile.tellg() << endl;
 		     exit(2);
 		  }
-		  printf("(%hi,",real((*p_Data).X.val));
-		  printf("%hi)",imag((*p_Data).X.val));
-		  printf("(%hi,",real((*p_Data).Y.val));
-		  printf("%hi)\n",imag((*p_Data).Y.val));
-		  myFile.clear();
+		  for (int row=0; row<BufferSIZE; row++)
+		  {
+		    data_s[row].xx.r = real((p_Data[row]).X.val);
+		    data_s[row].xx.i = imag((p_Data[row]).X.val);
+		    data_s[row].yy.r = real((p_Data[row]).Y.val);
+		    data_s[row].yy.i = imag((p_Data[row]).Y.val);
+		  }
+		  dataTable0->appendRows( data_s, BufferSIZE );
+
+		  if ( !myFile.eof() )
+		  {
+		    myFile.clear();
+		    counter+=BufferSIZE;
+		  }
 		}
-		exit(0);
 	}
 	else cout << "Unable to open file" << argv[1] << endl;
 	return 0;

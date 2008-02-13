@@ -145,8 +145,20 @@ void * dalData::get( long idx1, long idx2, long idx3 )
       index = c_index( idx1, idx2, idx3 );
    }
 
+//    if ( dal_COMPLEX == datatype )
+//       return (&(((complex<float>*)data)[ index ]));
+// 
+//    else if ( dal_DOUBLE == datatype )
+//       return (&(((double*)data)[ index ]));
+// 
+//    else if ( dal_INT == datatype )
+//       return (&(((int*)data)[ index ]));
+
    if ( dal_COMPLEX == datatype )
       return (&(((complex<float>*)data)[ index ]));
+
+   else if ( dal_COMPLEX_CHAR == datatype )
+      return (&(((complex<char>*)data)[ index ]));
 
    else if ( dal_DOUBLE == datatype )
       return (&(((double*)data)[ index ]));
@@ -154,14 +166,8 @@ void * dalData::get( long idx1, long idx2, long idx3 )
    else if ( dal_INT == datatype )
       return (&(((int*)data)[ index ]));
 
-   if ( dal_COMPLEX == datatype )
-      return (&(((complex<float>*)data)[ index ]));
-
-   else if ( dal_DOUBLE == datatype )
-      return (&(((double*)data)[ index ]));
-
-   else if ( dal_INT == datatype )
-      return (&(((int*)data)[ index ]));
+   else if ( dal_CHAR == datatype )
+      return (&(((char*)data)[ index ]));
 
    else if ( dal_STRING == datatype )
       return (&(((string*)data)[ index ]));
@@ -190,7 +196,14 @@ bpl::numeric::array dalData::get_boost()
 {
   bpl::list data_list;
   vector<int> mydims;
-      if ( dal_INT == datatype )
+      if ( dal_CHAR == datatype )
+      {
+        for (unsigned int hh=0; hh<shape.size(); hh++)
+	{ mydims.push_back(shape[hh]); }
+	bpl::numeric::array narray = num_util::makeNum((char*)data,mydims);
+	return narray;
+      }
+      else if ( dal_INT == datatype )
       {
         for (unsigned int hh=0; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
@@ -210,6 +223,14 @@ bpl::numeric::array dalData::get_boost()
         for (unsigned int hh=0; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
 	bpl::numeric::array narray = num_util::makeNum((complex<float>*)data,mydims);
+	vector<int> fshape = num_util::shape(narray);
+	return narray;
+      }
+      else if ( dal_COMPLEX_CHAR == datatype )
+      {
+        for (unsigned int hh=0; hh<shape.size(); hh++)
+	{ mydims.push_back(shape[hh]); }
+	bpl::numeric::array narray = num_util::makeNum((complex<char>*)data,mydims);
 	vector<int> fshape = num_util::shape(narray);
 	return narray;
       }

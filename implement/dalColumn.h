@@ -132,7 +132,15 @@ public:
 	dalColumn( casa::Table table, string colname );
 #endif
 
-    /*!
+	/*!
+	 \brief Open a column
+	
+	 Open a column.
+
+	 */
+	void open();
+
+	/*!
 	 \brief Add a member to a compound column.
 	 
 	 Add a member to a compound column.  A compound column is made up of
@@ -152,6 +160,15 @@ public:
 	  \return The name of the column.
 	 */
 	string getName();
+	
+	/*!
+	  \brief Set the name of the column.
+	  
+	  Set the name of the column.
+	  
+	  \param colname The name of the column.
+	 */
+	void setName(string colname);
 	
 	/*!
 	  \brief Get the column datatype.

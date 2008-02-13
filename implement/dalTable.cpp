@@ -69,8 +69,17 @@ dalColumn * dalTable::getColumn( string colname )
 	return lclcol;
 #endif
    }
-   else
-	return NULL;
+   else if ( type == H5TYPE )
+   {
+	dalColumn * lclcol;
+	lclcol = new dalColumn();
+	lclcol->setName( colname );
+	hsize_t start = 0;
+	H5TBread_fields_name(file_id, name.c_str(), colname.c_str(), start, hsize_t nrecords, size_t type_size,  const size_t *field_offset, const size_t *field_sizes, void  *data);
+/*dst_size, dst_offset, 0, NRECORDS-1, p_data_out);/*
+	return lclcol;
+   }
+   return NULL;
 }
 
 void dalTable::setFilter( string columns )
@@ -283,7 +292,7 @@ void * dalTable::getColumnData( string colname )
     }
    else
    {
-	cout << "dalTable::openColumn operation not supported for type "
+	cout << "dalTable::getColumnData operation not supported for type "
 	  << type << endl;
 	return NULL;
    }
@@ -547,6 +556,23 @@ void dalTable::addColumn( string colname, string coltype, int size )
 		addComplexColumn( colname, cv, 2 );
 		return;
 	}
+	else if ( ( dal_COMPLEX_CHAR == coltype ) ) 
+	{
+		vector<dalColumn> cv;
+		string component_type;
+		
+		component_type = dal_CHAR;
+			
+		dalColumn col_a( "r", component_type );  // real component
+		dalColumn col_b( "i", component_type );  // imaginary component
+
+		cv.push_back( col_a );
+		cv.push_back( col_b );
+
+		addComplexColumn( colname, cv, 2 );
+
+		return;
+	}
 	
 	// retrieve table information
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
@@ -583,7 +609,10 @@ void dalTable::addColumn( string colname, string coltype, int size )
 	hid_t	field_type_new;
 	if ( -1 == size )  // -1 for variable length data
 	{
-		if ( dal_INT == coltype )
+		if ( dal_CHAR == coltype )
+			field_type_new = H5Tvlen_create (H5T_NATIVE_CHAR);
+
+		else if ( dal_INT == coltype )
 			field_type_new = H5Tvlen_create (H5T_NATIVE_INT);
 			
 		else if ( dal_UINT == coltype )
@@ -604,7 +633,10 @@ void dalTable::addColumn( string colname, string coltype, int size )
 			exit(98);
 		}
 	} else {
-		if ( dal_INT == coltype )
+		if ( dal_CHAR == coltype )
+			field_type_new = H5T_NATIVE_CHAR;
+
+		else if ( dal_INT == coltype )
 			field_type_new = H5T_NATIVE_INT;
 			
 		else if ( dal_UINT == coltype )
@@ -728,7 +760,10 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 	hid_t	field_type;	
 	hid_t   h5type;
 	
-	if ( dal_INT == coltype )
+	if ( dal_CHAR == coltype )
+		h5type =  H5T_NATIVE_CHAR;
+
+	else if ( dal_INT == coltype )
 		h5type =  H5T_NATIVE_INT;
 	
 	else if ( dal_UINT == coltype )
@@ -746,6 +781,63 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 	else if ( dal_STRING == coltype )
 		h5type = H5T_NATIVE_CHAR;
 	
+	else if ( dal_COMPLEX_CHAR == coltype )
+	{
+		vector<dalColumn> cv;
+		string component_type;
+		
+		component_type = dal_CHAR;
+			
+		dalColumn col_a( "r", component_type );  // real component
+		dalColumn col_b( "i", component_type );  // imaginary component
+
+		cv.push_back( col_a );
+		cv.push_back( col_b );
+
+		size_t sz = 0;
+		
+		// compute the size of the compound column
+		for ( unsigned int ii=0; ii<cv.size(); ii++) {
+			//cout << "subcolumn name is " << foo[ii].getName() 
+			//	 << ". Type is " << foo[ii].getType() << endl;
+			sz += cv[ii].getSize();
+		}
+	
+		// create a compound type that can hold each field
+		h5type = H5Tcreate( H5T_COMPOUND, sz );
+	
+		size_t offset = 0;
+		for ( unsigned int ii=0; ii<cv.size(); ii++) {
+			
+			if (0==ii)
+				offset=0;
+			else
+				offset += cv[ii-1].getSize();
+				
+	
+			if ( dal_CHAR == cv[ii].getType() ) {
+				H5Tinsert( h5type,
+					cv[ii].getName().c_str(), offset,
+					H5T_NATIVE_CHAR);
+			}
+			else if ( dal_INT == cv[ii].getType() ) {
+				H5Tinsert( h5type,
+					cv[ii].getName().c_str(), offset,
+					H5T_NATIVE_INT);
+			}
+			else if ( dal_FLOAT == cv[ii].getType() ) {
+				H5Tinsert( h5type,
+					cv[ii].getName().c_str(), offset,
+					H5T_NATIVE_FLOAT);
+			}
+			else if ( dal_DOUBLE == cv[ii].getType() ) {
+				H5Tinsert( h5type,
+					cv[ii].getName().c_str(), offset,
+					H5T_NATIVE_DOUBLE);
+			}
+		}
+	}	
+
 	else if ( dal_COMPLEX == coltype )
 	{
 		vector<dalColumn> cv;
@@ -780,7 +872,12 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 				offset += cv[ii-1].getSize();
 				
 	
-			if ( dal_INT == cv[ii].getType() ) {
+			if ( dal_CHAR == cv[ii].getType() ) {
+				H5Tinsert( h5type,
+					cv[ii].getName().c_str(), offset,
+					H5T_NATIVE_CHAR);
+			}
+			else if ( dal_INT == cv[ii].getType() ) {
 				H5Tinsert( h5type,
 					cv[ii].getName().c_str(), offset,
 					H5T_NATIVE_INT);
@@ -865,14 +962,13 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 	
 	// compute the size of the compound column
 	for ( unsigned int ii=0; ii<foo.size(); ii++) {
-		//cout << "subcolumn name is " << foo[ii].getName() 
-		//	 << ". Type is " << foo[ii].getType() << endl;
+// 		cout << "subcolumn name is " << foo[ii].getName() 
+// 			 << ". Type is " << foo[ii].getType() << endl;
 		sz += foo[ii].getSize();
 	}
 
 	// create a compound type that can hold each field
 	hid_t fieldtype = H5Tcreate( H5T_COMPOUND, sz );
-
 	size_t offset = 0;
 	for ( unsigned int ii=0; ii<foo.size(); ii++) {
 		
@@ -881,8 +977,11 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 		else
 			offset += foo[ii-1].getSize();
 			
-
-		if ( dal_INT == foo[ii].getType() ) {
+		if ( dal_CHAR == foo[ii].getType() ) {
+			H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,
+				   H5T_NATIVE_CHAR);
+		}
+		else if ( dal_INT == foo[ii].getType() ) {
 			H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,
 				   H5T_NATIVE_INT);
 		}
@@ -908,7 +1007,6 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 	status = H5TBinsert_field( file_id, name.c_str(), compname.c_str(),
 					fieldtype, position,
 					fill_data, data );	
-
 
 	if ( removedummy )
 		removeColumn("000dummy000");
@@ -1096,9 +1194,12 @@ void dalTable::appendRows( void * data, long row_count )
 	
 	if ( firstrecord ) {
 		hsize_t start = 0;
-		status = H5TBappend_records ( file_id, name.c_str(),
-					      (hsize_t)row_count, *size_out,
+		if (row_count>1)
+		{
+		  status = H5TBappend_records ( file_id, name.c_str(),
+					      (hsize_t)row_count-1, *size_out,
 					      field_offsets, field_sizes, data);
+		}
 		status = H5TBwrite_records( file_id, name.c_str(), start,
 					    (hsize_t)row_count, *size_out,
 					    field_offsets, field_sizes, data );
