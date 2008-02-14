@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
      cout << "The first parameter is the raw TBB input file name." << endl;
      cout << "The second parameter is the dataset name." << endl;
      cout << endl;
-     return FAIL;
+     return DAL::FAIL;
   }
 
   dalDataset * dataset;
@@ -350,5 +350,5 @@ wb.antenna.frameno = counter;
   delete dataset;
 
   cout << "SUCCESS" << endl;
-  return SUCCESS;
+  return DAL::SUCCESS;
 }

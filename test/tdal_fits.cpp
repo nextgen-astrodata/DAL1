@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
      cout << endl << "Too few parameters..." << endl << endl;
      cout << "The first parameter is a fits dataset path and name." << endl;
      cout << endl;
-     return FAIL;
+     return DAL::FAIL;
   }
 
 // create a dataset
@@ -122,6 +122,6 @@ int main(int argc, char *argv[])
 //    delete dataset2;
 
    cout << "SUCCESS" << endl;
-   return SUCCESS;
+   return DAL::SUCCESS;
 }
 

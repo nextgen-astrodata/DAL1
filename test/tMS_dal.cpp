@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
       cout << "The first parameter is the input casa measurement set." << endl;
       cout << "The second parameter is the output hdf5 file." << endl;
       cout << endl;
-      return FAIL;
+      return DAL::FAIL;
     }
   
   // create a dataset object of type MSCASA
@@ -206,5 +206,5 @@ iarray = arraygroup->createIntArray( "int_array", dims, idata, cdims );
 ds->close();    // close the hdf5 file
 
 cout << "SUCCESS" << endl;
-return SUCCESS;
+return DAL::SUCCESS;
 }

@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
      cout << "The first parameter is the dataset name." << endl;
      cout << "The second parameter is the filetype. (optional)" << endl;
      cout << endl;
-     return FAIL;
+     return DAL::FAIL;
   }
 
   dalDataset * dataset;
@@ -190,5 +190,5 @@ for ( int uu=0 ; uu < LOOPMAX; uu++)
   delete dataset;
   
   cout << "SUCCESS" << endl;
-  return SUCCESS;
+  return DAL::SUCCESS;
 }

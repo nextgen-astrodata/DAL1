@@ -1,9 +1,7 @@
-/*-------------------------------------------------------------------------*
- | $Id:: tUseMeasures.cc 511 2007-08-05 13:14:48Z baehren                $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
- *   Copyright (C) 2006                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+
+ /***************************************************************************
+ *   Copyright (C) 2007                                                    *
+ *   Joseph Masters                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -101,7 +99,7 @@ int main (int argc, char *argv[])
      cout << "The first parameter is the raw LOPES input file name." << endl;
      cout << "The second parameter is the hdf5 dataset name." << endl;
      cout << endl;
-     return FAIL;
+     return DAL::FAIL;
   }
 
   dalDataset * dataset;

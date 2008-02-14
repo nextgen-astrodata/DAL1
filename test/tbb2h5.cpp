@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
      cout << "The first parameter is the output dataset name.\n";
      cout << "The remaining parameters are the raw TBB input file names.\n";
      cout << endl;
-     return FAIL;
+     return DAL::FAIL;
   }
 
   dalDataset * dataset;
@@ -340,5 +340,5 @@ int main(int argc, char *argv[])
   delete dataset;
 
   cout << "SUCCESS" << endl;
-  return SUCCESS;
+  return DAL::SUCCESS;
 }

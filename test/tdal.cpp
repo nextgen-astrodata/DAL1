@@ -258,6 +258,6 @@ int main()
    delete ds;
 
    cout << "\nSUCCESS" << endl;
-   return SUCCESS;
+   return DAL::SUCCESS;
 }
 

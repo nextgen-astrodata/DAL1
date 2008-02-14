@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
      cout << "The second parameter is the row start value." << endl;
      cout << "The third parameter is the row stop value." << endl;
      cout << endl;
-     return FAIL;
+     return DAL::FAIL;
   }
 
   /* Set defaults for all parameters: */
@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
   {
   	cout << "Problem opening dataset: " << argv[1] << '.' << " Quiting."
 	     << endl;
-  	exit(FAIL);
+  	exit(DAL::FAIL);
   }
 
   // Open Station group
@@ -304,5 +304,5 @@ unsigned int * data_length;
   delete dataset;
 
   cout << "SUCCESS" << endl;
-  return SUCCESS;
+  return DAL::SUCCESS;
 }

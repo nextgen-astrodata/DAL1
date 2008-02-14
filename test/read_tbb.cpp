@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 	  << "rcu id." << endl;
      cout << "The third parameter is the station group itentifier." << endl;
      cout << endl;
-     return FAIL;
+     return DAL::FAIL;
    }
 
    dalDataset * ds = new dalDataset();
@@ -85,6 +85,6 @@ int main(int argc, char *argv[])
    delete ds;
 
    cout << "\nSUCCESS" << endl;
-   return SUCCESS;
+   return DAL::SUCCESS;
 }
 

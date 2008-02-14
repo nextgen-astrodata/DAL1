@@ -227,6 +227,6 @@ int main()
    delete ds;
 
    cout << "SUCCESS" << endl;
-   return SUCCESS;
+   return DAL::SUCCESS;
 }
 

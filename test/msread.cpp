@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
      cout << "The first parameter is the dataset name." << endl;
      cout << "The second parameter is the filetype. (optional)" << endl;
      cout << endl;
-     return FAIL;
+     return DAL::FAIL;
   }
 
 
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
   if ( 0 != dataset->open( argv[1] ) )
   {
   	cout << "Problem opening dataset: " << argv[1] << '.' << " Quiting." << endl;
-  	exit(FAIL);
+  	exit(DAL::FAIL);
   }
 
   // define the structure of a table
@@ -153,5 +153,5 @@ int main(int argc, char *argv[])
   delete dataset;
 
   cout << "SUCCESS" << endl;
-  return SUCCESS;
+  return DAL::SUCCESS;
 }
