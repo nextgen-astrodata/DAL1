@@ -21,8 +21,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef BEAM_FORMED_H
-#define BEAM_FORMED_H
+#ifndef BEAMFORMED_H
+#define BEAMFORMED_H
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -36,8 +36,10 @@
 #include <dalDataset.h>
 #endif
 
+namespace DAL {
+
 /*!
-   \class beam_formed
+   \class BeamFormed
     
    \ingroup DAL
     
@@ -47,45 +49,41 @@
 
  */
  
- class beam_formed {
+  class BeamFormed {
+
+  private:
+
+    //! Filename of the dataset
+    std::string filename_p;
 
     //! HDF5 file handle ID
     hid_t H5fileID_p;
 
-    //! Identifier for this group within the HDF5 file
-    hid_t H5groupID_p;
-
-    //! Group object of the Data Access Library 
-    dalGroup *group_p;
-
-    //! Filename of the dataset
-    string filename_p;
-
     //! DAL Dataset object to handle the basic I/O
     dalDataset *dataset_p;
  
-   public:
+    bool init();
+
+  public:
+
 
     /*!
       \brief Empty constructor
 
     */
-    beam_formed();
+    BeamFormed();
+
+    /*!
+      \brief Argumented constructor
+
+      \param filename -- Name of the file from which to read in the data
+    */
+    BeamFormed(std::string const &filename);
 
     /*!
       \brief Destructor
     */
-    ~beam_formed();
-
-
-    /*!
-      \brief Get the name of the data file
-
-      \return filename -- The name of the data file
-    */
-    inline string filename () const {
-      return filename_p;
-    }
+    ~BeamFormed();
 	
     /*!
       \brief Provide a summary of the internal status
@@ -97,7 +95,14 @@
     /*!
       \brief Provide a summary of the internal status
     */
-    void summary (ostream &os);    
+    void summary (ostream &os);
+
+    /*!
+      \brief Get the name of the data file
+
+      \return filename -- The name of the data file
+    */
+    std::string filename();
 
     /*!
       \brief Get the name of the telescope
@@ -108,6 +113,8 @@
     */
     std::string telescope ();
 
+    int nstations();
+
     /*!
       \brief Get the name of the observer
 
@@ -116,5 +123,19 @@
     */
     std::string observer ();
 
- }
+    std::string datatype ();
+    std::string emband ();
+    std::string observation_id ();
+    std::string proj_id ();
+    std::string point_ra ();
+    std::string point_dec ();
+    std::string epoch_date ();
+    std::string epoch_utc ();
+    std::string epoch_lst ();
+    std::string notes ();
+
+  };
+
+} // end namespace DAL
+
 #endif

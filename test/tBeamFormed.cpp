@@ -38,6 +38,10 @@
 #include <dal.h>
 #endif
 
+#ifndef BEAMFORMED_H
+#include <BeamFormed.h>
+#endif
+
 #ifndef DALDATASET_H
 #include <dalDataset.h>
 #endif
@@ -51,7 +55,11 @@
 int main()
 {
 
-// create a dataset
+  DAL::BeamFormed * bf = new DAL::BeamFormed(FILENAME);
+  bf->summary();
+  delete bf;
+
+/*// create a dataset
 
 // -------- open the dataset ----------
 
@@ -136,5 +144,6 @@ int main()
 
    cout << "\nSUCCESS" << endl;
    return DAL::SUCCESS;
+*/
 }
 

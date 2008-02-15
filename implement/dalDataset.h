@@ -103,7 +103,7 @@ class dalDataset{
 	  \brief Open the dataset.
 	  \return Zero if successful.  Non-zero on failure.
      */
-	int open( char * datasetname );
+	int open( const char * datasetname );
 
 	/*!
 	  \brief Close the dataset.

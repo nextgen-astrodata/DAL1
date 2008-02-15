@@ -20,11 +20,17 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef BEAMFORMED_H
+#include "BeamFormed.h"
+#endif
 
-string beam_formed::telescope ()
-  {
+BeamFormed::BeamFormed(){}
+
+/*
+std::string BeamFormed::telescope()
+{
     string attribute_telescope ("");
-    
+
     if (group_p->getName() != "UNDEFINED") {
       try {
 	     char *telescope = (char*)(group_p->getAttribute("TELESCOPE"));
@@ -35,4 +41,5 @@ string beam_formed::telescope ()
       }
     }
     return attribute_telescope;
-  }
+}
+*/

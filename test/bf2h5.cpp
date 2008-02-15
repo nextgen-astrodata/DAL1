@@ -132,7 +132,7 @@ main (int argc, char *argv[]) {
 	// write headers using above
 	dataset->setAttribute_string( "FILENAME", "bh.h5" );
 	dataset->setAttribute_string( "TELESCOPE", "LOFAR" );
-	dataset->setAttribute_int(    "NUMBER_OF_STATIONS", n_stations );
+	dataset->setAttribute_float(    "NUMBER_OF_STATIONS", n_stations );
 	dataset->setAttribute_string( "DATATYPE", "Timing" );
 	dataset->setAttribute_string( "EMBAND", "Radio_HIGH" );
 	dataset->setAttribute_string( "SOURCE", srcvec );

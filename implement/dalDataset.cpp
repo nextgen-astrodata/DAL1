@@ -107,12 +107,13 @@ hid_t openHDF5( char * fname )
  *  Opens a dataset (file)
  *
  *****************************************************************/
-int dalDataset::open( char * filename )
+int dalDataset::open( const char * fname )
 {
   string lcltype;
 //  void * myfile;
   
 // cout << "trying to open fits..." << endl;
+  char * filename = const_cast<char*> ( fname );
   if ( 0 == openFITS( filename ) )
   {
 //     file = (fitsfile*)myfile;
@@ -125,6 +126,7 @@ int dalDataset::open( char * filename )
      file = &h5fh;
      lcltype = H5TYPE;
      type = lcltype;
+     name = filename;
      return DAL::SUCCESS;
   } else {
 #ifdef WITH_CASA
@@ -134,6 +136,7 @@ int dalDataset::open( char * filename )
         ms = new casa::MeasurementSet( filename );
         file = &ms;
         ms_reader = new casa::MSReader( *ms );
+        name = filename;
         return DAL::SUCCESS;
      } catch (casa::AipsError x) {
 //         cout << "ERROR: " << x.getMesg() << endl;
@@ -337,7 +340,7 @@ void * dalDataset::getAttribute( string attrname ) {
 		return NULL;
 	}
 	
-	string fullname = "/" + name;
+	string fullname = "/";
 
 	int rank;
 	H5LTget_attribute_ndims(h5fh, fullname.c_str(), attrname.c_str(),
@@ -348,6 +351,7 @@ void * dalDataset::getAttribute( string attrname ) {
 
 	if ( H5T_FLOAT == type_class ) {
 		void * data;
+		data = malloc(sizeof(float));
 		if ( 0 < H5LTget_attribute(h5fh, fullname.c_str(), attrname.c_str(),
 			 H5T_NATIVE_DOUBLE, data) )
 		  return NULL;
@@ -356,6 +360,7 @@ void * dalDataset::getAttribute( string attrname ) {
 	}
 	else if ( H5T_INTEGER == type_class ) {
 		void * data;
+		data = malloc(sizeof(int));
 		if ( 0 < H5LTget_attribute(h5fh, fullname.c_str(), attrname.c_str(),
 			 H5T_NATIVE_INT, data) )
 		  return NULL;
@@ -364,7 +369,6 @@ void * dalDataset::getAttribute( string attrname ) {
 	}
 	else if ( H5T_STRING == type_class ) {
 		char* data;
-		string fullname = "/" + name;
 		data = (char *)malloc(rank * sizeof(char));
 		if ( 0 < H5LTget_attribute_string( h5fh, fullname.c_str(), 
 			  attrname.c_str(),data) )

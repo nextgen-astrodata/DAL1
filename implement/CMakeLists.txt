@@ -77,6 +77,7 @@ set (dal_sources
   dalRow.cpp
   dalTable.cpp
   dalLopesEvent.cpp
+  BeamFormed.cpp
   )
 
 ## [2] List of external libraries against which to link; even though we really

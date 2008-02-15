@@ -278,6 +278,7 @@ void * dalGroup::getAttribute( string attrname ) {
 
 	if ( H5T_FLOAT == type_class ) {
 		void * data;
+		data = malloc(sizeof(float));
 		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
 			 H5T_NATIVE_DOUBLE, data) )
 		  return NULL;
@@ -286,6 +287,7 @@ void * dalGroup::getAttribute( string attrname ) {
 	}
 	else if ( H5T_INTEGER == type_class ) {
 		void * data;
+		data = malloc(sizeof(int));
 		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
 			 H5T_NATIVE_INT, data) )
 		  return NULL;
