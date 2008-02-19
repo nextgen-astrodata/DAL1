@@ -53,6 +53,7 @@ class dalColumn {
 
 	string filetype;  //!< "HDF5", "MSCASA" or "FITS"; for example
 	string name; //!< column name
+	string tablename; //!< table name
 	string dal_datatype;  //!< column datatype
 	int size; //!< datatype size
 	int totsize; //!< total column size

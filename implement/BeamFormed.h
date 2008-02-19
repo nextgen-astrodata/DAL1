@@ -36,6 +36,11 @@
 #include <dalDataset.h>
 #endif
 
+
+#ifndef BEAMGROUP_H
+#include <BeamGroup.h>
+#endif
+
 namespace DAL {
 
 /*!
@@ -64,6 +69,9 @@ namespace DAL {
  
     bool init();
 
+    //! Vector of beam groups within the dataset
+    std::vector<BeamGroup> beamGroups_p;
+
   public:
 
 
@@ -89,13 +97,19 @@ namespace DAL {
       \brief Provide a summary of the internal status
     */
     inline void summary () {
-      summary (cout);
+      summary (cout, true);
     }
 
     /*!
       \brief Provide a summary of the internal status
     */
-    void summary (ostream &os);
+    void summary (ostream &os, bool const &listBeams);
+
+    /*!
+      \brief Print beam groups embedded within the dataset
+
+    */
+    std::vector<std::string> beams();
 
     /*!
       \brief Get the name of the data file
@@ -111,28 +125,52 @@ namespace DAL {
               recorded; returns an empty string in case no keyword value could
 	      be extracted.
     */
-    std::string telescope ();
+    std::string telescope();
 
     int nstations();
 
+    std::string datatype();
+
+    std::string emband();
+
+    std::string observation_id();
+
+    std::string proj_id();
+
+    std::string point_ra();
+
+    std::string point_dec();
     /*!
       \brief Get the name of the observer
 
       \return observer -- The name of the observer; returns an empty string in
               case no keyword value could be extracted.
     */
-    std::string observer ();
+    std::string observer();
 
-    std::string datatype ();
-    std::string emband ();
-    std::string observation_id ();
-    std::string proj_id ();
-    std::string point_ra ();
-    std::string point_dec ();
-    std::string epoch_date ();
-    std::string epoch_utc ();
-    std::string epoch_lst ();
-    std::string notes ();
+    double epoch_mjd();
+
+    std::string epoch_date();
+
+    std::string epoch_utc();
+
+    std::string epoch_lst();
+
+    int main_beam_diam();
+    int center_freq();
+    int bandwidth();
+    double integration_time();
+    int breaks();
+    int dispersion_measure();
+    int number_of_samples();
+    double sampling_time();
+    int number_of_beams();
+    int sub_beam_diameter();
+    int weather_temperature();
+    int weather_humidity();
+    int station_temperatures();
+
+    std::string notes();
 
   };
 

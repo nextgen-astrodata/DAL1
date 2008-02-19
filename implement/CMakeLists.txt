@@ -78,7 +78,9 @@ set (dal_sources
   dalTable.cpp
   dalLopesEvent.cpp
   BeamFormed.cpp
-  )
+  BeamGroup.cpp
+  BeamSubband.cpp
+)
 
 ## [2] List of external libraries against which to link; even though we really
 ##     need the external libraries listed here, we should be a bit careful when

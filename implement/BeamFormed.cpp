@@ -39,26 +39,80 @@ namespace DAL {
     dataset_p->close();
   }
 
-  void BeamFormed::summary (std::ostream &os)
+  void BeamFormed::summary (std::ostream &os, bool const &listBeams)
   {
-    os << "[BeamFormed Data] Summary of object properties"     << endl;
+    os << "\n[BeamFormed Data] Summary of object properties"     << endl;
 
-    os << "-- Filename .......... : " << filename()              << endl;
-    os << "-- Telesope .......... : " << telescope()             << endl;
-    os << "-- Number of Stations. : " << nstations()             << endl;
-    os << "-- Observer .......... : " << observer()              << endl;
-    os << "-- Datatype .......... : " << datatype()              << endl;
-    os << "-- Emband   .......... : " << emband()                << endl;
-    os << "-- Observation Id .... : " << observation_id()        << endl;
-    os << "-- Project Id ........ : " << proj_id()               << endl;
-    os << "-- Point RA .......... : " << point_ra()              << endl;
-    os << "-- Point DEC ......... : " << point_dec()             << endl;
-    os << "-- Epoch Date ........ : " << epoch_date()            << endl;
-    os << "-- Epoch UTC ......... : " << epoch_utc()             << endl;
-    os << "-- Epoch LST ......... : " << epoch_lst()             << endl;
-//     os << "-- Notes ............. : " << notes()                 << endl;
+    os << "-- Filename ............. : " << filename()              << endl;
+    os << "-- Telesope ............. : " << telescope()             << endl;
+    os << "-- Number of Stations ... : " << nstations()             << endl;
+    os << "-- Datatype ............. : " << datatype()              << endl;
+    os << "-- Emband   ............. : " << emband()                << endl;
+    os << "-- Source(s) ............ : " /*<< sources()*/               << endl;
+    os << "-- Observation Id ....... : " << observation_id()        << endl;
+    os << "-- Project Id ........... : " << proj_id()               << endl;
+    os << "-- Point RA ............. : " << point_ra()              << endl;
+    os << "-- Point DEC ............ : " << point_dec()             << endl;
+    os << "-- Observer ............. : " << observer()              << endl;
+    os << "-- Epoch MJD ............ : " << epoch_mjd()             << endl;
+    os << "-- Epoch Date ........... : " << epoch_date()            << endl;
+    os << "-- Epoch UTC ............ : " << epoch_utc()             << endl;
+    os << "-- Epoch LST ............ : " << epoch_lst()             << endl;
+    os << "-- FWHM of the main beam  : " << main_beam_diam()        << endl;
+    os << "-- Center Frequency ..... : " << center_freq()           << endl;
+    os << "-- Bandwidth ............ : " << bandwidth()             << endl;
+    os << "-- Total Integration Time : " << integration_time()      << endl;
+    os << "-- Breaks in the data ... : " << breaks()                << endl;
+    os << "-- Dispersion measure ... : " << dispersion_measure()    << endl;
+    os << "-- Number of time samples : " << number_of_samples()     << endl;
+    os << "-- Sampling time ........ : " << sampling_time()         << endl;
+    os << "-- Notes ................ : " /*<< notes()*/                 << endl;
+    os << "-- Number of beams ...... : " << number_of_beams()       << endl;
+    os << "-- FWHM of the sub-beams  : " << sub_beam_diameter()     << endl;
+    os << "-- Weather temperature .. : " << weather_temperature()   << endl;
+    os << "-- Weather humidity ..... : " << weather_humidity()      << endl;
+    os << "-- Station temperature(s) : " /*<< station_temperatures()*/  << endl;
+
+    if (listBeams) {
+      for (uint beam(0); beam<beamGroups_p.size(); beam++) {
+	beamGroups_p[beam].summary();
+      }
+    }
+
   }
 
+  std::vector<std::string> BeamFormed::beams()
+  {
+    unsigned int nofBeams (100);
+    char stationstr[10];
+    std::vector<std::string> beamGroups;
+
+    for (unsigned int station(0); station<nofBeams; station++) {
+      /* create ID string for the group */
+      sprintf( stationstr, "beam%03d", station );
+      /* Check if group of given name exists in the file; according to the
+	 documentation of the DAL, the openGroup() function returns a NULL
+	 pointer in case no group of the given name exists. */
+      if (dataset_p->openGroup(stationstr) != NULL) {
+	beamGroups.push_back(stationstr);
+      }
+    }
+
+    return beamGroups;
+  }
+/*
+  void BeamFormed::beams()
+  {
+     std::vector< std::string > lcl_beams = dataset_p->getGroupNames();
+     if ( lcl_beams.size() > 0 )
+     {
+       cout << "\nBeams:" << endl;
+       for(unsigned int bb=0; bb<lcl_beams.size(); bb++)
+         cout << lcl_beams[bb] << endl;
+       cout << endl;
+     }
+  }
+*/
   std::string BeamFormed::filename ()
   {
     std::string attribute_filename ("");
@@ -228,6 +282,22 @@ namespace DAL {
    return attribute_point_dec;
   }
 
+  double BeamFormed::epoch_mjd ()
+  {
+    double epoch_mjd;
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	double * epoch_mjd_p = reinterpret_cast<double*>(dataset_p->getAttribute("EPOCH_MJD"));
+	epoch_mjd = *epoch_mjd_p;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute EPOCH_MJD" << endl;
+	epoch_mjd = -1;
+      }
+    }
+    return epoch_mjd;
+  }
+
   std::string BeamFormed::epoch_date ()
   {
     std::string attribute_epoch_date ("");
@@ -279,6 +349,134 @@ namespace DAL {
    return attribute_epoch_lst;
   }
 
+  int BeamFormed::main_beam_diam ()
+  {
+    int main_beam_diam;
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	int * main_beam_diam_p = reinterpret_cast<int*>(dataset_p->getAttribute("MAIN_BEAM_DIAM"));
+	main_beam_diam = *main_beam_diam_p;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute MAIN_BEAM_DIAM" << endl;
+	main_beam_diam = -1;
+      }
+    }
+    return main_beam_diam;
+  }
+
+  int BeamFormed::center_freq ()
+  {
+    int center_freq;
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	int * center_freq_p = reinterpret_cast<int*>(dataset_p->getAttribute("CENTER_FREQUENCY"));
+	center_freq = *center_freq_p;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute CENTER_FREQUENCY" << endl;
+	center_freq = -1;
+      }
+    }
+    return center_freq;
+  }
+
+  int BeamFormed::bandwidth ()
+  {
+    int bandwidth;
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	int * bandwidth_p = reinterpret_cast<int*>(dataset_p->getAttribute("BANDWIDTH"));
+	bandwidth = *bandwidth_p;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute BANDWIDTH" << endl;
+	bandwidth = -1;
+      }
+    }
+    return bandwidth;
+  }
+
+  double BeamFormed::integration_time ()
+  {
+    double integration_time;
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	double * integration_time_p = reinterpret_cast<double*>(dataset_p->getAttribute("TOTAL_INTEGRATION_TIME"));
+	integration_time = *integration_time_p;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute TOTAL_INTEGRATION_TIME" << endl;
+	integration_time = -1;
+      }
+    }
+    return integration_time;
+  }
+
+  int BeamFormed::breaks ()
+  {
+    int breaks;
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	int * breaks_p = reinterpret_cast<int*>(dataset_p->getAttribute("BREAKS_IN_DATA"));
+	breaks = *breaks_p;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute BREAKS_IN_DATA" << endl;
+	breaks = -1;
+      }
+    }
+    return breaks;
+  }
+
+  int BeamFormed::dispersion_measure ()
+  {
+    int dispersion_measure;
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	int * dispersion_measure_p = reinterpret_cast<int*>(dataset_p->getAttribute("DISPERSION_MEASURE"));
+	dispersion_measure = *dispersion_measure_p;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute DISPERSION_MEASURE" << endl;
+	dispersion_measure = -1;
+      }
+    }
+    return dispersion_measure;
+  }
+
+  int BeamFormed::number_of_samples ()
+  {
+    int number_of_samples;
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	int * number_of_samples_p = reinterpret_cast<int*>(dataset_p->getAttribute("NUMBER_OF_SAMPLES"));
+	number_of_samples = *number_of_samples_p;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute NUMBER_OF_SAMPLES" << endl;
+	number_of_samples = -1;
+      }
+    }
+    return number_of_samples;
+  }
+
+  double BeamFormed::sampling_time ()
+  {
+    double sampling_time;
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	double * sampling_time_p = reinterpret_cast<double*>(dataset_p->getAttribute("SAMPLING_TIME"));
+	sampling_time = *sampling_time_p;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute SAMPLING_TIME" << endl;
+	sampling_time = -1;
+      }
+    }
+    return sampling_time;
+  }
+
   std::string BeamFormed::notes ()
   {
     std::string attribute_notes ("");
@@ -296,6 +494,85 @@ namespace DAL {
    return attribute_notes;
   }
 
+  int BeamFormed::number_of_beams ()
+  {
+    int number_of_beams;
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	int * number_of_beams_p = reinterpret_cast<int*>(dataset_p->getAttribute("NUMBER_OF_BEAMS"));
+	number_of_beams = *number_of_beams_p;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute NUMBER_OF_BEAMS" << endl;
+	number_of_beams = -1;
+      }
+    }
+    return number_of_beams;
+  }
+
+  int BeamFormed::sub_beam_diameter ()
+  {
+    int sub_beam_diameter;
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	int * sub_beam_diameter_p = reinterpret_cast<int*>(dataset_p->getAttribute("SUB_BEAM_DIAMETER"));
+	sub_beam_diameter = *sub_beam_diameter_p;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute SUB_BEAM_DIAMETER" << endl;
+	sub_beam_diameter = -1;
+      }
+    }
+    return sub_beam_diameter;
+  }
+
+  int BeamFormed::weather_temperature ()
+  {
+    int weather_temperature;
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	int * weather_temperature_p = reinterpret_cast<int*>(dataset_p->getAttribute("WEATHER_TEMPERATURE"));
+	weather_temperature = *weather_temperature_p;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute WEATHER_TEMPERATURE" << endl;
+	weather_temperature = -1;
+      }
+    }
+    return weather_temperature;
+  }
+
+  int BeamFormed::weather_humidity ()
+  {
+    int weather_humidity;
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	int * weather_humidity_p = reinterpret_cast<int*>(dataset_p->getAttribute("WEATHER_HUMIDITY"));
+	weather_humidity = *weather_humidity_p;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute WEATHER_HUMIDITY" << endl;
+	weather_humidity = -1;
+      }
+    }
+    return weather_humidity;
+  }
+
+  int BeamFormed::station_temperatures ()
+  {
+    int station_temperatures;
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	int * station_temperatures_p = reinterpret_cast<int*>(dataset_p->getAttribute("TSYS"));
+	station_temperatures = *station_temperatures_p;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute TSYS" << endl;
+	station_temperatures = -1;
+      }
+    }
+    return station_temperatures;
+  }
 
   bool BeamFormed::init ()
   {
@@ -309,6 +586,29 @@ namespace DAL {
 		<< std::endl;
       return false;
     }
+
+    /*
+      [1] If opening the data file was successful, we can continue. First we scan
+      for the beam groups available in the file, since this is the basic unit
+      within which the actual data for the individual sub-bands are stored.
+    */
+    std::vector<std::string> beamGroups = beams();
+
+    /* Always check if actually a list of groups has been extracted */
+    if (beamGroups.size() > 0) {
+
+      for (uint beam(0); beam<beamGroups.size(); beam++) {
+	// assemble internal list of beam groups
+	BeamGroup group ((*dataset_p), beamGroups[beam]);
+	beamGroups_p.push_back(group);
+      }
+
+    } else {
+      std::cerr << "[BeamFormed::init] No beam group found in data set!"
+		<< std::endl;
+      status = false;
+    }
+
     return status;
   }
 

@@ -1,5 +1,8 @@
-/***************************************************************************
- *   Copyright (C) 2006 by Joseph Masters                                  *
+/*-------------------------------------------------------------------------*
+ | $Id:: BeamGroup.h 1126 2007-12-10 17:14:20Z masters                         $ |
+ *-------------------------------------------------------------------------*
+ ***************************************************************************
+ *   Copyright (C) 2008 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,29 +21,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*!
-  \file tBeamFormed.cpp
-  
-  \ingroup DAL
- 
-  \brief Test program for beam-formed functionality.
-
-  \author Joseph Masters
-
-  \date 12-04-07
-*/
-
-#ifndef BEAMFORMED_H
-#include <BeamFormed.h>
+#ifndef BEAMSUBBAND_H
+#include "BeamSubband.h"
 #endif
 
-#define FILENAME "bf.h5"
-
-int main()
-{
-
-  DAL::BeamFormed * bf = new DAL::BeamFormed(FILENAME);
-  bf->summary();
-  delete bf;
+namespace DAL {
 
 }
+

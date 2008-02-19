@@ -386,6 +386,13 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
     }
    }
 
+   else if ( H5TYPE == filetype )
+   {
+//      H5TBread_fields_name (file_id, tablename, name,
+//               dst_size, dst_offset, 0, NRECORDS-1, p_data_out);
+      cout << "\n\nHDF5 column read\n\n";
+   }
+
    return NULL;
 }
 

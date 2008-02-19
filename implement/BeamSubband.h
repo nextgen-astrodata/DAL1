@@ -1,5 +1,8 @@
-/***************************************************************************
- *   Copyright (C) 2006 by Joseph Masters                                  *
+/*-------------------------------------------------------------------------*
+ | $Id:: s                         $ |
+ *-------------------------------------------------------------------------*
+ ***************************************************************************
+ *   Copyright (C) 2008 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,29 +21,74 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*!
-  \file tBeamFormed.cpp
-  
-  \ingroup DAL
- 
-  \brief Test program for beam-formed functionality.
+#ifndef BEAMSUBBAND_H
+#define BEAMSUBBAND_H
 
-  \author Joseph Masters
-
-  \date 12-04-07
-*/
-
-#ifndef BEAMFORMED_H
-#include <BeamFormed.h>
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
-#define FILENAME "bf.h5"
+#ifndef DAL_H
+#include <dal.h>
+#endif
 
-int main()
-{
+#ifndef DALDATASET_H
+#include <dalDataset.h>
+#endif
 
-  DAL::BeamFormed * bf = new DAL::BeamFormed(FILENAME);
-  bf->summary();
-  delete bf;
+#ifndef DALGROUP_H
+#include <dalGroup.h>
+#endif
 
-}
+#ifndef DALTABLE_H
+#include <dalTable.h>
+#endif
+
+
+namespace DAL {
+
+/*!
+   \class BeamFormed
+    
+   \ingroup DAL
+    
+   \brief High-level interface between beam-formed data and the DAL
+    
+   \author Joseph Masters
+
+ */
+ 
+  class BeamSubband {
+
+  private:
+
+    //! HDF5 file handle ID
+    hid_t H5groupID_p;
+
+    //! Group object of the Data Access Library 
+    dalTable *table_p;
+
+    //! HDF5 file handle ID
+    hid_t H5fileID_p;
+
+    //! HDF5 table handle ID
+    hid_t H5tableID_p;
+
+  public:
+
+    BeamSubband();
+
+    void init();
+
+    inline void summary()
+    {
+       summary(cout);
+    }
+
+    void summary(std::ostream &os);
+
+ }; // end BeamSubband class
+
+} // end DAL namespace
+
+#endif

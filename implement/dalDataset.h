@@ -63,12 +63,12 @@
 class dalDataset{
 
 	void * file;  //!< can be HDF5File, FITS, MS
-	string type;  //!< "HDF5", "MSCASA" or "FITS"; for example
-	string name;  //!< dataset name
-	vector<string> files;  //!< list of files
-	vector<dalTable> tables; //!< list of tables
-	vector<dalGroup> groups; //!< list of groups
-	vector<dalAttribute> attrs;  //!< list of attributes
+	std::string type;  //!< "HDF5", "MSCASA" or "FITS"; for example
+	std::string name;  //!< dataset name
+	std::vector<std::string> files;  //!< list of files
+	std::vector<dalTable> tables; //!< list of tables
+	std::vector<dalGroup> groups; //!< list of groups
+	std::vector<dalAttribute> attrs;  //!< list of attributes
 	
 	dalFilter * filter;	//!< dataset filter
 
@@ -97,7 +97,7 @@ class dalDataset{
       \param name The name of the dataset to open.
 	  \param filetype Type of file to open ("HDF5", "MSCASA", etc.).
 	*/
-  	dalDataset( char * name, string filetype );
+  	dalDataset( char * name, std::string filetype );
 	
 	/*!
 	  \brief Open the dataset.
@@ -125,7 +125,7 @@ class dalDataset{
 
           \param attrname The name of the attribute you want to print.
         */
-	void printAttribute( string attrname );
+	void printAttribute( std::string attrname );
 
         /*!
           \brief Get the value of an attribute.
@@ -138,7 +138,7 @@ class dalDataset{
 
           \return void * A pointer to the data in the attribute. 
         */
-	void * getAttribute( string attrname );
+	void * getAttribute( std::string attrname );
 
         /*!
           \brief Define a string attribute.
@@ -148,7 +148,7 @@ class dalDataset{
           \param attrname The name of the attribute you want to create.
           \param data The value of the attribute you want to create.
         */
-	void setAttribute_string( string attrname, string data );
+	void setAttribute_string( std::string attrname, std::string data );
 
         /*!
           \brief Define a string attribute.
@@ -158,7 +158,7 @@ class dalDataset{
           \param attrname The name of the attribute you want to create.
           \param data The values of the attributes you want to create.
         */
-	void setAttribute_string( string attrname, vector<string> data );
+	void setAttribute_string( std::string attrname, std::vector<std::string> data );
 
         /*!
           \brief Define a integer attribute.
@@ -170,7 +170,7 @@ class dalDataset{
           \param size Optional parameter specifying the array size of the
                       attribute.  Default is scalar.
         */
-	void setAttribute_int( string attrname, int * data, int size=1 );
+	void setAttribute_int( std::string attrname, int * data, int size=1 );
 
         /*!
           \brief Define an unsigned integer attribute.
@@ -182,7 +182,7 @@ class dalDataset{
           \param size Optional parameter specifying the array size of the
                       attribute.  Default is scalar.
         */
-	void setAttribute_uint(string attrname, unsigned int * data,int size=1);
+	void setAttribute_uint(std::string attrname, unsigned int * data,int size=1);
 
         /*!
           \brief Define a double precision floating point attribute.
@@ -194,7 +194,7 @@ class dalDataset{
           \param size Optional parameter specifying the array size of the
                       attribute.  Default is scalar.
         */
-	void setAttribute_double( string attrname, double * data, int size=1 );
+	void setAttribute_double( std::string attrname, double * data, int size=1 );
 
 	/*!
 	  \brief Create a new array in the root group.
@@ -204,7 +204,7 @@ class dalDataset{
 	  \return dalArray * pointer to an array object.
      */
 	dalArray * createArray(
-				string arrayname,
+				std::string arrayname,
 				dalData * data_object);
 				
 	/*!
@@ -215,8 +215,8 @@ class dalDataset{
 	  \return dalArray * pointer to an array object.
      */
 	dalArray * createIntArray(
-				string arrayname,
-				vector<int> dims,
+				std::string arrayname,
+				std::vector<int> dims,
 				int data[]);
 
 	/*!
@@ -229,10 +229,10 @@ class dalDataset{
 	  \return dalArray * pointer to an array object.
      */
 	dalArray * createIntArray(
-				string arrayname,
-				vector<int> dims,
+				std::string arrayname,
+				std::vector<int> dims,
 				int data[],
-				vector<int>cdims);
+				std::vector<int>cdims);
 
 	/*!
 	  \brief Create a new extendible floating point array in the root group.
@@ -244,10 +244,10 @@ class dalDataset{
 	  \return dalArray * pointer to an array object.
      */
 	dalArray * createFloatArray(
-				string arrayname,
-				vector<int> dims,
+				std::string arrayname,
+				std::vector<int> dims,
 				float data[],
-				vector<int>cdims);
+				std::vector<int>cdims);
 
 	/*!
 	  \brief Create a new extendible complex floating point array in the
@@ -260,17 +260,17 @@ class dalDataset{
 	  \return dalArray * pointer to an array object.
      */
 	dalArray * createComplexArray(
-				string arrayname,
-				vector<int> dims,
+				std::string arrayname,
+				std::vector<int> dims,
 				complex<float> data[],
-				vector<int>cdims);
+				std::vector<int>cdims);
 
 	/*!
 	  \brief create a new table in the root group
 	  \param tablename
 	  \return dalTable
 	*/
-	dalTable * createTable( string tablename );
+	dalTable * createTable( std::string tablename );
 
 	/*!
 	  \brief create a new table in a specified group
@@ -278,7 +278,7 @@ class dalDataset{
 	  \param groupname 
 	  \return dalTable 
 	*/
-	dalTable * createTable( string tablename, string groupname );
+	dalTable * createTable( std::string tablename, std::string groupname );
 
 	/*!
 	  \brief Create a new group.
@@ -298,7 +298,7 @@ class dalDataset{
 	  \param tablename The name of the table you want to open
 	  \return dalTable * A pointer to a table object.
      */
-	dalTable * openTable( string tablename );
+	dalTable * openTable( std::string tablename );
 
     /*!
 	  \brief Set table filter.
@@ -308,7 +308,7 @@ class dalDataset{
 	  \param columns A string containing a comma-separated list of columns to
 	                 include in a filtered dataset.
 	 */
-	void setFilter( string columns );
+	void setFilter( std::string columns );
 
     /*!
 	  \brief Set table filter.
@@ -320,7 +320,7 @@ class dalDataset{
 	  \param conditions A string describing restraints on which rows are
 	                 included in an opened dataset.  For example: "time>100".
 	 */
-	void setFilter( string columns, string conditions ); //!< set table filter
+	void setFilter( std::string columns, std::string conditions ); //!< set table filter
 	
 	/*!
 	  \brief Open a table in a group.
@@ -331,7 +331,7 @@ class dalDataset{
 	  \param groupname The name of the group containing the table.
 	  \return dalTable * A pointer to a table object.
 	 */
-	dalTable * openTable( string tablename, string groupname );
+	dalTable * openTable( std::string tablename, std::string groupname );
 
 	/*!
 	  \brief Open a array.
@@ -341,7 +341,7 @@ class dalDataset{
 	  \param arrayname The name of the array to open.
 	  \return dalArray * A pointer to a array object.
 	 */
-	dalArray * openArray( string arrayname );
+	dalArray * openArray( std::string arrayname );
 
 	/*!
 	  \brief Open an array in a group.
@@ -352,7 +352,7 @@ class dalDataset{
 	  \param groupname The name of the group containing the array.
 	  \return dalArray * A pointer to a array object.
 	 */
-	dalArray * openArray( string arrayname, string groupname );
+	dalArray * openArray( std::string arrayname, std::string groupname );
 
 	/*!
 	  \brief Get a list of groups in the dataset.
@@ -361,7 +361,7 @@ class dalDataset{
 
 	  \return A vector of group names.
 	 */
-	vector<string> getGroupNames();
+	std::vector<std::string> getGroupNames();
 
 	/*!
 	  \brief Open a group in a dataset.
@@ -371,7 +371,7 @@ class dalDataset{
 	  \param groupname The name of the group to open
 	  \return dalGroup * A pointer to a group object.
 	 */
-	dalGroup * openGroup( string groupname );
+	dalGroup * openGroup( std::string groupname );
 	
 	/*!
 	  \brief List the tables in a dataset.
@@ -389,14 +389,14 @@ class dalDataset{
 
 	  \return A string describing the file format ("HDF5", "MSCASA", etc.)
 	*/
-	string getType();
+	std::string getType();
 
 	/*!
 	  \brief Retrieve the name of the data set
 
 	  \return name -- A string holding the name of the data set.
 	 */
-	inline string getName () const {
+	inline std::string getName () const {
 	  return name;
 	}
 
@@ -405,7 +405,7 @@ class dalDataset{
 
 	  \return files -- List of files
 	*/
-	inline vector<string> getFiles () const {
+	inline std::vector<std::string> getFiles () const {
 	  return files;
 	}
 
@@ -439,7 +439,7 @@ class dalDataset{
 	                starting at the specified start value.
 	  \return A pointer to a structure containing the block of data.
 	 */
-	void read_tbb(string id, int start, int length, short data_out[]);
+	void read_tbb(std::string id, int start, int length, short data_out[]);
 
 /************************************************************************
  *
@@ -450,31 +450,31 @@ class dalDataset{
 #ifdef PYTHON
 
 	// create[]Array wrappers
-	dalArray * cia_boost1(string arrayname, bpl::list dims, bpl::list data);
-	dalArray * cia_boost2(string arrayname, bpl::list dims, bpl::list data,
+	dalArray * cia_boost1(std::string arrayname, bpl::list dims, bpl::list data);
+	dalArray * cia_boost2(std::string arrayname, bpl::list dims, bpl::list data,
 				 bpl::list cdims );
-	dalArray * cia_boost_numarray1( string arrayname, bpl::list dims,
+	dalArray * cia_boost_numarray1( std::string arrayname, bpl::list dims,
 			bpl::numeric::array data );
-	dalArray * cia_boost_numarray2( string arrayname, bpl::list dims,
+	dalArray * cia_boost_numarray2( std::string arrayname, bpl::list dims,
 			bpl::numeric::array data, bpl::list cdims );
-	dalArray * cfa_boost( string arrayname, bpl::list dims, bpl::list data,
+	dalArray * cfa_boost( std::string arrayname, bpl::list dims, bpl::list data,
 				 bpl::list cdims );
-	dalArray * cfa_boost_numarray( string arrayname, bpl::list dims,
+	dalArray * cfa_boost_numarray( std::string arrayname, bpl::list dims,
 			 bpl::numeric::array data, bpl::list cdims );
 
-	bpl::numeric::array ria_boost( string arrayname );
-	bpl::numeric::array rfa_boost( string arrayname );
+	bpl::numeric::array ria_boost( std::string arrayname );
+	bpl::numeric::array rfa_boost( std::string arrayname );
 
 	// createTable wrappers
-	dalTable * ct1_boost( string tablename );
-	dalTable * ct2_boost( string tablename, string groupname );
+	dalTable * ct1_boost( std::string tablename );
+	dalTable * ct2_boost( std::string tablename, std::string groupname );
 
 	// openTable wrappers
-	dalTable * ot1_boost( string tablename );
-	dalTable * ot2_boost( string tablename, string groupname );
+	dalTable * ot1_boost( std::string tablename );
+	dalTable * ot2_boost( std::string tablename, std::string groupname );
 
-	void setFilter_boost1(string);
-	void setFilter_boost2(string,string);
+	void setFilter_boost1(std::string);
+	void setFilter_boost2(std::string,std::string);
 #endif
 };
 #endif

@@ -132,7 +132,7 @@ main (int argc, char *argv[]) {
 	// write headers using above
 	dataset->setAttribute_string( "FILENAME", "bh.h5" );
 	dataset->setAttribute_string( "TELESCOPE", "LOFAR" );
-	dataset->setAttribute_float(    "NUMBER_OF_STATIONS", n_stations );
+	dataset->setAttribute_int( "NUMBER_OF_STATIONS", n_stations );
 	dataset->setAttribute_string( "DATATYPE", "Timing" );
 	dataset->setAttribute_string( "EMBAND", "Radio_HIGH" );
 	dataset->setAttribute_string( "SOURCE", srcvec );
@@ -177,7 +177,11 @@ main (int argc, char *argv[]) {
         beamGroup = dataset->createGroup( beamstr );
 	beamGroup->setAttribute_string( "RA", "14:12:34.2342" );
 	beamGroup->setAttribute_string( "DEC", "14:12:34.2342" );
+        int n_subbands[] = { 1 };
+	beamGroup->setAttribute_int( "NUMBER_OF_SUBBANDS", n_subbands );
+
 	cout << "CREATED New beam group: " << string(beamstr) << endl;
+
 	dalTable * dataTable0 = dataset->createTable( "SUB0", beamstr );
 	dataTable0->setAttribute_int( "CENTER_FREQUENCY", center_frequency );
 	dataTable0->setAttribute_double( "BANDWIDTH", dataBandwidth );

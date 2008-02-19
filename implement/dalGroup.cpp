@@ -79,7 +79,7 @@ herr_t dalGroup_file_info(hid_t loc_id, const char *name, void *opdata)
 vector<string> dalGroup::getMemberNames()
 {
   vector<string> member_names;
-  H5Giterate(group_id, "/", NULL, dalGroup_file_info, &member_names);
+  H5Giterate(file_id, name.c_str(), NULL, dalGroup_file_info, &member_names);
   return member_names;
 }
 
