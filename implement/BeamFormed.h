@@ -51,7 +51,6 @@ namespace DAL {
    \brief High-level interface between beam-formed data and the DAL
     
    \author Joseph Masters
-
  */
  
   class BeamFormed {
@@ -74,16 +73,15 @@ namespace DAL {
 
   public:
 
-
+    
     /*!
       \brief Empty constructor
-
     */
     BeamFormed();
-
+    
     /*!
       \brief Argumented constructor
-
+      
       \param filename -- Name of the file from which to read in the data
     */
     BeamFormed(std::string const &filename);

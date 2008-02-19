@@ -47,7 +47,7 @@
 namespace DAL {
 
 /*!
-   \class BeamFormed
+   \class BeamGroup
     
    \ingroup DAL
     
@@ -94,7 +94,15 @@ namespace DAL {
     void summary(std::ostream &os);
 
     std::string ra();
+    /*!
+      \brief Get the declination of the beam
+    */
     std::string dec();
+    /*!
+      \brief Get the number of sub-bands
+
+      \return subbands -- The number of sub-bands.
+    */
     int n_subbands ();
 
  }; // end BeamGroup class

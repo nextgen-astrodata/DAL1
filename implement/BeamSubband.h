@@ -48,7 +48,7 @@
 namespace DAL {
 
 /*!
-   \class BeamFormed
+   \class BeamSubband
     
    \ingroup DAL
     
@@ -76,15 +76,31 @@ namespace DAL {
 
   public:
 
+    /*!
+      \brief Default constructor
+    */
     BeamSubband();
 
+    /*!
+      \brief Initialize the internal parameters of an object of this type
+    */
     void init();
 
+    /*!
+      \brief Provide a summary of the objects internal parameters
+      
+      The summary will be written to standard output
+    */
     inline void summary()
     {
        summary(cout);
     }
 
+    /*!
+      \brief Provide a summary of the objects internal parameters
+
+      \param os -- Output stream to which the summary is written.
+    */
     void summary(std::ostream &os);
 
  }; // end BeamSubband class
