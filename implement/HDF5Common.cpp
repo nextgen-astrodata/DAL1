@@ -61,11 +61,11 @@ namespace DAL { // Namespace DAL -- begin
     bool datatype_is_float   = H5Tdetect_class (datatype_id,H5T_FLOAT);
     bool datatype_is_string  = H5Tdetect_class (datatype_id,H5T_STRING);
     
-    cout << "\t-- Datatype ID             = " << datatype_id  << endl;
-    cout << "\t-- Datatype size [Bytes]   = " << datatype_size << endl;
-    cout << "\t-- Datatype is H5T_INTEGER = " << datatype_is_integer << endl;
-    cout << "\t-- Datatype is H5T_FLOAT   = " << datatype_is_float << endl;
-    cout << "\t-- Datatype is H5T_STRING  = " << datatype_is_string << endl;
+    os << "\t-- Datatype ID             = " << datatype_id  << endl;
+    os << "\t-- Datatype size [Bytes]   = " << datatype_size << endl;
+    os << "\t-- Datatype is H5T_INTEGER = " << datatype_is_integer << endl;
+    os << "\t-- Datatype is H5T_FLOAT   = " << datatype_is_float << endl;
+    os << "\t-- Datatype is H5T_STRING  = " << datatype_is_string << endl;
 
     H5Tclose (datatype_id);
 
@@ -99,7 +99,7 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
     herr_t h5error;
     hid_t dataspace_id       = H5Aget_space (attribute_id);
-    bool dataspace_is_simple = H5Sis_simple(dataspace_id);
+//     bool dataspace_is_simple = H5Sis_simple(dataspace_id);
     int rank                 = H5Sget_simple_extent_ndims (dataspace_id);
     hsize_t *dimensions;
 
@@ -497,10 +497,11 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     // Summary
-    cout << "-- Location ID    = " << location_id  << std::endl;
-    cout << "-- Attribute name = " << name         << std::endl;
-    cout << "-- Attribute ID   = " << attribute_id << std::endl;
-    cout << "-- Dataspace ID   = " << dataspace_id << std::endl;
+    cout << "-- Location ID     = " << location_id  << std::endl;
+    cout << "-- Attribute name  = " << name         << std::endl;
+    cout << "-- Attribute value = " << val          << std::endl;
+    cout << "-- Attribute ID    = " << attribute_id << std::endl;
+    cout << "-- Dataspace ID    = " << dataspace_id << std::endl;
 
     // Close dataspace and attribute
     if (dataspace_id > 0) {
@@ -562,6 +563,13 @@ namespace DAL { // Namespace DAL -- begin
   template bool h5get_attribute (std::vector<double> &value,
 				 std::string const &name,
 				 hid_t const &location_id);
+
+  template bool h5get_attribute (std::vector<uint> &value,
+				 hid_t const &attribute_id);
+  template bool h5get_attribute (std::vector<int> &value,
+				 hid_t const &attribute_id);
+  template bool h5get_attribute (std::vector<double> &value,
+				 hid_t const &attribute_id);
 
 #ifdef HAVE_CASA
   template bool h5get_attribute (casa::Vector<uint> &value,
