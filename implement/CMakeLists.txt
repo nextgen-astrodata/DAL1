@@ -65,6 +65,8 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 
 ## [1] list of source files
 
+#FILE (GLOB dal_sources *.cpp)
+
 set (dal_sources
   dalArray.cpp
   dalAttribute.cpp
@@ -80,6 +82,8 @@ set (dal_sources
   BeamFormed.cpp
   BeamGroup.cpp
   BeamSubband.cpp
+  HDF5Common.cpp
+  Enumerations.cpp
 )
 
 ## [2] List of external libraries against which to link; even though we really
@@ -88,8 +92,8 @@ set (dal_sources
 ##     set before adding it to the list of link libraries.
 
 set (dal_link_libraries
-  hdf5
-  hdf5_hl
+  ${HDF5_LIBRARIES}
+#  hdf5_hl
   z
 )
 
@@ -147,7 +151,7 @@ if (DAL_PYTHON_BINDINGS)
     ${PYTHON_LIBRARIES}
     ${BOOST_LIBRARIES}
     ${dal_link_libraries}
-    num_util
+    ${NUM_UTIL_LIBRARIES}
     )
   ## additional target properties
   if (APPLE)
