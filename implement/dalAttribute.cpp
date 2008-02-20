@@ -29,4 +29,8 @@
 #include "H5TA.h"
 
 dalAttribute::dalAttribute()
-{}
+{
+  name_p        = "UNDEFINED";
+  units_p       = "UNDEFINED";
+  description_p = "UNDEFINED";
+}
