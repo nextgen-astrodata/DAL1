@@ -78,24 +78,43 @@ namespace DAL {
 
   public:
 
+    /*!
+      \brief Default constructor
+    */
     BeamGroup();
 
+    /*!
+      \brief Argumented constructor
+    */
     BeamGroup (dalDataset &dataset, std::string const &name);
 
+    /*!
+      \brief Initialize the object's internal parameters
+    */
     void init();
 
     bool setBeamGroup (dalDataset &dataset, std::string const &name);
 
+    /*!
+      \brief Provide a summary of the object's interal parameters
+    */
     inline void summary()
     {
        summary(cout);
     }
 
+    /*!
+      \brief Provide a summary of the object's interal parameters
+
+      \param os -- Output stream to which the summary is written.
+    */
     void summary(std::ostream &os);
 
     std::string ra();
     /*!
-      \brief Get the declination of the beam
+      \brief Get the declination (angle?) of the beam
+
+      \return ra -- The declination (angle?) of the beam pointing direction
     */
     std::string dec();
     /*!
