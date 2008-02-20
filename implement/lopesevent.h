@@ -44,6 +44,8 @@
 
 /*!
   \brief Type of TIM-board data
+  
+  \ingroup DAL
 */
 enum datatypes {
   //! TIM40 board specification
