@@ -32,6 +32,11 @@
 #include "dalFilter.h"
 #endif
 
+/*!
+  \class dalRow
+  
+  \ingroup DAL
+*/
 class dalRow {
 
 	long index; //!< row name
