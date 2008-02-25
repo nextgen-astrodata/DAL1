@@ -494,6 +494,8 @@ namespace DAL {
    return attribute_notes;
   }
 
+  // ------------------------------------------------------------ number_of_beams
+
   int BeamFormed::number_of_beams ()
   {
     int number_of_beams;
@@ -509,6 +511,8 @@ namespace DAL {
     }
     return number_of_beams;
   }
+
+  // ---------------------------------------------------------- sub_beam_diameter
 
   int BeamFormed::sub_beam_diameter ()
   {
@@ -526,6 +530,8 @@ namespace DAL {
     return sub_beam_diameter;
   }
 
+  // -------------------------------------------------------- weather_temperature
+
   int BeamFormed::weather_temperature ()
   {
     int weather_temperature;
@@ -541,6 +547,8 @@ namespace DAL {
     }
     return weather_temperature;
   }
+
+  // ----------------------------------------------------------- weather_humidity
 
   int BeamFormed::weather_humidity ()
   {
@@ -558,6 +566,8 @@ namespace DAL {
     return weather_humidity;
   }
 
+  // ------------------------------------------------------- station_temperatures
+
   int BeamFormed::station_temperatures ()
   {
     int station_temperatures;
@@ -573,6 +583,8 @@ namespace DAL {
     }
     return station_temperatures;
   }
+
+  // ----------------------------------------------------------------------- init
 
   bool BeamFormed::init ()
   {
