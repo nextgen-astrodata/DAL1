@@ -184,12 +184,12 @@ namespace DAL { // Namespace DAL -- begin
     bool h5get_attribute (std::vector<T> &value,
 			  hid_t const &attribute_id);
 #ifdef HAVE_CASA
-  template <class T>
-    bool h5get_attribute (casa::Array<T> &value,
-			  hid_t const &attribute_id);
-  template <class T>
-    bool h5get_attribute (casa::Matrix<T> &value,
-			  hid_t const &attribute_id);
+/*   template <class T> */
+/*     bool h5get_attribute (casa::Array<T> &value, */
+/* 			  hid_t const &attribute_id); */
+/*   template <class T> */
+/*     bool h5get_attribute (casa::Matrix<T> &value, */
+/* 			  hid_t const &attribute_id); */
   template <class T>
     bool h5get_attribute (casa::Vector<T> &value,
 			  hid_t const &attribute_id);
@@ -237,14 +237,14 @@ namespace DAL { // Namespace DAL -- begin
 			  std::string const &name,
 			  hid_t const &location_id);
 #ifdef HAVE_CASA
-  template <class T>
-    bool h5get_attribute (casa::Array<T> &value,
-			  std::string const &name,
-			  hid_t const &location_id);
-  template <class T>
-    bool h5get_attribute (casa::Matrix<T> &value,
-			  std::string const &name,
-			  hid_t const &location_id);
+/*   template <class T> */
+/*     bool h5get_attribute (casa::Array<T> &value, */
+/* 			  std::string const &name, */
+/* 			  hid_t const &location_id); */
+/*   template <class T> */
+/*     bool h5get_attribute (casa::Matrix<T> &value, */
+/* 			  std::string const &name, */
+/* 			  hid_t const &location_id); */
   template <class T>
     bool h5get_attribute (casa::Vector<T> &value,
 			  std::string const &name,

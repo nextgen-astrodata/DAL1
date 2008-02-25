@@ -75,6 +75,7 @@ namespace DAL { // Namespace DAL -- begin
     int rank (0);
     hid_t dataspace_id       = H5Aget_space (attribute_id);
     bool dataspace_is_simple = H5Sis_simple(dataspace_id);
+    herr_t h5error;
 
     try {
       rank = H5Sget_simple_extent_ndims (dataspace_id);
@@ -87,8 +88,9 @@ namespace DAL { // Namespace DAL -- begin
     os << "\t-- Dataspace is simple?    = " << dataspace_is_simple << endl;
     os << "\t-- Rank of the data array  = " << rank << endl;
 
-    H5Sclose (dataspace_id);
-
+    if (dataspace_id > 0) {
+      h5error = H5Sclose (dataspace_id);
+    }
   }
 
   // ------------------------------------------------------ h5get_dataspace_shape
@@ -135,7 +137,7 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
     herr_t h5error;
     hid_t dataspace_id       = H5Aget_space (attribute_id);
-    bool dataspace_is_simple = H5Sis_simple(dataspace_id);
+//     bool dataspace_is_simple = H5Sis_simple(dataspace_id);
     int rank                 = H5Sget_simple_extent_ndims (dataspace_id);
     hsize_t *dimensions;
     
@@ -273,36 +275,6 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }  
 
-  // ------------------------------------------------------------ h5get_attribute
-
-#ifdef HAVE_CASA
-  template <class T>
-  bool h5get_attribute (casa::Vector<T> &value,
-			std::string const &name,
-			hid_t const &locationID)
-  {
-    bool status (true);
-    hid_t attribute_id (0);
-    
-    // get the identifier for the attribute
-    attribute_id = H5Aopen_name(locationID,
-				name.c_str());
-    
-    if (attribute_id > 0) {
-      status = h5get_attribute (value,
-				attribute_id);
-      H5Aclose (attribute_id);
-    } else {
-      std::cerr << "[h5get_attribute] No valid ID for attribute "
-		<< name 
-		<< std::endl;
-      status = false;
-    }
-
-    return status;
-  }  
-#endif
-
   // -------------------------------------------------------- h5get_attribute (T)
   
   template <class T>
@@ -378,7 +350,7 @@ namespace DAL { // Namespace DAL -- begin
       value.resize(shape[0]);
       // additional local variables
       herr_t h5error     = 0;
-      hid_t dataspace_id = H5Aget_space (attribute_id);
+//       hid_t dataspace_id = H5Aget_space (attribute_id);
       hid_t datatype_id  = H5Aget_type (attribute_id);
       T *buffer;
       // allocate buffer memory
@@ -411,6 +383,34 @@ namespace DAL { // Namespace DAL -- begin
 #ifdef HAVE_CASA
   template <class T>
   bool h5get_attribute (casa::Vector<T> &value,
+			std::string const &name,
+			hid_t const &locationID)
+  {
+    bool status (true);
+    hid_t attribute_id (0);
+    
+    // get the identifier for the attribute
+    attribute_id = H5Aopen_name(locationID,
+				name.c_str());
+    
+    if (attribute_id > 0) {
+      status = h5get_attribute (value,
+				attribute_id);
+      H5Aclose (attribute_id);
+    } else {
+      std::cerr << "[h5get_attribute] No valid ID for attribute "
+		<< name 
+		<< std::endl;
+      status = false;
+    }
+
+    return status;
+  }  
+
+  // ------------------------------------------ h5get_attribute (casa::Vector<T>)
+
+  template <class T>
+  bool h5get_attribute (casa::Vector<T> &value,
 			hid_t const &attribute_id)
   {
     bool status (true);
@@ -425,7 +425,7 @@ namespace DAL { // Namespace DAL -- begin
       value.resize(shape);
       // additional local variables
       herr_t h5error (0);
-      hid_t dataspace_id = H5Aget_space (attribute_id);
+//       hid_t dataspace_id = H5Aget_space (attribute_id);
       hid_t datatype_id  = H5Aget_type (attribute_id);
       T *buffer;
       // allocate buffer memory
@@ -436,7 +436,7 @@ namespace DAL { // Namespace DAL -- begin
 			 buffer);
       // copy retrieved data to returned vector
       if (h5error == 0) {
-	for (uint n(0); n<shape(0); n++) {
+	for (int n(0); n<shape(0); n++) {
 	  value(n) = buffer[n];
 	}
       } else {
@@ -555,32 +555,41 @@ namespace DAL { // Namespace DAL -- begin
 				 hid_t const &locationID);
 
   template bool h5get_attribute (std::vector<uint> &value,
-				 std::string const &name,
-				 hid_t const &location_id);
-  template bool h5get_attribute (std::vector<int> &value,
-				 std::string const &name,
-				 hid_t const &location_id);
-  template bool h5get_attribute (std::vector<double> &value,
+				 hid_t const &attribute_id);
+  template bool h5get_attribute (std::vector<uint> &value,
 				 std::string const &name,
 				 hid_t const &location_id);
 
-  template bool h5get_attribute (std::vector<uint> &value,
-				 hid_t const &attribute_id);
   template bool h5get_attribute (std::vector<int> &value,
 				 hid_t const &attribute_id);
+  template bool h5get_attribute (std::vector<int> &value,
+				 std::string const &name,
+				 hid_t const &location_id);
+
   template bool h5get_attribute (std::vector<double> &value,
 				 hid_t const &attribute_id);
+  template bool h5get_attribute (std::vector<double> &value,
+				 std::string const &name,
+				 hid_t const &location_id);
 
 #ifdef HAVE_CASA
   template bool h5get_attribute (casa::Vector<uint> &value,
+				 hid_t const &attribute_id);
+  template bool h5get_attribute (casa::Vector<uint> &value,
 				 std::string const &name,
 				 hid_t const &location_id);
+
+  template bool h5get_attribute (casa::Vector<int> &value,
+				 hid_t const &attribute_id);
   template bool h5get_attribute (casa::Vector<int> &value,
 				 std::string const &name,
 				 hid_t const &location_id);
+
+  template bool h5get_attribute (casa::Vector<double> &value,
+				 hid_t const &attribute_id);
   template bool h5get_attribute (casa::Vector<double> &value,
 				 std::string const &name,
 				 hid_t const &location_id);
 #endif
-
+  
 } // Namespace DAL -- end
