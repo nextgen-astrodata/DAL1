@@ -42,6 +42,16 @@
   </ul>
 */
 
+// socket headers
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -58,6 +68,8 @@
 #include "timeseries.h"
 #endif
 
+
+
 bool new_station( vector<int> vec, int station )
 {
   for( unsigned int ss = 0; ss < vec.size(); ss++ )
@@ -72,96 +84,157 @@ int main(int argc, char *argv[])
 {
 
   // parameter check
-  if ( argc < 3 )
+  if ( argc < 4 )
   {
      cout << endl << "Too few parameters..." << endl << endl;
      cout << "The first parameter is the output dataset name.\n";
-     cout << "The remaining parameters are the raw TBB input file names.\n";
+     cout << "The second parameter is the IP address to accept data from.\n";
+     cout << "The third parameter is the port number to accept data from.\n";
      cout << endl;
      return DAL::FAIL;
   }
 
+// ------------------------------------------------------------- 
+//
+//  Set up the socket connection to the server
+//
+// ------------------------------------------------------------- 
+
+  int port_number = atol(argv[3]);
+  const char * remote = argv[2];
+  int remote_port = atol(argv[3]);
+  fd_set readSet;
+  struct timeval timeVal;
+
+  // Step 1 Look up server to get numeric IP address
+  hostent * record = gethostbyname(remote);
+  if (record==NULL) { herror("gethostbyname failed"); exit(1); }
+  in_addr * addressptr = (in_addr *) record->h_addr;
+
+  // Step 2 Create a socket
+  int main_socket = socket(AF_INET, SOCK_DGRAM, 0);
+  if (main_socket<0) { perror("socket creation"); exit(1); }
+
+  // Step 3 Create a sockaddr_in to describe the local port
+  sockaddr_in local_info;
+  local_info.sin_family = AF_INET;
+  local_info.sin_addr.s_addr = htonl(INADDR_ANY);
+  local_info.sin_port = htons(port_number);
+
+  // Step 4 Bind the socket to the port
+  int r = bind(main_socket, (sockaddr *) &local_info, sizeof(local_info));
+  if (r<0) { perror("bind"); exit(1); }
+  printf("ready\n");
+
+  // Step 5 Create a sockaddr_in to describe the remote application
+  sockaddr_in remote_info;
+  remote_info.sin_family = AF_INET;
+  remote_info.sin_addr = *addressptr;
+  remote_info.sin_port = htons(remote_port);
+
+
+// ------------------------------------------------------------- 
+//
+//  Create an hdf5 output file
+//
+// ------------------------------------------------------------- 
+
+
   dalDataset * dataset;
   dataset = new dalDataset( argv[1], "HDF5" );
 
-  //
-  /////////////////////////////////////////
-  // read the RAW TBB input data
-  /////////////////////////////////////////
-  //
-  ifstream::pos_type size=0;		// buffer size
-
   UInt32 payload_crc;
 
-  vector<string> myfiles;
-
-  for ( int tbb=2; tbb<argc; tbb++)
-  {
-    myfiles.push_back( argv[tbb] );
-  }
   vector<int> stations;
   dalGroup * stationGroup;
 
+  bool first_sample = true;
+
+  dalArray * sarray;
+  vector<int> cdims;
+  cdims.push_back(CHUNK_SIZE);
+
+  // define dimensions of array
+  vector<int> dims;
+  dims.push_back(0);
+
+// ------------------------------------------------------------- 
+//
+//  Wait for and receive data
+//
+// ------------------------------------------------------------- 
+
+
   bool bigendian = BigEndian();
 
-  for( unsigned int cc = 0; cc < myfiles.size(); cc++ )
+  struct sockaddr_in incoming_info;
+  unsigned int socklen = sizeof(incoming_info);
+
+  TransientSample tran_sample;
+  SpectralSample spec_sample;
+  TBB_Header header;
+  int counter=0;
+  int offset=0;
+
+  while ( true )
   {
 
-   // declare handle for the input file
-   fstream file (myfiles[cc].c_str(), ios::binary|ios::in);
+    counter++;
 
-   bool first_sample = true;
+    // ------------------------------------------------------  read the header 
 
-   if (file.is_open())
-   {
-    TransientSample tran_sample;
-    SpectralSample spec_sample;
-    TBB_Header header;
-    file.seekg (0, ios::beg);
-    int counter=0;
-    int offset=0;
-
-    dalArray * sarray;
-    vector<int> cdims;
-    cdims.push_back(CHUNK_SIZE);
-
-    // define dimensions of array
-    vector<int> dims;
-    dims.push_back(0);
-
-    // loop through the file
-    while ( !file.eof() )
+    //
+    // read 88-byte TBB frame header
+    //
+    if ( select( main_socket + 1, &readSet, NULL, NULL, &timeVal ) ) {
+      r = recvfrom( main_socket, reinterpret_cast<char *>(&header),
+                    sizeof(header), 0,
+                    (sockaddr *) &incoming_info, &socklen);
+    }
+    else
     {
-      counter++;
+       cout << "Data stopped coming" << endl;
+       close(main_socket);
+       delete dataset;
+       return DAL::SUCCESS;
+    }
 
-      //
-      // read 88-byte TBB frame header
-      //
-      file.read(reinterpret_cast<char *>(&header), sizeof(header));
+    if (r<0) { perror("recvfrom"); exit(1); }
 
-      // reverse fields if big endian
-      if ( bigendian )
+    // reverse fields if big endian
+    if ( bigendian )
       {
-	header.seqnr = Int32Swap( header.seqnr );
-	header.sample_nr = Int32Swap( header.sample_nr );
-	header.n_samples_per_frame = 
-	Int16Swap( header.n_samples_per_frame);
-	header.n_freq_bands = Int16Swap( header.n_freq_bands );
+	  header.seqnr = Int32Swap( header.seqnr );
+	  header.sample_nr = Int32Swap( header.sample_nr );
+	  header.n_samples_per_frame = 
+	  Int16Swap( header.n_samples_per_frame);
+	  header.n_freq_bands = Int16Swap( header.n_freq_bands );
       }
 
-      if ( new_station( stations, header.stationid ) )
-      {
-        stations.push_back( header.stationid );
-	char * stationstr = new char[10];
-	sprintf( stationstr, "Station%03d", header.stationid );
-        stationGroup = dataset->createGroup( stationstr );
-	cout << "CREATED New station group: " << string(stationstr) << endl;
-	delete [] stationstr;
-      }
+/*
+    cout << "header.stationid           " << (int)header.stationid <<  endl;
+    cout << "header.rspid               " << (int)header.rspid <<  endl;
+    cout << "header.rcuid               " << (int)header.rcuid <<  endl;
+    cout << "header.sample_freq         " << (float)header.sample_freq <<  endl;
+    cout << "header.seqnr               " << header.seqnr <<  endl;
+    cout << "header.time                " << header.time <<  endl;
+    cout << "header.sample_nr           " << header.sample_nr <<  endl;
+    cout << "n_header.samples_per_frame " << header.n_samples_per_frame <<  endl;
+    cout << endl;
+*/
+    if ( new_station( stations, header.stationid ) )
+     {
+       stations.push_back( header.stationid );
+       char * stationstr = new char[10];
+       sprintf( stationstr, "Station%03d", header.stationid );
+       stationGroup = dataset->createGroup( stationstr );
+       cout << "CREATED New station group: " << string(stationstr) << endl;
+       delete [] stationstr;
+     }
 
-      // set the STATION_ID, SAMPLE_FREQ and DATA_LENGTH attributes
-      //    for the ANTENNA table
-      if ( first_sample )
+     // set the STATION_ID, SAMPLE_FREQ and DATA_LENGTH attributes
+     //    for the ANTENNA table
+     if ( first_sample )
       {
 	if ( 0!=header.n_freq_bands )
 	{
@@ -228,117 +301,67 @@ int main(int argc, char *argv[])
 	first_sample = false;
       }
 
-      short sdata[ header.n_samples_per_frame];
+    short sdata[ header.n_samples_per_frame];
 
-      // Read Payload
-      if ( 0==header.n_freq_bands )
+    // ------------------------------------------------------  read the data 
+
+    // Read Payload
+    if ( 0==header.n_freq_bands )  // Transient-mode
+    {
+      for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
       {
-	for (short zz=0; zz < header.n_samples_per_frame; zz++)
+
+        // wait for up to 2 seconds for data appearing in the socket
+        FD_ZERO(&readSet);
+        FD_SET(main_socket, &readSet);
+
+        timeVal.tv_sec = 2;
+        timeVal.tv_usec = 0;
+
+        if ( select( main_socket + 1, &readSet, NULL, NULL, &timeVal ) ) {
+          r = recvfrom( main_socket, reinterpret_cast<char *>(&tran_sample),
+                        sizeof(tran_sample), 0,
+                        (sockaddr *) &incoming_info, &socklen );
+        }
+        else
         {
-	  file.read(reinterpret_cast<char *>(&tran_sample),sizeof(tran_sample));
-	  if ( bigendian )  // reverse fields if big endian
-		tran_sample.value = Int16Swap( tran_sample.value );
+           cout << "Data stopped coming" << endl;
+           close(main_socket);
+           delete dataset;
+           return DAL::FAIL;
+        }
 
-	  sdata[zz] = tran_sample.value;
+        if ( r < 0 ) { perror("recvfrom"); exit(1); }
 
-	}
-				
-	dims[0] += header.n_samples_per_frame;
-	sarray->extend(dims);
-	int arraysize = header.n_samples_per_frame;
-	sarray->write(offset, sdata, arraysize );
-	offset += header.n_samples_per_frame;
-			
+        if ( 0 == counter % 10000 )
+           cout << counter << " value         " << tran_sample.value << endl;
+
+        if ( bigendian )  // reverse fields if big endian
+          tran_sample.value = Int16Swap( tran_sample.value );
+
+        sdata[zz] = tran_sample.value;
       }
-      else
-      {
-	Int16 real_part, imag_part;
-	for (int ii=0; ii < (header.n_samples_per_frame*2); ii+=2)
-	{
-	  file.read(reinterpret_cast<char *>(&spec_sample),sizeof(spec_sample));
-	  // reverse fields if big endian
-	  if ( bigendian )
-          {
-	    real_part = Int16Swap( real(spec_sample.value) );
-	    imag_part = Int16Swap( imag(spec_sample.value) );
-	  }
-	  else
-	  {
-	    real_part = real(spec_sample.value);
-	    imag_part = imag(spec_sample.value);
-	  }
-	}
 
-      }
-						
-      file.read( reinterpret_cast<char *>(&payload_crc), sizeof(payload_crc) );
-    } // end while()
- 
-    file.close();
+      dims[0] += header.n_samples_per_frame;
+      sarray->extend(dims);
+      int arraysize = header.n_samples_per_frame;
+      sarray->write(offset, sdata, arraysize );
+      offset += header.n_samples_per_frame;
 
-   } // end file.is_open()
-   else
-   {
-     cout << "Unable to open file " << myfiles[cc] << endl;
-   }
+    }
 
-  } // end loop over files
+    r=recvfrom( main_socket, reinterpret_cast<char *>(&payload_crc),
+                sizeof(payload_crc), 0,
+                (sockaddr *) &incoming_info, &socklen );
 
-  /////////////////////////////////////////
-  // create CALIBRATION table
-  /////////////////////////////////////////
-  //
-  dalTable * CalibrationTable = dataset->createTable( "CALIBRATION" );
+  } // end while (true)
 
-  // add attributes to CALIBRATION table
-
-  // add columns to CALIBRATION table
-  CalibrationTable->addColumn( "ADC2VOLT", dal_DOUBLE );  // simple column
-  CalibrationTable->addColumn( "GAIN_CURVE", dal_COMPLEX );
-  CalibrationTable->addColumn( "GAIN_FREQS", dal_DOUBLE );
-  CalibrationTable->addColumn( "BEAM_SHAPE", dal_COMPLEX );
-  CalibrationTable->addColumn( "BEAM_DIRS", dal_DOUBLE );
-  CalibrationTable->addColumn( "BEAM_FREQS", dal_DOUBLE );
-  CalibrationTable->addColumn( "NOISE_CURV", dal_COMPLEX );
-  CalibrationTable->addColumn( "NOISE_FREQ", dal_DOUBLE );
-
-  // Fill CALIBRATION table with data
-  const long CALBufferSIZE = 10;
-  typedef struct CalStruct {
-  		double adc2voltage;
-  		dalcomplex gain_curve;
-  		double gain_frequencies;
-  		dalcomplex beam_shape;
-  		double beam_directions;
-  		double beam_frequencies;
-  		dalcomplex noise_curve;
-  		double noise_frequencies;
-  } CalStruct;
-
-  CalStruct calibration[ CALBufferSIZE ];
-  const int calLOOPMAX = 1;
-  for ( int uu=0 ; uu < calLOOPMAX; uu++)
-  {
-	for (long row=0; row<CALBufferSIZE; row++) {
-		calibration[row].adc2voltage = 0;
-		calibration[row].gain_curve.r = 1;
-		calibration[row].gain_curve.i = 2;
-		calibration[row].gain_frequencies = 3;
-		calibration[row].beam_shape.r = 4;
-		calibration[row].beam_shape.i = 5;
-		calibration[row].beam_directions = 6;
-		calibration[row].beam_frequencies = 7;
-		calibration[row].noise_curve.r = 8;
-		calibration[row].noise_curve.i = 9;
-		calibration[row].noise_frequencies = 10;
-	}
-	CalibrationTable->appendRows( calibration, CALBufferSIZE );
-  }
-
-  delete CalibrationTable;
+  // Step 8 Close the socket and exit
+  close(main_socket);
 
   delete dataset;
 
   cout << "SUCCESS" << endl;
   return DAL::SUCCESS;
-}
+
+} // end of main()
