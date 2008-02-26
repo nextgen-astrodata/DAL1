@@ -26,6 +26,7 @@ set (tests
   tdal_fits
   tpulsar_dal
   tBeamFormed
+  tHDF5Common
   )
 
 foreach (src ${tests})
@@ -114,7 +115,22 @@ if (DAL_ENABLE_TESTING)
     message (STATUS "Unable to find LopesEvent dataset; skipping tests.")
   endif (lopes_dataset)
 
-  ## [4] Python scripts
+  ## [4] Tests using HDF5-based time-series dataset
+  
+  find_file (tbb_dataset tbb_test_file_v2.h5
+    PATHS
+    ${DAL_SOURCE_DIR}/data
+    ${DAL_SOURCE_DIR}/../data
+    ${DAL_SOURCE_DIR}/../../data
+    )  
+
+  if (tbb_dataset)
+    add_test (tHDF5Common tHDF5Common ${tbb_dataset})
+  else (tbb_dataset)
+    message (STATUS "Unable to find LOFAR time-series dataset; skipping tests.")
+  endif (tbb_dataset)
+
+  ## [5] Python scripts
 
   if (ms_dataset)
     ## show the coverage in the (u,v) plane

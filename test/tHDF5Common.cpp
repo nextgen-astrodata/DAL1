@@ -34,15 +34,18 @@ using std::cout;
 using std::endl;
 
 /*!
-  \file tHDF5Common.cc
+  \file tHDF5Common.cpp
 
   \ingroup DAL
 
-  \brief A collection of test routines for the HDF5Common class
+  \brief A collection of test routines for the routines contained in HDF5Common
  
   \author Lars B&auml;hren
  
   \date 2008/01/17
+
+  This also seems to be a reasonable place to do some general basic testing on
+  working with the HDF5 library.
 */
 
 // -----------------------------------------------------------------------------
@@ -87,6 +90,79 @@ int test_support_methods ()
     nofFailedTests++;
   }
 
+  return nofFailedTests;
+}
+
+// -----------------------------------------------------------------------------
+
+/*!
+  \brief A number of very basic tests for working with object identifiers
+
+  One of the things we definitely need to know is how to create copies of object
+  handlers, as this will be required for higher-level wrappers of LOFAR standard
+  datasets (such as e.g. for the time-series data).
+
+  \param file_id -- Identifier for the HDF5 file
+
+  \return nofFailedTests -- The number of failed tests within this function.
+*/
+int test_identifiers (hid_t const &file_id)
+{
+  cout << "\n[test_identifiers]\n" << endl;
+
+  int nofFailedTests (0);
+  uint nofCopies (5);
+  std::vector<hid_t> file_ids (nofCopies);
+
+  cout << "[1] Copy the file ID to a standard vector ..." << endl;
+  try {
+    cout << "--> [";
+    for (uint n(0); n<nofCopies; n++) {
+      file_ids[n] = file_id;
+      cout << " " << file_ids[n] << " ";
+    }
+    cout << " ]" << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[2] Open a station group within the file ..." << endl;
+  try {
+    hid_t group_id (0);
+    
+    for (uint n(0); n<nofCopies; n++) {
+      // open the group object within the file
+      group_id = H5Gopen (file_ids[n],
+			  "Station001");
+      // feedback
+      cout << "\t" << n
+	   << "\tfile_id= "  << file_ids[n]
+	   << "\tgroup_id= " << group_id
+	   << endl;
+    }
+
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[3] Test reverse conversion form object ID to file name ..." << endl;
+  try {
+    bool status (true);
+    std::string filename;
+
+    status = DAL::h5get_filename (filename,file_id);
+
+    if (status) {
+      cout << "-- File ID   = " << file_id  << endl;
+      cout << "-- File name = " << filename << endl;
+    }
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }  
+  
   return nofFailedTests;
 }
 
@@ -159,10 +235,10 @@ int test_create_file ()
 
 // -----------------------------------------------------------------------------
 
-/*
+/*!
   \brief Test retrieval of an attribute's identifier within the HDF5 file
 
-  \param file_id --
+  \param file_id -- Identifier for the opened HDF5 file
   
   \return nofFailedTests -- The number of failed tests within this function 
 */
@@ -545,7 +621,7 @@ int get_attributes (hid_t const &file_id)
 
 // -----------------------------------------------------------------------------
 
-/*
+/*!
   \brief Test retrieval of an objects name based on its identifier
 
   \param file_id -- Identifier for the HDF5 file.
@@ -622,7 +698,25 @@ int test_casacore (hid_t const &file_id)
   cout << "\n[test_casacore]\n" << endl;
   
   int nofFailedTests (0);
+  hid_t dataset_id (0);
+  herr_t h5error (0);
+  
+  /* Open up the dataset object to which the attributes are attached. */
 
+  dataset_id = H5Dopen (file_id,
+			"Station001/001002021");
+  
+  if (dataset_id > 0) {
+    std::cout << "-- Successfully opened HDF5 dataset." << std::endl;
+  } else {
+    return 0;
+  }
+
+  /*
+   * If the dataset object was opened successfully, we can continue testing the
+   * actual retrival of the attribute value.
+   */
+  
   cout << "[1] Retrieve attributes to Vector<T> ..." << endl;
   try {
     casa::Vector<double> beam_direction;
@@ -630,6 +724,9 @@ int test_casacore (hid_t const &file_id)
     cerr << message << endl;
     nofFailedTests++;
   }
+  
+  // clean up the error message buffer
+  h5error = H5Eclear();
   
   return nofFailedTests;
 }
@@ -646,9 +743,7 @@ int main (int argc,
     Some tests do not require any external data input
   */
 //   nofFailedTests += test_support_methods ();
-  nofFailedTests += test_create_file ();
-
-  return 0;
+//   nofFailedTests += test_create_file ();
 
   /*
     Check if filename of the dataset is provided on the command line; if not
@@ -672,6 +767,7 @@ int main (int argc,
 			   H5P_DEFAULT);
   
   if (file_id > 0) {
+    nofFailedTests += test_identifiers (file_id);
     nofFailedTests += get_attribute_id (file_id);
     nofFailedTests += get_attributes (file_id);
     nofFailedTests += get_name (file_id);
