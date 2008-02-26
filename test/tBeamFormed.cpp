@@ -41,6 +41,7 @@ int main()
 
   DAL::BeamFormed * bf = new DAL::BeamFormed(FILENAME);
   bf->summary();
+  std::vector<std::string> sources = bf->sources();
   delete bf;
 
 }

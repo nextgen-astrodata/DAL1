@@ -1,5 +1,5 @@
 ##------------------------------------------------------------------------------
-## $Id:: CMakeLists.txt 494 2007-08-02 09:39:15Z baehren                       $
+## $Id:: CMakeLists.txt                                                        $
 ##------------------------------------------------------------------------------
 
 ## Name of the project
@@ -12,6 +12,7 @@ cmake_minimum_required (VERSION 2.4)
 ## User defined build/install options
 
 option (DAL_BUILD_TESTS "Build the test programs?" 1)
+option (DAL_BUILD_APPS "Build the applications?" 1)
 option (DAL_ENABLE_TESTING "Build the test programs?" 1)
 option (DAL_PYTHON_BINDINGS "Create python bindings?" 1)
 option (DAL_DEBUGGING_MESSAGES "Print debugging information?" 0)
@@ -145,6 +146,7 @@ endif (NOT NUM_UTIL_INCLUDES)
 include_directories (
   ${DAL_SOURCE_DIR}/implement
   ${DAL_SOURCE_DIR}/test
+  ${DAL_SOURCE_DIR}/apps
   )
 
 ## header files of external packages
@@ -205,6 +207,10 @@ add_subdirectory (implement)
 if (DAL_BUILD_TESTS)
   add_subdirectory (test)
 endif (DAL_BUILD_TESTS)
+
+if (DAL_BUILD_APPS)
+  add_subdirectory (apps)
+endif (DAL_BUILD_APPS)
 
 ## -----------------------------------------------------------------------------
 ## Installation

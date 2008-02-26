@@ -68,7 +68,7 @@ namespace DAL {
     os << "-- Dispersion measure ... : " << dispersion_measure()    << endl;
     os << "-- Number of time samples : " << number_of_samples()     << endl;
     os << "-- Sampling time ........ : " << sampling_time()         << endl;
-    os << "-- Notes ................ : " << notes()                 << endl;
+    os << "-- Notes ................ : " /*<< notes()*/                 << endl;
     os << "-- Number of beams ...... : " << number_of_beams()       << endl;
     os << "-- FWHM of the sub-beams  : " << sub_beam_diameter()     << endl;
     os << "-- Weather temperature .. : " << weather_temperature()   << endl;

@@ -22,16 +22,9 @@ message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 ## Build the test programs
 
 set (tests
-  tsread
-  tswrite
-  msread
-  mswrite
   tdal
   tdal_fits
   tpulsar_dal
-  tbb2h5
-  bf2h5
-  read_tbb
   tBeamFormed
   )
 
@@ -60,7 +53,7 @@ if (HAVE_CASA OR HAVE_CASACORE)
   add_definitions (
     -DWITH_CASA
     )
-  foreach (src tMeasurementSets tMS_dal tdalLopesEvent lewrite)
+  foreach (src tMeasurementSets tMS_dal tdalLopesEvent )
     ## compiler instructions
     add_executable (${src} ${src}.cpp)
     ## linker instructions
