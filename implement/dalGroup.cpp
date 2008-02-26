@@ -24,7 +24,17 @@
 #ifndef DALGROUP_H
 #include "dalGroup.h"
 #endif
-herr_t attr_info(hid_t loc_id, const char *name, void *opdata);
+
+herr_t attr_info (hid_t loc_id,
+		  const char *name,
+		  void *opdata);
+
+// ==============================================================================
+//
+//  Construction
+//
+// ==============================================================================
+
 dalGroup::dalGroup() {
 }
 

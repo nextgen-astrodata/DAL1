@@ -23,6 +23,7 @@
 
 #include "HDF5Common.h"
 
+using std::cerr;
 using std::cout;
 using std::endl;
 
@@ -80,7 +81,7 @@ namespace DAL { // Namespace DAL -- begin
     try {
       rank = H5Sget_simple_extent_ndims (dataspace_id);
     } catch (std::string message) {
-      std::cerr << "[h5attribute_summary] " << message << endl;
+      cerr << "[h5attribute_summary] " << message << endl;
       status = false;
     }
 
@@ -90,6 +91,7 @@ namespace DAL { // Namespace DAL -- begin
 
     if (dataspace_id > 0) {
       h5error = H5Sclose (dataspace_id);
+      h5error = H5Eclear ();
     }
   }
 
@@ -123,6 +125,7 @@ namespace DAL { // Namespace DAL -- begin
     // release allocated identifiers
     if (dataspace_id > 0) {
       h5error = H5Sclose (dataspace_id);
+      h5error = H5Eclear ();
     }
     
     return status;
@@ -135,7 +138,7 @@ namespace DAL { // Namespace DAL -- begin
 			      hid_t const &attribute_id)
   {
     bool status (true);
-    herr_t h5error;
+    herr_t h5error (0);
     hid_t dataspace_id       = H5Aget_space (attribute_id);
 //     bool dataspace_is_simple = H5Sis_simple(dataspace_id);
     int rank                 = H5Sget_simple_extent_ndims (dataspace_id);
@@ -160,6 +163,7 @@ namespace DAL { // Namespace DAL -- begin
     // release allocated identifiers
     if (dataspace_id > 0) {
       h5error = H5Sclose (dataspace_id);
+      h5error = H5Eclear ();
     }
     
     return status;
@@ -171,6 +175,8 @@ namespace DAL { // Namespace DAL -- begin
   bool h5get_name (std::string &name,
 		   hid_t const &object_id)
   {
+    herr_t h5error (0);
+
     /*
      * [1] Check if the provided identifier is a valid pointer to an object
      *     within in the file.
@@ -180,7 +186,6 @@ namespace DAL { // Namespace DAL -- begin
     if (object_type == H5I_BADID) {
       return false;
     }
-    
     /*
      * [2] If the object ID is valid, we try to retrieve its name
      */
@@ -191,26 +196,89 @@ namespace DAL { // Namespace DAL -- begin
 
     buffer = new char[buffer_size];
     
-    name_length = H5Iget_name (object_id,
-			       buffer,
-			       buffer_size);
-
-    if (name_length > 0) {
-      // release the previously allocated buffer ...
-      delete [] buffer;
-      // ... and readjust it to the proper values retrieved above
-      buffer_size = name_length+1;
-      buffer      = new char[buffer_size];
-      // second function call to retrieve the object's name
+    if (object_type == H5I_FILE) {
+      // first call to get proper length of the name string
+      name_length = H5Fget_name (object_id,
+				 buffer,
+				 buffer_size);
+      // clear error stack
+      h5error = H5Eclear ();
+      // retrieve the file name
+      if (name_length > 0) {
+	// release the previously allocated buffer ...
+	delete [] buffer;
+	// ... and readjust it to the proper values retrieved above
+	buffer_size = name_length+1;
+	buffer      = new char[buffer_size];
+	// second function call to retrieve the object's name
+	name_length = H5Fget_name (object_id,
+				   buffer,
+				   buffer_size);
+	name = buffer;
+      } else {
+	return false;
+      }
+    } else {
       name_length = H5Iget_name (object_id,
 				 buffer,
 				 buffer_size);
-      name = buffer;
-    } else {
+      h5error = H5Eclear ();
+      
+      if (name_length > 0) {
+	// release the previously allocated buffer ...
+	delete [] buffer;
+	// ... and readjust it to the proper values retrieved above
+	buffer_size = name_length+1;
+	buffer      = new char[buffer_size];
+	// second function call to retrieve the object's name
+	name_length = H5Iget_name (object_id,
+				   buffer,
+				   buffer_size);
+	name = buffer;
+      } else {
+	return false;
+      }
+    }
+
+    return true;
+  }
+
+  // ------------------------------------------------------------- h5get_filename
+
+  bool h5get_filename (std::string &filename,
+		       hid_t const &object_id)
+  {
+
+    /*
+     * Basic check: does the provided identifier make any sense?
+     */
+    if (object_id < 1) {
+      std::cout << "[h5get_filename] Invalid value of object identifier;"
+		<< " must be greater zero!"
+		<< std::endl;
       return false;
     }
+
+    hid_t file_id;
+    H5I_type_t object_type;
+
+    /*
+     * If the provided object ID does not belong to a file already, we first need
+     * to obtain extactly this ID based on the object's ID.
+     */
+    object_type = H5Iget_type(object_id);
+
+    if (object_type == H5I_BADID) {
+      std::cerr << "[h5get_filename] Bad object type - aborting now!" << std::endl;
+      return false;
+    } else if (object_type == H5I_FILE) {
+      file_id = object_id;
+    } else {
+      file_id = H5Iget_file_id (object_id);
+    }
     
-    return true;
+    return h5get_name (filename,
+		       file_id);
   }
 
   // ============================================================================
@@ -228,22 +296,27 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
     hid_t attribute_id (0);
+    herr_t h5error (0);
     
     // get the identifier for the attribute
     attribute_id = H5Aopen_name(locationID,
 				name.c_str());
     
     if (attribute_id > 0) {
+      /* forward the call to retrieve the actual value of the attribute */
       status = h5get_attribute (value,
 				attribute_id);
-      H5Aclose (attribute_id);
+      /* release the identifier used for retrieval of the value */
+      h5error = H5Aclose (attribute_id);
+      /* clean up the error message buffer */
+      h5error = H5Eclear();
     } else {
-      std::cerr << "[h5get_attribute] No valid ID for attribute "
-		<< name 
-		<< std::endl;
+      cerr << "[h5get_attribute] No valid ID for attribute "
+	   << name 
+	   << std::endl;
       status = false;
     }
-
+    
     return status;
   }  
 
@@ -256,6 +329,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
     hid_t attribute_id (0);
+    herr_t h5error (0);
     
     // get the identifier for the attribute
     attribute_id = H5Aopen_name(locationID,
@@ -264,11 +338,12 @@ namespace DAL { // Namespace DAL -- begin
     if (attribute_id > 0) {
       status = h5get_attribute (value,
 				attribute_id);
-      H5Aclose (attribute_id);
+      /* release the identifier used for retrieval of the value */
+      h5error = H5Aclose (attribute_id);
+      /* clean up the error message buffer */
+      h5error = H5Eclear();
     } else {
-      std::cerr << "[h5get_attribute] No valid ID for attribute "
-		<< name 
-		<< std::endl;
+      cerr << "[h5get_attribute] No valid ID for attribute " << name << endl;
       status = false;
     }
 
@@ -288,7 +363,9 @@ namespace DAL { // Namespace DAL -- begin
     herr_t h5error = H5Aread (attribute_id,
 			      datatype_id,
 			      &value);
-    
+    // clean up the error message buffer
+    h5error = H5Eclear();
+
     if (h5error == 0) {
       return true;
     } else {
@@ -329,6 +406,8 @@ namespace DAL { // Namespace DAL -- begin
     // Release identifiers
     H5Tclose (datatype_id);
     H5Sclose (dataspace_id);
+    // clean up the error message buffer
+    h5error = H5Eclear();
 
     return status;
   }
@@ -365,12 +444,11 @@ namespace DAL { // Namespace DAL -- begin
 	  value[n] = buffer[n];
 	}
       } else {
-	std::cerr << "[h5get_attribute] Error reading value of attribute."
-		  << std::endl;
+	cerr << "[h5get_attribute] Error reading value of attribute." << endl;
 	status = false;
       }
     } else {
-      std::cerr << "[h5get_attribute] Wrong shape of attribute dataspace!"
+      cerr << "[h5get_attribute] Wrong shape of attribute dataspace!"
 		<< std::endl;
       status = false;
     }
@@ -398,9 +476,7 @@ namespace DAL { // Namespace DAL -- begin
 				attribute_id);
       H5Aclose (attribute_id);
     } else {
-      std::cerr << "[h5get_attribute] No valid ID for attribute "
-		<< name 
-		<< std::endl;
+      cerr << "[h5get_attribute] No valid ID for attribute " << name << endl;
       status = false;
     }
 
@@ -440,13 +516,11 @@ namespace DAL { // Namespace DAL -- begin
 	  value(n) = buffer[n];
 	}
       } else {
-	std::cerr << "[h5get_attribute] Error reading value of attribute."
-		  << std::endl;
+	cerr << "[h5get_attribute] Error reading value of attribute." << endl;
 	status = false;
       }
     } else {
-      std::cerr << "[h5get_attribute] Wrong shape of attribute dataspace!"
-		<< std::endl;
+      cerr << "[h5get_attribute] Wrong shape of attribute dataspace!" << endl;
       status = false;
     }
 
@@ -470,7 +544,7 @@ namespace DAL { // Namespace DAL -- begin
       attribute_id = H5Aopen_name(location_id,
 				  name.c_str());
     } catch (std::string message) {
-      std::cerr << "[h5set_attribute] " << message << std::endl;
+      cerr << "[h5set_attribute] " << message << std::endl;
       status = false;
     }
 

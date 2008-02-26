@@ -50,7 +50,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2008/01/17
 
-    \test tHDF5Common.cc
+    \test tHDF5Common.cpp
     
     <h3>Prerequisite</h3>
     
@@ -80,7 +80,7 @@ namespace DAL { // Namespace DAL -- begin
       <li>We need to account for the fact, that certain data - most likely
       attributes though - can show up at different levels within the
       file-structure; it might be desirable to directly support vertical search
-      for such attributes.
+      for such attributes (at least upwards).
       <li>When using the CASA array classes (Array, Vector, Matrix, Cube), we
       need to be able to properly read and write their contents. Most likely
       this can be done in a straight-forward manner wrapping some of the
@@ -161,6 +161,20 @@ namespace DAL { // Namespace DAL -- begin
   bool h5get_name (std::string &name,
 		   hid_t const &object_id);
 
+  /*!
+    \brief Retrieve the name of an object based on the object identifier
+
+    \retval filename -- Name of the HDF5 file within which the object is
+            contained
+    \param object_id -- Identifier for the objects of which to retrieve the
+           name.
+
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered
+  */
+  bool h5get_filename (std::string &filename,
+		       hid_t const &object_id);
+  
   // ============================================================================
   //
   //  Access to attributes
