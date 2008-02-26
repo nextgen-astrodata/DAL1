@@ -343,11 +343,13 @@ void * dalDataset::getAttribute( string attrname ) {
 	string fullname = "/";
 
 	int rank;
-	H5LTget_attribute_ndims(h5fh, fullname.c_str(), attrname.c_str(),
-				&rank );
+	if ( H5LTget_attribute_ndims(h5fh, fullname.c_str(), attrname.c_str(),
+				&rank ) <= 0 )
+		return NULL;
 
-	H5LTget_attribute_info( h5fh, fullname.c_str(), attrname.c_str(),
-				&dims, &type_class, &type_size );
+	if ( H5LTget_attribute_info( h5fh, fullname.c_str(), attrname.c_str(),
+				&dims, &type_class, &type_size ) <= 0 )
+	    return NULL;
 
 	if ( H5T_FLOAT == type_class ) {
 		void * data;
@@ -369,7 +371,7 @@ void * dalDataset::getAttribute( string attrname ) {
 	}
 	else if ( H5T_STRING == type_class ) {
 		char* data;
-		data = (char *)malloc(rank * sizeof(char));
+		data = (char *)malloc(100 * sizeof(char));
 		if ( 0 < H5LTget_attribute_string( h5fh, fullname.c_str(), 
 			  attrname.c_str(),data) )
 		  return NULL;

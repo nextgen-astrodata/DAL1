@@ -131,6 +131,8 @@ namespace DAL {
 
     std::string emband();
 
+    std::vector<std::string> sources();
+	
     std::string observation_id();
 
     std::string proj_id();

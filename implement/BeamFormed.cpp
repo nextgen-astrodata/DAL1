@@ -51,6 +51,7 @@ namespace DAL {
     os << "-- Source(s) ............ : " /*<< sources()*/               << endl;
     os << "-- Observation Id ....... : " << observation_id()        << endl;
     os << "-- Project Id ........... : " << proj_id()               << endl;
+
     os << "-- Point RA ............. : " << point_ra()              << endl;
     os << "-- Point DEC ............ : " << point_dec()             << endl;
     os << "-- Observer ............. : " << observer()              << endl;
@@ -62,11 +63,12 @@ namespace DAL {
     os << "-- Center Frequency ..... : " << center_freq()           << endl;
     os << "-- Bandwidth ............ : " << bandwidth()             << endl;
     os << "-- Total Integration Time : " << integration_time()      << endl;
+
     os << "-- Breaks in the data ... : " << breaks()                << endl;
     os << "-- Dispersion measure ... : " << dispersion_measure()    << endl;
     os << "-- Number of time samples : " << number_of_samples()     << endl;
     os << "-- Sampling time ........ : " << sampling_time()         << endl;
-    os << "-- Notes ................ : " /*<< notes()*/                 << endl;
+    os << "-- Notes ................ : " << notes()                 << endl;
     os << "-- Number of beams ...... : " << number_of_beams()       << endl;
     os << "-- FWHM of the sub-beams  : " << sub_beam_diameter()     << endl;
     os << "-- Weather temperature .. : " << weather_temperature()   << endl;
@@ -214,6 +216,12 @@ namespace DAL {
    return attribute_emband;
   }
 
+  std::vector<std::string> BeamFormed::sources()
+  {
+     std::vector<std::string> sources;
+	 return sources;
+  }
+  
   std::string BeamFormed::observation_id ()
   {
     std::string attribute_observation_id ("");
