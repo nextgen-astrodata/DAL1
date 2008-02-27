@@ -259,7 +259,8 @@ namespace DAL { // Namespace DAL -- begin
       return false;
     }
 
-    hid_t file_id;
+    bool status (true);
+    herr_t h5error (0);
     H5I_type_t object_type;
 
     /*
@@ -272,13 +273,19 @@ namespace DAL { // Namespace DAL -- begin
       std::cerr << "[h5get_filename] Bad object type - aborting now!" << std::endl;
       return false;
     } else if (object_type == H5I_FILE) {
-      file_id = object_id;
+      status = h5get_name (filename,
+			   object_id);
     } else {
-      file_id = H5Iget_file_id (object_id);
+      hid_t file_id = H5Iget_file_id (object_id);
+      status = h5get_name (filename,
+			   file_id);
+      h5error = H5Fclose (file_id);
     }
     
-    return h5get_name (filename,
-		       file_id);
+    /* clean up the error message buffer */
+    h5error = H5Eclear();
+
+    return status;
   }
 
   // ============================================================================
