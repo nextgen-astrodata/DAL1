@@ -70,14 +70,23 @@
 
 
 
-bool new_station( vector<int> vec, int station )
+bool it_exists( vector<string> vec, string name )
 {
   for( unsigned int ss = 0; ss < vec.size(); ss++ )
   {
-    if ( station == vec[ss] )
-      return false;
+    if ( name == vec[ss] )
+      return true;
   }
-  return true;
+  return false;
+}
+
+template <class T>
+void list_vector_members( vector<T> vec )
+{
+  for( unsigned int ss = 0; ss < vec.size(); ss++ )
+  {
+     cerr << vec[ss] << endl;
+  }
 }
 
 int main(int argc, char *argv[])
@@ -112,7 +121,7 @@ int main(int argc, char *argv[])
   in_addr * addressptr = (in_addr *) record->h_addr;
 
   // Step 2 Create a socket
-  int main_socket = socket(AF_INET, SOCK_DGRAM, 0);
+  int main_socket = socket(PF_INET, SOCK_DGRAM, 0);
   if (main_socket<0) { perror("socket creation"); exit(1); }
 
   // Step 3 Create a sockaddr_in to describe the local port
@@ -141,22 +150,43 @@ int main(int argc, char *argv[])
 
 
   dalDataset * dataset;
-  dataset = new dalDataset( argv[1], "HDF5" );
+
+  dataset = new dalDataset();
 
   UInt32 payload_crc;
 
-  vector<int> stations;
   dalGroup * stationGroup;
+
+  vector<string> stations;
+  vector<string> dipoles;
 
   bool first_sample = true;
 
-  dalArray * sarray;
+  dalArray * dipoleArray;
   vector<int> cdims;
   cdims.push_back(CHUNK_SIZE);
 
   // define dimensions of array
   vector<int> dims;
   dims.push_back(0);
+
+   if ( DAL::FAIL == dataset->open( argv[1] ) )
+   {
+      cerr << "Creating new dataset " << argv[1] << endl;
+      delete dataset;
+      dataset = new dalDataset( argv[1], "HDF5" );
+   }
+   else
+   {
+       cerr << "Dataset " << argv[1] << " exists." << endl;
+
+       stations = dataset->getGroupNames();
+       for( unsigned int ss = 0; ss < stations.size(); ss++ )
+       {
+          cerr << stations[ss] << endl;
+       }
+
+   }
 
 // ------------------------------------------------------------- 
 //
@@ -186,6 +216,14 @@ int main(int argc, char *argv[])
     //
     // read 88-byte TBB frame header
     //
+    // wait for up to 2 seconds for data appearing in the socket
+
+    FD_ZERO(&readSet);
+    FD_SET(main_socket, &readSet);
+
+    timeVal.tv_sec = 10;
+    timeVal.tv_usec = 0;
+
     if ( select( main_socket + 1, &readSet, NULL, NULL, &timeVal ) ) {
       r = recvfrom( main_socket, reinterpret_cast<char *>(&header),
                     sizeof(header), 0,
@@ -200,6 +238,7 @@ int main(int argc, char *argv[])
     }
 
     if (r<0) { perror("recvfrom"); exit(1); }
+    else { cerr << '.'; }
 
     // reverse fields if big endian
     if ( bigendian )
@@ -211,29 +250,43 @@ int main(int argc, char *argv[])
 	  header.n_freq_bands = Int16Swap( header.n_freq_bands );
       }
 
-/*
-    cout << "header.stationid           " << (int)header.stationid <<  endl;
-    cout << "header.rspid               " << (int)header.rspid <<  endl;
-    cout << "header.rcuid               " << (int)header.rcuid <<  endl;
-    cout << "header.sample_freq         " << (float)header.sample_freq <<  endl;
-    cout << "header.seqnr               " << header.seqnr <<  endl;
-    cout << "header.time                " << header.time <<  endl;
-    cout << "header.sample_nr           " << header.sample_nr <<  endl;
-    cout << "n_header.samples_per_frame " << header.n_samples_per_frame <<  endl;
-    cout << endl;
-*/
-    if ( new_station( stations, header.stationid ) )
-     {
-       stations.push_back( header.stationid );
-       char * stationstr = new char[10];
-       sprintf( stationstr, "Station%03d", header.stationid );
-       stationGroup = dataset->createGroup( stationstr );
-       cout << "CREATED New station group: " << string(stationstr) << endl;
-       delete [] stationstr;
-     }
+    char * stationstr = new char[10];
+    sprintf( stationstr, "Station%03d", header.stationid );
+    char uid[10];  // dipole identifier
 
-     // set the STATION_ID, SAMPLE_FREQ and DATA_LENGTH attributes
-     //    for the ANTENNA table
+    // does the station exist?
+    if ( it_exists( stations, stationstr ) )
+    {
+       stationGroup = dataset->openGroup( stationstr );
+       dipoles = stationGroup->getMemberNames(); 
+       sprintf(uid, "%03d%03d%03d",
+               header.stationid, header.rspid, header.rcuid);
+
+       // does the dipole exist?
+       if ( it_exists( dipoles, uid ) )
+       {
+          dipoleArray = dataset->openArray( uid, stationGroup->getName() );
+          dims = dipoleArray->dims();
+          offset = dims[0];
+          first_sample = false;
+       }
+       else
+       {
+         sprintf(uid, "%03d%03d%03d",
+                 header.stationid, header.rspid, header.rcuid);
+       }
+    }
+    else
+    {
+       stations.push_back( stationstr );
+       stationGroup = dataset->createGroup( stationstr );
+       cerr << "CREATED New station group: " << string(stationstr) << endl;
+       delete [] stationstr;
+       sprintf(uid, "%03d%03d%03d",
+               header.stationid, header.rspid, header.rcuid);
+    }
+
+     // if this is the first sample for this station set header attributes
      if ( first_sample )
       {
 	if ( 0!=header.n_freq_bands )
@@ -241,13 +294,10 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-	  char uid[10];
-	  sprintf(uid, "%03d%03d%03d",
-                  header.stationid, header.rspid, header.rcuid);
 	  vector<int> firstdims;
 	  firstdims.push_back( 0 );
 	  short nodata[0];
-	  sarray =
+	  dipoleArray =
 	    stationGroup->createShortArray( string(uid),firstdims,nodata,cdims );
 
 	  string telescope = "LOFAR";
@@ -284,28 +334,27 @@ int main(int argc, char *argv[])
 	  double apos[3]    = { 0, 0, 0 };
 	  double aorient[3] = { 0, 0, 0 };
 
-	  sarray->setAttribute_uint("STATION_ID", sid );
-	  sarray->setAttribute_uint("RSP_ID", rsp );
-	  sarray->setAttribute_uint("RCU_ID", rcu );
-	  sarray->setAttribute_double("SAMPLE_FREQ", sf );
-	  sarray->setAttribute_uint("TIME", time );
-	  sarray->setAttribute_uint("SAMPLE_NR", samp_num );
-	  sarray->setAttribute_uint("SAMPLES_PER_FRAME", spf );
-	  sarray->setAttribute_uint("DATA_LENGTH", datalen );
-	  sarray->setAttribute_uint("NYQUIST_ZONE", nyquist_zone );
-	  sarray->setAttribute_string("FEED", feed );
-	  sarray->setAttribute_double("ANT_POSITION", apos );
-	  sarray->setAttribute_double("ANT_ORIENTATION", aorient );
+	  dipoleArray->setAttribute_uint("STATION_ID", sid );
+	  dipoleArray->setAttribute_uint("RSP_ID", rsp );
+	  dipoleArray->setAttribute_uint("RCU_ID", rcu );
+	  dipoleArray->setAttribute_double("SAMPLE_FREQ", sf );
+	  dipoleArray->setAttribute_uint("TIME", time );
+	  dipoleArray->setAttribute_uint("SAMPLE_NR", samp_num );
+	  dipoleArray->setAttribute_uint("SAMPLES_PER_FRAME", spf );
+	  dipoleArray->setAttribute_uint("DATA_LENGTH", datalen );
+	  dipoleArray->setAttribute_uint("NYQUIST_ZONE", nyquist_zone );
+	  dipoleArray->setAttribute_string("FEED", feed );
+	  dipoleArray->setAttribute_double("ANT_POSITION", apos );
+	  dipoleArray->setAttribute_double("ANT_ORIENTATION", aorient );
 	}
 
 	first_sample = false;
-      }
+      }  // end if first sample
 
     short sdata[ header.n_samples_per_frame];
 
     // ------------------------------------------------------  read the data 
 
-    // Read Payload
     if ( 0==header.n_freq_bands )  // Transient-mode
     {
       for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
@@ -318,6 +367,7 @@ int main(int argc, char *argv[])
         timeVal.tv_sec = 2;
         timeVal.tv_usec = 0;
 
+        // Read Payload
         if ( select( main_socket + 1, &readSet, NULL, NULL, &timeVal ) ) {
           r = recvfrom( main_socket, reinterpret_cast<char *>(&tran_sample),
                         sizeof(tran_sample), 0,
@@ -343,12 +393,12 @@ int main(int argc, char *argv[])
       }
 
       dims[0] += header.n_samples_per_frame;
-      sarray->extend(dims);
+      dipoleArray->extend(dims);
       int arraysize = header.n_samples_per_frame;
-      sarray->write(offset, sdata, arraysize );
+      dipoleArray->write(offset, sdata, arraysize );
       offset += header.n_samples_per_frame;
 
-    }
+    }  // end if transient mode
 
     r=recvfrom( main_socket, reinterpret_cast<char *>(&payload_crc),
                 sizeof(payload_crc), 0,

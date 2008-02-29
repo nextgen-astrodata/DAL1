@@ -110,7 +110,6 @@ hid_t openHDF5( char * fname )
 int dalDataset::open( const char * fname )
 {
   string lcltype;
-//  void * myfile;
   
 // cout << "trying to open fits..." << endl;
   char * filename = const_cast<char*> ( fname );
@@ -140,8 +139,8 @@ int dalDataset::open( const char * fname )
         return DAL::SUCCESS;
      } catch (casa::AipsError x) {
 //         cout << "ERROR: " << x.getMesg() << endl;
-        cout << "Unable to open file \"" << filename << "\"."
-    	  << endl << "Please check file name, permissions and type.\n" << endl;  
+//         cout << "Unable to open file \"" << filename << "\"."
+//     	  << endl << "Please check file name, permissions and type.\n" << endl;  
 	return DAL::FAIL;
      }
 #else

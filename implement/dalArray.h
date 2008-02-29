@@ -64,6 +64,10 @@ class dalArray{
          */
 	dalArray();
 
+	vector<int> dims();
+
+        std::string getName();
+
 	/*!
           \brief Open an existing array.
 

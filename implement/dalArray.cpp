@@ -87,7 +87,7 @@ void dalArray::write( int offset, short data[], int arraysize )
 void dalArray::write( int offset, complex<float> data[], int arraysize )
 {
     hsize_t      dims[1] = { arraysize };
-    int rank=1;
+//     int rank=1;
     hsize_t off[1] = { offset };
 
     /* Select a hyperslab  */
@@ -110,6 +110,25 @@ void dalArray::write( int offset, complex<float> data[], int arraysize )
 
     /* Write the data to the hyperslab  */
     status = H5Dwrite (array_id, complex_id, filespace, filespace, H5P_DEFAULT, data);
+}
+
+vector<int> dalArray::dims()
+{
+    vector<int> return_values;
+    hid_t dataspace = H5Dget_space( array_id );    /* dataspace identifier */
+    int rank      = H5Sget_simple_extent_ndims(dataspace);
+    hsize_t      dims_out[rank];
+    status  = H5Sget_simple_extent_dims(dataspace, dims_out, NULL);
+    for (int ii=0; ii<rank; ii++)
+    {
+       return_values.push_back( dims_out[ii] );
+    }
+    return return_values;
+}
+
+std::string dalArray::getName()
+{
+   return name;
 }
 
 void dalArray::extend( vector<int> newdims )
