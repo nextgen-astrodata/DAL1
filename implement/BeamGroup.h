@@ -95,6 +95,9 @@ namespace DAL {
 
     bool setBeamGroup (dalDataset &dataset, std::string const &name);
 
+    void getSubbandData_X( int subband, int start, int length );
+    void getSubbandData_Y( int subband, int start, int length );
+
     /*!
       \brief Provide a summary of the object's interal parameters
     */
@@ -102,6 +105,8 @@ namespace DAL {
     {
        summary(cout);
     }
+
+    BeamSubband * getSubband( int );
 
     /*!
       \brief Provide a summary of the object's interal parameters

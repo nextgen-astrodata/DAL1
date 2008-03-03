@@ -71,6 +71,8 @@ namespace DAL {
     //! Vector of beam groups within the dataset
     std::vector<BeamGroup> beamGroups_p;
 
+    bool status;
+
   public:
 
     
@@ -108,6 +110,8 @@ namespace DAL {
 
     */
     std::vector<std::string> beams();
+
+    BeamGroup * getBeam( int beam );
 
     /*!
       \brief Get the name of the data file

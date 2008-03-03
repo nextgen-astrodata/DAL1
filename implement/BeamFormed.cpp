@@ -83,6 +83,11 @@ namespace DAL {
 
   }
 
+  BeamGroup * BeamFormed::getBeam( int beam )
+  {
+     return &beamGroups_p[ beam ];
+  }
+
   std::vector<std::string> BeamFormed::beams()
   {
     unsigned int nofBeams (100);
@@ -218,10 +223,18 @@ namespace DAL {
 
   std::vector<std::string> BeamFormed::sources()
   {
-     std::vector<std::string> sources;
-	 return sources;
+    status = true;
+    std::vector<std::string> sources;
+/*    try {
+      status = h5get_attribute ( sources,
+				      attribute_name("SOURCE"),
+				      H5fileID_p );
+    } catch (std::string message) {
+      cerr << message << endl;
+    }*/
+    return sources;
   }
-  
+
   std::string BeamFormed::observation_id ()
   {
     std::string attribute_observation_id ("");

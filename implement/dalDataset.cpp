@@ -273,21 +273,23 @@ void dalDataset::printAttribute( string attrname ) {
 	size_t type_size;
 
 	// Check if attribute exists
-	if ( H5LT_find_attribute(h5fh, attrname.c_str()) <= 0 ) {
-		cout << "Attribute " << attrname << " not found." << endl;
+	if ( H5LT_find_attribute(h5fh, attrname.c_str()) < 0 ) {
+		cerr << "Attribute " << attrname << " not found." << endl;
 		return;
 	}
 	
 	string fullname = "/" + name;
 
 	int rank;
-	H5LTget_attribute_ndims(h5fh, fullname.c_str(), attrname.c_str(),
-				&rank );
+	if ( H5LTget_attribute_ndims(h5fh, fullname.c_str(), attrname.c_str(),
+				&rank ) < 0 )
+	  return;
 
 	dims = (hsize_t *)malloc(rank * sizeof(hsize_t));
 
-	H5LTget_attribute_info( h5fh, fullname.c_str(), attrname.c_str(),
-				dims, &type_class, &type_size );
+	if ( H5LTget_attribute_info( h5fh, fullname.c_str(), attrname.c_str(),
+				dims, &type_class, &type_size ) < 0 )
+	  return;
 
 	if ( H5T_FLOAT == type_class ) {
 		double data[*dims];
@@ -335,7 +337,7 @@ void * dalDataset::getAttribute( string attrname ) {
 	size_t type_size;
 
 	// Check if attribute exists
-	if ( H5LT_find_attribute(h5fh, attrname.c_str()) <= 0 ) {
+	if ( H5LT_find_attribute(h5fh, attrname.c_str()) < 0 ) {
 		return NULL;
 	}
 	
@@ -343,11 +345,11 @@ void * dalDataset::getAttribute( string attrname ) {
 
 	int rank;
 	if ( H5LTget_attribute_ndims(h5fh, fullname.c_str(), attrname.c_str(),
-				&rank ) <= 0 )
+				&rank ) < 0 )
 		return NULL;
 
 	if ( H5LTget_attribute_info( h5fh, fullname.c_str(), attrname.c_str(),
-				&dims, &type_class, &type_size ) <= 0 )
+				&dims, &type_class, &type_size ) < 0 )
 	    return NULL;
 
 	if ( H5T_FLOAT == type_class ) {
@@ -491,7 +493,7 @@ void dalDataset::listTables()
  *
  *  Create a a new dataset (file)
  */
-dalDataset::dalDataset( char * name, string filetype )
+dalDataset::dalDataset( const char * name, string filetype )
 {
    type = filetype;  // set the global class variable: type
    filter = new dalFilter;

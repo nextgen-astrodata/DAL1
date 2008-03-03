@@ -24,6 +24,9 @@
 #ifndef DALCOLUMN_H
 #define DALCOLUMN_H
 
+// for high-level table interface (written in C)
+#include "H5TA.h"
+
 #ifndef DAL_H
 #include "dal.h"
 #endif
@@ -60,6 +63,11 @@ class dalColumn {
 	vector<dalAttribute> attributes; //!< list of column attributes
 	unsigned int num_of_rows;  //!< number of rows in the column
 
+	// HDF5-specific variables
+	hid_t file_id; 	//!< hdf5 file_id
+	hid_t table_id;	//!< hdf5 table id
+	hsize_t nfields; //!< hdf5 field count
+	hsize_t nrecords; //!< hdf5 record count
 	hid_t coltype;
 	herr_t  status;  //!< hdf5 call return status
 
@@ -117,6 +125,13 @@ public:
 	 */
 	dalColumn( string complexcolname );
 
+	dalColumn( hid_t fileid,
+                   hid_t tableid,
+                   string filetype,
+                   string lcl_tablename,
+                   string colname,
+                   string coldatatype );
+
 	/*!
 	  \brief Create a new column object.
 	  
@@ -139,7 +154,7 @@ public:
 	 Open a column.
 
 	 */
-	void open();
+	void open( std::string colname );
 
 	/*!
 	 \brief Add a member to a compound column.
@@ -171,6 +186,15 @@ public:
 	 */
 	void setName(string colname);
 	
+	/*!
+	  \brief Set the file type of the dataset containing the column.
+	  
+	  Set the file type of the dataset containing the column.
+	  
+	  \param type The type of file.
+	 */
+	void setFileType( string type );
+
 	/*!
 	  \brief Get the column datatype.
 	  
@@ -259,7 +283,7 @@ public:
 	  
 	  \return A dalData object containing the column data.
 	 */
-	dalData * data();
+	dalData * data( int start, int length );
 
 /************************************************************************
  *

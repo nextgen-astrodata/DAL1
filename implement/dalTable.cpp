@@ -31,9 +31,6 @@
 #include "dalTable.h"
 #endif
 
-// for high-level table interface (written in C)
-#include "H5TA.h"
-
 /****************************************************************
  *  Default constructor
  *
@@ -71,9 +68,10 @@ dalColumn * dalTable::getColumn( string colname )
    }
    else if ( type == H5TYPE )
    {
-	dalColumn * lclcol;
-	lclcol = new dalColumn();
-	lclcol->setName( colname );
+      dalColumn * lclcol;
+      lclcol = new dalColumn( file_id, table_id, H5TYPE, name, colname,
+                              dal_COMPLEX );
+
 // 	hsize_t start = 0;
 //	H5TBread_fields_name(file_id, name.c_str(), colname.c_str(), start, hsize_t nrecords, size_t type_size,  const size_t *field_offset, const size_t *field_sizes, void  *data);
 /*dst_size, dst_offset, 0, NRECORDS-1, p_data_out);*/

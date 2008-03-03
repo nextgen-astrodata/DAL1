@@ -51,7 +51,7 @@ namespace DAL {
   void BeamGroup::summary(std::ostream &os)
   {
 
-    os << "\n[" << group_p->getName() << " Group] Summary of object properties"     << endl;
+    os << "\n[" << group_p->getName() << " Group] Summary of object properties"  << endl;
 
     os << "-- RA ................... : " << ra()              << endl;
     os << "-- DEC .................. : " << dec()             << endl;
@@ -64,21 +64,43 @@ namespace DAL {
     {
        os << memnames[jj] << endl;
        dalTable * table = dataset_p.openTable(memnames[jj],group_p->getName());
-       table->listColumns();
-       dalColumn * col = table->getColumn("X");
-       os << "col->getName() " << col->getName() << endl;
-       os << "col->getSize() " << col->getSize() << endl;
-       os << "col->getType() " << col->getType() << endl;
-       os << "col->data() " << col->data() << endl;
+
+       dalColumn * col;
+       dalData * data;
+
+       col = table->getColumn("X");
+       os << "X: ";
+       data = col->data( 0, 5);
+       complex<char> * x;
+       for (int jj=0; jj<5; jj++)
+       {
+         x = (complex<char>*)data->get(jj);
+         printf("(%d,%d), ",x->real(),x->imag());
+       }
+       printf("\b\b\n");
        col->close();
+
        col = table->getColumn("Y");
-       os << "col->getName() " << col->getName() << endl;
-       os << "col->getSize() " << col->getSize() << endl;
-       os << "col->getType() " << col->getType() << endl;
-       os << "col->data() " << col->data() << endl;
+       os << "Y: ";
+       data = col->data( 0, 5);
+       complex<char> * y;
+       for (int jj=0; jj<5; jj++)
+       {
+         y = (complex<char>*)data->get(jj);
+         printf("(%d,%d), ",y->real(),y->imag());
+       }
+       printf("\b\b\n");
+       col->close();
+
+       delete col;
     }
     os << endl;
 
+  }
+
+  BeamSubband * BeamGroup::getSubband( int sb )
+  {
+    return &beamSubbands_p[ sb ];
   }
 
   bool BeamGroup::setBeamGroup (dalDataset &dataset, std::string const &name)
@@ -145,6 +167,51 @@ namespace DAL {
       }
     }
     return n_subbands;
+  }
+
+
+  void BeamGroup::getSubbandData_X( int subband, int start, int length )
+  {
+    vector<string> memnames = group_p->getMemberNames();
+    dalTable * table = dataset_p.openTable(memnames[ subband ],group_p->getName());
+    dalColumn * col;
+    dalData * data;
+
+    col = table->getColumn("X");
+    cerr << "X: ";
+    data = col->data( start, length );
+    complex<char> * x;
+    for (int jj=0; jj < length; jj++)
+    {
+      x = (complex<char>*)data->get(jj);
+      printf("(%d,%d), ",x->real(),x->imag());
+    }
+    printf("\b\b\n");
+    col->close();
+
+    delete col;
+  }
+
+  void BeamGroup::getSubbandData_Y( int subband, int start, int length )
+  {
+    vector<string> memnames = group_p->getMemberNames();
+    dalTable * table = dataset_p.openTable(memnames[ subband ],group_p->getName());
+    dalColumn * col;
+    dalData * data;
+
+    col = table->getColumn("Y");
+    cerr << "Y: ";
+    data = col->data( start, length );
+    complex<char> * x;
+    for (int jj=0; jj < length; jj++)
+    {
+      x = (complex<char>*)data->get(jj);
+      printf("(%d,%d), ",x->real(),x->imag());
+    }
+    printf("\b\b\n");
+    col->close();
+
+    delete col;
   }
 
 } // end namespace DAL

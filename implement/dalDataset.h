@@ -97,7 +97,7 @@ class dalDataset{
       \param name The name of the dataset to open.
 	  \param filetype Type of file to open ("HDF5", "MSCASA", etc.).
 	*/
-  	dalDataset( char * name, std::string filetype );
+  	dalDataset( const char * name, std::string filetype );
 	
 	/*!
 	  \brief Open the dataset.

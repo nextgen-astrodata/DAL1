@@ -38,11 +38,27 @@
 dalColumn::dalColumn()
 {}
 
+dalColumn::dalColumn( hid_t fileid,
+                      hid_t tableid,
+                      string lcl_filetype,
+                      string lcl_tablename,
+                      string colname,
+                      string coldatatype )
+{
+  file_id = fileid;
+  table_id = tableid;
+  filetype = lcl_filetype;
+  tablename = lcl_tablename;
+  name = colname;
+  dal_datatype = coldatatype;
+}
+
 dalColumn::dalColumn( string colname, string type )
 {
 	name = colname;
 	dal_datatype = type;
 }
+
 
 dalColumn::dalColumn( string complexcolname )
 {
@@ -215,14 +231,19 @@ unsigned int dalColumn::ndims()
   }
 }
 
-void dalColumn::open()
+void dalColumn::open( std::string colname )
 {
-  
+  cerr << "dalColumn::open( " << colname << " )" << endl;
 }
 
 void dalColumn::setName(string colname)
 {
   name = colname;
+}
+
+void dalColumn::setFileType( string type )
+{
+  filetype = type;
 }
 
 string dalColumn::getName()
@@ -252,7 +273,7 @@ string dalColumn::getType()
   return dal_datatype;
 }
 
-dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
+dalData * dalColumn::data( int start, int length )
 {
   if ( MSCASATYPE == filetype )
   {
@@ -388,9 +409,42 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 
    else if ( H5TYPE == filetype )
    {
-//      H5TBread_fields_name (file_id, tablename, name,
-//               dst_size, dst_offset, 0, NRECORDS-1, p_data_out);
-      cout << "\n\nHDF5 column read\n\n";
+	size_t * field_sizes;
+	size_t * field_offsets;
+	size_t * size_out;
+	
+	// retrieve the input fields needed for the append_records call
+	if ( H5TBget_table_info ( file_id, tablename.c_str(), &nfields, &nrecords )
+	  < 0 )
+	   return NULL;
+	
+	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
+	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
+	size_out = (size_t*)malloc( sizeof(size_t) );
+
+	if ( H5TBget_field_info( file_id, tablename.c_str(), NULL,
+             field_sizes, field_offsets, size_out ) < 0 )
+	  return NULL;
+	
+
+	dalcomplex_char data[length];
+
+        if ( H5TBread_fields_name (file_id, tablename.c_str(), name.c_str(),
+                 start, length, sizeof(dalcomplex_char), field_offsets, field_sizes,
+		 data ) < 0 )
+	   return NULL;
+
+	vector<int> shape(1);
+
+        data_object = new dalData( filetype, dal_COMPLEX_CHAR, shape, length );
+	data_object->data = (dalcomplex_char *)data;
+
+	free( field_sizes );
+	free( field_offsets );
+	free( size_out );
+
+	return data_object;
+
    }
 
    return NULL;
@@ -399,18 +453,28 @@ dalData * dalColumn::data(/*int cell1, int cell2, int cell3*/)
 int dalColumn::getSize()
 {
 	if ( dal_CHAR== getType() ) {
-		return sizeof(char);
+		return sizeof( char );
 	}
 	else if ( dal_INT == getType() ) {
-		return sizeof(int);
+		return sizeof( int );
 	}
 	else if ( dal_FLOAT == getType() ) {
-		return sizeof(float);
+		return sizeof( float );
 	}
 	else if ( dal_DOUBLE == getType() ) {
-		return sizeof(double);
+		return sizeof( double );
 	}
-	return -1;
+	else if ( dal_COMPLEX == getType() ) {
+		return sizeof( dalcomplex );
+	}
+	else if ( dal_COMPLEX_CHAR == getType() ) {
+		return sizeof( dalcomplex_char );
+	}
+	else
+	{
+	  cerr << getType() << endl;
+	  return -1;
+	}
 }
 
 void dalColumn::addMember( string member_name, string member_type )
