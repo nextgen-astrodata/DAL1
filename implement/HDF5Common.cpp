@@ -35,6 +35,8 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
 
+  // ---------------------------------------------------------------- show_vector
+
   template<class T>
   void show_vector (std::ostream& os,
 		    std::vector<T> &vec)
@@ -175,28 +177,24 @@ namespace DAL { // Namespace DAL -- begin
   bool h5get_name (std::string &name,
 		   hid_t const &object_id)
   {
-    herr_t h5error (0);
+    herr_t h5error        = 0;
+    H5I_type_t objectType = H5Iget_type (object_id);
 
-    /*
-     * [1] Check if the provided identifier is a valid pointer to an object
-     *     within in the file.
-     */
-    H5I_type_t object_type = H5Iget_type (object_id);
-    
-    if (object_type == H5I_BADID) {
+    /* Check: does the object ID point to a valid object type? */
+
+    if (objectType == H5I_BADID) {
       return false;
     }
-    /*
-     * [2] If the object ID is valid, we try to retrieve its name
-     */
 
-    ssize_t name_length (0);
-    size_t buffer_size (10);
+    /* If the object ID is valid, we try to retrieve its name. */
+
+    ssize_t name_length   = 0;
+    size_t buffer_size    = 10;
     char *buffer;
 
     buffer = new char[buffer_size];
-    
-    if (object_type == H5I_FILE) {
+          
+    if (objectType == H5I_FILE) {
       // first call to get proper length of the name string
       name_length = H5Fget_name (object_id,
 				 buffer,
@@ -216,6 +214,7 @@ namespace DAL { // Namespace DAL -- begin
 				   buffer_size);
 	name = buffer;
       } else {
+	std::cerr << "[h5get_name] Object name of zero characters!" << endl;
 	return false;
       }
     } else {
@@ -243,6 +242,82 @@ namespace DAL { // Namespace DAL -- begin
     return true;
   }
 
+  // ----------------------------------------------------------------- h5get_name
+  
+  bool h5get_name (std::string &name,
+		   hid_t const &object_id,
+		   hsize_t const &index)
+  {
+    H5I_type_t objectType = H5Iget_type (object_id);
+    hsize_t nofObjects    = 0;
+    herr_t h5error        = 0;
+
+    // Check if the HDF5 object is a group
+
+    if (objectType != H5I_GROUP) {
+      std::cerr << "[h5get_name] Running index only supported for groups!"
+		<< std::endl;
+      return false;
+    }
+
+    // Check if the transient index is within the valid range
+
+    h5error = H5Gget_num_objs(object_id,
+			      &nofObjects);
+
+    if (index > nofObjects) {
+      std::cerr << "[h5get_name] Running index outside valid range!"
+		<< std::endl;
+      return false;
+    }
+
+    /*
+      Get the name of the object identified by the transient index; first 
+      function call is to retrieve retrieve the number of characters in the
+      object's name.
+    */
+    
+    ssize_t name_length = 0;
+    size_t buffer_size  = 10;
+    char *buffer;
+    
+    // first function call to get the number of characters in the object's name
+    try {
+      buffer      = new char[buffer_size];
+      name_length = H5Gget_objname_by_idx (object_id,
+					   index,
+					   buffer,
+					   buffer_size);
+    } catch (std::string message) {
+      std::cerr << "[h5get_name] Error calling H5Gget_objname_by_idx; "
+		<< message
+		<< std::endl;
+      return false;
+    }
+    
+    if (name_length > 0) {
+      // release the previously allocated buffer ...
+      delete [] buffer;
+      // ... and readjust it to the proper values retrieved above
+      buffer_size = name_length+1;
+      buffer      = new char[buffer_size];
+      // second function call to retrieve the object's name
+      name_length = H5Gget_objname_by_idx (object_id,
+					   index,
+					   buffer,
+					   buffer_size);
+      name = buffer;
+    } else {
+      std::cerr << "[h5get_name] Object name of zero characters!" << endl;
+      return false;
+    }
+
+    // release the previously allocated buffer ...
+    delete [] buffer;
+
+    return true;
+  }
+
   // ------------------------------------------------------------- h5get_filename
 
   bool h5get_filename (std::string &filename,
@@ -261,18 +336,18 @@ namespace DAL { // Namespace DAL -- begin
 
     bool status (true);
     herr_t h5error (0);
-    H5I_type_t object_type;
+    H5I_type_t objectType;
 
     /*
      * If the provided object ID does not belong to a file already, we first need
      * to obtain extactly this ID based on the object's ID.
      */
-    object_type = H5Iget_type(object_id);
+    objectType = H5Iget_type(object_id);
 
-    if (object_type == H5I_BADID) {
+    if (objectType == H5I_BADID) {
       std::cerr << "[h5get_filename] Bad object type - aborting now!" << std::endl;
       return false;
-    } else if (object_type == H5I_FILE) {
+    } else if (objectType == H5I_FILE) {
       status = h5get_name (filename,
 			   object_id);
     } else {

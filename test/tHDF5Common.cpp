@@ -32,6 +32,7 @@
 using std::cerr;
 using std::cout;
 using std::endl;
+using namespace DAL;
 
 /*!
   \file tHDF5Common.cpp
@@ -259,41 +260,41 @@ int get_attribute_id (hid_t const &file_id)
   if (group_id > 0) {
 
     std::cout << "[1] Retrieving IDs of group attributes..." << endl;
-
+    
     attribute_id = H5Aopen_name(group_id,
-				DAL::attribute_name(DAL::TELESCOPE).c_str());
+				attribute_name(DAL::TELESCOPE).c_str());
     std::cout << "-- TELESCOPE = " << attribute_id << endl;
-
+    
     attribute_id = H5Aopen_name(group_id,
-				DAL::attribute_name(DAL::OBSERVER).c_str());
+				attribute_name(DAL::OBSERVER).c_str());
     std::cout << "-- OBSERVER  = " << attribute_id << endl;
 
     attribute_id = H5Aopen_name(group_id,
-				DAL::attribute_name(DAL::PROJECT).c_str());
+				attribute_name(DAL::PROJECT).c_str());
     std::cout << "-- PROJECT   = " << attribute_id << endl;
 
     attribute_id = H5Aopen_name(group_id,
-				DAL::attribute_name(DAL::OBSERVATION_ID).c_str());
+				attribute_name(DAL::OBSERVATION_ID).c_str());
     std::cout << "-- OBS_ID    = " << attribute_id << endl;
 
     attribute_id = H5Aopen_name(group_id,
-				DAL::attribute_name(DAL::OBSERVATION_MODE).c_str());
+				attribute_name(DAL::OBSERVATION_MODE).c_str());
     std::cout << "-- OBS_MODE  = " << attribute_id << endl;
 
     attribute_id = H5Aopen_name(group_id,
-				DAL::attribute_name(DAL::TRIGGER_TYPE).c_str());
+				attribute_name(DAL::TRIGGER_TYPE).c_str());
     std::cout << "-- TRIG_TYPE = " << attribute_id << endl;
 
     attribute_id = H5Aopen_name(group_id,
-				DAL::attribute_name(DAL::TRIGGER_OFFSET).c_str());
+				attribute_name(DAL::TRIGGER_OFFSET).c_str());
     std::cout << "-- TRIG_OFST = " << attribute_id << endl;
 
     attribute_id = H5Aopen_name(group_id,
-				DAL::attribute_name(DAL::TRIGGERED_ANTENNAS).c_str());
+				attribute_name(DAL::TRIGGERED_ANTENNAS).c_str());
     std::cout << "-- TRIG_ANTS = " << attribute_id << endl;
 
     attribute_id = H5Aopen_name(group_id,
-				DAL::attribute_name(DAL::BEAM_DIRECTION).c_str());
+				attribute_name(DAL::BEAM_DIRECTION).c_str());
     std::cout << "-- BEAM_DIR  = " << attribute_id << endl;
   }
 
@@ -308,27 +309,27 @@ int get_attribute_id (hid_t const &file_id)
     std::cout << "[2] Retrieving IDs of dataset attributes..." << endl;
 
     attribute_id = H5Aopen_name(dataset_id,
-				DAL::attribute_name(DAL::STATION_ID).c_str());
+				attribute_name(DAL::STATION_ID).c_str());
     std::cout << "-- STATION_ID        = " << attribute_id << endl;
     
     attribute_id = H5Aopen_name(dataset_id,
-				DAL::attribute_name(DAL::RSP_ID).c_str());
+				attribute_name(DAL::RSP_ID).c_str());
     std::cout << "-- RSP_ID            = " << attribute_id << endl;
     
     attribute_id = H5Aopen_name(dataset_id,
-				DAL::attribute_name(DAL::RCU_ID).c_str());
+				attribute_name(DAL::RCU_ID).c_str());
     std::cout << "-- RCU_ID            = " << attribute_id << endl;
     
     attribute_id = H5Aopen_name(dataset_id,
-				DAL::attribute_name(DAL::SAMPLE_FREQUENCY).c_str());
+				attribute_name(DAL::SAMPLE_FREQUENCY).c_str());
     std::cout << "-- SAMPLE_FREQ       = " << attribute_id << endl;
     
     attribute_id = H5Aopen_name(dataset_id,
-				DAL::attribute_name(DAL::TIME).c_str());
+				attribute_name(DAL::TIME).c_str());
     std::cout << "-- TIME              = " << attribute_id << endl;
     
     attribute_id = H5Aopen_name(dataset_id,
-				DAL::attribute_name(DAL::SAMPLE_NUMBER).c_str());
+				attribute_name(DAL::SAMPLE_NUMBER).c_str());
     std::cout << "-- SAMPLE_NR         = " << attribute_id << endl;
     
     attribute_id = H5Aopen_name(dataset_id,"SAMPLES_PER_FRAME");
@@ -341,7 +342,7 @@ int get_attribute_id (hid_t const &file_id)
     std::cout << "-- NYQUIST_ZONE      = " << attribute_id << endl;
     
     attribute_id = H5Aopen_name(dataset_id,
-				DAL::attribute_name(DAL::FEED).c_str());
+				attribute_name(DAL::FEED).c_str());
     std::cout << "-- FEED              = " << attribute_id << endl;
     
     attribute_id = H5Aopen_name(dataset_id,"ANT_POSITION");
@@ -394,81 +395,81 @@ int get_attributes (hid_t const &file_id)
     std::vector<double> beam_direction;
     
     try {
-      status = DAL::h5get_attribute (telescope,
-				       DAL::attribute_name(DAL::TELESCOPE),
-				       group_id);
+      status = h5get_attribute (telescope,
+				attribute_name(DAL::TELESCOPE),
+				group_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (observer,
-				       DAL::attribute_name(DAL::OBSERVER),
-				       group_id);
+      status = h5get_attribute (observer,
+				attribute_name(DAL::OBSERVER),
+				group_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (project,
-				       DAL::attribute_name(DAL::PROJECT),
-				       group_id);
+      status = h5get_attribute (project,
+				attribute_name(DAL::PROJECT),
+				group_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (observation_id,
-				       DAL::attribute_name(DAL::OBSERVATION_ID),
-				       group_id);
+      status = h5get_attribute (observation_id,
+				attribute_name(DAL::OBSERVATION_ID),
+				group_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (observation_mode,
-				       DAL::attribute_name(DAL::OBSERVATION_MODE),
-				       group_id);
+      status = h5get_attribute (observation_mode,
+				attribute_name(DAL::OBSERVATION_MODE),
+				group_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (trigger_type,
-				       DAL::attribute_name(DAL::TRIGGER_TYPE),
-				       group_id);
+      status = h5get_attribute (trigger_type,
+				attribute_name(DAL::TRIGGER_TYPE),
+				group_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (trigger_offset,
-				       DAL::attribute_name(DAL::TRIGGER_OFFSET),
-				       group_id);
+      status = h5get_attribute (trigger_offset,
+				attribute_name(DAL::TRIGGER_OFFSET),
+				group_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (triggered_antennas,
-				       DAL::attribute_name(DAL::TRIGGERED_ANTENNAS),
-				       group_id);
+      status = h5get_attribute (triggered_antennas,
+				attribute_name(DAL::TRIGGERED_ANTENNAS),
+				group_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (beam_direction,
-				       DAL::attribute_name(DAL::BEAM_DIRECTION),
-				       group_id);
+      status = h5get_attribute (beam_direction,
+				attribute_name(DAL::BEAM_DIRECTION),
+				group_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
@@ -509,93 +510,99 @@ int get_attributes (hid_t const &file_id)
     std::vector<double> antenna_orientation;
 
     try {
-      status = DAL::h5get_attribute (station_id,"STATION_ID",dataset_id);
+      status = h5get_attribute (station_id,
+				attribute_name(DAL::STATION_ID),
+				dataset_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (rsp_id,"RSP_ID",dataset_id);
+      status = h5get_attribute (rsp_id,
+				attribute_name(DAL::RSP_ID),
+				dataset_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (rcu_id,"RCU_ID",dataset_id);
+      status = h5get_attribute (rcu_id,
+				attribute_name(DAL::RCU_ID),
+				dataset_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (sample_frequency,
-				     "SAMPLE_FREQ",
-				     dataset_id);
+      status = h5get_attribute (sample_frequency,
+				attribute_name(DAL::SAMPLE_FREQUENCY),
+				dataset_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (time,
-				     "TIME",
-				     dataset_id);
+      status = h5get_attribute (time,
+				attribute_name(DAL::TIME),
+				dataset_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (sample_number,
-				     "SAMPLE_NR",
-				     dataset_id);
+      status = h5get_attribute (sample_number,
+				attribute_name(DAL::SAMPLE_NUMBER),
+				dataset_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (samples_per_frame,
-				     "SAMPLES_PER_FRAME",
-				     dataset_id);
+      status = h5get_attribute (samples_per_frame,
+				"SAMPLES_PER_FRAME",
+				dataset_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (data_length,
-				     "DATA_LENGTH",
-				     dataset_id);
+      status = h5get_attribute (data_length,
+				"DATA_LENGTH",
+				dataset_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (nyquist_zone,
-				     "NYQUIST_ZONE",
-				     dataset_id);
+      status = h5get_attribute (nyquist_zone,
+				"NYQUIST_ZONE",
+				dataset_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (antenna_position,
-				     "ANT_POSITION",
-				     dataset_id);
+      status = h5get_attribute (antenna_position,
+				attribute_name(DAL::ANTENNA_POSITION),
+				dataset_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
     }
     
     try {
-      status = DAL::h5get_attribute (antenna_orientation,
-				     "ANT_ORIENTATION",
-				     dataset_id);
+      status = h5get_attribute (antenna_orientation,
+				attribute_name(DAL::ANTENNA_ORIENTATION),
+				dataset_id);
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
@@ -632,8 +639,11 @@ int get_name (hid_t const &file_id)
 {
   int nofFailedTests (0);
   std::string name ("UNDEFINED");
-  bool status;
-
+  hid_t group_id (0);
+  hid_t dataset_id (0);
+  herr_t h5error (0);
+  bool status (true);
+  
   cout << "[1] Retrieve name of the HDF5 file ..." << endl;
   try {
     status = DAL::h5get_name (name,file_id);
@@ -649,8 +659,8 @@ int get_name (hid_t const &file_id)
   cout << "[2] Retrieve name of the station group ..." << endl;
   try {
     // open group
-    hid_t group_id = H5Gopen (file_id,
-			      "Station001");
+    group_id = H5Gopen (file_id,
+			"Station001");
     // retrieve name of group
     status = DAL::h5get_name (name,group_id);
     // feedback
@@ -666,8 +676,8 @@ int get_name (hid_t const &file_id)
   cout << "[3] Retrieve name of dipole dataset ..." << endl;
   try {
     // open dataset
-    hid_t dataset_id = H5Dopen (file_id,
-				"Station001/001002021");
+    dataset_id = H5Dopen (file_id,
+			  "Station001/001002021");
     // retrieve name of dataset
     status = DAL::h5get_name (name,dataset_id);
     // feedback
@@ -679,7 +689,28 @@ int get_name (hid_t const &file_id)
     cerr << message << endl;
     nofFailedTests++;
   }
-  
+
+  cout << "[4] Retrieve names via transients index ..." << endl;
+  try {
+    hsize_t nofObjects (0);
+    // get the number of objects attached to the group
+    h5error = H5Gget_num_objs(group_id,
+			      &nofObjects);
+    cout << "--> " << nofObjects << " objects attached to dataset." << endl;
+    // go through the list of objects and retrieve their name
+    for (hsize_t n(0); n<nofObjects; n++) {
+      status = DAL::h5get_name (name,group_id,n);
+      // give some feedback
+      if (status) {
+	cout << "\t" << n << "\t" << name << endl;
+      } else {
+      }
+    }
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+
   return nofFailedTests;
 }
 

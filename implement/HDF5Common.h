@@ -164,6 +164,22 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \brief Retrieve the name of an object based on the object identifier
 
+    \retval name     -- Name of the object (if set or defined).
+    \param object_id -- Identifier for the objects of which to retrieve the
+           name.
+    \param index     -- Transient index identifying the object whose name to
+           retrieve.
+
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered
+  */
+  bool h5get_name (std::string &name,
+		   hid_t const &object_id,
+		   hsize_t const &index);
+
+  /*!
+    \brief Retrieve the name of an object based on the object identifier
+
     \retval filename -- Name of the HDF5 file within which the object is
             contained
     \param object_id -- Identifier for the objects of which to retrieve the
