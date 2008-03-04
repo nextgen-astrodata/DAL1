@@ -57,7 +57,9 @@ int main(int argc, char *argv[])
   
   // create a dataset object of type MSCASA
   cout << " -- Creating a dataset object of type MSCASA ..." << endl;
-  dalDataset * msds = new dalDataset( argv[1], "MSCASA" );
+  dalDataset * msds = new dalDataset();
+  
+  msds->open( argv[1] );
   
   // print out a list of tables in the dataset
   msds->listTables();
