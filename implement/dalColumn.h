@@ -294,9 +294,11 @@ class dalColumn {
 	  
 	  Get the data object for the column.
 	  
+	  \param start Start cell number for column.
+	  \param length Number of cells to retrieve into the data object.
 	  \return A dalData object containing the column data.
 	 */
-	dalData * data( int start, int length );
+	dalData * data( int start=-1, int length=-1 );
 
 /************************************************************************
  *

@@ -426,6 +426,10 @@ dalData * dalColumn::data( int start, int length )
              field_sizes, field_offsets, size_out ) < 0 )
 	  return NULL;
 	
+    if ( start < 0 )
+	  start = 0;
+	if ( length < 0 )
+	  length = nrecords;
 
 	dalcomplex_char data[length];
 

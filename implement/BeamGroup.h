@@ -80,33 +80,82 @@ namespace DAL {
 
     /*!
       \brief Default constructor
+	  
+	  Default constructor
     */
     BeamGroup();
 
     /*!
       \brief Argumented constructor
+	  
+	  Argumented constructor
+	  
+	  \param dataset The dalDataset the the group belongs to.
+	  \param name The name of the group.
     */
     BeamGroup (dalDataset &dataset, std::string const &name);
 
     /*!
       \brief Initialize the object's internal parameters
+	  
+	  Initialize the object's internal parameters
     */
     void init();
 
+    /*!
+	  \brief Initialize the beam group values.
+	  
+	  Initialize the beam group with some real values.
+	  
+	  \param dataset The dalDataset the the group belongs to.
+	  \param name The name of the group.
+     */	  
     bool setBeamGroup (dalDataset &dataset, std::string const &name);
 
-    void getSubbandData_X( int subband, int start, int length );
-    void getSubbandData_Y( int subband, int start, int length );
+    /*!
+	  \brief Get X column data for a given subband
+	  
+	  Get X column data for a given subband
+	  
+	  \param subband Subband to get the data from.
+	  \param start Start number of the cell in the column.
+	  \param length The number of cells to retrieve.
+	  
+	  \return A character vector of values.
+	 */
+    std::vector< std::complex<char> > getSubbandData_X( int subband, int start, int length );
+
+    /*!
+	  \brief Get Y column data for a given subband
+	  
+	  Get Y column data for a given subband
+	  
+	  \param subband Subband to get the data from.
+	  \param start Start number of the cell in the column.
+	  \param length The number of cells to retrieve.
+	  
+	  \return A character vector of values.
+	 */
+    std::vector< std::complex<char> > getSubbandData_Y( int subband, int start, int length );
 
     /*!
       \brief Provide a summary of the object's interal parameters
+	  
+	  Provide a summary of the object's interal parameters
     */
     inline void summary()
     {
        summary(cout);
     }
 
-    BeamSubband * getSubband( int );
+    /*!
+	  \brief Get a subband object from the beam.
+	  
+	  Get a subband object from the beam.
+	  
+	  \param subband Number of the subband you want to retrieve.
+	 */
+    BeamSubband * getSubband( int subband );
 
     /*!
       \brief Provide a summary of the object's interal parameters
@@ -115,13 +164,20 @@ namespace DAL {
     */
     void summary(std::ostream &os);
 
-    std::string ra();
     /*!
-      \brief Get the declination (angle?) of the beam
+      \brief Get the ra of the beam
 
-      \return ra -- The declination (angle?) of the beam pointing direction
+      \return ra -- The ra of the beam pointing direction
+    */
+    std::string ra();
+
+    /*!
+      \brief Get the declination of the beam
+
+      \return dec -- The declination of the beam pointing direction
     */
     std::string dec();
+
     /*!
       \brief Get the number of sub-bands
 

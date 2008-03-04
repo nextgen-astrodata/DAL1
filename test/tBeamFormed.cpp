@@ -44,10 +44,6 @@ int main()
   bf->summary();
 
   DAL::BeamGroup * beam = bf->getBeam( 0 );
-//   bg->summary();
-
-  beam->getSubbandData_X( 0, 4, 1000 );
-  beam->getSubbandData_Y( 0, 4, 1000 );
 
 //   std::vector<std::string> sources = bf->sources();
 
