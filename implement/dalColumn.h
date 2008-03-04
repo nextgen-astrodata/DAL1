@@ -107,31 +107,41 @@ class dalColumn {
 	casa::Bool deleteIt;
 #endif
 
-public:
-
-    /*!
+ public:
+	
+	/*!
 	  \brief Default constructor.
-
+	  
 	  Default constructor.
-	 */
+	*/
 	dalColumn();
 	
-    /*!
+	/*!
 	  \brief Create a new complex column.
-	
+	  
 	  Create a new column with a complex floating point datatype.
 	  
 	  \param complexcolname Name of the column you want to create.
-	 */
+	*/
 	dalColumn( string complexcolname );
+	
+	/*!
+	  \brief Create a new column object.
 
+	  \param fileid
+	  \param tableid
+	  \param filetype
+	  \param lcl_tablename
+	  \param colname
+	  \param coldatatype
+	*/
 	dalColumn( hid_t fileid,
                    hid_t tableid,
                    string filetype,
                    string lcl_tablename,
                    string colname,
                    string coldatatype );
-
+	
 	/*!
 	  \brief Create a new column object.
 	  
@@ -141,18 +151,21 @@ public:
 	  \param coltype The datatype of the column you want to craete (i.e.
 	                 dalINT, dalFLOAT, dalSTRING, etc.)
 	 */
-	dalColumn( string colname, string coltype );
+	dalColumn( string colname,
+		   string coltype );
 
 #ifdef WITH_CASA
-
-	dalColumn( casa::Table table, string colname );
+	/*!
+	  \brief Create a new column object.
+	 */
+	dalColumn( casa::Table table,
+		   string colname );
 #endif
 
 	/*!
 	 \brief Open a column
 	
-	 Open a column.
-
+	 \param colname Name of the colum to be opened.
 	 */
 	void open( std::string colname );
 
