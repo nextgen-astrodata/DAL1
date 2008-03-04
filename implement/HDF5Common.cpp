@@ -248,17 +248,17 @@ namespace DAL { // Namespace DAL -- begin
 		   hid_t const &object_id,
 		   hsize_t const &index)
   {
-    H5I_type_t objectType = H5Iget_type (object_id);
+//     H5I_type_t objectType = H5Iget_type (object_id);
     hsize_t nofObjects    = 0;
     herr_t h5error        = 0;
 
     // Check if the HDF5 object is a group
 
-    if (objectType != H5I_GROUP) {
-      std::cerr << "[h5get_name] Running index only supported for groups!"
-		<< std::endl;
-      return false;
-    }
+//     if (objectType != H5I_GROUP) {
+//       std::cerr << "[h5get_name] Running index only supported for groups!"
+// 		<< std::endl;
+//       return false;
+//     }
 
     // Check if the transient index is within the valid range
 
