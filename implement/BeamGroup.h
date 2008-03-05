@@ -93,7 +93,8 @@ namespace DAL {
 	  \param dataset The dalDataset the the group belongs to.
 	  \param name The name of the group.
     */
-    BeamGroup (dalDataset &dataset, std::string const &name);
+    BeamGroup ( dalDataset &dataset,
+	            std::string const &name );
 
     /*!
       \brief Initialize the object's internal parameters
@@ -110,7 +111,27 @@ namespace DAL {
 	  \param dataset The dalDataset the the group belongs to.
 	  \param name The name of the group.
      */	  
-    bool setBeamGroup (dalDataset &dataset, std::string const &name);
+    bool setBeamGroup ( dalDataset &dataset,
+	                    std::string const &name);
+
+
+    /*!
+	  \brief Get X and Y columns data for a given subband
+	  
+	  Get X and Y columns data for a given subband
+	  
+	  \param subband Subband to get the data from.
+	  \param start Start number of the cell in the column.
+	  \param length The number of cells to retrieve.
+	  \param Output character vector of X values.
+	  \param Output character vector of Y values.
+	  
+	 */
+    void getSubbandData_XY( int subband,
+	                        int start,
+							int length,
+							std::vector< std::complex<char> > &x_values,
+							std::vector< std::complex<char> > &y_values );
 
     /*!
 	  \brief Get X column data for a given subband
@@ -120,10 +141,14 @@ namespace DAL {
 	  \param subband Subband to get the data from.
 	  \param start Start number of the cell in the column.
 	  \param length The number of cells to retrieve.
+	  \param Output character vector of values.
 	  
-	  \return A character vector of values.
 	 */
-    std::vector< std::complex<char> > getSubbandData_X( int subband, int start, int length );
+    void getSubbandData_X( int subband,
+	                       int start,
+				           int length,
+					       std::vector< std::complex<char> > &values );
+
 
     /*!
 	  \brief Get Y column data for a given subband
@@ -133,10 +158,14 @@ namespace DAL {
 	  \param subband Subband to get the data from.
 	  \param start Start number of the cell in the column.
 	  \param length The number of cells to retrieve.
+	  \param Output character vector of values.
 	  
-	  \return A character vector of values.
 	 */
-    std::vector< std::complex<char> > getSubbandData_Y( int subband, int start, int length );
+    void getSubbandData_Y( int subband,
+	                       int start,
+				           int length,
+					       std::vector< std::complex<char> > &values );
+
 
     /*!
       \brief Provide a summary of the object's interal parameters

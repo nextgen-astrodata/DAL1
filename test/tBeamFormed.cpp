@@ -39,11 +39,13 @@
 int main()
 {
 
-  DAL::BeamFormed * bf = new DAL::BeamFormed(FILENAME);
+  DAL::BeamFormed * bf;
+  bf = new DAL::BeamFormed(FILENAME);
 
   bf->summary();
 
-  DAL::BeamGroup * beam = bf->getBeam( 0 );
+  DAL::BeamGroup * beam;
+  beam = bf->getBeam( 0 );
 
 //   std::vector<std::string> sources = bf->sources();
 

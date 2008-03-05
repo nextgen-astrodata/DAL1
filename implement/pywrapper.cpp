@@ -30,7 +30,10 @@
 #include "dalGroup.h"
 #include "dalAttribute.h"
 #include "dalDataset.h"
+#include "BeamFormed.h"
 #include <num_util.h>
+
+using namespace DAL;
 
 namespace { const char* rcsid = "$Id: pywrapper.cpp 39 2007-02-01 02:54:54Z joe $"; }
 using namespace boost::python;
@@ -44,13 +47,13 @@ BOOST_PYTHON_MODULE(pydal)
 
     bpl::class_<dalDataset>("dalDataset")
 	.def(bpl::init<char*, string>())
-        .def("open", &dalDataset::open, bpl::arg("datasetname"),
-		"Opens a dataset.")
-        .def("close", &dalDataset::close, "Closes a dataset.")
-        .def("getType", &dalDataset::getType, "Get the file type of dataset.")
+    .def("open", &dalDataset::open, bpl::arg("datasetname"),
+         "Opens a dataset.")
+    .def("close", &dalDataset::close, "Closes a dataset.")
+    .def("getType", &dalDataset::getType, "Get the file type of dataset.")
 	.def("createTable", &dalDataset::ct1_boost,
-		bpl::return_value_policy<bpl::manage_new_object>(),
-		"Create a new table in the dataset.")
+		 bpl::return_value_policy<bpl::manage_new_object>(),
+		 "Create a new table in the dataset.")
 	.def("createTable", &dalDataset::ct2_boost,
 		bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createGroup", &dalDataset::createGroup,
@@ -86,14 +89,14 @@ BOOST_PYTHON_MODULE(pydal)
 	.def(bpl::init<>())
 	.def(bpl::init<char*, void*>())
  	.def(bpl::init<hid_t,char*>())
-        .def("getName", &dalGroup::getName)
-        .def("setName", &dalGroup::setName)
-        .def("getId", &dalGroup::getId)
-        .def("getAttributes", &dalGroup::getAttributes)
-        .def("setAttribute_string", &dalGroup::setAttribute_string)
-        .def("setAttribute_int", &dalGroup::setAttribute_int)
-        .def("setAttribute_uint", &dalGroup::setAttribute_uint)
-        .def("setAttribute_double", &dalGroup::setAttribute_double)
+    .def("getName", &dalGroup::getName)
+    .def("setName", &dalGroup::setName)
+    .def("getId", &dalGroup::getId)
+    .def("getAttributes", &dalGroup::getAttributes)
+    .def("setAttribute_string", &dalGroup::setAttribute_string)
+    .def("setAttribute_int", &dalGroup::setAttribute_int)
+    .def("setAttribute_uint", &dalGroup::setAttribute_uint)
+    .def("setAttribute_double", &dalGroup::setAttribute_double)
 	.def("getAttribute", &dalGroup::getAttribute,
 		bpl::return_value_policy<bpl::return_opaque_pointer>())
 	.def("createIntArray", &dalGroup::cia_boost1,
@@ -128,10 +131,10 @@ BOOST_PYTHON_MODULE(pydal)
 		bpl::return_value_policy<bpl::return_opaque_pointer>())
 	.def("getAttribute", &dalTable::getAttribute,
 		bpl::return_value_policy<bpl::return_opaque_pointer>())
-        .def("setAttribute_string", &dalTable::setAttribute_string)
-        .def("setAttribute_int", &dalTable::setAttribute_int)
-        .def("setAttribute_uint", &dalTable::setAttribute_uint)
-        .def("setAttribute_double", &dalTable::setAttribute_double)
+    .def("setAttribute_string", &dalTable::setAttribute_string)
+    .def("setAttribute_int", &dalTable::setAttribute_int)
+    .def("setAttribute_uint", &dalTable::setAttribute_uint)
+    .def("setAttribute_double", &dalTable::setAttribute_double)
 	.def("findAttribute", &dalTable::findAttribute)
 	.def("getNumberOfRows", &dalTable::getNumberOfRows)
 #ifdef WITH_CASA
@@ -173,5 +176,13 @@ BOOST_PYTHON_MODULE(pydal)
     bpl::class_<dalData>("dalData")
 	.def(bpl::init<>())
 	.def("get", &dalData::get_boost)
+    ;
+
+    bpl::class_<BeamFormed>("BeamFormed")
+	.def(bpl::init<>())
+	.def(bpl::init<string>())
+	.def("summary", &BeamFormed::summary_boost)
+	.def("beams", &BeamFormed::beams_boost)
+	.def("filename", &BeamFormed::filename)
     ;
 }

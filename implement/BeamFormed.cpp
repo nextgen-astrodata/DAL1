@@ -645,5 +645,33 @@ namespace DAL {
     return status;
   }
 
+#ifdef PYTHON
+/************************************************************************
+ *
+ * The following functions are boost wrappers to allow some previously
+ *   defined functions to be easily called from a python prompt.
+ *
+ ************************************************************************/
+
+void BeamFormed::summary_boost()
+{
+  summary();
+}
+
+bpl::list BeamFormed::beams_boost()
+{
+   bpl::list beams_list;
+
+   std::vector<std::string> beams_vec;
+   
+   beams_vec = beams();
+   
+   for( unsigned int ii; ii<beams_vec.size(); ii++ )
+     beams_list.append( string(beams_vec[ii]) );
+   
+   return beams_list;
+}
+
+#endif
 
 } // end namespace DAL

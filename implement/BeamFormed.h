@@ -176,6 +176,19 @@ namespace DAL {
 
     std::string notes();
 
+/************************************************************************
+ *
+ * The following functions are boost wrappers to allow some previously
+ *   defined functions to be easily called from a python prompt.
+ *
+ ************************************************************************/
+#ifdef PYTHON
+
+    void summary_boost();
+    bpl::list beams_boost();
+	
+#endif
+
   };
 
 } // end namespace DAL
