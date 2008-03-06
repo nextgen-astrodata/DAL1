@@ -86,7 +86,7 @@ class dalGroup{
           \param groupname The name of the group to create.
           \param file A pointer to the file where you want to create the group.
          */
-	dalGroup( char* groupname, void * file );
+	dalGroup( const char * groupname, void * file );
 
 	/*!
           \brief Create a subgroup.
@@ -96,7 +96,7 @@ class dalGroup{
           \param group_id The parent group identifier.
           \param gname The name of the subgroup.
          */
-	dalGroup( hid_t group_id, char* gname );
+	dalGroup( hid_t group_id, const char * gname );
 
 	/*!
           \brief Open an existing group.

@@ -22,8 +22,6 @@ message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 ## Build the test programs
 
 set (tests
-  tsread
-  tswrite
   msread
   mswrite
   tbb2h5

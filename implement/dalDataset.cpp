@@ -439,7 +439,7 @@ void dalDataset::setAttribute_double( string attrname, double * data, int size )
  *  Creates a group (mainly for hdf5)
  *
  *****************************************************************/
-dalGroup * dalDataset::createGroup( char* gname )
+dalGroup * dalDataset::createGroup( const char * gname )
 {
     if ( type == H5TYPE )
    {
@@ -448,7 +448,7 @@ dalGroup * dalDataset::createGroup( char* gname )
 	   return lg;
    }
    else
-   	return NULL;  
+   	return NULL;
 }
 
 /****************************************************************

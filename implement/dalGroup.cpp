@@ -38,7 +38,7 @@ herr_t attr_info (hid_t loc_id,
 dalGroup::dalGroup() {
 }
 
-dalGroup::dalGroup( char* gname, void * voidfile ) {
+dalGroup::dalGroup( const char * gname, void * voidfile ) {
 
 
 	hid_t * lclfile = (hid_t*)voidfile; // H5File object
@@ -51,7 +51,7 @@ dalGroup::dalGroup( char* gname, void * voidfile ) {
 // cout << "group_id " << group_id << endl;
 }
 
-dalGroup::dalGroup( hid_t group_id, char* gname ) {
+dalGroup::dalGroup( hid_t group_id, const char * gname ) {
 	group_id = H5Gcreate(group_id, gname, 0);
 }
 

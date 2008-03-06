@@ -288,7 +288,7 @@ class dalDataset{
 	  \param groupname 
 	  \return dalGroup 
 	*/
-	dalGroup * createGroup( char* groupname );
+	dalGroup * createGroup( const char * groupname );
 
     /*!
 	  \brief Open a table (that's not in a group) by name.

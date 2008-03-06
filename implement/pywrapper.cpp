@@ -34,8 +34,6 @@
 #include <num_util.h>
 
 using namespace DAL;
-
-namespace { const char* rcsid = "$Id: pywrapper.cpp 39 2007-02-01 02:54:54Z joe $"; }
 using namespace boost::python;
 
 BOOST_PYTHON_MODULE(pydal)
