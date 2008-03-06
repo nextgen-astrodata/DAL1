@@ -665,9 +665,11 @@ bpl::list BeamFormed::beams_boost()
    std::vector<std::string> beams_vec;
    
    beams_vec = beams();
-   
-   for( unsigned int ii; ii<beams_vec.size(); ii++ )
-     beams_list.append( string(beams_vec[ii]) );
+
+   for( unsigned int ii=0; ii<beams_vec.size(); ii++ )
+   {
+     beams_list.append( beams_vec[ii] );
+   }
    
    return beams_list;
 }

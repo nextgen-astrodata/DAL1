@@ -179,8 +179,63 @@ BOOST_PYTHON_MODULE(pydal)
     bpl::class_<BeamFormed>("BeamFormed")
 	.def(bpl::init<>())
 	.def(bpl::init<string>())
-	.def("summary", &BeamFormed::summary_boost)
-	.def("beams", &BeamFormed::beams_boost)
-	.def("filename", &BeamFormed::filename)
+	.def("summary", &BeamFormed::summary_boost,
+	     "Print a summary of the file contents")
+	.def("beams", &BeamFormed::beams_boost,
+	     "Return a list of the beams")
+	.def("filename", &BeamFormed::filename,
+	     "Return the filename from the header")
+	.def("telescope", &BeamFormed::telescope,
+	     "Return telescope the from the header")
+	.def("nstations", &BeamFormed::nstations,
+	     "Return the nstations from the header")
+	.def("datatype", &BeamFormed::datatype,
+	     "Return the datatype from the header")
+	.def("emband", &BeamFormed::emband,
+	     "Return the emband from the header")
+	.def("observation_id", &BeamFormed::observation_id,
+	     "Return the observation_id from the header")
+	.def("proj_id", &BeamFormed::proj_id,
+	     "Return the proj_id from the header")
+	.def("point_ra", &BeamFormed::point_ra,
+	     "Return the point_ra from the header")
+	.def("point_dec", &BeamFormed::point_dec,
+	     "Return the point_dec from the header")
+	.def("observer", &BeamFormed::observer,
+	     "Return the observer from the header")
+	.def("epoch_mjd", &BeamFormed::epoch_mjd,
+	     "Return the epoch_mjd from the header")
+	.def("epoch_date", &BeamFormed::epoch_date,
+	     "Return the epoch_date from the header")
+	.def("epoch_utc", &BeamFormed::epoch_utc,
+	     "Return the epoch_utc from the header")
+	.def("epoch_lst", &BeamFormed::epoch_lst,
+	     "Return the epoch_lst from the header")
+	.def("main_beam_diam", &BeamFormed::main_beam_diam,
+	     "Return the main_beam_diam from the header")
+	.def("center_freq", &BeamFormed::center_freq,
+	     "Return the center_freq from the header")
+	.def("bandwidth", &BeamFormed::bandwidth,
+	     "Return the bandwidth from the header")
+	.def("integration_time", &BeamFormed::integration_time,
+	     "Return the integration_time from the header")
+	.def("breaks", &BeamFormed::breaks,
+	     "Return the breaks from the header")
+	.def("dispersion_measure", &BeamFormed::dispersion_measure,
+	     "Return the dispersion_measure from the header")
+	.def("number_of_samples", &BeamFormed::number_of_samples,
+	     "Return the number_of_samples from the header")
+	.def("sampling_time", &BeamFormed::sampling_time,
+	     "Return the sampling_time from the header")
+	.def("number_of_beams", &BeamFormed::number_of_beams,
+	     "Return the number_of_beams from the header")
+	.def("sub_beam_diameter", &BeamFormed::sub_beam_diameter,
+	     "Return the sub_beam_diameter from the header")
+	.def("weather_temperature", &BeamFormed::weather_temperature,
+	     "Return the weather_temperature from the header")
+	.def("weather_humidity", &BeamFormed::weather_humidity,
+	     "Return the weather_humidity from the header")
+	.def("station_temperatures", &BeamFormed::station_temperatures,
+	     "Return the station_temperatures from the header")
     ;
 }
