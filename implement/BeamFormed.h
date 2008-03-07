@@ -45,14 +45,14 @@ namespace DAL {
 
 /*!
    \class BeamFormed
-    
+
    \ingroup DAL
-    
+
    \brief High-level interface between beam-formed data and the DAL
-    
+
    \author Joseph Masters
  */
- 
+
   class BeamFormed {
 
   private:
@@ -65,7 +65,7 @@ namespace DAL {
 
     //! DAL Dataset object to handle the basic I/O
     dalDataset *dataset_p;
- 
+
     bool init();
 
     //! Vector of beam groups within the dataset
@@ -75,15 +75,15 @@ namespace DAL {
 
   public:
 
-    
+
     /*!
       \brief Empty constructor
     */
     BeamFormed();
-    
+
     /*!
       \brief Argumented constructor
-      
+
       \param filename -- Name of the file from which to read in the data
     */
     BeamFormed(std::string const &filename);
@@ -92,7 +92,7 @@ namespace DAL {
       \brief Destructor
     */
     ~BeamFormed();
-	
+
     /*!
       \brief Provide a summary of the internal status
     */
@@ -125,7 +125,7 @@ namespace DAL {
 
       \return telescope -- The name of the telescope with which the data were
               recorded; returns an empty string in case no keyword value could
-	      be extracted.
+              be extracted.
     */
     std::string telescope();
 
@@ -136,7 +136,7 @@ namespace DAL {
     std::string emband();
 
     std::vector<std::string> sources();
-	
+
     std::string observation_id();
 
     std::string proj_id();
@@ -186,7 +186,7 @@ namespace DAL {
 
     void summary_boost();
     bpl::list beams_boost();
-	
+
 #endif
 
   };

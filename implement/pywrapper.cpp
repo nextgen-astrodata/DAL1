@@ -31,7 +31,7 @@
 #include "dalAttribute.h"
 #include "dalDataset.h"
 #include "BeamFormed.h"
-#include <num_util.h>
+#include "BeamGroup.h"
 
 using namespace DAL;
 using namespace boost::python;
@@ -45,40 +45,40 @@ BOOST_PYTHON_MODULE(pydal)
 
     bpl::class_<dalDataset>("dalDataset")
 	.def(bpl::init<char*, string>())
-    .def("open", &dalDataset::open, bpl::arg("datasetname"),
-         "Opens a dataset.")
-    .def("close", &dalDataset::close, "Closes a dataset.")
-    .def("getType", &dalDataset::getType, "Get the file type of dataset.")
+	.def("open", &dalDataset::open, bpl::arg("datasetname"),
+	     "Opens a dataset.")
+	.def("close", &dalDataset::close, "Closes a dataset.")
+	.def("getType", &dalDataset::getType, "Get the file type of dataset.")
 	.def("createTable", &dalDataset::ct1_boost,
-		 bpl::return_value_policy<bpl::manage_new_object>(),
-		 "Create a new table in the dataset.")
+	     bpl::return_value_policy<bpl::manage_new_object>(),
+	    "Create a new table in the dataset.")
 	.def("createTable", &dalDataset::ct2_boost,
-		bpl::return_value_policy<bpl::manage_new_object>())
+	     bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createGroup", &dalDataset::createGroup,
-		bpl::return_value_policy<bpl::manage_new_object>())
+	     bpl::return_value_policy<bpl::manage_new_object>())
 	.def("openTable", &dalDataset::ot1_boost,
-		bpl::return_value_policy<bpl::manage_new_object>())
+	     bpl::return_value_policy<bpl::manage_new_object>())
 	.def("openTable", &dalDataset::ot2_boost,
-		bpl::return_value_policy<bpl::manage_new_object>())
+	     bpl::return_value_policy<bpl::manage_new_object>())
 	.def("openGroup", &dalDataset::openGroup,
-		bpl::return_value_policy<bpl::manage_new_object>())
+	     bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createIntArray", &dalDataset::cia_boost1,
-		bpl::return_value_policy<bpl::manage_new_object>())
+	     bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createIntArray", &dalDataset::cia_boost2,
-		bpl::return_value_policy<bpl::manage_new_object>())
+	     bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createIntArray", &dalDataset::cia_boost_numarray1,
-		bpl::return_value_policy<bpl::manage_new_object>())
+	     bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createIntArray", &dalDataset::cia_boost_numarray2,
-		bpl::return_value_policy<bpl::manage_new_object>())
+	     bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createFloatArray", &dalDataset::cfa_boost,
-		bpl::return_value_policy<bpl::manage_new_object>())
+	     bpl::return_value_policy<bpl::manage_new_object>())
 	.def("createFloatArray", &dalDataset::cfa_boost_numarray,
-		bpl::return_value_policy<bpl::manage_new_object>())
+	     bpl::return_value_policy<bpl::manage_new_object>())
 	.def("readIntArray", &dalDataset::ria_boost)
 	.def("readFloatArray", &dalDataset::rfa_boost)
 	.def("createArray", &dalDataset::createArray,
-		bpl::return_value_policy<bpl::manage_new_object>(),
-		"Create an array from a dalData object")
+	     bpl::return_value_policy<bpl::manage_new_object>(),
+	     "Create an array from a dalData object")
 	.def("setFilter", &dalDataset::setFilter_boost1)
 	.def("setFilter", &dalDataset::setFilter_boost2)
     ;
@@ -86,15 +86,15 @@ BOOST_PYTHON_MODULE(pydal)
     bpl::class_<dalGroup>("dalGroup")
 	.def(bpl::init<>())
 	.def(bpl::init<char*, void*>())
- 	.def(bpl::init<hid_t,char*>())
-    .def("getName", &dalGroup::getName)
-    .def("setName", &dalGroup::setName)
-    .def("getId", &dalGroup::getId)
-    .def("getAttributes", &dalGroup::getAttributes)
-    .def("setAttribute_string", &dalGroup::setAttribute_string)
-    .def("setAttribute_int", &dalGroup::setAttribute_int)
-    .def("setAttribute_uint", &dalGroup::setAttribute_uint)
-    .def("setAttribute_double", &dalGroup::setAttribute_double)
+	.def(bpl::init<hid_t,char*>())
+	.def("getName", &dalGroup::getName)
+	.def("setName", &dalGroup::setName)
+	.def("getId", &dalGroup::getId)
+	.def("getAttributes", &dalGroup::getAttributes)
+	.def("setAttribute_string", &dalGroup::setAttribute_string)
+	.def("setAttribute_int", &dalGroup::setAttribute_int)
+	.def("setAttribute_uint", &dalGroup::setAttribute_uint)
+	.def("setAttribute_double", &dalGroup::setAttribute_double)
 	.def("getAttribute", &dalGroup::getAttribute,
 		bpl::return_value_policy<bpl::return_opaque_pointer>())
 	.def("createIntArray", &dalGroup::cia_boost1,
@@ -113,7 +113,7 @@ BOOST_PYTHON_MODULE(pydal)
     ;
     bpl::class_<dalTable>("dalTable")
 	.def(bpl::init<char*>())
-        .def("getAttributes", &dalTable::getAttributes)
+	.def("getAttributes", &dalTable::getAttributes)
 	.def("openTable", &dalTable::ot_hdf5)
 	.def("openTable", &dalTable::ot_nonMStable)
 	.def("createTable", &dalTable::createTable)
@@ -128,18 +128,18 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("readRows", &dalTable::readRows,
 		bpl::return_value_policy<bpl::return_opaque_pointer>())
 	.def("getAttribute", &dalTable::getAttribute,
-		bpl::return_value_policy<bpl::return_opaque_pointer>())
-    .def("setAttribute_string", &dalTable::setAttribute_string)
-    .def("setAttribute_int", &dalTable::setAttribute_int)
-    .def("setAttribute_uint", &dalTable::setAttribute_uint)
-    .def("setAttribute_double", &dalTable::setAttribute_double)
+	     bpl::return_value_policy<bpl::return_opaque_pointer>())
+	.def("setAttribute_string", &dalTable::setAttribute_string)
+	.def("setAttribute_int", &dalTable::setAttribute_int)
+	.def("setAttribute_uint", &dalTable::setAttribute_uint)
+	.def("setAttribute_double", &dalTable::setAttribute_double)
 	.def("findAttribute", &dalTable::findAttribute)
 	.def("getNumberOfRows", &dalTable::getNumberOfRows)
 #ifdef WITH_CASA
 	.def("setFilter", &dalTable::setFilter_boost1)
 	.def("setFilter", &dalTable::setFilter_boost2)
 	.def("getColumn", &dalTable::getColumn,
-		bpl::return_value_policy<bpl::manage_new_object>())
+	     bpl::return_value_policy<bpl::manage_new_object>())
 #endif
     ;
 
@@ -167,13 +167,30 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("isScalar", &dalColumn::isScalar)
 	.def("isArray", &dalColumn::isArray)
 #ifdef WITH_CASA
- 	.def("data", &dalColumn::data_boost)
+	.def("data", &dalColumn::data_boost)
 #endif
     ;
 
     bpl::class_<dalData>("dalData")
 	.def(bpl::init<>())
 	.def("get", &dalData::get_boost)
+    ;
+
+    bpl::class_<BeamGroup>("BeamGroup")
+	.def(bpl::init<>())
+	.def("summary", &BeamGroup::summary_boost)
+	.def("ra", &BeamGroup::ra,
+	     "Return ra value for the beam")
+	.def("dec", &BeamGroup::dec,
+	     "Return dec value for the beam")
+	.def("n_subbands", &BeamGroup::n_subbands,
+	     "Return number of subbands")
+	.def("getSubbandData_X", &BeamGroup::getSubbandData_X_boost,
+	     "Get a numpy array of values for a given subband")
+	.def("getSubbandData_Y", &BeamGroup::getSubbandData_Y_boost,
+	     "Get a numpy array of values for a given subband")
+	.def("getSubbandData_XY", &BeamGroup::getSubbandData_XY_boost,
+	     "Get a numpy array of values for a given subband")
     ;
 
     bpl::class_<BeamFormed>("BeamFormed")
@@ -237,5 +254,7 @@ BOOST_PYTHON_MODULE(pydal)
 	     "Return the weather_humidity from the header")
 	.def("station_temperatures", &BeamFormed::station_temperatures,
 	     "Return the station_temperatures from the header")
+	.def("getBeam", &BeamFormed::getBeam,
+	     bpl::return_value_policy<bpl::manage_new_object>())
     ;
 }

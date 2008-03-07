@@ -48,15 +48,15 @@ namespace DAL {
 
 /*!
    \class BeamGroup
-    
+
    \ingroup DAL
-    
+
    \brief High-level interface between beam-formed data and the DAL
-    
+
    \author Joseph Masters
 
  */
- 
+
   class BeamGroup {
 
   private:
@@ -64,11 +64,11 @@ namespace DAL {
     //! HDF5 file handle ID
     hid_t H5groupID_p;
 
-    //! Dataset object of the Data Access Library 
-    dalDataset dataset_p;
-
     //! Group object of the Data Access Library 
     dalGroup *group_p;
+
+    //! Dataset object of the Data Access Library 
+    dalDataset dataset_p;
 
     //! HDF5 file handle ID
     hid_t H5fileID_p;
@@ -80,97 +80,97 @@ namespace DAL {
 
     /*!
       \brief Default constructor
-	  
-	  Default constructor
+
+      Default constructor
     */
     BeamGroup();
 
     /*!
       \brief Argumented constructor
-	  
-	  Argumented constructor
-	  
-	  \param dataset The dalDataset the the group belongs to.
-	  \param name The name of the group.
+
+      Argumented constructor
+
+      \param dataset The dalDataset the the group belongs to.
+      \param name The name of the group.
     */
     BeamGroup ( dalDataset &dataset,
-	            std::string const &name );
+                std::string const &name );
 
     /*!
       \brief Initialize the object's internal parameters
-	  
-	  Initialize the object's internal parameters
+
+      Initialize the object's internal parameters
     */
     void init();
 
     /*!
-	  \brief Initialize the beam group values.
-	  
-	  Initialize the beam group with some real values.
-	  
-	  \param dataset The dalDataset the the group belongs to.
-	  \param name The name of the group.
-     */	  
+     \brief Initialize the beam group values.
+
+     Initialize the beam group with some real values.
+
+     \param dataset The dalDataset the the group belongs to.
+     \param name The name of the group.
+     */
     bool setBeamGroup ( dalDataset &dataset,
-	                    std::string const &name);
+                        std::string const &name);
 
 
     /*!
-	  \brief Get X and Y columns data for a given subband
-	  
-	  Get X and Y columns data for a given subband
-	  
-	  \param subband Subband to get the data from.
-	  \param start Start number of the cell in the column.
-	  \param length The number of cells to retrieve.
-	  \param Output character vector of X values.
-	  \param Output character vector of Y values.
-	  
-	 */
+     \brief Get X and Y columns data for a given subband
+
+     Get X and Y columns data for a given subband
+
+     \param subband Subband to get the data from.
+     \param start Start number of the cell in the column.
+     \param length The number of cells to retrieve.
+     \param Output character vector of X values.
+     \param Output character vector of Y values.
+
+    */
     void getSubbandData_XY( int subband,
-	                        int start,
-							int length,
-							std::vector< std::complex<char> > &x_values,
-							std::vector< std::complex<char> > &y_values );
+                            int start,
+                            int length,
+                            std::vector< std::complex<char> > &x_values,
+                            std::vector< std::complex<char> > &y_values );
 
     /*!
-	  \brief Get X column data for a given subband
-	  
-	  Get X column data for a given subband
-	  
-	  \param subband Subband to get the data from.
-	  \param start Start number of the cell in the column.
-	  \param length The number of cells to retrieve.
-	  \param Output character vector of values.
-	  
-	 */
+     \brief Get X column data for a given subband
+
+      Get X column data for a given subband
+
+     \param subband Subband to get the data from.
+     \param start Start number of the cell in the column.
+     \param length The number of cells to retrieve.
+     \param Output character vector of values.
+
+    */
     void getSubbandData_X( int subband,
-	                       int start,
-				           int length,
-					       std::vector< std::complex<char> > &values );
+                           int start,
+                           int length,
+                           std::vector< std::complex<char> > &values );
 
 
     /*!
-	  \brief Get Y column data for a given subband
-	  
-	  Get Y column data for a given subband
-	  
-	  \param subband Subband to get the data from.
-	  \param start Start number of the cell in the column.
-	  \param length The number of cells to retrieve.
-	  \param Output character vector of values.
-	  
-	 */
+     \brief Get Y column data for a given subband
+
+     Get Y column data for a given subband
+
+     \param subband Subband to get the data from.
+     \param start Start number of the cell in the column.
+     \param length The number of cells to retrieve.
+     \param Output character vector of values.
+
+   */
     void getSubbandData_Y( int subband,
-	                       int start,
-				           int length,
-					       std::vector< std::complex<char> > &values );
+                           int start,
+                           int length,
+                           std::vector< std::complex<char> > &values );
 
 
     /*!
       \brief Provide a summary of the object's interal parameters
-	  
-	  Provide a summary of the object's interal parameters
+
+      Provide a summary of the object's interal parameters
     */
     inline void summary()
     {
@@ -178,12 +178,12 @@ namespace DAL {
     }
 
     /*!
-	  \brief Get a subband object from the beam.
-	  
-	  Get a subband object from the beam.
-	  
-	  \param subband Number of the subband you want to retrieve.
-	 */
+     \brief Get a subband object from the beam.
+
+     Get a subband object from the beam.
+
+     \param subband Number of the subband you want to retrieve.
+    */
     BeamSubband * getSubband( int subband );
 
     /*!
@@ -214,6 +214,27 @@ namespace DAL {
     */
     int n_subbands ();
 
+/************************************************************************
+ *
+ * The following functions are boost wrappers to allow some previously
+ *   defined functions to be easily called from a python prompt.
+ *
+ ************************************************************************/
+#ifdef PYTHON
+
+    void summary_boost();
+    bpl::numeric::array getSubbandData_X_boost( int subband,
+                                                int start,
+                                                int length );
+
+    bpl::numeric::array getSubbandData_Y_boost( int subband,
+                                                int start,
+                                                int length );
+
+    bpl::numeric::array getSubbandData_XY_boost( int subband,
+                                                 int start,
+                                                 int length );
+#endif
  }; // end BeamGroup class
 
 } // end DAL namespace

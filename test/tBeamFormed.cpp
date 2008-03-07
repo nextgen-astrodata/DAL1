@@ -20,9 +20,9 @@
 
 /*!
   \file tBeamFormed.cpp
-  
+
   \ingroup DAL
- 
+
   \brief Test program for beam-formed functionality.
 
   \author Joseph Masters

@@ -31,10 +31,6 @@
 #include "dalColumn.h"
 #endif
 
-#ifdef PYTHON
-#include <num_util.h>
-#endif
-
 dalColumn::dalColumn()
 {}
 

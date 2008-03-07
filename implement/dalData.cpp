@@ -29,10 +29,6 @@
 #include "dalData.h"
 #endif
 
-#ifdef PYTHON
-#include <num_util.h>
-#endif
-
 unsigned long dalData::fortran_index(long idx1, long idx2, long idx3)
 {
    vector<long> indices;

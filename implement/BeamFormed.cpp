@@ -36,7 +36,10 @@ namespace DAL {
 
   BeamFormed::~BeamFormed()
   {
-    dataset_p->close();
+//      for (uint beam(0); beam<beamGroups_p.size(); beam++) {
+//         beamGroups_p[beam].group_p->close();
+//      }
+//      dataset_p->close();
   }
 
   void BeamFormed::summary (std::ostream &os, bool const &listBeams)
@@ -77,7 +80,7 @@ namespace DAL {
 
     if (listBeams) {
       for (uint beam(0); beam<beamGroups_p.size(); beam++) {
-	beamGroups_p[beam].summary();
+        beamGroups_p[beam].summary();
       }
     }
 
@@ -85,7 +88,9 @@ namespace DAL {
 
   BeamGroup * BeamFormed::getBeam( int beam )
   {
-     return &beamGroups_p[ beam ];
+    std::vector<std::string> beamGroups = beams();
+    BeamGroup * group = new BeamGroup((*dataset_p), beamGroups[beam]);
+    return group;
   }
 
   std::vector<std::string> BeamFormed::beams()
@@ -93,6 +98,7 @@ namespace DAL {
     unsigned int nofBeams (100);
     char stationstr[10];
     std::vector<std::string> beamGroups;
+    dalGroup * beamgroup;
 
     for (unsigned int station(0); station<nofBeams; station++) {
       /* create ID string for the group */
@@ -100,13 +106,17 @@ namespace DAL {
       /* Check if group of given name exists in the file; according to the
 	 documentation of the DAL, the openGroup() function returns a NULL
 	 pointer in case no group of the given name exists. */
-      if (dataset_p->openGroup(stationstr) != NULL) {
-	beamGroups.push_back(stationstr);
+      if (NULL != (beamgroup = dataset_p->openGroup(stationstr))) {
+        beamGroups.push_back(stationstr);
+        if ( beamgroup->close() )
+          cerr << "Problem with group close." << endl;
       }
     }
 
+    delete beamgroup;
     return beamGroups;
   }
+
 /*
   void BeamFormed::beams()
   {
@@ -120,6 +130,7 @@ namespace DAL {
      }
   }
 */
+
   std::string BeamFormed::filename ()
   {
     std::string attribute_filename ("");
@@ -522,12 +533,14 @@ namespace DAL {
     int number_of_beams;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
-	int * number_of_beams_p = reinterpret_cast<int*>(dataset_p->getAttribute("NUMBER_OF_BEAMS"));
-	number_of_beams = *number_of_beams_p;
+        int * number_of_beams_p;
+        number_of_beams_p =
+          reinterpret_cast<int*>(dataset_p->getAttribute("NUMBER_OF_BEAMS"));
+        number_of_beams = *number_of_beams_p;
 
       } catch (std::string message) {
-	std::cerr << "-- Error extracting attribute NUMBER_OF_BEAMS" << endl;
-	number_of_beams = -1;
+        std::cerr << "-- Error extracting attribute NUMBER_OF_BEAMS" << endl;
+        number_of_beams = -1;
       }
     }
     return number_of_beams;
@@ -540,12 +553,14 @@ namespace DAL {
     int sub_beam_diameter;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
-	int * sub_beam_diameter_p = reinterpret_cast<int*>(dataset_p->getAttribute("SUB_BEAM_DIAMETER"));
-	sub_beam_diameter = *sub_beam_diameter_p;
+        int * sub_beam_diameter_p;
+        sub_beam_diameter_p =
+          reinterpret_cast<int*>(dataset_p->getAttribute("SUB_BEAM_DIAMETER"));
+        sub_beam_diameter = *sub_beam_diameter_p;
 
       } catch (std::string message) {
-	std::cerr << "-- Error extracting attribute SUB_BEAM_DIAMETER" << endl;
-	sub_beam_diameter = -1;
+        std::cerr << "-- Error extracting attribute SUB_BEAM_DIAMETER" << endl;
+        sub_beam_diameter = -1;
       }
     }
     return sub_beam_diameter;
@@ -558,12 +573,14 @@ namespace DAL {
     int weather_temperature;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
-	int * weather_temperature_p = reinterpret_cast<int*>(dataset_p->getAttribute("WEATHER_TEMPERATURE"));
-	weather_temperature = *weather_temperature_p;
+        int * weather_temperature_p;
+        weather_temperature_p =
+         reinterpret_cast<int*>(dataset_p->getAttribute("WEATHER_TEMPERATURE"));
+        weather_temperature = *weather_temperature_p;
 
       } catch (std::string message) {
-	std::cerr << "-- Error extracting attribute WEATHER_TEMPERATURE" << endl;
-	weather_temperature = -1;
+        std::cerr << "-- Error extracting attribute WEATHER_TEMPERATURE" << endl;
+        weather_temperature = -1;
       }
     }
     return weather_temperature;
@@ -576,12 +593,14 @@ namespace DAL {
     int weather_humidity;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
-	int * weather_humidity_p = reinterpret_cast<int*>(dataset_p->getAttribute("WEATHER_HUMIDITY"));
-	weather_humidity = *weather_humidity_p;
+        int * weather_humidity_p;
+        weather_humidity_p =
+           reinterpret_cast<int*>(dataset_p->getAttribute("WEATHER_HUMIDITY"));
+        weather_humidity = *weather_humidity_p;
 
       } catch (std::string message) {
-	std::cerr << "-- Error extracting attribute WEATHER_HUMIDITY" << endl;
-	weather_humidity = -1;
+        std::cerr << "-- Error extracting attribute WEATHER_HUMIDITY" << endl;
+        weather_humidity = -1;
       }
     }
     return weather_humidity;
@@ -594,12 +613,14 @@ namespace DAL {
     int station_temperatures;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
-	int * station_temperatures_p = reinterpret_cast<int*>(dataset_p->getAttribute("TSYS"));
-	station_temperatures = *station_temperatures_p;
+        int * station_temperatures_p;
+        station_temperatures_p =
+           reinterpret_cast<int*>(dataset_p->getAttribute("TSYS"));
+        station_temperatures = *station_temperatures_p;
 
       } catch (std::string message) {
-	std::cerr << "-- Error extracting attribute TSYS" << endl;
-	station_temperatures = -1;
+         std::cerr << "-- Error extracting attribute TSYS" << endl;
+         station_temperatures = -1;
       }
     }
     return station_temperatures;
@@ -616,7 +637,7 @@ namespace DAL {
     dataset_p = new dalDataset();
     if (dataset_p->open(filename_p.c_str())) {
       std::cerr << "[BeamFormed::init] Error opening file into dalDataset!"
-		<< std::endl;
+                << std::endl;
       return false;
     }
 
@@ -631,14 +652,14 @@ namespace DAL {
     if (beamGroups.size() > 0) {
 
       for (uint beam(0); beam<beamGroups.size(); beam++) {
-	// assemble internal list of beam groups
-	BeamGroup group ((*dataset_p), beamGroups[beam]);
-	beamGroups_p.push_back(group);
+        // assemble internal list of beam groups
+        BeamGroup group((*dataset_p), beamGroups[beam]);
+        beamGroups_p.push_back(group);
       }
 
     } else {
       std::cerr << "[BeamFormed::init] No beam group found in data set!"
-		<< std::endl;
+                << std::endl;
       status = false;
     }
 
@@ -663,14 +684,14 @@ bpl::list BeamFormed::beams_boost()
    bpl::list beams_list;
 
    std::vector<std::string> beams_vec;
-   
+
    beams_vec = beams();
 
    for( unsigned int ii=0; ii<beams_vec.size(); ii++ )
    {
      beams_list.append( beams_vec[ii] );
    }
-   
+
    return beams_list;
 }
 

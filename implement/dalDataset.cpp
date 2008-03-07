@@ -29,10 +29,6 @@
 #include "dalDataset.h"
 #endif
 
-#ifdef PYTHON
-#include <num_util.h>
-#endif
-
 /****************************************************************
  *  Sub-routine to open a FITS file
  *

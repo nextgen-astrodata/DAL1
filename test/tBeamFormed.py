@@ -1,0 +1,33 @@
+from pydal import *
+
+# The BeamFormed object represents the file.
+#  The parameter is the name of the beam-formed file.
+file = BeamFormed("bf.h5")
+
+# Here's a print to screen summary of the file.
+file.summary()
+
+print file.beams()
+
+# get beam 0
+beam = file.getBeam(0)
+
+# show the beam pointing direction
+print beam.ra()
+print beam.dec()
+beam.summary()
+
+# get X complex data for subband 0, start 0, length 10
+# returns a numpy array
+sb0x = beam.getSubbandData_X( 0, 0, 10 )
+print sb0x
+
+# get Y complex data for subband 0, start 0, length 10
+# returns a numpy array
+sb0y = beam.getSubbandData_Y( 0, 0, 10 )
+print sb0y
+
+# get X and Y complex data for subband 0, start 0, length 10
+# returns a numpy array
+sb0xy = beam.getSubbandData_XY( 0, 0, 10 )
+print sb0xy

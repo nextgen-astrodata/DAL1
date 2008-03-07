@@ -155,7 +155,7 @@ install (TARGETS ${tests}
 
 ## python scripts
 
-install (FILES tdal.py tMS_dal.py uv_coverage.py baseline_intensity.py datacube.py
+install (FILES tdal.py tMS_dal.py uv_coverage.py baseline_intensity.py tBeamFormed.py
   DESTINATION bin
   PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE OWNER_READ GROUP_READ WORLD_READ
 )
