@@ -93,6 +93,19 @@ namespace DAL {
     */
     ~BeamFormed();
 
+
+    /*!
+      \brief Print a list of vector elements
+    */
+    template<class T>
+    void print_vector ( std::ostream& os,
+                         std::vector<T> &vec);
+
+    /*!
+      \brief Get a list of values for a string array attribute
+    */
+   std::vector< std::string > h5get_str_array_attr( std::string attrname,
+                                                    hid_t obj_id );
     /*!
       \brief Provide a summary of the internal status
     */
@@ -111,6 +124,9 @@ namespace DAL {
     */
     std::vector<std::string> beams();
 
+    /*!
+      \brief Get a beam group object
+    */
     BeamGroup * getBeam( int beam );
 
     /*!
@@ -129,21 +145,46 @@ namespace DAL {
     */
     std::string telescope();
 
+    /*!
+      \brief Get the number of stations
+    */
     int nstations();
 
+    /*!
+      \brief Get the datatype
+    */
     std::string datatype();
 
+    /*!
+      \brief Get the emband
+    */
     std::string emband();
 
+    /*!
+      \brief Get the source list
+    */
     std::vector<std::string> sources();
 
+    /*!
+      \brief Get the observation identifier
+    */
     std::string observation_id();
 
+    /*!
+      \brief Get the project identifier
+    */
     std::string proj_id();
 
+    /*!
+      \brief Get the pointing (ra)
+    */
     std::string point_ra();
 
+    /*!
+      \brief Get the pointing (dec)
+    */
     std::string point_dec();
+
     /*!
       \brief Get the name of the observer
 
@@ -152,28 +193,94 @@ namespace DAL {
     */
     std::string observer();
 
+    /*!
+      \brief Get the epoch mjd
+    */
     double epoch_mjd();
 
+    /*!
+      \brief Get the epoch date
+    */
     std::string epoch_date();
 
+    /*!
+      \brief Get the epoch utc
+    */
     std::string epoch_utc();
 
+    /*!
+      \brief Get the epoch lst
+    */
     std::string epoch_lst();
 
+    /*!
+      \brief Get the main beam diameter
+    */
     int main_beam_diam();
-    int center_freq();
-    int bandwidth();
-    double integration_time();
-    int breaks();
-    int dispersion_measure();
-    int number_of_samples();
-    double sampling_time();
-    int number_of_beams();
-    int sub_beam_diameter();
-    int weather_temperature();
-    int weather_humidity();
-    int station_temperatures();
 
+    /*!
+      \brief Get the center frequency
+    */
+    int center_freq();
+
+    /*!
+      \brief Get the bandwidth
+    */
+    int bandwidth();
+
+    /*!
+      \brief Get the integration time
+    */
+    double integration_time();
+
+    /*!
+      \brief Get the number of breaks
+    */
+    int breaks();
+
+    /*!
+      \brief Get the dispersion measure
+    */
+    int dispersion_measure();
+
+    /*!
+      \brief Get the number of samples
+    */
+    int number_of_samples();
+
+    /*!
+      \brief Get the sampling time
+    */
+    double sampling_time();
+
+    /*!
+      \brief Get the number of beams
+    */
+    int number_of_beams();
+
+    /*!
+      \brief Get the sub beam diameter
+    */
+    int sub_beam_diameter();
+
+    /*!
+      \brief Get the weather temperature
+    */
+    int weather_temperature();
+
+    /*!
+      \brief Get the weather humidity
+    */
+    int weather_humidity();
+
+    /*!
+      \brief Get the station temperatures
+    */
+    std::vector<int> station_temperatures();
+
+    /*!
+      \brief Get the notes
+    */
     std::string notes();
 
 /************************************************************************
@@ -186,6 +293,11 @@ namespace DAL {
 
     void summary_boost();
     bpl::list beams_boost();
+    bpl::list source_boost();
+
+    /* utility to turn a vector into a python list */
+    template <class T>
+    bpl::list vector2list( std::vector<T> vec );
 
 #endif
 

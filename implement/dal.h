@@ -130,17 +130,20 @@
 #include <iomanip>  // for cout field width
 #include <cstdio>
 
-/* #include "H5LT.h" */
 #include <H5LT.h>
 
 extern "C" {
-#include "fitsio.h"
+#include <fitsio.h>
 }
 
-#include "convert.h"  // for stringify function
+#include <convert.h>  // for stringify function
 
 #ifndef DALBASETYPES_H
-#include "dalBaseTypes.h"
+#include <dalBaseTypes.h>
+#endif
+
+#ifndef HDF5COMMON_H
+#include <HDF5Common.h>
 #endif
 
 using namespace std;

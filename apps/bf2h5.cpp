@@ -185,8 +185,11 @@ main (int argc, char *argv[]) {
 	dalTable * dataTable0 = dataset->createTable( "SUB0", beamstr );
 	dataTable0->setAttribute_int( "CENTER_FREQUENCY", center_frequency );
 	dataTable0->setAttribute_double( "BANDWIDTH", dataBandwidth );
-	dataTable0->setAttribute_double( "CHANNEL_BANDWIDTH", channel_bandwidth );
-	dataTable0->setAttribute_double( "CHANNEL_CENTER_FREQUENCY", channel_center_freq, 3 );
+	dataTable0->setAttribute_double( "CHANNEL_BANDWIDTH",
+                                         channel_bandwidth );
+	dataTable0->setAttribute_double( "CHANNEL_CENTER_FREQUENCY",
+                                         channel_center_freq,
+                                         3 );
 	dataTable0->addColumn( "X", dal_COMPLEX_CHAR );
 	dataTable0->addColumn( "Y", dal_COMPLEX_CHAR );
 

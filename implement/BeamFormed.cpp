@@ -26,6 +26,70 @@
 
 namespace DAL {
 
+  template<class T>
+  void BeamFormed::print_vector ( std::ostream& os,
+                                  std::vector<T> &vec)
+  {
+    for (uint n(0); n<vec.size(); n++) {
+      os << vec[n] << ", ";
+    }
+  }
+
+  std::vector< std::string >
+  BeamFormed::h5get_str_array_attr( std::string attrname,
+                                    hid_t obj_id )
+  {
+    status = true;
+    hid_t attribute_id (0);
+    std::vector<std::string> lcl_sources;
+    attribute_id = H5Aopen_name( obj_id, attrname.c_str() );
+
+    bool status (true);
+    std::vector<uint> shape;
+
+    // get the shape of the dataspace
+    status = h5get_dataspace_shape( shape, attribute_id );
+
+    if (shape.size() == 1) {
+      // additional local variables
+      hid_t datatype_id  = H5Aget_type (attribute_id);
+      hsize_t dims[1] = { shape[0] };
+
+      char **data_in;
+
+      /* How many strings are in the string array? */
+      if (!(data_in = (char**)malloc(dims[0] * sizeof(char *))))
+        cerr << "ERROR! malloc " << attrname << endl;
+
+      /* Now read the array of strings. The HDF5 library will allocate
+       * space for each string. */
+      if ( H5Aread( attribute_id, datatype_id, data_in ) < 0)
+         cerr << "ERROR! h5aread "  << attrname << endl;
+
+      for (uint ii=0; ii<shape[0]; ii++)
+       lcl_sources.push_back( data_in[ii] );
+
+      for (uint ii=0; ii<shape[0]; ii++)
+        free( data_in[ii] );
+
+      free( data_in );
+
+     /* Close HDF5 stuff. */
+     if (H5Aclose(attribute_id) < 0)
+        cerr << "ERROR! h5aclose " << attrname << endl;
+     if (H5Tclose(datatype_id) < 0)
+        cerr << "ERROR! h5tclose " << attrname << endl;
+
+    } else {
+      cerr << "[h5get_attribute] Wrong shape of attribute dataspace!"
+               << std::endl;
+      status = false;
+    }
+
+    return lcl_sources;
+
+  }
+
   BeamFormed::BeamFormed(){};
 
   BeamFormed::BeamFormed(std::string const &filename)
@@ -51,7 +115,10 @@ namespace DAL {
     os << "-- Number of Stations ... : " << nstations()             << endl;
     os << "-- Datatype ............. : " << datatype()              << endl;
     os << "-- Emband   ............. : " << emband()                << endl;
-    os << "-- Source(s) ............ : " /*<< sources()*/               << endl;
+
+    std::vector< std::string > srcs = sources();
+    os << "-- Source(s) ............ : "; print_vector(os, srcs); os << endl;
+
     os << "-- Observation Id ....... : " << observation_id()        << endl;
     os << "-- Project Id ........... : " << proj_id()               << endl;
 
@@ -71,12 +138,13 @@ namespace DAL {
     os << "-- Dispersion measure ... : " << dispersion_measure()    << endl;
     os << "-- Number of time samples : " << number_of_samples()     << endl;
     os << "-- Sampling time ........ : " << sampling_time()         << endl;
-    os << "-- Notes ................ : " /*<< notes()*/                 << endl;
+    os << "-- Notes ................ : " << notes()                 << endl;
     os << "-- Number of beams ...... : " << number_of_beams()       << endl;
     os << "-- FWHM of the sub-beams  : " << sub_beam_diameter()     << endl;
     os << "-- Weather temperature .. : " << weather_temperature()   << endl;
     os << "-- Weather humidity ..... : " << weather_humidity()      << endl;
-    os << "-- Station temperature(s) : " /*<< station_temperatures()*/  << endl;
+    std::vector< int > temps = station_temperatures();
+    os << "-- Station temperature(s) : "; print_vector(os, temps); os << endl;
 
     if (listBeams) {
       for (uint beam(0); beam<beamGroups_p.size(); beam++) {
@@ -95,12 +163,12 @@ namespace DAL {
 
   std::vector<std::string> BeamFormed::beams()
   {
-    unsigned int nofBeams (100);
+    uint nofBeams (100);
     char stationstr[10];
     std::vector<std::string> beamGroups;
     dalGroup * beamgroup;
 
-    for (unsigned int station(0); station<nofBeams; station++) {
+    for (uint station(0); station<nofBeams; station++) {
       /* create ID string for the group */
       sprintf( stationstr, "beam%03d", station );
       /* Check if group of given name exists in the file; according to the
@@ -124,7 +192,7 @@ namespace DAL {
      if ( lcl_beams.size() > 0 )
      {
        cout << "\nBeams:" << endl;
-       for(unsigned int bb=0; bb<lcl_beams.size(); bb++)
+       for(uint bb=0; bb<lcl_beams.size(); bb++)
          cout << lcl_beams[bb] << endl;
        cout << endl;
      }
@@ -234,16 +302,24 @@ namespace DAL {
 
   std::vector<std::string> BeamFormed::sources()
   {
-    status = true;
-    std::vector<std::string> sources;
-/*    try {
-      status = h5get_attribute ( sources,
-				      attribute_name("SOURCE"),
-				      H5fileID_p );
-    } catch (std::string message) {
-      cerr << message << endl;
-    }*/
-    return sources;
+    return h5get_str_array_attr("SOURCE", H5fileID_p);
+  }
+
+  std::string BeamFormed::notes()
+  {
+    std::string attribute_notes ("");
+
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	char * notes = reinterpret_cast<char*>(dataset_p->getAttribute("NOTES"));
+	attribute_notes = string(notes);
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute NOTES" << endl;
+	attribute_notes = "";
+      }
+    }
+   return attribute_notes;
   }
 
   std::string BeamFormed::observation_id ()
@@ -509,23 +585,6 @@ namespace DAL {
     return sampling_time;
   }
 
-  std::string BeamFormed::notes ()
-  {
-    std::string attribute_notes ("");
-
-    if (dataset_p->getName() != "UNDEFINED") {
-      try {
-	char * notes = reinterpret_cast<char*>(dataset_p->getAttribute("NOTES"));
-	attribute_notes = string(notes);
-
-      } catch (std::string message) {
-	std::cerr << "-- Error extracting attribute NOTES" << endl;
-	attribute_notes = "";
-      }
-    }
-   return attribute_notes;
-  }
-
   // ------------------------------------------------------------ number_of_beams
 
   int BeamFormed::number_of_beams ()
@@ -608,20 +667,15 @@ namespace DAL {
 
   // ------------------------------------------------------- station_temperatures
 
-  int BeamFormed::station_temperatures ()
+  std::vector< int > BeamFormed::station_temperatures ()
   {
-    int station_temperatures;
-    if (dataset_p->getName() != "UNDEFINED") {
-      try {
-        int * station_temperatures_p;
-        station_temperatures_p =
-           reinterpret_cast<int*>(dataset_p->getAttribute("TSYS"));
-        station_temperatures = *station_temperatures_p;
-
-      } catch (std::string message) {
-         std::cerr << "-- Error extracting attribute TSYS" << endl;
-         station_temperatures = -1;
-      }
+    std::vector<int> station_temperatures;
+    try {
+      status = h5get_attribute ( station_temperatures,
+                                 "TSYS",
+                                 H5fileID_p );
+    } catch (std::string message) {
+      cerr << message << endl;
     }
     return station_temperatures;
   }
@@ -640,6 +694,8 @@ namespace DAL {
                 << std::endl;
       return false;
     }
+
+    H5fileID_p = dataset_p->getFileHandle();
 
     /*
       [1] If opening the data file was successful, we can continue. First we scan
@@ -679,22 +735,28 @@ void BeamFormed::summary_boost()
   summary();
 }
 
-bpl::list BeamFormed::beams_boost()
+template <class T>
+bpl::list BeamFormed::vector2list( std::vector<T> vec )
 {
-   bpl::list beams_list;
+   bpl::list mylist;
 
-   std::vector<std::string> beams_vec;
+   for( uint ii=0; ii<vec.size(); ii++ )
+     mylist.append( vec[ii] );
 
-   beams_vec = beams();
-
-   for( unsigned int ii=0; ii<beams_vec.size(); ii++ )
-   {
-     beams_list.append( beams_vec[ii] );
-   }
-
-   return beams_list;
+   return mylist;
 }
 
+bpl::list BeamFormed::beams_boost()
+{
+   std::vector<std::string> beams_vec = beams();
+   return vector2list( beams_vec );
+}
+
+bpl::list BeamFormed::source_boost()
+{
+   std::vector<std::string> source_vec = sources();
+   return vector2list( source_vec );
+}
 #endif
 
 } // end namespace DAL

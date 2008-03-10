@@ -200,6 +200,10 @@ BOOST_PYTHON_MODULE(pydal)
 	     "Print a summary of the file contents")
 	.def("beams", &BeamFormed::beams_boost,
 	     "Return a list of the beams")
+	.def("source", &BeamFormed::source_boost,
+	     "Return a list of the sources")
+	.def("notes", &BeamFormed::notes,
+	     "Return the notes from the header")
 	.def("filename", &BeamFormed::filename,
 	     "Return the filename from the header")
 	.def("telescope", &BeamFormed::telescope,
