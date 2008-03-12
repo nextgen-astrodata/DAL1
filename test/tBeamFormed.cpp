@@ -40,6 +40,7 @@ int main()
 {
 
   DAL::BeamFormed * bf;
+  
   bf = new DAL::BeamFormed(FILENAME);
 
   bf->summary();

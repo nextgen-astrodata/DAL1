@@ -23,7 +23,7 @@ message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 
 set (tests
   msread
-  mswrite
+  ms2h5
   tbb2h5
   bf2h5
   read_tbb
@@ -54,7 +54,7 @@ if (HAVE_CASA OR HAVE_CASACORE)
   add_definitions (
     -DWITH_CASA
     )
-  foreach (src lewrite)
+  foreach (src lopes2h5)
     ## compiler instructions
     add_executable (${src} ${src}.cpp)
     ## linker instructions
@@ -73,8 +73,8 @@ if (DAL_ENABLE_TESTING)
 
   ## [1] simple tests which do not require sample data
 
-  add_test(test1 ${CMAKE_CURRENT_BINARY_DIR}/mswrite foo.h5)
-  add_test(test2 ${CMAKE_CURRENT_BINARY_DIR}/mswrite)
+  add_test(test1 ${CMAKE_CURRENT_BINARY_DIR}/ms2h5 foo.h5)
+  add_test(test2 ${CMAKE_CURRENT_BINARY_DIR}/ms2h5)
 
   ## [2] Processing tests which require sample datasets
   

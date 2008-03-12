@@ -95,7 +95,8 @@ namespace DAL {
   BeamFormed::BeamFormed(std::string const &filename)
   {
     filename_p = filename;
-    init();
+    if ( !init() )
+	  exit(-1);
   }
 
   BeamFormed::~BeamFormed()

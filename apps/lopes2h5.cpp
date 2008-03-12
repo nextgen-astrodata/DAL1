@@ -20,7 +20,7 @@
  ***************************************************************************/
 
 /*!
-  \file lewrite.cpp
+  \file lopes2h5.cpp
   
   \ingroup DAL
 
@@ -33,7 +33,7 @@
   In order to convert a data stored in a LopesEvent data file to the time-series
   data format defined for the DAL use:
   \verbatim
-  ./lewrite <LopesEvent file> <HDF5 file>
+  ./lopes2h5 <LopesEvent file> <HDF5 file>
   \endverbatim
 */
 
