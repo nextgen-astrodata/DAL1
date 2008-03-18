@@ -92,10 +92,14 @@ set (dal_sources
 ##     set before adding it to the list of link libraries.
 
 set (dal_link_libraries
-  ${HDF5_LIBRARIES}
-#  hdf5_hl
   z
-)
+  )
+
+if (HDF5_LIBRARIES)
+  list (APPEND dal_link_libraries ${HDF5_LIBRARIES})
+else (HDF5_LIBRARIES)
+  message (FATAL_ERROR "[DAL] Missing HDF5 library file(s)!")
+endif (HDF5_LIBRARIES)
 
 if (CFITSIO_LIBRARIES)
   list (APPEND dal_link_libraries ${CFITSIO_LIBRARIES})
