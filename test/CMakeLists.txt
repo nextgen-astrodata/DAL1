@@ -73,6 +73,7 @@ if (DAL_ENABLE_TESTING)
 
   ## [1] simple tests which do not require sample data
 
+  add_test(tdal ${CMAKE_CURRENT_BINARY_DIR}/tdal)
   add_test(test1 ${CMAKE_CURRENT_BINARY_DIR}/mswrite foo.h5)
   add_test(test2 ${CMAKE_CURRENT_BINARY_DIR}/mswrite)
 

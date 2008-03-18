@@ -97,6 +97,62 @@ int test_support_methods ()
 // -----------------------------------------------------------------------------
 
 /*!
+  \brief Test some general functions provided by the HDF5 library
+
+  \return nofFailedTests -- The number of failed tests within this function
+*/
+int test_general_functions ()
+{
+  cout << "\n[test_general_functions]\n" << endl;
+
+  int nofFailedTests (0);
+  herr_t h5error (0);
+  uint majorVersion (0);
+  uint minorVersion (0);
+  uint releaseNumber (0);
+
+  cout << "[1] Retrieve library version ..." << endl;
+  try {
+    h5error = H5get_libversion (&majorVersion,
+				&minorVersion,
+				&releaseNumber);
+    cout << "-- Major version  = " << majorVersion  << endl;
+    cout << "-- Minor version  = " << minorVersion  << endl;
+    cout << "-- Release number = " << releaseNumber << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[2] Test library version ..." << endl;
+  try {
+    uint maj = majorVersion;
+    uint min = minorVersion;
+    uint rel = releaseNumber;
+
+    // perform check using the correct library version
+    h5error = H5check_version (maj,min,rel);
+    cout << "-- Checked version = " << maj << "." << min << "." << rel << endl;
+    cout << "-- Version check   = " << h5error << endl;
+    h5error = H5Eclear();
+
+    // perform check using invalid library version
+    min++;
+    h5error = H5check_version (maj,min,rel);
+    cout << "-- Checked version = " << maj << "." << min << "." << rel << endl;
+    cout << "-- Version check   = " << h5error << endl;
+    h5error = H5Eclear();
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  return nofFailedTests;
+}
+
+// -----------------------------------------------------------------------------
+
+/*!
   \brief A number of very basic tests for working with object identifiers
 
   One of the things we definitely need to know is how to create copies of object
@@ -775,6 +831,7 @@ int main (int argc,
   */
 //   nofFailedTests += test_support_methods ();
 //   nofFailedTests += test_create_file ();
+  nofFailedTests += test_general_functions();
 
   /*
     Check if filename of the dataset is provided on the command line; if not
