@@ -229,6 +229,20 @@ if (prefix)
   set (CMAKE_INSTALL_PREFIX ${prefix}) 
 endif (prefix)
 
+# skip the full RPATH for the build tree
+set (CMAKE_SKIP_BUILD_RPATH TRUE)
+
+# when building, use the install RPATH already
+# (so it doesn't need to relink when installing)
+set (CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+
+# the RPATH to be used when installing
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+
+# add the automatically determined parts of the RPATH
+# which point to directories outside the build tree to the install RPATH
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 ## -----------------------------------------------------------------------------
 ## Feedback
 
