@@ -60,8 +60,8 @@ namespace DAL {
     os << endl;
     os << "-- Sub-bands : " << endl;
     vector<string> memnames = group_p->getMemberNames();
-    std::vector< std::complex<char> > xvals;
-    std::vector< std::complex<char> > yvals;
+    std::vector< std::complex<short> > xvals;
+    std::vector< std::complex<short> > yvals;
 
 
     for (unsigned int jj=0; jj<memnames.size(); jj++)
@@ -159,8 +159,8 @@ namespace DAL {
   void BeamGroup::getSubbandData_XY( int subband,
                                      int start,
                                      int length,
-                                     std::vector< std::complex<char> > &x_values,
-                                     std::vector< std::complex<char> > &y_values )
+                                     std::vector< std::complex<short> > &x_values,
+                                     std::vector< std::complex<short> > &y_values )
   {
      getSubbandData_X( subband, start, length, x_values );
      getSubbandData_Y( subband, start, length, y_values );
@@ -170,13 +170,13 @@ namespace DAL {
   void BeamGroup::getSubbandData_X( int subband,
                                     int start,
                                     int length,
-                                    std::vector< std::complex<char> > &values )
+                                    std::vector< std::complex<short> > &values )
   {
     dalTable * table;
     dalColumn * col;
     dalData * data;
 
-    complex<char> * xx;
+    complex<short> * xx;
     vector<string> memnames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memnames[ subband ],group_p->getName());
@@ -185,7 +185,7 @@ namespace DAL {
 
     for (int jj=0; jj < length; jj++)
     {
-      xx = (complex<char>*)data->get(jj);
+      xx = (complex<short>*)data->get(jj);
       values.push_back(*xx);
     }
 
@@ -195,9 +195,9 @@ namespace DAL {
   void BeamGroup::getSubbandData_Y( int subband,
                                     int start,
                                     int length,
-                                    std::vector< std::complex<char> > &values )
+                                    std::vector< std::complex<short> > &values )
   {
-    complex<char> * yy;
+    complex<short> * yy;
     dalTable * table;
     dalColumn * col;
     dalData * data;
@@ -210,7 +210,7 @@ namespace DAL {
 
     for (int jj=0; jj < length; jj++)
     {
-      yy = (complex<char>*)data->get(jj);
+      yy = (complex<short>*)data->get(jj);
       values.push_back(*yy);
     }
 
@@ -234,7 +234,7 @@ bpl::numeric::array BeamGroup::getSubbandData_X_boost( int subband,
                                                        int start,
                                                        int length )
 {
-  std::vector< std::complex<char> > values;
+  std::vector< std::complex<short> > values;
   getSubbandData_X( subband, start, length, values );
   bpl::list value_list;
 
@@ -253,7 +253,7 @@ bpl::numeric::array BeamGroup::getSubbandData_Y_boost( int subband,
                                                        int start,
                                                        int length )
 {
-  std::vector< std::complex<char> > values;
+  std::vector< std::complex<short> > values;
   getSubbandData_Y( subband, start, length, values );
   bpl::list value_list;
 
@@ -272,8 +272,8 @@ bpl::numeric::array BeamGroup::getSubbandData_XY_boost( int subband,
                                                         int start,
                                                         int length )
 {
-  std::vector< std::complex<char> > x_values;
-  std::vector< std::complex<char> > y_values;
+  std::vector< std::complex<short> > x_values;
+  std::vector< std::complex<short> > y_values;
   getSubbandData_X( subband, start, length, x_values );
   getSubbandData_Y( subband, start, length, y_values );
 

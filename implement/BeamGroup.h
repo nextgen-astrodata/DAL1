@@ -130,8 +130,8 @@ namespace DAL {
     void getSubbandData_XY( int subband,
                             int start,
                             int length,
-                            std::vector< std::complex<char> > &x_values,
-                            std::vector< std::complex<char> > &y_values );
+                            std::vector< std::complex<short> > &x_values,
+                            std::vector< std::complex<short> > &y_values );
 
     /*!
      \brief Get X column data for a given subband
@@ -147,7 +147,7 @@ namespace DAL {
     void getSubbandData_X( int subband,
                            int start,
                            int length,
-                           std::vector< std::complex<char> > &values );
+                           std::vector< std::complex<short> > &values );
 
 
     /*!
@@ -164,7 +164,7 @@ namespace DAL {
     void getSubbandData_Y( int subband,
                            int start,
                            int length,
-                           std::vector< std::complex<char> > &values );
+                           std::vector< std::complex<short> > &values );
 
 
     /*!

@@ -422,22 +422,22 @@ dalData * dalColumn::data( int start, int length )
              field_sizes, field_offsets, size_out ) < 0 )
 	  return NULL;
 	
-    if ( start < 0 )
+        if ( start < 0 )
 	  start = 0;
 	if ( length < 0 )
 	  length = nrecords;
 
-	dalcomplex_char data[length];
+	dalcomplex_int16 data[length];
 
         if ( H5TBread_fields_name (file_id, tablename.c_str(), name.c_str(),
-                 start, length, sizeof(dalcomplex_char), field_offsets, field_sizes,
+                 start, length, sizeof(dalcomplex_int16), field_offsets, field_sizes,
 		 data ) < 0 )
 	   return NULL;
 
 	vector<int> shape(1);
 
-        data_object = new dalData( filetype, dal_COMPLEX_CHAR, shape, length );
-	data_object->data = (dalcomplex_char *)data;
+        data_object = new dalData( filetype, dal_COMPLEX_SHORT, shape, length );
+	data_object->data = (dalcomplex_int16 *)data;
 
 	free( field_sizes );
 	free( field_offsets );
@@ -457,6 +457,9 @@ int dalColumn::getSize()
 	}
 	else if ( dal_INT == getType() ) {
 		return sizeof( int );
+	}
+	else if ( dal_SHORT == getType() ) {
+		return sizeof( short );
 	}
 	else if ( dal_FLOAT == getType() ) {
 		return sizeof( float );

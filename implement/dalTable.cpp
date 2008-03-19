@@ -571,6 +571,23 @@ void dalTable::addColumn( string colname, string coltype, int size )
 
 		return;
 	}
+	else if ( ( dal_COMPLEX_SHORT == coltype ) ) 
+	{
+		vector<dalColumn> cv;
+		string component_type;
+		
+		component_type = dal_SHORT;
+			
+		dalColumn col_a( "r", component_type );  // real component
+		dalColumn col_b( "i", component_type );  // imaginary component
+
+		cv.push_back( col_a );
+		cv.push_back( col_b );
+
+		addComplexColumn( colname, cv, 2 );
+
+		return;
+	}
 	
 	// retrieve table information
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
@@ -978,6 +995,10 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 		if ( dal_CHAR == foo[ii].getType() ) {
 			H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,
 				   H5T_NATIVE_CHAR);
+		}
+		else if ( dal_SHORT == foo[ii].getType() ) {
+			H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,
+				   H5T_NATIVE_SHORT);
 		}
 		else if ( dal_INT == foo[ii].getType() ) {
 			H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,

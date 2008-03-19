@@ -199,9 +199,9 @@ const short MAX_COL_NAME_SIZE = 256;
 const string dal_CHAR = "dalCHAR";
 const string dal_STRING = "dalSTRING";
 
+const string dal_SHORT = "dalSHORT";
 const string dal_INT = "dalINT";
 const string dal_UINT = "dalINT";
-const string dal_SHORT = "dalSHORT";
 const string dal_LONG = "dalLONG";
 
 const string dal_FLOAT = "dalFLOAT";
@@ -210,11 +210,17 @@ const string dal_DOUBLE = "dalDOUBLE";
 const string dal_COMPLEX = "dalCOMPLEX";
 const string dal_DCOMPLEX = "dalDCOMPLEX";
 const string dal_COMPLEX_CHAR = "dalCOMPLEX_CHAR";
+const string dal_COMPLEX_SHORT = "dalCOMPLEX_SHORT";
 
 typedef struct dalcomplex {
 	double r;  // real
 	double i;  // imaginary
 } dalcomplex;
+
+typedef struct dalcomplex_int16 {
+	short r;  // real
+	short i;  // imaginary
+} dalcomplex_int16;
 
 typedef struct dalcomplex_char {
 	char r;  // real

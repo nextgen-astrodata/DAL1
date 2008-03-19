@@ -61,11 +61,44 @@ using std::complex;
 
 // define a few datatypes
 
-typedef unsigned int  UInt32;
-typedef int            Int32;
-typedef float        Float32;
+typedef unsigned char   UInt8;
+typedef unsigned short UInt16;
+typedef short           Int16;
+typedef unsigned int   UInt32;
+typedef int             Int32;
+typedef float         Float32;
+typedef long            Int64;
+typedef double        Float64;
 
-#define FILENAME "bf.h5"
+#define FILENAME "beam-formed_test.h5"
+
+
+typedef struct FileHeader {
+   UInt8     magic[4];        // 0x3F8304EC, also determines endianness
+   UInt8     bitsPerSample;
+   UInt8     nrPolarizations;
+   UInt16    nrBeamlets;
+   UInt32    nrSamplesPerBeamlet;
+   char      station[20];
+   Float64    sampleRate;    // 156250.0 or 195312.5
+   Float64    subbandFrequencies[54];
+   Float64    beamDirections[8][2];
+   Int16     beamlet2beams[54];
+   UInt8     padding;
+} FileHeader;
+
+typedef struct BlockHeader {
+   UInt8       magic[4]; // 0x2913D852
+   Int32       coarseDelayApplied[8];
+   Float64     fineDelayRemainingAtBegin[8];
+   Float64     fineDelayRemainingAfterEnd[8];
+   Int64       time[8]; // compatible with TimeStamp class.
+   UInt32      nrFlagsRanges[8];
+   struct range {
+     UInt32    begin; // inclusive
+     UInt32    end;   // exclusive
+   } flagsRanges[8][16];
+ } BlockHeader;
 
 /************************************************
  *
@@ -100,11 +133,67 @@ main (int argc, char *argv[]) {
 
 	// If less than two arguments provided, print usage
 	if ( 2 != argc &&  4 != argc ) {
-		cout << "Usage:  lta_reader <filename> [start sample #] " << 
+		cout << "Usage:  bf2h5 <filename> [start sample #] " << 
 			"[stop sample #]" << endl << endl;
 		exit(1);
 	}
 		
+
+
+	const long BufferSIZE = 608;
+	typedef struct dataStruct {
+		dalcomplex_int16 xx;
+		dalcomplex_int16 yy;
+	} dataStruct;
+
+	dataStruct data_s[ BufferSIZE ];
+
+	// define memory buffers
+	typedef struct Polarization {
+		complex<Int16> val;
+	};
+	typedef struct Sample {
+		Polarization X;
+		Polarization Y;
+	};
+	Sample p_Data[ BufferSIZE ];
+	int size = sizeof(Sample)*BufferSIZE;
+
+	// define memory buffers
+	FileHeader fileheader;
+
+
+	BlockHeader blockheader;
+
+
+	// define memory buffers
+//	unsigned char * memblock=NULL;
+//	size = 1288;
+//	memblock = new unsigned char [size];
+
+	// declare handle for the input file
+	cout << "Reading from the data file: " << argv[1] << endl;
+	ifstream myFile (argv[1], ios::in | ios::binary);
+
+//----------------------------------------------------- read file header
+	if (!myFile.read ( reinterpret_cast<char *>(&fileheader),
+                           sizeof(fileheader) ))
+	{
+	   cout << "ERROR: problem with read (3)." << endl;
+	   cout << "read pointer position: " << myFile.tellg() << endl;
+	   exit(3);
+	}
+printf("size of file header: %ld\n", sizeof(fileheader));
+	cout << "read pointer position: " << myFile.tellg() << endl;
+	Sample newsample;
+	char bob;
+
+
+cout << "read pointer position: " << myFile.tellg() << endl;
+
+// 	size = sizeof(Sample) * BufferSIZE;
+
+
 	dalDataset * dataset;
 	dataset = new dalDataset( FILENAME, "HDF5" );
 
@@ -115,22 +204,22 @@ main (int argc, char *argv[]) {
 	srcvec.push_back( "PSR J1643-1225" );
 	srcvec.push_back( "PSR J1643-1226" );
 	srcvec.push_back( "PSR J1643-1227" );
-	double epoch_mjd[] = { 54218.928347566934865 };
+	Float64 epoch_mjd[] = { 54218.928347566934865 };
 	int main_beam_diam[] = { 60 };
 	int center_freq[] = { 180 };
 	int bandwidth[] = { 90 }; // Total bandwidth (MHz)
-	double total_integration_time[] = { 1800.000 };
+	Float64 total_integration_time[] = { 1800.000 };
 	int breaks_in_data[] = { 0 }; // Any breaks in data?
 	int dispersion_measure[] = { 42 };
 	int number_of_samples[] = { 1923879 };
-	double sampling_time[] = { 0.0001024 };
-	int number_of_beams[] = { 3 };
+	Float64 sampling_time[] = { 0.0001024 };
+	int number_of_beams[] = { (int)fileheader.nrBeamlets };
 	int sub_beam_diameter[] = { 5 }; // fwhm of the sub-beams (arcmin)
 	int weather_temperature[] = { 32 }; // approx. centigrade
 	int weather_humidity[] = { 88 }; // approx. %
 	int tsys[] = { 122, 188, 116 }; // for various stations (K)
 	// write headers using above
-	dataset->setAttribute_string( "FILENAME", "bh.h5" );
+	dataset->setAttribute_string( "FILENAME", argv[2] );
 	dataset->setAttribute_string( "TELESCOPE", "LOFAR" );
 	dataset->setAttribute_int( "NUMBER_OF_STATIONS", n_stations );
 	dataset->setAttribute_string( "DATATYPE", "Timing" );
@@ -161,16 +250,15 @@ main (int argc, char *argv[]) {
 	dataset->setAttribute_int( "WEATHER_HUMIDITY", weather_humidity );
 	dataset->setAttribute_int( "TSYS", tsys, 3 );
 
-
 	dalGroup * beamGroup;
 	char * beamstr = new char[10];
 
 	int beam_number;
 
 	int center_frequency[] = { 140 };
-	double dataBandwidth[] = { 0.156 };
-	double channel_bandwidth[] = { 0.156 };
-	double channel_center_freq[] = { 140.0000, 140.0150, 140.0300 };
+	Float64 dataBandwidth[] = { 0.156 };
+	Float64 channel_bandwidth[] = { 0.156 };
+	Float64 channel_center_freq[] = { 140.0000, 140.0150, 140.0300 };
 
 	beam_number = 0;
 	sprintf( beamstr, "beam%03d", beam_number );
@@ -190,50 +278,23 @@ main (int argc, char *argv[]) {
 	dataTable0->setAttribute_double( "CHANNEL_CENTER_FREQUENCY",
                                          channel_center_freq,
                                          3 );
-	dataTable0->addColumn( "X", dal_COMPLEX_CHAR );
-	dataTable0->addColumn( "Y", dal_COMPLEX_CHAR );
+	dataTable0->addColumn( "X", dal_COMPLEX_SHORT );
+	dataTable0->addColumn( "Y", dal_COMPLEX_SHORT );
 
-	const long BufferSIZE = 1000;
-	typedef struct dataStruct {
-		dalcomplex_char xx;
-		dalcomplex_char yy;
-	} dataStruct;
-
-	dataStruct data_s[ BufferSIZE ];
 	delete [] beamstr;
 
-	// define memory buffers
-	typedef struct Polarization {
-		complex<char> val;
-	};
-	typedef struct Sample {
-		Polarization X;
-		Polarization Y;
-	};
-
-	// define memory buffers
-	char header[4096];
-	Sample p_Data[ BufferSIZE ];
-	int size = sizeof(Sample) * BufferSIZE;
-
-	// declare handle for the input file
-	cout << "Reading from the data file: " << argv[1] << endl;
-	ifstream myFile (argv[1], ios::in | ios::binary);
-
-	cout << "read pointer position: " << myFile.tellg() << endl;
-	if (!myFile.read (header, sizeof(header) ))
-	{
-	   cout << "ERROR: problem with read (3)." << endl;
-	   cout << "read pointer position: " << myFile.tellg() << endl;
-	   exit(3);
-	}
-	myFile.clear();
+int xx=0;
 	int counter = 0;
 	if (myFile.is_open())
 	{
-		while ( !myFile.eof()/* && counter < 100000*/ )
-		{
-		  if ( !myFile.read (reinterpret_cast<char *>(&p_Data), size) )
+	  while ( myFile.read ( reinterpret_cast<char *>(&blockheader),
+                                sizeof(blockheader) ) /*&& xx < 100*/ )
+	  {
+	    xx++;
+	    // buffersize ( 608 ) * 256 = 155648 is the 160Mhz sampling rate
+	    for (unsigned int ii=0; ii<(24*256); ii++)
+	    {
+		  if ( !myFile.read (reinterpret_cast<char *>(&p_Data), sizeof(p_Data)) )
 		  {
 		     cout << "ERROR: problem with read (2)." << endl;
 		     cout << "read pointer position: " << myFile.tellg() << endl;
@@ -253,7 +314,8 @@ main (int argc, char *argv[]) {
 		    myFile.clear();
 		    counter+=BufferSIZE;
 		  }
-		}
+	    }
+	  }
 	}
 	else cout << "Unable to open file" << argv[1] << endl;
 	return 0;
