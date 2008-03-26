@@ -44,14 +44,20 @@
 using namespace std;
 using std::complex;
 
-typedef unsigned int UInt32;
+// define a few datatypes
+typedef unsigned char   UInt8;
 typedef unsigned short UInt16;
-typedef short Int16;
-typedef int Int32;
-typedef float Float32;
+typedef short           Int16;
+typedef unsigned int   UInt32;
+typedef int             Int32;
+typedef float         Float32;
+typedef long            Int64;
+typedef double        Float64;
 
 bool BigEndian( void );
-Int32 Int32Swap ( int i );
-short Int16Swap( short s );
+
+Int16 Int16Swap ( Int16 ss );
+Int32 Int32Swap ( Int32 ii );
+Int64 Int64Swap ( Int64 ff );
 
 #endif

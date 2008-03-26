@@ -59,28 +59,17 @@
 using namespace std;
 using std::complex;
 
-// define a few datatypes
-
-typedef unsigned char   UInt8;
-typedef unsigned short UInt16;
-typedef short           Int16;
-typedef unsigned int   UInt32;
-typedef int             Int32;
-typedef float         Float32;
-typedef long            Int64;
-typedef double        Float64;
-
-#define FILENAME "beam-formed_test.h5"
-
+#define FILENAME "/mnt/disk2/data/cs1/pulsar/B0329.h5"
+#define DEBUG
 
 typedef struct FileHeader {
    UInt8     magic[4];        // 0x3F8304EC, also determines endianness
    UInt8     bitsPerSample;
    UInt8     nrPolarizations;
    UInt16    nrBeamlets;
-   UInt32    nrSamplesPerBeamlet;
+   UInt32    nrSamplesPerBeamlet; // 155648 (160Mhz) or 196608 (200Mhz)
    char      station[20];
-   Float64    sampleRate;    // 156250.0 or 195312.5
+   Float64    sampleRate;
    Float64    subbandFrequencies[54];
    Float64    beamDirections[8][2];
    Int16     beamlet2beams[54];
@@ -120,120 +109,132 @@ void print_banner() {
 		 << left << "-------" << endl;
 }
 
-/************************************************
- *
- * Function:  main(int argc, char *argv[])
- *
- * Returns:   int
- * Purpose:   MAIN
- *
- ***********************************************/
-int
-main (int argc, char *argv[]) {
+int main (int argc, char *argv[])
+{
 
-	// If less than two arguments provided, print usage
-	if ( 2 != argc &&  4 != argc ) {
-		cout << "Usage:  bf2h5 <filename> [start sample #] " << 
-			"[stop sample #]" << endl << endl;
-		exit(1);
-	}
-		
+  // If less than two arguments provided, print usage
+  if ( 2 != argc &&  4 != argc ) {
+    cout << "Usage:  bf2h5 <filename> [start sample #] " << 
+            "[stop sample #]" << endl << endl;
+    exit(1);
+  }
 
+  bool bigendian = BigEndian();
 
-	const long BufferSIZE = 608;
-	typedef struct dataStruct {
-		dalcomplex_int16 xx;
-		dalcomplex_int16 yy;
-	} dataStruct;
+  const long BufferSIZE = 608;
+  typedef struct dataStruct {
+    dalcomplex_int16 xx;
+    dalcomplex_int16 yy;
+  } dataStruct;
 
-	dataStruct data_s[ BufferSIZE ];
+  dataStruct data_s[ BufferSIZE ];
 
-	// define memory buffers
-	typedef struct Polarization {
-		complex<Int16> val;
-	};
-	typedef struct Sample {
-		Polarization X;
-		Polarization Y;
-	};
-	Sample p_Data[ BufferSIZE ];
-	int size = sizeof(Sample)*BufferSIZE;
+  // define memory buffers
+  typedef struct Polarization {
+    complex<Int16> val;
+  };
+  typedef struct Sample {
+    Polarization X;
+    Polarization Y;
+  };
+  Sample p_Data[ BufferSIZE ];
 
-	// define memory buffers
-	FileHeader fileheader;
+  // define memory buffers
+  FileHeader fileheader;
+  BlockHeader blockheader;
 
 
-	BlockHeader blockheader;
+#ifdef DEBUG
+  cout << "Reading from the data file: " << argv[1] << endl;
+#endif
 
 
-	// define memory buffers
-//	unsigned char * memblock=NULL;
-//	size = 1288;
-//	memblock = new unsigned char [size];
-
-	// declare handle for the input file
-	cout << "Reading from the data file: " << argv[1] << endl;
-	ifstream myFile (argv[1], ios::in | ios::binary);
+  // declare handle for the input file
+  ifstream myFile (argv[1], ios::in | ios::binary);
 
 //----------------------------------------------------- read file header
-	if (!myFile.read ( reinterpret_cast<char *>(&fileheader),
-                           sizeof(fileheader) ))
-	{
-	   cout << "ERROR: problem with read (3)." << endl;
-	   cout << "read pointer position: " << myFile.tellg() << endl;
-	   exit(3);
-	}
-printf("size of file header: %ld\n", sizeof(fileheader));
-	cout << "read pointer position: " << myFile.tellg() << endl;
-	Sample newsample;
-	char bob;
+
+  if (!myFile.read ( reinterpret_cast<char *>(&fileheader),
+                     sizeof(fileheader) ))
+  {
+     cout << "ERROR: problem with read (3)." << endl;
+     cout << "read pointer position: " << myFile.tellg() << endl;
+     exit(3);
+  }
+
+#ifdef DEBUG
+  printf("size of file header: %ld\n", sizeof(fileheader));
+  cout << "read pointer position: " << myFile.tellg() << endl;
+#endif
+
+  Sample newsample;
+
+  // swap values when necessary
+  if ( !bigendian )
+  {
+    fileheader.nrBeamlets = Int16Swap( fileheader.nrBeamlets );
+    fileheader.nrSamplesPerBeamlet = Int32Swap( fileheader.nrSamplesPerBeamlet );
+    fileheader.sampleRate = Int64Swap( fileheader.sampleRate );
+    for (unsigned int idx=0; idx<54; idx++)
+    {
+      fileheader.subbandFrequencies[idx] =
+        Int64Swap( fileheader.subbandFrequencies[idx] );
+
+      fileheader.beamlet2beams[idx] =
+        Int16Swap( fileheader.beamlet2beams[idx] );
+    }
+    for (unsigned int aa=0; aa<8; aa++)
+    {
+      for (unsigned int bb=0; bb<2; bb++)
+      {
+        fileheader.beamDirections[aa][bb] =
+         Int64Swap( fileheader.beamDirections[aa][bb]);
+      }
+    }
+  }
 
 
-cout << "read pointer position: " << myFile.tellg() << endl;
+  dalDataset * dataset;
+  dataset = new dalDataset( FILENAME, "HDF5" );
 
-// 	size = sizeof(Sample) * BufferSIZE;
-
-
-	dalDataset * dataset;
-	dataset = new dalDataset( FILENAME, "HDF5" );
-
-	// root-level headers
-	int n_stations[] = { 32 };
-	vector<string> srcvec;
-	srcvec.push_back( "PSR J1643-1224" );
-	srcvec.push_back( "PSR J1643-1225" );
-	srcvec.push_back( "PSR J1643-1226" );
-	srcvec.push_back( "PSR J1643-1227" );
-	Float64 epoch_mjd[] = { 54218.928347566934865 };
-	int main_beam_diam[] = { 60 };
-	int center_freq[] = { 180 };
-	int bandwidth[] = { 90 }; // Total bandwidth (MHz)
-	Float64 total_integration_time[] = { 1800.000 };
+  // root-level headers
+  int n_stations[] = { 1 };
+  vector<string> srcvec;
+  srcvec.push_back( "Source A" );
+  srcvec.push_back( "Source B" );
+	srcvec.push_back( "Source C" );
+	srcvec.push_back( "Source D" );
+	Float64 epoch_mjd[] = { 0 };
+	int main_beam_diam[] = { 0 };
+	int center_freq[] = { 0 };
+	int bandwidth[] = { 0 }; // Total bandwidth (MHz)
+	Float64 total_integration_time[] = { 0 };
 	int breaks_in_data[] = { 0 }; // Any breaks in data?
-	int dispersion_measure[] = { 42 };
-	int number_of_samples[] = { 1923879 };
-	Float64 sampling_time[] = { 0.0001024 };
-	int number_of_beams[] = { (int)fileheader.nrBeamlets };
-	int sub_beam_diameter[] = { 5 }; // fwhm of the sub-beams (arcmin)
-	int weather_temperature[] = { 32 }; // approx. centigrade
-	int weather_humidity[] = { 88 }; // approx. %
-	int tsys[] = { 122, 188, 116 }; // for various stations (K)
+	int dispersion_measure[] = { 0 };
+	int number_of_samples[] =
+           { fileheader.nrBeamlets * fileheader.nrSamplesPerBeamlet };
+	Float64 sampling_time[] = { fileheader.sampleRate };
+	int number_of_beams[] = { fileheader.nrBeamlets };
+	int sub_beam_diameter[] = { 0 }; // fwhm of the sub-beams (arcmin)
+	int weather_temperature[] = { 0 }; // approx. centigrade
+	int weather_humidity[] = { 0 }; // approx. %
+	int tsys[] = { 0 }; // for various stations (K)
 	// write headers using above
-	dataset->setAttribute_string( "FILENAME", argv[2] );
+	dataset->setAttribute_string( "FILENAME", FILENAME );
 	dataset->setAttribute_string( "TELESCOPE", "LOFAR" );
 	dataset->setAttribute_int( "NUMBER_OF_STATIONS", n_stations );
-	dataset->setAttribute_string( "DATATYPE", "Timing" );
-	dataset->setAttribute_string( "EMBAND", "Radio_HIGH" );
+	dataset->setAttribute_string( "DATATYPE", "" );
+	dataset->setAttribute_string( "EMBAND", "" );
 	dataset->setAttribute_string( "SOURCE", srcvec );
-	dataset->setAttribute_string( "OBSERVATION_ID", "PSR_1234" );
-	dataset->setAttribute_string( "PROJ_ID", "PSR_Scint_Studies" );
-	dataset->setAttribute_string( "POINT_RA", "14:12:55:5112" );
-	dataset->setAttribute_string( "POINT_DEC", "79:12:55:5112" );
-	dataset->setAttribute_string( "OBSERVER", "Bob the Builder" );
+	dataset->setAttribute_string( "OBSERVATION_ID", "" );
+	dataset->setAttribute_string( "PROJ_ID", "" );
+	dataset->setAttribute_string( "POINT_RA", "" );
+	dataset->setAttribute_string( "POINT_DEC", "" );
+	dataset->setAttribute_string( "OBSERVER", "" );
 	dataset->setAttribute_double( "EPOCH_MJD", epoch_mjd );
-	dataset->setAttribute_string( "EPOCH_DATE", "20/07/08" );
-	dataset->setAttribute_string( "EPOCH_UTC", "22:53:23" );
-	dataset->setAttribute_string( "EPOCH_LST", "13:08:33" );
+	dataset->setAttribute_string( "EPOCH_DATE", "" );
+	dataset->setAttribute_string( "EPOCH_UTC", "" );
+	dataset->setAttribute_string( "EPOCH_LST", "" );
 	dataset->setAttribute_int( "MAIN_BEAM_DIAM", main_beam_diam );
 	dataset->setAttribute_int( "CENTER_FREQUENCY", center_freq );
 	dataset->setAttribute_int( "BANDWIDTH", bandwidth );
@@ -255,68 +256,115 @@ cout << "read pointer position: " << myFile.tellg() << endl;
 
 	int beam_number;
 
-	int center_frequency[] = { 140 };
-	Float64 dataBandwidth[] = { 0.156 };
-	Float64 channel_bandwidth[] = { 0.156 };
-	Float64 channel_center_freq[] = { 140.0000, 140.0150, 140.0300 };
+	int center_frequency[] = { 0 };
+	Float64 dataBandwidth[] = { 0 };
+	Float64 channel_bandwidth[] = { 0 };
+	Float64 channel_center_freq[] = { 0, 0, 0 };
 
 	beam_number = 0;
 	sprintf( beamstr, "beam%03d", beam_number );
         beamGroup = dataset->createGroup( beamstr );
-	beamGroup->setAttribute_string( "RA", "14:12:34.2342" );
-	beamGroup->setAttribute_string( "DEC", "14:12:34.2342" );
+	beamGroup->setAttribute_string( "RA", "" );
+	beamGroup->setAttribute_string( "DEC", "" );
         int n_subbands[] = { 1 };
 	beamGroup->setAttribute_int( "NUMBER_OF_SUBBANDS", n_subbands );
 
+#ifdef DEBUG
 	cout << "CREATED New beam group: " << string(beamstr) << endl;
+#endif
 
-	dalTable * dataTable0 = dataset->createTable( "SUB0", beamstr );
-	dataTable0->setAttribute_int( "CENTER_FREQUENCY", center_frequency );
-	dataTable0->setAttribute_double( "BANDWIDTH", dataBandwidth );
-	dataTable0->setAttribute_double( "CHANNEL_BANDWIDTH",
-                                         channel_bandwidth );
-	dataTable0->setAttribute_double( "CHANNEL_CENTER_FREQUENCY",
-                                         channel_center_freq,
-                                         3 );
-	dataTable0->addColumn( "X", dal_COMPLEX_SHORT );
-	dataTable0->addColumn( "Y", dal_COMPLEX_SHORT );
+  dalTable ** table;
+  table = new dalTable * [ fileheader.nrBeamlets ];
 
-	delete [] beamstr;
+  char * sbName = new char[8];
+  for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
+  {
+    sprintf( sbName, "SB%03d", idx );
+    table[idx] = dataset->createTable( sbName, beamstr );
+    table[idx]->setAttribute_int( "CENTER_FREQUENCY", center_frequency );
+    table[idx]->setAttribute_double( "BANDWIDTH", dataBandwidth );
+    table[idx]->setAttribute_double( "CHANNEL_BANDWIDTH", 
+                                      channel_bandwidth );
+    table[idx]->setAttribute_double( "CHANNEL_CENTER_FREQUENCY",
+                                      channel_center_freq,
+                                      3 );
+    table[idx]->addColumn( "X", dal_COMPLEX_SHORT );
+    table[idx]->addColumn( "Y", dal_COMPLEX_SHORT );
+  }
 
-int xx=0;
-	int counter = 0;
-	if (myFile.is_open())
-	{
-	  while ( myFile.read ( reinterpret_cast<char *>(&blockheader),
-                                sizeof(blockheader) ) /*&& xx < 100*/ )
-	  {
-	    xx++;
-	    // buffersize ( 608 ) * 256 = 155648 is the 160Mhz sampling rate
-	    for (unsigned int ii=0; ii<(24*256); ii++)
-	    {
-		  if ( !myFile.read (reinterpret_cast<char *>(&p_Data), sizeof(p_Data)) )
-		  {
-		     cout << "ERROR: problem with read (2)." << endl;
-		     cout << "read pointer position: " << myFile.tellg() << endl;
-		     exit(2);
-		  }
-		  for (int row=0; row<BufferSIZE; row++)
-		  {
-		    data_s[row].xx.r = real((p_Data[row]).X.val);
-		    data_s[row].xx.i = imag((p_Data[row]).X.val);
-		    data_s[row].yy.r = real((p_Data[row]).Y.val);
-		    data_s[row].yy.i = imag((p_Data[row]).Y.val);
-		  }
-		  dataTable0->appendRows( data_s, BufferSIZE );
+  delete [] beamstr;
 
-		  if ( !myFile.eof() )
-		  {
-		    myFile.clear();
-		    counter+=BufferSIZE;
-		  }
-	    }
-	  }
-	}
-	else cout << "Unable to open file" << argv[1] << endl;
-	return 0;
+  int xx=0;
+  int counter = 0;
+  while ( myFile.read ( reinterpret_cast<char *>(&blockheader),
+                        sizeof(blockheader) ) /*&& xx < 2*/ )
+  {
+
+    // swap values when necessary
+    if ( !bigendian )
+    {
+      for (unsigned int idx=0; idx<8; idx++)
+      {
+        blockheader.coarseDelayApplied[idx] =
+           Int32Swap( blockheader.coarseDelayApplied[idx] );
+        blockheader.fineDelayRemainingAtBegin[idx] =
+           Int64Swap( blockheader.fineDelayRemainingAtBegin[idx] );
+        blockheader.fineDelayRemainingAfterEnd[idx] =
+           Int64Swap( blockheader.fineDelayRemainingAfterEnd[idx] );
+        blockheader.time[idx] = Int64Swap( blockheader.time[idx] );
+        blockheader.nrFlagsRanges[idx] =
+           Int32Swap( blockheader.nrFlagsRanges[idx] );
+        for(unsigned int idx2=0; idx2<16; idx2++)
+        {
+          blockheader.flagsRanges[idx][idx2].begin =
+            Int32Swap( blockheader.flagsRanges[idx][idx2].begin );
+          blockheader.flagsRanges[idx][idx2].end =
+            Int32Swap( blockheader.flagsRanges[idx][idx2].end );
+        }
+      }
+    }
+
+    xx++;
+
+    // buffersize ( 608 ) * 256 = 155648 is the 160Mhz sampling rate
+
+    for(unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
+    {
+      for (unsigned int ii=0; ii<(256); ii++)
+      {
+        if ( !myFile.read ( reinterpret_cast<char *>(&p_Data),
+                           sizeof(p_Data)) )
+         {
+          cout << "ERROR: problem with read (2)." << endl;
+          cout << "read pointer position: " << myFile.tellg() << endl;
+          exit(2);
+         }
+         for (int row=0; row<BufferSIZE; row++)
+         {
+          data_s[row].xx.r = real((p_Data[row]).X.val);
+          data_s[row].xx.i = imag((p_Data[row]).X.val);
+          data_s[row].yy.r = real((p_Data[row]).Y.val);
+          data_s[row].yy.i = imag((p_Data[row]).Y.val);
+         }
+         table[idx]->appendRows( data_s, BufferSIZE );
+         if ( !myFile.eof() )
+         {
+           myFile.clear();
+           counter+=BufferSIZE;
+         }
+       }
+     }
+
+   }
+
+  // cleanup memory
+  for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
+  {
+    sprintf( sbName, "SB_%03d", idx );
+    delete table[idx];
+  }
+  delete [] sbName;
+  delete [] table;
+
+  return 0;
 }

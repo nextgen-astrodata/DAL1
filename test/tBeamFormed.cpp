@@ -34,21 +34,26 @@
 #include <BeamFormed.h>
 #endif
 
-#define FILENAME "bf.h5"
+#define FILENAME "/mnt/disk2/data/cs1/pulsar/beam-formed_test.h5"
 
-int main()
+int main(int argc,char *argv[])
 {
 
   DAL::BeamFormed * bf;
   
-  bf = new DAL::BeamFormed(FILENAME);
-
+  if (argc > 1)
+    bf = new DAL::BeamFormed(argv[1]);
+  else
+  {
+    cout << "Please provide a HDF5 filename." << endl;
+    exit(1);
+  }
   bf->summary();
 
   DAL::BeamGroup * beam;
   beam = bf->getBeam( 0 );
 
-//   std::vector<std::string> sources = bf->sources();
+  std::vector<std::string> sources = bf->sources();
 
   delete bf;
 

@@ -1,8 +1,15 @@
+#! /usr/bin/env python
+
 from pydal import *
+import sys
 
 # The BeamFormed object represents the file.
 #  The parameter is the name of the beam-formed file.
-file = BeamFormed("bf.h5")
+if (len(sys.argv) > 1):
+  file = BeamFormed(sys.argv[1])
+else:
+  print "Please provide a beam-formed hdf5 file as input."
+  sys.exit(1)
 
 # Here's a print to screen summary of the file.
 print "[1] ---------------------------------"

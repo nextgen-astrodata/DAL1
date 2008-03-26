@@ -21,6 +21,10 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
+#ifndef DAL_H 
+#include <dal.h>
+#endif
+
 #ifndef DALBASETYPES_H 
 #include <dalBaseTypes.h>
 #endif
@@ -38,25 +42,42 @@ bool BigEndian( void )
   }
 }
 
-Int32 Int32Swap (int i)
+Int64 Int64Swap (Int64 ff)
+{
+  unsigned char b1, b2, b3, b4, b5, b6, b7, b8;
+
+  b1 = ( ff       ) & 255;
+  b2 = ( ff >>  8 ) & 255;
+  b3 = ( ff >> 16 ) & 255;
+  b4 = ( ff >> 24 ) & 255;
+  b5 = ( ff >> 32 ) & 255;
+  b6 = ( ff >> 40 ) & 255;
+  b7 = ( ff >> 48 ) & 255;
+  b8 = ( ff >> 56 ) & 255;
+
+  return ((Int64)b1 << 56) + ((Int64)b2 << 48) + ((Int64)b3 << 40) +
+         ((Int64)b4 << 32) + ((Int64)b5 << 24) + ((Int64)b6 << 16) +
+         ((Int64)b7 <<  8) + b8;
+}
+
+Int32 Int32Swap (Int32 ii)
 {
   unsigned char b1, b2, b3, b4;
 
-  b1 = i & 255;
-  b2 = ( i >> 8 ) & 255;
-  b3 = ( i>>16 ) & 255;
-  b4 = ( i>>24 ) & 255;
+  b1 = ( ii       ) & 255;
+  b2 = ( ii >>  8 ) & 255;
+  b3 = ( ii >> 16 ) & 255;
+  b4 = ( ii >> 24 ) & 255;
 
-  return ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
+  return ((Int32)b1 << 24) + ((Int32)b2 << 16) + ((Int32)b3 << 8) + b4;
 }
 
-short Int16Swap( short s )
+Int16 Int16Swap( Int16 ss )
 {
   unsigned char b1, b2;
-  
-  b1 = s & 255;
-  b2 = (s >> 8) & 255;
+
+  b1 = ( ss      ) & 255;
+  b2 = ( ss >> 8 ) & 255;
 
   return (b1 << 8) + b2;
 }
-
