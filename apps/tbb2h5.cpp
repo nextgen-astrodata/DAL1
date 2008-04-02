@@ -300,15 +300,15 @@ int main(int argc, char *argv[])
 	  dipoleArray =
 	    stationGroup->createShortArray( string(uid),firstdims,nodata,cdims );
 
-	  string telescope = "LOFAR";
-	  string observer = "J.S. Masters";
-	  string project = "Transients";
-	  string observation_id = "1287";
-	  string observation_mode = "TransientDetection";
-	  string trigger_type = "Unknown";
-	  double trigger_offset[1] = { 0 };
+	  string telescope          = "LOFAR";
+	  string observer           = "J.S. Masters";
+	  string project            = "Transients";
+	  string observation_id     = "1287";
+	  string observation_mode   = "TransientDetection";
+	  string trigger_type       = "Unknown";
+	  double trigger_offset[1]  = { 0 };
 	  int triggered_antennas[1] = { 0 };
-	  double beam_direction[2] = { 0, 90 };
+	  double beam_direction[2]  = { 0, 90 };
 
 	  // Add attributes to "Station" group
 	  stationGroup->setAttribute_string("TELESCOPE", telescope );
@@ -330,7 +330,7 @@ int main(int argc, char *argv[])
 	  unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
 	  unsigned int datalen[] = { (unsigned int)0 };
 	  unsigned int nyquist_zone[] = { (unsigned int)0 };
-	  string feed = "NONE";
+	  string feed       = "NONE";
 	  double apos[3]    = { 0, 0, 0 };
 	  double aorient[3] = { 0, 0, 0 };
 
