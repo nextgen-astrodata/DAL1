@@ -55,11 +55,13 @@
 #include <iomanip>  // for cout field width
 #include <fstream>  // for file handle
 #include <complex>  // for complex datatypes
+#include <assert.h>
+#include <new>
 
 using namespace std;
 using std::complex;
 
-#define FILENAME "/mnt/disk2/data/cs1/pulsar/B0329.h5"
+//#define FILENAME "/mnt/disk2/data/cs1/pulsar/B0329.h5"
 #define DEBUG
 
 typedef struct FileHeader {
@@ -113,31 +115,33 @@ int main (int argc, char *argv[])
 {
 
   // If less than two arguments provided, print usage
-  if ( 2 != argc &&  4 != argc ) {
-    cout << "Usage:  bf2h5 <filename> [start sample #] " << 
-            "[stop sample #]" << endl << endl;
+  if ( 3 != argc ) {
+    cout << "Usage:  bf2h5 <input filename> <output filename>" << endl << endl;
     exit(1);
   }
 
   bool bigendian = BigEndian();
 
-  const long BufferSIZE = 608;
+  // dataStruct is 8 bytes
   typedef struct dataStruct {
     dalcomplex_int16 xx;
     dalcomplex_int16 yy;
   } dataStruct;
 
-  dataStruct data_s[ BufferSIZE ];
 
-  // define memory buffers
-  typedef struct Polarization {
-    complex<Int16> val;
-  };
-  typedef struct Sample {
-    Polarization X;
-    Polarization Y;
-  };
-  Sample p_Data[ BufferSIZE ];
+  const unsigned long BufferSIZE = 155648;//608;
+
+  dataStruct * data_s = NULL; // pointer to dataStruct
+  try
+  {
+    data_s = new dataStruct[ BufferSIZE ];  // allocate memory
+  }
+  catch ( bad_alloc )
+  {
+    cerr << "Could not allocate memory buffer" << endl;
+    exit(3);
+  }
+
 
   // define memory buffers
   FileHeader fileheader;
@@ -167,8 +171,6 @@ int main (int argc, char *argv[])
   cout << "read pointer position: " << myFile.tellg() << endl;
 #endif
 
-  Sample newsample;
-
   // swap values when necessary
   if ( !bigendian )
   {
@@ -195,79 +197,79 @@ int main (int argc, char *argv[])
 
 
   dalDataset * dataset;
-  dataset = new dalDataset( FILENAME, "HDF5" );
+  dataset = new dalDataset( argv[2], "HDF5" );
 
   // root-level headers
   int n_stations[] = { 1 };
   vector<string> srcvec;
-  srcvec.push_back( "Source A" );
-  srcvec.push_back( "Source B" );
-	srcvec.push_back( "Source C" );
-	srcvec.push_back( "Source D" );
-	Float64 epoch_mjd[] = { 0 };
-	int main_beam_diam[] = { 0 };
-	int center_freq[] = { 0 };
-	int bandwidth[] = { 0 }; // Total bandwidth (MHz)
-	Float64 total_integration_time[] = { 0 };
-	int breaks_in_data[] = { 0 }; // Any breaks in data?
-	int dispersion_measure[] = { 0 };
-	int number_of_samples[] =
-           { fileheader.nrBeamlets * fileheader.nrSamplesPerBeamlet };
-	Float64 sampling_time[] = { fileheader.sampleRate };
-	int number_of_beams[] = { fileheader.nrBeamlets };
-	int sub_beam_diameter[] = { 0 }; // fwhm of the sub-beams (arcmin)
-	int weather_temperature[] = { 0 }; // approx. centigrade
-	int weather_humidity[] = { 0 }; // approx. %
-	int tsys[] = { 0 }; // for various stations (K)
-	// write headers using above
-	dataset->setAttribute_string( "FILENAME", FILENAME );
-	dataset->setAttribute_string( "TELESCOPE", "LOFAR" );
-	dataset->setAttribute_int( "NUMBER_OF_STATIONS", n_stations );
-	dataset->setAttribute_string( "DATATYPE", "" );
-	dataset->setAttribute_string( "EMBAND", "" );
-	dataset->setAttribute_string( "SOURCE", srcvec );
-	dataset->setAttribute_string( "OBSERVATION_ID", "" );
-	dataset->setAttribute_string( "PROJ_ID", "" );
-	dataset->setAttribute_string( "POINT_RA", "" );
-	dataset->setAttribute_string( "POINT_DEC", "" );
-	dataset->setAttribute_string( "OBSERVER", "" );
-	dataset->setAttribute_double( "EPOCH_MJD", epoch_mjd );
-	dataset->setAttribute_string( "EPOCH_DATE", "" );
-	dataset->setAttribute_string( "EPOCH_UTC", "" );
-	dataset->setAttribute_string( "EPOCH_LST", "" );
-	dataset->setAttribute_int( "MAIN_BEAM_DIAM", main_beam_diam );
-	dataset->setAttribute_int( "CENTER_FREQUENCY", center_freq );
-	dataset->setAttribute_int( "BANDWIDTH", bandwidth );
-	dataset->setAttribute_double( "TOTAL_INTEGRATION_TIME",
-	  total_integration_time );
-	dataset->setAttribute_int( "BREAKS_IN_DATA", breaks_in_data );
-	dataset->setAttribute_int( "DISPERSION_MEASURE", dispersion_measure );
-	dataset->setAttribute_int( "NUMBER_OF_SAMPLES", number_of_samples );
-	dataset->setAttribute_double( "SAMPLING_TIME", sampling_time );
-	dataset->setAttribute_string( "NOTES", "Test data for pulsar survey" );
-	dataset->setAttribute_int( "NUMBER_OF_BEAMS", number_of_beams );
-	dataset->setAttribute_int( "SUB_BEAM_DIAMETER", sub_beam_diameter );
-	dataset->setAttribute_int( "WEATHER_TEMPERATURE", weather_temperature );
-	dataset->setAttribute_int( "WEATHER_HUMIDITY", weather_humidity );
-	dataset->setAttribute_int( "TSYS", tsys, 3 );
+  srcvec.push_back( "A" );
+  srcvec.push_back( "B" );
+  srcvec.push_back( "C" );
+  srcvec.push_back( "D" );
+  Float64 epoch_mjd[] = { 0 };
+  int main_beam_diam[] = { 0 };
+  int center_freq[] = { 0 };
+  int bandwidth[] = { 0 }; // Total bandwidth (MHz)
+  Float64 total_integration_time[] = { 0 };
+  int breaks_in_data[] = { 0 }; // Any breaks in data?
+  int dispersion_measure[] = { 0 };
+  int number_of_samples[] =
+     { fileheader.nrBeamlets * fileheader.nrSamplesPerBeamlet };
+  Float64 sampling_time[] = { fileheader.sampleRate };
+  int number_of_beams[] = { fileheader.nrBeamlets };
+  int sub_beam_diameter[] = { 0 }; // fwhm of the sub-beams (arcmin)
+  int weather_temperature[] = { 0 }; // approx. centigrade
+  int weather_humidity[] = { 0 }; // approx. %
+  int tsys[] = { 0 }; // for various stations (K)
 
-	dalGroup * beamGroup;
-	char * beamstr = new char[10];
+  // write headers using above
+  dataset->setAttribute_string( "FILENAME", argv[2] );
+  dataset->setAttribute_string( "TELESCOPE", "LOFAR" );
+  dataset->setAttribute_int( "NUMBER_OF_STATIONS", n_stations );
+  dataset->setAttribute_string( "DATATYPE", "" );
+  dataset->setAttribute_string( "EMBAND", "" );
+  dataset->setAttribute_string( "SOURCE", srcvec );
+  dataset->setAttribute_string( "OBSERVATION_ID", "" );
+  dataset->setAttribute_string( "PROJ_ID", "" );
+  dataset->setAttribute_string( "POINT_RA", "" );
+  dataset->setAttribute_string( "POINT_DEC", "" );
+  dataset->setAttribute_string( "OBSERVER", "" );
+  dataset->setAttribute_double( "EPOCH_MJD", epoch_mjd );
+  dataset->setAttribute_string( "EPOCH_DATE", "" );
+  dataset->setAttribute_string( "EPOCH_UTC", "" );
+  dataset->setAttribute_string( "EPOCH_LST", "" );
+  dataset->setAttribute_int( "MAIN_BEAM_DIAM", main_beam_diam );
+  dataset->setAttribute_int( "CENTER_FREQUENCY", center_freq );
+  dataset->setAttribute_int( "BANDWIDTH", bandwidth );
+  dataset->setAttribute_double( "TOTAL_INTEGRATION_TIME",
+                                total_integration_time );
+  dataset->setAttribute_int( "BREAKS_IN_DATA", breaks_in_data );
+  dataset->setAttribute_int( "DISPERSION_MEASURE", dispersion_measure );
+  dataset->setAttribute_int( "NUMBER_OF_SAMPLES", number_of_samples );
+  dataset->setAttribute_double( "SAMPLING_TIME", sampling_time );
+  dataset->setAttribute_string( "NOTES", "Test data for pulsar survey" );
+  dataset->setAttribute_int( "NUMBER_OF_BEAMS", number_of_beams );
+  dataset->setAttribute_int( "SUB_BEAM_DIAMETER", sub_beam_diameter );
+  dataset->setAttribute_int( "WEATHER_TEMPERATURE", weather_temperature );
+  dataset->setAttribute_int( "WEATHER_HUMIDITY", weather_humidity );
+  dataset->setAttribute_int( "TSYS", tsys, 3 );
 
-	int beam_number;
+  dalGroup * beamGroup;
+  char * beamstr = new char[10];
 
-	int center_frequency[] = { 0 };
-	Float64 dataBandwidth[] = { 0 };
-	Float64 channel_bandwidth[] = { 0 };
-	Float64 channel_center_freq[] = { 0, 0, 0 };
+  int beam_number;
 
-	beam_number = 0;
-	sprintf( beamstr, "beam%03d", beam_number );
-        beamGroup = dataset->createGroup( beamstr );
-	beamGroup->setAttribute_string( "RA", "" );
-	beamGroup->setAttribute_string( "DEC", "" );
-        int n_subbands[] = { 1 };
-	beamGroup->setAttribute_int( "NUMBER_OF_SUBBANDS", n_subbands );
+  Float64 dataBandwidth[] = { 0 };
+  Float64 channel_bandwidth[] = { 0 };
+  Float64 channel_center_freq[] = { 0, 0, 0 };
+
+  beam_number = 0;
+  sprintf( beamstr, "beam%03d", beam_number );
+  beamGroup = dataset->createGroup( beamstr );
+  beamGroup->setAttribute_string( "RA", "" );
+  beamGroup->setAttribute_string( "DEC", "" );
+  int n_subbands[] = { 1 };
+  beamGroup->setAttribute_int( "NUMBER_OF_SUBBANDS", n_subbands );
 
 #ifdef DEBUG
 	cout << "CREATED New beam group: " << string(beamstr) << endl;
@@ -277,10 +279,13 @@ int main (int argc, char *argv[])
   table = new dalTable * [ fileheader.nrBeamlets ];
 
   char * sbName = new char[8];
+  int center_frequency[] = { 0 };
+  // nrBeamlets is actually the number of subbands (see email from J.Romein)
   for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
   {
     sprintf( sbName, "SB%03d", idx );
     table[idx] = dataset->createTable( sbName, beamstr );
+    center_frequency[0] = fileheader.subbandFrequencies[ idx ];
     table[idx]->setAttribute_int( "CENTER_FREQUENCY", center_frequency );
     table[idx]->setAttribute_double( "BANDWIDTH", dataBandwidth );
     table[idx]->setAttribute_double( "CHANNEL_BANDWIDTH", 
@@ -297,7 +302,7 @@ int main (int argc, char *argv[])
   int xx=0;
   int counter = 0;
   while ( myFile.read ( reinterpret_cast<char *>(&blockheader),
-                        sizeof(blockheader) ) /*&& xx < 2*/ )
+                        sizeof(blockheader) ) /*&& xx < 10*/ )
   {
 
     // swap values when necessary
@@ -326,25 +331,14 @@ int main (int argc, char *argv[])
 
     xx++;
 
-    // buffersize ( 608 ) * 256 = 155648 is the 160Mhz sampling rate
-
-    for(unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
+   for(unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
     {
-      for (unsigned int ii=0; ii<(256); ii++)
-      {
-        if ( !myFile.read ( reinterpret_cast<char *>(&p_Data),
-                           sizeof(p_Data)) )
+        if ( !myFile.read ( reinterpret_cast<char *>(data_s),
+                           sizeof(dataStruct)*BufferSIZE) )
          {
           cout << "ERROR: problem with read (2)." << endl;
           cout << "read pointer position: " << myFile.tellg() << endl;
           exit(2);
-         }
-         for (int row=0; row<BufferSIZE; row++)
-         {
-          data_s[row].xx.r = real((p_Data[row]).X.val);
-          data_s[row].xx.i = imag((p_Data[row]).X.val);
-          data_s[row].yy.r = real((p_Data[row]).Y.val);
-          data_s[row].yy.i = imag((p_Data[row]).Y.val);
          }
          table[idx]->appendRows( data_s, BufferSIZE );
          if ( !myFile.eof() )
@@ -352,9 +346,7 @@ int main (int argc, char *argv[])
            myFile.clear();
            counter+=BufferSIZE;
          }
-       }
      }
-
    }
 
   // cleanup memory
@@ -365,6 +357,7 @@ int main (int argc, char *argv[])
   }
   delete [] sbName;
   delete [] table;
+  delete [] data_s;
 
   return 0;
 }
