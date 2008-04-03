@@ -34,18 +34,16 @@
 #include <BeamFormed.h>
 #endif
 
-#define FILENAME "/mnt/disk2/data/cs1/pulsar/beam-formed_test.h5"
-
 int main(int argc,char *argv[])
 {
 
   DAL::BeamFormed * bf;
-  
+
   if (argc > 1)
     bf = new DAL::BeamFormed(argv[1]);
   else
   {
-    cout << "Please provide a HDF5 filename." << endl;
+    cerr << "Please provide a HDF5 filename." << endl;
     exit(1);
   }
   bf->summary();
@@ -54,6 +52,37 @@ int main(int argc,char *argv[])
   beam = bf->getBeam( 0 );
 
   std::vector<std::string> sources = bf->sources();
+  cerr << "Sources:" << endl;
+  for (unsigned int idx=0; idx<sources.size(); idx++)
+  {
+    cerr << sources[ idx ] << endl;
+  }
+
+  int subband = 0;
+  int start = 0;
+  int length = 10;
+  std::vector< std::complex<short> > xvals;
+  std::vector< std::complex<short> > yvals;
+  xvals.clear();
+  yvals.clear();
+
+  // step through the data for subband 0, 10 samples at a time, 10 times
+  for (unsigned int count=0; count < 10; count++ )
+  {
+    beam->getSubbandData_XY( subband, start, length, xvals, yvals );
+
+    for (unsigned int ii=0; ii < xvals.size(); ii++ )
+    {
+      printf( "{ (%d,%d),(%d,%d) }," , xvals[ii].real(),
+                                       xvals[ii].imag(),
+                                       yvals[ii].real(),
+                                       yvals[ii].imag() );
+    }
+    printf("\n\n");
+    xvals.clear();
+    yvals.clear();
+    start += length;
+  }
 
   delete bf;
 
