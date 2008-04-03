@@ -57,7 +57,7 @@ find_library (libutil util ${lib_locations})
 
 ## check where to find the CMake scripts
 
-find_path (dal_cmake FindHDF5.cmake FindCASACORE.cmake
+find_path (dal_cmake CMakeSettings.cmake
   PATHS 
   ${DAL_SOURCE_DIR}
   ${DAL_SOURCE_DIR}/..
@@ -65,6 +65,13 @@ find_path (dal_cmake FindHDF5.cmake FindCASACORE.cmake
   PATH_SUFFIXES
   devel_common/cmake
   )
+
+if (dal_cmake)
+  list (APPEND CMAKE_MODULE_PATH
+ ${dal_cmake})
+else (dal_cmake)
+  message (FATAL_ERROR "Unable to locate additional CMake scripts!")
+endif (dal_cmake)
 
 ## check for the external packages
 
