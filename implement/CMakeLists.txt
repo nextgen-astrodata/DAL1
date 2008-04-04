@@ -91,9 +91,7 @@ set (dal_sources
 ##     dealing with the related CMake variables - check first if the variable is
 ##     set before adding it to the list of link libraries.
 
-set (dal_link_libraries
-  z
-  )
+set (dal_link_libraries "")
 
 if (HDF5_LIBRARIES)
   list (APPEND dal_link_libraries ${HDF5_LIBRARIES})
@@ -116,6 +114,10 @@ endif (libdl)
 if (libm)
   list (APPEND dal_link_libraries ${libm})
 endif (libm)
+
+if (libz)
+  list (APPEND dal_link_libraries ${libz})
+endif (libz)
 
 if (libpthread)
   list (APPEND dal_link_libraries ${libpthread})

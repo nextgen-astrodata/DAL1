@@ -54,6 +54,7 @@ find_library (libdl dl ${lib_locations})
 find_library (libm m ${lib_locations})
 find_library (libpthread pthread ${lib_locations})
 find_library (libutil util ${lib_locations})
+find_library (libz z ${lib_locations})
 
 ## check where to find the CMake scripts
 
