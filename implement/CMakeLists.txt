@@ -93,6 +93,10 @@ set (dal_sources
 
 set (dal_link_libraries "")
 
+if (libz)
+  list (APPEND dal_link_libraries ${libz})
+endif (libz)
+
 if (HDF5_LIBRARIES)
   list (APPEND dal_link_libraries ${HDF5_LIBRARIES})
 else (HDF5_LIBRARIES)
@@ -114,10 +118,6 @@ endif (libdl)
 if (libm)
   list (APPEND dal_link_libraries ${libm})
 endif (libm)
-
-if (libz)
-  list (APPEND dal_link_libraries ${libz})
-endif (libz)
 
 if (libpthread)
   list (APPEND dal_link_libraries ${libpthread})
