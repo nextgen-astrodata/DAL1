@@ -49,20 +49,16 @@ dalColumn * dalTable::getColumn( string colname )
    if ( type == MSCASATYPE )
    {
 #ifdef WITH_CASA
-/*	casa::ROTableColumn column;
-	column = casa_table_handle->getColumn( colname );
-	return column;*/
-
-// using the dalColumn class
+   // using the dalColumn class
 	dalColumn * lclcol;
 	lclcol = new dalColumn( *casa_table_handle, colname );
-/*
+    #ifdef DEBUGGING_MESSAGES
 	lclcol->getType();
 	if ( lclcol->isScalar() )
 	  cout << colname << " is SCALAR" << endl;
 	if ( lclcol->isArray() )
 	  cout << colname << " is ARRAY" << endl;
-*/
+    #endif
 	return lclcol;
 #endif
    }
@@ -102,19 +98,16 @@ void * dalTable::getColumnData( string colname )
    if ( type == MSCASATYPE )
    {
 #ifdef WITH_CASA
-/*	casa::ROTableColumn column;
-	column = casa_table_handle->getColumn( colname );
-	return column;*/
-
-// using the dalColumn class
+   // using the dalColumn class
 	dalColumn lclcol;
 	lclcol = dalColumn( *casa_table_handle, colname );
 	lclcol.getType();
+    #ifdef DEBUGGING_MESSAGES
 	if ( lclcol.isScalar() )
 	  cout << colname << " is SCALAR" << endl;
 	if ( lclcol.isArray() )
 	  cout << colname << " is ARRAY" << endl;
-
+    #endif
 	casa::uInt nrow;
 	nrow = casa_table_handle->nrow();
 
@@ -129,31 +122,42 @@ void * dalTable::getColumnData( string colname )
 	casa::Bool isarray = col_desc.isArray();
 	if ( casa::True == isarray )
 	{
+	  #ifdef DEBUGGING_MESSAGES
 	  cout << "YES" << endl;
-	  casa::uInt ndimcol = column.ndimColumn();
+      #endif
+	  casa::uInt ndimcol;
+	  ndimcol = column.ndimColumn();
 	  casa::IPosition shape = column.shape(1);
+      #ifdef DEBUGGING_MESSAGES
 	  cout << "  Number of global dims: " << ndimcol << endl;
 	  cout << "  Shape: " << shape << endl;
+      #endif
 	  switch ( col_desc.dataType() )
 	  {
 	    case casa::TpComplex:
 	    {
+          #ifdef DEBUGGING_MESSAGES
 	      cout << "Data type is Complex." << endl;
+          #endif
 	      casa::ROArrayColumn<casa::Complex>
 	        arcolumn( *casa_table_handle, colname );
 	      int polarization = 0;
 	      casa::IPosition start (2,polarization,0)/*, length (1,1)*/;
 	      casa::Slicer slicer (start/*, length*/);
 	      array_vals_comp = arcolumn.getColumn( slicer );
-// 	      if ( "UVW" == colname ) cout << vals << endl;
+          #ifdef DEBUGGING_MESSAGES
+ 	      if ( "UVW" == colname ) cout << vals << endl;
 	      cout << "number of dims: " << array_vals_comp.ndim() << endl;
 	      cout << "shape: " << array_vals_comp.shape() << endl;
 	      cout << "size: " << array_vals_comp.size() << endl;
+          #endif
 	      vector< complex< float > > valvec;
 	      array_vals_comp.tovector( valvec );
+          #ifdef DEBUGGING_MESSAGES
 	      cout << valvec[0] << valvec[1] << valvec[2] << endl;
 	      cout << "vector size: " << valvec.size() << endl;
 	      cout << "Polarization number: " << polarization << endl;
+          #endif
 	      return array_vals_comp.data();
 	    }
 	    break;
@@ -181,14 +185,18 @@ void * dalTable::getColumnData( string colname )
 	      casa::IPosition start (1,cell)/*, length (1,1)*/;
 	      casa::Slicer slicer (start/*, length*/);
 	      array_vals_dbl = arcolumn.getColumn( slicer );
-// 	      if ( "UVW" == colname ) cout << vals << endl;
+          #ifdef DEBUGGING_MESSAGES
+ 	      if ( "UVW" == colname ) cout << vals << endl;
 	      cout << "number of dims: " << array_vals_dbl.ndim() << endl;
 	      cout << "shape: " << array_vals_dbl.shape() << endl;
 	      cout << "size: " << array_vals_dbl.size() << endl;
+          #endif
 	      vector<double> valvec;
 	      array_vals_dbl.tovector( valvec );
+          #ifdef DEBUGGING_MESSAGES
 	      cout << "vector size: " << valvec.size() << endl;
 	      cout << "Data from cell number: " << cell << endl;
+          #endif
 	      return array_vals_dbl.data();
 	    }
 	    break;
@@ -197,13 +205,15 @@ void * dalTable::getColumnData( string colname )
 	    break;
 	    case casa::TpInt:
 	    {
+          #ifdef DEBUGGING_MESSAGES
 	      cout << "Data type is Int." << endl;
+          #endif
 	      int * value = new int[100];
 	      for (int ii=0; ii<100; ii++)
-	        {
-		  column.getScalar(ii,value[ii]);
-	        }
-              return value;
+	      {
+			column.getScalar(ii,value[ii]);
+		  }
+		  return value;
 	    }
 	    break;
 	    default:
@@ -238,10 +248,10 @@ void * dalTable::getColumnData( string colname )
 	      cout << "Data type is Double." << endl;
 	      double * value = new double[100];
 	      for (int ii=0; ii<100; ii++)
-	        {
-		  column.getScalar(ii,value[ii]);
-	        }
-              return value;
+		  {
+		    column.getScalar(ii,value[ii]);
+		  }
+          return value;
 	    }
 	    break;
 	    case casa::TpString:
@@ -252,10 +262,10 @@ void * dalTable::getColumnData( string colname )
 	      cout << "Data type is Int." << endl;
 	      int * value = new int[100];
 	      for (int ii=0; ii<100; ii++)
-	        {
-		  column.getScalar(ii,value[ii]);
-	        }
-              return value;
+		  {
+		    column.getScalar(ii,value[ii]);
+		  }
+		  return value;
 	    }
 	    break;
 /*	  case casa::TpArrayShort:
@@ -280,8 +290,10 @@ void * dalTable::getColumnData( string colname )
 	}
 
 	casa::TableRecord table_rec = column.keywordSet();
-// 	cout << "Number of fields: " << table_rec.nfields() << endl;
-// 	cout << "Datatype: " << col_desc.dataType() << endl;
+    #ifdef DEBUGGING_MESSAGES
+ 	cout << "Number of fields: " << table_rec.nfields() << endl;
+ 	cout << "Datatype: " << col_desc.dataType() << endl;
+    #endif
 	return NULL;
 #else
 	cout << "CASA support not enabled." << endl;
