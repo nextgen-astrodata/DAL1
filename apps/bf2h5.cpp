@@ -148,7 +148,7 @@ int main (int argc, char *argv[])
   BlockHeader blockheader;
 
 
-#ifdef DEBUG
+#ifdef DEBUGGING_MESSAGES
   cout << "Reading from the data file: " << argv[1] << endl;
 #endif
 
@@ -166,7 +166,7 @@ int main (int argc, char *argv[])
      exit(3);
   }
 
-#ifdef DEBUG
+#ifdef DEBUGGING_MESSAGES
   printf("size of file header: %ld\n", sizeof(fileheader));
   cout << "read pointer position: " << myFile.tellg() << endl;
 #endif
@@ -195,6 +195,14 @@ int main (int argc, char *argv[])
     }
   }
 
+#ifdef DEBUGGING_MESSAGES
+  printf("fileheader.bitsPerSample: %d\n", fileheader.bitsPerSample);
+  printf("fileheader.nrPolarizations: %d\n", fileheader.nrPolarizations);
+  cerr << "fileheader.nrBeamlets: " <<  fileheader.nrBeamlets << endl;
+  cerr << "fileheader.nrSamplesPerBeamlet: " <<  fileheader.nrSamplesPerBeamlet	 << endl;
+  cerr << "fileheader.sampleRate: " <<  fileheader.sampleRate << endl;
+//   cerr << "fileheader.: " <<  fileheader. << endl;
+#endif
 
   dalDataset * dataset;
   dataset = new dalDataset( argv[2], "HDF5" );
@@ -268,7 +276,7 @@ int main (int argc, char *argv[])
   beamGroup = dataset->createGroup( beamstr );
   beamGroup->setAttribute_string( "RA", "" );
   beamGroup->setAttribute_string( "DEC", "" );
-  int n_subbands[] = { 1 };
+  int n_subbands[] = { fileheader.nrBeamlets };
   beamGroup->setAttribute_int( "NUMBER_OF_SUBBANDS", n_subbands );
 
 #ifdef DEBUG

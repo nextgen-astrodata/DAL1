@@ -62,7 +62,8 @@ namespace DAL {
     vector<string> memnames = group_p->getMemberNames();
     std::vector< std::complex<short> > xvals;
     std::vector< std::complex<short> > yvals;
-
+    xvals.clear();
+    yvals.clear();
 
     for (unsigned int jj=0; jj<memnames.size(); jj++)
     {

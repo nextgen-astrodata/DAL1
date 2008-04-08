@@ -221,8 +221,8 @@ int main(int argc, char *argv[])
     FD_ZERO(&readSet);
     FD_SET(main_socket, &readSet);
 
-    timeVal.tv_sec = 10;
-    timeVal.tv_usec = 0;
+    timeVal.tv_sec =   10;
+    timeVal.tv_usec =  0;
 
     if ( select( main_socket + 1, &readSet, NULL, NULL, &timeVal ) ) {
       r = recvfrom( main_socket, reinterpret_cast<char *>(&header),
@@ -382,6 +382,10 @@ int main(int argc, char *argv[])
         }
 
         if ( r < 0 ) { perror("recvfrom"); exit(1); }
+
+        #ifdef DEBUGGING_MESSAGES
+        cerr << r << " bytes received." << endl;
+        #endif
 
         if ( 0 == counter % 10000 )
            cout << counter << " value         " << tran_sample.value << endl;

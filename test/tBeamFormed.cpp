@@ -57,6 +57,7 @@ int main(int argc,char *argv[])
   {
     cerr << sources[ idx ] << endl;
   }
+  cerr << endl;
 
   int subband = 0;
   int start = 0;
@@ -71,14 +72,15 @@ int main(int argc,char *argv[])
   {
     beam->getSubbandData_XY( subband, start, length, xvals, yvals );
 
+    printf( "Values %d through %d\n", start, start + length );
     for (unsigned int ii=0; ii < xvals.size(); ii++ )
     {
-      printf( "{ (%d,%d),(%d,%d) }," , xvals[ii].real(),
-                                       xvals[ii].imag(),
-                                       yvals[ii].real(),
-                                       yvals[ii].imag() );
+      printf( "(%d,%d),(%d,%d)\n" , xvals[ii].real(),
+                                    xvals[ii].imag(),
+                                    yvals[ii].real(),
+                                    yvals[ii].imag() );
     }
-    printf("\n\n");
+    printf("\n");
     xvals.clear();
     yvals.clear();
     start += length;
