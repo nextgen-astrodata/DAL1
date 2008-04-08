@@ -35,6 +35,12 @@ if (NOT DAL_VERBOSE_CONFIGURE)
   set (PYTHON_FIND_QUIETLY ON)
 endif (NOT DAL_VERBOSE_CONFIGURE)
 
+## Handle option: debugging messages on/off
+
+if (DAL_DEBUGGING_MESSAGES)
+  add_definitions (-DDEBUGGING_MESSAGES)
+endif (DAL_DEBUGGING_MESSAGES)
+
 ## -----------------------------------------------------------------------------
 ## External dependencies
 
