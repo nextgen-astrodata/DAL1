@@ -238,7 +238,10 @@ int main(int argc, char *argv[])
     }
 
     if (r<0) { perror("recvfrom"); exit(1); }
-    else { cerr << '.'; }
+
+    #ifdef DEBUGGING_MESSAGES
+    cerr << r << " bytes received." << endl;
+    #endif
 
     // reverse fields if big endian
     if ( bigendian )
@@ -291,6 +294,9 @@ int main(int argc, char *argv[])
       {
 	if ( 0!=header.n_freq_bands )
 	{
+          #ifdef DEBUGGING_MESSAGES
+          cerr << "Spectral mode." << endl;
+          #endif
 	}
 	else
 	{

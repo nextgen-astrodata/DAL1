@@ -146,7 +146,6 @@ void * dalTable::getColumnData( string colname )
 	      casa::Slicer slicer (start/*, length*/);
 	      array_vals_comp = arcolumn.getColumn( slicer );
           #ifdef DEBUGGING_MESSAGES
- 	      if ( "UVW" == colname ) cout << vals << endl;
 	      cout << "number of dims: " << array_vals_comp.ndim() << endl;
 	      cout << "shape: " << array_vals_comp.shape() << endl;
 	      cout << "size: " << array_vals_comp.size() << endl;
@@ -186,7 +185,6 @@ void * dalTable::getColumnData( string colname )
 	      casa::Slicer slicer (start/*, length*/);
 	      array_vals_dbl = arcolumn.getColumn( slicer );
           #ifdef DEBUGGING_MESSAGES
- 	      if ( "UVW" == colname ) cout << vals << endl;
 	      cout << "number of dims: " << array_vals_dbl.ndim() << endl;
 	      cout << "shape: " << array_vals_dbl.shape() << endl;
 	      cout << "size: " << array_vals_dbl.size() << endl;
