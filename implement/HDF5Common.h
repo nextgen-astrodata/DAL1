@@ -34,8 +34,8 @@
 #include <casa/Arrays/Vector.h>
 #endif
 
-#include <hdf5/H5LT.h>
-#include <hdf5/H5TA.h>
+#include <H5LT.h>
+#include <H5TA.h>
 
 namespace DAL { // Namespace DAL -- begin
   
