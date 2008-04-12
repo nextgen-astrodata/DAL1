@@ -46,7 +46,7 @@ int main(int argc,char *argv[])
     cerr << "Please provide a HDF5 filename." << endl;
     exit(1);
   }
-  bf->summary();
+//   bf->summary();
 
   DAL::BeamGroup * beam;
   beam = bf->getBeam( 0 );
@@ -61,13 +61,26 @@ int main(int argc,char *argv[])
 
   int subband = 0;
   int start = 0;
-  int length = 10;
+  int length = 144441344;
   std::vector< std::complex<short> > xvals;
   std::vector< std::complex<short> > yvals;
   xvals.clear();
   yvals.clear();
 
+std::complex<short> * xx = NULL;
+//xx = new std::complex<short>[length];
+xx = beam->getSubbandData_X( subband, start, length );
+printf( "(%d,%d)" , xx[10000000].real(), xx[10000000].imag() );
+/*
+for (int ii=0; ii < length; ii++ )
+{
+  printf( "(%d,%d)" , xx[ii].real(), xx[ii].imag() );
+}
+*/
+//delete [] xx;
+
   // step through the data for subband 0, 10 samples at a time, 10 times
+/*
   for (unsigned int count=0; count < 10; count++ )
   {
     beam->getSubbandData_XY( subband, start, length, xvals, yvals );
@@ -85,6 +98,7 @@ int main(int argc,char *argv[])
     yvals.clear();
     start += length;
   }
+*/
 
   delete bf;
 

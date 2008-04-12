@@ -28,32 +28,32 @@ else:
 # get beam 0
 beam = file.getBeam(0)
 
-subband = 10
-start = 0
-n_samples = 512 * 128
+tot_samples = 512 * 128 * 2200
+avg_samples = 512 * 128
 
-first = 1
-
-downsampled_data = array([],'f')
-
-for count in range(2200):
-	data = beam.getSubbandData_XY( subband, start, n_samples )
-	xx_intensity = abs(data[0])
-	yy_intensity = abs(data[1])
-	tot_intensity = sqrt(xx_intensity*xx_intensity + yy_intensity*yy_intensity)
+for subband in range(1):
+	start = 0
+	xx = beam.getSubbandData_X( subband, start, tot_samples )
+	yy = beam.getSubbandData_Y( subband, start, tot_samples )
+	downsampled_data = array([],'f')
+	for count in range(2200):
+		end = start+avg_samples
+		xx_intensity = abs(xx[start:end])
+		yy_intensity = abs(yy[start:end])
+		tot_intensity = sqrt(xx_intensity*xx_intensity + yy_intensity*yy_intensity)
+		
+		data = downsample( tot_intensity, 128 )
+		start += avg_samples
 	
-	data = downsample( tot_intensity, 128 )
-	start += n_samples
+		downsampled_data = concatenate( (downsampled_data, float32(data)) )
 
-	downsampled_data = concatenate( (downsampled_data, float32(data)) )
+	tmpfile = "B0329+54_080313_subband%02d" % subband
+	fileobj = open(tmpfile, mode='wb')
+	fileobj.write(downsampled_data)
+	fileobj.close()
+	print "Wrote ",tmpfile
 
-
-print len(downsampled_data)
-#plot(downsampled_data)
-#show()
-print type(downsampled_data[0])
-
-tmpfile = "tmp.dat"
-fileobj = open(tmpfile, mode='wb')
-fileobj.write(downsampled_data)
-fileobj.close()
+	#plot(downsampled_data)
+	#show()
+	#print len(downsampled_data)
+	#print type(downsampled_data[0])

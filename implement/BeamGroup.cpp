@@ -168,6 +168,52 @@ namespace DAL {
   }
 
 
+  std::complex<short> * 
+  BeamGroup::getSubbandData_X( int subband,
+                               int start,
+                               int length )
+  {
+    dalTable * table;
+    dalColumn * col;
+    dalData * data;
+
+    vector<string> memnames = group_p->getMemberNames();
+
+    table = dataset_p.openTable(memnames[ subband ],group_p->getName());
+    col = table->getColumn("X");
+    data = col->data( start, length );
+
+    delete col;
+
+    std::complex<short> * values;
+    values = (complex<short>*)data->data;
+
+    return values;
+  }
+
+  std::complex<short> * 
+  BeamGroup::getSubbandData_Y( int subband,
+                               int start,
+                               int length )
+  {
+    dalTable * table;
+    dalColumn * col;
+    dalData * data;
+
+    vector<string> memnames = group_p->getMemberNames();
+
+    table = dataset_p.openTable(memnames[ subband ],group_p->getName());
+    col = table->getColumn("Y");
+    data = col->data( start, length );
+
+    delete col;
+
+    std::complex<short> * values;
+    values = (complex<short>*)data->data;
+
+    return values;
+  }
+
   void BeamGroup::getSubbandData_X( int subband,
                                     int start,
                                     int length,
@@ -233,20 +279,23 @@ void BeamGroup::summary_boost()
 
 bpl::numeric::array BeamGroup::getSubbandData_X_boost( int subband,
                                                        int start,
-                                                       int length )
+                                                       unsigned int length )
 {
-  std::vector< std::complex<short> > values;
-  getSubbandData_X( subband, start, length, values );
-  bpl::list value_list;
+  std::complex<short> * values = NULL;
+  values = getSubbandData_X( subband, start, length );
+  std::complex<float> * value_list;
+  value_list = new std::complex<float>[length];
 
-  for (unsigned int ii=0; ii<values.size(); ii++)
+  for (unsigned int ii=0; ii<length; ii++)
   {
-     std::complex<float> foo(values[ii].real(),values[ii].imag());
-     value_list.append( foo );
+     value_list[ii] = complex<float>(values[ii].real(),values[ii].imag());
   }
-
-  bpl::numeric::array narray = num_util::makeNum( value_list );
-
+  delete [] values;
+  std::vector<int> mydims;
+  mydims.push_back( length );
+  bpl::numeric::array narray = num_util::makeNum( value_list, mydims );
+  delete [] value_list;
+  value_list = NULL;
   return narray;
 }
 
@@ -254,18 +303,21 @@ bpl::numeric::array BeamGroup::getSubbandData_Y_boost( int subband,
                                                        int start,
                                                        int length )
 {
-  std::vector< std::complex<short> > values;
-  getSubbandData_Y( subband, start, length, values );
-  bpl::list value_list;
+  std::complex<short> * values = NULL;
+  values = getSubbandData_Y( subband, start, length );
+  std::complex<float> * value_list;
+  value_list = new std::complex<float>[length];
 
-  for (unsigned int ii=0; ii<values.size(); ii++)
+  for (int ii=0; ii<length; ii++)
   {
-     std::complex<float> foo(values[ii].real(),values[ii].imag());
-     value_list.append( foo );
+     value_list[ii] = complex<float>(values[ii].real(),values[ii].imag());
   }
-
-  bpl::numeric::array narray = num_util::makeNum( value_list );
-
+  delete [] values;
+  std::vector<int> mydims;
+  mydims.push_back( length );
+  bpl::numeric::array narray = num_util::makeNum( value_list, mydims );
+  delete [] value_list;
+  value_list = NULL;
   return narray;
 }
 
@@ -275,6 +327,8 @@ bpl::numeric::array BeamGroup::getSubbandData_XY_boost( int subband,
 {
   std::vector< std::complex<short> > x_values;
   std::vector< std::complex<short> > y_values;
+  x_values.clear();
+  y_values.clear();
   getSubbandData_X( subband, start, length, x_values );
   getSubbandData_Y( subband, start, length, y_values );
 

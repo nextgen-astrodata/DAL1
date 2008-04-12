@@ -427,7 +427,16 @@ dalData * dalColumn::data( int start, int length )
 	if ( length < 0 )
 	  length = nrecords;
 
-	dalcomplex_int16 data[length];
+	dalcomplex_int16 * data = NULL;
+	try
+	{
+          data = new dalcomplex_int16[length];
+	}
+	catch ( bad_alloc )
+	{
+	  cerr << "Could not allocate memory buffer for dalColumn" << endl;
+	  exit(3);
+	}
 
         if ( H5TBread_fields_name (file_id, tablename.c_str(), name.c_str(),
                  start, length, sizeof(dalcomplex_int16), field_offsets, field_sizes,

@@ -150,6 +150,16 @@ namespace DAL {
                            std::vector< std::complex<short> > &values );
 
 
+    // array version of the above
+    std::complex<short>  * getSubbandData_X( int subband,
+                           int start,
+                           int length );
+
+    // array version of the above
+    std::complex<short>  * getSubbandData_Y( int subband,
+                           int start,
+                           int length );
+
     /*!
      \brief Get Y column data for a given subband
 
@@ -225,7 +235,7 @@ namespace DAL {
     void summary_boost();
     bpl::numeric::array getSubbandData_X_boost( int subband,
                                                 int start,
-                                                int length );
+                                                unsigned int length );
 
     bpl::numeric::array getSubbandData_Y_boost( int subband,
                                                 int start,
