@@ -159,6 +159,9 @@ void * dalData::get( long idx1, long idx2, long idx3 )
    else if ( dal_SHORT == datatype )
       return (&(((short*)data)[ index ]));
 
+   else if ( dal_FLOAT == datatype )
+      return (&(((float*)data)[ index ]));
+
    else if ( dal_CHAR == datatype )
       return (&(((char*)data)[ index ]));
 
@@ -201,6 +204,14 @@ bpl::numeric::array dalData::get_boost()
         for (unsigned int hh=0; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
 	bpl::numeric::array narray = num_util::makeNum((int*)data,mydims);
+	return narray;
+      }
+      else if ( dal_FLOAT == datatype )
+      {
+        for (unsigned int hh=0; hh<shape.size(); hh++)
+	{ mydims.push_back(shape[hh]); }
+	bpl::numeric::array narray = num_util::makeNum((float*)data,mydims);
+cerr << "getting FLOAT data" << endl;
 	return narray;
       }
       else if ( dal_DOUBLE == datatype )

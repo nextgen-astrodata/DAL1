@@ -427,26 +427,56 @@ dalData * dalColumn::data( int start, int length )
 	if ( length < 0 )
 	  length = nrecords;
 
-	dalcomplex_int16 * data = NULL;
-	try
-	{
-          data = new dalcomplex_int16[length];
+	if ( dal_COMPLEX_SHORT == getType() )
+        {
+		dalcomplex_int16 * data = NULL;
+		try
+		{
+			data = new dalcomplex_int16[length];
+		}
+		catch ( bad_alloc )
+		{
+			cerr << "Could not allocate memory buffer for dalColumn" << endl;
+			exit(3);
+		}
+		
+		if ( H5TBread_fields_name (file_id, tablename.c_str(), name.c_str(),
+				start, length, sizeof(dalcomplex_int16), field_offsets, field_sizes,
+				data ) < 0 )
+			return NULL;
+		
+		vector<int> shape(1);
+		
+		data_object = new dalData( filetype, dal_COMPLEX_SHORT, shape, length );
+		data_object->data = (dalcomplex_int16 *)data;
 	}
-	catch ( bad_alloc )
-	{
-	  cerr << "Could not allocate memory buffer for dalColumn" << endl;
-	  exit(3);
+	else if ( dal_FLOAT == getType() )
+        {
+		float * data = NULL;
+		try
+		{
+			data = new float[length];
+		}
+		catch ( bad_alloc )
+		{
+			cerr << "Could not allocate memory buffer for dalColumn" << endl;
+			exit(3);
+		}
+		
+		if ( H5TBread_fields_name (file_id, tablename.c_str(), name.c_str(),
+				start, length, sizeof(float), field_offsets, field_sizes,
+				data ) < 0 )
+			return NULL;
+		
+		vector<int> shape(1);
+		
+		data_object = new dalData( filetype, dal_FLOAT, shape, length );
+		data_object->data = (float *)data;
 	}
-
-        if ( H5TBread_fields_name (file_id, tablename.c_str(), name.c_str(),
-                 start, length, sizeof(dalcomplex_int16), field_offsets, field_sizes,
-		 data ) < 0 )
-	   return NULL;
-
-	vector<int> shape(1);
-
-        data_object = new dalData( filetype, dal_COMPLEX_SHORT, shape, length );
-	data_object->data = (dalcomplex_int16 *)data;
+        else
+        {
+           cerr << "ERROR: datatype not supported [dalColumn.data]" << endl;
+        }
 
 	free( field_sizes );
 	free( field_offsets );
@@ -478,6 +508,9 @@ int dalColumn::getSize()
 	}
 	else if ( dal_COMPLEX == getType() ) {
 		return sizeof( dalcomplex );
+	}
+	else if ( dal_COMPLEX_SHORT == getType() ) {
+		return sizeof( dalcomplex_int16 );
 	}
 	else if ( dal_COMPLEX_CHAR == getType() ) {
 		return sizeof( dalcomplex_char );
@@ -694,6 +727,16 @@ bpl::numeric::array dalColumn::data_boost()
        cout << "ERROR: " << x.getMesg() << endl;
        exit(-4);
     }
+   }
+   else if ( H5TYPE == filetype )
+   {
+     cerr << "ERROR: hdf5 not supported [dalColumn.data - python]" << endl;
+     data_object = data();
+     return data_object->get_boost();
+   }
+   else
+   {
+     cerr << "ERROR: filetype not supported [dalColumn.data - python]" << endl;
    }
 
    bpl::list tmp_list;

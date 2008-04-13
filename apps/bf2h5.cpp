@@ -91,6 +91,12 @@ typedef struct BlockHeader {
    } flagsRanges[8][16];
  } BlockHeader;
 
+  // dataStruct is 8 bytes
+  typedef struct dataStruct {
+    complex<short> xx;
+    complex<short> yy;
+  } dataStruct;
+
 /************************************************
  *
  * Function:  print_banner()
@@ -111,6 +117,69 @@ void print_banner() {
 		 << left << "-------" << endl;
 }
 
+dataStruct * downsample( dataStruct * data,
+                         const unsigned long arraylength,
+                         int factor )
+{
+  const int DS_SIZE = arraylength / factor;
+  int start = 0;
+  dataStruct * ds_data = NULL;
+  try
+  {
+    ds_data = new dataStruct[ DS_SIZE ];
+  }
+  catch (bad_alloc)
+  {
+    cerr << "Can't allocate memory for downsampled array." << endl;
+  }
+
+  for (int count=0; count<DS_SIZE; count++)
+  {
+    for (int idx=start; idx < (start+factor); idx++)
+    {
+      ds_data[count].xx += data[idx].xx;
+      ds_data[count].yy += data[idx].yy;
+    }
+    start += factor;
+  }
+  return ds_data;
+}
+
+Float32 * downsample_to_float32_intensity( dataStruct * data,
+                                           const unsigned long arraylength,
+                                           int factor )
+{
+  const int DS_SIZE = arraylength / factor;
+  int start = 0;
+  double xx_intensity = 0;
+  double yy_intensity = 0;
+  Float32 * ds_data = NULL;
+  try
+  {
+    ds_data = new Float32[ DS_SIZE ];
+  }
+  catch (bad_alloc)
+  {
+    cerr << "Can't allocate memory for downsampled array." << endl;
+  }
+
+  for (int count=0; count<DS_SIZE; count++)
+  {
+    ds_data[count] = 0;
+    for (int idx=start; idx < (start+factor); idx++)
+    {
+      xx_intensity = std::sqrt( real(data[idx].xx)*real(data[idx].xx) +
+                                imag(data[idx].xx)*imag(data[idx].xx) );
+      yy_intensity = std::sqrt( real(data[idx].yy)*real(data[idx].yy) +
+                                imag(data[idx].yy)*imag(data[idx].yy) );
+      ds_data[count] +=
+        (Float32)std::sqrt( xx_intensity*xx_intensity + yy_intensity*yy_intensity );
+    }
+    start += factor;
+  }
+  return ds_data;
+}
+
 int main (int argc, char *argv[])
 {
 
@@ -122,14 +191,8 @@ int main (int argc, char *argv[])
 
   bool bigendian = BigEndian();
 
-  // dataStruct is 8 bytes
-  typedef struct dataStruct {
-    dalcomplex_int16 xx;
-    dalcomplex_int16 yy;
-  } dataStruct;
-
-
   const unsigned long BufferSIZE = 155648;//608;
+  int downsample_factor = 128;
 
   dataStruct * data_s = NULL; // pointer to dataStruct
   try
@@ -142,6 +205,9 @@ int main (int argc, char *argv[])
     exit(3);
   }
 
+
+  const bool DO_DOWNSAMPLE = true;
+  const bool DO_FLOAT32_INTENSITY = true;
 
   // define memory buffers
   FileHeader fileheader;
@@ -301,8 +367,16 @@ int main (int argc, char *argv[])
     table[idx]->setAttribute_double( "CHANNEL_CENTER_FREQUENCY",
                                       channel_center_freq,
                                       3 );
-    table[idx]->addColumn( "X", dal_COMPLEX_SHORT );
-    table[idx]->addColumn( "Y", dal_COMPLEX_SHORT );
+    if (DO_FLOAT32_INTENSITY)
+    {
+       table[idx]->addColumn( "TOTAL_INTENSITY", dal_FLOAT );
+    }
+    else
+    {
+      table[idx]->addColumn( "X", dal_COMPLEX_SHORT );
+      table[idx]->addColumn( "Y", dal_COMPLEX_SHORT );
+    }
+
   }
 
   delete [] beamstr;
@@ -310,7 +384,7 @@ int main (int argc, char *argv[])
   int xx=0;
   int counter = 0;
   while ( myFile.read ( reinterpret_cast<char *>(&blockheader),
-                        sizeof(blockheader) ) /*&& xx < 10*/ )
+                        sizeof(blockheader) ) && xx < 1 )
   {
 
     // swap values when necessary
@@ -348,7 +422,34 @@ int main (int argc, char *argv[])
           cout << "read pointer position: " << myFile.tellg() << endl;
           exit(2);
          }
-         table[idx]->appendRows( data_s, BufferSIZE );
+         if ( DO_DOWNSAMPLE )  // if downsampling
+         {
+            if ( DO_FLOAT32_INTENSITY ) // if you want float32 intensities
+            {
+               Float32 * downsampled_data;
+               downsampled_data =
+                  downsample_to_float32_intensity( data_s,
+                                                   BufferSIZE,
+                                                   downsample_factor );
+               table[idx]->appendRows( downsampled_data,
+                                       BufferSIZE / downsample_factor );
+               delete [] downsampled_data;
+            }
+            else // if you want complex numbers
+            {
+               dataStruct * downsampled_data;
+               downsampled_data = downsample( data_s,
+                                              BufferSIZE,
+                                              downsample_factor );
+               table[idx]->appendRows( downsampled_data,
+                                       BufferSIZE / downsample_factor );
+               delete [] downsampled_data;
+            }
+         }
+         else  // no downsampling
+         {
+            table[idx]->appendRows( data_s, BufferSIZE );
+         }
          if ( !myFile.eof() )
          {
            myFile.clear();
