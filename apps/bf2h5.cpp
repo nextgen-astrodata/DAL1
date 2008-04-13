@@ -384,7 +384,7 @@ int main (int argc, char *argv[])
   int xx=0;
   int counter = 0;
   while ( myFile.read ( reinterpret_cast<char *>(&blockheader),
-                        sizeof(blockheader) ) && xx < 1 )
+                        sizeof(blockheader) ) /*&& xx < 1*/ )
   {
 
     // swap values when necessary
