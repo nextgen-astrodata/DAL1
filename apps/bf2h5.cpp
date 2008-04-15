@@ -396,7 +396,7 @@ int main (int argc, char *argv[])
   int xx=0;
   int counter = 0;
   while ( myFile.read ( reinterpret_cast<char *>(&blockheader),
-                        sizeof(blockheader) ) && xx < 10 )
+                        sizeof(blockheader) ) /*&& xx < 10*/ )
   {
 
     // swap values when necessary
@@ -404,21 +404,15 @@ int main (int argc, char *argv[])
     {
       for (unsigned int idx=0; idx<8; idx++)
       {
-        blockheader.coarseDelayApplied[idx] =
-           Int32Swap( blockheader.coarseDelayApplied[idx] );
-        blockheader.fineDelayRemainingAtBegin[idx] =
-           Int64Swap( blockheader.fineDelayRemainingAtBegin[idx] );
-        blockheader.fineDelayRemainingAfterEnd[idx] =
-           Int64Swap( blockheader.fineDelayRemainingAfterEnd[idx] );
-        blockheader.time[idx] = Int64Swap( blockheader.time[idx] );
-        blockheader.nrFlagsRanges[idx] =
-           Int32Swap( blockheader.nrFlagsRanges[idx] );
+        swapbytes((char *)&blockheader.coarseDelayApplied[idx],4);
+        swapbytes((char *)&blockheader.fineDelayRemainingAtBegin[idx],8);
+        swapbytes((char *)&blockheader.fineDelayRemainingAfterEnd[idx],8);
+        swapbytes((char *)&blockheader.time[idx],8);
+        swapbytes((char *)&blockheader.nrFlagsRanges[idx],4);
         for(unsigned int idx2=0; idx2<16; idx2++)
         {
-          blockheader.flagsRanges[idx][idx2].begin =
-            Int32Swap( blockheader.flagsRanges[idx][idx2].begin );
-          blockheader.flagsRanges[idx][idx2].end =
-            Int32Swap( blockheader.flagsRanges[idx][idx2].end );
+          swapbytes( (char *)&blockheader.flagsRanges[idx][idx2].begin,4 );
+          swapbytes( (char *)&blockheader.flagsRanges[idx][idx2].end,4 );
         }
       }
     }
