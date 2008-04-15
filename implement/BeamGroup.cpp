@@ -157,6 +157,29 @@ namespace DAL {
   }
 
 
+  float * 
+  BeamGroup::getIntensity( int subband,
+                           int start,
+                           int length )
+  {
+    dalTable * table;
+    dalColumn * col;
+    dalData * data;
+
+    vector<string> memnames = group_p->getMemberNames();
+
+    table = dataset_p.openTable(memnames[ subband ],group_p->getName());
+    col = table->getColumn_Float32("TOTAL_INTENSITY");
+    data = col->data( start, length );
+
+    delete col;
+
+    float * values;
+    values = (float*)data->data;
+
+    return values;
+  }
+
   void BeamGroup::getSubbandData_XY( int subband,
                                      int start,
                                      int length,
@@ -180,7 +203,7 @@ namespace DAL {
     vector<string> memnames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memnames[ subband ],group_p->getName());
-    col = table->getColumn("X");
+    col = table->getColumn_complexFloat32("X");
     data = col->data( start, length );
 
     delete col;
@@ -203,7 +226,7 @@ namespace DAL {
     vector<string> memnames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memnames[ subband ],group_p->getName());
-    col = table->getColumn("Y");
+    col = table->getColumn_complexFloat32("Y");
     data = col->data( start, length );
 
     delete col;
@@ -227,7 +250,7 @@ namespace DAL {
     vector<string> memnames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memnames[ subband ],group_p->getName());
-    col = table->getColumn("X");
+    col = table->getColumn_complexFloat32("X");
     data = col->data( start, length );
 
     for (int jj=0; jj < length; jj++)
@@ -252,7 +275,7 @@ namespace DAL {
     vector<string> memnames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memnames[ subband ],group_p->getName());
-    col = table->getColumn("Y");
+    col = table->getColumn_complexFloat32("Y");
     data = col->data( start, length );
 
     for (int jj=0; jj < length; jj++)
@@ -275,6 +298,20 @@ namespace DAL {
 void BeamGroup::summary_boost()
 {
   summary();
+}
+
+bpl::numeric::array BeamGroup::getIntensity_boost( int subband,
+                                                   int start,
+                                                   unsigned int length )
+{
+  float * values = NULL;
+  values = getIntensity( subband, start, length );
+  std::vector<int> mydims;
+  mydims.push_back( length );
+  bpl::numeric::array narray = num_util::makeNum( values, mydims );
+  delete [] values;
+  values = NULL;
+  return narray;
 }
 
 bpl::numeric::array BeamGroup::getSubbandData_X_boost( int subband,

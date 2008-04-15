@@ -115,6 +115,8 @@ namespace DAL {
                         std::string const &name);
 
 
+    float *  getIntensity( int subband, int start, int length );
+
     /*!
      \brief Get X and Y columns data for a given subband
 
@@ -233,6 +235,9 @@ namespace DAL {
 #ifdef PYTHON
 
     void summary_boost();
+    bpl::numeric::array getIntensity_boost( int subband,
+                                            int start,
+                                            unsigned int length );
     bpl::numeric::array getSubbandData_X_boost( int subband,
                                                 int start,
                                                 unsigned int length );

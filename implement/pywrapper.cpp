@@ -140,6 +140,10 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("setFilter", &dalTable::setFilter_boost2)
 	.def("getColumn", &dalTable::getColumn,
 	     bpl::return_value_policy<bpl::manage_new_object>())
+	.def("getColumn_Float32", &dalTable::getColumn_Float32,
+	     bpl::return_value_policy<bpl::manage_new_object>())
+	.def("getColumn_complexFloat32", &dalTable::getColumn_complexFloat32,
+	     bpl::return_value_policy<bpl::manage_new_object>())
 #endif
     ;
 
@@ -185,6 +189,8 @@ BOOST_PYTHON_MODULE(pydal)
 	     "Return dec value for the beam")
 	.def("n_subbands", &BeamGroup::n_subbands,
 	     "Return number of subbands")
+	.def("getIntensity", &BeamGroup::getIntensity_boost,
+	     "Get a numpy array of intensities for a given subband")
 	.def("getSubbandData_X", &BeamGroup::getSubbandData_X_boost,
 	     "Get a numpy array of values for a given subband")
 	.def("getSubbandData_Y", &BeamGroup::getSubbandData_Y_boost,

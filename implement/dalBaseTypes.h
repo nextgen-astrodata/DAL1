@@ -55,7 +55,7 @@ typedef long long       Int64;
 typedef double        Float64;
 
 bool BigEndian( void );
-
+void swapbytes(char *addr, int8_t nbytes);
 Int16 Int16Swap ( Int16 ss );
 Int32 Int32Swap ( Int32 ii );
 Int64 Int64Swap ( Int64 ff );

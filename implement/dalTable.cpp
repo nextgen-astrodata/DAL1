@@ -64,13 +64,77 @@ dalColumn * dalTable::getColumn( string colname )
    }
    else if ( type == H5TYPE )
    {
+      cerr << "ERROR: hdf5 not yet supported for this function."
+           << " Try getColumn_Float32, etc." << endl;
+   }
+   return NULL;
+}
+
+/****************************************************************
+ *  (experimental)  Return the column data
+ *
+ *****************************************************************/
+dalColumn * dalTable::getColumn_Float32( string colname )
+{
+   if ( type == MSCASATYPE )
+   {
+#ifdef WITH_CASA
+   // using the dalColumn class
+	dalColumn * lclcol;
+	lclcol = new dalColumn( *casa_table_handle, colname );
+    #ifdef DEBUGGING_MESSAGES
+	lclcol->getType();
+	if ( lclcol->isScalar() )
+	  cout << colname << " is SCALAR" << endl;
+	if ( lclcol->isArray() )
+	  cout << colname << " is ARRAY" << endl;
+    #endif
+	return lclcol;
+#endif
+   }
+   else if ( type == H5TYPE )
+   {
+      dalColumn * lclcol;
+      lclcol = new dalColumn( file_id, table_id, H5TYPE, name, colname,
+                              dal_FLOAT );
+
+//	H5TBread_fields_name(file_id, name.c_str(), colname.c_str(), start, hsize_t nrecords, size_t type_size,  const size_t *field_offset, const size_t *field_sizes, void  *data);
+
+	return lclcol;
+   }
+   return NULL;
+}
+
+/****************************************************************
+ *  (experimental)  Return the column data
+ *
+ *****************************************************************/
+dalColumn * dalTable::getColumn_complexFloat32( string colname )
+{
+   if ( type == MSCASATYPE )
+   {
+#ifdef WITH_CASA
+   // using the dalColumn class
+	dalColumn * lclcol;
+	lclcol = new dalColumn( *casa_table_handle, colname );
+    #ifdef DEBUGGING_MESSAGES
+	lclcol->getType();
+	if ( lclcol->isScalar() )
+	  cout << colname << " is SCALAR" << endl;
+	if ( lclcol->isArray() )
+	  cout << colname << " is ARRAY" << endl;
+    #endif
+	return lclcol;
+#endif
+   }
+   else if ( type == H5TYPE )
+   {
       dalColumn * lclcol;
       lclcol = new dalColumn( file_id, table_id, H5TYPE, name, colname,
                               dal_COMPLEX );
 
-// 	hsize_t start = 0;
 //	H5TBread_fields_name(file_id, name.c_str(), colname.c_str(), start, hsize_t nrecords, size_t type_size,  const size_t *field_offset, const size_t *field_sizes, void  *data);
-/*dst_size, dst_offset, 0, NRECORDS-1, p_data_out);*/
+
 	return lclcol;
    }
    return NULL;

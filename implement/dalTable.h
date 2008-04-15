@@ -189,6 +189,8 @@ class dalTable{
 	   \param colname The name of the column you want to get from the table.
 	   \return dalColumn Pointer to a column object.
 	 */
+	dalColumn * getColumn_complexFloat32( string colname );
+	dalColumn * getColumn_Float32( string colname );
 	dalColumn * getColumn( string colname );
 
     /*!

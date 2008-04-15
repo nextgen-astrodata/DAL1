@@ -273,6 +273,7 @@ dalData * dalColumn::data( int start, int length )
 {
   if ( MSCASATYPE == filetype )
   {
+#ifdef WITH_CASA
    try
    {
     if ( isScalar() )
@@ -401,6 +402,7 @@ dalData * dalColumn::data( int start, int length )
        cout << "ERROR: " << x.getMesg() << endl;
        exit(-4);
     }
+#endif
    }
 
    else if ( H5TYPE == filetype )

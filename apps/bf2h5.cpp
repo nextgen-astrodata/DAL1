@@ -65,22 +65,23 @@ using std::complex;
 #define DEBUG
 
 typedef struct FileHeader {
-   UInt8     magic[4];        // 0x3F8304EC, also determines endianness
+   UInt32    magic;        // 0x3F8304EC, also determines endianness
    UInt8     bitsPerSample;
    UInt8     nrPolarizations;
    UInt16    nrBeamlets;
    UInt32    nrSamplesPerBeamlet; // 155648 (160Mhz) or 196608 (200Mhz)
    char      station[20];
-   Float64    sampleRate;
-   Float64    subbandFrequencies[54];
-   Float64    beamDirections[8][2];
+   Float64   sampleRate;       //156250.0 or 195312.5 .. double
+   Float64   subbandFrequencies[54];
+   Float64   beamDirections[8][2];
    Int16     beamlet2beams[54];
-   UInt8     padding;
+   UInt32    padding;  // padding to circumvent 8-byte alignment
 } FileHeader;
 
 typedef struct BlockHeader {
    UInt8       magic[4]; // 0x2913D852
    Int32       coarseDelayApplied[8];
+   UInt8       padding[4];  // padding to circumvent 8-byte alignment
    Float64     fineDelayRemainingAtBegin[8];
    Float64     fineDelayRemainingAfterEnd[8];
    Int64       time[8]; // compatible with TimeStamp class.
@@ -118,11 +119,11 @@ void print_banner() {
 }
 
 dataStruct * downsample( dataStruct * data,
+                         int start,
                          const unsigned long arraylength,
                          int factor )
 {
   const int DS_SIZE = arraylength / factor;
-  int start = 0;
   dataStruct * ds_data = NULL;
   try
   {
@@ -146,11 +147,11 @@ dataStruct * downsample( dataStruct * data,
 }
 
 Float32 * downsample_to_float32_intensity( dataStruct * data,
+                                           int start,
                                            const unsigned long arraylength,
                                            int factor )
 {
   const int DS_SIZE = arraylength / factor;
-  int start = 0;
   double xx_intensity = 0;
   double yy_intensity = 0;
   Float32 * ds_data = NULL;
@@ -169,9 +170,9 @@ Float32 * downsample_to_float32_intensity( dataStruct * data,
     for (int idx=start; idx < (start+factor); idx++)
     {
       xx_intensity = std::sqrt( (double)real(data[idx].xx)*real(data[idx].xx) +
-				(double)imag(data[idx].xx)*imag(data[idx].xx) );
+                                (double)imag(data[idx].xx)*imag(data[idx].xx) );
       yy_intensity = std::sqrt( (double)real(data[idx].yy)*real(data[idx].yy) +
-				(double)imag(data[idx].yy)*imag(data[idx].yy) );
+                                (double)imag(data[idx].yy)*imag(data[idx].yy) );
       ds_data[count] +=
         (Float32)std::sqrt( xx_intensity*xx_intensity + yy_intensity*yy_intensity );
     }
@@ -191,20 +192,7 @@ int main (int argc, char *argv[])
 
   bool bigendian = BigEndian();
 
-  const unsigned long BufferSIZE = 155648;//608;
   int downsample_factor = 128;
-
-  dataStruct * data_s = NULL; // pointer to dataStruct
-  try
-  {
-    data_s = new dataStruct[ BufferSIZE ];  // allocate memory
-  }
-  catch ( bad_alloc )
-  {
-    cerr << "Could not allocate memory buffer" << endl;
-    exit(3);
-  }
-
 
   const bool DO_DOWNSAMPLE = true;
   const bool DO_FLOAT32_INTENSITY = true;
@@ -240,25 +228,39 @@ int main (int argc, char *argv[])
   // swap values when necessary
   if ( !bigendian )
   {
-    fileheader.nrBeamlets = Int16Swap( fileheader.nrBeamlets );
-    fileheader.nrSamplesPerBeamlet = Int32Swap( fileheader.nrSamplesPerBeamlet );
-    fileheader.sampleRate = Int64Swap( fileheader.sampleRate );
-    for (unsigned int idx=0; idx<54; idx++)
-    {
-      fileheader.subbandFrequencies[idx] =
-        Int64Swap( fileheader.subbandFrequencies[idx] );
+  // change byte order for all frequencies.
+  for (int ii=0;ii<54;ii++){
+    swapbytes((char *)&fileheader.subbandFrequencies[ii],8);
+    swapbytes((char *)&fileheader.beamlet2beams,2);
+  }
 
-      fileheader.beamlet2beams[idx] =
-        Int16Swap( fileheader.beamlet2beams[idx] );
-    }
-    for (unsigned int aa=0; aa<8; aa++)
-    {
-      for (unsigned int bb=0; bb<2; bb++)
-      {
-        fileheader.beamDirections[aa][bb] =
-         Int64Swap( fileheader.beamDirections[aa][bb]);
-      }
-    }
+  // change byte order for beamlets.
+  swapbytes((char *)&fileheader.nrBeamlets,2);
+
+  // change byte order for nrSamplesPerBeamlet
+  swapbytes((char *)&fileheader.nrSamplesPerBeamlet,4);
+
+  // change byte order for sampleRate
+  swapbytes((char *)&fileheader.sampleRate,8);
+
+  // change byte order for Magic Number
+  swapbytes((char *)&fileheader.magic,4);
+
+
+  printf("Magic number: %8X\n",fileheader.magic);
+  printf("bits per sample: %u\n",fileheader.bitsPerSample);
+  printf("Polarizations : %u\n",fileheader.nrPolarizations);
+  printf("Beamlets : %u\n",fileheader.nrBeamlets);
+  printf("Samples per beamlet: %u\n", fileheader.nrSamplesPerBeamlet);
+  printf("Station ID: %s\n", fileheader.station);
+  printf("Sample rate: %g\n", fileheader.sampleRate);
+  printf("Centre Freq. of subbands (MHz): \n");
+
+  for (int ii=0;ii<fileheader.nrBeamlets;ii++){
+    printf("%9.6f ",fileheader.subbandFrequencies[ii]/1000000.0);
+    if (((ii+1)%4) == 0 ) printf("\n");
+  }
+
   }
 
 #ifdef DEBUGGING_MESSAGES
@@ -267,8 +269,9 @@ int main (int argc, char *argv[])
   cerr << "fileheader.nrBeamlets: " <<  fileheader.nrBeamlets << endl;
   cerr << "fileheader.nrSamplesPerBeamlet: " <<  fileheader.nrSamplesPerBeamlet	 << endl;
   cerr << "fileheader.sampleRate: " <<  fileheader.sampleRate << endl;
-//   cerr << "fileheader.: " <<  fileheader. << endl;
 #endif
+
+  const unsigned long BufferSIZE = fileheader.nrSamplesPerBeamlet;
 
   dalDataset * dataset;
   dataset = new dalDataset( argv[2], "HDF5" );
@@ -276,10 +279,7 @@ int main (int argc, char *argv[])
   // root-level headers
   int n_stations[] = { 1 };
   vector<string> srcvec;
-  srcvec.push_back( "A" );
-  srcvec.push_back( "B" );
-  srcvec.push_back( "C" );
-  srcvec.push_back( "D" );
+  srcvec.push_back( "" );
   Float64 epoch_mjd[] = { 0 };
   int main_beam_diam[] = { 0 };
   int center_freq[] = { 0 };
@@ -381,10 +381,22 @@ int main (int argc, char *argv[])
 
   delete [] beamstr;
 
+  dataStruct * data_s = NULL; // pointer to dataStruct
+  try
+  {
+    // allocate memory
+    data_s = new dataStruct[ BufferSIZE * fileheader.nrBeamlets ];
+  }
+  catch ( bad_alloc )
+  {
+    cerr << "Could not allocate memory buffer" << endl;
+    exit(3);
+  }
+
   int xx=0;
   int counter = 0;
   while ( myFile.read ( reinterpret_cast<char *>(&blockheader),
-                        sizeof(blockheader) ) /*&& xx < 1*/ )
+                        sizeof(blockheader) ) && xx < 10 )
   {
 
     // swap values when necessary
@@ -413,22 +425,24 @@ int main (int argc, char *argv[])
 
     xx++;
 
+  if ( !myFile.read ( reinterpret_cast<char *>(data_s),
+                       sizeof(dataStruct)*BufferSIZE*fileheader.nrBeamlets) )
+  {
+     cout << "ERROR: problem with read (2)." << endl;
+     cout << "read pointer position: " << myFile.tellg() << endl;
+     exit(2);
+   }
    for(unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
     {
-        if ( !myFile.read ( reinterpret_cast<char *>(data_s),
-                           sizeof(dataStruct)*BufferSIZE) )
-         {
-          cout << "ERROR: problem with read (2)." << endl;
-          cout << "read pointer position: " << myFile.tellg() << endl;
-          exit(2);
-         }
          if ( DO_DOWNSAMPLE )  // if downsampling
          {
             if ( DO_FLOAT32_INTENSITY ) // if you want float32 intensities
             {
                Float32 * downsampled_data;
+               int start = BufferSIZE*idx;
                downsampled_data =
                   downsample_to_float32_intensity( data_s,
+                                                   start,
                                                    BufferSIZE,
                                                    downsample_factor );
                table[idx]->appendRows( downsampled_data,
@@ -438,7 +452,9 @@ int main (int argc, char *argv[])
             else // if you want complex numbers
             {
                dataStruct * downsampled_data;
+               int start = BufferSIZE*idx;
                downsampled_data = downsample( data_s,
+                                              start,
                                               BufferSIZE,
                                               downsample_factor );
                table[idx]->appendRows( downsampled_data,
