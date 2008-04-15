@@ -168,10 +168,10 @@ Float32 * downsample_to_float32_intensity( dataStruct * data,
     ds_data[count] = 0;
     for (int idx=start; idx < (start+factor); idx++)
     {
-      xx_intensity = std::sqrt( real(data[idx].xx)*real(data[idx].xx) +
-                                imag(data[idx].xx)*imag(data[idx].xx) );
-      yy_intensity = std::sqrt( real(data[idx].yy)*real(data[idx].yy) +
-                                imag(data[idx].yy)*imag(data[idx].yy) );
+      xx_intensity = std::sqrt( (double)real(data[idx].xx)*real(data[idx].xx) +
+				(double)imag(data[idx].xx)*imag(data[idx].xx) );
+      yy_intensity = std::sqrt( (double)real(data[idx].yy)*real(data[idx].yy) +
+				(double)imag(data[idx].yy)*imag(data[idx].yy) );
       ds_data[count] +=
         (Float32)std::sqrt( xx_intensity*xx_intensity + yy_intensity*yy_intensity );
     }
