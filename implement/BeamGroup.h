@@ -115,6 +115,17 @@ namespace DAL {
                         std::string const &name);
 
 
+    /*!
+     \brief Get total instensity data for a given subband
+
+     Get X and Y columns data for a given subband
+
+     \param subband Subband to get the data from.
+     \param start Start number of the cell in the column.
+     \param length The number of cells to retrieve.
+     \return array of intensities
+
+    */
     float *  getIntensity( int subband, int start, int length );
 
     /*!
@@ -152,12 +163,32 @@ namespace DAL {
                            std::vector< std::complex<short> > &values );
 
 
-    // array version of the above
+    /*!
+     \brief Get X column data for a given subband
+
+      Get X column data for a given subband
+
+     \param subband Subband to get the data from.
+     \param start Start number of the cell in the column.
+     \param length The number of cells to retrieve.
+     \return array of values
+
+    */
     std::complex<short>  * getSubbandData_X( int subband,
                            int start,
                            int length );
 
-    // array version of the above
+    /*!
+     \brief Get X column data for a given subband
+
+      Get Y column data for a given subband
+
+     \param subband Subband to get the data from.
+     \param start Start number of the cell in the column.
+     \param length The number of cells to retrieve.
+     \return array of values
+
+    */
     std::complex<short>  * getSubbandData_Y( int subband,
                            int start,
                            int length );

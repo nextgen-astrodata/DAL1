@@ -89,6 +89,38 @@ void list_vector_members( vector<T> vec )
   }
 }
 
+long double julday(time_t seconds,long *intmjd, long double *fracmjd)
+{
+   long double dayfrac, jd, sec;
+   int year, yday;
+   int hour, min;
+   struct tm *ptr;
+
+   unsigned int nd;
+
+   ptr = gmtime(&seconds);
+
+   hour = ptr->tm_hour;
+   min = ptr->tm_min;
+   sec = (long double)ptr->tm_sec;
+
+   year = ptr->tm_year;
+   yday = ptr->tm_yday + 1;
+
+   dayfrac = ( (sec/60.0L + (long double) min)/60.0L + \
+          (long double)hour)/24.0L;
+   nd = year * 365;
+   nd += (year - 1)/4;
+   nd += yday + 2415020;
+
+   *intmjd = nd - 2400001;
+   *fracmjd = dayfrac;
+
+   jd = (long double)nd + dayfrac - 0.5L;
+
+   return jd;
+}
+
 int main(int argc, char *argv[])
 {
 
@@ -206,6 +238,10 @@ int main(int argc, char *argv[])
   int counter=0;
   int offset=0;
 
+  // For date
+  time_t sample_time;
+
+
   while ( true )
   {
 
@@ -240,19 +276,47 @@ int main(int argc, char *argv[])
     if (r<0) { perror("recvfrom"); exit(1); }
 
     #ifdef DEBUGGING_MESSAGES
-    cerr << r << " bytes received." << endl;
+//     cerr << r << " bytes received." << endl;
     #endif
 
     // reverse fields if big endian
     if ( bigendian )
       {
-	  header.seqnr = Int32Swap( header.seqnr );
-	  header.sample_nr = Int32Swap( header.sample_nr );
-	  header.n_samples_per_frame = 
-	  Int16Swap( header.n_samples_per_frame);
-	  header.n_freq_bands = Int16Swap( header.n_freq_bands );
+	  swapbytes( (char *)&header.seqnr, 4 );
+	  swapbytes( (char *)&header.sample_nr, 4 );
+	  swapbytes( (char *)&header.n_samples_per_frame, 8);
+	  swapbytes( (char *)&header.n_freq_bands, 2 );
       }
 
+    // Convert the time (seconds since 1 Jan 1970) to a human-readable string
+    // "The samplenr field is used together with the time field to get
+    //  an absolute time reference.  The samplenr field holds the number of
+    //  samples that was counted by RSP since the start of the current second."
+    // "By multiplying the samplenr with the sample period and additing it to
+    //  the seconds field, the time instance of the first data sample of the
+    //  frame is known"
+    //   -- TBB Design Description document, Wietse Poiesz (2006-10-3)
+    //      Doc..id: LOFAR-ASTRON-SDD-047
+    sample_time =
+      (time_t)( header.time + header.sample_nr/(header.sample_freq*1000000) );
+    char *time_string=ctime(&sample_time);
+    time_string[strlen(time_string)-1]=0;   // remove \n
+
+    #ifdef DEBUGGING_MESSAGES
+    printf("Station ID         : %d\n",header.stationid);
+    printf("RSP ID             : %d\n",header.rspid);
+    printf("RCU ID             : %d\n",header.rcuid);
+    printf("Sample Freqency    : %d MHz\n",header.sample_freq);
+    printf("Sequence Number    : %d\n",header.seqnr);
+    printf("Time:              : %s\n",time_string );
+    printf("Sample Number      : %d\n",header.sample_nr);
+    printf("Samples Per Frame  : %d\n",header.n_samples_per_frame);
+    printf("Num. of Freq. Bands: %d\n",header.n_freq_bands);
+    printf("Bands present : ");
+    for (int idx=0; idx<64; idx++)
+       printf("%X,", header.bandsel[idx]);
+    printf("\n");
+    #endif
     char * stationstr = new char[10];
     sprintf( stationstr, "Station%03d", header.stationid );
     char uid[10];  // dipole identifier
@@ -390,14 +454,14 @@ int main(int argc, char *argv[])
         if ( r < 0 ) { perror("recvfrom"); exit(1); }
 
         #ifdef DEBUGGING_MESSAGES
-        cerr << r << " bytes received." << endl;
+//         cerr << r << " bytes received." << endl;
         #endif
 
         if ( 0 == counter % 10000 )
            cout << counter << " value         " << tran_sample.value << endl;
 
         if ( bigendian )  // reverse fields if big endian
-          tran_sample.value = Int16Swap( tran_sample.value );
+          swapbytes( (char *)&tran_sample.value, 2 );
 
         sdata[zz] = tran_sample.value;
       }
