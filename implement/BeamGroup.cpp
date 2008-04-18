@@ -142,7 +142,7 @@ namespace DAL {
 
   int BeamGroup::n_subbands ()
   {
-    int n_subbands;
+    int n_subbands = 0;
     if (group_p->getName() != "UNDEFINED") {
       try {
 	int * n_subbands_p = reinterpret_cast<int*>(group_p->getAttribute("NUMBER_OF_SUBBANDS"));
@@ -162,9 +162,9 @@ namespace DAL {
                            int start,
                            int length )
   {
-    dalTable * table;
-    dalColumn * col;
-    dalData * data;
+    dalTable * table = NULL;
+    dalColumn * col = NULL;
+    dalData * data = NULL;
 
     vector<string> memnames = group_p->getMemberNames();
 
@@ -196,19 +196,19 @@ namespace DAL {
                                int start,
                                int length )
   {
-    dalTable * table;
-    dalColumn * col;
-    dalData * data;
+    dalTable * table = NULL;
+    dalColumn * col = NULL;
+    dalData * data = NULL;
 
     vector<string> memnames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memnames[ subband ],group_p->getName());
-    col = table->getColumn_complexFloat32("X");
+    col = table->getColumn_complexInt16("X");
     data = col->data( start, length );
 
     delete col;
 
-    std::complex<short> * values;
+    std::complex<short> * values = NULL;
     values = (complex<short>*)data->data;
 
     return values;
@@ -219,19 +219,19 @@ namespace DAL {
                                int start,
                                int length )
   {
-    dalTable * table;
-    dalColumn * col;
-    dalData * data;
+    dalTable * table = NULL;
+    dalColumn * col = NULL;
+    dalData * data = NULL;
 
     vector<string> memnames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memnames[ subband ],group_p->getName());
-    col = table->getColumn_complexFloat32("Y");
+    col = table->getColumn_complexInt16("Y");
     data = col->data( start, length );
 
     delete col;
 
-    std::complex<short> * values;
+    std::complex<short> * values = NULL;
     values = (complex<short>*)data->data;
 
     return values;
@@ -242,15 +242,15 @@ namespace DAL {
                                     int length,
                                     std::vector< std::complex<short> > &values )
   {
-    dalTable * table;
-    dalColumn * col;
-    dalData * data;
+    dalTable * table = NULL;
+    dalColumn * col = NULL;
+    dalData * data = NULL;
 
-    complex<short> * xx;
+    complex<short> * xx = NULL;
     vector<string> memnames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memnames[ subband ],group_p->getName());
-    col = table->getColumn_complexFloat32("X");
+    col = table->getColumn_complexInt16("X");
     data = col->data( start, length );
 
     for (int jj=0; jj < length; jj++)
@@ -267,15 +267,15 @@ namespace DAL {
                                     int length,
                                     std::vector< std::complex<short> > &values )
   {
-    complex<short> * yy;
-    dalTable * table;
-    dalColumn * col;
-    dalData * data;
+    complex<short> * yy = NULL;
+    dalTable * table = NULL;
+    dalColumn * col = NULL;
+    dalData * data = NULL;
 
     vector<string> memnames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memnames[ subband ],group_p->getName());
-    col = table->getColumn_complexFloat32("Y");
+    col = table->getColumn_complexInt16("Y");
     data = col->data( start, length );
 
     for (int jj=0; jj < length; jj++)

@@ -194,8 +194,8 @@ int main (int argc, char *argv[])
 
   int downsample_factor = 128;
 
-  const bool DO_DOWNSAMPLE = true;
-  const bool DO_FLOAT32_INTENSITY = true;
+  const bool DO_DOWNSAMPLE = false;//true;
+  const bool DO_FLOAT32_INTENSITY = false;//true;
 
   // define memory buffers
   FileHeader fileheader;
@@ -228,48 +228,42 @@ int main (int argc, char *argv[])
   // swap values when necessary
   if ( !bigendian )
   {
-  // change byte order for all frequencies.
-  for (int ii=0;ii<54;ii++){
-    swapbytes((char *)&fileheader.subbandFrequencies[ii],8);
-    swapbytes((char *)&fileheader.beamlet2beams,2);
-  }
+    // change byte order for all frequencies.
+    for (int ii=0;ii<54;ii++)
+    {
+      swapbytes((char *)&fileheader.subbandFrequencies[ii],8);
+      swapbytes((char *)&fileheader.beamlet2beams,2);
+    }
 
-  // change byte order for beamlets.
-  swapbytes((char *)&fileheader.nrBeamlets,2);
+    // change byte order for beamlets.
+    swapbytes((char *)&fileheader.nrBeamlets,2);
 
-  // change byte order for nrSamplesPerBeamlet
-  swapbytes((char *)&fileheader.nrSamplesPerBeamlet,4);
+    // change byte order for nrSamplesPerBeamlet
+    swapbytes((char *)&fileheader.nrSamplesPerBeamlet,4);
 
-  // change byte order for sampleRate
-  swapbytes((char *)&fileheader.sampleRate,8);
+    // change byte order for sampleRate
+    swapbytes((char *)&fileheader.sampleRate,8);
 
-  // change byte order for Magic Number
-  swapbytes((char *)&fileheader.magic,4);
+    // change byte order for Magic Number
+    swapbytes((char *)&fileheader.magic,4);
 
+   }
 
-  printf("Magic number: %8X\n",fileheader.magic);
-  printf("bits per sample: %u\n",fileheader.bitsPerSample);
-  printf("Polarizations : %u\n",fileheader.nrPolarizations);
-  printf("Beamlets : %u\n",fileheader.nrBeamlets);
-  printf("Samples per beamlet: %u\n", fileheader.nrSamplesPerBeamlet);
-  printf("Station ID: %s\n", fileheader.station);
-  printf("Sample rate: %g\n", fileheader.sampleRate);
-  printf("Centre Freq. of subbands (MHz): \n");
-
-  for (int ii=0;ii<fileheader.nrBeamlets;ii++){
-    printf("%9.6f ",fileheader.subbandFrequencies[ii]/1000000.0);
-    if (((ii+1)%4) == 0 ) printf("\n");
-  }
-
-  }
-
-#ifdef DEBUGGING_MESSAGES
-  printf("fileheader.bitsPerSample: %d\n", fileheader.bitsPerSample);
-  printf("fileheader.nrPolarizations: %d\n", fileheader.nrPolarizations);
-  cerr << "fileheader.nrBeamlets: " <<  fileheader.nrBeamlets << endl;
-  cerr << "fileheader.nrSamplesPerBeamlet: " <<  fileheader.nrSamplesPerBeamlet	 << endl;
-  cerr << "fileheader.sampleRate: " <<  fileheader.sampleRate << endl;
-#endif
+   #ifdef DEBUGGING_MESSAGES
+   printf("Magic number: %8X\n",fileheader.magic);
+   printf("bits per sample: %u\n",fileheader.bitsPerSample);
+   printf("Polarizations : %u\n",fileheader.nrPolarizations);
+   printf("Beamlets : %u\n",fileheader.nrBeamlets);
+   printf("Samples per beamlet: %u\n", fileheader.nrSamplesPerBeamlet);
+   printf("Station ID: %s\n", fileheader.station);
+   printf("Sample rate: %g\n", fileheader.sampleRate);
+   printf("Centre Freq. of subbands (MHz): \n");
+   for (int ii=0;ii<fileheader.nrBeamlets;ii++)
+   {
+     printf("%9.6f ",fileheader.subbandFrequencies[ii]/1000000.0);
+     if (((ii+1)%4) == 0 ) printf("\n");
+   }
+   #endif
 
   const unsigned long BufferSIZE = fileheader.nrSamplesPerBeamlet;
 
@@ -280,7 +274,6 @@ int main (int argc, char *argv[])
   int n_stations[] = { 1 };
   vector<string> srcvec;
   srcvec.push_back( "" );
-  Float64 epoch_mjd[] = { 0 };
   int main_beam_diam[] = { 0 };
   int center_freq[] = { 0 };
   int bandwidth[] = { 0 }; // Total bandwidth (MHz)
@@ -308,7 +301,7 @@ int main (int argc, char *argv[])
   dataset->setAttribute_string( "POINT_RA", "" );
   dataset->setAttribute_string( "POINT_DEC", "" );
   dataset->setAttribute_string( "OBSERVER", "" );
-  dataset->setAttribute_double( "EPOCH_MJD", epoch_mjd );
+  dataset->setAttribute_string( "EPOCH_MJD", "" );
   dataset->setAttribute_string( "EPOCH_DATE", "" );
   dataset->setAttribute_string( "EPOCH_UTC", "" );
   dataset->setAttribute_string( "EPOCH_LST", "" );
@@ -345,8 +338,8 @@ int main (int argc, char *argv[])
   int n_subbands[] = { fileheader.nrBeamlets };
   beamGroup->setAttribute_int( "NUMBER_OF_SUBBANDS", n_subbands );
 
-#ifdef DEBUG
-	cout << "CREATED New beam group: " << string(beamstr) << endl;
+#ifdef DEBUGGING_MESSAGES
+	cerr << "CREATED New beam group: " << string(beamstr) << endl;
 #endif
 
   dalTable ** table;

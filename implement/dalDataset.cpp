@@ -439,12 +439,13 @@ dalGroup * dalDataset::createGroup( const char * gname )
 {
     if ( type == H5TYPE )
    {
-	hid_t * lclfile = &h5fh;
-	   dalGroup * lg = new dalGroup( gname, lclfile );
-	   return lg;
+     hid_t * lclfile = &h5fh;
+     dalGroup * lg = NULL;
+     lg = new dalGroup( gname, lclfile );
+     return lg;
    }
    else
-   	return NULL;
+     return NULL;
 }
 
 /****************************************************************
@@ -492,7 +493,7 @@ void dalDataset::listTables()
 dalDataset::dalDataset( const char * name, string filetype )
 {
    type = filetype;  // set the global class variable: type
-   filter = new dalFilter;
+   filter = new dalFilter();
 
    if ( filetype == H5TYPE )
    {
@@ -663,7 +664,7 @@ dalTable * dalDataset::createTable( string tablename, string groupname )
    if ( type == H5TYPE )
    {
 	   dalTable * lt = new dalTable( H5TYPE );
-	   lt->createTable( file, tablename, '/' + groupname );
+	   lt->createTable( file, tablename, groupname );
 	   return lt;
    }
    else

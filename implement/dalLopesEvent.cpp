@@ -169,7 +169,7 @@ bool dalLopesEvent::attachFile (string filename)
 
 short* dalLopesEvent::data ()
 {
-  short *data;
+  short *data = NULL;
   unsigned int nofElements = channeldata_p.nelements();
   
   try {

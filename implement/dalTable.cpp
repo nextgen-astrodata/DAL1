@@ -50,7 +50,7 @@ dalColumn * dalTable::getColumn( string colname )
    {
 #ifdef WITH_CASA
    // using the dalColumn class
-	dalColumn * lclcol;
+	dalColumn * lclcol = NULL;
 	lclcol = new dalColumn( *casa_table_handle, colname );
     #ifdef DEBUGGING_MESSAGES
 	lclcol->getType();
@@ -80,7 +80,7 @@ dalColumn * dalTable::getColumn_Float32( string colname )
    {
 #ifdef WITH_CASA
    // using the dalColumn class
-	dalColumn * lclcol;
+	dalColumn * lclcol = NULL;
 	lclcol = new dalColumn( *casa_table_handle, colname );
     #ifdef DEBUGGING_MESSAGES
 	lclcol->getType();
@@ -115,7 +115,7 @@ dalColumn * dalTable::getColumn_complexFloat32( string colname )
    {
 #ifdef WITH_CASA
    // using the dalColumn class
-	dalColumn * lclcol;
+	dalColumn * lclcol = NULL;
 	lclcol = new dalColumn( *casa_table_handle, colname );
     #ifdef DEBUGGING_MESSAGES
 	lclcol->getType();
@@ -134,6 +134,35 @@ dalColumn * dalTable::getColumn_complexFloat32( string colname )
                               dal_COMPLEX );
 
 //	H5TBread_fields_name(file_id, name.c_str(), colname.c_str(), start, hsize_t nrecords, size_t type_size,  const size_t *field_offset, const size_t *field_sizes, void  *data);
+
+	return lclcol;
+   }
+   return NULL;
+}
+
+dalColumn * dalTable::getColumn_complexInt16( string colname )
+{
+   if ( type == MSCASATYPE )
+   {
+#ifdef WITH_CASA
+   // using the dalColumn class
+	dalColumn * lclcol = NULL;
+	lclcol = new dalColumn( *casa_table_handle, colname );
+    #ifdef DEBUGGING_MESSAGES
+	lclcol->getType();
+	if ( lclcol->isScalar() )
+	  cout << colname << " is SCALAR" << endl;
+	if ( lclcol->isArray() )
+	  cout << colname << " is ARRAY" << endl;
+    #endif
+	return lclcol;
+#endif
+   }
+   else if ( type == H5TYPE )
+   {
+      dalColumn * lclcol;
+      lclcol = new dalColumn( file_id, table_id, H5TYPE, name, colname,
+                              dal_COMPLEX_SHORT );
 
 	return lclcol;
    }
@@ -402,7 +431,7 @@ void dalTable::getName()
  *****************************************************************************/
 dalTable::dalTable( string filetype )
 {
-    filter = new dalFilter;
+    filter = new dalFilter();
 
 	type = filetype;
  	columns.clear();  // clear the coulumns vector
@@ -551,9 +580,8 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 	 * columns are added
 	 */
 	
-	int			dummy_col;
+	int dummy_col;
 	name = groupname + '/' + tablename;// set the private class variable: name
-	
 	// cast the voidfile to an hdf5 file
 	hid_t * lclfile = (hid_t*)voidfile; // H5File object
 	file = lclfile;
@@ -571,7 +599,7 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 	int			compress  = 0;  // 0=off 1=on
 
 	typedef struct Particle {
-		int		dummy;
+		int dummy;
 	} Particle;
 	Particle data[NFIELDS];
 
@@ -580,7 +608,7 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 
 	tablename = groupname + '/' + tablename;
 	//cout << tablename << endl;
-	status = H5TBmake_table( "My Table Title", file_id, tablename.c_str(),
+	status = H5TBmake_table( tablename.c_str(), file_id, tablename.c_str(),
 				 NFIELDS, NRECORDS, dst_size, lclfield_names,
 				 dst_offset, field_type, chunk_size,
 				 fill_data, compress, data );
@@ -669,9 +697,9 @@ void dalTable::addColumn( string colname, string coltype, int size )
 
 	// allocate space for the column/field names and retrieve them from
 	// the table
-	field_names = (char**)malloc( nfields * sizeof(char*) );
+	field_names = (char**)malloc( (size_t)nfields * sizeof(char*) );
 	for (unsigned int ii=0; ii<nfields; ii++) {
-		field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+	  field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
 	}
 	status = H5TBget_field_info( file_id, name.c_str(), field_names, NULL,
 				     NULL, NULL );
@@ -1183,9 +1211,9 @@ void dalTable::writeDataByColNum( void * data, int index, int rownum )
    if ( type == H5TYPE )
    {
 	
-	size_t * field_sizes;
-	size_t * field_offsets;
-	size_t * size_out;
+	size_t * field_sizes = NULL;
+	size_t * field_offsets = NULL;
+	size_t * size_out = NULL;
 	
 	// retrieve the input fields needed for the append_records call
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
@@ -1228,9 +1256,9 @@ void dalTable::appendRow( void * data )
    if ( type == H5TYPE )
    {
 	hsize_t recs2write = 1; // number of records to append
-	size_t * field_sizes;
-	size_t * field_offsets;
-	size_t * size_out;
+	size_t * field_sizes = NULL;
+	size_t * field_offsets = NULL;
+	size_t * size_out = NULL;
 	
 	// retrieve the input fields needed for the append_records call
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
@@ -1271,9 +1299,9 @@ void dalTable::appendRows( void * data, long row_count )
 {
    if ( type == H5TYPE )
    {
-	size_t * field_sizes;
-	size_t * field_offsets;
-	size_t * size_out;
+	size_t * field_sizes = NULL;
+	size_t * field_offsets = NULL;
+	size_t * size_out = NULL;
 
 	// retrieve the input fields needed for the append_records call
 	H5TBget_table_info( file_id, name.c_str(), &nfields, &nrecords );
@@ -1400,9 +1428,9 @@ void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
 {
    if ( type == H5TYPE )
    {
-    size_t * field_sizes;
-	size_t * field_offsets;
-	size_t * size_out;
+      size_t * field_sizes = NULL;
+      size_t * field_offsets = NULL;
+      size_t * size_out = NULL;
  	
 	// retrieve the input fields needed for the append_records call
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
@@ -1461,9 +1489,9 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buf
 {
    if ( type == H5TYPE )
    {
-        size_t * field_sizes;
-        size_t * field_offsets;
-        size_t * size_out;
+        size_t * field_sizes = NULL;
+        size_t * field_offsets = NULL;
+        size_t * size_out = NULL;
 
         // retrieve the input fields needed for the append_records call
         H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
@@ -1630,7 +1658,7 @@ void * dalTable::getAttribute( string attrname ) {
 				&dims, &type_class, &type_size );
 
 	if ( H5T_FLOAT == type_class ) {
-		void * data;
+		void * data = NULL;
 		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), 
 		  attrname.c_str(),
 			 H5T_NATIVE_DOUBLE, data) )
@@ -1639,7 +1667,7 @@ void * dalTable::getAttribute( string attrname ) {
 		  return reinterpret_cast<double*>(data);
 	}
 	else if ( H5T_INTEGER == type_class ) {
-		void * data;
+		void * data = NULL;
 		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(),
 		  attrname.c_str(),
 			H5T_NATIVE_INT, data) )
@@ -1648,7 +1676,7 @@ void * dalTable::getAttribute( string attrname ) {
 		  return reinterpret_cast<int*>(data);
 	}
 	else if ( H5T_STRING == type_class ) {
-		char* data;
+		char* data = NULL;
 		string fullname = "/" + name;
 		data = (char *)malloc(rank * sizeof(char));
 		if ( 0 < H5LTget_attribute_string( file_id, fullname.c_str(),

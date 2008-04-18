@@ -48,7 +48,6 @@ dalGroup::dalGroup( const char * gname, void * voidfile ) {
 	name = gname;
 	string fullgroupname = "/" + stringify(gname);
 	group_id = H5Gcreate(*(hid_t*)file, fullgroupname.c_str(), 0);
-// cout << "group_id " << group_id << endl;
 }
 
 dalGroup::dalGroup( hid_t group_id, const char * gname ) {

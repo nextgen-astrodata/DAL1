@@ -94,7 +94,7 @@ long double julday(time_t seconds,long *intmjd, long double *fracmjd)
    long double dayfrac, jd, sec;
    int year, yday;
    int hour, min;
-   struct tm *ptr;
+   struct tm *ptr = NULL;
 
    unsigned int nd;
 
@@ -181,20 +181,20 @@ int main(int argc, char *argv[])
 // ------------------------------------------------------------- 
 
 
-  dalDataset * dataset;
+  dalDataset * dataset = NULL;
 
   dataset = new dalDataset();
 
-  UInt32 payload_crc;
+  UInt32 payload_crc = 0;
 
-  dalGroup * stationGroup;
+  dalGroup * stationGroup = NULL;
 
   vector<string> stations;
   vector<string> dipoles;
 
   bool first_sample = true;
 
-  dalArray * dipoleArray;
+  dalArray * dipoleArray = NULL;
   vector<int> cdims;
   cdims.push_back(CHUNK_SIZE);
 

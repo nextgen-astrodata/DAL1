@@ -167,7 +167,7 @@ namespace DAL {
     uint nofBeams (100);
     char stationstr[10];
     std::vector<std::string> beamGroups;
-    dalGroup * beamgroup;
+    dalGroup * beamgroup = NULL;
 
     for (uint station(0); station<nofBeams; station++) {
       /* create ID string for the group */
@@ -236,7 +236,7 @@ namespace DAL {
 
   int BeamFormed::nstations ()
   {
-    int nstations;
+    int nstations = 0;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
 	int * nstations_p = reinterpret_cast<int*>(dataset_p->getAttribute("NUMBER_OF_STATIONS"));
@@ -393,7 +393,7 @@ namespace DAL {
 
   double BeamFormed::epoch_mjd ()
   {
-    double epoch_mjd;
+    double epoch_mjd = 0.0;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
 	double * epoch_mjd_p = reinterpret_cast<double*>(dataset_p->getAttribute("EPOCH_MJD"));
@@ -460,7 +460,7 @@ namespace DAL {
 
   int BeamFormed::main_beam_diam ()
   {
-    int main_beam_diam;
+    int main_beam_diam = 0;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
 	int * main_beam_diam_p = reinterpret_cast<int*>(dataset_p->getAttribute("MAIN_BEAM_DIAM"));
@@ -476,7 +476,7 @@ namespace DAL {
 
   int BeamFormed::center_freq ()
   {
-    int center_freq;
+    int center_freq = 0;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
 	int * center_freq_p = reinterpret_cast<int*>(dataset_p->getAttribute("CENTER_FREQUENCY"));
@@ -492,7 +492,7 @@ namespace DAL {
 
   int BeamFormed::bandwidth ()
   {
-    int bandwidth;
+    int bandwidth = 0;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
 	int * bandwidth_p = reinterpret_cast<int*>(dataset_p->getAttribute("BANDWIDTH"));
@@ -508,7 +508,7 @@ namespace DAL {
 
   double BeamFormed::integration_time ()
   {
-    double integration_time;
+    double integration_time = 0.0;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
 	double * integration_time_p = reinterpret_cast<double*>(dataset_p->getAttribute("TOTAL_INTEGRATION_TIME"));
@@ -524,7 +524,7 @@ namespace DAL {
 
   int BeamFormed::breaks ()
   {
-    int breaks;
+    int breaks = 0;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
 	int * breaks_p = reinterpret_cast<int*>(dataset_p->getAttribute("BREAKS_IN_DATA"));
@@ -540,7 +540,7 @@ namespace DAL {
 
   int BeamFormed::dispersion_measure ()
   {
-    int dispersion_measure;
+    int dispersion_measure = 0;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
 	int * dispersion_measure_p = reinterpret_cast<int*>(dataset_p->getAttribute("DISPERSION_MEASURE"));
@@ -556,7 +556,7 @@ namespace DAL {
 
   int BeamFormed::number_of_samples ()
   {
-    int number_of_samples;
+    int number_of_samples = 0;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
 	int * number_of_samples_p = reinterpret_cast<int*>(dataset_p->getAttribute("NUMBER_OF_SAMPLES"));
@@ -572,7 +572,7 @@ namespace DAL {
 
   double BeamFormed::sampling_time ()
   {
-    double sampling_time;
+    double sampling_time = 0.0;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
 	double * sampling_time_p = reinterpret_cast<double*>(dataset_p->getAttribute("SAMPLING_TIME"));
@@ -590,10 +590,10 @@ namespace DAL {
 
   int BeamFormed::number_of_beams ()
   {
-    int number_of_beams;
+    int number_of_beams = 0;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
-        int * number_of_beams_p;
+        int * number_of_beams_p = NULL;
         number_of_beams_p =
           reinterpret_cast<int*>(dataset_p->getAttribute("NUMBER_OF_BEAMS"));
         number_of_beams = *number_of_beams_p;
@@ -610,10 +610,10 @@ namespace DAL {
 
   int BeamFormed::sub_beam_diameter ()
   {
-    int sub_beam_diameter;
+    int sub_beam_diameter = 0;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
-        int * sub_beam_diameter_p;
+        int * sub_beam_diameter_p = NULL;
         sub_beam_diameter_p =
           reinterpret_cast<int*>(dataset_p->getAttribute("SUB_BEAM_DIAMETER"));
         sub_beam_diameter = *sub_beam_diameter_p;
@@ -630,10 +630,10 @@ namespace DAL {
 
   int BeamFormed::weather_temperature ()
   {
-    int weather_temperature;
+    int weather_temperature = 0;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
-        int * weather_temperature_p;
+        int * weather_temperature_p = NULL;
         weather_temperature_p =
          reinterpret_cast<int*>(dataset_p->getAttribute("WEATHER_TEMPERATURE"));
         weather_temperature = *weather_temperature_p;
@@ -650,10 +650,10 @@ namespace DAL {
 
   int BeamFormed::weather_humidity ()
   {
-    int weather_humidity;
+    int weather_humidity = 0;
     if (dataset_p->getName() != "UNDEFINED") {
       try {
-        int * weather_humidity_p;
+        int * weather_humidity_p = NULL;
         weather_humidity_p =
            reinterpret_cast<int*>(dataset_p->getAttribute("WEATHER_HUMIDITY"));
         weather_humidity = *weather_humidity_p;
