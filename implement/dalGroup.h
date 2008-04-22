@@ -45,6 +45,8 @@
 #include "dalArray.h"
 #endif
 
+namespace DAL {
+
 /*!
   \class dalGroup
   
@@ -309,7 +311,9 @@ class dalGroup{
 	dalArray * cfa_boost_numarray( string arrayname, bpl::list dims,
 			 bpl::numeric::array data, bpl::list cdims );
 	bpl::numeric::array ria_boost( string arrayname );
-#endif
+#endif // end #ifdef PYTHON
 };
 
-#endif
+} // end namespace DAL
+
+#endif  // end #ifndef DALGROUP_H

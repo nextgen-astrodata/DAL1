@@ -59,10 +59,8 @@
 #include <new>
 
 using namespace std;
+using namespace DAL;
 using std::complex;
-
-//#define FILENAME "/mnt/disk2/data/cs1/pulsar/B0329.h5"
-#define DEBUG
 
 typedef struct FileHeader {
    UInt32    magic;        // 0x3F8304EC, also determines endianness
@@ -194,8 +192,8 @@ int main (int argc, char *argv[])
 
   int downsample_factor = 128;
 
-  const bool DO_DOWNSAMPLE = false;//true;
-  const bool DO_FLOAT32_INTENSITY = false;//true;
+  const bool DO_DOWNSAMPLE = true;
+  const bool DO_FLOAT32_INTENSITY = true;
 
   // define memory buffers
   FileHeader fileheader;
@@ -306,7 +304,7 @@ int main (int argc, char *argv[])
   dataset->setAttribute_string( "EPOCH_UTC", "" );
   dataset->setAttribute_string( "EPOCH_LST", "" );
   dataset->setAttribute_int( "MAIN_BEAM_DIAM", main_beam_diam );
-  dataset->setAttribute_int( "CENTER_FREQUENCY", center_freq );
+//   dataset->setAttribute_int( "CENTER_FREQUENCY", center_freq );
   dataset->setAttribute_int( "BANDWIDTH", bandwidth );
   dataset->setAttribute_double( "TOTAL_INTEGRATION_TIME",
                                 total_integration_time );
@@ -326,7 +324,6 @@ int main (int argc, char *argv[])
 
   int beam_number;
 
-  Float64 dataBandwidth[] = { 0 };
   Float64 channel_bandwidth[] = { 0 };
   Float64 channel_center_freq[] = { 0, 0, 0 };
 
@@ -346,33 +343,46 @@ int main (int argc, char *argv[])
   table = new dalTable * [ fileheader.nrBeamlets ];
 
   char * sbName = new char[8];
-  int center_frequency[] = { 0 };
+  int * center_frequency = new int[fileheader.nrBeamlets];
+//   Float64 * dataBandwidth = new Float64[ fileheader.nrBeamlets ];
+
   // nrBeamlets is actually the number of subbands (see email from J.Romein)
   for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
   {
     sprintf( sbName, "SB%03d", idx );
     table[idx] = dataset->createTable( sbName, beamstr );
-    center_frequency[0] = fileheader.subbandFrequencies[ idx ];
-    table[idx]->setAttribute_int( "CENTER_FREQUENCY", center_frequency );
-    table[idx]->setAttribute_double( "BANDWIDTH", dataBandwidth );
-    table[idx]->setAttribute_double( "CHANNEL_BANDWIDTH", 
-                                      channel_bandwidth );
-    table[idx]->setAttribute_double( "CHANNEL_CENTER_FREQUENCY",
-                                      channel_center_freq,
-                                      3 );
-    if (DO_FLOAT32_INTENSITY)
-    {
-       table[idx]->addColumn( "TOTAL_INTENSITY", dal_FLOAT );
-    }
-    else
-    {
-      table[idx]->addColumn( "X", dal_COMPLEX_SHORT );
-      table[idx]->addColumn( "Y", dal_COMPLEX_SHORT );
-    }
-
   }
 
+  for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
+  {
+     if (DO_FLOAT32_INTENSITY)
+     {
+        table[idx]->addColumn( "TOTAL_INTENSITY", dal_FLOAT );
+     }
+     else
+     {
+       table[idx]->addColumn( "X", dal_COMPLEX_SHORT );
+       table[idx]->addColumn( "Y", dal_COMPLEX_SHORT );
+     }
+  }
+  for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
+  {
+    center_frequency[idx] = (int)fileheader.subbandFrequencies[ idx ];
+    table[idx]->setAttribute_int( "CENTER_FREQUENCY", &center_frequency[idx] );
+//     table[idx]->setAttribute_double( "BANDWIDTH", dataBandwidth );
+//     table[idx]->setAttribute_double( "CHANNEL_BANDWIDTH", 
+//                                       channel_bandwidth );
+//     table[idx]->setAttribute_double( "CHANNEL_CENTER_FREQUENCY",
+//                                       channel_center_freq,
+//                                       3 );
+  }
+
+  delete [] sbName;
+  sbName = NULL;
+  delete [] center_frequency;
+  center_frequency = NULL;
   delete [] beamstr;
+  beamstr = NULL;
 
   dataStruct * data_s = NULL; // pointer to dataStruct
   try
@@ -464,12 +474,12 @@ int main (int argc, char *argv[])
   // cleanup memory
   for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
   {
-    sprintf( sbName, "SB_%03d", idx );
     delete table[idx];
   }
-  delete [] sbName;
   delete [] table;
+  table = NULL;
   delete [] data_s;
+  data_s = NULL;
 
   return 0;
 }

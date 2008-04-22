@@ -31,6 +31,8 @@
 #include "dalTable.h"
 #endif
 
+namespace DAL {
+
 /****************************************************************
  *  Default constructor
  *
@@ -545,9 +547,13 @@ void dalTable::openTable( void * voidfile, string tablename, string groupname )
  *****************************************************************/
 dalTable::~dalTable()
 {
-	/* broken in HDF5 library itself! */
-	//  	if ( nrecords > 1 )
-	//		H5TBdelete_record (file_id, name.c_str(), 0, 1);
+  delete filter;
+   if ( type == MSCASATYPE )
+   {
+#ifdef WITH_CASA
+	delete casa_table_handle;
+#endif
+   }
 }
 
 /****************************************************************
@@ -573,48 +579,51 @@ void dalTable::printColumns()
  *****************************************************************/
 void dalTable::createTable( void * voidfile, string tablename, string groupname )
 {
+
    if ( type == H5TYPE )
    {
-	/* It is necessary to have at least one column for table creation
-	 * so we create a dummy column that will be deleted when real
-	 * columns are added
-	 */
+	// It is necessary to have at least one column for table creation
+	 // so we create a dummy column that will be deleted when real
+	 // columns are added
+	//
 	
-	int dummy_col;
 	name = groupname + '/' + tablename;// set the private class variable: name
 	// cast the voidfile to an hdf5 file
 	hid_t * lclfile = (hid_t*)voidfile; // H5File object
 	file = lclfile;
 	file_id = *lclfile;  // get the file handle
 
-	const unsigned int	NFIELDS = 1;
-	const unsigned long	NRECORDS = 1;
-	size_t			dst_size =  sizeof(dummy_col);
-	const char		*lclfield_names[NFIELDS] = { "000dummy000" };
-	size_t			dst_offset[NFIELDS] = { 0 };
-		
-	hid_t			field_type[NFIELDS] = { H5T_NATIVE_INT };	
-	hsize_t			chunk_size = CHUNK_SIZE;
-	int			fill_data[NFIELDS] = { -1 };
-	int			compress  = 0;  // 0=off 1=on
+        const char *lclfield_names[1]  = { "000dummy000" };
+	size_t dst_offset[1] =
+        {
+          0
+        };
+        hid_t field_type[1] = { H5T_NATIVE_INT };	
+	hsize_t chunk_size = (hsize_t)CHUNK_SIZE;
+	int compress  = 0;  // 0=off 1=on
+        int *fill=NULL;
 
 	typedef struct Particle {
 		int dummy;
 	} Particle;
-	Particle data[NFIELDS];
+	Particle data[1] = {{0}};
+	size_t dst_size =  sizeof(Particle);
 
 	dst_size = sizeof( Particle );
 	dst_offset[0] = HOFFSET( Particle, dummy );
 
 	tablename = groupname + '/' + tablename;
 	//cout << tablename << endl;
+
 	status = H5TBmake_table( tablename.c_str(), file_id, tablename.c_str(),
-				 NFIELDS, NRECORDS, dst_size, lclfield_names,
+				 1, 1, dst_size, lclfield_names,
 				 dst_offset, field_type, chunk_size,
-				 fill_data, compress, data );
+				 fill, compress, data );
+        table_id = H5Dopen( file_id, tablename.c_str() );
    } else {
      cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
+
 }
 
 
@@ -721,7 +730,7 @@ void dalTable::addColumn( string colname, string coltype, int size )
 	for (unsigned int ii=0; ii<nfields; ii++) {
 		free(field_names[ii]);
 	}
-	
+	free(field_names);
 	// set the column type
 	hid_t	field_type_new;
 	if ( -1 == size )  // -1 for variable length data
@@ -870,7 +879,7 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 	for (unsigned int ii=0; ii<nfields; ii++) {
 		free(field_names[ii]);
 	}
-		
+	free(field_names);
 	// set the column type
 	hsize_t dd = indims;
 	hsize_t * dims = &dd;
@@ -1074,7 +1083,7 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 	for (unsigned int ii=0; ii<nfields; ii++) {
 		free(field_names[ii]);
 	}
-
+	free(field_names);
 	size_t sz = 0;
 	
 	// compute the size of the compound column
@@ -1121,8 +1130,10 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 
 	// set additional required fields for new column call
 	hsize_t	position = nfields;
-	int		fill_data[subfields];
-	int		data[subfields]; 
+	int		*fill_data=NULL;
+	int		data[subfields];
+	for (int idx=0; idx<subfields; idx++)
+          data[idx] = 0;
 
 	// create the new column
 	status = H5TBinsert_field( file_id, name.c_str(), compname.c_str(),
@@ -1193,6 +1204,7 @@ void dalTable::removeColumn(string colname)
 	for (unsigned int ii=0; ii<nfields; ii++) {
 		free(field_names[ii]);
 	}
+	free(field_names);
 	
 	if ( !columnpresent )
 		cout << "WARNING: Column \'" << colname.c_str() <<
@@ -1382,6 +1394,7 @@ void dalTable::setAttribute_int( string attrname, int * data, int size ) {
 					attrname.c_str(), data, size ) < 0 ) {
 		cout << "ERROR: could not set attribute " << attrname << endl;
 	}
+ 
    } else {
      cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
@@ -1449,7 +1462,9 @@ void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
 
 	for (unsigned int ii=0; ii<nfields; ii++) {
 		cout << setw(17) << field_names[ii];
+		free(field_names[ii]);
 	}
+	free(field_names);
 	cout << endl;
    }
    else if ( type == MSCASATYPE )
@@ -1522,7 +1537,7 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buf
 	for (unsigned int ii=0; ii<nfields; ii++) {
 		free(field_names[ii]);
 	}
-
+	free(field_names);
         if (status < 0) {
                 cout << "Problem reading records. Row buffer may be too big. "
                      << "Make sure the buffer is smaller than the size of the "
@@ -1831,6 +1846,8 @@ void dalTable::setFilter_boost2( string columns, string conditions )
    setFilter( columns, conditions );
 }
 
-#endif
+#endif // end #ifdef WITH_CASA
 
-#endif
+#endif // end #ifdef PYTHON
+
+} // end namespace DAL

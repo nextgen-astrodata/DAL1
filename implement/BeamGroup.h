@@ -280,10 +280,11 @@ namespace DAL {
     bpl::numeric::array getSubbandData_XY_boost( int subband,
                                                  int start,
                                                  int length );
-#endif
+#endif // end #ifdef PYTHON
+
  }; // end BeamGroup class
 
-} // end DAL namespace
 
+} // end DAL namespace
 
 #endif

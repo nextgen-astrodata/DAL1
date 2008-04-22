@@ -29,6 +29,8 @@
 #include "dalDataset.h"
 #endif
 
+namespace DAL {
+
 /****************************************************************
  *  Sub-routine to open a FITS file
  *
@@ -521,6 +523,7 @@ dalDataset::dalDataset( const char * name, string filetype )
  *****************************************************************/
 dalDataset::~dalDataset()
 {
+  delete filter;
 }
 
 void dalDataset::setFilter( string columns )
@@ -1254,4 +1257,6 @@ void dalDataset::setFilter_boost2( string columns, string conditions )
 {
    setFilter( columns, conditions );
 }
-#endif
+#endif  // end #ifdef PYTHON
+
+} // end namespace DAL

@@ -50,6 +50,8 @@
 #include "dalColumn.h"
 #endif
 
+namespace DAL {
+
 /*!
 A dalTable can reside within a dataset, or within a group that is within
 a dataset.
@@ -461,4 +463,5 @@ class dalTable{
 #endif
 };
 
+} // end namespace DAL
 #endif

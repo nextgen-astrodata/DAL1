@@ -146,6 +146,10 @@ extern "C" {
 #include <HDF5Common.h>
 #endif
 
+#ifndef ENUMERATIONS_H
+#include <Enumerations.h>
+#endif
+
 using namespace std;
 
 /*

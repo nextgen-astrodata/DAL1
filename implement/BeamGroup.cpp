@@ -391,6 +391,6 @@ bpl::numeric::array BeamGroup::getSubbandData_XY_boost( int subband,
 
   return narray;
 }
-#endif
+#endif // end #ifdef PYTHON
 
 } // end namespace DAL

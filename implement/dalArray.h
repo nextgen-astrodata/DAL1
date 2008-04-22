@@ -21,8 +21,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef dalArray_H
-#define dalArray_H
+#ifndef DALARRAY_H
+#define DALARRAY_H
 
 #ifndef DAL_H
 #include "dal.h"
@@ -31,6 +31,8 @@
 #ifndef DALATTRIBUTE_H
 #include "dalAttribute.h"
 #endif
+
+namespace DAL {
 
 /*!
   \class dalArray
@@ -384,4 +386,6 @@ class dalComplexArray: public dalArray {
 			 complex<float> data[], vector<int>chnkdims);
 };
 
-#endif
+} // end namespace DAL
+
+#endif // end #ifndef DALARRAY_H

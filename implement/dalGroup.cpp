@@ -25,6 +25,8 @@
 #include "dalGroup.h"
 #endif
 
+namespace DAL {
+
 herr_t attr_info (hid_t loc_id,
 		  const char *name,
 		  void *opdata);
@@ -652,7 +654,8 @@ dalArray * dalGroup::cfa_boost_numarray( string arrayname,
 }
 
 
-#endif
+#endif // end #ifdef PYTHON
+
 /*
 void dalGroup::setAttribute( string attrname, void * data, string coltype )
 {
@@ -671,3 +674,5 @@ void dalGroup::setAttribute( string attrname, void * data, string coltype )
 	}			
 }
 */
+
+} // end namespace DAL

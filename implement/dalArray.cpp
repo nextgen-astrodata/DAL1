@@ -21,9 +21,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef dalArray_H
+#ifndef DALARRAY_H
 #include "dalArray.h"
 #endif
+
+namespace DAL {
 
 dalArray::dalArray() {}
 
@@ -848,4 +850,6 @@ void dalArray::extend_boost( bpl::list pydims )
 // 
 // }
 
-#endif
+#endif // end #ifdef PYTHON
+
+} // end namespace DAL

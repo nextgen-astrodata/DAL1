@@ -44,6 +44,8 @@
 #include "dalAttribute.h"
 #endif
 
+namespace DAL {
+
 /*!
   \class dalDataset
 
@@ -477,4 +479,7 @@ class dalDataset{
 	void setFilter_boost2(std::string,std::string);
 #endif
 };
+
+} //end namespace DAL
+
 #endif
