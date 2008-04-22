@@ -48,6 +48,8 @@
 
 #define FILENAME "tdal_test.h5"
 
+using namespace DAL;
+
 typedef struct rowStruct {
 	float time;
 	float uvw[3];

@@ -54,7 +54,7 @@ if (HAVE_CASA OR HAVE_CASACORE)
   add_definitions (
     -DWITH_CASA
     )
-  foreach (src tMeasurementSets tMS_dal tdalLopesEvent )
+  foreach (src tMeasurementSets tMS_dal tdalLopesEvent)
     ## compiler instructions
     add_executable (${src} ${src}.cpp)
     ## linker instructions

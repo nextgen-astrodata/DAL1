@@ -30,6 +30,8 @@
 #include <dalDataset.h>
 #endif
 
+using namespace DAL;
+
 int main(int argc, char *argv[])
 {
    // parameter check

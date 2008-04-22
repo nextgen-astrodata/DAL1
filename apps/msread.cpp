@@ -49,6 +49,8 @@
 #include <dalGroup.h>
 #endif
 
+using namespace DAL;
+
 //#include <mpi.h>       /* Include the MPI definitions */
 
 const long BSIZE = 10000;

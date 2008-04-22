@@ -49,6 +49,8 @@
 
 #define FILENAME "./tpulsar.h5"
 
+using namespace DAL;
+
 /*! sample doxygen comment in dal.cpp */
 int main()
 {

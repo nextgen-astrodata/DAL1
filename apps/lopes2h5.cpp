@@ -60,6 +60,8 @@
 #include <fstream>
 #include <dalLopesEvent.h>
 
+using namespace DAL;
+
 void export_data (std::string const &filename,
 		  casa::Matrix<short> const &data)
 {

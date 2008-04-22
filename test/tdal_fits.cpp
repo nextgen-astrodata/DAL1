@@ -51,6 +51,8 @@
 #include <timeseries.h>
 #endif
 
+using namespace DAL;
+
 /*! sample doxygen comment in dal.cpp */
 int main(int argc, char *argv[])
 {

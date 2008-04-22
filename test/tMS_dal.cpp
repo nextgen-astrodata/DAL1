@@ -42,6 +42,10 @@
 #include <dalData.h>
 
 using namespace casa;
+using DAL::dalArray;
+using DAL::dalDataset;
+using DAL::dalGroup;
+using DAL::dalTable;
 
 int main(int argc, char *argv[])
 {

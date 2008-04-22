@@ -68,7 +68,7 @@
 #include "timeseries.h"
 #endif
 
-
+using namespace DAL;
 
 bool it_exists( vector<string> vec, string name )
 {
