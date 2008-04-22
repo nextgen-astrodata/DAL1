@@ -56,6 +56,15 @@ namespace DAL { // Namespace DAL -- begin
     case STATION_ID:
       name = "STATION_ID";
       break;
+    case STATION_POSITION_VALUE:
+      name = "STATION_POSITION_VALUE";
+      break;
+    case STATION_POSITION_UNIT:
+      name = "STATION_POSITION_UNIT";
+      break;
+    case STATION_POSITION_FRAME:
+      name = "STATION_POSITION_FRAME";
+      break;
       // --- Attributes for an individual signal channel (dipole) ----
     case RSP_ID:
       name = "RSP_ID";
@@ -87,6 +96,18 @@ namespace DAL { // Namespace DAL -- begin
     case ANTENNA_POSITION:
       name = "ANT_POSITION";
       break;
+    case ANTENNA_POSITION_VALUE:
+      name = "ANTENNA_POSITION_VALUE";
+      break;
+    case ANTENNA_POSITION_UNIT:
+      name = "ANTENNA_POSITION_UNIT";
+      break;
+    case ANTENNA_POSITION_FRAME:
+      name = "ANTENNA_POSITION_FRAME";
+      break;
+    case ANTENNA_ORIENTATION:
+      name = "ANT_ORIENTATION";
+      break;
     case ANTENNA_ORIENTATION_VALUE:
       name = "ANTENNA_ORIENTATION_VALUE";
       break;
@@ -95,9 +116,6 @@ namespace DAL { // Namespace DAL -- begin
       break;
     case ANTENNA_ORIENTATION_FRAME:
       name = "ANTENNA_ORIENTATION_FRAME";
-      break;
-    case ANTENNA_ORIENTATION:
-      name = "ANT_ORIENTATION";
       break;
     case BEAM_DIRECTION:
       name = "BEAM_DIR";

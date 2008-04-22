@@ -88,6 +88,12 @@ namespace DAL { // Namespace DAL -- begin
     */
     STATION_ID,
     /*!
+      Position of a LOFAR station
+    */
+    STATION_POSITION_VALUE,
+    STATION_POSITION_UNIT,
+    STATION_POSITION_FRAME,
+    /*!
       Identifier for a Remote Station Processing (RSP) board
     */
     RSP_ID,
