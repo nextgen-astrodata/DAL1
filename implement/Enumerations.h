@@ -113,7 +113,13 @@ namespace DAL { // Namespace DAL -- begin
     DATA_LENGTH,
     FEED,
     ANTENNA_POSITION,
+    ANTENNA_POSITION_VALUE,
+    ANTENNA_POSITION_UNIT,
+    ANTENNA_POSITION_FRAME,
     ANTENNA_ORIENTATION,
+    ANTENNA_ORIENTATION_VALUE,
+    ANTENNA_ORIENTATION_UNIT,
+    ANTENNA_ORIENTATION_FRAME,
     BEAM_DIRECTION,
     /*!
       Nyquist zone within which the analog-digital conversion step is performed

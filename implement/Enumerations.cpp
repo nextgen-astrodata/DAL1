@@ -87,6 +87,15 @@ namespace DAL { // Namespace DAL -- begin
     case ANTENNA_POSITION:
       name = "ANT_POSITION";
       break;
+    case ANTENNA_ORIENTATION_VALUE:
+      name = "ANTENNA_ORIENTATION_VALUE";
+      break;
+    case ANTENNA_ORIENTATION_UNIT:
+      name = "ANTENNA_ORIENTATION_UNIT";
+      break;
+    case ANTENNA_ORIENTATION_FRAME:
+      name = "ANTENNA_ORIENTATION_FRAME";
+      break;
     case ANTENNA_ORIENTATION:
       name = "ANT_ORIENTATION";
       break;

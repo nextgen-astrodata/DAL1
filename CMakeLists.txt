@@ -214,19 +214,6 @@ else (HDF5_INCLUDES)
 endif (HDF5_INCLUDES)
 
 ## -----------------------------------------------------------------------------
-## Subdirectories
-
-add_subdirectory (implement)
-
-if (DAL_BUILD_TESTS)
-  add_subdirectory (test)
-endif (DAL_BUILD_TESTS)
-
-if (DAL_BUILD_APPS)
-  add_subdirectory (apps)
-endif (DAL_BUILD_APPS)
-
-## -----------------------------------------------------------------------------
 ## Installation
 
 find_path (prefix release_area.txt
@@ -256,6 +243,19 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 # add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+## -----------------------------------------------------------------------------
+## Subdirectories
+
+add_subdirectory (implement)
+
+if (DAL_BUILD_TESTS)
+  add_subdirectory (test)
+endif (DAL_BUILD_TESTS)
+
+if (DAL_BUILD_APPS)
+  add_subdirectory (apps)
+endif (DAL_BUILD_APPS)
 
 ## -----------------------------------------------------------------------------
 ## Feedback
