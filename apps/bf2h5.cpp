@@ -233,6 +233,14 @@ int main (int argc, char *argv[])
       swapbytes((char *)&fileheader.beamlet2beams,2);
     }
 
+    for (int ii=0;ii<8;ii++)
+    {
+      for (int jj=0;jj<2;jj++)
+      {
+        swapbytes((char *)&fileheader.beamDirections[ii][jj],8);
+      }
+    }
+
     // change byte order for beamlets.
     swapbytes((char *)&fileheader.nrBeamlets,2);
 
@@ -261,6 +269,16 @@ int main (int argc, char *argv[])
      printf("%9.6f ",fileheader.subbandFrequencies[ii]/1000000.0);
      if (((ii+1)%4) == 0 ) printf("\n");
    }
+   printf("Beam Directions J2000 radians:\n");
+   for (int ii=0;ii<8;ii++)
+   {
+     printf("[%d] ", ii );
+     for (int jj=0;jj<2;jj++)
+     {
+        printf("%f   ",fileheader.beamDirections[ii][jj]);
+     }
+     printf("\n");
+   }
    #endif
 
   const unsigned long BufferSIZE = fileheader.nrSamplesPerBeamlet;
@@ -273,9 +291,7 @@ int main (int argc, char *argv[])
   vector<string> srcvec;
   srcvec.push_back( "" );
   int main_beam_diam[] = { 0 };
-  int center_freq[] = { 0 };
   int bandwidth[] = { 0 }; // Total bandwidth (MHz)
-  Float64 total_integration_time[] = { 0 };
   int breaks_in_data[] = { 0 }; // Any breaks in data?
   int dispersion_measure[] = { 0 };
   int number_of_samples[] =
@@ -299,15 +315,9 @@ int main (int argc, char *argv[])
   dataset->setAttribute_string( "POINT_RA", "" );
   dataset->setAttribute_string( "POINT_DEC", "" );
   dataset->setAttribute_string( "OBSERVER", "" );
-  dataset->setAttribute_string( "EPOCH_MJD", "" );
-  dataset->setAttribute_string( "EPOCH_DATE", "" );
-  dataset->setAttribute_string( "EPOCH_UTC", "" );
-  dataset->setAttribute_string( "EPOCH_LST", "" );
   dataset->setAttribute_int( "MAIN_BEAM_DIAM", main_beam_diam );
 //   dataset->setAttribute_int( "CENTER_FREQUENCY", center_freq );
   dataset->setAttribute_int( "BANDWIDTH", bandwidth );
-  dataset->setAttribute_double( "TOTAL_INTEGRATION_TIME",
-                                total_integration_time );
   dataset->setAttribute_int( "BREAKS_IN_DATA", breaks_in_data );
   dataset->setAttribute_int( "DISPERSION_MEASURE", dispersion_measure );
   dataset->setAttribute_int( "NUMBER_OF_SAMPLES", number_of_samples );
@@ -317,21 +327,28 @@ int main (int argc, char *argv[])
   dataset->setAttribute_int( "SUB_BEAM_DIAMETER", sub_beam_diameter );
   dataset->setAttribute_int( "WEATHER_TEMPERATURE", weather_temperature );
   dataset->setAttribute_int( "WEATHER_HUMIDITY", weather_humidity );
-  dataset->setAttribute_int( "TSYS", tsys, 3 );
+  dataset->setAttribute_int( "TSYS", tsys );
 
   dalGroup * beamGroup;
   char * beamstr = new char[10];
 
   int beam_number;
 
-  Float64 channel_bandwidth[] = { 0 };
-  Float64 channel_center_freq[] = { 0, 0, 0 };
-
   beam_number = 0;
   sprintf( beamstr, "beam%03d", beam_number );
   beamGroup = dataset->createGroup( beamstr );
-  beamGroup->setAttribute_string( "RA", "" );
-  beamGroup->setAttribute_string( "DEC", "" );
+
+  char * ra_val  = new char[20];
+  char * dec_val = new char[20];
+  sprintf( ra_val, "%f", fileheader.beamDirections[beam_number+1][0] );
+  sprintf( dec_val, "%f",fileheader.beamDirections[beam_number+1][1] );
+  beamGroup->setAttribute_string( "RA", ra_val );
+  beamGroup->setAttribute_string( "DEC", dec_val );
+  delete [] ra_val;
+  ra_val = NULL;
+  delete [] dec_val;
+  dec_val = NULL;
+
   int n_subbands[] = { fileheader.nrBeamlets };
   beamGroup->setAttribute_int( "NUMBER_OF_SUBBANDS", n_subbands );
 
@@ -344,7 +361,6 @@ int main (int argc, char *argv[])
 
   char * sbName = new char[8];
   int * center_frequency = new int[fileheader.nrBeamlets];
-//   Float64 * dataBandwidth = new Float64[ fileheader.nrBeamlets ];
 
   // nrBeamlets is actually the number of subbands (see email from J.Romein)
   for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
@@ -369,12 +385,6 @@ int main (int argc, char *argv[])
   {
     center_frequency[idx] = (int)fileheader.subbandFrequencies[ idx ];
     table[idx]->setAttribute_int( "CENTER_FREQUENCY", &center_frequency[idx] );
-//     table[idx]->setAttribute_double( "BANDWIDTH", dataBandwidth );
-//     table[idx]->setAttribute_double( "CHANNEL_BANDWIDTH", 
-//                                       channel_bandwidth );
-//     table[idx]->setAttribute_double( "CHANNEL_CENTER_FREQUENCY",
-//                                       channel_center_freq,
-//                                       3 );
   }
 
   delete [] sbName;
@@ -398,6 +408,7 @@ int main (int argc, char *argv[])
 
   int xx=0;
   int counter = 0;
+  bool first_block (true);
   while ( myFile.read ( reinterpret_cast<char *>(&blockheader),
                         sizeof(blockheader) ) /*&& xx < 10*/ )
   {
@@ -419,6 +430,34 @@ int main (int argc, char *argv[])
         }
       }
     }
+
+   if ( first_block )
+   {
+     time_t utc;
+     utc = (time_t)(blockheader.time[0]/(Int64)fileheader.sampleRate);
+     char * timeDateString = NULL;
+     uint buf_size = 128;
+     if (!timeDateString)
+       timeDateString = (char *)malloc(buf_size*sizeof(char));
+
+     memset (timeDateString,'\0',buf_size);
+     strftime(timeDateString, buf_size, "%T", gmtime(&utc));
+     dataset->setAttribute_string( "EPOCH_UTC", timeDateString );
+
+     memset (timeDateString,'\0',buf_size);
+     strftime(timeDateString, buf_size, "%D", gmtime(&utc));
+     dataset->setAttribute_string( "EPOCH_DATE", timeDateString );
+
+     memset (timeDateString,'\0',buf_size);
+     strftime(timeDateString, buf_size, "%D", gmtime(&utc));
+     dataset->setAttribute_string( "EPOCH_MJD", "" );
+
+     memset (timeDateString,'\0',buf_size);
+     strftime(timeDateString, buf_size, "%D", gmtime(&utc));
+     dataset->setAttribute_string( "EPOCH_LST", "" );
+     free(timeDateString);
+     first_block = false;
+   }
 
     xx++;
 
@@ -468,8 +507,14 @@ int main (int argc, char *argv[])
            myFile.clear();
            counter+=BufferSIZE;
          }
-     }
-   }
+     }  // end for each beamlet(subband)
+
+   }  // end for each block
+
+  Float64 total_integration_time[1] =
+     { xx * ( fileheader.nrSamplesPerBeamlet / fileheader.sampleRate ) };
+  dataset->setAttribute_double( "TOTAL_INTEGRATION_TIME",
+                                total_integration_time );
 
   // cleanup memory
   for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
