@@ -62,6 +62,37 @@ using namespace std;
 using namespace DAL;
 using std::complex;
 
+#define PI 3.141592653589793238462643
+char * RArad2deg( const float &rad )
+{
+  char * ra_string = new char[14];
+
+  float deg_hour = ( rad * (180./PI) ) / 15.;
+  int   hour = (int)deg_hour;
+  float deg_min = (deg_hour - hour) * 60.;
+  int    min = int( deg_min );
+  float  sec = (deg_min - min) * 60;
+
+  sprintf(ra_string,"%02d:%02d:%02.4f", hour, min, sec);
+
+  return ra_string;
+}
+
+char * DECrad2deg( const float &rad )
+{
+  char * ra_string = new char[14];
+
+  float deg_hour = ( rad * (180./PI) );
+  int   hour = int( deg_hour );
+  float deg_min = (deg_hour - hour) * 60.;
+  int    min = int( deg_min );
+  float  sec = (deg_min - min) * 60;
+
+  sprintf(ra_string,"%02d:%02d:%02.4f", hour, min, sec);
+
+  return ra_string;
+}
+
 typedef struct FileHeader {
    UInt32    magic;        // 0x3F8304EC, also determines endianness
    UInt8     bitsPerSample;
@@ -219,7 +250,7 @@ int main (int argc, char *argv[])
   }
 
 #ifdef DEBUGGING_MESSAGES
-  printf("size of file header: %ld\n", sizeof(fileheader));
+  printf("size of file header: %u\n", sizeof(fileheader));
   cout << "read pointer position: " << myFile.tellg() << endl;
 #endif
 
@@ -270,15 +301,24 @@ int main (int argc, char *argv[])
      if (((ii+1)%4) == 0 ) printf("\n");
    }
    printf("Beam Directions J2000 radians:\n");
+   char * ra = NULL;
+   char * dec = NULL;
    for (int ii=0;ii<8;ii++)
    {
      printf("[%d] ", ii );
      for (int jj=0;jj<2;jj++)
      {
         printf("%f   ",fileheader.beamDirections[ii][jj]);
+        if ( 0 == jj )
+           ra = RArad2deg( fileheader.beamDirections[ii][jj] );
+        else
+           dec = DECrad2deg( fileheader.beamDirections[ii][jj] );
      }
+     printf("[  %s, %s ]", ra, dec );
      printf("\n");
    }
+   free(ra);
+   free(dec);
    #endif
 
   const unsigned long BufferSIZE = fileheader.nrSamplesPerBeamlet;
