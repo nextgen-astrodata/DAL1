@@ -132,7 +132,8 @@ int main()
 	cdata[ gg ] = 0;
    }
    dalArray * carray = ds->createComplexArray( "complex_array", dims, cdata, cdims );
-   delete cdata;
+   delete [] cdata;
+   cdata = NULL;
    cout << "done." << endl;
 
    /*****************************************************
@@ -143,9 +144,8 @@ int main()
    dalTable * table1 = ds->createTable( "table1", "groupA" );
    cout << "done." << endl;
 
-   string colname;
+   string colname = "TIME";
 
-   colname = "TIME";
    cout << "Adding float column " << colname << " to table1... ";
    table1->addColumn( colname, dal_FLOAT );
    cout << "done." << endl;
@@ -191,6 +191,7 @@ int main()
    for (int xx=0; xx<count; xx++)
      table1->writeDataByColNum( &mi, colnum, xx );
    cout << "done." << endl;
+   delete table1;
 
    /*****************************************************
     *  Close arrays
@@ -222,8 +223,11 @@ int main()
    float * station_id;
    station_id = reinterpret_cast<float*>( iarray2->getAttribute("STATION_ID") );
    if (station_id) cout << *(float*)station_id << " ...done."; else   cout << "FAILED.";
+   delete [] station_id;
+   station_id = NULL;
    cout << "\nClosing integer array... ";
    if ( 0==iarray2->close() ) cout << "done." << endl; else  cout << "FAILED.";
+   delete iarray2;
 
    cout << "Getting list of groups in file...\n";
    vector<string> groupnames = ds->getGroupNames();
@@ -241,15 +245,21 @@ int main()
         vector<string> memnames = mygroup->getMemberNames();
         for (unsigned int jj=0; jj<memnames.size(); jj++)
            cout << memnames[jj] << endl;
-
+        delete mygroup;
       }
      else
        cout << "FAILED.";
    }
 
    cout << "\nClosing dataset... ";
-   ds->close();
-   cout << "done." << endl;
+   if ( 0 == ds->close() )
+   {
+     cout << "done." << endl;
+   }
+   else
+   {
+     cout << "ERROR: Problem closing dataset." << endl;
+   }
 
    delete iarray;
    delete farray;

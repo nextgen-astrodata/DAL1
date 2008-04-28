@@ -198,10 +198,10 @@ Float32 * downsample_to_float32_intensity( dataStruct * data,
     ds_data[count] = 0;
     for (int idx=start; idx < (start+factor); idx++)
     {
-      xx_intensity = std::sqrt( (double)real(data[idx].xx)*real(data[idx].xx) +
-                                (double)imag(data[idx].xx)*imag(data[idx].xx) );
-      yy_intensity = std::sqrt( (double)real(data[idx].yy)*real(data[idx].yy) +
-                                (double)imag(data[idx].yy)*imag(data[idx].yy) );
+      xx_intensity = ( (double)real(data[idx].xx)*real(data[idx].xx) +
+                       (double)imag(data[idx].xx)*imag(data[idx].xx) );
+      yy_intensity = ( (double)real(data[idx].yy)*real(data[idx].yy) +
+                       (double)imag(data[idx].yy)*imag(data[idx].yy) );
       ds_data[count] +=
         (Float32)std::sqrt( xx_intensity*xx_intensity + yy_intensity*yy_intensity );
     }
@@ -223,8 +223,8 @@ int main (int argc, char *argv[])
 
   int downsample_factor = 128;
 
-  const bool DO_DOWNSAMPLE = true;
-  const bool DO_FLOAT32_INTENSITY = true;
+  const bool DO_DOWNSAMPLE = false;
+  const bool DO_FLOAT32_INTENSITY = false;
 
   // define memory buffers
   FileHeader fileheader;
@@ -250,7 +250,7 @@ int main (int argc, char *argv[])
   }
 
 #ifdef DEBUGGING_MESSAGES
-  printf("size of file header: %u\n", sizeof(fileheader));
+  printf("size of file header: %lu\n", sizeof(fileheader));
   cout << "read pointer position: " << myFile.tellg() << endl;
 #endif
 
@@ -337,7 +337,7 @@ int main (int argc, char *argv[])
   int number_of_samples[] =
      { fileheader.nrBeamlets * fileheader.nrSamplesPerBeamlet };
   Float64 sampling_time[] = { fileheader.sampleRate };
-  int number_of_beams[] = { fileheader.nrBeamlets };
+  int number_of_beams[] = { 1 };
   int sub_beam_diameter[] = { 0 }; // fwhm of the sub-beams (arcmin)
   int weather_temperature[] = { 0 }; // approx. centigrade
   int weather_humidity[] = { 0 }; // approx. %
@@ -370,6 +370,7 @@ int main (int argc, char *argv[])
   dataset->setAttribute_int( "TSYS", tsys );
 
   dalGroup * beamGroup;
+
   char * beamstr = new char[10];
 
   int beam_number;
@@ -391,6 +392,9 @@ int main (int argc, char *argv[])
 
   int n_subbands[] = { fileheader.nrBeamlets };
   beamGroup->setAttribute_int( "NUMBER_OF_SUBBANDS", n_subbands );
+
+  delete beamGroup;
+
 
 #ifdef DEBUGGING_MESSAGES
 	cerr << "CREATED New beam group: " << string(beamstr) << endl;
@@ -524,6 +528,7 @@ int main (int argc, char *argv[])
                table[idx]->appendRows( downsampled_data,
                                        BufferSIZE / downsample_factor );
                delete [] downsampled_data;
+               downsampled_data = NULL;
             }
             else // if you want complex numbers
             {
@@ -536,6 +541,7 @@ int main (int argc, char *argv[])
                table[idx]->appendRows( downsampled_data,
                                        BufferSIZE / downsample_factor );
                delete [] downsampled_data;
+               downsampled_data = NULL;
             }
          }
          else  // no downsampling
@@ -563,6 +569,9 @@ int main (int argc, char *argv[])
   }
   delete [] table;
   table = NULL;
+
+  delete dataset;
+
   delete [] data_s;
   data_s = NULL;
 

@@ -27,7 +27,15 @@
 
 namespace DAL {
 
-dalArray::dalArray() {}
+dalArray::dalArray()
+{
+  array_id = 0;
+  file_id = 0;
+  rank = 0;
+  datatype = "";
+  status = 0;
+  name = "";
+}
 
 int dalArray::open( void * voidfile, string arrayname ) {
 	name = arrayname;
@@ -143,7 +151,6 @@ void dalArray::extend( vector<int> newdims )
    status = H5Dextend( array_id, lcldims );
 }
 
-herr_t attr_info(hid_t loc_id, const char *name, void *opdata);
 void dalArray::getAttributes()
 {
 
@@ -179,17 +186,17 @@ void * dalArray::getAttribute( string attrname ) {
 				&dims, &type_class, &type_size );
 
 	if ( H5T_FLOAT == type_class ) {
-		void * data;
-		data = malloc(sizeof(float));
+		float * data;
+		data = new float[1];
 		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), 
 		  attrname.c_str(), H5T_NATIVE_FLOAT, data) )
 		  return NULL;
 		else{
-		  return reinterpret_cast<float*>(data);}
+		  return data;}
 	}
 	else if ( H5T_INTEGER == type_class ) {
-		void * data;
-		data = malloc(sizeof(int));
+		int * data;
+		data = new int[1];
 		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(),
 		  attrname.c_str(),
 			H5T_NATIVE_INT, data) )
@@ -198,9 +205,9 @@ void * dalArray::getAttribute( string attrname ) {
 		  return reinterpret_cast<int*>(data);
 	}
 	else if ( H5T_STRING == type_class ) {
-		char* data;
+		char * data;
 		string fullname = "/" + name;
-		data = (char *)malloc(rank * sizeof(char));
+		data = new char[ 256 ];
 		if ( 0 < H5LTget_attribute_string( file_id, fullname.c_str(),
 			  attrname.c_str(),data) )
 		  return NULL;

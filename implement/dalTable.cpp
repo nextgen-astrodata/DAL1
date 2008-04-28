@@ -593,15 +593,14 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 	file = lclfile;
 	file_id = *lclfile;  // get the file handle
 
-        const char *lclfield_names[1]  = { "000dummy000" };
-	size_t dst_offset[1] =
-        {
-          0
-        };
+        const char * lclfield_names[1]  = { "000dummy000" };
+	size_t dst_offset[1] = { 0  };
         hid_t field_type[1] = { H5T_NATIVE_INT };	
 	hsize_t chunk_size = (hsize_t)CHUNK_SIZE;
 	int compress  = 0;  // 0=off 1=on
-        int *fill=NULL;
+        int * fill = NULL;
+        fill = new int[1];
+        fill[0] = 0;
 
 	typedef struct Particle {
 		int dummy;
@@ -613,12 +612,13 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 	dst_offset[0] = HOFFSET( Particle, dummy );
 
 	tablename = groupname + '/' + tablename;
-	//cout << tablename << endl;
 
 	status = H5TBmake_table( tablename.c_str(), file_id, tablename.c_str(),
 				 1, 1, dst_size, lclfield_names,
 				 dst_offset, field_type, chunk_size,
 				 fill, compress, data );
+        delete [] fill;
+        fill = NULL;
         table_id = H5Dopen( file_id, tablename.c_str() );
    } else {
      cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
@@ -706,9 +706,9 @@ void dalTable::addColumn( string colname, string coltype, int size )
 
 	// allocate space for the column/field names and retrieve them from
 	// the table
-	field_names = (char**)malloc( (size_t)nfields * sizeof(char*) );
+	field_names = new char * [nfields];
 	for (unsigned int ii=0; ii<nfields; ii++) {
-	  field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+	  field_names[ii] = new char[MAX_COL_NAME_SIZE];
 	}
 	status = H5TBget_field_info( file_id, name.c_str(), field_names, NULL,
 				     NULL, NULL );
@@ -728,11 +728,14 @@ void dalTable::addColumn( string colname, string coltype, int size )
 	}
 
 	for (unsigned int ii=0; ii<nfields; ii++) {
-		free(field_names[ii]);
+		delete [] field_names[ii];
+		field_names[ii] = NULL;
 	}
-	free(field_names);
+	delete [] field_names;
+	field_names = NULL;
+
 	// set the column type
-	hid_t	field_type_new;
+	hid_t	field_type_new = 0;
 	if ( -1 == size )  // -1 for variable length data
 	{
 		if ( dal_CHAR == coltype )
@@ -791,9 +794,16 @@ void dalTable::addColumn( string colname, string coltype, int size )
 	// set additional required fields for new column call
 	hsize_t	position = nfields;
 
+        int * data = NULL;
+        data = new int[1];
+        data[0] = 0;
+
 	// create the new column
 	status = H5TBinsert_field( file_id, name.c_str(), colname.c_str(),
-				   field_type_new, position, NULL, NULL );
+				   field_type_new, position, NULL, data );
+
+        delete [] data;
+        data = NULL;
 
 	if ( removedummy )
 		removeColumn("000dummy000");
@@ -819,7 +829,6 @@ void dalTable::addColumn( string colname, string coltype, int size )
  *  
  *
  *****************************************************************/
-herr_t attr_info(hid_t loc_id, const char *name, void *opdata);
 void dalTable::getAttributes() {
    if ( type == H5TYPE )
    {
@@ -880,11 +889,12 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 		free(field_names[ii]);
 	}
 	free(field_names);
+
 	// set the column type
 	hsize_t dd = indims;
 	hsize_t * dims = &dd;
-	hid_t	field_type;	
-	hid_t   h5type;
+	hid_t	field_type = 0;
+	hid_t   h5type = 0;
 	
 	if ( dal_CHAR == coltype )
 		h5type =  H5T_NATIVE_CHAR;
@@ -1025,16 +1035,21 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 		     << endl;
 		exit(99);
 	}
-	field_type = H5Tarray_create( h5type, 1, dims, NULL);
+	field_type = H5Tarray_create( h5type, 1, dims, NULL );
 
 	// set additional required fields for new column call
 	hsize_t	position = nfields;
-	int		fill_data[indims];
-	int		data[indims]; 
-	
+        int * data = NULL;
+        data = new int[ indims ];
+        for (unsigned int idx=0; idx<indims; idx++)
+          data[idx] = 0;
+
 	// create the new column
 	status = H5TBinsert_field( file_id, name.c_str(), colname.c_str(),
-				   field_type, position, fill_data, data );
+				   field_type, position, NULL, data );
+
+        delete [] data;
+        data = NULL;
 
 	if ( removedummy )
 		removeColumn("000dummy000");
@@ -1129,16 +1144,19 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
 
 	// set additional required fields for new column call
-	hsize_t	position = nfields;
-	int		*fill_data=NULL;
-	int		data[subfields];
+	hsize_t position = nfields;
+
+	int * data = new int[subfields];
 	for (int idx=0; idx<subfields; idx++)
           data[idx] = 0;
 
 	// create the new column
 	status = H5TBinsert_field( file_id, name.c_str(), compname.c_str(),
 					fieldtype, position,
-					fill_data, data );	
+					data, data );
+
+        delete [] data;
+        data = NULL;
 
 	if ( removedummy )
 		removeColumn("000dummy000");
@@ -1164,7 +1182,7 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
  *  
  *
  *****************************************************************/
-void dalTable::removeColumn(string colname)
+void dalTable::removeColumn(const string &colname)
 {	
    if ( type == H5TYPE )
    {
@@ -1174,40 +1192,40 @@ void dalTable::removeColumn(string colname)
 			return;
 	}
 	
-	field_names = (char**)malloc( nfields * sizeof(char*) );
-	for (unsigned int ii=0; ii<nfields; ii++)
-	{
-		field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+
+        hsize_t nfields_start = nfields;
+
+        field_names = (char **)malloc(nfields_start * sizeof(char *));
+	for (unsigned int ii=0; ii<nfields_start; ii++) {
+	  field_names[ii] = (char *)malloc(MAX_COL_NAME_SIZE * sizeof(char));
 	}
-	
-	
+
 	status = H5TBget_field_info( file_id, name.c_str(), field_names, NULL,
 				     NULL, NULL );
 
-	//if ( 0 == status )
-		//{
-			//columns.pop_back();
-	//	}
-
-	bool columnpresent = false;					
+	bool columnpresent = false;
 	for (unsigned int ii=0; ii < nfields; ii++) {
 		
 		if (0 == strcmp(colname.c_str(),field_names[ii])) {
+
 			status = H5TBdelete_field( file_id, name.c_str(),
 						   field_names[ii]);
+
 			status = H5TBget_table_info ( file_id, name.c_str(),
 						      &nfields, &nrecords );
 			columnpresent = true;
 			break;
+
 		}
 	}
-	for (unsigned int ii=0; ii<nfields; ii++) {
-		free(field_names[ii]);
+
+	for (unsigned int ii=0; ii<nfields_start; ii++) {
+	  free(field_names[ii]);
 	}
 	free(field_names);
-	
+
 	if ( !columnpresent )
-		cout << "WARNING: Column \'" << colname.c_str() <<
+		cout << "WARNING: Column \'" << colname <<
 				"\' not present.  Cannot delete." << endl;
    } else {
      cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
@@ -1230,9 +1248,12 @@ void dalTable::writeDataByColNum( void * data, int index, int rownum )
 	// retrieve the input fields needed for the append_records call
 	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
 	
-	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
-	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
-	size_out = (size_t*)malloc( sizeof(size_t) );
+        field_sizes   = new size_t[ nfields ];
+        field_offsets = new size_t[ nfields ];
+        size_out      = new size_t[ 1 ];
+// 	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
+// 	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
+// 	size_out = (size_t*)malloc( sizeof(size_t) );
 
 	status = H5TBget_field_info( file_id, name.c_str(), NULL, field_sizes,
 				     field_offsets, size_out );
@@ -1254,6 +1275,14 @@ void dalTable::writeDataByColNum( void * data, int index, int rownum )
   	status = H5TBwrite_fields_index(file_id, name.c_str(), num_fields,
 					index_num, start, numrecords, size,
 					field_offsets, field_sizes, data);
+
+        delete [] field_sizes;
+        field_sizes = NULL;
+        delete [] field_offsets;
+        field_offsets = NULL;
+        delete [] size_out;
+        size_out = NULL;
+
    } else {
      cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }

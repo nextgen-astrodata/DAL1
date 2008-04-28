@@ -298,7 +298,7 @@ class dalColumn {
 	  \param length Number of cells to retrieve into the data object.
 	  \return A dalData object containing the column data.
 	 */
-	dalData * data( int start=-1, int length=-1 );
+	dalData * data( int start, int &length );
 
 /************************************************************************
  *

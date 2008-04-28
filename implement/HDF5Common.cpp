@@ -671,6 +671,60 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
 
+/*
+ * Operator function.
+ * This function is used in combination with H5Aiterate.
+ * It prints out the value of attribute.
+ */
+herr_t 
+attr_info(hid_t loc_id, const char * name, void * opdata)
+{
+    /*  Open the attribute using its name.  */
+    hid_t attr = H5Aopen_name(loc_id, name);
+
+    /* Get attribute datatype, dataspace, rank, and dimensions.  */
+    hid_t atype  = H5Aget_type(attr);
+    hid_t aspace = H5Aget_space(attr);
+
+    hsize_t * sdim = new hsize_t[ 64 ];
+    herr_t ret = H5Sget_simple_extent_dims(aspace, sdim, NULL);
+    delete [] sdim;
+    sdim = NULL;
+
+    opdata = opdata;  // avoid compiler warnings of unused parameter
+
+    if (H5T_INTEGER == H5Tget_class(atype)) {
+       int point_out = 0;
+       ret  = H5Aread(attr, H5T_NATIVE_INT, &point_out);
+       cout << name << " = " << point_out << endl;
+    }
+    else if (H5T_FLOAT == H5Tget_class(atype)) {
+       size_t npoints = H5Sget_simple_extent_npoints(aspace);
+       float * float_array = new float[ npoints ];
+       ret = H5Aread( attr, H5T_NATIVE_FLOAT, float_array );
+       cout << name << " = ";
+       for(int i = 0; i < (int)npoints; i++) printf("%f ", float_array[i]); 
+       printf("\n");
+       delete [] float_array;
+       float_array = NULL;
+    }
+
+    if (H5T_STRING == H5Tget_class (atype)) {
+      char * data;
+      data = new char[ 256 ];
+      ret = H5Aread(attr, H5T_C_S1, data);
+      cout << name << " = " << data << endl;
+      delete [] data;
+      data = NULL;
+    }
+
+    ret = H5Tclose(atype);
+    ret = H5Sclose(aspace);
+    ret = H5Aclose(attr);
+
+    return 0;
+}
+
   // ============================================================================
   //
   //  Dataspaces and Datatypes

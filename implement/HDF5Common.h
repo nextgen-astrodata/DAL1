@@ -280,6 +280,20 @@ namespace DAL { // Namespace DAL -- begin
 			  std::string const &name,
 			  hid_t const &location_id);
 #endif
+
+  /*!
+    \brief Print an attribute value. (Used with H5Aiterate).
+
+    This is a function parameter meant to be used with H5Aiterate.
+
+    \param loc_id -- Identifier for the HDF5 object - file, group, dataset,
+           array - the attribute is attached to.
+    \param name        -- Name of the attribute
+    \param opdata -- not used, but necessary as a placeholder
+    \return error status
+  */
+  herr_t attr_info(hid_t loc_id, const char *name, void *opdata);
+
   //@}
 
   // ============================================================================

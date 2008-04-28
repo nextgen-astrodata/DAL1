@@ -170,96 +170,13 @@ int dalDataset::close()
    return -2;
 }
 
-/*
- * Operator function.
- */
-herr_t 
-_dalDataset_attr_info(hid_t loc_id, const char *name, void *opdata)
-{
-    hid_t attr, atype, aspace;  /* Attribute, datatype, dataspace identifiers */
-    int   rank;
-    hsize_t sdim[64]; 
-    herr_t ret;
-    int i;
-    size_t size;
-    size_t npoints;             /* Number of elements in the array attribute. */ 
-    int point_out;    
-    float *float_array;         /* Pointer to the array attribute. */
-    H5S_class_t  type_class;
-
-    /* avoid warnings */
-    opdata = opdata;
-
-    /*  Open the attribute using its name.  */    
-    attr = H5Aopen_name(loc_id, name);
-
-    /*  Display attribute name.  */
-    //printf("\nName : ");
-    //puts(name);
-
-    /* Get attribute datatype, dataspace, rank, and dimensions.  */
-    atype  = H5Aget_type(attr);
-    aspace = H5Aget_space(attr);
-    rank = H5Sget_simple_extent_ndims(aspace);
-    ret = H5Sget_simple_extent_dims(aspace, sdim, NULL);
-
-    /* Get dataspace type */
-    type_class = H5Sget_simple_extent_type (aspace);
-    //printf ("H5Sget_simple_extent_type (aspace) returns: %i\n", type_class);
-
-    /* Display rank and dimension sizes for the array attribute.  */
-    if(rank > 0) {
-       //printf("Rank : %d \n", rank); 
-       //printf("Dimension sizes : ");
-       //for (i=0; i< rank; i++) printf("%d ", (int)sdim[i]);
-       //printf("\n");
-    }
-
-    if (H5T_INTEGER == H5Tget_class(atype)) {
-       //printf("Type : INTEGER \n");
-       ret  = H5Aread(attr, atype, &point_out);
-       //printf("The value of the attribute \"Integer attribute\" is %d \n", 
-         //      point_out);
-	cout << name << " = " << point_out << endl;
-    }
-
-    if (H5T_FLOAT == H5Tget_class(atype)) {
-       //printf("Type : FLOAT \n"); 
-       npoints = H5Sget_simple_extent_npoints(aspace);
-       float_array = (float *)malloc(sizeof(float)*(int)npoints); 
-       ret = H5Aread(attr, atype, float_array);
-       //printf("Values : ");
-	cout << name << " = ";
-       for( i = 0; i < (int)npoints; i++) printf("%f ", float_array[i]); 
-       printf("\n");
-       free(float_array);
-    }
-
-    if (H5T_STRING == H5Tget_class (atype)) {
-      //printf ("Type: STRING \n");
-      size = H5Tget_size (atype);
-
-	char* data;
-	data = (char *)malloc(rank * sizeof(char));
-      	ret = H5Aread(attr, atype, data);
-	cout << name << " = " << data << endl;
-
-    }
-
-    ret = H5Tclose(atype);
-    ret = H5Sclose(aspace);
-    ret = H5Aclose(attr);
-
-    return 0;
-}
-
 void dalDataset::getAttributes()
 {
 
    //status = H5Aget_num_attrs(h5fh);
    //printf ("H5Aget_num_attrs returns: %i\n", status);
 
-   status = H5Aiterate(h5fh,NULL ,_dalDataset_attr_info, NULL);
+   status = H5Aiterate( h5fh, NULL, attr_info, NULL );
    //printf ("\nH5Aiterate returns: %i\n", status);
 
 }
@@ -784,6 +701,8 @@ dalArray * dalDataset::openArray( string arrayname, string groupname )
   }
   else if ( type == H5TYPE )
   {
+	dalArray * test = new dalArray();
+        delete test;
 	dalArray * la = new dalArray();
 	la->open( file, '/' + groupname + '/' + arrayname );
 	return la;

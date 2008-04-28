@@ -246,7 +246,7 @@ class dalTable{
 	  
 	  \param colname Name of the column you want to remove from the table.
 	 */
-	void removeColumn( string colname );
+	void removeColumn( const string &colname );
 
     /*!
 	  \brief Write data to a column identified by it's position.

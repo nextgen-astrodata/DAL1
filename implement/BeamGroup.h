@@ -142,7 +142,7 @@ namespace DAL {
     */
     void getSubbandData_XY( int subband,
                             int start,
-                            int length,
+                            int &length,
                             std::vector< std::complex<short> > &x_values,
                             std::vector< std::complex<short> > &y_values );
 
@@ -159,7 +159,7 @@ namespace DAL {
     */
     void getSubbandData_X( int subband,
                            int start,
-                           int length,
+                           int &length,
                            std::vector< std::complex<short> > &values );
 
 
@@ -176,7 +176,7 @@ namespace DAL {
     */
     std::complex<short>  * getSubbandData_X( int subband,
                            int start,
-                           int length );
+                           int &length );
 
     /*!
      \brief Get X column data for a given subband
@@ -191,7 +191,7 @@ namespace DAL {
     */
     std::complex<short>  * getSubbandData_Y( int subband,
                            int start,
-                           int length );
+                           int &length );
 
     /*!
      \brief Get Y column data for a given subband
@@ -206,7 +206,7 @@ namespace DAL {
    */
     void getSubbandData_Y( int subband,
                            int start,
-                           int length,
+                           int &length,
                            std::vector< std::complex<short> > &values );
 
 
@@ -268,10 +268,10 @@ namespace DAL {
     void summary_boost();
     bpl::numeric::array getIntensity_boost( int subband,
                                             int start,
-                                            unsigned int length );
+                                            int length );
     bpl::numeric::array getSubbandData_X_boost( int subband,
                                                 int start,
-                                                unsigned int length );
+                                                int length );
 
     bpl::numeric::array getSubbandData_Y_boost( int subband,
                                                 int start,

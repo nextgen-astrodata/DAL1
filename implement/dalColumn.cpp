@@ -269,7 +269,7 @@ string dalColumn::getType()
   return dal_datatype;
 }
 
-dalData * dalColumn::data( int start, int length )
+dalData * dalColumn::data( int start, int &length )
 {
   if ( MSCASATYPE == filetype )
   {
@@ -733,7 +733,9 @@ bpl::numeric::array dalColumn::data_boost()
    else if ( H5TYPE == filetype )
    {
      cerr << "ERROR: hdf5 not supported [dalColumn.data - python]" << endl;
-     data_object = data();
+     int start = 0;
+     int length = -1;
+     data_object = data(start,length);
      return data_object->get_boost();
    }
    else
