@@ -299,6 +299,7 @@ class dalColumn {
 	  \return A dalData object containing the column data.
 	 */
 	dalData * data( int start, int &length );
+	dalData * data();
 
 /************************************************************************
  *

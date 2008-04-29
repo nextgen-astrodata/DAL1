@@ -269,6 +269,13 @@ string dalColumn::getType()
   return dal_datatype;
 }
 
+dalData * dalColumn::data()
+{
+  int start = -1;
+  int length = -1;
+  return data( start, length );
+}
+
 dalData * dalColumn::data( int start, int &length )
 {
   if ( MSCASATYPE == filetype )
