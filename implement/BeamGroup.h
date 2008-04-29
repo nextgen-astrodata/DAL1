@@ -86,6 +86,13 @@ namespace DAL {
     BeamGroup();
 
     /*!
+      \brief Default destructor
+
+      Default destructor
+    */
+    ~BeamGroup();
+
+    /*!
       \brief Argumented constructor
 
       Argumented constructor

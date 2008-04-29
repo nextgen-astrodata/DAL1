@@ -107,7 +107,7 @@ namespace DAL { // Namespace DAL -- begin
     hid_t dataspace_id       = H5Aget_space (attribute_id);
 //     bool dataspace_is_simple = H5Sis_simple(dataspace_id);
     int rank                 = H5Sget_simple_extent_ndims (dataspace_id);
-    hsize_t *dimensions;
+    hsize_t * dimensions = NULL;
 
     if (rank > 0) {
       dimensions = new hsize_t[rank];
@@ -130,6 +130,12 @@ namespace DAL { // Namespace DAL -- begin
       h5error = H5Eclear ();
     }
     
+    if ( dimensions )
+    {
+      delete [] dimensions;
+      dimensions = NULL;
+    }
+
     return status;
   }
   
@@ -525,6 +531,10 @@ namespace DAL { // Namespace DAL -- begin
 	for (uint n(0); n<shape[0]; n++) {
 	  value[n] = buffer[n];
 	}
+
+      delete [] buffer;
+      buffer = NULL;
+
       } else {
 	cerr << "[h5get_attribute] Error reading value of attribute." << endl;
 	status = false;

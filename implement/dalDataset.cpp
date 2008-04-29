@@ -32,6 +32,79 @@
 namespace DAL {
 
 /****************************************************************
+ *  Default constructor
+ *
+ *****************************************************************/
+dalDataset::dalDataset()
+{
+  init();
+}
+
+/****************************************************************
+ *  Default constructor
+ *
+ *****************************************************************/
+dalDataset::dalDataset( const char * dsname, string filetype )
+{
+
+   init();
+
+   name = stringify( dsname );
+   type = filetype;  // set the global class variable: type
+
+   if ( filetype == H5TYPE )
+   {
+     h5fh = H5Fcreate( dsname, H5F_ACC_TRUNC, H5P_DEFAULT,
+                       H5P_DEFAULT);
+     file = &h5fh;
+
+   } else if ( filetype == FITSTYPE )
+   {
+#ifdef CFITSIO
+     fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
+     int status;
+     fits_create_file(&fptr, dsname, &status); /*create new file*/
+#else
+     cerr << "ERROR: CFITSIO libraries not found." << endl;
+     exit(9);
+#endif
+   }
+   else {
+      cout << "(dalDataset::dalDataset) Data format \'" << type
+           << "\' not supported for this operation." << endl;
+   }
+}
+
+void dalDataset::init()
+{
+#ifdef PYTHON
+  Py_Initialize();
+#endif
+
+  file = NULL;
+  type = "UNDEFINED";
+  name = "UNDEFINED";
+  files.clear();
+  tables.clear();
+  groups.clear();
+  attrs.clear();
+  filter = NULL;
+  h5fh = 0;   //!< hdf5 file handle
+  status = 0;
+
+#ifdef WITH_CASA
+  ms = NULL;
+  ms_reader = NULL;
+#endif
+
+}
+/****************************************************************
+ *  Default destructor
+ *
+ *****************************************************************/
+dalDataset::~dalDataset() {}
+
+/****************************************************************
  *  Sub-routine to open a FITS file
  *
  *****************************************************************/
@@ -268,8 +341,8 @@ void * dalDataset::getAttribute( string attrname ) {
 	    return NULL;
 
 	if ( H5T_FLOAT == type_class ) {
-		void * data;
-		data = malloc(sizeof(float));
+		double * data;
+		data = new double[1];
 		if ( 0 < H5LTget_attribute(h5fh, fullname.c_str(), attrname.c_str(),
 			 H5T_NATIVE_DOUBLE, data) )
 		  return NULL;
@@ -277,8 +350,8 @@ void * dalDataset::getAttribute( string attrname ) {
 		  return reinterpret_cast<double*>(data);
 	}
 	else if ( H5T_INTEGER == type_class ) {
-		void * data;
-		data = malloc(sizeof(int));
+		int * data;
+		data = new int[1];
 		if ( 0 < H5LTget_attribute(h5fh, fullname.c_str(), attrname.c_str(),
 			 H5T_NATIVE_INT, data) )
 		  return NULL;
@@ -286,8 +359,8 @@ void * dalDataset::getAttribute( string attrname ) {
 		  return reinterpret_cast<int*>(data);
 	}
 	else if ( H5T_STRING == type_class ) {
-		char* data;
-		data = (char *)malloc(100 * sizeof(char));
+		char * data;
+		data =  new char[256];
 		if ( 0 < H5LTget_attribute_string( h5fh, fullname.c_str(), 
 			  attrname.c_str(),data) )
 		  return NULL;
@@ -368,20 +441,6 @@ dalGroup * dalDataset::createGroup( const char * gname )
 }
 
 /****************************************************************
- *  Default constructor
- *
- *****************************************************************/
-dalDataset::dalDataset()
-{
-  type = "UNDEFINED";
-  name = "UNDEFINED";
-#ifdef PYTHON
-    Py_Initialize();
-#endif
-    filter = new dalFilter;
-}
-
-/****************************************************************
  *  List tables in a dataset (file)
  *
  *****************************************************************/
@@ -403,44 +462,6 @@ void dalDataset::listTables()
    {
 	cout << "This operation is not supported for filetype " << type << endl;
    }
-}
-
-/*!
- *
- *  Create a a new dataset (file)
- */
-dalDataset::dalDataset( const char * name, string filetype )
-{
-   type = filetype;  // set the global class variable: type
-   filter = new dalFilter();
-
-   if ( filetype == H5TYPE )
-   {
-
-	h5fh = H5Fcreate(name, H5F_ACC_TRUNC, H5P_DEFAULT,
-				   H5P_DEFAULT);
-        file = &h5fh;
-	
-   } else if ( filetype == FITSTYPE )
-   {
-	fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
-	int status;
-	fits_create_file(&fptr, name, &status); /*create new file*/
-// h5fh = fits_create_file(fitsfile **fptr, char *filename, > int *status);
-   }
-   else {
-   	cout << "(dalDataset::dalDataset) Data format \'" << type
-             << "\' not supported for this operation." << endl;
-   }
-}
-
-/****************************************************************
- *  Default destructor
- *
- *****************************************************************/
-dalDataset::~dalDataset()
-{
-  delete filter;
 }
 
 void dalDataset::setFilter( string columns )

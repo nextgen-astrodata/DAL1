@@ -26,8 +26,12 @@
 #endif
 dalFilter::dalFilter()
 {
-   is_set = false;
+  filterstring = "";
+  filetype= "";
+  is_set = false;
 }
+
+dalFilter::~dalFilter() {}
 
 void dalFilter::set( string cols ) {
   if ( filetype == MSCASATYPE )

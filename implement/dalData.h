@@ -70,6 +70,13 @@ public:
         dalData();
 
 	/*!
+          \brief Default destructor.
+
+          Defulat data object destructor.
+         */
+        ~dalData();
+
+	/*!
           \brief Constructor with a specific file type.
 
           Constructor with a specific file type.

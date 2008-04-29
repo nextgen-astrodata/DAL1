@@ -64,12 +64,12 @@ namespace DAL {
     hid_t H5fileID_p;
 
     //! DAL Dataset object to handle the basic I/O
-    dalDataset *dataset_p;
+    dalDataset * dataset_p;
 
     bool init();
 
     //! Vector of beam groups within the dataset
-    std::vector<BeamGroup> beamGroups_p;
+    std::vector<BeamGroup*> beamGroups_p;
 
     bool status;
 
@@ -196,7 +196,7 @@ namespace DAL {
     /*!
       \brief Get the epoch mjd
     */
-    double epoch_mjd();
+    std::string epoch_mjd();
 
     /*!
       \brief Get the epoch date

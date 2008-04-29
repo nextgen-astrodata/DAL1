@@ -94,6 +94,13 @@ class dalDataset{
 	 */
 	~dalDataset();
 	
+       /*!
+         \brief Initialize the object's internal parameters
+
+         Initialize the object's internal parameters
+       */
+       void init();
+
 	/*!
 	  \brief Another constructor with two arguments.
       \param name The name of the dataset to open.

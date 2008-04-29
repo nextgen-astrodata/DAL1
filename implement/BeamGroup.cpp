@@ -32,13 +32,6 @@ namespace DAL {
     init();
   }
 
-  void BeamGroup::init()
-  {
-    H5fileID_p        = -1;
-    group_p           = new dalGroup();
-    group_p->setName ("UNDEFINED");
-  }
-
   BeamGroup::BeamGroup (dalDataset &dataset, std::string const &name)
   {
     bool status (true);
@@ -46,6 +39,21 @@ namespace DAL {
     init ();
 
     status = setBeamGroup (dataset, name);
+  }
+
+  void BeamGroup::init()
+  {
+    H5groupID_p       = -1;
+    group_p           = NULL;
+    H5fileID_p        = -1;
+    group_p           = new dalGroup();
+    group_p->setName ("UNDEFINED");
+    beamSubbands_p.clear();
+  }
+
+  BeamGroup::~BeamGroup()
+  {
+    delete group_p;
   }
 
   void BeamGroup::summary(std::ostream &os)
@@ -101,6 +109,7 @@ namespace DAL {
     try {
       dataset_p = dataset;
       H5fileID_p = dataset.getFileHandle();
+      delete group_p; // allocated during construction in init()
       group_p    = dataset.openGroup(name);
     } catch (std::string message) {
       std::cerr << "[BeamGroup::setBeamGroup] " << message << endl;
@@ -118,6 +127,8 @@ namespace DAL {
       try {
 	char * ra = reinterpret_cast<char*>(group_p->getAttribute("RA"));
 	attribute_ra = string(ra);
+        delete [] ra;
+        ra = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute RA" << endl;
@@ -135,6 +146,8 @@ namespace DAL {
       try {
 	char * dec = reinterpret_cast<char*>(group_p->getAttribute("DEC"));
 	attribute_dec = string(dec);
+        delete [] dec;
+        dec = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute DEC" << endl;
@@ -151,6 +164,8 @@ namespace DAL {
       try {
 	int * n_subbands_p = reinterpret_cast<int*>(group_p->getAttribute("NUMBER_OF_SUBBANDS"));
 	n_subbands = *n_subbands_p;
+        delete [] n_subbands_p;
+        n_subbands_p = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute NUMBER_OF_SUBBANDS" << endl;
@@ -176,10 +191,12 @@ namespace DAL {
     col = table->getColumn_Float32("TOTAL_INTENSITY");
     data = col->data( start, length );
 
-    delete col;
-
     float * values;
     values = (float*)data->data;
+
+    delete data;
+    delete col;
+    delete table;
 
     return values;
   }
@@ -210,10 +227,12 @@ namespace DAL {
     col = table->getColumn_complexInt16("X");
     data = col->data( start, length );
 
-    delete col;
-
     std::complex<short> * values = NULL;
     values = (complex<short>*)data->data;
+
+    delete data;
+    delete col;
+    delete table;
 
     return values;
   }
@@ -233,10 +252,12 @@ namespace DAL {
     col = table->getColumn_complexInt16("Y");
     data = col->data( start, length );
 
-    delete col;
-
     std::complex<short> * values = NULL;
     values = (complex<short>*)data->data;
+
+    delete data;
+    delete col;
+    delete table;
 
     return values;
   }
@@ -263,7 +284,9 @@ namespace DAL {
       values.push_back(*xx);
     }
 
+    delete data;
     delete col;
+    delete table;
   }
 
   void BeamGroup::getSubbandData_Y( int subband,
@@ -288,7 +311,9 @@ namespace DAL {
       values.push_back(*yy);
     }
 
+    delete data;
     delete col;
+    delete table;
   }
 
 #ifdef PYTHON

@@ -33,23 +33,58 @@ namespace DAL {
 //
 // ==============================================================================
 
-dalGroup::dalGroup() {
+dalGroup::dalGroup()
+{
+   file = NULL;
+   name = "";
+   group = NULL;
+   tables.clear();
+   attributes.clear();
+   filter = NULL;
+   file_id = 0;
+   group_id = 0;
+   status = 0;
+   subgroup = NULL;
 }
 
 dalGroup::dalGroup( const char * gname, void * voidfile ) {
 
+   dalGroup();
 
-	hid_t * lclfile = (hid_t*)voidfile; // H5File object
-	file = lclfile;
-	file_id = *lclfile;  // get the file handle
+   hid_t * lclfile = (hid_t*)voidfile; // H5File object
+   file = lclfile;
+   file_id = *lclfile;  // get the file handle
 
-	name = gname;
-	string fullgroupname = "/" + stringify(gname);
-	group_id = H5Gcreate(*(hid_t*)file, fullgroupname.c_str(), 0);
+   name = gname;
+   string fullgroupname = "/" + stringify(gname);
+   group_id = H5Gcreate(*(hid_t*)file, fullgroupname.c_str(), 0);
 }
 
-dalGroup::dalGroup( hid_t group_id, const char * gname ) {
-	group_id = H5Gcreate(group_id, gname, 0);
+dalGroup::dalGroup( hid_t group_id, const char * gname )
+{
+   dalGroup();
+
+   group_id = H5Gcreate(group_id, gname, 0);
+}
+
+int dalGroup::open( void * voidfile, string groupname ) {
+
+  name = groupname;
+
+  hid_t * lclfile = (hid_t*)voidfile; // H5File object
+  file = lclfile;
+  file_id = *lclfile;  // get the file handle
+
+  string fullgroupname = "/" + groupname;
+  group_id = H5Gopen( file_id, fullgroupname.c_str() );
+  return( group_id );
+}
+
+dalGroup::~dalGroup()
+{
+  if ( 0 != group_id )
+    if ( H5Gclose(group_id) < 0 )
+      cout << "ERROR: dalGroup::close() failed.\n";
 }
 
 hid_t dalGroup::getId() {
@@ -134,26 +169,6 @@ dalArray * dalGroup::createFloatArray( string arrayname, vector<int> dims, float
 
 string dalGroup::getName () {
    return name;
-}
-
-int dalGroup::open( void * voidfile, string groupname ) {
-	name = groupname;
-
-	hid_t * lclfile = (hid_t*)voidfile; // H5File object
-	file = lclfile;
-	file_id = *lclfile;  // get the file handle
-	
-	string fullgroupname = "/" + groupname;
-	group_id = H5Gopen( file_id, fullgroupname.c_str() );
-	return( group_id );
-}
-
-int dalGroup::close()
-{
-	status = H5Gclose(group_id);
-	if ( status < 0 )
-	  cout << "ERROR: dalGroup::close() failed.\n";
-	return status;
 }
 
 void dalGroup::setAttribute_string( string attrname, string data )
@@ -284,8 +299,8 @@ void * dalGroup::getAttribute( string attrname ) {
 				&dims, &type_class, &type_size );
 
 	if ( H5T_FLOAT == type_class ) {
-		void * data;
-		data = malloc(sizeof(float));
+		double * data;
+		data = new double[1];
 		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
 			 H5T_NATIVE_DOUBLE, data) )
 		  return NULL;
@@ -293,8 +308,8 @@ void * dalGroup::getAttribute( string attrname ) {
 		  return reinterpret_cast<double*>(data);
 	}
 	else if ( H5T_INTEGER == type_class ) {
-		void * data;
-		data = malloc(sizeof(int));
+		int * data;
+		data = new int[1];
 		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
 			 H5T_NATIVE_INT, data) )
 		  return NULL;
@@ -304,7 +319,7 @@ void * dalGroup::getAttribute( string attrname ) {
 	else if ( H5T_STRING == type_class ) {
 		char * data;
 		string fullname = "/" + name;
-		data = new char[rank];
+		data = new char[256];
 		if ( 0 < H5LTget_attribute_string( file_id, fullname.c_str(), 
 			  attrname.c_str(),data) )
 		  return NULL;
@@ -399,8 +414,6 @@ dalArray * dalGroup::cia_boost_numarray2(
     dims.push_back(bpl::extract<int>(pydims[ii]));
 
   long size = bpl::len(pydata);
-  int * data = NULL;
-  data = new int[size];
 
 // cout << "cia_boost_numarray "<< pydata.nelements() << endl;
   pydata.setshape( pydata.nelements() );
@@ -506,6 +519,10 @@ bpl::numeric::array dalGroup::ria_boost( string arrayname )
 	{
 	    data_list.append(data[ii]);
 	}
+
+        delete [] data;
+        data = NULL;
+
 	bpl::numeric::array nadata(
           bpl::make_tuple(
 	    bpl::make_tuple(data_list)
@@ -540,6 +557,7 @@ dalArray * dalGroup::cfa_boost( string arrayname, bpl::list pydims, bpl::list py
   dalArray * array = createFloatArray(arrayname, dims, data, chnkdims);
 
   delete [] data;
+  data = NULL;
 
   return array;
 }
@@ -554,8 +572,6 @@ dalArray * dalGroup::cfa_boost_numarray( string arrayname,
     dims.push_back(bpl::extract<int>(pydims[ii]));
 
   long size = bpl::len(pydata);
-  float * data = NULL;
-  data = new float[size];
 
 // cout << "cia_boost_numarray "<< pydata.nelements() << endl;
   pydata.setshape( pydata.nelements() );

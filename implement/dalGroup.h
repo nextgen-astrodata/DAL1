@@ -64,7 +64,7 @@ class dalGroup{
 	void * group;
 	vector<dalTable> tables; //!< list of tables within groups
 	vector<dalAttribute> attributes; //!< list of group attributes
-	dalFilter filter; //!< filter associated with group
+	dalFilter * filter; //!< filter associated with group
 	hid_t file_id; //!< hdf5 file_id
 	hid_t group_id; //!< hdf5 group_id
 	herr_t	status; //!< hdf5 return status
@@ -99,6 +99,13 @@ class dalGroup{
           \param gname The name of the subgroup.
          */
 	dalGroup( hid_t group_id, const char * gname );
+
+	/*!
+          \brief Default destructor.
+
+          Default destructor.
+         */
+	~dalGroup();
 
 	/*!
           \brief Open an existing group.

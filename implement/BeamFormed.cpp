@@ -26,6 +26,86 @@
 
 namespace DAL {
 
+  BeamFormed::BeamFormed()
+  {
+    dataset_p = NULL;
+    status = true;
+    filename_p = "";
+    H5fileID_p = 0;
+    beamGroups_p.clear();
+  };
+
+  BeamFormed::BeamFormed(std::string const &filename)
+  {
+    dataset_p = NULL;
+    status = true;
+    filename_p = "";
+    H5fileID_p = 0;
+    beamGroups_p.clear();
+
+    filename_p = filename;
+
+    if ( !init() )
+      exit(-1);
+  }
+
+  // ----------------------------------------------------------------------- init
+
+  bool BeamFormed::init ()
+  {
+
+    bool status (true);
+
+    // Connection to dataset via DAL layer
+
+    dataset_p = new dalDataset();
+    if (dataset_p->open(filename_p.c_str())) {
+      std::cerr << "[BeamFormed::init] Error opening file into dalDataset!"
+                << std::endl;
+      return false;
+    }
+
+    H5fileID_p = dataset_p->getFileHandle();
+
+    /*
+      [1] If opening the data file was successful, we can continue. First we scan
+      for the beam groups available in the file, since this is the basic unit
+      within which the actual data for the individual sub-bands are stored.
+    */
+    std::vector<std::string> beamGroups = beams();
+
+    /* Always check if actually a list of groups has been extracted */
+    if (beamGroups.size() > 0) {
+
+      for (uint beam(0); beam<beamGroups.size(); beam++) {
+        // assemble internal list of beam groups
+        BeamGroup * group = new BeamGroup((*dataset_p), beamGroups[beam]);
+        beamGroups_p.push_back(group);
+      }
+
+    } else {
+      std::cerr << "[BeamFormed::init] No beam group found in data set!"
+                << std::endl;
+      status = false;
+    }
+
+    return status;
+  }
+
+  BeamFormed::~BeamFormed()
+  {
+    for (uint beam(0); beam<beamGroups_p.size(); beam++) {
+       delete beamGroups_p[beam];
+    }
+
+    if ( NULL != dataset_p )
+    {
+      dataset_p->close();
+      delete dataset_p;
+      dataset_p = NULL;
+    }
+  }
+
   template<class T>
   void BeamFormed::print_vector ( std::ostream& os,
                                   std::vector<T> &vec)
@@ -90,23 +170,6 @@ namespace DAL {
 
   }
 
-  BeamFormed::BeamFormed(){};
-
-  BeamFormed::BeamFormed(std::string const &filename)
-  {
-    filename_p = filename;
-    if ( !init() )
-	  exit(-1);
-  }
-
-  BeamFormed::~BeamFormed()
-  {
-//      for (uint beam(0); beam<beamGroups_p.size(); beam++) {
-//         beamGroups_p[beam].group_p->close();
-//      }
-//      dataset_p->close();
-  }
-
   void BeamFormed::summary (std::ostream &os, bool const &listBeams)
   {
     os << "\n[BeamFormed Data] Summary of object properties"     << endl;
@@ -131,9 +194,9 @@ namespace DAL {
     os << "-- Epoch UTC ............ : " << epoch_utc()             << endl;
     os << "-- Epoch LST ............ : " << epoch_lst()             << endl;
     os << "-- FWHM of the main beam  : " << main_beam_diam()        << endl;
-    os << "-- Center Frequency ..... : " << center_freq()           << endl;
+//     os << "-- Center Frequency ..... : " << center_freq()           << endl;
     os << "-- Bandwidth ............ : " << bandwidth()             << endl;
-    os << "-- Total Integration Time : " << integration_time()      << endl;
+//     os << "-- Total Integration Time : " << integration_time()      << endl;
 
     os << "-- Breaks in the data ... : " << breaks()                << endl;
     os << "-- Dispersion measure ... : " << dispersion_measure()    << endl;
@@ -149,7 +212,7 @@ namespace DAL {
 
     if (listBeams) {
       for (uint beam(0); beam<beamGroups_p.size(); beam++) {
-        beamGroups_p[beam].summary();
+        beamGroups_p[beam]->summary();
       }
     }
 
@@ -164,41 +227,31 @@ namespace DAL {
 
   std::vector<std::string> BeamFormed::beams()
   {
-    uint nofBeams (100);
-    char stationstr[10];
+    char * beamstr = new char[10];
     std::vector<std::string> beamGroups;
     dalGroup * beamgroup = NULL;
+    std::vector< std::string > lcl_beams = dataset_p->getGroupNames();
 
-    for (uint station(0); station<nofBeams; station++) {
+    for(uint beam=0; beam<lcl_beams.size(); beam++)
+    {
+
       /* create ID string for the group */
-      sprintf( stationstr, "beam%03d", station );
-      /* Check if group of given name exists in the file; according to the
-	 documentation of the DAL, the openGroup() function returns a NULL
-	 pointer in case no group of the given name exists. */
-      if (NULL != (beamgroup = dataset_p->openGroup(stationstr))) {
-        beamGroups.push_back(stationstr);
-        if ( beamgroup->close() )
-          cerr << "Problem with group close." << endl;
+      sprintf( beamstr, "beam%03d", beam );
+
+      beamgroup = dataset_p->openGroup(beamstr);
+
+      if ( beamgroup )
+      {
+         beamGroups.push_back(beamstr);
+         delete beamgroup;
       }
     }
 
-    delete beamgroup;
+    delete [] beamstr;
+    beamstr = NULL;
+
     return beamGroups;
   }
-
-/*
-  void BeamFormed::beams()
-  {
-     std::vector< std::string > lcl_beams = dataset_p->getGroupNames();
-     if ( lcl_beams.size() > 0 )
-     {
-       cout << "\nBeams:" << endl;
-       for(uint bb=0; bb<lcl_beams.size(); bb++)
-         cout << lcl_beams[bb] << endl;
-       cout << endl;
-     }
-  }
-*/
 
   std::string BeamFormed::filename ()
   {
@@ -207,13 +260,16 @@ namespace DAL {
     if (dataset_p->getName() != "UNDEFINED") {
       try {
 	char * filename = reinterpret_cast<char*>(dataset_p->getAttribute("FILENAME"));
-	attribute_filename = string(filename);
+	attribute_filename = stringify(filename);
+        delete [] filename;
+        filename = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute FILENAME" << endl;
 	attribute_filename = "";
       }
     }
+
    return attribute_filename;
   }
 
@@ -225,6 +281,8 @@ namespace DAL {
       try {
 	char * telescope = reinterpret_cast<char*>(dataset_p->getAttribute("TELESCOPE"));
 	attribute_telescope = string(telescope);
+        delete [] telescope;
+        telescope = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute TELESCOPE" << endl;
@@ -241,6 +299,8 @@ namespace DAL {
       try {
 	int * nstations_p = reinterpret_cast<int*>(dataset_p->getAttribute("NUMBER_OF_STATIONS"));
 	nstations = *nstations_p;
+        delete [] nstations_p;
+        nstations_p = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute NUMBER_OF_STATIONS" << endl;
@@ -248,23 +308,6 @@ namespace DAL {
       }
     }
     return nstations;
-  }
-
-  std::string BeamFormed::observer ()
-  {
-    std::string attribute_observer ("");
-
-    if (dataset_p->getName() != "UNDEFINED") {
-      try {
-	char * observer = reinterpret_cast<char*>(dataset_p->getAttribute("OBSERVER"));
-	attribute_observer = string(observer);
-
-      } catch (std::string message) {
-	std::cerr << "-- Error extracting attribute OBSERVER" << endl;
-	attribute_observer = "";
-      }
-    }
-   return attribute_observer;
   }
 
   std::string BeamFormed::datatype ()
@@ -275,6 +318,8 @@ namespace DAL {
       try {
 	char * datatype = reinterpret_cast<char*>(dataset_p->getAttribute("DATATYPE"));
 	attribute_datatype = string(datatype);
+        delete [] datatype;
+        datatype = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute DATATYPE" << endl;
@@ -292,6 +337,8 @@ namespace DAL {
       try {
 	char * emband = reinterpret_cast<char*>(dataset_p->getAttribute("EMBAND"));
 	attribute_emband = string(emband);
+        delete [] emband;
+        emband = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute EMBAND" << endl;
@@ -314,6 +361,8 @@ namespace DAL {
       try {
 	char * notes = reinterpret_cast<char*>(dataset_p->getAttribute("NOTES"));
 	attribute_notes = string(notes);
+        delete [] notes;
+        notes = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute NOTES" << endl;
@@ -331,6 +380,8 @@ namespace DAL {
       try {
 	char * observation_id = reinterpret_cast<char*>(dataset_p->getAttribute("OBSERVATION_ID"));
 	attribute_observation_id = string(observation_id);
+        delete [] observation_id;
+        observation_id = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute OBSERVATION_ID" << endl;
@@ -348,6 +399,8 @@ namespace DAL {
       try {
 	char * proj_id = reinterpret_cast<char*>(dataset_p->getAttribute("PROJ_ID"));
 	attribute_proj_id = string(proj_id);
+        delete [] proj_id;
+        proj_id = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute PROJ_ID" << endl;
@@ -365,6 +418,8 @@ namespace DAL {
       try {
 	char * point_ra = reinterpret_cast<char*>(dataset_p->getAttribute("POINT_RA"));
 	attribute_point_ra = string(point_ra);
+        delete [] point_ra;
+        point_ra = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute POINT_RA" << endl;
@@ -382,6 +437,8 @@ namespace DAL {
       try {
 	char * point_dec = reinterpret_cast<char*>(dataset_p->getAttribute("POINT_DEC"));
 	attribute_point_dec = string(point_dec);
+        delete [] point_dec;
+        point_dec = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute POINT_DEC" << endl;
@@ -391,20 +448,42 @@ namespace DAL {
    return attribute_point_dec;
   }
 
-  double BeamFormed::epoch_mjd ()
+  std::string BeamFormed::observer ()
   {
-    double epoch_mjd = 0.0;
+    std::string attribute_observer ("");
+
     if (dataset_p->getName() != "UNDEFINED") {
       try {
-	double * epoch_mjd_p = reinterpret_cast<double*>(dataset_p->getAttribute("EPOCH_MJD"));
-	epoch_mjd = *epoch_mjd_p;
+	char * observer = reinterpret_cast<char*>(dataset_p->getAttribute("OBSERVER"));
+	attribute_observer = string(observer);
+        delete [] observer;
+        observer = NULL;
+
+      } catch (std::string message) {
+	std::cerr << "-- Error extracting attribute OBSERVER" << endl;
+	attribute_observer = "";
+      }
+    }
+   return attribute_observer;
+  }
+
+  std::string BeamFormed::epoch_mjd ()
+  {
+    std::string attribute_epoch_mjd ("");
+
+    if (dataset_p->getName() != "UNDEFINED") {
+      try {
+	char * epoch_mjd = reinterpret_cast<char*>(dataset_p->getAttribute("EPOCH_MJD"));
+	attribute_epoch_mjd = string(epoch_mjd);
+        delete [] epoch_mjd;
+        epoch_mjd = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute EPOCH_MJD" << endl;
-	epoch_mjd = -1;
+	attribute_epoch_mjd = "";
       }
     }
-    return epoch_mjd;
+   return attribute_epoch_mjd;
   }
 
   std::string BeamFormed::epoch_date ()
@@ -415,6 +494,8 @@ namespace DAL {
       try {
 	char * epoch_date = reinterpret_cast<char*>(dataset_p->getAttribute("EPOCH_DATE"));
 	attribute_epoch_date = string(epoch_date);
+        delete [] epoch_date;
+        epoch_date = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute EPOCH_DATE" << endl;
@@ -432,6 +513,8 @@ namespace DAL {
       try {
 	char * epoch_utc = reinterpret_cast<char*>(dataset_p->getAttribute("EPOCH_UTC"));
 	attribute_epoch_utc = string(epoch_utc);
+        delete [] epoch_utc;
+        epoch_utc = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute EPOCH_UTC" << endl;
@@ -449,6 +532,8 @@ namespace DAL {
       try {
 	char * epoch_lst = reinterpret_cast<char*>(dataset_p->getAttribute("EPOCH_LST"));
 	attribute_epoch_lst = string(epoch_lst);
+        delete [] epoch_lst;
+        epoch_lst = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute EPOCH_LST" << endl;
@@ -465,6 +550,8 @@ namespace DAL {
       try {
 	int * main_beam_diam_p = reinterpret_cast<int*>(dataset_p->getAttribute("MAIN_BEAM_DIAM"));
 	main_beam_diam = *main_beam_diam_p;
+        delete [] main_beam_diam_p;
+        main_beam_diam_p = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute MAIN_BEAM_DIAM" << endl;
@@ -481,6 +568,8 @@ namespace DAL {
       try {
 	int * center_freq_p = reinterpret_cast<int*>(dataset_p->getAttribute("CENTER_FREQUENCY"));
 	center_freq = *center_freq_p;
+        delete [] center_freq_p;
+        center_freq_p = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute CENTER_FREQUENCY" << endl;
@@ -497,6 +586,8 @@ namespace DAL {
       try {
 	int * bandwidth_p = reinterpret_cast<int*>(dataset_p->getAttribute("BANDWIDTH"));
 	bandwidth = *bandwidth_p;
+        delete [] bandwidth_p;
+        bandwidth_p = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute BANDWIDTH" << endl;
@@ -513,6 +604,8 @@ namespace DAL {
       try {
 	double * integration_time_p = reinterpret_cast<double*>(dataset_p->getAttribute("TOTAL_INTEGRATION_TIME"));
 	integration_time = *integration_time_p;
+        delete [] integration_time_p;
+        integration_time_p = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute TOTAL_INTEGRATION_TIME" << endl;
@@ -529,6 +622,8 @@ namespace DAL {
       try {
 	int * breaks_p = reinterpret_cast<int*>(dataset_p->getAttribute("BREAKS_IN_DATA"));
 	breaks = *breaks_p;
+        delete [] breaks_p;
+        breaks_p = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute BREAKS_IN_DATA" << endl;
@@ -545,6 +640,8 @@ namespace DAL {
       try {
 	int * dispersion_measure_p = reinterpret_cast<int*>(dataset_p->getAttribute("DISPERSION_MEASURE"));
 	dispersion_measure = *dispersion_measure_p;
+        delete [] dispersion_measure_p;
+        dispersion_measure_p = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute DISPERSION_MEASURE" << endl;
@@ -561,6 +658,8 @@ namespace DAL {
       try {
 	int * number_of_samples_p = reinterpret_cast<int*>(dataset_p->getAttribute("NUMBER_OF_SAMPLES"));
 	number_of_samples = *number_of_samples_p;
+        delete [] number_of_samples_p;
+        number_of_samples_p = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute NUMBER_OF_SAMPLES" << endl;
@@ -577,6 +676,8 @@ namespace DAL {
       try {
 	double * sampling_time_p = reinterpret_cast<double*>(dataset_p->getAttribute("SAMPLING_TIME"));
 	sampling_time = *sampling_time_p;
+        delete [] sampling_time_p;
+        sampling_time_p = NULL;
 
       } catch (std::string message) {
 	std::cerr << "-- Error extracting attribute SAMPLING_TIME" << endl;
@@ -597,6 +698,8 @@ namespace DAL {
         number_of_beams_p =
           reinterpret_cast<int*>(dataset_p->getAttribute("NUMBER_OF_BEAMS"));
         number_of_beams = *number_of_beams_p;
+        delete [] number_of_beams_p;
+        number_of_beams_p = NULL;
 
       } catch (std::string message) {
         std::cerr << "-- Error extracting attribute NUMBER_OF_BEAMS" << endl;
@@ -617,6 +720,8 @@ namespace DAL {
         sub_beam_diameter_p =
           reinterpret_cast<int*>(dataset_p->getAttribute("SUB_BEAM_DIAMETER"));
         sub_beam_diameter = *sub_beam_diameter_p;
+        delete [] sub_beam_diameter_p;
+        sub_beam_diameter_p = NULL;
 
       } catch (std::string message) {
         std::cerr << "-- Error extracting attribute SUB_BEAM_DIAMETER" << endl;
@@ -637,7 +742,8 @@ namespace DAL {
         weather_temperature_p =
          reinterpret_cast<int*>(dataset_p->getAttribute("WEATHER_TEMPERATURE"));
         weather_temperature = *weather_temperature_p;
-
+        delete [] weather_temperature_p;
+        weather_temperature_p = NULL;
       } catch (std::string message) {
         std::cerr << "-- Error extracting attribute WEATHER_TEMPERATURE" << endl;
         weather_temperature = -1;
@@ -657,6 +763,8 @@ namespace DAL {
         weather_humidity_p =
            reinterpret_cast<int*>(dataset_p->getAttribute("WEATHER_HUMIDITY"));
         weather_humidity = *weather_humidity_p;
+        delete [] weather_humidity_p;
+        weather_humidity_p = NULL;
 
       } catch (std::string message) {
         std::cerr << "-- Error extracting attribute WEATHER_HUMIDITY" << endl;
@@ -679,48 +787,6 @@ namespace DAL {
       cerr << message << endl;
     }
     return station_temperatures;
-  }
-
-  // ----------------------------------------------------------------------- init
-
-  bool BeamFormed::init ()
-  {
-    bool status (true);
-
-    // Connection to dataset via DAL layer
-
-    dataset_p = new dalDataset();
-    if (dataset_p->open(filename_p.c_str())) {
-      std::cerr << "[BeamFormed::init] Error opening file into dalDataset!"
-                << std::endl;
-      return false;
-    }
-
-    H5fileID_p = dataset_p->getFileHandle();
-
-    /*
-      [1] If opening the data file was successful, we can continue. First we scan
-      for the beam groups available in the file, since this is the basic unit
-      within which the actual data for the individual sub-bands are stored.
-    */
-    std::vector<std::string> beamGroups = beams();
-
-    /* Always check if actually a list of groups has been extracted */
-    if (beamGroups.size() > 0) {
-
-      for (uint beam(0); beam<beamGroups.size(); beam++) {
-        // assemble internal list of beam groups
-        BeamGroup group((*dataset_p), beamGroups[beam]);
-        beamGroups_p.push_back(group);
-      }
-
-    } else {
-      std::cerr << "[BeamFormed::init] No beam group found in data set!"
-                << std::endl;
-      status = false;
-    }
-
-    return status;
   }
 
 #ifdef PYTHON

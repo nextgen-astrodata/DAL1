@@ -97,6 +97,12 @@ unsigned long dalData::c_index(long idx1, long idx2, long idx3)
      return index;
 }
 
+dalData::~dalData()
+{
+//   delete [] data;
+//   data = NULL;
+}
+
 string dalData::get_datatype()
 {
    return datatype;
@@ -171,7 +177,13 @@ void * dalData::get( long idx1, long idx2, long idx3 )
    return NULL;
 }
 
-dalData::dalData() {}
+dalData::dalData()
+{
+  datatype = "";
+  filetype = "";
+  array_order = "";
+  data = NULL;
+}
 
 dalData::dalData(string lclfiletype, string lcldatatype,
    vector<int> lclshape, long lclnrows)
@@ -184,6 +196,7 @@ dalData::dalData(string lclfiletype, string lcldatatype,
     datatype = lcldatatype;
     shape = lclshape;
     nrows = lclnrows;
+    data = NULL;
 }
 
 #ifdef PYTHON

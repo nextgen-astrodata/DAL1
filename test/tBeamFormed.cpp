@@ -34,24 +34,28 @@
 #include <BeamFormed.h>
 #endif
 
+#include <dalDataset.h>
+#include <dalFilter.h>
+
 int main(int argc,char *argv[])
 {
 
-  DAL::BeamFormed * bf;
+  DAL::BeamFormed * file;
 
   if (argc > 1)
-    bf = new DAL::BeamFormed(argv[1]);
+    file = new DAL::BeamFormed(argv[1]);
   else
   {
     cerr << "Please provide a HDF5 filename." << endl;
     exit(1);
   }
-//   bf->summary();
+
+  file->summary();
 
   DAL::BeamGroup * beam;
-  beam = bf->getBeam( 0 );
+  beam = file->getBeam( 0 );
 
-  std::vector<std::string> sources = bf->sources();
+  std::vector<std::string> sources = file->sources();
   cerr << "Sources:" << endl;
   for (unsigned int idx=0; idx<sources.size(); idx++)
   {
@@ -61,7 +65,7 @@ int main(int argc,char *argv[])
 
   int subband = 0;
   int start = 0;
-  int length = 144441344;
+  int length = 144;//441344;
   std::vector< std::complex<short> > xvals;
   std::vector< std::complex<short> > yvals;
   xvals.clear();
@@ -70,17 +74,16 @@ int main(int argc,char *argv[])
 std::complex<short> * xx = NULL;
 //xx = new std::complex<short>[length];
 xx = beam->getSubbandData_X( subband, start, length );
-printf( "(%d,%d)" , xx[10000000].real(), xx[10000000].imag() );
-/*
+// printf( "(%d,%d)" , xx[10000000].real(), xx[10000000].imag() );
+
 for (int ii=0; ii < length; ii++ )
 {
   printf( "(%d,%d)" , xx[ii].real(), xx[ii].imag() );
 }
-*/
-//delete [] xx;
+
+delete [] xx;
 
   // step through the data for subband 0, 10 samples at a time, 10 times
-/*
   for (unsigned int count=0; count < 10; count++ )
   {
     beam->getSubbandData_XY( subband, start, length, xvals, yvals );
@@ -98,8 +101,8 @@ for (int ii=0; ii < length; ii++ )
     yvals.clear();
     start += length;
   }
-*/
 
-  delete bf;
+  delete beam;
+  delete file;
 
 }
