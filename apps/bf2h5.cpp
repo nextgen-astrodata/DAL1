@@ -316,9 +316,12 @@ int main (int argc, char *argv[])
      }
      printf("[  %s, %s ]", ra, dec );
      printf("\n");
+     delete [] ra;
+     ra = NULL;
+     delete [] dec;
+     dec = NULL;
    }
-   free(ra);
-   free(dec);
+
    #endif
 
   const unsigned long BufferSIZE = fileheader.nrSamplesPerBeamlet;
@@ -454,7 +457,7 @@ int main (int argc, char *argv[])
   int counter = 0;
   bool first_block (true);
   while ( myFile.read ( reinterpret_cast<char *>(&blockheader),
-                        sizeof(blockheader) ) /*&& xx < 10*/ )
+                        sizeof(blockheader) ) && xx < 2 )
   {
 
     // swap values when necessary

@@ -99,8 +99,8 @@ unsigned long dalData::c_index(long idx1, long idx2, long idx3)
 
 dalData::~dalData()
 {
-//   delete [] data;
-//   data = NULL;
+  if ( data )
+   free(data);
 }
 
 string dalData::get_datatype()

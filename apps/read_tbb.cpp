@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
      return DAL::FAIL;
    }
 
-   dalDataset * ds = new dalDataset();
+   dalDataset * ds = new dalDataset;
    int ret;
    ret = ds->open( argv[1] );
 

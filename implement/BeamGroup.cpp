@@ -46,7 +46,7 @@ namespace DAL {
     H5groupID_p       = -1;
     group_p           = NULL;
     H5fileID_p        = -1;
-    group_p           = new dalGroup();
+    group_p           = new dalGroup;
     group_p->setName ("UNDEFINED");
     beamSubbands_p.clear();
   }

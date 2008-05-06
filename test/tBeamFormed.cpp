@@ -71,17 +71,16 @@ int main(int argc,char *argv[])
   xvals.clear();
   yvals.clear();
 
-std::complex<short> * xx = NULL;
+std::vector< std::complex<short> > xx;
+xx.clear();
 //xx = new std::complex<short>[length];
-xx = beam->getSubbandData_X( subband, start, length );
+beam->getSubbandData_X( subband, start, length, xx );
 // printf( "(%d,%d)" , xx[10000000].real(), xx[10000000].imag() );
 
 for (int ii=0; ii < length; ii++ )
 {
   printf( "(%d,%d)" , xx[ii].real(), xx[ii].imag() );
 }
-
-delete [] xx;
 
   // step through the data for subband 0, 10 samples at a time, 10 times
   for (unsigned int count=0; count < 10; count++ )

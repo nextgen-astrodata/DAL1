@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
   
   // create a dataset object of type MSCASA
   cout << " -- Creating a dataset object of type MSCASA ..." << endl;
-  dalDataset * msds = new dalDataset();
+  dalDataset * msds = new dalDataset;
   
   msds->open( argv[1] );
   

@@ -413,7 +413,7 @@ dalArray * dalGroup::cia_boost_numarray2(
   for(int ii=0; ii<bpl::len(pydims); ii++)
     dims.push_back(bpl::extract<int>(pydims[ii]));
 
-  long size = bpl::len(pydata);
+//   long size = bpl::len(pydata);
 
 // cout << "cia_boost_numarray "<< pydata.nelements() << endl;
   pydata.setshape( pydata.nelements() );
@@ -571,7 +571,7 @@ dalArray * dalGroup::cfa_boost_numarray( string arrayname,
   for(int ii=0; ii<bpl::len(pydims); ii++)
     dims.push_back(bpl::extract<int>(pydims[ii]));
 
-  long size = bpl::len(pydata);
+//   long size = bpl::len(pydata);
 
 // cout << "cia_boost_numarray "<< pydata.nelements() << endl;
   pydata.setshape( pydata.nelements() );

@@ -696,7 +696,7 @@ dalArray * dalDataset::openArray( string arrayname )
   }
   else if ( type == H5TYPE )
   {
-	dalArray * la = new dalArray();
+	dalArray * la = new dalArray;
 	la->open( file, arrayname );
 	return la;
    }
@@ -722,9 +722,9 @@ dalArray * dalDataset::openArray( string arrayname, string groupname )
   }
   else if ( type == H5TYPE )
   {
-	dalArray * test = new dalArray();
+	dalArray * test = new dalArray;
         delete test;
-	dalArray * la = new dalArray();
+	dalArray * la = new dalArray;
 	la->open( file, '/' + groupname + '/' + arrayname );
 	return la;
    }
@@ -788,7 +788,7 @@ dalGroup * dalDataset::openGroup( string groupname )
 {
    if ( type == H5TYPE )
    {
-	   dalGroup * group = new dalGroup();
+	   dalGroup * group = new dalGroup;
 	   //cout << "Trying to open group " << groupname << endl; 
 	   int retval = group->open( file, groupname );
 	   if ( retval < 0 )

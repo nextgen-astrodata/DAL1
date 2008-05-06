@@ -433,7 +433,7 @@ void dalTable::getName()
  *****************************************************************************/
 dalTable::dalTable( string filetype )
 {
-    filter = new dalFilter();
+    filter = new dalFilter;
 
 	type = filetype;
  	columns.clear();  // clear the coulumns vector
@@ -442,7 +442,7 @@ dalTable::dalTable( string filetype )
    if ( type == MSCASATYPE )
    {
 #ifdef WITH_CASA
-	casa_table_handle = new casa::Table();
+	casa_table_handle = new casa::Table;
 #else
 	cout << "CASA support not enabled." << endl;
 #endif

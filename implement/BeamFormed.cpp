@@ -58,7 +58,7 @@ namespace DAL {
 
     // Connection to dataset via DAL layer
 
-    dataset_p = new dalDataset();
+    dataset_p = new dalDataset;
     if (dataset_p->open(filename_p.c_str())) {
       std::cerr << "[BeamFormed::init] Error opening file into dalDataset!"
                 << std::endl;

@@ -441,7 +441,7 @@ dalData * dalColumn::data( int start, int &length )
 		dalcomplex_int16 * data = NULL;
 		try
 		{
-			data = new dalcomplex_int16[length];
+		  data = (dalcomplex_int16*)malloc(sizeof(dalcomplex_int16)*length);
 		}
 		catch ( bad_alloc )
 		{
@@ -464,7 +464,7 @@ dalData * dalColumn::data( int start, int &length )
 		float * data = NULL;
 		try
 		{
-			data = new float[length];
+		  data = (float*)malloc(sizeof(float)*length);
 		}
 		catch ( bad_alloc )
 		{

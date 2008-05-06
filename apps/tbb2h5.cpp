@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
 
   dalDataset * dataset = NULL;
 
-  dataset = new dalDataset();
+  dataset = new dalDataset;
 
   UInt32 payload_crc = 0;
 
@@ -483,6 +483,11 @@ int main(int argc, char *argv[])
   // Step 8 Close the socket and exit
   close(main_socket);
 
+  if ( dipoleArray )
+  {
+    delete [] dipoleArray;
+    dipoleArray = NULL;
+  }
   delete dataset;
 
   cout << "SUCCESS" << endl;

@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
   }
 
 
-  dalDataset * dataset = new dalDataset();
+  dalDataset * dataset = new dalDataset;
 /*
   if ( NULL == argv[2] )
 	  dataset = new dalDataset( argv[1] );

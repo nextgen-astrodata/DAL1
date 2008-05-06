@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 
 
 //    dalDataset * dataset2;
-//    dataset2 = new dalDataset();
+//    dataset2 = new dalDataset;
 //    if ( 0 != dataset2->open( FILENAME ) )
 //    {
 // 	cout << "Problem opening dataset: " << FILENAME << '.' << " Quiting."
