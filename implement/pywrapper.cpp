@@ -1,4 +1,4 @@
-/*-------------------------------------------------------------------------*
+/*------------------------------------------------------------------------*
 | $Id:: cs1.h 389 2007-06-13 08:47:09Z baehren                          $ |
 *-------------------------------------------------------------------------*
 ***************************************************************************
@@ -115,7 +115,6 @@ BOOST_PYTHON_MODULE(pydal)
 	.def(bpl::init<char*>())
 	.def("getAttributes", &dalTable::getAttributes)
 	.def("openTable", &dalTable::ot_hdf5)
-	.def("openTable", &dalTable::ot_nonMStable)
 	.def("createTable", &dalTable::createTable)
 	.def("addColumn", &dalTable::addColumn)
 	.def("addArrayColumn", &dalTable::addArrayColumn)
@@ -136,6 +135,7 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("findAttribute", &dalTable::findAttribute)
 	.def("getNumberOfRows", &dalTable::getNumberOfRows)
 #ifdef WITH_CASA
+	.def("openTable", &dalTable::ot_nonMStable)
 	.def("setFilter", &dalTable::setFilter_boost1)
 	.def("setFilter", &dalTable::setFilter_boost2)
 	.def("getColumn", &dalTable::getColumn,

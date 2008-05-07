@@ -132,9 +132,11 @@
 
 #include <H5LT.h>
 
+#ifdef WITH_CFITSIO
 extern "C" {
 #include <fitsio.h>
 }
+#endif
 
 #include <convert.h>  // for stringify function
 

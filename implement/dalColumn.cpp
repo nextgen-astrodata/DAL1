@@ -120,6 +120,9 @@ string dalColumn::getDataType()
       casa_datatype = "Unsupported type";
   }
   return casa_datatype;
+#else
+  cerr << "ERROR: CASA not enabled [dalColumn::getDataType()]" << endl;
+  return("");
 #endif
   }
   else
@@ -139,6 +142,9 @@ int dalColumn::isScalar()
       return 1;
    else
       return 0;
+#else
+  cerr << "ERROR: CASA not enabled [dalColumn::isScalar()]" << endl;
+  return(0);
 #endif
   }
   else
@@ -158,6 +164,9 @@ int dalColumn::isArray()
       return 1;
    else
       return 0;
+#else
+  cerr << "ERROR: CASA not enabled [dalColumn::isArray()]" << endl;
+  return(0);
 #endif
   }
   else
@@ -196,6 +205,9 @@ vector<int> dalColumn::shape()
       shape_vals.push_back( nrows() );
       return shape_vals;
     }
+#else
+  cerr << "ERROR: CASA not enabled [dalColumn::shape()]" << endl;
+  return(shape_vals);
 #endif
   }
   else
@@ -217,6 +229,9 @@ unsigned int dalColumn::ndims()
     {
 	  return 0;
     }
+#else
+  cerr << "ERROR: CASA not used [dalColumn::ndims]" << endl;
+  return(-1);
 #endif
   }
   else
@@ -254,6 +269,9 @@ unsigned int dalColumn::nrows()
 #ifdef WITH_CASA
     num_of_rows = casa_column->nrow();
 	return num_of_rows;
+#else
+    cerr << "ERROR: casacore not installed" << endl;
+	return(0);
 #endif
   }
   else
@@ -599,6 +617,7 @@ bpl::numeric::array dalColumn::data_boost()
 {
   if ( MSCASATYPE == filetype )
   {
+#ifdef WITH_CASA
    try
    {
     if ( isScalar() )
@@ -736,6 +755,7 @@ bpl::numeric::array dalColumn::data_boost()
        cout << "ERROR: " << x.getMesg() << endl;
        exit(-4);
     }
+#endif // WITH_CASA
    }
    else if ( H5TYPE == filetype )
    {

@@ -78,13 +78,16 @@ set (dal_sources
   dalGroup.cpp
   dalRow.cpp
   dalTable.cpp
-  dalLopesEvent.cpp
   BeamFormed.cpp
   BeamGroup.cpp
   BeamSubband.cpp
   HDF5Common.cpp
   Enumerations.cpp
 )
+
+if ( HAVE_CASACORE )
+  list ( APPEND dal_sources dalLopesEvent.cpp )
+endif ( HAVE_CASACORE )
 
 ## [2] List of external libraries against which to link; even though we really
 ##     need the external libraries listed here, we should be a bit careful when

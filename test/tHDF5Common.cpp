@@ -24,7 +24,7 @@
 #include <HDF5Common.h>
 #include <Enumerations.h>
 
-#ifdef HAVE_CASA
+#ifdef WITH_CASA
 #include <casa/aips.h>
 #include <casa/Arrays/Vector.h>
 #endif
@@ -779,7 +779,7 @@ int get_name (hid_t const &file_id)
 
   \return nofFailedTests -- The number of failed tests in this function.
 */
-#ifdef HAVE_CASA
+#ifdef WITH_CASA
 int test_casacore (hid_t const &file_id)
 {
   cout << "\n[test_casacore]\n" << endl;
@@ -859,7 +859,7 @@ int main (int argc,
     nofFailedTests += get_attribute_id (file_id);
     nofFailedTests += get_attributes (file_id);
     nofFailedTests += get_name (file_id);
-#ifdef HAVE_CASA
+#ifdef WITH_CASA
     nofFailedTests += test_casacore (file_id);
 #endif
   } else {

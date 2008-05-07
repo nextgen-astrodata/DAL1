@@ -29,7 +29,7 @@
 #include <string>
 #include <vector>
 
-#ifdef HAVE_CASA
+#ifdef WITH_CASA
 #include <casa/Arrays/IPosition.h>
 #include <casa/Arrays/Vector.h>
 #endif
@@ -142,7 +142,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   bool h5get_dataspace_shape (std::vector<uint> &shape,
 			      hid_t const &attribute_id);
-#ifdef HAVE_CASA
+#ifdef WITH_CASA
   bool h5get_dataspace_shape (casa::IPosition &shape,
 			      hid_t const &attribute_id);
 #endif
@@ -213,7 +213,7 @@ namespace DAL { // Namespace DAL -- begin
   template <class T>
     bool h5get_attribute (std::vector<T> &value,
 			  hid_t const &attribute_id);
-#ifdef HAVE_CASA
+#ifdef WITH_CASA
 /*   template <class T> */
 /*     bool h5get_attribute (casa::Array<T> &value, */
 /* 			  hid_t const &attribute_id); */
@@ -266,7 +266,7 @@ namespace DAL { // Namespace DAL -- begin
     bool h5get_attribute (std::vector<T> &value,
 			  std::string const &name,
 			  hid_t const &location_id);
-#ifdef HAVE_CASA
+#ifdef WITH_CASA
 /*   template <class T> */
 /*     bool h5get_attribute (casa::Array<T> &value, */
 /* 			  std::string const &name, */

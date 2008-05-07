@@ -141,7 +141,7 @@ namespace DAL { // Namespace DAL -- begin
   
   // ------------------------------------------------------ h5get_dataspace_shape
 
-#ifdef HAVE_CASA
+#ifdef WITH_CASA
   bool h5get_dataspace_shape (casa::IPosition &shape,
 			      hid_t const &attribute_id)
   {
@@ -550,7 +550,7 @@ namespace DAL { // Namespace DAL -- begin
 
   // ------------------------------------------ h5get_attribute (casa::Vector<T>)
 
-#ifdef HAVE_CASA
+#ifdef WITH_CASA
   template <class T>
   bool h5get_attribute (casa::Vector<T> &value,
 			std::string const &name,
@@ -618,7 +618,8 @@ namespace DAL { // Namespace DAL -- begin
 
     return status;
   }
-#endif
+
+#endif // WITH_CASA
 
   // ------------------------------------------------------------ h5set_attribute
 
@@ -792,7 +793,7 @@ attr_info(hid_t loc_id, const char * name, void * opdata)
 				 std::string const &name,
 				 hid_t const &location_id);
 
-#ifdef HAVE_CASA
+#ifdef WITH_CASA
   template bool h5get_attribute (casa::Vector<uint> &value,
 				 hid_t const &attribute_id);
   template bool h5get_attribute (casa::Vector<uint> &value,

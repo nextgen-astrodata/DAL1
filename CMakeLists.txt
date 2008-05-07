@@ -202,7 +202,7 @@ endif (CASACORE_INCLUDES)
 
 if (CFITSIO_INCLUDES)
   include_directories (${CFITSIO_INCLUDES})
-  add_definitions (-DHAVE_CFITSIO)
+  add_definitions (-DWITH_CFITSIO)
 else (CFITSIO_INCLUDES)
   message (STATUS "[DAL] Missing CFITSIO header files!")
 endif (CFITSIO_INCLUDES)

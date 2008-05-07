@@ -441,6 +441,6 @@ class dalLopesEvent {
     void init ();
     
   };
-  
+
 #endif /* LOPESEVENTIN_H */
   

@@ -62,14 +62,23 @@ dalColumn * dalTable::getColumn( string colname )
 	  cout << colname << " is ARRAY" << endl;
     #endif
 	return lclcol;
+#else
+	cerr << "ERROR: casacore not installed" << endl;
+    // prevent unsused var build warning when casacore isn't installed
+    colname = colname;
+	return NULL;
 #endif
    }
    else if ( type == H5TYPE )
    {
       cerr << "ERROR: hdf5 not yet supported for this function."
            << " Try getColumn_Float32, etc." << endl;
+      return NULL;
    }
-   return NULL;
+   else
+   {
+      return NULL;
+   }
 }
 
 /****************************************************************
@@ -158,6 +167,11 @@ dalColumn * dalTable::getColumn_complexInt16( string colname )
 	  cout << colname << " is ARRAY" << endl;
     #endif
 	return lclcol;
+#else
+	cerr << "ERROR: casacore not installed" << endl;
+	// prevent unused variable build warning if casacore isn't installed
+	colname = colname;
+	return NULL;
 #endif
    }
    else if ( type == H5TYPE )
@@ -166,9 +180,12 @@ dalColumn * dalTable::getColumn_complexInt16( string colname )
       lclcol = new dalColumn( file_id, table_id, H5TYPE, name, colname,
                               dal_COMPLEX_SHORT );
 
-	return lclcol;
+	  return lclcol;
    }
-   return NULL;
+   else
+   {
+      return NULL;
+   }
 }
 
 void dalTable::setFilter( string columns )
@@ -389,7 +406,9 @@ void * dalTable::getColumnData( string colname )
     #endif
 	return NULL;
 #else
-	cout << "CASA support not enabled." << endl;
+    // prevent unused variable build warning when casacore isn't installed
+    colname = colname;
+	cout << "ERROR: casacore not installed." << endl;
 	return NULL;
 #endif
     }
@@ -489,7 +508,12 @@ void dalTable::openTable( string tablename, casa::MSReader * reader )
 {
    if ( type == MSCASATYPE )
    {
+#ifdef WITH_CASA
 	*casa_table_handle = reader->table( tablename );
+#else
+	cout << "CASA support not enabled." << endl;
+	exit(-1);
+#endif
    }
    else
    {
@@ -507,9 +531,14 @@ void dalTable::openTable( string tablename,
 {
    if ( type == MSCASATYPE )
    {
+#ifdef WITH_CASA
 	*casa_table_handle = reader->table( tablename );
 	*casa_table_handle = casa::tableCommand( filter->get(),
             *casa_table_handle );
+#else
+	cout << "CASA support not enabled." << endl;
+	exit(-1);
+#endif
    }
    else
    {
@@ -1498,8 +1527,13 @@ void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
    }
    else if ( type == MSCASATYPE )
    {
+#ifdef WITH_CASA
      casa::TableDesc td = casa_table_handle->tableDesc();
      cout << td.columnNames() << endl;
+#else
+	cout << "CASA support not enabled." << endl;
+	exit(-1);
+#endif
    }
    else
    {
@@ -1840,8 +1874,10 @@ for (int ii=0; ii<30; ii++)
 // }
 
 #ifdef WITH_CASA
+
 /****************************************************************
- *  wrapper for openTable (hdf5)
+ *  wrapper for openTable
+ *    This opens a casa table, but not in a MeasurementSet
  *
  *****************************************************************/
 void dalTable::ot_nonMStable( string tablename )
@@ -1875,8 +1911,8 @@ void dalTable::setFilter_boost2( string columns, string conditions )
    setFilter( columns, conditions );
 }
 
-#endif // end #ifdef WITH_CASA
+#endif // WITH_CASA
 
-#endif // end #ifdef PYTHON
+#endif // PYTHON
 
 } // end namespace DAL
