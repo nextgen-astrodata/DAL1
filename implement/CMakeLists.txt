@@ -132,6 +132,11 @@ if (libutil)
   list (APPEND dal_link_libraries ${libutil})
 endif (libutil)
 
+if (HAVE_MYSQL)
+  list (APPEND dal_sources Database.cpp)
+  list (APPEND dal_link_libraries ${MYSQL_LIBRARIES})
+endif (HAVE_MYSQL)
+
 ## [3] Build the library
 
 add_library(dal STATIC ${dal_sources})

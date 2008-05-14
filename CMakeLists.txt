@@ -58,7 +58,7 @@ if (NOT DAL_VERBOSE_CONFIGURE)
   set (CFITSIO_FIND_QUIETLY ON)
   set (HDF5_FIND_QUIETLY ON)
   set (PYTHON_FIND_QUIETLY ON)
-  set (MySQL_FIND_QUIETLY ON)
+  set (MYSQL_FIND_QUIETLY ON)
 endif (NOT DAL_VERBOSE_CONFIGURE)
 
 ## Handle option: debugging messages on/off
@@ -113,6 +113,13 @@ endif (NOT HAVE_HDF5)
 if (NOT HAVE_MYSQL)
   include (FindMySQL)
 endif (NOT HAVE_MYSQL)
+
+## ---------------------------------------------------------
+## GSL
+
+if (NOT HAVE_GSL)
+  include (FindGSL)
+endif (NOT HAVE_GSL)
 
 ## ---------------------------------------------------------
 ## PYTHON (we use custom module in place of FindPythonLibs)
@@ -225,11 +232,29 @@ else (CFITSIO_INCLUDES)
   message (STATUS "[DAL] Missing CFITSIO header files!")
 endif (CFITSIO_INCLUDES)
 
-if (HDF5_INCLUDES)
+if (HAVE_HDF5)
   include_directories (${HDF5_INCLUDES})
-else (HDF5_INCLUDES)
-  message (STATUS "[DAL] Missing HDF5 header files!")
-endif (HDF5_INCLUDES)
+else (HAVE_HDF5)
+  message (STATUS "[DAL] HDF5 installation incomplete!")
+endif (HAVE_HDF5)
+
+if (HAVE_MYSQL)
+  include_directories (${MYSQL_INCLUDES})
+  add_definitions (
+   -DWITH_MYSQL
+  )
+else (HAVE_MYSQL)
+  message (STATUS "[DAL] MYSQL installation incomplete!")
+endif (HAVE_MYSQL)
+
+if (HAVE_GSL)
+  include_directories (${GSL_INCLUDES})
+  add_definitions (
+   -DWITH_GSL
+  )
+else (HAVE_GSL)
+  message (STATUS "[DAL] GSL installation incomplete!")
+endif (HAVE_GSL)
 
 ## -----------------------------------------------------------------------------
 ## Installation
