@@ -12,7 +12,9 @@
 ## -----------------------------------------------------------------------------
 ## Compiler flags
 
-set(CMAKE_CXX_FLAGS "-W -Wall")
+if (DAL_COMPILER_WARNINGS)
+  set(CMAKE_CXX_FLAGS "-W -Wall")
+endif (DAL_COMPILER_WARNINGS)
 
 message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 

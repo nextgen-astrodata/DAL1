@@ -8,12 +8,37 @@ project (DAL)
 ## Minimum required version of CMake to configure the project
 cmake_minimum_required (VERSION 2.4)
 
-## -----------------------------------------------------------------------------
-## User defined build/install options
+## ==============================================================================
+##
+##  CMake configuration settings
+##
+## ==============================================================================
+
+find_path (USG_ROOT devel_common/cmake/CMakeSettings.cmake
+  PATHS 
+  ${DAL_SOURCE_DIR}
+  ${DAL_SOURCE_DIR}/..
+  ${DAL_SOURCE_DIR}/../..
+  ${DAL_SOURCE_DIR}/../../..
+  $ENV{LOFARSOFT}
+  )
+
+if (USG_ROOT)
+  include (${USG_ROOT}/devel_common/cmake/CMakeSettings.cmake)
+else (USG_ROOT)
+  message (FATAL_ERROR "Unable to locate additional CMake scripts!")
+endif (USG_ROOT)
+
+## ==============================================================================
+##
+##  Options
+##
+## ==============================================================================
 
 option (DAL_BUILD_TESTS "Build the test programs?" 1)
 option (DAL_BUILD_APPS "Build the applications?" 1)
 option (DAL_ENABLE_TESTING "Build the test programs?" 1)
+option (DAL_COMPILER_WARNINGS "Enable standard set of compiler warnings?" ON)
 option (DAL_PYTHON_BINDINGS "Create python bindings?" 1)
 option (DAL_DEBUGGING_MESSAGES "Print debugging information?" 0)
 option (DAL_VERBOSE_CONFIGURE "Verbose output during configuration?" 0)
@@ -33,6 +58,7 @@ if (NOT DAL_VERBOSE_CONFIGURE)
   set (CFITSIO_FIND_QUIETLY ON)
   set (HDF5_FIND_QUIETLY ON)
   set (PYTHON_FIND_QUIETLY ON)
+  set (MySQL_FIND_QUIETLY ON)
 endif (NOT DAL_VERBOSE_CONFIGURE)
 
 ## Handle option: debugging messages on/off
@@ -41,19 +67,17 @@ if (DAL_DEBUGGING_MESSAGES)
   add_definitions (-DDEBUGGING_MESSAGES)
 endif (DAL_DEBUGGING_MESSAGES)
 
-## -----------------------------------------------------------------------------
-## External dependencies
+## ==============================================================================
+##
+##  External dependencies
+##
+## ==============================================================================
 
 include (CPack)
 
-set (lib_locations
-  /lib
-  /usr/lib
-  /usr/local/lib
-  /opt/lib
-  /sw/lib
-  )
+set (NO_DEFAULT_PATH ON)
 
+## ---------------------------------------------------------
 ## system libraries
 
 find_library (libdl dl ${lib_locations})
@@ -62,58 +86,52 @@ find_library (libpthread pthread ${lib_locations})
 find_library (libutil util ${lib_locations})
 find_library (libz z ${lib_locations})
 
-## check where to find the CMake scripts
+## ---------------------------------------------------------
+## casacore
 
-find_path (dal_cmake CMakeSettings.cmake
-  PATHS 
-  ${DAL_SOURCE_DIR}
-  ${DAL_SOURCE_DIR}/..
-  ${DAL_SOURCE_DIR}/../..
-  PATH_SUFFIXES
-  devel_common/cmake
-  )
+if (NOT HAVE_CASACORE)
+  include (FindCASACORE)
+endif (NOT HAVE_CASACORE)
 
-if (dal_cmake)
-  list (APPEND CMAKE_MODULE_PATH
- ${dal_cmake})
-else (dal_cmake)
-  message (FATAL_ERROR "Unable to locate additional CMake scripts!")
-endif (dal_cmake)
+## ---------------------------------------------------------
+## CFITSIO
 
-## check for the external packages
+if (NOT HAVE_CFITSIO)
+  include (FindCFITSIO)
+endif (NOT HAVE_CFITSIO)
 
-set (NO_DEFAULT_PATH ON)
+## ---------------------------------------------------------
+## HDF5
 
-if (dal_cmake)
-  ## casacore
-  if (NOT HAVE_CASACORE)
-    include (${dal_cmake}/FindCASACORE.cmake)
-  endif (NOT HAVE_CASACORE)
-  ## CFITSIO
-  if (NOT HAVE_CFITSIO)
-    include (${dal_cmake}/FindCFITSIO.cmake)
-  endif (NOT HAVE_CFITSIO)
-  ## HDF5
-  if (NOT HAVE_HDF5)
-    include (${dal_cmake}/FindHDF5.cmake)
-  endif (NOT HAVE_HDF5)
-  ## PYTHON (we use custom module in place of FindPythonLibs)
-  if (NOT HAVE_PYTHON)
-    include (${dal_cmake}/FindPython.cmake)
-  endif (NOT HAVE_PYTHON)
-  ##----------------------------------------------------------
-  ## optional external packages (required for Python bindings)
-  if (DAL_PYTHON_BINDINGS)
-    ## BOOST 
-    set (BOOST_pythonOnly ON)
-    set (BOOST_test_exec_monitor OFF)
-    if (NOT HAVE_BOOST)
-      include (${dal_cmake}/FindBoost.cmake)
-    endif (NOT HAVE_BOOST)
-  endif (DAL_PYTHON_BINDINGS)
-elseif (dal_cmake)
-  message (SEND_ERROR "Unable to locate additional CMake scripts!")
-endif (dal_cmake)
+if (NOT HAVE_HDF5)
+  include (FindHDF5)
+endif (NOT HAVE_HDF5)
+
+## ---------------------------------------------------------
+## MySQL
+
+if (NOT HAVE_MYSQL)
+  include (FindMySQL)
+endif (NOT HAVE_MYSQL)
+
+## ---------------------------------------------------------
+## PYTHON (we use custom module in place of FindPythonLibs)
+
+if (NOT HAVE_PYTHON)
+  include (FindPython)
+endif (NOT HAVE_PYTHON)
+
+## ---------------------------------------------------------
+## optional external packages (required for Python bindings)
+
+if (DAL_PYTHON_BINDINGS)
+  ## BOOST
+  set (BOOST_pythonOnly ON)
+  set (BOOST_test_exec_monitor OFF)
+  if (NOT HAVE_BOOST)
+    include (FindBoost)
+  endif (NOT HAVE_BOOST)
+endif (DAL_PYTHON_BINDINGS)
 
 ## We need to be a bit careful with the Boost and Python libraries; appending
 ## the Boost libraries only makes sense, if there is already a list of Python
