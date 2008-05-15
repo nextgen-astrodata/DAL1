@@ -72,109 +72,61 @@ namespace DAL {
 
   }; // class TBB
 
-// check if an object exists in a vector
-template <class T>
-bool it_exists( vector<T> vec, T item )
-{
-  for( unsigned int ss = 0; ss < vec.size(); ss++ )
-  {
-    if ( item == vec[ss] )
-      return true;
-  }
-  return false;
-}
 
-template <class T>
-void list_vector_members( vector<T> vec )
-{
-  for( unsigned int ss = 0; ss < vec.size(); ss++ )
-  {
-     cerr << vec[ss] << endl;
-  }
-}
+  ///////////////////////////////////////////////////////////////
+  //
+  // constant values and structures
+  //
+  ///////////////////////////////////////////////////////////////
 
-/*
-long double julday(time_t seconds,long *intmjd, long double *fracmjd)
-{
-   long double dayfrac, jd, sec;
-   int year, yday;
-   int hour, min;
-   struct tm *ptr = NULL;
+  const Int32 ETHEREAL_HEADER_LENGTH = 46;
+  const Int32 FIRST_EXTRA_HDR_LENGTH = 40;
+  const Int32 EXTRA_HDR_LENGTH = 16;
 
-   unsigned int nd;
+  typedef struct AntennaStruct {
+    unsigned int frameno;
+    unsigned int rsp_id;
+    unsigned int rcu_id;
+    unsigned int time;
+    unsigned int sample_nr;
+    unsigned int samples_per_frame;
+    char feed[16];
+    double ant_position[ 3 ];
+    double ant_orientation[ 3 ];
+    hvl_t data[1];
+  };
 
-   ptr = gmtime(&seconds);
+  typedef struct writebuffer {
+    AntennaStruct antenna;
+  };
 
-   hour = ptr->tm_hour;
-   min = ptr->tm_min;
-   sec = (long double)ptr->tm_sec;
+  typedef struct TBB_Header {
+    unsigned char stationid;
+    unsigned char rspid;
+    unsigned char rcuid;
+    unsigned char sample_freq;
+    UInt32 seqnr;
+    Int32 time;
+    UInt32 sample_nr;
+    UInt16 n_samples_per_frame;
+    UInt16 n_freq_bands;
+    char bandsel[64];
+    Int16 spare;
+    UInt16 crc;
+  };
 
-   year = ptr->tm_year;
-   yday = ptr->tm_yday + 1;
+  typedef struct TransientSample {
+    Int16 value;
+  };
 
-   dayfrac = ( (sec/60.0L + (long double) min)/60.0L + \
-          (long double)hour)/24.0L;
-   nd = year * 365;
-   nd += (year - 1)/4;
-   nd += yday + 2415020;
+  typedef struct SpectralSample {
+    complex<Int16> value;
+  };
 
-   *intmjd = nd - 2400001;
-   *fracmjd = dayfrac;
-
-   jd = (long double)nd + dayfrac - 0.5L;
-
-   return jd;
-}
-*/
-
-const Int32 ETHEREAL_HEADER_LENGTH = 46;
-const Int32 FIRST_EXTRA_HDR_LENGTH = 40;
-const Int32 EXTRA_HDR_LENGTH = 16;
-
-typedef struct AntennaStruct {
-unsigned int frameno;
-	unsigned int rsp_id;
-	unsigned int rcu_id;
-	unsigned int time;
-	unsigned int sample_nr;
-	unsigned int samples_per_frame;
-	char feed[16];
-	double ant_position[ 3 ];
-	double ant_orientation[ 3 ];
-	hvl_t data[1];
-} AntennaStruct;
-
-typedef struct writebuffer {
-	AntennaStruct antenna;
-} writebuffer;
-
-typedef struct TBB_Header {
-	unsigned char stationid;
-	unsigned char rspid;
-	unsigned char rcuid;
-	unsigned char sample_freq;
-	UInt32 seqnr;
-	Int32 time;
-	UInt32 sample_nr;
-	UInt16 n_samples_per_frame;
-	UInt16 n_freq_bands;
-	char bandsel[64];
-	Int16 spare;
-	UInt16 crc;
-};
-
-typedef struct TransientSample {
-	Int16 value;
-};
-
-typedef struct SpectralSample {
-	complex<Int16> value;
-};
-
-typedef struct CosmicRayStruct {
-	//int nofDatapoints;
-	Int16 data;
-} CosmicRayStruct;
+  typedef struct CosmicRayStruct {
+    //int nofDatapoints;
+    Int16 data;
+  };
 
 } // DAL namespace
 

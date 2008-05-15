@@ -86,6 +86,7 @@ set (dal_sources
   HDF5Common.cpp
   Enumerations.cpp
   TBB.cpp
+  Common.cpp
 )
 
 if ( HAVE_CASACORE )
