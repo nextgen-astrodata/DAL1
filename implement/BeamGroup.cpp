@@ -181,9 +181,9 @@ namespace DAL {
                            int start,
                            int length )
   {
-    dalTable * table = NULL;
-    dalColumn * col = NULL;
-    dalData * data = NULL;
+    dalTable * table;
+    dalColumn * col;
+    dalData * data;
 
     vector<string> memnames = group_p->getMemberNames();
 
@@ -193,10 +193,6 @@ namespace DAL {
 
     float * values;
     values = (float*)data->data;
-
-    delete data;
-    delete col;
-    delete table;
 
     return values;
   }

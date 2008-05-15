@@ -2,7 +2,7 @@
 
 import sys
 import string
-import numarray
+import numpy
 
 def check_pyversion():
 	version = string.split(string.split(sys.version)[0], ".")
@@ -68,7 +68,7 @@ def create_int_array_from_list( array_group ):
 def create_int_array_from_numarray( array_group ):
 	print "\nCreating an INT array from a numarray array..."
 	arrayname = "intarray_numarray"
-	data = numarray.array([[1,1],[2,2]]) # array data
+	data = numpy.array([[1,1],[2,2]]) # array data
 	dims = [2,2] # array dimensions (row-major)
 	# create the array with initial dimensions
 	int_array_numarray = array_group.createIntArray(arrayname,dims,data)

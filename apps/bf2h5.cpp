@@ -46,16 +46,15 @@
 #include "dalDataset.h"
 #endif
 
-#ifndef TIMESERIES_H
-#include "timeseries.h"
-#endif
-
 // reading a complete binary file
 #include <iostream> // for cout
 #include <iomanip>  // for cout field width
 #include <fstream>  // for file handle
 #include <complex>  // for complex datatypes
 #include <assert.h>
+#ifdef WITH_GSL
+#include <gsl/gsl_fft_complex.h> // for fft's during channelization
+#endif
 #include <new>
 
 using namespace std;
@@ -147,7 +146,8 @@ void print_banner() {
 		 << left << "-------" << endl;
 }
 
-dataStruct * downsample( dataStruct * data,
+/*
+dataStruct * channelize( dataStruct * data,
                          int start,
                          const unsigned long arraylength,
                          int factor )
@@ -165,6 +165,37 @@ dataStruct * downsample( dataStruct * data,
 
   for (int count=0; count<DS_SIZE; count++)
   {
+    for (int idx=start; idx < (start+factor); idx++)
+    {
+      ds_data[count].xx += data[idx].xx;
+      ds_data[count].yy += data[idx].yy;
+    }
+    start += factor;
+  }
+  return ds_data;
+}
+*/
+
+dataStruct * downsample( dataStruct * data,
+                         int start,
+                         const unsigned long arraylength,
+                         int factor )
+{
+  const int DS_SIZE = arraylength / factor;
+  dataStruct * ds_data = NULL;
+  try
+  {
+    ds_data = new dataStruct[ DS_SIZE ];
+  }
+  catch (bad_alloc)
+  {
+    cerr << "Can't allocate memory for downsampled array." << endl;
+  }
+
+//   #pragma omp parallel for ordered schedule(dynamic)
+  for (int count=0; count<DS_SIZE; count++)
+  {
+//     #pragma omp parallel for ordered schedule(dynamic)
     for (int idx=start; idx < (start+factor); idx++)
     {
       ds_data[count].xx += data[idx].xx;
@@ -193,6 +224,7 @@ Float32 * downsample_to_float32_intensity( dataStruct * data,
     cerr << "Can't allocate memory for downsampled array." << endl;
   }
 
+//   #pragma omp parallel for ordered schedule(dynamic)
   for (int count=0; count<DS_SIZE; count++)
   {
     ds_data[count] = 0;
@@ -223,8 +255,9 @@ int main (int argc, char *argv[])
 
   int downsample_factor = 128;
 
-  const bool DO_DOWNSAMPLE = false;
-  const bool DO_FLOAT32_INTENSITY = false;
+  const bool DO_DOWNSAMPLE = true;
+  const bool DO_FLOAT32_INTENSITY = true;
+  const bool DO_CHANNELIZATION = true;
 
   // define memory buffers
   FileHeader fileheader;
@@ -457,7 +490,7 @@ int main (int argc, char *argv[])
   int counter = 0;
   bool first_block (true);
   while ( myFile.read ( reinterpret_cast<char *>(&blockheader),
-                        sizeof(blockheader) ) && xx < 2 )
+                        sizeof(blockheader) ) /*&& xx < 10*/ )
   {
 
     // swap values when necessary
@@ -515,6 +548,7 @@ int main (int argc, char *argv[])
      cout << "read pointer position: " << myFile.tellg() << endl;
      exit(2);
    }
+   #pragma omp parallel for ordered schedule(dynamic)
    for(unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
     {
          if ( DO_DOWNSAMPLE )  // if downsampling
@@ -528,6 +562,7 @@ int main (int argc, char *argv[])
                                                    start,
                                                    BufferSIZE,
                                                    downsample_factor );
+               #pragma omp ordered
                table[idx]->appendRows( downsampled_data,
                                        BufferSIZE / downsample_factor );
                delete [] downsampled_data;
@@ -541,6 +576,7 @@ int main (int argc, char *argv[])
                                               start,
                                               BufferSIZE,
                                               downsample_factor );
+               #pragma omp ordered
                table[idx]->appendRows( downsampled_data,
                                        BufferSIZE / downsample_factor );
                delete [] downsampled_data;

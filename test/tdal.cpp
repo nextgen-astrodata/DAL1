@@ -46,6 +46,10 @@
 #include <dalGroup.h>
 #endif
 
+#ifndef DATABASE_H
+#include <Database.h>
+#endif
+
 #define FILENAME "tdal_test.h5"
 
 using namespace DAL;
@@ -61,6 +65,16 @@ int main()
 {
 
 // create a dataset
+#ifdef WITH_MYSQL
+   cout << "Creating a database object... ";
+   string server("pc-swinbank");
+   string name("lofar");
+   string passwd("cs1");
+   string database("pipeline");
+   Database db( server, name, passwd, database );
+   db.query("show tables;");
+   cout << "done\n\n";
+#endif
 
    dalDataset * ds;
    cout << "Creating a new HDF5 dataset called " << FILENAME << "... ";

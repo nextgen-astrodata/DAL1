@@ -299,10 +299,10 @@ namespace DAL {
     template <class T>
     bpl::list vector2list( std::vector<T> vec );
 
-#endif
+#endif // PYTHON
 
-  };
+  }; // BeamFormed class
 
-} // end namespace DAL
+} // namespace DAL
 
-#endif
+#endif // BEAMFORMED_H
