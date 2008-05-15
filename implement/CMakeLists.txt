@@ -85,6 +85,7 @@ set (dal_sources
   BeamSubband.cpp
   HDF5Common.cpp
   Enumerations.cpp
+  TBB.cpp
 )
 
 if ( HAVE_CASACORE )
