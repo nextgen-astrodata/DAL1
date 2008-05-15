@@ -42,84 +42,15 @@
   </ul>
 */
 
-// socket headers
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#ifndef DAL_H
-#include "dal.h"
-#endif
-
-#ifndef DALDATASET_H
-#include "dalDataset.h"
-#endif
-
-#ifndef TIMESERIES_H
-#include "timeseries.h"
+#ifndef TBB_H
+#include "TBB.h"
 #endif
 
 using namespace DAL;
-
-bool it_exists( vector<string> vec, string name )
-{
-  for( unsigned int ss = 0; ss < vec.size(); ss++ )
-  {
-    if ( name == vec[ss] )
-      return true;
-  }
-  return false;
-}
-
-template <class T>
-void list_vector_members( vector<T> vec )
-{
-  for( unsigned int ss = 0; ss < vec.size(); ss++ )
-  {
-     cerr << vec[ss] << endl;
-  }
-}
-
-long double julday(time_t seconds,long *intmjd, long double *fracmjd)
-{
-   long double dayfrac, jd, sec;
-   int year, yday;
-   int hour, min;
-   struct tm *ptr = NULL;
-
-   unsigned int nd;
-
-   ptr = gmtime(&seconds);
-
-   hour = ptr->tm_hour;
-   min = ptr->tm_min;
-   sec = (long double)ptr->tm_sec;
-
-   year = ptr->tm_year;
-   yday = ptr->tm_yday + 1;
-
-   dayfrac = ( (sec/60.0L + (long double) min)/60.0L + \
-          (long double)hour)/24.0L;
-   nd = year * 365;
-   nd += (year - 1)/4;
-   nd += yday + 2415020;
-
-   *intmjd = nd - 2400001;
-   *fracmjd = dayfrac;
-
-   jd = (long double)nd + dayfrac - 0.5L;
-
-   return jd;
-}
 
 int main(int argc, char *argv[])
 {
@@ -135,90 +66,31 @@ int main(int argc, char *argv[])
      return DAL::FAIL;
   }
 
-// ------------------------------------------------------------- 
-//
-//  Set up the socket connection to the server
-//
-// ------------------------------------------------------------- 
-
-  int port_number = atol(argv[3]);
-  const char * remote = argv[2];
-  int remote_port = atol(argv[3]);
-  fd_set readSet;
-  struct timeval timeVal;
-
-  // Step 1 Look up server to get numeric IP address
-  hostent * record = gethostbyname(remote);
-  if (record==NULL) { herror("gethostbyname failed"); exit(1); }
-  in_addr * addressptr = (in_addr *) record->h_addr;
-
-  // Step 2 Create a socket
-  int main_socket = socket(PF_INET, SOCK_DGRAM, 0);
-  if (main_socket<0) { perror("socket creation"); exit(1); }
-
-  // Step 3 Create a sockaddr_in to describe the local port
-  sockaddr_in local_info;
-  local_info.sin_family = AF_INET;
-  local_info.sin_addr.s_addr = htonl(INADDR_ANY);
-  local_info.sin_port = htons(port_number);
-
-  // Step 4 Bind the socket to the port
-  int r = bind(main_socket, (sockaddr *) &local_info, sizeof(local_info));
-  if (r<0) { perror("bind"); exit(1); }
-  printf("ready\n");
-
-  // Step 5 Create a sockaddr_in to describe the remote application
-  sockaddr_in remote_info;
-  remote_info.sin_family = AF_INET;
-  remote_info.sin_addr = *addressptr;
-  remote_info.sin_port = htons(remote_port);
-
 
 // ------------------------------------------------------------- 
 //
 //  Create an hdf5 output file
 //
 // ------------------------------------------------------------- 
+  TBB tbb = TBB( string(argv[1]) );
 
+  int main_socket = tbb.connectsocket( argv[2], argv[3] );
 
-  dalDataset * dataset = NULL;
+  cout << "main_socket " << main_socket << endl;
 
-  dataset = new dalDataset;
-
-  UInt32 payload_crc = 0;
-
+exit(9);
+/*
   dalGroup * stationGroup = NULL;
-
+  dalArray * dipoleArray = NULL;
   vector<string> stations;
   vector<string> dipoles;
-
   bool first_sample = true;
-
-  dalArray * dipoleArray = NULL;
   vector<int> cdims;
   cdims.push_back(CHUNK_SIZE);
-
   // define dimensions of array
   vector<int> dims;
   dims.push_back(0);
-
-   if ( DAL::FAIL == dataset->open( argv[1] ) )
-   {
-      cerr << "Creating new dataset " << argv[1] << endl;
-      delete dataset;
-      dataset = new dalDataset( argv[1], "HDF5" );
-   }
-   else
-   {
-       cerr << "Dataset " << argv[1] << " exists." << endl;
-
-       stations = dataset->getGroupNames();
-       for( unsigned int ss = 0; ss < stations.size(); ss++ )
-       {
-          cerr << stations[ss] << endl;
-       }
-
-   }
+  UInt32 payload_crc = 0;
 
 // ------------------------------------------------------------- 
 //
@@ -241,6 +113,9 @@ int main(int argc, char *argv[])
   // For date
   time_t sample_time;
 
+  fd_set readSet;
+  struct timeval timeVal;
+  int rr = 0;
 
   while ( true )
   {
@@ -261,7 +136,7 @@ int main(int argc, char *argv[])
     timeVal.tv_usec =  0;
 
     if ( select( main_socket + 1, &readSet, NULL, NULL, &timeVal ) ) {
-      r = recvfrom( main_socket, reinterpret_cast<char *>(&header),
+      rr = recvfrom( main_socket, reinterpret_cast<char *>(&header),
                     sizeof(header), 0,
                     (sockaddr *) &incoming_info, &socklen);
     }
@@ -273,7 +148,7 @@ int main(int argc, char *argv[])
        return DAL::SUCCESS;
     }
 
-    if (r<0) { perror("recvfrom"); exit(1); }
+    if (rr<0) { perror("recvfrom"); exit(1); }
 
     #ifdef DEBUGGING_MESSAGES
 //     cerr << r << " bytes received." << endl;
@@ -439,7 +314,7 @@ int main(int argc, char *argv[])
 
         // Read Payload
         if ( select( main_socket + 1, &readSet, NULL, NULL, &timeVal ) ) {
-          r = recvfrom( main_socket, reinterpret_cast<char *>(&tran_sample),
+          rr = recvfrom( main_socket, reinterpret_cast<char *>(&tran_sample),
                         sizeof(tran_sample), 0,
                         (sockaddr *) &incoming_info, &socklen );
         }
@@ -451,7 +326,7 @@ int main(int argc, char *argv[])
            return DAL::FAIL;
         }
 
-        if ( r < 0 ) { perror("recvfrom"); exit(1); }
+        if ( rr < 0 ) { perror("recvfrom"); exit(1); }
 
         #ifdef DEBUGGING_MESSAGES
 //         cerr << r << " bytes received." << endl;
@@ -474,9 +349,9 @@ int main(int argc, char *argv[])
 
     }  // end if transient mode
 
-    r=recvfrom( main_socket, reinterpret_cast<char *>(&payload_crc),
-                sizeof(payload_crc), 0,
-                (sockaddr *) &incoming_info, &socklen );
+    rr = recvfrom( main_socket, reinterpret_cast<char *>(&payload_crc),
+                   sizeof(payload_crc), 0,
+                   (sockaddr *) &incoming_info, &socklen );
 
   } // end while (true)
 
@@ -489,7 +364,7 @@ int main(int argc, char *argv[])
     dipoleArray = NULL;
   }
   delete dataset;
-
+*/
   cout << "SUCCESS" << endl;
   return DAL::SUCCESS;
 
