@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 
     if ( tbb.transientMode() )
     {
-       #idfef DEBUGGING_MESSAGES
+       #ifdef DEBUGGING_MESSAGES
        cerr << "block " << counter << endl;
        #endif
        if (socketmode)
