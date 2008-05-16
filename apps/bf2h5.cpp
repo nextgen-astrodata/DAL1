@@ -525,7 +525,7 @@ int main (int argc, char *argv[])
      dataset->setAttribute_string( "EPOCH_UTC", timeDateString );
 
      memset (timeDateString,'\0',buf_size);
-     strftime(timeDateString, buf_size, "%D", gmtime(&utc));
+     strftime(timeDateString, buf_size, "%d/%m/%y", gmtime(&utc));
      dataset->setAttribute_string( "EPOCH_DATE", timeDateString );
 
      memset (timeDateString,'\0',buf_size);

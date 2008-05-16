@@ -28,10 +28,43 @@ namespace DAL {
 
   TBB::TBB( string const& filename )
   {
-
+    // initializations (private)
+    bigendian = BigEndian();
+    sample_time = (time_t)0;
     name = filename;
-
     dataset = new dalDataset;
+    station.clear();
+    header.stationid = 0;     // --------------------  TBB_Header
+    header.rspid = 0;
+    header.rcuid = 0;
+    header.sample_freq = 0;
+    header.seqnr = 0;
+    header.time = 0;
+    header.sample_nr = 0;
+    header.n_samples_per_frame = 0;
+    header.n_freq_bands = 0;
+    memset(header.bandsel,0,64);
+    header.spare = 0;
+    header.crc = 0;
+    rr = 0;
+    main_socket = -1;
+    socklen = sizeof(incoming_addr);
+    status = 0;
+    stations.clear();
+    stationGroup = NULL;
+    dipoleArray = NULL;
+    dipoles.clear();
+    dims.push_back(0);
+    offset = 0;
+    cdims.push_back(CHUNK_SIZE);
+    stationstr = NULL;
+    memset(uid,'-',10);
+    payload_crc = 0;
+    tran_sample.value = 0;
+    spec_sample.value = 0;
+
+    // initializations (public)
+    first_sample = true;
 
     if ( DAL::FAIL == dataset->open( filename.c_str() ) )
     {
@@ -53,25 +86,40 @@ namespace DAL {
 
   }
 
+
+  TBB::~TBB()
+  {
+    if ( dipoleArray )
+    {
+      delete dipoleArray;
+      dipoleArray = NULL;
+    }
+    if ( stationGroup )
+    {
+      delete stationGroup;
+      stationGroup = NULL;
+    }
+    delete dataset;
+    close(main_socket);
+  }
+
   // ------------------------------------------------------------- 
   //
   //  Set up the socket connection to the server
   //
   // ------------------------------------------------------------- 
 
-  int TBB::connectsocket( char* ipaddress, char* portnumber )
+  void TBB::connectsocket( char* ipaddress, char* portnumber )
   {
     int port_number = atol( portnumber );
     const char * remote = ipaddress;
-    int remote_port = atol( portnumber );
 
     // Step 1 Look up server to get numeric IP address
     hostent * record = gethostbyname(remote);
     if (record==NULL) { herror("gethostbyname failed"); exit(1); }
-    in_addr * addressptr = (in_addr *) record->h_addr;
 
     // Step 2 Create a socket
-    int main_socket = socket(PF_INET, SOCK_DGRAM, 0);
+    main_socket = socket(PF_INET, SOCK_DGRAM, 0);
     if (main_socket<0) { perror("socket creation"); exit(1); }
 
     // Step 3 Create a sockaddr_in to describe the local port
@@ -84,13 +132,229 @@ namespace DAL {
     int rr = bind(main_socket, (sockaddr *) &local_info, sizeof(local_info));
     if (rr<0) { perror("bind"); exit(1); }
     printf("ready\n");
+  }
 
-    // Step 5 Create a sockaddr_in to describe the remote application
-    sockaddr_in remote_info;
-    remote_info.sin_family = AF_INET;
-    remote_info.sin_addr = *addressptr;
-    remote_info.sin_port = htons(remote_port);
-    return main_socket;
+  int TBB::readsocket( unsigned int nbytes, char* buf )
+  {
+    FD_ZERO(&readSet);
+    FD_SET(main_socket, &readSet);
+
+    timeVal.tv_sec =   3;
+    timeVal.tv_usec =  0;
+
+    // waits for up to N seconds for data appearing in the socket
+    if ( select( main_socket + 1, &readSet, NULL, NULL, &timeVal ) )
+    {
+      rr = recvfrom( main_socket, buf, nbytes, 0,
+                    (sockaddr *) &incoming_addr, &socklen);
+    }
+    else
+    {
+       cout << "Data stopped coming" << endl;
+       return DAL::FAIL;
+    }
+
+    if (rr<0) { perror("recvfrom"); exit(1); }
+
+    return DAL::SUCCESS;
+  }
+
+  bool TBB::readRawSocketHeader()
+  {
+    // ------------------------------------------------------  read the header 
+    //
+    // read 88-byte TBB frame header
+    //
+    status = readsocket( sizeof(header), reinterpret_cast<char *>(&header) );
+    if (DAL::FAIL == status)
+      return false;
+
+    // reverse fields if big endian
+    if ( bigendian )
+      {
+        swapbytes( (char *)&header.seqnr, 4 );
+        swapbytes( (char *)&header.sample_nr, 4 );
+        swapbytes( (char *)&header.n_samples_per_frame, 8);
+        swapbytes( (char *)&header.n_freq_bands, 2 );
+      }
+
+    // Convert the time (seconds since 1 Jan 1970) to a human-readable string
+    // "The samplenr field is used together with the time field to get
+    //  an absolute time reference.  The samplenr field holds the number of
+    //  samples that was counted by RSP since the start of the current second."
+    // "By multiplying the samplenr with the sample period and additing it to
+    //  the seconds field, the time instance of the first data sample of the
+    //  frame is known"
+    //   -- TBB Design Description document, Wietse Poiesz (2006-10-3)
+    //      Doc..id: LOFAR-ASTRON-SDD-047
+    sample_time =
+      (time_t)( header.time + header.sample_nr/(header.sample_freq*1000000) );
+    char *time_string=ctime(&sample_time);
+    time_string[strlen(time_string)-1]=0;   // remove \n
+
+    #ifdef DEBUGGING_MESSAGES
+    printf("Time:              : %s\n",time_string );
+    printRawHeader();
+    #endif
+
+    return true;
+  }
+
+  void TBB::printRawHeader()
+  {
+    printf("Station ID         : %d\n",header.stationid);
+    printf("RSP ID             : %d\n",header.rspid);
+    printf("RCU ID             : %d\n",header.rcuid);
+    printf("Sample Freqency    : %d MHz\n",header.sample_freq);
+    printf("Sequence Number    : %d\n",header.seqnr);
+    printf("Sample Number      : %d\n",header.sample_nr);
+    printf("Samples Per Frame  : %d\n",header.n_samples_per_frame);
+    printf("Num. of Freq. Bands: %d\n",header.n_freq_bands);
+    printf("Bands present : ");
+    for (int idx=0; idx<64; idx++)
+       printf("%X,", header.bandsel[idx]);
+    printf("\n");
+  }
+
+  void TBB::stationCheck()
+  {
+    char stationstr[10];
+    memset(stationstr,'\0',10);
+    sprintf( stationstr, "Station%03d", header.stationid );
+
+    // does the station exist?
+    if ( it_exists_str( stations, stationstr ) )
+    {
+       stationGroup = dataset->openGroup( stationstr );
+       dipoles = stationGroup->getMemberNames();
+       sprintf(uid, "%03d%03d%03d",
+               header.stationid, header.rspid, header.rcuid);
+
+       // does the dipole exist?
+       if ( it_exists_str( dipoles, uid ) )
+       {
+          dipoleArray = dataset->openArray( uid, stationGroup->getName() );
+          dims = dipoleArray->dims();
+          offset = dims[0];
+          first_sample = false;
+       }
+       else
+       {
+         sprintf(uid, "%03d%03d%03d",
+                 header.stationid, header.rspid, header.rcuid);
+       }
+    }
+    else
+    {
+       stations.push_back( stationstr );
+       stationGroup = dataset->createGroup( stationstr );
+       cerr << "CREATED New station group: " << string(stationstr) << endl;
+       sprintf(uid, "%03d%03d%03d",
+               header.stationid, header.rspid, header.rcuid);
+    }
+  }
+
+  void TBB::makeOutputHeader()
+  {
+	if ( 0!=header.n_freq_bands )
+	{
+          #ifdef DEBUGGING_MESSAGES
+          cerr << "Spectral mode." << endl;
+          #endif
+	}
+	else
+	{
+	  vector<int> firstdims;
+	  firstdims.push_back( 0 );
+	  short nodata[0];
+	  dipoleArray =
+	    stationGroup->createShortArray( string(uid),firstdims,nodata,cdims );
+
+	  string telescope          = "LOFAR";
+	  string observer           = "";
+	  string project            = "";
+	  string observation_id     = "";
+	  string observation_mode   = "";
+	  string trigger_type       = "";
+	  double trigger_offset[1]  = { 0 };
+	  int triggered_antennas[1] = { 0 };
+	  double beam_direction[2]  = { 0, 0 };
+
+	  // Add attributes to "Station" group
+	  stationGroup->setAttribute_string("TELESCOPE", telescope );
+	  stationGroup->setAttribute_string("OBSERVER", observer );
+	  stationGroup->setAttribute_string("PROJECT", project );
+	  stationGroup->setAttribute_string("OBS_ID", observation_id );
+	  stationGroup->setAttribute_string("OBS_MODE", observation_mode );
+	  stationGroup->setAttribute_string("TRIG_TYPE", trigger_type );
+	  stationGroup->setAttribute_double("TRIG_OFST", trigger_offset );
+	  stationGroup->setAttribute_int(   "TRIG_ANTS", triggered_antennas );
+	  stationGroup->setAttribute_double("BEAM_DIR", beam_direction, 2 );
+
+	  unsigned int sid[] = { (unsigned int)(header.stationid) };
+	  unsigned int rsp[] = { (unsigned int)(header.rspid) };
+	  unsigned int rcu[] = { (unsigned int)(header.rcuid) };
+	  double sf[] = { (double)header.sample_freq };
+	  unsigned int time[] = { (unsigned int)(header.time) };
+	  unsigned int samp_num[] = { (unsigned int)(header.sample_nr) };
+	  unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
+	  unsigned int datalen[] = { (unsigned int)0 };
+	  unsigned int nyquist_zone[] = { (unsigned int)0 };
+	  string feed       = "NONE";
+	  double apos[3]    = { 0, 0, 0 };
+	  double aorient[3] = { 0, 0, 0 };
+
+	  dipoleArray->setAttribute_uint("STATION_ID", sid );
+	  dipoleArray->setAttribute_uint("RSP_ID", rsp );
+	  dipoleArray->setAttribute_uint("RCU_ID", rcu );
+	  dipoleArray->setAttribute_double("SAMPLE_FREQ", sf );
+	  dipoleArray->setAttribute_uint("TIME", time );
+	  dipoleArray->setAttribute_uint("SAMPLE_NR", samp_num );
+	  dipoleArray->setAttribute_uint("SAMPLES_PER_FRAME", spf );
+	  dipoleArray->setAttribute_uint("DATA_LENGTH", datalen );
+	  dipoleArray->setAttribute_uint("NYQUIST_ZONE", nyquist_zone );
+	  dipoleArray->setAttribute_string("FEED", feed );
+	  dipoleArray->setAttribute_double("ANT_POSITION", apos );
+	  dipoleArray->setAttribute_double("ANT_ORIENTATION", aorient );
+	}
+  }
+
+  bool TBB::transientMode()
+  {
+    if ( 0==header.n_freq_bands )
+      return true;   // transient mode
+    else
+      return false;  // spectral mode
+  }
+
+  bool TBB::processTransientSocketDataBlock()
+  {
+      short sdata[ header.n_samples_per_frame];
+      for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
+      {
+
+        status = readsocket( sizeof(tran_sample),
+                             reinterpret_cast<char *>(&tran_sample) );
+        if (DAL::FAIL == status)
+          return false;
+
+        if ( bigendian )  // reverse fields if big endian
+          swapbytes( (char *)&tran_sample.value, 2 );
+
+        sdata[zz] = tran_sample.value;
+      }
+
+      dims[0] += header.n_samples_per_frame;
+      dipoleArray->extend(dims);
+      dipoleArray->write(offset, sdata, header.n_samples_per_frame );
+      offset += header.n_samples_per_frame;
+
+      status = readsocket( sizeof(payload_crc),
+                           reinterpret_cast<char *>(&payload_crc) );
+      if (DAL::FAIL == status)
+         return false;
+
+      return true;
   }
 
 } // end namespace DAL

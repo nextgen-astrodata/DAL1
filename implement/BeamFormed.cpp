@@ -196,12 +196,12 @@ namespace DAL {
     os << "-- FWHM of the main beam  : " << main_beam_diam()        << endl;
 //     os << "-- Center Frequency ..... : " << center_freq()           << endl;
     os << "-- Bandwidth ............ : " << bandwidth()             << endl;
-//     os << "-- Total Integration Time : " << integration_time()      << endl;
+//     os << "-- Total Integration Time : " << total_integration_time()      << endl;
 
     os << "-- Breaks in the data ... : " << breaks()                << endl;
     os << "-- Dispersion measure ... : " << dispersion_measure()    << endl;
     os << "-- Number of time samples : " << number_of_samples()     << endl;
-    os << "-- Sampling time ........ : " << sampling_time()         << endl;
+    os << "-- Sampling time (Hz).... : " << sampling_time()         << endl;
     os << "-- Notes ................ : " << notes()                 << endl;
     os << "-- Number of beams ...... : " << number_of_beams()       << endl;
     os << "-- FWHM of the sub-beams  : " << sub_beam_diameter()     << endl;
@@ -597,7 +597,7 @@ namespace DAL {
     return bandwidth;
   }
 
-  double BeamFormed::integration_time ()
+  double BeamFormed::total_integration_time ()
   {
     double integration_time = 0.0;
     if (dataset_p->getName() != "UNDEFINED") {
@@ -807,8 +807,9 @@ bpl::list BeamFormed::vector2list( std::vector<T> vec )
 {
    bpl::list mylist;
 
-   for( uint ii=0; ii<vec.size(); ii++ )
-     mylist.append( vec[ii] );
+   typename std::vector<T>::iterator it;
+   for( it=vec.begin(); it < vec.end(); it++ )
+     mylist.append( *it );
 
    return mylist;
 }

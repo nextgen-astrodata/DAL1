@@ -36,6 +36,10 @@
 #include <dalDataset.h>
 #endif
 
+#ifndef COMMON_H
+#include <Common.h>
+#endif
+
 // socket headers
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,31 +51,6 @@
 #include <netdb.h>
 
 namespace DAL {
-
-/*!
-   \class TBB
-
-   \ingroup DAL
-
-   \brief High-level interface between TBB data and the DAL
-
-   \author Joseph Masters
- */
-
-  class TBB {
-
-  string name;
-  dalDataset * dataset;
-  std::vector<dalGroup> station;
-
-  public:
-
-  TBB( string const& name );  // constructor
-
-  int connectsocket( char* ipaddress, char* portnumber );
-
-  }; // class TBB
-
 
   ///////////////////////////////////////////////////////////////
   //
@@ -100,6 +79,34 @@ namespace DAL {
     AntennaStruct antenna;
   };
 
+  typedef struct TransientSample {
+    Int16 value;
+  };
+
+  typedef struct SpectralSample {
+    complex<Int16> value;
+  };
+
+  typedef struct CosmicRayStruct {
+    //int nofDatapoints;
+    Int16 data;
+  };
+
+
+/*!
+   \class TBB
+
+   \ingroup DAL
+
+   \brief High-level interface between TBB data and the DAL
+
+   \author Joseph Masters
+ */
+
+  class TBB {
+
+  public:
+
   typedef struct TBB_Header {
     unsigned char stationid;
     unsigned char rspid;
@@ -115,18 +122,45 @@ namespace DAL {
     UInt16 crc;
   };
 
-  typedef struct TransientSample {
-    Int16 value;
-  };
+  bool bigendian;
+  time_t sample_time;  // For date
+  string name;
+  dalDataset * dataset;
+  std::vector<dalGroup> station;
+  fd_set readSet;
+  struct timeval timeVal;
+  TBB_Header header;
+  int rr;
+  int main_socket;
+  struct sockaddr_in incoming_addr;
+  unsigned int socklen;
+  int status;
+  vector<string> stations;
+  dalGroup * stationGroup;
+  dalArray * dipoleArray;
+  vector<string> dipoles;
+  vector<int> dims; // define dimensions of array
+  int offset;
+  vector<int> cdims;
+  char * stationstr;
+  char uid[10];  // dipole identifier
+  int readsocket( unsigned int nbytes, char* buf );
+  bool first_sample;
+  UInt32 payload_crc;
+  TransientSample tran_sample;
+  SpectralSample spec_sample;
 
-  typedef struct SpectralSample {
-    complex<Int16> value;
-  };
+  TBB( string const& name );  // constructor
+  ~TBB(); // destructor
+  void connectsocket( char* ipaddress, char* portnumber );
+  bool readRawSocketHeader();
+  void printRawHeader();
+  void stationCheck();
+  void makeOutputHeader();
+  bool transientMode();
+  bool processTransientSocketDataBlock();
 
-  typedef struct CosmicRayStruct {
-    //int nofDatapoints;
-    Int16 data;
-  };
+  }; // class TBB
 
 } // DAL namespace
 

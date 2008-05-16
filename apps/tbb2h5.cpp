@@ -56,316 +56,68 @@ int main(int argc, char *argv[])
 {
 
   // parameter check
-  if ( argc < 4 )
+  if ( argc < 3 )
   {
-     cout << endl << "Too few parameters..." << endl << endl;
-     cout << "The first parameter is the output dataset name.\n";
-     cout << "The second parameter is the IP address to accept data from.\n";
-     cout << "The third parameter is the port number to accept data from.\n";
-     cout << endl;
+     cerr << endl << "Too few parameters..." << endl << endl;
+     cerr << "First parameter is the output dataset name.\n";
+     cerr << "Second parameter indicates file mode (0) or socket mode (1).\n";
+     cerr << "Third parameter is either the IP address to accept data from,";
+     cerr << " or the input file name.";
+     cerr << "Fourth parameter is the port number to accept data from.\n";
+     cerr << endl;
      return DAL::FAIL;
   }
 
+  string outfilename( argv[1] );
+  bool socketmode( argv[2] );
 
-// ------------------------------------------------------------- 
-//
-//  Create an hdf5 output file
-//
-// ------------------------------------------------------------- 
-  TBB tbb = TBB( string(argv[1]) );
+  TBB tbb = TBB( outfilename );
 
-  int main_socket = tbb.connectsocket( argv[2], argv[3] );
+  if ( socketmode )  // socket mode?
+  {
+    if ( argc < 4 )
+    {
+       cerr << "ERROR: missing parameters." << endl;
+       return DAL::FAIL;
+    }
+    tbb.connectsocket( argv[3], argv[4] );
+  }
 
-  cout << "main_socket " << main_socket << endl;
-
-exit(9);
-/*
-  dalGroup * stationGroup = NULL;
-  dalArray * dipoleArray = NULL;
-  vector<string> stations;
-  vector<string> dipoles;
-  bool first_sample = true;
-  vector<int> cdims;
-  cdims.push_back(CHUNK_SIZE);
-  // define dimensions of array
-  vector<int> dims;
-  dims.push_back(0);
-  UInt32 payload_crc = 0;
-
-// ------------------------------------------------------------- 
-//
-//  Wait for and receive data
-//
-// ------------------------------------------------------------- 
-
-
-  bool bigendian = BigEndian();
-
-  struct sockaddr_in incoming_info;
-  unsigned int socklen = sizeof(incoming_info);
-
-  TransientSample tran_sample;
-  SpectralSample spec_sample;
-  TBB_Header header;
-  int counter=0;
-  int offset=0;
-
-  // For date
-  time_t sample_time;
-
-  fd_set readSet;
-  struct timeval timeVal;
-  int rr = 0;
-
+  int counter = 0;
   while ( true )
   {
-
     counter++;
 
-    // ------------------------------------------------------  read the header 
-
-    //
-    // read 88-byte TBB frame header
-    //
-    // wait for up to 2 seconds for data appearing in the socket
-
-    FD_ZERO(&readSet);
-    FD_SET(main_socket, &readSet);
-
-    timeVal.tv_sec =   10;
-    timeVal.tv_usec =  0;
-
-    if ( select( main_socket + 1, &readSet, NULL, NULL, &timeVal ) ) {
-      rr = recvfrom( main_socket, reinterpret_cast<char *>(&header),
-                    sizeof(header), 0,
-                    (sockaddr *) &incoming_info, &socklen);
-    }
-    else
+    if (socketmode)
     {
-       cout << "Data stopped coming" << endl;
-       close(main_socket);
-       delete dataset;
-       return DAL::SUCCESS;
+       if ( !tbb.readRawSocketHeader() )
+         break;
     }
 
-    if (rr<0) { perror("recvfrom"); exit(1); }
-
-    #ifdef DEBUGGING_MESSAGES
-//     cerr << r << " bytes received." << endl;
-    #endif
-
-    // reverse fields if big endian
-    if ( bigendian )
-      {
-	  swapbytes( (char *)&header.seqnr, 4 );
-	  swapbytes( (char *)&header.sample_nr, 4 );
-	  swapbytes( (char *)&header.n_samples_per_frame, 8);
-	  swapbytes( (char *)&header.n_freq_bands, 2 );
-      }
-
-    // Convert the time (seconds since 1 Jan 1970) to a human-readable string
-    // "The samplenr field is used together with the time field to get
-    //  an absolute time reference.  The samplenr field holds the number of
-    //  samples that was counted by RSP since the start of the current second."
-    // "By multiplying the samplenr with the sample period and additing it to
-    //  the seconds field, the time instance of the first data sample of the
-    //  frame is known"
-    //   -- TBB Design Description document, Wietse Poiesz (2006-10-3)
-    //      Doc..id: LOFAR-ASTRON-SDD-047
-    sample_time =
-      (time_t)( header.time + header.sample_nr/(header.sample_freq*1000000) );
-    char *time_string=ctime(&sample_time);
-    time_string[strlen(time_string)-1]=0;   // remove \n
-
-    #ifdef DEBUGGING_MESSAGES
-    printf("Station ID         : %d\n",header.stationid);
-    printf("RSP ID             : %d\n",header.rspid);
-    printf("RCU ID             : %d\n",header.rcuid);
-    printf("Sample Freqency    : %d MHz\n",header.sample_freq);
-    printf("Sequence Number    : %d\n",header.seqnr);
-    printf("Time:              : %s\n",time_string );
-    printf("Sample Number      : %d\n",header.sample_nr);
-    printf("Samples Per Frame  : %d\n",header.n_samples_per_frame);
-    printf("Num. of Freq. Bands: %d\n",header.n_freq_bands);
-    printf("Bands present : ");
-    for (int idx=0; idx<64; idx++)
-       printf("%X,", header.bandsel[idx]);
-    printf("\n");
-    #endif
-    char * stationstr = new char[10];
-    sprintf( stationstr, "Station%03d", header.stationid );
-    char uid[10];  // dipole identifier
-
-    // does the station exist?
-    if ( it_exists( stations, stationstr ) )
-    {
-       stationGroup = dataset->openGroup( stationstr );
-       dipoles = stationGroup->getMemberNames(); 
-       sprintf(uid, "%03d%03d%03d",
-               header.stationid, header.rspid, header.rcuid);
-
-       // does the dipole exist?
-       if ( it_exists( dipoles, uid ) )
-       {
-          dipoleArray = dataset->openArray( uid, stationGroup->getName() );
-          dims = dipoleArray->dims();
-          offset = dims[0];
-          first_sample = false;
-       }
-       else
-       {
-         sprintf(uid, "%03d%03d%03d",
-                 header.stationid, header.rspid, header.rcuid);
-       }
-    }
-    else
-    {
-       stations.push_back( stationstr );
-       stationGroup = dataset->createGroup( stationstr );
-       cerr << "CREATED New station group: " << string(stationstr) << endl;
-       delete [] stationstr;
-       sprintf(uid, "%03d%03d%03d",
-               header.stationid, header.rspid, header.rcuid);
-    }
+    tbb.stationCheck();
 
      // if this is the first sample for this station set header attributes
-     if ( first_sample )
-      {
-	if ( 0!=header.n_freq_bands )
-	{
-          #ifdef DEBUGGING_MESSAGES
-          cerr << "Spectral mode." << endl;
-          #endif
-	}
-	else
-	{
-	  vector<int> firstdims;
-	  firstdims.push_back( 0 );
-	  short nodata[0];
-	  dipoleArray =
-	    stationGroup->createShortArray( string(uid),firstdims,nodata,cdims );
+     if ( tbb.first_sample )
+     {
+       tbb.makeOutputHeader();
+       tbb.first_sample = false;
+     }
 
-	  string telescope          = "LOFAR";
-	  string observer           = "J.S. Masters";
-	  string project            = "Transients";
-	  string observation_id     = "1287";
-	  string observation_mode   = "TransientDetection";
-	  string trigger_type       = "Unknown";
-	  double trigger_offset[1]  = { 0 };
-	  int triggered_antennas[1] = { 0 };
-	  double beam_direction[2]  = { 0, 90 };
-
-	  // Add attributes to "Station" group
-	  stationGroup->setAttribute_string("TELESCOPE", telescope );
-	  stationGroup->setAttribute_string("OBSERVER", observer );
-	  stationGroup->setAttribute_string("PROJECT", project );
-	  stationGroup->setAttribute_string("OBS_ID", observation_id );
-	  stationGroup->setAttribute_string("OBS_MODE", observation_mode );
-	  stationGroup->setAttribute_string("TRIG_TYPE", trigger_type );
-	  stationGroup->setAttribute_double("TRIG_OFST", trigger_offset );
-	  stationGroup->setAttribute_int(   "TRIG_ANTS", triggered_antennas );
-	  stationGroup->setAttribute_double("BEAM_DIR", beam_direction, 2 );
-
-	  unsigned int sid[] = { (unsigned int)(header.stationid) };
-	  unsigned int rsp[] = { (unsigned int)(header.rspid) };
-	  unsigned int rcu[] = { (unsigned int)(header.rcuid) };
-	  double sf[] = { (double)header.sample_freq };
-	  unsigned int time[] = { (unsigned int)(header.time) };
-	  unsigned int samp_num[] = { (unsigned int)(header.sample_nr) };
-	  unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
-	  unsigned int datalen[] = { (unsigned int)0 };
-	  unsigned int nyquist_zone[] = { (unsigned int)0 };
-	  string feed       = "NONE";
-	  double apos[3]    = { 0, 0, 0 };
-	  double aorient[3] = { 0, 0, 0 };
-
-	  dipoleArray->setAttribute_uint("STATION_ID", sid );
-	  dipoleArray->setAttribute_uint("RSP_ID", rsp );
-	  dipoleArray->setAttribute_uint("RCU_ID", rcu );
-	  dipoleArray->setAttribute_double("SAMPLE_FREQ", sf );
-	  dipoleArray->setAttribute_uint("TIME", time );
-	  dipoleArray->setAttribute_uint("SAMPLE_NR", samp_num );
-	  dipoleArray->setAttribute_uint("SAMPLES_PER_FRAME", spf );
-	  dipoleArray->setAttribute_uint("DATA_LENGTH", datalen );
-	  dipoleArray->setAttribute_uint("NYQUIST_ZONE", nyquist_zone );
-	  dipoleArray->setAttribute_string("FEED", feed );
-	  dipoleArray->setAttribute_double("ANT_POSITION", apos );
-	  dipoleArray->setAttribute_double("ANT_ORIENTATION", aorient );
-	}
-
-	first_sample = false;
-      }  // end if first sample
-
-    short sdata[ header.n_samples_per_frame];
-
-    // ------------------------------------------------------  read the data 
-
-    if ( 0==header.n_freq_bands )  // Transient-mode
+    if ( tbb.transientMode() )
     {
-      for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
-      {
+       #idfef DEBUGGING_MESSAGES
+       cerr << "block " << counter << endl;
+       #endif
+       if (socketmode)
+       {
+         if ( !tbb.processTransientSocketDataBlock() )
+           break;
+       }
+    }
 
-        // wait for up to 2 seconds for data appearing in the socket
-        FD_ZERO(&readSet);
-        FD_SET(main_socket, &readSet);
+  } // while (true)
 
-        timeVal.tv_sec = 2;
-        timeVal.tv_usec = 0;
-
-        // Read Payload
-        if ( select( main_socket + 1, &readSet, NULL, NULL, &timeVal ) ) {
-          rr = recvfrom( main_socket, reinterpret_cast<char *>(&tran_sample),
-                        sizeof(tran_sample), 0,
-                        (sockaddr *) &incoming_info, &socklen );
-        }
-        else
-        {
-           cout << "Data stopped coming" << endl;
-           close(main_socket);
-           delete dataset;
-           return DAL::FAIL;
-        }
-
-        if ( rr < 0 ) { perror("recvfrom"); exit(1); }
-
-        #ifdef DEBUGGING_MESSAGES
-//         cerr << r << " bytes received." << endl;
-        #endif
-
-        if ( 0 == counter % 10000 )
-           cout << counter << " value         " << tran_sample.value << endl;
-
-        if ( bigendian )  // reverse fields if big endian
-          swapbytes( (char *)&tran_sample.value, 2 );
-
-        sdata[zz] = tran_sample.value;
-      }
-
-      dims[0] += header.n_samples_per_frame;
-      dipoleArray->extend(dims);
-      int arraysize = header.n_samples_per_frame;
-      dipoleArray->write(offset, sdata, arraysize );
-      offset += header.n_samples_per_frame;
-
-    }  // end if transient mode
-
-    rr = recvfrom( main_socket, reinterpret_cast<char *>(&payload_crc),
-                   sizeof(payload_crc), 0,
-                   (sockaddr *) &incoming_info, &socklen );
-
-  } // end while (true)
-
-  // Step 8 Close the socket and exit
-  close(main_socket);
-
-  if ( dipoleArray )
-  {
-    delete [] dipoleArray;
-    dipoleArray = NULL;
-  }
-  delete dataset;
-*/
-  cout << "SUCCESS" << endl;
+  cerr << "SUCCESS" << endl;
   return DAL::SUCCESS;
 
-} // end of main()
+} // main

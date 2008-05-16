@@ -34,7 +34,7 @@ dalFilter::dalFilter()
 dalFilter::~dalFilter() {}
 
 void dalFilter::set( string cols ) {
-  if ( filetype == MSCASATYPE )
+  if ( filetype == DAL::MSCASATYPE )
   {
     filterstring = "Select " + cols + " from $1";
     is_set = true;
@@ -44,7 +44,7 @@ void dalFilter::set( string cols ) {
 }
 
 void dalFilter::set( string cols, string conditions ) {
-  if ( filetype == MSCASATYPE )
+  if ( filetype == DAL::MSCASATYPE )
   {
     filterstring = "Select " + cols + " from $1 where " + conditions;
     is_set = true;

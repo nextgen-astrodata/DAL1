@@ -108,12 +108,14 @@ dalDataset::~dalDataset() {}
  *  Sub-routine to open a FITS file
  *
  *****************************************************************/
-int openFITS( char * fname )
+int openFITS( const char * fname )
 {
-	fitsfile * fptr;
+	fitsfile * fptr = NULL;
 	int status = 0;  /* MUST initialize status */
-	int nkeys, ii;
-	char card[500]; 
+	int nkeys = 0;
+        int ii = 0;
+	char card[500];
+        memset(card,'\0',500);
 	//cout << "Try to open FITS...";
 	
 	fits_open_file(&fptr, fname, READWRITE, &status);
@@ -152,7 +154,7 @@ int openFITS( char * fname )
  *  Sub-routine to open a HDF5 file
  *
  *****************************************************************/
-hid_t openHDF5( char * fname )
+hid_t openHDF5( const char * fname )
 {
 	// the following return an integer file handle
 	// Turn off error reporting since we expect failure in cases
@@ -183,8 +185,7 @@ int dalDataset::open( const char * fname )
   string lcltype;
   
 // cout << "trying to open fits..." << endl;
-  char * filename = const_cast<char*> ( fname );
-  if ( 0 == openFITS( filename ) )
+  if ( 0 == openFITS( fname ) )
   {
 //     file = (fitsfile*)myfile;
     lcltype = FITSTYPE;
@@ -192,21 +193,21 @@ int dalDataset::open( const char * fname )
     cout << lcltype << " file opened, but other FITS operations are not "
       << "yet supported.  Sorry." << endl;
 	exit(10);
-  } else if ( (h5fh = openHDF5( filename )) >= 0 ) {
+  } else if ( (h5fh = openHDF5( fname )) >= 0 ) {
      file = &h5fh;
      lcltype = H5TYPE;
      type = lcltype;
-     name = filename;
+     name = fname;
      return DAL::SUCCESS;
   } else {
 #ifdef WITH_CASA
      try {
         lcltype = MSCASATYPE;
         type = lcltype;
-        ms = new casa::MeasurementSet( filename );
+        ms = new casa::MeasurementSet( fname );
         file = &ms;
         ms_reader = new casa::MSReader( *ms );
-        name = filename;
+        name = fname;
         return DAL::SUCCESS;
      } catch (casa::AipsError x) {
 //         cout << "ERROR: " << x.getMesg() << endl;

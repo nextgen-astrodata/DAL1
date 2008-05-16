@@ -231,7 +231,7 @@ namespace DAL {
     /*!
       \brief Get the integration time
     */
-    double integration_time();
+    double total_integration_time();
 
     /*!
       \brief Get the number of breaks

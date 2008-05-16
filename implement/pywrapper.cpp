@@ -244,8 +244,8 @@ BOOST_PYTHON_MODULE(pydal)
 	     "Return the center_freq from the header")
 	.def("bandwidth", &BeamFormed::bandwidth,
 	     "Return the bandwidth from the header")
-	.def("integration_time", &BeamFormed::integration_time,
-	     "Return the integration_time from the header")
+	.def("total_integration_time", &BeamFormed::total_integration_time,
+	     "Return the total_integration_time from the header")
 	.def("breaks", &BeamFormed::breaks,
 	     "Return the breaks from the header")
 	.def("dispersion_measure", &BeamFormed::dispersion_measure,

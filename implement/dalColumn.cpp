@@ -59,13 +59,13 @@ dalColumn::dalColumn( string colname, string type )
 dalColumn::dalColumn( string complexcolname )
 {
 	name = complexcolname;
-	dal_datatype = dal_COMPLEX;
+	dal_datatype = DAL::dal_COMPLEX;
 }
 
 #ifdef WITH_CASA
 dalColumn::dalColumn(casa::Table table, string colname)
 {
-    filetype = MSCASATYPE;
+    filetype = DAL::MSCASATYPE;
     try
     {
        casa_column = new casa::ROTableColumn( table, colname );
@@ -99,7 +99,7 @@ void dalColumn::close()
 //               };
 string dalColumn::getDataType()
 {
-  if ( MSCASATYPE == filetype )
+  if ( DAL::MSCASATYPE == filetype )
   {
 #ifdef WITH_CASA
   switch ( casa_col_desc.dataType() )
@@ -135,7 +135,7 @@ string dalColumn::getDataType()
 
 int dalColumn::isScalar()
 {
-  if ( MSCASATYPE == filetype )
+  if ( DAL::MSCASATYPE == filetype )
   {
 #ifdef WITH_CASA
    if ( casa_col_desc.isScalar() )
@@ -157,7 +157,7 @@ int dalColumn::isScalar()
 
 int dalColumn::isArray()
 {
-  if ( MSCASATYPE == filetype )
+  if ( DAL::MSCASATYPE == filetype )
   {
 #ifdef WITH_CASA
    if ( casa_col_desc.isArray() )
@@ -180,7 +180,7 @@ int dalColumn::isArray()
 vector<int> dalColumn::shape()
 {
   vector<int> shape_vals;
-  if ( MSCASATYPE == filetype )
+  if ( DAL::MSCASATYPE == filetype )
   {
 #ifdef WITH_CASA
     if ( isArray() )
@@ -220,7 +220,7 @@ vector<int> dalColumn::shape()
 
 unsigned int dalColumn::ndims()
 {
-  if ( MSCASATYPE == filetype )
+  if ( DAL::MSCASATYPE == filetype )
   {
 #ifdef WITH_CASA
     if ( isArray() )
@@ -264,7 +264,7 @@ string dalColumn::getName()
 
 unsigned int dalColumn::nrows()
 {
-  if ( MSCASATYPE == filetype )
+  if ( DAL::MSCASATYPE == filetype )
   {
 #ifdef WITH_CASA
     num_of_rows = casa_column->nrow();
@@ -296,7 +296,7 @@ dalData * dalColumn::data()
 
 dalData * dalColumn::data( int start, int &length )
 {
-  if ( MSCASATYPE == filetype )
+  if ( DAL::MSCASATYPE == filetype )
   {
 #ifdef WITH_CASA
    try
@@ -309,7 +309,7 @@ dalData * dalColumn::data( int start, int &length )
 	 {
 	   rosc_int = new casa::ROScalarColumn<casa::Int>( *casa_column );
 	   scalar_vals_int = rosc_int->getColumn();
-	   data_object = new dalData( filetype, dal_INT, shape(), nrows() );
+	   data_object = new dalData( filetype, DAL::dal_INT, shape(), nrows() );
 	   data_object->data = (int *)scalar_vals_int.getStorage(deleteIt);
 	   return data_object;
          }
@@ -318,7 +318,7 @@ dalData * dalColumn::data( int start, int &length )
 	 {
 	   rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
 	   scalar_vals_dbl = rosc_dbl->getColumn();
-	   data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
+	   data_object = new dalData( filetype, DAL::dal_DOUBLE, shape(), nrows() );
 	   data_object->data = (double *)scalar_vals_dbl.getStorage(deleteIt);
 	   return data_object;
          }
@@ -327,7 +327,7 @@ dalData * dalColumn::data( int start, int &length )
 	 {
 	   rosc_comp = new casa::ROScalarColumn<casa::Complex>( *casa_column );
 	   scalar_vals_comp = rosc_comp->getColumn();
-	   data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
+	   data_object = new dalData( filetype, DAL::dal_COMPLEX, shape(), nrows() );
 	   data_object->data =
 	     (complex<float> *)scalar_vals_comp.getStorage(deleteIt);
 	   return data_object;
@@ -337,7 +337,7 @@ dalData * dalColumn::data( int start, int &length )
 	 {
 	   rosc_string = new casa::ROScalarColumn<casa::String>( *casa_column );
 	   scalar_vals_string = rosc_string->getColumn();
-	   data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
+	   data_object = new dalData( filetype, DAL::dal_STRING, shape(), nrows() );
 	   data_object->data =
 	     (string *)scalar_vals_string.getStorage(deleteIt);
 	   return data_object;
@@ -362,7 +362,7 @@ dalData * dalColumn::data( int start, int &length )
 	  {
 	    roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
             array_vals_int = roac_int->getColumn();
-	    data_object = new dalData( filetype, dal_INT, shape(), nrows() );
+	    data_object = new dalData( filetype, DAL::dal_INT, shape(), nrows() );
 	    data_object->data = (int *)array_vals_int.getStorage(deleteIt);
 	    return data_object;
 	  }
@@ -371,7 +371,7 @@ dalData * dalColumn::data( int start, int &length )
 	  {
 	    roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
             array_vals_dbl = roac_dbl->getColumn();
-	    data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
+	    data_object = new dalData( filetype, DAL::dal_DOUBLE, shape(), nrows() );
 	    data_object->data = (double *)array_vals_dbl.getStorage(deleteIt);
 	    return data_object;
 	  }
@@ -380,7 +380,7 @@ dalData * dalColumn::data( int start, int &length )
 	  {
 // 	    casa::IPosition start (2,cell1,cell2);
 // 	    casa::Slicer slicer (start);
-	    dal_datatype = dal_COMPLEX;
+	    dal_datatype = DAL::dal_COMPLEX;
 	    vector< complex< float > > ret_valvec;
 	    try
 	    {
@@ -390,7 +390,7 @@ dalData * dalColumn::data( int start, int &length )
 	       exit(-4);
             }
             array_vals_comp = roac_comp->getColumn(/*slicer*/);
-	    data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
+	    data_object = new dalData( filetype, DAL::dal_COMPLEX, shape(), nrows() );
 	    data_object->data =
 		  (complex<float> *)array_vals_comp.getStorage(deleteIt);
 	    return data_object;
@@ -401,7 +401,7 @@ dalData * dalColumn::data( int start, int &length )
 	  {
 	    roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
 	    array_vals_string = roac_string->getColumn();
-	    data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
+	    data_object = new dalData( filetype, DAL::dal_STRING, shape(), nrows() );
 	    data_object->data = (string *)array_vals_string.getStorage(deleteIt);
 	    return data_object;
 	  }
@@ -430,7 +430,7 @@ dalData * dalColumn::data( int start, int &length )
 #endif
    }
 
-   else if ( H5TYPE == filetype )
+   else if ( DAL::H5TYPE == filetype )
    {
 	size_t * field_sizes;
 	size_t * field_offsets;
@@ -454,12 +454,12 @@ dalData * dalColumn::data( int start, int &length )
 	if ( length < 0 )
 	  length = nrecords;
 
-	if ( dal_COMPLEX_SHORT == getType() )
+	if ( DAL::dal_COMPLEX_SHORT == getType() )
         {
-		dalcomplex_int16 * data = NULL;
+		DAL::dalcomplex_int16 * data = NULL;
 		try
 		{
-		  data = (dalcomplex_int16*)malloc(sizeof(dalcomplex_int16)*length);
+		  data = (DAL::dalcomplex_int16*)malloc(sizeof(DAL::dalcomplex_int16)*length);
 		}
 		catch ( bad_alloc )
 		{
@@ -468,16 +468,16 @@ dalData * dalColumn::data( int start, int &length )
 		}
 		
 		if ( H5TBread_fields_name (file_id, tablename.c_str(), name.c_str(),
-				start, length, sizeof(dalcomplex_int16), field_offsets, field_sizes,
+				start, length, sizeof(DAL::dalcomplex_int16), field_offsets, field_sizes,
 				data ) < 0 )
 			return NULL;
 		
 		vector<int> shape(1);
 		
-		data_object = new dalData( filetype, dal_COMPLEX_SHORT, shape, length );
-		data_object->data = (dalcomplex_int16 *)data;
+		data_object = new dalData( filetype, DAL::dal_COMPLEX_SHORT, shape, length );
+		data_object->data = (DAL::dalcomplex_int16 *)data;
 	}
-	else if ( dal_FLOAT == getType() )
+	else if ( DAL::dal_FLOAT == getType() )
         {
 		float * data = NULL;
 		try
@@ -497,7 +497,7 @@ dalData * dalColumn::data( int start, int &length )
 		
 		vector<int> shape(1);
 		
-		data_object = new dalData( filetype, dal_FLOAT, shape, length );
+		data_object = new dalData( filetype, DAL::dal_FLOAT, shape, length );
 		data_object->data = (float *)data;
 	}
         else
@@ -518,29 +518,29 @@ dalData * dalColumn::data( int start, int &length )
 
 int dalColumn::getSize()
 {
-	if ( dal_CHAR== getType() ) {
+	if ( DAL::dal_CHAR== getType() ) {
 		return sizeof( char );
 	}
-	else if ( dal_INT == getType() ) {
+	else if ( DAL::dal_INT == getType() ) {
 		return sizeof( int );
 	}
-	else if ( dal_SHORT == getType() ) {
+	else if ( DAL::dal_SHORT == getType() ) {
 		return sizeof( short );
 	}
-	else if ( dal_FLOAT == getType() ) {
+	else if ( DAL::dal_FLOAT == getType() ) {
 		return sizeof( float );
 	}
-	else if ( dal_DOUBLE == getType() ) {
+	else if ( DAL::dal_DOUBLE == getType() ) {
 		return sizeof( double );
 	}
-	else if ( dal_COMPLEX == getType() ) {
-		return sizeof( dalcomplex );
+	else if ( DAL::dal_COMPLEX == getType() ) {
+		return sizeof( DAL::dalcomplex );
 	}
-	else if ( dal_COMPLEX_SHORT == getType() ) {
-		return sizeof( dalcomplex_int16 );
+	else if ( DAL::dal_COMPLEX_SHORT == getType() ) {
+		return sizeof( DAL::dalcomplex_int16 );
 	}
-	else if ( dal_COMPLEX_CHAR == getType() ) {
-		return sizeof( dalcomplex_char );
+	else if ( DAL::dal_COMPLEX_CHAR == getType() ) {
+		return sizeof( DAL::dalcomplex_char );
 	}
 	else
 	{
@@ -554,27 +554,27 @@ void dalColumn::addMember( string member_name, string member_type )
 /*    array_tid = H5Tarray_create(H5T_NATIVE_CHAR, ARRAY_RANK,
 		    array_dim, NULL);
 */
-  if ( H5TYPE == filetype )
+  if ( DAL::H5TYPE == filetype )
   {
-    if ( member_type == dal_CHAR )	{
+    if ( member_type == DAL::dal_CHAR )	{
       status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_CHAR );
     }
-    else if ( member_type == dal_INT )	{
+    else if ( member_type == DAL::dal_INT )	{
       status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_INT );
     }
-    else if ( member_type == dal_UINT )	{
+    else if ( member_type == DAL::dal_UINT )	{
       status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_UINT );
     }
-    else if ( member_type == dal_SHORT )	{
+    else if ( member_type == DAL::dal_SHORT )	{
       status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_SHORT );
     }
-    else if ( member_type == dal_FLOAT )	{
+    else if ( member_type == DAL::dal_FLOAT )	{
       status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_FLOAT );
     }
-    else if ( member_type == dal_DOUBLE )	{
+    else if ( member_type == DAL::dal_DOUBLE )	{
       status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_NATIVE_DOUBLE );
     }
-    else if ( member_type == dal_STRING )	{
+    else if ( member_type == DAL::dal_STRING )	{
       status = H5Tinsert(coltype, member_name.c_str(), 0, H5T_C_S1 );
     }
     else {					     
@@ -602,9 +602,10 @@ bpl::tuple dalColumn::shape_boost()
   lclvals = shape();
   bpl::list lcllist;
 
-  for (unsigned int ii=0; ii<lclvals.size(); ii++)
+  vector<int>::iterator iter;
+  for (iter=lclvals.begin(); iter < lclvals.end(); iter++)
   {
-    lcllist.append(lclvals[ii]);
+    lcllist.append(*iter);
   }
 
    bpl::tuple lcl_tuple;
@@ -615,7 +616,7 @@ bpl::tuple dalColumn::shape_boost()
 
 bpl::numeric::array dalColumn::data_boost()
 {
-  if ( MSCASATYPE == filetype )
+  if ( DAL::MSCASATYPE == filetype )
   {
 #ifdef WITH_CASA
    try
@@ -628,7 +629,7 @@ bpl::numeric::array dalColumn::data_boost()
 	 {
 	   rosc_int = new casa::ROScalarColumn<casa::Int>( *casa_column );
 	   scalar_vals_int = rosc_int->getColumn();
-	   data_object = new dalData( filetype, dal_INT, shape(), nrows() );
+	   data_object = new dalData( filetype, DAL::dal_INT, shape(), nrows() );
 	   data_object->data = (int *)scalar_vals_int.getStorage(deleteIt);
 	   return data_object->get_boost();
          }
@@ -637,7 +638,7 @@ bpl::numeric::array dalColumn::data_boost()
 	 {
 	   rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
 	   scalar_vals_dbl = rosc_dbl->getColumn();
-	   data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
+	   data_object = new dalData( filetype, DAL::dal_DOUBLE, shape(), nrows() );
 	   data_object->data = (double *)scalar_vals_dbl.getStorage(deleteIt);
 	   return data_object->get_boost();
          }
@@ -646,7 +647,7 @@ bpl::numeric::array dalColumn::data_boost()
 	 {
 	   rosc_comp = new casa::ROScalarColumn<casa::Complex>( *casa_column );
 	   scalar_vals_comp = rosc_comp->getColumn();
-	   data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
+	   data_object = new dalData( filetype, DAL::dal_COMPLEX, shape(), nrows() );
 	   data_object->data =
 	     (complex<float> *)scalar_vals_comp.getStorage(deleteIt);
 	   return data_object->get_boost();
@@ -656,7 +657,7 @@ bpl::numeric::array dalColumn::data_boost()
 	 {
 	   rosc_string = new casa::ROScalarColumn<casa::String>( *casa_column );
 	   scalar_vals_string = rosc_string->getColumn();
-	   data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
+	   data_object = new dalData( filetype, DAL::dal_STRING, shape(), nrows() );
 	   data_object->data =
 	     (string *)scalar_vals_string.getStorage(deleteIt);
 	   return data_object->get_boost();
@@ -684,7 +685,7 @@ bpl::numeric::array dalColumn::data_boost()
 	  {
 	    roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
             array_vals_int = roac_int->getColumn();
-	    data_object = new dalData( filetype, dal_INT, shape(), nrows() );
+	    data_object = new dalData( filetype, DAL::dal_INT, shape(), nrows() );
 	    data_object->data = (int *)array_vals_int.getStorage(deleteIt);
 	    return data_object->get_boost();
 	    }
@@ -693,7 +694,7 @@ bpl::numeric::array dalColumn::data_boost()
 	  {
 	    roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
             array_vals_dbl = roac_dbl->getColumn();
-	    data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
+	    data_object = new dalData( filetype, DAL::dal_DOUBLE, shape(), nrows() );
 	    data_object->data = (double *)array_vals_dbl.getStorage(deleteIt);
 	    return data_object->get_boost();
 	    }
@@ -702,7 +703,7 @@ bpl::numeric::array dalColumn::data_boost()
 	  {
 // 	    casa::IPosition start (2,cell1,cell2);
 // 	    casa::Slicer slicer (start);
-	    dal_datatype = dal_COMPLEX;
+	    dal_datatype = DAL::dal_COMPLEX;
 	    vector< complex< float > > ret_valvec;
 	    try
 	    {
@@ -712,7 +713,7 @@ bpl::numeric::array dalColumn::data_boost()
 	       exit(-4);
             }
             array_vals_comp = roac_comp->getColumn(/*slicer*/);
-	    data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
+	    data_object = new dalData( filetype, DAL::dal_COMPLEX, shape(), nrows() );
 	    data_object->data =
 		  (complex<float> *)array_vals_comp.getStorage(deleteIt);
 	    return data_object->get_boost();
@@ -723,7 +724,7 @@ bpl::numeric::array dalColumn::data_boost()
 	  {
 	    roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
             array_vals_string = roac_string->getColumn();
-	    data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
+	    data_object = new dalData( filetype, DAL::dal_STRING, shape(), nrows() );
 	    data_object->data = (string *)array_vals_string.getStorage(deleteIt);
 	    return data_object->get_boost();
 	    }
@@ -757,7 +758,7 @@ bpl::numeric::array dalColumn::data_boost()
     }
 #endif // WITH_CASA
    }
-   else if ( H5TYPE == filetype )
+   else if ( DAL::H5TYPE == filetype )
    {
      cerr << "ERROR: hdf5 not supported [dalColumn.data - python]" << endl;
      int start = 0;

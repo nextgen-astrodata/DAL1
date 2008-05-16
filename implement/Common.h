@@ -26,12 +26,14 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 namespace DAL {
 
 // check if an object exists in a vector
 template <class T>
 bool it_exists( std::vector<T> vec, T item );
+bool it_exists_str( std::vector<std::string> vec, std::string name );
 
 template <class T>
 void list_vector_members( std::vector<T> vec );

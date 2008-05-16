@@ -388,7 +388,9 @@ bpl::numeric::array BeamGroup::getSubbandData_XY_boost( int subband,
                                                         int length )
 {
   std::vector< std::complex<short> > x_values;
+  std::vector< std::complex<short> >::iterator xvalit;
   std::vector< std::complex<short> > y_values;
+  std::vector< std::complex<short> >::iterator yvalit;
   x_values.clear();
   y_values.clear();
   getSubbandData_X( subband, start, length, x_values );
@@ -398,14 +400,14 @@ bpl::numeric::array BeamGroup::getSubbandData_XY_boost( int subband,
   bpl::list y_value_list;
   bpl::list xy_value_list;
 
-  for (unsigned int ii=0; ii<x_values.size(); ii++)
+  for (xvalit=x_values.begin(); xvalit < x_values.end(); xvalit++)
   {
-     std::complex<float> foo(x_values[ii].real(),x_values[ii].imag());
+     std::complex<float> foo((*xvalit).real(),(*xvalit).imag());
      x_value_list.append( foo );
   }
-  for (unsigned int ii=0; ii<y_values.size(); ii++)
+  for (yvalit=y_values.begin(); yvalit < y_values.end(); yvalit++)
   {
-     std::complex<float> foo(y_values[ii].real(),y_values[ii].imag());
+     std::complex<float> foo((*yvalit).real(),(*yvalit).imag());
      y_value_list.append( foo );
   }
 

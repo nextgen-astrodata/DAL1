@@ -40,6 +40,17 @@ bool it_exists( std::vector<T> vec, T item )
   return false;
 }
 
+bool it_exists_str( std::vector<std::string> vec, std::string name )
+{
+  std::vector<std::string>::iterator it;
+  for ( it=vec.begin() ; it < vec.end(); it++ )
+  {
+    if ( name == *it )
+      return true;
+  }
+  return false;
+}
+
 template <class T>
 void list_vector_members( std::vector<T> vec )
 {
