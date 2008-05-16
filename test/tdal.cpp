@@ -46,8 +46,10 @@
 #include <dalGroup.h>
 #endif
 
+#ifdef WITH_MYSQL
 #ifndef DATABASE_H
 #include <Database.h>
+#endif
 #endif
 
 #define FILENAME "tdal_test.h5"

@@ -240,9 +240,7 @@ endif (HAVE_HDF5)
 
 if (HAVE_MYSQL)
   include_directories (${MYSQL_INCLUDES})
-  add_definitions (
-   -DWITH_MYSQL
-  )
+  add_definitions (-DWITH_MYSQL)
 else (HAVE_MYSQL)
   message (STATUS "[DAL] MYSQL installation incomplete!")
 endif (HAVE_MYSQL)
