@@ -88,7 +88,7 @@ void dalDataset::init()
   tables.clear();
   groups.clear();
   attrs.clear();
-  filter = NULL;
+  filter = new dalFilter;
   h5fh = 0;   //!< hdf5 file handle
   status = 0;
 
@@ -102,7 +102,11 @@ void dalDataset::init()
  *  Default destructor
  *
  *****************************************************************/
-dalDataset::~dalDataset() {}
+dalDataset::~dalDataset()
+{
+  delete filter;
+  filter = NULL;
+}
 
 /****************************************************************
  *  Sub-routine to open a FITS file
@@ -467,7 +471,6 @@ void dalDataset::listTables()
 
 void dalDataset::setFilter( string columns )
 {
-    filter = new dalFilter;
     filter->setFiletype( type );
     filter->set(columns);
 }

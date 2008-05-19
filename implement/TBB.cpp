@@ -29,6 +29,7 @@ namespace DAL {
   TBB::TBB( string const& filename )
   {
     // initializations (private)
+    seqnrLast = 0;
     bigendian = BigEndian();
     sample_time = (time_t)0;
     name = filename;
@@ -196,6 +197,16 @@ namespace DAL {
     printf("Time:              : %s\n",time_string );
     printRawHeader();
     #endif
+
+    if ( !first_sample )
+    {
+      if ( ( seqnrLast > header.seqnr ) || ( seqnrLast+1 != header.seqnr ) )
+      {
+         printf("WARNING: Frame missing or out of order\n");
+         exit(9);
+      }
+    }
+    seqnrLast = header.seqnr;
 
     return true;
   }

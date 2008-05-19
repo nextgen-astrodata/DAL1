@@ -121,7 +121,7 @@ namespace DAL {
     Int16 spare;
     UInt16 crc;
   };
-
+  long seqnrLast;
   bool bigendian;
   time_t sample_time;  // For date
   string name;
