@@ -63,6 +63,11 @@ namespace DAL {
     payload_crc = 0;
     tran_sample.value = 0;
     spec_sample.value = 0;
+    size = 0;
+    memblock = NULL;
+    rawfile = NULL;
+    real_part = 0;
+    imag_part = 0;
 
     // initializations (public)
     first_sample = true;
@@ -101,7 +106,17 @@ namespace DAL {
       stationGroup = NULL;
     }
     delete dataset;
-    close(main_socket);
+    if (main_socket)
+      close(main_socket);
+    if (rawfile)
+    {
+      if (rawfile->is_open())
+      {
+        rawfile->close();
+      }
+      delete rawfile;
+      rawfile = NULL;
+    }
   }
 
   // ------------------------------------------------------------- 
@@ -135,6 +150,13 @@ namespace DAL {
     printf("ready\n");
   }
 
+  void TBB::openRawFile( char* filename )
+  {
+     delete rawfile;
+     rawfile = new fstream( filename, ios::binary|ios::in );
+     rawfile->seekg (0, ios::beg);  // move to start of file
+  }
+
   int TBB::readsocket( unsigned int nbytes, char* buf )
   {
     FD_ZERO(&readSet);
@@ -160,7 +182,7 @@ namespace DAL {
     return DAL::SUCCESS;
   }
 
-  bool TBB::readRawSocketHeader()
+  bool TBB::readRawSocketBlockHeader()
   {
     // ------------------------------------------------------  read the header 
     //
@@ -209,6 +231,53 @@ namespace DAL {
     seqnrLast = header.seqnr;
 
     return true;
+  }
+
+  // ------------------------------------------------------  read the header 
+  //
+  // read 88-byte TBB frame header
+  //
+
+  void TBB::readRawFileBlockHeader()
+  {
+    rawfile->read(reinterpret_cast<char *>(&header), sizeof(header));
+
+    // reverse fields if big endian
+    if ( bigendian )
+      {
+        swapbytes( (char *)&header.seqnr, 4 );
+        swapbytes( (char *)&header.sample_nr, 4 );
+        swapbytes( (char *)&header.n_samples_per_frame, 8);
+        swapbytes( (char *)&header.n_freq_bands, 2 );
+      }
+
+    // Convert the time (seconds since 1 Jan 1970) to a human-readable string
+    // "The samplenr field is used together with the time field to get
+    //  an absolute time reference.  The samplenr field holds the number of
+    //  samples that was counted by RSP since the start of the current second."
+    // "By multiplying the samplenr with the sample period and additing it to
+    //  the seconds field, the time instance of the first data sample of the
+    //  frame is known"
+    //   -- TBB Design Description document, Wietse Poiesz (2006-10-3)
+    //      Doc..id: LOFAR-ASTRON-SDD-047
+    sample_time =
+      (time_t)( header.time + header.sample_nr/(header.sample_freq*1000000) );
+    char *time_string=ctime(&sample_time);
+    time_string[strlen(time_string)-1]=0;   // remove \n
+
+    #ifdef DEBUGGING_MESSAGES
+    printf("Time:              : %s\n",time_string );
+    printRawHeader();
+    #endif
+
+  }
+
+  bool TBB::eof()
+  {
+    if ( rawfile->peek() == EOF )
+      return true;
+    else
+      return false;
   }
 
   void TBB::printRawHeader()
@@ -262,72 +331,82 @@ namespace DAL {
        cerr << "CREATED New station group: " << string(stationstr) << endl;
        sprintf(uid, "%03d%03d%03d",
                header.stationid, header.rspid, header.rcuid);
+       first_sample = true;
     }
   }
 
   void TBB::makeOutputHeader()
   {
-	if ( 0!=header.n_freq_bands )
-	{
-          #ifdef DEBUGGING_MESSAGES
-          cerr << "Spectral mode." << endl;
-          #endif
-	}
-	else
-	{
-	  vector<int> firstdims;
-	  firstdims.push_back( 0 );
-	  short nodata[0];
-	  dipoleArray =
-	    stationGroup->createShortArray( string(uid),firstdims,nodata,cdims );
+     vector<int> firstdims;
+     firstdims.push_back( 0 );
 
-	  string telescope          = "LOFAR";
-	  string observer           = "";
-	  string project            = "";
-	  string observation_id     = "";
-	  string observation_mode   = "";
-	  string trigger_type       = "";
-	  double trigger_offset[1]  = { 0 };
-	  int triggered_antennas[1] = { 0 };
-	  double beam_direction[2]  = { 0, 0 };
+     string telescope          = "LOFAR";
+     string observer           = "";
+     string project            = "";
+     string observation_id     = "";
 
-	  // Add attributes to "Station" group
-	  stationGroup->setAttribute_string("TELESCOPE", telescope );
-	  stationGroup->setAttribute_string("OBSERVER", observer );
-	  stationGroup->setAttribute_string("PROJECT", project );
-	  stationGroup->setAttribute_string("OBS_ID", observation_id );
-	  stationGroup->setAttribute_string("OBS_MODE", observation_mode );
-	  stationGroup->setAttribute_string("TRIG_TYPE", trigger_type );
-	  stationGroup->setAttribute_double("TRIG_OFST", trigger_offset );
-	  stationGroup->setAttribute_int(   "TRIG_ANTS", triggered_antennas );
-	  stationGroup->setAttribute_double("BEAM_DIR", beam_direction, 2 );
+     if ( 0 == header.n_freq_bands )
+     {
+       short nodata[0];
+       dipoleArray = stationGroup->createShortArray( string(uid),
+                                                     firstdims,
+                                                     nodata,
+                                                     cdims );
+       stationGroup->setAttribute_string("OBS_MODE", "Transient" );
+     }
+     else
+     {
+       complex<Int16> nodata[0];
+       dipoleArray =
+         stationGroup->createComplexShortArray( string(uid),
+                                                firstdims,
+                                                nodata,
+                                                cdims );
+       stationGroup->setAttribute_string("OBS_MODE", "Sub-band" );
+     }
 
-	  unsigned int sid[] = { (unsigned int)(header.stationid) };
-	  unsigned int rsp[] = { (unsigned int)(header.rspid) };
-	  unsigned int rcu[] = { (unsigned int)(header.rcuid) };
-	  double sf[] = { (double)header.sample_freq };
-	  unsigned int time[] = { (unsigned int)(header.time) };
-	  unsigned int samp_num[] = { (unsigned int)(header.sample_nr) };
-	  unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
-	  unsigned int datalen[] = { (unsigned int)0 };
-	  unsigned int nyquist_zone[] = { (unsigned int)0 };
-	  string feed       = "NONE";
-	  double apos[3]    = { 0, 0, 0 };
-	  double aorient[3] = { 0, 0, 0 };
+     string observation_mode   = "";
+     string trigger_type       = "";
+     double trigger_offset[1]  = { 0 };
+     int triggered_antennas[1] = { 0 };
+     double beam_direction[2]  = { 0, 0 };
 
-	  dipoleArray->setAttribute_uint("STATION_ID", sid );
-	  dipoleArray->setAttribute_uint("RSP_ID", rsp );
-	  dipoleArray->setAttribute_uint("RCU_ID", rcu );
-	  dipoleArray->setAttribute_double("SAMPLE_FREQ", sf );
-	  dipoleArray->setAttribute_uint("TIME", time );
-	  dipoleArray->setAttribute_uint("SAMPLE_NR", samp_num );
-	  dipoleArray->setAttribute_uint("SAMPLES_PER_FRAME", spf );
-	  dipoleArray->setAttribute_uint("DATA_LENGTH", datalen );
-	  dipoleArray->setAttribute_uint("NYQUIST_ZONE", nyquist_zone );
-	  dipoleArray->setAttribute_string("FEED", feed );
-	  dipoleArray->setAttribute_double("ANT_POSITION", apos );
-	  dipoleArray->setAttribute_double("ANT_ORIENTATION", aorient );
-	}
+     // Add attributes to "Station" group
+     stationGroup->setAttribute_string("TELESCOPE", telescope );
+     stationGroup->setAttribute_string("OBSERVER", observer );
+     stationGroup->setAttribute_string("PROJECT", project );
+     stationGroup->setAttribute_string("OBS_ID", observation_id );
+     stationGroup->setAttribute_string("OBS_MODE", observation_mode );
+     stationGroup->setAttribute_string("TRIG_TYPE", trigger_type );
+     stationGroup->setAttribute_double("TRIG_OFST", trigger_offset );
+     stationGroup->setAttribute_int(   "TRIG_ANTS", triggered_antennas );
+     stationGroup->setAttribute_double("BEAM_DIR", beam_direction, 2 );
+
+     unsigned int sid[] = { (unsigned int)(header.stationid) };
+     unsigned int rsp[] = { (unsigned int)(header.rspid) };
+     unsigned int rcu[] = { (unsigned int)(header.rcuid) };
+     double sf[] = { (double)header.sample_freq };
+     unsigned int time[] = { (unsigned int)(header.time) };
+     unsigned int samp_num[] = { (unsigned int)(header.sample_nr) };
+     unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
+     unsigned int datalen[] = { (unsigned int)0 };
+     unsigned int nyquist_zone[] = { (unsigned int)0 };
+     string feed       = "NONE";
+     double apos[3]    = { 0, 0, 0 };
+     double aorient[3] = { 0, 0, 0 };
+
+     dipoleArray->setAttribute_uint("STATION_ID", sid );
+     dipoleArray->setAttribute_uint("RSP_ID", rsp );
+     dipoleArray->setAttribute_uint("RCU_ID", rcu );
+     dipoleArray->setAttribute_double("SAMPLE_FREQ", sf );
+     dipoleArray->setAttribute_uint("TIME", time );
+     dipoleArray->setAttribute_uint("SAMPLE_NR", samp_num );
+     dipoleArray->setAttribute_uint("SAMPLES_PER_FRAME", spf );
+     dipoleArray->setAttribute_uint("DATA_LENGTH", datalen );
+     dipoleArray->setAttribute_uint("NYQUIST_ZONE", nyquist_zone );
+     dipoleArray->setAttribute_string("FEED", feed );
+     dipoleArray->setAttribute_double("ANT_POSITION", apos );
+     dipoleArray->setAttribute_double("ANT_ORIENTATION", aorient );
   }
 
   bool TBB::transientMode()
@@ -366,6 +445,62 @@ namespace DAL {
          return false;
 
       return true;
+  }
+
+  void TBB::processTransientFileDataBlock()
+  {
+    short sdata[ header.n_samples_per_frame];
+
+    for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
+    {
+      rawfile->read( reinterpret_cast<char *>(&tran_sample),
+                     sizeof(tran_sample) );
+
+      if ( bigendian )  // reverse fields if big endian
+        swapbytes( (char *)&tran_sample.value, 2 );
+
+      sdata[zz] = tran_sample.value;
+    }
+
+    dims[0] += header.n_samples_per_frame;
+    dipoleArray->extend(dims);
+    dipoleArray->write(offset, sdata, header.n_samples_per_frame );
+    offset += header.n_samples_per_frame;
+
+    rawfile->read( reinterpret_cast<char *>(&payload_crc),
+                    sizeof(payload_crc) );
+
+  }
+
+  void TBB::processSpectralFileDataBlock()
+  {
+    complex<Int16> csdata[ header.n_samples_per_frame];
+
+    for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
+    {
+      rawfile->read( reinterpret_cast<char *>(&spec_sample),
+                     sizeof(spec_sample) );
+
+      real_part = real(spec_sample.value);
+      imag_part = imag(spec_sample.value);
+
+      if ( bigendian ) // reverse fields if big endian
+      {
+         swapbytes( (char *)&real_part, 2 );
+         swapbytes( (char *)&imag_part, 2 );
+      }
+
+      csdata[zz] = complex<Int16>( real_part, imag_part );
+    }
+
+    dims[0] += header.n_samples_per_frame;
+    dipoleArray->extend(dims);
+    dipoleArray->write(offset, csdata, header.n_samples_per_frame );
+    offset += header.n_samples_per_frame;
+
+    rawfile->read( reinterpret_cast<char *>(&payload_crc),
+                   sizeof(payload_crc) );
+
   }
 
 } // end namespace DAL

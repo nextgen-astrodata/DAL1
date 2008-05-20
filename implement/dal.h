@@ -223,6 +223,11 @@ namespace DAL {
     double i;  // imaginary
   };
 
+  typedef struct dalcomplex_float32 {
+    float r;  // real
+    float i;  // imaginary
+  };
+
   typedef struct dalcomplex_int16 {
     short r;  // real
     short i;  // imaginary
@@ -231,7 +236,7 @@ namespace DAL {
   typedef struct dalcomplex_char {
     char r;  // real
     char i;  // imaginary
-  } dalcomplex_char;
+  };
 
 } // namespace DAL
 

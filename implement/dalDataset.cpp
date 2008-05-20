@@ -501,7 +501,8 @@ dalArray * dalDataset::createArray( string arrayname, dalData * data_object )
       }
 
    if ( dal_COMPLEX == data_object->get_datatype() )
-      return createComplexArray( arrayname, data_object->shape, cdata, cdims);
+      return createComplexFloatArray( arrayname, data_object->shape,
+                                      cdata, cdims );
    else
    {
 // ADD MORE DATATYPES HERE!
@@ -517,7 +518,9 @@ dalArray * dalDataset::createArray( string arrayname, dalData * data_object )
  *  Create an Integer array of N dimensions
  *
  *****************************************************************/
-dalArray * dalDataset::createIntArray( string arrayname, vector<int> dims, int data[], vector<int> cdims)
+dalArray *
+dalDataset::createIntArray( string arrayname, vector<int> dims,
+                            int data[], vector<int> cdims )
 {
    if ( type == H5TYPE )
    {
@@ -541,7 +544,9 @@ dalArray * dalDataset::createIntArray( string arrayname, vector<int> dims, int d
  *  Create an Float array of N dimensions
  *
  *****************************************************************/
-dalArray * dalDataset::createFloatArray( string arrayname, vector<int> dims, float data[], vector<int> cdims)
+dalArray *
+dalDataset::createFloatArray( string arrayname, vector<int> dims,
+                              float data[], vector<int> cdims )
 {
    if ( type == H5TYPE )
    {
@@ -562,12 +567,14 @@ dalArray * dalDataset::createFloatArray( string arrayname, vector<int> dims, flo
  *  Create an Copmlex array of N dimensions
  *
  *****************************************************************/
-dalArray * dalDataset::createComplexArray( string arrayname, vector<int> dims, /*vector< complex<float> >*/complex<float> data[]/*dalcomplex data[]*/, vector<int> cdims)
+dalArray *
+dalDataset::createComplexFloatArray( string arrayname, vector<int> dims,
+                                     complex<float> data[], vector<int> cdims )
 {
    if ( type == H5TYPE )
    {
-	dalComplexArray * la = new dalComplexArray(
-	   file, arrayname, dims, data, cdims );
+	dalComplexArray_float32 * la = new dalComplexArray_float32(
+	   h5fh, arrayname, dims, data, cdims );
 	return la;
    }
    else

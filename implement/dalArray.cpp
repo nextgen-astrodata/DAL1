@@ -97,7 +97,6 @@ void dalArray::write( int offset, short data[], int arraysize )
 void dalArray::write( int offset, complex<float> data[], int arraysize )
 {
     hsize_t      dims[1] = { arraysize };
-//     int rank=1;
     hsize_t off[1] = { offset };
 
     /* Select a hyperslab  */
@@ -120,6 +119,33 @@ void dalArray::write( int offset, complex<float> data[], int arraysize )
 
     /* Write the data to the hyperslab  */
     status = H5Dwrite (array_id, complex_id, filespace, filespace, H5P_DEFAULT, data);
+}
+
+void dalArray::write( int offset, complex<Int16> data[], int arraysize )
+{
+    hsize_t      dims[1] = { arraysize };
+    hsize_t off[1] = { offset };
+
+    /* Select a hyperslab  */
+    hid_t filespace = H5Dget_space( array_id );
+    status = H5Sselect_hyperslab( filespace, H5S_SELECT_SET, off, NULL,
+                                  dims, NULL);
+
+    /* Define memory space */
+    typedef struct {
+      Int16 re;   /*real part*/
+      Int16 im;   /*imaginary part*/
+    } complex_t;
+
+    hid_t complex_id = H5Tcreate (H5T_COMPOUND, sizeof(complex_t));
+    H5Tinsert ( complex_id, "real", HOFFSET(complex_t,re),
+                H5T_NATIVE_DOUBLE );
+    H5Tinsert ( complex_id, "imaginary", HOFFSET(complex_t,im),
+                H5T_NATIVE_DOUBLE );
+
+    /* Write the data to the hyperslab  */
+    status = H5Dwrite( array_id, complex_id, filespace, filespace,
+                       H5P_DEFAULT, data );
 }
 
 vector<int> dalArray::dims()
@@ -729,11 +755,11 @@ int * dalIntArray::readIntArray( hid_t obj_id, string arrayname )
 }
 
 /********************************************************************
- *  dalComplexArray constructor creates an n-dimensional
+ *  dalComplexArray_float32 constructor creates an n-dimensional
  *    array of Complexs (defined in the DAL).
  *
  *  arguments:
- *    voidfile (I) - dataset file handle
+ *    obj_id (I) - dataset file handle
  *    arrayname (I) - name of the array to create
  *    dims (I) - vector of the array dimensions
  *    data (I) - complex<float> vector of data to write
@@ -741,75 +767,149 @@ int * dalIntArray::readIntArray( hid_t obj_id, string arrayname )
  *      if the size of the array is fixed.
  *
  ********************************************************************/
-dalComplexArray::dalComplexArray( void * voidfile, string arrayname, vector<int> dims,
-			  /*vector< complex<float> >*/complex<float> data[], vector<int> chnkdims ) {
-	hid_t * lclfile = (hid_t*)voidfile;
-	file_id = *lclfile;  // get the file handle
-	hid_t datatype, dataspace;  // declare a few h5 variables
+dalComplexArray_float32::dalComplexArray_float32( hid_t obj_id,
+                                                  string arrayname,
+                                                  vector<int> dims,
+                                                  complex<float> data[],
+                                                  vector<int> chnkdims )
+{
+  hid_t datatype, dataspace;  // declare a few h5 variables
+  name = arrayname;  // set the private name variable to the array name
 
-        // determine the rank from the size of the dimensions vector
-	unsigned int rank = dims.size();
-// cout << "RANK IS " << rank << endl;
-	hsize_t mydims[rank];  // declare a dimensions c-array
-	hsize_t maxdims[rank]; // declare a maximum dimensions c-array
-	hid_t status_lcl;  // declare a local return status
+  // determine the rank from the size of the dimensions vector
+  unsigned int rank = dims.size();
 
-	hsize_t chunk_dims[ rank ];  // declare chunk dimensions c-array
+  hsize_t mydims[rank];  // declare a dimensions c-array
+  hsize_t maxdims[rank]; // declare a maximum dimensions c-array
+  hid_t status_lcl;  // declare a local return status
+  hsize_t chunk_dims[ rank ];  // declare chunk dimensions c-array
 
-	// set the c-array dimensions and maxiumum dimensions
-	for (unsigned int ii=0; ii<rank; ii++)
-	{
-// cout << "    " << dims[ii] << endl;
-		mydims[ii] = dims[ii];
-		maxdims[ii] = H5S_UNLIMITED;
-	}
+  // set the c-array dimensions and maxiumum dimensions
+  for (unsigned int ii=0; ii<rank; ii++)
+  {
+     mydims[ii] = dims[ii];  // vector to c-array
+     maxdims[ii] = H5S_UNLIMITED;
+  }
 
-	// set the c-array chunk dimensions from the chunk dims vector
-	for (unsigned int ii=0; ii<chnkdims.size(); ii++)
-	{
-		chunk_dims[ii] = chnkdims[ii];
-	}
+  // set the c-array chunk dimensions from the chunk dims vector
+  for (unsigned int ii=0; ii<chnkdims.size(); ii++)
+  {
+     chunk_dims[ii] = chnkdims[ii];
+  }
 
-	////////////////////////////////////////////////////////
-	// THE FOLLOWING SHOULD BE MOVED TO A COMMON HEADER FILE
-	//
-	// declare a new datatype to hold complex values
-	typedef struct mydalcomplex {
-		float r;  // real
-		float i;  // imaginary
-	} mydalcomplex;
-	// create a new hdf5 datatype for complex values
-	hid_t complex_id = H5Tcreate (H5T_COMPOUND, sizeof(mydalcomplex));
-	H5Tinsert (complex_id, "real", HOFFSET(mydalcomplex,r), H5T_NATIVE_FLOAT);
-	H5Tinsert (complex_id, "imag", HOFFSET(mydalcomplex,i), H5T_NATIVE_FLOAT);
-	//
-	////////////////////////////////////////////////////////
+  // create a new hdf5 datatype for complex values
+  hid_t complex_id = H5Tcreate (H5T_COMPOUND, sizeof(dalcomplex_float32));
+  H5Tinsert (complex_id, "real", HOFFSET(dalcomplex_float32,r), H5T_NATIVE_FLOAT);
+  H5Tinsert (complex_id, "imag", HOFFSET(dalcomplex_float32,i), H5T_NATIVE_FLOAT);
+  //
+  ////////////////////////////////////////////////////////
 
-	// set the datatype to write
-	datatype = H5Tcopy( complex_id );
+  // set the datatype to write
+  datatype = H5Tcopy( complex_id );
 
-	// if there are chunk dimensions, write the data this way
-	if ( chnkdims.size()>0 )
-	{
-	   dataspace = H5Screate_simple(rank,mydims,maxdims);
-	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
-	   status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
-	   array_id = H5Dcreate( file_id, arrayname.c_str(), datatype, dataspace, cparms);
-	}
-        // otherwise, write the data this way
-	else
-	{
-	   dataspace = H5Screate_simple(rank,mydims,NULL);
-	   array_id = H5Dcreate( file_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
-	}
+  // if there are chunk dimensions, write the data this way
+  if ( chnkdims.size()>0 )
+  {
+     dataspace = H5Screate_simple(rank,mydims,maxdims);
+     hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
+     status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
+     array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+                           dataspace, cparms);
+  }
+  // otherwise, write the data this way
+  else
+  {
+     dataspace = H5Screate_simple(rank,mydims,NULL);
+     array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+                           dataspace, H5P_DEFAULT);
+  }
 
-	// write the data
-	H5Dwrite(array_id, datatype, dataspace, dataspace, H5P_DEFAULT, data/*&data[0]*/);
+  // write the data
+  H5Dwrite(array_id, datatype, dataspace, dataspace, H5P_DEFAULT, data);
 
-	// close local hdf5 objects
-	H5Sclose( dataspace );
-	H5Tclose( datatype );
-// 	H5Dclose( array );
+  // close local hdf5 objects
+  H5Sclose( dataspace );
+  H5Tclose( datatype );
+
+}
+
+/********************************************************************
+ *  dalComplexArray_int16 constructor creates an n-dimensional
+ *    array of Complexs (defined in the DAL).
+ *
+ *  arguments:
+ *    obj_id (I) - dataset file handle
+ *    arrayname (I) - name of the array to create
+ *    dims (I) - vector of the array dimensions
+ *    data (I) - complex<float> vector of data to write
+ *    chnkdims (I) - resizing (chunking) dimensions. Empty vector
+ *      if the size of the array is fixed.
+ *
+ ********************************************************************/
+dalComplexArray_int16::dalComplexArray_int16( hid_t obj_id,
+                                              string arrayname,
+                                              vector<int> dims,
+                                              complex<Int16> data[],
+                                              vector<int> chnkdims )
+{
+  hid_t datatype, dataspace;  // declare a few h5 variables
+  name = arrayname;  // set the private name variable to the array name
+
+  // determine the rank from the size of the dimensions vector
+  unsigned int rank = dims.size();
+
+  hsize_t mydims[rank];  // declare a dimensions c-array
+  hsize_t maxdims[rank]; // declare a maximum dimensions c-array
+  hid_t status_lcl;  // declare a local return status
+  hsize_t chunk_dims[ rank ];  // declare chunk dimensions c-array
+
+  // set the c-array dimensions and maxiumum dimensions
+  for (unsigned int ii=0; ii<rank; ii++)
+  {
+     mydims[ii] = dims[ii];  // vector to c-array
+     maxdims[ii] = H5S_UNLIMITED;
+  }
+
+  // set the c-array chunk dimensions from the chunk dims vector
+  for (unsigned int ii=0; ii<chnkdims.size(); ii++)
+  {
+     chunk_dims[ii] = chnkdims[ii];
+  }
+
+  // create a new hdf5 datatype for complex values
+  hid_t complex_id = H5Tcreate (H5T_COMPOUND, sizeof(dalcomplex_int16));
+  H5Tinsert (complex_id, "real", HOFFSET(dalcomplex_int16,r), H5T_NATIVE_SHORT);
+  H5Tinsert (complex_id, "imag", HOFFSET(dalcomplex_int16,i), H5T_NATIVE_SHORT);
+  //
+  ////////////////////////////////////////////////////////
+
+  // set the datatype to write
+  datatype = H5Tcopy( complex_id );
+
+  // if there are chunk dimensions, write the data this way
+  if ( chnkdims.size()>0 )
+  {
+     dataspace = H5Screate_simple(rank,mydims,maxdims);
+     hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
+     status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
+     array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+                           dataspace, cparms);
+  }
+  // otherwise, write the data this way
+  else
+  {
+     dataspace = H5Screate_simple(rank,mydims,NULL);
+     array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+                           dataspace, H5P_DEFAULT);
+  }
+
+  // write the data
+  H5Dwrite(array_id, datatype, dataspace, dataspace, H5P_DEFAULT, data);
+
+  // close local hdf5 objects
+  H5Sclose( dataspace );
+  H5Tclose( datatype );
+
 }
 
 #ifdef PYTHON

@@ -268,11 +268,10 @@ class dalDataset{
 	               hdf5 dataset).
 	  \return dalArray * pointer to an array object.
      */
-	dalArray * createComplexArray(
-				std::string arrayname,
-				std::vector<int> dims,
-				complex<float> data[],
-				std::vector<int>cdims);
+	dalArray * createComplexFloatArray( std::string arrayname,
+                                            std::vector<int> dims,
+                                            complex<float> data[],
+                                            std::vector<int>cdims );
 
 	/*!
 	  \brief create a new table in the root group

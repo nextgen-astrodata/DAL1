@@ -187,7 +187,8 @@ class dalArray{
 	  
 	  Write data to an array, usually after extending it's dimensions.
 	 */
-	void write(int offset, complex<float> data[], int arraysize);
+	void write( int offset, complex<float> data[], int arraysize );
+        void write( int offset, complex<Int16> data[], int arraysize );
 
 /************************************************************************
  *
@@ -358,7 +359,7 @@ class dalFloatArray: public dalArray {
 			 float data[], vector<int>chnkdims);
 };
 
-class dalComplexArray: public dalArray {
+class dalComplexArray_float32: public dalArray {
   
   public:
     /*!
@@ -366,7 +367,7 @@ class dalComplexArray: public dalArray {
 	  
 	  Default destructor.
 	 */
-	~dalComplexArray();
+	~dalComplexArray_float32();
 
 	/*!
 	  \brief Constructor for extendible complex floating point array.
@@ -382,8 +383,38 @@ class dalComplexArray: public dalArray {
 				  of the array.
 	  \param chnkdims Specifies the chunk size for extendible arrays.
 	 */
-	dalComplexArray( void* voidfile, string arrayname, vector<int> dims,
-			 complex<float> data[], vector<int>chnkdims);
+	dalComplexArray_float32( hid_t objfile, string arrayname,
+                                 vector<int> dims, complex<float> data[],
+                                 vector<int>chnkdims);
+};
+
+class dalComplexArray_int16: public dalArray {
+
+  public:
+    /*!
+	  \brief Default destructor.
+	  
+	  Default destructor.
+	 */
+	~dalComplexArray_int16();
+
+	/*!
+	  \brief Constructor for extendible complex floating point array.
+	  
+	  Constructor for an extendible complex floating point array.  This is
+	  usually called from the dataset object and not directly by the developer.
+	  
+	  \param voidfile An pointer to the file.
+	  \param arrayname The name of the array you want to create.
+	  \param dims The dimensions of the array you want to create.
+	  \param data A structure containing the data you want to write to the
+	              array.  The size of the structure should match the dimensions
+				  of the array.
+	  \param chnkdims Specifies the chunk size for extendible arrays.
+	 */
+	dalComplexArray_int16( hid_t objfile, string arrayname,
+                               vector<int> dims, complex<Int16> data[],
+                               vector<int>chnkdims);
 };
 
 } // end namespace DAL

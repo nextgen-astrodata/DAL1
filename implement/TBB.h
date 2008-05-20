@@ -149,16 +149,27 @@ namespace DAL {
   UInt32 payload_crc;
   TransientSample tran_sample;
   SpectralSample spec_sample;
+  // for file i/o
+  ifstream::pos_type size;
+  unsigned char * memblock;
+  fstream * rawfile;
+  Int16 real_part, imag_part;
 
   TBB( string const& name );  // constructor
   ~TBB(); // destructor
   void connectsocket( char* ipaddress, char* portnumber );
-  bool readRawSocketHeader();
+  void openRawFile( char* filename );
+  bool readRawSocketBlockHeader();
+  void readRawFileBlockHeader();
   void printRawHeader();
   void stationCheck();
   void makeOutputHeader();
   bool transientMode();
   bool processTransientSocketDataBlock();
+  bool processSpectralSocketDataBlock();
+  void processTransientFileDataBlock();
+  void processSpectralFileDataBlock();
+  bool eof();
 
   }; // class TBB
 

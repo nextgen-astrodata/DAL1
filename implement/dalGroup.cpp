@@ -138,33 +138,60 @@ bool dalGroup::setName ( string gname ) {
    }
 }
 
-dalArray * dalGroup::createShortArray( string arrayname,
-				     vector<int> dims,
-				     short data[],
-				     vector<int> cdims )
+dalArray *
+dalGroup::createShortArray( string arrayname,
+                            vector<int> dims,
+                            short data[],
+                            vector<int> cdims )
 {
-	   dalShortArray * la;
-	   la = new dalShortArray( group_id, arrayname, dims, data, cdims );
-	   return la;
+   dalShortArray * la;
+   la = new dalShortArray( group_id, arrayname, dims, data, cdims );
+   return la;
 }
 
 
-dalArray * dalGroup::createIntArray( string arrayname,
-				     vector<int> dims,
-				     int data[],
-				     vector<int> cdims )
+dalArray *
+dalGroup::createIntArray( string arrayname,
+                          vector<int> dims,
+                          int data[],
+                          vector<int> cdims )
 {
-	   dalIntArray * la;
-	   la = new dalIntArray( group_id, arrayname, dims, data, cdims );
-	   return la;
+   dalIntArray * la;
+   la = new dalIntArray( group_id, arrayname, dims, data, cdims );
+   return la;
 }
 
-dalArray * dalGroup::createFloatArray( string arrayname, vector<int> dims, float data[], vector<int> cdims)
+dalArray *
+dalGroup::createFloatArray( string arrayname,
+                            vector<int> dims,
+                            float data[],
+                            vector<int> cdims )
 {
-// cout << "group_id: " << group_id << endl;
-	   dalFloatArray * la;
-	   la = new dalFloatArray( group_id, arrayname, dims, data, cdims );
-	   return la;
+   dalFloatArray * la;
+   la = new dalFloatArray( group_id, arrayname, dims, data, cdims );
+   return la;
+}
+
+dalArray *
+dalGroup::createComplexFloatArray( string arrayname,
+                                   vector<int> dims,
+                                   complex<float> data[],
+                                   vector<int> cdims )
+{
+   dalComplexArray_float32 * la;
+   la = new dalComplexArray_float32( group_id, arrayname, dims, data, cdims );
+   return la;
+}
+
+dalArray *
+dalGroup::createComplexShortArray( string arrayname,
+                                   vector<int> dims,
+                                   complex<Int16> data[],
+                                   vector<int> cdims )
+{
+   dalComplexArray_int16 * la;
+   la = new dalComplexArray_int16( group_id, arrayname, dims, data, cdims );
+   return la;
 }
 
 string dalGroup::getName () {

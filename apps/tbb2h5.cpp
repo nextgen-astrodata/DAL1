@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
   }
 
   string outfilename( argv[1] );
-  bool socketmode( argv[2] );
+  int socketmode( atoi(&argv[2][0]) );
 
   TBB tbb = TBB( outfilename );
 
@@ -82,40 +82,76 @@ int main(int argc, char *argv[])
     }
     tbb.connectsocket( argv[3], argv[4] );
   }
+  else  // reading from a file
+  {
+    tbb.openRawFile( argv[3] );
+  }
 
   int counter = 0;
-  while ( true )
+
+  if (socketmode)  // reading from a socket
   {
-    counter++;
-
-    if (socketmode)
+    while ( true )
     {
-       if ( !tbb.readRawSocketHeader() )
+      counter++;
+
+       if ( !tbb.readRawSocketBlockHeader() )
          break;
-    }
 
-    tbb.stationCheck();
+       tbb.stationCheck();
 
-     // if this is the first sample for this station set header attributes
-     if ( tbb.first_sample )
-     {
-       tbb.makeOutputHeader();
-       tbb.first_sample = false;
-     }
+       // if this is the first sample for this station, set header attributes
+       if ( tbb.first_sample )
+       {
+         tbb.makeOutputHeader();
+         tbb.first_sample = false;
+       }
 
-    if ( tbb.transientMode() )
+      if ( tbb.transientMode() )
+      {
+         #ifdef DEBUGGING_MESSAGES
+         cerr << "block " << counter << endl;
+         #endif
+         if ( !tbb.processTransientSocketDataBlock() )
+           break;
+      }
+
+    } // while (true)
+
+  }
+  else  // reading from a file
+  {
+    while ( !tbb.eof() )
     {
+       counter++;
+
+       tbb.readRawFileBlockHeader();
+
+       tbb.stationCheck();
+
+       // if this is the first sample for this station set header attributes
+       if ( tbb.first_sample )
+       {
+         tbb.makeOutputHeader();
+         tbb.first_sample = false;
+       }
+
        #ifdef DEBUGGING_MESSAGES
        cerr << "block " << counter << endl;
        #endif
-       if (socketmode)
-       {
-         if ( !tbb.processTransientSocketDataBlock() )
-           break;
-       }
-    }
 
-  } // while (true)
+       if ( tbb.transientMode() )
+       {
+         tbb.processTransientFileDataBlock();
+       }
+       else  // spectral mode
+       {
+         tbb.processSpectralFileDataBlock();
+       }
+
+    } // !eof
+
+  } // socket or file
 
   cerr << "SUCCESS" << endl;
   return DAL::SUCCESS;

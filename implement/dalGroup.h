@@ -206,6 +206,47 @@ class dalGroup{
 				vector<int> dims,
 				float data[],
 				vector<int>cdims);
+
+        /*!
+          \brief Create an array of complex floating point values within the group.
+
+          Create an array of complex floating point values with any dimensions.
+          This is usually called from the dataset object and not from the
+          developer.
+
+          \param arrayname A string containing he name of the array.
+          \param dims A vector specifying the array dimensions.
+          \param data A structure containing the data to be written.  The size
+                      of the data must match the provided dimensions.
+          \param cdims The chunk dimensions for an extendible array.
+
+          \return dalArray * A pointer to an array object.
+        */
+        dalArray * createComplexFloatArray( string arrayname,
+                                            vector<int> dims,
+                                            complex<float> data[],
+                                            vector<int>cdims );
+
+        /*!
+          \brief Create an array of complex int16 values within the group.
+
+          Create an array of complex int16 values with any dimensions.
+          This is usually called from the dataset object and not from the
+          developer.
+
+          \param arrayname A string containing he name of the array.
+          \param dims A vector specifying the array dimensions.
+          \param data A structure containing the data to be written.  The size
+                      of the data must match the provided dimensions.
+          \param cdims The chunk dimensions for an extendible array.
+
+          \return dalArray * A pointer to an array object.
+        */
+        dalArray * createComplexShortArray( string arrayname,
+                                            vector<int> dims,
+                                            complex<Int16> data[],
+                                            vector<int>cdims );
+
         /*!
           \brief Get the group ID.
 
