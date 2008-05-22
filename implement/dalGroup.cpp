@@ -36,7 +36,8 @@ namespace DAL {
 dalGroup::dalGroup()
 {
    file = NULL;
-   name = "";
+   groupname = "";
+   groupname_full = "";
    group = NULL;
    tables.clear();
    attributes.clear();
@@ -55,9 +56,9 @@ dalGroup::dalGroup( const char * gname, void * voidfile ) {
    file = lclfile;
    file_id = *lclfile;  // get the file handle
 
-   name = gname;
-   string fullgroupname = "/" + stringify(gname);
-   group_id = H5Gcreate(*(hid_t*)file, fullgroupname.c_str(), 0);
+   groupname = gname;
+   groupname_full = "/" + stringify(gname);
+   group_id = H5Gcreate(*(hid_t*)file, groupname_full.c_str(), 0);
 }
 
 dalGroup::dalGroup( hid_t group_id, const char * gname )
@@ -67,16 +68,16 @@ dalGroup::dalGroup( hid_t group_id, const char * gname )
    group_id = H5Gcreate(group_id, gname, 0);
 }
 
-int dalGroup::open( void * voidfile, string groupname ) {
+int dalGroup::open( void * voidfile, string gname ) {
 
-  name = groupname;
+  groupname = gname;
 
   hid_t * lclfile = (hid_t*)voidfile; // H5File object
   file = lclfile;
   file_id = *lclfile;  // get the file handle
 
-  string fullgroupname = "/" + groupname;
-  group_id = H5Gopen( file_id, fullgroupname.c_str() );
+  groupname_full = "/" + groupname;
+  group_id = H5Gopen( file_id, groupname_full.c_str() );
   return( group_id );
 }
 
@@ -121,14 +122,14 @@ herr_t dalGroup_file_info(hid_t loc_id, const char *name, void *opdata)
 vector<string> dalGroup::getMemberNames()
 {
   vector<string> member_names;
-  H5Giterate(file_id, name.c_str(), NULL, dalGroup_file_info, &member_names);
+  H5Giterate(file_id, groupname.c_str(), NULL, dalGroup_file_info, &member_names);
   return member_names;
 }
 
 bool dalGroup::setName ( string gname ) {
    if ( gname.length() > 0 )
    {
-     name = gname;
+     groupname = gname;
      return DAL::SUCCESS;
    }
    else
@@ -195,41 +196,42 @@ dalGroup::createComplexShortArray( string arrayname,
 }
 
 string dalGroup::getName () {
-   return name;
+   return groupname;
 }
 
 void dalGroup::setAttribute_string( string attrname, string data )
 {
-	if ( H5LTset_attribute_string( file_id, name.c_str(),
-					attrname.c_str(), data.c_str() ) < 0 ) {
-		cout << "ERROR: could not set attribute " << attrname << endl;
-	}
+  if ( H5LTset_attribute_string( file_id, groupname.c_str(),
+                                 attrname.c_str(), data.c_str() ) < 0 )
+  {
+    cout << "ERROR: could not set attribute " << attrname << endl;
+  }
 }
 
 void dalGroup::setAttribute_int( string attrname, int * data, int size )
 {
-// 	int size=1;
-	if ( H5LTset_attribute_int( file_id, name.c_str(),
-		attrname.c_str(), /*&*/data, size ) < 0 ) {
-		cout << "ERROR: could not set attribute " << attrname << endl;
-	}
+  if ( H5LTset_attribute_int( file_id, groupname.c_str(),
+                              attrname.c_str(), data, size ) < 0 )
+  {
+    cout << "ERROR: could not set attribute " << attrname << endl;
+  }
 }
 
 void dalGroup::setAttribute_uint( string attrname, unsigned int * data, int size ) {
-// 	int size=1;
-	if ( H5LTset_attribute_uint( file_id, name.c_str(),
-					attrname.c_str(), /*&*/data, size ) < 0 ) {
-		cout << "ERROR: could not set attribute " << attrname << endl;
-	}
+  if ( H5LTset_attribute_uint( file_id, groupname.c_str(),
+                               attrname.c_str(), data, size ) < 0 )
+  {
+     cout << "ERROR: could not set attribute " << attrname << endl;
+  }
 }
 
 void dalGroup::setAttribute_double( string attrname, double * data, int size )
 {
-// 	int size=1;
-	if ( H5LTset_attribute_double( file_id, name.c_str(),
-					attrname.c_str(), /*&*/data, size ) < 0 ) {
-		cout << "ERROR: could not set attribute " << attrname << endl;
-	}
+   if ( H5LTset_attribute_double( file_id, groupname.c_str(),
+                                  attrname.c_str(), data, size ) < 0 )
+   {
+     cout << "ERROR: could not set attribute " << attrname << endl;
+   }
 }
 
 void dalGroup::getAttributes()
@@ -243,32 +245,34 @@ void dalGroup::getAttributes()
 
 }
 
-void dalGroup::printAttribute( string attrname ) {
+void dalGroup::printAttribute( string attrname )
+{
 
-	hsize_t * dims;
-	H5T_class_t type_class;
-	size_t type_size;
+   hsize_t * dims;
+   H5T_class_t type_class;
+   size_t type_size;
 
-	// Check if attribute exists
-	if ( H5LT_find_attribute(group_id, attrname.c_str()) <= 0 ) {
-		cout << "Attribute " << attrname << " not found." << endl;
-		return;
-	}
-	
-	string fullname = "/" + name;
+   // Check if attribute exists
+   if ( H5LT_find_attribute(group_id, attrname.c_str()) <= 0 )
+   {
+     cerr << "Attribute " << attrname << " not found." << endl;
+     return;
+   }
+
+   groupname_full = "/" + groupname;
 
 	int rank;
-	H5LTget_attribute_ndims(file_id, fullname.c_str(), attrname.c_str(),
+	H5LTget_attribute_ndims(file_id, groupname_full.c_str(), attrname.c_str(),
 				&rank );
 
 	dims = (hsize_t *)malloc(rank * sizeof(hsize_t));
 
-	H5LTget_attribute_info( file_id, fullname.c_str(), attrname.c_str(),
+	H5LTget_attribute_info( file_id, groupname_full.c_str(), attrname.c_str(),
 				dims, &type_class, &type_size );
 
 	if ( H5T_FLOAT == type_class ) {
 		double data[*dims];
-		H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
+		H5LTget_attribute(file_id, groupname_full.c_str(), attrname.c_str(),
 			 H5T_NATIVE_DOUBLE, data);
 		cout << attrname << " = ";
 		for (unsigned int ii=0; ii<*dims; ii++) {
@@ -281,7 +285,7 @@ void dalGroup::printAttribute( string attrname ) {
 	}
 	else if ( H5T_INTEGER == type_class ) {
 		int data[*dims];
-		H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
+		H5LTget_attribute(file_id, groupname_full.c_str(), attrname.c_str(),
 			 H5T_NATIVE_INT, data);
 		cout << attrname << " = ";
 		for (unsigned int ii=0; ii<*dims; ii++) {
@@ -294,9 +298,9 @@ void dalGroup::printAttribute( string attrname ) {
 	}
 	else if ( H5T_STRING == type_class ) {
 		char* data;
-		string fullname = "/" + name;
+		groupname_full = "/" + groupname;
 		data = (char *)malloc(rank * sizeof(char));
-		H5LTget_attribute_string( file_id, fullname.c_str(), 
+		H5LTget_attribute_string( file_id, groupname_full.c_str(), 
 					  attrname.c_str(),data);
 		cout << attrname << " = " << data << endl;
 	}
@@ -316,19 +320,19 @@ void * dalGroup::getAttribute( string attrname ) {
 		return NULL;
 	}
 	
-	string fullname = "/" + name;
+	groupname_full = "/" + groupname;
 
 	int rank;
-	H5LTget_attribute_ndims(file_id, fullname.c_str(), attrname.c_str(),
+	H5LTget_attribute_ndims(file_id, groupname_full.c_str(), attrname.c_str(),
 				&rank );
 
-	H5LTget_attribute_info( file_id, fullname.c_str(), attrname.c_str(),
+	H5LTget_attribute_info( file_id, groupname_full.c_str(), attrname.c_str(),
 				&dims, &type_class, &type_size );
 
 	if ( H5T_FLOAT == type_class ) {
 		double * data;
 		data = new double[1];
-		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
+		if ( 0 < H5LTget_attribute(file_id, groupname_full.c_str(), attrname.c_str(),
 			 H5T_NATIVE_DOUBLE, data) )
 		  return NULL;
 		else
@@ -337,7 +341,7 @@ void * dalGroup::getAttribute( string attrname ) {
 	else if ( H5T_INTEGER == type_class ) {
 		int * data;
 		data = new int[1];
-		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
+		if ( 0 < H5LTget_attribute(file_id, groupname_full.c_str(), attrname.c_str(),
 			 H5T_NATIVE_INT, data) )
 		  return NULL;
 		else
@@ -345,9 +349,9 @@ void * dalGroup::getAttribute( string attrname ) {
 	}
 	else if ( H5T_STRING == type_class ) {
 		char * data;
-		string fullname = "/" + name;
+		groupname_full = "/" + groupname;
 		data = new char[256];
-		if ( 0 < H5LTget_attribute_string( file_id, fullname.c_str(), 
+		if ( 0 < H5LTget_attribute_string( file_id, groupname_full.c_str(), 
 			  attrname.c_str(),data) )
 		  return NULL;
 		else

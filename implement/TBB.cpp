@@ -72,11 +72,25 @@ namespace DAL {
     // initializations (public)
     first_sample = true;
 
-    if ( DAL::FAIL == dataset->open( filename.c_str() ) )
+    if ( FAIL == dataset->open( filename.c_str() ) )
     {
       cerr << "Creating new dataset " << filename << endl;
       delete dataset;
       dataset = new dalDataset( filename.c_str(), "HDF5" );
+
+      string telescope          = "LOFAR";
+      string observer           = "UNDEFINED";
+      string project            = "UNDEFINED";
+      string observation_id     = "UNDEFINED";
+      string observation_mode   = "UNDEFINED";
+      dataset->setAttribute_string( attribute_name(TELESCOPE), telescope );
+      dataset->setAttribute_string( attribute_name(OBSERVER), observer );
+      dataset->setAttribute_string( attribute_name(PROJECT), project );
+      dataset->setAttribute_string( attribute_name(OBSERVATION_ID),
+                                    observation_id );
+      dataset->setAttribute_string( attribute_name(OBSERVATION_MODE),
+                                    observation_mode );
+
     }
     else
     {
@@ -174,12 +188,12 @@ namespace DAL {
     else
     {
        cout << "Data stopped coming" << endl;
-       return DAL::FAIL;
+       return FAIL;
     }
 
     if (rr<0) { perror("recvfrom"); exit(1); }
 
-    return DAL::SUCCESS;
+    return SUCCESS;
   }
 
   bool TBB::readRawSocketBlockHeader()
@@ -189,7 +203,7 @@ namespace DAL {
     // read 88-byte TBB frame header
     //
     status = readsocket( sizeof(header), reinterpret_cast<char *>(&header) );
-    if (DAL::FAIL == status)
+    if (FAIL == status)
       return false;
 
     // reverse fields if big endian
@@ -340,11 +354,6 @@ namespace DAL {
      vector<int> firstdims;
      firstdims.push_back( 0 );
 
-     string telescope          = "LOFAR";
-     string observer           = "";
-     string project            = "";
-     string observation_id     = "";
-
      if ( 0 == header.n_freq_bands )
      {
        short nodata[0];
@@ -352,7 +361,8 @@ namespace DAL {
                                                      firstdims,
                                                      nodata,
                                                      cdims );
-       stationGroup->setAttribute_string("OBS_MODE", "Transient" );
+       stationGroup->setAttribute_string( attribute_name(OBSERVATION_MODE),
+                                          "Transient" );
      }
      else
      {
@@ -362,25 +372,34 @@ namespace DAL {
                                                 firstdims,
                                                 nodata,
                                                 cdims );
-       stationGroup->setAttribute_string("OBS_MODE", "Sub-band" );
+       stationGroup->setAttribute_string( attribute_name(OBSERVATION_MODE),
+                                          "Sub-band" );
      }
 
-     string observation_mode   = "";
-     string trigger_type       = "";
      double trigger_offset[1]  = { 0 };
      int triggered_antennas[1] = { 0 };
-     double beam_direction[2]  = { 0, 0 };
+     double bdv[2]  = { 0, 90 };
+     double spv[3]  = { 0, 0, 0 };
 
      // Add attributes to "Station" group
-     stationGroup->setAttribute_string("TELESCOPE", telescope );
-     stationGroup->setAttribute_string("OBSERVER", observer );
-     stationGroup->setAttribute_string("PROJECT", project );
-     stationGroup->setAttribute_string("OBS_ID", observation_id );
-     stationGroup->setAttribute_string("OBS_MODE", observation_mode );
-     stationGroup->setAttribute_string("TRIG_TYPE", trigger_type );
-     stationGroup->setAttribute_double("TRIG_OFST", trigger_offset );
-     stationGroup->setAttribute_int(   "TRIG_ANTS", triggered_antennas );
-     stationGroup->setAttribute_double("BEAM_DIR", beam_direction, 2 );
+     stationGroup->setAttribute_double( attribute_name(STATION_POSITION_VALUE),
+                                        spv, 3 );
+     stationGroup->setAttribute_string( attribute_name(STATION_POSITION_UNIT),
+                                        "m" );
+     stationGroup->setAttribute_string( attribute_name(STATION_POSITION_FRAME),
+                                        "ITRF" );
+     stationGroup->setAttribute_double( attribute_name(BEAM_DIRECTION_VALUE),
+                                        bdv, 2 );
+     stationGroup->setAttribute_string( attribute_name(BEAM_DIRECTION_UNIT),
+                                        "deg" );
+     stationGroup->setAttribute_string( attribute_name(BEAM_DIRECTION_FRAME),
+                                        "UNDEFINED" );
+     stationGroup->setAttribute_string( attribute_name(TRIGGER_TYPE),
+                                        "UNDEFINED" );
+     stationGroup->setAttribute_double( attribute_name(TRIGGER_OFFSET),
+                                        trigger_offset );
+     stationGroup->setAttribute_int(    attribute_name(TRIGGERED_ANTENNAS),
+                                        triggered_antennas);
 
      unsigned int sid[] = { (unsigned int)(header.stationid) };
      unsigned int rsp[] = { (unsigned int)(header.rspid) };
@@ -390,23 +409,38 @@ namespace DAL {
      unsigned int samp_num[] = { (unsigned int)(header.sample_nr) };
      unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
      unsigned int datalen[] = { (unsigned int)0 };
-     unsigned int nyquist_zone[] = { (unsigned int)0 };
-     string feed       = "NONE";
+     unsigned int nyquist_zone[] = { (unsigned int)1 };
      double apos[3]    = { 0, 0, 0 };
      double aorient[3] = { 0, 0, 0 };
 
-     dipoleArray->setAttribute_uint("STATION_ID", sid );
-     dipoleArray->setAttribute_uint("RSP_ID", rsp );
-     dipoleArray->setAttribute_uint("RCU_ID", rcu );
-     dipoleArray->setAttribute_double("SAMPLE_FREQ", sf );
-     dipoleArray->setAttribute_uint("TIME", time );
-     dipoleArray->setAttribute_uint("SAMPLE_NR", samp_num );
-     dipoleArray->setAttribute_uint("SAMPLES_PER_FRAME", spf );
-     dipoleArray->setAttribute_uint("DATA_LENGTH", datalen );
-     dipoleArray->setAttribute_uint("NYQUIST_ZONE", nyquist_zone );
-     dipoleArray->setAttribute_string("FEED", feed );
-     dipoleArray->setAttribute_double("ANT_POSITION", apos );
-     dipoleArray->setAttribute_double("ANT_ORIENTATION", aorient );
+     dipoleArray->setAttribute_uint( attribute_name(STATION_ID), sid );
+     dipoleArray->setAttribute_uint( attribute_name(RSP_ID), rsp );
+     dipoleArray->setAttribute_uint( attribute_name(RCU_ID), rcu );
+     dipoleArray->setAttribute_uint( attribute_name(TIME), time );
+     dipoleArray->setAttribute_uint( attribute_name(SAMPLE_NUMBER), samp_num );
+     dipoleArray->setAttribute_uint( attribute_name(SAMPLES_PER_FRAME), spf );
+     dipoleArray->setAttribute_uint( attribute_name(DATA_LENGTH), datalen );
+     dipoleArray->setAttribute_double( attribute_name(ANTENNA_POSITION_VALUE),
+                                       apos, 3 );
+     dipoleArray->setAttribute_string( attribute_name(ANTENNA_POSITION_UNIT),
+                                       "m" );
+     dipoleArray->setAttribute_string( attribute_name(ANTENNA_POSITION_FRAME),
+                                       "ITRF" );
+     dipoleArray->setAttribute_double( attribute_name(ANTENNA_ORIENTATION),
+                                       aorient, 3 );
+     dipoleArray->setAttribute_double( attribute_name(ANTENNA_ORIENTATION_VALUE),
+                                       apos, 3 );
+     dipoleArray->setAttribute_string( attribute_name(ANTENNA_ORIENTATION_UNIT),
+                                       "m" );
+     dipoleArray->setAttribute_string( attribute_name(ANTENNA_ORIENTATION_FRAME),
+                                       "ITRF" );
+     dipoleArray->setAttribute_string( attribute_name(FEED), "UNDEFINED" );
+     dipoleArray->setAttribute_uint(   attribute_name(NYQUIST_ZONE),
+                                       nyquist_zone );
+     dipoleArray->setAttribute_double( attribute_name(SAMPLE_FREQUENCY_VALUE),
+                                       sf, 1 );
+     dipoleArray->setAttribute_string( attribute_name(SAMPLE_FREQUENCY_UNIT),
+                                       "Hz" );
   }
 
   bool TBB::transientMode()
@@ -425,7 +459,7 @@ namespace DAL {
 
         status = readsocket( sizeof(tran_sample),
                              reinterpret_cast<char *>(&tran_sample) );
-        if (DAL::FAIL == status)
+        if (FAIL == status)
           return false;
 
         if ( bigendian )  // reverse fields if big endian
@@ -441,7 +475,7 @@ namespace DAL {
 
       status = readsocket( sizeof(payload_crc),
                            reinterpret_cast<char *>(&payload_crc) );
-      if (DAL::FAIL == status)
+      if (FAIL == status)
          return false;
 
       return true;

@@ -47,10 +47,10 @@ namespace DAL { // Namespace DAL -- begin
       name = "PROJECT";
       break;
     case OBSERVATION_ID:
-      name = "OBS_ID";
+      name = "OBSERVATION_ID";
       break;
     case OBSERVATION_MODE:
-      name = "OBS_MODE";
+      name = "OBSERVATION_MODE";
       break;
       // --- Attributes for an individual LOFAR station --------------
     case STATION_ID:
@@ -76,10 +76,13 @@ namespace DAL { // Namespace DAL -- begin
       name = "TIME";
       break;
     case SAMPLE_NUMBER:
-      name = "SAMPLE_NR";
+      name = "SAMPLE_NUMBER";
       break;
-    case SAMPLE_FREQUENCY:
-      name = "SAMPLE_FREQ";
+    case SAMPLE_FREQUENCY_VALUE:
+      name = "SAMPLE_FREQEUNCY_VALUE";
+      break;
+    case SAMPLE_FREQUENCY_UNIT:
+      name = "SAMPLE_FREQUENCY_UNIT";
       break;
     case NYQUIST_ZONE:
       name = "NYQUIST_ZONE";
@@ -93,9 +96,6 @@ namespace DAL { // Namespace DAL -- begin
     case FEED:
       name = "FEED";
       break;
-    case ANTENNA_POSITION:
-      name = "ANT_POSITION";
-      break;
     case ANTENNA_POSITION_VALUE:
       name = "ANTENNA_POSITION_VALUE";
       break;
@@ -106,7 +106,7 @@ namespace DAL { // Namespace DAL -- begin
       name = "ANTENNA_POSITION_FRAME";
       break;
     case ANTENNA_ORIENTATION:
-      name = "ANT_ORIENTATION";
+      name = "ANTENNA_ORIENTATION";
       break;
     case ANTENNA_ORIENTATION_VALUE:
       name = "ANTENNA_ORIENTATION_VALUE";
@@ -117,18 +117,24 @@ namespace DAL { // Namespace DAL -- begin
     case ANTENNA_ORIENTATION_FRAME:
       name = "ANTENNA_ORIENTATION_FRAME";
       break;
-    case BEAM_DIRECTION:
-      name = "BEAM_DIR";
+    case BEAM_DIRECTION_VALUE:
+      name = "BEAM_DIRECTION_VALUE";
+      break;
+    case BEAM_DIRECTION_UNIT:
+      name = "BEAM_DIRECTION_UNIT";
+      break;
+    case BEAM_DIRECTION_FRAME:
+      name = "BEAM_DIRECTION_FRAME";
       break;
       // --- Trigger algorithm ---------------------------------------
     case TRIGGER_TYPE:
-      name = "TRIG_TYPE";
+      name = "TRIGGER_TYPE";
       break;
     case TRIGGER_OFFSET:
-      name = "TRIG_OFST";
+      name = "TRIGGER_OFFSET";
       break;
     case TRIGGERED_ANTENNAS:
-      name = "TRIG_ANTS";
+      name = "TRIGGER_ANTENNAS";
       break;
     }
     

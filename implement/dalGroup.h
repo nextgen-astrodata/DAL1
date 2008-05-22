@@ -60,7 +60,8 @@ class dalGroup{
 
  protected:
 	void * file; //!< can be HDF5File, FITS, MS
-	string name; //!< group name
+	string groupname; //!< group name
+        string groupname_full;
 	void * group;
 	vector<dalTable> tables; //!< list of tables within groups
 	vector<dalAttribute> attributes; //!< list of group attributes

@@ -114,11 +114,11 @@ namespace DAL { // Namespace DAL -- begin
     /*!
       Sample frequency in the analog-digital conversion step
     */
-    SAMPLE_FREQUENCY,
+    SAMPLE_FREQUENCY_VALUE,
+    SAMPLE_FREQUENCY_UNIT,
     SAMPLES_PER_FRAME,
     DATA_LENGTH,
     FEED,
-    ANTENNA_POSITION,
     ANTENNA_POSITION_VALUE,
     ANTENNA_POSITION_UNIT,
     ANTENNA_POSITION_FRAME,
@@ -126,7 +126,9 @@ namespace DAL { // Namespace DAL -- begin
     ANTENNA_ORIENTATION_VALUE,
     ANTENNA_ORIENTATION_UNIT,
     ANTENNA_ORIENTATION_FRAME,
-    BEAM_DIRECTION,
+    BEAM_DIRECTION_VALUE,
+    BEAM_DIRECTION_UNIT,
+    BEAM_DIRECTION_FRAME,
     /*!
       Nyquist zone within which the analog-digital conversion step is performed
     */

@@ -147,7 +147,7 @@ int main()
    for (int gg=0; gg<(4*5*6); gg++) {
 	cdata[ gg ] = 0;
    }
-   dalArray * carray = ds->createComplexArray( "complex_array", dims, cdata, cdims );
+   dalArray * carray = ds->createComplexFloatArray( "complex_array", dims, cdata, cdims );
    delete [] cdata;
    cdata = NULL;
    cout << "done." << endl;

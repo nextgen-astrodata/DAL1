@@ -39,12 +39,10 @@ dalArray::dalArray()
 
 int dalArray::open( void * voidfile, string arrayname ) {
 	name = arrayname;
-
 	hid_t * lclfile = (hid_t*)voidfile; // H5File object
 	file_id = *lclfile;  // get the file handle
 	
-	string fullarrayname = arrayname;
-	array_id = H5Dopen( file_id, fullarrayname.c_str() );
+	array_id = H5Dopen( file_id, name.c_str() );
 	return( array_id );
 }
 
@@ -52,7 +50,7 @@ int dalArray::close()
 {
 	status = H5Dclose(array_id);
 	if ( status < 0 )
-	  cout << "ERROR: dalArray::close() failed.\n";
+	  cerr << "ERROR: dalArray::close() failed.\n";
 	return status;
 }
 
@@ -245,7 +243,7 @@ void * dalArray::getAttribute( string attrname ) {
 		return NULL;
 	}
 /*   } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
      return NULL;
    }*/
 }
@@ -264,7 +262,7 @@ void dalArray::setAttribute_string( string attrname, string data )
    hid_t attr1 = H5Acreate(array_id, attrname.c_str(), atype, aid1, H5P_DEFAULT);
    ret = H5Awrite(attr1, atype, data.c_str());
    if (ret < 0)
-     cout << "ERROR: could not set attribute " << attrname << endl;
+     cerr << "ERROR: could not set attribute " << attrname << endl;
 }
  
 void dalArray::setAttribute_int( string attrname, int * data/*, int size*/ )
@@ -277,7 +275,7 @@ void dalArray::setAttribute_int( string attrname, int * data/*, int size*/ )
    attr1 = H5Acreate(array_id, attrname.c_str(), H5T_NATIVE_INT, aid1, H5P_DEFAULT);
    ret = H5Awrite(attr1, H5T_NATIVE_INT, data);
    if (ret < 0)
-     cout << "ERROR: could not set attribute " << attrname << endl;
+     cerr << "ERROR: could not set attribute " << attrname << endl;
 }
 
 void dalArray::setAttribute_uint( string attrname, unsigned int * data/*, int size*/ )
@@ -290,7 +288,7 @@ void dalArray::setAttribute_uint( string attrname, unsigned int * data/*, int si
    attr1 = H5Acreate(array_id, attrname.c_str(), H5T_NATIVE_UINT, aid1, H5P_DEFAULT);
    ret = H5Awrite(attr1, H5T_NATIVE_UINT, data);
    if (ret < 0)
-     cout << "ERROR: could not set attribute " << attrname << endl;
+     cerr << "ERROR: could not set attribute " << attrname << endl;
 }
 
 void dalArray::setAttribute_float( string attrname, float * data/*, int size*/ )
@@ -303,45 +301,57 @@ void dalArray::setAttribute_float( string attrname, float * data/*, int size*/ )
    attr1 = H5Acreate(array_id, attrname.c_str(), H5T_NATIVE_FLOAT, aid1, H5P_DEFAULT);
    ret = H5Awrite(attr1, H5T_NATIVE_FLOAT, data);
    if (ret < 0)
-     cout << "ERROR: could not set attribute " << attrname << endl;
+     cerr << "ERROR: could not set attribute " << attrname << endl;
 }
 
-void dalArray::setAttribute_double( string attrname, double * data/*, int size*/ )
+void dalArray::setAttribute_double( string attrname, double * data, int size )
 {
-   /* Create scalar attribute.  */
    hid_t   attr1; /* Attribute identifier */
    hid_t   aid1;  /* Attribute dataspace identifier */
    herr_t  ret;   /* Return value */
+   hsize_t dims[1] = { size };
+   aid1  = H5Screate_simple( 1, dims, NULL );
+   attr1 = H5Acreate( array_id, attrname.c_str(),
+                      H5T_NATIVE_DOUBLE, aid1, H5P_DEFAULT);
+   ret = H5Awrite(attr1, H5T_NATIVE_DOUBLE, data);
+   if (ret < 0)
+     cerr << "ERROR: could not set attribute " << attrname << endl;
+}
+
+/*
+void dalArray::setAttribute_double( string attrname, double * data )
+{
+   hid_t   attr1;
+   hid_t   aid1;
+   herr_t  ret;
    aid1  = H5Screate(H5S_SCALAR);
    attr1 = H5Acreate(array_id, attrname.c_str(), H5T_NATIVE_DOUBLE, aid1, H5P_DEFAULT);
    ret = H5Awrite(attr1, H5T_NATIVE_DOUBLE, data);
    if (ret < 0)
-     cout << "ERROR: could not set attribute " << attrname << endl;
+     cerr << "ERROR: could not set attribute " << attrname << endl;
 }
-
-dalShortArray::dalShortArray(){}
-dalIntArray::dalIntArray(){}
+*/
 
 dalShortArray::dalShortArray( hid_t obj_id, string arrayname,
-			  vector<int> dims, short data[] )
+                              vector<int> dims, short data[] )
 {
    vector<int> chnkdims;
 
    for( unsigned int ii=0; ii < dims.size(); ii++)
       chnkdims.push_back(10);
 
-	hid_t datatype, dataspace;  // declare a few h5 variables
+   hid_t datatype, dataspace;  // declare a few h5 variables
 
-	name = arrayname;  // set the private name variable to the array name
+   name = arrayname;  // set the private name variable to the array name
 
-	// determine the rank from the size of the dimensions vector
-	unsigned int rank = dims.size();
+   // determine the rank from the size of the dimensions vector
+   unsigned int rank = dims.size();
 
-	hsize_t mydims[rank];  // declare a dimensions c-array
-	hsize_t maxdims[rank]; // declare a maximum dimensions c-array
-	hid_t status_lcl;  // declare a local return status
+   hsize_t mydims[rank];  // declare a dimensions c-array
+   hsize_t maxdims[rank]; // declare a maximum dimensions c-array
+   hid_t status_lcl;  // declare a local return status
 
-	hsize_t chunk_dims[ rank ];  // declare chunk dimensions c-array
+   hsize_t chunk_dims[ rank ];  // declare chunk dimensions c-array
 
 	// set the c-array dimensions and maxiumum dimensions
 	for (unsigned int ii=0; ii<rank; ii++)

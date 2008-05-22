@@ -156,7 +156,8 @@ class dalArray{
 	  \param attrname The name of the attribute you want to add.
 	  \param data The value of the attribute you want to add.
 	 */
-	void setAttribute_double( string attrname, double * data );
+// 	void setAttribute_double( string attrname, double * data );
+        void setAttribute_double( string attrname, double * data, int size );
 
 	/*!
 	  \brief Extend an array.
@@ -208,14 +209,6 @@ class dalArray{
 class dalShortArray: public dalArray {
 
   public:
-  
-    /*!
-	  \brief Default constructor.
-	  
-	  Default constructor.
-	 */
-	dalShortArray();
-	
     /*!
 	  \brief Default destructor.
 	  
@@ -270,15 +263,7 @@ class dalShortArray: public dalArray {
 
 class dalIntArray: public dalArray {
 
-  public:
-  
-    /*!
-	  \brief Default constructor.
-	  
-	  Default constructor.
-	 */
-	dalIntArray();
-	
+  public: 
     /*!
 	  \brief Default destructor.
 	  
