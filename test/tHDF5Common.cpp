@@ -350,7 +350,7 @@ int get_attribute_id (hid_t const &file_id)
     std::cout << "-- TRIG_ANTS = " << attribute_id << endl;
 
     attribute_id = H5Aopen_name(group_id,
-				attribute_name(DAL::BEAM_DIRECTION).c_str());
+				attribute_name(DAL::BEAM_DIRECTION_VALUE).c_str());
     std::cout << "-- BEAM_DIR  = " << attribute_id << endl;
   }
 
@@ -377,7 +377,7 @@ int get_attribute_id (hid_t const &file_id)
     std::cout << "-- RCU_ID            = " << attribute_id << endl;
     
     attribute_id = H5Aopen_name(dataset_id,
-				attribute_name(DAL::SAMPLE_FREQUENCY).c_str());
+				attribute_name(DAL::SAMPLE_FREQUENCY_VALUE).c_str());
     std::cout << "-- SAMPLE_FREQ       = " << attribute_id << endl;
     
     attribute_id = H5Aopen_name(dataset_id,
@@ -524,7 +524,7 @@ int get_attributes (hid_t const &file_id)
     
     try {
       status = h5get_attribute (beam_direction,
-				attribute_name(DAL::BEAM_DIRECTION),
+				attribute_name(DAL::BEAM_DIRECTION_VALUE),
 				group_id);
     } catch (std::string message) {
       cerr << message << endl;
@@ -594,7 +594,7 @@ int get_attributes (hid_t const &file_id)
     
     try {
       status = h5get_attribute (sample_frequency,
-				attribute_name(DAL::SAMPLE_FREQUENCY),
+				attribute_name(DAL::SAMPLE_FREQUENCY_VALUE),
 				dataset_id);
     } catch (std::string message) {
       cerr << message << endl;
@@ -648,7 +648,7 @@ int get_attributes (hid_t const &file_id)
     
     try {
       status = h5get_attribute (antenna_position,
-				attribute_name(DAL::ANTENNA_POSITION),
+				attribute_name(DAL::ANTENNA_POSITION_VALUE),
 				dataset_id);
     } catch (std::string message) {
       cerr << message << endl;

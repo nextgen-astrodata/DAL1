@@ -155,9 +155,6 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("extend", &dalArray::extend_boost)
     ;
 
-    bpl::class_<dalIntArray,bpl::bases<dalArray> >("dalIntArray")
-    ;
-
     bpl::class_<dalColumn>("dalColumn")
 	.def(bpl::init<>())
 	.def(bpl::init<string>())

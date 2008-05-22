@@ -131,7 +131,7 @@ int main()
    double sf[] = { (double)2 };
    string feed = "NONE";
    iarray->setAttribute_float("STATION_ID", sid );
-   iarray->setAttribute_double("SAMPLE_FREQ", sf );
+   iarray->setAttribute_double("SAMPLE_FREQ", sf, 1 );
    iarray->setAttribute_string("FEED", feed );
    cout << "done." << endl;
 
