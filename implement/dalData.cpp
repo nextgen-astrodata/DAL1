@@ -29,6 +29,8 @@
 #include "dalData.h"
 #endif
 
+namespace DAL {
+
 unsigned long dalData::fortran_index(long idx1, long idx2, long idx3)
 {
    vector<long> indices;
@@ -110,7 +112,7 @@ string dalData::get_datatype()
 
 void dalData::toFloat()
 {
-   if ( DAL::dal_COMPLEX == datatype )
+   if ( dal_COMPLEX == datatype )
    {
       long length = 1;
       for ( unsigned int hh=0; hh < shape.size(); hh++ )
@@ -138,40 +140,40 @@ void * dalData::get( long idx1, long idx2, long idx3 )
    // Determine the correct index value, depending on the order
    //   of the underlying array (determined by the filetype)
    //
-   if ( DAL::MSCASATYPE == filetype )
+   if ( MSCASATYPE == filetype )
    {
       index = fortran_index( idx1, idx2, idx3 );
    }
-   else if ( DAL::H5TYPE == filetype )
+   else if ( H5TYPE == filetype )
    {
       index = c_index( idx1, idx2, idx3 );
    }
 
-   if ( DAL::dal_COMPLEX == datatype )
+   if ( dal_COMPLEX == datatype )
       return (&(((complex<float>*)data)[ index ]));
 
-   else if ( DAL::dal_COMPLEX_CHAR == datatype )
+   else if ( dal_COMPLEX_CHAR == datatype )
       return (&(((complex<char>*)data)[ index ]));
 
-   else if ( DAL::dal_COMPLEX_SHORT == datatype )
+   else if ( dal_COMPLEX_SHORT == datatype )
       return (&(((complex<short>*)data)[ index ]));
 
-   else if ( DAL::dal_DOUBLE == datatype )
+   else if ( dal_DOUBLE == datatype )
       return (&(((double*)data)[ index ]));
 
-   else if ( DAL::dal_INT == datatype )
+   else if ( dal_INT == datatype )
       return (&(((int*)data)[ index ]));
 
-   else if ( DAL::dal_SHORT == datatype )
+   else if ( dal_SHORT == datatype )
       return (&(((short*)data)[ index ]));
 
-   else if ( DAL::dal_FLOAT == datatype )
+   else if ( dal_FLOAT == datatype )
       return (&(((float*)data)[ index ]));
 
-   else if ( DAL::dal_CHAR == datatype )
+   else if ( dal_CHAR == datatype )
       return (&(((char*)data)[ index ]));
 
-   else if ( DAL::dal_STRING == datatype )
+   else if ( dal_STRING == datatype )
       return (&(((string*)data)[ index ]));
 
    return NULL;
@@ -189,9 +191,9 @@ dalData::dalData(string lclfiletype, string lcldatatype,
    vector<int> lclshape, long lclnrows)
 {
     filetype = lclfiletype;
-    if ( DAL::MSCASATYPE == lclfiletype )
+    if ( MSCASATYPE == lclfiletype )
        array_order = "fortran";
-    else if ( DAL::H5TYPE == lclfiletype )
+    else if ( H5TYPE == lclfiletype )
        array_order = "c";
     datatype = lcldatatype;
     shape = lclshape;
@@ -205,29 +207,28 @@ bpl::numeric::array dalData::get_boost()
 {
   bpl::list data_list;
   vector<int> mydims;
-      if ( DAL::dal_CHAR == datatype )
+      if ( dal_CHAR == datatype )
       {
         for (unsigned int hh=0; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
 	bpl::numeric::array narray = num_util::makeNum((char*)data,mydims);
 	return narray;
       }
-      else if ( DAL::dal_INT == datatype )
+      else if ( dal_INT == datatype )
       {
         for (unsigned int hh=0; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
 	bpl::numeric::array narray = num_util::makeNum((int*)data,mydims);
 	return narray;
       }
-      else if ( DAL::dal_FLOAT == datatype )
+      else if ( dal_FLOAT == datatype )
       {
         for (unsigned int hh=0; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
 	bpl::numeric::array narray = num_util::makeNum((float*)data,mydims);
-cerr << "getting FLOAT data" << endl;
 	return narray;
       }
-      else if ( DAL::dal_DOUBLE == datatype )
+      else if ( dal_DOUBLE == datatype )
       {
         for (unsigned int hh=0; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
@@ -235,7 +236,7 @@ cerr << "getting FLOAT data" << endl;
 	vector<int> fshape = num_util::shape(narray);
 	return narray;
       }
-      else if ( DAL::dal_COMPLEX == datatype )
+      else if ( dal_COMPLEX == datatype )
       {
         for (unsigned int hh=0; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
@@ -243,7 +244,7 @@ cerr << "getting FLOAT data" << endl;
 	vector<int> fshape = num_util::shape(narray);
 	return narray;
       }
-      else if ( DAL::dal_COMPLEX_CHAR == datatype )
+      else if ( dal_COMPLEX_CHAR == datatype )
       {
         for (unsigned int hh=0; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
@@ -251,7 +252,7 @@ cerr << "getting FLOAT data" << endl;
 	vector<int> fshape = num_util::shape(narray);
 	return narray;
       }
-      else if ( DAL::dal_COMPLEX_SHORT == datatype )
+      else if ( dal_COMPLEX_SHORT == datatype )
       {
         for (unsigned int hh=0; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
@@ -259,7 +260,7 @@ cerr << "getting FLOAT data" << endl;
 	vector<int> fshape = num_util::shape(narray);
 	return narray;
       }
-      else if ( DAL::dal_STRING == datatype )
+      else if ( dal_STRING == datatype )
       {
         for (unsigned int hh=0; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
@@ -301,4 +302,8 @@ cerr << "getting FLOAT data" << endl;
 	return nadata;
       }
 }
-#endif
+#endif  // PYTHON
+
+
+} // DAL namespace
+

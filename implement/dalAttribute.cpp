@@ -28,9 +28,13 @@
 // for high-level Attribute interface (written in C)
 #include "H5TA.h"
 
+namespace DAL {
+
 dalAttribute::dalAttribute()
 {
   name_p        = "UNDEFINED";
   units_p       = "UNDEFINED";
   description_p = "UNDEFINED";
 }
+
+} // DAL namespace

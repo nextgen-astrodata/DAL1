@@ -72,13 +72,12 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 set (dal_sources
   dalArray.cpp
   dalAttribute.cpp
-  dalBaseTypes.cpp 
+  dalBaseTypes.cpp
   dalColumn.cpp
   dalData.cpp
   dalDataset.cpp
   dalFilter.cpp
   dalGroup.cpp
-  dalRow.cpp
   dalTable.cpp
   BeamFormed.cpp
   BeamGroup.cpp
@@ -86,6 +85,7 @@ set (dal_sources
   HDF5Common.cpp
   Enumerations.cpp
   TBB.cpp
+  BFRaw.cpp
   Common.cpp
 )
 

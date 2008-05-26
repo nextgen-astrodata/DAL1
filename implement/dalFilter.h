@@ -27,6 +27,9 @@
 #include "dal.h"
 #endif
 
+
+namespace DAL {
+
 /*!
   \class dalFilter
   
@@ -98,4 +101,8 @@ class dalFilter {
          */
 	string get();
 };
-#endif
+
+
+} // DAL namespace
+
+#endif  // DALFILTER_H

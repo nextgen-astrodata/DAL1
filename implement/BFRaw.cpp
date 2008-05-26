@@ -1,9 +1,9 @@
 /*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
+ | $Id:: dal.h 1126 2007-12-10 17:14:20Z masters                         $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
- *   Copyright (C) 2006 by Joseph Masters                                  *
- *   jmasters@science.uva.nl                                               *
+ *   Copyright (C) 2008 by Joseph Masters                                  *
+ *   J.S.Masters@uva.nl                                               *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,56 +20,9 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-#ifndef DALFILTER_H
-#include "dalFilter.h"
+#ifndef BFRAW_H
+#include "BFRaw.h"
 #endif
 
 namespace DAL {
-
-dalFilter::dalFilter()
-{
-  filterstring = "";
-  filetype= "";
-  is_set = false;
-}
-
-void dalFilter::set( string cols ) {
-  if ( filetype == MSCASATYPE )
-  {
-    filterstring = "Select " + cols + " from $1";
-    is_set = true;
-  }
-  else
-    cout << "Operation not yet supported for type: " + filetype + ". Sorry.\n";
-}
-
-void dalFilter::set( string cols, string conditions ) {
-  if ( filetype == MSCASATYPE )
-  {
-    filterstring = "Select " + cols + " from $1 where " + conditions;
-    is_set = true;
-  }
-  else
-    cout << "Operation not yet supported for type: " + filetype + ". Sorry.\n";
-}
-void dalFilter::setFiletype( string type )
-{
-   filetype = type;
-}
-
-bool dalFilter::isSet()
-{
-  if (is_set)
-    return true;
-  else
-    return false;
-}
-
-string dalFilter::get()
-{
-   return filterstring;
-}
-
-
 } // DAL namespace

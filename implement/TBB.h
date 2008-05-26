@@ -105,8 +105,6 @@ namespace DAL {
 
   class TBB {
 
-  public:
-
   typedef struct TBB_Header {
     unsigned char stationid;
     unsigned char rspid;
@@ -145,7 +143,6 @@ namespace DAL {
   char * stationstr;
   char uid[10];  // dipole identifier
   int readsocket( unsigned int nbytes, char* buf );
-  bool first_sample;
   UInt32 payload_crc;
   TransientSample tran_sample;
   SpectralSample spec_sample;
@@ -154,6 +151,10 @@ namespace DAL {
   unsigned char * memblock;
   fstream * rawfile;
   Int16 real_part, imag_part;
+
+  public:
+
+  bool first_sample;
 
   TBB( string const& name );  // constructor
   ~TBB(); // destructor

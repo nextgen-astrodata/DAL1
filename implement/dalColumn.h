@@ -43,6 +43,8 @@
 #include "dalFilter.h"
 #endif
 
+namespace DAL {
+
 /*!
   \class dalColumn
   
@@ -313,6 +315,9 @@ class dalColumn {
 	bpl::numeric::array data_boost();
 
 #endif
-};
+};  // dalColumn class
 
-#endif
+
+} // DAL namespace
+
+#endif // DALCOLUMN_H

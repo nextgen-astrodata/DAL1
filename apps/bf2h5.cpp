@@ -28,22 +28,14 @@
   
   \ingroup DAL
 
-  \brief Write TBB time-series data into an HDF5 file.
+  \brief Write Beam-Formed data into an HDF5 file.
 
   \author Joseph Masters
 
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifndef DAL_H
-#include "dal.h"
-#endif
-
-#ifndef DALDATASET_H
-#include "dalDataset.h"
+#ifndef BFRAW_H
+#include "BFRaw.h"
 #endif
 
 // reading a complete binary file
@@ -91,40 +83,6 @@ char * DECrad2deg( const float &rad )
 
   return ra_string;
 }
-
-typedef struct FileHeader {
-   UInt32    magic;        // 0x3F8304EC, also determines endianness
-   UInt8     bitsPerSample;
-   UInt8     nrPolarizations;
-   UInt16    nrBeamlets;
-   UInt32    nrSamplesPerBeamlet; // 155648 (160Mhz) or 196608 (200Mhz)
-   char      station[20];
-   Float64   sampleRate;       //156250.0 or 195312.5 .. double
-   Float64   subbandFrequencies[54];
-   Float64   beamDirections[8][2];
-   Int16     beamlet2beams[54];
-   UInt32    padding;  // padding to circumvent 8-byte alignment
-} FileHeader;
-
-typedef struct BlockHeader {
-   UInt8       magic[4]; // 0x2913D852
-   Int32       coarseDelayApplied[8];
-   UInt8       padding[4];  // padding to circumvent 8-byte alignment
-   Float64     fineDelayRemainingAtBegin[8];
-   Float64     fineDelayRemainingAfterEnd[8];
-   Int64       time[8]; // compatible with TimeStamp class.
-   UInt32      nrFlagsRanges[8];
-   struct range {
-     UInt32    begin; // inclusive
-     UInt32    end;   // exclusive
-   } flagsRanges[8][16];
- } BlockHeader;
-
-  // dataStruct is 8 bytes
-  typedef struct dataStruct {
-    complex<short> xx;
-    complex<short> yy;
-  } dataStruct;
 
 /************************************************
  *

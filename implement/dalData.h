@@ -29,6 +29,8 @@
 #endif
 
 
+namespace DAL {
+
 /*!
   \class dalData
 
@@ -157,4 +159,7 @@ public:
 	bpl::numeric::array get_boost();
 #endif
 };
-#endif
+
+} // DAL namespace
+
+#endif // DALDATA_H

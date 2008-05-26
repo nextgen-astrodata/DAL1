@@ -192,7 +192,7 @@ int dalDataset::open( const char * fname )
      lcltype = H5TYPE;
      type = lcltype;
      name = fname;
-     return DAL::SUCCESS;
+     return SUCCESS;
   } else {
 #ifdef WITH_CASA
      try {
@@ -202,15 +202,15 @@ int dalDataset::open( const char * fname )
         file = &ms;
         ms_reader = new casa::MSReader( *ms );
         name = fname;
-        return DAL::SUCCESS;
+        return SUCCESS;
      } catch (casa::AipsError x) {
 //         cout << "ERROR: " << x.getMesg() << endl;
 //         cout << "Unable to open file \"" << filename << "\"."
 //     	  << endl << "Please check file name, permissions and type.\n" << endl;  
-	return DAL::FAIL;
+	return FAIL;
      }
 #else
-     return DAL::FAIL;
+     return FAIL;
 #endif
   }
 }

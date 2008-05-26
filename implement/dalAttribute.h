@@ -28,6 +28,9 @@
 #include "dal.h"
 #endif
 
+
+namespace DAL {
+
 /*!
   \class dalAttribute
 
@@ -37,7 +40,6 @@
   
   \author Joseph Masters
 */
-
 class dalAttribute {
   
   //! The name of the attribute
@@ -122,5 +124,9 @@ class dalAttribute {
     return true;
   }
   
-};
-#endif
+}; // dalAttribute class
+
+
+} // DAL namespace
+
+#endif  // DALATTRIBUTE_H
