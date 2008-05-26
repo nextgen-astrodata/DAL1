@@ -133,7 +133,7 @@ namespace DAL {
      \return array of intensities
 
     */
-    float *  getIntensity( int subband, int start, int length );
+    float *  getIntensity( int subband, int start, int &length );
 
     /*!
      \brief Get X and Y columns data for a given subband

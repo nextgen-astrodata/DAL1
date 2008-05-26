@@ -432,9 +432,11 @@ dalData * dalColumn::data( int start, int &length )
 
    else if ( DAL::H5TYPE == filetype )
    {
-	size_t * field_sizes;
-	size_t * field_offsets;
-	size_t * size_out;
+	char  ** field_names;
+	size_t * field_sizes = NULL;
+	size_t * field_offsets = NULL;
+	size_t * size_out = NULL;
+        bool column_in_table = false;
 	
 	// retrieve the input fields needed for the append_records call
 	if ( H5TBget_table_info ( file_id, tablename.c_str(), &nfields, &nrecords )
@@ -445,10 +447,30 @@ dalData * dalColumn::data( int start, int &length )
 	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
 	size_out = (size_t*)malloc( sizeof(size_t) );
 
-	if ( H5TBget_field_info( file_id, tablename.c_str(), NULL,
+        /* Alocate space */
+        field_names = (char**)malloc( sizeof(char*) * (size_t)nfields );
+        for ( hsize_t ii = 0; ii < nfields; ii++)
+          field_names[ii] = (char*)malloc( sizeof(char) * HLTB_MAX_FIELD_LEN );
+
+	if ( H5TBget_field_info( file_id, tablename.c_str(), field_names,
              field_sizes, field_offsets, size_out ) < 0 )
 	  return NULL;
+
+        for ( hsize_t ii = 0; ii < nfields; ii++)
+        {
+          if ( 0 == strcmp( field_names[ii], name.c_str() ) )
+            column_in_table = true;
+        }
+
+        for ( hsize_t ii = 0; ii < nfields; ii++)
+          free( field_names[ii] );
+
+        free( field_names );
 	
+
+        if ( !column_in_table )  // if column isn't found in the table
+          return NULL;
+
         if ( start < 0 )
 	  start = 0;
 	if ( length < 0 )
@@ -466,12 +488,12 @@ dalData * dalColumn::data( int start, int &length )
 			cerr << "Could not allocate memory buffer for dalColumn" << endl;
 			exit(3);
 		}
-		
+
 		if ( H5TBread_fields_name (file_id, tablename.c_str(), name.c_str(),
-				start, length, sizeof(DAL::dalcomplex_int16), field_offsets, field_sizes,
-				data ) < 0 )
+		  start, length, sizeof(DAL::dalcomplex_int16), field_offsets, field_sizes,
+		  data ) < 0 )
 			return NULL;
-		
+
 		vector<int> shape(1);
 		
 		data_object = new dalData( filetype, DAL::dal_COMPLEX_SHORT, shape, length );

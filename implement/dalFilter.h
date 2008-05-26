@@ -50,13 +50,6 @@ class dalFilter {
 	dalFilter();
 
         /*!
-          \brief Default destructor.
-
-          Default destructor.
-         */
-	~dalFilter();
-
-        /*!
           \brief Restrict to certain columns.
 
           Restrict the opening of a table to particular columns.

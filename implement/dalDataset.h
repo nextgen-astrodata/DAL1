@@ -72,7 +72,7 @@ class dalDataset{
 	std::vector<dalGroup> groups; //!< list of groups
 	std::vector<dalAttribute> attrs;  //!< list of attributes
 	
-	dalFilter * filter;	//!< dataset filter
+	dalFilter filter;	//!< dataset filter
 
 	hid_t h5fh;   //!< hdf5 file handle
 	herr_t status;
@@ -89,11 +89,6 @@ class dalDataset{
 	 */
   	dalDataset();
 
-	/*!
-	  \brief The dataset object destructor
-	 */
-	~dalDataset();
-	
        /*!
          \brief Initialize the object's internal parameters
 

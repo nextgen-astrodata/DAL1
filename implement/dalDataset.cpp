@@ -88,7 +88,6 @@ void dalDataset::init()
   tables.clear();
   groups.clear();
   attrs.clear();
-  filter = new dalFilter;
   h5fh = 0;   //!< hdf5 file handle
   status = 0;
 
@@ -97,15 +96,6 @@ void dalDataset::init()
   ms_reader = NULL;
 #endif
 
-}
-/****************************************************************
- *  Default destructor
- *
- *****************************************************************/
-dalDataset::~dalDataset()
-{
-  delete filter;
-  filter = NULL;
 }
 
 /****************************************************************
@@ -471,14 +461,14 @@ void dalDataset::listTables()
 
 void dalDataset::setFilter( string columns )
 {
-    filter->setFiletype( type );
-    filter->set(columns);
+    filter.setFiletype( type );
+    filter.set(columns);
 }
 
 void dalDataset::setFilter( string columns, string conditions )
 {
-    filter->setFiletype( type );
-    filter->set(columns,conditions);
+    filter.setFiletype( type );
+    filter.set(columns,conditions);
 }
 
 dalArray * dalDataset::createArray( string arrayname, dalData * data_object )
@@ -638,8 +628,10 @@ dalTable * dalDataset::openTable( string tablename )
    {
 #ifdef WITH_CASA
 	dalTable * lt = new dalTable( MSCASATYPE );
-	if ( filter->isSet() )
-	  lt->openTable( tablename, ms_reader, filter );
+	if ( filter.isSet() )
+        {
+           lt->openTable( tablename, ms_reader, &filter );
+        }
         else
 	  lt->openTable( tablename, ms_reader );
 	return lt;

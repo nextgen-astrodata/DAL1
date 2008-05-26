@@ -179,8 +179,8 @@ dalColumn * dalTable::getColumn_complexInt16( string colname )
       dalColumn * lclcol;
       lclcol = new dalColumn( file_id, table_id, H5TYPE, name, colname,
                               dal_COMPLEX_SHORT );
+      return lclcol;
 
-	  return lclcol;
    }
    else
    {

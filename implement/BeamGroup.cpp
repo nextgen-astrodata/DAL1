@@ -179,7 +179,7 @@ namespace DAL {
   float * 
   BeamGroup::getIntensity( int subband,
                            int start,
-                           int length )
+                           int &length )
   {
     dalTable * table;
     dalColumn * col;
@@ -188,8 +188,19 @@ namespace DAL {
     vector<string> memnames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memnames[ subband ],group_p->getName());
+    if ( !table )
+    {
+      printf("ERROR: Subband %d does not exist for this beam\n", subband);
+      return NULL;
+    }
+
     col = table->getColumn_Float32("TOTAL_INTENSITY");
     data = col->data( start, length );
+    if ( !data )
+    {
+      printf("ERROR: Column TOTAL_INTENSITY does not exist for this subband\n");
+      return NULL;
+    }
 
     float * values;
     values = (float*)data->data;
@@ -219,9 +230,20 @@ namespace DAL {
 
     vector<string> memnames = group_p->getMemberNames();
 
-    table = dataset_p.openTable(memnames[ subband ],group_p->getName());
+    table = dataset_p.openTable( memnames[subband], group_p->getName() );
+    if ( !table )
+    {
+      printf("ERROR: Subband %d does not exist for this beam\n", subband);
+      return NULL;
+    }
+
     col = table->getColumn_complexInt16("X");
     data = col->data( start, length );
+    if ( !data )
+    {
+      printf("ERROR: Column X does not exist for this subband\n");
+      return NULL;
+    }
 
     std::complex<short> * values = NULL;
     values = (complex<short>*)data->data;
@@ -245,8 +267,20 @@ namespace DAL {
     vector<string> memnames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memnames[ subband ],group_p->getName());
+    if ( !table )
+    {
+      printf("ERROR: Subband %d does not exist for this beam\n", subband);
+      return NULL;
+    }
+
     col = table->getColumn_complexInt16("Y");
     data = col->data( start, length );
+    if ( !data )
+    {
+      printf("ERROR: Column Y does not exist for this subband\n");
+      return NULL;
+    }
+
 
     std::complex<short> * values = NULL;
     values = (complex<short>*)data->data;
@@ -271,8 +305,17 @@ namespace DAL {
     vector<string> memnames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memnames[ subband ],group_p->getName());
+    if ( !table )
+    {
+      printf("ERROR: Subband %d does not exist for this beam\n", subband);
+    }
+
     col = table->getColumn_complexInt16("X");
     data = col->data( start, length );
+    if ( !data )
+    {
+      printf("ERROR: Column X does not exist for this subband\n");
+    }
 
     for (int jj=0; jj < length; jj++)
     {
@@ -298,8 +341,17 @@ namespace DAL {
     vector<string> memnames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memnames[ subband ],group_p->getName());
+    if ( !table )
+    {
+      printf("ERROR: Subband %d does not exist for this beam\n", subband);
+    }
+
     col = table->getColumn_complexInt16("Y");
     data = col->data( start, length );
+    if ( !data )
+    {
+      printf("ERROR: Column Y does not exist for this subband\n");
+    }
 
     for (int jj=0; jj < length; jj++)
     {
@@ -344,7 +396,16 @@ bpl::numeric::array BeamGroup::getSubbandData_X_boost( int subband,
                                                        int length )
 {
   std::complex<short> * values = NULL;
+
   values = getSubbandData_X( subband, start, length );
+  if ( !values )
+  {
+    bpl::list foo;
+    foo.append( 0 );
+    bpl::numeric::array narray = num_util::makeNum( foo );
+    return narray;
+  }
+
   std::complex<float> * value_list;
   value_list = new std::complex<float>[length];
 
