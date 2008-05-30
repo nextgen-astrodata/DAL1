@@ -79,7 +79,7 @@ namespace DAL { // Namespace DAL -- begin
       name = "SAMPLE_NUMBER";
       break;
     case SAMPLE_FREQUENCY_VALUE:
-      name = "SAMPLE_FREQEUNCY_VALUE";
+      name = "SAMPLE_FREQUENCY_VALUE";
       break;
     case SAMPLE_FREQUENCY_UNIT:
       name = "SAMPLE_FREQUENCY_UNIT";
