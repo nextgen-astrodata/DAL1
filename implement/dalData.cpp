@@ -311,24 +311,32 @@ bpl::numeric::array dalData::get_boost2( int32_t length )
       if ( dal_CHAR == datatype )
       {
 	mydims.push_back(length);
+        for (unsigned int hh=1; hh<shape.size(); hh++)
+	{ mydims.push_back(shape[hh]); }
 	bpl::numeric::array narray = num_util::makeNum((char*)data,mydims);
 	return narray;
       }
       else if ( dal_INT == datatype )
       {
-	{ mydims.push_back(length); }
+	mydims.push_back(length);
+        for (unsigned int hh=1; hh<shape.size(); hh++)
+	{ mydims.push_back(shape[hh]); }
 	bpl::numeric::array narray = num_util::makeNum((int*)data,mydims);
 	return narray;
       }
       else if ( dal_FLOAT == datatype )
       {
 	mydims.push_back(length);
+        for (unsigned int hh=1; hh<shape.size(); hh++)
+	{ mydims.push_back(shape[hh]); }
 	bpl::numeric::array narray = num_util::makeNum((float*)data,mydims);
 	return narray;
       }
       else if ( dal_DOUBLE == datatype )
       {
 	mydims.push_back(length);
+        for (unsigned int hh=1; hh<shape.size(); hh++)
+	{ mydims.push_back(shape[hh]); }
 	bpl::numeric::array narray = num_util::makeNum((double*)data,mydims);
 	vector<int> fshape = num_util::shape(narray);
 	return narray;
@@ -336,6 +344,8 @@ bpl::numeric::array dalData::get_boost2( int32_t length )
       else if ( dal_COMPLEX == datatype )
       {
 	mydims.push_back(length);
+        for (unsigned int hh=1; hh<shape.size(); hh++)
+	{ mydims.push_back(shape[hh]); }
 	bpl::numeric::array narray = num_util::makeNum((complex<float>*)data,mydims);
 	vector<int> fshape = num_util::shape(narray);
 	return narray;
@@ -343,6 +353,8 @@ bpl::numeric::array dalData::get_boost2( int32_t length )
       else if ( dal_COMPLEX_CHAR == datatype )
       {
 	mydims.push_back(length);
+        for (unsigned int hh=1; hh<shape.size(); hh++)
+	{ mydims.push_back(shape[hh]); }
 	bpl::numeric::array narray = num_util::makeNum((complex<char>*)data,mydims);
 	vector<int> fshape = num_util::shape(narray);
 	return narray;
@@ -350,6 +362,8 @@ bpl::numeric::array dalData::get_boost2( int32_t length )
       else if ( dal_COMPLEX_SHORT == datatype )
       {
 	mydims.push_back(length);
+        for (unsigned int hh=1; hh<shape.size(); hh++)
+	{ mydims.push_back(shape[hh]); }
 	bpl::numeric::array narray = num_util::makeNum((complex<short>*)data,mydims);
 	vector<int> fshape = num_util::shape(narray);
 	return narray;
@@ -357,6 +371,8 @@ bpl::numeric::array dalData::get_boost2( int32_t length )
       else if ( dal_STRING == datatype )
       {
 	mydims.push_back(length);
+        for (unsigned int hh=1; hh<shape.size(); hh++)
+	{ mydims.push_back(shape[hh]); }
 	bpl::list data_list;
 	if ( 1 == shape.size() ) // 1D case
 	{
