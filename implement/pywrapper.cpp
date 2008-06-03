@@ -169,12 +169,14 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("isArray", &dalColumn::isArray)
 #ifdef WITH_CASA
 	.def("data", &dalColumn::data_boost)
+	.def("data", &dalColumn::data_boost2)
 #endif
     ;
 
     bpl::class_<dalData>("dalData")
 	.def(bpl::init<>())
 	.def("get", &dalData::get_boost)
+	.def("get", &dalData::get_boost2)
     ;
 
     bpl::class_<BeamGroup>("BeamGroup")

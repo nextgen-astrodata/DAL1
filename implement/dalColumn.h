@@ -311,8 +311,9 @@ class dalColumn {
  ************************************************************************/
 #ifdef PYTHON
 
-	bpl::tuple shape_boost();
-	bpl::numeric::array data_boost();
+    bpl::tuple shape_boost();
+    bpl::numeric::array data_boost();
+    bpl::numeric::array data_boost2( int32_t length );
 
 #endif
 };  // dalColumn class
