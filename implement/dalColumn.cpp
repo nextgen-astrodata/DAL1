@@ -888,8 +888,11 @@ bpl::numeric::array dalColumn::data_boost2( int32_t length )
 	    break;
 	  case casa::TpComplex:
 	  {
-// 	    casa::IPosition start (2,cell1,cell2);
-// 	    casa::Slicer slicer (start);
+            vector<int32_t> lcldims = shape();
+            lcldims[0] = length;
+	    casa::IPosition start ( 1, 0 );
+	    casa::IPosition end ( 1, length );
+	    casa::Slicer slicer ( start, end );
 	    dal_datatype = dal_COMPLEX;
 	    vector< complex< float > > ret_valvec;
 	    try
@@ -899,11 +902,11 @@ bpl::numeric::array dalColumn::data_boost2( int32_t length )
                cout << "ERROR: " << x.getMesg() << endl;
 	       exit(-4);
             }
-            array_vals_comp = roac_comp->getColumn(/*slicer*/);
-	    data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
+            array_vals_comp = roac_comp->getColumnRange( slicer );
+	    data_object = new dalData( filetype, dal_COMPLEX, lcldims, length );
 	    data_object->data =
 		  (complex<float> *)array_vals_comp.getStorage(deleteIt);
-	    return data_object->get_boost2( length );
+	    return data_object->get_boost();
 
 	    }
 	    break;
