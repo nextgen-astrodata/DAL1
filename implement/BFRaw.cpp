@@ -494,9 +494,9 @@ namespace DAL {
 
   Float32 *
   BFRaw::downsample_to_float32_intensity( Sample * data,
-                                          int start,
-                                          const unsigned long arraylength,
-                                          int factor )
+                                          int32_t start,
+                                          const uint64_t arraylength,
+                                          int32_t factor )
   {
     const int DS_SIZE = arraylength / factor;
     double xx_intensity = 0;
