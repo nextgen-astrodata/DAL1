@@ -32,6 +32,12 @@
 #ifdef WITH_CASA
 #include <casa/Arrays/IPosition.h>
 #include <casa/Arrays/Vector.h>
+#include <casa/Quanta/Quantum.h>
+#include <measures/Measures/MDirection.h>
+#endif
+
+#ifndef ENUMERATIONS_H
+#include <dal/Enumerations.h>
 #endif
 
 #include <H5LT.h>
@@ -288,7 +294,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \param loc_id -- Identifier for the HDF5 object - file, group, dataset,
            array - the attribute is attached to.
-    \param name        -- Name of the attribute
+    \param name   -- Name of the attribute
     \param opdata -- not used, but necessary as a placeholder
     \return error status
   */
@@ -296,6 +302,41 @@ namespace DAL { // Namespace DAL -- begin
 
   //@}
 
+  /*!  
+    \brief Get physical quantity attribute as casa::Quantity
+    
+    \param value -- Identifier for the attribute storing the numerical value of
+           the quantity.
+    \param unit  -- Identifier for the attribute storing the physical unit of 
+           the quantity
+    \param location_id -- Identifier of the structure within the file, to which 
+           the attribut is attached to.
+    
+    \return quantity -- The physical quantity.
+  */
+  casa::Quantity h5get_quantity (DAL::Attributes const &value,
+				 DAL::Attributes const &unit,
+				 hid_t const &location_id);
+  
+  /*!  
+    \brief Get a physical quantity describing a direction within a frame
+    
+    \param value -- Identifier for the attribute storing the numerical value of
+           the quantity.
+    \param unit  -- Identifier for the attribute storing the physical unit of 
+           the quantity
+    \param frame -- Identifier for the attribute storing the identifier for the
+           reference frame within which the physical quantity is defined.
+    \param location_id -- Identifier of the structure within the file, to which 
+           the attribut is attached to.
+    
+    \return quantity -- The physical quantity.
+  */
+  casa::MDirection h5get_direction (DAL::Attributes const &value,
+				    DAL::Attributes const &unit,
+				    DAL::Attributes const &frame,
+				    hid_t const &location_id);
+    
   // ============================================================================
   //
   //  Dataspaces and Datatypes

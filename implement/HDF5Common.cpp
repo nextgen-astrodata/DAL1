@@ -728,14 +728,78 @@ attr_info(hid_t loc_id, const char * name, void * opdata)
       delete [] data;
       data = NULL;
     }
-
+    
     ret = H5Tclose(atype);
     ret = H5Sclose(aspace);
     ret = H5Aclose(attr);
-
+    
     return 0;
 }
+  
+#ifdef WITH_CASA  
 
+  // ------------------------------------------------------------- h5get_quantity
+  
+  casa::Quantity h5get_quantity (DAL::Attributes const &value,
+				 DAL::Attributes const &unit,
+				 hid_t const &location_id)
+  {
+    if (location_id > 0) {
+      bool status (true);
+      double quantityValue;
+      std::string quantityUnit;
+      // retrieve the value of the quantity
+      status *= DAL::h5get_attribute(quantityValue,
+				     attribute_name(value),
+				     location_id);
+      // retrieve the unit of the quantity
+      status *= DAL::h5get_attribute(quantityUnit,
+				     attribute_name(unit),
+				     location_id);
+      // put together the Quantity object
+      if (status) {
+	casa::Quantity val = casa::Quantity (quantityValue,
+					     casa::Unit(quantityUnit));
+	return val;
+      } else {
+	return casa::Quantity();
+      }
+    } else {
+      return casa::Quantity();
+    }
+  }
+
+  // ------------------------------------------------------------ h5get_direction
+
+  casa::MDirection h5get_direction (DAL::Attributes const &value,
+				    DAL::Attributes const &unit,
+				    DAL::Attributes const &frame,
+				    hid_t const &location_id)
+  {
+    if (location_id > 0) {
+      bool status (true);
+      std::string directionFrame;
+      // retrieve value and unit as quantity
+      casa::Quantity directionQuantity = h5get_quantity (value,
+							 unit,
+							 location_id);
+      // retrieve the frame of the direction
+      status *= DAL::h5get_attribute(directionFrame,
+				     attribute_name(frame),
+				     location_id);
+      // assemble MDirection object
+      if (status) {
+      } else {
+	return casa::MDirection();
+      }
+    } else {
+      return casa::MDirection();
+    }
+  }
+
+#endif
+
+  
   // ============================================================================
   //
   //  Dataspaces and Datatypes
