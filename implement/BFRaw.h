@@ -50,42 +50,79 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
+#define PI 3.141592653589793238462643
+
 namespace DAL {
 
-
-  typedef struct FileHeader {
-   UInt32    magic;        // 0x3F8304EC, also determines endianness
-   UInt8     bitsPerSample;
-   UInt8     nrPolarizations;
-   UInt16    nrBeamlets;
-   UInt32    nrSamplesPerBeamlet; // 155648 (160Mhz) or 196608 (200Mhz)
-   char      station[20];
-   Float64   sampleRate;       //156250.0 or 195312.5 .. double
-   Float64   subbandFrequencies[54];
-   Float64   beamDirections[8][2];
-   Int16     beamlet2beams[54];
-   UInt32    padding;  // padding to circumvent 8-byte alignment
+  struct FileHeader {
+    UInt32    magic;        // 0x3F8304EC, also determines endianness
+    UInt8     bitsPerSample;
+    UInt8     nrPolarizations;
+    UInt16    nrBeamlets;   // number of subbands
+    UInt32    nrSamplesPerBeamlet; // 155648 (160Mhz) or 196608 (200Mhz)
+    char      station[20];
+    Float64   sampleRate;       //156250.0 or 195312.5 .. double
+    Float64   subbandFrequencies[54];
+    Float64   beamDirections[8][2];
+    Int16     beamlet2beams[54];
+    UInt32    padding;  // padding to circumvent 8-byte alignment
   };
 
-  typedef struct BlockHeader {
-   UInt8       magic[4]; // 0x2913D852
-   Int32       coarseDelayApplied[8];
-   UInt8       padding[4];  // padding to circumvent 8-byte alignment
-   Float64     fineDelayRemainingAtBegin[8];
-   Float64     fineDelayRemainingAfterEnd[8];
-   Int64       time[8]; // compatible with TimeStamp class.
-   UInt32      nrFlagsRanges[8];
-   struct range {
+  struct BlockHeader
+  {
+    UInt32      magic; // 0x2913D852
+    Int32       coarseDelayApplied[8];
+    UInt8       padding[4];  // padding to circumvent 8-byte alignment
+    Float64     fineDelayRemainingAtBegin[8];
+    Float64     fineDelayRemainingAfterEnd[8];
+    Int64       time[8]; // compatible with TimeStamp class.
+    UInt32      nrFlagsRanges[8];
+
+    struct range {
      UInt32    begin; // inclusive
      UInt32    end;   // exclusive
-   } flagsRanges[8][16];
+    } flagsRanges[8][16];
+
   };
 
-  // dataStruct is 8 bytes
-  typedef struct dataStruct {
-    complex<short> xx;
-    complex<short> yy;
+   // dataStruct is 8 bytes
+  struct Sample {
+     complex<int16_t> xx;
+     complex<int16_t> yy;
   };
+
+  class BFRaw {
+
+    char * DECrad2deg( const float &rad );
+    char * RArad2deg( const float &rad );
+
+    // declare handle for the input file
+    dalTable ** table;
+    fstream * rawfile;
+    string outputfilename;
+    dalDataset dataset;
+    FileHeader fileheader;
+    BlockHeader blockheader;
+    bool bigendian;
+    bool first_block;
+    int downsample_factor;
+    bool DO_DOWNSAMPLE;
+    bool DO_FLOAT32_INTENSITY;
+    bool DO_CHANNELIZATION;
+    bool processBlocks( int16_t );
+    Float32 * downsample_to_float32_intensity( Sample *, int32_t,
+                                               const uint64_t, int32_t );
+    public:
+
+    BFRaw( string const& name );  // constructor
+    ~BFRaw();  // destructor
+    void makeH5OutputFile();
+    void readRawFileHeader();
+    void openRawFile(char*);
+    bool eof();
+    void processBlocks();
+
+  }; // class BFRaw
 
 } // DAL namespace
 
