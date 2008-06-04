@@ -765,6 +765,7 @@ attr_info(hid_t loc_id, const char * name, void * opdata)
 	return casa::Quantity();
       }
     } else {
+      cerr << "[h5get_quantity] Unusable ID for HDF5 object!" << endl;
       return casa::Quantity();
     }
   }
@@ -793,10 +794,40 @@ attr_info(hid_t loc_id, const char * name, void * opdata)
 	return casa::MDirection();
       }
     } else {
+      cerr << "[h5get_direction] Unusable ID for HDF5 object!" << endl;
       return casa::MDirection();
     }
   }
 
+  // ------------------------------------------------------------- h5get_position
+  
+  casa::MPosition h5get_position (DAL::Attributes const &value,
+				  DAL::Attributes const &unit,
+				  DAL::Attributes const &frame,
+				  hid_t const &location_id)
+  {
+    if (location_id > 0) {
+      bool status (true);
+      std::string positionFrame;
+      // retrieve value and unit as quantity
+      casa::Quantity positionQuantity = h5get_quantity (value,
+							unit,
+							location_id);
+      // retrieve the frame of the position
+      status *= DAL::h5get_attribute(positionFrame,
+				     attribute_name(frame),
+				     location_id);
+      // assemble MPosition object
+      if (status) {
+      } else {
+	return casa::MPosition();
+      }
+    } else {
+      cerr << "[h5get_position] Unusable ID for HDF5 object!" << endl;
+      return casa::MPosition();
+    }
+  }
+  
 #endif
 
   

@@ -34,6 +34,7 @@
 #include <casa/Arrays/Vector.h>
 #include <casa/Quanta/Quantum.h>
 #include <measures/Measures/MDirection.h>
+#include <measures/Measures/MPosition.h>
 #endif
 
 #ifndef ENUMERATIONS_H
@@ -302,6 +303,7 @@ namespace DAL { // Namespace DAL -- begin
 
   //@}
 
+#ifdef WITH_CASA
   /*!  
     \brief Get physical quantity attribute as casa::Quantity
     
@@ -330,13 +332,33 @@ namespace DAL { // Namespace DAL -- begin
     \param location_id -- Identifier of the structure within the file, to which 
            the attribut is attached to.
     
-    \return quantity -- The physical quantity.
+    \return direction -- The physical quantity.
   */
   casa::MDirection h5get_direction (DAL::Attributes const &value,
 				    DAL::Attributes const &unit,
 				    DAL::Attributes const &frame,
 				    hid_t const &location_id);
     
+  /*!  
+    \brief Get a physical quantity describing a position/location
+    
+    \param value -- Identifier for the attribute storing the numerical value of
+           the quantity.
+    \param unit  -- Identifier for the attribute storing the physical unit of 
+           the quantity
+    \param frame -- Identifier for the attribute storing the identifier for the
+           reference frame within which the physical quantity is defined.
+    \param location_id -- Identifier of the structure within the file, to which 
+           the attribut is attached to.
+    
+    \return position -- The physical quantity.
+  */
+  casa::MPosition h5get_position (DAL::Attributes const &value,
+				  DAL::Attributes const &unit,
+				  DAL::Attributes const &frame,
+				  hid_t const &location_id);
+#endif
+  
   // ============================================================================
   //
   //  Dataspaces and Datatypes
