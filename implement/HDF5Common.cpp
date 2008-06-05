@@ -27,6 +27,9 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
+using casa::MPosition;
+using casa::Quantity;
+
 namespace DAL { // Namespace DAL -- begin
   
   // ============================================================================
@@ -740,8 +743,8 @@ attr_info(hid_t loc_id, const char * name, void * opdata)
 
   // ------------------------------------------------------------- h5get_quantity
   
-  casa::Quantity h5get_quantity (DAL::Attributes const &value,
-				 DAL::Attributes const &unit,
+  casa::Quantity h5get_quantity (Attributes const &value,
+				 Attributes const &unit,
 				 hid_t const &location_id)
   {
     if (location_id > 0) {
@@ -749,13 +752,13 @@ attr_info(hid_t loc_id, const char * name, void * opdata)
       double quantityValue;
       std::string quantityUnit;
       // retrieve the value of the quantity
-      status *= DAL::h5get_attribute(quantityValue,
-				     attribute_name(value),
-				     location_id);
+      status *= h5get_attribute(quantityValue,
+				attribute_name(value),
+				location_id);
       // retrieve the unit of the quantity
-      status *= DAL::h5get_attribute(quantityUnit,
-				     attribute_name(unit),
-				     location_id);
+      status *= h5get_attribute(quantityUnit,
+				attribute_name(unit),
+				location_id);
       // put together the Quantity object
       if (status) {
 	casa::Quantity val = casa::Quantity (quantityValue,
@@ -769,12 +772,12 @@ attr_info(hid_t loc_id, const char * name, void * opdata)
       return casa::Quantity();
     }
   }
-
+  
   // ------------------------------------------------------------ h5get_direction
-
-  casa::MDirection h5get_direction (DAL::Attributes const &value,
-				    DAL::Attributes const &unit,
-				    DAL::Attributes const &frame,
+  
+  casa::MDirection h5get_direction (Attributes const &value,
+				    Attributes const &unit,
+				    Attributes const &frame,
 				    hid_t const &location_id)
   {
     if (location_id > 0) {
@@ -785,11 +788,12 @@ attr_info(hid_t loc_id, const char * name, void * opdata)
 							 unit,
 							 location_id);
       // retrieve the frame of the direction
-      status *= DAL::h5get_attribute(directionFrame,
-				     attribute_name(frame),
-				     location_id);
+      status *= h5get_attribute(directionFrame,
+				attribute_name(frame),
+				location_id);
       // assemble MDirection object
       if (status) {
+	return casa::MDirection();
       } else {
 	return casa::MDirection();
       }
@@ -801,35 +805,62 @@ attr_info(hid_t loc_id, const char * name, void * opdata)
 
   // ------------------------------------------------------------- h5get_position
   
-  casa::MPosition h5get_position (DAL::Attributes const &value,
-				  DAL::Attributes const &unit,
-				  DAL::Attributes const &frame,
-				  hid_t const &location_id)
+  MPosition h5get_position (Attributes const &value,
+			    Attributes const &unit,
+			    Attributes const &frame,
+			    hid_t const &location_id)
   {
+    MPosition obs = MPosition();
+    
     if (location_id > 0) {
       bool status (true);
-      std::string positionFrame;
-      // retrieve value and unit as quantity
-      casa::Quantity positionQuantity = h5get_quantity (value,
-							unit,
-							location_id);
+      casa::Vector<double> values;
+      casa::Vector<casa::String> units;
+      MPosition::Types tp;
+      std::string refcode;
+      // retrieve the numerical values of the position
+      status *= h5get_attribute(values,
+				attribute_name(value),
+				location_id);
+      // retrieve the physical units of the position
+      status *= h5get_attribute(units,
+				attribute_name(unit),
+				location_id);
       // retrieve the frame of the position
-      status *= DAL::h5get_attribute(positionFrame,
-				     attribute_name(frame),
-				     location_id);
+      status *= h5get_attribute(refcode,
+				attribute_name(frame),
+				location_id);
+      status *= MPosition::getType (tp,refcode);
       // assemble MPosition object
       if (status) {
+	int nofValues = values.nelements();
+	int nofUnits  = units.nelements();
+	if (nofValues == 3 && nofValues == nofUnits) {
+	  // create MPosition object
+	  obs = MPosition ( casa::MVPosition( Quantity( values(0), units(0)),
+					      Quantity( values(1), units(1)),
+					      Quantity( values(2), units(2))),
+			    MPosition::Ref(tp));
+	  // return result
+	  return obs;
+	} else {
+	  cerr << "[h5get_position] Mismatching number of values and units!" << endl;
+	  obs = MPosition();
+	}
       } else {
-	return casa::MPosition();
+	cerr << "[h5get_position] Error retrieving components for MPosition!" << endl;
+	obs = MPosition();
       }
     } else {
       cerr << "[h5get_position] Unusable ID for HDF5 object!" << endl;
-      return casa::MPosition();
+      obs = MPosition();
     }
+    
+    return obs;
   }
   
 #endif
-
+  
   
   // ============================================================================
   //
