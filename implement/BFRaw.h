@@ -112,6 +112,9 @@ namespace DAL {
     bool processBlocks( int16_t );
     Float32 * downsample_to_float32_intensity( Sample *, int32_t,
                                                const uint64_t, int32_t );
+    Float32 * compute_float32_intensity( Sample * data,
+                                         int32_t start,
+                                         const uint64_t arraylength );
     public:
 
     BFRaw( string const& name );  // constructor

@@ -65,6 +65,7 @@ namespace DAL {
     outputfilename = filename;
     rawfile = NULL;
     downsample_factor = 128;
+    DO_FLOAT32_INTENSITY = true;
     DO_DOWNSAMPLE = true;
     DO_CHANNELIZATION = false;
   }
@@ -304,7 +305,7 @@ namespace DAL {
 
     for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
     {
-       if (DO_DOWNSAMPLE || DO_FLOAT32_INTENSITY)
+       if ( DO_DOWNSAMPLE || DO_FLOAT32_INTENSITY )
        {
          table[idx]->addColumn( "TOTAL_INTENSITY", dal_FLOAT );
        }
@@ -460,7 +461,7 @@ namespace DAL {
           if ( DO_DOWNSAMPLE )  // if downsampling
           {
              Float32 * downsampled_data;
-             int start = fileheader.nrSamplesPerBeamlet;
+             int start = 0;
              downsampled_data =
                 downsample_to_float32_intensity( sample,
                                                  start,
@@ -474,7 +475,26 @@ namespace DAL {
           }
           else  // no downsampling
           {
-           table[subband]->appendRows( sample, fileheader.nrSamplesPerBeamlet );
+
+            if ( DO_FLOAT32_INTENSITY )
+            {
+              Float32 * intensity_data;
+              int start = 0;
+              intensity_data =
+                 compute_float32_intensity( sample,
+                                            start,
+                                            fileheader.nrSamplesPerBeamlet );
+              #pragma omp ordered
+              table[subband]->appendRows( intensity_data,
+                                          fileheader.nrSamplesPerBeamlet );
+              delete [] intensity_data;
+              intensity_data = NULL;
+            }
+            else
+            {
+              table[subband]->appendRows( sample,
+                                          fileheader.nrSamplesPerBeamlet );
+            }
           }
 
        } // for subband
@@ -490,6 +510,42 @@ namespace DAL {
 
     return retval;
 
+  }
+
+  Float32 *
+  BFRaw::compute_float32_intensity( Sample * data,
+                                    int32_t start,
+                                    const uint64_t arraylength )
+  {
+    double xx_intensity = 0;
+    double yy_intensity = 0;
+    Float32 * totalintensity = NULL;
+    try
+    {
+      totalintensity = new Float32[ arraylength ];
+    }
+    catch (bad_alloc)
+    {
+      cerr << "Can't allocate memory for total intensity array." << endl;
+    }
+
+    #pragma omp parallel for ordered schedule(dynamic)
+    for ( uint count = 0; count < arraylength; count++ )
+    {
+      totalintensity[ count ] = 0;
+
+      for ( uint idx = start; idx < ( start + arraylength ); idx++ )
+      {
+        xx_intensity = ( (double)real(data[ idx ].xx) * real(data[ idx ].xx) +
+                         (double)imag(data[ idx ].xx) * imag(data[ idx ].xx) );
+        yy_intensity = ( (double)real(data[ idx ].yy) * real(data[ idx ].yy) +
+                         (double)imag(data[ idx ].yy) * imag(data[ idx ].yy) );
+        totalintensity[count] +=
+          (Float32)std::sqrt( xx_intensity * xx_intensity +
+                              yy_intensity * yy_intensity );
+      }
+    }
+    return totalintensity;
   }
 
   Float32 *
@@ -517,12 +573,13 @@ namespace DAL {
       ds_data[count] = 0;
       for ( int idx = start; idx < (start+factor); idx++ )
       {
-        xx_intensity = ( (double)real(data[ idx ].xx)*real(data[ idx ].xx) +
-                         (double)imag(data[ idx ].xx)*imag(data[ idx ].xx) );
-        yy_intensity = ( (double)real(data[ idx ].yy)*real(data[ idx ].yy) +
-                         (double)imag(data[ idx ].yy)*imag(data[ idx ].yy) );
+        xx_intensity = ( (double)real(data[ idx ].xx) * real(data[ idx ].xx) +
+                         (double)imag(data[ idx ].xx) * imag(data[ idx ].xx) );
+        yy_intensity = ( (double)real(data[ idx ].yy) * real(data[ idx ].yy) +
+                         (double)imag(data[ idx ].yy) * imag(data[ idx ].yy) );
         ds_data[count] +=
-          (Float32)std::sqrt( xx_intensity*xx_intensity + yy_intensity*yy_intensity );
+          (Float32)std::sqrt( xx_intensity * xx_intensity +
+                              yy_intensity * yy_intensity );
       }
       start += factor;
     }
