@@ -59,19 +59,19 @@ namespace DAL {
 class dalGroup{
 
  protected:
-	void * file; //!< can be HDF5File, FITS, MS
-	string groupname; //!< group name
-        string groupname_full;
-	void * group;
-	vector<dalTable> tables; //!< list of tables within groups
-	vector<dalAttribute> attributes; //!< list of group attributes
-	dalFilter * filter; //!< filter associated with group
-	hid_t file_id; //!< hdf5 file_id
-	hid_t group_id; //!< hdf5 group_id
-	herr_t	status; //!< hdf5 return status
 
-	dalGroup * subgroup;
-	
+ void * file; //!< can be HDF5File, FITS, MS
+ string groupname; //!< group name
+ string groupname_full;
+ void * group;
+ vector<dalTable> tables; //!< list of tables within groups
+ vector<dalAttribute> attributes; //!< list of group attributes
+ dalFilter * filter; //!< filter associated with group
+ hid_t file_id; //!< hdf5 file_id
+ hid_t group_id; //!< hdf5 group_id
+ herr_t status; //!< hdf5 return status
+ dalGroup * subgroup;
+
  public:
 
 	/*!
@@ -304,6 +304,7 @@ class dalGroup{
           \param data The value of the attribute you want to create.
         */
 	void setAttribute_string( string attrname, string data );
+	void setAttribute_string( string attrname, string * data, int size=1 );
 
         /*!
           \brief Define a integer attribute.

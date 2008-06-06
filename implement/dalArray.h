@@ -117,6 +117,7 @@ class dalArray{
 	  \param data The value of the attribute you want to add.
 	 */
 	void setAttribute_string( string attrname, string data );
+	void setAttribute_string( string attrname, string * data, int size=1 );
 
 	/*!
 	  \brief Add an integer attribute.

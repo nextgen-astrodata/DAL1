@@ -57,17 +57,18 @@ dataStruct * channelize( dataStruct * data,
 
 namespace DAL {
 
-  BFRaw::BFRaw( string const& filename )
+  BFRaw::BFRaw( string const& filename, bool doIntensity, bool doDownsample,
+                bool doChannelization, int factor )
   {
     // initializations (private)
     bigendian = BigEndian();
     first_block = true;
     outputfilename = filename;
     rawfile = NULL;
-    downsample_factor = 128;
-    DO_FLOAT32_INTENSITY = true;
-    DO_DOWNSAMPLE = true;
-    DO_CHANNELIZATION = false;
+    downsample_factor = factor;
+    DO_FLOAT32_INTENSITY = doIntensity;
+    DO_DOWNSAMPLE = doDownsample;
+    DO_CHANNELIZATION = doChannelization;
   }
 
   BFRaw::~BFRaw()

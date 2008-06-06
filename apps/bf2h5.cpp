@@ -55,12 +55,38 @@ int main (int argc, char *argv[])
 {
 
   // If less than two arguments provided, print usage
-  if ( 3 != argc ) {
-    cout << "Usage:  bf2h5 <input filename> <output filename>" << endl << endl;
+  if ( 6 != argc ) {
+    cout << endl
+         << "Usage:  bf2h5 <input filename> <output filename> "
+         << "<do intensity> <do downsample> <downsample factor>" << endl
+         << endl
+         << "For example:" << endl << endl
+         << "bf2h5 /path/B0329.out B0329.h5 1 1 128" << endl
+         << endl
+         << "will compute total intensities and downsample the dataset by " << endl
+         << "averaging the total intensities over every 128 samples. " << endl
+         << endl
+         << "If <do intensity> or <do downsample> is set, the output file will " << endl
+         << "contain subband tables with a TOTAL_INTENSITY column. If neither " << endl
+         << "of these parameters is set, the subband tables will contain " << endl
+         << "real and imaginary polarization data at full resolution (XrXi,YrYi)." << endl
+         << endl
+         << "All parameters are required.  If <do downsample> is set to 0 " << endl
+         << "then <downsample factor> value will be ignored." << endl << endl;
     exit(1);
   }
 
-  BFRaw bf = BFRaw( argv[2] );
+  string filename = argv[2];
+  bool doIntensity = argv[3];
+  bool doDownsample = argv[4];
+  int factor = atoi(argv[5]);
+  // can't downsample w/o total intensities
+  if ( doDownsample ) doIntensity = true;
+  bool doChannelization = false;
+
+  BFRaw bf = BFRaw( filename, doIntensity, doDownsample,
+                    doChannelization, factor );
+
   bf.openRawFile( argv[1] );
   bf.readRawFileHeader();
   bf.makeH5OutputFile();

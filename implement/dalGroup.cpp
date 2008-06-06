@@ -199,6 +199,34 @@ string dalGroup::getName () {
    return groupname;
 }
 
+void dalGroup::setAttribute_string( string attrname, string * data, int size )
+{
+  hid_t att = 0;
+  hid_t dataspace = 0;
+  hsize_t dims[1] = { size };
+
+  char ** string_attr = (char**)malloc( size * sizeof(char*) );
+  for ( int ii = 0; ii < size; ii++ ) {
+     string_attr[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+     strcpy( string_attr[ii], data[ii].c_str() );
+     cerr << string_attr[ii] << endl;
+  }
+
+  hid_t type = H5Tcopy (H5T_C_S1);
+  status = H5Tset_size (type, H5T_VARIABLE);
+  dataspace = H5Screate_simple(1, dims, NULL);
+  att = H5Acreate( group_id, attrname.c_str(), type, dataspace, H5P_DEFAULT );
+  status = H5Awrite( att, type, string_attr ) ;
+  status = H5Aclose( att );
+
+  for ( int ii = 0; ii < size; ii++ )
+  {
+    free( string_attr[ii] );
+  }
+  free( string_attr );
+
+}
+
 void dalGroup::setAttribute_string( string attrname, string data )
 {
   if ( H5LTset_attribute_string( file_id, groupname.c_str(),

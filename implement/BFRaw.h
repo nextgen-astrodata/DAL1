@@ -117,7 +117,8 @@ namespace DAL {
                                          const uint64_t arraylength );
     public:
 
-    BFRaw( string const& name );  // constructor
+    BFRaw( string const& name, bool doIntensity, bool doDownsample,
+           bool doChannelization, int factor );  // constructor
     ~BFRaw();  // destructor
     void makeH5OutputFile();
     void readRawFileHeader();
