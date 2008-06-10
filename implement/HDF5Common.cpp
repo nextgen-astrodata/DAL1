@@ -945,6 +945,12 @@ attr_info(hid_t loc_id, const char * name, void * opdata)
 				 std::string const &name,
 				 hid_t const &location_id);
 
+  template bool h5get_attribute (std::vector<std::string> &value,
+				 hid_t const &attribute_id);
+  template bool h5get_attribute (std::vector<std::string> &value,
+				 std::string const &name,
+				 hid_t const &location_id);
+
 #ifdef WITH_CASA
   template bool h5get_attribute (casa::Vector<uint> &value,
 				 hid_t const &attribute_id);
@@ -961,6 +967,11 @@ attr_info(hid_t loc_id, const char * name, void * opdata)
   template bool h5get_attribute (casa::Vector<double> &value,
 				 hid_t const &attribute_id);
   template bool h5get_attribute (casa::Vector<double> &value,
+				 std::string const &name,
+				 hid_t const &location_id);
+  template bool h5get_attribute (casa::Vector<casa::String> &value,
+				 hid_t const &attribute_id);
+  template bool h5get_attribute (casa::Vector<casa::String> &value,
 				 std::string const &name,
 				 hid_t const &location_id);
 #endif

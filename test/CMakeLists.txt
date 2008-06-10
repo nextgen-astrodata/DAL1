@@ -116,7 +116,7 @@ if (DAL_ENABLE_TESTING)
 
   ## [4] Tests using HDF5-based time-series dataset
   
-  find_file (tbb_dataset tbb_test_file_v1_0.h5
+  find_file (tbb_dataset tbb_test_file_v1_1.h5
     PATHS
     ${DAL_SOURCE_DIR}/data
     ${DAL_SOURCE_DIR}/../data

@@ -38,7 +38,7 @@
 #endif
 
 #ifndef ENUMERATIONS_H
-#include <dal/Enumerations.h>
+#include "Enumerations.h"
 #endif
 
 #include <H5LT.h>
