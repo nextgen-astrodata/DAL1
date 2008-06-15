@@ -411,7 +411,6 @@ namespace DAL {
      unsigned int datalen[] = { (unsigned int)0 };
      unsigned int nyquist_zone[] = { (unsigned int)1 };
      double apos[3]    = { 0, 0, 0 };
-     double aorient[3] = { 0, 0, 0 };
 
      dipoleArray->setAttribute_uint( attribute_name(STATION_ID), sid );
      dipoleArray->setAttribute_uint( attribute_name(RSP_ID), rsp );
@@ -426,8 +425,6 @@ namespace DAL {
                                        "m" );
      dipoleArray->setAttribute_string( attribute_name(ANTENNA_POSITION_FRAME),
                                        "ITRF" );
-     dipoleArray->setAttribute_double( attribute_name(ANTENNA_ORIENTATION),
-                                       aorient, 3 );
      dipoleArray->setAttribute_double( attribute_name(ANTENNA_ORIENTATION_VALUE),
                                        apos, 3 );
      dipoleArray->setAttribute_string( attribute_name(ANTENNA_ORIENTATION_UNIT),

@@ -444,8 +444,10 @@ namespace DAL {
          free(timeDateString);
          first_block = false;
        }
-
+	   
+       #ifdef _OPENMP
        #pragma omp parallel for ordered schedule(dynamic)
+	   #endif
        for ( uint8_t subband=0; subband < fileheader.nrBeamlets; subband++ )
        {
 
@@ -468,7 +470,9 @@ namespace DAL {
                                                  start,
                                                  fileheader.nrSamplesPerBeamlet,
                                                  downsample_factor );
+             #ifdef _OPENMP
              #pragma omp ordered
+			 #endif
              table[subband]->appendRows( downsampled_data,
                          fileheader.nrSamplesPerBeamlet / downsample_factor );
              delete [] downsampled_data;
@@ -485,7 +489,9 @@ namespace DAL {
                  compute_float32_intensity( sample,
                                             start,
                                             fileheader.nrSamplesPerBeamlet );
+              #ifdef _OPENMP
               #pragma omp ordered
+			  #endif
               table[subband]->appendRows( intensity_data,
                                           fileheader.nrSamplesPerBeamlet );
               delete [] intensity_data;
@@ -530,7 +536,9 @@ namespace DAL {
       cerr << "Can't allocate memory for total intensity array." << endl;
     }
 
+	#ifdef _OPENMP
     #pragma omp parallel for ordered schedule(dynamic)
+	#endif
     for ( uint count = 0; count < arraylength; count++ )
     {
       totalintensity[ count ] = 0;
@@ -568,7 +576,9 @@ namespace DAL {
       cerr << "Can't allocate memory for downsampled array." << endl;
     }
 
+	#ifdef _OPENMP
     #pragma omp parallel for ordered schedule(dynamic)
+	#endif
     for ( int count = 0; count < DS_SIZE; count++ )
     {
       ds_data[count] = 0;
