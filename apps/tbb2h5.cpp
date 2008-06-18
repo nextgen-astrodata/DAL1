@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
      cerr << "First parameter is the output dataset name.\n";
      cerr << "Second parameter indicates file mode (0) or socket mode (1).\n";
      cerr << "Third parameter is either the IP address to accept data from,";
-     cerr << " or the input file name.";
+     cerr << " or the input file name.\n";
      cerr << "Fourth parameter is the port number to accept data from.\n";
      cerr << endl;
      return DAL::FAIL;
