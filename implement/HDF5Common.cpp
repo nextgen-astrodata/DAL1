@@ -27,9 +27,11 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
+#ifdef WITH_CASA
 using casa::MDirection;
 using casa::MPosition;
 using casa::Quantity;
+#endif
 
 namespace DAL { // Namespace DAL -- begin
   
