@@ -248,9 +248,7 @@ endif (HAVE_MYSQL)
 
 if (HAVE_GSL)
   include_directories (${GSL_INCLUDES})
-  add_definitions (
-   -DWITH_GSL
-  )
+  add_definitions (-DWITH_GSL)
 else (HAVE_GSL)
   message (STATUS "[DAL] GSL installation incomplete!")
 endif (HAVE_GSL)
