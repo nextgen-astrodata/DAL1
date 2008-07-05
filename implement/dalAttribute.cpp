@@ -25,9 +25,6 @@
 #include "dalAttribute.h"
 #endif
 
-// for high-level Attribute interface (written in C)
-#include "H5TA.h"
-
 namespace DAL {
 
 dalAttribute::dalAttribute()

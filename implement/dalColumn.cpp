@@ -452,7 +452,7 @@ dalData * dalColumn::data( int start, int &length )
         /* Alocate space */
         field_names = (char**)malloc( sizeof(char*) * (size_t)nfields );
         for ( hsize_t ii = 0; ii < nfields; ii++)
-          field_names[ii] = (char*)malloc( sizeof(char) * HLTB_MAX_FIELD_LEN );
+          field_names[ii] = (char*)malloc( sizeof(char) * MAX_COL_NAME_SIZE );
 
 	if ( H5TBget_field_info( file_id, tablename.c_str(), field_names,
              field_sizes, field_offsets, size_out ) < 0 )

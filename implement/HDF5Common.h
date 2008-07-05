@@ -41,8 +41,7 @@
 #include "Enumerations.h"
 #endif
 
-#include <H5LT.h>
-#include <H5TA.h>
+#include <hdf5.h>
 
 namespace DAL { // Namespace DAL -- begin
   

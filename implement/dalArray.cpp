@@ -42,7 +42,7 @@ int dalArray::open( void * voidfile, string arrayname ) {
 	hid_t * lclfile = (hid_t*)voidfile; // H5File object
 	file_id = *lclfile;  // get the file handle
 	
-	array_id = H5Dopen( file_id, name.c_str() );
+	array_id = H5Dopen( file_id, name.c_str(), H5P_DEFAULT );
 	return( array_id );
 }
 
@@ -180,7 +180,7 @@ void dalArray::getAttributes()
 
    //status = H5Aget_num_attrs(group_id);
    //printf ("H5Aget_num_attrs returns: %i\n", status);
-   status = H5Aiterate( array_id, NULL, attr_info, NULL );
+   status = H5Aiterate1( array_id, NULL, attr_info, NULL );
    //printf ("\nH5Aiterate returns: %i\n", status);
 
 }
@@ -198,8 +198,8 @@ void * dalArray::getAttribute( string attrname ) {
 	size_t type_size;
 
 	// Check if attribute exists
-	if ( H5LT_find_attribute( array_id, attrname.c_str() ) <= 0 ) {
-		return NULL;
+	if ( H5Aexists( array_id, attrname.c_str() ) <= 0 ) {
+	   return NULL;
 	}
 	
 	string fullname = name;
@@ -259,7 +259,7 @@ void dalArray::setAttribute_string( string attrname, string data )
    atype = H5Tcopy(H5T_C_S1);
    ret = H5Tset_size(atype, data.length());
    ret = H5Tset_strpad(atype,H5T_STR_NULLTERM);
-   hid_t attr1 = H5Acreate(array_id, attrname.c_str(), atype, aid1, H5P_DEFAULT);
+   hid_t attr1 = H5Acreate1(array_id, attrname.c_str(), atype, aid1, H5P_DEFAULT);
    ret = H5Awrite(attr1, atype, data.c_str());
    if (ret < 0)
      cerr << "ERROR: could not set attribute " << attrname << endl;
@@ -281,7 +281,7 @@ void dalArray::setAttribute_string( string attrname, string * data, int size )
   hid_t type = H5Tcopy (H5T_C_S1);
   status = H5Tset_size (type, H5T_VARIABLE);
   dataspace = H5Screate_simple(1, dims, NULL);
-  att = H5Acreate( array_id, attrname.c_str(), type, dataspace, H5P_DEFAULT );
+  att = H5Acreate1( array_id, attrname.c_str(), type, dataspace, H5P_DEFAULT );
   status = H5Awrite( att, type, string_attr ) ;
   status = H5Aclose( att );
 
@@ -299,7 +299,7 @@ void dalArray::setAttribute_int( string attrname, int * data/*, int size*/ )
    hid_t   aid1;  /* Attribute dataspace identifier */
    herr_t  ret;   /* Return value */
    aid1  = H5Screate(H5S_SCALAR);
-   attr1 = H5Acreate(array_id, attrname.c_str(), H5T_NATIVE_INT, aid1, H5P_DEFAULT);
+   attr1 = H5Acreate1(array_id, attrname.c_str(), H5T_NATIVE_INT, aid1, H5P_DEFAULT);
    ret = H5Awrite(attr1, H5T_NATIVE_INT, data);
    if (ret < 0)
      cerr << "ERROR: could not set attribute " << attrname << endl;
@@ -312,7 +312,7 @@ void dalArray::setAttribute_uint( string attrname, unsigned int * data/*, int si
    hid_t   aid1;  /* Attribute dataspace identifier */
    herr_t  ret;   /* Return value */
    aid1  = H5Screate(H5S_SCALAR);
-   attr1 = H5Acreate(array_id, attrname.c_str(), H5T_NATIVE_UINT, aid1, H5P_DEFAULT);
+   attr1 = H5Acreate1(array_id, attrname.c_str(), H5T_NATIVE_UINT, aid1, H5P_DEFAULT);
    ret = H5Awrite(attr1, H5T_NATIVE_UINT, data);
    if (ret < 0)
      cerr << "ERROR: could not set attribute " << attrname << endl;
@@ -325,7 +325,7 @@ void dalArray::setAttribute_float( string attrname, float * data/*, int size*/ )
    hid_t   aid1;  /* Attribute dataspace identifier */
    herr_t  ret;   /* Return value */
    aid1  = H5Screate(H5S_SCALAR);
-   attr1 = H5Acreate(array_id, attrname.c_str(), H5T_NATIVE_FLOAT, aid1, H5P_DEFAULT);
+   attr1 = H5Acreate1(array_id, attrname.c_str(), H5T_NATIVE_FLOAT, aid1, H5P_DEFAULT);
    ret = H5Awrite(attr1, H5T_NATIVE_FLOAT, data);
    if (ret < 0)
      cerr << "ERROR: could not set attribute " << attrname << endl;
@@ -338,7 +338,7 @@ void dalArray::setAttribute_double( string attrname, double * data, int size )
    herr_t  ret;   /* Return value */
    hsize_t dims[1] = { size };
    aid1  = H5Screate_simple( 1, dims, NULL );
-   attr1 = H5Acreate( array_id, attrname.c_str(),
+   attr1 = H5Acreate1( array_id, attrname.c_str(),
                       H5T_NATIVE_DOUBLE, aid1, H5P_DEFAULT);
    ret = H5Awrite(attr1, H5T_NATIVE_DOUBLE, data);
    if (ret < 0)
@@ -352,7 +352,7 @@ void dalArray::setAttribute_double( string attrname, double * data )
    hid_t   aid1;
    herr_t  ret;
    aid1  = H5Screate(H5S_SCALAR);
-   attr1 = H5Acreate(array_id, attrname.c_str(), H5T_NATIVE_DOUBLE, aid1, H5P_DEFAULT);
+   attr1 = H5Acreate1(array_id, attrname.c_str(), H5T_NATIVE_DOUBLE, aid1, H5P_DEFAULT);
    ret = H5Awrite(attr1, H5T_NATIVE_DOUBLE, data);
    if (ret < 0)
      cerr << "ERROR: could not set attribute " << attrname << endl;
@@ -402,13 +402,13 @@ dalShortArray::dalShortArray( hid_t obj_id, string arrayname,
 	   dataspace = H5Screate_simple(rank,mydims,maxdims);
 	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
 	   status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
-	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype, dataspace, cparms);
+	   array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype, dataspace, cparms);
 	}
 	// otherwise, write the data this way
 	else
 	{
 	   dataspace = H5Screate_simple(rank,mydims,NULL);
-	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+	   array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
 			dataspace, H5P_DEFAULT);
 	}
 
@@ -466,13 +466,13 @@ dalIntArray::dalIntArray( hid_t obj_id, string arrayname,
 	   dataspace = H5Screate_simple(rank,mydims,maxdims);
 	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
 	   status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
-	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype, dataspace, cparms);
+	   array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype, dataspace, cparms);
 	}
 	// otherwise, write the data this way
 	else
 	{
 	   dataspace = H5Screate_simple(rank,mydims,NULL);
-	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
+	   array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
 	}
 
 	// write the data
@@ -536,14 +536,14 @@ dalShortArray::dalShortArray( hid_t obj_id, string arrayname,
 	   dataspace = H5Screate_simple(rank,mydims,maxdims);
 	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
 	   status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
-	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+	   array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
 				dataspace, cparms);
 	}
 	// otherwise, write the data this way
 	else
 	{
 	   dataspace = H5Screate_simple(rank,mydims,NULL);
-	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+	   array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
 			dataspace, H5P_DEFAULT);
 	}
 
@@ -609,14 +609,14 @@ dalIntArray::dalIntArray( hid_t obj_id/*void * voidfile*/, string arrayname,
 	   dataspace = H5Screate_simple(rank,mydims,maxdims);
 	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
 	   status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
-	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+	   array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
 				dataspace, cparms);
 	}
 	// otherwise, write the data this way
 	else
 	{
 	   dataspace = H5Screate_simple(rank,mydims,NULL);
-	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+	   array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
 			dataspace, H5P_DEFAULT);
 	}
 
@@ -681,13 +681,13 @@ dalFloatArray::dalFloatArray( hid_t obj_id, string arrayname,
 	   dataspace = H5Screate_simple(rank,mydims,maxdims);
 	   hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
 	   status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
-	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype, dataspace, cparms);
+	   array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype, dataspace, cparms);
 	}
         // otherwise, write the data this way
 	else
 	{
 	   dataspace = H5Screate_simple(rank,mydims,NULL);
-	   array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
+	   array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype, dataspace, H5P_DEFAULT);
 	}
 
         // write the data
@@ -850,14 +850,14 @@ dalComplexArray_float32::dalComplexArray_float32( hid_t obj_id,
      dataspace = H5Screate_simple(rank,mydims,maxdims);
      hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
      status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
-     array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+     array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
                            dataspace, cparms);
   }
   // otherwise, write the data this way
   else
   {
      dataspace = H5Screate_simple(rank,mydims,NULL);
-     array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+     array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
                            dataspace, H5P_DEFAULT);
   }
 
@@ -929,14 +929,14 @@ dalComplexArray_int16::dalComplexArray_int16( hid_t obj_id,
      dataspace = H5Screate_simple(rank,mydims,maxdims);
      hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
      status_lcl = H5Pset_chunk( cparms, rank, chunk_dims );
-     array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+     array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
                            dataspace, cparms);
   }
   // otherwise, write the data this way
   else
   {
      dataspace = H5Screate_simple(rank,mydims,NULL);
-     array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+     array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
                            dataspace, H5P_DEFAULT);
   }
 

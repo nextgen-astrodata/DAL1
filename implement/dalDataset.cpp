@@ -60,7 +60,7 @@ dalDataset::dalDataset( const char * dsname, string filetype )
 
    } else if ( filetype == FITSTYPE )
    {
-#ifdef CFITSIO
+#ifdef WITH_CFITSIO
      fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
      int status;
      fits_create_file(&fptr, dsname, &status); /*create new file*/
@@ -104,6 +104,7 @@ void dalDataset::init()
  *****************************************************************/
 int openFITS( const char * fname )
 {
+#ifdef WITH_CFITSIO
 	fitsfile * fptr = NULL;
 	int status = 0;  /* MUST initialize status */
 	int nkeys = 0;
@@ -137,6 +138,10 @@ int openFITS( const char * fname )
 	
 	  return 0;
 	}
+#else
+  fname = fname; // to get rid of unused var compiler warning
+  return 1;
+#endif
 }
 
 /**
@@ -153,7 +158,7 @@ hid_t openHDF5( const char * fname )
 	// the following return an integer file handle
 	// Turn off error reporting since we expect failure in cases
 	//   where the file is not hdf5
-	H5Eset_auto(NULL, NULL);
+	H5Eset_auto1(NULL, NULL);
 	hid_t fh = H5Fopen(fname, H5F_ACC_RDWR, H5P_DEFAULT);
 	if (fh >= 0)
 	{
@@ -244,7 +249,7 @@ void dalDataset::getAttributes()
    //status = H5Aget_num_attrs(h5fh);
    //printf ("H5Aget_num_attrs returns: %i\n", status);
 
-   status = H5Aiterate( h5fh, NULL, attr_info, NULL );
+   status = H5Aiterate1( h5fh, NULL, attr_info, NULL );
    //printf ("\nH5Aiterate returns: %i\n", status);
 
 }
@@ -256,7 +261,7 @@ void dalDataset::printAttribute( string attrname ) {
 	size_t type_size;
 
 	// Check if attribute exists
-	if ( H5LT_find_attribute(h5fh, attrname.c_str()) < 0 ) {
+	if ( H5Aexists(h5fh, attrname.c_str()) < 0 ) {
 		cerr << "Attribute " << attrname << " not found." << endl;
 		return;
 	}
@@ -320,7 +325,7 @@ void * dalDataset::getAttribute( string attrname ) {
 	size_t type_size;
 
 	// Check if attribute exists
-	if ( H5LT_find_attribute(h5fh, attrname.c_str()) < 0 ) {
+	if ( H5Aexists(h5fh, attrname.c_str()) < 0 ) {
 		return NULL;
 	}
 	
@@ -388,8 +393,8 @@ void dalDataset::setAttribute_string( string attrname, vector<string> data )
    aid  = H5Screate_simple (1, dims, NULL);
    atype = H5Tcopy(H5T_C_S1);
    status = H5Tset_size(atype, H5T_VARIABLE);
-   hid_t root = H5Gopen( h5fh, "/");
-   att = H5Acreate(root, attrname.c_str(), atype, aid, H5P_DEFAULT);
+   hid_t root = H5Gopen1( h5fh, "/");
+   att = H5Acreate1(root, attrname.c_str(), atype, aid, H5P_DEFAULT);
    status = H5Awrite(att, atype, string_att );
    if ( status < 0 )
      cout << "ERROR: could not set attribute " << attrname << endl;
@@ -754,7 +759,7 @@ herr_t dalDataset_file_info(hid_t loc_id, const char *name, void *opdata)
      * The name of the object is passed to this function by 
      * the Library. Some magic :-)
      */
-    H5Gget_objinfo(loc_id, name, FALSE, &statbuf);
+    H5Gget_objinfo(loc_id, name, false, &statbuf);
     switch (statbuf.type) {
     case H5G_GROUP:
          myname = string(name);
@@ -831,7 +836,7 @@ void dalDataset::read_tbb (string id,
   sscanf(id.c_str(),"%3c%*6c",stid);
   char datasetname[18];
   sprintf( datasetname, "Station%c%c%c/%s", stid[0],stid[1],stid[2],id.c_str());
-  hid_t dataset = H5Dopen( h5fh, datasetname );
+  hid_t dataset = H5Dopen1( h5fh, datasetname );
   hid_t filespace = H5Dget_space( dataset );
   if (filespace < 0)
     {
@@ -1095,7 +1100,7 @@ bpl::numeric::array dalDataset::ria_boost( string arrayname )
 // 	hid_t datatype, dataspace;
 
 	// get the dataspace
-	lclfile = H5Dopen(h5fh, arrayname.c_str());
+	lclfile = H5Dopen1(h5fh, arrayname.c_str());
 	hid_t filespace = H5Dget_space(lclfile);
 
 	// what is the rank of the array?
@@ -1151,7 +1156,7 @@ bpl::numeric::array dalDataset::rfa_boost( string arrayname )
 // 	hid_t datatype, dataspace;
 
 	// get the dataspace
-	lclfile = H5Dopen(h5fh, arrayname.c_str());
+	lclfile = H5Dopen1(h5fh, arrayname.c_str());
 	hid_t filespace = H5Dget_space(lclfile);
 
 	// what is the rank of the array?

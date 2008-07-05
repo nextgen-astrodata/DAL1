@@ -24,9 +24,6 @@
 #ifndef DALCOLUMN_H
 #define DALCOLUMN_H
 
-// for high-level table interface (written in C)
-#include "H5TA.h"
-
 #ifndef DAL_H
 #include "dal.h"
 #endif

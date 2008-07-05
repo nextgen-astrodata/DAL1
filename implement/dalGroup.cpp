@@ -58,14 +58,14 @@ dalGroup::dalGroup( const char * gname, void * voidfile ) {
 
    groupname = gname;
    groupname_full = "/" + stringify(gname);
-   group_id = H5Gcreate(*(hid_t*)file, groupname_full.c_str(), 0);
+   group_id = H5Gcreate1(*(hid_t*)file, groupname_full.c_str(), 0);
 }
 
 dalGroup::dalGroup( hid_t group_id, const char * gname )
 {
    dalGroup();
 
-   group_id = H5Gcreate(group_id, gname, 0);
+   group_id = H5Gcreate1(group_id, gname, 0);
 }
 
 int dalGroup::open( void * voidfile, string gname ) {
@@ -77,7 +77,7 @@ int dalGroup::open( void * voidfile, string gname ) {
   file_id = *lclfile;  // get the file handle
 
   groupname_full = "/" + groupname;
-  group_id = H5Gopen( file_id, groupname_full.c_str() );
+  group_id = H5Gopen1( file_id, groupname_full.c_str() );
   return( group_id );
 }
 
@@ -105,7 +105,7 @@ herr_t dalGroup_file_info(hid_t loc_id, const char *name, void *opdata)
      * The name of the object is passed to this function by 
      * the Library. Some magic :-)
      */
-    H5Gget_objinfo(loc_id, name, FALSE, &statbuf);
+    H5Gget_objinfo(loc_id, name, false, &statbuf);
     switch (statbuf.type) {
     case H5G_DATASET: 
          myname = string(name);
@@ -215,7 +215,7 @@ void dalGroup::setAttribute_string( string attrname, string * data, int size )
   hid_t type = H5Tcopy (H5T_C_S1);
   status = H5Tset_size (type, H5T_VARIABLE);
   dataspace = H5Screate_simple(1, dims, NULL);
-  att = H5Acreate( group_id, attrname.c_str(), type, dataspace, H5P_DEFAULT );
+  att = H5Acreate1( group_id, attrname.c_str(), type, dataspace, H5P_DEFAULT );
   status = H5Awrite( att, type, string_attr ) ;
   status = H5Aclose( att );
 
@@ -267,8 +267,9 @@ void dalGroup::getAttributes()
 
    //status = H5Aget_num_attrs(group_id);
    //printf ("H5Aget_num_attrs returns: %i\n", status);
-
-   status = H5Aiterate( group_id, NULL, attr_info, NULL );
+   //unsigned number = 0;
+   //unsigned * idx = &number;
+   //status = H5Aiterate( group_id, idx, attr_info, NULL );
    //printf ("\nH5Aiterate returns: %i\n", status);
 
 }
@@ -281,7 +282,7 @@ void dalGroup::printAttribute( string attrname )
    size_t type_size;
 
    // Check if attribute exists
-   if ( H5LT_find_attribute(group_id, attrname.c_str()) <= 0 )
+   if ( H5Aexists(group_id, attrname.c_str()) <= 0 )
    {
      cerr << "Attribute " << attrname << " not found." << endl;
      return;
@@ -344,7 +345,7 @@ void * dalGroup::getAttribute( string attrname ) {
 	size_t type_size;
 
 	// Check if attribute exists
-	if ( H5LT_find_attribute(group_id, attrname.c_str()) <= 0 ) {
+	if ( H5Aexists(group_id, attrname.c_str()) <= 0 ) {
 		return NULL;
 	}
 	
@@ -544,7 +545,7 @@ bpl::numeric::array dalGroup::ria_boost( string arrayname )
 // 	hid_t datatype, dataspace;
 
 	// get the dataspace
-	lclfile = H5Dopen( group_id, arrayname.c_str() );
+	lclfile = H5Dopen1( group_id, arrayname.c_str() );
 	hid_t filespace = H5Dget_space(lclfile);
 
 	// what is the rank of the array?

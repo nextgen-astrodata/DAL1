@@ -561,7 +561,7 @@ void dalTable::openTable( void * voidfile, string tablename, string groupname )
 	file = lclfile;
 	file_id = *lclfile;  // get the file handle
 
-	table_id = H5Dopen ( file_id, name.c_str() );
+	table_id = H5Dopen1 ( file_id, name.c_str() );
    }
    else
    {
@@ -648,7 +648,7 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
 				 fill, compress, data );
         delete [] fill;
         fill = NULL;
-        table_id = H5Dopen( file_id, tablename.c_str() );
+        table_id = H5Dopen1( file_id, tablename.c_str() );
    } else {
      cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
@@ -864,7 +864,7 @@ void dalTable::getAttributes() {
 
    //status = H5Aget_num_attrs(group_id);
    //printf ("H5Aget_num_attrs returns: %i\n", status);
-   status = H5Aiterate( table_id, NULL, attr_info, NULL );
+   //status = H5Aiterate( table_id, NULL, attr_info, NULL );
    //printf ("\nH5Aiterate returns: %i\n", status);
 
    } else {
@@ -1064,7 +1064,7 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 		     << endl;
 		exit(99);
 	}
-	field_type = H5Tarray_create( h5type, 1, dims, NULL );
+	field_type = H5Tarray_create1( h5type, 1, dims, NULL );
 
 	// set additional required fields for new column call
 	hsize_t	position = nfields;
@@ -1513,7 +1513,7 @@ void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
 	/* Alocate space */ 
 	field_names = (char**)malloc( sizeof(char*) * (size_t)nfields );
 	for ( unsigned int i = 0; i < nfields; i++) { 
-	 	  field_names[i]=(char*)malloc(sizeof(char)*HLTB_MAX_FIELD_LEN );
+	 	  field_names[i]=(char*)malloc(sizeof(char) * MAX_COL_NAME_SIZE );
  	 }
 	status = H5TBget_field_info( file_id, name.c_str(), field_names,
 				     field_sizes, field_offsets, size_out );
@@ -1620,7 +1620,7 @@ bool dalTable::findAttribute( string attrname )
 {
    if ( type == H5TYPE )
    {
-	if ( H5LT_find_attribute( table_id, attrname.c_str() ) <= 0 ) {
+	if ( H5Aexists( table_id, attrname.c_str() ) <= 0 ) {
 		cout << "Attribute " << attrname << " not found." << endl;
 		return false;
 	} else {
@@ -1645,7 +1645,7 @@ void dalTable::printAttribute( string attrname ) {
 	size_t type_size;
 
 	// Check if attribute exists
-	if ( H5LT_find_attribute( table_id, attrname.c_str() ) <= 0 ) {
+	if ( H5Aexists( table_id, attrname.c_str() ) <= 0 ) {
 		cout << "Attribute " << attrname << " not found." << endl;
 		return;
 	}
@@ -1722,7 +1722,7 @@ void * dalTable::getAttribute( string attrname ) {
 	size_t type_size;
 
 	// Check if attribute exists
-	if ( H5LT_find_attribute( table_id, attrname.c_str() ) <= 0 ) {
+	if ( H5Aexists( table_id, attrname.c_str() ) <= 0 ) {
 		return NULL;
 	}
 	

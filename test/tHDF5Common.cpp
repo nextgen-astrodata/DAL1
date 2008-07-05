@@ -137,14 +137,14 @@ int test_general_functions ()
     h5error = H5check_version (maj,min,rel);
     cout << "-- Checked version = " << maj << "." << min << "." << rel << endl;
     cout << "-- Version check   = " << h5error << endl;
-    h5error = H5Eclear();
+    h5error = H5Eclear1();
 
     // perform check using invalid library version
     min++;
     h5error = H5check_version (maj,min,rel);
     cout << "-- Checked version = " << maj << "." << min << "." << rel << endl;
     cout << "-- Version check   = " << h5error << endl;
-    h5error = H5Eclear();
+    h5error = H5Eclear1();
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
@@ -193,7 +193,7 @@ int test_identifiers (hid_t const &file_id)
     
     for (uint n(0); n<nofCopies; n++) {
       // open the group object within the file
-      group_id = H5Gopen (file_ids[n],
+      group_id = H5Gopen1 (file_ids[n],
 			  name_station_group.c_str());
       // feedback
       cout << "\t" << n
@@ -349,7 +349,7 @@ int get_attribute_id (hid_t const &file_id)
 
   std::cout << "[2] Attributes in the station group ..." << std::endl;
 
-  group_id = H5Gopen (file_id,
+  group_id = H5Gopen1 (file_id,
 		      name_station_group.c_str());
   
   if (group_id > 0) {
@@ -376,7 +376,7 @@ int get_attribute_id (hid_t const &file_id)
   /*
    * Get ID of the first dataset in the first station group
    */
-  hid_t dataset_id = H5Dopen (file_id,
+  hid_t dataset_id = H5Dopen1 (file_id,
 			      "Station001/001003030");
 
   if (dataset_id > 0) {
@@ -451,9 +451,9 @@ int get_attributes (hid_t const &file_id)
   /*
    * Get the ID of the station group
    */
-  hid_t group_id = H5Gopen (file_id,
+  hid_t group_id = H5Gopen1 (file_id,
 			    name_station_group.c_str());
-  hid_t dataset_id = H5Dopen (file_id,
+  hid_t dataset_id = H5Dopen1 (file_id,
 			      "Station001/001003030");
   
   if (group_id > 0) {
@@ -734,7 +734,7 @@ int get_name (hid_t const &file_id)
   cout << "[2] Retrieve name of the station group ..." << endl;
   try {
     // open group
-    group_id = H5Gopen (file_id,
+    group_id = H5Gopen1 (file_id,
 			name_station_group.c_str());
     // retrieve name of group
     status = DAL::h5get_name (name,group_id);
@@ -751,7 +751,7 @@ int get_name (hid_t const &file_id)
   cout << "[3] Retrieve name of dipole dataset ..." << endl;
   try {
     // open dataset
-    dataset_id = H5Dopen (file_id,
+    dataset_id = H5Dopen1 (file_id,
 			  "Station001/001003030");
     // retrieve name of dataset
     status = DAL::h5get_name (name,dataset_id);
@@ -809,7 +809,7 @@ int test_casacore (hid_t const &file_id)
   
   /* Open up the dataset object to which the attributes are attached. */
 
-  dataset_id = H5Dopen (file_id,
+  dataset_id = H5Dopen1 (file_id,
 			"Station001/001003030");
   
   if (dataset_id > 0) {
@@ -832,7 +832,7 @@ int test_casacore (hid_t const &file_id)
   }
   
   // clean up the error message buffer
-  h5error = H5Eclear();
+  h5error = H5Eclear1();
   
   return nofFailedTests;
 }

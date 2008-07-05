@@ -99,7 +99,7 @@ namespace DAL { // Namespace DAL -- begin
 
     if (dataspace_id > 0) {
       h5error = H5Sclose (dataspace_id);
-      h5error = H5Eclear ();
+      h5error = H5Eclear1 ();
     }
   }
 
@@ -133,7 +133,7 @@ namespace DAL { // Namespace DAL -- begin
     // release allocated identifiers
     if (dataspace_id > 0) {
       h5error = H5Sclose (dataspace_id);
-      h5error = H5Eclear ();
+      h5error = H5Eclear1 ();
     }
     
     if ( dimensions )
@@ -177,7 +177,7 @@ namespace DAL { // Namespace DAL -- begin
     // release allocated identifiers
     if (dataspace_id > 0) {
       h5error = H5Sclose (dataspace_id);
-      h5error = H5Eclear ();
+      h5error = H5Eclear1 ();
     }
     
     return status;
@@ -212,7 +212,7 @@ namespace DAL { // Namespace DAL -- begin
 				 buffer,
 				 buffer_size);
       // clear error stack
-      h5error = H5Eclear ();
+      h5error = H5Eclear1 ();
       // retrieve the file name
       if (name_length > 0) {
 	// release the previously allocated buffer ...
@@ -233,7 +233,7 @@ namespace DAL { // Namespace DAL -- begin
       name_length = H5Iget_name (object_id,
 				 buffer,
 				 buffer_size);
-      h5error = H5Eclear ();
+      h5error = H5Eclear1 ();
       
       if (name_length > 0) {
 	// release the previously allocated buffer ...
@@ -370,7 +370,7 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     /* clean up the error message buffer */
-    h5error = H5Eclear();
+    h5error = H5Eclear1();
 
     return status;
   }
@@ -403,7 +403,7 @@ namespace DAL { // Namespace DAL -- begin
       /* release the identifier used for retrieval of the value */
       h5error = H5Aclose (attribute_id);
       /* clean up the error message buffer */
-      h5error = H5Eclear();
+      h5error = H5Eclear1();
     } else {
       cerr << "[h5get_attribute] No valid ID for attribute "
 	   << name 
@@ -435,7 +435,7 @@ namespace DAL { // Namespace DAL -- begin
       /* release the identifier used for retrieval of the value */
       h5error = H5Aclose (attribute_id);
       /* clean up the error message buffer */
-      h5error = H5Eclear();
+      h5error = H5Eclear1();
     } else {
       cerr << "[h5get_attribute] No valid ID for attribute " << name << endl;
       status = false;
@@ -458,7 +458,7 @@ namespace DAL { // Namespace DAL -- begin
 			      datatype_id,
 			      &value);
     // clean up the error message buffer
-    h5error = H5Eclear();
+    h5error = H5Eclear1();
 
     if (h5error == 0) {
       return true;
@@ -501,7 +501,7 @@ namespace DAL { // Namespace DAL -- begin
     H5Tclose (datatype_id);
     H5Sclose (dataspace_id);
     // clean up the error message buffer
-    h5error = H5Eclear();
+    h5error = H5Eclear1();
 
     return status;
   }
@@ -662,7 +662,7 @@ namespace DAL { // Namespace DAL -- begin
       // Create dataspace associated with the attribute 
       dataspace_id = H5Screate (H5S_SCALAR);
       // Create the attribute itself
-      attribute_id = H5Acreate (location_id,
+      attribute_id = H5Acreate1 (location_id,
 				name.c_str(),
 				H5T_NATIVE_UINT,
 				dataspace_id,

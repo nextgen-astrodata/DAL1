@@ -130,7 +130,8 @@
 #include <iomanip>  // for cout field width
 #include <cstdio>
 
-#include <H5LT.h>
+#include <hdf5.h>
+#include <hdf5_hl.h>
 
 #ifdef WITH_CFITSIO
 extern "C" {
