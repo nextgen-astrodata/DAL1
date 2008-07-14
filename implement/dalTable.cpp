@@ -50,24 +50,29 @@ dalColumn * dalTable::getColumn( string colname )
 {
    if ( type == MSCASATYPE )
    {
-#ifdef WITH_CASA
-   // using the dalColumn class
-	dalColumn * lclcol = NULL;
-	lclcol = new dalColumn( *casa_table_handle, colname );
-    #ifdef DEBUGGING_MESSAGES
-	lclcol->getType();
-	if ( lclcol->isScalar() )
-	  cout << colname << " is SCALAR" << endl;
-	if ( lclcol->isArray() )
-	  cout << colname << " is ARRAY" << endl;
-    #endif
-	return lclcol;
-#else
-	cerr << "ERROR: casacore not installed" << endl;
-    // prevent unsused var build warning when casacore isn't installed
-    colname = colname;
-	return NULL;
-#endif
+     #ifdef WITH_CASA
+       // using the dalColumn class
+       dalColumn * lclcol = NULL;
+       lclcol = new dalColumn( *casa_table_handle, colname );
+
+       #ifdef DEBUGGING_MESSAGES
+       lclcol->getType();
+       if ( lclcol->isScalar() )
+         cout << colname << " is SCALAR" << endl;
+       if ( lclcol->isArray() )
+         cout << colname << " is ARRAY" << endl;
+       #endif
+
+       return lclcol;
+
+     #else
+
+       cerr << "ERROR: casacore not installed" << endl;
+
+       // prevent unsused var build warning when casacore isn't installed
+       colname = colname;
+       return NULL;
+     #endif
    }
    else if ( type == H5TYPE )
    {
@@ -109,8 +114,6 @@ dalColumn * dalTable::getColumn_Float32( string colname )
       lclcol = new dalColumn( file_id, table_id, H5TYPE, name, colname,
                               dal_FLOAT );
 
-//	H5TBread_fields_name(file_id, name.c_str(), colname.c_str(), start, hsize_t nrecords, size_t type_size,  const size_t *field_offset, const size_t *field_sizes, void  *data);
-
 	return lclcol;
    }
    return NULL;
@@ -143,8 +146,6 @@ dalColumn * dalTable::getColumn_complexFloat32( string colname )
       dalColumn * lclcol;
       lclcol = new dalColumn( file_id, table_id, H5TYPE, name, colname,
                               dal_COMPLEX );
-
-//	H5TBread_fields_name(file_id, name.c_str(), colname.c_str(), start, hsize_t nrecords, size_t type_size,  const size_t *field_offset, const size_t *field_sizes, void  *data);
 
 	return lclcol;
    }
@@ -593,11 +594,44 @@ void dalTable::printColumns()
 {
    if ( type == H5TYPE )
    {
-	// Print the column list by iterating through the global column vector
-	cout << "Columns vector list:" << endl;
-	for (unsigned int ii=0; ii < columns.size(); ii++)
-		cout << columns[ii].getName() << " " << endl;
-   } else {
+      size_t * field_sizes = NULL;
+      size_t * field_offsets = NULL;
+      size_t * size_out = NULL;
+ 	
+	// retrieve the input fields needed for the append_records call
+	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
+	
+	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
+	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
+	size_out = (size_t*)malloc( sizeof(size_t) );
+
+	/* Alocate space */ 
+	field_names = (char**)malloc( sizeof(char*) * (size_t)nfields );
+	for ( unsigned int i = 0; i < nfields; i++) { 
+	 	  field_names[i]=(char*)malloc(sizeof(char) * MAX_COL_NAME_SIZE );
+ 	 }
+	status = H5TBget_field_info( file_id, name.c_str(), field_names,
+				     field_sizes, field_offsets, size_out );
+
+	for (unsigned int ii=0; ii<nfields; ii++) {
+		cout << setw(17) << field_names[ii];
+		free(field_names[ii]);
+	}
+	free(field_names);
+	cout << endl;
+   }
+   else if ( type == MSCASATYPE )
+   {
+#ifdef WITH_CASA
+     casa::TableDesc td = casa_table_handle->tableDesc();
+     cout << td.columnNames() << endl;
+#else
+	cout << "CASA support not enabled." << endl;
+	exit(-1);
+#endif
+   }
+   else
+   {
      cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
@@ -1409,10 +1443,6 @@ void dalTable::appendRows( void * data, long row_count )
    }
 }
 
-/****************************************************************
- *  
- *
- *****************************************************************/
 void dalTable::setAttribute_string( string attrname, string data ) {
    if ( type == H5TYPE )
    {
@@ -1425,10 +1455,6 @@ void dalTable::setAttribute_string( string attrname, string data ) {
    }
 }
 
-/****************************************************************
- *  
- *
- *****************************************************************/
 void dalTable::setAttribute_char( string attrname, char * data, int size ) {
    if ( type == H5TYPE )
    {
@@ -1441,10 +1467,6 @@ void dalTable::setAttribute_char( string attrname, char * data, int size ) {
    }
 }
 
-/****************************************************************
- *  
- *
- *****************************************************************/
 void dalTable::setAttribute_int( string attrname, int * data, int size ) {
    if ( type == H5TYPE )
    {
@@ -1458,10 +1480,6 @@ void dalTable::setAttribute_int( string attrname, int * data, int size ) {
    }
 }
 
-/****************************************************************
- *  
- *
- *****************************************************************/
 void dalTable::setAttribute_uint(string attrname, unsigned int * data, int size)
 {
    if ( type == H5TYPE )
@@ -1475,10 +1493,6 @@ void dalTable::setAttribute_uint(string attrname, unsigned int * data, int size)
    }
 }
 
-/****************************************************************
- *  
- *
- *****************************************************************/
 void dalTable::setAttribute_double( string attrname, double * data, int size ) {
    if ( type == H5TYPE )
    {
@@ -1491,53 +1505,61 @@ void dalTable::setAttribute_double( string attrname, double * data, int size ) {
    }
 }
 
-/****************************************************************
- *  
- *
- *****************************************************************/
-void dalTable::listColumns( /*void * data_out, long nstart, long numberRecs*/ )
+std::vector<std::string> dalTable::listColumns()
 {
+   std::vector<std::string> colnames;
+   colnames.clear();
+
    if ( type == H5TYPE )
    {
       size_t * field_sizes = NULL;
       size_t * field_offsets = NULL;
       size_t * size_out = NULL;
- 	
-	// retrieve the input fields needed for the append_records call
-	H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
-	
-	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
-	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
-	size_out = (size_t*)malloc( sizeof(size_t) );
 
-	/* Alocate space */ 
-	field_names = (char**)malloc( sizeof(char*) * (size_t)nfields );
-	for ( unsigned int i = 0; i < nfields; i++) { 
-	 	  field_names[i]=(char*)malloc(sizeof(char) * MAX_COL_NAME_SIZE );
- 	 }
-	status = H5TBget_field_info( file_id, name.c_str(), field_names,
-				     field_sizes, field_offsets, size_out );
+      // retrieve the input fields needed for the append_records call
+      H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
 
-	for (unsigned int ii=0; ii<nfields; ii++) {
-		cout << setw(17) << field_names[ii];
-		free(field_names[ii]);
-	}
-	free(field_names);
-	cout << endl;
+      field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
+      field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
+      size_out = (size_t*)malloc( sizeof(size_t) );
+
+      /* Alocate space */ 
+      field_names = (char**)malloc( sizeof(char*) * (size_t)nfields );
+      for ( unsigned int i = 0; i < nfields; i++)
+      {
+        field_names[i]=(char*)malloc(sizeof(char) * MAX_COL_NAME_SIZE );
+      }
+      status = H5TBget_field_info( file_id, name.c_str(), field_names,
+                  field_sizes, field_offsets, size_out );
+
+      for (unsigned int ii=0; ii<nfields; ii++)
+      {
+        colnames.push_back( field_names[ii] );
+        free(field_names[ii]);
+      }
+      free(field_names);
+      return colnames;
    }
    else if ( type == MSCASATYPE )
    {
 #ifdef WITH_CASA
      casa::TableDesc td = casa_table_handle->tableDesc();
-     cout << td.columnNames() << endl;
+     casa::Vector<casa::String> names = td.columnNames();
+     casa::Array<casa::String> myarray = names;
+     std::vector<casa::String> foovec;
+     myarray.tovector( foovec );
+     for ( uint idx=0; idx < foovec.size(); idx++ )
+        colnames.push_back( std::string( foovec[ idx ].c_str() ) );
+     return colnames;
 #else
-	cout << "CASA support not enabled." << endl;
-	exit(-1);
+     cout << "CASA support not enabled." << endl;
+     exit(-1);
 #endif
    }
    else
    {
      cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     return colnames;
    }
 
 }
@@ -1559,10 +1581,6 @@ long dalTable::getNumberOfRows()
    }
 }
 
-/****************************************************************
- *  
- *
- *****************************************************************/
 void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buffersize )
 {
    if ( type == H5TYPE )
@@ -1607,7 +1625,9 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buf
                      << "table." << endl;
                 exit(897);
         }
-   } else {
+   }
+   else
+   {
      cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
@@ -1800,78 +1820,20 @@ void dalTable::append_row_boost( bpl::object data )
 }
 
 /****************************************************************
- *  wrapper for getColumnData
+ *  wrapper for listColumns
  *
  *****************************************************************/
-// bpl::numeric::array dalTable::gcd_boost( string arrayname )
-// {
+bpl::list dalTable::listColumns_boost()
+{
+  std::vector<std::string> cols = listColumns();
+  std::vector<int> mydims;
+  mydims.push_back( cols.size() );
+  bpl::list mylist;
+  for ( uint idx=0; idx < cols.size(); idx++ )
+     mylist.append( cols[ idx ].c_str() );
+  return mylist;
+}
 
-/*double * mytime_data = new double[ 100 ];
-mytime_data = (double *)maintable->getColumnData( "TIME" );
-for (int ii=0; ii<10; ii++)
-  cout << "TIME data out: " << mytime_data[ii] << endl;
-delete mytime_data;
-
-double * myuvw;
-myuvw = (double *)maintable->getColumnData( "UVW" );
-// cout << myuvw << endl;
-for (int ii=0; ii<30; ii++)
-   cout << "UVW data out: " << myuvw[ii] << endl;
-
-complex<float> * data;
-data = (complex<float> *)maintable->getColumnData( "DATA" );
-for (int ii=0; ii<30; ii++)
-   cout << "DATA out: " << data[ii] << endl;
-
-	hid_t lclfile;
-	hid_t  status;
-// 	hid_t datatype, dataspace;
-
-	// get the dataspace
-	lclfile = H5Dopen(h5fh, arrayname.c_str());
-	hid_t filespace = H5Dget_space(lclfile);
-
-	// what is the rank of the array?
-	hid_t data_rank = H5Sget_simple_extent_ndims(filespace);
-	hsize_t dims[ data_rank ];
-// cout << "data rank: " << data_rank << endl;
-	status = H5Sget_simple_extent_dims(filespace, dims, NULL);
-
-	int size = 1;
-	bpl::list dims_list;
-	for (int ii=0; ii<data_rank; ii++)
-	{
-// cout << "dims["  << ii << "]: " << dims[ii] << endl;
-	  size *= dims[ii];
-	  dims_list.append(dims[ii]);
-	}
-// cout << "size: " << size << endl;
-
-	int * data = NULL;
-	data = new int[size];
-
-	status = H5LTread_dataset_int( h5fh, arrayname.c_str(), data );
-// 	for (int ii=0; ii<size; ii++)
-// 	{
-// 	  cout << data[ii] << endl;
-// 	}
-
-	bpl::list data_list;
-	// for each dimension
-	for (int ii=0; ii<size; ii++)
-	{
-	    data_list.append(data[ii]);
-	}
-	bpl::numeric::array nadata(
-//           bpl::make_tuple(
-	    bpl::make_tuple(data_list)
-// 	  )
-	);
-// 	dims_list.reverse();
-	nadata.setshape(dims_list);
-	delete data;
-	return nadata;*/
-// }
 
 #ifdef WITH_CASA
 
@@ -1885,19 +1847,6 @@ void dalTable::ot_nonMStable( string tablename )
    openTable( tablename );
 }
 
-/****************************************************************
- *  wrappers for openTable (casa)
- *
- *****************************************************************/
-/*void dalTable::ot_ms1( string tablename, casa::MSReader * reader)
-{
-   openTable( tablename, reader );
-}*/
-// void dalTable::ot_ms2( string tablename, casa::MSReader * reader,
-//   string parse_string )
-// {
-//    openTable( tablename, reader, parse_string );
-// }
 /******************************************************
  * wrappers for setFilter
  ******************************************************/
@@ -1911,6 +1860,17 @@ void dalTable::setFilter_boost2( string columns, string conditions )
    setFilter( columns, conditions );
 }
 
+/*
+bpl::numeric::array dalTable::getColumnData_boost( string colname )
+{
+     getColumnData( colname );
+     for (unsigned int hh=0; hh<shape.size(); hh++)
+     { mydims.push_back(shape[hh]); }
+     bpl::numeric::array narray = num_util::makeNum((double*)data,mydims);
+     vector<int> fshape = num_util::shape(narray);
+     return narray;
+}
+*/
 #endif // WITH_CASA
 
 #endif // PYTHON

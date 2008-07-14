@@ -159,7 +159,7 @@ namespace DAL {
   TBB( string const& name );  // constructor
   ~TBB(); // destructor
   void connectsocket( char* ipaddress, char* portnumber );
-  void openRawFile( char* filename );
+  bool openRawFile( char* filename );
   bool readRawSocketBlockHeader();
   void readRawFileBlockHeader();
   void printRawHeader();

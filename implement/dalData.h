@@ -156,8 +156,10 @@ public:
 	string getFileType();
 	
 #ifdef PYTHON
-    bpl::numeric::array get_boost();
+    bpl::numeric::array get_boost1();
     bpl::numeric::array get_boost2( int32_t length );
+    bpl::numeric::array get_boost3( int64_t offset, int32_t length );
+
 #endif
 };
 

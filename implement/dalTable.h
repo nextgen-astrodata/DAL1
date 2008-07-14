@@ -84,6 +84,7 @@ class dalTable{
 	casa::Table * casa_table_handle;
 	casa::Array<casa::Double> array_vals_dbl;
 	casa::Array<casa::Complex> array_vals_comp;
+	casa::ROTableColumn * casa_column;
 
 #endif
 
@@ -310,9 +311,9 @@ class dalTable{
     /*!
 	  \brief List the table columns.
 	  
-	  Print a list of columns contained within the opened table.
+	  \return a list of columns contained within the opened table.
 	 */
-	void listColumns();
+	std::vector<std::string> listColumns();
 
     /*!
 	  \brief Read rows from the table.
@@ -453,11 +454,13 @@ class dalTable{
 
 	void ot_hdf5( void * voidfile, string tablename, string groupname );
 	void append_row_boost( bpl::object data );
+	bpl::list listColumns_boost();
 
 #ifdef WITH_CASA
 	void ot_nonMStable( string tablename );
 	void setFilter_boost1(string);
 	void setFilter_boost2(string,string);
+// 	bpl::numeric::array getColumnData_boost( string colname );
 #endif
 
 #endif

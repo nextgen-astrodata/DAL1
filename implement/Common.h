@@ -24,6 +24,10 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#ifndef DAL_H
+#include "dal.h"
+#endif
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -39,6 +43,12 @@ template <class T>
 void list_vector_members( std::vector<T> vec );
 
 long double julday(time_t seconds,long *intmjd, long double *fracmjd);
+
+double mjd2unix( double mjd_time );
+
+#ifdef PYTHON
+bpl::numeric::array mjd2unix_boost( bpl::numeric::array mjd_time );
+#endif
 
 } // namespace DAL
 

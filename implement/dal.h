@@ -205,6 +205,7 @@ namespace DAL {
 
   const string dal_CHAR = "dalCHAR";
   const string dal_STRING = "dalSTRING";
+  const string dal_BOOL = "dalBOOL";
 
   const string dal_SHORT = "dalSHORT";
   const string dal_INT = "dalINT";

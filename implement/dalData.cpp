@@ -202,176 +202,101 @@ dalData::dalData(string lclfiletype, string lcldatatype,
 }
 
 #ifdef PYTHON
-// gets the whole column arrays
-bpl::numeric::array dalData::get_boost()
+
+bpl::numeric::array dalData::get_boost1()
 {
-  bpl::list data_list;
-  vector<int> mydims;
-      if ( dal_CHAR == datatype )
-      {
-        for (unsigned int hh=0; hh<shape.size(); hh++)
-	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((char*)data,mydims);
-	return narray;
-      }
-      else if ( dal_INT == datatype )
-      {
-        for (unsigned int hh=0; hh<shape.size(); hh++)
-	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((int*)data,mydims);
-	return narray;
-      }
-      else if ( dal_FLOAT == datatype )
-      {
-        for (unsigned int hh=0; hh<shape.size(); hh++)
-	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((float*)data,mydims);
-	return narray;
-      }
-      else if ( dal_DOUBLE == datatype )
-      {
-        for (unsigned int hh=0; hh<shape.size(); hh++)
-	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((double*)data,mydims);
-	vector<int> fshape = num_util::shape(narray);
-	return narray;
-      }
-      else if ( dal_COMPLEX == datatype )
-      {
-        for (unsigned int hh=0; hh<shape.size(); hh++)
-	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((complex<float>*)data,mydims);
-	vector<int> fshape = num_util::shape(narray);
-	return narray;
-      }
-      else if ( dal_COMPLEX_CHAR == datatype )
-      {
-        for (unsigned int hh=0; hh<shape.size(); hh++)
-	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((complex<char>*)data,mydims);
-	vector<int> fshape = num_util::shape(narray);
-	return narray;
-      }
-      else if ( dal_COMPLEX_SHORT == datatype )
-      {
-        for (unsigned int hh=0; hh<shape.size(); hh++)
-	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((complex<short>*)data,mydims);
-	vector<int> fshape = num_util::shape(narray);
-	return narray;
-      }
-      else if ( dal_STRING == datatype )
-      {
-        for (unsigned int hh=0; hh<shape.size(); hh++)
-	{ mydims.push_back(shape[hh]); }
-	bpl::list data_list;
-	if ( 1 == shape.size() ) // 1D case
-	{
-          for (int ii=0; ii<nrows; ii++)
-          {
-             data_list.append( (*((string*)get(ii))) );
-          }
-	}
-	else if ( 2 == shape.size() ) // 2D case
-        {
-                for ( int xx=0; xx<shape[0]; xx++)
-                  for ( int yy=0; yy<shape[1]; yy++)
-              data_list.append( (*((string*)get(xx,yy))) );
-        }
-        else if ( 3 == shape.size() ) // 3D case
-        {
-                for ( int xx=0; xx<shape[0]; xx++)
-                  for ( int yy=0; yy<shape[1]; yy++)
-                    for ( int zz=0; zz<shape[2]; zz++)
-                data_list.append( (*((string*)get(xx,yy,zz))) );
-        }
-	else
-	{
-	  cout << "ERROR: string array rank > 3 not supported. dalData::get_boost()\n";
-	}
-
-	bpl::numeric::array narray = num_util::makeNum(data_list);
-	return narray;
-      }
-      else 
-      {
-	cout << "ERROR:  Datatype '" << datatype << "' not yet supported.  (dalData::get_boost)\n";
-	for (int ii=0; ii<1; ii++)
-		data_list.append(0);
-		bpl::numeric::array nadata( data_list );
-	return nadata;
-      }
+   return get_boost3(0,-1);
 }
-
 
 bpl::numeric::array dalData::get_boost2( int32_t length )
 {
+   return get_boost3(0,length);
+}
+
+bpl::numeric::array dalData::get_boost3( int64_t offset, int32_t length )
+{
   bpl::list data_list;
   vector<int> mydims;
       if ( dal_CHAR == datatype )
       {
-	mydims.push_back(length);
-        for (unsigned int hh=1; hh<shape.size(); hh++)
+        unsigned int hh = 0;
+
+	if (length>0) { mydims.push_back(length); hh=1; }
+        for (; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((char*)data,mydims);
+	bpl::numeric::array narray = num_util::makeNum(((char*)data)+offset,mydims);
 	return narray;
       }
       else if ( dal_INT == datatype )
       {
-	mydims.push_back(length);
-        for (unsigned int hh=1; hh<shape.size(); hh++)
+        unsigned int hh = 0;
+
+	if (length>0) { mydims.push_back(length); hh=1; }
+        for (; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((int*)data,mydims);
+	bpl::numeric::array narray = num_util::makeNum(((int*)data)+offset,mydims);
 	return narray;
       }
       else if ( dal_FLOAT == datatype )
       {
-	mydims.push_back(length);
-        for (unsigned int hh=1; hh<shape.size(); hh++)
+        unsigned int hh = 0;
+
+	if (length>0) { mydims.push_back(length); hh=1; }
+        for (; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((float*)data,mydims);
+	bpl::numeric::array narray = num_util::makeNum(((float*)data)+offset,mydims);
 	return narray;
       }
       else if ( dal_DOUBLE == datatype )
       {
-	mydims.push_back(length);
-        for (unsigned int hh=1; hh<shape.size(); hh++)
+        unsigned int hh = 0;
+
+	if (length>0) { mydims.push_back(length); hh=1; }
+        for (; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((double*)data,mydims);
+	bpl::numeric::array narray = num_util::makeNum(((double*)data)+offset,mydims);
 	vector<int> fshape = num_util::shape(narray);
 	return narray;
       }
       else if ( dal_COMPLEX == datatype )
       {
-	mydims.push_back(length);
-        for (unsigned int hh=1; hh<shape.size(); hh++)
+        unsigned int hh = 0;
+
+	if (length>0) { mydims.push_back(length); hh=1; }
+        for (; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((complex<float>*)data,mydims);
+	bpl::numeric::array narray = num_util::makeNum(((complex<float>*)data)+offset,mydims);
 	vector<int> fshape = num_util::shape(narray);
 	return narray;
       }
       else if ( dal_COMPLEX_CHAR == datatype )
       {
-	mydims.push_back(length);
-        for (unsigned int hh=1; hh<shape.size(); hh++)
+        unsigned int hh = 0;
+
+	if (length>0) { mydims.push_back(length); hh=1; }
+        for (; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((complex<char>*)data,mydims);
+	bpl::numeric::array narray = num_util::makeNum(((complex<char>*)data)+offset,mydims);
 	vector<int> fshape = num_util::shape(narray);
 	return narray;
       }
       else if ( dal_COMPLEX_SHORT == datatype )
       {
-	mydims.push_back(length);
-        for (unsigned int hh=1; hh<shape.size(); hh++)
+        unsigned int hh = 0;
+
+	if (length>0) { mydims.push_back(length); hh=1; }
+        for (; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
-	bpl::numeric::array narray = num_util::makeNum((complex<short>*)data,mydims);
+	bpl::numeric::array narray = num_util::makeNum(((complex<short>*)data)+offset,mydims);
 	vector<int> fshape = num_util::shape(narray);
 	return narray;
       }
       else if ( dal_STRING == datatype )
       {
-	mydims.push_back(length);
-        for (unsigned int hh=1; hh<shape.size(); hh++)
+        unsigned int hh = 0;
+
+	if (length>0) { mydims.push_back(length); hh=1; }
+        for (; hh<shape.size(); hh++)
 	{ mydims.push_back(shape[hh]); }
 	bpl::list data_list;
 	if ( 1 == shape.size() ) // 1D case
@@ -411,6 +336,7 @@ bpl::numeric::array dalData::get_boost2( int32_t length )
 	return nadata;
       }
 }
+
 #endif  // PYTHON
 
 

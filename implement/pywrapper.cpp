@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "dal.h"
+#include "Common.h"
 #include "dalArray.h"
 #include "dalTable.h"
 #include "dalGroup.h"
@@ -42,6 +43,8 @@ BOOST_PYTHON_MODULE(pydal)
 
     import_array();
     bpl::numeric::array::set_module_and_type("numpy", "ndarray");
+
+    def("mjd2unix", &mjd2unix_boost );
 
     bpl::class_<dalDataset>("dalDataset")
 	.def(bpl::init<char*, string>())
@@ -123,7 +126,8 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("writeDataByColNum", &dalTable::writeDataByColNum)
 	.def("appendRow", &dalTable::append_row_boost)
 	.def("appendRows", &dalTable::appendRows)
-	.def("listColumns", &dalTable::listColumns)
+	.def("printColumns", &dalTable::printColumns)
+	.def("listColumns", &dalTable::listColumns_boost)
 	.def("readRows", &dalTable::readRows,
 		bpl::return_value_policy<bpl::return_opaque_pointer>())
 	.def("getAttribute", &dalTable::getAttribute,
@@ -168,15 +172,17 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("isScalar", &dalColumn::isScalar)
 	.def("isArray", &dalColumn::isArray)
 #ifdef WITH_CASA
-	.def("data", &dalColumn::data_boost)
+	.def("data", &dalColumn::data_boost1)
 	.def("data", &dalColumn::data_boost2)
+	.def("data", &dalColumn::data_boost3)
 #endif
     ;
 
     bpl::class_<dalData>("dalData")
 	.def(bpl::init<>())
-	.def("get", &dalData::get_boost)
+	.def("get", &dalData::get_boost1)
 	.def("get", &dalData::get_boost2)
+	.def("get", &dalData::get_boost3)
     ;
 
     bpl::class_<BeamGroup>("BeamGroup")

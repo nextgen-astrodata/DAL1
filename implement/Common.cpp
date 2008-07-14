@@ -93,4 +93,31 @@ long double julday(time_t seconds,long *intmjd, long double *fracmjd)
    return jd;
 }
 
+// To convert Modified Julian Date (mjd) to unix time
+double mjd2unix( double mjd_time )
+{
+   // The Unix base date is MJD 40587.
+   // and 1 mjd Day = 24 hours or 1440 minutes or 86400 seconds
+   // so (unix seconds) = (mjd seconds) - ( unix base date in seconds )
+   return ( mjd_time - (40587 * 86400) );
+}
+
+#ifdef PYTHON
+// To convert Modified Julian Date (mjd) to unix time
+bpl::numeric::array mjd2unix_boost( bpl::numeric::array mjd_time )
+{
+   // The Unix base date is MJD 40587.
+   // and 1 mjd Day = 24 hours or 1440 minutes or 86400 seconds
+   // so (unix seconds) = (mjd seconds) - ( unix base date in seconds )
+   int array_size = bpl::len( mjd_time );
+   double adjustment_factor = 3506716800; // 40587 * 86400;
+   for ( int idx=0; idx < array_size; idx++ )
+   {
+     mjd_time[ idx ] = bpl::extract<double>( mjd_time[ idx ] ) - adjustment_factor;
+   }
+
+   return mjd_time;
+}
+#endif
+
 } // namespace DAL

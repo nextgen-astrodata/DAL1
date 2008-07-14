@@ -96,11 +96,14 @@ namespace DAL {
     {
        cerr << "Dataset " << filename << " exists." << endl;
 
-       vector<string> stations = dataset->getGroupNames();
+       stations = dataset->getGroupNames();
+
+       #ifdef DEBUGGING_MESSAGES
        for( unsigned int ss = 0; ss < stations.size(); ss++ )
        {
-          cerr << stations[ss] << endl;
+          cerr << stations[ss] << " group exists." << endl;
        }
+       #endif
 
     }
 
@@ -164,11 +167,21 @@ namespace DAL {
     printf("ready\n");
   }
 
-  void TBB::openRawFile( char* filename )
+  bool TBB::openRawFile( char* filename )
   {
      delete rawfile;
      rawfile = new fstream( filename, ios::binary|ios::in );
-     rawfile->seekg (0, ios::beg);  // move to start of file
+     if ( !rawfile->is_open() )
+     {
+       std::cerr << "Error opening intput file: " << std::string(filename)
+                 << std::endl;
+       return false;
+     }
+     else
+     {
+         rawfile->seekg (0, ios::beg);  // move to start of file
+         return true;
+     }
   }
 
   int TBB::readsocket( unsigned int nbytes, char* buf )

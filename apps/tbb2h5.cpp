@@ -84,7 +84,8 @@ int main(int argc, char *argv[])
   }
   else  // reading from a file
   {
-    tbb.openRawFile( argv[3] );
+    if ( !tbb.openRawFile( argv[3] ) )
+     return DAL::FAIL;
   }
 
   int counter = 0;

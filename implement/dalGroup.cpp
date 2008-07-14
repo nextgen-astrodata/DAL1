@@ -485,55 +485,6 @@ dalArray * dalGroup::cia_boost_numarray2(
   return array;
 }
 
-// dalArray * dalGroup::cia_boost( string arrayname, bpl::list pydims,
-// 				  bpl::list pydata, bpl::list cdims ){
-// 
-//   vector<int> dims;
-//   vector<int> chnkdims;
-// 
-//   for(int ii=0; ii<bpl::len(pydims); ii++)
-//     dims.push_back(bpl::extract<int>(pydims[ii]));
-// 
-//   for(int ii=0; ii<bpl::len(cdims); ii++)
-//     chnkdims.push_back(bpl::extract<int>(cdims[ii]));
-// 
-//   long size = bpl::len(pydata);
-//   int * data = NULL;
-//   data = new int[size];
-// 
-//   for(int ii=0; ii<size; ii++)
-//     data[ii] = bpl::extract<int>(pydata[ii]);
-// 
-//   dalArray * array = createIntArray(arrayname, dims, data, chnkdims);
-// 
-//   delete [] data;
-// 
-//   return array;
-// }
-// 
-// dalArray * dalGroup::cia_boost_numarray( string arrayname, 
-// 	bpl::list pydims,
-// 	bpl::numeric::array pydata, bpl::list cdims ){
-// 
-//   vector<int> dims;
-// 
-//   for(int ii=0; ii<bpl::len(pydims); ii++)
-//     dims.push_back(bpl::extract<int>(pydims[ii]));
-// 
-//   long size = bpl::len(pydata);
-//   int * data = NULL;
-//   data = new int[size];
-// 
-// // cout << "cia_boost_numarray "<< pydata.nelements() << endl;
-//   pydata.setshape( pydata.nelements() );
-//   bpl::object flat_data = pydata.getflat();
-//   bpl::list list_data( flat_data );
-// 
-//   dalArray * array = cia_boost(arrayname, pydims, list_data, cdims);
-// 
-//   return array;
-// }
-
 /******************************************************
  * wrapper for readIntArray
  ******************************************************/
@@ -542,7 +493,6 @@ bpl::numeric::array dalGroup::ria_boost( string arrayname )
 {
 	hid_t lclfile;
 	hid_t  status;
-// 	hid_t datatype, dataspace;
 
 	// get the dataspace
 	lclfile = H5Dopen1( group_id, arrayname.c_str() );
@@ -551,27 +501,37 @@ bpl::numeric::array dalGroup::ria_boost( string arrayname )
 	// what is the rank of the array?
 	hid_t data_rank = H5Sget_simple_extent_ndims(filespace);
 	hsize_t dims[ data_rank ];
-// cout << "data rank: " << data_rank << endl;
+	#ifdef DEBUGGING_MESSAGES
+	cout << "data rank: " << data_rank << endl;
+	#endif
 	status = H5Sget_simple_extent_dims(filespace, dims, NULL);
 
 	int size = 1;
 	bpl::list dims_list;
 	for (int ii=0; ii<data_rank; ii++)
 	{
-// cout << "dims["  << ii << "]: " << dims[ii] << endl;
+	#ifdef DEBUGGING_MESSAGES
+	cout << "dims["  << ii << "]: " << dims[ii] << endl;
+	#endif
 	  size *= dims[ii];
 	  dims_list.append(dims[ii]);
 	}
-// cout << "size: " << size << endl;
+
+	#ifdef DEBUGGING_MESSAGES
+	cout << "size: " << size << endl;
+	#endif
 
 	int * data = NULL;
 	data = new int[size];
 
 	status = H5LTread_dataset_int( group_id, arrayname.c_str(), data );
-// 	for (int ii=0; ii<size; ii++)
-// 	{
-// 	  cout << data[ii] << endl;
-// 	}
+
+	#ifdef DEBUGGING_MESSAGES
+	for (int ii=0; ii<size; ii++)
+	{
+	  cout << data[ii] << endl;
+	}
+	#endif
 
 	bpl::list data_list;
 	// for each dimension
@@ -588,7 +548,7 @@ bpl::numeric::array dalGroup::ria_boost( string arrayname )
 	    bpl::make_tuple(data_list)
 	  )
 	);
-// 	dims_list.reverse();
+
 	nadata.setshape(dims_list);
 	return nadata;
 }
@@ -645,24 +605,5 @@ dalArray * dalGroup::cfa_boost_numarray( string arrayname,
 
 
 #endif // end #ifdef PYTHON
-
-/*
-void dalGroup::setAttribute( string attrname, void * data, string coltype )
-{
-	const int size = 1;
-	if ( dal_INT == coltype ) {
-			status = H5LTset_attribute_int( file_id, name.c_str(), attrname.c_str(), (const int*)data, size );
-	}
-	else if ( dal_FLOAT == coltype ) {
-			status = H5LTset_attribute_float( file_id, name.c_str(), attrname.c_str(), (const float*)data, size );
-	}
-	else if ( dal_DOUBLE == coltype ) {
-			status = H5LTset_attribute_double( file_id, name.c_str(), attrname.c_str(), (const double*)data, size );
-	}
-	else {
-			cout << "ERROR: datatype " << coltype << " not supported for setAttribute." << endl;
-	}			
-}
-*/
 
 } // end namespace DAL

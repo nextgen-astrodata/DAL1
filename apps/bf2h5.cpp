@@ -77,9 +77,13 @@ int main (int argc, char *argv[])
   }
 
   string filename = argv[2];
-  bool doIntensity = argv[3];
-  bool doDownsample = argv[4];
+  bool doIntensity = atoi(argv[3]);
+  bool doDownsample = atoi(argv[4]);
   int factor = atoi(argv[5]);
+
+  if (factor <= 0)
+    factor = 1;
+
   // can't downsample w/o total intensities
   if ( doDownsample ) doIntensity = true;
   bool doChannelization = false;

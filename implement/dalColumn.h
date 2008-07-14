@@ -89,6 +89,7 @@ class dalColumn {
 	casa::ROScalarColumn<double> * rosc_dbl;
 	casa::ROScalarColumn< complex< float > > * rosc_comp;
 	casa::ROScalarColumn<casa::String> * rosc_string;
+	casa::ROScalarColumn<bool> * rosc_bool;
 
 	// ARRAYs
 	casa::Array<casa::Double> array_vals_dbl;
@@ -101,6 +102,7 @@ class dalColumn {
 	casa::Vector<casa::Complex> scalar_vals_comp;
 	casa::Vector<casa::Int> scalar_vals_int;
 	casa::Vector<casa::String> scalar_vals_string;
+	casa::Vector<casa::Bool> scalar_vals_bool;
 	vector< complex< float > > stl_vec_comp;
 
 	casa::Bool deleteIt;
@@ -309,8 +311,9 @@ class dalColumn {
 #ifdef PYTHON
 
     bpl::tuple shape_boost();
-    bpl::numeric::array data_boost();
+    bpl::numeric::array data_boost1( );
     bpl::numeric::array data_boost2( int32_t length );
+    bpl::numeric::array data_boost3( int64_t offset, int32_t length );
 
 #endif
 };  // dalColumn class
