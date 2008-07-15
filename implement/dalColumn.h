@@ -86,10 +86,10 @@ class dalColumn {
 	casa::ROArrayColumn<casa::String> * roac_string;
 
 	casa::ROScalarColumn<int> * rosc_int;
+	casa::ROScalarColumn<casa::Bool> * rosc_bool;
 	casa::ROScalarColumn<double> * rosc_dbl;
 	casa::ROScalarColumn< complex< float > > * rosc_comp;
 	casa::ROScalarColumn<casa::String> * rosc_string;
-	casa::ROScalarColumn<bool> * rosc_bool;
 
 	// ARRAYs
 	casa::Array<casa::Double> array_vals_dbl;

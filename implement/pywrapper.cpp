@@ -84,6 +84,7 @@ BOOST_PYTHON_MODULE(pydal)
 	     "Create an array from a dalData object")
 	.def("setFilter", &dalDataset::setFilter_boost1)
 	.def("setFilter", &dalDataset::setFilter_boost2)
+	.def("listTables", &dalDataset::listTables_boost)
     ;
 
     bpl::class_<dalGroup>("dalGroup")
@@ -130,8 +131,7 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("listColumns", &dalTable::listColumns_boost)
 	.def("readRows", &dalTable::readRows,
 		bpl::return_value_policy<bpl::return_opaque_pointer>())
-	.def("getAttribute", &dalTable::getAttribute,
-	     bpl::return_value_policy<bpl::return_opaque_pointer>())
+	.def("getAttribute", &dalTable::getAttribute_boost)
 	.def("setAttribute_string", &dalTable::setAttribute_string)
 	.def("setAttribute_int", &dalTable::setAttribute_int)
 	.def("setAttribute_uint", &dalTable::setAttribute_uint)
@@ -140,6 +140,7 @@ BOOST_PYTHON_MODULE(pydal)
 	.def("getNumberOfRows", &dalTable::getNumberOfRows)
 #ifdef WITH_CASA
 	.def("openTable", &dalTable::ot_nonMStable)
+	.def("getName", &dalTable::getName)
 	.def("setFilter", &dalTable::setFilter_boost1)
 	.def("setFilter", &dalTable::setFilter_boost2)
 	.def("getColumn", &dalTable::getColumn,

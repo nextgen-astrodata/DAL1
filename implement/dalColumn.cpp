@@ -68,15 +68,24 @@ dalColumn::dalColumn( string complexcolname )
 dalColumn::dalColumn(casa::Table table, string colname)
 {
     filetype = MSCASATYPE;
+    bool error = false;
     try
     {
        casa_column = new casa::ROTableColumn( table, colname );
     } catch (casa::AipsError x) {
        cout << "ERROR: " << x.getMesg() << endl;
-       exit(-4);
+       error = true;
     }
-    casa_col_desc = casa_column->columnDesc();
-    casa_datatype = getDataType();
+
+    if (!error)
+    {
+      casa_col_desc = casa_column->columnDesc();
+      casa_datatype = getDataType();
+    }
+    else
+    {
+      casa_datatype = "unknown";
+    }
 }
 #endif
 
@@ -118,8 +127,11 @@ string dalColumn::getDataType()
     case ( casa::TpString ):
 	casa_datatype = "string";
     break;
+    case ( casa::TpBool ):
+        casa_datatype = "bool";
+    break;
     default:
-      casa_datatype = "Unsupported type";
+        casa_datatype = "Unsupported type";
   }
   return casa_datatype;
 #else
@@ -317,7 +329,7 @@ dalData * dalColumn::data( int start, int &length )
          }
 	 break;
 	 case casa::TpDouble:
-	 {
+         {
 	   rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
 	   scalar_vals_dbl = rosc_dbl->getColumn();
 	   data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
@@ -427,7 +439,7 @@ dalData * dalColumn::data( int start, int &length )
        }
     } catch (casa::AipsError x) {
        cout << "ERROR: " << x.getMesg() << endl;
-       exit(-4);
+       return NULL;
     }
 #endif
    }
@@ -654,6 +666,13 @@ bpl::numeric::array dalColumn::data_boost3( int64_t offset, int32_t length )
   if ( MSCASATYPE == filetype )
   {
 #ifdef WITH_CASA
+
+   if ( "unknown" == casa_datatype )
+   {
+     bpl::list lcllist;
+     return num_util::makeNum(lcllist);
+   }
+
    try
    {
     if ( isScalar() )
@@ -666,6 +685,15 @@ bpl::numeric::array dalColumn::data_boost3( int64_t offset, int32_t length )
 	   scalar_vals_int = rosc_int->getColumn();
 	   data_object = new dalData( filetype, dal_INT, shape(), nrows() );
 	   data_object->data = (int *)scalar_vals_int.getStorage(deleteIt);
+	   return data_object->get_boost3( offset, length );
+         }
+	 break;
+	 case casa::TpBool:
+	 {
+	   rosc_bool = new casa::ROScalarColumn<casa::Bool>( *casa_column );
+	   scalar_vals_bool = rosc_bool->getColumn();
+	   data_object = new dalData( filetype, dal_BOOL, shape(), nrows() );
+	   data_object->data = (int *)scalar_vals_bool.getStorage(deleteIt);
 	   return data_object->get_boost3( offset, length );
          }
 	 break;

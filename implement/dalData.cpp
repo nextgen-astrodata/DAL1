@@ -227,6 +227,16 @@ bpl::numeric::array dalData::get_boost3( int64_t offset, int32_t length )
 	bpl::numeric::array narray = num_util::makeNum(((char*)data)+offset,mydims);
 	return narray;
       }
+      else if ( dal_BOOL == datatype )
+      {
+        unsigned int hh = 0;
+
+	if (length>0) { mydims.push_back(length); hh=1; }
+        for (; hh<shape.size(); hh++)
+	{ mydims.push_back(shape[hh]); }
+	bpl::numeric::array narray = num_util::makeNum(((unsigned char*)data)+offset,mydims);
+	return narray;
+      }
       else if ( dal_INT == datatype )
       {
         unsigned int hh = 0;

@@ -85,7 +85,6 @@ class dalTable{
 	casa::Array<casa::Double> array_vals_dbl;
 	casa::Array<casa::Complex> array_vals_comp;
 	casa::ROTableColumn * casa_column;
-
 #endif
 
   public:
@@ -169,6 +168,14 @@ class dalTable{
 	void openTable( string tablename,
 	                casa::MSReader * reader,
 	                dalFilter * filter );
+
+        casa::Bool GetKeyword(casa::String const KeywordName, casa::String *result);
+        casa::Bool GetKeyword(casa::String const KeywordName, casa::Double *result);
+        casa::Bool GetKeyword(casa::String const KeywordName, casa::Float *result);
+        casa::Bool GetKeyword(casa::String const KeywordName, casa::DComplex *result);
+        casa::Bool GetKeyword(casa::String const KeywordName, casa::Array<casa::Double> *result);
+        casa::Bool GetKeyword(casa::String const KeywordName, casa::Array<casa::DComplex> *result);
+        casa::String GetKeywordType(casa::String const KeywordName);
 #endif
 
     /*!
@@ -455,6 +462,7 @@ class dalTable{
 	void ot_hdf5( void * voidfile, string tablename, string groupname );
 	void append_row_boost( bpl::object data );
 	bpl::list listColumns_boost();
+        bpl::numeric::array getAttribute_boost(std::string);
 
 #ifdef WITH_CASA
 	void ot_nonMStable( string tablename );

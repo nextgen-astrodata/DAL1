@@ -383,7 +383,7 @@ class dalDataset{
 	  supported for data set of appropriate internal structure, such e.g. 
 	  MeasurementSets.
 	 */
-	void listTables();
+	std::vector<std::string> listTables();
 
 	/*!
 	  \brief Retrieve the dataset type ("HDF5", "MSCASA", etc.).
@@ -478,6 +478,8 @@ class dalDataset{
 
 	void setFilter_boost1(std::string);
 	void setFilter_boost2(std::string,std::string);
+
+        bpl::list listTables_boost();
 #endif
 };
 

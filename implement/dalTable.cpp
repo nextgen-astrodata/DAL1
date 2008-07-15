@@ -58,9 +58,9 @@ dalColumn * dalTable::getColumn( string colname )
        #ifdef DEBUGGING_MESSAGES
        lclcol->getType();
        if ( lclcol->isScalar() )
-         cout << colname << " is SCALAR" << endl;
+         cerr << colname << " is SCALAR" << endl;
        if ( lclcol->isArray() )
-         cout << colname << " is ARRAY" << endl;
+         cerr << colname << " is ARRAY" << endl;
        #endif
 
        return lclcol;
@@ -101,9 +101,9 @@ dalColumn * dalTable::getColumn_Float32( string colname )
     #ifdef DEBUGGING_MESSAGES
 	lclcol->getType();
 	if ( lclcol->isScalar() )
-	  cout << colname << " is SCALAR" << endl;
+	  cerr << colname << " is SCALAR" << endl;
 	if ( lclcol->isArray() )
-	  cout << colname << " is ARRAY" << endl;
+	  cerr << colname << " is ARRAY" << endl;
     #endif
 	return lclcol;
 #endif
@@ -134,9 +134,9 @@ dalColumn * dalTable::getColumn_complexFloat32( string colname )
     #ifdef DEBUGGING_MESSAGES
 	lclcol->getType();
 	if ( lclcol->isScalar() )
-	  cout << colname << " is SCALAR" << endl;
+	  cerr << colname << " is SCALAR" << endl;
 	if ( lclcol->isArray() )
-	  cout << colname << " is ARRAY" << endl;
+	  cerr << colname << " is ARRAY" << endl;
     #endif
 	return lclcol;
 #endif
@@ -163,9 +163,9 @@ dalColumn * dalTable::getColumn_complexInt16( string colname )
     #ifdef DEBUGGING_MESSAGES
 	lclcol->getType();
 	if ( lclcol->isScalar() )
-	  cout << colname << " is SCALAR" << endl;
+	  cerr << colname << " is SCALAR" << endl;
 	if ( lclcol->isArray() )
-	  cout << colname << " is ARRAY" << endl;
+	  cerr << colname << " is ARRAY" << endl;
     #endif
 	return lclcol;
 #else
@@ -217,9 +217,9 @@ void * dalTable::getColumnData( string colname )
 	lclcol.getType();
     #ifdef DEBUGGING_MESSAGES
 	if ( lclcol.isScalar() )
-	  cout << colname << " is SCALAR" << endl;
+	  cerr << colname << " is SCALAR" << endl;
 	if ( lclcol.isArray() )
-	  cout << colname << " is ARRAY" << endl;
+	  cerr << colname << " is ARRAY" << endl;
     #endif
 	casa::uInt nrow;
 	nrow = casa_table_handle->nrow();
@@ -230,27 +230,27 @@ void * dalTable::getColumnData( string colname )
 	// get the column descriptor
 	casa::ColumnDesc col_desc = column.columnDesc();
 
-	cout << "-------\n" << col_desc.name() << "\n-------" << endl;
-	cout << "Is the column an array? ";
+	cerr << "-------\n" << col_desc.name() << "\n-------" << endl;
+	cerr << "Is the column an array? ";
 	casa::Bool isarray = col_desc.isArray();
 	if ( casa::True == isarray )
 	{
 	  #ifdef DEBUGGING_MESSAGES
-	  cout << "YES" << endl;
+	  cerr << "YES" << endl;
       #endif
 	  casa::uInt ndimcol;
 	  ndimcol = column.ndimColumn();
 	  casa::IPosition shape = column.shape(1);
       #ifdef DEBUGGING_MESSAGES
-	  cout << "  Number of global dims: " << ndimcol << endl;
-	  cout << "  Shape: " << shape << endl;
+	  cerr << "  Number of global dims: " << ndimcol << endl;
+	  cerr << "  Shape: " << shape << endl;
       #endif
 	  switch ( col_desc.dataType() )
 	  {
 	    case casa::TpComplex:
 	    {
           #ifdef DEBUGGING_MESSAGES
-	      cout << "Data type is Complex." << endl;
+	      cerr << "Data type is Complex." << endl;
           #endif
 	      casa::ROArrayColumn<casa::Complex>
 	        arcolumn( *casa_table_handle, colname );
@@ -259,38 +259,38 @@ void * dalTable::getColumnData( string colname )
 	      casa::Slicer slicer (start/*, length*/);
 	      array_vals_comp = arcolumn.getColumn( slicer );
           #ifdef DEBUGGING_MESSAGES
-	      cout << "number of dims: " << array_vals_comp.ndim() << endl;
-	      cout << "shape: " << array_vals_comp.shape() << endl;
-	      cout << "size: " << array_vals_comp.size() << endl;
+	      cerr << "number of dims: " << array_vals_comp.ndim() << endl;
+	      cerr << "shape: " << array_vals_comp.shape() << endl;
+	      cerr << "size: " << array_vals_comp.size() << endl;
           #endif
 	      vector< complex< float > > valvec;
 	      array_vals_comp.tovector( valvec );
           #ifdef DEBUGGING_MESSAGES
-	      cout << valvec[0] << valvec[1] << valvec[2] << endl;
-	      cout << "vector size: " << valvec.size() << endl;
-	      cout << "Polarization number: " << polarization << endl;
+	      cerr << valvec[0] << valvec[1] << valvec[2] << endl;
+	      cerr << "vector size: " << valvec.size() << endl;
+	      cerr << "Polarization number: " << polarization << endl;
           #endif
 	      return array_vals_comp.data();
 	    }
 	    break;
 	    case casa::TpDComplex:
-	      cout << "Data type is DComplex." << endl;
+	      cerr << "Data type is DComplex." << endl;
 	    break;
 	    case casa::TpBool:
-	      cout << "Data type is Boolean." << endl;
+	      cerr << "Data type is Boolean." << endl;
 	    break;
 	    case casa::TpChar:
-	      cout << "Data type is Char." << endl;
+	      cerr << "Data type is Char." << endl;
 	    break;
 	    case casa::TpShort:
-	      cout << "Data type is Short." << endl;
+	      cerr << "Data type is Short." << endl;
 	    break;
 	    case casa::TpFloat:
-	      cout << "Data type is Float." << endl;
+	      cerr << "Data type is Float." << endl;
 	    break;
 	    case casa::TpDouble:
 	    {
-	      cout << "Data type is Double." << endl;
+	      cerr << "Data type is Double." << endl;
 	      casa::ROArrayColumn<casa::Double>
 	        arcolumn( *casa_table_handle, colname );
 	      int cell = 0;
@@ -298,26 +298,26 @@ void * dalTable::getColumnData( string colname )
 	      casa::Slicer slicer (start/*, length*/);
 	      array_vals_dbl = arcolumn.getColumn( slicer );
           #ifdef DEBUGGING_MESSAGES
-	      cout << "number of dims: " << array_vals_dbl.ndim() << endl;
-	      cout << "shape: " << array_vals_dbl.shape() << endl;
-	      cout << "size: " << array_vals_dbl.size() << endl;
+	      cerr << "number of dims: " << array_vals_dbl.ndim() << endl;
+	      cerr << "shape: " << array_vals_dbl.shape() << endl;
+	      cerr << "size: " << array_vals_dbl.size() << endl;
           #endif
 	      vector<double> valvec;
 	      array_vals_dbl.tovector( valvec );
           #ifdef DEBUGGING_MESSAGES
-	      cout << "vector size: " << valvec.size() << endl;
-	      cout << "Data from cell number: " << cell << endl;
+	      cerr << "vector size: " << valvec.size() << endl;
+	      cerr << "Data from cell number: " << cell << endl;
           #endif
 	      return array_vals_dbl.data();
 	    }
 	    break;
 	    case casa::TpString:
-	      cout << "Data type is String." << endl;
+	      cerr << "Data type is String." << endl;
 	    break;
 	    case casa::TpInt:
 	    {
           #ifdef DEBUGGING_MESSAGES
-	      cout << "Data type is Int." << endl;
+	      cerr << "Data type is Int." << endl;
           #endif
 	      int * value = new int[100];
 	      for (int ii=0; ii<100; ii++)
@@ -328,35 +328,35 @@ void * dalTable::getColumnData( string colname )
 	    }
 	    break;
 	    default:
-	      cout << "Datatype not recognized." << endl;
+	      cerr << "Datatype not recognized." << endl;
 	  }
 	}
 	else
-	  cout << "NO" << endl;
+	  cerr << "NO" << endl;
 
 	if (col_desc.isScalar())
 	{
-	  cout << "isScalar" << endl;
+	  cerr << "isScalar" << endl;
 	  switch ( col_desc.dataType() )
 	  {
 	    case casa::TpComplex:
-	      cout << "Data type is Complex." << endl;
+	      cerr << "Data type is Complex." << endl;
 	    break;
 	    case casa::TpBool:
-	      cout << "Data type is Boolean." << endl;
+	      cerr << "Data type is Boolean." << endl;
 	    break;
 	    case casa::TpChar:
-	      cout << "Data type is Char." << endl;
+	      cerr << "Data type is Char." << endl;
 	    break;
 	    case casa::TpShort:
-	      cout << "Data type is Short." << endl;
+	      cerr << "Data type is Short." << endl;
 	    break;
 	    case casa::TpFloat:
-	      cout << "Data type is Float." << endl;
+	      cerr << "Data type is Float." << endl;
 	    break;
 	    case casa::TpDouble:
 	    {
-	      cout << "Data type is Double." << endl;
+	      cerr << "Data type is Double." << endl;
 	      double * value = new double[100];
 	      for (int ii=0; ii<100; ii++)
 		  {
@@ -366,11 +366,11 @@ void * dalTable::getColumnData( string colname )
 	    }
 	    break;
 	    case casa::TpString:
-	      cout << "Data type is String." << endl;
+	      cerr << "Data type is String." << endl;
 	    break;
 	    case casa::TpInt:
 	    {
-	      cout << "Data type is Int." << endl;
+	      cerr << "Data type is Int." << endl;
 	      int * value = new int[100];
 	      for (int ii=0; ii<100; ii++)
 		  {
@@ -380,42 +380,42 @@ void * dalTable::getColumnData( string colname )
 	    }
 	    break;
 /*	  case casa::TpArrayShort:
-	  cout << "Data type is ArrayShort." << endl;
+	  cerr << "Data type is ArrayShort." << endl;
 	  break;
 	  case casa::TpArrayDouble:
-	  cout << "Data type is ArrayDouble." << endl;
+	  cerr << "Data type is ArrayDouble." << endl;
 	  break;
 	  case casa::TpArrayComplex:
-	  cout << "Data type is ArrayComplex." << endl;
+	  cerr << "Data type is ArrayComplex." << endl;
 	  break;
 	  case casa::TpTable:
-	  cout << "Data type is Table." << endl;
+	  cerr << "Data type is Table." << endl;
 	  break;*/
 	    default:
-	      cout << "Datatype not recognized." << endl;
+	      cerr << "Datatype not recognized." << endl;
 	  }
 	}
 	else if (col_desc.isTable())
 	{
-		cout << "isTable" << endl;
+		cerr << "isTable" << endl;
 	}
 
 	casa::TableRecord table_rec = column.keywordSet();
     #ifdef DEBUGGING_MESSAGES
- 	cout << "Number of fields: " << table_rec.nfields() << endl;
- 	cout << "Datatype: " << col_desc.dataType() << endl;
+ 	cerr << "Number of fields: " << table_rec.nfields() << endl;
+ 	cerr << "Datatype: " << col_desc.dataType() << endl;
     #endif
 	return NULL;
 #else
     // prevent unused variable build warning when casacore isn't installed
     colname = colname;
-	cout << "ERROR: casacore not installed." << endl;
+	cerr << "ERROR: casacore not installed." << endl;
 	return NULL;
 #endif
     }
    else
    {
-	cout << "dalTable::getColumnData operation not supported for type "
+	cerr << "dalTable::getColumnData operation not supported for type "
 	  << type << endl;
 	return NULL;
    }
@@ -431,14 +431,14 @@ void dalTable::getName()
    {
 	// print the name of the table
 #ifdef WITH_CASA
-	cout << "CASA table name: " << casa_table_handle->tableName() << endl;
+	cerr << "CASA table name: " << casa_table_handle->tableName() << endl;
 #else
-	cout << "CASA support not enabled." << endl;
+	cerr << "CASA support not enabled." << endl;
 #endif
    }
    else
    {
-	cout << "dalTable::getName operation not supported for type "
+	cerr << "dalTable::getName operation not supported for type "
 	  << type << endl;
    }
 }
@@ -464,7 +464,7 @@ dalTable::dalTable( string filetype )
 #ifdef WITH_CASA
 	casa_table_handle = new casa::Table;
 #else
-	cout << "CASA support not enabled." << endl;
+	cerr << "CASA support not enabled." << endl;
 #endif
    }
 }
@@ -481,22 +481,36 @@ void dalTable::openTable( string tablename )
 #ifdef WITH_CASA
    	if ( filter->isSet() )
 	{
-	  *casa_table_handle = casa::Table( tablename );
-	  *casa_table_handle = casa::tableCommand( filter->get(),
-            *casa_table_handle );
+          try
+          {
+	     *casa_table_handle = casa::Table( tablename );
+	     *casa_table_handle = casa::tableCommand( filter->get(),
+                                                      *casa_table_handle );
+          }
+          catch (casa::AipsError x)
+          {
+             cerr << "ERROR: " << x.getMesg() << endl;
+          }
 	}
 	else
 	{
-	  *casa_table_handle = casa::Table( tablename );
+          try
+          {
+             *casa_table_handle = casa::Table( tablename );
+          }
+          catch (casa::AipsError x)
+          {
+             cerr << "ERROR: " << x.getMesg() << endl;
+          }
 	}
 #else
-	cout << "CASA support not enabled." << endl;
+	cerr << "CASA support not enabled." << endl;
 	exit(-1);
 #endif
    }
    else
    {
-	cout << "dalTable::openTable operation not supported for type "
+	cerr << "dalTable::openTable operation not supported for type "
 	  << type << endl;
    }
 }
@@ -510,15 +524,37 @@ void dalTable::openTable( string tablename, casa::MSReader * reader )
    if ( type == MSCASATYPE )
    {
 #ifdef WITH_CASA
-	*casa_table_handle = reader->table( tablename );
+      try
+      {
+         const casa::Vector< casa::String > tables = reader->tables();
+         unsigned int nelem (tables.nelements());
+         bool table_found = false;
+         for (unsigned int table(0); table<nelem; table++)
+         {
+            string table_val = tables(table);
+            if ( table_val == tablename )
+            {
+              *casa_table_handle = reader->table( tablename );
+              table_found = true;
+            }
+         }
+         if (!table_found)
+         {
+           cerr << "WARNING: Table \'" << tablename << "\' not found in file." << endl;
+         }
+      }
+      catch (casa::AipsError x)
+      {
+         cerr << "ERROR: " << x.getMesg() << endl;
+      }
 #else
-	cout << "CASA support not enabled." << endl;
+	cerr << "CASA support not enabled." << endl;
 	exit(-1);
 #endif
    }
    else
    {
-	cout << "dalTable::openTable operation not supported for type "
+	cerr << "dalTable::openTable operation not supported for type "
 	  << type << endl;
    }
 }
@@ -533,17 +569,24 @@ void dalTable::openTable( string tablename,
    if ( type == MSCASATYPE )
    {
 #ifdef WITH_CASA
-	*casa_table_handle = reader->table( tablename );
-	*casa_table_handle = casa::tableCommand( filter->get(),
-            *casa_table_handle );
+      try
+      {
+        *casa_table_handle = reader->table( tablename );
+        *casa_table_handle = casa::tableCommand( filter->get(),
+                                                 *casa_table_handle );
+      }
+      catch (casa::AipsError x)
+      {
+         cerr << "ERROR: " << x.getMesg() << endl;
+      }
 #else
-	cout << "CASA support not enabled." << endl;
+	cerr << "CASA support not enabled." << endl;
 	exit(-1);
 #endif
    }
    else
    {
-	cout << "dalTable::openTable operation not supported for type "
+	cerr << "dalTable::openTable operation not supported for type "
 	  << type << endl;
    }
 }
@@ -566,7 +609,7 @@ void dalTable::openTable( void * voidfile, string tablename, string groupname )
    }
    else
    {
-	cout << "dalTable::openTable operation not supported for type "
+	cerr << "dalTable::openTable operation not supported for type "
 	  << type << endl;
    }
 }
@@ -614,25 +657,25 @@ void dalTable::printColumns()
 				     field_sizes, field_offsets, size_out );
 
 	for (unsigned int ii=0; ii<nfields; ii++) {
-		cout << setw(17) << field_names[ii];
+		cerr << setw(17) << field_names[ii];
 		free(field_names[ii]);
 	}
 	free(field_names);
-	cout << endl;
+	cerr << endl;
    }
    else if ( type == MSCASATYPE )
    {
 #ifdef WITH_CASA
      casa::TableDesc td = casa_table_handle->tableDesc();
-     cout << td.columnNames() << endl;
+     cerr << td.columnNames() << endl;
 #else
-	cout << "CASA support not enabled." << endl;
+	cerr << "CASA support not enabled." << endl;
 	exit(-1);
 #endif
    }
    else
    {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -684,7 +727,7 @@ void dalTable::createTable( void * voidfile, string tablename, string groupname 
         fill = NULL;
         table_id = H5Dopen1( file_id, tablename.c_str() );
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 
 }
@@ -702,7 +745,7 @@ void dalTable::addColumn( string colname, string coltype, int size )
 
 	// make sure the column name isn't blank
 	if ( 0 == colname.length() ) {
-		cout << "WARNING: Trying to add column without a name.  Skipping."
+		cerr << "WARNING: Trying to add column without a name.  Skipping."
 		     << endl;
 		return;
 	}
@@ -780,7 +823,7 @@ void dalTable::addColumn( string colname, string coltype, int size )
 	bool removedummy = false;
 	for (unsigned int ii=0; ii<nfields; ii++) {
 		if (0 == strcmp(colname.c_str(),field_names[ii])) {
-			cout << "WARNING: Cannot create column \'"
+			cerr << "WARNING: Cannot create column \'"
 			     << colname.c_str()
 			     <<	"\'. Column already exists." << endl;
 			return;
@@ -820,7 +863,7 @@ void dalTable::addColumn( string colname, string coltype, int size )
 			field_type_new = H5Tvlen_create (H5T_NATIVE_DOUBLE);
 			
 		else {
-			cout << "ERROR: column type " << coltype <<
+			cerr << "ERROR: column type " << coltype <<
 			  " is not supported." << endl;
 			exit(98);
 		}
@@ -848,7 +891,7 @@ void dalTable::addColumn( string colname, string coltype, int size )
 			H5Tset_size( field_type_new, 16 );
 		}
 		else {
-			cout << "ERROR: column type " << coltype <<
+			cerr << "ERROR: column type " << coltype <<
 			  " is not supported." << endl;
 			exit(99);
 		}
@@ -884,7 +927,7 @@ void dalTable::addColumn( string colname, string coltype, int size )
 	}
 
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -902,7 +945,7 @@ void dalTable::getAttributes() {
    //printf ("\nH5Aiterate returns: %i\n", status);
 
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -916,7 +959,7 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
    {
 	// make sure the column name isn't blank
 	if ( 0 == colname.length() ) {
-		cout << "WARNING: Trying to add column without a name.  Skipping."
+		cerr << "WARNING: Trying to add column without a name.  Skipping."
 		     << endl;
 		return;
 	}
@@ -939,7 +982,7 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 	bool removedummy = false;
 	for (unsigned int ii=0; ii<nfields; ii++) {
 		if (0 == strcmp(colname.c_str(),field_names[ii])) {
-			cout << "WARNING: Cannot create column \'"
+			cerr << "WARNING: Cannot create column \'"
 			     << colname.c_str()
 			     << "\'. Column already exists." << endl;
 			return;
@@ -997,7 +1040,7 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 		
 		// compute the size of the compound column
 		for ( unsigned int ii=0; ii<cv.size(); ii++) {
-			//cout << "subcolumn name is " << foo[ii].getName() 
+			//cerr << "subcolumn name is " << foo[ii].getName() 
 			//	 << ". Type is " << foo[ii].getType() << endl;
 			sz += cv[ii].getSize();
 		}
@@ -1054,7 +1097,7 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 		
 		// compute the size of the compound column
 		for ( unsigned int ii=0; ii<cv.size(); ii++) {
-			//cout << "subcolumn name is " << foo[ii].getName() 
+			//cerr << "subcolumn name is " << foo[ii].getName() 
 			//	 << ". Type is " << foo[ii].getType() << endl;
 			sz += cv[ii].getSize();
 		}
@@ -1094,7 +1137,7 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 		}
 	}	
 	else {
-		cout << "ERROR: column type " << coltype << " is not supported." 
+		cerr << "ERROR: column type " << coltype << " is not supported." 
 		     << endl;
 		exit(99);
 	}
@@ -1118,7 +1161,7 @@ void dalTable::addArrayColumn( string colname, string coltype, unsigned int indi
 		removeColumn("000dummy000");
 	
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -1148,7 +1191,7 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 	bool removedummy = false;
 	for (unsigned int ii=0; ii<nfields; ii++) {
 		if (0 == strcmp(compname.c_str(),field_names[ii])) {
-			cout << "WARNING: Cannot create column \'"
+			cerr << "WARNING: Cannot create column \'"
 			     << compname.c_str()
 			     <<	"\'. Column already exists." << endl;
 			return;
@@ -1166,7 +1209,7 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 	
 	// compute the size of the compound column
 	for ( unsigned int ii=0; ii<foo.size(); ii++) {
-// 		cout << "subcolumn name is " << foo[ii].getName() 
+// 		cerr << "subcolumn name is " << foo[ii].getName() 
 // 			 << ". Type is " << foo[ii].getType() << endl;
 		sz += foo[ii].getSize();
 	}
@@ -1236,7 +1279,7 @@ void dalTable::addComplexColumn( string compname, vector<dalColumn> foo,
 	 	lc->addMember( "a_member", dal_INT );
 	}
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 
 }
@@ -1251,7 +1294,7 @@ void dalTable::removeColumn(const string &colname)
    {
 	status = H5TBget_table_info( file_id, name.c_str(), &nfields, &nrecords );
 	if ( nfields < 2 ) {
-			cout << "WARNING: Cannot delete last column." << endl;
+			cerr << "WARNING: Cannot delete last column." << endl;
 			return;
 	}
 	
@@ -1288,10 +1331,10 @@ void dalTable::removeColumn(const string &colname)
 	free(field_names);
 
 	if ( !columnpresent )
-		cout << "WARNING: Column \'" << colname <<
+		cerr << "WARNING: Column \'" << colname <<
 				"\' not present.  Cannot delete." << endl;
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -1347,7 +1390,7 @@ void dalTable::writeDataByColNum( void * data, int index, int rownum )
         size_out = NULL;
 
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -1391,7 +1434,7 @@ void dalTable::appendRow( void * data )
 	free( field_offsets );
 	free( size_out );
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -1439,7 +1482,7 @@ void dalTable::appendRows( void * data, long row_count )
 	free( field_offsets );
 	free( size_out );
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -1448,10 +1491,10 @@ void dalTable::setAttribute_string( string attrname, string data ) {
    {
 	if ( H5LTset_attribute_string( file_id, name.c_str(),
 					attrname.c_str(), data.c_str() ) < 0 ) {
-		cout << "ERROR: could not set attribute " << attrname << endl;
+		cerr << "ERROR: could not set attribute " << attrname << endl;
 	}
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -1460,10 +1503,10 @@ void dalTable::setAttribute_char( string attrname, char * data, int size ) {
    {
 	if ( H5LTset_attribute_char( file_id, name.c_str(),
 					attrname.c_str(), data, size ) < 0 ) {
-		cout << "ERROR: could not set attribute " << attrname << endl;
+		cerr << "ERROR: could not set attribute " << attrname << endl;
 	}
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -1472,11 +1515,11 @@ void dalTable::setAttribute_int( string attrname, int * data, int size ) {
    {
 	if ( H5LTset_attribute_int( file_id, name.c_str(),
 					attrname.c_str(), data, size ) < 0 ) {
-		cout << "ERROR: could not set attribute " << attrname << endl;
+		cerr << "ERROR: could not set attribute " << attrname << endl;
 	}
  
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -1486,10 +1529,10 @@ void dalTable::setAttribute_uint(string attrname, unsigned int * data, int size)
    {
 	if ( H5LTset_attribute_uint( file_id, name.c_str(),
 					attrname.c_str(), data, size ) < 0 ) {
-		cout << "ERROR: could not set attribute " << attrname << endl;
+		cerr << "ERROR: could not set attribute " << attrname << endl;
 	}
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -1498,10 +1541,10 @@ void dalTable::setAttribute_double( string attrname, double * data, int size ) {
    {
 	if ( H5LTset_attribute_double( file_id, name.c_str(),
 					attrname.c_str(), data, size ) < 0 ) {
-		cout << "ERROR: could not set attribute " << attrname << endl;
+		cerr << "ERROR: could not set attribute " << attrname << endl;
 	}
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -1552,13 +1595,13 @@ std::vector<std::string> dalTable::listColumns()
         colnames.push_back( std::string( foovec[ idx ].c_str() ) );
      return colnames;
 #else
-     cout << "CASA support not enabled." << endl;
+     cerr << "CASA support not enabled." << endl;
      exit(-1);
 #endif
    }
    else
    {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
      return colnames;
    }
 
@@ -1576,7 +1619,7 @@ long dalTable::getNumberOfRows()
 	return nrecords;
 
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
 	 return(-1);
    }
 }
@@ -1620,7 +1663,7 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buf
 	}
 	free(field_names);
         if (status < 0) {
-                cout << "Problem reading records. Row buffer may be too big. "
+                cerr << "Problem reading records. Row buffer may be too big. "
                      << "Make sure the buffer is smaller than the size of the "
                      << "table." << endl;
                 exit(897);
@@ -1628,7 +1671,7 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buf
    }
    else
    {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -1636,18 +1679,18 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buf
  *  
  *
  *****************************************************************/
-bool dalTable::findAttribute( string attrname )
+casa::Bool dalTable::findAttribute( string attrname )
 {
    if ( type == H5TYPE )
    {
 	if ( H5Aexists( table_id, attrname.c_str() ) <= 0 ) {
-		cout << "Attribute " << attrname << " not found." << endl;
+		cerr << "Attribute " << attrname << " not found." << endl;
 		return false;
 	} else {
 		return true;
 	}
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
 	 return false;
    }
 }
@@ -1666,7 +1709,7 @@ void dalTable::printAttribute( string attrname ) {
 
 	// Check if attribute exists
 	if ( H5Aexists( table_id, attrname.c_str() ) <= 0 ) {
-		cout << "Attribute " << attrname << " not found." << endl;
+		cerr << "Attribute " << attrname << " not found." << endl;
 		return;
 	}
 	
@@ -1685,13 +1728,13 @@ void dalTable::printAttribute( string attrname ) {
 		double data[*dims];
 		H5LTget_attribute(file_id, fullname.c_str(), attrname.c_str(),
 			 H5T_NATIVE_DOUBLE, data);
-		cout << attrname << " = ";
+		cerr << attrname << " = ";
 		for (unsigned int ii=0; ii<*dims; ii++) {
-		  cout << data[ii];
+		  cerr << data[ii];
 		  if (ii < (*dims)-1)
-		    cout << ',';
+		    cerr << ',';
 		  else
-		    cout << endl;
+		    cerr << endl;
 		}
 	}
 	else if ( H5T_INTEGER == type_class ) {
@@ -1699,17 +1742,17 @@ void dalTable::printAttribute( string attrname ) {
 		if ( 0 < H5LTget_attribute(file_id, fullname.c_str(), 
 		  attrname.c_str(), H5T_NATIVE_INT, data) )
 		{
-			cout << attrname << " not found" << endl;
+			cerr << attrname << " not found" << endl;
 		}
 		else
 		{
-			cout << attrname << " = ";
+			cerr << attrname << " = ";
 			for (unsigned int ii=0; ii<*dims; ii++) {
-			  cout << data[ii];
+			  cerr << data[ii];
 			  if (ii < (*dims)-1)
-				cout << ',';
+				cerr << ',';
 			  else
-				cout << endl;
+				cerr << endl;
 			}
 		}
 	}
@@ -1719,13 +1762,13 @@ void dalTable::printAttribute( string attrname ) {
 		data = (char *)malloc(rank * sizeof(char));
 		H5LTget_attribute_string( file_id, fullname.c_str(),
 					  attrname.c_str(),data);
-		cout << attrname << " = " << data << endl;
+		cerr << attrname << " = " << data << endl;
 	}
 	else {
-		cout << "Attribute " << attrname << " type unknown." << endl;
+		cerr << "Attribute " << attrname << " type unknown." << endl;
 	}
    } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
    }
 }
 
@@ -1787,11 +1830,196 @@ void * dalTable::getAttribute( string attrname ) {
 	{
 		return NULL;
 	}
-   } else {
-     cout << "Operation not yet supported for type " << type << ".  Sorry.\n";
+   }
+   else if ( type == MSCASATYPE )
+   {
+      #ifdef WITH_CASA
+      casa::TableRecord table_rec = casa_table_handle->keywordSet();
+      casa::String dtype = GetKeywordType(attrname);
+      if (dtype == "Float")
+      {
+        casa::Float result;
+        if (GetKeyword(attrname,&result))
+           return (casa::Float*)&result;
+        else
+        {
+          cerr << "ERROR: dalTable:GetKeyword Could not get '" << attrname << endl; 
+          return NULL;
+        }
+      }
+      else
+      {
+         cerr << "(TBD) datatype is " << type << endl;
+         return NULL;
+      }
+      #else
+      cerr << "ERROR: CASA not enabled [dalTable::getAttribute()]" << endl;
+      return NULL;
+      #endif
+   }
+   else
+   {
+     cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
      return NULL;
    }
+
+   return NULL;
 }
+
+#ifdef WITH_CASA
+
+  casa::Bool dalTable::GetKeyword(casa::String const KeywordName, casa::String *result)
+  {
+    #ifdef DEBUGGING_MESSAGES      
+    cerr << "dalTable::GetKeyword called for " << KeywordName << endl;
+    #endif
+    try {  
+      if (!casa_table_handle->keywordSet().isDefined(KeywordName)) {
+        cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName << 
+          "\" does not exist" << endl;
+        return casa::False;
+      };
+      *result = casa_table_handle->keywordSet().asString(KeywordName);
+    } catch (casa::AipsError x) {
+      cerr << "dalTable::GetKeyword: " << x.getMesg() << endl;
+      return casa::False;
+    }; 
+    return casa::True;
+  }
+
+  casa::Bool dalTable::GetKeyword(casa::String const KeywordName, casa::Double *result)
+  {
+    #ifdef DEBUGGING_MESSAGES      
+    cerr << "dalTable::GetKeyword called for " << KeywordName << endl;
+    #endif
+    try {  
+      if (!casa_table_handle->keywordSet().isDefined(KeywordName)) {
+        cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName << 
+          "\" does not exist" << endl;
+        return casa::False;
+      };
+      *result = casa_table_handle->keywordSet().asDouble(KeywordName);
+    } catch (casa::AipsError x) {
+      cerr << "dalTable::GetKeyword: " << x.getMesg() << endl;
+      return casa::False;
+    }; 
+    return casa::True;
+  }
+
+  casa::Bool dalTable::GetKeyword(casa::String const KeywordName, casa::Float *result)
+  {
+    #ifdef DEBUGGING_MESSAGES      
+    cerr << "dalTable::GetKeyword called for " << KeywordName << endl;
+    #endif
+    try {  
+      if (!casa_table_handle->keywordSet().isDefined(KeywordName)) {
+        cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName << 
+          "\" does not exist" << endl;
+        return casa::False;
+      };
+      *result = casa_table_handle->keywordSet().asFloat(KeywordName);
+    } catch (casa::AipsError x) {
+      cerr << "dalTable::GetKeyword: " << x.getMesg() << endl;
+      return casa::False;
+    }; 
+    return casa::True;
+  }
+
+  casa::Bool dalTable::GetKeyword(casa::String const KeywordName, casa::DComplex *result)
+  {
+    #ifdef DEBUGGING_MESSAGES      
+    cerr << "dalTable::GetKeyword called for " << KeywordName << endl;
+    #endif
+    try {  
+      if (!casa_table_handle->keywordSet().isDefined(KeywordName)) {
+        cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName << 
+          "\" does not exist" << endl;
+        return casa::False;
+      };
+      *result = casa_table_handle->keywordSet().asDComplex(KeywordName);
+    } catch (casa::AipsError x) {
+      cerr << "dalTable::GetKeyword: " << x.getMesg() << endl;
+      return casa::False;
+    }; 
+    return casa::True;
+  }
+
+  casa::Bool dalTable::GetKeyword(casa::String const KeywordName, casa::Array<casa::Double> *result)
+  {
+    #ifdef DEBUGGING_MESSAGES
+    cerr << "dalTable::GetKeyword called for " << KeywordName << endl;
+    #endif
+    try {  
+      if (!casa_table_handle->keywordSet().isDefined(KeywordName)) {
+        cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName << 
+          "\" does not exist" << endl;
+        return casa::False;
+      };
+      result->reference(casa_table_handle->keywordSet().asArrayDouble(KeywordName));
+    } catch (casa::AipsError x) {
+      cerr << "dalTable::GetKeyword: " << x.getMesg() << endl;
+      return casa::False;
+    }; 
+    return casa::True;
+  }
+  casa::Bool dalTable::GetKeyword(casa::String const KeywordName, casa::Array<casa::DComplex> *result)
+  {
+    #ifdef DEBUGGING_MESSAGES
+    cerr << "dalTable::GetKeyword called for " << KeywordName << endl;
+    #endif
+    try {  
+      if (!casa_table_handle->keywordSet().isDefined(KeywordName)) {
+        cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName << 
+          "\" does not exist" << endl;
+        return casa::False;
+      };
+      result->reference(casa_table_handle->keywordSet().asArrayDComplex(KeywordName));
+    } catch (casa::AipsError x) {
+      cerr << "dalTable::GetKeyword: " << x.getMesg() << endl;
+      return casa::False;
+    }; 
+    return casa::True;
+  }
+
+
+  // ==============================================================================
+  // Get the type of the given keyword
+  // ==============================================================================
+  casa::String dalTable::GetKeywordType(casa::String const KeywordName)
+  {
+    try {  
+      if (!casa_table_handle->keywordSet().isDefined(KeywordName)) {
+        cerr << "dalTable::GetKeywordType: Keyword named \"" << KeywordName << 
+          "\" does not exist" << endl;
+        return "";
+      };
+      casa::DataType type = casa_table_handle->keywordSet().dataType(KeywordName);
+      switch(type) {
+      case casa::TpString:
+        return "String";
+      case casa::TpFloat:
+        return "Float";
+      case casa::TpDouble:
+        return "Double";
+      case casa::TpDComplex:
+        return "DComplex";
+      case casa::TpArrayDouble:
+        return "Array<Double>";
+      case casa::TpArrayDComplex:
+        return "Array<DComplex>";
+      case casa::TpInt:
+        return "Int";
+      case casa::TpUInt:
+        return "uInt";
+      default:
+        return "unknown";
+      }
+    } catch (casa::AipsError x) {
+      cerr << "dalTable::GetKeywordType: " << x.getMesg() << endl;
+      return "unknown";
+    }; 
+  }
+#endif // WITH_CASA
 
 /************************************************************************
  *
@@ -1872,6 +2100,14 @@ bpl::numeric::array dalTable::getColumnData_boost( string colname )
 }
 */
 #endif // WITH_CASA
+
+bpl::numeric::array dalTable::getAttribute_boost(std::string attrname)
+{
+   vector<int> mydims;
+   mydims.push_back(1);
+   float * dta = (float*)getAttribute(attrname);
+   return num_util::makeNum(((float*)dta),mydims);
+}
 
 #endif // PYTHON
 

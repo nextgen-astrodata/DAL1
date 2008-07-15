@@ -444,23 +444,30 @@ dalGroup * dalDataset::createGroup( const char * gname )
  *  List tables in a dataset (file)
  *
  *****************************************************************/
-void dalDataset::listTables()
+std::vector<std::string> dalDataset::listTables()
 {
+   std::vector<std::string> tabs;
    if ( type == MSCASATYPE )
    {
 #ifdef WITH_CASA
-	ms_tables = ms_reader->tables();
+      ms_tables = ms_reader->tables();
+      unsigned int nelem (ms_tables.nelements());
 
-	// list the names of the tables
-	cout << ms_tables << endl;
+      // list the names of the tables
+      for (unsigned int table(0); table<nelem; table++)
+      {
+         tabs.push_back( ms_tables(table) );
+      }
+      return tabs;
 #else
 	cout << "CASA support not enabled." << endl;
-	exit(-1);
+	return tabs;
 #endif
    }
    else
    {
 	cout << "This operation is not supported for filetype " << type << endl;
+        return tabs;
    }
 }
 
@@ -634,15 +641,13 @@ dalTable * dalDataset::openTable( string tablename )
 #ifdef WITH_CASA
 	dalTable * lt = new dalTable( MSCASATYPE );
 	if ( filter.isSet() )
-        {
-           lt->openTable( tablename, ms_reader, &filter );
-        }
+          lt->openTable( tablename, ms_reader, &filter );
         else
 	  lt->openTable( tablename, ms_reader );
 	return lt;
 #else
 	cout << "CASA support not enabled." << endl;
-	exit(-1);
+	return NULL;
 #endif
    }
    else if ( type == H5TYPE )
@@ -1204,6 +1209,17 @@ void dalDataset::setFilter_boost1( string columns )
 void dalDataset::setFilter_boost2( string columns, string conditions )
 {
    setFilter( columns, conditions );
+}
+
+bpl::list dalDataset::listTables_boost()
+{
+   std::vector<std::string> lcltabs = listTables();
+   bpl::list lcllist;
+   for (uint idx=0; idx<lcltabs.size(); idx++)
+   {
+     lcllist.append( lcltabs[idx] );
+   }
+   return lcllist;
 }
 #endif  // end #ifdef PYTHON
 
