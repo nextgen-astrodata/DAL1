@@ -23,7 +23,7 @@
 
 /**
   \file tdal_fits.cpp
-  
+
   \ingroup DAL
 
   \brief Test program for working with FITS data
@@ -47,18 +47,18 @@ int main(int argc, char *argv[])
 
   // parameter check
   if ( argc < 2 )
-  {
-     cout << endl << "Too few parameters..." << endl << endl;
-     cout << "The first parameter is a fits dataset path and name." << endl;
-     cout << endl;
-     return DAL::FAIL;
-  }
+    {
+      cout << endl << "Too few parameters..." << endl << endl;
+      cout << "The first parameter is a fits dataset path and name." << endl;
+      cout << endl;
+      return DAL::FAIL;
+    }
 
 // create a dataset
   dalDataset * dataset1;
 //   dataset1->open(argv[1]);
 //  if ( NULL == argv[2] )
-	  dataset1 = new dalDataset( argv[1], "FITS" );
+  dataset1 = new dalDataset( argv[1], "FITS" );
 //   else
 // 	  dataset1 = new dalDataset( argv[1], argv[2] );
 
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 
 // close dataset
 //    dataset1->close();
-   delete dataset1;
+  delete dataset1;
 
 
 //    dalDataset * dataset2;
@@ -83,26 +83,26 @@ int main(int argc, char *argv[])
 //    dalGroup * groupA = dataset2->createGroup( "groupA" );
 //    dalGroup * groupB = dataset2->createGroup( "groupB" );
 //    dalGroup * groupC = dataset2->createGroup( "groupC" );
-// 
+//
 //    dalTable * table1 = dataset2->createTable( "table1", "groupA" );
 //    dalTable * table2 = dataset2->createTable( "table2", "groupA" );
 //    dalTable * table3 = dataset2->createTable( "table3", "groupB" );
-// 
-// 
+//
+//
 //    table1->addColumn( "col1", dal_INT );
 //    table1->addColumn( "col2", dal_SHORT );
 //    table1->addColumn( "col3", dal_FLOAT );
-// 
+//
 //    table2->addColumn( "col1", dal_UINT );
 //    table2->addColumn( "col2", dal_STRING );
 //    table2->addColumn( "col3", dal_DOUBLE );
-// 
+//
 //    table3->addColumn( "col1", dal_INT );
 //    table3->addColumn( "col2", dal_INT );
 //    table3->addColumn( "col3", dal_INT );
-// 
+//
 //    dataset2->close();
-// 
+//
 //    delete table1;
 //    delete table2;
 //    delete table3;
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 //    delete groupC;
 //    delete dataset2;
 
-   cout << "SUCCESS" << endl;
-   return DAL::SUCCESS;
+  cout << "SUCCESS" << endl;
+  return DAL::SUCCESS;
 }
 

@@ -29,7 +29,7 @@
 
 /*!
   \file convert.h
-  
+
   \ingroup DAL
 
   \brief A collection of methods for the conversion of variables
@@ -43,12 +43,13 @@
   Represents an object that is thrown when the stringify function fails to
   turn a variable into a string.
 */
-class BadConversion : public std::runtime_error {
- public:
-  BadConversion(const std::string& s)
-    : std::runtime_error(s)
+class BadConversion : public std::runtime_error
+  {
+  public:
+    BadConversion(const std::string& s)
+        : std::runtime_error(s)
     { }
-};
+  };
 
 /*!
   Stringify is a templated function that attemps to turn a variable
@@ -64,6 +65,6 @@ inline std::string stringify(const T& x)
   std::ostringstream o;
   if (!(o << x))
     throw BadConversion(std::string("stringify(")
-			+ typeid(x).name() + ")");
+                        + typeid(x).name() + ")");
   return o.str();
 }

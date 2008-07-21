@@ -25,51 +25,103 @@
 #include "dalFilter.h"
 #endif
 
-namespace DAL {
-
-dalFilter::dalFilter()
-{
-  filterstring = "";
-  filetype= "";
-  is_set = false;
-}
-
-void dalFilter::set( string cols ) {
-  if ( filetype == MSCASATYPE )
+namespace DAL
   {
-    filterstring = "Select " + cols + " from $1";
-    is_set = true;
-  }
-  else
-    cout << "Operation not yet supported for type: " + filetype + ". Sorry.\n";
-}
 
-void dalFilter::set( string cols, string conditions ) {
-  if ( filetype == MSCASATYPE )
+  /*!
+    \brief Default constructor.
+
+    Default constructor.
+   */
+  dalFilter::dalFilter()
   {
-    filterstring = "Select " + cols + " from $1 where " + conditions;
-    is_set = true;
+    filterstring = "";
+    filetype= "";
+    is_set = false;
   }
-  else
-    cout << "Operation not yet supported for type: " + filetype + ". Sorry.\n";
-}
-void dalFilter::setFiletype( string type )
-{
-   filetype = type;
-}
 
-bool dalFilter::isSet()
-{
-  if (is_set)
-    return true;
-  else
-    return false;
-}
 
-string dalFilter::get()
-{
-   return filterstring;
-}
+  /*!
+    \brief Restrict to certain columns.
+
+    Restrict the opening of a table to particular columns.
+
+    \param columns A comma-separated list of the column names that you
+                   want to pass the filter (i.e. "TIME,DATA,ANTENNA").
+   */
+  void dalFilter::set( string cols )
+  {
+    if ( filetype == MSCASATYPE )
+      {
+        filterstring = "Select " + cols + " from $1";
+        is_set = true;
+      }
+    else
+      cout << "Operation not yet supported for type: " + filetype + ". Sorry.\n";
+  }
+
+
+  /*!
+    \brief Restrict to certain columns and conditions.
+
+    Restrict the opening of a table to particular columns and conditions.
+
+    \param columns A comma-separated list of the column names that you
+                   want to pass the filter (i.e. "TIME,DATA,ANTENNA").
+    \param conditions A list of the conditions you want to apply.
+                      (i.e. "ANTENNA1=1 AND ANTENNA2=10")
+   */
+  void dalFilter::set( string cols, string conditions )
+  {
+    if ( filetype == MSCASATYPE )
+      {
+        filterstring = "Select " + cols + " from $1 where " + conditions;
+        is_set = true;
+      }
+    else
+      cout << "Operation not yet supported for type: " + filetype + ". Sorry.\n";
+  }
+
+  /*!
+    \brief Declare the type of the file.
+
+    Declare the type of the file (i.e. "MSCAS", "HDF5", etc.)
+
+    \param type The type of the file (i.e. "MSCAS", "HDF5", etc.)
+   */
+  void dalFilter::setFiletype( string type )
+  {
+    filetype = type;
+  }
+
+
+  /*!
+    \brief Check to see if the filter is defined.
+
+    Check to see if the filter is defined.
+
+    \return True if the filter is set.  False if filter is not set.
+   */
+  bool dalFilter::isSet()
+  {
+    if (is_set)
+      return true;
+    else
+      return false;
+  }
+
+
+  /*!
+    \brief Retrieve the filter string.
+
+    Retrieve the filter string.
+
+    \return A string representing the filter.
+   */
+  string dalFilter::get()
+  {
+    return filterstring;
+  }
 
 
 } // DAL namespace

@@ -29,102 +29,110 @@
 #endif
 
 
-namespace DAL {
-
-/*!
-  \class dalAttribute
-
-  \brief Represents a header keyword or attribute.
-
-  \ingroup DAL
-  
-  \author Joseph Masters
-*/
-class dalAttribute {
-  
-  //! The name of the attribute
-  string name_p;
-  //! The units of the attribute
-  string units_p;
-  //! Description of the column
-  string description_p;
-  
- public:
-  
-  /*!
-    \brief Default constructor.
-    
-    Default attribute constructor.
-  */
-  dalAttribute();
+namespace DAL
+  {
 
   /*!
-    \brief Get the name of the attribute
+    \class dalAttribute
 
-    \return name -- The name of the attribute
+    \brief Represents a header keyword or attribute.
+
+    \ingroup DAL
+
+    \author Joseph Masters
   */
-  inline string name () const {
-    return name_p;
-  }
+  class dalAttribute
+    {
 
-  /*!
-    \brief Set the name of the attribute
+      //! The name of the attribute
+      string name_p;
+      //! The units of the attribute
+      string units_p;
+      //! Description of the column
+      string description_p;
 
-    \param name -- The name of the attribute
+    public:
 
-    \return status -- Status of the operation; returns <tt>false</tt> in case an
-            error was encountered
-  */
-  inline bool setName (string const &name) {
-    name_p = name;
-    return true;
-  }
-  
-  /*!
-    \brief Get the units of the attribute
+      /*!
+        \brief Default constructor.
 
-    \return units -- The units of the attribute
-  */
-  inline string units () const {
-    return units_p;
-  }
+        Default attribute constructor.
+      */
+      dalAttribute();
 
-  /*!
-    \brief Set the units of the attribute
+      /*!
+        \brief Get the name of the attribute
 
-    \param units -- The units of the attribute
+        \return name -- The name of the attribute
+      */
+      inline string name () const
+        {
+          return name_p;
+        }
 
-    \return status -- Status of the operation; returns <tt>false</tt> in case an
-            error was encountered
-  */
-  inline bool setUnits (string const &units) {
-    units_p = units;
-    return true;
-  }
-  
-  /*!
-    \brief Get the description to the attribute
+      /*!
+        \brief Set the name of the attribute
 
-    \return description -- The description to the attribute
-  */
-  inline string description () const {
-    return description_p;
-  }
+        \param name -- The name of the attribute
 
-  /*!
-    \brief Set the description of the attribute
+        \return status -- Status of the operation; returns <tt>false</tt> in case an
+                error was encountered
+      */
+      inline bool setName (string const &name)
+      {
+        name_p = name;
+        return true;
+      }
 
-    \param description -- The description of the attribute
+      /*!
+        \brief Get the units of the attribute
 
-    \return status -- Status of the operation; returns <tt>false</tt> in case an
-            error was encountered
-  */
-  inline bool setDescription (string const &description) {
-    description_p = description;
-    return true;
-  }
-  
-}; // dalAttribute class
+        \return units -- The units of the attribute
+      */
+      inline string units () const
+        {
+          return units_p;
+        }
+
+      /*!
+        \brief Set the units of the attribute
+
+        \param units -- The units of the attribute
+
+        \return status -- Status of the operation; returns <tt>false</tt> in case an
+                error was encountered
+      */
+      inline bool setUnits (string const &units)
+      {
+        units_p = units;
+        return true;
+      }
+
+      /*!
+        \brief Get the description to the attribute
+
+        \return description -- The description to the attribute
+      */
+      inline string description () const
+        {
+          return description_p;
+        }
+
+      /*!
+        \brief Set the description of the attribute
+
+        \param description -- The description of the attribute
+
+        \return status -- Status of the operation; returns <tt>false</tt> in case an
+                error was encountered
+      */
+      inline bool setDescription (string const &description)
+      {
+        description_p = description;
+        return true;
+      }
+
+    }; // dalAttribute class
 
 
 } // DAL namespace

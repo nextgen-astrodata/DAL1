@@ -30,16 +30,16 @@
 
   \date 15-Mar-07
 */
- 
+
 #ifndef DALBASETYPES_H
 #define DALBASETYPES_H
- 
- // reading a complete binary file
+
+// reading a complete binary file
 #include <iostream> // for cout
 #include <iomanip>  // for cout field width
 #include <fstream>  // for file handle
 #include <complex>  // for complex datatypes
-#include <time.h>		// for local time conversion
+#include <time.h>   // for local time conversion
 
 using namespace std;
 using std::complex;

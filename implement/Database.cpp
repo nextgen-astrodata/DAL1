@@ -27,55 +27,57 @@
 
 // #ifdef WITH_MYSQL
 
-namespace DAL {
+namespace DAL
+  {
 
-   // constructor
-   Database::Database( string const& lcl_server,
-                       string const& lcl_username,
-                       string const& lcl_password,
-                       string const& lcl_database )
-   {
-       server = lcl_server;
-       username = lcl_username;
-       password = lcl_password;
-       database = lcl_database;
-       port = "";
+  // constructor
+  Database::Database( string const& lcl_server,
+                      string const& lcl_username,
+                      string const& lcl_password,
+                      string const& lcl_database )
+  {
+    server = lcl_server;
+    username = lcl_username;
+    password = lcl_password;
+    database = lcl_database;
+    port = "";
 
-       conn = mysql_init(NULL);
+    conn = mysql_init(NULL);
 
-       /* Connect to database */
-       if ( !mysql_real_connect(conn, server.c_str(),
-            username.c_str(), password.c_str(),
-            database.c_str(), 0, NULL, 0))
-       {
-          fprintf(stderr, "%s\n", mysql_error(conn));
-          exit(1);
-       }
-
-   }
-
-   // destructor
-   Database::~Database()
-   {
-       if (conn)
-       {
-         /* close connection */
-         mysql_close(conn);
-       }
-   }
-
-   void Database::query( string const& querystr )
-   {
-      /* send SQL query */
-      if (mysql_query(conn, querystr.c_str())) {
-         fprintf(stderr, "%s\n", mysql_error(conn));
+    /* Connect to database */
+    if ( !mysql_real_connect(conn, server.c_str(),
+                             username.c_str(), password.c_str(),
+                             database.c_str(), 0, NULL, 0))
+      {
+        fprintf(stderr, "%s\n", mysql_error(conn));
+        exit(1);
       }
-      res = mysql_use_result(conn);
-      /* output table names */
-      while ((row = mysql_fetch_row(res)) != NULL)
-         printf("%s \n", row[0]);
-      mysql_free_result(res);
-   }
+
+  }
+
+  // destructor
+  Database::~Database()
+  {
+    if (conn)
+      {
+        /* close connection */
+        mysql_close(conn);
+      }
+  }
+
+  void Database::query( string const& querystr )
+  {
+    /* send SQL query */
+    if (mysql_query(conn, querystr.c_str()))
+      {
+        fprintf(stderr, "%s\n", mysql_error(conn));
+      }
+    res = mysql_use_result(conn);
+    /* output table names */
+    while ((row = mysql_fetch_row(res)) != NULL)
+      printf("%s \n", row[0]);
+    mysql_free_result(res);
+  }
 
 } // end namespace DAL
 

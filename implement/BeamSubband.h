@@ -45,65 +45,67 @@
 #endif
 
 
-namespace DAL {
+namespace DAL
+  {
 
-/*!
-   \class BeamSubband
-    
-   \ingroup DAL
-    
-   \brief High-level interface between beam-formed data and the DAL
-    
-   \author Joseph Masters
+  /*!
+     \class BeamSubband
 
- */
- 
-  class BeamSubband {
+     \ingroup DAL
 
-  private:
+     \brief High-level interface between beam-formed data and the DAL
 
-    //! HDF5 file handle ID
-    hid_t H5groupID_p;
+     \author Joseph Masters
 
-    //! Group object of the Data Access Library 
-    dalTable *table_p;
+   */
 
-    //! HDF5 file handle ID
-    hid_t H5fileID_p;
-
-    //! HDF5 table handle ID
-    hid_t H5tableID_p;
-
-  public:
-
-    /*!
-      \brief Default constructor
-    */
-    BeamSubband();
-
-    /*!
-      \brief Initialize the internal parameters of an object of this type
-    */
-    void init();
-
-    /*!
-      \brief Provide a summary of the objects internal parameters
-      
-      The summary will be written to standard output
-    */
-    inline void summary()
+  class BeamSubband
     {
-       summary(cout);
-    }
 
-    /*!
-      \brief Provide a summary of the objects internal parameters
+    private:
 
-      \param os -- Output stream to which the summary is written.
-    */
-    void summary(std::ostream &os);
+      // HDF5 file handle ID
+      hid_t H5groupID_p;
 
- }; // end BeamSubband class
+      // Group object of the Data Access Library
+      dalTable *table_p;
+
+      // HDF5 file handle ID
+      hid_t H5fileID_p;
+
+      // HDF5 table handle ID
+      hid_t H5tableID_p;
+
+    public:
+
+      /*!
+        \brief Default constructor
+      */
+      BeamSubband();
+
+      /*!
+        \brief Initialize the internal parameters of an object of this type
+      */
+      void init();
+
+      /*!
+        \brief Provide a summary of the objects internal parameters
+
+        The summary will be written to standard output
+      */
+      inline void summary()
+      {
+        summary(cout);
+      }
+
+      /*!
+        \brief Provide a summary of the objects internal parameters
+
+        \param os -- Output stream to which the summary is written.
+      */
+      void summary(std::ostream &os);
+
+    }; // end BeamSubband class
 
 } // end DAL namespace
 

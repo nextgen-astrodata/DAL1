@@ -24,7 +24,8 @@
 #include "TBB.h"
 #endif
 
-namespace DAL {
+namespace DAL
+  {
 
   TBB::TBB( string const& filename )
   {
@@ -73,39 +74,39 @@ namespace DAL {
     first_sample = true;
 
     if ( FAIL == dataset->open( filename.c_str() ) )
-    {
-      cerr << "Creating new dataset " << filename << endl;
-      delete dataset;
-      dataset = new dalDataset( filename.c_str(), "HDF5" );
+      {
+        cerr << "Creating new dataset " << filename << endl;
+        delete dataset;
+        dataset = new dalDataset( filename.c_str(), "HDF5" );
 
-      string telescope          = "LOFAR";
-      string observer           = "UNDEFINED";
-      string project            = "UNDEFINED";
-      string observation_id     = "UNDEFINED";
-      string observation_mode   = "UNDEFINED";
-      dataset->setAttribute_string( attribute_name(TELESCOPE), telescope );
-      dataset->setAttribute_string( attribute_name(OBSERVER), observer );
-      dataset->setAttribute_string( attribute_name(PROJECT), project );
-      dataset->setAttribute_string( attribute_name(OBSERVATION_ID),
-                                    observation_id );
-      dataset->setAttribute_string( attribute_name(OBSERVATION_MODE),
-                                    observation_mode );
+        string telescope          = "LOFAR";
+        string observer           = "UNDEFINED";
+        string project            = "UNDEFINED";
+        string observation_id     = "UNDEFINED";
+        string observation_mode   = "UNDEFINED";
+        dataset->setAttribute_string( attribute_name(TELESCOPE), telescope );
+        dataset->setAttribute_string( attribute_name(OBSERVER), observer );
+        dataset->setAttribute_string( attribute_name(PROJECT), project );
+        dataset->setAttribute_string( attribute_name(OBSERVATION_ID),
+                                      observation_id );
+        dataset->setAttribute_string( attribute_name(OBSERVATION_MODE),
+                                      observation_mode );
 
-    }
+      }
     else
-    {
-       cerr << "Dataset " << filename << " exists." << endl;
+      {
+        cerr << "Dataset " << filename << " exists." << endl;
 
-       stations = dataset->getGroupNames();
+        stations = dataset->getGroupNames();
 
-       #ifdef DEBUGGING_MESSAGES
-       for( unsigned int ss = 0; ss < stations.size(); ss++ )
-       {
-          cerr << stations[ss] << " group exists." << endl;
-       }
-       #endif
+#ifdef DEBUGGING_MESSAGES
+        for ( unsigned int ss = 0; ss < stations.size(); ss++ )
+          {
+            cerr << stations[ss] << " group exists." << endl;
+          }
+#endif
 
-    }
+      }
 
   }
 
@@ -113,34 +114,34 @@ namespace DAL {
   TBB::~TBB()
   {
     if ( dipoleArray )
-    {
-      delete dipoleArray;
-      dipoleArray = NULL;
-    }
+      {
+        delete dipoleArray;
+        dipoleArray = NULL;
+      }
     if ( stationGroup )
-    {
-      delete stationGroup;
-      stationGroup = NULL;
-    }
+      {
+        delete stationGroup;
+        stationGroup = NULL;
+      }
     delete dataset;
     if (main_socket)
       close(main_socket);
     if (rawfile)
-    {
-      if (rawfile->is_open())
       {
-        rawfile->close();
+        if (rawfile->is_open())
+          {
+            rawfile->close();
+          }
+        delete rawfile;
+        rawfile = NULL;
       }
-      delete rawfile;
-      rawfile = NULL;
-    }
   }
 
-  // ------------------------------------------------------------- 
+  // -------------------------------------------------------------
   //
   //  Set up the socket connection to the server
   //
-  // ------------------------------------------------------------- 
+  // -------------------------------------------------------------
 
   void TBB::connectsocket( char* ipaddress, char* portnumber )
   {
@@ -149,11 +150,19 @@ namespace DAL {
 
     // Step 1 Look up server to get numeric IP address
     hostent * record = gethostbyname(remote);
-    if (record==NULL) { herror("gethostbyname failed"); exit(1); }
+    if (record==NULL)
+      {
+        herror("gethostbyname failed");
+        exit(1);
+      }
 
     // Step 2 Create a socket
     main_socket = socket(PF_INET, SOCK_DGRAM, 0);
-    if (main_socket<0) { perror("socket creation"); exit(1); }
+    if (main_socket<0)
+      {
+        perror("socket creation");
+        exit(1);
+      }
 
     // Step 3 Create a sockaddr_in to describe the local port
     sockaddr_in local_info;
@@ -163,25 +172,29 @@ namespace DAL {
 
     // Step 4 Bind the socket to the port
     int rr = bind(main_socket, (sockaddr *) &local_info, sizeof(local_info));
-    if (rr<0) { perror("bind"); exit(1); }
+    if (rr<0)
+      {
+        perror("bind");
+        exit(1);
+      }
     printf("ready\n");
   }
 
   bool TBB::openRawFile( char* filename )
   {
-     delete rawfile;
-     rawfile = new fstream( filename, ios::binary|ios::in );
-     if ( !rawfile->is_open() )
-     {
-       std::cerr << "Error opening intput file: " << std::string(filename)
-                 << std::endl;
-       return false;
-     }
-     else
-     {
-         rawfile->seekg (0, ios::beg);  // move to start of file
-         return true;
-     }
+    delete rawfile;
+    rawfile = new fstream( filename, ios::binary|ios::in );
+    if ( !rawfile->is_open() )
+      {
+        std::cerr << "Error opening intput file: " << std::string(filename)
+                  << std::endl;
+        return false;
+      }
+    else
+      {
+        rawfile->seekg (0, ios::beg);  // move to start of file
+        return true;
+      }
   }
 
   int TBB::readsocket( unsigned int nbytes, char* buf )
@@ -194,24 +207,28 @@ namespace DAL {
 
     // waits for up to N seconds for data appearing in the socket
     if ( select( main_socket + 1, &readSet, NULL, NULL, &timeVal ) )
-    {
-      rr = recvfrom( main_socket, buf, nbytes, 0,
-                    (sockaddr *) &incoming_addr, &socklen);
-    }
+      {
+        rr = recvfrom( main_socket, buf, nbytes, 0,
+                       (sockaddr *) &incoming_addr, &socklen);
+      }
     else
-    {
-       cout << "Data stopped coming" << endl;
-       return FAIL;
-    }
+      {
+        cout << "Data stopped coming" << endl;
+        return FAIL;
+      }
 
-    if (rr<0) { perror("recvfrom"); exit(1); }
+    if (rr<0)
+      {
+        perror("recvfrom");
+        exit(1);
+      }
 
     return SUCCESS;
   }
 
   bool TBB::readRawSocketBlockHeader()
   {
-    // ------------------------------------------------------  read the header 
+    // ------------------------------------------------------  read the header
     //
     // read 88-byte TBB frame header
     //
@@ -242,25 +259,25 @@ namespace DAL {
     char *time_string=ctime(&sample_time);
     time_string[strlen(time_string)-1]=0;   // remove \n
 
-    #ifdef DEBUGGING_MESSAGES
+#ifdef DEBUGGING_MESSAGES
     printf("Time:              : %s\n",time_string );
     printRawHeader();
-    #endif
+#endif
 
     if ( !first_sample )
-    {
-      if ( ( seqnrLast > header.seqnr ) || ( seqnrLast+1 != header.seqnr ) )
       {
-         printf("WARNING: Frame missing or out of order\n");
-         exit(9);
+        if ( ( seqnrLast > header.seqnr ) || ( seqnrLast+1 != header.seqnr ) )
+          {
+            printf("WARNING: Frame missing or out of order\n");
+            exit(9);
+          }
       }
-    }
     seqnrLast = header.seqnr;
 
     return true;
   }
 
-  // ------------------------------------------------------  read the header 
+  // ------------------------------------------------------  read the header
   //
   // read 88-byte TBB frame header
   //
@@ -292,10 +309,10 @@ namespace DAL {
     char *time_string=ctime(&sample_time);
     time_string[strlen(time_string)-1]=0;   // remove \n
 
-    #ifdef DEBUGGING_MESSAGES
+#ifdef DEBUGGING_MESSAGES
     printf("Time:              : %s\n",time_string );
     printRawHeader();
-    #endif
+#endif
 
   }
 
@@ -319,7 +336,7 @@ namespace DAL {
     printf("Num. of Freq. Bands: %d\n",header.n_freq_bands);
     printf("Bands present : ");
     for (int idx=0; idx<64; idx++)
-       printf("%X,", header.bandsel[idx]);
+      printf("%X,", header.bandsel[idx]);
     printf("\n");
   }
 
@@ -331,126 +348,126 @@ namespace DAL {
 
     // does the station exist?
     if ( it_exists_str( stations, stationstr ) )
-    {
-       stationGroup = dataset->openGroup( stationstr );
-       dipoles = stationGroup->getMemberNames();
-       sprintf(uid, "%03d%03d%03d",
-               header.stationid, header.rspid, header.rcuid);
+      {
+        stationGroup = dataset->openGroup( stationstr );
+        dipoles = stationGroup->getMemberNames();
+        sprintf(uid, "%03d%03d%03d",
+                header.stationid, header.rspid, header.rcuid);
 
-       // does the dipole exist?
-       if ( it_exists_str( dipoles, uid ) )
-       {
-          dipoleArray = dataset->openArray( uid, stationGroup->getName() );
-          dims = dipoleArray->dims();
-          offset = dims[0];
-          first_sample = false;
-       }
-       else
-       {
-         sprintf(uid, "%03d%03d%03d",
-                 header.stationid, header.rspid, header.rcuid);
-       }
-    }
+        // does the dipole exist?
+        if ( it_exists_str( dipoles, uid ) )
+          {
+            dipoleArray = dataset->openArray( uid, stationGroup->getName() );
+            dims = dipoleArray->dims();
+            offset = dims[0];
+            first_sample = false;
+          }
+        else
+          {
+            sprintf(uid, "%03d%03d%03d",
+                    header.stationid, header.rspid, header.rcuid);
+          }
+      }
     else
-    {
-       stations.push_back( stationstr );
-       stationGroup = dataset->createGroup( stationstr );
-       cerr << "CREATED New station group: " << string(stationstr) << endl;
-       sprintf(uid, "%03d%03d%03d",
-               header.stationid, header.rspid, header.rcuid);
-       first_sample = true;
-    }
+      {
+        stations.push_back( stationstr );
+        stationGroup = dataset->createGroup( stationstr );
+        cerr << "CREATED New station group: " << string(stationstr) << endl;
+        sprintf(uid, "%03d%03d%03d",
+                header.stationid, header.rspid, header.rcuid);
+        first_sample = true;
+      }
   }
 
   void TBB::makeOutputHeader()
   {
-     vector<int> firstdims;
-     firstdims.push_back( 0 );
+    vector<int> firstdims;
+    firstdims.push_back( 0 );
 
-     if ( 0 == header.n_freq_bands )
-     {
-       short nodata[0];
-       dipoleArray = stationGroup->createShortArray( string(uid),
-                                                     firstdims,
-                                                     nodata,
-                                                     cdims );
-       stationGroup->setAttribute_string( attribute_name(OBSERVATION_MODE),
-                                          "Transient" );
-     }
-     else
-     {
-       complex<Int16> nodata[0];
-       dipoleArray =
-         stationGroup->createComplexShortArray( string(uid),
-                                                firstdims,
-                                                nodata,
-                                                cdims );
-       stationGroup->setAttribute_string( attribute_name(OBSERVATION_MODE),
-                                          "Sub-band" );
-     }
+    if ( 0 == header.n_freq_bands )
+      {
+        short nodata[0];
+        dipoleArray = stationGroup->createShortArray( string(uid),
+                      firstdims,
+                      nodata,
+                      cdims );
+        stationGroup->setAttribute_string( attribute_name(OBSERVATION_MODE),
+                                           "Transient" );
+      }
+    else
+      {
+        complex<Int16> nodata[0];
+        dipoleArray =
+          stationGroup->createComplexShortArray( string(uid),
+                                                 firstdims,
+                                                 nodata,
+                                                 cdims );
+        stationGroup->setAttribute_string( attribute_name(OBSERVATION_MODE),
+                                           "Sub-band" );
+      }
 
-     double trigger_offset[1]  = { 0 };
-     int triggered_antennas[1] = { 0 };
-     double bdv[2]  = { 0, 90 };
-     double spv[3]  = { 0, 0, 0 };
+    double trigger_offset[1]  = { 0 };
+    int triggered_antennas[1] = { 0 };
+    double bdv[2]  = { 0, 90 };
+    double spv[3]  = { 0, 0, 0 };
 
-     // Add attributes to "Station" group
-     stationGroup->setAttribute_double( attribute_name(STATION_POSITION_VALUE),
-                                        spv, 3 );
-     stationGroup->setAttribute_string( attribute_name(STATION_POSITION_UNIT),
-                                        "m" );
-     stationGroup->setAttribute_string( attribute_name(STATION_POSITION_FRAME),
-                                        "ITRF" );
-     stationGroup->setAttribute_double( attribute_name(BEAM_DIRECTION_VALUE),
-                                        bdv, 2 );
-     stationGroup->setAttribute_string( attribute_name(BEAM_DIRECTION_UNIT),
-                                        "deg" );
-     stationGroup->setAttribute_string( attribute_name(BEAM_DIRECTION_FRAME),
-                                        "UNDEFINED" );
-     stationGroup->setAttribute_string( attribute_name(TRIGGER_TYPE),
-                                        "UNDEFINED" );
-     stationGroup->setAttribute_double( attribute_name(TRIGGER_OFFSET),
-                                        trigger_offset );
-     stationGroup->setAttribute_int(    attribute_name(TRIGGERED_ANTENNAS),
-                                        triggered_antennas);
-
-     unsigned int sid[] = { (unsigned int)(header.stationid) };
-     unsigned int rsp[] = { (unsigned int)(header.rspid) };
-     unsigned int rcu[] = { (unsigned int)(header.rcuid) };
-     double sf[] = { (double)header.sample_freq };
-     unsigned int time[] = { (unsigned int)(header.time) };
-     unsigned int samp_num[] = { (unsigned int)(header.sample_nr) };
-     unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
-     unsigned int datalen[] = { (unsigned int)0 };
-     unsigned int nyquist_zone[] = { (unsigned int)1 };
-     double apos[3]    = { 0, 0, 0 };
-
-     dipoleArray->setAttribute_uint( attribute_name(STATION_ID), sid );
-     dipoleArray->setAttribute_uint( attribute_name(RSP_ID), rsp );
-     dipoleArray->setAttribute_uint( attribute_name(RCU_ID), rcu );
-     dipoleArray->setAttribute_uint( attribute_name(TIME), time );
-     dipoleArray->setAttribute_uint( attribute_name(SAMPLE_NUMBER), samp_num );
-     dipoleArray->setAttribute_uint( attribute_name(SAMPLES_PER_FRAME), spf );
-     dipoleArray->setAttribute_uint( attribute_name(DATA_LENGTH), datalen );
-     dipoleArray->setAttribute_double( attribute_name(ANTENNA_POSITION_VALUE),
-                                       apos, 3 );
-     dipoleArray->setAttribute_string( attribute_name(ANTENNA_POSITION_UNIT),
+    // Add attributes to "Station" group
+    stationGroup->setAttribute_double( attribute_name(STATION_POSITION_VALUE),
+                                       spv, 3 );
+    stationGroup->setAttribute_string( attribute_name(STATION_POSITION_UNIT),
                                        "m" );
-     dipoleArray->setAttribute_string( attribute_name(ANTENNA_POSITION_FRAME),
+    stationGroup->setAttribute_string( attribute_name(STATION_POSITION_FRAME),
                                        "ITRF" );
-     dipoleArray->setAttribute_double( attribute_name(ANTENNA_ORIENTATION_VALUE),
-                                       apos, 3 );
-     dipoleArray->setAttribute_string( attribute_name(ANTENNA_ORIENTATION_UNIT),
-                                       "m" );
-     dipoleArray->setAttribute_string( attribute_name(ANTENNA_ORIENTATION_FRAME),
-                                       "ITRF" );
-     dipoleArray->setAttribute_string( attribute_name(FEED), "UNDEFINED" );
-     dipoleArray->setAttribute_uint(   attribute_name(NYQUIST_ZONE),
-                                       nyquist_zone );
-     dipoleArray->setAttribute_double( attribute_name(SAMPLE_FREQUENCY_VALUE),
-                                       sf, 1 );
-     dipoleArray->setAttribute_string( attribute_name(SAMPLE_FREQUENCY_UNIT),
-                                       "Hz" );
+    stationGroup->setAttribute_double( attribute_name(BEAM_DIRECTION_VALUE),
+                                       bdv, 2 );
+    stationGroup->setAttribute_string( attribute_name(BEAM_DIRECTION_UNIT),
+                                       "deg" );
+    stationGroup->setAttribute_string( attribute_name(BEAM_DIRECTION_FRAME),
+                                       "UNDEFINED" );
+    stationGroup->setAttribute_string( attribute_name(TRIGGER_TYPE),
+                                       "UNDEFINED" );
+    stationGroup->setAttribute_double( attribute_name(TRIGGER_OFFSET),
+                                       trigger_offset );
+    stationGroup->setAttribute_int(    attribute_name(TRIGGERED_ANTENNAS),
+                                       triggered_antennas);
+
+    unsigned int sid[] = { (unsigned int)(header.stationid) };
+    unsigned int rsp[] = { (unsigned int)(header.rspid) };
+    unsigned int rcu[] = { (unsigned int)(header.rcuid) };
+    double sf[] = { (double)header.sample_freq };
+    unsigned int time[] = { (unsigned int)(header.time) };
+    unsigned int samp_num[] = { (unsigned int)(header.sample_nr) };
+    unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
+    unsigned int datalen[] = { (unsigned int)0 };
+    unsigned int nyquist_zone[] = { (unsigned int)1 };
+    double apos[3]    = { 0, 0, 0 };
+
+    dipoleArray->setAttribute_uint( attribute_name(STATION_ID), sid );
+    dipoleArray->setAttribute_uint( attribute_name(RSP_ID), rsp );
+    dipoleArray->setAttribute_uint( attribute_name(RCU_ID), rcu );
+    dipoleArray->setAttribute_uint( attribute_name(TIME), time );
+    dipoleArray->setAttribute_uint( attribute_name(SAMPLE_NUMBER), samp_num );
+    dipoleArray->setAttribute_uint( attribute_name(SAMPLES_PER_FRAME), spf );
+    dipoleArray->setAttribute_uint( attribute_name(DATA_LENGTH), datalen );
+    dipoleArray->setAttribute_double( attribute_name(ANTENNA_POSITION_VALUE),
+                                      apos, 3 );
+    dipoleArray->setAttribute_string( attribute_name(ANTENNA_POSITION_UNIT),
+                                      "m" );
+    dipoleArray->setAttribute_string( attribute_name(ANTENNA_POSITION_FRAME),
+                                      "ITRF" );
+    dipoleArray->setAttribute_double( attribute_name(ANTENNA_ORIENTATION_VALUE),
+                                      apos, 3 );
+    dipoleArray->setAttribute_string( attribute_name(ANTENNA_ORIENTATION_UNIT),
+                                      "m" );
+    dipoleArray->setAttribute_string( attribute_name(ANTENNA_ORIENTATION_FRAME),
+                                      "ITRF" );
+    dipoleArray->setAttribute_string( attribute_name(FEED), "UNDEFINED" );
+    dipoleArray->setAttribute_uint(   attribute_name(NYQUIST_ZONE),
+                                      nyquist_zone );
+    dipoleArray->setAttribute_double( attribute_name(SAMPLE_FREQUENCY_VALUE),
+                                      sf, 1 );
+    dipoleArray->setAttribute_string( attribute_name(SAMPLE_FREQUENCY_UNIT),
+                                      "Hz" );
   }
 
   bool TBB::transientMode()
@@ -463,8 +480,8 @@ namespace DAL {
 
   bool TBB::processTransientSocketDataBlock()
   {
-      short sdata[ header.n_samples_per_frame];
-      for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
+    short sdata[ header.n_samples_per_frame];
+    for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
       {
 
         status = readsocket( sizeof(tran_sample),
@@ -478,17 +495,17 @@ namespace DAL {
         sdata[zz] = tran_sample.value;
       }
 
-      dims[0] += header.n_samples_per_frame;
-      dipoleArray->extend(dims);
-      dipoleArray->write(offset, sdata, header.n_samples_per_frame );
-      offset += header.n_samples_per_frame;
+    dims[0] += header.n_samples_per_frame;
+    dipoleArray->extend(dims);
+    dipoleArray->write(offset, sdata, header.n_samples_per_frame );
+    offset += header.n_samples_per_frame;
 
-      status = readsocket( sizeof(payload_crc),
-                           reinterpret_cast<char *>(&payload_crc) );
-      if (FAIL == status)
-         return false;
+    status = readsocket( sizeof(payload_crc),
+                         reinterpret_cast<char *>(&payload_crc) );
+    if (FAIL == status)
+      return false;
 
-      return true;
+    return true;
   }
 
   void TBB::processTransientFileDataBlock()
@@ -496,15 +513,15 @@ namespace DAL {
     short sdata[ header.n_samples_per_frame];
 
     for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
-    {
-      rawfile->read( reinterpret_cast<char *>(&tran_sample),
-                     sizeof(tran_sample) );
+      {
+        rawfile->read( reinterpret_cast<char *>(&tran_sample),
+                       sizeof(tran_sample) );
 
-      if ( bigendian )  // reverse fields if big endian
-        swapbytes( (char *)&tran_sample.value, 2 );
+        if ( bigendian )  // reverse fields if big endian
+          swapbytes( (char *)&tran_sample.value, 2 );
 
-      sdata[zz] = tran_sample.value;
-    }
+        sdata[zz] = tran_sample.value;
+      }
 
     dims[0] += header.n_samples_per_frame;
     dipoleArray->extend(dims);
@@ -512,7 +529,7 @@ namespace DAL {
     offset += header.n_samples_per_frame;
 
     rawfile->read( reinterpret_cast<char *>(&payload_crc),
-                    sizeof(payload_crc) );
+                   sizeof(payload_crc) );
 
   }
 
@@ -521,21 +538,21 @@ namespace DAL {
     complex<Int16> csdata[ header.n_samples_per_frame];
 
     for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
-    {
-      rawfile->read( reinterpret_cast<char *>(&spec_sample),
-                     sizeof(spec_sample) );
-
-      real_part = real(spec_sample.value);
-      imag_part = imag(spec_sample.value);
-
-      if ( bigendian ) // reverse fields if big endian
       {
-         swapbytes( (char *)&real_part, 2 );
-         swapbytes( (char *)&imag_part, 2 );
-      }
+        rawfile->read( reinterpret_cast<char *>(&spec_sample),
+                       sizeof(spec_sample) );
 
-      csdata[zz] = complex<Int16>( real_part, imag_part );
-    }
+        real_part = real(spec_sample.value);
+        imag_part = imag(spec_sample.value);
+
+        if ( bigendian ) // reverse fields if big endian
+          {
+            swapbytes( (char *)&real_part, 2 );
+            swapbytes( (char *)&imag_part, 2 );
+          }
+
+        csdata[zz] = complex<Int16>( real_part, imag_part );
+      }
 
     dims[0] += header.n_samples_per_frame;
     dipoleArray->extend(dims);

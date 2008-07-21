@@ -32,22 +32,23 @@
 #include <vector>
 #include <string>
 
-namespace DAL {
+namespace DAL
+  {
 
 // check if an object exists in a vector
-template <class T>
-bool it_exists( std::vector<T> vec, T item );
-bool it_exists_str( std::vector<std::string> vec, std::string name );
+  template <class T>
+  bool it_exists( std::vector<T> vec, T item );
+  bool it_exists_str( std::vector<std::string> vec, std::string name );
 
-template <class T>
-void list_vector_members( std::vector<T> vec );
+  template <class T>
+  void list_vector_members( std::vector<T> vec );
 
-long double julday(time_t seconds,long *intmjd, long double *fracmjd);
+  long double julday(time_t seconds,long *intmjd, long double *fracmjd);
 
-double mjd2unix( double mjd_time );
+  double mjd2unix( double mjd_time );
 
 #ifdef PYTHON
-bpl::numeric::array mjd2unix_boost( bpl::numeric::array mjd_time );
+  bpl::numeric::array mjd2unix_boost( bpl::numeric::array mjd_time );
 #endif
 
 } // namespace DAL

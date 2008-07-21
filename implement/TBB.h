@@ -50,7 +50,8 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-namespace DAL {
+namespace DAL
+  {
 
   ///////////////////////////////////////////////////////////////
   //
@@ -62,117 +63,124 @@ namespace DAL {
   const Int32 FIRST_EXTRA_HDR_LENGTH = 40;
   const Int32 EXTRA_HDR_LENGTH = 16;
 
-  typedef struct AntennaStruct {
-    unsigned int frameno;
-    unsigned int rsp_id;
-    unsigned int rcu_id;
-    unsigned int time;
-    unsigned int sample_nr;
-    unsigned int samples_per_frame;
-    char feed[16];
-    double ant_position[ 3 ];
-    double ant_orientation[ 3 ];
-    hvl_t data[1];
-  };
+  typedef struct AntennaStruct
+    {
+      unsigned int frameno;
+      unsigned int rsp_id;
+      unsigned int rcu_id;
+      unsigned int time;
+      unsigned int sample_nr;
+      unsigned int samples_per_frame;
+      char feed[16];
+      double ant_position[ 3 ];
+      double ant_orientation[ 3 ];
+      hvl_t data[1];
+    };
 
-  typedef struct writebuffer {
-    AntennaStruct antenna;
-  };
+  typedef struct writebuffer
+    {
+      AntennaStruct antenna;
+    };
 
-  typedef struct TransientSample {
-    Int16 value;
-  };
+  typedef struct TransientSample
+    {
+      Int16 value;
+    };
 
-  typedef struct SpectralSample {
-    complex<Int16> value;
-  };
+  typedef struct SpectralSample
+    {
+      complex<Int16> value;
+    };
 
-  typedef struct CosmicRayStruct {
-    //int nofDatapoints;
-    Int16 data;
-  };
+  typedef struct CosmicRayStruct
+    {
+      //int nofDatapoints;
+      Int16 data;
+    };
 
 
-/*!
-   \class TBB
+  /*!
+     \class TBB
 
-   \ingroup DAL
+     \ingroup DAL
 
-   \brief High-level interface between TBB data and the DAL
+     \brief High-level interface between TBB data and the DAL
 
-   \author Joseph Masters
- */
+     \author Joseph Masters
+   */
 
-  class TBB {
+  class TBB
+    {
 
-  typedef struct TBB_Header {
-    unsigned char stationid;
-    unsigned char rspid;
-    unsigned char rcuid;
-    unsigned char sample_freq;
-    UInt32 seqnr;
-    Int32 time;
-    UInt32 sample_nr;
-    UInt16 n_samples_per_frame;
-    UInt16 n_freq_bands;
-    char bandsel[64];
-    Int16 spare;
-    UInt16 crc;
-  };
-  UInt32 seqnrLast;
-  bool bigendian;
-  time_t sample_time;  // For date
-  string name;
-  dalDataset * dataset;
-  std::vector<dalGroup> station;
-  fd_set readSet;
-  struct timeval timeVal;
-  TBB_Header header;
-  int rr;
-  int main_socket;
-  struct sockaddr_in incoming_addr;
-  unsigned int socklen;
-  int status;
-  vector<string> stations;
-  dalGroup * stationGroup;
-  dalArray * dipoleArray;
-  vector<string> dipoles;
-  vector<int> dims; // define dimensions of array
-  int offset;
-  vector<int> cdims;
-  char * stationstr;
-  char uid[10];  // dipole identifier
-  int readsocket( unsigned int nbytes, char* buf );
-  UInt32 payload_crc;
-  TransientSample tran_sample;
-  SpectralSample spec_sample;
-  // for file i/o
-  ifstream::pos_type size;
-  unsigned char * memblock;
-  fstream * rawfile;
-  Int16 real_part, imag_part;
+      typedef struct TBB_Header
+        {
+          unsigned char stationid;
+          unsigned char rspid;
+          unsigned char rcuid;
+          unsigned char sample_freq;
+          UInt32 seqnr;
+          Int32 time;
+          UInt32 sample_nr;
+          UInt16 n_samples_per_frame;
+          UInt16 n_freq_bands;
+          char bandsel[64];
+          Int16 spare;
+          UInt16 crc;
+        };
+      UInt32 seqnrLast;
+      bool bigendian;
+      time_t sample_time;  // For date
+      string name;
+      dalDataset * dataset;
+      std::vector<dalGroup> station;
+      fd_set readSet;
+      struct timeval timeVal;
+      TBB_Header header;
+      int rr;
+      int main_socket;
+      struct sockaddr_in incoming_addr;
+      unsigned int socklen;
+      int status;
+      vector<string> stations;
+      dalGroup * stationGroup;
+      dalArray * dipoleArray;
+      vector<string> dipoles;
+      vector<int> dims; // define dimensions of array
+      int offset;
+      vector<int> cdims;
+      char * stationstr;
+      char uid[10];  // dipole identifier
+      int readsocket( unsigned int nbytes, char* buf );
+      UInt32 payload_crc;
+      TransientSample tran_sample;
+      SpectralSample spec_sample;
+      // for file i/o
+      ifstream::pos_type size;
+      unsigned char * memblock;
+      fstream * rawfile;
+      Int16 real_part, imag_part;
 
-  public:
+    public:
 
-  bool first_sample;
+      bool first_sample;
 
-  TBB( string const& name );  // constructor
-  ~TBB(); // destructor
-  void connectsocket( char* ipaddress, char* portnumber );
-  bool openRawFile( char* filename );
-  bool readRawSocketBlockHeader();
-  void readRawFileBlockHeader();
-  void printRawHeader();
-  void stationCheck();
-  void makeOutputHeader();
-  bool transientMode();
-  bool processTransientSocketDataBlock();
-  bool processSpectralSocketDataBlock();
-  void processTransientFileDataBlock();
-  void processSpectralFileDataBlock();
-  bool eof();
+      TBB( string const& name );  // constructor
+      ~TBB(); // destructor
+      void connectsocket( char* ipaddress, char* portnumber );
+      bool openRawFile( char* filename );
+      bool readRawSocketBlockHeader();
+      void readRawFileBlockHeader();
+      void printRawHeader();
+      void stationCheck();
+      void makeOutputHeader();
+      bool transientMode();
+      bool processTransientSocketDataBlock();
+      bool processSpectralSocketDataBlock();
+      void processTransientFileDataBlock();
+      void processSpectralFileDataBlock();
+      bool eof();
 
-  }; // class TBB
+    }; // class TBB
 
 } // DAL namespace
 

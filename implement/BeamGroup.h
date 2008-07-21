@@ -44,252 +44,106 @@
 #include <BeamSubband.h>
 #endif
 
-namespace DAL {
+namespace DAL
+  {
 
-/*!
-   \class BeamGroup
+  /*!
+     \class BeamGroup
 
-   \ingroup DAL
+     \ingroup DAL
 
-   \brief High-level interface between beam-formed data and the DAL
+     \brief High-level interface between beam-formed data and the DAL
 
-   \author Joseph Masters
-
- */
-
-  class BeamGroup {
-
-  private:
-
-    //! HDF5 file handle ID
-    hid_t H5groupID_p;
-
-    //! Group object of the Data Access Library 
-    dalGroup *group_p;
-
-    //! Dataset object of the Data Access Library 
-    dalDataset dataset_p;
-
-    //! HDF5 file handle ID
-    hid_t H5fileID_p;
-
-    //! Vector of subband tables within the dataset
-    std::vector<BeamSubband> beamSubbands_p;
-
-  public:
-
-    /*!
-      \brief Default constructor
-
-      Default constructor
-    */
-    BeamGroup();
-
-    /*!
-      \brief Default destructor
-
-      Default destructor
-    */
-    ~BeamGroup();
-
-    /*!
-      \brief Argumented constructor
-
-      Argumented constructor
-
-      \param dataset The dalDataset the the group belongs to.
-      \param name The name of the group.
-    */
-    BeamGroup ( dalDataset &dataset,
-                std::string const &name );
-
-    /*!
-      \brief Initialize the object's internal parameters
-
-      Initialize the object's internal parameters
-    */
-    void init();
-
-    /*!
-     \brief Initialize the beam group values.
-
-     Initialize the beam group with some real values.
-
-     \param dataset The dalDataset the the group belongs to.
-     \param name The name of the group.
-     */
-    bool setBeamGroup ( dalDataset &dataset,
-                        std::string const &name);
-
-
-    /*!
-     \brief Get total instensity data for a given subband
-
-     Get X and Y columns data for a given subband
-
-     \param subband Subband to get the data from.
-     \param start Start number of the cell in the column.
-     \param length The number of cells to retrieve.
-     \return array of intensities
-
-    */
-    float *  getIntensity( int subband, int start, int &length );
-
-    /*!
-     \brief Get X and Y columns data for a given subband
-
-     Get X and Y columns data for a given subband
-
-     \param subband Subband to get the data from.
-     \param start Start number of the cell in the column.
-     \param length The number of cells to retrieve.
-     \param Output character vector of X values.
-     \param Output character vector of Y values.
-
-    */
-    void getSubbandData_XY( int subband,
-                            int start,
-                            int &length,
-                            std::vector< std::complex<short> > &x_values,
-                            std::vector< std::complex<short> > &y_values );
-
-    /*!
-     \brief Get X column data for a given subband
-
-      Get X column data for a given subband
-
-     \param subband Subband to get the data from.
-     \param start Start number of the cell in the column.
-     \param length The number of cells to retrieve.
-     \param Output character vector of values.
-
-    */
-    void getSubbandData_X( int subband,
-                           int start,
-                           int &length,
-                           std::vector< std::complex<short> > &values );
-
-
-    /*!
-     \brief Get X column data for a given subband
-
-      Get X column data for a given subband
-
-     \param subband Subband to get the data from.
-     \param start Start number of the cell in the column.
-     \param length The number of cells to retrieve.
-     \return array of values
-
-    */
-    std::complex<short>  * getSubbandData_X( int subband,
-                           int start,
-                           int &length );
-
-    /*!
-     \brief Get X column data for a given subband
-
-      Get Y column data for a given subband
-
-     \param subband Subband to get the data from.
-     \param start Start number of the cell in the column.
-     \param length The number of cells to retrieve.
-     \return array of values
-
-    */
-    std::complex<short>  * getSubbandData_Y( int subband,
-                           int start,
-                           int &length );
-
-    /*!
-     \brief Get Y column data for a given subband
-
-     Get Y column data for a given subband
-
-     \param subband Subband to get the data from.
-     \param start Start number of the cell in the column.
-     \param length The number of cells to retrieve.
-     \param Output character vector of values.
+     \author Joseph Masters
 
    */
-    void getSubbandData_Y( int subband,
-                           int start,
-                           int &length,
-                           std::vector< std::complex<short> > &values );
 
-
-    /*!
-      \brief Provide a summary of the object's interal parameters
-
-      Provide a summary of the object's interal parameters
-    */
-    inline void summary()
+  class BeamGroup
     {
-       summary(cout);
-    }
 
-    /*!
-     \brief Get a subband object from the beam.
+    private:
 
-     Get a subband object from the beam.
+      // HDF5 file handle ID
+      hid_t H5groupID_p;
 
-     \param subband Number of the subband you want to retrieve.
-    */
-    BeamSubband * getSubband( int subband );
+      // Group object of the Data Access Library
+      dalGroup *group_p;
 
-    /*!
-      \brief Provide a summary of the object's interal parameters
+      // Dataset object of the Data Access Library
+      dalDataset dataset_p;
 
-      \param os -- Output stream to which the summary is written.
-    */
-    void summary(std::ostream &os);
+      // HDF5 file handle ID
+      hid_t H5fileID_p;
 
-    /*!
-      \brief Get the ra of the beam
+      // Vector of subband tables within the dataset
+      std::vector<BeamSubband> beamSubbands_p;
 
-      \return ra -- The ra of the beam pointing direction
-    */
-    std::string ra();
+    public:
 
-    /*!
-      \brief Get the declination of the beam
+      BeamGroup();
+      ~BeamGroup();
+      BeamGroup ( dalDataset &dataset,
+                  std::string const &name );
+      void init();
+      bool setBeamGroup ( dalDataset &dataset,
+                          std::string const &name);
+      float *  getIntensity( int subband, int start, int &length );
+      void getSubbandData_XY( int subband,
+                              int start,
+                              int &length,
+                              std::vector< std::complex<short> > &x_values,
+                              std::vector< std::complex<short> > &y_values );
+      void getSubbandData_X( int subband,
+                             int start,
+                             int &length,
+                             std::vector< std::complex<short> > &values );
+      std::complex<short>  * getSubbandData_X( int subband,
+          int start,
+          int &length );
 
-      \return dec -- The declination of the beam pointing direction
-    */
-    std::string dec();
+      std::complex<short>  * getSubbandData_Y( int subband,
+          int start,
+          int &length );
+      void getSubbandData_Y( int subband,
+                             int start,
+                             int &length,
+                             std::vector< std::complex<short> > &values );
+      inline void summary()
+      {
+        summary(cout);
+      }
+      BeamSubband * getSubband( int subband );
+      void summary(std::ostream &os);
+      std::string ra();
+      std::string dec();
+      int n_subbands ();
 
-    /*!
-      \brief Get the number of sub-bands
-
-      \return subbands -- The number of sub-bands.
-    */
-    int n_subbands ();
-
-/************************************************************************
- *
- * The following functions are boost wrappers to allow some previously
- *   defined functions to be easily called from a python prompt.
- *
- ************************************************************************/
+      /************************************************************************
+       *
+       * The following functions are boost wrappers to allow some previously
+       *   defined functions to be easily called from a python prompt.
+       *
+       ************************************************************************/
 #ifdef PYTHON
 
-    void summary_boost();
-    bpl::numeric::array getIntensity_boost( int subband,
-                                            int start,
-                                            int length );
-    bpl::numeric::array getSubbandData_X_boost( int subband,
-                                                int start,
-                                                int length );
+      void summary_boost();
+      bpl::numeric::array getIntensity_boost( int subband,
+                                              int start,
+                                              int length );
+      bpl::numeric::array getSubbandData_X_boost( int subband,
+          int start,
+          int length );
 
-    bpl::numeric::array getSubbandData_Y_boost( int subband,
-                                                int start,
-                                                int length );
+      bpl::numeric::array getSubbandData_Y_boost( int subband,
+          int start,
+          int length );
 
-    bpl::numeric::array getSubbandData_XY_boost( int subband,
-                                                 int start,
-                                                 int length );
+      bpl::numeric::array getSubbandData_XY_boost( int subband,
+          int start,
+          int length );
 #endif // end #ifdef PYTHON
 
- }; // end BeamGroup class
+    }; // end BeamGroup class
 
 
 } // end DAL namespace

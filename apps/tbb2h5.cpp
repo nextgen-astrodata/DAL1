@@ -20,7 +20,7 @@
 
 /*!
   \file tbb2h5.cpp
-  
+
   \ingroup DAL
 
   \brief Write TBB time-series data into an HDF5 file.
@@ -34,7 +34,7 @@
   \verbatim
   tbb2h5 <outfile> <infile1 infile2 ...>
   \endverbatim
-  where 
+  where
   <ul>
     <li><tt>outfile</tt> is the name of the created HDF5 output file
     <li><tt>infile1 infile2 ...</tt> is a list of input files containing the
@@ -57,16 +57,16 @@ int main(int argc, char *argv[])
 
   // parameter check
   if ( argc < 3 )
-  {
-     cerr << endl << "Too few parameters..." << endl << endl;
-     cerr << "First parameter is the output dataset name.\n";
-     cerr << "Second parameter indicates file mode (0) or socket mode (1).\n";
-     cerr << "Third parameter is either the IP address to accept data from,";
-     cerr << " or the input file name.\n";
-     cerr << "Fourth parameter is the port number to accept data from.\n";
-     cerr << endl;
-     return DAL::FAIL;
-  }
+    {
+      cerr << endl << "Too few parameters..." << endl << endl;
+      cerr << "First parameter is the output dataset name.\n";
+      cerr << "Second parameter indicates file mode (0) or socket mode (1).\n";
+      cerr << "Third parameter is either the IP address to accept data from,";
+      cerr << " or the input file name.\n";
+      cerr << "Fourth parameter is the port number to accept data from.\n";
+      cerr << endl;
+      return DAL::FAIL;
+    }
 
   string outfilename( argv[1] );
   int socketmode( atoi(&argv[2][0]) );
@@ -74,85 +74,85 @@ int main(int argc, char *argv[])
   TBB tbb = TBB( outfilename );
 
   if ( socketmode )  // socket mode?
-  {
-    if ( argc < 4 )
     {
-       cerr << "ERROR: missing parameters." << endl;
-       return DAL::FAIL;
+      if ( argc < 4 )
+        {
+          cerr << "ERROR: missing parameters." << endl;
+          return DAL::FAIL;
+        }
+      tbb.connectsocket( argv[3], argv[4] );
     }
-    tbb.connectsocket( argv[3], argv[4] );
-  }
   else  // reading from a file
-  {
-    if ( !tbb.openRawFile( argv[3] ) )
-     return DAL::FAIL;
-  }
+    {
+      if ( !tbb.openRawFile( argv[3] ) )
+        return DAL::FAIL;
+    }
 
   int counter = 0;
 
   if (socketmode)  // reading from a socket
-  {
-    while ( true )
     {
-      counter++;
+      while ( true )
+        {
+          counter++;
 
-       if ( !tbb.readRawSocketBlockHeader() )
-         break;
+          if ( !tbb.readRawSocketBlockHeader() )
+            break;
 
-       tbb.stationCheck();
+          tbb.stationCheck();
 
-       // if this is the first sample for this station, set header attributes
-       if ( tbb.first_sample )
-       {
-         tbb.makeOutputHeader();
-         tbb.first_sample = false;
-       }
+          // if this is the first sample for this station, set header attributes
+          if ( tbb.first_sample )
+            {
+              tbb.makeOutputHeader();
+              tbb.first_sample = false;
+            }
 
-      if ( tbb.transientMode() )
-      {
-         #ifdef DEBUGGING_MESSAGES
-         cerr << "block " << counter << endl;
-         #endif
-         if ( !tbb.processTransientSocketDataBlock() )
-           break;
-      }
+          if ( tbb.transientMode() )
+            {
+#ifdef DEBUGGING_MESSAGES
+              cerr << "block " << counter << endl;
+#endif
+              if ( !tbb.processTransientSocketDataBlock() )
+                break;
+            }
 
-    } // while (true)
+        } // while (true)
 
-  }
+    }
   else  // reading from a file
-  {
-    while ( !tbb.eof() )
     {
-       counter++;
+      while ( !tbb.eof() )
+        {
+          counter++;
 
-       tbb.readRawFileBlockHeader();
+          tbb.readRawFileBlockHeader();
 
-       tbb.stationCheck();
+          tbb.stationCheck();
 
-       // if this is the first sample for this station set header attributes
-       if ( tbb.first_sample )
-       {
-         tbb.makeOutputHeader();
-         tbb.first_sample = false;
-       }
+          // if this is the first sample for this station set header attributes
+          if ( tbb.first_sample )
+            {
+              tbb.makeOutputHeader();
+              tbb.first_sample = false;
+            }
 
-       #ifdef DEBUGGING_MESSAGES
-       cerr << "block " << counter << endl;
-       #endif
+#ifdef DEBUGGING_MESSAGES
+          cerr << "block " << counter << endl;
+#endif
 
-       if ( tbb.transientMode() )
-       {
-         tbb.processTransientFileDataBlock();
-       }
-       else  // spectral mode
-       {
-         tbb.processSpectralFileDataBlock();
-       }
+          if ( tbb.transientMode() )
+            {
+              tbb.processTransientFileDataBlock();
+            }
+          else  // spectral mode
+            {
+              tbb.processSpectralFileDataBlock();
+            }
 
-    } // !eof
+        } // !eof
 
-  } // socket or file
+    } // socket or file
 
   cerr << "SUCCESS" << endl;
   return DAL::SUCCESS;

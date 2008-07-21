@@ -31,34 +31,35 @@
 // #ifdef WITH_MYSQL
 #include "mysql/mysql.h"
 
-namespace DAL {
+namespace DAL
+  {
 
   class Database
-  {
-    string server;
-    string username;
-    string password;
-    string port;  // if needed
-    string database;
+    {
+      string server;
+      string username;
+      string password;
+      string port;  // if needed
+      string database;
 
-    MYSQL *conn;  // DB connection
-    MYSQL_RES *res;  // result
-    MYSQL_ROW row;
+      MYSQL *conn;  // DB connection
+      MYSQL_RES *res;  // result
+      MYSQL_ROW row;
 
     public:
 
-    // constructor
-    Database( string const& server,
-              string const& username,
-              string const& password,
-              string const& database );
+      // constructor
+      Database( string const& server,
+                string const& username,
+                string const& password,
+                string const& database );
 
-    // destructor
-    ~Database();
+      // destructor
+      ~Database();
 
-    void query(string const& querystr);
+      void query(string const& querystr);
 
-  }; // end class
+    }; // end class
 
 } // end namespace DAL
 

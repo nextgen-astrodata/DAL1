@@ -21,11 +21,11 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
-#ifndef DAL_H 
+#ifndef DAL_H
 #include <dal.h>
 #endif
 
-#ifndef DALBASETYPES_H 
+#ifndef DALBASETYPES_H
 #include <dalBaseTypes.h>
 #endif
 
@@ -33,13 +33,16 @@ bool BigEndian( void )
 {
   unsigned char SwapTest[2] = { 1, 0 };
 
-  if( *(short *) SwapTest == 1 ) {
-    //little endian
-    return false;
-  } else {
-    //big endian
-    return true;
-  }
+  if ( *(short *) SwapTest == 1 )
+    {
+      //little endian
+      return false;
+    }
+  else
+    {
+      //big endian
+      return true;
+    }
 }
 
 void swapbytes(char *addr, int8_t nbytes)
@@ -58,9 +61,12 @@ void swapbytes(char *addr, int8_t nbytes)
   //  buf3=buf2[0];buf2[0]=buf2[7];buf2[7]=buf3;
   //  buf3=buf2[1];buf2[1]=buf2[6];buf2[6]=buf3;
   //  buf3=buf2[2];buf2[2]=buf2[5];buf2[5]=buf3;
-  //  buf3=buf2[3];buf2[3]=buf2[4];buf2[4]=buf3;  
+  //  buf3=buf2[3];buf2[3]=buf2[4];buf2[4]=buf3;
 
-  for (i=0;i<nbytes/2;i++){
-    buf=addr[i]; addr[i] = addr[nbytes - (i+1)]; addr[nbytes - (i+1)] = buf;
-  }
+  for (i=0;i<nbytes/2;i++)
+    {
+      buf=addr[i];
+      addr[i] = addr[nbytes - (i+1)];
+      addr[nbytes - (i+1)] = buf;
+    }
 }

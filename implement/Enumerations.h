@@ -28,36 +28,38 @@
 #include <iostream>
 #include <string>
 
-namespace DAL { // Namespace DAL -- begin
-  
+namespace DAL   // Namespace DAL -- begin
+  {
+
   /*!
     \file Enumerations.h
-    
+
     \ingroup DAL
-    
+
     \brief List of attributes used within a LOFAR time-series dataset
-    
+
     \author Lars B&auml;hren
 
     \date 2008/01/31
 
     \test tLOFAR_Attributes.cc
-    
+
     <h3>Prerequisite</h3>
-    
+
     <ul type="square">
       <li>CR::LOFAR_TBB
       <li>DAL::LOFAR_StationGroup
       <li>DAL::LOFAR_DipoleDataset
     </ul>
-    
+
     <h3>Synopsis</h3>
-    
+
     <h3>Example(s)</h3>
-    
+
   */
 
-  enum Attributes {
+  enum Attributes
+  {
     // ---------------------------------------------------------------
     //  General attributes for telescope and observation
     // ---------------------------------------------------------------
@@ -155,8 +157,8 @@ namespace DAL { // Namespace DAL -- begin
             used to access an element within an HDF5 file.
   */
   std::string attribute_name (Attributes const &num);
-  
-  
+
+
 } // Namespace DAL -- end
 
 #endif /* ENUMERATIONS_H */

@@ -25,13 +25,14 @@
 #include "dalAttribute.h"
 #endif
 
-namespace DAL {
+namespace DAL
+  {
 
-dalAttribute::dalAttribute()
-{
-  name_p        = "UNDEFINED";
-  units_p       = "UNDEFINED";
-  description_p = "UNDEFINED";
-}
+  dalAttribute::dalAttribute()
+  {
+    name_p        = "UNDEFINED";
+    units_p       = "UNDEFINED";
+    description_p = "UNDEFINED";
+  }
 
 } // DAL namespace

@@ -25,7 +25,8 @@
 #include "BeamSubband.h"
 #endif
 
-namespace DAL {
+namespace DAL
+  {
 
 }
 
