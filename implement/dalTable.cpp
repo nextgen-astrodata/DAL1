@@ -1679,6 +1679,7 @@ void dalTable::readRows( void * data_out, long nstart, long numberRecs, long buf
  *  
  *
  *****************************************************************/
+#ifdef WITH_CASA
 casa::Bool dalTable::findAttribute( string attrname )
 {
    if ( type == H5TYPE )
@@ -1694,7 +1695,7 @@ casa::Bool dalTable::findAttribute( string attrname )
 	 return false;
    }
 }
-
+#endif
 /****************************************************************
  *  
  *
