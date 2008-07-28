@@ -28,16 +28,22 @@
 namespace DAL
   {
 
+  // ---------------------------------------------------------- BeamGroup
+
   /*!
     \brief Default constructor
 
     Default constructor
+
   */
   BeamGroup::BeamGroup()
   {
     init();
   }
 
+
+
+  // ---------------------------------------------------------- BeamGroup
 
   /*!
     \brief Argumented constructor
@@ -57,6 +63,9 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- init
+
+
   /*!
     \brief Initialize the object's internal parameters
 
@@ -73,6 +82,9 @@ namespace DAL
   }
 
 
+
+  // ---------------------------------------------------------- ~BeamGroup
+
   /*!
     \brief Default destructor
 
@@ -82,6 +94,9 @@ namespace DAL
   {
     delete group_p;
   }
+
+
+  // ---------------------------------------------------------- summary
 
 
 
@@ -132,6 +147,9 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- getSubband
+
+
   /*!
    \brief Get a subband object from the beam.
 
@@ -143,6 +161,9 @@ namespace DAL
   {
     return &beamSubbands_p[ sb ];
   }
+
+
+  // ---------------------------------------------------------- setBeamGroup
 
 
   /*!
@@ -174,6 +195,9 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- ra
+
+
   /*!
     \brief Get the ra of the beam
 
@@ -201,6 +225,9 @@ namespace DAL
       }
     return attribute_ra;
   }
+
+
+  // ---------------------------------------------------------- dec
 
 
   /*!
@@ -232,6 +259,9 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- n_subbands
+
+
   /*!
     \brief Get the number of sub-bands
 
@@ -260,7 +290,7 @@ namespace DAL
   }
 
 
-
+  // ---------------------------------------------------------- getIntensity
 
   /*!
    \brief Get total instensity data for a given subband
@@ -305,6 +335,7 @@ namespace DAL
     return values;
   }
 
+  // ---------------------------------------------------------- getSubbandData_XY
 
   /*!
    \brief Get X and Y columns data for a given subband
@@ -327,6 +358,9 @@ namespace DAL
     getSubbandData_X( subband, start, length, x_values );
     getSubbandData_Y( subband, start, length, y_values );
   }
+
+
+  // ---------------------------------------------------------- getSubbandData_X
 
 
   /*!
@@ -377,6 +411,9 @@ namespace DAL
     return values;
   }
 
+
+  // ---------------------------------------------------------- getSubbandData_Y
+
   /*!
    \brief Get Y column data for a given subband
 
@@ -425,6 +462,9 @@ namespace DAL
     return values;
   }
 
+
+  // ---------------------------------------------------------- getSubbandData_X
+
   /*!
    \brief Get X column data for a given subband
 
@@ -472,6 +512,9 @@ namespace DAL
     delete table;
   }
 
+
+
+  // ---------------------------------------------------------- getSubbandData_Y
 
   /*!
    \brief Get Y column data for a given subband
@@ -528,10 +571,16 @@ namespace DAL
    *
    ************************************************************************/
 
+
+  // ---------------------------------------------------------- summary_boost
+
   void BeamGroup::summary_boost()
   {
     summary();
   }
+
+
+  // ---------------------------------------------------------- getIntensity_boost
 
   bpl::numeric::array BeamGroup::getIntensity_boost( int subband,
       int start,
@@ -546,6 +595,9 @@ namespace DAL
     values = NULL;
     return narray;
   }
+
+
+  // ---------------------------------------------------------- getSubbandData_X_boost
 
   bpl::numeric::array BeamGroup::getSubbandData_X_boost( int subband,
       int start,
@@ -578,6 +630,9 @@ namespace DAL
     return narray;
   }
 
+
+  // ---------------------------------------------------------- getSubbandData_Y_boost
+
   bpl::numeric::array BeamGroup::getSubbandData_Y_boost( int subband,
       int start,
       int length )
@@ -599,6 +654,9 @@ namespace DAL
     value_list = NULL;
     return narray;
   }
+
+
+  // ---------------------------------------------------------- getSubbandData_XY_boost
 
   bpl::numeric::array BeamGroup::getSubbandData_XY_boost( int subband,
       int start,

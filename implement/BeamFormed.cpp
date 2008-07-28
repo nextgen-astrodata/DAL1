@@ -27,6 +27,8 @@
 namespace DAL
   {
 
+  // ---------------------------------------------------------- BeamFormed
+
   /*!
     \brief Empty constructor
   */
@@ -39,9 +41,10 @@ namespace DAL
     beamGroups_p.clear();
   };
 
+  // ---------------------------------------------------------- BeamFormed
+
   /*!
     \brief Argumented constructor
-
     \param filename -- Name of the file from which to read in the data
   */
   BeamFormed::BeamFormed(std::string const &filename)
@@ -60,6 +63,9 @@ namespace DAL
 
   // ----------------------------------------------------------------------- init
 
+  /*!
+    \brief Object initialization method
+  */
   bool BeamFormed::init ()
   {
 
@@ -106,6 +112,7 @@ namespace DAL
     return status;
   }
 
+  // ---------------------------------------------------------- ~BeamFormed
 
   /*!
     \brief Destructor
@@ -125,8 +132,12 @@ namespace DAL
       }
   }
 
+  // ---------------------------------------------------------- print_vector
+
   /*!
     \brief Print a list of vector elements
+    \param os        -- output stream [I]
+    \param vec       -- vector [I]
   */
   template<class T>
   void BeamFormed::print_vector ( std::ostream& os,
@@ -138,8 +149,12 @@ namespace DAL
       }
   }
 
+  // ---------------------------------------------------------- h5get_str_array_attr
+
   /*!
     \brief Get a list of values for a string array attribute
+    \param attrname       -- attribute name [I]
+    \param obj_id         -- hdf5 object identifier [I]
   */
   std::vector< std::string >
   BeamFormed::h5get_str_array_attr( std::string attrname,
@@ -199,8 +214,13 @@ namespace DAL
 
   }
 
+
+  // ---------------------------------------------------------- summary
+
   /*!
     \brief Provide a summary of the internal status
+    \param os              -- output stream [I]
+    \param listBeams       -- flag to determine whether or not to list beam summaries [I]
   */
   void BeamFormed::summary (std::ostream &os, bool const &listBeams)
   {
@@ -256,9 +276,12 @@ namespace DAL
 
   }
 
+  // ---------------------------------------------------------- getBeam
 
   /*!
     \brief Get a beam group object
+    \param beam       -- beam number [I]
+    \return beam object - a BeamGroup object representing the requested beam
   */
   BeamGroup * BeamFormed::getBeam( int beam )
   {
@@ -267,10 +290,11 @@ namespace DAL
     return group;
   }
 
+  // ---------------------------------------------------------- beams
 
   /*!
     \brief Print beam groups embedded within the dataset
-
+    \return beams - a vector of strings representing the names of the beams
   */
   std::vector<std::string> BeamFormed::beams()
   {
@@ -300,11 +324,11 @@ namespace DAL
     return beamGroups;
   }
 
+  // ---------------------------------------------------------- filename
 
   /*!
     \brief Get the name of the data file
-
-    \return filename -- The name of the data file
+    \return filename - The name of the data file
   */
   std::string BeamFormed::filename ()
   {
@@ -330,9 +354,10 @@ namespace DAL
     return attribute_filename;
   }
 
+  // ---------------------------------------------------------- telescope
+
   /*!
     \brief Get the name of the telescope
-
     \return telescope -- The name of the telescope with which the data were
             recorded; returns an empty string in case no keyword value could
             be extracted.
@@ -360,9 +385,11 @@ namespace DAL
     return attribute_telescope;
   }
 
+  // ---------------------------------------------------------- nstations
 
   /*!
     \brief Get the number of stations
+    \return nstations - the number of stations in the file
   */
   int BeamFormed::nstations ()
   {
@@ -386,9 +413,11 @@ namespace DAL
     return nstations;
   }
 
+  // ---------------------------------------------------------- datatype
 
   /*!
     \brief Get the datatype
+    \return datatype - the datatype of the observation
   */
   std::string BeamFormed::datatype ()
   {
@@ -413,9 +442,11 @@ namespace DAL
     return attribute_datatype;
   }
 
+  // ---------------------------------------------------------- emband
 
   /*!
     \brief Get the emband
+    \return emband
   */
   std::string BeamFormed::emband ()
   {
@@ -440,18 +471,22 @@ namespace DAL
     return attribute_emband;
   }
 
+  // ---------------------------------------------------------- sources
 
   /*!
     \brief Get the source list
+    \return source list - a vector of source ids
   */
   std::vector<std::string> BeamFormed::sources()
   {
     return h5get_str_array_attr("SOURCE", H5fileID_p);
   }
 
+  // ---------------------------------------------------------- notes
 
   /*!
     \brief Get the notes
+    \return notes - a string of notes from associated with the observation
   */
   std::string BeamFormed::notes()
   {
@@ -476,9 +511,11 @@ namespace DAL
     return attribute_notes;
   }
 
+  // ---------------------------------------------------------- observation_id
 
   /*!
     \brief Get the observation identifier
+    \return obs_id - the observation identifier
   */
   std::string BeamFormed::observation_id ()
   {
@@ -503,9 +540,11 @@ namespace DAL
     return attribute_observation_id;
   }
 
+  // ---------------------------------------------------------- proj_id
 
   /*!
     \brief Get the project identifier
+    \return proj_id - the project identifier
   */
   std::string BeamFormed::proj_id ()
   {
@@ -530,9 +569,11 @@ namespace DAL
     return attribute_proj_id;
   }
 
+  // ---------------------------------------------------------- pointing_ra
 
   /*!
     \brief Get the pointing (ra)
+    \return ra - the RA pointing direction
   */
   std::string BeamFormed::point_ra ()
   {
@@ -558,8 +599,11 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- pointing_dec
+
   /*!
     \brief Get the pointing (dec)
+    \return dec - the dec pointing direction
   */
   std::string BeamFormed::point_dec ()
   {
@@ -585,9 +629,10 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- observer
+
   /*!
     \brief Get the name of the observer
-
     \return observer -- The name of the observer; returns an empty string in
             case no keyword value could be extracted.
   */
@@ -614,9 +659,12 @@ namespace DAL
     return attribute_observer;
   }
 
+  // ---------------------------------------------------------- epoch_mjd
+
 
   /*!
     \brief Get the epoch mjd
+    \return epoch_mjd
   */
   std::string BeamFormed::epoch_mjd ()
   {
@@ -642,8 +690,11 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- epoch_date
+
   /*!
     \brief Get the epoch date
+    \return epoch_date
   */
   std::string BeamFormed::epoch_date ()
   {
@@ -669,8 +720,11 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- epoch_utc
+
   /*!
     \brief Get the epoch utc
+    \return epoch utc
   */
   std::string BeamFormed::epoch_utc ()
   {
@@ -695,8 +749,11 @@ namespace DAL
     return attribute_epoch_utc;
   }
 
+  // ---------------------------------------------------------- epoch_lst
+
   /*!
     \brief Get the epoch lst
+    \return epoch lst
   */
   std::string BeamFormed::epoch_lst ()
   {
@@ -722,8 +779,11 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- main_beam_diam
+
   /*!
     \brief Get the main beam diameter
+    \return main beam diameter
   */
   int BeamFormed::main_beam_diam ()
   {
@@ -748,8 +808,11 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- center_freq
+
   /*!
     \brief Get the center frequency
+    \return center frequency
   */
   int BeamFormed::center_freq ()
   {
@@ -774,8 +837,11 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- bandwidth
+
   /*!
     \brief Get the bandwidth
+    \return bandwidth
   */
   int BeamFormed::bandwidth ()
   {
@@ -800,8 +866,11 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- total_integration_time
+
   /*!
     \brief Get the integration time
+    \return total integration time
   */
   double BeamFormed::total_integration_time ()
   {
@@ -826,8 +895,11 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- breaks
+
   /*!
     \brief Get the number of breaks
+    \return number of breaks
   */
   int BeamFormed::breaks ()
   {
@@ -852,8 +924,11 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- dispersion_measure
+
   /*!
     \brief Get the dispersion measure
+    \return dispersion measure
   */
   int BeamFormed::dispersion_measure ()
   {
@@ -878,8 +953,11 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- number_of_samples
+
   /*!
     \brief Get the number of samples
+    \return number of samples
   */
   int BeamFormed::number_of_samples ()
   {
@@ -904,8 +982,11 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- sampling_time
+
   /*!
     \brief Get the sampling time
+    \return sampling time
   */
   double BeamFormed::sampling_time ()
   {
@@ -934,6 +1015,7 @@ namespace DAL
 
   /*!
     \brief Get the number of beams
+    \return number of beams
   */
   int BeamFormed::number_of_beams ()
   {
@@ -964,6 +1046,7 @@ namespace DAL
 
   /*!
     \brief Get the sub beam diameter
+    \return sub beam diameter
   */
   int BeamFormed::sub_beam_diameter ()
   {
@@ -994,6 +1077,7 @@ namespace DAL
 
   /*!
     \brief Get the weather temperature
+    \return weather temperature
   */
   int BeamFormed::weather_temperature ()
   {
@@ -1023,6 +1107,7 @@ namespace DAL
 
   /*!
     \brief Get the weather humidity
+    \brief weather humidity
   */
   int BeamFormed::weather_humidity ()
   {
@@ -1053,6 +1138,7 @@ namespace DAL
 
   /*!
     \brief Get the station temperatures
+    \return vector of stastion temperatures
   */
   std::vector< int > BeamFormed::station_temperatures ()
   {
@@ -1078,10 +1164,14 @@ namespace DAL
    *
    ************************************************************************/
 
+  // ---------------------------------------------------------- summary_boost
+
   void BeamFormed::summary_boost()
   {
     summary();
   }
+
+  // ---------------------------------------------------------- vector2list
 
   template <class T>
   bpl::list BeamFormed::vector2list( std::vector<T> vec )
@@ -1095,11 +1185,15 @@ namespace DAL
     return mylist;
   }
 
+  // ---------------------------------------------------------- beams_boost
+
   bpl::list BeamFormed::beams_boost()
   {
     std::vector<std::string> beams_vec = beams();
     return vector2list( beams_vec );
   }
+
+  // ---------------------------------------------------------- source_boost
 
   bpl::list BeamFormed::source_boost()
   {

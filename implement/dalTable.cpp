@@ -2199,8 +2199,9 @@ namespace DAL
         if (dtype == "Float")
           {
             casa::Float result;
+            casa::Float * result_p = &result;
             if (GetKeyword(attrname,&result))
-              return (casa::Float*)&result;
+              return result_p;
             else
               {
                 cerr << "ERROR: dalTable:GetKeyword Could not get '" << attrname << endl;

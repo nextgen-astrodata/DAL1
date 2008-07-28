@@ -28,7 +28,9 @@
 namespace DAL
   {
 
-// check if an object exists in a vector
+  // ---------------------------------------------------------- it_exists
+
+  // check if an object exists in a vector
   template <class T>
   bool it_exists( std::vector<T> vec, T item )
   {
@@ -41,6 +43,9 @@ namespace DAL
     return false;
   }
 
+
+  // ---------------------------------------------------------- it_exists_str
+
   bool it_exists_str( std::vector<std::string> vec, std::string name )
   {
     std::vector<std::string>::iterator it;
@@ -52,6 +57,9 @@ namespace DAL
     return false;
   }
 
+
+  // ---------------------------------------------------------- list_vector_members
+
   template <class T>
   void list_vector_members( std::vector<T> vec )
   {
@@ -61,6 +69,9 @@ namespace DAL
         std::cerr << *it << std::endl;
       }
   }
+
+
+  // ---------------------------------------------------------- julday
 
   long double julday(time_t seconds,long *intmjd, long double *fracmjd)
   {
@@ -94,7 +105,10 @@ namespace DAL
     return jd;
   }
 
-// To convert Modified Julian Date (mjd) to unix time
+
+  // ---------------------------------------------------------- mjd2unix
+
+  // To convert Modified Julian Date (mjd) to unix time
   double mjd2unix( double mjd_time )
   {
     // The Unix base date is MJD 40587.
@@ -104,7 +118,12 @@ namespace DAL
   }
 
 #ifdef PYTHON
-// To convert Modified Julian Date (mjd) to unix time
+
+
+  // ---------------------------------------------------------- mjd2unix_boost
+
+
+  // To convert Modified Julian Date (mjd) to unix time
   bpl::numeric::array mjd2unix_boost( bpl::numeric::array mjd_time )
   {
     // The Unix base date is MJD 40587.

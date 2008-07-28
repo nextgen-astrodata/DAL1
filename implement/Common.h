@@ -35,7 +35,7 @@
 namespace DAL
   {
 
-// check if an object exists in a vector
+  // check if an object exists in a vector
   template <class T>
   bool it_exists( std::vector<T> vec, T item );
   bool it_exists_str( std::vector<std::string> vec, std::string name );
