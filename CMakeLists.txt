@@ -235,6 +235,14 @@ endif (CFITSIO_INCLUDES)
 
 if (HAVE_HDF5)
   include_directories (${HDF5_INCLUDES})
+  ## check individual header files: H5LT.h
+  if (NOT HAVE_HDF5_H5LT_H)
+    message (STATUS "[DAL] HDF5 installation incomplete: missing H5LT.h")
+  endif (NOT HAVE_HDF5_H5LT_H)
+  ## check individual header files: hdf5_hl.h
+  if (NOT HAVE_HDF5_HDF5_HL_H)
+    message (STATUS "[DAL] HDF5 installation incomplete: missing hdf5_hl.h")
+  endif (NOT HAVE_HDF5_HDF5_HL_H)
 else (HAVE_HDF5)
   message (STATUS "[DAL] HDF5 installation incomplete!")
 endif (HAVE_HDF5)
