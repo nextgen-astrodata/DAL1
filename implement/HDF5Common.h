@@ -137,6 +137,21 @@ namespace DAL { // Namespace DAL -- begin
 
   //@{
   /*!
+    \brief Get the shape of a dataset
+
+    \reval shape -- The shape of the dataset i.e.the length of the array axes in 
+                    case of multidimensional data
+    \param dataset_id -- Identifier of the dataset within the HDF5 file
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered
+  */
+  bool h5get_dataset_shape (std::vector<uint> &shape,
+			    hid_t const &dataset_id);
+  //@}
+
+  //@{
+  /*!
     \brief Get the shape of the dataspace associated with the attribute
 
     \reval shape -- The shape of the dataspace attached to the attribute, i.e.

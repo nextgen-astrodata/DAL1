@@ -103,6 +103,48 @@ namespace DAL { // Namespace DAL -- begin
     }
   }
 
+  // ------------------------------------------------------ h5get_dataset_shape
+
+  bool h5get_dataset_shape (std::vector<uint> &shape,
+			    hid_t const &dataset_id)
+  {
+    bool status (true);
+    herr_t h5error;
+    hid_t dataspace_id       = H5Dget_space (dataset_id);
+//     bool dataspace_is_simple = H5Sis_simple(dataspace_id);
+    int rank                 = H5Sget_simple_extent_ndims (dataspace_id);
+    hsize_t * dimensions = NULL;
+
+    if (rank > 0) {
+      dimensions = new hsize_t[rank];
+      h5error = H5Sget_simple_extent_dims(dataspace_id,
+					  dimensions,
+					  NULL);
+      shape.resize(rank);
+      for (int n(0); n<rank; n++) {
+	shape[n] = dimensions[n];
+      }
+    } else {
+      shape.resize(1);
+      shape[0] = 0;
+      status   = false;
+    }
+    
+    // release allocated identifiers
+    if (dataspace_id > 0) {
+      h5error = H5Sclose (dataspace_id);
+      h5error = H5Eclear1 ();
+    }
+    
+    if ( dimensions )
+    {
+      delete [] dimensions;
+      dimensions = NULL;
+    }
+
+    return status;
+  }
+
   // ------------------------------------------------------ h5get_dataspace_shape
 
   bool h5get_dataspace_shape (std::vector<uint> &shape,
