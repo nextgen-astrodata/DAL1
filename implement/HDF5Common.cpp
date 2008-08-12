@@ -110,9 +110,8 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
     herr_t h5error;
-    hid_t dataspace_id       = H5Dget_space (dataset_id);
-//     bool dataspace_is_simple = H5Sis_simple(dataspace_id);
-    int rank                 = H5Sget_simple_extent_ndims (dataspace_id);
+    hid_t dataspace_id   = H5Dget_space (dataset_id);
+    int rank             = H5Sget_simple_extent_ndims (dataspace_id);
     hsize_t * dimensions = NULL;
 
     if (rank > 0) {
@@ -145,6 +144,44 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
 
+  // ------------------------------------------------------ h5get_dataset_shape
+
+#ifdef WITH_CASA
+  bool h5get_dataset_shape (casa::IPosition &shape,
+			    hid_t const &attribute_id)
+  {
+    bool status (true);
+    herr_t h5error (0);
+    hid_t dataspace_id = H5Dget_space (attribute_id);
+    int rank           = H5Sget_simple_extent_ndims (dataspace_id);
+    hsize_t *dimensions;
+    
+    if (rank > 0) {
+      dimensions = new hsize_t[rank];
+      h5error = H5Sget_simple_extent_dims(dataspace_id,
+					  dimensions,
+					  NULL);
+      shape.resize(rank);
+      for (int n(0); n<rank; n++) {
+	shape(n) = dimensions[n];
+      }
+
+    } else {
+      shape.resize(1);
+      shape(0) = 0;
+      status = false;
+    }
+    
+    // release allocated identifiers
+    if (dataspace_id > 0) {
+      h5error = H5Sclose (dataspace_id);
+      h5error = H5Eclear1 ();
+    }
+    
+    return status;
+  }
+#endif
+
   // ------------------------------------------------------ h5get_dataspace_shape
 
   bool h5get_dataspace_shape (std::vector<uint> &shape,
@@ -152,9 +189,8 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
     herr_t h5error;
-    hid_t dataspace_id       = H5Aget_space (attribute_id);
-//     bool dataspace_is_simple = H5Sis_simple(dataspace_id);
-    int rank                 = H5Sget_simple_extent_ndims (dataspace_id);
+    hid_t dataspace_id   = H5Aget_space (attribute_id);
+    int rank             = H5Sget_simple_extent_ndims (dataspace_id);
     hsize_t * dimensions = NULL;
 
     if (rank > 0) {
@@ -195,9 +231,8 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
     herr_t h5error (0);
-    hid_t dataspace_id       = H5Aget_space (attribute_id);
-//     bool dataspace_is_simple = H5Sis_simple(dataspace_id);
-    int rank                 = H5Sget_simple_extent_ndims (dataspace_id);
+    hid_t dataspace_id = H5Aget_space (attribute_id);
+    int rank           = H5Sget_simple_extent_ndims (dataspace_id);
     hsize_t *dimensions;
     
     if (rank > 0) {

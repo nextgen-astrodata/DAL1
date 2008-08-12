@@ -148,6 +148,10 @@ namespace DAL { // Namespace DAL -- begin
   */
   bool h5get_dataset_shape (std::vector<uint> &shape,
 			    hid_t const &dataset_id);
+#ifdef WITH_CASA
+  bool h5get_dataset_shape (casa::IPosition &shape,
+			    hid_t const &attribute_id);
+#endif
   //@}
 
   //@{
