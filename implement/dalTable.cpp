@@ -616,22 +616,7 @@ namespace DAL
 #ifdef WITH_CASA
         try
           {
-            const casa::Vector< casa::String > tables = reader->tables();
-            unsigned int nelem (tables.nelements());
-            bool table_found = false;
-            for (unsigned int table(0); table<nelem; table++)
-              {
-                std::string table_val = tables(table);
-                if ( table_val == tablename )
-                  {
-                    *casa_table_handle = reader->table( tablename );
-                    table_found = true;
-                  }
-              }
-            if (!table_found)
-              {
-                std::cerr << "WARNING: Table \'" << tablename << "\' not found in file." << endl;
-              }
+            *casa_table_handle = reader->table( tablename );
           }
         catch (casa::AipsError x)
           {
