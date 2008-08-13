@@ -24,20 +24,8 @@
 #ifndef DALCOLUMN_H
 #define DALCOLUMN_H
 
-#ifndef DAL_H
-#include "dal.h"
-#endif
-
-#ifndef DALATTRIBUTE_H
-#include "dalAttribute.h"
-#endif
-
 #ifndef DALDATA_H
 #include "dalData.h"
-#endif
-
-#ifndef DALFILTER_H
-#include "dalFilter.h"
 #endif
 
 namespace DAL
@@ -45,38 +33,33 @@ namespace DAL
 
   /*!
     \class dalColumn
-
     \ingroup DAL
-
     \brief Represents a table column.
-
     \author Joseph Masters
   */
   class dalColumn
     {
 
-      string filetype;  //!< "HDF5", "MSCASA" or "FITS"; for example
-      string name; //!< column name
-      string tablename; //!< table name
-      string dal_datatype;  //!< column datatype
-      int size; //!< datatype size
-      int totsize; //!< total column size
-      vector<dalAttribute> attributes; //!< list of column attributes
-      unsigned int num_of_rows;  //!< number of rows in the column
+      std::string filetype;  // "HDF5", "MSCASA" or "FITS"; for example
+      std::string name; // column name
+      std::string tablename; // table name
+      std::string dal_datatype;  // column datatype
+      int size; // datatype size
+      uint num_of_rows;  // number of rows in the column
 
       // HDF5-specific variables
-      hid_t file_id; 	//!< hdf5 file_id
-      hid_t table_id;	//!< hdf5 table id
-      hsize_t nfields; //!< hdf5 field count
-      hsize_t nrecords; //!< hdf5 record count
+      hid_t file_id; 	// hdf5 file_id
+      hid_t table_id;	// hdf5 table id
+      hsize_t nfields; // hdf5 field count
+      hsize_t nrecords; // hdf5 record count
       hid_t coltype;
-      herr_t  status;  //!< hdf5 call return status
+      herr_t  status;  // hdf5 call return status
 
-      dalData * data_object;  //!< object to hold column data
+      dalData * data_object;  // object to hold column data
 
 #ifdef WITH_CASA
 
-      string casa_datatype;  //!< column datatype
+      std::string casa_datatype;  // column datatype
 
       casa::ColumnDesc casa_col_desc;
       casa::ROTableColumn * casa_column;
@@ -108,40 +91,45 @@ namespace DAL
       vector< complex< float > > stl_vec_comp;
 
       casa::Bool deleteIt;
+
+      std::string getCasaDataType();
+      dalData * CasaData_scalar( );
+      dalData * CasaData_array( );
 #endif
+
+      dalData * H5data( int start, int &length );
 
     public:
 
       dalColumn();
-      dalColumn( string complexcolname );
+      dalColumn( std::string complexcolname );
       dalColumn( hid_t fileid,
                  hid_t tableid,
-                 string filetype,
-                 string lcl_tablename,
-                 string colname,
-                 string coldatatype );
-      dalColumn( string colname,
-                 string coltype );
+                 std::string filetype,
+                 std::string lcl_tablename,
+                 std::string colname,
+                 std::string coldatatype );
+      dalColumn( std::string colname,
+                 std::string coltype );
 
 #ifdef WITH_CASA
       dalColumn( casa::Table table,
-                 string colname );
+                 std::string colname );
 #endif
 
-      void open( std::string colname );
-      void addMember( string member_name, string type );
-      string getName();
-      void setName(string colname);
-      void setFileType( string type );
-      string getDataType();
+      void addMember( std::string member_name, std::string type );
+      std::string getName();
+      void setName(std::string colname);
+      void setFileType( std::string type );
+      std::string getDataType();
       int getSize();
       void close();
-      string getType();
-      int isArray();
-      int isScalar();
+      std::string getType();
+      bool isArray();
+      bool isScalar();
       vector<int> shape();
-      unsigned int ndims();
-      unsigned int nrows();
+      uint ndims();
+      uint nrows();
       dalData * data( int start, int &length );
       dalData * data();
 

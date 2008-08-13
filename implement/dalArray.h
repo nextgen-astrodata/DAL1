@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------*
- | $Id:: dalDataset.h 389 2007-06-13 08:47:09Z baehren                   $ |
+ | $Id:: dalDataset.h 389 2007-06-13 08:47:09Z masters                   $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2007 by Joseph Masters                                  *
@@ -24,12 +24,8 @@
 #ifndef DALARRAY_H
 #define DALARRAY_H
 
-#ifndef DAL_H
-#include "dal.h"
-#endif
-
-#ifndef DALATTRIBUTE_H
-#include "dalAttribute.h"
+#ifndef DALBASETYPES_H
+#include "dalBaseTypes.h"
 #endif
 
 namespace DAL
@@ -37,11 +33,8 @@ namespace DAL
 
   /*!
     \class dalArray
-
     \ingroup DAL
-
     \brief Represents an n-dimensional array.
-
     \author Joseph Masters
 
     The dalArray object holds an n-dimensional array of a single datatype.
@@ -65,20 +58,20 @@ namespace DAL
       vector<int> dims();
       std::string getName();
       int open( void * file, string arrayname );
-      int close();
-      void getAttributes();
+      bool close();
+      bool getAttributes();
       void * getAttribute( string attrname );
-      void setAttribute_string( string attrname, string data );
-      void setAttribute_string( string attrname, string * data, int size=1 );
-      void setAttribute_int( string attrname, int * data );
-      void setAttribute_uint( string attrname, unsigned int * data );
-      void setAttribute_float( string attrname, float * data );
-      void setAttribute_double( string attrname, double * data, int size );
-      void extend( vector<int> dims );
-      void write(int offset, short data[], int arraysize);
-      void write(int offset, int data[], int arraysize);
-      void write( int offset, complex<float> data[], int arraysize );
-      void write( int offset, complex<Int16> data[], int arraysize );
+      bool setAttribute_string( string attrname, string data );
+      bool setAttribute_string( string attrname, string * data, int size=1 );
+      bool setAttribute_int( string attrname, int * data );
+      bool setAttribute_uint( string attrname, unsigned int * data );
+      bool setAttribute_float( string attrname, float * data );
+      bool setAttribute_double( string attrname, double * data, int size );
+      bool extend( vector<int> dims );
+      bool write(int offset, short data[], int arraysize);
+      bool write(int offset, int data[], int arraysize);
+      bool write( int offset, complex<float> data[], int arraysize );
+      bool write( int offset, complex<Int16> data[], int arraysize );
 
       /************************************************************************
        *
@@ -99,9 +92,6 @@ namespace DAL
     {
 
     public:
-      ~dalShortArray();
-      dalShortArray( hid_t obj_id, string arrayname, vector<int> dims,
-                     short data[] );
       dalShortArray( hid_t obj_id, string arrayname, vector<int> dims,
                      short data[], vector<int>chnkdims);
       short * readShortArray( hid_t obj_id, string arrayname );
@@ -111,11 +101,8 @@ namespace DAL
     {
 
     public:
-      ~dalIntArray();
       dalIntArray( hid_t obj_id, string arrayname, vector<int> dims,
-                   int data[] );
-      dalIntArray( hid_t obj_id, string arrayname, vector<int> dims,
-                   int data[], vector<int>chnkdims);
+                   int data[], vector<int>chnkdims );
       int * readIntArray( hid_t obj_id, string arrayname );
     };
 
@@ -123,7 +110,6 @@ namespace DAL
     {
 
     public:
-      ~dalFloatArray();
       dalFloatArray( hid_t obj_id, string arrayname, vector<int> dims,
                      float data[], vector<int>chnkdims);
     };
@@ -141,7 +127,6 @@ namespace DAL
     {
 
     public:
-      ~dalComplexArray_int16();
       dalComplexArray_int16( hid_t objfile, string arrayname,
                              vector<int> dims, complex<Int16> data[],
                              vector<int>chnkdims);

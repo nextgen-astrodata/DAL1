@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------*
-| $Id:: cs1.h 389 2007-06-13 08:47:09Z baehren                          $ |
+| $Id:: cs1.h 389 2007-06-13 08:47:09Z masters                          $ |
 *-------------------------------------------------------------------------*
 ***************************************************************************
 *   Copyright (C) 2007 by Joseph Masters                                  *
@@ -29,7 +29,6 @@
 #include "dalArray.h"
 #include "dalTable.h"
 #include "dalGroup.h"
-#include "dalAttribute.h"
 #include "dalDataset.h"
 #include "BeamFormed.h"
 #include "BeamGroup.h"
@@ -94,13 +93,11 @@ BOOST_PYTHON_MODULE(pydal)
   .def("getName", &dalGroup::getName)
   .def("setName", &dalGroup::setName)
   .def("getId", &dalGroup::getId)
-  .def("getAttributes", &dalGroup::getAttributes)
-// 	.def("setAttribute_string", &dalGroup::setAttribute_string)
   .def("setAttribute_int", &dalGroup::setAttribute_int)
   .def("setAttribute_uint", &dalGroup::setAttribute_uint)
   .def("setAttribute_double", &dalGroup::setAttribute_double)
-  .def("getAttribute", &dalGroup::getAttribute,
-       bpl::return_value_policy<bpl::return_opaque_pointer>())
+//  .def("getAttribute", &dalGroup::getAttribute,
+//       bpl::return_value_policy<bpl::return_opaque_pointer>())
   .def("createIntArray", &dalGroup::cia_boost1,
        bpl::return_value_policy<bpl::manage_new_object>())
   .def("createIntArray", &dalGroup::cia_boost2,
@@ -115,9 +112,9 @@ BOOST_PYTHON_MODULE(pydal)
        bpl::return_value_policy<bpl::manage_new_object>())
   .def("readIntArray", &dalGroup::ria_boost)
   ;
+
   bpl::class_<dalTable>("dalTable")
   .def(bpl::init<char*>())
-  .def("getAttributes", &dalTable::getAttributes)
   .def("openTable", &dalTable::ot_hdf5)
   .def("createTable", &dalTable::createTable)
   .def("addColumn", &dalTable::addColumn)
@@ -180,7 +177,6 @@ BOOST_PYTHON_MODULE(pydal)
   ;
 
   bpl::class_<dalData>("dalData")
-  .def(bpl::init<>())
   .def("get", &dalData::get_boost1)
   .def("get", &dalData::get_boost2)
   .def("get", &dalData::get_boost3)

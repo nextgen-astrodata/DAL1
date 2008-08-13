@@ -23,36 +23,41 @@
 #ifndef DALFILTER_H
 #define DALFILTER_H
 
-#ifndef DAL_H
-#include "dal.h"
+#ifndef DALBASETYPES_H
+#include "dalBaseTypes.h"
 #endif
-
 
 namespace DAL
   {
 
   /*!
     \class dalFilter
-
-    \brief Superclass of dalDSFilter, dalColumnFilter, dalTableFilter)
-
     \ingroup DAL
-
     \author Joseph Masters
   */
+
   class dalFilter
     {
-      string filterstring;  // Table filter string
-      string filetype;  // MSCASA, HDF5, FITS, etc.
+      std::string filterstring;  // Table filter std::string
+      std::string filetype;  // MSCASA, HDF5, FITS, etc.
       bool is_set;
+
     public:
 
       dalFilter();
-      void set( string columns );
-      void set( string columns, string conditions );
-      void setFiletype( string type );
+
+      dalFilter( std::string type,
+                 std::string columns );
+
+      dalFilter( std::string type,
+                 std::string columns,
+                 std::string conditions );
+
+      void set( std::string columns );
+      void set( std::string columns, std::string conditions );
+      void setFiletype( std::string type );
       bool isSet();
-      string get();
+      std::string get();
     };
 
 

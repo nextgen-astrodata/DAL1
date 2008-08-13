@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------*
- | $Id:: tUseMeasures.cc 511 2007-08-05 13:14:48Z baehren                $ |
+ | $Id:: tUseMeasures.cc 511 2007-08-05 13:14:48Z masters                $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2006 by Joseph Masters                                  *
@@ -31,20 +31,8 @@
   \author Joseph Masters
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #ifndef DAL_H
 #include <dal.h>
-#endif
-
-#ifndef DALDATASET_H
-#include <dalDataset.h>
-#endif
-
-#ifndef DALGROUP_H
-#include <dalGroup.h>
 #endif
 
 #define FILENAME "./tpulsar.h5"

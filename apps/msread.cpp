@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------*
- | $Id:: tUseMeasures.cc 511 2007-08-05 13:14:48Z baehren                $ |
+ | $Id:: tUseMeasures.cc 511 2007-08-05 13:14:48Z masters                $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2006 by Joseph Masters                                  *
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
   if ( 0 != dataset->open( argv[1] ) )
     {
       cout << "Problem opening dataset: " << argv[1] << '.' << " Quiting." << endl;
-      exit(DAL::FAIL);
+      return(DAL::FAIL);
     }
 
   // define the structure of a table

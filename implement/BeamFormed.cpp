@@ -57,8 +57,7 @@ namespace DAL
 
     filename_p = filename;
 
-    if ( !init() )
-      exit(-1);
+    init();
   }
 
   // ----------------------------------------------------------------------- init
@@ -74,7 +73,7 @@ namespace DAL
     // Connection to dataset via DAL layer
 
     dataset_p = new dalDataset;
-    if (dataset_p->open(filename_p.c_str()))
+    if ( DAL::FAIL == dataset_p->open( filename_p.c_str() ) )
       {
         std::cerr << "[BeamFormed::init] Error opening file into dalDataset!"
                   << std::endl;
@@ -91,7 +90,7 @@ namespace DAL
     std::vector<std::string> beamGroups = beams();
 
     /* Always check if actually a list of groups has been extracted */
-    if (beamGroups.size() > 0)
+    if ( beamGroups.size() > 0 )
       {
 
         for (uint beam(0); beam<beamGroups.size(); beam++)
@@ -129,23 +128,6 @@ namespace DAL
         dataset_p->close();
         delete dataset_p;
         dataset_p = NULL;
-      }
-  }
-
-  // ---------------------------------------------------------- print_vector
-
-  /*!
-    \brief Print a list of vector elements
-    \param os        -- output stream [I]
-    \param vec       -- vector [I]
-  */
-  template<class T>
-  void BeamFormed::print_vector ( std::ostream& os,
-                                  std::vector<T> &vec)
-  {
-    for (uint n(0); n<vec.size(); n++)
-      {
-        os << vec[n] << ", ";
       }
   }
 
@@ -205,7 +187,7 @@ namespace DAL
       }
     else
       {
-        cerr << "[h5get_attribute] Wrong shape of attribute dataspace!"
+        cerr << "[dataset_p->getAttribute] Wrong shape of attribute dataspace!"
              << std::endl;
         status = false;
       }
@@ -332,26 +314,18 @@ namespace DAL
   */
   std::string BeamFormed::filename ()
   {
-    std::string attribute_filename ("");
+    std::string filename ("");
 
-    if (dataset_p->getName() != "UNDEFINED")
+    if ( dataset_p->getName() != "UNDEFINED" )
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "FILENAME", filename ) )
           {
-            char * filename = reinterpret_cast<char*>(dataset_p->getAttribute("FILENAME"));
-            attribute_filename = stringify(filename);
-            delete [] filename;
-            filename = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute FILENAME" << endl;
-            attribute_filename = "";
+            std::cerr << "-- Error extracting attribute FILENAME\n";
+            filename = "";
           }
       }
 
-    return attribute_filename;
+    return filename;
   }
 
   // ---------------------------------------------------------- telescope
@@ -364,25 +338,17 @@ namespace DAL
   */
   std::string BeamFormed::telescope ()
   {
-    std::string attribute_telescope ("");
+    std::string telescope ("");
 
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL ==  dataset_p->getAttribute( "TELESCOPE", telescope ) )
           {
-            char * telescope = reinterpret_cast<char*>(dataset_p->getAttribute("TELESCOPE"));
-            attribute_telescope = string(telescope);
-            delete [] telescope;
-            telescope = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute TELESCOPE" << endl;
-            attribute_telescope = "";
+            std::cerr << "-- Error extracting attribute TELESCOPE\n";
+            telescope = "";
           }
       }
-    return attribute_telescope;
+    return telescope;
   }
 
   // ---------------------------------------------------------- nstations
@@ -393,21 +359,13 @@ namespace DAL
   */
   int BeamFormed::nstations ()
   {
-    int nstations = 0;
+    int nstations = -1;
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "NUMBER_OF_STATIONS",
+             nstations ) )
           {
-            int * nstations_p = reinterpret_cast<int*>(dataset_p->getAttribute("NUMBER_OF_STATIONS"));
-            nstations = *nstations_p;
-            delete [] nstations_p;
-            nstations_p = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute NUMBER_OF_STATIONS" << endl;
-            nstations = -1;
+            std::cerr << "-- Error extracting attribute NUMBER_OF_STATIONS\n";
           }
       }
     return nstations;
@@ -421,25 +379,16 @@ namespace DAL
   */
   std::string BeamFormed::datatype ()
   {
-    std::string attribute_datatype ("");
+    std::string datatype ("");
 
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL ==  dataset_p->getAttribute( "DATATYPE", datatype ) )
           {
-            char * datatype = reinterpret_cast<char*>(dataset_p->getAttribute("DATATYPE"));
-            attribute_datatype = string(datatype);
-            delete [] datatype;
-            datatype = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute DATATYPE" << endl;
-            attribute_datatype = "";
+            std::cerr << "-- Error extracting attribute DATATYPE\n";
           }
       }
-    return attribute_datatype;
+    return datatype;
   }
 
   // ---------------------------------------------------------- emband
@@ -450,25 +399,16 @@ namespace DAL
   */
   std::string BeamFormed::emband ()
   {
-    std::string attribute_emband ("");
+    std::string emband ("");
 
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "EMBAND", emband ) )
           {
-            char * emband = reinterpret_cast<char*>(dataset_p->getAttribute("EMBAND"));
-            attribute_emband = string(emband);
-            delete [] emband;
-            emband = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute EMBAND" << endl;
-            attribute_emband = "";
+            std::cerr << "-- Error extracting attribute EMBAND\n";
           }
       }
-    return attribute_emband;
+    return emband;
   }
 
   // ---------------------------------------------------------- sources
@@ -479,7 +419,7 @@ namespace DAL
   */
   std::vector<std::string> BeamFormed::sources()
   {
-    return h5get_str_array_attr("SOURCE", H5fileID_p);
+    return h5get_str_array_attr( "SOURCE", H5fileID_p );
   }
 
   // ---------------------------------------------------------- notes
@@ -490,25 +430,16 @@ namespace DAL
   */
   std::string BeamFormed::notes()
   {
-    std::string attribute_notes ("");
+    std::string notes ("");
 
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "NOTES", notes ) )
           {
-            char * notes = reinterpret_cast<char*>(dataset_p->getAttribute("NOTES"));
-            attribute_notes = string(notes);
-            delete [] notes;
-            notes = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute NOTES" << endl;
-            attribute_notes = "";
+            std::cerr << "-- Error extracting attribute NOTES\n";
           }
       }
-    return attribute_notes;
+    return notes;
   }
 
   // ---------------------------------------------------------- observation_id
@@ -519,25 +450,17 @@ namespace DAL
   */
   std::string BeamFormed::observation_id ()
   {
-    std::string attribute_observation_id ("");
+    std::string observation_id ("");
 
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "OBSERVATION_ID",
+             observation_id ) )
           {
-            char * observation_id = reinterpret_cast<char*>(dataset_p->getAttribute("OBSERVATION_ID"));
-            attribute_observation_id = string(observation_id);
-            delete [] observation_id;
-            observation_id = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute OBSERVATION_ID" << endl;
-            attribute_observation_id = "";
+            std::cerr << "-- Error extracting attribute OBSERVATION_ID\n";
           }
       }
-    return attribute_observation_id;
+    return observation_id;
   }
 
   // ---------------------------------------------------------- proj_id
@@ -548,25 +471,16 @@ namespace DAL
   */
   std::string BeamFormed::proj_id ()
   {
-    std::string attribute_proj_id ("");
+    std::string proj_id ("");
 
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "PROJ_ID", proj_id ) )
           {
-            char * proj_id = reinterpret_cast<char*>(dataset_p->getAttribute("PROJ_ID"));
-            attribute_proj_id = string(proj_id);
-            delete [] proj_id;
-            proj_id = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute PROJ_ID" << endl;
-            attribute_proj_id = "";
+            std::cerr << "-- Error extracting attribute PROJ_ID\n";
           }
       }
-    return attribute_proj_id;
+    return proj_id;
   }
 
   // ---------------------------------------------------------- pointing_ra
@@ -577,25 +491,16 @@ namespace DAL
   */
   std::string BeamFormed::point_ra ()
   {
-    std::string attribute_point_ra ("");
+    std::string point_ra ("");
 
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "POINT_RA", point_ra ) )
           {
-            char * point_ra = reinterpret_cast<char*>(dataset_p->getAttribute("POINT_RA"));
-            attribute_point_ra = string(point_ra);
-            delete [] point_ra;
-            point_ra = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute POINT_RA" << endl;
-            attribute_point_ra = "";
+            std::cerr << "-- Error extracting attribute POINT_RA\n";
           }
       }
-    return attribute_point_ra;
+    return point_ra;
   }
 
 
@@ -607,25 +512,16 @@ namespace DAL
   */
   std::string BeamFormed::point_dec ()
   {
-    std::string attribute_point_dec ("");
+    std::string point_dec ("");
 
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "POINT_DEC", point_dec ) )
           {
-            char * point_dec = reinterpret_cast<char*>(dataset_p->getAttribute("POINT_DEC"));
-            attribute_point_dec = string(point_dec);
-            delete [] point_dec;
-            point_dec = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute POINT_DEC" << endl;
-            attribute_point_dec = "";
+            std::cerr << "-- Error extracting attribute POINT_DEC\n";
           }
       }
-    return attribute_point_dec;
+    return point_dec;
   }
 
 
@@ -638,25 +534,16 @@ namespace DAL
   */
   std::string BeamFormed::observer ()
   {
-    std::string attribute_observer ("");
+    std::string observer ("");
 
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "OBSERVER", observer ) )
           {
-            char * observer = reinterpret_cast<char*>(dataset_p->getAttribute("OBSERVER"));
-            attribute_observer = string(observer);
-            delete [] observer;
-            observer = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute OBSERVER" << endl;
-            attribute_observer = "";
+            std::cerr << "-- Error extracting attribute OBSERVER\n";
           }
       }
-    return attribute_observer;
+    return observer;
   }
 
   // ---------------------------------------------------------- epoch_mjd
@@ -668,25 +555,16 @@ namespace DAL
   */
   std::string BeamFormed::epoch_mjd ()
   {
-    std::string attribute_epoch_mjd ("");
+    std::string epoch_mjd ("");
 
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "EPOCH_MJD", epoch_mjd ) )
           {
-            char * epoch_mjd = reinterpret_cast<char*>(dataset_p->getAttribute("EPOCH_MJD"));
-            attribute_epoch_mjd = string(epoch_mjd);
-            delete [] epoch_mjd;
-            epoch_mjd = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute EPOCH_MJD" << endl;
-            attribute_epoch_mjd = "";
+            std::cerr << "-- Error extracting attribute EPOCH_MJD\n";
           }
       }
-    return attribute_epoch_mjd;
+    return epoch_mjd;
   }
 
 
@@ -698,25 +576,16 @@ namespace DAL
   */
   std::string BeamFormed::epoch_date ()
   {
-    std::string attribute_epoch_date ("");
+    std::string epoch_date ("");
 
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "EPOCH_DATE", epoch_date ) )
           {
-            char * epoch_date = reinterpret_cast<char*>(dataset_p->getAttribute("EPOCH_DATE"));
-            attribute_epoch_date = string(epoch_date);
-            delete [] epoch_date;
-            epoch_date = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute EPOCH_DATE" << endl;
-            attribute_epoch_date = "";
+            std::cerr << "-- Error extracting attribute EPOCH_DATE\n";
           }
       }
-    return attribute_epoch_date;
+    return epoch_date;
   }
 
 
@@ -728,25 +597,16 @@ namespace DAL
   */
   std::string BeamFormed::epoch_utc ()
   {
-    std::string attribute_epoch_utc ("");
+    std::string epoch_utc ("");
 
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "EPOCH_UTC", epoch_utc ) )
           {
-            char * epoch_utc = reinterpret_cast<char*>(dataset_p->getAttribute("EPOCH_UTC"));
-            attribute_epoch_utc = string(epoch_utc);
-            delete [] epoch_utc;
-            epoch_utc = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute EPOCH_UTC" << endl;
-            attribute_epoch_utc = "";
+            std::cerr << "-- Error extracting attribute EPOCH_UTC\n";
           }
       }
-    return attribute_epoch_utc;
+    return epoch_utc;
   }
 
   // ---------------------------------------------------------- epoch_lst
@@ -757,25 +617,16 @@ namespace DAL
   */
   std::string BeamFormed::epoch_lst ()
   {
-    std::string attribute_epoch_lst ("");
+    std::string epoch_lst ("");
 
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "EPOCH_LST", epoch_lst ) )
           {
-            char * epoch_lst = reinterpret_cast<char*>(dataset_p->getAttribute("EPOCH_LST"));
-            attribute_epoch_lst = string(epoch_lst);
-            delete [] epoch_lst;
-            epoch_lst = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute EPOCH_LST" << endl;
-            attribute_epoch_lst = "";
+            std::cerr << "-- Error extracting attribute EPOCH_LST\n";
           }
       }
-    return attribute_epoch_lst;
+    return epoch_lst;
   }
 
 
@@ -787,21 +638,13 @@ namespace DAL
   */
   int BeamFormed::main_beam_diam ()
   {
-    int main_beam_diam = 0;
+    int main_beam_diam = -1;
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "MAIN_BEAM_DIAM",
+             main_beam_diam ) )
           {
-            int * main_beam_diam_p = reinterpret_cast<int*>(dataset_p->getAttribute("MAIN_BEAM_DIAM"));
-            main_beam_diam = *main_beam_diam_p;
-            delete [] main_beam_diam_p;
-            main_beam_diam_p = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute MAIN_BEAM_DIAM" << endl;
-            main_beam_diam = -1;
+            std::cerr << "-- Error extracting attribute MAIN_BEAM_DIAM\n";
           }
       }
     return main_beam_diam;
@@ -816,21 +659,13 @@ namespace DAL
   */
   int BeamFormed::center_freq ()
   {
-    int center_freq = 0;
+    int center_freq = -1;
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "CENTER_FREQUENCY",
+             center_freq ) )
           {
-            int * center_freq_p = reinterpret_cast<int*>(dataset_p->getAttribute("CENTER_FREQUENCY"));
-            center_freq = *center_freq_p;
-            delete [] center_freq_p;
-            center_freq_p = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute CENTER_FREQUENCY" << endl;
-            center_freq = -1;
+            std::cerr << "-- Error extracting attribute CENTER_FREQUENCY\n";
           }
       }
     return center_freq;
@@ -845,28 +680,19 @@ namespace DAL
   */
   int BeamFormed::bandwidth ()
   {
-    int bandwidth = 0;
+    int bandwidth = -1;
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "BANDWIDTH", bandwidth ) )
           {
-            int * bandwidth_p = reinterpret_cast<int*>(dataset_p->getAttribute("BANDWIDTH"));
-            bandwidth = *bandwidth_p;
-            delete [] bandwidth_p;
-            bandwidth_p = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute BANDWIDTH" << endl;
-            bandwidth = -1;
+            std::cerr << "-- Error extracting attribute BANDWIDTH\n";
           }
       }
     return bandwidth;
   }
 
 
-  // ---------------------------------------------------------- total_integration_time
+  // ------------------------------------------------- total_integration_time
 
   /*!
     \brief Get the integration time
@@ -877,18 +703,10 @@ namespace DAL
     double integration_time = 0.0;
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "TOTAL_INTEGRATION_TIME",
+             integration_time ) )
           {
-            double * integration_time_p = reinterpret_cast<double*>(dataset_p->getAttribute("TOTAL_INTEGRATION_TIME"));
-            integration_time = *integration_time_p;
-            delete [] integration_time_p;
-            integration_time_p = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute TOTAL_INTEGRATION_TIME" << endl;
-            integration_time = -1;
+            std::cerr << "-- Error extracting attribute TOTAL_INTEGRATION_TIME\n";
           }
       }
     return integration_time;
@@ -903,21 +721,12 @@ namespace DAL
   */
   int BeamFormed::breaks ()
   {
-    int breaks = 0;
+    int breaks = -1;
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "BREAKS_IN_DATA", breaks ) )
           {
-            int * breaks_p = reinterpret_cast<int*>(dataset_p->getAttribute("BREAKS_IN_DATA"));
-            breaks = *breaks_p;
-            delete [] breaks_p;
-            breaks_p = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute BREAKS_IN_DATA" << endl;
-            breaks = -1;
+            std::cerr << "-- Error extracting attribute BREAKS_IN_DATA\n";
           }
       }
     return breaks;
@@ -932,21 +741,13 @@ namespace DAL
   */
   int BeamFormed::dispersion_measure ()
   {
-    int dispersion_measure = 0;
+    int dispersion_measure = -1;
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "DISPERSION_MEASURE",
+             dispersion_measure ) )
           {
-            int * dispersion_measure_p = reinterpret_cast<int*>(dataset_p->getAttribute("DISPERSION_MEASURE"));
-            dispersion_measure = *dispersion_measure_p;
-            delete [] dispersion_measure_p;
-            dispersion_measure_p = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute DISPERSION_MEASURE" << endl;
-            dispersion_measure = -1;
+            std::cerr << "-- Error extracting attribute DISPERSION_MEASURE\n";
           }
       }
     return dispersion_measure;
@@ -961,21 +762,13 @@ namespace DAL
   */
   int BeamFormed::number_of_samples ()
   {
-    int number_of_samples = 0;
+    int number_of_samples = -1;
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "NUMBER_OF_SAMPLES",
+             number_of_samples ) )
           {
-            int * number_of_samples_p = reinterpret_cast<int*>(dataset_p->getAttribute("NUMBER_OF_SAMPLES"));
-            number_of_samples = *number_of_samples_p;
-            delete [] number_of_samples_p;
-            number_of_samples_p = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute NUMBER_OF_SAMPLES" << endl;
-            number_of_samples = -1;
+            std::cerr << "-- Error extracting attribute NUMBER_OF_SAMPLES\n";
           }
       }
     return number_of_samples;
@@ -990,21 +783,13 @@ namespace DAL
   */
   double BeamFormed::sampling_time ()
   {
-    double sampling_time = 0.0;
+    double sampling_time = -1.0;
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "SAMPLING_TIME",
+             sampling_time ) )
           {
-            double * sampling_time_p = reinterpret_cast<double*>(dataset_p->getAttribute("SAMPLING_TIME"));
-            sampling_time = *sampling_time_p;
-            delete [] sampling_time_p;
-            sampling_time_p = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute SAMPLING_TIME" << endl;
-            sampling_time = -1;
+            std::cerr << "-- Error extracting attribute SAMPLING_TIME\n";
           }
       }
     return sampling_time;
@@ -1019,23 +804,13 @@ namespace DAL
   */
   int BeamFormed::number_of_beams ()
   {
-    int number_of_beams = 0;
+    int number_of_beams = -1;
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "NUMBER_OF_BEAMS",
+             number_of_beams ) )
           {
-            int * number_of_beams_p = NULL;
-            number_of_beams_p =
-              reinterpret_cast<int*>(dataset_p->getAttribute("NUMBER_OF_BEAMS"));
-            number_of_beams = *number_of_beams_p;
-            delete [] number_of_beams_p;
-            number_of_beams_p = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute NUMBER_OF_BEAMS" << endl;
-            number_of_beams = -1;
+            std::cerr << "-- Error extracting attribute NUMBER_OF_BEAMS\n";
           }
       }
     return number_of_beams;
@@ -1050,23 +825,13 @@ namespace DAL
   */
   int BeamFormed::sub_beam_diameter ()
   {
-    int sub_beam_diameter = 0;
+    int sub_beam_diameter = -1;
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "SUB_BEAM_DIAMETER",
+             sub_beam_diameter ) )
           {
-            int * sub_beam_diameter_p = NULL;
-            sub_beam_diameter_p =
-              reinterpret_cast<int*>(dataset_p->getAttribute("SUB_BEAM_DIAMETER"));
-            sub_beam_diameter = *sub_beam_diameter_p;
-            delete [] sub_beam_diameter_p;
-            sub_beam_diameter_p = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute SUB_BEAM_DIAMETER" << endl;
-            sub_beam_diameter = -1;
+            std::cerr << "-- Error extracting attribute SUB_BEAM_DIAMETER\n";
           }
       }
     return sub_beam_diameter;
@@ -1081,22 +846,13 @@ namespace DAL
   */
   int BeamFormed::weather_temperature ()
   {
-    int weather_temperature = 0;
+    int weather_temperature = -1;
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "WEATHER_TEMPERATURE",
+             weather_temperature ) )
           {
-            int * weather_temperature_p = NULL;
-            weather_temperature_p =
-              reinterpret_cast<int*>(dataset_p->getAttribute("WEATHER_TEMPERATURE"));
-            weather_temperature = *weather_temperature_p;
-            delete [] weather_temperature_p;
-            weather_temperature_p = NULL;
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute WEATHER_TEMPERATURE" << endl;
-            weather_temperature = -1;
+            std::cerr << "-- Error extracting attribute WEATHER_TEMPERATURE\n";
           }
       }
     return weather_temperature;
@@ -1111,23 +867,13 @@ namespace DAL
   */
   int BeamFormed::weather_humidity ()
   {
-    int weather_humidity = 0;
+    int weather_humidity = -1;
     if (dataset_p->getName() != "UNDEFINED")
       {
-        try
+        if ( DAL::FAIL == dataset_p->getAttribute( "WEATHER_HUMIDITY",
+             weather_humidity ) )
           {
-            int * weather_humidity_p = NULL;
-            weather_humidity_p =
-              reinterpret_cast<int*>(dataset_p->getAttribute("WEATHER_HUMIDITY"));
-            weather_humidity = *weather_humidity_p;
-            delete [] weather_humidity_p;
-            weather_humidity_p = NULL;
-
-          }
-        catch (std::string message)
-          {
-            std::cerr << "-- Error extracting attribute WEATHER_HUMIDITY" << endl;
-            weather_humidity = -1;
+            std::cerr << "-- Error extracting attribute WEATHER_HUMIDITY\n";
           }
       }
     return weather_humidity;
@@ -1145,9 +891,7 @@ namespace DAL
     std::vector<int> station_temperatures;
     try
       {
-        status = h5get_attribute ( station_temperatures,
-                                   "TSYS",
-                                   H5fileID_p );
+        status = h5get_attribute( station_temperatures, "TSYS", H5fileID_p );
       }
     catch (std::string message)
       {
@@ -1169,20 +913,6 @@ namespace DAL
   void BeamFormed::summary_boost()
   {
     summary();
-  }
-
-  // ---------------------------------------------------------- vector2list
-
-  template <class T>
-  bpl::list BeamFormed::vector2list( std::vector<T> vec )
-  {
-    bpl::list mylist;
-
-    typename std::vector<T>::iterator it;
-    for ( it=vec.begin(); it < vec.end(); it++ )
-      mylist.append( *it );
-
-    return mylist;
   }
 
   // ---------------------------------------------------------- beams_boost

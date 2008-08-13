@@ -24,24 +24,8 @@
 #ifndef DALDATASET_H
 #define DALDATASET_H
 
-#ifndef DAL_H
-#include "dal.h"
-#endif
-
-#ifndef DALARRAY_H
-#include "dalArray.h"
-#endif
-
-#ifndef DALTABLE_H
-#include "dalTable.h"
-#endif
-
 #ifndef DALGROUP_H
 #include "dalGroup.h"
-#endif
-
-#ifndef DALATTRIBUTE_H
-#include "dalAttribute.h"
 #endif
 
 namespace DAL
@@ -49,12 +33,9 @@ namespace DAL
 
   /*!
     \class dalDataset
-
     \ingroup DAL
-
     \brief Represents the file containing all sub-structures
            (tables, arrays, etc.)
-
     \author Joseph Masters
 
     <h3>Synopsis</h3>
@@ -63,55 +44,64 @@ namespace DAL
     consist of one or more files on disk, each of which contain multiple tables,
     images and attributes.  These tables and images can be gruoped.
   */
+
   class dalDataset
     {
 
-      void * file;  //!< can be HDF5File, FITS, MS
-      std::string type;  //!< "HDF5", "MSCASA" or "FITS"; for example
-      std::string name;  //!< dataset name
-      std::vector<std::string> files;  //!< list of files
-      std::vector<dalTable> tables; //!< list of tables
-      std::vector<dalGroup> groups; //!< list of groups
-      std::vector<dalAttribute> attrs;  //!< list of attributes
+      void * file;  // can be HDF5File, FITS, MS
+      std::string type;  // "HDF5", "MSCASA" or "FITS"; for example
+      std::string name;  // dataset name
+      dalFilter filter; // dataset filter
 
-      dalFilter filter;	//!< dataset filter
-
-      hid_t h5fh;   //!< hdf5 file handle
-      herr_t status;
+      hid_t h5fh;   // hdf5 file handle
 
 #ifdef WITH_CASA
-      casa::MeasurementSet * ms; //!< CASA measurement set pointer
-      casa::MSReader * ms_reader; //!< CASA measurement set reader pointer
-      casa::Vector<casa::String> ms_tables; //!< vector of CASA MS tables
+      casa::MeasurementSet * ms; // CASA measurement set pointer
+      casa::MSReader * ms_reader; // CASA measurement set reader pointer
+      casa::Vector<casa::String> ms_tables; // vector of CASA MS tables
 #endif
 
     public:
       dalDataset();
       void init();
       dalDataset( const char * name, std::string filetype );
-      int open( const char * datasetname );
-      int close();
-      void getAttributes();
-      void printAttribute( std::string attrname );
-      void * getAttribute( std::string attrname );
-      void setAttribute_string( std::string attrname, std::string data );
-      void setAttribute_string( std::string attrname, std::vector<std::string> data );
-      void setAttribute_int( std::string attrname, int * data, int size=1 );
-      void setAttribute_uint(std::string attrname, unsigned int * data,int size=1);
-      void setAttribute_double( std::string attrname, double * data, int size=1 );
-      dalArray * createArray(
-        std::string arrayname,
-        dalData * data_object);
-      dalArray * createIntArray(
-        std::string arrayname,
-        std::vector<int> dims,
-        int data[],
-        std::vector<int>cdims);
-      dalArray * createFloatArray(
-        std::string arrayname,
-        std::vector<int> dims,
-        float data[],
-        std::vector<int>cdims);
+      bool open( const char * datasetname );
+      bool close();
+      bool getAttributes();
+      hid_t getId();
+
+
+      // ---------------------------------------------------------- getAttribute
+
+      /*!
+        \brief Get the value of an attribute.
+
+        Get the value of an attribute.  This is different from printAttribute
+        because the value of the attribute is returned into a structure
+        instead of simply printing.
+
+        \param attrname The name of the attribute you want to retrieve.
+
+      */
+      template <class T>
+      bool getAttribute( std::string attrname, T &value )
+      {
+        return h5getAttribute( h5fh, attrname, value );
+      }
+
+      bool setAttribute_string( std::string attrname, std::string data );
+      bool setAttribute_string( std::string attrname,
+                                std::vector<std::string> data );
+      bool setAttribute_int( std::string attrname, int * data, int size=1 );
+      bool setAttribute_uint( std::string attrname, unsigned int * data,
+                              int size=1);
+      bool setAttribute_double( std::string attrname, double * data,
+                                int size=1 );
+      dalArray * createArray( std::string arrayname, dalData * data_object );
+      dalArray * createIntArray( std::string arrayname, std::vector<int> dims,
+                                 int data[], std::vector<int>cdims );
+      dalArray * createFloatArray( std::string arrayname, std::vector<int> dims,
+                                   float data[], std::vector<int>cdims );
       dalArray * createComplexFloatArray( std::string arrayname,
                                           std::vector<int> dims,
                                           complex<float> data[],
@@ -129,6 +119,7 @@ namespace DAL
       dalGroup * openGroup( std::string groupname );
       std::vector<std::string> listTables();
       std::string getType();
+
       /*!
         \brief Retrieve the name of the data set
         \return name -- A string holding the name of the data set.
@@ -137,14 +128,7 @@ namespace DAL
         {
           return name;
         }
-      /*!
-        \brief Retrieve the list of files
-        \return files -- List of files
-      */
-      inline std::vector<std::string> getFiles () const
-        {
-          return files;
-        }
+
       /*!
         \brief Get the HDF5 file handle identifier.
         \return h5fh -- File handle identifier to communicate with the HDF5

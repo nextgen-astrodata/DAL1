@@ -40,6 +40,48 @@ namespace DAL
     is_set = false;
   }
 
+  /*!
+    \brief Constructor.
+    \param columns A comma-separated list of the column names that you
+                   want to pass the filter (i.e. "TIME,DATA,ANTENNA").
+
+    Restrict the opening of a table to particular columns.
+   */
+  dalFilter::dalFilter( std::string type, std::string cols )
+  {
+    if ( type == MSCASATYPE )
+      {
+        filetype == type;
+        filterstring = "Select " + cols + " from $1";
+      }
+    else
+      std::cerr << "Operation not yet supported for type: " +
+                type + ". Sorry.\n";
+  }
+
+
+  /*!
+    \brief Constructor.
+    \param columns A comma-separated list of the column names that you
+                   want to pass the filter (i.e. "TIME,DATA,ANTENNA").
+    \param conditions A list of the conditions you want to apply.
+                      (i.e. "ANTENNA1=1 AND ANTENNA2=10")
+
+    Restrict the opening of a table to particular columns and conditions.
+   */
+  dalFilter::dalFilter( std::string type,
+                        std::string cols,
+                        std::string conditions )
+  {
+    if ( type == MSCASATYPE )
+      {
+        filetype = type;
+        filterstring = "Select " + cols + " from $1 where " + conditions;
+      }
+    else
+      std::cerr << "Operation not yet supported for type: " +
+                type + ". Sorry.\n";
+  }
 
   /*!
     \brief Restrict to certain columns.
@@ -49,7 +91,7 @@ namespace DAL
     \param columns A comma-separated list of the column names that you
                    want to pass the filter (i.e. "TIME,DATA,ANTENNA").
    */
-  void dalFilter::set( string cols )
+  void dalFilter::set( std::string cols )
   {
     if ( filetype == MSCASATYPE )
       {
@@ -57,7 +99,7 @@ namespace DAL
         is_set = true;
       }
     else
-      cout << "Operation not yet supported for type: " + filetype + ". Sorry.\n";
+      std::cerr << "Operation not yet supported for type: " + filetype + ". Sorry.\n";
   }
 
 
@@ -71,7 +113,7 @@ namespace DAL
     \param conditions A list of the conditions you want to apply.
                       (i.e. "ANTENNA1=1 AND ANTENNA2=10")
    */
-  void dalFilter::set( string cols, string conditions )
+  void dalFilter::set( std::string cols, std::string conditions )
   {
     if ( filetype == MSCASATYPE )
       {
@@ -79,7 +121,7 @@ namespace DAL
         is_set = true;
       }
     else
-      cout << "Operation not yet supported for type: " + filetype + ". Sorry.\n";
+      std::cerr << "Operation not yet supported for type: " + filetype + ". Sorry.\n";
   }
 
   /*!
@@ -89,7 +131,7 @@ namespace DAL
 
     \param type The type of the file (i.e. "MSCAS", "HDF5", etc.)
    */
-  void dalFilter::setFiletype( string type )
+  void dalFilter::setFiletype( std::string type )
   {
     filetype = type;
   }
@@ -118,7 +160,7 @@ namespace DAL
 
     \return A string representing the filter.
    */
-  string dalFilter::get()
+  std::string dalFilter::get()
   {
     return filterstring;
   }

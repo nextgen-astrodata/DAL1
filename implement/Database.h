@@ -24,23 +24,19 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#ifndef DAL_H
-#include "dal.h"
-#endif
-
-// #ifdef WITH_MYSQL
-#include "mysql/mysql.h"
+#include <string>
+#include <mysql/mysql.h>
 
 namespace DAL
   {
 
   class Database
     {
-      string server;
-      string username;
-      string password;
-      string port;  // if needed
-      string database;
+      std::string server;
+      std::string username;
+      std::string password;
+      std::string port;  // if needed
+      std::string database;
 
       MYSQL *conn;  // DB connection
       MYSQL_RES *res;  // result
@@ -49,20 +45,18 @@ namespace DAL
     public:
 
       // constructor
-      Database( string const& server,
-                string const& username,
-                string const& password,
-                string const& database );
+      Database( std::string const& server,
+                std::string const& username,
+                std::string const& password,
+                std::string const& database );
 
       // destructor
       ~Database();
 
-      void query(string const& querystr);
+      void query(std::string const& querystr);
 
     }; // end class
 
 } // end namespace DAL
-
-// #endif // WITH_MYSQL
 
 #endif // DATABASE_H

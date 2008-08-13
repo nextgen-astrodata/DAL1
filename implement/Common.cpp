@@ -28,48 +28,6 @@
 namespace DAL
   {
 
-  // ---------------------------------------------------------- it_exists
-
-  // check if an object exists in a vector
-  template <class T>
-  bool it_exists( std::vector<T> vec, T item )
-  {
-    typename std::vector<T>::iterator it;
-    for ( it=vec.begin() ; it < vec.end(); it++ )
-      {
-        if ( item == *it )
-          return true;
-      }
-    return false;
-  }
-
-
-  // ---------------------------------------------------------- it_exists_str
-
-  bool it_exists_str( std::vector<std::string> vec, std::string name )
-  {
-    std::vector<std::string>::iterator it;
-    for ( it=vec.begin() ; it < vec.end(); it++ )
-      {
-        if ( name == *it )
-          return true;
-      }
-    return false;
-  }
-
-
-  // ---------------------------------------------------------- list_vector_members
-
-  template <class T>
-  void list_vector_members( std::vector<T> vec )
-  {
-    typename std::vector<T>::iterator it;
-    for ( it=vec.begin() ; it < vec.end(); it++ )
-      {
-        std::cerr << *it << std::endl;
-      }
-  }
-
 
   // ---------------------------------------------------------- julday
 
@@ -115,6 +73,161 @@ namespace DAL
     // and 1 mjd Day = 24 hours or 1440 minutes or 86400 seconds
     // so (unix seconds) = (mjd seconds) - ( unix base date in seconds )
     return ( mjd_time - (40587 * 86400) );
+  }
+
+
+  // ------------------------------------------- h5setAttribute_string
+
+  /*!
+    \brief Add a string attribute.
+
+    Add a string attribute to the hdf5 object.
+
+    \param obj_id The hdf5 object identifier.
+    \param attrname The name of the attribute you want to add.
+    \param data The value of the attribute you want to add.
+    \param size The dimension of the attribute.
+    \return DAL::FAIL or DAL::SUCCESS
+   */
+  bool h5setAttribute_string( hid_t const &obj_id, std::string attrname,
+                              std::string * data, int size )
+  {
+    hid_t att       = 0;
+    hid_t dataspace = 0;
+    hsize_t dims[1] = { size };
+
+    char ** string_attr = (char**)malloc( size * sizeof(char*) );
+    for ( int ii = 0; ii < size; ii++ )
+      {
+        string_attr[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+        strcpy( string_attr[ii], data[ii].c_str() );
+      }
+
+    hid_t type = H5Tcopy (H5T_C_S1);
+    if ( type < 0 )
+      {
+        std::cerr << "ERROR: Could not set attribute '" << attrname
+                  << "' type.\n";
+        return DAL::FAIL;
+      }
+
+    if ( H5Tset_size(type, H5T_VARIABLE) < 0 )
+      {
+        std::cerr << "ERROR: Could not set attribute '" << attrname
+                  << "' size.\n";
+        return DAL::FAIL;
+      }
+
+    dataspace = H5Screate_simple(1, dims, NULL);
+    if ( dataspace < 0 )
+      {
+        std::cerr << "ERROR: Could not set attribute '" << attrname
+                  << "' dataspace.\n";
+        return DAL::FAIL;
+      }
+
+    att = H5Acreate1( obj_id, attrname.c_str(), type, dataspace, H5P_DEFAULT);
+    if ( att < 0 )
+      {
+        std::cerr << "ERROR: Could not create attribute '" << attrname << "'.\n";
+        return DAL::FAIL;
+      }
+
+    if ( H5Awrite( att, type, string_attr ) < 0 )
+      {
+        std::cerr << "ERROR: Could not write attribute '" << attrname << "'.\n";
+        return DAL::FAIL;
+      }
+
+    if (  H5Aclose( att ) < 0 )
+      {
+        std::cerr << "ERROR: Could not close attribute '" << attrname << "'.\n";
+        return DAL::FAIL;
+      }
+
+    for ( int ii = 0; ii < size; ii++ )
+      {
+        free( string_attr[ii] );
+      }
+    free( string_attr );
+
+    return DAL::SUCCESS;
+  }
+
+// ---------------------------------------------------- h5setAttribute_double
+  /*!
+    \brief Add a double-precision floating point attribute.
+
+    Add a double-precision floating point attribute to the hdf5 object.
+
+    \param obj_id The hdf5 object identifier.
+    \param attrname The name of the attribute you want to add.
+    \param data The value of the attribute you want to add.
+    \param size The dimension of the attribute.
+    \return DAL::FAIL or DAL::SUCCESS
+   */
+  bool h5setAttribute_double( hid_t const &obj_id, std::string attrname, double * data,
+                              int32_t size )
+  {
+    hid_t   datatype = H5T_NATIVE_DOUBLE;
+    return h5setAttribute( datatype, obj_id, attrname, data, size );
+  }
+
+// --------------------------------------------------------- h5setAttribute_int
+  /*!
+    \brief Add an integer attribute.
+
+    Add an integer attribute to an hdf5 object.
+
+    \param obj_id The hdf5 object identifier.
+    \param attrname The name of the attribute you want to add.
+    \param data The value of the attribute you want to add.
+    \param size The dimension of the attribute.
+    \return DAL::FAIL or DAL::SUCCESS
+   */
+  bool h5setAttribute_int( hid_t const &obj_id, std::string attrname,
+                           int * data, int32_t size )
+  {
+    hid_t   datatype = H5T_NATIVE_INT;
+    return h5setAttribute( datatype, obj_id, attrname, data, size );
+  }
+
+// ------------------------------------------------------- h5setAttribute_uint
+  /*!
+    \brief Add an unsigned integer attribute.
+
+    Add an unsigned integer attribute to an hdf5 object.
+
+    \param obj_id The hdf5 object identifier.
+    \param attrname The name of the attribute you want to add.
+    \param data The value of the attribute you want to add.
+    \param size The dimension of the attribute.
+    \return DAL::FAIL or DAL::SUCCESS
+   */
+  bool h5setAttribute_uint( hid_t const &obj_id, std::string attrname,
+                            uint * data, int32_t size )
+  {
+    hid_t   datatype = H5T_NATIVE_UINT;
+    return h5setAttribute( datatype, obj_id, attrname, data, size );
+  }
+
+// ------------------------------------------------------- h5setAttribute_float
+  /*!
+    \brief Add an unsigned integer attribute.
+
+    Add an unsigned integer attribute to an hdf5 object.
+
+    \param obj_id The hdf5 object identifier.
+    \param attrname The name of the attribute you want to add.
+    \param data The value of the attribute you want to add.
+    \param size The dimension of the attribute.
+    \return DAL::FAIL or DAL::SUCCESS
+   */
+  bool h5setAttribute_float( hid_t const &obj_id, std::string attrname,
+                             float * data, int32_t size )
+  {
+    hid_t   datatype = H5T_NATIVE_FLOAT;
+    return h5setAttribute( datatype, obj_id, attrname, data, size );
   }
 
 #ifdef PYTHON

@@ -24,21 +24,8 @@
 #ifndef DALGROUP_H
 #define DALGROUP_H
 
-#ifndef DAL_H
-#include "dal.h"
-#endif
-
 #ifndef DALTABLE_H
 #include "dalTable.h"
-#endif
-
-#ifndef DALATTRIBUTE_H
-#include "dalAttribute.h"
-#endif
-
-
-#ifndef DALFILTER_H
-#include "dalFilter.h"
 #endif
 
 #ifndef DALARRAY_H
@@ -59,17 +46,14 @@ namespace DAL
 
     protected:
 
-      void * file; //!< can be HDF5File, FITS, MS
-      string groupname; //!< group name
+      void * file; // can be HDF5File, FITS, MS
+      string groupname; // group name
       string groupname_full;
       void * group;
-      vector<dalTable> tables; //!< list of tables within groups
-      vector<dalAttribute> attributes; //!< list of group attributes
-      dalFilter * filter; //!< filter associated with group
-      hid_t file_id; //!< hdf5 file_id
-      hid_t group_id; //!< hdf5 group_id
-      herr_t status; //!< hdf5 return status
-      dalGroup * subgroup;
+      dalFilter * filter; // filter associated with group
+      hid_t file_id; // hdf5 file_id
+      hid_t group_id; // hdf5 group_id
+      herr_t status;
 
     public:
 
@@ -80,39 +64,58 @@ namespace DAL
       int open( void * file, string groupname );
       string getName();
       bool setName( string gname );
-      dalArray * createShortArray(
-        string arrayname,
-        vector<int> dims,
-        short data[],
-        vector<int>cdims);
-      dalArray * createIntArray(
-        string arrayname,
-        vector<int> dims,
-        int data[],
-        vector<int>cdims);
-      dalArray * createFloatArray(
-        string arrayname,
-        vector<int> dims,
-        float data[],
-        vector<int>cdims);
+
+      dalArray * createShortArray(        string arrayname,
+                                          vector<int> dims,
+                                          short data[],
+                                          vector<int>cdims);
+
+      dalArray * createIntArray(          string arrayname,
+                                          vector<int> dims,
+                                          int data[],
+                                          vector<int>cdims);
+
+      dalArray * createFloatArray(        string arrayname,
+                                          vector<int> dims,
+                                          float data[],
+                                          vector<int>cdims);
+
       dalArray * createComplexFloatArray( string arrayname,
                                           vector<int> dims,
                                           complex<float> data[],
                                           vector<int>cdims );
+
       dalArray * createComplexShortArray( string arrayname,
                                           vector<int> dims,
                                           complex<Int16> data[],
                                           vector<int>cdims );
       hid_t getId();
       vector<string> getMemberNames();
-      void getAttributes();
-      void printAttribute( string attrname );
-      void * getAttribute( string attrname );
-      void setAttribute_string( string attrname, string data );
-      void setAttribute_string( string attrname, string * data, int size=1 );
-      void setAttribute_int( string attrname, int * data, int size=1 );
-      void setAttribute_uint(string attrname, unsigned int * data,int size=1);
-      void setAttribute_double( string attrname, double * data, int size=1 );
+
+      // ---------------------------------------------------------- getAttribute
+
+      /*!
+        \brief Get the value of an attribute.
+
+        Get the value of an attribute.  This is different from printAttribute
+        because the value of the attribute is returned into a structure
+        instead of simply printing.
+
+        \param attrname The name of the attribute you want to retrieve.
+
+      */
+      template <class T>
+      bool getAttribute( std::string attrname, T &value )
+      {
+        return h5getAttribute( group_id, attrname, value );
+      }
+
+      bool setAttribute_string( string attrname, string data );
+      bool setAttribute_string( string attrname, string * data, int size=1 );
+      bool setAttribute_int( string attrname, int * data, int size=1 );
+      bool setAttribute_uint(string attrname, uint * data, int size=1);
+      bool setAttribute_double( string attrname, double * data, int size=1 );
+      bool setAttribute_float( string attrname, float * data, int size=1 );
 
       /************************************************************************
        *

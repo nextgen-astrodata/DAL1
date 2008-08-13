@@ -153,7 +153,7 @@ namespace DAL
     if (record==NULL)
       {
         herror("gethostbyname failed");
-        exit(1);
+        return;
       }
 
     // Step 2 Create a socket
@@ -161,7 +161,7 @@ namespace DAL
     if (main_socket<0)
       {
         perror("socket creation");
-        exit(1);
+        return;
       }
 
     // Step 3 Create a sockaddr_in to describe the local port
@@ -175,7 +175,7 @@ namespace DAL
     if (rr<0)
       {
         perror("bind");
-        exit(1);
+        return;
       }
     printf("ready\n");
   }
@@ -220,7 +220,7 @@ namespace DAL
     if (rr<0)
       {
         perror("recvfrom");
-        exit(1);
+        return FAIL;
       }
 
     return SUCCESS;
@@ -269,7 +269,7 @@ namespace DAL
         if ( ( seqnrLast > header.seqnr ) || ( seqnrLast+1 != header.seqnr ) )
           {
             printf("WARNING: Frame missing or out of order\n");
-            exit(9);
+            return false;
           }
       }
     seqnrLast = header.seqnr;
@@ -347,7 +347,7 @@ namespace DAL
     sprintf( stationstr, "Station%03d", header.stationid );
 
     // does the station exist?
-    if ( it_exists_str( stations, stationstr ) )
+    if ( it_exists( stations, stringify(stationstr) ) )
       {
         stationGroup = dataset->openGroup( stationstr );
         dipoles = stationGroup->getMemberNames();
@@ -355,7 +355,7 @@ namespace DAL
                 header.stationid, header.rspid, header.rcuid);
 
         // does the dipole exist?
-        if ( it_exists_str( dipoles, uid ) )
+        if ( it_exists( dipoles, stringify(uid) ) )
           {
             dipoleArray = dataset->openArray( uid, stationGroup->getName() );
             dims = dipoleArray->dims();

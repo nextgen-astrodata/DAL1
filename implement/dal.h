@@ -43,20 +43,16 @@
   <br/>
   \code
   #include <dal.h>
-  #include <dalDataset.h>
-  #include <dalData.h>
-
-  using namespace casa;
 
   int main(int argc, char *argv[])
   {
     // create a dataset object of type MSCASA
     cout << " -- Creating a dataset object of type MSCASA ..." << endl;
     dalDataset * msds = new dalDataset( argv[1], "MSCASA" );
-  
+
     // print out a list of tables in the dataset
     msds->listTables();
-  
+
     // open a table in the dataset
     cout << " -- Opening table in the dataset ..." << endl;
     string tablename = "MAIN";
@@ -64,7 +60,7 @@
     string filter_conditions = "ANTENNA1 = 1 AND ANTENNA2 = 1";
     msds->setFilter( filter_cols, filter_conditions );
     dalTable * maintable = msds->openTable( tablename );
-  
+
     //
     // get data from the TIME column
     //
@@ -124,122 +120,12 @@
 #ifndef DAL_H
 #define DAL_H
 
-#include <string>
-#include <vector>
-#include <iostream>
-#include <iomanip>  // for cout field width
-#include <cstdio>
-
-#include <hdf5.h>
-#include <hdf5_hl.h>
-
-#ifdef WITH_CFITSIO
-extern "C" {
-#include <fitsio.h>
-}
+#ifndef DALDATASET_H
+#include "dalDataset.h"
 #endif
 
-#include <convert.h>  // for stringify function
-
-#ifndef DALBASETYPES_H
-#include <dalBaseTypes.h>
+#ifndef DATABASE_H
+#include "Database.h"
 #endif
 
-#ifndef HDF5COMMON_H
-#include <HDF5Common.h>
-#endif
-
-#ifndef ENUMERATIONS_H
-#include <Enumerations.h>
-#endif
-
-using namespace std;
-
-/*
-   if creating python bindings
-*/
-#ifdef PYTHON
-#include <Python.h>
-#include <boost/python.hpp>
-#include <boost/python/object.hpp>
-#include <boost/python/list.hpp>
-#include <boost/python/extract.hpp>
-namespace bpl = boost::python;
-#include <num_util.h>
-#endif
-
-/*
-   if there is a casa installation
-*/
-#ifdef WITH_CASA
-#include <casa/aips.h>
-#include <tables/Tables.h>
-#include <tables/Tables/Table.h>
-#include <ms/MeasurementSets.h>
-#include <ms/MeasurementSets/MSReader.h>
-#include <iostream>
-#include <casa/aipstype.h>
-#include <casa/complex.h>
-#include <casa/BasicMath/Math.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/TableParse.h>
-#include <tables/Tables/TableKeyword.h>
-#endif
-
-
-
-namespace DAL {
-
-  const string H5TYPE = "HDF5";
-  const string FITSTYPE = "FITS";
-  const string MSCASATYPE = "MSCASA";
-
-  const int SUCCESS = 0;
-  const int FAIL = 1;
-
-
-  // CHUNK_SIZE arbitrarily chosen, more research needed on this feature
-  const int CHUNK_SIZE = 5000;
-
-  const short MAX_COL_NAME_SIZE = 256;
-
-  const string dal_CHAR = "dalCHAR";
-  const string dal_STRING = "dalSTRING";
-  const string dal_BOOL = "dalBOOL";
-
-  const string dal_SHORT = "dalSHORT";
-  const string dal_INT = "dalINT";
-  const string dal_UINT = "dalINT";
-  const string dal_LONG = "dalLONG";
-
-  const string dal_FLOAT = "dalFLOAT";
-  const string dal_DOUBLE = "dalDOUBLE";
-
-  const string dal_COMPLEX = "dalCOMPLEX";
-  const string dal_DCOMPLEX = "dalDCOMPLEX";
-  const string dal_COMPLEX_CHAR = "dalCOMPLEX_CHAR";
-  const string dal_COMPLEX_SHORT = "dalCOMPLEX_SHORT";
-
-  typedef struct dalcomplex {
-    double r;  // real
-    double i;  // imaginary
-  };
-
-  typedef struct dalcomplex_float32 {
-    float r;  // real
-    float i;  // imaginary
-  };
-
-  typedef struct dalcomplex_int16 {
-    short r;  // real
-    short i;  // imaginary
-  };
-
-  typedef struct dalcomplex_char {
-    char r;  // real
-    char i;  // imaginary
-  };
-
-} // namespace DAL
-
-#endif
+#endif // DAL_H

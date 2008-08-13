@@ -34,27 +34,141 @@
 #ifndef DALBASETYPES_H
 #define DALBASETYPES_H
 
-// reading a complete binary file
-#include <iostream> // for cout
+#include <string>
+#include <vector>
+#include <iostream>
 #include <iomanip>  // for cout field width
+#include <cstdio>
 #include <fstream>  // for file handle
 #include <complex>  // for complex datatypes
 #include <time.h>   // for local time conversion
 
-using namespace std;
-using std::complex;
+#include <hdf5.h>
+#include <hdf5_hl.h>
 
-// define a few datatypes
-typedef unsigned char   UInt8;
-typedef unsigned short UInt16;
-typedef short           Int16;
-typedef unsigned int   UInt32;
-typedef int             Int32;
-typedef float         Float32;
-typedef long long       Int64;
-typedef double        Float64;
-
-bool BigEndian( void );
-void swapbytes(char *addr, int8_t nbytes);
-
+#ifdef WITH_CFITSIO
+extern "C"
+  {
+#include <fitsio.h>
+  }
 #endif
+
+/*
+   if creating python bindings
+*/
+#ifdef PYTHON
+#include <Python.h>
+#include <boost/python.hpp>
+#include <boost/python/object.hpp>
+#include <boost/python/list.hpp>
+#include <boost/python/extract.hpp>
+namespace bpl = boost::python;
+#include <num_util.h>
+#endif
+
+/*
+   if there is a casa installation
+*/
+#ifdef WITH_CASA
+#include <casa/aips.h>
+#include <tables/Tables.h>
+#include <tables/Tables/Table.h>
+#include <ms/MeasurementSets.h>
+#include <ms/MeasurementSets/MSReader.h>
+#include <casa/aipstype.h>
+#include <casa/complex.h>
+#include <casa/BasicMath/Math.h>
+#include <tables/Tables/ScalarColumn.h>
+#include <tables/Tables/TableParse.h>
+#include <tables/Tables/TableKeyword.h>
+#endif
+
+// ----------------------------------------------------- USG code
+
+
+namespace DAL
+  {
+
+  using namespace std;
+
+  const std::string H5TYPE = "HDF5";
+  const std::string FITSTYPE = "FITS";
+  const std::string MSCASATYPE = "MSCASA";
+
+  const bool SUCCESS = true;
+  const bool FAIL = false;
+
+  // CHUNK_SIZE arbitrarily chosen, more research needed on this feature
+  const int CHUNK_SIZE = 5000;
+
+  const short MAX_COL_NAME_SIZE = 256;
+
+  const std::string dal_CHAR = "dalCHAR";
+  const std::string dal_STRING = "dalSTRING";
+  const std::string dal_BOOL = "dalBOOL";
+
+  const std::string dal_SHORT = "dalSHORT";
+  const std::string dal_INT = "dalINT";
+  const std::string dal_UINT = "dalINT";
+  const std::string dal_LONG = "dalLONG";
+
+  const std::string dal_FLOAT = "dalFLOAT";
+  const std::string dal_DOUBLE = "dalDOUBLE";
+
+  const std::string dal_COMPLEX = "dalCOMPLEX";
+  const std::string dal_DCOMPLEX = "dalDCOMPLEX";
+  const std::string dal_COMPLEX_CHAR = "dalCOMPLEX_CHAR";
+  const std::string dal_COMPLEX_SHORT = "dalCOMPLEX_SHORT";
+
+  // define a few datatypes
+  typedef unsigned char   UInt8;
+  typedef unsigned short UInt16;
+  typedef short           Int16;
+  typedef unsigned int   UInt32;
+  typedef int             Int32;
+  typedef float         Float32;
+  typedef long long       Int64;
+  typedef double        Float64;
+
+  typedef struct dalcomplex
+    {
+      Float64 r;  // real
+      Float64 i;  // imaginary
+    };
+
+  typedef struct dalcomplex_float32
+    {
+      Float32 r;  // real
+      Float32 i;  // imaginary
+    };
+
+  typedef struct dalcomplex_int16
+    {
+      Int16 r;  // real
+      Int16 i;  // imaginary
+    };
+
+  typedef struct dalcomplex_char
+    {
+      char r;  // real
+      char i;  // imaginary
+    };
+
+  bool BigEndian( void );
+  void swapbytes(char *addr, int8_t nbytes);
+
+} // DAL namespace
+
+#ifndef CONVERT_H
+#include <convert.h>  // for stringify function
+#endif
+
+#ifndef HDF5COMMON_H
+#include <HDF5Common.h>
+#endif
+
+#ifndef COMMON_H
+#include <Common.h>
+#endif
+
+#endif // DALBASETYPES_H

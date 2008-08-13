@@ -32,9 +32,46 @@
 namespace DAL
   {
 
+// ------------------------------------------------------------ dalData
+
+  dalData::dalData()
+  {
+    dtype = "UNKNOWN";
+    filetype = "UNKNOWN";
+    array_order = "UNKNOWN";
+    data = NULL;
+  }
+
+// ------------------------------------------------------------ dalData
 
   /*!
-    \brief Get the fortran index value of a three-dimensional array.
+    \brief Constructor with a specific file type.
+     Constructor with a specific file type.
+
+    \param lclfiletype The file type (i.e. "MSCASA", "HDF5", etc.)
+    \param lcldatatype The data type this instance of the class will
+                       contain.
+    \param lclshape The shape of the data object.
+    \param lclnrows The number of rows in the data object.
+   */
+  dalData::dalData(std::string lclfiletype, std::string lcldatatype,
+                   std::vector<int> lclshape, long lclnrows)
+  {
+    filetype = lclfiletype;
+    if ( MSCASATYPE == lclfiletype )
+      array_order = "fortran";
+    else if ( H5TYPE == lclfiletype )
+      array_order = "c";
+    dtype = lcldatatype;
+    shape = lclshape;
+    nrows = lclnrows;
+    data = NULL;
+  }
+
+// ------------------------------------------------------------ fortran_index
+
+  /*!
+    \brief Get the fortran index value of up to a three-dimensional array.
 
     This is a helper function that is usually called by the dataset
     object and not by the developer.  Its purpose is to find a single
@@ -50,7 +87,7 @@ namespace DAL
    */
   unsigned long dalData::fortran_index(long idx1, long idx2, long idx3)
   {
-    vector<long> indices;
+    std::vector<long> indices;
 
     if ( idx1>-1 )
       indices.push_back( idx1 );
@@ -61,8 +98,8 @@ namespace DAL
 
     if (indices.size() != (shape.size()) )
       {
-        cout << "ERROR: Number of indices do not match shape of column." << endl;
-        exit(-1);
+        cerr << "ERROR: Number of indices do not match shape of column." << endl;
+        return(-1);
       }
 
     unsigned long index = 0;
@@ -82,8 +119,10 @@ namespace DAL
   }
 
 
+// ------------------------------------------------------------ c_index
+
   /*!
-    \brief Get the C index value of a three-dimensional array.
+    \brief Get the C index value of up to a three-dimensional array.
 
     This is a helper function that is usually called by the dataset
     object and not by the developer.  Its purpose is to find a single
@@ -99,7 +138,7 @@ namespace DAL
    */
   unsigned long dalData::c_index(long idx1, long idx2, long idx3)
   {
-    vector<long> indices;
+    std::vector<long> indices;
 
     if ( idx1>-1 )
       indices.push_back( idx1 );
@@ -110,14 +149,14 @@ namespace DAL
 
     if (indices.size() != (shape.size()) )
       {
-        cout << "ERROR: Number of indices do not match shape of column." << endl;
-        exit(-1);
+        cerr << "ERROR: Number of indices do not match shape of column.\n";
+        return(-1);
       }
 
     unsigned long index = 0;
     long bb = 1;
 
-    //   cout << "HDF5 HDF5 HDF5 HDF5 HDF5 HDF5" << endl;
+    //   std::cerr << "HDF5 HDF5 HDF5 HDF5 HDF5 HDF5" << endl;
     // indx = xx*shape3[1]*shape3[2] + yy*shape3[2] + zz;
     for (unsigned int dim = 0; dim < shape.size(); dim++)
       {
@@ -133,50 +172,20 @@ namespace DAL
   }
 
 
-  /*!
-          \brief Default destructor.
+// ------------------------------------------------------------ ~dalData
 
-          Defulat data object destructor.
-         */
+  /*!
+    \brief Default destructor.
+
+    Defulat data object destructor.
+   */
   dalData::~dalData()
   {
     if ( data )
       free(data);
   }
 
-  string dalData::get_datatype()
-  {
-    return datatype;
-  }
-
-
-  /*!
-   \brief Converts array values to floating point values.
-
-   Converts array values to floating point values.
-  */
-  void dalData::toFloat()
-  {
-    if ( dal_COMPLEX == datatype )
-      {
-        long length = 1;
-        for ( unsigned int hh=0; hh < shape.size(); hh++ )
-          {
-            length *= shape[ hh ];
-          }
-        data2 = new float[ length ];
-        float lclval;
-        for ( int cell=0; cell < length; cell++ )
-          {
-            cout << abs(*(&(((complex<float>*)data)[ cell ]))) << endl;
-            lclval = abs(*(&(((complex<float>*)data)[ cell ])));
-            exit(2);
-          }
-        cout << "length: " << length << endl;
-        exit(45);
-      }
-
-  }
+// ------------------------------------------------------------ get
 
   /*!
     \brief Get the data.
@@ -205,261 +214,137 @@ namespace DAL
       {
         index = c_index( idx1, idx2, idx3 );
       }
+    else
+      {
+        std::cerr << "ERROR: file type not supported in dalData object.\n";
+        return NULL;
+      }
 
-    if ( dal_COMPLEX == datatype )
+    if ( dal_COMPLEX == dtype )
       return (&(((complex<float>*)data)[ index ]));
 
-    else if ( dal_COMPLEX_CHAR == datatype )
+    else if ( dal_COMPLEX_CHAR == dtype )
       return (&(((complex<char>*)data)[ index ]));
 
-    else if ( dal_COMPLEX_SHORT == datatype )
+    else if ( dal_COMPLEX_SHORT == dtype )
       return (&(((complex<short>*)data)[ index ]));
 
-    else if ( dal_DOUBLE == datatype )
+    else if ( dal_DOUBLE == dtype )
       return (&(((double*)data)[ index ]));
 
-    else if ( dal_INT == datatype )
+    else if ( dal_INT == dtype )
       return (&(((int*)data)[ index ]));
 
-    else if ( dal_SHORT == datatype )
+    else if ( dal_SHORT == dtype )
       return (&(((short*)data)[ index ]));
 
-    else if ( dal_FLOAT == datatype )
+    else if ( dal_FLOAT == dtype )
       return (&(((float*)data)[ index ]));
 
-    else if ( dal_CHAR == datatype )
+    else if ( dal_CHAR == dtype )
       return (&(((char*)data)[ index ]));
 
-    else if ( dal_STRING == datatype )
-      return (&(((string*)data)[ index ]));
+    else if ( dal_STRING == dtype )
+      return (&(((std::string*)data)[ index ]));
 
     return NULL;
   }
 
-  /*!
-          \brief Default constructor.
-
-          Defualt data object constructor.
-         */
-  dalData::dalData()
-  {
-    datatype = "";
-    filetype = "";
-    array_order = "";
-    data = NULL;
-  }
-
-
-  /*!
-          \brief Constructor with a specific file type.
-
-          Constructor with a specific file type.
-
-          \param lclfiletype The file type (i.e. "MSCASA", "HDF5", etc.)
-          \param lcldatatype The data type this instance of the class will
-                             contain.
-          \param lclshape The shape of the data object.
-          \param lclnrows The number of rows in the data object.
-         */
-  dalData::dalData(string lclfiletype, string lcldatatype,
-                   vector<int> lclshape, long lclnrows)
-  {
-    filetype = lclfiletype;
-    if ( MSCASATYPE == lclfiletype )
-      array_order = "fortran";
-    else if ( H5TYPE == lclfiletype )
-      array_order = "c";
-    datatype = lcldatatype;
-    shape = lclshape;
-    nrows = lclnrows;
-    data = NULL;
-  }
-
 #ifdef PYTHON
+
+// ------------------------------------------------------------ get_boost1
 
   bpl::numeric::array dalData::get_boost1()
   {
     return get_boost3(0,-1);
   }
 
+// ------------------------------------------------------------ get_boost2
+
   bpl::numeric::array dalData::get_boost2( int32_t length )
   {
     return get_boost3(0,length);
   }
 
+// ------------------------------------------------------------ get_boost3
+
   bpl::numeric::array dalData::get_boost3( int64_t offset, int32_t length )
   {
     bpl::list data_list;
-    vector<int> mydims;
-    if ( dal_CHAR == datatype )
-      {
-        unsigned int hh = 0;
+    std::vector<int> mydims;
 
-        if (length>0)
-          {
-            mydims.push_back(length);
-            hh=1;
-          }
-        for (; hh<shape.size(); hh++)
-          {
-            mydims.push_back(shape[hh]);
-          }
-        bpl::numeric::array narray = num_util::makeNum(((char*)data)+offset,mydims);
-        return narray;
+    unsigned int hh = 0;
+
+    if (length>0)
+      {
+        mydims.push_back(length);
+        hh=1;
       }
-    else if ( dal_BOOL == datatype )
+    for (; hh<shape.size(); hh++)
       {
-        unsigned int hh = 0;
-
-        if (length>0)
-          {
-            mydims.push_back(length);
-            hh=1;
-          }
-        for (; hh<shape.size(); hh++)
-          {
-            mydims.push_back(shape[hh]);
-          }
-        bpl::numeric::array narray = num_util::makeNum(((unsigned char*)data)+offset,mydims);
-        return narray;
+        mydims.push_back(shape[hh]);
       }
-    else if ( dal_INT == datatype )
-      {
-        unsigned int hh = 0;
 
-        if (length>0)
-          {
-            mydims.push_back(length);
-            hh=1;
-          }
-        for (; hh<shape.size(); hh++)
-          {
-            mydims.push_back(shape[hh]);
-          }
-        bpl::numeric::array narray = num_util::makeNum(((int*)data)+offset,mydims);
-        return narray;
+    if ( dal_CHAR == dtype )
+      {
+        return num_util::makeNum( ((char*)data) + offset, mydims );
       }
-    else if ( dal_FLOAT == datatype )
+    else if ( dal_BOOL == dtype )
       {
-        unsigned int hh = 0;
-
-        if (length>0)
-          {
-            mydims.push_back(length);
-            hh=1;
-          }
-        for (; hh<shape.size(); hh++)
-          {
-            mydims.push_back(shape[hh]);
-          }
-        bpl::numeric::array narray = num_util::makeNum(((float*)data)+offset,mydims);
-        return narray;
+        return num_util::makeNum( ((unsigned char*)data) + offset, mydims );
       }
-    else if ( dal_DOUBLE == datatype )
+    else if ( dal_INT == dtype )
       {
-        unsigned int hh = 0;
-
-        if (length>0)
-          {
-            mydims.push_back(length);
-            hh=1;
-          }
-        for (; hh<shape.size(); hh++)
-          {
-            mydims.push_back(shape[hh]);
-          }
-        bpl::numeric::array narray = num_util::makeNum(((double*)data)+offset,mydims);
-        vector<int> fshape = num_util::shape(narray);
-        return narray;
+        return num_util::makeNum( ((int*)data) + offset, mydims );
       }
-    else if ( dal_COMPLEX == datatype )
+    else if ( dal_FLOAT == dtype )
       {
-        unsigned int hh = 0;
-
-        if (length>0)
-          {
-            mydims.push_back(length);
-            hh=1;
-          }
-        for (; hh<shape.size(); hh++)
-          {
-            mydims.push_back(shape[hh]);
-          }
-        bpl::numeric::array narray = num_util::makeNum(((complex<float>*)data)+offset,mydims);
-        vector<int> fshape = num_util::shape(narray);
-        return narray;
+        return num_util::makeNum(((float*)data)+offset,mydims);
       }
-    else if ( dal_COMPLEX_CHAR == datatype )
+    else if ( dal_DOUBLE == dtype )
       {
-        unsigned int hh = 0;
-
-        if (length>0)
-          {
-            mydims.push_back(length);
-            hh=1;
-          }
-        for (; hh<shape.size(); hh++)
-          {
-            mydims.push_back(shape[hh]);
-          }
-        bpl::numeric::array narray = num_util::makeNum(((complex<char>*)data)+offset,mydims);
-        vector<int> fshape = num_util::shape(narray);
-        return narray;
+        return num_util::makeNum(((double*)data)+offset,mydims);
       }
-    else if ( dal_COMPLEX_SHORT == datatype )
+    else if ( dal_COMPLEX == dtype )
       {
-        unsigned int hh = 0;
-
-        if (length>0)
-          {
-            mydims.push_back(length);
-            hh=1;
-          }
-        for (; hh<shape.size(); hh++)
-          {
-            mydims.push_back(shape[hh]);
-          }
-        bpl::numeric::array narray = num_util::makeNum(((complex<short>*)data)+offset,mydims);
-        vector<int> fshape = num_util::shape(narray);
-        return narray;
+        return num_util::makeNum(((complex<float>*)data)+offset,mydims);
       }
-    else if ( dal_STRING == datatype )
+    else if ( dal_COMPLEX_CHAR == dtype )
       {
-        unsigned int hh = 0;
-
-        if (length>0)
-          {
-            mydims.push_back(length);
-            hh=1;
-          }
-        for (; hh<shape.size(); hh++)
-          {
-            mydims.push_back(shape[hh]);
-          }
+        return num_util::makeNum(((complex<char>*)data)+offset,mydims);
+      }
+    else if ( dal_COMPLEX_SHORT == dtype )
+      {
+        return num_util::makeNum(((complex<short>*)data)+offset,mydims);
+      }
+    else if ( dal_STRING == dtype )
+      {
         bpl::list data_list;
+
         if ( 1 == shape.size() ) // 1D case
           {
             for (int ii=0; ii<nrows; ii++)
               {
-                data_list.append( (*((string*)get(ii))) );
+                data_list.append( (*((std::string*)get(ii))) );
               }
           }
         else if ( 2 == shape.size() ) // 2D case
           {
             for ( int xx=0; xx<shape[0]; xx++)
               for ( int yy=0; yy<shape[1]; yy++)
-                data_list.append( (*((string*)get(xx,yy))) );
+                data_list.append( (*((std::string*)get(xx,yy))) );
           }
         else if ( 3 == shape.size() ) // 3D case
           {
             for ( int xx=0; xx<shape[0]; xx++)
               for ( int yy=0; yy<shape[1]; yy++)
                 for ( int zz=0; zz<shape[2]; zz++)
-                  data_list.append( (*((string*)get(xx,yy,zz))) );
+                  data_list.append( (*((std::string*)get(xx,yy,zz))) );
           }
         else
           {
-            cout << "ERROR: string array rank > 3 not supported. dalData::get_boost()\n";
+            std::cerr << "ERROR: string array rank > 3 not supported. "
+                      << "dalData::get_boost()\n";
           }
 
         bpl::numeric::array narray = num_util::makeNum(data_list);
@@ -467,10 +352,14 @@ namespace DAL
       }
     else
       {
-        cout << "ERROR:  Datatype '" << datatype << "' not yet supported.  (dalData::get_boost)\n";
+        std::cerr << "ERROR:  Datatype '" << dtype
+                  << "' not yet supported.  (dalData::get_boost)\n";
+
         for (int ii=0; ii<1; ii++)
           data_list.append(0);
+
         bpl::numeric::array nadata( data_list );
+
         return nadata;
       }
   }

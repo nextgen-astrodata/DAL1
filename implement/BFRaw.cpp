@@ -138,7 +138,6 @@ namespace DAL
       {
         cout << "ERROR: problem with read (fileheader)." << endl;
         cout << "read pointer position: " << rawfile->tellg() << endl;
-        exit(3);
       }
 
 #ifdef DEBUGGING_MESSAGES

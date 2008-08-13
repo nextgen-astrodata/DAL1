@@ -21,6 +21,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#ifndef CONVERT_H
+#define CONVERT_H
+
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -68,3 +71,5 @@ inline std::string stringify(const T& x)
                         + typeid(x).name() + ")");
   return o.str();
 }
+
+#endif // CONVERT_H

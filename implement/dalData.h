@@ -24,8 +24,8 @@
 #ifndef DALDATA_H
 #define DALDATA_H
 
-#ifndef DAL_H
-#include "dal.h"
+#ifndef DALBASETYPES_H
+#include "dalBaseTypes.h"
 #endif
 
 
@@ -34,11 +34,8 @@ namespace DAL
 
   /*!
     \class dalData
-
     \brief Represents container of data.
-
     \ingroup DAL
-
     \author Joseph Masters
 
     <h3>Synopsis</h3>
@@ -52,27 +49,33 @@ namespace DAL
     There will also be a way for the developer to get access to the c-array,
     exactly as it is stored.
   */
+
   class dalData
     {
-      string datatype;  // i.e. "dal_COMPLEX", "dal_INT", "dal_FLOAT"
-      string filetype;  // i.e. "MSCASA", "FITS", "HDF5"
-      string array_order; // i.e. "fortran", "c"
+      std::string dtype;  // i.e. "dal_COMPLEX", "dal_INT", "dal_FLOAT"
+      std::string filetype;  // i.e. "MSCASA", "FITS", "HDF5"
+      std::string array_order; // i.e. "fortran", "c"
 
     public:
 
       void * data;  // pointer to the actual c-array data
       void * data2;  // used to convert one datatype to another
-      vector<int> shape;
+      std::vector<int> shape;
       long nrows;
-      string get_datatype();
+
       dalData();
+      dalData( std::string lclfiletype,  std::string lcldatatype,
+               std::vector<int> lclshape, long lclnrows);
       ~dalData();
-      dalData(string lclfiletype, string lcldatatype,
-              vector<int> lclshape, long lclnrows);
+
       unsigned long fortran_index(long idx1, long idx2, long idx3);
       unsigned long c_index(long idx1, long idx2, long idx3);
+
+      inline std::string datatype()
+      {
+        return dtype;
+      }
       void * get(long idx1=-1, long idx2=-1, long idx3=-1);
-      void toFloat();
 
 #ifdef PYTHON
       bpl::numeric::array get_boost1();

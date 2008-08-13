@@ -34,14 +34,6 @@
 #ifndef DALTABLE_H
 #define DALTABLE_H
 
-#ifndef DAL_H
-#include "dal.h"
-#endif
-
-#ifndef DALATTRIBUTE_H
-#include "dalAttribute.h"
-#endif
-
 #ifndef DALFILTER_H
 #include "dalFilter.h"
 #endif
@@ -75,11 +67,7 @@ namespace DAL
       bool firstrecord;
       string name; // table name
       string type;  // "HDF5", "MSCASA" or "FITS"; for example
-      vector<dalAttribute> attributes; // list of table attributes
       vector<dalColumn> columns; // list of table columns
-
-      long nrows; // number of table rows
-      int ncols; // number of table columns
 
 #ifdef WITH_CASA
 
@@ -94,7 +82,6 @@ namespace DAL
       dalTable();
       dalTable( string filetype );
       ~dalTable();
-      void getAttributes();
       void printColumns();
       void openTable( void * voidfile, string tablename, string groupname );
 
@@ -140,12 +127,30 @@ namespace DAL
       std::vector<std::string> listColumns();
       void readRows( void * data_out, long start, long stop, long buffersize=0 );
       void * getAttribute( string attrname );
-      void printAttribute( string attrname );
-      void setAttribute_string( string attrname, string data );
+
+      // ---------------------------------------------------------- getAttribute
+
+      /*!
+        \brief Get the value of an attribute.
+
+        Get the value of an attribute.  This is different from printAttribute
+        because the value of the attribute is returned into a structure
+        instead of simply printing.
+
+        \param attrname The name of the attribute you want to retrieve.
+
+      */
+      template<class T>
+      bool getAttribute( std::string attrname, T &value )
+      {
+        return h5getAttribute( table_id, attrname, value );
+      }
+
+      bool setAttribute_string( string attrname, string data );
       void setAttribute_char( string attrname, char * data, int size=1 );
-      void setAttribute_int( string attrname, int * data, int size=1 );
-      void setAttribute_uint( string attrname, unsigned int * data, int size=1 );
-      void setAttribute_double( string attrname, double * data, int size=1 );
+      bool setAttribute_int( string attrname, int * data, int size=1 );
+      bool setAttribute_uint( string attrname, unsigned int * data, int size=1 );
+      bool setAttribute_double( string attrname, double * data, int size=1 );
       bool findAttribute( string attrname );
       long getNumberOfRows();
       void getName();

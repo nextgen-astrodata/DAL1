@@ -44,10 +44,11 @@
 
 /*!
   \brief Type of TIM-board data
-  
+
   \ingroup DAL
 */
-enum datatypes {
+enum datatypes
+{
   //! TIM40 board specification
   TIM40 = 1,
   //! TIM80 board specification
@@ -57,8 +58,9 @@ enum datatypes {
 /*!
   \brief Class of event data
 */
-enum lopesclass {
-  //! Cosmic ray data 
+enum lopesclass
+{
+  //! Cosmic ray data
   cosmic = 1,
   //! Simulation data
   simulation= 2,
@@ -68,58 +70,61 @@ enum lopesclass {
   solar=4
 };
 
-typedef struct {
-  //! length of the dataset (in bytes)
-  unsigned int length;
-  //! LOPES-Event version
-  unsigned int version;
-  //! KASCADE-style timestamp   
-  unsigned int JDR,TL;
-  //! Type of data. (currently only TIM-40 supported)
-  unsigned int type;
-  //! cosmic / simulation / solar-flare etc.
-  unsigned int evclass;
-  //! Size of one channel (number of shorts)  (optional)
-  unsigned int blocksize;
-  //! First entry is presync before the sync signal (optional)
-  int presync;
-  // --- This is the change from version 1 to version 2 ---
-  //! 40MHz timestamp from menable card
-  unsigned int LTL;
-  // --- This is the change from version 2 to version 3 ---
-  //! ID of the observatory (0:LOPES; 1:LORUN)
-  int observatory;
-  unsigned int frei[2];
-  //! unstructured raw data with variable length
-  short int data[MAXDATASIZE/2];
-} lopesevent_v1;
+typedef struct
+  {
+    //! length of the dataset (in bytes)
+    unsigned int length;
+    //! LOPES-Event version
+    unsigned int version;
+    //! KASCADE-style timestamp
+    unsigned int JDR,TL;
+    //! Type of data. (currently only TIM-40 supported)
+    unsigned int type;
+    //! cosmic / simulation / solar-flare etc.
+    unsigned int evclass;
+    //! Size of one channel (number of shorts)  (optional)
+    unsigned int blocksize;
+    //! First entry is presync before the sync signal (optional)
+    int presync;
+    // --- This is the change from version 1 to version 2 ---
+    //! 40MHz timestamp from menable card
+    unsigned int LTL;
+    // --- This is the change from version 2 to version 3 ---
+    //! ID of the observatory (0:LOPES; 1:LORUN)
+    int observatory;
+    unsigned int frei[2];
+    //! unstructured raw data with variable length
+    short int data[MAXDATASIZE/2];
+  } lopesevent_v1;
 
-typedef struct {
-  //! channel ID: pcnum*10000 + boardnum*100 + chnum
-  unsigned int channid;
-  //! length of the data (number of shorts)
-  unsigned int length;
-  //! the data itself.
-  short int *data;
-} channeldata;
+typedef struct
+  {
+    //! channel ID: pcnum*10000 + boardnum*100 + chnum
+    unsigned int channid;
+    //! length of the data (number of shorts)
+    unsigned int length;
+    //! the data itself.
+    short int *data;
+  } channeldata;
 
 
 /*!
-  \brief definition of transev 
+  \brief definition of transev
 
   This is the structure, that will be sent to te KASCADE xevb
 */
-typedef struct {
-  // Length of the dataset (in bytes)
-  unsigned int length;
-  unsigned int version;
-  // KASCADE-style timestamp   
-  unsigned int JDR,TL;
-  // Type of data. (currently only TIM-40 supported)
-  unsigned int type;
-  // cosmic / simulation / solar-flare etc.
-  unsigned int evclass;
-} transev1;
+typedef struct
+  {
+    // Length of the dataset (in bytes)
+    unsigned int length;
+    unsigned int version;
+    // KASCADE-style timestamp
+    unsigned int JDR,TL;
+    // Type of data. (currently only TIM-40 supported)
+    unsigned int type;
+    // cosmic / simulation / solar-flare etc.
+    unsigned int evclass;
+  } transev1;
 
 
 // KASCADE-xevb stuff

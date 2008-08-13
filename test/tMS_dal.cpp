@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------*
- | $Id:: tUseMeasures.cc 511 2007-08-05 13:14:48Z baehren                $ |
+ | $Id:: tUseMeasures.cc 511 2007-08-05 13:14:48Z masters                $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2006 by Joseph Masters                                  *
@@ -38,8 +38,6 @@
 */
 
 #include <dal.h>
-#include <dalDataset.h>
-#include <dalData.h>
 
 using namespace casa;
 using namespace DAL;
@@ -91,7 +89,7 @@ int main(int argc, char *argv[])
   if ( time_col->nrows() <= 0 )
     {
       cout << "ERROR:  No rows within filtered file." << endl;
-      exit(2);
+      return 1;
     }
 
   dalData * data_object = time_col->data();

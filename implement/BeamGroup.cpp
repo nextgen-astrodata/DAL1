@@ -203,27 +203,18 @@ namespace DAL
 
     \return ra -- The ra of the beam pointing direction
   */
-  std::string BeamGroup::ra ()
+  std::string BeamGroup::ra()
   {
-    std::string attribute_ra ("");
+    std::string ra ("");
 
     if (group_p->getName() != "UNDEFINED")
       {
-        try
-          {
-            char * ra = reinterpret_cast<char*>(group_p->getAttribute("RA"));
-            attribute_ra = string(ra);
-            delete [] ra;
-            ra = NULL;
-
-          }
-        catch (std::string message)
+        if ( DAL::FAIL == group_p->getAttribute( "RA", ra ) )
           {
             std::cerr << "-- Error extracting attribute RA" << endl;
-            attribute_ra = "";
           }
       }
-    return attribute_ra;
+    return ra;
   }
 
 
@@ -235,27 +226,18 @@ namespace DAL
 
     \return dec -- The declination of the beam pointing direction
   */
-  std::string BeamGroup::dec ()
+  std::string BeamGroup::dec()
   {
-    std::string attribute_dec ("");
+    std::string dec ("");
 
     if (group_p->getName() != "UNDEFINED")
       {
-        try
-          {
-            char * dec = reinterpret_cast<char*>(group_p->getAttribute("DEC"));
-            attribute_dec = string(dec);
-            delete [] dec;
-            dec = NULL;
-
-          }
-        catch (std::string message)
+        if ( DAL::FAIL == group_p->getAttribute( "DEC", dec ) )
           {
             std::cerr << "-- Error extracting attribute DEC" << endl;
-            attribute_dec = "";
           }
       }
-    return attribute_dec;
+    return dec;
   }
 
 
@@ -269,21 +251,13 @@ namespace DAL
   */
   int BeamGroup::n_subbands ()
   {
-    int n_subbands = 0;
+    int n_subbands = -1;
     if (group_p->getName() != "UNDEFINED")
       {
-        try
-          {
-            int * n_subbands_p = reinterpret_cast<int*>(group_p->getAttribute("NUMBER_OF_SUBBANDS"));
-            n_subbands = *n_subbands_p;
-            delete [] n_subbands_p;
-            n_subbands_p = NULL;
-
-          }
-        catch (std::string message)
+        if ( DAL::FAIL == h5get_attribute( n_subbands, "NUMBER_OF_SUBBANDS",
+                                           group_p->getId() ) )
           {
             std::cerr << "-- Error extracting attribute NUMBER_OF_SUBBANDS" << endl;
-            n_subbands = -1;
           }
       }
     return n_subbands;

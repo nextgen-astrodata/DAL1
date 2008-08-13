@@ -24,22 +24,6 @@
 #ifndef BEAMGROUP_H
 #define BEAMGROUP_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifndef DAL_H
-#include <dal.h>
-#endif
-
-#ifndef DALDATASET_H
-#include <dalDataset.h>
-#endif
-
-#ifndef DALGROUP_H
-#include <dalGroup.h>
-#endif
-
 #ifndef BEAMSUBBAND_H
 #include <BeamSubband.h>
 #endif

@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------*
- | $Id:: cs1.h 389 2007-06-13 08:47:09Z baehren                          $ |
+ | $Id::                                                                 $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2006 by Joseph Masters                                  *
@@ -28,41 +28,36 @@
 namespace DAL
   {
 
-// ==============================================================================
-//
-//  Construction
-//
-// ==============================================================================
+// ------------------------------------------------------------ dalGroup
 
   /*!
-          \brief Default constructor.
+    \brief Default constructor.
 
-          Default constructor.
-         */
+    Default constructor.
+   */
   dalGroup::dalGroup()
   {
     file = NULL;
-    groupname = "";
-    groupname_full = "";
+    groupname = "UNKNOWN";
+    groupname_full = "UNKNOWN";
     group = NULL;
-    tables.clear();
-    attributes.clear();
     filter = NULL;
     file_id = 0;
     group_id = 0;
     status = 0;
-    subgroup = NULL;
   }
 
 
+// ------------------------------------------------------------ dalGroup
+
   /*!
-          \brief Create a group in a certain file.
+    \brief Create a group in a certain file.
 
-          Create a group in a certain file.
+    Create a group in a certain file.
 
-          \param groupname The name of the group to create.
-          \param file A pointer to the file where you want to create the group.
-         */
+    \param groupname The name of the group to create.
+    \param file A pointer to the file where you want to create the group.
+   */
   dalGroup::dalGroup( const char * gname, void * voidfile )
   {
 
@@ -74,36 +69,49 @@ namespace DAL
 
     groupname = gname;
     groupname_full = "/" + stringify(gname);
-    group_id = H5Gcreate1(*(hid_t*)file, groupname_full.c_str(), 0);
+    if ( ( group_id = H5Gcreate1(file_id, groupname_full.c_str(), 0) )
+         < 0 )
+      {
+        std::cerr << "ERROR: Could not create group'" << groupname_full
+                  << "'.\n";
+      }
+
   }
 
 
+// ------------------------------------------------------------ dalGroup
+
   /*!
-          \brief Create a subgroup.
+    \brief Create a subgroup.
 
-          Create a subgroup in an existing group.
+    Create a subgroup in an existing group.
 
-          \param group_id The parent group identifier.
-          \param gname The name of the subgroup.
-         */
+    \param group_id The parent group identifier.
+    \param gname The name of the subgroup.
+   */
   dalGroup::dalGroup( hid_t group_id, const char * gname )
   {
     dalGroup();
 
-    group_id = H5Gcreate1(group_id, gname, 0);
+    if ( ( group_id = H5Gcreate1(group_id, gname, 0) ) < 0 )
+      {
+        std::cerr << "ERROR: Could not create group'" << string( gname )
+                  << "'.\n";
+      }
   }
 
 
+// ------------------------------------------------------------ open
+
   /*!
-          \brief Open an existing group.
+    \brief Open an existing group.
 
-          Open an existing group.
+    Open an existing group.
 
-          \param file A pointer to the file.
-          \param groupname The name of the group you want to open.
-
-          \return An identifier for the new group.
-         */
+    \param file A pointer to the file.
+    \param groupname The name of the group you want to open.
+    \return An identifier for the new group.
+   */
   int dalGroup::open( void * voidfile, string gname )
   {
 
@@ -114,23 +122,35 @@ namespace DAL
     file_id = *lclfile;  // get the file handle
 
     groupname_full = "/" + groupname;
-    group_id = H5Gopen1( file_id, groupname_full.c_str() );
+    if ( ( group_id = H5Gopen1( file_id, groupname_full.c_str() ) ) < 0 )
+      {
+        std::cerr << "ERROR: Could not create group'" << groupname_full
+                  << "'.\n";
+        return 0;
+      }
+
     return( group_id );
   }
 
 
-  /*!
-          \brief Default destructor.
+// ------------------------------------------------------------ ~dalGroup
 
-          Default destructor.
-         */
+  /*!
+    \brief Default destructor.
+
+    Default destructor.
+   */
   dalGroup::~dalGroup()
   {
     if ( 0 != group_id )
       if ( H5Gclose(group_id) < 0 )
-        cout << "ERROR: dalGroup::close() failed.\n";
+        {
+          std::cerr << "ERROR: dalGroup::close() failed.\n";
+        }
   }
 
+
+// ------------------------------------------------------------ getId
 
   /*!
     \brief Get the group ID.
@@ -144,34 +164,42 @@ namespace DAL
     return group_id;
   }
 
+// -------------------------------------------------- dalGroup_file_info
+
   /*
    * Operator function.
    */
   herr_t dalGroup_file_info(hid_t loc_id, const char *name, void *opdata)
   {
     H5G_stat_t statbuf;
-    string myname;
 
     /*
      * Get type of the object and display its name and type.
      * The name of the object is passed to this function by
      * the Library. Some magic :-)
      */
-    H5Gget_objinfo(loc_id, name, false, &statbuf);
+    if ( H5Gget_objinfo(loc_id, name, false, &statbuf) > 0 )
+      {
+        std::cerr << "ERROR: Could not get group object info.\n";
+        return 1;
+      }
+
     switch (statbuf.type)
       {
       case H5G_DATASET:
-        myname = string(name);
-        (*(vector<string>*)opdata).push_back( myname );
+        (*(vector<string>*)opdata).push_back( std::string(name) );
         break;
       case H5G_GROUP:
       case H5G_TYPE:
       default:
         break;
       }
+
     return 0;
   }
 
+
+// ------------------------------------------------------------ getMemberNames
 
   /*!
     \brief Retrieve the array or table member names.
@@ -183,21 +211,21 @@ namespace DAL
   vector<string> dalGroup::getMemberNames()
   {
     vector<string> member_names;
-    H5Giterate(file_id, groupname.c_str(), NULL, dalGroup_file_info, &member_names);
+    H5Giterate( file_id, groupname.c_str(), NULL, dalGroup_file_info, &member_names );
     return member_names;
   }
 
+// ------------------------------------------------------------ setName
 
   /*!
-          \brief Set group name.
+    \brief Set group name.
 
-          Set the name of the group.
+    Set the name of the group.
 
-          \param gname The name of the group.
-
-          \return Zero on success. Non-zero on failure.
-         */
-  bool dalGroup::setName ( string gname )
+    \param gname The name of the group.
+    \return Zero on success. Non-zero on failure.
+   */
+  bool dalGroup::setName ( std::string gname )
   {
     if ( gname.length() > 0 )
       {
@@ -206,11 +234,13 @@ namespace DAL
       }
     else
       {
-        cout << "Error:  Group name must not be empty." << endl;
+        std::cerr << "Error:  Group name must not be empty.\n";
         return FAIL;
       }
   }
 
+
+// ------------------------------------------------------- createShortArray
 
   /*!
     \brief Create an array of shorts within the group.
@@ -239,6 +269,8 @@ namespace DAL
 
 
 
+// ------------------------------------------------------------ createIntArray
+
   /*!
     \brief Create an array of integers within the group.
 
@@ -265,6 +297,8 @@ namespace DAL
   }
 
 
+// ------------------------------------------------------- createFloatArray
+
   /*!
     \brief Create an array of floating point values within the group.
 
@@ -290,6 +324,8 @@ namespace DAL
     return la;
   }
 
+
+// ------------------------------------------------ createComplexFloatArray
 
   /*!
     \brief Create an array of complex floating point values within the group.
@@ -318,6 +354,8 @@ namespace DAL
   }
 
 
+// ------------------------------------------------- createComplexShortArray
+
   /*!
     \brief Create an array of complex int16 values within the group.
 
@@ -344,18 +382,21 @@ namespace DAL
     return la;
   }
 
+// ------------------------------------------------------------ getName
+
   /*!
-          \brief Get group name.
+     \brief Get group name.
 
-          Retrieve the name of the group object.
+    Retrieve the name of the group object.
 
-          \return The name of the group.
-         */
+    \return The name of the group.
+   */
   string dalGroup::getName ()
   {
     return groupname;
   }
 
+// ---------------------------------------------------- setAttribute_string
 
   /*!
     \brief Define a string attribute.
@@ -366,35 +407,13 @@ namespace DAL
     \param data The value of the attribute you want to create.
     \param size The size of the array.
   */
-  void dalGroup::setAttribute_string( string attrname, string * data, int size )
+  bool dalGroup::setAttribute_string( string attrname, string * data, int size )
   {
-    hid_t att = 0;
-    hid_t dataspace = 0;
-    hsize_t dims[1] = { size };
-
-    char ** string_attr = (char**)malloc( size * sizeof(char*) );
-    for ( int ii = 0; ii < size; ii++ )
-      {
-        string_attr[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
-        strcpy( string_attr[ii], data[ii].c_str() );
-        cerr << string_attr[ii] << endl;
-      }
-
-    hid_t type = H5Tcopy (H5T_C_S1);
-    status = H5Tset_size (type, H5T_VARIABLE);
-    dataspace = H5Screate_simple(1, dims, NULL);
-    att = H5Acreate1( group_id, attrname.c_str(), type, dataspace, H5P_DEFAULT );
-    status = H5Awrite( att, type, string_attr ) ;
-    status = H5Aclose( att );
-
-    for ( int ii = 0; ii < size; ii++ )
-      {
-        free( string_attr[ii] );
-      }
-    free( string_attr );
-
+    return h5setAttribute_string( group_id, attrname, data, size );
   }
 
+
+// --------------------------------------------------- setAttribute_string
 
   /*!
     \brief Define a string attribute.
@@ -404,15 +423,13 @@ namespace DAL
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
   */
-  void dalGroup::setAttribute_string( string attrname, string data )
+  bool dalGroup::setAttribute_string( string attrname, string data )
   {
-    if ( H5LTset_attribute_string( file_id, groupname.c_str(),
-                                   attrname.c_str(), data.c_str() ) < 0 )
-      {
-        cout << "ERROR: could not set attribute " << attrname << endl;
-      }
+    return setAttribute_string( attrname, &data, 1 );
   }
 
+
+// ----------------------------------------------------- setAttribute_int
 
   /*!
     \brief Define a integer attribute.
@@ -424,15 +441,13 @@ namespace DAL
     \param size Optional parameter specifying the array size of the
                 attribute.  Default is scalar.
   */
-  void dalGroup::setAttribute_int( string attrname, int * data, int size )
+  bool dalGroup::setAttribute_int( string attrname, int * data, int size )
   {
-    if ( H5LTset_attribute_int( file_id, groupname.c_str(),
-                                attrname.c_str(), data, size ) < 0 )
-      {
-        cout << "ERROR: could not set attribute " << attrname << endl;
-      }
+    return h5setAttribute_int( group_id, attrname, data, size );
   }
 
+
+// ----------------------------------------------------- setAttribute_uint
 
   /*!
     \brief Define an unsigned integer attribute.
@@ -444,15 +459,31 @@ namespace DAL
     \param size Optional parameter specifying the array size of the
                 attribute.  Default is scalar.
   */
-  void dalGroup::setAttribute_uint( string attrname, unsigned int * data, int size )
+  bool dalGroup::setAttribute_uint( string attrname, unsigned int * data,
+                                    int size )
   {
-    if ( H5LTset_attribute_uint( file_id, groupname.c_str(),
-                                 attrname.c_str(), data, size ) < 0 )
-      {
-        cout << "ERROR: could not set attribute " << attrname << endl;
-      }
+    return h5setAttribute_uint( group_id, attrname, data, size );
   }
 
+// ----------------------------------------------------- setAttribute_float
+
+  /*!
+    \brief Define a float attribute.
+
+    Define a float attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \param size Optional parameter specifying the array size of the
+                attribute.  Default is scalar.
+  */
+  bool dalGroup::setAttribute_float( string attrname, float * data,
+                                     int size )
+  {
+    return h5setAttribute_float( group_id, attrname, data, size );
+  }
+
+// -------------------------------------------- setAttribute_double
 
   /*!
     \brief Define a double precision floating point attribute.
@@ -464,180 +495,9 @@ namespace DAL
     \param size Optional parameter specifying the array size of the
                 attribute.  Default is scalar.
   */
-  void dalGroup::setAttribute_double( string attrname, double * data, int size )
+  bool dalGroup::setAttribute_double( string attrname, double * data, int size )
   {
-    if ( H5LTset_attribute_double( file_id, groupname.c_str(),
-                                   attrname.c_str(), data, size ) < 0 )
-      {
-        cout << "ERROR: could not set attribute " << attrname << endl;
-      }
-  }
-
-
-  /*!
-    \brief Print the group attributes.
-
-    Print the group attributes.
-  */
-  void dalGroup::getAttributes()
-  {
-
-    //status = H5Aget_num_attrs(group_id);
-    //printf ("H5Aget_num_attrs returns: %i\n", status);
-    //unsigned number = 0;
-    //unsigned * idx = &number;
-    //status = H5Aiterate( group_id, idx, attr_info, NULL );
-    //printf ("\nH5Aiterate returns: %i\n", status);
-
-  }
-
-
-  /*!
-    \brief Print the value of a specified attribute.
-
-    Print the value of a specified attribute.
-
-    \param attrname The name of the attribute you want to print.
-  */
-  void dalGroup::printAttribute( string attrname )
-  {
-
-    hsize_t * dims;
-    H5T_class_t type_class;
-    size_t type_size;
-
-    // Check if attribute exists
-    if ( H5Aexists(group_id, attrname.c_str()) <= 0 )
-      {
-        cerr << "Attribute " << attrname << " not found." << endl;
-        return;
-      }
-
-    groupname_full = "/" + groupname;
-
-    int rank;
-    H5LTget_attribute_ndims(file_id, groupname_full.c_str(), attrname.c_str(),
-                            &rank );
-
-    dims = (hsize_t *)malloc(rank * sizeof(hsize_t));
-
-    H5LTget_attribute_info( file_id, groupname_full.c_str(), attrname.c_str(),
-                            dims, &type_class, &type_size );
-
-    if ( H5T_FLOAT == type_class )
-      {
-        double data[*dims];
-        H5LTget_attribute(file_id, groupname_full.c_str(), attrname.c_str(),
-                          H5T_NATIVE_DOUBLE, data);
-        cout << attrname << " = ";
-        for (unsigned int ii=0; ii<*dims; ii++)
-          {
-            cout << data[ii];
-            if (ii < (*dims)-1)
-              cout << ',';
-            else
-              cout << endl;
-          }
-      }
-    else if ( H5T_INTEGER == type_class )
-      {
-        int data[*dims];
-        H5LTget_attribute(file_id, groupname_full.c_str(), attrname.c_str(),
-                          H5T_NATIVE_INT, data);
-        cout << attrname << " = ";
-        for (unsigned int ii=0; ii<*dims; ii++)
-          {
-            cout << data[ii];
-            if (ii < (*dims)-1)
-              cout << ',';
-            else
-              cout << endl;
-          }
-      }
-    else if ( H5T_STRING == type_class )
-      {
-        char* data;
-        groupname_full = "/" + groupname;
-        data = (char *)malloc(rank * sizeof(char));
-        H5LTget_attribute_string( file_id, groupname_full.c_str(),
-                                  attrname.c_str(),data);
-        cout << attrname << " = " << data << endl;
-      }
-    else
-      {
-        cout << "Attribute " << attrname << " type unknown." << endl;
-      }
-  }
-
-
-  /*!
-    \brief Get the value of an attribute.
-
-    Get the value of an attribute.  This is different from printAttribute
-    because the value of the attribute is returned into a structure
-    instead of simply printing.
-
-    \param attrname The name of the attribute you want to retrieve.
-
-    \return void * A pointer to the data in the attribute.
-  */
-  void * dalGroup::getAttribute( string attrname )
-  {
-
-    hsize_t dims;
-    H5T_class_t type_class;
-    size_t type_size;
-
-    // Check if attribute exists
-    if ( H5Aexists(group_id, attrname.c_str()) <= 0 )
-      {
-        return NULL;
-      }
-
-    groupname_full = "/" + groupname;
-
-    int rank;
-    H5LTget_attribute_ndims(file_id, groupname_full.c_str(), attrname.c_str(),
-                            &rank );
-
-    H5LTget_attribute_info( file_id, groupname_full.c_str(), attrname.c_str(),
-                            &dims, &type_class, &type_size );
-
-    if ( H5T_FLOAT == type_class )
-      {
-        double * data;
-        data = new double[1];
-        if ( 0 < H5LTget_attribute(file_id, groupname_full.c_str(), attrname.c_str(),
-                                   H5T_NATIVE_DOUBLE, data) )
-          return NULL;
-        else
-          return reinterpret_cast<double*>(data);
-      }
-    else if ( H5T_INTEGER == type_class )
-      {
-        int * data;
-        data = new int[1];
-        if ( 0 < H5LTget_attribute(file_id, groupname_full.c_str(), attrname.c_str(),
-                                   H5T_NATIVE_INT, data) )
-          return NULL;
-        else
-          return reinterpret_cast<int*>(data);
-      }
-    else if ( H5T_STRING == type_class )
-      {
-        char * data;
-        groupname_full = "/" + groupname;
-        data = new char[256];
-        if ( 0 < H5LTget_attribute_string( file_id, groupname_full.c_str(),
-                                           attrname.c_str(),data) )
-          return NULL;
-        else
-          return data;
-      }
-    else
-      {
-        return NULL;
-      }
+    return h5setAttribute_double( group_id, attrname, data, size );
   }
 
 #ifdef PYTHON
@@ -652,6 +512,8 @@ namespace DAL
    * wrappers for createIntArray
    ******************************************************/
 
+// ------------------------------------------------------------ cia_boost1
+
   dalArray * dalGroup::cia_boost1( string arrayname, bpl::list pydims,
                                    bpl::list pydata )
   {
@@ -665,6 +527,8 @@ namespace DAL
 
     return array;
   }
+
+// ------------------------------------------------------------ cia_boost2
 
   dalArray * dalGroup::cia_boost2(
     string arrayname,
@@ -697,6 +561,8 @@ namespace DAL
     return array;
   }
 
+// --------------------------------------------- cia_boost_numarray1
+
   dalArray * dalGroup::cia_boost_numarray1(
     string arrayname,
     bpl::list pydims,
@@ -713,6 +579,8 @@ namespace DAL
 
     return array;
   }
+
+// ------------------------------------------- cia_boost_numarray2
 
   dalArray * dalGroup::cia_boost_numarray2(
     string arrayname,
@@ -735,6 +603,8 @@ namespace DAL
     return array;
   }
 
+// ------------------------------------------------------------ ria_boost
+
   /******************************************************
    * wrapper for readIntArray
    ******************************************************/
@@ -752,7 +622,7 @@ namespace DAL
     hid_t data_rank = H5Sget_simple_extent_ndims(filespace);
     hsize_t dims[ data_rank ];
 #ifdef DEBUGGING_MESSAGES
-    cout << "data rank: " << data_rank << endl;
+    std::cerr << "data rank: " << data_rank << endl;
 #endif
     status = H5Sget_simple_extent_dims(filespace, dims, NULL);
 
@@ -761,14 +631,14 @@ namespace DAL
     for (int ii=0; ii<data_rank; ii++)
       {
 #ifdef DEBUGGING_MESSAGES
-        cout << "dims["  << ii << "]: " << dims[ii] << endl;
+        std::cerr << "dims["  << ii << "]: " << dims[ii] << endl;
 #endif
         size *= dims[ii];
         dims_list.append(dims[ii]);
       }
 
 #ifdef DEBUGGING_MESSAGES
-    cout << "size: " << size << endl;
+    std::cerr << "size: " << size << endl;
 #endif
 
     int * data = NULL;
@@ -779,7 +649,7 @@ namespace DAL
 #ifdef DEBUGGING_MESSAGES
     for (int ii=0; ii<size; ii++)
       {
-        cout << data[ii] << endl;
+        std::cerr << data[ii] << endl;
       }
 #endif
 
@@ -806,7 +676,11 @@ namespace DAL
   /******************************************************
    * wrappers for createFloatArray
    ******************************************************/
-  dalArray * dalGroup::cfa_boost( string arrayname, bpl::list pydims, bpl::list pydata, bpl::list cdims )
+
+// ------------------------------------------------------------ cfa_boost
+
+  dalArray * dalGroup::cfa_boost( string arrayname, bpl::list pydims,
+                                  bpl::list pydata, bpl::list cdims )
   {
 
     vector<int> dims;
@@ -832,6 +706,8 @@ namespace DAL
 
     return array;
   }
+
+// ---------------------------------------------------- cfa_boost_numarray
 
   dalArray * dalGroup::cfa_boost_numarray( string arrayname,
       bpl::list pydims,

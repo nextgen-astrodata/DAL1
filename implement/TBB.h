@@ -24,20 +24,8 @@
 #ifndef TBB_H
 #define TBB_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifndef DAL_H
-#include <dal.h>
-#endif
-
 #ifndef DALDATASET_H
 #include <dalDataset.h>
-#endif
-
-#ifndef COMMON_H
-#include <Common.h>
 #endif
 
 // socket headers

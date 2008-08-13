@@ -24,19 +24,6 @@
 #ifndef BEAMFORMED_H
 #define BEAMFORMED_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifndef DAL_H
-#include <dal.h>
-#endif
-
-#ifndef DALDATASET_H
-#include <dalDataset.h>
-#endif
-
-
 #ifndef BEAMGROUP_H
 #include <BeamGroup.h>
 #endif
@@ -80,9 +67,25 @@ namespace DAL
       BeamFormed();
       BeamFormed(std::string const &filename);
       ~BeamFormed();
+
+
+      // ---------------------------------------------------------- print_vector
+
+      /*!
+        \brief Print a list of vector elements
+        \param os        -- output stream [I]
+        \param vec       -- vector [I]
+      */
       template<class T>
       void print_vector ( std::ostream& os,
-                          std::vector<T> &vec);
+                          std::vector<T> &vec)
+      {
+        for (uint n(0); n<vec.size(); n++)
+          {
+            os << vec[n] << ", ";
+          }
+      }
+
       std::vector< std::string > h5get_str_array_attr( std::string attrname,
           hid_t obj_id );
       /*! \brief Provide a summary of the internal status */
@@ -135,9 +138,21 @@ namespace DAL
       bpl::list beams_boost();
       bpl::list source_boost();
 
+      // ---------------------------------------------------------- vector2list
+
       /* utility to turn a vector into a python list */
+
       template <class T>
-      bpl::list vector2list( std::vector<T> vec );
+      bpl::list vector2list( std::vector<T> vec )
+      {
+        bpl::list mylist;
+
+        typename std::vector<T>::iterator it;
+        for ( it=vec.begin(); it < vec.end(); it++ )
+          mylist.append( *it );
+
+        return mylist;
+      }
 
 #endif // PYTHON
 

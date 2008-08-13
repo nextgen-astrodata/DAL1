@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------*
- | $Id:: tUseMeasures.cc 511 2007-08-05 13:14:48Z baehren                $ |
+ | $Id:: tUseMeasures.cc 511 2007-08-05 13:14:48Z masters                $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2006 by Joseph Masters                                  *
@@ -31,13 +31,7 @@
   \author Joseph Masters
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifndef DALDATASET_H
-#include <dalDataset.h>
-#endif
+#include <dal.h>
 
 using namespace DAL;
 
@@ -77,7 +71,7 @@ int main(int argc, char *argv[])
 //    {
 // 	cout << "Problem opening dataset: " << FILENAME << '.' << " Quiting."
 // 	     << endl;
-//    	exit(FAIL);
+//    	return(FAIL);
 //    }
 
 //    dalGroup * groupA = dataset2->createGroup( "groupA" );

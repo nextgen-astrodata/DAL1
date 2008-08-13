@@ -49,7 +49,7 @@
 #endif
 #include <new>
 
-using namespace DAL;
+using namespace std;
 
 int main (int argc, char *argv[])
 {
@@ -74,7 +74,7 @@ int main (int argc, char *argv[])
            << endl
            << "All parameters are required.  If <do downsample> is set to 0 " << endl
            << "then <downsample factor> value will be ignored." << endl << endl;
-      exit(1);
+      return 1;
     }
 
   string filename = argv[2];
@@ -89,8 +89,8 @@ int main (int argc, char *argv[])
   if ( doDownsample ) doIntensity = true;
   bool doChannelization = false;
 
-  BFRaw bf = BFRaw( filename, doIntensity, doDownsample,
-                    doChannelization, factor );
+  DAL::BFRaw bf = DAL::BFRaw( filename, doIntensity, doDownsample,
+                              doChannelization, factor );
 
   bf.openRawFile( argv[1] );
   bf.readRawFileHeader();

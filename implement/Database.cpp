@@ -25,16 +25,14 @@
 #include "Database.h"
 #endif
 
-// #ifdef WITH_MYSQL
-
 namespace DAL
   {
 
   // constructor
-  Database::Database( string const& lcl_server,
-                      string const& lcl_username,
-                      string const& lcl_password,
-                      string const& lcl_database )
+  Database::Database( std::string const& lcl_server,
+                      std::string const& lcl_username,
+                      std::string const& lcl_password,
+                      std::string const& lcl_database )
   {
     server = lcl_server;
     username = lcl_username;
@@ -50,7 +48,6 @@ namespace DAL
                              database.c_str(), 0, NULL, 0))
       {
         fprintf(stderr, "%s\n", mysql_error(conn));
-        exit(1);
       }
 
   }
@@ -65,17 +62,23 @@ namespace DAL
       }
   }
 
-  void Database::query( string const& querystr )
+  void Database::query( std::string const& querystr )
   {
     /* send SQL query */
     if (mysql_query(conn, querystr.c_str()))
       {
         fprintf(stderr, "%s\n", mysql_error(conn));
       }
+
     res = mysql_use_result(conn);
-    /* output table names */
+
+    /* For now we print the result the screen, but in the future we most
+       likely want to put the result into a data struct for use as input
+       somewhere else
+     */
     while ((row = mysql_fetch_row(res)) != NULL)
       printf("%s \n", row[0]);
+
     mysql_free_result(res);
   }
 
