@@ -48,6 +48,8 @@ namespace DAL
   class dalDataset
     {
 
+      void init();
+
       void * file;  // can be HDF5File, FITS, MS
       std::string type;  // "HDF5", "MSCASA" or "FITS"; for example
       std::string name;  // dataset name
@@ -63,7 +65,6 @@ namespace DAL
 
     public:
       dalDataset();
-      void init();
       dalDataset( const char * name, std::string filetype );
       bool open( const char * datasetname );
       bool close();
@@ -81,8 +82,9 @@ namespace DAL
         instead of simply printing.
 
         \param attrname The name of the attribute you want to retrieve.
-
-      */
+        \param value Attribute value to return.
+        \return bool -- DAL::FAIL or DAL::SUCCESS
+       */
       template <class T>
       bool getAttribute( std::string attrname, T &value )
       {
@@ -121,7 +123,10 @@ namespace DAL
       std::string getType();
 
       /*!
-        \brief Retrieve the name of the data set
+        \brief Retrieve the name of the data set.
+
+        Retrieve the name of the data set.
+
         \return name -- A string holding the name of the data set.
        */
       inline std::string getName () const
@@ -131,6 +136,9 @@ namespace DAL
 
       /*!
         \brief Get the HDF5 file handle identifier.
+
+        Get the HDF5 file handle identifier.
+
         \return h5fh -- File handle identifier to communicate with the HDF5
                 file through the HDF5 library.
        */

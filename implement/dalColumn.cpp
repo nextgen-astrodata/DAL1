@@ -112,7 +112,12 @@ namespace DAL
 // ------------------------------------------------------- dalColumn
 
   /*!
-    \brief Create a new column object.
+    \brief Create a new column object from a Casa table.
+
+    Create a new column object from a Casa table.
+
+    \param table A casa table object.
+    \param colname Name of the column.
    */
   dalColumn::dalColumn(casa::Table table, std::string colname)
   {

@@ -71,6 +71,13 @@ namespace DAL
       unsigned long fortran_index(long idx1, long idx2, long idx3);
       unsigned long c_index(long idx1, long idx2, long idx3);
 
+      /*!
+        \brief Get datatype.
+
+        Get the type of data held by dalData object.
+
+        \return string -- i.e. dal_INT, dal_FLOAT, etc.
+       */
       inline std::string datatype()
       {
         return dtype;

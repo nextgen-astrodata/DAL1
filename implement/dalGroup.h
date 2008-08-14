@@ -102,7 +102,8 @@ namespace DAL
         instead of simply printing.
 
         \param attrname The name of the attribute you want to retrieve.
-
+        \param value The value of the attribute.
+        \return bool -- DAL::FAIL or DAL::SUCCESS
       */
       template <class T>
       bool getAttribute( std::string attrname, T &value )

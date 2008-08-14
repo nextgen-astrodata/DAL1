@@ -87,11 +87,6 @@ namespace DAL
 
   // ---------------------------------------------------------- init
 
-  /*!
-    \brief Initialize the object's internal parameters
-
-    Initialize the object's internal parameters
-  */
   void dalDataset::init()
   {
 #ifdef PYTHON
@@ -185,15 +180,13 @@ namespace DAL
   }
 
   // ---------------------------------------------------------- open
-
-  /****************************************************************
-   *  Opens a dataset (file)
-   *
-   *****************************************************************/
-
   /*!
     \brief Open the dataset.
-    \return Zero if successful.  Non-zero on failure.
+
+    Open the dataset (file).
+
+    \param filename The name of the file to open.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
      */
   bool dalDataset::open( const char * fname )
   {
@@ -242,8 +235,11 @@ namespace DAL
 
   /*!
     \brief Close the dataset.
-    \return Zero if successful.  Non-zero on failure.
-     */
+
+    Close the dataset.
+
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+   */
   bool dalDataset::close()
   {
     if ( type == MSCASATYPE )
@@ -273,6 +269,8 @@ namespace DAL
     \brief Print the group attributes.
 
     Print the group attributes.
+
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::getAttributes()
   {
@@ -310,6 +308,7 @@ namespace DAL
 
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute_string( std::string attrname, std::string data )
   {
@@ -326,6 +325,7 @@ namespace DAL
 
     \param attrname The name of the attribute you want to create.
     \param data The values of the attributes you want to create.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute_string( std::string attrname, std::vector<std::string> data )
   {
@@ -392,6 +392,7 @@ namespace DAL
     \param data The value of the attribute you want to create.
     \param size Optional parameter specifying the array size of the
                 attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute_int( std::string attrname, int * data, int size )
   {
@@ -410,6 +411,7 @@ namespace DAL
     \param data The value of the attribute you want to create.
     \param size Optional parameter specifying the array size of the
                 attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute_uint( std::string attrname, uint * data,
                                       int size )
@@ -429,6 +431,7 @@ namespace DAL
     \param data The value of the attribute you want to create.
     \param size Optional parameter specifying the array size of the
                 attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute_double( std::string attrname, double * data,
                                         int size )
@@ -469,17 +472,14 @@ namespace DAL
 
   // ---------------------------------------------------------- listTables
 
-  /****************************************************************
-   *  List tables in a dataset (file)
-   *
-   *****************************************************************/
-
   /*!
     \brief List the tables in a dataset.
 
     List the tables in a dataset; keep in mind, that this operation only is
     supported for data set of appropriate internal structure, such e.g.
     MeasurementSets.
+
+    \return String vector of table names.
    */
   std::vector<std::string> dalDataset::listTables()
   {
@@ -1261,7 +1261,8 @@ namespace DAL
 
   // ---------------------------------------------------------- cfa_boost
 
-  dalArray * dalDataset::cfa_boost( std::string arrayname, bpl::list pydims, bpl::list pydata, bpl::list cdims )
+  dalArray * dalDataset::cfa_boost( std::string arrayname, bpl::list pydims,
+                                    bpl::list pydata, bpl::list cdims )
   {
 
     std::vector<int> dims;
@@ -1280,7 +1281,8 @@ namespace DAL
     for (int ii=0; ii<size; ii++)
       data[ii] = bpl::extract<float>(pydata[ii]);
 
-    dalArray * array = dalDataset::createFloatArray(arrayname, dims, data, chnkdims);
+    dalArray * array = dalDataset::createFloatArray( arrayname, dims,
+                       data, chnkdims );
 
     delete [] data;
 
@@ -1291,7 +1293,8 @@ namespace DAL
 
   dalArray * dalDataset::cfa_boost_numarray( std::string arrayname,
       bpl::list pydims,
-      bpl::numeric::array pydata, bpl::list cdims )
+      bpl::numeric::array pydata,
+      bpl::list cdims )
   {
 
     std::vector<int> dims;
@@ -1303,7 +1306,6 @@ namespace DAL
     float * data = NULL;
     data = new float[size];
 
-// std::cerr << "cia_boost_numarray "<< pydata.nelements() << endl;
     pydata.setshape( pydata.nelements() );
     bpl::object flat_data = pydata.getflat();
     bpl::list list_data( flat_data );
@@ -1313,22 +1315,12 @@ namespace DAL
     return array;
   }
 
-// void dalDataset::sfe(bpl::numeric::array& y, int value)
-// {
-//     y[bpl::make_tuple(0,0)] = value;
-// }
-
-  /******************************************************
-   * wrapper for readIntArray
-   ******************************************************/
-
   // ---------------------------------------------------------- ria_boost
 
   bpl::numeric::array dalDataset::ria_boost( std::string arrayname )
   {
     hid_t lclfile;
     hid_t  status;
-// 	hid_t datatype, dataspace;
 
     // get the dataspace
     lclfile = H5Dopen1(h5fh, arrayname.c_str());
@@ -1337,18 +1329,15 @@ namespace DAL
     // what is the rank of the array?
     hid_t data_rank = H5Sget_simple_extent_ndims(filespace);
     hsize_t dims[ data_rank ];
-// std::cerr << "data rank: " << data_rank << endl;
     status = H5Sget_simple_extent_dims(filespace, dims, NULL);
 
     int size = 1;
     bpl::list dims_list;
     for (int ii=0; ii<data_rank; ii++)
       {
-// std::cerr << "dims["  << ii << "]: " << dims[ii] << endl;
         size *= dims[ii];
         dims_list.append(dims[ii]);
       }
-// std::cerr << "size: " << size << endl;
 
     int * data = NULL;
     data = new int[size];
@@ -1368,17 +1357,12 @@ namespace DAL
     return nadata;
   }
 
-  /******************************************************
-   * wrapper for readFloatArray
-   ******************************************************/
-
   // ---------------------------------------------------------- rfa_boost
 
   bpl::numeric::array dalDataset::rfa_boost( std::string arrayname )
   {
     hid_t lclfile;
     hid_t status;
-// 	hid_t datatype, dataspace;
 
     // get the dataspace
     lclfile = H5Dopen1(h5fh, arrayname.c_str());

@@ -37,17 +37,71 @@ namespace DAL
   // ---------------------------------------------------------- dalTable
 
   /*!
-  \brief Default table constructor.
+    \brief Default table constructor.
 
-  The default table constructor.
+    The default table constructor.
   */
   dalTable::dalTable()
   {
     filter = new dalFilter;
   }
 
+  // ---------------------------------------------------------- dalTable
+
+  /*!
+  \brief Table constructor for a specific file format.
+
+  Table constructor for a specific file format.
+
+  \param filetype The type of table you want to create (i.e.
+  	"HDF5", "MSCASA", etc.)
+  */
+  dalTable::dalTable( std::string filetype )
+  {
+    filter = new dalFilter;
+
+    type = filetype;
+    columns.clear();  // clear the coulumns vector
+    firstrecord = true;
+
+    if ( type == MSCASATYPE )
+      {
+#ifdef WITH_CASA
+        casa_table_handle = new casa::Table;
+#else
+        std::cerr << "CASA support not enabled." << endl;
+#endif
+      }
+  }
+
+  // ---------------------------------------------------------- ~dalTable
+
+  /*!
+    \brief Default table destructor.
+
+    Default table destructor.
+   */
+  dalTable::~dalTable()
+  {
+    delete filter;
+    if ( type == MSCASATYPE )
+      {
+#ifdef WITH_CASA
+        delete casa_table_handle;
+#endif
+      }
+  }
+
   // ---------------------------------------------------------- getColumn
 
+  /*!
+    \brief Get a column object.
+
+    Get a column object.
+
+    \param colname The name of the column to retrieve.
+    \return Pointer to dalColumn object.
+  */
   dalColumn * dalTable::getColumn( std::string colname )
   {
     if ( type == MSCASATYPE )
@@ -512,35 +566,8 @@ namespace DAL
       }
   }
 
-  // ---------------------------------------------------------- dalTable
-
-  /*!
-  \brief Table constructor for a specific file format.
-
-  Table constructor for a specific file format.
-
-  \param filetype The type of table you want to create (i.e.
-  	"HDF5", "MSCASA", etc.)
-  */
-  dalTable::dalTable( std::string filetype )
-  {
-    filter = new dalFilter;
-
-    type = filetype;
-    columns.clear();  // clear the coulumns vector
-    firstrecord = true;
-
-    if ( type == MSCASATYPE )
-      {
 #ifdef WITH_CASA
-        casa_table_handle = new casa::Table;
-#else
-        std::cerr << "CASA support not enabled." << endl;
-#endif
-      }
-  }
 
-#ifdef WITH_CASA
   // ---------------------------------------------------------- openTable
 
   /****************************************************************
@@ -699,29 +726,6 @@ namespace DAL
       {
         std::cerr << "dalTable::openTable operation not supported for type "
                   << type << endl;
-      }
-  }
-
-  // ---------------------------------------------------------- ~dalTable
-
-  /****************************************************************
-   *  Default destructor
-   *
-   *****************************************************************/
-
-  /*!
-  \brief Default table destructor.
-
-  Default table destructor.
-  */
-  dalTable::~dalTable()
-  {
-    delete filter;
-    if ( type == MSCASATYPE )
-      {
-#ifdef WITH_CASA
-        delete casa_table_handle;
-#endif
       }
   }
 
@@ -1535,7 +1539,7 @@ namespace DAL
 
   Write data to a column identified by it's position within the table.
 
-  \param structure A pointer to a structure containing the data you want
+  \param data A pointer to a structure containing the data you want
                    to write.
   \param index The position of the column you want to write to.
   \param rownum The row position where you want to start writing data.
@@ -1652,14 +1656,14 @@ namespace DAL
   // ---------------------------------------------------------- appendRows
 
   /*!
-  \brief Append multiple rows.
+    \brief Append multiple rows.
 
-  Append multiple rows to the end of the table.
+    Append multiple rows to the end of the table.
 
-  \param data The data you want to write at the end of the table.  The
-  		  structure of the data parameter should match that of the
-  		  table itself.
-  \param number_of_rows The number of rows you wish to append.
+    \param data The data you want to write at the end of the table.  The
+                structure of the data parameter should match that of the
+                table itself.
+    \param row_count The number of rows you wish to append.
   */
   void dalTable::appendRows( void * data, long row_count )
   {
@@ -1713,13 +1717,14 @@ namespace DAL
   // ----------------------------------------------------- setAttribute_string
 
   /*!
-  \brief Add a string attribute.
+    \brief Add a string attribute.
 
-  Add a std::string attribute to the table.
+    Add a std::string attribute to the table.
 
-  \param attrname The name of the attribute you wish to add.
-  \param data The value of the attribute you wish to add.
-  */
+    \param attrname The name of the attribute you wish to add.
+    \param data The value of the attribute you wish to add.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+   */
   bool dalTable::setAttribute_string( std::string attrname, std::string data )
   {
     return h5setAttribute_string( table_id, attrname, &data, 1 );
@@ -1728,15 +1733,15 @@ namespace DAL
   // ----------------------------------------------- setAttribute_char
 
   /*!
-  \brief Add a character attribute.
+    \brief Add a character attribute.
 
-  Add a character attribute to the table.
+    Add a character attribute to the table.
 
-  \param attrname The name of the attribute you wish to add.
-  \param data The value of the attribute you wish to add.
-  \param size An optional parameter specifiying the array size of the
-              attribute.  If not supplied, it will default to being
-  		  a scalar attribute.
+    \param attrname The name of the attribute you wish to add.
+    \param data The value of the attribute you wish to add.
+    \param size An optional parameter specifiying the array size of the
+                attribute.  If not supplied, it will default to being
+                a scalar attribute.
   */
   void dalTable::setAttribute_char( std::string attrname, char * data, int size )
   {
@@ -1758,16 +1763,17 @@ namespace DAL
   // ------------------------------------------------------ setAttribute_int
 
   /*!
-  \brief Add a integer attribute.
+    \brief Add a integer attribute.
 
-  Add a integer attribute to the table.
+    Add a integer attribute to the table.
 
-  \param attrname The name of the attribute you wish to add.
-  \param data The value of the attribute you wish to add.
-  \param size An optional parameter specifiying the array size of the
-              attribute.  If not supplied, it will default to being
-  		  a scalar attribute.
-  */
+    \param attrname The name of the attribute you wish to add.
+    \param data The value of the attribute you wish to add.
+    \param size An optional parameter specifiying the array size of the
+                attribute.  If not supplied, it will default to being
+                a scalar attribute.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+   */
   bool dalTable::setAttribute_int( std::string attrname, int * data, int size )
   {
     return h5setAttribute_int( table_id, attrname, data, size );
@@ -1777,15 +1783,16 @@ namespace DAL
   // ------------------------------------------------- setAttribute_uint
 
   /*!
-  \brief Add a unsigned integer attribute.
+    \brief Add a unsigned integer attribute.
 
-  Add a unsigned integer attribute to the table.
+    Add a unsigned integer attribute to the table.
 
-  \param attrname The name of the attribute you wish to add.
-  \param data The value of the attribute you wish to add.
-  \param size An optional parameter specifiying the array size of the
-              attribute.  If not supplied, it will default to being
-              a scalar attribute.
+    \param attrname The name of the attribute you wish to add.
+    \param data The value of the attribute you wish to add.
+    \param size An optional parameter specifiying the array size of the
+                attribute.  If not supplied, it will default to being
+                a scalar attribute.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalTable::setAttribute_uint(string attrname, unsigned int * data, int size)
   {
@@ -1796,16 +1803,17 @@ namespace DAL
   // ----------------------------------------------------- setAttribute_double
 
   /*!
-  \brief Add a double precision floating point attribute.
+    \brief Add a double precision floating point attribute.
 
-  Add a double precision floating point attribute to the table.
+    Add a double precision floating point attribute to the table.
 
-  \param attrname The name of the attribute you wish to add.
-  \param data The value of the attribute you wish to add.
-  \param size An optional parameter specifiying the array size of the
-              attribute.  If not supplied, it will default to being
-              a scalar attribute.
-  */
+    \param attrname The name of the attribute you wish to add.
+    \param data The value of the attribute you wish to add.
+    \param size An optional parameter specifiying the array size of the
+                attribute.  If not supplied, it will default to being
+                a scalar attribute.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+   */
   bool dalTable::setAttribute_double( std::string attrname, double * data, int size )
   {
     return h5setAttribute_double( table_id, attrname, data, size );
@@ -1815,10 +1823,10 @@ namespace DAL
   // ---------------------------------------------------------- listColumns
 
   /*!
-  \brief List the table columns.
+    \brief List the table columns.
 
-  \return a list of columns contained within the opened table.
-  */
+    \return a list of columns contained within the opened table.
+   */
   std::vector<std::string> dalTable::listColumns()
   {
     std::vector<std::string> colnames;
@@ -2112,6 +2120,16 @@ namespace DAL
 
   // ---------------------------------------------------------- GetKeyword
 
+  /*!
+    \brief Retrieve a casa keykword.
+
+    Retrieve a casa keykword.
+
+    \param KeywordName Name of the keyword to retrieve.
+    \param result Keyword value.
+    \return Casa boolean value. True on success. False on fail.
+   */
+
   casa::Bool dalTable::GetKeyword(casa::String const KeywordName, casa::String *result)
   {
 #ifdef DEBUGGING_MESSAGES
@@ -2136,6 +2154,16 @@ namespace DAL
   }
 
   // ---------------------------------------------------------- GetKeyword
+
+  /*!
+    \brief Retrieve a casa keykword.
+
+    Retrieve a casa keykword.
+
+    \param KeywordName Name of the keyword to retrieve.
+    \param result Keyword value.
+    \return Casa boolean value. True on success. False on fail.
+   */
 
   casa::Bool dalTable::GetKeyword(casa::String const KeywordName, casa::Double *result)
   {
@@ -2162,6 +2190,16 @@ namespace DAL
 
   // ---------------------------------------------------------- GetKeyword
 
+  /*!
+    \brief Retrieve a casa keykword.
+
+    Retrieve a casa keykword.
+
+    \param KeywordName Name of the keyword to retrieve.
+    \param result Keyword value.
+    \return Casa boolean value. True on success. False on fail.
+   */
+
   casa::Bool dalTable::GetKeyword(casa::String const KeywordName, casa::Float *result)
   {
 #ifdef DEBUGGING_MESSAGES
@@ -2186,6 +2224,16 @@ namespace DAL
   }
 
   // ---------------------------------------------------------- GetKeyword
+
+  /*!
+    \brief Retrieve a casa keykword.
+
+    Retrieve a casa keykword.
+
+    \param KeywordName Name of the keyword to retrieve.
+    \param result Keyword value.
+    \return Casa boolean value. True on success. False on fail.
+   */
 
   casa::Bool dalTable::GetKeyword(casa::String const KeywordName, casa::DComplex *result)
   {
@@ -2212,6 +2260,16 @@ namespace DAL
 
   // ---------------------------------------------------------- GetKeyword
 
+  /*!
+    \brief Retrieve a casa keykword.
+
+    Retrieve a casa keykword.
+
+    \param KeywordName Name of the keyword to retrieve.
+    \param result Keyword value.
+    \return Casa boolean value. True on success. False on fail.
+   */
+
   casa::Bool dalTable::GetKeyword(casa::String const KeywordName, casa::Array<casa::Double> *result)
   {
 #ifdef DEBUGGING_MESSAGES
@@ -2236,6 +2294,16 @@ namespace DAL
   }
 
   // ---------------------------------------------------------- GetKeyword
+
+  /*!
+    \brief Retrieve a casa keykword.
+
+    Retrieve a casa keykword.
+
+    \param KeywordName Name of the keyword to retrieve.
+    \param result Keyword value.
+    \return Casa boolean value. True on success. False on fail.
+   */
 
   casa::Bool dalTable::GetKeyword(casa::String const KeywordName, casa::Array<casa::DComplex> *result)
   {
@@ -2266,6 +2334,15 @@ namespace DAL
   // ==============================================================================
   // Get the type of the given keyword
   // ==============================================================================
+  /*!
+    \brief Get the type of the given casa keyword.
+
+    Get the type of the given casa keyword.
+
+    \param KeywordName Name of the keyword to retrieve.
+    \return String containing the keyword type.
+   */
+
   casa::String dalTable::GetKeywordType(casa::String const KeywordName)
   {
     try

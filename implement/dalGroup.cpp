@@ -223,7 +223,7 @@ namespace DAL
     Set the name of the group.
 
     \param gname The name of the group.
-    \return Zero on success. Non-zero on failure.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
    */
   bool dalGroup::setName ( std::string gname )
   {
@@ -406,6 +406,7 @@ namespace DAL
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
     \param size The size of the array.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalGroup::setAttribute_string( string attrname, string * data, int size )
   {
@@ -422,6 +423,7 @@ namespace DAL
 
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalGroup::setAttribute_string( string attrname, string data )
   {
@@ -440,6 +442,7 @@ namespace DAL
     \param data The value of the attribute you want to create.
     \param size Optional parameter specifying the array size of the
                 attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalGroup::setAttribute_int( string attrname, int * data, int size )
   {
@@ -458,6 +461,7 @@ namespace DAL
     \param data The value of the attribute you want to create.
     \param size Optional parameter specifying the array size of the
                 attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalGroup::setAttribute_uint( string attrname, unsigned int * data,
                                     int size )
@@ -476,6 +480,7 @@ namespace DAL
     \param data The value of the attribute you want to create.
     \param size Optional parameter specifying the array size of the
                 attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalGroup::setAttribute_float( string attrname, float * data,
                                      int size )
@@ -494,6 +499,7 @@ namespace DAL
     \param data The value of the attribute you want to create.
     \param size Optional parameter specifying the array size of the
                 attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalGroup::setAttribute_double( string attrname, double * data, int size )
   {
@@ -604,10 +610,6 @@ namespace DAL
   }
 
 // ------------------------------------------------------------ ria_boost
-
-  /******************************************************
-   * wrapper for readIntArray
-   ******************************************************/
 
   bpl::numeric::array dalGroup::ria_boost( string arrayname )
   {

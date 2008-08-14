@@ -28,7 +28,15 @@
 namespace DAL
   {
 
-  // constructor
+// ----------------------------------------------------- Database
+
+  /*!
+    \brief Constructor
+    \param server Name of the server to connect to.
+    \param username Database username.
+    \param password Database password.
+    \param database Name of database.
+   */
   Database::Database( std::string const& lcl_server,
                       std::string const& lcl_username,
                       std::string const& lcl_password,
@@ -52,7 +60,11 @@ namespace DAL
 
   }
 
-  // destructor
+// ----------------------------------------------------- ~Database
+
+  /*!
+    \brief Destructor
+   */
   Database::~Database()
   {
     if (conn)
@@ -62,6 +74,12 @@ namespace DAL
       }
   }
 
+// ----------------------------------------------------- query
+
+  /*!
+    \brief Query the database.
+    \param querystr Query string to send to database.
+   */
   void Database::query( std::string const& querystr )
   {
     /* send SQL query */

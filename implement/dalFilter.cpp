@@ -28,6 +28,8 @@
 namespace DAL
   {
 
+  // ---------------------------------------------------------- dalFilter
+
   /*!
     \brief Default constructor.
 
@@ -40,8 +42,11 @@ namespace DAL
     is_set = false;
   }
 
+  // ---------------------------------------------------------- dalFilter
+
   /*!
     \brief Constructor.
+    \param type The type of file (i.e. H5TYPE, MSCASATYPE).
     \param columns A comma-separated list of the column names that you
                    want to pass the filter (i.e. "TIME,DATA,ANTENNA").
 
@@ -60,8 +65,11 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------------------- dalFilter
+
   /*!
     \brief Constructor.
+    \param type The type of file (i.e. H5TYPE, MSCASATYPE).
     \param columns A comma-separated list of the column names that you
                    want to pass the filter (i.e. "TIME,DATA,ANTENNA").
     \param conditions A list of the conditions you want to apply.
@@ -83,6 +91,8 @@ namespace DAL
                 type + ". Sorry.\n";
   }
 
+  // ---------------------------------------------------------- set
+
   /*!
     \brief Restrict to certain columns.
 
@@ -102,6 +112,8 @@ namespace DAL
       std::cerr << "Operation not yet supported for type: " + filetype + ". Sorry.\n";
   }
 
+
+  // ---------------------------------------------------------- set
 
   /*!
     \brief Restrict to certain columns and conditions.
@@ -124,6 +136,8 @@ namespace DAL
       std::cerr << "Operation not yet supported for type: " + filetype + ". Sorry.\n";
   }
 
+  // ---------------------------------------------------------- setFiletype
+
   /*!
     \brief Declare the type of the file.
 
@@ -136,6 +150,8 @@ namespace DAL
     filetype = type;
   }
 
+
+  // ---------------------------------------------------------- isSet
 
   /*!
     \brief Check to see if the filter is defined.
@@ -152,6 +168,8 @@ namespace DAL
       return false;
   }
 
+
+  // ---------------------------------------------------------- get
 
   /*!
     \brief Retrieve the filter string.

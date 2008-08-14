@@ -34,6 +34,11 @@ namespace DAL
 
 // ------------------------------------------------------------ dalData
 
+  /*!
+    \brief Default constructor.
+
+     Default constructor.
+   */
   dalData::dalData()
   {
     dtype = "UNKNOWN";

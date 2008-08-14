@@ -72,6 +72,8 @@ namespace DAL
    \brief Close an existing array.
 
    Close an existing array.
+
+   \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalArray::close()
   {
@@ -90,6 +92,11 @@ namespace DAL
     \brief Write int to an array.
 
     Write data to an array, usually after extending it's dimensions.
+
+   \param offset Position to begin writing array.
+   \param data Data array to write.
+   \param arraysize Size of the array to write.
+   \return bool -- DAL::FAIL or DAL::SUCCESS
    */
   bool dalArray::write( int offset, int data[], int arraysize )
   {
@@ -137,6 +144,11 @@ namespace DAL
     \brief Write short data to an array.
 
     Write data to an array, usually after extending it's dimensions.
+
+   \param offset Position to begin writing array.
+   \param data Data array to write.
+   \param arraysize Size of the array to write.
+   \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalArray::write( int offset, short data[], int arraysize )
   {
@@ -184,6 +196,11 @@ namespace DAL
     \brief Write complex to an array.
 
     Write data to an array, usually after extending it's dimensions.
+
+   \param offset Position to begin writing array.
+   \param data Data array to write.
+   \param arraysize Size of the array to write.
+   \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalArray::write( int offset, complex<float> data[], int arraysize )
   {
@@ -250,6 +267,11 @@ namespace DAL
     \brief Write complex to an array.
 
     Write data to an array, usually after extending it's dimensions.
+
+   \param offset Position to begin writing array.
+   \param data Data array to write.
+   \param arraysize Size of the array to write.
+   \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalArray::write( int offset, complex<Int16> data[], int arraysize )
   {
@@ -312,8 +334,8 @@ namespace DAL
 
 // ------------------------------------------------------------ dims
   /*!
-   \brief Retrieve the dimensions of an array
-   \return The dimensions of the array
+    \brief Retrieve the dimensions of an array
+    \return The dimensions of the array
    */
   vector<int> dalArray::dims()
   {
@@ -345,11 +367,12 @@ namespace DAL
 // ------------------------------------------------------------ extend
   /*!
     \brief Extend an array.
-    \param dims The new desired dimensions of the array.  The extend method
-                should normally be followed by a write.
 
     Increase the dimensions of the array.
 
+    \param dims The new desired dimensions of the array.  The extend method
+                should normally be followed by a write.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalArray::extend( vector<int> newdims )
   {
@@ -372,9 +395,11 @@ namespace DAL
 
 // ------------------------------------------------------------ getAttributes
   /*!
-  \brief Print the attributes of the array.
+   \brief Print the attributes of the array.
 
-   Print the attributes of the array.
+    Print the attributes of the array.
+
+   \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalArray::getAttributes()
   {
@@ -501,6 +526,7 @@ namespace DAL
 
     \param attrname The name of the attribute you want to add.
     \param data The value of the attribute you want to add.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
    */
   bool dalArray::setAttribute_string( string attrname, string data )
   {
@@ -516,6 +542,7 @@ namespace DAL
     \param attrname The name of the attribute you want to add.
     \param data The value of the attribute you want to add.
     \param size The size of the data array.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
    */
   bool dalArray::setAttribute_string( string attrname, string * data, int size )
   {
@@ -531,6 +558,7 @@ namespace DAL
 
     \param attrname The name of the attribute you want to add.
     \param data The value of the attribute you want to add.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
    */
   bool dalArray::setAttribute_int( string attrname, int * data )
   {
@@ -547,6 +575,7 @@ namespace DAL
 
     \param attrname The name of the attribute you want to add.
     \param data The value of the attribute you want to add.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
    */
   bool dalArray::setAttribute_uint( string attrname, unsigned int * data )
   {
@@ -562,6 +591,7 @@ namespace DAL
 
     \param attrname The name of the attribute you want to add.
     \param data The value of the attribute you want to add.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
    */
   bool dalArray::setAttribute_float( string attrname, float * data )
   {
@@ -576,6 +606,7 @@ namespace DAL
 
     \param attrname The name of the attribute you want to add.
     \param data The value of the attribute you want to add.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
    */
   bool dalArray::setAttribute_double( string attrname, double * data, int size )
   {
@@ -597,9 +628,9 @@ namespace DAL
    *
    ********************************************************************/
   /*!
-    \brief Constructor for extendible integer array.
+    \brief Constructor for extendible short array.
 
-    Constructor for an extendible integer array.  This is usually called from
+    Constructor for an extendible short array.  This is usually called from
     the dataset object and not directly by the developer.
 
     \param obj_id An identifier for the dataset object.
@@ -719,6 +750,15 @@ namespace DAL
    *
    ********************************************************************/
 
+  /*!
+    \brief Read the array.
+
+    Reads an array of type short.
+
+    \param obj_id An identifier for the dataset object.
+    \param arrayname The name of the array you want to create.
+    \return Pointer to array values.
+   */
   short * dalShortArray::readShortArray( hid_t obj_id, string arrayname )
   {
 
@@ -918,6 +958,7 @@ namespace DAL
 
     \param obj_id An identifier for the dataset object.
     \param arrayname The name of the array you want to read.
+    \return Pointer to array data.
    */
   int * dalIntArray::readIntArray( hid_t obj_id, string arrayname )
   {
@@ -1270,9 +1311,9 @@ namespace DAL
    ********************************************************************/
 
   /*!
-    \brief Constructor for extendible complex floating point array.
+    \brief Constructor for extendible complex int16 array.
 
-    Constructor for an extendible complex floating point array.  This is
+    Constructor for an extendible complex int16 array.  This is
     usually called from the dataset object and not directly by the developer.
 
     \param voidfile An pointer to the file.
