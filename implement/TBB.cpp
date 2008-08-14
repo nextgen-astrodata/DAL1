@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2008 by Joseph Masters                                  *
- *   J.S.Masters@uva.nl                                               *
+ *   J.S.Masters@uva.nl                                                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -30,11 +30,11 @@ namespace DAL
   TBB::TBB( string const& filename )
   {
     // initializations (private)
-    seqnrLast = 0;
-    bigendian = BigEndian();
+    seqnrLast   = 0;
+    bigendian   = BigEndian();
     sample_time = (time_t)0;
-    name = filename;
-    dataset = new dalDataset;
+    name        = filename;
+    dataset     = new dalDataset;
     station.clear();
     header.stationid = 0;     // --------------------  TBB_Header
     header.rspid = 0;
@@ -61,14 +61,14 @@ namespace DAL
     cdims.push_back(CHUNK_SIZE);
     stationstr = NULL;
     memset(uid,'-',10);
-    payload_crc = 0;
+    payload_crc       = 0;
     tran_sample.value = 0;
     spec_sample.value = 0;
-    size = 0;
-    memblock = NULL;
-    rawfile = NULL;
-    real_part = 0;
-    imag_part = 0;
+    size              = 0;
+    memblock          = NULL;
+    rawfile           = NULL;
+    real_part         = 0;
+    imag_part         = 0;
 
     // initializations (public)
     first_sample = true;
@@ -467,7 +467,7 @@ namespace DAL
     dipoleArray->setAttribute_double( attribute_name(SAMPLE_FREQUENCY_VALUE),
                                       sf, 1 );
     dipoleArray->setAttribute_string( attribute_name(SAMPLE_FREQUENCY_UNIT),
-                                      "Hz" );
+                                      "MHz" );
   }
 
   bool TBB::transientMode()

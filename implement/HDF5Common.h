@@ -65,16 +65,17 @@ namespace DAL   // Namespace DAL -- begin
       <li>HDF5 Library
       <ul>
         <li><a href="http://hdfgroup.com/HDF5/doc/RM_H5Front.html">API
-  Specification</a>
-  <li><a href="http://hdf.ncsa.uiuc.edu/HDF5/doc/UG/index.html">User's
-  Guide</a>
-  <li><a href="http://hdfgroup.org/HDF5/hdf5_hl/doc/RM_hdf5lt.html">HDF5
-  Lite API</a> - higher-level functions which do more operations per call
-  than the basic HDF5 interface. The purpose is to wrap intuitive
-  functions around certain sets of features in the existing APIs. This
-  version of the API has two sets of functions: dataset and attribute
-  related functions.
+	Specification</a>
+	<li><a href="http://hdf.ncsa.uiuc.edu/HDF5/doc/UG/index.html">User's
+	Guide</a>
+	<li><a href="http://hdfgroup.org/HDF5/hdf5_hl/doc/RM_hdf5lt.html">HDF5
+	Lite API</a> - higher-level functions which do more operations per call
+	than the basic HDF5 interface. The purpose is to wrap intuitive
+	functions around certain sets of features in the existing APIs. This
+	version of the API has two sets of functions: dataset and attribute
+	related functions.
       </ul>
+      <li>casacore Library
     </ul>
 
     <h3>Synopsis</h3>
