@@ -155,6 +155,11 @@ int main (int argc, char *argv[])
 
       dalLopesEvent event (filename);
       const unsigned int BUFSIZE=10000;
+      typedef struct CosmicRayStruct
+        {
+          //int nofDatapoints;
+          Int16 data;
+        };
       typedef struct CRwritebuffer
         {
           CosmicRayStruct cr[ BUFSIZE ];

@@ -22,13 +22,9 @@
  ***************************************************************************/
 
 /*!
+  \class dalBaseTypes
   \ingroup DAL
-
   \brief Basic type definitions and byte swapping routines.
-
-  \author Joseph Masters
-
-  \date 15-Mar-07
 */
 
 #ifndef DALBASETYPES_H
@@ -83,8 +79,11 @@ namespace bpl = boost::python;
 #include <tables/Tables/TableKeyword.h>
 #endif
 
-// ----------------------------------------------------- USG code
+// CHUNK_SIZE arbitrarily chosen, more research needed on this feature
+const int32_t CHUNK_SIZE = 5000;
+const int32_t MAX_COL_NAME_SIZE = 256;
 
+// ----------------------------------------------------- USG code
 
 namespace DAL
   {
@@ -97,11 +96,6 @@ namespace DAL
 
   const bool SUCCESS = true;
   const bool FAIL = false;
-
-  // CHUNK_SIZE arbitrarily chosen, more research needed on this feature
-  const int CHUNK_SIZE = 5000;
-
-  const short MAX_COL_NAME_SIZE = 256;
 
   const std::string dal_CHAR = "dalCHAR";
   const std::string dal_STRING = "dalSTRING";

@@ -410,9 +410,6 @@ int get_attribute_id (hid_t const &file_id)
     attribute_id = H5Aopen_name(dataset_id,"SAMPLES_PER_FRAME");
     std::cout << "-- SAMPLES_PER_FRAME = " << attribute_id << endl;
     
-    attribute_id = H5Aopen_name(dataset_id,"DATA_LENGTH");
-    std::cout << "-- DATA_LENGTH       = " << attribute_id << endl;
-    
     attribute_id = H5Aopen_name(dataset_id,"NYQUIST_ZONE");
     std::cout << "-- NYQUIST_ZONE      = " << attribute_id << endl;
     
@@ -648,15 +645,6 @@ int get_attributes (hid_t const &file_id)
     }
     
     try {
-      status = h5get_attribute (data_length,
-				"DATA_LENGTH",
-				dataset_id);
-    } catch (std::string message) {
-      cerr << message << endl;
-      nofFailedTests++;
-    }
-    
-    try {
       status = h5get_attribute (nyquist_zone,
 				"NYQUIST_ZONE",
 				dataset_id);
@@ -690,7 +678,6 @@ int get_attributes (hid_t const &file_id)
     std::cout << "-- TIME              = " << time              << endl;
     std::cout << "-- SAMPLE_NUMBER     = " << sample_number     << endl;
     std::cout << "-- SAMPLES_PER_FRAME = " << samples_per_frame << endl;
-    std::cout << "-- DATA_LENGTH       = " << data_length       << endl;
     std::cout << "-- NYQUIST_ZONE      = " << nyquist_zone      << endl;
     
   } else {

@@ -36,7 +36,6 @@ namespace DAL
     \class dalData
     \brief Represents container of data.
     \ingroup DAL
-    \author Joseph Masters
 
     <h3>Synopsis</h3>
     The dalData object represents an n-dimensional array of data regardless of

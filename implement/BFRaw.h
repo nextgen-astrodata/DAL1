@@ -47,48 +47,56 @@
 namespace DAL
   {
 
-  struct FileHeader
-    {
-      UInt32    magic;        // 0x3F8304EC, also determines endianness
-      UInt8     bitsPerSample;
-      UInt8     nrPolarizations;
-      UInt16    nrBeamlets;   // number of subbands
-      UInt32    nrSamplesPerBeamlet; // 155648 (160Mhz) or 196608 (200Mhz)
-      char      station[20];
-      Float64   sampleRate;       //156250.0 or 195312.5 .. double
-      Float64   subbandFrequencies[54];
-      Float64   beamDirections[8][2];
-      Int16     beamlet2beams[54];
-      UInt32    padding;  // padding to circumvent 8-byte alignment
-    };
+  /*!
+     \class BFRaw
+     \ingroup DAL
+     \brief High-level interface between raw beam-formed data and the DAL.
 
-  struct BlockHeader
-    {
-      UInt32      magic; // 0x2913D852
-      Int32       coarseDelayApplied[8];
-      UInt8       padding[4];  // padding to circumvent 8-byte alignment
-      Float64     fineDelayRemainingAtBegin[8];
-      Float64     fineDelayRemainingAfterEnd[8];
-      Int64       time[8]; // compatible with TimeStamp class.
-      UInt32      nrFlagsRanges[8];
-
-      struct range
-        {
-          UInt32    begin; // inclusive
-          UInt32    end;   // exclusive
-        } flagsRanges[8][16];
-
-    };
-
-  // dataStruct is 8 bytes
-  struct Sample
-    {
-      complex<int16_t> xx;
-      complex<int16_t> yy;
-    };
+     High-level interface between raw beam-formed data and the DAL.
+   */
 
   class BFRaw
     {
+
+      struct FileHeader
+        {
+          UInt32    magic;        // 0x3F8304EC, also determines endianness
+          UInt8     bitsPerSample;
+          UInt8     nrPolarizations;
+          UInt16    nrBeamlets;   // number of subbands
+          UInt32    nrSamplesPerBeamlet; // 155648 (160Mhz) or 196608 (200Mhz)
+          char      station[20];
+          Float64   sampleRate;       //156250.0 or 195312.5 .. double
+          Float64   subbandFrequencies[54];
+          Float64   beamDirections[8][2];
+          Int16     beamlet2beams[54];
+          UInt32    padding;  // padding to circumvent 8-byte alignment
+        };
+
+      struct BlockHeader
+        {
+          UInt32      magic; // 0x2913D852
+          Int32       coarseDelayApplied[8];
+          UInt8       padding[4];  // padding to circumvent 8-byte alignment
+          Float64     fineDelayRemainingAtBegin[8];
+          Float64     fineDelayRemainingAfterEnd[8];
+          Int64       time[8]; // compatible with TimeStamp class.
+          UInt32      nrFlagsRanges[8];
+
+          struct range
+            {
+              UInt32    begin; // inclusive
+              UInt32    end;   // exclusive
+            } flagsRanges[8][16];
+
+        };
+
+      // dataStruct is 8 bytes
+      struct Sample
+        {
+          complex<int16_t> xx;
+          complex<int16_t> yy;
+        };
 
       char * DECrad2deg( const float &rad );
       char * RArad2deg( const float &rad );

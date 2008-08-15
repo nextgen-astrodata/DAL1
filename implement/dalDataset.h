@@ -36,7 +36,6 @@ namespace DAL
     \ingroup DAL
     \brief Represents the file containing all sub-structures
            (tables, arrays, etc.)
-    \author Joseph Masters
 
     <h3>Synopsis</h3>
 

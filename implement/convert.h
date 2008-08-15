@@ -30,22 +30,6 @@
 #include <typeinfo>
 #include <stdexcept>
 
-/*!
-  \file convert.h
-
-  \ingroup DAL
-
-  \brief A collection of methods for the conversion of variables
-*/
-
-/*!
-  \class BadConversion
-
-  \ingroup DAL
-
-  Represents an object that is thrown when the stringify function fails to
-  turn a variable into a string.
-*/
 class BadConversion : public std::runtime_error
   {
   public:
@@ -54,14 +38,6 @@ class BadConversion : public std::runtime_error
     { }
   };
 
-/*!
-  Stringify is a templated function that attemps to turn a variable
-  into a string.
-
-  \param x -- Variable to be turned into a string
-
-  \return string -- Stringified version of the provided input variable
-*/
 template<typename T>
 inline std::string stringify(const T& x)
 {

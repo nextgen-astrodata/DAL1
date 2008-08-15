@@ -438,7 +438,6 @@ namespace DAL
     unsigned int time[] = { (unsigned int)(header.time) };
     unsigned int samp_num[] = { (unsigned int)(header.sample_nr) };
     unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
-    unsigned int datalen[] = { (unsigned int)0 };
     unsigned int nyquist_zone[] = { (unsigned int)1 };
     double apos[3]    = { 0, 0, 0 };
 
@@ -448,7 +447,6 @@ namespace DAL
     dipoleArray->setAttribute_uint( attribute_name(TIME), time );
     dipoleArray->setAttribute_uint( attribute_name(SAMPLE_NUMBER), samp_num );
     dipoleArray->setAttribute_uint( attribute_name(SAMPLES_PER_FRAME), spf );
-    dipoleArray->setAttribute_uint( attribute_name(DATA_LENGTH), datalen );
     dipoleArray->setAttribute_double( attribute_name(ANTENNA_POSITION_VALUE),
                                       apos, 3 );
     dipoleArray->setAttribute_string( attribute_name(ANTENNA_POSITION_UNIT),

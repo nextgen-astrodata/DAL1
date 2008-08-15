@@ -38,67 +38,56 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
+#define ETHEREAL_HEADER_LENGTH = 46;
+#define FIRST_EXTRA_HDR_LENGTH = 40;
+#define EXTRA_HDR_LENGTH = 16;
+
 namespace DAL
   {
 
-  ///////////////////////////////////////////////////////////////
-  //
-  // constant values and structures
-  //
-  ///////////////////////////////////////////////////////////////
-
-  const Int32 ETHEREAL_HEADER_LENGTH = 46;
-  const Int32 FIRST_EXTRA_HDR_LENGTH = 40;
-  const Int32 EXTRA_HDR_LENGTH = 16;
-
-  typedef struct AntennaStruct
-    {
-      unsigned int frameno;
-      unsigned int rsp_id;
-      unsigned int rcu_id;
-      unsigned int time;
-      unsigned int sample_nr;
-      unsigned int samples_per_frame;
-      char feed[16];
-      double ant_position[ 3 ];
-      double ant_orientation[ 3 ];
-      hvl_t data[1];
-    };
-
-  typedef struct writebuffer
-    {
-      AntennaStruct antenna;
-    };
-
-  typedef struct TransientSample
-    {
-      Int16 value;
-    };
-
-  typedef struct SpectralSample
-    {
-      complex<Int16> value;
-    };
-
-  typedef struct CosmicRayStruct
-    {
-      //int nofDatapoints;
-      Int16 data;
-    };
-
-
   /*!
      \class TBB
-
      \ingroup DAL
-
      \brief High-level interface between TBB data and the DAL
-
-     \author Joseph Masters
    */
 
   class TBB
     {
+
+      ///////////////////////////////////////////////////////////////
+      //
+      // constant values and structures
+      //
+      ///////////////////////////////////////////////////////////////
+
+      typedef struct AntennaStruct
+        {
+          unsigned int frameno;
+          unsigned int rsp_id;
+          unsigned int rcu_id;
+          unsigned int time;
+          unsigned int sample_nr;
+          unsigned int samples_per_frame;
+          char feed[16];
+          double ant_position[ 3 ];
+          double ant_orientation[ 3 ];
+          hvl_t data[1];
+        };
+
+      typedef struct writebuffer
+        {
+          AntennaStruct antenna;
+        };
+
+      typedef struct TransientSample
+        {
+          Int16 value;
+        };
+
+      typedef struct SpectralSample
+        {
+          complex<Int16> value;
+        };
 
       typedef struct TBB_Header
         {
@@ -115,6 +104,7 @@ namespace DAL
           Int16 spare;
           UInt16 crc;
         };
+
       UInt32 seqnrLast;
       bool bigendian;
       time_t sample_time;  // For date

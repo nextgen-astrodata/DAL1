@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------*
- | $Id:: tUseMeasures.cc 511 2007-08-05 13:14:48Z masters                $ |
+ | $Id:: tdal_fits.cpp 511 2007-08-05 13:14:48Z masters                $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2006 by Joseph Masters                                  *
@@ -21,21 +21,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/**
-  \file tdal_fits.cpp
-
-  \ingroup DAL
-
-  \brief Test program for working with FITS data
-
-  \author Joseph Masters
-*/
-
 #include <dal.h>
 
 using namespace DAL;
 
-/*! sample doxygen comment in dal.cpp */
 int main(int argc, char *argv[])
 {
 

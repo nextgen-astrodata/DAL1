@@ -32,8 +32,8 @@ namespace DAL
 
   /*!
     \class dalFilter
+    \brief Class representing a filter that can be applied to a table.
     \ingroup DAL
-    \author Joseph Masters
   */
 
   class dalFilter

@@ -124,8 +124,10 @@
 #include "dalDataset.h"
 #endif
 
+#ifdef WITH_MYSQL
 #ifndef DATABASE_H
 #include "Database.h"
+#endif
 #endif
 
 #endif // DAL_H

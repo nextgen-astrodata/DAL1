@@ -30,6 +30,14 @@
 namespace DAL
   {
 
+  /*!
+    \class Database
+    \ingroup DAL
+    \brief Class to allow database connections
+
+    Class to allow database connections
+
+   */
   class Database
     {
       std::string server;

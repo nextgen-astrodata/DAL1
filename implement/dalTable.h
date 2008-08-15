@@ -21,16 +21,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*!
-  \ingroup DAL
-
-  \brief Object representing a table within a dataset.
-
-  \author Joseph Masters
-
-  \date 12-04-06
-*/
-
 #ifndef DALTABLE_H
 #define DALTABLE_H
 
@@ -46,9 +36,15 @@ namespace DAL
   {
 
   /*!
-  A dalTable can reside within a dataset, or within a group that is within
-  a dataset.
-  */
+    \class dalTable
+    \ingroup DAL
+    \brief Object representing a table within a dataset.
+
+    A dalTable can reside within a dataset, or within a group that is within
+    a dataset.
+
+   */
+
   class dalTable
     {
 
