@@ -92,6 +92,9 @@ namespace DAL   // Namespace DAL -- begin
       case SAMPLES_PER_FRAME:
         name = "SAMPLES_PER_FRAME";
         break;
+      case DATA_LENGTH:
+        name = "DATA_LENGTH";
+        break;
       case FEED:
         name = "FEED";
         break;
