@@ -120,6 +120,10 @@
 #ifndef DAL_H
 #define DAL_H
 
+#ifndef BEAMFORMED_H
+#include "BeamFormed.h"
+#endif
+
 #ifndef DALDATASET_H
 #include "dalDataset.h"
 #endif

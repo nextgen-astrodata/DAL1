@@ -60,7 +60,7 @@ namespace DAL
       //
       ///////////////////////////////////////////////////////////////
 
-      typedef struct AntennaStruct
+      struct AntennaStruct
         {
           unsigned int frameno;
           unsigned int rsp_id;
@@ -74,22 +74,22 @@ namespace DAL
           hvl_t data[1];
         };
 
-      typedef struct writebuffer
+      struct writebuffer
         {
           AntennaStruct antenna;
         };
 
-      typedef struct TransientSample
+      struct TransientSample
         {
           Int16 value;
         };
 
-      typedef struct SpectralSample
+      struct SpectralSample
         {
           complex<Int16> value;
         };
 
-      typedef struct TBB_Header
+      struct TBB_Header
         {
           unsigned char stationid;
           unsigned char rspid;

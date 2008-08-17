@@ -124,25 +124,25 @@ namespace DAL
   typedef long long       Int64;
   typedef double        Float64;
 
-  typedef struct dalcomplex
+  struct dalcomplex
     {
       Float64 r;  // real
       Float64 i;  // imaginary
     };
 
-  typedef struct dalcomplex_float32
+  struct dalcomplex_float32
     {
       Float32 r;  // real
       Float32 i;  // imaginary
     };
 
-  typedef struct dalcomplex_int16
+  struct dalcomplex_int16
     {
       Int16 r;  // real
       Int16 i;  // imaginary
     };
 
-  typedef struct dalcomplex_char
+  struct dalcomplex_char
     {
       char r;  // real
       char i;  // imaginary
