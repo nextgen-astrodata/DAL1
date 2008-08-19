@@ -218,8 +218,6 @@ BOOST_PYTHON_MODULE(pydal)
         "Create a table object." )
   .def( "addColumn", &dalTable::addColumn,
         "Add a column to the table." )
-  .def( "addArrayColumn", &dalTable::addArrayColumn,
-        "Add an array column to the table." )
   .def( "addComplexColumn", &dalTable::addComplexColumn,
         "Add a complex column to the table." )
   .def( "removeColumn", &dalTable::removeColumn,

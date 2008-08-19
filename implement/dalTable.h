@@ -73,6 +73,10 @@ namespace DAL
       casa::ROTableColumn * casa_column;
 #endif
 
+      void h5addColumn_setup( std::string const column_name, bool &removedummy );
+      void h5addColumn_insert( uint const & indims, std::string const & colname,
+							   hid_t const & field_type, bool const & removedummy );
+
     public:
 
       dalTable();
@@ -109,8 +113,7 @@ namespace DAL
       dalColumn * getColumn_complexFloat32( string colname );
       dalColumn * getColumn_Float32( string colname );
       dalColumn * getColumn( string colname );
-      void addColumn( string colname, string coltype, int size=1 );
-      void addArrayColumn( string colname, string coltype, unsigned int dims);
+      void addColumn( string colname, string coltype, uint dims=1);
       void addComplexColumn( string compname,
                              vector<dalColumn> ri,
                              int subfields );

@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
   tableA->addColumn( "obs_id", dal_INT );  // simple column
   tableA->addColumn( "state_id", dal_INT );  // simple column
 
-  tableA->addArrayColumn( "uvw", dal_DOUBLE, 3 );
+  tableA->addColumn( "uvw", dal_DOUBLE, 3 );
 
   typedef struct skycol
     {

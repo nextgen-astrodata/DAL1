@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------*
-| $Id:: cs1.h 389 2007-06-13 08:47:09Z masters                          $ |
+| $Id:: dalTable.cpp 389 2007-06-13 08:47:09Z masters                   $ |
 *-------------------------------------------------------------------------*
 ***************************************************************************
 *   Copyright (C) 2007 by Joseph Masters                                  *
@@ -133,7 +133,7 @@ namespace DAL
     else if ( type == H5TYPE )
       {
         std::cerr << "ERROR: hdf5 not yet supported for this function."
-                  << " Try getColumn_Float32, etc." << endl;
+        << " Try getColumn_Float32, etc." << endl;
         return NULL;
       }
     else
@@ -143,11 +143,6 @@ namespace DAL
   }
 
   // ------------------------------------------------------- getColumn_Float32
-
-  /****************************************************************
-   *  (experimental)  Return the column data
-   *
-   *****************************************************************/
 
   /*!
   \brief Get a column object from a table.
@@ -187,11 +182,6 @@ namespace DAL
   }
 
   // ---------------------------------------------- getColumn_complexFloat32
-
-  /****************************************************************
-   *  (experimental)  Return the column data
-   *
-   *****************************************************************/
 
   /*!
   \brief Get a column object from a table.
@@ -499,18 +489,6 @@ namespace DAL
                 return value;
               }
               break;
-              /*	  case casa::TpArrayShort:
-              	  std::cerr << "Data type is ArrayShort." << endl;
-              	  break;
-              	  case casa::TpArrayDouble:
-              	  std::cerr << "Data type is ArrayDouble." << endl;
-              	  break;
-              	  case casa::TpArrayComplex:
-              	  std::cerr << "Data type is ArrayComplex." << endl;
-              	  break;
-              	  case casa::TpTable:
-              	  std::cerr << "Data type is Table." << endl;
-              	  break;*/
               default:
                 std::cerr << "Datatype not recognized." << endl;
               }
@@ -536,7 +514,7 @@ namespace DAL
     else
       {
         std::cerr << "dalTable::getColumnData operation not supported for type "
-                  << type << endl;
+        << type << endl;
         return NULL;
       }
   }
@@ -562,7 +540,7 @@ namespace DAL
     else
       {
         std::cerr << "dalTable::getName operation not supported for type "
-                  << type << endl;
+        << type << endl;
       }
   }
 
@@ -570,14 +548,10 @@ namespace DAL
 
   // ---------------------------------------------------------- openTable
 
-  /****************************************************************
-   *  Open a CASA table (not in a MS)
-   *
-   *****************************************************************/
   /*!
-  \brief Open a CASA table.
+  \brief Open a CASA table, not in a MeasurementSet.
 
-  Open a CASA table.
+  Open a CASA table, not in a MeasurementSet.
 
   \param tablename The name of the table you want to open.
   */
@@ -617,16 +591,11 @@ namespace DAL
     else
       {
         std::cerr << "ERROR: dalTable::openTable operation not supported for type "
-                  << type << endl;
+        << type << endl;
       }
   }
 
   // ---------------------------------------------------------- openTable
-
-  /****************************************************************
-   *  Open a CASA table
-   *
-   *****************************************************************/
 
   /*!
   \brief Open the table in a measurement set.
@@ -656,7 +625,7 @@ namespace DAL
     else
       {
         std::cerr << "dalTable::openTable operation not supported for type "
-                  << type << endl;
+        << type << endl;
       }
   }
 
@@ -690,17 +659,13 @@ namespace DAL
     else
       {
         std::cerr << "ERROR: dalTable::openTable operation not supported for type "
-                  << type << endl;
+        << type << endl;
       }
   }
 #endif
 
   // ---------------------------------------------------------- openTable
 
-  /****************************************************************
-   *  Open a table (mainly for hdf5)
-   *
-   *****************************************************************/
   /*!
   \brief Open the table.  Called from dalDataset, not from the user.
 
@@ -725,7 +690,7 @@ namespace DAL
     else
       {
         std::cerr << "dalTable::openTable operation not supported for type "
-                  << type << endl;
+        << type << endl;
       }
   }
 
@@ -785,10 +750,6 @@ namespace DAL
 
   // ---------------------------------------------------------- createTable
 
-  /****************************************************************
-   *  (currently assumes HDF5) Create a table in a group
-   *
-   *****************************************************************/
   /*!
   \brief Create a new table.
 
@@ -851,255 +812,16 @@ namespace DAL
       }
 
   }
-
-
-  // ---------------------------------------------------------- addColumn
-
-  /*!
-  \brief Add a column to the table.
-
-  Add a column to the table.
-
-  \param colname Name of the column you want to add.
-  \param coltype Datatype of the column you want to add (i.e. dalINT,
-                 dalFLOAT, dalSTRING, etc.)
-  \param size Optional parameter that specifies the array size of the
-              column.  The default is 1, meaning the column will be scalar.
-  */
-  void dalTable::addColumn( std::string colname, std::string coltype, int size )
+  
+  void dalTable::h5addColumn_setup( std::string const column_name, bool &removedummy )
   {
 
-    if ( type == H5TYPE )
-      {
-
-        // make sure the column name isn't blank
-        if ( 0 == colname.length() )
-          {
-            std::cerr << "WARNING: Trying to add column without a name.  Skipping."
-                      << endl;
-            return;
-          }
-
-        if ( size > 1 )
-          {
-            addArrayColumn( colname, coltype, size );
-            return;
-          }
-
-        if ( ( dal_COMPLEX == coltype ) || ( dal_DCOMPLEX == coltype ) )
-          {
-            std::vector<dalColumn> cv;
-            std::string component_type;
-
-            component_type = dal_DOUBLE;
-
-            dalColumn col_a( "r", component_type );  // real component
-            dalColumn col_b( "i", component_type );  // imaginary component
-
-            cv.push_back( col_a );
-            cv.push_back( col_b );
-
-            addComplexColumn( colname, cv, 2 );
-            return;
-          }
-        else if ( ( dal_COMPLEX_CHAR == coltype ) )
-          {
-            std::vector<dalColumn> cv;
-            std::string component_type;
-
-            component_type = dal_CHAR;
-
-            dalColumn col_a( "r", component_type );  // real component
-            dalColumn col_b( "i", component_type );  // imaginary component
-
-            cv.push_back( col_a );
-            cv.push_back( col_b );
-
-            addComplexColumn( colname, cv, 2 );
-
-            return;
-          }
-        else if ( ( dal_COMPLEX_SHORT == coltype ) )
-          {
-            std::vector<dalColumn> cv;
-            std::string component_type;
-
-            component_type = dal_SHORT;
-
-            dalColumn col_a( "r", component_type );  // real component
-            dalColumn col_b( "i", component_type );  // imaginary component
-
-            cv.push_back( col_a );
-            cv.push_back( col_b );
-
-            addComplexColumn( colname, cv, 2 );
-
-            return;
-          }
-
-        // retrieve table information
-        H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
-
-
-        // allocate space for the column/field names and retrieve them from
-        // the table
-        field_names = new char * [nfields];
-        for (unsigned int ii=0; ii<nfields; ii++)
-          {
-            field_names[ii] = new char[MAX_COL_NAME_SIZE];
-          }
-        status = H5TBget_field_info( file_id, name.c_str(), field_names, NULL,
-                                     NULL, NULL );
-
-        // check to make sure column doesn't already exist
-        bool removedummy = false;
-        for (unsigned int ii=0; ii<nfields; ii++)
-          {
-            if (0 == strcmp(colname.c_str(),field_names[ii]))
-              {
-                std::cerr << "WARNING: Cannot create column \'"
-                          << colname.c_str()
-                          <<	"\'. Column already exists." << endl;
-                return;
-              }
-            else if (0 == strcmp("000dummy000",field_names[ii]))
-              {
-                removedummy = true;
-              }
-          }
-
-        for (unsigned int ii=0; ii<nfields; ii++)
-          {
-            delete [] field_names[ii];
-            field_names[ii] = NULL;
-          }
-        delete [] field_names;
-        field_names = NULL;
-
-        // set the column type
-        hid_t	field_type_new = 0;
-        if ( -1 == size )  // -1 for variable length data
-          {
-            if ( dal_CHAR == coltype )
-              field_type_new = H5Tvlen_create (H5T_NATIVE_CHAR);
-
-            else if ( dal_INT == coltype )
-              field_type_new = H5Tvlen_create (H5T_NATIVE_INT);
-
-            else if ( dal_UINT == coltype )
-              field_type_new = H5Tvlen_create (H5T_NATIVE_UINT);
-
-            else if ( dal_SHORT == coltype )
-              field_type_new = H5Tvlen_create (H5T_NATIVE_SHORT);
-
-            else if ( dal_FLOAT == coltype )
-              field_type_new = H5Tvlen_create (H5T_NATIVE_FLOAT);
-
-            else if ( dal_DOUBLE == coltype )
-              field_type_new = H5Tvlen_create (H5T_NATIVE_DOUBLE);
-
-            else
-              {
-                std::cerr << "ERROR: column type " << coltype <<
-                          " is not supported." << endl;
-                return;
-              }
-          }
-        else
-          {
-            if ( dal_CHAR == coltype )
-              field_type_new = H5T_NATIVE_CHAR;
-
-            else if ( dal_INT == coltype )
-              field_type_new = H5T_NATIVE_INT;
-
-            else if ( dal_UINT == coltype )
-              field_type_new = H5T_NATIVE_UINT;
-
-            else if ( dal_SHORT == coltype )
-              field_type_new = H5T_NATIVE_SHORT;
-
-            else if ( dal_FLOAT == coltype )
-              field_type_new = H5T_NATIVE_FLOAT;
-
-            else if ( dal_DOUBLE == coltype )
-              field_type_new = H5T_NATIVE_DOUBLE;
-
-            else if ( dal_STRING == coltype )
-              {
-                field_type_new = H5Tcopy( H5T_C_S1 );
-                H5Tset_size( field_type_new, 16 );
-              }
-            else
-              {
-                std::cerr << "ERROR: column type " << coltype <<
-                          " is not supported." << endl;
-                return;
-              }
-          }
-
-        // set additional required fields for new column call
-        hsize_t	position = nfields;
-
-        int * data = NULL;
-        data = new int[1];
-        data[0] = 0;
-
-        // create the new column
-        status = H5TBinsert_field( file_id, name.c_str(), colname.c_str(),
-                                   field_type_new, position, NULL, data );
-
-        delete [] data;
-        data = NULL;
-
-        if ( removedummy )
-          removeColumn("000dummy000");
-
-        return;
-
-        // if successful, add corresponding column object to list
-        if ( 0 == status )
-          {
-            dalColumn * lc = new dalColumn( colname, dal_INT /*coltype*/ );
-
-            // add new dalColumn to the 'columns' vector
-            columns.push_back( *lc );
-
-            lc->addMember( "a_member", coltype );
-          }
-
-      }
-    else
-      {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
-      }
-  }
-
-  // ---------------------------------------------------------- addArrayColumn
-
-  /*!
-  \brief Create an array column.
-
-  Create an array column.  This is usually called by the addColumn method
-  and not by the developer.
-
-  \param colname Name of the column you want to add.
-  \param coltype Datatype of the column you want to add (i.e. dalINT,
-                 dalFLOAT, dalSTRING, etc.)
-  \param dims Number of dimensions of the column you want to add.
-  */
-  void dalTable::addArrayColumn( std::string colname, std::string coltype,
-                                 uint indims )
-  {
-    if ( type == H5TYPE )
-      {
-        // make sure the column name isn't blank
-        if ( 0 == colname.length() )
+      // make sure the column name isn't blank
+        if ( 0 == column_name.length() )
           {
             std::cerr << "WARNING: Trying to add column without a name.\n";
             return;
           }
-
 
         // retrieve table information
         H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
@@ -1116,14 +838,13 @@ namespace DAL
                                      NULL, NULL );
 
         // check to make sure column doesn't already exist
-        bool removedummy = false;
         for (unsigned int ii=0; ii<nfields; ii++)
           {
-            if (0 == strcmp(colname.c_str(),field_names[ii]))
+            if (0 == strcmp( column_name.c_str(), field_names[ii] ))
               {
                 std::cerr << "WARNING: Cannot create column \'"
-                          << colname.c_str()
-                          << "\'. Column already exists." << endl;
+                << column_name.c_str()
+                <<	"\'. Column already exists." << endl;
                 return;
               }
             else if (0 == strcmp("000dummy000",field_names[ii]))
@@ -1131,12 +852,57 @@ namespace DAL
                 removedummy = true;
               }
           }
+
         for (unsigned int ii=0; ii<nfields; ii++)
           {
             free(field_names[ii]);
           }
         free(field_names);
+  }
 
+  void dalTable::h5addColumn_insert( uint const & indims, std::string const & colname,
+                                     hid_t const & field_type, bool const & removedummy )
+  {
+          // set additional required fields for new column call
+        int * data = NULL;
+        data = new int[ indims ];
+        for (unsigned int idx=0; idx<indims; idx++)
+          data[idx] = 0;
+
+        // create the new column
+        status = H5TBinsert_field( file_id, name.c_str(), colname.c_str(),
+                                   field_type, nfields, data, data );
+
+        delete [] data;
+        data = NULL;
+
+        if ( removedummy )
+          removeColumn("000dummy000");
+
+  }
+
+  // ---------------------------------------------------------- addColumn
+
+  /*!
+  \brief Create a column.
+
+  Create a column.
+
+  \param colname Name of the column you want to add.
+  \param coltype Datatype of the column you want to add (i.e. dalINT,
+                 dalFLOAT, dalSTRING, etc.)
+  \param dims Number of dimensions of the column you want to add.
+  */
+  void dalTable::addColumn( std::string colname, std::string coltype,
+                                 uint indims )
+  {
+    if ( type == H5TYPE )
+      {
+  
+		bool removedummy = false;
+
+		h5addColumn_setup( colname, removedummy );
+		
         // set the column type
         hsize_t dd = indims;
         hsize_t * dims = &dd;
@@ -1164,12 +930,16 @@ namespace DAL
         else if ( dal_STRING == coltype )
           h5type = H5T_NATIVE_CHAR;
 
-        else if ( dal_COMPLEX_CHAR == coltype )
+        else if ( dal_COMPLEX_CHAR == coltype || dal_COMPLEX == coltype )
           {
             std::vector<dalColumn> cv;
             std::string component_type;
 
-            component_type = dal_CHAR;
+            if ( dal_COMPLEX_CHAR == coltype )
+              component_type = dal_CHAR;
+
+            else if ( dal_COMPLEX == coltype )
+              component_type = dal_DOUBLE;
 
             dalColumn col_a( "r", component_type );  // real component
             dalColumn col_b( "i", component_type );  // imaginary component
@@ -1191,6 +961,7 @@ namespace DAL
             h5type = H5Tcreate( H5T_COMPOUND, sz );
 
             size_t offset = 0;
+            hid_t lcl_datatype = 0;
             for ( unsigned int ii=0; ii<cv.size(); ii++)
               {
 
@@ -1199,121 +970,30 @@ namespace DAL
                 else
                   offset += cv[ii-1].getSize();
 
-
                 if ( dal_CHAR == cv[ii].getType() )
-                  {
-                    H5Tinsert( h5type,
-                               cv[ii].getName().c_str(), offset,
-                               H5T_NATIVE_CHAR);
-                  }
+                  lcl_datatype = H5T_NATIVE_CHAR;
+
                 else if ( dal_INT == cv[ii].getType() )
-                  {
-                    H5Tinsert( h5type,
-                               cv[ii].getName().c_str(), offset,
-                               H5T_NATIVE_INT);
-                  }
+                  lcl_datatype = H5T_NATIVE_INT;
+
                 else if ( dal_FLOAT == cv[ii].getType() )
-                  {
-                    H5Tinsert( h5type,
-                               cv[ii].getName().c_str(), offset,
-                               H5T_NATIVE_FLOAT);
-                  }
+                  lcl_datatype = H5T_NATIVE_FLOAT;
+
                 else if ( dal_DOUBLE == cv[ii].getType() )
-                  {
-                    H5Tinsert( h5type,
-                               cv[ii].getName().c_str(), offset,
-                               H5T_NATIVE_DOUBLE);
-                  }
-              }
-          }
+                  lcl_datatype = H5T_NATIVE_DOUBLE;
 
-        else if ( dal_COMPLEX == coltype )
-          {
-            std::vector<dalColumn> cv;
-            std::string component_type;
-
-            component_type = dal_DOUBLE;
-
-            dalColumn col_a( "r", component_type );  // real component
-            dalColumn col_b( "i", component_type );  // imaginary component
-
-            cv.push_back( col_a );
-            cv.push_back( col_b );
-
-            size_t sz = 0;
-
-            // compute the size of the compound column
-            for ( unsigned int ii=0; ii<cv.size(); ii++)
-              {
-                //cerr << "subcolumn name is " << foo[ii].getName()
-                //	 << ". Type is " << foo[ii].getType() << endl;
-                sz += cv[ii].getSize();
-              }
-
-            // create a compound type that can hold each field
-            h5type = H5Tcreate( H5T_COMPOUND, sz );
-
-            size_t offset = 0;
-            for ( unsigned int ii=0; ii<cv.size(); ii++)
-              {
-
-                if (0==ii)
-                  offset=0;
-                else
-                  offset += cv[ii-1].getSize();
-
-
-                if ( dal_CHAR == cv[ii].getType() )
-                  {
-                    H5Tinsert( h5type,
-                               cv[ii].getName().c_str(), offset,
-                               H5T_NATIVE_CHAR);
-                  }
-                else if ( dal_INT == cv[ii].getType() )
-                  {
-                    H5Tinsert( h5type,
-                               cv[ii].getName().c_str(), offset,
-                               H5T_NATIVE_INT);
-                  }
-                else if ( dal_FLOAT == cv[ii].getType() )
-                  {
-                    H5Tinsert( h5type,
-                               cv[ii].getName().c_str(), offset,
-                               H5T_NATIVE_FLOAT);
-                  }
-                else if ( dal_DOUBLE == cv[ii].getType() )
-                  {
-                    H5Tinsert( h5type,
-                               cv[ii].getName().c_str(), offset,
-                               H5T_NATIVE_DOUBLE);
-                  }
+                H5Tinsert( h5type, cv[ii].getName().c_str(), offset, lcl_datatype );
               }
           }
         else
           {
             std::cerr << "ERROR: column type " << coltype << " is not supported."
-                      << endl;
+            << endl;
             return;
           }
         field_type = H5Tarray_create1( h5type, 1, dims, NULL );
-
-        // set additional required fields for new column call
-        hsize_t	position = nfields;
-        int * data = NULL;
-        data = new int[ indims ];
-        for (unsigned int idx=0; idx<indims; idx++)
-          data[idx] = 0;
-
-        // create the new column
-        status = H5TBinsert_field( file_id, name.c_str(), colname.c_str(),
-                                   field_type, position, NULL, data );
-
-        delete [] data;
-        data = NULL;
-
-        if ( removedummy )
-          removeColumn("000dummy000");
-
+		
+        h5addColumn_insert( indims, colname, field_type, removedummy );
       }
     else
       {
@@ -1341,46 +1021,17 @@ namespace DAL
   {
     if ( type == H5TYPE )
       {
-        // retrieve table information
-        H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
 
-
-        // allocate space for the column/field names and retrieve them from
-        // the table
-        field_names = (char**)malloc( nfields * sizeof(char*) );
-        for (unsigned int ii=0; ii<nfields; ii++)
-          {
-            field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
-          }
-        status = H5TBget_field_info( file_id, name.c_str(), field_names, NULL,
-                                     NULL, NULL );
-
-        // check to make sure column doesn't already exist
         bool removedummy = false;
-        for (unsigned int ii=0; ii<nfields; ii++)
-          {
-            if (0 == strcmp(compname.c_str(),field_names[ii]))
-              {
-                std::cerr << "WARNING: Cannot create column \'"
-                          << compname.c_str()
-                          <<	"\'. Column already exists." << endl;
-                return;
-              }
-            else if (0 == strcmp("000dummy000",field_names[ii]))
-              {
-                removedummy = true;
-              }
-          }
 
-        for (unsigned int ii=0; ii<nfields; ii++)
-          {
-            free(field_names[ii]);
-          }
-        free(field_names);
+		h5addColumn_setup( compname, removedummy );
+		
+// ----------   begin complex column-specific code. -------------
+
         size_t sz = 0;
 
         // compute the size of the compound column
-        for ( unsigned int ii=0; ii<foo.size(); ii++)
+        for ( unsigned int ii=0; ii< foo.size(); ii++ )
           {
 // 		cerr << "subcolumn name is " << foo[ii].getName()
 // 			 << ". Type is " << foo[ii].getType() << endl;
@@ -1389,6 +1040,7 @@ namespace DAL
 
         // create a compound type that can hold each field
         hid_t fieldtype = H5Tcreate( H5T_COMPOUND, sz );
+
         size_t offset = 0;
         for ( unsigned int ii=0; ii<foo.size(); ii++)
           {
@@ -1425,33 +1077,16 @@ namespace DAL
               }
           }
 
-        // retrieve table information
-        H5TBget_table_info ( file_id, name.c_str(), &nfields, &nrecords );
+// ----------   end complex column-specific code. -------------
 
-        // set additional required fields for new column call
-        hsize_t position = nfields;
-
-        int * data = new int[subfields];
-        for (int idx=0; idx<subfields; idx++)
-          data[idx] = 0;
-
-        // create the new column
-        status = H5TBinsert_field( file_id, name.c_str(), compname.c_str(),
-                                   fieldtype, position,
-                                   data, data );
-
-        delete [] data;
-        data = NULL;
-
-        if ( removedummy )
-          removeColumn("000dummy000");
+        h5addColumn_insert( subfields, compname, fieldtype, removedummy );
 
         return;
 
         // if successful, add corresponding column object to list
         if ( 0 == status )
           {
-            dalColumn * lc = new dalColumn( compname, "foo" /*H5_COMPOUND*/ );
+            dalColumn * lc = new dalColumn( compname, "foo" );
 
             // add new dalColumn to the 'columns' vector
             columns.push_back( *lc );
@@ -1524,7 +1159,7 @@ namespace DAL
 
         if ( !columnpresent )
           std::cerr << "WARNING: Column \'" << colname <<
-                    "\' not present.  Cannot delete." << endl;
+          "\' not present.  Cannot delete." << endl;
       }
     else
       {
@@ -1967,8 +1602,8 @@ namespace DAL
         if (status < 0)
           {
             std::cerr << "ERROR: Problem reading records. Row buffer may be too big."
-                      << " Make sure the buffer is smaller than the size of the "
-                      << "table." << endl;
+            << " Make sure the buffer is smaller than the size of the "
+            << "table." << endl;
           }
       }
     else
@@ -2140,7 +1775,7 @@ namespace DAL
         if (!casa_table_handle->keywordSet().isDefined(KeywordName))
           {
             std::cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName <<
-                      "\" does not exist" << endl;
+            "\" does not exist" << endl;
             return casa::False;
           };
         *result = casa_table_handle->keywordSet().asString(KeywordName);
@@ -2175,7 +1810,7 @@ namespace DAL
         if (!casa_table_handle->keywordSet().isDefined(KeywordName))
           {
             std::cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName <<
-                      "\" does not exist" << endl;
+            "\" does not exist" << endl;
             return casa::False;
           };
         *result = casa_table_handle->keywordSet().asDouble(KeywordName);
@@ -2210,7 +1845,7 @@ namespace DAL
         if (!casa_table_handle->keywordSet().isDefined(KeywordName))
           {
             std::cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName <<
-                      "\" does not exist" << endl;
+            "\" does not exist" << endl;
             return casa::False;
           };
         *result = casa_table_handle->keywordSet().asFloat(KeywordName);
@@ -2245,7 +1880,7 @@ namespace DAL
         if (!casa_table_handle->keywordSet().isDefined(KeywordName))
           {
             std::cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName <<
-                      "\" does not exist" << endl;
+            "\" does not exist" << endl;
             return casa::False;
           };
         *result = casa_table_handle->keywordSet().asDComplex(KeywordName);
@@ -2280,7 +1915,7 @@ namespace DAL
         if (!casa_table_handle->keywordSet().isDefined(KeywordName))
           {
             std::cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName <<
-                      "\" does not exist" << endl;
+            "\" does not exist" << endl;
             return casa::False;
           };
         result->reference(casa_table_handle->keywordSet().asArrayDouble(KeywordName));
@@ -2315,7 +1950,7 @@ namespace DAL
         if (!casa_table_handle->keywordSet().isDefined(KeywordName))
           {
             std::cerr << "dalTable::GetKeyword: Keyword named \"" << KeywordName <<
-                      "\" does not exist" << endl;
+            "\" does not exist" << endl;
             return casa::False;
           };
         result->reference(casa_table_handle->keywordSet().asArrayDComplex(KeywordName));
@@ -2350,7 +1985,7 @@ namespace DAL
         if (!casa_table_handle->keywordSet().isDefined(KeywordName))
           {
             std::cerr << "dalTable::GetKeywordType: Keyword named \"" << KeywordName <<
-                      "\" does not exist" << endl;
+            "\" does not exist" << endl;
             return "";
           };
         casa::DataType type = casa_table_handle->keywordSet().dataType(KeywordName);
@@ -2463,17 +2098,6 @@ namespace DAL
     setFilter( columns, conditions );
   }
 
-  /*
-  bpl::numeric::array dalTable::getColumnData_boost( std::string colname )
-  {
-       getColumnData( colname );
-       for (unsigned int hh=0; hh<shape.size(); hh++)
-       { mydims.push_back(shape[hh]); }
-       bpl::numeric::array narray = num_util::makeNum((double*)data,mydims);
-       std::vector<int> fshape = num_util::shape(narray);
-       return narray;
-  }
-  */
 #endif // WITH_CASA
 
   // ----------------------------------------------------- getAttribute_boost
