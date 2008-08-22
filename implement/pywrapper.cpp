@@ -45,12 +45,24 @@ BOOST_PYTHON_MODULE(pydal)
 //---------------------------------------------------------------- dalArray
 
   bpl::class_<dalArray>("dalArray")
+  .def( "setAttribute_char", &dalArray::setAttribute_char,
+        "Set a character attribute" )
+  .def( "setAttribute_short", &dalArray::setAttribute_short,
+        "Set a short integer attribute" )
+  .def( "setAttribute_int", &dalArray::setAttribute_int,
+        "Set a integer attribute" )
+  .def( "setAttribute_uint", &dalArray::setAttribute_uint,
+        "Set a unsigned integer attribute" )
+  .def( "setAttribute_long", &dalArray::setAttribute_long,
+        "Set a long integer attribute" )
+  .def( "setAttribute_float", &dalArray::setAttribute_float,
+        "Set a floating point attribute" )
+  .def( "setAttribute_double", &dalArray::setAttribute_double,
+        "Set a double precision floating point attribute" )
+  .def( "setAttribute_string", &dalArray::setAttribute_string,
+        "Set a string attribute" )
   .def( "getAttributes", &dalArray::getAttributes,
         "Print the attributes of the array." )
-  .def( "setAttribute_int", &dalArray::sai_boost,
-        "Add a string attribute. " )
-  .def( "setAttribute_float", &dalArray::saf_boost,
-        "Add a float attribute." )
   .def( "extend", &dalArray::extend_boost,
         "Extend an array." )
   ;
@@ -105,6 +117,22 @@ BOOST_PYTHON_MODULE(pydal)
 
   bpl::class_<dalDataset>("dalDataset")
   .def( bpl::init<char*, string>() )
+  .def( "setAttribute_char", &dalDataset::setAttribute_char,
+        "Set a character attribute" )
+  .def( "setAttribute_short", &dalDataset::setAttribute_short,
+        "Set a short integer attribute" )
+  .def( "setAttribute_int", &dalDataset::setAttribute_int,
+        "Set a integer attribute" )
+  .def( "setAttribute_uint", &dalDataset::setAttribute_uint,
+        "Set a unsigned integer attribute" )
+  .def( "setAttribute_long", &dalDataset::setAttribute_long,
+        "Set a long integer attribute" )
+  .def( "setAttribute_float", &dalDataset::setAttribute_float,
+        "Set a floating point attribute" )
+  .def( "setAttribute_double", &dalDataset::setAttribute_double,
+        "Set a double precision floating point attribute" )
+  .def( "setAttribute_string", &dalDataset::setAttribute_string,
+        "Set a string attribute" )
   .def( "open", &dalDataset::open,
         ( bpl::arg("dataset_name") ),
         "Opens a dataset." )
@@ -174,18 +202,28 @@ BOOST_PYTHON_MODULE(pydal)
   .def( bpl::init<>())
   .def( bpl::init<char*, void*>())
   .def( bpl::init<hid_t,char*>())
+  .def( "setAttribute_char", &dalGroup::setAttribute_char,
+        "Set a character attribute" )
+  .def( "setAttribute_short", &dalGroup::setAttribute_short,
+        "Set a short integer attribute" )
+  .def( "setAttribute_int", &dalGroup::setAttribute_int,
+        "Set a integer attribute" )
+  .def( "setAttribute_uint", &dalGroup::setAttribute_uint,
+        "Set a unsigned integer attribute" )
+  .def( "setAttribute_long", &dalGroup::setAttribute_long,
+        "Set a long integer attribute" )
+  .def( "setAttribute_float", &dalGroup::setAttribute_float,
+        "Set a floating point attribute" )
+  .def( "setAttribute_double", &dalGroup::setAttribute_double,
+        "Set a double precision floating point attribute" )
+  .def( "setAttribute_string", &dalGroup::setAttribute_string,
+        "Set a string attribute" )
   .def( "getName", &dalGroup::getName,
         "Return the group name." )
   .def( "setName", &dalGroup::setName,
         "Set the name of the group." )
   .def( "getId", &dalGroup::getId,
         "Return the group identifier." )
-  .def( "setAttribute_int", &dalGroup::setAttribute_int,
-        "Set an integer attribute to the group." )
-  .def( "setAttribute_uint", &dalGroup::setAttribute_uint,
-        "Set an unsigned integer attribute to the group." )
-  .def( "setAttribute_double", &dalGroup::setAttribute_double,
-        "Set an double precision floating point attribute to the group." )
   .def( "createIntArray", &dalGroup::cia_boost1,
         bpl::return_value_policy<bpl::manage_new_object>(),
         "Create an integer array in the group." )
@@ -212,6 +250,22 @@ BOOST_PYTHON_MODULE(pydal)
 
   bpl::class_<dalTable>("dalTable")
   .def( bpl::init<char*>())
+  .def( "setAttribute_char", &dalTable::setAttribute_char,
+        "Set a character attribute" )
+  .def( "setAttribute_short", &dalTable::setAttribute_short,
+        "Set a short integer attribute" )
+  .def( "setAttribute_int", &dalTable::setAttribute_int,
+        "Set a integer attribute" )
+  .def( "setAttribute_uint", &dalTable::setAttribute_uint,
+        "Set a unsigned integer attribute" )
+  .def( "setAttribute_long", &dalTable::setAttribute_long,
+        "Set a long integer attribute" )
+  .def( "setAttribute_float", &dalTable::setAttribute_float,
+        "Set a floating point attribute" )
+  .def( "setAttribute_double", &dalTable::setAttribute_double,
+        "Set a double precision floating point attribute" )
+  .def( "setAttribute_string", &dalTable::setAttribute_string,
+        "Set a string attribute" )
   .def( "openTable", &dalTable::ot_hdf5,
         "Open an hdf5 table object." )
   .def( "createTable", &dalTable::createTable,
@@ -237,14 +291,6 @@ BOOST_PYTHON_MODULE(pydal)
         "Read table rows." )
   .def( "getAttribute", &dalTable::getAttribute_boost,
         "Return the value of a column attribute." )
-  .def( "setAttribute_string", &dalTable::setAttribute_string,
-        "Set a string attribute for the table." )
-  .def( "setAttribute_int", &dalTable::setAttribute_int,
-        "Set an integer attribute for the table." )
-  .def( "setAttribute_uint", &dalTable::setAttribute_uint,
-        "Set an unsigned integer attribute for the table." )
-  .def( "setAttribute_double", &dalTable::setAttribute_double,
-        "Set a double precision floating point attribute for the table." )
   .def( "findAttribute", &dalTable::findAttribute,
         "Return true if the attribute exists for the table." )
   .def( "getNumberOfRows", &dalTable::getNumberOfRows,

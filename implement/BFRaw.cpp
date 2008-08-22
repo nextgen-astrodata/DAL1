@@ -220,47 +220,47 @@ namespace DAL
     dataset = dalDataset( outputfilename.c_str(), "HDF5" );
 
     // root-level headers
-    int n_stations[] = { 1 };
+    int n_stations = 1;
     vector<string> srcvec;
     srcvec.push_back( "" );
-    int main_beam_diam[] = { 0 };
-    int bandwidth[] = { 0 }; // Total bandwidth (MHz)
-    int breaks_in_data[] = { 0 }; // Any breaks in data?
-    int dispersion_measure[] = { 0 };
-    int number_of_samples[] =
-      { fileheader.nrBeamlets * fileheader.nrSamplesPerBeamlet };
-    Float64 sampling_time[] = { fileheader.sampleRate };
-    int number_of_beams[] = { 1 };
-    int sub_beam_diameter[] = { 0 }; // fwhm of the sub-beams (arcmin)
-    int weather_temperature[] = { 0 }; // approx. centigrade
-    int weather_humidity[] = { 0 }; // approx. %
-    int tsys[] = { 0 }; // for various stations (K)
+    int main_beam_diam = 0;
+    int bandwidth = 0; // Total bandwidth (MHz)
+    int breaks_in_data = 0; // Any breaks in data?
+    int dispersion_measure = 0;
+    int number_of_samples =
+      fileheader.nrBeamlets * fileheader.nrSamplesPerBeamlet;
+    Float64 sampling_time = fileheader.sampleRate;
+    int number_of_beams = 1;
+    int sub_beam_diameter = 0; // fwhm of the sub-beams (arcmin)
+    int weather_temperature = 0; // approx. centigrade
+    int weather_humidity = 0; // approx. %
+    int tsys = 0; // for various stations (K)
 
     // write headers using above
-    dataset.setAttribute_string( "FILENAME", outputfilename.c_str() );
-    dataset.setAttribute_string( "TELESCOPE", "LOFAR" );
-    dataset.setAttribute_int( "NUMBER_OF_STATIONS", n_stations );
-    dataset.setAttribute_string( "DATATYPE", "" );
-    dataset.setAttribute_string( "EMBAND", "" );
+    dataset.setAttribute( "FILENAME", outputfilename.c_str() );
+    dataset.setAttribute( "TELESCOPE", std::string("LOFAR") );
+    dataset.setAttribute( "NUMBER_OF_STATIONS", &n_stations );
+    dataset.setAttribute( "DATATYPE", std::string("") );
+    dataset.setAttribute( "EMBAND", std::string("") );
     dataset.setAttribute_string( "SOURCE", srcvec );
-    dataset.setAttribute_string( "OBSERVATION_ID", "" );
-    dataset.setAttribute_string( "PROJ_ID", "" );
-    dataset.setAttribute_string( "POINT_RA", "" );
-    dataset.setAttribute_string( "POINT_DEC", "" );
-    dataset.setAttribute_string( "OBSERVER", "" );
-    dataset.setAttribute_int( "MAIN_BEAM_DIAM", main_beam_diam );
-//   dataset.setAttribute_int( "CENTER_FREQUENCY", center_freq );
-    dataset.setAttribute_int( "BANDWIDTH", bandwidth );
-    dataset.setAttribute_int( "BREAKS_IN_DATA", breaks_in_data );
-    dataset.setAttribute_int( "DISPERSION_MEASURE", dispersion_measure );
-    dataset.setAttribute_int( "NUMBER_OF_SAMPLES", number_of_samples );
-    dataset.setAttribute_double( "SAMPLING_TIME", sampling_time );
-    dataset.setAttribute_string( "NOTES", "" );
-    dataset.setAttribute_int( "NUMBER_OF_BEAMS", number_of_beams );
-    dataset.setAttribute_int( "SUB_BEAM_DIAMETER", sub_beam_diameter );
-    dataset.setAttribute_int( "WEATHER_TEMPERATURE", weather_temperature );
-    dataset.setAttribute_int( "WEATHER_HUMIDITY", weather_humidity );
-    dataset.setAttribute_int( "TSYS", tsys );
+    dataset.setAttribute( "OBSERVATION_ID", std::string("") );
+    dataset.setAttribute( "PROJ_ID", std::string("") );
+    dataset.setAttribute( "POINT_RA", std::string("") );
+    dataset.setAttribute( "POINT_DEC", std::string("") );
+    dataset.setAttribute( "OBSERVER", std::string("") );
+    dataset.setAttribute( "MAIN_BEAM_DIAM", &main_beam_diam );
+//   dataset.setAttribute( "CENTER_FREQUENCY", center_freq );
+    dataset.setAttribute( "BANDWIDTH", &bandwidth );
+    dataset.setAttribute( "BREAKS_IN_DATA", &breaks_in_data );
+    dataset.setAttribute( "DISPERSION_MEASURE", &dispersion_measure );
+    dataset.setAttribute( "NUMBER_OF_SAMPLES", &number_of_samples );
+    dataset.setAttribute( "SAMPLING_TIME", &sampling_time );
+    dataset.setAttribute( "NOTES", std::string("") );
+    dataset.setAttribute( "NUMBER_OF_BEAMS", &number_of_beams );
+    dataset.setAttribute( "SUB_BEAM_DIAMETER", &sub_beam_diameter );
+    dataset.setAttribute( "WEATHER_TEMPERATURE", &weather_temperature );
+    dataset.setAttribute( "WEATHER_HUMIDITY", &weather_humidity );
+    dataset.setAttribute( "TSYS", &tsys );
 
     dalGroup * beamGroup;
 
@@ -276,15 +276,15 @@ namespace DAL
     char * dec_val = new char[20];
     sprintf( ra_val, "%f", fileheader.beamDirections[beam_number+1][0] );
     sprintf( dec_val, "%f",fileheader.beamDirections[beam_number+1][1] );
-    beamGroup->setAttribute_string( "RA", ra_val );
-    beamGroup->setAttribute_string( "DEC", dec_val );
+    beamGroup->setAttribute( "RA", ra_val );
+    beamGroup->setAttribute( "DEC", dec_val );
     delete [] ra_val;
     ra_val = NULL;
     delete [] dec_val;
     dec_val = NULL;
 
     int n_subbands[] = { fileheader.nrBeamlets };
-    beamGroup->setAttribute_int( "NUMBER_OF_SUBBANDS", n_subbands );
+    beamGroup->setAttribute( "NUMBER_OF_SUBBANDS", n_subbands );
 
     delete beamGroup;
 
@@ -319,7 +319,7 @@ namespace DAL
     for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
       {
         center_frequency[idx] = (int)fileheader.subbandFrequencies[ idx ];
-        table[idx]->setAttribute_int( "CENTER_FREQUENCY", &center_frequency[idx] );
+        table[idx]->setAttribute( "CENTER_FREQUENCY", &center_frequency[idx] );
       }
 
     delete [] sbName;
@@ -433,11 +433,11 @@ namespace DAL
 
             memset (timeDateString,'\0',buf_size);
             strftime(timeDateString, buf_size, "%T", gmtime(&utc));
-            dataset.setAttribute_string( "EPOCH_UTC", timeDateString );
+            dataset.setAttribute( "EPOCH_UTC", timeDateString );
 
             memset (timeDateString,'\0',buf_size);
             strftime(timeDateString, buf_size, "%d/%m/%y", gmtime(&utc));
-            dataset.setAttribute_string( "EPOCH_DATE", timeDateString );
+            dataset.setAttribute( "EPOCH_DATE", timeDateString );
 
             memset (timeDateString,'\0',buf_size);
 

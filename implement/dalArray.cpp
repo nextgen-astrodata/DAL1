@@ -66,6 +66,19 @@ namespace DAL
     return( array_id );
   }
 
+// ------------------------------------------------------------ getId
+
+  /*!
+    \brief Get the array ID.
+
+    Retrieve the identifier for the array.
+
+    \return The array identifier as an integer.
+  */
+  hid_t dalArray::getId()
+  {
+    return array_id;
+  }
 
 // ------------------------------------------------------------ close
   /*!
@@ -518,39 +531,40 @@ namespace DAL
   }
 
 
-// ------------------------------------------------------- setAttribute_string
-  /*!
-    \brief Add a string attribute.
+  // ---------------------------------------------- setAttribute
 
-    Add a string attribute to the array.
+  /*!
+    \brief Add a char attribute.
+
+    Add a char attribute to the array.
 
     \param attrname The name of the attribute you want to add.
     \param data The value of the attribute you want to add.
     \return bool -- DAL::FAIL or DAL::SUCCESS
    */
-  bool dalArray::setAttribute_string( string attrname, string data )
+  bool dalArray::setAttribute( std::string attrname, char * data, int size )
   {
-    return h5setAttribute_string( array_id, attrname, &data, 1 );
+    return h5setAttribute( H5T_NATIVE_CHAR, array_id, attrname, data, size );
   }
 
-// ------------------------------------------------------- setAttribute_string
-  /*!
-    \brief Add a string attribute.
+  // ---------------------------------------------- setAttribute
 
-    Add a string attribute to the array.
+  /*!
+    \brief Add a short integer attribute.
+
+    Add a short integer attribute to the array.
 
     \param attrname The name of the attribute you want to add.
     \param data The value of the attribute you want to add.
-    \param size The size of the data array.
     \return bool -- DAL::FAIL or DAL::SUCCESS
    */
-  bool dalArray::setAttribute_string( string attrname, string * data, int size )
+  bool dalArray::setAttribute( std::string attrname, short * data, int size )
   {
-    return h5setAttribute_string( array_id, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_SHORT, array_id, attrname, data, size );
   }
 
+  // ---------------------------------------------- setAttribute
 
-// --------------------------------------------------------- setAttribute_int
   /*!
     \brief Add an integer attribute.
 
@@ -560,30 +574,45 @@ namespace DAL
     \param data The value of the attribute you want to add.
     \return bool -- DAL::FAIL or DAL::SUCCESS
    */
-  bool dalArray::setAttribute_int( string attrname, int * data )
+  bool dalArray::setAttribute( std::string attrname, int * data, int size )
   {
-    return h5setAttribute_int( array_id, attrname, data, 1 );
+    return h5setAttribute( H5T_NATIVE_INT, array_id, attrname, data, size );
   }
 
-
-// ------------------------------------------------------- setAttribute_uint
+  // ---------------------------------------------- setAttribute
 
   /*!
-    \brief Add an unsigned integer attribute.
+    \brief Add a unsigned integer attribute.
 
-    Add an unsigned integer attribute to the array.
+    Add a unsigned integer attribute to the array.
 
     \param attrname The name of the attribute you want to add.
     \param data The value of the attribute you want to add.
     \return bool -- DAL::FAIL or DAL::SUCCESS
    */
-  bool dalArray::setAttribute_uint( string attrname, unsigned int * data )
+  bool dalArray::setAttribute( std::string attrname, uint * data, int size )
   {
-    return h5setAttribute_uint( array_id, attrname, data, 1 );
+    return h5setAttribute( H5T_NATIVE_UINT, array_id, attrname, data, size );
   }
 
+  // ---------------------------------------------- setAttribute
 
-// ------------------------------------------------------ setAttribute_float
+  /*!
+    \brief Add a long integer attribute.
+
+    Add a long integer attribute to the array.
+
+    \param attrname The name of the attribute you want to add.
+    \param data The value of the attribute you want to add.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+   */
+  bool dalArray::setAttribute( std::string attrname, long * data, int size )
+  {
+    return h5setAttribute( H5T_NATIVE_LONG, array_id, attrname, data, size );
+  }
+
+  // ---------------------------------------------- setAttribute
+
   /*!
     \brief Add a floating point attribute.
 
@@ -593,24 +622,58 @@ namespace DAL
     \param data The value of the attribute you want to add.
     \return bool -- DAL::FAIL or DAL::SUCCESS
    */
-  bool dalArray::setAttribute_float( string attrname, float * data )
+  bool dalArray::setAttribute( std::string attrname, float * data, int size )
   {
-    return h5setAttribute_float( array_id, attrname, data, 1 );
+    return h5setAttribute( H5T_NATIVE_FLOAT, array_id, attrname, data, size );
   }
 
-// ---------------------------------------------------- setAttribute_double
-  /*!
-    \brief Add a double-precision floating point attribute.
+  // ---------------------------------------------- setAttribute
 
-    Add a double-precision floating point attribute to the array.
+  /*!
+    \brief Add a double precision floating point attribute.
+
+    Add a double precision floating point attribute to the array.
 
     \param attrname The name of the attribute you want to add.
     \param data The value of the attribute you want to add.
     \return bool -- DAL::FAIL or DAL::SUCCESS
    */
-  bool dalArray::setAttribute_double( string attrname, double * data, int size )
+  bool dalArray::setAttribute( std::string attrname, double * data, int size )
   {
-    return h5setAttribute_double( array_id, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_DOUBLE, array_id, attrname, data, size );
+  }
+
+  // ---------------------------------------------- setAttribute_string
+
+  /*!
+    \brief Define a string attribute.
+
+    Define a string attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalArray::setAttribute( std::string attrname, std::string data )
+  {
+    return h5setAttribute_string( array_id, attrname, &data, 1 );
+  }
+
+  // ---------------------------------------------- setAttribute_string
+
+  /*!
+    \brief Define a string attribute.
+
+    Define a string attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalArray::setAttribute( std::string attrname, std::string * data,
+                                 int size )
+  {
+    return h5setAttribute_string( array_id, attrname, data, size );
   }
 
 // ------------------------------------------------------------ dalShortArray
@@ -855,7 +918,6 @@ namespace DAL
   dalIntArray::dalIntArray( hid_t obj_id, string arrayname,
                             vector<int> dims, int data[], vector<int> chnkdims )
   {
-
     hid_t datatype  = 0;
     hid_t dataspace = 0;  // declare a few h5 variables
 
@@ -945,7 +1007,6 @@ namespace DAL
       {
         std::cerr << "ERROR: Could not close array datatype.\n";
       }
-
   }
 
 // ------------------------------------------------------------ readIntArray
@@ -1052,20 +1113,21 @@ namespace DAL
   dalFloatArray::dalFloatArray( hid_t obj_id, string arrayname,
                                 vector<int> dims, float data[], vector<int> chnkdims )
   {
-    // declare a few h5 variables
     hid_t datatype  = 0;
-    hid_t dataspace = 0;
+    hid_t dataspace = 0;  // declare a few h5 variables
+
+    name = arrayname;  // set the private name variable to the array name
 
     // determine the rank from the size of the dimensions vector
-    int rank = dims.size();
+    unsigned int rank = dims.size();
     hsize_t mydims[rank];  // declare a dimensions c-array
     hsize_t maxdims[rank]; // declare a maximum dimensions c-array
     hsize_t chunk_dims[ rank ];  // declare chunk dimensions c-array
 
     // set the c-array dimensions and maxiumum dimensions
-    for (int ii=0; ii<rank; ii++)
+    for (unsigned int ii=0; ii<rank; ii++)
       {
-        mydims[ii] = dims[ii];
+        mydims[ii] = dims[ii];  // vector to c-array
         maxdims[ii] = H5S_UNLIMITED;
       }
 
@@ -1076,7 +1138,7 @@ namespace DAL
       }
 
     // set the datatype to write
-    if ( ( datatype = H5Tcopy(H5T_NATIVE_FLOAT) ) < 0 )
+    if ( ( datatype = H5Tcopy( H5T_NATIVE_FLOAT ) ) < 0 )
       {
         std::cerr << "ERROR: Could not set array datatype.\n";
       }
@@ -1100,11 +1162,12 @@ namespace DAL
             std::cerr << "ERROR: Could not set array chunk size.\n";
           }
 
-        if ( ( array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
-                                      dataspace, cparms) ) < 0 )
+        if ( ( array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+                                      dataspace, cparms, NULL, NULL ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array.\n";
           }
+
       }
     // otherwise, write the data this way
     else
@@ -1114,8 +1177,9 @@ namespace DAL
             std::cerr << "ERROR: Could not set array dataspace.\n";
           }
 
-        if ( ( array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
-                                      dataspace, H5P_DEFAULT ) ) < 0 )
+        if ( ( array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+                                     dataspace, H5P_DEFAULT, NULL,
+                                     NULL ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array.\n";
           }
@@ -1123,7 +1187,7 @@ namespace DAL
 
     // write the data
     if ( H5Dwrite( array_id, datatype, dataspace, dataspace, H5P_DEFAULT,
-                   data) < 0 )
+                   data ) < 0 )
       {
         std::cerr << "ERROR: Could not write array.\n";
       }
@@ -1139,6 +1203,7 @@ namespace DAL
       {
         std::cerr << "ERROR: Could not close array datatype.\n";
       }
+
   }
 
 
@@ -1456,24 +1521,6 @@ namespace DAL
    *
    ************************************************************************/
 
-// ------------------------------------------------------------ sai_boost
-  /******************************************************
-   * wrapper for dalArray::setAttribute_int
-   ******************************************************/
-  void dalArray::sai_boost( string attrname, int data )
-  {
-    setAttribute_int( attrname, &data );
-  }
-
-// ------------------------------------------------------------ saf_boost
-  /******************************************************
-   * wrapper for dalArray::setAttribute_float
-   ******************************************************/
-  void dalArray::saf_boost( string attrname, float data )
-  {
-    setAttribute_float( attrname, &data );
-  }
-
 // ------------------------------------------------------------ extend_boost
   /******************************************************
    * wrapper for dalArray::extend
@@ -1488,6 +1535,38 @@ namespace DAL
     extend( dims );
   }
 
+  bool dalArray::setAttribute_char( std::string attrname, char data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalArray::setAttribute_short( std::string attrname, short data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalArray::setAttribute_int( std::string attrname, int data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalArray::setAttribute_uint( std::string attrname, uint data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalArray::setAttribute_long( std::string attrname, long data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalArray::setAttribute_float( std::string attrname, float data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalArray::setAttribute_double( std::string attrname, double data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalArray::setAttribute_string( std::string attrname, std::string data )
+  {
+     return setAttribute( attrname, &data );
+  }
 #endif // end #ifdef PYTHON
 
 } // end namespace DAL

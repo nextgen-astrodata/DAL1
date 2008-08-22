@@ -84,13 +84,13 @@ namespace DAL
         string project            = "UNDEFINED";
         string observation_id     = "UNDEFINED";
         string observation_mode   = "UNDEFINED";
-        dataset->setAttribute_string( attribute_name(TELESCOPE), telescope );
-        dataset->setAttribute_string( attribute_name(OBSERVER), observer );
-        dataset->setAttribute_string( attribute_name(PROJECT), project );
-        dataset->setAttribute_string( attribute_name(OBSERVATION_ID),
-                                      observation_id );
-        dataset->setAttribute_string( attribute_name(OBSERVATION_MODE),
-                                      observation_mode );
+        dataset->setAttribute( attribute_name(TELESCOPE), telescope );
+        dataset->setAttribute( attribute_name(OBSERVER), observer );
+        dataset->setAttribute( attribute_name(PROJECT), project );
+        dataset->setAttribute( attribute_name(OBSERVATION_ID),
+                               observation_id );
+        dataset->setAttribute( attribute_name(OBSERVATION_MODE),
+                               observation_mode );
 
       }
     else
@@ -391,8 +391,8 @@ namespace DAL
                       firstdims,
                       nodata,
                       cdims );
-        stationGroup->setAttribute_string( attribute_name(OBSERVATION_MODE),
-                                           "Transient" );
+        stationGroup->setAttribute( attribute_name(OBSERVATION_MODE),
+                                    std::string("Transient") );
       }
     else
       {
@@ -402,8 +402,8 @@ namespace DAL
                                                  firstdims,
                                                  nodata,
                                                  cdims );
-        stationGroup->setAttribute_string( attribute_name(OBSERVATION_MODE),
-                                           "Sub-band" );
+        stationGroup->setAttribute( attribute_name(OBSERVATION_MODE),
+                                    std::string("Sub-band") );
       }
 
     double trigger_offset[1]  = { 0 };
@@ -412,60 +412,59 @@ namespace DAL
     double spv[3]  = { 0, 0, 0 };
 
     // Add attributes to "Station" group
-    stationGroup->setAttribute_double( attribute_name(STATION_POSITION_VALUE),
-                                       spv, 3 );
-    stationGroup->setAttribute_string( attribute_name(STATION_POSITION_UNIT),
-                                       "m" );
-    stationGroup->setAttribute_string( attribute_name(STATION_POSITION_FRAME),
-                                       "ITRF" );
-    stationGroup->setAttribute_double( attribute_name(BEAM_DIRECTION_VALUE),
-                                       bdv, 2 );
-    stationGroup->setAttribute_string( attribute_name(BEAM_DIRECTION_UNIT),
-                                       "deg" );
-    stationGroup->setAttribute_string( attribute_name(BEAM_DIRECTION_FRAME),
-                                       "UNDEFINED" );
-    stationGroup->setAttribute_string( attribute_name(TRIGGER_TYPE),
-                                       "UNDEFINED" );
-    stationGroup->setAttribute_double( attribute_name(TRIGGER_OFFSET),
-                                       trigger_offset );
-    stationGroup->setAttribute_int(    attribute_name(TRIGGERED_ANTENNAS),
-                                       triggered_antennas);
+    stationGroup->setAttribute( attribute_name(STATION_POSITION_VALUE),
+                                spv, 3 );
+    stationGroup->setAttribute( attribute_name(STATION_POSITION_UNIT),
+                                std::string("m") );
+    stationGroup->setAttribute( attribute_name(STATION_POSITION_FRAME),
+                                std::string("ITRF") );
+    stationGroup->setAttribute( attribute_name(BEAM_DIRECTION_VALUE),
+                                bdv, 2 );
+    stationGroup->setAttribute( attribute_name(BEAM_DIRECTION_UNIT),
+                                std::string("deg") );
+    stationGroup->setAttribute( attribute_name(BEAM_DIRECTION_FRAME),
+                                std::string("UNDEFINED") );
+    stationGroup->setAttribute( attribute_name(TRIGGER_TYPE),
+                                std::string("UNDEFINED") );
+    stationGroup->setAttribute( attribute_name(TRIGGER_OFFSET),
+                                trigger_offset );
+    stationGroup->setAttribute( attribute_name(TRIGGERED_ANTENNAS),
+                                triggered_antennas);
 
-    unsigned int sid[] = { (unsigned int)(header.stationid) };
-    unsigned int rsp[] = { (unsigned int)(header.rspid) };
-    unsigned int rcu[] = { (unsigned int)(header.rcuid) };
-    double sf[] = { (double)header.sample_freq };
-    unsigned int time[] = { (unsigned int)(header.time) };
-    unsigned int samp_num[] = { (unsigned int)(header.sample_nr) };
-    unsigned int spf[] = { (unsigned int)header.n_samples_per_frame };
-    unsigned int nyquist_zone[] = { (unsigned int)1 };
+    unsigned int sid = header.stationid;
+    unsigned int rsp = header.rspid;
+    unsigned int rcu = header.rcuid;
+    double sf = header.sample_freq;
+    unsigned int time = header.time;
+    unsigned int samp_num = header.sample_nr;
+    unsigned int spf = header.n_samples_per_frame;
+    unsigned int nyquist_zone = 1;
     double apos[3]    = { 0, 0, 0 };
 
-    dipoleArray->setAttribute_uint( attribute_name(STATION_ID), sid );
-    dipoleArray->setAttribute_uint( attribute_name(RSP_ID), rsp );
-    dipoleArray->setAttribute_uint( attribute_name(RCU_ID), rcu );
-    dipoleArray->setAttribute_uint( attribute_name(TIME), time );
-    dipoleArray->setAttribute_uint( attribute_name(SAMPLE_NUMBER), samp_num );
-    dipoleArray->setAttribute_uint( attribute_name(SAMPLES_PER_FRAME), spf );
-    dipoleArray->setAttribute_double( attribute_name(ANTENNA_POSITION_VALUE),
-                                      apos, 3 );
-    dipoleArray->setAttribute_string( attribute_name(ANTENNA_POSITION_UNIT),
-                                      "m" );
-    dipoleArray->setAttribute_string( attribute_name(ANTENNA_POSITION_FRAME),
-                                      "ITRF" );
-    dipoleArray->setAttribute_double( attribute_name(ANTENNA_ORIENTATION_VALUE),
-                                      apos, 3 );
-    dipoleArray->setAttribute_string( attribute_name(ANTENNA_ORIENTATION_UNIT),
-                                      "m" );
-    dipoleArray->setAttribute_string( attribute_name(ANTENNA_ORIENTATION_FRAME),
-                                      "ITRF" );
-    dipoleArray->setAttribute_string( attribute_name(FEED), "UNDEFINED" );
-    dipoleArray->setAttribute_uint(   attribute_name(NYQUIST_ZONE),
-                                      nyquist_zone );
-    dipoleArray->setAttribute_double( attribute_name(SAMPLE_FREQUENCY_VALUE),
-                                      sf, 1 );
-    dipoleArray->setAttribute_string( attribute_name(SAMPLE_FREQUENCY_UNIT),
-                                      "MHz" );
+    dipoleArray->setAttribute( attribute_name(STATION_ID), &sid );
+    dipoleArray->setAttribute( attribute_name(RSP_ID), &rsp );
+    dipoleArray->setAttribute( attribute_name(RCU_ID), &rcu );
+    dipoleArray->setAttribute( attribute_name(TIME), &time );
+    dipoleArray->setAttribute( attribute_name(SAMPLE_NUMBER), &samp_num );
+    dipoleArray->setAttribute( attribute_name(SAMPLES_PER_FRAME), &spf );
+    dipoleArray->setAttribute( attribute_name(ANTENNA_POSITION_VALUE),
+                               apos, 3 );
+    dipoleArray->setAttribute( attribute_name(ANTENNA_POSITION_UNIT),
+                               std::string("m") );
+    dipoleArray->setAttribute( attribute_name(ANTENNA_POSITION_FRAME),
+                               std::string("ITRF") );
+    dipoleArray->setAttribute( attribute_name(ANTENNA_ORIENTATION_VALUE),
+                               apos, 3 );
+    dipoleArray->setAttribute( attribute_name(ANTENNA_ORIENTATION_UNIT),
+                               std::string("m") );
+    dipoleArray->setAttribute( attribute_name(ANTENNA_ORIENTATION_FRAME),
+                               std::string("ITRF") );
+    dipoleArray->setAttribute( attribute_name(FEED), std::string("UNDEFINED") );
+    dipoleArray->setAttribute( attribute_name(NYQUIST_ZONE),
+                               &nyquist_zone );
+    dipoleArray->setAttribute( attribute_name(SAMPLE_FREQUENCY_VALUE), &sf, 1 );
+    dipoleArray->setAttribute( attribute_name(SAMPLE_FREQUENCY_UNIT),
+                               std::string("MHz") );
   }
 
   bool TBB::transientMode()

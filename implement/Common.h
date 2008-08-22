@@ -94,15 +94,16 @@ namespace DAL
       {
         std::cerr << "ERROR: Could not set attribute '" << attrname
                   << "' dataspace.\n";
-        return FAIL;
+        return DAL::FAIL;
       }
 
-    attr1 = H5Acreate1( obj_id, attrname.c_str(),
-                        datatype, aid1, H5P_DEFAULT);
+    attr1 = H5Acreate( obj_id, attrname.c_str(),
+                        datatype, aid1, NULL, NULL );
     if ( attr1 < 0 )
       {
-        std::cerr << "ERROR: Could not create attribute '" << attrname << "'.\n";
-        return FAIL;
+        std::cerr << "ERROR: Could not create attribute '" << attrname
+                  << "'.\n";
+        return DAL::FAIL;
       }
 
     if ( H5Awrite(attr1, datatype, data) < 0 )

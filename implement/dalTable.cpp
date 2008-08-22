@@ -1349,23 +1349,7 @@ namespace DAL
   }
 
 
-  // ----------------------------------------------------- setAttribute_string
-
-  /*!
-    \brief Add a string attribute.
-
-    Add a std::string attribute to the table.
-
-    \param attrname The name of the attribute you wish to add.
-    \param data The value of the attribute you wish to add.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-   */
-  bool dalTable::setAttribute_string( std::string attrname, std::string data )
-  {
-    return h5setAttribute_string( table_id, attrname, &data, 1 );
-  }
-
-  // ----------------------------------------------- setAttribute_char
+  // ---------------------------------------------- setAttribute
 
   /*!
     \brief Add a character attribute.
@@ -1378,24 +1362,30 @@ namespace DAL
                 attribute.  If not supplied, it will default to being
                 a scalar attribute.
   */
-  void dalTable::setAttribute_char( std::string attrname, char * data, int size )
+  bool dalTable::setAttribute( std::string attrname, char * data, int size )
   {
-    if ( type == H5TYPE )
-      {
-        if ( H5LTset_attribute_char( file_id, name.c_str(),
-                                     attrname.c_str(), data, size ) < 0 )
-          {
-            std::cerr << "ERROR: could not set attribute " << attrname << endl;
-          }
-      }
-    else
-      {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
-      }
+    return h5setAttribute( H5T_NATIVE_CHAR, table_id, attrname, data, size );
   }
 
+  // ---------------------------------------------- setAttribute
 
-  // ------------------------------------------------------ setAttribute_int
+  /*!
+    \brief Add a short attribute.
+
+    Add a short attribute to the table.
+
+    \param attrname The name of the attribute you wish to add.
+    \param data The value of the attribute you wish to add.
+    \param size An optional parameter specifiying the array size of the
+                attribute.  If not supplied, it will default to being
+                a scalar attribute.
+  */
+  bool dalTable::setAttribute( std::string attrname, short * data, int size )
+  {
+    return h5setAttribute( H5T_NATIVE_SHORT, table_id, attrname, data, size );
+  }
+
+  // ---------------------------------------------- setAttribute
 
   /*!
     \brief Add a integer attribute.
@@ -1409,13 +1399,12 @@ namespace DAL
                 a scalar attribute.
     \return bool -- DAL::FAIL or DAL::SUCCESS
    */
-  bool dalTable::setAttribute_int( std::string attrname, int * data, int size )
+  bool dalTable::setAttribute( std::string attrname, int * data, int size )
   {
-    return h5setAttribute_int( table_id, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_INT, table_id, attrname, data, size );
   }
 
-
-  // ------------------------------------------------- setAttribute_uint
+  // ---------------------------------------------- setAttribute
 
   /*!
     \brief Add a unsigned integer attribute.
@@ -1429,13 +1418,48 @@ namespace DAL
                 a scalar attribute.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalTable::setAttribute_uint(string attrname, unsigned int * data, int size)
+  bool dalTable::setAttribute( std::string attrname, uint * data, int size )
   {
-    return h5setAttribute_uint( table_id, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_UINT, table_id, attrname, data, size );
   }
 
+  // ---------------------------------------------- setAttribute
 
-  // ----------------------------------------------------- setAttribute_double
+  /*!
+    \brief Add a long attribute.
+
+    Add a long attribute to the table.
+
+    \param attrname The name of the attribute you wish to add.
+    \param data The value of the attribute you wish to add.
+    \param size An optional parameter specifiying the array size of the
+                attribute.  If not supplied, it will default to being
+                a scalar attribute.
+  */
+  bool dalTable::setAttribute( std::string attrname, long * data, int size )
+  {
+    return h5setAttribute( H5T_NATIVE_LONG, table_id, attrname, data, size );
+  }
+
+  // ---------------------------------------------- setAttribute
+
+  /*!
+    \brief Add a float attribute.
+
+    Add a float attribute to the table.
+
+    \param attrname The name of the attribute you wish to add.
+    \param data The value of the attribute you wish to add.
+    \param size An optional parameter specifiying the array size of the
+                attribute.  If not supplied, it will default to being
+                a scalar attribute.
+  */
+  bool dalTable::setAttribute( std::string attrname, float * data, int size )
+  {
+    return h5setAttribute( H5T_NATIVE_FLOAT, table_id, attrname, data, size );
+  }
+
+  // ---------------------------------------------- setAttribute
 
   /*!
     \brief Add a double precision floating point attribute.
@@ -1449,10 +1473,45 @@ namespace DAL
                 a scalar attribute.
     \return bool -- DAL::FAIL or DAL::SUCCESS
    */
-  bool dalTable::setAttribute_double( std::string attrname, double * data, int size )
+  bool dalTable::setAttribute( std::string attrname, double * data, int size )
   {
-    return h5setAttribute_double( table_id, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_DOUBLE, table_id, attrname, data, size );
   }
+
+  // ---------------------------------------------- setAttribute_string
+
+  /*!
+    \brief Define a string attribute.
+
+    Define a string attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalTable::setAttribute( std::string attrname, std::string data )
+  {
+    return h5setAttribute_string( table_id, attrname, &data, 1 );
+  }
+
+  // ---------------------------------------------- setAttribute_string
+
+  /*!
+    \brief Define a string attribute.
+
+    Define a string attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalTable::setAttribute( std::string attrname, std::string * data,
+                                 int size )
+  {
+    return h5setAttribute_string( table_id, attrname, data, size );
+  }
+
+
 
 
   // ---------------------------------------------------------- listColumns
@@ -2066,6 +2125,39 @@ namespace DAL
     return mylist;
   }
 
+
+  bool dalTable::setAttribute_char( std::string attrname, char data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalTable::setAttribute_short( std::string attrname, short data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalTable::setAttribute_int( std::string attrname, int data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalTable::setAttribute_uint( std::string attrname, uint data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalTable::setAttribute_long( std::string attrname, long data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalTable::setAttribute_float( std::string attrname, float data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalTable::setAttribute_double( std::string attrname, double data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalTable::setAttribute_string( std::string attrname, std::string data )
+  {
+     return setAttribute( attrname, &data );
+  }
 
 #ifdef WITH_CASA
 

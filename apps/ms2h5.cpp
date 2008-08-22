@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
   data[3].a=4;
   data[4].a=5;
 
-//tableA->setAttribute_int("attrTEST", data, attrSize );
+//tableA->setAttribute("attrTEST", data, attrSize );
 
   delete tableA;
 

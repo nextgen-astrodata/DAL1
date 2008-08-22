@@ -80,12 +80,13 @@ namespace DAL
     \brief Query the database.
     \param querystr Query string to send to database.
    */
-  void Database::query( std::string const& querystr )
+  bool Database::query( std::string const & querystr )
   {
     /* send SQL query */
     if (mysql_query(conn, querystr.c_str()))
       {
         fprintf(stderr, "%s\n", mysql_error(conn));
+        return DAL::FAIL;
       }
 
     res = mysql_use_result(conn);
@@ -94,10 +95,12 @@ namespace DAL
        likely want to put the result into a data struct for use as input
        somewhere else
      */
-    while ((row = mysql_fetch_row(res)) != NULL)
-      printf("%s \n", row[0]);
+    //while ((row = mysql_fetch_row(res)) != NULL)
+    //  printf("%s \n", row[0]);
 
     mysql_free_result(res);
+
+    return DAL::SUCCESS;
   }
 
 } // end namespace DAL

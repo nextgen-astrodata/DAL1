@@ -60,38 +60,39 @@ namespace DAL
       dalGroup( const char * groupname, void * file );
       dalGroup( hid_t group_id, const char * gname );
       ~dalGroup();
-      int open( void * file, string groupname );
-      string getName();
+      int open( void * file, std::string groupname );
+      bool close();
+      std::string getName();
       bool setName( string gname );
 
-      dalArray * createShortArray(        string arrayname,
-                                          vector<int> dims,
+      dalArray * createShortArray(        std::string arrayname,
+                                          std::vector<int> dims,
                                           short data[],
-                                          vector<int>cdims);
+                                          std::vector<int>cdims);
 
-      dalArray * createIntArray(          string arrayname,
-                                          vector<int> dims,
+      dalArray * createIntArray(          std::string arrayname,
+                                          std::vector<int> dims,
                                           int data[],
-                                          vector<int>cdims);
+                                          std::vector<int>cdims);
 
-      dalArray * createFloatArray(        string arrayname,
-                                          vector<int> dims,
+      dalArray * createFloatArray(        std::string arrayname,
+                                          std::vector<int> dims,
                                           float data[],
-                                          vector<int>cdims);
+                                          std::vector<int>cdims);
 
-      dalArray * createComplexFloatArray( string arrayname,
-                                          vector<int> dims,
+      dalArray * createComplexFloatArray( std::string arrayname,
+                                          std::vector<int> dims,
                                           complex<float> data[],
-                                          vector<int>cdims );
+                                          std::vector<int>cdims );
 
-      dalArray * createComplexShortArray( string arrayname,
-                                          vector<int> dims,
+      dalArray * createComplexShortArray( std::string arrayname,
+                                          std::vector<int> dims,
                                           complex<Int16> data[],
-                                          vector<int>cdims );
+                                          std::vector<int>cdims );
       hid_t getId();
-      vector<string> getMemberNames();
+      std::vector<std::string> getMemberNames();
 
-      // ---------------------------------------------------------- getAttribute
+      // ------------------------------------------------------- getAttribute
 
       /*!
         \brief Get the value of an attribute.
@@ -110,19 +111,24 @@ namespace DAL
         return h5getAttribute( group_id, attrname, value );
       }
 
-      bool setAttribute_string( string attrname, string data );
-      bool setAttribute_string( string attrname, string * data, int size=1 );
-      bool setAttribute_int( string attrname, int * data, int size=1 );
-      bool setAttribute_uint(string attrname, uint * data, int size=1);
-      bool setAttribute_double( string attrname, double * data, int size=1 );
-      bool setAttribute_float( string attrname, float * data, int size=1 );
+      bool setAttribute( std::string attrname, char * data, int size=1 );
+      bool setAttribute( std::string attrname, short * data, int size=1 );
+      bool setAttribute( std::string attrname, int * data, int size=1 );
+      bool setAttribute( std::string attrname, uint * data, int size=1 );
+      bool setAttribute( std::string attrname, long * data, int size=1 );
+      bool setAttribute( std::string attrname, float * data, int size=1 );
+      bool setAttribute( std::string attrname, double * data, int size=1 );
+      bool setAttribute( std::string attrname, std::string data );
+      bool setAttribute( std::string attrname, std::string * data, int size=1 );
 
-      /************************************************************************
+      dalGroup * createGroup( const char * gname );
+
+      /******************************************************************
        *
        * The following functions are boost wrappers to allow some previously
        *   defined functions to be easily called from a python prompt.
        *
-       ************************************************************************/
+       ******************************************************************/
 #ifdef PYTHON
       dalArray * cia_boost1(string arrayname, bpl::list dims, bpl::list data);
       dalArray * cia_boost2(string arrayname, bpl::list dims, bpl::list data,
@@ -136,6 +142,15 @@ namespace DAL
       dalArray * cfa_boost_numarray( string arrayname, bpl::list dims,
                                      bpl::numeric::array data, bpl::list cdims );
       bpl::numeric::array ria_boost( string arrayname );
+
+      bool setAttribute_char( std::string attrname, char data );
+      bool setAttribute_short( std::string attrname, short data );
+      bool setAttribute_int( std::string attrname, int data );
+      bool setAttribute_uint( std::string attrname, uint data );
+      bool setAttribute_long( std::string attrname, long data );
+      bool setAttribute_float( std::string attrname, float data );
+      bool setAttribute_double( std::string attrname, double data );
+      bool setAttribute_string( std::string attrname, std::string data );
 #endif // end #ifdef PYTHON
     };
 

@@ -59,14 +59,20 @@ namespace DAL
       std::string getName();
       int open( void * file, string arrayname );
       bool close();
+      hid_t getId();
       bool getAttributes();
       void * getAttribute( string attrname );
-      bool setAttribute_string( string attrname, string data );
-      bool setAttribute_string( string attrname, string * data, int size=1 );
-      bool setAttribute_int( string attrname, int * data );
-      bool setAttribute_uint( string attrname, unsigned int * data );
-      bool setAttribute_float( string attrname, float * data );
-      bool setAttribute_double( string attrname, double * data, int size );
+
+      bool setAttribute( std::string attrname, char * data, int size=1 );
+      bool setAttribute( std::string attrname, short * data, int size=1 );
+      bool setAttribute( std::string attrname, int * data, int size=1 );
+      bool setAttribute( std::string attrname, uint * data, int size=1 );
+      bool setAttribute( std::string attrname, long * data, int size=1 );
+      bool setAttribute( std::string attrname, float * data, int size=1 );
+      bool setAttribute( std::string attrname, double * data, int size=1 );
+      bool setAttribute( std::string attrname, std::string data );
+      bool setAttribute( std::string attrname, std::string * data, int size=1 );
+
       bool extend( vector<int> dims );
       bool write(int offset, short data[], int arraysize);
       bool write(int offset, int data[], int arraysize);
@@ -81,10 +87,18 @@ namespace DAL
        ************************************************************************/
 #ifdef PYTHON
 
-      void sai_boost( string attrname, int data );
-      void saf_boost( string attrname, float data );
+      void sai_boost( std::string attrname, int data );
+      void saf_boost( std::string attrname, float data );
       void extend_boost( bpl::list pydims );
 
+      bool setAttribute_char( std::string attrname, char data );
+      bool setAttribute_short( std::string attrname, short data );
+      bool setAttribute_int( std::string attrname, int data );
+      bool setAttribute_uint( std::string attrname, uint data );
+      bool setAttribute_long( std::string attrname, long data );
+      bool setAttribute_float( std::string attrname, float data );
+      bool setAttribute_double( std::string attrname, double data );
+      bool setAttribute_string( std::string attrname, std::string data );
 #endif
     };
 
@@ -92,9 +106,9 @@ namespace DAL
     {
 
     public:
-      dalShortArray( hid_t obj_id, string arrayname, vector<int> dims,
-                     short data[], vector<int>chnkdims);
-      short * readShortArray( hid_t obj_id, string arrayname );
+      dalShortArray( hid_t obj_id, std::string arrayname, std::vector<int> dims,
+                     short data[], std::vector<int>chnkdims);
+      short * readShortArray( hid_t obj_id, std::string arrayname );
     };
 
   class dalIntArray: public dalArray

@@ -299,6 +299,132 @@ namespace DAL
   }
 
 
+  // ---------------------------------------------- setAttribute
+
+  /*!
+    \brief Define a char attribute.
+
+    Define a char attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \param size Optional parameter specifying the array size of the
+                attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalDataset::setAttribute( std::string attrname, char * data, int size )
+  {
+    return h5setAttribute( H5T_NATIVE_CHAR, h5fh, attrname, data, size );
+  }
+
+  // ---------------------------------------------- setAttribute
+
+  /*!
+    \brief Define a short attribute.
+
+    Define a short attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \param size Optional parameter specifying the array size of the
+                attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalDataset::setAttribute( std::string attrname, short * data, int size )
+  {
+    return h5setAttribute( H5T_NATIVE_SHORT, h5fh, attrname, data, size );
+  }
+
+  // ---------------------------------------------- setAttribute
+
+  /*!
+    \brief Define a integer attribute.
+
+    Define a integer attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \param size Optional parameter specifying the array size of the
+                attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalDataset::setAttribute( std::string attrname, int * data, int size )
+  {
+    return h5setAttribute( H5T_NATIVE_INT, h5fh, attrname, data, size );
+  }
+
+  // ---------------------------------------------- setAttribute
+
+  /*!
+    \brief Define an unsigned integer attribute.
+
+    Define an unsigned integer attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \param size Optional parameter specifying the array size of the
+                attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalDataset::setAttribute( std::string attrname, uint * data, int size )
+  {
+    return h5setAttribute( H5T_NATIVE_UINT, h5fh, attrname, data, size );
+  }
+
+  // ---------------------------------------------- setAttribute
+
+  /*!
+    \brief Define a long attribute.
+
+    Define a long attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \param size Optional parameter specifying the array size of the
+                attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalDataset::setAttribute( std::string attrname, long * data, int size )
+  {
+    return h5setAttribute( H5T_NATIVE_LONG, h5fh, attrname, data, size );
+  }
+
+  // ---------------------------------------------- setAttribute
+
+  /*!
+    \brief Define a floating point attribute.
+
+    Define a floating point attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \param size Optional parameter specifying the array size of the
+                attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalDataset::setAttribute( std::string attrname, float * data, int size )
+  {
+    return h5setAttribute( H5T_NATIVE_FLOAT, h5fh, attrname, data, size );
+  }
+
+  // ---------------------------------------------- setAttribute
+
+  /*!
+    \brief Define a double precision floating point attribute.
+
+    Define a double precision floating point attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \param size Optional parameter specifying the array size of the
+                attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalDataset::setAttribute( std::string attrname, double * data, int size )
+  {
+    return h5setAttribute( H5T_NATIVE_DOUBLE, h5fh, attrname, data, size );
+  }
+
   // ---------------------------------------------- setAttribute_string
 
   /*!
@@ -310,9 +436,26 @@ namespace DAL
     \param data The value of the attribute you want to create.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute_string( std::string attrname, std::string data )
+  bool dalDataset::setAttribute( std::string attrname, std::string data )
   {
     return h5setAttribute_string( h5fh, attrname, &data, 1 );
+  }
+
+  // ---------------------------------------------- setAttribute_string
+
+  /*!
+    \brief Define a string attribute.
+
+    Define a string attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalDataset::setAttribute( std::string attrname, std::string * data,
+                                 int size )
+  {
+    return h5setAttribute_string( h5fh, attrname, data, size );
   }
 
 
@@ -381,70 +524,7 @@ namespace DAL
   }
 
 
-  // --------------------------------------------------- setAttribute_int
-
-  /*!
-    \brief Define a integer attribute.
-
-    Define a integer attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalDataset::setAttribute_int( std::string attrname, int * data, int size )
-  {
-    return h5setAttribute_int( h5fh, attrname, data, size );
-  }
-
-
-  // ---------------------------------------------------- setAttribute_uint
-
-  /*!
-    \brief Define an unsigned integer attribute.
-
-    Define an unsigned integer attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalDataset::setAttribute_uint( std::string attrname, uint * data,
-                                      int size )
-  {
-    return h5setAttribute_uint( h5fh, attrname, data, size );
-  }
-
-
-  // --------------------------------------------------- setAttribute_double
-
-  /*!
-    \brief Define a double precision floating point attribute.
-
-    Define a double precision floating point attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalDataset::setAttribute_double( std::string attrname, double * data,
-                                        int size )
-  {
-    return h5setAttribute_double( h5fh, attrname, data, size );
-  }
-
   // ---------------------------------------------------------- createGroup
-
-  /****************************************************************
-   *  Creates a group (mainly for hdf5)
-   *
-   *****************************************************************/
 
   /*!
     \brief Create a new group.
@@ -609,7 +689,8 @@ namespace DAL
   {
     if ( type == H5TYPE )
       {
-        dalIntArray * la = new dalIntArray( h5fh, arrayname, dims, data, cdims );
+        dalIntArray * la = new dalIntArray( h5fh, arrayname, dims,
+                                            data, cdims );
         return la;
       }
     else if ( type == FITSTYPE )
@@ -1432,6 +1513,40 @@ namespace DAL
       }
     return lcllist;
   }
+
+  bool dalDataset::setAttribute_char( std::string attrname, char data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalDataset::setAttribute_short( std::string attrname, short data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalDataset::setAttribute_int( std::string attrname, int data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalDataset::setAttribute_uint( std::string attrname, uint data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalDataset::setAttribute_long( std::string attrname, long data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalDataset::setAttribute_float( std::string attrname, float data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalDataset::setAttribute_double( std::string attrname, double data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalDataset::setAttribute_string_boost( std::string attrname, std::string data )
+  {
+     return setAttribute( attrname, &data );
+  }
+
 #endif  // end #ifdef PYTHON
 
 } // end namespace DAL

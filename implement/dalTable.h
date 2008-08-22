@@ -75,7 +75,8 @@ namespace DAL
 
       void h5addColumn_setup( std::string const column_name, bool &removedummy );
       void h5addColumn_insert( uint const & indims, std::string const & colname,
-							   hid_t const & field_type, bool const & removedummy );
+                               hid_t const & field_type,
+                               bool const & removedummy );
 
     public:
 
@@ -145,11 +146,16 @@ namespace DAL
         return h5getAttribute( table_id, attrname, value );
       }
 
-      bool setAttribute_string( string attrname, string data );
-      void setAttribute_char( string attrname, char * data, int size=1 );
-      bool setAttribute_int( string attrname, int * data, int size=1 );
-      bool setAttribute_uint( string attrname, unsigned int * data, int size=1 );
-      bool setAttribute_double( string attrname, double * data, int size=1 );
+      bool setAttribute( std::string attrname, char * data, int size=1 );
+      bool setAttribute( std::string attrname, short * data, int size=1 );
+      bool setAttribute( std::string attrname, int * data, int size=1 );
+      bool setAttribute( std::string attrname, uint * data, int size=1 );
+      bool setAttribute( std::string attrname, long * data, int size=1 );
+      bool setAttribute( std::string attrname, float * data, int size=1 );
+      bool setAttribute( std::string attrname, double * data, int size=1 );
+      bool setAttribute( std::string attrname, std::string data );
+      bool setAttribute( std::string attrname, std::string * data, int size=1 );
+
       bool findAttribute( string attrname );
       long getNumberOfRows();
       void getName();
@@ -167,6 +173,15 @@ namespace DAL
       void append_row_boost( bpl::object data );
       bpl::list listColumns_boost();
       bpl::numeric::array getAttribute_boost(std::string);
+
+      bool setAttribute_char( std::string attrname, char data );
+      bool setAttribute_short( std::string attrname, short data );
+      bool setAttribute_int( std::string attrname, int data );
+      bool setAttribute_uint( std::string attrname, uint data );
+      bool setAttribute_long( std::string attrname, long data );
+      bool setAttribute_float( std::string attrname, float data );
+      bool setAttribute_double( std::string attrname, double data );
+      bool setAttribute_string( std::string attrname, std::string data );
 
 #ifdef WITH_CASA
       void ot_nonMStable( string tablename );

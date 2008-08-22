@@ -126,7 +126,7 @@ namespace DAL
         return DAL::FAIL;
       }
 
-    att = H5Acreate1( obj_id, attrname.c_str(), type, dataspace, H5P_DEFAULT);
+    att = H5Acreate( obj_id, attrname.c_str(), type, dataspace, NULL, NULL );
     if ( att < 0 )
       {
         std::cerr << "ERROR: Could not create attribute '" << attrname << "'.\n";

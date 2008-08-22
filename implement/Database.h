@@ -27,6 +27,10 @@
 #include <string>
 #include <mysql/mysql.h>
 
+#ifndef DAL_H
+#include "dal.h"
+#endif
+
 namespace DAL
   {
 
@@ -61,7 +65,7 @@ namespace DAL
       // destructor
       ~Database();
 
-      void query(std::string const& querystr);
+      bool query(std::string const & querystr);
 
     }; // end class
 

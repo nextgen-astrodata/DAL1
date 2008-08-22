@@ -127,11 +127,11 @@ int main (int argc, char *argv[])
   string observation_mode = "Normal";
 
   // Add attributes to "Station" group
-  stationGroup->setAttribute_string("TELESCOPE", telescope );
-  stationGroup->setAttribute_string("OBSERVER", observer );
-  stationGroup->setAttribute_string("PROJECT", project );
-  stationGroup->setAttribute_string("OBS_ID", observation_id );
-  stationGroup->setAttribute_string("OBS_MODE", observation_mode );
+  stationGroup->setAttribute("TELESCOPE", telescope );
+  stationGroup->setAttribute("OBSERVER", observer );
+  stationGroup->setAttribute("PROJECT", project );
+  stationGroup->setAttribute("OBS_ID", observation_id );
+  stationGroup->setAttribute("OBS_MODE", observation_mode );
   /**************************************************************************/
   std::string filename ("UNDEFINED");
 
@@ -167,13 +167,12 @@ int main (int argc, char *argv[])
       CRwritebuffer wb;
 
       nofAntennas = event.nofAntennas();
-      unsigned int ants[] = { nofAntennas };
-      stationGroup->setAttribute_uint("NUM_ANTS", ants );
+      stationGroup->setAttribute("NUM_ANTS", &nofAntennas );
 
       blocksize   = event.blocksize();
 
-      unsigned int samps[] = { blocksize };
-      stationGroup->setAttribute_uint("NUMSAMPS", samps );
+      unsigned int samps =  blocksize;
+      stationGroup->setAttribute("NUMSAMPS", &samps );
 
       data = new short[ blocksize ];
 
@@ -182,8 +181,8 @@ int main (int argc, char *argv[])
 
           string antName = "ANTENNA" + stringify(antenna);
           dalTable * AntennaTable = dataset->createTable( antName, "Station" );
-          int ri[] = { 1 };
-          AntennaTable->setAttribute_int("RSP_ID", ri );
+          int ri = 1;
+          AntennaTable->setAttribute("RSP_ID", &ri );
           AntennaTable->addColumn( "DATA", dal_SHORT );
 
           event.data(data,antenna);

@@ -69,8 +69,8 @@ namespace DAL
 
     groupname = gname;
     groupname_full = "/" + stringify(gname);
-    if ( ( group_id = H5Gcreate1(file_id, groupname_full.c_str(), 0) )
-         < 0 )
+    if ( ( group_id = H5Gcreate( file_id, groupname_full.c_str(),  H5P_DEFAULT,
+                                 H5P_DEFAULT, H5P_DEFAULT ) ) < 0 )
       {
         std::cerr << "ERROR: Could not create group'" << groupname_full
                   << "'.\n";
@@ -89,11 +89,12 @@ namespace DAL
     \param group_id The parent group identifier.
     \param gname The name of the subgroup.
    */
-  dalGroup::dalGroup( hid_t group_id, const char * gname )
+  dalGroup::dalGroup( hid_t obj_id, const char * gname )
   {
     dalGroup();
 
-    if ( ( group_id = H5Gcreate1(group_id, gname, 0) ) < 0 )
+    if ( ( group_id = H5Gcreate( obj_id, gname, H5P_DEFAULT, H5P_DEFAULT,
+                                 H5P_DEFAULT ) ) < 0 )
       {
         std::cerr << "ERROR: Could not create group'" << string( gname )
                   << "'.\n";
@@ -112,7 +113,7 @@ namespace DAL
     \param groupname The name of the group you want to open.
     \return An identifier for the new group.
    */
-  int dalGroup::open( void * voidfile, string gname )
+  int dalGroup::open( void * voidfile, std::string gname )
   {
 
     groupname = gname;
@@ -132,6 +133,28 @@ namespace DAL
     return( group_id );
   }
 
+// ------------------------------------------------------------ close
+
+  /*!
+    \brief Close a group.
+
+    Cloase a group.
+
+   */
+  bool dalGroup::close()
+  {
+    if ( 0 != group_id )
+      {
+        if ( H5Gclose(group_id) < 0 )
+          {
+            std::cerr << "ERROR: dalGroup::close() failed.\n";
+            return DAL::FAIL;
+          }
+        group_id = 0;
+      }
+    return DAL::SUCCESS;
+  }
+
 
 // ------------------------------------------------------------ ~dalGroup
 
@@ -143,10 +166,13 @@ namespace DAL
   dalGroup::~dalGroup()
   {
     if ( 0 != group_id )
+    {
       if ( H5Gclose(group_id) < 0 )
         {
           std::cerr << "ERROR: dalGroup::close() failed.\n";
         }
+      group_id = 0;
+    }
   }
 
 
@@ -396,42 +422,44 @@ namespace DAL
     return groupname;
   }
 
-// ---------------------------------------------------- setAttribute_string
+
+  // ---------------------------------------------- setAttribute
 
   /*!
-    \brief Define a string attribute.
+    \brief Define a char attribute.
 
-    Define a string attribute.
+    Define a char attribute.
 
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
-    \param size The size of the array.
+    \param size Optional parameter specifying the array size of the
+                attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalGroup::setAttribute_string( string attrname, string * data, int size )
+  bool dalGroup::setAttribute( std::string attrname, char * data, int size )
   {
-    return h5setAttribute_string( group_id, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_CHAR, group_id, attrname, data, size );
   }
 
-
-// --------------------------------------------------- setAttribute_string
+  // ---------------------------------------------- setAttribute
 
   /*!
-    \brief Define a string attribute.
+    \brief Define a short attribute.
 
-    Define a string attribute.
+    Define a short attribute.
 
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
+    \param size Optional parameter specifying the array size of the
+                attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalGroup::setAttribute_string( string attrname, string data )
+  bool dalGroup::setAttribute( std::string attrname, short * data, int size )
   {
-    return setAttribute_string( attrname, &data, 1 );
+    return h5setAttribute( H5T_NATIVE_SHORT, group_id, attrname, data, size );
   }
 
-
-// ----------------------------------------------------- setAttribute_int
+  // ---------------------------------------------- setAttribute
 
   /*!
     \brief Define a integer attribute.
@@ -444,18 +472,17 @@ namespace DAL
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalGroup::setAttribute_int( string attrname, int * data, int size )
+  bool dalGroup::setAttribute( std::string attrname, int * data, int size )
   {
-    return h5setAttribute_int( group_id, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_INT, group_id, attrname, data, size );
   }
 
-
-// ----------------------------------------------------- setAttribute_uint
+  // ---------------------------------------------- setAttribute
 
   /*!
-    \brief Define an unsigned integer attribute.
+    \brief Define a unsigned integer attribute.
 
-    Define an unsigned integer attribute.
+    Define a unsigned integer attribute.
 
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
@@ -463,18 +490,17 @@ namespace DAL
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalGroup::setAttribute_uint( string attrname, unsigned int * data,
-                                    int size )
+  bool dalGroup::setAttribute( std::string attrname, uint * data, int size )
   {
-    return h5setAttribute_uint( group_id, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_UINT, group_id, attrname, data, size );
   }
 
-// ----------------------------------------------------- setAttribute_float
+  // ---------------------------------------------- setAttribute
 
   /*!
-    \brief Define a float attribute.
+    \brief Define a long integer attribute.
 
-    Define a float attribute.
+    Define a long integer attribute.
 
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
@@ -482,13 +508,30 @@ namespace DAL
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalGroup::setAttribute_float( string attrname, float * data,
-                                     int size )
+  bool dalGroup::setAttribute( std::string attrname, long * data, int size )
   {
-    return h5setAttribute_float( group_id, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_LONG, group_id, attrname, data, size );
   }
 
-// -------------------------------------------- setAttribute_double
+  // ---------------------------------------------- setAttribute
+
+  /*!
+    \brief Define a floating point attribute.
+
+    Define a floating point attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \param size Optional parameter specifying the array size of the
+                attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalGroup::setAttribute( std::string attrname, float * data, int size )
+  {
+    return h5setAttribute( H5T_NATIVE_FLOAT, group_id, attrname, data, size );
+  }
+
+  // ---------------------------------------------- setAttribute
 
   /*!
     \brief Define a double precision floating point attribute.
@@ -501,9 +544,61 @@ namespace DAL
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalGroup::setAttribute_double( string attrname, double * data, int size )
+  bool dalGroup::setAttribute( std::string attrname, double * data, int size )
   {
-    return h5setAttribute_double( group_id, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_DOUBLE, group_id, attrname, data, size );
+  }
+
+  // ---------------------------------------------- setAttribute_string
+
+  /*!
+    \brief Define a string attribute.
+
+    Define a string attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalGroup::setAttribute( std::string attrname, std::string data )
+  {
+    return h5setAttribute_string( group_id, attrname, &data, 1 );
+  }
+
+  // ---------------------------------------------- setAttribute_string
+
+  /*!
+    \brief Define a string attribute.
+
+    Define a string attribute.
+
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \param size Optional parameter specifying the array size of the
+                attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalGroup::setAttribute( std::string attrname, std::string * data,
+                               int size )
+  {
+    return h5setAttribute_string( group_id, attrname, data, size );
+  }
+
+  // ---------------------------------------------------------- createGroup
+
+  /*!
+    \brief Create a new group.
+
+    Create a new group.
+
+    \param groupname
+    \return dalGroup
+  */
+  dalGroup * dalGroup::createGroup( const char * gname )
+  {
+        dalGroup * lg = NULL;
+        lg = new dalGroup( group_id, gname );
+        return lg;
   }
 
 #ifdef PYTHON
@@ -730,6 +825,38 @@ namespace DAL
     return array;
   }
 
+  bool dalGroup::setAttribute_char( std::string attrname, char data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalGroup::setAttribute_short( std::string attrname, short data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalGroup::setAttribute_int( std::string attrname, int data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalGroup::setAttribute_uint( std::string attrname, uint data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalGroup::setAttribute_long( std::string attrname, long data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalGroup::setAttribute_float( std::string attrname, float data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalGroup::setAttribute_double( std::string attrname, double data )
+  {
+     return setAttribute( attrname, &data );
+  }
+  bool dalGroup::setAttribute_string( std::string attrname, std::string data )
+  {
+     return setAttribute( attrname, &data );
+  }
 
 #endif // end #ifdef PYTHON
 
