@@ -64,9 +64,26 @@ uint create_hdf5_dataset()
     ret++;
 
   if ( DAL::FAIL == ds->close() )
-   ret++;
+    ret++;
 
   delete ds;
+
+  return ret;
+}
+
+// --------------------------------------------- open_and_close_hdf5_dataset
+
+uint open_and_close_hdf5_dataset()
+{
+  uint ret = 0;
+
+  dalDataset ds;
+
+  if ( DAL::FAIL == ds.open( FILENAME ) )
+    ret++;
+
+  if ( DAL::FAIL == ds.close() )
+    ret++;
 
   return ret;
 }
@@ -97,7 +114,39 @@ uint create_hdf5_integer_array()
     ret++;
 
   if ( DAL::FAIL == array->close() )
-   ret++;
+    ret++;
+
+  delete array;
+
+  return ret;
+}
+
+// ----------------------------------------------- read_hdf5_integer_array
+
+uint read_hdf5_integer_array()
+{
+  uint ret = 0;
+
+  dalDataset ds;
+
+  if ( DAL::FAIL == ds.open( FILENAME ) )
+    ret++;
+
+  dalArray * array = ds.openArray( "int_array" );
+  if ( NULL == array )
+    ret++;
+
+  std::vector<int> dims =  array->dims();
+  if ( dims.size() > 0 )
+    {
+      std::cerr << "array dimensions = ( ";
+      for ( uint idx = 0; idx < dims.size(); idx++ )
+        std::cerr << dims[idx] << ',';
+      std::cerr << " )\n";
+    }
+
+  if ( DAL::FAIL == array->close() )
+    ret++;
 
   delete array;
 
@@ -186,7 +235,7 @@ uint create_hdf5_float_array()
     ret++;
 
   if ( DAL::FAIL == array->close() )
-   ret++;
+    ret++;
 
   delete array;
 
@@ -215,13 +264,13 @@ uint create_hdf5_complex_float_array()
     data[ gg ] = gg;
 
   dalArray * array = ds.createComplexFloatArray( "complex_float_array",
-                                                 dims, data, cdims );
+                     dims, data, cdims );
 
   if ( NULL == array )
     ret++;
 
   if ( DAL::FAIL == array->close() )
-   ret++;
+    ret++;
 
   delete [] data;
   data = NULL;
@@ -244,7 +293,7 @@ uint set_attributes_hdf5_array()
   dalArray * array = NULL;
   array = ds.openArray( "int_array" );
   if ( NULL == array )
-   ret++;
+    ret++;
 
   std::string sval = "string test value";
   if ( DAL::FAIL == array->setAttribute( "STRING_ATTR", sval ) )
@@ -287,7 +336,7 @@ uint set_attributes_hdf5_array()
     ret++;
 
   if ( DAL::FAIL == array->close() )
-   ret++;
+    ret++;
 
   delete array;
 
@@ -307,10 +356,10 @@ uint create_hdf5_group()
 
   dalGroup * group = ds.createGroup( "group" );
   if ( NULL == group )
-   ret++;
+    ret++;
 
   if ( DAL::FAIL == group->close() )
-   ret++;
+    ret++;
 
   delete group;
 
@@ -331,10 +380,10 @@ uint open_and_close_hdf5_group()
   dalGroup * group = NULL;
   group = ds.openGroup( "group" );
   if ( NULL == group )
-   ret++;
+    ret++;
 
   if ( DAL::FAIL == group->close() )
-   ret++;
+    ret++;
 
   delete group;
 
@@ -355,7 +404,7 @@ uint set_attribute_hdf5_group()
   dalGroup * group = NULL;
   group = ds.openGroup( "group" );
   if ( NULL == group )
-   ret++;
+    ret++;
 
   std::string sval = "string test value";
   if ( DAL::FAIL == group->setAttribute( "STRING_ATTR", sval ) )
@@ -398,7 +447,7 @@ uint set_attribute_hdf5_group()
     ret++;
 
   if ( DAL::FAIL == group->close() )
-   ret++;
+    ret++;
 
   delete group;
   return ret;
@@ -417,17 +466,17 @@ uint create_hdf5_group_subgroup()
 
   dalGroup * group = ds.openGroup("group");
   if ( NULL == group )
-   ret++;
+    ret++;
 
   dalGroup * subgroup = group->createGroup( "subgroup" );
   if ( NULL == subgroup )
-   ret++;
+    ret++;
 
   if ( DAL::FAIL == subgroup->close() )
-   ret++;
+    ret++;
 
   if ( DAL::FAIL == group->close() )
-   ret++;
+    ret++;
 
   delete group;
   delete subgroup;
@@ -448,7 +497,7 @@ uint create_hdf5_integer_array_in_group()
 
   dalGroup * group = ds.openGroup("group");
   if ( NULL == group )
-   ret++;
+    ret++;
 
   // define dimensions of array
   vector<int> dims;
@@ -466,7 +515,7 @@ uint create_hdf5_integer_array_in_group()
     ret++;
 
   if ( DAL::FAIL == array->close() )
-   ret++;
+    ret++;
 
   delete array;
   delete group;
@@ -486,7 +535,7 @@ uint create_hdf5_float_array_in_group()
 
   dalGroup * group = ds.openGroup("group");
   if ( NULL == group )
-   ret++;
+    ret++;
 
   // define dimensions of array
   vector<int> dims;
@@ -504,7 +553,7 @@ uint create_hdf5_float_array_in_group()
     ret++;
 
   if ( DAL::FAIL == array->close() )
-   ret++;
+    ret++;
 
   delete array;
   delete group;
@@ -524,7 +573,7 @@ uint create_hdf5_complex_float_array_in_group()
 
   dalGroup * group = ds.openGroup("group");
   if ( NULL == group )
-   ret++;
+    ret++;
 
   // define dimensions of array
   vector<int> dims;
@@ -538,13 +587,13 @@ uint create_hdf5_complex_float_array_in_group()
     data[ gg ] = gg;
 
   dalArray * array = group->createComplexFloatArray( "complex_float_array",
-                                                 dims, data, cdims );
+                     dims, data, cdims );
 
   if ( NULL == array )
     ret++;
 
   if ( DAL::FAIL == array->close() )
-   ret++;
+    ret++;
 
   delete [] data;
   data = NULL;
@@ -567,7 +616,7 @@ uint create_hdf5_short_array_in_group()
 
   dalGroup * group = ds.openGroup("group");
   if ( NULL == group )
-   ret++;
+    ret++;
 
   // define dimensions of array
   vector<int> dims;
@@ -581,12 +630,12 @@ uint create_hdf5_short_array_in_group()
     data[gg] = rand();
 
   dalArray * array = group->createShortArray( "short_array", dims, data,
-                                              cdims );
+                     cdims );
   if ( NULL == array )
     ret++;
 
   if ( DAL::FAIL == array->close() )
-   ret++;
+    ret++;
 
   delete array;
   delete group;
@@ -594,63 +643,83 @@ uint create_hdf5_short_array_in_group()
   return ret;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ---------------------------------------------------- create_tables
-
-bool create_tables( dalDataset ds )
+// ---------------------------------------------------- read_hdf5_dataset_attributes
+uint read_hdf5_dataset_attributes()
 {
-  std::cerr << "Creating table 1 in groupA.\n";
-  dalTable * table1 = ds.createTable( "table1", "groupA" );
+  uint ret = 0;
 
-  string colname = "TIME";
+  dalDataset ds;
 
-  std::cerr << "Adding float column " << colname << " to table1.\n";
-  table1->addColumn( colname, dal_FLOAT );
+  if ( DAL::FAIL == ds.open( FILENAME ) )
+    ret++;
+
+  std::string attr_name("INT_ATTR");
+  int iattr = 0;
+  if ( DAL::FAIL == ds.getAttribute( attr_name, iattr ) )
+    ret++;
+  else
+    std::cerr << attr_name << "  = " << iattr << endl;
+
+  attr_name = "FLOAT_ATTR";
+  float fattr = 0.0;
+  if ( DAL::FAIL == ds.getAttribute( attr_name, fattr ) )
+    ret++;
+  else
+    std::cerr << attr_name << "  = " << fattr << endl;
+
+  attr_name = "DOUBLE_ATTR";
+  double dattr = 0.0;
+  if ( DAL::FAIL == ds.getAttribute( attr_name, dattr ) )
+    ret++;
+  else
+    printf( "%s = %f\n", attr_name.c_str() , dattr );
+
+  attr_name = "STRING_ATTR";
+  std::string sattr = "";
+  if ( DAL::FAIL == ds.getAttribute( std::string(attr_name), sattr ) )
+    ret++;
+  else
+    printf( "%s = %s\n", attr_name.c_str() , sattr.c_str() );
+
+  if ( DAL::FAIL == ds.close() )
+    ret++;
+
+  return ret;
+}
+
+// ------------------------------------------------------ create_hdf5_table
+
+uint create_hdf5_table()
+{
+  uint ret = 0;
+
+  dalDataset ds;
+
+  if ( DAL::FAIL == ds.open( FILENAME ) )
+    ret++;
+
+  // create two identical tables - one at root level and one in a group
+  dalTable * table_in_ds = ds.createTable( "table" );
+  if ( NULL == table_in_ds )
+    ret++;
+
+  dalTable * table_in_group = ds.createTable( "table", "group" );
+  if ( NULL == table_in_group )
+    ret++;
+
+  std::string colname = "TIME";
+
+  table_in_ds->addColumn( colname, dal_FLOAT );
+  table_in_group->addColumn( colname, dal_FLOAT );
 
   colname = "UVW";
-  std::cerr << "Adding float array column " << colname << " to table1.\n";
-  table1->addColumn( colname, dal_FLOAT, 3 );
+
+  table_in_ds->addColumn( colname, dal_FLOAT, 3 );
+  table_in_group->addColumn( colname, dal_FLOAT, 3 );
 
   colname = "ANTENNA1";
-  std::cerr << "Adding float column " << colname << " to table1.\n";
-  table1->addColumn( colname, dal_FLOAT );
+  table_in_ds->addColumn( colname, dal_FLOAT );
+  table_in_group->addColumn( colname, dal_FLOAT );
 
   struct rowStruct
     {
@@ -666,84 +735,50 @@ bool create_tables( dalDataset ds )
   rs.antenna1 = 1;
 
   int count = 5;
-  std::cerr << "Appending " << count << " rows to table1.\n";
   for (int xx=0; xx<count; xx++)
-    table1->appendRow(&rs);
+    {
+      table_in_ds->appendRow(&rs);
+      table_in_group->appendRow(&rs);
+    }
 
   float md = 3;
   float mi = 5;
   count = 3;
   int colnum = 0;
   std::cerr << "Overwriting first " << count << " rows of column " <<
-            colnum << " in table1.\n";
+  colnum << " in table.\n";
   for (int xx=0; xx<count; xx++)
-    table1->writeDataByColNum( &md, colnum, xx );
+    {
+      table_in_ds->writeDataByColNum( &md, colnum, xx );
+      table_in_group->writeDataByColNum( &md, colnum, xx );
+    }
 
   count = 3;
   colnum = 2;
   std::cerr << "Overwriting first " << count << " rows of column " <<
-            colnum << " in table1.\n";
+  colnum << " in table.\n";
   for (int xx=0; xx<count; xx++)
-    table1->writeDataByColNum( &mi, colnum, xx );
+    {
+      table_in_ds->writeDataByColNum( &mi, colnum, xx );
+      table_in_group->writeDataByColNum( &mi, colnum, xx );
+    }
 
-  return true;
+  return ret;
 }
 
+// ---------------------------------------------------- list_groups
 
-// --------------------------------------------- open_and_close_hdf5_dataset
-
-uint open_and_close_hdf5_dataset()
+uint list_groups()
 {
   uint ret = 0;
-
   dalDataset ds;
 
   if ( DAL::FAIL == ds.open( FILENAME ) )
     ret++;
 
-  return ret;
-}
-
-// ---------------------------------------------------- open_integer_array
-
-bool open_integer_array()
-{
-  dalDataset ds;
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-   return false;
-
-  dalArray * iarray2 = ds.openArray( "int_array", "groupA" );
-  if ( NULL == iarray2 )
-   return false;
-
-  std::cerr << "Calling getAttributes.\n";
-  iarray2->getAttributes();
-
-  std::cerr << "Getting STATION_ID attribute from array = ";
-  float * station_id;
-  station_id = reinterpret_cast<float*>( iarray2->getAttribute("STATION_ID") );
-  if (station_id) std::cerr << *(float*)station_id << endl;
-  delete [] station_id;
-  station_id = NULL;
-  std::cerr << "Closing integer array.\n";
-
-  if ( DAL::FAIL == iarray2->close() )
-   return false;
-
-  return true;
-}
-
-// ---------------------------------------------------- list_groups
-
-bool list_groups()
-{
-  dalDataset ds;
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-   return false;
-
   std::cerr << "Getting list of groups in file.\n";
 
-  vector<string> groupnames = ds.getGroupNames();
+  std::vector<std::string> groupnames = ds.getGroupNames();
   for (unsigned int jj=0; jj<groupnames.size(); jj++)
     std::cerr << groupnames[jj] << endl;
 
@@ -760,11 +795,22 @@ bool list_groups()
           delete mygroup;
         }
       else
-        return false;
+        ret++;
     }
 
-  return true;
+  return ret;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 // ---------------------------------------------------- main
 
@@ -787,104 +833,167 @@ int main()
   std::cerr << "\n[ create_and_close_hdf5_dataset ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = create_hdf5_dataset() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
   std::cerr << "\n[ open_and_close_hdf5_dataset ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = open_and_close_hdf5_dataset() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
 // ----------- dataset attributes
 
   std::cerr << "\n[ set_attributes_hdf5_dataset ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = set_attributes_hdf5_dataset() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
 // ----------- dataset arrays
 
   std::cerr << "\n[ create_hdf5_integer_array ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = create_hdf5_integer_array() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
+
+  std::cerr << "\n[ read_hdf5_integer_array ]\n";
+  std::cerr << "-----------------------------------------------------\n";
+  if ( 0 != ( ret = read_hdf5_integer_array() ) )
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
   std::cerr << "\n[ create_hdf5_float_array ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = create_hdf5_float_array() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
   std::cerr << "\n[ create_hdf5_complex_float_array ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = create_hdf5_complex_float_array() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
   std::cerr << "\n[ set_attributes_hdf5_array ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = set_attributes_hdf5_array() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
 // ----------- dataset groups
 
   std::cerr << "\n[ create_hdf5_group ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = create_hdf5_group() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
   std::cerr << "\n[ open_and_close_hdf5_group ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = open_and_close_hdf5_group() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
   std::cerr << "\n[ set_attribute_hdf5_group ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = set_attribute_hdf5_group() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
   std::cerr << "\n[ create_hdf5_group_subgroup ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = create_hdf5_group_subgroup() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
   std::cerr << "\n[ create_hdf5_short_array_in_group ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = create_hdf5_short_array_in_group() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
   std::cerr << "\n[ create_hdf5_integer_array_in_group ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = create_hdf5_integer_array_in_group() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
   std::cerr << "\n[ create_hdf5_float_array_in_group ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = create_hdf5_float_array_in_group() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
   std::cerr << "\n[ create_hdf5_complex_float_array_in_group ]\n";
   std::cerr << "-----------------------------------------------------\n";
   if ( 0 != ( ret = create_hdf5_complex_float_array_in_group() ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
-
-
-
-
-// ----------- group subgroup creation
-
-/*
-  std::cerr << "\n[  ]\n";
+  std::cerr << "\n[  read_hdf5_dataset_attributes ]\n";
   std::cerr << "-----------------------------------------------------\n";
-  if ( 0 != ( ret = () ) )
-  { std::cerr << "FAIL\n"; failed_tests += ret; }
+  if ( 0 != ( ret = read_hdf5_dataset_attributes() ) )
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
-  std::cerr << "\n[ open_integer_array ]\n";
+  std::cerr << "\n[ create_hdf5_table ]\n";
   std::cerr << "-----------------------------------------------------\n";
-  open_integer_array();
+  if ( 0 != ( ret = create_hdf5_table() ) )
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
 
   std::cerr << "\n[ list_groups ]\n";
   std::cerr << "-----------------------------------------------------\n";
-  list_groups();
-*/
+  if ( 0 != ( ret = list_groups() ) )
+    {
+      std::cerr << "FAIL\n";
+      failed_tests += ret;
+    }
+
+  /*
+    std::cerr << "\n[  ]\n";
+    std::cerr << "-----------------------------------------------------\n";
+    if ( 0 != ( ret = () ) )
+    { std::cerr << "FAIL\n"; failed_tests += ret; }
+  */
 
   std::cerr << "\nFailed tests:  " << failed_tests << endl;
   return 0;
