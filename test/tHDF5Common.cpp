@@ -576,7 +576,6 @@ int get_attributes (hid_t const &file_id)
     uint time (0);
     uint sample_number (0);
     uint samples_per_frame (0);
-    uint data_length (0);
     uint nyquist_zone (0);
     std::vector<double> antenna_position;
     std::vector<double> antenna_orientation;
