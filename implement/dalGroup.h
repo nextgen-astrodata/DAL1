@@ -130,18 +130,12 @@ namespace DAL
        *
        ******************************************************************/
 #ifdef PYTHON
-      dalArray * cia_boost1(string arrayname, bpl::list dims, bpl::list data);
-      dalArray * cia_boost2(string arrayname, bpl::list dims, bpl::list data,
-                            bpl::list cdims );
-      dalArray * cia_boost_numarray1( string arrayname, bpl::list dims,
-                                      bpl::numeric::array data );
-      dalArray * cia_boost_numarray2( string arrayname, bpl::list dims,
-                                      bpl::numeric::array data, bpl::list cdims );
-      dalArray * cfa_boost( string arrayname, bpl::list dims, bpl::list data,
-                            bpl::list cdims );
-      dalArray * cfa_boost_numarray( string arrayname, bpl::list dims,
-                                     bpl::numeric::array data, bpl::list cdims );
-      bpl::numeric::array ria_boost( string arrayname );
+      dalArray * cia_boost_list( std::string arrayname, bpl::list dims, bpl::list data);
+	  									  
+      dalArray * cfa_boost_list( std::string arrayname, bpl::list dims,
+	                             bpl::list data );
+									 
+      bpl::numeric::array ria_boost( std::string arrayname );
 
       bool setAttribute_char( std::string attrname, char data );
       bool setAttribute_short( std::string attrname, short data );

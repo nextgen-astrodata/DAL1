@@ -224,24 +224,12 @@ BOOST_PYTHON_MODULE(pydal)
         "Set the name of the group." )
   .def( "getId", &dalGroup::getId,
         "Return the group identifier." )
-  .def( "createIntArray", &dalGroup::cia_boost1,
+  .def( "createIntArray", &dalGroup::cia_boost_list,
         bpl::return_value_policy<bpl::manage_new_object>(),
         "Create an integer array in the group." )
-  .def( "createIntArray", &dalGroup::cia_boost2,
-        bpl::return_value_policy<bpl::manage_new_object>(),
-        "Create an integer array in the group." )
-  .def( "createIntArray", &dalGroup::cia_boost_numarray1,
-        bpl::return_value_policy<bpl::manage_new_object>(),
-        "Create an integer array in the group." )
-  .def( "createIntArray", &dalGroup::cia_boost_numarray2,
-        bpl::return_value_policy<bpl::manage_new_object>(),
-        "Create an integer array in the group." )
-  .def( "createFloatArray", &dalGroup::cfa_boost,
+  .def( "createFloatArray", &dalGroup::cfa_boost_list,
         bpl::return_value_policy<bpl::manage_new_object>(),
         "Create a floating point array in the group." )
-  .def( "createFloatArray", &dalGroup::cfa_boost_numarray,
-        bpl::return_value_policy<bpl::manage_new_object>(),
-        "Create an floating point array in the group." )
   .def( "readIntArray", &dalGroup::ria_boost,
         "Read an integer array from the group." )
   ;

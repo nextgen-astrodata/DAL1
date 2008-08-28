@@ -39,8 +39,7 @@ def create_int_array_from_list( array_group ):
 	arrayname = "intarray_list"
 	dims = [2,2] # array dimensions (row-major)
 	data = [1,1,2,2] # array data
-	cdims = [] # no chunk dims, array size will be fixed
-	int_array_list = array_group.createIntArray(arrayname,dims,data,cdims)
+	int_array_list = array_group.createIntArray(arrayname,dims,data)
 	print array_group.readIntArray(arrayname)
 
 	#----------------------
@@ -71,30 +70,9 @@ def create_int_array_from_numarray( array_group ):
 	data = numpy.array([[1,1],[2,2]]) # array data
 	dims = [2,2] # array dimensions (row-major)
 	# create the array with initial dimensions
-	int_array_numarray = array_group.createIntArray(arrayname,dims,data)
+	int_array_numarray = array_group.createIntArray(arrayname,dims,data.flatten().tolist())
 	#int_array_numarray.extend( newdims )
 	print array_group.readIntArray(arrayname)
-
-def create_int_array_from_numarray_including_dims( array_group ):
-	print "\nCreating an INT array from a numarray array " \
-	  + "(including chunk dims)..."
-	arrayname = "intarray_numarray_cdims"
-	data = numarray.array([[1,1],[2,2]]) # array data
-	dims = [2,2] # array dimensions (row-major)
-	cdims = [5,5] # rank can not be greater than data rank
-	# create the array with initial dimensions
-	int_array_numarray = \
-	  array_group.createIntArray(arrayname,dims,data,cdims)
-	newdims = [4,2]
-	print "Extending the " + arrayname + " array."
-	int_array_numarray.extend( newdims )
-	print "Writing data to the new " + arrayname + " dimensions."
-	offset = [2,0] # define the offset (row-major)
-	write_dims = [2,2] # define the write dimensions (row-major)
-	data = numarray.array([[1,1],[2,2]]) # array data
-	#int_array_numarray.write( offset, write_dims, data )
-	print array_group.readIntArray(arrayname)
-
 
 #----------------------
 # FLOAT Arrays
@@ -105,17 +83,15 @@ def create_float_array_from_list( array_group ):
 	arrayname = "floatarray_list"
 	dims = [2,2] # array dimensions
 	data = [1,1,2,2] # array data
-	cdims = [] # no chunk dims, array size will be fixed
-	int_array_list = array_group.createFloatArray(arrayname,dims,data,cdims)
+	int_array_list = array_group.createFloatArray(arrayname,dims,data)
 
 def create_float_array_from_numarray( array_group ):
 	print "\nCreating a FLOAT array from a numarray array..."
 	arrayname = "floatarray_numarray"
 	dims = [2,2] # array dimensions
-	cdims = [] # no chunk dims, array size will be fixed
-	data = numarray.array([[1,1],[2,2]]) # array data
+	data = numpy.array([[1,1],[2,2]]) # array data
 	float_array_numarray = \
-	 array_group.createFloatArray(arrayname,dims,data,cdims)
+	 array_group.createFloatArray(arrayname,dims,data.flatten().tolist())
 
 def close_dataset( ds ):
 	print "\nClosing dataset..."
@@ -140,7 +116,6 @@ table_group = create_table_group( ds )
 # int arrays
 create_int_array_from_list( array_group )
 create_int_array_from_numarray( array_group )
-create_int_array_from_numarray_including_dims( array_group )
 
 # float arrays
 create_float_array_from_list( array_group )
