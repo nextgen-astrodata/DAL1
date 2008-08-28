@@ -30,33 +30,31 @@
 #include <dalDataset.h>
 #endif
 
-using namespace DAL;
-
 int main(int argc, char *argv[])
 {
   // parameter check
   if ( argc < 3 )
     {
-      cout << endl << "Too few parameters..." << endl << endl;
-      cout << "The first parameter is the tbb dataset name." << endl;
-      cout << "The second parameter is the dipole itentifier. "
+      std::cerr << std::endl << "Too few parameters..." << std::endl << std::endl;
+      std::cerr << "The first parameter is the tbb dataset name." << std::endl;
+      std::cerr << "The second parameter is the dipole itentifier. "
            << "(i.e. \"001002003\").\n" << "  The first 3 characters are the "
            << "station id.\n  The next 3 are the rsp id.\n  The last 3 are the "
-           << "rcu id." << endl;
-      cout << "The third parameter is the station group itentifier." << endl;
-      cout << endl;
+           << "rcu id." << std::endl;
+      std::cerr << "The third parameter is the station group itentifier." << std::endl;
+      std::cerr << std::endl;
       return DAL::FAIL;
     }
 
-  dalDataset * ds = new dalDataset;
-  int ret;
-  ret = ds->open( argv[1] );
+  DAL::dalDataset ds;
+  if ( DAL::FAIL == ds.open( argv[1] ) )
+     std::cerr << "ERROR: couldn't open file: " << argv[1] << std::endl;
 
   string id = argv[2];
   int start = 25;
   int length = 20;
   short data[length];
-  ds->read_tbb(id, start, length, data);
+  ds.read_tbb( id, start, length, data );
 
   printf("\n");
   printf("Dataset: \n");
@@ -66,30 +64,36 @@ int main(int argc, char *argv[])
       printf("\n");
     }
 
-  ds->getGroupNames();
+  printf("\nStation groups:\n");
+  std::vector<std::string> groups = ds.getGroupNames();
+  for (uint idx=0; idx<groups.size(); idx++)
+    std::cerr << groups[idx] << std::endl;
+  std::cerr << std::endl;
 
-  dalArray * myarray = ds->openArray(argv[2],argv[3]);
+  DAL::dalArray * array = NULL;
+  if ( DAL::FAIL == ( array = ds.openArray( argv[2], argv[3] ) ) )
+    std::cerr << "ERROR: couldn't open dipole: " << argv[2] << std::endl;
 
-  cout << "\nGetting TIME attribute from array...";
-  unsigned int * time;
-  time = reinterpret_cast<unsigned int*>( myarray->getAttribute("TIME") );
-  if (time) cout << *(unsigned int*)time << " ...done.";
-  else   cout << "FAILED.";
+  std::cerr << "\nGetting TELESCOPE attribute from array...";
+  std::string telescope("");
+  if ( DAL::SUCCESS == ds.getAttribute( "TELESCOPE", telescope ) )
+    std::cerr << telescope << " ...done.";
+  else   std::cerr << "FAILED.";
 
-  cout << "\nGetting SAMPLE_NR attribute from array...";
-  unsigned int * sample_nr;
-  sample_nr = reinterpret_cast<unsigned int*>( myarray->getAttribute("SAMPLE_NR") );
-  if (sample_nr) cout << *(unsigned int*)sample_nr << " ...done.";
-  else   cout << "FAILED.";
+  std::cerr << "\nGetting TIME attribute from array...";
+  uint time = 0;
+  if ( DAL::SUCCESS == array->getAttribute( "TIME", time ) )
+    std::cerr << time << " ...done.";
+  else   std::cerr << "FAILED.";
 
-  cout << "\n\nClosing integer array... ";
-  if ( 0==myarray->close() ) cout << "done." << endl;
-  else  cout << "FAILED.";
+  std::cerr << "\n\nClosing integer array... ";
+  if ( DAL::SUCCESS == array->close() )
+    std::cerr << "done." << std::endl;
+  else  std::cerr << "FAILED.";
 
-  ds->close();
-  delete ds;
+  if ( DAL::FAIL == ds.close() )
+    std::cerr << "ERROR: closing dataset failed\n";
 
-  cout << "\nSUCCESS" << endl;
+  std::cerr << "\nSUCCESS" << std::endl;
   return DAL::SUCCESS;
 }
-

@@ -61,7 +61,25 @@ namespace DAL
       bool close();
       hid_t getId();
       bool getAttributes();
-      void * getAttribute( string attrname );
+
+      // ---------------------------------------------------------- getAttribute
+
+      /*!
+        \brief Get the value of an attribute.
+
+        Get the value of an attribute.  This is different from printAttribute
+        because the value of the attribute is returned into a structure
+        instead of simply printing.
+
+        \param attrname The name of the attribute you want to retrieve.
+        \param value Attribute value to return.
+        \return bool -- DAL::FAIL or DAL::SUCCESS
+       */
+      template <class T>
+      bool getAttribute( std::string attrname, T &value )
+      {
+        return h5getAttribute( array_id, attrname, value );
+      }
 
       bool setAttribute( std::string attrname, char * data, int size=1 );
       bool setAttribute( std::string attrname, short * data, int size=1 );
