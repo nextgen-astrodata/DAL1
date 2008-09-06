@@ -30,7 +30,23 @@
 
   \author Joseph Masters
 
+  \verbatim
+  lofarsoft
+  |-- data
+  |-- doc
+  |-- release
+  |-- build
+  |-- devel_common
+  |-- external
+  `-- src
+      |-- contrib
+      |-- CR-Tools
+      |-- DAL          <-- you are here
+      `-- pybdsm
+  \endverbatim
+
   <h3>Synopsis</h3>
+
   The Data Access Library (DAL) is a library that abstracts the underlying
   file format from the user when working with radio astronomy data.  Underlying
   formats may include HDF5, AIPS++/CASA tables, FITS or specific raw formats.
