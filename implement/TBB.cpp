@@ -143,7 +143,7 @@ namespace DAL
   //
   // -------------------------------------------------------------
 
-  void TBB::connectsocket( char* ipaddress, char* portnumber )
+  void TBB::connectsocket( const char* ipaddress, const char* portnumber )
   {
     int port_number = atol( portnumber );
     const char * remote = ipaddress;
@@ -180,7 +180,7 @@ namespace DAL
     printf("ready\n");
   }
 
-  bool TBB::openRawFile( char* filename )
+  bool TBB::openRawFile( const char* filename )
   {
     delete rawfile;
     rawfile = new fstream( filename, ios::binary|ios::in );

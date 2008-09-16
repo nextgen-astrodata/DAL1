@@ -88,6 +88,15 @@ find_library (libutil util ${lib_locations})
 find_library (libz z ${lib_locations})
 
 ## ---------------------------------------------------------
+## Boost
+
+set (BOOST_pythonOnly NO )
+
+if (NOT HAVE_BOOST)
+  include (FindBoost)
+endif (NOT HAVE_BOOST)
+
+## ---------------------------------------------------------
 ## casacore
 
 if (NOT HAVE_CASACORE)
@@ -131,15 +140,6 @@ endif (NOT HAVE_PYTHON)
 
 ## ---------------------------------------------------------
 ## optional external packages (required for Python bindings)
-
-if (DAL_PYTHON_BINDINGS)
-  ## BOOST
-  set (BOOST_pythonOnly ON)
-  set (BOOST_test_exec_monitor OFF)
-  if (NOT HAVE_BOOST)
-    include (FindBoost)
-  endif (NOT HAVE_BOOST)
-endif (DAL_PYTHON_BINDINGS)
 
 ## We need to be a bit careful with the Boost and Python libraries; appending
 ## the Boost libraries only makes sense, if there is already a list of Python
@@ -215,6 +215,7 @@ endif (DAL_PYTHON_BINDINGS)
 
 if (BOOST_INCLUDES)
   include_directories (${BOOST_INCLUDES} ${BOOST_INCLUDES}/boost)
+  add_definitions (-DWITH_BOOST)
 else (BOOST_INCLUDES)
   message (STATUS "[DAL] Missing Boost header files!")
 endif (BOOST_INCLUDES)
@@ -293,8 +294,51 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 # which point to directories outside the build tree to the install RPATH
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-## -----------------------------------------------------------------------------
-## Subdirectories
+## =============================================================================
+##
+##  Datasets for the test programs
+##
+## =============================================================================
+
+if (DAL_ENABLE_TESTING)
+
+  ## Measurement Set
+
+  find_path (dataset_ms table.dat table.info
+    PATHS
+    ${DAL_SOURCE_DIR}/data
+    ${DAL_SOURCE_DIR}/../data
+    ${DAL_SOURCE_DIR}/../../data
+    PATH_SUFFIXES
+    L2007_01810_SB18-20_OB20.MS
+    lofar/cs1/L2007_01810_SB18-20_OB20.MS
+    10602381_S0_T20.MS
+    wsrt/lffe/10602381_S0_T20.MS
+    )
+
+  ## TBB time-series data
+  
+  find_file (dataset_tbb rw_20080604_121347_2300.dat.h5
+    PATHS
+    ${DAL_SOURCE_DIR}/data
+    ${DAL_SOURCE_DIR}/../data
+    ${DAL_SOURCE_DIR}/../../data
+    )
+  
+  find_file (dataset_tbb_raw rw_20080604_122217_2300.dat
+    PATHS
+    ${DAL_SOURCE_DIR}/data
+    ${DAL_SOURCE_DIR}/../data
+    ${DAL_SOURCE_DIR}/../../data
+    )
+  
+endif (DAL_ENABLE_TESTING)
+
+## =============================================================================
+##
+##  Subdirectories
+##
+## =============================================================================
 
 add_subdirectory (implement)
 

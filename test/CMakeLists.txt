@@ -77,25 +77,11 @@ if (DAL_ENABLE_TESTING)
 
   ## [2] Processing tests which require sample datasets
   
-  ## Tests using MS datasets
-  
-  find_path (ms_dataset table.dat table.info
-    PATHS
-    ${DAL_SOURCE_DIR}/data
-    ${DAL_SOURCE_DIR}/../data
-    ${DAL_SOURCE_DIR}/../../data
-    PATH_SUFFIXES
-    L2007_01810_SB18-20_OB20.MS
-    lofar/cs1/L2007_01810_SB18-20_OB20.MS
-    10602381_S0_T20.MS
-    wsrt/lffe/10602381_S0_T20.MS
-    )
-  
-  if (ms_dataset)
-    add_test (tMS_dal tMS_dal ${ms_dataset} ${ms_dataset}.h5)
-  else (ms_dataset)
+  if (dataset_ms)
+    add_test (tMS_dal tMS_dal ${dataset_ms} ${dataset_ms}.h5)
+  else (dataset_ms)
     message (STATUS "Unable to find MS dataset; skipping tests.")
-  endif (ms_dataset)
+  endif (dataset_ms)
 
   ## [3] Tests using LopesEvent datasets
 
@@ -116,29 +102,22 @@ if (DAL_ENABLE_TESTING)
 
   ## [4] Tests using HDF5-based time-series dataset
   
-  find_file (tbb_dataset tbb_test_file_v1_1.h5
-    PATHS
-    ${DAL_SOURCE_DIR}/data
-    ${DAL_SOURCE_DIR}/../data
-    ${DAL_SOURCE_DIR}/../../data
-    )  
-
-  if (tbb_dataset)
-    add_test (tHDF5Common tHDF5Common ${tbb_dataset})
-  else (tbb_dataset)
+  if (dataset_tbb)
+    add_test (tHDF5Common tHDF5Common ${dataset_tbb})
+  else (dataset_tbb)
     message (STATUS "Unable to find LOFAR time-series dataset; skipping tests.")
-  endif (tbb_dataset)
+  endif (dataset_tbb)
 
   ## [5] Python scripts
 
-  if (ms_dataset)
+  if (dataset_ms)
     ## show the coverage in the (u,v) plane
-    add_test (uv_coverage uv_coverage.py ${ms_dataset})
+    add_test (uv_coverage uv_coverage.py ${dataset_ms})
     ## auto-correlated intensity in the first frequency band
-    add_test (baseline_intensity1 baseline_intensity.py ${ms_dataset} 1 1 0)
+    add_test (baseline_intensity1 baseline_intensity.py ${dataset_ms} 1 1 0)
     ## auto-correlated intensity in the first frequency band, channel 0
-    add_test (baseline_intensity2 baseline_intensity.py ${ms_dataset} 1 1 0 0)
-  endif (ms_dataset)
+    add_test (baseline_intensity2 baseline_intensity.py ${dataset_ms} 1 1 0 0)
+  endif (dataset_ms)
   
 endif (DAL_ENABLE_TESTING)
 

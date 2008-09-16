@@ -18,8 +18,27 @@ message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 #  -D_LARGEFILE_SOURCE
 #  )
 
+## ==============================================================================
+##
+##  Build application programs
+##
+## ==============================================================================
+
 ## ------------------------------------------------------------------------------
-## Build the test programs
+## Set up the linker instructions for the applications
+
+set (apps_link_libraries dal)
+
+if (HAVE_CASA OR HAVE_CASACORE)
+  list (APPEND apps_link_libraries ${dal_link_libraries})
+endif (HAVE_CASA OR HAVE_CASACORE)
+
+if (HAVE_BOOST)
+  list (APPEND apps_link_libraries ${BOOST_LIBRARIES})
+endif (HAVE_BOOST)
+
+## ------------------------------------------------------------------------------
+## Build application programs
 
 set (tests
   msread
@@ -33,21 +52,34 @@ foreach (src ${tests})
   ## executable and its source
   add_executable(${src} ${src}.cpp)
   ## libraries against which to link
-  if (HAVE_CASA OR HAVE_CASACORE)
-    target_link_libraries(${src}
-      dal
-      ${dal_link_libraries}
-      )
-  else (HAVE_CASA OR HAVE_CASACORE)
-    target_link_libraries(${src} dal)
-  endif (HAVE_CASA OR HAVE_CASACORE)
+  target_link_libraries(${src} ${apps_link_libraries})
 endforeach (src)
 
+if (DAL_ENABLE_TESTING)
+
+  ## Test tbb2h5 with various command line parameters
+
+  add_test (tbb2h5_test1 tbb2h5 -H)
+  add_test (tbb2h5_test2 tbb2h5 --help)
+  add_test (tbb2h5_test3 tbb2h5 -O testdata.h5)
+  add_test (tbb2h5_test4 tbb2h5 --outfile testdata.h5)
+  add_test (tbb2h5_test5 tbb2h5 -M 0)
+  add_test (tbb2h5_test6 tbb2h5 --mode 0)
+  add_test (tbb2h5_test7 tbb2h5 -P 20)
+  add_test (tbb2h5_test8 tbb2h5 --port 20)
+
+  if (dataset_tbb_raw)
+    add_test (tbb2h5_test9 tbb2h5 --infile ${dataset_tbb_raw} --outfile testdata.h5)
+  endif (dataset_tbb_raw)
+
+endif (DAL_ENABLE_TESTING)
+
 ## ------------------------------------------------------------------------------
-## Test which require additional external libraries (and thereby should be
+## Programs which require additional external libraries (and thereby should be
 ## considered optional)
 
-## [1] casacore
+## -------------------------------------------------------------------
+## lopes2h5
 
 if (HAVE_CASA OR HAVE_CASACORE)
   ## additional compiler flags
@@ -66,62 +98,27 @@ else (HAVE_CASA OR HAVE_CASACORE)
   message (STATUS "Skipping test programs that require casacore!")
 endif (HAVE_CASA OR HAVE_CASACORE)
 
-## ------------------------------------------------------------------------------
-## Testing
+## ==============================================================================
+##
+##  Testing
+##
+## ==============================================================================
 
 if (DAL_ENABLE_TESTING)
 
-  ## [1] simple tests which do not require sample data
-
-  ## [2] Processing tests which require sample datasets
-  
   ## Tests using MS datasets
   
-  find_path (ms_dataset table.dat table.info
-    PATHS
-    ${DAL_SOURCE_DIR}/data
-    ${DAL_SOURCE_DIR}/../data
-    ${DAL_SOURCE_DIR}/../../data
-    PATH_SUFFIXES
-    L2007_01810_SB18-20_OB20.MS
-    lofar/cs1/L2007_01810_SB18-20_OB20.MS
-    10602381_S0_T20.MS
-    wsrt/lffe/10602381_S0_T20.MS
-    )
-  
-  if (ms_dataset)
-    add_test (tMS_dal tMS_dal ${ms_dataset} ${ms_dataset}.h5)
-  else (ms_dataset)
-    message (STATUS "Unable to find MS dataset; skipping tests.")
-  endif (ms_dataset)
-
-  ## [3] Tests using LopesEvent datasets
-
-  find_file (lopes_dataset 2007.01.31.23:59:33.960.event
-    PATHS
-    ${DAL_SOURCE_DIR}/data
-    ${DAL_SOURCE_DIR}/../data
-    ${DAL_SOURCE_DIR}/../../data
-    PATH_SUFFIXES
-    lopes
-    )
-  
-  if (lopes_dataset)
-    add_test (tdalLopesEvent tdalLopesEvent ${lopes_dataset})
-  else (lopes_dataset)
-    message (STATUS "Unable to find LopesEvent dataset; skipping tests.")
-  endif (lopes_dataset)
-
-  ## [4] Python scripts
-
-  if (ms_dataset)
+  if (dataset_ms)
+    add_test (tMS_dal tMS_dal ${dataset_ms} ${dataset_ms}.h5)
     ## show the coverage in the (u,v) plane
-    add_test (uv_coverage uv_coverage.py ${ms_dataset})
+    add_test (uv_coverage uv_coverage.py ${dataset_ms})
     ## auto-correlated intensity in the first frequency band
-    add_test (baseline_intensity1 baseline_intensity.py ${ms_dataset} 1 1 0)
+    add_test (baseline_intensity1 baseline_intensity.py ${dataset_ms} 1 1 0)
     ## auto-correlated intensity in the first frequency band, channel 0
-    add_test (baseline_intensity2 baseline_intensity.py ${ms_dataset} 1 1 0 0)
-  endif (ms_dataset)
+    add_test (baseline_intensity2 baseline_intensity.py ${dataset_ms} 1 1 0 0)
+  else (dataset_ms)
+    message (STATUS "Unable to find MS dataset; skipping tests.")
+  endif (dataset_ms)
   
 endif (DAL_ENABLE_TESTING)
 
