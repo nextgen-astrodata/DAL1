@@ -26,7 +26,16 @@
 #endif
 
 namespace DAL
-  {
+{
 
+  void BeamSubband::summary(std::ostream &os)
+  {
+    os << "[BeamSubband] Summary of object properties." << std::endl;
+
+    os << "-- HDF5 file handle ID  = " << H5fileID_p  << std::endl;
+    os << "-- HDF5 group handle ID = " << H5groupID_p << std::endl;
+    os << "-- HDF5 table handle ID = " << H5tableID_p << std::endl;
+  }
+  
 }
 

@@ -47,14 +47,14 @@ namespace DAL
 
     private:
 
-      // HDF5 file handle ID
-      hid_t H5groupID_p;
-
       // Group object of the Data Access Library
       dalTable *table_p;
 
       // HDF5 file handle ID
       hid_t H5fileID_p;
+
+      // HDF5 group handle ID
+      hid_t H5groupID_p;
 
       // HDF5 table handle ID
       hid_t H5tableID_p;
@@ -70,6 +70,33 @@ namespace DAL
         \brief Initialize the internal parameters of an object of this type
       */
       void init();
+
+      /*!
+	\brief Get the HDF5 file handle ID
+
+	\return fileID -- The HDF5 file handle ID
+      */
+      inline hid_t fileID () const {
+	return H5fileID_p;
+      }
+
+      /*!
+	\brief Get the HDF5 group handle ID
+
+	\return groupID -- The HDF5 group handle ID
+      */
+      inline hid_t groupID () const {
+	return H5groupID_p;
+      }
+
+      /*!
+	\brief Get the HDF5 table handle ID
+
+	\return tableID -- The HDF5 table handle ID
+      */
+      inline hid_t tableID () const {
+	return H5tableID_p;
+      }
 
       /*!
         \brief Provide a summary of the objects internal parameters

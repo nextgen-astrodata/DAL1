@@ -63,8 +63,8 @@ int main(int argc,char *argv[])
   cerr << endl;
 
   int subband = 0;
-  int start = 0;
-  int length = 20;//441344;
+  int start   = 0;
+  int length  = 20; //441344;
   std::vector< std::complex<short> > xvals;
   std::vector< std::complex<short> > yvals;
   xvals.clear();
