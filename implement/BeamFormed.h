@@ -39,6 +39,29 @@ namespace DAL
      \brief High-level interface between beam-formed data and the DAL
 
      \author Joseph Masters
+
+     \test tBeamFormed.cpp
+
+     While this class implements the top-level structure of a HDF5 file storing
+     beam-formed data, the lower-level structures are accessible through the
+     classes BeamGroup and BeamSubband.
+
+     <h3>Examples</h3>
+
+     <ol>
+       <li>Create an object of type BeamFormed within your class/application:
+       \code
+       #include <dal/BeamFormed.h>
+       
+       DAL::BeamFormed bf (filename);
+       \endcode
+       <li>Retrieve attributes in the root group of the file:
+       \code
+       std::string filename      = bf.filename();
+       std::string telescope     = bf.telescope();
+       std::string observationID = bf.observation_id();
+       \endcode
+     </ol>
    */
 
   class BeamFormed
@@ -64,7 +87,13 @@ namespace DAL
 
     public:
 
+      /*!
+	\brief Default constructor
+       */
       BeamFormed();
+      /*!
+	\brief Argumented constructor
+       */
       BeamFormed(std::string const &filename);
       ~BeamFormed();
 
