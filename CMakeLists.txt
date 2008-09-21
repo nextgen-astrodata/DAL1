@@ -331,6 +331,17 @@ if (DAL_ENABLE_TESTING)
     ${DAL_SOURCE_DIR}/../data
     ${DAL_SOURCE_DIR}/../../data
     )
+
+  ## Beam-formed data
+
+  find_file (dataset_beamformed
+    NAMES
+    bf_20080604_121337.cor.h5 bf_20080604_121337.h5 TBB1.cor.h5
+    PATHS
+    ${DAL_SOURCE_DIR}/data
+    ${DAL_SOURCE_DIR}/../data
+    ${DAL_SOURCE_DIR}/../../data
+    )
   
 endif (DAL_ENABLE_TESTING)
 
