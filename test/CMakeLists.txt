@@ -18,14 +18,18 @@ message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 #  -D_LARGEFILE_SOURCE
 #  )
 
-## ------------------------------------------------------------------------------
-## Build the test programs
+## ==============================================================================
+##
+##  Build the test programs
+##
+## ==============================================================================
 
 set (tests
   tdal
   tdal_fits
   tpulsar_dal
   tBeamFormed
+  tBeamGroup
   tHDF5Common
   )
 
@@ -66,15 +70,20 @@ else (HAVE_CASA OR HAVE_CASACORE)
   message (STATUS "Skipping test programs that require casacore!")
 endif (HAVE_CASA OR HAVE_CASACORE)
 
-## ------------------------------------------------------------------------------
-## Testing
+## ==============================================================================
+##
+##  Testing
+##
+## ==============================================================================
 
 if (DAL_ENABLE_TESTING)
 
+  ## -----------------------------------------------------------------
   ## [1] simple tests which do not require sample data
 
   add_test(tdal ${CMAKE_CURRENT_BINARY_DIR}/tdal)
 
+  ## -----------------------------------------------------------------
   ## [2] Processing tests which require sample datasets
   
   if (dataset_ms)
@@ -83,6 +92,7 @@ if (DAL_ENABLE_TESTING)
     message (STATUS "Unable to find MS dataset; skipping tests.")
   endif (dataset_ms)
 
+  ## -----------------------------------------------------------------
   ## [3] Tests using LopesEvent datasets
 
   find_file (lopes_dataset 2007.01.31.23:59:33.960.event
@@ -100,6 +110,7 @@ if (DAL_ENABLE_TESTING)
     message (STATUS "Unable to find LopesEvent dataset; skipping tests.")
   endif (lopes_dataset)
 
+  ## -----------------------------------------------------------------
   ## [4] Tests using HDF5-based time-series dataset
   
   if (dataset_tbb)
@@ -108,7 +119,16 @@ if (DAL_ENABLE_TESTING)
     message (STATUS "Unable to find LOFAR time-series dataset; skipping tests.")
   endif (dataset_tbb)
 
-  ## [5] Python scripts
+  ## -----------------------------------------------------------------
+  ## [5] Tests using HDF5-based beam-formed data
+
+  if (dataset_beamformed)
+    add_test (tBeamFormed tBeamFormed ${dataset_beamformed})
+    add_test (tBeamGroup tBeamGroup ${dataset_beamformed})
+  endif (dataset_beamformed)
+
+  ## -----------------------------------------------------------------
+  ## [6] Python scripts
 
   if (dataset_ms)
     ## show the coverage in the (u,v) plane
