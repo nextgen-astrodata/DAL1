@@ -41,6 +41,10 @@
   <h3>Related pages</h3>
 
   - \ref dal_coding
+    - \ref dal_code_tree
+    - \ref dal_compile_link
+  - \ref dal_coding_cpp
+  - \ref dal_coding_python
 
 */
 
