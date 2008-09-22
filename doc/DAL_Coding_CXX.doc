@@ -56,51 +56,68 @@ Basic usage of the DAL::dalDataset class to encapsulate a dataset stored on disk
 </ul>
 
 Usage of the DAL::dalDataset class to access data stored within a MeasurementSet:
+<ul>
+  <li>Test program to probe some of the tables contained within the MS:
+  \code
+  #include <dal/dal.h>
 
-\code
-#include <dal.h>
-
-int main(int argc, char *argv[])
-{
-  // create a dataset object of type MSCASA
-  cout << " -- Creating a dataset object of type MSCASA ..." << endl;
-  dalDataset * msds = new dalDataset( argv[1], "MSCASA" );
-
-  // print out a list of tables in the dataset
-  msds->listTables();
-
-  // open a table in the dataset
-  cout << " -- Opening table in the dataset ..." << endl;
-  string tablename = "MAIN";
-  string filter_cols = "UVW, TIME, ANTENNA1, ANTENNA2, DATA";
-  string filter_conditions = "ANTENNA1 = 1 AND ANTENNA2 = 1";
-  msds->setFilter( filter_cols, filter_conditions );
-  dalTable * maintable = msds->openTable( tablename );
-
-  //
-  // get data from the TIME column
-  //
-  dalColumn * time_col = maintable->getColumn("TIME");
-  cout << time_col->getDataType() << endl;
-  if ( time_col->isScalar() ) cout << "SCALAR" << endl;
-  if ( time_col->isArray() ) cout << "ARRAY" << endl;
-  cout << "Number of rows: " << time_col->nrows() << endl;
-
-  dalData * data_object = time_col->data();
-  double * value1;
-  for(unsigned int xx=0; xx<13; xx++)
+  int main(int argc, char *argv[])
   {
-    value1 = (double*)data_object->get(xx);
-    cout << *value1 << endl;
+	// create a dataset object of type MSCASA
+	cout << " -- Creating a dataset object of type MSCASA ..." << endl;
+	dalDataset * msds = new dalDataset( argv[1], "MSCASA" );
+
+	// print out a list of tables in the dataset
+	msds->listTables();
+
+	// open a table in the dataset
+	cout << " -- Opening table in the dataset ..." << endl;
+	string tablename = "MAIN";
+	string filter_cols = "UVW, TIME, ANTENNA1, ANTENNA2, DATA";
+	string filter_conditions = "ANTENNA1 = 1 AND ANTENNA2 = 1";
+	msds->setFilter( filter_cols, filter_conditions );
+	dalTable * maintable = msds->openTable( tablename );
+
+	//
+	// get data from the TIME column
+	//
+	dalColumn * time_col = maintable->getColumn("TIME");
+	cout << time_col->getDataType() << endl;
+	if ( time_col->isScalar() ) cout << "SCALAR" << endl;
+	if ( time_col->isArray() ) cout << "ARRAY" << endl;
+	cout << "Number of rows: " << time_col->nrows() << endl;
+
+	dalData * data_object = time_col->data();
+	double * value1;
+	for(unsigned int xx=0; xx<13; xx++)
+	{
+      value1 = (double*)data_object->get(xx);
+      cout << *value1 << endl;
+	}
+	delete time_col;
+
+	ds->close();    // close the hdf5 file
+
+	return SUCCESS;
   }
-  delete time_col;
-
-  ds->close();    // close the hdf5 file
-
-  return SUCCESS;
-}
-\endcode
+  \endcode
+</ul>
 
 \section dal_coding_BeamFormed Class BeamFormed
+
+<ol>
+  <li>Create an object of type BeamFormed within your class/application:
+  \code
+  #include <dal/BeamFormed.h>
+
+  DAL::BeamFormed bf (filename);
+  \endcode
+  <li>Retrieve attributes in the root group of the file:
+  \code
+  std::string filename      = bf.filename();
+  std::string telescope     = bf.telescope();
+  std::string observationID = bf.observation_id();
+  \endcode
+</ol>
 
 */
