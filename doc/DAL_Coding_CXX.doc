@@ -1,0 +1,106 @@
+/**
+
+\page dal_coding_cpp Coding against the DAL C++ interface
+
+- \ref dal_coding_dalDataset
+- \ref dal_coding_BeamFormed
+
+\section dal_coding_dalDataset Class dalDataset
+
+Basic usage of the DAL::dalDataset class to encapsulate a dataset stored on disk:
+
+<ul>
+  <li>Create new object through default constuctor:
+  \code
+  #include <dal/dalDataset.h>
+
+  DAL::dalDataset dataset;
+  \endcode
+  and display some of its internal properties
+  \code
+  dataset.summary();
+  \endcode
+  
+  <li>Create object for an already existing dataset on disk:
+  \code
+  std::string filename ("mydata.h5");
+
+  DAL::dalDataset dataset (filename.c_str(),"HDF5");
+  \endcode
+  
+  <li>Obtain a summary of the object's internal properties:
+  \code
+  dataset.summary();
+  \endcode
+  The output will look something like this:
+  \verbatim
+  [dalDataset] Summary of object properties
+  -- Dataset type     = HDF5
+  -- Dataset name     = /Users/lars/Code/lofar/usg/data/bf_20080604_121337.cor.h5
+  -- HDF5 file handle = 16777216
+  -- HDF5 group ID    = 16777216
+  \endverbatim
+
+  <li>Get the values of the internal parameters handling/describing the access
+  to the dataset on disk:
+  \code
+  // Get the group ID
+  dataset.getId();
+  // Retrieve the dataset type ("HDF5", "MSCASA", etc.)
+  dataset.getType();
+  // Retrieve the name of the data set
+  dataset.getName();
+  // Get the HDF5 file handle identifier
+  dataset.getFileHandle();
+  \endcode
+</ul>
+
+Usage of the DAL::dalDataset class to access data stored within a MeasurementSet:
+
+\code
+#include <dal.h>
+
+int main(int argc, char *argv[])
+{
+  // create a dataset object of type MSCASA
+  cout << " -- Creating a dataset object of type MSCASA ..." << endl;
+  dalDataset * msds = new dalDataset( argv[1], "MSCASA" );
+
+  // print out a list of tables in the dataset
+  msds->listTables();
+
+  // open a table in the dataset
+  cout << " -- Opening table in the dataset ..." << endl;
+  string tablename = "MAIN";
+  string filter_cols = "UVW, TIME, ANTENNA1, ANTENNA2, DATA";
+  string filter_conditions = "ANTENNA1 = 1 AND ANTENNA2 = 1";
+  msds->setFilter( filter_cols, filter_conditions );
+  dalTable * maintable = msds->openTable( tablename );
+
+  //
+  // get data from the TIME column
+  //
+  dalColumn * time_col = maintable->getColumn("TIME");
+  cout << time_col->getDataType() << endl;
+  if ( time_col->isScalar() ) cout << "SCALAR" << endl;
+  if ( time_col->isArray() ) cout << "ARRAY" << endl;
+  cout << "Number of rows: " << time_col->nrows() << endl;
+
+  dalData * data_object = time_col->data();
+  double * value1;
+  for(unsigned int xx=0; xx<13; xx++)
+  {
+    value1 = (double*)data_object->get(xx);
+    cout << *value1 << endl;
+  }
+  delete time_col;
+
+  ds->close();    // close the hdf5 file
+
+  return SUCCESS;
+}
+\endcode
+
+\section dal_coding_BeamFormed Class BeamFormed
+
+*/

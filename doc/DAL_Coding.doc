@@ -1,0 +1,72 @@
+/**
+
+\page dal_coding Coding against the DAL
+
+\section dal_coding_toc Contents
+
+- \ref dal_code_tree
+- \ref dal_compile_link
+- \ref dal_python_interface
+
+\section dal_code_tree Organization of the code tree
+
+  \verbatim
+  lofarsoft
+  |-- data
+  |-- doc
+  |-- release
+  |-- build
+  |-- devel_common
+  |-- external
+  `-- src
+      |-- contrib
+      |-- CR-Tools
+      |-- DAL          <-- you are here
+      `-- pybdsm
+  \endverbatim
+
+\section dal_compile_link Compile and link against the DAL
+
+The minimum include statement to be put into your code if you want to use 
+functionality of the DAL from a C++ program is:
+\code
+#include <dal/dal.h>
+\endcode
+
+\section dal_python_interface Python interface
+
+Typical python usage of the <b><i>pydal</i></b> module might look like this:
+
+<ol>
+  <li>Working with a MeasurementSet:
+  \code
+  import sys
+  import pydal as dal
+  from pylab import *
+
+  msds= dal.dalDataset()
+  if ( msds.open(sys.argv[1]) ):
+	sys.exit(1)
+
+  tablename = "MAIN";
+
+  msds.setFilter("UVW")
+  title("UV coverage for\n" + sys.argv[1] )
+
+  maintable = msds.openTable( tablename )
+
+  # get the UVW column
+  uvw_column = maintable.getColumn("UVW")
+
+  # get the data from the column
+  data = uvw_column.data()
+
+  # plot the data
+  xlabel("U(-U)")
+  ylabel("V(-V)")
+  plot(data[0],data[1],'r,',-(data[0]),-(data[1]),'b,')
+  show()
+  \endcode
+</ol>
+
+*/
