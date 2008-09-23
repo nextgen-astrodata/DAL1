@@ -1,6 +1,8 @@
+/* $Id$ */
+
 /**
 
-\page dal_coding_python Coding against the DAL Python interface
+\page dal_coding_python DAL :: Coding against the Python interface
 
 Typical python usage of the <b><i>pydal</i></b> module might look like this:
 

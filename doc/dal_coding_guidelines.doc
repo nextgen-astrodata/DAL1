@@ -1,0 +1,107 @@
+/* $Id$ */
+
+/**
+
+\page dal_coding_guidelines DAL :: Coding guidelines
+
+<ul>
+
+  <li>For each new class included into the library (\e libdal) at least two
+  files are created:
+  <ol>
+    <li>Header file (e.g. \e dalDataset.h) containing function prototypes and
+	declarations.
+	<li>Implementation file (e.g. \e dalDataset.cpp) containing the actual
+	implementation of functions	and methods.
+  </ol>
+
+  <li>All classes included into the library are enclosed in the \e DAL
+  namespace: in the header file -
+  \code
+  namespace DAL {
+  
+    class dalDataset {
+	};
+  
+  }
+  \endcode
+  and in the implementation file
+  \code
+  namespace DAL {
+  
+    dalDataset::dalDataset () {};
+  
+  }
+  \endcode
+
+  <li>Include guards in the header file -
+  \code
+  #ifndef DALDATASET_H
+  #define DALDATASET_H
+  
+  namespace DAL {
+  
+  }
+  
+  #endif
+  \endcode
+  and in the implementation file -
+  \code
+  #ifndef DALDATASET_H
+  #include "dalDataset.h"
+  #endif
+  
+  namespace DAL {
+  
+  }
+  \endcode
+  
+  <li>Make private variables of the class distinguishable from either temporary local ones and
+  function parameters:
+  \code
+  bool openFile (const string &filename)
+  {
+    bool status (true);
+  
+    if ( h5fh_p = H5Fopen(filename, H5F_ACC_RDWR, H5P_DEFAULT ) > 0 ) {
+	  filename_p = filename;
+	} else {
+	  status = false;
+	}
+
+    return status;  
+  }
+  \endcode
+  So in this example both \e filename_p and \e h5fh_p would be private variables, \e filename
+  a function parameter and \e status variable local to the function.
+
+  <li>Both header and implementation file should contain a GNU GPL License
+  header:
+  \code
+  /*-------------------------------------------------------------------------*
+   | $Id:: dalDataset.h 1378 2008-04-01 16:47:06Z baehren                  $ |
+   *-------------------------------------------------------------------------*
+   ***************************************************************************
+   *   Copyright (C) 2008                                                    *
+   *   <Name author> (<Email author>)                                        *
+   *                                                                         *
+   *   This program is free software; you can redistribute it and/or modify  *
+   *   it under the terms of the GNU General Public License as published by  *
+   *   the Free Software Foundation; either version 2 of the License, or     *
+   *   (at your option) any later version.                                   *
+   *                                                                         *
+   *   This program is distributed in the hope that it will be useful,       *
+   *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+   *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+   *   GNU General Public License for more details.                          *
+   *                                                                         *
+   *   You should have received a copy of the GNU General Public License     *
+   *   along with this program; if not, write to the                         *
+   *   Free Software Foundation, Inc.,                                       *
+   *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+   ***************************************************************************/
+  \endcode
+
+<ul>
+
+*/

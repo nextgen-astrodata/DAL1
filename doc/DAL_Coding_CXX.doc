@@ -1,11 +1,76 @@
+/* $Id$ */
+
 /**
 
-\page dal_coding_cpp Coding against the DAL C++ interface
+\page dal_coding_cpp DAL :: Coding against the C++ interface
 
+<hr>
+
+  - \ref dal_code_tree
+  - \ref dal_compile_link
+  - \ref dal_library_classes
+
+<hr>
+
+\section dal_code_tree Organization of the code tree
+
+\verbatim
+lofarsoft
+|-- data
+|-- doc
+|-- release
+|-- build
+|-- devel_common
+|-- external
+`-- src
+    |-- contrib
+    |-- CR-Tools
+    |-- DAL                 <-- you are here
+    |   |-- apps
+    |   |-- doc
+    |   |-- implement
+    |   `-- test
+    `-- pybdsm
+\endverbatim
+
+  - \b apps holds the source code for application executables, such as 
+  tools (e.g. tbb2h5.cpp) for the creation of the various standard data products. 
+  - \b test contains the source code for the various test programs (e.g.
+  tdal.cpp or tdalDataset.cpp) which can be used to check the functionality of
+  the library classes.
+
+<hr>
+
+\section dal_compile_link Compile and link against the DAL
+
+The minimum include statement to be put into your code if you want to use 
+functionality of the DAL from a C++ program is:
+\code
+#include <dal/dal.h>
+\endcode
+
+<hr>
+
+\section dal_library_classes Examples for working with the library classes
+
+<table border="0">
+  <tr>
+    <td class="indexkey">Core library classes</td>
+    <td class="indexkey">High-level dataset interfaces</td>
+  </tr>
+  <tr>
+    <td>
 - \ref dal_coding_dalDataset
+- \ref dal_coding_dalTable
+    </td>
+    <td>
 - \ref dal_coding_BeamFormed
+- \ref dal_coding_BeamGroup
+    </td>
+  </tr>
+</table>
 
-\section dal_coding_dalDataset Class dalDataset
+\subsection dal_coding_dalDataset Class dalDataset
 
 Basic usage of the DAL::dalDataset class to encapsulate a dataset stored on disk:
 
@@ -103,7 +168,24 @@ Usage of the DAL::dalDataset class to access data stored within a MeasurementSet
   \endcode
 </ul>
 
-\section dal_coding_BeamFormed Class BeamFormed
+\subsection dal_coding_dalTable Class dalTable
+
+<ol>
+  <li>Construct object for table of type \e HDF5:
+  \code
+  DAL::dalTable table_hdf5 ("H5TYPE");
+  \endcode
+  Construct object for table of type \e FITS:
+  \code
+  DAL::dalTable table_fits ("FITSTYPE");
+  \endcode
+  Construct object for table of type \e MeasurementSet:
+  \code
+  DAL::dalTable table_ms ("MSCASATYPE");
+  \endcode
+</ol>
+
+\subsection dal_coding_BeamFormed Class BeamFormed
 
 <ol>
   <li>Create an object of type BeamFormed within your class/application:
@@ -119,5 +201,7 @@ Usage of the DAL::dalDataset class to access data stored within a MeasurementSet
   std::string observationID = bf.observation_id();
   \endcode
 </ol>
+
+\subsection dal_coding_BeamGroup Class BeamGroup
 
 */

@@ -1,0 +1,138 @@
+/* $Id$ */
+
+/**
+
+\page dal_changes DAL :: Required and requested changes
+
+<hr>
+
+  - \ref dal_changes_build
+  - \ref dal_changes_cpp
+  - \ref dal_changes_python
+  - \ref dal_changes_tools
+
+<hr>
+
+\section dal_changes_build Build issues
+
+<ol>
+  <li>At least on Ray there still seems to be the issue of one of the Python
+  modules not building properly, resulting in a failure to generate the Python
+  bindings to the DAL.
+  <li>John McFarland reports the following build errors for version 1964:
+  \verbatim
+  usg/src/DAL/implement/dalArray.cpp: In constructor `DAL::dalFloatArray::dalFloatArray(hid_t, std::string, std::vector<int, std::allocator<int> >, float*, std::vector<int, std::allocator<int> >)':
+  usg/src/DAL/implement/dalArray.cpp:1066: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Dcreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/dalArray.cpp:1066: warning: passing NULL used for non-pointer converting 7 of `hid_t H5Dcreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/dalArray.cpp:1082: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Dcreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/dalArray.cpp:1082: warning: passing NULL used for non-pointer converting 7 of `hid_t H5Dcreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/dalArray.cpp: In member function `void DAL::dalArray::extend_boost(boost::python::list)':
+  usg/src/DAL/implement/dalArray.cpp:1432: error: `len' is not a member of `bpl'
+  usg/src/DAL/implement/Common.h: In function `bool DAL::h5setAttribute(const hid_t&, hid_t, std::string, T*, int) [with T = char]':
+  usg/src/DAL/implement/dalArray.cpp:447:   instantiated from here
+  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 5 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/Common.h: In function `bool DAL::h5setAttribute(const hid_t&, hid_t, std::string, T*, int) [with T = short int]':
+  usg/src/DAL/implement/dalArray.cpp:463:   instantiated from here
+  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 5 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/Common.h: In function `bool DAL::h5setAttribute(const hid_t&, hid_t, std::string, T*, int) [with T = int]':
+  usg/src/DAL/implement/dalArray.cpp:479:   instantiated from here
+  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 5 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/Common.h: In function `bool DAL::h5setAttribute(const hid_t&, hid_t, std::string, T*, int) [with T = uint]':
+  usg/src/DAL/implement/dalArray.cpp:495:   instantiated from here
+  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 5 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/Common.h: In function `bool DAL::h5setAttribute(const hid_t&, hid_t, std::string, T*, int) [with T = long int]':
+  usg/src/DAL/implement/dalArray.cpp:511:   instantiated from here
+  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 5 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/Common.h: In function `bool DAL::h5setAttribute(const hid_t&, hid_t, std::string, T*, int) [with T = float]':
+  usg/src/DAL/implement/dalArray.cpp:527:   instantiated from here
+  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 5 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/Common.h: In function `bool DAL::h5setAttribute(const hid_t&, hid_t, std::string, T*, int) [with T = double]':
+  usg/src/DAL/implement/dalArray.cpp:543:   instantiated from here
+  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 5 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
+  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
+  usg/release/lib/python2.3/site-packages/numpy/core/include/numpy/__multiarray_api.h: At global scope:
+  usg/release/lib/python2.3/site-packages/numpy/core/include/numpy/__multiarray_api.h:959: warning: 'int _import_array()' defined but not used
+  make[2]: *** [implement/CMakeFiles/pydal.dir/dalArray.cpp.o] Error 1
+  make[1]: *** [implement/CMakeFiles/pydal.dir/all] Error 2
+  make: *** [all] Error 2
+  \endverbatim
+</ol>
+
+<hr>
+
+\section dal_changes_cpp Issues with the C++ interface
+
+<ol>
+  <li>Add method(s) to retrieve all channels of a correlation product (Intensity, X, Y, etc.) stored
+  within DAL::BeamSubband
+  <li>Add methods to retrieve length of data columns in a DAL::dalTable
+  <li>Make sure all classes provide at least a basic <tt>summary()</tt> method to display the status
+  of internal parameters.
+  <li>Add optional parameter to the argumented constructor for DAL::dalDataset; use \e overwrite to
+  enable the user to decide wether or not to overwrite an existing file.
+</ol>
+
+<hr>
+
+\section dal_changes_python Issues with the Python interface
+
+<ol>
+  <li>The <tt>POL_RESPONSE</tt> column of the <tt>FEED(1,2)</tt> table gives the
+  following error when its data is accessed:
+  \verbatim
+   ERROR: Slicer error:length<0
+  i.e.
+  > from pydal import *
+  > ds = dalDataset()
+  > ds.open('data/lofar/cs1/L2007_01810_SB18-20_OB20.MS')
+  0
+  > feed1 = ds.openTable('FEED1')
+  > pr = feed1.getColumn('POL_RESPONSE')
+  > pr.shape()
+  ([16, 2, 2],)
+  > pr_data = pr.data()
+  ERROR: Slicer error:length<0
+  \endverbatim
+  Also...
+  \verbatim
+  > pr_data = pr.data(1)
+  ERROR: ArrayBase::validateConformance
+  \endverbatim
+  
+  <li>If we open a table, for example \verb|OBSERVATION|, then DAL crashes when
+  we access the \verb|LOG| column.
+  \verbatim
+  ERROR: Table DataManager error: Invalid
+  operation: SSMIndStringColumn::getShape: no array in row 0
+  \endverbatim
+
+  <li>Some methods are not implemented, like \verb|readRows()| of a table.
+  \verbatim
+  Operation not yet supported for type MSCASA.  Sorry.
+  \endverbatim
+
+  <li>Unable to retrieve attribute <tt>MS_VERSION</tt> from MeasurementSet:
+  \verbatim
+  > main.getColumn('MS_VERSION')
+  ERROR: Table column MS_VERSION is unknown
+  > main.getAttribute('MS_VERSION')
+  Operation not yet supported for type MSCASA.  Sorry.
+  > main.getAttributes()
+  Operation not yet supported for type MSCASA.  Sorry.
+  \endverbatim
+
+<hr>
+
+\section dal_changes_tools Issues with the application executables
+
+  - Debugging of HDF5 generation using tbb2h5.cpp: check version approx. 1700 -> /mnt/disk2/data/tbb/kalpana
+  - Consider switching all command line parameter handling to Boost \e program_options interface; a first
+  implementation example can be found in tbb2h5.cpp
+
+*/
