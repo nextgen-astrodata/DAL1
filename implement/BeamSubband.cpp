@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------*
- | $Id:: BeamGroup.h 1126 2007-12-10 17:14:20Z masters                         $ |
+ | $Id:: BeamGroup.h 1126 2007-12-10 17:14:20Z masters                   $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2008 by Joseph Masters                                  *
@@ -28,14 +28,82 @@
 namespace DAL
 {
 
-  void BeamSubband::summary(std::ostream &os)
+  // ============================================================================
+  //
+  //  Construction
+  //
+  // ============================================================================
+  
+  // ---------------------------------------------------------------- BeamSubband
+  
+  /*!
+    \brief Default constructor
+  */
+  BeamSubband::BeamSubband ()
+  {
+    init();
+  }
+
+  // ============================================================================
+  //
+  //  Methods
+  //
+  // ============================================================================
+  
+  // ----------------------------------------------------------------------- init
+
+  /*!
+    \brief initialize the internal parameters of the object
+  */
+  void BeamSubband::init ()
+  {
+    table_p     = NULL;
+    H5fileID_p  = -1;
+    H5groupID_p = -1;
+    H5tableID_p = -1;
+  }
+
+  // -------------------------------------------------------------------- summary
+
+  void BeamSubband::summary (std::ostream &os)
   {
     os << "[BeamSubband] Summary of object properties." << std::endl;
 
     os << "-- HDF5 file handle ID  = " << H5fileID_p  << std::endl;
     os << "-- HDF5 group handle ID = " << H5groupID_p << std::endl;
     os << "-- HDF5 table handle ID = " << H5tableID_p << std::endl;
+    
+    if (H5fileID_p > 0) {
+      os << "-- Number of table rows = " << table_p->getNumberOfRows()
+	 << std::endl;
+    }
   }
+
+  // ----------------------------------------------------------- center_frequency
+
+  /*!
+    \brief Get the center frequency of the subband
+
+    \return frequency -- The frequency of the subband
+  */
+  int BeamSubband::center_frequency () const
+  {
+    int frequency (0);
+
+    if (H5tableID_p > 0) {
+      if ( DAL::FAIL == h5get_attribute( frequency,
+					 "CENTER_FREQUENCY",
+					 H5tableID_p ) ) {
+	std::cerr << "-- Error extracting attribute CENTER_FREQUENCY" << endl;
+      }
+    } else {
+      std::cerr << "[BeamSubband::center_frequency] Unable to retrieve attribute;"
+		<< " HDF5 table ID not assigned" << std::endl;
+    }
+    
+    return frequency;
+  }
+
   
 }
 

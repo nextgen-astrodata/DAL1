@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
 
   // -----------------------------------------------------------------
   // Check the provided input
-
+  
   switch (socketmode) {
   case 0:
     if (!vm.count("infile") || !vm.count("outfile")) {
@@ -172,12 +172,12 @@ int main(int argc, char *argv[])
     }
     break;
   }
-
+  
   // -----------------------------------------------------------------
   // Start processing of the input data
   
   TBB tbb = TBB( outfile );
-
+  
   if ( socketmode )  // socket mode?
     {
       tbb.connectsocket( ip.c_str(), port.c_str() );
@@ -189,25 +189,25 @@ int main(int argc, char *argv[])
     }
   
   int counter = 0;
-
+  
   if (socketmode)  // reading from a socket
     {
       while ( true )
         {
           counter++;
-
+	  
           if ( !tbb.readRawSocketBlockHeader() )
             break;
-
+	  
           tbb.stationCheck();
-
+	  
           // if this is the first sample for this station, set header attributes
           if ( tbb.first_sample )
             {
               tbb.makeOutputHeader();
               tbb.first_sample = false;
             }
-
+	  
           if ( tbb.transientMode() )
             {
 #ifdef DEBUGGING_MESSAGES
@@ -216,16 +216,16 @@ int main(int argc, char *argv[])
               if ( !tbb.processTransientSocketDataBlock() )
                 break;
             }
-
+	  
         } // while (true)
-
+      
     }
   else  // reading from a file
     {
       while ( !tbb.eof() )
         {
           counter++;
-
+	  
           tbb.readRawFileBlockHeader();
 
           tbb.stationCheck();

@@ -33,18 +33,42 @@
   <h3>Synopsis</h3>
 
   The Data Access Library (DAL) is a library that abstracts the underlying
-  file format from the user when working with radio astronomy data.  Underlying
-  formats may include HDF5, AIPS++/CASA tables, FITS or specific raw formats.
-  This library is available to both the C/C++ developer and the Python user via
-  the pydal module.
-
+  file format from the user when working with radio astronomy data. Underlying
+  formats may include \ref dal_hdf5, AIPS++/CASA tables, \ref dal_fits or specific
+  raw formats. This library is available to both the C/C++ developer and the
+  Python user via the \e pydal module.
+  
+  <table border="0">
+    <tr>
+      <td class="indexkey">Core library classes</td>
+      <td class="indexkey">High-level dataset interfaces</td>
+      <td class="indexkey">Application tools</td>
+    </tr>
+    <tr>
+      <td>
+      - DAL::dalDataset
+      - DAL::dalTable
+      </td>
+      <td>
+      - DAL::BeamFormed
+      - DAL::BeamGroup
+      </td>
+      <td>
+      - bf2h5
+      - tbb2h5
+      </td>
+    </tr>
+  </table>
+  
   <h3>Related pages</h3>
 
-  - \ref dal_coding
+  - \ref dal_file_types
+  - \ref dal_coding_guidelines
+  - \ref dal_coding_cpp
     - \ref dal_code_tree
     - \ref dal_compile_link
-  - \ref dal_coding_cpp
   - \ref dal_coding_python
+  - \ref dal_changes
 
 */
 

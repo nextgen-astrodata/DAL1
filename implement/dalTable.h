@@ -32,39 +32,42 @@
 #include "dalColumn.h"
 #endif
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   /*!
     \class dalTable
+
     \ingroup DAL
+
     \brief Object representing a table within a dataset.
 
+    \test tdalTable.cpp
+    
     A dalTable can reside within a dataset, or within a group that is within
     a dataset.
-
-   */
-
+    
+  */
+  
   class dalTable
-    {
-
-      void * file;  // can be HDF5File, FITS, MS
-
-      // HDF5-specific variables
-      hid_t file_id; // hdf5 file_id
-      hid_t table_id; // hdf5 table id
-      hsize_t nfields; // hdf5 field count
-      hsize_t nrecords; // hdf5 record count
-      herr_t status; // hdf5 return status
-      char **field_names;  // hdf5 list of columns
-
-      dalFilter * filter; // table filter
-
-      bool firstrecord;
-      string name; // table name
-      string type;  // "HDF5", "MSCASA" or "FITS"; for example
-      vector<dalColumn> columns; // list of table columns
-
+  {
+    
+    void * file;  // can be HDF5File, FITS, MS
+    
+    // HDF5-specific variables
+    hid_t file_id; // hdf5 file_id
+    hid_t table_id; // hdf5 table id
+    hsize_t nfields; // hdf5 field count
+    hsize_t nrecords; // hdf5 record count
+    herr_t status; // hdf5 return status
+    char **field_names;  // hdf5 list of columns
+    
+    dalFilter * filter; // table filter
+    
+    bool firstrecord;
+    string name; // table name
+    string type;  // "HDF5", "MSCASA" or "FITS"; for example
+    vector<dalColumn> columns; // list of table columns
+    
 #ifdef WITH_CASA
 
       casa::Table * casa_table_handle;
@@ -84,8 +87,12 @@ namespace DAL
       dalTable( string filetype );
       ~dalTable();
       void printColumns();
-      void openTable( void * voidfile, string tablename, string groupname );
-
+      inline void summary() { summary(std::cout); }
+      void summary(std::ostream &os);
+      void openTable( void * voidfile,
+		      string tablename,
+		      string groupname );
+      
 #ifdef WITH_CASA
       void openTable( string tablename );
       void openTable( string tablename,

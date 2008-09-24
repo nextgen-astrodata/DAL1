@@ -1,27 +1,25 @@
-/******************************************************************************
- *
- *  This file represents a Lofar Tied-Array (aka Beam-Formed, aka Pulsar) data
- *  reader.
- *
- *   It reads raw data and dumps samples to the screen in blocks of
- *   155,648 per ~1 second.  There are no time stamps provided.  The output
- *   columns (as described by the first two lines) are:
- *
- *    - sample number (1 to 155648 for each frame)
- *    - X coordinate as a complex number (Xr,Xi)
- *    - Y coordinate as a complex number (Yr,Yi)
- *
- * The very last line of output gives the cumulative observation time for the file.
- *
- * Usage is:  lta_reader <filename>
- * Example:   lta_reader
- *
- * The program was written for and tested on little-endian machines
- *
- * Author:  Joseph Masters <jmasters at science dot uva dot nl>
- * Created:  February 2007
- *
- ******************************************************************************/
+/*-------------------------------------------------------------------------*
+ | $Id:: templates.h 391 2007-06-13 09:25:11Z baehren                    $ |
+ *-------------------------------------------------------------------------*
+ ***************************************************************************
+ *   Copyright (C) 2007 by Joseph Masters                                  *
+ *   jmasters@science.uva.nl                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 
 /*!
   \file bf2h5.cpp
@@ -31,7 +29,27 @@
   \brief Write Beam-Formed data into an HDF5 file.
 
   \author Joseph Masters
+  
+  This file represents a LOFAR Tied-Array (aka Beam-Formed, aka Pulsar) data
+  reader.
+  
+  It reads raw data and dumps samples to the screen in blocks of
+  155,648 per ~1 second.  There are no time stamps provided.  The output
+  columns (as described by the first two lines) are:
+  
+  - sample number (1 to 155648 for each frame)
+  - X coordinate as a complex number (Xr,Xi)
+  - Y coordinate as a complex number (Yr,Yi)
+  
+  The very last line of output gives the cumulative observation time for the file.
+  
+  The program was written for and tested on little-endian machines
 
+  <h3>Usage</h3>
+  
+  \verbatim
+  lta_reader <filename>
+  \endverbatim
 */
 
 #ifndef BFRAW_H
@@ -81,7 +99,7 @@ int main (int argc, char *argv[])
   bool doIntensity = atoi(argv[3]);
   bool doDownsample = atoi(argv[4]);
   int factor = atoi(argv[5]);
-
+  
   if (factor <= 0)
     factor = 1;
 
@@ -89,8 +107,11 @@ int main (int argc, char *argv[])
   if ( doDownsample ) doIntensity = true;
   bool doChannelization = false;
 
-  DAL::BFRaw bf = DAL::BFRaw( filename, doIntensity, doDownsample,
-                              doChannelization, factor );
+  DAL::BFRaw bf = DAL::BFRaw( filename,
+			      doIntensity,
+			      doDownsample,
+                              doChannelization,
+			      factor );
 
   bf.openRawFile( argv[1] );
   bf.readRawFileHeader();

@@ -25,165 +25,195 @@
 #include "BeamGroup.h"
 #endif
 
-namespace DAL
-  {
+namespace DAL {
 
-  // ---------------------------------------------------------- BeamGroup
-
+  // ============================================================================
+  //
+  //  Construction
+  //
+  // ============================================================================
+  
+  // ------------------------------------------------------------------ BeamGroup
+  
   /*!
     \brief Default constructor
-
-    Default constructor
-
   */
   BeamGroup::BeamGroup()
   {
     init();
   }
-
-
-
-  // ---------------------------------------------------------- BeamGroup
-
+  
+  // ------------------------------------------------------------------ BeamGroup
+  
   /*!
     \brief Argumented constructor
-
-    Argumented constructor
-
+    
     \param dataset The dalDataset the the group belongs to.
     \param name The name of the group.
   */
-  BeamGroup::BeamGroup (dalDataset &dataset, std::string const &name)
+  BeamGroup::BeamGroup (dalDataset &dataset,
+			std::string const &name)
   {
     bool status (true);
-
+    
     init ();
-
+    
     status = setBeamGroup (dataset, name);
   }
-
-
-  // ---------------------------------------------------------- init
-
-
+  
+  
+  // ----------------------------------------------------------------------- init
+  
+  
   /*!
     \brief Initialize the object's internal parameters
-
+    
     Initialize the object's internal parameters
   */
   void BeamGroup::init()
   {
+    H5fileID_p        = -1;
     H5groupID_p       = -1;
     group_p           = NULL;
-    H5fileID_p        = -1;
     group_p           = new dalGroup;
     group_p->setName ("UNDEFINED");
     beamSubbands_p.clear();
   }
-
-
-
-  // ---------------------------------------------------------- ~BeamGroup
-
+  
+  // ============================================================================
+  //
+  //  Destruction
+  //
+  // ============================================================================
+  
+  // ----------------------------------------------------------------- ~BeamGroup
+  
   /*!
     \brief Default destructor
-
-    Default destructor
   */
   BeamGroup::~BeamGroup()
   {
     delete group_p;
   }
-
-
-  // ---------------------------------------------------------- summary
-
-
-
+  
+  // ============================================================================
+  //
+  //  Parameters & Attributes
+  //
+  // ============================================================================
+    
+  // -------------------------------------------------------------------- summary
+  
   /*!
     \brief Provide a summary of the object's interal parameters
 
-    Provide a summary of the object's interal parameters
+    \param os -- Output stream to which the summary will be written.
   */
   void BeamGroup::summary(std::ostream &os)
   {
+    os << "\n[BeamGroup] Summary of object properties"  << endl;
+    
+    /* We need to guard against trying to get a summary for an object
+     * created via the default constructor; since in that case no connection
+     * to a file and/or group is made, no attribute values can be retrieved.
+     */
+    if (fileID() < 0) {
+      os << "-- No summary available." << endl;
+    } else {
+      os << "-- HDF5 file ID ............. : " << fileID()        << endl;
+      os << "-- HDF5 group ID ............ : " << groupID()       << endl;
+      os << "-- HDF5 group name .......... : " << groupName()     << endl;
+      os << "-- RA ....................... : " << ra()            << endl;
+      os << "-- DEC ...................... : " << dec()           << endl;
+      os << "-- Number of Sub-bands ...... : " << n_subbands()    << endl;
 
-    os << "\n[" << group_p->getName() << " Group] Summary of object properties"  << endl;
-
-    os << "-- RA ................... : " << ra()              << endl;
-    os << "-- DEC .................. : " << dec()             << endl;
-    os << "-- Number of Sub-bands .. : " << n_subbands()      << endl;
-
-    os << endl;
-    os << "-- Sub-bands : " << endl;
-    vector<string> memnames = group_p->getMemberNames();
-    std::vector< std::complex<short> > xvals;
-    std::vector< std::complex<short> > yvals;
-    xvals.clear();
-    yvals.clear();
-
-
-    /*    int subband = 0;
-        int start = 0;
-        int length = 10;
-        for (unsigned int jj=0; jj<memnames.size(); jj++)
-        {
-           os << memnames[jj] << endl;
-
-           xvals.clear();
-           yvals.clear();
-
-           getSubbandData_XY( start, subband, length, xvals, yvals );
-
-           for (unsigned int ii=0; ii < xvals.size(); ii++ ) {
-
-               printf( "{ (%d,%d),(%d,%d) }," , xvals[ii].real(),
-                                                xvals[ii].imag(),
-                                                yvals[ii].real(),
-                                                yvals[ii].imag() );
-           }
-           os << endl << endl;
-        }*/
+      /* If the BeamGroup contains subband tables, we can list them - otherwise
+       * there is nothing else to do here.
+       */
+      
+      if (n_subbands() > 0) {
+	/* Name of the subband tables */
+	vector<string> memberNames = group_p->getMemberNames();	
+	os << "-- Subband table names ...... : [";
+	for (unsigned int n(0); n<memberNames.size(); n++) {
+	  os << " " << memberNames[n];
+	}
+	os << " ]" << std::endl;
+	/* Center frequencies of the subbands */
+	std::vector<int> frequencies = center_frequencies();
+	os << "-- Subband center frequencies : [";
+	for (unsigned int n(0); n<frequencies.size(); n++) {
+	  os << " " << frequencies[n];
+	}
+	os << " ]" << std::endl;
+      }
+      
+    }
   }
-
-
+    
+    
   // ---------------------------------------------------------- getSubband
 
 
   /*!
    \brief Get a subband object from the beam.
 
-   Get a subband object from the beam.
-
    \param subband Number of the subband you want to retrieve.
+
+   \return subbands Array pointer to the set of subbands contained within
+           the BeamGroup.
   */
   BeamSubband * BeamGroup::getSubband( int sb )
   {
     return &beamSubbands_p[ sb ];
   }
 
+  // ------------------------------------------------------------ getSubbandTable
 
+  /*!
+    \brief Get a dalTable object of a subband from the beam
+
+    \param subband -- Number of the subband for which to retrieve the table
+    
+    \return table -- Array pointer to the table containing the data for the
+            selected subband.
+  */
+  dalTable * BeamGroup::getSubbandTable (int subband)
+  {
+    dalTable * table;
+    /* Get the list of Subband-tables contained in this group */
+    vector<string> memberNames = group_p->getMemberNames();
+    
+    table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
+
+    return table;
+  }
+  
   // ---------------------------------------------------------- setBeamGroup
 
 
   /*!
    \brief Initialize the beam group values.
 
-   Initialize the beam group with some real values.
-
    \param dataset The dalDataset the the group belongs to.
    \param name The name of the group.
+
+   \return status Status of the operation; returns <tt>false</tt> in case an
+           error was encountered.
    */
-  bool BeamGroup::setBeamGroup (dalDataset &dataset, std::string const &name)
+  bool BeamGroup::setBeamGroup (dalDataset &dataset,
+				std::string const &name)
   {
     bool status (true);
 
     try
       {
         dataset_p = dataset;
-        H5fileID_p = dataset.getFileHandle();
         delete group_p; // allocated during construction in init()
-        group_p    = dataset.openGroup(name);
+        group_p     = dataset.openGroup(name);
+	/* Extract the values of the identifiers */
+        H5fileID_p  = dataset.getFileHandle();
+	H5groupID_p = group_p->getId();
       }
     catch (std::string message)
       {
@@ -194,22 +224,20 @@ namespace DAL
     return status;
   }
 
-
-  // ---------------------------------------------------------- ra
-
+  // ------------------------------------------------------------------------- ra
 
   /*!
     \brief Get the ra of the beam
 
     \return ra -- The ra of the beam pointing direction
   */
-  std::string BeamGroup::ra()
+  std::string BeamGroup::ra ()
   {
     std::string ra ("");
 
     if (group_p->getName() != "UNDEFINED")
       {
-        if ( DAL::FAIL == group_p->getAttribute( "RA", ra ) )
+        if ( DAL::FAIL == h5get_attribute( ra, "RA", group_p->getId() ) )
           {
             std::cerr << "-- Error extracting attribute RA" << endl;
           }
@@ -217,22 +245,20 @@ namespace DAL
     return ra;
   }
 
-
-  // ---------------------------------------------------------- dec
-
+  // ------------------------------------------------------------------------ dec
 
   /*!
     \brief Get the declination of the beam
 
     \return dec -- The declination of the beam pointing direction
   */
-  std::string BeamGroup::dec()
+  std::string BeamGroup::dec ()
   {
     std::string dec ("");
 
     if (group_p->getName() != "UNDEFINED")
       {
-        if ( DAL::FAIL == group_p->getAttribute( "DEC", dec ) )
+        if ( DAL::FAIL == h5get_attribute( dec, "DEC", group_p->getId() ) )
           {
             std::cerr << "-- Error extracting attribute DEC" << endl;
           }
@@ -263,8 +289,34 @@ namespace DAL
     return n_subbands;
   }
 
+  // ============================================================================
+  //
+  //  Methods
+  //
+  // ============================================================================
+  
+  /*!
+    \brief Get the center frequencies of the subbands
 
-  // ---------------------------------------------------------- getIntensity
+    \return frequencies -- The center frequencies of the subbands
+  */
+  std::vector<int> BeamGroup::center_frequencies ()
+  {
+    std::vector<int> frequencies (1,0);
+    
+    if (group_p->getName() != "UNDEFINED") {
+      unsigned int nofSubbands = beamSubbands_p.size();
+      frequencies.resize(nofSubbands);
+      /* Retrieve the center frequencies from the individual subbands */
+      for (unsigned int n(0); n<nofSubbands; n++) {
+	frequencies[n] = beamSubbands_p[n].center_frequency();
+      }
+    }
+    
+    return frequencies;
+  }
+  
+  // --------------------------------------------------------------- getIntensity
 
   /*!
    \brief Get total instensity data for a given subband
@@ -274,7 +326,7 @@ namespace DAL
    \param subband Subband to get the data from.
    \param start Start number of the cell in the column.
    \param length The number of cells to retrieve.
-   \return array of intensities
+   \return intensities Array of intensities
 
   */
   float *
@@ -286,9 +338,9 @@ namespace DAL
     dalColumn * col;
     dalData * data;
 
-    vector<string> memnames = group_p->getMemberNames();
+    vector<string> memberNames = group_p->getMemberNames();
 
-    table = dataset_p.openTable(memnames[ subband ],group_p->getName());
+    table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
     if ( !table )
       {
         printf("ERROR: Subband %d does not exist for this beam\n", subband);
@@ -312,16 +364,15 @@ namespace DAL
   // ---------------------------------------------------------- getSubbandData_XY
 
   /*!
-   \brief Get X and Y columns data for a given subband
-
-   Get X and Y columns data for a given subband
-
-   \param subband Subband to get the data from.
-   \param start Start number of the cell in the column.
-   \param length The number of cells to retrieve.
-   \param Output character vector of X values.
-   \param Output character vector of Y values.
-
+    \brief Get X and Y columns data for a given subband
+    
+    Get X and Y columns data for a given subband
+    
+    \param subband Subband to get the data from.
+    \param start Start number of the cell in the column.
+    \param length The number of cells to retrieve.
+    \param Output character vector of X values.
+    \param Output character vector of Y values.
   */
   void BeamGroup::getSubbandData_XY( int subband,
                                      int start,
@@ -355,12 +406,12 @@ namespace DAL
                                int &length )
   {
     dalTable * table = NULL;
-    dalColumn * col = NULL;
-    dalData * data = NULL;
+    dalColumn * col  = NULL;
+    dalData * data   = NULL;
 
-    vector<string> memnames = group_p->getMemberNames();
+    vector<string> memberNames = group_p->getMemberNames();
 
-    table = dataset_p.openTable( memnames[subband], group_p->getName() );
+    table = dataset_p.openTable( memberNames[subband], group_p->getName() );
     if ( !table )
       {
         printf("ERROR: Subband %d does not exist for this beam\n", subband);
@@ -408,9 +459,9 @@ namespace DAL
     dalColumn * col = NULL;
     dalData * data = NULL;
 
-    vector<string> memnames = group_p->getMemberNames();
+    vector<string> memberNames = group_p->getMemberNames();
 
-    table = dataset_p.openTable(memnames[ subband ],group_p->getName());
+    table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
     if ( !table )
       {
         printf("ERROR: Subband %d does not exist for this beam\n", subband);
@@ -460,9 +511,9 @@ namespace DAL
     dalData * data = NULL;
 
     complex<short> * xx = NULL;
-    vector<string> memnames = group_p->getMemberNames();
+    vector<string> memberNames = group_p->getMemberNames();
 
-    table = dataset_p.openTable(memnames[ subband ],group_p->getName());
+    table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
     if ( !table )
       {
         printf("ERROR: Subband %d does not exist for this beam\n", subband);
@@ -511,9 +562,9 @@ namespace DAL
     dalColumn * col = NULL;
     dalData * data = NULL;
 
-    vector<string> memnames = group_p->getMemberNames();
+    vector<string> memberNames = group_p->getMemberNames();
 
-    table = dataset_p.openTable(memnames[ subband ],group_p->getName());
+    table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
     if ( !table )
       {
         printf("ERROR: Subband %d does not exist for this beam\n", subband);

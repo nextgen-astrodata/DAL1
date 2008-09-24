@@ -20,6 +20,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #ifdef PYTHON
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 #define NO_IMPORT_ARRAY
@@ -30,10 +31,16 @@
 #endif
 
 namespace DAL
-  {
-
+{
+  
+  // ============================================================================
+  //
+  //  Construction
+  //
+  // ============================================================================
+  
   // ----------------------------------------------------------  dalDataset
-
+  
   /*!
     \brief The dataset object constructor
   */
@@ -46,12 +53,16 @@ namespace DAL
 
   /*!
     \brief Another constructor with two arguments.
-    \param name The name of the dataset to open.
-    \param filetype Type of file to open ("HDF5", "MSCASA", etc.).
+    \param dsname    -- The name of the dataset to open.
+    \param filetype  -- Type of file to open ("HDF5", "MSCASA", etc.).
+    \param overwrite -- Overwrite existing file if one already exist for name
+           \e dsname. By default an already existing file is kept and only
+	   opened -- if you want to overwrite use <tt>overwrite=true</tt>
   */
-  dalDataset::dalDataset( const char * dsname, std::string filetype )
+  dalDataset::dalDataset( const char * dsname,
+			  std::string filetype,
+			  const bool &overwrite)
   {
-
     init();
 
     name = stringify( dsname );
@@ -59,12 +70,23 @@ namespace DAL
 
     if ( filetype == H5TYPE )
       {
-        if ( ( h5fh = H5Fcreate( dsname, H5F_ACC_TRUNC, H5P_DEFAULT,
-                                 H5P_DEFAULT ) ) < 0 )
-          {
-            std::cerr << "ERROR: Could not create file '" << dsname << "'.\n";
-          }
-
+	/* Check if the provided name belongs to an already existing dataset;
+	 * if this is the case, open the dataset instead of blindly creating
+	 * it (and thereby potentially overwriting the existing one).
+	 */
+	if ( ( h5fh = H5Fopen(dsname, H5F_ACC_RDWR, H5P_DEFAULT ) ) > 0 ) {
+#ifdef DEBUGGING_MESSAGES
+	  std::cout << "[dalDataset] Opening existing file " << dsname
+		    << std::endl;
+#endif
+	}
+        else if ( ( h5fh = H5Fcreate( dsname,
+				      H5F_ACC_TRUNC,
+				      H5P_DEFAULT,
+				      H5P_DEFAULT ) ) < 0 ) {
+	  std::cerr << "ERROR: Could not create file '" << dsname << "'.\n";
+	}
+	
         file = &h5fh;
       }
     else if ( filetype == FITSTYPE )
@@ -104,7 +126,38 @@ namespace DAL
 #endif
 
   }
+    
+    // ------------------------------------------------------------------ summary
 
+    /*!
+      \brief Provide a summary of the internal status
+      
+      \param os -- Output stream to which the summary is written.
+    */
+    void dalDataset::summary (std::ostream &os)
+    {
+      os << "[dalDataset] Summary of object properties" << std::endl;
+
+      os << "-- Dataset type     = " << getType()       << std::endl;
+      os << "-- Dataset name     = " << getName()       << std::endl;
+      os << "-- HDF5 file handle = " << getFileHandle() << std::endl;
+      os << "-- HDF5 group ID    = " << getId()         << std::endl;
+
+      /* Further properties only can be requested if the object is connected
+       * to a dataset.
+       */
+      
+      if (getName() != "UNDEFINED") {
+	std::vector<std::string> groupNames = getGroupNames();
+	
+	os << "-- Group names      = [";
+	for (unsigned int n(0); n<groupNames.size(); n++) {
+	  os << " " << groupNames[n];
+	}
+	os << " ]" << std::endl;
+      }
+    }
+    
   // ---------------------------------------------------------- openFITS
 
   /****************************************************************

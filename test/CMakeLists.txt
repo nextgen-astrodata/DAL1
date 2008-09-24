@@ -28,6 +28,8 @@ set (tests
   tdal
   tdal_fits
   tpulsar_dal
+  tdalDataset
+  tdalTable
   tBeamFormed
   tBeamGroup
   tHDF5Common
@@ -123,6 +125,8 @@ if (DAL_ENABLE_TESTING)
   ## [5] Tests using HDF5-based beam-formed data
 
   if (dataset_beamformed)
+    add_test (tdalDataset tdalDataset ${dataset_beamformed})
+    add_test (tdalTable tdalTable ${dataset_beamformed})
     add_test (tBeamFormed tBeamFormed ${dataset_beamformed})
     add_test (tBeamGroup tBeamGroup ${dataset_beamformed})
   endif (dataset_beamformed)

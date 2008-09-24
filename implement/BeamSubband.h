@@ -28,95 +28,95 @@
 #include <dalDataset.h>
 #endif
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   /*!
-     \class BeamSubband
+    \class BeamSubband
+    
+    \ingroup DAL
+    
+    \brief High-level interface between beam-formed data and the DAL
+    
+    \author Joseph Masters
 
-     \ingroup DAL
+    \test tBeamSubband.cpp
+  */
+  
+  class BeamSubband {
+    
+  private:
+    
+    //! Group object of the Data Access Library
+    dalTable *table_p;
+    //! HDF5 file handle ID
+    hid_t H5fileID_p;
+    //! HDF5 group handle ID
+    hid_t H5groupID_p;
+    //! HDF5 table handle ID
+    hid_t H5tableID_p;
+    
+  public:
+    
+    // ==========================================================================
+    //  Construction
 
-     \brief High-level interface between beam-formed data and the DAL
+    BeamSubband();
+    
+    void init();
+    
+    // ==========================================================================
+    //  Parameters
+    
+    /*!
+      \brief Get the HDF5 file handle ID
+      
+      \return fileID -- The HDF5 file handle ID
+    */
+    inline hid_t fileID () const {
+      return H5fileID_p;
+    }
+    
+    /*!
+      \brief Get the HDF5 group handle ID
+      
+      \return groupID -- The HDF5 group handle ID
+    */
+    inline hid_t groupID () const {
+      return H5groupID_p;
+    }
+    
+    /*!
+      \brief Get the HDF5 table handle ID
+      
+      \return tableID -- The HDF5 table handle ID
+    */
+    inline hid_t tableID () const {
+      return H5tableID_p;
+    }
+    
+    /*!
+      \brief Provide a summary of the objects internal parameters
+      
+      The summary will be written to standard output
+    */
+    inline void summary() {
+      summary(cout);
+    }
+    
+    /*!
+      \brief Provide a summary of the objects internal parameters
+      
+      \param os -- Output stream to which the summary is written.
+    */
+    void summary(std::ostream &os);
 
-     \author Joseph Masters
+    // ==========================================================================
+    //  Methods
 
-   */
+    int center_frequency () const;
 
-  class BeamSubband
-    {
-
-    private:
-
-      // Group object of the Data Access Library
-      dalTable *table_p;
-
-      // HDF5 file handle ID
-      hid_t H5fileID_p;
-
-      // HDF5 group handle ID
-      hid_t H5groupID_p;
-
-      // HDF5 table handle ID
-      hid_t H5tableID_p;
-
-    public:
-
-      /*!
-        \brief Default constructor
-      */
-      BeamSubband();
-
-      /*!
-        \brief Initialize the internal parameters of an object of this type
-      */
-      void init();
-
-      /*!
-	\brief Get the HDF5 file handle ID
-
-	\return fileID -- The HDF5 file handle ID
-      */
-      inline hid_t fileID () const {
-	return H5fileID_p;
-      }
-
-      /*!
-	\brief Get the HDF5 group handle ID
-
-	\return groupID -- The HDF5 group handle ID
-      */
-      inline hid_t groupID () const {
-	return H5groupID_p;
-      }
-
-      /*!
-	\brief Get the HDF5 table handle ID
-
-	\return tableID -- The HDF5 table handle ID
-      */
-      inline hid_t tableID () const {
-	return H5tableID_p;
-      }
-
-      /*!
-        \brief Provide a summary of the objects internal parameters
-
-        The summary will be written to standard output
-      */
-      inline void summary()
-      {
-        summary(cout);
-      }
-
-      /*!
-        \brief Provide a summary of the objects internal parameters
-
-        \param os -- Output stream to which the summary is written.
-      */
-      void summary(std::ostream &os);
-
-    }; // end BeamSubband class
-
+  }; // end BeamSubband class
+  
 } // end DAL namespace
 
 #endif

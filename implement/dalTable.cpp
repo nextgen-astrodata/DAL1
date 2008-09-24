@@ -31,39 +31,44 @@
 #include "dalTable.h"
 #endif
 
-namespace DAL
-  {
-
-  // ---------------------------------------------------------- dalTable
-
+namespace DAL {
+  
+  // ============================================================================
+  //
+  //  Construction
+  //
+  // ============================================================================
+  
+  // ------------------------------------------------------------------- dalTable
+  
   /*!
     \brief Default table constructor.
-
+    
     The default table constructor.
   */
   dalTable::dalTable()
   {
     filter = new dalFilter;
   }
-
-  // ---------------------------------------------------------- dalTable
-
+  
+  // ------------------------------------------------------------------- dalTable
+  
   /*!
-  \brief Table constructor for a specific file format.
-
-  Table constructor for a specific file format.
-
-  \param filetype The type of table you want to create (i.e.
-  	"HDF5", "MSCASA", etc.)
+    \brief Table constructor for a specific file format.
+    
+    Table constructor for a specific file format.
+    
+    \param filetype The type of table you want to create (i.e.
+    "HDF5", "MSCASA", etc.)
   */
   dalTable::dalTable( std::string filetype )
   {
     filter = new dalFilter;
-
+    
     type = filetype;
     columns.clear();  // clear the coulumns vector
     firstrecord = true;
-
+    
     if ( type == MSCASATYPE )
       {
 #ifdef WITH_CASA
@@ -73,14 +78,14 @@ namespace DAL
 #endif
       }
   }
-
+  
   // ---------------------------------------------------------- ~dalTable
-
+  
   /*!
     \brief Default table destructor.
-
+    
     Default table destructor.
-   */
+  */
   dalTable::~dalTable()
   {
     delete filter;
@@ -91,9 +96,48 @@ namespace DAL
 #endif
       }
   }
+  
+  // -------------------------------------------------------------------- summary
 
+  void dalTable::summary(std::ostream &os)
+  {
+    unsigned int nofColumns = columns.size();
+
+    os << "\n[dalTable] Summary of object properties"  << endl;
+
+    if (name != "") {
+      os << "-- Table name    = " << name << std::endl;
+      os << "-- Table type    = " << type << std::endl;
+      os << "-- nof. rows     = " << getNumberOfRows() << std::endl;
+      os << "-- nof. columns  = " << nofColumns << std::endl;
+    }
+
+    /* If the table contains a non-zero number of columns, list their names.
+     */
+    if (nofColumns > 0) {
+      os << "-- Column names  = [";
+      for (unsigned int n(0); n<nofColumns; n++) {
+	os << " " << columns[n].getName();
+      }
+      os << " ]" << std::endl;
+    }
+    
+    /* If the table is working with HDF5 as back-end, provide a summary of the
+     * identifiers and properties.
+     */    
+    if (type == H5TYPE && file_id > 0) {
+      os << "-- HDF5 file ID  = " << file_id  << std::endl;
+      os << "-- HDF5 table ID = " << table_id << std::endl;
+      os << "-- nof. fields   = " << nfields  << std::endl;
+      os << "-- nof. records  = " << nrecords << std::endl;
+    } else {
+      os << "-- File type is HDF5, but object not connected to file!"
+	 << std::endl;
+    }
+  }
+  
   // ---------------------------------------------------------- getColumn
-
+  
   /*!
     \brief Get a column object.
 

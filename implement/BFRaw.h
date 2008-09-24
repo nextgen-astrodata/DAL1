@@ -44,34 +44,37 @@
 
 #define PI 3.141592653589793238462643
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   /*!
-     \class BFRaw
-     \ingroup DAL
-     \brief High-level interface between raw beam-formed data and the DAL.
+    \class BFRaw
 
-     High-level interface between raw beam-formed data and the DAL.
-   */
+    \ingroup DAL
 
+    \brief High-level interface between raw beam-formed data and the DAL.
+
+    \author Joseph Masters
+    
+    High-level interface between raw beam-formed data and the DAL.
+  */
+  
   class BFRaw
+  {
+    
+    struct FileHeader
     {
-
-      struct FileHeader
-        {
-          UInt32    magic;        // 0x3F8304EC, also determines endianness
-          UInt8     bitsPerSample;
-          UInt8     nrPolarizations;
-          UInt16    nrBeamlets;   // number of subbands
-          UInt32    nrSamplesPerBeamlet; // 155648 (160Mhz) or 196608 (200Mhz)
-          char      station[20];
-          Float64   sampleRate;       //156250.0 or 195312.5 .. double
-          Float64   subbandFrequencies[54];
-          Float64   beamDirections[8][2];
-          Int16     beamlet2beams[54];
-          UInt32    padding;  // padding to circumvent 8-byte alignment
-        };
+      UInt32    magic;        // 0x3F8304EC, also determines endianness
+      UInt8     bitsPerSample;
+      UInt8     nrPolarizations;
+      UInt16    nrBeamlets;   // number of subbands
+      UInt32    nrSamplesPerBeamlet; // 155648 (160Mhz) or 196608 (200Mhz)
+      char      station[20];
+      Float64   sampleRate;       //156250.0 or 195312.5 .. double
+      Float64   subbandFrequencies[54];
+      Float64   beamDirections[8][2];
+      Int16     beamlet2beams[54];
+      UInt32    padding;  // padding to circumvent 8-byte alignment
+    };
 
       struct BlockHeader
         {
@@ -122,9 +125,20 @@ namespace DAL
                                            const uint64_t arraylength );
     public:
 
-      BFRaw( string const& name, bool doIntensity, bool doDownsample,
-             bool doChannelization, int factor );  // constructor
-      ~BFRaw();  // destructor
+      /* Construction */
+
+      BFRaw( string const& name,
+	     bool doIntensity,
+	     bool doDownsample,
+             bool doChannelization,
+	     int factor );
+
+      /* Destruction */
+
+      ~BFRaw();
+
+      /* Methods */
+
       void makeH5OutputFile();
       void readRawFileHeader();
       void openRawFile(char*);

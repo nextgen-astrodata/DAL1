@@ -41,7 +41,52 @@ namespace DAL
 
     The dalDataset is the highest level container for dalData.  It may
     consist of one or more files on disk, each of which contain multiple tables,
-    images and attributes.  These tables and images can be gruoped.
+    images and attributes.  These tables and images can be grouped.
+
+    <h3>Examples</h3>
+
+    <ol>
+      <li>Create new object through default constuctor:
+      \code
+      #include <dal/dalDataset.h>
+
+      DAL::dalDataset dataset;
+      \endcode
+      and display some of its internal properties
+      \code
+      dataset.summary();
+      \endcode
+      <li>Create object for an already existing dataset on disk:
+      \code
+      std::string filename ("mydata.h5");
+
+      DAL::dalDataset dataset (filename.c_str(),"HDF5");
+      \endcode
+      <li>Obtain a summary of the object's internal properties:
+      \code
+      dataset.summary();
+      \endcode
+      The output will look something like this:
+      \verbatim
+      [dalDataset] Summary of object properties
+      -- Dataset type     = HDF5
+      -- Dataset name     = /Users/lars/Code/lofar/usg/data/bf_20080604_121337.cor.h5
+      -- HDF5 file handle = 16777216
+      -- HDF5 group ID    = 16777216
+      \endverbatim
+      <li>Get the values of the internal parameters handling/describing the access
+      to the dataset on disk:
+      \code
+      // Get the group ID
+      dataset.getId();
+      // Retrieve the dataset type ("HDF5", "MSCASA", etc.)
+      dataset.getType();
+      // Retrieve the name of the data set
+      dataset.getName();
+      // Get the HDF5 file handle identifier
+      dataset.getFileHandle();
+      \endcode
+    </ol>
   */
 
   class dalDataset
@@ -49,12 +94,16 @@ namespace DAL
 
       void init();
 
-      void * file;  // can be HDF5File, FITS, MS
-      std::string type;  // "HDF5", "MSCASA" or "FITS"; for example
-      std::string name;  // dataset name
-      dalFilter filter; // dataset filter
-
-      hid_t h5fh;   // hdf5 file handle
+      //! can be HDF5File, FITS, MS
+      void * file;
+      //! "HDF5", "MSCASA" or "FITS"; for example
+      std::string type;
+      //! Dataset name
+      std::string name;
+      //! Dataset filter
+      dalFilter filter;
+      //! HDF5 file handle
+      hid_t h5fh;
 
 #ifdef WITH_CASA
       casa::MeasurementSet * ms; // CASA measurement set pointer
@@ -64,12 +113,21 @@ namespace DAL
 
     public:
       dalDataset();
-      dalDataset( const char * name, std::string filetype );
+      dalDataset( const char * name,
+		  std::string filetype,
+		  const bool &overwrite=false);
       bool open( const char * datasetname );
       bool close();
       bool getAttributes();
       hid_t getId();
-
+      
+      /*!
+	\brief Provide a summary of the internal status
+      */
+      inline void summary () {
+        summary (std::cout);
+      }
+      void summary (std::ostream &os);
 
       // ---------------------------------------------------------- getAttribute
 

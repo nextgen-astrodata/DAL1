@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2008 by Joseph Masters                                  *
- *   J.S.Masters@uva.nl                                               *
+ *   J.S.Masters@uva.nl                                                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,6 +20,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #ifndef BFRAW_H
 #include "BFRaw.h"
 #endif
@@ -55,11 +56,28 @@ dataStruct * channelize( dataStruct * data,
 
 */
 
-namespace DAL
-  {
+namespace DAL {
 
-  BFRaw::BFRaw( string const& filename, bool doIntensity, bool doDownsample,
-                bool doChannelization, int factor )
+  // ============================================================================
+  //
+  //  Construction
+  //
+  // ============================================================================
+
+  /*!
+    \brief Argumented constructor
+
+    \param filename         -- Name of the input data file.
+    \param doIntensity      -- 
+    \param doDownsample     -- 
+    \param doChannelization -- 
+    \param factor           -- 
+  */
+  BFRaw::BFRaw( string const& filename,
+		bool doIntensity,
+		bool doDownsample,
+                bool doChannelization,
+		int factor )
   {
     // initializations (private)
     bigendian = BigEndian();
@@ -71,7 +89,16 @@ namespace DAL
     DO_DOWNSAMPLE = doDownsample;
     DO_CHANNELIZATION = doChannelization;
   }
+  
+  // ============================================================================
+  //
+  //  Destruction
+  //
+  // ============================================================================
 
+  /*!
+    \brief Destructor
+  */
   BFRaw::~BFRaw()
   {
     if (rawfile)
@@ -84,8 +111,20 @@ namespace DAL
         rawfile = NULL;
       }
   }
+  
+  // ============================================================================
+  //
+  //  Methods
+  //
+  // ============================================================================
 
+  // ------------------------------------------------------------------------ eof
 
+  /*!
+    \brief Check for reaching end-of-file
+
+    \return eof -- Returns \e true if the end of file has been reached
+  */
   bool BFRaw::eof()
   {
     if ( rawfile->peek() == EOF )
@@ -94,6 +133,15 @@ namespace DAL
       return false;
   }
 
+  // ------------------------------------------------------------------ RArad2deg
+
+  /*!
+    \brief Convert RA position (in radian) to degrees
+
+    \param rad -- The RA position in radian
+
+    \return deg -- The RA position in degrees
+  */
   char * BFRaw::RArad2deg( const float &rad )
   {
     char * ra_string = new char[14];
@@ -109,6 +157,15 @@ namespace DAL
     return ra_string;
   }
 
+  // ----------------------------------------------------------------- DECrad2deg
+
+  /*!
+    \brief Convert Dec position (in radian) to degrees
+
+    \param rad -- The Dec position in radian
+
+    \return deg -- The Dec position in degrees
+  */
   char * BFRaw::DECrad2deg( const float &rad )
   {
     char * ra_string = new char[14];
@@ -124,12 +181,16 @@ namespace DAL
     return ra_string;
   }
 
+  // ---------------------------------------------------------------- openRawFile
+
   void BFRaw::openRawFile( char* filename )
   {
     delete rawfile;
     rawfile = new fstream( filename, ios::binary|ios::in );
     rawfile->seekg (0, ios::beg);  // move to start of file
   }
+
+  // ---------------------------------------------------------- readRawFileHeader
 
   void BFRaw::readRawFileHeader()
   {
@@ -214,6 +275,8 @@ namespace DAL
       }
 #endif
   }
+
+  // ----------------------------------------------------------- makeH5OutputFile
 
   void BFRaw::makeH5OutputFile()
   {
@@ -330,6 +393,8 @@ namespace DAL
     beamstr = NULL;
 
   } // BFRaw::makeH5OutputFile
+
+  // -------------------------------------------------------------- processBlocks
 
   void BFRaw::processBlocks()
   {

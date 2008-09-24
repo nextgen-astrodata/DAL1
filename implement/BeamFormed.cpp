@@ -24,11 +24,10 @@
 #include "BeamFormed.h"
 #endif
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   // ---------------------------------------------------------- BeamFormed
-
+  
   /*!
     \brief Empty constructor
   */
@@ -40,9 +39,9 @@ namespace DAL
     H5fileID_p = 0;
     beamGroups_p.clear();
   };
-
+  
   // ---------------------------------------------------------- BeamFormed
-
+  
   /*!
     \brief Argumented constructor
     \param filename -- Name of the file from which to read in the data
@@ -195,71 +194,74 @@ namespace DAL
     return lcl_sources;
 
   }
-
-
+  
+  
   // ---------------------------------------------------------- summary
-
+  
   /*!
     \brief Provide a summary of the internal status
     \param os              -- output stream [I]
-    \param listBeams       -- flag to determine whether or not to list beam summaries [I]
+    \param listBeams       -- flag to determine whether or not to list beam
+           summaries [I]
   */
   void BeamFormed::summary (std::ostream &os, bool const &listBeams)
   {
     os << "\n[BeamFormed Data] Summary of object properties"     << endl;
-
-    os << "-- Filename ............. : " << filename()              << endl;
-    os << "-- Telesope ............. : " << telescope()             << endl;
-    os << "-- Number of Stations ... : " << nstations()             << endl;
-    os << "-- Datatype ............. : " << datatype()              << endl;
-    os << "-- Emband   ............. : " << emband()                << endl;
-
-    std::vector< std::string > srcs = sources();
-    os << "-- Source(s) ............ : ";
-    print_vector(os, srcs);
-    os << endl;
-
-    os << "-- Observation Id ....... : " << observation_id()        << endl;
-    os << "-- Project Id ........... : " << proj_id()               << endl;
-
-    os << "-- Point RA ............. : " << point_ra()              << endl;
-    os << "-- Point DEC ............ : " << point_dec()             << endl;
-    os << "-- Observer ............. : " << observer()              << endl;
-    os << "-- Epoch MJD ............ : " << epoch_mjd()             << endl;
-    os << "-- Epoch Date ........... : " << epoch_date()            << endl;
-    os << "-- Epoch UTC ............ : " << epoch_utc()             << endl;
-    os << "-- Epoch LST ............ : " << epoch_lst()             << endl;
-    os << "-- FWHM of the main beam  : " << main_beam_diam()        << endl;
-//     os << "-- Center Frequency ..... : " << center_freq()           << endl;
-    os << "-- Bandwidth ............ : " << bandwidth()             << endl;
-//     os << "-- Total Integration Time : " << total_integration_time()      << endl;
-
-    os << "-- Breaks in the data ... : " << breaks()                << endl;
-    os << "-- Dispersion measure ... : " << dispersion_measure()    << endl;
-    os << "-- Number of time samples : " << number_of_samples()     << endl;
-    os << "-- Sampling time (Hz).... : " << sampling_time()         << endl;
-    os << "-- Notes ................ : " << notes()                 << endl;
-    os << "-- Number of beams ...... : " << number_of_beams()       << endl;
-    os << "-- FWHM of the sub-beams  : " << sub_beam_diameter()     << endl;
-    os << "-- Weather temperature .. : " << weather_temperature()   << endl;
-    os << "-- Weather humidity ..... : " << weather_humidity()      << endl;
-    std::vector< int > temps = station_temperatures();
-    os << "-- Station temperature(s) : ";
-    print_vector(os, temps);
-    os << endl;
-
-    if (listBeams)
-      {
-        for (uint beam(0); beam<beamGroups_p.size(); beam++)
-          {
-            beamGroups_p[beam]->summary();
-          }
+    
+    if (dataset_p != NULL) {
+      os << "-- Filename ............. : " << filename()              << endl;
+      os << "-- Telesope ............. : " << telescope()             << endl;
+      os << "-- Number of Stations ... : " << nstations()             << endl;
+      os << "-- Datatype ............. : " << datatype()              << endl;
+      os << "-- Emband   ............. : " << emband()                << endl;
+      
+      std::vector< std::string > srcs = sources();
+      os << "-- Source(s) ............ : ";
+      print_vector(os, srcs);
+      os << endl;
+      
+      os << "-- Observation Id ....... : " << observation_id()        << endl;
+      os << "-- Project Id ........... : " << proj_id()               << endl;
+      
+      os << "-- Point RA ............. : " << point_ra()              << endl;
+      os << "-- Point DEC ............ : " << point_dec()             << endl;
+      os << "-- Observer ............. : " << observer()              << endl;
+      os << "-- Epoch MJD ............ : " << epoch_mjd()             << endl;
+      os << "-- Epoch Date ........... : " << epoch_date()            << endl;
+      os << "-- Epoch UTC ............ : " << epoch_utc()             << endl;
+      os << "-- Epoch LST ............ : " << epoch_lst()             << endl;
+      os << "-- FWHM of the main beam  : " << main_beam_diam()        << endl;
+      //     os << "-- Center Frequency ..... : " << center_freq()           << endl;
+      os << "-- Bandwidth ............ : " << bandwidth()             << endl;
+      //     os << "-- Total Integration Time : " << total_integration_time()      << endl;
+      
+      os << "-- Breaks in the data ... : " << breaks()                << endl;
+      os << "-- Dispersion measure ... : " << dispersion_measure()    << endl;
+      os << "-- Number of time samples : " << number_of_samples()     << endl;
+      os << "-- Sampling time (Hz).... : " << sampling_time()         << endl;
+      os << "-- Notes ................ : " << notes()                 << endl;
+      os << "-- Number of beams ...... : " << number_of_beams()       << endl;
+      os << "-- FWHM of the sub-beams  : " << sub_beam_diameter()     << endl;
+      os << "-- Weather temperature .. : " << weather_temperature()   << endl;
+      os << "-- Weather humidity ..... : " << weather_humidity()      << endl;
+      std::vector< int > temps = station_temperatures();
+      os << "-- Station temperature(s) : ";
+      print_vector(os, temps);
+      os << endl;
+      
+      if (listBeams) {
+	for (uint beam(0); beam<beamGroups_p.size(); beam++) {
+	  beamGroups_p[beam]->summary();
+	}
       }
-
+    } else {
+      os << "-- HDF5 file ID = " << H5fileID_p << std::endl;
+    }
+    
   }
-
+  
   // ---------------------------------------------------------- getBeam
-
+  
   /*!
     \brief Get a beam group object
     \param beam       -- beam number [I]
@@ -271,9 +273,9 @@ namespace DAL
     BeamGroup * group = new BeamGroup((*dataset_p), beamGroups[beam]);
     return group;
   }
-
+  
   // ---------------------------------------------------------- beams
-
+  
   /*!
     \brief Print beam groups embedded within the dataset
     \return beams - a vector of strings representing the names of the beams
@@ -800,7 +802,7 @@ namespace DAL
 
   /*!
     \brief Get the number of beams
-    \return number of beams
+    \return nofBeams -- The number of beams contained within this dataset
   */
   int BeamFormed::number_of_beams ()
   {

@@ -29,85 +29,114 @@
 #endif
 
 namespace DAL
-  {
-
+{
+  
   /*!
-     \class BeamGroup
-
-     \ingroup DAL
-
-     \brief High-level interface between beam-formed data and the DAL
-
-     \author Joseph Masters
-
-   */
-
+    \class BeamGroup
+    
+    \ingroup DAL
+    
+    \brief High-level interface between beam-formed data and the DAL
+    
+    \author Joseph Masters
+    
+    \test tBeamGroup.cpp
+  */
+  
   class BeamGroup
-    {
-
-    private:
-
-      // HDF5 file handle ID
-      hid_t H5groupID_p;
-
-      // Group object of the Data Access Library
-      dalGroup *group_p;
-
-      // Dataset object of the Data Access Library
-      dalDataset dataset_p;
-
-      // HDF5 file handle ID
-      hid_t H5fileID_p;
-
-      // Vector of subband tables within the dataset
-      std::vector<BeamSubband> beamSubbands_p;
-
-    public:
-
-      BeamGroup();
-      ~BeamGroup();
-      BeamGroup ( dalDataset &dataset,
-                  std::string const &name );
-      void init();
-      bool setBeamGroup ( dalDataset &dataset,
-                          std::string const &name);
-      float *  getIntensity( int subband, int start, int &length );
-      void getSubbandData_XY( int subband,
-                              int start,
-                              int &length,
-                              std::vector< std::complex<short> > &x_values,
-                              std::vector< std::complex<short> > &y_values );
-      void getSubbandData_X( int subband,
-                             int start,
-                             int &length,
-                             std::vector< std::complex<short> > &values );
-      std::complex<short>  * getSubbandData_X( int subband,
-          int start,
-          int &length );
-
-      std::complex<short>  * getSubbandData_Y( int subband,
-          int start,
-          int &length );
-      void getSubbandData_Y( int subband,
-                             int start,
-                             int &length,
-                             std::vector< std::complex<short> > &values );
-      inline void summary()
-      {
-        summary(cout);
-      }
-      BeamSubband * getSubband( int subband );
-      void summary(std::ostream &os);
-      std::string ra();
-      std::string dec();
-      int n_subbands ();
-
-      /************************************************************************
-       *
-       * The following functions are boost wrappers to allow some previously
-       *   defined functions to be easily called from a python prompt.
-       *
-       ************************************************************************/
+  {
+    
+  private:
+    
+    //! HDF5 file handle ID
+    hid_t H5fileID_p;
+    
+    //! HDF5 file handle ID
+    hid_t H5groupID_p;
+    
+    //! Group object of the Data Access Library
+    dalGroup *group_p;
+    
+    //! Dataset object of the Data Access Library
+    dalDataset dataset_p;
+    
+    //! Vector of subband tables within the dataset
+    std::vector<BeamSubband> beamSubbands_p;
+    
+  public:
+    
+    BeamGroup();
+    ~BeamGroup();
+    BeamGroup ( dalDataset &dataset,
+		std::string const &name );
+    void init();
+    /*!
+      \brief Get the HDF5 file handle ID
+      
+      \return H5fileID -- The HDF5 file handle ID for this dataset
+    */
+    inline hid_t fileID () const {
+      return H5fileID_p;
+    }
+    /*!
+      \brief Get the HDF5 group handle ID
+      
+      \return H5groupID -- The HDF5 group handle ID for this dataset
+    */
+    inline hid_t groupID () const {
+      return H5groupID_p;
+    }
+    /*!
+      \brief Get the name of the underlying HDF5 group
+      
+      \return name -- The name of the underlying HDF5 group.
+    */
+    inline std::string groupName () const {
+      return group_p->getName();
+    }
+    bool setBeamGroup ( dalDataset &dataset,
+			std::string const &name);
+    dalTable * getSubbandTable (int subband);
+    float *  getIntensity( int subband, int start, int &length );
+    void getSubbandData_XY( int subband,
+			    int start,
+			    int &length,
+			    std::vector< std::complex<short> > &x_values,
+			    std::vector< std::complex<short> > &y_values );
+    void getSubbandData_X( int subband,
+			   int start,
+			   int &length,
+			   std::vector< std::complex<short> > &values );
+    std::complex<short>  * getSubbandData_X( int subband,
+					     int start,
+					     int &length );
+    
+    std::complex<short>  * getSubbandData_Y( int subband,
+					     int start,
+					     int &length );
+    void getSubbandData_Y( int subband,
+			   int start,
+			   int &length,
+			   std::vector< std::complex<short> > &values );
+    BeamSubband * getSubband( int subband );
+    /*!
+      \brief Provide a summary of the object's properties
+    */
+    inline void summary() {
+      summary(std::cout);
+    }
+    void summary(std::ostream &os);
+    std::string ra();
+    std::string dec();
+    int n_subbands ();
+    std::vector<int> center_frequencies ();
+    
+    /************************************************************************
+     *
+     * The following functions are boost wrappers to allow some previously
+     *   defined functions to be easily called from a python prompt.
+     *
+     ************************************************************************/
 #ifdef PYTHON
 
       void summary_boost();
