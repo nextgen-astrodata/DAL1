@@ -306,9 +306,8 @@ if (DAL_ENABLE_TESTING)
 
   find_path (dataset_ms table.dat table.info
     PATHS
-    ${DAL_SOURCE_DIR}/data
-    ${DAL_SOURCE_DIR}/../data
-    ${DAL_SOURCE_DIR}/../../data
+    ${USG_ROOT}/data
+    ${USG_ROOT}/data/test
     PATH_SUFFIXES
     L2007_01810_SB18-20_OB20.MS
     lofar/cs1/L2007_01810_SB18-20_OB20.MS
@@ -318,18 +317,16 @@ if (DAL_ENABLE_TESTING)
 
   ## TBB time-series data
   
-  find_file (dataset_tbb rw_20080604_121347_2300.dat.h5
+  find_file (dataset_tbb rw_20080604_122217_2300.dat.h5
     PATHS
-    ${DAL_SOURCE_DIR}/data
-    ${DAL_SOURCE_DIR}/../data
-    ${DAL_SOURCE_DIR}/../../data
+    ${USG_ROOT}/data
+    ${USG_ROOT}/data/test
     )
   
   find_file (dataset_tbb_raw rw_20080604_122217_2300.dat
     PATHS
-    ${DAL_SOURCE_DIR}/data
-    ${DAL_SOURCE_DIR}/../data
-    ${DAL_SOURCE_DIR}/../../data
+    ${USG_ROOT}/data
+    ${USG_ROOT}/data/test
     )
 
   ## Beam-formed data
@@ -338,9 +335,8 @@ if (DAL_ENABLE_TESTING)
     NAMES
     bf_20080604_121337.cor.h5 bf_20080604_121337.h5 TBB1.cor.h5
     PATHS
-    ${DAL_SOURCE_DIR}/data
-    ${DAL_SOURCE_DIR}/../data
-    ${DAL_SOURCE_DIR}/../../data
+    ${USG_ROOT}/data
+    ${USG_ROOT}/data/test
     )
   
 endif (DAL_ENABLE_TESTING)
