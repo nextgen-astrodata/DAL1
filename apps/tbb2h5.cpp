@@ -30,6 +30,11 @@
 
   \author Joseph Masters, Lars B&auml;hren
 
+  <h3>Prerequisite</h3>
+
+  - DAL::TBB -- High-level interface between TBB data and the DAL; provides the
+  method which carry out the data handling.
+
   <h4>Usage</h4>
 
   \t tbb2h5 supports reading in the raw TBB time-series data from two different
