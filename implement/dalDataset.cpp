@@ -39,7 +39,7 @@ namespace DAL
   //
   // ============================================================================
   
-  // ----------------------------------------------------------  dalDataset
+  // ----------------------------------------------------------------  dalDataset
   
   /*!
     \brief The dataset object constructor
@@ -49,7 +49,7 @@ namespace DAL
     init();
   }
 
-  // ----------------------------------------------------------  dalDataset
+  // ----------------------------------------------------------------  dalDataset
 
   /*!
     \brief Another constructor with two arguments.
@@ -64,33 +64,41 @@ namespace DAL
 			  const bool &overwrite)
   {
     init();
-
+    
     name = stringify( dsname );
     type = filetype;  // set the global class variable: type
-
-    if ( filetype == H5TYPE )
-      {
-	/* Check if the provided name belongs to an already existing dataset;
-	 * if this is the case, open the dataset instead of blindly creating
-	 * it (and thereby potentially overwriting the existing one).
-	 */
-	if ( ( h5fh = H5Fopen(dsname, H5F_ACC_RDWR, H5P_DEFAULT ) ) > 0 ) {
-#ifdef DEBUGGING_MESSAGES
-	  std::cout << "[dalDataset] Opening existing file " << dsname
+    
+    if ( filetype == H5TYPE ) {
+      /*
+       * Check if the provided name belongs to an already existing dataset;
+       * if this is the case, open the dataset instead of blindly creating
+       * it (and thereby potentially overwriting the existing one).
+       */
+      if (overwrite) {
+	/* Directly try to create the dataset */
+	if ( ( h5fh = H5Fcreate( dsname,
+				 H5F_ACC_TRUNC,
+				 H5P_DEFAULT,
+				 H5P_DEFAULT ) ) < 0 ) {
+	  std::cerr << "ERROR: Could not create file '" << dsname << "'."
 		    << std::endl;
-#endif
 	}
-        else if ( ( h5fh = H5Fcreate( dsname,
+      } else {
+	/* First try to open the dataset; if it does not exist yet, create it. */
+	if ( ( h5fh = H5Fopen(dsname, H5F_ACC_RDWR, H5P_DEFAULT ) ) > 0 ) {
+	  std::cerr << "SUCCESS: Opened file '" << dsname << "'.\n";
+	}
+	else if ( ( h5fh = H5Fcreate( dsname,
 				      H5F_ACC_TRUNC,
 				      H5P_DEFAULT,
 				      H5P_DEFAULT ) ) < 0 ) {
 	  std::cerr << "ERROR: Could not create file '" << dsname << "'.\n";
 	}
-	
-        file = &h5fh;
       }
-    else if ( filetype == FITSTYPE )
-      {
+      
+      file = &h5fh;
+    }
+    else if ( filetype == FITSTYPE ) {
 #ifdef WITH_CFITSIO
         fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
         int status;
@@ -105,16 +113,16 @@ namespace DAL
                   << "\' not supported for this operation." << endl;
       }
   }
-
-
-  // ---------------------------------------------------------- init
-
+  
+  
+  // ----------------------------------------------------------------------- init
+  
   void dalDataset::init()
   {
 #ifdef PYTHON
     Py_Initialize();
 #endif
-
+    
     file = NULL;
     type = "UNDEFINED";
     name = "UNDEFINED";
@@ -365,7 +373,9 @@ namespace DAL
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute( std::string attrname, char * data, int size )
+  bool dalDataset::setAttribute( std::string attrname,
+				 char * data,
+				 int size )
   {
     return h5setAttribute( H5T_NATIVE_CHAR, h5fh, attrname, data, size );
   }
@@ -383,7 +393,9 @@ namespace DAL
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute( std::string attrname, short * data, int size )
+  bool dalDataset::setAttribute( std::string attrname,
+				 short * data,
+				 int size )
   {
     return h5setAttribute( H5T_NATIVE_SHORT, h5fh, attrname, data, size );
   }
@@ -401,7 +413,9 @@ namespace DAL
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute( std::string attrname, int * data, int size )
+  bool dalDataset::setAttribute( std::string attrname,
+				 int * data,
+				 int size )
   {
     return h5setAttribute( H5T_NATIVE_INT, h5fh, attrname, data, size );
   }
@@ -419,7 +433,9 @@ namespace DAL
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute( std::string attrname, uint * data, int size )
+  bool dalDataset::setAttribute( std::string attrname,
+				 uint * data,
+				 int size )
   {
     return h5setAttribute( H5T_NATIVE_UINT, h5fh, attrname, data, size );
   }
@@ -437,7 +453,9 @@ namespace DAL
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute( std::string attrname, long * data, int size )
+  bool dalDataset::setAttribute( std::string attrname,
+				 long * data,
+				 int size )
   {
     return h5setAttribute( H5T_NATIVE_LONG, h5fh, attrname, data, size );
   }
@@ -455,7 +473,9 @@ namespace DAL
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute( std::string attrname, float * data, int size )
+  bool dalDataset::setAttribute( std::string attrname,
+				 float * data,
+				 int size )
   {
     return h5setAttribute( H5T_NATIVE_FLOAT, h5fh, attrname, data, size );
   }
@@ -473,7 +493,9 @@ namespace DAL
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute( std::string attrname, double * data, int size )
+  bool dalDataset::setAttribute( std::string attrname,
+				 double * data,
+				 int size )
   {
     return h5setAttribute( H5T_NATIVE_DOUBLE, h5fh, attrname, data, size );
   }
@@ -489,7 +511,8 @@ namespace DAL
     \param data The value of the attribute you want to create.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute( std::string attrname, std::string data )
+  bool dalDataset::setAttribute( std::string attrname,
+				 std::string data )
   {
     return h5setAttribute_string( h5fh, attrname, &data, 1 );
   }
@@ -505,7 +528,8 @@ namespace DAL
     \param data The value of the attribute you want to create.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute( std::string attrname, std::string * data,
+  bool dalDataset::setAttribute( std::string attrname,
+				 std::string * data,
                                  int size )
   {
     return h5setAttribute_string( h5fh, attrname, data, size );
@@ -523,7 +547,8 @@ namespace DAL
     \param data The values of the attributes you want to create.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute_string( std::string attrname, std::vector<std::string> data )
+  bool dalDataset::setAttribute_string( std::string attrname,
+					std::vector<std::string> data )
   {
     hid_t aid, atype, att;
     int size = data.size();
@@ -582,9 +607,7 @@ namespace DAL
   /*!
     \brief Create a new group.
 
-    Create a new group.
-
-    \param groupname
+    \param groupname -- The name of the group to be created
     \return dalGroup
   */
   dalGroup * dalDataset::createGroup( const char * gname )
@@ -648,8 +671,6 @@ namespace DAL
   /*!
   \brief Set table filter.
 
-  Set table filter.
-
   \param columns A string containing a comma-separated list of columns to
                  include in a filtered dataset.
   */
@@ -664,8 +685,6 @@ namespace DAL
 
   /*!
   \brief Set table filter.
-
-  Set table filter.
 
   \param columns A string containing a comma-separated list of columns to
                  include in a filtered dataset.
@@ -735,10 +754,11 @@ namespace DAL
           \param cdims A vector a chunk dimensions (necessary for extending an
                  hdf5 dataset).
     \return dalArray * pointer to an array object.
-     */
-  dalArray *
-  dalDataset::createIntArray( std::string arrayname, std::vector<int> dims,
-                              int data[], std::vector<int> cdims )
+  */
+  dalArray * dalDataset::createIntArray( std::string arrayname,
+					 std::vector<int> dims,
+					 int data[],
+					 std::vector<int> cdims )
   {
     if ( type == H5TYPE )
       {
@@ -865,11 +885,13 @@ namespace DAL
 
   /*!
     \brief create a new table in a specified group
-    \param tablename
-    \param groupname
+    \param tablename -- Name of the table to be created
+    \param groupname -- Name of the group within which the table is to be
+           created.
     \return dalTable
   */
-  dalTable * dalDataset::createTable( std::string tablename, std::string groupname )
+  dalTable * dalDataset::createTable( std::string tablename,
+				      std::string groupname )
   {
     if ( type == H5TYPE )
       {
@@ -951,7 +973,8 @@ namespace DAL
     \param groupname The name of the group containing the table.
     \return dalTable * A pointer to a table object.
    */
-  dalTable * dalDataset::openTable( std::string tablename, std::string groupname )
+  dalTable * dalDataset::openTable( std::string tablename,
+				    std::string groupname )
   {
     if ( type == MSCASATYPE )
       {
@@ -1020,8 +1043,6 @@ namespace DAL
   /*!
     \brief Open an array in a group.
 
-    Open an array in a group.
-
     \param arrayname The name of the array to open.
     \param groupname The name of the group containing the array.
     \return dalArray * A pointer to a array object.
@@ -1053,10 +1074,16 @@ namespace DAL
 
   // -------------------------------------------- dalDataset_file_info
 
-  /*
-   * Operator function.
+  /*!
+    \brief Get type of the object and display its name and type
+
+    \param loc_id -- 
+    \param name   -- 
+    \param opdata -- 
    */
-  herr_t dalDataset_file_info(hid_t loc_id, const char *name, void *opdata)
+  herr_t dalDataset_file_info(hid_t loc_id,
+			      const char *name,
+			      void *opdata)
   {
     H5G_stat_t statbuf;
 
@@ -1080,12 +1107,10 @@ namespace DAL
   }
 
 
-  // ---------------------------------------------------------- getGroupNames
+  // -------------------------------------------------------------- getGroupNames
 
   /*!
     \brief Get a list of groups in the dataset.
-
-    Get a list of groups in the dataset.
 
     \return A vector of group names.
    */
@@ -1146,9 +1171,7 @@ namespace DAL
   /*!
     \brief Retrieve the dataset type ("HDF5", "MSCASA", etc.).
 
-    Retrieve the dataset type ("HDF5", "MSCASA", etc.).
-
-    \return A string describing the file format ("HDF5", "MSCASA", etc.)
+    \return type -- A string describing the file format ("HDF5", "MSCASA", etc.)
   */
   std::string dalDataset::getType()
   {
@@ -1252,6 +1275,11 @@ namespace DAL
 
   // ---------------------------------------------------------- ct1_boost
 
+  /*!
+    \brief Create a new table
+
+    \param a -- The name of the table to be created
+  */
   dalTable * dalDataset::ct1_boost(std::string a)
   {
     dalTable * ret;
@@ -1261,7 +1289,14 @@ namespace DAL
 
   // ---------------------------------------------------------- ct2_boost
 
-  dalTable * dalDataset::ct2_boost(std::string a, std::string b)
+  /*!
+    \brief Create a new table
+    
+    \param a -- The name of the group within which the new table is created.
+    \param b -- The name of the table to be created    
+   */
+  dalTable * dalDataset::ct2_boost( std::string a,
+				    std::string b)
   {
     dalTable * ret;
     ret = dalDataset::createTable(a,b);

@@ -107,7 +107,6 @@ using namespace DAL;
 
 int main(int argc, char *argv[])
 {
-
   std::string infile;
   std::string outfile;
   std::string ip;
@@ -132,7 +131,8 @@ int main(int argc, char *argv[])
   bpo::store (bpo::parse_command_line(argc,argv,desc), vm);
 
   if (vm.count("help") || argc == 1) {
-    std::cout << desc << std::endl;
+    std::cout << "\n" << desc << std::endl;
+    return 0;
   }
 
   if (vm.count("infile")) {
@@ -230,9 +230,10 @@ int main(int argc, char *argv[])
       while ( !tbb.eof() )
         {
           counter++;
-	  
-          tbb.readRawFileBlockHeader();
 
+	  /* Read header block of raw file */
+          tbb.readRawFileBlockHeader();
+	  /* Check station ID of the data */
           tbb.stationCheck();
 
           // if this is the first sample for this station set header attributes
@@ -259,7 +260,6 @@ int main(int argc, char *argv[])
 
     } // socket or file
 
-  cerr << "SUCCESS" << endl;
-  return DAL::SUCCESS;
-
+  cout << "SUCCESS" << endl;
+  return 0;
 } // main

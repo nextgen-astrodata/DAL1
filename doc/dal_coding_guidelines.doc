@@ -74,6 +74,14 @@
   \endcode
   So in this example both \e filename_p and \e h5fh_p would be private variables, \e filename
   a function parameter and \e status variable local to the function.
+  
+  <li>Parameters/variables of functions and methods should be given as one per
+  line:
+  \code
+  dalDataset::dalDataset( const char * dsname,
+                          std::string filetype,
+                          const bool &overwrite)
+  \endcode
 
   <li>Both header and implementation file should contain a GNU GPL License
   header:

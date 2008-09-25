@@ -14,7 +14,7 @@
 
 <hr>
 
-\section dal_changes_build Build issues
+\section dal_changes_build Configuration & Build
 
 <ol>
   <li>At least on Ray there still seems to be the issue of one of the Python
@@ -145,12 +145,12 @@ drwxr-xr-x   39 lars  lars        1326 Sep 24 12:09 L2007_01810_SB18-20_OB20.MS
   > main.getAttributes()
   Operation not yet supported for type MSCASA.  Sorry.
   \endverbatim
+</ol>
 
 <hr>
 
 \section dal_changes_tools Issues with the application executables
 
-  - Debugging of HDF5 generation using tbb2h5.cpp: check version approx. 1700 -> /mnt/disk2/data/tbb/kalpana
   - Consider switching all command line parameter handling to Boost \e program_options interface; a first
   implementation example can be found in tbb2h5.cpp
 

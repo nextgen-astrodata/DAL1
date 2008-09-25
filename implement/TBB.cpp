@@ -24,9 +24,19 @@
 #include "TBB.h"
 #endif
 
-namespace DAL
-  {
+namespace DAL {
 
+  // ============================================================================
+  //
+  //  Construction
+  //
+  // ============================================================================
+
+  /*!
+    \brief Argumented constructor
+
+    \param filename -- Name of the output HDF5 dataset to create
+  */
   TBB::TBB( string const& filename )
   {
     // initializations (private)
@@ -36,25 +46,13 @@ namespace DAL
     name        = filename;
     dataset     = new dalDataset;
     station.clear();
-    header.stationid = 0;     // --------------------  TBB_Header
-    header.rspid = 0;
-    header.rcuid = 0;
-    header.sample_freq = 0;
-    header.seqnr = 0;
-    header.time = 0;
-    header.sample_nr = 0;
-    header.n_samples_per_frame = 0;
-    header.n_freq_bands = 0;
-    memset(header.bandsel,0,64);
-    header.spare = 0;
-    header.crc = 0;
     rr = 0;
     main_socket = -1;
     socklen = sizeof(incoming_addr);
     status = 0;
     stations.clear();
-    stationGroup = NULL;
-    dipoleArray = NULL;
+    stationGroup_p = NULL;
+    dipoleArray_p  = NULL;
     dipoles.clear();
     dims.push_back(0);
     offset = 0;
@@ -69,7 +67,9 @@ namespace DAL
     rawfile           = NULL;
     real_part         = 0;
     imag_part         = 0;
-
+    /* Initialize the TBB_Header struct */
+    init_TBB_Header ();
+    
     // initializations (public)
     first_sample = true;
 
@@ -110,18 +110,47 @@ namespace DAL
 
   }
 
+  // ------------------------------------------------------------ init_TBB_Header
+  
+  /*!
+    \brief Initialize the values within the TBB_Header struct
+  */
+  void TBB::init_TBB_Header ()
+  {
+    header.stationid           = 0;
+    header.rspid               = 0;
+    header.rcuid               = 0;
+    header.sample_freq         = 0;
+    header.seqnr               = 0;
+    header.time                = 0;
+    header.sample_nr           = 0;
+    header.n_samples_per_frame = 0;
+    header.n_freq_bands        = 0;
+    header.spare               = 0;
+    header.crc                 = 0;
+    memset(header.bandsel,0,64);
+  }
+  
+  // ============================================================================
+  //
+  //  Destruction
+  //
+  // ============================================================================
 
+  /*!
+    \brief Destructor
+  */
   TBB::~TBB()
   {
-    if ( dipoleArray )
+    if ( dipoleArray_p )
       {
-        delete dipoleArray;
-        dipoleArray = NULL;
+        delete dipoleArray_p;
+        dipoleArray_p = NULL;
       }
-    if ( stationGroup )
+    if ( stationGroup_p )
       {
-        delete stationGroup;
-        stationGroup = NULL;
+        delete stationGroup_p;
+        stationGroup_p = NULL;
       }
     delete dataset;
     if (main_socket)
@@ -137,13 +166,20 @@ namespace DAL
       }
   }
 
-  // -------------------------------------------------------------
+  // ============================================================================
   //
-  //  Set up the socket connection to the server
+  //  Methods
   //
-  // -------------------------------------------------------------
+  // ============================================================================
+  
+  /*!
+    \brief Set up the socket connection to the server
 
-  void TBB::connectsocket( const char* ipaddress, const char* portnumber )
+    \brief ipaddress  -- IP number to which to connect
+    \brief portnumber -- Portnumber to which to connect
+  */
+  void TBB::connectsocket( const char* ipaddress,
+			   const char* portnumber )
   {
     int port_number = atol( portnumber );
     const char * remote = ipaddress;
@@ -180,6 +216,17 @@ namespace DAL
     printf("ready\n");
   }
 
+  // ---------------------------------------------------------------- openRawFile
+
+  /*!
+    \brief Open file containing data resulting from a TBBB dump
+
+    \param filename -- Name of the data file
+
+    \return status -- Status of the operation; returns \e true in case the input
+            file could be opened successfully, if an error is encountered
+	    \e false is returned.
+  */
   bool TBB::openRawFile( const char* filename )
   {
     delete rawfile;
@@ -316,6 +363,8 @@ namespace DAL
 
   }
 
+  // ------------------------------------------------------------------------ eof
+
   bool TBB::eof()
   {
     if ( rawfile->peek() == EOF )
@@ -324,6 +373,8 @@ namespace DAL
       return false;
   }
 
+  // ------------------------------------------------------------- printRawHeader
+  
   void TBB::printRawHeader()
   {
     printf("Station ID         : %d\n",header.stationid);
@@ -339,27 +390,34 @@ namespace DAL
       printf("%X,", header.bandsel[idx]);
     printf("\n");
   }
-
+  
+  // --------------------------------------------------------------- stationCheck
+  
   void TBB::stationCheck()
   {
     char stationstr[10];
     memset(stationstr,'\0',10);
     sprintf( stationstr, "Station%03d", header.stationid );
-
+    sprintf(uid, "%03d%03d%03d",
+	    header.stationid, header.rspid, header.rcuid);
+    
+    /* Use std::string for the name of the station group */
+    std::string channelID (uid);
+    
     // does the station exist?
     if ( it_exists( stations, stringify(stationstr) ) )
       {
-        stationGroup = dataset->openGroup( stationstr );
-        dipoles = stationGroup->getMemberNames();
+        stationGroup_p = dataset->openGroup( stationstr );
+        dipoles = stationGroup_p->getMemberNames();
         sprintf(uid, "%03d%03d%03d",
                 header.stationid, header.rspid, header.rcuid);
 
         // does the dipole exist?
         if ( it_exists( dipoles, stringify(uid) ) )
           {
-            dipoleArray = dataset->openArray( uid, stationGroup->getName() );
-            dims = dipoleArray->dims();
-            offset = dims[0];
+            dipoleArray_p  = dataset->openArray( uid, stationGroup_p->getName() );
+            dims         = dipoleArray_p->dims();
+            offset       = dims[0];
             first_sample = false;
           }
         else
@@ -371,13 +429,17 @@ namespace DAL
     else
       {
         stations.push_back( stationstr );
-        stationGroup = dataset->createGroup( stationstr );
-        cerr << "CREATED New station group: " << string(stationstr) << endl;
+        stationGroup_p = dataset->createGroup( stationstr );
+	/* Generate channel ID for the individual dipole */
         sprintf(uid, "%03d%03d%03d",
                 header.stationid, header.rspid, header.rcuid);
         first_sample = true;
+	/* Feedback */
+	std::cout << "CREATED New station group: " << stationstr << std::endl;
       }
   }
+
+  // ----------------------------------------------------------- makeOutputHeader
 
   void TBB::makeOutputHeader()
   {
@@ -387,22 +449,22 @@ namespace DAL
     if ( 0 == header.n_freq_bands )
       {
         short nodata[0];
-        dipoleArray = stationGroup->createShortArray( string(uid),
+        dipoleArray_p = stationGroup_p->createShortArray( string(uid),
                       firstdims,
                       nodata,
                       cdims );
-        stationGroup->setAttribute( attribute_name(OBSERVATION_MODE),
+        stationGroup_p->setAttribute( attribute_name(OBSERVATION_MODE),
                                     std::string("Transient") );
       }
     else
       {
         complex<Int16> nodata[0];
-        dipoleArray =
-          stationGroup->createComplexShortArray( string(uid),
+        dipoleArray_p =
+          stationGroup_p->createComplexShortArray( string(uid),
                                                  firstdims,
                                                  nodata,
                                                  cdims );
-        stationGroup->setAttribute( attribute_name(OBSERVATION_MODE),
+        stationGroup_p->setAttribute( attribute_name(OBSERVATION_MODE),
                                     std::string("Sub-band") );
       }
 
@@ -410,27 +472,27 @@ namespace DAL
     int triggered_antennas[1] = { 0 };
     double bdv[2]  = { 0, 90 };
     double spv[3]  = { 0, 0, 0 };
-
+    
     // Add attributes to "Station" group
-    stationGroup->setAttribute( attribute_name(STATION_POSITION_VALUE),
-                                spv, 3 );
-    stationGroup->setAttribute( attribute_name(STATION_POSITION_UNIT),
-                                std::string("m") );
-    stationGroup->setAttribute( attribute_name(STATION_POSITION_FRAME),
-                                std::string("ITRF") );
-    stationGroup->setAttribute( attribute_name(BEAM_DIRECTION_VALUE),
-                                bdv, 2 );
-    stationGroup->setAttribute( attribute_name(BEAM_DIRECTION_UNIT),
-                                std::string("deg") );
-    stationGroup->setAttribute( attribute_name(BEAM_DIRECTION_FRAME),
-                                std::string("UNDEFINED") );
-    stationGroup->setAttribute( attribute_name(TRIGGER_TYPE),
-                                std::string("UNDEFINED") );
-    stationGroup->setAttribute( attribute_name(TRIGGER_OFFSET),
-                                trigger_offset );
-    stationGroup->setAttribute( attribute_name(TRIGGERED_ANTENNAS),
-                                triggered_antennas);
-
+    stationGroup_p->setAttribute( attribute_name(STATION_POSITION_VALUE),
+				  spv, 3 );
+    stationGroup_p->setAttribute( attribute_name(STATION_POSITION_UNIT),
+				  std::string("m") );
+    stationGroup_p->setAttribute( attribute_name(STATION_POSITION_FRAME),
+				  std::string("ITRF") );
+    stationGroup_p->setAttribute( attribute_name(BEAM_DIRECTION_VALUE),
+				  bdv, 2 );
+    stationGroup_p->setAttribute( attribute_name(BEAM_DIRECTION_UNIT),
+				  std::string("deg") );
+    stationGroup_p->setAttribute( attribute_name(BEAM_DIRECTION_FRAME),
+				  std::string("UNDEFINED") );
+    stationGroup_p->setAttribute( attribute_name(TRIGGER_TYPE),
+				  std::string("UNDEFINED") );
+    stationGroup_p->setAttribute( attribute_name(TRIGGER_OFFSET),
+				  trigger_offset );
+    stationGroup_p->setAttribute( attribute_name(TRIGGERED_ANTENNAS),
+				  triggered_antennas);
+    
     unsigned int sid = header.stationid;
     unsigned int rsp = header.rspid;
     unsigned int rcu = header.rcuid;
@@ -440,32 +502,34 @@ namespace DAL
     unsigned int spf = header.n_samples_per_frame;
     unsigned int nyquist_zone = 1;
     double apos[3]    = { 0, 0, 0 };
-
-    dipoleArray->setAttribute( attribute_name(STATION_ID), &sid );
-    dipoleArray->setAttribute( attribute_name(RSP_ID), &rsp );
-    dipoleArray->setAttribute( attribute_name(RCU_ID), &rcu );
-    dipoleArray->setAttribute( attribute_name(TIME), &time );
-    dipoleArray->setAttribute( attribute_name(SAMPLE_NUMBER), &samp_num );
-    dipoleArray->setAttribute( attribute_name(SAMPLES_PER_FRAME), &spf );
-    dipoleArray->setAttribute( attribute_name(ANTENNA_POSITION_VALUE),
-                               apos, 3 );
-    dipoleArray->setAttribute( attribute_name(ANTENNA_POSITION_UNIT),
-                               std::string("m") );
-    dipoleArray->setAttribute( attribute_name(ANTENNA_POSITION_FRAME),
-                               std::string("ITRF") );
-    dipoleArray->setAttribute( attribute_name(ANTENNA_ORIENTATION_VALUE),
-                               apos, 3 );
-    dipoleArray->setAttribute( attribute_name(ANTENNA_ORIENTATION_UNIT),
-                               std::string("m") );
-    dipoleArray->setAttribute( attribute_name(ANTENNA_ORIENTATION_FRAME),
-                               std::string("ITRF") );
-    dipoleArray->setAttribute( attribute_name(FEED), std::string("UNDEFINED") );
-    dipoleArray->setAttribute( attribute_name(NYQUIST_ZONE),
-                               &nyquist_zone );
-    dipoleArray->setAttribute( attribute_name(SAMPLE_FREQUENCY_VALUE), &sf, 1 );
-    dipoleArray->setAttribute( attribute_name(SAMPLE_FREQUENCY_UNIT),
-                               std::string("MHz") );
+    
+    dipoleArray_p->setAttribute( attribute_name(STATION_ID), &sid );
+    dipoleArray_p->setAttribute( attribute_name(RSP_ID), &rsp );
+    dipoleArray_p->setAttribute( attribute_name(RCU_ID), &rcu );
+    dipoleArray_p->setAttribute( attribute_name(TIME), &time );
+    dipoleArray_p->setAttribute( attribute_name(SAMPLE_NUMBER), &samp_num );
+    dipoleArray_p->setAttribute( attribute_name(SAMPLES_PER_FRAME), &spf );
+    dipoleArray_p->setAttribute( attribute_name(ANTENNA_POSITION_VALUE),
+				 apos, 3 );
+    dipoleArray_p->setAttribute( attribute_name(ANTENNA_POSITION_UNIT),
+				 std::string("m") );
+    dipoleArray_p->setAttribute( attribute_name(ANTENNA_POSITION_FRAME),
+				 std::string("ITRF") );
+    dipoleArray_p->setAttribute( attribute_name(ANTENNA_ORIENTATION_VALUE),
+				 apos, 3 );
+    dipoleArray_p->setAttribute( attribute_name(ANTENNA_ORIENTATION_UNIT),
+				 std::string("m") );
+    dipoleArray_p->setAttribute( attribute_name(ANTENNA_ORIENTATION_FRAME),
+				 std::string("ITRF") );
+    dipoleArray_p->setAttribute( attribute_name(FEED), std::string("UNDEFINED") );
+    dipoleArray_p->setAttribute( attribute_name(NYQUIST_ZONE),
+				 &nyquist_zone );
+    dipoleArray_p->setAttribute( attribute_name(SAMPLE_FREQUENCY_VALUE), &sf, 1 );
+    dipoleArray_p->setAttribute( attribute_name(SAMPLE_FREQUENCY_UNIT),
+				 std::string("MHz") );
   }
+  
+  // -------------------------------------------------------------- transientMode
 
   bool TBB::transientMode()
   {
@@ -475,6 +539,8 @@ namespace DAL
       return false;  // spectral mode
   }
 
+  // -------------------------------------------- processTransientSocketDataBlock
+  
   bool TBB::processTransientSocketDataBlock()
   {
     short sdata[ header.n_samples_per_frame];
@@ -493,8 +559,8 @@ namespace DAL
       }
 
     dims[0] += header.n_samples_per_frame;
-    dipoleArray->extend(dims);
-    dipoleArray->write(offset, sdata, header.n_samples_per_frame );
+    dipoleArray_p->extend(dims);
+    dipoleArray_p->write(offset, sdata, header.n_samples_per_frame );
     offset += header.n_samples_per_frame;
 
     status = readsocket( sizeof(payload_crc),
@@ -504,6 +570,8 @@ namespace DAL
 
     return true;
   }
+
+  // ---------------------------------------------- processTransientFileDataBlock
 
   void TBB::processTransientFileDataBlock()
   {
@@ -521,14 +589,16 @@ namespace DAL
       }
 
     dims[0] += header.n_samples_per_frame;
-    dipoleArray->extend(dims);
-    dipoleArray->write(offset, sdata, header.n_samples_per_frame );
+    dipoleArray_p->extend(dims);
+    dipoleArray_p->write(offset, sdata, header.n_samples_per_frame );
     offset += header.n_samples_per_frame;
 
     rawfile->read( reinterpret_cast<char *>(&payload_crc),
                    sizeof(payload_crc) );
 
   }
+
+  // ----------------------------------------------- processSpectralFileDataBlock
 
   void TBB::processSpectralFileDataBlock()
   {
@@ -552,8 +622,8 @@ namespace DAL
       }
 
     dims[0] += header.n_samples_per_frame;
-    dipoleArray->extend(dims);
-    dipoleArray->write(offset, csdata, header.n_samples_per_frame );
+    dipoleArray_p->extend(dims);
+    dipoleArray_p->write(offset, csdata, header.n_samples_per_frame );
     offset += header.n_samples_per_frame;
 
     rawfile->read( reinterpret_cast<char *>(&payload_crc),

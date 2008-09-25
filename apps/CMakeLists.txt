@@ -98,30 +98,6 @@ else (HAVE_CASA OR HAVE_CASACORE)
   message (STATUS "Skipping test programs that require casacore!")
 endif (HAVE_CASA OR HAVE_CASACORE)
 
-## ==============================================================================
-##
-##  Testing
-##
-## ==============================================================================
-
-if (DAL_ENABLE_TESTING)
-
-  ## Tests using MS datasets
-  
-  if (dataset_ms)
-    add_test (tMS_dal tMS_dal ${dataset_ms} ${dataset_ms}.h5)
-    ## show the coverage in the (u,v) plane
-    add_test (uv_coverage uv_coverage.py ${dataset_ms})
-    ## auto-correlated intensity in the first frequency band
-    add_test (baseline_intensity1 baseline_intensity.py ${dataset_ms} 1 1 0)
-    ## auto-correlated intensity in the first frequency band, channel 0
-    add_test (baseline_intensity2 baseline_intensity.py ${dataset_ms} 1 1 0 0)
-  else (dataset_ms)
-    message (STATUS "Unable to find MS dataset; skipping tests.")
-  endif (dataset_ms)
-  
-endif (DAL_ENABLE_TESTING)
-
 ## ------------------------------------------------------------------------------
 ## Installation
 
@@ -131,10 +107,3 @@ install (TARGETS ${tests}
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   )
-
-## python scripts
-
-#install (FILES uv_coverage.py baseline_intensity.py datacube.py
-#  DESTINATION bin
-#  PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE OWNER_READ GROUP_READ WORLD_READ
-#)
