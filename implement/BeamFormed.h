@@ -28,65 +28,125 @@
 #include <BeamGroup.h>
 #endif
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   /*!
-     \class BeamFormed
+    \class BeamFormed
+    
+    \ingroup DAL
+    
+    \brief High-level interface between beam-formed data and the DAL
+    
+    \author Joseph Masters
+    
+    \test tBeamFormed.cpp
+    
+    While this class implements the top-level structure of a HDF5 file storing
+    beam-formed data, the lower-level structures are accessible through the
+    classes BeamGroup and BeamSubband.
+    
+    A LOFAR Beam-Formed file is stored per observation as an HDF5 file, grouped by
+    beam and then subband.  All attribute data, described below, is defined in the
+    <i>LOFAR Beam-Formed Data Format ICD</i>.
+    
+    \verbatim
+    beam-formed-file.h5         <-------  Root level of dataset
+    |--beam000                  <-------  First beam group
+    |  |--SB000                 \
+    |  |--SB001                  )------  Table for each subband
+    |  `--SB00N                 /
+    |--beam001                  <-------  Second beam group
+    |  |--SB000                 \
+    |  |--SB001                  )------  Table for each subband
+    |  `--SB00N                 /
+    `--beam00N                  <-------  Nth beam group
+       |--SB000                 \
+       |--SB001                  )------  Table for each subband
+       `--SB00N                 /
+    \endverbatim
 
-     \ingroup DAL
+    <ul>
+      <li><b>Root-level</b> The root level of the file contains the majority of
+      associated meta-data, describing the circumstances of the observation. These
+      data attributes include time, frequency, weather and other important
+      characteristics of the dataset.
 
-     \brief High-level interface between beam-formed data and the DAL
+      <li><b>Beam Group</b> Each observation beam is stored as a seperate group
+      within the file, each containing its own subband tables and pointing
+      information.
 
-     \author Joseph Masters
+      <li><b>Subband Data tables</b> The subband tables are where the bulk of the
+      data reside. Each beam has a fixed number of tables; one per subband. The subband
+      frequency information is stored as an attribute of the table.
 
-     \test tBeamFormed.cpp
+      <li><b>Full Resolution</b> The default data stored in each subband table is full
+      resolution, polarized voltages from the dipoles. These voltages are stored as
+      16-bit complex pairs for both X and Y.  In other words, each sample is stored
+      as (X-real, X-imaginary)(Y-real, Y-imaginary) for a total of 64-bits.
 
-     While this class implements the top-level structure of a HDF5 file storing
-     beam-formed data, the lower-level structures are accessible through the
-     classes BeamGroup and BeamSubband.
+      <li><b>Total Intensity</b> Although complete, full resolution data is very
+      large due to a very high sampling rate. In some cases, the observer may not
+      be especially
+      interested in polarization data and instead choose to receive only the total
+      intensities of the samples.  Because the total intensity information can be
+      stored as a single 32-bit floating point value, the size of the file is
+      effectively halved.  In this case, each subband table consists of one total
+      intensity value per sample instead of two complex pairs as described above.
 
-     <h3>Examples</h3>
+      <li><b>Downsampled</b> Furthermore, the observer may prefer a smaller file
+      with data averaged along the time axis, or ``downsampled''. A relatively
+      modest downsample factor (i.e. 128) will drastically reduce the size of the
+      data file and, in many cases, still provide interesting, high-resolution
+      data for analysis.
 
-     <ol>
-       <li>Create an object of type BeamFormed within your class/application:
-       \code
-       #include <dal/BeamFormed.h>
-       
-       DAL::BeamFormed bf (filename);
-       \endcode
-       <li>Retrieve attributes in the root group of the file:
-       \code
-       std::string filename      = bf.filename();
-       std::string telescope     = bf.telescope();
-       std::string observationID = bf.observation_id();
-       \endcode
-     </ol>
-   */
+      <li><b>Channelized</b> Another option for the user is to bin the data into
+      frequency channels, effectively downsampling the data along the time-axis
+      by a factor of the number of frequency bins. <br>
+      In this case, the subband table would have total intensities for each channel,
+      per sample.
+    </ul>
 
-  class BeamFormed
-    {
+    <h3>Examples</h3>
+    
+    <ol>
+      <li>Create an object of type BeamFormed within your class/application:
+      \code
+      #include <dal/BeamFormed.h>
+      
+      DAL::BeamFormed bf (filename);
+      \endcode
 
-    private:
-
-      // Filename of the dataset
-      std::string filename_p;
-
-      // HDF5 file handle ID
-      hid_t H5fileID_p;
-
-      // DAL Dataset object to handle the basic I/O
-      dalDataset * dataset_p;
-
-      bool init();
-
-      // Vector of beam groups within the dataset
-      std::vector<BeamGroup*> beamGroups_p;
-
-      bool status;
-
-    public:
-
+      <li>Retrieve attributes in the root group of the file:
+      \code
+      std::string filename      = bf.filename();
+      std::string telescope     = bf.telescope();
+      std::string observationID = bf.observation_id();
+      \endcode
+    </ol>
+  */
+  
+  class BeamFormed {
+    
+  private:
+    
+    // Filename of the dataset
+    std::string filename_p;
+    
+    // HDF5 file handle ID
+    hid_t H5fileID_p;
+    
+    // DAL Dataset object to handle the basic I/O
+    dalDataset * dataset_p;
+    
+    bool init();
+    
+    // Vector of beam groups within the dataset
+    std::vector<BeamGroup*> beamGroups_p;
+    
+    bool status;
+    
+  public:
+    
       /*!
 	\brief Default constructor
        */
