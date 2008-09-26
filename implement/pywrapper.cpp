@@ -344,7 +344,7 @@ BOOST_PYTHON_MODULE(pydal)
         "Return the filename from the header" )
   .def( "telescope", &BeamFormed::telescope,
         "Return telescope the from the header" )
-  .def( "nstations", &BeamFormed::nstations,
+  .def( "nstations", &BeamFormed::nofStations,
         "Return the nstations from the header" )
   .def( "datatype", &BeamFormed::datatype,
         "Return the datatype from the header" )

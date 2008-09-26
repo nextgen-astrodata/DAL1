@@ -96,6 +96,14 @@ int test_constructors (std::string const &filename)
 
 // ------------------------------------------------------------------------------
 
+/*!
+  \brief Test the various methods to access parameters to the class
+
+  \param filename -- Name of the input data file
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function
+*/
 int test_parameters (std::string const &filename)
 {
   std::cout << "\n[tdalTable::test_parameters]\n" << std::endl;
@@ -116,6 +124,14 @@ int test_parameters (std::string const &filename)
 
 // ------------------------------------------------------------------------------
 
+/*!
+  \brief Test the various methods for working with metadata
+
+  \param filename -- Name of the input data file
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function
+*/
 int test_methods (std::string const &filename)
 {
   std::cout << "\n[tdalTable::test_methods]\n" << std::endl;

@@ -194,14 +194,14 @@ int test_identifiers (hid_t const &file_id)
     for (uint n(0); n<nofCopies; n++) {
       // open the group object within the file
       group_id = H5Gopen1 (file_ids[n],
-			  name_station_group.c_str());
+			   name_station_group.c_str());
       // feedback
       cout << "\t" << n
 	   << "\tfile_id= "  << file_ids[n]
 	   << "\tgroup_id= " << group_id
 	   << endl;
     }
-
+    
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;

@@ -831,8 +831,10 @@ namespace DAL
     \return dalArray * pointer to an array object.
      */
   dalArray *
-  dalDataset::createComplexFloatArray( std::string arrayname, std::vector<int> dims,
-                                       complex<float> data[], std::vector<int> cdims )
+  dalDataset::createComplexFloatArray( std::string arrayname,
+				       std::vector<int> dims,
+                                       complex<float> data[],
+				       std::vector<int> cdims )
   {
     if ( type == H5TYPE )
       {
@@ -965,16 +967,12 @@ namespace DAL
    *****************************************************************/
 
   /*!
-    \brief Open a table in a group.
-
-    Open a table in a group.
-
     \param tablename The name of the table to open.
     \param groupname The name of the group containing the table.
     \return dalTable * A pointer to a table object.
    */
-  dalTable * dalDataset::openTable( std::string tablename,
-				    std::string groupname )
+  dalTable * dalDataset::openTable( std::string const &tablename,
+				    std::string const &groupname )
   {
     if ( type == MSCASATYPE )
       {
@@ -984,7 +982,11 @@ namespace DAL
     else if ( type == H5TYPE )
       {
         dalTable * lt = new dalTable( H5TYPE );
-        lt->openTable( file, tablename, '/' + groupname );
+	try {
+	  lt->openTable( file, tablename, '/' + groupname );
+	} catch (std::string message) {
+	  std::cerr << "[dalDataset::openTable] ERROR : " << message << std::endl;
+	}
         return lt;
       }
     else if ( type == FITSTYPE )

@@ -35,9 +35,6 @@ namespace DAL {
   
   // ------------------------------------------------------------------ BeamGroup
   
-  /*!
-    \brief Default constructor
-  */
   BeamGroup::BeamGroup()
   {
     init();
@@ -46,8 +43,6 @@ namespace DAL {
   // ------------------------------------------------------------------ BeamGroup
   
   /*!
-    \brief Argumented constructor
-    
     \param dataset The dalDataset the the group belongs to.
     \param name The name of the group.
   */
@@ -64,12 +59,6 @@ namespace DAL {
   
   // ----------------------------------------------------------------------- init
   
-  
-  /*!
-    \brief Initialize the object's internal parameters
-    
-    Initialize the object's internal parameters
-  */
   void BeamGroup::init()
   {
     H5fileID_p        = -1;
@@ -88,12 +77,14 @@ namespace DAL {
   
   // ----------------------------------------------------------------- ~BeamGroup
   
-  /*!
-    \brief Default destructor
-  */
   BeamGroup::~BeamGroup()
   {
-    delete group_p;
+    if ( NULL != group_p )
+      {
+        group_p->close();
+        delete group_p;
+        group_p = NULL;
+      }
   }
   
   // ============================================================================
@@ -125,7 +116,8 @@ namespace DAL {
       os << "-- HDF5 group name .......... : " << groupName()     << endl;
       os << "-- RA ....................... : " << ra()            << endl;
       os << "-- DEC ...................... : " << dec()           << endl;
-      os << "-- Number of Sub-bands ...... : " << n_subbands()    << endl;
+      os << "-- Number of sub-bands ...... : " << n_subbands()    << endl;
+      os << "-- Number of sub-band tables  : " << beamSubbands_p.size() << endl;
 
       /* If the BeamGroup contains subband tables, we can list them - otherwise
        * there is nothing else to do here.
@@ -137,6 +129,13 @@ namespace DAL {
 	os << "-- Subband table names ...... : [";
 	for (unsigned int n(0); n<memberNames.size(); n++) {
 	  os << " " << memberNames[n];
+	}
+	os << " ]" << std::endl;
+	/* HDF5 table IDs */
+	std::vector<hid_t> ids = tableIDs();
+	os << "-- Subband table HDF5 IDs     : [";
+	for (unsigned int n(0); n<ids.size(); n++) {
+	  os << " " << ids[n];
 	}
 	os << " ]" << std::endl;
 	/* Center frequencies of the subbands */
@@ -151,13 +150,64 @@ namespace DAL {
     }
   }
     
+  // --------------------------------------------------------------- setBeamGroup
+
+  /*!
+   \brief Initialize the beam group values.
+
+   \param dataset The dalDataset the the group belongs to.
+   \param name The name of the group.
+
+   \return status Status of the operation; returns <tt>false</tt> in case an
+           error was encountered.
+   */
+  bool BeamGroup::setBeamGroup (dalDataset &dataset,
+				std::string const &name)
+  {
+    bool status (true);
+
+    /* [1] Assign identifiers */
+
+    try {
+      dataset_p = dataset;
+      delete group_p; // allocated during construction in init()
+      group_p     = dataset.openGroup(name);
+      /* Extract the values of the identifiers */
+      H5fileID_p  = dataset.getFileHandle();
+      H5groupID_p = group_p->getId();
+    } catch (std::string message) {
+      std::cerr << "[BeamGroup::setBeamGroup] " << message << endl;
+      status = false;
+    }
+
+    /* [2] Set up list of objects handling subband data */
     
+    try {
+      vector<string> subbandTables = group_p->getMemberNames();
+      unsigned int nofSubbands     = subbandTables.size();
+      
+      if (nofSubbands>0) {
+	beamSubbands_p.clear();
+	for (unsigned int n(0); n<nofSubbands; n++) {
+	  /* Create new object for the subband ... */
+	  BeamSubband table (groupID(),
+			     subbandTables[n]);
+	  /* ... and add it to the list */
+	  beamSubbands_p.push_back(table);
+	}
+      }
+    } catch (std::string message) {
+      std::cerr << "[BeamGroup::setBeamGroup] " << message << endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
   // ---------------------------------------------------------- getSubband
 
 
   /*!
-   \brief Get a subband object from the beam.
-
    \param subband Number of the subband you want to retrieve.
 
    \return subbands Array pointer to the set of subbands contained within
@@ -168,8 +218,14 @@ namespace DAL {
     return &beamSubbands_p[ sb ];
   }
 
+  void BeamGroup::getSubband( BeamSubband &subband,
+			      int sb )
+  {
+    subband = beamSubbands_p[ sb ];
+  }
+  
   // ------------------------------------------------------------ getSubbandTable
-
+  
   /*!
     \brief Get a dalTable object of a subband from the beam
 
@@ -189,41 +245,6 @@ namespace DAL {
     return table;
   }
   
-  // ---------------------------------------------------------- setBeamGroup
-
-
-  /*!
-   \brief Initialize the beam group values.
-
-   \param dataset The dalDataset the the group belongs to.
-   \param name The name of the group.
-
-   \return status Status of the operation; returns <tt>false</tt> in case an
-           error was encountered.
-   */
-  bool BeamGroup::setBeamGroup (dalDataset &dataset,
-				std::string const &name)
-  {
-    bool status (true);
-
-    try
-      {
-        dataset_p = dataset;
-        delete group_p; // allocated during construction in init()
-        group_p     = dataset.openGroup(name);
-	/* Extract the values of the identifiers */
-        H5fileID_p  = dataset.getFileHandle();
-	H5groupID_p = group_p->getId();
-      }
-    catch (std::string message)
-      {
-        std::cerr << "[BeamGroup::setBeamGroup] " << message << endl;
-        status = false;
-      }
-
-    return status;
-  }
-
   // ------------------------------------------------------------------------- ra
 
   /*!
@@ -296,8 +317,6 @@ namespace DAL {
   // ============================================================================
   
   /*!
-    \brief Get the center frequencies of the subbands
-
     \return frequencies -- The center frequencies of the subbands
   */
   std::vector<int> BeamGroup::center_frequencies ()
@@ -314,6 +333,28 @@ namespace DAL {
     }
     
     return frequencies;
+  }
+
+  // ------------------------------------------------------------------- tableIDs
+
+  /*!
+    \return ids -- Vector with the HDF5 table IDs of the embedded Subband
+            objects
+  */
+  std::vector<hid_t> BeamGroup::tableIDs ()
+  {
+    std::vector<hid_t> ids (1,0);
+    
+    if (group_p->getName() != "UNDEFINED") {
+      unsigned int nofSubbands = beamSubbands_p.size();
+      ids.resize(nofSubbands);
+      /* Retrieve the center frequencies from the individual subbands */
+      for (unsigned int n(0); n<nofSubbands; n++) {
+	ids[n] = beamSubbands_p[n].tableID();
+      }
+    }
+    
+    return ids;
   }
   
   // --------------------------------------------------------------- getIntensity

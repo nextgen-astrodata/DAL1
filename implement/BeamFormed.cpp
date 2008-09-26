@@ -28,13 +28,10 @@ namespace DAL {
   
   // ---------------------------------------------------------- BeamFormed
   
-  /*!
-    \brief Empty constructor
-  */
   BeamFormed::BeamFormed()
   {
-    dataset_p = NULL;
-    status = true;
+    dataset_p  = NULL;
+    status     = true;
     filename_p = "";
     H5fileID_p = 0;
     beamGroups_p.clear();
@@ -43,13 +40,12 @@ namespace DAL {
   // ---------------------------------------------------------- BeamFormed
   
   /*!
-    \brief Argumented constructor
     \param filename -- Name of the file from which to read in the data
   */
   BeamFormed::BeamFormed(std::string const &filename)
   {
-    dataset_p = NULL;
-    status = true;
+    dataset_p  = NULL;
+    status     = true;
     filename_p = "";
     H5fileID_p = 0;
     beamGroups_p.clear();
@@ -63,6 +59,9 @@ namespace DAL {
 
   /*!
     \brief Object initialization method
+
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
   */
   bool BeamFormed::init ()
   {
@@ -91,14 +90,12 @@ namespace DAL {
     /* Always check if actually a list of groups has been extracted */
     if ( beamGroups.size() > 0 )
       {
-
-        for (uint beam(0); beam<beamGroups.size(); beam++)
-          {
-            // assemble internal list of beam groups
-            BeamGroup * group = new BeamGroup((*dataset_p), beamGroups[beam]);
-            beamGroups_p.push_back(group);
-          }
-
+	for (uint beam(0); beam<beamGroups.size(); beam++)
+	  {
+	    // assemble internal list of beam groups
+	    BeamGroup * group = new BeamGroup((*dataset_p), beamGroups[beam]);
+	    beamGroups_p.push_back(group);
+	  }
       }
     else
       {
@@ -106,15 +103,12 @@ namespace DAL {
                   << std::endl;
         status = false;
       }
-
+    
     return status;
   }
-
+  
   // ---------------------------------------------------------- ~BeamFormed
-
-  /*!
-    \brief Destructor
-  */
+  
   BeamFormed::~BeamFormed()
   {
     for (uint beam(0); beam<beamGroups_p.size(); beam++)
@@ -208,12 +202,15 @@ namespace DAL {
   {
     os << "\n[BeamFormed Data] Summary of object properties"     << endl;
     
+    os << "-- Status ............... : " << status     << endl;
+    os << "-- Filename ............. : " << filename_p << endl;
+    os << "-- HDF5 file ID ......... : " << H5fileID_p << endl;
+    
     if (dataset_p != NULL) {
-      os << "-- Filename ............. : " << filename()              << endl;
-      os << "-- Telesope ............. : " << telescope()             << endl;
-      os << "-- Number of Stations ... : " << nstations()             << endl;
-      os << "-- Datatype ............. : " << datatype()              << endl;
-      os << "-- Emband   ............. : " << emband()                << endl;
+      os << "-- Telesope ............. : " << telescope()         << endl;
+      os << "-- Number of Stations ... : " << nofStations()       << endl;
+      os << "-- Datatype ............. : " << datatype()          << endl;
+      os << "-- Emband   ............. : " << emband()            << endl;
       
       std::vector< std::string > srcs = sources();
       os << "-- Source(s) ............ : ";
@@ -254,8 +251,6 @@ namespace DAL {
 	  beamGroups_p[beam]->summary();
 	}
       }
-    } else {
-      os << "-- HDF5 file ID = " << H5fileID_p << std::endl;
     }
     
   }
@@ -333,7 +328,6 @@ namespace DAL {
   // ---------------------------------------------------------- telescope
 
   /*!
-    \brief Get the name of the telescope
     \return telescope -- The name of the telescope with which the data were
             recorded; returns an empty string in case no keyword value could
             be extracted.
@@ -353,13 +347,12 @@ namespace DAL {
     return telescope;
   }
 
-  // ---------------------------------------------------------- nstations
+  // ---------------------------------------------------------------- nofStations
 
   /*!
-    \brief Get the number of stations
     \return nstations - the number of stations in the file
   */
-  int BeamFormed::nstations ()
+  int BeamFormed::nofStations ()
   {
     int nstations = -1;
     if (dataset_p->getName() != "UNDEFINED")
@@ -376,7 +369,6 @@ namespace DAL {
   // ---------------------------------------------------------- datatype
 
   /*!
-    \brief Get the datatype
     \return datatype - the datatype of the observation
   */
   std::string BeamFormed::datatype ()
@@ -416,7 +408,6 @@ namespace DAL {
   // ---------------------------------------------------------- sources
 
   /*!
-    \brief Get the source list
     \return source list - a vector of source ids
   */
   std::vector<std::string> BeamFormed::sources()
@@ -427,7 +418,6 @@ namespace DAL {
   // ---------------------------------------------------------- notes
 
   /*!
-    \brief Get the notes
     \return notes - a string of notes from associated with the observation
   */
   std::string BeamFormed::notes()
@@ -447,7 +437,6 @@ namespace DAL {
   // ---------------------------------------------------------- observation_id
 
   /*!
-    \brief Get the observation identifier
     \return obs_id - the observation identifier
   */
   std::string BeamFormed::observation_id ()

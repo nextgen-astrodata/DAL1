@@ -97,7 +97,7 @@ int test_attributes (std::string const &filename)
   try {
     std::cout << "-- Filename       = " << bf.filename()        << std::endl;
     std::cout << "-- Telescope      = " << bf.telescope()       << std::endl;
-    std::cout << "-- nof. stations  = " << bf.nstations()       << std::endl;
+    std::cout << "-- nof. stations  = " << bf.nofStations()     << std::endl;
     std::cout << "-- Datatype       = " << bf.datatype()        << std::endl;
     std::cout << "-- EM band        = " << bf.emband()          << std::endl;
     std::cout << "-- Observation ID = " << bf.observation_id()  << std::endl;
@@ -131,14 +131,6 @@ int test_attributes (std::string const &filename)
 	std::cout << "-- RA of the beam  = " << group->ra()      << std::endl;
 	std::cout << "-- Dec of the beam = " << group->dec()     << std::endl;
 	std::cout << "-- nof. subbands   = " << group->n_subbands() << std::endl;
-	/* Cross-check retrival of attribute through direct HDF5 library call */
-	std::string ra;
-	std::string dec;
-	DAL::h5get_attribute (ra,"RA",group->groupID());
-	DAL::h5get_attribute (dec,"DEC",group->groupID());
-	//
-	std::cout << "RA  = " << ra  << std::endl;
-	std::cout << "DEC = " << dec << std::endl;
       } catch (std::string message) {
 	std::cerr << message << std::endl;
 	nofFailedTests++;
@@ -187,13 +179,14 @@ int test_getData (std::string const &filename)
     xx.clear();
     
     beam->getSubbandData_X( subband, start, length, xx );
+
+    std::cout << "-- First " << length << " xx values for subband "
+	      << subband << " = [";
     
-    printf( "First %d xx values for subband %d.\n" , length, subband );
-    for (int ii=0; ii < length; ii++ )
-      {
-	printf( "(%d,%d)\n" , xx[ii].real(), xx[ii].imag() );
+    for (int ii=0; ii < length; ii++ ) {
+      std::cout << " (" << xx[ii].real() << "," << xx[ii].imag() << ")";
       }
-    printf("\n");
+    std::cout << " ]" << std::endl;
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;

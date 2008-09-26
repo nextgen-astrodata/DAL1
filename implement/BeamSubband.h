@@ -28,6 +28,10 @@
 #include <dalDataset.h>
 #endif
 
+#ifndef DALTABLE_H
+#include <dalTable.h>
+#endif
+
 namespace DAL {
   
   /*!
@@ -48,8 +52,6 @@ namespace DAL {
     
     //! Group object of the Data Access Library
     dalTable *table_p;
-    //! HDF5 file handle ID
-    hid_t H5fileID_p;
     //! HDF5 group handle ID
     hid_t H5groupID_p;
     //! HDF5 table handle ID
@@ -60,48 +62,41 @@ namespace DAL {
     // ==========================================================================
     //  Construction
 
+    //! Default constructor
     BeamSubband();
-    
-    void init();
+    //! Argumented constructor
+    BeamSubband ( hid_t const &groupID,
+		  std::string const &table );
+    //! Argumented constructor
+    BeamSubband ( dalDataset &dataset,
+		  std::string const &group,
+		  std::string const &table );
+    //! Destructor
+    ~BeamSubband();
     
     // ==========================================================================
     //  Parameters
-    
-    /*!
-      \brief Get the HDF5 file handle ID
-      
-      \return fileID -- The HDF5 file handle ID
-    */
-    inline hid_t fileID () const {
-      return H5fileID_p;
-    }
     
     /*!
       \brief Get the HDF5 group handle ID
       
       \return groupID -- The HDF5 group handle ID
     */
-    inline hid_t groupID () const {
-      return H5groupID_p;
-    }
+    inline hid_t groupID () const { return H5groupID_p; }
     
     /*!
       \brief Get the HDF5 table handle ID
       
       \return tableID -- The HDF5 table handle ID
     */
-    inline hid_t tableID () const {
-      return H5tableID_p;
-    }
+    inline hid_t tableID () const { return H5tableID_p; }
     
     /*!
       \brief Provide a summary of the objects internal parameters
       
       The summary will be written to standard output
     */
-    inline void summary() {
-      summary(cout);
-    }
+    inline void summary() { summary(std::cout); }
     
     /*!
       \brief Provide a summary of the objects internal parameters
@@ -115,6 +110,18 @@ namespace DAL {
 
     int center_frequency () const;
 
+  private:
+
+    //! Initialize the object's internal parameters
+    void init();
+    //! Initialize the object's internal parameters
+    void init ( hid_t const &groupID,
+		std::string const &name );
+    //! Initialize the object's internal parameters
+    void init ( dalDataset &dataset,
+		std::string const &group,
+		std::string const &table );
+    
   }; // end BeamSubband class
   
 } // end DAL namespace

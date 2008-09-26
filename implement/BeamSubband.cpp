@@ -36,14 +36,54 @@ namespace DAL
   
   // ---------------------------------------------------------------- BeamSubband
   
-  /*!
-    \brief Default constructor
-  */
   BeamSubband::BeamSubband ()
   {
     init();
   }
+  
+  // ---------------------------------------------------------------- BeamSubband
+  /*!
+    \param groupID -- HDF5 identifier of the group within which the table is 
+           contained
+    \param table -- Name of the table to be created/opened.
+  */
+  BeamSubband::BeamSubband ( hid_t const &groupID,
+			     std::string const &table )
+  {
+    init (groupID,
+	  table);
+  }
+  
+  // ---------------------------------------------------------------- BeamSubband
 
+  /*!
+    \param dataset -- Dataset within which the table is embedded
+    \param group   -- Groug within the dataset within which the table is
+           embedded
+    \param table -- Name of the table to be opened
+  */
+  BeamSubband::BeamSubband ( dalDataset &dataset,
+			     std::string const &group,
+			     std::string const &table )
+  {
+    init ( dataset,
+	   group,
+	   table );
+  }
+  
+  // ============================================================================
+  //
+  //  Destruction
+  //
+  // ============================================================================
+  
+  BeamSubband::~BeamSubband()
+  {
+    if ( NULL != table_p ) {
+      delete table_p;
+    }
+  }
+  
   // ============================================================================
   //
   //  Methods
@@ -52,28 +92,67 @@ namespace DAL
   
   // ----------------------------------------------------------------------- init
 
-  /*!
-    \brief initialize the internal parameters of the object
-  */
   void BeamSubband::init ()
   {
     table_p     = NULL;
-    H5fileID_p  = -1;
     H5groupID_p = -1;
     H5tableID_p = -1;
   }
 
-  // -------------------------------------------------------------------- summary
+  // ----------------------------------------------------------------------- init
+  
+  /*!
+    \param groupID -- HDF5 identifier of the group within which the table is 
+           contained
+    \param table -- Name of the table to be created/opened.
+  */
+  void BeamSubband::init ( hid_t const &groupID,
+			   std::string const &table )
+  {
+    /* Basic initialization */
+    init ();
+    
+    try {
+      dalTable tmp (groupID,table);
+      H5tableID_p = tmp.tableID();
+    } catch (std::string message) {
+      std::cerr << "[BeamSubband::init] ERROR : " << message << std::endl;
+    }
+  }
+  
+  // ----------------------------------------------------------------------- init
 
+  /*!
+    \param dataset -- Dataset within which the table is embedded
+    \param group   -- Groug within the dataset within which the table is
+           embedded
+    \param table -- Name of the table to be opened
+  */
+  void BeamSubband::init ( dalDataset &dataset,
+			   std::string const &group,
+			   std::string const &table )
+  {
+    /* Basic initialization */
+    init ();
+    
+    try {
+      dalTable * newTable = dataset.openTable (group,table);
+      table_p = newTable;
+    } catch (std::string message) {
+      std::cerr << "[BeamSubband::init] ERROR : " << message << std::endl;
+    }
+  }
+  
+  // -------------------------------------------------------------------- summary
+  
   void BeamSubband::summary (std::ostream &os)
   {
     os << "[BeamSubband] Summary of object properties." << std::endl;
-
-    os << "-- HDF5 file handle ID  = " << H5fileID_p  << std::endl;
+    
     os << "-- HDF5 group handle ID = " << H5groupID_p << std::endl;
     os << "-- HDF5 table handle ID = " << H5tableID_p << std::endl;
     
-    if (H5fileID_p > 0) {
+    if (H5tableID_p > 0) {
       os << "-- Number of table rows = " << table_p->getNumberOfRows()
 	 << std::endl;
     }

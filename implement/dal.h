@@ -69,6 +69,7 @@
     - \ref dal_compile_link
   - \ref dal_coding_python
   - \ref dal_changes
+  - \ref dal_testing
 
 */
 

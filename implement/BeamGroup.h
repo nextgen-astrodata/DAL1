@@ -50,50 +50,49 @@ namespace DAL
     
     //! HDF5 file handle ID
     hid_t H5fileID_p;
-    
     //! HDF5 file handle ID
     hid_t H5groupID_p;
-    
     //! Group object of the Data Access Library
     dalGroup *group_p;
-    
     //! Dataset object of the Data Access Library
     dalDataset dataset_p;
-    
     //! Vector of subband tables within the dataset
     std::vector<BeamSubband> beamSubbands_p;
-    
+
   public:
-    
+
+    // -------------------------------------- Construction/Destruction
+
+    //! Default constructor
     BeamGroup();
-    ~BeamGroup();
+    //! Argumented constructor
     BeamGroup ( dalDataset &dataset,
 		std::string const &name );
+    //! Destructor
+    ~BeamGroup();
+
+    // -------------------------------------------- Parameter handling
+
+    //! Initialize the object's internal parameters
     void init();
     /*!
       \brief Get the HDF5 file handle ID
-      
       \return H5fileID -- The HDF5 file handle ID for this dataset
     */
-    inline hid_t fileID () const {
-      return H5fileID_p;
-    }
+    inline hid_t fileID () const { return H5fileID_p; }
     /*!
       \brief Get the HDF5 group handle ID
-      
       \return H5groupID -- The HDF5 group handle ID for this dataset
     */
-    inline hid_t groupID () const {
-      return H5groupID_p;
-    }
+    inline hid_t groupID () const { return H5groupID_p; }
     /*!
       \brief Get the name of the underlying HDF5 group
-      
       \return name -- The name of the underlying HDF5 group.
     */
-    inline std::string groupName () const {
-      return group_p->getName();
-    }
+    inline std::string groupName () const { return group_p->getName(); }
+
+    // ------------------------------------------------------- Methods
+
     bool setBeamGroup ( dalDataset &dataset,
 			std::string const &name);
     dalTable * getSubbandTable (int subband);
@@ -118,7 +117,11 @@ namespace DAL
 			   int start,
 			   int &length,
 			   std::vector< std::complex<short> > &values );
+    //! Get a subband from the beam
     BeamSubband * getSubband( int subband );
+    //! Get a subband from the beam
+    void getSubband( BeamSubband &subband,
+		     int sb );
     /*!
       \brief Provide a summary of the object's properties
     */
@@ -129,7 +132,11 @@ namespace DAL
     std::string ra();
     std::string dec();
     int n_subbands ();
+
+    //! Get the center frequencies of the sub-bands
     std::vector<int> center_frequencies ();
+    //! Get the table IDs of the sub-bands
+    std::vector<hid_t> tableIDs ();
     
     /************************************************************************
      *

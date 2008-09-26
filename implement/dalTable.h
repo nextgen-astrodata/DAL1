@@ -83,9 +83,28 @@ namespace DAL {
 
     public:
 
+      // ------------------------------------------------ Construction
+
+      //! Default table constructor
       dalTable();
+      //! Table constructor for a specific file format.
       dalTable( string filetype );
+      //! Table constructor for table in HDF5 group
+      dalTable (hid_t const &groupID,
+		std::string const tableName);
+
+      // ------------------------------------------------- Destruction
+
+      //! Destructor
       ~dalTable();
+
+      // -------------------------------------------- Parameter access
+      
+      inline hid_t fileID () const { return file_id; }
+      inline hid_t tableID () const { return table_id; }
+      inline hsize_t nofFields () const { return nfields; }
+      inline hsize_t nofRecords () const { return nrecords; }
+
       void printColumns();
       inline void summary() { summary(std::cout); }
       void summary(std::ostream &os);

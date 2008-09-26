@@ -11,6 +11,7 @@
   - \ref dal_changes_cpp
   - \ref dal_changes_python
   - \ref dal_changes_tools
+  - \ref dal_changes_documentation
 
 <hr>
 
@@ -69,6 +70,8 @@
 
 \section dal_changes_testing Testing of library components and tools
 
+- The various Python data inspection scripts need to be added to the list of \e
+ctest driven tests such that we can track errors there as well.
 - We need a commonly availabe set of input data files for the test programs,
 such that we can run the same set of tests on the various platforms. Suggested
 solution is to create tar-ball containing a collection of such datasets, which
@@ -87,15 +90,26 @@ drwxr-xr-x   39 lars  lars        1326 Sep 24 12:09 L2007_01810_SB18-20_OB20.MS
 
 \section dal_changes_cpp Issues with the C++ interface
 
-<ol>
-  <li>Add method(s) to retrieve all channels of a correlation product (Intensity, X, Y, etc.) stored
-  within DAL::BeamSubband
-  <li>Add methods to retrieve length of data columns in a DAL::dalTable
-  <li>Make sure all classes provide at least a basic <tt>summary()</tt> method to display the status
-  of internal parameters.
-  <li>Add optional parameter to the argumented constructor for DAL::dalDataset; use \e overwrite to
-  enable the user to decide wether or not to overwrite an existing file.
-</ol>
+- Make sure all classes provide at least a basic <tt>summary()</tt> method to display the status
+of internal parameters.
+
+- DAL::BeamGroup
+  - get* methods don't raise Exceptions, only return default arrays
+  - Add method(s) to retrieve all channels of a correlation product (Intensity,
+  X, Y, etc.)
+
+- DAL::BeamSubband
+  - currently has no methods to actually create a valid object connected to the
+  subband table data within the dataset.
+  - is there really a need to store fileID and groupID? All we actually need is
+  the tableID.
+
+- DAL::dalTable
+  - need additional constructor to create table using group ID (in which the
+  table is contained) and table name. -> basic implementation is done, final
+  testing of internal initialization pending
+  - Add methods to retrieve length of data columns
+  - add opional parameter to control potential overwriting of existing table
 
 <hr>
 
@@ -172,16 +186,21 @@ drwxr-xr-x   39 lars  lars        1326 Sep 24 12:09 L2007_01810_SB18-20_OB20.MS
     - sub_beam_diameter
     - telescope
     - weather_*
-
-  <li>DAL::BeamGroup.get* methods don't raise Exceptions, only return default arrays
-
 </ol>
 
 <hr>
 
 \section dal_changes_tools Issues with the application executables
 
-  - Consider switching all command line parameter handling to Boost \e program_options interface; a first
-  implementation example can be found in tbb2h5.cpp
+- Consider switching all command line parameter handling to Boost \e
+  program_options interface; a first implementation example can be found in
+  tbb2h5.cpp
+  - bf2h5.cpp
+
+<hr>
+
+\section dal_changes_documentation Documentation
+
+- change name of source file: dal_file_formats.doc -> dal_data_formats.doc
 
 */

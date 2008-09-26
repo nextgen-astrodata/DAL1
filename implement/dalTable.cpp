@@ -41,11 +41,6 @@ namespace DAL {
   
   // ------------------------------------------------------------------- dalTable
   
-  /*!
-    \brief Default table constructor.
-    
-    The default table constructor.
-  */
   dalTable::dalTable()
   {
     filter = new dalFilter;
@@ -54,10 +49,6 @@ namespace DAL {
   // ------------------------------------------------------------------- dalTable
   
   /*!
-    \brief Table constructor for a specific file format.
-    
-    Table constructor for a specific file format.
-    
     \param filetype The type of table you want to create (i.e.
     "HDF5", "MSCASA", etc.)
   */
@@ -78,14 +69,25 @@ namespace DAL {
 #endif
       }
   }
+
+  // ------------------------------------------------------------------- dalTable
+  
+  dalTable::dalTable (hid_t const &groupID,
+		      std::string const tableName)
+  {
+    filter = new dalFilter;    
+    type   = "HDF5";
+    columns.clear();
+    
+    try {
+      table_id = H5Dopen1 ( groupID, tableName.c_str() );
+    } catch (std::string message) {
+      std::cerr << "[dalTable::dalTable] ERROR : " << message << std::endl;
+    }
+  }
   
   // ---------------------------------------------------------- ~dalTable
   
-  /*!
-    \brief Default table destructor.
-    
-    Default table destructor.
-  */
   dalTable::~dalTable()
   {
     delete filter;
@@ -720,7 +722,9 @@ namespace DAL {
   \param groupname The name of the group containing the table you want
                    to open.
   */
-  void dalTable::openTable( void * voidfile, std::string tablename, std::string groupname )
+  void dalTable::openTable( void * voidfile,
+			    std::string tablename,
+			    std::string groupname )
   {
     if ( type == H5TYPE )
       {

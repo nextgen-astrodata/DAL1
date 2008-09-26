@@ -177,7 +177,9 @@ namespace DAL
       dalTable * openTable( std::string tablename );
       void setFilter( std::string columns );
       void setFilter( std::string columns, std::string conditions );
-      dalTable * openTable( std::string tablename, std::string groupname );
+      //! Open a table within a group
+      dalTable * openTable( std::string const &tablename,
+			    std::string const &groupname );
       dalArray * openArray( std::string arrayname );
       dalArray * openArray( std::string arrayname, std::string groupname );
       std::vector<std::string> getGroupNames();
