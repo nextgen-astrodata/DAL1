@@ -24,17 +24,19 @@
 #include <iostream>
 #include <string>
 
-#include <Data/LOFAR_Attributes.h>
+#ifndef ENUMERATIONS_H
+#include <Enumerations.h>
+#endif
 
 using std::cout;
 using std::endl;
 
 /*!
-  \file tLOFAR_Attributes.cc
+  \file tEnumerations.cpp
 
-  \ingroup LOFAR
+  \ingroup DAL
 
-  \brief A collection of test routines for the LOFAR_Attributes class
+  \brief A collection of test routines for the Enumerations class
  
   \author Lars B&auml;hren
  
@@ -58,25 +60,25 @@ using std::endl;
 
   \return nofFailedTests -- The number of failed tests.
 */
-int test_LOFAR_Attributes ()
+int test_id2name ()
 {
   int nofFailedTests (0);
   
-  cout << "\n[test_LOFAR_Attributes]\n" << endl;
+  cout << "\n[tEnumerations::test_id2name]\n" << endl;
 
   try {
     cout << "-- TELESCOPE        = "
-	 << LOFAR::attribute_name (LOFAR::TELESCOPE) << endl;
+	 << DAL::attribute_name (DAL::TELESCOPE) << endl;
     cout << "-- OBSERVER         = "
-	 << LOFAR::attribute_name (LOFAR::OBSERVER) << endl;
+	 << DAL::attribute_name (DAL::OBSERVER) << endl;
     cout << "-- PROJECT          = "
-	 << LOFAR::attribute_name (LOFAR::PROJECT) << endl;
+	 << DAL::attribute_name (DAL::PROJECT) << endl;
     cout << "-- OBSERVATION_ID   = "
-	 << LOFAR::attribute_name (LOFAR::OBSERVATION_ID) << endl;
+	 << DAL::attribute_name (DAL::OBSERVATION_ID) << endl;
     cout << "-- OBSERVATION_MODE = "
-	 << LOFAR::attribute_name (LOFAR::OBSERVATION_MODE) << endl;
+	 << DAL::attribute_name (DAL::OBSERVATION_MODE) << endl;
     cout << "-- TIME             = "
-	 << LOFAR::attribute_name (LOFAR::TIME) << endl;
+	 << DAL::attribute_name (DAL::TIME) << endl;
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -91,7 +93,7 @@ int main ()
 {
   int nofFailedTests (0);
   
-  nofFailedTests += test_LOFAR_Attributes ();
+  nofFailedTests += test_id2name ();
 
   return nofFailedTests;
 }

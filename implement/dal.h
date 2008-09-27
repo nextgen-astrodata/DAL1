@@ -54,8 +54,8 @@
       - DAL::BeamGroup
       </td>
       <td>
-      - bf2h5
-      - tbb2h5
+      - bf2h5.cpp
+      - tbb2h5.cpp
       </td>
     </tr>
   </table>

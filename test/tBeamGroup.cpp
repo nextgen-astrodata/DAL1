@@ -28,6 +28,10 @@
   \author Lars B&auml;hren
 
   \date 2008/09/19
+
+  This test program mainly is going through the functionality of the
+  DAL::BeamGroup class, but also - at least in an indirect way - some of
+  DAL::BeamSubband.
 */
 
 #ifndef DALDATASET_H
@@ -88,6 +92,14 @@ int test_constructors (std::string const &filename)
 
 // ------------------------------------------------------------------------------
 
+/*!
+  \brief Test extraction of the various attributes/parameters
+
+  \param filename -- Name of the input data file
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function
+*/
 int test_parameters (std::string const &filename)
 {
   std::cout << "\n[tBeamGroup::test_parameters]\n" << std::endl;

@@ -5,10 +5,6 @@
 set(CMAKE_CXX_FLAGS "-W -Wall")
 message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 
-#if(NOT CMAKE_BUILD_TYPE)
-#    set(CMAKE_BUILD_TYPE "Debug")
-#endif(NOT CMAKE_BUILD_TYPE)
-
 #add_definitions(
 #  -DMPICH_IGNORE_CXX_SEEK
 #  -D_BSD_SOURCE

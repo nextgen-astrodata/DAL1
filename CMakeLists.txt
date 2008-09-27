@@ -302,6 +302,14 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 if (DAL_ENABLE_TESTING)
 
+  ## FITS
+  
+  find_file (dataset_fits WN65341H.fits
+    PATHS
+    ${USG_ROOT}/data
+    ${USG_ROOT}/data/test
+    )
+  
   ## Measurement Set
 
   find_path (dataset_ms table.dat table.info
@@ -337,6 +345,14 @@ if (DAL_ENABLE_TESTING)
     PATHS
     ${USG_ROOT}/data
     ${USG_ROOT}/data/test
+    )
+  
+  find_file (dataset_lopes 2007.01.31.23:59:33.960.event
+    PATHS
+    ${USG_ROOT}/data
+    ${USG_ROOT}/data/test
+    PATH_SUFFIXES
+    lopes
     )
   
 endif (DAL_ENABLE_TESTING)

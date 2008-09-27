@@ -32,6 +32,7 @@ set (tests
   tdalTable
   tBeamFormed
   tBeamGroup
+  tEnumerations
   tHDF5Common
   )
 
@@ -57,14 +58,12 @@ endforeach (src)
 
 if (HAVE_CASA OR HAVE_CASACORE)
   ## additional compiler flags
-  add_definitions (
-    -DWITH_CASA
-    )
+  add_definitions (-DWITH_CASA)
   foreach (src tMeasurementSets tMS_dal tdalLopesEvent)
     ## compiler instructions
     add_executable (${src} ${src}.cpp)
     ## linker instructions
-    target_link_libraries (${src}  dal ${dal_link_libraries})
+    target_link_libraries (${src} dal ${dal_link_libraries})
     ## installation
     list (APPEND tests ${src})
   endforeach (src)
@@ -83,7 +82,8 @@ if (DAL_ENABLE_TESTING)
   ## -----------------------------------------------------------------
   ## [1] simple tests which do not require sample data
 
-  add_test(tdal ${CMAKE_CURRENT_BINARY_DIR}/tdal)
+  add_test(tdal tdal)
+  add_test(tEnumerations tEnumerations)
 
   ## -----------------------------------------------------------------
   ## [2] Processing tests which require sample datasets
@@ -97,20 +97,11 @@ if (DAL_ENABLE_TESTING)
   ## -----------------------------------------------------------------
   ## [3] Tests using LopesEvent datasets
 
-  find_file (lopes_dataset 2007.01.31.23:59:33.960.event
-    PATHS
-    ${DAL_SOURCE_DIR}/data
-    ${DAL_SOURCE_DIR}/../data
-    ${DAL_SOURCE_DIR}/../../data
-    PATH_SUFFIXES
-    lopes
-    )
-  
-  if (lopes_dataset)
-    add_test (tdalLopesEvent tdalLopesEvent ${lopes_dataset})
-  else (lopes_dataset)
+  if (dataset_lopes)
+    add_test (tdalLopesEvent tdalLopesEvent ${dataset_lopes})
+  else (dataset_lopes)
     message (STATUS "Unable to find LopesEvent dataset; skipping tests.")
-  endif (lopes_dataset)
+  endif (dataset_lopes)
 
   ## -----------------------------------------------------------------
   ## [4] Tests using HDF5-based time-series dataset
@@ -132,9 +123,18 @@ if (DAL_ENABLE_TESTING)
   endif (dataset_beamformed)
 
   ## -----------------------------------------------------------------
-  ## [6] Python scripts
+  ## [6] Tests using FITS file format data
+
+  if (dataset_fits)
+    add_test (tdal_fits tdal_fits ${dataset_fits})
+  endif (dataset_fits)
+
+  ## -----------------------------------------------------------------
+  ## [7] Python scripts
 
   if (dataset_ms)
+    ## show the coverage in the (u,v) plane
+    add_test (datacube datacube.py ${dataset_ms} ${dataset_ms}.out 1 1 0)
     ## show the coverage in the (u,v) plane
     add_test (uv_coverage uv_coverage.py ${dataset_ms})
     ## auto-correlated intensity in the first frequency band
@@ -157,7 +157,9 @@ install (TARGETS ${tests}
 
 ## python scripts
 
-install (FILES tdal.py tMS_dal.py uv_coverage.py baseline_intensity.py tBeamFormed.py
+file (GLOB python_scripts *.py)
+
+install (FILES ${python_scripts}
   DESTINATION bin
   PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE OWNER_READ GROUP_READ WORLD_READ
 )
