@@ -25,44 +25,44 @@
 #include "dalGroup.h"
 #endif
 
-namespace DAL
-  {
+namespace DAL {
 
-// ------------------------------------------------------------ dalGroup
-
-  /*!
-    \brief Default constructor.
-
-    Default constructor.
-   */
+  // ============================================================================
+  //
+  //  Construction
+  //
+  // ============================================================================
+  
+  // ------------------------------------------------------------ dalGroup
+  
   dalGroup::dalGroup()
   {
-    file = NULL;
-    groupname = "UNKNOWN";
+    file           = NULL;
+    groupname      = "UNKNOWN";
     groupname_full = "UNKNOWN";
-    group = NULL;
-    filter = NULL;
-    file_id = 0;
-    group_id = 0;
-    status = 0;
+    group          = NULL;
+    filter         = NULL;
+    file_id        = 0;
+    group_id       = 0;
+    status         = 0;
   }
-
-
-// ------------------------------------------------------------ dalGroup
-
+  
+  
+  // ------------------------------------------------------------ dalGroup
+  
   /*!
     \brief Create a group in a certain file.
-
+    
     Create a group in a certain file.
-
+    
     \param groupname The name of the group to create.
     \param file A pointer to the file where you want to create the group.
-   */
+  */
   dalGroup::dalGroup( const char * gname, void * voidfile )
   {
-
+    
     dalGroup();
-
+    
     hid_t * lclfile = (hid_t*)voidfile; // H5File object
     file = lclfile;
     file_id = *lclfile;  // get the file handle
@@ -175,22 +175,49 @@ namespace DAL
     }
   }
 
+  // ============================================================================
+  //
+  //  Parameters
+  //
+  // ============================================================================
+  
+  /*!
+    \param os -- Output stream to which the summary will be written.
+  */
+  void dalGroup::summary(std::ostream &os)
+  {
+    os << "[dalGroup] Summary of object properties"  << endl;
 
-// ------------------------------------------------------------ getId
+    os << "-- File ID            = " << file_id   << std::endl;
+    os << "-- Group ID           = " << group_id  << std::endl;
+    os << "-- Group name         = " << groupname << std::endl;
+    os << "-- Status             = " << status    << std::endl;
 
+    std::vector<std::string> memberNames = getMemberNames();
+    os << "-- nof. group members = " << memberNames.size() << std::endl;
+    os << "-- Member names       = [";
+    for (unsigned int n(0); n<memberNames.size(); n++) {
+      os << " " << memberNames[n];
+    }
+    os << " ]" << std::endl;
+    
+  }
+  
+  // ------------------------------------------------------------ getId
+  
   /*!
     \brief Get the group ID.
-
+    
     Retrieve the identifier for the group.
-
+    
     \return The group identifier as an integer.
   */
   hid_t dalGroup::getId()
   {
     return group_id;
   }
-
-// -------------------------------------------------- dalGroup_file_info
+  
+  // -------------------------------------------------- dalGroup_file_info
 
   /*
    * Operator function.

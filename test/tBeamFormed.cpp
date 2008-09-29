@@ -124,13 +124,13 @@ int test_attributes (std::string const &filename)
 	/* Retrieve the beam group */
 	group = bf.getBeam(beam);
 	/* Display the attribute of this group */
-	std::cout << "-- Group number    = " << beam             << std::endl;
-	std::cout << "-- HDF5 file ID    = " << group->fileID()  << std::endl;
-	std::cout << "-- HDF5 group ID   = " << group->groupID() << std::endl;
-	std::cout << "-- HDF5 group name = " << group->groupName() << std::endl;
-	std::cout << "-- RA of the beam  = " << group->ra()      << std::endl;
-	std::cout << "-- Dec of the beam = " << group->dec()     << std::endl;
-	std::cout << "-- nof. subbands   = " << group->n_subbands() << std::endl;
+	std::cout << "-- Group number    = " << beam                 << std::endl;
+	std::cout << "-- HDF5 file ID    = " << group->fileID()      << std::endl;
+	std::cout << "-- HDF5 group ID   = " << group->groupID()     << std::endl;
+	std::cout << "-- HDF5 group name = " << group->groupName()   << std::endl;
+	std::cout << "-- RA of the beam  = " << group->ra()          << std::endl;
+	std::cout << "-- Dec of the beam = " << group->dec()         << std::endl;
+	std::cout << "-- nof. subbands   = " << group->nofSubbands() << std::endl;
       } catch (std::string message) {
 	std::cerr << message << std::endl;
 	nofFailedTests++;

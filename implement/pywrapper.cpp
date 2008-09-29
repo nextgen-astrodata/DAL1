@@ -311,11 +311,15 @@ BOOST_PYTHON_MODULE(pydal)
   bpl::class_<BeamGroup>("BeamGroup")
   .def( bpl::init<>())
   .def( "summary", &BeamGroup::summary_boost)
+  .def( "fileID", &BeamGroup::fileID,
+        "Get the HDF5 file handle ID")
+  .def( "groupID", &BeamGroup::groupID,
+        "Get the HDF5 group handle ID")
   .def( "ra", &BeamGroup::ra,
         "Return ra value for the beam")
   .def( "dec", &BeamGroup::dec,
         "Return dec value for the beam")
-  .def( "n_subbands", &BeamGroup::n_subbands,
+  .def( "nofSubbands", &BeamGroup::nofSubbands,
         "Return number of subbands")
   .def( "getIntensity", &BeamGroup::getIntensity_boost,
         "Get a numpy array of intensities for a given subband")

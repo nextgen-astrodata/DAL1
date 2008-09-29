@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Lars B"ahren                                    *
- *   lbaehren@gmail,com                                                    *
+ *   Copyright (C) 2006 by Lars B"ahren                                    *
+ *   lbaehren@gmail.com                                                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,102 +19,74 @@
  ***************************************************************************/
 
 /*!
-  \file tdalTable.cpp
+  \file tBeamSubband.cpp
 
   \ingroup DAL
 
-  \brief Test program for table within a dataset
+  \brief A collection of test routines for the DAL::BeamSubband class
 
   \author Lars B&auml;hren
 
-  \date 2008/09/22
+  \date 2008/09/28
 */
 
 #include <dal.h>
 
+using DAL::dalDataset;
+using DAL::dalGroup;
+using DAL::dalTable;
+
 // ------------------------------------------------------------------------------
 
 /*!
-  \brief Test the various constructors for an object of type dalTable
+  \brief Test working with tables through HDF5 library and DAL
 
-  \param filename -- Name of the input data file
+  \param filename  -- Name of the input data file
+  \param groupName -- Name of the beam group to open and work with
+  \param tableName -- Name of the sub-band table to open and work with
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
-int test_constructors (std::string const &filename)
+int test_tables (std::string const &filename,
+		 std::string const &groupName,
+		 std::string const &tableName)
 {
-  std::cout << "\n[tdalTable::test_constructors]\n" << std::endl;
+  std::cout << "\n[tBeamSubband::test_tables]\n" << std::endl;
 
   int nofFailedTests (0);
+  dalDataset *dataset;
+  dalGroup * group;
+  dalTable * table;
 
-  std::cout << "[1] Default constructor..." << std::endl;
+  std::cout << "[1] Open file into dalDataset ..." << std::endl;
   try {
-    DAL::dalTable table;
+    dataset = new dalDataset(filename.c_str(),"HDF5");
+    dataset->summary();
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Open beam group from dalDataset ..." << std::endl;
+  try {
+    group = dataset->openGroup(groupName);
     //
-    table.summary();
+    group->summary();
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
-
-  std::cout << "[2] Construct object for table of type HDF5..." << std::endl;
+  
+  std::cout << "[3] Open sub-band table from dalDataset ..." << std::endl;
   try {
-    DAL::dalTable table ("HDF5");
-    table.summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-
-  std::cout << "[3] Construct object for table of type FITS..." << std::endl;
-  try {
-    DAL::dalTable table ("FITS");
-    table.summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-
-  std::cout << "[4] Construction from dalDataset..." << std::endl;
-  try {
-    DAL::dalDataset dataset;
-    dataset.open(filename.c_str());
-    dataset.summary();
-    //
-    DAL::dalTable * table = dataset.openTable ("/beam000","SB000");
+    table = dataset->openTable (tableName,groupName);
+    // 
     table->summary();
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
-
-  return nofFailedTests;
-}
-
-// ------------------------------------------------------------------------------
-
-/*!
-  \brief Test the various methods to access parameters to the class
-
-  \param filename -- Name of the input data file
-
-  \return nofFailedTests -- The number of failed tests encountered within this
-          function
-*/
-int test_parameters (std::string const &filename)
-{
-  std::cout << "\n[tdalTable::test_parameters]\n" << std::endl;
-
-  int nofFailedTests (0);
-
-  try {
-    DAL::dalDataset dataset (filename.c_str(),"HDF5");
-    std::vector<std::string> groupNames = dataset.getGroupNames();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
   
   return nofFailedTests;
 }
@@ -122,19 +94,21 @@ int test_parameters (std::string const &filename)
 // ------------------------------------------------------------------------------
 
 /*!
-  \brief Test the various methods for working with metadata
+  \brief Test the constructors for an object of type BeamSubband
 
-  \param filename -- Name of the input data file
+  \param filename  -- Name of the input data file
+  \param groupName -- Name of the beam group to open and work with
+  \param tableName -- Name of the sub-band table to open and work with
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
-int test_methods (std::string const &filename)
+int test_construction (std::string const &filename,
+		       std::string const &groupName,
+		       std::string const &tableName)
 {
-  std::cout << "\n[tdalTable::test_methods]\n" << std::endl;
-
   int nofFailedTests (0);
-  
+
   return nofFailedTests;
 }
 
@@ -144,6 +118,7 @@ int main (int argc,char *argv[])
 {
   int nofFailedTests (0);
   std::string filename;
+  std::string groupName ("beam000");
   std::string tableName ("SB000");
 
   /* Check command line parameters */
@@ -151,17 +126,11 @@ int main (int argc,char *argv[])
   if (argc > 1) {
     filename = std::string(argv[1]);
   } else {
-    std::cout << "[tdalTable] Missing name of input test file." << std::endl;
+    std::cout << "[tBeamSubband] Missing name of input test file." << std::endl;
     return(DAL::FAIL);
   }
 
-  /* Test the constructors */
-  nofFailedTests += test_constructors(filename);
-
-  if (nofFailedTests == 0) {
-    nofFailedTests += test_parameters(filename);
-    nofFailedTests += test_methods(filename);
-  }
+  nofFailedTests += test_tables (filename,groupName,tableName);
 
   return nofFailedTests;
 }

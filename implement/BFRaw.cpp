@@ -65,13 +65,15 @@ namespace DAL {
   // ============================================================================
 
   /*!
-    \brief Argumented constructor
+    This is the only constructor provided for an object of this class. The 
+    optional processing parameters, which can can be passed along, are set to
+    sensible default values, such that only the \e filename is required.
 
     \param filename         -- Name of the input data file.
-    \param doIntensity      -- 
-    \param doDownsample     -- 
-    \param doChannelization -- 
-    \param factor           -- 
+    \param doIntensity      -- Compute total intensity
+    \param doDownsample     -- Compute downsampled version of the original data
+    \param doChannelization -- Compute channelization of the original data
+    \param factor           -- Downsampling factor
   */
   BFRaw::BFRaw( string const& filename,
 		bool doIntensity,
@@ -80,14 +82,14 @@ namespace DAL {
 		int factor )
   {
     // initializations (private)
-    bigendian = BigEndian();
-    first_block = true;
-    outputfilename = filename;
-    rawfile = NULL;
-    downsample_factor = factor;
+    bigendian            = BigEndian();
+    first_block          = true;
+    outputfilename       = filename;
+    rawfile              = NULL;
+    downsample_factor    = factor;
     DO_FLOAT32_INTENSITY = doIntensity;
-    DO_DOWNSAMPLE = doDownsample;
-    DO_CHANNELIZATION = doChannelization;
+    doDownsample_p       = doDownsample;
+    DO_CHANNELIZATION    = doChannelization;
   }
   
   // ============================================================================
@@ -118,11 +120,21 @@ namespace DAL {
   //
   // ============================================================================
 
+  /*!
+    \param os -- Output stream to which the summary is going to be written
+  */
+  void BFRaw::summary (std::ostream &os)
+  {
+    os << "[BFRaw] Summary of object properties." << endl;
+
+    os << "-- Name of output file  = " << outputfilename    << std::endl;
+    os << "-- Downsampling of data = " << doDownsample_p    << std::endl;
+    os << "-- Downsample factor    = " << downsample_factor << std::endl;
+  }
+
   // ------------------------------------------------------------------------ eof
 
   /*!
-    \brief Check for reaching end-of-file
-
     \return eof -- Returns \e true if the end of file has been reached
   */
   bool BFRaw::eof()
@@ -286,18 +298,18 @@ namespace DAL {
     int n_stations = 1;
     vector<string> srcvec;
     srcvec.push_back( "" );
-    int main_beam_diam = 0;
-    int bandwidth = 0; // Total bandwidth (MHz)
-    int breaks_in_data = 0; // Any breaks in data?
-    int dispersion_measure = 0;
+    int main_beam_diam      = 0;
+    int bandwidth           = 0; // Total bandwidth (MHz)
+    int breaks_in_data      = 0; // Any breaks in data?
+    int dispersion_measure  = 0;
     int number_of_samples =
       fileheader.nrBeamlets * fileheader.nrSamplesPerBeamlet;
-    Float64 sampling_time = fileheader.sampleRate;
-    int number_of_beams = 1;
-    int sub_beam_diameter = 0; // fwhm of the sub-beams (arcmin)
+    Float64 sampling_time   = fileheader.sampleRate;
+    int number_of_beams     = 1;
+    int sub_beam_diameter   = 0; // fwhm of the sub-beams (arcmin)
     int weather_temperature = 0; // approx. centigrade
-    int weather_humidity = 0; // approx. %
-    int tsys = 0; // for various stations (K)
+    int weather_humidity    = 0; // approx. %
+    int tsys                = 0; // for various stations (K)
 
     // write headers using above
     dataset.setAttribute( "FILENAME", outputfilename.c_str() );
@@ -369,7 +381,7 @@ namespace DAL {
 
     for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
       {
-        if ( DO_DOWNSAMPLE || DO_FLOAT32_INTENSITY )
+        if ( doDownsample_p || DO_FLOAT32_INTENSITY )
           {
             table[idx]->addColumn( "TOTAL_INTENSITY", dal_FLOAT );
           }
@@ -528,7 +540,7 @@ namespace DAL {
 
             sample = reinterpret_cast<Sample*>(&( buf[ index ]));
 
-            if ( DO_DOWNSAMPLE )  // if downsampling
+            if ( doDownsample_p )  // if downsampling
               {
                 Float32 * downsampled_data;
                 int start = 0;

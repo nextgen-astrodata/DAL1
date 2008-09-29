@@ -2,8 +2,9 @@
  | $Id:: dal.h 1126 2007-12-10 17:14:20Z masters                         $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
- *   Copyright (C) 2008 by Joseph Masters                                  *
- *   jmasters@science.uva.nl                                               *
+ *   Copyright (C) 2008                                                    *
+ *   Joseph Masters <jmasters@science.uva.nl>                              *
+ *   Lars B"ahren <lbaehren@gmail.com>                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -41,9 +42,17 @@ namespace DAL {
     
     \brief High-level interface between beam-formed data and the DAL
     
-    \author Joseph Masters
+    \author Joseph Masters, Lars B&auml;hren
 
     \test tBeamSubband.cpp
+
+    <h3>Prerequisite</h3>
+
+    <ul>
+      <li>dalDataset -- Representation the file containing all sub-structures
+      (tables, arrays, etc.).
+      <li>dalTable -- Object representing a table within a dataset.
+    </ul>
   */
   
   class BeamSubband {
@@ -51,9 +60,7 @@ namespace DAL {
   private:
     
     //! Group object of the Data Access Library
-    dalTable *table_p;
-    //! HDF5 group handle ID
-    hid_t H5groupID_p;
+    dalTable * table_p;
     //! HDF5 table handle ID
     hid_t H5tableID_p;
     
@@ -65,24 +72,16 @@ namespace DAL {
     //! Default constructor
     BeamSubband();
     //! Argumented constructor
-    BeamSubband ( hid_t const &groupID,
-		  std::string const &table );
+    BeamSubband ( dalTable * table );
     //! Argumented constructor
-    BeamSubband ( dalDataset &dataset,
-		  std::string const &group,
-		  std::string const &table );
+    BeamSubband (dalDataset &dataset,
+		 std::string const &group,
+		 std::string const &table);
     //! Destructor
     ~BeamSubband();
     
     // ==========================================================================
     //  Parameters
-    
-    /*!
-      \brief Get the HDF5 group handle ID
-      
-      \return groupID -- The HDF5 group handle ID
-    */
-    inline hid_t groupID () const { return H5groupID_p; }
     
     /*!
       \brief Get the HDF5 table handle ID
@@ -108,22 +107,19 @@ namespace DAL {
     // ==========================================================================
     //  Methods
 
+    //! Get the number of fields within the table
+    hsize_t nofFields ();
+    //! Get the number of records within the table
+    hsize_t nofRecords ();
+    //! Get the number of table rows
+    long nofTableRows ();
+    //! Get a list with the names of the table columns
+    std::vector<std::string> columnNames ();
+    //! Get the center frequency of the sub-band
     int center_frequency () const;
 
-  private:
-
-    //! Initialize the object's internal parameters
-    void init();
-    //! Initialize the object's internal parameters
-    void init ( hid_t const &groupID,
-		std::string const &name );
-    //! Initialize the object's internal parameters
-    void init ( dalDataset &dataset,
-		std::string const &group,
-		std::string const &table );
-    
-  }; // end BeamSubband class
+  }; // class BeamSubband -- end
   
-} // end DAL namespace
+} // namespace DAL -- end
 
 #endif

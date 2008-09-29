@@ -23,8 +23,7 @@
 
   \ingroup DAL
 
-  \brief Test program for beam-formed functionality.
-
+  \brief A collection of test routines for the DAL::BeamGroup class
   \author Lars B&auml;hren
 
   \date 2008/09/19
@@ -46,19 +45,19 @@
 #include <BeamGroup.h>
 #endif
 
-const std::string groupName ("beam000");
-
 // ------------------------------------------------------------------------------
 
 /*!
   \brief Test the various constructors for an object of type BeamGroup
 
-  \param filename -- Name of the input data file
+  \param filename  -- Name of the input data file
+  \param groupName -- Name of the beam group to open and work with
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
-int test_constructors (std::string const &filename)
+int test_constructors (std::string const &filename,
+		       std::string const &groupName)
 {
   std::cout << "\n[tBeamGroup::test_constructors]\n" << std::endl;
 
@@ -95,12 +94,14 @@ int test_constructors (std::string const &filename)
 /*!
   \brief Test extraction of the various attributes/parameters
 
-  \param filename -- Name of the input data file
+  \param filename  -- Name of the input data file
+  \param groupName -- Name of the beam group to open and work with
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
-int test_parameters (std::string const &filename)
+int test_parameters (std::string const &filename,
+		     std::string const &groupName)
 {
   std::cout << "\n[tBeamGroup::test_parameters]\n" << std::endl;
 
@@ -111,12 +112,12 @@ int test_parameters (std::string const &filename)
   DAL::BeamGroup group (dataset,groupName);
 
   try {
-    std::cout << "-- fileID()     = " << group.fileID()     << std::endl;
-    std::cout << "-- groupID()    = " << group.groupID()    << std::endl;
-    std::cout << "-- groupName()  = " << group.groupName()  << std::endl;
-    std::cout << "-- ra()         = " << group.ra()         << std::endl;
-    std::cout << "-- dec()        = " << group.dec()        << std::endl;
-    std::cout << "-- n_subbands() = " << group.n_subbands() << std::endl;
+    std::cout << "-- fileID()      = " << group.fileID()      << std::endl;
+    std::cout << "-- groupID()     = " << group.groupID()     << std::endl;
+    std::cout << "-- groupName()   = " << group.groupName()   << std::endl;
+    std::cout << "-- ra()          = " << group.ra()          << std::endl;
+    std::cout << "-- dec()         = " << group.dec()         << std::endl;
+    std::cout << "-- nofSubbands() = " << group.nofSubbands() << std::endl;
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
@@ -127,7 +128,17 @@ int test_parameters (std::string const &filename)
 
 // ------------------------------------------------------------------------------
 
-int test_methods (std::string const &filename)
+/*!
+  \brief Test the various methods for operation on the data
+
+  \param filename  -- Name of the input data file
+  \param groupName -- Name of the beam group to open and work with
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function
+*/
+int test_methods (std::string const &filename,
+		  std::string const &groupName)
 {
   std::cout << "\n[tBeamGroup::test_methods]\n" << std::endl;
 
@@ -137,8 +148,18 @@ int test_methods (std::string const &filename)
   dataset.open(filename.c_str());
   DAL::BeamGroup group (dataset,groupName);
 
+  std::cout << "[1] Extract Subband objects from beam-group..." << std::endl;
   try {
-    
+    int nofSubbands = group.nofSubbands();
+    if (nofSubbands > 0) {
+      DAL::BeamSubband * subband;
+      for (int n(0); n<nofSubbands; n++) {
+	/* Extract the n-th subband from the beam-group */
+	subband = group.getSubband (n);
+	/* Display a summary of the sub-band's properties */
+ 	subband->summary();
+      }
+    }
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
@@ -153,6 +174,7 @@ int main (int argc,char *argv[])
 {
   int nofFailedTests (0);
   std::string filename;
+  std::string groupName ("beam000");
 
   /* Check command line parameters */
 
@@ -164,11 +186,11 @@ int main (int argc,char *argv[])
   }
 
   /* Test the constructors */
-  nofFailedTests += test_constructors(filename);
+  nofFailedTests += test_constructors(filename,groupName);
 
   if (nofFailedTests == 0) {
-    nofFailedTests += test_parameters(filename);
-    nofFailedTests += test_methods(filename);
+    nofFailedTests += test_parameters(filename,groupName);
+//     nofFailedTests += test_methods(filename,groupName);
   }
 
   return nofFailedTests;

@@ -214,6 +214,8 @@ of internal parameters.
   testing of internal initialization pending
   - Add methods to retrieve length of data columns
   - add opional parameter to control potential overwriting of existing table
+  - rename getName() to printName(), since the current name of the method is 
+  misleading.
 
 <hr>
 

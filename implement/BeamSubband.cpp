@@ -25,6 +25,9 @@
 #include "BeamSubband.h"
 #endif
 
+using std::cerr;
+using std::endl;
+
 namespace DAL
 {
 
@@ -38,39 +41,36 @@ namespace DAL
   
   BeamSubband::BeamSubband ()
   {
-    init();
+    table_p     = NULL;
+    H5tableID_p = -1;
   }
-  
+
   // ---------------------------------------------------------------- BeamSubband
+
   /*!
-    \param groupID -- HDF5 identifier of the group within which the table is 
-           contained
-    \param table -- Name of the table to be created/opened.
+    \param table -- Pointer to a dalTable object
   */
-  BeamSubband::BeamSubband ( hid_t const &groupID,
-			     std::string const &table )
+  BeamSubband::BeamSubband ( dalTable * table )
   {
-    init (groupID,
-	  table);
+    table_p     = table;
+    H5tableID_p = table_p->tableID();
   }
   
   // ---------------------------------------------------------------- BeamSubband
 
   /*!
-    \param dataset -- Dataset within which the table is embedded
-    \param group   -- Groug within the dataset within which the table is
-           embedded
-    \param table -- Name of the table to be opened
+    \param dataset -- dalDataset within which the table is contained
+    \param group   -- Name of the BeamGroup within which the sub-band in contained
+    \param table   -- Name of the sub-band table
   */
-  BeamSubband::BeamSubband ( dalDataset &dataset,
-			     std::string const &group,
-			     std::string const &table )
+  BeamSubband::BeamSubband (dalDataset &dataset,
+			    std::string const &group,
+			    std::string const &table)
   {
-    init ( dataset,
-	   group,
-	   table );
+    table_p     = dataset.openTable (table,group);
+    H5tableID_p = table_p->tableID();
   }
-  
+
   // ============================================================================
   //
   //  Destruction
@@ -90,79 +90,93 @@ namespace DAL
   //
   // ============================================================================
   
-  // ----------------------------------------------------------------------- init
-
-  void BeamSubband::init ()
-  {
-    table_p     = NULL;
-    H5groupID_p = -1;
-    H5tableID_p = -1;
-  }
-
-  // ----------------------------------------------------------------------- init
-  
-  /*!
-    \param groupID -- HDF5 identifier of the group within which the table is 
-           contained
-    \param table -- Name of the table to be created/opened.
-  */
-  void BeamSubband::init ( hid_t const &groupID,
-			   std::string const &table )
-  {
-    /* Basic initialization */
-    init ();
-    
-    try {
-      dalTable tmp (groupID,table);
-      H5tableID_p = tmp.tableID();
-    } catch (std::string message) {
-      std::cerr << "[BeamSubband::init] ERROR : " << message << std::endl;
-    }
-  }
-  
-  // ----------------------------------------------------------------------- init
-
-  /*!
-    \param dataset -- Dataset within which the table is embedded
-    \param group   -- Groug within the dataset within which the table is
-           embedded
-    \param table -- Name of the table to be opened
-  */
-  void BeamSubband::init ( dalDataset &dataset,
-			   std::string const &group,
-			   std::string const &table )
-  {
-    /* Basic initialization */
-    init ();
-    
-    try {
-      dalTable * newTable = dataset.openTable (group,table);
-      table_p = newTable;
-    } catch (std::string message) {
-      std::cerr << "[BeamSubband::init] ERROR : " << message << std::endl;
-    }
-  }
-  
   // -------------------------------------------------------------------- summary
   
+  /*!
+    \param os -- Output stream to which the summary will be written.
+  */
   void BeamSubband::summary (std::ostream &os)
   {
-    os << "[BeamSubband] Summary of object properties." << std::endl;
+    os << "[BeamSubband] Summary of object properties." << endl;
     
-    os << "-- HDF5 group handle ID = " << H5groupID_p << std::endl;
-    os << "-- HDF5 table handle ID = " << H5tableID_p << std::endl;
-    
-    if (H5tableID_p > 0) {
-      os << "-- Number of table rows = " << table_p->getNumberOfRows()
-	 << std::endl;
+    if (table_p != NULL) {
+      os << "-- Table HDF5 object ID   = " << table_p->tableID()         << endl;
+      os << "-- nof. table fields      = " << table_p->nofFields()       << endl;
+      os << "-- nof. table records     = " << table_p->nofRecords()      << endl;
+      os << "-- Number of table rows   = " << table_p->getNumberOfRows() << endl;
+      /* List of table column names */
+      std::vector<std::string> names = columnNames ();
+//       os << "-- Names of table columns = [";
+//       for (unsigned int n(0); n<names.size(); n++) {
+// 	os << " " << names[n];
+//       }
+//       os << " ]" << endl;
     }
   }
 
+  // ------------------------------------------------------------------ nofFields
+  
+  /*!
+    \return nofFields -- The number of fields within the table
+  */
+  hsize_t BeamSubband::nofFields ()
+  {
+    hsize_t fields (0);
+
+    if (table_p != NULL) {
+      fields = table_p->nofFields();
+    }
+
+    return fields;
+  }
+
+  // ----------------------------------------------------------------- nofRecords
+
+  /*!
+    \return nofRecords -- The number of records within the table
+  */
+  hsize_t BeamSubband::nofRecords ()
+  {
+    hsize_t records (0);
+
+    if (table_p != NULL) {
+      records = table_p->nofRecords();
+    }
+
+    return records;
+  }
+  
+  // ----------------------------------------------------------------- nofRecords
+
+  /*!
+    \return nofTableRows -- The number of rows within the table
+  */
+  long BeamSubband::nofTableRows ()
+  {
+    long rows (0);
+
+    if (table_p != NULL) {
+      rows = table_p->getNumberOfRows();
+    }
+
+    return rows;
+  }
+
+  // ---------------------------------------------------------------- columnNames
+
+  std::vector<std::string> BeamSubband::columnNames ()
+  {
+    if (table_p != NULL) {
+      return table_p->listColumns();
+    } else {
+      std::vector<std::string> names (1,"");
+      return names;
+    }
+  }
+  
   // ----------------------------------------------------------- center_frequency
 
   /*!
-    \brief Get the center frequency of the subband
-
     \return frequency -- The frequency of the subband
   */
   int BeamSubband::center_frequency () const
@@ -177,7 +191,7 @@ namespace DAL
       }
     } else {
       std::cerr << "[BeamSubband::center_frequency] Unable to retrieve attribute;"
-		<< " HDF5 table ID not assigned" << std::endl;
+		<< " HDF5 table ID not assigned" << endl;
     }
     
     return frequency;

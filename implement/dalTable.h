@@ -54,12 +54,12 @@ namespace DAL {
     void * file;  // can be HDF5File, FITS, MS
     
     // HDF5-specific variables
-    hid_t file_id; // hdf5 file_id
-    hid_t table_id; // hdf5 table id
-    hsize_t nfields; // hdf5 field count
-    hsize_t nrecords; // hdf5 record count
-    herr_t status; // hdf5 return status
-    char **field_names;  // hdf5 list of columns
+    hid_t fileID_p;      // HDF5 file_id
+    hid_t tableID_p;     // HDF5 table id
+    hsize_t nfields;     // HDF5 field count
+    hsize_t nrecords;    // HDF5 record count
+    herr_t status;       // HDF5 return status
+    char **field_names;  // HDF5 list of columns
     
     dalFilter * filter; // table filter
     
@@ -69,18 +69,17 @@ namespace DAL {
     vector<dalColumn> columns; // list of table columns
     
 #ifdef WITH_CASA
-
       casa::Table * casa_table_handle;
       casa::Array<casa::Double> array_vals_dbl;
       casa::Array<casa::Complex> array_vals_comp;
       casa::ROTableColumn * casa_column;
 #endif
-
+      
       void h5addColumn_setup( std::string const column_name, bool &removedummy );
       void h5addColumn_insert( uint const & indims, std::string const & colname,
                                hid_t const & field_type,
                                bool const & removedummy );
-
+      
     public:
 
       // ------------------------------------------------ Construction
@@ -89,9 +88,6 @@ namespace DAL {
       dalTable();
       //! Table constructor for a specific file format.
       dalTable( string filetype );
-      //! Table constructor for table in HDF5 group
-      dalTable (hid_t const &groupID,
-		std::string const tableName);
 
       // ------------------------------------------------- Destruction
 
@@ -99,10 +95,14 @@ namespace DAL {
       ~dalTable();
 
       // -------------------------------------------- Parameter access
-      
-      inline hid_t fileID () const { return file_id; }
-      inline hid_t tableID () const { return table_id; }
+
+      //! Get the HDF5 file identifier
+      inline hid_t fileID () const { return fileID_p; }
+      //! Get the HDF5 table object identifier
+      inline hid_t tableID () const { return tableID_p; }
+      //! Get the number of fields within the table
       inline hsize_t nofFields () const { return nfields; }
+      //! Get the numbe of records within the table
       inline hsize_t nofRecords () const { return nrecords; }
 
       void printColumns();
@@ -114,16 +114,20 @@ namespace DAL {
       
 #ifdef WITH_CASA
       void openTable( string tablename );
+      //! Open the table in a measurement set.
       void openTable( string tablename,
                       casa::MSReader * reader );
+      //! Open a filtered CASA measurement set table.
       void openTable( string tablename,
                       casa::MSReader * reader,
                       dalFilter * filter );
-
+      //! Get keyword of type casa::String
       casa::Bool GetKeyword( casa::String const KeywordName,
                              casa::String *result);
+      //! Get keyword of type casa::Double
       casa::Bool GetKeyword( casa::String const KeywordName,
                              casa::Double *result);
+      //! Get keyword of type casa::Float
       casa::Bool GetKeyword( casa::String const KeywordName,
                              casa::Float *result);
       casa::Bool GetKeyword( casa::String const KeywordName,
@@ -136,14 +140,21 @@ namespace DAL {
 #endif
 
       void createTable( void * voidfile, string tablename, string groupname );
+      //! Get a column object
       dalColumn * getColumn_complexInt16( string colname );
+      //! Get a column object
       dalColumn * getColumn_complexFloat32( string colname );
+      //! Get a column object
       dalColumn * getColumn_Float32( string colname );
+      //! Get a column object
       dalColumn * getColumn( string colname );
+      //! Add a new column to the table
       void addColumn( string colname, string coltype, uint dims=1);
+      //! Add a new column of type complex to the table
       void addComplexColumn( string compname,
                              vector<dalColumn> ri,
                              int subfields );
+      //! Remove a column from the table
       void removeColumn( const string &colname );
       void writeDataByColNum( void * structure, int index, int rownum );
       void setFilter( string columns );
@@ -169,7 +180,7 @@ namespace DAL {
       template<class T>
       bool getAttribute( std::string attrname, T &value )
       {
-        return h5getAttribute( table_id, attrname, value );
+        return h5getAttribute( tableID_p, attrname, value );
       }
 
       bool setAttribute( std::string attrname, char * data, int size=1 );
@@ -181,9 +192,11 @@ namespace DAL {
       bool setAttribute( std::string attrname, double * data, int size=1 );
       bool setAttribute( std::string attrname, std::string data );
       bool setAttribute( std::string attrname, std::string * data, int size=1 );
-
+      //! Find an attribute associated with the table
       bool findAttribute( string attrname );
+      //! Get the number of rows within the table
       long getNumberOfRows();
+      //! Print the name of the table
       void getName();
       void * getColumnData( string colname );
 

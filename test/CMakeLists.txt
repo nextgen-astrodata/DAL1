@@ -32,6 +32,7 @@ set (tests
   tdalTable
   tBeamFormed
   tBeamGroup
+  tBeamSubband
   tEnumerations
   tHDF5Common
   )
@@ -120,6 +121,7 @@ if (DAL_ENABLE_TESTING)
     add_test (tdalTable tdalTable ${dataset_beamformed})
     add_test (tBeamFormed tBeamFormed ${dataset_beamformed})
     add_test (tBeamGroup tBeamGroup ${dataset_beamformed})
+    add_test (tBeamSubband tBeamSubband ${dataset_beamformed})
   endif (dataset_beamformed)
 
   ## -----------------------------------------------------------------

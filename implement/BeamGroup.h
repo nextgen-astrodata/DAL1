@@ -41,6 +41,16 @@ namespace DAL
     \author Joseph Masters
     
     \test tBeamGroup.cpp
+
+    <h3>Synopsis</h3>
+
+    Besides the the possibility to retrieve attributes attached to the HDF5 group
+    there are also a few methods available, which wrap the access to the embedded 
+    BeamSubband objects:
+    - center_frequencies()
+    - tableIDs()
+    - nofTableFields()
+    - nofTableRows()
   */
   
   class BeamGroup
@@ -57,7 +67,7 @@ namespace DAL
     //! Dataset object of the Data Access Library
     dalDataset dataset_p;
     //! Vector of subband tables within the dataset
-    std::vector<BeamSubband> beamSubbands_p;
+    std::vector<BeamSubband*> subbands_p;
 
   public:
 
@@ -93,19 +103,11 @@ namespace DAL
 
     // ------------------------------------------------------- Methods
 
+    //! Initialize the beam group values.
     bool setBeamGroup ( dalDataset &dataset,
 			std::string const &name);
     dalTable * getSubbandTable (int subband);
     float *  getIntensity( int subband, int start, int &length );
-    void getSubbandData_XY( int subband,
-			    int start,
-			    int &length,
-			    std::vector< std::complex<short> > &x_values,
-			    std::vector< std::complex<short> > &y_values );
-    void getSubbandData_X( int subband,
-			   int start,
-			   int &length,
-			   std::vector< std::complex<short> > &values );
     std::complex<short>  * getSubbandData_X( int subband,
 					     int start,
 					     int &length );
@@ -113,30 +115,43 @@ namespace DAL
     std::complex<short>  * getSubbandData_Y( int subband,
 					     int start,
 					     int &length );
+    void getSubbandData_X( int subband,
+			   int start,
+			   int &length,
+			   std::vector< std::complex<short> > &values );
     void getSubbandData_Y( int subband,
 			   int start,
 			   int &length,
 			   std::vector< std::complex<short> > &values );
+    void getSubbandData_XY( int subband,
+			    int start,
+			    int &length,
+			    std::vector< std::complex<short> > &x_values,
+			    std::vector< std::complex<short> > &y_values );
     //! Get a subband from the beam
     BeamSubband * getSubband( int subband );
     //! Get a subband from the beam
     void getSubband( BeamSubband &subband,
 		     int sb );
-    /*!
-      \brief Provide a summary of the object's properties
-    */
-    inline void summary() {
-      summary(std::cout);
-    }
+    //! Provide a summary of the object's properties
+    inline void summary() { summary(std::cout); }
+    //! Provide a summary of the object's properties
     void summary(std::ostream &os);
+    //! Get the RA of the beam direction
     std::string ra();
+    //! Get the declination of the beam direction
     std::string dec();
-    int n_subbands ();
+    //! Get the number of sub-bands for this beam
+    int nofSubbands ();
 
     //! Get the center frequencies of the sub-bands
     std::vector<int> center_frequencies ();
     //! Get the table IDs of the sub-bands
     std::vector<hid_t> tableIDs ();
+    //! Get the nof. fields within the sub-band tables
+    std::vector<hsize_t> nofTableFields ();
+    //! Get the number of table rows
+    std::vector<long> nofTableRows ();
     
     /************************************************************************
      *

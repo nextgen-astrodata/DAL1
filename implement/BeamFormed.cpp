@@ -86,7 +86,7 @@ namespace DAL {
       within which the actual data for the individual sub-bands are stored.
     */
     std::vector<std::string> beamGroups = beams();
-
+    
     /* Always check if actually a list of groups has been extracted */
     if ( beamGroups.size() > 0 )
       {
