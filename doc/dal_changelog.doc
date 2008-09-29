@@ -1,0 +1,61 @@
+/* $Id$ */
+
+/**
+
+\page dal_changelog DAL :: Changelog
+
+<hr>
+
+<pre>
+From: Lars B"ahren
+Date: September 25, 2008 12:47:38 PM GMT+02:00
+</pre>
+
+Hey everyone,
+
+since taking over some of the DAL-related duties from Joe, I have been working towards fixing a number of issues and providing a requested functionality of the higher-level data access interfaces.
+
+1) The tool to convert raw TBB data dumps to HDF5 (tbb2h5) no has been switched completely to a Boost-based command line interface, thereby making the passing of parameters considerably simpler and more stable. The required dependency on the Boost program_options library is handled within the USG code base, such that no additional external components are required.
+
+2) I fixed errors in the DAL::TBB class, which resulted in a failure to convert raw TBB data to the HDF5 data format; we ran into this problem when Sef tried to convert some raw data here in Nijmegen. Successful has been done on the file Joe has been providing to Kalpana - a final check will be done using another set of file stored on a machine here in Nijmegen.
+
+3) A small conceptional oversight has been corrected in DAL::dalDataset - already existing datasets are no longer automatically overwritten when creating a new object. However an optional parameter can be used to force re-creation/overwrite.
+
+4) Some of the documentation originally provided with the DAL Manual has been moved to the Doxygen documentation, thereby increasing the visibility and shortening the update cycles.
+
+Next in line are:
+
+1) Add requested functionality to work with beamformed data; while the basic functionality is in place a number of higher level methods are missing, which will enable application programmers to make more efficient usage of the classes.
+
+2) Track configuration/build error reported by John, which will cause a failure to build the DAL at Groningen.
+
+
+Cheers,
+
+Lars
+
+<hr>
+
+<pre>
+From: Lars B"ahren
+Date: September 29, 2008 3:19:07 PM GMT+02:00
+</pre>
+
+Hey everybody,
+
+time for another DAL updates/changes summary:
+
+1) I now completed the mapping of the HDF5 file structure for beam-formed data onto the set of classes Joe started writing; most important of all now also the missing DAL::BeamSubband objects are created, there allowing access to the (meta-) data of the various sub-bands. A number of additional wrapper functions have been written, which enable to retrieve all values of a certain type (e.g. the center frequency) from the sub-bands within a beam.  Minor adjustments have been made to the constructors, adding a bit more flexibility in how to create a new object.
+
+2) Basic testing of all the high-level interfaces to the beam-formed data is now available; besides serving as test the small programs should also serve a place to look for examples how to code against the C++ interface of the DAL.
+
+3) Methods to provide a basic summary of an object's properties have been added to some more of the DAL core classes, thereby enabling the means for simple diagnostics.
+
+Next in line:
+
+1) Next iteration on the installation problems reported by John.
+
+2) Added extraction of time-shifts between TBB dumbs from individual dipoles to the high-level interfaces (DAL::LOFAR_DipoleDataset, DAL::LOFAR_StationGroup). Also consider finally moving the classes from the CR-Tools code branch to DAL/implement.
+
+
+*/
