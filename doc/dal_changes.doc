@@ -26,7 +26,20 @@
   <li>At least on Ray there still seems to be the issue of one of the Python
   modules not building properly, resulting in a failure to generate the Python
   bindings to the DAL.
-  <li>John McFarland reports the following build errors for version 1964:
+  <li>John McFarland reports the following build errors for version 2041:
+  - The is still the problem that the Python \e num_util module does not build
+  properly due to an error of locating the \e numpy installation
+  \verbatim
+  [100%] Building CXX object num_util/CMakeFiles/num_util.dir/num_util.o
+  In file included from /ome12/lofar/lofarsoft/lofarsoft/external/python/num_util/num_util.cpp:8:
+  /ome12/lofar/lofarsoft/lofarsoft/external/python/num_util/num_util.h:14:31: error: numpy/arrayobject.h: No such file or directory
+  \endverbatim
+  - \e casacore is not build, since the \e g2c library cannot be found:
+  \verbatim
+  CMake Error: The following variables are used in this project, but they are set to NOTFOUND.
+  Please set them or make sure they are set and tested correctly in the CMake files:
+  G2C_LIBRARIES (ADVANCED)
+  \endverbatim
   - Unable to find NUMERIC
   \verbatim
   -- [USG CMake configuration]
@@ -223,13 +236,15 @@ of internal parameters.
   misleading.
 
 - DAL::TBB_Timeseries
-  - DAL::TBB_Timeseries::channelNames () not yet implemented - currently there i
+  - DAL::TBB_Timeseries::channelNames () not yet implemented - currently there is
   only an empty function as placeholder to avoid linking errors.
 
 - DAL::TBB_StationGroup
   - DAL::TBB_StationGroup::channelNames() currently only implemented for
   std::vector<std::string> -> need to implement casa::Vector<casa::String>
   variant as well
+  - Collect start-times of the dumps from the individual dipoles and thereof compute a
+  relative shift between the data channels.
 
 - DAL::TBB
   - We need to implement a frame buffer, which can be used to reorder incoming
