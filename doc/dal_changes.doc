@@ -18,6 +18,11 @@
 \section dal_changes_build Configuration & Build
 
 <ol>
+  <li>Adjust the -D compiler flags used for indicating if a external component (such as casacore or HDF5) can
+  be used; the compiler flags used should be the same ones as used in the external code itself, such that we
+  can use one and the dame switch.
+  - -DWITH_BOOST -> -DHAVE_BOOST
+  - -DWITH_CFITSIO -> -DHAVE_CFITSIO
   <li>At least on Ray there still seems to be the issue of one of the Python
   modules not building properly, resulting in a failure to generate the Python
   bindings to the DAL.
@@ -217,6 +222,22 @@ of internal parameters.
   - rename getName() to printName(), since the current name of the method is 
   misleading.
 
+- DAL::TBB_Timeseries
+  - DAL::TBB_Timeseries::channelNames () not yet implemented - currently there i
+  only an empty function as placeholder to avoid linking errors.
+
+- DAL::TBB_StationGroup
+  - DAL::TBB_StationGroup::channelNames() currently only implemented for
+  std::vector<std::string> -> need to implement casa::Vector<casa::String>
+  variant as well
+
+- DAL::TBB
+  - We need to implement a frame buffer, which can be used to reorder incoming
+  frames if necessary; even though raw frames may be arriving in chronological
+  order for most of the time, this by no means is a globally valid assumption.
+  Check whether or not some of the ideas implemented in tbbctlResort.cc can be
+  used.
+
 <hr>
 
 \section dal_changes_python Issues with the Python interface
@@ -280,9 +301,9 @@ of internal parameters.
     - DAL::BeamGroup.dec
     - DAL::BeamGroup.n_subbands
     - DAL::BeamGroup.summary
-    - main_beam_diam
-    - notes
-    - nstations
+    - DAL::BeamFormed.main_beam_diam
+    - DAL::BeamFormed.notes
+    - DAL::BeamFormed.nofStations
     - number_of_*
     - observation_id
     - observer, point_*
