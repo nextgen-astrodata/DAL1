@@ -23,16 +23,12 @@
   can use one and the dame switch.
   - -DWITH_BOOST -> -DHAVE_BOOST
   - -DWITH_CFITSIO -> -DHAVE_CFITSIO
-  <li>At least on Ray there still seems to be the issue of one of the Python
-  modules not building properly, resulting in a failure to generate the Python
-  bindings to the DAL.
+  <li>I've been unable to make a clean build of the DAL. Not only on the (somewhat misconfigured) machines in
+  Nijmegen, but also not on a clean SUSE 10.3. To me it seems to be connected to using a newer  version of boost.
+  If boost 1.33 from the system is used, I get error messeages during compilation, if I (try to) force it to use
+  the boost from the  "usg/external" tree or a freshly installed boost 1.36, then I get errors during  linking. (If
+  you want the exact error messages, mail me.) -- A. Horneffer (01/10/2008)
   <li>John McFarland reports the following build errors for version 2041:
-  - \e casacore is not build, since the \e g2c library cannot be found:
-  \verbatim
-  CMake Error: The following variables are used in this project, but they are set to NOTFOUND.
-  Please set them or make sure they are set and tested correctly in the CMake files:
-  G2C_LIBRARIES (ADVANCED)
-  \endverbatim
   - Failure caused by HDF5 interface version
   \verbatim
   usg/src/DAL/implement/dalArray.cpp: In constructor `DAL::dalFloatArray::dalFloatArray(hid_t, std::string, std::vector<int, std::allocator<int> >, float*, std::vector<int, std::allocator<int> >)':
