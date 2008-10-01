@@ -215,7 +215,7 @@ endif (DAL_PYTHON_BINDINGS)
 
 if (BOOST_INCLUDES)
   include_directories (${BOOST_INCLUDES} ${BOOST_INCLUDES}/boost)
-  add_definitions (-DWITH_BOOST)
+  add_definitions (-DHAVE_BOOST)
 else (BOOST_INCLUDES)
   message (STATUS "[DAL] Missing Boost header files!")
 endif (BOOST_INCLUDES)
@@ -229,14 +229,14 @@ endif (CASACORE_INCLUDES)
 
 if (CFITSIO_INCLUDES)
   include_directories (${CFITSIO_INCLUDES})
-  add_definitions (-DWITH_CFITSIO)
+  add_definitions (-DHAVE_CFITSIO)
 else (CFITSIO_INCLUDES)
   message (STATUS "[DAL] Missing CFITSIO header files!")
 endif (CFITSIO_INCLUDES)
 
 if (HAVE_HDF5)
   include_directories (${HDF5_INCLUDES})
-  add_definitions (-DWITH_HDF5)
+  add_definitions (-DHAVE_HDF5)
   ## check individual header files: H5LT.h
   if (NOT HAVE_HDF5_H5LT_H)
     message (STATUS "[DAL] HDF5 installation incomplete: missing H5LT.h")
@@ -293,69 +293,6 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 # add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-## =============================================================================
-##
-##  Datasets for the test programs
-##
-## =============================================================================
-
-if (DAL_ENABLE_TESTING)
-
-  ## FITS
-  
-  find_file (dataset_fits WN65341H.fits
-    PATHS
-    ${USG_ROOT}/data
-    ${USG_ROOT}/data/test
-    )
-  
-  ## Measurement Set
-
-  find_path (dataset_ms table.dat table.info
-    PATHS
-    ${USG_ROOT}/data
-    ${USG_ROOT}/data/test
-    PATH_SUFFIXES
-    L2007_01810_SB18-20_OB20.MS
-    lofar/cs1/L2007_01810_SB18-20_OB20.MS
-    10602381_S0_T20.MS
-    wsrt/lffe/10602381_S0_T20.MS
-    )
-
-  ## TBB time-series data
-  
-  find_file (dataset_tbb rw_20080604_122217_2300.dat.h5
-    PATHS
-    ${USG_ROOT}/data
-    ${USG_ROOT}/data/test
-    )
-  
-  find_file (dataset_tbb_raw rw_20080604_122217_2300.dat
-    PATHS
-    ${USG_ROOT}/data
-    ${USG_ROOT}/data/test
-    )
-
-  ## Beam-formed data
-
-  find_file (dataset_beamformed
-    NAMES
-    bf_20080604_121337.cor.h5 bf_20080604_121337.h5 TBB1.cor.h5
-    PATHS
-    ${USG_ROOT}/data
-    ${USG_ROOT}/data/test
-    )
-  
-  find_file (dataset_lopes 2007.01.31.23:59:33.960.event
-    PATHS
-    ${USG_ROOT}/data
-    ${USG_ROOT}/data/test
-    PATH_SUFFIXES
-    lopes
-    )
-  
-endif (DAL_ENABLE_TESTING)
 
 ## =============================================================================
 ##

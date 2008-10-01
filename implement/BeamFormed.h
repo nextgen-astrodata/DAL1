@@ -147,7 +147,7 @@ namespace DAL {
       {
         summary (cout, true);
       }
-    void summary (ostream &os, bool const &listBeams);
+    void summary (ostream &os, bool const &listBeams=false);
     std::vector<std::string> beams();
     BeamGroup * getBeam( int beam );
     std::string filename();

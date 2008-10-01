@@ -31,6 +31,7 @@ add_definitions (
 
 if (HAVE_CASA OR HAVE_CASACORE)
   add_definitions (
+    -DHAVE_CASA
     -DWITH_CASA
     # -- compiler flags utilized in the source code --
     -DAIPS_STDLIB
@@ -67,7 +68,7 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 
 ## [1] list of source files
 
-#FILE (GLOB dal_sources *.cpp)
+#FILE (GLOB dal_sources dal*.cpp)
 
 set (dal_sources
   dalArray.cpp
@@ -84,6 +85,9 @@ set (dal_sources
   HDF5Common.cpp
   Enumerations.cpp
   TBB.cpp
+  TBB_DipoleDataset.cpp
+  TBB_StationGroup.cpp
+  TBB_Timeseries.cpp
   BFRaw.cpp
   Common.cpp
 )

@@ -42,7 +42,7 @@
 #include <hdf5.h>
 #include <hdf5_hl.h>
 
-#ifdef WITH_CFITSIO
+#ifdef HAVE_CFITSIO
 extern "C"
   {
 #include <fitsio.h>

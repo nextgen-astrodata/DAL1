@@ -35,6 +35,9 @@ set (tests
   tBeamSubband
   tEnumerations
   tHDF5Common
+  tTBB_DipoleDataset
+  tTBB_StationGroup
+  tTBB_Timeseries
   )
 
 foreach (src ${tests})
@@ -109,6 +112,7 @@ if (DAL_ENABLE_TESTING)
   
   if (dataset_tbb)
     add_test (tHDF5Common tHDF5Common ${dataset_tbb})
+    add_test (tTBB_Timeseries tTBB_Timeseries ${dataset_tbb})
   else (dataset_tbb)
     message (STATUS "Unable to find LOFAR time-series dataset; skipping tests.")
   endif (dataset_tbb)

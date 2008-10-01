@@ -34,6 +34,9 @@
   In file included from /ome12/lofar/lofarsoft/lofarsoft/external/python/num_util/num_util.cpp:8:
   /ome12/lofar/lofarsoft/lofarsoft/external/python/num_util/num_util.h:14:31: error: numpy/arrayobject.h: No such file or directory
   \endverbatim
+  \b Update: Think I found the solution for that one. On the one hand the build order might not have been listed correctly within the CMakeLists.txt
+  file, but more importantly one needs to take into account that numpy/arrayobject.h would be picked up by any of the search scripts after installation
+  of the module.
   - \e casacore is not build, since the \e g2c library cannot be found:
   \verbatim
   CMake Error: The following variables are used in this project, but they are set to NOTFOUND.

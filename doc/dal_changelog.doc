@@ -8,6 +8,50 @@
 
 <pre>
 From: Lars B"ahren
+Date: October 1, 2008 10:21:07 AM GMT+02:00
+</pre>
+
+Hey all,
+
+here is another updates on the recent changes:
+
+1) There has been the long-standing issue of making the high-level methods for the access of TBB time-series dat in HDF5 format part of the DAL; originally - when I started with them - they were part of the CR-Tools. However with the ongoing upgrades to the classes this has been the perfect opportunity to finally collect all the functionality within the DAL: the classes LOFAR_DipoleDataset, LOFAR_StationGroup and LOFAR_Timeseries now have been moved to DAL::TBB_DipoleDataset, DAL::TBB_StationGroup and DAL::TBB_Timeseries - a number of functional upgrades have been done already do allow recursive access to the attributes. Resulting adjustments in the CR-Tools source code have been made already.
+
+2) Inspecting the build logs John sent in, I think I have been able to resolve the problem of num_util not building due to missing the NumPy header files - this is an issue which potentially should show up across all systems unless there is a system-wide NumPy installation in a place where the configuration scripts can pick it up. Since include paths are set during configuration time, the header files must be search for also within the source code tree, because they will be showing up in the installation location only afterwards (essentially it is that one cannot prove for something which has not been created yet).
+
+Next in line:
+
+1) Resolve problem of missing Boost library functionality on a number of machines (including the one in Groningen and in Nijmegen). Since making use of the program_options library to handle command line parameters, we can no longer rely on a system-wide installation, as it typically is older and does not contain the required modules yet.
+
+2) For the TBB time-series data collect start-times of the dumps from the individual dipoles and thereof compute a relative shift between the data channels. Also clean up some of the functions which do recursive collection of attributes to properly support casacore types. In order to better connect to the DataReader framework of the CR-Tools, default constructor and file attachment need to be added.
+
+<hr>
+
+<pre>
+From: Lars B"ahren
+Date: September 29, 2008 3:19:07 PM GMT+02:00
+</pre>
+
+Hey everybody,
+
+time for another DAL updates/changes summary:
+
+1) I now completed the mapping of the HDF5 file structure for beam-formed data onto the set of classes Joe started writing; most important of all now also the missing DAL::BeamSubband objects are created, there allowing access to the (meta-) data of the various sub-bands. A number of additional wrapper functions have been written, which enable to retrieve all values of a certain type (e.g. the center frequency) from the sub-bands within a beam.  Minor adjustments have been made to the constructors, adding a bit more flexibility in how to create a new object.
+
+2) Basic testing of all the high-level interfaces to the beam-formed data is now available; besides serving as test the small programs should also serve a place to look for examples how to code against the C++ interface of the DAL.
+
+3) Methods to provide a basic summary of an object's properties have been added to some more of the DAL core classes, thereby enabling the means for simple diagnostics.
+
+Next in line:
+
+1) Next iteration on the installation problems reported by John.
+
+2) Added extraction of time-shifts between TBB dumbs from individual dipoles to the high-level interfaces (DAL::LOFAR_DipoleDataset, DAL::LOFAR_StationGroup). Also consider finally moving the classes from the CR-Tools code branch to DAL/implement.
+
+<hr>
+
+<pre>
+From: Lars B"ahren
 Date: September 25, 2008 12:47:38 PM GMT+02:00
 </pre>
 
@@ -34,28 +78,6 @@ Cheers,
 
 Lars
 
-<hr>
-
-<pre>
-From: Lars B"ahren
-Date: September 29, 2008 3:19:07 PM GMT+02:00
-</pre>
-
-Hey everybody,
-
-time for another DAL updates/changes summary:
-
-1) I now completed the mapping of the HDF5 file structure for beam-formed data onto the set of classes Joe started writing; most important of all now also the missing DAL::BeamSubband objects are created, there allowing access to the (meta-) data of the various sub-bands. A number of additional wrapper functions have been written, which enable to retrieve all values of a certain type (e.g. the center frequency) from the sub-bands within a beam.  Minor adjustments have been made to the constructors, adding a bit more flexibility in how to create a new object.
-
-2) Basic testing of all the high-level interfaces to the beam-formed data is now available; besides serving as test the small programs should also serve a place to look for examples how to code against the C++ interface of the DAL.
-
-3) Methods to provide a basic summary of an object's properties have been added to some more of the DAL core classes, thereby enabling the means for simple diagnostics.
-
-Next in line:
-
-1) Next iteration on the installation problems reported by John.
-
-2) Added extraction of time-shifts between TBB dumbs from individual dipoles to the high-level interfaces (DAL::LOFAR_DipoleDataset, DAL::LOFAR_StationGroup). Also consider finally moving the classes from the CR-Tools code branch to DAL/implement.
 
 
 */
