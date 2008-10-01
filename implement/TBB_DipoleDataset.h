@@ -110,36 +110,23 @@ namespace DAL { // Namespace DAL -- begin
     TBB_DipoleDataset ();
     //! Argumented constructor
     TBB_DipoleDataset (std::string const &filename,
-			 std::string const &dataset);
+		       std::string const &dataset);
     //! Argumented constructor
     TBB_DipoleDataset (hid_t const &location,
-			 std::string const &dataset);
-    
+		       std::string const &dataset);   
+    //! Argumented constructor
     TBB_DipoleDataset (hid_t const &dataset_id);
-    
-    /*!
-      \brief Copy constructor
-      
-      \param other -- Another TBB_DipoleDataset object from which to create
-             this new one.
-    */
+    //! Copy constructor
     TBB_DipoleDataset (TBB_DipoleDataset const &other);
     
     // -------------------------------------------------------------- Destruction
 
-    /*!
-      \brief Destructor
-    */
+    //! Destructor
     ~TBB_DipoleDataset ();
     
     // ---------------------------------------------------------------- Operators
     
-    /*!
-      \brief Overloading of the copy operator
-      
-      \param other -- Another TBB_DipoleDataset object from which to make a
-             copy.
-    */
+    //! Overloading of the copy operator
     TBB_DipoleDataset& operator= (TBB_DipoleDataset const &other); 
     
     // --------------------------------------------------------------- Parameters

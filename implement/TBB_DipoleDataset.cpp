@@ -87,6 +87,10 @@ namespace DAL { // Namespace DAL -- begin
   
   // -------------------------------------------------------- TBB_DipoleDataset
 
+  /*!
+    \param other -- Another TBB_DipoleDataset object from which to create
+           this new one.
+  */
   TBB_DipoleDataset::TBB_DipoleDataset (TBB_DipoleDataset const &other)
   {
     // Initialize internal variables
@@ -128,6 +132,10 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  /*!
+    \param other -- Another TBB_DipoleDataset object from which to make a
+           copy.
+  */
   TBB_DipoleDataset& TBB_DipoleDataset::operator= (TBB_DipoleDataset const &other)
   {
     if (this != &other) {
