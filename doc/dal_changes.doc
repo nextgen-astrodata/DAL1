@@ -28,7 +28,48 @@
   If boost 1.33 from the system is used, I get error messeages during compilation, if I (try to) force it to use
   the boost from the  "usg/external" tree or a freshly installed boost 1.36, then I get errors during  linking. (If
   you want the exact error messages, mail me.) -- A. Horneffer (01/10/2008)
-  <li>John McFarland reports the following build errors for version 2041:
+  <li>Conflicting Boost library versions lead to failure to build the applications using \e program_options
+  library:
+  \verbatim
+  Linking CXX executable bf2h5
+  /usr/local/lib/libboost_unit_test_framework-gcc.so: undefined reference to `init_unit_test_suite(int, char**)'
+  collect2: ld returned 1 exit status
+  make[2]: *** [apps/bf2h5] Error 1
+  make[1]: *** [apps/CMakeFiles/bf2h5.dir/all] Error 2
+  make: *** [all] Error 2
+  \endverbatim
+  Looks like we also need to build that library ourselves to ensure nothing funny happens along the way; for
+  information on how to build the library consult <tt>boost/libs/test/build/Jamfile.v2</tt>:
+  \verbatim
+  UTF_SOURCES =
+	compiler_log_formatter
+	debug
+	exception_safety
+	execution_monitor
+	framework
+	interaction_based
+	logged_expectations
+	plain_report_formatter
+	progress_monitor
+	results_collector
+	results_reporter
+	test_tools
+	unit_test_log
+	unit_test_main
+	unit_test_monitor
+	unit_test_parameters
+	unit_test_suite
+	xml_log_formatter
+	xml_report_formatter
+	;
+
+  lib boost_prg_exec_monitor : $(PRG_EXEC_MON_SOURCES).cpp ;
+
+  lib boost_test_exec_monitor : $(TEST_EXEC_MON_SOURCES).cpp : <link>static ;
+
+  lib boost_unit_test_framework : $(UTF_SOURCES).cpp ;
+  \endverbatim
+  <li>John McFarland reports the following build errors for version 2049:
   - Failure caused by HDF5 interface version
   \verbatim
   usg/src/DAL/implement/dalArray.cpp: In constructor `DAL::dalFloatArray::dalFloatArray(hid_t, std::string, std::vector<int, std::allocator<int> >, float*, std::vector<int, std::allocator<int> >)':
