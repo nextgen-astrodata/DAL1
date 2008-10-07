@@ -38,14 +38,14 @@ namespace DAL { // Namespace DAL -- begin
   
   TBB_Timeseries::TBB_Timeseries ()
   {
-    filename_p = "UNDEFINED";
-    fileID_p   = 0;
+    init ();
   }
 
   // ------------------------------------------------------------- TBB_Timeseries
   
   TBB_Timeseries::TBB_Timeseries (std::string const &filename)
   {
+    init ();
     init (filename);
   }
   
@@ -54,9 +54,8 @@ namespace DAL { // Namespace DAL -- begin
   TBB_Timeseries::TBB_Timeseries (TBB_Timeseries const &other)
   {
     // Initialize internal variables
-    fileID_p   = 0;
-    filename_p = "UNDEFINED";
-
+    init ();
+    // copy the internal parameters of the other object
     copy (other);
   }
   
@@ -95,9 +94,8 @@ namespace DAL { // Namespace DAL -- begin
 
   void TBB_Timeseries::copy (TBB_Timeseries const &other)
   {
-    if (other.fileID_p == 0) {
-      filename_p = "UNDEFINED";
-      fileID_p   = 0;
+    if (other.fileID_p < 0) {
+      init ();
     } else {
       init (other.filename_p);
     }
@@ -216,6 +214,14 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
 
   // ----------------------------------------------------------------------- init
+
+  void TBB_Timeseries::init ()
+  {
+    filename_p = "UNDEFINED";
+    fileID_p   = -1;
+  }
+  
+  // ----------------------------------------------------------------------- init
   
   void TBB_Timeseries::init (std::string const &filename)
   {
@@ -246,12 +252,15 @@ namespace DAL { // Namespace DAL -- begin
   bool TBB_Timeseries::setStationGroups ()
   {
     /* Check minimal condition for operations below. */
-    if (fileID_p < 1) {
+    if (fileID_p < 0) {
+      std::cerr << "[TBB_Timeseries::setStationGroups]"
+		<< " Unable to set station groups; not connected to fileset."
+		<< endl;
       return false;
     }
-
+    
     /* Local variables. */
-
+    
     bool status        = true;
     herr_t h5error     = 0;
     hsize_t nofObjects = 0;

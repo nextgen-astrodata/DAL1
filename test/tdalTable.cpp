@@ -132,8 +132,9 @@ int test_parameters (std::string const &filename)
 int test_methods (std::string const &filename)
 {
   std::cout << "\n[tdalTable::test_methods]\n" << std::endl;
-
+  
   int nofFailedTests (0);
+  DAL::dalDataset dataset (filename.c_str(),"HDF5");
   
   return nofFailedTests;
 }

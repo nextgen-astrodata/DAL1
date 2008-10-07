@@ -676,6 +676,11 @@ namespace DAL { // Namespace DAL -- begin
     
     /*!
       \brief Initialize the internal dataspace of the object
+    */
+    void init ();
+
+    /*!
+      \brief Initialize the internal dataspace of the object
 
       \param filename -- Name of the data file
     */
