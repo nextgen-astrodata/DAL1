@@ -276,14 +276,6 @@ namespace DAL   // Namespace DAL -- begin
   //@{
   /*!
     \brief Get the value of an attribute attached to a group or dataset
-
-    \retval value      -- Value of the attribute
-    \param name        -- Name of the attribute
-    \param location_id -- Identifier for the HDF5 object - file, group, dataset,
-           array - the attribute is attached to.
-
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered
   */
   template <class T>
   bool h5get_attribute (T &value,

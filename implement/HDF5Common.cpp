@@ -33,17 +33,16 @@ using casa::MPosition;
 using casa::Quantity;
 #endif
 
-namespace DAL   // Namespace DAL -- begin
-  {
-
+namespace DAL {  // Namespace DAL -- begin
+  
   // ============================================================================
   //
   //  Inspection and Feedback
   //
   // ============================================================================
-
+  
   // ---------------------------------------------------------------- show_vector
-
+  
   template<class T>
   void show_vector (std::ostream& os,
                     std::vector<T> &vec)
@@ -55,9 +54,9 @@ namespace DAL   // Namespace DAL -- begin
       }
     os << " ]";
   }
-
+  
   // -------------------------------------------------------- h5attribute_summary
-
+  
   void h5attribute_summary (std::ostream &os,
                             hid_t const &attribute_id)
   {
@@ -508,7 +507,16 @@ namespace DAL   // Namespace DAL -- begin
   // ============================================================================
 
   // ------------------------------------------------------------ h5get_attribute
+  
+  /*!
+    \retval value      -- Value of the attribute
+    \param name        -- Name of the attribute
+    \param location_id -- Identifier for the HDF5 object - file, group, dataset,
+           array - the attribute is attached to.
 
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered
+   */
   template <class T>
   bool h5get_attribute (T &value,
                         std::string const &name,

@@ -71,7 +71,7 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   void TBB_Timeseries::destroy ()
-  {;}
+  { ; }
   
   // ============================================================================
   //
@@ -187,8 +187,8 @@ namespace DAL { // Namespace DAL -- begin
   void TBB_Timeseries::summary (std::ostream &os)
   {
     os << "[TBB_Timeseries] Summary of object properties"       << endl;
-    os << "-- File name  ........  : " << filename_p              << endl;
-    os << "-- File ID      ......  : " << fileID_p                << endl;
+    os << "-- File name  ........  : " << filename_p            << endl;
+    os << "-- File ID      ......  : " << fileID_p              << endl;
 
     /*
       Further output is conditional - only makes sense if successfully connected
@@ -231,7 +231,9 @@ namespace DAL { // Namespace DAL -- begin
 			H5P_DEFAULT);
     
     if (fileID_p > 0) {
-      // store the filename
+      /*
+       * Store the filename
+       */
       filename_p = filename;
       // locate and register the station groups
       bool status = setStationGroups ();

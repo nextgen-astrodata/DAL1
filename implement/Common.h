@@ -28,25 +28,36 @@
 #include "dalBaseTypes.h"
 #endif
 
-namespace DAL
-  {
+/*!
+  \file Common.h
 
-  long double julday(time_t seconds,long *intmjd, long double *fracmjd);
+  \ingroup DAL 
 
+  \brief A collection of commonly used routines for the Data Access Library
+
+  \author Joseph Masters
+*/
+
+namespace DAL {
+  
+  long double julday (time_t seconds,
+		      long *intmjd,
+		      long double *fracmjd);
+  
   double mjd2unix( double mjd_time );
-
+  
   bool h5setAttribute_string( hid_t const &obj_id, std::string attrname,
                               std::string * data, int size );
-
+  
   bool h5setAttribute_double( hid_t const &obj_id, std::string attrname,
                               double * data, int32_t size );
-
+  
   bool h5setAttribute_int( hid_t const &obj_id, std::string attrname,
                            int * data, int32_t size );
-
+  
   bool h5setAttribute_uint( hid_t const &obj_id, std::string attrname,
                             uint * data, int32_t size );
-
+  
   bool h5setAttribute_float( hid_t const &obj_id, std::string attrname,
                              float * data, int32_t size );
 
