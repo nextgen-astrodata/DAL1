@@ -46,6 +46,65 @@ using DAL::TBB_Timeseries;  // Namespace usage
 
 // -----------------------------------------------------------------------------
 
+int test_hdf5access (std::string const &filename)
+{
+  std::cout << "\n[test_hdf5access]\n" << std::endl;
+  
+  int nofFailedTests (0);
+  hid_t file_id (0);
+  hid_t group_id (0);
+  
+  std::cout << "[1] Open HDF5 file for reading ..." << std::endl;
+  try {
+    file_id = H5Fopen (filename.c_str(),
+		       H5F_ACC_RDONLY,
+		       H5P_DEFAULT);
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  std::cout << "[2] Reading attributes attached to root group ..." << std::endl;
+  try {
+    if (file_id > 0) {
+      std::string telescope;
+      std::string observer;
+      std::string project;
+      
+      DAL::h5get_attribute (telescope,"TELESCOPE",file_id);
+      DAL::h5get_attribute (observer,"OBSERVER",file_id);
+      DAL::h5get_attribute (project,"PROJECT",file_id);
+      
+      std::cout << "-- TELESCOPE = " << telescope << std::endl;
+      std::cout << "-- OBSERVER  = " << observer  << std::endl;
+      std::cout << "-- PROJECT   = " << project   << std::endl;
+    } else {
+      std::cerr << "--> Unable to read attributes - no open file!" << std::endl;
+      nofFailedTests++;
+    }
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  std::cout << "[3]" << std::endl;
+  try {
+    if (file_id > 0) {
+      group_id = H5Gopen1 (file_id,"Station023");
+    } else {
+      std::cerr << "--> Unable to open station group - no open file!" << std::endl;
+      nofFailedTests++;
+    }
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  } 
+
+  return nofFailedTests;
+}
+
+// -----------------------------------------------------------------------------
+
 /*!
   \brief Test constructors for a new TBB_Timeseries object
 
@@ -290,6 +349,9 @@ int main (int argc,
   }
 
   std::string filename = argv[1];
+
+  // Test file access directly using the HDF5 library
+  nofFailedTests += test_hdf5access (filename);
 
   // Test for the constructor(s)
   nofFailedTests += test_construction (filename);

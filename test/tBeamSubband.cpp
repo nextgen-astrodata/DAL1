@@ -35,6 +35,7 @@
 using DAL::dalDataset;
 using DAL::dalGroup;
 using DAL::dalTable;
+using DAL::BeamSubband;
 
 // ------------------------------------------------------------------------------
 
@@ -107,8 +108,47 @@ int test_construction (std::string const &filename,
 		       std::string const &groupName,
 		       std::string const &tableName)
 {
-  int nofFailedTests (0);
+  std::cout << "\n[tBeamSubband::test_construction]\n" << std::endl;
 
+  int nofFailedTests (0);
+  
+  std::cout << "[1] Testing default constructor ..." << std::endl;
+  try {
+    BeamSubband subband;
+    //
+    subband.summary();
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Argumented constructor using dalDataset ..." << std::endl;
+  try {
+    dalDataset dataset (filename.c_str(),"HDF5");
+    //
+    BeamSubband subband (dataset,groupName,tableName);
+    //
+    subband.summary();
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[3] Argumented constructor using dalTable ..." << std::endl;
+  try {
+    dalDataset *dataset;
+    dalTable * table;
+    dataset = new dalDataset(filename.c_str(),"HDF5");
+    table = dataset->openTable (tableName,groupName);
+    //
+    BeamSubband subband (table);
+    //
+    subband.summary();
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
@@ -131,6 +171,10 @@ int main (int argc,char *argv[])
   }
 
   nofFailedTests += test_tables (filename,groupName,tableName);
-
+  
+  if (nofFailedTests == 0) {
+    nofFailedTests += test_construction (filename,groupName,tableName);
+  }
+    
   return nofFailedTests;
 }
