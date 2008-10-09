@@ -162,14 +162,18 @@ namespace DAL {
     std::vector<std::string> sources();
     //! Get the observation identifier
     std::string observation_id();
+    //! Get the project identifier
     std::string proj_id();
     std::string point_ra();
     std::string point_dec();
+    //! Get the name of the observer
     std::string observer();
+    //! Get the observation epoch as Median Julian Day (MJD)
     std::string epoch_mjd();
     std::string epoch_date();
     std::string epoch_utc();
     std::string epoch_lst();
+    //! Get the diameter of the main beam
     int main_beam_diam();
     int center_freq();
     int bandwidth();
@@ -185,6 +189,24 @@ namespace DAL {
     std::vector<int> station_temperatures();
     //! Get the notes attached to the data set
     std::string notes();
+
+    // --------------------------------------------------------------------------
+    // Access to the data stored in the sub-bands
+    
+    //! Get the X column data for a given subband.
+    std::complex<short> * getSubbandData_X (int const &beam,
+					    int const &subband);
+    //! Get the Y column data for a given subband.
+    std::complex<short> * getSubbandData_Y (int const &beam,
+					    int const &subband);
+    //! Get the X column data for a given subband.
+    void getSubbandData_X (std::vector<complex<short> > &data,
+			   int const &beam,
+			   int const &subband);
+    //! Get the Y column data for a given subband.
+    void getSubbandData_Y (std::vector<complex<short> > &data,
+			   int const &beam,
+			   int const &subband);
     
     /************************************************************************
      *

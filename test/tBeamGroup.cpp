@@ -92,7 +92,7 @@ int test_constructors (std::string const &filename,
 // ------------------------------------------------------------------------------
 
 /*!
-  \brief Test extraction of the various attributes/parameters
+  \brief Test extraction of the various attributes
 
   \param filename  -- Name of the input data file
   \param groupName -- Name of the beam group to open and work with
@@ -100,10 +100,10 @@ int test_constructors (std::string const &filename,
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
-int test_parameters (std::string const &filename,
+int test_attributes (std::string const &filename,
 		     std::string const &groupName)
 {
-  std::cout << "\n[tBeamGroup::test_parameters]\n" << std::endl;
+  std::cout << "\n[tBeamGroup::test_attributes]\n" << std::endl;
 
   int nofFailedTests (0);
   
@@ -111,6 +111,7 @@ int test_parameters (std::string const &filename,
   dataset.open(filename.c_str());
   DAL::BeamGroup group (dataset,groupName);
 
+  std::cout << "[1] Attributes attached to the beam group ..." << std::endl;
   try {
     std::cout << "-- fileID()      = " << group.fileID()      << std::endl;
     std::cout << "-- groupID()     = " << group.groupID()     << std::endl;
@@ -123,6 +124,31 @@ int test_parameters (std::string const &filename,
     nofFailedTests++;
   }
   
+  std::cout << "[2] Attributes attached to the sub-band tables ..." << std::endl;
+  try {
+    /*
+     *  Center frequencies [MHz] of the sub-bands
+     */
+    std::vector<int> freq = group.center_frequencies();
+    std::cout << "-- Center frequencies = [";
+    for (uint n(0); n<freq.size(); n++) {
+      std::cout << " " << freq[n];
+    }
+    std::cout << " ]" << std::endl;
+    /*
+     * Number of rows in the sub-band tables
+     */
+    std::vector<long> rows = group.nofTableRows();
+    std::cout << "-- nof. table rows    = [";
+    for (uint n(0); n<rows.size(); n++) {
+      std::cout << " " << rows[n];
+    }
+    std::cout << " ]" << std::endl;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
   return nofFailedTests;
 }
 
@@ -189,7 +215,7 @@ int main (int argc,char *argv[])
   nofFailedTests += test_constructors(filename,groupName);
 
   if (nofFailedTests == 0) {
-    nofFailedTests += test_parameters(filename,groupName);
+    nofFailedTests += test_attributes(filename,groupName);
 //     nofFailedTests += test_methods(filename,groupName);
   }
 

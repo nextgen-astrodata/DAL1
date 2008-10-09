@@ -890,14 +890,41 @@ namespace DAL {
       }
     return station_temperatures;
   }
+  
+  // ============================================================================
+  //
+  //  Access to the data stored in the sub-bands
+  //
+  // ============================================================================
+
+  /*!
+    \param beam    -- The number of the beam from which to access the subband
+    \param subband -- The number of the subband from which to retrieve the data
+  */
+  std::complex<short> * BeamFormed::getSubbandData_X (int const &beam,
+						      int const &subband)
+  {
+    return beamGroups_p[beam]->getSubbandData_X(subband);
+  }
+  
+  /*!
+    \param beam    -- The number of the beam from which to access the subband
+    \param subband -- The number of the subband from which to retrieve the data
+  */
+  std::complex<short> * BeamFormed::getSubbandData_Y (int const &beam,
+						      int const &subband)
+  {
+    return beamGroups_p[beam]->getSubbandData_Y(subband);
+  }
+  
+  // ============================================================================
+  //
+  //  Boost wrappers to allow some previously defined functions to be easily
+  //  called from a python prompt.
+  //
+  // ============================================================================
 
 #ifdef PYTHON
-  /************************************************************************
-   *
-   * The following functions are boost wrappers to allow some previously
-   *   defined functions to be easily called from a python prompt.
-   *
-   ************************************************************************/
 
   // ---------------------------------------------------------- summary_boost
 

@@ -51,10 +51,35 @@ namespace DAL
     - tableIDs()
     - nofTableFields()
     - nofTableRows()
+
+    <h3>Usage</h3>
+
+    <ol>
+      <li>Construction of a new BeamGroup object can be done via the default
+      constructor (which will not be connected to any dataset)
+      \code
+      DAL::BeamGroup group;
+      \endcode
+      or from an existing dalDataset
+      \code
+      // Name of the dataset to open
+      std::string nameFile ("mydata.h5");
+      // Name of the beam group within the dataset
+      std::string nameBeam ("beam000");
+      // Open dataset into a dalDataset
+      DAL::dalDataset dataset;
+      dataset.open(nameFile.c_str());
+      // Extract beam group from the dataset
+      DAL::BeamGroup beam (dataset,nameBeam);
+      \endcode
+      <li>Get the center frequencies of the sub-bands contained within this beam:
+      \code
+      std::vector<int> freq = beam.center_frequencies();
+      \endcode
+    </ol>
   */
   
-  class BeamGroup
-  {
+  class BeamGroup {
     
   private:
     
@@ -68,11 +93,11 @@ namespace DAL
     dalDataset dataset_p;
     //! Vector of subband tables within the dataset
     std::vector<BeamSubband*> subbands_p;
-
+    
   public:
-
+    
     // -------------------------------------- Construction/Destruction
-
+    
     //! Default constructor
     BeamGroup();
     //! Argumented constructor
@@ -80,7 +105,7 @@ namespace DAL
 		std::string const &name );
     //! Destructor
     ~BeamGroup();
-
+    
     // -------------------------------------------- Parameter handling
 
     //! Initialize the object's internal parameters
@@ -107,18 +132,30 @@ namespace DAL
     bool setBeamGroup ( dalDataset &dataset,
 			std::string const &name);
     dalTable * getSubbandTable (int subband);
-    float *  getIntensity( int subband, int start, int &length );
-    std::complex<short>  * getSubbandData_X( int subband,
+    //! Get the X column data for a given subband.
+    std::complex<short>  * getSubbandData_X (int const &subband);
+    //! Get the Y column data for a given subband.
+    std::complex<short>  * getSubbandData_Y (int const &subband);
+    //! Get the X column data for a given subband.
+    void getSubbandData_X (std::vector<std::complex<short> > &data,
+			   int const &subband);
+    //! Get the Y column data for a given subband.
+    void getSubbandData_Y (std::vector<std::complex<short> > &data,
+			   int const &subband);
+    //! Get X column data for a given subband.
+    std::complex<short>  * getSubbandData_X (int subband,
 					     int start,
 					     int &length );
-    
+    //! Get Y column data for a given subband.
     std::complex<short>  * getSubbandData_Y( int subband,
 					     int start,
 					     int &length );
+    //! Get X column data for a given subband.
     void getSubbandData_X( int subband,
 			   int start,
 			   int &length,
 			   std::vector< std::complex<short> > &values );
+    //! Get Y column data for a given subband.
     void getSubbandData_Y( int subband,
 			   int start,
 			   int &length,
@@ -128,6 +165,10 @@ namespace DAL
 			    int &length,
 			    std::vector< std::complex<short> > &x_values,
 			    std::vector< std::complex<short> > &y_values );
+    //! Get total instensity data for a given subband
+    float *  getIntensity( int subband,
+			   int start,
+			   int &length );
     //! Get a subband from the beam
     BeamSubband * getSubband( int subband );
     //! Get a subband from the beam

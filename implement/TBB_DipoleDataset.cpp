@@ -715,8 +715,8 @@ namespace DAL { // Namespace DAL -- begin
   // ------------------------------------------------------------------------- fx
   
   bool TBB_DipoleDataset::fx (int const &start,
-				int const &nofSamples,
-				short *data)
+			      int const &nofSamples,
+			      short *data)
   {
     if (datasetID_p > 0) {
       herr_t h5error (0);
@@ -817,7 +817,7 @@ namespace DAL { // Namespace DAL -- begin
   // ------------------------------------------------------------------------- fx
   
   casa::Vector<double> TBB_DipoleDataset::fx (int const &start,
-						int const &nofSamples)
+					      int const &nofSamples)
   {
     if (datasetID_p > 0) {
       bool status (true);

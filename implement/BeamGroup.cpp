@@ -321,7 +321,7 @@ namespace DAL {
 
   // ============================================================================
   //
-  //  Methods
+  //  Methods for access of metadata/attributes
   //
   // ============================================================================
   
@@ -408,18 +408,76 @@ namespace DAL {
     return rows;
   }
 
-  // --------------------------------------------------------------- getIntensity
+  // ============================================================================
+  //
+  //  Methods for access of subband data
+  //
+  // ============================================================================
 
   /*!
-   \brief Get total instensity data for a given subband
+    \param subband -- The number of the subband from which to retrieve the data
+  */
+  std::complex<short> * BeamGroup::getSubbandData_X (int const &subband)
+  {
+    int start  = 0;
+    int length = subbands_p[subband]->nofTableRows();
+    
+    return getSubbandData_X (subband,
+			     start,
+			     length);
+    
+  }
+  
+  /*!
+    \param subband -- The number of the subband from which to retrieve the data
+  */
+  std::complex<short> * BeamGroup::getSubbandData_Y (int const &subband)
+  {
+    int start  = 0;
+    int length = subbands_p[subband]->nofTableRows();
 
-   Get X and Y columns data for a given subband
+    return getSubbandData_X (subband,
+			     start,
+			     length);
+  }
+  
+  /*!
+    \retval data   -- The data from the selected sub-band
+    \param subband -- The number of the subband from which to retrieve the data
+  */
+  void BeamGroup::getSubbandData_X (std::vector<std::complex<short> > &data,
+				    int const &subband)
+  {
+    int length = subbands_p[subband]->nofTableRows();
+    std::complex<short> *tmp = getSubbandData_X (subband);
 
-   \param subband Subband to get the data from.
-   \param start Start number of the cell in the column.
-   \param length The number of cells to retrieve.
-   \return intensities Array of intensities
+    data.clear();
+    data.assign (tmp,&tmp[length]);
+  }
+  
+  /*!
+    \retval data   -- The data from the selected sub-band
+    \param subband -- The number of the subband from which to retrieve the data
+  */
+  void BeamGroup::getSubbandData_Y (std::vector<std::complex<short> > &data,
+				    int const &subband)
+  {
+    int length = subbands_p[subband]->nofTableRows();
+    std::complex<short> *tmp;
 
+    tmp = getSubbandData_X (subband);
+
+    data.clear();
+    data.assign (tmp,&tmp[length]);
+  }
+  
+  // --------------------------------------------------------------- getIntensity
+  
+  /*!
+    \param subband Subband to get the data from.
+    \param start Start number of the cell in the column.
+    \param length The number of cells to retrieve.
+    \return intensities Array of intensities
   */
   float *
   BeamGroup::getIntensity( int subband,
@@ -452,13 +510,11 @@ namespace DAL {
 
     return values;
   }
-
+  
   // ---------------------------------------------------------- getSubbandData_XY
-
+  
   /*!
     \brief Get X and Y columns data for a given subband
-    
-    Get X and Y columns data for a given subband
     
     \param subband Subband to get the data from.
     \param start Start number of the cell in the column.
@@ -481,17 +537,11 @@ namespace DAL {
 
 
   /*!
-   \brief Get X column data for a given subband
-
-    Get X column data for a given subband
-
-   \param subband Subband to get the data from.
-   \param start Start number of the cell in the column.
-   \param length The number of cells to retrieve.
-   \param Output character vector of values.
-
+    \param subband Subband to get the data from.
+    \param start Start number of the cell in the column.
+    \param length The number of cells to retrieve.
+    \param Output character vector of values.
   */
-
   std::complex<short> *
   BeamGroup::getSubbandData_X( int subband,
                                int start,
@@ -500,7 +550,7 @@ namespace DAL {
     dalTable * table = NULL;
     dalColumn * col  = NULL;
     dalData * data   = NULL;
-
+    
     vector<string> memberNames = group_p->getMemberNames();
 
     table = dataset_p.openTable( memberNames[subband], group_p->getName() );
@@ -530,17 +580,12 @@ namespace DAL {
 
 
   // ---------------------------------------------------------- getSubbandData_Y
-
+  
   /*!
-   \brief Get Y column data for a given subband
-
-    Get Y column data for a given subband
-
-   \param subband Subband to get the data from.
-   \param start Start number of the cell in the column.
-   \param length The number of cells to retrieve.
-   \return array of values
-
+    \param subband Subband to get the data from.
+    \param start Start number of the cell in the column.
+    \param length The number of cells to retrieve.
+    \return array of values
   */
   std::complex<short> *
   BeamGroup::getSubbandData_Y( int subband,
@@ -581,17 +626,12 @@ namespace DAL {
 
 
   // ---------------------------------------------------------- getSubbandData_X
-
+  
   /*!
-   \brief Get X column data for a given subband
-
-    Get X column data for a given subband
-
-   \param subband Subband to get the data from.
-   \param start Start number of the cell in the column.
-   \param length The number of cells to retrieve.
-   \return array of values
-
+    \param subband Subband to get the data from.
+    \param start Start number of the cell in the column.
+    \param length The number of cells to retrieve.
+    \return array of values
   */
   void BeamGroup::getSubbandData_X( int subband,
                                     int start,
@@ -632,17 +672,12 @@ namespace DAL {
 
 
   // ---------------------------------------------------------- getSubbandData_Y
-
+  
   /*!
-   \brief Get Y column data for a given subband
-
-   Get Y column data for a given subband
-
-   \param subband Subband to get the data from.
-   \param start Start number of the cell in the column.
-   \param length The number of cells to retrieve.
-   \param Output character vector of values.
-
+    \param subband Subband to get the data from.
+    \param start Start number of the cell in the column.
+    \param length The number of cells to retrieve.
+    \param Output character vector of values.
   */
   void BeamGroup::getSubbandData_Y( int subband,
                                     int start,

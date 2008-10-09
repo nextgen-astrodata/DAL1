@@ -40,24 +40,35 @@
 
 namespace DAL {
   
+  //! 
   long double julday (time_t seconds,
 		      long *intmjd,
 		      long double *fracmjd);
   
+  //! Convert Modified Julian Date (mjd) to unix time  
   double mjd2unix( double mjd_time );
-  
-  bool h5setAttribute_string( hid_t const &obj_id, std::string attrname,
-                              std::string * data, int size );
-  
-  bool h5setAttribute_double( hid_t const &obj_id, std::string attrname,
-                              double * data, int32_t size );
-  
-  bool h5setAttribute_int( hid_t const &obj_id, std::string attrname,
-                           int * data, int32_t size );
-  
-  bool h5setAttribute_uint( hid_t const &obj_id, std::string attrname,
-                            uint * data, int32_t size );
-  
+
+  //! Set attribute of type \e string
+  bool h5setAttribute_string( hid_t const &obj_id,
+			      std::string attrname,
+                              std::string * data,
+			      int size );
+  //! Set attribute of type \e double
+  bool h5setAttribute_double( hid_t const &obj_id,
+			      std::string attrname,
+                              double * data,
+			      int32_t size );
+  //! Set attribute of type \e int
+  bool h5setAttribute_int( hid_t const &obj_id,
+			   std::string attrname,
+                           int * data,
+			   int32_t size );
+  //! Set attribute of type \e uint
+  bool h5setAttribute_uint( hid_t const &obj_id,
+			    std::string attrname,
+                            uint * data,
+			    int32_t size );
+  //! Set attribute of type \e float
   bool h5setAttribute_float( hid_t const &obj_id, std::string attrname,
                              float * data, int32_t size );
 
@@ -256,6 +267,7 @@ namespace DAL {
   }
 
 #ifdef PYTHON
+  //! Convert Modified Julian Date (mjd) to unix time  
   bpl::numeric::array mjd2unix_boost( bpl::numeric::array mjd_time );
 #endif
 
