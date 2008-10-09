@@ -161,8 +161,8 @@ namespace DAL
 #include <HDF5Common.h>
 #endif
 
-#ifndef COMMON_H
-#include <Common.h>
+#ifndef DALCOMMON_H
+#include <dalCommon.h>
 #endif
 
 #endif // DALBASETYPES_H

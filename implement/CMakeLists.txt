@@ -74,6 +74,7 @@ set (dal_sources
   dalArray.cpp
   dalBaseTypes.cpp
   dalColumn.cpp
+  dalCommon.cpp
   dalData.cpp
   dalDataset.cpp
   dalFilter.cpp
@@ -89,7 +90,6 @@ set (dal_sources
   TBB_StationGroup.cpp
   TBB_Timeseries.cpp
   BFRaw.cpp
-  Common.cpp
 )
 
 if ( HAVE_CASACORE )

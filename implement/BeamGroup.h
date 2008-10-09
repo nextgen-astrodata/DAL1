@@ -28,8 +28,7 @@
 #include <BeamSubband.h>
 #endif
 
-namespace DAL
-{
+namespace DAL {
   
   /*!
     \class BeamGroup
@@ -131,6 +130,7 @@ namespace DAL
     //! Initialize the beam group values.
     bool setBeamGroup ( dalDataset &dataset,
 			std::string const &name);
+    //! Get the sub-band table
     dalTable * getSubbandTable (int subband);
     //! Get the X column data for a given subband.
     std::complex<short>  * getSubbandData_X (int const &subband);

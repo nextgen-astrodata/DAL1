@@ -21,32 +21,85 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef DALCOMMON_H
+#define DALCOMMON_H
 
 #ifndef DALBASETYPES_H
 #include "dalBaseTypes.h"
 #endif
 
 /*!
-  \file Common.h
+  \file dalCommon.h
 
   \ingroup DAL 
 
   \brief A collection of commonly used routines for the Data Access Library
 
-  \author Joseph Masters
+  \author Joseph Masters, Lars B&auml;hren
+
+  A number of different things are included into this collection of commonly
+  used routines:
+  - Conversion routines
+    - DAL::julday
+    - DAL::mjd2unix
+  - Service functions
+    - DAL::it_exists
+    - DAL::list_vector_members
+  - Routines for the access of HDF5 attributes
+  - Boost.Python wrappers 
+    - DAL::mjd2unix_boost
 */
 
 namespace DAL {
   
-  //! 
+  // ============================================================================
+  //
+  //  Conversion routines
+  //
+  // ============================================================================
+
+  //! Convert UNIX time in to Julian Day
   long double julday (time_t seconds,
 		      long *intmjd,
 		      long double *fracmjd);
   
   //! Convert Modified Julian Date (mjd) to unix time  
-  double mjd2unix( double mjd_time );
+  double mjd2unix (double mjd_time);
+
+  // ============================================================================
+  //
+  //  Service routines
+  //
+  // ============================================================================
+  
+  //! Check if an object exists in a vector
+  template <class T>
+    bool it_exists( std::vector<T> vec, T item )
+    {
+      typename std::vector<T>::iterator it;
+      for ( it=vec.begin() ; it < vec.end(); it++ ) {
+	if ( item == *it ) {
+	  return true;
+	}
+      }
+      return false;
+    }
+  
+  //! List the members of a vector
+  template <class T>
+    void list_vector_members( std::vector<T> vec )
+    {
+      typename std::vector<T>::iterator it;
+      for ( it=vec.begin() ; it < vec.end(); it++ ) {
+	std::cerr << *it << std::endl;
+      }
+    }
+  
+  // ============================================================================
+  //
+  //  Access to HDF5 attributes
+  //
+  // ============================================================================
 
   //! Set attribute of type \e string
   bool h5setAttribute_string( hid_t const &obj_id,
@@ -72,34 +125,6 @@ namespace DAL {
   bool h5setAttribute_float( hid_t const &obj_id, std::string attrname,
                              float * data, int32_t size );
 
-
-  // check if an object exists in a vector
-  // ---------------------------------------------------------- it_exists
-
-  // check if an object exists in a vector
-  template <class T>
-  bool it_exists( std::vector<T> vec, T item )
-  {
-    typename std::vector<T>::iterator it;
-    for ( it=vec.begin() ; it < vec.end(); it++ )
-      {
-        if ( item == *it )
-          return true;
-      }
-    return false;
-  }
-
-  // ---------------------------------------------------------- list_vector_members
-
-  template <class T>
-  void list_vector_members( std::vector<T> vec )
-  {
-    typename std::vector<T>::iterator it;
-    for ( it=vec.begin() ; it < vec.end(); it++ )
-      {
-        std::cerr << *it << std::endl;
-      }
-  }
 
   // ------------------------------------------- h5setAttribute
 
@@ -210,34 +235,33 @@ namespace DAL {
 
     return DAL::SUCCESS;
   }
-
-  /*
-     std::string type specialization
-   */
-  inline bool h5getAttribute( hid_t const &obj_id, std::string attrname,
+  
+  //! Get an HDF5 attribute - std::string type specialization
+  inline bool h5getAttribute( hid_t const &obj_id,
+			      std::string attrname,
                               std::string &value )
-  {
-    hsize_t dims;
-    H5T_class_t type_class;
-    size_t type_size;
-    int rank = 0;
-
-    // Check if attribute exists
-    if ( H5Aexists( obj_id, attrname.c_str()) <= 0 )
-      {
-        std::cerr << "ERROR: Attribute '" << attrname << "' does not exist.\n";
-        return DAL::FAIL;
-      }
-
-    std::string fullname = "/";
-
-    if ( H5LTget_attribute_ndims( obj_id, fullname.c_str(), attrname.c_str(),
-                                  &rank ) < 0 )
-      {
-        std::cerr << "ERROR: Attribute '" << attrname << "' does not exist.\n";
-        return DAL::FAIL;
-      }
-
+    {
+      hsize_t dims;
+      H5T_class_t type_class;
+      size_t type_size;
+      int rank = 0;
+      
+      // Check if attribute exists
+      if ( H5Aexists( obj_id, attrname.c_str()) <= 0 )
+	{
+	  std::cerr << "ERROR: Attribute '" << attrname << "' does not exist.\n";
+	  return DAL::FAIL;
+	}
+      
+      std::string fullname = "/";
+      
+      if ( H5LTget_attribute_ndims( obj_id, fullname.c_str(), attrname.c_str(),
+				    &rank ) < 0 )
+	{
+	  std::cerr << "ERROR: Attribute '" << attrname << "' does not exist.\n";
+	  return DAL::FAIL;
+	}
+      
     if ( H5LTget_attribute_info( obj_id, fullname.c_str(), attrname.c_str(),
                                  &dims, &type_class, &type_size ) < 0 )
       {
@@ -265,6 +289,12 @@ namespace DAL {
     return DAL::FAIL;
 
   }
+
+  // ============================================================================
+  //
+  //  Boost.Python wrappers
+  //
+  // ============================================================================
 
 #ifdef PYTHON
   //! Convert Modified Julian Date (mjd) to unix time  

@@ -173,24 +173,42 @@ int test_methods (std::string const &filename,
   DAL::dalDataset dataset;
   dataset.open(filename.c_str());
   DAL::BeamGroup group (dataset,groupName);
+  int nofSubbands (group.nofSubbands());
+  std::vector<long> rows = group.nofTableRows();
 
   std::cout << "[1] Extract Subband objects from beam-group..." << std::endl;
   try {
-    int nofSubbands = group.nofSubbands();
     if (nofSubbands > 0) {
       DAL::BeamSubband * subband;
       for (int n(0); n<nofSubbands; n++) {
 	/* Extract the n-th subband from the beam-group */
 	subband = group.getSubband (n);
-	/* Display a summary of the sub-band's properties */
- 	subband->summary();
       }
     }
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
-  
+
+  std::cout << "[2] Retrieve data from the subbands ..." << std::endl;
+  try {
+    int length (20);
+    /* Arrays for taking up the returned data */
+    std::complex<short> * dataX;
+    dataX = new std::complex<short> [length];
+    /* Go through the subbands and retrieve the data */
+    for (int n(0); n<nofSubbands; n++) {
+      dataX = group.getSubbandData_X (n,1,length);
+      /* Print some values */
+      std::cout << "[ " << dataX[0] << " " << dataX[1] << " " << dataX[2] << " ... ]" << std::endl;
+    }
+    /* Release allocated memory */
+    delete [] dataX;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
   return nofFailedTests;
 }
 
@@ -216,7 +234,7 @@ int main (int argc,char *argv[])
 
   if (nofFailedTests == 0) {
     nofFailedTests += test_attributes(filename,groupName);
-//     nofFailedTests += test_methods(filename,groupName);
+    nofFailedTests += test_methods(filename,groupName);
   }
 
   return nofFailedTests;

@@ -21,17 +21,23 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef COMMON_H
-#include "Common.h"
+#ifndef DALCOMMON_H
+#include "dalCommon.h"
 #endif
 
-namespace DAL
-  {
+namespace DAL {
 
+  // ============================================================================
+  //
+  //  Conversion routines
+  //
+  // ============================================================================
 
-  // ---------------------------------------------------------- julday
+  // --------------------------------------------------------------------- julday
 
-  long double julday(time_t seconds,long *intmjd, long double *fracmjd)
+  long double julday (time_t seconds,
+		      long *intmjd,
+		      long double *fracmjd)
   {
     long double dayfrac, jd, sec;
     int year, yday;
@@ -63,20 +69,34 @@ namespace DAL
     return jd;
   }
 
-
-  // ---------------------------------------------------------- mjd2unix
-
-  // To convert Modified Julian Date (mjd) to unix time
-  double mjd2unix( double mjd_time )
+  // ------------------------------------------------------------------- mjd2unix
+  
+  /*!
+    \param mjd_time -- The time as Modified Julian Date
+    
+    \return unix -- The time as UNIX seconds
+  */
+  double mjd2unix (double mjd_time)
   {
     // The Unix base date is MJD 40587.
     // and 1 mjd Day = 24 hours or 1440 minutes or 86400 seconds
     // so (unix seconds) = (mjd seconds) - ( unix base date in seconds )
     return ( mjd_time - (40587 * 86400) );
   }
+  
+  // ============================================================================
+  //
+  //  Service routines
+  //
+  // ============================================================================
+  
+  // ============================================================================
+  //
+  //  Access to HDF5 attributes
+  //
+  // ============================================================================
 
-
-  // ------------------------------------------- h5setAttribute_string
+  // ------------------------------------------------------ h5setAttribute_string
 
   /*!
     \brief Add a string attribute.
@@ -232,12 +252,16 @@ namespace DAL
     return h5setAttribute( datatype, obj_id, attrname, data, size );
   }
 
+  // ============================================================================
+  //
+  //  Boost.Python wrappers
+  //
+  // ============================================================================
+  
 #ifdef PYTHON
-
-
-  // ---------------------------------------------------------- mjd2unix_boost
-
-
+  
+  // ------------------------------------------------------------- mjd2unix_boost
+  
   /*!
     - The Unix base date is MJD 40587.
     - 1 mjd Day = 24 hours or 1440 minutes or 86400 seconds
