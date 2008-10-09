@@ -146,10 +146,15 @@ drwxr-xr-x   39 lars  lars        1326 Sep 24 12:09 L2007_01810_SB18-20_OB20.MS
 - currently there are two files collecting a number of commonly used functions
   (HDF5Common.h and Common.h); we should merge them at some point.
 
+- DAL::BeamFormed
+  - add method to retrieve ADC sample frequency
+
 - DAL::BeamGroup
   - get* methods don't raise Exceptions, only return default arrays
   - Add method(s) to retrieve all channels of a correlation product (Intensity,
   X, Y, etc.)
+  - add methods supporting std::vector and casa::Vector
+  - method to retrieve all entries for a subband fails (segfault)
 
 - DAL::BeamSubband
   - currently has no methods to actually create a valid object connected to the
