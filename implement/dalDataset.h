@@ -105,7 +105,7 @@ namespace DAL
       //! HDF5 file handle
       hid_t h5fh;
 
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
       casa::MeasurementSet * ms; // CASA measurement set pointer
       casa::MSReader * ms_reader; // CASA measurement set reader pointer
       casa::Vector<casa::String> ms_tables; // vector of CASA MS tables

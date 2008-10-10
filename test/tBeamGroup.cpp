@@ -33,6 +33,10 @@
   DAL::BeamSubband.
 */
 
+#ifndef DALCOMMON_H
+#include <dalCommon.h>
+#endif
+
 #ifndef DALDATASET_H
 #include <dalDataset.h>
 #endif
@@ -44,6 +48,8 @@
 #ifndef BEAMGROUP_H
 #include <BeamGroup.h>
 #endif
+
+using std::endl;
 
 // ------------------------------------------------------------------------------
 
@@ -59,21 +65,21 @@
 int test_constructors (std::string const &filename,
 		       std::string const &groupName)
 {
-  std::cout << "\n[tBeamGroup::test_constructors]\n" << std::endl;
+  std::cout << "\n[tBeamGroup::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
 
-  std::cout << "[1] Default constructor..." << std::endl;
+  std::cout << "[1] Default constructor..." << endl;
   try {
     DAL::BeamGroup group;
     //
     group.summary();
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
 
-  std::cout << "[2] Argumented constructor..." << std::endl;
+  std::cout << "[2] Argumented constructor..." << endl;
   try {
     DAL::dalDataset dataset;
     dataset.open(filename.c_str());
@@ -82,7 +88,7 @@ int test_constructors (std::string const &filename,
     //
     group.summary();
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
 
@@ -103,7 +109,7 @@ int test_constructors (std::string const &filename,
 int test_attributes (std::string const &filename,
 		     std::string const &groupName)
 {
-  std::cout << "\n[tBeamGroup::test_attributes]\n" << std::endl;
+  std::cout << "\n[tBeamGroup::test_attributes]\n" << endl;
 
   int nofFailedTests (0);
   
@@ -111,20 +117,20 @@ int test_attributes (std::string const &filename,
   dataset.open(filename.c_str());
   DAL::BeamGroup group (dataset,groupName);
 
-  std::cout << "[1] Attributes attached to the beam group ..." << std::endl;
+  std::cout << "[1] Attributes attached to the beam group ..." << endl;
   try {
-    std::cout << "-- fileID()      = " << group.fileID()      << std::endl;
-    std::cout << "-- groupID()     = " << group.groupID()     << std::endl;
-    std::cout << "-- groupName()   = " << group.groupName()   << std::endl;
-    std::cout << "-- ra()          = " << group.ra()          << std::endl;
-    std::cout << "-- dec()         = " << group.dec()         << std::endl;
-    std::cout << "-- nofSubbands() = " << group.nofSubbands() << std::endl;
+    std::cout << "-- fileID()      = " << group.fileID()      << endl;
+    std::cout << "-- groupID()     = " << group.groupID()     << endl;
+    std::cout << "-- groupName()   = " << group.groupName()   << endl;
+    std::cout << "-- ra()          = " << group.ra()          << endl;
+    std::cout << "-- dec()         = " << group.dec()         << endl;
+    std::cout << "-- nofSubbands() = " << group.nofSubbands() << endl;
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   
-  std::cout << "[2] Attributes attached to the sub-band tables ..." << std::endl;
+  std::cout << "[2] Attributes attached to the sub-band tables ..." << endl;
   try {
     /*
      *  Center frequencies [MHz] of the sub-bands
@@ -134,7 +140,7 @@ int test_attributes (std::string const &filename,
     for (uint n(0); n<freq.size(); n++) {
       std::cout << " " << freq[n];
     }
-    std::cout << " ]" << std::endl;
+    std::cout << " ]" << endl;
     /*
      * Number of rows in the sub-band tables
      */
@@ -143,9 +149,9 @@ int test_attributes (std::string const &filename,
     for (uint n(0); n<rows.size(); n++) {
       std::cout << " " << rows[n];
     }
-    std::cout << " ]" << std::endl;
+    std::cout << " ]" << endl;
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
 
@@ -166,9 +172,11 @@ int test_attributes (std::string const &filename,
 int test_methods (std::string const &filename,
 		  std::string const &groupName)
 {
-  std::cout << "\n[tBeamGroup::test_methods]\n" << std::endl;
+  std::cout << "\n[tBeamGroup::test_methods]\n" << endl;
 
   int nofFailedTests (0);
+  int start (0);
+  int length (20);
   
   DAL::dalDataset dataset;
   dataset.open(filename.c_str());
@@ -176,36 +184,60 @@ int test_methods (std::string const &filename,
   int nofSubbands (group.nofSubbands());
   std::vector<long> rows = group.nofTableRows();
 
-  std::cout << "[1] Extract Subband objects from beam-group..." << std::endl;
+  std::cout << "[1] Extract Subband objects from beam-group..." << endl;
   try {
     if (nofSubbands > 0) {
       DAL::BeamSubband * subband;
-      for (int n(0); n<nofSubbands; n++) {
 	/* Extract the n-th subband from the beam-group */
+      for (int n(0); n<nofSubbands; n++) {
 	subband = group.getSubband (n);
+	//
+	std::cout << "  Sub-band = " << n;
+	std::cout << "  ID = " << subband->tableID() << std::endl;
       }
     }
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
 
-  std::cout << "[2] Retrieve data from the subbands ..." << std::endl;
+  std::cout << "[2] Retrieve data via getSubbandData(int,int,&int,vector<complex>) ..."
+	    << endl;
   try {
-    int length (20);
     /* Arrays for taking up the returned data */
-    std::complex<short> * dataX;
-    dataX = new std::complex<short> [length];
+    std::vector<std::complex<short> > dataX (length);
+    std::vector<std::complex<short> > dataY (length);
     /* Go through the subbands and retrieve the data */
     for (int n(0); n<nofSubbands; n++) {
-      dataX = group.getSubbandData_X (n,1,length);
-      /* Print some values */
-      std::cout << "[ " << dataX[0] << " " << dataX[1] << " " << dataX[2] << " ... ]" << std::endl;
+      /* Extract data values from the table */
+      group.getSubbandData_X (n,start,length,dataX);
+      group.getSubbandData_Y (n,start,length,dataY);
+      /* Print the extracted values */
+      std::cout << "-- Data from subband " << n << " ..." << std::endl;
+      std::cout << dataX << std::endl;
+      std::cout << dataY << std::endl;
     }
-    /* Release allocated memory */
-    delete [] dataX;
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  std::cout << "[3] Retrieve data via getSubbandDataXY(...) ..." << endl;
+  try {
+    /* Arrays for taking up the returned data */
+    std::vector<std::complex<short> > dataX (length);
+    std::vector<std::complex<short> > dataY (length);
+    /* Go through the subbands and retrieve the data */
+    for (int n(0); n<nofSubbands; n++) {
+      /* Extract data values from the table */
+      group.getSubbandData_XY (n,start,length,dataX,dataY);
+      /* Print the extracted values */
+      std::cout << "-- Data from subband " << n << " ..." << std::endl;
+      std::cout << dataX << std::endl;
+      std::cout << dataY << std::endl;
+    }
+  } catch (std::string message) {
+    std::cerr << message << endl;
     nofFailedTests++;
   }
 
@@ -225,7 +257,7 @@ int main (int argc,char *argv[])
   if (argc > 1) {
     filename = std::string(argv[1]);
   } else {
-    std::cout << "[tBeamGroup] Missing name of input test file." << std::endl;
+    std::cout << "[tBeamGroup] Missing name of input test file." << endl;
     return(DAL::FAIL);
   }
 

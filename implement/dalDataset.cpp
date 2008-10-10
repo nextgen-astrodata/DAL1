@@ -128,7 +128,7 @@ namespace DAL
     name = "UNDEFINED";
     h5fh = 0;   // hdf5 file handle
 
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
     ms = NULL;
     ms_reader = NULL;
 #endif
@@ -271,7 +271,7 @@ namespace DAL
       }
     else
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         try
           {
             lcltype = MSCASATYPE;
@@ -305,7 +305,7 @@ namespace DAL
   {
     if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         delete ms;
         return DAL::SUCCESS;
 #else
@@ -642,7 +642,7 @@ namespace DAL
     std::vector<std::string> tabs;
     if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         ms_tables = ms_reader->tables();
         unsigned int nelem (ms_tables.nelements());
 
@@ -928,7 +928,7 @@ namespace DAL
   {
     if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         dalTable * lt = new dalTable( MSCASATYPE );
         if ( filter.isSet() )
           lt->openTable( tablename, ms_reader, &filter );

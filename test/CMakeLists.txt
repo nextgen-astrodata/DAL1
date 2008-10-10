@@ -28,6 +28,7 @@ set (tests
   tdal
   tdal_fits
   tpulsar_dal
+  tdalCommon
   tdalDataset
   tdalTable
   tBeamFormed
@@ -62,7 +63,7 @@ endforeach (src)
 
 if (HAVE_CASA OR HAVE_CASACORE)
   ## additional compiler flags
-  add_definitions (-DWITH_CASA)
+  add_definitions (-DHAVE_CASA)
   foreach (src tMeasurementSets tMS_dal tdalLopesEvent)
     ## compiler instructions
     add_executable (${src} ${src}.cpp)
@@ -111,6 +112,7 @@ if (DAL_ENABLE_TESTING)
   ## [4] Tests using HDF5-based time-series dataset
   
   if (dataset_tbb)
+    add_test (tdalCommon tdalCommon ${dataset_tbb})
     add_test (tHDF5Common tHDF5Common ${dataset_tbb})
     add_test (tTBB_DipoleDataset tTBB_DipoleDataset ${dataset_tbb})
     add_test (tTBB_StationGroup tTBB_StationGroup ${dataset_tbb})

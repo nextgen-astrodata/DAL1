@@ -194,19 +194,13 @@ namespace DAL {
     // Access to the data stored in the sub-bands
     
     //! Get the X column data for a given subband.
-    std::complex<short> * getSubbandData_X (int const &beam,
-					    int const &subband);
+    void getSubbandData_X (int &beam,
+			   int &subband,
+			   std::vector<complex<short> > &data);
     //! Get the Y column data for a given subband.
-    std::complex<short> * getSubbandData_Y (int const &beam,
-					    int const &subband);
-    //! Get the X column data for a given subband.
-    void getSubbandData_X (std::vector<complex<short> > &data,
-			   int const &beam,
-			   int const &subband);
-    //! Get the Y column data for a given subband.
-    void getSubbandData_Y (std::vector<complex<short> > &data,
-			   int const &beam,
-			   int const &subband);
+    void getSubbandData_Y (int &beam,
+			   int &subband,
+			   std::vector<complex<short> > &data);
     
     /************************************************************************
      *

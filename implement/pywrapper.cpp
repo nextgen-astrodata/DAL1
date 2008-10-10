@@ -91,7 +91,7 @@ BOOST_PYTHON_MODULE(pydal)
   .def( "data", &dalColumn::data_boost3,
         "Returns the column data into a numpy array.  With three parameters, \n"
         "it returns N elements beginning at offset O [data(O,N)]." )
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
   .def( "getDataType", &dalColumn::getDataType,
         "Return the datatype of the column (casa only)." )
   .def( "ndims", &dalColumn::ndims,
@@ -283,7 +283,7 @@ BOOST_PYTHON_MODULE(pydal)
         "Return true if the attribute exists for the table." )
   .def( "getNumberOfRows", &dalTable::getNumberOfRows,
         "Return the number of rows in the table." )
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
   .def( "openTable", &dalTable::ot_nonMStable,
         "Open a casa table." )
   .def( "getName", &dalTable::getName,

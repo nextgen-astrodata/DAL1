@@ -896,25 +896,21 @@ namespace DAL {
   //  Access to the data stored in the sub-bands
   //
   // ============================================================================
-
-  /*!
-    \param beam    -- The number of the beam from which to access the subband
-    \param subband -- The number of the subband from which to retrieve the data
-  */
-  std::complex<short> * BeamFormed::getSubbandData_X (int const &beam,
-						      int const &subband)
+  
+  void BeamFormed::getSubbandData_X (int &beam,
+				     int &subband,
+				     std::vector<complex<short> > &data)
   {
-    return beamGroups_p[beam]->getSubbandData_X(subband);
+    beamGroups_p[beam]->getSubbandData_X(subband,
+					 data);
   }
   
-  /*!
-    \param beam    -- The number of the beam from which to access the subband
-    \param subband -- The number of the subband from which to retrieve the data
-  */
-  std::complex<short> * BeamFormed::getSubbandData_Y (int const &beam,
-						      int const &subband)
+  void BeamFormed::getSubbandData_Y (int &beam,
+				     int &subband,
+				     std::vector<complex<short> > &data)
   {
-    return beamGroups_p[beam]->getSubbandData_Y(subband);
+    beamGroups_p[beam]->getSubbandData_Y(subband,
+					 data);
   }
   
   // ============================================================================

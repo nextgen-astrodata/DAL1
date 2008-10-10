@@ -27,7 +27,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
 using casa::MDirection;
 using casa::MPosition;
 using casa::Quantity;
@@ -41,73 +41,6 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
   
-  // ---------------------------------------------------------------- show_vector
-  
-  template<class T>
-  void show_vector (std::ostream& os,
-                    std::vector<T> &vec)
-  {
-    os << "[";
-    for (uint n(0); n<vec.size(); n++)
-      {
-        os << " " << vec[n];
-      }
-    os << " ]";
-  }
-  
-  // -------------------------------------------------------- h5attribute_summary
-  
-  void h5attribute_summary (std::ostream &os,
-                            hid_t const &attribute_id)
-  {
-    bool status (true);
-
-    /*
-     * Datatype of the attribute
-     */
-    hid_t datatype_id        = H5Aget_type (attribute_id);
-    hsize_t datatype_size    = H5Tget_size (datatype_id);
-    bool datatype_is_integer = H5Tdetect_class (datatype_id,H5T_INTEGER);
-    bool datatype_is_float   = H5Tdetect_class (datatype_id,H5T_FLOAT);
-    bool datatype_is_string  = H5Tdetect_class (datatype_id,H5T_STRING);
-
-    os << "\t-- Datatype ID             = " << datatype_id  << endl;
-    os << "\t-- Datatype size [Bytes]   = " << datatype_size << endl;
-    os << "\t-- Datatype is H5T_INTEGER = " << datatype_is_integer << endl;
-    os << "\t-- Datatype is H5T_FLOAT   = " << datatype_is_float << endl;
-    os << "\t-- Datatype is H5T_STRING  = " << datatype_is_string << endl;
-
-    H5Tclose (datatype_id);
-
-    /*
-     * Dataspace of the attribute
-     */
-    int rank (0);
-    hid_t dataspace_id       = H5Aget_space (attribute_id);
-    bool dataspace_is_simple = H5Sis_simple(dataspace_id);
-    herr_t h5error;
-
-    try
-      {
-        rank = H5Sget_simple_extent_ndims (dataspace_id);
-      }
-    catch (std::string message)
-      {
-        cerr << "[h5attribute_summary] " << message << endl;
-        status = false;
-      }
-
-    os << "\t-- Dataspace ID            = " << dataspace_id << endl;
-    os << "\t-- Dataspace is simple?    = " << dataspace_is_simple << endl;
-    os << "\t-- Rank of the data array  = " << rank << endl;
-
-    if (dataspace_id > 0)
-      {
-        h5error = H5Sclose (dataspace_id);
-        h5error = H5Eclear1 ();
-      }
-  }
-
   // ------------------------------------------------------ h5get_dataset_shape
 
   bool h5get_dataset_shape (std::vector<uint> &shape,
@@ -156,7 +89,7 @@ namespace DAL {  // Namespace DAL -- begin
 
   // ------------------------------------------------------ h5get_dataset_shape
 
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
   bool h5get_dataset_shape (casa::IPosition &shape,
                             hid_t const &attribute_id)
   {
@@ -245,7 +178,7 @@ namespace DAL {  // Namespace DAL -- begin
 
   // ------------------------------------------------------ h5get_dataspace_shape
 
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
   bool h5get_dataspace_shape (casa::IPosition &shape,
                               hid_t const &attribute_id)
   {
@@ -713,7 +646,7 @@ namespace DAL {  // Namespace DAL -- begin
 
   // ------------------------------------------ h5get_attribute (casa::Vector<T>)
 
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
   template <class T>
   bool h5get_attribute (casa::Vector<T> &value,
                         std::string const &name,
@@ -792,7 +725,7 @@ namespace DAL {  // Namespace DAL -- begin
     return status;
   }
 
-#endif // WITH_CASA
+#endif // HAVE_CASA
 
   // ------------------------------------------------------------ h5set_attribute
 
@@ -921,177 +854,6 @@ namespace DAL {  // Namespace DAL -- begin
     return 0;
   }
 
-#ifdef WITH_CASA
-
-  // ------------------------------------------------------------- h5get_quantity
-
-  Quantity h5get_quantity (Attributes const &value,
-                           Attributes const &unit,
-                           hid_t const &location_id)
-  {
-    if (location_id > 0)
-      {
-        bool status (true);
-        double qValue;
-        std::string qUnit;
-        // retrieve the value of the quantity
-        status *= h5get_attribute(qValue,
-                                  attribute_name(value),
-                                  location_id);
-        // retrieve the unit of the quantity
-        status *= h5get_attribute(qUnit,
-                                  attribute_name(unit),
-                                  location_id);
-        // put together the Quantity object
-        if (status)
-          {
-            Quantity val = Quantity (qValue,
-                                     casa::Unit(qUnit));
-            return val;
-          }
-        else
-          {
-            return Quantity();
-          }
-      }
-    else
-      {
-        cerr << "[h5get_quantity] Unusable ID for HDF5 object!" << endl;
-        return Quantity();
-      }
-  }
-
-  // ------------------------------------------------------------ h5get_direction
-
-  MDirection h5get_direction (Attributes const &value,
-                              Attributes const &unit,
-                              Attributes const &frame,
-                              hid_t const &location_id)
-  {
-    MDirection dir = MDirection();
-
-    if (location_id > 0)
-      {
-        bool status (true);
-        casa::Vector<double> values;
-        casa::Vector<casa::String> units;
-        MDirection::Types tp;
-        std::string refcode;
-        // retrieve the numerical values of the position
-        status *= h5get_attribute(values,
-                                  attribute_name(value),
-                                  location_id);
-        // retrieve the physical units of the position
-        status *= h5get_attribute(units,
-                                  attribute_name(unit),
-                                  location_id);
-        // retrieve the frame of the position
-        status *= h5get_attribute(refcode,
-                                  attribute_name(frame),
-                                  location_id);
-        status *= MDirection::getType (tp,refcode);
-        // assemble MDirection object
-        if (status)
-          {
-            int nofValues = values.nelements();
-            int nofUnits  = units.nelements();
-            if (nofValues == 2 && nofValues == nofUnits)
-              {
-                // create MDirection object
-                dir = MDirection ( Quantity( values(0), units(0)),
-                                   Quantity( values(1), units(1)),
-                                   MDirection::Ref(tp));
-                // return result
-                return dir;
-              }
-            else
-              {
-                cerr << "[h5get_direction] Mismatching number of values and units!" << endl;
-                dir = MDirection();
-              }
-          }
-        else
-          {
-            cerr << "[h5get_direction] Error retrieving components for MDirection!" << endl;
-            dir = MDirection();
-          }
-      }
-    else
-      {
-        cerr << "[h5get_direction] Unusable ID for HDF5 object!" << endl;
-        dir = MDirection();
-      }
-
-    return dir;
-  }
-
-  // ------------------------------------------------------------- h5get_position
-
-  MPosition h5get_position (Attributes const &value,
-                            Attributes const &unit,
-                            Attributes const &frame,
-                            hid_t const &location_id)
-  {
-    MPosition obs = MPosition();
-
-    if (location_id > 0)
-      {
-        bool status (true);
-        casa::Vector<double> values;
-        casa::Vector<casa::String> units;
-        MPosition::Types tp;
-        std::string refcode;
-        // retrieve the numerical values of the position
-        status *= h5get_attribute(values,
-                                  attribute_name(value),
-                                  location_id);
-        // retrieve the physical units of the position
-        status *= h5get_attribute(units,
-                                  attribute_name(unit),
-                                  location_id);
-        // retrieve the frame of the position
-        status *= h5get_attribute(refcode,
-                                  attribute_name(frame),
-                                  location_id);
-        status *= MPosition::getType (tp,refcode);
-        // assemble MPosition object
-        if (status)
-          {
-            int nofValues = values.nelements();
-            int nofUnits  = units.nelements();
-            if (nofValues == 3 && nofValues == nofUnits)
-              {
-                // create MPosition object
-                obs = MPosition ( casa::MVPosition( Quantity( values(0), units(0)),
-                                                    Quantity( values(1), units(1)),
-                                                    Quantity( values(2), units(2))),
-                                  MPosition::Ref(tp));
-                // return result
-                return obs;
-              }
-            else
-              {
-                cerr << "[h5get_position] Mismatching number of values and units!" << endl;
-                obs = MPosition();
-              }
-          }
-        else
-          {
-            cerr << "[h5get_position] Error retrieving components for MPosition!" << endl;
-            obs = MPosition();
-          }
-      }
-    else
-      {
-        cerr << "[h5get_position] Unusable ID for HDF5 object!" << endl;
-        obs = MPosition();
-      }
-
-    return obs;
-  }
-
-#endif
-
 
   // ============================================================================
   //
@@ -1105,19 +867,6 @@ namespace DAL {  // Namespace DAL -- begin
   //  Template instantiation
   //
   // ============================================================================
-
-  template void show_vector (std::ostream& os,
-                             std::vector<uint> &vec);
-  template void show_vector (std::ostream& os,
-                             std::vector<int> &vec);
-  template void show_vector (std::ostream& os,
-                             std::vector<long> &vec);
-  template void show_vector (std::ostream& os,
-                             std::vector<float> &vec);
-  template void show_vector (std::ostream& os,
-                             std::vector<double> &vec);
-  template void show_vector (std::ostream& os,
-                             std::vector<std::string> &vec);
 
   template bool h5get_attribute (uint &value,
                                  std::string const &name,
@@ -1156,7 +905,7 @@ namespace DAL {  // Namespace DAL -- begin
                                  std::string const &name,
                                  hid_t const &location_id);
 
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
   template bool h5get_attribute (casa::Vector<uint> &value,
                                  hid_t const &attribute_id);
   template bool h5get_attribute (casa::Vector<uint> &value,

@@ -29,7 +29,7 @@
 #include <string>
 #include <vector>
 
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
 #include <casa/Arrays/IPosition.h>
 #include <casa/Arrays/Vector.h>
 #include <casa/Quanta/Quantum.h>
@@ -39,6 +39,10 @@
 
 #ifndef ENUMERATIONS_H
 #include "Enumerations.h"
+#endif
+
+#ifndef DALCOMMON_H
+#include <dalCommon.h>
 #endif
 
 #include <hdf5.h>
@@ -103,40 +107,6 @@ namespace DAL   // Namespace DAL -- begin
   //
   // ============================================================================
 
-  /*!
-    \brief Write vector to an output stream
-
-    \param os  -- Stream to which the output is written
-    \param vec -- Vector to be written to the designated output stream
-
-    \return os
-  */
-  template<class T>
-  void show_vector (std::ostream& os,
-                    std::vector<T> &vec);
-
-  /*!
-    \brief Provide a summary of an attribute's internal structure
-
-    \param os           -- Output stream to which the summary is written
-    \param attribute_id --
-  */
-  void h5attribute_summary (std::ostream &os,
-                            hid_t const &attribute_id);
-
-  /*!
-    \brief Provide a summary of an attribute's internal structure
-
-    \param os          -- Output stream to which the summary is written
-    \param name        -- Name of the attribute, as which it is attached to
-           another structure within the file
-    \param location_id -- Identifier of the structure within the file, to which
-           the attribut is attached to.
-  */
-  void h5attribute_summary (std::ostream &os,
-                            std::string const &name,
-                            hid_t const &location_id);
-
   //@{
   /*!
     \brief Get the shape of a dataset
@@ -150,7 +120,7 @@ namespace DAL   // Namespace DAL -- begin
   */
   bool h5get_dataset_shape (std::vector<uint> &shape,
                             hid_t const &dataset_id);
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
   bool h5get_dataset_shape (casa::IPosition &shape,
                             hid_t const &attribute_id);
 #endif
@@ -169,7 +139,7 @@ namespace DAL   // Namespace DAL -- begin
   */
   bool h5get_dataspace_shape (std::vector<uint> &shape,
                               hid_t const &attribute_id);
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
   bool h5get_dataspace_shape (casa::IPosition &shape,
                               hid_t const &attribute_id);
 #endif
@@ -240,7 +210,7 @@ namespace DAL   // Namespace DAL -- begin
   template <class T>
   bool h5get_attribute (std::vector<T> &value,
                         hid_t const &attribute_id);
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
   /*   template <class T> */
   /*     bool h5get_attribute (casa::Array<T> &value, */
   /* 			  hid_t const &attribute_id); */
@@ -285,7 +255,7 @@ namespace DAL   // Namespace DAL -- begin
   bool h5get_attribute (std::vector<T> &value,
                         std::string const &name,
                         hid_t const &location_id);
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
   /*   template <class T> */
   /*     bool h5get_attribute (casa::Array<T> &value, */
   /* 			  std::string const &name, */
@@ -311,71 +281,11 @@ namespace DAL   // Namespace DAL -- begin
     \param opdata -- not used, but necessary as a placeholder
     \return error status
   */
-  herr_t attr_info(hid_t loc_id, const char *name, void *opdata);
+  herr_t attr_info (hid_t loc_id,
+		    const char *name,
+		    void *opdata);
 
   //@}
-
-#ifdef WITH_CASA
-  /*!
-    \brief Get physical quantity attribute as casa::Quantity
-
-    \param value -- Identifier for the attribute storing the numerical value of
-           the quantity.
-    \param unit  -- Identifier for the attribute storing the physical unit of
-           the quantity
-    \param location_id -- Identifier of the structure within the file, to which
-           the attribut is attached to.
-
-    \return quantity -- The physical quantity.
-  */
-  casa::Quantity h5get_quantity (DAL::Attributes const &value,
-                                 DAL::Attributes const &unit,
-                                 hid_t const &location_id);
-
-  /*!
-    \brief Get a physical quantity describing a direction within a frame
-
-    \param value -- Identifier for the attribute storing the numerical value of
-           the quantity.
-    \param unit  -- Identifier for the attribute storing the physical unit of
-           the quantity
-    \param frame -- Identifier for the attribute storing the identifier for the
-           reference frame within which the physical quantity is defined.
-    \param location_id -- Identifier of the structure within the file, to which
-           the attribut is attached to.
-
-    \return direction -- The physical quantity.
-  */
-  casa::MDirection h5get_direction (DAL::Attributes const &value,
-                                    DAL::Attributes const &unit,
-                                    DAL::Attributes const &frame,
-                                    hid_t const &location_id);
-
-  /*!
-    \brief Get a physical quantity describing a position/location
-
-    \param value -- Identifier for the attribute storing the numerical value of
-           the quantity.
-    \param unit  -- Identifier for the attribute storing the physical unit of
-           the quantity
-    \param frame -- Identifier for the attribute storing the identifier for the
-           reference frame within which the physical quantity is defined.
-    \param location_id -- Identifier of the structure within the file, to which
-           the attribut is attached to.
-
-    \return position -- The physical quantity.
-  */
-  casa::MPosition h5get_position (DAL::Attributes const &value,
-                                  DAL::Attributes const &unit,
-                                  DAL::Attributes const &frame,
-                                  hid_t const &location_id);
-#endif
-
-  // ============================================================================
-  //
-  //  Dataspaces and Datatypes
-  //
-  // ============================================================================
 
 } // Namespace DAL -- end
 

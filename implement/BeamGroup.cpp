@@ -128,36 +128,12 @@ namespace DAL {
 	std::vector<hsize_t> fields  = nofTableFields();
 	std::vector<long> rows       = nofTableRows();
 	std::vector<int> frequencies = center_frequencies();
-	/* Name of the subband tables */
-	os << "-- Subband table names ...... : [";
-	for (unsigned int n(0); n<memberNames.size(); n++) {
-	  os << " " << memberNames[n];
-	}
-	os << " ]" << std::endl;
-	/* HDF5 table IDs */
-	os << "-- Subband table HDF5 IDs     : [";
-	for (unsigned int n(0); n<ids.size(); n++) {
-	  os << " " << ids[n];
-	}
-	os << " ]" << std::endl;
-	/* Fields within the tables */
-	os << "-- nof. table fields          : [";
-	for (unsigned int n(0); n<fields.size(); n++) {
-	  os << " " << fields[n];
-	}
-	os << " ]" << std::endl;
-	/* Number of table rows */
-	os << "-- nof. table rows            : [";
-	for (unsigned int n(0); n<rows.size(); n++) {
-	  os << " " << rows[n];
-	}
-	os << " ]" << std::endl;
-	/* Center frequencies of the subbands */
-	os << "-- Subband center frequencies : [";
-	for (unsigned int n(0); n<frequencies.size(); n++) {
-	  os << " " << frequencies[n];
-	}
-	os << " ]" << std::endl;
+	//
+	os << "-- Subband table names ...... : " << memberNames << endl;
+	os << "-- Subband table HDF5 IDs     : " << ids         << endl;
+	os << "-- nof. table fields          : " << fields      << endl;
+	os << "-- nof. table rows            : " << rows        << endl;
+	os << "-- Subband center frequencies : " << frequencies << endl;
       }
       
     }
@@ -415,60 +391,29 @@ namespace DAL {
   // ============================================================================
 
   /*!
+    \retval data   -- The data from the selected sub-band
     \param subband -- The number of the subband from which to retrieve the data
   */
-  std::complex<short> * BeamGroup::getSubbandData_X (int const &subband)
+  void BeamGroup::getSubbandData_X (int &subband,
+				    std::vector< std::complex<short> > &values)
   {
     int start  = 0;
     int length = subbands_p[subband]->nofTableRows();
     
-    return getSubbandData_X (subband,
-			     start,
-			     length);
-    
-  }
-  
-  /*!
-    \param subband -- The number of the subband from which to retrieve the data
-  */
-  std::complex<short> * BeamGroup::getSubbandData_Y (int const &subband)
-  {
-    int start  = 0;
-    int length = subbands_p[subband]->nofTableRows();
-
-    return getSubbandData_X (subband,
-			     start,
-			     length);
+    getSubbandData_X (subband,start,length,values);
   }
   
   /*!
     \retval data   -- The data from the selected sub-band
     \param subband -- The number of the subband from which to retrieve the data
   */
-  void BeamGroup::getSubbandData_X (std::vector<std::complex<short> > &data,
-				    int const &subband)
+  void BeamGroup::getSubbandData_Y (int &subband,
+				    std::vector< std::complex<short> > &values)
   {
+    int start  = 0;
     int length = subbands_p[subband]->nofTableRows();
-    std::complex<short> *tmp = getSubbandData_X (subband);
-
-    data.clear();
-    data.assign (tmp,&tmp[length]);
-  }
-  
-  /*!
-    \retval data   -- The data from the selected sub-band
-    \param subband -- The number of the subband from which to retrieve the data
-  */
-  void BeamGroup::getSubbandData_Y (std::vector<std::complex<short> > &data,
-				    int const &subband)
-  {
-    int length = subbands_p[subband]->nofTableRows();
-    std::complex<short> *tmp;
-
-    tmp = getSubbandData_X (subband);
-
-    data.clear();
-    data.assign (tmp,&tmp[length]);
+    
+    getSubbandData_Y (subband,start,length,values);
   }
   
   // --------------------------------------------------------------- getIntensity
@@ -480,8 +425,8 @@ namespace DAL {
     \return intensities Array of intensities
   */
   float *
-  BeamGroup::getIntensity( int subband,
-                           int start,
+  BeamGroup::getIntensity( int &subband,
+                           int &start,
                            int &length )
   {
     dalTable * table;
@@ -511,28 +456,6 @@ namespace DAL {
     return values;
   }
   
-  // ---------------------------------------------------------- getSubbandData_XY
-  
-  /*!
-    \brief Get X and Y columns data for a given subband
-    
-    \param subband Subband to get the data from.
-    \param start Start number of the cell in the column.
-    \param length The number of cells to retrieve.
-    \param Output character vector of X values.
-    \param Output character vector of Y values.
-  */
-  void BeamGroup::getSubbandData_XY( int subband,
-                                     int start,
-                                     int &length,
-                                     std::vector< std::complex<short> > &x_values,
-                                     std::vector< std::complex<short> > &y_values )
-  {
-    getSubbandData_X( subband, start, length, x_values );
-    getSubbandData_Y( subband, start, length, y_values );
-  }
-
-
   // ---------------------------------------------------------- getSubbandData_X
 
 
@@ -542,41 +465,42 @@ namespace DAL {
     \param length The number of cells to retrieve.
     \param Output character vector of values.
   */
-  std::complex<short> *
-  BeamGroup::getSubbandData_X( int subband,
-                               int start,
-                               int &length )
-  {
-    dalTable * table = NULL;
-    dalColumn * col  = NULL;
-    dalData * data   = NULL;
+//   std::complex<short> * BeamGroup::getSubbandData_X (int &subband,
+// 						     int &start,
+// 						     int &length)
+//   {
+//     dalTable * table    = NULL;
+//     dalColumn * col     = NULL;
+//     dalData * data      = NULL;
+//     complex<short> * xx = NULL;
     
-    vector<string> memberNames = group_p->getMemberNames();
+//     vector<string> memberNames = group_p->getMemberNames();
 
-    table = dataset_p.openTable( memberNames[subband], group_p->getName() );
-    if ( !table )
-      {
-        printf("ERROR: Subband %d does not exist for this beam\n", subband);
-        return NULL;
-      }
+//     table = dataset_p.openTable( memberNames[subband], group_p->getName() );
+//     if ( !table )
+//       {
+//         printf("ERROR: Subband %d does not exist for this beam\n", subband);
+//         return NULL;
+//       }
 
-    col = table->getColumn_complexInt16("X");
-    data = col->data( start, length );
-    if ( !data )
-      {
-        printf("ERROR: Column X does not exist for this subband\n");
-        return NULL;
-      }
+//     col = table->getColumn_complexInt16("X");
+//     data = col->data( start, length );
+//     if ( !data )
+//       {
+//         printf("ERROR: Column X does not exist for this subband\n");
+//         return NULL;
+//       }
 
-    std::complex<short> * values = NULL;
-    values = (complex<short>*)data->data;
+//    for (int jj=0; jj < length; jj++) {
+//       xx = (complex<short>*)data->get(jj);
+//     }
+    
+//     delete data;
+//     delete col;
+//     delete table;
 
-    delete data;
-    delete col;
-    delete table;
-
-    return values;
-  }
+//     return xx;
+//   }
 
 
   // ---------------------------------------------------------- getSubbandData_Y
@@ -587,62 +511,60 @@ namespace DAL {
     \param length The number of cells to retrieve.
     \return array of values
   */
-  std::complex<short> *
-  BeamGroup::getSubbandData_Y( int subband,
-                               int start,
-                               int &length )
-  {
-    dalTable * table = NULL;
-    dalColumn * col = NULL;
-    dalData * data = NULL;
+//   std::complex<short> * BeamGroup::getSubbandData_Y (int &subband,
+// 						     int &start,
+// 						     int &length)
+//   {
+//     dalTable * table = NULL;
+//     dalColumn * col  = NULL;
+//     dalData * data   = NULL;
 
-    vector<string> memberNames = group_p->getMemberNames();
+//     vector<string> memberNames = group_p->getMemberNames();
 
-    table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
-    if ( !table )
-      {
-        printf("ERROR: Subband %d does not exist for this beam\n", subband);
-        return NULL;
-      }
+//     table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
+//     if ( !table )
+//       {
+// 	std::cerr << "ERROR: Subband " << subband << " does not exist for this beam!"
+// 		  << std::endl;
+//         return NULL;
+//       }
 
-    col = table->getColumn_complexInt16("Y");
-    data = col->data( start, length );
-    if ( !data )
-      {
-        printf("ERROR: Column Y does not exist for this subband\n");
-        return NULL;
-      }
+//     col = table->getColumn_complexInt16("Y");
+//     data = col->data( start, length );
+//     if ( !data ) {
+//       std::cerr << "ERROR: Column Y does not exist for this subband" << std::endl;
+//       return NULL;
+//     }
+    
+//     std::complex<short> * values = NULL;
+//     values = (complex<short>*)data->data;
 
+//     delete data;
+//     delete col;
+//     delete table;
 
-    std::complex<short> * values = NULL;
-    values = (complex<short>*)data->data;
-
-    delete data;
-    delete col;
-    delete table;
-
-    return values;
-  }
+//     return values;
+//   }
 
 
   // ---------------------------------------------------------- getSubbandData_X
   
   /*!
-    \param subband Subband to get the data from.
-    \param start Start number of the cell in the column.
-    \param length The number of cells to retrieve.
-    \return array of values
+    \param subband -- Subband to get the data from.
+    \param start   -- Start number of the cell in the column.
+    \param length  -- The number of cells to retrieve.
+    \retval values -- Vector with the extracted values
   */
-  void BeamGroup::getSubbandData_X( int subband,
-                                    int start,
+  void BeamGroup::getSubbandData_X( int &subband,
+                                    int &start,
                                     int &length,
                                     std::vector< std::complex<short> > &values )
   {
-    dalTable * table = NULL;
-    dalColumn * col = NULL;
-    dalData * data = NULL;
-
     complex<short> * xx = NULL;
+    dalTable * table    = NULL;
+    dalColumn * col     = NULL;
+    dalData * data      = NULL;
+
     vector<string> memberNames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
@@ -653,23 +575,20 @@ namespace DAL {
 
     col = table->getColumn_complexInt16("X");
     data = col->data( start, length );
-    if ( !data )
-      {
-        printf("ERROR: Column X does not exist for this subband\n");
-      }
+    if ( !data ) {
+      std::cerr << "ERROR: Column X does not exist for this subband!" << std::endl;
+    }
 
-    for (int jj=0; jj < length; jj++)
-      {
-        xx = (complex<short>*)data->get(jj);
-        values.push_back(*xx);
-      }
+    for (int jj=0; jj < length; jj++) {
+      xx = (complex<short>*)data->get(jj);
+    }
+
+    values.assign (xx,&xx[length]);
 
     delete data;
     delete col;
     delete table;
   }
-
-
 
   // ---------------------------------------------------------- getSubbandData_Y
   
@@ -679,8 +598,8 @@ namespace DAL {
     \param length The number of cells to retrieve.
     \param Output character vector of values.
   */
-  void BeamGroup::getSubbandData_Y( int subband,
-                                    int start,
+  void BeamGroup::getSubbandData_Y( int &subband,
+                                    int &start,
                                     int &length,
                                     std::vector< std::complex<short> > &values )
   {
@@ -703,40 +622,59 @@ namespace DAL {
       {
         printf("ERROR: Column Y does not exist for this subband\n");
       }
-
-    for (int jj=0; jj < length; jj++)
-      {
-        yy = (complex<short>*)data->get(jj);
-        values.push_back(*yy);
-      }
-
+    
+    for (int jj=0; jj < length; jj++) {
+      yy = (complex<short>*)data->get(jj);
+    }
+    
+    values.assign (yy,&yy[length]);
+    
     delete data;
     delete col;
     delete table;
   }
 
+  // ---------------------------------------------------------- getSubbandData_XY
+  
+  /*!
+    \param subband   -- Subband to get the data from.
+    \param start     -- Start number of the cell in the column.
+    \param length    -- The number of cells to retrieve.
+    \retval values_x -- Vector of X values.
+    \retval values_y -- Vector of Y values.
+  */
+  void BeamGroup::getSubbandData_XY( int &subband,
+                                     int &start,
+                                     int &length,
+                                     std::vector< std::complex<short> > &values_x,
+                                     std::vector< std::complex<short> > &values_y )
+  {
+    getSubbandData_X( subband, start, length, values_x );
+    getSubbandData_Y( subband, start, length, values_y );
+  }
+
+  // ============================================================================
+  //
+  //  Boost wrappers to allow some previously defined functions to be easily
+  //  called from a python prompt.
+  //
+  // ============================================================================
+  
 #ifdef PYTHON
-  /************************************************************************
-   *
-   * The following functions are boost wrappers to allow some previously
-   *   defined functions to be easily called from a python prompt.
-   *
-   ************************************************************************/
 
-
-  // ---------------------------------------------------------- summary_boost
-
+  // -------------------------------------------------------------- summary_boost
+  
   void BeamGroup::summary_boost()
   {
     summary();
   }
-
-
-  // ---------------------------------------------------------- getIntensity_boost
-
+  
+  
+  // --------------------------------------------------------- getIntensity_boost
+  
   bpl::numeric::array BeamGroup::getIntensity_boost( int subband,
-      int start,
-      int length )
+						     int start,
+						     int length )
   {
     float * values = NULL;
     values = getIntensity( subband, start, length );
@@ -747,33 +685,23 @@ namespace DAL {
     values = NULL;
     return narray;
   }
-
-
-  // ---------------------------------------------------------- getSubbandData_X_boost
-
+  
+  
+  // ----------------------------------------------------- getSubbandData_X_boost
+  
   bpl::numeric::array BeamGroup::getSubbandData_X_boost( int subband,
-      int start,
-      int length )
+							 int start,
+							 int length )
   {
-    std::complex<short> * values = NULL;
-
-    values = getSubbandData_X( subband, start, length );
-    if ( !values )
-      {
-        bpl::list foo;
-        foo.append( 0 );
-        bpl::numeric::array narray = num_util::makeNum( foo );
-        return narray;
-      }
-
+    std::vector<std::complex<short> > values;
+    getSubbandData_X( subband, start, length, values );
+    
     std::complex<float> * value_list;
     value_list = new std::complex<float>[length];
-
-    for (int ii=0; ii<length; ii++)
-      {
-        value_list[ii] = complex<float>(values[ii].real(),values[ii].imag());
-      }
-    delete [] values;
+    
+    for (int ii=0; ii<length; ii++) {
+      value_list[ii] = complex<float>(values[ii].real(),values[ii].imag());
+    }
     std::vector<int> mydims;
     mydims.push_back( length );
     bpl::numeric::array narray = num_util::makeNum( value_list, mydims );
@@ -781,24 +709,23 @@ namespace DAL {
     value_list = NULL;
     return narray;
   }
-
-
-  // ---------------------------------------------------------- getSubbandData_Y_boost
-
+  
+  
+  // ----------------------------------------------------- getSubbandData_Y_boost
+  
   bpl::numeric::array BeamGroup::getSubbandData_Y_boost( int subband,
-      int start,
-      int length )
+							 int start,
+							 int length )
   {
-    std::complex<short> * values = NULL;
-    values = getSubbandData_Y( subband, start, length );
+    std::vector<std::complex<short> > values;
+    getSubbandData_Y( subband, start, length, values );
+    
     std::complex<float> * value_list;
     value_list = new std::complex<float>[length];
-
-    for (int ii=0; ii<length; ii++)
-      {
-        value_list[ii] = complex<float>(values[ii].real(),values[ii].imag());
-      }
-    delete [] values;
+    
+    for (int ii=0; ii<length; ii++) {
+      value_list[ii] = complex<float>(values[ii].real(),values[ii].imag());
+    }
     std::vector<int> mydims;
     mydims.push_back( length );
     bpl::numeric::array narray = num_util::makeNum( value_list, mydims );
@@ -806,45 +733,45 @@ namespace DAL {
     value_list = NULL;
     return narray;
   }
-
-
-  // ---------------------------------------------------------- getSubbandData_XY_boost
-
+  
+  
+  // ---------------------------------------------------- getSubbandData_XY_boost
+  
   bpl::numeric::array BeamGroup::getSubbandData_XY_boost( int subband,
-      int start,
-      int length )
+							  int start,
+							  int length )
   {
-    std::vector< std::complex<short> > x_values;
+    std::vector< std::complex<short> > values_x;
     std::vector< std::complex<short> >::iterator xvalit;
-    std::vector< std::complex<short> > y_values;
+    std::vector< std::complex<short> > values_y;
     std::vector< std::complex<short> >::iterator yvalit;
-    x_values.clear();
-    y_values.clear();
-    getSubbandData_X( subband, start, length, x_values );
-    getSubbandData_Y( subband, start, length, y_values );
-
+    values_x.clear();
+    values_y.clear();
+    getSubbandData_X( subband, start, length, values_x );
+    getSubbandData_Y( subband, start, length, values_y );
+    
     bpl::list x_value_list;
     bpl::list y_value_list;
     bpl::list xy_value_list;
-
-    for (xvalit=x_values.begin(); xvalit < x_values.end(); xvalit++)
+    
+    for (xvalit=values_x.begin(); xvalit < values_x.end(); xvalit++)
       {
         std::complex<float> foo((*xvalit).real(),(*xvalit).imag());
         x_value_list.append( foo );
       }
-    for (yvalit=y_values.begin(); yvalit < y_values.end(); yvalit++)
+    for (yvalit=values_y.begin(); yvalit < values_y.end(); yvalit++)
       {
         std::complex<float> foo((*yvalit).real(),(*yvalit).imag());
         y_value_list.append( foo );
       }
-
+    
     xy_value_list.append(x_value_list);
     xy_value_list.append(y_value_list);
-
+    
     bpl::numeric::array narray = num_util::makeNum( xy_value_list );
-
+    
     return narray;
   }
 #endif // end #ifdef PYTHON
-
+  
 } // end namespace DAL

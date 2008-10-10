@@ -65,7 +65,7 @@ namespace bpl = boost::python;
 /*
    if there is a casa installation
 */
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
 #include <casa/aips.h>
 #include <tables/Tables.h>
 #include <tables/Tables/Table.h>

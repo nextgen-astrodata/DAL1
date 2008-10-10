@@ -32,7 +32,6 @@ add_definitions (
 if (HAVE_CASA OR HAVE_CASACORE)
   add_definitions (
     -DHAVE_CASA
-    -DWITH_CASA
     # -- compiler flags utilized in the source code --
     -DAIPS_STDLIB
     -DAIPS_AUTO_STL

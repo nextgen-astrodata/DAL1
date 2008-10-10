@@ -21,10 +21,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <dalCommon.h>
 #include <HDF5Common.h>
 #include <Enumerations.h>
 
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
 #include <casa/aips.h>
 #include <casa/Arrays/Vector.h>
 #endif
@@ -51,51 +52,6 @@ const std::string name_dataset ("Station001/001003030");
   This also seems to be a reasonable place to do some general basic testing on
   working with the HDF5 library.
 */
-
-// -----------------------------------------------------------------------------
-
-/*!
-  \brief Test the additional methods to go along with the HDF5 functionality
-
-  \return nofFailedTests -- The number of failed tests in this function.
-*/
-int test_support_methods ()
-{
-  cout << "\n[test_support_methods]\n" << endl;
-
-  int nofFailedTests (0);
-  uint nofElements (10);
-
-  try {
-    std::vector<int> vec (nofElements);
-    //
-    for (uint n(0); n<vec.size(); n++) {
-      vec[n] = int(n);
-    }
-    //
-    DAL::show_vector(std::cout,vec);
-    cout << endl;
-  } catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-
-  try {
-    std::vector<double> vec (nofElements);
-    //
-    for (uint n(0); n<vec.size(); n++) {
-      vec[n] = 0.5*n;
-    }
-    //
-    DAL::show_vector(std::cout,vec);
-    cout << endl;
-  } catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-
-  return nofFailedTests;
-}
 
 // -----------------------------------------------------------------------------
 
@@ -547,19 +503,15 @@ int get_attributes (hid_t const &file_id)
       nofFailedTests++;
     }
     
-    std::cout << "-- TELESCOPE          = " << telescope        << endl;
-    std::cout << "-- OBSERVER           = " << observer         << endl;
-    std::cout << "-- PROJECT            = " << project          << endl;
-    std::cout << "-- OBSERVATION_ID     = " << observation_id   << endl;
-    std::cout << "-- OBSERVATION_MODE   = " << observation_mode << endl;
-    std::cout << "-- TRIGGER_TYPE       = " << trigger_type     << endl;
-    std::cout << "-- TRIGGER_OFFSET     = " << trigger_offset   << endl;
-    std::cout << "-- TRIGGERED_ANTENNAS = "; DAL::show_vector(std::cout,
-							     triggered_antennas);
-    std::cout << endl;
-    std::cout << "-- BEAM_DIRECTION     = "; DAL::show_vector(std::cout,
-							   beam_direction);
-    std::cout << endl;
+    std::cout << "-- TELESCOPE          = " << telescope          << endl;
+    std::cout << "-- OBSERVER           = " << observer           << endl;
+    std::cout << "-- PROJECT            = " << project            << endl;
+    std::cout << "-- OBSERVATION_ID     = " << observation_id     << endl;
+    std::cout << "-- OBSERVATION_MODE   = " << observation_mode   << endl;
+    std::cout << "-- TRIGGER_TYPE       = " << trigger_type       << endl;
+    std::cout << "-- TRIGGER_OFFSET     = " << trigger_offset     << endl;
+    std::cout << "-- TRIGGERED_ANTENNAS = " << triggered_antennas << endl;
+    std::cout << "-- BEAM_DIRECTION     = " << beam_direction     << endl;
 
   } else {
     cerr << "[get_attributes] Unable to open station group!" << endl;
@@ -784,7 +736,7 @@ int get_name (hid_t const &file_id)
 
   \return nofFailedTests -- The number of failed tests in this function.
 */
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
 int test_casacore (hid_t const &file_id)
 {
   cout << "\n[test_casacore]\n" << endl;
@@ -834,7 +786,6 @@ int main (int argc,
   /*
     Some tests do not require any external data input
   */
-//   nofFailedTests += test_support_methods ();
 //   nofFailedTests += test_create_file ();
   nofFailedTests += test_general_functions();
 
@@ -864,7 +815,7 @@ int main (int argc,
     nofFailedTests += get_attribute_id (file_id);
 //     nofFailedTests += get_attributes (file_id);
 //     nofFailedTests += get_name (file_id);
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
 //     nofFailedTests += test_casacore (file_id);
 #endif
   } else {

@@ -68,7 +68,7 @@ namespace DAL {
     string type;  // "HDF5", "MSCASA" or "FITS"; for example
     vector<dalColumn> columns; // list of table columns
     
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
       casa::Table * casa_table_handle;
       casa::Array<casa::Double> array_vals_dbl;
       casa::Array<casa::Complex> array_vals_comp;
@@ -112,7 +112,7 @@ namespace DAL {
 		      string tablename,
 		      string groupname );
       
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
       void openTable( string tablename );
       //! Open the table in a measurement set.
       void openTable( string tablename,
@@ -222,7 +222,7 @@ namespace DAL {
       bool setAttribute_double( std::string attrname, double data );
       bool setAttribute_string( std::string attrname, std::string data );
 
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
       void ot_nonMStable( string tablename );
       void setFilter_boost1(string);
       void setFilter_boost2(string,string);

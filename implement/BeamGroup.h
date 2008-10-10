@@ -44,12 +44,16 @@ namespace DAL {
     <h3>Synopsis</h3>
 
     Besides the the possibility to retrieve attributes attached to the HDF5 group
-    there are also a few methods available, which wrap the access to the embedded 
-    BeamSubband objects:
-    - center_frequencies()
-    - tableIDs()
-    - nofTableFields()
-    - nofTableRows()
+    there are also a few methods available,
+    <ul>
+      <li>center_frequencies()
+      <li>tableIDs()
+      <li>nofTableFields()
+      <li>nofTableRows()
+    </ul>
+    which wrap the access to the embedded BeamSubband objects; by this an
+    application programmer will not be required to individually retrieve the
+    needed information from the embedded sub-band tables.
 
     <h3>Usage</h3>
 
@@ -75,7 +79,24 @@ namespace DAL {
       \code
       std::vector<int> freq = beam.center_frequencies();
       \endcode
-    </ol>
+      <li>Retrieve values from a selected sub-band:
+      \code
+      int subband (0);
+      int start (0)
+      int length (20);
+      // Vector into which the requested data are returned
+      std::vector<std::complex<short> > data (length);
+      // Extract data values from the table
+      beam.getSubbandData_X (subband,start,length,data);
+      \endcode
+      This will retrieve the first 20 X-component data-points [0 .. 19] from the
+      first sub-band. Stepping through the data volume along the time axis then
+      is simply done by incrementing the value of the starting point:
+      \code
+      dataX = beam.getSubbandData_X (0,20,length);
+      \endcode
+      which will return values [20 .. 39] from the same table column accessed above.
+      </ol>
   */
   
   class BeamGroup {
@@ -113,17 +134,23 @@ namespace DAL {
       \brief Get the HDF5 file handle ID
       \return H5fileID -- The HDF5 file handle ID for this dataset
     */
-    inline hid_t fileID () const { return H5fileID_p; }
+    inline hid_t fileID () const {
+      return H5fileID_p;
+    }
     /*!
       \brief Get the HDF5 group handle ID
       \return H5groupID -- The HDF5 group handle ID for this dataset
     */
-    inline hid_t groupID () const { return H5groupID_p; }
+    inline hid_t groupID () const {
+      return H5groupID_p;
+    }
     /*!
       \brief Get the name of the underlying HDF5 group
       \return name -- The name of the underlying HDF5 group.
     */
-    inline std::string groupName () const { return group_p->getName(); }
+    inline std::string groupName () const {
+      return group_p->getName();
+    }
 
     // ------------------------------------------------------- Methods
 
@@ -133,41 +160,38 @@ namespace DAL {
     //! Get the sub-band table
     dalTable * getSubbandTable (int subband);
     //! Get the X column data for a given subband.
-    std::complex<short>  * getSubbandData_X (int const &subband);
+    void getSubbandData_X (int &subband,
+			   std::vector< std::complex<short> > &values);
     //! Get the Y column data for a given subband.
-    std::complex<short>  * getSubbandData_Y (int const &subband);
-    //! Get the X column data for a given subband.
-    void getSubbandData_X (std::vector<std::complex<short> > &data,
-			   int const &subband);
-    //! Get the Y column data for a given subband.
-    void getSubbandData_Y (std::vector<std::complex<short> > &data,
-			   int const &subband);
+    void getSubbandData_Y (int &subband,
+			   std::vector< std::complex<short> > &values);
+/*     //! Get X column data for a given subband. */
+/*     std::complex<short>  * getSubbandData_X (int &subband, */
+/* 					     int &start, */
+/* 					     int &length); */
+/*     //! Get Y column data for a given subband. */
+/*     std::complex<short>  * getSubbandData_Y (int &subband, */
+/* 					     int &start, */
+/* 					     int &length); */
     //! Get X column data for a given subband.
-    std::complex<short>  * getSubbandData_X (int subband,
-					     int start,
-					     int &length );
-    //! Get Y column data for a given subband.
-    std::complex<short>  * getSubbandData_Y( int subband,
-					     int start,
-					     int &length );
-    //! Get X column data for a given subband.
-    void getSubbandData_X( int subband,
-			   int start,
+    void getSubbandData_X( int &subband,
+			   int &start,
 			   int &length,
 			   std::vector< std::complex<short> > &values );
     //! Get Y column data for a given subband.
-    void getSubbandData_Y( int subband,
-			   int start,
+    void getSubbandData_Y( int &subband,
+			   int &start,
 			   int &length,
 			   std::vector< std::complex<short> > &values );
-    void getSubbandData_XY( int subband,
-			    int start,
+    //! Get X and Y columns data for a given subband
+    void getSubbandData_XY( int &subband,
+			    int &start,
 			    int &length,
-			    std::vector< std::complex<short> > &x_values,
-			    std::vector< std::complex<short> > &y_values );
+			    std::vector< std::complex<short> > &values_x,
+			    std::vector< std::complex<short> > &values_y );
     //! Get total instensity data for a given subband
-    float *  getIntensity( int subband,
-			   int start,
+    float *  getIntensity( int &subband,
+			   int &start,
 			   int &length );
     //! Get a subband from the beam
     BeamSubband * getSubband( int subband );
@@ -207,21 +231,21 @@ namespace DAL {
                                               int start,
                                               int length );
       bpl::numeric::array getSubbandData_X_boost( int subband,
-          int start,
-          int length );
-
+						  int start,
+						  int length );
+      
       bpl::numeric::array getSubbandData_Y_boost( int subband,
-          int start,
-          int length );
-
+						  int start,
+						  int length );
+      
       bpl::numeric::array getSubbandData_XY_boost( int subband,
-          int start,
-          int length );
+						   int start,
+						   int length );
 #endif // end #ifdef PYTHON
-
-    }; // end BeamGroup class
-
-
+      
+  }; // end BeamGroup class
+  
+  
 } // end DAL namespace
 
 #endif

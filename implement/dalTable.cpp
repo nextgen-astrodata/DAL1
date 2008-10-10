@@ -62,7 +62,7 @@ namespace DAL {
     
     if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         casa_table_handle = new casa::Table;
 #else
         std::cerr << "CASA support not enabled." << endl;
@@ -77,7 +77,7 @@ namespace DAL {
     delete filter;
     if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         delete casa_table_handle;
 #endif
       }
@@ -135,7 +135,7 @@ namespace DAL {
   {
     if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         // using the dalColumn class
         dalColumn * lclcol = NULL;
         lclcol = new dalColumn( *casa_table_handle, colname );
@@ -185,7 +185,7 @@ namespace DAL {
   {
     if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         // using the dalColumn class
         dalColumn * lclcol = NULL;
         lclcol = new dalColumn( *casa_table_handle, colname );
@@ -224,7 +224,7 @@ namespace DAL {
   {
     if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         // using the dalColumn class
         dalColumn * lclcol = NULL;
         lclcol = new dalColumn( *casa_table_handle, colname );
@@ -264,7 +264,7 @@ namespace DAL {
   {
     if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         // using the dalColumn class
         dalColumn * lclcol = NULL;
         lclcol = new dalColumn( *casa_table_handle, colname );
@@ -349,7 +349,7 @@ namespace DAL {
   {
     if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         // using the dalColumn class
         dalColumn lclcol;
         lclcol = dalColumn( *casa_table_handle, colname );
@@ -555,7 +555,7 @@ namespace DAL {
     if ( type == MSCASATYPE )
       {
         // print the name of the table
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         std::cerr << "CASA table name: " << casa_table_handle->tableName() << endl;
 #else
         std::cerr << "CASA support not enabled." << endl;
@@ -568,7 +568,7 @@ namespace DAL {
       }
   }
 
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
 
   // ---------------------------------------------------------- openTable
 
@@ -583,7 +583,7 @@ namespace DAL {
   {
     if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         if ( filter->isSet() )
           {
             try
@@ -630,7 +630,7 @@ namespace DAL {
   {
     if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         try
           {
             *casa_table_handle = reader->table( tablename );
@@ -663,7 +663,7 @@ namespace DAL {
   {
     if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         try
           {
             *casa_table_handle = reader->table( tablename );
@@ -759,7 +759,7 @@ namespace DAL {
       }
     else if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         casa::TableDesc td = casa_table_handle->tableDesc();
         std::cerr << td.columnNames() << endl;
 #else
@@ -1589,7 +1589,7 @@ namespace DAL {
       }
     else if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         casa::TableDesc td = casa_table_handle->tableDesc();
         casa::Vector<casa::String> names = td.columnNames();
         casa::Array<casa::String> myarray = names;
@@ -1701,7 +1701,7 @@ namespace DAL {
       }
   }
 
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
   // ---------------------------------------------------------- findAttribute
 
   /*!
@@ -1806,7 +1806,7 @@ namespace DAL {
       }
     else if ( type == MSCASATYPE )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         casa::TableRecord table_rec = casa_table_handle->keywordSet();
         casa::String dtype = GetKeywordType(attrname);
         if (dtype == "Float")
@@ -1840,7 +1840,7 @@ namespace DAL {
     return NULL;
   }
 
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
 
   // ---------------------------------------------------------- GetKeyword
 
@@ -2112,7 +2112,7 @@ namespace DAL {
         return "unknown";
       };
   }
-#endif // WITH_CASA
+#endif // HAVE_CASA
 
   /************************************************************************
    *
@@ -2195,7 +2195,7 @@ namespace DAL {
      return setAttribute( attrname, &data );
   }
 
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
 
   // ---------------------------------------------------------- ot_nonMStable
 
@@ -2226,7 +2226,7 @@ namespace DAL {
     setFilter( columns, conditions );
   }
 
-#endif // WITH_CASA
+#endif // HAVE_CASA
 
   // ----------------------------------------------------- getAttribute_boost
 

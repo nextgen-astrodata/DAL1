@@ -88,7 +88,7 @@ endif (DAL_ENABLE_TESTING)
 if (HAVE_CASA OR HAVE_CASACORE)
   ## additional compiler flags
   add_definitions (
-    -DWITH_CASA
+    -DHAVE_CASA
     )
   foreach (src lopes2h5)
     ## compiler instructions

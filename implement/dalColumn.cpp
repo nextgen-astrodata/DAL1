@@ -31,25 +31,24 @@
 #include "dalColumn.h"
 #endif
 
-namespace DAL
-  {
-
-// ------------------------------------------------------- dalColumn
-
+namespace DAL {
+  
+  // ------------------------------------------------------- dalColumn
+  
   /*!
     \brief Default constructor.
-
+    
     Default constructor.
   */
   dalColumn::dalColumn()
   {}
-
-
-// ------------------------------------------------------- dalColumn
-
+  
+  
+  // ------------------------------------------------------- dalColumn
+  
   /*!
     \brief Create a new column object.
-
+    
     \param fileid
     \param tableid
     \param filetype
@@ -71,34 +70,34 @@ namespace DAL
     name = colname;
     dal_datatype = coldatatype;
   }
-
-
-// ------------------------------------------------------- dalColumn
-
+  
+  
+  // ------------------------------------------------------- dalColumn
+  
   /*!
     \brief Create a new column object.
-
+    
     Create a new column object.
-
+    
     \param colname The name of the column you want to create.
     \param coltype The datatype of the column you want to craete (i.e.
-                   dalINT, dalFLOAT, dalSTRING, etc.)
-   */
+    dalINT, dalFLOAT, dalSTRING, etc.)
+  */
   dalColumn::dalColumn( std::string colname, std::string type )
   {
     name = colname;
     dal_datatype = type;
   }
-
-
-
-// ------------------------------------------------------- dalColumn
-
+  
+  
+  
+  // ------------------------------------------------------- dalColumn
+  
   /*!
     \brief Create a new complex column.
-
+    
     Create a new column with a complex floating point datatype.
-
+    
     \param complexcolname Name of the column you want to create.
   */
   dalColumn::dalColumn( std::string complexcolname )
@@ -106,19 +105,19 @@ namespace DAL
     name = complexcolname;
     dal_datatype = dal_COMPLEX;
   }
-
-#ifdef WITH_CASA
-
-// ------------------------------------------------------- dalColumn
-
+  
+#ifdef HAVE_CASA
+  
+  // ------------------------------------------------------- dalColumn
+  
   /*!
     \brief Create a new column object from a Casa table.
-
+    
     Create a new column object from a Casa table.
-
+    
     \param table A casa table object.
     \param colname Name of the column.
-   */
+  */
   dalColumn::dalColumn(casa::Table table, std::string colname)
   {
     filetype = MSCASATYPE;
@@ -132,7 +131,7 @@ namespace DAL
         std::cerr << "ERROR: " << x.getMesg() << endl;
         error = true;
       }
-
+    
     if (!error)
       {
         casa_col_desc = casa_column->columnDesc();
@@ -144,27 +143,27 @@ namespace DAL
       }
   }
 #endif
-
-
-// ------------------------------------------------------- close
-
+  
+  
+  // ------------------------------------------------------- close
+  
   /*!
     \brief Close the column.
-
+    
     Close the column.
-
-   */
+    
+  */
   void dalColumn::close()
   {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
     delete casa_column;
 #endif
   }
-
-// ------------------------------------------------------- getCasaDataType
-
-#ifdef WITH_CASA
-
+  
+  // ------------------------------------------------------- getCasaDataType
+  
+#ifdef HAVE_CASA
+  
   std::string dalColumn::getCasaDataType()
   {
     switch ( casa_col_desc.dataType() )
@@ -189,36 +188,36 @@ namespace DAL
       }
     return casa_datatype;
   }
-
+  
 #endif
-
-// ------------------------------------------------------- getDataType
-
-// enum DataType {TpBool,         TpChar,          TpUChar,
-//              TpShort,        TpUShort,        TpInt,        TpUInt,
-//              TpFloat,        TpDouble,
-//              TpComplex,      TpDComplex,      TpString,
-//              TpTable,
-//              TpArrayBool,    TpArrayChar,     TpArrayUChar,
-//              TpArrayShort,   TpArrayUShort,   TpArrayInt,   TpArrayUInt,
-//              TpArrayFloat,   TpArrayDouble,
-//              TpArrayComplex, TpArrayDComplex, TpArrayString,
-//              TpRecord, TpOther,
-//              TpNumberOfTypes
-//               };
-
+  
+  // ------------------------------------------------------- getDataType
+  
+  // enum DataType {TpBool,         TpChar,          TpUChar,
+  //              TpShort,        TpUShort,        TpInt,        TpUInt,
+  //              TpFloat,        TpDouble,
+  //              TpComplex,      TpDComplex,      TpString,
+  //              TpTable,
+  //              TpArrayBool,    TpArrayChar,     TpArrayUChar,
+  //              TpArrayShort,   TpArrayUShort,   TpArrayInt,   TpArrayUInt,
+  //              TpArrayFloat,   TpArrayDouble,
+  //              TpArrayComplex, TpArrayDComplex, TpArrayString,
+  //              TpRecord, TpOther,
+  //              TpNumberOfTypes
+  //               };
+  
   /*!
     \brief Get the column datatype.
-
+    
     Get the datatype of the column.
-
+    
     \return A string describing the datatype of the column.
-   */
+  */
   std::string dalColumn::getDataType()
   {
     if ( MSCASATYPE == filetype )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         return getCasaDataType();
 #else
         std::cerr << "ERROR: CASA not enabled [dalColumn::getDataType()]\n";
@@ -228,26 +227,26 @@ namespace DAL
     else
       {
         std::cerr << "dalColumn::getDataType not yet supported for filetype " <<
-                  filetype << endl;
+	  filetype << endl;
         return "";
       }
   }
-
-
-// ------------------------------------------------------- isScalar
-
+  
+  
+  // ------------------------------------------------------- isScalar
+  
   /*!
     \brief Is the column a scalar?
-
+    
     Check to see if the column is scalar.
-
+    
     \return Non-zero if the column is scalar.
-   */
+  */
   bool dalColumn::isScalar()
   {
     if ( MSCASATYPE == filetype )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         if ( casa_col_desc.isScalar() )
           return true;
         else
@@ -260,26 +259,26 @@ namespace DAL
     else
       {
         std::cerr << "dalColumn::isScalar not yet supported for filetype " <<
-                  filetype << endl;
+	  filetype << endl;
         return false;
       }
   }
-
-
-// ------------------------------------------------------- isArray
-
+  
+  
+  // ------------------------------------------------------- isArray
+  
   /*!
     \brief Is the column an array?
-
+    
     Check to see if the column is an array.
-
+    
     \return Non-zero if the column is an array.
-   */
+  */
   bool dalColumn::isArray()
   {
     if ( MSCASATYPE == filetype )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         if ( casa_col_desc.isArray() )
           return true;
         else
@@ -292,31 +291,31 @@ namespace DAL
     else
       {
         std::cerr << "dalColumn::isArray not yet supported for filetype " <<
-                  filetype << endl;
+	  filetype << endl;
         return false;
       }
   }
-
-
-// ------------------------------------------------------- shape
-
+  
+  
+  // ------------------------------------------------------- shape
+  
   /*!
     \brief Get the shape of the column.
-
+    
     Get the shape of the column.
-
+    
     \return A vector of integers specifying the shape of the column.
-   */
+  */
   vector<int> dalColumn::shape()
   {
     vector<int> shape_vals;
     if ( MSCASATYPE == filetype )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         if ( isArray() )
           {
             //std::cerr << casa_column->shapeColumn();
-
+	    
             try
               {
                 casa::IPosition ipos = casa_column->shape(0);
@@ -344,26 +343,26 @@ namespace DAL
     else
       {
         std::cerr << "dalColumn::shape not yet supported for filetype " <<
-                  filetype << endl;
+	  filetype << endl;
         return shape_vals;
       }
   }
-
-
-// ------------------------------------------------------- ndims
-
+  
+  
+  // ------------------------------------------------------- ndims
+  
   /*!
     \brief Get the number of dimensions of the column.
-
+    
     Get the number of dimensions of the column.
-
+    
     \return A integer specifying the number of column dimensions.
-   */
+  */
   uint dalColumn::ndims()
   {
     if ( MSCASATYPE == filetype )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         if ( isArray() )
           return casa_column->ndimColumn();
         else
@@ -378,72 +377,72 @@ namespace DAL
     else
       {
         std::cerr << "dalColumn::ndims not yet supported for filetype " <<
-                  filetype << endl;
+	  filetype << endl;
         return -1;
       }
   }
-
-
-// ------------------------------------------------------- setName
-
+  
+  
+  // ------------------------------------------------------- setName
+  
   /*!
     \brief Set the name of the column.
-
+    
     Set the name of the column.
-
+    
     \param colname The name of the column.
-   */
+  */
   void dalColumn::setName(std::string colname)
   {
     name = colname;
   }
-
-
-// ------------------------------------------------------- setFileType
-
+  
+  
+  // ------------------------------------------------------- setFileType
+  
   /*!
     \brief Set the file type of the dataset containing the column.
-
+    
     Set the file type of the dataset containing the column.
-
+    
     \param type The type of file.
-   */
+  */
   void dalColumn::setFileType( std::string type )
   {
     filetype = type;
   }
-
-
-// ------------------------------------------------------- getName
-
+  
+  
+  // ------------------------------------------------------- getName
+  
   /*!
     \brief Get the name of the column.
-
+    
     Retrieve the name of the column.
-
+    
     \return The name of the column.
-   */
+  */
   std::string dalColumn::getName()
   {
     return name;
   }
-
-
-
-// ------------------------------------------------------- nrows
-
+  
+  
+  
+  // ------------------------------------------------------- nrows
+  
   /*!
     \brief Get the number of rows in the column.
-
+    
     Get the number of rows in the column.
-
+    
     \return A number specifying the number of column rows.
-   */
+  */
   uint dalColumn::nrows()
   {
     if ( MSCASATYPE == filetype )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         num_of_rows = casa_column->nrow();
         return num_of_rows;
 #else
@@ -458,293 +457,294 @@ namespace DAL
         return 0;
       }
   }
-
-
-// ------------------------------------------------------- getType
-
+  
+  
+  // ------------------------------------------------------- getType
+  
   /*!
     \brief Get the data type.
-
+    
     Retrieve the datatype of the column.
-
+    
     \return A string describing the column datatype.
-   */
+  */
   std::string dalColumn::getType()
   {
     return dal_datatype;
   }
-
-
-// ------------------------------------------------------- data
-
+  
+  
+  // ------------------------------------------------------- data
+  
   /*!
     \brief Get column data.
-
+    
     Get the data object for the column.
-
+    
     \return A dalData object containing the column data.
-   */
+  */
   dalData * dalColumn::data()
   {
     int start = -1;
     int length = -1;
     return data( start, length );
   }
-
-
-// ------------------------------------------------------- CasaData_scalar
-
-#ifdef WITH_CASA
-
+  
+  
+  // ------------------------------------------------------- CasaData_scalar
+  
+#ifdef HAVE_CASA
+  
   dalData * dalColumn::CasaData_scalar( )
   {
     switch ( casa_col_desc.dataType() )
       {
       case casa::TpInt:
-      {
-        rosc_int = new casa::ROScalarColumn<casa::Int>( *casa_column );
-        scalar_vals_int = rosc_int->getColumn();
-        data_object = new dalData( filetype, dal_INT, shape(), nrows() );
-        data_object->data = (int *)scalar_vals_int.getStorage(deleteIt);
-        return data_object;
-      }
-      break;
+	{
+	  rosc_int = new casa::ROScalarColumn<casa::Int>( *casa_column );
+	  scalar_vals_int = rosc_int->getColumn();
+	  data_object = new dalData( filetype, dal_INT, shape(), nrows() );
+	  data_object->data = (int *)scalar_vals_int.getStorage(deleteIt);
+	  return data_object;
+	}
+	break;
       case casa::TpDouble:
-      {
-        rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
-        scalar_vals_dbl = rosc_dbl->getColumn();
-        data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
-        data_object->data = (double *)scalar_vals_dbl.getStorage(deleteIt);
-        return data_object;
-      }
-      break;
+	{
+	  rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
+	  scalar_vals_dbl = rosc_dbl->getColumn();
+	  data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
+	  data_object->data = (double *)scalar_vals_dbl.getStorage(deleteIt);
+	  return data_object;
+	}
+	break;
       case casa::TpComplex:
-      {
-        rosc_comp = new casa::ROScalarColumn<casa::Complex>( *casa_column );
-        scalar_vals_comp = rosc_comp->getColumn();
-        data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
-        data_object->data =
-          (complex<float> *)scalar_vals_comp.getStorage(deleteIt);
-        return data_object;
-      }
-      break;
+	{
+	  rosc_comp = new casa::ROScalarColumn<casa::Complex>( *casa_column );
+	  scalar_vals_comp = rosc_comp->getColumn();
+	  data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
+	  data_object->data =
+	    (complex<float> *)scalar_vals_comp.getStorage(deleteIt);
+	  return data_object;
+	}
+	break;
       case casa::TpString:
-      {
-        rosc_string = new casa::ROScalarColumn<casa::String>( *casa_column );
-        scalar_vals_string = rosc_string->getColumn();
-        data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
-        data_object->data =
-          (std::string *)scalar_vals_string.getStorage(deleteIt);
-        return data_object;
-      }
-      break;
-      /************************************
-       * ADD MORE TYPES HERES
-       ************************************/
+	{
+	  rosc_string = new casa::ROScalarColumn<casa::String>( *casa_column );
+	  scalar_vals_string = rosc_string->getColumn();
+	  data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
+	  data_object->data =
+	    (std::string *)scalar_vals_string.getStorage(deleteIt);
+	  return data_object;
+	}
+	break;
+	/************************************
+	 * ADD MORE TYPES HERES
+	 ************************************/
       default:
-      {
-        std::cerr << "dalColumn::data() Column type not yet supported."
-                  << endl;
-        return NULL;
+	{
+	  std::cerr << "dalColumn::data() Column type not yet supported."
+		    << endl;
+	  return NULL;
+	}
       }
-      }
-
+    
   }
 #endif
-
-// ------------------------------------------------------- CasaData_array
-
-#ifdef WITH_CASA
-
+  
+  // ------------------------------------------------------- CasaData_array
+  
+#ifdef HAVE_CASA
+  
   dalData * dalColumn::CasaData_array( )
   {
     switch ( casa_col_desc.dataType() )
       {
       case casa::TpInt:
-      {
-        roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
-        array_vals_int = roac_int->getColumn();
-        data_object = new dalData( filetype, dal_INT, shape(), nrows() );
-        data_object->data = (int *)array_vals_int.getStorage(deleteIt);
-        return data_object;
-      }
-      break;
+	{
+	  roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
+	  array_vals_int = roac_int->getColumn();
+	  data_object = new dalData( filetype, dal_INT, shape(), nrows() );
+	  data_object->data = (int *)array_vals_int.getStorage(deleteIt);
+	  return data_object;
+	}
+	break;
       case casa::TpDouble:
-      {
-        roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
-        array_vals_dbl = roac_dbl->getColumn();
-        data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
-        data_object->data = (double *)array_vals_dbl.getStorage(deleteIt);
-        return data_object;
-      }
-      break;
+	{
+	  roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
+	  array_vals_dbl = roac_dbl->getColumn();
+	  data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
+	  data_object->data = (double *)array_vals_dbl.getStorage(deleteIt);
+	  return data_object;
+	}
+	break;
       case casa::TpComplex:
-      {
-        dal_datatype = dal_COMPLEX;
-        vector< complex< float > > ret_valvec;
-        try
-          {
-            roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
-          }
-        catch (casa::AipsError x)
-          {
-            std::cerr << "ERROR: " << x.getMesg() << endl;
-            return NULL;
-          }
-        array_vals_comp = roac_comp->getColumn( );
-        data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
-        data_object->data =
-          (complex<float> *)array_vals_comp.getStorage(deleteIt);
-        return data_object;
-      }
-      break;
+	{
+	  dal_datatype = dal_COMPLEX;
+	  vector< complex< float > > ret_valvec;
+	  try
+	    {
+	      roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
+	    }
+	  catch (casa::AipsError x)
+	    {
+	      std::cerr << "ERROR: " << x.getMesg() << endl;
+	      return NULL;
+	    }
+	  array_vals_comp = roac_comp->getColumn( );
+	  data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
+	  data_object->data =
+	    (complex<float> *)array_vals_comp.getStorage(deleteIt);
+	  return data_object;
+	}
+	break;
       case casa::TpString:
-      {
-        roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
-        array_vals_string = roac_string->getColumn();
-        data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
-        data_object->data = (std::string *)array_vals_string.getStorage(deleteIt);
-        return data_object;
-      }
-      break;
-      /************************************
-       * ADD MORE TYPES HERES
-       ************************************/
+	{
+	  roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
+	  array_vals_string = roac_string->getColumn();
+	  data_object = new dalData( filetype, dal_STRING, shape(), nrows() );
+	  data_object->data = (std::string *)array_vals_string.getStorage(deleteIt);
+	  return data_object;
+	}
+	break;
+	/************************************
+	 * ADD MORE TYPES HERES
+	 ************************************/
       default:
-      {
-        std::cerr << "dalColumn::data() Column type not yet supported."
-                  << endl;
-        return NULL;
-      }
+	{
+	  std::cerr << "dalColumn::data() Column type not yet supported."
+		    << endl;
+	  return NULL;
+	}
       }
   }
 #endif
-
-// ------------------------------------------------------- H5data
-
-  dalData * dalColumn::H5data( int start, int &length )
+  
+  // ------------------------------------------------------- H5data
+  
+  dalData * dalColumn::H5data (int &start,
+			       int &length)
   {
     char  ** field_names;
     size_t * field_sizes = NULL;
     size_t * field_offsets = NULL;
     size_t * size_out = NULL;
     bool column_in_table = false;
-
+    
     // retrieve the input fields needed for the append_records call
     if ( H5TBget_table_info ( file_id, tablename.c_str(), &nfields, &nrecords )
-         < 0 )
+	 < 0 )
       return NULL;
-
+    
     field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
     field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
     size_out = (size_t*)malloc( sizeof(size_t) );
-
+    
     /* Alocate space */
     field_names = (char**)malloc( sizeof(char*) * (size_t)nfields );
     for ( hsize_t ii = 0; ii < nfields; ii++)
       field_names[ii] = (char*)malloc( sizeof(char) * MAX_COL_NAME_SIZE );
-
+    
     if ( H5TBget_field_info( file_id, tablename.c_str(), field_names,
-                             field_sizes, field_offsets, size_out ) < 0 )
+			     field_sizes, field_offsets, size_out ) < 0 )
       return NULL;
-
+    
     for ( hsize_t ii = 0; ii < nfields; ii++)
       {
-        if ( 0 == strcmp( field_names[ii], name.c_str() ) )
-          column_in_table = true;
+	if ( 0 == strcmp( field_names[ii], name.c_str() ) )
+	  column_in_table = true;
       }
-
+    
     for ( hsize_t ii = 0; ii < nfields; ii++)
       free( field_names[ii] );
-
+    
     free( field_names );
-
-
+    
+    
     if ( !column_in_table )  // if column isn't found in the table
       {
-        std::cerr << "ERROR: column not found in table.\n";
-        return NULL;
+	std::cerr << "ERROR: column not found in table.\n";
+	return NULL;
       }
-
+    
     if ( start < 0 )
       start = 0;
     if ( length < 0 )
       length = nrecords;
-
+    
     if ( dal_COMPLEX_SHORT == getType() )
       {
-        dalcomplex_int16 * data = NULL;
-        try
-          {
-            data = (dalcomplex_int16*)malloc(sizeof(dalcomplex_int16)*length);
-          }
-        catch ( bad_alloc )
-          {
-            std::cerr <<
-                      "ERROR: Could not allocate memory buffer for dalColumn\n";
-            return NULL;
-          }
-
-        if ( H5TBread_fields_name ( file_id, tablename.c_str(),
-                                    name.c_str(), start, length,
-                                    sizeof(dalcomplex_int16),
-                                    field_offsets, field_sizes,
-                                    data ) < 0 )
-          {
-            std::cerr << "ERROR: H5TBread_fields_name failed.\n";
-            return NULL;
-          }
-
-        vector<int> shape(1);
-
-        data_object = new dalData( filetype, dal_COMPLEX_SHORT,
-                                   shape, length );
-        data_object->data = (dalcomplex_int16 *)data;
+	dalcomplex_int16 * data = NULL;
+	try
+	  {
+	    data = (dalcomplex_int16*)malloc(sizeof(dalcomplex_int16)*length);
+	  }
+	catch ( bad_alloc )
+	  {
+	    std::cerr <<
+	      "ERROR: Could not allocate memory buffer for dalColumn\n";
+	    return NULL;
+	  }
+	
+	if ( H5TBread_fields_name ( file_id, tablename.c_str(),
+				    name.c_str(), start, length,
+				    sizeof(dalcomplex_int16),
+				    field_offsets, field_sizes,
+				    data ) < 0 )
+	  {
+	    std::cerr << "ERROR: H5TBread_fields_name failed.\n";
+	    return NULL;
+	  }
+	
+	vector<int> shape(1);
+	
+	data_object = new dalData( filetype, dal_COMPLEX_SHORT,
+				   shape, length );
+	data_object->data = (dalcomplex_int16 *)data;
       }
     else if ( dal_FLOAT == getType() )
       {
-        float * data = NULL;
-        try
-          {
-            data = (float*)malloc(sizeof(float)*length);
-          }
-        catch ( bad_alloc )
-          {
-            std::cerr << "ERROR: Could not allocate memory buffer for " <<
-                      "dalColumn\n";
-            return NULL;
-          }
-
-        if ( H5TBread_fields_name (file_id, tablename.c_str(), name.c_str(),
-                                   start, length, sizeof(float), field_offsets, field_sizes,
-                                   data ) < 0 )
-          {
-            std::cerr << "ERROR: H5TBread_fields_name failed.\n";
-            return NULL;
-          }
-
-        vector<int> shape(1);
-
-        data_object = new dalData( filetype, dal_FLOAT, shape, length );
-        data_object->data = (float *)data;
+	float * data = NULL;
+	try
+	  {
+	    data = (float*)malloc(sizeof(float)*length);
+	  }
+	catch ( bad_alloc )
+	  {
+	    std::cerr << "ERROR: Could not allocate memory buffer for " <<
+	      "dalColumn\n";
+	    return NULL;
+	  }
+	
+	if ( H5TBread_fields_name (file_id, tablename.c_str(), name.c_str(),
+				   start, length, sizeof(float), field_offsets, field_sizes,
+				   data ) < 0 )
+	  {
+	    std::cerr << "ERROR: H5TBread_fields_name failed.\n";
+	    return NULL;
+	  }
+	
+	vector<int> shape(1);
+	
+	data_object = new dalData( filetype, dal_FLOAT, shape, length );
+	data_object->data = (float *)data;
       }
     else
       {
-        std::cerr << "ERROR: datatype not supported [dalColumn.data]\n";
-        free( field_sizes );
-        free( field_offsets );
-        free( size_out );
-        return NULL;
+	std::cerr << "ERROR: datatype not supported [dalColumn.data]\n";
+	free( field_sizes );
+	free( field_offsets );
+	free( size_out );
+	return NULL;
       }
-
+    
     free( field_sizes );
     free( field_offsets );
     free( size_out );
-
+    
     return data_object;
-
+    
   }
-
+  
 // ------------------------------------------------------- data
 
   /*!
@@ -756,11 +756,12 @@ namespace DAL
     \param length Number of cells to retrieve into the data object.
     \return A dalData object containing the column data.
    */
-  dalData * dalColumn::data( int start, int &length )
+    dalData * dalColumn::data (int &start,
+			       int &length)
   {
     if ( MSCASATYPE == filetype )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
         try
           {
             if ( isScalar() )
@@ -963,7 +964,7 @@ namespace DAL
   {
     if ( MSCASATYPE == filetype )
       {
-#ifdef WITH_CASA
+#ifdef HAVE_CASA
 
         if ( "unknown" == casa_datatype )
           {
@@ -1133,7 +1134,7 @@ namespace DAL
             bpl::numeric::array nadata(tmp_list);
             return nadata;
           }
-#endif // WITH_CASA
+#endif // HAVE_CASA
       }
     else if ( H5TYPE == filetype )
       {
