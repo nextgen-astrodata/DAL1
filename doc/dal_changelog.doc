@@ -8,6 +8,31 @@
 
 <pre>
 From: Lars B"ahren
+Date: October 10, 2008 10:49:33 PM GMT+02:00
+</pre>
+
+Hey everybody,
+
+after a some extensive debugging session during the 24 hours here is another set up updates/upgrades to the DAL:
+
+1) The segmentation faults we have been getting yesterday afternoon when trying to extract the data columns from the beam-formed data have been resolved (at least I am pretty sure about this). In order to avoid the related issues I have been cleaning up the interface of the DAL::BeamGroup class quite a bit, similar adjustments have been performed on DAL::BeamFormed. The test programs to the classes should be used as reference when coding against the library - some additional examples have been written up in the Doxygen documentation. The requested methods to support the casacore Vector class will be added next, such that shuffling around of the data outside the DAL should be kept to a minimum.
+
+2) I started merging HDF5Common and Common into a what now is called dalCommon. As discussed with Joe this was a logical step, since it makes no sense to keep these routines stored in different places. As a consequence I already cleaned up the set of routines, as a number of them were present double. One of the hopefully popular features is the overloading of the output operator for std::vector<T>, such that these now can be printed just like casa::Vector<T>.
+
+3) Unified the <tt>-D</tt> pre-compiler flags used for indicating the presence of external components; all appearances of WITH_CASA therefore have been replaced by HAVE_CASA.
+
+Next in line:
+
+1) Track the error in writing string-valued attributes, which results in corrupted metadata to both beam-formed data and TBB times-series. Joe already pointed me to the area where the problem should be located, but another extensive bug-tracking session will be required to resolve this.
+
+2) Implement recursive collection of metadata for TBB time-series data (DAL::TBB_Timeseries, DAL::TBB_StationGroup and DAL::TBB_DipoleDataset), such that those can be exported as a record to be fed to the CR::DataReader header record.
+
+3) Have a look at the report sent in by John; I'd say however that the changes to the Python bindings is something which better should be taken care of by Joe.
+
+<hr>
+
+<pre>
+From: Lars B"ahren
 Date: October 1, 2008 10:21:07 AM GMT+02:00
 </pre>
 
