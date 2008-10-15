@@ -6,25 +6,28 @@
 
 <hr>
 
-1) All pre-compiler flags indicating the presence of an external component (e.g.
-CFITSIO, HDF5) now have been switched to HAVE_<name>, thereby reaching
-unification of the flags across the software packages.
+<pre>
+From: Lars B"ahren
+Date: October 15, 2008 4:30:58 PM GMT+02:00
+</pre>
 
-2) Tracked down the error resulting in corrupted attribute values when reading
-from HDF5 files storing string attributes as variable length string.
+Hey everybody,
 
-3) Continued merging the contents of Common.cpp and HDF5Common.cpp into a single
-set of commonly used routines now to be found in dalCommon.cpp
+another bigger set of updates has just gone online:
 
-4) Cleaning up of CR-Tools code to removed compiler warnings resulting from
-conflicting definition of "restrict" both in Blitz and casacore. The scheme by
-which either of the library calls become available now has been unified.
+1) After some major debugging session I have been able to track down the error resulting in the return of corrupted string attribute values. One of the last changes Joe had been adding before signing off from major work on the DAL, was the transition from fixed length to variable length string attributes. While this allows a greater flexibility in storing metadata, this broke the routines which then in turn would read the attributes back in. This has been fixed now, such that especially the access to the attributes attached to the TBB time-series data and the beam-formed data is functional again.
 
-5) Tracked down error resulting in broken build of tbbTest.cc; when working with
-both WCSLIB and CFITSIO we need to be extra careful not avoid attempted
-redefinition of struct potentially present in both libraries. This now is
-handled as part of the CMake configuration step which - if required - sets the
-necessary pre-compiler flag.
+2) All pre-compiler flags indicating the presence of an external component (e.g. CFITSIO, HDF5) now have been switched to HAVE_<name>, thereby reaching unification of the flags across the software packages. The previous mix of statements required the use of multiple flags to activate/deactivate code segments across packages, which e.g. became relevant when coding the CR-Tools against the DAL.
+
+3) Continued merging the contents of Common.cpp and HDF5Common.cpp into a single set of commonly used routines now to be found in dalCommon.cpp
+
+4) The run-time error detected by John has been resolved; the problem was the missing installation of and linking against one of the Boost libraries. Depending on the platform either a mix of system-wide libraries and local versions would be used, or the required symbols would not be located at all.
+
+Next in line:
+
+1) Implement recursive collection of metadata shipped with the TBB time-series data in DAL::TBB_Timeseries.
+
+2) Joe looking into the Python-related issues John ran into while testing in Groningen...?
 
 <hr>
 
