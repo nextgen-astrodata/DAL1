@@ -84,7 +84,7 @@
 #include "dalDataset.h"
 #endif
 
-#ifdef WITH_MYSQL
+#ifdef HAVE_MYSQL
 #ifndef DATABASE_H
 #include "Database.h"
 #endif

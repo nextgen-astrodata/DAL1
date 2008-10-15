@@ -105,4 +105,4 @@ namespace DAL
 
 } // end namespace DAL
 
-// #endif // WITH_MYSQL
+// #endif // HAVE_MYSQL

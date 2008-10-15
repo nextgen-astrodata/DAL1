@@ -47,16 +47,15 @@
 
 #include <hdf5.h>
 
-namespace DAL   // Namespace DAL -- begin
-  {
+namespace DAL {  //  Namespace DAL -- begin
 
   /*!
     \file HDF5Common.h
-
+    
     \ingroup DAL
-
+    
     \brief A collection of routines to work with HDF5 datasets
-
+    
     \author Lars B&auml;hren
 
     \date 2008/01/17
@@ -103,126 +102,13 @@ namespace DAL   // Namespace DAL -- begin
 
   // ============================================================================
   //
-  //  Inspection and Feedback
-  //
-  // ============================================================================
-
-  //@{
-  /*!
-    \brief Get the shape of a dataset
-
-    \reval shape -- The shape of the dataset i.e.the length of the array axes in
-                    case of multidimensional data
-    \param dataset_id -- Identifier of the dataset within the HDF5 file
-
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered
-  */
-  bool h5get_dataset_shape (std::vector<uint> &shape,
-                            hid_t const &dataset_id);
-#ifdef HAVE_CASA
-  bool h5get_dataset_shape (casa::IPosition &shape,
-                            hid_t const &attribute_id);
-#endif
-  //@}
-
-  //@{
-  /*!
-    \brief Get the shape of the dataspace associated with the attribute
-
-    \reval shape -- The shape of the dataspace attached to the attribute, i.e.
-           the length of the array axes in case of multidimensional data
-    \param attribute_id -- Identifier of the attribute within the HDF5 file
-
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered
-  */
-  bool h5get_dataspace_shape (std::vector<uint> &shape,
-                              hid_t const &attribute_id);
-#ifdef HAVE_CASA
-  bool h5get_dataspace_shape (casa::IPosition &shape,
-                              hid_t const &attribute_id);
-#endif
-  //@}
-
-  /*!
-    \brief Retrieve the name of an object based on the object identifier
-
-    \retval name     -- Name of the object (if set or defined).
-    \param object_id -- Identifier for the objects of which to retrieve the
-           name.
-
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered
-  */
-  bool h5get_name (std::string &name,
-                   hid_t const &object_id);
-
-  /*!
-    \brief Retrieve the name of an object based on the object identifier
-
-    \retval name     -- Name of the object (if set or defined).
-    \param object_id -- Identifier for the objects of which to retrieve the
-           name.
-    \param index     -- Transient index identifying the object whose name to
-           retrieve.
-
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered
-  */
-  bool h5get_name (std::string &name,
-                   hid_t const &object_id,
-                   hsize_t const &index);
-
-  /*!
-    \brief Retrieve the name of an object based on the object identifier
-
-    \retval filename -- Name of the HDF5 file within which the object is
-            contained
-    \param object_id -- Identifier for the objects of which to retrieve the
-           name.
-
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered
-  */
-  bool h5get_filename (std::string &filename,
-                       hid_t const &object_id);
-
-  // ============================================================================
-  //
   //  Access to attributes
   //
   // ============================================================================
-
-  //@{
-  /*!
-    \brief Get the value of an attribute attached to a group or dataset
-
-    \retval value       -- Value of the attribute
-    \param attribute_id -- Identifier of the attribute within the HDF5 file
-
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered
-  */
-  template <class T>
-  bool h5get_attribute (T &value,
-                        hid_t const &attribute_id);
-  template <class T>
-  bool h5get_attribute (std::vector<T> &value,
-                        hid_t const &attribute_id);
+  
 #ifdef HAVE_CASA
-  /*   template <class T> */
-  /*     bool h5get_attribute (casa::Array<T> &value, */
-  /* 			  hid_t const &attribute_id); */
-  /*   template <class T> */
-  /*     bool h5get_attribute (casa::Matrix<T> &value, */
-  /* 			  hid_t const &attribute_id); */
-  template <class T>
-  bool h5get_attribute (casa::Vector<T> &value,
-                        hid_t const &attribute_id);
 #endif
-  //@}
-
+  
   /*!
     \brief Set the value of an attribute attached to a group or dataset
 
@@ -242,50 +128,6 @@ namespace DAL   // Namespace DAL -- begin
                         std::string const &name,
                         uint const &val);
 
-
-  //@{
-  /*!
-    \brief Get the value of an attribute attached to a group or dataset
-  */
-  template <class T>
-  bool h5get_attribute (T &value,
-                        std::string const &name,
-                        hid_t const &location_id);
-  template <class T>
-  bool h5get_attribute (std::vector<T> &value,
-                        std::string const &name,
-                        hid_t const &location_id);
-#ifdef HAVE_CASA
-  /*   template <class T> */
-  /*     bool h5get_attribute (casa::Array<T> &value, */
-  /* 			  std::string const &name, */
-  /* 			  hid_t const &location_id); */
-  /*   template <class T> */
-  /*     bool h5get_attribute (casa::Matrix<T> &value, */
-  /* 			  std::string const &name, */
-  /* 			  hid_t const &location_id); */
-  template <class T>
-  bool h5get_attribute (casa::Vector<T> &value,
-                        std::string const &name,
-                        hid_t const &location_id);
-#endif
-
-  /*!
-    \brief Print an attribute value. (Used with H5Aiterate).
-
-    This is a function parameter meant to be used with H5Aiterate.
-
-    \param loc_id -- Identifier for the HDF5 object - file, group, dataset,
-           array - the attribute is attached to.
-    \param name   -- Name of the attribute
-    \param opdata -- not used, but necessary as a placeholder
-    \return error status
-  */
-  herr_t attr_info (hid_t loc_id,
-		    const char *name,
-		    void *opdata);
-
-  //@}
 
 } // Namespace DAL -- end
 

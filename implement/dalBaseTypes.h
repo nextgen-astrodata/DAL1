@@ -90,28 +90,28 @@ namespace DAL
 
   using namespace std;
 
-  const std::string H5TYPE = "HDF5";
-  const std::string FITSTYPE = "FITS";
+  const std::string H5TYPE     = "HDF5";
+  const std::string FITSTYPE   = "FITS";
   const std::string MSCASATYPE = "MSCASA";
 
   const bool SUCCESS = true;
   const bool FAIL = false;
 
-  const std::string dal_CHAR = "dalCHAR";
+  const std::string dal_CHAR   = "dalCHAR";
   const std::string dal_STRING = "dalSTRING";
-  const std::string dal_BOOL = "dalBOOL";
+  const std::string dal_BOOL   = "dalBOOL";
 
-  const std::string dal_SHORT = "dalSHORT";
-  const std::string dal_INT = "dalINT";
-  const std::string dal_UINT = "dalINT";
-  const std::string dal_LONG = "dalLONG";
+  const std::string dal_SHORT         = "dalSHORT";
+  const std::string dal_INT           = "dalINT";
+  const std::string dal_UINT          = "dalINT";
+  const std::string dal_LONG          = "dalLONG";
 
-  const std::string dal_FLOAT = "dalFLOAT";
-  const std::string dal_DOUBLE = "dalDOUBLE";
+  const std::string dal_FLOAT         = "dalFLOAT";
+  const std::string dal_DOUBLE        = "dalDOUBLE";
 
-  const std::string dal_COMPLEX = "dalCOMPLEX";
-  const std::string dal_DCOMPLEX = "dalDCOMPLEX";
-  const std::string dal_COMPLEX_CHAR = "dalCOMPLEX_CHAR";
+  const std::string dal_COMPLEX       = "dalCOMPLEX";
+  const std::string dal_DCOMPLEX      = "dalDCOMPLEX";
+  const std::string dal_COMPLEX_CHAR  = "dalCOMPLEX_CHAR";
   const std::string dal_COMPLEX_SHORT = "dalCOMPLEX_SHORT";
 
   // define a few datatypes
@@ -155,10 +155,6 @@ namespace DAL
 
 #ifndef CONVERT_H
 #include <convert.h>  // for stringify function
-#endif
-
-#ifndef HDF5COMMON_H
-#include <HDF5Common.h>
 #endif
 
 #ifndef DALCOMMON_H

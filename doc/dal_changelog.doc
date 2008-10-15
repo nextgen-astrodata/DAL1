@@ -6,6 +6,28 @@
 
 <hr>
 
+1) All pre-compiler flags indicating the presence of an external component (e.g.
+CFITSIO, HDF5) now have been switched to HAVE_<name>, thereby reaching
+unification of the flags across the software packages.
+
+2) Tracked down the error resulting in corrupted attribute values when reading
+from HDF5 files storing string attributes as variable length string.
+
+3) Continued merging the contents of Common.cpp and HDF5Common.cpp into a single
+set of commonly used routines now to be found in dalCommon.cpp
+
+4) Cleaning up of CR-Tools code to removed compiler warnings resulting from
+conflicting definition of "restrict" both in Blitz and casacore. The scheme by
+which either of the library calls become available now has been unified.
+
+5) Tracked down error resulting in broken build of tbbTest.cc; when working with
+both WCSLIB and CFITSIO we need to be extra careful not avoid attempted
+redefinition of struct potentially present in both libraries. This now is
+handled as part of the CMake configuration step which - if required - sets the
+necessary pre-compiler flag.
+
+<hr>
+
 <pre>
 From: Lars B"ahren
 Date: October 10, 2008 10:49:33 PM GMT+02:00

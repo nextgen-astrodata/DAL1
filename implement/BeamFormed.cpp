@@ -875,7 +875,8 @@ namespace DAL {
 
   /*!
     \brief Get the station temperatures
-    \return vector of stastion temperatures
+    \return temperatures -- Vector with the temperatures for measured at the 
+            different stations.
   */
   std::vector< int > BeamFormed::station_temperatures ()
   {
@@ -897,19 +898,41 @@ namespace DAL {
   //
   // ============================================================================
   
+  /*!
+    \param beam    -- The number of the beam from which to retrieve the data
+    \param subband -- The number of the sub-band from which to retrieve the data
+    \param start   -- Start number of the cell in the column.
+    \param length  -- The number of cells to retrieve.
+    \retval values -- Vector with the extracted values
+  */
   void BeamFormed::getSubbandData_X (int &beam,
 				     int &subband,
+				     int &start,
+				     int &length,
 				     std::vector<complex<short> > &data)
   {
     beamGroups_p[beam]->getSubbandData_X(subband,
+					 start,
+					 length,
 					 data);
   }
   
+  /*!
+    \param beam    -- The number of the beam from which to retrieve the data
+    \param subband -- The number of the sub-band from which to retrieve the data
+    \param start   -- Start number of the cell in the column.
+    \param length  -- The number of cells to retrieve.
+    \retval values -- Vector with the extracted values
+  */
   void BeamFormed::getSubbandData_Y (int &beam,
 				     int &subband,
+				     int &start,
+				     int &length,
 				     std::vector<complex<short> > &data)
   {
     beamGroups_p[beam]->getSubbandData_Y(subband,
+					 start,
+					 length,
 					 data);
   }
   

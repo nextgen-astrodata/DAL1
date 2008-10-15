@@ -18,101 +18,11 @@
 \section dal_changes_build Configuration & Build
 
 <ol>
-  <li>Adjust the -D compiler flags used for indicating if a external component (such as casacore or HDF5) can
-  be used; the compiler flags used should be the same ones as used in the external code itself, such that we
-  can use one and the dame switch.
-  - -DWITH_BOOST -> -DHAVE_BOOST
-  - -DWITH_CFITSIO -> -DHAVE_CFITSIO
   <li>I've been unable to make a clean build of the DAL. Not only on the (somewhat misconfigured) machines in
   Nijmegen, but also not on a clean SUSE 10.3. To me it seems to be connected to using a newer  version of boost.
   If boost 1.33 from the system is used, I get error messeages during compilation, if I (try to) force it to use
   the boost from the  "usg/external" tree or a freshly installed boost 1.36, then I get errors during  linking. (If
   you want the exact error messages, mail me.) -- A. Horneffer (01/10/2008)
-  <li>Conflicting Boost library versions lead to failure to build the applications using \e program_options
-  library:
-  \verbatim
-  Linking CXX executable bf2h5
-  /usr/local/lib/libboost_unit_test_framework-gcc.so: undefined reference to `init_unit_test_suite(int, char**)'
-  collect2: ld returned 1 exit status
-  make[2]: *** [apps/bf2h5] Error 1
-  make[1]: *** [apps/CMakeFiles/bf2h5.dir/all] Error 2
-  make: *** [all] Error 2
-  \endverbatim
-  Looks like we also need to build that library ourselves to ensure nothing funny happens along the way; for
-  information on how to build the library consult <tt>boost/libs/test/build/Jamfile.v2</tt>:
-  \verbatim
-  UTF_SOURCES =
-	compiler_log_formatter
-	debug
-	exception_safety
-	execution_monitor
-	framework
-	interaction_based
-	logged_expectations
-	plain_report_formatter
-	progress_monitor
-	results_collector
-	results_reporter
-	test_tools
-	unit_test_log
-	unit_test_main
-	unit_test_monitor
-	unit_test_parameters
-	unit_test_suite
-	xml_log_formatter
-	xml_report_formatter
-	;
-
-  lib boost_prg_exec_monitor : $(PRG_EXEC_MON_SOURCES).cpp ;
-
-  lib boost_test_exec_monitor : $(TEST_EXEC_MON_SOURCES).cpp : <link>static ;
-
-  lib boost_unit_test_framework : $(UTF_SOURCES).cpp ;
-  \endverbatim
-  <li>John McFarland reports the following build errors for version 2049:
-  - Failure caused by HDF5 interface version
-  \verbatim
-  usg/src/DAL/implement/dalArray.cpp: In constructor `DAL::dalFloatArray::dalFloatArray(hid_t, std::string, std::vector<int, std::allocator<int> >, float*, std::vector<int, std::allocator<int> >)':
-  usg/src/DAL/implement/dalArray.cpp:1066: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Dcreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/dalArray.cpp:1066: warning: passing NULL used for non-pointer converting 7 of `hid_t H5Dcreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/dalArray.cpp:1082: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Dcreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/dalArray.cpp:1082: warning: passing NULL used for non-pointer converting 7 of `hid_t H5Dcreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/dalArray.cpp: In member function `void DAL::dalArray::extend_boost(boost::python::list)':
-  usg/src/DAL/implement/dalArray.cpp:1432: error: `len' is not a member of `bpl'
-  usg/src/DAL/implement/Common.h: In function `bool DAL::h5setAttribute(const hid_t&, hid_t, std::string, T*, int) [with T = char]':
-  usg/src/DAL/implement/dalArray.cpp:447:   instantiated from here
-  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 5 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/Common.h: In function `bool DAL::h5setAttribute(const hid_t&, hid_t, std::string, T*, int) [with T = short int]':
-  usg/src/DAL/implement/dalArray.cpp:463:   instantiated from here
-  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 5 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/Common.h: In function `bool DAL::h5setAttribute(const hid_t&, hid_t, std::string, T*, int) [with T = int]':
-  usg/src/DAL/implement/dalArray.cpp:479:   instantiated from here
-  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 5 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/Common.h: In function `bool DAL::h5setAttribute(const hid_t&, hid_t, std::string, T*, int) [with T = uint]':
-  usg/src/DAL/implement/dalArray.cpp:495:   instantiated from here
-  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 5 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/Common.h: In function `bool DAL::h5setAttribute(const hid_t&, hid_t, std::string, T*, int) [with T = long int]':
-  usg/src/DAL/implement/dalArray.cpp:511:   instantiated from here
-  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 5 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/Common.h: In function `bool DAL::h5setAttribute(const hid_t&, hid_t, std::string, T*, int) [with T = float]':
-  usg/src/DAL/implement/dalArray.cpp:527:   instantiated from here
-  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 5 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/Common.h: In function `bool DAL::h5setAttribute(const hid_t&, hid_t, std::string, T*, int) [with T = double]':
-  usg/src/DAL/implement/dalArray.cpp:543:   instantiated from here
-  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 5 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
-  usg/src/DAL/implement/Common.h:100: warning: passing NULL used for non-pointer converting 6 of `hid_t H5Acreate2(hid_t, const char*, hid_t, hid_t, hid_t, hid_t)'
-  usg/release/lib/python2.3/site-packages/numpy/core/include/numpy/__multiarray_api.h: At global scope:
-  usg/release/lib/python2.3/site-packages/numpy/core/include/numpy/__multiarray_api.h:959: warning: 'int _import_array()' defined but not used
-  make[2]: *** [implement/CMakeFiles/pydal.dir/dalArray.cpp.o] Error 1
-  make[1]: *** [implement/CMakeFiles/pydal.dir/all] Error 2
-  make: *** [all] Error 2
-  \endverbatim
 </ol>
 
 <hr>

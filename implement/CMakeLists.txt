@@ -82,7 +82,6 @@ set (dal_sources
   BeamFormed.cpp
   BeamGroup.cpp
   BeamSubband.cpp
-  HDF5Common.cpp
   Enumerations.cpp
   TBB.cpp
   TBB_DipoleDataset.cpp

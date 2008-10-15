@@ -35,7 +35,6 @@ set (tests
   tBeamGroup
   tBeamSubband
   tEnumerations
-  tHDF5Common
   tTBB_DipoleDataset
   tTBB_StationGroup
   tTBB_Timeseries

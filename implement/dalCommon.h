@@ -37,12 +37,12 @@
 #include <measures/Measures/MPosition.h>
 using casa::MDirection;
 using casa::MPosition;
+using casa::MVPosition;
 using casa::Quantity;
 #endif
 
-#ifndef DALBASETYPES_H
 #include "dalBaseTypes.h"
-#endif
+#include "Enumerations.h"
 
 /*!
   \file dalCommon.h
@@ -128,16 +128,40 @@ namespace DAL {
       return false;
     }
   
+  //! Retrieve the name of an object based on the object identifier
+  bool h5get_name (std::string &name,
+                   hid_t const &object_id);
+  
+  //! Retrieve the name of an object based on the object identifier
+  bool h5get_name (std::string &name,
+                   hid_t const &object_id,
+                   hsize_t const &index);
+  
+  //! Retrieve the name of an object based on the object identifier
+  bool h5get_filename (std::string &filename,
+                       hid_t const &object_id);
+
   // ============================================================================
   //
   //  Access to HDF5 attributes
   //
   // ============================================================================
-  
+ 
   //! Provide a summary of an attribute's internal structure
   void h5attribute_summary (std::ostream &os,
                             hid_t const &attribute_id);
   
+  //! Print an attribute value. (Used with H5Aiterate).
+  herr_t attr_info (hid_t loc_id,
+		    const char *name,
+		    void *opdata);
+  
+  //! Get the shape of a dataset
+  bool h5get_dataset_shape (std::vector<uint> &shape,
+                            hid_t const &dataset_id);
+  //! Get the shape of the dataspace associated with the attribute
+  bool h5get_dataspace_shape (std::vector<uint> &shape,
+                              hid_t const &attribute_id);
   /*!
     \todo Function not yet implemented
     \brief Provide a summary of an attribute's internal structure
@@ -180,8 +204,11 @@ namespace DAL {
   // ------------------------------------------------------------- h5setAttribute
 
   template <class T>
-  bool h5setAttribute( hid_t const &datatype, hid_t obj_id, std::string attrname,
-                       T * data, int size )
+  bool h5setAttribute( hid_t const &datatype,
+		       hid_t obj_id,
+		       std::string attrname,
+                       T * data,
+		       int size )
   {
     hid_t   attr1    = 0;  /* Attribute identifier */
     hid_t   aid1     = 0;  /* Attribute dataspace identifier */
@@ -251,7 +278,9 @@ namespace DAL {
       
       std::string fullname = "/";
       
-      if ( H5LTget_attribute_ndims( obj_id, fullname.c_str(), attrname.c_str(),
+      if ( H5LTget_attribute_ndims( obj_id,
+				    fullname.c_str(),
+				    attrname.c_str(),
 				    &rank ) < 0 )
 	{
 	  std::cerr << "ERROR: Attribute '" << attrname << "' does not exist.\n";
@@ -341,12 +370,100 @@ namespace DAL {
 
   }
 
+  //! Get the value of an attribute attached to a group or dataset
+  template <class T>
+    bool h5get_attribute (T &value,
+			  hid_t const &attribute_id);
+  //! Get the value of an attribute attached to a group or dataset
+  template <class T>
+    bool h5get_attribute (T &value,
+			  std::string const &name,
+			  hid_t const &locationID);  
+  /*!
+    \brief Get the value of an attribute attached to a group or dataset
+    
+    \retval value       -- Value of the attribute
+    \param attribute_id -- Identifier of the attribute within the HDF5 file
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered
+  */
+  template <class T>
+    bool h5get_attribute (std::vector<T> &value,
+			  hid_t const &attribute_id)
+    {
+      bool status (true);
+      std::vector<uint> shape;
+      
+      // get the shape of the dataspace
+      status = h5get_dataspace_shape (shape,attribute_id);
+      
+      if (shape.size() == 1) {
+	// adjust size of vector returning the result
+	value.resize(shape[0]);
+	// additional local variables
+	herr_t h5error     = 0;
+	hid_t datatype_id  = H5Aget_type (attribute_id);
+	T *buffer;
+	// allocate buffer memory
+	buffer = new T [shape[0]];
+	// read attribute value into buffer
+	h5error = H5Aread (attribute_id,
+			   datatype_id,
+			   buffer);
+	// copy retrieved data to returned vector
+	if (h5error == 0) {
+	  for (uint n(0); n<shape[0]; n++)
+	    {
+	      value[n] = buffer[n];
+	    }
+	  
+	  delete [] buffer;
+	  buffer = NULL;
+	  
+	}
+	else {
+	  cerr << "[h5get_attribute] Error reading value of attribute." << endl;
+	  status = false;
+	}
+      }
+      else {
+	cerr << "[h5get_attribute] Wrong shape of attribute dataspace!"
+	     << std::endl;
+	status = false;
+      }
+      
+      return status;
+    }
+  
+  //! Get the value of an attribute attached to a group or dataset
+  template <class T>
+    bool h5get_attribute (std::vector<T> &value,
+			  std::string const &name,
+			  hid_t const &locationID);  
+  
+  
 #ifdef HAVE_CASA
 
+  //! Get the shape of a dataset
+  bool h5get_dataset_shape (casa::IPosition &shape,
+                            hid_t const &attribute_id);
+  //! Get the shape of the dataspace associated with the attribute
+  bool h5get_dataspace_shape (casa::IPosition &shape,
+                              hid_t const &attribute_id);
+  //! Get the value of an attribute attached to a group or dataset
+  template <class T>
+    bool h5get_attribute (casa::Vector<T> &value,
+			  hid_t const &attribute_id);
+  //! Get the value of an attribute attached to a group or dataset
+  template <class T>
+  bool h5get_attribute (casa::Vector<T> &value,
+                        std::string const &name,
+                        hid_t const &location_id);
   //! Get physical quantity attribute as casa::Quantity
-  casa::Quantity h5get_quantity (DAL::Attributes const &value,
-                                 DAL::Attributes const &unit,
-                                 hid_t const &location_id);  
+  Quantity h5get_quantity (DAL::Attributes const &value,
+			   DAL::Attributes const &unit,
+			   hid_t const &location_id);  
   //! Get a physical quantity describing a direction within a frame
   casa::MDirection h5get_direction (DAL::Attributes const &value,
                                     DAL::Attributes const &unit,
@@ -371,7 +488,8 @@ namespace DAL {
                                   DAL::Attributes const &unit,
                                   DAL::Attributes const &frame,
                                   hid_t const &location_id);
-#endif
+
+#endif  // HAVE_CASA
 
   // ============================================================================
   //

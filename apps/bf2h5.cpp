@@ -83,7 +83,7 @@
 #include <fstream>  // for file handle
 #include <complex>  // for complex datatypes
 #include <assert.h>
-#ifdef WITH_GSL
+#ifdef HAVE_GSL
 #include <gsl/gsl_fft_complex.h> // for fft's during channelization
 #endif
 #include <new>

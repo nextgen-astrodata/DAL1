@@ -32,7 +32,7 @@
 
 using namespace DAL;
 
-#ifdef WITH_MYSQL
+#ifdef HAVE_MYSQL
 
 // ---------------------------------------------------- connect_mysql_database
 
@@ -810,7 +810,7 @@ int main()
   uint ret = 0;
   uint failed_tests = 0;
 
-#ifdef WITH_MYSQL
+#ifdef HAVE_MYSQL
   std::cerr << "\n[ connect_mysql_database ]\n";
   std::cerr << "-----------------------------------------------------\n";
   connect_mysql_database();

@@ -23,9 +23,9 @@
 
 #include <dalCommon.h>
 #include <Enumerations.h>
+#include <dalDataset.h>
 
 #ifdef HAVE_CASA
-#include <casa/aips.h>
 #include <casa/Arrays/Vector.h>
 #endif
 
@@ -81,10 +81,10 @@ int test_service_routines ()
       arr_complex[n] = std::complex<double>(n);
     }
     //
-    show (std::cout,arr_int,nelem);
-    show (std::cout,arr_float,nelem);
-    show (std::cout,arr_double,nelem);
-    show (std::cout,arr_complex,nelem);
+    show (cout,arr_int,nelem);
+    show (cout,arr_float,nelem);
+    show (cout,arr_double,nelem);
+    show (cout,arr_complex,nelem);
     //
     delete [] arr_int;
     delete [] arr_float;
@@ -103,11 +103,11 @@ int test_service_routines ()
     std::vector<float> vec_float (nelem);
     std::vector<double> vec_double (nelem);
     
-    std::cout << "-- vector<int>    = " << vec_int    << std::endl;
-    std::cout << "-- vector<long>   = " << vec_long   << std::endl;
-    std::cout << "-- vector<short>  = " << vec_short  << std::endl;
-    std::cout << "-- vector<float>  = " << vec_float  << std::endl;
-    std::cout << "-- vector<double> = " << vec_double << std::endl;
+    cout << "-- vector<int>    = " << vec_int    << std::endl;
+    cout << "-- vector<long>   = " << vec_long   << std::endl;
+    cout << "-- vector<short>  = " << vec_short  << std::endl;
+    cout << "-- vector<float>  = " << vec_float  << std::endl;
+    cout << "-- vector<double> = " << vec_double << std::endl;
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
@@ -126,8 +126,37 @@ int test_service_routines ()
 */
 int test_hdf5_attributes (std::string const &filename)
 {
-  int nofFailedTests (0);
+  cout << "\n[tdalCommon::test_hdf5_attributes]\n" << std::endl;
 
+  int nofFailedTests (0);
+  hid_t fileID;
+
+  cout << "[1] Creating HDF5 file for testing ..." << endl;
+  try {
+    fileID = H5Fcreate ("tdalCommon.h5",
+			H5F_ACC_TRUNC,
+			H5P_DEFAULT,
+			H5P_DEFAULT);
+    
+  } catch (std::string message) {
+    cerr << message << endl;
+    return 1;
+  }
+
+  cout << "[2] Set attributes of single value ..." << endl;
+  try {
+    int attr_int (1);
+    uint attr_uint (2);
+    long attr_long (3);
+    float attr_float (4);
+    double attr_double (5);
+    std::string attr_string ("Hello");
+    //
+  } catch (std::string message) {
+    cerr << message << endl;
+    return 1;
+  }
+  
   return nofFailedTests;
 }
 

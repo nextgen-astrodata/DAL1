@@ -391,6 +391,11 @@ namespace DAL {
   // ============================================================================
 
   /*!
+    Please keep in mind, that this function is mainly for convenience and should
+    be used with care, since it will try to do extactly what it is asked for --
+    try to retrieve all the X-column values for the selected sub-band, which 
+    simply might be too large to fit into memory.
+
     \retval data   -- The data from the selected sub-band
     \param subband -- The number of the subband from which to retrieve the data
   */
@@ -404,6 +409,11 @@ namespace DAL {
   }
   
   /*!
+    Please keep in mind, that this function is mainly for convenience and should
+    be used with care, since it will try to do extactly what it is asked for --
+    try to retrieve all the Y-column values for the selected sub-band, which 
+    simply might be too large to fit into memory.
+
     \retval data   -- The data from the selected sub-band
     \param subband -- The number of the subband from which to retrieve the data
   */

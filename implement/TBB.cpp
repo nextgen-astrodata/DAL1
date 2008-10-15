@@ -84,9 +84,12 @@ namespace DAL {
         string project            = "UNDEFINED";
         string observation_id     = "UNDEFINED";
         string observation_mode   = "UNDEFINED";
-        dataset->setAttribute( attribute_name(TELESCOPE), telescope );
-        dataset->setAttribute( attribute_name(OBSERVER), observer );
-        dataset->setAttribute( attribute_name(PROJECT), project );
+        dataset->setAttribute( attribute_name(TELESCOPE),
+			       telescope );
+        dataset->setAttribute( attribute_name(OBSERVER),
+			       observer );
+        dataset->setAttribute( attribute_name(PROJECT),
+			       project );
         dataset->setAttribute( attribute_name(OBSERVATION_ID),
                                observation_id );
         dataset->setAttribute( attribute_name(OBSERVATION_MODE),

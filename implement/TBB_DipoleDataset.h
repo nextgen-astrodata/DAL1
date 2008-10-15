@@ -34,8 +34,8 @@
 #include <measures/Measures/MFrequency.h>
 #include <measures/Measures/MPosition.h>
 
-#ifndef HDF5COMMON_H
-#include <HDF5Common.h>
+#ifndef DALCOMMON_H
+#include <dalCommon.h>
 #endif
 
 #ifndef ENUMERATIONS_H

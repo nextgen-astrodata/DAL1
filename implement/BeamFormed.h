@@ -196,10 +196,14 @@ namespace DAL {
     //! Get the X column data for a given subband.
     void getSubbandData_X (int &beam,
 			   int &subband,
+			   int &start,
+			   int &length,
 			   std::vector<complex<short> > &data);
     //! Get the Y column data for a given subband.
     void getSubbandData_Y (int &beam,
 			   int &subband,
+			   int &start,
+			   int &length,
 			   std::vector<complex<short> > &data);
     
     /************************************************************************
