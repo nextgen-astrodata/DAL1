@@ -112,7 +112,6 @@ if (DAL_ENABLE_TESTING)
   
   if (dataset_tbb)
     add_test (tdalCommon tdalCommon ${dataset_tbb})
-    add_test (tHDF5Common tHDF5Common ${dataset_tbb})
     add_test (tTBB_DipoleDataset tTBB_DipoleDataset ${dataset_tbb})
     add_test (tTBB_StationGroup tTBB_StationGroup ${dataset_tbb})
     add_test (tTBB_Timeseries tTBB_Timeseries ${dataset_tbb})
