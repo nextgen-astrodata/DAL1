@@ -369,6 +369,93 @@ namespace DAL { // Namespace DAL -- begin
     }
 #endif
   }
+
+  // ============================================================================
+  //
+  //  Parameters from dipole datasets
+  //
+  // ============================================================================
+  
+  // ----------------------------------------------------------------- station_id
+
+#ifdef HAVE_CASA
+  casa::Vector<uint> TBB_StationGroup::station_id ()
+  {
+    uint nofDatasets (datasets_p.size());
+    casa::Vector<uint> station_id (nofDatasets);
+    
+    for (uint n(0); n<nofDatasets; n++) {
+      station_id(n) = datasets_p[n].station_id();
+    }
+    
+    return station_id;
+  }
+#else
+  std::vector<uint> TBB_StationGroup::station_id ()
+  {
+    std::vector<double> station_id;
+    
+    for (uint n(0); n<datasets_p.size(); n++) {
+      station_id.push_back(datasets_p[n].station_id());
+    }
+    
+    return station_id;
+  }
+#endif
+  
+  // --------------------------------------------------------------------- rsp_id
+
+#ifdef HAVE_CASA
+  casa::Vector<uint> TBB_StationGroup::rsp_id ()
+  {
+    uint nofDatasets (datasets_p.size());
+    casa::Vector<uint> rsp_id (nofDatasets);
+    
+    for (uint n(0); n<nofDatasets; n++) {
+      rsp_id(n) = datasets_p[n].rsp_id();
+    }
+    
+    return rsp_id;
+  }
+#else
+  std::vector<uint> TBB_StationGroup::rsp_id ()
+  {
+    std::vector<double> rsp_id;
+    
+    for (uint n(0); n<datasets_p.size(); n++) {
+      rsp_id.push_back(datasets_p[n].rsp_id());
+    }
+    
+    return rsp_id;
+  }
+#endif
+
+  // --------------------------------------------------------------------- rcu_id
+  
+#ifdef HAVE_CASA
+  casa::Vector<uint> TBB_StationGroup::rcu_id ()
+  {
+    uint nofDatasets (datasets_p.size());
+    casa::Vector<uint> rcu_id (nofDatasets);
+    
+    for (uint n(0); n<nofDatasets; n++) {
+      rcu_id(n) = datasets_p[n].rcu_id();
+    }
+    
+    return rcu_id;
+  }
+#else
+  std::vector<uint> TBB_StationGroup::rcu_id ()
+  {
+    std::vector<double> rcu_id;
+    
+    for (uint n(0); n<datasets_p.size(); n++) {
+      rcu_id.push_back(datasets_p[n].rcu_id());
+    }
+    
+    return rcu_id;
+  }
+#endif
   
   // ============================================================================
   //
@@ -627,38 +714,38 @@ namespace DAL { // Namespace DAL -- begin
   }
 #endif
   
-  // --------------------------------------------------------- sample_frequencies
+  // ----------------------------------------------------------- sample_frequency
   
 #ifdef HAVE_CASA
   casa::Vector<double>
-  TBB_StationGroup::sample_frequencies (std::string const &units)
+  TBB_StationGroup::sample_frequency ()
   {
     uint nofDatasets (datasets_p.size());
     casa::Vector<double> sample_frequency (nofDatasets);
     
     for (uint n(0); n<nofDatasets; n++) {
-      sample_frequency(n) = datasets_p[n].sample_frequency_value(units);
+      sample_frequency(n) = datasets_p[n].sample_frequency_value();
     }
     
     return sample_frequency;
   }
 #else
-  std::vector<double> TBB_StationGroup::sample_frequencies (std::string const &units)
+  std::vector<double> TBB_StationGroup::sample_frequency ()
   {
     std::vector<double> sample_frequency;
     
     for (uint n(0); n<datasets_p.size(); n++) {
-      sample_frequency.push_back(datasets_p[n].sample_frequency(units));
+      sample_frequency.push_back(datasets_p[n].sample_frequency());
     }
     
     return sample_frequency;
   }
 #endif
   
-  // --------------------------------------------------------------- data_lengths
+  // --------------------------------------------------------------- data_length
   
 #ifdef HAVE_CASA
-  casa::Vector<uint> TBB_StationGroup::data_lengths ()
+  casa::Vector<uint> TBB_StationGroup::data_length ()
   {
     uint nofDatasets (datasets_p.size());
     casa::Vector<uint> data_length (nofDatasets);
@@ -670,7 +757,7 @@ namespace DAL { // Namespace DAL -- begin
     return data_length;
   }
 #else
-  std::vector<uint> TBB_StationGroup::data_lengths ()
+  std::vector<uint> TBB_StationGroup::data_length ()
   {
     std::vector<uint> data_length;
     
@@ -695,10 +782,12 @@ namespace DAL { // Namespace DAL -- begin
     casa::Matrix<double> data (nofSamples,datasets_p.size());
     casa::Vector<double> tmp (nofSamples);
 
-    std::cout << "[TBB_StationGroup::fx]"           << std::endl;
+#ifdef DEBUGGING_MESSAGES
+    std::cout << "[TBB_StationGroup::fx]"             << std::endl;
     std::cout << "-- nof. samples = " << nofSamples   << std::endl;
     std::cout << "-- shape(data)  = " << data.shape() << std::endl;
     std::cout << "-- shape(tmp)   = " << tmp.shape()  << std::endl;
+#endif
     
     for (uint n(0); n<datasets_p.size(); n++) {
       // get the channel data ...

@@ -163,7 +163,14 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
 
   // -------------------------------------------------------------- nofAttributes
-
+  
+  /*!
+    \return nofAttributes -- The number of attributes attached to the dataset;
+            if the dataset ID is properly connected to a dataset within the 
+	    HDF5 file, the returned value will be zero or greater. If a
+	    negative value is returned, most likely te connection with the
+	    file is broken.
+  */
   int TBB_DipoleDataset::nofAttributes ()
   {
     if (datasetID_p > 0) {
@@ -211,6 +218,9 @@ namespace DAL { // Namespace DAL -- begin
   
   // ----------------------------------------------------------------- station_id
   
+  /*!
+    \return STATION_ID -- ID of the LOFAR station this dipole belongs to
+  */
   uint TBB_DipoleDataset::station_id ()
   {    
     if (datasetID_p > 0) {
@@ -233,6 +243,10 @@ namespace DAL { // Namespace DAL -- begin
   
   // --------------------------------------------------------------------- rsp_id
   
+  /*!
+    \return RSP_ID -- ID of the Remote Station Processing board (RSP) this
+            dipole is connected with
+  */
   uint TBB_DipoleDataset::rsp_id ()
   {
     if (datasetID_p > 0) {
@@ -255,6 +269,9 @@ namespace DAL { // Namespace DAL -- begin
   
   // --------------------------------------------------------------------- rcu_id
   
+  /*!
+    \return RCU_ID -- ID of the receiver unit (RCU) this dipole is connected with
+  */
   uint TBB_DipoleDataset::rcu_id ()
   {
     if (datasetID_p > 0) {
@@ -277,6 +294,9 @@ namespace DAL { // Namespace DAL -- begin
   
   // ----------------------------------------------------------------------- time
   
+  /*!
+    \return time -- The (UNIX) time at which the data were recorded.
+  */
   uint TBB_DipoleDataset::time ()
   {
     if (datasetID_p > 0) {
@@ -321,7 +341,7 @@ namespace DAL { // Namespace DAL -- begin
   
   // ----------------------------------------------------- sample_frequency_value
   
-  double TBB_DipoleDataset::sample_frequency_value (std::string const &unit)
+  double TBB_DipoleDataset::sample_frequency_value ()
   {
     if (datasetID_p > 0) {
       bool status (true);

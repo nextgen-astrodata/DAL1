@@ -604,9 +604,9 @@ namespace DAL { // Namespace DAL -- begin
               for all datasets present in this station group
     */
 #ifdef HAVE_CASA
-    casa::Vector<double> sample_frequencies (std::string const &units="Hz");
+    casa::Vector<double> sample_frequency ();
 #else
-    std::vector<double> sample_frequencies (std::string const &units="Hz");
+    std::vector<double> sample_frequency ();
 #endif
 
     /*!
@@ -616,9 +616,9 @@ namespace DAL { // Namespace DAL -- begin
               this station group
     */
 #ifdef HAVE_CASA
-    casa::Vector<uint> data_lengths ();
+    casa::Vector<uint> data_length ();
 #else
-    std::vector<uint> data_lengths ();
+    std::vector<uint> data_length ();
 #endif
 
     /*!

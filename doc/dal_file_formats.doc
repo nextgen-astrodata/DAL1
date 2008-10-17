@@ -13,6 +13,10 @@
 
 \section dal_formats_beamformed Beamformed data
 
+- DAL::BeamFormed
+- DAL::BeamGroup
+- DAL::BeamSubband
+
 A LOFAR Beam-Formed file is stored per observation as an HDF5 file, grouped by
 beam and then subband.  All attribute data, described below, is defined in the
 <i>LOFAR Beam-Formed Data Format ICD</i>.
@@ -77,6 +81,10 @@ beam-formed-file.h5         <-------  Root level of dataset
 <hr>
 
 \section dal_formats_tbb TBB time-series data
+
+- DAL::TBB_Timeseries
+- DAL::TBB_StationGroup
+- DAL::TBB_DipoleDataset
 
 Structure of the dataset:
 \verbatim

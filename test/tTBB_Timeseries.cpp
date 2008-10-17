@@ -48,13 +48,13 @@ using DAL::TBB_Timeseries;  // Namespace usage
 
 int test_hdf5access (std::string const &filename)
 {
-  std::cout << "\n[test_hdf5access]\n" << std::endl;
+  cout << "\n[test_hdf5access]\n" << std::endl;
   
   int nofFailedTests (0);
   hid_t file_id (0);
   hid_t group_id (0);
   
-  std::cout << "[1] Open HDF5 file for reading ..." << std::endl;
+  cout << "[1] Open HDF5 file for reading ..." << std::endl;
   try {
     file_id = H5Fopen (filename.c_str(),
 		       H5F_ACC_RDONLY,
@@ -64,20 +64,26 @@ int test_hdf5access (std::string const &filename)
     nofFailedTests++;
   }
 
-  std::cout << "[2] Reading attributes attached to root group ..." << std::endl;
+  cout << "[2] Reading attributes attached to root group ..." << std::endl;
   try {
     if (file_id > 0) {
       std::string telescope;
       std::string observer;
       std::string project;
+      std::string observation_id;
+      std::string observation_mode;
       
       DAL::h5get_attribute (telescope,"TELESCOPE",file_id);
       DAL::h5get_attribute (observer,"OBSERVER",file_id);
       DAL::h5get_attribute (project,"PROJECT",file_id);
+      DAL::h5get_attribute (observation_id,"OBSERVATION_ID",file_id);
+      DAL::h5get_attribute (observation_mode,"OBSERVATION_MODE",file_id);
       
-      std::cout << "-- TELESCOPE = " << telescope << std::endl;
-      std::cout << "-- OBSERVER  = " << observer  << std::endl;
-      std::cout << "-- PROJECT   = " << project   << std::endl;
+      cout << "-- TELESCOPE        = " << telescope        << std::endl;
+      cout << "-- OBSERVER         = " << observer         << std::endl;
+      cout << "-- PROJECT          = " << project          << std::endl;
+      cout << "-- OBSERVATION_ID   = " << observation_id   << std::endl;
+      cout << "-- OBSERVATION_MODE = " << observation_mode << std::endl;
     } else {
       std::cerr << "--> Unable to read attributes - no open file!" << std::endl;
       nofFailedTests++;
@@ -87,7 +93,7 @@ int test_hdf5access (std::string const &filename)
     nofFailedTests++;
   }
 
-  std::cout << "[3]" << std::endl;
+  cout << "[3]" << std::endl;
   try {
     if (file_id > 0) {
       group_id = H5Gopen1 (file_id,"Station023");
@@ -114,11 +120,11 @@ int test_hdf5access (std::string const &filename)
 */
 int test_construction (std::string const &filename)
 {
-  std::cout << "\n[test_construction]\n" << std::endl;
+  cout << "\n[test_construction]\n" << std::endl;
 
   int nofFailedTests (0);
   
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  cout << "[1] Testing default constructor ..." << std::endl;
   try {
     TBB_Timeseries newTBB_Timeseries;
     //
@@ -128,7 +134,7 @@ int test_construction (std::string const &filename)
     nofFailedTests++;
   }
   
-  std::cout << "[2] Testing argumented constructor ..." << std::endl;
+  cout << "[2] Testing argumented constructor ..." << std::endl;
   try {
     TBB_Timeseries newTBB_Timeseries (filename);
     //
@@ -138,13 +144,13 @@ int test_construction (std::string const &filename)
     nofFailedTests++;
   }
   
-  std::cout << "[3] Testing copy constructor ..." << std::endl;
+  cout << "[3] Testing copy constructor ..." << std::endl;
   try {
-    std::cout << "--> creating original object ..." << std::endl;
+    cout << "--> creating original object ..." << std::endl;
     TBB_Timeseries timeseries (filename);
     timeseries.summary(); 
     //
-    std::cout << "--> creating new object by copy ..." << std::endl;
+    cout << "--> creating new object by copy ..." << std::endl;
     TBB_Timeseries timeseriesCopy (timeseries);
     timeseriesCopy.summary(); 
   } catch (std::string message) {
@@ -166,7 +172,7 @@ int test_construction (std::string const &filename)
 */
 int test_methods (std::string const &filename)
 {
-  std::cout << "\n[test_methods]\n" << std::endl;
+  cout << "\n[test_methods]\n" << std::endl;
 
   int nofFailedTests = 0;
   TBB_Timeseries timeseries (filename);
@@ -174,12 +180,13 @@ int test_methods (std::string const &filename)
   cout << "[1] Retrieving sample frequencies ..." << endl;
   try {
 #ifdef HAVE_CASA
-    casa::Vector<double> sampleFreq = timeseries.sample_frequencies();
+    casa::Vector<double> sampleFreq = timeseries.sample_frequency();
     cout << "-- nof. values        = " << sampleFreq.nelements() << endl;
     cout << "-- Sample frequencies = " << sampleFreq << endl;
 #else 
-    std::vector<double> sampleFreq = timeseries.sample_frequencies();
+    std::vector<double> sampleFreq = timeseries.sample_frequency();
     cout << "-- nof. values        = " << sampleFreq.size() << endl;
+    cout << "-- Sample frequencies = " << sampleFreq << endl;
 #endif
   } catch (std::string message) {
     cerr << message << endl;
@@ -215,12 +222,12 @@ int test_methods (std::string const &filename)
 */
 int test_attributes2record (string const &filename)
 {
-  std::cout << "\n[test_attributes2record]\n" << std::endl;
+  cout << "\n[test_attributes2record]\n" << std::endl;
 
   int nofFailedTests (0);
   TBB_Timeseries ts (filename);
 
-  std::cout << "[1] Retreiving attributes of group into record ..." << std::endl;
+  cout << "[1] Retreiving attributes of group into record ..." << std::endl;
   try {
     // retrieve attributes into record
     casa::Record rec = ts.attributes2record ();
@@ -232,7 +239,7 @@ int test_attributes2record (string const &filename)
     nofFailedTests++;
   }
 
-  std::cout << "[2] Retreiving attributes of group into record (recursive) ..."
+  cout << "[2] Retreiving attributes of group into record (recursive) ..."
 	    << std::endl;
   try {
     // retrieve attributes into record
@@ -245,30 +252,30 @@ int test_attributes2record (string const &filename)
     nofFailedTests++;
   }
 
-  std::cout << "[3] Fill dataset information into a record ..." << std::endl;
+  cout << "[3] Fill dataset information into a record ..." << std::endl;
   try {
     casa::Record rec;
     //
-    std::cout << "-- TELESCOPE" << std::endl;
+    cout << "-- TELESCOPE" << std::endl;
     rec.define("TELESCOPE",ts.telescope());
     //
-    std::cout << "-- OBSERVER" << std::endl;
+    cout << "-- OBSERVER" << std::endl;
     rec.define("OBSERVER",ts.observer());
     //
-    std::cout << "-- PROJECT" << std::endl;
+    cout << "-- PROJECT" << std::endl;
     rec.define("PROJECT",ts.project());
     //
-    std::cout << "-- CHANNEL_NAME" << std::endl;
+    cout << "-- CHANNEL_NAME" << std::endl;
     rec.define("CHANNEL_NAME",ts.channelNames());
     //
-    std::cout << "-- CHANNEL_ID" << std::endl;
+    cout << "-- CHANNEL_ID" << std::endl;
     rec.define("CHANNEL_ID",ts.channelID());
     //
-    std::cout << "-- TIME" << std::endl;
+    cout << "-- TIME" << std::endl;
     rec.define("TIME",ts.times());
     //
-    std::cout << "-- DATA_LENGTH" << std::endl;
-    rec.define("DATA_LENGTH",ts.data_lengths());
+    cout << "-- DATA_LENGTH" << std::endl;
+    rec.define("DATA_LENGTH",ts.data_length());
     // Create HDF5 file and write the record to it
     casa::HDF5File file("tTimeseries_3.h5", casa::ByteIO::New);
     casa::HDF5Record::writeRecord (file, "Timeseries", rec);
@@ -277,13 +284,13 @@ int test_attributes2record (string const &filename)
     nofFailedTests++;
   }
 
-  std::cout << "[4] Test operations on parameters " << std::endl;
+  cout << "[4] Test operations on parameters " << std::endl;
   try {
     uint min_times      = min(ts.times());
-    uint min_dataLength = min(ts.data_lengths());
+    uint min_dataLength = min(ts.data_length());
     //
-    std::cout << "-- min(times)       = " << min_times      << std::endl;
-    std::cout << "-- min(data_length) = " << min_dataLength << std::endl;
+    cout << "-- min(times)       = " << min_times      << std::endl;
+    cout << "-- min(data_length) = " << min_dataLength << std::endl;
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
@@ -303,24 +310,24 @@ int test_attributes2record (string const &filename)
 */
 int test_data (std::string const &filename)
 {
-  std::cout << "\n[test_data]\n" << std::endl;
+  cout << "\n[test_data]\n" << std::endl;
 
   int nofFailedTests = 0;
   int start          = 0;
   int nofSamples     = 1024;
   TBB_Timeseries timeseries (filename);
 
-  std::cout << "[1] Retrieve time-series data without channel selection"
+  cout << "[1] Retrieve time-series data without channel selection"
 	    << std::endl;
   try {
     casa::Matrix<double> data = timeseries.fx (start,
 					       nofSamples);
     // feedback 
-    std::cout << "-- Data start     = " << start        << std::endl;
-    std::cout << "-- Data blocksize = " << nofSamples   << std::endl;
-    std::cout << "-- Data array     = " << data.shape() << std::endl;
-    std::cout << "-- Data [0,]      = " << data.row(0)  << std::endl;
-    std::cout << "-- Data [1,]      = " << data.row(1)  << std::endl;
+    cout << "-- Data start     = " << start        << std::endl;
+    cout << "-- Data blocksize = " << nofSamples   << std::endl;
+    cout << "-- Data array     = " << data.shape() << std::endl;
+    cout << "-- Data [0,]      = " << data.row(0)  << std::endl;
+    cout << "-- Data [1,]      = " << data.row(1)  << std::endl;
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
@@ -335,11 +342,10 @@ int main (int argc,
 	  char *argv[])
 {
   int nofFailedTests (0);
+
+  // -----------------------------------------------------------------
+  // Check the input parameters provided form the command line
   
-  /*
-    Check if filename of the dataset is provided on the command line; if not
-    exit the program.
-  */
   if (argc < 2) {
     std::cerr << "[tTBB_StationGroup] Too few parameters!" << endl;
     std::cerr << "" << endl;
@@ -349,7 +355,20 @@ int main (int argc,
   }
 
   std::string filename = argv[1];
-
+  std::string name_station = "Station023";
+  std::string name_dataset = "023000000";
+  
+  if (argc == 3) {
+    name_station = argv[2];
+  }
+  
+  if (argc == 4) {
+    name_dataset = argv[3];
+  }
+  
+  // -----------------------------------------------------------------
+  // Run the tests
+  
   // Test file access directly using the HDF5 library
   nofFailedTests += test_hdf5access (filename);
 

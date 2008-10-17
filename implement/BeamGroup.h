@@ -75,6 +75,17 @@ namespace DAL {
       // Extract beam group from the dataset
       DAL::BeamGroup beam (dataset,nameBeam);
       \endcode
+      Another method to get the same result is by extracting the object for a 
+      beam-group from a previously created BeamFormed object:
+      \code
+      std::string filename ("<the name of the dataset you want to access>");
+      int numBeam (<number of the beam>);
+      
+      // Open beamformed dataset
+      DAL::BeamFormed bf (filename);
+      // Extract contents for the selected beam
+      DAL::BeamGroup * group = bf.getBeam (numBeam);
+      \endcode
       <li>Get the center frequencies of the sub-bands contained within this beam:
       \code
       std::vector<int> freq = beam.center_frequencies();

@@ -38,10 +38,6 @@ using std::endl;
 
 using DAL::TBB_DipoleDataset;
 
-const std::string name_station = "Station023";
-const std::string name_dataset = "023000000";
-const std::string path_dataset = "Station023/023000000";
-
 /*!
   \file tTBB_DipoleDataset.cpp
 
@@ -64,7 +60,7 @@ const std::string path_dataset = "Station023/023000000";
   \code
     TBB_DipoleDataset ();
 
-    TBB_DipoleDataset (std::string const &filename,
+    TBB_DipoleDataset (std::string const &name_file,
 			 std::string const &dataset);
 
     TBB_DipoleDataset (hid_t const &location,
@@ -75,16 +71,19 @@ const std::string path_dataset = "Station023/023000000";
     TBB_DipoleDataset (TBB_DipoleDataset const &other);
   \endcode
   
-  \param filename -- Name of the HDF5 file, within which the dataset is located
+  \param name_file -- Name of the HDF5 file, within which the dataset is located
 
   \return nofFailedTests -- The number of failed tests.
 */
-int test_construction (std::string const &filename)
+int test_construction (std::string const &name_file,
+		       std::string const &name_station,
+		       std::string const &name_dataset)
 {
   cout << "\n[test_construction]\n" << endl;
 
   int nofFailedTests (0);
   herr_t h5error;
+  std::string path_dataset = name_station + "/" + name_dataset;
 
   /*
    * Test for the default constructor taking no argument at all.
@@ -107,8 +106,8 @@ int test_construction (std::string const &filename)
   
   cout << "[2] Testing argumented constructor ..." << endl;
   try {
-    TBB_DipoleDataset dataset (filename,
-				 path_dataset);
+    TBB_DipoleDataset dataset (name_file,
+			       path_dataset);
     //
     dataset.summary(); 
   } catch (std::string message) {
@@ -124,7 +123,7 @@ int test_construction (std::string const &filename)
   
   cout << "[3] Testing argumented constructor with file as anchor ..." << endl;
   try {
-    hid_t file_id = H5Fopen (filename.c_str(),
+    hid_t file_id = H5Fopen (name_file.c_str(),
 			     H5F_ACC_RDONLY,
 			     H5P_DEFAULT);
 
@@ -134,7 +133,7 @@ int test_construction (std::string const &filename)
       dataset.summary();
       h5error = H5Fclose (file_id);
     } else {
-      cerr << "-- Error opening HDF5 file " << filename << endl;
+      cerr << "-- Error opening HDF5 file " << name_file << endl;
       nofFailedTests++;
     }
   } catch (std::string message) {
@@ -151,7 +150,7 @@ int test_construction (std::string const &filename)
   cout << "[4] Testing argumented constructor with group as anchor ..." << endl;
   try {
     // open file first
-    hid_t file_id = H5Fopen (filename.c_str(),
+    hid_t file_id = H5Fopen (name_file.c_str(),
 			     H5F_ACC_RDONLY,
 			     H5P_DEFAULT);
     
@@ -176,7 +175,7 @@ int test_construction (std::string const &filename)
       // release file ID
       h5error = H5Fclose (file_id);
     } else {
-      cerr << "-- Error opening HDF5 file " << filename << endl;
+      cerr << "-- Error opening HDF5 file " << name_file << endl;
       nofFailedTests++;
     }
   } catch (std::string message) {
@@ -194,7 +193,7 @@ int test_construction (std::string const &filename)
   cout << "[5] Testing argumented constructor with dataset identifier ..." << endl;
   try {
     // open file first
-    hid_t file_id = H5Fopen (filename.c_str(),
+    hid_t file_id = H5Fopen (name_file.c_str(),
 			     H5F_ACC_RDONLY,
 			     H5P_DEFAULT);
     
@@ -218,7 +217,7 @@ int test_construction (std::string const &filename)
       // release file ID
       h5error = H5Fclose (file_id);
     } else {
-      cerr << "-- Error opening HDF5 file " << filename << endl;
+      cerr << "-- Error opening HDF5 file " << name_file << endl;
       nofFailedTests++;
     }
   } catch (std::string message) {
@@ -235,7 +234,7 @@ int test_construction (std::string const &filename)
   cout << "[6] Testing copy constructor ..." << endl;
   try {
     cout << "-- creating original object ..." << endl;
-    TBB_DipoleDataset dataset (filename,
+    TBB_DipoleDataset dataset (name_file,
  				 path_dataset);
     dataset.summary();
     //
@@ -266,21 +265,24 @@ int test_construction (std::string const &filename)
   so we should be testing well in advance that such a construct behaves as
   expected.
 
-  \param filename -- Data file used for testing
+  \param name_file -- Data file used for testing
 
   \return nofFailedTests -- The number of failed tests.
 */
-int test_datasets (std::string const &filename)
+int test_datasets (std::string const &name_file,
+		   std::string const &name_station,
+		   std::string const &name_dataset)
 {
   cout << "\n[test_datasets]\n" << endl;
-
+  
   int nofFailedTests (0);
   hid_t file_id (0);
   hid_t dataset_id (0);
   herr_t h5error;
+  std::string path_dataset = name_station + "/" + name_dataset;
   std::vector<std::string> dataset_names;
   uint nofDatasets (0);
-
+  
   dataset_names.push_back (path_dataset);
 
   nofDatasets = dataset_names.size();
@@ -291,12 +293,12 @@ int test_datasets (std::string const &filename)
    */
 
   cout << "[1] Opening the HDF5 file containing the data ..." << endl;
-  file_id = H5Fopen (filename.c_str(),
+  file_id = H5Fopen (name_file.c_str(),
 		     H5F_ACC_RDONLY,
 		     H5P_DEFAULT);
 
   if (file_id > 0) {
-    cout << "--> File name = " << filename << endl;
+    cout << "--> File name = " << name_file << endl;
     cout << "--> File ID   = " << file_id  << endl;
   } else {
     return 0;
@@ -426,21 +428,24 @@ int test_datasets (std::string const &filename)
 /*!
   \brief Test the methods used for retrieval of parameters/private data
   
-  \param filename -- Name of the HDF5 file, within which the dataset is located
+  \param name_file -- Name of the HDF5 file, within which the dataset is located
 
   \return nofFailedTests -- The number of failed tests.
 */
-int test_parameters (std::string const &filename)
+int test_parameters (std::string const &name_file,
+		     std::string const &name_station,
+		     std::string const &name_dataset)
 {
   cout << "\n[test_parameters]\n" << endl;
-
+  
   int nofFailedTests (0);
   herr_t h5error;
+  std::string path_dataset = name_station + "/" + name_dataset;
 
   // create object to use for the subsequent tests
-  TBB_DipoleDataset dataset (filename,
-			       path_dataset);
-
+  TBB_DipoleDataset dataset (name_file,
+			     path_dataset);
+  
   cout << "[1] Retrieve object parameters ..." << endl;
   try {
     cout << "-- Class name = " << dataset.className()  << endl;
@@ -450,7 +455,7 @@ int test_parameters (std::string const &filename)
     nofFailedTests++;
   }
   h5error = H5Eclear1();
-
+  
   cout << "[2] Retrieve atomic valued attributes ..." << endl;
   try {
     uint station_id         = dataset.station_id();
@@ -500,22 +505,25 @@ int test_parameters (std::string const &filename)
 /*!
   \brief Test the retrieval of the actual TBB data contained within the dataset
   
-  \param filename -- Name of the HDF5 file, within which the dataset is located
+  \param name_file -- Name of the HDF5 file, within which the dataset is located
 
   \return nofFailedTests -- The number of failed tests.
 */
-int test_data (std::string const &filename)
+int test_data (std::string const &name_file,
+	       std::string const &name_station,
+	       std::string const &name_dataset)
 {
   cout << "\n[test_data]\n" << endl;
-
+  
   int nofFailedTests (0);
   bool status (true);
   int start (0);
   uint blocksize (10);
+  std::string path_dataset = name_station + "/" + name_dataset;
 
   // open dataset
-  TBB_DipoleDataset dataset (filename,
-			       path_dataset);
+  TBB_DipoleDataset dataset (name_file,
+			     path_dataset);
   
   std::cout << "[1] Retrieve data via pointer to array ..." << std::endl;
   try {
@@ -592,20 +600,23 @@ int test_data (std::string const &filename)
 /*!
   \brief Test export of the attribute values to a casa::Record object
   
-  \param filename -- Name of the HDF5 file, within which the dataset is located
+  \param name_file -- Name of the HDF5 file, within which the dataset is located
 
   \return nofFailedTests -- The number of failed tests.
 */
-int test_export2record (std::string const &filename)
+int test_export2record (std::string const &name_file,
+			std::string const &name_station,
+			std::string const &name_dataset)
 {
   cout << "\n[test_export2record]\n" << endl;
-
+  
   int nofFailedTests (0);
+  std::string path_dataset = name_station + "/" + name_dataset;
 
   cout << "[1] Retrieve attributes of dataset into record ..." << endl;
   try {
     // open dataset
-    TBB_DipoleDataset dataset (filename,
+    TBB_DipoleDataset dataset (name_file,
 				 path_dataset);
     // retrieve attributes into record
     casa::Record rec = dataset.attributes2record ();
@@ -624,7 +635,7 @@ int test_export2record (std::string const &filename)
   cout << "[2] Combine records from multiple dipole datasets ..." << endl;
   try {
     // open dataset
-    TBB_DipoleDataset dataset (filename,
+    TBB_DipoleDataset dataset (name_file,
 				 path_dataset);
     // retrieve attributes into record
     casa::Record rec = dataset.attributes2record ();
@@ -652,26 +663,52 @@ int main (int argc,
 {
   int nofFailedTests (0);
 
+  // -----------------------------------------------------------------
+  // Process parameters from the command line
+
   if (argc < 2) {
     cerr << "[tHDF5Common] Too few parameters!" << endl;
     cerr << "" << endl;
-    cerr << "  tHDF5Common <filename>" << endl;
+    cerr << "  tHDF5Common <name_file>" << endl;
     cerr << "" << endl;
     return -1;
   }
+  
+  std::string name_file     = argv[1];
+  std::string name_station = "Station023";
+  std::string name_dataset = "023000000";
 
-  std::string filename (argv[1]);
+  if (argc == 3) {
+    name_station = argv[2];
+  }
+
+  if (argc == 4) {
+    name_dataset = argv[3];
+  }
+  
+  // -----------------------------------------------------------------
+  // Run the tests
   
   // Test for the constructor(s)
-  nofFailedTests += test_construction (filename);
+  nofFailedTests += test_construction (name_file,
+				       name_station,
+				       name_dataset);
   // Test working with collection of multiple objects
-  nofFailedTests += test_datasets (filename);
+  nofFailedTests += test_datasets (name_file,
+				   name_station,
+				   name_dataset);
   // Test retrieval of parameters/attributes attached to the dataset
-  nofFailedTests += test_parameters (filename);
+  nofFailedTests += test_parameters (name_file,
+				     name_station,
+				     name_dataset);
   // Test retrieval of the actual TBB time-series values
-  nofFailedTests += test_data (filename);
+  nofFailedTests += test_data (name_file,
+			       name_station,
+			       name_dataset);
   // Test exporting the attributes to a casa::Record
-  nofFailedTests += test_export2record (filename);
-
+  nofFailedTests += test_export2record (name_file,
+					name_station,
+					name_dataset);
+  
   return nofFailedTests;
 }

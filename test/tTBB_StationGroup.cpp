@@ -40,10 +40,6 @@ using std::cout;
 using std::endl;
 using DAL::TBB_StationGroup;
 
-const std::string name_station = "Station023";
-const std::string name_dataset = "023000000";
-const std::string path_dataset = "Station023/023000000";
-
 /*!
   \file tTBB_StationGroup.cpp
 
@@ -69,11 +65,12 @@ const std::string path_dataset = "Station023/023000000";
 /*!
   \brief Test localization and handling of datasets inside the group
 
-  \param filename -- Data file used for testing
+  \param name_file -- Data file used for testing
 
   \return nofFailedTests -- The number of failed tests.
 */
-int test_datasets (std::string const &filename)
+int test_datasets (std::string const &name_file,
+		   std::string const &name_station)
 {
   cout << "\n[test_construction]\n" << endl;
 
@@ -84,7 +81,7 @@ int test_datasets (std::string const &filename)
 
   try {
     cout << "-- opening HDF5 file ..." << endl;
-    fileID = H5Fopen (filename.c_str(),
+    fileID = H5Fopen (name_file.c_str(),
 		      H5F_ACC_RDONLY,
 		      H5P_DEFAULT);
   } catch (std::string message) {
@@ -138,7 +135,7 @@ int test_datasets (std::string const &filename)
   \code
     TBB_StationGroup ();
 
-    TBB_StationGroup (std::string const &filename,
+    TBB_StationGroup (std::string const &name_file,
 			std::string const &group);
 
     TBB_StationGroup (hid_t const &location,
@@ -149,19 +146,20 @@ int test_datasets (std::string const &filename)
     TBB_StationGroup (TBB_StationGroup const &other);
   \endcode
   
-  \param filename -- Data file used for testing
+  \param name_file -- Data file used for testing
 
   \return nofFailedTests -- The number of failed tests.
 */
-int test_construction (std::string const &filename)
+int test_construction (std::string const &name_file,
+		       std::string const &name_station)
 {
   cout << "\n[test_construction]\n" << endl;
-
+  
   int nofFailedTests (0);
   herr_t h5error (0);
   
   // open the HDF5 for further access
-  hid_t file_id = H5Fopen (filename.c_str(),
+  hid_t file_id = H5Fopen (name_file.c_str(),
 			   H5F_ACC_RDONLY,
 			   H5P_DEFAULT);
 
@@ -179,16 +177,16 @@ int test_construction (std::string const &filename)
     nofFailedTests++;
   }
   h5error = H5Eclear1();
-
+  
   /*
-   * TEST: Argumented constructor using filename and name of the group as
+   * TEST: Argumented constructor using name_file and name of the group as
    *       input parameters.
    */
   
   cout << "[2] Testing argumented constructor ..." << endl;
   try {
-    TBB_StationGroup group (filename,
-			      name_station);
+    TBB_StationGroup group (name_file,
+			    name_station);
     //
     group.summary(); 
   } catch (std::string message) {
@@ -206,7 +204,7 @@ int test_construction (std::string const &filename)
   try {    
     if (file_id > 0) {
       TBB_StationGroup group (file_id,
-				name_station);
+			      name_station);
       group.summary(); 
     } else {
       cerr << "--> Unable to perform test; invalid file ID!" << endl;
@@ -216,18 +214,18 @@ int test_construction (std::string const &filename)
     nofFailedTests++;
   }
   h5error = H5Eclear1();
-
+  
   /*
    * TEST: Argumented constructor using object identifier for the group as
    *       input parameter.
    */
-
+  
   cout << "[4] Testing argumented constructor ..." << endl;
   try {
     if (file_id > 0) {
       // retrieve the group ID 
       hid_t groupID = H5Gopen1 (file_id,
-			       name_station.c_str());
+				name_station.c_str());
       // contiue if group successfully opened
       if (groupID > 0) {
 	// feedback
@@ -246,16 +244,16 @@ int test_construction (std::string const &filename)
     nofFailedTests++;
   }
   h5error = H5Eclear1();
-
+  
   /*
    * TEST: 
    */
-
+  
   cout << "[5] Testing copy constructor ..." << endl;
   try {
     cout << "--> creating original object ..." << endl;
-    TBB_StationGroup group (filename,
-			      name_station);
+    TBB_StationGroup group (name_file,
+			    name_station);
     group.summary();
     //
     cout << "--> creating new object as copy ..." << endl;
@@ -266,7 +264,7 @@ int test_construction (std::string const &filename)
     nofFailedTests++;
   }
   h5error = H5Eclear1();
-
+  
   // release file identifier
   h5error = H5Fclose (file_id);
   
@@ -278,14 +276,14 @@ int test_construction (std::string const &filename)
 /*!
   \brief Test identification and access of groups a root level of the HDF5 file
   
-  \param filename -- Data file used for testing
+  \param name_file -- Data file used for testing
   
   \return nofFailedTests -- The number of failed tests.
 */
-int test_groups (std::string const &filename)
+int test_groups (std::string const &name_file)
 {
   cout << "\n[test_groups]\n" << endl;
-
+  
   bool status        = true;
   int nofFailedTests = 0;
   hsize_t nofObjects = 0;
@@ -294,7 +292,7 @@ int test_groups (std::string const &filename)
   herr_t h5error     = 0;
   
   // open the HDF5 for further access
-  hid_t fileID = H5Fopen (filename.c_str(),
+  hid_t fileID = H5Fopen (name_file.c_str(),
 			  H5F_ACC_RDONLY,
 			  H5P_DEFAULT);
   
@@ -340,65 +338,62 @@ int test_groups (std::string const &filename)
 /*!
   \brief Test the various methods provided by the class
 
-  \param filename -- Data file used for testing
+  The tests included in this function also go through the various methods
+  provided to recursively retrieve attributes from the embedded dipole datasets.
+
+  \param name_file    -- Data file used for testing
+  \param name_station -- Name of the station group to access
 
   \return nofFailedTests -- The number of failed tests.
 */
-int test_methods (std::string const &filename)
+int test_methods (std::string const &name_file,
+		  std::string const &name_station)
 {
   cout << "\n[test_methods]\n" << endl;
 
   int nofFailedTests (0);
 
   // create TBB_StationGroup object to continue working with
-  TBB_StationGroup group (filename,name_station);
-  
-  cout << "[1] Retrieve list of UNIX times ..." << endl;
+  TBB_StationGroup group (name_file,name_station);
+
+  cout << "[1] Retrieve attributes from dipole datasets ..." << endl;
   try {
 #ifdef HAVE_CASA
     // retrieve the values ...
-    casa::Vector<uint> times = group.times();
-    // .. and display them 
-    cout << "-- UNIX times = " << times << endl;
+    casa::Vector<uint> station_id = group.station_id();
+    casa::Vector<uint> rsp_id     = group.rsp_id();
+    casa::Vector<uint> rcu_id     = group.rcu_id();
+    casa::Vector<double> sampleFrequency = group.sample_frequency();
+    casa::Vector<uint> times      = group.times();
+    casa::Vector<uint> dataLengths = group.data_length();
+    // .. and display them  
+    cout << "-- Station IDs      = " << station_id << endl;
+    cout << "-- RSP IDs          = " << rsp_id << endl;
+    cout << "-- RCU IDs          = " << rcu_id << endl;
+    cout << "-- Sample frequency = " << group.sample_frequency() << endl;
+    cout << "-- UNIX times       = " << times << endl;
+    cout << "-- Data lengths     = " << dataLengths << endl;
 #else
-    std::vector<uint> times = group.times();
+    // retrieve the values ...
+    std::vector<uint> station_id = group.station_id();
+    std::vector<uint> rsp_id     = group.rsp_id();
+    std::vector<uint> rcu_id     = group.rcu_id();
+    std::vector<double> sampleFrequency = group.sample_frequency();
+    std::vector<uint> times      = group.times();
+    std::vector<uint> dataLenghts = group.data_length();
+    // .. and display them 
+    cout << "-- Station IDs      = " << station_id << endl;
+    cout << "-- RSP IDs          = " << rsp_id << endl;
+    cout << "-- RCU IDs          = " << rcu_id << endl;
+    cout << "-- Sample frequency = " << group.sample_frequency() << endl;
+    cout << "-- UNIX times       = " << times << endl;
+    cout << "-- Data lengths     = " << dataLengths << endl;
 #endif
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
-  }
+  }  
   
-  cout << "[2] Retrieve list of sampling freqencies ..." << endl;
-  try {
-    std::string units ("MHz");
-#ifdef HAVE_CASA
-    // retrieve the values ...
-    casa::Vector<double> sampleFrequencies = group.sample_frequencies();
-    // .. and display them 
-    cout << "-- Sample frequencies [ Hz] = " << sampleFrequencies << endl;
-    cout << "-- Sample frequencies [MHz] = " << group.sample_frequencies(units)
-	 << endl;
-#else
-    std::vector<double> sampleFrequencies = group.sample_frequencies();
-#endif    
-  } catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-
-  cout << "[3] Retrieve list of data lengths ..." << endl;
-  try {
-#ifdef HAVE_CASA
-    casa::Vector<uint> dataLengths = group.data_lengths();
-    cout << "-- Data lengths = " << dataLengths << endl;
-#else 
-    std::vector<uint> dataLenghts = group.data_lengths();
-#endif
-  } catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-
   cout << "[4] Retrieve antenna position values ..." << endl;
   try {
     casa::Matrix<double> antennaPositions = group.antennaPositionValues();
@@ -414,12 +409,21 @@ int test_methods (std::string const &filename)
 
 // ---------------------------------------------------------- test_export2record
 
-int test_export2record (std::string const &filename)
+/*!
+  \brief Test export of the attributes to a casa::Record container
+
+  \param name_file    -- Data file used for testing
+  \param name_station -- Name of the station group to access
+
+  \return nofFailedTests -- The number of failed tests.
+*/
+int test_export2record (std::string const &name_file,
+			std::string const &name_station)
 {
   std::cout << "\n[test_export2record]\n" << std::endl;
-
+  
   int nofFailedTests (0);
-  TBB_StationGroup group (filename,name_station);
+  TBB_StationGroup group (name_file,name_station);
 
   std::cout << "[1] Retreiving attributes of group into record ..." << std::endl;
   try {
@@ -455,16 +459,17 @@ int test_export2record (std::string const &filename)
 /*!
   \brief Test retrieval of the actual time-series data form the dipoles
 
-  \param filename -- Data file used for testing
+  \param name_file -- Data file used for testing
 
   \return nofFailedTests -- The number of failed tests.
 */
-int test_data (std::string const &filename)
+int test_data (std::string const &name_file,
+	       std::string const &name_station)
 {
   cout << "\n[test_data]\n" << endl;
 
   int nofFailedTests (0);
-  TBB_StationGroup group (filename,name_station);
+  TBB_StationGroup group (name_file,name_station);
   int start (0);
   int blocksize (1024);
 
@@ -494,34 +499,52 @@ int main (int argc,
   int nofFailedTests (0);
 
   /*
-    Check if filename of the dataset is provided on the command line; if not
+    Check if name_file of the dataset is provided on the command line; if not
     exit the program.
   */
   if (argc < 2) {
     cerr << "[tTBB_StationGroup] Too few parameters!" << endl;
     cerr << "" << endl;
-    cerr << "  tTBB_StationGroup <filename>" << endl;
+    cerr << "  tTBB_StationGroup <name_file>" << endl;
     cerr << "" << endl;
     return -1;
   }
-
-  std::string filename = argv[1];
-
-  // Test localization and handling of datasets inside the group
-  nofFailedTests += test_datasets (filename);
-
-  // Test for the constructor(s)
-  nofFailedTests += test_construction (filename);
   
-  if (nofFailedTests == 0) {
-    nofFailedTests += test_groups(filename);
-    // Test the varios methods implemented in the class
-    nofFailedTests += test_methods (filename);
-    // Test exporting the attributes to a casa::Record
-    nofFailedTests += test_export2record (filename);
-    // Test extraction of channel data
-    nofFailedTests += test_data(filename);
+  std::string name_file    = argv[1];
+  std::string name_station = "Station023";
+  std::string name_dataset = "023000000";
+
+  if (argc == 3) {
+    name_station = argv[2];
   }
 
+  if (argc == 4) {
+    name_dataset = argv[3];
+  }
+
+  // -----------------------------------------------------------------
+  // Run the tests
+  
+  // Test localization and handling of datasets inside the group
+  nofFailedTests += test_datasets (name_file,
+				   name_station);
+
+  // Test for the constructor(s)
+  nofFailedTests += test_construction (name_file,
+				       name_station);
+  
+  if (nofFailedTests == 0) {
+    nofFailedTests += test_groups(name_file);
+    // Test the varios methods implemented in the class
+    nofFailedTests += test_methods (name_file,
+				    name_station);
+    // Test exporting the attributes to a casa::Record
+    nofFailedTests += test_export2record (name_file,
+					  name_station);
+    // Test extraction of channel data
+    nofFailedTests += test_data(name_file,
+				name_station);
+  }
+  
   return nofFailedTests;
 }

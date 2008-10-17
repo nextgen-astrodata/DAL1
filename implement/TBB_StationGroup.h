@@ -321,9 +321,9 @@ namespace DAL { // Namespace DAL -- begin
               for all datasets present in this station group
     */
 #ifdef HAVE_CASA
-    casa::Vector<double> sample_frequencies (std::string const &units="Hz");
+    casa::Vector<double> sample_frequency ();
 #else
-    std::vector<double> sample_frequencies (std::string const &units="Hz");
+    std::vector<double> sample_frequency ();
 #endif
 
     /*!
@@ -333,21 +333,21 @@ namespace DAL { // Namespace DAL -- begin
               datasets present in this station group
     */
 #ifdef HAVE_CASA
-    casa::Vector<uint> data_lengths ();
+    casa::Vector<uint> data_length ();
 #else
-    std::vector<uint> data_lengths ();
+    std::vector<uint> data_length ();
 #endif
-
+    
     /*!
       \brief Retrieve the station IDs from the antenna datasets within this group
-
+      
       \return stationIDs -- The station IDs from the antenna datasets within this
               group
     */
 #ifdef HAVE_CASA
-    casa::Vector<uint> stationIDs ();
+    casa::Vector<uint> station_id ();
 #else
-    std::vector<uint> stationIDs ();
+    std::vector<uint> station_id ();
 #endif
     
     /*!
@@ -356,7 +356,11 @@ namespace DAL { // Namespace DAL -- begin
       \return rspIDs -- The RSP IDs from the antenna datasets within this
               group
     */
-    std::vector<uint> rspIDs ();
+#ifdef HAVE_CASA
+    casa::Vector<uint> rsp_id ();
+#else
+    std::vector<uint> rsp_id ();
+#endif
     
     /*!
       \brief Retrieve the RCU IDs from the antenna datasets within this group
@@ -364,7 +368,11 @@ namespace DAL { // Namespace DAL -- begin
       \return rcuIDs -- The RCU IDs from the antenna datasets within this
               group
     */
-    std::vector<uint> rcuIDs ();
+#ifdef HAVE_CASA
+    casa::Vector<uint> rcu_id ();
+#else
+    std::vector<uint> rcu_id ();
+#endif
     
     /*!
       \brief Retrieve the list of channels IDs contained within this group

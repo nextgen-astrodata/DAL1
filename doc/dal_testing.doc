@@ -52,4 +52,118 @@ The following tests FAILED:
 Errors while running CTest
 \endverbatim
 
+<hr>
+
+- Test results on Yavanna
+\verbatim
+Test project /Users/lars/Code/lofar/usg/build/dal
+  1/ 32 Testing tdal .........................   Passed
+  2/ 32 Testing tEnumerations ................   Passed
+  3/ 32 Testing tMS_dal ......................***Failed 
+  4/ 32 Testing tdalLopesEvent ...............   Passed
+  5/ 32 Testing tdalCommon ...................   Passed
+  6/ 32 Testing tTBB_DipoleDataset ...........   Passed
+  7/ 32 Testing tTBB_StationGroup ............   Passed
+  8/ 32 Testing tTBB_Timeseries ..............   Passed
+  9/ 32 Testing tdalDataset ..................   Passed
+ 10/ 32 Testing tdalTable ....................   Passed
+ 11/ 32 Testing tBeamFormed ..................   Passed
+ 12/ 32 Testing tBeamGroup ...................***Exception: SegFault
+ 13/ 32 Testing tBeamSubband .................   Passed
+ 14/ 32 Testing tdal_fits ....................   Passed
+ 15/ 32 Testing datacube .....................***Failed 
+ 16/ 32 Testing uv_coverage ..................***Failed 
+ 17/ 32 Testing baseline_intensity1 ..........***Failed 
+ 18/ 32 Testing baseline_intensity2 ..........***Failed 
+ 19/ 32 Testing tbb2h5_test1 .................   Passed
+ 20/ 32 Testing tbb2h5_test2 .................   Passed
+ 21/ 32 Testing tbb2h5_test3 .................   Passed
+ 22/ 32 Testing tbb2h5_test4 .................   Passed
+ 23/ 32 Testing tbb2h5_test5 .................   Passed
+ 24/ 32 Testing tbb2h5_test6 .................   Passed
+ 25/ 32 Testing tbb2h5_test7 .................   Passed
+ 26/ 32 Testing tbb2h5_test8 .................   Passed
+ 27/ 32 Testing tbb2h5_test9 .................   Passed
+ 28/ 32 Testing bf2h5_test1 ..................   Passed
+ 29/ 32 Testing bf2h5_test2 ..................   Passed
+ 30/ 32 Testing bf2h5_test3 ..................   Passed
+ 31/ 32 Testing bf2h5_test4 ..................   Passed
+ 32/ 32 Testing bf2h5_test5 ..................   Passed
+
+81% tests passed, 6 tests failed out of 32
+\endverbatim
+
+- Test results on <tt>ray.astro.kun.nl</tt>
+\verbatim
+Start processing tests
+Test project /home/lbaehren/coding/lofar/usg/build/dal
+  1/ 26 Testing tdal                             Passed
+  2/ 26 Testing tEnumerations                    Passed
+  3/ 26 Testing tMS_dal                       ***Failed 
+  4/ 26 Testing tdalLopesEvent                   Passed
+  5/ 26 Testing tdalDataset                      Passed
+  6/ 26 Testing tdalTable                        Passed
+  7/ 26 Testing tBeamFormed                      Passed
+  8/ 26 Testing tBeamGroup                       Passed
+  9/ 26 Testing tBeamSubband                     Passed
+ 10/ 26 Testing datacube                      ***Failed 
+ 11/ 26 Testing uv_coverage                   ***Failed 
+ 12/ 26 Testing baseline_intensity1           ***Failed 
+ 13/ 26 Testing baseline_intensity2           ***Failed 
+ 14/ 26 Testing tbb2h5_test1                     Passed
+ 15/ 26 Testing tbb2h5_test2                     Passed
+ 16/ 26 Testing tbb2h5_test3                     Passed
+ 17/ 26 Testing tbb2h5_test4                     Passed
+ 18/ 26 Testing tbb2h5_test5                     Passed
+ 19/ 26 Testing tbb2h5_test6                     Passed
+ 20/ 26 Testing tbb2h5_test7                     Passed
+ 21/ 26 Testing tbb2h5_test8                     Passed
+ 22/ 26 Testing bf2h5_test1                      Passed
+ 23/ 26 Testing bf2h5_test2                      Passed
+ 24/ 26 Testing bf2h5_test3                      Passed
+ 25/ 26 Testing bf2h5_test4                      Passed
+ 26/ 26 Testing bf2h5_test5                      Passed
+
+81% tests passed, 5 tests failed out of 26
+\endverbatim
+
+- Test results on <tt>dop71.astron.nl</tt>
+\verbatim
+Start processing tests
+Test project /home/lars/coding/lofar/usg/build/dal
+  1/ 30 Testing tdal                             Passed
+  2/ 30 Testing tEnumerations                    Passed
+  3/ 30 Testing tMS_dal                       ***Failed 
+  4/ 30 Testing tdalLopesEvent                   Passed
+  5/ 30 Testing tdalCommon                       Passed
+  6/ 30 Testing tTBB_DipoleDataset            ***Exception: Other
+  7/ 30 Testing tTBB_StationGroup             ***Exception: Other
+  8/ 30 Testing tTBB_Timeseries               ***Exception: SegFault
+  9/ 30 Testing tdalDataset                      Passed
+ 10/ 30 Testing tdalTable                        Passed
+ 11/ 30 Testing tBeamFormed                   ***Exception: SegFault
+ 12/ 30 Testing tBeamGroup                    ***Exception: SegFault
+ 13/ 30 Testing tBeamSubband                     Passed
+ 14/ 30 Testing datacube                      ***Failed 
+ 15/ 30 Testing uv_coverage                   ***Failed 
+ 16/ 30 Testing baseline_intensity1           ***Failed 
+ 17/ 30 Testing baseline_intensity2           ***Failed 
+ 18/ 30 Testing tbb2h5_test1                     Passed
+ 19/ 30 Testing tbb2h5_test2                     Passed
+ 20/ 30 Testing tbb2h5_test3                     Passed
+ 21/ 30 Testing tbb2h5_test4                     Passed
+ 22/ 30 Testing tbb2h5_test5                     Passed
+ 23/ 30 Testing tbb2h5_test6                     Passed
+ 24/ 30 Testing tbb2h5_test7                     Passed
+ 25/ 30 Testing tbb2h5_test8                     Passed
+ 26/ 30 Testing bf2h5_test1                      Passed
+ 27/ 30 Testing bf2h5_test2                      Passed
+ 28/ 30 Testing bf2h5_test3                      Passed
+ 29/ 30 Testing bf2h5_test4                      Passed
+ 30/ 30 Testing bf2h5_test5                      Passed
+
+67% tests passed, 10 tests failed out of 30
+\endverbatim
+
+
 */

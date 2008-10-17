@@ -422,58 +422,58 @@ namespace DAL { // Namespace DAL -- begin
   }
 #endif
 
-  // --------------------------------------------------------- sample_frequencies
+  // --------------------------------------------------------- sample_frequency
 
 #ifdef HAVE_CASA
-  casa::Vector<double> TBB_Timeseries::sample_frequencies (std::string const &units)
+  casa::Vector<double> TBB_Timeseries::sample_frequency ()
   {
     uint n           = 0;
     uint station     = 0;
     uint dipole      = 0;
     uint nofDipoles  = nofDipoleDatasets();
     uint nofStations = nofStationGroups();
-    casa::Vector<double> sampleFrequencies (nofDipoles);
+    casa::Vector<double> sampleFrequency (nofDipoles);
     casa::Vector<double> tmp;
     
     for (station=0; station<nofStations; station++) {
-      tmp = groups_p[station].sample_frequencies(units);
+      tmp = groups_p[station].sample_frequency();
       nofDipoles = groups_p[station].nofDipoleDatasets();
       for (dipole=0; dipole<nofDipoles; dipole++) {
-	sampleFrequencies(n) = tmp(dipole);
+	sampleFrequency(n) = tmp(dipole);
 	n++;
       }
     }
     
-    return sampleFrequencies;
+    return sampleFrequency;
   }
 #else
-  std::vector<double> TBB_Timeseries::sample_frequencies (std::string const &units)
+  std::vector<double> TBB_Timeseries::sample_frequency ()
   {
     uint n           = 0;
     uint station     = 0;
     uint dipole      = 0;
     uint nofDipoles  = nofDipoleDatasets();
     uint nofStations = nofStationGroups();
-    std::vector<double> sampleFrequencies (nofDipoles);
+    std::vector<double> sampleFrequency (nofDipoles);
     std::vector<double> tmp;
     
     for (station=0; station<nofStations; station++) {
-      tmp = groups_p[station].sample_frequencies(units);
+      tmp = groups_p[station].sample_frequency();
       nofDipoles = groups_p[station].nofDipoleDatasets();
       for (dipole=0; dipole<nofDipoles; dipole++) {
-	sampleFrequencies[n] = tmp[dipole];
+	sampleFrequency[n] = tmp[dipole];
 	n++;
       }
     }
     
-    return sampleFrequencies;
+    return sampleFrequency;
   }
 #endif
 
-  // ----------------------------------------------------------------- data_lengths
+  // ---------------------------------------------------------------- data_length
 
 #ifdef HAVE_CASA
-  casa::Vector<uint> TBB_Timeseries::data_lengths ()
+  casa::Vector<uint> TBB_Timeseries::data_length ()
   {
     uint n           = 0;
     uint station     = 0;
@@ -484,7 +484,7 @@ namespace DAL { // Namespace DAL -- begin
     casa::Vector<uint> tmp;
     
     for (station=0; station<nofStations; station++) {
-      tmp        = groups_p[station].data_lengths();
+      tmp        = groups_p[station].data_length();
       nofDipoles = groups_p[station].nofDipoleDatasets();
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	dataLengths(n) = tmp(dipole);
@@ -495,7 +495,7 @@ namespace DAL { // Namespace DAL -- begin
     return dataLengths;
   }
 #else
-  std::vector<uint> TBB_Timeseries::data_lengths ()
+  std::vector<uint> TBB_Timeseries::data_length ()
   {
     uint n           = 0;
     uint station     = 0;
@@ -506,7 +506,7 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<uint> tmp;
     
     for (station=0; station<nofStations; station++) {
-      tmp        = groups_p[station].data_lengths();
+      tmp        = groups_p[station].data_length();
       nofDipoles = groups_p[station].nofDipoleDatasets();
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	dataLengths[n] = tmp[dipole];
@@ -569,7 +569,7 @@ namespace DAL { // Namespace DAL -- begin
       rec.define("Date",min(times()));
       rec.define("AntennaIDs",channelID());
       rec.define("Observatory",telescope());
-      rec.define("Filesize",min(data_lengths()));
+      rec.define("Filesize",min(data_length()));
     } catch (std::string message) {
       std::cerr << "[TBB_Timeseries::attributes2headerRecord] " << message
 		<< std::endl;      

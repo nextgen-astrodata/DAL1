@@ -95,6 +95,28 @@ namespace DAL { // Namespace DAL -- begin
     </ol>
     
     <h3>Example(s)</h3>
+
+    <ul>
+    <li>Use the default constructor for a new object and display its internal
+    settings:
+    \code
+    // Create new object
+    DAL::TBB_DipoleDataset dataset;
+    // Summaru of the internal properties
+    dataset.summary();
+    \endcode
+    <li>Create a new object for a specific dipole dataset embedded within a TBB
+    time-series dataset:
+    \code
+    // The name of the file to open
+    std::string fileName ("<the name of the file>");
+    // The path to the dataset contained within the HDF5 file
+    std::string datasetName ("<path to the dataset>");
+
+    DAL::TBB_DipoleDataset dataset (fileName,
+                                    datasetName);
+    \endcode
+  </ul>
     
   */  
   class TBB_DipoleDataset {
@@ -136,52 +158,29 @@ namespace DAL { // Namespace DAL -- begin
 
       \return H5datasetID -- The identifier for this dataset within the HDF5 file
     */
-    inline hid_t dataset_id () const { return datasetID_p; }
+    inline hid_t dataset_id () const {
+      return datasetID_p;
+    }
 
-    /*!
-      \brief Get the number of attributes attached to the dataset
-
-      \return nofAttributes -- The number of attributes attached to the dataset;
-              if the dataset ID is properly connected to a dataset within the 
-	      HDF5 file, the returned value will be zero or greater. If a
-	      negative value is returned, most likely te connection with the
-	      file is broken.
-    */
+    //! Get the number of attributes attached to the dataset
     int nofAttributes ();
 
-    /*!
-      \brief Get the ID of the LOFAR station this dipole belongs to
-
-      \return STATION_ID -- ID of the LOFAR station this dipole belongs to
-    */
+    //! Get the ID of the LOFAR station this dipole belongs to
     uint station_id ();
 
-    /*!
-      \brief Get the ID of the RSP board this dipole is connected with
-
-      \return RSP_ID -- ID of the Remote Station Processing board (RSP) this
-              dipole is connected with
-    */
+    //! Get the ID of the RSP board this dipole is connected with
     uint rsp_id ();
 
-    /*!
-      \brief Get the ID of the receiver unit (RCU) this dipole is connected with
-
-      \return RCU_ID -- ID of the receiver unit (RCU) this dipole is connected with
-    */
+    //! Get the ID of the receiver unit (RCU) this dipole is connected with
     uint rcu_id ();
 
     /*!
       \brief Get the numerical value of the ADC sample frequency
 
-      \param unit -- Units in which to return the ADC sample frequency; by
-             default this is "Hz".
-
-      \return value -- The numerical value of the ADC sample frequency, in units
-              as specified.
+      \return value -- The numerical value of the ADC sample frequency, [Hz].
     */
-    double sample_frequency_value (std::string const &unit="Hz");
-
+    double sample_frequency_value ();
+    
     /*!
       \brief Get the physical unit associated with the ADC sample frequency
 
@@ -205,11 +204,7 @@ namespace DAL { // Namespace DAL -- begin
     */
     uint nyquist_zone ();
 
-    /*!
-      \brief Get the (UNIX) time at which the data were recorded
-      
-      \return time -- The (UNIX) time at which the data were recorded.
-    */
+    //! Get the (UNIX) time at which the data were recorded
     uint time ();
 
     /*!
@@ -315,7 +310,7 @@ namespace DAL { // Namespace DAL -- begin
       
       \return className -- The name of the class, TBB_DipoleDataset.
     */
-    std::string className () const {
+    inline std::string className () const {
       return "TBB_DipoleDataset";
     }
 
