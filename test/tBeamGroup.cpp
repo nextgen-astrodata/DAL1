@@ -93,6 +93,21 @@ int test_constructors (std::string const &filename,
     nofFailedTests++;
   }
 
+  cout << "[3] Construction from BeamFormed object ..." << endl;
+  try {
+    cout << "-- Creating BeamFormed object ..." << endl;
+    DAL::BeamFormed bf (filename);
+    //
+    cout << "-- Extracting beam group from dataset ..." << endl;
+    int numBeam (0);
+    DAL::BeamGroup * group = bf.getBeam (numBeam);
+    //
+    group->summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
   return nofFailedTests;
 }
 
