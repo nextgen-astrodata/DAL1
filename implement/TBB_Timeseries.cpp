@@ -388,7 +388,7 @@ namespace DAL { // Namespace DAL -- begin
     casa::Vector<uint> tmp;
     
     for (station=0; station<nofStations; station++) {
-      tmp        = groups_p[station].times();
+      tmp        = groups_p[station].time();
       nofDipoles = groups_p[station].nofDipoleDatasets();
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	UnixTimes(n) = tmp(dipole);
@@ -410,7 +410,7 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<uint> tmp;
     
     for (station=0; station<nofStations; station++) {
-      tmp        = groups_p[station].times();
+      tmp        = groups_p[station].time();
       nofDipoles = groups_p[station].nofDipoleDatasets();
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	UnixTimes[n] = tmp[dipole];
@@ -436,7 +436,7 @@ namespace DAL { // Namespace DAL -- begin
     casa::Vector<double> tmp;
     
     for (station=0; station<nofStations; station++) {
-      tmp = groups_p[station].sample_frequency();
+      tmp = groups_p[station].sample_frequency_value();
       nofDipoles = groups_p[station].nofDipoleDatasets();
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	sampleFrequency(n) = tmp(dipole);
@@ -458,7 +458,7 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<double> tmp;
     
     for (station=0; station<nofStations; station++) {
-      tmp = groups_p[station].sample_frequency();
+      tmp = groups_p[station].sample_frequency_value();
       nofDipoles = groups_p[station].nofDipoleDatasets();
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	sampleFrequency[n] = tmp[dipole];

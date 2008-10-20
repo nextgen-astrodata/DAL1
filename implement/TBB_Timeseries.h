@@ -536,15 +536,19 @@ namespace DAL { // Namespace DAL -- begin
     */
     void summary (std::ostream &os);    
 
-    // ------------------------------------------------------------------ Methods
-
+    // ==========================================================================
+    //
+    //  Parameter access - TBB time-series
+    //
+    // ==========================================================================
+    
     /*!
       \brief Get the number of station groups collected into this file
 
       \return nofStationGroups -- The number of station groups collected into
               this file
     */
-    inline uint nofStationGroups () {
+    inline uint nofStationGroups () const {
       return groups_p.size();
     }
 
@@ -561,21 +565,46 @@ namespace DAL { // Namespace DAL -- begin
       }
       return nofDatasets;
     }
-
+    
+    // ==========================================================================
+    //
+    //  Parameter access - station group
+    //
+    // ==========================================================================
+    
+#ifdef HAVE_CASA
+    casa::Vector<std::string> trigger_type ();
+#else
+    std::vector<std::string> trigger_type ();
+#endif
+    
+#ifdef HAVE_CASA
+    casa::Vector<double> trigger_offset ();
+#else
+    std::vector<double> trigger_offset ();
+#endif
+    
+    // ==========================================================================
+    //
+    //  Parameter access - dipole dataset
+    //
+    // ==========================================================================
+    
     /*!
       \brief Retrieve the list of channel names (i.e. as string)
-
-      \return channelIDnames -- A list of the channel IDs for all the dipoles within
+      
+      \return names -- A list of the channel IDs for all the dipoles within
               this data set.
-     */
+    */
 #ifdef HAVE_CASA
     casa::Vector<casa::String> channelNames ();
 #else
     std::vector<std::string> channelNames ();
 #endif
+
     /*!
       \brief Retrieve the list of channel IDs
-
+      
       \return channelID -- A list of the channel IDs for all the dipoles within
               this data set.
      */

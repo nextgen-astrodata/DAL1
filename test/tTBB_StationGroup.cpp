@@ -360,34 +360,50 @@ int test_methods (std::string const &name_file,
   try {
 #ifdef HAVE_CASA
     // retrieve the values ...
-    casa::Vector<uint> station_id = group.station_id();
-    casa::Vector<uint> rsp_id     = group.rsp_id();
-    casa::Vector<uint> rcu_id     = group.rcu_id();
-    casa::Vector<double> sampleFrequency = group.sample_frequency();
-    casa::Vector<uint> times      = group.times();
-    casa::Vector<uint> dataLengths = group.data_length();
+    casa::Vector<uint> station_id        = group.station_id();
+    casa::Vector<uint> rsp_id            = group.rsp_id();
+    casa::Vector<uint> rcu_id            = group.rcu_id();
+    casa::Vector<double> sample_freq_value = group.sample_frequency_value();
+    casa::Vector<std::string> sample_freq_unit = group.sample_frequency_unit();
+    casa::Vector<uint> nyquist_zone      = group.nyquist_zone();
+    casa::Vector<uint> time              = group.time();
+    casa::Vector<uint> sample_number     = group.sample_number();
+    casa::Vector<uint> samples_per_frame = group.samples_per_frame();
+    casa::Vector<uint> data_length       = group.data_length();
     // .. and display them  
-    cout << "-- Station IDs      = " << station_id << endl;
-    cout << "-- RSP IDs          = " << rsp_id << endl;
-    cout << "-- RCU IDs          = " << rcu_id << endl;
-    cout << "-- Sample frequency = " << group.sample_frequency() << endl;
-    cout << "-- UNIX times       = " << times << endl;
-    cout << "-- Data lengths     = " << dataLengths << endl;
+    cout << "-- station_id ........... = " << station_id        << endl;
+    cout << "-- rsp_id ............... = " << rsp_id            << endl;
+    cout << "-- rcu_id ............... = " << rcu_id            << endl;
+    cout << "-- sample_frequency_value = " << sample_freq_value << endl;
+    cout << "-- sample_frequency_unit  = " << sample_freq_unit  << endl;
+    cout << "-- nyquist_zone ......... = " << nyquist_zone      << endl;
+    cout << "-- time ................. = " << time              << endl;
+    cout << "-- sample_number ........ = " << sample_number     << endl;
+    cout << "-- samples_per_frame .... = " << samples_per_frame << endl;
+    cout << "-- Data lengths ......... = " << data_length       << endl;
 #else
     // retrieve the values ...
-    std::vector<uint> station_id = group.station_id();
-    std::vector<uint> rsp_id     = group.rsp_id();
-    std::vector<uint> rcu_id     = group.rcu_id();
-    std::vector<double> sampleFrequency = group.sample_frequency();
-    std::vector<uint> times      = group.times();
-    std::vector<uint> dataLenghts = group.data_length();
+    std::vector<uint> station_id        = group.station_id();
+    std::vector<uint> rsp_id            = group.rsp_id();
+    std::vector<uint> rcu_id            = group.rcu_id();
+    std::vector<double> sample_freq_value = group.sample_frequency_value();
+    std::vector<std::string> sample_freq_unit = group.sample_frequency_unit();
+    std::vector<uint> nyquist_zone      = group.nyquist_zone();
+    std::vector<uint> time              = group.time();
+    std::vector<uint> sample_number     = group.sample_number();
+    std::vector<uint> samples_per_frame = group.samples_per_frame();
+    std::vector<uint> data_length       = group.data_length();
     // .. and display them 
-    cout << "-- Station IDs      = " << station_id << endl;
-    cout << "-- RSP IDs          = " << rsp_id << endl;
-    cout << "-- RCU IDs          = " << rcu_id << endl;
-    cout << "-- Sample frequency = " << group.sample_frequency() << endl;
-    cout << "-- UNIX times       = " << times << endl;
-    cout << "-- Data lengths     = " << dataLengths << endl;
+    cout << "-- station_id ........... = " << station_id        << endl;
+    cout << "-- rsp_id ............... = " << rsp_id            << endl;
+    cout << "-- rcu_id ............... = " << rcu_id            << endl;
+    cout << "-- sample_frequency_value = " << sample_freq_value << endl;
+    cout << "-- sample_frequency_unit  = " << sample_freq_unit  << endl;
+    cout << "-- nyquist_zone ......... = " << nyquist_zone      << endl;
+    cout << "-- time ................. = " << time              << endl;
+    cout << "-- sample_number ........ = " << sample_number     << endl;
+    cout << "-- samples_per_frame .... = " << samples_per_frame << endl;
+    cout << "-- Data lengths ......... = " << data_length       << endl;
 #endif
   } catch (std::string message) {
     cerr << message << endl;
@@ -396,7 +412,7 @@ int test_methods (std::string const &name_file,
   
   cout << "[4] Retrieve antenna position values ..." << endl;
   try {
-    casa::Matrix<double> antennaPositions = group.antennaPositionValues();
+    casa::Matrix<double> antennaPositions = group.antenna_position_value();
     // Feedback
     cout << "-- shape(antennaPositionValues) = " << antennaPositions.shape() << endl;
   } catch (std::string message) {

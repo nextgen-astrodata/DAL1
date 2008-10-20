@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------*
- | $Id::                                                               $ |
+ | $Id::                                                                 $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2007                                                    *
@@ -58,9 +58,9 @@ namespace DAL { // Namespace DAL -- begin
     
     <ul type="square">
       <li>Definition of the LOFAR time-series data format
-      <li>[DAL] DAL::TBB_Timeseries
-      <li>[DAL] DAL::TBB_DipoleDataset
-      <li>[CR] CR::TBB_TBB -- Interface between Data Access Library (DAL) and
+      <li>DAL::TBB_Timeseries
+      <li>DAL::TBB_DipoleDataset
+      <li>CR::LOFAR_TBB -- Interface between Data Access Library (DAL) and
       CR::DataReader framework
     </ul>
     
@@ -72,7 +72,7 @@ namespace DAL { // Namespace DAL -- begin
       /
       |-- Station001                    ... Group
       |   |-- TRIGGER_TYPE              ... Attribute       ... string
-      |   |-- TRIGGER_OFFSET            ... Attribute       ... string
+      |   |-- TRIGGER_OFFSET            ... Attribute       ... double
       |   |-- TRIGGERED_ANTENNAS        ... Attribute       ... array<int,1>
       |   |-- BEAM_DIRECTION_VALUE      ... Attribute       ... array<double,1>
       |   |-- BEAM_DIRECTION_UNIT       ... Attribute       ... string
@@ -124,19 +124,23 @@ namespace DAL { // Namespace DAL -- begin
     
   */
   class TBB_StationGroup {
-
+    
     //! Identifier for this group within the HDF5 file
     hid_t groupID_p;
     //! Datasets contained within this group
     std::vector<TBB_DipoleDataset> datasets_p;
-
+    
   public:
     
-    // ------------------------------------------------------------- Construction
+    // ==========================================================================
+    //
+    //  Construction / Destruction
+    //
+    // ==========================================================================
     
     /*!
       \brief Default constructor
-
+      
       Default constructor does not connect to a file, but simply sets up internal
       parameters.
     */
@@ -150,30 +154,20 @@ namespace DAL { // Namespace DAL -- begin
     TBB_StationGroup (hid_t const &location,
 		      std::string const &group);
     
-    /*!
-      \brief Argumented constructor
-
-      \param group_id -- Identifier for the group contained within the HDF5
-             file
-    */
+    //! Argumented constructor
     TBB_StationGroup (hid_t const &group_id);
     
-    /*!
-      \brief Copy constructor
-      
-      \param other -- Another TBB_StationGroup object from which to create
-             this new one.
-    */
+    //! Copy constructor
     TBB_StationGroup (TBB_StationGroup const &other);
     
-    // -------------------------------------------------------------- Destruction
-
-    /*!
-      \brief Destructor
-    */
+    //! Destructor
     ~TBB_StationGroup ();
     
-    // ---------------------------------------------------------------- Operators
+    // ==========================================================================
+    //
+    //  Operators
+    //
+    // ==========================================================================
     
     /*!
       \brief Overloading of the copy operator
@@ -183,7 +177,11 @@ namespace DAL { // Namespace DAL -- begin
     */
     TBB_StationGroup& operator= (TBB_StationGroup const &other); 
     
-    // --------------------------------------------------------------- Parameters
+    // ==========================================================================
+    //
+    //  Parameter access - station group
+    //
+    // ==========================================================================
     
     /*!
       \brief Get the identifier for this group within the HDF5 file
@@ -216,10 +214,10 @@ namespace DAL { // Namespace DAL -- begin
       \return trigger_offset -- The trigger offset.
     */
     double trigger_offset ();
-
+    
     /*!
       \brief Get the list of triggered antennas
-
+      
       \return triggered_antennas -- List of antennas, for which the trigger
               condition was fullfilled.
     */
@@ -302,41 +300,11 @@ namespace DAL { // Namespace DAL -- begin
     */
     inline uint nofDipoleDatasets () { return datasets_p.size(); }
 
-    /*!
-      \brief Get the values of TIME for all present datasets
-      
-      \return times -- Values of the TIME attribute for all datasets present in
-              this station group
-    */
-#ifdef HAVE_CASA
-    casa::Vector<uint> times ();
-#else
-    std::vector<uint> times ();
-#endif
-
-    /*!
-      \brief Get the values of sample frequency of all included datasets
-      
-      \return sample_frequencies -- Values of the SAMPLE_FREQUENCY attribute
-              for all datasets present in this station group
-    */
-#ifdef HAVE_CASA
-    casa::Vector<double> sample_frequency ();
-#else
-    std::vector<double> sample_frequency ();
-#endif
-
-    /*!
-      \brief Get the values of DATA_LENGTH for all present datasets
-      
-      \return data_lengths -- Values of the DATA_LENGTH attribute for all
-              datasets present in this station group
-    */
-#ifdef HAVE_CASA
-    casa::Vector<uint> data_length ();
-#else
-    std::vector<uint> data_length ();
-#endif
+    // ==========================================================================
+    //
+    //  Parameter access - dipole dataset
+    //
+    // ==========================================================================
     
     /*!
       \brief Retrieve the station IDs from the antenna datasets within this group
@@ -374,14 +342,104 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<uint> rcu_id ();
 #endif
     
+#ifdef HAVE_CASA
+    casa::Vector<double> sample_frequency_value ();
+#else
+    std::vector<double> sample_frequency_value ();
+#endif
+
+#ifdef HAVE_CASA
+    casa::Vector<std::string> sample_frequency_unit ();
+#else
+    std::vector<std::string> sample_frequency_unit ();
+#endif
+
+#ifdef HAVE_CASA
+    casa::Vector<casa::MFrequency> sample_frequency ();
+#endif
+    
+    /*!
+      \brief Get the Nyquist zone in which the ADC is performed
+      
+      \return zone -- The Nyquist zone in which the analog-to-digital conversion
+              (ADC) is performed
+    */
+#ifdef HAVE_CASA
+    casa::Vector<uint> nyquist_zone ();
+#else
+    std::vector<uint> nyquist_zone ();
+#endif
+    
+    /*!
+      \brief Get the values of TIME for all present datasets
+      
+      \return times -- Values of the TIME attribute for all datasets present in
+              this station group
+    */
+#ifdef HAVE_CASA
+    casa::Vector<uint> time ();
+#else
+    std::vector<uint> time ();
+#endif
+
+#ifdef HAVE_CASA
+    casa::Vector<uint> sample_number ();
+#else
+    std::vector<uint> sample_number ();
+#endif
+
+#ifdef HAVE_CASA
+    casa::Vector<uint> samples_per_frame ();
+#else
+    std::vector<uint> samples_per_frame ();
+#endif
+
+    /*!
+      \brief Get the values of DATA_LENGTH for all present datasets
+      
+      \return data_lengths -- Values of the DATA_LENGTH attribute for all
+              datasets present in this station group
+    */
+#ifdef HAVE_CASA
+    casa::Vector<uint> data_length ();
+#else
+    std::vector<uint> data_length ();
+#endif
+
+    //! Get the type of the feeds.
+#ifdef HAVE_CASA
+    casa::Vector<std::string> feed ();
+#else
+    std::vector<std::string> feed ();
+#endif
+
+    //! Get the numerical values of the antenna positions within this station.    
+#ifdef HAVE_CASA
+    casa::Matrix<double> antenna_position_value ();
+#endif
+
+    //! Get the physical units for the antenna positions within this station.
+#ifdef HAVE_CASA
+    casa::Matrix<std::string> antenna_position_unit ();
+#endif
+
+    //! Get the positions of the antennas within this station as Measure.
+#ifdef HAVE_CASA
+    casa::Vector<casa::MPosition> antenna_position ();
+#endif
+    
     /*!
       \brief Retrieve the list of channels IDs contained within this group
 
       \return channelID -- A list of the channel IDs for all the dipoles within
               this LOFAR station.
     */
+#ifdef HAVE_CASA
+    casa::Vector<int> channelID ();
+#else
     std::vector<int> channelID ();
-
+#endif
+    
     /*!
       \brief Retrieve the list of channels names contained within this group
 
@@ -427,16 +485,6 @@ namespace DAL { // Namespace DAL -- begin
     casa::Vector<hid_t> datasetIDs ();
 #else
     std::vector<hid_t> datasetIDs ();
-#endif
-
-    /*!
-      \brief Get the antenna positions values for all antennas in the station
-
-      \return positions -- [antenna,coord] Matrix containing the position values
-              for all the antennas in the station
-    */
-#ifdef HAVE_CASA
-    casa::Matrix<double> antennaPositionValues ();
 #endif
 
     /*!
