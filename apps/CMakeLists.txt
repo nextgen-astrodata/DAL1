@@ -66,6 +66,8 @@ if (DAL_ENABLE_TESTING)
 
   if (dataset_tbb_raw)
     add_test (tbb2h5_test9 tbb2h5 --infile ${dataset_tbb_raw} --outfile testdata.h5)
+    add_test (tbb2h5_test10 tbb2h5 --infile ${USG_DATA}/test/rw_20071024_090656_0102.dat --outfile testdata.h5)
+    add_test (tbb2h5_test11 tbb2h5 --infile ${USG_DATA}/test/rw_20071024_090656_0103.dat --outfile testdata.h5)
   endif (dataset_tbb_raw)
 
   ## Test bf2h5 with various command line parameters
