@@ -90,6 +90,29 @@ using casa::Quantity;
   - Routines for the access of HDF5 attributes
   - Boost.Python wrappers 
     - DAL::mjd2unix_boost
+
+  <h3>Coding conventions</h3>
+
+  All get/set functions wrapping the underlying functionality should conform to
+  a common ordering of the function arguments to avoid confusion:
+  \code
+  template <typename T>
+    bool h5get_attribute (hid_t const &attribute_id,
+			  T &value);
+
+  template <typename T>
+    bool h5get_attribute (hid_t const &locationID,
+			  std::string const &name,
+			  T &value);  
+  template <typename T>
+    bool h5get_attribute (hid_t const &attribute_id,
+			  std::vector<T> &value);
+
+  template <typename T>
+    bool h5get_attribute (hid_t const &locationID,
+			  std::string const &name,
+			  std::vector<T> &value);  
+  \endcode
   
 */
 
@@ -116,7 +139,7 @@ namespace DAL {
   // ============================================================================
   
   //! Check if an object exists in a vector
-  template <class T>
+  template <typename T>
     bool it_exists( std::vector<T> vec, T item )
     {
       typename std::vector<T>::iterator it;
@@ -203,7 +226,7 @@ namespace DAL {
 
   // ------------------------------------------------------------- h5setAttribute
 
-  template <class T>
+  template <typename T>
   bool h5setAttribute( hid_t const &datatype,
 		       hid_t obj_id,
 		       std::string attrname,
@@ -215,107 +238,63 @@ namespace DAL {
     hsize_t dims[1]  = { size };
 
     aid1  = H5Screate_simple( 1, dims, NULL );
-    if ( aid1 < 0 )
-      {
-        std::cerr << "ERROR: Could not set attribute '" << attrname
-                  << "' dataspace.\n";
-        return DAL::FAIL;
-      }
-
-    attr1 = H5Acreate( obj_id, attrname.c_str(),
-                        datatype, aid1, NULL, NULL );
-    if ( attr1 < 0 )
-      {
-        std::cerr << "ERROR: Could not create attribute '" << attrname
-                  << "'.\n";
-        return DAL::FAIL;
-      }
-
-    if ( H5Awrite(attr1, datatype, data) < 0 )
-      {
-        std::cerr << "ERROR: Could not write attribute '" << attrname << "'.\n";
-        return DAL::FAIL;
-      }
-
-    if ( H5Aclose( attr1 ) < 0 )
-      {
-        std::cerr << "ERROR: Could not close attribute '" << attrname << "'.\n";
-        return DAL::FAIL;
-      }
-
-    return DAL::SUCCESS;
-
-  }
-
-  // --------------------------------------------------------------- getAttribute
-
-  /*!
-    \brief Get the value of an attribute.
-
-    Get the value of an attribute.  This is different from printAttribute
-    because the value of the attribute is returned into a structure
-    instead of simply printing.
-
-    \param attrname The name of the attribute you want to retrieve.
-    
-  */
-  template <class T>
-    bool h5getAttribute( hid_t const &obj_id,
-			 std::string attrname,
-			 T &value )
-    {
-      hsize_t dims;
-      H5T_class_t type_class;
-      size_t type_size;
-      hid_t datatype (0);
-      int rank (0);
-      
-      // Check if attribute exists
-      if ( H5Aexists( obj_id, attrname.c_str()) <= 0 ) {
-	std::cerr << "ERROR: Attribute '" << attrname << "' does not exist.\n";
-	return DAL::FAIL;
-      }
-      
-      std::string fullname = "/";
-      
-      if ( H5LTget_attribute_ndims( obj_id,
-				    fullname.c_str(),
-				    attrname.c_str(),
-				    &rank ) < 0 )
-	{
-	  std::cerr << "ERROR: Attribute '" << attrname << "' does not exist.\n";
-	  return DAL::FAIL;
-	}
-      
-      if ( H5LTget_attribute_info( obj_id, fullname.c_str(), attrname.c_str(),
-				   &dims, &type_class, &type_size ) < 0 )
-	{
-	  std::cerr << "ERROR: Could not get attribute '" << attrname
-		    << "' info.\n";
-	  return DAL::FAIL;
-	}
-      else if ( H5T_FLOAT == type_class ) {
-	datatype = H5T_NATIVE_FLOAT;
-      }
-      else if ( H5T_INTEGER == type_class ) {
-	datatype = H5T_NATIVE_INT;
-      }
-      else {
-	return DAL::FAIL;
-      }
-      
-      if ( H5LTget_attribute( obj_id, fullname.c_str(), attrname.c_str(),
-			      datatype, &value) < 0 )
-	{
-	  std::cerr << "ERROR: Could not get attribute '" << attrname << "'.\n";
-	  return DAL::FAIL;
-	}
-      
-      return DAL::SUCCESS;
+    if ( aid1 < 0 ) {
+      std::cerr << "ERROR: Could not set attribute '" << attrname
+		<< "' dataspace.\n";
+      return DAL::FAIL;
     }
+    
+    attr1 = H5Acreate( obj_id, attrname.c_str(),
+		       datatype, aid1, NULL, NULL );
+    if ( attr1 < 0 ) {
+      std::cerr << "ERROR: Could not create attribute '" << attrname
+		<< "'.\n";
+      return DAL::FAIL;
+    }
+    
+    if ( H5Awrite(attr1, datatype, data) < 0 ) {
+      std::cerr << "ERROR: Could not write attribute '" << attrname << "'.\n";
+      return DAL::FAIL;
+    }
+    
+    if ( H5Aclose( attr1 ) < 0 ) {
+      std::cerr << "ERROR: Could not close attribute '" << attrname << "'.\n";
+      return DAL::FAIL;
+    }
+    
+    return DAL::SUCCESS;
+    
+  }
   
-  // ------------------------------------------------------------- h5getAttribute
+  // ------------------------------------------------------------ h5set_attribute
 
+  //! Set the value of an attribute attached to a group or dataset
+  template <typename T>
+    bool h5set_attribute( hid_t const &datatype,
+			  hid_t obj_id,
+			  std::string name,
+			  std::vector<T> const &value )
+  {
+    T *data;
+    int nelem = value.size();
+
+    data = new T [nelem];
+
+    for (int n(0); n<nelem; n++) {
+      data[n] = value[n];
+    }
+
+    return h5setAttribute (datatype,
+			   obj_id,
+			   name,
+			   data,
+			   nelem);
+
+    delete [] data;
+  }
+    
+  // ------------------------------------------------------------- h5getAttribute
+  
   //! Get an HDF5 attribute - std::string type specialization
   inline bool h5getAttribute( hid_t const &obj_id,
 			      std::string attrname,
@@ -371,26 +350,20 @@ namespace DAL {
   }
 
   //! Get the value of an attribute attached to a group or dataset
-  template <class T>
-    bool h5get_attribute (T &value,
-			  hid_t const &attribute_id);
+  template <typename T>
+    bool h5get_attribute (hid_t const &attribute_id,
+			  T &value);
+
   //! Get the value of an attribute attached to a group or dataset
-  template <class T>
-    bool h5get_attribute (T &value,
+  template <typename T>
+    bool h5get_attribute (hid_t const &locationID,
 			  std::string const &name,
-			  hid_t const &locationID);  
-  /*!
-    \brief Get the value of an attribute attached to a group or dataset
-    
-    \retval value       -- Value of the attribute
-    \param attribute_id -- Identifier of the attribute within the HDF5 file
-    
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered
-  */
-  template <class T>
-    bool h5get_attribute (std::vector<T> &value,
-			  hid_t const &attribute_id)
+			  T &value);
+
+  //! Get the value of an attribute attached to a group or dataset
+  template <typename T>
+    bool h5get_attribute (hid_t const &attribute_id,
+			  std::vector<T> &value)
     {
       bool status (true);
       std::vector<uint> shape;
@@ -437,58 +410,44 @@ namespace DAL {
     }
   
   //! Get the value of an attribute attached to a group or dataset
-  template <class T>
-    bool h5get_attribute (std::vector<T> &value,
+  template <typename T>
+    bool h5get_attribute (hid_t const &locationID,
 			  std::string const &name,
-			  hid_t const &locationID);  
+			  std::vector<T> &value);  
   
   
 #ifdef HAVE_CASA
-
-  //! Get the shape of a dataset
-  bool h5get_dataset_shape (casa::IPosition &shape,
-                            hid_t const &attribute_id);
-  //! Get the shape of the dataspace associated with the attribute
-  bool h5get_dataspace_shape (casa::IPosition &shape,
-                              hid_t const &attribute_id);
-  //! Get the value of an attribute attached to a group or dataset
-  template <class T>
-    bool h5get_attribute (casa::Vector<T> &value,
-			  hid_t const &attribute_id);
-  //! Get the value of an attribute attached to a group or dataset
-  template <class T>
-  bool h5get_attribute (casa::Vector<T> &value,
-                        std::string const &name,
-                        hid_t const &location_id);
-  //! Get physical quantity attribute as casa::Quantity
-  Quantity h5get_quantity (DAL::Attributes const &value,
-			   DAL::Attributes const &unit,
-			   hid_t const &location_id);  
-  //! Get a physical quantity describing a direction within a frame
-  casa::MDirection h5get_direction (DAL::Attributes const &value,
-                                    DAL::Attributes const &unit,
-                                    DAL::Attributes const &frame,
-                                    hid_t const &location_id);
   
-  /*!
-    \brief Get a physical quantity describing a position/location
-    
-    \param value -- Identifier for the attribute storing the numerical value of
-           the quantity.
-    \param unit  -- Identifier for the attribute storing the physical unit of
-           the quantity
-    \param frame -- Identifier for the attribute storing the identifier for the
-           reference frame within which the physical quantity is defined.
-    \param location_id -- Identifier of the structure within the file, to which
-           the attribut is attached to.
-
-    \return position -- The physical quantity.
-  */
-  casa::MPosition h5get_position (DAL::Attributes const &value,
-                                  DAL::Attributes const &unit,
-                                  DAL::Attributes const &frame,
-                                  hid_t const &location_id);
-
+  //! Get the shape of a dataset
+  bool h5get_dataset_shape (hid_t const &attribute_id,
+			    casa::IPosition &shape);
+  //! Get the shape of the dataspace associated with the attribute
+  bool h5get_dataspace_shape (hid_t const &attribute_id,
+			      casa::IPosition &shape);
+  //! Get the value of an attribute attached to a group or dataset
+  template <typename T>
+    bool h5get_attribute (hid_t const &attribute_id,
+			  casa::Vector<T> &value);
+  //! Get the value of an attribute attached to a group or dataset
+  template <typename T>
+    bool h5get_attribute (hid_t const &location_id,
+			  std::string const &name,
+			  casa::Vector<T> &value);
+  //! Get physical quantity attribute as casa::Quantity
+  Quantity h5get_quantity (hid_t const &location_id,
+			   DAL::Attributes const &value,
+			   DAL::Attributes const &unit);  
+  //! Get a physical quantity describing a direction within a frame
+  casa::MDirection h5get_direction (hid_t const &location_id,
+				    DAL::Attributes const &value,
+                                    DAL::Attributes const &unit,
+                                    DAL::Attributes const &frame);  
+  //! Get a physical quantity describing a position/location
+  casa::MPosition h5get_position (hid_t const &location_id,
+				  DAL::Attributes const &value,
+				  DAL::Attributes const &unit,
+				  DAL::Attributes const &frame);
+  
 #endif  // HAVE_CASA
 
   // ============================================================================
@@ -525,7 +484,7 @@ namespace DAL {
   \param arr   -- Pointer to the array with the data to be displayed
   \param nelem -- The number of elements stored within the array
 */
-template <class T>
+template <typename T>
 void show (T const *arr,
 	   uint const &nelem)
 {
@@ -543,7 +502,7 @@ void show (T const *arr,
   \param arr   -- Pointer to the array with the data to be displayed
   \param nelem -- The number of elements stored within the array
 */
-template <class T> void show (std::ostream& os,
+template <typename T> void show (std::ostream& os,
 			      T const *arr,
 			      uint const &nelem)
 {
@@ -564,7 +523,7 @@ template <class T> void show (std::ostream& os,
   \param os  -- Output stream to which the result will be written to
   \param vec -- The vector to be displayed
 */
-template <class T>
+template <typename T>
 std::ostream& operator<< (std::ostream &os,
 			  const std::vector<T> &vec)
 {

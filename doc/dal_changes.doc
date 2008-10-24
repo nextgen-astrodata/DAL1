@@ -67,6 +67,10 @@ drwxr-xr-x   39 lars  lars        1326 Sep 24 12:09 L2007_01810_SB18-20_OB20.MS
 
 - Make sure all classes provide at least a basic <tt>summary()</tt> method to display the status
   of internal parameters.
+  
+- Unification of all the get/set functions in dalCommon.cpp; as a first step get
+  the ordering of the function parameters organized, thereafter remove
+  dublicates.
 
 - DAL::BeamFormed
   - add method to retrieve ADC sample frequency

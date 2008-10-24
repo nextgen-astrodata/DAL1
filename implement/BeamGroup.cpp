@@ -247,54 +247,52 @@ namespace DAL {
   {
     std::string ra ("");
 
-    if (group_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == h5get_attribute( ra, "RA", group_p->getId() ) )
-          {
-            std::cerr << "-- Error extracting attribute RA" << endl;
-          }
-      }
+    if (group_p->getName() != "UNDEFINED") {
+      if ( DAL::FAIL == h5get_attribute( group_p->getId(), "RA", ra ) )
+	{
+	  std::cerr << "-- Error extracting attribute RA" << endl;
+	}
+    }
     return ra;
   }
-
+  
   // ------------------------------------------------------------------------ dec
-
+  
   /*!
     \return dec -- The declination of the beam pointing direction
   */
   std::string BeamGroup::dec ()
   {
     std::string dec ("");
-
-    if (group_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == h5get_attribute( dec, "DEC", group_p->getId() ) )
-          {
-            std::cerr << "-- Error extracting attribute DEC" << endl;
-          }
-      }
+    
+    if (group_p->getName() != "UNDEFINED") {
+      if ( DAL::FAIL == h5get_attribute( group_p->getId(), "DEC", dec ) )
+	{
+	  std::cerr << "-- Error extracting attribute DEC" << endl;
+	}
+    }
     return dec;
   }
-
+  
   // ---------------------------------------------------------------- nofSubbands
-
+  
   /*!
     \return subbands -- The number of sub-bands.
   */
   int BeamGroup::nofSubbands ()
   {
     int nofSubbands = -1;
-    if (group_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == h5get_attribute( nofSubbands, "NUMBER_OF_SUBBANDS",
-                                           group_p->getId() ) )
-          {
-            std::cerr << "-- Error extracting attribute NUMBER_OF_SUBBANDS" << endl;
-          }
-      }
+    if (group_p->getName() != "UNDEFINED") {
+      if ( DAL::FAIL == h5get_attribute( group_p->getId(),
+					 "NUMBER_OF_SUBBANDS",
+					 nofSubbands) )
+	{
+	  std::cerr << "-- Error extracting attribute NUMBER_OF_SUBBANDS" << endl;
+	}
+    }
     return nofSubbands;
   }
-
+  
   // ============================================================================
   //
   //  Methods for access of metadata/attributes

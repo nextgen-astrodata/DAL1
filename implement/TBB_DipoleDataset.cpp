@@ -225,9 +225,9 @@ namespace DAL { // Namespace DAL -- begin
   {    
     if (datasetID_p > 0) {
       uint val (0);
-      if (DAL::h5get_attribute(val,
+      if (DAL::h5get_attribute(datasetID_p,
 			       attribute_name(DAL::STATION_ID),
-			       datasetID_p)) {
+			       val)) {
 	return val;
       } else {
 	cerr << "[TBB_DipoleDataset::station_id]"
@@ -251,9 +251,9 @@ namespace DAL { // Namespace DAL -- begin
   {
     if (datasetID_p > 0) {
       uint val (0);
-      if (DAL::h5get_attribute(val,
+      if (DAL::h5get_attribute(datasetID_p,
 			       attribute_name(DAL::RSP_ID),
-			       datasetID_p)) {
+			       val)) {
 	return val;
       } else {
 	cerr << "[TBB_DipoleDataset::rsp_id]"
@@ -276,9 +276,9 @@ namespace DAL { // Namespace DAL -- begin
   {
     if (datasetID_p > 0) {
       uint val (0);
-      if (DAL::h5get_attribute(val,
+      if (DAL::h5get_attribute(datasetID_p,
 			       attribute_name(DAL::RCU_ID),
-			       datasetID_p)) {
+			       val)) {
 	return val;
       } else {
 	cerr << "[TBB_DipoleDataset::rcu_id]"
@@ -301,9 +301,9 @@ namespace DAL { // Namespace DAL -- begin
   {
     if (datasetID_p > 0) {
       uint val (0);
-      if (DAL::h5get_attribute(val,
+      if (DAL::h5get_attribute(datasetID_p,
 			       attribute_name(DAL::TIME),
-			       datasetID_p)) {
+			       val)) {
 	return val;
       } else {
 	cerr << "[TBB_DipoleDataset::time]"
@@ -319,6 +319,11 @@ namespace DAL { // Namespace DAL -- begin
   
   // ------------------------------------------------------------------ julianDay
   
+  /*!
+    \param onlySeconds -- Fully quallified timestamp for the first sample? If
+           set to <tt>true</tt> only the UNIX time -- qualifying the full
+	   seconds -- will be returned.
+  */
   double TBB_DipoleDataset::julianDay (bool const &onlySeconds)
   {
     uint seconds = time ();
@@ -341,6 +346,9 @@ namespace DAL { // Namespace DAL -- begin
   
   // ----------------------------------------------------- sample_frequency_value
   
+  /*!
+    \return value -- The numerical value of the ADC sample frequency, [Hz].
+  */
   double TBB_DipoleDataset::sample_frequency_value ()
   {
     if (datasetID_p > 0) {
@@ -348,9 +356,9 @@ namespace DAL { // Namespace DAL -- begin
       double val (0);
       std::string unit;
       
-      status = DAL::h5get_attribute(val,
+      status = DAL::h5get_attribute(datasetID_p,
 				    attribute_name(DAL::SAMPLE_FREQUENCY_VALUE),
-				    datasetID_p);
+				    val);
       unit = sample_frequency_unit ();
 
       if (status) {
@@ -386,13 +394,17 @@ namespace DAL { // Namespace DAL -- begin
   
   // ------------------------------------------------------ sample_frequency_unit
   
+  /*!
+    \return unit -- The physical unit associated with the numerical value of
+            the ADC sample frequency.
+  */
   std::string TBB_DipoleDataset::sample_frequency_unit ()
   {
     std::string val;
     
-    if (DAL::h5get_attribute(val,
+    if (DAL::h5get_attribute(datasetID_p,
 			     attribute_name(DAL::SAMPLE_FREQUENCY_UNIT),
-			     datasetID_p)) {
+			     val)) {
       return val;
     } else {
       return std::string ("UNDEFINED");
@@ -401,12 +413,15 @@ namespace DAL { // Namespace DAL -- begin
   
   // ----------------------------------------------------------- sample_frequency
   
+  /*!
+    \return freq -- The ADC sample frequency, as casa::Measure
+  */
   casa::MFrequency TBB_DipoleDataset::sample_frequency ()
   {
     if (datasetID_p > 0) {
-      casa::Quantity qFreq = DAL::h5get_quantity (DAL::SAMPLE_FREQUENCY_VALUE,
-						  DAL::SAMPLE_FREQUENCY_UNIT,
-						  datasetID_p);
+      casa::Quantity qFreq = DAL::h5get_quantity (datasetID_p,
+						  DAL::SAMPLE_FREQUENCY_VALUE,
+						  DAL::SAMPLE_FREQUENCY_UNIT);
       return casa::MFrequency (qFreq,
 			       casa::MFrequency::TOPO);
     } else {
@@ -418,13 +433,17 @@ namespace DAL { // Namespace DAL -- begin
   
   // --------------------------------------------------------------- nyquist_zone
   
+  /*!
+    \return zone -- The Nyquist zone in which the analog-to-digital
+            conversion (ADC) is performed
+  */
   uint TBB_DipoleDataset::nyquist_zone ()
   {
     if (datasetID_p > 0) {
       uint val (0);
-      if (DAL::h5get_attribute(val,
+      if (DAL::h5get_attribute(datasetID_p,
 			       attribute_name(DAL::NYQUIST_ZONE),
-			       datasetID_p)) {
+			       val)) {
 	return val;
       } else {
 	return 0;
@@ -484,7 +503,7 @@ namespace DAL { // Namespace DAL -- begin
   // ----------------------------------------------------------------------- init
   
   void TBB_DipoleDataset::init (std::string const &filename,
-				  std::string const &dataset)
+				std::string const &dataset)
   {
     hid_t file_id (0);
     herr_t h5error (0);
@@ -496,7 +515,7 @@ namespace DAL { // Namespace DAL -- begin
     file_id = H5Fopen (filename.c_str(),
 		       H5F_ACC_RDONLY,
 		       H5P_DEFAULT);
-
+    
     // if opening of file was successfull, try to open dataset
     if (file_id > 0) {
       init (file_id,
@@ -516,13 +535,13 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   // ----------------------------------------------------------------------- init
-
+  
   void TBB_DipoleDataset::init (hid_t const &location,
-				  std::string const &dataset)
+				std::string const &dataset)
   {
     bool status (true);
     hid_t dataset_id (0);
-
+    
     /*
       Try to open the dataset within the HDF5 file; the dataset is expected
       to reside below the object identified by "location".
@@ -545,13 +564,20 @@ namespace DAL { // Namespace DAL -- begin
 
   // -------------------------------------------------------------- sample_number
   
+  /*!
+    \return sample_number -- The timespan in samples since the last full
+            second, as stored in <i>time</i>; the absolute time for this 
+	    dataset thus is obtained by adding
+	    <i>sample_number</i>/<i>sample_frequency</i> to the value of 
+	    <i>time</i>.
+  */
   uint TBB_DipoleDataset::sample_number ()
   {
     if (datasetID_p > 0) {
       uint val (0);
-      if (DAL::h5get_attribute(val,
+      if (DAL::h5get_attribute(datasetID_p,
 			       attribute_name(DAL::SAMPLE_NUMBER),
-			       datasetID_p)) {
+			       val)) {
 	return val;
       } else {
 	return 0;
@@ -563,13 +589,17 @@ namespace DAL { // Namespace DAL -- begin
   
   // ---------------------------------------------------------- samples_per_frame
   
+  /*!
+    \return samplesPerFrame -- The number of samples originally transmitted 
+            per frame of data sent from TBB to RSP.
+  */
   uint TBB_DipoleDataset::samples_per_frame ()
   {
     if (datasetID_p > 0) {
       uint val (0);
-      if (DAL::h5get_attribute(val,
+      if (DAL::h5get_attribute(datasetID_p,
 			       attribute_name(DAL::SAMPLES_PER_FRAME),
-			       datasetID_p)) {
+			       val)) {
 	return val;
       } else {
 	return 0;
@@ -581,6 +611,11 @@ namespace DAL { // Namespace DAL -- begin
   
   // ---------------------------------------------------------------- data_length
   
+  /*!
+    \return dataLength -- The number of samples stored in this dataset; this
+            corresponds to the maximum blocksize, which can be set for this
+	    dataset.
+  */
   uint TBB_DipoleDataset::data_length ()
   {
     uint val (0);
@@ -597,13 +632,16 @@ namespace DAL { // Namespace DAL -- begin
 
   // ----------------------------------------------------------------------- feed
   
+  /*!
+    \return feed -- The type of antenna feed of this dipole
+  */
   std::string TBB_DipoleDataset::feed ()
   {
     std::string val;
     
-    if (DAL::h5get_attribute(val,
+    if (DAL::h5get_attribute(datasetID_p,
 			     attribute_name(DAL::FEED),
-			     datasetID_p)) {
+			     val)) {
       return val;
     } else {
       return std::string ("");
@@ -612,13 +650,17 @@ namespace DAL { // Namespace DAL -- begin
   
   // ----------------------------------------------------- antenna_position_value
   
+  /*!
+    \return value -- Numerical value of the antenna position coordinates, e.g.
+            <tt>value=[10,12,0]</tt>
+  */
   casa::Vector<double> TBB_DipoleDataset::antenna_position_value ()
   {
     casa::Vector<double> val;
     
-    if (DAL::h5get_attribute(val,
+    if (DAL::h5get_attribute(datasetID_p,
 			     attribute_name(DAL::ANTENNA_POSITION_VALUE),
-			     datasetID_p)) {
+			     val)) {
       return val;
     } else {
       return casa::Vector<double> (1);
@@ -627,53 +669,70 @@ namespace DAL { // Namespace DAL -- begin
   
   // ------------------------------------------------------ antenna_position_unit
   
-  std::string TBB_DipoleDataset::antenna_position_unit ()
+  /*!
+    \return unit -- Physical unit associated with the numerical values for the
+            antenna position, e.g. <tt>unit="m"</tt>
+  */
+  casa::Vector<casa::String> TBB_DipoleDataset::antenna_position_unit ()
   {
-    std::string val;
+    casa::Vector<casa::String> val;
     
-    if (DAL::h5get_attribute(val,
+    if (DAL::h5get_attribute(datasetID_p,
 			     attribute_name(DAL::ANTENNA_POSITION_UNIT),
-			     datasetID_p)) {
+			     val)) {
       return val;
     } else {
-      return std::string ("UNDEFINED");
+      return casa::Vector<casa::String> (1);
     }
-  }
-
-  // ----------------------------------------------------------- antenna_position
-
-  casa::MPosition TBB_DipoleDataset::antenna_position ()
-  {
-    return DAL::h5get_position (DAL::ANTENNA_POSITION_VALUE,
-				DAL::ANTENNA_POSITION_UNIT,
-				DAL::ANTENNA_POSITION_FRAME,
-				datasetID_p);
   }
   
   // ----------------------------------------------------- antenna_position_frame
   
+  /*!
+    \return frame -- Identifier for the reference frame within which the antenna
+            position is provided, e.g. <tt>frame="ITRF"</tt>
+  */
   std::string TBB_DipoleDataset::antenna_position_frame ()
   {
     std::string val;
     
-    if (DAL::h5get_attribute(val,
+    if (DAL::h5get_attribute(datasetID_p,
 			     attribute_name(DAL::ANTENNA_POSITION_FRAME),
-			     datasetID_p)) {
+			     val)) {
       return val;
     } else {
       return std::string ("UNDEFINED");
     }
   }
   
+  // ----------------------------------------------------------- antenna_position
+
+  /*!
+    \return position -- The antenna position as casa::Measure, combining the 
+            information from ANTENNA_POSITION_VALUE, ANTENNA_POSITION_UNIT and
+	    ANTENNA_POSITION_FRAME.
+  */
+  casa::MPosition TBB_DipoleDataset::antenna_position ()
+  {
+    return DAL::h5get_position (datasetID_p,
+				DAL::ANTENNA_POSITION_VALUE,
+				DAL::ANTENNA_POSITION_UNIT,
+				DAL::ANTENNA_POSITION_FRAME);
+  }
+  
   // -------------------------------------------------- antenna_orientation_value
   
+  /*!
+    \return value -- The numerical values describing the antenna position; this
+            can be either a set of Euler angles or a normal vector.
+  */
   casa::Vector<double> TBB_DipoleDataset::antenna_orientation_value ()
   {
     casa::Vector<double> val;
     
-    if (DAL::h5get_attribute(val,
+    if (DAL::h5get_attribute(datasetID_p,
 			     attribute_name(DAL::ANTENNA_ORIENTATION_VALUE),
-			     datasetID_p)) {
+			     val)) {
       return val;
     } else {
       return casa::Vector<double> (1);
@@ -682,28 +741,37 @@ namespace DAL { // Namespace DAL -- begin
   
   // --------------------------------------------------- antenna_orientation_unit
   
-  std::string TBB_DipoleDataset::antenna_orientation_unit ()
+  /*!
+    \return unit -- Physical unit associated with the numerical values for the
+            antenna orientation; depending on the parametrization this can be
+	    <tt>unit="rad"</tt>, <tt>unit="deg"</tt> or <tt>unit="m"</tt>.
+  */
+  casa::Vector<casa::String> TBB_DipoleDataset::antenna_orientation_unit ()
   {
-    std::string val;
+    casa::Vector<casa::String> val;
     
-    if (DAL::h5get_attribute(val,
+    if (DAL::h5get_attribute(datasetID_p,
 			     attribute_name(DAL::ANTENNA_ORIENTATION_UNIT),
-			     datasetID_p)) {
+			     val)) {
       return val;
     } else {
-      return std::string ("UNDEFINED");
+      return casa::Vector<casa::String> (1);
     }
   }
   
   // -------------------------------------------------- antenna_orientation_frame
   
+  /*!
+    \return frame -- Identifier for the reference frame within which the antenna
+            orientation is provided, e.g. <tt>frame="ITRF"</tt>
+  */
   std::string TBB_DipoleDataset::antenna_orientation_frame ()
   {
     std::string val;
     
-    if (DAL::h5get_attribute(val,
+    if (DAL::h5get_attribute(datasetID_p,
 			     attribute_name(DAL::ANTENNA_ORIENTATION_FRAME),
-			     datasetID_p)) {
+			     val)) {
       return val;
     } else {
       return std::string ("UNDEFINED");
@@ -712,13 +780,25 @@ namespace DAL { // Namespace DAL -- begin
   
   // ----------------------------------------------------------------- channel_id
   
+  /*!
+    \return channelID -- The unique identifier for a signal channel/dipole
+            within the whole LOFAR array; this ID is created from a combination
+	    of station ID, RSP ID and RCU ID:
+	    \f$ N_{\rm RCU} + 10^{3} \times N_{\rm RSP} + 10^{6} \times
+	    N_{\rm Station} \f$
+  */
   int TBB_DipoleDataset::channelID ()
   {
     return rcu_id() + 1000*rsp_id() + 1000000*station_id();
   }
-
+  
   // ---------------------------------------------------------------- channelName
   
+  /*!
+    \return channel_id -- The unique identifier for a signal channel/dipole
+            within the whole LOFAR array; this ID is created from a combination
+	    of station ID, RSP ID and RCU ID.
+  */
   std::string TBB_DipoleDataset::channelName ()
   {
     char uid[10];
@@ -734,6 +814,16 @@ namespace DAL { // Namespace DAL -- begin
 
   // ------------------------------------------------------------------------- fx
   
+  /*!
+    \param start      -- Number of the sample at which to start reading
+    \param nofSamples -- Number of samples to read, starting from the position
+           given by <tt>start</tt>.
+    \retval data       -- [nofSamples] Array with the raw ADC samples
+            representing the electric field strength as function of time.
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered.
+  */
   bool TBB_DipoleDataset::fx (int const &start,
 			      int const &nofSamples,
 			      short *data)
@@ -836,6 +926,14 @@ namespace DAL { // Namespace DAL -- begin
   
   // ------------------------------------------------------------------------- fx
   
+  /*!
+    \param start      -- Number of the sample at which to start reading
+    \param nofSamples -- Number of samples to read, starting from the position
+           given by <tt>start</tt>.
+    
+    \return fx -- [nofSamples] Vector of raw ADC samples representing the 
+            electric field strength as function of time.
+  */
   casa::Vector<double> TBB_DipoleDataset::fx (int const &start,
 					      int const &nofSamples)
   {
@@ -873,7 +971,12 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   // ---------------------------------------------------------- recordDescription
-
+  
+  /*!
+    \return recDesc -- Record descriptor containing the information on how to
+            structure the record as which the attributes attached to the dataset
+	    can be retrieved.
+  */
   casa::RecordDesc TBB_DipoleDataset::recordDescription ()
   {
     casa::RecordDesc desc;
@@ -900,6 +1003,10 @@ namespace DAL { // Namespace DAL -- begin
   
   // ---------------------------------------------------------- attributes2record
   
+  /*!
+      \return record -- A casa::Record container holding the values of the 
+              attributes attached to the dataset for this dipole
+  */
   casa::Record TBB_DipoleDataset::attributes2record ()
   {
     casa::Record rec;

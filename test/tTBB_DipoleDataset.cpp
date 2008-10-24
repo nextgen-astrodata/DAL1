@@ -53,6 +53,167 @@ using DAL::TBB_DipoleDataset;
 // -----------------------------------------------------------------------------
 
 /*!
+  \brief Test low-level access to the dataset using HDF5 library calls
+
+  \param name_file    -- Name of the HDF5 file, within which the dataset is
+         located.
+  \param name_station -- Name of the station group within which the dipole
+         dataset is contained.
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_dataset (std::string const &name_file,
+		  std::string const &name_station,
+		  std::string const &name_dataset)
+{
+  cout << "\n[test_dataset]\n" << endl;
+  
+  int nofFailedTests (0);
+  hid_t file_id (0);
+  hid_t group_id (0);
+  hid_t dataset_id (0);
+  std::string path_dataset = name_station + "/" + name_dataset;
+
+  cout << "-- HDF5 file .... = " << name_file    << endl;
+  cout << "-- Station group  = " << name_station << endl;
+  cout << "-- Dipole dataset = " << name_dataset << endl;
+  cout << "-- Dipole dataset path = " << path_dataset << endl;
+
+  //__________________________________________________________________
+  // Open the HDF5 dataset used for this test
+
+  cout << "[1] Opening HDF5 file " << name_file << " ..." << endl;
+  try {
+    file_id = H5Fopen (name_file.c_str(),
+		      H5F_ACC_RDONLY,
+		      H5P_DEFAULT);
+    cout << "-- file ID = " << file_id << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    return 1;
+  }
+
+  //__________________________________________________________________
+  // Open the station group
+
+  cout << "[2] Opening group " << name_station << " ..." << endl;
+  if (file_id > 0) {
+    group_id = H5Gopen1 (file_id,
+			 name_station.c_str());
+    cout << "-- group ID = " << group_id << endl;
+  }
+
+  //__________________________________________________________________
+  // Open the dipole dataset
+
+  cout << "[3] Opening dataset " << name_dataset << " ..." << endl;
+  if (group_id > 0) {
+    dataset_id = H5Dopen1 (group_id,
+			   name_dataset.c_str());
+    cout << "-- dataset ID = " << dataset_id << endl;
+  }
+
+  //__________________________________________________________________
+  // Test reading of the attributes attached to the root group
+  
+  if (file_id > 0) {
+    cout << "[4] Reading attributes attached to root group ..." << endl;
+    try {
+      std::string name;
+      std::string telescope;
+      std::string observer;
+      std::string project;
+      std::string observation_id;
+      std::string observation_mode;
+      //
+      DAL::h5get_name (name,file_id);
+      DAL::h5get_attribute (file_id,"TELESCOPE",telescope);
+      DAL::h5get_attribute (file_id,"OBSERVER",observer);
+      DAL::h5get_attribute (file_id,"PROJECT",project);
+      DAL::h5get_attribute (file_id,"OBSERVATION_ID",observation_id);
+      DAL::h5get_attribute (file_id,"OBSERVATION_MODE",observation_mode);
+      //
+      cout << "-- HDF5 object name = " << name      << endl;
+      cout << "-- TELESCOPE ...... = " << telescope << endl;
+      cout << "-- OBSERVER ....... = " << observer  << endl;
+      cout << "-- PROJECT ........ = " << project   << endl;
+      cout << "-- OBSERVATION_ID   = " << observation_id   << endl;
+      cout << "-- OBSERVATION_MODE = " << observation_mode   << endl;
+    } catch (std::string message) {
+      cerr << message << endl;
+      nofFailedTests++;
+    }
+  }
+
+  //__________________________________________________________________
+  // Test reading the attributes attached to the station group
+
+  if (group_id > 0) {
+    cout << "[5] Reading attributes attached to the station group ..." << endl;
+    try {
+      std::string name ("");
+      std::string trigger_type ("");
+      double trigger_offset (0);
+      std::vector<uint> triggered_antennas;
+      std::vector<double> station_position_value;
+      std::vector<double> beam_direction_value;
+      //
+      DAL::h5get_name (name,group_id);
+      DAL::h5get_attribute (group_id, "TRIGGER_TYPE", trigger_type);
+      DAL::h5get_attribute (group_id, "TRIGGER_OFFSET", trigger_offset);
+      DAL::h5get_attribute (group_id, "STATION_POSITION_VALUE", station_position_value);
+      DAL::h5get_attribute (group_id, "BEAM_DIRECTION_VALUE", beam_direction_value);
+      //
+      cout << "-- HDF5 object name ..... = " << name                   << endl;
+      cout << "-- TRIGGER_TYPE ......... = " << trigger_type           << endl;
+      cout << "-- TRIGGER_OFFSET ....... = " << trigger_offset         << endl;
+      cout << "-- STATION_POSITION_VALUE = " << station_position_value << endl;
+      cout << "-- BEAM_DIRECTION_VALUE . = " << beam_direction_value   << endl;
+    } catch (std::string message) {
+      cerr << message << endl;
+      nofFailedTests++;
+    }
+  }
+
+  //__________________________________________________________________
+  // Test reading the attributes attached to the dipole dataset
+
+  if (dataset_id > 0) {
+    cout << "[6] Reading attributes attached to the dipole dataset ..." << endl;
+    try {
+      uint station_id (0);
+      uint rsp_id (0);
+      uint rcu_id (0);
+      double sample_frequency_value (0);
+      std::string sample_frequency_unit;
+      uint time (0);
+      //
+      DAL::h5get_attribute (dataset_id, "STATION_ID", station_id);
+      DAL::h5get_attribute (dataset_id, "RSP_ID", rsp_id);
+      DAL::h5get_attribute (dataset_id, "RCU_ID", rcu_id);
+      DAL::h5get_attribute (dataset_id, "TIME", time);
+      DAL::h5get_attribute (dataset_id, "SAMPLE_FREQUENCY_VALUE", sample_frequency_value);
+      DAL::h5get_attribute (dataset_id, "SAMPLE_FREQUENCY_UNIT", sample_frequency_unit);
+      //
+      cout << "-- STATION_ID ........... = " << station_id << endl;
+      cout << "-- RSP_ID ............... = " << rsp_id     << endl;
+      cout << "-- RCU_ID ............... = " << rcu_id     << endl;
+      cout << "-- TIME ................. = " << time       << endl;
+      cout << "-- SAMPLE_FREQUENCY_VALUE = " << sample_frequency_value << endl;
+      cout << "-- SAMPLE_FREQUENCY_UNIT  = " << sample_frequency_unit  << endl;
+    } catch (std::string message) {
+      cerr << message << endl;
+      nofFailedTests++;
+    }
+  }
+  
+  return nofFailedTests;
+}
+
+// -----------------------------------------------------------------------------
+
+/*!
   \brief Test constructors for a new TBB_DipoleDataset object
 
   This function should provide tests for all the available constructors to a 
@@ -73,7 +234,8 @@ using DAL::TBB_DipoleDataset;
   
   \param name_file -- Name of the HDF5 file, within which the dataset is located
 
-  \return nofFailedTests -- The number of failed tests.
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
 */
 int test_construction (std::string const &name_file,
 		       std::string const &name_station,
@@ -85,9 +247,8 @@ int test_construction (std::string const &name_file,
   herr_t h5error;
   std::string path_dataset = name_station + "/" + name_dataset;
 
-  /*
-   * Test for the default constructor taking no argument at all.
-   */
+  //__________________________________________________________________
+  // Test for the default constructor taking no argument at all.
   
   cout << "[1] Testing default constructor ..." << endl;
   try {
@@ -100,12 +261,15 @@ int test_construction (std::string const &name_file,
   }
   h5error = H5Eclear1();
 
-  /*
-   * Test for the constructor taking file name and name of the dataset as arguments.
-   */
+  //__________________________________________________________________
+  // Test for the constructor taking file name and name of the dataset
+  // as arguments.
   
   cout << "[2] Testing argumented constructor ..." << endl;
   try {
+    cout << "-- Filename ...... = " << name_file << endl;
+    cout << "-- Path to dataset = " << path_dataset << endl;
+    //
     TBB_DipoleDataset dataset (name_file,
 			       path_dataset);
     //
@@ -116,20 +280,19 @@ int test_construction (std::string const &name_file,
   }
   h5error = H5Eclear1();
   
-  /*
-   * Test for the constructor taking file identifier and name of the dataset as
-   * arguments.
-   */
+  //__________________________________________________________________
+  // Test for the constructor taking file identifier and name of the
+  // dataset as arguments.
   
   cout << "[3] Testing argumented constructor with file as anchor ..." << endl;
   try {
     hid_t file_id = H5Fopen (name_file.c_str(),
 			     H5F_ACC_RDONLY,
 			     H5P_DEFAULT);
-
+    
     if (file_id > 0) {
       TBB_DipoleDataset dataset (file_id,
-				   path_dataset);
+				 path_dataset);
       dataset.summary();
       h5error = H5Fclose (file_id);
     } else {
@@ -141,11 +304,11 @@ int test_construction (std::string const &name_file,
     nofFailedTests++;
   }
   h5error = H5Eclear1();
-
-  /*
-   * Instead of using the base of the file as reference location, also the group
-   * within which the dataset is contained can serve as anchor point.
-   */
+  
+  //__________________________________________________________________
+  // Instead of using the base of the file as reference location, also
+  // the group within which the dataset is contained can serve as anchor
+  // point.
   
   cout << "[4] Testing argumented constructor with group as anchor ..." << endl;
   try {
@@ -613,25 +776,27 @@ int test_export2record (std::string const &name_file,
   int nofFailedTests (0);
   std::string path_dataset = name_station + "/" + name_dataset;
 
+  //__________________________________________________________________
+  // Test the TBB_DipoleDataset::attributes2record() function
+
   cout << "[1] Retrieve attributes of dataset into record ..." << endl;
   try {
     // open dataset
     TBB_DipoleDataset dataset (name_file,
-				 path_dataset);
+			       path_dataset);
     // retrieve attributes into record
     casa::Record rec = dataset.attributes2record ();
     // feedback
-    cout << "-- nof. attributes    = " << dataset.nofAttributes() << endl;
-    cout << "-- nof. record fields = " << rec.nfields()           << endl;
-    // Create HDF5 file and write the record to it
-    casa::String outfile ("tDipoleDataset_1.h5");
-    casa::HDF5File file(outfile, casa::ByteIO::New);
-    casa::HDF5Record::writeRecord (file, "DipoleDataset", rec);
+    cout << "-- nof. attributes ...... = " << dataset.nofAttributes() << endl;
+    cout << "-- nof. record fields ... = " << rec.nfields()           << endl;
+    cout << "-- Contents of the record:\n" << rec << endl;
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
   }
 
+  //__________________________________________________________________
+  
   cout << "[2] Combine records from multiple dipole datasets ..." << endl;
   try {
     // open dataset
@@ -646,7 +811,7 @@ int test_export2record (std::string const &name_file,
     record.defineRecord ("dipole2",rec);
     record.defineRecord ("dipole3",rec);
     // Create HDF5 file and write the record to it
-    casa::HDF5File file("tDipoleDataset_2.h5", casa::ByteIO::New);
+    casa::HDF5File file("tDipoleDataset_1.h5", casa::ByteIO::New);
     casa::HDF5Record::writeRecord (file, "DipoleDataset", record);
   } catch (std::string message) {
     cerr << message << endl;
@@ -663,7 +828,7 @@ int main (int argc,
 {
   int nofFailedTests (0);
 
-  // -----------------------------------------------------------------
+  //__________________________________________________________________
   // Process parameters from the command line
 
   if (argc < 2) {
@@ -675,8 +840,8 @@ int main (int argc,
   }
   
   std::string name_file     = argv[1];
-  std::string name_station = "Station023";
-  std::string name_dataset = "023000000";
+  std::string name_station = "Station001";
+  std::string name_dataset = "001000001";
 
   if (argc == 3) {
     name_station = argv[2];
@@ -686,29 +851,39 @@ int main (int argc,
     name_dataset = argv[3];
   }
   
-  // -----------------------------------------------------------------
+  //__________________________________________________________________
   // Run the tests
-  
+
+  nofFailedTests += test_dataset (name_file,
+				  name_station,
+				  name_dataset);
+
   // Test for the constructor(s)
   nofFailedTests += test_construction (name_file,
 				       name_station,
 				       name_dataset);
+
   // Test working with collection of multiple objects
   nofFailedTests += test_datasets (name_file,
 				   name_station,
 				   name_dataset);
+
   // Test retrieval of parameters/attributes attached to the dataset
   nofFailedTests += test_parameters (name_file,
 				     name_station,
 				     name_dataset);
+
   // Test retrieval of the actual TBB time-series values
   nofFailedTests += test_data (name_file,
 			       name_station,
 			       name_dataset);
+
+#ifdef HAVE_CASA
   // Test exporting the attributes to a casa::Record
   nofFailedTests += test_export2record (name_file,
 					name_station,
 					name_dataset);
+#endif
   
   return nofFailedTests;
 }

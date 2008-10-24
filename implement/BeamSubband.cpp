@@ -184,9 +184,9 @@ namespace DAL
     int frequency (0);
 
     if (H5tableID_p > 0) {
-      if ( DAL::FAIL == h5get_attribute( frequency,
+      if ( DAL::FAIL == h5get_attribute( H5tableID_p,
 					 "CENTER_FREQUENCY",
-					 H5tableID_p ) ) {
+					 frequency) ) {
 	std::cerr << "-- Error extracting attribute CENTER_FREQUENCY" << endl;
       }
     } else {

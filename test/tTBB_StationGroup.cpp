@@ -72,7 +72,7 @@ using DAL::TBB_StationGroup;
 int test_datasets (std::string const &name_file,
 		   std::string const &name_station)
 {
-  cout << "\n[test_construction]\n" << endl;
+  cout << "\n[test_datasets]\n" << endl;
 
   int nofFailedTests (0);
   herr_t h5error (0);
@@ -88,7 +88,7 @@ int test_datasets (std::string const &name_file,
     cerr << message << endl;
     nofFailedTests++;
   }
-  
+
   if (fileID > 0) {
     
     cout << "-- opening HDF5 group ..." << endl;
@@ -163,9 +163,13 @@ int test_construction (std::string const &name_file,
 			   H5F_ACC_RDONLY,
 			   H5P_DEFAULT);
 
-  /*
-   * TEST: Default constructor
-   */
+  if (file_id <= 0) {
+    cerr << "-- Error opening HDF5 file " << name_file << endl;
+    return 1;
+  }
+
+  //__________________________________________________________________
+  // TEST: Default constructor
   
   cout << "[1] Testing default constructor ..." << endl;
   try {
@@ -178,10 +182,9 @@ int test_construction (std::string const &name_file,
   }
   h5error = H5Eclear1();
   
-  /*
-   * TEST: Argumented constructor using name_file and name of the group as
-   *       input parameters.
-   */
+  //__________________________________________________________________
+  // TEST: Argumented constructor using name_file and name of the group as
+  //       input parameters.
   
   cout << "[2] Testing argumented constructor ..." << endl;
   try {
@@ -195,10 +198,9 @@ int test_construction (std::string const &name_file,
   }
   h5error = H5Eclear1();
   
-  /*
-   * TEST: Argumented constructor using file identifier (as obtained from 
-   *       previous call to HDF5 library) and group name as input parameters.
-   */  
+  //__________________________________________________________________
+  // TEST: Argumented constructor using file identifier (as obtained from 
+  //       previous call to HDF5 library) and group name as input parameters.
   
   cout << "[3] Testing argumented constructor ..." << endl;
   try {    
@@ -215,10 +217,11 @@ int test_construction (std::string const &name_file,
   }
   h5error = H5Eclear1();
   
-  /*
-   * TEST: Argumented constructor using object identifier for the group as
-   *       input parameter.
-   */
+  return 0;
+  
+  //__________________________________________________________________
+  // TEST: Argumented constructor using object identifier for the group
+  //       as input parameter.
   
   cout << "[4] Testing argumented constructor ..." << endl;
   try {
@@ -244,10 +247,9 @@ int test_construction (std::string const &name_file,
     nofFailedTests++;
   }
   h5error = H5Eclear1();
-  
-  /*
-   * TEST: 
-   */
+
+  //__________________________________________________________________
+  // TEST: Copy constructor
   
   cout << "[5] Testing copy constructor ..." << endl;
   try {
@@ -364,7 +366,7 @@ int test_methods (std::string const &name_file,
     casa::Vector<uint> rsp_id            = group.rsp_id();
     casa::Vector<uint> rcu_id            = group.rcu_id();
     casa::Vector<double> sample_freq_value = group.sample_frequency_value();
-    casa::Vector<std::string> sample_freq_unit = group.sample_frequency_unit();
+    casa::Vector<casa::String> sample_freq_unit = group.sample_frequency_unit();
     casa::Vector<uint> nyquist_zone      = group.nyquist_zone();
     casa::Vector<uint> time              = group.time();
     casa::Vector<uint> sample_number     = group.sample_number();
@@ -527,8 +529,8 @@ int main (int argc,
   }
   
   std::string name_file    = argv[1];
-  std::string name_station = "Station023";
-  std::string name_dataset = "023000000";
+  std::string name_station = "Station001";
+  std::string name_dataset = "001000001";
 
   if (argc == 3) {
     name_station = argv[2];
@@ -538,28 +540,39 @@ int main (int argc,
     name_dataset = argv[3];
   }
 
+  cout << "[tTBB_StationGroup]" << endl;
+  cout << "-- File name .... = " << name_file    << endl;
+  cout << "-- Station group  = " << name_station << endl;
+  cout << "-- Dipole dataset = " << name_dataset << endl;
+
   // -----------------------------------------------------------------
   // Run the tests
   
   // Test localization and handling of datasets inside the group
   nofFailedTests += test_datasets (name_file,
 				   name_station);
-
+  
   // Test for the constructor(s)
   nofFailedTests += test_construction (name_file,
 				       name_station);
   
+  return 0;
+
   if (nofFailedTests == 0) {
+
     nofFailedTests += test_groups(name_file);
+
     // Test the varios methods implemented in the class
     nofFailedTests += test_methods (name_file,
 				    name_station);
-    // Test exporting the attributes to a casa::Record
-    nofFailedTests += test_export2record (name_file,
-					  name_station);
+
     // Test extraction of channel data
     nofFailedTests += test_data(name_file,
 				name_station);
+
+    // Test exporting the attributes to a casa::Record
+    nofFailedTests += test_export2record (name_file,
+					  name_station);
   }
   
   return nofFailedTests;

@@ -323,7 +323,7 @@ namespace DAL {
 
     return status;
   }
-  
+
   // ============================================================================
   //
   //  Access to HDF5 attributes
@@ -658,7 +658,7 @@ namespace DAL {
     return status;
   }
 #endif
-
+  
   // ------------------------------------------------------ h5setAttribute_string
   
   /*!
@@ -821,18 +821,42 @@ namespace DAL {
   }
 
   // ------------------------------------------------------------ h5get_attribute
-
-  template <class T>
-  bool h5get_attribute (T &value,
-                        hid_t const &attribute_id)
+  
+  /*!
+    \param attribute_id -- Identifier of the attribute within the HDF5 file
+    \retval value       -- Value of the attribute
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered
+  */
+  template <typename T>
+  bool h5get_attribute (hid_t const &attribute_id,
+			T &value)
   {
-    // Get the datatype of the attribute's value
-    hid_t datatype_id (H5Aget_type (attribute_id));
+    herr_t h5error (0);
+    hid_t h5datatype (0);
+    
+    /*
+     * Get the datatype of the attribute's value; for a few cases we might
+     * need to adjust the returned value to match the native HDF5 datatype.
+     */
+    if ( (h5datatype = H5Aget_type (attribute_id)) > 0 ) {
+      switch (h5datatype) {
+      case H5T_FLOAT:
+	h5datatype = H5T_NATIVE_FLOAT;
+	
+	break;
+      case H5T_INTEGER:
+	h5datatype = H5T_NATIVE_INT;
+	break;
+      }
+    } else {
+    }
     
     // read attribute value into buffer
-    herr_t h5error = H5Aread (attribute_id,
-                              datatype_id,
-                              &value);
+    h5error = H5Aread (attribute_id,
+		       h5datatype,
+		       &value);
     // clean up the error message buffer
     h5error = H5Eclear1();
     
@@ -845,52 +869,16 @@ namespace DAL {
   }
   
   // ------------------------------------------------------------ h5get_attribute
-  
+
   /*!
-    \retval value      -- Value of the attribute
-    \param name        -- Name of the attribute
-    \param location_id -- Identifier for the HDF5 object - file, group, dataset,
-           array - the attribute is attached to.
+    \param attribute_id -- Identifier of the attribute within the HDF5 file
+    \retval value       -- Value of the attribute
     
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered
   */
-  template <class T>
-    bool h5get_attribute (T &value,
-			  std::string const &name,
-			  hid_t const &locationID)
-    {
-      bool status (true);
-      hid_t attribute_id (0);
-      herr_t h5error (0);
-      
-      // get the identifier for the attribute
-      attribute_id = H5Aopen_name(locationID,
-				  name.c_str());
-      
-      if (attribute_id > 0) {
-	/* forward the call to retrieve the actual value of the attribute */
-	status = h5get_attribute (value,
-				  attribute_id);
-	/* release the identifier used for retrieval of the value */
-	h5error = H5Aclose (attribute_id);
-	/* clean up the error message buffer */
-	h5error = H5Eclear1();
-      }
-      else {
-	std::cerr << "[h5get_attribute] No valid ID for attribute "
-		  << name
-		  << endl;
-	status = false;
-      }
-      
-      return status;
-    }
-  
-  // ------------------------------------------------------------ h5get_attribute
-
-  bool h5get_attribute (std::string &value,
-                        hid_t const &attribute_id)
+  bool h5get_attribute (hid_t const &attribute_id,
+			std::string &value)
   {
     bool status (true);
     herr_t h5error (0);
@@ -954,50 +942,116 @@ namespace DAL {
   }
 
   // ------------------------------------------------------------ h5get_attribute
-  
+
   /*!
-    \todo Function not yet implemented
+    \param locationID  -- HDF5 identifier for the structure the attribute \e name
+           is attached to.
+    \param name        -- Name of the attribute
+    \retval value      -- Value of the attribute
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered
   */
-  template <class T>
-    bool h5get_attribute (std::vector<T> &value,
+  template <typename T>
+    bool h5get_attribute (hid_t const &locationID,
 			  std::string const &name,
-			  hid_t const &locationID)
+			  T &value)
   {
-      bool status (true);
-      hid_t attribute_id (0);
-      herr_t h5error (0);
-      
-      // get the identifier for the attribute
+    bool status (true);
+    hid_t attribute_id (0);
+    herr_t h5error (0);
+
+    /* Check if the requested attribute exists; if this is the case, retrieve
+     * its HDF5 object ID - else return error message.
+     */
+    if ( H5Aexists( locationID, name.c_str()) > 0 ) {
       attribute_id = H5Aopen_name(locationID,
 				  name.c_str());
-      
-      if (attribute_id > 0) {
-	/* forward the call to retrieve the actual value of the attribute */
-// 	status = h5get_attribute (value,
-// 				  attribute_id);
-	/* release the identifier used for retrieval of the value */
-	h5error = H5Aclose (attribute_id);
-	/* clean up the error message buffer */
-	h5error = H5Eclear1();
-      }
-      else {
-	std::cerr << "[h5get_attribute] No valid ID for attribute "
-		  << name
-		  << endl;
-	status = false;
-      }
-      
-      return status;
+    } else {
+      std::cerr << "ERROR: Attribute '" << name << "' does not exist." << endl;
+      return DAL::FAIL;
+    }
+    
+    if (attribute_id > 0) {
+//       int rank (0);
+//       std::string fullname ("/");
+//       // Check the dimensions of the attribute's dataspace
+//       if ( H5LTget_attribute_ndims( locationID,
+// 				    fullname.c_str(),
+// 				    name.c_str(),
+// 				    &rank ) < 0 ) {
+// 	std::cerr << "ERROR: Attribute '" << name << "' does not exist." << endl;
+// 	return DAL::FAIL;
+//       }
+      /* Forward the call to retrieve the actual value of the attribute */
+      status = h5get_attribute (attribute_id,
+				value);
+      /* release the identifier used for retrieval of the value */
+      h5error = H5Aclose (attribute_id);
+      /* clean up the error message buffer */
+      h5error = H5Eclear1();
+    }
+    else {
+      std::cerr << "[h5get_attribute] No valid ID for attribute "
+		<< name
+		<< endl;
+      status = false;
+    }
+    
+    return status;
   }
 
+  // ------------------------------------------------------------ h5get_attribute
 
+  /*!
+    \param locationID  -- HDF5 identifier for the structure the attribute \e name
+           is attached to.
+    \param name        -- Name of the attribute
+    \retval value      -- Value of the attribute
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered
+  */
+  template <typename T>
+  bool h5get_attribute (hid_t const &locationID,
+			std::string const &name,
+			std::vector<T> &value)
+  {
+    bool status (true);
+    hid_t attribute_id (0);
+    herr_t h5error (0);
+    
+    // get the identifier for the attribute
+    attribute_id = H5Aopen_name(locationID,
+				name.c_str());
+    
+    if (attribute_id > 0) {
+      /* forward the call to retrieve the actual value of the attribute */
+      status = h5get_attribute (attribute_id,
+				value);
+      /* release the identifier used for retrieval of the value */
+      h5error = H5Aclose (attribute_id);
+      /* clean up the error message buffer */
+      h5error = H5Eclear1();
+    }
+    else {
+      std::cerr << "[h5get_attribute] No valid ID for attribute "
+		<< name
+		<< endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
+  
 #ifdef HAVE_CASA
-
+  
   // ------------------------------------------------------------ h5get_attribute
   
-  template <class T>
-  bool h5get_attribute (casa::Vector<T> &value,
-                        hid_t const &attribute_id)
+  template <typename T>
+  bool h5get_attribute (hid_t const &attribute_id,
+			casa::Vector<T> &value)
   {
     bool status (true);
     casa::IPosition shape;
@@ -1040,61 +1094,60 @@ namespace DAL {
 
   // ------------------------------------------------------------ h5get_attribute
   
-  template <class T>
-  bool h5get_attribute (casa::Vector<T> &value,
+  template <typename T>
+  bool h5get_attribute (hid_t const &locationID,
                         std::string const &name,
-                        hid_t const &locationID)
+			casa::Vector<T> &value)
   {
     bool status (true);
     hid_t attribute_id (0);
-
+    
     // get the identifier for the attribute
     attribute_id = H5Aopen_name(locationID,
                                 name.c_str());
-
-    if (attribute_id > 0)
-      {
-        status = h5get_attribute (value,
-                                  attribute_id);
-        H5Aclose (attribute_id);
-      }
+    
+    if (attribute_id > 0) {
+      status = h5get_attribute (attribute_id,
+				value);
+      H5Aclose (attribute_id);
+    }
     else
       {
         cerr << "[h5get_attribute] No valid ID for attribute " << name << endl;
         status = false;
       }
-
+    
     return status;
   }
   
   // ------------------------------------------------------------- h5get_quantity
   
   /*!
+    \param location_id -- Identifier of the structure within the file, to which
+           the attribut is attached to.
     \param value -- Identifier for the attribute storing the numerical value of
            the quantity.
     \param unit  -- Identifier for the attribute storing the physical unit of
            the quantity
-    \param location_id -- Identifier of the structure within the file, to which
-           the attribut is attached to.
 
     \return quantity -- The physical quantity.
   */
-  Quantity h5get_quantity (Attributes const &value,
-			   Attributes const &unit,
-			   hid_t const &location_id)
+  Quantity h5get_quantity (hid_t const &location_id,
+			   Attributes const &value,
+			   Attributes const &unit)
   {
     if (location_id > 0) {
       bool status (true);
       double qValue;
       std::string qUnit;
       // retrieve the value of the quantity
-      status *= h5get_attribute(qValue,
+      status *= h5get_attribute(location_id,
 				attribute_name(value),
-				location_id);
+				qValue);
       // retrieve the unit of the quantity
-      status *= h5get_attribute(qUnit,
+      status *= h5get_attribute(location_id,
 				attribute_name(unit),
-				location_id);
+				qUnit);
       // put together the Quantity object
       if (status) {
 	Quantity val = Quantity (qValue,
@@ -1114,24 +1167,24 @@ namespace DAL {
   // ------------------------------------------------------------ h5get_direction
   
   /*!
+    \param location_id -- Identifier of the structure within the file, to which
+           the attribut is attached to.
     \param value -- Identifier for the attribute storing the numerical value of
            the quantity.
     \param unit  -- Identifier for the attribute storing the physical unit of
            the quantity
     \param frame -- Identifier for the attribute storing the identifier for the
            reference frame within which the physical quantity is defined.
-    \param location_id -- Identifier of the structure within the file, to which
-           the attribut is attached to.
 
     \return direction -- The physical quantity.
   */
-  MDirection h5get_direction (Attributes const &value,
+  MDirection h5get_direction (hid_t const &location_id,
+			      Attributes const &value,
                               Attributes const &unit,
-                              Attributes const &frame,
-                              hid_t const &location_id)
+                              Attributes const &frame)
   {
     MDirection dir = MDirection();
-
+    
     if (location_id > 0) {
       bool status (true);
       casa::Vector<double> values;
@@ -1139,17 +1192,17 @@ namespace DAL {
       MDirection::Types tp;
       std::string refcode;
       // retrieve the numerical values of the position
-      status *= h5get_attribute(values,
+      status *= h5get_attribute(location_id,
 				attribute_name(value),
-				location_id);
+				values);
       // retrieve the physical units of the position
-      status *= h5get_attribute(units,
+      status *= h5get_attribute(location_id,
 				attribute_name(unit),
-				location_id);
+				units);
       // retrieve the frame of the position
-      status *= h5get_attribute(refcode,
+      status *= h5get_attribute(location_id,
 				attribute_name(frame),
-				location_id);
+				refcode);
       status *= MDirection::getType (tp,refcode);
       // assemble MDirection object
       if (status) {
@@ -1159,8 +1212,8 @@ namespace DAL {
 	  {
 	    // create MDirection object
 	    dir = MDirection ( Quantity( values(0), units(0)),
-				     Quantity( values(1), units(1)),
-				     MDirection::Ref(tp));
+			       Quantity( values(1), units(1)),
+			       MDirection::Ref(tp));
 	    // return result
 	    return dir;
 	  }
@@ -1170,12 +1223,11 @@ namespace DAL {
 	  dir = MDirection();
 	}
       }
-      else
-	{
-	  cerr << "[h5get_direction] Error retrieving components for MDirection!"
-	       << endl;
-	  dir = MDirection();
-	}
+      else {
+	cerr << "[h5get_direction] Error retrieving components for MDirection!"
+	     << endl;
+	dir = MDirection();
+      }
     }
     else {
       cerr << "[h5get_direction] Unusable ID for HDF5 object!" << endl;
@@ -1187,13 +1239,25 @@ namespace DAL {
   
   // ------------------------------------------------------------- h5get_position
   
-  MPosition h5get_position (Attributes const &value,
+  /*!
+    \param location_id -- Identifier of the structure within the file, to which
+           the attribut is attached to.
+    \param value -- Identifier for the attribute storing the numerical value of
+           the quantity.
+    \param unit  -- Identifier for the attribute storing the physical unit of
+           the quantity
+    \param frame -- Identifier for the attribute storing the identifier for the
+           reference frame within which the physical quantity is defined.
+
+    \return position -- The position as casa::Measure.
+  */
+  MPosition h5get_position (hid_t const &location_id,
+			    Attributes const &value,
                             Attributes const &unit,
-                            Attributes const &frame,
-                            hid_t const &location_id)
+                            Attributes const &frame)
   {
     MPosition obs = MPosition();
-
+    
     if (location_id > 0)
       {
         bool status (true);
@@ -1202,17 +1266,17 @@ namespace DAL {
         MPosition::Types tp;
         std::string refcode;
         // retrieve the numerical values of the position
-        status *= h5get_attribute(values,
+        status *= h5get_attribute(location_id,
                                   attribute_name(value),
-                                  location_id);
+                                  values);
         // retrieve the physical units of the position
-        status *= h5get_attribute(units,
+        status *= h5get_attribute(location_id,
                                   attribute_name(unit),
-                                  location_id);
+                                  units);
         // retrieve the frame of the position
-        status *= h5get_attribute(refcode,
+        status *= h5get_attribute(location_id,
                                   attribute_name(frame),
-                                  location_id);
+                                  refcode);
         status *= MPosition::getType (tp,refcode);
         // assemble MPosition object
         if (status)
@@ -1247,9 +1311,9 @@ namespace DAL {
     
     return obs;
   }
-
+  
 #endif
-
+  
   // ============================================================================
   //
   //  Boost.Python wrappers
@@ -1273,11 +1337,10 @@ namespace DAL {
     double unix_base_time (40587);
     double seconds_per_day (86400);
     double adjustment_factor = unix_base_time*seconds_per_day;
-    for ( int idx=0; idx < array_size; idx++ )
-      {
-        mjd_time[ idx ] = bpl::extract<double>( mjd_time[ idx ] ) - adjustment_factor;
-      }
-
+    for ( int idx=0; idx < array_size; idx++ ) {
+      mjd_time[ idx ] = bpl::extract<double>( mjd_time[ idx ] ) - adjustment_factor;
+    }
+    
     return mjd_time;
   }
 #endif
@@ -1287,76 +1350,105 @@ namespace DAL {
   //  Template instantiation
   //
   // ============================================================================
-  
-  template bool h5get_attribute (int &value,
-                                 hid_t const &attribute_id);
-  template bool h5get_attribute (uint &value,
-                                 hid_t const &attribute_id);
-  template bool h5get_attribute (short &value,
-                                 hid_t const &attribute_id);
-  template bool h5get_attribute (long &value,
-                                 hid_t const &attribute_id);
-  template bool h5get_attribute (float &value,
-                                 hid_t const &attribute_id);
-  template bool h5get_attribute (double &value,
-                                 hid_t const &attribute_id);
-  template bool h5get_attribute (std::string &value,
-                                 hid_t const &attribute_id);
-  
-  template bool h5get_attribute (int &value,
-				 std::string const &name,
-                                 hid_t const &location_id);
-  template bool h5get_attribute (uint &value,
-				 std::string const &name,
-                                 hid_t const &location_id);
-  template bool h5get_attribute (short &value,
-				 std::string const &name,
-                                 hid_t const &location_id);
-  template bool h5get_attribute (long &value,
-				 std::string const &name,
-                                 hid_t const &location_id);
-  template bool h5get_attribute (float &value,
-				 std::string const &name,
-                                 hid_t const &location_id);
-  template bool h5get_attribute (double &value,
-				 std::string const &name,
-                                 hid_t const &location_id);
-  template bool h5get_attribute (std::string &value,
-				 std::string const &name,
-                                 hid_t const &location_id);
 
-  template bool h5get_attribute (std::vector<int> &value,
-				 std::string const &name,
-				 hid_t const &locationID);
-  template bool h5get_attribute (std::vector<uint> &value,
-				 std::string const &name,
-				 hid_t const &locationID);
-  template bool h5get_attribute (std::vector<short> &value,
-				 std::string const &name,
-				 hid_t const &locationID);
-  template bool h5get_attribute (std::vector<long> &value,
-				 std::string const &name,
-				 hid_t const &locationID);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 int &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 uint &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 short &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 long &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 float &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 double &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 std::string &value);
 
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 std::string const &name,
+				 int &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 std::string const &name,
+				 uint &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 std::string const &name,
+				 short &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 std::string const &name,
+				 long &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 std::string const &name,
+				 float &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 std::string const &name,
+				 double &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 std::string const &name,
+				 std::string &value);    
+
+  template bool h5get_attribute (hid_t const &locationID,
+				 std::string const &name,
+				 std::vector<int> &value);
+  template bool h5get_attribute (hid_t const &locationID,
+				 std::string const &name,
+				 std::vector<uint> &value);
+  template bool h5get_attribute (hid_t const &locationID,
+				 std::string const &name,
+				 std::vector<short> &value);
+  template bool h5get_attribute (hid_t const &locationID,
+				 std::string const &name,
+				 std::vector<long> &value);
+  template bool h5get_attribute (hid_t const &locationID,
+				 std::string const &name,
+				 std::vector<float> &value);
+  template bool h5get_attribute (hid_t const &locationID,
+				 std::string const &name,
+				 std::vector<double> &value);
+  template bool h5get_attribute (hid_t const &locationID,
+				 std::string const &name,
+				 std::vector<std::string> &value);
+  
 #ifdef HAVE_CASA
 
-  template bool h5get_attribute (casa::Vector<int> &value,
-				 hid_t const &attribute_id);
-  template bool h5get_attribute (casa::Vector<uint> &value,
-				 hid_t const &attribute_id);
-  template bool h5get_attribute (casa::Vector<casa::String> &value,
-				 hid_t const &attribute_id);
-
-  template bool h5get_attribute (casa::Vector<int> &value,
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 casa::Vector<int> &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 casa::Vector<uint> &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 casa::Vector<short> &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 casa::Vector<long> &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 casa::Vector<float> &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 casa::Vector<double> &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 casa::Vector<casa::String> &value);
+  
+  template bool h5get_attribute (hid_t const &attribute_id,
 				 std::string const &name,
-				 hid_t const &location_id);
-  template bool h5get_attribute (casa::Vector<uint> &value,
+				 casa::Vector<int> &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
 				 std::string const &name,
-				 hid_t const &location_id);
-  template bool h5get_attribute (casa::Vector<casa::String> &value,
+				 casa::Vector<uint> &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
 				 std::string const &name,
-				 hid_t const &location_id);
-
+				 casa::Vector<short> &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 std::string const &name,
+				 casa::Vector<long> &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 std::string const &name,
+				 casa::Vector<float> &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 std::string const &name,
+				 casa::Vector<double> &value);
+  template bool h5get_attribute (hid_t const &attribute_id,
+				 std::string const &name,
+				 casa::Vector<casa::String> &value);
+  
 #endif
-
+  
 } // namespace DAL

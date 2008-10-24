@@ -113,9 +113,9 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::string val;
     
-    if (DAL::h5get_attribute(val,
+    if (DAL::h5get_attribute(fileID_p,
 			     attribute_name(DAL::TELESCOPE),
-			     fileID_p)) {
+			     val)) {
       return val;
     } else {
       return std::string ("UNDEFINED");
@@ -128,9 +128,9 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::string val;
     
-    if (DAL::h5get_attribute(val,
+    if (DAL::h5get_attribute(fileID_p,
  			     attribute_name(DAL::OBSERVER),
-			     fileID_p)) {
+			     val)) {
       return val;
     } else {
       return std::string ("UNDEFINED");
@@ -143,9 +143,9 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::string val;
     
-    if (DAL::h5get_attribute(val,
+    if (DAL::h5get_attribute(fileID_p,
 			     attribute_name(DAL::PROJECT),
-			     fileID_p)) {
+			     val)) {
       return val;
     } else {
       return std::string ("UNDEFINED");
@@ -158,9 +158,9 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::string val;
     
-    if (DAL::h5get_attribute(val,
+    if (DAL::h5get_attribute(fileID_p,
 			     attribute_name(DAL::OBSERVATION_ID),
-			     fileID_p)) {
+			     val)) {
       return val;
     } else {
       return std::string ("UNDEFINED");
@@ -173,9 +173,9 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::string val;
     
-    if (DAL::h5get_attribute(val,
+    if (DAL::h5get_attribute(fileID_p,
 			     attribute_name(DAL::OBSERVATION_MODE),
-			     fileID_p)) {
+			     val)) {
       return val;
     } else {
       return std::string ("UNDEFINED");
@@ -205,7 +205,6 @@ namespace DAL { // Namespace DAL -- begin
       os << "-- nof. dipole datasets : " << nofDipoleDatasets() << endl;
     }
   }
-  
   
   // ============================================================================
   //

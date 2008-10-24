@@ -146,49 +146,46 @@ namespace DAL {
     // get the shape of the dataspace
     status = h5get_dataspace_shape( shape, attribute_id );
 
-    if (shape.size() == 1)
-      {
-        // additional local variables
-        hid_t datatype_id  = H5Aget_type (attribute_id);
-        hsize_t dims[1] = { shape[0] };
-
-        char **data_in;
-
-        /* How many strings are in the string array? */
-        if (!(data_in = (char**)malloc(dims[0] * sizeof(char *))))
-          cerr << "ERROR! malloc " << attrname << endl;
-
-        /* Now read the array of strings. The HDF5 library will allocate
-         * space for each string. */
-        if ( H5Aread( attribute_id, datatype_id, data_in ) < 0)
-          cerr << "ERROR! h5aread "  << attrname << endl;
-
-        for (uint ii=0; ii<shape[0]; ii++)
-          lcl_sources.push_back( data_in[ii] );
-
-        for (uint ii=0; ii<shape[0]; ii++)
-          free( data_in[ii] );
-
-        free( data_in );
-
-        /* Close HDF5 stuff. */
-        if (H5Aclose(attribute_id) < 0)
-          cerr << "ERROR! h5aclose " << attrname << endl;
-        if (H5Tclose(datatype_id) < 0)
-          cerr << "ERROR! h5tclose " << attrname << endl;
-
-      }
-    else
-      {
-        cerr << "[dataset_p->getAttribute] Wrong shape of attribute dataspace!"
-             << std::endl;
-        status = false;
-      }
-
+    if (shape.size() == 1) {
+      // additional local variables
+      hid_t datatype_id  = H5Aget_type (attribute_id);
+      hsize_t dims[1] = { shape[0] };
+      
+      char **data_in;
+      
+      /* How many strings are in the string array? */
+      if (!(data_in = (char**)malloc(dims[0] * sizeof(char *))))
+	cerr << "ERROR! malloc " << attrname << endl;
+      
+      /* Now read the array of strings. The HDF5 library will allocate
+       * space for each string. */
+      if ( H5Aread( attribute_id, datatype_id, data_in ) < 0)
+	cerr << "ERROR! h5aread "  << attrname << endl;
+      
+      for (uint ii=0; ii<shape[0]; ii++)
+	lcl_sources.push_back( data_in[ii] );
+      
+      for (uint ii=0; ii<shape[0]; ii++)
+	free( data_in[ii] );
+      
+      free( data_in );
+      
+      /* Close HDF5 stuff. */
+      if (H5Aclose(attribute_id) < 0)
+	cerr << "ERROR! h5aclose " << attrname << endl;
+      if (H5Tclose(datatype_id) < 0)
+	cerr << "ERROR! h5tclose " << attrname << endl;
+      
+    }
+    else {
+      cerr << "[dataset_p->getAttribute] Wrong shape of attribute dataspace!"
+	   << std::endl;
+      status = false;
+    }
+    
     return lcl_sources;
-
+    
   }
-  
   
   // ---------------------------------------------------------- summary
   
@@ -358,14 +355,14 @@ namespace DAL {
     if (dataset_p->getName() != "UNDEFINED")
       {
         if ( DAL::FAIL == dataset_p->getAttribute( "NUMBER_OF_STATIONS",
-             nstations ) )
+						   nstations ) )
           {
             std::cerr << "-- Error extracting attribute NUMBER_OF_STATIONS\n";
           }
       }
     return nstations;
   }
-
+  
   // ---------------------------------------------------------- datatype
 
   /*!
@@ -881,14 +878,12 @@ namespace DAL {
   std::vector< int > BeamFormed::station_temperatures ()
   {
     std::vector<int> station_temperatures;
-    try
-      {
-        status = h5get_attribute( station_temperatures, "TSYS", H5fileID_p );
-      }
-    catch (std::string message)
-      {
-        cerr << message << endl;
-      }
+    try {
+      status = h5get_attribute( H5fileID_p, "TSYS", station_temperatures );
+    }
+    catch (std::string message) {
+      cerr << message << endl;
+    }
     return station_temperatures;
   }
   

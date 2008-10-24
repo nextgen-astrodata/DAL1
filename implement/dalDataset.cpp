@@ -76,7 +76,7 @@ namespace DAL
        */
       if (overwrite) {
 	/* Directly try to create the dataset */
-	if ( ( h5fh = H5Fcreate( dsname,
+	if ( ( h5fh_p = H5Fcreate( dsname,
 				 H5F_ACC_TRUNC,
 				 H5P_DEFAULT,
 				 H5P_DEFAULT ) ) < 0 ) {
@@ -85,10 +85,10 @@ namespace DAL
 	}
       } else {
 	/* First try to open the dataset; if it does not exist yet, create it. */
-	if ( ( h5fh = H5Fopen(dsname, H5F_ACC_RDWR, H5P_DEFAULT ) ) > 0 ) {
+	if ( ( h5fh_p = H5Fopen(dsname, H5F_ACC_RDWR, H5P_DEFAULT ) ) > 0 ) {
 	  std::cerr << "SUCCESS: Opened file '" << dsname << "'.\n";
 	}
-	else if ( ( h5fh = H5Fcreate( dsname,
+	else if ( ( h5fh_p = H5Fcreate( dsname,
 				      H5F_ACC_TRUNC,
 				      H5P_DEFAULT,
 				      H5P_DEFAULT ) ) < 0 ) {
@@ -96,7 +96,7 @@ namespace DAL
 	}
       }
       
-      file = &h5fh;
+      file = &h5fh_p;
     }
     else if ( filetype == FITSTYPE ) {
 #ifdef HAVE_CFITSIO
@@ -126,7 +126,7 @@ namespace DAL
     file = NULL;
     type = "UNDEFINED";
     name = "UNDEFINED";
-    h5fh = 0;   // hdf5 file handle
+    h5fh_p = 0;   // hdf5 file handle
 
 #ifdef HAVE_CASA
     ms = NULL;
@@ -261,9 +261,9 @@ namespace DAL
                   << "yet supported.  Sorry." << endl;
         return DAL::SUCCESS;
       }
-    else if ( (h5fh = openHDF5( fname )) >= 0 )
+    else if ( (h5fh_p = openHDF5( fname )) >= 0 )
       {
-        file = &h5fh;
+        file = &h5fh_p;
         lcltype = H5TYPE;
         type = lcltype;
         name = fname;
@@ -315,7 +315,7 @@ namespace DAL
       }
     else if ( type == H5TYPE )
       {
-        if ( H5Fclose( h5fh ) < 0 )
+        if ( H5Fclose( h5fh_p ) < 0 )
           return DAL::FAIL;
         else
           return DAL::SUCCESS;
@@ -335,7 +335,7 @@ namespace DAL
   */
   bool dalDataset::getAttributes()
   {
-    if ( H5Aiterate1( h5fh, NULL, attr_info, NULL ) < 0 )
+    if ( H5Aiterate1( h5fh_p, NULL, attr_info, NULL ) < 0 )
       {
         std::cerr << "ERROR: Could not iterate over dataset attributes.\n";
         return DAL::FAIL;
@@ -356,17 +356,13 @@ namespace DAL
   */
   hid_t dalDataset::getId()
   {
-    return h5fh;
+    return h5fh_p;
   }
 
 
   // ---------------------------------------------- setAttribute
 
   /*!
-    \brief Define a char attribute.
-
-    Define a char attribute.
-
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
     \param size Optional parameter specifying the array size of the
@@ -377,16 +373,12 @@ namespace DAL
 				 char * data,
 				 int size )
   {
-    return h5setAttribute( H5T_NATIVE_CHAR, h5fh, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_CHAR, h5fh_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
 
   /*!
-    \brief Define a short attribute.
-
-    Define a short attribute.
-
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
     \param size Optional parameter specifying the array size of the
@@ -397,16 +389,12 @@ namespace DAL
 				 short * data,
 				 int size )
   {
-    return h5setAttribute( H5T_NATIVE_SHORT, h5fh, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_SHORT, h5fh_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
 
   /*!
-    \brief Define a integer attribute.
-
-    Define a integer attribute.
-
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
     \param size Optional parameter specifying the array size of the
@@ -417,16 +405,12 @@ namespace DAL
 				 int * data,
 				 int size )
   {
-    return h5setAttribute( H5T_NATIVE_INT, h5fh, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_INT, h5fh_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
 
   /*!
-    \brief Define an unsigned integer attribute.
-
-    Define an unsigned integer attribute.
-
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
     \param size Optional parameter specifying the array size of the
@@ -437,16 +421,12 @@ namespace DAL
 				 uint * data,
 				 int size )
   {
-    return h5setAttribute( H5T_NATIVE_UINT, h5fh, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_UINT, h5fh_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
 
   /*!
-    \brief Define a long attribute.
-
-    Define a long attribute.
-
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
     \param size Optional parameter specifying the array size of the
@@ -457,16 +437,12 @@ namespace DAL
 				 long * data,
 				 int size )
   {
-    return h5setAttribute( H5T_NATIVE_LONG, h5fh, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
 
   /*!
-    \brief Define a floating point attribute.
-
-    Define a floating point attribute.
-
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
     \param size Optional parameter specifying the array size of the
@@ -477,62 +453,51 @@ namespace DAL
 				 float * data,
 				 int size )
   {
-    return h5setAttribute( H5T_NATIVE_FLOAT, h5fh, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_FLOAT, h5fh_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
 
   /*!
-    \brief Define a double precision floating point attribute.
-
-    Define a double precision floating point attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
+    \param attrname -- The name of the attribute you want to create.
+    \param data     -- The value of the attribute you want to create.
+    \param size     -- Optional parameter specifying the array size of the
+           attribute. Default is scalar.
+    \return bool    -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
 				 double * data,
 				 int size )
   {
-    return h5setAttribute( H5T_NATIVE_DOUBLE, h5fh, attrname, data, size );
+    return h5setAttribute( H5T_NATIVE_DOUBLE, h5fh_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute_string
 
   /*!
-    \brief Define a string attribute.
-
-    Define a string attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
+    \param attrname -- The name of the attribute you want to create.
+    \param data     -- The value of the attribute you want to create.
+    \return bool    -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
 				 std::string data )
   {
-    return h5setAttribute_string( h5fh, attrname, &data, 1 );
+    return h5setAttribute_string( h5fh_p, attrname, &data, 1 );
   }
 
   // ---------------------------------------------- setAttribute_string
 
   /*!
-    \brief Define a string attribute.
-
-    Define a string attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
+    \param attrname -- The name of the attribute you want to create.
+    \param data     -- The value of the attribute you want to create.
+    \return bool    -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
 				 std::string * data,
                                  int size )
   {
-    return h5setAttribute_string( h5fh, attrname, data, size );
+    return h5setAttribute_string ( h5fh_p, attrname, data, size );
+//     return h5setAttribute_string( h5fh_p, attrname, data, size );
   }
 
 
@@ -578,7 +543,7 @@ namespace DAL
       }
 
     hid_t root;
-    if ( ( root = H5Gopen1( h5fh, "/") ) < 0 )
+    if ( ( root = H5Gopen1( h5fh_p, "/") ) < 0 )
       {
         std::cerr << "ERROR: Could not open group.\n";
         return DAL::FAIL;
@@ -615,7 +580,7 @@ namespace DAL
     if ( type == H5TYPE )
       {
         dalGroup * lg = NULL;
-        lg = new dalGroup( gname, &h5fh );
+        lg = new dalGroup( gname, &h5fh_p );
         return lg;
       }
     else
@@ -762,7 +727,7 @@ namespace DAL
   {
     if ( type == H5TYPE )
       {
-        dalIntArray * la = new dalIntArray( h5fh, arrayname, dims,
+        dalIntArray * la = new dalIntArray( h5fh_p, arrayname, dims,
                                             data, cdims );
         return la;
       }
@@ -802,7 +767,7 @@ namespace DAL
     if ( type == H5TYPE )
       {
         dalFloatArray * la =
-          new dalFloatArray( h5fh, arrayname, dims, data, cdims );
+          new dalFloatArray( h5fh_p, arrayname, dims, data, cdims );
         return la;
       }
     else
@@ -839,7 +804,7 @@ namespace DAL
     if ( type == H5TYPE )
       {
         dalComplexArray_float32 * la =
-          new dalComplexArray_float32( h5fh, arrayname, dims, data, cdims );
+          new dalComplexArray_float32( h5fh_p, arrayname, dims, data, cdims );
         return la;
       }
     else
@@ -1119,7 +1084,7 @@ namespace DAL
   std::vector<std::string> dalDataset::getGroupNames()
   {
     std::vector<std::string> group_names;
-    H5Giterate( h5fh, "/", NULL, dalDataset_file_info, &group_names );
+    H5Giterate( h5fh_p, "/", NULL, dalDataset_file_info, &group_names );
     return group_names;
   }
 
@@ -1212,7 +1177,7 @@ namespace DAL
     sscanf(id.c_str(),"%3c%*6c",stid);
     char datasetname[18];
     sprintf( datasetname, "Station%c%c%c/%s", stid[0],stid[1],stid[2],id.c_str());
-    hid_t dataset = H5Dopen1( h5fh, datasetname );
+    hid_t dataset = H5Dopen1( h5fh_p, datasetname );
     hid_t filespace = H5Dget_space( dataset );
     if (filespace < 0)
       {
@@ -1494,7 +1459,7 @@ namespace DAL
     hid_t  status;
 
     // get the dataspace
-    lclfile = H5Dopen1(h5fh, arrayname.c_str());
+    lclfile = H5Dopen1(h5fh_p, arrayname.c_str());
     hid_t filespace = H5Dget_space(lclfile);
 
     // what is the rank of the array?
@@ -1513,7 +1478,7 @@ namespace DAL
     int * data = NULL;
     data = new int[size];
 
-    status = H5LTread_dataset_int( h5fh, arrayname.c_str(), data );
+    status = H5LTread_dataset_int( h5fh_p, arrayname.c_str(), data );
     bpl::list data_list;
     // for each dimension
     for (int ii=0; ii<size; ii++)
@@ -1536,7 +1501,7 @@ namespace DAL
     hid_t status;
 
     // get the dataspace
-    lclfile = H5Dopen1(h5fh, arrayname.c_str());
+    lclfile = H5Dopen1(h5fh_p, arrayname.c_str());
     hid_t filespace = H5Dget_space(lclfile);
 
     // what is the rank of the array?
@@ -1556,7 +1521,7 @@ namespace DAL
     float * data = NULL;
     data = new float[size];
 
-    status = H5LTread_dataset_float( h5fh, arrayname.c_str(), data );
+    status = H5LTread_dataset_float( h5fh_p, arrayname.c_str(), data );
 
     bpl::list data_list;
     // for each dimension

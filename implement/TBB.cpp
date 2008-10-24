@@ -471,22 +471,24 @@ namespace DAL {
                                     std::string("Sub-band") );
       }
 
-    double trigger_offset[1]  = { 0 };
-    int triggered_antennas[1] = { 0 };
-    double bdv[2]  = { 0, 90 };
-    double spv[3]  = { 0, 0, 0 };
+    double trigger_offset[1]             = { 0 };
+    int triggered_antennas[1]            = { 0 };
+    double station_position_value[3]     = { 0, 0, 0 };
+    std::string station_position_unit[3] = { "m", "m", "m" };
+    double beam_direction_value[2]       = { 0, 90 };
+    std::string beam_direction_unit[2]   = { "deg", "deg"};
     
     // Add attributes to "Station" group
     stationGroup_p->setAttribute( attribute_name(STATION_POSITION_VALUE),
-				  spv, 3 );
+				  station_position_value, 3 );
     stationGroup_p->setAttribute( attribute_name(STATION_POSITION_UNIT),
-				  std::string("m") );
+				  station_position_unit, 3 );
     stationGroup_p->setAttribute( attribute_name(STATION_POSITION_FRAME),
 				  std::string("ITRF") );
     stationGroup_p->setAttribute( attribute_name(BEAM_DIRECTION_VALUE),
-				  bdv, 2 );
+				  beam_direction_value, 2 );
     stationGroup_p->setAttribute( attribute_name(BEAM_DIRECTION_UNIT),
-				  std::string("deg") );
+				  beam_direction_unit, 2 );
     stationGroup_p->setAttribute( attribute_name(BEAM_DIRECTION_FRAME),
 				  std::string("UNDEFINED") );
     stationGroup_p->setAttribute( attribute_name(TRIGGER_TYPE),
@@ -500,28 +502,29 @@ namespace DAL {
     unsigned int rsp = header.rspid;
     unsigned int rcu = header.rcuid;
     double sf = header.sample_freq;
-    unsigned int time = header.time;
-    unsigned int samp_num = header.sample_nr;
-    unsigned int spf = header.n_samples_per_frame;
-    unsigned int nyquist_zone = 1;
-    double apos[3]    = { 0, 0, 0 };
+    unsigned int time                    = header.time;
+    unsigned int samp_num                = header.sample_nr;
+    unsigned int samples_per_frame       = header.n_samples_per_frame;
+    unsigned int nyquist_zone            = 1;
+    double antenna_position_value[3]     = { 0, 0, 0 };
+    std::string antenna_position_unit[3] = { "m", "m", "m" };
     
     dipoleArray_p->setAttribute( attribute_name(STATION_ID), &sid );
     dipoleArray_p->setAttribute( attribute_name(RSP_ID), &rsp );
     dipoleArray_p->setAttribute( attribute_name(RCU_ID), &rcu );
     dipoleArray_p->setAttribute( attribute_name(TIME), &time );
     dipoleArray_p->setAttribute( attribute_name(SAMPLE_NUMBER), &samp_num );
-    dipoleArray_p->setAttribute( attribute_name(SAMPLES_PER_FRAME), &spf );
+    dipoleArray_p->setAttribute( attribute_name(SAMPLES_PER_FRAME), &samples_per_frame );
     dipoleArray_p->setAttribute( attribute_name(ANTENNA_POSITION_VALUE),
-				 apos, 3 );
+				 antenna_position_value, 3 );
     dipoleArray_p->setAttribute( attribute_name(ANTENNA_POSITION_UNIT),
-				 std::string("m") );
+				 antenna_position_unit, 3 );
     dipoleArray_p->setAttribute( attribute_name(ANTENNA_POSITION_FRAME),
 				 std::string("ITRF") );
     dipoleArray_p->setAttribute( attribute_name(ANTENNA_ORIENTATION_VALUE),
-				 apos, 3 );
+				 antenna_position_value, 3 );
     dipoleArray_p->setAttribute( attribute_name(ANTENNA_ORIENTATION_UNIT),
-				 std::string("m") );
+				 antenna_position_unit, 3 );
     dipoleArray_p->setAttribute( attribute_name(ANTENNA_ORIENTATION_FRAME),
 				 std::string("ITRF") );
     dipoleArray_p->setAttribute( attribute_name(FEED), std::string("UNDEFINED") );

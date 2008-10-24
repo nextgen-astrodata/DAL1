@@ -175,12 +175,11 @@ namespace DAL {
         instead of simply printing.
 
         \param attrname The name of the attribute you want to retrieve.
-
       */
       template<class T>
       bool getAttribute( std::string attrname, T &value )
       {
-        return h5getAttribute( tableID_p, attrname, value );
+        return h5get_attribute( tableID_p, attrname, value );
       }
 
       bool setAttribute( std::string attrname, char * data, int size=1 );

@@ -76,6 +76,10 @@
 #ifndef DAL_H
 #define DAL_H
 
+#ifndef DALCOMMON_H
+#include "dalCommon.h"
+#endif
+
 #ifndef BEAMFORMED_H
 #include "BeamFormed.h"
 #endif

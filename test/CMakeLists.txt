@@ -123,7 +123,8 @@ if (DAL_ENABLE_TESTING)
   ## [5] Tests using HDF5-based beam-formed data
 
   if (dataset_beamformed)
-    add_test (tdalDataset tdalDataset ${dataset_beamformed})
+    add_test (tdalDataset_test1 tdalDataset ${dataset_beamformed})
+    add_test (tdalDataset_test2 tdalDataset ${dataset_tbb})
     add_test (tdalTable tdalTable ${dataset_beamformed})
     add_test (tBeamFormed tBeamFormed ${dataset_beamformed})
     add_test (tBeamGroup tBeamGroup ${dataset_beamformed})

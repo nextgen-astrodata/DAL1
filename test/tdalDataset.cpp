@@ -105,6 +105,20 @@ int test_parameters (std::string const &filename)
 
 // ------------------------------------------------------------------------------
 
+/*!
+  \brief Test writing attributes to the dataset
+
+  \brief filename -- Name of the dataset to be created and used for the test
+*/
+int test_setAttributes (std::string const &filename)
+{
+  int nofFailedTests (0);
+
+  return nofFailedTests;
+}
+
+// ------------------------------------------------------------------------------
+
 int main (int argc,char *argv[]) 
 {
   int nofFailedTests (0);
@@ -123,7 +137,10 @@ int main (int argc,char *argv[])
   nofFailedTests += test_constructors(filename);
 
   if (nofFailedTests == 0) {
+    // Test access to the parameters of the object
     nofFailedTests += test_parameters (filename);
+    // Test writing attributes to the dataset
+    nofFailedTests += test_setAttributes (filename);
   }
 
   return nofFailedTests;

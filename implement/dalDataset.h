@@ -103,7 +103,7 @@ namespace DAL
       //! Dataset filter
       dalFilter filter;
       //! HDF5 file handle
-      hid_t h5fh;
+      hid_t h5fh_p;
 
 #ifdef HAVE_CASA
       casa::MeasurementSet * ms; // CASA measurement set pointer
@@ -145,20 +145,28 @@ namespace DAL
       template <class T>
       bool getAttribute( std::string attrname, T &value )
       {
-        return h5getAttribute( h5fh, attrname, value );
+        return h5get_attribute( h5fh_p, attrname, value );
       }
 
-
+      //! Define a char attribute.
       bool setAttribute( std::string attrname, char * data, int size=1 );
+      //! Define a short attribute.
       bool setAttribute( std::string attrname, short * data, int size=1 );
+      //! Define a integer attribute.
       bool setAttribute( std::string attrname, int * data, int size=1 );
+      //! Define an unsigned integer attribute.
       bool setAttribute( std::string attrname, uint * data, int size=1 );
+      //! Define a long attribute.
       bool setAttribute( std::string attrname, long * data, int size=1 );
+      //! Define a floating point attribute.
       bool setAttribute( std::string attrname, float * data, int size=1 );
+      //! Define a double precision floating point attribute.
       bool setAttribute( std::string attrname, double * data, int size=1 );
+      //! Define a string attribute.
       bool setAttribute( std::string attrname, std::string data );
+      //! Define a string attribute.
       bool setAttribute( std::string attrname, std::string * data, int size=1 );
-
+      //! Define a string attribute.
       bool setAttribute_string( std::string attrname,
                                 std::vector<std::string> data );
 
@@ -207,12 +215,14 @@ namespace DAL
         \return h5fh -- File handle identifier to communicate with the HDF5
                 file through the HDF5 library.
        */
-      inline hid_t getFileHandle () const
-        {
-          return h5fh;
-        }
-
-      void read_tbb(std::string id, int start, int length, short data_out[]);
+      inline hid_t getFileHandle () const {
+	return h5fh_p;
+      }
+      
+      void read_tbb(std::string id,
+		    int start,
+		    int length,
+		    short data_out[]);
 
       /************************************************************************
        *

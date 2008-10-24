@@ -113,7 +113,7 @@ namespace DAL {
     template <class T>
       bool getAttribute( std::string attrname, T &value )
       {
-        return h5getAttribute( group_id, attrname, value );
+        return h5get_attribute( group_id, attrname, value );
       }
     
     bool setAttribute( std::string attrname, char * data, int size=1 );
