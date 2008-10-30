@@ -439,6 +439,49 @@ int test_hdf5_attributes ()
     cerr << message << endl;
     nofFailedTests++;
   }
+  
+  //__________________________________________________________________
+  // Test repeated read access to attributes
+
+  cout << "[8] Test repeated read access to attributes ..." << endl;
+  try {
+    uint nofLoops (20);
+    int data_int (0);
+    std::string data_string;
+    std::vector<int> vec_int;
+    std::vector<std::string> vec_string;
+    //
+    cout << "-- ATTRIBUTE_INT :";
+    for (uint n(0); n<nofLoops; n++) {
+      DAL::h5get_attribute (fileID, "ATTRIBUTE_INT", data_int);
+      cout << " " << data_int;
+    }
+    cout << endl;
+    //
+    cout << "-- ATTRIBUTE_STRING :";
+    for (uint n(0); n<nofLoops; n++) {
+      DAL::h5get_attribute (fileID, "ATTRIBUTE_STRING", data_string);
+      cout << " " << data_string;
+    }
+    cout << endl;
+    //
+    cout << "-- ATTRIBUTE_INT_VECTOR :";
+    for (uint n(0); n<nofLoops; n++) {
+      DAL::h5get_attribute (fileID, "ATTRIBUTE_INT_VECTOR", vec_int);
+      cout << " " << vec_int;
+    }
+    cout << endl;
+    //
+    cout << "-- ATTRIBUTE_STRING_VECTOR :";
+    for (uint n(0); n<nofLoops; n++) {
+      DAL::h5get_attribute (fileID, "ATTRIBUTE_STRING_VECTOR", vec_string);
+      cout << " " << vec_string;
+    }
+    cout << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
 
   return nofFailedTests;
 }

@@ -107,23 +107,21 @@ namespace DAL {
     return status;
   }
   
-  // ---------------------------------------------------------- ~BeamFormed
+  // ---------------------------------------------------------------- ~BeamFormed
   
   BeamFormed::~BeamFormed()
   {
-    for (uint beam(0); beam<beamGroups_p.size(); beam++)
-      {
-        delete beamGroups_p[beam];
-      }
-
-    if ( NULL != dataset_p )
-      {
-        dataset_p->close();
-        delete dataset_p;
-        dataset_p = NULL;
-      }
+    for (uint beam(0); beam<beamGroups_p.size(); beam++) {
+      delete beamGroups_p[beam];
+    }
+    
+    if ( NULL != dataset_p ) {
+      dataset_p->close();
+      delete dataset_p;
+      dataset_p = NULL;
+    }
   }
-
+  
   // ---------------------------------------------------------- h5get_str_array_attr
 
   /*!

@@ -214,7 +214,9 @@ namespace DAL { // Namespace DAL -- begin
     std::string beam_direction_frame ();
     
     //! Get the direction of the station beam as casa::Measure
+#ifdef HAVE_CASA
     casa::MDirection beam_direction ();
+#endif
 
     //! Get the numerical values of the station position
 #ifdef HAVE_CASA

@@ -51,21 +51,21 @@ namespace DAL { // Namespace DAL -- begin
              the base of the hierarchical structure within the HDF5 file.
   */  
   TBB_DipoleDataset::TBB_DipoleDataset (std::string const &filename,
-					    std::string const &dataset)
+					std::string const &dataset)
   {
     init (filename,
 	  dataset);
   }
-
+  
   // -------------------------------------------------------- TBB_DipoleDataset
-
+  
   /*!
     \param location -- Identifier for the location within the HDF5 file, below
            which the dataset is placed.
     \param dataset  -- Name of the dataset.
   */
   TBB_DipoleDataset::TBB_DipoleDataset (hid_t const &location,
-					    std::string const &dataset)
+					std::string const &dataset)
   {
     // Initialize internal variables
     datasetID_p = 0;

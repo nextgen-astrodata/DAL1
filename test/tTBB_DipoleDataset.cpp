@@ -158,24 +158,30 @@ int test_dataset (std::string const &name_file,
       std::vector<uint> triggered_antennas;
       std::vector<double> station_position_value;
       std::vector<std::string> station_position_unit;
+      std::string station_position_frame;
       std::vector<double> beam_direction_value;
       std::vector<std::string> beam_direction_unit;
+      std::string beam_direction_frame;
       //
       DAL::h5get_name (name,group_id);
       DAL::h5get_attribute (group_id, "TRIGGER_TYPE", trigger_type);
       DAL::h5get_attribute (group_id, "TRIGGER_OFFSET", trigger_offset);
       DAL::h5get_attribute (group_id, "STATION_POSITION_VALUE", station_position_value);
       DAL::h5get_attribute (group_id, "STATION_POSITION_UNIT", station_position_unit);
+      DAL::h5get_attribute (group_id, "STATION_POSITION_FRAME", station_position_frame);
       DAL::h5get_attribute (group_id, "BEAM_DIRECTION_VALUE", beam_direction_value);
       DAL::h5get_attribute (group_id, "BEAM_DIRECTION_UNIT", beam_direction_unit);
+      DAL::h5get_attribute (group_id, "BEAM_DIRECTION_FRAME", beam_direction_frame);
       //
       cout << "-- HDF5 object name ..... = " << name                   << endl;
       cout << "-- TRIGGER_TYPE ......... = " << trigger_type           << endl;
       cout << "-- TRIGGER_OFFSET ....... = " << trigger_offset         << endl;
       cout << "-- STATION_POSITION_VALUE = " << station_position_value << endl;
       cout << "-- STATION_POSITION_UNIT  = " << station_position_unit  << endl;
+      cout << "-- STATION_POSITION_FRAME = " << station_position_frame << endl;
       cout << "-- BEAM_DIRECTION_VALUE . = " << beam_direction_value   << endl;
       cout << "-- BEAM_DIRECTION_UNIT .. = " << beam_direction_unit    << endl;
+      cout << "-- BEAM_DIRECTION_FRAME . = " << beam_direction_frame   << endl;
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
@@ -194,20 +200,38 @@ int test_dataset (std::string const &name_file,
       double sample_frequency_value (0);
       std::string sample_frequency_unit;
       uint time (0);
+      std::vector<double> antenna_position_value;
+      std::vector<std::string> antenna_position_unit;
+      std::string antenna_position_frame;
+      std::vector<double> antenna_orientation_value;
+      std::vector<std::string> antenna_orientation_unit;
+      std::string antenna_orientation_frame;
       //
-      DAL::h5get_attribute (dataset_id, "STATION_ID", station_id);
-      DAL::h5get_attribute (dataset_id, "RSP_ID", rsp_id);
-      DAL::h5get_attribute (dataset_id, "RCU_ID", rcu_id);
-      DAL::h5get_attribute (dataset_id, "TIME", time);
-      DAL::h5get_attribute (dataset_id, "SAMPLE_FREQUENCY_VALUE", sample_frequency_value);
-      DAL::h5get_attribute (dataset_id, "SAMPLE_FREQUENCY_UNIT", sample_frequency_unit);
+      DAL::h5get_attribute (dataset_id,"STATION_ID", station_id);
+      DAL::h5get_attribute (dataset_id,"RSP_ID", rsp_id);
+      DAL::h5get_attribute (dataset_id,"RCU_ID", rcu_id);
+      DAL::h5get_attribute (dataset_id,"TIME", time);
+      DAL::h5get_attribute (dataset_id,"SAMPLE_FREQUENCY_VALUE", sample_frequency_value);
+      DAL::h5get_attribute (dataset_id,"SAMPLE_FREQUENCY_UNIT", sample_frequency_unit);
+      DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_VALUE", antenna_position_value);
+      DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_UNIT", antenna_position_unit);
+      DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_FRAME", antenna_position_frame);
+      DAL::h5get_attribute (dataset_id,"ANTENNA_ORIENTATION_VALUE", antenna_orientation_value);
+      DAL::h5get_attribute (dataset_id,"ANTENNA_ORIENTATION_UNIT", antenna_orientation_unit);
+      DAL::h5get_attribute (dataset_id,"ANTENNA_ORIENTATION_FRAME", antenna_orientation_frame);
       //
-      cout << "-- STATION_ID ........... = " << station_id << endl;
-      cout << "-- RSP_ID ............... = " << rsp_id     << endl;
-      cout << "-- RCU_ID ............... = " << rcu_id     << endl;
-      cout << "-- TIME ................. = " << time       << endl;
-      cout << "-- SAMPLE_FREQUENCY_VALUE = " << sample_frequency_value << endl;
-      cout << "-- SAMPLE_FREQUENCY_UNIT  = " << sample_frequency_unit  << endl;
+      cout << "-- STATION_ID .............. = " << station_id << endl;
+      cout << "-- RSP_ID .................. = " << rsp_id     << endl;
+      cout << "-- RCU_ID .................. = " << rcu_id     << endl;
+      cout << "-- TIME .................... = " << time       << endl;
+      cout << "-- SAMPLE_FREQUENCY_VALUE .. = " << sample_frequency_value << endl;
+      cout << "-- SAMPLE_FREQUENCY_UNIT ... = " << sample_frequency_unit  << endl;
+      cout << "-- ANTENNA_POSITION_VALUE .. = " << antenna_position_value << endl;
+      cout << "-- ANTENNA_POSITION_UNIT ... = " << antenna_position_unit  << endl;
+      cout << "-- ANTENNA_POSITION_FRAME .. = " << antenna_position_frame << endl;
+      cout << "-- ANTENNA_ORIENTATION_VALUE = " << antenna_orientation_value << endl;
+      cout << "-- ANTENNA_ORIENTATION_UNIT  = " << antenna_orientation_unit  << endl;
+      cout << "-- ANTENNA_ORIENTATION_FRAME = " << antenna_orientation_frame << endl;
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;

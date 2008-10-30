@@ -864,15 +864,20 @@ namespace DAL {
       
       if (shape.size() > 0) {
 	char *buffer[shape[0]];
+	// Read the attribute data from the file
 	h5error = H5Aread(attribute_id,
 			  native_datatype_id,
 			  &buffer);
-	//
+	// Copy the retrieved data to the returned variable
 	if (h5error == 0) {
 	  value.resize(shape[0]);
 	  for (uint n(0); n<shape[0]; n++) {
 	    value[n] = buffer[n];
 	  }
+	}
+	// Release allocated memory
+	for (uint n(0); n<shape[0]; n++) {
+	  delete buffer[n];
 	}
       }
       else {

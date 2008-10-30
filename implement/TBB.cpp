@@ -490,7 +490,7 @@ namespace DAL {
     stationGroup_p->setAttribute( attribute_name(BEAM_DIRECTION_UNIT),
 				  beam_direction_unit, 2 );
     stationGroup_p->setAttribute( attribute_name(BEAM_DIRECTION_FRAME),
-				  std::string("UNDEFINED") );
+				  std::string("AZEL") );
     stationGroup_p->setAttribute( attribute_name(TRIGGER_TYPE),
 				  std::string("UNDEFINED") );
     stationGroup_p->setAttribute( attribute_name(TRIGGER_OFFSET),

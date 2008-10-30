@@ -79,9 +79,9 @@ namespace DAL { // Namespace DAL -- begin
     init (location,
 	  group);
   }
-
+  
   //_____________________________________________________________________________
-
+  
   /*!
     \param groupID -- Object identifier for the group within the HDF5 dataset
   */
@@ -185,10 +185,15 @@ namespace DAL { // Namespace DAL -- begin
 		<< message << std::endl;
     }
     
-    // if opening of file was successfull, try to open group
+    //________________________________________________________________
+    // If the file was opened successfully, open the station group
+
     if (file_id > 0) {
       init (file_id,
 	    group);
+      // release the global file handle and clear the error stack
+      h5error = H5Fclose (file_id);
+      h5error = H5Eclear1 ();
     } else {
       std::cerr << "[TBB_StationGroup::init] Error opening HDF5 file "
 		<< filename 
@@ -196,11 +201,6 @@ namespace DAL { // Namespace DAL -- begin
 		<< std::endl;
     }
     
-    // release the global file handle and clear the error stack
-    if (file_id > 0) {
-      h5error = H5Fclose (file_id);
-      h5error = H5Eclear1 ();
-    }
   }
   
   // ----------------------------------------------------------------------- init
@@ -308,10 +308,15 @@ namespace DAL { // Namespace DAL -- begin
   
   void TBB_StationGroup::destroy ()
   {
-    herr_t h5error (0);
-    
+    if (datasets_p.size() > 0) {
+      datasets_p.clear();
+    }
+
     if (groupID_p > 0) {
+      herr_t h5error (0);
+
       h5error = H5Gclose (groupID_p);
+      h5error = H5Eclear1 ();
     }
   }
   
@@ -408,6 +413,18 @@ namespace DAL { // Namespace DAL -- begin
     }
   }
 #else
+  std::vector<double> TBB_StationGroup::station_position_value ()
+  {
+    std::vector<double> val;
+    
+    if (DAL::h5get_attribute(groupID_p,
+			     attribute_name(DAL::STATION_POSITION_VALUE),
+			     val)) {
+      return val;
+    } else {
+      return std::vector<double> (1);
+    }
+  }
 #endif
   
   // ------------------------------------------------------ station_position_unit
@@ -426,6 +443,18 @@ namespace DAL { // Namespace DAL -- begin
     }
   }
 #else
+  std::vector<std::string> TBB_StationGroup::station_position_unit ()
+  {
+    std::vector<std::string> val;
+    
+    if (DAL::h5get_attribute(groupID_p,
+			     DAL::attribute_name(DAL::STATION_POSITION_UNIT),
+			     val)) {
+      return val;
+    } else {
+      return std::vector<std::string> (1);
+    }
+  }
 #endif
   
   // ----------------------------------------------------- station_position_frame

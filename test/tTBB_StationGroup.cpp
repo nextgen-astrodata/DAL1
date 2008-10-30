@@ -91,6 +91,8 @@ int test_datasets (std::string const &name_file,
 
   if (fileID > 0) {
     
+    cout << "--> successfully opened HDF5 file" << endl;
+
     cout << "-- opening HDF5 group ..." << endl;
     groupID = H5Gopen1 (fileID,
 			name_station.c_str());
@@ -159,16 +161,6 @@ int test_construction (std::string const &name_file,
   herr_t h5error (0);
   uint nofLoops (10);
   
-  // open the HDF5 for further access
-  hid_t file_id = H5Fopen (name_file.c_str(),
-			   H5F_ACC_RDONLY,
-			   H5P_DEFAULT);
-
-  if (file_id <= 0) {
-    cerr << "-- Error opening HDF5 file " << name_file << endl;
-    return 1;
-  }
-
   //__________________________________________________________________
   // TEST: Default constructor
   
@@ -191,7 +183,7 @@ int test_construction (std::string const &name_file,
   // TEST: Argumented constructor using name_file and name of the group as
   //       input parameters.
   
-  cout << "[2] Testing argumented constructor ..." << endl;
+  cout << "[2] Construction from file- and group-name ..." << endl;
   try {
     TBB_StationGroup group (name_file,
 			    name_station);
@@ -207,8 +199,13 @@ int test_construction (std::string const &name_file,
   // TEST: Argumented constructor using file identifier (as obtained from 
   //       previous call to HDF5 library) and group name as input parameters.
   
-  cout << "[3] Testing argumented constructor ..." << endl;
+  cout << "[3] Construction from filename and group ID ..." << endl;
   try {    
+    // Open HDF5 file to get its object ID
+    hid_t file_id = H5Fopen (name_file.c_str(),
+			     H5F_ACC_RDONLY,
+			     H5P_DEFAULT);
+    
     if (file_id > 0) {
       TBB_StationGroup group (file_id,
 			      name_station);
@@ -216,6 +213,9 @@ int test_construction (std::string const &name_file,
     } else {
       cerr << "--> Unable to perform test; invalid file ID!" << endl;
     }
+
+    // release file identifier
+    h5error = H5Fclose (file_id);
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
@@ -240,9 +240,6 @@ int test_construction (std::string const &name_file,
     nofFailedTests++;
   }
   h5error = H5Eclear1();
-  
-  // release file identifier
-  h5error = H5Fclose (file_id);
   
   return nofFailedTests;
 }
@@ -490,10 +487,9 @@ int main (int argc,
 {
   int nofFailedTests (0);
 
-  /*
-    Check if name_file of the dataset is provided on the command line; if not
-    exit the program.
-  */
+  //__________________________________________________________________
+  // Check parameters provided from the command line
+
   if (argc < 2) {
     cerr << "[tTBB_StationGroup] Too few parameters!" << endl;
     cerr << "" << endl;
@@ -519,7 +515,7 @@ int main (int argc,
   cout << "-- Station group  = " << name_station << endl;
   cout << "-- Dipole dataset = " << name_dataset << endl;
 
-  // -----------------------------------------------------------------
+  //__________________________________________________________________
   // Run the tests
   
   // Test localization and handling of datasets inside the group
@@ -547,6 +543,10 @@ int main (int argc,
     // Test exporting the attributes to a casa::Record
     nofFailedTests += test_export2record (name_file,
 					  name_station);
+  } else {
+    std::cerr << "[tTBB_StationGroup] Skipping further tests because testing of"
+	      << " constructor returned non-zero value!"
+	      << endl;
   }
   
   return nofFailedTests;
