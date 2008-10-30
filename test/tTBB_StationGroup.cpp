@@ -157,6 +157,7 @@ int test_construction (std::string const &name_file,
   
   int nofFailedTests (0);
   herr_t h5error (0);
+  uint nofLoops (10);
   
   // open the HDF5 for further access
   hid_t file_id = H5Fopen (name_file.c_str(),
@@ -173,9 +174,13 @@ int test_construction (std::string const &name_file,
   
   cout << "[1] Testing default constructor ..." << endl;
   try {
+    // single instance
     TBB_StationGroup group;
-    //
     group.summary(); 
+    // repeated creation
+    for (uint n(0); n<nofLoops; n++) {
+      TBB_StationGroup group;
+    }
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
@@ -216,46 +221,15 @@ int test_construction (std::string const &name_file,
     nofFailedTests++;
   }
   h5error = H5Eclear1();
-  
-  return 0;
-  
-  //__________________________________________________________________
-  // TEST: Argumented constructor using object identifier for the group
-  //       as input parameter.
-  
-  cout << "[4] Testing argumented constructor ..." << endl;
-  try {
-    if (file_id > 0) {
-      // retrieve the group ID 
-      hid_t groupID = H5Gopen1 (file_id,
-				name_station.c_str());
-      // contiue if group successfully opened
-      if (groupID > 0) {
-	// feedback
-	cout << "--> Passed group ID = " << groupID << endl;
-	// create new object
-	TBB_StationGroup group (groupID);
-	group.summary(); 
-      } else {
-	cerr << "--> Unable to perform test; invalid group ID!" << endl;
-      }
-    } else {
-      cerr << "--> Unable to perform test; invalid file ID!" << endl;
-    }
-  } catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-  h5error = H5Eclear1();
 
   //__________________________________________________________________
   // TEST: Copy constructor
   
-  cout << "[5] Testing copy constructor ..." << endl;
+  cout << "[4] Testing copy constructor ..." << endl;
   try {
     cout << "--> creating original object ..." << endl;
     TBB_StationGroup group (name_file,
-			    name_station);
+ 			    name_station);
     group.summary();
     //
     cout << "--> creating new object as copy ..." << endl;

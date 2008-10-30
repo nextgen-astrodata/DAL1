@@ -36,8 +36,8 @@ namespace DAL { // Namespace DAL -- begin
   //  Construction
   //
   // ============================================================================
-  
-  // ----------------------------------------------------------- TBB_StationGroup
+
+  //_____________________________________________________________________________
   
   /*!
     Default constructor does not connect to a file, but simply sets up internal
@@ -48,7 +48,7 @@ namespace DAL { // Namespace DAL -- begin
     init ();
   }
   
-  // ----------------------------------------------------------- TBB_StationGroup
+  //_____________________________________________________________________________
   
   /*!
     \param filename -- Name of the HDF5 file within which the group is
@@ -63,7 +63,7 @@ namespace DAL { // Namespace DAL -- begin
 	  group);
   }
   
-  // ----------------------------------------------------------- TBB_StationGroup
+  //_____________________________________________________________________________
   
   /*!
     \param location -- Identifier for the location within the HDF5 file, below
@@ -79,19 +79,18 @@ namespace DAL { // Namespace DAL -- begin
     init (location,
 	  group);
   }
-  
-  // ----------------------------------------------------------- TBB_StationGroup
-  
+
+  //_____________________________________________________________________________
+
   /*!
-    \param group_id -- Identifier for the group contained within the HDF5
-           file.
+    \param groupID -- Object identifier for the group within the HDF5 dataset
   */
-  TBB_StationGroup::TBB_StationGroup (hid_t const &group_id)
+  TBB_StationGroup::TBB_StationGroup (hid_t const &groupID)
   {
-    init (group_id);
+    init (groupID);
   }
   
-  // ----------------------------------------------------------- TBB_StationGroup
+  //_____________________________________________________________________________
   
   /*!
     \param other -- Another TBB_StationGroup object from which to create
@@ -123,22 +122,43 @@ namespace DAL { // Namespace DAL -- begin
     std::string filename;
     std::string group;
     
-    //  group ID -> file name
+    //________________________________________________________________
+    // Get filename and group name from the group ID
+
     status = DAL::h5get_filename (filename,
 				  group_id);
-    //  group ID -> group name
+
     if (status) {
       status = DAL::h5get_name (group,
 				group_id);
+    } else {
+      std::cerr << "[TBB_StationGroup::init] Failed to get filename from group ID!"
+		<< std::endl;
     }
-    /*
-     * Forward the reverse engineered information to the init() function to 
-     * set up a new object identifier for the group in question.
-     */
+
+    //________________________________________________________________
+    // Debugging messages
+
+#ifdef DEBUGGING_MESSAGES
+    std::cout << "[TBB_StationGroup::init]" << std::endl;
+    std::cout << "-- Filename   = " << filename << std::endl;
+    std::cout << "-- Group name = " << group    << std::endl;
+    std::cout << "-- Group ID   = " << group_id << std::endl;
+#endif
+
+    //________________________________________________________________
+    // Forward the reverse engineered information to the init() function
+    // to set up a new object identifier for the group in question.
+    
     if (status) {
       init (filename,
 	    group);
+    } else {
+      std::cerr << "[TBB_StationGroup::init] "
+		<< "Incomplete information to initialize new object!"
+		<< std::endl;
     }
+    
   }
   
   // ----------------------------------------------------------------------- init
@@ -153,13 +173,17 @@ namespace DAL { // Namespace DAL -- begin
     hid_t file_id (0);
     herr_t h5error (0);
     
-    // Initialize internal variables
-    groupID_p = 0;
-    
-    // open the file
-    file_id = H5Fopen (filename.c_str(),
-		       H5F_ACC_RDONLY,
-		       H5P_DEFAULT);
+    //________________________________________________________________
+    // Open the HDF5 file containing the station group
+
+    try {
+      file_id = H5Fopen (filename.c_str(),
+			 H5F_ACC_RDONLY,
+			 H5P_DEFAULT);
+    } catch (std::string message) {
+      std::cerr << "[TBB_StationGroup::init] Error while opening HDF5 file: "
+		<< message << std::endl;
+    }
     
     // if opening of file was successfull, try to open group
     if (file_id > 0) {
@@ -321,7 +345,11 @@ namespace DAL { // Namespace DAL -- begin
   void TBB_StationGroup::copy (TBB_StationGroup const &other)
   {
     if (other.groupID_p > 0) {
-      init (other.groupID_p);
+      try {
+	init (other.groupID_p);
+      } catch (std::string message) {
+	std::cerr << "[TBB_StationGroup::copy] " << message << std::endl;
+      }
     } else {
       /*
        * if previous operation failed, at least ensure internal handling remains
@@ -538,18 +566,33 @@ namespace DAL { // Namespace DAL -- begin
     \return unit -- The physical units within which the beam direction
             is given; this might be <i>radian</i> or <i>degree</i>
   */
+#ifdef HAVE_CASA
   casa::Vector<casa::String> TBB_StationGroup::beam_direction_unit ()
   {
     casa::Vector<casa::String> val;
     
     if (DAL::h5get_attribute(groupID_p,
-			     attribute_name(DAL::BEAM_DIRECTION_VALUE),
+			     attribute_name(DAL::BEAM_DIRECTION_UNIT),
 			     val)) {
       return val;
     } else {
       return casa::Vector<casa::String> (1);
     }
   }
+#else 
+  std::vector<std::string> TBB_StationGroup::beam_direction_unit ()
+  {
+    std::vector<std::string> val;
+    
+    if (DAL::h5get_attribute(groupID_p,
+			     attribute_name(DAL::BEAM_DIRECTION_UNIT),
+			     val)) {
+      return val;
+    } else {
+      return std::vector<std::string> (1);
+    }
+  }
+#endif
   
   // ------------------------------------------------------- beam_direction_frame
   
@@ -594,10 +637,10 @@ namespace DAL { // Namespace DAL -- begin
       os << "-- Group name ............. : " << group_name(true)         << endl;
       os << "-- nof. dipole datasets ... : " << nofDipoleDatasets()      << endl;
       os << "-- Station position (Value) : " << station_position_value() << endl;
-//       os << "-- Station position (Unit)  : " << station_position_unit()  << endl;
+      os << "-- Station position (Unit)  : " << station_position_unit()  << endl;
       os << "-- Station position (Frame) : " << station_position_frame() << endl;
       os << "-- Beam direction (Value) . : " << beam_direction_value()   << endl;
-//       os << "-- Beam direction (Unit) .. : " << beam_direction_unit()    << endl;
+      os << "-- Beam direction (Unit) .. : " << beam_direction_unit()    << endl;
       os << "-- Beam direction (Frame).. : " << beam_direction_frame()   << endl;
       os << "-- Trigger type ........... : " << trigger_type()           << endl;
       os << "-- Trigger offset ......... : " << trigger_offset()         << endl;
@@ -605,7 +648,7 @@ namespace DAL { // Namespace DAL -- begin
     
 #ifdef HAVE_CASA
     if (groupID_p > 0) {
-      os << "-- Triggered antennas  : " << triggered_antennas()     << endl;
+      os << "-- Triggered antennas ..... : " << triggered_antennas()     << endl;
     }
 #endif
   }

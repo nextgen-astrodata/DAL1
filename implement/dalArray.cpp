@@ -444,7 +444,7 @@ namespace DAL
    */
   bool dalArray::setAttribute( std::string attrname, char * data, int size )
   {
-    return h5setAttribute( H5T_NATIVE_CHAR, array_id, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_CHAR, array_id, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -460,7 +460,7 @@ namespace DAL
    */
   bool dalArray::setAttribute( std::string attrname, short * data, int size )
   {
-    return h5setAttribute( H5T_NATIVE_SHORT, array_id, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_SHORT, array_id, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -476,7 +476,7 @@ namespace DAL
    */
   bool dalArray::setAttribute( std::string attrname, int * data, int size )
   {
-    return h5setAttribute( H5T_NATIVE_INT, array_id, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_INT, array_id, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -492,7 +492,7 @@ namespace DAL
    */
   bool dalArray::setAttribute( std::string attrname, uint * data, int size )
   {
-    return h5setAttribute( H5T_NATIVE_UINT, array_id, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_UINT, array_id, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -508,7 +508,7 @@ namespace DAL
    */
   bool dalArray::setAttribute( std::string attrname, long * data, int size )
   {
-    return h5setAttribute( H5T_NATIVE_LONG, array_id, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_LONG, array_id, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -524,7 +524,7 @@ namespace DAL
    */
   bool dalArray::setAttribute( std::string attrname, float * data, int size )
   {
-    return h5setAttribute( H5T_NATIVE_FLOAT, array_id, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_FLOAT, array_id, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -540,7 +540,7 @@ namespace DAL
    */
   bool dalArray::setAttribute( std::string attrname, double * data, int size )
   {
-    return h5setAttribute( H5T_NATIVE_DOUBLE, array_id, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_DOUBLE, array_id, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute_string

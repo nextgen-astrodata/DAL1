@@ -373,7 +373,7 @@ namespace DAL
 				 char * data,
 				 int size )
   {
-    return h5setAttribute( H5T_NATIVE_CHAR, h5fh_p, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_CHAR, h5fh_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -389,7 +389,7 @@ namespace DAL
 				 short * data,
 				 int size )
   {
-    return h5setAttribute( H5T_NATIVE_SHORT, h5fh_p, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_SHORT, h5fh_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -405,7 +405,7 @@ namespace DAL
 				 int * data,
 				 int size )
   {
-    return h5setAttribute( H5T_NATIVE_INT, h5fh_p, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_INT, h5fh_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -421,7 +421,7 @@ namespace DAL
 				 uint * data,
 				 int size )
   {
-    return h5setAttribute( H5T_NATIVE_UINT, h5fh_p, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_UINT, h5fh_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -437,7 +437,7 @@ namespace DAL
 				 long * data,
 				 int size )
   {
-    return h5setAttribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -453,7 +453,7 @@ namespace DAL
 				 float * data,
 				 int size )
   {
-    return h5setAttribute( H5T_NATIVE_FLOAT, h5fh_p, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_FLOAT, h5fh_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -469,7 +469,7 @@ namespace DAL
 				 double * data,
 				 int size )
   {
-    return h5setAttribute( H5T_NATIVE_DOUBLE, h5fh_p, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_DOUBLE, h5fh_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute_string

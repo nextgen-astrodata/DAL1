@@ -1388,7 +1388,7 @@ namespace DAL {
 			       char * data,
 			       int size )
   {
-    return h5setAttribute( H5T_NATIVE_CHAR, tableID_p, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_CHAR, tableID_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -1408,7 +1408,7 @@ namespace DAL {
 			       short * data,
 			       int size )
   {
-    return h5setAttribute( H5T_NATIVE_SHORT, tableID_p, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_SHORT, tableID_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -1429,7 +1429,7 @@ namespace DAL {
 			       int * data,
 			       int size )
   {
-    return h5setAttribute( H5T_NATIVE_INT, tableID_p, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_INT, tableID_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -1450,7 +1450,7 @@ namespace DAL {
 			       uint * data,
 			       int size )
   {
-    return h5setAttribute( H5T_NATIVE_UINT, tableID_p, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_UINT, tableID_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -1470,7 +1470,7 @@ namespace DAL {
 			       long * data,
 			       int size )
   {
-    return h5setAttribute( H5T_NATIVE_LONG, tableID_p, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_LONG, tableID_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -1490,7 +1490,7 @@ namespace DAL {
 			       float * data,
 			       int size )
   {
-    return h5setAttribute( H5T_NATIVE_FLOAT, tableID_p, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_FLOAT, tableID_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -1511,7 +1511,7 @@ namespace DAL {
 			       double * data,
 			       int size )
   {
-    return h5setAttribute( H5T_NATIVE_DOUBLE, tableID_p, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_DOUBLE, tableID_p, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute_string

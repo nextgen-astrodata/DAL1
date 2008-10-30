@@ -465,7 +465,7 @@ namespace DAL {
   */
   bool dalGroup::setAttribute( std::string attrname, char * data, int size )
   {
-    return h5setAttribute( H5T_NATIVE_CHAR, group_id, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_CHAR, group_id, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -483,7 +483,7 @@ namespace DAL {
   */
   bool dalGroup::setAttribute( std::string attrname, short * data, int size )
   {
-    return h5setAttribute( H5T_NATIVE_SHORT, group_id, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_SHORT, group_id, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -501,7 +501,7 @@ namespace DAL {
   */
   bool dalGroup::setAttribute( std::string attrname, int * data, int size )
   {
-    return h5setAttribute( H5T_NATIVE_INT, group_id, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_INT, group_id, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -519,7 +519,7 @@ namespace DAL {
   */
   bool dalGroup::setAttribute( std::string attrname, uint * data, int size )
   {
-    return h5setAttribute( H5T_NATIVE_UINT, group_id, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_UINT, group_id, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -537,7 +537,7 @@ namespace DAL {
   */
   bool dalGroup::setAttribute( std::string attrname, long * data, int size )
   {
-    return h5setAttribute( H5T_NATIVE_LONG, group_id, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_LONG, group_id, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -555,7 +555,7 @@ namespace DAL {
   */
   bool dalGroup::setAttribute( std::string attrname, float * data, int size )
   {
-    return h5setAttribute( H5T_NATIVE_FLOAT, group_id, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_FLOAT, group_id, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute
@@ -573,7 +573,7 @@ namespace DAL {
   */
   bool dalGroup::setAttribute( std::string attrname, double * data, int size )
   {
-    return h5setAttribute( H5T_NATIVE_DOUBLE, group_id, attrname, data, size );
+    return h5set_attribute( H5T_NATIVE_DOUBLE, group_id, attrname, data, size );
   }
 
   // ---------------------------------------------- setAttribute_string

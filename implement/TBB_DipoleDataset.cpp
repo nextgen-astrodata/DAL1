@@ -185,7 +185,7 @@ namespace DAL { // Namespace DAL -- begin
   void TBB_DipoleDataset::summary (std::ostream &os)
   {
     os << "[TBB_DipoleDataset::summary]"   << endl;
-    os << "-- Dataset ID             = " << datasetID_p  << endl;
+    os << "-- Dataset ID .............. = " << datasetID_p  << endl;
   
     if (datasetID_p) {
       /*
@@ -194,24 +194,30 @@ namespace DAL { // Namespace DAL -- begin
        */
       int nofAttributes = H5Aget_num_attrs (datasetID_p);
       
-      os << "-- nof. attributes        = " << nofAttributes         << endl;
+      os << "-- nof. attributes ......... = " << nofAttributes << endl;
 
       if (nofAttributes < 0) {
 	os << "--> Illegal number of attached attributes!" << endl;
       } else {
-	os << "-- STATION_ID             = " << station_id()             << endl;
-	os << "-- RSP_ID                 = " << rsp_id()                 << endl;
-	os << "-- RCU_ID                 = " << rcu_id()                 << endl;
-	os << "-- CHANNEL_ID             = " << channelName()            << endl;
-	os << "-- SAMPLE_FREQUENCY_VALUE = " << sample_frequency_value() << endl;
-	os << "-- SAMPLE_FREQUENCY_UNIT  = " << sample_frequency_unit()  << endl;
-	os << "-- NYQUIST_ZONE           = " << nyquist_zone()           << endl;
-	os << "-- TIME [Unix seconds]    = " << time()                   << endl;
-	os << "-- TIME [  Julian Day]    = " << julianDay()              << endl;
-	os << "-- SAMPLE_NUMBER          = " << sample_number()          << endl;
-	os << "-- SAMPLES_PER_FRAME      = " << samples_per_frame()      << endl;
-	os << "-- FEED                   = " << feed()                   << endl;
-	os << "-- DATA_LENGTH            = " << data_length()            << endl;
+	os << "-- STATION_ID .............. = " << station_id()                << endl;
+	os << "-- RSP_ID .................. = " << rsp_id()                    << endl;
+	os << "-- RCU_ID .................. = " << rcu_id()                    << endl;
+	os << "-- CHANNEL_ID .............. = " << channelName()               << endl;
+	os << "-- ANTENNA_POSITION_VALUE .. = " << antenna_position_value()    << endl;
+	os << "-- ANTENNA_POSITION_UNIT ... = " << antenna_position_unit()     << endl;
+	os << "-- ANTENNA_POSITION_FRAME .. = " << antenna_position_frame()    << endl;
+	os << "-- ANTENNA_ORIENTATION_VALUE = " << antenna_orientation_value() << endl;
+	os << "-- ANTENNA_ORIENTATION_UNIT  = " << antenna_orientation_unit()  << endl;
+	os << "-- ANTENNA_ORIENTATION_FRAME = " << antenna_orientation_frame() << endl;
+	os << "-- SAMPLE_FREQUENCY_VALUE .. = " << sample_frequency_value() << endl;
+	os << "-- SAMPLE_FREQUENCY_UNIT ... = " << sample_frequency_unit()  << endl;
+	os << "-- NYQUIST_ZONE ............ = " << nyquist_zone()           << endl;
+	os << "-- TIME [Unix seconds]...... = " << time()                   << endl;
+	os << "-- TIME [  Julian Day] ..... = " << julianDay()              << endl;
+	os << "-- SAMPLE_NUMBER ........... = " << sample_number()          << endl;
+	os << "-- SAMPLES_PER_FRAME ....... = " << samples_per_frame()      << endl;
+	os << "-- FEED .................... = " << feed()                   << endl;
+	os << "-- DATA_LENGTH ............. = " << data_length()            << endl;
       }
     }
   }
@@ -475,21 +481,28 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
     std::string filename;
     std::string dataset;
-    /*
-     * In order to avoid using the same object identifier, we first need to
-     * reconstruct the filename from the dataset identifier.
-     */
+
+    //________________________________________________________________
+    // Get filename and dataset name from the dataset ID
+
     status = DAL::h5get_filename (filename,
 				  dataset_id);
-    /*
-     * If reconstruction of the filename was ok, then we need the name of the
-     * dataset next, to know which position to point to within the file
-     * structure.
-     */
+    
     if (status) {
       status = DAL::h5get_name (dataset,
 				dataset_id);
     }
+
+    //________________________________________________________________
+    // Debugging messages
+
+#ifdef DEBUGGING_MESSAGES
+    std::cout << "[TBB_DipoleDataset::init]" << std::endl;
+    std::cout << "-- Filename     = " << filename << std::endl;
+    std::cout << "-- Dataset name = " << dataset    << std::endl;
+    std::cout << "-- Dataset ID   = " << dataset_id << std::endl;
+#endif
+
     /*
      * Forward the reverse engineered information to the init() function to 
      * set up a new object identifier for the dataset in question.
@@ -621,8 +634,7 @@ namespace DAL { // Namespace DAL -- begin
     uint val (0);
     std::vector<uint> shape;
     
-    if (DAL::h5get_dataset_shape(shape,
-				 datasetID_p)) {
+    if (DAL::h5get_dataset_shape(datasetID_p,shape)) {
       val = shape[0];
       return val;
     } else {

@@ -150,7 +150,7 @@ namespace DAL { // Namespace DAL -- begin
 		      std::string const &group);
     
     //! Argumented constructor
-    TBB_StationGroup (hid_t const &group_id);
+    TBB_StationGroup (hid_t const &groupID);
     
     //! Copy constructor
     TBB_StationGroup (TBB_StationGroup const &other);

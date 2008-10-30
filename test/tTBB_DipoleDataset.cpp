@@ -157,19 +157,25 @@ int test_dataset (std::string const &name_file,
       double trigger_offset (0);
       std::vector<uint> triggered_antennas;
       std::vector<double> station_position_value;
+      std::vector<std::string> station_position_unit;
       std::vector<double> beam_direction_value;
+      std::vector<std::string> beam_direction_unit;
       //
       DAL::h5get_name (name,group_id);
       DAL::h5get_attribute (group_id, "TRIGGER_TYPE", trigger_type);
       DAL::h5get_attribute (group_id, "TRIGGER_OFFSET", trigger_offset);
       DAL::h5get_attribute (group_id, "STATION_POSITION_VALUE", station_position_value);
+      DAL::h5get_attribute (group_id, "STATION_POSITION_UNIT", station_position_unit);
       DAL::h5get_attribute (group_id, "BEAM_DIRECTION_VALUE", beam_direction_value);
+      DAL::h5get_attribute (group_id, "BEAM_DIRECTION_UNIT", beam_direction_unit);
       //
       cout << "-- HDF5 object name ..... = " << name                   << endl;
       cout << "-- TRIGGER_TYPE ......... = " << trigger_type           << endl;
       cout << "-- TRIGGER_OFFSET ....... = " << trigger_offset         << endl;
       cout << "-- STATION_POSITION_VALUE = " << station_position_value << endl;
+      cout << "-- STATION_POSITION_UNIT  = " << station_position_unit  << endl;
       cout << "-- BEAM_DIRECTION_VALUE . = " << beam_direction_value   << endl;
+      cout << "-- BEAM_DIRECTION_UNIT .. = " << beam_direction_unit    << endl;
     } catch (std::string message) {
       cerr << message << endl;
       nofFailedTests++;
@@ -325,7 +331,7 @@ int test_construction (std::string const &name_file,
       if (group_id > 0) {
 	// create new object
 	TBB_DipoleDataset dataset (group_id,
-				     name_dataset);
+				   name_dataset);
 	// provide summary of object's properties
 	dataset.summary(); 
 	// release group ID
@@ -334,7 +340,7 @@ int test_construction (std::string const &name_file,
 	cerr << "-- Error opening station group" << endl;
 	nofFailedTests++;
       }
-
+      
       // release file ID
       h5error = H5Fclose (file_id);
     } else {
@@ -376,7 +382,7 @@ int test_construction (std::string const &name_file,
 	cerr << "-- Error opening dipole dataaset!" << endl;
 	nofFailedTests++;
       }
-
+      
       // release file ID
       h5error = H5Fclose (file_id);
     } else {
@@ -649,11 +655,15 @@ int test_parameters (std::string const &name_file,
 
   cout << "[3] Retrieve vector valued attributes ..." << endl;
   try {
-    casa::Vector<double> antenna_position    = dataset.antenna_position_value();
-    casa::Vector<double> antenna_orientation = dataset.antenna_orientation_value();
+    casa::Vector<double> antenna_position_value = dataset.antenna_position_value();
+    casa::Vector<casa::String> antenna_position_unit = dataset.antenna_position_unit();
+    casa::Vector<double> antenna_orientation_value = dataset.antenna_orientation_value();
+    casa::Vector<casa::String> antenna_orientation_unit = dataset.antenna_orientation_unit();
     //
-    cout << "-- ANTENNA_POSITION    = " << antenna_position    << endl;
-    cout << "-- ANTENNA_ORIENTATION = " << antenna_orientation << endl;
+    cout << "-- ANTENNA_POSITION_VALUE    = " << antenna_position_value << endl;
+    cout << "-- ANTENNA_POSITION_UNIT     = " << antenna_position_unit  << endl;
+    cout << "-- ANTENNA_ORIENTATION_VALUE = " << antenna_orientation_value << endl;
+    cout << "-- ANTENNA_ORIENTATION_UNIT  = " << antenna_orientation_unit  << endl;
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;

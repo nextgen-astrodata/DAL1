@@ -144,7 +144,7 @@ namespace DAL {
     std::vector<uint> shape;
 
     // get the shape of the dataspace
-    status = h5get_dataspace_shape( shape, attribute_id );
+    status = h5get_dataspace_shape (attribute_id,shape);
 
     if (shape.size() == 1) {
       // additional local variables
