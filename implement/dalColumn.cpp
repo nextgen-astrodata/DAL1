@@ -1063,30 +1063,12 @@ namespace DAL {
                   break;
                   case casa::TpComplex:
                   {
-                    vector<int32_t> lcldims = shape();
-                    lcldims[0] = length;
-                    casa::IPosition start ( 1, 0 );
-                    casa::IPosition end ( 1, length );
-                    casa::Slicer slicer ( start, end );
-                    dal_datatype = dal_COMPLEX;
-                    vector< complex< float > > ret_valvec;
-                    try
-                      {
-                        roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
-                      }
-                    catch (casa::AipsError x)
-                      {
-                        std::cerr << "ERROR: " << x.getMesg() << endl;
-                        bpl::list tmp_list;
-                        tmp_list.append(0);
-                        bpl::numeric::array nadata(tmp_list);
-                        return nadata;
-                      }
-                    array_vals_comp = roac_comp->getColumnRange( slicer );
-                    data_object = new dalData( filetype, dal_COMPLEX, lcldims, length );
+                    roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
+                    array_vals_comp = roac_comp->getColumn();
+                    data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
                     data_object->data =
                       (complex<float> *)array_vals_comp.getStorage(deleteIt);
-                    return data_object->get_boost1();
+                    return data_object->get_boost3( offset, length );
                   }
                   break;
                   case casa::TpString:
