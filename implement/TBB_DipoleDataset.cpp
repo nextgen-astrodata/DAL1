@@ -666,6 +666,7 @@ namespace DAL { // Namespace DAL -- begin
     \return value -- Numerical value of the antenna position coordinates, e.g.
             <tt>value=[10,12,0]</tt>
   */
+#ifdef HAVE_CASA
   casa::Vector<double> TBB_DipoleDataset::antenna_position_value ()
   {
     casa::Vector<double> val;
@@ -678,6 +679,20 @@ namespace DAL { // Namespace DAL -- begin
       return casa::Vector<double> (1);
     }
   }
+#else
+  std::vector<double> TBB_DipoleDataset::antenna_position_value ()
+  {
+    std::vector<double> val;
+    
+    if (DAL::h5get_attribute(datasetID_p,
+			     attribute_name(DAL::ANTENNA_POSITION_VALUE),
+			     val)) {
+      return val;
+    } else {
+      return std::vector<double> (1);
+    }
+  }
+#endif
   
   // ------------------------------------------------------ antenna_position_unit
   
@@ -738,6 +753,7 @@ namespace DAL { // Namespace DAL -- begin
     \return value -- The numerical values describing the antenna position; this
             can be either a set of Euler angles or a normal vector.
   */
+#ifdef HAVE_CASA
   casa::Vector<double> TBB_DipoleDataset::antenna_orientation_value ()
   {
     casa::Vector<double> val;
@@ -750,6 +766,20 @@ namespace DAL { // Namespace DAL -- begin
       return casa::Vector<double> (1);
     }
   }
+#else
+  std::vector<double> TBB_DipoleDataset::antenna_orientation_value ()
+  {
+    std::vector<double> val;
+    
+    if (DAL::h5get_attribute(datasetID_p,
+			     attribute_name(DAL::ANTENNA_ORIENTATION_VALUE),
+			     val)) {
+      return val;
+    } else {
+      return std::vector<double> (1);
+    }
+  }
+#endif
   
   // --------------------------------------------------- antenna_orientation_unit
   
@@ -758,6 +788,7 @@ namespace DAL { // Namespace DAL -- begin
             antenna orientation; depending on the parametrization this can be
 	    <tt>unit="rad"</tt>, <tt>unit="deg"</tt> or <tt>unit="m"</tt>.
   */
+#ifdef HAVE_CASA
   casa::Vector<casa::String> TBB_DipoleDataset::antenna_orientation_unit ()
   {
     casa::Vector<casa::String> val;
@@ -770,6 +801,20 @@ namespace DAL { // Namespace DAL -- begin
       return casa::Vector<casa::String> (1);
     }
   }
+#else
+  std::vector<std::string> TBB_DipoleDataset::antenna_orientation_unit ()
+  {
+    std::vector<std::string> val;
+    
+    if (DAL::h5get_attribute(datasetID_p,
+			     attribute_name(DAL::ANTENNA_ORIENTATION_UNIT),
+			     val)) {
+      return val;
+    } else {
+      return std::vector<std::string> (1);
+    }
+  }
+#endif
   
   // -------------------------------------------------- antenna_orientation_frame
   
@@ -883,7 +928,7 @@ namespace DAL { // Namespace DAL -- begin
       
       hid_t memspace = H5Screate_simple (rank,
 					 shape,
-					 NULL);
+					 shape);
       hsize_t offset[1];
 
       if (filespaceID < 0) {
@@ -950,30 +995,34 @@ namespace DAL { // Namespace DAL -- begin
 					      int const &nofSamples)
   {
     if (datasetID_p > 0) {
-      bool status (true);
-      short *dataBuffer;
+      bool status   = true;
+      short *buffer = new short [nofSamples];
       
-      dataBuffer = new short [nofSamples];
-      
-      /* Retrieve the data from the file */
+      //______________________________________________________________
+      // Retrieve the data from the file
       
       status = fx (start,
 		   nofSamples,
-		   dataBuffer);
+		   buffer);
       
-      /* Copy the data from the buffer into the vector returned by this function */
+      //______________________________________________________________
+      // Copy the data from the buffer into the vector returned by
+      // this function
       
       if (status) {
 	casa::Vector<double> data (nofSamples);
 	// copy values to returned vector
 	for (int sample(0); sample<nofSamples; sample++) {
-	  data(sample) = double(dataBuffer[sample]);
+	  data(sample) = double(buffer[sample]);
 	}
-	// clean up memory
-	delete [] dataBuffer;
+	// release allocated memory
+	delete [] buffer;
 	// return data
 	return data;
       } else {
+	// release allocated memory
+	delete [] buffer;
+	// return data
 	return casa::Vector<double> (1,0);
       }
       
@@ -981,7 +1030,7 @@ namespace DAL { // Namespace DAL -- begin
       return casa::Vector<double> (1,0);
     }
   }
-
+  
   // ---------------------------------------------------------- recordDescription
   
   /*!

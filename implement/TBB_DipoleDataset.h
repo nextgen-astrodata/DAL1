@@ -205,7 +205,11 @@ namespace DAL { // Namespace DAL -- begin
     std::string feed ();
     
     //! Get the numerical value of the antenna position
+#ifdef HAVE_CASA
     casa::Vector<double> antenna_position_value ();
+#else
+    std::vector<double> antenna_position_value ();
+#endif
     
     //! Get the physical unit within which the antenna position is given
     casa::Vector<casa::String> antenna_position_unit ();
@@ -219,10 +223,18 @@ namespace DAL { // Namespace DAL -- begin
     casa::MPosition antenna_position ();
 
     //! Get the numerical values describing the antenna orientation
+#ifdef HAVE_CASA
     casa::Vector<double> antenna_orientation_value ();
+#else
+    std::vector<double> antenna_orientation_value ();
+#endif
     
     //! Get the physical unit within which the antenna orientation is given
+#ifdef HAVE_CASA
     casa::Vector<casa::String> antenna_orientation_unit ();
+#else
+    casa::Vector<casa::String> antenna_orientation_unit ();
+#endif
     
     //! Get the identifier for the reference frame of the antenna orientation
     std::string antenna_orientation_frame ();

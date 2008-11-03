@@ -445,44 +445,210 @@ int test_hdf5_attributes ()
 
   cout << "[8] Test repeated read access to attributes ..." << endl;
   try {
-    uint nofLoops (20);
+    uint nofLoops (200);
     int data_int (0);
     std::string data_string;
     std::vector<int> vec_int;
     std::vector<std::string> vec_string;
     //
-    cout << "-- ATTRIBUTE_INT :";
+    cout << "-- ATTRIBUTE_INT ...           " << std::flush;
     for (uint n(0); n<nofLoops; n++) {
       DAL::h5get_attribute (fileID, "ATTRIBUTE_INT", data_int);
-      cout << " " << data_int;
     }
-    cout << endl;
+    cout << nofLoops << " reads finished." << endl;
     //
-    cout << "-- ATTRIBUTE_STRING :";
+    cout << "-- ATTRIBUTE_STRING ...        " << std::flush;
     for (uint n(0); n<nofLoops; n++) {
       DAL::h5get_attribute (fileID, "ATTRIBUTE_STRING", data_string);
-      cout << " " << data_string;
     }
-    cout << endl;
+    cout << nofLoops << " reads finished." << endl;
     //
-    cout << "-- ATTRIBUTE_INT_VECTOR :";
+    cout << "-- ATTRIBUTE_INT_VECTOR    ... " << std::flush;
     for (uint n(0); n<nofLoops; n++) {
       DAL::h5get_attribute (fileID, "ATTRIBUTE_INT_VECTOR", vec_int);
-      cout << " " << vec_int;
     }
-    cout << endl;
+    cout << nofLoops << " reads finished." << endl;
     //
-    cout << "-- ATTRIBUTE_STRING_VECTOR :";
+    cout << "-- ATTRIBUTE_STRING_VECTOR ... " << std::flush;
     for (uint n(0); n<nofLoops; n++) {
       DAL::h5get_attribute (fileID, "ATTRIBUTE_STRING_VECTOR", vec_string);
-      cout << " " << vec_string;
     }
-    cout << endl;
+    cout << nofLoops << " reads finished." << endl;
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
   }
 
+  return nofFailedTests;
+}
+
+// -----------------------------------------------------------------------------
+
+/*!
+  \param filename -- Name of the input HDF5 file on which the access routines are
+         tested.
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function
+*/
+int test_datasets (std::string const &filename)
+{
+  std::cout << "\n[tdalCommon::test_datasets]\n" << std::endl;
+
+  int nofFailedTests (0);
+  hid_t file_id (-1);
+  hid_t group_id (-1);
+  hid_t dataset_id (-1);
+  
+  //__________________________________________________________________
+  // Open the HDF5 dataset
+  
+  std::cout << "-- opening HDF5 file ..." << std::endl;
+  file_id = H5Fopen (filename.c_str(),
+		     H5F_ACC_RDONLY,
+		     H5P_DEFAULT);
+
+  if (file_id < 0) {
+    std::cerr << "Failed to open file " << filename << std::endl;
+    return 1;
+  }
+  
+  //__________________________________________________________________
+  // Access the attributes attached to the root group of the file
+
+  try {
+    std::string name;
+    std::string telescope;
+    std::string observer;
+    std::string project;
+    std::string observation_id;
+    std::string observation_mode;
+    //
+    DAL::h5get_name (name,file_id);
+    DAL::h5get_attribute (file_id,"TELESCOPE",telescope);
+    DAL::h5get_attribute (file_id,"OBSERVER",observer);
+    DAL::h5get_attribute (file_id,"PROJECT",project);
+    DAL::h5get_attribute (file_id,"OBSERVATION_ID",observation_id);
+    DAL::h5get_attribute (file_id,"OBSERVATION_MODE",observation_mode);
+    //
+    cout << "-- TELESCOPE ...... = " << telescope        << endl;
+    cout << "-- OBSERVER ....... = " << observer         << endl;
+    cout << "-- PROJECT ........ = " << project          << endl;
+    cout << "-- OBSERVATION_ID   = " << observation_id   << endl;
+    cout << "-- OBSERVATION_MODE = " << observation_mode << endl;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  //__________________________________________________________________
+  // Open the station group
+  
+  std::cout << "-- opening station group ..." << std::endl;
+  group_id = H5Gopen1 (file_id,"Station001");
+  
+  if (group_id < 0) {
+    std::cerr << "Error opening the station group!" << std::endl;
+    return 1;
+  } 
+
+  //__________________________________________________________________
+  // Access the attributes attached to the station group
+
+  try {
+    std::string trigger_type;
+    double trigger_offset;
+    std::vector<uint> triggered_antennas;
+    std::vector<double> station_position_value;
+    std::vector<std::string> station_position_unit;
+    std::string station_position_frame;
+    std::vector<double> beam_direction_value;
+    std::vector<std::string> beam_direction_unit;
+    std::string beam_direction_frame;
+    //
+    DAL::h5get_attribute (group_id, "TRIGGER_TYPE", trigger_type);
+    DAL::h5get_attribute (group_id, "TRIGGER_OFFSET", trigger_offset);
+    DAL::h5get_attribute (group_id, "STATION_POSITION_VALUE", station_position_value);
+    DAL::h5get_attribute (group_id, "STATION_POSITION_UNIT", station_position_unit);
+    DAL::h5get_attribute (group_id, "STATION_POSITION_FRAME", station_position_frame);
+    DAL::h5get_attribute (group_id, "BEAM_DIRECTION_VALUE", beam_direction_value);
+    DAL::h5get_attribute (group_id, "BEAM_DIRECTION_UNIT", beam_direction_unit);
+    DAL::h5get_attribute (group_id, "BEAM_DIRECTION_FRAME", beam_direction_frame);
+    //
+    cout << "-- TRIGGER_TYPE ......... = " << trigger_type           << endl;
+    cout << "-- TRIGGER_OFFSET ....... = " << trigger_offset         << endl;
+    cout << "-- STATION_POSITION_VALUE = " << station_position_value << endl;
+    cout << "-- STATION_POSITION_UNIT  = " << station_position_unit  << endl;
+    cout << "-- STATION_POSITION_FRAME = " << station_position_frame << endl;
+    cout << "-- BEAM_DIRECTION_VALUE . = " << beam_direction_value   << endl;
+    cout << "-- BEAM_DIRECTION_UNIT .. = " << beam_direction_unit    << endl;
+    cout << "-- BEAM_DIRECTION_FRAME . = " << beam_direction_frame   << endl;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  //__________________________________________________________________
+  // Open the dipole dataset
+
+  std::cout << "-- opening dipole dataset ..." << std::endl;
+  dataset_id = H5Dopen1 (group_id,
+			 "001000001");
+  
+  if (dataset_id < 0) {
+    std::cerr << "Error opening the dipole dataset!" << std::endl;
+    return 1;
+  } 
+
+  //__________________________________________________________________
+  // Access the attributes attached to the dipole dataset
+  
+  try {
+    uint station_id;
+    uint rsp_id;
+    uint rcu_id;
+    uint time;
+    double sample_frequency_value;
+    std::string sample_frequency_unit;
+    std::vector<double> antenna_position_value;
+    std::vector<std::string> antenna_position_unit;
+    std::string antenna_position_frame;
+    std::vector<double> antenna_orientation_value;
+    std::vector<std::string> antenna_orientation_unit;
+    std::string antenna_orientation_frame;
+    //
+    DAL::h5get_attribute (dataset_id,"STATION_ID", station_id);
+    DAL::h5get_attribute (dataset_id,"RSP_ID", rsp_id);
+    DAL::h5get_attribute (dataset_id,"RCU_ID", rcu_id);
+    DAL::h5get_attribute (dataset_id,"TIME", time);
+    DAL::h5get_attribute (dataset_id,"SAMPLE_FREQUENCY_VALUE", sample_frequency_value);
+    DAL::h5get_attribute (dataset_id,"SAMPLE_FREQUENCY_UNIT", sample_frequency_unit);
+    DAL::h5get_attribute (dataset_id,"SAMPLE_FREQUENCY_VALUE", sample_frequency_value);
+    DAL::h5get_attribute (dataset_id,"SAMPLE_FREQUENCY_UNIT", sample_frequency_unit);
+    DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_VALUE", antenna_position_value);
+    DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_UNIT", antenna_position_unit);
+    DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_FRAME", antenna_position_frame);
+    DAL::h5get_attribute (dataset_id,"ANTENNA_ORIENTATION_VALUE", antenna_orientation_value);
+    DAL::h5get_attribute (dataset_id,"ANTENNA_ORIENTATION_UNIT", antenna_orientation_unit);
+    DAL::h5get_attribute (dataset_id,"ANTENNA_ORIENTATION_FRAME", antenna_orientation_frame);
+    //
+    cout << "-- STATION_ID .............. = " << station_id << endl;
+    cout << "-- RSP_ID .................. = " << rsp_id     << endl;
+    cout << "-- RCU_ID .................. = " << rcu_id     << endl;
+    cout << "-- TIME .................... = " << time       << endl;
+    cout << "-- SAMPLE_FREQUENCY_VALUE .. = " << sample_frequency_value << endl;
+    cout << "-- SAMPLE_FREQUENCY_UNIT ... = " << sample_frequency_unit  << endl;
+    cout << "-- ANTENNA_POSITION_VALUE .. = " << antenna_position_value << endl;
+    cout << "-- ANTENNA_POSITION_UNIT ... = " << antenna_position_unit  << endl;
+    cout << "-- ANTENNA_POSITION_FRAME .. = " << antenna_position_frame << endl;
+    cout << "-- ANTENNA_ORIENTATION_VALUE = " << antenna_orientation_value << endl;
+    cout << "-- ANTENNA_ORIENTATION_UNIT  = " << antenna_orientation_unit  << endl;
+    cout << "-- ANTENNA_ORIENTATION_FRAME = " << antenna_orientation_frame << endl;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
@@ -503,6 +669,10 @@ int main (int argc,
   
   nofFailedTests += test_operators ();
   nofFailedTests += test_hdf5_attributes ();
+
+  if (have_filename) {
+    test_datasets (filename);
+  }
 
   return nofFailedTests;
 }

@@ -35,13 +35,14 @@ endif (USG_ROOT)
 ##
 ## ==============================================================================
 
-option (DAL_BUILD_TESTS "Build the test programs?" 1)
-option (DAL_BUILD_APPS "Build the applications?" 1)
-option (DAL_ENABLE_TESTING "Build the test programs?" 1)
-option (DAL_COMPILER_WARNINGS "Enable standard set of compiler warnings?" ON)
-option (DAL_PYTHON_BINDINGS "Create python bindings?" 1)
-option (DAL_DEBUGGING_MESSAGES "Print debugging information?" 0)
-option (DAL_VERBOSE_CONFIGURE "Verbose output during configuration?" 0)
+option (DAL_BUILD_TESTS        "Build the test programs?"                  YES )
+option (DAL_BUILD_APPS         "Build the applications?"                   YES )
+option (DAL_ENABLE_TESTING     "Build the test programs?"                  YES )
+option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?" ON  )
+option (DAL_PYTHON_BINDINGS    "Create python bindings?"                   YES )
+option (DAL_MEMORY_CHECKING    "Enable usage of memory checker?"           NO  )
+option (DAL_DEBUGGING_MESSAGES "Print debugging information?"              NO  )
+option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"      NO  )
 
 ## Handle option: testing mode on/off
 
@@ -59,6 +60,7 @@ if (NOT DAL_VERBOSE_CONFIGURE)
   set (GSL_FIND_QUIETLY ON)
   set (HDF5_FIND_QUIETLY ON)
   set (PYTHON_FIND_QUIETLY ON)
+  set (MPATROL_FIND_QUIETLY ON)
   set (MYSQL_FIND_QUIETLY ON)
 endif (NOT DAL_VERBOSE_CONFIGURE)
 
@@ -78,7 +80,7 @@ include (CPack)
 
 set (NO_DEFAULT_PATH ON)
 
-## ---------------------------------------------------------
+##__________________________________________________________
 ## system libraries
 
 find_library (libdl dl ${lib_locations})
@@ -87,7 +89,7 @@ find_library (libpthread pthread ${lib_locations})
 find_library (libutil util ${lib_locations})
 find_library (libz z ${lib_locations})
 
-## ---------------------------------------------------------
+##__________________________________________________________
 ## Boost
 
 set (BOOST_pythonOnly NO )
@@ -96,26 +98,33 @@ if (NOT HAVE_BOOST)
   include (FindBoost)
 endif (NOT HAVE_BOOST)
 
-## ---------------------------------------------------------
+##__________________________________________________________
 ## casacore
 
 if (NOT HAVE_CASACORE)
   include (FindCASACORE)
 endif (NOT HAVE_CASACORE)
 
-## ---------------------------------------------------------
+##__________________________________________________________
 ## CFITSIO
 
 if (NOT HAVE_CFITSIO)
   include (FindCFITSIO)
 endif (NOT HAVE_CFITSIO)
 
-## ---------------------------------------------------------
+##__________________________________________________________
 ## HDF5
 
 if (NOT HAVE_HDF5)
   include (FindHDF5)
 endif (NOT HAVE_HDF5)
+
+## ---------------------------------------------------------
+## mpatrol
+
+if (NOT HAVE_MPATROL)
+  include (FindMPatrol)
+endif (NOT HAVE_MPATROL)
 
 ## ---------------------------------------------------------
 ## MySQL
@@ -124,14 +133,14 @@ if (NOT HAVE_MYSQL)
   include (FindMySQL)
 endif (NOT HAVE_MYSQL)
 
-## ---------------------------------------------------------
-## GSL
+##__________________________________________________________
+## GNU scientific library (GSL)
 
 if (NOT HAVE_GSL)
   include (FindGSL)
 endif (NOT HAVE_GSL)
 
-## ---------------------------------------------------------
+##__________________________________________________________
 ## PYTHON (we use custom module in place of FindPythonLibs)
 
 if (NOT HAVE_PYTHON)
@@ -263,6 +272,21 @@ else (HAVE_GSL)
   message (STATUS "[DAL] GSL installation incomplete!")
 endif (HAVE_GSL)
 
+##__________________________________________________________
+## Option: Enable checking against memory leaks
+
+if (DAL_MEMORY_CHECKING)
+  
+  if (HAVE_MPATROL)
+    include_directories (${MPATROL_INCLUDES})
+    add_definitions (-DHAVE_MPATROL)
+  else (HAVE_MPATROL)
+    message (STATUS "[DAL] mpatrol installation incomplete!")
+    set (DAL_MEMORY_CHECKING OFF)
+  endif (HAVE_MPATROL)
+  
+endif (DAL_MEMORY_CHECKING)
+
 ## -----------------------------------------------------------------------------
 ## Installation
 
@@ -317,14 +341,16 @@ if (DAL_VERBOSE_CONFIGURE)
   message (STATUS "+============================================================+")
   message (STATUS "| DAL: Summary of configuration settings                     |")
   message (STATUS "+------------------------------------------------------------+")
-  message (STATUS " HDF5 includes     = ${HDF5_INCLUDES}")
-  message (STATUS " HDF5 library      = ${HDF5_LIBRARIES}")
-  message (STATUS " Boost includes    = ${BOOST_INCLUDES}")
-  message (STATUS " Boost library     = ${BOOST_LIBRARIES}")
-  message (STATUS " Python includes   = ${PYTHON_INCLUDES}")
-  message (STATUS " NumPy includes    = ${NUMPY_INCLUDES}")
-  message (STATUS " num_util includes = ${NUM_UTIL_INCLUDES}")
-  message (STATUS " Python library    = ${PYTHON_LIBRARIES}")
-  message (STATUS " casacore          = ${HAVE_CASACORE}")
+  message (STATUS " Create Python bindings = ${DAL_PYTHON_BINDINGS}")
+  message (STATUS "+------------------------------------------------------------+")
+  message (STATUS " HDF5 includes          = ${HDF5_INCLUDES}")
+  message (STATUS " HDF5 library           = ${HDF5_LIBRARIES}")
+  message (STATUS " Boost includes         = ${BOOST_INCLUDES}")
+  message (STATUS " Boost library          = ${BOOST_LIBRARIES}")
+  message (STATUS " Python includes        = ${PYTHON_INCLUDES}")
+  message (STATUS " NumPy includes         = ${NUMPY_INCLUDES}")
+  message (STATUS " num_util includes      = ${NUM_UTIL_INCLUDES}")
+  message (STATUS " Python library         = ${PYTHON_LIBRARIES}")
+  message (STATUS " casacore               = ${HAVE_CASACORE}")
   message (STATUS "+------------------------------------------------------------+")
 endif (DAL_VERBOSE_CONFIGURE)

@@ -299,8 +299,7 @@ namespace DAL {
       
       if (shape.size() > 0) {
 	// Buffer for the underlying HDF5 library call
-	T *buffer;
-	buffer = new T [shape[0]];
+	T *buffer = new T [shape[0]];
 	// read attribute value into buffer
 	h5error = H5Aread (attribute_id,
 			   native_datatype_id,
@@ -391,8 +390,10 @@ namespace DAL {
       hid_t   attribute_id = 0;
       hid_t   dataspace_id = 0;
       hsize_t dims[1]      = { size };
+/*       hsize_t maxdims[1]   = { size }; */
+      hsize_t *maxdims   = NULL;
   
-      dataspace_id  = H5Screate_simple( 1, dims, NULL );
+      dataspace_id  = H5Screate_simple( 1, dims, maxdims );
       if ( dataspace_id < 0 ) {
 	std::cerr << "ERROR: Could not set attribute '" << name
 		  << "' dataspace.\n";
@@ -437,10 +438,8 @@ namespace DAL {
 			  std::string name,
 			  std::vector<T> const &value)
     {
-      T * data;
       int nelem = value.size();
-      
-      data = new T [nelem];
+      T * data  = new T [nelem];
       
       for (int n(0); n<nelem; n++) {
 	data[n] = value[n];
@@ -473,6 +472,8 @@ namespace DAL {
 			      name,
 			      data,
 			      nelem);
+
+      delete [] data;
     }
   
   //_____________________________________________________________________________
@@ -491,12 +492,80 @@ namespace DAL {
   //! Get the value of an attribute attached to a group or dataset
   template <typename T>
     bool h5get_attribute (hid_t const &attribute_id,
-			  casa::Vector<T> &value);
+			  casa::Vector<T> &value)
+    {
+      bool status                   = true;
+      herr_t h5error                = 0;
+      hid_t datatype_id             = H5Aget_type (attribute_id);
+      hid_t native_datatype_id      = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
+      std::vector<uint> shape;
+      
+      status = h5get_dataspace_shape (attribute_id,shape);
+      
+      if (shape.size() > 0) {
+	// Buffer for the underlying HDF5 library call
+	T *buffer = new T [shape[0]];
+	// read attribute value into buffer
+	h5error = H5Aread (attribute_id,
+			   native_datatype_id,
+			   buffer);
+	// copy retrieved data to returned vector
+	if (h5error == 0) {
+	  // adjust size of vector returning the result
+	  value.resize(shape[0]);
+	  // copy the contents of the buffer
+	  for (uint n(0); n<shape[0]; n++) {
+	    value(n) = buffer[n];
+	  }
+	}
+	else {
+	  cerr << "[h5get_attribute] Error reading value of attribute." << endl;
+	  status = false;
+	}
+	// release memory allocated for temporary buffer
+	delete [] buffer;
+	buffer = NULL;
+      }
+      else {
+	cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
+	     << endl;
+	status = false;
+      }
+      
+      return status;
+    }
   //! Get the value of an attribute attached to a group or dataset
   template <typename T>
     bool h5get_attribute (hid_t const &location_id,
 			  std::string const &name,
-			  casa::Vector<T> &value);
+			  casa::Vector<T> &value)
+    {
+      bool status (true);
+      hid_t attribute_id (0);
+      herr_t h5error (0);
+      
+      // get the identifier for the attribute
+      attribute_id = H5Aopen_name(location_id,
+				  name.c_str());
+      
+      if (attribute_id > 0) {
+	/* forward the call to retrieve the actual value of the attribute */
+	status = h5get_attribute (attribute_id,
+				  value);
+	/* release the identifier used for retrieval of the value */
+	h5error = H5Aclose (attribute_id);
+	/* clean up the error message buffer */
+	h5error = H5Eclear1();
+      }
+      else {
+	std::cerr << "[h5get_attribute] No valid ID for attribute "
+		  << name
+		  << endl;
+	status = false;
+      }
+      
+      return status;
+    }
   //! Get physical quantity attribute as casa::Quantity
   Quantity h5get_quantity (hid_t const &location_id,
 			   DAL::Attributes const &value,
@@ -536,14 +605,6 @@ namespace DAL {
   
 #endif  // HAVE_CASA
   
-  // ============================================================================
-  //
-  //  Access to Dataspaces and Datatypes
-  //
-  // ============================================================================
-
-
-
   // ============================================================================
   //
   //  Boost.Python wrappers

@@ -105,81 +105,81 @@ namespace DAL {
   bool h5get_name (std::string &name,
                    hid_t const &object_id)
   {
-    herr_t h5error        = 0;
+    bool status (true);
     H5I_type_t objectType = H5Iget_type (object_id);
 
-    /* Check: does the object ID point to a valid object type? */
+    //________________________________________________________________
+    // Check: does the object ID point to a valid object type?
 
-    if (objectType == H5I_BADID)
-      {
-        return false;
+    if (objectType == H5I_BADID) {
+      return false;
+    }
+    
+    //______________________________________________________
+    // Retrive the name of the object within the HDF5 file
+
+    ssize_t name_length = 0;
+    size_t buffer_size  = 10;
+    
+    //________________________________________________________________
+    // Determine the proper length of the name string
+
+    char *buffer        = new char[buffer_size];
+
+    switch (objectType) {
+    case H5I_FILE:
+      name_length = H5Fget_name (object_id,
+				 buffer,
+				 buffer_size);
+      break;
+    default:
+      name_length = H5Iget_name (object_id,
+				 buffer,
+				 buffer_size);
+      break;
+    };
+
+    delete [] buffer;
+
+    //________________________________________________________________
+    
+    if (name_length > 0) {
+
+      // ... and readjust it to the proper values retrieved above
+      buffer_size = name_length+1;
+      char *buffer = new char[buffer_size];
+
+      // retrieve the name of the object
+      switch (objectType) {
+      case H5I_FILE:
+	name_length = H5Fget_name (object_id,
+				   buffer,
+				   buffer_size);
+	break;
+      default:
+	name_length = H5Iget_name (object_id,
+				   buffer,
+				   buffer_size);
+	break;
       }
-
-    /* If the object ID is valid, we try to retrieve its name. */
-
-    ssize_t name_length   = 0;
-    size_t buffer_size    = 10;
-    char *buffer;
-
-    buffer = new char[buffer_size];
-
-    if (objectType == H5I_FILE)
-      {
-        // first call to get proper length of the name string
-        name_length = H5Fget_name (object_id,
-                                   buffer,
-                                   buffer_size);
-        // clear error stack
-        h5error = H5Eclear1 ();
-        // retrieve the file name
-        if (name_length > 0)
-          {
-            // release the previously allocated buffer ...
-            delete [] buffer;
-            // ... and readjust it to the proper values retrieved above
-            buffer_size = name_length+1;
-            buffer      = new char[buffer_size];
-            // second function call to retrieve the object's name
-            name_length = H5Fget_name (object_id,
-                                       buffer,
-                                       buffer_size);
-            name = buffer;
-          }
-        else
-          {
-            std::cerr << "[h5get_name] Object name of zero characters!" << endl;
-            return false;
-          }
-      }
-    else
-      {
-        name_length = H5Iget_name (object_id,
-                                   buffer,
-                                   buffer_size);
-        h5error = H5Eclear1 ();
-
-        if (name_length > 0)
-          {
-            // release the previously allocated buffer ...
-            delete [] buffer;
-            // ... and readjust it to the proper values retrieved above
-            buffer_size = name_length+1;
-            buffer      = new char[buffer_size];
-            // second function call to retrieve the object's name
-            name_length = H5Iget_name (object_id,
-                                       buffer,
-                                       buffer_size);
-            name = buffer;
-          }
-        else
-          {
-            return false;
-          }
-      }
-
+      
+      // copy the result to the returned variable
+      std::string tmp = buffer;
+      name = tmp;
+      
+      // Release allocated memory
+      delete [] buffer;
+      buffer = NULL;
+      
+    } 
+    else {
+      std::cerr << "[h5get_name] Object name of zero characters!" << endl;
+      status = false;
+    }
+    
     return true;
   }
-
+  
   // ----------------------------------------------------------------- h5get_name
 
   /*!
@@ -196,22 +196,20 @@ namespace DAL {
                    hid_t const &object_id,
                    hsize_t const &index)
   {
-//     H5I_type_t objectType = H5Iget_type (object_id);
-    hsize_t nofObjects    = 0;
-    herr_t h5error        = 0;
+    hsize_t nofObjects = 0;
+    herr_t h5error     = 0;
 
     // Check if the transient index is within the valid range
 
     h5error = H5Gget_num_objs(object_id,
                               &nofObjects);
 
-    if (index > nofObjects)
-      {
-        std::cerr << "[h5get_name] Running index outside valid range!"
-                  << endl;
-        return false;
-      }
-
+    if (index > nofObjects) {
+      std::cerr << "[h5get_name] Running index outside valid range!"
+		<< endl;
+      return false;
+    }
+    
     /*
       Get the name of the object identified by the transient index; first
       function call is to retrieve retrieve the number of characters in the
@@ -220,53 +218,45 @@ namespace DAL {
 
     ssize_t name_length = 0;
     size_t buffer_size  = 10;
-    char *buffer;
 
     // first function call to get the number of characters in the object's name
-    try
-      {
-        buffer      = new char[buffer_size];
-        name_length = H5Gget_objname_by_idx (object_id,
-                                             index,
-                                             buffer,
-                                             buffer_size);
-      }
-    catch (std::string message)
-      {
-        std::cerr << "[h5get_name] Error calling H5Gget_objname_by_idx; "
-                  << message
-                  << endl;
-        return false;
-      }
-
-    if (name_length > 0)
-      {
-        // release the previously allocated buffer ...
-        delete [] buffer;
-        // ... and readjust it to the proper values retrieved above
-        buffer_size = name_length+1;
-        buffer      = new char[buffer_size];
-        // second function call to retrieve the object's name
-        name_length = H5Gget_objname_by_idx (object_id,
-                                             index,
-                                             buffer,
-                                             buffer_size);
-        name = buffer;
-      }
-    else
-      {
-        std::cerr << "[h5get_name] Object name of zero characters!" << endl;
-        return false;
-      }
-
-    // release the previously allocated buffer ...
-    delete [] buffer;
-
+    try {
+      char *buffer = new char[buffer_size];
+      name_length = H5Gget_objname_by_idx (object_id,
+					   index,
+					   buffer,
+					   buffer_size);
+      delete [] buffer;
+    }
+    catch (std::string message) {
+      std::cerr << "[h5get_name] Error calling H5Gget_objname_by_idx; "
+		<< message
+		<< endl;
+      return false;
+    }
+    
+    if (name_length > 0) {
+      buffer_size  = name_length+1;
+      char *buffer = new char[buffer_size];
+      // second function call to retrieve the object's name
+      name_length = H5Gget_objname_by_idx (object_id,
+					   index,
+					   buffer,
+					   buffer_size);
+      std::string tmp = buffer;
+      name = tmp;
+      delete [] buffer;
+    }
+    else {
+      std::cerr << "[h5get_name] Object name of zero characters!" << endl;
+      return false;
+    }
+    
     return true;
   }
-
+  
   // ------------------------------------------------------------- h5get_filename
-
+  
   /*!
     \retval filename -- Name of the HDF5 file within which the object is
             contained
@@ -320,7 +310,7 @@ namespace DAL {
     
     return status;
   }
-  
+
   // ============================================================================
   //
   //  Get HDF5 attributes
@@ -408,12 +398,11 @@ namespace DAL {
 
     opdata = opdata;  // avoid compiler warnings of unused parameter
 
-    if (H5T_INTEGER == H5Tget_class(atype))
-      {
-        int point_out = 0;
-        ret  = H5Aread(attr, H5T_NATIVE_INT, &point_out);
-        cout << name << " = " << point_out << endl;
-      }
+    if (H5T_INTEGER == H5Tget_class(atype)) {
+      int point_out = 0;
+      ret  = H5Aread(attr, H5T_NATIVE_INT, &point_out);
+      cout << name << " = " << point_out << endl;
+    }
     else if (H5T_FLOAT == H5Tget_class(atype))
       {
         size_t npoints = H5Sget_simple_extent_npoints(aspace);
@@ -460,29 +449,31 @@ namespace DAL {
   {
     bool status (true);
     herr_t h5error;
-    hid_t dataspace_id        = H5Dget_space (dataset_id);
-    int rank                  = H5Sget_simple_extent_ndims (dataspace_id);
-    hsize_t * dataset_dims    = NULL;
-    hsize_t * dataset_maxdims = NULL;
-
+    hid_t dataspace_id = H5Dget_space (dataset_id);
+    int rank           = H5Sget_simple_extent_ndims (dataspace_id);
+    
     if (rank > 0) {
-        shape.resize(rank);
-        dataset_dims    = new hsize_t[rank];
-        dataset_maxdims = new hsize_t[rank];
-	//
-        h5error = H5Sget_simple_extent_dims(dataspace_id,
-                                            dataset_dims,
-                                            dataset_maxdims);
-	//
-	if (maxdims) {
-	  for (int n(0); n<rank; n++) {
-	    shape[n] = dataset_maxdims[n];
-	  }
-	} else {
-	  for (int n(0); n<rank; n++) {
-	    shape[n] = dataset_dims[n];
-	  }
+      shape.resize(rank);
+      hsize_t * dataset_dims    = new hsize_t[rank];
+      hsize_t * dataset_maxdims = new hsize_t[rank];
+      //
+      h5error = H5Sget_simple_extent_dims(dataspace_id,
+					  dataset_dims,
+					  dataset_maxdims);
+      // copy retrieved values to returned variable
+      if (maxdims) {
+	for (int n(0); n<rank; n++) {
+	  shape[n] = dataset_maxdims[n];
 	}
+      } else {
+	for (int n(0); n<rank; n++) {
+	  shape[n] = dataset_dims[n];
+	}
+      }
+      
+      // release allocated memory
+      delete [] dataset_dims;
+      delete [] dataset_maxdims;
     }
     else {
       shape.resize(1);
@@ -491,79 +482,13 @@ namespace DAL {
     }
     
     // release allocated identifiers
-    if (dataspace_id > 0)
-      {
-        h5error = H5Sclose (dataspace_id);
-        h5error = H5Eclear1 ();
-      }
-    
-    if ( dataset_dims )
-      {
-        delete [] dataset_dims;
-        dataset_dims = NULL;
-      }
-
-    return status;
-  }
-
-  // -------------------------------------------------------- h5get_dataset_shape
-
-#ifdef HAVE_CASA
-  /*!
-    \param dataset_id -- Identifier of the dataset within the HDF5 file
-    \reval shape -- The shape of the dataset i.e.the length of the array axes in
-           case of multidimensional data
-    \param maxdims -- Return maximum dimensions instead of present dimensions?
-
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered
-  */
-  bool h5get_dataset_shape (hid_t const &attribute_id,
-			    casa::IPosition &shape,
-			    bool const &maxdims)
-  {
-    bool status (true);
-    herr_t h5error (0);
-    hid_t dataset_id = H5Dget_space (attribute_id);
-    int rank           = H5Sget_simple_extent_ndims (dataset_id);
-    hsize_t *dataset_dims;
-    hsize_t *dataset_maxdims;
-
-    if (rank > 0) {
-      shape.resize(rank);
-      dataset_dims    = new hsize_t[rank];
-      dataset_maxdims = new hsize_t[rank];
-      // get dimensions of simple dataspace
-      h5error = H5Sget_simple_extent_dims(dataset_id,
-					  dataset_dims,
-					  dataset_maxdims);
-      // copy dataset information to return value
-      if (maxdims) {
-	for (int n(0); n<rank; n++) {
-	  shape(n) = dataset_maxdims[n];
-	}
-      } else {
-	for (int n(0); n<rank; n++) {
-	  shape(n) = dataset_dims[n];
-	}
-      }
-    }
-    else {
-      shape.resize(1);
-      shape(0) = 0;
-      status = false;
+    if (dataspace_id > 0) {
+      h5error = H5Sclose (dataspace_id);
+      h5error = H5Eclear1 ();
     }
     
-    // release allocated identifiers
-    if (dataset_id > 0)
-      {
-        h5error = H5Sclose (dataset_id);
-        h5error = H5Eclear1 ();
-      }
-
     return status;
   }
-#endif
 
   // ------------------------------------------------------ h5get_dataspace_shape
 
@@ -583,14 +508,12 @@ namespace DAL {
     herr_t h5error;
     hid_t dataspace_id   = H5Aget_space (attribute_id);
     int rank             = H5Sget_simple_extent_ndims (dataspace_id);
-    hsize_t * dataspace_dims    = NULL;
-    hsize_t * dataspace_maxdims = NULL;
 
     if (rank > 0) {
       // set array sizes
       shape.resize(rank);
-      dataspace_dims    = new hsize_t[rank];
-      dataspace_maxdims = new hsize_t[rank];
+      hsize_t * dataspace_dims    = new hsize_t[rank];
+      hsize_t * dataspace_maxdims = new hsize_t[rank];
       // get dataspace dimensions
       h5error = H5Sget_simple_extent_dims(dataspace_id,
 					  dataspace_dims,
@@ -605,6 +528,10 @@ namespace DAL {
 	  shape[n] = dataspace_dims[n];
 	}
       }
+      
+      // release allocated memory
+      delete [] dataspace_dims;
+      delete [] dataspace_maxdims;
     }
     else {
       shape.resize(1);
@@ -618,75 +545,8 @@ namespace DAL {
       h5error = H5Eclear1 ();
     }
     
-    if ( dataspace_dims ) {
-      delete [] dataspace_dims;
-      delete [] dataspace_maxdims;
-      dataspace_dims    = NULL;
-      dataspace_maxdims = NULL;
-    }
-    
     return status;
   }
-  
-  // ------------------------------------------------------ h5get_dataspace_shape
-
-#ifdef HAVE_CASA
-  /*!
-
-    \param attribute_id -- Identifier of the attribute within the HDF5 file
-    \reval shape -- The shape of the dataspace attached to the attribute, i.e.
-           the length of the array axes in case of multidimensional data
-
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered
-  */
-  bool h5get_dataspace_shape (hid_t const &attribute_id,
-			      casa::IPosition &shape,
-			      bool const &maxdims)
-  {
-    bool status (true);
-    herr_t h5error (0);
-    hid_t dataspace_id = H5Aget_space (attribute_id);
-    int rank           = H5Sget_simple_extent_ndims (dataspace_id);
-    hsize_t *dataspace_dims;
-    hsize_t *dataspace_maxdims;
-
-    if (rank > 0) {
-      shape.resize(rank);
-      dataspace_dims    = new hsize_t[rank];
-      dataspace_maxdims = new hsize_t[rank];
-      //
-      h5error = H5Sget_simple_extent_dims(dataspace_id,
-					  dataspace_dims,
-					  dataspace_maxdims);
-      //
-      if (maxdims) {
-	for (int n(0); n<rank; n++) {
-	  shape(n) = dataspace_maxdims[n];
-	}
-      } else {
-	for (int n(0); n<rank; n++) {
-	  shape(n) = dataspace_dims[n];
-	}
-      }
-    }
-    else
-      {
-        shape.resize(1);
-        shape(0) = 0;
-        status = false;
-      }
-    
-    // release allocated identifiers
-    if (dataspace_id > 0)
-      {
-        h5error = H5Sclose (dataspace_id);
-        h5error = H5Eclear1 ();
-      }
-    
-    return status;
-  }
-#endif
   
   // ------------------------------------------------------ h5setAttribute_string
   
@@ -782,44 +642,45 @@ namespace DAL {
   bool h5get_attribute (hid_t const &attribute_id,
 			std::string &value)
   {
-    bool status (true);
-    herr_t h5error (0);
-    hid_t dataspace_id            = H5Aget_space (attribute_id);
-    hid_t datatype_id             = H5Aget_type (attribute_id);
-    H5T_class_t datatype_class_id = H5Tget_class (datatype_id);
-    hid_t native_datatype_id      = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
+    bool status       = true;
+    herr_t h5error    = 0;
+    hid_t datatype_id = H5Aget_type (attribute_id);
     
     if (datatype_id > 0) {
+
+      H5T_class_t datatype_class_id = H5Tget_class (datatype_id);
+      hid_t native_datatype_id      = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
+      hsize_t datatype_size         = H5Tget_size (datatype_id);
+      char * data;
+
       if (datatype_class_id == H5T_STRING) {
-	hsize_t datatype_size         = H5Tget_size (datatype_id);
 	htri_t is_variable_string     = H5Tis_variable_str(datatype_id);
 	
 #ifdef DEBUGGING_MESSAGES
 	std::cout << "[DAL::h5get_attribute]" << endl;
 	std::cout << "-- Attribute ID       = " << attribute_id  << endl;
-	std::cout << "-- Dataspace ID       = " << dataspace_id  << endl;
 	std::cout << "-- Datatype ID        = " << datatype_id   << endl;
 	std::cout << "-- Datatype size      = " << datatype_size << endl;
 	std::cout << "-- Is variable length = " << is_variable_string << endl;
 #endif
 	
 	if (is_variable_string) {
-	  char *data;
 	  h5error = H5Aread(attribute_id,
 			    native_datatype_id,
 			    &data);
 	  if (h5error == 0) {
-	    value = data;
+	    std::string tmp = data;
+	    value = tmp;
 	  }
 	}
 	else {
-	  char* data;
 	  data = new char[datatype_size];
 	  h5error = H5Aread(attribute_id,
 			    datatype_id,
 			    data);
 	  if (h5error == 0) {
-	    value = data;
+	    std::string tmp = data;
+	    value = tmp;
 	  }
 	}
 	
@@ -828,6 +689,13 @@ namespace DAL {
 	  status = false;
 	}
       }
+      
+      // release allocated memory
+      if (data != NULL) {
+	delete [] data;
+	data = NULL;
+      }
+      
     }
     else {
       value  = "";
@@ -836,7 +704,6 @@ namespace DAL {
     
     // Release identifiers
     H5Tclose (datatype_id);
-    H5Sclose (dataspace_id);
     // clean up the error message buffer
     h5error = H5Eclear1();
 
@@ -863,7 +730,7 @@ namespace DAL {
       status = h5get_dataspace_shape (attribute_id,shape);
       
       if (shape.size() > 0) {
-	char *buffer[shape[0]];
+	char * buffer[shape[0]];
 	// Read the attribute data from the file
 	h5error = H5Aread(attribute_id,
 			  native_datatype_id,
@@ -874,10 +741,6 @@ namespace DAL {
 	  for (uint n(0); n<shape[0]; n++) {
 	    value[n] = buffer[n];
 	  }
-	}
-	// Release allocated memory
-	for (uint n(0); n<shape[0]; n++) {
-	  delete buffer[n];
 	}
       }
       else {
@@ -1094,51 +957,129 @@ namespace DAL {
 			    value,
 			    size);
   }
-  
-  //_____________________________________________________________________________
-  // Access to HDF5 attributes through casacore array classes
+
+
+  // ============================================================================
+  //
+  // Access to HDF5 attributes through casacore (array) classes
+  //
+  // ============================================================================
   
 #ifdef HAVE_CASA
   
-  // ------------------------------------------------------------ h5get_attribute
-  
-  template <typename T>
-  bool h5get_attribute (hid_t const &attribute_id,
-			casa::Vector<T> &value)
+  //_____________________________________________________________________________
+  // Get the shape of the dataspace associated with the attribute
+
+  /*!
+
+    \param attribute_id -- Identifier of the attribute within the HDF5 file
+    \reval shape -- The shape of the dataspace attached to the attribute, i.e.
+           the length of the array axes in case of multidimensional data
+
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered
+  */
+  bool h5get_dataspace_shape (hid_t const &attribute_id,
+			      casa::IPosition &shape,
+			      bool const &maxdims)
   {
     bool status (true);
-    casa::IPosition shape;
-    
-    // get the shape of the dataspace
-    status = h5get_dataspace_shape (attribute_id,shape);
-    
-    if (shape.nelements() == 1) {
-      // adjust size of vector returning the result
-      value.resize(shape);
-      // additional local variables
-      herr_t h5error (0);
-      hid_t datatype_id  = H5Aget_type (attribute_id);
-      T *buffer;
-      // allocate buffer memory
-      buffer = new T [shape(0)];
-      // read attribute value into buffer
-      h5error = H5Aread (attribute_id,
-			 datatype_id,
-			 buffer);
-      // copy retrieved data to returned vector
-      if (h5error == 0) {
-	for (int n(0); n<shape(0); n++) {
-	  value(n) = buffer[n];
+    herr_t h5error (0);
+    hid_t dataspace_id = H5Aget_space (attribute_id);
+    int rank           = H5Sget_simple_extent_ndims (dataspace_id);
+
+    if (rank > 0) {
+      shape.resize(rank);
+      hsize_t * dataspace_dims    = new hsize_t[rank];
+      hsize_t * dataspace_maxdims = new hsize_t[rank];
+      //
+      h5error = H5Sget_simple_extent_dims(dataspace_id,
+					  dataspace_dims,
+					  dataspace_maxdims);
+      //
+      if (maxdims) {
+	for (int n(0); n<rank; n++) {
+	  shape(n) = dataspace_maxdims[n];
+	}
+      } else {
+	for (int n(0); n<rank; n++) {
+	  shape(n) = dataspace_dims[n];
 	}
       }
-      else {
-	cerr << "[h5get_attribute] Error reading value of attribute." << endl;
-	status = false;
-      }
+
+      // release allocated memory
+      delete [] dataspace_dims;
+      delete [] dataspace_maxdims;
     }
     else {
-      cerr << "[h5get_attribute] Wrong shape of attribute dataspace!" << endl;
+      shape.resize(1);
+      shape(0) = 0;
       status = false;
+    }
+    
+    // release allocated identifiers
+    if (dataspace_id > 0) {
+      h5error = H5Sclose (dataspace_id);
+      h5error = H5Eclear1 ();
+    }
+    
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  // Get the shape of a dataset
+
+  /*!
+    \param dataset_id -- Identifier of the dataset within the HDF5 file
+    \reval shape -- The shape of the dataset i.e.the length of the array axes in
+           case of multidimensional data
+    \param maxdims -- Return maximum dimensions instead of present dimensions?
+
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered
+  */
+  bool h5get_dataset_shape (hid_t const &attribute_id,
+			    casa::IPosition &shape,
+			    bool const &maxdims)
+  {
+    bool status (true);
+    herr_t h5error (0);
+    hid_t dataset_id = H5Dget_space (attribute_id);
+    int rank         = H5Sget_simple_extent_ndims (dataset_id);
+
+    if (rank > 0) {
+      shape.resize(rank);
+      hsize_t * dataset_dims    = new hsize_t[rank];
+      hsize_t * dataset_maxdims = new hsize_t[rank];
+      // get dimensions of simple dataspace
+      h5error = H5Sget_simple_extent_dims(dataset_id,
+					  dataset_dims,
+					  dataset_maxdims);
+      // copy dataset information to return value
+      if (maxdims) {
+	for (int n(0); n<rank; n++) {
+	  shape(n) = dataset_maxdims[n];
+	}
+      } else {
+	for (int n(0); n<rank; n++) {
+	  shape(n) = dataset_dims[n];
+	}
+      }
+
+      // release allocated memory
+      delete [] dataset_dims;
+      delete [] dataset_maxdims;
+    }
+    else {
+      shape.resize(1);
+      shape(0) = 0;
+      status = false;
+    }
+    
+    // release allocated identifiers
+    if (dataset_id > 0) {
+      h5error = H5Sclose (dataset_id);
+      h5error = H5Eclear1 ();
     }
     
     return status;
@@ -1146,32 +1087,41 @@ namespace DAL {
 
   // ------------------------------------------------------------ h5get_attribute
   
-  template <typename T>
-  bool h5get_attribute (hid_t const &location_id,
-                        std::string const &name,
-			casa::Vector<T> &value)
-  {
-    bool status (true);
-    hid_t attribute_id (0);
-    
-    // get the identifier for the attribute
-    attribute_id = H5Aopen_name(location_id,
-                                name.c_str());
-    
-    if (attribute_id > 0) {
-      status = h5get_attribute (attribute_id,
-				value);
-      H5Aclose (attribute_id);
-    }
-    else
-      {
-        cerr << "[h5get_attribute] No valid ID for attribute " << name << endl;
-        status = false;
+  template <>
+    bool h5get_attribute (hid_t const &attribute_id,
+			  casa::Vector<casa::String> &value)
+    {
+      bool status              = true;
+      herr_t h5error           = 0;
+      hid_t datatype_id        = H5Aget_type (attribute_id);
+      hid_t native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
+      std::vector<uint> shape;
+      
+      status = h5get_dataspace_shape (attribute_id,shape);
+      
+      if (shape.size() > 0) {
+	char * buffer[shape[0]];
+	// Read the attribute data from the file
+	h5error = H5Aread(attribute_id,
+			  native_datatype_id,
+			  &buffer);
+	// Copy the retrieved data to the returned variable
+	if (h5error == 0) {
+	  value.resize(shape[0]);
+	  for (uint n(0); n<shape[0]; n++) {
+	    value(n) = buffer[n];
+	  }
+	}
       }
+      else {
+	cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
+	     << endl;
+	status = false;
+      }
+      
+      return status;
+    }
     
-    return status;
-  }
-  
   // ------------------------------------------------------------- h5get_quantity
   
   /*!
@@ -1385,63 +1335,17 @@ namespace DAL {
   */
   bpl::numeric::array mjd2unix_boost( bpl::numeric::array mjd_time )
   {
-    int array_size = bpl::len( mjd_time );
-    double unix_base_time (40587);
-    double seconds_per_day (86400);
+    int array_size           = bpl::len( mjd_time );
+    double unix_base_time    = 40587;
+    double seconds_per_day   = 86400;
     double adjustment_factor = unix_base_time*seconds_per_day;
+
     for ( int idx=0; idx < array_size; idx++ ) {
       mjd_time[ idx ] = bpl::extract<double>( mjd_time[ idx ] ) - adjustment_factor;
     }
     
     return mjd_time;
   }
-#endif
-  
-  // ============================================================================
-  //
-  //  Template instantiation
-  //
-  // ============================================================================
-
-#ifdef HAVE_CASA
-
-  template bool h5get_attribute (hid_t const &attribute_id,
-				 casa::Vector<int> &value);
-  template bool h5get_attribute (hid_t const &attribute_id,
-				 casa::Vector<uint> &value);
-  template bool h5get_attribute (hid_t const &attribute_id,
-				 casa::Vector<short> &value);
-  template bool h5get_attribute (hid_t const &attribute_id,
-				 casa::Vector<long> &value);
-  template bool h5get_attribute (hid_t const &attribute_id,
-				 casa::Vector<float> &value);
-  template bool h5get_attribute (hid_t const &attribute_id,
-				 casa::Vector<double> &value);
-  template bool h5get_attribute (hid_t const &attribute_id,
-				 casa::Vector<casa::String> &value);
-  
-  template bool h5get_attribute (hid_t const &attribute_id,
-				 std::string const &name,
-				 casa::Vector<int> &value);
-  template bool h5get_attribute (hid_t const &attribute_id,
-				 std::string const &name,
-				 casa::Vector<uint> &value);
-  template bool h5get_attribute (hid_t const &attribute_id,
-				 std::string const &name,
-				 casa::Vector<short> &value);
-  template bool h5get_attribute (hid_t const &attribute_id,
-				 std::string const &name,
-				 casa::Vector<long> &value);
-  template bool h5get_attribute (hid_t const &attribute_id,
-				 std::string const &name,
-				 casa::Vector<float> &value);
-  template bool h5get_attribute (hid_t const &attribute_id,
-				 std::string const &name,
-				 casa::Vector<double> &value);
-  template bool h5get_attribute (hid_t const &attribute_id,
-				 std::string const &name,
-				 casa::Vector<casa::String> &value);
-  
 #endif
   
 } // namespace DAL

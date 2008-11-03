@@ -140,9 +140,14 @@ if (HAVE_MYSQL)
   list (APPEND dal_link_libraries ${MYSQL_LIBRARIES})
 endif (HAVE_MYSQL)
 
+if (DAL_MEMORY_CHECKING)
+  list (APPEND dal_link_libraries ${MPATROL_LIBRARIES})
+endif (DAL_MEMORY_CHECKING)
+
 ## [3] Build the library
 
 add_library(dal STATIC ${dal_sources})
+
 target_link_libraries(dal
   ${dal_link_libraries}
   )

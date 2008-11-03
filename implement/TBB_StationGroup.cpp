@@ -265,12 +265,26 @@ namespace DAL { // Namespace DAL -- begin
     std::string datasetName;
     hsize_t nofObjects (0);
     herr_t h5error (0);
+
+    //________________________________________________________________
+    // Obtain the number of objects contained within the station group
+
+    h5error = H5Gget_num_objs(groupID_p,
+			      &nofObjects);
+
+    if (h5error > 0) {
+      std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
+		<< " Error retrieving the number of objects attached to"
+		<< " the station group!"
+		<< std::endl;
+      return false;
+    }
+    
+    //________________________________________________________________
+    // Iterate through the objects within the station group and create
+    // a new object for each dipole dataset
     
     try {
-      // Number of objects in the group specified by its identifier
-      h5error = H5Gget_num_objs(groupID_p,
-				&nofObjects);
-      // go throught the list of objects to identify the datasets
       for (hsize_t idx (0); idx<nofObjects; idx++) {
 	// get the type of the object
 	if (H5G_DATASET == H5Gget_objtype_by_idx (groupID_p,idx)) {
@@ -281,7 +295,11 @@ namespace DAL { // Namespace DAL -- begin
 	  // if name retrieval was successful, create new TBB_DipoleDataset
 	  if (status) {
 	    datasets_p.push_back(DAL::TBB_DipoleDataset (groupID_p,
-							   datasetName));
+							 datasetName));
+	  } else {
+	    std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
+		      << " Failed to open dataset!"
+		      << std::endl;
 	  }
 	}
       }

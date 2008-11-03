@@ -194,12 +194,12 @@ int test_dataset (std::string const &name_file,
   if (dataset_id > 0) {
     cout << "[6] Reading attributes attached to the dipole dataset ..." << endl;
     try {
-      uint station_id (0);
-      uint rsp_id (0);
-      uint rcu_id (0);
-      double sample_frequency_value (0);
+      uint station_id;
+      uint rsp_id;
+      uint rcu_id;
+      uint time;
+      double sample_frequency_value;
       std::string sample_frequency_unit;
-      uint time (0);
       std::vector<double> antenna_position_value;
       std::vector<std::string> antenna_position_unit;
       std::string antenna_position_frame;
@@ -247,20 +247,7 @@ int test_dataset (std::string const &name_file,
   \brief Test constructors for a new TBB_DipoleDataset object
 
   This function should provide tests for all the available constructors to a 
-  new DAL::TBB_DipoleDataset object:
-  \code
-    TBB_DipoleDataset ();
-
-    TBB_DipoleDataset (std::string const &name_file,
-			 std::string const &dataset);
-
-    TBB_DipoleDataset (hid_t const &location,
-			 std::string const &dataset);
-
-    TBB_DipoleDataset (hid_t const &dataset_id);
-
-    TBB_DipoleDataset (TBB_DipoleDataset const &other);
-  \endcode
+  new DAL::TBB_DipoleDataset object.
   
   \param name_file -- Name of the HDF5 file, within which the dataset is located
 
@@ -376,12 +363,11 @@ int test_construction (std::string const &name_file,
     nofFailedTests++;
   }
   h5error = H5Eclear1();
-
-  /*
-   * Instead of using a ID/name conbination, we should be able to construct a
-   * new object directly from a provided identifier for the dataset within the HDF5
-   * file.
-   */
+  
+  //__________________________________________________________________
+  // Instead of using a ID/name conbination, we should be able to
+  // construct a new object directly from a provided identifier for
+  // the dataset within the HDF5 file.
   
   cout << "[5] Testing argumented constructor with dataset identifier ..." << endl;
   try {
@@ -419,16 +405,15 @@ int test_construction (std::string const &name_file,
   }
   h5error = H5Eclear1();
 
-  /*
-   * Test copy constructor, as required to directly construct a new object from an
-   * existing one.
-   */
+  //__________________________________________________________________
+  // Test copy constructor, as required to directly construct a new
+  // object from an existing one.
 
   cout << "[6] Testing copy constructor ..." << endl;
   try {
     cout << "-- creating original object ..." << endl;
     TBB_DipoleDataset dataset (name_file,
- 				 path_dataset);
+			       path_dataset);
     dataset.summary();
     //
     cout << "-- creating new object as copy ..." << endl;
@@ -439,6 +424,47 @@ int test_construction (std::string const &name_file,
     nofFailedTests++;
   }
   h5error = H5Eclear1();
+
+  //__________________________________________________________________
+  // Test creation of a number of TBB_DipoleDataset objects to handle
+  // the multiple datasets contained within a station group.
+  
+  if (name_dataset == "001000001") {
+    cout << "[7] Collecting objects for multiple datasets into vector..." << endl;
+    try {
+      cout << "-- opening HDF5 file ...." << endl;
+      hid_t file_id = H5Fopen (name_file.c_str(),
+			       H5F_ACC_RDONLY,
+			       H5P_DEFAULT);
+      cout << "-- opening station group ..." << endl;
+      hid_t group_id = H5Gopen1 (file_id,
+				 name_station.c_str());
+      //
+      std::vector<DAL::TBB_DipoleDataset> datasets;
+      datasets.push_back(DAL::TBB_DipoleDataset (group_id,
+						 "001000001"));
+      datasets.push_back(DAL::TBB_DipoleDataset (group_id,
+						 "001000002"));
+      datasets.push_back(DAL::TBB_DipoleDataset (group_id,
+						 "001000003"));
+      datasets.push_back(DAL::TBB_DipoleDataset (group_id,
+						 "001000004"));
+      //
+      cout << "-- nof. datasets attached to objects = " << datasets.size() << endl;
+      //
+      for (uint n(0); n<datasets.size(); n++) {
+	datasets[n].summary();
+      }
+      //
+      H5Gclose(group_id);
+      H5Fclose(file_id);
+    } catch (std::string message) {
+      cerr << message << endl;
+      nofFailedTests++;
+    }
+  } else {
+    cout << "Skipping test." << endl;
+  }
   
   return nofFailedTests;
   }
@@ -480,10 +506,8 @@ int test_datasets (std::string const &name_file,
 
   nofDatasets = dataset_names.size();
 
-  /*
-   * TEST:
-   * Open the HDF5 file for further reading
-   */
+  //__________________________________________________________________
+  // Open the HDF5 file for further reading
 
   cout << "[1] Opening the HDF5 file containing the data ..." << endl;
   file_id = H5Fopen (name_file.c_str(),
@@ -497,11 +521,10 @@ int test_datasets (std::string const &name_file,
     return 0;
   }
 
-  /* 
-   * TEST: Use the basic methods provided by the HDF5 library to open a number
-   *       datasets contained within the file. The object identifiers are
-   *       collected in a STD vector.
-   */
+  //__________________________________________________________________
+  // Use the basic methods provided by the HDF5 library to open a number
+  // datasets contained within the file. The object identifiers are
+  // collected in a STD vector.
 
   cout << "[2] Opening dipole datasets ..." << endl;
   try {
