@@ -432,10 +432,8 @@ int test_export2record (std::string const &name_file,
   try {
     // retrieve attributes into record
     casa::Record rec = group.attributes2record ();
-    // Create HDF5 file and write the record to it
-    casa::String outfile ("tStationGroup_1.h5");
-    casa::HDF5File file(outfile, casa::ByteIO::New);
-    casa::HDF5Record::writeRecord (file, "StationGroup", rec);
+    // display the record
+    std::cout << rec << std::endl;
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
@@ -446,9 +444,25 @@ int test_export2record (std::string const &name_file,
   try {
     // retrieve attributes into record
     casa::Record rec = group.attributes2record (true);
-    // Create HDF5 file and write the record to it
-    casa::HDF5File file("tStationGroup_2.h5", casa::ByteIO::New);
-    casa::HDF5Record::writeRecord (file, "StationGroup", rec);
+    // display the record
+    std::cout << rec << std::endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  std::cout << "[3] Combined multiple station group records ..." << std::endl;
+  try {
+    // retrieve attributes into record
+    casa::Record rec = group.attributes2record (true);
+    // set up recording holding multiple station group records
+    casa::Record record;
+    record.defineRecord ("Station001",rec);
+    record.defineRecord ("Station002",rec);
+    record.defineRecord ("Station003",rec);
+    record.defineRecord ("Station004",rec);
+    // display the record
+    std::cout << record << std::endl;
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;

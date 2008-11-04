@@ -48,6 +48,7 @@ foreach (src ${tests})
     target_link_libraries(${src}
       dal
       ${dal_link_libraries}
+      ${HAVE_MALLOC_DEBUG}
       )
   else (HAVE_CASA OR HAVE_CASACORE)
     target_link_libraries(${src} dal)

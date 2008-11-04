@@ -399,9 +399,9 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
     std::string name ("UNDEFINED");
-
+    
     status = DAL::h5get_name (name,groupID_p);
-
+    
     if (status) {
       if (stripPath) {
 	return name.substr(1);
@@ -411,7 +411,7 @@ namespace DAL { // Namespace DAL -- begin
 		<< "Error retrieving name of HDF5 group!"
 		<< std::endl;
     }
-
+    
     return name;
   }
   
@@ -1248,21 +1248,38 @@ casa::Vector<uint> TBB_StationGroup::sample_number ()
     
     return data;
   }
+
+#ifdef HAVE_CASA
   
   // ---------------------------------------------------------- attributes2record
   
   /*!
-    \param addRecursive -- Recursively add information from embedded HDF5
+    \param recursive -- Recursively add information from embedded HDF5
            objects, such as groups and datasets? 
     
     \return record -- A casa::Record container holding the values of the 
             attributes attached to the dataset for this dipole
   */
-#ifdef HAVE_CASA
-  casa::Record TBB_StationGroup::attributes2record (bool const &addRecursive)
+  casa::Record TBB_StationGroup::attributes2record (bool const &recursive)
   {
+    bool status (true);
     casa::Record rec;
+
+    status = attributes2record (rec,recursive);
     
+    return rec;
+  }
+
+  // ---------------------------------------------------------- attributes2record
+  
+  bool TBB_StationGroup::attributes2record (casa::Record &rec,
+					    bool const &recursive)
+  {
+    bool status (true);
+
+    //________________________________________________________________
+    // Retrieve the attributes attached to the station group
+
     try {
       rec.define(casa::RecordFieldId(attribute_name(DAL::STATION_POSITION_VALUE)),
        		 station_position_value());
@@ -1287,22 +1304,28 @@ casa::Vector<uint> TBB_StationGroup::sample_number ()
 		<< "Error filling the record with attribute values!\n"
 		<< message
 		<< std::endl;
+      status=false;
     }
 
-    /* Recursive adding of embbedded data? */
+    //________________________________________________________________
+    // Recursive retrieval of the attributes attached to the dipole
+    // datasets.
 
-    if (addRecursive) {
+    if (recursive) {
+      std::string name;
       casa::Record recordDipole;
       for (uint n(0); n<datasets_p.size(); n++) {
+	name = datasets_p[n].channelName();
 	// retrieve the attributes for the dipole data-set as record
 	recordDipole = datasets_p[n].attributes2record();
 	// ... and add it to the existing record
-	rec.defineRecord (datasets_p[n].channelName(),recordDipole);
+	rec.defineRecord (name,recordDipole);
       }
     }
-    
-    return rec;
-  }
-#endif
 
+    return status;
+  }
+  
+#endif
+  
 } // Namespace DAL -- end

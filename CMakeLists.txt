@@ -39,8 +39,8 @@ option (DAL_BUILD_TESTS        "Build the test programs?"                  YES )
 option (DAL_BUILD_APPS         "Build the applications?"                   YES )
 option (DAL_ENABLE_TESTING     "Build the test programs?"                  YES )
 option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?" ON  )
+option (DAL_MEMORY_CHECKING    "Enable checking against memory leaks?"     NO  )
 option (DAL_PYTHON_BINDINGS    "Create python bindings?"                   YES )
-option (DAL_MEMORY_CHECKING    "Enable usage of memory checker?"           NO  )
 option (DAL_DEBUGGING_MESSAGES "Print debugging information?"              NO  )
 option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"      NO  )
 
@@ -277,13 +277,15 @@ endif (HAVE_GSL)
 
 if (DAL_MEMORY_CHECKING)
   
-  if (HAVE_MPATROL)
-    include_directories (${MPATROL_INCLUDES})
-    add_definitions (-DHAVE_MPATROL)
-  else (HAVE_MPATROL)
-    message (STATUS "[DAL] mpatrol installation incomplete!")
-    set (DAL_MEMORY_CHECKING OFF)
-  endif (HAVE_MPATROL)
+  if (APPLE)
+    find_library (HAVE_MALLOC_DEBUG MallocDebug ${lib_locations})
+
+    if (HAVE_MALLOC_DEBUG)
+      message (STATUS "libMallocDebug = ${HAVE_MALLOC_DEBUG}")
+    else (HAVE_MALLOC_DEBUG)
+      set (HAVE_MALLOC_DEBUG NO)
+    endif (HAVE_MALLOC_DEBUG)
+  endif (APPLE) 
   
 endif (DAL_MEMORY_CHECKING)
 

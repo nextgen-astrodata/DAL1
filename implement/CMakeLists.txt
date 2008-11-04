@@ -9,7 +9,7 @@
 ##    g++ -c *.cpp -ftemplate-depth-100 -fPIC -I/usr/include/python2.4 -I.
 ##    g++ *.o -lboost_python -lcfitsio -lhdf5 -lhdf5_hl -lhdf5_cpp -lz -lm -o dal.so -shared
 
-## -----------------------------------------------------------------------------
+##_______________________________________________________________________________
 ## Compiler flags
 
 if (DAL_COMPILER_WARNINGS)
@@ -65,9 +65,7 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 ## ------------------------------------------------------------------------------
 ## Build the library, "libdal"
 
-## [1] list of source files
-
-#FILE (GLOB dal_sources dal*.cpp)
+## List of source files included into the library
 
 set (dal_sources
   dalArray.cpp
@@ -140,11 +138,17 @@ if (HAVE_MYSQL)
   list (APPEND dal_link_libraries ${MYSQL_LIBRARIES})
 endif (HAVE_MYSQL)
 
+##____________________________________________________________________
+## Optional external libraries
+
 if (DAL_MEMORY_CHECKING)
-  list (APPEND dal_link_libraries ${MPATROL_LIBRARIES})
+  
+  list (APPEND dal_link_libraries ${HAVE_MALLOC_DEBUG})
+  
 endif (DAL_MEMORY_CHECKING)
 
-## [3] Build the library
+##____________________________________________________________________
+## Build the library
 
 add_library(dal STATIC ${dal_sources})
 

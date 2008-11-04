@@ -36,6 +36,10 @@ namespace DAL { // Namespace DAL -- begin
   
   // ------------------------------------------------------------- TBB_Timeseries
   
+  /*!
+    A minimal setup of the internal dataspace is performed, but since no
+    data file is provided, no inspection of the data structure is carried out.
+  */
   TBB_Timeseries::TBB_Timeseries ()
   {
     init ();
@@ -43,6 +47,9 @@ namespace DAL { // Namespace DAL -- begin
 
   // ------------------------------------------------------------- TBB_Timeseries
   
+  /*!
+    \param filename -- Name of the data file
+  */
   TBB_Timeseries::TBB_Timeseries (std::string const &filename)
   {
     init ();
@@ -51,6 +58,10 @@ namespace DAL { // Namespace DAL -- begin
   
   // ------------------------------------------------------------- TBB_Timeseries
   
+  /*!
+    \param other -- Another TBB_Timeseries object from which to create this
+           new one.
+  */
   TBB_Timeseries::TBB_Timeseries (TBB_Timeseries const &other)
   {
     // Initialize internal variables
@@ -109,6 +120,11 @@ namespace DAL { // Namespace DAL -- begin
 
   // ------------------------------------------------------------------ telescope
 
+  /*!
+    \return telescope -- The name of the telescope with which the data were
+            recorded; returns an empty string in case no keyword value could be
+	    extracted.
+  */
   std::string TBB_Timeseries::telescope ()
   {
     std::string val;
@@ -121,7 +137,7 @@ namespace DAL { // Namespace DAL -- begin
       return std::string ("UNDEFINED");
     }
   }
-
+  
   // ------------------------------------------------------------------- observer
   
   std::string TBB_Timeseries::observer ()
@@ -230,12 +246,17 @@ namespace DAL { // Namespace DAL -- begin
 			H5P_DEFAULT);
     
     if (fileID_p > 0) {
-      /*
-       * Store the filename
-       */
+      bool status (true);
+      // Store the filename
       filename_p = filename;
       // locate and register the station groups
-      bool status = setStationGroups ();
+      try {
+	status = setStationGroups ();
+      } catch (std::string message) {
+	std::cerr << "[TBB_Timeseries::init] Error running setStationGroups ()! "
+		  << message 
+		  << std::endl;
+      }
       // feedback
       if (!status) {
 	std::cerr << "[TBB_Timeseries::init] Error setting up the station groups!"
@@ -306,7 +327,76 @@ namespace DAL { // Namespace DAL -- begin
     
     return true;
   }
+
+  // ============================================================================
+  //
+  //  Access to attributes attached to the station groups
+  //
+  // ============================================================================
+
+  // --------------------------------------------------------------- trigger_type
+
+#ifdef HAVE_CASA
+    casa::Vector<casa::String> TBB_Timeseries::trigger_type ()
+    {
+      uint nofStations = nofStationGroups();
+      casa::Vector<casa::String> trigger (nofStations);
+
+      for (uint n(0); n<nofStations; n++) {
+	trigger(n) = groups_p[n].trigger_type();
+      }
+
+      return trigger;
+    }
+#else
+    std::vector<std::string> TBB_Timeseries::trigger_type ()
+    {
+      uint nofStations = nofStationGroups();
+      std::vector<std::string> trigger (nofStations);
+
+      for (uint n(0); n<nofStations; n++) {
+	trigger[n] = groups_p[n].trigger_type();
+      }
+
+      return trigger;
+    }
+#endif
+
+  // ------------------------------------------------------------- trigger_offset
+
+#ifdef HAVE_CASA
+    casa::Vector<double> TBB_Timeseries::trigger_offset ()
+    {
+      uint nofStations = nofStationGroups();
+      casa::Vector<double> trigger (nofStations);
+
+      for (uint n(0); n<nofStations; n++) {
+	trigger(n) = groups_p[n].trigger_offset();
+      }
+
+      return trigger;
+    }
+#else
+    std::vector<double> TBB_Timeseries::trigger_offset ()
+    {
+      uint nofStations = nofStationGroups();
+      std::vector<double> trigger (nofStations);
+
+      for (uint n(0); n<nofStations; n++) {
+	trigger[n] = groups_p[n].trigger_offset();
+      }
+
+      return trigger;
+    }
+#endif
+
   
+  // ============================================================================
+  //
+  //  Access to attributes attached to the dipole datasets
+  //
+  // ============================================================================
+
   // -------------------------------------------------------------- channelNames
 
 #ifdef HAVE_CASA
@@ -376,7 +466,7 @@ namespace DAL { // Namespace DAL -- begin
   // ---------------------------------------------------------------------- times
 
 #ifdef HAVE_CASA
-  casa::Vector<uint> TBB_Timeseries::times ()
+  casa::Vector<uint> TBB_Timeseries::time ()
   {
     uint n           = 0;
     uint station     = 0;
@@ -398,7 +488,7 @@ namespace DAL { // Namespace DAL -- begin
     return UnixTimes;
   }
 #else
-  std::vector<uint> TBB_Timeseries::times (std::string const &units)
+  std::vector<uint> TBB_Timeseries::time (std::string const &units)
   {
     uint n           = 0;
     uint station     = 0;
@@ -519,66 +609,89 @@ namespace DAL { // Namespace DAL -- begin
 
   // ---------------------------------------------------------- attributes2record
 
-  casa::Record TBB_Timeseries::attributes2record (bool const &addRecursive)
+  /*!
+    \param recursive    -- Recursively add information from the station groups
+           and dipole datasets? If set to \e true the file structure will be 
+	   transverse recursively, collecting the attributes attached to the 
+	   embedded objects.
+
+    \return rec -- casa::Record to which the values of the attributes will be
+            added as new entries.
+  */
+#ifdef HAVE_CASA
+  casa::Record TBB_Timeseries::attributes2record (bool const &recursive)
   {
     casa::Record rec;
     
-    rec.define(casa::RecordFieldId(attribute_name(DAL::TELESCOPE)),
-	       telescope());
-    rec.define(casa::RecordFieldId(attribute_name(DAL::OBSERVER)),
-	       observer());
-    rec.define(casa::RecordFieldId(attribute_name(DAL::PROJECT)),
-	       project());
-    rec.define(casa::RecordFieldId(attribute_name(DAL::OBSERVATION_ID)),
-	       observation_id());
-    rec.define(casa::RecordFieldId(attribute_name(DAL::OBSERVATION_MODE)),
-	       observation_mode());
-
-    /* Recursive adding of embbedded data? */
-
-    if (addRecursive) {
-      casa::Record recordStation;
-      for (uint n(0); n<groups_p.size(); n++) {
-	// retrieve the attributes for the dipole data-set as record
-	recordStation = groups_p[n].attributes2record(addRecursive);
-	// ... and add it to the existing record
-	rec.defineRecord (groups_p[n].group_name(true),recordStation);
-      }
-    }
+    attributes2record (rec,
+		       recursive);
     
     return rec;
   }
-
-  // ---------------------------------------------------- attributes2headerRecord
-
-  casa::Record TBB_Timeseries::attributes2headerRecord ()
-  {
-    casa::Record rec;
-    
-    attributes2headerRecord (rec);
-    
-    return rec;
-  }
+#endif
 
   // ---------------------------------------------------- attributes2headerRecord
   
-  void TBB_Timeseries::attributes2headerRecord (casa::Record &rec)
+  /*!
+    \retval rec         -- casa::Record to which the values of the attributes
+            will be added as new entries.
+    \param recursive    -- Recursively add information from the station groups
+           and dipole datasets? If set to \e true the file structure will be 
+	   transverse recursively, collecting the attributes attached to the 
+	   embedded objects.
+    \param headerRecord -- Create record entries conforming to the information
+           expected in the header record of the CR::DataReader class.
+  */
+#ifdef HAVE_CASA
+  void TBB_Timeseries::attributes2record (casa::Record &rec,
+					  bool const &recursive,
+					  bool const &headerRecord)
   {
-    try {
-      rec.define("Date",min(times()));
+    if (headerRecord) {
+      rec.define("Date",min(time()));
       rec.define("AntennaIDs",channelID());
       rec.define("Observatory",telescope());
       rec.define("Filesize",min(data_length()));
-    } catch (std::string message) {
-      std::cerr << "[TBB_Timeseries::attributes2headerRecord] " << message
-		<< std::endl;      
+    }
+    else {
+      try {
+	rec.define(casa::RecordFieldId(attribute_name(DAL::TELESCOPE)),
+		   telescope());
+	rec.define(casa::RecordFieldId(attribute_name(DAL::OBSERVER)),
+		   observer());
+	rec.define(casa::RecordFieldId(attribute_name(DAL::PROJECT)),
+		   project());
+	rec.define(casa::RecordFieldId(attribute_name(DAL::OBSERVATION_ID)),
+		   observation_id());
+	rec.define(casa::RecordFieldId(attribute_name(DAL::OBSERVATION_MODE)),
+		   observation_mode());
+      } catch (std::string message) {
+	std::cerr << "[TBB_Timeseries::attributes2record]" << message << std::endl;
+      }
+
+      //______________________________________________________________
+      // Recursive retrieval of the attributes attached to the station
+      // groups and dipole datasets
+      
+      if (recursive) {
+	std::string group;
+	casa::Record recordStation;
+	for (uint n(0); n<groups_p.size(); n++) {
+	  group = groups_p[n].group_name(true);
+	  // retrieve the attributes for the dipole data-set as record
+	  recordStation = groups_p[n].attributes2record(recursive);
+	  // ... and add it to the existing record
+ 	  rec.defineRecord (group,recordStation);
+	}
+      }
     }
   }
+#endif  
 
   // ------------------------------------------------------------------------- fx
-
+  
   casa::Matrix<double> TBB_Timeseries::fx (int const &start,
-					     int const &nofSamples)
+					   int const &nofSamples)
   {
     /* Check minimal condition for operations below. */
     if (fileID_p < 1) {

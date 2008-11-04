@@ -1062,8 +1062,9 @@ namespace DAL { // Namespace DAL -- begin
     return desc;
   }
   
-  // ---------------------------------------------------------- attributes2record
-  
+  //_____________________________________________________________________________
+  // Get a casa::Record containing the values of the attributes
+
   /*!
       \return record -- A casa::Record container holding the values of the 
               attributes attached to the dataset for this dipole
@@ -1071,7 +1072,23 @@ namespace DAL { // Namespace DAL -- begin
   casa::Record TBB_DipoleDataset::attributes2record ()
   {
     casa::Record rec;
+
+    attributes2record (rec);
     
+    return rec;
+  }
+
+  //_____________________________________________________________________________
+  // Get a casa::Record containing the values of the attributes
+  
+  /*!
+    \retval record -- A casa::Record container holding the values of the 
+            attributes attached to the dataset for this dipole
+  */
+  bool TBB_DipoleDataset::attributes2record (casa::Record &rec)
+  {
+    bool status (true);
+
     try {
       rec.define(casa::RecordFieldId(attribute_name(DAL::STATION_ID)),
 		 station_id());
@@ -1108,9 +1125,10 @@ namespace DAL { // Namespace DAL -- begin
 	   << "Error filling the record with attribute values!\n"
 	   << message
 	   << endl;
+      status = false;
     }
-    
-    return rec;
+
+    return status;
   }
 
 } // Namespace DAL -- end

@@ -283,6 +283,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Get a casa::Record containing the values of the attributes
     casa::Record attributes2record ();
     
+    //! Get a casa::Record containing the values of the attributes
+    bool attributes2record (casa::Record &rec);
+    
   private:
     
     /*!

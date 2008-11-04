@@ -404,34 +404,18 @@ namespace DAL { // Namespace DAL -- begin
     
     // ------------------------------------------------------------- Construction
     
-    /*!
-      \brief Default constructor
-
-      A minimal setup of the internal dataspace is performed, but since no
-      data file is provided, no inspection of the data structure is carried out.
-    */
+    //! Default constructor
     TBB_Timeseries ();
     
-    /*!
-      \brief Default constructor
-
-      \param filename -- Name of the data file
-    */
+    //! Construction using filename of dataset
     TBB_Timeseries (std::string const &filename);
     
-    /*!
-      \brief Copy constructor
-      
-      \param other -- Another TBB_Timeseries object from which to create
-             this new one.
-    */
+    //! Copy constructor
     TBB_Timeseries (TBB_Timeseries const &other);
     
     // -------------------------------------------------------------- Destruction
 
-    /*!
-      \brief Destructor
-    */
+    //! Destructor
     ~TBB_Timeseries ();
     
     // ---------------------------------------------------------------- Operators
@@ -439,8 +423,7 @@ namespace DAL { // Namespace DAL -- begin
     /*!
       \brief Overloading of the copy operator
       
-      \param other -- Another TBB_Timeseries object from which to make a
-             copy.
+      \param other -- Another TBB_Timeseries object from which to make a copy.
     */
     TBB_Timeseries& operator= (TBB_Timeseries const &other); 
     
@@ -474,13 +457,7 @@ namespace DAL { // Namespace DAL -- begin
       return groups_p;
     }
 
-    /*!
-      \brief Get the name of the telescope
-      
-      \return telescope -- The name of the telescope with which the data were
-              recorded; returns an empty string in case no keyword value could
-	      be extracted.
-    */
+    //! Get the name of the telescope
     std::string telescope ();
 
     /*!
@@ -571,13 +548,15 @@ namespace DAL { // Namespace DAL -- begin
     //  Parameter access - station group
     //
     // ==========================================================================
-    
+
+    //! Get the type of trigger causing the dump of the TBB data
 #ifdef HAVE_CASA
-    casa::Vector<std::string> trigger_type ();
+    casa::Vector<casa::String> trigger_type ();
 #else
     std::vector<std::string> trigger_type ();
 #endif
-    
+
+    //! Time offset from the trigger reference time
 #ifdef HAVE_CASA
     casa::Vector<double> trigger_offset ();
 #else
@@ -621,9 +600,9 @@ namespace DAL { // Namespace DAL -- begin
               this station group
     */
 #ifdef HAVE_CASA
-    casa::Vector<uint> times ();
+    casa::Vector<uint> time ();
 #else
-    std::vector<uint> times ();
+    std::vector<uint> time ();
 #endif
 
     /*!
@@ -678,20 +657,15 @@ namespace DAL { // Namespace DAL -- begin
     casa::Matrix<double> fx (std::vector<int> const &start,
 			     int const &nofSamples=1);
 
-    /*!
-      \brief Get a casa::Record containing the values of the attributes
-
-      \param addRecursive -- Recursively add information from embedded HDF5
-             objects, such as groups and datasets? 
-
-      \return record -- A casa::Record container holding the values of the 
-              attributes attached to the dataset for this dipole
-    */
-    casa::Record attributes2record (bool const &addRecursive=false);
-
-    //! Set up the record which is used as member of the CR::DataReader class
-    casa::Record attributes2headerRecord ();
-    void attributes2headerRecord (casa::Record &rec);
+#ifdef HAVE_CASA
+    //! Get a casa::Record containing the values of the attributes
+    casa::Record attributes2record (bool const &recursive=false);
+    
+    //! Get a casa::Record containing the values of the attributes
+    void attributes2record (casa::Record &rec,
+			    bool const &recursive=false,
+			    bool const &headerRecord=false);
+#endif
     
   private:
     

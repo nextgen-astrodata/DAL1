@@ -861,15 +861,20 @@ int test_export2record (std::string const &name_file,
 				 path_dataset);
     // retrieve attributes into record
     casa::Record rec = dataset.attributes2record ();
-    // create record containing the other records
+    // combine records from dipole datasets at station level
+    casa::Record recordStation;
+    recordStation.define ("STATION", "Station001");
+    recordStation.defineRecord ("dipole1",rec);
+    recordStation.defineRecord ("dipole2",rec);
+    recordStation.defineRecord ("dipole3",rec);
+    // combine records from station groups at root level
     casa::Record record;
-    record.define ("STATION", "Station001");
-    record.defineRecord ("dipole1",rec);
-    record.defineRecord ("dipole2",rec);
-    record.defineRecord ("dipole3",rec);
-    // Create HDF5 file and write the record to it
-    casa::HDF5File file("tDipoleDataset_1.h5", casa::ByteIO::New);
-    casa::HDF5Record::writeRecord (file, "DipoleDataset", record);
+    record.define ("INSTRUMENT", "LOFAR");
+    record.defineRecord ("Station001",recordStation);
+    record.defineRecord ("Station002",recordStation);
+    record.defineRecord ("Station003",recordStation);
+    // display the created record
+    std::cout << record << std::endl;
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;

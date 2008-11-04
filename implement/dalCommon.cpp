@@ -44,7 +44,7 @@ namespace DAL {
     int yday (0);
     int hour (0);
     int min (0);
-    struct tm *ptr = NULL;
+    struct tm *ptr = 0;
 
     unsigned int nd;
 
@@ -169,7 +169,7 @@ namespace DAL {
       
       // Release allocated memory
       delete [] buffer;
-      buffer = NULL;
+      buffer = 0;
       
     } 
     else {
@@ -392,9 +392,9 @@ namespace DAL {
     hid_t aspace = H5Aget_space(attr);
 
     hsize_t * sdim = new hsize_t[ 64 ];
-    herr_t ret = H5Sget_simple_extent_dims(aspace, sdim, NULL);
+    herr_t ret = H5Sget_simple_extent_dims(aspace, sdim, 0);
     delete [] sdim;
-    sdim = NULL;
+    sdim = 0;
 
     opdata = opdata;  // avoid compiler warnings of unused parameter
 
@@ -414,22 +414,23 @@ namespace DAL {
         for (int i = 0; i < (int)npoints; i++) printf("%f ", float_array[i]);
         printf("\n");
         delete [] float_array;
-        float_array = NULL;
+        float_array = 0;
       }
-    else if (H5T_STRING == H5Tget_class (atype))
-      {
-        char * string_attr;
-        hid_t type = H5Tget_native_type( atype, H5T_DIR_ASCEND);
-        if ( H5Aread( attr, type, &string_attr) < 0 )
-          return 1;
+    else if (H5T_STRING == H5Tget_class (atype)) {
+      char * string_attr;
+      hid_t type = H5Tget_native_type( atype, H5T_DIR_ASCEND);
+      if ( H5Aread( attr, type, &string_attr) < 0 )
+	return 1;
+      
+      fprintf(stderr, "%s = %s\n", name, string_attr );
+      free(string_attr);
+    }
 
-        fprintf(stderr, "%s = %s\n", name, string_attr );
-        free(string_attr);
-      }
+    // close opened HDF5 objects
     ret = H5Tclose(atype);
     ret = H5Sclose(aspace);
     ret = H5Aclose(attr);
-
+    
     return 0;
   }
   
@@ -592,7 +593,7 @@ namespace DAL {
         return DAL::FAIL;
       }
 
-    dataspace = H5Screate_simple(1, dims, NULL);
+    dataspace = H5Screate_simple(1, dims, 0);
     if ( dataspace < 0 )
       {
         std::cerr << "ERROR: Could not set attribute '" << attrname
@@ -600,7 +601,7 @@ namespace DAL {
         return DAL::FAIL;
       }
 
-    att = H5Acreate( obj_id, attrname.c_str(), type, dataspace, NULL, NULL );
+    att = H5Acreate( obj_id, attrname.c_str(), type, dataspace, 0, 0 );
     if ( att < 0 )
       {
         std::cerr << "ERROR: Could not create attribute '" << attrname << "'.\n";
@@ -691,9 +692,9 @@ namespace DAL {
       }
       
       // release allocated memory
-      if (data != NULL) {
+      if (data != 0) {
 	delete [] data;
-	data = NULL;
+	data = 0;
       }
       
     }
@@ -804,7 +805,7 @@ namespace DAL {
 	return false;
       }
       
-      dataspace_id = H5Screate_simple(1, dims, NULL);
+      dataspace_id = H5Screate_simple(1, dims, 0);
       if ( dataspace_id < 0 ) {
 	std::cerr << "ERROR: Could not set attribute '" << name
 		  << "' dataspace.\n";
@@ -815,7 +816,7 @@ namespace DAL {
 				name.c_str(),
 				type,
 				dataspace_id,
-				NULL, NULL );
+				0, 0 );
       if ( attribute_id < 0 ) {
 	std::cerr << "ERROR: Could not create attribute '" << name << "'.\n";
 	return false;

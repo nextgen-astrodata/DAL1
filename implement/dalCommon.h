@@ -29,6 +29,9 @@
 #include <string>
 #include <sstream>
 
+using std::cout;
+using std::endl;
+
 #ifdef HAVE_CASA
 #include <casa/Arrays/IPosition.h>
 #include <casa/Arrays/Vector.h>
@@ -41,11 +44,12 @@ using casa::MVPosition;
 using casa::Quantity;
 #endif
 
+#ifdef HAVE_MPATROL
+#include <mpatrol.h>
+#endif
+
 #include "dalBaseTypes.h"
 #include "Enumerations.h"
-
-using std::cout;
-using std::endl;
 
 /*!
   \file dalCommon.h
@@ -319,7 +323,7 @@ namespace DAL {
 	}
 	// release memory allocated for temporary buffer
 	delete [] buffer;
-	buffer = NULL;
+	buffer = 0;
       }
       else {
 	cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
@@ -391,7 +395,7 @@ namespace DAL {
       hid_t   dataspace_id = 0;
       hsize_t dims[1]      = { size };
 /*       hsize_t maxdims[1]   = { size }; */
-      hsize_t *maxdims   = NULL;
+      hsize_t *maxdims   = 0;
   
       dataspace_id  = H5Screate_simple( 1, dims, maxdims );
       if ( dataspace_id < 0 ) {
@@ -401,7 +405,7 @@ namespace DAL {
       }
       
       attribute_id = H5Acreate( location_id, name.c_str(),
-				datatype, dataspace_id, NULL, NULL );
+				datatype, dataspace_id, 0, 0 );
       if ( attribute_id < 0 ) {
 	std::cerr << "ERROR: Could not create attribute '" << name
 		  << "'.\n";
@@ -524,7 +528,7 @@ namespace DAL {
 	}
 	// release memory allocated for temporary buffer
 	delete [] buffer;
-	buffer = NULL;
+	buffer = 0;
       }
       else {
 	cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
@@ -649,9 +653,10 @@ void show (T const *arr,
   \param arr   -- Pointer to the array with the data to be displayed
   \param nelem -- The number of elements stored within the array
 */
-template <typename T> void show (std::ostream& os,
-			      T const *arr,
-			      uint const &nelem)
+template <typename T>
+void show (std::ostream& os,
+	   T const *arr,
+	   uint const &nelem)
 {
   os << "[";
   

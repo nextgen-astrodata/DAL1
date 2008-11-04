@@ -453,7 +453,9 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Get a casa::Record containing the values of the attributes
 #ifdef HAVE_CASA
-    casa::Record attributes2record (bool const &addRecursive=false);
+    casa::Record attributes2record (bool const &recursive=false);
+    bool attributes2record (casa::Record &rec,
+			    bool const &recursive=false);
 #endif
     
   private:
