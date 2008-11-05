@@ -28,6 +28,10 @@
 #include <dalDataset.h>
 #endif
 
+#ifdef HAVE_BLITZ
+#include <blitz/Array.h>
+#endif
+
 // socket headers
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,6 +41,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <fstream>
 
 #define ETHEREAL_HEADER_LENGTH = 46;
 #define FIRST_EXTRA_HDR_LENGTH = 40;
@@ -50,7 +55,6 @@ namespace DAL {
     \brief High-level interface between TBB data and the DAL
     \author Joseph Masters
   */
-  
   class TBB
   {
     
@@ -69,36 +73,39 @@ namespace DAL {
       unsigned int rsp_id;
       //! Identifier for the RCU board
       unsigned int rcu_id;
+      //! Time for the first sample of the dipole dataset
       unsigned int time;
+      //! Offset in number of samples
       unsigned int sample_nr;
       //! Number of samples sent within a frame of data
       unsigned int samples_per_frame;
+      //! Type of antenna feed (dipole type)
       char feed[16];
       //! Antenna position
       double ant_position[ 3 ];
       //! Antenna orientation
       double ant_orientation[ 3 ];
+      //! The data themselves
       hvl_t data[1];
     };
     
-    struct writebuffer
-    {
+    //! Structure storing the buffer which is getting written to output
+    struct writebuffer {
       AntennaStruct antenna;
     };
     
-    struct TransientSample
-    {
+    //! Sample when using TBB in time-series mode
+    struct TransientSample {
       Int16 value;
     };
     
-    struct SpectralSample
-    {
+    //! Sample when using TBB in spectral mode
+    struct SpectralSample {
       complex<Int16> value;
     };
     
     //! Structure storing metadata stored in the TBB header block
-    struct TBB_Header
-    {
+    struct TBB_Header {
       //! The identifier to the station
       unsigned char stationid;
       //! The identifier for the RSP board
@@ -118,10 +125,12 @@ namespace DAL {
       UInt16 crc;
     };
     
+    //! Status tracking
     int status;
-    UInt32 seqnrLast;
-    bool bigendian;
-    time_t sample_time;  // For date
+    UInt32 seqnrLast_p;
+    //! Is the system big-endian?
+    bool bigendian_p;
+    time_t sampleTime_p;  // For date
     string name;
     dalDataset * dataset;
     std::vector<dalGroup> station;
@@ -138,7 +147,7 @@ namespace DAL {
     vector<string> dipoles;
     //! Definition of array dimensions (shape)
     vector<int> dims;
-    int offset;
+    int offset_p;
     vector<int> cdims;
     //! Name of the HDF5 group storing data for a station
     char * stationstr;
@@ -158,13 +167,20 @@ namespace DAL {
     
     bool first_sample;
     
-    TBB( string const& name );  // constructor
-    ~TBB(); // destructor
-    void connectsocket( const char* ipaddress, const char* portnumber );
+    //! Constructor
+    TBB (string const& name);
+    //! Destructor
+    ~TBB();
+    //! Set up the socket connection to the server
+    void connectsocket( const char* ipaddress,
+			const char* portnumber );
+    //! Open file containing data resulting from a TBB dump
     bool openRawFile( const char* filename );
     bool readRawSocketBlockHeader();
     void readRawFileBlockHeader();
+    //! Print the contents of a raw TBB frame header
     void printRawHeader();
+    //! Check if the group for a given station exists within the HDF5 file
     void stationCheck();
     void makeOutputHeader();
     bool transientMode();
@@ -172,7 +188,21 @@ namespace DAL {
     bool processSpectralSocketDataBlock();
     void processTransientFileDataBlock();
     void processSpectralFileDataBlock();
+    //! Check for the end-of-file
     bool eof();
+
+    //! Provide a summary of the internal status
+    inline void summary () {
+      summary (std::cout);
+    }
+    //! Provide a summary of the internal status
+    void summary (std::ostream &os);    
+
+#ifdef HAVE_BLITZ
+    //! Set the antenna array position metadata from calibration file
+    bool writeAntennaArrayPositions (std::string const &infile,
+				     std::string const &name);
+#endif
 
   private:
     

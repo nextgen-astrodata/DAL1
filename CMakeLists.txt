@@ -54,14 +54,15 @@ endif (DAL_ENABLE_TESTING)
 ## Handle option: verbose mode during configuration on/off
 
 if (NOT DAL_VERBOSE_CONFIGURE)
-  set (BOOST_FIND_QUIETLY ON)
-  set (CASACORE_FIND_QUIETLY ON)
-  set (CFITSIO_FIND_QUIETLY ON)
-  set (GSL_FIND_QUIETLY ON)
-  set (HDF5_FIND_QUIETLY ON)
-  set (PYTHON_FIND_QUIETLY ON)
-  set (MPATROL_FIND_QUIETLY ON)
-  set (MYSQL_FIND_QUIETLY ON)
+  set (BLITZ_FIND_QUIETLY     ON )
+  set (BOOST_FIND_QUIETLY     ON )
+  set (CASACORE_FIND_QUIETLY  ON )
+  set (CFITSIO_FIND_QUIETLY   ON )
+  set (GSL_FIND_QUIETLY       ON )
+  set (HDF5_FIND_QUIETLY      ON )
+  set (PYTHON_FIND_QUIETLY    ON )
+  set (MPATROL_FIND_QUIETLY   ON )
+  set (MYSQL_FIND_QUIETLY     ON )
 endif (NOT DAL_VERBOSE_CONFIGURE)
 
 ## Handle option: debugging messages on/off
@@ -88,6 +89,14 @@ find_library (libm m ${lib_locations})
 find_library (libpthread pthread ${lib_locations})
 find_library (libutil util ${lib_locations})
 find_library (libz z ${lib_locations})
+
+##__________________________________________________________
+## Blitz++
+
+if (NOT HAVE_BLITZ)
+  include (FindBlitz)
+  add_definitions (-DBZ_HAVE_NCEG_RESTRICT)
+endif (NOT HAVE_BLITZ)
 
 ##__________________________________________________________
 ## Boost
@@ -119,14 +128,14 @@ if (NOT HAVE_HDF5)
   include (FindHDF5)
 endif (NOT HAVE_HDF5)
 
-## ---------------------------------------------------------
+##__________________________________________________________
 ## mpatrol
 
 if (NOT HAVE_MPATROL)
   include (FindMPatrol)
 endif (NOT HAVE_MPATROL)
 
-## ---------------------------------------------------------
+##__________________________________________________________
 ## MySQL
 
 if (NOT HAVE_MYSQL)
@@ -221,6 +230,13 @@ if (DAL_PYTHON_BINDINGS)
   endif (NUM_UTIL_INCLUDES)
   
 endif (DAL_PYTHON_BINDINGS)
+
+if (BLITZ_INCLUDES)
+  include_directories (${BLITZ_INCLUDES})
+  add_definitions (-DHAVE_BLITZ)
+else (BLITZ_INCLUDES)
+  message (STATUS "[DAL] Missing Blitz++ header files!")
+endif (BLITZ_INCLUDES)
 
 if (BOOST_INCLUDES)
   include_directories (${BOOST_INCLUDES} ${BOOST_INCLUDES}/boost)
@@ -347,6 +363,8 @@ if (DAL_VERBOSE_CONFIGURE)
   message (STATUS "+------------------------------------------------------------+")
   message (STATUS " HDF5 includes          = ${HDF5_INCLUDES}")
   message (STATUS " HDF5 library           = ${HDF5_LIBRARIES}")
+  message (STATUS " Blitz++ includes       = ${BLITZ_INCLUDES}")
+  message (STATUS " Blitz++ library        = ${BLITZ_LIBRARIES}")
   message (STATUS " Boost includes         = ${BOOST_INCLUDES}")
   message (STATUS " Boost library          = ${BOOST_LIBRARIES}")
   message (STATUS " Python includes        = ${PYTHON_INCLUDES}")

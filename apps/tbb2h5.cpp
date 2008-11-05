@@ -86,6 +86,11 @@
     \verbatim
     tbb2h5 --ip <IP address> --port <port number> --outfile <HDF5 output>
     \endverbatim
+    <li>Read antenna positions from a calibration file and write them to a
+    previously created HDF5 file:
+    \verbatim
+    tbb2h5 --antpos <antenna positions> --outfile <HDF5 output>
+    \endverbatim
   </ul>
 */
 
@@ -105,13 +110,20 @@ namespace bpo = boost::program_options;
 
 using namespace DAL;
 
+//_______________________________________________________________________________
+// Program main function
+
 int main(int argc, char *argv[])
 {
   std::string infile;
   std::string outfile;
+  std::string antpos;
   std::string ip;
   std::string port;
   int socketmode (0);
+
+  bool file2hdf5 (false);
+  bool positions2hdf5 (false);
 
   // -----------------------------------------------------------------
   // Processing of command line options
@@ -125,6 +137,7 @@ int main(int argc, char *argv[])
     ("mode,M", bpo::value<int>(), "Operation mode: file (0), socket (1)")
     ("ip", bpo::value<std::string>(), "IP address from which to accept the data")
     ("port,P", bpo::value<std::string>(), "Port number to accept data from")
+    ("antpos,A", bpo::value<std::string>(), "File containing antenna positions")
     ;
   
   bpo::variables_map vm;
@@ -142,6 +155,10 @@ int main(int argc, char *argv[])
 
   if (vm.count("outfile")) {
     outfile = vm["outfile"].as<std::string>();
+  }
+
+  if (vm.count("antpos")) {
+    outfile = vm["antpos"].as<std::string>();
   }
 
   if (vm.count("ip")) {
@@ -163,10 +180,17 @@ int main(int argc, char *argv[])
   
   switch (socketmode) {
   case 0:
-    if (!vm.count("infile") || !vm.count("outfile")) {
-      std::cerr << "Incomplete list of parameters for file mode!" << std::endl;
-      std::cerr << desc << std::endl;
-      return DAL::FAIL;
+    {
+      if (vm.count("infile") || vm.count("outfile")) {
+	file2hdf5 = true;
+      } 
+      else if (vm.count("antpos") || vm.count("outfile")) {
+	positions2hdf5 = true;
+      } else {
+	std::cerr << "Incomplete list of parameters for file mode!" << std::endl;
+	std::cerr << desc << std::endl;
+	return DAL::FAIL;
+      }
     }
     break;
   case 1:

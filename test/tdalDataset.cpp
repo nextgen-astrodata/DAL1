@@ -112,7 +112,11 @@ int test_parameters (std::string const &filename)
 */
 int test_setAttributes (std::string const &filename)
 {
+  std::cout << "\n[tdalDataset::test_setAttributes]\n" << std::endl;
+
   int nofFailedTests (0);
+  DAL::dalDataset dataset (filename.c_str(),"HDF5");
+
 
   return nofFailedTests;
 }

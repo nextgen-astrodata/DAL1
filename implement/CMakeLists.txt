@@ -92,6 +92,10 @@ if ( HAVE_CASACORE )
   list ( APPEND dal_sources dalLopesEvent.cpp )
 endif ( HAVE_CASACORE )
 
+#if (HAVE_BLITZ)
+#  list (APPEND dal_sources LOFAR_AntennaArray.cpp)
+#endif (HAVE_BLITZ)
+
 ## [2] List of external libraries against which to link; even though we really
 ##     need the external libraries listed here, we should be a bit careful when
 ##     dealing with the related CMake variables - check first if the variable is

@@ -20,6 +20,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #ifndef TBB_H
 #include "TBB.h"
 #endif
@@ -33,18 +34,16 @@ namespace DAL {
   // ============================================================================
 
   /*!
-    \brief Argumented constructor
-
     \param filename -- Name of the output HDF5 dataset to create
   */
   TBB::TBB( string const& filename )
   {
     // initializations (private)
-    seqnrLast   = 0;
-    bigendian   = BigEndian();
-    sample_time = (time_t)0;
-    name        = filename;
-    dataset     = new dalDataset;
+    seqnrLast_p  = 0;
+    bigendian_p  = BigEndian();
+    sampleTime_p = (time_t)0;
+    name         = filename;
+    dataset      = new dalDataset;
     station.clear();
     rr = 0;
     main_socket = -1;
@@ -55,7 +54,7 @@ namespace DAL {
     dipoleArray_p  = NULL;
     dipoles.clear();
     dims.push_back(0);
-    offset = 0;
+    offset_p   = 0;
     cdims.push_back(CHUNK_SIZE);
     stationstr = NULL;
     memset(uid,'-',10);
@@ -140,20 +139,17 @@ namespace DAL {
   //
   // ============================================================================
 
-  /*!
-    \brief Destructor
-  */
   TBB::~TBB()
   {
     if ( dipoleArray_p )
       {
         delete dipoleArray_p;
-        dipoleArray_p = NULL;
+        dipoleArray_p = 0;
       }
     if ( stationGroup_p )
       {
         delete stationGroup_p;
-        stationGroup_p = NULL;
+        stationGroup_p = 0;
       }
     delete dataset;
     if (main_socket)
@@ -165,7 +161,7 @@ namespace DAL {
             rawfile->close();
           }
         delete rawfile;
-        rawfile = NULL;
+        rawfile = 0;
       }
   }
 
@@ -174,10 +170,23 @@ namespace DAL {
   //  Methods
   //
   // ============================================================================
-  
-  /*!
-    \brief Set up the socket connection to the server
 
+  //_____________________________________________________________________________
+
+  /*!
+    \param os -- Output stream to which the summary is going to be written
+  */
+  void TBB::summary (std::ostream &os)
+  {
+    os << "[TBB] Summary of object properties"         << endl;    
+    os << "-- Last sequence number : " << seqnrLast_p  << endl;
+    os << "-- System is big endian : " << bigendian_p  << endl;
+    os << "-- Sample time ........ : " << sampleTime_p << endl;
+  }
+  
+  //_____________________________________________________________________________
+
+  /*!
     \brief ipaddress  -- IP number to which to connect
     \brief portnumber -- Portnumber to which to connect
   */
@@ -219,11 +228,10 @@ namespace DAL {
     printf("ready\n");
   }
 
-  // ---------------------------------------------------------------- openRawFile
+  //_____________________________________________________________________________
+  // Open file containing data resulting from a TBB dump
 
   /*!
-    \brief Open file containing data resulting from a TBBB dump
-
     \param filename -- Name of the data file
 
     \return status -- Status of the operation; returns \e true in case the input
@@ -247,7 +255,15 @@ namespace DAL {
       }
   }
 
-  int TBB::readsocket( unsigned int nbytes, char* buf )
+  //_____________________________________________________________________________
+  // Read data from a socket
+
+  /*!
+    \param nbytes -- Number of Bytes read
+    \param buf    -- Buffer holding the read data
+  */
+  int TBB::readsocket( unsigned int nbytes,
+		       char* buf )
   {
     FD_ZERO(&readSet);
     FD_SET(main_socket, &readSet);
@@ -276,18 +292,18 @@ namespace DAL {
     return SUCCESS;
   }
 
+  //_____________________________________________________________________________
+  // Read the 88-byte TBB frame header
+
   bool TBB::readRawSocketBlockHeader()
   {
-    // ------------------------------------------------------  read the header
-    //
-    // read 88-byte TBB frame header
-    //
     status = readsocket( sizeof(header), reinterpret_cast<char *>(&header) );
-    if (FAIL == status)
+    if (FAIL == status) {
       return false;
-
+    }
+    
     // reverse fields if big endian
-    if ( bigendian )
+    if ( bigendian_p )
       {
         swapbytes( (char *)&header.seqnr, 4 );
         swapbytes( (char *)&header.sample_nr, 4 );
@@ -304,9 +320,9 @@ namespace DAL {
     //  frame is known"
     //   -- TBB Design Description document, Wietse Poiesz (2006-10-3)
     //      Doc..id: LOFAR-ASTRON-SDD-047
-    sample_time =
+    sampleTime_p =
       (time_t)( header.time + header.sample_nr/(header.sample_freq*1000000) );
-    char *time_string=ctime(&sample_time);
+    char *time_string=ctime(&sampleTime_p);
     time_string[strlen(time_string)-1]=0;   // remove \n
 
 #ifdef DEBUGGING_MESSAGES
@@ -316,28 +332,38 @@ namespace DAL {
 
     if ( !first_sample )
       {
-        if ( ( seqnrLast > header.seqnr ) || ( seqnrLast+1 != header.seqnr ) )
+        if ( ( seqnrLast_p > header.seqnr ) || ( seqnrLast_p+1 != header.seqnr ) )
           {
             printf("WARNING: Frame missing or out of order\n");
             return false;
           }
       }
-    seqnrLast = header.seqnr;
+    seqnrLast_p = header.seqnr;
 
     return true;
   }
 
-  // ------------------------------------------------------  read the header
-  //
-  // read 88-byte TBB frame header
-  //
+  //_____________________________________________________________________________
+  // Read 88-byte TBB frame header
+  
+  /*!
+    Convert the time (seconds since 1 Jan 1970) to a human-readable string
+    "The samplenr field is used together with the time field to get
+    an absolute time reference.  The samplenr field holds the number of
+    samples that was counted by RSP since the start of the current second."
+    "By multiplying the samplenr with the sample period and additing it to
+    the seconds field, the time instance of the first data sample of the
+    frame is known"
 
+    -- TBB Design Description document, Wietse Poiesz (2006-10-3)
+        Doc..id: LOFAR-ASTRON-SDD-047
+  */
   void TBB::readRawFileBlockHeader()
   {
     rawfile->read(reinterpret_cast<char *>(&header), sizeof(header));
 
     // reverse fields if big endian
-    if ( bigendian )
+    if ( bigendian_p )
       {
         swapbytes( (char *)&header.seqnr, 4 );
         swapbytes( (char *)&header.sample_nr, 4 );
@@ -345,18 +371,12 @@ namespace DAL {
         swapbytes( (char *)&header.n_freq_bands, 2 );
       }
 
-    // Convert the time (seconds since 1 Jan 1970) to a human-readable string
-    // "The samplenr field is used together with the time field to get
-    //  an absolute time reference.  The samplenr field holds the number of
-    //  samples that was counted by RSP since the start of the current second."
-    // "By multiplying the samplenr with the sample period and additing it to
-    //  the seconds field, the time instance of the first data sample of the
-    //  frame is known"
-    //   -- TBB Design Description document, Wietse Poiesz (2006-10-3)
-    //      Doc..id: LOFAR-ASTRON-SDD-047
-    sample_time =
+    /*
+     * Convert the time (seconds since 1 Jan 1970) to a human-readable string
+     */
+    sampleTime_p =
       (time_t)( header.time + header.sample_nr/(header.sample_freq*1000000) );
-    char *time_string=ctime(&sample_time);
+    char *time_string=ctime(&sampleTime_p);
     time_string[strlen(time_string)-1]=0;   // remove \n
 
 #ifdef DEBUGGING_MESSAGES
@@ -366,7 +386,8 @@ namespace DAL {
 
   }
 
-  // ------------------------------------------------------------------------ eof
+  //_____________________________________________________________________________
+  // Check for the end of file
 
   bool TBB::eof()
   {
@@ -376,7 +397,8 @@ namespace DAL {
       return false;
   }
 
-  // ------------------------------------------------------------- printRawHeader
+  //_____________________________________________________________________________
+  // Print the contents of a raw TBB frame header
   
   void TBB::printRawHeader()
   {
@@ -394,7 +416,8 @@ namespace DAL {
     printf("\n");
   }
   
-  // --------------------------------------------------------------- stationCheck
+  //_____________________________________________________________________________
+  // Check if the group for a given station exists within the HDF5 file
   
   void TBB::stationCheck()
   {
@@ -420,7 +443,7 @@ namespace DAL {
           {
             dipoleArray_p  = dataset->openArray( uid, stationGroup_p->getName() );
             dims         = dipoleArray_p->dims();
-            offset       = dims[0];
+            offset_p     = dims[0];
             first_sample = false;
           }
         else
@@ -475,8 +498,10 @@ namespace DAL {
     int triggered_antennas[1]            = { 0 };
     double station_position_value[3]     = { 0, 0, 0 };
     std::string station_position_unit[3] = { "m", "m", "m" };
+    std::string station_position_frame   = "ITRF";
     double beam_direction_value[2]       = { 0, 90 };
     std::string beam_direction_unit[2]   = { "deg", "deg"};
+    std::string beam_direction_frame     = "AZEL";
     
     // Add attributes to "Station" group
     stationGroup_p->setAttribute( attribute_name(STATION_POSITION_VALUE),
@@ -484,13 +509,13 @@ namespace DAL {
     stationGroup_p->setAttribute( attribute_name(STATION_POSITION_UNIT),
 				  station_position_unit, 3 );
     stationGroup_p->setAttribute( attribute_name(STATION_POSITION_FRAME),
-				  std::string("ITRF") );
+				  station_position_frame );
     stationGroup_p->setAttribute( attribute_name(BEAM_DIRECTION_VALUE),
 				  beam_direction_value, 2 );
     stationGroup_p->setAttribute( attribute_name(BEAM_DIRECTION_UNIT),
 				  beam_direction_unit, 2 );
     stationGroup_p->setAttribute( attribute_name(BEAM_DIRECTION_FRAME),
-				  std::string("AZEL") );
+				  beam_direction_frame );
     stationGroup_p->setAttribute( attribute_name(TRIGGER_TYPE),
 				  std::string("UNDEFINED") );
     stationGroup_p->setAttribute( attribute_name(TRIGGER_OFFSET),
@@ -558,7 +583,7 @@ namespace DAL {
         if (FAIL == status)
           return false;
 
-        if ( bigendian )  // reverse fields if big endian
+        if ( bigendian_p )  // reverse fields if big endian
           swapbytes( (char *)&tran_sample.value, 2 );
 
         sdata[zz] = tran_sample.value;
@@ -566,8 +591,8 @@ namespace DAL {
 
     dims[0] += header.n_samples_per_frame;
     dipoleArray_p->extend(dims);
-    dipoleArray_p->write(offset, sdata, header.n_samples_per_frame );
-    offset += header.n_samples_per_frame;
+    dipoleArray_p->write(offset_p, sdata, header.n_samples_per_frame );
+    offset_p += header.n_samples_per_frame;
 
     status = readsocket( sizeof(payload_crc),
                          reinterpret_cast<char *>(&payload_crc) );
@@ -588,7 +613,7 @@ namespace DAL {
         rawfile->read( reinterpret_cast<char *>(&tran_sample),
                        sizeof(tran_sample) );
 
-        if ( bigendian )  // reverse fields if big endian
+        if ( bigendian_p )  // reverse fields if big endian
           swapbytes( (char *)&tran_sample.value, 2 );
 
         sdata[zz] = tran_sample.value;
@@ -596,8 +621,8 @@ namespace DAL {
 
     dims[0] += header.n_samples_per_frame;
     dipoleArray_p->extend(dims);
-    dipoleArray_p->write(offset, sdata, header.n_samples_per_frame );
-    offset += header.n_samples_per_frame;
+    dipoleArray_p->write(offset_p, sdata, header.n_samples_per_frame );
+    offset_p += header.n_samples_per_frame;
 
     rawfile->read( reinterpret_cast<char *>(&payload_crc),
                    sizeof(payload_crc) );
@@ -618,7 +643,7 @@ namespace DAL {
         real_part = real(spec_sample.value);
         imag_part = imag(spec_sample.value);
 
-        if ( bigendian ) // reverse fields if big endian
+        if ( bigendian_p ) // reverse fields if big endian
           {
             swapbytes( (char *)&real_part, 2 );
             swapbytes( (char *)&imag_part, 2 );
@@ -629,12 +654,73 @@ namespace DAL {
 
     dims[0] += header.n_samples_per_frame;
     dipoleArray_p->extend(dims);
-    dipoleArray_p->write(offset, csdata, header.n_samples_per_frame );
-    offset += header.n_samples_per_frame;
+    dipoleArray_p->write(offset_p, csdata, header.n_samples_per_frame );
+    offset_p += header.n_samples_per_frame;
 
     rawfile->read( reinterpret_cast<char *>(&payload_crc),
                    sizeof(payload_crc) );
 
   }
+
+  //_____________________________________________________________________________
+  // Set the antenna array position metadata from calibration file
+
+#ifdef HAVE_BLITZ
+  /*!
+    \param infile -- Calibration file containing the antenna array positions
+    \param name   -- Name of the group of antenna array positions
+  */
+  bool TBB::writeAntennaArrayPositions (std::string const &infile,
+					std::string const &name)
+  {
+    bool status (true);
+    std::ifstream m_file;
+    std::string m_name (name);
+    blitz::Array<double,1> m_geoloc;
+    blitz::Array<double,3> m_positions;
+
+    /* Open calibration file with positions */
+    m_file.open(infile.c_str());
+    
+    /* Check status of file stream */
+    if (!m_file.good()) {
+      m_file.close();
+      return false;
+    }
+   
+    /* Get the name of the antenna array positions */
+    std::getline(m_file, m_name);
+    if ("" == m_name) {
+      m_file.close();
+      return false;
+    }
+
+    /* Get geographical location: 1-d array with 3 elements */
+    try {
+      m_file >> m_geoloc;
+    } catch (std::string message) {
+      std::cerr << "[TBB::writeAntennaArrayPositions] " << message << std::endl;
+      return false;
+    }
+    
+    if ((1 != m_geoloc.dimensions()) || (3 != m_geoloc.extent(blitz::firstDim))) {
+      std::cerr << "[TBB::writeAntennaArrayPositions] "
+		<< "Wrong shape of array storing geographic location!" << std::endl;
+      return false;
+    }
+
+    /* Get the antenna positions */
+    
+    try {
+      m_file >> m_positions;
+      m_file.ignore(80,'\n');
+    } catch (std::string message) {
+      std::cerr << "[TBB::writeAntennaArrayPositions] " << message << std::endl;
+      return false;
+    }
+    
+    return status;
+  }
+#endif  
 
 } // end namespace DAL
