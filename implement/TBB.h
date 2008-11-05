@@ -29,7 +29,7 @@
 #endif
 
 #ifdef HAVE_BLITZ
-#include <blitz/Array.h>
+#include <blitz/array.h>
 #endif
 
 // socket headers

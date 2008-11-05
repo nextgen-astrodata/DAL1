@@ -1063,7 +1063,7 @@ namespace DAL
           }
 
         if ( ( array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
-                                      dataspace, cparms, NULL, NULL ) ) < 0 )
+                                      dataspace, cparms, 0, 0 ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array.\n";
           }
@@ -1078,8 +1078,8 @@ namespace DAL
           }
 
         if ( ( array_id = H5Dcreate( obj_id, arrayname.c_str(), datatype,
-                                     dataspace, H5P_DEFAULT, NULL,
-                                     NULL ) ) < 0 )
+                                     dataspace, H5P_DEFAULT, 0,
+                                     0 ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array.\n";
           }
