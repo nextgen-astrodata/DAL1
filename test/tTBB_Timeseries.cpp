@@ -30,7 +30,7 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-using DAL::TBB_Timeseries;  // Namespace usage
+using DAL::TBB_Timeseries;
 
 /*!
   \file tTBB_Timeseries.cpp
@@ -118,22 +118,16 @@ int test_methods (std::string const &filename)
 {
   cout << "\n[test_methods]\n" << endl;
 
-  int nofFailedTests = 0;
+  int nofFailedTests (0);
   TBB_Timeseries ts (filename);
 
   cout << "[1] Retrieve attributes attached to the root group ..." << endl;
   try {
-    std::string telescope;
-    std::string observer;
-    std::string project;
-    std::string observation_id;
-    std::string observation_mode;
-    //
-    telescope        = ts.telescope();
-    observer         = ts.observer();
-    project          = ts.project();
-    observation_id   = ts.observation_id();
-    observation_mode = ts.observation_mode();
+    std::string telescope        = ts.telescope();
+    std::string observer         = ts.observer();
+    std::string project          = ts.project();
+    std::string observation_id   = ts.observation_id();
+    std::string observation_mode = ts.observation_mode();
     //
     cout << "-- TELESCOPE ...... = " << telescope        << endl;
     cout << "-- OBSERVER ....... = " << observer         << endl;
@@ -144,41 +138,27 @@ int test_methods (std::string const &filename)
     cerr << message << endl;
     nofFailedTests++;
   }
-  
+
   cout << "[2] Retrieve attributes attached to the station groups ..." << endl;
   try {
     std::string group_name;
 #ifdef HAVE_CASA
-    casa::Vector<casa::String> trigger_type;
-    casa::Vector <double> trigger_offset;
-    casa::Vector<double> station_position_value;
-    casa::Vector<casa::String> station_position_unit;
-    std::string station_position_frame;
-    casa::Vector<double> beam_direction_value;
-    casa::Vector<casa::String> beam_direction_unit;
-    std::string beam_direction_frame;
+    casa::Vector<casa::String> trigger_type        = ts.trigger_type();
+    casa::Vector <double> trigger_offset           = ts.trigger_offset();
+    casa::Vector<casa::MPosition> station_position = ts.station_position();
+    casa::Vector<casa::MDirection> beam_direction  = ts.beam_direction();
+    //
+    cout << "-- TRIGGER_TYPE ......... = " << trigger_type      << endl;
+    cout << "-- TRIGGER_OFFSET ....... = " << trigger_offset    << endl;
+    cout << "-- STATION_POSITION ..... = " << station_position  << endl;
+    cout << "-- BEAM_DIRECTION ....... = " << beam_direction    << endl;
 #else
-    std::vector<std::string> trigger_type;
-    std::vector<double> trigger_offset;
-    std::vector<double> station_position_value;
-    std::vector<std::string> station_position_unit;
-    std::string station_position_frame;
-    std::vector<double> beam_direction_value;
-    std::vector<std::string> beam_direction_unit;
-    std::string beam_direction_frame;
+    std::vector<std::string> trigger_type = ts.trigger_type();
+    std::vector<double> trigger_offset    = ts.trigger_offset();
+    //
+    cout << "-- TRIGGER_TYPE ......... = " << trigger_type      << endl;
+    cout << "-- TRIGGER_OFFSET ....... = " << trigger_offset    << endl;
 #endif
-    //
-    trigger_type   = ts.trigger_type();
-    trigger_offset = ts.trigger_offset();
-    //
-    cout << "-- TRIGGER_TYPE ......... = " << trigger_type           << endl;
-    cout << "-- TRIGGER_OFFSET ....... = " << trigger_offset         << endl;
-    cout << "-- STATION_POSITION_VALUE = " << station_position_value << endl;
-    cout << "-- STATION_POSITION_UNIT  = " << station_position_unit  << endl;
-    cout << "-- STATION_POSITION_FRAME = " << station_position_frame << endl;
-    cout << "-- BEAM_DIRECTION_VALUE   = " << beam_direction_value   << endl;
-    cout << "-- BEAM_DIRECTION_UNIT    = " << beam_direction_unit    << endl;
-    cout << "-- BEAM_DIRECTION_FRAME   = " << beam_direction_frame   << endl;
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;

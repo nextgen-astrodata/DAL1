@@ -67,10 +67,34 @@ int test_constructors (std::string const &filename)
 
 // -----------------------------------------------------------------------------
 
-int main ()
+int main (int argc, char *argv[])
 {
   int nofFailedTests (0);
-  std::string outfile;
+  std::string outfile ("tTBB.h5");
+  std::string calfile;
+  bool have_outfile (false);
+  bool have_calfile (false);
+
+  //__________________________________________________________________
+  // Check the input parameters provided form the command line
+
+  if (argc < 2) {
+    std::cerr << "[tTBB] Missing name of output file!" << std::endl;
+    std::cerr << std::endl;
+    std::cerr << " tTBB <HDF5 outfile>" << std::endl;
+    std::cerr << std::endl;
+  } else {
+    outfile      = argv[1];
+    have_outfile = true;
+  }
+  
+  if (argc == 3) {
+    calfile      = argv[2];
+    have_calfile = true;
+  }
+  
+  //__________________________________________________________________
+  // Run the tests
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors (outfile);

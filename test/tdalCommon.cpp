@@ -152,31 +152,31 @@ int test_hdf5_attributes ()
   
   cout << "[2] Set attributes of single value ..." << endl;
   try {
-    std::cout << "-- Attribute of type int ..." << std::endl;
+    cout << "-- Attribute of type int ..." << std::endl;
     int data_int (1);
     DAL::h5set_attribute( fileID, "ATTRIBUTE_INT", data_int );
     //
-    std::cout << "-- Attribute of type uint ..." << std::endl;
+    cout << "-- Attribute of type uint ..." << std::endl;
     uint data_uint (2);
     DAL::h5set_attribute( fileID, "ATTRIBUTE_UINT", data_uint );
     //
-    std::cout << "-- Attribute of type short ..." << std::endl;
+    cout << "-- Attribute of type short ..." << std::endl;
     short data_short (3);
     DAL::h5set_attribute( fileID, "ATTRIBUTE_SHORT", data_short );
     //
-    std::cout << "-- Attribute of type long ..." << std::endl;
+    cout << "-- Attribute of type long ..." << std::endl;
     long data_long (4);
     DAL::h5set_attribute( fileID, "ATTRIBUTE_LONG", data_long );
     //
-    std::cout << "-- Attribute of type float ..." << std::endl;
+    cout << "-- Attribute of type float ..." << std::endl;
     float data_float (5);
     DAL::h5set_attribute( fileID, "ATTRIBUTE_FLOAT", data_float );
     //
-    std::cout << "-- Attribute of type double ..." << std::endl;
+    cout << "-- Attribute of type double ..." << std::endl;
     double data_double (6);
     DAL::h5set_attribute( fileID, "ATTRIBUTE_DOUBLE", data_double );
     //
-    std::cout << "-- Attribute of type string ..." << std::endl;
+    cout << "-- Attribute of type string ..." << std::endl;
     std::string data_string ("Hello");
     DAL::h5set_attribute( fileID, "ATTRIBUTE_STRING", data_string );
   } catch (std::string message) {
@@ -196,7 +196,7 @@ int test_hdf5_attributes ()
     double *data_double;
     std::string  *data_string;
     //
-    std::cout << "-- Attribute of type int[3] ..." << std::endl;
+    cout << "-- Attribute of type int[3] ..." << std::endl;
     data_int = new int[3];
     data_int[0] = 1;
     data_int[1] = 2;
@@ -206,7 +206,7 @@ int test_hdf5_attributes ()
 			 data_int,
 			 3);
     //
-    std::cout << "-- Attribute of type uint[3] ..." << std::endl;
+    cout << "-- Attribute of type uint[3] ..." << std::endl;
     data_uint = new uint[3];
     data_uint[0] = 1;
     data_uint[1] = 2;
@@ -216,7 +216,7 @@ int test_hdf5_attributes ()
 			 data_uint,
 			 3);
     //
-    std::cout << "-- Attribute of type short[3] ..." << std::endl;
+    cout << "-- Attribute of type short[3] ..." << std::endl;
     data_short = new short[3];
     data_short[0] = 1;
     data_short[1] = 2;
@@ -226,7 +226,7 @@ int test_hdf5_attributes ()
 			 data_short,
 			 3);
     //
-    std::cout << "-- Attribute of type long[3] ..." << std::endl;
+    cout << "-- Attribute of type long[3] ..." << std::endl;
     data_long = new long[3];
     data_long[0] = 1;
     data_long[1] = 2;
@@ -236,7 +236,7 @@ int test_hdf5_attributes ()
 			 data_long,
 			 3);
     //
-    std::cout << "-- Attribute of type float[3] ..." << std::endl;
+    cout << "-- Attribute of type float[3] ..." << std::endl;
     data_float = new float[3];
     data_float[0] = 1;
     data_float[1] = 2;
@@ -246,7 +246,7 @@ int test_hdf5_attributes ()
 			 data_float,
 			 3);
     //
-    std::cout << "-- Attribute of type double[3] ..." << std::endl;
+    cout << "-- Attribute of type double[3] ..." << std::endl;
     data_double = new double[3];
     data_double[0] = 1;
     data_double[1] = 2;
@@ -256,7 +256,7 @@ int test_hdf5_attributes ()
 			 data_double,
 			 3);
     //
-    std::cout << "-- Attribute of type string[3] ..." << std::endl;
+    cout << "-- Attribute of type string[3] ..." << std::endl;
     data_string = new std::string[3];
     data_string[0] = "aa";
     data_string[1] = "bb";
@@ -282,7 +282,7 @@ int test_hdf5_attributes ()
     std::vector<double> data_double(nelem);
     std::vector<std::string> data_string(nelem);
     //
-    std::cout << "-- Attribute of type std::vector<int> ..." << std::endl;
+    cout << "-- Attribute of type std::vector<int> ..." << std::endl;
     data_int[0] = 1;
     data_int[1] = 2;
     data_int[2] = 3;
@@ -290,7 +290,7 @@ int test_hdf5_attributes ()
 			  "ATTRIBUTE_INT_VECTOR",
 			  data_int);
     //
-    std::cout << "-- Attribute of type std::vector<uint> ..." << std::endl;
+    cout << "-- Attribute of type std::vector<uint> ..." << std::endl;
     data_uint[0] = 4;
     data_uint[1] = 5;
     data_uint[2] = 6;
@@ -298,7 +298,7 @@ int test_hdf5_attributes ()
 			  "ATTRIBUTE_UINT_VECTOR",
 			  data_uint);
     //
-    std::cout << "-- Attribute of type std::vector<short> ..." << std::endl;
+    cout << "-- Attribute of type std::vector<short> ..." << std::endl;
     data_short[0] = 7;
     data_short[1] = 8;
     data_short[2] = 9;
@@ -306,7 +306,7 @@ int test_hdf5_attributes ()
 			  "ATTRIBUTE_SHORT_VECTOR",
 			  data_short);
     //
-    std::cout << "-- Attribute of type std::vector<long> ..." << std::endl;
+    cout << "-- Attribute of type std::vector<long> ..." << std::endl;
     data_long[0] = 10;
     data_long[1] = 11;
     data_long[2] = 12;
@@ -314,7 +314,7 @@ int test_hdf5_attributes ()
 			  "ATTRIBUTE_LONG_VECTOR",
 			  data_long);
     //
-    std::cout << "-- Attribute of type std::vector<float> ..." << std::endl;
+    cout << "-- Attribute of type std::vector<float> ..." << std::endl;
     data_float[0] = 13;
     data_float[1] = 14;
     data_float[2] = 15;
@@ -322,7 +322,7 @@ int test_hdf5_attributes ()
 			  "ATTRIBUTE_FLOAT_VECTOR",
 			  data_float);
     //
-    std::cout << "-- Attribute of type std::vector<double> ..." << std::endl;
+    cout << "-- Attribute of type std::vector<double> ..." << std::endl;
     data_double[0] = 16;
     data_double[1] = 17;
     data_double[2] = 18;
@@ -330,7 +330,7 @@ int test_hdf5_attributes ()
 			  "ATTRIBUTE_DOUBLE_VECTOR",
 			  data_double);
     //
-    std::cout << "-- Attribute of type std::vector<string> ..." << std::endl;
+    cout << "-- Attribute of type std::vector<string> ..." << std::endl;
     data_string[0] = "aaa";
     data_string[1] = "bbb";
     data_string[2] = "ccc";
@@ -493,7 +493,7 @@ int test_hdf5_attributes ()
 */
 int test_datasets (std::string const &filename)
 {
-  std::cout << "\n[tdalCommon::test_datasets]\n" << std::endl;
+  cout << "\n[tdalCommon::test_datasets]\n" << std::endl;
 
   int nofFailedTests (0);
   hid_t file_id (-1);
@@ -503,19 +503,21 @@ int test_datasets (std::string const &filename)
   //__________________________________________________________________
   // Open the HDF5 dataset
   
-  std::cout << "-- opening HDF5 file ..." << std::endl;
+  cout << "-- opening HDF5 file ..." << std::endl;
   file_id = H5Fopen (filename.c_str(),
 		     H5F_ACC_RDONLY,
 		     H5P_DEFAULT);
 
   if (file_id < 0) {
-    std::cerr << "Failed to open file " << filename << std::endl;
+    cerr << "Failed to open file " << filename << std::endl;
     return 1;
   }
   
   //__________________________________________________________________
   // Access the attributes attached to the root group of the file
 
+  cout << "-- Access the attributes attached to the root group of the file" 
+	    << std::endl;
   try {
     std::string name;
     std::string telescope;
@@ -537,18 +539,18 @@ int test_datasets (std::string const &filename)
     cout << "-- OBSERVATION_ID   = " << observation_id   << endl;
     cout << "-- OBSERVATION_MODE = " << observation_mode << endl;
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    cerr << message << std::endl;
     nofFailedTests++;
   }
   
   //__________________________________________________________________
   // Open the station group
   
-  std::cout << "-- opening station group ..." << std::endl;
+  cout << "-- opening station group ..." << std::endl;
   group_id = H5Gopen1 (file_id,"Station001");
   
   if (group_id < 0) {
-    std::cerr << "Error opening the station group!" << std::endl;
+    cerr << "Error opening the station group!" << std::endl;
     return 1;
   } 
 
@@ -584,19 +586,19 @@ int test_datasets (std::string const &filename)
     cout << "-- BEAM_DIRECTION_UNIT .. = " << beam_direction_unit    << endl;
     cout << "-- BEAM_DIRECTION_FRAME . = " << beam_direction_frame   << endl;
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    cerr << message << std::endl;
     nofFailedTests++;
   }
 
   //__________________________________________________________________
   // Open the dipole dataset
 
-  std::cout << "-- opening dipole dataset ..." << std::endl;
+  cout << "-- opening dipole dataset ..." << std::endl;
   dataset_id = H5Dopen1 (group_id,
 			 "001000001");
   
   if (dataset_id < 0) {
-    std::cerr << "Error opening the dipole dataset!" << std::endl;
+    cerr << "Error opening the dipole dataset!" << std::endl;
     return 1;
   } 
 
@@ -645,7 +647,7 @@ int test_datasets (std::string const &filename)
     cout << "-- ANTENNA_ORIENTATION_UNIT  = " << antenna_orientation_unit  << endl;
     cout << "-- ANTENNA_ORIENTATION_FRAME = " << antenna_orientation_frame << endl;
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    cerr << message << std::endl;
     nofFailedTests++;
   }
   
