@@ -352,13 +352,9 @@ namespace DAL {
   // ------------------------------------------------------- ndims
   
   /*!
-    \brief Get the number of dimensions of the column.
-    
-    Get the number of dimensions of the column.
-    
-    \return A integer specifying the number of column dimensions.
+    \return ndims -- An integer specifying the number of column dimensions.
   */
-  uint dalColumn::ndims()
+  int dalColumn::ndims()
   {
     if ( MSCASATYPE == filetype )
       {
@@ -386,11 +382,7 @@ namespace DAL {
   // ------------------------------------------------------- setName
   
   /*!
-    \brief Set the name of the column.
-    
-    Set the name of the column.
-    
-    \param colname The name of the column.
+    \param colname -- The name of the column.
   */
   void dalColumn::setName(std::string colname)
   {
@@ -401,11 +393,7 @@ namespace DAL {
   // ------------------------------------------------------- setFileType
   
   /*!
-    \brief Set the file type of the dataset containing the column.
-    
-    Set the file type of the dataset containing the column.
-    
-    \param type The type of file.
+    \param -- type The type of file.
   */
   void dalColumn::setFileType( std::string type )
   {
@@ -416,11 +404,7 @@ namespace DAL {
   // ------------------------------------------------------- getName
   
   /*!
-    \brief Get the name of the column.
-    
-    Retrieve the name of the column.
-    
-    \return The name of the column.
+    \return name -- The name of the column.
   */
   std::string dalColumn::getName()
   {
@@ -432,10 +416,6 @@ namespace DAL {
   // ------------------------------------------------------- nrows
   
   /*!
-    \brief Get the number of rows in the column.
-    
-    Get the number of rows in the column.
-    
     \return A number specifying the number of column rows.
   */
   uint dalColumn::nrows()
@@ -477,10 +457,6 @@ namespace DAL {
   // ------------------------------------------------------- data
   
   /*!
-    \brief Get column data.
-    
-    Get the data object for the column.
-    
     \return A dalData object containing the column data.
   */
   dalData * dalColumn::data()

@@ -58,11 +58,8 @@ namespace DAL {
   class TBB
   {
     
-    ///////////////////////////////////////////////////////////////
-    //
-    // constant values and structures
-    //
-    ///////////////////////////////////////////////////////////////
+    //___________________________________________________________________________
+    // Constant values and structures
     
     //! Structure for the storage of data for an individual antenna
     struct AntennaStruct
@@ -124,14 +121,25 @@ namespace DAL {
       Int16 spare;
       UInt16 crc;
     };
-    
+
+    //! Name of the output HDF5 file
+    string name;
+    //! Name of the telescope
+    std::string telescope_p;
+    //! Name of the observer
+    std::string observer_p;
+    //! Name of the project
+    std::string project_p;
+    //! Observation ID
+    std::string observation_id_p;
+    //! Telescope observation mode
+    std::string observationMode_p;
     //! Status tracking
     int status;
     UInt32 seqnrLast_p;
     //! Is the system big-endian?
     bool bigendian_p;
     time_t sampleTime_p;  // For date
-    string name;
     dalDataset * dataset;
     std::vector<dalGroup> station;
     fd_set readSet;
@@ -166,11 +174,58 @@ namespace DAL {
   public:
     
     bool first_sample;
+
+    //___________________________________________________________________________
+    // Construction/Destruction
     
     //! Constructor
-    TBB (string const& name);
+    TBB (string const &outfile);
+    //! Constructor
+    TBB (string const &outfile,
+	 string const &telescope,
+	 string const &observer,
+	 string const &project);
     //! Destructor
     ~TBB();
+
+    //___________________________________________________________________________
+    // Parameter access
+
+    //! Get the name of the telescope
+    inline std::string telescope ()        const { return telescope_p;        }
+    //! Get the name of the observer
+    inline std::string observer ()         const { return observer_p;         }
+    //! Get the name of the project
+    inline std::string project ()          const { return project_p;          }
+    //! Get the identifier for the observation
+    inline std::string observation_id ()   const { return observation_id_p;   }
+    //! Set the telescope observation mode
+    inline std::string observation_mode () const { return observationMode_p;  }
+    
+    //! Set the name of the telescope
+    inline void setTelescope (std::string const &telescope) {
+      telescope_p = telescope;
+    }
+    //! Set the name of the observer
+    inline void setObserver (std::string const &observer) {
+      observer_p = observer;
+    }
+    //! Set the name of the project
+    inline void setProject (std::string const &project) {
+      project_p = project;
+    }
+    //! Set the identifier for the observation
+    inline void setObservation_id (std::string const &observation_id) {
+      observation_id_p = observation_id;
+    }
+    //! Set the telescope observation mode
+    inline void setObservation_mode (std::string const &observation_mode) {
+      observationMode_p = observation_mode;
+    }
+    
+    //___________________________________________________________________________
+    // Methods
+
     //! Set up the socket connection to the server
     void connectsocket( const char* ipaddress,
 			const char* portnumber );
@@ -206,6 +261,9 @@ namespace DAL {
 
   private:
     
+    //! Initialize internal data
+    void init ();
+    //! Initialize the values within the TBB_Header struct
     void init_TBB_Header ();
     
   }; // class TBB

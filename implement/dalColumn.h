@@ -118,8 +118,11 @@ namespace DAL {
 #endif
     
     void addMember( std::string member_name, std::string type );
+    //! Get the name of the column.
     std::string getName();
+    //! Set the name of the column.
     void setName(std::string colname);
+    //! Set the file type of the dataset containing the column.
     void setFileType( std::string type );
     std::string getDataType();
     int getSize();
@@ -128,10 +131,13 @@ namespace DAL {
     bool isArray();
     bool isScalar();
     vector<int> shape();
-    uint ndims();
+    //! Get the number of dimensions of the column.
+    int ndims();
+    //! Get the number of rows in the column.
     uint nrows();
     dalData * data (int &start,
 		    int &length);
+    //! Get the data object for the column.
     dalData * data();
     
     /************************************************************************

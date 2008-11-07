@@ -49,6 +49,7 @@ namespace DAL {
     unsigned int nd;
 
     ptr = gmtime(&seconds);
+    assert (ptr);
 
     hour = ptr->tm_hour;
     min = ptr->tm_min;
@@ -65,6 +66,9 @@ namespace DAL {
 
     *intmjd = nd - 2400001;
     *fracmjd = dayfrac;
+
+    assert (intmjd);
+    assert (fracmjd);
 
     jd = (long double)nd + dayfrac - 0.5L;
 
@@ -1189,46 +1193,67 @@ namespace DAL {
     MDirection dir = MDirection();
     
     if (location_id > 0) {
-      bool status (true);
       casa::Vector<double> values;
       casa::Vector<casa::String> units;
-      MDirection::Types tp;
       std::string refcode;
-      // retrieve the numerical values of the position
-      status *= h5get_attribute(location_id,
-				attribute_name(value),
-				values);
-      // retrieve the physical units of the position
-      status *= h5get_attribute(location_id,
-				attribute_name(unit),
-				units);
-      // retrieve the frame of the position
-      status *= h5get_attribute(location_id,
-				attribute_name(frame),
-				refcode);
-      status *= MDirection::getType (tp,refcode);
-      // assemble MDirection object
-      if (status) {
-	int nofValues = values.nelements();
-	int nofUnits  = units.nelements();
-	if (nofValues == 2 && nofValues == nofUnits)
-	  {
-	    // create MDirection object
-	    dir = MDirection ( Quantity( values(0), units(0)),
-			       Quantity( values(1), units(1)),
-			       MDirection::Ref(tp));
-	    // return result
-	    return dir;
-	  }
-	else {
-	  cerr << "[h5get_direction] Mismatching number of values and units!"
-	       << endl;
-	  dir = MDirection();
-	}
-      }
-      else {
-	cerr << "[h5get_direction] Error retrieving components for MDirection!"
+      MDirection::Types tp;
+
+      //______________________________________________________________
+      // Retrieve components from dataset to construct MDirection
+
+      if (!h5get_attribute(location_id,
+			   attribute_name(value),
+			   values)) {
+	cerr << "[h5get_direction]"
+	     << " Error retrieving the numerical values of the position"
 	     << endl;
+	return dir;
+      }
+
+      if (!h5get_attribute(location_id,
+			   attribute_name(unit),
+			   units)) {
+	cerr << "[h5get_direction]"
+	     << " Error retrieving the physical units of the position"
+	     << endl;
+	return dir;
+      }
+
+      if (!h5get_attribute(location_id,
+			   attribute_name(frame),
+			   refcode)) {
+	cerr << "[h5get_direction]"
+	     << " Error retrieving the frame of the position"
+	     << endl;
+	return dir;
+      }
+
+      //______________________________________________________________
+      // Combine components into MDirection
+      
+      if (MDirection::getType (tp,refcode))
+	{
+	  if (values.nelements() == 2 && units.nelements() == 2)
+	    {
+	      // create MDirection object
+	      dir = MDirection ( Quantity( values(0), units(0)),
+				 Quantity( values(1), units(1)),
+				 MDirection::Ref(tp));
+	      // return result
+	      return dir;
+	    }
+	  else {
+	    cerr << "[h5get_direction] Mismatching number of values and units!"
+		 << endl;
+	    cerr << "-- Values = " << values << endl;
+	    cerr << "-- Units  = " << units  << endl;
+	    dir = MDirection();
+	  }
+	}
+      else {
+	cerr << "[h5get_direction] Error translating reference code into type!"
+	     << endl;
+	cerr << "-- Refcode = " << refcode << endl;
 	dir = MDirection();
       }
     }
@@ -1261,52 +1286,69 @@ namespace DAL {
   {
     MPosition obs = MPosition();
     
-    if (location_id > 0)
-      {
-        bool status (true);
-        casa::Vector<double> values;
-        casa::Vector<casa::String> units;
-        MPosition::Types tp;
-        std::string refcode;
-        // retrieve the numerical values of the position
-        status *= h5get_attribute(location_id,
-                                  attribute_name(value),
-                                  values);
-        // retrieve the physical units of the position
-        status *= h5get_attribute(location_id,
-                                  attribute_name(unit),
-                                  units);
-        // retrieve the frame of the position
-        status *= h5get_attribute(location_id,
-                                  attribute_name(frame),
-                                  refcode);
-        status *= MPosition::getType (tp,refcode);
-        // assemble MPosition object
-        if (status)
-          {
-            int nofValues = values.nelements();
-            int nofUnits  = units.nelements();
-            if (nofValues == 3 && nofValues == nofUnits) {
-	      // create MPosition object
-	      obs = MPosition ( MVPosition( Quantity( values(0), units(0)),
-					    Quantity( values(1), units(1)),
-					    Quantity( values(2), units(2))),
-				MPosition::Ref(tp));
-	      // return result
+    if (location_id > 0) {
+      bool status (true);
+      casa::Vector<double> values;
+      casa::Vector<casa::String> units;
+      std::string refcode;
+
+      // retrieve the numerical values of the position
+      status *= h5get_attribute(location_id,
+				attribute_name(value),
+				values);
+      // retrieve the physical units of the position
+      status *= h5get_attribute(location_id,
+				attribute_name(unit),
+				units);
+      // retrieve the frame of the position
+      status *= h5get_attribute(location_id,
+				attribute_name(frame),
+				refcode);
+
+      if (status) 
+	{
+	  if (values.nelements() == 3 && units.nelements() == 3)
+	    {	      
+	      MPosition::Types tp;
+	      // Translate reference code into MPosition::Type
+	      status *= MPosition::getType (tp,refcode);
+	      
+	      switch (tp) {
+	      case MPosition::ITRF:
+		obs = MPosition ( MVPosition( values(0),
+					      values(1),
+					      values(2)),
+				  MPosition::Ref(MPosition::ITRF));
+		break;
+	      case MPosition::WGS84:
+		obs = MPosition ( MVPosition( Quantity( values(0), units(0)),
+					      Quantity( values(1), units(1)),
+					      Quantity( values(2), units(2))),
+				  MPosition::Ref(MPosition::WGS84));
+		
+		break;
+	      default:
+		std::cerr << "[h5get_position] Unknown MPosition::Type!" << endl;
+		break;
+	      };
+	      
 	      return obs;
 	    }
-            else {
-	      cerr << "[h5get_position] Mismatching number of values and units!"
-		   << endl;
-	      obs = MPosition();
-	    }
-          }
-        else {
-	  cerr << "[h5get_position] Error retrieving components for MPosition!"
-	       << endl;
-	  obs = MPosition();
+	  else {
+	    cerr << "[h5get_position] Mismatching number of values and units!"
+		 << endl;
+	    obs = MPosition();
+	  }
 	}
+      else {
+	cerr << "[h5get_position] Error retrieving components for MPosition!"
+	     << endl;
+	cerr << "-- Values  = " << values  << endl;
+	cerr << "-- Units   = " << units   << endl;
+	cerr << "-- Refcode = " << refcode << endl;
+	obs = MPosition();
       }
+    }
     else {
       cerr << "[h5get_position] Unusable ID for HDF5 object!" << endl;
       obs = MPosition();

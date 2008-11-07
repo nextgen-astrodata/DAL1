@@ -108,7 +108,8 @@ namespace DAL { // Namespace DAL -- begin
   
   void TBB_StationGroup::init ()
   {
-    groupID_p = 0;
+    groupID_p              = 0;
+    nofTriggeredAntennas_p = -1;
   }
   
   // ----------------------------------------------------------------------- init
@@ -227,12 +228,19 @@ namespace DAL { // Namespace DAL -- begin
       status = false;
     }
     
+    /* Set internal variables */
+
     if (group_id > 0) {
-      groupID_p = group_id;
+      groupID_p              = group_id;
+#ifdef HAVE_CASA
+      nofTriggeredAntennas_p = triggered_antennas().nelements();
+#else
+      nofTriggeredAntennas_p = triggered_antennas().size();
+#endif
     } else {
       groupID_p = 0;
     }
-    
+
     /* Set up the list of dipole datasets contained within this group */
     status = setDipoleDatasets ();    
   }
@@ -691,13 +699,10 @@ namespace DAL { // Namespace DAL -- begin
       os << "-- Beam direction (Frame).. : " << beam_direction_frame()   << endl;
       os << "-- Trigger type ........... : " << trigger_type()           << endl;
       os << "-- Trigger offset ......... : " << trigger_offset()         << endl;
-    }
-    
-#ifdef HAVE_CASA
-    if (groupID_p > 0) {
+      os << "-- nof. triggered antennas  : " << nofTriggeredAntennas()   << endl;
       os << "-- Triggered antennas ..... : " << triggered_antennas()     << endl;
     }
-#endif
+    
   }
 
   // ============================================================================

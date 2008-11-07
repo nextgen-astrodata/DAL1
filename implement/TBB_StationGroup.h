@@ -129,6 +129,8 @@ namespace DAL { // Namespace DAL -- begin
     hid_t groupID_p;
     //! Datasets contained within this group
     std::vector<TBB_DipoleDataset> datasets_p;
+    //! Number of triggered antennas at this station
+    uint nofTriggeredAntennas_p;
     
   public:
     
@@ -192,9 +194,14 @@ namespace DAL { // Namespace DAL -- begin
     //! Get the list of triggered antennas
 #ifdef HAVE_CASA
     casa::Vector<uint> triggered_antennas ();
-#else 
-    std::vector<uint> triggered_antennas ();
+#else
+   std::vector<uint> triggered_antennas ();
 #endif
+
+   //! Get the number of triggered antennas at this station
+   inline uint nofTriggeredAntennas () const {
+     return nofTriggeredAntennas_p;
+   }
     
     //! Get the numerical value of the beam pointing direction.
 #ifdef HAVE_CASA
@@ -213,11 +220,6 @@ namespace DAL { // Namespace DAL -- begin
     //! Get the coordinate frame identifier for the beam direction
     std::string beam_direction_frame ();
     
-    //! Get the direction of the station beam as casa::Measure
-#ifdef HAVE_CASA
-    casa::MDirection beam_direction ();
-#endif
-
     //! Get the numerical values of the station position
 #ifdef HAVE_CASA
     casa::Vector<double> station_position_value ();
@@ -234,9 +236,6 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Get the identifier for the station position reference frame
     std::string station_position_frame ();
-
-    //! Get the position of the station as a casa::Measure
-    casa::MPosition station_position ();
 
     /*!
       \brief Get the name of the class
@@ -264,6 +263,14 @@ namespace DAL { // Namespace DAL -- begin
               this station group.
     */
     inline uint nofDipoleDatasets () { return datasets_p.size(); }
+
+#ifdef HAVE_CASA
+    //! Get the direction of the station beam as casa::Measure
+    casa::MDirection beam_direction ();
+
+    //! Get the position of the station as a casa::Measure
+    casa::MPosition station_position ();
+#endif
 
     // ==========================================================================
     //

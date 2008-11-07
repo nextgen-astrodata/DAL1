@@ -75,7 +75,11 @@ namespace DAL { // Namespace DAL -- begin
 
     This class provides the top-level interface to a standard dataset of LOFAR
     time-series data, as obtained from dumping the contents of the cyclic 
-    buffers of the transient buffer boards (TBB).
+    buffers of the transient buffer boards (TBB). Since the time-series data
+    are are tailored towards the HDF5 data format, the implementation within this
+    class for the most part of it does not go through the additional abstraction
+    layers - such as dalDataset or dalGroup - but directly performs the required
+    operations through the HDF5 library.
     
     <ol>
       <li><b><a name="Structure of the data-set">Structure of the
@@ -85,9 +89,9 @@ namespace DAL { // Namespace DAL -- begin
       |-- TELESCOPE                 ... Attribute       ... string
       |-- OBSERVER                  ... Attribute       ... string
       |-- PROJECT                   ... Attribute       ... string
+      |-- OBSERVATION_ID            ... Attribute       ... string
+      |-- OBSERVATION_MODE          ... Attribute       ... string
       |-- Station001                ... Group
-      |   |-- OBSERVATION_ID        ... Attribute       ... string
-      |   |-- OBSERVATION_MODE      ... Attribute       ... string
       |   |-- TRIGGER_TYPE          ... Attribute       ... string
       |   |-- TRIGGER_OFFSET        ... Attribute       ... string
       |   |-- TRIG_ANTS             ... Attribute       ... array<int,1>
@@ -561,6 +565,13 @@ namespace DAL { // Namespace DAL -- begin
     casa::Vector<double> trigger_offset ();
 #else
     std::vector<double> trigger_offset ();
+#endif
+
+#ifdef HAVE_CASA
+    //! Get the position of the station as a casa::Measure
+    casa::Vector<casa::MPosition> station_position ();
+    //! Get the direction of the station beam as casa::Measure
+    casa::Vector<casa::MDirection> beam_direction ();
 #endif
     
     // ==========================================================================

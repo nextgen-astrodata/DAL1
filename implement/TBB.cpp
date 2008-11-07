@@ -33,16 +33,86 @@ namespace DAL {
   //
   // ============================================================================
 
+  // ------------------------------------------------------------------------ TBB
+
   /*!
     \param filename -- Name of the output HDF5 dataset to create
   */
   TBB::TBB( string const& filename )
+    : name (filename)
   {
-    // initializations (private)
+    init ();
+    
+    if ( FAIL == dataset->open( filename.c_str() ) )
+      {
+        cerr << "Creating new dataset " << filename << endl;
+        delete dataset;
+        dataset = new dalDataset( filename.c_str(), "HDF5" );
+	
+        dataset->setAttribute( attribute_name(TELESCOPE),
+			       telescope_p );
+        dataset->setAttribute( attribute_name(OBSERVER),
+			       observer_p );
+        dataset->setAttribute( attribute_name(PROJECT),
+			       project_p );
+        dataset->setAttribute( attribute_name(OBSERVATION_ID),
+                               observation_id_p );
+        dataset->setAttribute( attribute_name(OBSERVATION_MODE),
+                               observationMode_p );
+
+      }
+    else
+      {
+        cerr << "Dataset " << filename << " exists." << endl;
+
+        stations = dataset->getGroupNames();
+
+#ifdef DEBUGGING_MESSAGES
+        for ( unsigned int ss = 0; ss < stations.size(); ss++ )
+          {
+            cerr << stations[ss] << " group exists." << endl;
+          }
+#endif
+
+      }
+
+  }
+
+  // ------------------------------------------------------------------------ TBB
+
+  /*!
+    \param filename  -- Name of the output HDF5 dataset to create
+    \param telescope -- Name of the telecope
+    \param observer  -- Name of the observer
+    \param project   -- Name of the project
+  */
+  TBB::TBB (string const &outfile,
+	    string const &telescope,
+	    string const &observer,
+	    string const &project)
+    : name (outfile),
+      telescope_p (telescope),
+      observer_p (observer),
+      project_p (project)
+  {
+  }
+  
+
+  // ----------------------------------------------------------------------- init
+
+  void TBB::init ()
+  {
+    /* Initialization of private data */
+
+    telescope_p        = "LOFAR";
+    observer_p         = "UNDEFINED";
+    project_p          = "UNDEFINED";
+    observation_id_p   = "UNDEFINED";
+    observationMode_p  = "UNDEFINED";  
+
     seqnrLast_p  = 0;
     bigendian_p  = BigEndian();
     sampleTime_p = (time_t)0;
-    name         = filename;
     dataset      = new dalDataset;
     station.clear();
     rr = 0;
@@ -66,57 +136,18 @@ namespace DAL {
     rawfile           = NULL;
     real_part         = 0;
     imag_part         = 0;
-    /* Initialize the TBB_Header struct */
-    init_TBB_Header ();
-    
-    // initializations (public)
+
+    /* Initialization of public data */
+
     first_sample = true;
 
-    if ( FAIL == dataset->open( filename.c_str() ) )
-      {
-        cerr << "Creating new dataset " << filename << endl;
-        delete dataset;
-        dataset = new dalDataset( filename.c_str(), "HDF5" );
+    /* Initialization of structs */
 
-        string telescope          = "LOFAR";
-        string observer           = "UNDEFINED";
-        string project            = "UNDEFINED";
-        string observation_id     = "UNDEFINED";
-        string observation_mode   = "UNDEFINED";
-        dataset->setAttribute( attribute_name(TELESCOPE),
-			       telescope );
-        dataset->setAttribute( attribute_name(OBSERVER),
-			       observer );
-        dataset->setAttribute( attribute_name(PROJECT),
-			       project );
-        dataset->setAttribute( attribute_name(OBSERVATION_ID),
-                               observation_id );
-        dataset->setAttribute( attribute_name(OBSERVATION_MODE),
-                               observation_mode );
-
-      }
-    else
-      {
-        cerr << "Dataset " << filename << " exists." << endl;
-
-        stations = dataset->getGroupNames();
-
-#ifdef DEBUGGING_MESSAGES
-        for ( unsigned int ss = 0; ss < stations.size(); ss++ )
-          {
-            cerr << stations[ss] << " group exists." << endl;
-          }
-#endif
-
-      }
-
+    init_TBB_Header ();
   }
-
+  
   // ------------------------------------------------------------ init_TBB_Header
   
-  /*!
-    \brief Initialize the values within the TBB_Header struct
-  */
   void TBB::init_TBB_Header ()
   {
     header.stationid           = 0;
@@ -178,10 +209,16 @@ namespace DAL {
   */
   void TBB::summary (std::ostream &os)
   {
-    os << "[TBB] Summary of object properties"         << endl;    
+    os << "[TBB] Summary of object properties"         << endl;
     os << "-- Last sequence number : " << seqnrLast_p  << endl;
     os << "-- System is big endian : " << bigendian_p  << endl;
     os << "-- Sample time ........ : " << sampleTime_p << endl;
+    os << "-- Attributes attached to file root group:"      << endl;
+    os << "   -- TELESCOPE        = " << telescope()        << endl;
+    os << "   -- OBSERVER         = " << observer()         << endl;
+    os << "   -- PROJECT          = " << project()          << endl;
+    os << "   -- OBSERVATION_ID   = " << observation_id()   << endl;
+    os << "   -- OBSERVATION_MODE = " << observation_mode() << endl;
   }
   
   //_____________________________________________________________________________

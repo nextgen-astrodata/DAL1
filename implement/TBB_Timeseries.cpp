@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------*
- | $Id::                                                               $ |
+ | $Id::                                                                 $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2008                                                    *
@@ -82,7 +82,13 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   void TBB_Timeseries::destroy ()
-  { ; }
+  {
+    if (fileID_p > 0) {
+      herr_t h5error (0);
+      // Close the HDF5 file
+      h5error = H5Fclose (fileID_p);
+    }
+  }
   
   // ============================================================================
   //
@@ -341,9 +347,13 @@ namespace DAL { // Namespace DAL -- begin
     {
       uint nofStations = nofStationGroups();
       casa::Vector<casa::String> trigger (nofStations);
-
-      for (uint n(0); n<nofStations; n++) {
-	trigger(n) = groups_p[n].trigger_type();
+      
+      try {
+	for (uint n(0); n<nofStations; n++) {
+	  trigger(n) = groups_p[n].trigger_type();
+	}
+      } catch (std::string message) {
+	std::cerr << "[TBB_Timeseries::trigger_type] " <<  message << std::endl;
       }
 
       return trigger;
@@ -354,69 +364,108 @@ namespace DAL { // Namespace DAL -- begin
       uint nofStations = nofStationGroups();
       std::vector<std::string> trigger (nofStations);
 
-      for (uint n(0); n<nofStations; n++) {
-	trigger[n] = groups_p[n].trigger_type();
+      try {
+	for (uint n(0); n<nofStations; n++) {
+	  trigger[n] = groups_p[n].trigger_type();
+	}
+      } catch (std::string message) {
+	std::cerr << "[TBB_Timeseries::trigger_type] " <<  message << std::endl;
       }
-
+      
       return trigger;
     }
 #endif
-
+  
   // ------------------------------------------------------------- trigger_offset
-
+  
 #ifdef HAVE_CASA
-    casa::Vector<double> TBB_Timeseries::trigger_offset ()
-    {
-      uint nofStations = nofStationGroups();
-      casa::Vector<double> trigger (nofStations);
+  casa::Vector<double> TBB_Timeseries::trigger_offset ()
+  {
+    uint nofStations = nofStationGroups();
+    casa::Vector<double> trigger (nofStations);
 
+    try {
       for (uint n(0); n<nofStations; n++) {
 	trigger(n) = groups_p[n].trigger_offset();
       }
-
-      return trigger;
+    } catch (std::string message) {
+      std::cerr << "[TBB_Timeseries::trigger_offset] " <<  message << std::endl;
     }
+    
+    return trigger;
+  }
 #else
-    std::vector<double> TBB_Timeseries::trigger_offset ()
-    {
-      uint nofStations = nofStationGroups();
-      std::vector<double> trigger (nofStations);
-
+  std::vector<double> TBB_Timeseries::trigger_offset ()
+  {
+    uint nofStations = nofStationGroups();
+    std::vector<double> trigger (nofStations);
+    
+    try {
       for (uint n(0); n<nofStations; n++) {
 	trigger[n] = groups_p[n].trigger_offset();
       }
-
-      return trigger;
+    } catch (std::string message) {
+      std::cerr << "[TBB_Timeseries::trigger_offset] " <<  message << std::endl;
     }
+    
+    return trigger;
+  }
 #endif
 
+#ifdef HAVE_CASA
+  
+  casa::Vector<casa::MPosition> TBB_Timeseries::station_position ()
+  {
+    uint nofStations = nofStationGroups();
+    casa::Vector<casa::MPosition> positions (nofStations);
+    
+    for (uint n(0); n<nofStations; n++) {
+      positions(n) = groups_p[n].station_position();
+    }
+    
+    return positions;
+  }
+  
+  casa::Vector<casa::MDirection> TBB_Timeseries::beam_direction ()
+  {
+    uint nofStations = nofStationGroups();
+    casa::Vector<casa::MDirection> directions (nofStations);
+    
+    for (uint n(0); n<nofStations; n++) {
+      directions(n) = groups_p[n].beam_direction();
+    }
+    
+    return directions;
+  }
+  
+#endif
   
   // ============================================================================
   //
   //  Access to attributes attached to the dipole datasets
   //
   // ============================================================================
-
+  
   // -------------------------------------------------------------- channelNames
-
+  
 #ifdef HAVE_CASA
-    casa::Vector<casa::String> TBB_Timeseries::channelNames ()
-    {
-      casa::Vector<casa::String> names;
-
-      return names;
-    }
+  casa::Vector<casa::String> TBB_Timeseries::channelNames ()
+  {
+    casa::Vector<casa::String> names;
+    
+    return names;
+  }
 #else
-    std::vector<std::string> TBB_Timeseries::channelNames ()
-    {
-      std::vector<std::string> names;
-      
-      return names;
-    }
+  std::vector<std::string> TBB_Timeseries::channelNames ()
+  {
+    std::vector<std::string> names;
+    
+    return names;
+  }
 #endif
-
+  
   // ---------------------------------------------------------------- channelID
-
+  
 #ifdef HAVE_CASA
   casa::Vector<int> TBB_Timeseries::channelID ()
   {
