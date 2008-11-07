@@ -86,6 +86,7 @@ set (dal_sources
   TBB_StationGroup.cpp
   TBB_Timeseries.cpp
   BFRaw.cpp
+  dalFITS.cpp
 )
 
 if ( HAVE_CASACORE )
