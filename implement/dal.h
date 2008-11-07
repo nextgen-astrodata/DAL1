@@ -44,14 +44,23 @@
       <td class="indexkey">High-level dataset interfaces</td>
       <td class="indexkey">Application tools</td>
     </tr>
-    <tr>
+    <tr valign="top">
       <td>
+      - DAL::dalArray
+      - DAL::dalColumn
+      - DAL::dalData
       - DAL::dalDataset
+      - DAL::dalFilter
+      - DAL::dalGroup
       - DAL::dalTable
       </td>
       <td>
       - DAL::BeamFormed
       - DAL::BeamGroup
+      - DAL::BeamSubband
+      - DAL::TBB_Timeseries
+      - DAL::TBB_StationGroup
+      - DAL::TBB_DipoleDataset
       </td>
       <td>
       - bf2h5.cpp
