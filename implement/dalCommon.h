@@ -28,6 +28,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <assert.h>
 
 using std::cout;
 using std::endl;
