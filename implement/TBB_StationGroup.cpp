@@ -67,8 +67,7 @@ namespace DAL { // Namespace DAL -- begin
   
   /*!
     \param location -- Identifier for the location within the HDF5 file, below
-           which the group is placed.
-    \param group    -- Name of the group.
+           which the group is placed.    \param group    -- Name of the group.
   */
   TBB_StationGroup::TBB_StationGroup (hid_t const &location,
 				      std::string const &group)
@@ -264,13 +263,17 @@ namespace DAL { // Namespace DAL -- begin
   {
     /* Check minimal condition for operations below. */
     if (groupID_p < 1) {
+      std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
+		<< " Unable to set dipole datasets; not connected to HDF5 group!"
+		<< endl;
       return false;
     }
     
-    /* Local variables. */
+    //________________________________________________________________
+    // Local variables.
     
     bool status (true);
-    std::string datasetName;
+    std::string nameDataset;
     hsize_t nofObjects (0);
     herr_t h5error (0);
 
@@ -286,6 +289,11 @@ namespace DAL { // Namespace DAL -- begin
 		<< " the station group!"
 		<< std::endl;
       return false;
+    } else if (nofObjects == 0) {
+      std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
+		<< " No dipole datasets found attached to station group!" 
+		<< std::endl;
+      return false;
     }
     
     //________________________________________________________________
@@ -293,17 +301,18 @@ namespace DAL { // Namespace DAL -- begin
     // a new object for each dipole dataset
     
     try {
+      // Iterate through the list of objects
       for (hsize_t idx (0); idx<nofObjects; idx++) {
 	// get the type of the object
 	if (H5G_DATASET == H5Gget_objtype_by_idx (groupID_p,idx)) {
 	  // get the name of the dataset
-	  status = DAL::h5get_name (datasetName,
+	  status = DAL::h5get_name (nameDataset,
 				    groupID_p,
 				    idx);
 	  // if name retrieval was successful, create new TBB_DipoleDataset
 	  if (status) {
 	    datasets_p.push_back(DAL::TBB_DipoleDataset (groupID_p,
-							 datasetName));
+							 nameDataset));
 	  } else {
 	    std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
 		      << " Failed to open dataset!"
@@ -518,7 +527,7 @@ namespace DAL { // Namespace DAL -- begin
   std::string TBB_StationGroup::trigger_type ()
   {
     std::string val;
-    
+
     if (DAL::h5get_attribute(groupID_p,
 			     attribute_name(DAL::TRIGGER_TYPE),
 			     val)) {

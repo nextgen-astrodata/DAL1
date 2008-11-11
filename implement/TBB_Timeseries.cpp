@@ -114,6 +114,7 @@ namespace DAL { // Namespace DAL -- begin
     if (other.fileID_p < 0) {
       init ();
     } else {
+      filename_p = other.filename_p;
       init (other.filename_p);
     }
   }
@@ -216,7 +217,6 @@ namespace DAL { // Namespace DAL -- begin
       Further output is conditional - only makes sense if successfully connected
       to a file
     */
-
     if (fileID_p > 0) {
       os << "-- Telescope            : " << telescope()         << endl;
       os << "-- Observer             : " << observer()          << endl;
@@ -250,6 +250,7 @@ namespace DAL { // Namespace DAL -- begin
     fileID_p = H5Fopen (filename.c_str(),
 			H5F_ACC_RDONLY,
 			H5P_DEFAULT);
+    assert (fileID_p);
     
     if (fileID_p > 0) {
       bool status (true);
@@ -280,50 +281,63 @@ namespace DAL { // Namespace DAL -- begin
   bool TBB_Timeseries::setStationGroups ()
   {
     /* Check minimal condition for operations below. */
-    if (fileID_p < 0) {
+    if (fileID_p < 1) {
       std::cerr << "[TBB_Timeseries::setStationGroups]"
 		<< " Unable to set station groups; not connected to fileset."
 		<< endl;
       return false;
     }
     
-    /* Local variables. */
+    //________________________________________________________________
+    // Local variables.
     
-    bool status        = true;
-    herr_t h5error     = 0;
-    hsize_t nofObjects = 0;
-    std::string name;
+    bool status (true);
+    hsize_t nofObjects (0);
+    herr_t h5error (0);
+    std::string nameGroup;
+    
+    //________________________________________________________________
+    // Obtain the number of objects attached to the root level of the file
+    
+    h5error = H5Gget_num_objs(fileID_p,
+			      &nofObjects);
+    
+    if (h5error > 0) {
+      std::cerr << "[TBB_Timeseries::setStationGroups]"
+		<< " Error retrieving the number of objects attached to"
+		<< " the root level of the file!"
+		<< std::endl;
+      return false;
+    } else if (nofObjects == 0) {
+      std::cerr << "[TBB_Timeseries::setStationGroups]"
+		<< " No station groups found attached to root group!!"
+		<< std::endl;
+      return false;
+    }
 
+    //________________________________________________________________
+    // Iterate through the list of objects attached to the root group
+    // of the file
+    
     try {
-      // get the number of objects attached to the root level of the file
-      h5error = H5Gget_num_objs(fileID_p,
-				&nofObjects);
-      if (nofObjects > 0) {
-	// go through the list of objects to identify the station groups
-	for (hsize_t n(0); n<nofObjects; n++) {
-	  // check type of object
-	  if (H5G_GROUP == H5Gget_objtype_by_idx (fileID_p,n)) {
-	    // get the name of the group
-	    status = DAL::h5get_name (name,
-				      fileID_p,
-				      n);
-	    /*
-	     * If retrieval of group name was successful, create new
-	     * TBB_StationGroup object to be added to the internal list.
-	     */
-	    if (status) {
-	      groups_p.push_back(DAL::TBB_StationGroup(filename_p,
-							 name));
-	    } else {
-	      std::cerr << "[TBB_Timeseries::setStationGroups]"
-			<< " Error retrieving group name!"
-			<< std::endl;
-	    }
+      // Iterate through the list of objects
+      for (hsize_t idx (0); idx<nofObjects; idx++) {
+	// get the type of the object
+	if (H5G_GROUP == H5Gget_objtype_by_idx (fileID_p,idx)) {
+	  // get the name of the dataset
+	  status = DAL::h5get_name (nameGroup,
+				    fileID_p,
+				    idx);
+	  // if name retrieval was successful, create new TBB_DipoleDataset
+	  if (status) {
+	    groups_p.push_back(DAL::TBB_StationGroup (fileID_p,
+						      nameGroup));
+	  } else {
+	    std::cerr << "[TBB_Timeseries::setStationGroups]"
+		      << " Failed to open station group!"
+		      << std::endl;
 	  }
 	}
-      } else {
-	std::cout << "[TBB_Timeseries::setStationGroups]"
-		  << " No objects found at root level of the file!" << std::endl;
       }
     } catch (std::string message) {
       std::cerr << "[TBB_Timeseries::setStationGroups] " << message
@@ -332,6 +346,28 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     return true;
+  }
+  
+  //_____________________________________________________________________________
+  // Get one of the embedded station group objects
+
+  /*!
+    \param station -- Number of the TBB_StationGroup object embedded within this
+           TBB_Timeseries object.
+
+    return stationGroup -- The requested station group object; if the provided
+           index is outside the valid range, an empty StationGroup object is 
+	   returned.
+  */
+  TBB_StationGroup TBB_Timeseries::stationGroup (uint const &station)
+  {
+    if (station > 0 && station < groups_p.size()) {
+      return groups_p[station];
+    } else {
+      std::cout << "[TBB_Timeseries::stationGroup] Index for station group"
+		<< " out of range!" << std::endl;
+      return TBB_StationGroup();
+    }
   }
 
   // ============================================================================
@@ -343,37 +379,29 @@ namespace DAL { // Namespace DAL -- begin
   // --------------------------------------------------------------- trigger_type
 
 #ifdef HAVE_CASA
-    casa::Vector<casa::String> TBB_Timeseries::trigger_type ()
-    {
-      uint nofStations = nofStationGroups();
-      casa::Vector<casa::String> trigger (nofStations);
-      
-      try {
-	for (uint n(0); n<nofStations; n++) {
-	  trigger(n) = groups_p[n].trigger_type();
-	}
-      } catch (std::string message) {
-	std::cerr << "[TBB_Timeseries::trigger_type] " <<  message << std::endl;
-      }
+  casa::Vector<casa::String> TBB_Timeseries::trigger_type ()
+  {
+    uint nofStations = groups_p.size();
+    casa::Vector<casa::String> trigger (nofStations);
 
-      return trigger;
+    for (uint n(0); n<nofStations; n++) {
+      trigger(n) = groups_p[n].trigger_type();
     }
+    
+    return trigger;
+  }
 #else
-    std::vector<std::string> TBB_Timeseries::trigger_type ()
-    {
-      uint nofStations = nofStationGroups();
-      std::vector<std::string> trigger (nofStations);
-
-      try {
-	for (uint n(0); n<nofStations; n++) {
-	  trigger[n] = groups_p[n].trigger_type();
-	}
-      } catch (std::string message) {
-	std::cerr << "[TBB_Timeseries::trigger_type] " <<  message << std::endl;
-      }
-      
-      return trigger;
+  std::vector<std::string> TBB_Timeseries::trigger_type ()
+  {
+    uint nofStations = groups_p.size();
+    std::vector<std::string> trigger (nofStations);
+    
+    for (uint n(0); n<nofStations; n++) {
+      trigger[n] = groups_p[n].trigger_type();
     }
+    
+    return trigger;
+  }
 #endif
   
   // ------------------------------------------------------------- trigger_offset
@@ -383,13 +411,9 @@ namespace DAL { // Namespace DAL -- begin
   {
     uint nofStations = nofStationGroups();
     casa::Vector<double> trigger (nofStations);
-
-    try {
-      for (uint n(0); n<nofStations; n++) {
-	trigger(n) = groups_p[n].trigger_offset();
-      }
-    } catch (std::string message) {
-      std::cerr << "[TBB_Timeseries::trigger_offset] " <<  message << std::endl;
+    
+    for (uint n(0); n<nofStations; n++) {
+      trigger(n) = groups_p[n].trigger_offset();
     }
     
     return trigger;
@@ -400,18 +424,14 @@ namespace DAL { // Namespace DAL -- begin
     uint nofStations = nofStationGroups();
     std::vector<double> trigger (nofStations);
     
-    try {
-      for (uint n(0); n<nofStations; n++) {
-	trigger[n] = groups_p[n].trigger_offset();
-      }
-    } catch (std::string message) {
-      std::cerr << "[TBB_Timeseries::trigger_offset] " <<  message << std::endl;
+    for (uint n(0); n<nofStations; n++) {
+      trigger[n] = groups_p[n].trigger_offset();
     }
     
     return trigger;
   }
 #endif
-
+  
 #ifdef HAVE_CASA
   
   casa::Vector<casa::MPosition> TBB_Timeseries::station_position ()

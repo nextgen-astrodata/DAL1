@@ -650,7 +650,7 @@ namespace DAL {
     bool status       = true;
     herr_t h5error    = 0;
     hid_t datatype_id = H5Aget_type (attribute_id);
-    
+
     if (datatype_id > 0) {
 
       H5T_class_t datatype_class_id = H5Tget_class (datatype_id);

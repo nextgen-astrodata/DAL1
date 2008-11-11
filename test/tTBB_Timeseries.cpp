@@ -22,6 +22,7 @@
  ***************************************************************************/
 
 #include <casa/Arrays/ArrayIO.h>
+#include <casa/BasicSL/String.h>
 #include <casa/HDF5/HDF5File.h>
 #include <casa/HDF5/HDF5Record.h>
 
@@ -58,15 +59,35 @@ int test_construction (std::string const &filename)
   cout << "\n[test_construction]\n" << endl;
 
   int nofFailedTests (0);
+  int nofIterations (500);
 
   //__________________________________________________________________
   // Test the default constructor
   
   cout << "[1] Testing default constructor ..." << endl;
   try {
-    TBB_Timeseries newTBB_Timeseries;
+    TBB_Timeseries ts;
     //
-    newTBB_Timeseries.summary(); 
+    ts.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  //__________________________________________________________________
+  // Test the repeated usage of the default constructor
+  
+  cout << "[2] Repeated testing default constructor ..." << endl;
+  try {
+    hid_t fileID;
+    for (int n(0); n<nofIterations; n++) {
+      // construct new object
+      TBB_Timeseries ts;
+      // probe the newly created object
+      fileID = ts.file_id();
+    }
+    std::cout << "--> " << nofIterations << " object constructions completed."
+	      << std::endl;
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -75,7 +96,7 @@ int test_construction (std::string const &filename)
   //__________________________________________________________________
   // Test the argumented constructor taking filename as input
   
-  cout << "[2] Testing argumented constructor ..." << endl;
+  cout << "[3] Testing argumented constructor ..." << endl;
   try {
     TBB_Timeseries newTBB_Timeseries (filename);
     //
@@ -88,7 +109,7 @@ int test_construction (std::string const &filename)
   //__________________________________________________________________
   // Test the copy constructor
   
-  cout << "[3] Testing copy constructor ..." << endl;
+  cout << "[4] Testing copy constructor ..." << endl;
   try {
     cout << "--> creating original object ..." << endl;
     TBB_Timeseries timeseries (filename);
@@ -121,6 +142,8 @@ int test_methods (std::string const &filename)
   int nofFailedTests (0);
   TBB_Timeseries ts (filename);
 
+  assert (nofFailedTests==0);
+
   cout << "[1] Retrieve attributes attached to the root group ..." << endl;
   try {
     std::string telescope        = ts.telescope();
@@ -139,14 +162,22 @@ int test_methods (std::string const &filename)
     nofFailedTests++;
   }
 
+  assert (nofFailedTests==0);
+
   cout << "[2] Retrieve attributes attached to the station groups ..." << endl;
   try {
+    uint nelem = ts.nofStationGroups();
     std::string group_name;
 #ifdef HAVE_CASA
-    casa::Vector<casa::String> trigger_type        = ts.trigger_type();
-    casa::Vector <double> trigger_offset           = ts.trigger_offset();
-    casa::Vector<casa::MPosition> station_position = ts.station_position();
-    casa::Vector<casa::MDirection> beam_direction  = ts.beam_direction();
+    casa::Vector<casa::String> trigger_type (nelem);
+    casa::Vector <double> trigger_offset (nelem,0);
+    casa::Vector<casa::MPosition> station_position (nelem);
+    casa::Vector<casa::MDirection> beam_direction (nelem);
+    //
+    trigger_type     = ts.trigger_type();
+    trigger_offset   = ts.trigger_offset();
+    station_position = ts.station_position();
+    beam_direction   = ts.beam_direction();
     //
     cout << "-- TRIGGER_TYPE ......... = " << trigger_type      << endl;
     cout << "-- TRIGGER_OFFSET ....... = " << trigger_offset    << endl;
@@ -306,10 +337,14 @@ int main (int argc,
   
   //__________________________________________________________________
   // Run the tests
+
+  assert (nofFailedTests == 0);
   
   // Test for the constructor(s)
   nofFailedTests += test_construction (filename);
 
+  assert (nofFailedTests == 0);
+  
   if (nofFailedTests == 0) {
     nofFailedTests += test_methods (filename);
     nofFailedTests += test_attributes2record (filename);

@@ -24,6 +24,9 @@
 #ifndef DALFITS_H
 #define DALFITS_H
 
+#include <iostream>
+#include <string>
+
 namespace DAL {
   
   /*!
@@ -34,10 +37,15 @@ namespace DAL {
     \brief DAL class to provide access to FITS
 
     \author Sven Duscha
+
+    \test tdalFITS.cpp
   */
   class dalFITS {
 
   public:
+
+    //________________________________________________________________
+    // Construction/Destruction
     
     //! Default constructor
     dalFITS ();
@@ -45,6 +53,22 @@ namespace DAL {
     //! Destructor
     ~dalFITS ();
     
+    //________________________________________________________________
+    // Methods
+
+    //! Get the name of the class
+    std::string className () const {
+      return "dalFITS";
+    }
+
+    //! Provide a summary of the internal status
+    inline void summary () {
+      summary (std::cout);
+    }
+
+    //! Provide a summary of the internal status
+    void summary (std::ostream &os);    
+
   };
   
 }

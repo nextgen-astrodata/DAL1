@@ -32,7 +32,9 @@
 // casacore header files
 #include <casa/Arrays/Matrix.h>
 #include <casa/Arrays/Vector.h>
+#include <casa/BasicSL/String.h>
 
+#include <dalCommon.h>
 #include <TBB_StationGroup.h>
 
 namespace DAL { // Namespace DAL -- begin
@@ -164,6 +166,14 @@ namespace DAL { // Namespace DAL -- begin
 	      <td>
 	      <td>Unique identifier for this observation.
 	    </tr>
+	    <tr>
+	      <td>OBSERVATION_MODE
+	      <td>string
+	      <td>mandatory
+	      <td>
+	      <td>Description of the telescope mode in which this observation
+	      was carried out.
+	    </tr>
 	  </table>
 	  <br>
         <li>Station group
@@ -222,21 +232,6 @@ namespace DAL { // Namespace DAL -- begin
 	      <td>LOFAR/CR
 	      <td>Name of the project for which this observation has been 
 	      carried out.
-	    </tr>
-	    <tr>
-	      <td>OBSERVATION_ID
-	      <td>string
-	      <td>optional
-	      <td>
-	      <td>Unique identifier for this observation.
-	    </tr>
-	    <tr>
-	      <td>OBSERVATION_MODE
-	      <td>string
-	      <td>mandatory
-	      <td>
-	      <td>Description of the telescope mode in which this observation
-	      was carried out.
 	    </tr>
 	    <tr>
 	      <td>TRIGGER_TYPE
@@ -451,16 +446,6 @@ namespace DAL { // Namespace DAL -- begin
       return fileID_p;
     }
 
-    /*!
-      \brief Get station groups embedded within the dataset
-
-      \return stationGroups -- Vector with a set of TBB_StationGroup objects,
-              encapsulating the contents of the groups within the dataset.
-    */
-    inline std::vector<TBB_StationGroup> stationGroups () const {
-      return groups_p;
-    }
-
     //! Get the name of the telescope
     std::string telescope ();
 
@@ -505,16 +490,12 @@ namespace DAL { // Namespace DAL -- begin
       return "TBB_Timeseries";
     }
 
-    /*!
-      \brief Provide a summary of the internal status
-    */
+    //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
     }
 
-    /*!
-      \brief Provide a summary of the internal status
-    */
+    //! Provide a summary of the internal status
     void summary (std::ostream &os);    
 
     // ==========================================================================
@@ -547,6 +528,19 @@ namespace DAL { // Namespace DAL -- begin
       return nofDatasets;
     }
     
+    /*!
+      \brief Get station groups embedded within the dataset
+
+      \return stationGroups -- Vector with a set of TBB_StationGroup objects,
+              encapsulating the contents of the groups within the dataset.
+    */
+    inline std::vector<TBB_StationGroup> stationGroups () const {
+      return groups_p;
+    }
+
+    //! Get one of the embedded station group objects
+    TBB_StationGroup stationGroup (uint const &station);
+
     // ==========================================================================
     //
     //  Parameter access - station group

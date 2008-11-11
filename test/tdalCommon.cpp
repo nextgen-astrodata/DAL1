@@ -27,6 +27,7 @@
 
 #ifdef HAVE_CASA
 #include <casa/Arrays/Vector.h>
+#include <casa/BasicSL/String.h>
 #endif
 
 using std::cout;
@@ -46,6 +47,48 @@ using std::endl;
  
   \date 2008/10/09
 */
+
+// -----------------------------------------------------------------------------
+
+/*!
+  \brief Test operation performed with/on casacore variable types
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function
+*/
+int test_casacore_variables ()
+{
+  cout << "\n[tdalCommon::test_operators]\n" << endl;
+  
+  int nofFailedTests (0);
+ 
+  cout << "[1] Assign std::string -> casa::String" << std::endl;
+  try {
+    std::string string_std ("LOFAR");
+    casa::String string_casa;
+    //
+    string_casa = string_std;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  cout << "[2] Assign std::string -> casa::Vector<casa::String>" << std::endl;
+  try {
+    uint nelem (20);
+    std::string string_std ("LOFAR");
+    casa::Vector<casa::String> string_casa (nelem);
+    //
+    for (uint n(0); n<nelem; n++) {
+      string_casa(n) = string_std;
+    }
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  return nofFailedTests;
+}
 
 // -----------------------------------------------------------------------------
 
@@ -542,6 +585,27 @@ int test_datasets (std::string const &filename)
     cerr << message << std::endl;
     nofFailedTests++;
   }
+
+  std::cout << "-- repeated read access to attributes ..." << std::endl;
+  try {
+    uint nofTrials (500);
+    std::string telescope;
+    std::string observer;
+    std::string project;
+    std::string observation_id;
+    std::string observation_mode;
+    
+    for (uint n(0); n<nofTrials; n++) {
+      DAL::h5get_attribute (file_id,"TELESCOPE",telescope);
+      DAL::h5get_attribute (file_id,"OBSERVER",observer);
+      DAL::h5get_attribute (file_id,"PROJECT",project);
+      DAL::h5get_attribute (file_id,"OBSERVATION_ID",observation_id);
+      DAL::h5get_attribute (file_id,"OBSERVATION_MODE",observation_mode);
+    }
+  } catch (std::string message) {
+    cerr << message << std::endl;
+    nofFailedTests++;
+  }
   
   //__________________________________________________________________
   // Open the station group
@@ -665,10 +729,11 @@ int main (int argc,
 
   /* Check for command-line parameters */
   if (argc > 1) {
-    filename = argv[1];
+    filename      = argv[1];
     have_filename = true;
   }
   
+  nofFailedTests += test_casacore_variables ();
   nofFailedTests += test_operators ();
   nofFailedTests += test_hdf5_attributes ();
 

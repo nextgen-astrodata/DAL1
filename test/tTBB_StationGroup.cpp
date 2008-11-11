@@ -159,21 +159,14 @@ int test_construction (std::string const &name_file,
   
   int nofFailedTests (0);
   herr_t h5error (0);
-  uint nofLoops (20);
   
   //__________________________________________________________________
   // TEST: Default constructor
   
   cout << "[1] Testing default constructor ..." << endl;
   try {
-    cout << "-- creating single object once ..." << endl;
     TBB_StationGroup group;
     group.summary(); 
-    //
-    cout << "-- repeated creation of single object ..." << endl;
-    for (uint n(0); n<nofLoops; n++) {
-      TBB_StationGroup group;
-    }
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
@@ -186,16 +179,9 @@ int test_construction (std::string const &name_file,
   
   cout << "[2] Construction from file- and group-name ..." << endl;
   try {
-    cout << "-- creating single object once ..." << endl;
     TBB_StationGroup group (name_file,
 			    name_station);
     group.summary(); 
-    //
-    cout << "-- repeated creation of single object ..." << endl;
-    for (uint n(0); n<nofLoops; n++) {
-      TBB_StationGroup group (name_file,
-			      name_station);
-    }
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
@@ -214,16 +200,9 @@ int test_construction (std::string const &name_file,
 			     H5P_DEFAULT);
     
     if (file_id > 0) {
-      cout << "-- creating single object once ..." << endl;
       TBB_StationGroup group (file_id,
 			      name_station);
       group.summary(); 
-      //
-      cout << "-- repeated creation of single object ..." << endl;
-      for (uint n(0); n<nofLoops; n++) {
-	TBB_StationGroup group (file_id,
-				name_station);
-      }
     } else {
       cerr << "--> Unable to perform test; invalid file ID!" << endl;
     }
