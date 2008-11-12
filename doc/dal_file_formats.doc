@@ -13,10 +13,6 @@
 
 \section dal_formats_beamformed Beamformed data
 
-- DAL::BeamFormed
-- DAL::BeamGroup
-- DAL::BeamSubband
-
 A LOFAR Beam-Formed file is stored per observation as an HDF5 file, grouped by
 beam and then subband.  All attribute data, described below, is defined in the
 <i>LOFAR Beam-Formed Data Format ICD</i>.
@@ -38,18 +34,19 @@ beam-formed-file.h5         <-------  Root level of dataset
 \endverbatim
 
 <ul>
-  <li><b>Root-level</b> The root level of the file contains the majority of
-  associated meta-data, describing the circumstances of the observation. These
-  data attributes include time, frequency, weather and other important
-  characteristics of the dataset.
+  <li><b>Root-level</b> (DAL::BeamFormed) The root level of the file contains
+  the majority of associated meta-data, describing the circumstances of the
+  observation. These data attributes include time, frequency, weather and other
+  important characteristics of the dataset.
 
-  <li><b>Beam Group</b> Each observation beam is stored as a seperate group
-  within the file, each containing its own subband tables and pointing
-  information.
+  <li><b>Beam Group</b> (DAL::BeamGroup) Each observation beam is stored as a
+  seperate group within the file, each containing its own subband tables and
+  pointing information.
 
-  <li><b>Subband Data tables</b> The subband tables are where the bulk of the
-  data reside. Each beam has a fixed number of tables; one per subband. The subband
-  frequency information is stored as an attribute of the table.
+  <li><b>Subband Data tables</b> (DAL::BeamSubband) The subband tables are where
+  the bulk of the data reside. Each beam has a fixed number of tables; one per
+  subband. The subband frequency information is stored as an attribute of the
+  table.
 
   <li><b>Full Resolution</b> The default data stored in each subband table is full
   resolution, polarized voltages from the dipoles. These voltages are stored as
@@ -82,36 +79,44 @@ beam-formed-file.h5         <-------  Root level of dataset
 
 \section dal_formats_tbb TBB time-series data
 
-- DAL::TBB_Timeseries
-- DAL::TBB_StationGroup
-- DAL::TBB_DipoleDataset
-
-Structure of the dataset:
-\verbatim
-/                             ... Group
-|-- TELESCOPE                 ... Attribute       ... string
-|-- OBSERVER                  ... Attribute       ... string
-|-- PROJECT                   ... Attribute       ... string
-|-- Station001                ... Group
-|   |-- OBSERVATION_ID        ... Attribute       ... string
-|   |-- OBSERVATION_MODE      ... Attribute       ... string
-|   |-- TRIGGER_TYPE          ... Attribute       ... string
-|   |-- TRIGGER_OFFSET        ... Attribute       ... string
-|   |-- TRIG_ANTS             ... Attribute       ... array<int,1>
-|   |-- BEAM_DIRECTION        ... Attribute       ... array<double,2>
-|   |-- 001000000             ... Dataset         ... array<uint,1>
-|   |   |-- STATION_ID        ... Attribute       ... uint
-|   |   |-- RSP_ID            ... Attribute       ... uint 
-|   |   |-- RCU_ID            ... Attribute       ... uint
-|   |   |-- SAMPLE_FREQ       ... Attribute       ... double
-|   |   |-- TIME              ... Attribute       ... uint
-|   |   |-- SAMPLE_NR         ... Attribute       ... uint
-|   |   |-- SAMPLES_PER_FRAME ... Attribute       ... uint
-|   |   |-- DATA_LENGTH       ... Attribute       ... uint
-|   |   |-- NYQUIST_ZONE      ... Attribute       ... uint
-|   |   |-- FEED              ... Attribute       ... string
-|   |   |-- ANT_POSITION      ... Attribute       ... array<double,1>
-|   |   `-- ANT_ORIENTATION   ... Attribute       ... array<double,1>
+The structure of the data set is build up such that it will reflect the
+hierarchical structure of the LOFAR array itself -- i.e. the array being
+composed of a number of station, which in turn group together sets of antennas.
+\verbatim	
+/         	                             ... Group
+|-- TELESCOPE                          ... Attribute       ... string
+|-- OBSERVER                           ... Attribute       ... string
+|-- PROJECT                            ... Attribute       ... string
+|-- OBSERVATION_ID                     ... Attribute       ... string
+|-- OBSERVATION_MODE                   ... Attribute       ... string
+|-- Station001                         ... Group
+|   |-- TRIGGER_TYPE                   ... Attribute       ... string
+|   |-- TRIGGER_OFFSET                 ... Attribute       ... string
+|   |-- TRIGGERED_ANTENNAS             ... Attribute       ... array<int,1>
+|   |-- STATION_POSITION_VALUE         ... Attribute       ... array<double,1>
+|   |-- STATION_POSITION_UNIT          ... Attribute       ... array<sting,1>
+|   |-- STATION_POSITION_FRAME         ... Attribute       ... string
+|   |-- BEAM_DIRECTION_VALUE           ... Attribute       ... array<double,1>
+|   |-- BEAM_DIRECTION_UNIT            ... Attribute       ... array<sting,1>
+|   |-- BEAM_DIRECTION_FRAME           ... Attribute       ... string
+|   |-- 001000000                      ... Dataset         ... array<uint,1>
+|   |   |-- STATION_ID                 ... Attribute       ... uint
+|   |   |-- RSP_ID                     ... Attribute       ... uint 
+|   |   |-- RCU_ID                     ... Attribute       ... uint
+|   |   |-- SAMPLE_FREQUENCY_VALUE     ... Attribute       ... double
+|   |   |-- SAMPLE_FREQUENCY_UNIT      ... Attribute       ... string
+|   |   |-- TIME                       ... Attribute       ... uint
+|   |   |-- SAMPLE_NR                  ... Attribute       ... uint
+|   |   |-- SAMPLES_PER_FRAME          ... Attribute       ... uint
+|   |   |-- DATA_LENGTH                ... Attribute       ... uint
+|   |   |-- NYQUIST_ZONE               ... Attribute       ... uint
+|   |   |-- FEED                       ... Attribute       ... string
+|   |   |-- ANTENNA_POSITION_VALUE     ... Attribute       ... array<double,1>
+|   |   |-- ANTENNA_POSITION_UNIT      ... Attribute       ... array<string,1>
+|   |   |-- ANTENNA_POSITION_FRAME     ... Attribute       ... string
+|   |   |-- ANTENNA_ORIENTATION_VALUE  ... Attribute       ... array<double,1>
+|   |   |-- ANTENNA_ORIENTATION_UNIT   ... Attribute       ... array<string,1>
+|   |   |-- ANTENNA_ORIENTATION_FRAME  ... Attribute       ... string
 |   |-- 001000001
 |   |-- 001000002
 |   |-- 001000003
@@ -126,5 +131,254 @@ Structure of the dataset:
 As can be read from the above listing, the internal structure of a LOFAR
 time-series dataset is made up of a number of sub-components, each of them
 representing a hierarchical level in the setup of the telecope.
+
+<ol>
+  <li>Root group (DAL::TBB_Timeseries)
+  <table border=0>
+	<tr>
+	<td class="indexkey">Field Name
+	<td class="indexkey">Type
+	<td class="indexkey">Status
+	<td class="indexkey">Default
+	<td class="indexkey">Desctription
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>TELESCOPE
+	<td>string
+	<td>mandatory
+	<td>LOFAR
+	<td>Name of the telescope with which the observation has been 
+	performed.
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>OBSERVER
+	<td>string
+	<td>mandatory
+	<td>LOFAR/CR
+	<td>Name of the person either responsible for carrying out the 
+	observation or having requested the observation; combination of 
+	both possible.
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>PROJECT
+	<td>string
+	<td>mandatory
+	<td>LOFAR/CR
+	<td>Name of the project for which this observation has been 
+	carried out.
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>OBSERVATION_ID
+	<td>string
+	<td>mandatory
+	<td>
+	<td>Unique identifier for this observation.
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>OBSERVATION_MODE
+	<td>string
+	<td>mandatory
+	<td>
+	<td>Description of the telescope mode in which this observation
+	was carried out.
+	</tr>
+  </table>
+  <br>
+  <li>Station group (DAL::TBB_StationGroup)
+  <table border=0>
+	<tr>
+	<td class="indexkey">Field Name
+	<td class="indexkey">Type
+	<td class="indexkey">Status
+	<td class="indexkey">Default
+	<td class="indexkey">Desctription
+	</tr>
+	<tr bgcolor=#eeeeff>
+	  <td>STATION_POSITION_VALUE
+	  <td>array<double,1>
+	  <td>mandatory
+	  <td>
+	  <td>Numerical value of the station center/reference position
+	</tr>
+	<tr bgcolor=#eeeeff>
+	  <td>STATION_POSITION_UNIT
+	  <td>array<string,1>
+	  <td>mandatory
+	  <td>
+	  <td>Units within which the numerical values for the station center/reference
+	  position is given
+	</tr>
+	<tr bgcolor=#eeeeff>
+	  <td>STATION_POSITION_FRAME
+	  <td>string
+	  <td>mandatory
+	  <td>
+	  <td>Identifier for the reference frame/system within which the station
+	  center/reference position is given
+	</tr>
+	<tr bgcolor=#eeeeff>
+	  <td>BEAM_DIRECTION_VALUE
+	  <td>array<double,1>
+	  <td>mandatory
+	  <td>
+	  <td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	  <td>BEAM_DIRECTION_UNIT
+	  <td>array<string,1>
+	  <td>mandatory
+	  <td>
+	  <td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	  <td>BEAM_DIRECTION_FRAME
+	  <td>string
+	  <td>mandatory
+	  <td>
+	  <td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>TRIGGER_TYPE
+	<td>string
+	<td>mandatory
+	<td>
+	<td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>TRIGGER_OFFSET
+	<td>string
+	<td>mandatory
+	<td>
+	<td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>TRIGGERED_ANTENNAS
+	<td>array<int,1>
+	<td>optional
+	<td>
+	<td>
+	</tr>
+  </table>
+  <br>
+  <li>Dipole dataset (DAL::TBB_DipoleDataset)
+  <table border=0>
+	<tr>
+	<td class="indexkey">Field Name
+	<td class="indexkey">Type
+	<td class="indexkey">Status
+	<td class="indexkey">Default
+	<td class="indexkey">Desctription
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>STATION_ID
+	<td>uint
+	<td>mandatory
+	<td>
+	<td>Identifier of the LOFAR station at which this dipole is
+	located.
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>RSP_ID
+	<td>uint
+	<td>mandatory
+	<td>
+	<td>Identifier of the RSP board, via which this dipole is connected.
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>RCU_ID
+	<td>uint
+	<td>mandatory
+	<td>
+	<td>Identifier of the receiver unit (RCU), to which this dipole
+	is connected.
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>TIME
+	<td>uint
+	<td>mandatory
+	<td>
+	<td>Date of the observation. Standard unix date i.e. (GMT-)seconds
+	since 1.1.1970
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>SAMPLE_NUMBER
+	<td>uint
+	<td>mandatory
+	<td>
+	<td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	  <td>SAMPLE_FREQUENCY_VALUE
+	  <td>uint
+	  <td>mandatory
+	  <td>
+	  <td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	  <td>SAMPLE_FREQUENCY_UNIT
+	  <td>string
+	  <td>mandatory
+	  <td>
+	  <td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>NYQUIST_ZONE
+	<td>uint
+	<td>mandatory
+	<td>
+	<td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>ANTENNA_POSITION_VALUE
+	<td>array<double,1>
+	<td>mandatory
+	<td>
+	<td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	<td>ANTENNA_POSITION_UNIT
+	<td>array<string,1>
+	<td>mandatory
+	<td>
+	<td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	  <td>ANTENNA_POSITION_FRAME
+	  <td>string
+	  <td>mandatory
+	  <td>
+	  <td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	  <td>ANTENNA_ORIENTATION_VALUE
+	  <td>array<double,1>
+	  <td>mandatory
+	  <td>
+	  <td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	  <td>ANTENNA_ORIENTATION_UNIT
+	  <td>string
+	  <td>mandatory
+	  <td>
+	  <td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	  <td>ANTENNA_ORIENTATION_FRAME
+	  <td>string
+	  <td>mandatory
+	  <td>
+	  <td>
+	</tr>
+	<tr bgcolor=#eeeeff>
+	  <td>FEED
+	  <td>string
+	  <td>mandatory
+	  <td>
+	  <td>
+	</tr>
+  </table>
+  <br>
+</ol>
 
 */
