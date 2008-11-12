@@ -8,6 +8,29 @@
 
 <pre>
 From: Lars B"ahren
+Date: November 12, 2008 1:04:01 PM GMT+01:00
+</pre>
+
+Hi everybody,
+
+as some of you might know I have been spending the better part of the last two weeks digging through the DAL in other to find and eliminate bugs which would a) affect the general functionality of the library and b) cause the interface to the TBB times-series data to fail on a number of occasions. Since a number of larger commits have been done recently I thought I once again fill you in on the main issues:
+
+1) I think I am now done merging the previously existing collection of common routines for access to HDF5 files; there were function collections started by Joe and me, both having considerable overlap, so come cleaning up was in order. As a part of this effort I went through all implemented methods to check whether or not they were performing as expected; this resulted in the elimination of quite a number of bugs in the handling of metadata/attributes, especially concerning string-valued entries and vector-type attributes (as e.g. used to store antenna position values and antenna position units). The revised and tested set of functions now is contained within dalCommon.h and used by all classes implementing objects supported by the DAL.
+
+2) I have created a revised list of test data-sets which is used to test the functionality of the routines (both low-level and high-level). A compressed tar archive can be obtained through the USG server, providing examples of raw and HDF5-versions for beam-formed data, TBB time-series data, MeasurementSets and FITS. Aside from the already existing unit testing a number of functional tests have been added to the CMake scripts.
+
+3) All types of attributes storing metadata associated with the TBB time-series data now are supported: this now also includes vector-valued attributes (see comment above) as well as derived objects (such as casacore Measures used for handling positions and directions).
+
+4) The high-level interfaces to the TBB time-series data (DAL::TBB_Timeseries, DAL::TBB_StationGroup and DAL::TBB_DipoleDataset) have undergone extensive testing and debugging; as a result of this also the pending issue of segmentation faults when using the top-level  object seem to have been resolved. A few final tests need to be run on the Linux platforms to be supported, since past experience has shown that problems will surface differently on Mac OS X and Linux.
+
+Next in line:
+
+1) Add method(s) to fill in the missing station and antenna position information using tables created for station CalServer; as long as tbb2h5 is not able to talk to the central parameter database, these metadata cannot be filled in at file creation time.
+
+<hr>
+
+<pre>
+From: Lars B"ahren
 Date: October 15, 2008 4:30:58 PM GMT+02:00
 </pre>
 

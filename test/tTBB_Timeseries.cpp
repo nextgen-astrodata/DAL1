@@ -241,11 +241,8 @@ int test_attributes2record (std::string const &filename)
 
   cout << "[3] Retrieve attributes into a header record for the DR ..." << endl;
   try {
-    casa::Record rec;
-    bool recursive (false);
-    bool headerRecord (true);
     // retrieve the attrbutes into the record
-    ts.attributes2record (rec,recursive,headerRecord);
+    casa::Record rec = ts.attributes2headerRecord();
     // display the contents of the record
     std::cout << rec << endl;
   } catch (std::string message) {

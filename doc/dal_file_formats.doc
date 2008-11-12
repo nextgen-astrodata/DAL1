@@ -91,13 +91,13 @@ composed of a number of station, which in turn group together sets of antennas.
 |-- OBSERVATION_MODE                   ... Attribute       ... string
 |-- Station001                         ... Group
 |   |-- TRIGGER_TYPE                   ... Attribute       ... string
-|   |-- TRIGGER_OFFSET                 ... Attribute       ... string
-|   |-- TRIGGERED_ANTENNAS             ... Attribute       ... array<int,1>
+|   |-- TRIGGER_OFFSET                 ... Attribute       ... double
+|   |-- TRIGGERED_ANTENNAS             ... Attribute       ... array<uint,1>
 |   |-- STATION_POSITION_VALUE         ... Attribute       ... array<double,1>
-|   |-- STATION_POSITION_UNIT          ... Attribute       ... array<sting,1>
+|   |-- STATION_POSITION_UNIT          ... Attribute       ... array<string,1>
 |   |-- STATION_POSITION_FRAME         ... Attribute       ... string
 |   |-- BEAM_DIRECTION_VALUE           ... Attribute       ... array<double,1>
-|   |-- BEAM_DIRECTION_UNIT            ... Attribute       ... array<sting,1>
+|   |-- BEAM_DIRECTION_UNIT            ... Attribute       ... array<string,1>
 |   |-- BEAM_DIRECTION_FRAME           ... Attribute       ... string
 |   |-- 001000000                      ... Dataset         ... array<uint,1>
 |   |   |-- STATION_ID                 ... Attribute       ... uint
@@ -197,14 +197,14 @@ representing a hierarchical level in the setup of the telecope.
 	  <td>STATION_POSITION_VALUE
 	  <td>array<double,1>
 	  <td>mandatory
-	  <td>
+	  <td>[ 0, 0, 0 ]
 	  <td>Numerical value of the station center/reference position
 	</tr>
 	<tr bgcolor=#eeeeff>
 	  <td>STATION_POSITION_UNIT
 	  <td>array<string,1>
 	  <td>mandatory
-	  <td>
+	  <td>[ "m", "m", "m" ]
 	  <td>Units within which the numerical values for the station center/reference
 	  position is given
 	</tr>
@@ -212,7 +212,7 @@ representing a hierarchical level in the setup of the telecope.
 	  <td>STATION_POSITION_FRAME
 	  <td>string
 	  <td>mandatory
-	  <td>
+	  <td>"ITRF"
 	  <td>Identifier for the reference frame/system within which the station
 	  center/reference position is given
 	</tr>
@@ -221,21 +221,23 @@ representing a hierarchical level in the setup of the telecope.
 	  <td>array<double,1>
 	  <td>mandatory
 	  <td>
-	  <td>
+	  <td>Numerical value of the station beam pointing direction
 	</tr>
 	<tr bgcolor=#eeeeff>
 	  <td>BEAM_DIRECTION_UNIT
 	  <td>array<string,1>
 	  <td>mandatory
 	  <td>
-	  <td>
+	  <td>Units within which the numerical value of the station beam
+          pointing direction is given
 	</tr>
 	<tr bgcolor=#eeeeff>
 	  <td>BEAM_DIRECTION_FRAME
 	  <td>string
 	  <td>mandatory
 	  <td>
-	  <td>
+	  <td>Identifier for the reference frame/system within which station beam
+          pointing direction is given
 	</tr>
 	<tr bgcolor=#eeeeff>
 	<td>TRIGGER_TYPE

@@ -357,10 +357,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Get a casa::Record containing the values of the attributes
     casa::Record attributes2record (bool const &recursive=false);
     
-    //! Get a casa::Record containing the values of the attributes
-    void attributes2record (casa::Record &rec,
-			    bool const &recursive=false,
-			    bool const &headerRecord=false);
+    //! Create casa::Record used as header record for the CR::DataReader class
+    casa::Record attributes2headerRecord ();
+    
 #endif
     
   private:
