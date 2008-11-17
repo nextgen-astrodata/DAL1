@@ -376,9 +376,10 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
 
+#ifdef HAVE_CASA
+
   // --------------------------------------------------------------- trigger_type
 
-#ifdef HAVE_CASA
   casa::Vector<casa::String> TBB_Timeseries::trigger_type ()
   {
     uint nofStations = groups_p.size();
@@ -390,23 +391,9 @@ namespace DAL { // Namespace DAL -- begin
     
     return trigger;
   }
-#else
-  std::vector<std::string> TBB_Timeseries::trigger_type ()
-  {
-    uint nofStations = groups_p.size();
-    std::vector<std::string> trigger (nofStations);
-    
-    for (uint n(0); n<nofStations; n++) {
-      trigger[n] = groups_p[n].trigger_type();
-    }
-    
-    return trigger;
-  }
-#endif
-  
+
   // ------------------------------------------------------------- trigger_offset
   
-#ifdef HAVE_CASA
   casa::Vector<double> TBB_Timeseries::trigger_offset ()
   {
     uint nofStations = nofStationGroups();
@@ -418,22 +405,51 @@ namespace DAL { // Namespace DAL -- begin
     
     return trigger;
   }
-#else
-  std::vector<double> TBB_Timeseries::trigger_offset ()
+
+  // ----------------------------------------------------- station_position_value
+
+  casa::Matrix<double> TBB_Timeseries::station_position_value ()
   {
     uint nofStations = nofStationGroups();
-    std::vector<double> trigger (nofStations);
+    casa::Matrix<double> values (nofStations,3);
     
     for (uint n(0); n<nofStations; n++) {
-      trigger[n] = groups_p[n].trigger_offset();
+      values.row(n) = groups_p[n].station_position_value();
     }
     
-    return trigger;
+    return values;
   }
-#endif
+
+  // ------------------------------------------------------ station_position_unit
+
+  casa::Matrix<casa::String> TBB_Timeseries::station_position_unit ()
+  {
+    uint nofStations = nofStationGroups();
+    casa::Matrix<casa::String> units (nofStations,3);
+    
+    for (uint n(0); n<nofStations; n++) {
+      units.row(n) = groups_p[n].station_position_unit();
+    }
+    
+    return units;
+  }
+
+  // ----------------------------------------------------- station_position_frame
+
+  casa::Vector<casa::String> TBB_Timeseries::station_position_frame ()
+  {
+    uint nofStations = nofStationGroups();
+    casa::Vector<casa::String> frame (nofStations);
+    
+    for (uint n(0); n<nofStations; n++) {
+      frame(n) = groups_p[n].station_position_frame();
+    }
+    
+    return frame;
+  }
   
-#ifdef HAVE_CASA
-  
+  // ----------------------------------------------------------- station_position
+
   casa::Vector<casa::MPosition> TBB_Timeseries::station_position ()
   {
     uint nofStations = nofStationGroups();
@@ -444,6 +460,48 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     return positions;
+  }
+  
+  // ------------------------------------------------------- beam_direction_value
+
+  casa::Matrix<double> TBB_Timeseries::beam_direction_value ()
+  {
+    uint nofStations = nofStationGroups();
+    casa::Matrix<double> values (nofStations,3);
+    
+    for (uint n(0); n<nofStations; n++) {
+      values.row(n) = groups_p[n].beam_direction_value();
+    }
+    
+    return values;
+  }
+
+  // -------------------------------------------------------- beam_direction_unit
+
+  casa::Matrix<casa::String> TBB_Timeseries::beam_direction_unit ()
+  {
+    uint nofStations = nofStationGroups();
+    casa::Matrix<casa::String> units (nofStations,3);
+    
+    for (uint n(0); n<nofStations; n++) {
+      units.row(n) = groups_p[n].beam_direction_unit();
+    }
+    
+    return units;
+  }
+
+  // ------------------------------------------------------- beam_direction_frame
+
+  casa::Vector<casa::String> TBB_Timeseries::beam_direction_frame ()
+  {
+    uint nofStations = nofStationGroups();
+    casa::Vector<casa::String> frame (nofStations);
+    
+    for (uint n(0); n<nofStations; n++) {
+      frame(n) = groups_p[n].beam_direction_frame();
+    }
+    
+    return frame;
   }
   
   casa::Vector<casa::MDirection> TBB_Timeseries::beam_direction ()
@@ -458,7 +516,52 @@ namespace DAL { // Namespace DAL -- begin
     return directions;
   }
   
+#else
+
+  // --------------------------------------------------------------- trigger_type
+
+  std::vector<std::string> TBB_Timeseries::trigger_type ()
+  {
+    uint nofStations = groups_p.size();
+    std::vector<std::string> trigger (nofStations);
+    
+    for (uint n(0); n<nofStations; n++) {
+      trigger[n] = groups_p[n].trigger_type();
+    }
+    
+    return trigger;
+  }
+
+  // ------------------------------------------------------------- trigger_offset
+
+  std::vector<double> TBB_Timeseries::trigger_offset ()
+  {
+    uint nofStations = nofStationGroups();
+    std::vector<double> trigger (nofStations);
+    
+    for (uint n(0); n<nofStations; n++) {
+      trigger[n] = groups_p[n].trigger_offset();
+    }
+    
+    return trigger;
+  }
+
+  // ----------------------------------------------------- station_position_frame
+
+  std::vector<std::string> TBB_Timeseries::station_position_frame ()
+  {
+    uint nofStations = nofStationGroups();
+    std::vector<std::string> frame (nofStations);
+    
+    for (uint n(0); n<nofStations; n++) {
+      frame[n] = groups_p[n].station_position_frame();
+    }
+    
+    return frame;
+  }
+  
 #endif
+  
   
   // ============================================================================
   //
@@ -583,51 +686,123 @@ namespace DAL { // Namespace DAL -- begin
   // --------------------------------------------------------- sample_frequency
 
 #ifdef HAVE_CASA
-  casa::Vector<double> TBB_Timeseries::sample_frequency ()
+  casa::Vector<double> TBB_Timeseries::sample_frequency_value ()
   {
     uint n           = 0;
     uint station     = 0;
     uint dipole      = 0;
     uint nofDipoles  = nofDipoleDatasets();
     uint nofStations = nofStationGroups();
-    casa::Vector<double> sampleFrequency (nofDipoles);
+    casa::Vector<double> values (nofDipoles);
     casa::Vector<double> tmp;
     
     for (station=0; station<nofStations; station++) {
       tmp = groups_p[station].sample_frequency_value();
       nofDipoles = groups_p[station].nofDipoleDatasets();
       for (dipole=0; dipole<nofDipoles; dipole++) {
-	sampleFrequency(n) = tmp(dipole);
+	values(n) = tmp(dipole);
 	n++;
       }
     }
     
-    return sampleFrequency;
+    return values;
   }
 #else
-  std::vector<double> TBB_Timeseries::sample_frequency ()
+  std::vector<double> TBB_Timeseries::sample_frequency_value ()
   {
     uint n           = 0;
     uint station     = 0;
     uint dipole      = 0;
     uint nofDipoles  = nofDipoleDatasets();
     uint nofStations = nofStationGroups();
-    std::vector<double> sampleFrequency (nofDipoles);
+    std::vector<double> values (nofDipoles);
     std::vector<double> tmp;
     
     for (station=0; station<nofStations; station++) {
       tmp = groups_p[station].sample_frequency_value();
       nofDipoles = groups_p[station].nofDipoleDatasets();
       for (dipole=0; dipole<nofDipoles; dipole++) {
-	sampleFrequency[n] = tmp[dipole];
+	values[n] = tmp[dipole];
 	n++;
       }
     }
     
-    return sampleFrequency;
+    return values;
   }
 #endif
 
+  // ------------------------------------------------------ sample_frequency_unit
+  
+#ifdef HAVE_CASA
+  casa::Vector<casa::String> TBB_Timeseries::sample_frequency_unit ()
+  {
+    uint n           = 0;
+    uint station     = 0;
+    uint dipole      = 0;
+    uint nofDipoles  = nofDipoleDatasets();
+    uint nofStations = nofStationGroups();
+    casa::Vector<casa::String> units (nofDipoles);
+    casa::Vector<casa::String> tmp;
+    
+    for (station=0; station<nofStations; station++) {
+      tmp = groups_p[station].sample_frequency_unit();
+      nofDipoles = groups_p[station].nofDipoleDatasets();
+      for (dipole=0; dipole<nofDipoles; dipole++) {
+	units(n) = tmp(dipole);
+	n++;
+      }
+    }
+    
+    return units;
+  }  
+#else
+  std::vector<std::string> TBB_Timeseries::sample_frequency_unit ();
+  {
+    uint n           = 0;
+    uint station     = 0;
+    uint dipole      = 0;
+    uint nofDipoles  = nofDipoleDatasets();
+    uint nofStations = nofStationGroups();
+    std::vector<std::string> units (nofDipoles);
+    std::vector<std::string> tmp;
+    
+    for (station=0; station<nofStations; station++) {
+      tmp = groups_p[station].sample_frequency_unit();
+      nofDipoles = groups_p[station].nofDipoleDatasets();
+      for (dipole=0; dipole<nofDipoles; dipole++) {
+	units[n] = tmp[dipole];
+	n++;
+      }
+    }
+    
+    return units;
+  }
+#endif
+  
+  // ----------------------------------------------------------- sample_frequency
+
+  casa::Vector<casa::MFrequency> TBB_Timeseries::sample_frequency ()
+  {
+    uint n           = 0;
+    uint station     = 0;
+    uint dipole      = 0;
+    uint nofDipoles  = nofDipoleDatasets();
+    uint nofStations = nofStationGroups();
+    casa::Vector<casa::MFrequency> freq (nofDipoles);
+    casa::Vector<casa::MFrequency> tmp;
+    
+    for (station=0; station<nofStations; station++) {
+      tmp = groups_p[station].sample_frequency();
+      nofDipoles = groups_p[station].nofDipoleDatasets();
+      for (dipole=0; dipole<nofDipoles; dipole++) {
+	freq(n) = tmp(dipole);
+	n++;
+      }
+    }
+    
+    return freq;
+  }
+  
   // ---------------------------------------------------------------- data_length
 
 #ifdef HAVE_CASA
@@ -748,39 +923,73 @@ namespace DAL { // Namespace DAL -- begin
 #endif
   
   // ------------------------------------------------------------------------- fx
-  
+
+#ifdef HAVE_CASA  
+  /*!
+    \param start      -- Number of the sample at which to start reading.
+    \param nofSamples -- Number of samples to read, starting from the position
+           given by <tt>start</tt>.
+    
+    \return fx -- [nofSamples,dipole] Array of raw ADC samples representing
+            the electric field strength as function of time.
+  */
   casa::Matrix<double> TBB_Timeseries::fx (int const &start,
 					   int const &nofSamples)
   {
-    /* Check minimal condition for operations below. */
-    if (fileID_p < 1) {
-      return casa::Matrix<double> (1,1,0);
-    }
+    uint nofDipoles  = nofDipoleDatasets();
+    std::vector<int> startPositions (nofDipoles,start);
     
-    uint n           = 0;
-    uint station     = 0;
-    uint dipole      = 0;
+    return fx (startPositions,
+	       nofSamples);
+  }
+  
+  /*!
+    \param start      -- Number of the sample at which to start reading; w.r.t. 
+           to the variant where just a single value is provided, this function
+           allows to set the starting point for each dipole individually
+    \param nofSamples -- Number of samples to read, starting from the position
+           given by <tt>start</tt>.
+    
+    \return fx -- [nofSamples,dipole] Array of raw ADC samples representing
+            the electric field strength as function of time.
+  */
+  casa::Matrix<double> TBB_Timeseries::fx (std::vector<int> const &start,
+					   int const &nofSamples)
+  {
     uint nofStations = groups_p.size();
     uint nofDipoles  = nofDipoleDatasets();
     std::vector<uint> selection (1);
     casa::Matrix<double> data (nofSamples,nofDipoles);
     casa::Vector<double> tmp (nofSamples);
-    
-#ifdef DEBUGGING_MESSAGES
-    std::cout << "[TBB_Timeseries::fx]" << std::endl;
-    std::cout << "-- nof. dipoles  = " << nofDipoles   << std::endl;
-    std::cout << "-- nof. stations = " << nofStations  << std::endl;
-    std::cout << "-- shape(data)   = " << data.shape() << std::endl;
-    std::cout << "-- shape(tmp)    = " << tmp.shape()  << std::endl;
-#endif
 
+    //______________________________________________________
+    // Check input parameters
+    
+    if (fileID_p < 1) {
+      std::cerr << "[TBB_Timeseries::fx] Not connected to data set!" << std::endl;
+      return casa::Matrix<double> (1,1,0);
+    }    
+
+    if (start.size() != nofDipoles) {
+      std::cerr << "[TBB_Timeseries::fx] Invalid number of elements in vector"
+		<< " for selection of start position!" << std::endl;
+      return casa::Matrix<double> (1,1,0);
+    }
+
+    //______________________________________________________
+    // Start retrieving the data from the file
+    
+    uint n       = 0;
+    uint station = 0;
+    uint dipole  = 0;
+    
     for (station=0; station<nofStations; station++) {
       // get the number dipoles 
       nofDipoles = groups_p[station].nofDipoleDatasets();
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	selection[0] = dipole;
 	// get the channel data ...
-	tmp = groups_p[station].fx(start,
+	tmp = groups_p[station].fx(start[n],
 				   nofSamples,
 				   selection);
 	// ... and add them to the returned array
@@ -791,7 +1000,8 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     return data;
-    
   }
+  
+#endif
   
 } // Namespace DAL -- end

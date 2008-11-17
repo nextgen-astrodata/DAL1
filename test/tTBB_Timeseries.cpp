@@ -22,6 +22,7 @@
  ***************************************************************************/
 
 #include <casa/Arrays/ArrayIO.h>
+#include <casa/Arrays/Matrix.h>
 #include <casa/BasicSL/String.h>
 #include <casa/HDF5/HDF5File.h>
 #include <casa/HDF5/HDF5Record.h>
@@ -170,25 +171,60 @@ int test_methods (std::string const &filename)
     std::string group_name;
 #ifdef HAVE_CASA
     casa::Vector<casa::String> trigger_type (nelem);
-    casa::Vector <double> trigger_offset (nelem,0);
-    casa::Vector<casa::MPosition> station_position (nelem);
-    casa::Vector<casa::MDirection> beam_direction (nelem);
+    casa::Vector<double> trigger_offset (nelem,0);
+    casa::Matrix<double> station_position_value;
+    casa::Matrix<casa::String> station_position_unit;
+    casa::Vector<casa::MPosition> station_position;
+    casa::Vector<casa::MDirection> beam_direction;
     //
-    trigger_type     = ts.trigger_type();
-    trigger_offset   = ts.trigger_offset();
-    station_position = ts.station_position();
-    beam_direction   = ts.beam_direction();
+    trigger_type           = ts.trigger_type();
+    trigger_offset         = ts.trigger_offset();
+    station_position_value = ts.station_position_value();
+    station_position_unit  = ts.station_position_unit();
+    station_position       = ts.station_position();
+    beam_direction         = ts.beam_direction();
     //
-    cout << "-- TRIGGER_TYPE ......... = " << trigger_type      << endl;
-    cout << "-- TRIGGER_OFFSET ....... = " << trigger_offset    << endl;
-    cout << "-- STATION_POSITION ..... = " << station_position  << endl;
-    cout << "-- BEAM_DIRECTION ....... = " << beam_direction    << endl;
+    cout << "-- TRIGGER_TYPE ......... = " << trigger_type            << endl;
+    cout << "-- TRIGGER_OFFSET ....... = " << trigger_offset          << endl;
+    cout << "-- STATION_POSITION ..... = " << station_position        << endl;
+    cout << "-- BEAM_DIRECTION ....... = " << beam_direction          << endl;
 #else
     std::vector<std::string> trigger_type = ts.trigger_type();
     std::vector<double> trigger_offset    = ts.trigger_offset();
     //
     cout << "-- TRIGGER_TYPE ......... = " << trigger_type      << endl;
     cout << "-- TRIGGER_OFFSET ....... = " << trigger_offset    << endl;
+#endif
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  assert (nofFailedTests==0);
+
+  cout << "[3] Retrieve attributes attached to the dipole datasets ..." << endl;
+  try {
+#ifdef HAVE_CASA
+    casa::Vector<double> sample_frequency_value;
+    casa::Vector<casa::String> sample_frequency_unit;
+    casa::Vector<casa::MFrequency> sample_frequency;
+    //
+    sample_frequency_value = ts.sample_frequency_value();
+    sample_frequency_unit  = ts.sample_frequency_unit();
+    sample_frequency       = ts.sample_frequency();
+    //
+    cout << "-- SAMPLE_FREQUENCY_VALUE = " << sample_frequency_value << endl;
+    cout << "-- SAMPLE_FREQUENCY_UNIT  = " << sample_frequency_unit  << endl;
+    cout << "-- SAMPLE_FREQUENCY       = " << sample_frequency       << endl;
+#else
+    std::vector<double> sample_frequency_value;
+    std::vector<std::string> sample_frequency_unit;
+    //
+    sample_frequency_value = ts.sample_frequency_value();
+    sample_frequency_unit  = ts.sample_frequency_unit();
+    //
+    cout << "-- SAMPLE_FREQUENCY_VALUE = " << sample_frequency_value << endl;
+    cout << "-- SAMPLE_FREQUENCY_UNIT  = " << sample_frequency_unit << endl;
 #endif
   } catch (std::string message) {
     cerr << message << endl;

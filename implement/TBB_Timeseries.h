@@ -238,25 +238,34 @@ namespace DAL { // Namespace DAL -- begin
     //
     // ==========================================================================
 
+#ifdef HAVE_CASA
     //! Get the type of trigger causing the dump of the TBB data
-#ifdef HAVE_CASA
     casa::Vector<casa::String> trigger_type ();
-#else
-    std::vector<std::string> trigger_type ();
-#endif
-
     //! Time offset from the trigger reference time
-#ifdef HAVE_CASA
     casa::Vector<double> trigger_offset ();
-#else
-    std::vector<double> trigger_offset ();
-#endif
-
-#ifdef HAVE_CASA
+    //! Get the values of the station position
+    casa::Matrix<double> station_position_value ();
+    //! Get the physical units of the station positions
+    casa::Matrix<casa::String> station_position_unit ();
+    //! Get the reference codes for the frame of the station positions
+    casa::Vector<casa::String> station_position_frame ();
     //! Get the position of the station as a casa::Measure
     casa::Vector<casa::MPosition> station_position ();
+    //! Get the values of the beam directions
+    casa::Matrix<double> beam_direction_value ();
+    //! Get the physical units of the beam directions
+    casa::Matrix<casa::String> beam_direction_unit ();
+    //! Get the reference codes for the frame of the beam direction
+    casa::Vector<casa::String> beam_direction_frame ();
     //! Get the direction of the station beam as casa::Measure
     casa::Vector<casa::MDirection> beam_direction ();
+#else
+    //! Get the type of trigger causing the dump of the TBB data
+    std::vector<std::string> trigger_type ();
+    //! Time offset from the trigger reference time
+    std::vector<double> trigger_offset ();
+    //! Get the reference codes for the frame of the station positions
+    std::vector<std::string> station_position_frame ();
 #endif
     
     // ==========================================================================
@@ -265,101 +274,53 @@ namespace DAL { // Namespace DAL -- begin
     //
     // ==========================================================================
     
-    /*!
-      \brief Retrieve the list of channel names (i.e. as string)
-      
-      \return names -- A list of the channel IDs for all the dipoles within
-              this data set.
-    */
 #ifdef HAVE_CASA
+    //! Retrieve the list of channel names (i.e. as string)
     casa::Vector<casa::String> channelNames ();
-#else
-    std::vector<std::string> channelNames ();
-#endif
-
-    /*!
-      \brief Retrieve the list of channel IDs
-      
-      \return channelID -- A list of the channel IDs for all the dipoles within
-              this data set.
-     */
-#ifdef HAVE_CASA
+    //! Retrieve the list of channel IDs
     casa::Vector<int> channelID ();
-#else
-    std::vector<int> channelID ();
-#endif
-    
-    /*!
-      \brief Get the values of TIME for all present datasets
-      
-      \return times -- Values of the TIME attribute for all datasets present in
-              this station group
-    */
-#ifdef HAVE_CASA
+    //! Get the values of TIME for all present datasets
     casa::Vector<uint> time ();
-#else
-    std::vector<uint> time ();
-#endif
-
-    /*!
-      \brief Get the values of SAMPLE_FREQUENCY for all present datasets
-      
-      \return sample_frequencies -- Values of the SAMPLE_FREQUENCY attribute
-              for all datasets present in this station group
-    */
-#ifdef HAVE_CASA
-    casa::Vector<double> sample_frequency ();
-#else
-    std::vector<double> sample_frequency ();
-#endif
-
-    /*!
-      \brief Get the values of DATA_LENGTH for all present datasets
-      
-      \return times -- Values of the DATA_LENGTH attribute for all datasets present in
-              this station group
-    */
-#ifdef HAVE_CASA
+    //! Get the values of the ADC sample frequency
+    casa::Vector<double> sample_frequency_value ();
+    //! Get the unit of the ADC sample frequency
+    casa::Vector<casa::String> sample_frequency_unit ();
+    //! Get the sample frequency as vector of casa::MFrequency
+    casa::Vector<casa::MFrequency> sample_frequency ();
+    //! Get the values of DATA_LENGTH for all present datasets
     casa::Vector<uint> data_length ();
 #else
+    //! Retrieve the list of channel names (i.e. as string)
+    std::vector<std::string> channelNames ();
+    //! Retrieve the list of channel IDs
+    std::vector<int> channelID ();
+    //! Get the values of TIME for all present datasets
+    std::vector<uint> time ();
+    //! Get the values of the ADC sample frequency
+    std::vector<double> sample_frequency_value ();
+    //! Get the unit of the ADC sample frequency
+    std::vector<std::string> sample_frequency_unit ();
+    //! Get the values of DATA_LENGTH for all present datasets
     std::vector<uint> data_length ();
 #endif
-
-    /*!
-      \brief Retrieve a block of ADC values per dipole
-
-      \param start      -- Number of the sample at which to start reading
-      \param nofSamples -- Number of samples to read, starting from the position
-             given by <tt>start</tt>.
-
-      \return fx -- [nofSamples,dipole] Array of raw ADC samples representing
-              the electric field strength as function of time.
-    */
+    
+    // ==========================================================================
+    //
+    //  High-level access to data and attributes
+    //
+    // ==========================================================================
+    
+#ifdef HAVE_CASA
+    //! Retrieve a block of ADC values per dipole
     casa::Matrix<double> fx (int const &start=0,
 			     int const &nofSamples=1);
-
-    /*!
-      \brief Retrieve a block of ADC values per dipole
-
-      \param start      -- Number of the sample at which to start reading; w.r.t. 
-             to the variant where just a single value is provided, this function
-	     allows to set the starting point for each dipole individually
-      \param nofSamples -- Number of samples to read, starting from the position
-             given by <tt>start</tt>.
-
-      \return fx -- [nofSamples,dipole] Array of raw ADC samples representing
-              the electric field strength as function of time.
-    */
+    //! Retrieve a block of ADC values per dipole
     casa::Matrix<double> fx (std::vector<int> const &start,
 			     int const &nofSamples=1);
-
-#ifdef HAVE_CASA
     //! Get a casa::Record containing the values of the attributes
     casa::Record attributes2record (bool const &recursive=false);
-    
     //! Create casa::Record used as header record for the CR::DataReader class
     casa::Record attributes2headerRecord ();
-    
 #endif
     
   private:
