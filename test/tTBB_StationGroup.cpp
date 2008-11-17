@@ -383,10 +383,11 @@ int test_methods (std::string const &name_file,
     casa::Vector<uint> rcu_id;
     casa::Vector<double> sample_freq_value;
     casa::Vector<casa::String> sample_freq_unit;
-    casa::Vector<uint> nyquist_zone      = group.nyquist_zone();
+    casa::Vector<uint> nyquist_zone;
     casa::Vector<uint> time              = group.time();
     casa::Vector<uint> sample_number     = group.sample_number();
     casa::Vector<uint> samples_per_frame = group.samples_per_frame();
+    casa::Vector<int> sample_offset      = group.sample_offset();
     casa::Vector<uint> data_length       = group.data_length();
 #else
     // retrieve the values ...
@@ -395,7 +396,7 @@ int test_methods (std::string const &name_file,
     std::vector<uint> rcu_id;
     std::vector<double> sample_freq_value;
     std::vector<std::string> sample_freq_unit;
-    std::vector<uint> nyquist_zone      = group.nyquist_zone();
+    std::vector<uint> nyquist_zone;
     std::vector<uint> time              = group.time();
     std::vector<uint> sample_number     = group.sample_number();
     std::vector<uint> samples_per_frame = group.samples_per_frame();
@@ -407,6 +408,7 @@ int test_methods (std::string const &name_file,
     rcu_id            = group.rcu_id();
     sample_freq_value = group.sample_frequency_value();
     sample_freq_unit  = group.sample_frequency_unit();
+    nyquist_zone      = group.nyquist_zone();
     // ... and display them  
     cout << "-- station_id ........... = " << station_id        << endl;
     cout << "-- rsp_id ............... = " << rsp_id            << endl;
@@ -417,6 +419,7 @@ int test_methods (std::string const &name_file,
     cout << "-- time ................. = " << time              << endl;
     cout << "-- sample_number ........ = " << sample_number     << endl;
     cout << "-- samples_per_frame .... = " << samples_per_frame << endl;
+    cout << "-- sample_offset ........ = " << sample_offset     << endl;
     cout << "-- Data lengths ......... = " << data_length       << endl;
   } catch (std::string message) {
     cerr << message << endl;

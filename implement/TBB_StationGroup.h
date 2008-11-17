@@ -67,24 +67,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Synopsis</h3>
     
     <ol>
-      <li>Structure of the HDF5 group inside the time-series data format:
-      \verbatim
-      /
-      |-- Station001                    ... Group
-      |   |-- TRIGGER_TYPE              ... Attribute       ... string
-      |   |-- TRIGGER_OFFSET            ... Attribute       ... double
-      |   |-- TRIGGERED_ANTENNAS        ... Attribute       ... array<int,1>
-      |   |-- BEAM_DIRECTION_VALUE      ... Attribute       ... array<double,1>
-      |   |-- BEAM_DIRECTION_UNIT       ... Attribute       ... array<string,1>
-      |   |-- BEAM_DIRECTION_FRAME      ... Attribute       ... string
-      |   |-- STATION_POSITION_VALUE    ... Attribute       ... array<double,1>
-      |   |-- STATION_POSITION_UNIT     ... Attribute       ... array<string,1>
-      |   |-- STATION_POSITION_FRAME    ... Attribute       ... string
-      |   |-- 001000000                 ... Dataset         ... array<uint,1>
-      |   |   `-- 
-      |   |-- 001000001                 ... Dataset         ... array<uint,1>
-      |   |   `-- 
-      \endverbatim
+      <li>Structure of the \ref dal_formats_tbb
     </ol>
 
     <h3>Example(s)</h3>
@@ -203,37 +186,29 @@ namespace DAL { // Namespace DAL -- begin
      return nofTriggeredAntennas_p;
    }
     
-    //! Get the numerical value of the beam pointing direction.
 #ifdef HAVE_CASA
+    //! Get the numerical value of the beam pointing direction.
     casa::Vector<double> beam_direction_value ();
+    //! Get the physical units for the beam direction
+    casa::Vector<casa::String> beam_direction_unit ();
+    //! Get the numerical values of the station position
+    casa::Vector<double> station_position_value ();
+    //! Get the physical units for the station position
+    casa::Vector<casa::String> station_position_unit ();
 #else 
+    //! Get the numerical value of the beam pointing direction.
     std::vector<double> beam_direction_value ();
+    //! Get the physical units for the beam direction
+    std::vector<std::string> beam_direction_unit ();
+    //! Get the numerical values of the station position
+    std::vector<double> station_position_value ();
+    //! Get the physical units for the station position
+    std::vector<std::string> station_position_unit ();
 #endif
     
-    //! Get the physical units for the beam direction
-#ifdef HAVE_CASA
-    casa::Vector<casa::String> beam_direction_unit ();
-#else 
-    std::vector<std::string> beam_direction_unit ();
-#endif
-
     //! Get the coordinate frame identifier for the beam direction
     std::string beam_direction_frame ();
     
-    //! Get the numerical values of the station position
-#ifdef HAVE_CASA
-    casa::Vector<double> station_position_value ();
-#else 
-    std::vector<double> station_position_value ();
-#endif
-
-    //! Get the physical units for the station position
-#ifdef HAVE_CASA
-    casa::Vector<casa::String> station_position_unit ();
-#else 
-    std::vector<std::string> station_position_unit ();
-#endif
-
     //! Get the identifier for the station position reference frame
     std::string station_position_frame ();
 
@@ -345,59 +320,38 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<uint> nyquist_zone ();
 #endif
     
-    /*!
-      \brief Get the values of TIME for all present datasets
-      
-      \return times -- Values of the TIME attribute for all datasets present in
-              this station group
-    */
 #ifdef HAVE_CASA
+    //! Get the values of TIME for all present datasets
     casa::Vector<uint> time ();
-#else
-    std::vector<uint> time ();
-#endif
-
     //! Get the offset in number of samples from the last full second
-#ifdef HAVE_CASA
     casa::Vector<uint> sample_number ();
-#else
-    std::vector<uint> sample_number ();
-#endif
-
     //! Get the number of samples contained in the original data frames
-#ifdef HAVE_CASA
     casa::Vector<uint> samples_per_frame ();
-#else
-    std::vector<uint> samples_per_frame ();
-#endif
-    
+    //! Time offset between the individual antennas in units of samples
+    casa::Vector<int> sample_offset (uint const &refAntenna=0);
     //! Get the values of DATA_LENGTH for all present datasets
-#ifdef HAVE_CASA
     casa::Vector<uint> data_length ();
-#else
-    std::vector<uint> data_length ();
-#endif
-
     //! Get the type of the feeds.
-#ifdef HAVE_CASA
     casa::Vector<casa::String> feed ();
-#else
-    std::vector<std::string> feed ();
-#endif
-
     //! Get the numerical values of the antenna positions within this station.    
-#ifdef HAVE_CASA
     casa::Matrix<double> antenna_position_value ();
-#endif
-
     //! Get the physical units for the antenna positions within this station.
-#ifdef HAVE_CASA
     casa::Matrix<casa::String> antenna_position_unit ();
-#endif
-
     //! Get the positions of the antennas within this station as Measure.
-#ifdef HAVE_CASA
     casa::Vector<casa::MPosition> antenna_position ();
+#else
+    //! Get the values of TIME for all present datasets
+    std::vector<uint> time ();
+    //! Get the offset in number of samples from the last full second
+    std::vector<uint> sample_number ();
+    //! Get the number of samples contained in the original data frames
+    std::vector<uint> samples_per_frame ();
+    //! Time offset between the individual antennas in units of samples
+    std::vector<int> sample_offset (uint const &refAntenna=0);
+    //! Get the values of DATA_LENGTH for all present datasets
+    std::vector<uint> data_length ();
+    //! Get the type of the feeds.
+    std::vector<std::string> feed ();
 #endif
     
     //! Retrieve the list of channels IDs contained within this group

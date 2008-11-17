@@ -980,6 +980,36 @@ casa::Vector<uint> TBB_StationGroup::sample_number ()
     return samples_per_frame;
   }
 #endif
+
+#ifdef HAVE_CASA
+  casa::Vector<int> TBB_StationGroup::sample_offset (uint const &refAntenna)
+  {
+    uint nofDipoles              = nofDipoleDatasets();
+    casa::Vector<uint> valTime   = time();
+    casa::Vector<uint> valSample = sample_number();
+    casa::Vector<int> offset (nofDipoles);
+
+    for (uint n(0); n<nofDipoles; n++) {
+      offset(n) = valTime(n)-valTime(refAntenna) + valSample(n)-valSample(refAntenna);
+    }
+
+    return offset;
+  }
+#else
+  std::vector<int> TBB_StationGroup::sample_offset (uint const &refAntenna)
+  {
+    uint nofDipoles             = nofDipoleDatasets();
+    std::vector<uint> valTime   = time();
+    std::vector<uint> valSample = sample_number();
+    std::vector<int> offset (nofDipoles);
+
+    for (uint n(0); n<nofDipoles; n++) {
+      offset[n] = valTime[n]-valTime(refAntenna) + valSample[n]-valSample[refAntenna];
+    }
+
+    return offset;
+  }
+#endif
   
   // --------------------------------------------------------------- data_length
   
