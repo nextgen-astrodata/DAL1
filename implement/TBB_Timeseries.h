@@ -281,6 +281,8 @@ namespace DAL { // Namespace DAL -- begin
     casa::Vector<int> channelID ();
     //! Get the values of TIME for all present datasets
     casa::Vector<uint> time ();
+    //! Get the number of samples elapsed since the last full second
+    casa::Vector<uint> sample_number ();
     //! Get the values of the ADC sample frequency
     casa::Vector<double> sample_frequency_value ();
     //! Get the unit of the ADC sample frequency
@@ -296,6 +298,8 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<int> channelID ();
     //! Get the values of TIME for all present datasets
     std::vector<uint> time ();
+    //! Get the number of samples elapsed since the last full second
+    std::vector<uint> sample_number ();
     //! Get the values of the ADC sample frequency
     std::vector<double> sample_frequency_value ();
     //! Get the unit of the ADC sample frequency
@@ -311,6 +315,8 @@ namespace DAL { // Namespace DAL -- begin
     // ==========================================================================
     
 #ifdef HAVE_CASA
+    //! Time offset between the individual antennas in units of samples
+    casa::Vector<int> sample_offset (uint const &refAntenna=0);
     //! Retrieve a block of ADC values per dipole
     casa::Matrix<double> fx (int const &start=0,
 			     int const &nofSamples=1);

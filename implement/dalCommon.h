@@ -263,8 +263,9 @@ namespace DAL {
      * its HDF5 object ID - else return error message.
      */
     if ( H5Aexists( location_id, name.c_str()) > 0 ) {
-      attribute_id = H5Aopen_name(location_id,
-				  name.c_str());
+      attribute_id = H5Aopen (location_id,
+			      name.c_str(),
+			      H5P_DEFAULT);
     } else {
       std::cerr << "ERROR: Attribute '" << name << "' does not exist." << endl;
       return DAL::FAIL;
@@ -352,8 +353,9 @@ namespace DAL {
     herr_t h5error (0);
     
     // get the identifier for the attribute
-    attribute_id = H5Aopen_name(location_id,
-				name.c_str());
+    attribute_id = H5Aopen (location_id,
+			    name.c_str(),
+			    H5P_DEFAULT);
     
     if (attribute_id > 0) {
       /* forward the call to retrieve the actual value of the attribute */
@@ -378,11 +380,16 @@ namespace DAL {
   // Set the value of an attribute attached to a group or dataset
   
   /*!
+    \brief Set the value of an attribute attached to a group or dataset
+
     \param datatype    -- HDF5 datatype of the attribute
     \param location_id -- HDF5 identifier of the attribute within the file
     \param name        -- Name of the attribute
     \param value       -- Value of the attribute
     \param size        -- The size of the attribute
+
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered and detected.
   */
   template <typename T>
     bool h5set_attribute (hid_t const &datatype,
@@ -395,22 +402,32 @@ namespace DAL {
       hid_t   attribute_id = 0;
       hid_t   dataspace_id = 0;
       hsize_t dims[1]      = { size };
-/*       hsize_t maxdims[1]   = { size }; */
-      hsize_t *maxdims   = 0;
-  
-      dataspace_id  = H5Screate_simple( 1, dims, maxdims );
-      if ( dataspace_id < 0 ) {
-	std::cerr << "ERROR: Could not set attribute '" << name
-		  << "' dataspace.\n";
-	return false;
+      hsize_t *maxdims     = 0;
+
+      /* Check if the attribute already exists; if this is the case we update
+       * the contents - otherwise we newly create the attribute.
+       */
+      if (H5Aexists(location_id,name.c_str())) {
+	attribute_id = H5Aopen (location_id,
+				name.c_str(),
+				H5P_DEFAULT);
       }
-      
-      attribute_id = H5Acreate( location_id, name.c_str(),
-				datatype, dataspace_id, 0, 0 );
-      if ( attribute_id < 0 ) {
-	std::cerr << "ERROR: Could not create attribute '" << name
-		  << "'.\n";
-	return false;
+      else {
+	// Create the ddataspace attached to the attribute
+	dataspace_id  = H5Screate_simple( 1, dims, maxdims );
+	if ( dataspace_id < 0 ) {
+	  std::cerr << "ERROR: Could not set attribute '" << name
+		    << "' dataspace.\n";
+	  return false;
+	}
+	// Create the attribute itself
+	attribute_id = H5Acreate( location_id, name.c_str(),
+				  datatype, dataspace_id, 0, 0 );
+	if ( attribute_id < 0 ) {
+	  std::cerr << "ERROR: Could not create attribute '" << name
+		    << "'.\n";
+	  return false;
+	}
       }
       
       if ( H5Awrite(attribute_id, datatype, value) < 0 ) {
@@ -550,8 +567,9 @@ namespace DAL {
       herr_t h5error (0);
       
       // get the identifier for the attribute
-      attribute_id = H5Aopen_name(location_id,
-				  name.c_str());
+      attribute_id = H5Aopen(location_id,
+			     name.c_str(),
+			     H5P_DEFAULT);
       
       if (attribute_id > 0) {
 	/* forward the call to retrieve the actual value of the attribute */

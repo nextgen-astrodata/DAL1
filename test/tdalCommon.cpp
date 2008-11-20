@@ -394,7 +394,7 @@ int test_hdf5_attributes ()
     h5error = H5Eclear1 ();
     cout << "-- Opening HDF5 file ..." << endl;
     fileID = H5Fopen (filename.c_str(),
-		      H5F_ACC_RDONLY,
+		      H5F_ACC_RDWR,
 		      H5P_DEFAULT);  
   } catch (std::string message) {
     cerr << message << endl;
@@ -488,7 +488,7 @@ int test_hdf5_attributes ()
 
   cout << "[8] Test repeated read access to attributes ..." << endl;
   try {
-    uint nofLoops (200);
+    uint nofLoops (500);
     int data_int (0);
     std::string data_string;
     std::vector<int> vec_int;
@@ -522,6 +522,111 @@ int test_hdf5_attributes ()
     nofFailedTests++;
   }
 
+  //__________________________________________________________________
+  // Test post-creation manipulation of attributes
+
+  cout << "[9] Update the value of attributes after their creation ..." << endl;
+  try {
+
+    //____________________________________________
+    
+    std::vector<double> var_vector_double (3);
+    // write the first set of values
+    var_vector_double[0] = 0;
+    var_vector_double[1] = 1;
+    var_vector_double[2] = 2;
+    DAL::h5set_attribute (fileID,
+			  "VAR_VECTOR_DOUBLE",
+			  var_vector_double);
+    DAL::h5get_attribute (fileID,
+			  "VAR_VECTOR_DOUBLE",
+			  var_vector_double);
+    cout << "-- VAR_VECTOR_DOUBLE = " << var_vector_double << endl;
+    // write the second set of values
+    var_vector_double[0] = 3;
+    var_vector_double[1] = 4;
+    var_vector_double[2] = 5;
+    DAL::h5set_attribute (fileID,
+			  "VAR_VECTOR_DOUBLE",
+			  var_vector_double);
+    DAL::h5get_attribute (fileID,
+			  "VAR_VECTOR_DOUBLE",
+			  var_vector_double);
+    cout << "-- VAR_VECTOR_DOUBLE = " << var_vector_double << endl;
+    // write the second set of values
+    var_vector_double[0] = 6;
+    var_vector_double[1] = 7;
+    var_vector_double[2] = 8;
+    DAL::h5set_attribute (fileID,
+			  "VAR_VECTOR_DOUBLE",
+			  var_vector_double);
+    DAL::h5get_attribute (fileID,
+			  "VAR_VECTOR_DOUBLE",
+			  var_vector_double);
+    cout << "-- VAR_VECTOR_DOUBLE = " << var_vector_double << endl;
+
+    //____________________________________________
+
+    double var_double (0);
+    DAL::h5set_attribute (fileID,
+			  "VAR_DOUBLE",
+			  var_double);
+    DAL::h5get_attribute (fileID,
+			  "VAR_DOUBLE",
+			  var_double);
+    cout << "-- VAR_DOUBLE = " << var_double << endl;
+    // Update the previously written attribute
+    var_double = 1;
+    DAL::h5set_attribute (fileID,
+			  "VAR_DOUBLE",
+			  var_double);
+    DAL::h5get_attribute (fileID,
+			  "VAR_DOUBLE",
+			  var_double);
+    cout << "-- VAR_DOUBLE = " << var_double << endl;
+    // Update the previously written attribute
+    var_double = 2;
+    DAL::h5set_attribute (fileID,
+			  "VAR_DOUBLE",
+			  var_double);
+    DAL::h5get_attribute (fileID,
+			  "VAR_DOUBLE",
+			  var_double);
+    cout << "-- VAR_DOUBLE = " << var_double << endl;
+
+    //____________________________________________
+
+    std::string var_string ("a");
+    DAL::h5set_attribute (fileID,
+			  "VAR_STRING",
+			  var_string);
+    DAL::h5get_attribute (fileID,
+			  "VAR_STRING",
+			  var_string);
+    cout << "-- VAR_STRING = " << var_string << endl;
+    // Update the previously written attribute
+    var_string = "b";
+    DAL::h5set_attribute (fileID,
+			  "VAR_STRING",
+			  var_string);
+    DAL::h5get_attribute (fileID,
+			  "VAR_STRING",
+			  var_string);
+    cout << "-- VAR_STRING = " << var_string << endl;
+    // Update the previously written attribute
+    var_string = "c";
+    DAL::h5set_attribute (fileID,
+			  "VAR_STRING",
+			  var_string);
+    DAL::h5get_attribute (fileID,
+			  "VAR_STRING",
+			  var_string);
+    cout << "-- VAR_STRING = " << var_string << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+
   return nofFailedTests;
 }
 
@@ -548,7 +653,7 @@ int test_datasets (std::string const &filename)
   
   cout << "-- opening HDF5 file ..." << std::endl;
   file_id = H5Fopen (filename.c_str(),
-		     H5F_ACC_RDONLY,
+		     H5F_ACC_RDWR,
 		     H5P_DEFAULT);
 
   if (file_id < 0) {

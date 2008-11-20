@@ -635,7 +635,7 @@ namespace DAL { // Namespace DAL -- begin
   }
 #endif
 
-  // ---------------------------------------------------------------------- times
+  // ----------------------------------------------------------------------- time
 
 #ifdef HAVE_CASA
   casa::Vector<uint> TBB_Timeseries::time ()
@@ -660,7 +660,7 @@ namespace DAL { // Namespace DAL -- begin
     return UnixTimes;
   }
 #else
-  std::vector<uint> TBB_Timeseries::time (std::string const &units)
+  std::vector<uint> TBB_Timeseries::time ()
   {
     uint n           = 0;
     uint station     = 0;
@@ -680,6 +680,54 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     return UnixTimes;
+  }
+#endif
+
+  // -------------------------------------------------------------- sample_number
+
+#ifdef HAVE_CASA
+  casa::Vector<uint> TBB_Timeseries::sample_number ()
+  {
+    uint n           = 0;
+    uint station     = 0;
+    uint dipole      = 0;
+    uint nofDipoles  = nofDipoleDatasets();
+    uint nofStations = nofStationGroups();
+    casa::Vector<uint> samples (nofDipoles);
+    casa::Vector<uint> tmp;
+    
+    for (station=0; station<nofStations; station++) {
+      tmp        = groups_p[station].sample_number();
+      nofDipoles = groups_p[station].nofDipoleDatasets();
+      for (dipole=0; dipole<nofDipoles; dipole++) {
+	samples(n) = tmp(dipole);
+	n++;
+      }
+    }
+    
+    return samples;
+  }
+#else
+  std::vector<uint> TBB_Timeseries::sample_number ()
+  {
+    uint n           = 0;
+    uint station     = 0;
+    uint dipole      = 0;
+    uint nofDipoles  = nofDipoleDatasets();
+    uint nofStations = nofStationGroups();
+    std::vector<uint> samples (nofDipoles);
+    std::vector<uint> tmp;
+    
+    for (station=0; station<nofStations; station++) {
+      tmp        = groups_p[station].sample_number();
+      nofDipoles = groups_p[station].nofDipoleDatasets();
+      for (dipole=0; dipole<nofDipoles; dipole++) {
+	samples[n] = tmp[dipole];
+	n++;
+      }
+    }
+    
+    return samples;
   }
 #endif
 
@@ -850,7 +898,31 @@ namespace DAL { // Namespace DAL -- begin
     return dataLengths;
   }
 #endif
+  
+  // ============================================================================
+  //
+  //  High-level access to data and attributes
+  //
+  // ============================================================================
 
+#ifdef HAVE_CASA
+
+  // -------------------------------------------------------------- sample_offset
+
+  casa::Vector<int> TBB_Timeseries::sample_offset (uint const &refAntenna)
+  {
+    uint nofDipoles              = nofDipoleDatasets();
+    casa::Vector<uint> valTime   = time();
+    casa::Vector<uint> valSample = sample_number();
+    casa::Vector<int> offset (nofDipoles);
+
+    for (uint n(0); n<nofDipoles; n++) {
+      offset(n) = valTime(n)-valTime(refAntenna) + valSample(n)-valSample(refAntenna);
+    }
+
+    return offset;
+  }
+  
   // ---------------------------------------------------------- attributes2record
 
   /*!
@@ -862,7 +934,6 @@ namespace DAL { // Namespace DAL -- begin
     \return rec -- casa::Record to which the values of the attributes will be
             added as new entries.
   */
-#ifdef HAVE_CASA
   casa::Record TBB_Timeseries::attributes2record (bool const &recursive)
   {
     casa::Record rec;
@@ -900,7 +971,6 @@ namespace DAL { // Namespace DAL -- begin
     
     return rec;
   }
-#endif
   
   // ---------------------------------------------------- attributes2headerRecord
 
@@ -908,7 +978,6 @@ namespace DAL { // Namespace DAL -- begin
     \return rec -- Create record entries conforming to the information expected
             in the header record of the CR::DataReader class.
   */
-#ifdef HAVE_CASA
   casa::Record TBB_Timeseries::attributes2headerRecord ()
   {
     casa::Record rec;
@@ -920,11 +989,9 @@ namespace DAL { // Namespace DAL -- begin
     
     return rec;
   }
-#endif
   
   // ------------------------------------------------------------------------- fx
 
-#ifdef HAVE_CASA  
   /*!
     \param start      -- Number of the sample at which to start reading.
     \param nofSamples -- Number of samples to read, starting from the position

@@ -204,38 +204,31 @@ namespace DAL { // Namespace DAL -- begin
     //! Get the type of feed for this dipole
     std::string feed ();
     
-    //! Get the numerical value of the antenna position
 #ifdef HAVE_CASA
+    //! Get the numerical value of the antenna position
     casa::Vector<double> antenna_position_value ();
-#else
-    std::vector<double> antenna_position_value ();
-#endif
-    
     //! Get the physical unit within which the antenna position is given
     casa::Vector<casa::String> antenna_position_unit ();
-
+    //! Get the antenna position as a measure
+    casa::MPosition antenna_position ();
+    //! Get the numerical values describing the antenna orientation
+    casa::Vector<double> antenna_orientation_value ();
+    //! Get the physical unit within which the antenna orientation is given
+    casa::Vector<casa::String> antenna_orientation_unit ();
+#else
+    //! Get the numerical value of the antenna position
+    std::vector<double> antenna_position_value ();
+    //! Get the physical unit within which the antenna position is given
+    std::vector<std::string> antenna_position_unit ();
+    //! Get the numerical values describing the antenna orientation
+    std::vector<double> antenna_orientation_value ();
+    //! Get the physical unit within which the antenna orientation is given
+    casa::Vector<casa::String> antenna_orientation_unit ();
+#endif
+    
     //! Get the identifier for the reference frame of the antenna position
     std::string antenna_position_frame ();
 
-    /*!
-      \brief Get the antenna position as a measure
-    */
-    casa::MPosition antenna_position ();
-
-    //! Get the numerical values describing the antenna orientation
-#ifdef HAVE_CASA
-    casa::Vector<double> antenna_orientation_value ();
-#else
-    std::vector<double> antenna_orientation_value ();
-#endif
-    
-    //! Get the physical unit within which the antenna orientation is given
-#ifdef HAVE_CASA
-    casa::Vector<casa::String> antenna_orientation_unit ();
-#else
-    casa::Vector<casa::String> antenna_orientation_unit ();
-#endif
-    
     //! Get the identifier for the reference frame of the antenna orientation
     std::string antenna_orientation_frame ();
 
@@ -248,16 +241,12 @@ namespace DAL { // Namespace DAL -- begin
       return "TBB_DipoleDataset";
     }
 
-    /*!
-      \brief Provide a summary of the internal status
-    */
+    //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
     }
 
-    /*!
-      \brief Provide a summary of the internal status
-    */
+    //! Provide a summary of the internal status
     void summary (std::ostream &os);    
 
     // ------------------------------------------------------------------ Methods
@@ -288,9 +277,7 @@ namespace DAL { // Namespace DAL -- begin
     
   private:
     
-    /*!
-      \brief Initialize the internal dataspace
-    */
+    //! Initialize the internal dataspace
     void init ();
     
     /*!

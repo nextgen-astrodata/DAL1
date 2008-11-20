@@ -35,14 +35,14 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  // -------------------------------------------------------- TBB_DipoleDataset
+  // ---------------------------------------------------------- TBB_DipoleDataset
 
   TBB_DipoleDataset::TBB_DipoleDataset ()
   {
     init ();
   }
   
-  // -------------------------------------------------------- TBB_DipoleDataset
+  // ---------------------------------------------------------- TBB_DipoleDataset
   
   /*!
       \param filename -- Name of the HDF5 file within which the dataset is
@@ -57,7 +57,7 @@ namespace DAL { // Namespace DAL -- begin
 	  dataset);
   }
   
-  // -------------------------------------------------------- TBB_DipoleDataset
+  // ---------------------------------------------------------- TBB_DipoleDataset
   
   /*!
     \param location -- Identifier for the location within the HDF5 file, below
@@ -74,7 +74,7 @@ namespace DAL { // Namespace DAL -- begin
 	  dataset);
   }
 
-  // -------------------------------------------------------- TBB_DipoleDataset
+  // ---------------------------------------------------------- TBB_DipoleDataset
 
   /*!
     \param dataset_id -- Identifier for the dataset contained within the HDF5
@@ -85,7 +85,7 @@ namespace DAL { // Namespace DAL -- begin
     init (dataset_id);
   }
   
-  // -------------------------------------------------------- TBB_DipoleDataset
+  // ---------------------------------------------------------- TBB_DipoleDataset
 
   /*!
     \param other -- Another TBB_DipoleDataset object from which to create
@@ -133,8 +133,7 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   /*!
-    \param other -- Another TBB_DipoleDataset object from which to make a
-           copy.
+    \param other -- Another TBB_DipoleDataset object from which to make a copy.
   */
   TBB_DipoleDataset& TBB_DipoleDataset::operator= (TBB_DipoleDataset const &other)
   {

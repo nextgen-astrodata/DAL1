@@ -389,7 +389,9 @@ namespace DAL {
 		    void * opdata)
   {
     /*  Open the attribute using its name.  */
-    hid_t attr = H5Aopen_name(loc_id, name);
+    hid_t attr = H5Aopen (loc_id,
+			  name,
+			  H5P_DEFAULT);
 
     /* Get attribute datatype, dataspace, rank, and dimensions.  */
     hid_t atype  = H5Aget_type(attr);
@@ -809,21 +811,29 @@ namespace DAL {
 	return false;
       }
       
-      dataspace_id = H5Screate_simple(1, dims, 0);
-      if ( dataspace_id < 0 ) {
-	std::cerr << "ERROR: Could not set attribute '" << name
-		  << "' dataspace.\n";
-	return false;
-      }
-      
-      attribute_id = H5Acreate( location_id,
+
+      if (H5Aexists(location_id,name.c_str())) {
+	attribute_id = H5Aopen (location_id,
 				name.c_str(),
-				type,
-				dataspace_id,
-				0, 0 );
-      if ( attribute_id < 0 ) {
-	std::cerr << "ERROR: Could not create attribute '" << name << "'.\n";
-	return false;
+				H5P_DEFAULT);
+      }
+      else {
+	dataspace_id = H5Screate_simple(1, dims, 0);
+	if ( dataspace_id < 0 ) {
+	  std::cerr << "ERROR: Could not set attribute '" << name
+		    << "' dataspace.\n";
+	  return false;
+	}
+	
+	attribute_id = H5Acreate( location_id,
+				  name.c_str(),
+				  type,
+				  dataspace_id,
+				  0, 0 );
+	if ( attribute_id < 0 ) {
+	  std::cerr << "ERROR: Could not create attribute '" << name << "'.\n";
+	  return false;
+	}
       }
       
       if ( H5Awrite( attribute_id, type, string_attr ) < 0 ) {
