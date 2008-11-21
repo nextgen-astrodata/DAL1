@@ -866,6 +866,35 @@ int test_datasets (std::string const &filename)
     nofFailedTests++;
   }
   
+  //__________________________________________________________________
+  // Test retrieval of positions and directions as Measures
+
+  try {
+    casa::MPosition station_position;
+    casa::MPosition antenna_position;
+    casa::MDirection beam_direction;
+    //
+    station_position = DAL::h5get_position (group_id,
+					    "STATION_POSITION_VALUE",
+					    "STATION_POSITION_UNIT",
+					    "STATION_POSITION_FRAME");
+    beam_direction = DAL::h5get_direction (group_id,
+					   "BEAM_DIRECTION_VALUE",
+					   "BEAM_DIRECTION_UNIT",
+					   "BEAM_DIRECTION_FRAME");
+    antenna_position = DAL::h5get_position (dataset_id,
+					    "ANTENNA_POSITION_VALUE",
+					    "ANTENNA_POSITION_UNIT",
+					    "ANTENNA_POSITION_FRAME");
+    //
+    cout << "-- STATION_POSITION = " << station_position << endl;
+    cout << "-- ANTENNA_POSITION = " << antenna_position << endl;
+    cout << "-- BEAM_DIRECTION   = " << beam_direction   << endl;
+  } catch (std::string message) {
+    cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
   return nofFailedTests;
 }
 

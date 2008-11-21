@@ -598,11 +598,21 @@ namespace DAL {
 				    DAL::Attributes const &value,
                                     DAL::Attributes const &unit,
                                     DAL::Attributes const &frame);  
+  //! Get a physical quantity describing a direction within a frame
+  casa::MDirection h5get_direction (hid_t const &location_id,
+				    std::string const &value,
+                                    std::string const &unit,
+                                    std::string const &frame);  
   //! Get a physical quantity describing a position/location
   casa::MPosition h5get_position (hid_t const &location_id,
 				  DAL::Attributes const &value,
 				  DAL::Attributes const &unit,
 				  DAL::Attributes const &frame);
+  //! Get a physical quantity describing a position/location
+  casa::MPosition h5get_position (hid_t const &location_id,
+				  std::string const &value,
+				  std::string const &unit,
+				  std::string const &frame);
   //! Set the value of an attribute from a casa::Vector<T>
   template <typename T>
     bool h5set_attribute (hid_t location_id,

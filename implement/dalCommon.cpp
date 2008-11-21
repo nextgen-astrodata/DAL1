@@ -1200,6 +1200,29 @@ namespace DAL {
                               Attributes const &unit,
                               Attributes const &frame)
   {
+    return h5get_direction (location_id,
+			    attribute_name(value),
+			    attribute_name(unit),
+			    attribute_name(frame));
+  }
+  
+  /*!
+    \param location_id -- Identifier of the structure within the file, to which
+           the attribut is attached to.
+    \param value -- Identifier for the attribute storing the numerical value of
+           the quantity.
+    \param unit  -- Identifier for the attribute storing the physical unit of
+           the quantity
+    \param frame -- Identifier for the attribute storing the identifier for the
+           reference frame within which the physical quantity is defined.
+
+    \return direction -- The physical quantity.
+  */
+  MDirection h5get_direction (hid_t const &location_id,
+			      std::string const &value,
+                              std::string const &unit,
+                              std::string const &frame)
+  {
     MDirection dir = MDirection();
     
     if (location_id > 0) {
@@ -1212,7 +1235,7 @@ namespace DAL {
       // Retrieve components from dataset to construct MDirection
 
       if (!h5get_attribute(location_id,
-			   attribute_name(value),
+			   value,
 			   values)) {
 	cerr << "[h5get_direction]"
 	     << " Error retrieving the numerical values of the position"
@@ -1221,7 +1244,7 @@ namespace DAL {
       }
 
       if (!h5get_attribute(location_id,
-			   attribute_name(unit),
+			   unit,
 			   units)) {
 	cerr << "[h5get_direction]"
 	     << " Error retrieving the physical units of the position"
@@ -1230,7 +1253,7 @@ namespace DAL {
       }
 
       if (!h5get_attribute(location_id,
-			   attribute_name(frame),
+			   frame,
 			   refcode)) {
 	cerr << "[h5get_direction]"
 	     << " Error retrieving the frame of the position"
@@ -1289,10 +1312,33 @@ namespace DAL {
 
     \return position -- The position as casa::Measure.
   */
-  MPosition h5get_position (hid_t const &location_id,
-			    Attributes const &value,
-                            Attributes const &unit,
-                            Attributes const &frame)
+  casa::MPosition h5get_position (hid_t const &location_id,
+				  Attributes const &value,
+				  Attributes const &unit,
+				  Attributes const &frame)
+  {
+    return h5get_position (location_id,
+			   attribute_name(value),
+			   attribute_name(unit),
+			   attribute_name(frame));
+  }
+
+  /*!
+    \param location_id -- Identifier of the structure within the file, to which
+           the attribut is attached to.
+    \param value -- Identifier for the attribute storing the numerical value of
+           the quantity.
+    \param unit  -- Identifier for the attribute storing the physical unit of
+           the quantity
+    \param frame -- Identifier for the attribute storing the identifier for the
+           reference frame within which the physical quantity is defined.
+
+    \return position -- The position as casa::Measure.
+  */
+  casa::MPosition h5get_position (hid_t const &location_id,
+				  std::string const &value,
+				  std::string const &unit,
+				  std::string const &frame)
   {
     MPosition obs = MPosition();
     
@@ -1304,15 +1350,15 @@ namespace DAL {
 
       // retrieve the numerical values of the position
       status *= h5get_attribute(location_id,
-				attribute_name(value),
+				value,
 				values);
       // retrieve the physical units of the position
       status *= h5get_attribute(location_id,
-				attribute_name(unit),
+				unit,
 				units);
       // retrieve the frame of the position
       status *= h5get_attribute(location_id,
-				attribute_name(frame),
+				frame,
 				refcode);
 
       if (status) 
