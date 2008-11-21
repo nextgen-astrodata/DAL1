@@ -78,7 +78,7 @@
   determine the basic behaviour.
 
   <ul>
-    <li>Concert file with dump of raw TBB data to a HDF5 file:
+    <li>Convert file with dump of raw TBB data to a HDF5 file:
     \verbatim
     tbb2h5 --infile <raw data> --outfile <HDF5 output>
     \endverbatim
@@ -109,6 +109,21 @@
 namespace bpo = boost::program_options;
 
 using namespace DAL;
+
+//_______________________________________________________________________________
+// Print usage examples
+
+void print_examples (std::ostream &os)
+{
+  os << "[tbb2h5] Usage examples." << std::endl;
+  os << std::endl;
+  os << "1) Convert file with dump of raw TBB data to a HDF5 file:" << std::endl;
+  os << "  tbb2h5 --infile <raw data> --outfile <HDF5 output>" << std::endl;
+  os << std::endl;
+  os << "2) Read data from socket to a HDF5 file:" << std::endl;
+  os << "  tbb2h5 --ip <IP address> --port <port number> --outfile <HDF5 output>" << std::endl;
+  os << std::endl;
+}
 
 //_______________________________________________________________________________
 // Program main function
@@ -194,9 +209,10 @@ int main(int argc, char *argv[])
     }
     break;
   case 1:
-    if (!vm.count("ip") || !vm.count("socket")) {
+    if (!vm.count("ip") || !vm.count("port")) {
       std::cerr << "Incomplete list of parameters for socket mode!" << std::endl;
       std::cerr << desc << std::endl;
+      print_examples(std::cerr);
       return DAL::FAIL;
     }
     break;
