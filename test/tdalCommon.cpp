@@ -529,6 +529,70 @@ int test_hdf5_attributes ()
   try {
 
     //____________________________________________
+
+    cout << "-- manipulating variable of type double ..." << endl;
+    
+    double var_double (0);
+    DAL::h5set_attribute (fileID,
+			  "VAR_DOUBLE",
+			  var_double);
+    DAL::h5get_attribute (fileID,
+			  "VAR_DOUBLE",
+			  var_double);
+    cout << "--> VAR_DOUBLE = " << var_double << endl;
+    // Update the previously written attribute
+    var_double = 1;
+    DAL::h5set_attribute (fileID,
+			  "VAR_DOUBLE",
+			  var_double);
+    DAL::h5get_attribute (fileID,
+			  "VAR_DOUBLE",
+			  var_double);
+    cout << "--> VAR_DOUBLE = " << var_double << endl;
+    // Update the previously written attribute
+    var_double = 2;
+    DAL::h5set_attribute (fileID,
+			  "VAR_DOUBLE",
+			  var_double);
+    DAL::h5get_attribute (fileID,
+			  "VAR_DOUBLE",
+			  var_double);
+    cout << "--> VAR_DOUBLE = " << var_double << endl;
+
+    //____________________________________________
+
+    cout << "-- manipulating variable of type string ..." << endl;
+    
+    std::string var_string ("a");
+    DAL::h5set_attribute (fileID,
+			  "VAR_STRING",
+			  var_string);
+    DAL::h5get_attribute (fileID,
+			  "VAR_STRING",
+			  var_string);
+    cout << "--> VAR_STRING = " << var_string << endl;
+    // Update the previously written attribute
+    var_string = "b";
+    DAL::h5set_attribute (fileID,
+			  "VAR_STRING",
+			  var_string);
+    DAL::h5get_attribute (fileID,
+			  "VAR_STRING",
+			  var_string);
+    cout << "--> VAR_STRING = " << var_string << endl;
+    // Update the previously written attribute
+    var_string = "c";
+    DAL::h5set_attribute (fileID,
+			  "VAR_STRING",
+			  var_string);
+    DAL::h5get_attribute (fileID,
+			  "VAR_STRING",
+			  var_string);
+    cout << "--> VAR_STRING = " << var_string << endl;
+
+    //____________________________________________
+
+    cout << "-- manipulating variable of type vector<double> ..." << endl;
     
     std::vector<double> var_vector_double (3);
     // write the first set of values
@@ -541,7 +605,7 @@ int test_hdf5_attributes ()
     DAL::h5get_attribute (fileID,
 			  "VAR_VECTOR_DOUBLE",
 			  var_vector_double);
-    cout << "-- VAR_VECTOR_DOUBLE = " << var_vector_double << endl;
+    cout << "--> VAR_VECTOR_DOUBLE = " << var_vector_double << endl;
     // write the second set of values
     var_vector_double[0] = 3;
     var_vector_double[1] = 4;
@@ -552,7 +616,7 @@ int test_hdf5_attributes ()
     DAL::h5get_attribute (fileID,
 			  "VAR_VECTOR_DOUBLE",
 			  var_vector_double);
-    cout << "-- VAR_VECTOR_DOUBLE = " << var_vector_double << endl;
+    cout << "--> VAR_VECTOR_DOUBLE = " << var_vector_double << endl;
     // write the second set of values
     var_vector_double[0] = 6;
     var_vector_double[1] = 7;
@@ -563,65 +627,47 @@ int test_hdf5_attributes ()
     DAL::h5get_attribute (fileID,
 			  "VAR_VECTOR_DOUBLE",
 			  var_vector_double);
-    cout << "-- VAR_VECTOR_DOUBLE = " << var_vector_double << endl;
+    cout << "--> VAR_VECTOR_DOUBLE = " << var_vector_double << endl;
 
     //____________________________________________
 
-    double var_double (0);
+    cout << "-- manipulating variable of type vector<std::string> ..." << endl;
+    
+    std::vector<std::string> var_vector_string (3);
+    // write the first set of values
+    var_vector_string[0] = "a";
+    var_vector_string[1] = "b";
+    var_vector_string[2] = "c";
     DAL::h5set_attribute (fileID,
-			  "VAR_DOUBLE",
-			  var_double);
+			  "VAR_VECTOR_STRING",
+			  var_vector_string);
     DAL::h5get_attribute (fileID,
-			  "VAR_DOUBLE",
-			  var_double);
-    cout << "-- VAR_DOUBLE = " << var_double << endl;
-    // Update the previously written attribute
-    var_double = 1;
+			  "VAR_VECTOR_STRING",
+			  var_vector_string);
+    cout << "--> VAR_VECTOR_STRING = " << var_vector_string << endl;
+    // write the second set of values
+    var_vector_string[0] = "aa";
+    var_vector_string[1] = "bb";
+    var_vector_string[2] = "cc";
     DAL::h5set_attribute (fileID,
-			  "VAR_DOUBLE",
-			  var_double);
+			  "VAR_VECTOR_STRING",
+			  var_vector_string);
     DAL::h5get_attribute (fileID,
-			  "VAR_DOUBLE",
-			  var_double);
-    cout << "-- VAR_DOUBLE = " << var_double << endl;
-    // Update the previously written attribute
-    var_double = 2;
+			  "VAR_VECTOR_STRING",
+			  var_vector_string);
+    cout << "--> VAR_VECTOR_STRING = " << var_vector_string << endl;
+    // write the second set of values
+    var_vector_string[0] = "aaa";
+    var_vector_string[1] = "bbb";
+    var_vector_string[2] = "ccc";
     DAL::h5set_attribute (fileID,
-			  "VAR_DOUBLE",
-			  var_double);
+			  "VAR_VECTOR_STRING",
+			  var_vector_string);
     DAL::h5get_attribute (fileID,
-			  "VAR_DOUBLE",
-			  var_double);
-    cout << "-- VAR_DOUBLE = " << var_double << endl;
+			  "VAR_VECTOR_STRING",
+			  var_vector_string);
+    cout << "--> VAR_VECTOR_STRING = " << var_vector_string << endl;
 
-    //____________________________________________
-
-    std::string var_string ("a");
-    DAL::h5set_attribute (fileID,
-			  "VAR_STRING",
-			  var_string);
-    DAL::h5get_attribute (fileID,
-			  "VAR_STRING",
-			  var_string);
-    cout << "-- VAR_STRING = " << var_string << endl;
-    // Update the previously written attribute
-    var_string = "b";
-    DAL::h5set_attribute (fileID,
-			  "VAR_STRING",
-			  var_string);
-    DAL::h5get_attribute (fileID,
-			  "VAR_STRING",
-			  var_string);
-    cout << "-- VAR_STRING = " << var_string << endl;
-    // Update the previously written attribute
-    var_string = "c";
-    DAL::h5set_attribute (fileID,
-			  "VAR_STRING",
-			  var_string);
-    DAL::h5get_attribute (fileID,
-			  "VAR_STRING",
-			  var_string);
-    cout << "-- VAR_STRING = " << var_string << endl;
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
