@@ -20,36 +20,55 @@ message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 ##
 ## ==============================================================================
 
-## ------------------------------------------------------------------------------
-## Set up the linker instructions for the applications
+##____________________________________________________________________
+## Applications with no further external dependencies
 
+## source files
+set (tests read_tbb)
+## linker instructions
 set (apps_link_libraries dal)
 
+##____________________________________________________________________
+## Applications which require casacore
+
 if (HAVE_CASA OR HAVE_CASACORE)
+  ## source files
+  list (APPEND tests msread)
+  list (APPEND tests ms2h5)
+  ## linker instructions
   list (APPEND apps_link_libraries ${dal_link_libraries})
+else (HAVE_CASA OR HAVE_CASACORE)
+  message (STATUS "[DAL] Unable to build applications: msread, ms2h5")
 endif (HAVE_CASA OR HAVE_CASACORE)
 
+##____________________________________________________________________
+## Applications which require Boost
+
 if (HAVE_BOOST)
+  ## source files
+  list (APPEND tests bf2h5)
+  list (APPEND tests tbb2h5)
+  ## linker instructions
   list (APPEND apps_link_libraries ${BOOST_LIBRARIES})
+else (HAVE_BOOST)
+  message (STATUS "[DAL] Unable to build applications: bf2h5, tbb2h5")
 endif (HAVE_BOOST)
 
-## ------------------------------------------------------------------------------
-## Build application programs
-
-set (tests
-  msread
-  ms2h5
-  tbb2h5
-  bf2h5
-  read_tbb
-  )
+##____________________________________________________________________
+## Build the executables
 
 foreach (src ${tests})
-  ## executable and its source
+  ## compiler instructions
   add_executable(${src} ${src}.cpp)
-  ## libraries against which to link
+  ## linker instructions
   target_link_libraries(${src} ${apps_link_libraries})
 endforeach (src)
+
+## ==============================================================================
+##
+##  Run the test programs
+##
+## ==============================================================================
 
 if (DAL_ENABLE_TESTING)
 
