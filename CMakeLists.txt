@@ -337,6 +337,40 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 ## =============================================================================
 ##
+##  Creation of tar-archive
+##
+## =============================================================================
+
+find_program (tar_executable tar ${bin_locations})
+find_program (gzip_executable gzip ${bin_locations})
+
+if (tar_executable AND gzip_executable)
+
+  add_custom_target (create_archive
+    WORKING_DIRECTORY ${USG_ROOT}
+    COMMAND ${tar_executable} -cvf dal.tar --exclude .svn src/DAL
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/cmake
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/flex
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/bison
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/wcslib
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/cfitsio
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/hdf5
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/casacore
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/plplot
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/boost
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/python
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn CMakeLists.txt
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn devel_common
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn release/release_area.txt
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn build/build.sh
+    COMMAND ${gzip_executable} dal.tar
+    COMMAND mv dal.tar.gz dal.tgz
+    )
+  
+endif (tar_executable AND gzip_executable)
+
+## =============================================================================
+##
 ##  Subdirectories
 ##
 ## =============================================================================
@@ -371,5 +405,7 @@ if (DAL_VERBOSE_CONFIGURE)
   message (STATUS " num_util includes      = ${NUM_UTIL_INCLUDES}")
   message (STATUS " Python library         = ${PYTHON_LIBRARIES}")
   message (STATUS " casacore               = ${HAVE_CASACORE}")
+  message (STATUS " MySQL includes         = ${MYSQL_INCLUDES}")
+  message (STATUS " MySQL libraries        = ${MYSQL_LIBRARIES}")
   message (STATUS "+------------------------------------------------------------+")
 endif (DAL_VERBOSE_CONFIGURE)
