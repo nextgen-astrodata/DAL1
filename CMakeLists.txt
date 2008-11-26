@@ -160,12 +160,21 @@ endif (NOT HAVE_PYTHON)
 
 ## We need to be a bit careful with the Boost and Python libraries; appending
 ## the Boost libraries only makes sense, if there is already a list of Python
-## libraries
+## libraries. Furthermore we need to make sure not to have libboost_python in
+## in the list, because this requires for the presence of the Python library.
 
 if (BOOST_LIBRARIES)
   if (PYTHON_LIBRARIES)
     list (APPEND PYTHON_LIBRARIES ${BOOST_LIBRARIES})
   else (PYTHON_LIBRARIES)
+    ## Clean up the list of Boost libraries
+    foreach (lib ${BOOST_LIBRARIES})
+      string (REGEX MATCH ^.*python.* have_libboost_python ${lib})
+      if (have_libboost_python)
+	list (REMOVE_ITEM BOOST_LIBRARIES ${have_libboost_python})
+      endif (have_libboost_python)
+    endforeach (lib)
+    ## Add the libraries
     set (PYTHON_LIBRARIES ${BOOST_LIBRARIES})
   endif (PYTHON_LIBRARIES)
 endif (BOOST_LIBRARIES)
@@ -175,7 +184,7 @@ endif (BOOST_LIBRARIES)
 ## disable this option - otherwise we won't be able to properly build the test
 ## programs and applications.
 
-if (NOT HAVE_BOOST) 
+if (NOT HAVE_BOOST)
   set (DAL_PYTHON_BINDINGS OFF)
   message (STATUS "[DAL] Unable to generate Python bindings; missing Boost++ headers!")
 endif (NOT HAVE_BOOST)
