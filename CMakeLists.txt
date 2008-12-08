@@ -359,8 +359,12 @@ find_program (gzip_executable gzip ${bin_locations})
 if (tar_executable AND gzip_executable)
 
   add_custom_target (create_archive
+    COMMENT "Creating tar-archive for DAL and required packages."
     WORKING_DIRECTORY ${USG_ROOT}
-    COMMAND ${tar_executable} -cvf dal.tar --exclude .svn src/DAL
+    COMMAND ${tar_executable} -cvf dal.tar --exclude .svn CMakeLists.txt
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn devel_common
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn release/release_area.txt
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn build/build.sh
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/cmake
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/flex
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/bison
@@ -371,10 +375,7 @@ if (tar_executable AND gzip_executable)
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/plplot
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/boost
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/python
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn CMakeLists.txt
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn devel_common
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn release/release_area.txt
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn build/build.sh
+    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn src/DAL
     COMMAND ${gzip_executable} dal.tar
     COMMAND mv dal.tar.gz dal.tgz
     )
