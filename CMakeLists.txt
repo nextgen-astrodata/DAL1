@@ -377,9 +377,9 @@ if (tar_executable AND gzip_executable)
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/python
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn src/DAL
     COMMAND ${gzip_executable} dal.tar
-    COMMAND mv dal.tar.gz ${DAL_BUILD_DIR}/dal.tgz
+    COMMAND mv dal.tar.gz ${DAL_BINARY_DIR}/dal.tgz
     )
-  
+ 
 endif (tar_executable AND gzip_executable)
 
 ## =============================================================================
