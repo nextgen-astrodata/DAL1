@@ -360,7 +360,7 @@ if (tar_executable AND gzip_executable)
 
   add_custom_target (create_archive
     COMMENT "Creating tar-archive for DAL and required packages."
-    WORKING_DIRECTORY ${USG_ROOT}
+    WORKING_DIRECTORY ${DAL_BUILD_DIR}
     COMMAND ${tar_executable} -cvf dal.tar --exclude .svn CMakeLists.txt
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn devel_common
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn release/release_area.txt
