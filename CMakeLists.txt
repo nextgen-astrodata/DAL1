@@ -358,9 +358,9 @@ find_program (gzip_executable gzip ${bin_locations})
 
 if (tar_executable AND gzip_executable)
 
-  add_custom_target (create_archive
+  add_custom_target (tar_archive
     COMMENT "Creating tar-archive for DAL and required packages."
-    WORKING_DIRECTORY ${DAL_BUILD_DIR}
+    WORKING_DIRECTORY ${USG_ROOT}
     COMMAND ${tar_executable} -cvf dal.tar --exclude .svn CMakeLists.txt
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn devel_common
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn release/release_area.txt
@@ -377,7 +377,7 @@ if (tar_executable AND gzip_executable)
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/python
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn src/DAL
     COMMAND ${gzip_executable} dal.tar
-    COMMAND mv dal.tar.gz dal.tgz
+    COMMAND mv dal.tar.gz ${DAL_BUILD_DIR}/dal.tgz
     )
   
 endif (tar_executable AND gzip_executable)
