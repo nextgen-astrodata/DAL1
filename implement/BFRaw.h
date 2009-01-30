@@ -161,7 +161,7 @@ namespace DAL {
     //! Read the header block of the file with the raw data
     void readRawFileHeader();
     //! Open file with raw output of beamformer
-    void openRawFile(char*);
+    void openRawFile(const char*);
     //! Check for reaching end-of-file
     bool eof();
     //! Processing of the data blocks within the input file

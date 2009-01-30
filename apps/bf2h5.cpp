@@ -182,7 +182,7 @@ int main (int argc, char *argv[])
                               doChannelization,
 			      factor );
 
-  bf.openRawFile( argv[1] );
+  bf.openRawFile( infile.c_str() );
   bf.readRawFileHeader();
   bf.makeH5OutputFile();
   bf.processBlocks();

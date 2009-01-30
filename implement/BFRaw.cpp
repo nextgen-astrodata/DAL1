@@ -195,7 +195,7 @@ namespace DAL {
 
   // ---------------------------------------------------------------- openRawFile
 
-  void BFRaw::openRawFile( char* filename )
+  void BFRaw::openRawFile( const char* filename )
   {
     delete rawfile;
     rawfile = new fstream( filename, ios::binary|ios::in );

@@ -83,20 +83,38 @@ namespace DAL
 	  std::cerr << "ERROR: Could not create file '" << dsname << "'."
 		    << std::endl;
 	}
-      } else {
-	/* First try to open the dataset; if it does not exist yet, create it. */
-	if ( ( h5fh_p = H5Fopen(dsname, H5F_ACC_RDWR, H5P_DEFAULT ) ) > 0 ) {
-	  std::cerr << "SUCCESS: Opened file '" << dsname << "'.\n";
-	}
-	else if ( ( h5fh_p = H5Fcreate( dsname,
-				      H5F_ACC_TRUNC,
-				      H5P_DEFAULT,
-				      H5P_DEFAULT ) ) < 0 ) {
+      }
+      else
+      {
+	FILE * pFile;
+	pFile = fopen ( dsname, "r" );
+	if ( pFile == NULL )  /* check to see if the file exists */
+	{
+	  /* if not, create it */
+	  if ( ( h5fh_p = H5Fcreate( dsname,
+			   	     H5F_ACC_TRUNC,
+				     H5P_DEFAULT,
+				     H5P_DEFAULT ) ) < 0 )
 	  std::cerr << "ERROR: Could not create file '" << dsname << "'.\n";
 	}
-      }
-      
+	else  /* if it does exist, try to reopen it as a hdf5 file */
+	{
+	  if ( 0 != fclose( pFile ) )
+	    std::cerr << "ERROR: Could not close file '" << dsname << "'.\n";
+
+	  /* if it does reopen it as an hdf5 file */
+	  if ( ( h5fh_p = H5Fopen(dsname, H5F_ACC_RDWR, H5P_DEFAULT ) ) > 0 )
+	    std::cerr << "SUCCESS: Opened file '" << dsname << "'.\n";
+	  else
+	  {
+	    std::cerr << "ERROR: There was a problem opening the file '"
+	              << dsname << "'.\n";
+	    exit(9);
+          }
+	}
+
       file = &h5fh_p;
+     }
     }
     else if ( filetype == FITSTYPE ) {
 #ifdef HAVE_CFITSIO
