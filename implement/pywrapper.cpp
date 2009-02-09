@@ -20,12 +20,39 @@
 *   Free Software Foundation, Inc.,                                       *
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
+
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 
 #include "dal.h"
 
 using namespace DAL;
 using namespace boost::python;
+
+/*!
+  \file pywrapper.cpp
+
+  \ingroup DAL
+
+  \brief Python bindings for the C++ layer of the Data Acccess Library
+  
+  \author Joseph Masters, Lars B&auml;hren
+
+  <h3>Synopsis</h3>
+
+  Core library classes:
+  <ul>
+    <li>DAL::dalArray
+    <li>DAL::dalColumn
+    <li>DAL::dalData
+  </ul>
+
+  High-level dataset interfaces
+  <ul>
+    <li>DAL::BeamGroup
+    <li>DAL::BeamFormed
+    <li>DAL::TBB_DipoleDataset
+  </ul>
+*/
 
 BOOST_PYTHON_MODULE(pydal)
 {
@@ -42,7 +69,8 @@ BOOST_PYTHON_MODULE(pydal)
        "or 1440 minutes or 86400 seconds so: \n"
        "(unix seconds) = (mjd seconds) - ( unix base date in seconds )." );
   
-  //-------------------------------------------------------------------- dalArray
+  //_____________________________________________________________________________
+  //                                                                     dalArray
   
   bpl::class_<dalArray>("dalArray")
     .def( "setAttribute_char", &dalArray::setAttribute_char,
@@ -67,7 +95,8 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Extend an array." )
     ;
   
-  //------------------------------------------------------------------- dalColumn
+  //_____________________________________________________________________________
+  //                                                                    dalColumn
   
   bpl::class_<dalColumn>("dalColumn")
     .def( bpl::init<>())
@@ -105,7 +134,8 @@ BOOST_PYTHON_MODULE(pydal)
 #endif
     ;
   
-  //--------------------------------------------------------------------- dalData
+  //_____________________________________________________________________________
+  //                                                                      dalData
   
   bpl::class_<dalData>("dalData")
     .def( "get", &dalData::get_boost1, "Get the data." )
@@ -233,8 +263,9 @@ BOOST_PYTHON_MODULE(pydal)
     .def( "readIntArray", &dalGroup::ria_boost,
 	  "Read an integer array from the group." )
     ;
-  
-  //---------------------------------------------------------------- dalTable
+
+  //_____________________________________________________________________________
+  //                                                                     dalTable
   
   bpl::class_<dalTable>("dalTable")
     .def( bpl::init<char*>())
@@ -309,8 +340,9 @@ BOOST_PYTHON_MODULE(pydal)
   //  High-level interfaces to specific data
   //
   // ============================================================================
-  
-  // ------------------------------------------------------------------ BeamGroup
+
+  //_____________________________________________________________________________
+  //                                                                    BeamGroup
   
   bpl::class_<BeamGroup>("BeamGroup")
     .def( bpl::init<>())
@@ -334,8 +366,9 @@ BOOST_PYTHON_MODULE(pydal)
     .def( "getSubbandData_XY", &BeamGroup::getSubbandData_XY_boost,
 	  "Get a numpy array of values for a given subband")
     ;
-  
-  //--------------------------------------------------------------- BeamFormed
+
+  //_____________________________________________________________________________
+  //                                                                   BeamFormed
   
   bpl::class_<BeamFormed>("BeamFormed")
     .def( bpl::init<>())
@@ -406,4 +439,82 @@ BOOST_PYTHON_MODULE(pydal)
 	  bpl::return_value_policy<bpl::manage_new_object>(),
 	  "Return a beam object from the file." )
     ;
+
+  //_____________________________________________________________________________
+  //                                                            TBB_DipoleDataset
+  
+  bpl::class_<TBB_DipoleDataset>("TBB_DipoleDataset")
+    /* Construction */
+    .def( bpl::init<>())
+    .def( bpl::init<string,string>())
+    /* Access to internal parameters */
+    .def( "nofAttributes", &TBB_DipoleDataset::nofAttributes,
+	  "Get the number of attributes attached to the dataset." )
+    .def( "station_id", &TBB_DipoleDataset::station_id,
+	  "Get the ID of the LOFAR station this dipole belongs to." )
+    .def( "rsp_id", &TBB_DipoleDataset::rsp_id,
+	  "Get the ID of the RSP board this dipole is connected with." )
+    .def( "rcu_id", &TBB_DipoleDataset::rcu_id,
+	  "Get the ID of the receiver unit (RCU) this dipole is connected with." )
+    .def( "sample_frequency_value", &TBB_DipoleDataset::sample_frequency_value,
+	  "Get the numerical value of the ADC sample frequency." )
+    .def( "sample_frequency_unit", &TBB_DipoleDataset::sample_frequency_unit,
+	  "Get the physical unit associated with the ADC sample frequency." )
+    .def( "time", &TBB_DipoleDataset::time,
+	  "Get the (UNIX) time at which the data were recorded." )
+    .def( "julianDay", &TBB_DipoleDataset::julianDay,
+	  "Get the time as Julian Day." )
+    .def( "sample_number", &TBB_DipoleDataset::sample_number,
+	  "Get the timespan in samples since the last full second." )
+    .def( "samples_per_frame", &TBB_DipoleDataset::samples_per_frame,
+	  "The number of samples per original TBB-RSP frame." )
+    .def( "data_length", &TBB_DipoleDataset::data_length,
+	  "Get the number of samples stored in this dataset." )
+    .def( "feed", &TBB_DipoleDataset::feed,
+	  "Get the type of feed for this dipole." )
+#ifdef HAVE_CASA
+#endif
+    .def( "antenna_position_frame", &TBB_DipoleDataset::antenna_position_frame,
+	  "Get the identifier for the reference frame of the antenna position." )
+    .def( "antenna_orientation_frame", &TBB_DipoleDataset::antenna_orientation_frame,
+	  "Get the identifier for the reference frame of the antenna orientation." )
+    .def( "className", &TBB_DipoleDataset::className,
+	  "Get the name of the class." )
+    .def( "channelID", &TBB_DipoleDataset::channelID,
+	  "Get the unique channel/dipole identifier." )
+    .def( "channelName", &TBB_DipoleDataset::channelName,
+	  "Get the unique channel/dipole identifier." )
+//     .def( "fx", &TBB_DipoleDataset::fx,
+// 	  "Get a number of data values as recorded for this dipole." )
+    ;
+
+  //_____________________________________________________________________________
+  //                                                             TBB_StationGroup
+
+  bpl::class_<TBB_StationGroup>("TBB_StationGroup")
+    /* Construction */
+    .def( bpl::init<>())
+    .def( bpl::init<string,string>())
+    .def( bpl::init<uint,string>())
+    .def( bpl::init<uint>())
+    /* Acces to internal parameters */
+    .def( "group_id", &TBB_StationGroup::group_id,
+	  "Get the identifier for this group within the HDF5 file." )
+    .def( "group_name", &TBB_StationGroup::group_name,
+	  "Get the name for this group within the HDF5 file." )
+    .def( "trigger_type", &TBB_StationGroup::trigger_type,
+	  "Get the trigger type which cause recording this data." )
+    .def( "trigger_offset", &TBB_StationGroup::trigger_offset,
+	  "Get the trigger offset." )
+//     .def( "", &TBB_StationGroup::,
+// 	  "" )
+    .def( "beam_direction_frame", &TBB_StationGroup::beam_direction_frame,
+	  "Get the coordinate frame identifier for the beam direction." )
+    .def( "station_position_frame", &TBB_StationGroup::station_position_frame,
+	  "Get the identifier for the station position reference frame." )
+    ;
+
+  //_____________________________________________________________________________
+  //                                                               TBB_TimeSeries
+
 }

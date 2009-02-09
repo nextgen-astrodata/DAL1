@@ -103,4 +103,8 @@
 #endif
 #endif
 
+#ifndef TBB_TIMESERIES
+#include "TBB_Timeseries.h"
+#endif
+
 #endif // DAL_H
