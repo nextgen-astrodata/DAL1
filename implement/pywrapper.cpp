@@ -515,6 +515,30 @@ BOOST_PYTHON_MODULE(pydal)
     ;
 
   //_____________________________________________________________________________
-  //                                                               TBB_TimeSeries
+  //                                                               TBB_Timeseries
+
+  bpl::class_<TBB_Timeseries>("TBB_Timeseries")
+    /* Construction */
+    .def( bpl::init<>())
+    .def( bpl::init<string>())
+    .def( "filename", &TBB_Timeseries::filename,
+	  "Get the name of the data file." )
+    .def( "file_id", &TBB_Timeseries::file_id,
+	  "Get the object identifier for the data file." )
+    .def( "telescope", &TBB_Timeseries::telescope,
+	  "Get the name of the telescope." )
+    .def( "observer", &TBB_Timeseries::observer,
+	  "Get the name of the observer." )
+    .def( "project", &TBB_Timeseries::project,
+	  "Get the project name/description." )
+    .def( "observation_id", &TBB_Timeseries::observation_id,
+	  "Get the observation ID." )
+    .def( "observation_mode", &TBB_Timeseries::observation_mode,
+	  "Get the description of the observation mode." )
+    .def( "nofStationGroups", &TBB_Timeseries::nofStationGroups,
+	  "Get the number of station groups collected into this file." )
+    .def( "nofDipoleDatasets", &TBB_Timeseries::nofDipoleDatasets,
+	  "Get the number of dipole datasets collected into this file." )
+    ;
 
 }
