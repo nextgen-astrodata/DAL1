@@ -498,9 +498,8 @@ namespace DAL {
 
     for (int jj=0; jj < length; jj++) {
       xx = (complex<short>*)data->get(jj);
+      values.push_back(*xx);
     }
-
-    values.assign (xx,&xx[length]);
 
     delete data;
     delete col;
@@ -542,9 +541,9 @@ namespace DAL {
     
     for (int jj=0; jj < length; jj++) {
       yy = (complex<short>*)data->get(jj);
+      values.push_back(*yy);
     }
     
-    values.assign (yy,&yy[length]);
     
     delete data;
     delete col;
