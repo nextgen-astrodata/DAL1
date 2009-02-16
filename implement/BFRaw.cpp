@@ -410,7 +410,7 @@ namespace DAL {
 
   void BFRaw::processBlocks()
   {
-    int16_t nseconds = 60;
+    int16_t nseconds = 20;
     bool ret = true;
     do
       {
