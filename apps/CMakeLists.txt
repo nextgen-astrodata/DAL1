@@ -96,7 +96,14 @@ if (DAL_ENABLE_TESTING)
   add_test (bf2h5_test3 bf2h5 --help)
   add_test (bf2h5_test4 bf2h5 --downsample)
   add_test (bf2h5_test5 bf2h5 --intensity)
-
+  
+  if (dataset_bf_raw)
+    add_test (bf2h5_test6 bf2h5 -I ${dataset_bf_raw} -O testdata_bf.h5)
+    add_test (bf2h5_test7 bf2h5 -I ${dataset_bf_raw} -O testdata_bf.h5 --intensity)
+  else (dataset_bf_raw)
+    message (STATUS "[DAL] Skipping bf2h5 conversion tests - no input file!")
+  endif (dataset_bf_raw)
+  
 endif (DAL_ENABLE_TESTING)
 
 ## ------------------------------------------------------------------------------
