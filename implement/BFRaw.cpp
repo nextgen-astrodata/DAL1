@@ -419,6 +419,8 @@ namespace DAL {
     while ( true == ret );
   }
 
+  // -------------------------------------------------------------- processBlocks
+
   bool BFRaw::processBlocks( int16_t blocks )
   {
 
@@ -598,6 +600,8 @@ namespace DAL {
 
   }
 
+  // -------------------------------------------------- compute_float32_intensity
+
   Float32 *
   BFRaw::compute_float32_intensity( Sample * data,
                                     int32_t start,
@@ -635,6 +639,8 @@ namespace DAL {
       }
     return totalintensity;
   }
+
+  // -------------------------------------------- downsample_to_float32_intensity
 
   Float32 *
   BFRaw::downsample_to_float32_intensity( Sample * data,

@@ -61,6 +61,7 @@ namespace DAL {
   class BFRaw
   {
     
+    //! Components of the file header
     struct FileHeader
     {
       UInt32    magic;        // 0x3F8304EC, also determines endianness
