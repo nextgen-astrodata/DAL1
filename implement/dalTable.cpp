@@ -958,7 +958,8 @@ namespace DAL {
         else if ( dal_STRING == coltype )
           h5type = H5T_NATIVE_CHAR;
 
-        else if ( dal_COMPLEX_CHAR == coltype || dal_COMPLEX == coltype )
+        else if ( dal_COMPLEX_CHAR == coltype || dal_COMPLEX == coltype ||
+                  dal_COMPLEX_SHORT == coltype )
           {
             std::vector<dalColumn> cv;
             std::string component_type;
@@ -968,6 +969,9 @@ namespace DAL {
 
             else if ( dal_COMPLEX == coltype )
               component_type = dal_DOUBLE;
+
+            else if ( dal_COMPLEX_SHORT == coltype )
+              component_type = dal_SHORT;
 
             dalColumn col_a( "r", component_type );  // real component
             dalColumn col_b( "i", component_type );  // imaginary component
@@ -1000,6 +1004,9 @@ namespace DAL {
 
                 if ( dal_CHAR == cv[ii].getType() )
                   lcl_datatype = H5T_NATIVE_CHAR;
+
+                else if ( dal_SHORT == cv[ii].getType() )
+                  lcl_datatype = H5T_NATIVE_SHORT;
 
                 else if ( dal_INT == cv[ii].getType() )
                   lcl_datatype = H5T_NATIVE_INT;
