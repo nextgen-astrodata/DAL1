@@ -37,6 +37,9 @@ using std::endl;
 #include <casa/Arrays/IPosition.h>
 #include <casa/Arrays/Vector.h>
 #include <casa/Quanta/Quantum.h>
+#include <casa/OS/File.h>
+#include <casa/OS/Path.h>
+#include <casa/OS/SymLink.h>
 #include <measures/Measures/MDirection.h>
 #include <measures/Measures/MPosition.h>
 using casa::MDirection;

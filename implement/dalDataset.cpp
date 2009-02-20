@@ -202,7 +202,7 @@ namespace DAL
     char card [500 ];
     memset( card, '\0', 500);
 
-    fits_open_file(&fptr, fname, READWRITE, &status);
+    fits_open_file(&fptr, fname, READONLY, &status);
 
     if (status)          /* print any error messages */
       {
@@ -246,6 +246,12 @@ namespace DAL
     // Turn off error reporting since we expect failure in cases
     //   where the file is not hdf5
     H5Eset_auto1(NULL, NULL);
+
+    /* return -1 if the file is not recognized as hdf5 */
+    if ( H5Fis_hdf5( fname ) < 1 )  // hdf5 file returns a positive int
+      {
+        return -1;
+      }
 
     // the following returns an integer file handle
     if ( ( fh = H5Fopen(fname, H5F_ACC_RDWR, H5P_DEFAULT ) ) < 0 )
@@ -294,11 +300,26 @@ namespace DAL
           {
             lcltype = MSCASATYPE;
             type = lcltype;
-            ms = new casa::MeasurementSet( fname );
-            file = &ms;
-            ms_reader = new casa::MSReader( *ms );
-            name = fname;
-            return DAL::SUCCESS;
+            casa::File msfile( fname );
+            // first treat it as a symbolic link
+            if( msfile.isSymLink() )
+            {
+               casa::SymLink link( msfile );
+               casa::Path realFileName = link.followSymLink();
+               ms = new casa::MeasurementSet( realFileName.absoluteName() );
+               file = &ms;
+               ms_reader = new casa::MSReader( *ms );
+               name = fname;
+               return DAL::SUCCESS;
+            }
+            else // treat it as a regular file
+            {
+               ms = new casa::MeasurementSet( fname );
+               file = &ms;
+               ms_reader = new casa::MSReader( *ms );
+               name = fname;
+               return DAL::SUCCESS;
+            }
           }
         catch (casa::AipsError x)
           {
