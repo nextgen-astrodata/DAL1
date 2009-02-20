@@ -164,13 +164,17 @@ namespace DAL {
     std::string observation_id();
     //! Get the project identifier
     std::string proj_id();
+    //! RA of the beam pointing direction
     std::string point_ra();
+    //! DEC of the beam pointing direction
     std::string point_dec();
     //! Get the name of the observer
     std::string observer();
-    //! Get the observation epoch as Median Julian Day (MJD)
+    //! The observation epoch as Median Julian Day (MJD)
     std::string epoch_mjd();
+    //! The observation epoch as data
     std::string epoch_date();
+    //! The observation epoch as UTC
     std::string epoch_utc();
     std::string epoch_lst();
     //! Get the diameter of the main beam

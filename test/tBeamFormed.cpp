@@ -34,6 +34,7 @@
 #include <BeamFormed.h>
 #endif
 
+using std::cout;
 using std::endl;
 using std::vector;
 
@@ -49,11 +50,11 @@ using std::vector;
 */
 int test_constructors (std::string const &filename)
 {
-  std::cout << "[tBeamFormed::test_constructors]" << endl;
+  cout << "[tBeamFormed::test_constructors]" << endl;
 
   int nofFailedTests (0);
 
-  std::cout << "[1] Test default constructor ..." << endl;
+  cout << "[1] Test default constructor ..." << endl;
   try {
     DAL::BeamFormed bf;
     //
@@ -63,7 +64,7 @@ int test_constructors (std::string const &filename)
     nofFailedTests++;
   }
 
-  std::cout << "[2] Test argumented constructor ..." << endl;
+  cout << "[2] Test argumented constructor ..." << endl;
   try {
     DAL::BeamFormed bf (filename);
     //
@@ -88,55 +89,63 @@ int test_constructors (std::string const &filename)
 */
 int test_attributes (std::string const &filename)
 {
-  std::cout << "\n[tBeamFormed::test_attributes]\n" << endl;
+  cout << "\n[tBeamFormed::test_attributes]\n" << endl;
   
   int nofFailedTests (0);
   DAL::BeamFormed bf (filename);
   int nofBeams = bf.number_of_beams();
 
-  std::cout << "[1] Attributes of the root group..." << endl;
+  cout << "[1] Attributes of the root group..." << endl;
   try {
-    std::cout << "-- Filename       = " << bf.filename()        << endl;
-    std::cout << "-- Telescope      = " << bf.telescope()       << endl;
-    std::cout << "-- nof. stations  = " << bf.nofStations()     << endl;
-    std::cout << "-- Datatype       = " << bf.datatype()        << endl;
-    std::cout << "-- EM band        = " << bf.emband()          << endl;
-    std::cout << "-- Observation ID = " << bf.observation_id()  << endl;
-    std::cout << "-- Project ID     = " << bf.proj_id()         << endl;
-    std::cout << "-- nof. beams     = " << bf.number_of_beams() << endl;
-    std::cout << "-- Epoch (MJD)    = " << bf.epoch_mjd()       << endl;
-    std::cout << "-- Epoch (Date)   = " << bf.epoch_date()      << endl;
-    std::cout << "-- Epoch (UTC)    = " << bf.epoch_utc()       << endl;
-    std::cout << "-- Epoch (LST)    = " << bf.epoch_lst()       << endl;
-    std::cout << "-- Sampling time  = " << bf.sampling_time()   << endl;
-    //
-    std::vector<std::string> sources = bf.sources();
-    std::cout << "-- Sources        = [";
-    for (unsigned int idx=0; idx<sources.size(); idx++) {
-      std::cout << " " << sources[ idx ];
-    }
-    std::cout << " ]" << endl;
-    
+    cout << "-- Filename             = " << bf.filename()               << endl;
+    cout << "-- Telescope            = " << bf.telescope()              << endl;
+    cout << "-- nof. stations        = " << bf.nofStations()            << endl;
+    cout << "-- Datatype             = " << bf.datatype()               << endl;
+    cout << "-- EM band              = " << bf.emband()                 << endl;
+    cout << "-- List of sources      = " << bf.sources()                << endl;
+    cout << "-- Observation ID       = " << bf.observation_id()         << endl;
+    cout << "-- Project ID           = " << bf.proj_id()                << endl;
+    cout << "-- RA of pointing       = " << bf.point_ra()               << endl;
+    cout << "-- DEC of pointing      = " << bf.point_dec()              << endl;
+    cout << "-- Observer             = " << bf.observer()               << endl;
+    cout << "-- Epoch (MJD)          = " << bf.epoch_mjd()              << endl;
+    cout << "-- Epoch (Date)         = " << bf.epoch_date()             << endl;
+    cout << "-- Epoch (UTC)          = " << bf.epoch_utc()              << endl;
+    cout << "-- Epoch (LST)          = " << bf.epoch_lst()              << endl;
+    cout << "-- Main beam diam.      = " << bf.main_beam_diam()         << endl;
+    cout << "-- Center frequency     = " << bf.center_freq()            << endl;
+    cout << "-- Bandwidth            = " << bf.bandwidth()              << endl;
+    cout << "-- Integration time     = " << bf.total_integration_time() << endl;
+    cout << "-- nof. breaks          = " << bf.breaks()                 << endl;
+    cout << "-- Dispersion measure   = " << bf.dispersion_measure()     << endl;
+    cout << "-- nof. samples         = " << bf.number_of_samples()      << endl;
+    cout << "-- Sampling time        = " << bf.sampling_time()          << endl;
+    cout << "-- nof. beams           = " << bf.number_of_beams()        << endl;
+    cout << "-- Sub-beam diameter    = " << bf.sub_beam_diameter()      << endl;
+    cout << "-- Weather temperature  = " << bf.weather_temperature()    << endl;
+    cout << "-- Weather humidity     = " << bf.weather_humidity()       << endl;
+    cout << "-- Station temperatures = " << bf.station_temperatures()   << endl;
+    cout << "-- Notes                = " << bf.notes()                  << endl;
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
   
   if (nofBeams > 0) {
-    std::cout << "[2] Attributes of the beam groups..." << endl;
+    cout << "[2] Attributes of the beam groups..." << endl;
     DAL::BeamGroup *group;
     for (int beam(0); beam<nofBeams; beam++) {
       try {
 	/* Retrieve the beam group */
 	group = bf.getBeam(beam);
 	/* Display the attribute of this group */
-	std::cout << "-- Group number    = " << beam                 << endl;
-	std::cout << "-- HDF5 file ID    = " << group->fileID()      << endl;
-	std::cout << "-- HDF5 group ID   = " << group->groupID()     << endl;
-	std::cout << "-- HDF5 group name = " << group->groupName()   << endl;
-	std::cout << "-- RA of the beam  = " << group->ra()          << endl;
-	std::cout << "-- Dec of the beam = " << group->dec()         << endl;
-	std::cout << "-- nof. subbands   = " << group->nofSubbands() << endl;
+	cout << "-- Group number    = " << beam                 << endl;
+	cout << "-- HDF5 file ID    = " << group->fileID()      << endl;
+	cout << "-- HDF5 group ID   = " << group->groupID()     << endl;
+	cout << "-- HDF5 group name = " << group->groupName()   << endl;
+	cout << "-- RA of the beam  = " << group->ra()          << endl;
+	cout << "-- Dec of the beam = " << group->dec()         << endl;
+	cout << "-- nof. subbands   = " << group->nofSubbands() << endl;
       } catch (std::string message) {
 	std::cerr << message << endl;
 	nofFailedTests++;
@@ -159,7 +168,7 @@ int test_attributes (std::string const &filename)
 */
 int test_getData (std::string const &filename)
 {
-  std::cout << "\n[tBeamFormed::test_getData]\n" << endl;
+  cout << "\n[tBeamFormed::test_getData]\n" << endl;
 
   int nofFailedTests (0);
   DAL::BeamFormed * file = NULL;
@@ -168,7 +177,7 @@ int test_getData (std::string const &filename)
   int start              = 0;
   int length             = 20; //441344;
   
-  std::cout << "[1] Extract BeamGroup ..." << endl;
+  cout << "[1] Extract BeamGroup ..." << endl;
   try {
     file = new DAL::BeamFormed(filename.c_str());
     beam = file->getBeam(0);
@@ -179,26 +188,26 @@ int test_getData (std::string const &filename)
     nofFailedTests++;
   }
 
-  std::cout << "[2] Read in data from X-component of subband..." << endl;
+  cout << "[2] Read in data from X-component of subband..." << endl;
   try {
     std::vector< std::complex<short> > xx;
     xx.clear();
     
     beam->getSubbandData_X( subband, start, length, xx );
 
-    std::cout << "-- First " << length << " xx values for subband "
+    cout << "-- First " << length << " xx values for subband "
 	      << subband << " = [";
     
     for (int ii=0; ii < length; ii++ ) {
-      std::cout << " (" << xx[ii].real() << "," << xx[ii].imag() << ")";
+      cout << " (" << xx[ii].real() << "," << xx[ii].imag() << ")";
       }
-    std::cout << " ]" << endl;
+    cout << " ]" << endl;
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
 
-  std::cout << "[3] Read in data from (X,Y) components of subband..." << endl;
+  cout << "[3] Read in data from (X,Y) components of subband..." << endl;
   try {
     std::vector< std::complex<short> > xvals;
     std::vector< std::complex<short> > yvals;

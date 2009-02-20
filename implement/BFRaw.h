@@ -64,28 +64,41 @@ namespace DAL {
     //! Components of the file header
     struct FileHeader
     {
-      UInt32    magic;        // 0x3F8304EC, also determines endianness
+      //! 0x3F8304EC, also determines endianness
+      UInt32    magic;
+      //! The number of bits per sample
       UInt8     bitsPerSample;
+      //! The number of polarizations
       UInt8     nrPolarizations;
-      UInt16    nrBeamlets;   // number of subbands
-      UInt32    nrSamplesPerBeamlet; // 155648 (160Mhz) or 196608 (200Mhz)
+      //! Number of subbands
+      UInt16    nrBeamlets;
+      //! 155648 (160Mhz) or 196608 (200Mhz)
+      UInt32    nrSamplesPerBeamlet;
+      //! Name of the station
       char      station[20];
-      Float64   sampleRate;       //156250.0 or 195312.5 .. double
+      //! The sample rate: 156250.0 or 195312.5 .. double
+      Float64   sampleRate;
+      //! The frequencies within a subband
       Float64   subbandFrequencies[54];
+      //! The beam pointing directions
       Float64   beamDirections[8][2];
       Int16     beamlet2beams[54];
-      UInt32    padding;  // padding to circumvent 8-byte alignment
+      //! Padding to circumvent 8-byte alignment
+      UInt32    padding;
     };
 
     //! Components of the header of a single block of raw data
     struct BlockHeader
     {
-      UInt32      magic; // 0x2913D852
+      //! 0x2913D852
+      UInt32      magic;
       Int32       coarseDelayApplied[8];
-      UInt8       padding[4];  // padding to circumvent 8-byte alignment
+      //! Padding to circumvent 8-byte alignment
+      UInt8       padding[4];
       Float64     fineDelayRemainingAtBegin[8];
       Float64     fineDelayRemainingAfterEnd[8];
-      Int64       time[8]; // compatible with TimeStamp class.
+      //! Compatible with TimeStamp class.
+      Int64       time[8];
       UInt32      nrFlagsRanges[8];
       
       struct range

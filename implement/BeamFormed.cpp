@@ -472,7 +472,6 @@ namespace DAL {
   // ---------------------------------------------------------- pointing_ra
 
   /*!
-    \brief Get the pointing (ra)
     \return ra - the RA pointing direction
   */
   std::string BeamFormed::point_ra ()
@@ -493,7 +492,6 @@ namespace DAL {
   // ---------------------------------------------------------- pointing_dec
 
   /*!
-    \brief Get the pointing (dec)
     \return dec - the dec pointing direction
   */
   std::string BeamFormed::point_dec ()
@@ -514,7 +512,6 @@ namespace DAL {
   // ---------------------------------------------------------- observer
 
   /*!
-    \brief Get the name of the observer
     \return observer -- The name of the observer; returns an empty string in
             case no keyword value could be extracted.
   */
