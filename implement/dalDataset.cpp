@@ -256,7 +256,10 @@ namespace DAL
     // the following returns an integer file handle
     if ( ( fh = H5Fopen(fname, H5F_ACC_RDWR, H5P_DEFAULT ) ) < 0 )
       {
-        return -1;
+        std::cerr << "Could not open " << fname
+                  << " as read-write.  Trying as read-only." << endl;
+        if ( ( fh = H5Fopen(fname, H5F_ACC_RDONLY, H5P_DEFAULT ) ) < 0 )
+          return -1;
       }
     else
       {

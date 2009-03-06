@@ -214,9 +214,9 @@ namespace DAL {
     //! Provide a summary of the object's properties
     void summary(std::ostream &os);
     //! Get the RA of the beam direction
-    std::string ra();
+    float ra();
     //! Get the declination of the beam direction
-    std::string dec();
+    float dec();
     //! Get the number of sub-bands for this beam
     int nofSubbands ();
 

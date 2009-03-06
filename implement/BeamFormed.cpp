@@ -223,9 +223,7 @@ namespace DAL {
       os << "-- Epoch UTC ............ : " << epoch_utc()             << endl;
       os << "-- Epoch LST ............ : " << epoch_lst()             << endl;
       os << "-- FWHM of the main beam  : " << main_beam_diam()        << endl;
-      //     os << "-- Center Frequency ..... : " << center_freq()           << endl;
       os << "-- Bandwidth ............ : " << bandwidth()             << endl;
-      //     os << "-- Total Integration Time : " << total_integration_time()      << endl;
       
       os << "-- Breaks in the data ... : " << breaks()                << endl;
       os << "-- Dispersion measure ... : " << dispersion_measure()    << endl;

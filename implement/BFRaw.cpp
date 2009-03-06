@@ -324,7 +324,6 @@ namespace DAL {
     dataset.setAttribute( "POINT_DEC", std::string("") );
     dataset.setAttribute( "OBSERVER", std::string("") );
     dataset.setAttribute( "MAIN_BEAM_DIAM", &main_beam_diam );
-//   dataset.setAttribute( "CENTER_FREQUENCY", center_freq );
     dataset.setAttribute( "BANDWIDTH", &bandwidth );
     dataset.setAttribute( "BREAKS_IN_DATA", &breaks_in_data );
     dataset.setAttribute( "DISPERSION_MEASURE", &dispersion_measure );
@@ -347,16 +346,10 @@ namespace DAL {
     sprintf( beamstr, "beam%03d", beam_number );
     beamGroup = dataset.createGroup( beamstr );
 
-    char * ra_val  = new char[20];
-    char * dec_val = new char[20];
-    sprintf( ra_val, "%f", fileheader.beamDirections[beam_number+1][0] );
-    sprintf( dec_val, "%f",fileheader.beamDirections[beam_number+1][1] );
-    beamGroup->setAttribute( "RA", ra_val );
-    beamGroup->setAttribute( "DEC", dec_val );
-    delete [] ra_val;
-    ra_val = NULL;
-    delete [] dec_val;
-    dec_val = NULL;
+    float ra_val  = fileheader.beamDirections[beam_number+1][0];
+    float dec_val = fileheader.beamDirections[beam_number+1][1];
+    beamGroup->setAttribute( "RA", &ra_val, 1 );
+    beamGroup->setAttribute( "DEC", &dec_val, 1 );
 
     int n_subbands[] = { fileheader.nrBeamlets };
     beamGroup->setAttribute( "NUMBER_OF_SUBBANDS", n_subbands );
@@ -364,7 +357,8 @@ namespace DAL {
     delete beamGroup;
 
 #ifdef DEBUGGING_MESSAGES
-    cerr << "CREATED New beam group: " << string(beamstr) << endl;
+    std::cerr << "CREATED New beam group: " << std::string(beamstr) << std::endl;
+    std::cerr << "   " << fileheader.nrBeamlets << " subbands" << std::endl;
 #endif
 
     table = new dalTable * [ fileheader.nrBeamlets ];
@@ -512,11 +506,11 @@ namespace DAL {
 
             memset (timeDateString,'\0',buf_size);
             strftime(timeDateString, buf_size, "%T", gmtime(&utc));
-            dataset.setAttribute( "EPOCH_UTC", timeDateString );
+            dataset.setAttribute( "EPOCH_UTC", std::string(timeDateString) );
 
             memset (timeDateString,'\0',buf_size);
             strftime(timeDateString, buf_size, "%d/%m/%y", gmtime(&utc));
-            dataset.setAttribute( "EPOCH_DATE", timeDateString );
+            dataset.setAttribute( "EPOCH_DATE", std::string(timeDateString) );
 
             memset (timeDateString,'\0',buf_size);
 

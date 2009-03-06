@@ -243,9 +243,9 @@ namespace DAL {
   /*!
     \return ra -- The ra of the beam pointing direction
   */
-  std::string BeamGroup::ra ()
+  float BeamGroup::ra ()
   {
-    std::string ra ("");
+    float ra = -1;
 
     if (group_p->getName() != "UNDEFINED") {
       if ( DAL::FAIL == h5get_attribute( group_p->getId(), "RA", ra ) )
@@ -261,9 +261,9 @@ namespace DAL {
   /*!
     \return dec -- The declination of the beam pointing direction
   */
-  std::string BeamGroup::dec ()
+  float BeamGroup::dec ()
   {
-    std::string dec ("");
+    float dec = -1;
     
     if (group_p->getName() != "UNDEFINED") {
       if ( DAL::FAIL == h5get_attribute( group_p->getId(), "DEC", dec ) )
