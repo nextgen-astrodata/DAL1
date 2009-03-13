@@ -84,11 +84,11 @@ set (NO_DEFAULT_PATH ON)
 ##__________________________________________________________
 ## system libraries
 
-find_library (libdl dl ${lib_locations})
-find_library (libm m ${lib_locations})
-find_library (libpthread pthread ${lib_locations})
-find_library (libutil util ${lib_locations})
-find_library (libz z ${lib_locations})
+find_library (libdl      dl       ${lib_locations})
+find_library (libm       m        ${lib_locations})
+find_library (libpthread pthread  ${lib_locations})
+find_library (libutil    util     ${lib_locations})
+find_library (libz       z        ${lib_locations})
 
 ##__________________________________________________________
 ## Blitz++
