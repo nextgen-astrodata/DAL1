@@ -228,7 +228,8 @@ namespace DAL {
 
     //! Set up the socket connection to the server
     void connectsocket( const char* ipaddress,
-			const char* portnumber );
+			const char* portnumber,
+			const int &timeout=0);
     //! Open file containing data resulting from a TBB dump
     bool openRawFile( const char* filename );
     bool readRawSocketBlockHeader();

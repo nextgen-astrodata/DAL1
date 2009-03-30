@@ -140,6 +140,7 @@ int main(int argc, char *argv[])
   std::string ip;
   std::string port;
   int socketmode (0);
+  int timeout (0);
 
   bool file2hdf5 (false);
   bool positions2hdf5 (false);
@@ -156,6 +157,7 @@ int main(int argc, char *argv[])
     ("mode,M", bpo::value<int>(), "Operation mode: file (0), socket (1)")
     ("ip", bpo::value<std::string>(), "IP address from which to accept the data")
     ("port,P", bpo::value<std::string>(), "Port number to accept data from")
+    ("timeout,T", bpo::value<int>(), "Time-out before stop listening to the port")
     ("antpos,A", bpo::value<std::string>(), "File containing antenna positions")
     ;
   
@@ -194,6 +196,10 @@ int main(int argc, char *argv[])
     socketmode = vm["mode"].as<int>();
   }
 
+  if (vm.count("timeout")) {
+    timeout = vm["timeout"].as<int>();
+  }
+
   // -----------------------------------------------------------------
   // Check the provided input
   
@@ -221,6 +227,24 @@ int main(int argc, char *argv[])
     }
     break;
   }
+
+  // -----------------------------------------------------------------
+  // Feedback on the settings
+  
+  std::cout << "[tbb2h5] Summary of parameters"  << std::endl;
+  std::cout << "-- Output file = " << outfile    << std::endl;
+  std::cout << "-- Socket mode = " << socketmode << std::endl;
+  
+  switch (socketmode) {
+  case 0:
+    std::cout << "-- IP address  = " << ip      << std::endl;
+    std::cout << "-- Port number = " << port    << std::endl;
+    std::cout << "-- Timeout     = " << timeout << std::endl;
+    break;
+  case 1:
+    std::cout << "-- Input file  = " << infile  << std::endl;
+  break;
+  };
   
   // -----------------------------------------------------------------
   // Start processing of the input data
@@ -229,10 +253,12 @@ int main(int argc, char *argv[])
   
   if ( socketmode )  // socket mode?
     {
-      tbb.connectsocket( ip.c_str(), port.c_str() );
+      std::cout << "[tbb2h5] Opening connection to socket ..." << std::endl;
+      tbb.connectsocket( ip.c_str(), port.c_str(), timeout );
     }
   else  // reading from a file
     {
+      std::cout << "[tbb2h5] Opening input raw file ..." << std::endl;
       if ( !tbb.openRawFile( infile.c_str() ) )
         return DAL::FAIL;
     }
@@ -241,6 +267,7 @@ int main(int argc, char *argv[])
   
   if (socketmode)  // reading from a socket
     {
+
       while ( true )
         {
           counter++;

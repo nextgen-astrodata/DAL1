@@ -115,10 +115,10 @@ namespace DAL {
     sampleTime_p = (time_t)0;
     dataset      = new dalDataset;
     station.clear();
-    rr = 0;
-    main_socket = -1;
-    socklen = sizeof(incoming_addr);
-    status = 0;
+    rr           = 0;
+    main_socket  = -1;
+    socklen      = sizeof(incoming_addr);
+    status       = 0;
     stations.clear();
     stationGroup_p = NULL;
     dipoleArray_p  = NULL;
@@ -224,16 +224,19 @@ namespace DAL {
   //_____________________________________________________________________________
 
   /*!
-    \brief ipaddress  -- IP number to which to connect
-    \brief portnumber -- Portnumber to which to connect
+    \param ipaddress  -- IP number to which to connect
+    \param portnumber -- Portnumber to which to connect
+    \param timeout    -- Timeout before stopping to listen for data; if a value
+           greater zero is provided, the value is the time-out in seconds.
   */
   void TBB::connectsocket( const char* ipaddress,
-			   const char* portnumber )
+			   const char* portnumber,
+			   const int &timeout )
   {
     int port_number = atol( portnumber );
     const char * remote = ipaddress;
 
-    // Step 1 Look up server to get numeric IP address
+    // Step 1: Look up server to get numeric IP address
     hostent * record = gethostbyname(remote);
     if (record==NULL)
       {
@@ -241,7 +244,7 @@ namespace DAL {
         return;
       }
 
-    // Step 2 Create a socket
+    // Step 2: Create a socket
     main_socket = socket(PF_INET, SOCK_DGRAM, 0);
     if (main_socket<0)
       {
@@ -249,13 +252,13 @@ namespace DAL {
         return;
       }
 
-    // Step 3 Create a sockaddr_in to describe the local port
+    // Step 3: Create a sockaddr_in to describe the local port
     sockaddr_in local_info;
     local_info.sin_family = AF_INET;
     local_info.sin_addr.s_addr = htonl(INADDR_ANY);
     local_info.sin_port = htons(port_number);
 
-    // Step 4 Bind the socket to the port
+    // Step 4: Bind the socket to the port
     int rr = bind(main_socket, (sockaddr *) &local_info, sizeof(local_info));
     if (rr<0)
       {
@@ -263,6 +266,18 @@ namespace DAL {
         return;
       }
     printf("ready\n");
+
+    // Step 5: Start listening to the port
+    if (timeout) {
+      FD_ZERO(&readSet);
+      FD_SET(main_socket, &readSet);
+      
+      timeVal.tv_sec  = timeout;
+      timeVal.tv_usec = 0;
+     
+      // wait for up to "timeout" seconds for data to start showing up
+      select( main_socket + 1, &readSet, NULL, NULL, &timeVal );
+    }
   }
 
   //_____________________________________________________________________________
