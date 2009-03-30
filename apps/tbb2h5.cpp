@@ -47,19 +47,19 @@
     <td class="indexkey">Decription</td>
     </tr>
     <tr>
-      <td>--help</td>
+      <td>-H [--help]</td>
       <td>Show help messages</td>
     </tr>
     <tr>
-      <td>--outfile arg</td>
+      <td>-O [--outfile] arg</td>
       <td>Name of the output dataset</td>
     </tr>
     <tr>
-      <td>--infile arg</td>
+      <td>-I [--infile] arg</td>
       <td>Name of the input file</td>
     </tr>
     <tr>
-      <td>--mode arg</td>
+      <td>-M [--mode] arg</td>
       <td>Operation mode: file (0), socket (1)</td>
     </tr>
     <tr>
@@ -67,8 +67,12 @@
       <td>IP address from which to accept the data</td>
     </tr>
     <tr>
-      <td>--port arg</td>
+      <td>-P [--port] arg</td>
       <td>Port number to accept data from</td>
+    </tr>
+    <tr>
+      <td>-A [--antpos] arg</td>
+      <td>File containing the positions of the individual antennas</td>
     </tr>
   </table>
 
