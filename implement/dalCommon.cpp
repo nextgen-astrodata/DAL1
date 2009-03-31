@@ -660,7 +660,8 @@ namespace DAL {
 
       if (datatype_class_id == H5T_STRING) {
 	htri_t is_variable_string     = H5Tis_variable_str(datatype_id);
-	
+	char *data;
+
 #ifdef DEBUGGING_MESSAGES
 	// additional variables
 	hsize_t datatype_size         = H5Tget_size (datatype_id);
@@ -673,16 +674,29 @@ namespace DAL {
 #endif
 	
 	if (is_variable_string) {
+	  // read the contents of the attribute into the buffer
 	  h5error = H5Aread(attribute_id,
 			    native_datatype_id,
-			    &value);
+			    &data);
+	  // copy retrieved value to return variable
+	  if (h5error == 0) {
+	    std::string tmp = data;
+	    value = tmp;
+	  }
 	}
 	else {
 	  h5error = H5Aread(attribute_id,
 			    datatype_id,
 			    &value);
 	}
-      }
+
+	// release allocated memory
+	if (data != 0) {
+	  delete [] data;
+	  data = 0;
+	}
+
+      } // END: (datatype_class_id == H5T_STRING)
     }
 
     // Release identifiers
