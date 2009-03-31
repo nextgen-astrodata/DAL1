@@ -227,7 +227,8 @@ namespace DAL {
     \param ipaddress  -- IP number to which to connect
     \param portnumber -- Portnumber to which to connect
     \param timeout    -- Timeout before stopping to listen for data; if a value
-           greater zero is provided, the value is the time-out in seconds.
+           greater zero is provided, the value is the time-out in seconds --
+	   otherwise the connection is kept open indefinitely.
   */
   void TBB::connectsocket( const char* ipaddress,
 			   const char* portnumber,
@@ -268,18 +269,21 @@ namespace DAL {
     printf("ready\n");
 
     // Step 5: Start listening to the port
-    if (timeout) {
-      FD_ZERO(&readSet);
-      FD_SET(main_socket, &readSet);
-      
+    FD_ZERO(&readSet);
+    FD_SET(main_socket, &readSet);
+    
+    if (timeout > 0) {
       timeVal.tv_sec  = timeout;
       timeVal.tv_usec = 0;
-     
-      // wait for up to "timeout" seconds for data to start showing up
       select( main_socket + 1, &readSet, NULL, NULL, &timeVal );
     }
+    else {
+      select( main_socket + 1, &readSet, NULL, NULL, NULL );
+    }
+    
+    // wait for up to "timeout" seconds for data to start showing up
   }
-
+  
   //_____________________________________________________________________________
   // Open file containing data resulting from a TBB dump
 

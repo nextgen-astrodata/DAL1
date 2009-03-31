@@ -657,14 +657,14 @@ namespace DAL {
 
       H5T_class_t datatype_class_id = H5Tget_class (datatype_id);
       hid_t native_datatype_id      = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
-#ifdef DEBUGGING_MESSAGES
-      hsize_t datatype_size         = H5Tget_size (datatype_id);
-#endif
 
       if (datatype_class_id == H5T_STRING) {
 	htri_t is_variable_string     = H5Tis_variable_str(datatype_id);
 	
 #ifdef DEBUGGING_MESSAGES
+	// additional variables
+	hsize_t datatype_size         = H5Tget_size (datatype_id);
+	// output
 	std::cout << "[DAL::h5get_attribute]" << endl;
 	std::cout << "-- Attribute ID       = " << attribute_id  << endl;
 	std::cout << "-- Datatype ID        = " << datatype_id   << endl;

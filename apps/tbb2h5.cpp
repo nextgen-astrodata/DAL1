@@ -34,7 +34,15 @@
 
   - DAL::TBB -- High-level interface between TBB data and the DAL; provides the
   method which carry out the data handling.
-
+  
+  - select -- synchronous I/O multiplexing. 
+  If timeout is a non-nil pointer, it specifies a maximum interval to wait
+  for the selection to complete.  If timeout is a nil pointer, the select
+  blocks indefinitely.  To effect a poll, the timeout argument should be
+  non-nil, pointing to a zero-valued timeval structure.  Timeout is not
+  changed by select(), and may be reused on subsequent calls, however it is
+  good style to re-initialize it before each invocation of select().
+  
   <h4>Usage</h4>
 
   \t tbb2h5 supports reading in the raw TBB time-series data from two different
@@ -69,6 +77,12 @@
     <tr>
       <td>-P [--port] arg</td>
       <td>Port number to accept data from</td>
+    </tr>
+    <tr>
+      <td>-T [--timeout] arg</td>
+      <td>Time-out before stop listening to the port. If the provided value
+      is smaller but zero (which is the default) the connection to the port is
+      kept open indefinitely.</td>
     </tr>
     <tr>
       <td>-A [--antpos] arg</td>
@@ -140,7 +154,7 @@ int main(int argc, char *argv[])
   std::string ip;
   std::string port;
   int socketmode (0);
-  int timeout (10);
+  int timeout (-1);
 
   bool file2hdf5 (false);
   bool positions2hdf5 (false);
