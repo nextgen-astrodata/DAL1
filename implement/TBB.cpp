@@ -386,15 +386,16 @@ namespace DAL {
     printRawHeader();
 #endif
 
-    if ( !first_sample )
-      {
-        if ( ( seqnrLast_p > header.seqnr ) || ( seqnrLast_p+1 != header.seqnr ) )
-          {
-            printf("WARNING: Frame missing or out of order\n");
-            return false;
-          }
-      }
-    seqnrLast_p = header.seqnr;
+// This is hopefully not needed anymore
+//     if ( !first_sample )
+//       {
+//         if ( ( seqnrLast_p > header.seqnr ) || ( seqnrLast_p+1 != header.seqnr ) )
+//           {
+//             printf("WARNING: Frame missing or out of order\n");
+//             return false;
+//           }
+//       }
+//     seqnrLast_p = header.seqnr;
 
     return true;
   }
@@ -644,17 +645,44 @@ namespace DAL {
 
         sdata[zz] = tran_sample.value;
       }
-
-    dims[0] += header.n_samples_per_frame;
-    dipoleArray_p->extend(dims);
-    dipoleArray_p->write(offset_p, sdata, header.n_samples_per_frame );
-    offset_p += header.n_samples_per_frame;
-
+    
+    //calculate the writeOffset from time of first block and this block
+    uint starttime, startsamplenum;
+    dipoleArray_p->getAttribute( attribute_name(TIME), starttime );
+    dipoleArray_p->getAttribute( attribute_name(SAMPLE_NUMBER), startsamplenum );
+    int writeOffset= (header.time-starttime)*header.sample_freq*1000000 + 
+      (header.sample_nr-startsamplenum);
+    std::cout << header.seqnr << " starttime:"<< starttime << " startsamplenum:" << startsamplenum 
+	      << " writeOffset:" << writeOffset << endl; 
+    //only write data if this block comes after the first block
+    // (don't extend the array to the front)
+    if (writeOffset >= 0)
+      {
+	//extend array if neccessary.
+	if ((writeOffset+ header.n_samples_per_frame)> dims[0])
+	  {  
+	    dims[0] = writeOffset+ header.n_samples_per_frame;
+	    dipoleArray_p->extend(dims);
+	  };
+	dipoleArray_p->write(writeOffset, sdata, header.n_samples_per_frame );
+	offset_p = dims[0];
+	//#ifdef DEBUGGING_MESSAGES
+      }
+    else
+      {
+	std::cout << "Block seq-nr: " << header.seqnr << " has negative write offset." 
+		  << " Block discarded!" << endl;
+	std::cout << "  start-time:"<< starttime << " sample:" << startsamplenum 
+		  << " time:" << header.time << " sample:" << header.sample_nr <<endl;
+	std::cout << "  writeOffset:" << writeOffset << endl;     
+	//#endif    
+      };
+    
     status = readsocket( sizeof(payload_crc),
                          reinterpret_cast<char *>(&payload_crc) );
     if (FAIL == status)
       return false;
-
+    
     return true;
   }
 
@@ -674,12 +702,37 @@ namespace DAL {
 
         sdata[zz] = tran_sample.value;
       }
+    
+    //calculate the writeOffset from time of first block and this block
+    uint starttime, startsamplenum;
+    dipoleArray_p->getAttribute( attribute_name(TIME), starttime );
+    dipoleArray_p->getAttribute( attribute_name(SAMPLE_NUMBER), startsamplenum );
+    int writeOffset= (header.time-starttime)*header.sample_freq*1000000 + 
+      (header.sample_nr-startsamplenum);
 
-    dims[0] += header.n_samples_per_frame;
-    dipoleArray_p->extend(dims);
-    dipoleArray_p->write(offset_p, sdata, header.n_samples_per_frame );
-    offset_p += header.n_samples_per_frame;
-
+    //only write data if this block comes after the first block
+    // (don't extend the array to the front)
+    if (writeOffset >= 0)
+      {
+	//extend array if neccessary.
+	if ((writeOffset+ header.n_samples_per_frame)> dims[0]) 
+	  {
+	    dims[0] = writeOffset+ header.n_samples_per_frame;
+	    dipoleArray_p->extend(dims);
+	  };
+	dipoleArray_p->write(writeOffset, sdata, header.n_samples_per_frame );
+	offset_p = dims[0];
+#ifdef DEBUGGING_MESSAGES
+      }
+    else
+      {
+	std::cout << "Block seq-nr: " << header.seqnr << " has negative write offset." 
+		  << " Block discarded!" << endl;
+	std::cout << "  start-time:"<< starttime << " sample:" << startsamplenum 
+		  << " time:" << header.time << " sample:" << header.sample_nr <<endl;
+	std::cout << "  writeOffset:" << writeOffset << endl;     
+#endif    
+      };
     rawfile->read( reinterpret_cast<char *>(&payload_crc),
                    sizeof(payload_crc) );
 
