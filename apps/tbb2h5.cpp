@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
   std::string ip;
   std::string port;
   int socketmode (0);
-  int timeout (0);
+  int timeout (10);
 
   bool file2hdf5 (false);
   bool positions2hdf5 (false);
