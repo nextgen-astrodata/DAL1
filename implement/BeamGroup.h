@@ -217,6 +217,8 @@ namespace DAL {
     float ra();
     //! Get the declination of the beam direction
     float dec();
+    //! Get the beam direction
+    std::vector<float> beam_direction ();
     //! Get the number of sub-bands for this beam
     int nofSubbands ();
 

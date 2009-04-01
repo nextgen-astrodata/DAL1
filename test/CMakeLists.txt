@@ -99,21 +99,24 @@ if (DAL_ENABLE_TESTING)
   else (dataset_ms)
     message (STATUS "Unable to find MS dataset; skipping tests.")
   endif (dataset_ms)
-
+  
+  if (dataset_tbb AND dataset_beamformed)
+    add_test (tdalCommon tdalCommon ${dataset_tbb} ${dataset_beamformed})
+  endif (dataset_tbb AND dataset_beamformed)
+  
   ## -----------------------------------------------------------------
   ## [3] Tests using LopesEvent datasets
-
+  
   if (dataset_lopes)
     add_test (tdalLopesEvent tdalLopesEvent ${dataset_lopes})
   else (dataset_lopes)
     message (STATUS "Unable to find LopesEvent dataset; skipping tests.")
   endif (dataset_lopes)
-
+  
   ## -----------------------------------------------------------------
   ## [4] Tests using HDF5-based time-series dataset
   
   if (dataset_tbb)
-    add_test (tdalCommon tdalCommon ${dataset_tbb})
     add_test (tTBB_test1 tTBB tTBB.h5)
     add_test (tTBB_test2 tTBB tTBB.h5 ${dataset_tbb})
     add_test (tTBB_DipoleDataset tTBB_DipoleDataset ${dataset_tbb})

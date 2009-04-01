@@ -273,6 +273,22 @@ namespace DAL {
     }
     return dec;
   }
+
+  //_____________________________________________________________________________
+  //                                                               beam_direction
+
+  /*
+    \return beam_direction -- [ra,dec] The beam pointing direction
+  */
+  std::vector<float> BeamGroup::beam_direction ()
+  {
+    std::vector<float> beam (2);
+    
+    beam[0] = ra();
+    beam[1] = dec();
+    
+    return beam;
+  }
   
   // ---------------------------------------------------------------- nofSubbands
   

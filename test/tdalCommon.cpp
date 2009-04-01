@@ -685,9 +685,9 @@ int test_hdf5_attributes ()
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
-int test_datasets (std::string const &filename)
+int test_timeseries (std::string const &filename)
 {
-  cout << "\n[tdalCommon::test_datasets]\n" << std::endl;
+  cout << "\n[tdalCommon::test_timeseries]\n" << std::endl;
 
   int nofFailedTests (0);
   hid_t file_id (-1);
@@ -900,17 +900,71 @@ int test_datasets (std::string const &filename)
 
 // -----------------------------------------------------------------------------
 
+int test_beamformed (std::string const &infile)
+{
+  cout << "\n[tdalCommon::test_beamformed]\n" << std::endl;
+
+  int nofFailedTests (0);
+
+  hid_t file_id (-1);
+  hid_t group_id (-1);
+  hid_t dataset_id (-1);
+  
+  //__________________________________________________________________
+  // Open the HDF5 dataset
+  
+  cout << "-- opening HDF5 file " << infile << " ..." << std::endl;
+  file_id = H5Fopen (infile.c_str(),
+		     H5F_ACC_RDWR,
+		     H5P_DEFAULT);
+
+  if (file_id < 0) {
+    cerr << "Failed to open file " << infile << std::endl;
+    return 1;
+  }
+  
+  //__________________________________________________________________
+  // Access the attributes attached to the root group of the file
+
+  cout << "-- Access the attributes attached to the root group of the file" 
+	    << std::endl;
+  try {
+    std::string name;
+    std::string filename;
+    std::string telescope;
+    int nofStations;
+    //
+    DAL::h5get_name (name,file_id);
+//     DAL::h5get_attribute (file_id,"FILENAME",filename);
+//     DAL::h5get_attribute (file_id,"TELESCOPE",telescope);
+    DAL::h5get_attribute (file_id,"NUMBER_OF_STATIONS",nofStations);
+    //
+    cout << "-- FILENAME ......... = " << filename     << endl;
+    cout << "-- TELESCOPE ........ = " << telescope    << endl;
+    cout << "-- NUMBER_OF_STATIONS = " << nofStations  << endl;
+  } catch (std::string message) {
+    cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  return nofFailedTests;
+}
+
+// -----------------------------------------------------------------------------
+
 int main (int argc,
 	  char *argv[])
 {
   int nofFailedTests (0);
-  std::string filename;
+  std::string data_timeseries;
+  std::string data_beamformed;
   bool have_filename (false);
 
   /* Check for command-line parameters */
-  if (argc > 1) {
-    filename      = argv[1];
-    have_filename = true;
+  if (argc > 2) {
+    data_timeseries = argv[1];
+    data_beamformed = argv[2];
+    have_filename   = true;
   }
   
   nofFailedTests += test_casacore_variables ();
@@ -918,7 +972,8 @@ int main (int argc,
   nofFailedTests += test_hdf5_attributes ();
 
   if (have_filename) {
-    test_datasets (filename);
+    test_timeseries (data_timeseries);
+    test_beamformed (data_beamformed);
   }
 
   return nofFailedTests;

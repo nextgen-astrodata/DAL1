@@ -211,10 +211,10 @@ namespace DAL {
   */
   void TBB::summary (std::ostream &os)
   {
-    os << "[TBB] Summary of object properties"         << endl;
-    os << "-- Last sequence number : " << seqnrLast_p  << endl;
-    os << "-- System is big endian : " << bigendian_p  << endl;
-    os << "-- Sample time ........ : " << sampleTime_p << endl;
+    os << "[TBB] Summary of object properties"              << endl;
+    os << "-- Last sequence number : " << seqnrLast_p       << endl;
+    os << "-- System is big endian : " << bigendian_p       << endl;
+    os << "-- Sample time ........ : " << sampleTime_p      << endl;
     os << "-- Attributes attached to file root group:"      << endl;
     os << "   -- TELESCOPE        = " << telescope()        << endl;
     os << "   -- OBSERVER         = " << observer()         << endl;

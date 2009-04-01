@@ -29,6 +29,7 @@
 #include <string>
 #include <sstream>
 #include <assert.h>
+#include <vector>
 
 using std::cout;
 using std::endl;

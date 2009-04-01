@@ -635,7 +635,6 @@ namespace DAL {
   // ---------------------------------------------------------- center_freq
 
   /*!
-    \brief Get the center frequency
     \return center frequency
   */
   int BeamFormed::center_freq ()
@@ -717,7 +716,6 @@ namespace DAL {
   // ---------------------------------------------------------- dispersion_measure
 
   /*!
-    \brief Get the dispersion measure
     \return dispersion measure
   */
   int BeamFormed::dispersion_measure ()

@@ -179,10 +179,12 @@ namespace DAL {
     std::string epoch_lst();
     //! Get the diameter of the main beam
     int main_beam_diam();
+    //! Get the center frequency
     int center_freq();
     int bandwidth();
     double total_integration_time();
     int breaks();
+    //! Get the dispersion measure
     int dispersion_measure();
     int number_of_samples();
     double sampling_time();
