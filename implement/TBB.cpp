@@ -327,8 +327,9 @@ namespace DAL {
     timeVal.tv_sec =   3;
     timeVal.tv_usec =  0;
 
+    int status;
     // waits for up to N seconds for data appearing in the socket
-    if ( select( main_socket + 1, &readSet, NULL, NULL, &timeVal ) )
+    if ( (status = select( main_socket + 1, &readSet, NULL, NULL, &timeVal) ) )
       {
         rr = recvfrom( main_socket, buf, nbytes, 0,
                        (sockaddr *) &incoming_addr, &socklen);
@@ -632,20 +633,44 @@ namespace DAL {
   bool TBB::processTransientSocketDataBlock()
   {
     short sdata[ header.n_samples_per_frame];
-    for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
-      {
+//     for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
+//       {
 
-        status = readsocket( sizeof(tran_sample),
-                             reinterpret_cast<char *>(&tran_sample) );
-        if (FAIL == status)
-          return false;
+//         status = readsocket( sizeof(tran_sample),
+//                              reinterpret_cast<char *>(&tran_sample) );
+//         if (FAIL == status) {
+//           cout << "read in processTransientSocketDataBlock failed! At sample: " << zz 
+// 	       << " out of:" << header.n_samples_per_frame << endl;
+//           return false;
+//          };
 
-        if ( bigendian_p )  // reverse fields if big endian
-          swapbytes( (char *)&tran_sample.value, 2 );
+//         if ( bigendian_p )  // reverse fields if big endian
+//           swapbytes( (char *)&tran_sample.value, 2 );
 
-        sdata[zz] = tran_sample.value;
-      }
+//         sdata[zz] = tran_sample.value;
+//       }
     
+    status = readsocket( (header.n_samples_per_frame*sizeof(sdata[0])),
+			 reinterpret_cast<char *>(sdata) );
+    if (FAIL == status) 
+      {
+	cout << "read in processTransientSocketDataBlock failed!" << endl;
+      };
+#ifdef DEBUGGING_MESSAGES    
+    if (rr != (header.n_samples_per_frame*sizeof(sdata[0]))) 
+      {
+	cout << "read in processTransientSocketDataBlock failed!" << endl;      
+      };
+#endif
+    if ( bigendian_p ) 
+      {
+	for ( short zz=0; zz < header.n_samples_per_frame; zz++ ) 
+	  {
+	    swapbytes( (char *)&(sdata[zz]), 2 );
+	  };
+      };
+
+
     //calculate the writeOffset from time of first block and this block
     uint starttime, startsamplenum;
     dipoleArray_p->getAttribute( attribute_name(TIME), starttime );
@@ -666,7 +691,7 @@ namespace DAL {
 	  };
 	dipoleArray_p->write(writeOffset, sdata, header.n_samples_per_frame );
 	offset_p = dims[0];
-	//#ifdef DEBUGGING_MESSAGES
+#ifdef DEBUGGING_MESSAGES
       }
     else
       {
@@ -675,7 +700,7 @@ namespace DAL {
 	std::cout << "  start-time:"<< starttime << " sample:" << startsamplenum 
 		  << " time:" << header.time << " sample:" << header.sample_nr <<endl;
 	std::cout << "  writeOffset:" << writeOffset << endl;     
-	//#endif    
+#endif    
       };
     
     status = readsocket( sizeof(payload_crc),
