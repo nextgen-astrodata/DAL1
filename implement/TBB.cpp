@@ -95,6 +95,7 @@ namespace DAL {
       observer_p (observer),
       project_p (project)
   {
+    headerp_p = &header;
   }
   
 
@@ -143,6 +144,7 @@ namespace DAL {
 
     /* Initialization of structs */
 
+    headerp_p = &header;
     init_TBB_Header ();
   }
   
@@ -150,18 +152,18 @@ namespace DAL {
   
   void TBB::init_TBB_Header ()
   {
-    header.stationid           = 0;
-    header.rspid               = 0;
-    header.rcuid               = 0;
-    header.sample_freq         = 0;
-    header.seqnr               = 0;
-    header.time                = 0;
-    header.sample_nr           = 0;
-    header.n_samples_per_frame = 0;
-    header.n_freq_bands        = 0;
-    header.spare               = 0;
-    header.crc                 = 0;
-    memset(header.bandsel,0,64);
+    headerp_p->stationid           = 0;
+    headerp_p->rspid               = 0;
+    headerp_p->rcuid               = 0;
+    headerp_p->sample_freq         = 0;
+    headerp_p->seqnr               = 0;
+    headerp_p->time                = 0;
+    headerp_p->sample_nr           = 0;
+    headerp_p->n_samples_per_frame = 0;
+    headerp_p->n_freq_bands        = 0;
+    headerp_p->spare               = 0;
+    headerp_p->crc                 = 0;
+    memset(headerp_p->bandsel,0,64);
   }
   
   // ============================================================================
@@ -354,18 +356,29 @@ namespace DAL {
 
   bool TBB::readRawSocketBlockHeader()
   {
-    status = readsocket( sizeof(header), reinterpret_cast<char *>(&header) );
+
+    // read the full UDP-datagramm, as otherwithe the remainder may be flushed by the OS
+    status = readsocket( UDP_BUFFER_SIZE, udpBuff_p );
     if (FAIL == status) {
       return false;
     }
+#ifdef DEBUGGING_MESSAGES
+    cout << "readRawSocketBlockHeader: Frame with " << rr << " bytes." << endl;
+    if (rr == UDP_BUFFER_SIZE) 
+      {
+	cout << "readRawSocketBlockHeader: Oversized packet received." << endl;
+      };
+#endif
+    // set the headerpointer to the just read data
+    headerp_p = (TBB_Header*)udpBuff_p;
     
     // reverse fields if big endian
     if ( bigendian_p )
       {
-        swapbytes( (char *)&header.seqnr, 4 );
-        swapbytes( (char *)&header.sample_nr, 4 );
-        swapbytes( (char *)&header.n_samples_per_frame, 8);
-        swapbytes( (char *)&header.n_freq_bands, 2 );
+        swapbytes( (char *)&(headerp_p->seqnr), 4 );
+        swapbytes( (char *)&(headerp_p->sample_nr), 4 );
+	swapbytes( (char *)&(headerp_p->n_samples_per_frame), 8);
+	swapbytes( (char *)&(headerp_p->n_freq_bands), 2 );
       }
 
     // Convert the time (seconds since 1 Jan 1970) to a human-readable string
@@ -378,7 +391,7 @@ namespace DAL {
     //   -- TBB Design Description document, Wietse Poiesz (2006-10-3)
     //      Doc..id: LOFAR-ASTRON-SDD-047
     sampleTime_p =
-      (time_t)( header.time + header.sample_nr/(header.sample_freq*1000000) );
+      (time_t)( headerp_p->time + headerp_p->sample_nr/(headerp_p->sample_freq*1000000) );
     char *time_string=ctime(&sampleTime_p);
     time_string[strlen(time_string)-1]=0;   // remove \n
 
@@ -390,13 +403,13 @@ namespace DAL {
 // This is hopefully not needed anymore
 //     if ( !first_sample )
 //       {
-//         if ( ( seqnrLast_p > header.seqnr ) || ( seqnrLast_p+1 != header.seqnr ) )
+//         if ( ( seqnrLast_p > headerp_p->seqnr ) || ( seqnrLast_p+1 != headerp_p->seqnr ) )
 //           {
 //             printf("WARNING: Frame missing or out of order\n");
 //             return false;
 //           }
 //       }
-//     seqnrLast_p = header.seqnr;
+//     seqnrLast_p = headerp_p->seqnr;
 
     return true;
   }
@@ -419,21 +432,23 @@ namespace DAL {
   void TBB::readRawFileBlockHeader()
   {
     rawfile->read(reinterpret_cast<char *>(&header), sizeof(header));
+    // set the headerpointer to the just read data
+    headerp_p = &header;
 
     // reverse fields if big endian
     if ( bigendian_p )
       {
-        swapbytes( (char *)&header.seqnr, 4 );
-        swapbytes( (char *)&header.sample_nr, 4 );
-        swapbytes( (char *)&header.n_samples_per_frame, 8);
-        swapbytes( (char *)&header.n_freq_bands, 2 );
+        swapbytes( (char *)&(headerp_p->seqnr), 4 );
+	swapbytes( (char *)&(headerp_p->sample_nr), 4 );
+	swapbytes( (char *)&(headerp_p->n_samples_per_frame), 8);
+	swapbytes( (char *)&(headerp_p->n_freq_bands), 2 );
       }
 
     /*
      * Convert the time (seconds since 1 Jan 1970) to a human-readable string
      */
     sampleTime_p =
-      (time_t)( header.time + header.sample_nr/(header.sample_freq*1000000) );
+      (time_t)( headerp_p->time + headerp_p->sample_nr/(headerp_p->sample_freq*1000000) );
     char *time_string=ctime(&sampleTime_p);
     time_string[strlen(time_string)-1]=0;   // remove \n
 
@@ -460,17 +475,17 @@ namespace DAL {
   
   void TBB::printRawHeader()
   {
-    printf("Station ID         : %d\n",header.stationid);
-    printf("RSP ID             : %d\n",header.rspid);
-    printf("RCU ID             : %d\n",header.rcuid);
-    printf("Sample Freqency    : %d MHz\n",header.sample_freq);
-    printf("Sequence Number    : %d\n",header.seqnr);
-    printf("Sample Number      : %d\n",header.sample_nr);
-    printf("Samples Per Frame  : %d\n",header.n_samples_per_frame);
-    printf("Num. of Freq. Bands: %d\n",header.n_freq_bands);
+    printf("Station ID         : %d\n",headerp_p->stationid);
+    printf("RSP ID             : %d\n",headerp_p->rspid);
+    printf("RCU ID             : %d\n",headerp_p->rcuid);
+    printf("Sample Freqency    : %d MHz\n",headerp_p->sample_freq);
+    printf("Sequence Number    : %d\n",headerp_p->seqnr);
+    printf("Sample Number      : %d\n",headerp_p->sample_nr);
+    printf("Samples Per Frame  : %d\n",headerp_p->n_samples_per_frame);
+    printf("Num. of Freq. Bands: %d\n",headerp_p->n_freq_bands);
     printf("Bands present : ");
     for (int idx=0; idx<64; idx++)
-      printf("%X,", header.bandsel[idx]);
+      printf("%X,", headerp_p->bandsel[idx]);
     printf("\n");
   }
   
@@ -481,9 +496,9 @@ namespace DAL {
   {
     char stationstr[10];
     memset(stationstr,'\0',10);
-    sprintf( stationstr, "Station%03d", header.stationid );
+    sprintf( stationstr, "Station%03d", headerp_p->stationid );
     sprintf(uid, "%03d%03d%03d",
-	    header.stationid, header.rspid, header.rcuid);
+	    headerp_p->stationid, headerp_p->rspid, headerp_p->rcuid);
     
     /* Use std::string for the name of the station group */
     std::string channelID (uid);
@@ -494,7 +509,7 @@ namespace DAL {
         stationGroup_p = dataset->openGroup( stationstr );
         dipoles = stationGroup_p->getMemberNames();
         sprintf(uid, "%03d%03d%03d",
-                header.stationid, header.rspid, header.rcuid);
+                headerp_p->stationid, headerp_p->rspid, headerp_p->rcuid);
 
         // does the dipole exist?
         if ( it_exists( dipoles, stringify(uid) ) )
@@ -507,7 +522,7 @@ namespace DAL {
         else
           {
             sprintf(uid, "%03d%03d%03d",
-                    header.stationid, header.rspid, header.rcuid);
+                    headerp_p->stationid, headerp_p->rspid, headerp_p->rcuid);
           }
       }
     else
@@ -516,7 +531,7 @@ namespace DAL {
         stationGroup_p = dataset->createGroup( stationstr );
 	/* Generate channel ID for the individual dipole */
         sprintf(uid, "%03d%03d%03d",
-                header.stationid, header.rspid, header.rcuid);
+                headerp_p->stationid, headerp_p->rspid, headerp_p->rcuid);
         first_sample = true;
 	/* Feedback */
 	std::cout << "CREATED New station group: " << stationstr << std::endl;
@@ -530,7 +545,7 @@ namespace DAL {
     vector<int> firstdims;
     firstdims.push_back( 0 );
 
-    if ( 0 == header.n_freq_bands )
+    if ( 0 == headerp_p->n_freq_bands )
       {
         short nodata[0];
         dipoleArray_p = stationGroup_p->createShortArray( string(uid),
@@ -581,13 +596,13 @@ namespace DAL {
     stationGroup_p->setAttribute( attribute_name(TRIGGERED_ANTENNAS),
 				  triggered_antennas);
     
-    unsigned int sid = header.stationid;
-    unsigned int rsp = header.rspid;
-    unsigned int rcu = header.rcuid;
-    double sf = header.sample_freq;
-    unsigned int time                    = header.time;
-    unsigned int samp_num                = header.sample_nr;
-    unsigned int samples_per_frame       = header.n_samples_per_frame;
+    unsigned int sid = headerp_p->stationid;
+    unsigned int rsp = headerp_p->rspid;
+    unsigned int rcu = headerp_p->rcuid;
+    double sf = headerp_p->sample_freq;
+    unsigned int time                    = headerp_p->time;
+    unsigned int samp_num                = headerp_p->sample_nr;
+    unsigned int samples_per_frame       = headerp_p->n_samples_per_frame;
     unsigned int nyquist_zone            = 1;
     double antenna_position_value[3]     = { 0, 0, 0 };
     std::string antenna_position_unit[3] = { "m", "m", "m" };
@@ -622,7 +637,7 @@ namespace DAL {
 
   bool TBB::transientMode()
   {
-    if ( 0==header.n_freq_bands )
+    if ( 0==headerp_p->n_freq_bands )
       return true;   // transient mode
     else
       return false;  // spectral mode
@@ -632,81 +647,64 @@ namespace DAL {
   
   bool TBB::processTransientSocketDataBlock()
   {
-    short sdata[ header.n_samples_per_frame];
-//     for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
-//       {
-
-//         status = readsocket( sizeof(tran_sample),
-//                              reinterpret_cast<char *>(&tran_sample) );
-//         if (FAIL == status) {
-//           cout << "read in processTransientSocketDataBlock failed! At sample: " << zz 
-// 	       << " out of:" << header.n_samples_per_frame << endl;
-//           return false;
-//          };
-
-//         if ( bigendian_p )  // reverse fields if big endian
-//           swapbytes( (char *)&tran_sample.value, 2 );
-
-//         sdata[zz] = tran_sample.value;
-//       }
+    short * sdata;
     
-    status = readsocket( (header.n_samples_per_frame*sizeof(sdata[0])),
-			 reinterpret_cast<char *>(sdata) );
-    if (FAIL == status) 
+    //set sdata to the (hopefully correct) position in the udp-buffer
+    sdata = (short *)(udpBuff_p[sizeof(TBB_Header)]);
+    if (rr < (int)(headerp_p->n_samples_per_frame*sizeof(short)+sizeof(TBB_Header)) )
       {
-	cout << "read in processTransientSocketDataBlock failed!" << endl;
+	cerr << "processTransientSocketDataBlock: Too few data read in! Aborting." << endl;
+	return FAIL;
       };
-#ifdef DEBUGGING_MESSAGES    
-    if (rr != (header.n_samples_per_frame*sizeof(sdata[0]))) 
-      {
-	cout << "read in processTransientSocketDataBlock failed!" << endl;      
-      };
-#endif
+    
     if ( bigendian_p ) 
       {
-	for ( short zz=0; zz < header.n_samples_per_frame; zz++ ) 
+	for ( short zz=0; zz < headerp_p->n_samples_per_frame; zz++ ) 
 	  {
 	    swapbytes( (char *)&(sdata[zz]), 2 );
 	  };
       };
-
-
+    
+    
     //calculate the writeOffset from time of first block and this block
     uint starttime, startsamplenum;
     dipoleArray_p->getAttribute( attribute_name(TIME), starttime );
     dipoleArray_p->getAttribute( attribute_name(SAMPLE_NUMBER), startsamplenum );
-    int writeOffset= (header.time-starttime)*header.sample_freq*1000000 + 
-      (header.sample_nr-startsamplenum);
-    std::cout << header.seqnr << " starttime:"<< starttime << " startsamplenum:" << startsamplenum 
+    int writeOffset= (headerp_p->time-starttime)*headerp_p->sample_freq*1000000 + 
+      (headerp_p->sample_nr-startsamplenum);
+#ifdef DEBUGGING_MESSAGES
+    uint sid, rsp, rcu;
+    dipoleArray_p->getAttribute( attribute_name(STATION_ID), sid );
+    dipoleArray_p->getAttribute( attribute_name(RSP_ID), rsp );
+    dipoleArray_p->getAttribute( attribute_name(RCU_ID), rcu );
+    std::cout << "Station: " << sid << " RSP: " << rsp << " RCU: " << rcu 
+	      << " Sequence-Nr: " << headerp_p->seqnr << endl;
+    std::cout << " starttime:"<< starttime << " startsamplenum:" << startsamplenum 
 	      << " writeOffset:" << writeOffset << endl; 
+#endif
     //only write data if this block comes after the first block
     // (don't extend the array to the front)
     if (writeOffset >= 0)
       {
 	//extend array if neccessary.
-	if ((writeOffset+ header.n_samples_per_frame)> dims[0])
+	if ((writeOffset+ headerp_p->n_samples_per_frame)> dims[0])
 	  {  
-	    dims[0] = writeOffset+ header.n_samples_per_frame;
+	    dims[0] = writeOffset+ headerp_p->n_samples_per_frame;
 	    dipoleArray_p->extend(dims);
 	  };
-	dipoleArray_p->write(writeOffset, sdata, header.n_samples_per_frame );
+	dipoleArray_p->write(writeOffset, sdata, headerp_p->n_samples_per_frame );
 	offset_p = dims[0];
 #ifdef DEBUGGING_MESSAGES
       }
     else
       {
-	std::cout << "Block seq-nr: " << header.seqnr << " has negative write offset." 
+	std::cout << "Block seq-nr: " << headerp_p->seqnr << " has negative write offset." 
 		  << " Block discarded!" << endl;
-	std::cout << "  start-time:"<< starttime << " sample:" << startsamplenum 
-		  << " time:" << header.time << " sample:" << header.sample_nr <<endl;
-	std::cout << "  writeOffset:" << writeOffset << endl;     
 #endif    
       };
     
-    status = readsocket( sizeof(payload_crc),
-                         reinterpret_cast<char *>(&payload_crc) );
-    if (FAIL == status)
-      return false;
+    UInt32 *payloadp = (UInt32 *)(udpBuff_p[headerp_p->n_samples_per_frame*sizeof(short)+sizeof(TBB_Header)]);
+    payload_crc = *payloadp;
     
     return true;
   }
@@ -715,9 +713,9 @@ namespace DAL {
 
   void TBB::processTransientFileDataBlock()
   {
-    short sdata[ header.n_samples_per_frame];
+    short sdata[ headerp_p->n_samples_per_frame];
 
-    for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
+    for ( short zz=0; zz < headerp_p->n_samples_per_frame; zz++ )
       {
         rawfile->read( reinterpret_cast<char *>(&tran_sample),
                        sizeof(tran_sample) );
@@ -732,30 +730,37 @@ namespace DAL {
     uint starttime, startsamplenum;
     dipoleArray_p->getAttribute( attribute_name(TIME), starttime );
     dipoleArray_p->getAttribute( attribute_name(SAMPLE_NUMBER), startsamplenum );
-    int writeOffset= (header.time-starttime)*header.sample_freq*1000000 + 
-      (header.sample_nr-startsamplenum);
+    int writeOffset= (headerp_p->time-starttime)*headerp_p->sample_freq*1000000 + 
+      (headerp_p->sample_nr-startsamplenum);
+#ifdef DEBUGGING_MESSAGES
+    uint sid, rsp, rcu;
+    dipoleArray_p->getAttribute( attribute_name(STATION_ID), sid );
+    dipoleArray_p->getAttribute( attribute_name(RSP_ID), rsp );
+    dipoleArray_p->getAttribute( attribute_name(RCU_ID), rcu );
+    std::cout << "Station: " << sid << " RSP: " << rsp << " RCU: " << rcu 
+	      << " Sequence-Nr: " << headerp_p->seqnr << endl;
+    std::cout << " starttime:"<< starttime << " startsamplenum:" << startsamplenum 
+	      << " writeOffset:" << writeOffset << endl; 
+#endif
 
     //only write data if this block comes after the first block
     // (don't extend the array to the front)
     if (writeOffset >= 0)
       {
 	//extend array if neccessary.
-	if ((writeOffset+ header.n_samples_per_frame)> dims[0]) 
+	if ((writeOffset+ headerp_p->n_samples_per_frame)> dims[0]) 
 	  {
-	    dims[0] = writeOffset+ header.n_samples_per_frame;
+	    dims[0] = writeOffset+ headerp_p->n_samples_per_frame;
 	    dipoleArray_p->extend(dims);
 	  };
-	dipoleArray_p->write(writeOffset, sdata, header.n_samples_per_frame );
+	dipoleArray_p->write(writeOffset, sdata, headerp_p->n_samples_per_frame );
 	offset_p = dims[0];
 #ifdef DEBUGGING_MESSAGES
       }
     else
       {
-	std::cout << "Block seq-nr: " << header.seqnr << " has negative write offset." 
+	std::cout << "Block seq-nr: " << headerp_p->seqnr << " has negative write offset." 
 		  << " Block discarded!" << endl;
-	std::cout << "  start-time:"<< starttime << " sample:" << startsamplenum 
-		  << " time:" << header.time << " sample:" << header.sample_nr <<endl;
-	std::cout << "  writeOffset:" << writeOffset << endl;     
 #endif    
       };
     rawfile->read( reinterpret_cast<char *>(&payload_crc),
@@ -767,9 +772,9 @@ namespace DAL {
 
   void TBB::processSpectralFileDataBlock()
   {
-    complex<Int16> csdata[ header.n_samples_per_frame];
+    complex<Int16> csdata[ headerp_p->n_samples_per_frame];
 
-    for ( short zz=0; zz < header.n_samples_per_frame; zz++ )
+    for ( short zz=0; zz < headerp_p->n_samples_per_frame; zz++ )
       {
         rawfile->read( reinterpret_cast<char *>(&spec_sample),
                        sizeof(spec_sample) );
@@ -786,10 +791,10 @@ namespace DAL {
         csdata[zz] = complex<Int16>( real_part, imag_part );
       }
 
-    dims[0] += header.n_samples_per_frame;
+    dims[0] += headerp_p->n_samples_per_frame;
     dipoleArray_p->extend(dims);
-    dipoleArray_p->write(offset_p, csdata, header.n_samples_per_frame );
-    offset_p += header.n_samples_per_frame;
+    dipoleArray_p->write(offset_p, csdata, headerp_p->n_samples_per_frame );
+    offset_p += headerp_p->n_samples_per_frame;
 
     rawfile->read( reinterpret_cast<char *>(&payload_crc),
                    sizeof(payload_crc) );

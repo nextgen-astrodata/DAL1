@@ -47,6 +47,9 @@
 #define FIRST_EXTRA_HDR_LENGTH = 40;
 #define EXTRA_HDR_LENGTH = 16;
 
+//!size of the buffer for the UDP-datagram
+#define UDP_BUFFER_SIZE 2500
+
 namespace DAL {
   
   /*!
@@ -144,7 +147,12 @@ namespace DAL {
     std::vector<dalGroup> station;
     fd_set readSet;
     struct timeval timeVal;
+    //!buffer for the UDP-datagram
+    char udpBuff_p[UDP_BUFFER_SIZE];
+    //!header of the TBB-frame 
     TBB_Header header;
+    //!header of the TBB-frame 
+    TBB_Header *headerp_p;
     int rr;
     int main_socket;
     struct sockaddr_in incoming_addr;
