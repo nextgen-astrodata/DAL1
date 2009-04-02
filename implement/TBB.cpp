@@ -127,7 +127,7 @@ namespace DAL {
     dims.push_back(0);
     offset_p   = 0;
     cdims.push_back(CHUNK_SIZE);
-    stationstr = NULL;
+    //stationstr = NULL;
     memset(uid,'-',10);
     payload_crc       = 0;
     tran_sample.value = 0;
@@ -376,8 +376,9 @@ namespace DAL {
     if ( bigendian_p )
       {
         swapbytes( (char *)&(headerp_p->seqnr), 4 );
-        swapbytes( (char *)&(headerp_p->sample_nr), 4 );
-	swapbytes( (char *)&(headerp_p->n_samples_per_frame), 8);
+        swapbytes( (char *)&(headerp_p->time), 4 );
+	swapbytes( (char *)&(headerp_p->sample_nr), 4 );
+	swapbytes( (char *)&(headerp_p->n_samples_per_frame), 2);
 	swapbytes( (char *)&(headerp_p->n_freq_bands), 2 );
       }
 
@@ -399,17 +400,6 @@ namespace DAL {
     printf("Time:              : %s\n",time_string );
     printRawHeader();
 #endif
-
-// This is hopefully not needed anymore
-//     if ( !first_sample )
-//       {
-//         if ( ( seqnrLast_p > headerp_p->seqnr ) || ( seqnrLast_p+1 != headerp_p->seqnr ) )
-//           {
-//             printf("WARNING: Frame missing or out of order\n");
-//             return false;
-//           }
-//       }
-//     seqnrLast_p = headerp_p->seqnr;
 
     return true;
   }
@@ -439,8 +429,9 @@ namespace DAL {
     if ( bigendian_p )
       {
         swapbytes( (char *)&(headerp_p->seqnr), 4 );
+        swapbytes( (char *)&(headerp_p->time), 4 );
 	swapbytes( (char *)&(headerp_p->sample_nr), 4 );
-	swapbytes( (char *)&(headerp_p->n_samples_per_frame), 8);
+	swapbytes( (char *)&(headerp_p->n_samples_per_frame), 2);
 	swapbytes( (char *)&(headerp_p->n_freq_bands), 2 );
       }
 
@@ -493,79 +484,50 @@ namespace DAL {
   // Check if the group for a given station exists within the HDF5 file
   
   void TBB::stationCheck()
-  {
+  {   
     char stationstr[10];
+    char dipolestr[10];
     memset(stationstr,'\0',10);
     sprintf( stationstr, "Station%03d", headerp_p->stationid );
-    sprintf(uid, "%03d%03d%03d",
-	    headerp_p->stationid, headerp_p->rspid, headerp_p->rcuid);
+    sprintf( dipolestr, "%03d%03d%03d", headerp_p->stationid, headerp_p->rspid, headerp_p->rcuid);
+    first_sample = false;
     
     /* Use std::string for the name of the station group */
-    std::string channelID (uid);
+    std::string channelID (dipolestr);
     
+    first_sample = false;
     // does the station exist?
-    if ( it_exists( stations, stringify(stationstr) ) )
-      {
-        stationGroup_p = dataset->openGroup( stationstr );
-        dipoles = stationGroup_p->getMemberNames();
-        sprintf(uid, "%03d%03d%03d",
-                headerp_p->stationid, headerp_p->rspid, headerp_p->rcuid);
-
-        // does the dipole exist?
-        if ( it_exists( dipoles, stringify(uid) ) )
-          {
-            dipoleArray_p  = dataset->openArray( uid, stationGroup_p->getName() );
-            dims         = dipoleArray_p->dims();
-            offset_p     = dims[0];
-            first_sample = false;
-          }
-        else
-          {
-            sprintf(uid, "%03d%03d%03d",
-                    headerp_p->stationid, headerp_p->rspid, headerp_p->rcuid);
-          }
-      }
-    else
-      {
-        stations.push_back( stationstr );
-        stationGroup_p = dataset->createGroup( stationstr );
-	/* Generate channel ID for the individual dipole */
-        sprintf(uid, "%03d%03d%03d",
-                headerp_p->stationid, headerp_p->rspid, headerp_p->rcuid);
-        first_sample = true;
-	/* Feedback */
-	std::cout << "CREATED New station group: " << stationstr << std::endl;
-      }
+    if ( !it_exists( stations, stringify(stationstr)) ) {
+      //Station unknown, make new station group, which also makes a new dipole.
+      makeNewStation(stationstr, headerp_p);
+      stationGroup_p = dataset->openGroup( stationstr );
+      dipoles = stationGroup_p->getMemberNames();
+    } else {
+      stationGroup_p = dataset->openGroup( stationstr );
+      dipoles = stationGroup_p->getMemberNames();      
+      // does the dipole exist?
+      if ( !it_exists( dipoles, stringify(dipolestr)) )	{
+	//Need to generate a new dipole structure
+	makeNewDipole(dipolestr, stationGroup_p, headerp_p);
+      };
+    };
+    dipoleArray_p = dataset->openArray( dipolestr, stationGroup_p->getName() );
+    dims          = dipoleArray_p->dims();
+    offset_p      = dims[0];
   }
 
-  // ----------------------------------------------------------- makeOutputHeader
+  // ---------------------------------------------------------- makeStationHeader
 
-  void TBB::makeOutputHeader()
+  void TBB::makeOutputHeader(){
+    //this function has become 
+  };
+
+  // ------------------------------------------------------------- makeNewStation
+
+  void TBB::makeNewStation(char * newStationstr, TBB_Header * headerPtr)
   {
-    vector<int> firstdims;
-    firstdims.push_back( 0 );
-
-    if ( 0 == headerp_p->n_freq_bands )
-      {
-        short nodata[0];
-        dipoleArray_p = stationGroup_p->createShortArray( string(uid),
-                      firstdims,
-                      nodata,
-                      cdims );
-        stationGroup_p->setAttribute( attribute_name(OBSERVATION_MODE),
-                                    std::string("Transient") );
-      }
-    else
-      {
-        complex<Int16> nodata[0];
-        dipoleArray_p =
-          stationGroup_p->createComplexShortArray( string(uid),
-                                                 firstdims,
-                                                 nodata,
-                                                 cdims );
-        stationGroup_p->setAttribute( attribute_name(OBSERVATION_MODE),
-                                    std::string("Sub-band") );
-      }
+    stations.push_back( newStationstr );
+    stationGroup_p = dataset->createGroup( newStationstr );
 
     double trigger_offset[1]             = { 0 };
     int triggered_antennas[1]            = { 0 };
@@ -595,14 +557,58 @@ namespace DAL {
 				  trigger_offset );
     stationGroup_p->setAttribute( attribute_name(TRIGGERED_ANTENNAS),
 				  triggered_antennas);
+    if ( 0 == headerPtr->n_freq_bands ) {
+      stationGroup_p->setAttribute( attribute_name(OBSERVATION_MODE),
+				     std::string("Transient") );
+    } else {
+      stationGroup_p->setAttribute( attribute_name(OBSERVATION_MODE),
+				     std::string("Sub-band") );
+    };
+
+
+    //As there is a new Station, then there is also a new dipole!
+    /* Generate channel ID for the individual dipole */
+    sprintf(uid, "%03d%03d%03d",
+	    headerPtr->stationid, headerPtr->rspid, headerPtr->rcuid);
+    makeNewDipole(uid, stationGroup_p, headerPtr);
+    /* Feedback */
+    std::cout << "CREATED New station group: " << newStationstr << std::endl;
+
+  };
+
+  // ------------------------------------------------------------ makeNewDipole
+
+  void TBB::makeNewDipole(string newuid, dalGroup * stationGroupPtr, TBB_Header * headerPtr)
+  {
+    vector<int> firstdims;
+    firstdims.push_back( 0 );
     
-    unsigned int sid = headerp_p->stationid;
-    unsigned int rsp = headerp_p->rspid;
-    unsigned int rcu = headerp_p->rcuid;
-    double sf = headerp_p->sample_freq;
-    unsigned int time                    = headerp_p->time;
-    unsigned int samp_num                = headerp_p->sample_nr;
-    unsigned int samples_per_frame       = headerp_p->n_samples_per_frame;
+    if ( 0 == headerPtr->n_freq_bands )
+      {
+        short nodata[0];
+        dipoleArray_p = stationGroupPtr->createShortArray( newuid,
+							   firstdims,
+							   nodata,
+							   cdims );
+      }
+    else
+      {
+        complex<Int16> nodata[0];
+        dipoleArray_p = stationGroupPtr->createComplexShortArray( newuid,
+								  firstdims,
+								  nodata,
+								  cdims );
+        stationGroupPtr->setAttribute( attribute_name(OBSERVATION_MODE),
+				       std::string("Sub-band") );
+      }
+    
+    unsigned int sid = headerPtr->stationid;
+    unsigned int rsp = headerPtr->rspid;
+    unsigned int rcu = headerPtr->rcuid;
+    double sf = headerPtr->sample_freq;
+    unsigned int time                    = headerPtr->time;
+    unsigned int samp_num                = headerPtr->sample_nr;
+    unsigned int samples_per_frame       = headerPtr->n_samples_per_frame;
     unsigned int nyquist_zone            = 1;
     double antenna_position_value[3]     = { 0, 0, 0 };
     std::string antenna_position_unit[3] = { "m", "m", "m" };
@@ -631,7 +637,12 @@ namespace DAL {
     dipoleArray_p->setAttribute( attribute_name(SAMPLE_FREQUENCY_VALUE), &sf, 1 );
     dipoleArray_p->setAttribute( attribute_name(SAMPLE_FREQUENCY_UNIT),
 				 std::string("MHz") );
-  }
+#ifdef DEBUGGING_MESSAGES
+    /* Feedback */
+    std::cout << "CREATED New dipole group: " << newuid << std::endl;
+#endif
+
+  };
   
   // -------------------------------------------------------------- transientMode
 
@@ -760,6 +771,8 @@ cout << "data written" << endl;
 	    dims[0] = writeOffset+ headerp_p->n_samples_per_frame;
 	    dipoleArray_p->extend(dims);
 	  };
+	dipoleArray_p->write(writeOffset, sdata, 1 );
+	cout << "second try for write. " << endl;
 	dipoleArray_p->write(writeOffset, sdata, headerp_p->n_samples_per_frame );
 	offset_p = dims[0];
 #ifdef DEBUGGING_MESSAGES

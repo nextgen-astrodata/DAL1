@@ -47,8 +47,9 @@
 #define FIRST_EXTRA_HDR_LENGTH = 40;
 #define EXTRA_HDR_LENGTH = 16;
 
-//!size of the buffer for the UDP-datagram
-#define UDP_BUFFER_SIZE 2500
+//!size of the buffer for the UDP-datagram 
+// 1 byte larger than the frame size (subband-frames are smaller)
+#define UDP_BUFFER_SIZE 2141
 
 namespace DAL {
   
@@ -166,7 +167,7 @@ namespace DAL {
     int offset_p;
     vector<int> cdims;
     //! Name of the HDF5 group storing data for a station
-    char * stationstr;
+    //char * stationstr;
     //! Unique identifier for an individual dipole
     char uid[10];
     int readsocket( unsigned int nbytes, char* buf );
@@ -247,6 +248,8 @@ namespace DAL {
     //! Check if the group for a given station exists within the HDF5 file
     void stationCheck();
     void makeOutputHeader();
+    void makeNewStation(char *, TBB_Header *);
+    void makeNewDipole(string, dalGroup *, TBB_Header *);
     bool transientMode();
     bool processTransientSocketDataBlock();
     bool processSpectralSocketDataBlock();
