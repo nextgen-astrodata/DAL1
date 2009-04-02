@@ -650,7 +650,8 @@ namespace DAL {
     short * sdata;
     
     //set sdata to the (hopefully correct) position in the udp-buffer
-    sdata = (short *)(udpBuff_p[sizeof(TBB_Header)]);
+    char *tmpptr = udpBuff_p+sizeof(TBB_Header);
+    sdata = (short *)(tmpptr);
     if (rr < (int)(headerp_p->n_samples_per_frame*sizeof(short)+sizeof(TBB_Header)) )
       {
 	cerr << "processTransientSocketDataBlock: Too few data read in! Aborting." << endl;
@@ -689,11 +690,16 @@ namespace DAL {
 	//extend array if neccessary.
 	if ((writeOffset+ headerp_p->n_samples_per_frame)> dims[0])
 	  {  
+cout << "extending array to:" << writeOffset+ headerp_p->n_samples_per_frame 
+     << " from:" << dims << endl;
 	    dims[0] = writeOffset+ headerp_p->n_samples_per_frame;
 	    dipoleArray_p->extend(dims);
 	  };
+cout << "extended array to: " << dipoleArray_p->dims() << endl;
+cout << "writing data ..." ;
 	dipoleArray_p->write(writeOffset, sdata, headerp_p->n_samples_per_frame );
 	offset_p = dims[0];
+cout << "data written" << endl;   
 #ifdef DEBUGGING_MESSAGES
       }
     else
@@ -702,8 +708,9 @@ namespace DAL {
 		  << " Block discarded!" << endl;
 #endif    
       };
-    
-    UInt32 *payloadp = (UInt32 *)(udpBuff_p[headerp_p->n_samples_per_frame*sizeof(short)+sizeof(TBB_Header)]);
+ 
+    tmpptr += headerp_p->n_samples_per_frame*sizeof(short);
+    UInt32 *payloadp = (UInt32 *)tmpptr;
     payload_crc = *payloadp;
     
     return true;
