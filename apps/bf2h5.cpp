@@ -64,9 +64,15 @@
 
   Examples:
   <ol>
+    <li>Simple conversion of \e reprocessed (!) correlator output to HDF5 file:
+    \verbatim
+    bf2h5 -I /path/B0329.cor -O B0329.h5
+    \endverbatim
+    This will cause an averaging of the total intensities over every 128
+    samples.
     <li>Compute total intensities and downsample the dataset:
     \verbatim
-    bf2h5 -I /path/B0329.out -O B0329.h5 --intensity --downsample --factor 128
+    bf2h5 -I /path/B0329.cor -O B0329.h5 --intensity --downsample --factor 128
     \endverbatim
     This will cause an averaging of the total intensities over every 128
     samples.
