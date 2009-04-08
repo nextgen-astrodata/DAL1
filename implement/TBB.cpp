@@ -654,6 +654,31 @@ namespace DAL {
       return false;  // spectral mode
   }
 
+  void TBB::fixDate(){
+    static bool oddSecond = false;
+    if (headerp_p->sample_freq == 200) {
+      if ((headerp_p->time%2)!=0) {
+	if (headerp_p->sample_nr == 199999488) {
+	  headerp_p->time -= 1;
+	} else {
+	  headerp_p->sample_nr += 512;
+	  oddSecond = true;
+	};    
+      } else if (oddSecond && (headerp_p->sample_nr == 199998464)) {
+	headerp_p->time -= 1;
+	headerp_p->sample_nr += 512;
+      } else {
+	oddSecond = false;
+      };
+    } else if (headerp_p->sample_freq == 160) {
+      if (headerp_p->sample_nr == 159998976) {
+	headerp_p->time -= 1;
+      };
+    } else {
+      cerr << "fixDate: Unsupported samplerate!!!" << endl;
+    };
+  };
+  
   // -------------------------------------------- processTransientSocketDataBlock
   
   bool TBB::processTransientSocketDataBlock()
@@ -701,16 +726,15 @@ namespace DAL {
 	//extend array if neccessary.
 	if ((writeOffset+ headerp_p->n_samples_per_frame)> dims[0])
 	  {  
+#ifdef DEBUGGING_MESSAGES
 cout << "extending array to:" << writeOffset+ headerp_p->n_samples_per_frame 
      << " from:" << dims << endl;
+#endif
 	    dims[0] = writeOffset+ headerp_p->n_samples_per_frame;
 	    dipoleArray_p->extend(dims);
 	  };
-cout << "extended array to: " << dipoleArray_p->dims() << endl;
-cout << "writing data ..." ;
 	dipoleArray_p->write(writeOffset, sdata, headerp_p->n_samples_per_frame );
 	offset_p = dims[0];
-cout << "data written" << endl;   
 #ifdef DEBUGGING_MESSAGES
       }
     else
@@ -771,8 +795,6 @@ cout << "data written" << endl;
 	    dims[0] = writeOffset+ headerp_p->n_samples_per_frame;
 	    dipoleArray_p->extend(dims);
 	  };
-	dipoleArray_p->write(writeOffset, sdata, 1 );
-	cout << "second try for write. " << endl;
 	dipoleArray_p->write(writeOffset, sdata, headerp_p->n_samples_per_frame );
 	offset_p = dims[0];
 #ifdef DEBUGGING_MESSAGES

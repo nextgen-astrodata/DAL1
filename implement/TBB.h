@@ -251,6 +251,7 @@ namespace DAL {
     void makeNewStation(char *, TBB_Header *);
     void makeNewDipole(string, dalGroup *, TBB_Header *);
     bool transientMode();
+    void fixDate();
     bool processTransientSocketDataBlock();
     bool processSpectralSocketDataBlock();
     void processTransientFileDataBlock();
