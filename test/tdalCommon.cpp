@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2008                                                    *
- *   Lars B"ahren (lbaehren@gmail.com)                                     *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -184,8 +184,7 @@ int test_hdf5_attributes ()
     fileID = H5Fcreate (filename.c_str(),
 			H5F_ACC_TRUNC,
 			H5P_DEFAULT,
-			H5P_DEFAULT);
-    
+			H5P_DEFAULT);    
   } catch (std::string message) {
     cerr << message << endl;
     return 1;
@@ -245,9 +244,9 @@ int test_hdf5_attributes ()
     data_int[1] = 2;
     data_int[2] = 3;
     DAL::h5set_attribute (fileID,
-			 "ATTRIBUTE_INT_ARRAY",
-			 data_int,
-			 3);
+			  "ATTRIBUTE_INT_ARRAY",
+			  data_int,
+			  3);
     //
     cout << "-- Attribute of type uint[3] ..." << std::endl;
     data_uint = new uint[3];
@@ -255,9 +254,9 @@ int test_hdf5_attributes ()
     data_uint[1] = 2;
     data_uint[2] = 3;
     DAL::h5set_attribute (fileID,
-			 "ATTRIBUTE_UINT_ARRAY",
-			 data_uint,
-			 3);
+			  "ATTRIBUTE_UINT_ARRAY",
+			  data_uint,
+			  3);
     //
     cout << "-- Attribute of type short[3] ..." << std::endl;
     data_short = new short[3];
@@ -265,9 +264,9 @@ int test_hdf5_attributes ()
     data_short[1] = 2;
     data_short[2] = 3;
     DAL::h5set_attribute (fileID,
-			 "ATTRIBUTE_SHORT_ARRAY",
-			 data_short,
-			 3);
+			  "ATTRIBUTE_SHORT_ARRAY",
+			  data_short,
+			  3);
     //
     cout << "-- Attribute of type long[3] ..." << std::endl;
     data_long = new long[3];
@@ -275,9 +274,9 @@ int test_hdf5_attributes ()
     data_long[1] = 2;
     data_long[2] = 3;
     DAL::h5set_attribute (fileID,
-			 "ATTRIBUTE_LONG_ARRAY",
-			 data_long,
-			 3);
+			  "ATTRIBUTE_LONG_ARRAY",
+			  data_long,
+			  3);
     //
     cout << "-- Attribute of type float[3] ..." << std::endl;
     data_float = new float[3];
@@ -285,9 +284,9 @@ int test_hdf5_attributes ()
     data_float[1] = 2;
     data_float[2] = 3;
     DAL::h5set_attribute (fileID,
-			 "ATTRIBUTE_FLOAT_ARRAY",
-			 data_float,
-			 3);
+			  "ATTRIBUTE_FLOAT_ARRAY",
+			  data_float,
+			  3);
     //
     cout << "-- Attribute of type double[3] ..." << std::endl;
     data_double = new double[3];
@@ -295,9 +294,9 @@ int test_hdf5_attributes ()
     data_double[1] = 2;
     data_double[2] = 3;
     DAL::h5set_attribute (fileID,
-			 "ATTRIBUTE_DOUBLE_ARRAY",
-			 data_double,
-			 3);
+			  "ATTRIBUTE_DOUBLE_ARRAY",
+			  data_double,
+			  3);
     //
     cout << "-- Attribute of type string[3] ..." << std::endl;
     data_string = new std::string[3];
@@ -906,19 +905,17 @@ int test_beamformed (std::string const &infile)
 
   int nofFailedTests (0);
 
-  hid_t file_id (-1);
-  hid_t group_id (-1);
-  hid_t dataset_id (-1);
+  hid_t fileID (-1);
   
   //__________________________________________________________________
   // Open the HDF5 dataset
   
   cout << "-- opening HDF5 file " << infile << " ..." << std::endl;
-  file_id = H5Fopen (infile.c_str(),
+  fileID = H5Fopen (infile.c_str(),
 		     H5F_ACC_RDWR,
 		     H5P_DEFAULT);
 
-  if (file_id < 0) {
+  if (fileID < 0) {
     cerr << "Failed to open file " << infile << std::endl;
     return 1;
   }
@@ -934,10 +931,10 @@ int test_beamformed (std::string const &infile)
     std::string telescope;
     int nofStations;
     //
-    DAL::h5get_name (name,file_id);
-//     DAL::h5get_attribute (file_id,"FILENAME",filename);
-//     DAL::h5get_attribute (file_id,"TELESCOPE",telescope);
-    DAL::h5get_attribute (file_id,"NUMBER_OF_STATIONS",nofStations);
+    DAL::h5get_name (name,fileID);
+//     DAL::h5get_attribute (fileID,"FILENAME",filename);
+//     DAL::h5get_attribute (fileID,"TELESCOPE",telescope);
+    DAL::h5get_attribute (fileID,"NUMBER_OF_STATIONS",nofStations);
     //
     cout << "-- FILENAME ......... = " << filename     << endl;
     cout << "-- TELESCOPE ........ = " << telescope    << endl;

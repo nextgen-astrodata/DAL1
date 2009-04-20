@@ -81,6 +81,7 @@ set (dal_sources
   BeamGroup.cpp
   BeamSubband.cpp
   Enumerations.cpp
+  DataType.cpp
   TBB.cpp
   TBB_DipoleDataset.cpp
   TBB_StationGroup.cpp
