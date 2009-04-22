@@ -303,7 +303,7 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<std::string> sample_frequency_unit ();
 #endif
 
-    //! Get the sample freuqncies as casa::Measure
+    //! Get the sample frequencies as casa::Measure
 #ifdef HAVE_CASA
     casa::Vector<casa::MFrequency> sample_frequency ();
 #endif
@@ -398,10 +398,9 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<hid_t> datasetIDs ();
 #endif
 
-    //! Get the positions of all antennas in the station
 #ifdef HAVE_CASA
+    //! Get the positions of all antennas in the station
     casa::Vector<casa::MPosition> antennaPositions ();
-#endif
     
     //! Retrieve a block of ADC values for the dipoles in this station
     casa::Matrix<double> fx (int const &start=0,
@@ -413,8 +412,8 @@ namespace DAL { // Namespace DAL -- begin
 			     std::vector<uint> const &dipoleSelection);
     
     //! Get a casa::Record containing the values of the attributes
-#ifdef HAVE_CASA
     casa::Record attributes2record (bool const &recursive=false);
+    
     bool attributes2record (casa::Record &rec,
 			    bool const &recursive=false);
 #endif

@@ -1227,6 +1227,7 @@ casa::Vector<uint> TBB_StationGroup::sample_number ()
     \return fx -- [nofSamples,dipole] Array of raw ADC samples representing
             the electric field strength as function of time.
   */
+#ifdef HAVE_CASA
   casa::Matrix<double> TBB_StationGroup::fx (int const &start,
 					     int const &nofSamples)
   {
@@ -1254,6 +1255,7 @@ casa::Vector<uint> TBB_StationGroup::sample_number ()
     
     return data;
   }
+#endif 
   
   // ------------------------------------------------------------------------- fx
   
@@ -1267,6 +1269,7 @@ casa::Vector<uint> TBB_StationGroup::sample_number ()
     \return fx -- [nofSamples,dipole] Vector of raw ADC samples representing
             the electric field strength as function of time.
   */
+#ifdef HAVE_CASA
   casa::Matrix<double> TBB_StationGroup::fx (int const &start,
 					     int const &nofSamples,
 					     std::vector<uint> const &dipoleSelection)
@@ -1292,8 +1295,7 @@ casa::Vector<uint> TBB_StationGroup::sample_number ()
     
     return data;
   }
-
-#ifdef HAVE_CASA
+#endif 
   
   // ---------------------------------------------------------- attributes2record
   
@@ -1304,6 +1306,7 @@ casa::Vector<uint> TBB_StationGroup::sample_number ()
     \return record -- A casa::Record container holding the values of the 
             attributes attached to the dataset for this dipole
   */
+#ifdef HAVE_CASA
   casa::Record TBB_StationGroup::attributes2record (bool const &recursive)
   {
     bool status (true);
@@ -1313,9 +1316,11 @@ casa::Vector<uint> TBB_StationGroup::sample_number ()
     
     return rec;
   }
+#endif 
 
   // ---------------------------------------------------------- attributes2record
   
+#ifdef HAVE_CASA
   bool TBB_StationGroup::attributes2record (casa::Record &rec,
 					    bool const &recursive)
   {
@@ -1369,7 +1374,6 @@ casa::Vector<uint> TBB_StationGroup::sample_number ()
 
     return status;
   }
-  
 #endif
   
 } // Namespace DAL -- end

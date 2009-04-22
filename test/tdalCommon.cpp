@@ -56,6 +56,7 @@ using std::endl;
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
+#ifdef HAVE_CASA
 int test_casacore_variables ()
 {
   cout << "\n[tdalCommon::test_operators]\n" << endl;
@@ -89,6 +90,7 @@ int test_casacore_variables ()
 
   return nofFailedTests;
 }
+#endif
 
 // -----------------------------------------------------------------------------
 
@@ -868,6 +870,7 @@ int test_timeseries (std::string const &filename)
   //__________________________________________________________________
   // Test retrieval of positions and directions as Measures
 
+#ifdef HAVE_CASA
   try {
     casa::MPosition station_position;
     casa::MPosition antenna_position;
@@ -893,6 +896,7 @@ int test_timeseries (std::string const &filename)
     cerr << message << std::endl;
     nofFailedTests++;
   }
+#endif
 
   return nofFailedTests;
 }
@@ -963,8 +967,10 @@ int main (int argc,
     data_beamformed = argv[2];
     have_filename   = true;
   }
-  
+
+#ifdef HAVE_CASA  
   nofFailedTests += test_casacore_variables ();
+#endif
   nofFailedTests += test_operators ();
   nofFailedTests += test_hdf5_attributes ();
 

@@ -829,6 +829,7 @@ namespace DAL { // Namespace DAL -- begin
   
   // ----------------------------------------------------------- sample_frequency
 
+#ifdef HAVE_CASA
   casa::Vector<casa::MFrequency> TBB_Timeseries::sample_frequency ()
   {
     uint n           = 0;
@@ -850,6 +851,7 @@ namespace DAL { // Namespace DAL -- begin
     
     return freq;
   }
+#endif
   
   // ---------------------------------------------------------------- data_length
 
