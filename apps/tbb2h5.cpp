@@ -257,19 +257,16 @@ int main(int argc, char *argv[])
   // Feedback on the settings
   
   std::cout << "[tbb2h5] Summary of parameters"  << std::endl;
-  std::cout << "-- Output file = " << outfile    << std::endl;
   std::cout << "-- Socket mode = " << socketmode << std::endl;
+  std::cout << "-- Output file = " << outfile    << std::endl;
   
-  switch (socketmode) {
-  case 0:
+  if (socketmode) {
     std::cout << "-- IP address  = " << ip      << std::endl;
     std::cout << "-- Port number = " << port    << std::endl;
     std::cout << "-- Timeout     = " << timeout << std::endl;
-    break;
-  case 1:
+  } else {
     std::cout << "-- Input file  = " << infile  << std::endl;
-  break;
-  };
+  }
   
   // -----------------------------------------------------------------
   // Start processing of the input data
