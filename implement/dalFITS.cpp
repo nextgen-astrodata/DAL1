@@ -1,9 +1,9 @@
 /*-------------------------------------------------------------------------*
- | $Id:: TBB_Timeseries.h 2126 2008-11-07 13:31:59Z baehren              $ |
+ | $Id:: dalFITS.h 2126 2008-11-07 13:31:59Z baehren              $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2008                                                    *
- *   Sven Duscha ()                                                        *
+ *   Sven Duscha (sduscha@mpa-garching.mpg.de)                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -23,6 +23,8 @@
 
 #include "dalFITS.h"
 
+using namespace std;
+
 namespace DAL
 {
   // ============================================================================
@@ -31,9 +33,32 @@ namespace DAL
   //
   // ============================================================================
   
-  dalFITS::dalFITS () {}
+  //! Default constructor
+  dalFITS::dalFITS()
+  {
   
-  dalFITS::~dalFITS () {}
+  
+  }
+
+
+  //! Constructor with associated filename
+  dalFITS::dalFITS(const string &filename) 
+  {
+
+  
+  
+  
+  }
+
+
+  
+  dalFITS::~dalFITS() 
+  {
+    // close the FITS file
+  
+    // deallocate memory
+  
+  }
 
   // ============================================================================
   //
@@ -41,9 +66,30 @@ namespace DAL
   //
   // ============================================================================
 
+  /*!
+    Header access functions (specific to RM)
+  */
+  
+  
+
+
+ 
+  /*!
+    Functions to set FITS object parameters that were not declared inline
+  */
+
+  
+
+
+
+  /*!
+      \param os -- Output stream to which the summary is going to be written
+  */
+
   void dalFITS::summary (std::ostream &os)
   {
-    os << "[dalFITS] Summary of object properties"       << std::endl;
+    os << "[dalFITS] Summary of object properties" << std::endl;
+    os << "-- Filename : " << << std::endl;
   }
   
 }
