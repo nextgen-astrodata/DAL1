@@ -44,10 +44,7 @@ namespace DAL
   //! Constructor with associated filename
   dalFITS::dalFITS(const string &filename) 
   {
-
-  
-  
-  
+    setFilename (filename);
   }
 
 
@@ -85,11 +82,10 @@ namespace DAL
   /*!
       \param os -- Output stream to which the summary is going to be written
   */
-
   void dalFITS::summary (std::ostream &os)
   {
     os << "[dalFITS] Summary of object properties" << std::endl;
-    os << "-- Filename : " << << std::endl;
+    os << "-- Filename : " << filename() << std::endl;
   }
   
 }

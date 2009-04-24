@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2008                                                    *
- *   Sven Duscha (sduscha@mpa-garching.mpg.de)                                                        *
+ *   Sven Duscha (sduscha@mpa-garching.mpg.de)                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -35,24 +35,6 @@
 // cfitsio
 #include <fitsio.h>
 
-/*
-// AIPS++/CASA header files
-#include <casa/aips.h>
-#include <casa/Arrays.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/Containers/Record.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <coordinates/Coordinates/LinearCoordinate.h>
-#include <coordinates/Coordinates/SpectralCoordinate.h>
-#include <images/Images/HDF5Image.h>
-#include <images/Images/PagedImage.h>
-#include <tables/Tables/TableDesc.h>
-#include <tables/Tables/SetupNewTab.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/TableRecord.h>
-*/
-
 namespace DAL {
   
   /*!
@@ -68,36 +50,48 @@ namespace DAL {
   */
   class dalFITS {
 
-
-  private:
-    //! file handle for direct file access
-    fitsfile **fptr;
+  public:
     
-    //! filename
-    std::string filename;
-    
-    //! CASAcore lattice handle
-
-    //! dimensions of FITS image
-    std::vector<int> dimensions;
-
-
-    //! define types of bins
-    enum DALbinType {
-      frequency,
-      lambda_sq
-    };
-    
-    DALbinType binType;
-
     //! define bin units (Hz, MHz, etc)
     enum DALbinUnit {
       Hz,
       kHz,
       MHz
     };
+    
+    //! Data type of FITS Image (in accordance with casacore naming scheme)
+    enum DALImageType {
+      TpFloat,
+      TpDouble,
+      TpComplex,
+      TpDComplex
+    };
 
-    DALbinUnit binUnit;
+  private:
+
+    //! File handle for direct file access
+    fitsfile **fptr;
+    
+    //! Name of the file storing the image
+    std::string filename_p;
+    
+    //! CASAcore lattice handle
+
+    //! dimensions of FITS image
+    std::vector<int> dimensions;
+
+    //! define types of bins
+    enum DALbinType {
+      frequency,
+      lambda_sq
+    };
+
+    //! Type of the image
+    DALImageType imageType_p;
+
+    DALbinType binType_p;
+
+    DALbinUnit binUnit_p;
 
     //! frequency bins (central frequencies) or lambda squareds
     std::vector<double> bins;
@@ -107,17 +101,7 @@ namespace DAL {
 
 
   public:
-
-    //! data type of FITS Image (in accordance with casacore naming scheme)
-    enum DALImageType {
-      TpFloat,
-      TpDouble,
-      TpComplex,
-      TpDComplex
-    };
  
-    DALImageType imageType;
-
     //________________________________________________________________
     // Construction/Destruction
     
@@ -159,8 +143,8 @@ namespace DAL {
     
       \return binUnit -- unit associated with bins
     */
-    inline binUnit getBinUnit () const {
-      return mybinUnit;
+    inline DALbinUnit getBinUnit () const {
+      return binUnit_p;
     }
 
 
@@ -194,25 +178,33 @@ namespace DAL {
 
 
     //! get the associated filename of a FITS object
-    inline std::string getFilename () const {
-      return filename;
+    inline std::string filename () const {
+      return filename_p;
     }
 
-    inline std::string getImageType () const {
-      return ImageType;
-    }
-
-
-
-    //! set the associated filename of a FITS object
+    //! Set the associated filename of a FITS object
     inline void setFilename (const std::string filename) {
-      this->filename=filename;
+      this->filename_p=filename;
     };
-
-
-
-
-
+    
+    //! Get the type of the image
+    inline std::string getImageType () const {
+      switch (imageType_p) {
+      case TpFloat:
+	return "TpFloat";
+	break;
+      case TpDouble:
+	return "TpDouble";
+	break;
+      case TpComplex:
+	return "TpComplex";
+	break;
+      case TpDComplex:
+	return "TpDComplex";
+	break;
+      };
+    }
+    
     //! Get the name of the class
     std::string className () const {
       return "dalFITS";
