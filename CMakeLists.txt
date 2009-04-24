@@ -60,6 +60,8 @@ if (NOT DAL_VERBOSE_CONFIGURE)
   set (CFITSIO_FIND_QUIETLY   ON )
   set (GSL_FIND_QUIETLY       ON )
   set (HDF5_FIND_QUIETLY      ON )
+  set (NUMPY_FIND_QUIETLY     ON )
+  set (NUM_UTIL_FIND_QUIETLY  ON )
   set (PYTHON_FIND_QUIETLY    ON )
   set (MPATROL_FIND_QUIETLY   ON )
   set (MYSQL_FIND_QUIETLY     ON )
@@ -153,6 +155,8 @@ endif (NOT HAVE_GSL)
 
 if (NOT HAVE_PYTHON)
   include (FindPython)
+  include (FindNumPy)
+  include (FindNumUtil)
 endif (NOT HAVE_PYTHON)
 
 ## ---------------------------------------------------------
