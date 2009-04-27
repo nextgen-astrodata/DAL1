@@ -48,8 +48,9 @@ namespace DAL   // Namespace DAL -- begin
 
     <ul type="square">
       <li>CR::LOFAR_TBB
-      <li>DAL::LOFAR_StationGroup
-      <li>DAL::LOFAR_DipoleDataset
+      <li>DAL::TBB_Timeseries
+      <li>DAL::TBB_StationGroup
+      <li>DAL::TBB_DipoleDataset
     </ul>
 
     <h3>Synopsis</h3>

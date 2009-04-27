@@ -88,7 +88,7 @@ namespace DAL {
 
     //! Type of the image
     DALImageType imageType_p;
-
+    //! Bin type of the image
     DALbinType binType_p;
 
     DALbinUnit binUnit_p;
@@ -127,26 +127,15 @@ namespace DAL {
     
     //! close a FITS file hanle
     //close();
-
-
-
-    /*!
-      \brief Get ImageType (data type float, double, complex, dcomplex)
-  
-      \return ImageType
-      
-    */  
-      
-      
-     /*!
-      \brief Get the bin unit (center frequencies) of a FITS image
     
+    /*!
+      \brief Get the bin unit (center frequencies) of a FITS image
+      
       \return binUnit -- unit associated with bins
     */
     inline DALbinUnit getBinUnit () const {
       return binUnit_p;
     }
-
 
     /*!
       \brief Get the bins (center frequencies) of a FITS image
@@ -157,9 +146,6 @@ namespace DAL {
       return bins;
     }
 
-  
-
-  
     /*!
       \brief Get widths (for RM integration) of a FITS object (not necessarily in the image)
    
@@ -169,14 +155,6 @@ namespace DAL {
       return binWidths;
     }
   
-  
-    /*!
-      \brief Get 
-   
-      \return 
-   */
-
-
     //! get the associated filename of a FITS object
     inline std::string filename () const {
       return filename_p;
