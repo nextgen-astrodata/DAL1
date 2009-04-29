@@ -103,7 +103,7 @@ namespace DAL {
   public:
  
     //________________________________________________________________
-    // Construction/Destruction
+    //                                        Construction/Destruction
     
     //! Default constructor
     dalFITS ();
@@ -119,7 +119,7 @@ namespace DAL {
     dalFITS (dalFITS const& other);
     
     //________________________________________________________________
-    // Methods
+    //                                                         Methods
 
 
     //! open a FITS file for reading, writing or both
