@@ -166,22 +166,18 @@ namespace DAL {
 
     
     //________________________________________________________________
-<<<<<<< .mine
     // 
     // Methods
-=======
-    //                                                         Methods
->>>>>>> .r2594
    //________________________________________________________________
  
     /*! 
       \brief open a FITS file for reading, writing or both
       
-      \param mode --
+      \param iomode --
 
       \return fitsret --
     */
-    int open(int mode);	// modes as defined in cfitsio library: RO, W, RW
+    int open(int iomode);	// modes as defined in cfitsio library: RO, W, RW
     
     /*!
       \brief close a FITS file handle
@@ -203,7 +199,6 @@ namespace DAL {
       \return LatticeBase* --
     */
     casa::Lattice<Float>* getLattice ();
-<<<<<<< .mine
 
 
     /*! 
@@ -213,9 +208,7 @@ namespace DAL {
     */
     std::string getFitsError ();
 
-=======
-    
->>>>>>> .r2594
+
     /*! 
       \brief Get the number of HDUs in the FITS file
 
@@ -276,7 +269,6 @@ namespace DAL {
 
 
     /*!
-<<<<<<< .mine
       \brief Read the filename of the currently opened FITS file
     
       \param filename --
@@ -550,10 +542,9 @@ namespace DAL {
       \return fitsret --
     */
     int writeRMHeader(int hdu=1);
-    
+
+
      /*!
-=======
->>>>>>> .r2594
       \brief Get the bin unit (center frequencies) of a FITS image
       
       \return binUnit -- unit associated with bins
@@ -571,10 +562,7 @@ namespace DAL {
       return bins;
     }
 
-<<<<<<< .mine
-  
-=======
->>>>>>> .r2594
+
     /*!
       \brief Get widths (for RM integration) of a FITS object (not necessarily in the image)
    
@@ -583,9 +571,8 @@ namespace DAL {
     inline std::vector<double> getBinWidths () const {
       return binWidths;
     }
-  
-<<<<<<< .mine
- 
+
+
     /*! 
       \brief Get the associated filename of a FITS object
     
@@ -596,8 +583,6 @@ namespace DAL {
     }
 
 
-=======
->>>>>>> .r2594
     /*! 
       \brief Set the associated filename of a FITS object
       
