@@ -367,25 +367,16 @@ namespace DAL { // Namespace DAL -- begin
       unit = sample_frequency_unit ();
 
       if (status) {
-	if (unit == "Hz" && val < 1e3) {
-#ifdef DEBUGGING_MESSAGES
-	  std::cerr << "[TBB_DipoleDataset::sample_frequency_value] "
-		    << "Encountered combination of value and unit for sample "
-		    << "outside LOFAR range -- assuming value in MHz and "
-		    << "correction for it."
-		    << std::endl;
-#endif
-	  val *= 1e6;
-	} else if (unit == "kHz" && val < 1e6) {
-#ifdef DEBUGGING_MESSAGES
-	  std::cerr << "[TBB_DipoleDataset::sample_frequency_value] "
-		    << "Encountered combination of value and unit for sample "
-		    << "outside LOFAR range -- assuming value in kHz and "
-		    << "correction for it."
-		    << std::endl;
-#endif
-	  val *= 1e3;
+	/* Do some checking on the value to be returned. */
+	if (val < 1e3) {
+	  if (unit == "Hz") {
+	    val *= 1e6;
+	  }
+	  else if (unit == "kHz") {
+	    val *= 1e3;
+	  }
 	}
+	/* Return the value of the sampling frequency. */
 	return val;
       } else {
 	return 0;
@@ -401,7 +392,7 @@ namespace DAL { // Namespace DAL -- begin
   
   /*!
     \return unit -- The physical unit associated with the numerical value of
-            the ADC sample frequency.
+    the ADC sample frequency.
   */
   std::string TBB_DipoleDataset::sample_frequency_unit ()
   {
