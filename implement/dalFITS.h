@@ -330,32 +330,32 @@ namespace DAL {
     /*! 
       \brief Get image type of the FITS image
     
-      \param *bitpix --
+      \param &bitpix --
 
       \return ret --
     */
-    int getImgType(int *bitpix);
+    int getImgType(int &bitpix);
 
 
     /*! 
       \brief Get image dimensions of the FITS image
       
-      \param *naxis --
+      \param &naxis --
 
       \return ret --
     */
-    int getImgDim(int *naxis);
+    int getImgDim(int &naxis);
 
 
     /*!
       \brief Get image size of the FITS image
   
       \param maxdim --
-      \param *naxes --
+      \param &naxes --
       
       \return ret --
     */
-    int getImgSize(int maxdim,  long *naxes);
+    int getImgSize(int maxdim,  long &naxes);
 
 
     /*!
@@ -368,7 +368,7 @@ namespace DAL {
 
       \return ret --
     */
-    int getImgParam(int maxdim,  int *bitpix, int *naxis, long *naxes);
+    int getImgParam(int maxdim,  int &bitpix, int &naxis, long &naxes);
 
 
     /*!
@@ -459,16 +459,22 @@ namespace DAL {
     // Header access functions
     //
     // ===========================================================
-    
+
+    //===============================================================
+    //
+    // Methods for reading keywords and records from a FITS file
+    //
+    //===============================================================
+
     /*!
       \brief Get size of Header space of current HDU
       
-      \param *keysexist --
-      \param *morekeys --
+      \param &keysexist --
+      \param &morekeys --
       
       \return fitsret --
     */
-    int getHDRspace(int *keysexist, int *morekeys);
+    int getHDRspace(int &keysexist, int &morekeys);
 
 
     /*!
@@ -479,18 +485,18 @@ namespace DAL {
       
       \return fitsret --
     */
-    int readRecord(int keynum, char *record);
+    int readRecord(int keynum, std::string record);
     
     
     /*!
       \brief Get the record card from the current HDU
       
-      \param *keyname --
-      \param *record --
+      \param keyname --
+      \param record --
       
       \return fitsret --
     */
-    int readCard(char *keyname, char *record);
+    int readCard(std::string keyname, std::string record);
 
 
     /*!
@@ -523,12 +529,203 @@ namespace DAL {
     /*!
       \brief Read the key's unit from the key with keyname in the current HDU
       
-      \param *keyname --
-      \param *unit --
+      \param keyname --
+      \param unit --
       
       \return fitsret --
     */
-    int readKeyUnit(char *keyname, char *unit);
+    int readKeyUnit(std::string keyname, std::string unit);
+    
+    
+    
+    //===============================================================
+    //
+    // Methods for writing keywords and records to a FITS file
+    //
+    //===============================================================
+    
+    /*!
+      \brief Write a new key to the FITS header of the CHDU
+    
+      \param datatype --
+      \param keyname --
+      \param *value --
+      \param comment --
+      
+      \return fitsret --
+    */
+    int writeKey(int datatype, std::string keyname, void *value, std::string comment);
+    
+    
+    /*!
+      \brief Update a key in the FITS header of the CHDU
+      
+      \param datatype --
+      \param keyname --
+      \param *value --
+      \param comment --
+      
+      \return fitsret --
+    */
+    int updateKey(int datatype, std::string keyname, void *value, std::string comment);
+    
+    
+    /*!
+      \brief Write a record "card" to the FITS header of the CHDU
+      
+      \param card --
+      
+      \return fitsret --
+    */
+    int writeRecord(std::string card);
+
+
+    /*!
+      \brief Modify the comment of &keyname in the FITS header of the CHDU
+      
+      \param keyname --
+      \param comment --
+      
+      \return fitsret --
+    */
+    int modifyComment(std::string keyname, std::string comment);
+    
+    /*!
+      \brief Write a Unit to the key corresponding to &keyname in the CHDU
+    
+      \param keyname --
+      \param unit --
+      
+      \return fitsret --
+    */
+    int writeKeyUnit(std::string keyname, std::string unit);
+    
+    
+    /*!
+      \brief Write a comment to the CHDU
+    
+      \param &comment --
+      
+      \return fitsret --
+    */
+    int writeComment(std::string comment);
+
+
+    /*!
+      \brief Write a HISTORY entry to the CHDU
+      
+      \param history --
+      
+      \return fitsret --
+    */
+    int writeHistory(std::string history);
+    
+    
+    /*!
+      \brief Write the current date to the CHDU
+      
+      \return fitsret --
+    */
+    int writeDate();
+    
+    /*!
+      \brief Delete a record from the CHDU
+      
+      \param keynum --
+      
+      \return fitsret --
+    */
+    int deleteRecord(int keynum);
+
+
+    /*!
+      \brief Delete the key referenced by &keyname from the CHDU 
+    
+      \param keyname --
+      
+      \return fitsret --
+    */
+    int deleteKey(std::string keyname);
+
+
+    /*!
+      \brief Copy the Header of this FITS to the &other dalFITS object
+      
+      \param &other --
+      
+      \return fitsret --
+    */
+    int copyHeader(dalFITS &other);
+
+
+    /*!
+      \brief Write the Header checksum to the CHDU
+      
+      \return fitsret --
+    */
+    int writeChecksum();
+
+  
+    /*!
+      \brief Verify checksum of the CHDU
+      
+      \param dataok --
+      \param hduok --
+      
+      \return fitsret --
+    */
+    int verifyChecksum(bool &dataok, bool &hduok);
+
+
+    /*!
+      \brief Parse a record card into value and comment
+      
+      \param card --
+      \param &value --
+      \param &comment --
+      
+      \return fitsret -- 
+    */
+    int parseValue(std::string card, std::string value, std::string comment);
+
+
+    /*!
+      \brief Get the type of a key with &value in the CHDU
+      
+      \param value --
+      \param dtype --
+      
+      \return fitsret --
+    */
+    int getKeytype(std::string value, char &dtype);
+
+
+    /*!
+      \brief Get the class of the key in &card
+      
+      \param card --
+      
+      \return fitsret --
+    */
+    int getKeyclass(std::string card);
+
+
+    /*!
+      \brief Parse the &templatec of &card
+      
+      \param templatec --
+      \param card --
+      \param &keytype --
+
+      \return fitsret --
+    */
+    int parseTemplate(std::string templatec, std::string card, int &keytype);
+   
+    //===============================================================
+    //
+    // RM specific header functions
+    //
+    //===============================================================
     
     
     // Strictly speaking: writeRMHeader and bin-functions should be part of

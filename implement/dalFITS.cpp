@@ -323,11 +323,11 @@ namespace DAL
   //
   // ============================================================================
 
-  int dalFITS::getImgType(int *bitpix)
+  int dalFITS::getImgType(int &bitpix)
   {
     int fitsret=0;
 
-    if(!(fitsret=fits_get_img_type(fptr, bitpix, &fitsstatus)))
+    if(!(fitsret=fits_get_img_type(fptr, &bitpix, &fitsstatus)))
     {
       throw "dalFITS::get_image_type";
     }
@@ -336,11 +336,11 @@ namespace DAL
   }
 
 
-  int dalFITS::getImgDim(int *naxis)
+  int dalFITS::getImgDim(int &naxis)
   {
     int fitsret=0;
 
-    if(!(fitsret=fits_get_img_dim(fptr, naxis,  &fitsstatus)))
+    if(!(fitsret=fits_get_img_dim(fptr, &naxis,  &fitsstatus)))
     {
       throw "dalFITS::getImageDim";
     }
@@ -349,11 +349,11 @@ namespace DAL
   }
 
 
-  int dalFITS::getImgSize(int maxdim,  long *naxes)
+  int dalFITS::getImgSize(int maxdim,  long &naxes)
   {
     int fitsret=0;
 
-    if(!(fitsret=fits_get_img_size(fptr, maxdim, naxes , &fitsstatus)))
+    if(!(fitsret=fits_get_img_size(fptr, maxdim, &naxes , &fitsstatus)))
     {
       throw "dalFITS::getImageSize";
     }
@@ -362,11 +362,11 @@ namespace DAL
   }
 
   
-  int dalFITS::getImgParam(int maxdim,  int *bitpix, int *naxis, long *naxes)
+  int dalFITS::getImgParam(int maxdim,  int &bitpix, int &naxis, long &naxes)
   {
     int fitsret=0;
 
-    if(!(fitsret=fits_get_img_param(fptr, maxdim, bitpix, naxis, naxes , &fitsstatus)))
+    if(!(fitsret=fits_get_img_param(fptr, maxdim, &bitpix, &naxis, &naxes, &fitsstatus)))
     {
       throw "dalFITS::getImageParam";
     }
@@ -526,11 +526,11 @@ namespace DAL
 
 
   // Methods for reading keywords and records from a dalFITS file
-  int dalFITS::getHDRspace(int *keysexist, int *morekeys)
+  int dalFITS::getHDRspace(int &keysexist, int &morekeys)
   {
     int fitsret=0;
 
-    if(!(fitsret=fits_get_hdrspace(fptr, keysexist, morekeys, &fitsstatus)))
+    if(!(fitsret=fits_get_hdrspace(fptr, &keysexist, &morekeys, &fitsstatus)))
     {
       throw "dalFITS::getHDRspace";
     }
@@ -539,11 +539,11 @@ namespace DAL
   }
 
 
-  int dalFITS::readRecord(int keynum, char *record)
+  int dalFITS::readRecord(int keynum, std::string record)
   {
     int fitsret=0;
 
-    if(!(fitsret=fits_read_record(fptr, keynum, record, &fitsstatus)))
+    if(!(fitsret=fits_read_record(fptr, keynum, const_cast<char *>(record.c_str()), &fitsstatus)))
     {
       throw "dalFITS::readRecord";
     }
@@ -552,11 +552,11 @@ namespace DAL
   }
   
   
-  int dalFITS::readCard(char *keyname, char *record)
+  int dalFITS::readCard(std::string keyname, std::string record)
   {
     int fitsret=0;
 
-    if(!(fitsret=fits_read_card(fptr, keyname, record, &fitsstatus)))
+    if(!(fitsret=fits_read_card(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(record.c_str()), &fitsstatus)))
     {
       throw "dalFITS::readCard";
     }
@@ -591,11 +591,11 @@ namespace DAL
   }
 
 
-  int dalFITS::readKeyUnit(char *keyname, char *unit)
+  int dalFITS::readKeyUnit(std::string keyname, std::string unit)
   {
     int fitsret=0;
   
-    if(!(fitsret=fits_read_key_unit(fptr, keyname, unit, &fitsstatus)))
+    if(!(fitsret=fits_read_key_unit(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(unit.c_str()), &fitsstatus)))
     {
       throw "dalFITS::readKeyUnit";
     }
@@ -604,58 +604,242 @@ namespace DAL
   }
 
 
+  //===============================================================
+  //
   // Methods for writing keywords and records to a dalFITS file
+  //
+  //===============================================================
 
-/*
-int fits_write_key(fitsfile *fptr, int datatype, char *keyname, 
-        void *value, char *comment, int *status)
+  int dalFITS::writeKey(int datatype, std::string keyname, void *value, std::string comment)
+  {
+    int fitsret=0;
+  
+    if(!(fitsret=fits_write_key(fptr, datatype, const_cast<char 
+*>(keyname.c_str()), value, const_cast<char *>(comment.c_str()), &fitsstatus)))
+    {
+      throw "dalFITS::writeKey";
+    }
 
-int fits_update_key(fitsfile *fptr, int datatype, char *keyname,
-        void *value, char *comment, int *status)
+    return fitsret;
+  }
+   
 
-int fits_write_record(fitsfile *fptr, char *card, int *status)
+  int dalFITS::updateKey(int datatype, std::string keyname, void *value, std::string comment)
+  {
+    int fitsret=0;
+  
+    if(!(fitsret=fits_update_key(fptr, datatype, const_cast<char *>(keyname.c_str()), value, const_cast<char *>(comment.c_str()), &fitsstatus)))
+    {
+      throw "dalFITS::updateKey";
+    }
+    
+    return fitsret;
+  }
+  
+
+  int dalFITS::writeRecord(std::string card)
+  {
+    int fitsret=0;
+    
+    if(!(fitsret=fits_write_record(fptr, const_cast<char *>(card.c_str()), &fitsstatus)))
+    {
+      throw "dalFITS:writeRecord";
+    }
+
+    return fitsret;
+  }
+  
+
+  int dalFITS::modifyComment(std::string keyname, std::string comment)
+  {
+    int fitsret=0;
+  
+    if(!(fitsret=fits_modify_comment(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus)))
+    {
+      throw "dalFITS::modifyComment";
+    }
+
+    return fitsret;
+  }
 
 
-int fits_modify_comment(fitsfile *fptr, char *keyname, char *comment,
-        int *status)
+  int dalFITS::writeKeyUnit(std::string keyname, std::string unit)
+  {
+    int fitsret=0;
+  
+    if(!(fitsret=fits_write_key_unit(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(unit.c_str()), &fitsstatus)))
+    {
+      throw "dalFITS::writeKeyUnit";
+    }
 
-int fits_write_key_unit(fitsfile *fptr, char *keyname, char *unit,
-        int *status)
-
-
-int fits_write_comment(fitsfile *fptr, char *comment,  int *status)
-
-
-int fits_write_history(fitsfile *fptr, char *history,  int *status)
-
-
-int fits_write_date(fitsfile *fptr,  int *status)
+    return fitsret;
+  }
 
 
-int fits_delete_record(fitsfile *fptr, int keynum,  int *status)
+  int dalFITS::writeComment(std::string comment)
+  {
+    int fitsret=0;
+    
+    if(!(fitsret=fits_write_comment(fptr, const_cast<char *>(comment.c_str()),  &fitsstatus)))
+    {
+      throw "dalFITS::writeComment";
+    }
+
+    return fitsret;
+  }
 
 
-int fits_delete_key(fitsfile *fptr, char *keyname,  int *status)
+  int dalFITS::writeHistory(std::string history)
+  {
+    int fitsret=0;
+  
+    if(!(fitsret=fits_write_history(fptr, const_cast<char *>(history.c_str()),  &fitsstatus)))
+    {
+      throw "dalFITS::writeHistory";
+    }
+  
+    return fitsret;
+  }
+  
+
+  int dalFITS::writeDate()
+  {
+    int fitsret=0;
+    
+    if(!(fitsret=fits_write_date(fptr,  &fitsstatus)))
+    {
+      throw "dalFITS::writeDate";
+    }
+
+    return fitsret;
+  }
+
+
+  int dalFITS::deleteRecord(int keynum)
+  {
+    int fitsret=0;
+  
+    if(!(fitsret=fits_delete_record(fptr, keynum,  &fitsstatus)))
+    {
+      throw "dalFITS::deleteRecord";
+    }
+
+    return fitsret;
+  }
+
+
+  int dalFITS::deleteKey(std::string keyname)
+  {
+    int fitsret=0;
+
+    if(!(fitsret=fits_delete_key(fptr, const_cast<char *>(keyname.c_str()),  &fitsstatus)))
+    {
+      throw "dalFITS::deleteKey";
+    }
+
+    return fitsret;
+  }
 
 
   // Header utility routines
-int fits_copy_header(fitsfile *infptr, fitsfile *outfptr,  int *status)
+  
+  int dalFITS::copyHeader(dalFITS &other)
+  {
+    int fitsret=0;
+
+    if(!(fitsret=fits_copy_header(fptr, other.fptr, &fitsstatus)))
+    {
+      throw "dalFITS::copyHeader";
+    }
+  
+    return fitsret;
+  }
 
 
-int fits_write_chksum( fitsfile *fptr, int *status)
+  int dalFITS::writeChecksum()
+  {
+    int fitsret=0;
+    
+    if(!(fitsret=fits_write_chksum(fptr, &fitsstatus)))
+    {
+
+    }
+    
+    return fitsret;
+  }
+
+  
+  int dalFITS::verifyChecksum(bool &dataok, bool &hduok)
+  {
+    int fitsret=0;
+    
+    int dataok_int=0, hduok_int=0;
+  
+    if(!(fitsret=fits_verify_chksum(fptr, &dataok_int, &hduok_int, &fitsstatus)))
+    {
+      throw "dalFITS::verifyChecksum";
+    }
+
+    // convert int dataok and int hduk to bools
+    if(dataok_int)
+      dataok=true;
+    if(hduok_int)
+      hduok=true;
+    
+    return fitsret;
+  }
 
 
-int fits_verify_chksum(fitsfile *fptr, int *dataok, int *hduok, int *status)
+  int dalFITS::parseValue(std::string card, std::string value, std::string comment)
+  {
+    int fitsret=0;
+    
+    if(!(fitsret=fits_parse_value(const_cast<char *>(card.c_str()), const_cast<char *>(value.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus)))
+    {
+      throw "dalFITS::parseValue";
+    }
 
-int fits_parse_value(char *card, char *value, char *comment, int *status)
-
-int fits_get_keytype(char *value, char *dtype, int *status)
-
-int fits_get_keyclass(char *card)
+    return fitsret;
+  }
 
 
-int fits_parse_template(char *template, char *card, int *keytype, int *status)
-*/
+  int dalFITS::getKeytype(std::string value, char &dtype)
+  {
+    int fitsret=0;
+    
+    if(!(fitsret=fits_get_keytype(const_cast<char *>(value.c_str()), &dtype, &fitsstatus)))
+    {
+      throw "dalFITS::getKeytype";
+    }
+
+    return fitsret;
+  }
+
+
+  int dalFITS::getKeyclass(std::string card)
+  {
+    int fitsret=0;
+  
+    if(!(fitsret=fits_get_keyclass(const_cast<char *>(card.c_str()))))
+    {
+      throw "dalFITS::getKeyclass";
+    }
+
+    return fitsret;
+  }
+  
+  
+  int dalFITS::parseTemplate(std::string templatec, std::string card, int &keytype)
+  {
+    int fitsret=0;
+    
+    if(!(fitsret=fits_parse_template(const_cast<char *>(templatec.c_str()), const_cast<char *>(card.c_str()), &keytype, &fitsstatus)))
+    {
+      throw "dalFITS::parseTemplate";
+    }
+    
+    return fitsret;
+  }
 
 
   // ============================================================================
@@ -683,7 +867,7 @@ int fits_parse_template(char *template, char *card, int *keytype, int *status)
   //
   // ============================================================================
 
-
+  // Implement these in a dalFITSTable.h/.cpp class?
 
 
   // ============================================================================
