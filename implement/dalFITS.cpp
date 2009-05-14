@@ -489,29 +489,34 @@ namespace DAL
     \param x --
     \param y --
   */
-  int dalFITS::appendTile(double* tile, int x, int y)
+  int dalFITS::appendTile(double* tile,
+			  int x,
+			  int y)
   {
     int fitsret=0;
-
-
+    
+    
     return fitsret;
   }
   
   
   /*! Append a SubCube to a FITS file
-
+    
     \param cube --
     \param x --
     \param y --
     \param z --
-  
+    
     \return fitsret
   */
-  int dalFITS::appendCube(double* cube, int x, int y, int z)
+  int dalFITS::appendCube(double* cube,
+			  int x,
+			  int y,
+			  int z)
   {
     int fitsret=0;
-
-
+    
+    
     return fitsret;
   }
 
@@ -526,7 +531,8 @@ namespace DAL
 
 
   // Methods for reading keywords and records from a dalFITS file
-  int dalFITS::getHDRspace(int &keysexist, int &morekeys)
+  int dalFITS::getHDRspace(int &keysexist,
+			   int &morekeys)
   {
     int fitsret=0;
 
@@ -539,7 +545,8 @@ namespace DAL
   }
 
 
-  int dalFITS::readRecord(int keynum, std::string record)
+  int dalFITS::readRecord(int keynum,
+			  std::string record)
   {
     int fitsret=0;
 
@@ -564,8 +571,16 @@ namespace DAL
     return fitsret;
   }
 
-
-  int dalFITS::readKey(int datatype, char *keyname, void *value, char *comment)
+  /*!
+    \param datatype
+    \param keyname
+    \param value
+    \param comment
+  */
+  int dalFITS::readKey(int datatype,
+		       char *keyname,
+		       void *value,
+		       char *comment)
   {
     int fitsret=0;
 
@@ -577,8 +592,18 @@ namespace DAL
     return fitsret;
   }
     
-
-  int dalFITS::findNextKey(char **inclist, int ninc, char **exclist, int nexc, char *card)
+  /*!
+    \param inclist
+    \param ninc
+    \param exclist
+    \param nexc
+    \param card
+  */
+  int dalFITS::findNextKey(char **inclist,
+			   int ninc,
+			   char **exclist,
+			   int nexc,
+			   char *card)
   {
     int fitsret=0;
 
@@ -590,8 +615,12 @@ namespace DAL
     return fitsret;
   }
 
-
-  int dalFITS::readKeyUnit(std::string keyname, std::string unit)
+  /*!
+    \param keyname
+    \param unit
+  */
+  int dalFITS::readKeyUnit(std::string keyname,
+			   std::string unit)
   {
     int fitsret=0;
   
@@ -610,33 +639,52 @@ namespace DAL
   //
   //===============================================================
 
-  int dalFITS::writeKey(int datatype, std::string keyname, void *value, std::string comment)
+  /*!
+    \param 
+  */
+  int dalFITS::writeKey(int datatype,
+			std::string keyname,
+			void *value,
+			std::string comment)
   {
     int fitsret=0;
   
     if(!(fitsret=fits_write_key(fptr, datatype, const_cast<char 
-*>(keyname.c_str()), value, const_cast<char *>(comment.c_str()), &fitsstatus)))
-    {
-      throw "dalFITS::writeKey";
-    }
-
-    return fitsret;
-  }
-   
-
-  int dalFITS::updateKey(int datatype, std::string keyname, void *value, std::string comment)
-  {
-    int fitsret=0;
-  
-    if(!(fitsret=fits_update_key(fptr, datatype, const_cast<char *>(keyname.c_str()), value, const_cast<char *>(comment.c_str()), &fitsstatus)))
-    {
-      throw "dalFITS::updateKey";
-    }
+				*>(keyname.c_str()), value, const_cast<char *>(comment.c_str()), &fitsstatus)))
+      {
+	throw "dalFITS::writeKey";
+      }
     
     return fitsret;
   }
   
-
+  /*!
+    \param datatype
+    \param keyname
+    \param value
+    \param comment
+  */
+  int dalFITS::updateKey(int datatype,
+			 std::string keyname,
+			 void *value,
+			 std::string comment)
+  {
+    int fitsret=0;
+    
+    if(!(fitsret=fits_update_key(fptr,
+				 datatype,
+				 const_cast<char *>(keyname.c_str()),
+				 value,
+				 const_cast<char *>(comment.c_str()),
+				 &fitsstatus)))
+      {
+	throw "dalFITS::updateKey";
+      }
+    
+    return fitsret;
+  }
+  
+  
   int dalFITS::writeRecord(std::string card)
   {
     int fitsret=0;

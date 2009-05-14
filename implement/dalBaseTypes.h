@@ -39,8 +39,10 @@
 #include <complex>  // for complex datatypes
 #include <time.h>   // for local time conversion
 
+#ifdef HAVE_HDF5
 #include <hdf5.h>
 #include <hdf5_hl.h>
+#endif
 
 #ifdef HAVE_CFITSIO
 extern "C"
