@@ -318,7 +318,7 @@ int main(int argc, char *argv[])
               if ( !tbb.processTransientSocketDataBlock() )
                 break;
             }
-	  
+
         } // while (true)
       
     }
@@ -358,6 +358,9 @@ int main(int argc, char *argv[])
             {
               tbb.processSpectralFileDataBlock();
             }
+
+          // cleanup open groups, etc.
+          tbb.cleanup();
 
         } // !eof
 

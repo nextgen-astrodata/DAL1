@@ -496,22 +496,35 @@ namespace DAL {
     std::string channelID (dipolestr);
     
     first_sample = false;
+
     // does the station exist?
-    if ( !it_exists( stations, stringify(stationstr)) ) {
-      //Station unknown, make new station group, which also makes a new dipole.
-      makeNewStation(stationstr, headerp_p);
+    if ( it_exists( stations, stringify(stationstr)) ) {
+
+      // if the station group already exists, then open it
       stationGroup_p = dataset->openGroup( stationstr );
+
       dipoles = stationGroup_p->getMemberNames();
-    } else {
-      stationGroup_p = dataset->openGroup( stationstr );
-      dipoles = stationGroup_p->getMemberNames();      
+
       // does the dipole exist?
-      if ( !it_exists( dipoles, stringify(dipolestr)) )	{
+      if ( it_exists( dipoles, stringify(dipolestr)) )	{
+        // if the dipole array already exists, then open it
+        dipoleArray_p = dataset->openArray( dipolestr, stationGroup_p->getName() );
+      }
+      else
+      {
 	//Need to generate a new dipole structure
 	makeNewDipole(dipolestr, stationGroup_p, headerp_p);
-      };
-    };
-    dipoleArray_p = dataset->openArray( dipolestr, stationGroup_p->getName() );
+      }
+
+    } else {
+
+      //Station unknown, make new station group, which also makes a new dipole.
+
+      makeNewStation(stationstr, headerp_p);
+
+      dipoles = stationGroup_p->getMemberNames();
+    }
+
     dims          = dipoleArray_p->dims();
     offset_p      = dims[0];
   }
@@ -903,5 +916,16 @@ cout << "extending array to:" << writeOffset+ headerp_p->n_samples_per_frame
     return status;
   }
 #endif  
+
+  void TBB::cleanup()
+  {
+      stationGroup_p->close();
+      delete stationGroup_p;
+      stationGroup_p = NULL;
+
+      dipoleArray_p->close();
+      delete dipoleArray_p;
+      dipoleArray_p = NULL;
+  }
 
 } // end namespace DAL

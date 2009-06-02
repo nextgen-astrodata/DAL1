@@ -256,6 +256,8 @@ namespace DAL {
     bool processSpectralSocketDataBlock();
     void processTransientFileDataBlock();
     void processSpectralFileDataBlock();
+    void cleanup();
+
     //! Check for the end-of-file
     bool eof();
 
