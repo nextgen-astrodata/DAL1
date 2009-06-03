@@ -236,7 +236,9 @@ namespace DAL {
       h5error = H5Aread (attribute_id,
 			 h5datatype,
 			 &value);
-      // clean up the error message buffer
+// fix leak: close the type identifier (modified by A. Corstanje, June 3rd 2009). See http://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetType
+			H5Tclose(h5datatype);
+			// clean up the error message buffer
       h5error = H5Eclear1();
       
       if (h5error == 0) {
