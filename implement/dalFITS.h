@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: TBB_Timeseries.h 2126 2008-11-07 13:31:59Z baehren              $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+ /***************************************************************************
  *   Copyright (C) 2008                                                    *
  *   Sven Duscha (sduscha@mpa-garching.mpg.de)                                                        *
  *                                                                         *
@@ -48,9 +45,11 @@
 #include <coordinates/Coordinates/LinearCoordinate.h>
 #include <coordinates/Coordinates/SpectralCoordinate.h>
 #include <lattices/Lattices/TiledShape.h>
+#include <tables/Tables/TiledFileAccess.h>
 #include <lattices/Lattices/LatticeBase.h>
 #include <lattices/Lattices/LatticeIterator.h>			// Iterator over lattices
 #include <images/Images/ImageOpener.h>				// wrapper class for
+#include <images/Images/FITSImage.h>				// high-level FITSImage interface
 #include <images/Images/HDF5Image.h>
 #include <images/Images/PagedImage.h>
 #include <tables/Tables/TableDesc.h>
@@ -93,7 +92,13 @@ namespace DAL {
 //     long naxis;
 
     //! dimensions of FITS image
-    std::vector<long> dimensions;
+    std::vector<long long> dimensions;
+
+    //! Current hdu (chdu)
+    int chdu;
+    
+    //! type of current HDU
+    int hdutype;
 
     //! bzero value
 //     double bzero;
@@ -174,31 +179,24 @@ namespace DAL {
       \brief open a FITS file for reading, writing or both
       
       \param iomode --
-
-      \return fitsret --
     */
-    int open(int iomode);	// modes as defined in cfitsio library: RO, W, RW
+    void open(int iomode);	// modes as defined in cfitsio library: RO, W, RW
     
     /*!
       \brief close a FITS file handle
-      
-      \return fitsret --
     */
-    int close();
+    void close();
 
     /*!
       \brief create a new FITS file
-
-      \return fitsret --
     */
-    int create();
+    void create();
 
     /*!
       \brief Get a (casa) Lattice<Float> to access the fits file
-    
-      \return LatticeBase* --
     */
-    casa::Lattice<Float>* getLattice ();
+    //casa::Lattice<Float>* getLattice ();
+    void getLattice();	// set Lattice in object
 
 
     /*! 
@@ -212,91 +210,71 @@ namespace DAL {
     /*! 
       \brief Get the number of HDUs in the FITS file
 
-      \return fitsret --
+      \return numHDUS - number of HDUs in FITS file
     */
     int readNumHDUs ();
 
 
     /*! 
       \brief Read the current header postion (HDU) in FITS file
-    
-      \param *hdu --
       
-      \return fitsret --
+      \return chdu - current HDU in FITS file
     */
-    int readCurrentHDU(int *currenthdu);
+    int readCurrentHDU();
 
 
     /*!	
       \brief Move to HDU unit given by hdu
     
-      \param hdu --
-      
-      \return hdutype --
+      \param hdu - move to HDU number
     */
-    int moveAbsoluteHDU(int hdu);
+    void moveAbsoluteHDU(int hdu);
 
 
     /*! 
       \brief Move relative by hdu units
       
-      \param hdu --
-      
-      \return fitsret --
+      \param hdu - move relative number of HDUs
     */  
-    int moveRelativeHDU(int hdu);
+    void moveRelativeHDU(int hdu);
 
 
     /*! 
       \brief Move to hdu extension with name, extname
       
-      \param *hdutype --
-      \param extname --
-      
-      \return fitstret --
+      \param extname - extension name
+ 
+      \return hdutype - Type of HDU moved to
     */
-    int moveNameHDU(int &hdutype, const std::string &extname);
+    int moveNameHDU(const std::string &extname);
 
 
     /*!	
       \brief Read type of HDU (IMAGE_HDU, ASCII_TBL, or BINARY_TBL)
 
-      \param *hdutype --
-
-      \return ret --
+      \return ret - HDUType
     */
-    int readHDUType(int *hdutype);
+    int readHDUType();
 
 
     /*!
       \brief Read the filename of the currently opened FITS file
-    
-      \param filename --
-      \param hdutype --
 
-      \return fitsretval
+      \return filename - Name of FITS file currently opened in dalFITS object
     */
-    int readFilename(char *filename, char &hdutype);
+    std::string readFilename();
 
 
     /*! 
-      \brief Read the IO mode of the currently opened FITS file
-  
-      \param mode --
-
-      \return fitsret --
+      \brief Read the IO mode of the currently opened FITS file  
     */    
-    int readFileMode(int *mode);
+    int readFileMode();
 
 
     /*! 
       \brief Read the url type, e.g. file://, ftp:// of the currently opened FITS file
-      
-      \param *urltype --
-      
-      \return fitsret --
     */
-    int readURLType(char *urltype);
+    std::string readURLType();
 
 
     /*!
@@ -308,17 +286,13 @@ namespace DAL {
 
     /*!
       \brief Flush the FITS file, close and reopen
-
-      \return fitsret --
     */
-    int flushFITSfile();
+    void flushFITSfile();
 
     /*!
       \brief Flush buffer (without proper closing and reopening)
-    
-      \return fitsret --
     */
-    int flushFITSBuffer();
+    void flushFITSBuffer();
 
     
     // ============================================================================
@@ -326,115 +300,28 @@ namespace DAL {
     //	Image access functions
     //
     // ============================================================================
-
-    /*! 
-      \brief Get image type of the FITS image
     
-      \param &bitpix --
-
-      \return ret --
-    */
-    int getImgType(int &bitpix);
-
-
-    /*! 
-      \brief Get image dimensions of the FITS image
-      
-      \param &naxis --
-
-      \return ret --
-    */
-    int getImgDim(int &naxis);
-
-
-    /*!
-      \brief Get image size of the FITS image
-  
-      \param maxdim --
-      \param &naxes --
-      
-      \return ret --
-    */
-    int getImgSize(int maxdim,  long &naxes);
-
-
-    /*!
-      \brief Get image parameters: maxdim, bitpix, naxis, naxes
-
-      \param maxdim --
-      \param *bitpix --
-      \param *naxis --
-      \param *naxes --
-
-      \return ret --
-    */
-    int getImgParam(int maxdim,  int &bitpix, int &naxis, long &naxes);
-
-
-    /*!
-      \brief Create an image extension
-
-      \param bitpix --
-      \param naxis --
-      \param *naxes --
-
-      \return ret --
-    */
-    int createImg(int bitpix, int naxis, long *naxes);
-    
-
-    /*!
-      \brief Write nelements pixels to FITS image extension
-      
-      \param datatype --
-      \param *fpixel --
-      \param nelements --
-      \param *array --
-
-      \return ret --
-    */
-    int writePix(int datatype, long *fpixel, long nelements, void *array);
-
-
-    /*!
-      \brief Write pixels to FITS image (any undefined value is replaced by nulval)
-    
-      \param datatype --
-      \param *fpixel --
-      \param nelements --
-      \param *array --
-      \param *nulval --
-      
-      \return fitsret --
-    */
-    int writePixNull(int datatype, long *fpixel, long nelements, void *array, void *nulval);
-
-    /*! 
-      \brief Read pixels from an FITS image
-      
-      \param datatype --
-      \param *fpixel --
-      \param n
-      
-      \return fitsret --
-    */
-    int readPix(int  datatype, long *fpixel, 
+    int getImgType();
+    int getImgDim();
+    void getImgSize(int maxdim,  long &naxes);
+    void getImgParam(int maxdim,  int &bitpix, int &naxis, long &naxes);
+    void createImg(int bitpix, int naxis, long *naxes);
+    void writePix(int datatype, 
+		  long *fpixel, 
+		  long nelements, 
+		  void *array);
+    void writePixNull(int datatype, 
+		      long *fpixel, 
+		      long nelements, 
+		      void *array, 
+		      void *nulval); 
+    void readPix(int datatype, long *fpixel, 
                   long nelements, void *nulval, void *array, 
                   int *anynul);
-
-
-    /*! 
-      \brief Write a subset to a FITS image
-      
-      \param datatype --
-      \param *fpixel --
-      \param *lpixel --
-      \param *array --
-      
-      \return fitsret --
-    */
-    int writeSubset(int datatype, long *fpixel,
-             long *lpixel, double *array);
+    void writeSubset( int datatype, 
+		      long *fpixel,
+		      long *lpixel, 
+		      double *array);
 
     /*! 
       \brief Read a subset from a FITS image
@@ -449,7 +336,7 @@ namespace DAL {
       
       \return fitsret --
     */
-    int readSubset(int  datatype, long *fpixel,
+    void readSubset(int  datatype, long *fpixel,
              long *lpixel, long *inc, void *nulval,  void *array,
              int *anynul);
 
@@ -474,7 +361,7 @@ namespace DAL {
       
       \return fitsret --
     */
-    int getHDRspace(int &keysexist, int &morekeys);
+    void getHDRspace(int &keysexist, int &morekeys);
 
 
     /*!
@@ -485,7 +372,7 @@ namespace DAL {
       
       \return fitsret --
     */
-    int readRecord(int keynum, std::string record);
+    void readRecord(int keynum, std::string record);
     
     
     /*!
@@ -496,7 +383,7 @@ namespace DAL {
       
       \return fitsret --
     */
-    int readCard(std::string keyname, std::string record);
+    void readCard(std::string keyname, std::string record);
 
 
     /*!
@@ -509,7 +396,7 @@ namespace DAL {
       
       \return fitsret --
     */ 
-    int readKey(int datatype, char *keyname, void *value, char *comment);
+    void readKey(int datatype, char *keyname, void *value, char *comment);
 
 
     /*!
@@ -523,7 +410,7 @@ namespace DAL {
       
       \return fitsret --
     */
-    int findNextKey(char **inclist, int ninc, char **exclist, int nexc, char *card);
+    void findNextKey(char **inclist, int ninc, char **exclist, int nexc, char *card);
     
     
     /*!
@@ -534,7 +421,7 @@ namespace DAL {
       
       \return fitsret --
     */
-    int readKeyUnit(std::string keyname, std::string unit);
+    void readKeyUnit(std::string keyname, std::string unit);
     
     
     
@@ -551,10 +438,8 @@ namespace DAL {
       \param keyname --
       \param *value --
       \param comment --
-      
-      \return fitsret --
     */
-    int writeKey(int datatype, std::string keyname, void *value, std::string comment);
+    void writeKey(int datatype, std::string keyname, void *value, std::string comment);
     
     
     /*!
@@ -564,10 +449,8 @@ namespace DAL {
       \param keyname --
       \param *value --
       \param comment --
-      
-      \return fitsret --
     */
-    int updateKey(int datatype, std::string keyname, void *value, std::string comment);
+    void updateKey(int datatype, std::string keyname, void *value, std::string comment);
     
     
     /*!
@@ -577,7 +460,7 @@ namespace DAL {
       
       \return fitsret --
     */
-    int writeRecord(std::string card);
+    void writeRecord(std::string card);
 
 
     /*!
@@ -585,85 +468,67 @@ namespace DAL {
       
       \param keyname --
       \param comment --
-      
-      \return fitsret --
     */
-    int modifyComment(std::string keyname, std::string comment);
+    void modifyComment(std::string keyname, std::string comment);
     
     /*!
       \brief Write a Unit to the key corresponding to &keyname in the CHDU
     
       \param keyname --
       \param unit --
-      
-      \return fitsret --
     */
-    int writeKeyUnit(std::string keyname, std::string unit);
+    void writeKeyUnit(std::string keyname, std::string unit);
     
     
     /*!
       \brief Write a comment to the CHDU
     
       \param &comment --
-      
-      \return fitsret --
     */
-    int writeComment(std::string comment);
+    void writeComment(std::string comment);
 
 
     /*!
       \brief Write a HISTORY entry to the CHDU
       
       \param history --
-      
-      \return fitsret --
     */
-    int writeHistory(std::string history);
+    void writeHistory(std::string history);
     
     
     /*!
       \brief Write the current date to the CHDU
-      
-      \return fitsret --
     */
-    int writeDate();
+    void writeDate();
     
     /*!
       \brief Delete a record from the CHDU
       
       \param keynum --
-      
-      \return fitsret --
     */
-    int deleteRecord(int keynum);
+    void deleteRecord(int keynum);
 
 
     /*!
       \brief Delete the key referenced by &keyname from the CHDU 
     
       \param keyname --
-      
-      \return fitsret --
     */
-    int deleteKey(std::string keyname);
+    void deleteKey(std::string keyname);
 
 
     /*!
       \brief Copy the Header of this FITS to the &other dalFITS object
       
       \param &other --
-      
-      \return fitsret --
     */
-    int copyHeader(dalFITS &other);
+    void copyHeader(dalFITS &other);
 
 
     /*!
       \brief Write the Header checksum to the CHDU
-      
-      \return fitsret --
     */
-    int writeChecksum();
+    void writeChecksum();
 
   
     /*!
@@ -671,10 +536,8 @@ namespace DAL {
       
       \param dataok --
       \param hduok --
-      
-      \return fitsret --
     */
-    int verifyChecksum(bool &dataok, bool &hduok);
+    void verifyChecksum(bool &dataok, bool &hduok);
 
 
     /*!
@@ -683,10 +546,8 @@ namespace DAL {
       \param card --
       \param &value --
       \param &comment --
-      
-      \return fitsret -- 
     */
-    int parseValue(std::string card, std::string value, std::string comment);
+    void parseValue(std::string card, std::string value, std::string comment);
 
 
     /*!
@@ -694,20 +555,16 @@ namespace DAL {
       
       \param value --
       \param dtype --
-      
-      \return fitsret --
     */
-    int getKeytype(std::string value, char &dtype);
+    void getKeytype(std::string value, char &dtype);
 
 
     /*!
       \brief Get the class of the key in &card
       
       \param card --
-      
-      \return fitsret --
     */
-    int getKeyclass(std::string card);
+    void getKeyclass(std::string card);
 
 
     /*!
@@ -716,10 +573,8 @@ namespace DAL {
       \param templatec --
       \param card --
       \param &keytype --
-
-      \return fitsret --
     */
-    int parseTemplate(std::string templatec, std::string card, int &keytype);
+    void parseTemplate(std::string templatec, std::string card, int &keytype);
    
     //===============================================================
     //
@@ -738,7 +593,7 @@ namespace DAL {
     
       \return fitsret --
     */
-    int writeRMHeader(int hdu=1);
+    void writeRMHeader(int hdu=1);
 
 
      /*!
@@ -792,48 +647,40 @@ namespace DAL {
 
     // ============================================================================
     //
+    //  RM-Cube input functions
+    //
+    // ============================================================================  
+
+    void readPlane(double *plane, int z);
+
+    void readLine(vector<double> &line, int x, int y);
+
+    void readSubCube(double *subCube, int x_pos, int y_pos, int x_size, int y_size);
+    
+
+    // ============================================================================
+    //
     //  RM-Cube output functions
     //
     // ============================================================================  
 
+    void writePlane(double *plane, int x, int y, int z);
 
-    /*! Append one image plane to a FITS file at the current filepointer position
+    void writeLine(vector<double> faradayline, int x, int y);
 
-      \param *plane --
-      \param x --
-      \param y --
-    */
-    int appendPlane(double *plane, int x, int y);
-
-
-    /*! Append one line of sight to a FITS file at the current filepointer position
-
-      \param line --
-      \param x --
-      \param y --
-    */
-    int appendLine(vector<double> faradayline);
-
-
-    /*! Append a tile to a FITS file at the current filepointer position
+    void writeTile( double* tile, 
+		    int x_size, 
+		    int y_size, 
+		    int x_pos, 
+		    int y_pos);   
     
-      \param tile --
-      \param x --
-      \param y --
-    */
-    int appendTile(double* tile, int x, int y);
-    
-    
-    /*! Append a SubCube to a FITS file at the current filepointer position
+    void writeCube(double* cube, int x, int y, int z);
 
-      \param cube --
-      \param x --
-      \param y --
-      \param z --
-    */
-    int appendCube(double* cube, int x, int y, int z);
-
-
+    void writeSubCube(  double* subcube, 
+			int x_size, 
+			int y_size, 
+			int x_pos, 
+			int y_pos);
 
     // ============================================================================
     //
