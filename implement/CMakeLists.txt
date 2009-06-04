@@ -182,10 +182,12 @@ if (DAL_PYTHON_BINDINGS)
     )
   ## linker instructions
   target_link_libraries(pydal
+    ${dal_link_libraries}
     ${PYTHON_LIBRARIES}
     ${BOOST_LIBRARIES}
-    ${dal_link_libraries}
     ${NUM_UTIL_LIBRARIES}
+    ${WCSLIB_LIBRARIES}
+    ${LAPACK_LIBRARIES}
     )
   ## additional target properties
   if (APPLE)

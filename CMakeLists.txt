@@ -60,11 +60,13 @@ if (NOT DAL_VERBOSE_CONFIGURE)
   set (CFITSIO_FIND_QUIETLY   ON )
   set (GSL_FIND_QUIETLY       ON )
   set (HDF5_FIND_QUIETLY      ON )
+  set (LAPACK_FIND_QUIETLY    ON )
   set (NUMPY_FIND_QUIETLY     ON )
   set (NUM_UTIL_FIND_QUIETLY  ON )
   set (PYTHON_FIND_QUIETLY    ON )
   set (MPATROL_FIND_QUIETLY   ON )
   set (MYSQL_FIND_QUIETLY     ON )
+  set (WCSLIB_FIND_QUIETLY     ON )
 endif (NOT DAL_VERBOSE_CONFIGURE)
 
 ## Handle option: debugging messages on/off
@@ -130,6 +132,13 @@ if (NOT HAVE_HDF5)
 endif (NOT HAVE_HDF5)
 
 ##__________________________________________________________
+## LAPACK
+
+if (NOT HAVE_LAPACK)
+  include (FindLAPACK)
+endif (NOT HAVE_LAPACK)
+
+##__________________________________________________________
 ## mpatrol
 
 if (NOT HAVE_MPATROL)
@@ -158,6 +167,13 @@ if (NOT HAVE_PYTHON)
   include (FindNumPy)
   include (FindNumUtil)
 endif (NOT HAVE_PYTHON)
+
+##__________________________________________________________
+## WCS Library
+
+if (NOT HAVE_WCS)
+  include (FindWCS)
+endif (NOT HAVE_WCS)
 
 ## ---------------------------------------------------------
 ## optional external packages (required for Python bindings)
