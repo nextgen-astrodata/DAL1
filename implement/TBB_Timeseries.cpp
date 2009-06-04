@@ -731,7 +731,57 @@ namespace DAL { // Namespace DAL -- begin
   }
 #endif
 
-  // --------------------------------------------------------- sample_frequency
+  //_____________________________________________________________________________
+  //                                                                 nyquist_zone
+
+#ifdef HAVE_CASA
+  casa::Vector<uint> TBB_Timeseries::nyquist_zone ()
+  {
+    uint n           = 0;
+    uint station     = 0;
+    uint dipole      = 0;
+    uint nofDipoles  = nofDipoleDatasets();
+    uint nofStations = nofStationGroups();
+    casa::Vector<uint> values (nofDipoles);
+    casa::Vector<uint> tmp;
+    
+    for (station=0; station<nofStations; station++) {
+      tmp = groups_p[station].nyquist_zone();
+      nofDipoles = groups_p[station].nofDipoleDatasets();
+      for (dipole=0; dipole<nofDipoles; dipole++) {
+	values(n) = tmp(dipole);
+	n++;
+      }
+    }
+    
+    return values;
+  }
+#else
+  std::vector<uint> TBB_Timeseries::nyquist_zone ()
+  {
+    uint n           = 0;
+    uint station     = 0;
+    uint dipole      = 0;
+    uint nofDipoles  = nofDipoleDatasets();
+    uint nofStations = nofStationGroups();
+    std::vector<uint> values (nofDipoles);
+    std::vector<uint> tmp;
+    
+    for (station=0; station<nofStations; station++) {
+      tmp = groups_p[station].nyquist_zone();
+      nofDipoles = groups_p[station].nofDipoleDatasets();
+      for (dipole=0; dipole<nofDipoles; dipole++) {
+	values[n] = tmp[dipole];
+	n++;
+      }
+    }
+    
+    return values;
+  }
+#endif
+
+  //_____________________________________________________________________________
+  //                                                             sample_frequency
 
 #ifdef HAVE_CASA
   casa::Vector<double> TBB_Timeseries::sample_frequency_value ()

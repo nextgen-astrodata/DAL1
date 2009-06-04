@@ -1,78 +1,79 @@
 /*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
- *   Copyright (C) 2007 by Joseph Masters                                  *
- *   jmasters@science.uva.nl                                               *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
- ***************************************************************************/
+  | $Id::                                                                 $ |
+  *-------------------------------------------------------------------------*
+  ***************************************************************************
+  *   Copyright (C) 2007 by Joseph Masters                                  *
+  *   jmasters@science.uva.nl                                               *
+  *                                                                         *
+  *   This program is free software; you can redistribute it and/or modify  *
+  *   it under the terms of the GNU General Public License as published by  *
+  *   the Free Software Foundation; either version 2 of the License, or     *
+  *   (at your option) any later version.                                   *
+  *                                                                         *
+  *   This program is distributed in the hope that it will be useful,       *
+  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+  *   GNU General Public License for more details.                          *
+  *                                                                         *
+  *   You should have received a copy of the GNU General Public License     *
+  *   along with this program; if not, write to the                         *
+  *   Free Software Foundation, Inc.,                                       *
+  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+  ***************************************************************************/
 
 #ifndef DALARRAY_H
 #include "dalArray.h"
 #endif
 
 namespace DAL
-  {
-
-// ------------------------------------------------------------ dalArray
+{
+  
+  // ------------------------------------------------------------ dalArray
   /*!
     \brief Default constructor.
-
+    
     Default constructor.
-   */
+  */
   dalArray::dalArray()
   {
     array_id = 0;
-    file_id = 0;
-    rank = 0;
+    file_id  = 0;
+    rank_p   = 0;
     datatype = "UNKNOWN";
     status = 0;
     name = "UNKNOWN";
   }
-
-
-// ------------------------------------------------------------ open
+  
+  
+  // ------------------------------------------------------------ open
   /*!
-   \brief Open an existing array.
-   \param file A pointer to the file.
-   \param arrayname The name of the array you want to open.
-   \return An identifier for the array.
-
-   Open an existing array.
+    \brief Open an existing array.
+    \param file A pointer to the file.
+    \param arrayname The name of the array you want to open.
+    \return An identifier for the array.
+    
+    Open an existing array.
   */
-  int dalArray::open( void * voidfile, string arrayname )
+  int dalArray::open( void * voidfile,
+		      string arrayname )
   {
     name = arrayname;
     hid_t * lclfile = (hid_t*)voidfile; // H5File object
     file_id = *lclfile;  // get the file handle
-
+    
     if ( ( array_id = H5Dopen( file_id, name.c_str(), H5P_DEFAULT ) ) < 0 )
       std::cerr << "ERROR: could not open array '" << arrayname << "'.\n";
-
+    
     return( array_id );
   }
-
-// ------------------------------------------------------------ getId
-
+  
+  // ------------------------------------------------------------ getId
+  
   /*!
     \brief Get the array ID.
-
+    
     Retrieve the identifier for the array.
-
+    
     \return The array identifier as an integer.
   */
   hid_t dalArray::getId()
@@ -80,13 +81,25 @@ namespace DAL
     return array_id;
   }
 
-// ------------------------------------------------------------ close
+  // ---------------------------------------------------------- getRank
+
   /*!
-   \brief Close an existing array.
+    \brief Get the rank of the array, i.e. the number of dimensions
 
-   Close an existing array.
-
-   \return bool -- DAL::FAIL or DAL::SUCCESS
+    \return rank -- The rank of the array.
+  */
+  int dalArray::getRank ()
+  {
+    return rank_p;
+  }
+  
+  // ------------------------------------------------------------ close
+  /*!
+    \brief Close an existing array.
+    
+    Close an existing array.
+    
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalArray::close()
   {
@@ -95,12 +108,12 @@ namespace DAL
         std::cerr << "ERROR: dalArray::close() failed.\n";
         return DAL::FAIL;
       }
-
+    
     return DAL::SUCCESS;
   }
-
-
-// ------------------------------------------------------------ write (int)
+  
+  
+  // ------------------------------------------------------------ write (int)
   /*!
     \brief Write int to an array.
 
@@ -114,7 +127,7 @@ namespace DAL
   bool dalArray::write( int offset, int data[], int arraysize )
   {
     hsize_t      dims[1] = { arraysize };
-    int32_t      rank    = 1;
+    int32_t      rank_p  = 1;
     hsize_t      off[1]  = { offset };
     hid_t filespace      = 0;
     hid_t dataspace      = 0;
@@ -135,7 +148,7 @@ namespace DAL
       }
     
     /* Define memory space */
-    if ( ( dataspace = H5Screate_simple (rank, dims, NULL) ) < 0 )
+    if ( ( dataspace = H5Screate_simple (rank_p, dims, NULL) ) < 0 )
       {
         std::cerr << "ERROR: Could not create dataspace for array.\n";
 	H5Sclose(filespace);
@@ -174,7 +187,7 @@ namespace DAL
   bool dalArray::write( int offset, short data[], int arraysize )
   {
     hsize_t      dims[1] = { arraysize };
-    int32_t      rank    = 1;
+    int32_t      rank_p  = 1;
     hsize_t      off[1]  = { offset };
     hid_t filespace      = 0;
     hid_t dataspace      = 0;
@@ -195,7 +208,7 @@ namespace DAL
       }
     
     /* Define memory space */
-    if ( ( dataspace = H5Screate_simple (rank, dims, NULL) ) < 0 )
+    if ( ( dataspace = H5Screate_simple (rank_p, dims, NULL) ) < 0 )
       {
         std::cerr << "ERROR: Could not create dataspace for array.\n";
 	H5Sclose(filespace);

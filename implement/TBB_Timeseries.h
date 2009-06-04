@@ -283,6 +283,8 @@ namespace DAL { // Namespace DAL -- begin
     casa::Vector<uint> time ();
     //! Get the number of samples elapsed since the last full second
     casa::Vector<uint> sample_number ();
+    //! Get the Nyquist zone for the A/D conversion
+    casa::Vector<uint> nyquist_zone ();
     //! Get the values of the ADC sample frequency
     casa::Vector<double> sample_frequency_value ();
     //! Get the unit of the ADC sample frequency
@@ -300,6 +302,8 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<uint> time ();
     //! Get the number of samples elapsed since the last full second
     std::vector<uint> sample_number ();
+    //! Get the Nyquist zone for the A/D conversion
+    std::vector<uint> nyquist_zone ();
     //! Get the values of the ADC sample frequency
     std::vector<double> sample_frequency_value ();
     //! Get the unit of the ADC sample frequency

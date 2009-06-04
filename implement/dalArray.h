@@ -43,7 +43,7 @@ namespace DAL
   class dalArray
     {
 
-      int rank;        // number of dimensions
+      int rank_p;        // number of dimensions
       string datatype; // array datatype identifier
       herr_t status;   // hdf5 return status
 
@@ -60,6 +60,7 @@ namespace DAL
       int open( void * file, string arrayname );
       bool close();
       hid_t getId();
+      int getRank ();
       bool getAttributes();
 
       // ---------------------------------------------------------- getAttribute

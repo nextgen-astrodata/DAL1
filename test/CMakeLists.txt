@@ -77,6 +77,23 @@ else (HAVE_CASA OR HAVE_CASACORE)
   message (STATUS "Skipping test programs that require casacore!")
 endif (HAVE_CASA OR HAVE_CASACORE)
 
+## [2] casacore & HDF5
+
+if (HAVE_CASACORE AND HAVE_HDF5)
+  foreach (src tcasacore_hdf5)
+    ## compiler instructions
+    add_executable (${src} ${src}.cpp)
+    ## linker instructions
+    target_link_libraries (${src} dal ${dal_link_libraries})
+    ## installation
+    list (APPEND tests ${src})
+    ## testing
+    if (DAL_ENABLE_TESTING)
+      add_test (${src}} ${src})
+    endif (DAL_ENABLE_TESTING)
+  endforeach (src)
+endif (HAVE_CASACORE AND HAVE_HDF5)
+
 ## ==============================================================================
 ##
 ##  Testing

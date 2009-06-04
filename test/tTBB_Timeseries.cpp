@@ -208,6 +208,7 @@ int test_methods (std::string const &filename)
     casa::Vector<uint> time;
     casa::Vector<uint> sample_number;
     casa::Vector<int> sample_offset;
+    casa::Vector<uint> nyquist_zone;
     casa::Vector<double> sample_frequency_value;
     casa::Vector<casa::String> sample_frequency_unit;
     casa::Vector<casa::MFrequency> sample_frequency;
@@ -215,6 +216,7 @@ int test_methods (std::string const &filename)
     time                   = ts.time();
     sample_number          = ts.sample_number();
     sample_offset          = ts.sample_offset();
+    nyquist_zone           = ts.nyquist_zone();
     sample_frequency_value = ts.sample_frequency_value();
     sample_frequency_unit  = ts.sample_frequency_unit();
     sample_frequency       = ts.sample_frequency();
@@ -222,22 +224,26 @@ int test_methods (std::string const &filename)
     cout << "-- TIME ................. = " << time                   << endl;
     cout << "-- SAMPLE_NUMBER ........ = " << sample_number          << endl;
     cout << "-- SAMPLE_OFFSET ........ = " << sample_offset          << endl;
+    cout << "-- NYQUIST_ZONE ......... = " << nyquist_zone           << endl;
     cout << "-- SAMPLE_FREQUENCY_VALUE = " << sample_frequency_value << endl;
     cout << "-- SAMPLE_FREQUENCY_UNIT  = " << sample_frequency_unit  << endl;
     cout << "-- SAMPLE_FREQUENCY       = " << sample_frequency       << endl;
 #else
     std::vector<uint> time;
     std::vector<uint> sample_number;
+    std::vector<uint> nyquist_zone;
     std::vector<double> sample_frequency_value;
     std::vector<std::string> sample_frequency_unit;
     //
     time                   = ts.time();
     sample_number          = ts.sample_number();
+    nyquist_zone           = ts.nyquist_zone();
     sample_frequency_value = ts.sample_frequency_value();
     sample_frequency_unit  = ts.sample_frequency_unit();
     //
     cout << "-- TIME ................. = " << time                   << endl;
     cout << "-- SAMPLE_NUMBER ........ = " << sample_number          << endl;
+    cout << "-- NYQUIST_ZONE ......... = " << nyquist_zone           << endl;
     cout << "-- SAMPLE_FREQUENCY_VALUE = " << sample_frequency_value << endl;
     cout << "-- SAMPLE_FREQUENCY_UNIT  = " << sample_frequency_unit  << endl;
 #endif
