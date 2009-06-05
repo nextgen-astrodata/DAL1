@@ -42,22 +42,34 @@ namespace DAL
     // initialise critical pointers
     fptr=NULL;
     fitsstatus=0;
-    filename="";
     lattice=NULL;
-    chdu=0;  
   }
 
 
   /*! 
     \brief Constructor with associated filename
     
-    \param &filename --
+    \param &filename - filename of FITS file
   */
-  dalFITS::dalFITS(const string &filename) 
+  dalFITS::dalFITS(const string &filename, int iomode) 
   {
-    this->filename=filename;	// assign filename to object 
+    // Depending on iomode: OPEN for READING,WRITING, RW or CREATE a FITS file
+    if(!(fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus)))
+    {
+      throw "dalFITS::open";	// get fits error from fitsstatus property later
+    }
   }
 
+  /*! 
+    \brief Copy constructor
+
+    \param other - other dalFITS object to be copied
+  */
+  dalFITS::dalFITS(dalFITS const &other)
+  {
+      // Copy object /TODO
+  
+  }
   
   /*!
     \brief Destructor
@@ -75,41 +87,36 @@ namespace DAL
   //
   // ============================================================================
  
-  /*
-    Functions to get FITS administrative handles (fileptr, lattice, hdu etc.)
-  */
-  
-  
-  /*
-    File access functions open/close etc.  
-  */
 
-  /*!	Open a FITS file in mode: r, w, rw
-  
-    \param string --
-  
-    \return fitsret --
+  /*! 
+    \brief open a FITS file for read or readwrite and move to first HDU with significant data
+    
+    \param iomode - I/O-mode: R, RW
   */
-  void dalFITS::open (int iomode)
+  void dalFITS::openData (const std::string &filename, int iomode)
   {
-    // Open fits file, status will be forwarded to object variable fitsstatus
-    // need std::string.cstr()-method to get const char* which is needed by fits_open_file
-    if(!(fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus)))
+    if(!(fits_open_data(&fptr, const_cast<char *>(filename.c_str()), iomode , &fitsstatus)))
     {
-      throw "dalFITS::open";	// get fits error from fitsstatus property later
-    }
+      throw "dalFITS::openData";
+    }  
   }
   
-
+ 
+  /*!
+    \brief Get a (casa) Lattice<Float> to access the fits file
+  */
   void dalFITS::getLattice()
   //casa::Lattice<Float>* dalFITS::getLattice () // don't return, but set in object instead
   {
     casa::LatticeBase *latticeBase;	// generic lattice variable for casa lattice
+    std::string filename;		// local string to hold filename
 
     FITSImage::registerOpenFunction();	// Register the FITS and Miriad image types.
 
+    // Get filename of dalFITS object
+    
 
-    latticeBase=ImageOpener::openImage (this->filename);	// try open the file with generic casa function
+    latticeBase=ImageOpener::openImage (filename);	// try open the file with generic casa function
     
     if(lattice==NULL)			// on error	
     {
@@ -144,6 +151,9 @@ namespace DAL
   }
 
 
+  /*!
+      \brief close a FITS file handle
+  */
   void dalFITS::close ()
   {
     if(!(fits_close_file(fptr, &fitsstatus)))
@@ -153,6 +163,11 @@ namespace DAL
   }
 
 
+  /*! 
+    \brief Get the corresponding cfits error message to the current fitsstatus
+  
+    \return fitserrormsg --
+  */
   std::string dalFITS::getFitsError ()
   {
     char* fits_error_message;
@@ -166,7 +181,7 @@ namespace DAL
     char msg[81];
     fits_get_errstatus (status, msg);
     cerr << msg << endl;
-    while (fits_read_errmsg(msg)) cerr << msg << endl;
+    while (firead_errmsg(msg)) cerr << msg << endl;
     planck_fail("FITS error");
     }
    */
@@ -175,17 +190,45 @@ namespace DAL
   }
 
 
-  void dalFITS::moveAbsoluteHDU(int hdu)
-  {    
-    if(!(fits_movabs_hdu(fptr, hdu, &hdutype, &fitsstatus)))
+  /*! 
+    \brief Get the number of HDUs in the FITS file
+
+    \return numHDUS - number of HDUs in FITS file
+  */
+  int dalFITS::readNumHDUs()
+  {
+    int hdunum=0;	// number of hdus in FITS file
+  
+    if(!(fits_get_num_hdus(fptr, &hdunum ,&fitsstatus)))
+    {
+      throw "dalFITS::readNumHDUs";
+    }
+    
+    return hdunum;
+  }
+
+
+  /*!	
+    \brief Move to HDU unit given by hdu
+  
+    \param hdu - move to HDU number
+  
+    \return hdutype - type of HDU moved to
+  */
+  int dalFITS::moveAbsoluteHDU(int hdu)
+  {
+    if(!(fits_movabs_hdu(fptr, hdu, NULL, &fitsstatus)))
     {
       throw "dalFITS::moveAbsoluteHDU";
     }
-    
-    this->chdu=hdu; // Update chdu in dalFITS object
   }
-  
 
+
+  /*! 
+    \brief Move relative by hdu units
+    
+    \param hdu - move relative number of HDUs
+  */  
   void dalFITS::moveRelativeHDU(int nhdu)
   {
     int hdupos=0;		// local variable to hold current hdu
@@ -196,11 +239,14 @@ namespace DAL
     }
     
     fits_get_hdu_num(fptr, &hdupos);
-    
-    this->chdu=hdupos;		// update chdu in dalFITS object
   }
 
 
+  /*! 
+    \brief Read the current header postion (HDU) in FITS file
+    
+    \return chdu - current HDU in FITS file
+  */
   int dalFITS::readCurrentHDU()
   {
     int hdupos=0;		// local variable to hold chdu
@@ -210,15 +256,19 @@ namespace DAL
       throw "dalFITS::readCurrentHDU";
     }
   
-    this->chdu=hdupos;	// update chdu in dalFITS object
-  
-    return chdu;	// return to caller
+    return hdupos;		// return to caller
   }
 
 
+  /*! 
+    \brief Move to hdu extension with name, extname
+    
+    \param extname - extension name to move to
+
+    \return hdutype - Type of HDU moved to
+  */
   int dalFITS::moveNameHDU(const std::string &extname)
   {
-    int hdupos=0;		// local variable to hold chdu
     int hdutype=0;		// type of HDU
 
     // ignoring the version number of the extension
@@ -226,16 +276,16 @@ namespace DAL
     {
       throw "dalFITS::moveNameHDU";
     }
-    
-    fits_get_hdu_num(fptr, &hdupos);
-
-    this->chdu=hdupos;		// update chdu in dalFITS object
-    this->hdutype=hdutype;	// update hdutype in dalFITS object
-  
+ 
     return hdutype;
   }
 
 
+  /*!	
+    \brief Read type of HDU (IMAGE_HDU, ASCII_TBL, or BINARY_TBL)
+
+    \return hduype - Type of current HDU
+  */
   int dalFITS::readHDUType()
   { 
     int hdutype=0;
@@ -245,28 +295,31 @@ namespace DAL
       throw "dalFITS::readHDUType";
     }
     
-    this->hdutype=hdutype; // update hdutype in dalFITS object
-    
     return hdutype;
   }
 
 
+  /*!
+    \brief Read the filename of the currently opened FITS file
+
+    \return filename - Name of FITS file currently opened in dalFITS object
+  */
   std::string dalFITS::readFilename()
   {  
-    char hdutype=0;	// local variable to hold hdutype
-  
-    if(!(fits_file_name(fptr, &hdutype, &fitsstatus)))
+    std::string filename;	// local variable to hold FITS filename
+
+    if(!(fits_file_name(fptr, const_cast<char *>(filename.c_str()), &fitsstatus)))
     {
       throw "dalFITS::readFilename";
     }
-    
-    this->filename=filename; 	// update filename in dalFITS object
-    this->hdutype=hdutype;	// update hdutype in dalFITS object
   
     return filename;
   }
 
 
+  /*! 
+    \brief Read the IO mode of the currently opened FITS file  
+  */    
   int dalFITS::readFileMode()
   {
     int mode;
@@ -279,7 +332,10 @@ namespace DAL
     return mode;
   }
 
- 
+
+  /*! 
+    \brief Read the url type, e.g. file://, ftp:// of the currently opened FITS file
+  */
   std::string dalFITS::readURLType()
   {
     string urltype;
@@ -292,20 +348,22 @@ namespace DAL
     return urltype;
   }
 
-
+ 
+  /*!
+    \brief Delete the fitsfile of the dalFITS object
+  */
   int dalFITS::deleteFITSfile()
   {
-    int fitsret=0;
-    
-    if(!(fitsret=fits_delete_file(fptr, &fitsstatus)))
+    if(!(fits_delete_file(fptr, &fitsstatus)))
     {
       throw "dalFITS::deleteFITSfile";
     }
-    
-    return fitsret;
   }
 
- 
+
+  /*!
+    \brief Flush the FITS file, close and reopen
+  */
   void dalFITS::flushFITSfile()
   {
     if(!(fits_flush_file(fptr, &fitsstatus)))
@@ -315,6 +373,9 @@ namespace DAL
   }
 
 
+  /*!
+    \brief Flush buffer (without proper closing and reopening)
+  */
   void dalFITS::flushFITSBuffer()
   {
     if(!(fits_flush_buffer(fptr, 0, &fitsstatus)))
@@ -685,8 +746,15 @@ namespace DAL
   //
   // ============================================================================
 
-
   // Methods for reading keywords and records from a dalFITS file
+
+
+  /*!
+    \brief Get size of Header space of current HDU
+    
+    \param &keysexist - number of existing keywords (without END)
+    \param &morekeys - morekeys=-1 if the header has not yet been closed
+  */
   void dalFITS::getHDRspace(int &keysexist,
 			   int &morekeys)
   {
@@ -697,6 +765,12 @@ namespace DAL
   }
 
 
+  /*!
+    \brief Get a record from the current HDU
+    
+    \param keynum - nth key to read, first keyword in the header is at keynum=1
+    \param record - write the entire 80-character header record into this string
+  */
   void dalFITS::readRecord(int keynum,
 			  std::string record)
   {
@@ -705,8 +779,13 @@ namespace DAL
       throw "dalFITS::readRecord";
     }
   }
-  
-  
+
+  /*!
+    \brief Get the record card from the current HDU
+    
+    \param keyname - name of key to read
+    \param record - write the entire 80-character header record into this string
+  */
   void dalFITS::readCard(std::string keyname, std::string record)
   {
     if(!(fits_read_card(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(record.c_str()), &fitsstatus)))
@@ -715,45 +794,71 @@ namespace DAL
     }
   }
 
+
   /*!
-    \param datatype
-    \param keyname
-    \param value
-    \param comment
+    \brief Read the nth header record in the CHU
+
+    \param keynum - nth key to read, first keyword in the header is at keynum=1
+    \param keyname - string that will contain keyname
+    \param value - string that will contain the key's value
+    \param comment - string that will contain the corresponding comment
+  */
+  void dalFITS::readKeyn(int keynum, std::string keyname, std::string value, std::string comment)
+  {
+    if(!(fits_read_keyn(fptr, keynum, const_cast<char *>(keyname.c_str()), const_cast<char *>(value.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus) ))
+    {
+      throw "dalFITS::readKeyn";
+    }
+  }
+  
+
+  /*!
+    \brief Return the specified keyword
+    
+    \param datatype - data type of the keyword (TSTRING, TLOGICAL==int, TBYTE, TSHORT, TUSHORT, TINT, TUINT, TLONG, TULONG, TLONGLONG, TFLOAT, TDOUBLE, TCOMPLEX, TDBLCOMPLEX
+    \param keyname -name of key to look for
+    \param value - value of key to look for
+    \param comment - comment of key to look for
   */
   void dalFITS::readKey(int datatype,
-		       char *keyname,
+		       std::string keyname,
 		       void *value,
-		       char *comment)
+		       std::string comment)
   {
-    if(!(fits_read_key(fptr, datatype, keyname, value, comment, &fitsstatus)))
+    if(!(fits_read_key(fptr, datatype, const_cast<char *>(keyname.c_str()), value, const_cast<char *>(comment.c_str()), &fitsstatus)))
     {
       throw "dalFITS::readKey";
     }
   }
-    
+
+
   /*!
-    \param inclist
-    \param ninc
-    \param exclist
-    \param nexc
-    \param card
+    \brief Find the next key in the header whose name matches one of the strings in inclist
+    
+    \param **inclist - array of character strings with names to be included in search
+    \param ninc - number of included keys in search
+    \param **exclist - array of character strings with names to be excluded in search
+    \param nexc - number of excluded keys, may be set to 0 if there are no keys excluded
+    \param card - string to write card to
   */
   void dalFITS::findNextKey(char **inclist,
 			   int ninc,
 			   char **exclist,
 			   int nexc,
-			   char *card)
+			   std::string card)
   {
-    if(!(fits_find_nextkey(fptr, inclist, ninc, exclist, nexc, card, &fitsstatus)))
+    if(!(fits_find_nextkey(fptr, inclist, ninc, exclist, nexc, const_cast<char *>(card.c_str()), &fitsstatus)))
     {
       throw "dalFITS::findNextKey";
     }
   }
 
+
   /*!
-    \param keyname
-    \param unit
+    \brief Read the Unit string of a key
+  
+    \param keyname - name of key
+    \param unit - string to write the physical unit to
   */
   void dalFITS::readKeyUnit(std::string keyname,
 			   std::string unit)
@@ -772,7 +877,12 @@ namespace DAL
   //===============================================================
 
   /*!
-    \param 
+    \brief Write a key to the header
+  
+    \param datatype - data type of key
+    \param keyname - name of key
+    \param *value - value to write into field
+    \param comment - comment string
   */
   void dalFITS::writeKey(int datatype,
 			std::string keyname,
@@ -785,17 +895,20 @@ namespace DAL
 	throw "dalFITS::writeKey";
       }
   }
-  
+
+
   /*!
-    \param datatype
-    \param keyname
-    \param value
-    \param comment
+    \brief Update a key in the header
+  
+    \param datatype - data type of key
+    \param keyname - name of key
+    \param value - value to write into field
+    \param comment - comment string
   */
   void dalFITS::updateKey(int datatype,
-			 std::string keyname,
+			 std::string &keyname,
 			 void *value,
-			 std::string comment)
+			 std::string &comment)
   {
   
     if(!(fits_update_key(fptr,
@@ -808,9 +921,14 @@ namespace DAL
 	throw "dalFITS::updateKey";
       }
   }
-  
-  
-  void dalFITS::writeRecord(std::string card)
+
+
+  /*!
+    \brief Write a record "card" to the FITS header of the CHDU
+    
+    \param card - string containing card information
+  */
+  void dalFITS::writeRecord(std::string &card)
   {
     if(!(fits_write_record(fptr, const_cast<char *>(card.c_str()), &fitsstatus)))
     {
@@ -819,7 +937,13 @@ namespace DAL
   }
   
 
-  void dalFITS::modifyComment(std::string keyname, std::string comment)
+  /*!
+    \brief Modify the comment of &keyname in the FITS header of the CHDU
+    
+    \param keyname - name of key to modify key of
+    \param comment - new comment string
+  */
+  void dalFITS::modifyComment(std::string &keyname, std::string &comment)
   {
     if(!(fits_modify_comment(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus)))
     {
@@ -828,7 +952,13 @@ namespace DAL
   }
 
 
-  void dalFITS::writeKeyUnit(std::string keyname, std::string unit)
+  /*!
+    \brief Write a Unit to the key corresponding to &keyname in the CHDU
+  
+    \param keyname - name of key to modify unit of
+    \param unit - string with physical unit
+  */
+  void dalFITS::writeKeyUnit(std::string &keyname, std::string &unit)
   {
     if(!(fits_write_key_unit(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(unit.c_str()), &fitsstatus)))
     {
@@ -836,8 +966,13 @@ namespace DAL
     }
   }
 
-
-  void dalFITS::writeComment(std::string comment)
+ 
+  /*!
+    \brief Write a comment to the CHDU
+  
+    \param &comment - write a comment to the CHU
+  */
+  void dalFITS::writeComment(std::string &comment)
   {
     if(!(fits_write_comment(fptr, const_cast<char *>(comment.c_str()),  &fitsstatus)))
     {
@@ -846,15 +981,23 @@ namespace DAL
   }
 
 
-  void dalFITS::writeHistory(std::string history)
+  /*!
+    \brief Write a HISTORY entry to the CHDU
+      
+    \param history - History text
+  */
+  void dalFITS::writeHistory(std::string &history)
   {
     if(!(fits_write_history(fptr, const_cast<char *>(history.c_str()),  &fitsstatus)))
     {
       throw "dalFITS::writeHistory";
     }
   }
-  
 
+
+  /*!
+    \brief Write the current date to the CHDU
+  */
   void dalFITS::writeDate()
   {
     if(!(fits_write_date(fptr,  &fitsstatus)))
@@ -864,6 +1007,11 @@ namespace DAL
   }
 
 
+  /*!
+    \brief Delete a record from the CHDU
+    
+    \param keynum - number of key to delete
+  */
   void dalFITS::deleteRecord(int keynum)
   {
     if(!(fits_delete_record(fptr, keynum,  &fitsstatus)))
@@ -873,6 +1021,11 @@ namespace DAL
   }
 
 
+  /*!
+    \brief Delete the key referenced by &keyname from the CHDU 
+    
+    \param keyname - name of key to delete
+  */
   void dalFITS::deleteKey(std::string keyname)
   {
     if(!(fits_delete_key(fptr, const_cast<char *>(keyname.c_str()),  &fitsstatus)))
@@ -882,8 +1035,11 @@ namespace DAL
   }
 
 
-  // Header utility routines
-  
+  /*!
+    \brief Copy the Header of this FITS to the &other dalFITS object
+      
+    \param &other - other dalFITS object to copy header from
+  */
   void dalFITS::copyHeader(dalFITS &other)
   {
     if(!(fits_copy_header(fptr, other.fptr, &fitsstatus)))
@@ -893,6 +1049,23 @@ namespace DAL
   }
 
 
+  /*!
+    \brief Delete the CHDU
+
+    \param *hdutype - Stores the HDUType of the deleted HDU (can be NULL if not needed)
+  */
+  void dalFITS::deleteHDU(int *hdutype=NULL)
+  {
+    if(!(fits_delete_hdu(fptr, hdutype ,&fitsstatus)))
+    {
+      throw "dalFITS::deleteHDU";
+    }
+  }
+  
+
+  /*!
+    \brief Write the Header checksum to the CHDU
+  */
   void dalFITS::writeChecksum()
   {
     if(!(fits_write_chksum(fptr, &fitsstatus)))
@@ -901,7 +1074,13 @@ namespace DAL
     }
   }
 
-  
+
+  /*!
+    \brief Verify checksum of the CHDU
+      
+    \param dataok - bool indicating that data part of hdu is ok
+    \param hduok - bool indicating that hdu is ok
+  */
   void dalFITS::verifyChecksum(bool &dataok, bool &hduok)
   {
     int dataok_int=0, hduok_int=0;
@@ -919,7 +1098,14 @@ namespace DAL
   }
 
 
-  void dalFITS::parseValue(std::string card, std::string value, std::string comment)
+  /*!
+      \brief Parse a record card into value and comment
+      
+      \param card - card to be parsed
+      \param &value - string to hold content of value
+      \param &comment - string to hold content of comment
+    */
+  void dalFITS::parseValue(std::string &card, std::string &value, std::string &comment)
   {
     if(!(fits_parse_value(const_cast<char *>(card.c_str()), const_cast<char *>(value.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus)))
     {
@@ -928,30 +1114,63 @@ namespace DAL
   }
 
 
-  void dalFITS::getKeytype(std::string value, char &dtype)
+  /*!
+    \brief Get the type of a key with &value in the CHDU
+    
+    Parses the input 80-character header keyword value string to determine its datatype. It returns with a value of 'C', 'L', 'I', 'F' or 'X', for character string, logical integer, floating point, or complex, respectively.
+    
+    \param value - value of key to look for
+    \param dtype - data type of that key/value
+  */
+  char dalFITS::getKeytype(std::string &value)
   {   
+    char dtype;
+  
     if(!(fits_get_keytype(const_cast<char *>(value.c_str()), &dtype, &fitsstatus)))
     {
       throw "dalFITS::getKeytype";
     }
+    
+    return dtype;
   }
 
 
-  void dalFITS::getKeyclass(std::string card)
+  /*!
+    \brief Get the class of the key in &card
+    
+    \param card - Card to determine class of
+  */
+  int dalFITS::getKeyclass(std::string &card)
   {
+    int keyclass=0;
+  
     if(!(fits_get_keyclass(const_cast<char *>(card.c_str()))))
     {
       throw "dalFITS::getKeyclass";
     }
+    
+    return keyclass;
   }
-  
-  
-  void dalFITS::parseTemplate(std::string templatec, std::string card, int &keytype)
+
+
+  /*!
+    \brief Parse the &templatec of &card
+    
+    \param templatec - Template card
+    \param card -
+    
+    \return keytype - determines if the keyword is a COMMENT or not
+  */
+  int dalFITS::parseTemplate(std::string &templatec, std::string &card)
   {
+    int keytype=0;
+  
     if(!(fits_parse_template(const_cast<char *>(templatec.c_str()), const_cast<char *>(card.c_str()), &keytype, &fitsstatus)))
     {
       throw "dalFITS::parseTemplate";
     }
+    
+    return keytype;
   }
 
 
@@ -971,6 +1190,8 @@ namespace DAL
     moveAbsoluteHDU(hdu);
 
     // Check if it is an image extension
+
+    // Copy dalFITS image header
 
     // Write individual header keywords to FITS
     

@@ -83,17 +83,20 @@ namespace DAL {
     int fitsstatus;
     
     //! Filename associated with dalFITS object
-    std::string filename;
+  //  std::string filename;
 
     //! CASAcore lattice handle
     Lattice<Float>* lattice;	// casacore Lattice interface to image
 
-    //! No. of axes in FITS file
-//     long naxis;
-
+ 
     //! dimensions of FITS image
     std::vector<long long> dimensions;
 
+    /*
+    //! No. of axes in FITS file
+//     long naxis;
+
+ 
     //! Current hdu (chdu)
     int chdu;
     
@@ -105,6 +108,8 @@ namespace DAL {
 
     //! scaling factor
 //     double bscale;
+  */
+
 
     //! define types of bins
     enum DALbinType {
@@ -145,28 +150,9 @@ namespace DAL {
     //________________________________________________________________
     //                                        Construction/Destruction
     
-    /*!
-      \brief Default constructor, with no filenmae set 
-    */
     dalFITS ();
- 
-    /*!
-      \brief Constructor with associated filename
-    
-      \param filename --
-    */
-    dalFITS (const std::string &);
-    
-    /*!
-      \brief Destructor
-    */
-    ~dalFITS ();
-    
-    /*! 
-      \brief Copy constructor
-
-      \param other --
-    */
+    dalFITS (const std::string &, int mode);   
+    ~dalFITS ();    
     dalFITS (dalFITS const& other);
 
     
@@ -175,123 +161,21 @@ namespace DAL {
     // Methods
    //________________________________________________________________
  
-    /*! 
-      \brief open a FITS file for reading, writing or both
-      
-      \param iomode --
-    */
-    void open(int iomode);	// modes as defined in cfitsio library: RO, W, RW
-    
-    /*!
-      \brief close a FITS file handle
-    */
+    void openData(const std::string &filename, int iomode);
     void close();
-
-    /*!
-      \brief create a new FITS file
-    */
-    void create();
-
-    /*!
-      \brief Get a (casa) Lattice<Float> to access the fits file
-    */
-    //casa::Lattice<Float>* getLattice ();
     void getLattice();	// set Lattice in object
-
-
-    /*! 
-      \brief Get the corresponding cfits error message to the current fitsstatus
-    
-      \return fitserrormsg --
-    */
-    std::string getFitsError ();
-
-
-    /*! 
-      \brief Get the number of HDUs in the FITS file
-
-      \return numHDUS - number of HDUs in FITS file
-    */
-    int readNumHDUs ();
-
-
-    /*! 
-      \brief Read the current header postion (HDU) in FITS file
-      
-      \return chdu - current HDU in FITS file
-    */
+    std::string getFitsError();
+    int readNumHDUs();
     int readCurrentHDU();
-
-
-    /*!	
-      \brief Move to HDU unit given by hdu
-    
-      \param hdu - move to HDU number
-    */
-    void moveAbsoluteHDU(int hdu);
-
-
-    /*! 
-      \brief Move relative by hdu units
-      
-      \param hdu - move relative number of HDUs
-    */  
+    int moveAbsoluteHDU(int hdu);
     void moveRelativeHDU(int hdu);
-
-
-    /*! 
-      \brief Move to hdu extension with name, extname
-      
-      \param extname - extension name
- 
-      \return hdutype - Type of HDU moved to
-    */
     int moveNameHDU(const std::string &extname);
-
-
-    /*!	
-      \brief Read type of HDU (IMAGE_HDU, ASCII_TBL, or BINARY_TBL)
-
-      \return ret - HDUType
-    */
     int readHDUType();
-
-
-    /*!
-      \brief Read the filename of the currently opened FITS file
-
-      \return filename - Name of FITS file currently opened in dalFITS object
-    */
     std::string readFilename();
-
-
-    /*! 
-      \brief Read the IO mode of the currently opened FITS file  
-    */    
     int readFileMode();
-
-
-    /*! 
-      \brief Read the url type, e.g. file://, ftp:// of the currently opened FITS file
-    */
     std::string readURLType();
-
-
-    /*!
-      \brief Delete the fitsfile of the dalFITS object
-    
-      \return fitsret --
-    */
     int deleteFITSfile();
-
-    /*!
-      \brief Flush the FITS file, close and reopen
-    */
     void flushFITSfile();
-
-    /*!
-      \brief Flush buffer (without proper closing and reopening)
-    */
     void flushFITSBuffer();
 
     
@@ -306,6 +190,9 @@ namespace DAL {
     void getImgSize(int maxdim,  long &naxes);
     void getImgParam(int maxdim,  int &bitpix, int &naxis, long &naxes);
     void createImg(int bitpix, int naxis, long *naxes);
+    void readPix(int datatype, long *fpixel, 
+                  long nelements, void *nulval, void *array, 
+                  int *anynul);
     void writePix(int datatype, 
 		  long *fpixel, 
 		  long nelements, 
@@ -315,30 +202,17 @@ namespace DAL {
 		      long nelements, 
 		      void *array, 
 		      void *nulval); 
-    void readPix(int datatype, long *fpixel, 
-                  long nelements, void *nulval, void *array, 
-                  int *anynul);
+    void readSubset(int  datatype, 
+		    long *fpixel,
+		    long *lpixel, 
+		    long *inc, 
+		    void *nulval,  
+		    void *array,
+		    int *anynul);
     void writeSubset( int datatype, 
 		      long *fpixel,
 		      long *lpixel, 
-		      double *array);
-
-    /*! 
-      \brief Read a subset from a FITS image
-      
-      \param datatype --
-      \param *fpixel --
-      \param *lpixel --
-      \param *inc --
-      \param *nulval --
-      \param *array --
-      \param *anynul --
-      
-      \return fitsret --
-    */
-    void readSubset(int  datatype, long *fpixel,
-             long *lpixel, long *inc, void *nulval,  void *array,
-             int *anynul);
+		      double *array); 
 
       
     // ===========================================================
@@ -353,74 +227,13 @@ namespace DAL {
     //
     //===============================================================
 
-    /*!
-      \brief Get size of Header space of current HDU
-      
-      \param &keysexist --
-      \param &morekeys --
-      
-      \return fitsret --
-    */
     void getHDRspace(int &keysexist, int &morekeys);
-
-
-    /*!
-      \brief Get a record from the current HDU
-      
-      \param keynum --
-      \param *record --
-      
-      \return fitsret --
-    */
-    void readRecord(int keynum, std::string record);
-    
-    
-    /*!
-      \brief Get the record card from the current HDU
-      
-      \param keyname --
-      \param record --
-      
-      \return fitsret --
-    */
+    void readRecord(int keynum, std::string record); 
     void readCard(std::string keyname, std::string record);
-
-
-    /*!
-      \brief Read a key from the current HDU
-      
-      \param datatype --
-      \param *keyname --
-      \param *value --
-      \param *comment --
-      
-      \return fitsret --
-    */ 
-    void readKey(int datatype, char *keyname, void *value, char *comment);
-
-
-    /*!
-      \brief Read the record card from the current HDU
-      
-      \param **inclist --
-      \param ninc --
-      \param **exclist --
-      \param nexc --
-      \param *card --
-      
-      \return fitsret --
-    */
-    void findNextKey(char **inclist, int ninc, char **exclist, int nexc, char *card);
-    
-    
-    /*!
-      \brief Read the key's unit from the key with keyname in the current HDU
-      
-      \param keyname --
-      \param unit --
-      
-      \return fitsret --
-    */
+    void readKeyn(int keynum, std::string keyname, std::string value, std::string comment);
+    void readKey(int datatype, std::string keyname, void *value, std::string comment);
+    void readKeyword(std::string keyname, std::string value, std::string comment);
+    void findNextKey(char **inclist, int ninc, char **exclist, int nexc, std::string card);
     void readKeyUnit(std::string keyname, std::string unit);
     
     
@@ -430,151 +243,25 @@ namespace DAL {
     // Methods for writing keywords and records to a FITS file
     //
     //===============================================================
-    
-    /*!
-      \brief Write a new key to the FITS header of the CHDU
-    
-      \param datatype --
-      \param keyname --
-      \param *value --
-      \param comment --
-    */
+     
     void writeKey(int datatype, std::string keyname, void *value, std::string comment);
-    
-    
-    /*!
-      \brief Update a key in the FITS header of the CHDU
-      
-      \param datatype --
-      \param keyname --
-      \param *value --
-      \param comment --
-    */
-    void updateKey(int datatype, std::string keyname, void *value, std::string comment);
-    
-    
-    /*!
-      \brief Write a record "card" to the FITS header of the CHDU
-      
-      \param card --
-      
-      \return fitsret --
-    */
-    void writeRecord(std::string card);
-
-
-    /*!
-      \brief Modify the comment of &keyname in the FITS header of the CHDU
-      
-      \param keyname --
-      \param comment --
-    */
-    void modifyComment(std::string keyname, std::string comment);
-    
-    /*!
-      \brief Write a Unit to the key corresponding to &keyname in the CHDU
-    
-      \param keyname --
-      \param unit --
-    */
-    void writeKeyUnit(std::string keyname, std::string unit);
-    
-    
-    /*!
-      \brief Write a comment to the CHDU
-    
-      \param &comment --
-    */
-    void writeComment(std::string comment);
-
-
-    /*!
-      \brief Write a HISTORY entry to the CHDU
-      
-      \param history --
-    */
-    void writeHistory(std::string history);
-    
-    
-    /*!
-      \brief Write the current date to the CHDU
-    */
-    void writeDate();
-    
-    /*!
-      \brief Delete a record from the CHDU
-      
-      \param keynum --
-    */
+    void updateKey(int datatype, std::string &keyname, void *value, std::string &comment);
+    void writeRecord(std::string &card);
+    void modifyComment(std::string &keyname, std::string &comment);    
+    void writeKeyUnit(std::string &keyname, std::string &unit);
+    void writeComment(std::string &comment);
+    void writeHistory(std::string &history);
+    void writeDate();    
     void deleteRecord(int keynum);
-
-
-    /*!
-      \brief Delete the key referenced by &keyname from the CHDU 
-    
-      \param keyname --
-    */
     void deleteKey(std::string keyname);
-
-
-    /*!
-      \brief Copy the Header of this FITS to the &other dalFITS object
-      
-      \param &other --
-    */
     void copyHeader(dalFITS &other);
-
-
-    /*!
-      \brief Write the Header checksum to the CHDU
-    */
+    void deleteHDU(int *hdutype);
     void writeChecksum();
-
-  
-    /*!
-      \brief Verify checksum of the CHDU
-      
-      \param dataok --
-      \param hduok --
-    */
     void verifyChecksum(bool &dataok, bool &hduok);
-
-
-    /*!
-      \brief Parse a record card into value and comment
-      
-      \param card --
-      \param &value --
-      \param &comment --
-    */
-    void parseValue(std::string card, std::string value, std::string comment);
-
-
-    /*!
-      \brief Get the type of a key with &value in the CHDU
-      
-      \param value --
-      \param dtype --
-    */
-    void getKeytype(std::string value, char &dtype);
-
-
-    /*!
-      \brief Get the class of the key in &card
-      
-      \param card --
-    */
-    void getKeyclass(std::string card);
-
-
-    /*!
-      \brief Parse the &templatec of &card
-      
-      \param templatec --
-      \param card --
-      \param &keytype --
-    */
-    void parseTemplate(std::string templatec, std::string card, int &keytype);
+    void parseValue(std::string &card, std::string &value, std::string &comment);
+    char getKeytype(std::string &value);
+    int getKeyclass(std::string &card);
+    int parseTemplate(std::string &templatec, std::string &card);
    
     //===============================================================
     //
@@ -586,13 +273,6 @@ namespace DAL {
     // Strictly speaking: writeRMHeader and bin-functions should be part of
     // RM class?
     
-    /*!
-      \brief Write RM header to a FITS file
-      
-      \param hdu (default=1) --
-    
-      \return fitsret --
-    */
     void writeRMHeader(int hdu=1);
 
 
@@ -623,27 +303,6 @@ namespace DAL {
     inline std::vector<double> getBinWidths () const {
       return binWidths;
     }
-
-
-    /*! 
-      \brief Get the associated filename of a FITS object
-    
-      \return filename --
-    */
-    inline std::string getFilename () const {
-      return filename;
-    }
-
-
-    /*! 
-      \brief Set the associated filename of a FITS object
-      
-      \param filename --
-    */
-    inline void setFilename (const std::string filename) {
-      this->filename=filename;
-    };
-
 
     // ============================================================================
     //
