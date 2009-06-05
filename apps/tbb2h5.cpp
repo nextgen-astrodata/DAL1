@@ -366,6 +366,7 @@ int main(int argc, char *argv[])
 
     } // socket or file
 
+  cout << "No of processed blocks " << counter << endl;
   cout << "SUCCESS" << endl;
   return 0;
 } // main
