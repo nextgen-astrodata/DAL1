@@ -154,7 +154,7 @@ namespace DAL {
     dalFITS (const std::string &, int mode);   
     ~dalFITS ();    
     dalFITS (dalFITS const& other);
-
+    dalFITS(dalFITS const &other, bool previous, bool current, bool following);
     
     //________________________________________________________________
     // 
@@ -162,19 +162,22 @@ namespace DAL {
    //________________________________________________________________
  
     void openData(const std::string &filename, int iomode);
+    void openImage(const std::string &filename, int iomode);
+    void openTable(const std::string &filename, int iomode);
     void close();
     void getLattice();	// set Lattice in object
     std::string getFitsError();
     int readNumHDUs();
     int readCurrentHDU();
-    int moveAbsoluteHDU(int hdu);
+    void copyCHDU(dalFITS const &other);
+    void moveAbsoluteHDU(int hdu);
     void moveRelativeHDU(int hdu);
     int moveNameHDU(const std::string &extname);
     int readHDUType();
     std::string readFilename();
     int readFileMode();
     std::string readURLType();
-    int deleteFITSfile();
+    void deleteFITSfile();
     void flushFITSfile();
     void flushFITSBuffer();
 

@@ -53,23 +53,76 @@ namespace DAL
   */
   dalFITS::dalFITS(const string &filename, int iomode) 
   {
+    // Check if file exists: if it exists open in iomode
+  
+  
     // Depending on iomode: OPEN for READING,WRITING, RW or CREATE a FITS file
     if(!(fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus)))
     {
       throw "dalFITS::open";	// get fits error from fitsstatus property later
     }
+    
+    // if file didnt exist, create a new one
+    
   }
 
-  /*! 
-    \brief Copy constructor
 
-    \param other - other dalFITS object to be copied
+  /*!
+    \brief Copy constructor that copies the whole FITS file
+
+    \param other - dalFITS object to be copied to
   */
   dalFITS::dalFITS(dalFITS const &other)
   {
-      // Copy object /TODO
-  
+    if(!fits_copy_file(fptr, other.fptr, 1, 1, 1, &fitsstatus))
+    {
+      throw "dalFITS::dalFITS copy constructor";
+    }
   }
+  
+
+  /*! 
+    \brief Copy constructor that copies a complete dalFITS object to another
+
+    \param &other - other dalFITS object to be copied to
+    \param previous - copy previous (before CHDU) HDUs to other dalFITS object
+    \param current - copy current HDU to other dalFITS object
+    \param following - copy following (after CHDU) HDUs to other dalFITS object
+  */
+  dalFITS::dalFITS(dalFITS const &other, bool previous, bool current, bool following)
+  {
+    int previousInt=0, currentInt=0, followingInt=0;	// copy prev, current, following to other FITS file
+  
+    if(previous)	// if previous bool is true...
+      previousInt=1;	// ... set int logic variable to true
+    if(current)		// and so on...
+      currentInt=1;
+    if(following)
+      followingInt=1;
+  
+    if(!fits_copy_file(fptr, other.fptr, previousInt, currentInt, followingInt, &fitsstatus))
+    {
+      throw "dalFITS::dalFITS copy constructor";
+    }
+  }
+  
+  
+  /*!
+    \brief Copy constructor that copies only one HDU and appends it to another dalFITS object
+    
+    \param &other - other dalFITS object to append HDU to
+    \param hdu - HDU number to copy
+  */
+  void dalFITS::copyCHDU(dalFITS const &other)
+  {
+    int morekeys=0;	// Don't reserve space for more keys
+  
+    if(!fits_copy_hdu(fptr, other.fptr, morekeys, &fitsstatus))
+    {
+      throw "dalFITS::dalFITS copy constructor";
+    }
+  }
+  
   
   /*!
     \brief Destructor
@@ -100,7 +153,35 @@ namespace DAL
       throw "dalFITS::openData";
     }  
   }
-  
+
+
+  /*! 
+    \brief open a FITS file for read or readwrite and move to first HDU with an image
+    
+    \param iomode - I/O-mode: R, RW
+  */
+  void dalFITS::openImage(const std::string &filename, int iomode)
+  {
+    if(!(fits_open_image(&fptr, const_cast<char *>(filename.c_str()), iomode, &fitsstatus)))
+    {
+      throw "dalFITS::openImage";
+    }
+  }
+
+
+  /*! 
+    \brief open a FITS file for read or readwrite and move to first HDU with a table
+    
+    \param iomode - I/O-mode: R, RW
+  */
+  void dalFITS::openTable(const std::string &filename, int iomode)
+  {
+    if(!(fits_open_table(&fptr, const_cast<char *>(filename.c_str()), iomode, &fitsstatus)))
+    {
+      throw "dalFITS::openTable";
+    }
+  }
+
  
   /*!
     \brief Get a (casa) Lattice<Float> to access the fits file
@@ -215,7 +296,7 @@ namespace DAL
   
     \return hdutype - type of HDU moved to
   */
-  int dalFITS::moveAbsoluteHDU(int hdu)
+  void dalFITS::moveAbsoluteHDU(int hdu)
   {
     if(!(fits_movabs_hdu(fptr, hdu, NULL, &fitsstatus)))
     {
@@ -352,7 +433,7 @@ namespace DAL
   /*!
     \brief Delete the fitsfile of the dalFITS object
   */
-  int dalFITS::deleteFITSfile()
+  void dalFITS::deleteFITSfile()
   {
     if(!(fits_delete_file(fptr, &fitsstatus)))
     {
