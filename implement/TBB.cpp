@@ -326,8 +326,8 @@ namespace DAL {
     FD_ZERO(&readSet);
     FD_SET(main_socket, &readSet);
 
-    timeVal.tv_sec =   3;
-    timeVal.tv_usec =  0;
+    timeVal.tv_sec =   0;
+    timeVal.tv_usec =  40*1e3; // 40 ms for the time being.
 
     int status;
     // waits for up to N seconds for data appearing in the socket
