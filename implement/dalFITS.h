@@ -278,6 +278,7 @@ namespace DAL {
     
     void writeRMHeader(int hdu=1);
 
+    bool fileExists(const std::string &filename);
 
      /*!
       \brief Get the bin unit (center frequencies) of a FITS image

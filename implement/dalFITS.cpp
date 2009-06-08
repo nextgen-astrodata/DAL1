@@ -22,6 +22,7 @@
  ***************************************************************************/
 
 #include "dalFITS.h"
+#include <sys/stat.h>	// needed to check for existence of a file
 
 using namespace std;
 using namespace casa;
@@ -48,22 +49,36 @@ namespace DAL
 
   /*! 
     \brief Constructor with associated filename
-    
+
     \param &filename - filename of FITS file
+    \param iomode - I/O Read () OR Write 
   */
   dalFITS::dalFITS(const string &filename, int iomode) 
   {
     // Check if file exists: if it exists open in iomode
-  
-  
-    // Depending on iomode: OPEN for READING,WRITING, RW or CREATE a FITS file
-    if(!(fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus)))
+    if(fileExists(filename))
     {
-      throw "dalFITS::open";	// get fits error from fitsstatus property later
+      // Depending on iomode: OPEN for READING,WRITING, RW or CREATE a FITS file
+      if(!(fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus)))
+      {
+	throw "dalFITS::open";	// get fits error from fitsstatus property later
+      }
+      
     }
-    
-    // if file didnt exist, create a new one
-    
+    else
+    {
+      // if file didnt exist, create a new one ...
+      if(!(fits_create_file(&fptr, const_cast<char *>(filename.c_str()), &fitsstatus)))
+      {
+	throw "dalFITS::open could not create file";
+      }
+      
+      // ... and open it
+      if(!(fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus)))
+      {
+	throw "dalFITS::open";	// get fits error from fitsstatus property later
+      }
+    }
   }
 
 
@@ -686,6 +701,9 @@ namespace DAL
   */
   void dalFITS::readLine(vector<double> &line, int x, int y)
   {
+    long *fpixel;
+    long *lpixel;
+  
     // Check if vector has right dimension, same as z dimension of cube
     if(line.size()!=dimensions[2])
     {
@@ -697,12 +715,18 @@ namespace DAL
     {
       throw "dalFITS::readLine chdu is no 32bpix image";
     }
-   
+
+    // Define first pixel to read
+    
+
     // Read subset from FITS file
+    
     /*readSubset(int  datatype, long *fpixel,
              long *lpixel, long *inc, void *nulval,  void *array,
              int *anynul);
     */
+//     readSubset(TDOUBLE, fpixel, lpixel, NULL, line, NULL);
+    
   }
 
 
@@ -1281,6 +1305,36 @@ namespace DAL
     // algorithm used to create RM cube
   }
 
+
+  /*!
+    \brief Check if a file exists
+    
+    \param filename - Name of the file to check for its existence
+  */
+  bool dalFITS::fileExists(const std::string &filename) 
+  {
+    struct stat stFileInfo;
+    bool blnReturn;
+    int intStat;
+
+    // Attempt to get the file attributes
+    intStat = stat(filename.c_str(),&stFileInfo);
+    if(intStat == 0) {
+      // We were able to get the file attributes
+      // so the file obviously exists.
+      blnReturn = true;
+    } else {
+      // We were not able to get the file attributes.
+      // This may mean that we don't have permission to
+      // access the folder which contains this file. If you
+      // need to do that level of checking, lookup the
+      // return values of stat which will give you
+      // more details on why stat failed.
+      blnReturn = false;
+    }
+    
+    return(blnReturn);
+}
 
   // ============================================================================
   //
