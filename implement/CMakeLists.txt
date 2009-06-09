@@ -13,7 +13,7 @@
 ## Compiler flags
 
 if (DAL_COMPILER_WARNINGS)
-  set(CMAKE_CXX_FLAGS "-W -Wall")
+  set(CMAKE_CXX_FLAGS "-W -g -Wall")
 endif (DAL_COMPILER_WARNINGS)
 
 message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")

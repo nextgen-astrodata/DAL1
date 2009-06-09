@@ -55,11 +55,15 @@ namespace DAL
   */
   dalFITS::dalFITS(const string &filename, int iomode) 
   {
+    fptr=NULL; 		// initialise FITS filepointer
+    fitsstatus=0;	// initialise FITS status
+    lattice=NULL;	// initialise casa lattice
+  
     // Check if file exists: if it exists open in iomode
     if(fileExists(filename))
     {
       // Depending on iomode: OPEN for READING,WRITING, RW or CREATE a FITS file
-      if(!(fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus)))
+      if(fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus))
       {
 	throw "dalFITS::open";	// get fits error from fitsstatus property later
       }
@@ -68,13 +72,13 @@ namespace DAL
     else
     {
       // if file didnt exist, create a new one ...
-      if(!(fits_create_file(&fptr, const_cast<char *>(filename.c_str()), &fitsstatus)))
+      if(fits_create_file(&fptr, const_cast<char *>(filename.c_str()), &fitsstatus))
       {
 	throw "dalFITS::open could not create file";
       }
       
       // ... and open it
-      if(!(fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus)))
+      if(fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus))
       {
 	throw "dalFITS::open";	// get fits error from fitsstatus property later
       }
@@ -89,7 +93,7 @@ namespace DAL
   */
   dalFITS::dalFITS(dalFITS const &other)
   {
-    if(!fits_copy_file(fptr, other.fptr, 1, 1, 1, &fitsstatus))
+    if(fits_copy_file(fptr, other.fptr, 1, 1, 1, &fitsstatus))
     {
       throw "dalFITS::dalFITS copy constructor";
     }
@@ -115,7 +119,7 @@ namespace DAL
     if(following)
       followingInt=1;
   
-    if(!fits_copy_file(fptr, other.fptr, previousInt, currentInt, followingInt, &fitsstatus))
+    if(fits_copy_file(fptr, other.fptr, previousInt, currentInt, followingInt, &fitsstatus))
     {
       throw "dalFITS::dalFITS copy constructor";
     }
@@ -132,7 +136,7 @@ namespace DAL
   {
     int morekeys=0;	// Don't reserve space for more keys
   
-    if(!fits_copy_hdu(fptr, other.fptr, morekeys, &fitsstatus))
+    if(fits_copy_hdu(fptr, other.fptr, morekeys, &fitsstatus))
     {
       throw "dalFITS::dalFITS copy constructor";
     }
@@ -159,16 +163,22 @@ namespace DAL
   /*! 
     \brief open a FITS file for read or readwrite and move to first HDU with significant data
     
-    \param iomode - I/O-mode: R, RW
+    \param iomode - I/O-mode: READONLY, READWRITE
   */
   void dalFITS::openData (const std::string &filename, int iomode)
-  {
-    if(!(fits_open_data(&fptr, const_cast<char *>(filename.c_str()), iomode , &fitsstatus)))
+  { 
+    if(fits_open_data(&fptr, const_cast<char *>(filename.c_str()), iomode , &fitsstatus))
     {
       throw "dalFITS::openData";
-    }  
-  }
+    }
+ 
+    if(readHDUType()==IMAGE_HDU)	 // if it is an image extension
+    {
+      updateImageDimensions();		// Update dimensions-vector, 
+    }
 
+  }
+  
 
   /*! 
     \brief open a FITS file for read or readwrite and move to first HDU with an image
@@ -177,9 +187,14 @@ namespace DAL
   */
   void dalFITS::openImage(const std::string &filename, int iomode)
   {
-    if(!(fits_open_image(&fptr, const_cast<char *>(filename.c_str()), iomode, &fitsstatus)))
+    if(fits_open_image(&fptr, const_cast<char *>(filename.c_str()), iomode, &fitsstatus))
     {
       throw "dalFITS::openImage";
+    }
+    
+    if(readHDUType()==IMAGE_HDU)	 // if it is an image extension
+    {
+      updateImageDimensions();		// Update dimensions-vector, 
     }
   }
 
@@ -191,10 +206,11 @@ namespace DAL
   */
   void dalFITS::openTable(const std::string &filename, int iomode)
   {
-    if(!(fits_open_table(&fptr, const_cast<char *>(filename.c_str()), iomode, &fitsstatus)))
+    if(fits_open_table(&fptr, const_cast<char *>(filename.c_str()), iomode, &fitsstatus))
     {
       throw "dalFITS::openTable";
     }
+    
   }
 
  
@@ -252,7 +268,7 @@ namespace DAL
   */
   void dalFITS::close ()
   {
-    if(!(fits_close_file(fptr, &fitsstatus)))
+    if(fits_close_file(fptr, &fitsstatus))
     {
       throw "dalFITS::close";
     }
@@ -262,14 +278,23 @@ namespace DAL
   /*! 
     \brief Get the corresponding cfits error message to the current fitsstatus
   
-    \return fitserrormsg --
+    \return fitserrormsg - Complete string with all FITS errors on the error stack
   */
   std::string dalFITS::getFitsError ()
   {
     char* fits_error_message;
+    std::string complete_error_message;
   
     fits_get_errstatus(fitsstatus, fits_error_message);
-    
+ 
+    cerr << fits_error_message << endl;		// print error message on cerr
+ 
+    while(fits_read_errmsg(fits_error_message)!=NULL)
+    {
+      cerr << fits_error_message << endl;		// print further messages
+      complete_error_message += fits_error_message;	// concat complete error msg
+    }
+ 
     /* Martin's code
     void fitshandle::check_errors() const
    {
@@ -282,7 +307,7 @@ namespace DAL
     }
    */
     
-    return (string) fits_error_message;
+    return (string) complete_error_message;
   }
 
 
@@ -295,7 +320,7 @@ namespace DAL
   {
     int hdunum=0;	// number of hdus in FITS file
   
-    if(!(fits_get_num_hdus(fptr, &hdunum ,&fitsstatus)))
+    if(fits_get_num_hdus(fptr, &hdunum ,&fitsstatus))
     {
       throw "dalFITS::readNumHDUs";
     }
@@ -313,9 +338,14 @@ namespace DAL
   */
   void dalFITS::moveAbsoluteHDU(int hdu)
   {
-    if(!(fits_movabs_hdu(fptr, hdu, NULL, &fitsstatus)))
+    if(fits_movabs_hdu(fptr, hdu, NULL, &fitsstatus))
     {
       throw "dalFITS::moveAbsoluteHDU";
+    }
+
+    if(readHDUType()==IMAGE_HDU)	 // if it is an image extension
+    {
+      updateImageDimensions();		// Update dimensions-vector, 
     }
   }
 
@@ -327,14 +357,16 @@ namespace DAL
   */  
   void dalFITS::moveRelativeHDU(int nhdu)
   {
-    int hdupos=0;		// local variable to hold current hdu
-  
-    if(!(fits_movrel_hdu(fptr, nhdu, NULL, &fitsstatus)))	// try to move nhdu
+    if(fits_movrel_hdu(fptr, nhdu, NULL, &fitsstatus))	// try to move nhdu
     {
       throw "dalFITS::moveRelativeHDU";
     }
     
-    fits_get_hdu_num(fptr, &hdupos);
+    if(readHDUType()==IMAGE_HDU)	 // if it is an image extension
+    {
+      updateImageDimensions();		// Update dimensions-vector, 
+    }
+
   }
 
 
@@ -347,7 +379,7 @@ namespace DAL
   {
     int hdupos=0;		// local variable to hold chdu
     
-    if(!(fits_get_hdu_num(fptr, &hdupos)))
+    if(fits_get_hdu_num(fptr, &hdupos))
     {
       throw "dalFITS::readCurrentHDU";
     }
@@ -365,17 +397,47 @@ namespace DAL
   */
   int dalFITS::moveNameHDU(const std::string &extname)
   {
-    int hdutype=0;		// type of HDU
+    int hdutype=0;			// type of HDU
 
     // ignoring the version number of the extension
-    if(!(fits_movnam_hdu(fptr, hdutype, const_cast<char*>(extname.c_str()) , NULL, &fitsstatus)))
+    if(fits_movnam_hdu(fptr, hdutype, const_cast<char*>(extname.c_str()) , NULL, &fitsstatus))
     {
       throw "dalFITS::moveNameHDU";
+    }
+    
+    if(readHDUType()==IMAGE_HDU)	 // if it is an image extension
+    {
+      updateImageDimensions();		// Update dimensions-vector, 
     }
  
     return hdutype;
   }
 
+
+  /*!
+    \brief Update the information contained in the dimensions-vector of the dalFITS object
+  */
+  void dalFITS::updateImageDimensions()
+  {
+    int i=0;
+    int naxis=0;
+    long *naxes=0;
+
+    if(readHDUType()==IMAGE_HDU)
+    {
+      naxis=getImgDim();			// get number of axis
+      naxes=(long*) calloc(sizeof(long), naxis);// allocate memory for axis dimensions
+    
+      dimensions.resize(naxis);		// resize dimensions vector
+      getImgSize(naxis, naxes);		// get the size of each axis
+      
+      for(i=0; i<naxis; i++)
+      {
+	dimensions[i]=naxes[i];
+      }
+    }  
+  }
+  
 
   /*!	
     \brief Read type of HDU (IMAGE_HDU, ASCII_TBL, or BINARY_TBL)
@@ -386,7 +448,7 @@ namespace DAL
   { 
     int hdutype=0;
   
-    if(!(fits_get_hdu_type(fptr,  &hdutype, &fitsstatus)))
+    if(fits_get_hdu_type(fptr,  &hdutype, &fitsstatus))
     {
       throw "dalFITS::readHDUType";
     }
@@ -404,7 +466,7 @@ namespace DAL
   {  
     std::string filename;	// local variable to hold FITS filename
 
-    if(!(fits_file_name(fptr, const_cast<char *>(filename.c_str()), &fitsstatus)))
+    if(fits_file_name(fptr, const_cast<char *>(filename.c_str()), &fitsstatus))
     {
       throw "dalFITS::readFilename";
     }
@@ -420,7 +482,7 @@ namespace DAL
   {
     int mode;
   
-    if(!(fits_file_mode(fptr, &mode, &fitsstatus)))
+    if(fits_file_mode(fptr, &mode, &fitsstatus))
     {
       throw "dalFITS::readFileMode";
     }
@@ -436,7 +498,7 @@ namespace DAL
   {
     string urltype;
   
-    if(!(fits_url_type(fptr, const_cast<char *> (urltype.c_str()), &fitsstatus)))
+    if(fits_url_type(fptr, const_cast<char *> (urltype.c_str()), &fitsstatus))
     {
       throw "dalFITS::readURLType";
     }
@@ -450,7 +512,7 @@ namespace DAL
   */
   void dalFITS::deleteFITSfile()
   {
-    if(!(fits_delete_file(fptr, &fitsstatus)))
+    if(fits_delete_file(fptr, &fitsstatus))
     {
       throw "dalFITS::deleteFITSfile";
     }
@@ -462,7 +524,7 @@ namespace DAL
   */
   void dalFITS::flushFITSfile()
   {
-    if(!(fits_flush_file(fptr, &fitsstatus)))
+    if(fits_flush_file(fptr, &fitsstatus))
     {
       throw "dalFITS::fits_flush_file";
     }
@@ -474,7 +536,7 @@ namespace DAL
   */
   void dalFITS::flushFITSBuffer()
   {
-    if(!(fits_flush_buffer(fptr, 0, &fitsstatus)))
+    if(fits_flush_buffer(fptr, 0, &fitsstatus))
     {
       throw "dalFITS::fitsFITSBbuffer";
     }
@@ -496,7 +558,7 @@ namespace DAL
   {
     int bitpix=0;
 
-    if(!(fits_get_img_type(fptr, &bitpix, &fitsstatus)))
+    if(fits_get_img_type(fptr, &bitpix, &fitsstatus))
     {
       throw "dalFITS::getImgType";
     }
@@ -514,10 +576,12 @@ namespace DAL
   {
     int naxis=0;
 
-    if(!(fits_get_img_dim(fptr, &naxis,  &fitsstatus)))
+    if(fits_get_img_dim(fptr, &naxis,  &fitsstatus))
     {
       throw "dalFITS::getImgDim";
     }
+
+    dimensions.resize(naxis);	// resize dimensions vector in dalFITS object
 
     return naxis;	// return number of axes 
   }
@@ -529,12 +593,17 @@ namespace DAL
       \param maxdim - Maximum number of dimensions
       \param &naxes - Array to hold axes lengths
   */
-  void dalFITS::getImgSize(int maxdim,  long &naxes)
+  void dalFITS::getImgSize(int maxdim,  long *naxes)
   { 
-    if(!(fits_get_img_size(fptr, maxdim, &naxes , &fitsstatus)))
+    unsigned int i=0;		// loop variable
+  
+    if(fits_get_img_size(fptr, maxdim, naxes , &fitsstatus))
     {
       throw "dalFITS::getImageSize";
     }
+
+    for(i=0; i<dimensions.size(); i++)
+      dimensions[i]=naxes[i];
   }
 
 
@@ -548,7 +617,7 @@ namespace DAL
   */
   void dalFITS::getImgParam(int maxdim,  int &bitpix, int &naxis, long &naxes)
   {
-    if(!(fits_get_img_param(fptr, maxdim, &bitpix, &naxis, &naxes, &fitsstatus)))
+    if(fits_get_img_param(fptr, maxdim, &bitpix, &naxis, &naxes, &fitsstatus))
     {
       throw "dalFITS::getImageParam";
     }
@@ -564,7 +633,12 @@ namespace DAL
   */
   void dalFITS::createImg(int bitpix, int naxis, long *naxes)
   {
-    if(!(fits_create_img(fptr, bitpix, naxis , naxes, &fitsstatus)))
+    if(naxis==0 || naxes==NULL)
+    {
+      throw "dalFITS::createImg naxis or naxes NULL";
+    }
+  
+    if(fits_create_img(fptr, bitpix, naxis , naxes, &fitsstatus))
     {
       throw "dalFITS::createImg";
     }
@@ -581,7 +655,7 @@ namespace DAL
   */
   void dalFITS::writePix(int datatype, long *fpixel, long nelements, void *array)
   {
-    if(!(fits_write_pix(fptr, datatype, fpixel, nelements, array, &fitsstatus)))
+    if(fits_write_pix(fptr, datatype, fpixel, nelements, array, &fitsstatus))
     {
       throw "dalFITS::writePix";
     }
@@ -599,7 +673,7 @@ namespace DAL
   */
   void dalFITS::writePixNull(int datatype, long *fpixel, long nelements, void *array, void *nulval)
   {
-    if(!(fits_write_pixnull(fptr, datatype, fpixel , nelements, array, nulval, &fitsstatus)))
+    if(fits_write_pixnull(fptr, datatype, fpixel , nelements, array, nulval, &fitsstatus))
     {
       throw "dalFITS::writePix";
     }
@@ -617,7 +691,7 @@ namespace DAL
   */  
   void dalFITS::readPix(int datatype, long *fpixel, long nelements, void *nulval, void *array, int *anynul)
   {
-    if(!(fits_read_pix(fptr, datatype, fpixel, nelements, nulval, array, anynul, &fitsstatus)))
+    if(fits_read_pix(fptr, datatype, fpixel, nelements, nulval, array, anynul, &fitsstatus))
     {
       throw "dalFITS::readPix";
     }
@@ -639,7 +713,7 @@ namespace DAL
 	  long *lpixel, long *inc, void *nulval,  void *array,
 	  int *anynul)
   {
-    if(!(fits_read_subset(fptr, datatype, fpixel, lpixel, inc, nulval, array, anynul, &fitsstatus)))
+    if(fits_read_subset(fptr, datatype, fpixel, lpixel, inc, nulval, array, anynul, &fitsstatus))
     {
       throw "dalFITS::readSubset";
     }
@@ -656,7 +730,7 @@ namespace DAL
   */
   void dalFITS::writeSubset(int datatype, long *fpixel, long *lpixel, double *array)
   {
-    if(!(fits_write_subset(fptr, datatype, fpixel, lpixel, array, &fitsstatus)))
+    if(fits_write_subset(fptr, datatype, fpixel, lpixel, array, &fitsstatus))
     {
       throw "dalFITS::writeSubset";
     }
@@ -677,18 +751,39 @@ namespace DAL
     \param *plane - pointer to array holding the data read from the image
     \param z - z axis position to read plane from
   */
-  void dalFITS::readPlane(double *plane, int z)
+  void dalFITS::readPlane(double *plane, const unsigned long z, void *nulval)
   {
+    long fpixel[3]; 
+    int nelements=0;
+    int anynul=0;
+  
     // Check if z is within the FITS cube
-    if(z >= dimensions[2])
+    if(z > dimensions[2])
     {
       throw "dalFITS::readPlane out of range";
     }
     
-    // Check if current HDU is an image extension
+    if(readHDUType()!=IMAGE_HDU)	// Check if current HDU is an image extension
+    {
+      throw "dalFITS::readLine CHDU is not an image";
+    }
+ 
+    // Read from FITS file one plane
+    fpixel[0]=1;
+    fpixel[1]=1;
+    fpixel[2]=z;  
     
-    // Read from FITS file
-
+    nelements=dimensions[0]*dimensions[1];	// compute number of elements in plane
+    
+ 
+    if(plane!=NULL)	// only if valid pointer is given
+    {
+      readPix(TDOUBLE, fpixel, nelements, nulval, plane, &anynul);
+    }
+    else
+    {
+      throw "dalFITS::readLine NULL pointer";
+    }
   }
 
 
@@ -699,34 +794,36 @@ namespace DAL
     \param x - x axis lower left corner position to read line from
     \param y - y axis lower left corner position to read line from
   */
-  void dalFITS::readLine(vector<double> &line, int x, int y)
+  void dalFITS::readLine(double *line, const unsigned long x, const unsigned long y, void* nulval)
   {
-    long *fpixel;
-    long *lpixel;
+    long fpixel[3];
+    long lpixel[3];
+    int anynul=0;
   
     // Check if vector has right dimension, same as z dimension of cube
-    if(line.size()!=dimensions[2])
+    if(readHDUType()!=IMAGE_HDU)	  // Check if current HDU is an image extension 
     {
-      throw "dalFITS::readLine size does not match";
+      throw "dalFITS::readLine CHDU is not an image";
     }
-   
-    // Check if current HDU is an image extension and of type double
-    if(getImgType()!=32)
-    {
-      throw "dalFITS::readLine chdu is no 32bpix image";
-    }
-
-    // Define first pixel to read
+ 
+    // Define first pixel to read, read along one line of sight
+    fpixel[0]=x;
+    fpixel[1]=y;
+    fpixel[2]=1;
+    lpixel[0]=x;
+    lpixel[1]=y;
+    lpixel[2]=dimensions[2];
     
 
     // Read subset from FITS file
-    
-    /*readSubset(int  datatype, long *fpixel,
-             long *lpixel, long *inc, void *nulval,  void *array,
-             int *anynul);
-    */
-//     readSubset(TDOUBLE, fpixel, lpixel, NULL, line, NULL);
-    
+    if(line==NULL)
+    {
+      throw "dalFITS::readLine NULL pointer";
+    }
+    else
+    {
+      readSubset(TDOUBLE, fpixel, lpixel, NULL, line, nulval, &anynul);
+    }
   }
 
 
@@ -739,13 +836,18 @@ namespace DAL
     \param x_size - size in x direction in pixels
     \param y_size - size in y direction in pixels
   */
-  void dalFITS::readSubCube(double *subCube, int x_pos, int y_pos, int x_size, int y_size)
+  void dalFITS::readSubCube(double *subCube, unsigned long x_pos, unsigned long y_pos, unsigned long x_size, unsigned long y_size)
   {
-    long fpixel[3];	// axis definition
+    long fpixel[3];	// first pixel definition
+    long lpixel[3];	// last pixel definition
 
-    // Check if current HDU is an image extension
-    
-    
+    fpixel[0]=1;	
+
+    if(readHDUType()!=IMAGE_HDU)    // Check if current HDU is an image extension 
+    {
+      throw "dalFITS::readLine CHDU is not an image";
+    }
+
     // Read subset from FITS Image
  
   
@@ -765,22 +867,52 @@ namespace DAL
     \param x - horizontal dimension in pixels
     \param y - vertical dimension in pixels
     \param z - z position to write plane to
+    \param nulval - pointer to data to be substituted for any 0 values encountered 
   */
-  void dalFITS::writePlane(double *plane, int x, int y, int z)
+  void dalFITS::writePlane(double *plane, const long x, const long y, const long z, void *nulval)
   {
+    long fpixel[3]; 	// first pixel position to read
+    long nelements=0;	// number of elements to write
+  
     // Check if Faraday plane has the same x-/y-dimensions as naxes dimensions of FITS
     if(x!=dimensions[0] || y!=dimensions[1])
     {
       throw "dalFITS::writePlane dimensions do not match";  
     }
  
-    // check if plane counter is below limit
-      
-      
-    // Write to FITS file
+    // check if plane counter is above limit
+    if(z > dimensions[2])
+    {
+      throw "dalFITS::writePlane z out of range";
+    }
+    
+    if(readHDUType()!=IMAGE_HDU)	// Check if current HDU is an image extension
+    {
+      throw "dalFITS::writePlane CHDU is not an image";
+    }
  
+    // Read from FITS file one plane
+    fpixel[0]=1;
+    fpixel[1]=1;
+    fpixel[2]=z;  
  
+    nelements=dimensions[0]*dimensions[1];	// compute nelements in plane
+ 
+      // Write to FITS file
+    if(plane==NULL)
+    {
+      throw "dalFITS::writePlane NULL pointer";
+    }
+    else if(nulval==NULL)
+    {
+      writePix(TDOUBLE, fpixel, nelements, plane);
+    } 
+    else	// write pixels with substituting null value
+    { 
+      writePixNull(TDOUBLE, fpixel, nelements, plane, nulval); 
+    }
   }
+
 
   /*!
     \brief Write a line of sight to a FITS file
@@ -789,13 +921,8 @@ namespace DAL
     \param x - x position in pixels to write line to
     \param y - y position in pixels to write line to
   */
-  void dalFITS::writeLine(vector<double> line, int x, int y)
+  void dalFITS::writeLine(double *line, const long x, const long y, void *nulval)
   {
-    // Check if vector has equal length to z-dimension of image cube
-    if(line.size() != dimensions[2])
-    {
-      throw "dalFITS::writeLine size does not match";
-    }
     
   
   }
@@ -804,15 +931,17 @@ namespace DAL
   /*! 
     \brief Write a tile to a FITS file
   
-    \param tile --
-    \param x --
-    \param y --
+    \param tile - buffer containing tile data
+    \param x_pos - x position in pixels to write tile to
+    \param y_pos - y position in pixels to write tile to
+    \param x_size - horizontal size of tile
+    \param y_size - vertical size of tile
   */
   void dalFITS::writeTile(double* tile,
-			  int x_pos,
-			  int y_pos,
-			  int x_size,
-			  int y_size
+			  const long x_pos,
+			  const long y_pos,
+			  const long x_size,
+			  const long y_size
 			  )
   {
 
@@ -829,11 +958,11 @@ namespace DAL
     \param x_size - x-dimension of cube in pixels
     \param y_size - y-dimension of cube in pixels
   */
-  void dalFITS::writeSubCube(double* subcube,
-			  int x_size,
-			  int y_size,
-			  int x_pos,
-			  int y_pos)
+  void dalFITS::writeSubCube( double* subcube,
+			      long x_size,
+			      long y_size,
+			      long x_pos,
+			      long y_pos)
   {
     // Check if position is valid
     
@@ -863,7 +992,7 @@ namespace DAL
   void dalFITS::getHDRspace(int &keysexist,
 			   int &morekeys)
   {
-    if(!(fits_get_hdrspace(fptr, &keysexist, &morekeys, &fitsstatus)))
+    if(fits_get_hdrspace(fptr, &keysexist, &morekeys, &fitsstatus))
     {
       throw "dalFITS::getHDRspace";
     }
@@ -879,7 +1008,7 @@ namespace DAL
   void dalFITS::readRecord(int keynum,
 			  std::string record)
   {
-    if(!(fits_read_record(fptr, keynum, const_cast<char *>(record.c_str()), &fitsstatus)))
+    if(fits_read_record(fptr, keynum, const_cast<char *>(record.c_str()), &fitsstatus))
     {
       throw "dalFITS::readRecord";
     }
@@ -893,7 +1022,7 @@ namespace DAL
   */
   void dalFITS::readCard(std::string keyname, std::string record)
   {
-    if(!(fits_read_card(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(record.c_str()), &fitsstatus)))
+    if(fits_read_card(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(record.c_str()), &fitsstatus))
     {
       throw "dalFITS::readCard";
     }
@@ -910,7 +1039,7 @@ namespace DAL
   */
   void dalFITS::readKeyn(int keynum, std::string keyname, std::string value, std::string comment)
   {
-    if(!(fits_read_keyn(fptr, keynum, const_cast<char *>(keyname.c_str()), const_cast<char *>(value.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus) ))
+    if(fits_read_keyn(fptr, keynum, const_cast<char *>(keyname.c_str()), const_cast<char *>(value.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus))
     {
       throw "dalFITS::readKeyn";
     }
@@ -930,7 +1059,7 @@ namespace DAL
 		       void *value,
 		       std::string comment)
   {
-    if(!(fits_read_key(fptr, datatype, const_cast<char *>(keyname.c_str()), value, const_cast<char *>(comment.c_str()), &fitsstatus)))
+    if(fits_read_key(fptr, datatype, const_cast<char *>(keyname.c_str()), value, const_cast<char *>(comment.c_str()), &fitsstatus))
     {
       throw "dalFITS::readKey";
     }
@@ -952,7 +1081,7 @@ namespace DAL
 			   int nexc,
 			   std::string card)
   {
-    if(!(fits_find_nextkey(fptr, inclist, ninc, exclist, nexc, const_cast<char *>(card.c_str()), &fitsstatus)))
+    if(fits_find_nextkey(fptr, inclist, ninc, exclist, nexc, const_cast<char *>(card.c_str()), &fitsstatus))
     {
       throw "dalFITS::findNextKey";
     }
@@ -968,7 +1097,7 @@ namespace DAL
   void dalFITS::readKeyUnit(std::string keyname,
 			   std::string unit)
   {
-    if(!(fits_read_key_unit(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(unit.c_str()), &fitsstatus)))
+    if(fits_read_key_unit(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(unit.c_str()), &fitsstatus))
     {
       throw "dalFITS::readKeyUnit";
     }
@@ -994,8 +1123,8 @@ namespace DAL
 			void *value,
 			std::string comment)
   {
-    if(!(fits_write_key(fptr, datatype, const_cast<char 
-				*>(keyname.c_str()), value, const_cast<char *>(comment.c_str()), &fitsstatus)))
+    if(fits_write_key(fptr, datatype, const_cast<char 
+				*>(keyname.c_str()), value, const_cast<char *>(comment.c_str()), &fitsstatus))
       {
 	throw "dalFITS::writeKey";
       }
@@ -1016,12 +1145,12 @@ namespace DAL
 			 std::string &comment)
   {
   
-    if(!(fits_update_key(fptr,
-				 datatype,
-				 const_cast<char *>(keyname.c_str()),
-				 value,
-				 const_cast<char *>(comment.c_str()),
-				 &fitsstatus)))
+    if(fits_update_key(	fptr,
+			datatype,
+			const_cast<char *>(keyname.c_str()),
+			value,
+			const_cast<char *>(comment.c_str()),
+			&fitsstatus))
       {
 	throw "dalFITS::updateKey";
       }
@@ -1035,7 +1164,7 @@ namespace DAL
   */
   void dalFITS::writeRecord(std::string &card)
   {
-    if(!(fits_write_record(fptr, const_cast<char *>(card.c_str()), &fitsstatus)))
+    if(fits_write_record(fptr, const_cast<char *>(card.c_str()), &fitsstatus))
     {
       throw "dalFITS:writeRecord";
     }
@@ -1050,7 +1179,7 @@ namespace DAL
   */
   void dalFITS::modifyComment(std::string &keyname, std::string &comment)
   {
-    if(!(fits_modify_comment(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus)))
+    if(fits_modify_comment(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus))
     {
       throw "dalFITS::modifyComment";
     }
@@ -1065,7 +1194,7 @@ namespace DAL
   */
   void dalFITS::writeKeyUnit(std::string &keyname, std::string &unit)
   {
-    if(!(fits_write_key_unit(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(unit.c_str()), &fitsstatus)))
+    if(fits_write_key_unit(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(unit.c_str()), &fitsstatus))
     {
       throw "dalFITS::writeKeyUnit";
     }
@@ -1079,7 +1208,7 @@ namespace DAL
   */
   void dalFITS::writeComment(std::string &comment)
   {
-    if(!(fits_write_comment(fptr, const_cast<char *>(comment.c_str()),  &fitsstatus)))
+    if(fits_write_comment(fptr, const_cast<char *>(comment.c_str()),  &fitsstatus))
     {
       throw "dalFITS::writeComment";
     }
@@ -1093,7 +1222,7 @@ namespace DAL
   */
   void dalFITS::writeHistory(std::string &history)
   {
-    if(!(fits_write_history(fptr, const_cast<char *>(history.c_str()),  &fitsstatus)))
+    if(fits_write_history(fptr, const_cast<char *>(history.c_str()),  &fitsstatus))
     {
       throw "dalFITS::writeHistory";
     }
@@ -1105,7 +1234,7 @@ namespace DAL
   */
   void dalFITS::writeDate()
   {
-    if(!(fits_write_date(fptr,  &fitsstatus)))
+    if(fits_write_date(fptr,  &fitsstatus))
     {
       throw "dalFITS::writeDate";
     }
@@ -1119,7 +1248,7 @@ namespace DAL
   */
   void dalFITS::deleteRecord(int keynum)
   {
-    if(!(fits_delete_record(fptr, keynum,  &fitsstatus)))
+    if(fits_delete_record(fptr, keynum,  &fitsstatus))
     {
       throw "dalFITS::deleteRecord";
     }
@@ -1133,7 +1262,7 @@ namespace DAL
   */
   void dalFITS::deleteKey(std::string keyname)
   {
-    if(!(fits_delete_key(fptr, const_cast<char *>(keyname.c_str()),  &fitsstatus)))
+    if(fits_delete_key(fptr, const_cast<char *>(keyname.c_str()),  &fitsstatus))
     {
       throw "dalFITS::deleteKey";
     }
@@ -1147,7 +1276,7 @@ namespace DAL
   */
   void dalFITS::copyHeader(dalFITS &other)
   {
-    if(!(fits_copy_header(fptr, other.fptr, &fitsstatus)))
+    if(fits_copy_header(fptr, other.fptr, &fitsstatus))
     {
       throw "dalFITS::copyHeader";
     }
@@ -1161,7 +1290,7 @@ namespace DAL
   */
   void dalFITS::deleteHDU(int *hdutype=NULL)
   {
-    if(!(fits_delete_hdu(fptr, hdutype ,&fitsstatus)))
+    if(fits_delete_hdu(fptr, hdutype ,&fitsstatus))
     {
       throw "dalFITS::deleteHDU";
     }
@@ -1173,7 +1302,7 @@ namespace DAL
   */
   void dalFITS::writeChecksum()
   {
-    if(!(fits_write_chksum(fptr, &fitsstatus)))
+    if(fits_write_chksum(fptr, &fitsstatus))
     {
       throw "dalFITS::writeChecksum";
     }
@@ -1190,7 +1319,7 @@ namespace DAL
   {
     int dataok_int=0, hduok_int=0;
   
-    if(!(fits_verify_chksum(fptr, &dataok_int, &hduok_int, &fitsstatus)))
+    if(fits_verify_chksum(fptr, &dataok_int, &hduok_int, &fitsstatus))
     {
       throw "dalFITS::verifyChecksum";
     }
@@ -1212,7 +1341,7 @@ namespace DAL
     */
   void dalFITS::parseValue(std::string &card, std::string &value, std::string &comment)
   {
-    if(!(fits_parse_value(const_cast<char *>(card.c_str()), const_cast<char *>(value.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus)))
+    if(fits_parse_value(const_cast<char *>(card.c_str()), const_cast<char *>(value.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus))
     {
       throw "dalFITS::parseValue";
     }
@@ -1231,7 +1360,7 @@ namespace DAL
   {   
     char dtype;
   
-    if(!(fits_get_keytype(const_cast<char *>(value.c_str()), &dtype, &fitsstatus)))
+    if(fits_get_keytype(const_cast<char *>(value.c_str()), &dtype, &fitsstatus))
     {
       throw "dalFITS::getKeytype";
     }
@@ -1249,7 +1378,7 @@ namespace DAL
   {
     int keyclass=0;
   
-    if(!(fits_get_keyclass(const_cast<char *>(card.c_str()))))
+    if(fits_get_keyclass(const_cast<char *>(card.c_str())))
     {
       throw "dalFITS::getKeyclass";
     }
@@ -1270,7 +1399,7 @@ namespace DAL
   {
     int keytype=0;
   
-    if(!(fits_parse_template(const_cast<char *>(templatec.c_str()), const_cast<char *>(card.c_str()), &keytype, &fitsstatus)))
+    if(fits_parse_template(const_cast<char *>(templatec.c_str()), const_cast<char *>(card.c_str()), &keytype, &fitsstatus))
     {
       throw "dalFITS::parseTemplate";
     }
@@ -1295,7 +1424,7 @@ namespace DAL
     moveAbsoluteHDU(hdu);
 
     // Check if it is an image extension
-
+   
     // Copy dalFITS image header
 
     // Write individual header keywords to FITS

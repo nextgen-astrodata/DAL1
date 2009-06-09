@@ -90,7 +90,7 @@ namespace DAL {
 
  
     //! dimensions of FITS image
-    std::vector<long long> dimensions;
+    std::vector<unsigned long long> dimensions;
 
     /*
     //! No. of axes in FITS file
@@ -173,6 +173,7 @@ namespace DAL {
     void moveAbsoluteHDU(int hdu);
     void moveRelativeHDU(int hdu);
     int moveNameHDU(const std::string &extname);
+    void updateImageDimensions();
     int readHDUType();
     std::string readFilename();
     int readFileMode();
@@ -190,7 +191,7 @@ namespace DAL {
     
     int getImgType();
     int getImgDim();
-    void getImgSize(int maxdim,  long &naxes);
+    void getImgSize(int maxdim,  long *naxes);
     void getImgParam(int maxdim,  int &bitpix, int &naxis, long &naxes);
     void createImg(int bitpix, int naxis, long *naxes);
     void readPix(int datatype, long *fpixel, 
@@ -283,7 +284,7 @@ namespace DAL {
      /*!
       \brief Get the bin unit (center frequencies) of a FITS image
       
-      \return binUnit -- unit associated with bins
+      \return binUnit - unit associated with bins
     */
     inline DALbinUnit getBinUnit () const {
       return binUnit;
@@ -292,7 +293,7 @@ namespace DAL {
     /*!
       \brief Get the bins (center frequencies) of a FITS image
     
-      \return bins -- can be frequency or lambda squared
+      \return bins - can be frequency or lambda squared
     */
     inline std::vector<double> getBins () const {
       return bins;
@@ -302,7 +303,7 @@ namespace DAL {
     /*!
       \brief Get widths (for RM integration) of a FITS object (not necessarily in the image)
    
-      \return binDeltas --
+      \return binDeltas - delta steps between frequency bins
     */
     inline std::vector<double> getBinWidths () const {
       return binWidths;
@@ -314,11 +315,11 @@ namespace DAL {
     //
     // ============================================================================  
 
-    void readPlane(double *plane, int z);
+    void readPlane(double *plane, const unsigned long z, void *nulval=NULL);
 
-    void readLine(vector<double> &line, int x, int y);
+    void readLine(double *line, const unsigned long x, const unsigned long y, void *nulval=NULL);
 
-    void readSubCube(double *subCube, int x_pos, int y_pos, int x_size, int y_size);
+    void readSubCube(double *subCube, const unsigned long x_pos, const unsigned long y_pos, const unsigned long x_size, const unsigned long y_size);
     
 
     // ============================================================================
@@ -327,23 +328,24 @@ namespace DAL {
     //
     // ============================================================================  
 
-    void writePlane(double *plane, int x, int y, int z);
+    void writePlane(double *plane, const long x, const long y, const long z, void *nulval=NULL);
 
-    void writeLine(vector<double> faradayline, int x, int y);
+    void writeLine(double *line, const long x, const long y, void *nulval=NULL);
 
     void writeTile( double* tile, 
-		    int x_size, 
-		    int y_size, 
-		    int x_pos, 
-		    int y_pos);   
+		    const long x_size, 
+		    const long y_size, 
+		    const long x_pos, 
+		    const long y_pos);   
     
-    void writeCube(double* cube, int x, int y, int z);
+    void writeCube(double* cube, const long x, const long y, const long z);
 
     void writeSubCube(  double* subcube, 
-			int x_size, 
-			int y_size, 
-			int x_pos, 
-			int y_pos);
+			const long x_size, 
+			const long y_size, 
+			const long x_pos, 
+			const long y_pos);
+
 
     // ============================================================================
     //
