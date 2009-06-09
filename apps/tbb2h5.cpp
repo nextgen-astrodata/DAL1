@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
   int socketmode (0);
   int timeout (-1);
 
-  bool fixTransientTimes (false);
+  int fixTransientTimes (0);
   bool file2hdf5 (false);
   bool positions2hdf5 (false);
 
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
     ("ip", bpo::value<std::string>(), "IP address from which to accept the data")
     ("port,P", bpo::value<std::string>(), "Port number to accept data from")
     ("timeout,T", bpo::value<int>(), "Time-out before stop listening to the port")
-    ("fixTimes,F", bpo::value<bool>(), "Fix broken time-stamps (1), or not (0, default)")
+    ("fixTimes,F", bpo::value<int>(), "Fix broken time-stamps old style (1), new style (2), or not (0, default)")
     ("antpos,A", bpo::value<std::string>(), "File containing antenna positions")
     ;
   
@@ -217,13 +217,13 @@ int main(int argc, char *argv[])
   }
 
   if (vm.count("fixTimes")) {
-    fixTransientTimes = vm["fixTimes"].as<bool>();
+    fixTransientTimes = vm["fixTimes"].as<int>();
   }
 
   // -----------------------------------------------------------------
   // Check the provided input
   
-  if (fixTransientTimes) {
+  if (fixTransientTimes>0) {
     cout << "Going to fix (probably) broken time-stamps." << endl;
     cout << "!!! Only tested for transient (=raw) data!!!" << endl;
   };
@@ -297,9 +297,11 @@ int main(int argc, char *argv[])
           if ( !tbb.readRawSocketBlockHeader() )
             break;
 	  
-	  if (fixTransientTimes) {
+	  if (fixTransientTimes==1) {
 	    tbb.fixDate();
-	  };	 
+	  } else if (fixTransientTimes==2) {	 
+	    tbb.fixDateNew();
+	  };
  
           tbb.stationCheck();
 	  

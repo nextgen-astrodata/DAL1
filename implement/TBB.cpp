@@ -691,6 +691,17 @@ namespace DAL {
       cerr << "fixDate: Unsupported samplerate!!!" << endl;
     };
   };
+
+  void TBB::fixDateNew(){
+    if (headerp_p->sample_freq == 200) {
+      if ((headerp_p->time%2)!=1) {
+	headerp_p->sample_nr += 512;
+      };
+    } else if (headerp_p->sample_freq == 160) {
+    } else {
+      cerr << "fixDate: Unsupported samplerate!!!" << endl;
+    };
+  };
   
   // -------------------------------------------- processTransientSocketDataBlock
   
