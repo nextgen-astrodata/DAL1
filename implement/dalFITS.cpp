@@ -611,13 +611,13 @@ namespace DAL
     \brief Get image parameters: maxdim, bitpix, naxis, naxes
 
     \param maxdim - Maximum number of dimensions returned
-    \param *bitpix - Bits per pixel
-    \param *naxis - Number of axes
+    \param &bitpix - Bits per pixel
+    \param &naxis - Number of axes
     \param *naxes - Array with length of each axis
   */
-  void dalFITS::getImgParam(int maxdim,  int &bitpix, int &naxis, long &naxes)
+  void dalFITS::getImgParam(int maxdim,  int &bitpix, int &naxis, long *naxes)
   {
-    if(fits_get_img_param(fptr, maxdim, &bitpix, &naxis, &naxes, &fitsstatus))
+    if(fits_get_img_param(fptr, maxdim, &bitpix, &naxis, naxes, &fitsstatus))
     {
       throw "dalFITS::getImageParam";
     }

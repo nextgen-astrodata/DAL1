@@ -192,7 +192,7 @@ namespace DAL {
     int getImgType();
     int getImgDim();
     void getImgSize(int maxdim,  long *naxes);
-    void getImgParam(int maxdim,  int &bitpix, int &naxis, long &naxes);
+    void getImgParam(int maxdim,  int &bitpix, int &naxis, long *naxes);
     void createImg(int bitpix, int naxis, long *naxes);
     void readPix(int datatype, long *fpixel, 
                   long nelements, void *nulval, void *array, 
