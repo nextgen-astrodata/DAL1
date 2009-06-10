@@ -55,9 +55,26 @@ namespace DAL {
   
   /*!
     \class TBB
+
     \ingroup DAL
+
     \brief High-level interface between TBB data and the DAL
-    \author Joseph Masters
+
+    \author Joseph Masters, Lars B&auml;hren, Andreas Horneffer
+
+    \test tTBB.cpp
+    
+    <h3>Prerequisite</h3>
+    
+    <ul type="square">
+      <li>
+    </ul>
+    
+    <h3>Synopsis</h3>
+
+    
+    <h3>Example(s)</h3>
+    
   */
   class TBB
   {
@@ -147,7 +164,8 @@ namespace DAL {
     dalDataset * dataset;
     std::vector<dalGroup> station;
     fd_set readSet;
-    struct timeval timeVal;
+    struct timeval timeoutStart_p;
+    struct timeval timeoutRead_p;
     //!buffer for the UDP-datagram
     char udpBuff_p[UDP_BUFFER_SIZE];
     //!header of the TBB-frame 
@@ -170,14 +188,16 @@ namespace DAL {
     //char * stationstr;
     //! Unique identifier for an individual dipole
     char uid[10];
-    int readsocket( unsigned int nbytes, char* buf );
+    //! Read data from a socket
+    int readsocket( unsigned int nbytes,
+		    char* buf);
     UInt32 payload_crc;
     TransientSample tran_sample;
     SpectralSample spec_sample;
     // for file i/o
     ifstream::pos_type size;
     unsigned char * memblock;
-    fstream * rawfile;
+    fstream * rawfile_p;
     Int16 real_part, imag_part;
     
   public:
@@ -200,26 +220,44 @@ namespace DAL {
     //___________________________________________________________________________
     // Parameter access
 
-    //! Get the name of the telescope
+    /*!
+      \brief Get the name of the telescope
+      \return telescope -- The name of the telescope 
+    */
     inline std::string telescope ()        const { return telescope_p;        }
-    //! Get the name of the observer
+    /*!
+      \brief Get the name of the observer
+      \return observer -- The name of the observer 
+    */
     inline std::string observer ()         const { return observer_p;         }
-    //! Get the name of the project
+    /*!
+      \brief Get the name of the project
+      \return project -- The name of the project
+    */
     inline std::string project ()          const { return project_p;          }
     //! Get the identifier for the observation
     inline std::string observation_id ()   const { return observation_id_p;   }
     //! Set the telescope observation mode
     inline std::string observation_mode () const { return observationMode_p;  }
     
-    //! Set the name of the telescope
+    /*!
+      \brief Set the name of the telescope
+      \param telescope -- The name of the telescope
+    */
     inline void setTelescope (std::string const &telescope) {
       telescope_p = telescope;
     }
-    //! Set the name of the observer
+    /*!
+      \brief Set the name of the observer
+      \param observer -- The name of the observer
+    */
     inline void setObserver (std::string const &observer) {
       observer_p = observer;
     }
-    //! Set the name of the project
+    /*!
+      \brief Set the name of the project
+      \param project -- The name of the project
+    */
     inline void setProject (std::string const &project) {
       project_p = project;
     }
@@ -231,14 +269,54 @@ namespace DAL {
     inline void setObservation_mode (std::string const &observation_mode) {
       observationMode_p = observation_mode;
     }
+
+    //! Get the time-out before dropping socket connection at connect
+    inline void timeoutStart (unsigned int &time_sec,
+			      unsigned int &time_usec)
+    {
+      time_sec  = timeoutStart_p.tv_sec;
+      time_usec = timeoutStart_p.tv_usec;
+    }
+    //! Set the time-out before dropping socket connection at connect
+    void setTimeoutStart (double const &timeout=-1.0);
+    
+    //! Set the time-out before dropping socket connection at connect
+    inline void setTimeoutStart (unsigned int const &time_sec,
+				 unsigned int const &time_usec)
+    {
+      timeoutStart_p.tv_sec  = time_sec;
+      timeoutStart_p.tv_usec = time_usec;
+    }
+
+    /*!
+      \brief Get the time-out before dropping socket connection while reading
+      \retval time_sec  -- 
+      \retval time_usec -- 
+    */
+    inline void timeoutRead (unsigned int &time_sec,
+			     unsigned int &time_usec)
+    {
+      time_sec  = timeoutRead_p.tv_sec;
+      time_usec = timeoutRead_p.tv_usec;
+    }
+    
+    //! Set the time-out before dropping socket connection while reading
+    void setTimeoutRead (double const &timeout=1.0);
+    
+    //! Set the time-out before dropping socket connection while reading
+    inline void setTimeoutRead (unsigned int const &time_sec,
+				unsigned int const &time_usec)
+    {
+      timeoutRead_p.tv_sec  = time_sec;
+      timeoutRead_p.tv_usec = time_usec;
+    }
     
     //___________________________________________________________________________
     // Methods
 
     //! Set up the socket connection to the server
     void connectsocket( const char* ipaddress,
-			const char* portnumber,
-			const int &timeout=0);
+			const char* portnumber);
     //! Open file containing data resulting from a TBB dump
     bool openRawFile( const char* filename );
     bool readRawSocketBlockHeader();

@@ -75,20 +75,63 @@ int test_constructors (std::string const &filename)
 /*!
   \brief Test the functions providing access to internal parameters
 
+  \param outfile - Name of the HDF5 output file
+
   \return nofFailedTests -- The number of failed tests within this function.
 */
-int test_parameters (std::string const &filename)
+int test_parameters (std::string const &outfile)
 {
-  int nofFailedTests (0);
-  TBB tbb (filename);
+  std::cout << "\n[tTBB::test_parameters]\n" << std::endl;
 
-  tbb.setTelescope ("a");
-  tbb.setObserver ("b");
-  tbb.setProject ("c");
-  tbb.setObservation_id ("d");
-  tbb.setObservation_mode ("e");
-  
-  tbb.summary();
+  int nofFailedTests (0);
+  TBB tbb (outfile);
+
+  std::cout << "[1] Test assigning top-level attributes ..." << std::endl;
+  try {
+    tbb.setTelescope ("TheTelescope");
+    tbb.setObserver ("TheObserver");
+    tbb.setProject ("ThePoject");
+    tbb.setObservation_id ("TheObservationID");
+    tbb.setObservation_mode ("TheObservationMode");
+    //
+    tbb.summary();
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  std::cout << "[2] Assign time-outs ..." << std::endl;
+  try {
+    tbb.setTimeoutStart (1.5);
+    tbb.summary();
+    //
+    tbb.setTimeoutStart (1,200);
+    tbb.summary();
+    //
+    tbb.setTimeoutRead (2,5);
+    tbb.summary();
+    //
+    tbb.setTimeoutRead (0,50);
+    tbb.summary();
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  cout << "[3] Retrieve time-outs ..." << endl;
+  try {
+    unsigned int time_sec;
+    unsigned int time_usec;
+    //
+    tbb.timeoutStart(time_sec,time_usec);
+    cout << "-- Start time-out = [" << time_sec << ";" << time_usec << "]" << endl;
+    //
+    tbb.timeoutRead(time_sec,time_usec);
+    cout << "-- Read time-out  = [" << time_sec << ";" << time_usec << "]" << endl;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
 
   return nofFailedTests;
 }
@@ -117,20 +160,30 @@ int main (int argc, char *argv[])
     cerr << std::endl;
   }
 
-  if (argc == 2) {
+  if (argc > 1) {
     outfile      = argv[1];
     have_outfile = true;
   }
 
-  if (argc == 3) {
+  if (argc > 2) {
     rawfile      = argv[2];
     have_rawfile = true;
   }
 
-  if (argc == 4) {
+  if (argc > 3) {
     calfile      = argv[3];
     have_calfile = true;
   }
+
+  //__________________________________________________________________
+  // Parameter summary
+
+#ifdef DEBUGGING_MESSAGES
+  cout << "[tTBB]" << endl;
+  cout << "-- Output file      = " << outfile << endl;
+  cout << "-- Input file       = " << rawfile << endl;
+  cout << "-- Calibration file = " << calfile << endl;
+#endif
   
   //__________________________________________________________________
   // Run the tests

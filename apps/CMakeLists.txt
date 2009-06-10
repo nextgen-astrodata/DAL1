@@ -82,11 +82,12 @@ if (DAL_ENABLE_TESTING)
   add_test (tbb2h5_test6 tbb2h5 --mode 0)
   add_test (tbb2h5_test7 tbb2h5 -P 20)
   add_test (tbb2h5_test8 tbb2h5 --port 20)
+  add_test (tbb2h5_test9 tbb2h5 --port 20 --timeoutRead 0.2)
 
   if (dataset_tbb_raw)
-    add_test (tbb2h5_test9 tbb2h5 --infile ${dataset_tbb_raw} --outfile testdata.h5)
-    add_test (tbb2h5_test10 tbb2h5 --infile ${USG_DATA}/test/rw_20071024_090656_0102.dat --outfile testdata.h5)
-    add_test (tbb2h5_test11 tbb2h5 --infile ${USG_DATA}/test/rw_20071024_090656_0103.dat --outfile testdata.h5)
+    add_test (tbb2h5_test10 tbb2h5 --infile ${dataset_tbb_raw} --outfile testdata.h5)
+    add_test (tbb2h5_test11 tbb2h5 --infile ${dataset_tbb_raw} --outfile testdata.h5)
+    add_test (tbb2h5_test12 tbb2h5 --infile ${dataset_tbb_raw} --outfile testdata.h5)
   endif (dataset_tbb_raw)
 
   ## Test bf2h5 with various command line parameters

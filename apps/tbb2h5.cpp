@@ -79,10 +79,16 @@
       <td>Port number to accept data from</td>
     </tr>
     <tr>
-      <td>-T [--timeout] arg</td>
-      <td>Time-out before stop listening to the port. If the provided value
-      is smaller but zero (which is the default) the connection to the port is
-      kept open indefinitely.</td>
+      <td>-S [--timeoutStart] arg</td>
+      <td>Time-out, [sec], when opening socket connection, before dropping the
+      conection. If the provided value is smaller but zero (which is the default)
+      the connection to the port is kept open indefinitely.</td>
+    </tr>
+    <tr>
+      <td>-R [--timeoutRead] arg</td>
+      <td>Time-out, [sec], when opening socket connection, before dropping the
+      conection. If the provided value is smaller but zero (which is the default)
+      the connection to the port is kept open indefinitely.</td>
     </tr>
     <tr>
       <td>-A [--antpos] arg</td>
@@ -98,6 +104,10 @@
       (2): change new style time stamps: add 512 to the sample_nr of odd-numbered second 
       frames in 200MHz mode
       </td>
+    </tr>
+    <tr>
+      <td>--verbose</td>
+      <td>Enable verbose mode, showing status messages during processing.</td>
     </tr>
   </table>
 
@@ -164,8 +174,10 @@ int main(int argc, char *argv[])
   std::string antpos;
   std::string ip;
   std::string port;
+  bool verboseMode (false);
   int socketmode (0);
-  int timeout (-1);
+  double timeoutStart (0);
+  double timeoutRead (0);
 
   int fixTransientTimes (0);
   bool file2hdf5 (false);
@@ -183,9 +195,11 @@ int main(int argc, char *argv[])
     ("mode,M", bpo::value<int>(), "Operation mode: file (0), socket (1)")
     ("ip", bpo::value<std::string>(), "IP address from which to accept the data")
     ("port,P", bpo::value<std::string>(), "Port number to accept data from")
-    ("timeout,T", bpo::value<int>(), "Time-out before stop listening to the port")
+    ("timeoutStart,S", bpo::value<double>(), "Time-out when opening socket connection, [sec].")
+    ("timeoutRead,R", bpo::value<double>(), "Time-out when while reading from socket, [sec].")
     ("fixTimes,F", bpo::value<int>(), "Fix broken time-stamps old style (1), new style (2), or not (0, default)")
     ("antpos,A", bpo::value<std::string>(), "File containing antenna positions")
+    ("verbose", "Verbose mode on")
     ;
   
   bpo::variables_map vm;
@@ -194,6 +208,10 @@ int main(int argc, char *argv[])
   if (vm.count("help") || argc == 1) {
     std::cout << "\n" << desc << std::endl;
     return 0;
+  }
+
+  if (vm.count("verbose")) {
+    verboseMode=true;
   }
 
   if (vm.count("infile")) {
@@ -223,8 +241,12 @@ int main(int argc, char *argv[])
     socketmode = vm["mode"].as<int>();
   }
 
-  if (vm.count("timeout")) {
-    timeout = vm["timeout"].as<int>();
+  if (vm.count("timeoutStart")) {
+    timeoutStart = vm["timeoutStart"].as<double>();
+  }
+
+  if (vm.count("timeoutRead")) {
+    timeoutRead = vm["timeoutRead"].as<double>();
   }
 
   if (vm.count("fixTimes")) {
@@ -267,16 +289,19 @@ int main(int argc, char *argv[])
   // -----------------------------------------------------------------
   // Feedback on the settings
   
-  std::cout << "[tbb2h5] Summary of parameters"  << std::endl;
-  std::cout << "-- Socket mode = " << socketmode << std::endl;
-  std::cout << "-- Output file = " << outfile    << std::endl;
-  
-  if (socketmode) {
-    std::cout << "-- IP address  = " << ip      << std::endl;
-    std::cout << "-- Port number = " << port    << std::endl;
-    std::cout << "-- Timeout     = " << timeout << std::endl;
-  } else {
-    std::cout << "-- Input file  = " << infile  << std::endl;
+  if (verboseMode) {
+    std::cout << "[tbb2h5] Summary of parameters"  << std::endl;
+    std::cout << "-- Socket mode = " << socketmode << std::endl;
+    std::cout << "-- Output file = " << outfile    << std::endl;
+    
+    if (socketmode) {
+      std::cout << "-- IP address      = " << ip           << std::endl;
+      std::cout << "-- Port number     = " << port         << std::endl;
+      std::cout << "-- Timeout (start) = " << timeoutStart << std::endl;
+      std::cout << "-- Timeout (read)  = " << timeoutRead  << std::endl;
+    } else {
+      std::cout << "-- Input file  = " << infile  << std::endl;
+    }
   }
   
   // -----------------------------------------------------------------
@@ -286,8 +311,16 @@ int main(int argc, char *argv[])
   
   if ( socketmode )  // socket mode?
     {
+      /* Adjust settings for timeout */
+      if (timeoutStart > 0) {
+	tbb.setTimeoutStart (timeoutStart);
+      }
+      if (timeoutRead > 0) {
+	tbb.setTimeoutRead (timeoutRead);
+      }
+      /* Open connection to socket */
       std::cout << "[tbb2h5] Opening connection to socket ..." << std::endl;
-      tbb.connectsocket( ip.c_str(), port.c_str(), timeout );
+      tbb.connectsocket( ip.c_str(), port.c_str());
     }
   else  // reading from a file
     {

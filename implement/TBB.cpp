@@ -33,7 +33,8 @@ namespace DAL {
   //
   // ============================================================================
 
-  // ------------------------------------------------------------------------ TBB
+  //_____________________________________________________________________________
+  //                                                                          TBB
 
   /*!
     \param filename -- Name of the output HDF5 dataset to create
@@ -78,7 +79,8 @@ namespace DAL {
 
   }
 
-  // ------------------------------------------------------------------------ TBB
+  //_____________________________________________________________________________
+  //                                                                          TBB
 
   /*!
     \param filename  -- Name of the output HDF5 dataset to create
@@ -99,7 +101,8 @@ namespace DAL {
   }
   
 
-  // ----------------------------------------------------------------------- init
+  //_____________________________________________________________________________
+  //                                                                         init
 
   void TBB::init ()
   {
@@ -109,8 +112,11 @@ namespace DAL {
     observer_p         = "UNDEFINED";
     project_p          = "UNDEFINED";
     observation_id_p   = "UNDEFINED";
-    observationMode_p  = "UNDEFINED";  
+    observationMode_p  = "UNDEFINED";
 
+    setTimeoutStart (-1.0);
+    setTimeoutRead (1.0);
+    
     seqnrLast_p  = 0;
     bigendian_p  = BigEndian();
     sampleTime_p = (time_t)0;
@@ -134,7 +140,7 @@ namespace DAL {
     spec_sample.value = 0;
     size              = 0;
     memblock          = NULL;
-    rawfile           = NULL;
+    rawfile_p         = NULL;
     real_part         = 0;
     imag_part         = 0;
 
@@ -148,7 +154,8 @@ namespace DAL {
     init_TBB_Header ();
   }
   
-  // ------------------------------------------------------------ init_TBB_Header
+  //_____________________________________________________________________________
+  //                                                              init_TBB_Header
   
   void TBB::init_TBB_Header ()
   {
@@ -187,54 +194,123 @@ namespace DAL {
     delete dataset;
     if (main_socket)
       close(main_socket);
-    if (rawfile)
+    if (rawfile_p)
       {
-        if (rawfile->is_open())
+        if (rawfile_p->is_open())
           {
-            rawfile->close();
+            rawfile_p->close();
           }
-        delete rawfile;
-        rawfile = 0;
+        delete rawfile_p;
+        rawfile_p = 0;
       }
   }
 
   // ============================================================================
   //
-  //  Methods
+  //  Access to parameters
   //
   // ============================================================================
 
   //_____________________________________________________________________________
+  //                                                              setTimeoutStart
+  
+  /*!
+    \param timeout -- Timeout, [sec], before stopping to listen for data; if a
+           value greater zero is provided, the value is the time-out in seconds
+	   -- otherwise the connection is kept open indefinitely.
+  */
+  void TBB::setTimeoutStart (double const &timeout)
+  {
+    /*
+     * Decompose the floating point value of the timeout into two parts:
+     * seconds (time_sec) and micro-seconds (time_usec).
+     */
+    int time_sec  = std::floor(timeout);
+    int time_usec = 1e06*(timeout - time_sec);
 
+#ifdef DEBUGGING_MESSAGES    
+    std::cout << "[TBB::setTimeoutStart]" << std::endl;
+    std::cout << "-- Timeout        = " << timeout   << std::endl;
+    std::cout << "-- Timeout  [sec] = " << time_sec  << std::endl;
+    std::cout << "-- Timeout [usec] = " << time_usec << std::endl;
+#endif
+
+    setTimeoutStart (time_sec,
+		     time_usec);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                               setTimeoutRead
+  
+  /*!
+    \param timeout -- Timeout, [sec]
+  */
+  void TBB::setTimeoutRead (double const &timeout)
+  {
+    /*
+     * Decompose the floating point value of the timeout into two parts:
+     * seconds (time_sec) and micro-seconds (time_usec).
+     */
+    int time_sec  = std::floor(timeout);
+    int time_usec = 1e06*(timeout - time_sec);
+
+#ifdef DEBUGGING_MESSAGES    
+    std::cout << "[TBB::setTimeoutRead]" << std::endl;
+    std::cout << "-- Timeout        = " << timeout   << std::endl;
+    std::cout << "-- Timeout  [sec] = " << time_sec  << std::endl;
+    std::cout << "-- Timeout [usec] = " << time_usec << std::endl;
+#endif
+
+    setTimeoutRead (time_sec,
+		    time_usec);
+  }
+  
+  // ============================================================================
+  //
+  //  Methods
+  //
+  // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                      summary
+  
   /*!
     \param os -- Output stream to which the summary is going to be written
   */
   void TBB::summary (std::ostream &os)
   {
-    os << "[TBB] Summary of object properties"              << endl;
-    os << "-- Last sequence number : " << seqnrLast_p       << endl;
-    os << "-- System is big endian : " << bigendian_p       << endl;
-    os << "-- Sample time ........ : " << sampleTime_p      << endl;
-    os << "-- Attributes attached to file root group:"      << endl;
-    os << "   -- TELESCOPE        = " << telescope()        << endl;
-    os << "   -- OBSERVER         = " << observer()         << endl;
-    os << "   -- PROJECT          = " << project()          << endl;
-    os << "   -- OBSERVATION_ID   = " << observation_id()   << endl;
-    os << "   -- OBSERVATION_MODE = " << observation_mode() << endl;
+    os << "[TBB] Summary of object properties"                << endl;
+    os << "-- Last sequence number : " << seqnrLast_p         << endl;
+    os << "-- System is big endian : " << bigendian_p         << endl;
+    os << "-- Sample time ........ : " << sampleTime_p        << endl;
+    os << "-- Attributes attached to file root group:"        << endl;
+    os << "   -- TELESCOPE        = " << telescope()          << endl;
+    os << "   -- OBSERVER         = " << observer()           << endl;
+    os << "   -- PROJECT          = " << project()            << endl;
+    os << "   -- OBSERVATION_ID   = " << observation_id()     << endl;
+    os << "   -- OBSERVATION_MODE = " << observation_mode()   << endl;
+    os << "-- Time-outs for socket mode"                      << endl;
+    os << "   -- Start-up         = [" 
+       << timeoutStart_p.tv_sec
+       << ";" 
+       << timeoutStart_p.tv_usec
+       << "]" << endl;
+    os << "   -- Reading          = ["
+       << timeoutRead_p.tv_sec
+       << ";"
+       << timeoutRead_p.tv_usec
+       << "]" << endl;
   }
   
   //_____________________________________________________________________________
+  //                                                                connectsocket
 
   /*!
     \param ipaddress  -- IP number to which to connect
     \param portnumber -- Portnumber to which to connect
-    \param timeout    -- Timeout before stopping to listen for data; if a value
-           greater zero is provided, the value is the time-out in seconds --
-	   otherwise the connection is kept open indefinitely.
   */
   void TBB::connectsocket( const char* ipaddress,
-			   const char* portnumber,
-			   const int &timeout )
+			   const char* portnumber)
   {
     int port_number = atol( portnumber );
     const char * remote = ipaddress;
@@ -274,10 +350,8 @@ namespace DAL {
     FD_ZERO(&readSet);
     FD_SET(main_socket, &readSet);
     
-    if (timeout > 0) {
-      timeVal.tv_sec  = timeout;
-      timeVal.tv_usec = 0;
-      select( main_socket + 1, &readSet, NULL, NULL, &timeVal );
+    if (timeoutStart_p.tv_sec+timeoutStart_p.tv_usec > 0) {
+      select( main_socket + 1, &readSet, NULL, NULL, &timeoutStart_p );
     }
     else {
       select( main_socket + 1, &readSet, NULL, NULL, NULL );
@@ -298,9 +372,9 @@ namespace DAL {
   */
   bool TBB::openRawFile( const char* filename )
   {
-    delete rawfile;
-    rawfile = new fstream( filename, ios::binary|ios::in );
-    if ( !rawfile->is_open() )
+    delete rawfile_p;
+    rawfile_p = new fstream( filename, ios::binary|ios::in );
+    if ( !rawfile_p->is_open() )
       {
         std::cerr << "Error opening intput file: " << std::string(filename)
                   << std::endl;
@@ -308,7 +382,7 @@ namespace DAL {
       }
     else
       {
-        rawfile->seekg (0, ios::beg);  // move to start of file
+        rawfile_p->seekg (0, ios::beg);  // move to start of file
         return true;
       }
   }
@@ -321,17 +395,14 @@ namespace DAL {
     \param buf    -- Buffer holding the read data
   */
   int TBB::readsocket( unsigned int nbytes,
-		       char* buf )
+		       char* buf)
   {
     FD_ZERO(&readSet);
     FD_SET(main_socket, &readSet);
 
-    timeVal.tv_sec =   0;
-    timeVal.tv_usec =  40*1e3; // 40 ms for the time being.
-
     int status;
     // waits for up to N seconds for data appearing in the socket
-    if ( (status = select( main_socket + 1, &readSet, NULL, NULL, &timeVal) ) )
+    if ( (status = select( main_socket + 1, &readSet, NULL, NULL, &timeoutRead_p) ) )
       {
         rr = recvfrom( main_socket, buf, nbytes, 0,
                        (sockaddr *) &incoming_addr, &socklen);
@@ -421,7 +492,7 @@ namespace DAL {
   */
   void TBB::readRawFileBlockHeader()
   {
-    rawfile->read(reinterpret_cast<char *>(&header), sizeof(header));
+    rawfile_p->read(reinterpret_cast<char *>(&header), sizeof(header));
     // set the headerpointer to the just read data
     headerp_p = &header;
 
@@ -455,7 +526,7 @@ namespace DAL {
 
   bool TBB::eof()
   {
-    if ( rawfile->peek() == EOF )
+    if ( rawfile_p->peek() == EOF )
       return true;
     else
       return false;
@@ -783,7 +854,7 @@ cout << "extending array to:" << writeOffset+ headerp_p->n_samples_per_frame
 
     for ( short zz=0; zz < headerp_p->n_samples_per_frame; zz++ )
       {
-        rawfile->read( reinterpret_cast<char *>(&tran_sample),
+        rawfile_p->read( reinterpret_cast<char *>(&tran_sample),
                        sizeof(tran_sample) );
 
         if ( bigendian_p )  // reverse fields if big endian
@@ -829,7 +900,7 @@ cout << "extending array to:" << writeOffset+ headerp_p->n_samples_per_frame
 		  << " Block discarded!" << endl;
 #endif    
       };
-    rawfile->read( reinterpret_cast<char *>(&payload_crc),
+    rawfile_p->read( reinterpret_cast<char *>(&payload_crc),
                    sizeof(payload_crc) );
 
   }
@@ -842,7 +913,7 @@ cout << "extending array to:" << writeOffset+ headerp_p->n_samples_per_frame
 
     for ( short zz=0; zz < headerp_p->n_samples_per_frame; zz++ )
       {
-        rawfile->read( reinterpret_cast<char *>(&spec_sample),
+        rawfile_p->read( reinterpret_cast<char *>(&spec_sample),
                        sizeof(spec_sample) );
 
         real_part = real(spec_sample.value);
@@ -861,15 +932,15 @@ cout << "extending array to:" << writeOffset+ headerp_p->n_samples_per_frame
     dipoleArray_p->extend(dims);
     dipoleArray_p->write(offset_p, csdata, headerp_p->n_samples_per_frame );
     offset_p += headerp_p->n_samples_per_frame;
-
-    rawfile->read( reinterpret_cast<char *>(&payload_crc),
-                   sizeof(payload_crc) );
-
+    
+    rawfile_p->read( reinterpret_cast<char *>(&payload_crc),
+		     sizeof(payload_crc) );
+    
   }
-
+  
   //_____________________________________________________________________________
   // Set the antenna array position metadata from calibration file
-
+  
 #ifdef HAVE_BLITZ
   /*!
     \param infile -- Calibration file containing the antenna array positions
