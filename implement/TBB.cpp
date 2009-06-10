@@ -786,6 +786,10 @@ namespace DAL {
     if (rr < (int)(headerp_p->n_samples_per_frame*sizeof(short)+sizeof(TBB_Header)) )
       {
 	cerr << "processTransientSocketDataBlock: Too few data read in! Aborting." << endl;
+	cerr << "  block size: " << rr << " bytes, estimated size: " 
+	     << (headerp_p->n_samples_per_frame*sizeof(short)+sizeof(TBB_Header))
+	     << " bytes" << endl;
+	printRawHeader();
 	return FAIL;
       };
     
