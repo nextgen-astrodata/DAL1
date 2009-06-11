@@ -79,7 +79,7 @@ namespace DAL {
 		// following used in socket mode
     fd_set readSet; 
     struct timeval timeVal;
-    int server_socket;
+    //int server_socket;
     struct sockaddr_in incoming_addr;
 		socklen_t socklen;
     BlockHeader blockheader;

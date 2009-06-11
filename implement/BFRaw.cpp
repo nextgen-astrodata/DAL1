@@ -26,6 +26,9 @@
 #include "BFRaw.h"
 #endif
 
+#include <signal.h>
+
+
 /*
 dataStruct * channelize( dataStruct * data,
                          int start,
@@ -59,6 +62,26 @@ dataStruct * channelize( dataStruct * data,
 
 namespace DAL {
 
+		bool time_out; //! used for time out handler
+		int server_socket(0);
+
+	  //_________________________________________________timeout_alarm
+		//! used to handle time out for socket connection
+		void timeout_alarm (int sig)
+		{
+			time_out = true;
+			std::cout << " time out on socket read" << std::endl;
+			// shutdown and close socket connection
+			shutdown(server_socket, SHUT_RDWR);
+			close(server_socket);
+			std::cout << "connection closed" << std::endl;
+			signal (sig, timeout_alarm);
+		}
+
+		
+		
+
+
   // ============================================================================
   //
   //  Construction
@@ -83,7 +106,7 @@ namespace DAL {
 		int factor ) :
 rawfile(0),
 outputfilename(filename),
-server_socket(0),
+//server_socket(0),
 socklen(sizeof(incoming_addr)),
 blockHeaderSize(sizeof(blockheader)),
 dataSize(0),
@@ -239,6 +262,7 @@ DO_CHANNELIZATION(doChannelization)
 				close(server_socket);
         return false;
       }
+		
 		// Step 4 listen for incoming connections
     if (-1 == listen(server_socket,5))
       {
@@ -463,7 +487,6 @@ int BFRaw::receiveBytes(void *storage, size_t nrOfBytesToRead) {
 	}
 }
 
-
   //_________________________________________________processBFRawDataBlockFromSocket
 	bool BFRaw::processBFRawDataBlockFromSocket(void) {
 
@@ -503,29 +526,44 @@ if (receiveBytes(reinterpret_cast<char *>(&blockheader), blockHeaderSize) == -1)
 			perror("Error, reading the first data block!");
 			throw "Error reading the first data block!";
 		}
-
+	
 	writeBFRawDataBlockToFile();
 	++block_nr;
 
 	// read rest of datablocks and write to file
-	while (true) { // process all next data blocks
+	int result;
+	
+	// enable time out alarm
+	// set a time out alarm
+	time_out = false;
+	signal( SIGALRM, timeout_alarm );
+	alarm( 7 );
+	
+	while (!time_out) { // process all next data blocks
 cout << "block_nr: " << block_nr << endl;
 
-	int result = receiveBytes(reinterpret_cast<char *>(&blockheader), blockHeaderSize);
+	result = receiveBytes(reinterpret_cast<char *>(&blockheader), blockHeaderSize);
 	
-	if (result == 0) {
-		break;  // read end of stream
-	}
-	else if (result < -1) {
+	if (!time_out) {
+		if (result == 0) {
+			std::cout << "shutdown connection by remote" << std::endl;
+			break;  // read end of stream
+		}
+		else if (result < -1) {
+			std::cerr << "Error, read of data block: " << block_nr << " !" << std::endl;
+			perror("processBFRawDataBlockFromSocket");
+			throw "Error read data block!";
+		}
+		result = receiveBytes(sampledata, dataSize * sizeof(Sample));
+		if (!time_out) {
+			if (result == -1) {
 				std::cerr << "Error, read of data block: " << block_nr << " !" << std::endl;
 				perror("processBFRawDataBlockFromSocket");
 				throw "Error read data block!";
-	}
-	
-	if (receiveBytes(sampledata, dataSize * sizeof(Sample)) == -1) {
-				std::cerr << "Error, read of data block: " << block_nr << " !" << std::endl;
-				perror("processBFRawDataBlockFromSocket");
-				throw "Error read data block!";
+			} else {
+				alarm(7); // reset time out alarm
+			}
+		}
 	}
 	
 	if (!bigendian) { convertEndian(); }
@@ -533,10 +571,16 @@ cout << "block_nr: " << block_nr << endl;
 	writeBFRawDataBlockToFile();
 		++block_nr;
 } // while
+alarm (0); // cancel time out alarm
+
 
 // shutdown and close socket connection
-shutdown(server_socket, SHUT_RDWR);
-close(server_socket);
+if (!time_out) { // if server socket was not yet closed in time out event handler
+	shutdown(server_socket, SHUT_RDWR);
+	close(server_socket);
+	std::cout << "connection closed" << std::endl;
+}
+
 
 return true;
 }
