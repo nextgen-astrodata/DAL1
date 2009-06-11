@@ -2,8 +2,9 @@
  | $Id:: dal.h 1126 2007-12-10 17:14:20Z masters                         $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
- *   Copyright (C) 2008 by Joseph Masters                                  *
- *   J.S.Masters@uva.nl                                                    *
+ *   Copyright (C) 2008 by Joseph Masters & Alwin de Jong                  *
+ *   J.S.Masters@uva.nl                   																 *
+ *   jong@astron.nl                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -78,18 +79,25 @@ namespace DAL {
   BFRaw::BFRaw( string const& filename,
 		bool doIntensity,
 		bool doDownsample,
-                bool doChannelization,
-		int factor )
+    bool doChannelization,
+		int factor ) :
+rawfile(0),
+outputfilename(filename),
+server_socket(0),
+socklen(sizeof(incoming_addr)),
+blockHeaderSize(sizeof(blockheader)),
+dataSize(0),
+sampledata(0),
+block_nr(0),
+index(0),
+first_block(true),
+downsample_factor(factor),
+doDownsample_p(doDownsample),
+DO_FLOAT32_INTENSITY(doIntensity),
+DO_CHANNELIZATION(doChannelization)
   {
     // initializations (private)
     bigendian            = BigEndian();
-    first_block          = true;
-    outputfilename       = filename;
-    rawfile              = NULL;
-    downsample_factor    = factor;
-    DO_FLOAT32_INTENSITY = doIntensity;
-    doDownsample_p       = doDownsample;
-    DO_CHANNELIZATION    = doChannelization;
   }
   
   // ============================================================================
@@ -103,15 +111,21 @@ namespace DAL {
   */
   BFRaw::~BFRaw()
   {
+    if (server_socket)
+      close(server_socket);
     if (rawfile)
       {
         if (rawfile->is_open())
           {
             rawfile->close();
-          }
+					}
         delete rawfile;
         rawfile = NULL;
       }
+	if (sampledata){		
+		delete [] sampledata;
+		sampledata = 0;
+	}
   }
   
   // ============================================================================
@@ -193,6 +207,59 @@ namespace DAL {
     return ra_string;
   }
 
+  //________________________________________________________________connectsocket
+
+  /*!
+    \brief portnumber -- Portnumber to which to connect
+  */
+  bool BFRaw::connectsocket( const char *portnumber )
+  {
+    int port_number = atol( portnumber );
+
+    // Step 1 Create a socket using TCP
+    server_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+    if (server_socket<0)
+      {
+        perror("socket creation");
+        return false;
+      }
+
+    // Step 2 Create a sockaddr_in to describe the local port
+    //sockaddr_in local_info;
+		memset(&incoming_addr, 0, sizeof(incoming_addr));
+    incoming_addr.sin_family = AF_INET;
+    incoming_addr.sin_addr.s_addr = INADDR_ANY;
+    incoming_addr.sin_port = htons(port_number);
+
+    // Step 3 Bind the socket to the port
+    if (-1 == bind(server_socket, (sockaddr *) &incoming_addr, sizeof(incoming_addr)))
+      {
+        perror("error bind failed");
+				close(server_socket);
+        return false;
+      }
+		// Step 4 listen for incoming connections
+    if (-1 == listen(server_socket,5))
+      {
+        perror("error listen failed");
+				close(server_socket);
+        return false;
+      }
+		int old_server_socket = server_socket;
+		if (-1 == (server_socket = accept(server_socket, 0, 0))) {
+				perror("error accept failed");
+				close(server_socket);
+				return false;
+		}
+#ifdef DEBUGGING_MESSAGES
+		cout << "socket connected" << endl;
+#endif
+		close(old_server_socket);
+
+		return true;
+  }
+
   // ---------------------------------------------------------------- openRawFile
 
   void BFRaw::openRawFile( const char* filename )
@@ -206,15 +273,15 @@ namespace DAL {
 
   void BFRaw::readRawFileHeader()
   {
-    if ( !rawfile->read ( reinterpret_cast<char *>(&fileheader),
-                          sizeof(fileheader) ))
+    if ( !rawfile->read ( reinterpret_cast<char *>(&header),
+                          sizeof(header) ))
       {
-        cout << "ERROR: problem with read (fileheader)." << endl;
+        cout << "ERROR: problem with read (header)." << endl;
         cout << "read pointer position: " << rawfile->tellg() << endl;
       }
 
 #ifdef DEBUGGING_MESSAGES
-    printf("size of file header: %lu\n", sizeof(fileheader));
+    printf("size of file header: %lu\n", sizeof(header));
     cout << "read pointer position: " << rawfile->tellg() << endl;
 #endif
 
@@ -222,46 +289,46 @@ namespace DAL {
     if ( !bigendian )
       {
         // change byte order for all frequencies.
-        for (int ii=0;ii<54;ii++)
+        for (int ii = 0; ii < maxNrSubbands; ii++)
           {
-            swapbytes((char *)&fileheader.subbandFrequencies[ii],8);
-            swapbytes((char *)&fileheader.beamlet2beams,2);
+            swapbytes((char *)&header.subbandFrequencies[ii],8);
+            swapbytes((char *)&header.subbandToBeamMapping,2);
           }
 
         for (int ii=0;ii<8;ii++)
           {
             for (int jj=0;jj<2;jj++)
               {
-                swapbytes((char *)&fileheader.beamDirections[ii][jj],8);
+                swapbytes((char *)&header.beamDirections[ii][jj],8);
               }
           }
 
-        // change byte order for beamlets.
-        swapbytes((char *)&fileheader.nrBeamlets,2);
+        // change byte order for subbands.
+        swapbytes((char *)&header.nrSubbands,2);
 
-        // change byte order for nrSamplesPerBeamlet
-        swapbytes((char *)&fileheader.nrSamplesPerBeamlet,4);
+        // change byte order for nrSamplesPerSubband
+        swapbytes((char *)&header.nrSamplesPerSubband,4);
 
         // change byte order for sampleRate
-        swapbytes((char *)&fileheader.sampleRate,8);
+        swapbytes((char *)&header.sampleRate,8);
 
         // change byte order for Magic Number
-        swapbytes((char *)&fileheader.magic,4);
+        swapbytes((char *)&header.magic,4);
 
       }
 
 #ifdef DEBUGGING_MESSAGES
-    printf("Magic number: %8X\n",fileheader.magic);
-    printf("bits per sample: %u\n",fileheader.bitsPerSample);
-    printf("Polarizations : %u\n",fileheader.nrPolarizations);
-    printf("Beamlets : %u\n",fileheader.nrBeamlets);
-    printf("Samples per beamlet: %u\n", fileheader.nrSamplesPerBeamlet);
-    printf("Station ID: %s\n", fileheader.station);
-    printf("Sample rate: %g\n", fileheader.sampleRate);
+    printf("Magic number: %8X\n",header.magic);
+    printf("bits per sample: %u\n",header.bitsPerSample);
+    printf("Polarizations : %u\n",header.nrPolarizations);
+    printf("Subbands : %u\n",header.nrSubbands);
+    printf("Samples per subband: %u\n", header.nrSamplesPerSubband);
+    printf("Station ID: %s\n", header.station);
+    printf("Sample rate: %g\n", header.sampleRate);
     printf("Centre Freq. of subbands (MHz): \n");
-    for (int ii=0;ii<fileheader.nrBeamlets;ii++)
+    for (int ii=0;ii<header.nrSubbands;ii++)
       {
-        printf("%9.6f ",fileheader.subbandFrequencies[ii]/1000000.0);
+        printf("%9.6f ",header.subbandFrequencies[ii]/1000000.0);
         if (((ii+1)%4) == 0 ) printf("\n");
       }
     printf("Beam Directions J2000 radians:\n");
@@ -272,11 +339,11 @@ namespace DAL {
         printf("[%d] ", ii );
         for (int jj=0;jj<2;jj++)
           {
-            printf("%f   ",fileheader.beamDirections[ii][jj]);
+            printf("%f   ",header.beamDirections[ii][jj]);
             if ( 0 == jj )
-              ra = RArad2deg( fileheader.beamDirections[ii][jj] );
+              ra = RArad2deg( header.beamDirections[ii][jj] );
             else
-              dec = DECrad2deg( fileheader.beamDirections[ii][jj] );
+              dec = DECrad2deg( header.beamDirections[ii][jj] );
           }
         printf("[  %s, %s ]", ra, dec );
         printf("\n");
@@ -288,9 +355,272 @@ namespace DAL {
 #endif
   }
 
-  // ----------------------------------------------------------- makeH5OutputFile
+  // ---------------------------------------------------------- readRawSocketHeader
 
-  void BFRaw::makeH5OutputFile()
+  bool BFRaw::readRawSocketHeader()
+  {
+		if (recvfrom(server_socket, reinterpret_cast<char *>(&header), sizeof(header),0,  (sockaddr *) &incoming_addr, &socklen) < static_cast<int>(sizeof(header))) {
+			cerr << "error reading header from socket" << endl;
+			close(server_socket);
+			perror("readRawSocketHeader");
+      return false;
+		}
+
+    // swap values when necessary
+    if ( !bigendian )
+      {
+        // change byte order for all frequencies.
+        for (int ii=0;ii<maxNrSubbands;ii++)
+          {
+            swapbytes((char *)&header.subbandFrequencies[ii],8);
+            swapbytes((char *)&header.subbandToBeamMapping,2);
+          }
+
+        for (int ii=0;ii<8;ii++)
+          {
+            for (int jj=0;jj<2;jj++)
+              {
+                swapbytes((char *)&header.beamDirections[ii][jj],8);
+              }
+          }
+
+        // change byte order for beamlets.
+        swapbytes((char *)&header.nrSubbands,2);
+        // change byte order for nrSamplesPerSubband
+        swapbytes((char *)&header.nrSamplesPerSubband,4);
+        // change byte order for sampleRate
+        swapbytes((char *)&header.sampleRate,8);
+        // change byte order for Magic Number
+        swapbytes((char *)&header.magic,4);
+
+      }
+	
+	dataSize = header.nrSamplesPerSubband*header.nrSubbands;
+
+#ifdef DEBUGGING_MESSAGES
+			cout << "Allocating " << sizeof(Sample) * dataSize << " bytes." << endl;
+#endif
+			sampledata = new Sample[ dataSize ]; // sample contains 8 bytes
+
+#ifdef DEBUGGING_MESSAGES
+    printf("Magic number: %8X\n",header.magic);
+    printf("bits per sample: %u\n",header.bitsPerSample);
+    printf("Polarizations : %u\n",header.nrPolarizations);
+    printf("Subbands : %u\n",header.nrSubbands);
+    printf("Samples per subband: %u\n", header.nrSamplesPerSubband);
+    printf("Station ID: %s\n", header.station);
+    printf("Sample rate: %g\n", header.sampleRate);
+    printf("Centre Freq. of subbands (MHz): \n");
+    for (int ii=0;ii<header.nrSubbands;ii++)
+      {
+        printf("%9.6f ",header.subbandFrequencies[ii]/1000000.0);
+        if (((ii+1)%4) == 0 ) printf("\n");
+      }
+    printf("Beam Directions J2000 radians:\n");
+    char * ra = NULL;
+    char * dec = NULL;
+    for (int ii=0;ii<8;ii++)
+      {
+        printf("[%d] ", ii );
+        for (int jj=0;jj<2;jj++)
+          {
+            printf("%f   ",header.beamDirections[ii][jj]);
+            if ( 0 == jj )
+              ra = RArad2deg( header.beamDirections[ii][jj] );
+            else
+              dec = DECrad2deg( header.beamDirections[ii][jj] );
+          }
+        printf("[  %s, %s ]", ra, dec );
+        printf("\n");
+        delete [] ra;
+        ra = NULL;
+        delete [] dec;
+        dec = NULL;
+      }
+#endif
+	return true;
+  }
+
+
+int BFRaw::receiveBytes(void *storage, size_t nrOfBytesToRead) {
+	int bytes_read = 0;
+	int8_t *bytepointer = reinterpret_cast<int8_t *>(storage);
+	while (true) {
+	bytes_read = recvfrom(server_socket, bytepointer, nrOfBytesToRead, 0, (sockaddr *) &incoming_addr, &socklen);
+	if (bytes_read == -1) { // error reading
+		shutdown(server_socket, SHUT_RDWR);
+		close(server_socket);
+		return -1;
+	}
+	else if (bytes_read == 0) { // end of stream?
+		 return 0;
+	}
+	nrOfBytesToRead -= bytes_read;
+	bytepointer += bytes_read;
+	if (nrOfBytesToRead == 0) { // did we read enough?
+		return bytes_read;
+	}
+	}
+}
+
+
+  //_________________________________________________processBFRawDataBlockFromSocket
+	bool BFRaw::processBFRawDataBlockFromSocket(void) {
+
+if (receiveBytes(reinterpret_cast<char *>(&blockheader), blockHeaderSize) == -1) {
+			perror("Error, receiving the first data block header");
+      throw "Error, receiving the first data block header";
+	}
+
+	if (!bigendian) { convertEndian(); }
+
+	makeH5OutputFile();
+
+	// write the utc time to hdf5 file according to header time info
+	time_t utc;
+	utc = (time_t)(blockheader.time[0]/(Int64)header.sampleRate);
+	char * timeDateString = NULL;
+	uint16_t buf_size = 128;
+	if (!timeDateString) {
+		timeDateString = new char[buf_size*sizeof(char)];
+	}
+	memset (timeDateString,'\0',buf_size);
+	strftime(timeDateString, buf_size, "%T", gmtime(&utc));
+	dataset.setAttribute( "EPOCH_UTC", timeDateString );
+
+	memset (timeDateString,'\0',buf_size);
+	strftime(timeDateString, buf_size, "%d/%m/%y", gmtime(&utc));
+	dataset.setAttribute( "EPOCH_DATE", timeDateString );
+
+	memset (timeDateString,'\0',buf_size);
+
+
+	delete[] timeDateString;
+	first_block = false;
+
+// read the first datablock in the temporary storage
+	if ( receiveBytes( sampledata, dataSize * sizeof(Sample)) == -1) {
+			perror("Error, reading the first data block!");
+			throw "Error reading the first data block!";
+		}
+
+	writeBFRawDataBlockToFile();
+	++block_nr;
+
+	// read rest of datablocks and write to file
+	while (true) { // process all next data blocks
+cout << "block_nr: " << block_nr << endl;
+
+	int result = receiveBytes(reinterpret_cast<char *>(&blockheader), blockHeaderSize);
+	
+	if (result == 0) {
+		break;  // read end of stream
+	}
+	else if (result < -1) {
+				std::cerr << "Error, read of data block: " << block_nr << " !" << std::endl;
+				perror("processBFRawDataBlockFromSocket");
+				throw "Error read data block!";
+	}
+	
+	if (receiveBytes(sampledata, dataSize * sizeof(Sample)) == -1) {
+				std::cerr << "Error, read of data block: " << block_nr << " !" << std::endl;
+				perror("processBFRawDataBlockFromSocket");
+				throw "Error read data block!";
+	}
+	
+	if (!bigendian) { convertEndian(); }
+	
+	writeBFRawDataBlockToFile();
+		++block_nr;
+} // while
+
+// shutdown and close socket connection
+shutdown(server_socket, SHUT_RDWR);
+close(server_socket);
+
+return true;
+}
+
+ // ---------------------------------------------------------writeBFRawDataBlock
+void BFRaw::writeBFRawDataBlockToFile(void) {
+#ifdef _OPENMP
+#pragma omp parallel for ordered schedule(dynamic)
+#endif
+				for ( unsigned int subband=0; subband < header.nrSubbands; ++subband )
+					{
+						index = sizeof(blockheader) +
+										subband * header.nrSamplesPerSubband * 4 * header.bitsPerSample/8;
+/*
+#ifdef DEBUGGING_MESSAGES
+						cout << "sampledata[0].xx: " << sampledata[0].xx << ", sampledata[0].yy: " << sampledata[0].yy <<  "sampledata[10].xx: " << sampledata[10].xx << ", sampledata[10].yy: " << sampledata[10].yy << endl;
+#endif
+*/
+						if ( doDownsample_p )  // if downsampling
+							{
+								Float32 * downsampled_data =
+										downsample_to_float32_intensity( sampledata,
+																									0,
+																									header.nrSamplesPerSubband,
+																									downsample_factor );
+#ifdef _OPENMP
+#pragma omp ordered
+#endif
+								table[subband]->appendRows( downsampled_data,
+																						header.nrSamplesPerSubband / downsample_factor );
+								delete [] downsampled_data;
+								downsampled_data = NULL;
+							}
+						else  // no downsampling
+							{
+								if ( DO_FLOAT32_INTENSITY )
+									{
+										Float32 * intensity_data =
+												compute_float32_intensity( sampledata,
+																								0,
+																								header.nrSamplesPerSubband );
+#ifdef _OPENMP
+#pragma omp ordered
+#endif
+										table[subband]->appendRows( intensity_data,
+																								header.nrSamplesPerSubband );
+										delete [] intensity_data;
+										intensity_data = NULL;
+									}
+								else
+									{
+										table[subband]->appendRows( sampledata,
+																								header.nrSamplesPerSubband );
+									}
+							}
+
+					} // for subband
+}
+
+  // --------------------------------------------------------------convertEndian
+	void BFRaw::convertEndian(void)	{
+		swapbytes((char *)&blockheader.magic,4);
+		for ( uint ii = 0; ii < 8; ii++ )
+			{
+				swapbytes((char *)&blockheader.coarseDelayApplied[ ii ],4);
+				swapbytes((char *)&blockheader.fineDelayRemainingAtBegin[ ii ],8);
+				swapbytes((char *)&blockheader.fineDelayRemainingAfterEnd[ ii ],8);
+				swapbytes((char *)&blockheader.time[ ii ],8);
+				swapbytes((char *)&blockheader.flags[ ii ].nrFlagsRanges,4);
+//				swapbytes((char *)&blockheader.nrFlagsRanges[ ii ],4);
+				for ( uint jj = 0; jj < 16; jj++ )
+					{
+						swapbytes( (char *)&blockheader.flags[ ii ].flagsRanges[ jj ].begin,4 );
+						swapbytes( (char *)&blockheader.flags[ ii ].flagsRanges[ jj ].end,4 );
+/*						swapbytes( (char *)&blockheader.flagsRanges[ ii ][ jj ].begin,4 );
+						swapbytes( (char *)&blockheader.flagsRanges[ ii ][ jj ].end,4 ); */
+					}
+			}
+	}
+
+
+// ----------------------------------------------------------- makeH5OutputFile
+
+  void BFRaw::makeH5OutputFile(void)
   {
     dataset = dalDataset( outputfilename.c_str(), "HDF5" );
 
@@ -302,9 +632,8 @@ namespace DAL {
     int bandwidth           = 0; // Total bandwidth (MHz)
     int breaks_in_data      = 0; // Any breaks in data?
     int dispersion_measure  = 0;
-    int number_of_samples =
-      fileheader.nrBeamlets * fileheader.nrSamplesPerBeamlet;
-    Float64 sampling_time   = fileheader.sampleRate;
+		int number_of_samples = header.nrSubbands * header.nrSamplesPerSubband;
+    Float64 sampling_time   = header.sampleRate;
     int number_of_beams     = 1;
     int sub_beam_diameter   = 0; // fwhm of the sub-beams (arcmin)
     int weather_temperature = 0; // approx. centigrade
@@ -346,34 +675,33 @@ namespace DAL {
     sprintf( beamstr, "beam%03d", beam_number );
     beamGroup = dataset.createGroup( beamstr );
 
-    float ra_val  = fileheader.beamDirections[beam_number+1][0];
-    float dec_val = fileheader.beamDirections[beam_number+1][1];
+    float ra_val  = header.beamDirections[beam_number+1][0];
+    float dec_val = header.beamDirections[beam_number+1][1];
     beamGroup->setAttribute( "RA", &ra_val, 1 );
     beamGroup->setAttribute( "DEC", &dec_val, 1 );
 
-    int n_subbands[] = { fileheader.nrBeamlets };
+    int n_subbands[] = { header.nrSubbands };
     beamGroup->setAttribute( "NUMBER_OF_SUBBANDS", n_subbands );
 
     delete beamGroup;
 
 #ifdef DEBUGGING_MESSAGES
     std::cerr << "CREATED New beam group: " << std::string(beamstr) << std::endl;
-    std::cerr << "   " << fileheader.nrBeamlets << " subbands" << std::endl;
+    std::cerr << "   " << header.nrSubbands << " subbands" << std::endl;
 #endif
 
-    table = new dalTable * [ fileheader.nrBeamlets ];
-
+    table = new dalTable * [ header.nrSubbands ];
     char * sbName = new char[8];
-    int * center_frequency = new int[fileheader.nrBeamlets];
+    int * center_frequency = new int[header.nrSubbands];
 
-    // nrBeamlets is actually the number of subbands (see email from J.Romein)
-    for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
+    // nrSubbands is actually the number of subbands (see email from J.Romein)
+    for (unsigned int idx=0; idx<header.nrSubbands; idx++)
       {
         sprintf( sbName, "SB%03d", idx );
         table[idx] = dataset.createTable( sbName, beamstr );
       }
 
-    for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
+    for (unsigned int idx=0; idx<header.nrSubbands; idx++)
       {
         if ( doDownsample_p || DO_FLOAT32_INTENSITY )
           {
@@ -385,9 +713,9 @@ namespace DAL {
             table[idx]->addColumn( "Y", dal_COMPLEX_SHORT );
           }
       }
-    for (unsigned int idx=0; idx<fileheader.nrBeamlets; idx++)
+    for (unsigned int idx=0; idx<header.nrSubbands; idx++)
       {
-        center_frequency[idx] = (int)fileheader.subbandFrequencies[ idx ];
+        center_frequency[idx] = (int)header.subbandFrequencies[ idx ];
         table[idx]->setAttribute( "CENTER_FREQUENCY", &center_frequency[idx] );
       }
 
@@ -399,6 +727,7 @@ namespace DAL {
     beamstr = NULL;
 
   } // BFRaw::makeH5OutputFile
+
 
   // -------------------------------------------------------------- processBlocks
 
@@ -425,8 +754,8 @@ namespace DAL {
       sizeof(blockheader)
       +
       (
-        fileheader.nrSamplesPerBeamlet *
-        2 * sizeof(complex<Int16>) * fileheader.nrBeamlets
+        header.nrSamplesPerSubband *
+        2 * sizeof(complex<Int16>) * header.nrSubbands
       );
 
     int64_t blocksize = oneSecondBlockSize * blocks;
@@ -449,7 +778,7 @@ namespace DAL {
         return retval;
       }
 
-    rawfile->read( buf, blocksize );
+    rawfile->read( buf, blocksize ); // 1 second read
 
 #ifdef DEBUGGING_MESSAGES
     cerr << "read pointer position: " << rawfile->tellg() << endl;
@@ -469,9 +798,10 @@ namespace DAL {
 #endif
 
     BlockHeader * pbuf = NULL;
-    Sample * sample = new Sample[ fileheader.nrSamplesPerBeamlet ];
-    int32_t index = 0;
 
+#ifdef DEBUGGING_MESSAGES
+		cout << " allocating " << sizeof(Sample) * header.nrSamplesPerSubband << " bytes for sample data." << endl;
+#endif
     for ( int blk=0 ; blk < blocks ; blk++ )
       {
         pbuf = reinterpret_cast<BlockHeader*>(&(buf[ blk * (blocksize/blocks) ]));
@@ -486,19 +816,21 @@ namespace DAL {
                 swapbytes((char *)&pbuf->fineDelayRemainingAtBegin[ ii ],8);
                 swapbytes((char *)&pbuf->fineDelayRemainingAfterEnd[ ii ],8);
                 swapbytes((char *)&pbuf->time[ ii ],8);
-                swapbytes((char *)&pbuf->nrFlagsRanges[ ii ],4);
+                swapbytes((char *)&pbuf->flags[ ii ].nrFlagsRanges,4);
+//                swapbytes((char *)&pbuf->nrFlagsRanges[ ii ],4);
                 for ( uint jj = 0; jj < 16; jj++ )
                   {
-                    swapbytes( (char *)&pbuf->flagsRanges[ ii ][ jj ].begin,4 );
-                    swapbytes( (char *)&pbuf->flagsRanges[ ii ][ jj ].end,4 );
+						swapbytes( (char *)&blockheader.flags[ ii ].flagsRanges[ jj ].begin,4 );
+						swapbytes( (char *)&blockheader.flags[ ii ].flagsRanges[ jj ].end,4 );
+/*                    swapbytes( (char *)&pbuf->flagsRanges[ ii ][ jj ].begin,4 );
+										swapbytes( (char *)&pbuf->flagsRanges[ ii ][ jj ].end,4 );  */
                   }
               }
           }
-
         if ( first_block )
           {
             time_t utc;
-            utc = (time_t)(pbuf->time[0]/(Int64)fileheader.sampleRate);
+            utc = (time_t)(pbuf->time[0]/(Int64)header.sampleRate);
             char * timeDateString = NULL;
             uint16_t buf_size = 128;
             if (!timeDateString)
@@ -514,8 +846,6 @@ namespace DAL {
 
             memset (timeDateString,'\0',buf_size);
 
-            memset (timeDateString,'\0',buf_size);
-
             free(timeDateString);
             first_block = false;
           }
@@ -523,33 +853,36 @@ namespace DAL {
 #ifdef _OPENMP
 #pragma omp parallel for ordered schedule(dynamic)
 #endif
-        for ( uint8_t subband=0; subband < fileheader.nrBeamlets; subband++ )
+        for ( unsigned int subband=0; subband < header.nrSubbands; ++subband )
           {
 
             index = blk *
                     (
-                      (fileheader.nrSamplesPerBeamlet * 8) *
-                      fileheader.nrBeamlets
+                      (header.nrSamplesPerSubband * 8) *
+                      header.nrSubbands
                     )
                     + (blk+1) * sizeof(blockheader) +
-                    subband * fileheader.nrSamplesPerBeamlet * 8;
+                    subband * header.nrSamplesPerSubband * 8;
 
-            sample = reinterpret_cast<Sample*>(&( buf[ index ]));
+            Sample * sample = reinterpret_cast<Sample*>(&( buf[ index ]));
+/*
+#ifdef DEBUGGING_MESSAGES
+cout << "sample[0].xx: " << sample[0].xx << ", sample[0].yy: " << sample[0].yy <<  "sample[10].xx: " << sample[10].xx << ", sample[10].yy: " << sample[10].yy << endl;
+#endif
+*/
 
             if ( doDownsample_p )  // if downsampling
               {
-                Float32 * downsampled_data;
-                int start = 0;
-                downsampled_data =
+                Float32 * downsampled_data =
                   downsample_to_float32_intensity( sample,
-                                                   start,
-                                                   fileheader.nrSamplesPerBeamlet,
+                                                   0,
+                                                   header.nrSamplesPerSubband,
                                                    downsample_factor );
 #ifdef _OPENMP
 #pragma omp ordered
 #endif
                 table[subband]->appendRows( downsampled_data,
-                                            fileheader.nrSamplesPerBeamlet / downsample_factor );
+                                            header.nrSamplesPerSubband / downsample_factor );
                 delete [] downsampled_data;
                 downsampled_data = NULL;
               }
@@ -558,25 +891,23 @@ namespace DAL {
 
                 if ( DO_FLOAT32_INTENSITY )
                   {
-                    Float32 * intensity_data;
-                    int start = 0;
-                    intensity_data =
+                    Float32 * intensity_data =
                       compute_float32_intensity( sample,
-                                                 start,
-                                                 fileheader.nrSamplesPerBeamlet );
+                                                 0,
+                                                 header.nrSamplesPerSubband );
 #ifdef _OPENMP
 #pragma omp ordered
 #endif
                     table[subband]->appendRows( intensity_data,
-                                                fileheader.nrSamplesPerBeamlet );
+                                                header.nrSamplesPerSubband );
                     delete [] intensity_data;
                     intensity_data = NULL;
                   }
                 else
                   {
                     table[subband]->appendRows( sample,
-                                                fileheader.nrSamplesPerBeamlet );
-                  }
+                                                header.nrSamplesPerSubband );
+               		}
               }
 
           } // for subband
@@ -598,8 +929,8 @@ namespace DAL {
 
   Float32 *
   BFRaw::compute_float32_intensity( Sample * data,
-                                    int32_t start,
-                                    const uint64_t arraylength )
+																		int32_t start,
+																		const uint64_t arraylength )
   {
     double xx_intensity = 0;
     double yy_intensity = 0;

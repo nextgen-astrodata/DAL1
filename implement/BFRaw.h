@@ -24,6 +24,8 @@
 #ifndef BFRAW_H
 #define BFRAW_H
 
+#define DEBUGGING_MESSAGES
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -31,6 +33,8 @@
 #ifndef DALDATASET_H
 #include <dalDataset.h>
 #endif
+
+#include <BFRawFormat.h>
 
 // socket headers
 #include <stdio.h>
@@ -58,74 +62,35 @@ namespace DAL {
     High-level interface between raw beam-formed data and the DAL.
   */
   
-  class BFRaw
+  class BFRaw : public BFRawFormat
   {
-    
-    //! Components of the file header
-    struct FileHeader
-    {
-      //! 0x3F8304EC, also determines endianness
-      UInt32    magic;
-      //! The number of bits per sample
-      UInt8     bitsPerSample;
-      //! The number of polarizations
-      UInt8     nrPolarizations;
-      //! Number of subbands
-      UInt16    nrBeamlets;
-      //! 155648 (160Mhz) or 196608 (200Mhz)
-      UInt32    nrSamplesPerBeamlet;
-      //! Name of the station
-      char      station[20];
-      //! The sample rate: 156250.0 or 195312.5 .. double
-      Float64   sampleRate;
-      //! The frequencies within a subband
-      Float64   subbandFrequencies[54];
-      //! The beam pointing directions
-      Float64   beamDirections[8][2];
-      Int16     beamlet2beams[54];
-      //! Padding to circumvent 8-byte alignment
-      UInt32    padding;
-    };
-
-    //! Components of the header of a single block of raw data
-    struct BlockHeader
-    {
-      //! 0x2913D852
-      UInt32      magic;
-      Int32       coarseDelayApplied[8];
-      //! Padding to circumvent 8-byte alignment
-      UInt8       padding[4];
-      Float64     fineDelayRemainingAtBegin[8];
-      Float64     fineDelayRemainingAfterEnd[8];
-      //! Compatible with TimeStamp class.
-      Int64       time[8];
-      UInt32      nrFlagsRanges[8];
-      
-      struct range
-      {
-	UInt32    begin; // inclusive
-	UInt32    end;   // exclusive
-      } flagsRanges[8][16];
-      
-    };
-    
-    // dataStruct is 8 bytes
-    struct Sample
-    {
-      complex<int16_t> xx;
-      complex<int16_t> yy;
-    };
-    
+   public:
     char * DECrad2deg( const float &rad );
     char * RArad2deg( const float &rad );
     
+	private:
     // declare handle for the input file
     dalTable ** table;
     fstream * rawfile;
     string outputfilename;
     dalDataset dataset;
-    FileHeader fileheader;
+    BFRaw_Header header;
+
+		// following used in socket mode
+    fd_set readSet; 
+    struct timeval timeVal;
+    int server_socket;
+    struct sockaddr_in incoming_addr;
+		socklen_t socklen;
     BlockHeader blockheader;
+		size_t blockHeaderSize;
+		size_t dataSize;
+		//char * pData; // pointer to temporary buffer to store data samples of one subband
+		Sample * sampledata;
+		uint32_t block_nr;
+		// end used in socket mode
+
+		int32_t index;
     bool bigendian;
     bool first_block;
     int downsample_factor;
@@ -133,15 +98,10 @@ namespace DAL {
     bool DO_FLOAT32_INTENSITY;
     bool DO_CHANNELIZATION;
     bool processBlocks( int16_t );
-    Float32 * downsample_to_float32_intensity( Sample *,
-					       int32_t,
-					       const uint64_t,
-					       int32_t );
-    Float32 * compute_float32_intensity( Sample * data,
-					 int32_t start,
-					 const uint64_t arraylength );
-  public:
+    Float32 * downsample_to_float32_intensity( Sample *, int32_t, const uint64_t, int32_t );
+    Float32 * compute_float32_intensity( Sample * data, int32_t start, const uint64_t arraylength );
 
+	public:
     //! Argumented constructor
     BFRaw( string const& name,
 	   bool doIntensity=false,
@@ -153,33 +113,40 @@ namespace DAL {
     
     ~BFRaw();
 
-    /* Parameter access */
-    
+public:
     //! Provide a summary of the object's properties
     inline void summary () { summary(std::cout); }
     //! Provide a summary of the object's properties
     void summary (std::ostream &os);
     //! Get the name of the output file
     inline string outfile () const { return outputfilename; }
-    //! Get the number of bits per sample
-    inline UInt8 bitsPerSample () const { return fileheader.bitsPerSample; }
-    //! Get the number of polarizations
-    inline UInt8 nofPolarizations () const { return fileheader.nrPolarizations; }
-    //! Get the number of beamlets
-    inline UInt16 nofBeamlets () const { return fileheader.nrBeamlets;}
-    
-    /* Methods */
-    
+    //! Set up the socket connection to the server
+    bool connectsocket( const char * portnumber );
     //! Create HDF5 file from the raw data
-    void makeH5OutputFile();
-    //! Read the header block of the file with the raw data
-    void readRawFileHeader();
+    void makeH5OutputFile(void);
     //! Open file with raw output of beamformer
     void openRawFile(const char*);
-    //! Check for reaching end-of-file
-    bool eof();
+		//! read and process the BFRaw data blocks from socket
+		bool processBFRawDataBlockFromSocket(void);
+		//! writes the currently stored BFRaw data block to the output file
+		void writeBFRawDataBlockToFile(void);
+    //! Read the main header block of the file with the raw data
+    void readRawFileHeader();
+		//! reads the main header block from the main_socket connection
+    bool readRawSocketHeader();
     //! Processing of the data blocks within the input file
     void processBlocks();
+    //! Check for reaching end-of-file
+    bool eof();
+
+private:
+		//! reads upto nrOfBytesToRead from socket and checks for end ans reading errors
+		int receiveBytes(void *storage, size_t nrOfBytesToRead);
+		//! read raw bytes from the main_socket
+//		bool readsocket( unsigned int nbytes, char* buf );
+		//! converts endian of data read from socket
+		void convertEndian();
+
 
   }; // class BFRaw
   
