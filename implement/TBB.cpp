@@ -780,6 +780,9 @@ namespace DAL {
   {
     short * sdata;
     
+		// just for debug info: block nr.
+		static uint blocknr = 0;
+		
     //set sdata to the (hopefully correct) position in the udp-buffer
     char *tmpptr = udpBuff_p+sizeof(TBB_Header);
     sdata = (short *)(tmpptr);
@@ -800,7 +803,6 @@ namespace DAL {
 	    swapbytes( (char *)&(sdata[zz]), 2 );
 	  };
       };
-    
     
     //calculate the writeOffset from time of first block and this block
     uint starttime, startsamplenum;
@@ -847,6 +849,9 @@ cout << "extending array to:" << writeOffset+ headerp_p->n_samples_per_frame
     UInt32 *payloadp = (UInt32 *)tmpptr;
     payload_crc = *payloadp;
     
+		// debug info
+		blocknr++;
+		
     return true;
   }
 
