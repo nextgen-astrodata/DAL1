@@ -289,7 +289,7 @@ namespace DAL
  
     cerr << fits_error_message << endl;		// print error message on cerr
  
-    while(fits_read_errmsg(fits_error_message)!=NULL)
+    while(fits_read_errmsg(fits_error_message)!=0)
     {
       cerr << fits_error_message << endl;		// print further messages
       complete_error_message += fits_error_message;	// concat complete error msg
@@ -584,6 +584,25 @@ namespace DAL
     dimensions.resize(naxis);	// resize dimensions vector in dalFITS object
 
     return naxis;	// return number of axes 
+  }
+
+
+  /*!
+      \brief Get image size of the FITS image, but only update dalFITS object do not pass parameters
+  */
+  void dalFITS::getImgSize()
+  { 
+    unsigned int i=0;		// loop variable
+    int maxdim=getImgDim();	// maximum number of dimensions
+    long *naxes=(long *) calloc(maxdim, sizeof(long));
+
+    if(fits_get_img_size(fptr, maxdim, naxes , &fitsstatus))
+    {
+      throw "dalFITS::getImageSize";
+    }
+
+    for(i=0; i<dimensions.size(); i++)
+      dimensions[i]=naxes[i];
   }
 
 
