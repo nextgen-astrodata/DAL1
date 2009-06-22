@@ -343,6 +343,7 @@ int main(int argc, char *argv[])
     }
   
   int counter = 0;
+  int discardedBlocks = 0;
   
   if (socketmode)  // reading from a socket
     {
@@ -361,6 +362,7 @@ int main(int argc, char *argv[])
 		    {
 		      cerr << "Header CRC error on block: " << counter << endl;
 		    }
+		  discardedBlocks++;
 		  continue; // just discard and continue to the next block
 		}
 	    }
@@ -407,7 +409,9 @@ int main(int argc, char *argv[])
 	      {
 		cerr << "Header CRC error on block: " << counter << endl;
 	      }
-	      continue; // just discard and continue to the next block
+	      tbb.discardFileBytes(2052); // discard data and continue with next block.
+	      discardedBlocks++;
+	      continue;
 	    }
 	  }
 	  /* try to fix broken time-stamps if requested */
@@ -447,7 +451,9 @@ int main(int argc, char *argv[])
 
     } // socket or file
 
-  cout << "No of processed blocks " << counter << endl;
+  cout << "Total no of processed blocks: " << counter << endl;
+  cout << "of which were discarded: " << discardedBlocks << endl;
+  cout << "Correctly written to file: " << counter - discardedBlocks << endl;
   cout << "SUCCESS" << endl;
   return 0;
 } // main
