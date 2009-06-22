@@ -106,6 +106,13 @@
       </td>
     </tr>
     <tr>
+      <td>-C [--doCheckCRC] arg</td>
+      <td> Check the CRCs of the frames:
+      (0): do not check the CRCs
+      (1): check the header CRCs and discard broken frames
+      (2): check the header CRCs, discard broken frames and report it.
+      </td>
+    <tr>
       <td>--verbose</td>
       <td>Enable verbose mode, showing status messages during processing.</td>
     </tr>
@@ -180,6 +187,7 @@ int main(int argc, char *argv[])
   double timeoutRead (0);
 
   int fixTransientTimes (0);
+  int doCheckCRC (0);
   bool file2hdf5 (false);
   bool positions2hdf5 (false);
 
@@ -198,6 +206,7 @@ int main(int argc, char *argv[])
     ("timeoutStart,S", bpo::value<double>(), "Time-out when opening socket connection, [sec].")
     ("timeoutRead,R", bpo::value<double>(), "Time-out when while reading from socket, [sec].")
     ("fixTimes,F", bpo::value<int>(), "Fix broken time-stamps old style (1), new style (2), or not (0, default)")
+    ("doCheckCRC,C", bpo::value<int>(), "Check the CRCs: (0,default) no check, (1) check header, (2) check and report Header.")
     ("antpos,A", bpo::value<std::string>(), "File containing antenna positions")
     ("verbose", "Verbose mode on")
     ;
@@ -251,6 +260,10 @@ int main(int argc, char *argv[])
 
   if (vm.count("fixTimes")) {
     fixTransientTimes = vm["fixTimes"].as<int>();
+  }
+
+  if (vm.count("doCheckCRC")) {
+    doCheckCRC = vm["doCheckCRC"].as<int>();
   }
 
   // -----------------------------------------------------------------
@@ -333,30 +346,30 @@ int main(int argc, char *argv[])
   
   if (socketmode)  // reading from a socket
     {
-
+      
       while ( true )
         {
           counter++;
 	  
           if ( !tbb.readRawSocketBlockHeader() )
-            break;
-					if ( doCheckCRC > 0)
-					{
-						if (!tbb.headerCRC() )
-							{ // CRC error
-								if (doCheckCRC >= 2)
-								{
-									cerr << "Header CRC error on block: " << counter << endl;
-								}
-								continue; // just discard and continue to the next block
-							}
-					}
+	    break;
+	  if ( doCheckCRC > 0)
+	    {
+	      if (!tbb.headerCRC() )
+		{ // CRC error
+		  if (doCheckCRC >= 2)
+		    {
+		      cerr << "Header CRC error on block: " << counter << endl;
+		    }
+		  continue; // just discard and continue to the next block
+		}
+	    }
 	  if (fixTransientTimes==1) {
 	    tbb.fixDate();
 	  } else if (fixTransientTimes==2) {	 
 	    tbb.fixDateNew();
 	  };
- 
+	  
           tbb.stationCheck();
 	  
           // if this is the first sample for this station, set header attributes
