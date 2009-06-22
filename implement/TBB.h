@@ -336,6 +336,7 @@ namespace DAL {
     void fixDateNew();
     bool processTransientSocketDataBlock();
     bool processSpectralSocketDataBlock();
+    void discardFileBytes(uint bytes);
     void processTransientFileDataBlock();
     void processSpectralFileDataBlock();
     void cleanup();
