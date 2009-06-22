@@ -553,7 +553,7 @@ namespace DAL {
 	// Generic CRC16 method working on 16-bit unsigned data
 	// adapted from Python script by Gijs Schoonderbeek.
 	
-	uint16_t TBB::CRC16(uint16_t * buffer, uint32_t length)
+  uint16_t TBB::CRC16(uint16_t * buffer, uint32_t length)
   {
     uint16_t CRC = 0;
     const uint32_t CRC_poly = 0x18005;
@@ -899,13 +899,20 @@ cout << "extending array to:" << writeOffset+ headerp_p->n_samples_per_frame
     return true;
   }
 
+  void TBB::discardFileBytes(uint bytes)
+  {
+    char discardbyte = 0;
+    for(uint n = 0; n < bytes; n++)
+    {
+      rawfile_p->read(&discardbyte, 1);
+    }
+  }
   // ---------------------------------------------- processTransientFileDataBlock
-
+  
   void TBB::processTransientFileDataBlock()
   {
     short sdata[ headerp_p->n_samples_per_frame];
-
-    for ( short zz=0; zz < headerp_p->n_samples_per_frame; zz++ )
+    for (short zz=0; zz < headerp_p->n_samples_per_frame; zz++ )
       {
         rawfile_p->read( reinterpret_cast<char *>(&tran_sample),
                        sizeof(tran_sample) );
