@@ -427,8 +427,7 @@ namespace DAL {
 
   bool TBB::readRawSocketBlockHeader()
   {
-
-    // read the full UDP-datagramm, as otherwithe the remainder may be flushed by the OS
+    // read the full UDP-datagram, as otherwise the remainder may be flushed by the OS
     status = readsocket( UDP_BUFFER_SIZE, udpBuff_p );
     if (FAIL == status) {
       return false;
@@ -445,14 +444,14 @@ namespace DAL {
     
     // reverse fields if big endian
     if ( bigendian_p )
-      {
-        swapbytes( (char *)&(headerp_p->seqnr), 4 );
-        swapbytes( (char *)&(headerp_p->time), 4 );
-	swapbytes( (char *)&(headerp_p->sample_nr), 4 );
-	swapbytes( (char *)&(headerp_p->n_samples_per_frame), 2);
-	swapbytes( (char *)&(headerp_p->n_freq_bands), 2 );
-      }
-
+		{
+			swapbytes( (char *)&(headerp_p->seqnr), 4 );
+			swapbytes( (char *)&(headerp_p->time), 4 );
+			swapbytes( (char *)&(headerp_p->sample_nr), 4 );
+			swapbytes( (char *)&(headerp_p->n_samples_per_frame), 2);
+			swapbytes( (char *)&(headerp_p->n_freq_bands), 2 );
+		}
+		
     // Convert the time (seconds since 1 Jan 1970) to a human-readable string
     // "The samplenr field is used together with the time field to get
     //  an absolute time reference.  The samplenr field holds the number of
@@ -551,9 +550,54 @@ namespace DAL {
     printf("\n");
   }
   
-  //_____________________________________________________________________________
+	// Generic CRC16 method working on 16-bit unsigned data
+	// adapted from Python script by Gijs Schoonderbeek.
+	
+	uint16_t TBB::CRC16(uint16_t * buffer, uint32_t length)
+  {
+    uint16_t CRC = 0;
+    const uint32_t CRC_poly = 0x18005;
+    const uint16_t bits = 16;
+    uint32_t data = 0;
+    const uint32_t CRC_div = (CRC_poly & 0x7fffffff) << 15;
+		
+		data = (buffer[0] & 0x7fffffff) << 16;
+	  for(uint32_t i=1; i<length; i++)
+    {
+      data += buffer[i];
+      for(uint16_t j=0; j<bits; j++)
+      {
+        if ((data & 0x80000000) != 0)
+        { data ^= CRC_div; }
+        data &= 0x7fffffff;
+        data <<= 1;
+      }
+    }
+    CRC = data >> 16;
+    return CRC;
+  }
+	
+	// Check the CRC of a TBB frame header. Uses CRC16. Returns TRUE if OK, FALSE otherwise
+	bool TBB::headerCRC()
+  { 
+		unsigned int seqnr = headerp_p->seqnr; // temporary; we need to zero this out for CRC check
+		headerp_p->seqnr = 0;
+		
+    uint16_t * headerBuf = reinterpret_cast<uint16_t*> (headerp_p); 
+		uint16_t CRC = this->CRC16(headerBuf, sizeof(TBB_Header) / sizeof(uint16_t));
+		headerp_p->seqnr = seqnr; // and set it back again
+		
+    return (CRC == 0);
+  }
+	
+	
+	
+	//_____________________________________________________________________________
   // Check if the group for a given station exists within the HDF5 file
   
+	
+	
+	
   void TBB::stationCheck()
   {   
     char stationstr[10];

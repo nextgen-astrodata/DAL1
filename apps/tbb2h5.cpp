@@ -340,7 +340,17 @@ int main(int argc, char *argv[])
 	  
           if ( !tbb.readRawSocketBlockHeader() )
             break;
-	  
+					if ( doCheckCRC > 0)
+					{
+						if (!tbb.headerCRC() )
+							{ // CRC error
+								if (doCheckCRC >= 2)
+								{
+									cerr << "Header CRC error on block: " << counter << endl;
+								}
+								continue; // just discard and continue to the next block
+							}
+					}
 	  if (fixTransientTimes==1) {
 	    tbb.fixDate();
 	  } else if (fixTransientTimes==2) {	 

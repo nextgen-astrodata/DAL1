@@ -323,6 +323,9 @@ namespace DAL {
     void readRawFileBlockHeader();
     //! Print the contents of a raw TBB frame header
     void printRawHeader();
+		//! Check the CRC of a TBB frame header
+		uint16_t CRC16(uint16_t * buffer, uint32_t length);
+		bool TBB::headerCRC();
     //! Check if the group for a given station exists within the HDF5 file
     void stationCheck();
     void makeOutputHeader();
