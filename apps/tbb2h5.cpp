@@ -399,12 +399,24 @@ int main(int argc, char *argv[])
 
 	  /* Read header block of raw file */
           tbb.readRawFileBlockHeader();
-
+	  if ( doCheckCRC > 0)
+	  {
+	    if (!tbb.headerCRC() )
+	    { // CRC error
+	      if (doCheckCRC >= 2)
+	      {
+		cerr << "Header CRC error on block: " << counter << endl;
+	      }
+	      continue; // just discard and continue to the next block
+	    }
+	  }
 	  /* try to fix broken time-stamps if requested */
-	  if (fixTransientTimes) {
+	  if (fixTransientTimes==1) {
 	    tbb.fixDate();
-	  };	 
-
+	  } else if (fixTransientTimes==2) {	 
+	    tbb.fixDateNew();
+	  };
+	  
 	  /* Check station ID of the data */
           tbb.stationCheck();
 
