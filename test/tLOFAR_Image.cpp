@@ -49,21 +49,38 @@ using std::endl;
 
 // ==============================================================================
 //
-//  Helper functions
+//  Class DAL::Coordinate
 //
 // ==============================================================================
 
 namespace DAL {
 
-  class Coordinate {
+  /*!
+    \class Coordinate
     
+    \ingroup DAL
+
+    \brief A basic container for a coordinate object added to a HDF5 file
+  */
+  class Coordinate {
+
+  protected:
+    
+    //! The type of coordinate
     std::string coordinateType_p;
+    //! The number of coordinate axes
     unsigned int nofAxes_p;
+    //! World axis names
     std::vector<std::string> axisNames_p;
+    //! World axis units
     std::vector<std::string> axisUnits_p;
+    //! Reference value (CRVAL)
     std::vector<double> refValue_p;
+    //! Reference pixel (CRPIX)
     std::vector<double> refPixel_p;
+    //! Coordinate axis increment (CDELT)
     std::vector<double> increment_p;
+    //! Transformation matrix
     std::vector<double> pc_p;
 
   public:
@@ -78,13 +95,21 @@ namespace DAL {
       axisUnits_p[0]="UNDEFINED";
     };
 
+    //! Get the world axis names
+    std::vector<std::string> axisNames () {
+      return axisNames_p;
+    }
     //! Set the world axis names
     void setAxisNames (std::vector<std::string> const &axisNames) {
       if (axisNames.size() == nofAxes_p) {
 	axisNames_p = axisNames;
       }
     }
-
+    
+    //! Get the world axis units
+    std::vector<std::string> axisUnits () {
+      return axisUnits_p;
+    }
     //! Set the world axis units
     void setAxisUnits (std::vector<std::string> const &axisUnits) {
       if (axisUnits.size() == nofAxes_p) {
@@ -92,6 +117,10 @@ namespace DAL {
       }
     }
 
+    //! Get the reference value
+    std::vector<double> refValue () {
+      return refValue_p;
+    }
     //! Set the reference value
     void setRefValue (std::vector<double> const &refValue) {
       if (refValue.size() == nofAxes_p) {
@@ -99,6 +128,10 @@ namespace DAL {
       }
     }
 
+    //! Get the reference pixel
+    std::vector<double> refPixel () {
+      return refPixel_p;
+    }
     //! Set the reference pixel
     void setRefPixel (std::vector<double> const &refPixel) {
       if (refPixel.size() == nofAxes_p) {
@@ -106,10 +139,38 @@ namespace DAL {
       }
     }
 
-    //! Set the coordinate axis increment
+    /*!
+      \brief Get the coordinate axis increment
+      \return increment -- The increment along the coordinate axes
+    */
+    std::vector<double> increment () {
+      return increment_p;
+    }
+    /*!
+      \brief Set the coordinate axis increment
+      \param increment -- The increment along the coordinate axes
+    */
     void setIncrement (std::vector<double> const &increment) {
       if (increment.size() == nofAxes_p) {
 	increment_p = increment;
+      }
+    }
+
+    /*!
+      \brief Get the transformation matrix
+      \return pc -- The transformation matrix, in row-wise ordering, e.g. [00,01,10,11]
+    */
+    std::vector<double> pc () {
+      return pc_p;
+    }
+    /*!
+      \brief Set the transformation matrix
+      \param pc -- The transformation matrix, in row-wise ordering, e.g. [00,01,10,11]
+    */
+    void setPc (std::vector<double> const &pc) {
+      unsigned int nelem = nofAxes_p*nofAxes_p;
+      if (pc.size() == nelem) {
+	pc_p = pc;
       }
     }
 
@@ -127,7 +188,19 @@ namespace DAL {
 
     //! Write the coordinate object to a HDF5 file
     void h5write (hid_t const &locationID,
-		  std::string const &name);
+		  std::string const &name) {
+      hid_t groupID (0);
+      // create HDF5 group
+      groupID = H5Gcreate( locationID,
+			   name.c_str(),
+			   H5P_DEFAULT,
+			   H5P_DEFAULT,
+			   H5P_DEFAULT );
+      // write coordinate attributes
+      h5write (groupID);
+      // close the group after write
+      H5Gclose (groupID);
+    }
 
     //! Read the coordinate object from a HDF5 file
     void h5read (hid_t const &locationID);
@@ -160,7 +233,9 @@ namespace DAL {
           the opened object later on.
  */
 hid_t create_direction_coordinate (hid_t const &locationID,
-				   std::string const &groupName)
+				   std::string const &groupName,
+				   std::string const &refname="J2000",
+				   std::string const &projection="SIN")
 {
   hid_t groupID (0);
   
@@ -179,6 +254,9 @@ hid_t create_direction_coordinate (hid_t const &locationID,
     std::vector<double> refValue (nofAxes);
     std::vector<double> increment (nofAxes);
     std::vector<double> pc (nofAxes*nofAxes);
+    std::vector<double> projectionParam (1,0);
+    double longpole (0);
+    double latpole (90);
     //
     axisNames[0] = "Longitude";
     axisNames[1] = "Latitude";
@@ -194,6 +272,119 @@ hid_t create_direction_coordinate (hid_t const &locationID,
     pc[1] = 0;
     pc[2] = 0;
     pc[3] = 1;
+    //
+    DAL::h5set_attribute( groupID, "COORDINATE_TYPE",  coordinateType );
+    DAL::h5set_attribute( groupID, "NOF_AXES",         nofAxes );
+    DAL::h5set_attribute( groupID, "AXIS_NAMES",       axisNames );
+    DAL::h5set_attribute( groupID, "AXIS_UNITS",       axisUnits );
+    DAL::h5set_attribute( groupID, "CRPIX",            refPixel );
+    DAL::h5set_attribute( groupID, "CRVAL",            refValue );
+    DAL::h5set_attribute( groupID, "CDELT",            increment );
+    DAL::h5set_attribute( groupID, "PC",               pc );
+    DAL::h5set_attribute( groupID, "SYSTEM",           refname );
+    DAL::h5set_attribute( groupID, "PROJECTION",       projection );
+    DAL::h5set_attribute( groupID, "PROJECTION_PARAM", projectionParam );
+    DAL::h5set_attribute( groupID, "LONGPOLE",         longpole );
+    DAL::h5set_attribute( groupID, "LATPOLE",          latpole );
+  }
+
+  return groupID;
+}
+
+//_______________________________________________________________________________
+//                                                       create_radius_coordinate
+
+/*!
+  \brief Create a group for storing a radius coordinate
+
+  \param locationID -- HDF5 identifier for the location at which the coordinate
+         group is created.
+  \param groupName  -- 
+  
+  \return groupID -- Identifier of the created HDF5 group; required properly close
+          the opened object later on.
+ */
+hid_t create_radius_coordinate (hid_t const &locationID,
+				std::string const &groupName)
+{
+  hid_t groupID (0);
+  
+  groupID = H5Gcreate( locationID,
+		       groupName.c_str(),
+		       H5P_DEFAULT,
+		       H5P_DEFAULT,
+		       H5P_DEFAULT );
+  
+  if (groupID) {
+    std::string coordinateType ("Linear");
+    unsigned int nofAxes (1);
+    std::vector<std::string> axisNames (nofAxes);
+    std::vector<std::string> axisUnits (nofAxes);
+    std::vector<double> refPixel (nofAxes);
+    std::vector<double> refValue (nofAxes);
+    std::vector<double> increment (nofAxes);
+    std::vector<double> pc (nofAxes*nofAxes);
+    //
+    axisNames[0] = "Radius";
+    axisUnits[0] = "m";
+    refPixel[0]  = 0;
+    refValue[0]  = 100;
+    increment[0] = 1;
+    pc[0] = 1;
+    //
+    DAL::h5set_attribute( groupID, "COORDINATE_TYPE", coordinateType );
+    DAL::h5set_attribute( groupID, "NOF_AXES",        nofAxes );
+    DAL::h5set_attribute( groupID, "AXIS_NAMES",      axisNames );
+    DAL::h5set_attribute( groupID, "AXIS_UNITS",      axisUnits );
+    DAL::h5set_attribute( groupID, "CRPIX",           refPixel );
+    DAL::h5set_attribute( groupID, "CRVAL",           refValue );
+    DAL::h5set_attribute( groupID, "CDELT",           increment );
+    DAL::h5set_attribute( groupID, "PC",              pc );
+  }
+
+  return groupID;
+}
+
+//_______________________________________________________________________________
+//                                                         create_time_coordinate
+
+/*!
+  \brief Create a group for storing a time coordinate
+
+  \param locationID -- HDF5 identifier for the location at which the coordinate
+         group is created.
+  \param groupName  -- 
+  
+  \return groupID -- Identifier of the created HDF5 group; required properly close
+          the opened object later on.
+ */
+hid_t create_time_coordinate (hid_t const &locationID,
+			      std::string const &groupName)
+{
+  hid_t groupID (0);
+  
+  groupID = H5Gcreate( locationID,
+		       groupName.c_str(),
+		       H5P_DEFAULT,
+		       H5P_DEFAULT,
+		       H5P_DEFAULT );
+  
+  if (groupID) {
+    std::string coordinateType ("Linear");
+    unsigned int nofAxes (1);
+    std::vector<std::string> axisNames (nofAxes);
+    std::vector<std::string> axisUnits (nofAxes);
+    std::vector<double> refPixel (nofAxes);
+    std::vector<double> refValue (nofAxes);
+    std::vector<double> increment (nofAxes);
+    std::vector<double> pc (nofAxes*nofAxes);
+    //
+    axisNames[0] = "Time";
+    axisUnits[0] = "sec";
+    refPixel[0]  = 0;
+    refValue[0]  = -1e02;
+    increment[0] = 1e-06;
+    pc[0] = 1;
     //
     DAL::h5set_attribute( groupID, "COORDINATE_TYPE", coordinateType );
     DAL::h5set_attribute( groupID, "NOF_AXES",        nofAxes );
@@ -311,7 +502,88 @@ hid_t create_stokes_coordinate (hid_t const &locationID,
 }
 
 //_______________________________________________________________________________
-// create_sky_image
+//                                                                create_cr_image
+
+/*!
+  \brief Create set of coordinate attributes for a CR near-field image
+
+  \verbatim
+  FILE_CONTENTS {
+    group      /
+    group      /COORDINATES
+    group      /COORDINATES/COORDINATE0
+    group      /COORDINATES/COORDINATE1
+    group      /COORDINATES/COORDINATE2
+    group      /COORDINATES/COORDINATE3
+  }
+  \endverbatim
+  
+  \param filename -- Name of the output HDF5 file
+*/
+void create_cr_image (std::string const &filename)
+{
+  hid_t fileID;
+  hid_t groupID;
+
+  /* Create HDF5 file to work with */
+  fileID = H5Fcreate (filename.c_str(),
+		      H5F_ACC_TRUNC,
+		      H5P_DEFAULT,
+		      H5P_DEFAULT);
+
+  /* Create coordinates group */
+  groupID = H5Gcreate( fileID,
+		       "COORDINATES",
+		       H5P_DEFAULT,
+		       H5P_DEFAULT,
+		       H5P_DEFAULT );
+  
+  if (groupID) {
+    unsigned int nofCoordinates (4);
+    unsigned int nofAxes (5);
+    std::vector<std::string> coordinateTypes (nofCoordinates);
+    //
+    coordinateTypes[0] = "Direction";
+    coordinateTypes[1] = "Radius";
+    coordinateTypes[2] = "Frequency";
+    coordinateTypes[3] = "Time";
+    //
+    DAL::h5set_attribute( groupID, "NOF_COORDINATES", nofCoordinates );
+    DAL::h5set_attribute( groupID, "NOF_AXES", nofAxes );
+    DAL::h5set_attribute( groupID, "COORDINATE_TYPES", coordinateTypes );
+  } else {
+    std::cerr << "ERROR - failed to create coordinates group!" << std::endl;
+  }
+
+  /* Add coordinate sub-groups */
+  if (groupID) {
+    hid_t directionID;
+    hid_t radiusID;
+    hid_t frequencyID;
+    hid_t timeID;
+    //
+    std::cout << "-- Adding direction coordinate ..." << std::endl;
+    directionID = create_direction_coordinate (groupID,"COORDINATE0");
+    std::cout << "-- Adding linear coordinate (Radius) ..." << std::endl;
+    directionID = create_radius_coordinate (groupID,"COORDINATE1");
+    std::cout << "-- Adding frequency coordinate ..." << std::endl;
+    frequencyID = create_frequency_coordinate (groupID,"COORDINATE2");
+    std::cout << "-- Adding time coordinate ..." << std::endl;
+    timeID = create_time_coordinate (groupID,"COORDINATE3");
+    //
+    H5Gclose (directionID);
+    H5Gclose (radiusID);
+    H5Gclose (frequencyID);
+    H5Gclose (timeID);
+  }
+
+  /* Close file handles */
+  H5Gclose (groupID);
+  H5Fclose (fileID);
+}
+
+//_______________________________________________________________________________
+//                                                               create_sky_image
 
 void create_sky_image (std::string const &filename)
 {
@@ -338,6 +610,7 @@ void create_sky_image (std::string const &filename)
     //
     coordinateTypes[0] = "Direction";
     coordinateTypes[1] = "Frequency";
+    coordinateTypes[2] = "Stokes";
     //
     DAL::h5set_attribute( groupID, "NOF_COORDINATES", nofCoordinates );
     DAL::h5set_attribute( groupID, "NOF_AXES", nofAxes );
@@ -363,7 +636,6 @@ void create_sky_image (std::string const &filename)
     H5Gclose (frequencyID);
     H5Gclose (stokesID);
   }
-
   
   /* Close file handles */
   H5Gclose (groupID);
@@ -373,19 +645,14 @@ void create_sky_image (std::string const &filename)
 //_______________________________________________________________________________
 //                                                                           main
 
-int main (int argc,
-	  char *argv[])
+int main ()
 {
   int nofFailedTests (0);
-  std::string outfile;
 
-  if (argc < 2) {
-    outfile = std::string("testimage.h5");
-  } else {
-    outfile = std::string(argv[1]);
-  }
-
-  create_sky_image (outfile);
+  /* Create standard sky image */
+  create_sky_image ("testimage-sky.h5");
+  /* Create CR near-field image */
+  create_cr_image ("testimage-crc.h5");
 
   return nofFailedTests;
 }
