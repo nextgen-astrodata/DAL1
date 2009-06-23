@@ -1641,9 +1641,18 @@ namespace DAL
   {
      return setAttribute( attrname, &data );
   }
-  bool dalDataset::setAttribute_string_boost( std::string attrname, std::string data )
+  bool dalDataset::setAttribute_string_boost(std::string attrname, std::string data )
   {
      return setAttribute( attrname, &data );
+  }
+  bool dalDataset::setAttribute_string_vector( std::string attrname, bpl::list data )
+  {
+    std::vector<std::string> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<std::string>(data[ii]));
+
+    return setAttribute_string( attrname, mydata );
   }
 
 #endif  // end #ifdef PYTHON

@@ -163,6 +163,8 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Set a double precision floating point attribute" )
     .def( "setAttribute_string", &dalDataset::setAttribute_string_boost,
 	  "Set a string attribute" )
+    .def( "setAttribute_string", &dalDataset::setAttribute_string_vector,
+	  "Set a string attribute" )
     .def( "open", &dalDataset::open,
 	  ( bpl::arg("dataset_name") ),
 	  "Opens a dataset." )
