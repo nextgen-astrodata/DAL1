@@ -35,6 +35,7 @@ set (tests
   tBeamGroup
   tBeamSubband
   tEnumerations
+  tLOFAR_Image
   tTBB
   tTBB_DipoleDataset
   tTBB_StationGroup
@@ -107,6 +108,7 @@ if (DAL_ENABLE_TESTING)
 
   add_test(tdal tdal)
   add_test(tEnumerations tEnumerations)
+  add_test(tLOFAR_Image tLOFAR_Image)
 
   ## -----------------------------------------------------------------
   ## [2] Processing tests which require sample datasets
