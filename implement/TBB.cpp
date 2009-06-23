@@ -400,9 +400,13 @@ namespace DAL {
     FD_ZERO(&readSet);
     FD_SET(main_socket, &readSet);
 
+    struct timeval readTimeout;
+    readTimeout = timeoutRead_p;
+
     int status;
     // waits for up to N seconds for data appearing in the socket
-    if ( (status = select( main_socket + 1, &readSet, NULL, NULL, &timeoutRead_p) ) )
+    if ( (status = select( main_socket + 1, &readSet, NULL, NULL, &readTimeout) ) )
+
       {
         rr = recvfrom( main_socket, buf, nbytes, 0,
                        (sockaddr *) &incoming_addr, &socklen);

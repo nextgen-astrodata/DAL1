@@ -350,10 +350,11 @@ int main(int argc, char *argv[])
       
       while ( true )
         {
-          counter++;
-	  
           if ( !tbb.readRawSocketBlockHeader() )
 	    break;
+
+          counter++;
+	  
 	  if ( doCheckCRC > 0)
 	    {
 	      if (!tbb.headerCRC() )
@@ -361,6 +362,7 @@ int main(int argc, char *argv[])
 		  if (doCheckCRC >= 2)
 		    {
 		      cerr << "Header CRC error on block: " << counter << endl;
+		      tbb.printRawHeader();
 		    }
 		  discardedBlocks++;
 		  continue; // just discard and continue to the next block
@@ -408,6 +410,7 @@ int main(int argc, char *argv[])
 	      if (doCheckCRC >= 2)
 	      {
 		cerr << "Header CRC error on block: " << counter << endl;
+		tbb.printRawHeader();
 	      }
 	      tbb.discardFileBytes(2052); // discard data and continue with next block.
 	      discardedBlocks++;
