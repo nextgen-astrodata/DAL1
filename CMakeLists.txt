@@ -107,6 +107,10 @@ endif (NOT HAVE_BLITZ)
 
 set (BOOST_pythonOnly NO )
 
+if (NOT DAL_PYTHON_BINDINGS)
+  set (BOOST_FIND_python NO)
+endif (NOT DAL_PYTHON_BINDINGS)
+
 if (NOT HAVE_BOOST)
   include (FindBoost)
 endif (NOT HAVE_BOOST)
