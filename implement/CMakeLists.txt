@@ -94,6 +94,12 @@ if ( HAVE_CASACORE )
   list ( APPEND dal_sources dalLopesEvent.cpp )
 endif ( HAVE_CASACORE )
 
+if (DAL_EXPERIMENTAL_CODE)
+  list ( APPEND dal_sources
+    Coordinate.cpp
+    )
+endif (DAL_EXPERIMENTAL_CODE)
+
 #if (HAVE_BLITZ)
 #  list (APPEND dal_sources LOFAR_AntennaArray.cpp)
 #endif (HAVE_BLITZ)

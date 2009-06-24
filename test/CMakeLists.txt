@@ -24,6 +24,8 @@ message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 ##
 ## ==============================================================================
 
+## Set up list of source files
+
 set (tests
   tdal
   tdal_fits
@@ -41,6 +43,14 @@ set (tests
   tTBB_StationGroup
   tTBB_Timeseries
   )
+
+if (DAL_EXPERIMENTAL_CODE)
+  list ( APPEND tests
+    tCoordinate
+    )
+endif (DAL_EXPERIMENTAL_CODE)
+
+## Build instructions
 
 foreach (src ${tests})
   ## executable and its source
@@ -109,7 +119,11 @@ if (DAL_ENABLE_TESTING)
   add_test(tdal tdal)
   add_test(tEnumerations tEnumerations)
   add_test(tLOFAR_Image tLOFAR_Image)
-
+  
+  if (DAL_EXPERIMENTAL_CODE)
+    add_test(tCoordinate tCoordinate)
+  endif (DAL_EXPERIMENTAL_CODE)
+  
   ## -----------------------------------------------------------------
   ## [2] Processing tests which require sample datasets
   

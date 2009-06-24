@@ -43,6 +43,7 @@ option (DAL_MEMORY_CHECKING    "Enable checking against memory leaks?"     NO  )
 option (DAL_PYTHON_BINDINGS    "Create python bindings?"                   YES )
 option (DAL_DEBUGGING_MESSAGES "Print debugging information?"              NO  )
 option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"      NO  )
+option (DAL_EXPERIMENTAL_CODE  "Include new expermetal code into build?"   NO  )
 
 ## Handle option: testing mode on/off
 

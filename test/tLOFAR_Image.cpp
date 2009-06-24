@@ -27,6 +27,7 @@
 
 /* DAL header files */
 #include <dalCommon.h>
+#include <Coordinate.h>
 
 using std::cout;
 using std::cerr;
@@ -46,178 +47,6 @@ using std::endl;
   <h3>Synopsis</h3>
 
 */
-
-// ==============================================================================
-//
-//  Class DAL::Coordinate
-//
-// ==============================================================================
-
-namespace DAL {
-
-  /*!
-    \class Coordinate
-    
-    \ingroup DAL
-
-    \brief A basic container for a coordinate object added to a HDF5 file
-  */
-  class Coordinate {
-
-  protected:
-    
-    //! The type of coordinate
-    std::string coordinateType_p;
-    //! The number of coordinate axes
-    unsigned int nofAxes_p;
-    //! World axis names
-    std::vector<std::string> axisNames_p;
-    //! World axis units
-    std::vector<std::string> axisUnits_p;
-    //! Reference value (CRVAL)
-    std::vector<double> refValue_p;
-    //! Reference pixel (CRPIX)
-    std::vector<double> refPixel_p;
-    //! Coordinate axis increment (CDELT)
-    std::vector<double> increment_p;
-    //! Transformation matrix
-    std::vector<double> pc_p;
-
-  public:
-
-    //! Default constructor
-    Coordinate() {
-      coordinateType_p="UNDEFINED";
-      nofAxes_p=1;
-      axisNames_p.resize(nofAxes_p);
-      axisUnits_p.resize(nofAxes_p);
-      axisNames_p[0]="UNDEFINED";
-      axisUnits_p[0]="UNDEFINED";
-    };
-
-    //! Get the world axis names
-    std::vector<std::string> axisNames () {
-      return axisNames_p;
-    }
-    //! Set the world axis names
-    void setAxisNames (std::vector<std::string> const &axisNames) {
-      if (axisNames.size() == nofAxes_p) {
-	axisNames_p = axisNames;
-      }
-    }
-    
-    //! Get the world axis units
-    std::vector<std::string> axisUnits () {
-      return axisUnits_p;
-    }
-    //! Set the world axis units
-    void setAxisUnits (std::vector<std::string> const &axisUnits) {
-      if (axisUnits.size() == nofAxes_p) {
-	axisUnits_p = axisUnits;
-      }
-    }
-
-    //! Get the reference value
-    std::vector<double> refValue () {
-      return refValue_p;
-    }
-    //! Set the reference value
-    void setRefValue (std::vector<double> const &refValue) {
-      if (refValue.size() == nofAxes_p) {
-	refValue_p = refValue;
-      }
-    }
-
-    //! Get the reference pixel
-    std::vector<double> refPixel () {
-      return refPixel_p;
-    }
-    //! Set the reference pixel
-    void setRefPixel (std::vector<double> const &refPixel) {
-      if (refPixel.size() == nofAxes_p) {
-	refPixel_p = refPixel;
-      }
-    }
-
-    /*!
-      \brief Get the coordinate axis increment
-      \return increment -- The increment along the coordinate axes
-    */
-    std::vector<double> increment () {
-      return increment_p;
-    }
-    /*!
-      \brief Set the coordinate axis increment
-      \param increment -- The increment along the coordinate axes
-    */
-    void setIncrement (std::vector<double> const &increment) {
-      if (increment.size() == nofAxes_p) {
-	increment_p = increment;
-      }
-    }
-
-    /*!
-      \brief Get the transformation matrix
-      \return pc -- The transformation matrix, in row-wise ordering, e.g. [00,01,10,11]
-    */
-    std::vector<double> pc () {
-      return pc_p;
-    }
-    /*!
-      \brief Set the transformation matrix
-      \param pc -- The transformation matrix, in row-wise ordering, e.g. [00,01,10,11]
-    */
-    void setPc (std::vector<double> const &pc) {
-      unsigned int nelem = nofAxes_p*nofAxes_p;
-      if (pc.size() == nelem) {
-	pc_p = pc;
-      }
-    }
-
-    //! Write the coordinate object to a HDF5 file
-    void h5write (hid_t const &locationID) {
-      DAL::h5set_attribute( locationID, "COORDINATE_TYPE", coordinateType_p );
-      DAL::h5set_attribute( locationID, "NOF_AXES",        nofAxes_p );
-      DAL::h5set_attribute( locationID, "AXIS_NAMES",      axisNames_p );
-      DAL::h5set_attribute( locationID, "AXIS_UNITS",      axisUnits_p );
-      DAL::h5set_attribute( locationID, "CRPIX",           refPixel_p );
-      DAL::h5set_attribute( locationID, "CRVAL",           refValue_p );
-      DAL::h5set_attribute( locationID, "CDELT",           increment_p );
-      DAL::h5set_attribute( locationID, "PC",              pc_p );
-    }
-
-    //! Write the coordinate object to a HDF5 file
-    void h5write (hid_t const &locationID,
-		  std::string const &name) {
-      hid_t groupID (0);
-      // create HDF5 group
-      groupID = H5Gcreate( locationID,
-			   name.c_str(),
-			   H5P_DEFAULT,
-			   H5P_DEFAULT,
-			   H5P_DEFAULT );
-      // write coordinate attributes
-      h5write (groupID);
-      // close the group after write
-      H5Gclose (groupID);
-    }
-
-    //! Read the coordinate object from a HDF5 file
-    void h5read (hid_t const &locationID);
-
-    //! Read the coordinate object from a HDF5 file
-    void h5read (hid_t const &groupID,
-		 std::string const &name);
-
-  };
-  
-}
-
-// ==============================================================================
-//
-//  Testing routines
-//
-// ==============================================================================
 
 //_______________________________________________________________________________
 //                                                    create_direction_coordinate
@@ -432,6 +261,7 @@ hid_t create_frequency_coordinate (hid_t const &locationID,
     std::vector<double> refValue (nofAxes);
     std::vector<double> increment (nofAxes);
     std::vector<double> pc (nofAxes*nofAxes);
+    std::string system ("TOPO");
     //
     axisNames[0] = "Frequency";
     axisUnits[0] = "Hz";
@@ -448,6 +278,7 @@ hid_t create_frequency_coordinate (hid_t const &locationID,
     DAL::h5set_attribute( groupID, "CRVAL",           refValue );
     DAL::h5set_attribute( groupID, "CDELT",           increment );
     DAL::h5set_attribute( groupID, "PC",              pc );
+    DAL::h5set_attribute( groupID, "SYSTEM",          system );
   }
 
   return groupID;
