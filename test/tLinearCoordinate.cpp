@@ -2,8 +2,8 @@
  | $Id:: tNewClass.cc 2286 2009-02-03 10:50:48Z baehren                  $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
- *   Copyright (C) 2009                                                  *
- *   Lars Baehren (<mail>)                                                     *
+ *   Copyright (C) 2009                                                    *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -23,9 +23,6 @@
 
 #include <LinearCoordinate.h>
 
-// Namespace usage
-using DAL::LinearCoordinate;
-
 /*!
   \file tLinearCoordinate.cc
 
@@ -33,7 +30,7 @@ using DAL::LinearCoordinate;
 
   \brief A collection of test routines for the LinearCoordinate class
  
-  \author Lars Baehren
+  \author Lars B&auml;hren
  
   \date 2009/06/24
 */
@@ -54,9 +51,48 @@ int test_constructors ()
   
   std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
-    LinearCoordinate newObject;
+    DAL::LinearCoordinate coord;
     //
-    newObject.summary(); 
+    coord.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Testing argumented constructor ..." << std::endl;
+  try {
+    DAL::LinearCoordinate coord (3);
+    //
+    coord.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Testing fully argumented constructor ..." << std::endl;
+  try {
+    unsigned int nofAxes (2);
+    std::vector<std::string> worldAxisNames (nofAxes);
+    std::vector<std::string> worldAxisUnits (nofAxes);
+    std::vector<double> refValue (nofAxes,0.0);
+    std::vector<double> refPixel (nofAxes,0.0);
+    std::vector<double> increment (nofAxes,1.0);
+    std::vector<double> pc (nofAxes*nofAxes);
+    //
+    worldAxisNames[0] = "Length";
+    worldAxisNames[1] = "Time";
+    worldAxisUnits[0] = "m";
+    worldAxisUnits[1] = "s";
+    //
+    DAL::LinearCoordinate coord (nofAxes,
+				 worldAxisNames,
+				 worldAxisUnits,
+				 refValue,
+				 refPixel,
+				 increment,
+				 pc);
+    //
+    coord.summary(); 
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;

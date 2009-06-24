@@ -35,24 +35,31 @@ namespace DAL { // Namespace DAL -- begin
   //                                                             LinearCoordinate
   
   LinearCoordinate::LinearCoordinate ()
-    : Coordinate()
+    : Coordinate(Coordinate::Linear,
+		 1)
   {
-    coordinateType_p = Coordinate::Linear;
-    nofAxes_p        = 1;
+  }
+
+  //_____________________________________________________________________________
+  //                                                             LinearCoordinate
+  
+  LinearCoordinate::LinearCoordinate (double const &nofAxes)
+    : Coordinate(Coordinate::Linear,
+		 nofAxes)
+  {
   }
   
   //_____________________________________________________________________________
   //                                                             LinearCoordinate
   
-  LinearCoordinate::LinearCoordinate (Coordinate::Type const &coordinateType,
-				      double const &nofAxes,
+  LinearCoordinate::LinearCoordinate (double const &nofAxes,
 				      std::vector<std::string> const &axisNames,
 				      std::vector<std::string> const &axisUnits,
 				      std::vector<double> const &refValue,
 				      std::vector<double> const &refPixel,
 				      std::vector<double> const &increment,
 				      std::vector<double> const &pc)
-    : Coordinate(coordinateType,
+    : Coordinate(Coordinate::Linear,
 		 nofAxes,
 		 axisNames,
 		 axisUnits,
@@ -194,28 +201,6 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                       h5read
-  
-  void LinearCoordinate::h5read (hid_t const &locationID,
-				 std::string const &name)
-  {
-    hid_t groupID (0);
-    
-    groupID = H5Gopen1 (locationID,
-			name.c_str());
-
-    if (groupID) {
-      h5read (groupID);
-    } else {
-      std::cerr << "[LinearCoordinate::h5read] Error opening group "
-		<< name 
-		<< std::endl;
-    }
-    
-    H5Gclose (groupID);
-  }
-  
-  //_____________________________________________________________________________
   //                                                                      h5write
   
   void LinearCoordinate::h5write (hid_t const &groupID)
@@ -229,24 +214,5 @@ namespace DAL { // Namespace DAL -- begin
     DAL::h5set_attribute( groupID, "CDELT",           increment_p );
     DAL::h5set_attribute( groupID, "PC",              pc_p );
   }
-  
-  //_____________________________________________________________________________
-  //                                                                      h5write
-  
-  void LinearCoordinate::h5write (hid_t const &locationID,
-				  std::string const &name)
-  {
-    hid_t groupID (0);
-    // create HDF5 group
-    groupID = H5Gcreate( locationID,
-			 name.c_str(),
-			 H5P_DEFAULT,
-			 H5P_DEFAULT,
-			 H5P_DEFAULT );
-    // write coordinate attributes
-    h5write (groupID);
-    // close the group after write
-    H5Gclose (groupID);
-  }  
   
 } // Namespace DAL -- end

@@ -47,7 +47,7 @@ set (tests
 if (DAL_EXPERIMENTAL_CODE)
   list ( APPEND tests
     tLinearCoordinate
-	tTabularCoordinate
+    tTabularCoordinate
     )
 endif (DAL_EXPERIMENTAL_CODE)
 
@@ -122,7 +122,8 @@ if (DAL_ENABLE_TESTING)
   add_test(tLOFAR_Image tLOFAR_Image)
   
   if (DAL_EXPERIMENTAL_CODE)
-    add_test(tCoordinate tCoordinate)
+    add_test(tLinearCoordinate tLinearCoordinate)
+    add_test(tTabularCoordinate tTabularCoordinate)
   endif (DAL_EXPERIMENTAL_CODE)
   
   ## -----------------------------------------------------------------

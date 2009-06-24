@@ -2,8 +2,8 @@
  | $Id:: NewClass.h 2286 2009-02-03 10:50:48Z baehren                    $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
- *   Copyright (C) 2009                                                  *
- *   Lars Baehren (<mail>)                                                     *
+ *   Copyright (C) 2009                                                    *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -28,16 +28,19 @@
 #include <iostream>
 #include <string>
 
+// DAL header files
+#include <Coordinate.h>
+
 namespace DAL { // Namespace DAL -- begin
   
   /*!
     \class TabularCoordinate
     
-    \ingroup Coordinates
+    \ingroup DAL
     
     \brief Brief description for class TabularCoordinate
     
-    \author Lars Baehren
+    \author Lars B&auml;hren
 
     \date 2009/06/24
 
@@ -54,7 +57,12 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class TabularCoordinate {
+  class TabularCoordinate : public Coordinate {
+
+    //! List of pixel values
+    std::vector<double> pixelValues_p;
+    //! List of world values
+    std::vector<double> worldValues_p;
     
   public:
     
@@ -62,13 +70,12 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Default constructor
     TabularCoordinate ();
-    
-    /*!
-      \brief Copy constructor
-      
-      \param other -- Another TabularCoordinate object from which to create this new
-             one.
-    */
+    //! Argumented constructor
+    TabularCoordinate (std::vector<std::string> const &axisNames,
+		       std::vector<std::string> const &axisUnits,
+		       std::vector<double> const &pixelValues,
+		       std::vector<double> const &worldValues);
+    //! Copy constructor
     TabularCoordinate (TabularCoordinate const &other);
     
     // -------------------------------------------------------------- Destruction
@@ -86,6 +93,22 @@ namespace DAL { // Namespace DAL -- begin
     TabularCoordinate& operator= (TabularCoordinate const &other); 
     
     // --------------------------------------------------------------- Parameters
+
+    //! Get the pixel values
+    inline std::vector<double> pixelValues () {
+      return pixelValues_p;
+    }
+    //! Set the pixel values
+    bool setPixelValues (std::vector<double> const &pixelValues);
+    //! Get the world values
+    inline std::vector<double> worldValues () {
+      return worldValues_p;
+    }
+    //! Set the world values
+    bool setWorldValues (std::vector<double> const &worldValues);
+    //! Set the values along the pixel and world axis
+    bool setAxisValues (std::vector<double> const &pixelValues,
+			std::vector<double> const &worldValues);
     
     /*!
       \brief Get the name of the class
@@ -112,9 +135,30 @@ namespace DAL { // Namespace DAL -- begin
 
     // ------------------------------------------------------------------ Methods
     
+    //! Write the coordinate object to a HDF5 file
+    void h5write (hid_t const &groupID);
+
+    //! Write the coordinate object to a HDF5 file
+    void h5write (hid_t const &locationID,
+		  std::string const &name);
+
+    //! Read the coordinate object from a HDF5 file
+    void h5read (hid_t const &groupID);
     
+    //! Read the coordinate object from a HDF5 file
+    void h5read (hid_t const &locationID,
+		 std::string const &name); 
     
   private:
+
+    //! Initialize internal parameters
+    void init () {
+      pixelValues_p.resize(nofAxes_p);
+      worldValues_p.resize(nofAxes_p);
+      //
+      pixelValues_p = std::vector<double>(nofAxes_p,0.0);
+      worldValues_p = std::vector<double>(nofAxes_p,0.0);
+    }
     
     //! Unconditional copying
     void copy (TabularCoordinate const &other);

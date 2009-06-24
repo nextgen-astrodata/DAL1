@@ -66,8 +66,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Default constructor
     LinearCoordinate ();
     //! Argumented constructor
-    LinearCoordinate (Coordinate::Type const &coordinateType,
-		      double const &nofAxes,
+    LinearCoordinate (double const &nofAxes);
+    //! Argumented constructor
+    LinearCoordinate (double const &nofAxes,
 		      std::vector<std::string> const &axisNames,
 		      std::vector<std::string> const &axisUnits,
 		      std::vector<double> const &refValue,

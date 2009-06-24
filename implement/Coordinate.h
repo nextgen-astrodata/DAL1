@@ -100,7 +100,6 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Default constructor
     Coordinate ();
-    
     //! Argumented constructor
     Coordinate (Coordinate::Type const &coordinateType,
 		double const &nofAxes);
@@ -243,30 +242,34 @@ namespace DAL { // Namespace DAL -- begin
 
     // ------------------------------------------------------------------ Methods
 
+    //! Get name type of the coordinate as name
     static std::string getName (Coordinate::Type const &type);
     
+    //! Get the type of the coordinate from its name
     static Coordinate::Type getType (std::string const &name);
     
     //! Write the coordinate object to a HDF5 file
     virtual void h5write (hid_t const &locationID) = 0;
 
     //! Write the coordinate object to a HDF5 file
-    virtual void h5write (hid_t const &locationID,
-			  std::string const &name) = 0;
-
+    void h5write (hid_t const &locationID,
+		  std::string const &name);
+    
     //! Read the coordinate object from a HDF5 file
     virtual void h5read (hid_t const &locationID) = 0;
     
     //! Read the coordinate object from a HDF5 file
-    virtual void h5read (hid_t const &groupID,
-			 std::string const &name) = 0;
-    
-  private:
+    void h5read (hid_t const &groupID,
+		 std::string const &name);
 
-    void init ();
+  protected:
     
     //! Unconditional copying
     void copy (Coordinate const &other);
+    
+  private:
+    
+    void init ();
     
     //! Unconditional deletion 
     void destroy(void);
@@ -276,4 +279,4 @@ namespace DAL { // Namespace DAL -- begin
 } // Namespace DAL -- end
 
 #endif /* COORDINATE_H */
-  
+
