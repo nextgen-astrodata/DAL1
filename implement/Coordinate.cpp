@@ -151,30 +151,7 @@ namespace DAL { // Namespace DAL -- begin
 
   std::string Coordinate::name ()
   {
-    std::string coordinateName;
-
-    switch (coordinateType_p) {
-    case DAL::Coordinate::Direction:
-      coordinateName="Direction";
-      break;
-    case DAL::Coordinate::Frequency:
-      coordinateName="Frequency";
-      break;
-    case DAL::Coordinate::Linear:
-      coordinateName="Linear";
-      break;
-    case DAL::Coordinate::Stokes:
-      coordinateName="Stokes";
-      break;
-    case DAL::Coordinate::Tabular:
-      coordinateName="Tabular";
-      break;
-    case DAL::Coordinate::NONE:
-      coordinateName="NONE";
-      break;
-    };
-
-    return coordinateName;
+    return getName (coordinateType_p);
   }
   
   //_____________________________________________________________________________
@@ -221,39 +198,62 @@ namespace DAL { // Namespace DAL -- begin
       increment_p[n] = 0;
     }
   };
-  
-  //_____________________________________________________________________________
-  //                                                                      h5write
 
-  void Coordinate::h5write (hid_t const &locationID)
+  //_____________________________________________________________________________
+  //                                                                      getName
+
+  std::string Coordinate::getName (Coordinate::Type const &type)
   {
-    DAL::h5set_attribute( locationID, "COORDINATE_TYPE", name()    );
-    DAL::h5set_attribute( locationID, "NOF_AXES",        nofAxes_p );
-    DAL::h5set_attribute( locationID, "AXIS_NAMES",      axisNames_p );
-    DAL::h5set_attribute( locationID, "AXIS_UNITS",      axisUnits_p );
-    DAL::h5set_attribute( locationID, "CRPIX",           refPixel_p );
-    DAL::h5set_attribute( locationID, "CRVAL",           refValue_p );
-    DAL::h5set_attribute( locationID, "CDELT",           increment_p );
-    DAL::h5set_attribute( locationID, "PC",              pc_p );
+    std::string coordinateName;
+    
+    switch (type) {
+    case DAL::Coordinate::Direction:
+      coordinateName="Direction";
+      break;
+    case DAL::Coordinate::Frequency:
+      coordinateName="Frequency";
+      break;
+    case DAL::Coordinate::Linear:
+      coordinateName="Linear";
+      break;
+    case DAL::Coordinate::Stokes:
+      coordinateName="Stokes";
+      break;
+    case DAL::Coordinate::Tabular:
+      coordinateName="Tabular";
+      break;
+    case DAL::Coordinate::NONE:
+      coordinateName="NONE";
+      break;
+    };
+    
+    return coordinateName;
   }
   
   //_____________________________________________________________________________
-  //                                                                      h5write
+  //                                                                      getName
 
-  void Coordinate::h5write (hid_t const &locationID,
-			    std::string const &name)
+  Coordinate::Type Coordinate::getType (std::string const &name)
   {
-    hid_t groupID (0);
-    // create HDF5 group
-    groupID = H5Gcreate( locationID,
-			 name.c_str(),
-			 H5P_DEFAULT,
-			 H5P_DEFAULT,
-			 H5P_DEFAULT );
-    // write coordinate attributes
-    h5write (groupID);
-    // close the group after write
-    H5Gclose (groupID);
+    Coordinate::Type coordinateType (Coordinate::NONE);
+
+    if (name == "Direction") {
+      coordinateType = Coordinate::Direction;
+    }
+    else if (name == "Frequency") {
+      coordinateType = Coordinate::Frequency;
+    }
+    else if (name == "Linear") {
+      coordinateType = Coordinate::Linear;
+    }
+    else if (name == "Stokes") {
+      coordinateType = Coordinate::Stokes;
+    }
+    else if (name == "Tabular") {
+      coordinateType = Coordinate::Tabular;
+    }
+
+    return coordinateType;
   }
-  
+
 } // Namespace DAL -- end

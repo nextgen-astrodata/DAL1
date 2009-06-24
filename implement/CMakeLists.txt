@@ -97,6 +97,8 @@ endif ( HAVE_CASACORE )
 if (DAL_EXPERIMENTAL_CODE)
   list ( APPEND dal_sources
     Coordinate.cpp
+    LinearCoordinate.cpp
+    TabularCoordinate.cpp
     )
 endif (DAL_EXPERIMENTAL_CODE)
 

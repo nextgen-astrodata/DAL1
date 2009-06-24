@@ -44,12 +44,10 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/06/23
 
-    \test tCoordinate.cc
-    
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>[start filling in your text here]
+      <li>LOFAR data format ICD: LOFAR Sky Image (LOFAR-USG-ICD-004)
     </ul>
     
     <h3>Synopsis</h3>
@@ -61,7 +59,7 @@ namespace DAL { // Namespace DAL -- begin
     
   public:
 
-    //! Type of the coordinate
+    //! Type of the coordinate; for definition and attributes see LOFAR-USG-ICD-004
     enum Type {
       //! Direction coordinate
       Direction,
@@ -121,7 +119,7 @@ namespace DAL { // Namespace DAL -- begin
     // -------------------------------------------------------------- Destruction
 
     //! Destructor
-    ~Coordinate ();
+    virtual ~Coordinate ();
     
     // ---------------------------------------------------------------- Operators
     
@@ -244,20 +242,24 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // ------------------------------------------------------------------ Methods
+
+    static std::string getName (Coordinate::Type const &type);
+    
+    static Coordinate::Type getType (std::string const &name);
     
     //! Write the coordinate object to a HDF5 file
-    void h5write (hid_t const &locationID);
+    virtual void h5write (hid_t const &locationID) = 0;
 
     //! Write the coordinate object to a HDF5 file
-    void h5write (hid_t const &locationID,
-		  std::string const &name);
+    virtual void h5write (hid_t const &locationID,
+			  std::string const &name) = 0;
 
     //! Read the coordinate object from a HDF5 file
-    void h5read (hid_t const &locationID);
+    virtual void h5read (hid_t const &locationID) = 0;
     
     //! Read the coordinate object from a HDF5 file
-    void h5read (hid_t const &groupID,
-		 std::string const &name);
+    virtual void h5read (hid_t const &groupID,
+			 std::string const &name) = 0;
     
   private:
 

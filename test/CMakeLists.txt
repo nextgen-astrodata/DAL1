@@ -46,7 +46,8 @@ set (tests
 
 if (DAL_EXPERIMENTAL_CODE)
   list ( APPEND tests
-    tCoordinate
+    tLinearCoordinate
+	tTabularCoordinate
     )
 endif (DAL_EXPERIMENTAL_CODE)
 
