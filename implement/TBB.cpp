@@ -472,8 +472,11 @@ namespace DAL {
     if (nFramesWaiting > maxWaitingFrames) { maxWaitingFrames = nFramesWaiting; };
     if ( inBufStorID == inBufProcessID) {
       // that means input buffer is empty
-      readTimeout = timeoutRead_p;
-      if (select(main_socket + 1, &readSet, NULL, NULL, &readTimeout) > 0 ) {
+      readTimeout.tv_sec = timeoutRead_p.tv_sec;
+      readTimeout.tv_usec = timeoutRead_p.tv_usec;
+      FD_ZERO(&readSet);
+      FD_SET(main_socket, &readSet);
+      if (status = select(main_socket + 1, &readSet, NULL, NULL, &readTimeout) ) {
 	inBufStorID++;
 	if (inBufStorID >= INPUT_BUFFER_SIZE) { inBufStorID =0; }
 	rr = recvfrom( main_socket, (inputBuffer_P+(inBufStorID*UDP_PACKET_BUFFER_SIZE)), 
@@ -481,6 +484,9 @@ namespace DAL {
       } else {
 	// we waited for "timeoutRead_p" but still no data -> end of data
         cout << "TBB::readSocketBuffer: Data stopped coming" << endl;
+	cout << "TBB::readSocketBuffer: inBufProcessID: " << inBufProcessID 
+	     << " inBufStorID: " << inBufStorID << " select-status:" << status 
+	     << " remaining-sec: " << readTimeout.tv_sec << " -usec: " << readTimeout.tv_usec << endl;
 	cout << "TBB::readSocketBuffer: Max no. of frames waiting: " << maxWaitingFrames
 	     << " number of desicarded frames: " << noFramesDropped << endl;
         return FAIL;
