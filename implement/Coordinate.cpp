@@ -134,13 +134,15 @@ namespace DAL { // Namespace DAL -- begin
     refValue_p.resize(nofAxes_p);
     refPixel_p.resize(nofAxes_p);
     increment_p.resize(nofAxes_p);
+    pc_p.resize(nofAxes_p*nofAxes_p);
 
     /* Copy the values */
     axisNames_p = other.axisNames_p;
     axisUnits_p = other.axisUnits_p;
     refValue_p  = other.refValue_p;
     refPixel_p  = other.refPixel_p;
-    increment_p = other.increment_p;    
+    increment_p = other.increment_p;
+    pc_p        = other.pc_p;
   }
 
   // ============================================================================
@@ -160,8 +162,7 @@ namespace DAL { // Namespace DAL -- begin
   void Coordinate::summary (std::ostream &os)
   {
     os << "[Coordinate] Summary of internal parameters." << std::endl;
-    os << "-- Coordinate type  = " << type()         << std::endl;
-    os << "-- Coordinate name  = " << name()         << std::endl;
+    os << "-- Coordinate type  = " << type() << " / " <<  name() << std::endl;
     os << "-- nof. axes        = " << nofAxes_p      << std::endl;
     os << "-- World axis names = " << axisNames_p    << std::endl;
     os << "-- World axis units = " << axisUnits_p    << std::endl;
@@ -190,16 +191,12 @@ namespace DAL { // Namespace DAL -- begin
     increment_p.resize(nofAxes_p);
     pc_p.resize(nofAxes_p*nofAxes_p);
 
-    refValue_p  = std::vector<double> (refValue_p.size(),0.0);
-    refPixel_p  = std::vector<double> (refPixel_p.size(),0.0);
-    increment_p = std::vector<double> (increment_p.size(),0.0);
+    axisNames_p = std::vector<std::string> (nofAxes_p,"UNDEFINED");
+    axisUnits_p = std::vector<std::string> (nofAxes_p,"UNDEFINED");
+    refValue_p  = std::vector<double> (nofAxes_p,0.0);
+    refPixel_p  = std::vector<double> (nofAxes_p,0.0);
+    increment_p = std::vector<double> (nofAxes_p,0.0);
     pc_p        = std::vector<double> (pc_p.size(),1.0);
-
-    /* Assign values */
-    for (unsigned int n(0); n<nofAxes_p; n++) {
-      axisNames_p[n] = "UNDEFINED";
-      axisUnits_p[n] = "UNDEFINED";
-    }
   };
 
   //_____________________________________________________________________________
@@ -258,47 +255,5 @@ namespace DAL { // Namespace DAL -- begin
 
     return coordinateType;
   }
-
-  //_____________________________________________________________________________
-  //                                                                       h5read
-  
-  void Coordinate::h5read (hid_t const &locationID,
-			   std::string const &name)
-  {
-    hid_t groupID (0);
-    
-    groupID = H5Gopen1 (locationID,
-			name.c_str());
-    
-    if (groupID) {
-      h5read (groupID);
-    } else {
-      std::cerr << "[Coordinate::h5read] Error opening group "
-		<< name 
-		<< std::endl;
-    }
-    
-    H5Gclose (groupID);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                      h5write
-  
-  void Coordinate::h5write (hid_t const &locationID,
-			    std::string const &name)
-  {
-    hid_t groupID (0);
-    // create HDF5 group
-    groupID = H5Gcreate( locationID,
-			 name.c_str(),
-			 H5P_DEFAULT,
-			 H5P_DEFAULT,
-			 H5P_DEFAULT );
-    // write coordinate attributes
-    h5write (groupID);
-    // close the group after write
-    H5Gclose (groupID);
-  }  
-  
   
 } // Namespace DAL -- end

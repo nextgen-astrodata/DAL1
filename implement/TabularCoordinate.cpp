@@ -2,8 +2,8 @@
  | $Id:: NewClass.cc 1964 2008-09-06 17:52:38Z baehren                   $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
- *   Copyright (C) 2009                                                  *
- *   Lars Baehren (<mail>)                                                     *
+ *   Copyright (C) 2009                                                    *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -35,7 +35,7 @@ namespace DAL { // Namespace DAL -- begin
   //                                                            TabularCoordinate
   
   TabularCoordinate::TabularCoordinate ()
-    : Coordinate(Coordinate::Linear,
+    : Coordinate(Coordinate::Tabular,
 		 1)
   {
     init ();
@@ -48,13 +48,13 @@ namespace DAL { // Namespace DAL -- begin
 					std::vector<std::string> const &axisUnits,
 					std::vector<double> const &pixelValues,
 					std::vector<double> const &worldValues)
-    : Coordinate(Coordinate::Linear,
+    : Coordinate(Coordinate::Tabular,
 		 1)
   {
     setAxisNames (axisNames);
     setAxisUnits (axisUnits);
-    setPixelValues (pixelValues);
-    setWorldValues (worldValues);
+    setAxisValues (pixelValues,
+		   worldValues);
   }
 
   //_____________________________________________________________________________
@@ -169,6 +169,16 @@ namespace DAL { // Namespace DAL -- begin
   void TabularCoordinate::summary (std::ostream &os)
   {
     os << "[TabularCoordinate] Summary of internal parameters." << std::endl;
+    os << "-- Coordinate type       = " << type() << " / " <<  name() << std::endl;
+    os << "-- nof. axes             = " << nofAxes_p      << std::endl;
+    os << "-- World axis names      = " << axisNames_p    << std::endl;
+    os << "-- World axis units      = " << axisUnits_p    << std::endl;
+    os << "-- Reference value       = " << refValue_p     << std::endl;
+    os << "-- Reference pixel       = " << refPixel_p     << std::endl;
+    os << "-- Increment             = " << increment_p    << std::endl;
+    os << "-- Transformation matrix = " << pc_p           << std::endl;
+    os << "-- Pixel values          = " << pixelValues_p  << std::endl;
+    os << "-- World values          = " << worldValues_p  << std::endl;
   }
   
   // ============================================================================
@@ -177,19 +187,68 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  void TabularCoordinate::h5write (hid_t const &groupID)
-  {}
-  
-  void TabularCoordinate::h5write (hid_t const &locationID,
-				   std::string const &name)
-  {}
+  //_____________________________________________________________________________
+  //                                                                       h5read
   
   void TabularCoordinate::h5read (hid_t const &groupID)
   {}
   
+  //_____________________________________________________________________________
+  //                                                                       h5read
+  
   void TabularCoordinate::h5read (hid_t const &locationID,
 				  std::string const &name)
-  {}
+  {
+    hid_t groupID (0);
+    
+    groupID = H5Gopen1 (locationID,
+			name.c_str());
+    
+    if (groupID) {
+      h5read (groupID);
+    } else {
+      std::cerr << "[TabularCoordinate::h5read] Error opening group "
+		<< name 
+		<< std::endl;
+    }
+    
+    H5Gclose (groupID);
+  }
   
+  //_____________________________________________________________________________
+  //                                                                      h5write
   
+  void TabularCoordinate::h5write (hid_t const &groupID)
+  {
+    DAL::h5set_attribute( groupID, "COORDINATE_TYPE", name() );
+    DAL::h5set_attribute( groupID, "NOF_AXES",        nofAxes_p );
+    DAL::h5set_attribute( groupID, "AXIS_NAMES",      axisNames_p );
+    DAL::h5set_attribute( groupID, "AXIS_UNITS",      axisUnits_p );
+    DAL::h5set_attribute( groupID, "CRPIX",           refPixel_p );
+    DAL::h5set_attribute( groupID, "CRVAL",           refValue_p );
+    DAL::h5set_attribute( groupID, "CDELT",           increment_p );
+    DAL::h5set_attribute( groupID, "PC",              pc_p );
+    DAL::h5set_attribute( groupID, "PIXEL_VALUES",    pixelValues_p );
+    DAL::h5set_attribute( groupID, "WORLD_VALUES",    worldValues_p );
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                      h5write
+  
+  void TabularCoordinate::h5write (hid_t const &locationID,
+				   std::string const &name)
+  {
+    hid_t groupID (0);
+    // create HDF5 group
+    groupID = H5Gcreate( locationID,
+			 name.c_str(),
+			 H5P_DEFAULT,
+			 H5P_DEFAULT,
+			 H5P_DEFAULT );
+    // write coordinate attributes
+    h5write (groupID);
+    // close the group after write
+    H5Gclose (groupID);
+  }
+    
 } // Namespace DAL -- end

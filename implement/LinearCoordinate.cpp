@@ -113,23 +113,7 @@ namespace DAL { // Namespace DAL -- begin
   
   void LinearCoordinate::copy (LinearCoordinate const &other)
   {
-    /* Copy basic attributes */
-    coordinateType_p = other.coordinateType_p;
-    nofAxes_p        = other.nofAxes_p;
-
-    /* Resize internal arrays */
-    axisNames_p.resize(nofAxes_p);
-    axisUnits_p.resize(nofAxes_p);
-    refValue_p.resize(nofAxes_p);
-    refPixel_p.resize(nofAxes_p);
-    increment_p.resize(nofAxes_p);
-
-    /* Copy the values */
-    axisNames_p = other.axisNames_p;
-    axisUnits_p = other.axisUnits_p;
-    refValue_p  = other.refValue_p;
-    refPixel_p  = other.refPixel_p;
-    increment_p = other.increment_p;    
+    Coordinate::copy (other);
   }
 
   // ============================================================================
@@ -141,8 +125,7 @@ namespace DAL { // Namespace DAL -- begin
   void LinearCoordinate::summary (std::ostream &os)
   {
     os << "[LinearCoordinate] Summary of internal parameters." << std::endl;
-    os << "-- Coordinate type       = " << type()         << std::endl;
-    os << "-- Coordinate name       = " << name()         << std::endl;
+    os << "-- Coordinate type       = " << type() << " / " <<  name() << std::endl;
     os << "-- nof. axes             = " << nofAxes_p      << std::endl;
     os << "-- World axis names      = " << axisNames_p    << std::endl;
     os << "-- World axis units      = " << axisUnits_p    << std::endl;
@@ -159,6 +142,28 @@ namespace DAL { // Namespace DAL -- begin
   //  Methods
   //
   // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                       h5read
+  
+  void LinearCoordinate::h5read (hid_t const &locationID,
+				 std::string const &name)
+  {
+    hid_t groupID (0);
+    
+    groupID = H5Gopen1 (locationID,
+			name.c_str());
+    
+    if (groupID) {
+      h5read (groupID);
+    } else {
+      std::cerr << "[LinearCoordinate::h5read] Error opening group "
+		<< name 
+		<< std::endl;
+    }
+    
+    H5Gclose (groupID);
+  }
   
   //_____________________________________________________________________________
   //                                                                       h5read
@@ -199,6 +204,25 @@ namespace DAL { // Namespace DAL -- begin
     } else {
     }
   }
+  
+  //_____________________________________________________________________________
+  //                                                                      h5write
+  
+  void LinearCoordinate::h5write (hid_t const &locationID,
+				  std::string const &name)
+  {
+    hid_t groupID (0);
+    // create HDF5 group
+    groupID = H5Gcreate( locationID,
+			 name.c_str(),
+			 H5P_DEFAULT,
+			 H5P_DEFAULT,
+			 H5P_DEFAULT );
+    // write coordinate attributes
+    h5write (groupID);
+    // close the group after write
+    H5Gclose (groupID);
+  }  
   
   //_____________________________________________________________________________
   //                                                                      h5write

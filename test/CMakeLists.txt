@@ -42,14 +42,10 @@ set (tests
   tTBB_DipoleDataset
   tTBB_StationGroup
   tTBB_Timeseries
+  tDirectionCoordinate
+  tLinearCoordinate
+  tTabularCoordinate
   )
-
-if (DAL_EXPERIMENTAL_CODE)
-  list ( APPEND tests
-    tLinearCoordinate
-    tTabularCoordinate
-    )
-endif (DAL_EXPERIMENTAL_CODE)
 
 ## Build instructions
 
@@ -120,11 +116,9 @@ if (DAL_ENABLE_TESTING)
   add_test(tdal tdal)
   add_test(tEnumerations tEnumerations)
   add_test(tLOFAR_Image tLOFAR_Image)
-  
-  if (DAL_EXPERIMENTAL_CODE)
-    add_test(tLinearCoordinate tLinearCoordinate)
-    add_test(tTabularCoordinate tTabularCoordinate)
-  endif (DAL_EXPERIMENTAL_CODE)
+  add_test(tDirectionCoordinate tDirectionCoordinate)
+  add_test(tLinearCoordinate tLinearCoordinate)
+  add_test(tTabularCoordinate tTabularCoordinate)
   
   ## -----------------------------------------------------------------
   ## [2] Processing tests which require sample datasets

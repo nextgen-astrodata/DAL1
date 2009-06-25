@@ -252,15 +252,15 @@ namespace DAL { // Namespace DAL -- begin
     virtual void h5write (hid_t const &locationID) = 0;
 
     //! Write the coordinate object to a HDF5 file
-    void h5write (hid_t const &locationID,
-		  std::string const &name);
+    virtual void h5write (hid_t const &locationID,
+			  std::string const &name) = 0;
     
     //! Read the coordinate object from a HDF5 file
     virtual void h5read (hid_t const &locationID) = 0;
     
     //! Read the coordinate object from a HDF5 file
-    void h5read (hid_t const &groupID,
-		 std::string const &name);
+    virtual void h5read (hid_t const &groupID,
+			 std::string const &name) = 0;
 
   protected:
     

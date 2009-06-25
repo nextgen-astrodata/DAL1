@@ -88,19 +88,15 @@ set (dal_sources
   TBB_Timeseries.cpp
   BFRaw.cpp
   dalFITS.cpp
-)
+  Coordinate.cpp
+  DirectionCoordinate.cpp
+  LinearCoordinate.cpp
+  TabularCoordinate.cpp
+  )
 
 if ( HAVE_CASACORE )
   list ( APPEND dal_sources dalLopesEvent.cpp )
 endif ( HAVE_CASACORE )
-
-if (DAL_EXPERIMENTAL_CODE)
-  list ( APPEND dal_sources
-    Coordinate.cpp
-    LinearCoordinate.cpp
-    TabularCoordinate.cpp
-    )
-endif (DAL_EXPERIMENTAL_CODE)
 
 #if (HAVE_BLITZ)
 #  list (APPEND dal_sources LOFAR_AntennaArray.cpp)

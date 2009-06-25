@@ -47,17 +47,15 @@
 #include <lattices/Lattices/TiledShape.h>
 #include <tables/Tables/TiledFileAccess.h>
 #include <lattices/Lattices/LatticeBase.h>
-#include <lattices/Lattices/LatticeIterator.h>			// Iterator over lattices
-#include <images/Images/ImageOpener.h>				// wrapper class for
-#include <images/Images/FITSImage.h>				// high-level FITSImage interface
+#include <lattices/Lattices/LatticeIterator.h>   // Iterator over lattices
+#include <images/Images/ImageOpener.h>		 // wrapper class for
+#include <images/Images/FITSImage.h>		 // high-level FITSImage interface
 #include <images/Images/HDF5Image.h>
 #include <images/Images/PagedImage.h>
 #include <tables/Tables/TableDesc.h>
 #include <tables/Tables/SetupNewTab.h>
 #include <tables/Tables/Table.h>
 #include <tables/Tables/TableRecord.h>
-
-using namespace casa;
 
 namespace DAL {
   
@@ -86,16 +84,16 @@ namespace DAL {
   //  std::string filename;
 
     //! CASAcore lattice handle
-    Lattice<Float>* lattice;	// casacore Lattice interface to image
-
- 
+    casa::Lattice<casa::Float>* lattice;
+    
+    
     //! dimensions of FITS image
     std::vector<unsigned long long> dimensions;
-
+    
     /*
     //! No. of axes in FITS file
-//     long naxis;
-
+    //     long naxis;
+    
  
     //! Current hdu (chdu)
     int chdu;
@@ -110,7 +108,7 @@ namespace DAL {
 //     double bscale;
   */
 
-
+    
     //! define types of bins
     enum DALbinType {
       frequency,
@@ -118,7 +116,7 @@ namespace DAL {
     };
     
     DALbinType binType;
-
+    
     //! define bin units (Hz, MHz, etc)
     enum DALbinUnit {
       Hz,
@@ -127,7 +125,7 @@ namespace DAL {
     };
     //! Bin type of the image
     DALbinUnit binUnit;
-
+    
     //! frequency bins (central frequencies) or lambda squareds
     std::vector<double> bins;
 
@@ -149,12 +147,21 @@ namespace DAL {
 
     //________________________________________________________________
     //                                        Construction/Destruction
-    
+
+    //! Default constructor
     dalFITS ();
-    dalFITS (const std::string &, int mode);   
-    ~dalFITS ();    
+    //! Argumented constructor
+    dalFITS (const std::string &,
+	     int mode);   
+    //! Copy constructor
     dalFITS (dalFITS const& other);
-    dalFITS(dalFITS const &other, bool previous, bool current, bool following);
+    //! Copy constructor
+    dalFITS(dalFITS const &other,
+	    bool previous,
+	    bool current,
+	    bool following);
+    //! Destructor
+    ~dalFITS ();
     
     //________________________________________________________________
     // 
@@ -192,12 +199,21 @@ namespace DAL {
     int getImgType();
     int getImgDim();
     void getImgSize();
-    void getImgSize(int maxdim,  long *naxes);
-    void getImgParam(int maxdim,  int &bitpix, int &naxis, long *naxes);
-    void createImg(int bitpix, int naxis, long *naxes);
-    void readPix(int datatype, long *fpixel, 
-                  long nelements, void *nulval, void *array, 
-                  int *anynul);
+    void getImgSize(int maxdim,
+		    long *naxes);
+    void getImgParam(int maxdim,
+		     int &bitpix,
+		     int &naxis,
+		     long *naxes);
+    void createImg(int bitpix,
+		   int naxis,
+		   long *naxes);
+    void readPix(int datatype,
+		 long *fpixel, 
+		 long nelements,
+		 void *nulval,
+		 void *array, 
+		 int *anynul);
     void writePix(int datatype, 
 		  long *fpixel, 
 		  long nelements, 
@@ -218,31 +234,53 @@ namespace DAL {
 		      long *fpixel,
 		      long *lpixel, 
 		      double *array); 
-
-      
+    
+    
     // ===========================================================
     //
     // Header access functions
     //
     // ===========================================================
-
+    
     //===============================================================
     //
     // Methods for reading keywords and records from a FITS file
     //
     //===============================================================
+    
+    //! Get size of Header space of current HDU    
+    void getHDRspace (int &keysexist,
+		      int &morekeys);
+    //! Get a record from the current HDU
+    void readRecord (int keynum,
+		     std::string record); 
+    //! Get the record card from the current HDU
+    void readCard (std::string keyname,
+		   std::string record);
+    //
+    void readKeyn (int keynum,
+		   std::string keyname,
+		   std::string value,
+		   std::string comment);
+    //
+    void readKey(int datatype,
+		 std::string keyname,
+		 void *value,
+		 std::string comment);
+    //
+    void readKeyword(std::string keyname,
+		     std::string value,
+		     std::string comment);
+    //
+    void findNextKey(char **inclist,
+		     int ninc,
+		     char **exclist,
+		     int nexc,
+		     std::string card);
+    //
+    void readKeyUnit(std::string keyname,
+		     std::string unit);
 
-    void getHDRspace(int &keysexist, int &morekeys);
-    void readRecord(int keynum, std::string record); 
-    void readCard(std::string keyname, std::string record);
-    void readKeyn(int keynum, std::string keyname, std::string value, std::string comment);
-    void readKey(int datatype, std::string keyname, void *value, std::string comment);
-    void readKeyword(std::string keyname, std::string value, std::string comment);
-    void findNextKey(char **inclist, int ninc, char **exclist, int nexc, std::string card);
-    void readKeyUnit(std::string keyname, std::string unit);
-    
-    
-    
     //===============================================================
     //
     // Methods for writing keywords and records to a FITS file
@@ -316,12 +354,20 @@ namespace DAL {
     //
     // ============================================================================  
 
-    void readPlane(double *plane, const unsigned long z, void *nulval=NULL);
-
-    void readLine(double *line, const unsigned long x, const unsigned long y, void *nulval=NULL);
-
-    void readSubCube(double *subCube, const unsigned long x_pos, const unsigned long y_pos, const unsigned long x_size, const unsigned long y_size);
+    void readPlane (double *plane,
+		    const unsigned long z,
+		    void *nulval=NULL);
     
+    void readLine (double *line,
+		   const unsigned long x,
+		   const unsigned long y,
+		   void *nulval=NULL);
+
+    void readSubCube (double *subCube,
+		      const unsigned long x_pos,
+		      const unsigned long y_pos,
+		      const unsigned long x_size,
+		      const unsigned long y_size);
 
     // ============================================================================
     //
@@ -329,7 +375,11 @@ namespace DAL {
     //
     // ============================================================================  
 
-    void writePlane(double *plane, const long x, const long y, const long z, void *nulval=NULL);
+    void writePlane (double *plane,
+		     const long x,
+		     const long y,
+		     const long z,
+		     void *nulval=NULL);
 
     void writeLine(double *line, const long x, const long y, void *nulval=NULL);
 

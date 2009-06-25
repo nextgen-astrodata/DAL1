@@ -21,8 +21,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef LINEARCOORDINATE_H
-#define LINEARCOORDINATE_H
+#ifndef DIRECTIONCOORDINATE_H
+#define DIRECTIONCOORDINATE_H
 
 // Standard library header files
 #include <iostream>
@@ -34,17 +34,17 @@
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class LinearCoordinate
+    \class DirectionCoordinate
     
     \ingroup DAL
     
-    \brief Brief description for class LinearCoordinate
+    \brief Brief description for class DirectionCoordinate
     
     \author Lars B&auml;hren
 
     \date 2009/06/24
 
-    \test tLinearCoordinate.cpp
+    \test tDirectionCoordinate.cpp
     
     <h3>Prerequisite</h3>
     
@@ -57,50 +57,84 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class LinearCoordinate : public Coordinate {
+  class DirectionCoordinate : public Coordinate {
+
+    //! Reference code for the celestial coordinate system
+    std::string system_p;
+    //! Reference code for the spherical map projection
+    std::string projection_p;
+    //! Optional parameters to the projection
+    std::vector<double> projectionParam_p;
+    //! Longpole
+    double longpole_p;
+    //! Latpole
+    double latpole_p;
     
   public:
     
     // ------------------------------------------------------------- Construction
     
     //! Default constructor
-    LinearCoordinate ();
+    DirectionCoordinate (std::string const &system="J2000",
+			 std::string const &projection="SIN");
     //! Argumented constructor
-    LinearCoordinate (double const &nofAxes);
-    //! Argumented constructor
-    LinearCoordinate (double const &nofAxes,
-		      std::vector<std::string> const &axisNames,
-		      std::vector<std::string> const &axisUnits,
-		      std::vector<double> const &refValue,
-		      std::vector<double> const &refPixel,
-		      std::vector<double> const &increment,
-		      std::vector<double> const &pc);
+    DirectionCoordinate (std::vector<std::string> const &axisNames,
+			 std::vector<std::string> const &axisUnits,
+			 std::vector<double> const &refValue,
+			 std::vector<double> const &refPixel,
+			 std::vector<double> const &increment,
+			 std::vector<double> const &pc,
+			 std::string const &system="J2000",
+			 std::string const &projection="SIN");
     //! Copy constructor
-    LinearCoordinate (LinearCoordinate const &other);
+    DirectionCoordinate (DirectionCoordinate const &other);
     
     // -------------------------------------------------------------- Destruction
 
     //! Destructor
-    ~LinearCoordinate ();
+    ~DirectionCoordinate ();
     
     // ---------------------------------------------------------------- Operators
     
     /*!
       \brief Overloading of the copy operator
       
-      \param other -- Another LinearCoordinate object from which to make a copy.
+      \param other -- Another DirectionCoordinate object from which to make a copy.
     */
-    LinearCoordinate& operator= (LinearCoordinate const &other); 
+    DirectionCoordinate& operator= (DirectionCoordinate const &other); 
     
     // --------------------------------------------------------------- Parameters
+
+    //! Get the projection parameters
+    inline std::vector<double> projectionParameters () {
+      return projectionParam_p;
+    }
+    //! Set the projection parameters
+    inline void setProjectionParameters (std::vector<double> const &param) {
+      projectionParam_p.resize(param.size());
+      projectionParam_p = param;
+    }
+
+    inline double longpole () {
+      return longpole_p;
+    }
+    inline void setLongpole (double const &longpole) {
+      longpole_p = longpole;
+    }
+    inline double latpole () {
+      return latpole_p;
+    }
+    inline void setLatpole (double const &latpole) {
+      latpole_p = latpole;
+    }
     
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, LinearCoordinate.
+      \return className -- The name of the class, DirectionCoordinate.
     */
     inline std::string className () const {
-      return "LinearCoordinate";
+      return "DirectionCoordinate";
     }
 
     /*!
@@ -135,15 +169,26 @@ namespace DAL { // Namespace DAL -- begin
 
   private:
     
+    //! Initialize internal parameters
+    inline void init (std::string const &system,
+		      std::string const &projection)
+    {
+      system_p          = system;
+      projection_p      = projection;
+      projectionParam_p = std::vector<double>(1,0.0);
+      longpole_p        = 0.0;
+      latpole_p         = 0.0;
+    }
+    
     //! Unconditional copying
-    void copy (LinearCoordinate const &other);
+    void copy (DirectionCoordinate const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class LinearCoordinate -- end
+  }; // Class DirectionCoordinate -- end
   
 } // Namespace DAL -- end
 
-#endif /* LINEARCOORDINATE_H */
+#endif /* DIRECTIONCOORDINATE_H */
   

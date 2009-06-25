@@ -21,14 +21,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <LinearCoordinate.h>
+#include <DirectionCoordinate.h>
 
 /*!
-  \file tLinearCoordinate.cc
+  \file tDirectionCoordinate.cc
 
   \ingroup DAL
 
-  \brief A collection of test routines for the LinearCoordinate class
+  \brief A collection of test routines for the DirectionCoordinate class
  
   \author Lars B&auml;hren
  
@@ -42,20 +42,20 @@ using std::endl;
 //                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new LinearCoordinate object
+  \brief Test constructors for a new DirectionCoordinate object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
 int test_constructors ()
 {
-  cout << "\n[tLinearCoordinate::test_constructors]\n" << endl;
+  cout << "\n[tDirectionCoordinate::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   
   cout << "[1] Testing default constructor ..." << endl;
   try {
-    DAL::LinearCoordinate coord;
+    DAL::DirectionCoordinate coord;
     //
     coord.summary(); 
   } catch (std::string message) {
@@ -63,17 +63,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[2] Testing argumented constructor ..." << endl;
-  try {
-    DAL::LinearCoordinate coord (3);
-    //
-    coord.summary(); 
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  cout << "[3] Testing fully argumented constructor ..." << endl;
+  cout << "[2] Testing fully argumented constructor ..." << endl;
   try {
     unsigned int nofAxes (2);
     std::vector<std::string> worldAxisNames (nofAxes);
@@ -88,32 +78,19 @@ int test_constructors ()
     worldAxisUnits[0] = "m";
     worldAxisUnits[1] = "s";
     //
-    DAL::LinearCoordinate coord (nofAxes,
-				 worldAxisNames,
-				 worldAxisUnits,
-				 refValue,
-				 refPixel,
-				 increment,
-				 pc);
+    DAL::DirectionCoordinate coord (worldAxisNames,
+				    worldAxisUnits,
+				    refValue,
+				    refPixel,
+				    increment,
+				    pc);
     //
     coord.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
-  
-  cout << "[4] Testing copy constructor ..." << endl;
-  try {
-    DAL::LinearCoordinate coord (3);
-    coord.summary();
-    //
-    DAL::LinearCoordinate coordCopy (coord);
-    coordCopy.summary();
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-  
+
   return nofFailedTests;
 }
 
@@ -121,26 +98,25 @@ int test_constructors ()
 //                                                                test_parameters
 
 /*!
-  \brief Test access to the interal parameters of a LinearCoordinate object
+  \brief Test access to the interal parameters of a DirectionCoordinate object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
 int test_parameters ()
 {
-  cout << "\n[tLinearCoordinate::test_parameters]\n" << endl;
+  cout << "\n[tDirectionCoordinate::test_parameters]\n" << endl;
 
   int nofFailedTests (0);
-  unsigned int nofAxes (2);
-  DAL::LinearCoordinate coord (nofAxes);
+  DAL::DirectionCoordinate coord;
 
   cout << "[1] Adjust world axis names ..." << endl;
   try {
     std::vector<std::string> names = coord.axisNames();
     cout << names << endl;
 
-    names[0] = "Time";
-    names[1] = "Frequency";
+    names[0] = "Lon";
+    names[1] = "Lat";
 
     coord.setAxisNames(names);
     cout << coord.axisNames() << endl;
@@ -155,8 +131,8 @@ int test_parameters ()
     std::vector<std::string> units = coord.axisUnits();
     cout << units << endl;
 
-    units[0] = "s";
-    units[1] = "Hz";
+    units[0] = "rad";
+    units[1] = "rad";
 
     coord.setAxisUnits(units);
     cout << coord.axisUnits() << endl;
@@ -171,8 +147,8 @@ int test_parameters ()
     std::vector<double> refValue = coord.refValue();
     cout << refValue << endl;
 
-    refValue[0] = 0.1;
-    refValue[1] = 30e06;
+    refValue[0] = -0.1;
+    refValue[1] = 0.1;
 
     coord.setRefValue(refValue);
     cout << coord.refValue() << endl;
@@ -222,35 +198,43 @@ int test_parameters ()
 
 int test_methods ()
 {
-  cout << "\n[tLinearCoordinate::test_methods]\n" << endl;
+  cout << "\n[tDirectionCoordinate::test_methods]\n" << endl;
 
   int nofFailedTests (0);
-  std::string filename ("tLinearCoordinate.h5");
+  std::string filename ("tDirectionCoordinate.h5");
   
   unsigned int nofAxes (2);
   std::vector<std::string> worldAxisNames (nofAxes);
   std::vector<std::string> worldAxisUnits (nofAxes);
-  std::vector<double> refValue (nofAxes,0.0);
+  std::vector<double> refValue (nofAxes);
   std::vector<double> refPixel (nofAxes,0.0);
   std::vector<double> increment (nofAxes,1.0);
   std::vector<double> pc (nofAxes*nofAxes);
+  std::vector<double> param (3);
 
-  worldAxisNames[0] = "Length";
-  worldAxisNames[1] = "Time";
-  worldAxisUnits[0] = "m";
-  worldAxisUnits[1] = "s";
+  worldAxisNames[0] = "Longitude";
+  worldAxisNames[1] = "Latitude";
+  worldAxisUnits[0] = "deg";
+  worldAxisUnits[1] = "deg";
+  refValue[0]       = 0;
+  refValue[1]       = 90;
   pc[0]             = 1;
   pc[1]             = 0;
   pc[2]             = 0;
   pc[3]             = 1;
+  param[0] = 1;
+  param[1] = 2;
+  param[2] = 3;
 
-  DAL::LinearCoordinate coord (nofAxes,
-				 worldAxisNames,
-				 worldAxisUnits,
-				 refValue,
-				 refPixel,
-				 increment,
-				 pc);
+  DAL::DirectionCoordinate coord (worldAxisNames,
+				  worldAxisUnits,
+				  refValue,
+				  refPixel,
+				  increment,
+				  pc);
+  coord.setLongpole(0);
+  coord.setLatpole(90);
+  coord.setProjectionParameters (param);
   coord.summary();
 
   cout << "[1] Write coordinate to a HDF5 file ..." << endl;
@@ -267,7 +251,7 @@ int test_methods ()
     coord.h5write(fileID);
 
     cout << "-- Write the coordinate to new group within the file ..." << endl;
-    coord.h5write(fileID,"LinearCoordinate");
+    coord.h5write(fileID,"DirectionCoordinate");
 
     cout << "-- Close the HDF5 file ..." << endl;
     H5Fclose(fileID);
@@ -286,12 +270,12 @@ int test_methods ()
 		      H5P_DEFAULT);
 
     cout << "-- Read the coordinate from the root group ..." << endl;
-    DAL::LinearCoordinate coord1;
+    DAL::DirectionCoordinate coord1;
     coord1.h5read(fileID);
     coord1.summary();
 
     cout << "-- Read the coordinate from a group within the file ..." << endl;
-    coord.h5read(fileID,"LinearCoordinate");
+    coord.h5read(fileID,"DirectionCoordinate");
     coord1.summary();
     
     cout << "-- Close the HDF5 file ..." << endl;

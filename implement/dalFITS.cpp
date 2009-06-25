@@ -85,7 +85,6 @@ namespace DAL
     }
   }
 
-
   /*!
     \brief Copy constructor that copies the whole FITS file
 
@@ -845,6 +844,8 @@ namespace DAL
     }
   }
 
+  //_____________________________________________________________________________
+  //                                                                  readSubCube
 
   /*!
     \brief Read a subCube from a FITS image
@@ -855,7 +856,11 @@ namespace DAL
     \param x_size - size in x direction in pixels
     \param y_size - size in y direction in pixels
   */
-  void dalFITS::readSubCube(double *subCube, unsigned long x_pos, unsigned long y_pos, unsigned long x_size, unsigned long y_size)
+  void dalFITS::readSubCube (double *subCube,
+			     unsigned long x_pos,
+			     unsigned long y_pos,
+			     unsigned long x_size,
+			     unsigned long y_size)
   {
     long fpixel[3];	// first pixel definition
     long lpixel[3];	// last pixel definition
@@ -1003,8 +1008,6 @@ namespace DAL
 
 
   /*!
-    \brief Get size of Header space of current HDU
-    
     \param &keysexist - number of existing keywords (without END)
     \param &morekeys - morekeys=-1 if the header has not yet been closed
   */
@@ -1019,8 +1022,6 @@ namespace DAL
 
 
   /*!
-    \brief Get a record from the current HDU
-    
     \param keynum - nth key to read, first keyword in the header is at keynum=1
     \param record - write the entire 80-character header record into this string
   */
@@ -1034,8 +1035,6 @@ namespace DAL
   }
 
   /*!
-    \brief Get the record card from the current HDU
-    
     \param keyname - name of key to read
     \param record - write the entire 80-character header record into this string
   */
