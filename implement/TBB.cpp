@@ -147,7 +147,8 @@ namespace DAL {
     inBufProcessID = inBufStorID = 0;
     maxWaitingFrames = 0;
     noFramesDropped = 0;
-    udpBuff_p = inputBuffer_P[0];
+    inputBuffer_P = new char [(INPUT_BUFFER_SIZE*UDP_PACKET_BUFFER_SIZE)];
+    udpBuff_p = inputBuffer_P;
 #endif 
     /* Initialization of public data */
 
@@ -208,6 +209,9 @@ namespace DAL {
         delete rawfile_p;
         rawfile_p = 0;
       }
+#ifdef USE_INPUT_BUFFER
+    delete [] inputBuffer_P;
+#endif
   }
 
   // ============================================================================
@@ -460,8 +464,8 @@ namespace DAL {
 	newBufID = inBufStorID;
       };
       //perform the actual read
-      rr = recvfrom( main_socket, inputBuffer_P[newBufID], UDP_PACKET_BUFFER_SIZE, 0,
-                       (sockaddr *) &incoming_addr, &socklen);
+      rr = recvfrom( main_socket, (inputBuffer_P + (newBufID*UDP_PACKET_BUFFER_SIZE)), 
+		     UDP_PACKET_BUFFER_SIZE, 0, (sockaddr *) &incoming_addr, &socklen);
       nFramesWaiting++;
       inBufStorID = newBufID;
     };
@@ -472,8 +476,8 @@ namespace DAL {
       if (select(main_socket + 1, &readSet, NULL, NULL, &readTimeout) > 0 ) {
 	inBufStorID++;
 	if (inBufStorID >= INPUT_BUFFER_SIZE) { inBufStorID =0; }
-	rr = recvfrom( main_socket, inputBuffer_P[inBufStorID], UDP_PACKET_BUFFER_SIZE, 0,
-                       (sockaddr *) &incoming_addr, &socklen);	
+	rr = recvfrom( main_socket, (inputBuffer_P+(inBufStorID*UDP_PACKET_BUFFER_SIZE)), 
+		       UDP_PACKET_BUFFER_SIZE, 0, (sockaddr *) &incoming_addr, &socklen);	
       } else {
 	// we waited for "timeoutRead_p" but still no data -> end of data
         cout << "TBB::readSocketBuffer: Data stopped coming" << endl;
@@ -490,7 +494,7 @@ namespace DAL {
 #endif
     inBufProcessID++;
     if (inBufProcessID >= INPUT_BUFFER_SIZE) { inBufProcessID =0; };
-    udpBuff_p = inputBuffer_P[inBufProcessID];
+    udpBuff_p = (inputBuffer_P + (inBufProcessID*UDP_PACKET_BUFFER_SIZE));
     return SUCCESS; 
   };
 #endif

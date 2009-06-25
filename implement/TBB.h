@@ -177,7 +177,8 @@ namespace DAL {
     //!pointers (array indices) for the last buffer processed and the last buffer written
     int inBufProcessID,inBufStorID;
     //!the Input Buffer
-    char inputBuffer_P[INPUT_BUFFER_SIZE][UDP_PACKET_BUFFER_SIZE];
+    //    char inputBuffer_P[INPUT_BUFFER_SIZE][UDP_PACKET_BUFFER_SIZE];
+    char * inputBuffer_P;
     //!pointer to the UDP-datagram
     char *udpBuff_p;
     //!maximum number of frames waiting in the vBuf while reading
