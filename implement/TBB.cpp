@@ -477,6 +477,8 @@ namespace DAL {
       } else {
 	// we waited for "timeoutRead_p" but still no data -> end of data
         cout << "TBB::readSocketBuffer: Data stopped coming" << endl;
+	cout << "TBB::readSocketBuffer: Max no. of frames waiting: " << maxWaitingFrames
+	     << " number of desicarded frames: " << noFramesDropped << endl;
         return FAIL;
       };
     };
