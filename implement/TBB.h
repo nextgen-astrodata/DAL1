@@ -49,7 +49,14 @@
 
 //!size of the buffer for the UDP-datagram 
 // 1 byte larger than the frame size (subband-frames are smaller)
-#define UDP_BUFFER_SIZE 2141
+#define UDP_PACKET_BUFFER_SIZE 2141
+
+// switch for large input buffer
+// define this to activate the input buffer
+#define USE_INPUT_BUFFER
+// number of frames in the input buffer (50000 is ca. 100MB)
+//(the vBuf of the system on the storage nodes can store ca. 3600 frames!)
+#define INPUT_BUFFER_SIZE 50000
 
 namespace DAL {
   
@@ -166,8 +173,19 @@ namespace DAL {
     fd_set readSet;
     struct timeval timeoutStart_p;
     struct timeval timeoutRead_p;
+#ifdef USE_INPUT_BUFFER
+    //!pointers (array indices) for the last buffer processed and the last buffer written
+    int inBufProcessID,inBufStorID;
+    //!the Input Buffer
+    char inputBuffer_P[INPUT_BUFFER_SIZE][UDP_PACKET_BUFFER_SIZE];
+    //!pointer to the UDP-datagram
+    char *udpBuff_p;
+    //!maximum number of frames waiting in the vBuf while reading
+    int maxWaitingFrames;
+#else
     //!buffer for the UDP-datagram
-    char udpBuff_p[UDP_BUFFER_SIZE];
+    char udpBuff_p[UDP_PACKET_BUFFER_SIZE];
+#endif
     //!header of the TBB-frame 
     TBB_Header header;
     //!header of the TBB-frame 
@@ -188,9 +206,14 @@ namespace DAL {
     //char * stationstr;
     //! Unique identifier for an individual dipole
     char uid[10];
+#ifdef USE_INPUT_BUFFER
+    //! Read data from the socket and/or set udpBuff_p to next frame in buffer
+    int readSocketBuffer();
+#else    
     //! Read data from a socket
     int readsocket( unsigned int nbytes,
 		    char* buf);
+#endif
     UInt32 payload_crc;
     TransientSample tran_sample;
     SpectralSample spec_sample;
@@ -203,7 +226,9 @@ namespace DAL {
   public:
     
     bool first_sample;
-
+#ifdef USE_INPUT_BUFFER
+    int noFramesDropped;
+#endif
     //___________________________________________________________________________
     // Construction/Destruction
     

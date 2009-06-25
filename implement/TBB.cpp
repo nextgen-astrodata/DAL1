@@ -143,7 +143,12 @@ namespace DAL {
     rawfile_p         = NULL;
     real_part         = 0;
     imag_part         = 0;
-
+#ifdef USE_INPUT_BUFFER
+    inBufProcessID = inBufStorID = 0;
+    maxWaitingFrames = 0;
+    noFramesDropped = 0;
+    udpBuff_p = inputBuffer_P[0];
+#endif 
     /* Initialization of public data */
 
     first_sample = true;
@@ -390,6 +395,7 @@ namespace DAL {
   //_____________________________________________________________________________
   // Read data from a socket
 
+#ifndef USE_INPUT_BUFFER
   /*!
     \param nbytes -- Number of Bytes read
     \param buf    -- Buffer holding the read data
@@ -406,10 +412,16 @@ namespace DAL {
     int status;
     // waits for up to N seconds for data appearing in the socket
     if ( (status = select( main_socket + 1, &readSet, NULL, NULL, &readTimeout) ) )
-
       {
         rr = recvfrom( main_socket, buf, nbytes, 0,
                        (sockaddr *) &incoming_addr, &socklen);
+#ifdef DEBUGGING_MESSAGES
+	cout << "readRawSocketBlockHeader: Frame with " << rr << " bytes." << endl;
+	if (rr == nbytes) 
+	  {
+	    cout << "readRawSocketBlockHeader: Oversized packet received." << endl;
+	  };
+#endif
       }
     else
       {
@@ -425,24 +437,78 @@ namespace DAL {
 
     return SUCCESS;
   }
+#endif
+  //_____________________________________________________________________________
+  // Read data from a socket into the input buffer
+#ifdef USE_INPUT_BUFFER
+  int TBB::readSocketBuffer() 
+  {
+    struct timeval readTimeout;
+    FD_ZERO(&readSet);
+    FD_SET(main_socket, &readSet);
+    int newBufID, nFramesWaiting = 0;
+
+    //set timeout to zero (don't wait, just poll)
+    readTimeout.tv_sec = readTimeout.tv_usec = 0;
+    while (select(main_socket + 1, &readSet, NULL, NULL, &readTimeout) > 0 ) {
+      //there is a frame waiting in the vBuffer
+      newBufID = inBufStorID+1;
+      if (newBufID >= INPUT_BUFFER_SIZE) { newBufID =0; }
+      if (newBufID == inBufProcessID) {
+	//cerr << "TBB::readSocketBuffer: Buffer overflow! Overwriting last frame." << endl;
+	noFramesDropped++;
+	newBufID = inBufStorID;
+      };
+      //perform the actual read
+      rr = recvfrom( main_socket, inputBuffer_P[newBufID], UDP_PACKET_BUFFER_SIZE, 0,
+                       (sockaddr *) &incoming_addr, &socklen);
+      nFramesWaiting++;
+      inBufStorID = newBufID;
+    };
+    if (nFramesWaiting > maxWaitingFrames) { maxWaitingFrames = nFramesWaiting; };
+    if ( inBufStorID == inBufProcessID) {
+      // that means input buffer is empty
+      readTimeout = timeoutRead_p;
+      if (select(main_socket + 1, &readSet, NULL, NULL, &readTimeout) > 0 ) {
+	inBufStorID++;
+	if (inBufStorID >= INPUT_BUFFER_SIZE) { inBufStorID =0; }
+	rr = recvfrom( main_socket, inputBuffer_P[inBufStorID], UDP_PACKET_BUFFER_SIZE, 0,
+                       (sockaddr *) &incoming_addr, &socklen);	
+      } else {
+	// we waited for "timeoutRead_p" but still no data -> end of data
+        cout << "TBB::readSocketBuffer: Data stopped coming" << endl;
+        return FAIL;
+      };
+    };
+#ifdef DEBUGGING_MESSAGES
+    if (inBufStorID == inBufProcessID) {
+      cerr << "TBB::readSocketBuffer: Empty buffer at end of method!" << endl;
+      return Fail;
+    };
+#endif
+    inBufProcessID++;
+    if (inBufProcessID >= INPUT_BUFFER_SIZE) { inBufProcessID =0; };
+    udpBuff_p = inputBuffer_P[inBufProcessID];
+    return SUCCESS; 
+  };
+#endif
 
   //_____________________________________________________________________________
   // Read the 88-byte TBB frame header
 
   bool TBB::readRawSocketBlockHeader()
   {
-    // read the full UDP-datagram, as otherwise the remainder may be flushed by the OS
-    status = readsocket( UDP_BUFFER_SIZE, udpBuff_p );
+#ifdef USE_INPUT_BUFFER
+    // read data through the input buffer
+    status = readSocketBuffer();
+#else
+    // read a single full UDP-datagram, as otherwise the remainder may be flushed by the OS
+    status = readsocket( UDP_PACKET_BUFFER_SIZE, udpBuff_p );
+#endif
     if (FAIL == status) {
       return false;
     }
-#ifdef DEBUGGING_MESSAGES
-    cout << "readRawSocketBlockHeader: Frame with " << rr << " bytes." << endl;
-    if (rr == UDP_BUFFER_SIZE) 
-      {
-	cout << "readRawSocketBlockHeader: Oversized packet received." << endl;
-      };
-#endif
+
     // set the headerpointer to the just read data
     headerp_p = (TBB_Header*)udpBuff_p;
     
@@ -556,7 +622,7 @@ namespace DAL {
   
 	// Generic CRC16 method working on 16-bit unsigned data
 	// adapted from Python script by Gijs Schoonderbeek.
-	
+  
   uint16_t TBB::CRC16(uint16_t * buffer, uint32_t length)
   {
     uint16_t CRC = 0;
@@ -564,44 +630,41 @@ namespace DAL {
     const uint16_t bits = 16;
     uint32_t data = 0;
     const uint32_t CRC_div = (CRC_poly & 0x7fffffff) << 15;
-		
-		data = (buffer[0] & 0x7fffffff) << 16;
-	  for(uint32_t i=1; i<length; i++)
-    {
-      data += buffer[i];
-      for(uint16_t j=0; j<bits; j++)
+    
+    data = (buffer[0] & 0x7fffffff) << 16;
+    for(uint32_t i=1; i<length; i++)
       {
-        if ((data & 0x80000000) != 0)
-        { data ^= CRC_div; }
-        data &= 0x7fffffff;
-        data <<= 1;
+	data += buffer[i];
+	for(uint16_t j=0; j<bits; j++)
+	  {
+	    if ((data & 0x80000000) != 0)
+	      { data ^= CRC_div; }
+	    data &= 0x7fffffff;
+	    data <<= 1;
+	  }
       }
-    }
     CRC = data >> 16;
     return CRC;
   }
-	
-	// Check the CRC of a TBB frame header. Uses CRC16. Returns TRUE if OK, FALSE otherwise
-	bool TBB::headerCRC()
+  
+  // Check the CRC of a TBB frame header. Uses CRC16. Returns TRUE if OK, FALSE otherwise
+  bool TBB::headerCRC()
   { 
-		unsigned int seqnr = headerp_p->seqnr; // temporary; we need to zero this out for CRC check
-		headerp_p->seqnr = 0;
-		
+    unsigned int seqnr = headerp_p->seqnr; // temporary; we need to zero this out for CRC check
+    headerp_p->seqnr = 0;
+    
     uint16_t * headerBuf = reinterpret_cast<uint16_t*> (headerp_p); 
-		uint16_t CRC = this->CRC16(headerBuf, sizeof(TBB_Header) / sizeof(uint16_t));
-		headerp_p->seqnr = seqnr; // and set it back again
-		
+    uint16_t CRC = this->CRC16(headerBuf, sizeof(TBB_Header) / sizeof(uint16_t));
+    headerp_p->seqnr = seqnr; // and set it back again
+    
     return (CRC == 0);
   }
-	
-	
-	
-	//_____________________________________________________________________________
+  
+  
+  
+  //_____________________________________________________________________________
   // Check if the group for a given station exists within the HDF5 file
   
-	
-	
-	
   void TBB::stationCheck()
   {   
     char stationstr[10];
