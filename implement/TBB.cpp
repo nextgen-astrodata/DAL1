@@ -488,7 +488,7 @@ namespace DAL {
 	     << " inBufStorID: " << inBufStorID << " select-status:" << status 
 	     << " remaining-sec: " << readTimeout.tv_sec << " -usec: " << readTimeout.tv_usec << endl;
 	cout << "TBB::readSocketBuffer: Max no. of frames waiting: " << maxWaitingFrames
-	     << " number of desicarded frames: " << noFramesDropped << endl;
+	     << " number of discarded frames: " << noFramesDropped << endl;
         return FAIL;
       };
     };

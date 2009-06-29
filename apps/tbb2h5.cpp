@@ -391,7 +391,10 @@ int main(int argc, char *argv[])
               if ( !tbb.processTransientSocketDataBlock() )
                 break;
             }
-
+	  
+          // cleanup open groups, etc.
+          tbb.cleanup();
+	  
         } // while (true)
       
     }
