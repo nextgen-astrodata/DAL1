@@ -48,6 +48,7 @@ if (HAVE_BOOST)
   ## source files
   list (APPEND tests bf2h5)
   list (APPEND tests tbb2h5)
+  list (APPEND tests TBBraw2h5)
   ## linker instructions
   list (APPEND apps_link_libraries ${BOOST_LIBRARIES})
 else (HAVE_BOOST)

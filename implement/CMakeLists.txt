@@ -83,6 +83,7 @@ set (dal_sources
   Enumerations.cpp
   DataType.cpp
   TBB.cpp
+  TBBraw.cpp
   TBB_DipoleDataset.cpp
   TBB_StationGroup.cpp
   TBB_Timeseries.cpp
