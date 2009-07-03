@@ -81,12 +81,6 @@ namespace DAL { // Namespace DAL -- begin
     
     struct stat filestat;
     
-    if (dataset_p != NULL){
-      cout << "TBBraw::open_file: Closing old file!" << endl;
-      destroy();
-      init();
-    };
-
     if ((stat(filename.c_str(), &filestat) != 0) && (errno == ENOENT)) {
       cout << "TBBraw::open_file: Creating new dataset " << filename << endl;
       if (dataset_p != NULL) { 
