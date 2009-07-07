@@ -307,9 +307,8 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Print the column tables to the screen." )
     .def( "listColumns", &dalTable::listColumns_boost,
 	  "Return a list of the table columns." )
-    .def( "readRows", &dalTable::readRows,
-	  bpl::return_value_policy<bpl::return_opaque_pointer>(),
-	  "Read table rows." )
+//    .def( "readRows", &dalTable::readRows_boost,
+//	  "Read table rows." )
     .def( "getAttribute", &dalTable::getAttribute_boost,
 	  "Return the value of a column attribute." )
     .def( "findAttribute", &dalTable::findAttribute,

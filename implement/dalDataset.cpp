@@ -1449,10 +1449,10 @@ namespace DAL
     std::vector<int> chnkdims;
 
     for (int ii=0; ii<bpl::len(pydims); ii++)
-      dims.push_back(bpl::extract<int>(pydims[ii]));
+       dims.push_back(bpl::extract<int>(pydims[ii]));
 
     for (int ii=0; ii<bpl::len(cdims); ii++)
-      chnkdims.push_back(bpl::extract<int>(cdims[ii]));
+       chnkdims.push_back(bpl::extract<int>(cdims[ii]));
 
     long size = bpl::len(pydata);
     float * data = NULL;
@@ -1461,8 +1461,7 @@ namespace DAL
     for (int ii=0; ii<size; ii++)
       data[ii] = bpl::extract<float>(pydata[ii]);
 
-    dalArray * array = dalDataset::createFloatArray( arrayname, dims,
-                       data, chnkdims );
+    dalArray * array = createFloatArray( arrayname, dims, data, chnkdims );
 
     delete [] data;
 
@@ -1512,27 +1511,18 @@ namespace DAL
     status = H5Sget_simple_extent_dims(filespace, dims, NULL);
 
     int size = 1;
-    bpl::list dims_list;
+    std::vector<int> dimensions;
     for (int ii=0; ii<data_rank; ii++)
       {
         size *= dims[ii];
-        dims_list.append(dims[ii]);
+        dimensions.push_back(dims[ii]);
       }
 
     int * data = NULL;
     data = new int[size];
 
     status = H5LTread_dataset_int( h5fh_p, arrayname.c_str(), data );
-    bpl::list data_list;
-    // for each dimension
-    for (int ii=0; ii<size; ii++)
-      {
-        data_list.append(data[ii]);
-      }
-    bpl::numeric::array nadata(
-      data_list
-    );
-    nadata.setshape(dims_list);
+	bpl::numeric::array nadata = num_util::makeNum( (int*)data, dimensions );
     delete data;
     return nadata;
   }
@@ -1555,30 +1545,20 @@ namespace DAL
     status = H5Sget_simple_extent_dims(filespace, dims, NULL);
 
     int size = 1;
-    bpl::list dims_list;
+    std::vector<int> dimensions;
+
     for (int ii=0; ii<data_rank; ii++)
       {
         size *= dims[ii];
-        dims_list.append(dims[ii]);
+        dimensions.push_back(dims[ii]);
       }
 
     float * data = NULL;
     data = new float[size];
 
     status = H5LTread_dataset_float( h5fh_p, arrayname.c_str(), data );
-
-    bpl::list data_list;
-    // for each dimension
-    for (int ii=0; ii<size; ii++)
-      {
-        data_list.append(data[ii]);
-      }
-    bpl::numeric::array nadata(
-      bpl::make_tuple(
-        bpl::make_tuple(data_list)
-      )
-    );
-    nadata.setshape(dims_list);
+	bpl::numeric::array nadata = num_util::makeNum( (float*)data, dimensions );
+    delete data;
     return nadata;
   }
 
@@ -1645,14 +1625,85 @@ namespace DAL
   {
      return setAttribute( attrname, &data );
   }
+  bool dalDataset::setAttribute_char_vector( std::string attrname, bpl::list data )
+  {
+  	int size = bpl::len(data);
+    std::vector<char> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<char>(data[ii]));
+
+    return setAttribute( attrname, reinterpret_cast<char*>(&mydata[0]), size );
+  }
+  bool dalDataset::setAttribute_short_vector( std::string attrname, bpl::list data )
+  {
+  	int size = bpl::len(data);
+    std::vector<short> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<short>(data[ii]));
+
+    return setAttribute( attrname, reinterpret_cast<short*>(&mydata[0]), size );
+  }
+  bool dalDataset::setAttribute_int_vector( std::string attrname, bpl::list data )
+  {
+  	int size = bpl::len(data);
+    std::vector<int> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<int>(data[ii]));
+
+    return setAttribute( attrname, reinterpret_cast<int*>(&mydata[0]), size );
+  }
+  bool dalDataset::setAttribute_uint_vector( std::string attrname, bpl::list data )
+  {
+  	int size = bpl::len(data);
+    std::vector<uint> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<uint>(data[ii]));
+
+    return setAttribute( attrname, reinterpret_cast<uint*>(&mydata[0]), size );
+  }
+  bool dalDataset::setAttribute_long_vector( std::string attrname, bpl::list data )
+  {
+  	int size = bpl::len(data);
+    std::vector<long> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<long>(data[ii]));
+
+    return setAttribute( attrname, reinterpret_cast<long*>(&mydata[0]), size );
+  }
+  bool dalDataset::setAttribute_float_vector( std::string attrname, bpl::list data )
+  {
+  	int size = bpl::len(data);
+    std::vector<float> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<float>(data[ii]));
+
+    return setAttribute( attrname, reinterpret_cast<float*>(&mydata[0]), size );
+  }
+  bool dalDataset::setAttribute_double_vector( std::string attrname, bpl::list data )
+  {
+  	int size = bpl::len(data);
+    std::vector<double> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<double>(data[ii]));
+
+    return setAttribute( attrname, reinterpret_cast<double*>(&mydata[0]), size );
+  }
   bool dalDataset::setAttribute_string_vector( std::string attrname, bpl::list data )
   {
+  	int size = bpl::len(data);
     std::vector<std::string> mydata;
 
     for (int ii=0; ii<bpl::len(data); ii++)
       mydata.push_back(bpl::extract<std::string>(data[ii]));
 
-    return setAttribute_string( attrname, mydata );
+    return setAttribute( attrname, reinterpret_cast<std::string*>(&mydata[0]), size );
   }
 
 #endif  // end #ifdef PYTHON

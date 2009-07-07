@@ -79,8 +79,7 @@ uint open_and_close_hdf5_dataset()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   if ( DAL::FAIL == ds.close() )
     ret++;
@@ -95,8 +94,7 @@ uint create_hdf5_integer_array()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   // define dimensions of array
   vector<int> dims;
@@ -129,8 +127,7 @@ uint read_hdf5_integer_array()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   dalArray * array = ds.openArray( "int_array" );
   if ( NULL == array )
@@ -160,8 +157,7 @@ uint set_attributes_hdf5_dataset()
 
   uint ret = 0;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret = false;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   std::string sval = "string test value";
   if ( DAL::FAIL == ds.setAttribute( "STRING_ATTR", sval ) )
@@ -216,8 +212,7 @@ uint create_hdf5_float_array()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   // define dimensions of array
   vector<int> dims;
@@ -249,8 +244,7 @@ uint create_hdf5_complex_float_array()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   // define dimensions of array
   vector<int> dims;
@@ -287,8 +281,7 @@ uint set_attributes_hdf5_array()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   dalArray * array = NULL;
   array = ds.openArray( "int_array" );
@@ -351,8 +344,7 @@ uint create_hdf5_group()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   dalGroup * group = ds.createGroup( "group" );
   if ( NULL == group )
@@ -374,8 +366,7 @@ uint open_and_close_hdf5_group()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   dalGroup * group = NULL;
   group = ds.openGroup( "group" );
@@ -398,8 +389,7 @@ uint set_attribute_hdf5_group()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   dalGroup * group = NULL;
   group = ds.openGroup( "group" );
@@ -461,8 +451,7 @@ uint create_hdf5_group_subgroup()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   dalGroup * group = ds.openGroup("group");
   if ( NULL == group )
@@ -492,8 +481,7 @@ uint create_hdf5_integer_array_in_group()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   dalGroup * group = ds.openGroup("group");
   if ( NULL == group )
@@ -530,8 +518,7 @@ uint create_hdf5_float_array_in_group()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   dalGroup * group = ds.openGroup("group");
   if ( NULL == group )
@@ -568,8 +555,7 @@ uint create_hdf5_complex_float_array_in_group()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   dalGroup * group = ds.openGroup("group");
   if ( NULL == group )
@@ -611,8 +597,7 @@ uint create_hdf5_short_array_in_group()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   dalGroup * group = ds.openGroup("group");
   if ( NULL == group )
@@ -650,8 +635,7 @@ uint read_hdf5_dataset_attributes()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   std::string attr_name("INT_ATTR");
   int iattr = 0;
@@ -695,8 +679,7 @@ uint create_hdf5_table()
 
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   // create two identical tables - one at root level and one in a group
   dalTable * table_in_ds = ds.createTable( "table" );
@@ -773,8 +756,7 @@ uint list_groups()
   uint ret = 0;
   dalDataset ds;
 
-  if ( DAL::FAIL == ds.open( FILENAME ) )
-    ret++;
+  ds = dalDataset( FILENAME, "HDF5" );
 
   std::cerr << "Getting list of groups in file.\n";
 
@@ -828,13 +810,13 @@ int main()
       failed_tests += ret;
     }
 
-  std::cerr << "\n[ open_and_close_hdf5_dataset ]\n";
-  std::cerr << "-----------------------------------------------------\n";
-  if ( 0 != ( ret = open_and_close_hdf5_dataset() ) )
-    {
-      std::cerr << "FAIL\n";
-      failed_tests += ret;
-    }
+//  std::cerr << "\n[ open_and_close_hdf5_dataset ]\n";
+//  std::cerr << "-----------------------------------------------------\n";
+//  if ( 0 != ( ret = open_and_close_hdf5_dataset() ) )
+//    {
+//      std::cerr << "FAIL\n";
+//      failed_tests += ret;
+//    }
 
 // ----------- dataset attributes
 

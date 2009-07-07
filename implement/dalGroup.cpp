@@ -785,6 +785,22 @@ namespace DAL {
   {
      return setAttribute( attrname, &data );
   }
+//  bool setAttribute_char_vector( std::string attrname, bpl::list data );
+//  bool setAttribute_short_vector( std::string attrname, bpl::list data );
+//  bool setAttribute_int_vector( std::string attrname, bpl::list data );
+//  bool setAttribute_uint_vector( std::string attrname, bpl::list data );
+//  bool setAttribute_long_vector( std::string attrname, bpl::list data );
+//  bool setAttribute_float_vector( std::string attrname, bpl::list data );
+//  bool setAttribute_double_vector( std::string attrname, bpl::list data );
+//  bool setAttribute_string_vector( std::string attrname, bpl::list data )
+//    {
+//    std::vector<std::string> mydata;
+//
+//    for (int ii=0; ii<bpl::len(data); ii++)
+//      mydata.push_back(bpl::extract<std::string>(data[ii]));
+//
+//    return setAttribute_string( attrname, mydata );
+//  }
 
 #endif // end #ifdef PYTHON
 

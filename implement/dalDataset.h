@@ -269,6 +269,13 @@ namespace DAL
       bool setAttribute_float( std::string attrname, float data );
       bool setAttribute_double( std::string attrname, double data );
       bool setAttribute_string_boost( std::string attrname, std::string data );
+      bool setAttribute_char_vector( std::string attrname, bpl::list data );
+      bool setAttribute_short_vector( std::string attrname, bpl::list data );
+      bool setAttribute_int_vector( std::string attrname, bpl::list data );
+      bool setAttribute_uint_vector( std::string attrname, bpl::list data );
+      bool setAttribute_long_vector( std::string attrname, bpl::list data );
+      bool setAttribute_float_vector( std::string attrname, bpl::list data );
+      bool setAttribute_double_vector( std::string attrname, bpl::list data );
       bool setAttribute_string_vector( std::string attrname, bpl::list data );
 #endif
     };

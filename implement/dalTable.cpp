@@ -2146,9 +2146,11 @@ namespace DAL {
    *  wrapper for appendRow (hdf5)
    *
    *****************************************************************/
-  void dalTable::append_row_boost( bpl::object data )
+  bool dalTable::append_row_boost( bpl::numeric::array data )
   {
-    appendRow(&data);
+  	void * mydata = num_util::data(data);
+    appendRow(mydata);
+    return true;
   }
 
   // ------------------------------------------------------- listColumns_boost
@@ -2244,6 +2246,13 @@ namespace DAL {
     float * dta = (float*)getAttribute(attrname);
     return num_util::makeNum(((float*)dta),mydims);
   }
+  
+//  bpl::numeric::array dalTable::readRows_boost( long start, long nrecs )
+//  {
+//  	void * data_out;
+//    readRows((int*)data_out, start, nrecs);
+//    return num_util::makeNum(data_out);
+//  }
 
 #endif // PYTHON
 
