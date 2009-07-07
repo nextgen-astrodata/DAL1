@@ -1,9 +1,9 @@
 /*-------------------------------------------------------------------------*
- | $Id:: dalFITS.h 2126 2008-11-07 13:31:59Z baehren              $ |
+ | $Id:: dalFITS.h 2126 2008-11-07 13:31:59Z baehren                     $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2008                                                    *
- *   Sven Duscha (sduscha@mpa-garching.mpg.de)                                                        *
+ *   Sven Duscha (sduscha@mpa-garching.mpg.de)                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -35,35 +35,37 @@ namespace DAL
   //
   // ============================================================================
   
-  /*! 
-    \brief Default constructor, creating an initialised, but empty object
-  */
+  //_____________________________________________________________________________
+  //                                                                      dalFITS
+
   dalFITS::dalFITS()
   {
     // initialise critical pointers
-    fptr=NULL;
-    fitsstatus=0;
-    lattice=NULL;
+    fptr         = NULL;
+    fitsstatus_p = 0;
+    lattice_p    = NULL;
   }
 
 
-  /*! 
-    \brief Constructor with associated filename
+  //_____________________________________________________________________________
+  //                                                                      dalFITS
 
+  /*! 
     \param &filename - filename of FITS file
     \param iomode - I/O Read () OR Write 
   */
-  dalFITS::dalFITS(const string &filename, int iomode) 
+  dalFITS::dalFITS (const string &filename,
+		    int iomode) 
   {
-    fptr=NULL; 		// initialise FITS filepointer
-    fitsstatus=0;	// initialise FITS status
-    lattice=NULL;	// initialise casa lattice
+    fptr         = NULL;    // initialise FITS filepointer
+    fitsstatus_p = 0;       // initialise FITS status
+    lattice_p    = NULL;    // initialise casa lattice
   
     // Check if file exists: if it exists open in iomode
     if(fileExists(filename))
     {
       // Depending on iomode: OPEN for READING,WRITING, RW or CREATE a FITS file
-      if(fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus))
+      if(fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus_p))
       {
 	throw "dalFITS::open";	// get fits error from fitsstatus property later
       }
@@ -72,42 +74,50 @@ namespace DAL
     else
     {
       // if file didnt exist, create a new one ...
-      if(fits_create_file(&fptr, const_cast<char *>(filename.c_str()), &fitsstatus))
+      if(fits_create_file(&fptr, const_cast<char *>(filename.c_str()), &fitsstatus_p))
       {
 	throw "dalFITS::open could not create file";
       }
       
       // ... and open it
-      if(fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus))
+      if(fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus_p))
       {
 	throw "dalFITS::open";	// get fits error from fitsstatus property later
       }
     }
   }
 
+  //_____________________________________________________________________________
+  //                                                                      dalFITS
+
   /*!
     \brief Copy constructor that copies the whole FITS file
 
     \param other - dalFITS object to be copied to
   */
-  dalFITS::dalFITS(dalFITS const &other)
+  dalFITS::dalFITS (dalFITS const &other)
   {
-    if(fits_copy_file(fptr, other.fptr, 1, 1, 1, &fitsstatus))
-    {
-      throw "dalFITS::dalFITS copy constructor";
-    }
+    if(fits_copy_file(fptr, other.fptr, 1, 1, 1, &fitsstatus_p))
+      {
+	throw "dalFITS::dalFITS copy constructor";
+      }
   }
   
-
+  //_____________________________________________________________________________
+  //                                                                      dalFITS
+  
   /*! 
     \brief Copy constructor that copies a complete dalFITS object to another
-
+    
     \param &other - other dalFITS object to be copied to
     \param previous - copy previous (before CHDU) HDUs to other dalFITS object
     \param current - copy current HDU to other dalFITS object
     \param following - copy following (after CHDU) HDUs to other dalFITS object
   */
-  dalFITS::dalFITS(dalFITS const &other, bool previous, bool current, bool following)
+  dalFITS::dalFITS (dalFITS const &other,
+		    bool previous,
+		    bool current,
+		    bool following)
   {
     int previousInt=0, currentInt=0, followingInt=0;	// copy prev, current, following to other FITS file
   
@@ -118,12 +128,14 @@ namespace DAL
     if(following)
       followingInt=1;
   
-    if(fits_copy_file(fptr, other.fptr, previousInt, currentInt, followingInt, &fitsstatus))
+    if(fits_copy_file(fptr, other.fptr, previousInt, currentInt, followingInt, &fitsstatus_p))
     {
       throw "dalFITS::dalFITS copy constructor";
     }
   }
-  
+
+  //_____________________________________________________________________________
+  //                                                                     copyCHDU
   
   /*!
     \brief Copy constructor that copies only one HDU and appends it to another dalFITS object
@@ -135,7 +147,7 @@ namespace DAL
   {
     int morekeys=0;	// Don't reserve space for more keys
   
-    if(fits_copy_hdu(fptr, other.fptr, morekeys, &fitsstatus))
+    if(fits_copy_hdu(fptr, other.fptr, morekeys, &fitsstatus_p))
     {
       throw "dalFITS::dalFITS copy constructor";
     }
@@ -149,7 +161,10 @@ namespace DAL
   {
     this->close();		// close the FITS file
     
-    // deallocate memory: not necessary at the moment, since no memory allocated in constructor
+    /*
+     *  Deallocate memory: not necessary at the moment, since no memory allocated
+     *  in constructor
+     */
   }
 
   // ============================================================================
@@ -158,15 +173,16 @@ namespace DAL
   //
   // ============================================================================
  
+  //_____________________________________________________________________________
+  //                                                                     openData
 
   /*! 
-    \brief open a FITS file for read or readwrite and move to first HDU with significant data
-    
     \param iomode - I/O-mode: READONLY, READWRITE
   */
-  void dalFITS::openData (const std::string &filename, int iomode)
+  void dalFITS::openData (const std::string &filename,
+			  int iomode)
   { 
-    if(fits_open_data(&fptr, const_cast<char *>(filename.c_str()), iomode , &fitsstatus))
+    if(fits_open_data(&fptr, const_cast<char *>(filename.c_str()), iomode , &fitsstatus_p))
     {
       throw "dalFITS::openData";
     }
@@ -178,15 +194,16 @@ namespace DAL
 
   }
   
+  //_____________________________________________________________________________
+  //                                                                    openImage
 
   /*! 
-    \brief open a FITS file for read or readwrite and move to first HDU with an image
-    
     \param iomode - I/O-mode: R, RW
   */
-  void dalFITS::openImage(const std::string &filename, int iomode)
+  void dalFITS::openImage (const std::string &filename,
+			   int iomode)
   {
-    if(fits_open_image(&fptr, const_cast<char *>(filename.c_str()), iomode, &fitsstatus))
+    if(fits_open_image(&fptr, const_cast<char *>(filename.c_str()), iomode, &fitsstatus_p))
     {
       throw "dalFITS::openImage";
     }
@@ -197,15 +214,16 @@ namespace DAL
     }
   }
 
+  //_____________________________________________________________________________
+  //                                                                    openTable
 
   /*! 
-    \brief open a FITS file for read or readwrite and move to first HDU with a table
-    
     \param iomode - I/O-mode: R, RW
   */
-  void dalFITS::openTable(const std::string &filename, int iomode)
+  void dalFITS::openTable (const std::string &filename,
+			   int iomode)
   {
-    if(fits_open_table(&fptr, const_cast<char *>(filename.c_str()), iomode, &fitsstatus))
+    if(fits_open_table(&fptr, const_cast<char *>(filename.c_str()), iomode, &fitsstatus_p))
     {
       throw "dalFITS::openTable";
     }
@@ -229,13 +247,13 @@ namespace DAL
 
     latticeBase=ImageOpener::openImage (filename);	// try open the file with generic casa function
     
-    if(lattice==NULL)			// on error	
+    if(lattice_p==NULL)			// on error	
     {
 	throw "dalFITS::getLattice ";
     }
 
     // Currently only support double lattices:
-    lattice=dynamic_cast<ImageInterface<Float>*>(latticeBase);
+    lattice_p=dynamic_cast<ImageInterface<Float>*>(latticeBase);
 
     /*
     // determine data type of lattice
@@ -267,7 +285,7 @@ namespace DAL
   */
   void dalFITS::close ()
   {
-    if(fits_close_file(fptr, &fitsstatus))
+    if(fits_close_file(fptr, &fitsstatus_p))
     {
       throw "dalFITS::close";
     }
@@ -284,7 +302,7 @@ namespace DAL
     char* fits_error_message;
     std::string complete_error_message;
   
-    fits_get_errstatus(fitsstatus, fits_error_message);
+    fits_get_errstatus(fitsstatus_p, fits_error_message);
  
     cerr << fits_error_message << endl;		// print error message on cerr
  
@@ -319,7 +337,7 @@ namespace DAL
   {
     int hdunum=0;	// number of hdus in FITS file
   
-    if(fits_get_num_hdus(fptr, &hdunum ,&fitsstatus))
+    if(fits_get_num_hdus(fptr, &hdunum ,&fitsstatus_p))
     {
       throw "dalFITS::readNumHDUs";
     }
@@ -337,7 +355,7 @@ namespace DAL
   */
   void dalFITS::moveAbsoluteHDU(int hdu)
   {
-    if(fits_movabs_hdu(fptr, hdu, NULL, &fitsstatus))
+    if(fits_movabs_hdu(fptr, hdu, NULL, &fitsstatus_p))
     {
       throw "dalFITS::moveAbsoluteHDU";
     }
@@ -356,7 +374,7 @@ namespace DAL
   */  
   void dalFITS::moveRelativeHDU(int nhdu)
   {
-    if(fits_movrel_hdu(fptr, nhdu, NULL, &fitsstatus))	// try to move nhdu
+    if(fits_movrel_hdu(fptr, nhdu, NULL, &fitsstatus_p))	// try to move nhdu
     {
       throw "dalFITS::moveRelativeHDU";
     }
@@ -399,7 +417,7 @@ namespace DAL
     int hdutype=0;			// type of HDU
 
     // ignoring the version number of the extension
-    if(fits_movnam_hdu(fptr, hdutype, const_cast<char*>(extname.c_str()) , NULL, &fitsstatus))
+    if(fits_movnam_hdu(fptr, hdutype, const_cast<char*>(extname.c_str()) , NULL, &fitsstatus_p))
     {
       throw "dalFITS::moveNameHDU";
     }
@@ -447,7 +465,7 @@ namespace DAL
   { 
     int hdutype=0;
   
-    if(fits_get_hdu_type(fptr,  &hdutype, &fitsstatus))
+    if(fits_get_hdu_type(fptr,  &hdutype, &fitsstatus_p))
     {
       throw "dalFITS::readHDUType";
     }
@@ -465,7 +483,7 @@ namespace DAL
   {  
     std::string filename;	// local variable to hold FITS filename
 
-    if(fits_file_name(fptr, const_cast<char *>(filename.c_str()), &fitsstatus))
+    if(fits_file_name(fptr, const_cast<char *>(filename.c_str()), &fitsstatus_p))
     {
       throw "dalFITS::readFilename";
     }
@@ -481,7 +499,7 @@ namespace DAL
   {
     int mode;
   
-    if(fits_file_mode(fptr, &mode, &fitsstatus))
+    if(fits_file_mode(fptr, &mode, &fitsstatus_p))
     {
       throw "dalFITS::readFileMode";
     }
@@ -497,7 +515,7 @@ namespace DAL
   {
     string urltype;
   
-    if(fits_url_type(fptr, const_cast<char *> (urltype.c_str()), &fitsstatus))
+    if(fits_url_type(fptr, const_cast<char *> (urltype.c_str()), &fitsstatus_p))
     {
       throw "dalFITS::readURLType";
     }
@@ -511,7 +529,7 @@ namespace DAL
   */
   void dalFITS::deleteFITSfile()
   {
-    if(fits_delete_file(fptr, &fitsstatus))
+    if(fits_delete_file(fptr, &fitsstatus_p))
     {
       throw "dalFITS::deleteFITSfile";
     }
@@ -523,7 +541,7 @@ namespace DAL
   */
   void dalFITS::flushFITSfile()
   {
-    if(fits_flush_file(fptr, &fitsstatus))
+    if(fits_flush_file(fptr, &fitsstatus_p))
     {
       throw "dalFITS::fits_flush_file";
     }
@@ -535,7 +553,7 @@ namespace DAL
   */
   void dalFITS::flushFITSBuffer()
   {
-    if(fits_flush_buffer(fptr, 0, &fitsstatus))
+    if(fits_flush_buffer(fptr, 0, &fitsstatus_p))
     {
       throw "dalFITS::fitsFITSBbuffer";
     }
@@ -557,7 +575,7 @@ namespace DAL
   {
     int bitpix=0;
 
-    if(fits_get_img_type(fptr, &bitpix, &fitsstatus))
+    if(fits_get_img_type(fptr, &bitpix, &fitsstatus_p))
     {
       throw "dalFITS::getImgType";
     }
@@ -575,7 +593,7 @@ namespace DAL
   {
     int naxis=0;
 
-    if(fits_get_img_dim(fptr, &naxis,  &fitsstatus))
+    if(fits_get_img_dim(fptr, &naxis,  &fitsstatus_p))
     {
       throw "dalFITS::getImgDim";
     }
@@ -595,7 +613,7 @@ namespace DAL
     int maxdim=getImgDim();	// maximum number of dimensions
     long *naxes=(long *) calloc(maxdim, sizeof(long));
 
-    if(fits_get_img_size(fptr, maxdim, naxes , &fitsstatus))
+    if(fits_get_img_size(fptr, maxdim, naxes , &fitsstatus_p))
     {
       throw "dalFITS::getImageSize";
     }
@@ -615,7 +633,7 @@ namespace DAL
   { 
     unsigned int i=0;		// loop variable
   
-    if(fits_get_img_size(fptr, maxdim, naxes , &fitsstatus))
+    if(fits_get_img_size(fptr, maxdim, naxes , &fitsstatus_p))
     {
       throw "dalFITS::getImageSize";
     }
@@ -635,7 +653,7 @@ namespace DAL
   */
   void dalFITS::getImgParam(int maxdim,  int &bitpix, int &naxis, long *naxes)
   {
-    if(fits_get_img_param(fptr, maxdim, &bitpix, &naxis, naxes, &fitsstatus))
+    if(fits_get_img_param(fptr, maxdim, &bitpix, &naxis, naxes, &fitsstatus_p))
     {
       throw "dalFITS::getImageParam";
     }
@@ -656,7 +674,7 @@ namespace DAL
       throw "dalFITS::createImg naxis or naxes NULL";
     }
   
-    if(fits_create_img(fptr, bitpix, naxis , naxes, &fitsstatus))
+    if(fits_create_img(fptr, bitpix, naxis , naxes, &fitsstatus_p))
     {
       throw "dalFITS::createImg";
     }
@@ -673,7 +691,7 @@ namespace DAL
   */
   void dalFITS::writePix(int datatype, long *fpixel, long nelements, void *array)
   {
-    if(fits_write_pix(fptr, datatype, fpixel, nelements, array, &fitsstatus))
+    if(fits_write_pix(fptr, datatype, fpixel, nelements, array, &fitsstatus_p))
     {
       throw "dalFITS::writePix";
     }
@@ -691,7 +709,7 @@ namespace DAL
   */
   void dalFITS::writePixNull(int datatype, long *fpixel, long nelements, void *array, void *nulval)
   {
-    if(fits_write_pixnull(fptr, datatype, fpixel , nelements, array, nulval, &fitsstatus))
+    if(fits_write_pixnull(fptr, datatype, fpixel , nelements, array, nulval, &fitsstatus_p))
     {
       throw "dalFITS::writePix";
     }
@@ -709,7 +727,7 @@ namespace DAL
   */  
   void dalFITS::readPix(int datatype, long *fpixel, long nelements, void *nulval, void *array, int *anynul)
   {
-    if(fits_read_pix(fptr, datatype, fpixel, nelements, nulval, array, anynul, &fitsstatus))
+    if(fits_read_pix(fptr, datatype, fpixel, nelements, nulval, array, anynul, &fitsstatus_p))
     {
       throw "dalFITS::readPix";
     }
@@ -731,7 +749,7 @@ namespace DAL
 	  long *lpixel, long *inc, void *nulval,  void *array,
 	  int *anynul)
   {
-    if(fits_read_subset(fptr, datatype, fpixel, lpixel, inc, nulval, array, anynul, &fitsstatus))
+    if(fits_read_subset(fptr, datatype, fpixel, lpixel, inc, nulval, array, anynul, &fitsstatus_p))
     {
       throw "dalFITS::readSubset";
     }
@@ -748,7 +766,7 @@ namespace DAL
   */
   void dalFITS::writeSubset(int datatype, long *fpixel, long *lpixel, double *array)
   {
-    if(fits_write_subset(fptr, datatype, fpixel, lpixel, array, &fitsstatus))
+    if(fits_write_subset(fptr, datatype, fpixel, lpixel, array, &fitsstatus_p))
     {
       throw "dalFITS::writeSubset";
     }
@@ -884,16 +902,22 @@ namespace DAL
   //
   // ============================================================================  
 
+  
+  //_____________________________________________________________________________
+  //                                                                   writePlane
+
   /*!
-    \brief Write an imageplane to a FITS file
-    
     \param *plane - array containing imageplane data
     \param x - horizontal dimension in pixels
     \param y - vertical dimension in pixels
     \param z - z position to write plane to
     \param nulval - pointer to data to be substituted for any 0 values encountered 
   */
-  void dalFITS::writePlane(double *plane, const long x, const long y, const long z, void *nulval)
+  void dalFITS::writePlane (double *plane,
+			    const long &x,
+			    const long &y,
+			    const long &z,
+			    void *nulval)
   {
     long fpixel[3]; 	// first pixel position to read
     long nelements=0;	// number of elements to write
@@ -937,24 +961,28 @@ namespace DAL
     }
   }
 
+  
+  //_____________________________________________________________________________
+  //                                                                    writeLine
 
   /*!
-    \brief Write a line of sight to a FITS file
-
     \param faradayLine - contains line of sight along Faraday Depths with RM intensity
     \param x - x position in pixels to write line to
     \param y - y position in pixels to write line to
   */
-  void dalFITS::writeLine(double *line, const long x, const long y, void *nulval)
+  void dalFITS::writeLine(double *line,
+			  const long &x,
+			  const long &y,
+			  void *nulval)
   {
     
-  
+    
   }
-
-
-  /*! 
-    \brief Write a tile to a FITS file
   
+  //_____________________________________________________________________________
+  //                                                                    writeTile
+  
+  /*! 
     \param tile - buffer containing tile data
     \param x_pos - x position in pixels to write tile to
     \param y_pos - y position in pixels to write tile to
@@ -962,17 +990,18 @@ namespace DAL
     \param y_size - vertical size of tile
   */
   void dalFITS::writeTile(double* tile,
-			  const long x_pos,
-			  const long y_pos,
-			  const long x_size,
-			  const long y_size
+			  const long &x_pos,
+			  const long &y_pos,
+			  const long &x_size,
+			  const long &y_size
 			  )
   {
 
-
   }
   
-  
+  //_____________________________________________________________________________
+  //                                                                 writeSubCube
+    
   /*! 
     \brief Write a SubCube to a FITS file
     
@@ -988,6 +1017,9 @@ namespace DAL
 			      long x_pos,
 			      long y_pos)
   {
+    /* ATTENTION: temporary assignment to avoid compiler warnings! */
+    x_size = y_size = x_pos = y_pos = 0;
+
     // Check if position is valid
     
     // check if size goes beyond limits of cube
@@ -1011,10 +1043,10 @@ namespace DAL
     \param &keysexist - number of existing keywords (without END)
     \param &morekeys - morekeys=-1 if the header has not yet been closed
   */
-  void dalFITS::getHDRspace(int &keysexist,
-			   int &morekeys)
+  void dalFITS::getHDRspace (int &keysexist,
+			     int &morekeys)
   {
-    if(fits_get_hdrspace(fptr, &keysexist, &morekeys, &fitsstatus))
+    if(fits_get_hdrspace(fptr, &keysexist, &morekeys, &fitsstatus_p))
     {
       throw "dalFITS::getHDRspace";
     }
@@ -1025,10 +1057,10 @@ namespace DAL
     \param keynum - nth key to read, first keyword in the header is at keynum=1
     \param record - write the entire 80-character header record into this string
   */
-  void dalFITS::readRecord(int keynum,
-			  std::string record)
+  void dalFITS::readRecord (int keynum,
+			    std::string record)
   {
-    if(fits_read_record(fptr, keynum, const_cast<char *>(record.c_str()), &fitsstatus))
+    if(fits_read_record(fptr, keynum, const_cast<char *>(record.c_str()), &fitsstatus_p))
     {
       throw "dalFITS::readRecord";
     }
@@ -1038,9 +1070,10 @@ namespace DAL
     \param keyname - name of key to read
     \param record - write the entire 80-character header record into this string
   */
-  void dalFITS::readCard(std::string keyname, std::string record)
+  void dalFITS::readCard (std::string keyname,
+			  std::string record)
   {
-    if(fits_read_card(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(record.c_str()), &fitsstatus))
+    if(fits_read_card(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(record.c_str()), &fitsstatus_p))
     {
       throw "dalFITS::readCard";
     }
@@ -1055,9 +1088,12 @@ namespace DAL
     \param value - string that will contain the key's value
     \param comment - string that will contain the corresponding comment
   */
-  void dalFITS::readKeyn(int keynum, std::string keyname, std::string value, std::string comment)
+  void dalFITS::readKeyn (int keynum,
+			  std::string keyname,
+			  std::string value,
+			  std::string comment)
   {
-    if(fits_read_keyn(fptr, keynum, const_cast<char *>(keyname.c_str()), const_cast<char *>(value.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus))
+    if(fits_read_keyn(fptr, keynum, const_cast<char *>(keyname.c_str()), const_cast<char *>(value.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus_p))
     {
       throw "dalFITS::readKeyn";
     }
@@ -1072,18 +1108,18 @@ namespace DAL
     \param value - value of key to look for
     \param comment - comment of key to look for
   */
-  void dalFITS::readKey(int datatype,
-		       std::string keyname,
-		       void *value,
-		       std::string comment)
+  void dalFITS::readKey (int datatype,
+			 std::string keyname,
+			 void *value,
+			 std::string comment)
   {
-    if(fits_read_key(fptr, datatype, const_cast<char *>(keyname.c_str()), value, const_cast<char *>(comment.c_str()), &fitsstatus))
-    {
-      throw "dalFITS::readKey";
-    }
+    if(fits_read_key(fptr, datatype, const_cast<char *>(keyname.c_str()), value, const_cast<char *>(comment.c_str()), &fitsstatus_p))
+      {
+	throw "dalFITS::readKey";
+      }
   }
-
-
+  
+  
   /*!
     \brief Find the next key in the header whose name matches one of the strings in inclist
     
@@ -1093,13 +1129,13 @@ namespace DAL
     \param nexc - number of excluded keys, may be set to 0 if there are no keys excluded
     \param card - string to write card to
   */
-  void dalFITS::findNextKey(char **inclist,
-			   int ninc,
-			   char **exclist,
-			   int nexc,
-			   std::string card)
+  void dalFITS::findNextKey (char **inclist,
+			     int ninc,
+			     char **exclist,
+			     int nexc,
+			     std::string card)
   {
-    if(fits_find_nextkey(fptr, inclist, ninc, exclist, nexc, const_cast<char *>(card.c_str()), &fitsstatus))
+    if(fits_find_nextkey(fptr, inclist, ninc, exclist, nexc, const_cast<char *>(card.c_str()), &fitsstatus_p))
     {
       throw "dalFITS::findNextKey";
     }
@@ -1112,10 +1148,10 @@ namespace DAL
     \param keyname - name of key
     \param unit - string to write the physical unit to
   */
-  void dalFITS::readKeyUnit(std::string keyname,
-			   std::string unit)
+  void dalFITS::readKeyUnit (std::string keyname,
+			     std::string unit)
   {
-    if(fits_read_key_unit(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(unit.c_str()), &fitsstatus))
+    if(fits_read_key_unit(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(unit.c_str()), &fitsstatus_p))
     {
       throw "dalFITS::readKeyUnit";
     }
@@ -1136,13 +1172,13 @@ namespace DAL
     \param *value - value to write into field
     \param comment - comment string
   */
-  void dalFITS::writeKey(int datatype,
-			std::string keyname,
-			void *value,
-			std::string comment)
+  void dalFITS::writeKey (int datatype,
+			  std::string keyname,
+			  void *value,
+			  std::string comment)
   {
     if(fits_write_key(fptr, datatype, const_cast<char 
-				*>(keyname.c_str()), value, const_cast<char *>(comment.c_str()), &fitsstatus))
+				*>(keyname.c_str()), value, const_cast<char *>(comment.c_str()), &fitsstatus_p))
       {
 	throw "dalFITS::writeKey";
       }
@@ -1157,18 +1193,18 @@ namespace DAL
     \param value - value to write into field
     \param comment - comment string
   */
-  void dalFITS::updateKey(int datatype,
-			 std::string &keyname,
-			 void *value,
-			 std::string &comment)
+  void dalFITS::updateKey (int datatype,
+			   std::string &keyname,
+			   void *value,
+			   std::string &comment)
   {
-  
+    
     if(fits_update_key(	fptr,
 			datatype,
 			const_cast<char *>(keyname.c_str()),
 			value,
 			const_cast<char *>(comment.c_str()),
-			&fitsstatus))
+			&fitsstatus_p))
       {
 	throw "dalFITS::updateKey";
       }
@@ -1182,7 +1218,7 @@ namespace DAL
   */
   void dalFITS::writeRecord(std::string &card)
   {
-    if(fits_write_record(fptr, const_cast<char *>(card.c_str()), &fitsstatus))
+    if(fits_write_record(fptr, const_cast<char *>(card.c_str()), &fitsstatus_p))
     {
       throw "dalFITS:writeRecord";
     }
@@ -1195,9 +1231,10 @@ namespace DAL
     \param keyname - name of key to modify key of
     \param comment - new comment string
   */
-  void dalFITS::modifyComment(std::string &keyname, std::string &comment)
+  void dalFITS::modifyComment (std::string &keyname,
+			       std::string &comment)
   {
-    if(fits_modify_comment(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus))
+    if(fits_modify_comment(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus_p))
     {
       throw "dalFITS::modifyComment";
     }
@@ -1210,9 +1247,10 @@ namespace DAL
     \param keyname - name of key to modify unit of
     \param unit - string with physical unit
   */
-  void dalFITS::writeKeyUnit(std::string &keyname, std::string &unit)
+  void dalFITS::writeKeyUnit (std::string &keyname,
+			      std::string &unit)
   {
-    if(fits_write_key_unit(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(unit.c_str()), &fitsstatus))
+    if(fits_write_key_unit(fptr, const_cast<char *>(keyname.c_str()), const_cast<char *>(unit.c_str()), &fitsstatus_p))
     {
       throw "dalFITS::writeKeyUnit";
     }
@@ -1226,7 +1264,7 @@ namespace DAL
   */
   void dalFITS::writeComment(std::string &comment)
   {
-    if(fits_write_comment(fptr, const_cast<char *>(comment.c_str()),  &fitsstatus))
+    if(fits_write_comment(fptr, const_cast<char *>(comment.c_str()),  &fitsstatus_p))
     {
       throw "dalFITS::writeComment";
     }
@@ -1240,104 +1278,103 @@ namespace DAL
   */
   void dalFITS::writeHistory(std::string &history)
   {
-    if(fits_write_history(fptr, const_cast<char *>(history.c_str()),  &fitsstatus))
+    if(fits_write_history(fptr, const_cast<char *>(history.c_str()),  &fitsstatus_p))
     {
       throw "dalFITS::writeHistory";
     }
   }
 
+  //_____________________________________________________________________________
+  //                                                                    writeDate
 
-  /*!
-    \brief Write the current date to the CHDU
-  */
   void dalFITS::writeDate()
   {
-    if(fits_write_date(fptr,  &fitsstatus))
+    if(fits_write_date(fptr,  &fitsstatus_p))
     {
       throw "dalFITS::writeDate";
     }
   }
 
+  //_____________________________________________________________________________
+  //                                                                 deleteRecord
 
   /*!
-    \brief Delete a record from the CHDU
-    
     \param keynum - number of key to delete
   */
-  void dalFITS::deleteRecord(int keynum)
+  void dalFITS::deleteRecord (int keynum)
   {
-    if(fits_delete_record(fptr, keynum,  &fitsstatus))
+    if(fits_delete_record(fptr, keynum,  &fitsstatus_p))
     {
       throw "dalFITS::deleteRecord";
     }
   }
 
+  //_____________________________________________________________________________
+  //                                                                    deleteKey
 
   /*!
-    \brief Delete the key referenced by &keyname from the CHDU 
-    
     \param keyname - name of key to delete
   */
-  void dalFITS::deleteKey(std::string keyname)
+  void dalFITS::deleteKey (std::string keyname)
   {
-    if(fits_delete_key(fptr, const_cast<char *>(keyname.c_str()),  &fitsstatus))
+    if(fits_delete_key(fptr, const_cast<char *>(keyname.c_str()),  &fitsstatus_p))
     {
       throw "dalFITS::deleteKey";
     }
   }
 
+  //_____________________________________________________________________________
+  //                                                                   copyHeader
 
   /*!
-    \brief Copy the Header of this FITS to the &other dalFITS object
-      
     \param &other - other dalFITS object to copy header from
   */
-  void dalFITS::copyHeader(dalFITS &other)
+  void dalFITS::copyHeader (dalFITS &other)
   {
-    if(fits_copy_header(fptr, other.fptr, &fitsstatus))
+    if(fits_copy_header(fptr, other.fptr, &fitsstatus_p))
     {
       throw "dalFITS::copyHeader";
     }
   }
 
+  //_____________________________________________________________________________
+  //                                                                    deleteHDU
 
   /*!
-    \brief Delete the CHDU
-
     \param *hdutype - Stores the HDUType of the deleted HDU (can be NULL if not needed)
   */
-  void dalFITS::deleteHDU(int *hdutype=NULL)
+  void dalFITS::deleteHDU (int *hdutype=NULL)
   {
-    if(fits_delete_hdu(fptr, hdutype ,&fitsstatus))
+    if(fits_delete_hdu(fptr, hdutype ,&fitsstatus_p))
     {
       throw "dalFITS::deleteHDU";
     }
   }
   
+  //_____________________________________________________________________________
+  //                                                                writeChecksum
 
-  /*!
-    \brief Write the Header checksum to the CHDU
-  */
   void dalFITS::writeChecksum()
   {
-    if(fits_write_chksum(fptr, &fitsstatus))
+    if(fits_write_chksum(fptr, &fitsstatus_p))
     {
       throw "dalFITS::writeChecksum";
     }
   }
 
+  //_____________________________________________________________________________
+  //                                                               verifyChecksum
 
   /*!
-    \brief Verify checksum of the CHDU
-      
     \param dataok - bool indicating that data part of hdu is ok
     \param hduok - bool indicating that hdu is ok
   */
-  void dalFITS::verifyChecksum(bool &dataok, bool &hduok)
+  void dalFITS::verifyChecksum (bool &dataok,
+				bool &hduok)
   {
     int dataok_int=0, hduok_int=0;
   
-    if(fits_verify_chksum(fptr, &dataok_int, &hduok_int, &fitsstatus))
+    if(fits_verify_chksum(fptr, &dataok_int, &hduok_int, &fitsstatus_p))
     {
       throw "dalFITS::verifyChecksum";
     }
@@ -1349,36 +1386,40 @@ namespace DAL
       hduok=true;
   }
 
+  //_____________________________________________________________________________
+  //                                                                   parseValue
 
   /*!
-      \brief Parse a record card into value and comment
-      
       \param card - card to be parsed
       \param &value - string to hold content of value
       \param &comment - string to hold content of comment
     */
-  void dalFITS::parseValue(std::string &card, std::string &value, std::string &comment)
+  void dalFITS::parseValue (std::string &card,
+			    std::string &value,
+			    std::string &comment)
   {
-    if(fits_parse_value(const_cast<char *>(card.c_str()), const_cast<char *>(value.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus))
+    if(fits_parse_value(const_cast<char *>(card.c_str()), const_cast<char *>(value.c_str()), const_cast<char *>(comment.c_str()), &fitsstatus_p))
     {
       throw "dalFITS::parseValue";
     }
   }
 
+  //_____________________________________________________________________________
+  //                                                                   getKeytype
 
   /*!
-    \brief Get the type of a key with &value in the CHDU
-    
-    Parses the input 80-character header keyword value string to determine its datatype. It returns with a value of 'C', 'L', 'I', 'F' or 'X', for character string, logical integer, floating point, or complex, respectively.
+    Parses the input 80-character header keyword value string to determine its
+    datatype. It returns with a value of 'C', 'L', 'I', 'F' or 'X', for character
+    string, logical integer, floating point, or complex, respectively.
     
     \param value - value of key to look for
     \param dtype - data type of that key/value
   */
-  char dalFITS::getKeytype(std::string &value)
+  char dalFITS::getKeytype (std::string &value)
   {   
     char dtype;
   
-    if(fits_get_keytype(const_cast<char *>(value.c_str()), &dtype, &fitsstatus))
+    if(fits_get_keytype(const_cast<char *>(value.c_str()), &dtype, &fitsstatus_p))
     {
       throw "dalFITS::getKeytype";
     }
@@ -1386,13 +1427,13 @@ namespace DAL
     return dtype;
   }
 
+  //_____________________________________________________________________________
+  //                                                                  getKeyclass
 
   /*!
-    \brief Get the class of the key in &card
-    
     \param card - Card to determine class of
   */
-  int dalFITS::getKeyclass(std::string &card)
+  int dalFITS::getKeyclass (std::string &card)
   {
     int keyclass=0;
   
@@ -1404,28 +1445,29 @@ namespace DAL
     return keyclass;
   }
 
+  //_____________________________________________________________________________
+  //                                                                parseTemplate
 
   /*!
-    \brief Parse the &templatec of &card
-    
     \param templatec - Template card
     \param card -
     
     \return keytype - determines if the keyword is a COMMENT or not
   */
-  int dalFITS::parseTemplate(std::string &templatec, std::string &card)
+  int dalFITS::parseTemplate (std::string &templatec,
+			      std::string &card)
   {
     int keytype=0;
-  
-    if(fits_parse_template(const_cast<char *>(templatec.c_str()), const_cast<char *>(card.c_str()), &keytype, &fitsstatus))
-    {
-      throw "dalFITS::parseTemplate";
-    }
+    
+    if(fits_parse_template(const_cast<char *>(templatec.c_str()), const_cast<char *>(card.c_str()), &keytype, &fitsstatus_p))
+      {
+	throw "dalFITS::parseTemplate";
+      }
     
     return keytype;
   }
-
-
+  
+  
   // ============================================================================
   //
   //  Header access functions (specific to RM)
@@ -1437,7 +1479,7 @@ namespace DAL
     
     \param hdu to write to (default 1)
   */
-  void dalFITS::writeRMHeader(int hdu)
+  void dalFITS::writeRMHeader (int hdu)
   {    
     moveAbsoluteHDU(hdu);
 
@@ -1458,7 +1500,7 @@ namespace DAL
     
     \param filename - Name of the file to check for its existence
   */
-  bool dalFITS::fileExists(const std::string &filename) 
+  bool dalFITS::fileExists (const std::string &filename) 
   {
     struct stat stFileInfo;
     bool blnReturn;
@@ -1505,7 +1547,7 @@ namespace DAL
   void dalFITS::summary (std::ostream &os)
   {
     os << "[dalFITS] Summary of object properties" << std::endl;
-    os << "-- Filename : " << std::endl;
+    os << "-- Status of last cfitsio operation = " << fitsstatus_p << std::endl;
   }
   
 }

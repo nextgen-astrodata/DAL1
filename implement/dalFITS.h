@@ -78,13 +78,13 @@ namespace DAL {
     fitsfile *fptr;
  
     //! Status of last cfitsio operation
-    int fitsstatus;
+    int fitsstatus_p;
     
     //! Filename associated with dalFITS object
   //  std::string filename;
 
     //! CASAcore lattice handle
-    casa::Lattice<casa::Float>* lattice;
+    casa::Lattice<casa::Float>* lattice_p;
     
     
     //! dimensions of FITS image
@@ -145,12 +145,12 @@ namespace DAL {
 
   public:
 
-    //________________________________________________________________
-    //                                        Construction/Destruction
+    //___________________________________________________________________________
+    //                                                   Construction/Destruction
 
-    //! Default constructor
+    //! Default constructor, creating an initialised, but empty object
     dalFITS ();
-    //! Argumented constructor
+    //! Constructor with associated filename
     dalFITS (const std::string &,
 	     int mode);   
     //! Copy constructor
@@ -166,13 +166,17 @@ namespace DAL {
     //________________________________________________________________
     // 
     // Methods
-   //________________________________________________________________
- 
+    //________________________________________________________________
+    
+    //! open a FITS file for read or readwrite and move to first HDU with significant data
     void openData(const std::string &filename, int iomode);
+    //! open a FITS file for read or readwrite and move to first HDU with an image
     void openImage(const std::string &filename, int iomode);
+    //! open a FITS file for read or readwrite and move to first HDU with a table    
     void openTable(const std::string &filename, int iomode);
     void close();
-    void getLattice();	// set Lattice in object
+    //! Set Lattice in object
+    void getLattice();
     std::string getFitsError();
     int readNumHDUs();
     int readCurrentHDU();
@@ -196,8 +200,11 @@ namespace DAL {
     //
     // ============================================================================
     
+    //! Get the type of the image
     int getImgType();
+    //! Get the dimensions of the image
     int getImgDim();
+    //! Get the size of the image
     void getImgSize();
     void getImgSize(int maxdim,
 		    long *naxes);
@@ -294,16 +301,27 @@ namespace DAL {
     void writeKeyUnit(std::string &keyname, std::string &unit);
     void writeComment(std::string &comment);
     void writeHistory(std::string &history);
-    void writeDate();    
+    //! Write the current date to the CHDU
+    void writeDate();
+    //! Delete a record from the CHDU    
     void deleteRecord(int keynum);
+    //! Delete the key referenced by &keyname from the CHDU 
     void deleteKey(std::string keyname);
+    //! Copy the Header of this FITS to the &other dalFITS object
     void copyHeader(dalFITS &other);
+    //! Delete the CHDU
     void deleteHDU(int *hdutype);
+    //! Write the Header checksum to the CHDU
     void writeChecksum();
+    //! Verify checksum of the CHDU
     void verifyChecksum(bool &dataok, bool &hduok);
+    //! Parse a record card into value and comment
     void parseValue(std::string &card, std::string &value, std::string &comment);
+    //! Get the type of a key with value in the CHDU
     char getKeytype(std::string &value);
+    //! Get the class of the key in a card
     int getKeyclass(std::string &card);
+    //! Parse the template of a card
     int parseTemplate(std::string &templatec, std::string &card);
    
     //===============================================================
@@ -375,29 +393,33 @@ namespace DAL {
     //
     // ============================================================================  
 
+    //! Write an image-plane to a FITS file
     void writePlane (double *plane,
-		     const long x,
-		     const long y,
-		     const long z,
+		     const long &x,
+		     const long &y,
+		     const long &z,
 		     void *nulval=NULL);
-
-    void writeLine(double *line, const long x, const long y, void *nulval=NULL);
-
+    //! Write a line of sight to a FITS file    
+    void writeLine(double *line,
+		   const long &x,
+		   const long &y,
+		   void *nulval=NULL);
+    //! Write a tile to a FITS file
     void writeTile( double* tile, 
-		    const long x_size, 
-		    const long y_size, 
-		    const long x_pos, 
-		    const long y_pos);   
+		    const long &x_size, 
+		    const long &y_size, 
+		    const long &x_pos, 
+		    const long &y_pos);   
     
     void writeCube(double* cube, const long x, const long y, const long z);
-
+    
     void writeSubCube(  double* subcube, 
 			const long x_size, 
 			const long y_size, 
 			const long x_pos, 
 			const long y_pos);
-
-
+    
+    
     // ============================================================================
     //
     // Class administrative functions
