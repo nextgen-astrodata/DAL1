@@ -256,6 +256,9 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Set the name of the group." )
     .def( "getId", &dalGroup::getId,
 	  "Return the group identifier." )
+    .def( "createShortArray", &dalGroup::csa_boost_list,
+	  bpl::return_value_policy<bpl::manage_new_object>(),
+	  "Create a short array in the group." )
     .def( "createIntArray", &dalGroup::cia_boost_list,
 	  bpl::return_value_policy<bpl::manage_new_object>(),
 	  "Create an integer array in the group." )

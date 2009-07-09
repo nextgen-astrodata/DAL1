@@ -18,16 +18,28 @@ class dal_tests(unittest.TestCase):
     def test_dataset_create(self):
     	self.assertEqual(type(ds),pydal.dalDataset)
 
-    def test_dataset_createIntArray_with_chunk_dimensions(self):
-    	arr = ds.createIntArray("intarray1_cdims",[2,2],[1,2,3,4],[2,2])
-    	self.assertEqual(type(arr),pydal.dalArray)
-
-    def test_dataset_createIntArray(self):
+    def test_dataset_createIntArray_with_list(self):
     	arr = ds.createIntArray("intarray1",[2,2],[1,2,3,4])
     	self.assertEqual(type(arr),pydal.dalArray)
 
-    def test_dataset_createFloatArray(self):
+    def test_dataset_createIntArray_with_list_and_chunk_dimensions(self):
+    	arr = ds.createIntArray("intarray1_cdims",[2,2],[1,2,3,4],[2,2])
+    	self.assertEqual(type(arr),pydal.dalArray)
+
+    def test_dataset_createIntArray_with_numpy_array(self):
+    	arr = ds.createIntArray("intarray1_numpy_array",[2,2],numpy.array([1,2,3,4]))
+    	self.assertEqual(type(arr),pydal.dalArray)
+
+    def test_dataset_createIntArray_with_numpy_array_and_chunk_dimensions(self):
+    	arr = ds.createIntArray("intarray1_numpy_array_cdims",[2,2],numpy.array([1,2,3,4]),[2,2])
+    	self.assertEqual(type(arr),pydal.dalArray)
+
+    def test_dataset_createFloatArray_with_list(self):
     	arr = ds.createFloatArray("floatarray1",[2,2],[1.0,2.0,3.0,4.0],[2,2])
+    	self.assertEqual(type(arr),pydal.dalArray)
+
+    def test_dataset_createFloatArray_with_numpy_array(self):
+    	arr = ds.createFloatArray("floatarray1_numpy_array",[2,2],numpy.array([1.0,2.0,3.0,4.0]),[2,2])
     	self.assertEqual(type(arr),pydal.dalArray)
 
     def test_dataset_createGroup(self):
@@ -90,6 +102,10 @@ class dal_tests(unittest.TestCase):
     	tab = ds.openTable("table1")
     	self.assertEqual(type(tab),pydal.dalTable)
 
+    def test_dataset_openTable_in_group(self):
+    	tab = ds.openTable("table1","newgroup")
+    	self.assertEqual(type(tab),pydal.dalTable)
+
     def test_dataset_openGroup(self):
     	group = ds.openGroup("newgroup")
     	self.assertEqual(type(group),pydal.dalGroup)
@@ -108,6 +124,11 @@ class dal_tests(unittest.TestCase):
 		self.assertEqual(type(ds.setFilter()),pydal.dalFilter)
 		
 # ------------------------------------------------------------------ dalGroup
+
+    def test_group_createShortArray(self):  # depends on createGroup
+        group = ds.openGroup("newgroup")
+        arr = group.createShortArray("shortarray1",[2,2],[1,2,3,4])
+        self.assertEqual(type(group),pydal.dalGroup)
 
     def test_group_createIntArray(self):  # depends on createGroup
         group = ds.openGroup("newgroup")
@@ -202,7 +223,7 @@ class dal_tests(unittest.TestCase):
     	cols = table.listColumns()
     	self.assertEqual(cols,['col1','col2','col3'])
     	
-    def test_table_appendRows(self):
+    def test_table_appendRow(self):
     	table = ds.openTable("table1")
     	ret = table.appendRow(numpy.array([1,2,3]))
     	ret = table.appendRow(numpy.array([4,5,6]))
@@ -217,7 +238,7 @@ class dal_tests(unittest.TestCase):
     	table = ds.openTable("table1")
     	aa = table.readRows(0,1)
     	print aa
-    	self.assertTrue(True)
+    	self.assertTrue()
 
 #    def tearDown(self):
 
@@ -241,9 +262,13 @@ if __name__ == "__main__":
 
 	suite = unittest.TestSuite()
 	suite.addTest(dal_tests("test_dataset_create"))
-	suite.addTest(dal_tests("test_dataset_createIntArray"))
-	suite.addTest(dal_tests("test_dataset_createIntArray_with_chunk_dimensions"))
-	suite.addTest(dal_tests("test_dataset_createFloatArray"))
+#	suite.addTest(dal_tests("test_dataset_open"))
+	suite.addTest(dal_tests("test_dataset_createIntArray_with_list"))
+	suite.addTest(dal_tests("test_dataset_createIntArray_with_list_and_chunk_dimensions"))
+	suite.addTest(dal_tests("test_dataset_createIntArray_with_numpy_array"))
+	suite.addTest(dal_tests("test_dataset_createIntArray_with_numpy_array_and_chunk_dimensions"))
+	suite.addTest(dal_tests("test_dataset_createFloatArray_with_list"))
+	suite.addTest(dal_tests("test_dataset_createFloatArray_with_numpy_array"))
 	suite.addTest(dal_tests("test_dataset_createGroup"))
 	suite.addTest(dal_tests("test_dataset_createSubGroup"))
 	suite.addTest(dal_tests("test_dataset_createTable"))
@@ -259,6 +284,7 @@ if __name__ == "__main__":
 	suite.addTest(dal_tests("test_dataset_setAttribute_string"))
 	suite.addTest(dal_tests("test_dataset_setAttribute_string_list"))
 	suite.addTest(dal_tests("test_dataset_openTable"))
+	suite.addTest(dal_tests("test_dataset_openTable_in_group"))
 	suite.addTest(dal_tests("test_dataset_openGroup"))
 	suite.addTest(dal_tests("test_dataset_getType"))
 	suite.addTest(dal_tests("test_dataset_readIntArray"))
@@ -266,6 +292,7 @@ if __name__ == "__main__":
 #	suite.addTest(dal_tests("test_dataset_setFilter"))
 
 	suite.addTest(dal_tests("test_group_getName"))
+	suite.addTest(dal_tests("test_group_createShortArray"))
 	suite.addTest(dal_tests("test_group_createIntArray"))
 	suite.addTest(dal_tests("test_group_setAttribute_char"))
 	suite.addTest(dal_tests("test_group_setAttribute_short"))
@@ -285,7 +312,7 @@ if __name__ == "__main__":
 	suite.addTest(dal_tests("test_table_setAttribute_double"))
 	suite.addTest(dal_tests("test_table_setAttribute_string"))
 	suite.addTest(dal_tests("test_table_addColumns"))
-	suite.addTest(dal_tests("test_table_appendRows"))
+	suite.addTest(dal_tests("test_table_appendRow"))
 	suite.addTest(dal_tests("test_table_getNumberOfRows"))
 #	suite.addTest(dal_tests("test_table_readRows"))
 	

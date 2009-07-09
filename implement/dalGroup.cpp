@@ -642,6 +642,37 @@ namespace DAL {
    ************************************************************************/
 
   /******************************************************
+   * wrappers for createShortArray
+   ******************************************************/
+
+// ------------------------------------------------------------ csa_boost_list
+
+  dalArray * dalGroup::csa_boost_list( std::string arrayname,
+                                       bpl::list pydims,
+									   bpl::list pydata )
+  {
+    vector<int> dims;
+    vector<int> chnkdims;
+
+    for (int ii=0; ii<bpl::len(pydims); ii++)
+      dims.push_back(bpl::extract<int>(pydims[ii]));
+
+    long size = bpl::len(pydata);
+    short * data = NULL;
+    data = new short[size];
+
+    for (int ii=0; ii<size; ii++)
+      data[ii] = bpl::extract<short>(pydata[ii]);
+
+    dalArray * array = createShortArray(arrayname, dims, data, chnkdims);
+
+    delete [] data;
+    data = NULL;
+
+    return array;
+  }
+
+  /******************************************************
    * wrappers for createIntArray
    ******************************************************/
 

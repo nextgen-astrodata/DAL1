@@ -208,7 +208,8 @@ namespace DAL {
 #ifdef PYTHON
 
       void ot_hdf5( void * voidfile, string tablename, string groupname );
-      bool append_row_boost( bpl::numeric::array data );
+//      bool append_row_boost( bpl::numeric::array data );
+      bool append_row_boost( bpl::object data );
       bpl::list listColumns_boost();
       bpl::numeric::array getAttribute_boost(std::string);
 //      bpl::numeric::array readRows_boost( long start, long nrecs );

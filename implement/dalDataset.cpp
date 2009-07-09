@@ -1415,22 +1415,25 @@ namespace DAL
     bpl::numeric::array pydata,
     bpl::list cdims )
   {
-
     std::vector<int> dims;
+    std::vector<int> chnkdims;
 
     for (int ii=0; ii<bpl::len(pydims); ii++)
       dims.push_back(bpl::extract<int>(pydims[ii]));
 
-    long size = bpl::len(pydata);
+    for (int ii=0; ii<bpl::len(cdims); ii++)
+      chnkdims.push_back(bpl::extract<int>(cdims[ii]));
+
+    int size = num_util::size(pydata);
     int * data = NULL;
     data = new int[size];
 
-// std::cerr << "cia_boost_numarray "<< pydata.nelements() << endl;
-    pydata.setshape( pydata.nelements() );
-    bpl::object flat_data = pydata.getflat();
-    bpl::list list_data( flat_data );
+    for (int ii=0; ii<size; ii++)
+      data[ii] = bpl::extract<int>(pydata[ii]);
 
-    dalArray * array = cia_boost2(arrayname, pydims, list_data, cdims);
+    dalArray * array = createIntArray(arrayname, dims, data, chnkdims);
+
+    delete [] data;
 
     return array;
   }
@@ -1475,23 +1478,28 @@ namespace DAL
       bpl::numeric::array pydata,
       bpl::list cdims )
   {
-
     std::vector<int> dims;
+    std::vector<int> chnkdims;
 
     for (int ii=0; ii<bpl::len(pydims); ii++)
       dims.push_back(bpl::extract<int>(pydims[ii]));
 
-    long size = bpl::len(pydata);
+    for (int ii=0; ii<bpl::len(cdims); ii++)
+      chnkdims.push_back(bpl::extract<int>(cdims[ii]));
+
+    int size = num_util::size(pydata);
     float * data = NULL;
     data = new float[size];
 
-    pydata.setshape( pydata.nelements() );
-    bpl::object flat_data = pydata.getflat();
-    bpl::list list_data( flat_data );
+    for (int ii=0; ii<size; ii++)
+      data[ii] = bpl::extract<float>(pydata[ii]);
 
-    dalArray * array = dalDataset::cfa_boost(arrayname, pydims, list_data, cdims);
+    dalArray * array = createFloatArray(arrayname, dims, data, chnkdims);
+
+    delete [] data;
 
     return array;
+    
   }
 
   // ---------------------------------------------------------- ria_boost

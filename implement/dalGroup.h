@@ -135,10 +135,9 @@ namespace DAL {
      *
      ******************************************************************/
 #ifdef PYTHON
+    dalArray * csa_boost_list( std::string arrayname, bpl::list dims, bpl::list data);
     dalArray * cia_boost_list( std::string arrayname, bpl::list dims, bpl::list data);
-    
-    dalArray * cfa_boost_list( std::string arrayname, bpl::list dims,
-			       bpl::list data );
+    dalArray * cfa_boost_list( std::string arrayname, bpl::list dims, bpl::list data );
     
     bpl::numeric::array ria_boost( std::string arrayname );
     

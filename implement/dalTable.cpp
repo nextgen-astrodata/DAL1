@@ -2146,12 +2146,18 @@ namespace DAL {
    *  wrapper for appendRow (hdf5)
    *
    *****************************************************************/
-  bool dalTable::append_row_boost( bpl::numeric::array data )
+  bool dalTable::append_row_boost( bpl::object data )
   {
-  	void * mydata = num_util::data(data);
-    appendRow(mydata);
+    appendRow(&data);
     return true;
   }
+
+//  bool dalTable::append_row_boost( bpl::numeric::array data )
+//  {
+//  	void * mydata = num_util::data(data);
+//    appendRow(mydata);
+//    return true;
+//  }
 
   // ------------------------------------------------------- listColumns_boost
 
