@@ -38,9 +38,9 @@ int main(int argc, char *argv[])
       std::cerr << std::endl << "Too few parameters..." << std::endl << std::endl;
       std::cerr << "The first parameter is the tbb dataset name." << std::endl;
       std::cerr << "The second parameter is the dipole itentifier. "
-           << "(i.e. \"001002003\").\n" << "  The first 3 characters are the "
-           << "station id.\n  The next 3 are the rsp id.\n  The last 3 are the "
-           << "rcu id." << std::endl;
+                << "(i.e. \"001002003\").\n" << "  The first 3 characters are the "
+                << "station id.\n  The next 3 are the rsp id.\n  The last 3 are the "
+                << "rcu id." << std::endl;
       std::cerr << "The third parameter is the station group itentifier." << std::endl;
       std::cerr << std::endl;
       return DAL::FAIL;
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
   DAL::dalDataset ds;
   if ( DAL::FAIL == ds.open( argv[1] ) )
-     std::cerr << "ERROR: couldn't open file: " << argv[1] << std::endl;
+    std::cerr << "ERROR: couldn't open file: " << argv[1] << std::endl;
 
   string id = argv[2];
   int start = 25;

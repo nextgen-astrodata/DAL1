@@ -39,9 +39,9 @@ using std::endl;
   \ingroup DAL
 
   \brief A collection of tests to work with the casacore HDF5 module
- 
+
   \author Lars B&auml;hren
- 
+
   \date 2009/05/30
 
   <h3>Synopsis</h3>
@@ -68,36 +68,42 @@ int test_HDF5File ()
   int nofFailedTests (0);
 
   cout << "[1] Creating new HDF5 file ..." << endl;
-  try {
-    // create new file
-    casa::HDF5File f ("testfile1.h5", casa::ByteIO::New);
-    // show file properties
-    cout << "-- File is writable          = " << f.isWritable()        << endl;
-    cout << "-- File is opened for delete = " << f.isOpenedForDelete() << endl;
-    cout << "-- File temporarily closed   = " << f.isClosed()          << endl;
-  } catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
+  try
+    {
+      // create new file
+      casa::HDF5File f ("testfile1.h5", casa::ByteIO::New);
+      // show file properties
+      cout << "-- File is writable          = " << f.isWritable()        << endl;
+      cout << "-- File is opened for delete = " << f.isOpenedForDelete() << endl;
+      cout << "-- File temporarily closed   = " << f.isClosed()          << endl;
+    }
+  catch (std::string message)
+    {
+      cerr << message << endl;
+      nofFailedTests++;
+    }
 
   cout << "[2] Reopen previously created HDF5 file as RO ..." << endl;
-  try {
-    // open the file
-    casa::HDF5File f ("testfile1.h5", casa::ByteIO::Old);
-    // show file properties
-    cout << "-- File is writable          = " << f.isWritable()        << endl;
-    cout << "-- File is opened for delete = " << f.isOpenedForDelete() << endl;
-    cout << "-- File temporarily closed   = " << f.isClosed()          << endl;
-  } catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
+  try
+    {
+      // open the file
+      casa::HDF5File f ("testfile1.h5", casa::ByteIO::Old);
+      // show file properties
+      cout << "-- File is writable          = " << f.isWritable()        << endl;
+      cout << "-- File is opened for delete = " << f.isOpenedForDelete() << endl;
+      cout << "-- File temporarily closed   = " << f.isClosed()          << endl;
+    }
+  catch (std::string message)
+    {
+      cerr << message << endl;
+      nofFailedTests++;
+    }
 
   return nofFailedTests;
 }
 
 //_______________________________________________________________________________
-// 
+//
 
 int test_HDF5Record ()
 {
@@ -110,7 +116,7 @@ int test_HDF5Record ()
 //                                                                           main
 
 int main (int argc,
-	  char *argv[])
+          char *argv[])
 {
   int nofFailedTests (0);
 

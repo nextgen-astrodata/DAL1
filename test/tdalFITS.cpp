@@ -35,9 +35,9 @@ using std::endl;
   \ingroup DAL
 
   \brief A collection of test routines for the routines contained in dalFITS
- 
+
   \author Sven Duscha
- 
+
   \date 2008/11/11
 */
 
@@ -53,28 +53,31 @@ int test_constructors ()
 // -----------------------------------------------------------------------------
 
 int main (int argc,
-	  char *argv[])
+          char *argv[])
 {
   int nofFailedTests (0);
   std::string filename;
 
   //__________________________________________________________________
   // Check the input parameters provided form the command line
-  
-  if (argc < 2) {
-    std::cerr << "[tdalFITS] Missing name of test input file!" << std::endl;
-    std::cerr << "" << std::endl;
-    std::cerr << "  tdalFITS <FITS file>" << std::endl;
-    std::cerr << "" << std::endl;
-    return 1;
-  } else {
-    filename = argv[1];
-  }
-  
+
+  if (argc < 2)
+    {
+      std::cerr << "[tdalFITS] Missing name of test input file!" << std::endl;
+      std::cerr << "" << std::endl;
+      std::cerr << "  tdalFITS <FITS file>" << std::endl;
+      std::cerr << "" << std::endl;
+      return 1;
+    }
+  else
+    {
+      filename = argv[1];
+    }
+
   //__________________________________________________________________
   // Run the tests
-  
+
   nofFailedTests += test_constructors ();
-  
+
   return nofFailedTests;
 }

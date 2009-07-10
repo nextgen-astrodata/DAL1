@@ -42,30 +42,31 @@
 #include <Enumerations.h>
 #endif
 
-namespace DAL { // Namespace DAL -- begin
-  
+namespace DAL   // Namespace DAL -- begin
+  {
+
   /*!
     \class TBB_DipoleDataset
-    
+
     \ingroup DAL
-    
+
     \brief Container for dipole-based data in a LOFAR TBB time-series dataset
-    
+
     \author Lars B&auml;hren
 
     \date 2008/01/10
 
     \test tTBB_DipoleDataset.cpp
-    
+
     <h3>Prerequisite</h3>
-    
+
     <ul type="square">
       <li><a href="http://www.atnf.csiro.au/computing/software/casacore/classcasa_1_1Record.html">casa::Record</a>
       -- A hierarchical collection of named fields of various types.
       <li>DAL::TBB_StationGroup
       <li>DAL::TBB_Timeseries
     </ul>
-    
+
     <h3>Synopsis</h3>
 
     <ol>
@@ -73,10 +74,10 @@ namespace DAL { // Namespace DAL -- begin
       \verbatim
       /                             ... Group
       |-- Station001                ... Group
-      |   |-- 
+      |   |--
       |   |-- 001000000                   ... Dataset        ... array<uint,1>
       |   |   |-- STATION_ID              ... Attribute      ... uint
-      |   |   |-- RSP_ID                  ... Attribute      ... uint 
+      |   |   |-- RSP_ID                  ... Attribute      ... uint
       |   |   |-- RCU_ID                  ... Attribute      ... uint
       |   |   |-- SAMPLE_FREQUENCY_VALUE  ... Attribute      ... double
       |   |   |-- SAMPLE_FREQUENCY_UNIT   ... Attribute      ... double
@@ -93,7 +94,7 @@ namespace DAL { // Namespace DAL -- begin
       |   |   `-- ANT_ORIENTATION_FRAME   ... Attribute      ... string
       \endverbatim
     </ol>
-    
+
     <h3>Example(s)</h3>
 
     <ul>
@@ -117,212 +118,216 @@ namespace DAL { // Namespace DAL -- begin
                                     datasetName);
     \endcode
   </ul>
-    
-  */  
-  class TBB_DipoleDataset {
-    
-    //! Identifier for this dataset within the HDF5 file
-    hid_t datasetID_p;
-    
-  public:
-    
-    // ------------------------------------------------------------- Construction
-     
-    //! Default constructor
-    TBB_DipoleDataset ();
-    //! Argumented constructor
-    TBB_DipoleDataset (std::string const &filename,
-		       std::string const &dataset);
-    //! Argumented constructor
-    TBB_DipoleDataset (hid_t const &location,
-		       std::string const &dataset);   
-    //! Argumented constructor
-    TBB_DipoleDataset (hid_t const &dataset_id);
-    //! Copy constructor
-    TBB_DipoleDataset (TBB_DipoleDataset const &other);
-    
-    // -------------------------------------------------------------- Destruction
 
-    //! Destructor
-    ~TBB_DipoleDataset ();
-    
-    // ---------------------------------------------------------------- Operators
-    
-    //! Overloading of the copy operator
-    TBB_DipoleDataset& operator= (TBB_DipoleDataset const &other); 
-    
-    // --------------------------------------------------------------- Parameters
-    
-    /*!
-      \brief Get the identifier for this dataset within the HDF5 file
+  */
+  class TBB_DipoleDataset
+    {
 
-      \return H5datasetID -- The identifier for this dataset within the HDF5 file
-    */
-    inline hid_t dataset_id () const {
-      return datasetID_p;
-    }
+      //! Identifier for this dataset within the HDF5 file
+      hid_t datasetID_p;
 
-    //! Get the number of attributes attached to the dataset
-    int nofAttributes ();
+    public:
 
-    //! Get the ID of the LOFAR station this dipole belongs to
-    uint station_id ();
+      // ------------------------------------------------------------- Construction
 
-    //! Get the ID of the RSP board this dipole is connected with
-    uint rsp_id ();
+      //! Default constructor
+      TBB_DipoleDataset ();
+      //! Argumented constructor
+      TBB_DipoleDataset (std::string const &filename,
+                         std::string const &dataset);
+      //! Argumented constructor
+      TBB_DipoleDataset (hid_t const &location,
+                         std::string const &dataset);
+      //! Argumented constructor
+      TBB_DipoleDataset (hid_t const &dataset_id);
+      //! Copy constructor
+      TBB_DipoleDataset (TBB_DipoleDataset const &other);
 
-    //! Get the ID of the receiver unit (RCU) this dipole is connected with
-    uint rcu_id ();
+      // -------------------------------------------------------------- Destruction
 
-    //! Get the numerical value of the ADC sample frequency
-    double sample_frequency_value ();
-    
-    //! Get the physical unit associated with the ADC sample frequency
-    std::string sample_frequency_unit ();
+      //! Destructor
+      ~TBB_DipoleDataset ();
 
-    //! Get the ADC sample frequency as casa::Measure
-    casa::MFrequency sample_frequency ();
+      // ---------------------------------------------------------------- Operators
 
-    //! Get the Nyquist zone in which the ADC is performed
-    uint nyquist_zone ();
+      //! Overloading of the copy operator
+      TBB_DipoleDataset& operator= (TBB_DipoleDataset const &other);
 
-    //! Get the (UNIX) time at which the data were recorded
-    uint time ();
+      // --------------------------------------------------------------- Parameters
 
-    //! Get the time as Julian Day
-    double julianDay (bool const &onlySeconds=false);
-    
-    //! Get the timespan in samples since the last full second    
-    uint sample_number ();
+      /*!
+        \brief Get the identifier for this dataset within the HDF5 file
 
-    //! The number of samples per original TBB-RSP frame
-    uint samples_per_frame ();
-    
-    //! Get the number of samples stored in this dataset
-    uint data_length ();
+        \return H5datasetID -- The identifier for this dataset within the HDF5 file
+      */
+      inline hid_t dataset_id () const
+        {
+          return datasetID_p;
+        }
 
-    //! Get the type of feed for this dipole
-    std::string feed ();
-    
+      //! Get the number of attributes attached to the dataset
+      int nofAttributes ();
+
+      //! Get the ID of the LOFAR station this dipole belongs to
+      uint station_id ();
+
+      //! Get the ID of the RSP board this dipole is connected with
+      uint rsp_id ();
+
+      //! Get the ID of the receiver unit (RCU) this dipole is connected with
+      uint rcu_id ();
+
+      //! Get the numerical value of the ADC sample frequency
+      double sample_frequency_value ();
+
+      //! Get the physical unit associated with the ADC sample frequency
+      std::string sample_frequency_unit ();
+
+      //! Get the ADC sample frequency as casa::Measure
+      casa::MFrequency sample_frequency ();
+
+      //! Get the Nyquist zone in which the ADC is performed
+      uint nyquist_zone ();
+
+      //! Get the (UNIX) time at which the data were recorded
+      uint time ();
+
+      //! Get the time as Julian Day
+      double julianDay (bool const &onlySeconds=false);
+
+      //! Get the timespan in samples since the last full second
+      uint sample_number ();
+
+      //! The number of samples per original TBB-RSP frame
+      uint samples_per_frame ();
+
+      //! Get the number of samples stored in this dataset
+      uint data_length ();
+
+      //! Get the type of feed for this dipole
+      std::string feed ();
+
 #ifdef HAVE_CASA
-    //! Get the numerical value of the antenna position
-    casa::Vector<double> antenna_position_value ();
-    //! Get the physical unit within which the antenna position is given
-    casa::Vector<casa::String> antenna_position_unit ();
-    //! Get the antenna position as a measure
-    casa::MPosition antenna_position ();
-    //! Get the numerical values describing the antenna orientation
-    casa::Vector<double> antenna_orientation_value ();
-    //! Get the physical unit within which the antenna orientation is given
-    casa::Vector<casa::String> antenna_orientation_unit ();
+      //! Get the numerical value of the antenna position
+      casa::Vector<double> antenna_position_value ();
+      //! Get the physical unit within which the antenna position is given
+      casa::Vector<casa::String> antenna_position_unit ();
+      //! Get the antenna position as a measure
+      casa::MPosition antenna_position ();
+      //! Get the numerical values describing the antenna orientation
+      casa::Vector<double> antenna_orientation_value ();
+      //! Get the physical unit within which the antenna orientation is given
+      casa::Vector<casa::String> antenna_orientation_unit ();
 #else
-    //! Get the numerical value of the antenna position
-    std::vector<double> antenna_position_value ();
-    //! Get the physical unit within which the antenna position is given
-    std::vector<std::string> antenna_position_unit ();
-    //! Get the numerical values describing the antenna orientation
-    std::vector<double> antenna_orientation_value ();
-    //! Get the physical unit within which the antenna orientation is given
-    casa::Vector<casa::String> antenna_orientation_unit ();
+      //! Get the numerical value of the antenna position
+      std::vector<double> antenna_position_value ();
+      //! Get the physical unit within which the antenna position is given
+      std::vector<std::string> antenna_position_unit ();
+      //! Get the numerical values describing the antenna orientation
+      std::vector<double> antenna_orientation_value ();
+      //! Get the physical unit within which the antenna orientation is given
+      casa::Vector<casa::String> antenna_orientation_unit ();
 #endif
-    
-    //! Get the identifier for the reference frame of the antenna position
-    std::string antenna_position_frame ();
 
-    //! Get the identifier for the reference frame of the antenna orientation
-    std::string antenna_orientation_frame ();
+      //! Get the identifier for the reference frame of the antenna position
+      std::string antenna_position_frame ();
 
-    /*!
-      \brief Get the name of the class
-      
-      \return className -- The name of the class, TBB_DipoleDataset.
-    */
-    inline std::string className () const {
-      return "TBB_DipoleDataset";
-    }
+      //! Get the identifier for the reference frame of the antenna orientation
+      std::string antenna_orientation_frame ();
 
-    //! Provide a summary of the internal status
-    inline void summary () {
-      summary (std::cout);
-    }
+      /*!
+        \brief Get the name of the class
 
-    //! Provide a summary of the internal status
-    void summary (std::ostream &os);    
+        \return className -- The name of the class, TBB_DipoleDataset.
+      */
+      inline std::string className () const
+        {
+          return "TBB_DipoleDataset";
+        }
 
-    // ------------------------------------------------------------------ Methods
+      //! Provide a summary of the internal status
+      inline void summary ()
+      {
+        summary (std::cout);
+      }
 
-    //! Get the unique channel/dipole identifier
-    int channelID ();
+      //! Provide a summary of the internal status
+      void summary (std::ostream &os);
 
-    //! Get the unique channel/dipole identifier
-    std::string channelName ();
+      // ------------------------------------------------------------------ Methods
 
-    //! Get a number of data values as recorded for this dipole
-    bool fx (int const &start,
-	     int const &nofSamples,
-	     short *data);
-    
-    //! Get a number of data values as recorded for this dipole
-    casa::Vector<double> fx (int const &start=0,
-			     int const &nofSamples=1);
+      //! Get the unique channel/dipole identifier
+      int channelID ();
 
-    //! Get a casa::RecordDesc object describing the structure of the record
-    casa::RecordDesc recordDescription ();
-    
-    //! Get a casa::Record containing the values of the attributes
-    casa::Record attributes2record ();
-    
-    //! Get a casa::Record containing the values of the attributes
-    bool attributes2record (casa::Record &rec);
-    
-  private:
-    
-    //! Initialize the internal dataspace
-    void init ();
-    
-    /*!
-      \brief Initialize the internal dataspace
+      //! Get the unique channel/dipole identifier
+      std::string channelName ();
 
-      \param dataset_id -- Identifier for the dataset within the HDF5 file
-     */
-    void init (hid_t const &dataset_id);
-    
-    /*!
-      \brief Initialize the internal dataspace
+      //! Get a number of data values as recorded for this dipole
+      bool fx (int const &start,
+               int const &nofSamples,
+               short *data);
 
-      \param filename -- HDF5 file within which the dataset in question is
-             contained
-      \param dataset  -- Name of the dataset which this object is to encapsulate.
-     */
-    void init (std::string const &filename,
-	       std::string const &dataset);
-    
-    /*!
-      \brief Initialize the internal dataspace
+      //! Get a number of data values as recorded for this dipole
+      casa::Vector<double> fx (int const &start=0,
+                               int const &nofSamples=1);
 
-      \param location -- Location below which the dataset is found within the
-             file.
-      \param dataset  -- Name of the dataset which this object if to encapsulate.
-     */
-    void init (hid_t const &location,
-	       std::string const &dataset);
+      //! Get a casa::RecordDesc object describing the structure of the record
+      casa::RecordDesc recordDescription ();
 
-    /*!
-      \brief Unconditional copying
+      //! Get a casa::Record containing the values of the attributes
+      casa::Record attributes2record ();
 
-      \param other -- Another TBB_DipoleDataset object from which to create
-             this new one.
-    */
-    void copy (TBB_DipoleDataset const &other);
-    
-    /*!
-      \brief Unconditional deletion 
-    */
-    void destroy(void);
+      //! Get a casa::Record containing the values of the attributes
+      bool attributes2record (casa::Record &rec);
 
-  };
-  
+    private:
+
+      //! Initialize the internal dataspace
+      void init ();
+
+      /*!
+        \brief Initialize the internal dataspace
+
+        \param dataset_id -- Identifier for the dataset within the HDF5 file
+       */
+      void init (hid_t const &dataset_id);
+
+      /*!
+        \brief Initialize the internal dataspace
+
+        \param filename -- HDF5 file within which the dataset in question is
+               contained
+        \param dataset  -- Name of the dataset which this object is to encapsulate.
+       */
+      void init (std::string const &filename,
+                 std::string const &dataset);
+
+      /*!
+        \brief Initialize the internal dataspace
+
+        \param location -- Location below which the dataset is found within the
+               file.
+        \param dataset  -- Name of the dataset which this object if to encapsulate.
+       */
+      void init (hid_t const &location,
+                 std::string const &dataset);
+
+      /*!
+        \brief Unconditional copying
+
+        \param other -- Another TBB_DipoleDataset object from which to create
+               this new one.
+      */
+      void copy (TBB_DipoleDataset const &other);
+
+      /*!
+        \brief Unconditional deletion
+      */
+      void destroy(void);
+
+    };
+
 } // Namespace DAL -- end
 
 #endif /* TBB_DIPOLEDATASET_H */
-  
+

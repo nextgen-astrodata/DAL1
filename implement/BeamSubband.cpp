@@ -29,16 +29,16 @@ using std::cerr;
 using std::endl;
 
 namespace DAL
-{
+  {
 
   // ============================================================================
   //
   //  Construction
   //
   // ============================================================================
-  
+
   // ---------------------------------------------------------------- BeamSubband
-  
+
   BeamSubband::BeamSubband ()
   {
     table_p     = NULL;
@@ -55,7 +55,7 @@ namespace DAL
     table_p     = table;
     H5tableID_p = table_p->tableID();
   }
-  
+
   // ---------------------------------------------------------------- BeamSubband
 
   /*!
@@ -64,8 +64,8 @@ namespace DAL
     \param table   -- Name of the sub-band table
   */
   BeamSubband::BeamSubband (dalDataset &dataset,
-			    std::string const &group,
-			    std::string const &table)
+                            std::string const &group,
+                            std::string const &table)
   {
     table_p     = dataset.openTable (table,group);
     H5tableID_p = table_p->tableID();
@@ -76,46 +76,48 @@ namespace DAL
   //  Destruction
   //
   // ============================================================================
-  
+
   BeamSubband::~BeamSubband()
   {
-    if ( NULL != table_p ) {
-      delete table_p;
-    }
+    if ( NULL != table_p )
+      {
+        delete table_p;
+      }
   }
-  
+
   // ============================================================================
   //
   //  Methods
   //
   // ============================================================================
-  
+
   // -------------------------------------------------------------------- summary
-  
+
   /*!
     \param os -- Output stream to which the summary will be written.
   */
   void BeamSubband::summary (std::ostream &os)
   {
     os << "[BeamSubband] Summary of object properties." << endl;
-    
-    if (table_p != NULL) {
-      os << "-- Table HDF5 object ID   = " << table_p->tableID()         << endl;
-      os << "-- nof. table fields      = " << table_p->nofFields()       << endl;
-      os << "-- nof. table records     = " << table_p->nofRecords()      << endl;
-      os << "-- Number of table rows   = " << table_p->getNumberOfRows() << endl;
-      /* List of table column names */
-      std::vector<std::string> names = columnNames ();
+
+    if (table_p != NULL)
+      {
+        os << "-- Table HDF5 object ID   = " << table_p->tableID()         << endl;
+        os << "-- nof. table fields      = " << table_p->nofFields()       << endl;
+        os << "-- nof. table records     = " << table_p->nofRecords()      << endl;
+        os << "-- Number of table rows   = " << table_p->getNumberOfRows() << endl;
+        /* List of table column names */
+        std::vector<std::string> names = columnNames ();
 //       os << "-- Names of table columns = [";
 //       for (unsigned int n(0); n<names.size(); n++) {
 // 	os << " " << names[n];
 //       }
 //       os << " ]" << endl;
-    }
+      }
   }
 
   // ------------------------------------------------------------------ nofFields
-  
+
   /*!
     \return nofFields -- The number of fields within the table
   */
@@ -123,9 +125,10 @@ namespace DAL
   {
     hsize_t fields (0);
 
-    if (table_p != NULL) {
-      fields = table_p->nofFields();
-    }
+    if (table_p != NULL)
+      {
+        fields = table_p->nofFields();
+      }
 
     return fields;
   }
@@ -139,13 +142,14 @@ namespace DAL
   {
     hsize_t records (0);
 
-    if (table_p != NULL) {
-      records = table_p->nofRecords();
-    }
+    if (table_p != NULL)
+      {
+        records = table_p->nofRecords();
+      }
 
     return records;
   }
-  
+
   // ----------------------------------------------------------------- nofRecords
 
   /*!
@@ -155,9 +159,10 @@ namespace DAL
   {
     long rows (0);
 
-    if (table_p != NULL) {
-      rows = table_p->getNumberOfRows();
-    }
+    if (table_p != NULL)
+      {
+        rows = table_p->getNumberOfRows();
+      }
 
     return rows;
   }
@@ -166,37 +171,44 @@ namespace DAL
 
   std::vector<std::string> BeamSubband::columnNames ()
   {
-    if (table_p != NULL) {
-      return table_p->listColumns();
-    } else {
-      std::vector<std::string> names (1,"");
-      return names;
-    }
+    if (table_p != NULL)
+      {
+        return table_p->listColumns();
+      }
+    else
+      {
+        std::vector<std::string> names (1,"");
+        return names;
+      }
   }
-  
+
   // ----------------------------------------------------------- center_frequency
 
   /*!
     \return frequency -- The frequency of the subband
   */
   int BeamSubband::center_frequency () const
-  {
-    int frequency (0);
+    {
+      int frequency (0);
 
-    if (H5tableID_p > 0) {
-      if ( DAL::FAIL == h5get_attribute( H5tableID_p,
-					 "CENTER_FREQUENCY",
-					 frequency) ) {
-	std::cerr << "-- Error extracting attribute CENTER_FREQUENCY" << endl;
-      }
-    } else {
-      std::cerr << "[BeamSubband::center_frequency] Unable to retrieve attribute;"
-		<< " HDF5 table ID not assigned" << endl;
+      if (H5tableID_p > 0)
+        {
+          if ( DAL::FAIL == h5get_attribute( H5tableID_p,
+                                             "CENTER_FREQUENCY",
+                                             frequency) )
+            {
+              std::cerr << "-- Error extracting attribute CENTER_FREQUENCY" << endl;
+            }
+        }
+      else
+        {
+          std::cerr << "[BeamSubband::center_frequency] Unable to retrieve attribute;"
+                    << " HDF5 table ID not assigned" << endl;
+        }
+
+      return frequency;
     }
-    
-    return frequency;
-  }
 
-  
+
 }
 

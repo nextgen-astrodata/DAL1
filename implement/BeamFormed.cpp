@@ -24,10 +24,11 @@
 #include "BeamFormed.h"
 #endif
 
-namespace DAL {
-  
+namespace DAL
+  {
+
   // ---------------------------------------------------------- BeamFormed
-  
+
   BeamFormed::BeamFormed()
   {
     dataset_p  = NULL;
@@ -36,9 +37,9 @@ namespace DAL {
     H5fileID_p = 0;
     beamGroups_p.clear();
   };
-  
+
   // ---------------------------------------------------------- BeamFormed
-  
+
   /*!
     \param filename -- Name of the file from which to read in the data
   */
@@ -86,16 +87,16 @@ namespace DAL {
       within which the actual data for the individual sub-bands are stored.
     */
     std::vector<std::string> beamGroups = beams();
-    
+
     /* Always check if actually a list of groups has been extracted */
     if ( beamGroups.size() > 0 )
       {
-	for (uint beam(0); beam<beamGroups.size(); beam++)
-	  {
-	    // assemble internal list of beam groups
-	    BeamGroup * group = new BeamGroup((*dataset_p), beamGroups[beam]);
-	    beamGroups_p.push_back(group);
-	  }
+        for (uint beam(0); beam<beamGroups.size(); beam++)
+          {
+            // assemble internal list of beam groups
+            BeamGroup * group = new BeamGroup((*dataset_p), beamGroups[beam]);
+            beamGroups_p.push_back(group);
+          }
       }
     else
       {
@@ -103,25 +104,27 @@ namespace DAL {
                   << std::endl;
         status = false;
       }
-    
+
     return status;
   }
-  
+
   // ---------------------------------------------------------------- ~BeamFormed
-  
+
   BeamFormed::~BeamFormed()
   {
-    for (uint beam(0); beam<beamGroups_p.size(); beam++) {
-      delete beamGroups_p[beam];
-    }
-    
-    if ( NULL != dataset_p ) {
-      dataset_p->close();
-      delete dataset_p;
-      dataset_p = NULL;
-    }
+    for (uint beam(0); beam<beamGroups_p.size(); beam++)
+      {
+        delete beamGroups_p[beam];
+      }
+
+    if ( NULL != dataset_p )
+      {
+        dataset_p->close();
+        delete dataset_p;
+        dataset_p = NULL;
+      }
   }
-  
+
   // ---------------------------------------------------------- h5get_str_array_attr
 
   /*!
@@ -144,49 +147,51 @@ namespace DAL {
     // get the shape of the dataspace
     status = h5get_dataspace_shape (attribute_id,shape);
 
-    if (shape.size() == 1) {
-      // additional local variables
-      hid_t datatype_id  = H5Aget_type (attribute_id);
-      hsize_t dims[1] = { shape[0] };
-      
-      char **data_in;
-      
-      /* How many strings are in the string array? */
-      if (!(data_in = (char**)malloc(dims[0] * sizeof(char *))))
-	cerr << "ERROR! malloc " << attrname << endl;
-      
-      /* Now read the array of strings. The HDF5 library will allocate
-       * space for each string. */
-      if ( H5Aread( attribute_id, datatype_id, data_in ) < 0)
-	cerr << "ERROR! h5aread "  << attrname << endl;
-      
-      for (uint ii=0; ii<shape[0]; ii++)
-	lcl_sources.push_back( data_in[ii] );
-      
-      for (uint ii=0; ii<shape[0]; ii++)
-	free( data_in[ii] );
-      
-      free( data_in );
-      
-      /* Close HDF5 stuff. */
-      if (H5Aclose(attribute_id) < 0)
-	cerr << "ERROR! h5aclose " << attrname << endl;
-      if (H5Tclose(datatype_id) < 0)
-	cerr << "ERROR! h5tclose " << attrname << endl;
-      
-    }
-    else {
-      cerr << "[dataset_p->getAttribute] Wrong shape of attribute dataspace!"
-	   << std::endl;
-      status = false;
-    }
-    
+    if (shape.size() == 1)
+      {
+        // additional local variables
+        hid_t datatype_id  = H5Aget_type (attribute_id);
+        hsize_t dims[1] = { shape[0] };
+
+        char **data_in;
+
+        /* How many strings are in the string array? */
+        if (!(data_in = (char**)malloc(dims[0] * sizeof(char *))))
+          cerr << "ERROR! malloc " << attrname << endl;
+
+        /* Now read the array of strings. The HDF5 library will allocate
+         * space for each string. */
+        if ( H5Aread( attribute_id, datatype_id, data_in ) < 0)
+          cerr << "ERROR! h5aread "  << attrname << endl;
+
+        for (uint ii=0; ii<shape[0]; ii++)
+          lcl_sources.push_back( data_in[ii] );
+
+        for (uint ii=0; ii<shape[0]; ii++)
+          free( data_in[ii] );
+
+        free( data_in );
+
+        /* Close HDF5 stuff. */
+        if (H5Aclose(attribute_id) < 0)
+          cerr << "ERROR! h5aclose " << attrname << endl;
+        if (H5Tclose(datatype_id) < 0)
+          cerr << "ERROR! h5tclose " << attrname << endl;
+
+      }
+    else
+      {
+        cerr << "[dataset_p->getAttribute] Wrong shape of attribute dataspace!"
+             << std::endl;
+        status = false;
+      }
+
     return lcl_sources;
-    
+
   }
-  
+
   // ---------------------------------------------------------- summary
-  
+
   /*!
     \brief Provide a summary of the internal status
     \param os              -- output stream [I]
@@ -196,60 +201,63 @@ namespace DAL {
   void BeamFormed::summary (std::ostream &os, bool const &listBeams)
   {
     os << "\n[BeamFormed Data] Summary of object properties"     << endl;
-    
+
     os << "-- Status ............... : " << status     << endl;
     os << "-- Filename ............. : " << filename_p << endl;
     os << "-- HDF5 file ID ......... : " << H5fileID_p << endl;
-    
-    if (dataset_p != NULL) {
-      os << "-- Telesope ............. : " << telescope()         << endl;
-      os << "-- Number of Stations ... : " << nofStations()       << endl;
-      os << "-- Datatype ............. : " << datatype()          << endl;
-      os << "-- Emband   ............. : " << emband()            << endl;
-      
-      std::vector< std::string > srcs = sources();
-      os << "-- Source(s) ............ : ";
-      print_vector(os, srcs);
-      os << endl;
-      
-      os << "-- Observation Id ....... : " << observation_id()        << endl;
-      os << "-- Project Id ........... : " << proj_id()               << endl;
-      
-      os << "-- Point RA ............. : " << point_ra()              << endl;
-      os << "-- Point DEC ............ : " << point_dec()             << endl;
-      os << "-- Observer ............. : " << observer()              << endl;
-      os << "-- Epoch MJD ............ : " << epoch_mjd()             << endl;
-      os << "-- Epoch Date ........... : " << epoch_date()            << endl;
-      os << "-- Epoch UTC ............ : " << epoch_utc()             << endl;
-      os << "-- Epoch LST ............ : " << epoch_lst()             << endl;
-      os << "-- FWHM of the main beam  : " << main_beam_diam()        << endl;
-      os << "-- Bandwidth ............ : " << bandwidth()             << endl;
-      
-      os << "-- Breaks in the data ... : " << breaks()                << endl;
-      os << "-- Dispersion measure ... : " << dispersion_measure()    << endl;
-      os << "-- Number of time samples : " << number_of_samples()     << endl;
-      os << "-- Sampling time (Hz).... : " << sampling_time()         << endl;
-      os << "-- Notes ................ : " << notes()                 << endl;
-      os << "-- Number of beams ...... : " << number_of_beams()       << endl;
-      os << "-- FWHM of the sub-beams  : " << sub_beam_diameter()     << endl;
-      os << "-- Weather temperature .. : " << weather_temperature()   << endl;
-      os << "-- Weather humidity ..... : " << weather_humidity()      << endl;
-      std::vector< int > temps = station_temperatures();
-      os << "-- Station temperature(s) : ";
-      print_vector(os, temps);
-      os << endl;
-      
-      if (listBeams) {
-	for (uint beam(0); beam<beamGroups_p.size(); beam++) {
-	  beamGroups_p[beam]->summary();
-	}
+
+    if (dataset_p != NULL)
+      {
+        os << "-- Telesope ............. : " << telescope()         << endl;
+        os << "-- Number of Stations ... : " << nofStations()       << endl;
+        os << "-- Datatype ............. : " << datatype()          << endl;
+        os << "-- Emband   ............. : " << emband()            << endl;
+
+        std::vector< std::string > srcs = sources();
+        os << "-- Source(s) ............ : ";
+        print_vector(os, srcs);
+        os << endl;
+
+        os << "-- Observation Id ....... : " << observation_id()        << endl;
+        os << "-- Project Id ........... : " << proj_id()               << endl;
+
+        os << "-- Point RA ............. : " << point_ra()              << endl;
+        os << "-- Point DEC ............ : " << point_dec()             << endl;
+        os << "-- Observer ............. : " << observer()              << endl;
+        os << "-- Epoch MJD ............ : " << epoch_mjd()             << endl;
+        os << "-- Epoch Date ........... : " << epoch_date()            << endl;
+        os << "-- Epoch UTC ............ : " << epoch_utc()             << endl;
+        os << "-- Epoch LST ............ : " << epoch_lst()             << endl;
+        os << "-- FWHM of the main beam  : " << main_beam_diam()        << endl;
+        os << "-- Bandwidth ............ : " << bandwidth()             << endl;
+
+        os << "-- Breaks in the data ... : " << breaks()                << endl;
+        os << "-- Dispersion measure ... : " << dispersion_measure()    << endl;
+        os << "-- Number of time samples : " << number_of_samples()     << endl;
+        os << "-- Sampling time (Hz).... : " << sampling_time()         << endl;
+        os << "-- Notes ................ : " << notes()                 << endl;
+        os << "-- Number of beams ...... : " << number_of_beams()       << endl;
+        os << "-- FWHM of the sub-beams  : " << sub_beam_diameter()     << endl;
+        os << "-- Weather temperature .. : " << weather_temperature()   << endl;
+        os << "-- Weather humidity ..... : " << weather_humidity()      << endl;
+        std::vector< int > temps = station_temperatures();
+        os << "-- Station temperature(s) : ";
+        print_vector(os, temps);
+        os << endl;
+
+        if (listBeams)
+          {
+            for (uint beam(0); beam<beamGroups_p.size(); beam++)
+              {
+                beamGroups_p[beam]->summary();
+              }
+          }
       }
-    }
-    
+
   }
-  
+
   // ---------------------------------------------------------- getBeam
-  
+
   /*!
     \brief Get a beam group object
     \param beam       -- beam number [I]
@@ -261,9 +269,9 @@ namespace DAL {
     BeamGroup * group = new BeamGroup((*dataset_p), beamGroups[beam]);
     return group;
   }
-  
+
   // ---------------------------------------------------------- beams
-  
+
   /*!
     \brief Print beam groups embedded within the dataset
     \return beams - a vector of strings representing the names of the beams
@@ -351,14 +359,14 @@ namespace DAL {
     if (dataset_p->getName() != "UNDEFINED")
       {
         if ( DAL::FAIL == dataset_p->getAttribute( "NUMBER_OF_STATIONS",
-						   nstations ) )
+             nstations ) )
           {
             std::cerr << "-- Error extracting attribute NUMBER_OF_STATIONS\n";
           }
       }
     return nstations;
   }
-  
+
   // ---------------------------------------------------------- datatype
 
   /*!
@@ -863,27 +871,29 @@ namespace DAL {
 
   /*!
     \brief Get the station temperatures
-    \return temperatures -- Vector with the temperatures for measured at the 
+    \return temperatures -- Vector with the temperatures for measured at the
             different stations.
   */
   std::vector< int > BeamFormed::station_temperatures ()
   {
     std::vector<int> station_temperatures;
-    try {
-      status = h5get_attribute( H5fileID_p, "TSYS", station_temperatures );
-    }
-    catch (std::string message) {
-      cerr << message << endl;
-    }
+    try
+      {
+        status = h5get_attribute( H5fileID_p, "TSYS", station_temperatures );
+      }
+    catch (std::string message)
+      {
+        cerr << message << endl;
+      }
     return station_temperatures;
   }
-  
+
   // ============================================================================
   //
   //  Access to the data stored in the sub-bands
   //
   // ============================================================================
-  
+
   /*!
     \param beam    -- The number of the beam from which to retrieve the data
     \param subband -- The number of the sub-band from which to retrieve the data
@@ -892,17 +902,17 @@ namespace DAL {
     \retval values -- Vector with the extracted values
   */
   void BeamFormed::getSubbandData_X (int &beam,
-				     int &subband,
-				     int &start,
-				     int &length,
-				     std::vector<complex<short> > &data)
+                                     int &subband,
+                                     int &start,
+                                     int &length,
+                                     std::vector<complex<short> > &data)
   {
     beamGroups_p[beam]->getSubbandData_X(subband,
-					 start,
-					 length,
-					 data);
+                                         start,
+                                         length,
+                                         data);
   }
-  
+
   /*!
     \param beam    -- The number of the beam from which to retrieve the data
     \param subband -- The number of the sub-band from which to retrieve the data
@@ -911,17 +921,17 @@ namespace DAL {
     \retval values -- Vector with the extracted values
   */
   void BeamFormed::getSubbandData_Y (int &beam,
-				     int &subband,
-				     int &start,
-				     int &length,
-				     std::vector<complex<short> > &data)
+                                     int &subband,
+                                     int &start,
+                                     int &length,
+                                     std::vector<complex<short> > &data)
   {
     beamGroups_p[beam]->getSubbandData_Y(subband,
-					 start,
-					 length,
-					 data);
+                                         start,
+                                         length,
+                                         data);
   }
-  
+
   // ============================================================================
   //
   //  Boost wrappers to allow some previously defined functions to be easily

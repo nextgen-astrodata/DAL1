@@ -50,8 +50,8 @@ using DAL::BeamSubband;
           function
 */
 int test_tables (std::string const &filename,
-		 std::string const &groupName,
-		 std::string const &tableName)
+                 std::string const &groupName,
+                 std::string const &tableName)
 {
   std::cout << "\n[tBeamSubband::test_tables]\n" << std::endl;
 
@@ -61,34 +61,43 @@ int test_tables (std::string const &filename,
   dalTable * table;
 
   std::cout << "[1] Open file into dalDataset ..." << std::endl;
-  try {
-    dataset = new dalDataset(filename.c_str(),"HDF5");
-    dataset->summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-  
+  try
+    {
+      dataset = new dalDataset(filename.c_str(),"HDF5");
+      dataset->summary();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
+
   std::cout << "[2] Open beam group from dalDataset ..." << std::endl;
-  try {
-    group = dataset->openGroup(groupName);
-    //
-    group->summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-  
+  try
+    {
+      group = dataset->openGroup(groupName);
+      //
+      group->summary();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
+
   std::cout << "[3] Open sub-band table from dalDataset ..." << std::endl;
-  try {
-    table = dataset->openTable (tableName,groupName);
-    // 
-    table->summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-  
+  try
+    {
+      table = dataset->openTable (tableName,groupName);
+      //
+      table->summary();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
+
   return nofFailedTests;
 }
 
@@ -105,56 +114,65 @@ int test_tables (std::string const &filename,
           function
 */
 int test_construction (std::string const &filename,
-		       std::string const &groupName,
-		       std::string const &tableName)
+                       std::string const &groupName,
+                       std::string const &tableName)
 {
   std::cout << "\n[tBeamSubband::test_construction]\n" << std::endl;
 
   int nofFailedTests (0);
-  
+
   std::cout << "[1] Testing default constructor ..." << std::endl;
-  try {
-    BeamSubband subband;
-    //
-    subband.summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-  
+  try
+    {
+      BeamSubband subband;
+      //
+      subband.summary();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
+
   std::cout << "[2] Argumented constructor using dalDataset ..." << std::endl;
-  try {
-    dalDataset dataset (filename.c_str(),"HDF5");
-    //
-    BeamSubband subband (dataset,groupName,tableName);
-    //
-    subband.summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-  
+  try
+    {
+      dalDataset dataset (filename.c_str(),"HDF5");
+      //
+      BeamSubband subband (dataset,groupName,tableName);
+      //
+      subband.summary();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
+
   std::cout << "[3] Argumented constructor using dalTable ..." << std::endl;
-  try {
-    dalDataset *dataset;
-    dalTable * table;
-    dataset = new dalDataset(filename.c_str(),"HDF5");
-    table = dataset->openTable (tableName,groupName);
-    //
-    BeamSubband subband (table);
-    //
-    subband.summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-  
+  try
+    {
+      dalDataset *dataset;
+      dalTable * table;
+      dataset = new dalDataset(filename.c_str(),"HDF5");
+      table = dataset->openTable (tableName,groupName);
+      //
+      BeamSubband subband (table);
+      //
+      subband.summary();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
+
   return nofFailedTests;
 }
 
 // ------------------------------------------------------------------------------
 
-int main (int argc,char *argv[]) 
+int main (int argc,char *argv[])
 {
   int nofFailedTests (0);
   std::string filename;
@@ -163,18 +181,22 @@ int main (int argc,char *argv[])
 
   /* Check command line parameters */
 
-  if (argc > 1) {
-    filename = std::string(argv[1]);
-  } else {
-    std::cout << "[tBeamSubband] Missing name of input test file." << std::endl;
-    return(DAL::FAIL);
-  }
+  if (argc > 1)
+    {
+      filename = std::string(argv[1]);
+    }
+  else
+    {
+      std::cout << "[tBeamSubband] Missing name of input test file." << std::endl;
+      return(DAL::FAIL);
+    }
 
   nofFailedTests += test_tables (filename,groupName,tableName);
-  
-  if (nofFailedTests == 0) {
-    nofFailedTests += test_construction (filename,groupName,tableName);
-  }
-    
+
+  if (nofFailedTests == 0)
+    {
+      nofFailedTests += test_construction (filename,groupName,tableName);
+    }
+
   return nofFailedTests;
 }

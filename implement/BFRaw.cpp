@@ -60,26 +60,27 @@ dataStruct * channelize( dataStruct * data,
 
 */
 
-namespace DAL {
+namespace DAL
+  {
 
-		bool time_out; //! used for time out handler
-		int server_socket(0);
+  bool time_out; //! used for time out handler
+  int server_socket(0);
 
-	  //_________________________________________________timeout_alarm
-		//! used to handle time out for socket connection
-		void timeout_alarm (int sig)
-		{
-			time_out = true;
-			std::cout << " time out on socket read" << std::endl;
-			// shutdown and close socket connection
-			shutdown(server_socket, SHUT_RDWR);
-			close(server_socket);
-			std::cout << "connection closed" << std::endl;
-			signal (sig, timeout_alarm);
-		}
+  //_________________________________________________timeout_alarm
+  //! used to handle time out for socket connection
+  void timeout_alarm (int sig)
+  {
+    time_out = true;
+    std::cout << " time out on socket read" << std::endl;
+    // shutdown and close socket connection
+    shutdown(server_socket, SHUT_RDWR);
+    close(server_socket);
+    std::cout << "connection closed" << std::endl;
+    signal (sig, timeout_alarm);
+  }
 
-		
-		
+
+
 
 
   // ============================================================================
@@ -89,7 +90,7 @@ namespace DAL {
   // ============================================================================
 
   /*!
-    This is the only constructor provided for an object of this class. The 
+    This is the only constructor provided for an object of this class. The
     optional processing parameters, which can can be passed along, are set to
     sensible default values, such that only the \e filename is required.
 
@@ -100,29 +101,29 @@ namespace DAL {
     \param factor           -- Downsampling factor
   */
   BFRaw::BFRaw( string const& filename,
-		bool doIntensity,
-		bool doDownsample,
-    bool doChannelization,
-		int factor ) :
-rawfile(0),
-outputfilename(filename),
+                bool doIntensity,
+                bool doDownsample,
+                bool doChannelization,
+                int factor ) :
+      rawfile(0),
+      outputfilename(filename),
 //server_socket(0),
-socklen(sizeof(incoming_addr)),
-blockHeaderSize(sizeof(blockheader)),
-dataSize(0),
-sampledata(0),
-block_nr(0),
-index(0),
-first_block(true),
-downsample_factor(factor),
-doDownsample_p(doDownsample),
-DO_FLOAT32_INTENSITY(doIntensity),
-DO_CHANNELIZATION(doChannelization)
+      socklen(sizeof(incoming_addr)),
+      blockHeaderSize(sizeof(blockheader)),
+      dataSize(0),
+      sampledata(0),
+      block_nr(0),
+      index(0),
+      first_block(true),
+      downsample_factor(factor),
+      doDownsample_p(doDownsample),
+      DO_FLOAT32_INTENSITY(doIntensity),
+      DO_CHANNELIZATION(doChannelization)
   {
     // initializations (private)
     bigendian            = BigEndian();
   }
-  
+
   // ============================================================================
   //
   //  Destruction
@@ -141,16 +142,17 @@ DO_CHANNELIZATION(doChannelization)
         if (rawfile->is_open())
           {
             rawfile->close();
-					}
+          }
         delete rawfile;
         rawfile = NULL;
       }
-	if (sampledata){		
-		delete [] sampledata;
-		sampledata = 0;
-	}
+    if (sampledata)
+      {
+        delete [] sampledata;
+        sampledata = 0;
+      }
   }
-  
+
   // ============================================================================
   //
   //  Methods
@@ -250,7 +252,7 @@ DO_CHANNELIZATION(doChannelization)
 
     // Step 2 Create a sockaddr_in to describe the local port
     //sockaddr_in local_info;
-		memset(&incoming_addr, 0, sizeof(incoming_addr));
+    memset(&incoming_addr, 0, sizeof(incoming_addr));
     incoming_addr.sin_family = AF_INET;
     incoming_addr.sin_addr.s_addr = INADDR_ANY;
     incoming_addr.sin_port = htons(port_number);
@@ -259,29 +261,30 @@ DO_CHANNELIZATION(doChannelization)
     if (-1 == bind(server_socket, (sockaddr *) &incoming_addr, sizeof(incoming_addr)))
       {
         perror("error bind failed");
-				close(server_socket);
+        close(server_socket);
         return false;
       }
-		
-		// Step 4 listen for incoming connections
+
+    // Step 4 listen for incoming connections
     if (-1 == listen(server_socket,5))
       {
         perror("error listen failed");
-				close(server_socket);
+        close(server_socket);
         return false;
       }
-		int old_server_socket = server_socket;
-		if (-1 == (server_socket = accept(server_socket, 0, 0))) {
-				perror("error accept failed");
-				close(server_socket);
-				return false;
-		}
+    int old_server_socket = server_socket;
+    if (-1 == (server_socket = accept(server_socket, 0, 0)))
+      {
+        perror("error accept failed");
+        close(server_socket);
+        return false;
+      }
 #ifdef DEBUGGING_MESSAGES
-		cout << "socket connected" << endl;
+    cout << "socket connected" << endl;
 #endif
-		close(old_server_socket);
+    close(old_server_socket);
 
-		return true;
+    return true;
   }
 
   // ---------------------------------------------------------------- openRawFile
@@ -383,12 +386,13 @@ DO_CHANNELIZATION(doChannelization)
 
   bool BFRaw::readRawSocketHeader()
   {
-		if (recvfrom(server_socket, reinterpret_cast<char *>(&header), sizeof(header),0,  (sockaddr *) &incoming_addr, &socklen) < static_cast<int>(sizeof(header))) {
-			cerr << "error reading header from socket" << endl;
-			close(server_socket);
-			perror("readRawSocketHeader");
-      return false;
-		}
+    if (recvfrom(server_socket, reinterpret_cast<char *>(&header), sizeof(header),0,  (sockaddr *) &incoming_addr, &socklen) < static_cast<int>(sizeof(header)))
+      {
+        cerr << "error reading header from socket" << endl;
+        close(server_socket);
+        perror("readRawSocketHeader");
+        return false;
+      }
 
     // swap values when necessary
     if ( !bigendian )
@@ -418,13 +422,13 @@ DO_CHANNELIZATION(doChannelization)
         swapbytes((char *)&header.magic,4);
 
       }
-	
-	dataSize = header.nrSamplesPerSubband*header.nrSubbands;
+
+    dataSize = header.nrSamplesPerSubband*header.nrSubbands;
 
 #ifdef DEBUGGING_MESSAGES
-			cout << "Allocating " << sizeof(Sample) * dataSize << " bytes." << endl;
+    cout << "Allocating " << sizeof(Sample) * dataSize << " bytes." << endl;
 #endif
-			sampledata = new Sample[ dataSize ]; // sample contains 8 bytes
+    sampledata = new Sample[ dataSize ]; // sample contains 8 bytes
 
 #ifdef DEBUGGING_MESSAGES
     printf("Magic number: %8X\n",header.magic);
@@ -462,204 +466,230 @@ DO_CHANNELIZATION(doChannelization)
         dec = NULL;
       }
 #endif
-	return true;
+    return true;
   }
 
 
-int BFRaw::receiveBytes(void *storage, size_t nrOfBytesToRead) {
-	int bytes_read = 0;
-	int8_t *bytepointer = reinterpret_cast<int8_t *>(storage);
-	while (true) {
-	bytes_read = recvfrom(server_socket, bytepointer, nrOfBytesToRead, 0, (sockaddr *) &incoming_addr, &socklen);
-	if (bytes_read == -1) { // error reading
-		shutdown(server_socket, SHUT_RDWR);
-		close(server_socket);
-		return -1;
-	}
-	else if (bytes_read == 0) { // end of stream?
-		 return 0;
-	}
-	nrOfBytesToRead -= bytes_read;
-	bytepointer += bytes_read;
-	if (nrOfBytesToRead == 0) { // did we read enough?
-		return bytes_read;
-	}
-	}
-}
+  int BFRaw::receiveBytes(void *storage, size_t nrOfBytesToRead)
+  {
+    int bytes_read = 0;
+    int8_t *bytepointer = reinterpret_cast<int8_t *>(storage);
+    while (true)
+      {
+        bytes_read = recvfrom(server_socket, bytepointer, nrOfBytesToRead, 0, (sockaddr *) &incoming_addr, &socklen);
+        if (bytes_read == -1)   // error reading
+          {
+            shutdown(server_socket, SHUT_RDWR);
+            close(server_socket);
+            return -1;
+          }
+        else if (bytes_read == 0)   // end of stream?
+          {
+            return 0;
+          }
+        nrOfBytesToRead -= bytes_read;
+        bytepointer += bytes_read;
+        if (nrOfBytesToRead == 0)   // did we read enough?
+          {
+            return bytes_read;
+          }
+      }
+  }
 
   //_________________________________________________processBFRawDataBlockFromSocket
-	bool BFRaw::processBFRawDataBlockFromSocket(void) {
+  bool BFRaw::processBFRawDataBlockFromSocket(void)
+  {
 
-if (receiveBytes(reinterpret_cast<char *>(&blockheader), blockHeaderSize) == -1) {
-			perror("Error, receiving the first data block header");
-      throw "Error, receiving the first data block header";
-	}
+    if (receiveBytes(reinterpret_cast<char *>(&blockheader), blockHeaderSize) == -1)
+      {
+        perror("Error, receiving the first data block header");
+        throw "Error, receiving the first data block header";
+      }
 
-	if (!bigendian) { convertEndian(); }
+    if (!bigendian)
+      {
+        convertEndian();
+      }
 
-	makeH5OutputFile();
+    makeH5OutputFile();
 
-	// write the utc time to hdf5 file according to header time info
-	time_t utc;
-	utc = (time_t)(blockheader.time[0]/(Int64)header.sampleRate);
-	char * timeDateString = NULL;
-	uint16_t buf_size = 128;
-	if (!timeDateString) {
-		timeDateString = new char[buf_size*sizeof(char)];
-	}
-	memset (timeDateString,'\0',buf_size);
-	strftime(timeDateString, buf_size, "%T", gmtime(&utc));
-	dataset.setAttribute( "EPOCH_UTC", timeDateString );
+    // write the utc time to hdf5 file according to header time info
+    time_t utc;
+    utc = (time_t)(blockheader.time[0]/(Int64)header.sampleRate);
+    char * timeDateString = NULL;
+    uint16_t buf_size = 128;
+    if (!timeDateString)
+      {
+        timeDateString = new char[buf_size*sizeof(char)];
+      }
+    memset (timeDateString,'\0',buf_size);
+    strftime(timeDateString, buf_size, "%T", gmtime(&utc));
+    dataset.setAttribute( "EPOCH_UTC", timeDateString );
 
-	memset (timeDateString,'\0',buf_size);
-	strftime(timeDateString, buf_size, "%d/%m/%y", gmtime(&utc));
-	dataset.setAttribute( "EPOCH_DATE", timeDateString );
+    memset (timeDateString,'\0',buf_size);
+    strftime(timeDateString, buf_size, "%d/%m/%y", gmtime(&utc));
+    dataset.setAttribute( "EPOCH_DATE", timeDateString );
 
-	memset (timeDateString,'\0',buf_size);
+    memset (timeDateString,'\0',buf_size);
 
 
-	delete[] timeDateString;
-	first_block = false;
+    delete[] timeDateString;
+    first_block = false;
 
 // read the first datablock in the temporary storage
-	if ( receiveBytes( sampledata, dataSize * sizeof(Sample)) == -1) {
-			perror("Error, reading the first data block!");
-			throw "Error reading the first data block!";
-		}
-	
-	writeBFRawDataBlockToFile();
-	++block_nr;
+    if ( receiveBytes( sampledata, dataSize * sizeof(Sample)) == -1)
+      {
+        perror("Error, reading the first data block!");
+        throw "Error reading the first data block!";
+      }
 
-	// read rest of datablocks and write to file
-	int result;
-	
-	// enable time out alarm
-	// set a time out alarm
-	time_out = false;
-	signal( SIGALRM, timeout_alarm );
-	alarm( 7 );
-	
-	while (!time_out) { // process all next data blocks
-cout << "block_nr: " << block_nr << endl;
+    writeBFRawDataBlockToFile();
+    ++block_nr;
 
-	result = receiveBytes(reinterpret_cast<char *>(&blockheader), blockHeaderSize);
-	
-	if (!time_out) {
-		if (result == 0) {
-			std::cout << "shutdown connection by remote" << std::endl;
-			break;  // read end of stream
-		}
-		else if (result < -1) {
-			std::cerr << "Error, read of data block: " << block_nr << " !" << std::endl;
-			perror("processBFRawDataBlockFromSocket");
-			throw "Error read data block!";
-		}
-		result = receiveBytes(sampledata, dataSize * sizeof(Sample));
-		if (!time_out) {
-			if (result == -1) {
-				std::cerr << "Error, read of data block: " << block_nr << " !" << std::endl;
-				perror("processBFRawDataBlockFromSocket");
-				throw "Error read data block!";
-			} else {
-				alarm(7); // reset time out alarm
-			}
-		}
-	}
-	
-	if (!bigendian) { convertEndian(); }
-	
-	writeBFRawDataBlockToFile();
-		++block_nr;
-} // while
-alarm (0); // cancel time out alarm
+    // read rest of datablocks and write to file
+    int result;
+
+    // enable time out alarm
+    // set a time out alarm
+    time_out = false;
+    signal( SIGALRM, timeout_alarm );
+    alarm( 7 );
+
+    while (!time_out)   // process all next data blocks
+      {
+        cout << "block_nr: " << block_nr << endl;
+
+        result = receiveBytes(reinterpret_cast<char *>(&blockheader), blockHeaderSize);
+
+        if (!time_out)
+          {
+            if (result == 0)
+              {
+                std::cout << "shutdown connection by remote" << std::endl;
+                break;  // read end of stream
+              }
+            else if (result < -1)
+              {
+                std::cerr << "Error, read of data block: " << block_nr << " !" << std::endl;
+                perror("processBFRawDataBlockFromSocket");
+                throw "Error read data block!";
+              }
+            result = receiveBytes(sampledata, dataSize * sizeof(Sample));
+            if (!time_out)
+              {
+                if (result == -1)
+                  {
+                    std::cerr << "Error, read of data block: " << block_nr << " !" << std::endl;
+                    perror("processBFRawDataBlockFromSocket");
+                    throw "Error read data block!";
+                  }
+                else
+                  {
+                    alarm(7); // reset time out alarm
+                  }
+              }
+          }
+
+        if (!bigendian)
+          {
+            convertEndian();
+          }
+
+        writeBFRawDataBlockToFile();
+        ++block_nr;
+      } // while
+    alarm (0); // cancel time out alarm
 
 
 // shutdown and close socket connection
-if (!time_out) { // if server socket was not yet closed in time out event handler
-	shutdown(server_socket, SHUT_RDWR);
-	close(server_socket);
-	std::cout << "connection closed" << std::endl;
-}
+    if (!time_out)   // if server socket was not yet closed in time out event handler
+      {
+        shutdown(server_socket, SHUT_RDWR);
+        close(server_socket);
+        std::cout << "connection closed" << std::endl;
+      }
 
 
-return true;
-}
+    return true;
+  }
 
- // ---------------------------------------------------------writeBFRawDataBlock
-void BFRaw::writeBFRawDataBlockToFile(void) {
+// ---------------------------------------------------------writeBFRawDataBlock
+  void BFRaw::writeBFRawDataBlockToFile(void)
+  {
 #ifdef _OPENMP
 #pragma omp parallel for ordered schedule(dynamic)
 #endif
-				for ( unsigned int subband=0; subband < header.nrSubbands; ++subband )
-					{
-						index = sizeof(blockheader) +
-										subband * header.nrSamplesPerSubband * 4 * header.bitsPerSample/8;
-/*
-#ifdef DEBUGGING_MESSAGES
-						cout << "sampledata[0].xx: " << sampledata[0].xx << ", sampledata[0].yy: " << sampledata[0].yy <<  "sampledata[10].xx: " << sampledata[10].xx << ", sampledata[10].yy: " << sampledata[10].yy << endl;
-#endif
-*/
-						if ( doDownsample_p )  // if downsampling
-							{
-								Float32 * downsampled_data =
-										downsample_to_float32_intensity( sampledata,
-																									0,
-																									header.nrSamplesPerSubband,
-																									downsample_factor );
+    for ( unsigned int subband=0; subband < header.nrSubbands; ++subband )
+      {
+        index = sizeof(blockheader) +
+                subband * header.nrSamplesPerSubband * 4 * header.bitsPerSample/8;
+        /*
+        #ifdef DEBUGGING_MESSAGES
+        						cout << "sampledata[0].xx: " << sampledata[0].xx << ", sampledata[0].yy: " << sampledata[0].yy <<  "sampledata[10].xx: " << sampledata[10].xx << ", sampledata[10].yy: " << sampledata[10].yy << endl;
+        #endif
+        */
+        if ( doDownsample_p )  // if downsampling
+          {
+            Float32 * downsampled_data =
+              downsample_to_float32_intensity( sampledata,
+                                               0,
+                                               header.nrSamplesPerSubband,
+                                               downsample_factor );
 #ifdef _OPENMP
 #pragma omp ordered
 #endif
-								table[subband]->appendRows( downsampled_data,
-																						header.nrSamplesPerSubband / downsample_factor );
-								delete [] downsampled_data;
-								downsampled_data = NULL;
-							}
-						else  // no downsampling
-							{
-								if ( DO_FLOAT32_INTENSITY )
-									{
-										Float32 * intensity_data =
-												compute_float32_intensity( sampledata,
-																								0,
-																								header.nrSamplesPerSubband );
+            table[subband]->appendRows( downsampled_data,
+                                        header.nrSamplesPerSubband / downsample_factor );
+            delete [] downsampled_data;
+            downsampled_data = NULL;
+          }
+        else  // no downsampling
+          {
+            if ( DO_FLOAT32_INTENSITY )
+              {
+                Float32 * intensity_data =
+                  compute_float32_intensity( sampledata,
+                                             0,
+                                             header.nrSamplesPerSubband );
 #ifdef _OPENMP
 #pragma omp ordered
 #endif
-										table[subband]->appendRows( intensity_data,
-																								header.nrSamplesPerSubband );
-										delete [] intensity_data;
-										intensity_data = NULL;
-									}
-								else
-									{
-										table[subband]->appendRows( sampledata,
-																								header.nrSamplesPerSubband );
-									}
-							}
+                table[subband]->appendRows( intensity_data,
+                                            header.nrSamplesPerSubband );
+                delete [] intensity_data;
+                intensity_data = NULL;
+              }
+            else
+              {
+                table[subband]->appendRows( sampledata,
+                                            header.nrSamplesPerSubband );
+              }
+          }
 
-					} // for subband
-}
+      } // for subband
+  }
 
   // --------------------------------------------------------------convertEndian
-	void BFRaw::convertEndian(void)	{
-		swapbytes((char *)&blockheader.magic,4);
-		for ( uint ii = 0; ii < 8; ii++ )
-			{
-				swapbytes((char *)&blockheader.coarseDelayApplied[ ii ],4);
-				swapbytes((char *)&blockheader.fineDelayRemainingAtBegin[ ii ],8);
-				swapbytes((char *)&blockheader.fineDelayRemainingAfterEnd[ ii ],8);
-				swapbytes((char *)&blockheader.time[ ii ],8);
-				swapbytes((char *)&blockheader.flags[ ii ].nrFlagsRanges,4);
+  void BFRaw::convertEndian(void)
+  {
+    swapbytes((char *)&blockheader.magic,4);
+    for ( uint ii = 0; ii < 8; ii++ )
+      {
+        swapbytes((char *)&blockheader.coarseDelayApplied[ ii ],4);
+        swapbytes((char *)&blockheader.fineDelayRemainingAtBegin[ ii ],8);
+        swapbytes((char *)&blockheader.fineDelayRemainingAfterEnd[ ii ],8);
+        swapbytes((char *)&blockheader.time[ ii ],8);
+        swapbytes((char *)&blockheader.flags[ ii ].nrFlagsRanges,4);
 //				swapbytes((char *)&blockheader.nrFlagsRanges[ ii ],4);
-				for ( uint jj = 0; jj < 16; jj++ )
-					{
-						swapbytes( (char *)&blockheader.flags[ ii ].flagsRanges[ jj ].begin,4 );
-						swapbytes( (char *)&blockheader.flags[ ii ].flagsRanges[ jj ].end,4 );
-/*						swapbytes( (char *)&blockheader.flagsRanges[ ii ][ jj ].begin,4 );
-						swapbytes( (char *)&blockheader.flagsRanges[ ii ][ jj ].end,4 ); */
-					}
-			}
-	}
+        for ( uint jj = 0; jj < 16; jj++ )
+          {
+            swapbytes( (char *)&blockheader.flags[ ii ].flagsRanges[ jj ].begin,4 );
+            swapbytes( (char *)&blockheader.flags[ ii ].flagsRanges[ jj ].end,4 );
+            /*						swapbytes( (char *)&blockheader.flagsRanges[ ii ][ jj ].begin,4 );
+            						swapbytes( (char *)&blockheader.flagsRanges[ ii ][ jj ].end,4 ); */
+          }
+      }
+  }
 
 
 // ----------------------------------------------------------- makeH5OutputFile
@@ -676,7 +706,7 @@ void BFRaw::writeBFRawDataBlockToFile(void) {
     int bandwidth           = 0; // Total bandwidth (MHz)
     int breaks_in_data      = 0; // Any breaks in data?
     int dispersion_measure  = 0;
-		int number_of_samples = header.nrSubbands * header.nrSamplesPerSubband;
+    int number_of_samples = header.nrSubbands * header.nrSamplesPerSubband;
     Float64 sampling_time   = header.sampleRate;
     int number_of_beams     = 1;
     int sub_beam_diameter   = 0; // fwhm of the sub-beams (arcmin)
@@ -844,7 +874,7 @@ void BFRaw::writeBFRawDataBlockToFile(void) {
     BlockHeader * pbuf = NULL;
 
 #ifdef DEBUGGING_MESSAGES
-		cout << " allocating " << sizeof(Sample) * header.nrSamplesPerSubband << " bytes for sample data." << endl;
+    cout << " allocating " << sizeof(Sample) * header.nrSamplesPerSubband << " bytes for sample data." << endl;
 #endif
     for ( int blk=0 ; blk < blocks ; blk++ )
       {
@@ -864,10 +894,10 @@ void BFRaw::writeBFRawDataBlockToFile(void) {
 //                swapbytes((char *)&pbuf->nrFlagsRanges[ ii ],4);
                 for ( uint jj = 0; jj < 16; jj++ )
                   {
-						swapbytes( (char *)&blockheader.flags[ ii ].flagsRanges[ jj ].begin,4 );
-						swapbytes( (char *)&blockheader.flags[ ii ].flagsRanges[ jj ].end,4 );
-/*                    swapbytes( (char *)&pbuf->flagsRanges[ ii ][ jj ].begin,4 );
-										swapbytes( (char *)&pbuf->flagsRanges[ ii ][ jj ].end,4 );  */
+                    swapbytes( (char *)&blockheader.flags[ ii ].flagsRanges[ jj ].begin,4 );
+                    swapbytes( (char *)&blockheader.flags[ ii ].flagsRanges[ jj ].end,4 );
+                    /*                    swapbytes( (char *)&pbuf->flagsRanges[ ii ][ jj ].begin,4 );
+                    										swapbytes( (char *)&pbuf->flagsRanges[ ii ][ jj ].end,4 );  */
                   }
               }
           }
@@ -909,11 +939,11 @@ void BFRaw::writeBFRawDataBlockToFile(void) {
                     subband * header.nrSamplesPerSubband * 8;
 
             Sample * sample = reinterpret_cast<Sample*>(&( buf[ index ]));
-/*
-#ifdef DEBUGGING_MESSAGES
-cout << "sample[0].xx: " << sample[0].xx << ", sample[0].yy: " << sample[0].yy <<  "sample[10].xx: " << sample[10].xx << ", sample[10].yy: " << sample[10].yy << endl;
-#endif
-*/
+            /*
+            #ifdef DEBUGGING_MESSAGES
+            cout << "sample[0].xx: " << sample[0].xx << ", sample[0].yy: " << sample[0].yy <<  "sample[10].xx: " << sample[10].xx << ", sample[10].yy: " << sample[10].yy << endl;
+            #endif
+            */
 
             if ( doDownsample_p )  // if downsampling
               {
@@ -951,7 +981,7 @@ cout << "sample[0].xx: " << sample[0].xx << ", sample[0].yy: " << sample[0].yy <
                   {
                     table[subband]->appendRows( sample,
                                                 header.nrSamplesPerSubband );
-               		}
+                  }
               }
 
           } // for subband
@@ -973,8 +1003,8 @@ cout << "sample[0].xx: " << sample[0].xx << ", sample[0].yy: " << sample[0].yy <
 
   Float32 *
   BFRaw::compute_float32_intensity( Sample * data,
-																		int32_t start,
-																		const uint64_t arraylength )
+                                    int32_t start,
+                                    const uint64_t arraylength )
   {
     double xx_intensity = 0;
     double yy_intensity = 0;

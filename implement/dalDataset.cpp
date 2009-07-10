@@ -31,16 +31,16 @@
 #endif
 
 namespace DAL
-{
-  
+  {
+
   // ============================================================================
   //
   //  Construction
   //
   // ============================================================================
-  
+
   // ----------------------------------------------------------------  dalDataset
-  
+
   /*!
     \brief The dataset object constructor
   */
@@ -57,66 +57,70 @@ namespace DAL
     \param filetype  -- Type of file to open ("HDF5", "MSCASA", etc.).
     \param overwrite -- Overwrite existing file if one already exist for name
            \e dsname. By default an already existing file is kept and only
-	   opened -- if you want to overwrite use <tt>overwrite=true</tt>
+     opened -- if you want to overwrite use <tt>overwrite=true</tt>
   */
   dalDataset::dalDataset( const char * dsname,
-			  std::string filetype,
-			  const bool &overwrite)
+                          std::string filetype,
+                          const bool &overwrite)
   {
     init();
-    
+
     name = stringify( dsname );
     type = filetype;  // set the global class variable: type
-    
-    if ( filetype == H5TYPE ) {
-      /*
-       * Check if the provided name belongs to an already existing dataset;
-       * if this is the case, open the dataset instead of blindly creating
-       * it (and thereby potentially overwriting the existing one).
-       */
-      if (overwrite) {
-	/* Directly try to create the dataset */
-	if ( ( h5fh_p = H5Fcreate( dsname,
-				 H5F_ACC_TRUNC,
-				 H5P_DEFAULT,
-				 H5P_DEFAULT ) ) < 0 ) {
-	  std::cerr << "ERROR: Could not create file '" << dsname << "'."
-		    << std::endl;
-	}
-      }
-      else
+
+    if ( filetype == H5TYPE )
       {
-	FILE * pFile;
-	pFile = fopen ( dsname, "r" );
-	if ( pFile == NULL )  /* check to see if the file exists */
-	{
-	  /* if not, create it */
-	  if ( ( h5fh_p = H5Fcreate( dsname,
-			   	     H5F_ACC_TRUNC,
-				     H5P_DEFAULT,
-				     H5P_DEFAULT ) ) < 0 )
-	  std::cerr << "ERROR: Could not create file '" << dsname << "'.\n";
-	}
-	else  /* if it does exist, try to reopen it as a hdf5 file */
-	{
-	  if ( 0 != fclose( pFile ) )
-	    std::cerr << "ERROR: Could not close file '" << dsname << "'.\n";
-
-	  /* if it does reopen it as an hdf5 file */
-	  if ( ( h5fh_p = H5Fopen(dsname, H5F_ACC_RDWR, H5P_DEFAULT ) ) > 0 )
-	    std::cerr << "SUCCESS: Opened file '" << dsname << "'.\n";
-	  else
-	  {
-	    std::cerr << "ERROR: There was a problem opening the file '"
-	              << dsname << "'.\n";
-	    exit(9);
+        /*
+         * Check if the provided name belongs to an already existing dataset;
+         * if this is the case, open the dataset instead of blindly creating
+         * it (and thereby potentially overwriting the existing one).
+         */
+        if (overwrite)
+          {
+            /* Directly try to create the dataset */
+            if ( ( h5fh_p = H5Fcreate( dsname,
+                                       H5F_ACC_TRUNC,
+                                       H5P_DEFAULT,
+                                       H5P_DEFAULT ) ) < 0 )
+              {
+                std::cerr << "ERROR: Could not create file '" << dsname << "'."
+                          << std::endl;
+              }
           }
-	}
+        else
+          {
+            FILE * pFile;
+            pFile = fopen ( dsname, "r" );
+            if ( pFile == NULL )  /* check to see if the file exists */
+              {
+                /* if not, create it */
+                if ( ( h5fh_p = H5Fcreate( dsname,
+                                           H5F_ACC_TRUNC,
+                                           H5P_DEFAULT,
+                                           H5P_DEFAULT ) ) < 0 )
+                  std::cerr << "ERROR: Could not create file '" << dsname << "'.\n";
+              }
+            else  /* if it does exist, try to reopen it as a hdf5 file */
+              {
+                if ( 0 != fclose( pFile ) )
+                  std::cerr << "ERROR: Could not close file '" << dsname << "'.\n";
 
-      file = &h5fh_p;
-     }
-    }
-    else if ( filetype == FITSTYPE ) {
+                /* if it does reopen it as an hdf5 file */
+                if ( ( h5fh_p = H5Fopen(dsname, H5F_ACC_RDWR, H5P_DEFAULT ) ) > 0 )
+                  std::cerr << "SUCCESS: Opened file '" << dsname << "'.\n";
+                else
+                  {
+                    std::cerr << "ERROR: There was a problem opening the file '"
+                              << dsname << "'.\n";
+                    exit(9);
+                  }
+              }
+
+            file = &h5fh_p;
+          }
+      }
+    else if ( filetype == FITSTYPE )
+      {
 #ifdef HAVE_CFITSIO
         fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
         int status;
@@ -131,16 +135,16 @@ namespace DAL
                   << "\' not supported for this operation." << endl;
       }
   }
-  
-  
+
+
   // ----------------------------------------------------------------------- init
-  
+
   void dalDataset::init()
   {
 #ifdef PYTHON
     Py_Initialize();
 #endif
-    
+
     file = NULL;
     type = "UNDEFINED";
     name = "UNDEFINED";
@@ -152,38 +156,40 @@ namespace DAL
 #endif
 
   }
-    
-    // ------------------------------------------------------------------ summary
 
-    /*!
-      \brief Provide a summary of the internal status
-      
-      \param os -- Output stream to which the summary is written.
-    */
-    void dalDataset::summary (std::ostream &os)
-    {
-      os << "[dalDataset] Summary of object properties" << std::endl;
+  // ------------------------------------------------------------------ summary
 
-      os << "-- Dataset type     = " << getType()       << std::endl;
-      os << "-- Dataset name     = " << getName()       << std::endl;
-      os << "-- HDF5 file handle = " << getFileHandle() << std::endl;
-      os << "-- HDF5 group ID    = " << getId()         << std::endl;
+  /*!
+    \brief Provide a summary of the internal status
 
-      /* Further properties only can be requested if the object is connected
-       * to a dataset.
-       */
-      
-      if (getName() != "UNDEFINED") {
-	std::vector<std::string> groupNames = getGroupNames();
-	
-	os << "-- Group names      = [";
-	for (unsigned int n(0); n<groupNames.size(); n++) {
-	  os << " " << groupNames[n];
-	}
-	os << " ]" << std::endl;
+    \param os -- Output stream to which the summary is written.
+  */
+  void dalDataset::summary (std::ostream &os)
+  {
+    os << "[dalDataset] Summary of object properties" << std::endl;
+
+    os << "-- Dataset type     = " << getType()       << std::endl;
+    os << "-- Dataset name     = " << getName()       << std::endl;
+    os << "-- HDF5 file handle = " << getFileHandle() << std::endl;
+    os << "-- HDF5 group ID    = " << getId()         << std::endl;
+
+    /* Further properties only can be requested if the object is connected
+     * to a dataset.
+     */
+
+    if (getName() != "UNDEFINED")
+      {
+        std::vector<std::string> groupNames = getGroupNames();
+
+        os << "-- Group names      = [";
+        for (unsigned int n(0); n<groupNames.size(); n++)
+          {
+            os << " " << groupNames[n];
+          }
+        os << " ]" << std::endl;
       }
-    }
-    
+  }
+
   // ---------------------------------------------------------- openFITS
 
   /****************************************************************
@@ -307,24 +313,24 @@ namespace DAL
             type = lcltype;
             casa::File msfile( fname );
             // first treat it as a symbolic link
-            if( msfile.isSymLink() )
-            {
-               casa::SymLink link( msfile );
-               casa::Path realFileName = link.followSymLink();
-               ms = new casa::MeasurementSet( realFileName.absoluteName() );
-               file = &ms;
-               ms_reader = new casa::MSReader( *ms );
-               name = fname;
-               return DAL::SUCCESS;
-            }
+            if ( msfile.isSymLink() )
+              {
+                casa::SymLink link( msfile );
+                casa::Path realFileName = link.followSymLink();
+                ms = new casa::MeasurementSet( realFileName.absoluteName() );
+                file = &ms;
+                ms_reader = new casa::MSReader( *ms );
+                name = fname;
+                return DAL::SUCCESS;
+              }
             else // treat it as a regular file
-            {
-               ms = new casa::MeasurementSet( fname );
-               file = &ms;
-               ms_reader = new casa::MSReader( *ms );
-               name = fname;
-               return DAL::SUCCESS;
-            }
+              {
+                ms = new casa::MeasurementSet( fname );
+                file = &ms;
+                ms_reader = new casa::MSReader( *ms );
+                name = fname;
+                return DAL::SUCCESS;
+              }
           }
         catch (casa::AipsError x)
           {
@@ -414,8 +420,8 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-				 char * data,
-				 int size )
+                                 char * data,
+                                 int size )
   {
     return h5set_attribute( H5T_NATIVE_CHAR, h5fh_p, attrname, data, size );
   }
@@ -430,8 +436,8 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-				 short * data,
-				 int size )
+                                 short * data,
+                                 int size )
   {
     return h5set_attribute( H5T_NATIVE_SHORT, h5fh_p, attrname, data, size );
   }
@@ -446,8 +452,8 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-				 int * data,
-				 int size )
+                                 int * data,
+                                 int size )
   {
     return h5set_attribute( H5T_NATIVE_INT, h5fh_p, attrname, data, size );
   }
@@ -462,8 +468,8 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-				 uint * data,
-				 int size )
+                                 uint * data,
+                                 int size )
   {
     return h5set_attribute( H5T_NATIVE_UINT, h5fh_p, attrname, data, size );
   }
@@ -478,8 +484,8 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-				 long * data,
-				 int size )
+                                 long * data,
+                                 int size )
   {
     return h5set_attribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
   }
@@ -494,8 +500,8 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-				 float * data,
-				 int size )
+                                 float * data,
+                                 int size )
   {
     return h5set_attribute( H5T_NATIVE_FLOAT, h5fh_p, attrname, data, size );
   }
@@ -510,8 +516,8 @@ namespace DAL
     \return bool    -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-				 double * data,
-				 int size )
+                                 double * data,
+                                 int size )
   {
     return h5set_attribute( H5T_NATIVE_DOUBLE, h5fh_p, attrname, data, size );
   }
@@ -524,7 +530,7 @@ namespace DAL
     \return bool    -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-				 std::string data )
+                                 std::string data )
   {
     return h5setAttribute_string( h5fh_p, attrname, &data, 1 );
   }
@@ -537,7 +543,7 @@ namespace DAL
     \return bool    -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-				 std::string * data,
+                                 std::string * data,
                                  int size )
   {
     return h5setAttribute_string ( h5fh_p, attrname, data, size );
@@ -557,7 +563,7 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute_string( std::string attrname,
-					std::vector<std::string> data )
+                                        std::vector<std::string> data )
   {
     hid_t aid, atype, att;
     int size = data.size();
@@ -765,9 +771,9 @@ namespace DAL
     \return dalArray * pointer to an array object.
   */
   dalArray * dalDataset::createIntArray( std::string arrayname,
-					 std::vector<int> dims,
-					 int data[],
-					 std::vector<int> cdims )
+                                         std::vector<int> dims,
+                                         int data[],
+                                         std::vector<int> cdims )
   {
     if ( type == H5TYPE )
       {
@@ -841,9 +847,9 @@ namespace DAL
      */
   dalArray *
   dalDataset::createComplexFloatArray( std::string arrayname,
-				       std::vector<int> dims,
+                                       std::vector<int> dims,
                                        complex<float> data[],
-				       std::vector<int> cdims )
+                                       std::vector<int> cdims )
   {
     if ( type == H5TYPE )
       {
@@ -902,7 +908,7 @@ namespace DAL
     \return dalTable
   */
   dalTable * dalDataset::createTable( std::string tablename,
-				      std::string groupname )
+                                      std::string groupname )
   {
     if ( type == H5TYPE )
       {
@@ -981,7 +987,7 @@ namespace DAL
     \return dalTable * A pointer to a table object.
    */
   dalTable * dalDataset::openTable( std::string const &tablename,
-				    std::string const &groupname )
+                                    std::string const &groupname )
   {
     if ( type == MSCASATYPE )
       {
@@ -991,11 +997,14 @@ namespace DAL
     else if ( type == H5TYPE )
       {
         dalTable * lt = new dalTable( H5TYPE );
-	try {
-	  lt->openTable( file, tablename, '/' + groupname );
-	} catch (std::string message) {
-	  std::cerr << "[dalDataset::openTable] ERROR : " << message << std::endl;
-	}
+        try
+          {
+            lt->openTable( file, tablename, '/' + groupname );
+          }
+        catch (std::string message)
+          {
+            std::cerr << "[dalDataset::openTable] ERROR : " << message << std::endl;
+          }
         return lt;
       }
     else if ( type == FITSTYPE )
@@ -1088,13 +1097,13 @@ namespace DAL
   /*!
     \brief Get type of the object and display its name and type
 
-    \param loc_id -- 
-    \param name   -- 
-    \param opdata -- 
+    \param loc_id --
+    \param name   --
+    \param opdata --
    */
   herr_t dalDataset_file_info(hid_t loc_id,
-			      const char *name,
-			      void *opdata)
+                              const char *name,
+                              void *opdata)
   {
     H5G_stat_t statbuf;
 
@@ -1302,12 +1311,12 @@ namespace DAL
 
   /*!
     \brief Create a new table
-    
+
     \param a -- The name of the group within which the new table is created.
-    \param b -- The name of the table to be created    
+    \param b -- The name of the table to be created
    */
   dalTable * dalDataset::ct2_boost( std::string a,
-				    std::string b)
+                                    std::string b)
   {
     dalTable * ret;
     ret = dalDataset::createTable(a,b);
@@ -1452,10 +1461,10 @@ namespace DAL
     std::vector<int> chnkdims;
 
     for (int ii=0; ii<bpl::len(pydims); ii++)
-       dims.push_back(bpl::extract<int>(pydims[ii]));
+      dims.push_back(bpl::extract<int>(pydims[ii]));
 
     for (int ii=0; ii<bpl::len(cdims); ii++)
-       chnkdims.push_back(bpl::extract<int>(cdims[ii]));
+      chnkdims.push_back(bpl::extract<int>(cdims[ii]));
 
     long size = bpl::len(pydata);
     float * data = NULL;
@@ -1499,7 +1508,7 @@ namespace DAL
     delete [] data;
 
     return array;
-    
+
   }
 
   // ---------------------------------------------------------- ria_boost
@@ -1530,7 +1539,7 @@ namespace DAL
     data = new int[size];
 
     status = H5LTread_dataset_int( h5fh_p, arrayname.c_str(), data );
-	bpl::numeric::array nadata = num_util::makeNum( (int*)data, dimensions );
+    bpl::numeric::array nadata = num_util::makeNum( (int*)data, dimensions );
     delete data;
     return nadata;
   }
@@ -1565,7 +1574,7 @@ namespace DAL
     data = new float[size];
 
     status = H5LTread_dataset_float( h5fh_p, arrayname.c_str(), data );
-	bpl::numeric::array nadata = num_util::makeNum( (float*)data, dimensions );
+    bpl::numeric::array nadata = num_util::makeNum( (float*)data, dimensions );
     delete data;
     return nadata;
   }
@@ -1603,39 +1612,39 @@ namespace DAL
 
   bool dalDataset::setAttribute_char( std::string attrname, char data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalDataset::setAttribute_short( std::string attrname, short data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalDataset::setAttribute_int( std::string attrname, int data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalDataset::setAttribute_uint( std::string attrname, uint data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalDataset::setAttribute_long( std::string attrname, long data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalDataset::setAttribute_float( std::string attrname, float data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalDataset::setAttribute_double( std::string attrname, double data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalDataset::setAttribute_string_boost(std::string attrname, std::string data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalDataset::setAttribute_char_vector( std::string attrname, bpl::list data )
   {
-  	int size = bpl::len(data);
+    int size = bpl::len(data);
     std::vector<char> mydata;
 
     for (int ii=0; ii<bpl::len(data); ii++)
@@ -1645,7 +1654,7 @@ namespace DAL
   }
   bool dalDataset::setAttribute_short_vector( std::string attrname, bpl::list data )
   {
-  	int size = bpl::len(data);
+    int size = bpl::len(data);
     std::vector<short> mydata;
 
     for (int ii=0; ii<bpl::len(data); ii++)
@@ -1655,7 +1664,7 @@ namespace DAL
   }
   bool dalDataset::setAttribute_int_vector( std::string attrname, bpl::list data )
   {
-  	int size = bpl::len(data);
+    int size = bpl::len(data);
     std::vector<int> mydata;
 
     for (int ii=0; ii<bpl::len(data); ii++)
@@ -1665,7 +1674,7 @@ namespace DAL
   }
   bool dalDataset::setAttribute_uint_vector( std::string attrname, bpl::list data )
   {
-  	int size = bpl::len(data);
+    int size = bpl::len(data);
     std::vector<uint> mydata;
 
     for (int ii=0; ii<bpl::len(data); ii++)
@@ -1675,7 +1684,7 @@ namespace DAL
   }
   bool dalDataset::setAttribute_long_vector( std::string attrname, bpl::list data )
   {
-  	int size = bpl::len(data);
+    int size = bpl::len(data);
     std::vector<long> mydata;
 
     for (int ii=0; ii<bpl::len(data); ii++)
@@ -1685,7 +1694,7 @@ namespace DAL
   }
   bool dalDataset::setAttribute_float_vector( std::string attrname, bpl::list data )
   {
-  	int size = bpl::len(data);
+    int size = bpl::len(data);
     std::vector<float> mydata;
 
     for (int ii=0; ii<bpl::len(data); ii++)
@@ -1695,7 +1704,7 @@ namespace DAL
   }
   bool dalDataset::setAttribute_double_vector( std::string attrname, bpl::list data )
   {
-  	int size = bpl::len(data);
+    int size = bpl::len(data);
     std::vector<double> mydata;
 
     for (int ii=0; ii<bpl::len(data); ii++)
@@ -1705,7 +1714,7 @@ namespace DAL
   }
   bool dalDataset::setAttribute_string_vector( std::string attrname, bpl::list data )
   {
-  	int size = bpl::len(data);
+    int size = bpl::len(data);
     std::vector<std::string> mydata;
 
     for (int ii=0; ii<bpl::len(data); ii++)

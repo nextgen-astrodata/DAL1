@@ -33,15 +33,16 @@
 #include <dalTable.h>
 #endif
 
-namespace DAL {
-  
+namespace DAL
+  {
+
   /*!
     \class BeamSubband
-    
+
     \ingroup DAL
-    
+
     \brief High-level interface between beam-formed data and the DAL
-    
+
     \author Joseph Masters, Lars B&auml;hren
 
     \test tBeamSubband.cpp
@@ -54,72 +55,79 @@ namespace DAL {
       <li>dalTable -- Object representing a table within a dataset.
     </ul>
   */
-  
-  class BeamSubband {
-    
-  private:
-    
-    //! Group object of the Data Access Library
-    dalTable * table_p;
-    //! HDF5 table handle ID
-    hid_t H5tableID_p;
-    
-  public:
-    
-    // ==========================================================================
-    //  Construction
 
-    //! Default constructor
-    BeamSubband();
-    //! Argumented constructor
-    BeamSubband ( dalTable * table );
-    //! Argumented constructor
-    BeamSubband (dalDataset &dataset,
-		 std::string const &group,
-		 std::string const &table);
-    //! Destructor
-    ~BeamSubband();
-    
-    // ==========================================================================
-    //  Parameters
-    
-    /*!
-      \brief Get the HDF5 table handle ID
-      
-      \return tableID -- The HDF5 table handle ID
-    */
-    inline hid_t tableID () const { return H5tableID_p; }
-    
-    /*!
-      \brief Provide a summary of the objects internal parameters
-      
-      The summary will be written to standard output
-    */
-    inline void summary() { summary(std::cout); }
-    
-    /*!
-      \brief Provide a summary of the objects internal parameters
-      
-      \param os -- Output stream to which the summary is written.
-    */
-    void summary(std::ostream &os);
+  class BeamSubband
+    {
 
-    // ==========================================================================
-    //  Methods
+    private:
 
-    //! Get the number of fields within the table
-    hsize_t nofFields ();
-    //! Get the number of records within the table
-    hsize_t nofRecords ();
-    //! Get the number of table rows
-    long nofTableRows ();
-    //! Get a list with the names of the table columns
-    std::vector<std::string> columnNames ();
-    //! Get the center frequency of the sub-band
-    int center_frequency () const;
+      //! Group object of the Data Access Library
+      dalTable * table_p;
+      //! HDF5 table handle ID
+      hid_t H5tableID_p;
 
-  }; // class BeamSubband -- end
-  
+    public:
+
+      // ==========================================================================
+      //  Construction
+
+      //! Default constructor
+      BeamSubband();
+      //! Argumented constructor
+      BeamSubband ( dalTable * table );
+      //! Argumented constructor
+      BeamSubband (dalDataset &dataset,
+                   std::string const &group,
+                   std::string const &table);
+      //! Destructor
+      ~BeamSubband();
+
+      // ==========================================================================
+      //  Parameters
+
+      /*!
+        \brief Get the HDF5 table handle ID
+
+        \return tableID -- The HDF5 table handle ID
+      */
+      inline hid_t tableID () const
+        {
+          return H5tableID_p;
+        }
+
+      /*!
+        \brief Provide a summary of the objects internal parameters
+
+        The summary will be written to standard output
+      */
+      inline void summary()
+      {
+        summary(std::cout);
+      }
+
+      /*!
+        \brief Provide a summary of the objects internal parameters
+
+        \param os -- Output stream to which the summary is written.
+      */
+      void summary(std::ostream &os);
+
+      // ==========================================================================
+      //  Methods
+
+      //! Get the number of fields within the table
+      hsize_t nofFields ();
+      //! Get the number of records within the table
+      hsize_t nofRecords ();
+      //! Get the number of table rows
+      long nofTableRows ();
+      //! Get a list with the names of the table columns
+      std::vector<std::string> columnNames ();
+      //! Get the center frequency of the sub-band
+      int center_frequency () const;
+
+    }; // class BeamSubband -- end
+
 } // namespace DAL -- end
 
 #endif

@@ -24,30 +24,30 @@
 
 /*!
   \file bf2h5.cpp
-  
+
   \ingroup DAL
-  
+
   \brief Write Beam-Formed data into an HDF5 file.
-  
+
   \author Joseph Masters, Lars B&auml;hren, Alvin de Jong
-  
+
   This file represents a LOFAR Tied-Array (aka Beam-Formed, aka Pulsar) data
   reader.
-  
+
   It reads raw data and dumps samples to the screen in blocks of
   155,648 per ~1 second.  There are no time stamps provided.  The output
   columns (as described by the first two lines) are:
-  
+
   - sample number (1 to 155648 for each frame)
   - X coordinate as a complex number (Xr,Xi)
   - Y coordinate as a complex number (Yr,Yi)
-  
+
   The very last line of output gives the cumulative observation time for the file.
-  
+
   The program was written for and tested on little-endian machines
-  
+
   <h3>Usage</h3>
-  
+
   Command line interface:
   \verbatim
   -H [ --help ]         Show help messages
@@ -57,12 +57,12 @@
   --intensity           Compute total intensity
   -F [ --factor ] arg   Downsampling factor
   \endverbatim
-  
+
   If \e --intensity or \e --downsample is set, the output file will contain
   subband tables with a TOTAL_INTENSITY column. If neither of these parameters
   is set, the subband tables will contain real and imaginary polarization data
   at full resolution (XrXi,YrYi).
-  
+
   Examples:
   <ol>
     <li>Simple conversion of \e reprocessed (!) correlator output to HDF5 file:
@@ -134,144 +134,166 @@ int main (int argc, char *argv[])
   std::string outfile;
   std::string ip;
   std::string port;
-  bool socketmode       = false;	
+  bool socketmode       = false;
   bool doIntensity      = false;
   bool doDownsample     = false;
   bool doChannelization = false;
   int factor            = 1;
-  
-  
+
+
   // -----------------------------------------------------------------
   // Processing of command line options
-  
+
   bpo::options_description desc ("[bf2h5] Available command line options");
-  
+
   desc.add_options ()
-    ("help,H", "Show help messages")
-    ("outfile,O",bpo::value<std::string>(), "Name of the output dataset")
-    ("infile,I", bpo::value<std::string>(), "Name of the input file")
-    //			("source,S", bpo::value<std::string>(), "the source IP address from which to accept the data")
-    ("port,P", bpo::value<std::string>(), "Port number to accept beam formed raw data from")
-    ("downsample", "Downsampling of the original data")
-    ("intensity", "Compute total intensity")
-    ("factor,F", bpo::value<int>(), "Downsampling factor")
-    ;
-  
+  ("help,H", "Show help messages")
+  ("outfile,O",bpo::value<std::string>(), "Name of the output dataset")
+  ("infile,I", bpo::value<std::string>(), "Name of the input file")
+  //			("source,S", bpo::value<std::string>(), "the source IP address from which to accept the data")
+  ("port,P", bpo::value<std::string>(), "Port number to accept beam formed raw data from")
+  ("downsample", "Downsampling of the original data")
+  ("intensity", "Compute total intensity")
+  ("factor,F", bpo::value<int>(), "Downsampling factor")
+  ;
+
   bpo::variables_map vm;
   bpo::store (bpo::parse_command_line(argc,argv,desc), vm);
-  
-  if (vm.count("help") || argc == 1) {
-    std::cout << "\n" << desc << endl;
-    return 0;
-  }
-  
-  if (vm.count("infile")) {
-    infile = vm["infile"].as<std::string>();
-  }
-  
-  if (vm.count("outfile")) {
-    outfile = vm["outfile"].as<std::string>();
-  } else {
-    std::cerr << "[bf2h5] Missing name of output file!" << endl;
-    std::cout << "\n" << desc << endl;
-    return 0;
-  }
-  
-  if (vm.count("port")) {
-    port     = vm["port"].as<std::string>();
-    socketmode = true;
-  } 
-  
-  if (vm.count("downsample")) {
-    doDownsample = true;
-    // can't downsample w/o total intensities
-    doIntensity = true;
-  }
-  
-  if (vm.count("intensity")) {
-    doIntensity = true;
-  }
-  
-  if (vm.count("factor")) {
-    factor = vm["factor"].as<int>();
-    // check parameter value
-    if (factor <= 0) {
-      factor = 1;
+
+  if (vm.count("help") || argc == 1)
+    {
+      std::cout << "\n" << desc << endl;
+      return 0;
     }
-  }
-  
+
+  if (vm.count("infile"))
+    {
+      infile = vm["infile"].as<std::string>();
+    }
+
+  if (vm.count("outfile"))
+    {
+      outfile = vm["outfile"].as<std::string>();
+    }
+  else
+    {
+      std::cerr << "[bf2h5] Missing name of output file!" << endl;
+      std::cout << "\n" << desc << endl;
+      return 0;
+    }
+
+  if (vm.count("port"))
+    {
+      port     = vm["port"].as<std::string>();
+      socketmode = true;
+    }
+
+  if (vm.count("downsample"))
+    {
+      doDownsample = true;
+      // can't downsample w/o total intensities
+      doIntensity = true;
+    }
+
+  if (vm.count("intensity"))
+    {
+      doIntensity = true;
+    }
+
+  if (vm.count("factor"))
+    {
+      factor = vm["factor"].as<int>();
+      // check parameter value
+      if (factor <= 0)
+        {
+          factor = 1;
+        }
+    }
+
   // -----------------------------------------------------------------
   // Checks if parameters complete
-  
-  if (socketmode) {
-    /*		
-		if (!vm.count("ip")) {
-		std::cerr << "IP address of source not specified!" << endl;
-		std::cerr << desc << endl;
-		print_examples(std::cerr);
-		return DAL::FAIL;
-		} 
-		
-		if (!vm.count("port")) {
-		std::cerr << "Port number not specified!" << endl;
-		std::cerr << desc << endl;
-		print_examples(std::cerr);
-		return DAL::FAIL;
-		}
-    */
-    if (!vm.count("outfile")) {
-      std::cerr << "Output file name not specified!" << endl;
+
+  if (socketmode)
+    {
+      /*
+      if (!vm.count("ip")) {
+      std::cerr << "IP address of source not specified!" << endl;
       std::cerr << desc << endl;
       print_examples(std::cerr);
       return DAL::FAIL;
-    }
-  } else { // file mode
-    if (!vm.count("infile") || !vm.count("outfile")) {
-      std::cerr << "Both infile and outfile need to be specified for file mode!" << endl;
+      }
+
+      if (!vm.count("port")) {
+      std::cerr << "Port number not specified!" << endl;
       std::cerr << desc << endl;
       print_examples(std::cerr);
       return DAL::FAIL;
+      }
+      */
+      if (!vm.count("outfile"))
+        {
+          std::cerr << "Output file name not specified!" << endl;
+          std::cerr << desc << endl;
+          print_examples(std::cerr);
+          return DAL::FAIL;
+        }
     }
-  }
-  
+  else   // file mode
+    {
+      if (!vm.count("infile") || !vm.count("outfile"))
+        {
+          std::cerr << "Both infile and outfile need to be specified for file mode!" << endl;
+          std::cerr << desc << endl;
+          print_examples(std::cerr);
+          return DAL::FAIL;
+        }
+    }
+
   // -----------------------------------------------------------------
   // Summary of the parameters provided from the command line
-  
+
   std::cout << "[bf2h5] Summary of input parameters." << endl;
-  if (socketmode) {
-    std::cout << "   Socket mode:" << endl;
-    //		std::cout << "-- IP address .............. : " << ip << endl;
-    std::cout << "-- Port number ............ : " << port << endl;
-  } else {
-    std::cout << "   File mode:" << endl;
-    std::cout << "-- Input file ............ : " << infile << endl;
-    std::cout << "-- Output file ........... : " << outfile << endl;
-  }
+  if (socketmode)
+    {
+      std::cout << "   Socket mode:" << endl;
+      //		std::cout << "-- IP address .............. : " << ip << endl;
+      std::cout << "-- Port number ............ : " << port << endl;
+    }
+  else
+    {
+      std::cout << "   File mode:" << endl;
+      std::cout << "-- Input file ............ : " << infile << endl;
+      std::cout << "-- Output file ........... : " << outfile << endl;
+    }
   std::cout << "-- Compute total intensity : " << doIntensity  << endl;
   std::cout << "-- Downsampling of data .. : " << doDownsample << endl;
   std::cout << "-- Downsampling factor ... : " << factor       << endl;
-  
+
   // -----------------------------------------------------------------
   // Start processing of the input data
-  
+
   DAL::BFRaw bf = DAL::BFRaw( outfile,
-			      doIntensity,
-			      doDownsample,
-			      doChannelization,
-			      factor );
-  
-  if (socketmode) {
-    if (bf.connectsocket( port.c_str() )) { // server
-      if (bf.readRawSocketHeader()) {
-	bf.processBFRawDataBlockFromSocket();
-      }
+                              doIntensity,
+                              doDownsample,
+                              doChannelization,
+                              factor );
+
+  if (socketmode)
+    {
+      if (bf.connectsocket( port.c_str() ))   // server
+        {
+          if (bf.readRawSocketHeader())
+            {
+              bf.processBFRawDataBlockFromSocket();
+            }
+        }
     }
-  }
-  else { // File mode
-    bf.openRawFile( infile.c_str() );
-    bf.readRawFileHeader();
-    bf.makeH5OutputFile();
-    bf.processBlocks();
-  }
+  else   // File mode
+    {
+      bf.openRawFile( infile.c_str() );
+      bf.readRawFileHeader();
+      bf.makeH5OutputFile();
+      bf.processBlocks();
+    }
   return 0;
 }

@@ -51,24 +51,30 @@ int test_constructors (std::string const &filename)
   int nofFailedTests (0);
 
   std::cout << "[1] Default constructor..." << std::endl;
-  try {
-    DAL::dalDataset dataset;
-    //
-    dataset.summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
+  try
+    {
+      DAL::dalDataset dataset;
+      //
+      dataset.summary();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
 
   std::cout << "[2] Argumented constructor..." << std::endl;
-  try {
-    DAL::dalDataset dataset (filename.c_str(),"HDF5");
-    //
-    dataset.summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
+  try
+    {
+      DAL::dalDataset dataset (filename.c_str(),"HDF5");
+      //
+      dataset.summary();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
 
   return nofFailedTests;
 }
@@ -90,15 +96,18 @@ int test_parameters (std::string const &filename)
   int nofFailedTests (0);
   DAL::dalDataset dataset (filename.c_str(),"HDF5");
 
-  try {
-    std::cout << "-- getId ()         = " << dataset.getId ()         << std::endl;
-    std::cout << "-- getType ()       = " << dataset.getType ()       << std::endl;
-    std::cout << "-- getName ()       = " << dataset.getName ()       << std::endl;
-    std::cout << "-- getFileHandle () = " << dataset.getFileHandle () << std::endl;
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
+  try
+    {
+      std::cout << "-- getId ()         = " << dataset.getId ()         << std::endl;
+      std::cout << "-- getType ()       = " << dataset.getType ()       << std::endl;
+      std::cout << "-- getName ()       = " << dataset.getName ()       << std::endl;
+      std::cout << "-- getFileHandle () = " << dataset.getFileHandle () << std::endl;
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
 
   return nofFailedTests;
 }
@@ -123,29 +132,33 @@ int test_setAttributes (std::string const &filename)
 
 // ------------------------------------------------------------------------------
 
-int main (int argc,char *argv[]) 
+int main (int argc,char *argv[])
 {
   int nofFailedTests (0);
   std::string filename;
 
   /* Check command line parameters */
 
-  if (argc > 1) {
-    filename = std::string(argv[1]);
-  } else {
-    std::cout << "[tdalDataset] Missing name of input test file." << std::endl;
-    return(DAL::FAIL);
-  }
+  if (argc > 1)
+    {
+      filename = std::string(argv[1]);
+    }
+  else
+    {
+      std::cout << "[tdalDataset] Missing name of input test file." << std::endl;
+      return(DAL::FAIL);
+    }
 
   /* Test the constructors */
   nofFailedTests += test_constructors(filename);
 
-  if (nofFailedTests == 0) {
-    // Test access to the parameters of the object
-    nofFailedTests += test_parameters (filename);
-    // Test writing attributes to the dataset
-    nofFailedTests += test_setAttributes (filename);
-  }
+  if (nofFailedTests == 0)
+    {
+      // Test access to the parameters of the object
+      nofFailedTests += test_parameters (filename);
+      // Test writing attributes to the dataset
+      nofFailedTests += test_setAttributes (filename);
+    }
 
   return nofFailedTests;
 }

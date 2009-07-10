@@ -50,45 +50,57 @@ int test_constructors (std::string const &filename)
   int nofFailedTests (0);
 
   std::cout << "[1] Default constructor..." << std::endl;
-  try {
-    DAL::dalTable table;
-    //
-    table.summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
+  try
+    {
+      DAL::dalTable table;
+      //
+      table.summary();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
 
   std::cout << "[2] Construct object for table of type HDF5..." << std::endl;
-  try {
-    DAL::dalTable table ("HDF5");
-    table.summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
+  try
+    {
+      DAL::dalTable table ("HDF5");
+      table.summary();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
 
   std::cout << "[3] Construct object for table of type FITS..." << std::endl;
-  try {
-    DAL::dalTable table ("FITS");
-    table.summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
+  try
+    {
+      DAL::dalTable table ("FITS");
+      table.summary();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
 
   std::cout << "[4] Construction from dalDataset..." << std::endl;
-  try {
-    DAL::dalDataset dataset;
-    dataset.open(filename.c_str());
-    dataset.summary();
-    //
-    DAL::dalTable * table = dataset.openTable ("/beam000","SB000");
-    table->summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
+  try
+    {
+      DAL::dalDataset dataset;
+      dataset.open(filename.c_str());
+      dataset.summary();
+      //
+      DAL::dalTable * table = dataset.openTable ("/beam000","SB000");
+      table->summary();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
 
   return nofFailedTests;
 }
@@ -109,14 +121,17 @@ int test_parameters (std::string const &filename)
 
   int nofFailedTests (0);
 
-  try {
-    DAL::dalDataset dataset (filename.c_str(),"HDF5");
-    std::vector<std::string> groupNames = dataset.getGroupNames();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-  
+  try
+    {
+      DAL::dalDataset dataset (filename.c_str(),"HDF5");
+      std::vector<std::string> groupNames = dataset.getGroupNames();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
+
   return nofFailedTests;
 }
 
@@ -133,16 +148,16 @@ int test_parameters (std::string const &filename)
 int test_methods (std::string const &filename)
 {
   std::cout << "\n[tdalTable::test_methods]\n" << std::endl;
-  
+
   int nofFailedTests (0);
   DAL::dalDataset dataset (filename.c_str(),"HDF5");
-  
+
   return nofFailedTests;
 }
 
 // ------------------------------------------------------------------------------
 
-int main (int argc,char *argv[]) 
+int main (int argc,char *argv[])
 {
   int nofFailedTests (0);
   std::string filename;
@@ -150,20 +165,24 @@ int main (int argc,char *argv[])
 
   /* Check command line parameters */
 
-  if (argc > 1) {
-    filename = std::string(argv[1]);
-  } else {
-    std::cout << "[tdalTable] Missing name of input test file." << std::endl;
-    return(DAL::FAIL);
-  }
+  if (argc > 1)
+    {
+      filename = std::string(argv[1]);
+    }
+  else
+    {
+      std::cout << "[tdalTable] Missing name of input test file." << std::endl;
+      return(DAL::FAIL);
+    }
 
   /* Test the constructors */
   nofFailedTests += test_constructors(filename);
 
-  if (nofFailedTests == 0) {
-    nofFailedTests += test_parameters(filename);
-    nofFailedTests += test_methods(filename);
-  }
+  if (nofFailedTests == 0)
+    {
+      nofFailedTests += test_parameters(filename);
+      nofFailedTests += test_methods(filename);
+    }
 
   return nofFailedTests;
 }

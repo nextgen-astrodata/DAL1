@@ -25,7 +25,8 @@
 #include "dalGroup.h"
 #endif
 
-namespace DAL {
+namespace DAL
+  {
 
   // ============================================================================
   //
@@ -35,7 +36,7 @@ namespace DAL {
 
   //_____________________________________________________________________________
   //                                                                     dalGroup
-  
+
   dalGroup::dalGroup()
   {
     file           = NULL;
@@ -47,24 +48,24 @@ namespace DAL {
     group_id       = 0;
     status         = 0;
   }
-  
-  
+
+
   //_____________________________________________________________________________
   //                                                                     dalGroup
-  
+
   /*!
     \brief Create a group in a certain file.
-    
+
     Create a group in a certain file.
-    
+
     \param groupname The name of the group to create.
     \param file A pointer to the file where you want to create the group.
   */
   dalGroup::dalGroup( const char * gname, void * voidfile )
   {
-    
+
     dalGroup();
-    
+
     hid_t * lclfile = (hid_t*)voidfile; // H5File object
     file = lclfile;
     file_id = *lclfile;  // get the file handle
@@ -171,13 +172,13 @@ namespace DAL {
   dalGroup::~dalGroup()
   {
     if ( 0 != group_id )
-    {
-      if ( H5Gclose(group_id) < 0 )
-        {
-          std::cerr << "ERROR: dalGroup::close() failed.\n";
-        }
-      group_id = 0;
-    }
+      {
+        if ( H5Gclose(group_id) < 0 )
+          {
+            std::cerr << "ERROR: dalGroup::close() failed.\n";
+          }
+        group_id = 0;
+      }
   }
 
   // ============================================================================
@@ -185,7 +186,7 @@ namespace DAL {
   //  Parameters
   //
   // ============================================================================
-  
+
   /*!
     \param os -- Output stream to which the summary will be written.
   */
@@ -201,27 +202,28 @@ namespace DAL {
     std::vector<std::string> memberNames = getMemberNames();
     os << "-- nof. group members = " << memberNames.size() << std::endl;
     os << "-- Member names       = [";
-    for (unsigned int n(0); n<memberNames.size(); n++) {
-      os << " " << memberNames[n];
-    }
+    for (unsigned int n(0); n<memberNames.size(); n++)
+      {
+        os << " " << memberNames[n];
+      }
     os << " ]" << std::endl;
-    
+
   }
-  
+
   // ------------------------------------------------------------ getId
-  
+
   /*!
     \brief Get the group ID.
-    
+
     Retrieve the identifier for the group.
-    
+
     \return The group identifier as an integer.
   */
   hid_t dalGroup::getId()
   {
     return group_id;
   }
-  
+
   // -------------------------------------------------- dalGroup_file_info
 
   /*
@@ -628,9 +630,9 @@ namespace DAL {
   */
   dalGroup * dalGroup::createGroup( const char * gname )
   {
-        dalGroup * lg = NULL;
-        lg = new dalGroup( group_id, gname );
-        return lg;
+    dalGroup * lg = NULL;
+    lg = new dalGroup( group_id, gname );
+    return lg;
   }
 
 #ifdef PYTHON
@@ -649,7 +651,7 @@ namespace DAL {
 
   dalArray * dalGroup::csa_boost_list( std::string arrayname,
                                        bpl::list pydims,
-									   bpl::list pydata )
+                                       bpl::list pydata )
   {
     vector<int> dims;
     vector<int> chnkdims;
@@ -680,7 +682,7 @@ namespace DAL {
 
   dalArray * dalGroup::cia_boost_list( std::string arrayname,
                                        bpl::list pydims,
-									   bpl::list pydata )
+                                       bpl::list pydata )
   {
     vector<int> dims;
     vector<int> chnkdims;
@@ -723,14 +725,14 @@ namespace DAL {
     status = H5Sget_simple_extent_dims(filespace, dims, NULL);
 
     int size = 1;
-	std::vector<int> dimsvec;
+    std::vector<int> dimsvec;
     for (int ii=0; ii<data_rank; ii++)
       {
 #ifdef DEBUGGING_MESSAGES
         std::cerr << "dims["  << ii << "]: " << dims[ii] << endl;
 #endif
         size *= dims[ii];
-		dimsvec.push_back( dims[ii] );
+        dimsvec.push_back( dims[ii] );
       }
 
 #ifdef DEBUGGING_MESSAGES
@@ -786,35 +788,35 @@ namespace DAL {
 
   bool dalGroup::setAttribute_char( std::string attrname, char data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalGroup::setAttribute_short( std::string attrname, short data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalGroup::setAttribute_int( std::string attrname, int data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalGroup::setAttribute_uint( std::string attrname, uint data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalGroup::setAttribute_long( std::string attrname, long data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalGroup::setAttribute_float( std::string attrname, float data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalGroup::setAttribute_double( std::string attrname, double data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalGroup::setAttribute_string( std::string attrname, std::string data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
 //  bool setAttribute_char_vector( std::string attrname, bpl::list data );
 //  bool setAttribute_short_vector( std::string attrname, bpl::list data );

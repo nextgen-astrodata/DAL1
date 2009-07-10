@@ -114,17 +114,18 @@ namespace DAL
     public:
       dalDataset();
       dalDataset( const char * name,
-		  std::string filetype,
-		  const bool &overwrite=false);
+                  std::string filetype,
+                  const bool &overwrite=false);
       bool open( const char * datasetname );
       bool close();
       bool getAttributes();
       hid_t getId();
-      
+
       /*!
-	\brief Provide a summary of the internal status
+      \brief Provide a summary of the internal status
       */
-      inline void summary () {
+      inline void summary ()
+      {
         summary (std::cout);
       }
       void summary (std::ostream &os);
@@ -187,7 +188,7 @@ namespace DAL
       void setFilter( std::string columns, std::string conditions );
       //! Open a table within a group
       dalTable * openTable( std::string const &tablename,
-			    std::string const &groupname );
+                            std::string const &groupname );
       dalArray * openArray( std::string arrayname );
       dalArray * openArray( std::string arrayname, std::string groupname );
       std::vector<std::string> getGroupNames();
@@ -215,14 +216,15 @@ namespace DAL
         \return h5fh -- File handle identifier to communicate with the HDF5
                 file through the HDF5 library.
        */
-      inline hid_t getFileHandle () const {
-	return h5fh_p;
-      }
-      
+      inline hid_t getFileHandle () const
+        {
+          return h5fh_p;
+        }
+
       void read_tbb(std::string id,
-		    int start,
-		    int length,
-		    short data_out[]);
+                    int start,
+                    int length,
+                    short data_out[]);
 
       /************************************************************************
        *

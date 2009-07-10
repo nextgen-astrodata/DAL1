@@ -23,8 +23,9 @@
 
 #include <DirectionCoordinate.h>
 
-namespace DAL { // Namespace DAL -- begin
-  
+namespace DAL   // Namespace DAL -- begin
+  {
+
   // ============================================================================
   //
   //  Construction
@@ -33,88 +34,91 @@ namespace DAL { // Namespace DAL -- begin
 
   //_____________________________________________________________________________
   //                                                          DirectionCoordinate
-  
+
   DirectionCoordinate::DirectionCoordinate (std::string const &system,
-					    std::string const &projection)
-    : Coordinate(Coordinate::Direction,
-		 2)
+      std::string const &projection)
+      : Coordinate(Coordinate::Direction,
+                   2)
   {
     init (system,
-	  projection);
+          projection);
   }
-  
+
   //_____________________________________________________________________________
   //                                                          DirectionCoordinate
-  
+
   DirectionCoordinate::DirectionCoordinate (std::vector<std::string> const &axisNames,
-					    std::vector<std::string> const &axisUnits,
-					    std::vector<double> const &refValue,
-					    std::vector<double> const &refPixel,
-					    std::vector<double> const &increment,
-					    std::vector<double> const &pc,
-					    std::string const &system,
-					    std::string const &projection)
-    : Coordinate(Coordinate::Direction,
-		 2,
-		 axisNames,
-		 axisUnits,
-		 refValue,
-		 refPixel,
-		 increment,
-		 pc)
+      std::vector<std::string> const &axisUnits,
+      std::vector<double> const &refValue,
+      std::vector<double> const &refPixel,
+      std::vector<double> const &increment,
+      std::vector<double> const &pc,
+      std::string const &system,
+      std::string const &projection)
+      : Coordinate(Coordinate::Direction,
+                   2,
+                   axisNames,
+                   axisUnits,
+                   refValue,
+                   refPixel,
+                   increment,
+                   pc)
   {
     init (system,
-	  projection);
+          projection);
   }
-  
+
   //_____________________________________________________________________________
   //                                                          DirectionCoordinate
-  
+
   /*!
     \param other -- Another DirectionCoordinate object from which to create this new
            one.
   */
   DirectionCoordinate::DirectionCoordinate (DirectionCoordinate const &other)
-    : Coordinate(other)
+      : Coordinate(other)
   {
     copy (other);
   }
-  
+
   // ============================================================================
   //
   //  Destruction
   //
   // ============================================================================
-  
+
   DirectionCoordinate::~DirectionCoordinate ()
   {
     destroy();
   }
-  
+
   void DirectionCoordinate::destroy ()
-  {;}
-  
+  {
+    ;
+  }
+
   // ============================================================================
   //
   //  Operators
   //
   // ============================================================================
-  
+
   //_____________________________________________________________________________
   //                                                                    operator=
-  
+
   DirectionCoordinate& DirectionCoordinate::operator= (DirectionCoordinate const &other)
   {
-    if (this != &other) {
-      destroy ();
-      copy (other);
-    }
+    if (this != &other)
+      {
+        destroy ();
+        copy (other);
+      }
     return *this;
   }
-  
+
   //_____________________________________________________________________________
   //                                                                         copy
-  
+
   void DirectionCoordinate::copy (DirectionCoordinate const &other)
   {
     Coordinate::copy (other);
@@ -125,10 +129,10 @@ namespace DAL { // Namespace DAL -- begin
   //  Parameters
   //
   // ============================================================================
-  
+
   //_____________________________________________________________________________
   //                                                                      summary
-  
+
   void DirectionCoordinate::summary (std::ostream &os)
   {
     os << "[DirectionCoordinate] Summary of internal parameters." << std::endl;
@@ -148,38 +152,41 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- Longpole                 = " << longpole_p         << std::endl;
     os << "-- Latpole                  = " << latpole_p          << std::endl;
   }
-  
+
   // ============================================================================
   //
   //  Methods
   //
   // ============================================================================
-  
+
   //_____________________________________________________________________________
   //                                                                       h5read
-  
+
   void DirectionCoordinate::h5read (hid_t const &locationID,
-				 std::string const &name)
+                                    std::string const &name)
   {
     hid_t groupID (0);
-    
+
     groupID = H5Gopen1 (locationID,
-			name.c_str());
-    
-    if (groupID) {
-      h5read (groupID);
-    } else {
-      std::cerr << "[DirectionCoordinate::h5read] Error opening group "
-		<< name 
-		<< std::endl;
-    }
-    
+                        name.c_str());
+
+    if (groupID)
+      {
+        h5read (groupID);
+      }
+    else
+      {
+        std::cerr << "[DirectionCoordinate::h5read] Error opening group "
+                  << name
+                  << std::endl;
+      }
+
     H5Gclose (groupID);
   }
-  
+
   //_____________________________________________________________________________
   //                                                                       h5read
-  
+
   void DirectionCoordinate::h5read (hid_t const &groupID)
   {
     std::string coordinate_type;
@@ -195,7 +202,7 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<double> param;
     double longpole;
     double latpole;
-    
+
     /* Read the attributes from the HDF5 file */
     DAL::h5get_attribute( groupID, "COORDINATE_TYPE",  coordinate_type );
     DAL::h5get_attribute( groupID, "NOF_AXES",         nof_axes );
@@ -212,49 +219,52 @@ namespace DAL { // Namespace DAL -- begin
     DAL::h5get_attribute( groupID, "LATPOLE",          latpole );
 
     /* Store the retrieved values */
-    if (getType(coordinate_type) == Coordinate::Direction) {
-      // basic parameters
-      coordinateType_p = getType(coordinate_type);
-      nofAxes_p        = nof_axes;
-      // WCS parameters
-      setAxisNames (axis_names);
-      setAxisUnits (axis_units);
-      setRefValue  (refvalue);
-      setRefPixel  (refpixel);
-      setIncrement (increment);
-      setPc        (pc);
-      //
-      system_p     = refname;
-      projection_p = projection;
-      setProjectionParameters(param);
-      setLongpole(longpole);
-      setLatpole(latpole);
-    } else {
-    }
+    if (getType(coordinate_type) == Coordinate::Direction)
+      {
+        // basic parameters
+        coordinateType_p = getType(coordinate_type);
+        nofAxes_p        = nof_axes;
+        // WCS parameters
+        setAxisNames (axis_names);
+        setAxisUnits (axis_units);
+        setRefValue  (refvalue);
+        setRefPixel  (refpixel);
+        setIncrement (increment);
+        setPc        (pc);
+        //
+        system_p     = refname;
+        projection_p = projection;
+        setProjectionParameters(param);
+        setLongpole(longpole);
+        setLatpole(latpole);
+      }
+    else
+      {
+      }
   }
-  
+
   //_____________________________________________________________________________
   //                                                                      h5write
-  
+
   void DirectionCoordinate::h5write (hid_t const &locationID,
-				  std::string const &name)
+                                     std::string const &name)
   {
     hid_t groupID (0);
     // create HDF5 group
     groupID = H5Gcreate( locationID,
-			 name.c_str(),
-			 H5P_DEFAULT,
-			 H5P_DEFAULT,
-			 H5P_DEFAULT );
+                         name.c_str(),
+                         H5P_DEFAULT,
+                         H5P_DEFAULT,
+                         H5P_DEFAULT );
     // write coordinate attributes
     h5write (groupID);
     // close the group after write
     H5Gclose (groupID);
-  }  
-  
+  }
+
   //_____________________________________________________________________________
   //                                                                      h5write
-  
+
   void DirectionCoordinate::h5write (hid_t const &groupID)
   {
     /* Basic common parameters */
@@ -273,5 +283,5 @@ namespace DAL { // Namespace DAL -- begin
     DAL::h5set_attribute( groupID, "LONGPOLE",         longpole_p );
     DAL::h5set_attribute( groupID, "LATPOLE",          latpole_p );
   }
-  
+
 } // Namespace DAL -- end

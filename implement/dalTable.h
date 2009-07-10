@@ -32,8 +32,9 @@
 #include "dalColumn.h"
 #endif
 
-namespace DAL {
-  
+namespace DAL
+  {
+
   /*!
     \class dalTable
 
@@ -42,44 +43,44 @@ namespace DAL {
     \brief Object representing a table within a dataset.
 
     \test tdalTable.cpp
-    
+
     A dalTable can reside within a dataset, or within a group that is within
     a dataset.
-    
+
   */
-  
+
   class dalTable
-  {
-    
-    void * file;  // can be HDF5File, FITS, MS
-    
-    // HDF5-specific variables
-    hid_t fileID_p;      // HDF5 file_id
-    hid_t tableID_p;     // HDF5 table id
-    hsize_t nfields;     // HDF5 field count
-    hsize_t nrecords;    // HDF5 record count
-    herr_t status;       // HDF5 return status
-    char **field_names;  // HDF5 list of columns
-    
-    dalFilter * filter; // table filter
-    
-    bool firstrecord;
-    string name; // table name
-    string type;  // "HDF5", "MSCASA" or "FITS"; for example
-    vector<dalColumn> columns; // list of table columns
-    
+    {
+
+      void * file;  // can be HDF5File, FITS, MS
+
+      // HDF5-specific variables
+      hid_t fileID_p;      // HDF5 file_id
+      hid_t tableID_p;     // HDF5 table id
+      hsize_t nfields;     // HDF5 field count
+      hsize_t nrecords;    // HDF5 record count
+      herr_t status;       // HDF5 return status
+      char **field_names;  // HDF5 list of columns
+
+      dalFilter * filter; // table filter
+
+      bool firstrecord;
+      string name; // table name
+      string type;  // "HDF5", "MSCASA" or "FITS"; for example
+      vector<dalColumn> columns; // list of table columns
+
 #ifdef HAVE_CASA
       casa::Table * casa_table_handle;
       casa::Array<casa::Double> array_vals_dbl;
       casa::Array<casa::Complex> array_vals_comp;
       casa::ROTableColumn * casa_column;
 #endif
-      
+
       void h5addColumn_setup( std::string const column_name, bool &removedummy );
       void h5addColumn_insert( uint const & indims, std::string const & colname,
                                hid_t const & field_type,
                                bool const & removedummy );
-      
+
     public:
 
       // ------------------------------------------------ Construction
@@ -97,21 +98,36 @@ namespace DAL {
       // -------------------------------------------- Parameter access
 
       //! Get the HDF5 file identifier
-      inline hid_t fileID () const { return fileID_p; }
+      inline hid_t fileID () const
+        {
+          return fileID_p;
+        }
       //! Get the HDF5 table object identifier
-      inline hid_t tableID () const { return tableID_p; }
+      inline hid_t tableID () const
+        {
+          return tableID_p;
+        }
       //! Get the number of fields within the table
-      inline hsize_t nofFields () const { return nfields; }
+      inline hsize_t nofFields () const
+        {
+          return nfields;
+        }
       //! Get the numbe of records within the table
-      inline hsize_t nofRecords () const { return nrecords; }
+      inline hsize_t nofRecords () const
+        {
+          return nrecords;
+        }
 
       void printColumns();
-      inline void summary() { summary(std::cout); }
+      inline void summary()
+      {
+        summary(std::cout);
+      }
       void summary(std::ostream &os);
       void openTable( void * voidfile,
-		      string tablename,
-		      string groupname );
-      
+                      string tablename,
+                      string groupname );
+
 #ifdef HAVE_CASA
       void openTable( string tablename );
       //! Open the table in a measurement set.

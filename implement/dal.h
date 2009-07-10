@@ -37,7 +37,7 @@
   formats may include \ref dal_hdf5, AIPS++/CASA tables, \ref dal_fits or specific
   raw formats. This library is available to both the C/C++ developer and the
   Python user via the \e pydal module.
-  
+
   <table border="0">
     <tr>
       <td class="indexkey">Core library classes</td>
@@ -68,7 +68,7 @@
       </td>
     </tr>
   </table>
-  
+
   <h3>Related pages</h3>
 
   - \ref dal_file_types

@@ -25,53 +25,57 @@
 #include "DataType.h"
 #endif
 
-namespace DAL { // Namespace DAL -- begin
-  
+namespace DAL   // Namespace DAL -- begin
+  {
+
   // ============================================================================
   //
   //  Construction
   //
   // ============================================================================
-  
+
   DataType::DataType (DataType::Types const &type)
   {
     setType (type);
   }
-  
+
   DataType::DataType (DataType const &other)
   {
     copy (other);
   }
-  
+
   // ============================================================================
   //
   //  Destruction
   //
   // ============================================================================
-  
+
   DataType::~DataType ()
   {
     destroy();
   }
-  
+
   void DataType::destroy ()
-  {;}
-  
+  {
+    ;
+  }
+
   // ============================================================================
   //
   //  Operators
   //
   // ============================================================================
-  
+
   DataType& DataType::operator= (DataType const &other)
   {
-    if (this != &other) {
-      destroy ();
-      copy (other);
-    }
+    if (this != &other)
+      {
+        destroy ();
+        copy (other);
+      }
     return *this;
   }
-  
+
   void DataType::copy (DataType const &other)
   {
     type_p = other.type_p;
@@ -82,47 +86,48 @@ namespace DAL { // Namespace DAL -- begin
   //  Parameters
   //
   // ============================================================================
-  
+
   //_____________________________________________________________________________
   //                                                                         name
 
   std::string DataType::name ()
   {
     std::string typeName;
-    
-    switch (type_p) {
-    case DataType::VIS:
-      typeName="VIS";
-      break;
-    case DataType::SKY:
-      typeName="SKY";
-      break;
-    case DataType::RMC:
-      typeName="RMC";
-      break;
-    case DataType::RMM:
-      typeName="RMM";
-      break;
-    case DataType::DYS:
-      typeName="DYS";
-      break;
-    case DataType::CRC:
-      typeName="CRC";
-      break;
-    case DataType::BFS:
-      typeName="BFS";
-      break;
-    case DataType::BFT:
-      typeName="BFT";
-      break;
-    case DataType::TBB:
-      typeName="TBB";
-      break;
-    };
-    
+
+    switch (type_p)
+      {
+      case DataType::VIS:
+        typeName="VIS";
+        break;
+      case DataType::SKY:
+        typeName="SKY";
+        break;
+      case DataType::RMC:
+        typeName="RMC";
+        break;
+      case DataType::RMM:
+        typeName="RMM";
+        break;
+      case DataType::DYS:
+        typeName="DYS";
+        break;
+      case DataType::CRC:
+        typeName="CRC";
+        break;
+      case DataType::BFS:
+        typeName="BFS";
+        break;
+      case DataType::BFT:
+        typeName="BFT";
+        break;
+      case DataType::TBB:
+        typeName="TBB";
+        break;
+      };
+
     return typeName;
   }
-  
+
   //_____________________________________________________________________________
   //                                                                      summary
 
@@ -133,23 +138,24 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- Name           = " << name() << std::endl;
     os << "-- Is Visibility? = " << isVisibility() << std::endl;
   }
-  
+
   // ============================================================================
   //
   //  Methods
   //
   // ============================================================================
-  
+
   bool DataType::isVisibility ()
   {
-    switch (type_p) {
-    case DataType::VIS:
-      return true;
-      break;
-    default:
-      return false;
-      break;
-    };
+    switch (type_p)
+      {
+      case DataType::VIS:
+        return true;
+        break;
+      default:
+        return false;
+        break;
+      };
   }
 
 } // Namespace DAL -- end

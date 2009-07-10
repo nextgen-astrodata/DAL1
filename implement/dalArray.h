@@ -77,11 +77,11 @@ namespace DAL
         \return bool -- DAL::FAIL or DAL::SUCCESS
       */
       template <class T>
-	bool getAttribute( std::string attrname, T &value )
-	{
-	  return h5get_attribute( array_id, attrname, value );
-	}
-      
+      bool getAttribute( std::string attrname, T &value )
+      {
+        return h5get_attribute( array_id, attrname, value );
+      }
+
       bool setAttribute( std::string attrname, char * data, int size=1 );
       bool setAttribute( std::string attrname, short * data, int size=1 );
       bool setAttribute( std::string attrname, int * data, int size=1 );

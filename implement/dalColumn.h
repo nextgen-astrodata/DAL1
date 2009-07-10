@@ -28,8 +28,9 @@
 #include "dalData.h"
 #endif
 
-namespace DAL {
-  
+namespace DAL
+  {
+
   /*!
     \class dalColumn
     \ingroup DAL
@@ -37,126 +38,126 @@ namespace DAL {
     \author Joseph Masters
   */
   class dalColumn
-  {
-    
-    std::string filetype;  // "HDF5", "MSCASA" or "FITS"; for example
-    std::string name; // column name
-    std::string tablename; // table name
-    std::string dal_datatype;  // column datatype
-    int size; // datatype size
-    uint num_of_rows;  // number of rows in the column
-    
-    // HDF5-specific variables
-    hid_t file_id; 	// hdf5 file_id
-    hid_t table_id;	// hdf5 table id
-    hsize_t nfields; // hdf5 field count
-    hsize_t nrecords; // hdf5 record count
-    hid_t coltype;
-    herr_t  status;  // hdf5 call return status
-    
-    dalData * data_object;  // object to hold column data
-    
+    {
+
+      std::string filetype;  // "HDF5", "MSCASA" or "FITS"; for example
+      std::string name; // column name
+      std::string tablename; // table name
+      std::string dal_datatype;  // column datatype
+      int size; // datatype size
+      uint num_of_rows;  // number of rows in the column
+
+      // HDF5-specific variables
+      hid_t file_id; 	// hdf5 file_id
+      hid_t table_id;	// hdf5 table id
+      hsize_t nfields; // hdf5 field count
+      hsize_t nrecords; // hdf5 record count
+      hid_t coltype;
+      herr_t  status;  // hdf5 call return status
+
+      dalData * data_object;  // object to hold column data
+
 #ifdef HAVE_CASA
-    
-    std::string casa_datatype;  // column datatype
-    
-    casa::ColumnDesc casa_col_desc;
-    casa::ROTableColumn * casa_column;
-    
-    // COLUMNs
-    casa::ROArrayColumn<int> * roac_int;
-    casa::ROArrayColumn<double> * roac_dbl;
-    casa::ROArrayColumn< complex< float > > * roac_comp;
-    casa::ROArrayColumn<casa::String> * roac_string;
-    
-    casa::ROScalarColumn<int> * rosc_int;
-    casa::ROScalarColumn<casa::Bool> * rosc_bool;
-    casa::ROScalarColumn<double> * rosc_dbl;
-    casa::ROScalarColumn< complex< float > > * rosc_comp;
-    casa::ROScalarColumn<casa::String> * rosc_string;
-    
-    // ARRAYs
-    casa::Array<casa::Double> array_vals_dbl;
-    casa::Array<casa::Complex> array_vals_comp;
-    casa::Array<casa::Int> array_vals_int;
-    casa::Array<casa::String> array_vals_string;
-    
-    // VECTORs
-    casa::Vector<casa::Double> scalar_vals_dbl;
-    casa::Vector<casa::Complex> scalar_vals_comp;
-    casa::Vector<casa::Int> scalar_vals_int;
-    casa::Vector<casa::String> scalar_vals_string;
-    casa::Vector<casa::Bool> scalar_vals_bool;
-    vector< complex< float > > stl_vec_comp;
-    
-    casa::Bool deleteIt;
-    
-    std::string getCasaDataType();
-    dalData * CasaData_scalar( );
-    dalData * CasaData_array( );
+
+      std::string casa_datatype;  // column datatype
+
+      casa::ColumnDesc casa_col_desc;
+      casa::ROTableColumn * casa_column;
+
+      // COLUMNs
+      casa::ROArrayColumn<int> * roac_int;
+      casa::ROArrayColumn<double> * roac_dbl;
+      casa::ROArrayColumn< complex< float > > * roac_comp;
+      casa::ROArrayColumn<casa::String> * roac_string;
+
+      casa::ROScalarColumn<int> * rosc_int;
+      casa::ROScalarColumn<casa::Bool> * rosc_bool;
+      casa::ROScalarColumn<double> * rosc_dbl;
+      casa::ROScalarColumn< complex< float > > * rosc_comp;
+      casa::ROScalarColumn<casa::String> * rosc_string;
+
+      // ARRAYs
+      casa::Array<casa::Double> array_vals_dbl;
+      casa::Array<casa::Complex> array_vals_comp;
+      casa::Array<casa::Int> array_vals_int;
+      casa::Array<casa::String> array_vals_string;
+
+      // VECTORs
+      casa::Vector<casa::Double> scalar_vals_dbl;
+      casa::Vector<casa::Complex> scalar_vals_comp;
+      casa::Vector<casa::Int> scalar_vals_int;
+      casa::Vector<casa::String> scalar_vals_string;
+      casa::Vector<casa::Bool> scalar_vals_bool;
+      vector< complex< float > > stl_vec_comp;
+
+      casa::Bool deleteIt;
+
+      std::string getCasaDataType();
+      dalData * CasaData_scalar( );
+      dalData * CasaData_array( );
 #endif
-    
-    dalData * H5data (int &start,
-		      int &length);
-    
-  public:
-    
-    dalColumn();
-    dalColumn( std::string complexcolname );
-    dalColumn( hid_t fileid,
-	       hid_t tableid,
-	       std::string filetype,
-	       std::string lcl_tablename,
-	       std::string colname,
-	       std::string coldatatype );
-    dalColumn( std::string colname,
-	       std::string coltype );
-    
+
+      dalData * H5data (int &start,
+                        int &length);
+
+    public:
+
+      dalColumn();
+      dalColumn( std::string complexcolname );
+      dalColumn( hid_t fileid,
+                 hid_t tableid,
+                 std::string filetype,
+                 std::string lcl_tablename,
+                 std::string colname,
+                 std::string coldatatype );
+      dalColumn( std::string colname,
+                 std::string coltype );
+
 #ifdef HAVE_CASA
-    dalColumn( casa::Table table,
-	       std::string colname );
+      dalColumn( casa::Table table,
+                 std::string colname );
 #endif
-    
-    void addMember( std::string member_name, std::string type );
-    //! Get the name of the column.
-    std::string getName();
-    //! Set the name of the column.
-    void setName(std::string colname);
-    //! Set the file type of the dataset containing the column.
-    void setFileType( std::string type );
-    std::string getDataType();
-    int getSize();
-    void close();
-    std::string getType();
-    bool isArray();
-    bool isScalar();
-    vector<int> shape();
-    //! Get the number of dimensions of the column.
-    int ndims();
-    //! Get the number of rows in the column.
-    uint nrows();
-    dalData * data (int &start,
-		    int &length);
-    //! Get the data object for the column.
-    dalData * data();
-    
-    /************************************************************************
-     *
-     * The following functions are boost wrappers to allow some previously
-     *   defined functions to be easily called from a python prompt.
-     *
-     ************************************************************************/
+
+      void addMember( std::string member_name, std::string type );
+      //! Get the name of the column.
+      std::string getName();
+      //! Set the name of the column.
+      void setName(std::string colname);
+      //! Set the file type of the dataset containing the column.
+      void setFileType( std::string type );
+      std::string getDataType();
+      int getSize();
+      void close();
+      std::string getType();
+      bool isArray();
+      bool isScalar();
+      vector<int> shape();
+      //! Get the number of dimensions of the column.
+      int ndims();
+      //! Get the number of rows in the column.
+      uint nrows();
+      dalData * data (int &start,
+                      int &length);
+      //! Get the data object for the column.
+      dalData * data();
+
+      /************************************************************************
+       *
+       * The following functions are boost wrappers to allow some previously
+       *   defined functions to be easily called from a python prompt.
+       *
+       ************************************************************************/
 #ifdef PYTHON
-    
-    bpl::tuple shape_boost();
-    bpl::numeric::array data_boost1( );
-    bpl::numeric::array data_boost2( int32_t length );
-    bpl::numeric::array data_boost3( int64_t offset, int32_t length );
-    
+
+      bpl::tuple shape_boost();
+      bpl::numeric::array data_boost1( );
+      bpl::numeric::array data_boost2( int32_t length );
+      bpl::numeric::array data_boost3( int64_t offset, int32_t length );
+
 #endif
-  };  // dalColumn class
-  
-  
+    };  // dalColumn class
+
+
 } // DAL namespace
 
 #endif // DALCOLUMN_H

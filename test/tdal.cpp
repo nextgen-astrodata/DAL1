@@ -729,7 +729,7 @@ uint create_hdf5_table()
   count = 3;
   int colnum = 0;
   std::cerr << "Overwriting first " << count << " rows of column " <<
-  colnum << " in table.\n";
+            colnum << " in table.\n";
   for (int xx=0; xx<count; xx++)
     {
       table_in_ds->writeDataByColNum( &md, colnum, xx );
@@ -739,7 +739,7 @@ uint create_hdf5_table()
   count = 3;
   colnum = 2;
   std::cerr << "Overwriting first " << count << " rows of column " <<
-  colnum << " in table.\n";
+            colnum << " in table.\n";
   for (int xx=0; xx<count; xx++)
     {
       table_in_ds->writeDataByColNum( &mi, colnum, xx );

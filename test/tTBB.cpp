@@ -38,9 +38,9 @@ using DAL::TBB;
   \ingroup DAL
 
   \brief A collection of test routines for the TBB class
- 
+
   \author Lars B&auml;hren
- 
+
   \date 2008/11/05
 */
 
@@ -56,17 +56,20 @@ int test_constructors (std::string const &filename)
   cout << "\n[tTBB::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
-  
+
   cout << "[1] Testing default constructor ..." << std::endl;
-  try {
-    TBB newTBB (filename);
-    //
-    newTBB.summary(); 
-  } catch (std::string message) {
-    cerr << message << std::endl;
-    nofFailedTests++;
-  }
-  
+  try
+    {
+      TBB newTBB (filename);
+      //
+      newTBB.summary();
+    }
+  catch (std::string message)
+    {
+      cerr << message << std::endl;
+      nofFailedTests++;
+    }
+
   return nofFailedTests;
 }
 
@@ -87,51 +90,60 @@ int test_parameters (std::string const &outfile)
   TBB tbb (outfile);
 
   std::cout << "[1] Test assigning top-level attributes ..." << std::endl;
-  try {
-    tbb.setTelescope ("TheTelescope");
-    tbb.setObserver ("TheObserver");
-    tbb.setProject ("ThePoject");
-    tbb.setObservation_id ("TheObservationID");
-    tbb.setObservation_mode ("TheObservationMode");
-    //
-    tbb.summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
+  try
+    {
+      tbb.setTelescope ("TheTelescope");
+      tbb.setObserver ("TheObserver");
+      tbb.setProject ("ThePoject");
+      tbb.setObservation_id ("TheObservationID");
+      tbb.setObservation_mode ("TheObservationMode");
+      //
+      tbb.summary();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
 
   std::cout << "[2] Assign time-outs ..." << std::endl;
-  try {
-    tbb.setTimeoutStart (1.5);
-    tbb.summary();
-    //
-    tbb.setTimeoutStart (1,200);
-    tbb.summary();
-    //
-    tbb.setTimeoutRead (2,5);
-    tbb.summary();
-    //
-    tbb.setTimeoutRead (0,50);
-    tbb.summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
+  try
+    {
+      tbb.setTimeoutStart (1.5);
+      tbb.summary();
+      //
+      tbb.setTimeoutStart (1,200);
+      tbb.summary();
+      //
+      tbb.setTimeoutRead (2,5);
+      tbb.summary();
+      //
+      tbb.setTimeoutRead (0,50);
+      tbb.summary();
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
 
   cout << "[3] Retrieve time-outs ..." << endl;
-  try {
-    unsigned int time_sec;
-    unsigned int time_usec;
-    //
-    tbb.timeoutStart(time_sec,time_usec);
-    cout << "-- Start time-out = [" << time_sec << ";" << time_usec << "]" << endl;
-    //
-    tbb.timeoutRead(time_sec,time_usec);
-    cout << "-- Read time-out  = [" << time_sec << ";" << time_usec << "]" << endl;
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
+  try
+    {
+      unsigned int time_sec;
+      unsigned int time_usec;
+      //
+      tbb.timeoutStart(time_sec,time_usec);
+      cout << "-- Start time-out = [" << time_sec << ";" << time_usec << "]" << endl;
+      //
+      tbb.timeoutRead(time_sec,time_usec);
+      cout << "-- Read time-out  = [" << time_sec << ";" << time_usec << "]" << endl;
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
 
   return nofFailedTests;
 }
@@ -151,29 +163,33 @@ int main (int argc, char *argv[])
   //__________________________________________________________________
   // Check the input parameters provided form the command line
 
-  if (argc < 2) {
-    cerr << "[tTBB] Missing name of output file!" << std::endl;
-    cerr << std::endl;
-    cerr << " tTBB <HDF5 outfile>" << std::endl;
-    cerr << " tTBB <HDF5 outfile> <TBB raw file>" << std::endl;
-    cerr << " tTBB <HDF5 outfile> <TBB raw file> <Cal. file>" << std::endl;
-    cerr << std::endl;
-  }
+  if (argc < 2)
+    {
+      cerr << "[tTBB] Missing name of output file!" << std::endl;
+      cerr << std::endl;
+      cerr << " tTBB <HDF5 outfile>" << std::endl;
+      cerr << " tTBB <HDF5 outfile> <TBB raw file>" << std::endl;
+      cerr << " tTBB <HDF5 outfile> <TBB raw file> <Cal. file>" << std::endl;
+      cerr << std::endl;
+    }
 
-  if (argc > 1) {
-    outfile      = argv[1];
-    have_outfile = true;
-  }
+  if (argc > 1)
+    {
+      outfile      = argv[1];
+      have_outfile = true;
+    }
 
-  if (argc > 2) {
-    rawfile      = argv[2];
-    have_rawfile = true;
-  }
+  if (argc > 2)
+    {
+      rawfile      = argv[2];
+      have_rawfile = true;
+    }
 
-  if (argc > 3) {
-    calfile      = argv[3];
-    have_calfile = true;
-  }
+  if (argc > 3)
+    {
+      calfile      = argv[3];
+      have_calfile = true;
+    }
 
   //__________________________________________________________________
   // Parameter summary
@@ -184,18 +200,19 @@ int main (int argc, char *argv[])
   cout << "-- Input file       = " << rawfile << endl;
   cout << "-- Calibration file = " << calfile << endl;
 #endif
-  
+
   //__________________________________________________________________
   // Run the tests
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors (outfile);
 
-  if (nofFailedTests == 0) {
+  if (nofFailedTests == 0)
+    {
 
-    nofFailedTests += test_parameters (outfile);
+      nofFailedTests += test_parameters (outfile);
 
-  }
+    }
 
   return nofFailedTests;
 }

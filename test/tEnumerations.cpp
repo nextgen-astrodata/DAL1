@@ -37,9 +37,9 @@ using std::endl;
   \ingroup DAL
 
   \brief A collection of test routines for the Enumerations class
- 
+
   \author Lars B&auml;hren
- 
+
   \date 2008/01/31
 */
 
@@ -63,27 +63,30 @@ using std::endl;
 int test_id2name ()
 {
   int nofFailedTests (0);
-  
+
   cout << "\n[tEnumerations::test_id2name]\n" << endl;
 
-  try {
-    cout << "-- TELESCOPE        = "
-	 << DAL::attribute_name (DAL::TELESCOPE) << endl;
-    cout << "-- OBSERVER         = "
-	 << DAL::attribute_name (DAL::OBSERVER) << endl;
-    cout << "-- PROJECT          = "
-	 << DAL::attribute_name (DAL::PROJECT) << endl;
-    cout << "-- OBSERVATION_ID   = "
-	 << DAL::attribute_name (DAL::OBSERVATION_ID) << endl;
-    cout << "-- OBSERVATION_MODE = "
-	 << DAL::attribute_name (DAL::OBSERVATION_MODE) << endl;
-    cout << "-- TIME             = "
-	 << DAL::attribute_name (DAL::TIME) << endl;
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-  
+  try
+    {
+      cout << "-- TELESCOPE        = "
+           << DAL::attribute_name (DAL::TELESCOPE) << endl;
+      cout << "-- OBSERVER         = "
+           << DAL::attribute_name (DAL::OBSERVER) << endl;
+      cout << "-- PROJECT          = "
+           << DAL::attribute_name (DAL::PROJECT) << endl;
+      cout << "-- OBSERVATION_ID   = "
+           << DAL::attribute_name (DAL::OBSERVATION_ID) << endl;
+      cout << "-- OBSERVATION_MODE = "
+           << DAL::attribute_name (DAL::OBSERVATION_MODE) << endl;
+      cout << "-- TIME             = "
+           << DAL::attribute_name (DAL::TIME) << endl;
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << endl;
+      nofFailedTests++;
+    }
+
   return nofFailedTests;
 }
 
@@ -92,7 +95,7 @@ int test_id2name ()
 int main ()
 {
   int nofFailedTests (0);
-  
+
   nofFailedTests += test_id2name ();
 
   return nofFailedTests;

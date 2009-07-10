@@ -23,14 +23,15 @@
 
 #include <Coordinate.h>
 
-namespace DAL { // Namespace DAL -- begin
-  
+namespace DAL   // Namespace DAL -- begin
+  {
+
   // ============================================================================
   //
   //  Construction
   //
   // ============================================================================
-  
+
   //_____________________________________________________________________________
   //                                                                   Coordinate
 
@@ -40,7 +41,7 @@ namespace DAL { // Namespace DAL -- begin
     nofAxes_p        = 1;
     init();
   }
-  
+
   //_____________________________________________________________________________
   //                                                                   Coordinate
 
@@ -50,24 +51,24 @@ namespace DAL { // Namespace DAL -- begin
     \param nofAxes        -- Number of coordinate axes.
   */
   Coordinate::Coordinate (Coordinate::Type const &coordinateType,
-			  double const &nofAxes)
+                          double const &nofAxes)
   {
     coordinateType_p = coordinateType;
     nofAxes_p        = nofAxes;
     init();
   }
-  
+
   //_____________________________________________________________________________
   //                                                                   Coordinate
-  
+
   Coordinate::Coordinate (Coordinate::Type const &coordinateType,
-			  double const &nofAxes,
-			  std::vector<std::string> const &axisNames,
-			  std::vector<std::string> const &axisUnits,
-			  std::vector<double> const &refValue,
-			  std::vector<double> const &refPixel,
-			  std::vector<double> const &increment,
-			  std::vector<double> const &pc)
+                          double const &nofAxes,
+                          std::vector<std::string> const &axisNames,
+                          std::vector<std::string> const &axisUnits,
+                          std::vector<double> const &refValue,
+                          std::vector<double> const &refPixel,
+                          std::vector<double> const &increment,
+                          std::vector<double> const &pc)
   {
     // store basic variables
     coordinateType_p = coordinateType;
@@ -80,10 +81,10 @@ namespace DAL { // Namespace DAL -- begin
     setIncrement (increment);
     setPc        (pc);
   }
-  
+
   //_____________________________________________________________________________
   //                                                                   Coordinate
-  
+
   /*!
     \param other -- Another Coordinate object from which to create this new
            one.
@@ -92,36 +93,39 @@ namespace DAL { // Namespace DAL -- begin
   {
     copy (other);
   }
-  
+
   // ============================================================================
   //
   //  Destruction
   //
   // ============================================================================
-  
+
   Coordinate::~Coordinate ()
   {
     destroy();
   }
-  
+
   void Coordinate::destroy ()
-  {;}
-  
+  {
+    ;
+  }
+
   // ============================================================================
   //
   //  Operators
   //
   // ============================================================================
-  
+
   Coordinate& Coordinate::operator= (Coordinate const &other)
   {
-    if (this != &other) {
-      destroy ();
-      copy (other);
-    }
+    if (this != &other)
+      {
+        destroy ();
+        copy (other);
+      }
     return *this;
   }
-  
+
   void Coordinate::copy (Coordinate const &other)
   {
     /* Copy basic attributes */
@@ -155,7 +159,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     return getName (coordinateType_p);
   }
-  
+
   //_____________________________________________________________________________
   //                                                                      summary
 
@@ -170,14 +174,14 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- Reference pixel  = " << refPixel_p     << std::endl;
     os << "-- Increment        = " << increment_p    << std::endl;
   }
-  
-  
+
+
   // ============================================================================
   //
   //  Methods
   //
   // ============================================================================
-  
+
   //_____________________________________________________________________________
   //                                                                         init
 
@@ -205,31 +209,32 @@ namespace DAL { // Namespace DAL -- begin
   std::string Coordinate::getName (Coordinate::Type const &type)
   {
     std::string coordinateName;
-    
-    switch (type) {
-    case DAL::Coordinate::Direction:
-      coordinateName="Direction";
-      break;
-    case DAL::Coordinate::Frequency:
-      coordinateName="Frequency";
-      break;
-    case DAL::Coordinate::Linear:
-      coordinateName="Linear";
-      break;
-    case DAL::Coordinate::Stokes:
-      coordinateName="Stokes";
-      break;
-    case DAL::Coordinate::Tabular:
-      coordinateName="Tabular";
-      break;
-    case DAL::Coordinate::NONE:
-      coordinateName="NONE";
-      break;
-    };
-    
+
+    switch (type)
+      {
+      case DAL::Coordinate::Direction:
+        coordinateName="Direction";
+        break;
+      case DAL::Coordinate::Frequency:
+        coordinateName="Frequency";
+        break;
+      case DAL::Coordinate::Linear:
+        coordinateName="Linear";
+        break;
+      case DAL::Coordinate::Stokes:
+        coordinateName="Stokes";
+        break;
+      case DAL::Coordinate::Tabular:
+        coordinateName="Tabular";
+        break;
+      case DAL::Coordinate::NONE:
+        coordinateName="NONE";
+        break;
+      };
+
     return coordinateName;
   }
-  
+
   //_____________________________________________________________________________
   //                                                                      getName
 
@@ -237,23 +242,28 @@ namespace DAL { // Namespace DAL -- begin
   {
     Coordinate::Type coordinateType (Coordinate::NONE);
 
-    if (name == "Direction") {
-      coordinateType = Coordinate::Direction;
-    }
-    else if (name == "Frequency") {
-      coordinateType = Coordinate::Frequency;
-    }
-    else if (name == "Linear") {
-      coordinateType = Coordinate::Linear;
-    }
-    else if (name == "Stokes") {
-      coordinateType = Coordinate::Stokes;
-    }
-    else if (name == "Tabular") {
-      coordinateType = Coordinate::Tabular;
-    }
+    if (name == "Direction")
+      {
+        coordinateType = Coordinate::Direction;
+      }
+    else if (name == "Frequency")
+      {
+        coordinateType = Coordinate::Frequency;
+      }
+    else if (name == "Linear")
+      {
+        coordinateType = Coordinate::Linear;
+      }
+    else if (name == "Stokes")
+      {
+        coordinateType = Coordinate::Stokes;
+      }
+    else if (name == "Tabular")
+      {
+        coordinateType = Coordinate::Tabular;
+      }
 
     return coordinateType;
   }
-  
+
 } // Namespace DAL -- end

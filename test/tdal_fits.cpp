@@ -47,56 +47,64 @@ using std::endl;
 int test_FITS (std::string const &filename)
 {
   std::cout << "\n[tdal_fits::test_FITS]\n" << std::endl;
-  
+
   int nofFailedTests = 0;
   int status         = 0;
-  
+
   std::cout << "[1] Opening FITS file for reading ..." << std::endl;
-  try {
-    fitsfile *fptr;
-    fits_open_file(&fptr, filename.c_str(), READWRITE, &status);
-    //
-    std::cout << "-- Filename = " << filename << std::endl;
-    std::cout << "-- Status   = " << status   << std::endl;
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-
-  std::cout << "[2] Creating FITS with primary array image" << std::endl;
-  try {
-    long nelem (1024);
-    long naxis (2);
-    long naxes[2] = {nelem,nelem};
-    long nelements (nelem*nelem);
-    long fpixel (1);
-    float pixels[nelem][nelem];
-
-    std::cout << "-- Create new file ..." << std::endl;
-    fitsfile *fptr;
-    fits_create_file (&fptr, "!testimage1.fits", &status);
-
-    std::cout << "-- Create the primary array image ..." << std::endl;
-    fits_create_img (fptr, FLOAT_IMG, naxis, naxes, &status);
-
-    std::cout << "-- Fill the pixel value array ..." << std::endl;
-    for (int nx(0); nx<nelem; nx++) {
-      for (int ny(0); ny<nelem; ny++) {
-	pixels[ny][nx] = 1.0*(nx+ny);
-      }
+  try
+    {
+      fitsfile *fptr;
+      fits_open_file(&fptr, filename.c_str(), READWRITE, &status);
+      //
+      std::cout << "-- Filename = " << filename << std::endl;
+      std::cout << "-- Status   = " << status   << std::endl;
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
     }
 
-    std::cout << "-- Write the pixel value to the file ..." << std::endl;
-    fits_write_img(fptr, TFLOAT, fpixel, nelements, pixels[0], &status);
+  std::cout << "[2] Creating FITS with primary array image" << std::endl;
+  try
+    {
+      long nelem (1024);
+      long naxis (2);
+      long naxes[2] = {nelem,nelem};
+      long nelements (nelem*nelem);
+      long fpixel (1);
+      float pixels[nelem][nelem];
 
-    std::cout << "-- Close FITS file ..." << std::endl;
-    fits_close_file(fptr, &status);
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
+      std::cout << "-- Create new file ..." << std::endl;
+      fitsfile *fptr;
+      fits_create_file (&fptr, "!testimage1.fits", &status);
 
-  
+      std::cout << "-- Create the primary array image ..." << std::endl;
+      fits_create_img (fptr, FLOAT_IMG, naxis, naxes, &status);
+
+      std::cout << "-- Fill the pixel value array ..." << std::endl;
+      for (int nx(0); nx<nelem; nx++)
+        {
+          for (int ny(0); ny<nelem; ny++)
+            {
+              pixels[ny][nx] = 1.0*(nx+ny);
+            }
+        }
+
+      std::cout << "-- Write the pixel value to the file ..." << std::endl;
+      fits_write_img(fptr, TFLOAT, fpixel, nelements, pixels[0], &status);
+
+      std::cout << "-- Close FITS file ..." << std::endl;
+      fits_close_file(fptr, &status);
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << std::endl;
+      nofFailedTests++;
+    }
+
+
   return nofFailedTests;
 }
 
@@ -109,7 +117,7 @@ int test_FITS (std::string const &filename)
 
   \return nofFailedTests -- The number of failed tests encountered with this
           function
-*/  
+*/
 int test_dalDataset (std::string const &filename)
 {
   std::cout << "\n[tdal_fits::test_dalDataset ]\n" << endl;
@@ -120,32 +128,39 @@ int test_dalDataset (std::string const &filename)
   fitsfile += ".fits";
 
   std::cout << "[1] Creating new dalDataset for type FITS ..." << endl;
-  try {
-    std::cout << "-- Creating new dataset..." << endl;
-    dalDataset * dataset1;
-    std::cout << "-- Make the new dataset of type FITS ..." << endl;
-    dataset1 = new dalDataset( fitsfile.c_str(), "FITS" );
-    std::cout << "-- Release allocated memory..." << endl;
-    delete dataset1;
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-
-  std::cout << "[2] Open previously create dataset through dalDataset ..." << endl;
-  try {
-    dalDataset * dataset2;
-    dataset2 = new dalDataset;
-    if ( 0 != dataset2->open( fitsfile.c_str() ) ) {
-      cout << "Problem opening dataset: " << fitsfile << '.' << " Quiting."
-	   << endl;
+  try
+    {
+      std::cout << "-- Creating new dataset..." << endl;
+      dalDataset * dataset1;
+      std::cout << "-- Make the new dataset of type FITS ..." << endl;
+      dataset1 = new dalDataset( fitsfile.c_str(), "FITS" );
+      std::cout << "-- Release allocated memory..." << endl;
+      delete dataset1;
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << endl;
       nofFailedTests++;
     }
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-  
+
+  std::cout << "[2] Open previously create dataset through dalDataset ..." << endl;
+  try
+    {
+      dalDataset * dataset2;
+      dataset2 = new dalDataset;
+      if ( 0 != dataset2->open( fitsfile.c_str() ) )
+        {
+          cout << "Problem opening dataset: " << fitsfile << '.' << " Quiting."
+               << endl;
+          nofFailedTests++;
+        }
+    }
+  catch (std::string message)
+    {
+      std::cerr << message << endl;
+      nofFailedTests++;
+    }
+
 //    dalGroup * groupA = dataset2->createGroup( "groupA" );
 //    dalGroup * groupB = dataset2->createGroup( "groupB" );
 //    dalGroup * groupC = dataset2->createGroup( "groupC" );
@@ -193,17 +208,18 @@ int test_dalDataset (std::string const &filename)
  */
 
 int main (int argc,
-	  char *argv[])
+          char *argv[])
 {
   int nofFailedTests = 0;
 
   /* Check parameter provided from the command line */
-  if ( argc < 2 ) {
-    cout << "[tdal_fits] Too few parameters..." << endl << endl;
-    cout << "The first parameter is a fits dataset path and name." << endl;
-    cout << endl;
-    return DAL::FAIL;
-  }
+  if ( argc < 2 )
+    {
+      cout << "[tdal_fits] Too few parameters..." << endl << endl;
+      cout << "The first parameter is a fits dataset path and name." << endl;
+      cout << endl;
+      return DAL::FAIL;
+    }
 
   std::string filename (argv[1]);
 

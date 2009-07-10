@@ -26,12 +26,12 @@
 #endif
 
 namespace DAL
-{
-  
+  {
+
   // ------------------------------------------------------------ dalArray
   /*!
     \brief Default constructor.
-    
+
     Default constructor.
   */
   dalArray::dalArray()
@@ -43,37 +43,37 @@ namespace DAL
     status = 0;
     name = "UNKNOWN";
   }
-  
-  
+
+
   // ------------------------------------------------------------ open
   /*!
     \brief Open an existing array.
     \param file A pointer to the file.
     \param arrayname The name of the array you want to open.
     \return An identifier for the array.
-    
+
     Open an existing array.
   */
   int dalArray::open( void * voidfile,
-		      string arrayname )
+                      string arrayname )
   {
     name = arrayname;
     hid_t * lclfile = (hid_t*)voidfile; // H5File object
     file_id = *lclfile;  // get the file handle
-    
+
     if ( ( array_id = H5Dopen( file_id, name.c_str(), H5P_DEFAULT ) ) < 0 )
       std::cerr << "ERROR: could not open array '" << arrayname << "'.\n";
-    
+
     return( array_id );
   }
-  
+
   // ------------------------------------------------------------ getId
-  
+
   /*!
     \brief Get the array ID.
-    
+
     Retrieve the identifier for the array.
-    
+
     \return The array identifier as an integer.
   */
   hid_t dalArray::getId()
@@ -92,13 +92,13 @@ namespace DAL
   {
     return rank_p;
   }
-  
+
   // ------------------------------------------------------------ close
   /*!
     \brief Close an existing array.
-    
+
     Close an existing array.
-    
+
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalArray::close()
@@ -108,11 +108,11 @@ namespace DAL
         std::cerr << "ERROR: dalArray::close() failed.\n";
         return DAL::FAIL;
       }
-    
+
     return DAL::SUCCESS;
   }
-  
-  
+
+
   // ------------------------------------------------------------ write (int)
   /*!
     \brief Write int to an array.
@@ -143,28 +143,28 @@ namespace DAL
                               dims, NULL) < 0 )
       {
         std::cerr << "ERROR: Could not select hyperslab for array.\n";
-	H5Sclose(filespace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
-    
+
     /* Define memory space */
     if ( ( dataspace = H5Screate_simple (rank_p, dims, NULL) ) < 0 )
       {
         std::cerr << "ERROR: Could not create dataspace for array.\n";
-	H5Sclose(filespace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
-    
+
     /* Write the data to the hyperslab  */
     if ( H5Dwrite( array_id, H5T_NATIVE_INT, dataspace, filespace,
                    H5P_DEFAULT, data ) < 0 )
       {
         std::cerr << "ERROR: Could not write integer array.\n";
-	H5Sclose(dataspace);
-	H5Sclose(filespace);
+        H5Sclose(dataspace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
-    
+
     /* Close the memory- and data-space */
     H5Sclose(dataspace);
     H5Sclose(filespace);
@@ -198,37 +198,37 @@ namespace DAL
         std::cerr << "ERROR: Could not get filespace for array.\n";
         return DAL::FAIL;
       }
-    
+
     if ( H5Sselect_hyperslab( filespace, H5S_SELECT_SET, off, NULL,
                               dims, NULL ) < 0 )
       {
         std::cerr << "ERROR: Could not select hyperslab for array.\n";
-	H5Sclose(filespace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
-    
+
     /* Define memory space */
     if ( ( dataspace = H5Screate_simple (rank_p, dims, NULL) ) < 0 )
       {
         std::cerr << "ERROR: Could not create dataspace for array.\n";
-	H5Sclose(filespace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
-    
+
     /* Write the data to the hyperslab  */
     if ( H5Dwrite (array_id, H5T_NATIVE_SHORT, dataspace, filespace,
                    H5P_DEFAULT, data ) < 0 )
       {
         std::cerr << "ERROR: Could not write short array.\n";
-	H5Sclose(dataspace);
-	H5Sclose(filespace);
+        H5Sclose(dataspace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
-    
+
     /* Close the memory- and data-space */
     H5Sclose(dataspace);
     H5Sclose(filespace);
-    
+
     return DAL::SUCCESS;
   }
 
@@ -262,7 +262,7 @@ namespace DAL
                               dims, NULL) < 0 )
       {
         std::cerr << "ERROR: Could not select hyperslab for array.\n";
-	H5Sclose(filespace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
 
@@ -276,7 +276,7 @@ namespace DAL
     if ( ( complex_id = H5Tcreate (H5T_COMPOUND, sizeof(complex_t)) ) < 0 )
       {
         std::cerr << "ERROR: Could not create complex datatype.\n";
-	H5Sclose(filespace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
 
@@ -284,7 +284,7 @@ namespace DAL
                     H5T_NATIVE_DOUBLE ) < 0 )
       {
         std::cerr << "ERROR: Could not insert element into compound datatype.\n";
-	H5Sclose(filespace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
 
@@ -292,7 +292,7 @@ namespace DAL
                     H5T_NATIVE_DOUBLE ) < 0 )
       {
         std::cerr << "ERROR: Could not insert element into compound datatype.\n";
-	H5Sclose(filespace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
 
@@ -301,7 +301,7 @@ namespace DAL
                    H5P_DEFAULT, data ) < 0 )
       {
         std::cerr << "ERROR: Could not write complex<float> array.\n";
-	H5Sclose(filespace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
 
@@ -339,7 +339,7 @@ namespace DAL
                               dims, NULL ) < 0 )
       {
         std::cerr << "ERROR: Could not select hyperslab for array.\n";
-	H5Sclose(filespace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
 
@@ -353,7 +353,7 @@ namespace DAL
     if ( ( complex_id = H5Tcreate (H5T_COMPOUND, sizeof(complex_t)) ) < 0 )
       {
         std::cerr << "ERROR: Could not create complex datatype.\n";
-	H5Sclose(filespace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
 
@@ -361,7 +361,7 @@ namespace DAL
                      H5T_NATIVE_SHORT ) < 0 )
       {
         std::cerr << "ERROR: Could not insert element into compound datatype.\n";
-	H5Sclose(filespace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
 
@@ -369,7 +369,7 @@ namespace DAL
                      H5T_NATIVE_SHORT ) < 0 )
       {
         std::cerr << "ERROR: Could not insert element into compound datatype.\n";
-	H5Sclose(filespace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
 
@@ -378,7 +378,7 @@ namespace DAL
                    H5P_DEFAULT, data ) < 0 )
       {
         std::cerr << "ERROR: Could not write complex<Int16> array.\n";
-	H5Sclose(filespace);
+        H5Sclose(filespace);
         return DAL::FAIL;
       }
 
@@ -404,7 +404,7 @@ namespace DAL
 
     for (int32_t ii=0; ii<rank; ii++)
       return_values.push_back( dims_out[ii] );
-    
+
     H5Sclose(dataspace);
     return return_values;
   }
@@ -614,7 +614,7 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalArray::setAttribute( std::string attrname, std::string * data,
-                                 int size )
+                               int size )
   {
     return h5setAttribute_string( array_id, attrname, data, size );
   }
@@ -1121,7 +1121,7 @@ namespace DAL
           }
 
         if ( ( array_id = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
-                                     dataspace, H5P_DEFAULT ) ) < 0 )
+                                      dataspace, H5P_DEFAULT ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array.\n";
           }
@@ -1479,35 +1479,35 @@ namespace DAL
 
   bool dalArray::setAttribute_char( std::string attrname, char data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalArray::setAttribute_short( std::string attrname, short data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalArray::setAttribute_int( std::string attrname, int data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalArray::setAttribute_uint( std::string attrname, uint data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalArray::setAttribute_long( std::string attrname, long data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalArray::setAttribute_float( std::string attrname, float data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalArray::setAttribute_double( std::string attrname, double data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
   bool dalArray::setAttribute_string( std::string attrname, std::string data )
   {
-     return setAttribute( attrname, &data );
+    return setAttribute( attrname, &data );
   }
 #endif // end #ifdef PYTHON
 

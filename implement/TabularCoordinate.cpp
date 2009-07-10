@@ -23,8 +23,9 @@
 
 #include <TabularCoordinate.h>
 
-namespace DAL { // Namespace DAL -- begin
-  
+namespace DAL   // Namespace DAL -- begin
+  {
+
   // ============================================================================
   //
   //  Construction
@@ -33,75 +34,76 @@ namespace DAL { // Namespace DAL -- begin
 
   //_____________________________________________________________________________
   //                                                            TabularCoordinate
-  
+
   TabularCoordinate::TabularCoordinate ()
-    : Coordinate(Coordinate::Tabular,
-		 1)
+      : Coordinate(Coordinate::Tabular,
+                   1)
   {
     init ();
-  }
-  
-  //_____________________________________________________________________________
-  //                                                            TabularCoordinate
-  
-  TabularCoordinate::TabularCoordinate (std::vector<std::string> const &axisNames,
-					std::vector<std::string> const &axisUnits,
-					std::vector<double> const &pixelValues,
-					std::vector<double> const &worldValues)
-    : Coordinate(Coordinate::Tabular,
-		 1)
-  {
-    setAxisNames (axisNames);
-    setAxisUnits (axisUnits);
-    setAxisValues (pixelValues,
-		   worldValues);
   }
 
   //_____________________________________________________________________________
   //                                                            TabularCoordinate
-  
+
+  TabularCoordinate::TabularCoordinate (std::vector<std::string> const &axisNames,
+                                        std::vector<std::string> const &axisUnits,
+                                        std::vector<double> const &pixelValues,
+                                        std::vector<double> const &worldValues)
+      : Coordinate(Coordinate::Tabular,
+                   1)
+  {
+    setAxisNames (axisNames);
+    setAxisUnits (axisUnits);
+    setAxisValues (pixelValues,
+                   worldValues);
+  }
+
+  //_____________________________________________________________________________
+  //                                                            TabularCoordinate
+
   TabularCoordinate::TabularCoordinate (TabularCoordinate const &other)
-    : Coordinate (other)
+      : Coordinate (other)
   {
     copy (other);
   }
-  
+
   // ============================================================================
   //
   //  Destruction
   //
   // ============================================================================
-  
+
   TabularCoordinate::~TabularCoordinate ()
   {
     destroy();
   }
-  
+
   void TabularCoordinate::destroy ()
   {}
-  
+
   // ============================================================================
   //
   //  Operators
   //
   // ============================================================================
-  
+
   TabularCoordinate& TabularCoordinate::operator= (TabularCoordinate const &other)
   {
-    if (this != &other) {
-      destroy ();
-      copy (other);
-    }
+    if (this != &other)
+      {
+        destroy ();
+        copy (other);
+      }
     return *this;
   }
-  
+
   void TabularCoordinate::copy (TabularCoordinate const &other)
   {
     Coordinate::copy (other);
 
     pixelValues_p.resize(other.pixelValues_p.size());
     worldValues_p.resize(other.worldValues_p.size());
-    
+
     pixelValues_p = other.pixelValues_p;
     worldValues_p = other.worldValues_p;
   }
@@ -114,54 +116,63 @@ namespace DAL { // Namespace DAL -- begin
 
   //_____________________________________________________________________________
   //                                                               setPixelValues
-  
+
   bool TabularCoordinate::setPixelValues (std::vector<double> const &pixelValues)
   {
     bool status (true);
 
-    if (pixelValues.size() == pixelValues_p.size()) {
-      pixelValues_p = pixelValues;
-    } else {
-      status = false;
-    }
+    if (pixelValues.size() == pixelValues_p.size())
+      {
+        pixelValues_p = pixelValues;
+      }
+    else
+      {
+        status = false;
+      }
 
     return status;
   }
 
   //_____________________________________________________________________________
   //                                                               setWorldValues
-  
+
   bool TabularCoordinate::setWorldValues (std::vector<double> const &worldValues)
   {
     bool status (true);
 
-    if (worldValues.size() == worldValues_p.size()) {
-      worldValues_p = worldValues;
-    } else {
-      status = false;
-    }
+    if (worldValues.size() == worldValues_p.size())
+      {
+        worldValues_p = worldValues;
+      }
+    else
+      {
+        status = false;
+      }
 
     return status;
   }
 
   //_____________________________________________________________________________
   //                                                                setAxisValues
-  
+
   bool TabularCoordinate::setAxisValues (std::vector<double> const &pixelValues,
-					 std::vector<double> const &worldValues)
+                                         std::vector<double> const &worldValues)
   {
     bool status (true);
-    
-    if (pixelValues.size() == worldValues.size()) {
-      // adjust array sizes
-      pixelValues_p.resize(pixelValues.size());
-      worldValues_p.resize(worldValues.size());
-      // copy values
-      pixelValues_p = pixelValues;
-      worldValues_p = worldValues;
-    } else {
-      status = false;
-    }
+
+    if (pixelValues.size() == worldValues.size())
+      {
+        // adjust array sizes
+        pixelValues_p.resize(pixelValues.size());
+        worldValues_p.resize(worldValues.size());
+        // copy values
+        pixelValues_p = pixelValues;
+        worldValues_p = worldValues;
+      }
+    else
+      {
+        status = false;
+      }
 
     return status;
   }
@@ -180,44 +191,47 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- Pixel values          = " << pixelValues_p  << std::endl;
     os << "-- World values          = " << worldValues_p  << std::endl;
   }
-  
+
   // ============================================================================
   //
   //  Methods
   //
   // ============================================================================
-  
+
   //_____________________________________________________________________________
   //                                                                       h5read
-  
+
   void TabularCoordinate::h5read (hid_t const &groupID)
   {}
-  
+
   //_____________________________________________________________________________
   //                                                                       h5read
-  
+
   void TabularCoordinate::h5read (hid_t const &locationID,
-				  std::string const &name)
+                                  std::string const &name)
   {
     hid_t groupID (0);
-    
+
     groupID = H5Gopen1 (locationID,
-			name.c_str());
-    
-    if (groupID) {
-      h5read (groupID);
-    } else {
-      std::cerr << "[TabularCoordinate::h5read] Error opening group "
-		<< name 
-		<< std::endl;
-    }
-    
+                        name.c_str());
+
+    if (groupID)
+      {
+        h5read (groupID);
+      }
+    else
+      {
+        std::cerr << "[TabularCoordinate::h5read] Error opening group "
+                  << name
+                  << std::endl;
+      }
+
     H5Gclose (groupID);
   }
-  
+
   //_____________________________________________________________________________
   //                                                                      h5write
-  
+
   void TabularCoordinate::h5write (hid_t const &groupID)
   {
     DAL::h5set_attribute( groupID, "COORDINATE_TYPE", name() );
@@ -231,24 +245,24 @@ namespace DAL { // Namespace DAL -- begin
     DAL::h5set_attribute( groupID, "PIXEL_VALUES",    pixelValues_p );
     DAL::h5set_attribute( groupID, "WORLD_VALUES",    worldValues_p );
   }
-  
+
   //_____________________________________________________________________________
   //                                                                      h5write
-  
+
   void TabularCoordinate::h5write (hid_t const &locationID,
-				   std::string const &name)
+                                   std::string const &name)
   {
     hid_t groupID (0);
     // create HDF5 group
     groupID = H5Gcreate( locationID,
-			 name.c_str(),
-			 H5P_DEFAULT,
-			 H5P_DEFAULT,
-			 H5P_DEFAULT );
+                         name.c_str(),
+                         H5P_DEFAULT,
+                         H5P_DEFAULT,
+                         H5P_DEFAULT );
     // write coordinate attributes
     h5write (groupID);
     // close the group after write
     H5Gclose (groupID);
   }
-    
+
 } // Namespace DAL -- end
