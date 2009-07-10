@@ -304,8 +304,10 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Write column data using an index." )
     .def( "appendRow", &dalTable::append_row_boost,
 	  "Append a row to the table." )
-    .def( "appendRows", &dalTable::appendRows,
+    .def( "appendRows", &dalTable::append_rows_boost,
 	  "Append multiple rows to the table." )
+	.def("write_col_by_index_boost", &dalTable::write_col_by_index_boost,
+	  "Write data to a column with a numpy array as input")
     .def( "printColumns", &dalTable::printColumns,
 	  "Print the column tables to the screen." )
     .def( "listColumns", &dalTable::listColumns_boost,

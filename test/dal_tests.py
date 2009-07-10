@@ -5,6 +5,8 @@ import unittest
 import os
 import numpy
 
+BIGNUM = 20000
+
 #A testcase is created by subclassing unittest.TestCase. The three individual tests are defined with methods whose names start with the letters test. This naming convention informs the test runner about which methods represent tests.
 #
 #The crux of each test is a call to assertEqual() to check for an expected result; assert_() to verify a condition; or assertRaises() to verify that an expected exception gets raised. These methods are used instead of the assert statement so the test runner can accumulate all test results and produce a report.
@@ -52,6 +54,8 @@ class dal_tests(unittest.TestCase):
 
     def test_dataset_createTable(self):
     	tab = ds.createTable("table1")
+    	tab = ds.createTable("table2")
+    	tab = ds.createTable("table3")
     	self.assertEqual(type(tab),pydal.dalTable)
 
     def test_dataset_createTable_in_group(self):  # depends on test_createGroup
@@ -218,21 +222,50 @@ class dal_tests(unittest.TestCase):
     def test_table_addColumns(self):
     	table = ds.openTable("table1")
     	table.addColumn("col1", "dalINT", 1 )
-    	table.addColumn("col2", "dalINT", 1 )
+    	table.addColumn("col2", "dalFLOAT", 1 )
     	table.addColumn("col3", "dalINT", 1 )
+    	t2 = ds.openTable("table2")
+    	t2.addColumn("col1", "dalINT", 1 )
+    	t2.addColumn("col2", "dalFLOAT", 1 )
+    	t2.addColumn("col3", "dalSHORT", 1 )
+    	t3 = ds.openTable("table3")
+    	t3.addColumn("col1", "dalSHORT", 1 )
+    	t3.addColumn("col2", "dalSHORT", 1 )
+    	t3.addColumn("col3", "dalSHORT", 1 )
     	cols = table.listColumns()
     	self.assertEqual(cols,['col1','col2','col3'])
     	
     def test_table_appendRow(self):
     	table = ds.openTable("table1")
-    	ret = table.appendRow(numpy.array([1,2,3]))
-    	ret = table.appendRow(numpy.array([4,5,6]))
-    	ret = table.appendRow(numpy.array([7,8,9]))
+    	for x in range(BIGNUM):
+    		ret = table.appendRow([0,1.,2])
     	self.assertTrue(ret)
+
+    def test_table_appendRows(self):
+    	table = ds.openTable("table2")
+    	ret = table.appendRows([0 for x in range(BIGNUM*3)],BIGNUM)
+    	t3 = ds.openTable("table3")
+    	ret = t3.appendRows([0 for x in range(BIGNUM*3)],BIGNUM)
+    	self.assertTrue(ret)
+
+    def test_table_write_col_data_by_index(self):
+    	table = ds.openTable("table1")
+    	table.write_col_by_index_boost(numpy.random.randint(0,100,BIGNUM),0,0,BIGNUM)
+    	table.write_col_by_index_boost(numpy.ones(BIGNUM,numpy.float32),1,0,BIGNUM)
+    	table.write_col_by_index_boost(numpy.ones(BIGNUM,int),2,0,BIGNUM)
+    	t2 = ds.openTable("table2")
+    	t2.write_col_by_index_boost(numpy.ones(BIGNUM,numpy.int32),0,0,BIGNUM)
+    	t2.write_col_by_index_boost(numpy.ones(BIGNUM,numpy.float32),1,0,BIGNUM)
+    	t2.write_col_by_index_boost(numpy.array([0 for x in range(BIGNUM)],dtype=numpy.int16),2,0,BIGNUM)
+    	t3 = ds.openTable("table3")
+    	t3.write_col_by_index_boost(numpy.ones(BIGNUM,numpy.int16),0,0,BIGNUM)
+    	t3.write_col_by_index_boost(numpy.ones(BIGNUM,numpy.int16),1,0,BIGNUM)
+    	t3.write_col_by_index_boost(numpy.ones(BIGNUM,numpy.int16),2,0,BIGNUM)
+    	self.assertTrue(table)
 
     def test_table_getNumberOfRows(self): # depends on test_table_appendRows
     	table = ds.openTable("table1")
-    	self.assertTrue(table.getNumberOfRows(),3)
+    	self.assertEqual(table.getNumberOfRows(),BIGNUM)
 
     def test_table_readRows(self):
     	table = ds.openTable("table1")
@@ -313,6 +346,8 @@ if __name__ == "__main__":
 	suite.addTest(dal_tests("test_table_setAttribute_string"))
 	suite.addTest(dal_tests("test_table_addColumns"))
 	suite.addTest(dal_tests("test_table_appendRow"))
+	suite.addTest(dal_tests("test_table_appendRows"))
+	suite.addTest(dal_tests("test_table_write_col_data_by_index"))
 	suite.addTest(dal_tests("test_table_getNumberOfRows"))
 #	suite.addTest(dal_tests("test_table_readRows"))
 	

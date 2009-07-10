@@ -156,7 +156,7 @@ namespace DAL {
                              int subfields );
       //! Remove a column from the table
       void removeColumn( const string &colname );
-      void writeDataByColNum( void * structure, int index, int rownum );
+      void writeDataByColNum( void * structure, int index, int rownum, long nrecords=1 );
       void setFilter( string columns );
       void setFilter( string columns, string conditions );
       void appendRow( void * data );
@@ -210,6 +210,9 @@ namespace DAL {
       void ot_hdf5( void * voidfile, string tablename, string groupname );
 //      bool append_row_boost( bpl::numeric::array data );
       bool append_row_boost( bpl::object data );
+      bool append_rows_boost( bpl::object data, long nrows );
+      void write_col_by_index_boost( bpl::numeric::array data, int index,
+                                     int rownum, long nrecords );
       bpl::list listColumns_boost();
       bpl::numeric::array getAttribute_boost(std::string);
 //      bpl::numeric::array readRows_boost( long start, long nrecs );

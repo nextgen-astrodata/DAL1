@@ -1026,7 +1026,10 @@ namespace DAL {
             << endl;
             return;
           }
-        field_type = H5Tarray_create1( h5type, 1, dims, NULL );
+        if ((*dims) > 1)
+        	field_type = H5Tarray_create1( h5type, 1, dims, NULL );
+		else
+			field_type = h5type;        	
 		
         h5addColumn_insert( indims, colname, field_type, removedummy );
       }
@@ -1208,7 +1211,7 @@ namespace DAL {
   \param index The position of the column you want to write to.
   \param rownum The row position where you want to start writing data.
   */
-  void dalTable::writeDataByColNum( void * data, int index, int rownum )
+  void dalTable::writeDataByColNum( void * data, int index, int rownum, long nrecs )
   {
     if ( type == H5TYPE )
       {
@@ -1223,9 +1226,6 @@ namespace DAL {
         field_sizes   = new size_t[ nfields ];
         field_offsets = new size_t[ nfields ];
         size_out      = new size_t[ 1 ];
-// 	field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
-// 	field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
-// 	size_out = (size_t*)malloc( sizeof(size_t) );
 
         status = H5TBget_field_info( fileID_p, name.c_str(), NULL, field_sizes,
                                      field_offsets, size_out );
@@ -1237,16 +1237,13 @@ namespace DAL {
         const int inum		= index;  // column number to overwrite
         const int * index_num	= &inum;  // pointer to column number to overwrite
         hsize_t start		= hsize_t(rownum); // record index to start at
-        hsize_t numrecords	= 1;	  // number of records to write
+        hsize_t numrecords	= nrecs;	  // number of records to write
 
-
-        const size_t size = sizeof( data );
-// 	const size_t field_offsets[1] = { 0 };
-// 	const size_t dst_sizes[1] = { sizeof( int ) }; //(update)
-
+		size_t col_offset[1] = { 0 };
+		size_t col_size[1] = { field_sizes[index] };
         status = H5TBwrite_fields_index(fileID_p, name.c_str(), num_fields,
-                                        index_num, start, numrecords, size,
-                                        field_offsets, field_sizes, data);
+                                        index_num, start, numrecords, *col_size,
+                                        col_offset, col_size, data);
 
         delete [] field_sizes;
         field_sizes = NULL;
@@ -2147,9 +2144,26 @@ namespace DAL {
    *
    *****************************************************************/
   bool dalTable::append_row_boost( bpl::object data )
+  {	
+//  	printf("list size: %d\n",PyList_Size( data.ptr() ) );
+    return append_rows_boost(data,1);
+  }
+  
+  /****************************************************************
+   *  wrapper for appendRows (hdf5)
+   *
+   *****************************************************************/
+  bool dalTable::append_rows_boost( bpl::object data, long nrows )
+  {	
+    appendRows(data.ptr(), nrows);
+    return PyList_Check(data.ptr());
+  }
+
+  void dalTable::write_col_by_index_boost( bpl::numeric::array data, int index,
+                                           int rownum, long nrecords )
   {
-    appendRow(&data);
-    return true;
+      void * mydata = num_util::data(data);
+  	  writeDataByColNum( mydata, index, rownum, nrecords );
   }
 
 //  bool dalTable::append_row_boost( bpl::numeric::array data )
