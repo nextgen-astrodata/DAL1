@@ -28,6 +28,12 @@
 #include <iostream>
 #include <string>
 
+#ifdef HAVE_CASA
+#define WCSLIB_GETWCSTAB 1
+#include <coordinates/Coordinates/Projection.h>
+#include <measures/Measures/MDirection.h>
+#endif
+
 /* DAL header files */
 #include <dalCommon.h>
 
@@ -52,6 +58,10 @@ namespace DAL   // Namespace DAL -- begin
     </ul>
 
     <h3>Synopsis</h3>
+
+    This class defines the basic interface and data contents for a coordinate
+    object as being part of a HDF5-based LOFAR data-set (most prominently an
+    image).
 
     <h3>Example(s)</h3>
 
@@ -272,6 +282,7 @@ namespace DAL   // Namespace DAL -- begin
       //! Get the type of the coordinate from its name
       static Coordinate::Type getType (std::string const &name);
 
+#ifdef HAVE_HDF5
       //! Write the coordinate object to a HDF5 file
       virtual void h5write (hid_t const &locationID) = 0;
 
@@ -285,22 +296,42 @@ namespace DAL   // Namespace DAL -- begin
       //! Read the coordinate object from a HDF5 file
       virtual void h5read (hid_t const &groupID,
                            std::string const &name) = 0;
-
+#endif
+      
+#ifdef HAVE_CASA
+      //! Get the type of a reference system from its name
+      static casa::MDirection::Types systemType (casa::String const &refcode) {
+	// Local variables
+	bool ok (true);
+	casa::MDirection md;
+	casa::MDirection::Types tp;
+	// Get the type of the MDirection
+	ok = md.getType(tp,refcode);
+	// Return the result
+	return tp;
+      }
+      //! Get the type of a projection from its name
+      static casa::Projection::Type projectionType (casa::String const &refcode) {
+	casa::Projection prj;	
+	return prj.type(refcode);
+      }
+#endif
+      
     protected:
-
+      
       //! Unconditional copying
       void copy (Coordinate const &other);
-
+      
     private:
-
+      
       void init ();
-
+      
       //! Unconditional deletion
       void destroy(void);
-
+      
     }; // Class Coordinate -- end
-
-} // Namespace DAL -- end
+  
+  } // Namespace DAL -- end
 
 #endif /* COORDINATE_H */
 

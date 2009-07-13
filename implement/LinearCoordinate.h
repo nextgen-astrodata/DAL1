@@ -31,6 +31,10 @@
 // DAL header files
 #include <Coordinate.h>
 
+#ifdef HAVE_CASA
+#include <coordinates/Coordinates/LinearCoordinate.h>
+#endif
+
 namespace DAL   // Namespace DAL -- begin
   {
 
@@ -123,6 +127,7 @@ namespace DAL   // Namespace DAL -- begin
 
       // ------------------------------------------------------------------ Methods
 
+#ifdef HAVE_HDF5
       //! Read the coordinate object from a HDF5 file
       void h5read (hid_t const &groupID);
 
@@ -136,18 +141,24 @@ namespace DAL   // Namespace DAL -- begin
       //! Write the coordinate object to a HDF5 file
       void h5write (hid_t const &locationID,
                     std::string const &name);
-
+#endif
+      
+#ifdef HAVE_CASA
+      //! Create casa::Coordinate object from coordinate parameters
+      casa::LinearCoordinate casaCoordinate ();
+#endif
+      
     private:
-
+      
       //! Unconditional copying
       void copy (LinearCoordinate const &other);
-
+      
       //! Unconditional deletion
       void destroy(void);
-
+      
     }; // Class LinearCoordinate -- end
-
-} // Namespace DAL -- end
+    
+  } // Namespace DAL -- end
 
 #endif /* LINEARCOORDINATE_H */
 

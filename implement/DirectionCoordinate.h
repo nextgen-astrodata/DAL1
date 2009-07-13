@@ -28,6 +28,11 @@
 #include <iostream>
 #include <string>
 
+#ifdef HAVE_CASA
+#include <casa/Quanta/Quantum.h>
+#include <coordinates/Coordinates/DirectionCoordinate.h>
+#endif
+
 // DAL header files
 #include <Coordinate.h>
 
@@ -163,6 +168,7 @@ namespace DAL   // Namespace DAL -- begin
 
       // ------------------------------------------------------------------ Methods
 
+#ifdef HAVE_HDF5
       //! Read the coordinate object from a HDF5 file
       void h5read (hid_t const &groupID);
 
@@ -176,6 +182,11 @@ namespace DAL   // Namespace DAL -- begin
       //! Write the coordinate object to a HDF5 file
       void h5write (hid_t const &locationID,
                     std::string const &name);
+#endif
+
+#ifdef HAVE_CASA
+      casa::DirectionCoordinate casaCoordinate ();
+#endif
 
     private:
 

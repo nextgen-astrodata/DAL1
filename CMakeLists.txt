@@ -55,19 +55,19 @@ endif (DAL_ENABLE_TESTING)
 ## Handle option: verbose mode during configuration on/off
 
 if (NOT DAL_VERBOSE_CONFIGURE)
-  set (BLITZ_FIND_QUIETLY     ON )
-  set (BOOST_FIND_QUIETLY     ON )
-  set (CASACORE_FIND_QUIETLY  ON )
-  set (CFITSIO_FIND_QUIETLY   ON )
-  set (GSL_FIND_QUIETLY       ON )
-  set (HDF5_FIND_QUIETLY      ON )
-  set (LAPACK_FIND_QUIETLY    ON )
-  set (NUMPY_FIND_QUIETLY     ON )
-  set (NUM_UTIL_FIND_QUIETLY  ON )
-  set (PYTHON_FIND_QUIETLY    ON )
-  set (MPATROL_FIND_QUIETLY   ON )
-  set (MYSQL_FIND_QUIETLY     ON )
-  set (WCSLIB_FIND_QUIETLY     ON )
+  set (BLITZ_FIND_QUIETLY     YES )
+  set (BOOST_FIND_QUIETLY     YES )
+  set (CASACORE_FIND_QUIETLY  YES )
+  set (CFITSIO_FIND_QUIETLY   YES )
+  set (GSL_FIND_QUIETLY       YES )
+  set (HDF5_FIND_QUIETLY      YES )
+  set (LAPACK_FIND_QUIETLY    YES )
+  set (NUMPY_FIND_QUIETLY     YES )
+  set (NUM_UTIL_FIND_QUIETLY  YES )
+  set (PYTHON_FIND_QUIETLY    YES )
+  set (MPATROL_FIND_QUIETLY   YES )
+  set (MYSQL_FIND_QUIETLY     YES )
+  set (WCSLIB_FIND_QUIETLY    YES )
 endif (NOT DAL_VERBOSE_CONFIGURE)
 
 ## Handle option: debugging messages on/off
@@ -84,7 +84,7 @@ endif (DAL_DEBUGGING_MESSAGES)
 
 include (CPack)
 
-set (NO_DEFAULT_PATH ON)
+set (NO_DEFAULT_PATH YES)
 
 ##__________________________________________________________
 ## system libraries
@@ -105,10 +105,10 @@ endif (NOT HAVE_BLITZ)
 ##__________________________________________________________
 ## Boost
 
-set (BOOST_pythonOnly NO )
+set (BOOST_pythonOnly FALSE)
 
 if (NOT DAL_PYTHON_BINDINGS)
-  set (BOOST_FIND_python NO)
+  set (BOOST_FIND_python FALSE)
 endif (NOT DAL_PYTHON_BINDINGS)
 
 if (NOT HAVE_BOOST)
@@ -210,22 +210,22 @@ endif (BOOST_LIBRARIES)
 ## programs and applications.
 
 if (NOT HAVE_BOOST)
-  set (DAL_PYTHON_BINDINGS OFF)
+  set (DAL_PYTHON_BINDINGS FALSE)
   message (STATUS "[DAL] Unable to generate Python bindings; missing Boost++ headers!")
 endif (NOT HAVE_BOOST)
 
 if (NOT HAVE_PYTHON) 
-  set (DAL_PYTHON_BINDINGS OFF)
+  set (DAL_PYTHON_BINDINGS FALSE)
   message (STATUS "[DAL] Unable to generate Python bindings; missing Python headers!")
 endif (NOT HAVE_PYTHON)
 
 if (NOT NUMPY_INCLUDES) 
-  set (DAL_PYTHON_BINDINGS OFF)
+  set (DAL_PYTHON_BINDINGS FALSE)
   message (STATUS "[DAL] Unable to generate Python bindings; missing NumPy headers!")
 endif (NOT NUMPY_INCLUDES)
 
 if (NOT NUM_UTIL_INCLUDES) 
-  set (DAL_PYTHON_BINDINGS OFF)
+  set (DAL_PYTHON_BINDINGS FALSE)
   message (STATUS "[DAL] Unable to generate Python bindings; missing num_util headers!")
 endif (NOT NUM_UTIL_INCLUDES)
 
@@ -248,21 +248,21 @@ if (DAL_PYTHON_BINDINGS)
     include_directories (${PYTHON_INCLUDES})
   else (PYTHON_INCLUDES)
     message (STATUS "[DAL] Missing Python header files!")
-    set (DAL_PYTHON_BINDINGS OFF)
+    set (DAL_PYTHON_BINDINGS NO)
   endif (PYTHON_INCLUDES)
 
   if (NUMPY_INCLUDES)
     include_directories (${NUMPY_INCLUDES})
   else (NUMPY_INCLUDES)
     message (STATUS "[DAL] Missing numpy header files!")
-    set (DAL_PYTHON_BINDINGS OFF)
+    set (DAL_PYTHON_BINDINGS NO)
   endif (NUMPY_INCLUDES)
   
   if (NUM_UTIL_INCLUDES)
     include_directories (${NUM_UTIL_INCLUDES} ${NUM_UTIL_INCLUDES}/num_util)
   else (NUM_UTIL_INCLUDES)
     message (STATUS "[DAL] Missing num_util header files!")
-    set (DAL_PYTHON_BINDINGS OFF)
+    set (DAL_PYTHON_BINDINGS NO)
   endif (NUM_UTIL_INCLUDES)
   
 endif (DAL_PYTHON_BINDINGS)
@@ -349,18 +349,18 @@ if (prefix)
 endif (prefix)
 
 # skip the full RPATH for the build tree
-set (CMAKE_SKIP_BUILD_RPATH TRUE)
+set (CMAKE_SKIP_BUILD_RPATH YES)
 
 # when building, use the install RPATH already
 # (so it doesn't need to relink when installing)
-set (CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set (CMAKE_BUILD_WITH_INSTALL_RPATH YES)
 
 # the RPATH to be used when installing
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
 # add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH YES)
 
 ## =============================================================================
 ##

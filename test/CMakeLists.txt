@@ -37,14 +37,10 @@ set (tests
   tBeamGroup
   tBeamSubband
   tEnumerations
-  tLOFAR_Image
   tTBB
   tTBB_DipoleDataset
   tTBB_StationGroup
   tTBB_Timeseries
-  tDirectionCoordinate
-  tLinearCoordinate
-  tTabularCoordinate
   )
 
 ## Build instructions
@@ -88,11 +84,22 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 ## [2] casacore & HDF5
 
 if (HAVE_CASACORE AND HAVE_HDF5)
-  foreach (src tcasacore_hdf5)
+  foreach (src
+      tcasacore_hdf5
+      tDirectionCoordinate
+      tLinearCoordinate
+      tTabularCoordinate
+      tLOFAR_Image
+      )
     ## compiler instructions
     add_executable (${src} ${src}.cpp)
     ## linker instructions
-    target_link_libraries (${src} dal ${dal_link_libraries})
+    target_link_libraries (${src}
+      dal
+      ${dal_link_libraries}
+      ${WCSLIB_LIBRARIES}
+      ${LAPACK_LIBRARIES}
+      )
     ## installation
     list (APPEND tests ${src})
     ## testing

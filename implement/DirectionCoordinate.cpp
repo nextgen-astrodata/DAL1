@@ -24,63 +24,63 @@
 #include <DirectionCoordinate.h>
 
 namespace DAL   // Namespace DAL -- begin
-  {
-
+{
+  
   // ============================================================================
   //
   //  Construction
   //
   // ============================================================================
-
+  
   //_____________________________________________________________________________
   //                                                          DirectionCoordinate
-
+  
   DirectionCoordinate::DirectionCoordinate (std::string const &system,
-      std::string const &projection)
-      : Coordinate(Coordinate::Direction,
-                   2)
+					    std::string const &projection)
+    : Coordinate(Coordinate::Direction,
+		 2)
   {
     init (system,
-          projection);
+	  projection);
   }
-
+  
   //_____________________________________________________________________________
   //                                                          DirectionCoordinate
-
+  
   DirectionCoordinate::DirectionCoordinate (std::vector<std::string> const &axisNames,
-      std::vector<std::string> const &axisUnits,
-      std::vector<double> const &refValue,
-      std::vector<double> const &refPixel,
-      std::vector<double> const &increment,
-      std::vector<double> const &pc,
-      std::string const &system,
-      std::string const &projection)
-      : Coordinate(Coordinate::Direction,
-                   2,
-                   axisNames,
-                   axisUnits,
-                   refValue,
-                   refPixel,
-                   increment,
-                   pc)
+					    std::vector<std::string> const &axisUnits,
+					    std::vector<double> const &refValue,
+					    std::vector<double> const &refPixel,
+					    std::vector<double> const &increment,
+					    std::vector<double> const &pc,
+					    std::string const &system,
+					    std::string const &projection)
+    : Coordinate(Coordinate::Direction,
+		 2,
+		 axisNames,
+		 axisUnits,
+		 refValue,
+		 refPixel,
+		 increment,
+		 pc)
   {
     init (system,
           projection);
   }
-
+  
   //_____________________________________________________________________________
   //                                                          DirectionCoordinate
-
+  
   /*!
-    \param other -- Another DirectionCoordinate object from which to create this new
-           one.
+    \param other -- Another DirectionCoordinate object from which to create this
+           new one.
   */
   DirectionCoordinate::DirectionCoordinate (DirectionCoordinate const &other)
-      : Coordinate(other)
+    : Coordinate(other)
   {
     copy (other);
   }
-
+  
   // ============================================================================
   //
   //  Destruction
@@ -137,14 +137,14 @@ namespace DAL   // Namespace DAL -- begin
   {
     os << "[DirectionCoordinate] Summary of internal parameters." << std::endl;
     // Common coordinate parameters
-    os << "-- Coordinate type          = " << type() << " / " <<  name() << std::endl;
-    os << "-- nof. axes                = " << nofAxes_p      << std::endl;
-    os << "-- World axis names         = " << axisNames_p    << std::endl;
-    os << "-- World axis units         = " << axisUnits_p    << std::endl;
-    os << "-- Reference value          = " << refValue_p     << std::endl;
-    os << "-- Reference pixel          = " << refPixel_p     << std::endl;
-    os << "-- Increment                = " << increment_p    << std::endl;
-    os << "-- Transformation matrix    = " << pc_p           << std::endl;
+    os << "-- Coordinate type          = " << type() << " / "  <<  name() << std::endl;
+    os << "-- nof. axes                = " << nofAxes_p        << std::endl;
+    os << "-- World axis names         = " << axisNames_p      << std::endl;
+    os << "-- World axis units         = " << axisUnits_p      << std::endl;
+    os << "-- Reference value          = " << refValue_p       << std::endl;
+    os << "-- Reference pixel          = " << refPixel_p       << std::endl;
+    os << "-- Increment                = " << increment_p      << std::endl;
+    os << "-- Transformation matrix    = " << pc_p             << std::endl;
     // Specific add-ons
     os << "-- Reference system         = " << system_p           << std::endl;
     os << "-- Spherical map projection = " << projection_p       << std::endl;
@@ -158,6 +158,8 @@ namespace DAL   // Namespace DAL -- begin
   //  Methods
   //
   // ============================================================================
+
+#ifdef HAVE_HDF5
 
   //_____________________________________________________________________________
   //                                                                       h5read
@@ -283,5 +285,47 @@ namespace DAL   // Namespace DAL -- begin
     DAL::h5set_attribute( groupID, "LONGPOLE",         longpole_p );
     DAL::h5set_attribute( groupID, "LATPOLE",          latpole_p );
   }
-
+    
+#endif
+    
+    //___________________________________________________________________________
+    //                                                             casaCoordinate
+  
+#ifdef HAVE_CASA
+  casa::DirectionCoordinate DirectionCoordinate::casaCoordinate ()
+  {
+    casa::MDirection::Types system    = Coordinate::systemType(system_p);
+    casa::Projection::Type projection = Coordinate::projectionType(projection_p);
+    casa::Vector<casa::Quantum<double> > refValue (nofAxes_p);
+    casa::Vector<casa::Quantum<double> > increment (nofAxes_p);
+    casa::Matrix<double> xform (nofAxes_p,nofAxes_p);
+    
+    /* Copy data from internal storage to casa array objects */
+    
+    refValue(0) = casa::Quantum<double>(refValue_p[0],
+					casa::String(axisUnits_p[0]));
+    refValue(1) = casa::Quantum<double>(refValue_p[1],
+					casa::String(axisUnits_p[1]));
+    increment(0) = casa::Quantum<double>(increment_p[0],
+					 casa::String(axisUnits_p[0]));
+    increment(1) = casa::Quantum<double>(increment_p[1],
+					 casa::String(axisUnits_p[1]));
+    xform(0,0) = pc_p[0];
+    xform(0,1) = pc_p[1];
+    xform(1,0) = pc_p[2];
+    xform(1,1) = pc_p[3];
+    
+    return casa::DirectionCoordinate (system,
+				      casa::Projection(projection),
+				      refValue(0),
+				      refValue(1),
+				      increment(0),
+				      increment(1),
+				      xform,
+				      refPixel_p[0],
+				      refPixel_p[1]);
+  }
+#endif
+  
+  
 } // Namespace DAL -- end

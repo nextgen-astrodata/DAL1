@@ -147,6 +147,8 @@ namespace DAL   // Namespace DAL -- begin
   //
   // ============================================================================
 
+#ifdef HAVE_HDF5
+
   //_____________________________________________________________________________
   //                                                                       h5read
 
@@ -249,4 +251,43 @@ namespace DAL   // Namespace DAL -- begin
     DAL::h5set_attribute( groupID, "PC",              pc_p );
   }
 
+#endif
+
+    //_____________________________________________________________________________
+    //                                                               casaCoordinate
+    
+#ifdef HAVE_CASA
+    casa::LinearCoordinate LinearCoordinate::casaCoordinate () 
+    {
+      casa::Vector<casa::String> names (nofAxes_p);
+      casa::Vector<casa::String> units (nofAxes_p);
+      casa::Vector<double> crval (nofAxes_p);
+      casa::Vector<double> cdelt (nofAxes_p);
+      casa::Vector<double> crpix (nofAxes_p);
+      casa::Matrix<double> pc (nofAxes_p,nofAxes_p);
+      
+      /* Copy data from internal storage to casa array objects */
+
+      unsigned int i (0);
+      for (unsigned int n(0); n<nofAxes_p; n++) {
+	names(n) = axisNames_p[n];
+	units(n) = axisUnits_p[n];
+	crval(n) = refValue_p[n];
+	crpix(n) = refPixel_p[n];
+	cdelt(n) = increment_p[n];
+	for (unsigned int m(0); m<nofAxes_p; m++) {
+	  pc(n,m) = pc_p[i];
+	  i++;
+	}
+      }
+      
+      return casa::LinearCoordinate (names,
+				     units,
+				     crval,
+				     cdelt,
+				     pc,
+				     crpix);
+    }
+#endif
+    
 } // Namespace DAL -- end
