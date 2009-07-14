@@ -2,8 +2,9 @@
  | $Id:: dal.h 1126 2007-12-10 17:14:20Z masters                         $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
- *   Copyright (C) 2008 by Joseph Masters                                  *
- *   J.S.Masters@uva.nl                                                    *
+ *   Copyright (C) 2008                                                    *
+ *   Joseph Masters <J.S.Masters@uva.nl>                                   *
+ *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -25,17 +26,17 @@
 #include "dalCommon.h"
 #endif
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   // ============================================================================
   //
   //  Conversion routines
   //
   // ============================================================================
-
-  // --------------------------------------------------------------------- julday
-
+  
+  //_____________________________________________________________________________
+  //                                                                       julday
+  
   long double julday (time_t seconds,
                       long *intmjd,
                       long double *fracmjd)
@@ -46,41 +47,42 @@ namespace DAL
     int hour (0);
     int min (0);
     struct tm *ptr = 0;
-
+    
     unsigned int nd;
-
+    
     ptr = gmtime(&seconds);
     assert (ptr);
-
+    
     hour = ptr->tm_hour;
     min = ptr->tm_min;
     sec = (long double)ptr->tm_sec;
-
+    
     year = ptr->tm_year;
     yday = ptr->tm_yday + 1;
-
+    
     dayfrac = ( (sec/60.0L + (long double) min)/60.0L + \
                 (long double)hour)/24.0L;
     nd = year * 365;
     nd += (year - 1)/4;
     nd += yday + 2415020;
-
+    
     *intmjd = nd - 2400001;
     *fracmjd = dayfrac;
-
+    
     assert (intmjd);
     assert (fracmjd);
-
+    
     jd = (long double)nd + dayfrac - 0.5L;
-
+    
     return jd;
   }
-
-  // ------------------------------------------------------------------- mjd2unix
-
+  
+  //_____________________________________________________________________________
+  //                                                                     mjd2unix
+  
   /*!
     \param mjd_time -- The time as Modified Julian Date
-
+    
     \return unix -- The time as UNIX seconds
   */
   double mjd2unix (double mjd_time)
@@ -97,7 +99,8 @@ namespace DAL
   //
   // ============================================================================
 
-  // ----------------------------------------------------------------- h5get_name
+  //_____________________________________________________________________________
+  //                                                                   h5get_name
 
   /*!
     \retval name     -- Name of the object (if set or defined).
@@ -116,11 +119,10 @@ namespace DAL
     //________________________________________________________________
     // Check: does the object ID point to a valid object type?
 
-    if (objectType == H5I_BADID)
-      {
-        return false;
-      }
-
+    if (objectType == H5I_BADID) {
+      return false;
+    }
+    
     //______________________________________________________
     // Retrive the name of the object within the HDF5 file
 
@@ -132,75 +134,72 @@ namespace DAL
 
     char *buffer        = new char[buffer_size];
 
-    switch (objectType)
-      {
-      case H5I_FILE:
-        name_length = H5Fget_name (object_id,
-                                   buffer,
-                                   buffer_size);
-        break;
-      default:
-        name_length = H5Iget_name (object_id,
-                                   buffer,
-                                   buffer_size);
-        break;
-      };
-
+    switch (objectType) {
+    case H5I_FILE:
+      name_length = H5Fget_name (object_id,
+				 buffer,
+				 buffer_size);
+      break;
+    default:
+      name_length = H5Iget_name (object_id,
+				 buffer,
+				 buffer_size);
+      break;
+    };
+    
     delete [] buffer;
-
+    
     //________________________________________________________________
-
-    if (name_length > 0)
-      {
-
-        // ... and readjust it to the proper values retrieved above
-        buffer_size = name_length+1;
-        char *buffer = new char[buffer_size];
-
-        // retrieve the name of the object
-        switch (objectType)
-          {
-          case H5I_FILE:
-            name_length = H5Fget_name (object_id,
-                                       buffer,
-                                       buffer_size);
-            break;
-          default:
-            name_length = H5Iget_name (object_id,
-                                       buffer,
-                                       buffer_size);
-            break;
-          }
-
-        // copy the result to the returned variable
-        std::string tmp = buffer;
-        name = tmp;
-
-        // Release allocated memory
-        delete [] buffer;
-        buffer = 0;
-
+    
+    if (name_length > 0) {
+      
+      // ... and readjust it to the proper values retrieved above
+      buffer_size = name_length+1;
+      char *buffer = new char[buffer_size];
+      
+      // retrieve the name of the object
+      switch (objectType) {
+      case H5I_FILE:
+	name_length = H5Fget_name (object_id,
+				   buffer,
+				   buffer_size);
+	break;
+      default:
+	name_length = H5Iget_name (object_id,
+				   buffer,
+				   buffer_size);
+	break;
       }
-    else
-      {
-        std::cerr << "[h5get_name] Object name of zero characters!" << endl;
-        status = false;
-      }
-
+      
+      // copy the result to the returned variable
+      std::string tmp = buffer;
+      name = tmp;
+      
+      // Release allocated memory
+      delete [] buffer;
+      buffer = 0;
+      
+    }
+    else {
+      std::cerr << "[h5get_name] Object name of zero characters!" << endl;
+      status = false;
+    }
+    
     return true;
   }
-
-  // ----------------------------------------------------------------- h5get_name
-
+  
+  //_____________________________________________________________________________
+  //                                                                   h5get_name
+  
   /*!
     \retval name     -- Name of the object (if set or defined).
     \param object_id -- Identifier for the objects of which to retrieve the
            name.
     \param index     -- Transient index identifying the object whose name to
            retrieve.
-
+    
     \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered
+    an error was encountered
   */
   bool h5get_name (std::string &name,
                    hid_t const &object_id,
@@ -214,13 +213,12 @@ namespace DAL
     h5error = H5Gget_num_objs(object_id,
                               &nofObjects);
 
-    if (index > nofObjects)
-      {
-        std::cerr << "[h5get_name] Running index outside valid range!"
-                  << endl;
-        return false;
-      }
-
+    if (index > nofObjects) {
+      std::cerr << "[h5get_name] Running index outside valid range!"
+		<< endl;
+      return false;
+    }
+    
     /*
       Get the name of the object identified by the transient index; first
       function call is to retrieve retrieve the number of characters in the
@@ -231,47 +229,44 @@ namespace DAL
     size_t buffer_size  = 10;
 
     // first function call to get the number of characters in the object's name
-    try
-      {
-        char *buffer = new char[buffer_size];
-        name_length = H5Gget_objname_by_idx (object_id,
-                                             index,
-                                             buffer,
-                                             buffer_size);
-        delete [] buffer;
-      }
-    catch (std::string message)
-      {
-        std::cerr << "[h5get_name] Error calling H5Gget_objname_by_idx; "
-                  << message
-                  << endl;
-        return false;
-      }
-
-    if (name_length > 0)
-      {
-        buffer_size  = name_length+1;
-        char *buffer = new char[buffer_size];
-        // second function call to retrieve the object's name
-        name_length = H5Gget_objname_by_idx (object_id,
-                                             index,
-                                             buffer,
-                                             buffer_size);
-        std::string tmp = buffer;
-        name = tmp;
-        delete [] buffer;
-      }
-    else
-      {
-        std::cerr << "[h5get_name] Object name of zero characters!" << endl;
-        return false;
-      }
-
+    try {
+      char *buffer = new char[buffer_size];
+      name_length = H5Gget_objname_by_idx (object_id,
+					   index,
+					   buffer,
+					   buffer_size);
+      delete [] buffer;
+    }
+    catch (std::string message) {
+      std::cerr << "[h5get_name] Error calling H5Gget_objname_by_idx; "
+		<< message
+		<< endl;
+      return false;
+    }
+    
+    if (name_length > 0) {
+      buffer_size  = name_length+1;
+      char *buffer = new char[buffer_size];
+      // second function call to retrieve the object's name
+      name_length = H5Gget_objname_by_idx (object_id,
+					   index,
+					   buffer,
+					   buffer_size);
+      std::string tmp = buffer;
+      name = tmp;
+      delete [] buffer;
+    }
+    else {
+      std::cerr << "[h5get_name] Object name of zero characters!" << endl;
+      return false;
+    }
+    
     return true;
   }
-
-  // ------------------------------------------------------------- h5get_filename
-
+  
+  //_____________________________________________________________________________
+  //                                                               h5get_filename
+  
   /*!
     \retval filename -- Name of the HDF5 file within which the object is
             contained
@@ -288,56 +283,111 @@ namespace DAL
     //________________________________________________________________
     // Basic check for the provided object ID
 
-    if (object_id < 1)
-      {
-        std::cout << "[h5get_filename] Invalid value of object identifier;"
-                  << " must be greater zero!"
-                  << endl;
-        return false;
-      }
-
+    if (object_id < 1) {
+      std::cout << "[h5get_filename] Invalid value of object identifier;"
+		<< " must be greater zero!"
+		<< endl;
+      return false;
+    }
+    
     bool status (true);
     herr_t h5error (0);
     H5I_type_t objectType;
-
+    
     /*
      * If the provided object ID does not belong to a file already, we first need
      * to obtain extactly this ID based on the object's ID.
      */
     objectType = H5Iget_type(object_id);
-
-    if (objectType == H5I_BADID)
-      {
-        std::cerr << "[h5get_filename] Bad object type - aborting now!" << endl;
-        return false;
-      }
-    else if (objectType == H5I_FILE)
-      {
-        status = h5get_name (filename,
-                             object_id);
-      }
-    else
-      {
-        hid_t file_id = H5Iget_file_id (object_id);
-        status = h5get_name (filename,
-                             file_id);
-        h5error = H5Fclose (file_id);
-      }
-
+    
+    if (objectType == H5I_BADID) {
+      std::cerr << "[h5get_filename] Bad object type - aborting now!" << endl;
+      return false;
+    }
+    else if (objectType == H5I_FILE) {
+      status = h5get_name (filename,
+			   object_id);
+    }
+    else {
+      hid_t file_id = H5Iget_file_id (object_id);
+      status = h5get_name (filename,
+			   file_id);
+      h5error = H5Fclose (file_id);
+    }
+    
     /* clean up the error message buffer */
     h5error = H5Eclear1();
-
+    
     return status;
   }
 
+  //_____________________________________________________________________________
+  //                                                                  h5get_names
+
+  /*!
+    \retval names -- Vector with the names of the groups/datasets attached to the
+            object identified by \e location_id.
+    \param location_id -- Identifier of the object for which to retrieve the list
+           of names.
+    \param type -- Type of attached objects for which to get the list of names;
+           can be either \e H5G_GROUP or \e H5G_DATASET. By default this function
+	   will look for groups.
+
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
+   */
+  bool h5get_names (std::vector<std::string> &names,
+		    hid_t const &location_id,
+		    int const &type)
+  {
+    bool status        = true;
+    hsize_t nofObjects = 0;
+    herr_t h5error     = 0;
+    
+    /* Get the number of objects attached to this object */
+    h5error = H5Gget_num_objs(location_id,
+                              &nofObjects);
+    
+    if (h5error > 0) {
+      std::cerr << "[h5get_groupnames] Error retrieving number of attached groups!"
+		<< std::endl;
+      return false;
+    }
+    
+    /* Iterate through the list of attached objects and check whether they are a 
+     * group; is this indeed is the case add the name of the group to the list of
+     * names.
+     */
+  
+    std::string tmp;
+    names = std::vector<std::string>();
+    
+    for (hsize_t idx (0); idx<nofObjects; idx++) {
+      /* Get the type of the attached object */
+      if (type == H5Gget_objtype_by_idx (location_id,idx)) {
+	/* If the attached object is a group, retrieve its name */
+	status = DAL::h5get_name (tmp,
+				  location_id,
+				  idx);
+	/* If retrieval of the name was successful, add it to the list */
+	if (status) {
+	  names.push_back(tmp);
+	}
+      }
+    }
+    
+    return status;
+  }
+  
   // ============================================================================
   //
   //  Get HDF5 attributes
   //
   // ============================================================================
-
-  // -------------------------------------------------------- h5attribute_summary
-
+  
+  //_____________________________________________________________________________
+  //                                                          h5attribute_summary
+  
   /*!
     \param os           -- Output stream to which the summary is written
     \param attribute_id -- HDF5 identifier pointing at the attribute to show
@@ -372,29 +422,27 @@ namespace DAL
     bool dataspace_is_simple = H5Sis_simple(dataspace_id);
     herr_t h5error;
 
-    try
-      {
-        rank = H5Sget_simple_extent_ndims (dataspace_id);
-      }
-    catch (std::string message)
-      {
-        cerr << "[h5attribute_summary] " << message << endl;
-        status = false;
-      }
-
+    try {
+      rank = H5Sget_simple_extent_ndims (dataspace_id);
+    }
+    catch (std::string message) {
+      cerr << "[h5attribute_summary] " << message << endl;
+      status = false;
+    }
+    
     os << "\t-- Dataspace ID            = " << dataspace_id << endl;
     os << "\t-- Dataspace is simple?    = " << dataspace_is_simple << endl;
     os << "\t-- Rank of the data array  = " << rank << endl;
-
-    if (dataspace_id > 0)
-      {
-        h5error = H5Sclose (dataspace_id);
-        h5error = H5Eclear1 ();
-      }
+    
+    if (dataspace_id > 0) {
+      h5error = H5Sclose (dataspace_id);
+      h5error = H5Eclear1 ();
+    }
   }
-
-  // ------------------------------------------------------------------ attr_info
-
+  
+  //_____________________________________________________________________________
+  //                                                                    attr_info
+  
   /*!
     \param loc_id -- Identifier for the HDF5 object - file, group, dataset,
            array - the attribute is attached to.
@@ -460,7 +508,8 @@ namespace DAL
     return 0;
   }
 
-  // -------------------------------------------------------- h5get_dataset_shape
+  //_____________________________________________________________________________
+  //                                                          h5get_dataset_shape
 
   /*!
     \param dataset_id -- Identifier of the dataset within the HDF5 file
@@ -525,7 +574,8 @@ namespace DAL
     return status;
   }
 
-  // ------------------------------------------------------ h5get_dataspace_shape
+  //_____________________________________________________________________________
+  //                                                        h5get_dataspace_shape
 
   /*!
     \param attribute_id -- Identifier of the attribute within the HDF5 file
@@ -544,55 +594,48 @@ namespace DAL
     hid_t dataspace_id   = H5Aget_space (attribute_id);
     int rank             = H5Sget_simple_extent_ndims (dataspace_id);
 
-    if (rank > 0)
-      {
-        // set array sizes
-        shape.resize(rank);
-        hsize_t * dataspace_dims    = new hsize_t[rank];
-        hsize_t * dataspace_maxdims = new hsize_t[rank];
-        // get dataspace dimensions
-        h5error = H5Sget_simple_extent_dims(dataspace_id,
-                                            dataspace_dims,
-                                            dataspace_maxdims);
-        // copy dataspace information to return value
-        if (maxdims)
-          {
-            for (int n(0); n<rank; n++)
-              {
-                shape[n] = dataspace_maxdims[n];
-              }
-          }
-        else
-          {
-            for (int n(0); n<rank; n++)
-              {
-                shape[n] = dataspace_dims[n];
-              }
-          }
-
-        // release allocated memory
-        delete [] dataspace_dims;
-        delete [] dataspace_maxdims;
+    if (rank > 0) {
+      // set array sizes
+      shape.resize(rank);
+      hsize_t * dataspace_dims    = new hsize_t[rank];
+      hsize_t * dataspace_maxdims = new hsize_t[rank];
+      // get dataspace dimensions
+      h5error = H5Sget_simple_extent_dims(dataspace_id,
+					  dataspace_dims,
+					  dataspace_maxdims);
+      // copy dataspace information to return value
+      if (maxdims) {
+	for (int n(0); n<rank; n++) {
+	  shape[n] = dataspace_maxdims[n];
+	}
       }
-    else
-      {
-        shape.resize(1);
-        shape[0] = 0;
-        status   = false;
+      else {
+	for (int n(0); n<rank; n++) {
+	  shape[n] = dataspace_dims[n];
+	}
       }
-
+      
+      // release allocated memory
+      delete [] dataspace_dims;
+      delete [] dataspace_maxdims;
+    }
+    else {
+      shape.resize(1);
+      shape[0] = 0;
+      status   = false;
+    }
+    
     // release allocated identifiers
-    if (dataspace_id > 0)
-      {
-        h5error = H5Sclose (dataspace_id);
-        h5error = H5Eclear1 ();
-      }
-
+    if (dataspace_id > 0) {
+      h5error = H5Sclose (dataspace_id);
+      h5error = H5Eclear1 ();
+    }
+    
     return status;
   }
-
+  
   // ------------------------------------------------------ h5setAttribute_string
-
+  
   /*!
     \brief Add a string attribute.
 
@@ -614,66 +657,58 @@ namespace DAL
     hsize_t dims[1] = { size };
 
     char ** string_attr = (char**)malloc( size * sizeof(char*) );
-    for ( int ii = 0; ii < size; ii++ )
-      {
-        string_attr[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
-        strcpy( string_attr[ii], data[ii].c_str() );
-      }
-
+    for ( int ii = 0; ii < size; ii++ ) {
+      string_attr[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+      strcpy( string_attr[ii], data[ii].c_str() );
+    }
+    
     hid_t type = H5Tcopy (H5T_C_S1);
-    if ( type < 0 )
-      {
-        std::cerr << "ERROR: Could not set attribute '" << attrname
-                  << "' type.\n";
-        return DAL::FAIL;
-      }
-
-    if ( H5Tset_size(type, H5T_VARIABLE) < 0 )
-      {
-        std::cerr << "ERROR: Could not set attribute '" << attrname
-                  << "' size.\n";
-        return DAL::FAIL;
-      }
-
+    if ( type < 0 ) {
+      std::cerr << "ERROR: Could not set attribute '" << attrname
+		<< "' type.\n";
+      return DAL::FAIL;
+    }
+    
+    if ( H5Tset_size(type, H5T_VARIABLE) < 0 ) {
+      std::cerr << "ERROR: Could not set attribute '" << attrname
+		<< "' size.\n";
+      return DAL::FAIL;
+    }
+    
     dataspace = H5Screate_simple(1, dims, 0);
-    if ( dataspace < 0 )
-      {
-        std::cerr << "ERROR: Could not set attribute '" << attrname
-                  << "' dataspace.\n";
-        return DAL::FAIL;
-      }
-
+    if ( dataspace < 0 ) {
+      std::cerr << "ERROR: Could not set attribute '" << attrname
+		<< "' dataspace.\n";
+      return DAL::FAIL;
+    }
+    
     att = H5Acreate( obj_id, attrname.c_str(), type, dataspace, 0, 0 );
-    if ( att < 0 )
-      {
-        std::cerr << "ERROR: Could not create attribute '" << attrname << "'.\n";
-        return DAL::FAIL;
-      }
-
-    if ( H5Awrite( att, type, string_attr ) < 0 )
-      {
-        std::cerr << "ERROR: Could not write attribute '" << attrname << "'.\n";
-        return DAL::FAIL;
-      }
-
-    if (  H5Aclose( att ) < 0 )
-      {
-        std::cerr << "ERROR: Could not close attribute '" << attrname << "'.\n";
-        return DAL::FAIL;
-      }
-
-    for ( int ii = 0; ii < size; ii++ )
-      {
-        free( string_attr[ii] );
-      }
+    if ( att < 0 ) {
+      std::cerr << "ERROR: Could not create attribute '" << attrname << "'.\n";
+      return DAL::FAIL;
+    }
+    
+    if ( H5Awrite( att, type, string_attr ) < 0 ) {
+      std::cerr << "ERROR: Could not write attribute '" << attrname << "'.\n";
+      return DAL::FAIL;
+    }
+    
+    if (  H5Aclose( att ) < 0 ) {
+      std::cerr << "ERROR: Could not close attribute '" << attrname << "'.\n";
+      return DAL::FAIL;
+    }
+    
+    for ( int ii = 0; ii < size; ii++ ) {
+      free( string_attr[ii] );
+    }
     free( string_attr );
-
+    
     return DAL::SUCCESS;
   }
-
+  
   //_____________________________________________________________________________
   // Get the value of an attribute attached to a group or dataset
-
+  
   /*!
     \param attribute_id -- Identifier of the attribute within the HDF5 file
     \retval value       -- Value of the attribute
@@ -689,70 +724,67 @@ namespace DAL
     herr_t h5error    = 0;
     hid_t datatype_id = H5Aget_type (attribute_id);
 
-    if (datatype_id > 0)
-      {
-
-        H5T_class_t datatype_class_id = H5Tget_class (datatype_id);
-        hid_t native_datatype_id      = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
-
-        if (datatype_class_id == H5T_STRING)
-          {
-            htri_t is_variable_string     = H5Tis_variable_str(datatype_id);
-            char *data;
-
+    if (datatype_id > 0) {
+      
+      H5T_class_t datatype_class_id = H5Tget_class (datatype_id);
+      hid_t native_datatype_id      = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
+      
+      if (datatype_class_id == H5T_STRING) {
+	htri_t is_variable_string     = H5Tis_variable_str(datatype_id);
+	char *data;
+	
 #ifdef DEBUGGING_MESSAGES
-            // additional variables
-            hsize_t datatype_size         = H5Tget_size (datatype_id);
-            // output
-            std::cout << "[DAL::h5get_attribute]" << endl;
-            std::cout << "-- Attribute ID       = " << attribute_id  << endl;
-            std::cout << "-- Datatype ID        = " << datatype_id   << endl;
-            std::cout << "-- Datatype size      = " << datatype_size << endl;
-            std::cout << "-- Is variable length = " << is_variable_string << endl;
+	// additional variables
+	hsize_t datatype_size         = H5Tget_size (datatype_id);
+	// output
+	std::cout << "[DAL::h5get_attribute]" << endl;
+	std::cout << "-- Attribute ID       = " << attribute_id  << endl;
+	std::cout << "-- Datatype ID        = " << datatype_id   << endl;
+	std::cout << "-- Datatype size      = " << datatype_size << endl;
+	std::cout << "-- Is variable length = " << is_variable_string << endl;
 #endif
-
-            if (is_variable_string)
-              {
-                // read the contents of the attribute into the buffer
-                h5error = H5Aread(attribute_id,
-                                  native_datatype_id,
-                                  &data);
-                // copy retrieved value to return variable
-                if (h5error == 0)
-                  {
-                    std::string tmp = data;
-                    value = tmp;
-                  }
-              }
-            else
-              {
-                h5error = H5Aread(attribute_id,
-                                  datatype_id,
-                                  &value);
-              }
-
-            // release allocated memory
-            if (data != 0)
-              {
-                delete [] data;
-                data = 0;
-              }
-
-          } // END: (datatype_class_id == H5T_STRING)
-      }
-
+	
+	if (is_variable_string) {
+	  // read the contents of the attribute into the buffer
+	  h5error = H5Aread(attribute_id,
+			    native_datatype_id,
+			    &data);
+	  // copy retrieved value to return variable
+	  if (h5error == 0) {
+	    std::string tmp = data;
+	    value = tmp;
+	  }
+	}
+	else {
+	  h5error = H5Aread(attribute_id,
+			    datatype_id,
+			    &value);
+	}
+	
+	// release allocated memory
+	if (data != 0) {
+	  delete [] data;
+	  data = 0;
+	}
+	
+      } // END: (datatype_class_id == H5T_STRING)
+    }
+    
     // Release identifiers
     H5Tclose (datatype_id);
     // clean up the error message buffer
     h5error = H5Eclear1();
-
+    
     return status;
   }
+  
+  //_____________________________________________________________________________
+  //                                                              h5get_attribute
 
   /*!
     \param attribute_id -- Identifier of the attribute within the HDF5 file
     \retval value       -- Value of the attribute
-
+    
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered
   */
@@ -768,33 +800,29 @@ namespace DAL
 
     status = h5get_dataspace_shape (attribute_id,shape);
 
-    if (shape.size() > 0)
-      {
-        char * buffer[shape[0]];
-        // Read the attribute data from the file
-        h5error = H5Aread(attribute_id,
-                          native_datatype_id,
-                          &buffer);
-        // Copy the retrieved data to the returned variable
-        if (h5error == 0)
-          {
-            value.resize(shape[0]);
-            for (uint n(0); n<shape[0]; n++)
-              {
-                value[n] = buffer[n];
-              }
-          }
+    if (shape.size() > 0) {
+      char * buffer[shape[0]];
+      // Read the attribute data from the file
+      h5error = H5Aread(attribute_id,
+			native_datatype_id,
+			&buffer);
+      // Copy the retrieved data to the returned variable
+      if (h5error == 0) {
+	value.resize(shape[0]);
+	for (uint n(0); n<shape[0]; n++) {
+	  value[n] = buffer[n];
+	}
       }
-    else
-      {
-        cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
-             << endl;
-        status = false;
-      }
-
+    }
+    else {
+      cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
+	   << endl;
+      status = false;
+    }
+    
     return status;
   }
-
+  
   // ============================================================================
   //
   //  Set HDF5 attributes
@@ -822,85 +850,75 @@ namespace DAL
     hid_t   dataspace_id = 0;  /* Attribute dataspace identifier */
     hsize_t dims[1]      = { size };
 
-    if (datatype != H5T_STRING)
-      {
-        std::cerr << "[dalCommon::h5set_attribute] Wrong input datatype!"
-                  << std::endl;
-        return false;
-      }
+    if (datatype != H5T_STRING) {
+      std::cerr << "[dalCommon::h5set_attribute] Wrong input datatype!"
+		<< std::endl;
+      return false;
+    }
 
     char ** string_attr = (char**)malloc( size * sizeof(char*) );
-    for ( int ii = 0; ii < size; ii++ )
-      {
-        string_attr[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
-        strcpy( string_attr[ii], value[ii].c_str() );
-      }
-
+    for ( int ii = 0; ii < size; ii++ ) {
+      string_attr[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+      strcpy( string_attr[ii], value[ii].c_str() );
+    }
+    
     hid_t type = H5Tcopy (H5T_C_S1);
-    if ( type < 0 )
-      {
-        std::cerr << "ERROR: Could not set attribute '" << name << "' type."
-                  << std::endl;
-        return false;
+    if ( type < 0 ) {
+      std::cerr << "ERROR: Could not set attribute '" << name << "' type."
+		<< std::endl;
+      return false;
+    }
+    
+    if ( H5Tset_size(type, H5T_VARIABLE) < 0 ) {
+      std::cerr << "ERROR: Could not set attribute '" << name
+		<< "' size." << std::endl;
+      return false;
+    }
+    
+    
+    if (H5Aexists(location_id,name.c_str())) {
+      attribute_id = H5Aopen (location_id,
+			      name.c_str(),
+			      H5P_DEFAULT);
+    }
+    else {
+      dataspace_id = H5Screate_simple(1, dims, 0);
+      if ( dataspace_id < 0 )
+	{
+	  std::cerr << "ERROR: Could not set attribute '" << name
+		    << "' dataspace.\n";
+	  return false;
+	}
+      
+      attribute_id = H5Acreate( location_id,
+				name.c_str(),
+				type,
+				dataspace_id,
+				0, 0 );
+      if ( attribute_id < 0 ) {
+	std::cerr << "ERROR: Could not create attribute '" << name << "'.\n";
+	return false;
       }
-
-    if ( H5Tset_size(type, H5T_VARIABLE) < 0 )
-      {
-        std::cerr << "ERROR: Could not set attribute '" << name
-                  << "' size." << std::endl;
-        return false;
-      }
-
-
-    if (H5Aexists(location_id,name.c_str()))
-      {
-        attribute_id = H5Aopen (location_id,
-                                name.c_str(),
-                                H5P_DEFAULT);
-      }
-    else
-      {
-        dataspace_id = H5Screate_simple(1, dims, 0);
-        if ( dataspace_id < 0 )
-          {
-            std::cerr << "ERROR: Could not set attribute '" << name
-                      << "' dataspace.\n";
-            return false;
-          }
-
-        attribute_id = H5Acreate( location_id,
-                                  name.c_str(),
-                                  type,
-                                  dataspace_id,
-                                  0, 0 );
-        if ( attribute_id < 0 )
-          {
-            std::cerr << "ERROR: Could not create attribute '" << name << "'.\n";
-            return false;
-          }
-      }
-
-    if ( H5Awrite( attribute_id, type, string_attr ) < 0 )
-      {
-        std::cerr << "ERROR: Could not write attribute '" << name << "'.\n";
-        return false;
-      }
-
-    if (  H5Aclose( attribute_id ) < 0 )
-      {
-        std::cerr << "ERROR: Could not close attribute '" << name << "'.\n";
-        return false;
-      }
-
-    for ( int ii = 0; ii < size; ii++ )
-      {
-        free( string_attr[ii] );
-      }
+    }
+    
+    if ( H5Awrite( attribute_id, type, string_attr ) < 0 ) {
+      std::cerr << "ERROR: Could not write attribute '" << name << "'.\n";
+      return false;
+    }
+    
+    if (  H5Aclose( attribute_id ) < 0 ) {
+      std::cerr << "ERROR: Could not close attribute '" << name << "'.\n";
+      return false;
+    }
+    
+    for ( int ii = 0; ii < size; ii++ ) {
+      free( string_attr[ii] );
+    }
     free( string_attr );
-
+    
     return true;
   }
-
+  
   //_____________________________________________________________________________
   // Set the value of an attribute attached to a group or dataset
 
@@ -1060,45 +1078,39 @@ namespace DAL
                                             dataspace_dims,
                                             dataspace_maxdims);
         //
-        if (maxdims)
-          {
-            for (int n(0); n<rank; n++)
-              {
-                shape(n) = dataspace_maxdims[n];
-              }
-          }
-        else
-          {
-            for (int n(0); n<rank; n++)
-              {
-                shape(n) = dataspace_dims[n];
-              }
-          }
-
+        if (maxdims) {
+	  for (int n(0); n<rank; n++) {
+	    shape(n) = dataspace_maxdims[n];
+	  }
+	}
+        else {
+	  for (int n(0); n<rank; n++) {
+	    shape(n) = dataspace_dims[n];
+	  }
+	}
+	
         // release allocated memory
         delete [] dataspace_dims;
         delete [] dataspace_maxdims;
       }
-    else
-      {
-        shape.resize(1);
-        shape(0) = 0;
-        status = false;
-      }
-
+    else {
+      shape.resize(1);
+      shape(0) = 0;
+      status = false;
+    }
+    
     // release allocated identifiers
-    if (dataspace_id > 0)
-      {
-        h5error = H5Sclose (dataspace_id);
-        h5error = H5Eclear1 ();
-      }
-
+    if (dataspace_id > 0) {
+      h5error = H5Sclose (dataspace_id);
+      h5error = H5Eclear1 ();
+    }
+    
     return status;
   }
-
+  
   //_____________________________________________________________________________
   // Get the shape of a dataset
-
+  
   /*!
     \param dataset_id -- Identifier of the dataset within the HDF5 file
     \reval shape -- The shape of the dataset i.e.the length of the array axes in
@@ -1117,49 +1129,42 @@ namespace DAL
     hid_t dataset_id = H5Dget_space (attribute_id);
     int rank         = H5Sget_simple_extent_ndims (dataset_id);
 
-    if (rank > 0)
-      {
-        shape.resize(rank);
-        hsize_t * dataset_dims    = new hsize_t[rank];
-        hsize_t * dataset_maxdims = new hsize_t[rank];
-        // get dimensions of simple dataspace
-        h5error = H5Sget_simple_extent_dims(dataset_id,
-                                            dataset_dims,
-                                            dataset_maxdims);
-        // copy dataset information to return value
-        if (maxdims)
-          {
-            for (int n(0); n<rank; n++)
-              {
-                shape(n) = dataset_maxdims[n];
-              }
-          }
-        else
-          {
-            for (int n(0); n<rank; n++)
-              {
-                shape(n) = dataset_dims[n];
-              }
-          }
-
-        // release allocated memory
-        delete [] dataset_dims;
-        delete [] dataset_maxdims;
+    if (rank > 0) {
+      shape.resize(rank);
+      hsize_t * dataset_dims    = new hsize_t[rank];
+      hsize_t * dataset_maxdims = new hsize_t[rank];
+      // get dimensions of simple dataspace
+      h5error = H5Sget_simple_extent_dims(dataset_id,
+					  dataset_dims,
+					  dataset_maxdims);
+      // copy dataset information to return value
+      if (maxdims) {
+	for (int n(0); n<rank; n++) {
+	  shape(n) = dataset_maxdims[n];
+	}
       }
-    else
-      {
-        shape.resize(1);
-        shape(0) = 0;
-        status = false;
+      else {
+	for (int n(0); n<rank; n++) {
+	  shape(n) = dataset_dims[n];
+	}
       }
-
+      
+      // release allocated memory
+      delete [] dataset_dims;
+      delete [] dataset_maxdims;
+    }
+    else {
+      shape.resize(1);
+      shape(0) = 0;
+      status = false;
+    }
+    
     // release allocated identifiers
-    if (dataset_id > 0)
-      {
-        h5error = H5Sclose (dataset_id);
-        h5error = H5Eclear1 ();
-      }
-
+    if (dataset_id > 0) {
+      h5error = H5Sclose (dataset_id);
+      h5error = H5Eclear1 ();
+    }
+    
     return status;
   }
 
@@ -1420,84 +1425,77 @@ namespace DAL
   {
     MPosition obs = MPosition();
 
-    if (location_id > 0)
-      {
-        bool status (true);
-        casa::Vector<double> values;
-        casa::Vector<casa::String> units;
-        std::string refcode;
-
-        // retrieve the numerical values of the position
-        status *= h5get_attribute(location_id,
-                                  value,
-                                  values);
-        // retrieve the physical units of the position
-        status *= h5get_attribute(location_id,
-                                  unit,
-                                  units);
-        // retrieve the frame of the position
-        status *= h5get_attribute(location_id,
-                                  frame,
-                                  refcode);
-
-        if (status)
-          {
-            if (values.nelements() == 3 && units.nelements() == 3)
-              {
-                MPosition::Types tp;
-                // Translate reference code into MPosition::Type
-                status *= MPosition::getType (tp,refcode);
-
-                switch (tp)
-                  {
-                  case MPosition::ITRF:
-                    obs = MPosition ( MVPosition( values(0),
-                                                  values(1),
-                                                  values(2)),
-                                      MPosition::Ref(MPosition::ITRF));
-                    break;
-                  case MPosition::WGS84:
-                    obs = MPosition ( MVPosition( Quantity( values(0), units(0)),
-                                                  Quantity( values(1), units(1)),
-                                                  Quantity( values(2), units(2))),
-                                      MPosition::Ref(MPosition::WGS84));
-
-                    break;
-                  default:
-                    std::cerr << "[h5get_position] Unknown MPosition::Type!" << endl;
-                    break;
-                  };
-
-                return obs;
-              }
-            else
-              {
-                cerr << "[h5get_position] Mismatching number of values and units!"
-                     << endl;
-                obs = MPosition();
-              }
-          }
-        else
-          {
-            cerr << "[h5get_position] Error retrieving components for MPosition!"
-                 << endl;
-            cerr << "-- Values  = " << values  << endl;
-            cerr << "-- Units   = " << units   << endl;
-            cerr << "-- Refcode = " << refcode << endl;
-            obs = MPosition();
-          }
+    if (location_id > 0) {
+      bool status (true);
+      casa::Vector<double> values;
+      casa::Vector<casa::String> units;
+      std::string refcode;
+      
+      // retrieve the numerical values of the position
+      status *= h5get_attribute(location_id,
+				value,
+				values);
+      // retrieve the physical units of the position
+      status *= h5get_attribute(location_id,
+				unit,
+				units);
+      // retrieve the frame of the position
+      status *= h5get_attribute(location_id,
+				frame,
+				refcode);
+      
+      if (status) {
+	if (values.nelements() == 3 && units.nelements() == 3) {
+	  MPosition::Types tp;
+	  // Translate reference code into MPosition::Type
+	  status *= MPosition::getType (tp,refcode);
+	  
+	  switch (tp) {
+	  case MPosition::ITRF:
+	    obs = MPosition ( MVPosition( values(0),
+					  values(1),
+					  values(2)),
+			      MPosition::Ref(MPosition::ITRF));
+	    break;
+	  case MPosition::WGS84:
+	    obs = MPosition ( MVPosition( Quantity( values(0), units(0)),
+					  Quantity( values(1), units(1)),
+					  Quantity( values(2), units(2))),
+			      MPosition::Ref(MPosition::WGS84));
+	    
+	    break;
+	  default:
+	    std::cerr << "[h5get_position] Unknown MPosition::Type!" << endl;
+	    break;
+	  };
+	  
+	  return obs;
+	}
+	else {
+	  cerr << "[h5get_position] Mismatching number of values and units!"
+	       << endl;
+	  obs = MPosition();
+	}
       }
-    else
-      {
-        cerr << "[h5get_position] Unusable ID for HDF5 object!" << endl;
-        obs = MPosition();
+      else {
+	cerr << "[h5get_position] Error retrieving components for MPosition!"
+	     << endl;
+	cerr << "-- Values  = " << values  << endl;
+	cerr << "-- Units   = " << units   << endl;
+	cerr << "-- Refcode = " << refcode << endl;
+	obs = MPosition();
       }
-
+    }
+    else {
+      cerr << "[h5get_position] Unusable ID for HDF5 object!" << endl;
+      obs = MPosition();
+    }
+    
     return obs;
   }
-
+  
 #endif
-
+  
   // ============================================================================
   //
   //  Boost.Python wrappers
@@ -1522,13 +1520,12 @@ namespace DAL
     double seconds_per_day   = 86400;
     double adjustment_factor = unix_base_time*seconds_per_day;
 
-    for ( int idx=0; idx < array_size; idx++ )
-      {
-        mjd_time[ idx ] = bpl::extract<double>( mjd_time[ idx ] ) - adjustment_factor;
-      }
-
+    for ( int idx=0; idx < array_size; idx++ ) {
+      mjd_time[ idx ] = bpl::extract<double>( mjd_time[ idx ] ) - adjustment_factor;
+    }
+    
     return mjd_time;
   }
 #endif
-
+  
 } // namespace DAL

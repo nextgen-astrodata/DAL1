@@ -160,28 +160,42 @@ namespace DAL   // Namespace DAL -- begin
 
         \return H5datasetID -- The identifier for this dataset within the HDF5 file
       */
-      inline hid_t dataset_id () const
-        {
-          return datasetID_p;
-        }
-
+      inline hid_t dataset_id () const {
+	return datasetID_p;
+      }
+      
       //! Get the number of attributes attached to the dataset
       int nofAttributes ();
 
       //! Get the ID of the LOFAR station this dipole belongs to
       uint station_id ();
 
+      //! Set the ID of the LOFAR station this dipole belongs to
+      bool set_station_id (uint const &id);
+
       //! Get the ID of the RSP board this dipole is connected with
       uint rsp_id ();
+
+      //! Set the ID of the RSP board this dipole is connected with
+      bool set_rsp_id (uint const &id);
 
       //! Get the ID of the receiver unit (RCU) this dipole is connected with
       uint rcu_id ();
 
+      //! Set the ID of the receiver unit (RCU) this dipole is connected with
+      bool set_rcu_id (uint const &id);
+
       //! Get the numerical value of the ADC sample frequency
       double sample_frequency_value ();
 
+      //! Set the numerical value of the ADC sample frequency
+      bool set_sample_frequency_value (double const &value);
+
       //! Get the physical unit associated with the ADC sample frequency
       std::string sample_frequency_unit ();
+
+      //! Set the physical unit associated with the ADC sample frequency
+      bool set_sample_frequency_unit (std::string const &unit);
 
       //! Get the ADC sample frequency as casa::Measure
       casa::MFrequency sample_frequency ();
@@ -189,9 +203,15 @@ namespace DAL   // Namespace DAL -- begin
       //! Get the Nyquist zone in which the ADC is performed
       uint nyquist_zone ();
 
+      //! Set the Nyquist zone in which the ADC is performed
+      bool set_nyquist_zone (uint const &zone);
+
       //! Get the (UNIX) time at which the data were recorded
       uint time ();
 
+      //! Set the (UNIX) time at which the data were recorded
+      bool set_time (uint const &time);
+      
       //! Get the time as Julian Day
       double julianDay (bool const &onlySeconds=false);
 
@@ -240,17 +260,15 @@ namespace DAL   // Namespace DAL -- begin
 
         \return className -- The name of the class, TBB_DipoleDataset.
       */
-      inline std::string className () const
-        {
-          return "TBB_DipoleDataset";
-        }
-
+      inline std::string className () const {
+	return "TBB_DipoleDataset";
+      }
+      
       //! Provide a summary of the internal status
-      inline void summary ()
-      {
+      inline void summary () {
         summary (std::cout);
       }
-
+      
       //! Provide a summary of the internal status
       void summary (std::ostream &os);
 

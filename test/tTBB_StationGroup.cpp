@@ -613,9 +613,9 @@ int main (int argc,
       return -1;
     }
 
-  std::string name_file    = argv[1];
-  std::string name_station = "Station001";
-  std::string name_dataset = "001000001";
+  std::string name_file     = argv[1];
+  std::string name_station = "Station010";
+  std::string name_dataset = "010008064";
 
   if (argc == 3)
     {

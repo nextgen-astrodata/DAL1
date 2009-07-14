@@ -408,26 +408,14 @@ int main (int argc,
 
   if (argc < 2)
     {
-      std::cerr << "[tTBB_StationGroup] Too few parameters!" << endl;
+      std::cerr << "[tTBB_Timeseries] Too few parameters!" << endl;
       std::cerr << "" << endl;
-      std::cerr << "  tTBB_StationGroup <filename>" << endl;
+      std::cerr << "  tTBB_Timeseries <filename>" << endl;
       std::cerr << "" << endl;
       return -1;
     }
 
   std::string filename = argv[1];
-  std::string name_station = "Station001";
-  std::string name_dataset = "001000001";
-
-  if (argc == 3)
-    {
-      name_station = argv[2];
-    }
-
-  if (argc == 4)
-    {
-      name_dataset = argv[3];
-    }
 
   //__________________________________________________________________
   // Run the tests
@@ -439,18 +427,16 @@ int main (int argc,
 
   assert (nofFailedTests == 0);
 
-  if (nofFailedTests == 0)
-    {
-      nofFailedTests += test_methods (filename);
-      nofFailedTests += test_attributes2record (filename);
-      nofFailedTests += test_data (filename);
-    }
-  else
-    {
-      std::cerr << "[tTBB_StationGroup]"
-                << " Skipping tests after testing constructors returned errors!"
-                << endl;
-    }
-
+  if (nofFailedTests == 0) {
+    nofFailedTests += test_methods (filename);
+    nofFailedTests += test_attributes2record (filename);
+    nofFailedTests += test_data (filename);
+  }
+  else {
+    std::cerr << "[tTBB_Timeseries]"
+	      << " Skipping tests after testing constructors returned errors!"
+	      << endl;
+  }
+  
   return nofFailedTests;
 }

@@ -26,17 +26,16 @@
 using std::cout;
 using std::endl;
 
-namespace DAL   // Namespace DAL -- begin
-  {
-
+namespace DAL {  // Namespace DAL -- begin
+  
   // ============================================================================
   //
   //  Construction
   //
   // ============================================================================
-
+  
   // ------------------------------------------------------------- TBB_Timeseries
-
+  
   /*!
     A minimal setup of the internal dataspace is performed, but since no
     data file is provided, no inspection of the data structure is carried out.
@@ -45,9 +44,9 @@ namespace DAL   // Namespace DAL -- begin
   {
     init ();
   }
-
+  
   // ------------------------------------------------------------- TBB_Timeseries
-
+  
   /*!
     \param filename -- Name of the data file
   */
@@ -56,9 +55,9 @@ namespace DAL   // Namespace DAL -- begin
     init ();
     init (filename);
   }
-
+  
   // ------------------------------------------------------------- TBB_Timeseries
-
+  
   /*!
     \param other -- Another TBB_Timeseries object from which to create this
            new one.
@@ -76,55 +75,51 @@ namespace DAL   // Namespace DAL -- begin
   //  Destruction
   //
   // ============================================================================
-
+  
   TBB_Timeseries::~TBB_Timeseries ()
   {
     destroy();
   }
-
+  
   void TBB_Timeseries::destroy ()
   {
-    if (fileID_p > 0)
-      {
-        herr_t h5error (0);
-        // Close the HDF5 file
-        h5error = H5Fclose (fileID_p);
-      }
+    if (fileID_p > 0) {
+      herr_t h5error (0);
+      // Close the HDF5 file
+      h5error = H5Fclose (fileID_p);
+    }
   }
-
+  
   // ============================================================================
   //
   //  Operators
   //
   // ============================================================================
-
+  
   // ------------------------------------------------------------------ operator=
-
+  
   TBB_Timeseries& TBB_Timeseries::operator= (TBB_Timeseries const &other)
   {
-    if (this != &other)
-      {
-        destroy ();
-        copy (other);
-      }
+    if (this != &other) {
+      destroy ();
+      copy (other);
+    }
     return *this;
   }
-
+  
   // ----------------------------------------------------------------------- copy
 
   void TBB_Timeseries::copy (TBB_Timeseries const &other)
   {
-    if (other.fileID_p < 0)
-      {
-        init ();
-      }
-    else
-      {
-        filename_p = other.filename_p;
-        init (other.filename_p);
-      }
+    if (other.fileID_p < 0) {
+      init ();
+    }
+    else {
+      filename_p = other.filename_p;
+      init (other.filename_p);
+    }
   }
-
+  
   // ============================================================================
   //
   //  Parameters
@@ -141,91 +136,81 @@ namespace DAL   // Namespace DAL -- begin
   std::string TBB_Timeseries::telescope ()
   {
     std::string val;
-
+    
     if (DAL::h5get_attribute(fileID_p,
                              attribute_name(DAL::TELESCOPE),
-                             val))
-      {
-        return val;
-      }
-    else
-      {
-        return std::string ("UNDEFINED");
-      }
+                             val)) {
+      return val;
+    }
+    else {
+      return std::string ("UNDEFINED");
+    }
   }
-
+  
   // ------------------------------------------------------------------- observer
 
   std::string TBB_Timeseries::observer ()
   {
     std::string val;
-
+    
     if (DAL::h5get_attribute(fileID_p,
                              attribute_name(DAL::OBSERVER),
-                             val))
-      {
-        return val;
-      }
-    else
-      {
-        return std::string ("UNDEFINED");
-      }
+                             val)) {
+      return val;
+    }
+    else {
+      return std::string ("UNDEFINED");
+    }
   }
-
+  
   // -------------------------------------------------------------------- project
-
+  
   std::string TBB_Timeseries::project ()
   {
     std::string val;
-
+    
     if (DAL::h5get_attribute(fileID_p,
                              attribute_name(DAL::PROJECT),
-                             val))
-      {
-        return val;
-      }
-    else
-      {
-        return std::string ("UNDEFINED");
-      }
+                             val)) {
+      return val;
+    }
+    else {
+      return std::string ("UNDEFINED");
+    }
   }
-
+  
   // ------------------------------------------------------------- observation_id
 
   std::string TBB_Timeseries::observation_id ()
   {
     std::string val;
-
+    
     if (DAL::h5get_attribute(fileID_p,
                              attribute_name(DAL::OBSERVATION_ID),
-                             val))
-      {
-        return val;
-      }
-    else
-      {
-        return std::string ("UNDEFINED");
-      }
+                             val)) {
+      return val;
+    }
+    else {
+      return std::string ("UNDEFINED");
+    }
   }
-
+  
   // ----------------------------------------------------------- observation_mode
 
   std::string TBB_Timeseries::observation_mode ()
   {
     std::string val;
-
+    
     if (DAL::h5get_attribute(fileID_p,
                              attribute_name(DAL::OBSERVATION_MODE),
-                             val))
-      {
-        return val;
-      }
-    else
-      {
-        return std::string ("UNDEFINED");
-      }
+                             val)) {
+      return val;
+    }
+    else {
+      return std::string ("UNDEFINED");
+    }
   }
-
+  
   // -------------------------------------------------------------------- summary
 
   void TBB_Timeseries::summary (std::ostream &os)
@@ -238,16 +223,15 @@ namespace DAL   // Namespace DAL -- begin
       Further output is conditional - only makes sense if successfully connected
       to a file
     */
-    if (fileID_p > 0)
-      {
-        os << "-- Telescope            : " << telescope()         << endl;
-        os << "-- Observer             : " << observer()          << endl;
-        os << "-- Project              : " << project()           << endl;
-        os << "-- Observation ID       : " << observation_id()    << endl;
-        os << "-- Observation mode     : " << observation_mode()  << endl;
-        os << "-- nof. station groups  : " << groups_p.size()     << endl;
-        os << "-- nof. dipole datasets : " << nofDipoleDatasets() << endl;
-      }
+    if (fileID_p > 0) {
+      os << "-- Telescope            : " << telescope()         << endl;
+      os << "-- Observer             : " << observer()          << endl;
+      os << "-- Project              : " << project()           << endl;
+      os << "-- Observation ID       : " << observation_id()    << endl;
+      os << "-- Observation mode     : " << observation_mode()  << endl;
+      os << "-- nof. station groups  : " << groups_p.size()     << endl;
+      os << "-- nof. dipole datasets : " << nofDipoleDatasets() << endl;
+    }
   }
 
   // ============================================================================
@@ -273,38 +257,33 @@ namespace DAL   // Namespace DAL -- begin
                         H5F_ACC_RDONLY,
                         H5P_DEFAULT);
     assert (fileID_p);
-
-    if (fileID_p > 0)
-      {
-        bool status (true);
-        // Store the filename
-        filename_p = filename;
-        // locate and register the station groups
-        try
-          {
-            status = setStationGroups ();
-          }
-        catch (std::string message)
-          {
-            std::cerr << "[TBB_Timeseries::init] Error running setStationGroups ()! "
-                      << message
-                      << std::endl;
-          }
-        // feedback
-        if (!status)
-          {
-            std::cerr << "[TBB_Timeseries::init] Error setting up the station groups!"
-                      << std::endl;
-          }
+    
+    if (fileID_p > 0) {
+      bool status (true);
+      // Store the filename
+      filename_p = filename;
+      // locate and register the station groups
+      try {
+	status = setStationGroups ();
       }
-    else
-      {
-        std::cerr << "[TBB_Timeseries::init] Error opening file "
-                  << filename
-                  << std::endl;
+      catch (std::string message) {
+	std::cerr << "[TBB_Timeseries::init] Error running setStationGroups ()! "
+		  << message
+		  << std::endl;
       }
+      // feedback
+      if (!status) {
+	std::cerr << "[TBB_Timeseries::init] Error setting up the station groups!"
+		  << std::endl;
+      }
+    }
+    else {
+      std::cerr << "[TBB_Timeseries::init] Error opening file "
+		<< filename
+		<< std::endl;
+    }
   }
-
+  
   // ----------------------------------------------------------- setStationGroups
 
   bool TBB_Timeseries::setStationGroups ()
@@ -332,63 +311,55 @@ namespace DAL   // Namespace DAL -- begin
     h5error = H5Gget_num_objs(fileID_p,
                               &nofObjects);
 
-    if (h5error > 0)
-      {
-        std::cerr << "[TBB_Timeseries::setStationGroups]"
-                  << " Error retrieving the number of objects attached to"
-                  << " the root level of the file!"
-                  << std::endl;
-        return false;
-      }
-    else if (nofObjects == 0)
-      {
-        std::cerr << "[TBB_Timeseries::setStationGroups]"
-                  << " No station groups found attached to root group!!"
-                  << std::endl;
-        return false;
-      }
-
+    if (h5error > 0) {
+      std::cerr << "[TBB_Timeseries::setStationGroups]"
+		<< " Error retrieving the number of objects attached to"
+		<< " the root level of the file!"
+		<< std::endl;
+      return false;
+    }
+    else if (nofObjects == 0) {
+      std::cerr << "[TBB_Timeseries::setStationGroups]"
+		<< " No station groups found attached to root group!!"
+		<< std::endl;
+      return false;
+    }
+    
     //________________________________________________________________
     // Iterate through the list of objects attached to the root group
     // of the file
 
-    try
-      {
-        // Iterate through the list of objects
-        for (hsize_t idx (0); idx<nofObjects; idx++)
-          {
-            // get the type of the object
-            if (H5G_GROUP == H5Gget_objtype_by_idx (fileID_p,idx))
-              {
-                // get the name of the dataset
-                status = DAL::h5get_name (nameGroup,
-                                          fileID_p,
-                                          idx);
-                // if name retrieval was successful, create new TBB_DipoleDataset
-                if (status)
-                  {
-                    groups_p.push_back(DAL::TBB_StationGroup (fileID_p,
-                                       nameGroup));
-                  }
-                else
-                  {
-                    std::cerr << "[TBB_Timeseries::setStationGroups]"
-                              << " Failed to open station group!"
-                              << std::endl;
-                  }
-              }
-          }
+    try {
+      // Iterate through the list of objects
+      for (hsize_t idx (0); idx<nofObjects; idx++) {
+	// get the type of the object
+	if (H5G_GROUP == H5Gget_objtype_by_idx (fileID_p,idx)) {
+	  // get the name of the dataset
+	  status = DAL::h5get_name (nameGroup,
+				    fileID_p,
+				    idx);
+	  // if name retrieval was successful, create new TBB_DipoleDataset
+	  if (status) {
+	    groups_p.push_back(DAL::TBB_StationGroup (fileID_p,
+						      nameGroup));
+	  }
+	  else {
+	    std::cerr << "[TBB_Timeseries::setStationGroups]"
+		      << " Failed to open station group!"
+		      << std::endl;
+	  }
+	}
       }
-    catch (std::string message)
-      {
-        std::cerr << "[TBB_Timeseries::setStationGroups] " << message
-                  << std::endl;
-        return false;
-      }
-
+    }
+    catch (std::string message) {
+      std::cerr << "[TBB_Timeseries::setStationGroups] " << message
+		<< std::endl;
+      return false;
+    }
+    
     return true;
   }
-
+  
   //_____________________________________________________________________________
   // Get one of the embedded station group objects
 
@@ -402,18 +373,16 @@ namespace DAL   // Namespace DAL -- begin
   */
   TBB_StationGroup TBB_Timeseries::stationGroup (uint const &station)
   {
-    if (station > 0 && station < groups_p.size())
-      {
-        return groups_p[station];
-      }
-    else
-      {
-        std::cout << "[TBB_Timeseries::stationGroup] Index for station group"
-                  << " out of range!" << std::endl;
-        return TBB_StationGroup();
-      }
+    if (station > 0 && station < groups_p.size()) {
+      return groups_p[station];
+    }
+    else {
+      std::cout << "[TBB_Timeseries::stationGroup] Index for station group"
+		<< " out of range!" << std::endl;
+      return TBB_StationGroup();
+    }
   }
-
+  
   // ============================================================================
   //
   //  Access to attributes attached to the station groups
@@ -429,11 +398,10 @@ namespace DAL   // Namespace DAL -- begin
     uint nofStations = groups_p.size();
     casa::Vector<casa::String> trigger (nofStations);
 
-    for (uint n(0); n<nofStations; n++)
-      {
-        trigger(n) = groups_p[n].trigger_type();
-      }
-
+    for (uint n(0); n<nofStations; n++) {
+      trigger(n) = groups_p[n].trigger_type();
+    }
+    
     return trigger;
   }
 
@@ -444,11 +412,10 @@ namespace DAL   // Namespace DAL -- begin
     uint nofStations = nofStationGroups();
     casa::Vector<double> trigger (nofStations);
 
-    for (uint n(0); n<nofStations; n++)
-      {
-        trigger(n) = groups_p[n].trigger_offset();
-      }
-
+    for (uint n(0); n<nofStations; n++) {
+      trigger(n) = groups_p[n].trigger_offset();
+    }
+    
     return trigger;
   }
 
@@ -459,11 +426,10 @@ namespace DAL   // Namespace DAL -- begin
     uint nofStations = nofStationGroups();
     casa::Matrix<double> values (nofStations,3);
 
-    for (uint n(0); n<nofStations; n++)
-      {
-        values.row(n) = groups_p[n].station_position_value();
-      }
-
+    for (uint n(0); n<nofStations; n++) {
+      values.row(n) = groups_p[n].station_position_value();
+    }
+    
     return values;
   }
 
@@ -474,11 +440,10 @@ namespace DAL   // Namespace DAL -- begin
     uint nofStations = nofStationGroups();
     casa::Matrix<casa::String> units (nofStations,3);
 
-    for (uint n(0); n<nofStations; n++)
-      {
-        units.row(n) = groups_p[n].station_position_unit();
-      }
-
+    for (uint n(0); n<nofStations; n++) {
+      units.row(n) = groups_p[n].station_position_unit();
+    }
+    
     return units;
   }
 
@@ -489,11 +454,10 @@ namespace DAL   // Namespace DAL -- begin
     uint nofStations = nofStationGroups();
     casa::Vector<casa::String> frame (nofStations);
 
-    for (uint n(0); n<nofStations; n++)
-      {
-        frame(n) = groups_p[n].station_position_frame();
-      }
-
+    for (uint n(0); n<nofStations; n++) {
+      frame(n) = groups_p[n].station_position_frame();
+    }
+    
     return frame;
   }
 
@@ -504,11 +468,10 @@ namespace DAL   // Namespace DAL -- begin
     uint nofStations = nofStationGroups();
     casa::Vector<casa::MPosition> positions (nofStations);
 
-    for (uint n(0); n<nofStations; n++)
-      {
-        positions(n) = groups_p[n].station_position();
-      }
-
+    for (uint n(0); n<nofStations; n++) {
+      positions(n) = groups_p[n].station_position();
+    }
+    
     return positions;
   }
 
@@ -519,14 +482,13 @@ namespace DAL   // Namespace DAL -- begin
     uint nofStations = nofStationGroups();
     casa::Matrix<double> values (nofStations,3);
 
-    for (uint n(0); n<nofStations; n++)
-      {
-        values.row(n) = groups_p[n].beam_direction_value();
-      }
-
+    for (uint n(0); n<nofStations; n++) {
+      values.row(n) = groups_p[n].beam_direction_value();
+    }
+    
     return values;
   }
-
+  
   // -------------------------------------------------------- beam_direction_unit
 
   casa::Matrix<casa::String> TBB_Timeseries::beam_direction_unit ()
@@ -534,28 +496,29 @@ namespace DAL   // Namespace DAL -- begin
     uint nofStations = nofStationGroups();
     casa::Matrix<casa::String> units (nofStations,3);
 
-    for (uint n(0); n<nofStations; n++)
-      {
-        units.row(n) = groups_p[n].beam_direction_unit();
-      }
-
+    for (uint n(0); n<nofStations; n++) {
+      units.row(n) = groups_p[n].beam_direction_unit();
+    }
+    
     return units;
   }
-
+  
   // ------------------------------------------------------- beam_direction_frame
-
+  
   casa::Vector<casa::String> TBB_Timeseries::beam_direction_frame ()
   {
     uint nofStations = nofStationGroups();
     casa::Vector<casa::String> frame (nofStations);
-
-    for (uint n(0); n<nofStations; n++)
-      {
-        frame(n) = groups_p[n].beam_direction_frame();
-      }
-
+    
+    for (uint n(0); n<nofStations; n++) {
+      frame(n) = groups_p[n].beam_direction_frame();
+    }
+    
     return frame;
   }
+  
+  //_____________________________________________________________________________
+  //                                                               beam_direction
 
   casa::Vector<casa::MDirection> TBB_Timeseries::beam_direction ()
   {
