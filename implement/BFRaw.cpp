@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2008 by Joseph Masters & Alwin de Jong                  *
- *   J.S.Masters@uva.nl                   																 *
+ *   J.S.Masters@uva.nl                                                    *
  *   jong@astron.nl                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -27,7 +27,6 @@
 #endif
 
 #include <signal.h>
-
 
 /*
 dataStruct * channelize( dataStruct * data,
@@ -835,37 +834,36 @@ namespace DAL
     int64_t blocksize = oneSecondBlockSize * blocks;
 
     char * buf = NULL;
-    try
-      {
+    try {
 #ifdef DEBUGGING_MESSAGES
-        printf("Allocating %ld bytes (%d seconds)\n",blocksize,blocks);
+      std::cout << "Allocating " << blocksize << " bytes ("
+		<< blocks << " seconds)" << std::endl;
 #endif
-        buf = new char[ blocksize ];
-      }
-    catch (bad_alloc)
-      {
-        printf("WARNING: Can't allocate memory buffer for %d seconds of data.\n",
-               blocks );
-        printf("    Retrying with %d seconds of data.\n", blocks/2 );
-        delete [] buf;
-        processBlocks( blocks/2 );
-        return retval;
-      }
-
+      buf = new char[ blocksize ];
+    }
+    catch (bad_alloc) {
+      printf("WARNING: Can't allocate memory buffer for %d seconds of data.\n",
+	     blocks );
+      printf("    Retrying with %d seconds of data.\n", blocks/2 );
+      delete [] buf;
+      processBlocks( blocks/2 );
+      return retval;
+    }
+    
     rawfile->read( buf, blocksize ); // 1 second read
-
+    
 #ifdef DEBUGGING_MESSAGES
     cerr << "read pointer position: " << rawfile->tellg() << endl;
     cerr << "bytes read:            " << rawfile->gcount() << endl;
 #endif
-
+    
     if ( rawfile->fail() || rawfile->eof() || (rawfile->gcount() != blocksize) )
       {
         blocksize = rawfile->gcount();
         blocks = blocksize / oneSecondBlockSize;
         retval = false;
       }
-
+    
 #ifdef DEBUGGING_MESSAGES
     cerr << "blocksize " << blocksize << endl;
     cerr << "blocks    " << blocks << endl;
