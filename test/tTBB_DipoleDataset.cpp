@@ -151,8 +151,6 @@ int test_dataset (std::string const &name_file)
   hid_t group_id (0);
   hid_t dataset_id (0);
 
-  cout << "-- HDF5 file .... = " << name_file    << endl;
-
   //__________________________________________________________________
   // Open the HDF5 dataset used for this test
 
@@ -161,7 +159,8 @@ int test_dataset (std::string const &name_file)
     file_id = H5Fopen (name_file.c_str(),
 		       H5F_ACC_RDONLY,
 		       H5P_DEFAULT);
-    cout << "-- file ID = " << file_id << endl;
+    cout << "-- HDF5 file = " << name_file    << endl;
+    cout << "-- file ID   = " << file_id << endl;
   }
   catch (std::string message) {
     cerr << message << endl;
@@ -325,6 +324,42 @@ int test_dataset (std::string const &name_file)
       nofFailedTests++;
     }
   }
+
+  //__________________________________________________________________
+  // Test writing the attributes attached to the dipole dataset
+
+  if (dataset_id > 0) {
+    cout << "[7] Writing attributes attached to the dipole dataset ..." << endl;
+    try {
+      uint station_id (0);
+      uint rsp_id (0);
+      uint rcu_id (0);
+      std::vector<double> antenna_position_value;
+      std::vector<std::string> antenna_position_unit;
+      std::string antenna_position_frame;
+      //
+      DAL::h5get_attribute (dataset_id,"STATION_ID", station_id);
+      DAL::h5get_attribute (dataset_id,"RSP_ID", rsp_id);
+      DAL::h5get_attribute (dataset_id,"RCU_ID", rcu_id);
+      DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_VALUE", antenna_position_value);
+      DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_UNIT", antenna_position_unit);
+      DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_FRAME", antenna_position_frame);
+      //
+      cout << "-- Original attribute values:" << endl;
+      cout << "--> STATION_ID ........... = " << station_id             << endl;
+      cout << "--> RSP_ID ............... = " << rsp_id                 << endl;
+      cout << "--> RCU_ID ............... = " << rcu_id                 << endl;
+      cout << "--> ANTENNA_POSITION_VALUE = " << antenna_position_value << endl;
+      cout << "--> ANTENNA_POSITION_UNIT  = " << antenna_position_unit  << endl;
+      cout << "--> ANTENNA_POSITION_FRAME = " << antenna_position_frame << endl;
+    }
+    catch (std::string message) {
+      cerr << message << endl;
+      nofFailedTests++;
+    }
+  }
+
+  //__________________________________________________________________
   
   return nofFailedTests;
 }
@@ -1033,6 +1068,9 @@ int main (int argc,
 
   // Test low-level access to the dataset through the HDF5 library directly
   nofFailedTests += test_dataset (name_file);
+
+  return nofFailedTests;
+
   // Test for the constructor(s)
   nofFailedTests += test_construction (name_file, name_station, name_dataset);
   // Test working with collection of multiple objects

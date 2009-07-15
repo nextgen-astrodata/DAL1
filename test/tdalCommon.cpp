@@ -99,10 +99,14 @@ int test_casacore_variables ()
 }
 #endif
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                 test_operators
 
 /*!
   \brief Test overloading of operators
+
+  \e dalCommon provides overloading of the output operator (>>) in order to
+  allow simple output of std::vector<T>.
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function

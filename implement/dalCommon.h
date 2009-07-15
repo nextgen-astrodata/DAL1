@@ -235,13 +235,19 @@ namespace DAL {
 	break;
       }
     }
-    else {
-    }
     
     // read attribute value into buffer
     h5error = H5Aread (attribute_id,
                        h5datatype,
                        &value);
+
+#ifdef DEBUGGING_MESSAGES
+    std::cout << "[h5get_attribute]" << std::endl;
+    std::cout << "-- Attribute ID    = " << attribute_id << std::endl;
+    std::cout << "-- H5 datatype     = " << h5datatype   << std::endl;
+    std::cout << "-- Attribute value = " << value        << std::endl;
+#endif
+
     // fix leak: close the type identifier (modified by A. Corstanje, June 3rd 2009). See http://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetType
     H5Tclose(h5datatype);
     // clean up the error message buffer

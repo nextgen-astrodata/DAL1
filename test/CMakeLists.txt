@@ -5,18 +5,11 @@
 set(CMAKE_CXX_FLAGS "-W -Wall")
 message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 
-#if(NOT CMAKE_BUILD_TYPE)
-#    set(CMAKE_BUILD_TYPE "Debug")
-#endif(NOT CMAKE_BUILD_TYPE)
+find_program (BASH_EXCUTABLE bash ${bin_locations})
 
-#add_definitions(
-#  -DMPICH_IGNORE_CXX_SEEK
-#  -D_BSD_SOURCE
-#  -D_POSIX_SOURCE
-#  -D_FILE_OFFSET_BITS=64
-#  -D_LARGEFILE64_SOURCE
-#  -D_LARGEFILE_SOURCE
-#  )
+configure_file (${DAL_SOURCE_DIR}/test/tTBB_DipoleDataset.sh
+  ${DAL_BINARY_DIR}/test/tTBB_DipoleDataset.sh
+  )
 
 ## ==============================================================================
 ##
