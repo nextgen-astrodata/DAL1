@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------*
- | $Id:: NewClass.cc 1964 2008-09-06 17:52:38Z baehren                   $ |
+ | $Id::                                                                 $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2009                                                    *
@@ -23,8 +23,7 @@
 
 #include <LinearCoordinate.h>
 
-namespace DAL   // Namespace DAL -- begin
-  {
+namespace DAL {  // Namespace DAL -- begin
 
   // ============================================================================
   //
@@ -107,25 +106,24 @@ namespace DAL   // Namespace DAL -- begin
 
   LinearCoordinate& LinearCoordinate::operator= (LinearCoordinate const &other)
   {
-    if (this != &other)
-      {
-        destroy ();
-        copy (other);
-      }
+    if (this != &other) {
+      destroy ();
+      copy (other);
+    }
     return *this;
   }
-
+  
   void LinearCoordinate::copy (LinearCoordinate const &other)
   {
     Coordinate::copy (other);
   }
-
+  
   // ============================================================================
   //
   //  Parameters
   //
   // ============================================================================
-
+  
   void LinearCoordinate::summary (std::ostream &os)
   {
     os << "[LinearCoordinate] Summary of internal parameters." << std::endl;
@@ -160,20 +158,18 @@ namespace DAL   // Namespace DAL -- begin
     groupID = H5Gopen1 (locationID,
                         name.c_str());
 
-    if (groupID)
-      {
-        h5read (groupID);
-      }
-    else
-      {
-        std::cerr << "[LinearCoordinate::h5read] Error opening group "
-                  << name
-                  << std::endl;
-      }
-
+    if (groupID) {
+      h5read (groupID);
+    }
+    else {
+      std::cerr << "[LinearCoordinate::h5read] Error opening group "
+		<< name
+		<< std::endl;
+    }
+    
     H5Gclose (groupID);
   }
-
+  
   //_____________________________________________________________________________
   //                                                                       h5read
 
@@ -193,33 +189,31 @@ namespace DAL   // Namespace DAL -- begin
     DAL::h5get_attribute( groupID, "NOF_AXES",        nof_axes );
     DAL::h5get_attribute( groupID, "AXIS_NAMES",      axis_names );
     DAL::h5get_attribute( groupID, "AXIS_UNITS",      axis_units );
-    DAL::h5get_attribute( groupID, "CRVAL",           refvalue );
-    DAL::h5get_attribute( groupID, "CRPIX",           refpixel );
-    DAL::h5get_attribute( groupID, "CDELT",           increment );
+    DAL::h5get_attribute( groupID, "REF_VALUE",       refvalue );
+    DAL::h5get_attribute( groupID, "REF_PIXEL",       refpixel );
+    DAL::h5get_attribute( groupID, "INCREMENT",       increment );
     DAL::h5get_attribute( groupID, "PC",              pc );
 
     /* Store the retrieved values */
-    if (getType(coordinate_type) == Coordinate::Linear)
-      {
-        // basic parameters
-        coordinateType_p = getType(coordinate_type);
-        nofAxes_p        = nof_axes;
-        // WCS parameters
-        setAxisNames (axis_names);
-        setAxisUnits (axis_units);
-        setRefValue  (refvalue);
-        setRefPixel  (refpixel);
-        setIncrement (increment);
-        setPc        (pc);
-      }
-    else
-      {
-      }
+    if (getType(coordinate_type) == Coordinate::Linear) {
+      // basic parameters
+      coordinateType_p = getType(coordinate_type);
+      nofAxes_p        = nof_axes;
+      // WCS parameters
+      setAxisNames (axis_names);
+      setAxisUnits (axis_units);
+      setRefValue  (refvalue);
+      setRefPixel  (refpixel);
+      setIncrement (increment);
+      setPc        (pc);
+    }
+    else {
+    }
   }
-
+  
   //_____________________________________________________________________________
   //                                                                      h5write
-
+  
   void LinearCoordinate::h5write (hid_t const &locationID,
                                   std::string const &name)
   {
@@ -245,9 +239,9 @@ namespace DAL   // Namespace DAL -- begin
     DAL::h5set_attribute( groupID, "NOF_AXES",        nofAxes_p );
     DAL::h5set_attribute( groupID, "AXIS_NAMES",      axisNames_p );
     DAL::h5set_attribute( groupID, "AXIS_UNITS",      axisUnits_p );
-    DAL::h5set_attribute( groupID, "CRPIX",           refPixel_p );
-    DAL::h5set_attribute( groupID, "CRVAL",           refValue_p );
-    DAL::h5set_attribute( groupID, "CDELT",           increment_p );
+    DAL::h5set_attribute( groupID, "REF_PIXEL",       refPixel_p );
+    DAL::h5set_attribute( groupID, "REF_VALUE",       refValue_p );
+    DAL::h5set_attribute( groupID, "INCREMENT",       increment_p );
     DAL::h5set_attribute( groupID, "PC",              pc_p );
   }
 

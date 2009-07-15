@@ -18,7 +18,7 @@
 //#  along with this program; if not, write to the Free Software
 //#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //#
-//#  $Id: BFRawFormat.h 12611 2009-03-11 14:04:07Z de jong $
+//#  $Id$
 
 #ifndef BFRAWFORMAT_H
 #define BFRAWFORMAT_H
