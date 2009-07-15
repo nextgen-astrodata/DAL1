@@ -44,7 +44,10 @@ foreach (src ${tests})
   ## libraries against which to link
   if (HAVE_CASA OR HAVE_CASACORE)
     target_link_libraries(${src}
+      ${CASA_LIBRARIES}
       dal
+      ${CASA_LIBRARIES}
+      ${CFITSIO_LIBRARIES}
       ${dal_link_libraries}
       ${HAVE_MALLOC_DEBUG}
       )
@@ -62,7 +65,7 @@ endforeach (src)
 if (HAVE_CASA OR HAVE_CASACORE)
   ## additional compiler flags
   add_definitions (-DHAVE_CASA)
-  foreach (src tMeasurementSets tMS_dal tdalLopesEvent)
+  foreach (src tMeasurementSets tdalLopesEvent)
     ## compiler instructions
     add_executable (${src} ${src}.cpp)
     ## linker instructions
@@ -77,7 +80,9 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 ## [2] casacore & HDF5
 
 if (HAVE_CASACORE AND HAVE_HDF5)
+
   foreach (src
+      tMS_dal 
       tcasacore_hdf5
       tDirectionCoordinate
       tLinearCoordinate
@@ -89,9 +94,12 @@ if (HAVE_CASACORE AND HAVE_HDF5)
     ## linker instructions
     target_link_libraries (${src}
       dal
-      ${dal_link_libraries}
-      ${WCSLIB_LIBRARIES}
+      ${CASA_LIBRARIES}
       ${LAPACK_LIBRARIES}
+      ${CFITSIO_LIBRARIES}
+      ${WCSLIB_LIBRARIES}
+      ${GFORTRAN_LIBRARIES}
+      ${dal_link_libraries}
       )
     ## installation
     list (APPEND tests ${src})
@@ -178,6 +186,8 @@ if (DAL_ENABLE_TESTING)
   ## [7] Python scripts
 
   if (dataset_ms)
+    ## basic test of Python wrappers
+    add_test (dal_tests dal_tests.py)
     ## show the coverage in the (u,v) plane
     add_test (datacube datacube.py ${dataset_ms} ${dataset_ms}.out 1 1 0)
     ## show the coverage in the (u,v) plane

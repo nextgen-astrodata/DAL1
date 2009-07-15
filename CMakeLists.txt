@@ -314,6 +314,11 @@ if (HAVE_GSL)
   add_definitions (-DHAVE_GSL)
 endif (HAVE_GSL)
 
+if (HAVE_WCSLIB)
+  include_directories (${WCSLIB_INCLUDES})
+  add_definitions (-DHAVE_WCSLIB)
+endif (HAVE_WCSLIB)
+
 ##__________________________________________________________
 ## Option: Enable checking against memory leaks
 
@@ -428,12 +433,13 @@ message (STATUS " Enable code using GSL     = ${HAVE_GSL}")
 
 if (DAL_VERBOSE_CONFIGURE)
   message (STATUS "+------------------------------------------------------------+")
-  message (STATUS " HDF5 includes            = ${HDF5_INCLUDES}")
-  message (STATUS " HDF5 library             = ${HDF5_LIBRARIES}")
   message (STATUS " Blitz++ includes         = ${BLITZ_INCLUDES}")
   message (STATUS " Blitz++ library          = ${BLITZ_LIBRARIES}")
   message (STATUS " Boost includes           = ${BOOST_INCLUDES}")
   message (STATUS " Boost library            = ${BOOST_LIBRARIES}")
+  message (STATUS " HDF5 includes            = ${HDF5_INCLUDES}")
+  message (STATUS " HDF5 library             = ${HDF5_LIBRARIES}")
+  message (STATUS " LAPACK library           = ${LAPACK_LIBRARIES}")
   message (STATUS " Python includes          = ${PYTHON_INCLUDES}")
   message (STATUS " NumPy includes           = ${NUMPY_INCLUDES}")
   message (STATUS " num_util includes        = ${NUM_UTIL_INCLUDES}")
@@ -441,7 +447,8 @@ if (DAL_VERBOSE_CONFIGURE)
   message (STATUS " casacore                 = ${HAVE_CASACORE}")
   message (STATUS " MySQL includes           = ${MYSQL_INCLUDES}")
   message (STATUS " MySQL libraries          = ${MYSQL_LIBRARIES}")
-else (DAL_VERBOSE_CONFIGURE)
+  message (STATUS " WCSLIB includes          = ${WCSLIB_INCLUDES}")
+  message (STATUS " WCSLIB library           = ${WCSLIB_LIBRARIES}")
 endif (DAL_VERBOSE_CONFIGURE)
 
 message (STATUS "+------------------------------------------------------------+")

@@ -35,6 +35,7 @@ if (HAVE_CASA OR HAVE_CASACORE)
   ## source files
   list (APPEND tests msread)
   list (APPEND tests ms2h5)
+  list (APPEND tests lopes2h5)
   ## linker instructions
   list (APPEND apps_link_libraries ${dal_link_libraries})
 else (HAVE_CASA OR HAVE_CASACORE)
@@ -50,7 +51,7 @@ if (HAVE_BOOST)
   list (APPEND tests tbb2h5)
   list (APPEND tests TBBraw2h5)
   ## linker instructions
-  list (APPEND apps_link_libraries ${BOOST_LIBRARIES})
+  list (APPEND apps_link_libraries ${BOOST_LIBRARIES} ${CFITSIO_LIBRARIES})
 else (HAVE_BOOST)
   message (STATUS "[DAL] Unable to build applications: bf2h5, tbb2h5")
 endif (HAVE_BOOST)
@@ -108,34 +109,11 @@ if (DAL_ENABLE_TESTING)
   
 endif (DAL_ENABLE_TESTING)
 
-## ------------------------------------------------------------------------------
-## Programs which require additional external libraries (and thereby should be
-## considered optional)
-
-## -------------------------------------------------------------------
-## lopes2h5
-
-if (HAVE_CASA OR HAVE_CASACORE)
-  ## additional compiler flags
-  add_definitions (
-    -DHAVE_CASA
-    )
-  foreach (src lopes2h5)
-    ## compiler instructions
-    add_executable (${src} ${src}.cpp)
-    ## linker instructions
-    target_link_libraries (${src}  dal ${dal_link_libraries})
-    ## installation
-    list (APPEND tests ${src})
-  endforeach (src)
-else (HAVE_CASA OR HAVE_CASACORE)
-  message (STATUS "Skipping test programs that require casacore!")
-endif (HAVE_CASA OR HAVE_CASACORE)
-
-## ------------------------------------------------------------------------------
+## ==============================================================================
+##
 ## Installation
-
-## test programs
+##
+## ==============================================================================
 
 install (TARGETS ${tests}
   RUNTIME DESTINATION bin

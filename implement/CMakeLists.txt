@@ -114,19 +114,27 @@ if (libz)
   list (APPEND dal_link_libraries ${libz})
 endif (libz)
 
+if (CASA_LIBRARIES)
+  list (APPEND dal_link_libraries ${CASA_LIBRARIES})
+endif (CASA_LIBRARIES)
+
 if (HDF5_LIBRARIES)
   list (APPEND dal_link_libraries ${HDF5_LIBRARIES})
 else (HDF5_LIBRARIES)
   message (FATAL_ERROR "[DAL] Missing HDF5 library file(s)!")
 endif (HDF5_LIBRARIES)
 
+if (LAPACK_LIBRARIES)
+  list (APPEND cr_link_libraries ${LAPACK_LIBRARIES})
+endif (LAPACK_LIBRARIES)
+
 if (CFITSIO_LIBRARIES)
-  list (APPEND dal_link_libraries ${CFITSIO_LIBRARIES})
+  list (APPEND cr_link_libraries ${CFITSIO_LIBRARIES})
 endif (CFITSIO_LIBRARIES)
 
-if (CASA_LIBRARIES)
-  list (APPEND dal_link_libraries ${CASA_LIBRARIES})
-endif (CASA_LIBRARIES)
+if (WCSLIB_LIBRARIES)
+  list (APPEND cr_link_libraries ${WCSLIB_LIBRARIES})
+endif (WCSLIB_LIBRARIES)
 
 if (libdl)
   list (APPEND dal_link_libraries ${libdl})
