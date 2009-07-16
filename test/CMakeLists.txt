@@ -5,12 +5,6 @@
 set(CMAKE_CXX_FLAGS "-W -Wall")
 message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
 
-find_program (BASH_EXCUTABLE bash ${bin_locations})
-
-configure_file (${DAL_SOURCE_DIR}/test/tTBB_DipoleDataset.sh
-  ${DAL_BINARY_DIR}/test/tTBB_DipoleDataset.sh
-  )
-
 ## ==============================================================================
 ##
 ##  Build the test programs
@@ -117,7 +111,20 @@ endif (HAVE_CASACORE AND HAVE_HDF5)
 ## ==============================================================================
 
 if (DAL_ENABLE_TESTING)
+  
+  ## -----------------------------------------------------------------
+  ## Shell scripts which provide a wrapper around the test programs
 
+  find_program (BASH_EXCUTABLE bash ${bin_locations})
+  
+  configure_file (${DAL_SOURCE_DIR}/test/tTBB_DipoleDataset.sh
+    ${DAL_BINARY_DIR}/test/tTBB_DipoleDataset.sh
+    )
+  
+  configure_file (${DAL_SOURCE_DIR}/test/tTBB_StationGroup.sh
+    ${DAL_BINARY_DIR}/test/tTBB_StationGroup.sh
+    )
+  
   ## -----------------------------------------------------------------
   ## [1] simple tests which do not require sample data
 
@@ -156,8 +163,8 @@ if (DAL_ENABLE_TESTING)
   if (dataset_tbb)
     add_test (tTBB_test1 tTBB tTBB.h5)
     add_test (tTBB_test2 tTBB tTBB.h5 ${dataset_tbb})
-    add_test (tTBB_DipoleDataset tTBB_DipoleDataset ${dataset_tbb})
-    add_test (tTBB_StationGroup tTBB_StationGroup ${dataset_tbb})
+    add_test (tTBB_DipoleDataset tTBB_DipoleDataset.sh)
+    add_test (tTBB_StationGroup tTBB_StationGroup.sh)
     add_test (tTBB_Timeseries tTBB_Timeseries ${dataset_tbb})
   else (dataset_tbb)
     message (STATUS "Unable to find LOFAR time-series dataset; skipping tests.")
@@ -210,7 +217,7 @@ install (TARGETS ${tests}
   LIBRARY DESTINATION lib
   )
 
-## python scripts
+## scripts
 
 file (GLOB python_scripts *.py)
 
