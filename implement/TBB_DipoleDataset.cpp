@@ -436,8 +436,9 @@ namespace DAL {  // Namespace DAL -- begin
     
     return jd;
   }
-  
-  // ----------------------------------------------------- sample_frequency_value
+
+  //_____________________________________________________________________________
+  //                                                       sample_frequency_value
   
   /*!
     \return value -- The numerical value of the ADC sample frequency, [Hz].
@@ -478,7 +479,29 @@ namespace DAL {  // Namespace DAL -- begin
     }
   }
   
-  // ------------------------------------------------------ sample_frequency_unit
+  //_____________________________________________________________________________
+  //                                                   set_sample_frequency_value
+
+  bool TBB_DipoleDataset::set_sample_frequency_value (double const &val)
+  {
+    bool status (true);
+    
+    if (datasetID_p > 0) {
+      status = DAL::h5set_attribute (datasetID_p,
+				     attribute_name(DAL::SAMPLE_FREQUENCY_VALUE),
+				     val);
+    }
+    else {
+      cerr << "[TBB_DipoleDataset::set_sample_frequency_value] Dataset undefined!"
+	   << endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                        sample_frequency_unit
   
   /*!
     \return unit -- The physical unit associated with the numerical value of
@@ -496,6 +519,27 @@ namespace DAL {  // Namespace DAL -- begin
     else {
       return std::string ("UNDEFINED");
     }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                    set_sample_frequency_unit
+
+  bool TBB_DipoleDataset::set_sample_frequency_unit (std::string const &val)
+  {
+    bool status (true);
+    
+    if (datasetID_p > 0) {
+      status = DAL::h5set_attribute (datasetID_p,
+				     attribute_name(DAL::SAMPLE_FREQUENCY_UNIT),
+				     val);
+    }
+    else {
+      cerr << "[TBB_DipoleDataset::set_sample_frequency_unit] Dataset undefined!"
+	   << endl;
+      status = false;
+    }
+    
+    return status;
   }
   
   // ----------------------------------------------------------- sample_frequency

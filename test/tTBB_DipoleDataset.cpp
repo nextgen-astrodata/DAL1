@@ -1068,9 +1068,6 @@ int main (int argc,
 
   // Test low-level access to the dataset through the HDF5 library directly
   nofFailedTests += test_dataset (name_file);
-
-  return nofFailedTests;
-
   // Test for the constructor(s)
   nofFailedTests += test_construction (name_file, name_station, name_dataset);
   // Test working with collection of multiple objects

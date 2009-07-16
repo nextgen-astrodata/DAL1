@@ -218,14 +218,26 @@ namespace DAL   // Namespace DAL -- begin
       //! Get the timespan in samples since the last full second
       uint sample_number ();
 
+      //! Set the timespan in samples since the last full second
+      bool set_sample_number (uint const &number);
+
       //! The number of samples per original TBB-RSP frame
       uint samples_per_frame ();
+
+      //! Set the number of samples per original TBB-RSP frame
+      bool set_samples_per_frame (uint const &samples);
 
       //! Get the number of samples stored in this dataset
       uint data_length ();
 
+      //! Set the number of samples stored in this dataset
+      bool set_data_length (uint const &length);
+
       //! Get the type of feed for this dipole
       std::string feed ();
+
+      //! Set the type of feed for this dipole
+      bool set_feed (std::string const &feed);
 
 #ifdef HAVE_CASA
       //! Get the numerical value of the antenna position
