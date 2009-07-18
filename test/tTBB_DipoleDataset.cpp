@@ -51,18 +51,11 @@ using DAL::TBB_DipoleDataset;
   
   <h3>Usage</h3>
   
-  <ul>
-    <li>The simplest call for the test program ist by proving the name of the
-    data-set only:
-    \verbatim
-    tTBB_DipoleDataset <filename>
-    \endverbatim
-    <li>In order to be able to properly test access to station group and dipole
-    dataset, two additional command-line parameters can be provided:
-    \verbatim
-    tTBB_DipoleDataset <filename> <station group> <dipole dataset>
-    \endverbatim
-  </ul>
+  To run the test program use:
+  \verbatim
+  tTBB_DipoleDataset <filename>
+  \endverbatim
+  where the <i>filename</i> points to an existing HDF5 time-series dataset.
 */
 
 // ==============================================================================

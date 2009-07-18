@@ -77,11 +77,11 @@ namespace DAL {  // Namespace DAL -- begin
            one.
   */
   LinearCoordinate::LinearCoordinate (LinearCoordinate const &other)
-      : Coordinate(other)
+    : Coordinate(other)
   {
     copy (other);
   }
-
+  
   // ============================================================================
   //
   //  Destruction
@@ -150,6 +150,12 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                       h5read
 
+  /*!
+    \param locationID -- Identifier of the HDF5 object to which the coordinate
+           group is attached.
+    \param name       -- Name of the HDF5 group containing the coordinate
+           parameters.
+  */
   void LinearCoordinate::h5read (hid_t const &locationID,
                                  std::string const &name)
   {
@@ -173,6 +179,10 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                       h5read
 
+  /*!
+    \param groupID -- Identifier of the HDF5 group containing the coordinate 
+           parameters.
+   */
   void LinearCoordinate::h5read (hid_t const &groupID)
   {
     std::string coordinate_type;
@@ -246,42 +256,80 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
 #endif
+  
+  //_____________________________________________________________________________
+  //                                                             importCoordinate
 
-    //_____________________________________________________________________________
-    //                                                               casaCoordinate
-    
 #ifdef HAVE_CASA
-    casa::LinearCoordinate LinearCoordinate::casaCoordinate () 
-    {
-      casa::Vector<casa::String> names (nofAxes_p);
-      casa::Vector<casa::String> units (nofAxes_p);
-      casa::Vector<double> crval (nofAxes_p);
-      casa::Vector<double> cdelt (nofAxes_p);
-      casa::Vector<double> crpix (nofAxes_p);
-      casa::Matrix<double> pc (nofAxes_p,nofAxes_p);
-      
-      /* Copy data from internal storage to casa array objects */
+  void LinearCoordinate::importCoordinate (casa::LinearCoordinate const &coord) 
+  {
+    /* Get the number of axes associated with the coordinate */
+    nofAxes_p = (unsigned int)coord.worldAxisNames().nelements();
+    /* Adjust the size of the arrays storing the coordinate axis parameters */
+    axisNames_p.resize(nofAxes_p);
+    axisUnits_p.resize(nofAxes_p);
+    refValue_p.resize(nofAxes_p);
+    refPixel_p.resize(nofAxes_p);
+    increment_p.resize(nofAxes_p);
+    pc_p.resize(nofAxes_p*nofAxes_p);
 
-      unsigned int i (0);
-      for (unsigned int n(0); n<nofAxes_p; n++) {
-	names(n) = axisNames_p[n];
-	units(n) = axisUnits_p[n];
-	crval(n) = refValue_p[n];
-	crpix(n) = refPixel_p[n];
-	cdelt(n) = increment_p[n];
-	for (unsigned int m(0); m<nofAxes_p; m++) {
-	  pc(n,m) = pc_p[i];
-	  i++;
-	}
+    casa::Vector<casa::String> names = coord.worldAxisNames();
+    casa::Vector<casa::String> units = coord.worldAxisUnits();
+    casa::Vector<double> crval       = coord.referenceValue();
+    casa::Vector<double> crpix       = coord.referencePixel();
+    casa::Vector<double> cdelt       = coord.increment();
+    casa::Matrix<double> pc          = coord.linearTransform();
+
+    unsigned int i (0);
+    for (unsigned int n(0); n<nofAxes_p; n++) {
+      axisNames_p[n] = names(n);
+      axisUnits_p[n] = units(n);
+      refValue_p[n]  = crval(n);
+      refPixel_p[n]  = crpix(n);
+      increment_p[n] = cdelt(n);
+      for (unsigned int m(0); m<nofAxes_p; m++) {
+	pc_p[i] = pc(n,m);
+	i++;
       }
-      
-      return casa::LinearCoordinate (names,
-				     units,
-				     crval,
-				     cdelt,
-				     pc,
-				     crpix);
     }
+  }
 #endif
+  
+  //_____________________________________________________________________________
+  //                                                             exportCoordinate
+  
+#ifdef HAVE_CASA
+  void LinearCoordinate::exportCoordinate (casa::LinearCoordinate &coord) 
+  {
+    casa::Vector<casa::String> names (nofAxes_p);
+    casa::Vector<casa::String> units (nofAxes_p);
+    casa::Vector<double> crval (nofAxes_p);
+    casa::Vector<double> cdelt (nofAxes_p);
+    casa::Vector<double> crpix (nofAxes_p);
+    casa::Matrix<double> pc (nofAxes_p,nofAxes_p);
     
+    /* Copy data from internal storage to casa array objects */
+    
+    unsigned int i (0);
+    for (unsigned int n(0); n<nofAxes_p; n++) {
+      names(n) = axisNames_p[n];
+      units(n) = axisUnits_p[n];
+      crval(n) = refValue_p[n];
+      crpix(n) = refPixel_p[n];
+      cdelt(n) = increment_p[n];
+      for (unsigned int m(0); m<nofAxes_p; m++) {
+	pc(n,m) = pc_p[i];
+	i++;
+      }
+    }
+    
+    coord = casa::LinearCoordinate (names,
+				    units,
+				    crval,
+				    cdelt,
+				    pc,
+				    crpix);
+  }
+#endif
+  
 } // Namespace DAL -- end

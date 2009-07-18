@@ -35,16 +35,15 @@
 #include <coordinates/Coordinates/LinearCoordinate.h>
 #endif
 
-namespace DAL   // Namespace DAL -- begin
-  {
-
+namespace DAL {  // Namespace DAL -- begin
+  
   /*!
     \class LinearCoordinate
-
+    
     \ingroup DAL
-
+    
     \brief Brief description for class LinearCoordinate
-
+    
     \author Lars B&auml;hren
 
     \date 2009/06/24
@@ -59,106 +58,135 @@ namespace DAL   // Namespace DAL -- begin
 
     <h3>Synopsis</h3>
 
+    Consider a simple image (or dynammic spectrum), where we are dealing with both
+    a regular time and frequency axis:
+    \verbatim
+    NOF_AXES   =  2
+    AXIS_NAMES = [ "Time", "Frequency" ]
+    AXIS_UNITS = [ "s", "Hz" ]
+    REF_PIXEL  = [ 0.0, 00.0 ]
+    REF_VALUE  = [ 0.1, 100.0 ]
+    INCREMENT  = [ 0.05, 10.0 ]
+    PC         = [ 1.0, 0.0, 0.0, 1.0 ]
+    \endverbatim
+    The same information stored as FITS header keywords would be
+    \verbatim
+    NAXES = 2
+    CTYPE1 = "Time"
+    CTYPE2 = "Frequency"
+    CRPIX1 = 0.0
+    CRPIX2 = 0.0
+    CRVAL1 = 0.1
+    CRVAL2 = 100.0
+    CDELT1 = 0.05
+    CDELT2 = 10.0
+    \endverbatim
+    
     <h3>Example(s)</h3>
 
   */
-  class LinearCoordinate : public Coordinate
-    {
-
-    public:
-
-      // ------------------------------------------------------------- Construction
-
-      //! Default constructor
-      LinearCoordinate ();
-      //! Argumented constructor
-      LinearCoordinate (double const &nofAxes);
-      //! Argumented constructor
-      LinearCoordinate (double const &nofAxes,
-                        std::vector<std::string> const &axisNames,
-                        std::vector<std::string> const &axisUnits,
-                        std::vector<double> const &refValue,
-                        std::vector<double> const &refPixel,
-                        std::vector<double> const &increment,
-                        std::vector<double> const &pc);
-      //! Copy constructor
-      LinearCoordinate (LinearCoordinate const &other);
-
-      // -------------------------------------------------------------- Destruction
-
-      //! Destructor
-      ~LinearCoordinate ();
-
-      // ---------------------------------------------------------------- Operators
-
-      /*!
-        \brief Overloading of the copy operator
-
-        \param other -- Another LinearCoordinate object from which to make a copy.
-      */
-      LinearCoordinate& operator= (LinearCoordinate const &other);
-
-      // --------------------------------------------------------------- Parameters
-
-      /*!
-        \brief Get the name of the class
-
-        \return className -- The name of the class, LinearCoordinate.
-      */
-      inline std::string className () const
-        {
-          return "LinearCoordinate";
-        }
-
-      /*!
-        \brief Provide a summary of the internal status
-      */
-      inline void summary ()
-      {
-        summary (std::cout);
-      }
-
-      /*!
-        \brief Provide a summary of the internal status
-
-        \param os -- Output stream to which the summary is written.
-      */
-      void summary (std::ostream &os);
-
-      // ------------------------------------------------------------------ Methods
-
-#ifdef HAVE_HDF5
-      //! Read the coordinate object from a HDF5 file
-      void h5read (hid_t const &groupID);
-
-      //! Read the coordinate object from a HDF5 file
-      void h5read (hid_t const &locationID,
-                   std::string const &name);
-
-      //! Write the coordinate object to a HDF5 file
-      void h5write (hid_t const &groupID);
-
-      //! Write the coordinate object to a HDF5 file
-      void h5write (hid_t const &locationID,
-                    std::string const &name);
-#endif
-      
-#ifdef HAVE_CASA
-      //! Create casa::Coordinate object from coordinate parameters
-      casa::LinearCoordinate casaCoordinate ();
-#endif
-      
-    private:
-      
-      //! Unconditional copying
-      void copy (LinearCoordinate const &other);
-      
-      //! Unconditional deletion
-      void destroy(void);
-      
-    }; // Class LinearCoordinate -- end
+  class LinearCoordinate : public Coordinate {
     
-  } // Namespace DAL -- end
+  public:
+    
+    // ------------------------------------------------------------- Construction
+    
+    //! Default constructor
+    LinearCoordinate ();
+    //! Argumented constructor
+    LinearCoordinate (double const &nofAxes);
+    //! Argumented constructor
+    LinearCoordinate (double const &nofAxes,
+		      std::vector<std::string> const &axisNames,
+		      std::vector<std::string> const &axisUnits,
+		      std::vector<double> const &refValue,
+		      std::vector<double> const &refPixel,
+		      std::vector<double> const &increment,
+		      std::vector<double> const &pc);
+#ifdef HAVE_CASA
+    //! Construction from casa::LinearCoordinate object
+    LinearCoordinate (casa::LinearCoordinate const &coord) {
+      importCoordinate (coord);
+    }
+#endif
+    //! Copy constructor
+    LinearCoordinate (LinearCoordinate const &other);
+    
+    // -------------------------------------------------------------- Destruction
+    
+    //! Destructor
+    ~LinearCoordinate ();
+    
+    // ---------------------------------------------------------------- Operators
+    
+    /*!
+      \brief Overloading of the copy operator
+      
+      \param other -- Another LinearCoordinate object from which to make a copy.
+    */
+    LinearCoordinate& operator= (LinearCoordinate const &other);
+    
+    // --------------------------------------------------------------- Parameters
+    
+    /*!
+      \brief Get the name of the class
+      
+      \return className -- The name of the class, LinearCoordinate.
+    */
+    inline std::string className () const {
+      return "LinearCoordinate";
+    }
+    
+    /*!
+      \brief Provide a summary of the internal status
+    */
+    inline void summary () {
+      summary (std::cout);
+    }
+    
+    /*!
+      \brief Provide a summary of the internal status
+      
+      \param os -- Output stream to which the summary is written.
+    */
+    void summary (std::ostream &os);
+    
+    // ------------------------------------------------------------------ Methods
+    
+#ifdef HAVE_HDF5
+    //! Read the coordinate object from a HDF5 file
+    void h5read (hid_t const &groupID);
+    
+    //! Read the coordinate object from a HDF5 file
+    void h5read (hid_t const &locationID,
+		 std::string const &name);
+    
+    //! Write the coordinate object to a HDF5 file
+    void h5write (hid_t const &groupID);
+    
+    //! Write the coordinate object to a HDF5 file
+    void h5write (hid_t const &locationID,
+		  std::string const &name);
+#endif
+
+#ifdef HAVE_CASA
+    //! Create coordinate from casa::Coordinate object
+    void importCoordinate (casa::LinearCoordinate const &coord);
+    //! Create casa::Coordinate object from coordinate parameters
+    void exportCoordinate (casa::LinearCoordinate &coord);
+#endif
+    
+  private:
+    
+    //! Unconditional copying
+    void copy (LinearCoordinate const &other);
+    
+    //! Unconditional deletion
+    void destroy(void);
+    
+  }; // Class LinearCoordinate -- end
+  
+} // Namespace DAL -- end
 
 #endif /* LINEARCOORDINATE_H */
 

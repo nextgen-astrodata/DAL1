@@ -125,6 +125,10 @@ if (DAL_ENABLE_TESTING)
     ${DAL_BINARY_DIR}/test/tTBB_StationGroup.sh
     )
   
+  configure_file (${DAL_SOURCE_DIR}/test/tTBB_Timeseries.sh
+    ${DAL_BINARY_DIR}/test/tTBB_Timeseries.sh
+    )
+  
   ## -----------------------------------------------------------------
   ## [1] simple tests which do not require sample data
 
@@ -165,7 +169,7 @@ if (DAL_ENABLE_TESTING)
     add_test (tTBB_test2 tTBB tTBB.h5 ${dataset_tbb})
     add_test (tTBB_DipoleDataset ${BASH_EXCUTABLE} tTBB_DipoleDataset.sh)
     add_test (tTBB_StationGroup ${BASH_EXCUTABLE} tTBB_StationGroup.sh)
-    add_test (tTBB_Timeseries tTBB_Timeseries ${dataset_tbb})
+    add_test (tTBB_Timeseries ${BASH_EXCUTABLE} tTBB_Timeseries.sh)
   else (dataset_tbb)
     message (STATUS "Unable to find LOFAR time-series dataset; skipping tests.")
   endif (dataset_tbb)
@@ -180,6 +184,8 @@ if (DAL_ENABLE_TESTING)
     add_test (tBeamFormed tBeamFormed ${dataset_beamformed})
     add_test (tBeamGroup tBeamGroup ${dataset_beamformed})
     add_test (tBeamSubband tBeamSubband ${dataset_beamformed})
+  else (dataset_beamformed)
+    message (STATUS "Unable to find LOFAR beam-formed dataset; skipping tests.")
   endif (dataset_beamformed)
 
   ## -----------------------------------------------------------------
@@ -194,7 +200,11 @@ if (DAL_ENABLE_TESTING)
 
   if (dataset_ms)
     ## basic test of Python wrappers
-    add_test (dal_tests dal_tests.py)
+    add_test (dal_tests1 dal_tests.py)
+    ## basic test of Python wrappers
+    if (PYTHON_EXECUTABLE)
+      add_test (dal_tests2 ${PYTHON_EXECUTABLE} dal_tests.py)
+    endif (PYTHON_EXECUTABLE)
     ## show the coverage in the (u,v) plane
     add_test (datacube datacube.py ${dataset_ms} ${dataset_ms}.out 1 1 0)
     ## show the coverage in the (u,v) plane

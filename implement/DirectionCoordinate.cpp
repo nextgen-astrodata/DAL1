@@ -23,8 +23,7 @@
 
 #include <DirectionCoordinate.h>
 
-namespace DAL   // Namespace DAL -- begin
-{
+namespace DAL {   // Namespace DAL -- begin
   
   // ============================================================================
   //
@@ -289,10 +288,10 @@ namespace DAL   // Namespace DAL -- begin
 #endif
     
     //___________________________________________________________________________
-    //                                                             casaCoordinate
+    //                                                           exportCoordinate
   
 #ifdef HAVE_CASA
-  casa::DirectionCoordinate DirectionCoordinate::casaCoordinate ()
+  void DirectionCoordinate::exportCoordinate (casa::DirectionCoordinate &coord)
   {
     casa::MDirection::Types system    = Coordinate::systemType(system_p);
     casa::Projection::Type projection = Coordinate::projectionType(projection_p);
@@ -315,15 +314,15 @@ namespace DAL   // Namespace DAL -- begin
     xform(1,0) = pc_p[2];
     xform(1,1) = pc_p[3];
     
-    return casa::DirectionCoordinate (system,
-				      casa::Projection(projection),
-				      refValue(0),
-				      refValue(1),
-				      increment(0),
-				      increment(1),
-				      xform,
-				      refPixel_p[0],
-				      refPixel_p[1]);
+    coord = casa::DirectionCoordinate (system,
+				       casa::Projection(projection),
+				       refValue(0),
+				       refValue(1),
+				       increment(0),
+				       increment(1),
+				       xform,
+				       refPixel_p[0],
+				       refPixel_p[1]);
   }
 #endif
   

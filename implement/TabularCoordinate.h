@@ -31,6 +31,10 @@
 // DAL header files
 #include <Coordinate.h>
 
+#ifdef HAVE_CASA
+#include <coordinates/Coordinates/TabularCoordinate.h>
+#endif
+
 namespace DAL {  // Namespace DAL -- begin
   
   /*!
@@ -165,6 +169,13 @@ namespace DAL {  // Namespace DAL -- begin
 		 std::string const &name);
 #endif
     
+#ifdef HAVE_CASA
+    //! Create coordinate from casa::Coordinate object
+    void importCoordinate (casa::TabularCoordinate const &coord);
+    //! Create casa::Coordinate object from coordinate parameters
+    void exportCoordinate (casa::TabularCoordinate &coord);
+#endif
+
   private:
     
     //! Initialize internal parameters

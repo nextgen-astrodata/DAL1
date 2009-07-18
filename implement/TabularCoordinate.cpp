@@ -272,4 +272,14 @@ namespace DAL {  // Namespace DAL -- begin
 
 #endif
 
+  //_____________________________________________________________________________
+  //                                                             exportCoordinate
+#ifdef HAVE_CASA
+  void TabularCoordinate::exportCoordinate (casa::TabularCoordinate &coord)
+  {
+    
+  }
+#endif
+
+
 } // Namespace DAL -- end

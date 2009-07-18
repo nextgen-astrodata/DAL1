@@ -160,12 +160,11 @@ namespace DAL   // Namespace DAL -- begin
       //! Set the world axis names
       void setAxisNames (std::vector<std::string> const &axisNames)
       {
-        if (axisNames.size() == nofAxes_p)
-          {
-            axisNames_p = axisNames;
-          }
+        if (axisNames.size() == nofAxes_p) {
+	  axisNames_p = axisNames;
+	}
       }
-
+      
       //! Get the world axis units
       std::vector<std::string> axisUnits ()
       {
@@ -174,26 +173,23 @@ namespace DAL   // Namespace DAL -- begin
       //! Set the world axis units
       void setAxisUnits (std::vector<std::string> const &axisUnits)
       {
-        if (axisUnits.size() == nofAxes_p)
-          {
-            axisUnits_p = axisUnits;
-          }
+        if (axisUnits.size() == nofAxes_p) {
+	  axisUnits_p = axisUnits;
+	}
       }
-
+      
       //! Get the reference value
-      std::vector<double> refValue ()
-      {
-        return refValue_p;
+      std::vector<double> refValue () {
+	return refValue_p;
       }
       //! Set the reference value
       void setRefValue (std::vector<double> const &refValue)
       {
-        if (refValue.size() == nofAxes_p)
-          {
-            refValue_p = refValue;
-          }
+        if (refValue.size() == nofAxes_p) {
+	  refValue_p = refValue;
+	}
       }
-
+      
       //! Get the reference pixel
       std::vector<double> refPixel ()
       {
@@ -212,8 +208,7 @@ namespace DAL   // Namespace DAL -- begin
         \brief Get the coordinate axis increment
         \return increment -- The increment along the coordinate axes
       */
-      std::vector<double> increment ()
-      {
+      std::vector<double> increment () {
         return increment_p;
       }
       /*!
@@ -222,12 +217,11 @@ namespace DAL   // Namespace DAL -- begin
       */
       void setIncrement (std::vector<double> const &increment)
       {
-        if (increment.size() == nofAxes_p)
-          {
-            increment_p = increment;
-          }
+        if (increment.size() == nofAxes_p) {
+	  increment_p = increment;
+	}
       }
-
+      
       /*!
         \brief Get the transformation matrix
         \return pc -- The transformation matrix, in row-wise ordering, e.g. [00,01,10,11]
@@ -243,30 +237,27 @@ namespace DAL   // Namespace DAL -- begin
       void setPc (std::vector<double> const &pc)
       {
         unsigned int nelem = nofAxes_p*nofAxes_p;
-        if (pc.size() == nelem)
-          {
-            pc_p = pc;
-          }
+        if (pc.size() == nelem) {
+	  pc_p = pc;
+	}
       }
-
+      
       /*!
         \brief Get the name of the class
 
         \return className -- The name of the class, Coordinate.
       */
-      inline std::string className () const
-        {
-          return "Coordinate";
-        }
-
+      inline std::string className () const {
+	return "Coordinate";
+      }
+      
       /*!
         \brief Provide a summary of the internal status
       */
-      inline void summary ()
-      {
+      inline void summary () {
         summary (std::cout);
       }
-
+      
       /*!
         \brief Provide a summary of the internal status
 
