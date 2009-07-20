@@ -1,0 +1,26 @@
+## ==============================================================================
+## $ID:$
+## ==============================================================================
+
+
+Open issues
+-----------
+
+* No new class/application to be created to support additional conversion mode
+  of beam-formed data; as agreed upon with Joe, the required implementation code
+  can become part of the exiting classes, the possibility to switch between 
+  different types of input can be provided through a command-line switch with
+  the bf2h5 application.
+
+* Check the code committed by Sven for generic functionality which can be
+  integrated with the core classes. In principle we should not have a dalFITS,
+  but rather a class for the rotation synthesis images, which build on top
+  of the DAL core classes. A number of the commands which can be found in dalFITS
+  can indeed be used to fill the gaps in the core classes, such that that the
+  class is rather used as a high-level interface to the data-format (as is the
+  case already with the beam-formed data and the TBB dumps).
+
+Coding conventions
+------------------
+
+

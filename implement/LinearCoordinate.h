@@ -53,7 +53,8 @@ namespace DAL {  // Namespace DAL -- begin
     <h3>Prerequisite</h3>
 
     <ul type="square">
-      <li>[start filling in your text here]
+      <li>M.R. Calabretta, E.W. Greisen. <i>Representation of celestial
+      coordinates in FITS</i>. A&A 395, 1077-1122 (2002)
     </ul>
 
     <h3>Synopsis</h3>
@@ -61,13 +62,13 @@ namespace DAL {  // Namespace DAL -- begin
     Consider a simple image (or dynammic spectrum), where we are dealing with both
     a regular time and frequency axis:
     \verbatim
-    NOF_AXES   =  2
-    AXIS_NAMES = [ "Time", "Frequency" ]
-    AXIS_UNITS = [ "s", "Hz" ]
-    REF_PIXEL  = [ 0.0, 00.0 ]
-    REF_VALUE  = [ 0.1, 100.0 ]
-    INCREMENT  = [ 0.05, 10.0 ]
-    PC         = [ 1.0, 0.0, 0.0, 1.0 ]
+    NOF_AXES         =  2
+    AXIS_NAMES       = [ "Time", "Frequency" ]
+    AXIS_UNITS       = [ "s", "Hz" ]
+    REFERENCE_PIXEL  = [ 0.0, 00.0 ]
+    REFERENCE_VALUE  = [ 0.1, 100.0 ]
+    INCREMENT        = [ 0.05, 10.0 ]
+    PC               = [ 1.0, 0.0, 0.0, 1.0 ]
     \endverbatim
     The same information stored as FITS header keywords would be
     \verbatim

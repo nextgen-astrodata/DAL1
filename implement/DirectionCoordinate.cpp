@@ -209,8 +209,8 @@ namespace DAL {   // Namespace DAL -- begin
     DAL::h5get_attribute( groupID, "NOF_AXES",         nof_axes );
     DAL::h5get_attribute( groupID, "AXIS_NAMES",       axis_names );
     DAL::h5get_attribute( groupID, "AXIS_UNITS",       axis_units );
-    DAL::h5get_attribute( groupID, "REF_VALUE",        refvalue );
-    DAL::h5get_attribute( groupID, "REF_PIXEL",        refpixel );
+    DAL::h5get_attribute( groupID, "REFERENCE_VALUE",  refvalue );
+    DAL::h5get_attribute( groupID, "REFERENCE_PIXEL",  refpixel );
     DAL::h5get_attribute( groupID, "INCREMENT",        increment );
     DAL::h5get_attribute( groupID, "PC",               pc );
     DAL::h5get_attribute( groupID, "SYSTEM",           refname );
@@ -273,8 +273,8 @@ namespace DAL {   // Namespace DAL -- begin
     DAL::h5set_attribute( groupID, "NOF_AXES",         nofAxes_p );
     DAL::h5set_attribute( groupID, "AXIS_NAMES",       axisNames_p );
     DAL::h5set_attribute( groupID, "AXIS_UNITS",       axisUnits_p );
-    DAL::h5set_attribute( groupID, "REF_PIXEL",        refPixel_p );
-    DAL::h5set_attribute( groupID, "REF_VALUE",        refValue_p );
+    DAL::h5set_attribute( groupID, "REFERENCE_PIXEL",  refPixel_p );
+    DAL::h5set_attribute( groupID, "REFERENCE_VALUE",  refValue_p );
     DAL::h5set_attribute( groupID, "INCREMENT",        increment_p );
     DAL::h5set_attribute( groupID, "PC",               pc_p );
     /* Add-on for direction coordinate */

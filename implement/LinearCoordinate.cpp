@@ -195,14 +195,14 @@ namespace DAL {  // Namespace DAL -- begin
     std::vector<double> pc;
 
     /* Read the attributes from the HDF5 file */
-    DAL::h5get_attribute( groupID, "COORDINATE_TYPE", coordinate_type );
-    DAL::h5get_attribute( groupID, "NOF_AXES",        nof_axes );
-    DAL::h5get_attribute( groupID, "AXIS_NAMES",      axis_names );
-    DAL::h5get_attribute( groupID, "AXIS_UNITS",      axis_units );
-    DAL::h5get_attribute( groupID, "REF_VALUE",       refvalue );
-    DAL::h5get_attribute( groupID, "REF_PIXEL",       refpixel );
-    DAL::h5get_attribute( groupID, "INCREMENT",       increment );
-    DAL::h5get_attribute( groupID, "PC",              pc );
+    DAL::h5get_attribute( groupID, "COORDINATE_TYPE",  coordinate_type );
+    DAL::h5get_attribute( groupID, "NOF_AXES",         nof_axes );
+    DAL::h5get_attribute( groupID, "AXIS_NAMES",       axis_names );
+    DAL::h5get_attribute( groupID, "AXIS_UNITS",       axis_units );
+    DAL::h5get_attribute( groupID, "REFERENCE_VALUE",  refvalue );
+    DAL::h5get_attribute( groupID, "REFERENCE_PIXEL",  refpixel );
+    DAL::h5get_attribute( groupID, "INCREMENT",        increment );
+    DAL::h5get_attribute( groupID, "PC",               pc );
 
     /* Store the retrieved values */
     if (getType(coordinate_type) == Coordinate::Linear) {
@@ -245,14 +245,14 @@ namespace DAL {  // Namespace DAL -- begin
 
   void LinearCoordinate::h5write (hid_t const &groupID)
   {
-    DAL::h5set_attribute( groupID, "COORDINATE_TYPE", name() );
-    DAL::h5set_attribute( groupID, "NOF_AXES",        nofAxes_p );
-    DAL::h5set_attribute( groupID, "AXIS_NAMES",      axisNames_p );
-    DAL::h5set_attribute( groupID, "AXIS_UNITS",      axisUnits_p );
-    DAL::h5set_attribute( groupID, "REF_PIXEL",       refPixel_p );
-    DAL::h5set_attribute( groupID, "REF_VALUE",       refValue_p );
-    DAL::h5set_attribute( groupID, "INCREMENT",       increment_p );
-    DAL::h5set_attribute( groupID, "PC",              pc_p );
+    DAL::h5set_attribute( groupID, "COORDINATE_TYPE",  name() );
+    DAL::h5set_attribute( groupID, "NOF_AXES",         nofAxes_p );
+    DAL::h5set_attribute( groupID, "AXIS_NAMES",       axisNames_p );
+    DAL::h5set_attribute( groupID, "AXIS_UNITS",       axisUnits_p );
+    DAL::h5set_attribute( groupID, "REFERENCE_PIXEL",  refPixel_p );
+    DAL::h5set_attribute( groupID, "REFERENCE_VALUE",  refValue_p );
+    DAL::h5set_attribute( groupID, "INCREMENT",        increment_p );
+    DAL::h5set_attribute( groupID, "PC",               pc_p );
   }
 
 #endif
