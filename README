@@ -3,8 +3,8 @@
 ## ==============================================================================
 
 
-Open issues
------------
+_________________________________________________________________________________
+>>> Open issues
 
 * No new class/application to be created to support additional conversion mode
   of beam-formed data; as agreed upon with Joe, the required implementation code
@@ -20,7 +20,17 @@ Open issues
   class is rather used as a high-level interface to the data-format (as is the
   case already with the beam-formed data and the TBB dumps).
 
-Coding conventions
-------------------
+* The TBB_DipoleDataset, TBB_StationGroup and TBB_Timeseries need some cleaning
+  up in the functions which make use of casacore; there are still quite a number
+  functions which work with std::vector<T> and casa::Vector<T> -- those functions
+  should not be exclusive but available both at the same time. For this to happen
+  functions need to be changed from simply returning a result to returning the
+  result by reference.
 
+_________________________________________________________________________________
+>>> Coding conventions
 
+* All classes are within the namespace "DAL".
+
+* All source files contain a Doxygen-based documentation of their methods.
+  All classes/files are contained within the group "DAL".
