@@ -77,6 +77,7 @@ if (HAVE_CASACORE AND HAVE_HDF5)
 
   foreach (src
       tMS_dal 
+      tdalFITS
       tcasacore_hdf5
       tDirectionCoordinate
       tLinearCoordinate
