@@ -248,6 +248,7 @@ namespace DAL {
   bool BFRaw::connectsocket( const char *portnumber )
   {
 		off_online = std::string("online");
+		file_byte_size = 0;
     int port_number = atol( portnumber );
 
     // Step 1 Create a socket using TCP
@@ -827,7 +828,7 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
 		dataset.setAttribute( "GROUPTYPE", std::string("Root") );
 		dataset.setAttribute( "FILENAME", outputfilename.c_str() );
 		dataset.setAttribute( "FILETYPE", std::string("bfstation") );
-		dataset.setAttribute( "FILESIZE", &file_byte_size);
+		dataset.setAttribute( "INPUT_FILESIZE", &file_byte_size);
 		dataset.setAttribute( "OFF-/ONLINE_CREATION", off_online );
 		dataset.setAttribute( "TELESCOPE", std::string("LOFAR") );
 		dataset.setAttribute( "OBSERVER", std::string("") );
