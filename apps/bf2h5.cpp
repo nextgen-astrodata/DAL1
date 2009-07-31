@@ -29,7 +29,7 @@
 
   \brief Write Beam-Formed data into an HDF5 file.
 
-  \author Joseph Masters, Lars B&auml;hren, Alvin de Jong
+  \author Joseph Masters, Lars B&auml;hren, Alwin de Jong
 
   This file represents a LOFAR Tied-Array (aka Beam-Formed, aka Pulsar) data
   reader.
@@ -50,16 +50,16 @@
 
   Command line interface:
   \verbatim
+  -D [ --factor ] arg   Downsample with this integer factor
   -H [ --help ]         Show help messages
-  -O [ --outfile ] arg  Name of the output dataset
   -I [ --infile ] arg   Name of the input file
-  --downsample          Downsampling of the original data
+  -O [ --outfile ] arg  Name of the output dataset
+	--version							Show version information
   --intensity           Compute total intensity
-  -F [ --factor ] arg   Downsampling factor
   \endverbatim
 
-  If \e --intensity or \e --downsample is set, the output file will contain
-  subband tables with a TOTAL_INTENSITY column. If neither of these parameters
+  If \e --intensity or \e --factor is set, the output file will contain
+  subband tables with a TOTAL_INTENSITY^2 column. If neither of these parameters
   is set, the subband tables will contain real and imaginary polarization data
   at full resolution (XrXi,YrYi).
 
@@ -73,12 +73,14 @@
     samples.
     <li>Compute total intensities and downsample the dataset:
     \verbatim
-    bf2h5 -I /path/B0329.cor -O B0329.h5 --intensity --downsample --factor 128
+    bf2h5 -I /path/B0329.cor -O B0329.h5 -D 128 
     \endverbatim
-    This will cause an averaging of the total intensities over every 128
+    This will downsample the data by calculating the average of the intensities over every 128
     samples.
   </ol>
 */
+
+const static char *version = "$Id";
 
 #ifndef BFRAW_H
 #include "BFRaw.h"
@@ -120,8 +122,8 @@ void print_examples (std::ostream &os)
   os << "1) Convert file with dump of BF data to a HDF5 file:" << endl;
   os << "  bf2h5 --infile <raw data> --outfile <HDF5 output>" << endl;
   os << endl;
-  os << "2) Read data from socket to a HDF5 file:" << endl;
-  os << "  bf2h5 --ip <IP address> --port <port number> --outfile <HDF5 output>" << endl;
+  os << "2) Read data from TCP stream to a HDF5 file:" << endl;
+  os << "  bf2h5 --port <port number> --outfile <HDF5 output>" << endl;
   os << endl;
 }
 
@@ -138,7 +140,7 @@ int main (int argc, char *argv[])
   bool doIntensity      = false;
   bool doDownsample     = false;
   bool doChannelization = false;
-  int factor            = 1;
+  uint dsFactor            = 1;
 
 
   // -----------------------------------------------------------------
@@ -147,19 +149,25 @@ int main (int argc, char *argv[])
   bpo::options_description desc ("[bf2h5] Available command line options");
 
   desc.add_options ()
-  ("help,H", "Show help messages")
-  ("outfile,O",bpo::value<std::string>(), "Name of the output dataset")
-  ("infile,I", bpo::value<std::string>(), "Name of the input file")
+	("help,H", "Show help messages")
+	("factor,D", bpo::value<uint>(), "Downsample with this factor")
+	("infile,I", bpo::value<std::string>(), "Name of the input file")
+	("outfile,O",bpo::value<std::string>(), "Name of the output dataset")
   //			("source,S", bpo::value<std::string>(), "the source IP address from which to accept the data")
   ("port,P", bpo::value<std::string>(), "Port number to accept beam formed raw data from")
-  ("downsample", "Downsampling of the original data")
-  ("intensity", "Compute total intensity")
-  ("factor,F", bpo::value<int>(), "Downsampling factor")
-  ;
+  //("downsample", "Downsampling of the original data")
+	("intensity", "Compute total intensity")
+	("version", "Show bf2h5 version information")
+			;
 
   bpo::variables_map vm;
   bpo::store (bpo::parse_command_line(argc,argv,desc), vm);
 
+	if (vm.count("version")) {
+		std::cout << "bf2h5 version: " << version << std::endl;
+		return 0;
+	}
+	
   if (vm.count("help") || argc == 1)
     {
       std::cout << "\n" << desc << endl;
@@ -188,12 +196,12 @@ int main (int argc, char *argv[])
       socketmode = true;
     }
 
-  if (vm.count("downsample"))
+/*  if (vm.count("downsample"))
     {
       doDownsample = true;
       // can't downsample w/o total intensities
       doIntensity = true;
-    }
+} */
 
   if (vm.count("intensity"))
     {
@@ -202,12 +210,16 @@ int main (int argc, char *argv[])
 
   if (vm.count("factor"))
     {
-      factor = vm["factor"].as<int>();
+      dsFactor = vm["factor"].as<uint>();
       // check parameter value
-      if (factor <= 0)
+      if (dsFactor <= 0)
         {
-          factor = 1;
+          dsFactor = 1;
         }
+				else if (dsFactor > 1) {
+					doIntensity = true;
+					doDownsample = true;
+				}
     }
 
   // -----------------------------------------------------------------
@@ -267,7 +279,7 @@ int main (int argc, char *argv[])
     }
   std::cout << "-- Compute total intensity : " << doIntensity  << endl;
   std::cout << "-- Downsampling of data .. : " << doDownsample << endl;
-  std::cout << "-- Downsampling factor ... : " << factor       << endl;
+  std::cout << "-- Downsampling factor ... : " << dsFactor       << endl;
 
   // -----------------------------------------------------------------
   // Start processing of the input data
@@ -276,7 +288,7 @@ int main (int argc, char *argv[])
                               doIntensity,
                               doDownsample,
                               doChannelization,
-                              factor );
+                              dsFactor );
 
   if (socketmode)
     {
