@@ -80,7 +80,7 @@
   </ol>
 */
 
-const static char *version = "$Id";
+const static char *version = "2.0";
 
 #ifndef BFRAW_H
 #include "BFRaw.h"
@@ -92,6 +92,7 @@ const static char *version = "$Id";
 #include <fstream>  // for file handle
 #include <complex>  // for complex datatypes
 #include <assert.h>
+#include <fstream>
 #ifdef HAVE_GSL
 #include <gsl/gsl_fft_complex.h> // for fft's during channelization
 #endif
@@ -137,6 +138,7 @@ int main (int argc, char *argv[])
   std::string ip;
   std::string port;
   bool socketmode       = false;
+	bool non_interactive  = false;
   bool doIntensity      = false;
   bool doDownsample     = false;
   bool doChannelization = false;
@@ -158,6 +160,7 @@ int main (int argc, char *argv[])
   //("downsample", "Downsampling of the original data")
 	("intensity", "Compute total intensity")
 	("version", "Show bf2h5 version information")
+	("noninteractive", "non-interactive mode, automatically overwrites output file if it exists")
 			;
 
   bpo::variables_map vm;
@@ -221,6 +224,9 @@ int main (int argc, char *argv[])
 					doDownsample = true;
 				}
     }
+		if (vm.count("noninteractive")) {
+			non_interactive = true; 
+		}
 
   // -----------------------------------------------------------------
   // Checks if parameters complete
@@ -302,10 +308,39 @@ int main (int argc, char *argv[])
     }
   else   // File mode
     {
-      bf.openRawFile( infile.c_str() );
-      bf.readRawFileHeader();
-      bf.makeH5OutputFile();
-      bf.processBlocks();
+			std::fstream filestr;
+			filestr.open(outfile.data());
+			if ( filestr.is_open() ) {
+				if (!non_interactive) {
+				filestr.close();
+				std::string line;
+				std::cout << "Warning: output file exist. Do you want to overwrite? (y/n) [n]" << std::endl;
+				std::getline( std::cin, line );
+				if (!line.empty()) {
+					if (line == "n" | line == "N") return 0;
+					else if (line == "y" | line == "Y") {
+						if( remove( outfile.data() ) != 0 ) {
+							perror( "Error deleting file" );
+							std::cerr << "now exiting" << std::endl;
+							return 0;
+						}
+					}
+				} 
+				else return 0; // empty line, default answer is no
+				}
+				else { // non_interactive mode, delete file and continue
+					if( remove( outfile.data() ) != 0 ) {
+						perror( "Error deleting file" );
+						std::cerr << "now exiting" << std::endl;
+						return 0;
+					}
+				}
+			}
+			
+      	bf.openRawFile( infile.c_str() );
+      	bf.readRawFileHeader();
+      	bf.makeH5OutputFile();
+      	bf.processBlocks();
     }
   return 0;
 }
