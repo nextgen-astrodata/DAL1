@@ -141,12 +141,12 @@ namespace DAL
         {
           return this->header.nrPolarizations;
         }
-      //! Get the number of beamlets
+      //! Get the number of subbands
       inline uint16_t nofSubbands () const
         {
           return this->header.nrSubbands;
         }
-      //! Get the number of samples per beamlet
+      //! Get the number of samples per subband
       inline uint32_t nofSamplesPerSubband () const
         {
           return this->header.nrSamplesPerSubband;
