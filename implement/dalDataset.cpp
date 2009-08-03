@@ -30,17 +30,16 @@
 #include "dalDataset.h"
 #endif
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   // ============================================================================
   //
   //  Construction
   //
   // ============================================================================
-
+  
   // ----------------------------------------------------------------  dalDataset
-
+  
   /*!
     \brief The dataset object constructor
   */
@@ -409,8 +408,8 @@ namespace DAL
     return h5fh_p;
   }
 
-
-  // ---------------------------------------------- setAttribute
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \param attrname The name of the attribute you want to create.
@@ -426,7 +425,8 @@ namespace DAL
     return h5set_attribute( H5T_NATIVE_CHAR, h5fh_p, attrname, data, size );
   }
 
-  // ---------------------------------------------- setAttribute
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \param attrname The name of the attribute you want to create.
@@ -442,7 +442,8 @@ namespace DAL
     return h5set_attribute( H5T_NATIVE_SHORT, h5fh_p, attrname, data, size );
   }
 
-  // ---------------------------------------------- setAttribute
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \param attrname The name of the attribute you want to create.
@@ -458,7 +459,29 @@ namespace DAL
     return h5set_attribute( H5T_NATIVE_INT, h5fh_p, attrname, data, size );
   }
 
-  // ---------------------------------------------- setAttribute
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
+
+  /*!
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \param size Optional parameter specifying the array size of the
+                attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalDataset::setAttribute( std::string attrname,
+                                 int64_t * data,
+                                 int size )
+  {
+#ifdef HAVE_LONG_LONG
+    return h5set_attribute( H5T_NATIVE_LLONG, h5fh_p, attrname, data, size );
+#else
+    return h5set_attribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
+#endif
+  }
+
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \param attrname The name of the attribute you want to create.
@@ -474,7 +497,8 @@ namespace DAL
     return h5set_attribute( H5T_NATIVE_UINT, h5fh_p, attrname, data, size );
   }
 
-  // ---------------------------------------------- setAttribute
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \param attrname The name of the attribute you want to create.
@@ -490,7 +514,8 @@ namespace DAL
     return h5set_attribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
   }
 
-  // ---------------------------------------------- setAttribute
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \param attrname The name of the attribute you want to create.
@@ -506,7 +531,8 @@ namespace DAL
     return h5set_attribute( H5T_NATIVE_FLOAT, h5fh_p, attrname, data, size );
   }
 
-  // ---------------------------------------------- setAttribute
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \param attrname -- The name of the attribute you want to create.
@@ -522,7 +548,8 @@ namespace DAL
     return h5set_attribute( H5T_NATIVE_DOUBLE, h5fh_p, attrname, data, size );
   }
 
-  // ---------------------------------------------- setAttribute_string
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \param attrname -- The name of the attribute you want to create.
@@ -547,7 +574,6 @@ namespace DAL
                                  int size )
   {
     return h5setAttribute_string ( h5fh_p, attrname, data, size );
-//     return h5setAttribute_string( h5fh_p, attrname, data, size );
   }
 
 

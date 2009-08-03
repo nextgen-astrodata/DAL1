@@ -61,27 +61,23 @@ dataStruct * channelize( dataStruct * data,
 */
 
 namespace DAL {
-
-		bool time_out; //! used for time out handler
-		int server_socket(0);
-
-	  //_________________________________________________timeout_alarm
-		//! used to handle time out for socket connection
-		void timeout_alarm (int sig)
-		{
-			time_out = true;
-			std::cout << " time out on socket read" << std::endl;
-			// shutdown and close socket connection
-			shutdown(server_socket, SHUT_RDWR);
-			close(server_socket);
-			std::cout << "connection closed" << std::endl;
-			signal (sig, timeout_alarm);
-		}
-
-		
-		
-
-
+  
+  bool time_out; //! used for time out handler
+  int server_socket(0);
+  
+  //_________________________________________________timeout_alarm
+  //! used to handle time out for socket connection
+  void timeout_alarm (int sig)
+  {
+    time_out = true;
+    std::cout << " time out on socket read" << std::endl;
+    // shutdown and close socket connection
+    shutdown(server_socket, SHUT_RDWR);
+    close(server_socket);
+    std::cout << "connection closed" << std::endl;
+    signal (sig, timeout_alarm);
+  }
+  
   // ============================================================================
   //
   //  Construction
@@ -300,15 +296,15 @@ namespace DAL {
 
   void BFRaw::openRawFile( const char* filename )
   {
-		off_online = std::string("offline");
+    off_online = std::string("offline");
     delete rawfile;
     rawfile = new fstream( filename, ios::binary|ios::in );
-		rawfile->seekg(0, ios::end); // move to end of file to determine its file size
-		file_byte_size = static_cast<unsigned long int>(rawfile->tellg())-2; // see how many bytes in file
-		//std::cout << "filesize in bytes: " << file_byte_size << std::endl;
+    rawfile->seekg(0, ios::end); // move to end of file to determine its file size
+    file_byte_size = static_cast<unsigned long int>(rawfile->tellg())-2; // see how many bytes in file
+    //std::cout << "filesize in bytes: " << file_byte_size << std::endl;
     rawfile->seekg(0, ios::beg);  // move to start of file
   }
-
+  
   // ---------------------------------------------------------- readRawFileHeader
 
   void BFRaw::readRawFileHeader()
@@ -799,7 +795,7 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
   void BFRaw::makeH5OutputFile(void)
   {
     dataset = dalDataset( outputfilename.c_str(), "HDF5" );
-
+    
     // root-level headers
     int n_stations = 1;
     vector<string> srcvec;
@@ -808,68 +804,68 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
     int bandwidth           = 0; // Total bandwidth (MHz)
     int breaks_in_data      = 0; // Any breaks in data?
     int dispersion_measure  = 0;
-//		int number_of_samples_per_block = header.nrSubbands * header.nrSamplesPerSubband;
-		long total_number_of_samples = nrOfBlocks * header.nrSamplesPerSubband * header.nrSubbands;
+    //		int number_of_samples_per_block = header.nrSubbands * header.nrSamplesPerSubband;
+    long total_number_of_samples = nrOfBlocks * header.nrSamplesPerSubband * header.nrSubbands;
 #ifdef DEBUGGING_MESSAGES
-		std::cout << "total_number_of_samples = " << total_number_of_samples << std::endl;
+    std::cout << "total_number_of_samples = " << total_number_of_samples << std::endl;
 #endif
-//		double sampling_time   = header.sampleRate;
+    //		double sampling_time   = header.sampleRate;
     int number_of_beams     = 1;
     int sub_beam_diameter   = 0; // fwhm of the sub-beams (arcmin)
     int weather_temperature = 0; // approx. centigrade
     int weather_humidity    = 0; // approx. %
     int tsys                = 0; // for various stations (K)
-		std::string station_clock;
-		if (header.nrSamplesPerSubband == 155648) station_clock = std::string("160MHz");
-		else if (header.nrSamplesPerSubband == 196608) station_clock = std::string("200MHz");
-		else station_clock = std::string("unknown");
-		
+    std::string station_clock;
+    if (header.nrSamplesPerSubband == 155648) station_clock = std::string("160MHz");
+    else if (header.nrSamplesPerSubband == 196608) station_clock = std::string("200MHz");
+    else station_clock = std::string("unknown");
+    
     // write headers using above
-		dataset.setAttribute( "GROUPTYPE", std::string("Root") );
-		dataset.setAttribute( "FILENAME", outputfilename.c_str() );
-		dataset.setAttribute( "FILETYPE", std::string("bfstation") );
-		dataset.setAttribute( "INPUT_FILESIZE", &file_byte_size);
-		dataset.setAttribute( "OFF-/ONLINE_CREATION", off_online );
-		dataset.setAttribute( "TELESCOPE", std::string("LOFAR") );
-		dataset.setAttribute( "OBSERVER", std::string("") );
-		dataset.setAttribute( "PROJECT_ID", std::string("") );
-		dataset.setAttribute( "PROJECT_NAME", std::string("LOFAR") );
-		dataset.setAttribute( "PROJECT_DESCRIPTION", std::string("") );
-		dataset.setAttribute( "OBSERVATION_ID", std::string("") );
-		dataset.setAttribute( "OBSERVATION_MODE", std::string("") );
-		dataset.setAttribute_string( "TARGET", srcvec );
-		dataset.setAttribute( "TIME_SYSTEM", std::string("") );
-		dataset.setAttribute( "SYSTEM_VERSION", std::string("") );
-		dataset.setAttribute( "PIPELINE_NAME", std::string("") );
-		dataset.setAttribute( "NUMBER_OF_STATIONS", &n_stations );
-		dataset.setAttribute( "STATION_LIST", std::string(header.station) );
-		dataset.setAttribute( "STATION_CLOCK", station_clock );
-		dataset.setAttribute( "NOTES", std::string("") );
+    dataset.setAttribute( "GROUPTYPE", std::string("Root") );
+    dataset.setAttribute( "FILENAME", outputfilename.c_str() );
+    dataset.setAttribute( "FILETYPE", std::string("bfstation") );
+    dataset.setAttribute( "INPUT_FILESIZE", &file_byte_size);
+    dataset.setAttribute( "OFF-/ONLINE_CREATION", off_online );
+    dataset.setAttribute( "TELESCOPE", std::string("LOFAR") );
+    dataset.setAttribute( "OBSERVER", std::string("") );
+    dataset.setAttribute( "PROJECT_ID", std::string("") );
+    dataset.setAttribute( "PROJECT_NAME", std::string("LOFAR") );
+    dataset.setAttribute( "PROJECT_DESCRIPTION", std::string("") );
+    dataset.setAttribute( "OBSERVATION_ID", std::string("") );
+    dataset.setAttribute( "OBSERVATION_MODE", std::string("") );
+    dataset.setAttribute_string( "TARGET", srcvec );
+    dataset.setAttribute( "TIME_SYSTEM", std::string("") );
+    dataset.setAttribute( "SYSTEM_VERSION", std::string("") );
+    dataset.setAttribute( "PIPELINE_NAME", std::string("") );
+    dataset.setAttribute( "NUMBER_OF_STATIONS", &n_stations );
+    dataset.setAttribute( "STATION_LIST", std::string(header.station) );
+    dataset.setAttribute( "STATION_CLOCK", station_clock );
+    dataset.setAttribute( "NOTES", std::string("") );
     dataset.setAttribute( "DATATYPE", std::string("") );
     dataset.setAttribute( "EMBAND", std::string("") );
-		//		dataset.setAttribute_string( "SOURCE", srcvec ); // replaced by TARGET
+    //		dataset.setAttribute_string( "SOURCE", srcvec ); // replaced by TARGET
     dataset.setAttribute( "POINT_RA", std::string("") );
     dataset.setAttribute( "POINT_DEC", std::string("") );
     dataset.setAttribute( "MAIN_BEAM_DIAM", &main_beam_diam );
     dataset.setAttribute( "BANDWIDTH", &bandwidth );
     dataset.setAttribute( "BREAKS_IN_DATA", &breaks_in_data );
     dataset.setAttribute( "DISPERSION_MEASURE", &dispersion_measure );
-		dataset.setAttribute( "SECONDS_OF_DATA", &nrOfBlocks );
-		dataset.setAttribute( "SAMPLE_RATE", &header.sampleRate );
-		dataset.setAttribute( "NR_OF_SAMPLES_PER_SUBBAND", &header.nrSamplesPerSubband );
-		dataset.setAttribute( "TOTAL_NUMBER_OF_SAMPLES", &total_number_of_samples );
+    dataset.setAttribute( "SECONDS_OF_DATA", &nrOfBlocks );
+    dataset.setAttribute( "SAMPLE_RATE", &header.sampleRate );
+    dataset.setAttribute( "NR_OF_SAMPLES_PER_SUBBAND", &header.nrSamplesPerSubband );
+    dataset.setAttribute( "TOTAL_NUMBER_OF_SAMPLES", &total_number_of_samples );
     dataset.setAttribute( "NUMBER_OF_BEAMS", &number_of_beams );
     dataset.setAttribute( "SUB_BEAM_DIAMETER", &sub_beam_diameter );
     dataset.setAttribute( "WEATHER_TEMPERATURE", &weather_temperature );
     dataset.setAttribute( "WEATHER_HUMIDITY", &weather_humidity );
     dataset.setAttribute( "TSYS", &tsys );
-
+    
     dalGroup * beamGroup;
-
+    
     char * beamstr = new char[10];
-
+    
     int beam_number;
-
+    
     beam_number = 0;
     sprintf( beamstr, "beam%03d", beam_number );
     beamGroup = dataset.createGroup( beamstr );
@@ -957,7 +953,8 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
     try
       {
 #ifdef DEBUGGING_MESSAGES
-        printf("Allocating %ld bytes (%d seconds)\n",blocksize,blocks);
+	std::cout << "Allocating " << blocksize << " bytes (" << blocks 
+		  << " seconds)" << std::endl;
 #endif
         buf = new char[ blocksize ];
       }

@@ -146,19 +146,19 @@ public:
     //! Check for reaching end-of-file
     bool eof();
 
-private:
-		//! reads upto nrOfBytesToRead from socket and checks for end ans reading errors
-		int receiveBytes(void *storage, size_t nrOfBytesToRead);
-		//! read raw bytes from the main_socket
-//		bool readsocket( unsigned int nbytes, char* buf );
-		//! converts endian of data read from socket
-		void convertEndian(BlockHeader* blockheader);
-		std::string off_online;
-		int64_t file_byte_size;
-		int64_t oneSecondBlockSize;
-		int nrOfBlocks;
-
-
+  private:
+    //! reads upto nrOfBytesToRead from socket and checks for end ans reading errors
+    int receiveBytes(void *storage, size_t nrOfBytesToRead);
+    //! read raw bytes from the main_socket
+    //		bool readsocket( unsigned int nbytes, char* buf );
+    //! converts endian of data read from socket
+    void convertEndian(BlockHeader* blockheader);
+    std::string off_online;
+    int64_t file_byte_size;
+    int64_t oneSecondBlockSize;
+    //! The number of blocks
+    int nrOfBlocks;
+    
   }; // class BFRaw
   
 } // DAL namespace

@@ -34,8 +34,14 @@ namespace DAL
   /*!
     \class dalDataset
     \ingroup DAL
-    \brief Represents the file containing all sub-structures
-           (tables, arrays, etc.)
+    \brief Represents the file containing all sub-structures (tables, arrays, etc.)
+
+    <h3>Prerequisite</h3>
+
+    <ul>
+      <li><a href="http://www.hdfgroup.org/HDF5/doc/RM/PredefDTypes.html">HDF5
+      Predefined Datatypes</a>
+    </ul>
 
     <h3>Synopsis</h3>
 
@@ -153,8 +159,10 @@ namespace DAL
       bool setAttribute( std::string attrname, char * data, int size=1 );
       //! Define a short attribute.
       bool setAttribute( std::string attrname, short * data, int size=1 );
-      //! Define a integer attribute.
+      //! Define an integer attribute.
       bool setAttribute( std::string attrname, int * data, int size=1 );
+      //! Define an integer attribute.
+      bool setAttribute( std::string attrname, int64_t * data, int size=1 );
       //! Define an unsigned integer attribute.
       bool setAttribute( std::string attrname, uint * data, int size=1 );
       //! Define a long attribute.
