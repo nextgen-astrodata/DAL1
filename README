@@ -6,6 +6,10 @@
 _________________________________________________________________________________
 >>> Open issues
 
+* Better check of requirements for creating the Python bindings; in a number of
+  cases the currently implemented checks are not sufficient, thereby not disabling
+  the bindings, which in turns results in failure to build properly.
+
 * No new class/application to be created to support additional conversion mode
   of beam-formed data; as agreed upon with Joe, the required implementation code
   can become part of the exiting classes, the possibility to switch between 
