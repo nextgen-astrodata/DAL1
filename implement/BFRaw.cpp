@@ -809,7 +809,7 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
     int breaks_in_data      = 0; // Any breaks in data?
     int dispersion_measure  = 0;
 //		int number_of_samples_per_block = header.nrSubbands * header.nrSamplesPerSubband;
-		int64_t total_number_of_samples = nrOfBlocks * header.nrSamplesPerSubband * header.nrSubbands;
+		long total_number_of_samples = nrOfBlocks * header.nrSamplesPerSubband * header.nrSubbands;
 #ifdef DEBUGGING_MESSAGES
 		std::cout << "total_number_of_samples = " << total_number_of_samples << std::endl;
 #endif
