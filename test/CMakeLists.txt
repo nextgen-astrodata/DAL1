@@ -73,7 +73,7 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 
 ## [2] casacore & HDF5
 
-if (HAVE_CASACORE AND HAVE_HDF5)
+if (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES)
 
   foreach (src
       tMS_dal 
@@ -103,7 +103,7 @@ if (HAVE_CASACORE AND HAVE_HDF5)
       add_test (${src} ${src})
     endif (DAL_ENABLE_TESTING)
   endforeach (src)
-endif (HAVE_CASACORE AND HAVE_HDF5)
+endif (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES)
 
 ## ==============================================================================
 ##

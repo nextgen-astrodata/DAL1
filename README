@@ -6,10 +6,6 @@
 _________________________________________________________________________________
 >>> Open issues
 
-* Better check of requirements for creating the Python bindings; in a number of
-  cases the currently implemented checks are not sufficient, thereby not disabling
-  the bindings, which in turns results in failure to build properly.
-
 * No new class/application to be created to support additional conversion mode
   of beam-formed data; as agreed upon with Joe, the required implementation code
   can become part of the exiting classes, the possibility to switch between 
@@ -43,3 +39,14 @@ ________________________________________________________________________________
 
 * All source files contain a Doxygen-based documentation of their methods.
   All classes/files are contained within the group "DAL".
+
+_________________________________________________________________________________
+>>> Resolved issues
+
+* Better check of requirements for creating the Python bindings; in a number of
+  cases the currently implemented checks are not sufficient, thereby not disabling
+  the bindings, which in turns results in failure to build properly.
+
+  [04/08/2009] CMake script for DAL now tries to compile a simple test program
+  which contains all the required include statements and even uses some of the
+  newly defined variable types.
