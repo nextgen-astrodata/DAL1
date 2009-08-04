@@ -115,7 +115,8 @@ namespace DAL {
 		DO_FLOAT32_INTENSITY(doIntensity),
 		DO_CHANNELIZATION(doChannelization),
 		ds_data(0),
-		totalintensity(0)
+		totalintensity(0),
+		nrOfBlocks(0)
 		{
     	// initializations (private)
 			bigendian = BigEndian();	
@@ -804,8 +805,11 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
     int bandwidth           = 0; // Total bandwidth (MHz)
     int breaks_in_data      = 0; // Any breaks in data?
     int dispersion_measure  = 0;
-    //		int number_of_samples_per_block = header.nrSubbands * header.nrSamplesPerSubband;
-    long total_number_of_samples = nrOfBlocks * header.nrSamplesPerSubband * header.nrSubbands;
+//		int number_of_samples_per_block = header.nrSubbands * header.nrSamplesPerSubband;
+		long total_number_of_samples;
+		if (!doDownsample_p) {
+			total_number_of_samples = nrOfBlocks * header.nrSamplesPerSubband;
+		}
 #ifdef DEBUGGING_MESSAGES
     std::cout << "total_number_of_samples = " << total_number_of_samples << std::endl;
 #endif
@@ -825,7 +829,8 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
     dataset.setAttribute( "FILENAME", outputfilename.c_str() );
     dataset.setAttribute( "FILETYPE", std::string("bfstation") );
     dataset.setAttribute( "INPUT_FILESIZE", &file_byte_size);
-    dataset.setAttribute( "OFF-/ONLINE_CREATION", off_online );
+		dataset.setAttribute( "DOWNSAMPLE_RATE", &downsample_factor);
+		dataset.setAttribute( "OFF-/ONLINE_CREATION", off_online );
     dataset.setAttribute( "TELESCOPE", std::string("LOFAR") );
     dataset.setAttribute( "OBSERVER", std::string("") );
     dataset.setAttribute( "PROJECT_ID", std::string("") );
@@ -852,7 +857,7 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
     dataset.setAttribute( "DISPERSION_MEASURE", &dispersion_measure );
     dataset.setAttribute( "SECONDS_OF_DATA", &nrOfBlocks );
     dataset.setAttribute( "SAMPLE_RATE", &header.sampleRate );
-    dataset.setAttribute( "NR_OF_SAMPLES_PER_SUBBAND", &header.nrSamplesPerSubband );
+    dataset.setAttribute( "NOF_SAMPLES_PER_SUBBAND", &header.nrSamplesPerSubband );
     dataset.setAttribute( "TOTAL_NUMBER_OF_SAMPLES", &total_number_of_samples );
     dataset.setAttribute( "NUMBER_OF_BEAMS", &number_of_beams );
     dataset.setAttribute( "SUB_BEAM_DIAMETER", &sub_beam_diameter );

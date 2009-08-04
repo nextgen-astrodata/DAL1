@@ -48,6 +48,8 @@
 
 #define PI 3.141592653589793238462643
 
+#define _OPENMP
+
 namespace DAL {
   
   /*!
