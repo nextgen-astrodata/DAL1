@@ -115,10 +115,10 @@ namespace DAL   // Namespace DAL -- begin
       Coordinate ();
       //! Argumented constructor
       Coordinate (Coordinate::Type const &coordinateType,
-                  double const &nofAxes);
+                  unsigned int const &nofAxes);
       //! Argumented constructor
       Coordinate (Coordinate::Type const &coordinateType,
-                  double const &nofAxes,
+                  unsigned int const &nofAxes,
                   std::vector<std::string> const &axisNames,
                   std::vector<std::string> const &axisUnits,
                   std::vector<double> const &refValue,

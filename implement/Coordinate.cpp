@@ -51,7 +51,7 @@ namespace DAL   // Namespace DAL -- begin
     \param nofAxes        -- Number of coordinate axes.
   */
   Coordinate::Coordinate (Coordinate::Type const &coordinateType,
-                          double const &nofAxes)
+                          unsigned int const &nofAxes)
   {
     coordinateType_p = coordinateType;
     nofAxes_p        = nofAxes;
@@ -62,7 +62,7 @@ namespace DAL   // Namespace DAL -- begin
   //                                                                   Coordinate
 
   Coordinate::Coordinate (Coordinate::Type const &coordinateType,
-                          double const &nofAxes,
+                          unsigned int const &nofAxes,
                           std::vector<std::string> const &axisNames,
                           std::vector<std::string> const &axisUnits,
                           std::vector<double> const &refValue,
