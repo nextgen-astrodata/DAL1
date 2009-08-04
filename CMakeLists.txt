@@ -274,31 +274,6 @@ include_directories (
 
 ## header files of external packages
 
-if (DAL_PYTHON_BINDINGS)
-
-  if (PYTHON_INCLUDES)
-    include_directories (${PYTHON_INCLUDES})
-  else (PYTHON_INCLUDES)
-    message (STATUS "[DAL] Missing Python header files!")
-    set (DAL_PYTHON_BINDINGS NO)
-  endif (PYTHON_INCLUDES)
-
-  if (NUMPY_INCLUDES)
-    include_directories (${NUMPY_INCLUDES})
-  else (NUMPY_INCLUDES)
-    message (STATUS "[DAL] Missing numpy header files!")
-    set (DAL_PYTHON_BINDINGS NO)
-  endif (NUMPY_INCLUDES)
-  
-  if (NUM_UTIL_INCLUDES)
-    include_directories (${NUM_UTIL_INCLUDES} ${NUM_UTIL_INCLUDES}/num_util)
-  else (NUM_UTIL_INCLUDES)
-    message (STATUS "[DAL] Missing num_util header files!")
-    set (DAL_PYTHON_BINDINGS NO)
-  endif (NUM_UTIL_INCLUDES)
-  
-endif (DAL_PYTHON_BINDINGS)
-
 if (HAVE_BLITZ)
   include_directories (${BLITZ_INCLUDES})
   add_definitions (-DHAVE_BLITZ -DBZ_HAVE_NCEG_RESTRICT)
@@ -352,13 +327,47 @@ if (HAVE_WCSLIB)
 endif (HAVE_WCSLIB)
 
 ##__________________________________________________________
+## Option: Generation of Python bindings (pydal)
+
+if (DAL_PYTHON_BINDINGS)
+  
+  ## Try to compile test program
+  
+  file (WRITE ${PROJECT_BINARY_DIR}/CMakeTmp/CMakeLists.txt
+    "project (TestForPythonBindings)
+     cmake_minimum_required(VERSION 2.5)
+     include_directories (${PYTHON_INCLUDES})
+     include_directories (${BOOST_INCLUDES})
+     include_directories (${NUMPY_INCLUDES})
+     include_directories (${NUM_UTIL_INCLUDES} ${NUM_UTIL_INCLUDES}/num_util)
+     ADD_EXECUTABLE(TestForPythonBindings ${CMAKE_MODULE_PATH}/TestForPythonBindings.cc)
+     TARGET_LINK_LIBRARIES(TestForPythonBindings ${PYTHON_LIBRARIES} ${NUM_UTIL_LIBRARIES})"
+    )
+  
+  try_compile (DAL_PYTHON_BINDINGS
+    ${PROJECT_BINARY_DIR}/CMakeTmp
+    ${PROJECT_BINARY_DIR}/CMakeTmp
+    TestForPythonBindings
+    )
+
+  ## Enable include directories of test compile succeeded
+  
+  if (DAL_PYTHON_BINDINGS)
+    include_directories (${PYTHON_INCLUDES})
+    include_directories (${NUMPY_INCLUDES})
+    include_directories (${NUM_UTIL_INCLUDES} ${NUM_UTIL_INCLUDES}/num_util)
+  endif (DAL_PYTHON_BINDINGS)
+  
+endif (DAL_PYTHON_BINDINGS)
+
+##__________________________________________________________
 ## Option: Enable checking against memory leaks
 
 if (DAL_MEMORY_CHECKING)
   
   if (APPLE)
     find_library (HAVE_MALLOC_DEBUG MallocDebug ${lib_locations})
-
+    
     if (HAVE_MALLOC_DEBUG)
       message (STATUS "libMallocDebug = ${HAVE_MALLOC_DEBUG}")
     else (HAVE_MALLOC_DEBUG)
