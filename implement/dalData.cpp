@@ -29,29 +29,25 @@
 #include "dalData.h"
 #endif
 
-namespace DAL
-  {
-
-// ------------------------------------------------------------ dalData
-
+namespace DAL {
+  
+  // ------------------------------------------------------------ dalData
+  
   /*!
     \brief Default constructor.
-
-     Default constructor.
-   */
+  */
   dalData::dalData()
   {
-    dtype = "UNKNOWN";
-    filetype = "UNKNOWN";
+    dtype       = "UNKNOWN";
+    filetype    = "UNKNOWN";
     array_order = "UNKNOWN";
-    data = NULL;
+    data        = NULL;
   }
-
-// ------------------------------------------------------------ dalData
-
+  
+  // ------------------------------------------------------------ dalData
+  
   /*!
     \brief Constructor with a specific file type.
-     Constructor with a specific file type.
 
     \param lclfiletype The file type (i.e. "MSCASA", "HDF5", etc.)
     \param lcldatatype The data type this instance of the class will
@@ -72,9 +68,9 @@ namespace DAL
     nrows = lclnrows;
     data = NULL;
   }
-
-// ------------------------------------------------------------ fortran_index
-
+  
+  // ------------------------------------------------------------ fortran_index
+  
   /*!
     \brief Get the fortran index value of up to a three-dimensional array.
 
@@ -89,27 +85,29 @@ namespace DAL
     \param idx3 Specifies the third index.
 
     \return A single value index for the multi-dimensional array.
-   */
-  unsigned long dalData::fortran_index(long idx1, long idx2, long idx3)
+  */
+  unsigned long dalData::fortran_index (long idx1,
+					long idx2,
+					long idx3)
   {
     std::vector<long> indices;
-
+    
     if ( idx1>-1 )
       indices.push_back( idx1 );
     if ( idx2>-1 )
       indices.push_back( idx2 );
     if ( idx3>-1 )
       indices.push_back( idx3 );
-
+    
     if (indices.size() != (shape.size()) )
       {
         cerr << "ERROR: Number of indices do not match shape of column." << endl;
         return(-1);
       }
-
+    
     unsigned long index = 0;
     long bb = 1;
-
+    
     shape.insert( shape.begin(), 1 );
     for (unsigned int dim=0; dim<shape.size()-1; dim++)
       {
@@ -122,13 +120,12 @@ namespace DAL
     shape.erase( shape.begin() );
     return index;
   }
-
-
-// ------------------------------------------------------------ c_index
-
+  
+  // ------------------------------------------------------------ c_index
+  
   /*!
     \brief Get the C index value of up to a three-dimensional array.
-
+    
     This is a helper function that is usually called by the dataset
     object and not by the developer.  Its purpose is to find a single
     index value within a multi-dimensional array, but that index depends
@@ -141,7 +138,9 @@ namespace DAL
 
     \return A single value index for the multi-dimensional array.
    */
-  unsigned long dalData::c_index(long idx1, long idx2, long idx3)
+  unsigned long dalData::c_index (long idx1,
+				  long idx2,
+				  long idx3)
   {
     std::vector<long> indices;
 
@@ -189,9 +188,9 @@ namespace DAL
     if ( data )
       free(data);
   }
-
-// ------------------------------------------------------------ get
-
+  
+  // ------------------------------------------------------------ get
+  
   /*!
     \brief Get the data.
 
@@ -203,10 +202,12 @@ namespace DAL
 
     \return void * Pointer to an arbitrary data structure.
    */
-  void * dalData::get( long idx1, long idx2, long idx3 )
+  void * dalData::get (long idx1,
+		       long idx2,
+		       long idx3)
   {
     unsigned long index = 0;
-
+    
     //
     // Determine the correct index value, depending on the order
     //   of the underlying array (determined by the filetype)
@@ -255,31 +256,37 @@ namespace DAL
     return NULL;
   }
 
+  // ============================================================================
+  //
+  //  Python bindings
+  //
+  // ============================================================================
+
 #ifdef PYTHON
-
-// ------------------------------------------------------------ get_boost1
-
+  
+  // ------------------------------------------------------------ get_boost1
+  
   bpl::numeric::array dalData::get_boost1()
   {
     return get_boost3(0,-1);
   }
-
-// ------------------------------------------------------------ get_boost2
-
+  
+  // ------------------------------------------------------------ get_boost2
+  
   bpl::numeric::array dalData::get_boost2( int32_t length )
   {
     return get_boost3(0,length);
   }
-
-// ------------------------------------------------------------ get_boost3
-
+  
+  // ------------------------------------------------------------ get_boost3
+  
   bpl::numeric::array dalData::get_boost3( int64_t offset, int32_t length )
   {
     bpl::list data_list;
     std::vector<int> mydims;
-
+    
     unsigned int hh = 0;
-
+    
     if (length>0)
       {
         mydims.push_back(length);
@@ -289,7 +296,7 @@ namespace DAL
       {
         mydims.push_back(shape[hh]);
       }
-
+    
     if ( dal_CHAR == dtype )
       {
         return num_util::makeNum( ((char*)data) + offset, mydims );
@@ -325,7 +332,7 @@ namespace DAL
     else if ( dal_STRING == dtype )
       {
         bpl::list data_list;
-
+	
         if ( 1 == shape.size() ) // 1D case
           {
             for (int ii=0; ii<nrows; ii++)
@@ -351,7 +358,7 @@ namespace DAL
             std::cerr << "ERROR: string array rank > 3 not supported. "
                       << "dalData::get_boost()\n";
           }
-
+	
         bpl::numeric::array narray = num_util::makeNum(data_list);
         return narray;
       }
@@ -359,18 +366,18 @@ namespace DAL
       {
         std::cerr << "ERROR:  Datatype '" << dtype
                   << "' not yet supported.  (dalData::get_boost)\n";
-
+	
         for (int ii=0; ii<1; ii++)
           data_list.append(0);
-
+	
         bpl::numeric::array nadata( data_list );
-
+	
         return nadata;
       }
   }
-
+  
 #endif  // PYTHON
-
-
+  
+  
 } // DAL namespace
 

@@ -201,15 +201,25 @@ namespace DAL {  // Namespace DAL -- begin
 	os << "--> Illegal number of attached attributes!" << endl;
       }
       else {
+	std::vector<double> antennaPositionValue;
+	std::vector<std::string> antennaPositionUnit;
+	std::vector<double> antennaOrientationValue;
+	std::vector<std::string> antennaOrientationUnit;
+	// Retrieve attributes
+	antenna_position_value(antennaPositionValue);
+	antenna_position_unit(antennaPositionUnit);
+	antenna_orientation_value(antennaOrientationValue);
+	antenna_orientation_unit(antennaOrientationUnit);
+	/* Display attributes */
 	os << "-- STATION_ID .............. = " << station_id()                << endl;
 	os << "-- RSP_ID .................. = " << rsp_id()                    << endl;
 	os << "-- RCU_ID .................. = " << rcu_id()                    << endl;
 	os << "-- CHANNEL_ID .............. = " << channelName()               << endl;
-	os << "-- ANTENNA_POSITION_VALUE .. = " << antenna_position_value()    << endl;
-	os << "-- ANTENNA_POSITION_UNIT ... = " << antenna_position_unit()     << endl;
+	os << "-- ANTENNA_POSITION_VALUE .. = " << antennaPositionValue    << endl;
+	os << "-- ANTENNA_POSITION_UNIT ... = " << antennaPositionUnit     << endl;
 	os << "-- ANTENNA_POSITION_FRAME .. = " << antenna_position_frame()    << endl;
-	os << "-- ANTENNA_ORIENTATION_VALUE = " << antenna_orientation_value() << endl;
-	os << "-- ANTENNA_ORIENTATION_UNIT  = " << antenna_orientation_unit()  << endl;
+	os << "-- ANTENNA_ORIENTATION_VALUE = " << antennaOrientationValue << endl;
+	os << "-- ANTENNA_ORIENTATION_UNIT  = " << antennaOrientationUnit  << endl;
 	os << "-- ANTENNA_ORIENTATION_FRAME = " << antenna_orientation_frame() << endl;
 	os << "-- SAMPLE_FREQUENCY_VALUE .. = " << sample_frequency_value()    << endl;
 	os << "-- SAMPLE_FREQUENCY_UNIT ... = " << sample_frequency_unit()     << endl;
@@ -542,27 +552,6 @@ namespace DAL {  // Namespace DAL -- begin
     return status;
   }
   
-  // ----------------------------------------------------------- sample_frequency
-  
-  /*!
-    \return freq -- The ADC sample frequency, as casa::Measure
-  */
-  casa::MFrequency TBB_DipoleDataset::sample_frequency ()
-  {
-    if (datasetID_p > 0) {
-      casa::Quantity qFreq = DAL::h5get_quantity (datasetID_p,
-						  DAL::SAMPLE_FREQUENCY_VALUE,
-						  DAL::SAMPLE_FREQUENCY_UNIT);
-      return casa::MFrequency (qFreq,
-			       casa::MFrequency::TOPO);
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::sample_frequency] Dataset undefined!"
-	   << endl;
-      return casa::MFrequency();
-    }
-  }
-  
   // --------------------------------------------------------------- nyquist_zone
   
   /*!
@@ -797,60 +786,28 @@ namespace DAL {  // Namespace DAL -- begin
     }
   }
   
-  // ----------------------------------------------------- antenna_position_value
+  //_____________________________________________________________________________
+  //                                                       antenna_position_value
 
   /*!
     \return value -- Numerical value of the antenna position coordinates, e.g.
             <tt>value=[10,12,0]</tt>
   */
-#ifdef HAVE_CASA
-  casa::Vector<double> TBB_DipoleDataset::antenna_position_value ()
+  bool TBB_DipoleDataset::antenna_position_value (std::vector<double> &value)
   {
-    casa::Vector<double> val;
-    
-    if (DAL::h5get_attribute(datasetID_p,
-                             attribute_name(DAL::ANTENNA_POSITION_VALUE),
-                             val)) {
-      return val;
-    }
-    else {
-      return casa::Vector<double> (1);
-    }
+    return DAL::h5get_attribute(datasetID_p,
+				attribute_name(DAL::ANTENNA_POSITION_VALUE),
+				value);
   }
-#else
-  std::vector<double> TBB_DipoleDataset::antenna_position_value ()
-  {
-    std::vector<double> val;
-    
-    if (DAL::h5get_attribute(datasetID_p,
-                             attribute_name(DAL::ANTENNA_POSITION_VALUE),
-                             val)) {
-      return val;
-    }
-    else {
-      return std::vector<double> (1);
-    }
-  }
-#endif
   
-  // ------------------------------------------------------ antenna_position_unit
-  
-  /*!
-    \return unit -- Physical unit associated with the numerical values for the
-            antenna position, e.g. <tt>unit="m"</tt>
-  */
-  casa::Vector<casa::String> TBB_DipoleDataset::antenna_position_unit ()
-  {
-    casa::Vector<casa::String> val;
+  //_____________________________________________________________________________
+  //                                                        antenna_position_unit
 
-    if (DAL::h5get_attribute(datasetID_p,
-                             attribute_name(DAL::ANTENNA_POSITION_UNIT),
-                             val)) {
-      return val;
-    }
-    else {
-      return casa::Vector<casa::String> (1);
-    }
+  bool TBB_DipoleDataset::antenna_position_unit (std::vector<std::string> &unit)
+  {
+    return DAL::h5get_attribute(datasetID_p,
+				attribute_name(DAL::ANTENNA_POSITION_UNIT),
+				unit);
   }
   
   // ----------------------------------------------------- antenna_position_frame
@@ -873,56 +830,18 @@ namespace DAL {  // Namespace DAL -- begin
     }
   }
   
-  // ----------------------------------------------------------- antenna_position
-
-  /*!
-    \return position -- The antenna position as casa::Measure, combining the
-            information from ANTENNA_POSITION_VALUE, ANTENNA_POSITION_UNIT and
-      ANTENNA_POSITION_FRAME.
-  */
-  casa::MPosition TBB_DipoleDataset::antenna_position ()
-  {
-    return DAL::h5get_position (datasetID_p,
-                                DAL::ANTENNA_POSITION_VALUE,
-                                DAL::ANTENNA_POSITION_UNIT,
-                                DAL::ANTENNA_POSITION_FRAME);
-  }
-
   // -------------------------------------------------- antenna_orientation_value
 
   /*!
     \return value -- The numerical values describing the antenna position; this
             can be either a set of Euler angles or a normal vector.
   */
-#ifdef HAVE_CASA
-  casa::Vector<double> TBB_DipoleDataset::antenna_orientation_value ()
+  bool TBB_DipoleDataset::antenna_orientation_value (std::vector<double> &value)
   {
-    casa::Vector<double> val;
-
-    if (DAL::h5get_attribute(datasetID_p,
-                             attribute_name(DAL::ANTENNA_ORIENTATION_VALUE),
-                             val)) {
-      return val;
-    }
-    else {
-      return casa::Vector<double> (1);
-    }
+    return DAL::h5get_attribute(datasetID_p,
+				attribute_name(DAL::ANTENNA_ORIENTATION_VALUE),
+				value);
   }
-#else
-  std::vector<double> TBB_DipoleDataset::antenna_orientation_value ()
-  {
-    std::vector<double> val;
-
-    if (DAL::h5get_attribute(datasetID_p,
-                             attribute_name(DAL::ANTENNA_ORIENTATION_VALUE),
-                             val)) {
-      return val;
-    }
-    else {
-      return std::vector<double> (1);
-    }
-  }
-#endif
 
   // --------------------------------------------------- antenna_orientation_unit
 
@@ -931,35 +850,12 @@ namespace DAL {  // Namespace DAL -- begin
             antenna orientation; depending on the parametrization this can be
       <tt>unit="rad"</tt>, <tt>unit="deg"</tt> or <tt>unit="m"</tt>.
   */
-#ifdef HAVE_CASA
-  casa::Vector<casa::String> TBB_DipoleDataset::antenna_orientation_unit ()
+  bool TBB_DipoleDataset::antenna_orientation_unit (std::vector<std::string> &unit)
   {
-    casa::Vector<casa::String> val;
-
-    if (DAL::h5get_attribute(datasetID_p,
-                             attribute_name(DAL::ANTENNA_ORIENTATION_UNIT),
-                             val)) {
-      return val;
-    }
-    else {
-      return casa::Vector<casa::String> (1);
-    }
+    return DAL::h5get_attribute(datasetID_p,
+				attribute_name(DAL::ANTENNA_ORIENTATION_UNIT),
+				unit);
   }
-#else
-  std::vector<std::string> TBB_DipoleDataset::antenna_orientation_unit ()
-  {
-    std::vector<std::string> val;
-
-    if (DAL::h5get_attribute(datasetID_p,
-                             attribute_name(DAL::ANTENNA_ORIENTATION_UNIT),
-                             val)) {
-      return val;
-    }
-    else {
-      return std::vector<std::string> (1);
-    }
-  }
-#endif
   
   // -------------------------------------------------- antenna_orientation_frame
 
@@ -1051,12 +947,11 @@ namespace DAL {  // Namespace DAL -- begin
       
       rank = H5Sget_simple_extent_ndims(filespaceID);
       
-      if (rank < 0)
-	{
-	  cerr << "[TBB_DipoleDataset::fx]"
-	       << " Error retrieving rank of dataspace!" << endl;
-	  return false;
-	}
+      if (rank < 0) {
+	cerr << "[TBB_DipoleDataset::fx]"
+	     << " Error retrieving rank of dataspace!" << endl;
+	return false;
+      }
       
       /* Retrieve the dimension of the dataspace, i.e. the number of samples */
       
@@ -1064,16 +959,14 @@ namespace DAL {  // Namespace DAL -- begin
       h5error = H5Sget_simple_extent_dims (filespaceID,
 					   shape,
 					   NULL);
-      if (h5error < 0)
-	{
-	  cerr << "[TBB_DipoleDataset::fx]"
-	       << " Error retrieving dataspace dimension!" << endl;
-	  return false;
-	}
-      else
-	{
-	  shape[0] = nofSamples;
-	}
+      if (h5error < 0) {
+	cerr << "[TBB_DipoleDataset::fx]"
+	     << " Error retrieving dataspace dimension!" << endl;
+	return false;
+      }
+      else {
+	shape[0] = nofSamples;
+      }
       
       /* Set up memory space to retrieve the data read from the file */
       
@@ -1082,17 +975,15 @@ namespace DAL {  // Namespace DAL -- begin
 					 shape);
       hsize_t offset[1];
       
-      if (filespaceID < 0)
-	{
-	  cerr << "[TBB_DipoleDataset::fx]"
-	       << " Error creating memory space for reading in data!"
-	       << endl;
-	  return false;
-	}
-      else
-	{
-	  offset[0] = start;
-	}
+      if (filespaceID < 0) {
+	cerr << "[TBB_DipoleDataset::fx]"
+	     << " Error creating memory space for reading in data!"
+	     << endl;
+	return false;
+      }
+      else {
+	offset[0] = start;
+      }
       
       /* Select the hyperslab through the data volume */
       
@@ -1103,13 +994,12 @@ namespace DAL {  // Namespace DAL -- begin
 				     shape,
 				     NULL);
       
-      if (h5error < 0)
-	{
-	  cerr << "[TBB_DipoleDataset::fx]"
-	       << " Error selecting hyperslab through the data!"
-	       << endl;
-	  return false;
-	}
+      if (h5error < 0) {
+	cerr << "[TBB_DipoleDataset::fx]"
+	     << " Error selecting hyperslab through the data!"
+	     << endl;
+	return false;
+      }
       
       /* Retrieve the actual data from the file */
       
@@ -1120,26 +1010,261 @@ namespace DAL {  // Namespace DAL -- begin
 			 H5P_DEFAULT,
 			 data);
       
-      if (h5error < 0)
-	{
-	  cerr << "[TBB_DipoleDataset::fx]"
-	       << " Error reading data from file into buffer!"
-	       << endl;
-	  return false;
-	}
-    }
-    else
-      {
-        cerr << "[TBB_DipoleDataset::fx]"
-             << " Unable to read with connection to dataset object!"
-             << endl;
-        return false;
+      if (h5error < 0) {
+	cerr << "[TBB_DipoleDataset::fx]"
+	     << " Error reading data from file into buffer!"
+	     << endl;
+	return false;
       }
+    }
+    else {
+      cerr << "[TBB_DipoleDataset::fx]"
+	   << " Unable to read with connection to dataset object!"
+	   << endl;
+      return false;
+    }
     
     return true;
   }
   
-  // ------------------------------------------------------------------------- fx
+  // ============================================================================
+  //
+  //  Methods using casacore
+  //
+  // ============================================================================
+  
+#ifdef HAVE_CASA
+
+  //_____________________________________________________________________________
+  //                                                       antenna_position_value
+  
+  bool TBB_DipoleDataset::antenna_position_value (casa::Vector<double> &value)
+  {
+    return DAL::h5get_attribute(datasetID_p,
+				attribute_name(DAL::ANTENNA_POSITION_VALUE),
+				value);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                        antenna_position_unit
+  
+  /*!
+    \return unit -- Physical unit associated with the numerical values for the
+            antenna position, e.g. <tt>unit="m"</tt>
+  */
+  bool TBB_DipoleDataset::antenna_position_unit (casa::Vector<casa::String> &unit)
+  {
+    return DAL::h5get_attribute(datasetID_p,
+				attribute_name(DAL::ANTENNA_POSITION_UNIT),
+				unit);
+  }
+
+  //_____________________________________________________________________________
+  //                                                             antenna_position
+
+  /*!
+    \return position -- The antenna position as casa::Measure, combining the
+            information from ANTENNA_POSITION_VALUE, ANTENNA_POSITION_UNIT and
+      ANTENNA_POSITION_FRAME.
+  */
+  casa::MPosition TBB_DipoleDataset::antenna_position ()
+  {
+    return DAL::h5get_position (datasetID_p,
+                                DAL::ANTENNA_POSITION_VALUE,
+                                DAL::ANTENNA_POSITION_UNIT,
+                                DAL::ANTENNA_POSITION_FRAME);
+  }
+
+  //_____________________________________________________________________________
+  //                                                    antenna_orientation_value
+  
+  bool TBB_DipoleDataset::antenna_orientation_value (casa::Vector<double> &value)
+  {
+    return DAL::h5get_attribute(datasetID_p,
+				attribute_name(DAL::ANTENNA_ORIENTATION_VALUE),
+				value);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                     antenna_orientation_unit
+  
+  bool TBB_DipoleDataset::antenna_orientation_unit (casa::Vector<casa::String> &unit)
+  {
+    return DAL::h5get_attribute(datasetID_p,
+				attribute_name(DAL::ANTENNA_ORIENTATION_UNIT),
+				unit);
+  }
+
+  //_____________________________________________________________________________
+  //                                                             sample_frequency
+  
+  bool TBB_DipoleDataset::sample_frequency (casa::Quantity &freq)
+  { 
+    if (datasetID_p > 0) {
+      freq = DAL::h5get_quantity (datasetID_p,
+				  DAL::SAMPLE_FREQUENCY_VALUE,
+				  DAL::SAMPLE_FREQUENCY_UNIT);
+      return true;
+    }
+    else {
+      cerr << "[TBB_DipoleDataset::sample_frequency] Dataset undefined!"
+	   << endl;
+      return false;
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                             sample_frequency
+  
+  bool TBB_DipoleDataset::sample_frequency (casa::MFrequency &freq)
+  {
+    if (datasetID_p > 0) {
+      casa::Quantity qFreq = DAL::h5get_quantity (datasetID_p,
+						  DAL::SAMPLE_FREQUENCY_VALUE,
+						  DAL::SAMPLE_FREQUENCY_UNIT);
+      freq = casa::MFrequency (qFreq,
+			       casa::MFrequency::TOPO);
+      return true;
+    }
+    else {
+      cerr << "[TBB_DipoleDataset::sample_frequency] Dataset undefined!"
+	   << endl;
+      return false;
+    }
+  }
+
+  //_____________________________________________________________________________
+  //                                                         set_sample_frequency
+  
+  /*!
+    \param freq -- The ADC sample frequency as casa::Quantity
+  */
+  bool TBB_DipoleDataset::set_sample_frequency (casa::Quantity const &freq)
+  {
+    bool status (true);
+    
+    status *= set_sample_frequency_value (freq.getValue());
+    status *= set_sample_frequency_unit (freq.getUnit());
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                            recordDescription
+
+  /*!
+    \return recDesc -- Record descriptor containing the information on how to
+            structure the record as which the attributes attached to the dataset
+	    can be retrieved.
+  */
+  casa::RecordDesc TBB_DipoleDataset::recordDescription ()
+  {
+    casa::RecordDesc desc;
+
+    desc.addField (DAL::attribute_name(DAL::STATION_ID),casa::TpUInt);
+    desc.addField (DAL::attribute_name(DAL::RSP_ID),casa::TpUInt);
+    desc.addField (DAL::attribute_name(DAL::RCU_ID),casa::TpUInt);
+    desc.addField (DAL::attribute_name(DAL::TIME),casa::TpUInt);
+    desc.addField (DAL::attribute_name(DAL::SAMPLE_FREQUENCY_VALUE),casa::TpDouble);
+    desc.addField (DAL::attribute_name(DAL::SAMPLE_FREQUENCY_UNIT),casa::TpString);
+    desc.addField (DAL::attribute_name(DAL::NYQUIST_ZONE),casa::TpUInt);
+    desc.addField (DAL::attribute_name(DAL::SAMPLE_NUMBER),casa::TpUInt);
+    desc.addField (DAL::attribute_name(DAL::SAMPLES_PER_FRAME),casa::TpUInt);
+    desc.addField (DAL::attribute_name(DAL::ANTENNA_POSITION_VALUE),casa::TpDouble);
+    desc.addField (DAL::attribute_name(DAL::ANTENNA_POSITION_UNIT),casa::TpString);
+    desc.addField (DAL::attribute_name(DAL::ANTENNA_POSITION_FRAME),casa::TpString);
+    desc.addField (DAL::attribute_name(DAL::ANTENNA_ORIENTATION_VALUE),casa::TpDouble);
+    desc.addField (DAL::attribute_name(DAL::ANTENNA_ORIENTATION_UNIT),casa::TpString);
+    desc.addField (DAL::attribute_name(DAL::ANTENNA_ORIENTATION_FRAME),casa::TpString);
+    desc.addField (DAL::attribute_name(DAL::FEED),casa::TpString);
+
+    return desc;
+  }
+
+  //_____________________________________________________________________________
+  //                                                            attributes2record
+  
+  /*!
+      \return record -- A casa::Record container holding the values of the
+              attributes attached to the dataset for this dipole
+  */
+  casa::Record TBB_DipoleDataset::attributes2record ()
+  {
+    casa::Record rec;
+
+    attributes2record (rec);
+
+    return rec;
+  }
+
+  //_____________________________________________________________________________
+  //                                                            attributes2record
+
+  /*!
+    \retval record -- A casa::Record container holding the values of the
+            attributes attached to the dataset for this dipole
+  */
+  bool TBB_DipoleDataset::attributes2record (casa::Record &rec)
+  {
+    bool status (true);
+    
+    try {
+      casa::Vector<double> antennaPositionValue;
+      casa::Vector<casa::String> antennaPositionUnit;
+      casa::Vector<double> antennaOrientationValue;
+      casa::Vector<casa::String> antennaOrientationUnit;
+
+      // Retrieve attribute values
+      antenna_position_value (antennaPositionValue);
+      antenna_position_unit  (antennaPositionUnit);
+      antenna_orientation_value (antennaOrientationValue);
+      antenna_orientation_unit (antennaOrientationUnit);
+
+      // Fill record
+      rec.define(casa::RecordFieldId(attribute_name(DAL::STATION_ID)),
+		 station_id());
+      rec.define(casa::RecordFieldId(attribute_name(DAL::RSP_ID)),
+		 rsp_id());
+      rec.define(casa::RecordFieldId(attribute_name(DAL::RCU_ID)),
+		 rcu_id());
+      rec.define(casa::RecordFieldId(attribute_name(DAL::TIME)),
+		 time());
+      rec.define(casa::RecordFieldId(attribute_name(DAL::NYQUIST_ZONE)),
+		 nyquist_zone());
+      rec.define(casa::RecordFieldId(attribute_name(DAL::SAMPLE_NUMBER)),
+		 sample_number());
+      rec.define(casa::RecordFieldId(attribute_name(DAL::SAMPLES_PER_FRAME)),
+		 samples_per_frame());
+      rec.define(casa::RecordFieldId(attribute_name(DAL::FEED)),
+		 feed());
+      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_POSITION_VALUE)),
+		 antennaPositionValue);
+      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_POSITION_UNIT)),
+		 antennaPositionUnit);
+      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_POSITION_FRAME)),
+		 antenna_position_frame());
+      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_ORIENTATION_VALUE)),
+		 antennaOrientationValue);
+      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_ORIENTATION_UNIT)),
+		 antennaOrientationUnit);
+      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_ORIENTATION_FRAME)),
+		 antenna_orientation_frame());
+      rec.define(casa::RecordFieldId(attribute_name(DAL::DATA_LENGTH)),
+		 data_length());
+    }
+    catch (std::string message) {
+      cerr << "[TBB_DipoleDataset::attributes2record] "
+	   << "Error filling the record with attribute values!\n"
+	   << message
+	   << endl;
+      status = false;
+    }
+    
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                           fx
   
   /*!
     \param start      -- Number of the sample at which to start reading
@@ -1191,105 +1316,6 @@ namespace DAL {  // Namespace DAL -- begin
     }
   }
   
-  // ---------------------------------------------------------- recordDescription
-
-  /*!
-    \return recDesc -- Record descriptor containing the information on how to
-            structure the record as which the attributes attached to the dataset
-      can be retrieved.
-  */
-  casa::RecordDesc TBB_DipoleDataset::recordDescription ()
-  {
-    casa::RecordDesc desc;
-
-    desc.addField (DAL::attribute_name(DAL::STATION_ID),casa::TpUInt);
-    desc.addField (DAL::attribute_name(DAL::RSP_ID),casa::TpUInt);
-    desc.addField (DAL::attribute_name(DAL::RCU_ID),casa::TpUInt);
-    desc.addField (DAL::attribute_name(DAL::TIME),casa::TpUInt);
-    desc.addField (DAL::attribute_name(DAL::SAMPLE_FREQUENCY_VALUE),casa::TpDouble);
-    desc.addField (DAL::attribute_name(DAL::SAMPLE_FREQUENCY_UNIT),casa::TpString);
-    desc.addField (DAL::attribute_name(DAL::NYQUIST_ZONE),casa::TpUInt);
-    desc.addField (DAL::attribute_name(DAL::SAMPLE_NUMBER),casa::TpUInt);
-    desc.addField (DAL::attribute_name(DAL::SAMPLES_PER_FRAME),casa::TpUInt);
-    desc.addField (DAL::attribute_name(DAL::ANTENNA_POSITION_VALUE),casa::TpDouble);
-    desc.addField (DAL::attribute_name(DAL::ANTENNA_POSITION_UNIT),casa::TpString);
-    desc.addField (DAL::attribute_name(DAL::ANTENNA_POSITION_FRAME),casa::TpString);
-    desc.addField (DAL::attribute_name(DAL::ANTENNA_ORIENTATION_VALUE),casa::TpDouble);
-    desc.addField (DAL::attribute_name(DAL::ANTENNA_ORIENTATION_UNIT),casa::TpString);
-    desc.addField (DAL::attribute_name(DAL::ANTENNA_ORIENTATION_FRAME),casa::TpString);
-    desc.addField (DAL::attribute_name(DAL::FEED),casa::TpString);
-
-    return desc;
-  }
-
-  //_____________________________________________________________________________
-  // Get a casa::Record containing the values of the attributes
-
-  /*!
-      \return record -- A casa::Record container holding the values of the
-              attributes attached to the dataset for this dipole
-  */
-  casa::Record TBB_DipoleDataset::attributes2record ()
-  {
-    casa::Record rec;
-
-    attributes2record (rec);
-
-    return rec;
-  }
-
-  //_____________________________________________________________________________
-  // Get a casa::Record containing the values of the attributes
-
-  /*!
-    \retval record -- A casa::Record container holding the values of the
-            attributes attached to the dataset for this dipole
-  */
-  bool TBB_DipoleDataset::attributes2record (casa::Record &rec)
-  {
-    bool status (true);
-    
-    try {
-      rec.define(casa::RecordFieldId(attribute_name(DAL::STATION_ID)),
-		 station_id());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::RSP_ID)),
-		 rsp_id());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::RCU_ID)),
-		 rcu_id());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::TIME)),
-		 time());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::NYQUIST_ZONE)),
-		 nyquist_zone());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::SAMPLE_NUMBER)),
-		 sample_number());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::SAMPLES_PER_FRAME)),
-		 samples_per_frame());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::FEED)),
-		 feed());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_POSITION_VALUE)),
-		 antenna_position_value());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_POSITION_UNIT)),
-		 antenna_position_unit());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_POSITION_FRAME)),
-		 antenna_position_frame());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_ORIENTATION_VALUE)),
-		 antenna_orientation_value());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_ORIENTATION_UNIT)),
-		 antenna_orientation_unit());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_ORIENTATION_FRAME)),
-		 antenna_orientation_frame());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::DATA_LENGTH)),
-		 data_length());
-    }
-    catch (std::string message) {
-      cerr << "[TBB_DipoleDataset::attributes2record] "
-	   << "Error filling the record with attribute values!\n"
-	   << message
-	   << endl;
-      status = false;
-    }
-    
-    return status;
-  }
+#endif
   
 } // Namespace DAL -- end

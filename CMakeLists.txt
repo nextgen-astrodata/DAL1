@@ -120,12 +120,24 @@ check_type_size ("int64_t"       SIZEOF_INT64_T     )
 check_type_size ("float"         SIZEOF_FLOAT       )
 check_type_size ("double"        SIZEOF_DOUBLE      )
 check_type_size ("long"          SIZEOF_LONG        )
+check_type_size ("long int"      SIZEOF_LONG_INT   )
 check_type_size ("long long"     SIZEOF_LONG_LONG   )
 check_type_size ("uint"          SIZEOF_UINT        )
+
+message (STATUS "Size of int         = ${SIZEOF_INT}")
+message (STATUS "Size of int32_t     = ${SIZEOF_INT32_T}")
+message (STATUS "Size of int64_t     = ${SIZEOF_INT64_T}")
+message (STATUS "Size of long        = ${SIZEOF_LONG}")
+message (STATUS "Size of long int    = ${SIZEOF_LONG_INT}")
+message (STATUS "Size of long long   = ${SIZEOF_LONG_LONG}")
 
 if (SIZEOF_LONG_LONG)
     add_definitions (-DHAVE_LONG_LONG)
 endif (SIZEOF_LONG_LONG)
+
+if (SIZEOF_INT64_T EQUAL SIZEOF_LONG_INT)
+  add_definitions (-DINT64_IS_LONG_INT)
+endif (SIZEOF_INT64_T EQUAL SIZEOF_LONG_INT)
 
 ##__________________________________________________________
 ## Blitz++

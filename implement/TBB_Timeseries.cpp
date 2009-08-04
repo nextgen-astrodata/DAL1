@@ -921,34 +921,6 @@ namespace DAL {  // Namespace DAL -- begin
   }
 #endif
 
-  // ----------------------------------------------------------- sample_frequency
-
-#ifdef HAVE_CASA
-  casa::Vector<casa::MFrequency> TBB_Timeseries::sample_frequency ()
-  {
-    uint n           = 0;
-    uint station     = 0;
-    uint dipole      = 0;
-    uint nofDipoles  = nofDipoleDatasets();
-    uint nofStations = nofStationGroups();
-    casa::Vector<casa::MFrequency> freq (nofDipoles);
-    casa::Vector<casa::MFrequency> tmp;
-
-    for (station=0; station<nofStations; station++)
-      {
-        tmp = groups_p[station].sample_frequency();
-        nofDipoles = groups_p[station].nofDipoleDatasets();
-        for (dipole=0; dipole<nofDipoles; dipole++)
-          {
-            freq(n) = tmp(dipole);
-            n++;
-          }
-      }
-
-    return freq;
-  }
-#endif
-
   // ---------------------------------------------------------------- data_length
 
 #ifdef HAVE_CASA
@@ -1024,78 +996,6 @@ namespace DAL {  // Namespace DAL -- begin
       }
 
     return offset;
-  }
-
-  // ---------------------------------------------------------- attributes2record
-
-  /*!
-    \param recursive    -- Recursively add information from the station groups
-           and dipole datasets? If set to \e true the file structure will be
-     transverse recursively, collecting the attributes attached to the
-     embedded objects.
-
-    \return rec -- casa::Record to which the values of the attributes will be
-            added as new entries.
-  */
-  casa::Record TBB_Timeseries::attributes2record (bool const &recursive)
-  {
-    casa::Record rec;
-
-    try
-      {
-        rec.define(casa::RecordFieldId(attribute_name(DAL::TELESCOPE)),
-                   telescope());
-        rec.define(casa::RecordFieldId(attribute_name(DAL::OBSERVER)),
-                   observer());
-        rec.define(casa::RecordFieldId(attribute_name(DAL::PROJECT)),
-                   project());
-        rec.define(casa::RecordFieldId(attribute_name(DAL::OBSERVATION_ID)),
-                   observation_id());
-        rec.define(casa::RecordFieldId(attribute_name(DAL::OBSERVATION_MODE)),
-                   observation_mode());
-      }
-    catch (std::string message)
-      {
-        std::cerr << "[TBB_Timeseries::attributes2record]" << message << std::endl;
-      }
-
-    //________________________________________________________________
-    // Recursive retrieval of the attributes attached to the station
-    // groups and dipole datasets
-
-    if (recursive)
-      {
-        std::string group;
-        casa::Record recordStation;
-        for (uint n(0); n<groups_p.size(); n++)
-          {
-            group = groups_p[n].group_name(true);
-            // retrieve the attributes for the dipole data-set as record
-            recordStation = groups_p[n].attributes2record(recursive);
-            // ... and add it to the existing record
-            rec.defineRecord (group,recordStation);
-          }
-      }
-
-    return rec;
-  }
-
-  // ---------------------------------------------------- attributes2headerRecord
-
-  /*!
-    \return rec -- Create record entries conforming to the information expected
-            in the header record of the CR::DataReader class.
-  */
-  casa::Record TBB_Timeseries::attributes2headerRecord ()
-  {
-    casa::Record rec;
-
-    rec.define("Date",min(time()));
-    rec.define("AntennaIDs",channelID());
-    rec.define("Observatory",telescope());
-    rec.define("Filesize",min(data_length()));
-
-    return rec;
   }
 
   // ------------------------------------------------------------------------- fx
@@ -1179,6 +1079,115 @@ namespace DAL {  // Namespace DAL -- begin
       }
 
     return data;
+  }
+
+#endif
+
+  // ============================================================================
+  //
+  //  Methods using casacore
+  //
+  // ============================================================================
+
+#ifdef HAVE_CASA
+
+  //_____________________________________________________________________________
+  //                                                             sample_frequency
+
+  casa::Vector<casa::MFrequency> TBB_Timeseries::sample_frequency ()
+  {
+    bool status (true);
+    uint n           = 0;
+    uint station     = 0;
+    uint dipole      = 0;
+    uint nofDipoles  = nofDipoleDatasets();
+    uint nofStations = nofStationGroups();
+    casa::Vector<casa::MFrequency> freq (nofDipoles);
+    casa::Vector<casa::MFrequency> tmp;
+
+    for (station=0; station<nofStations; station++) {
+      /* Retrieve sample frequencies per station */
+      status = groups_p[station].sample_frequency(tmp);
+      /* Determine number of dipoles within this station */
+      nofDipoles = groups_p[station].nofDipoleDatasets();
+      /* Copy the data to the returned array */
+      for (dipole=0; dipole<nofDipoles; dipole++) {
+	freq(n) = tmp(dipole);
+	n++;
+      }
+    }
+    
+    return freq;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                            attributes2record
+
+  /*!
+    \param recursive    -- Recursively add information from the station groups
+           and dipole datasets? If set to \e true the file structure will be
+     transverse recursively, collecting the attributes attached to the
+     embedded objects.
+
+    \return rec -- casa::Record to which the values of the attributes will be
+            added as new entries.
+  */
+  casa::Record TBB_Timeseries::attributes2record (bool const &recursive)
+  {
+    casa::Record rec;
+
+    try {
+      rec.define(casa::RecordFieldId(attribute_name(DAL::TELESCOPE)),
+		 telescope());
+      rec.define(casa::RecordFieldId(attribute_name(DAL::OBSERVER)),
+		 observer());
+      rec.define(casa::RecordFieldId(attribute_name(DAL::PROJECT)),
+		 project());
+      rec.define(casa::RecordFieldId(attribute_name(DAL::OBSERVATION_ID)),
+		 observation_id());
+      rec.define(casa::RecordFieldId(attribute_name(DAL::OBSERVATION_MODE)),
+		 observation_mode());
+    }
+    catch (std::string message) {
+      std::cerr << "[TBB_Timeseries::attributes2record]" << message << std::endl;
+    }
+    
+    //________________________________________________________________
+    // Recursive retrieval of the attributes attached to the station
+    // groups and dipole datasets
+    
+    if (recursive) {
+      std::string group;
+      casa::Record recordStation;
+      for (uint n(0); n<groups_p.size(); n++) {
+	group = groups_p[n].group_name(true);
+	// retrieve the attributes for the dipole data-set as record
+	recordStation = groups_p[n].attributes2record(recursive);
+	// ... and add it to the existing record
+	rec.defineRecord (group,recordStation);
+      }
+    }
+    
+    return rec;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                      attributes2headerRecord
+
+  /*!
+    \return rec -- Create record entries conforming to the information expected
+            in the header record of the CR::DataReader class.
+  */
+  casa::Record TBB_Timeseries::attributes2headerRecord ()
+  {
+    casa::Record rec;
+
+    rec.define("Date",min(time()));
+    rec.define("AntennaIDs",channelID());
+    rec.define("Observatory",telescope());
+    rec.define("Filesize",min(data_length()));
+
+    return rec;
   }
 
 #endif

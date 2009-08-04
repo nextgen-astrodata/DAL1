@@ -50,49 +50,45 @@ int test_constructors ()
   int nofFailedTests (0);
 
   std::cout << "[1] Testing default constructor ..." << std::endl;
-  try
-    {
-      DAL::TabularCoordinate coord;
-      //
-      coord.summary();
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  try {
+    DAL::TabularCoordinate coord;
+    //
+    coord.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   std::cout << "[2] Testing argumented constructor ..." << std::endl;
-  try
-    {
-      unsigned int nelem (4);
-      std::vector<std::string> axisNames(1,"Length");
-      std::vector<std::string> axisUnits(1,"m");
-      std::vector<double> pixelValues(nelem);
-      std::vector<double> worldValues(nelem);
-      //
-      pixelValues[0] = 1;
-      pixelValues[1] = 2;
-      pixelValues[2] = 3;
-      pixelValues[3] = 4;
-      worldValues[0] = 1;
-      worldValues[1] = 2;
-      worldValues[2] = 5;
-      worldValues[3] = 10;
-      //
-      DAL::TabularCoordinate coord (axisNames,
-                                    axisUnits,
-                                    pixelValues,
-                                    worldValues);
-      //
-      coord.summary();
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  try {
+    unsigned int nelem (4);
+    std::vector<std::string> axisNames(1,"Length");
+    std::vector<std::string> axisUnits(1,"m");
+    std::vector<double> pixelValues(nelem);
+    std::vector<double> worldValues(nelem);
+    //
+    pixelValues[0] = 1;
+    pixelValues[1] = 2;
+    pixelValues[2] = 3;
+    pixelValues[3] = 4;
+    worldValues[0] = 1;
+    worldValues[1] = 2;
+    worldValues[2] = 5;
+    worldValues[3] = 10;
+    //
+    DAL::TabularCoordinate coord (axisNames,
+				  axisUnits,
+				  pixelValues,
+				  worldValues);
+    //
+    coord.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
@@ -127,31 +123,29 @@ int test_methods ()
                                 worldValues);
 
   cout << "[1] Write coordinate to a HDF5 file ..." << endl;
-  try
-    {
-      hid_t fileID;
-
-      cout << "-- Create HDF5 file to work with ..." << endl;
-      fileID = H5Fcreate (filename.c_str(),
-                          H5F_ACC_TRUNC,
-                          H5P_DEFAULT,
-                          H5P_DEFAULT);
-
-      cout << "-- Write the coordinate to the root group ..." << endl;
-      coord.h5write(fileID);
-
-      cout << "-- Write the coordinate to new group within the file ..." << endl;
-      coord.h5write(fileID,"TabularCoordinate");
-
-      cout << "-- Close the HDF5 file ..." << endl;
-      H5Fclose(fileID);
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << endl;
-      nofFailedTests++;
-    }
-
+  try {
+    hid_t fileID;
+    
+    cout << "-- Create HDF5 file to work with ..." << endl;
+    fileID = H5Fcreate (filename.c_str(),
+			H5F_ACC_TRUNC,
+			H5P_DEFAULT,
+			H5P_DEFAULT);
+    
+    cout << "-- Write the coordinate to the root group ..." << endl;
+    coord.h5write(fileID);
+    
+    cout << "-- Write the coordinate to new group within the file ..." << endl;
+    coord.h5write(fileID,"TabularCoordinate");
+    
+    cout << "-- Close the HDF5 file ..." << endl;
+    H5Fclose(fileID);
+  }
+  catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 

@@ -37,8 +37,7 @@
 #include <dalCommon.h>
 #include <TBB_StationGroup.h>
 
-namespace DAL   // Namespace DAL -- begin
-  {
+namespace DAL {  // Namespace DAL -- begin
 
   /*!
     \class TBB_Timeseries
@@ -80,307 +79,293 @@ namespace DAL   // Namespace DAL -- begin
     <h3>Example(s)</h3>
 
   */
-  class TBB_Timeseries
-    {
-
-    protected:
-
-      //! Name of the data file
-      std::string filename_p;
-      //! File handle identifier
-      hid_t fileID_p;
-      //! Station groups contained within this file
-      std::vector<TBB_StationGroup> groups_p;
-
-    public:
-
-      // ------------------------------------------------------------- Construction
-
-      //! Default constructor
-      TBB_Timeseries ();
-
-      //! Construction using filename of dataset
-      TBB_Timeseries (std::string const &filename);
-
-      //! Copy constructor
-      TBB_Timeseries (TBB_Timeseries const &other);
-
-      // -------------------------------------------------------------- Destruction
-
-      //! Destructor
-      ~TBB_Timeseries ();
-
-      // ---------------------------------------------------------------- Operators
-
-      /*!
-        \brief Overloading of the copy operator
-
-        \param other -- Another TBB_Timeseries object from which to make a copy.
-      */
-      TBB_Timeseries& operator= (TBB_Timeseries const &other);
-
-      // --------------------------------------------------------------- Parameters
-
-      /*!
-        \brief Get the name of the data file
-
-        \return filename -- The name of the data file.
-      */
-      inline std::string filename () const
-        {
-          return filename_p;
-        }
-
-      /*!
-        \brief Get the object identifier for the data file
-
-        \return file_id -- The object identifier for the data file
-      */
-      inline hid_t file_id () const
-        {
-          return fileID_p;
-        }
-
-      //! Get the name of the telescope
-      std::string telescope ();
-
-      /*!
-        \brief Get the name of the observer
-
-        \return observer -- The name of the observer; returns an empty string in
-                case no keyword value could be extracted.
-      */
-      std::string observer ();
-
-      /*!
-        \brief Get the project name/description
-
-        \return project -- Name/Description of the project for which this
-                observation was carried out; returns an empty string in case no
-          keyword value could be extracted.
-      */
-      std::string project ();
-
-      /*!
-        \brief Get the observation ID
-
-        \return observation_id -- The observation ID; returns an empty string in
-                case no keyword value could be extracted.
-      */
-      std::string observation_id ();
-
-      /*!
-        \brief Get the description of the observation mode
-
-        \return observation_mode -- Description/type of observation mode
-      */
-      std::string observation_mode ();
-
-      /*!
-        \brief Get the name of the class
-
-        \return className -- The name of the class, TBB_Timeseries.
-      */
-      std::string className () const
-        {
-          return "TBB_Timeseries";
-        }
-
-      //! Provide a summary of the internal status
-      inline void summary ()
-      {
-        summary (std::cout);
+  class TBB_Timeseries {
+    
+  protected:
+    
+    //! Name of the data file
+    std::string filename_p;
+    //! File handle identifier
+    hid_t fileID_p;
+    //! Station groups contained within this file
+    std::vector<TBB_StationGroup> groups_p;
+    
+  public:
+    
+    // ------------------------------------------------------------- Construction
+    
+    //! Default constructor
+    TBB_Timeseries ();
+    
+    //! Construction using filename of dataset
+    TBB_Timeseries (std::string const &filename);
+    
+    //! Copy constructor
+    TBB_Timeseries (TBB_Timeseries const &other);
+    
+    // -------------------------------------------------------------- Destruction
+    
+    //! Destructor
+    ~TBB_Timeseries ();
+    
+    // ---------------------------------------------------------------- Operators
+    
+    /*!
+      \brief Overloading of the copy operator
+      
+      \param other -- Another TBB_Timeseries object from which to make a copy.
+    */
+    TBB_Timeseries& operator= (TBB_Timeseries const &other);
+    
+    // --------------------------------------------------------------- Parameters
+    
+    /*!
+      \brief Get the name of the data file
+      
+      \return filename -- The name of the data file.
+    */
+    inline std::string filename () const {
+      return filename_p;
+    }
+    
+    /*!
+      \brief Get the object identifier for the data file
+      
+      \return file_id -- The object identifier for the data file
+    */
+    inline hid_t file_id () const {
+      return fileID_p;
+    }
+    
+    //! Get the name of the telescope
+    std::string telescope ();
+    
+    /*!
+      \brief Get the name of the observer
+      
+      \return observer -- The name of the observer; returns an empty string in
+              case no keyword value could be extracted.
+    */
+    std::string observer ();
+    
+    /*!
+      \brief Get the project name/description
+      
+      \return project -- Name/Description of the project for which this
+              observation was carried out; returns an empty string in case no
+	      keyword value could be extracted.
+    */
+    std::string project ();
+    
+    /*!
+      \brief Get the observation ID
+      
+      \return observation_id -- The observation ID; returns an empty string in
+              case no keyword value could be extracted.
+    */
+    std::string observation_id ();
+    
+    /*!
+      \brief Get the description of the observation mode
+      
+      \return observation_mode -- Description/type of observation mode
+    */
+    std::string observation_mode ();
+    
+    /*!
+      \brief Get the name of the class
+      
+      \return className -- The name of the class, TBB_Timeseries.
+    */
+    std::string className () const {
+      return "TBB_Timeseries";
+    }
+    
+    //! Provide a summary of the internal status
+    inline void summary () {
+      summary (std::cout);
+    }
+    
+    //! Provide a summary of the internal status
+    void summary (std::ostream &os);
+    
+    // ==========================================================================
+    //
+    //  Parameter access - TBB time-series
+    //
+    // ==========================================================================
+    
+    /*!
+      \brief Get the number of station groups collected into this file
+      
+      \return nofStationGroups -- The number of station groups collected into
+      this file
+    */
+    inline uint nofStationGroups () const {
+      return groups_p.size();
+    }
+    
+    /*!
+      \brief Get the number of dipole datasets collected into this file
+      
+      \return nofDipoleDatasets -- The number of dipole datasets collected into
+      this file.
+    */
+    inline uint nofDipoleDatasets () {
+      uint nofDatasets (0);
+      for (uint n(0); n<groups_p.size(); n++) {
+	nofDatasets += groups_p[n].nofDipoleDatasets();
       }
-
-      //! Provide a summary of the internal status
-      void summary (std::ostream &os);
-
-      // ==========================================================================
-      //
-      //  Parameter access - TBB time-series
-      //
-      // ==========================================================================
-
-      /*!
-        \brief Get the number of station groups collected into this file
-
-        \return nofStationGroups -- The number of station groups collected into
-                this file
-      */
-      inline uint nofStationGroups () const
-        {
-          return groups_p.size();
-        }
-
-      /*!
-        \brief Get the number of dipole datasets collected into this file
-
-        \return nofDipoleDatasets -- The number of dipole datasets collected into
-                this file.
-      */
-      inline uint nofDipoleDatasets ()
-      {
-        uint nofDatasets (0);
-        for (uint n(0); n<groups_p.size(); n++)
-          {
-            nofDatasets += groups_p[n].nofDipoleDatasets();
-          }
-        return nofDatasets;
-      }
-
-      /*!
-        \brief Get station groups embedded within the dataset
-
-        \return stationGroups -- Vector with a set of TBB_StationGroup objects,
-                encapsulating the contents of the groups within the dataset.
-      */
-      inline std::vector<TBB_StationGroup> stationGroups () const
-        {
-          return groups_p;
-        }
-
-      //! Get one of the embedded station group objects
-      TBB_StationGroup stationGroup (uint const &station);
-
-      // ==========================================================================
-      //
-      //  Parameter access - station group
-      //
-      // ==========================================================================
-
+      return nofDatasets;
+    }
+    
+    /*!
+      \brief Get station groups embedded within the dataset
+      
+      \return stationGroups -- Vector with a set of TBB_StationGroup objects,
+      encapsulating the contents of the groups within the dataset.
+    */
+    inline std::vector<TBB_StationGroup> stationGroups () const {
+      return groups_p;
+    }
+    
+    //! Get one of the embedded station group objects
+    TBB_StationGroup stationGroup (uint const &station);
+    
+    // ==========================================================================
+    //
+    //  Parameter access - station group
+    //
+    // ==========================================================================
+    
 #ifdef HAVE_CASA
-      //! Get the type of trigger causing the dump of the TBB data
-      casa::Vector<casa::String> trigger_type ();
-      //! Time offset from the trigger reference time
-      casa::Vector<double> trigger_offset ();
-      //! Get the values of the station position
-      casa::Matrix<double> station_position_value ();
-      //! Get the physical units of the station positions
-      casa::Matrix<casa::String> station_position_unit ();
-      //! Get the reference codes for the frame of the station positions
-      casa::Vector<casa::String> station_position_frame ();
-      //! Get the position of the station as a casa::Measure
-      casa::Vector<casa::MPosition> station_position ();
-      //! Get the values of the beam directions
-      casa::Matrix<double> beam_direction_value ();
-      //! Get the physical units of the beam directions
-      casa::Matrix<casa::String> beam_direction_unit ();
-      //! Get the reference codes for the frame of the beam direction
-      casa::Vector<casa::String> beam_direction_frame ();
-      //! Get the direction of the station beam as casa::Measure
-      casa::Vector<casa::MDirection> beam_direction ();
+    //! Get the type of trigger causing the dump of the TBB data
+    casa::Vector<casa::String> trigger_type ();
+    //! Time offset from the trigger reference time
+    casa::Vector<double> trigger_offset ();
+    //! Get the values of the station position
+    casa::Matrix<double> station_position_value ();
+    //! Get the physical units of the station positions
+    casa::Matrix<casa::String> station_position_unit ();
+    //! Get the reference codes for the frame of the station positions
+    casa::Vector<casa::String> station_position_frame ();
+    //! Get the position of the station as a casa::Measure
+    casa::Vector<casa::MPosition> station_position ();
+    //! Get the values of the beam directions
+    casa::Matrix<double> beam_direction_value ();
+    //! Get the physical units of the beam directions
+    casa::Matrix<casa::String> beam_direction_unit ();
+    //! Get the reference codes for the frame of the beam direction
+    casa::Vector<casa::String> beam_direction_frame ();
+    //! Get the direction of the station beam as casa::Measure
+    casa::Vector<casa::MDirection> beam_direction ();
 #else
-      //! Get the type of trigger causing the dump of the TBB data
-      std::vector<std::string> trigger_type ();
-      //! Time offset from the trigger reference time
-      std::vector<double> trigger_offset ();
-      //! Get the reference codes for the frame of the station positions
-      std::vector<std::string> station_position_frame ();
+    //! Get the type of trigger causing the dump of the TBB data
+    std::vector<std::string> trigger_type ();
+    //! Time offset from the trigger reference time
+    std::vector<double> trigger_offset ();
+    //! Get the reference codes for the frame of the station positions
+    std::vector<std::string> station_position_frame ();
 #endif
-
-      // ==========================================================================
-      //
-      //  Parameter access - dipole dataset
-      //
-      // ==========================================================================
-
+    
+    // ==========================================================================
+    //
+    //  Parameter access - dipole dataset
+    //
+    // ==========================================================================
+    
 #ifdef HAVE_CASA
-      //! Retrieve the list of channel names (i.e. as string)
-      casa::Vector<casa::String> channelNames ();
-      //! Retrieve the list of channel IDs
-      casa::Vector<int> channelID ();
-      //! Get the values of TIME for all present datasets
-      casa::Vector<uint> time ();
-      //! Get the number of samples elapsed since the last full second
-      casa::Vector<uint> sample_number ();
-      //! Get the Nyquist zone for the A/D conversion
-      casa::Vector<uint> nyquist_zone ();
-      //! Get the values of the ADC sample frequency
-      casa::Vector<double> sample_frequency_value ();
-      //! Get the unit of the ADC sample frequency
-      casa::Vector<casa::String> sample_frequency_unit ();
-      //! Get the sample frequency as vector of casa::MFrequency
-      casa::Vector<casa::MFrequency> sample_frequency ();
-      //! Get the values of DATA_LENGTH for all present datasets
-      casa::Vector<uint> data_length ();
+    //! Retrieve the list of channel names (i.e. as string)
+    casa::Vector<casa::String> channelNames ();
+    //! Retrieve the list of channel IDs
+    casa::Vector<int> channelID ();
+    //! Get the values of TIME for all present datasets
+    casa::Vector<uint> time ();
+    //! Get the number of samples elapsed since the last full second
+    casa::Vector<uint> sample_number ();
+    //! Get the Nyquist zone for the A/D conversion
+    casa::Vector<uint> nyquist_zone ();
+    //! Get the values of the ADC sample frequency
+    casa::Vector<double> sample_frequency_value ();
+    //! Get the unit of the ADC sample frequency
+    casa::Vector<casa::String> sample_frequency_unit ();
+    //! Get the sample frequency as vector of casa::MFrequency
+    casa::Vector<casa::MFrequency> sample_frequency ();
+    //! Get the values of DATA_LENGTH for all present datasets
+    casa::Vector<uint> data_length ();
 #else
-      //! Retrieve the list of channel names (i.e. as string)
-      std::vector<std::string> channelNames ();
-      //! Retrieve the list of channel IDs
-      std::vector<int> channelID ();
-      //! Get the values of TIME for all present datasets
-      std::vector<uint> time ();
-      //! Get the number of samples elapsed since the last full second
-      std::vector<uint> sample_number ();
-      //! Get the Nyquist zone for the A/D conversion
-      std::vector<uint> nyquist_zone ();
-      //! Get the values of the ADC sample frequency
-      std::vector<double> sample_frequency_value ();
-      //! Get the unit of the ADC sample frequency
-      std::vector<std::string> sample_frequency_unit ();
-      //! Get the values of DATA_LENGTH for all present datasets
-      std::vector<uint> data_length ();
+    //! Retrieve the list of channel names (i.e. as string)
+    std::vector<std::string> channelNames ();
+    //! Retrieve the list of channel IDs
+    std::vector<int> channelID ();
+    //! Get the values of TIME for all present datasets
+    std::vector<uint> time ();
+    //! Get the number of samples elapsed since the last full second
+    std::vector<uint> sample_number ();
+    //! Get the Nyquist zone for the A/D conversion
+    std::vector<uint> nyquist_zone ();
+    //! Get the values of the ADC sample frequency
+    std::vector<double> sample_frequency_value ();
+    //! Get the unit of the ADC sample frequency
+    std::vector<std::string> sample_frequency_unit ();
+    //! Get the values of DATA_LENGTH for all present datasets
+    std::vector<uint> data_length ();
 #endif
-
-      // ==========================================================================
-      //
-      //  High-level access to data and attributes
-      //
-      // ==========================================================================
-
+    
+    // ==========================================================================
+    //
+    //  High-level access to data and attributes
+    //
+    // ==========================================================================
+    
 #ifdef HAVE_CASA
-      //! Time offset between the individual antennas in units of samples
-      casa::Vector<int> sample_offset (uint const &refAntenna=0);
-      //! Retrieve a block of ADC values per dipole
-      casa::Matrix<double> fx (int const &start=0,
-                               int const &nofSamples=1);
-      //! Retrieve a block of ADC values per dipole
-      casa::Matrix<double> fx (std::vector<int> const &start,
-                               int const &nofSamples=1);
-      //! Get a casa::Record containing the values of the attributes
-      casa::Record attributes2record (bool const &recursive=false);
-      //! Create casa::Record used as header record for the CR::DataReader class
-      casa::Record attributes2headerRecord ();
+    //! Time offset between the individual antennas in units of samples
+    casa::Vector<int> sample_offset (uint const &refAntenna=0);
+    //! Retrieve a block of ADC values per dipole
+    casa::Matrix<double> fx (int const &start=0,
+			     int const &nofSamples=1);
+    //! Retrieve a block of ADC values per dipole
+    casa::Matrix<double> fx (std::vector<int> const &start,
+			     int const &nofSamples=1);
+    //! Get a casa::Record containing the values of the attributes
+    casa::Record attributes2record (bool const &recursive=false);
+    //! Create casa::Record used as header record for the CR::DataReader class
+    casa::Record attributes2headerRecord ();
 #endif
-
-    private:
-
-      /*!
-        \brief Unconditional copying
-
-        \param other -- Another TBB_Timeseries object from which to create
-               this new one.
-      */
-      void copy (TBB_Timeseries const &other);
-
-      /*!
-        \brief Initialize the internal dataspace of the object
-      */
-      void init ();
-
-      /*!
-        \brief Initialize the internal dataspace of the object
-
-        \param filename -- Name of the data file
-      */
-      void init (std::string const &filename);
-
-      /*!
-        \brief Locate and register the station groups contained within the file
-
-        \return status -- Status of the operation; returns <tt>false</tt> in case
-                an error was encountered.
-      */
-      bool setStationGroups ();
-
-      /*!
-        \brief Unconditional deletion
-      */
-      void destroy(void);
-
-    };
-
+    
+  private:
+    
+    /*!
+      \brief Unconditional copying
+      
+      \param other -- Another TBB_Timeseries object from which to create
+             this new one.
+    */
+    void copy (TBB_Timeseries const &other);
+    
+    //! Initialize the internal dataspace of the object
+    void init ();
+    
+    /*!
+      \brief Initialize the internal dataspace of the object
+      
+      \param filename -- Name of the data file
+    */
+    void init (std::string const &filename);
+    
+    /*!
+      \brief Locate and register the station groups contained within the file
+      
+      \return status -- Status of the operation; returns <tt>false</tt> in case
+      an error was encountered.
+    */
+    bool setStationGroups ();
+    
+    //! Unconditional deletion
+    void destroy(void);
+    
+  };
+  
 } // Namespace DAL -- end
 
 #endif /* TBB_TIMESERIES_H */
-

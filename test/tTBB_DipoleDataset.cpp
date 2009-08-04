@@ -303,11 +303,11 @@ int test_dataset (std::string const &name_file)
       cout << "-- RSP_ID .................. = " << rsp_id     << endl;
       cout << "-- RCU_ID .................. = " << rcu_id     << endl;
       cout << "-- TIME .................... = " << time       << endl;
-      cout << "-- SAMPLE_FREQUENCY_VALUE .. = " << sample_frequency_value << endl;
-      cout << "-- SAMPLE_FREQUENCY_UNIT ... = " << sample_frequency_unit  << endl;
-      cout << "-- ANTENNA_POSITION_VALUE .. = " << antenna_position_value << endl;
-      cout << "-- ANTENNA_POSITION_UNIT ... = " << antenna_position_unit  << endl;
-      cout << "-- ANTENNA_POSITION_FRAME .. = " << antenna_position_frame << endl;
+      cout << "-- SAMPLE_FREQUENCY_VALUE .. = " << sample_frequency_value    << endl;
+      cout << "-- SAMPLE_FREQUENCY_UNIT ... = " << sample_frequency_unit     << endl;
+      cout << "-- ANTENNA_POSITION_VALUE .. = " << antenna_position_value    << endl;
+      cout << "-- ANTENNA_POSITION_UNIT ... = " << antenna_position_unit     << endl;
+      cout << "-- ANTENNA_POSITION_FRAME .. = " << antenna_position_frame    << endl;
       cout << "-- ANTENNA_ORIENTATION_VALUE = " << antenna_orientation_value << endl;
       cout << "-- ANTENNA_ORIENTATION_UNIT  = " << antenna_orientation_unit  << endl;
       cout << "-- ANTENNA_ORIENTATION_FRAME = " << antenna_orientation_frame << endl;
@@ -334,9 +334,15 @@ int test_dataset (std::string const &name_file)
       DAL::h5get_attribute (dataset_id,"STATION_ID", station_id);
       DAL::h5get_attribute (dataset_id,"RSP_ID", rsp_id);
       DAL::h5get_attribute (dataset_id,"RCU_ID", rcu_id);
-      DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_VALUE", antenna_position_value);
-      DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_UNIT", antenna_position_unit);
-      DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_FRAME", antenna_position_frame);
+      DAL::h5get_attribute (dataset_id,
+			    "ANTENNA_POSITION_VALUE",
+			    antenna_position_value);
+      DAL::h5get_attribute (dataset_id,
+			    "ANTENNA_POSITION_UNIT",
+			    antenna_position_unit);
+      DAL::h5get_attribute (dataset_id,
+			    "ANTENNA_POSITION_FRAME",
+			    antenna_position_frame);
       //
       cout << "-- Original attribute values:" << endl;
       cout << "--> STATION_ID ........... = " << station_id             << endl;
@@ -840,15 +846,20 @@ int test_parameters (std::string const &name_file,
   
   cout << "[3] Retrieve vector valued attributes ..." << endl;
   try {
-    casa::Vector<double> antenna_position_value = dataset.antenna_position_value();
-    casa::Vector<casa::String> antenna_position_unit = dataset.antenna_position_unit();
-    casa::Vector<double> antenna_orientation_value = dataset.antenna_orientation_value();
-    casa::Vector<casa::String> antenna_orientation_unit = dataset.antenna_orientation_unit();
+    casa::Vector<double> antennaPositionValue;
+    casa::Vector<casa::String> antennaPositionUnit;
+    casa::Vector<double> antennaOrientationValue;
+    casa::Vector<casa::String> antennaOrientationUnit;
     //
-    cout << "-- ANTENNA_POSITION_VALUE    = " << antenna_position_value << endl;
-    cout << "-- ANTENNA_POSITION_UNIT     = " << antenna_position_unit  << endl;
-    cout << "-- ANTENNA_ORIENTATION_VALUE = " << antenna_orientation_value << endl;
-    cout << "-- ANTENNA_ORIENTATION_UNIT  = " << antenna_orientation_unit  << endl;
+    dataset.antenna_position_value(antennaPositionValue);
+    dataset.antenna_position_unit(antennaPositionUnit);
+    dataset.antenna_orientation_value(antennaOrientationValue);
+    dataset.antenna_orientation_unit(antennaOrientationUnit);
+    //
+    cout << "-- ANTENNA_POSITION_VALUE    = " << antennaPositionValue    << endl;
+    cout << "-- ANTENNA_POSITION_UNIT     = " << antennaPositionUnit     << endl;
+    cout << "-- ANTENNA_ORIENTATION_VALUE = " << antennaOrientationValue << endl;
+    cout << "-- ANTENNA_ORIENTATION_UNIT  = " << antennaOrientationUnit  << endl;
   }
   catch (std::string message) {
     cerr << message << endl;

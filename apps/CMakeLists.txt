@@ -3,16 +3,7 @@
 ## ------------------------------------------------------------------------------
 
 set(CMAKE_CXX_FLAGS "-W -Wall")
-message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
-
-#add_definitions(
-#  -DMPICH_IGNORE_CXX_SEEK
-#  -D_BSD_SOURCE
-#  -D_POSIX_SOURCE
-#  -D_FILE_OFFSET_BITS=64
-#  -D_LARGEFILE64_SOURCE
-#  -D_LARGEFILE_SOURCE
-#  )
+message(STATUS "CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
 
 ## ==============================================================================
 ##

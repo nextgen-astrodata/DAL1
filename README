@@ -31,6 +31,11 @@ ________________________________________________________________________________
   functions need to be changed from simply returning a result to returning the
   result by reference.
 
+* Provide command line parameter to adjust Nyquist zone value (which cannot be 
+  extracted from the TBB (meta-)data themselves. Value needs to be present in
+  underlying class as private variable which is used each time a new DipoleArray
+  is created.
+
 _________________________________________________________________________________
 >>> Coding conventions
 
