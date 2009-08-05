@@ -19,6 +19,7 @@ ________________________________________________________________________________
   can indeed be used to fill the gaps in the core classes, such that that the
   class is rather used as a high-level interface to the data-format (as is the
   case already with the beam-formed data and the TBB dumps).
+  As a first step rename dalFITS -> RM_Cube
 
 * The TBB_DipoleDataset, TBB_StationGroup and TBB_Timeseries need some cleaning
   up in the functions which make use of casacore; there are still quite a number
@@ -27,10 +28,17 @@ ________________________________________________________________________________
   functions need to be changed from simply returning a result to returning the
   result by reference.
 
-* Provide command line parameter to adjust Nyquist zone value (which cannot be 
-  extracted from the TBB (meta-)data themselves. Value needs to be present in
-  underlying class as private variable which is used each time a new DipoleArray
-  is created.
+* [2009/08/04] Provide command line parameter to adjust Nyquist zone value (which
+  cannot be extracted from the TBB (meta-)data themselves. Value needs to be
+  present in underlying class as private variable which is used each time a new
+  DipoleArray is created.
+
+* [2009/08/04] dalDataset is in desparate need for a clean-up: currently there
+  are multiple methods used internally to open a file (and/or testing for its
+  type beforehand).
+
+* [2009/08/05] TabularCoordinate needs o overload functions to get/set reference
+  pixel, reference value, increment and transformation matrix.
 
 _________________________________________________________________________________
 >>> Coding conventions
@@ -39,6 +47,8 @@ ________________________________________________________________________________
 
 * All source files contain a Doxygen-based documentation of their methods.
   All classes/files are contained within the group "DAL".
+
+* Private variables end with "_p" to distinguish them from local variables.
 
 _________________________________________________________________________________
 >>> Resolved issues
