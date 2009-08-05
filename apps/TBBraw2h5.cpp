@@ -107,6 +107,11 @@
       (0): do not check the CRCs
       (1): check the header CRCs and discard broken frames (default)
       </td>
+      <tr>
+    <td>-B [--bufferSize] arg</td>
+      <td> Size of the input buffer (in frames) when reading from a socket. The default is 
+      50000, which is about 100MByte. </td>
+    </tr>
     <tr>
       <td>--verbose</td>
       <td>Enable verbose mode, showing status messages during processing. (Not yet implemented.)</td>
@@ -143,7 +148,8 @@ TBBraw *tbb;
 #define UDP_PACKET_BUFFER_SIZE 2141
 //!number of frames in the input buffer (50000 is ca. 100MB)
 // (the vBuf of the system on the storage nodes can store ca. 800 frames)
-#define INPUT_BUFFER_SIZE 50000
+//#define INPUT_BUFFER_SIZE 50000
+int input_buffer_size;
 
 //!pointers (array indices) for the last buffer processed and the last buffer written
 int inBufProcessID,inBufStorID;
@@ -254,7 +260,7 @@ void socketReaderThread(int port, string ip, double startTimeout,
             //  (concurrent reading is O.K.)
             boost::mutex::scoped_lock lock(writeMutex);
             newBufID = inBufStorID+1;
-            if (newBufID >= INPUT_BUFFER_SIZE)
+            if (newBufID >= input_buffer_size)
               {
                 newBufID =0;
               }
@@ -314,7 +320,7 @@ bool readFromSocket(int port, string ip, float startTimeout,
   maxCachedFrames = maxWaitingFrames = 0;
   inBufProcessID = inBufStorID =0;
   noRunning = 0;
-  inputBuffer_p = new char[(INPUT_BUFFER_SIZE*UDP_PACKET_BUFFER_SIZE)];
+  inputBuffer_p = new char[(input_buffer_size*UDP_PACKET_BUFFER_SIZE)];
   if (inputBuffer_p == NULL)
     {
       cerr << "TBBraw2h5::readFromSocket: Failed to allocate input buffer!" <<endl;
@@ -322,7 +328,7 @@ bool readFromSocket(int port, string ip, float startTimeout,
     }
   else if (verbose)
     {
-      cout << "TBBraw2h5::readFromSocket: Allocated " << INPUT_BUFFER_SIZE*UDP_PACKET_BUFFER_SIZE
+      cout << "TBBraw2h5::readFromSocket: Allocated " << input_buffer_size*UDP_PACKET_BUFFER_SIZE
            << " bytes for the input buffer." << endl;
     };
   // start the reader-thread
@@ -346,15 +352,15 @@ bool readFromSocket(int port, string ip, float startTimeout,
           continue;
         };
       amWaiting=0;
-      tmpint = (inBufStorID-inBufProcessID+INPUT_BUFFER_SIZE)%INPUT_BUFFER_SIZE;
+      tmpint = (inBufStorID-inBufProcessID+input_buffer_size)%input_buffer_size;
       if (tmpint > maxCachedFrames)
         {
           maxCachedFrames = tmpint;
         };
       processingID = inBufProcessID+1;
-      if (processingID >= INPUT_BUFFER_SIZE)
+      if (processingID >= input_buffer_size)
         {
-          processingID -= INPUT_BUFFER_SIZE;
+          processingID -= input_buffer_size;
         };
       tbb->processTBBrawBlock( (inputBuffer_p + (processingID*UDP_PACKET_BUFFER_SIZE)),
                                UDP_PACKET_BUFFER_SIZE);
@@ -436,6 +442,9 @@ int main(int argc, char *argv[])
   int doCheckCRC(1);
   int socketmode(-1);
 
+  input_buffer_size = 50000;
+  
+
   bpo::options_description desc ("[TBBraw2h5] Available command line options");
 
   desc.add_options ()
@@ -448,6 +457,7 @@ int main(int argc, char *argv[])
   ("timeoutRead,R", bpo::value<float>(), "Time-out when while reading from socket, [sec].")
   ("fixTimes,F", bpo::value<int>(), "Fix broken time-stamps old style (1), new style (2, default), or not (0)")
   ("doCheckCRC,C", bpo::value<int>(), "Check the CRCs: (0) no check, (1,default) check header.")
+  ("bufferSize,B", bpo::value<int>(), "Size of the input buffer, [frames] (default=50000, about 100MB).")
   ("verbose,V", "Verbose mode on")
   ;
 
@@ -507,6 +517,12 @@ int main(int argc, char *argv[])
     {
       doCheckCRC = vm["doCheckCRC"].as<int>();
     }
+  
+  if (vm.count("bufferSize"))
+    {
+      input_buffer_size = vm["bufferSize"].as<int>();
+    }
+  
 
   // -----------------------------------------------------------------
   // Check the provided input
@@ -523,6 +539,12 @@ int main(int argc, char *argv[])
       cout << "[TBBraw2h5] Neither input file nor port number given, chose one of the two!" << endl;
       cout << endl << desc << endl;
       return 1;
+    };
+
+  if (input_buffer_size < 100) 
+    {
+      cout << "[TBBraw2h5] Buffer Size too small ("<< input_buffer_size << "<100), setting to default value" << endl;
+      input_buffer_size = 50000;
     };
 
   // -----------------------------------------------------------------
