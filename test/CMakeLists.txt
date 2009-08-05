@@ -73,7 +73,7 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 
 ## [2] casacore & HDF5
 
-if (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES)
+if (HAVE_CASACORE AND HAVE_HDF5)
 
   foreach (src
       tMS_dal 
@@ -103,7 +103,12 @@ if (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES)
       add_test (${src} ${src})
     endif (DAL_ENABLE_TESTING)
   endforeach (src)
-endif (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES)
+
+else (HAVE_CASACORE AND HAVE_HDF5)
+
+  message (STATUS "Skipping test programs that require casacore and HDF5!")
+
+endif (HAVE_CASACORE AND HAVE_HDF5)
 
 ## ==============================================================================
 ##
@@ -139,9 +144,28 @@ if (DAL_ENABLE_TESTING)
   add_test(tDirectionCoordinate tDirectionCoordinate)
   add_test(tLinearCoordinate tLinearCoordinate)
   add_test(tTabularCoordinate tTabularCoordinate)
+
+  ## -----------------------------------------------------------------
+  ## [2] tdalDataset
+
+  if (dataset_ms)
+    add_test (tdalDataset_ms tdalDataset ${dataset_ms})
+  endif (dataset_ms)
+  
+  if (dataset_beamformed)
+    add_test (tdalDataset_hdf5_bf tdalDataset ${dataset_beamformed})
+  endif (dataset_beamformed)
+  
+  if (dataset_tbb)
+    add_test (tdalDataset_hdf5_tbb tdalDataset ${dataset_tbb})
+  endif (dataset_tbb)
+  
+  if (dataset_fits)
+    add_test (tdalDataset_fits tdalDataset ${dataset_fits})
+  endif (dataset_fits)
   
   ## -----------------------------------------------------------------
-  ## [2] Processing tests which require sample datasets
+  ## [3] Processing tests which require sample datasets
   
   if (dataset_ms)
     add_test (tMS_dal tMS_dal ${dataset_ms} ${dataset_ms}.h5)
@@ -179,8 +203,6 @@ if (DAL_ENABLE_TESTING)
   ## [5] Tests using HDF5-based beam-formed data
 
   if (dataset_beamformed)
-    add_test (tdalDataset_test1 tdalDataset ${dataset_beamformed})
-    add_test (tdalDataset_test2 tdalDataset ${dataset_tbb})
     add_test (tdalTable tdalTable ${dataset_beamformed})
     add_test (tBeamFormed tBeamFormed ${dataset_beamformed})
     add_test (tBeamGroup tBeamGroup ${dataset_beamformed})
@@ -188,10 +210,10 @@ if (DAL_ENABLE_TESTING)
   else (dataset_beamformed)
     message (STATUS "Unable to find LOFAR beam-formed dataset; skipping tests.")
   endif (dataset_beamformed)
-
+  
   ## -----------------------------------------------------------------
   ## [6] Tests using FITS file format data
-
+  
   if (dataset_fits)
     add_test (tdal_fits tdal_fits ${dataset_fits})
   endif (dataset_fits)

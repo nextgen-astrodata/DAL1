@@ -150,6 +150,92 @@ int test_methods ()
 }
 
 //_______________________________________________________________________________
+//                                                             example_beamformed
+
+/*!
+  \brief Coordinate example for non-linear frequency axis in beamformed data
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int example_beamformed ()
+{
+  cout << "\n[tTabularCoordinate::example_beamformed]\n" << endl;
+
+  int nofFailedTests (0);
+  int n (0);
+  /* Total number of frequency bands */
+  int nofBands (3);
+  /* Number of channels per frequency band */
+  int channelsPerBand (512);
+  /* Start frequency of the individual bands, [MHz] */
+  std::vector<double> startFrequency (nofBands);
+  /* Frequency incremen between two channels within a band, [MHz]*/
+  double increment (0.1953125);
+  /* Vector with the frequency values, [MHz] */
+  std::vector<double> worldValues (nofBands*channelsPerBand);
+  /* Vector with the pixel values */
+  std::vector<double> pixelValues (nofBands*channelsPerBand);
+
+  startFrequency[0] = 140;
+  startFrequency[1] = 150;
+  startFrequency[2] = 165;
+
+  //________________________________________________________
+  // [1] Assign pixel and world values
+
+  /* Step through the frequency bands */
+  for (int band(0); band<nofBands; band++) {
+    /* Step through the channels within a band */
+    for (int channel(0); channel<channelsPerBand; channel++) {
+      pixelValues[n] = n;
+      worldValues[n] = startFrequency[band]+channel*increment;
+      n++;
+    }
+  }
+
+  //________________________________________________________
+  // [2] Create the coordinate object
+
+  std::vector<std::string> axisNames(1,"Frequency");
+  std::vector<std::string> axisUnits(1,"MHz");
+  
+  DAL::TabularCoordinate coord (axisNames,
+                                axisUnits,
+                                pixelValues,
+                                worldValues);
+  
+  //________________________________________________________
+  // [3] Write coordinate object to HDF5 file as group
+  
+  try {
+    std::string filename ("tTabularCoordinate_bf.h5");
+    hid_t fileID;
+    
+    cout << "-- Create HDF5 file to work with ..." << endl;
+    fileID = H5Fcreate (filename.c_str(),
+			H5F_ACC_TRUNC,
+			H5P_DEFAULT,
+			H5P_DEFAULT);
+    
+    cout << "-- Write the coordinate to the root group ..." << endl;
+    coord.h5write(fileID);
+    
+    cout << "-- Write the coordinate to new group within the file ..." << endl;
+    coord.h5write(fileID,"TabularCoordinate");
+    
+    cout << "-- Close the HDF5 file ..." << endl;
+    H5Fclose(fileID);
+  }
+  catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 int main ()
@@ -160,6 +246,8 @@ int main ()
   nofFailedTests += test_constructors ();
   // Test the various methods
   nofFailedTests += test_methods();
+  // Coordinate example for non-linear frequency axis in beamformed data
+  nofFailedTests += example_beamformed ();
 
   return nofFailedTests;
 }

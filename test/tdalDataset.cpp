@@ -34,7 +34,8 @@
 #include <dalDataset.h>
 #endif
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                              test_constructors
 
 /*!
   \brief Test the various constructors for an object of type DAL::dalDataset
@@ -51,31 +52,28 @@ int test_constructors (std::string const &filename)
   int nofFailedTests (0);
 
   std::cout << "[1] Default constructor..." << std::endl;
-  try
-    {
-      DAL::dalDataset dataset;
-      //
-      dataset.summary();
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  try {
+    DAL::dalDataset dataset;
+    //
+    dataset.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   std::cout << "[2] Argumented constructor..." << std::endl;
-  try
-    {
-      DAL::dalDataset dataset (filename.c_str(),"HDF5");
-      //
-      dataset.summary();
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  try {
+    DAL::dalDataset dataset (filename.c_str(),
+			     "HDF5");
+    //
+    dataset.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
@@ -83,9 +81,9 @@ int test_constructors (std::string const &filename)
 
 /*!
   \brief Test the various methods which provide access to internal parameters
-
+  
   \param filename -- Name of the input HDF5 data file
-
+  
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
@@ -96,19 +94,17 @@ int test_parameters (std::string const &filename)
   int nofFailedTests (0);
   DAL::dalDataset dataset (filename.c_str(),"HDF5");
 
-  try
-    {
-      std::cout << "-- getId ()         = " << dataset.getId ()         << std::endl;
-      std::cout << "-- getType ()       = " << dataset.getType ()       << std::endl;
-      std::cout << "-- getName ()       = " << dataset.getName ()       << std::endl;
-      std::cout << "-- getFileHandle () = " << dataset.getFileHandle () << std::endl;
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  try {
+    std::cout << "-- getId ()         = " << dataset.getId ()         << std::endl;
+    std::cout << "-- getType ()       = " << dataset.getType ()       << std::endl;
+    std::cout << "-- getName ()       = " << dataset.getName ()       << std::endl;
+    std::cout << "-- getFileHandle () = " << dataset.getFileHandle () << std::endl;
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
