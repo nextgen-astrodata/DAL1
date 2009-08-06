@@ -40,9 +40,6 @@ namespace DAL {
   
   // ----------------------------------------------------------------  dalDataset
   
-  /*!
-    \brief The dataset object constructor
-  */
   dalDataset::dalDataset()
   {
     init();
@@ -51,79 +48,76 @@ namespace DAL {
   // ----------------------------------------------------------------  dalDataset
 
   /*!
-    \brief Another constructor with two arguments.
-    \param dsname    -- The name of the dataset to open.
+    \param filename  -- The name of the dataset/file to open.
     \param filetype  -- Type of file to open ("HDF5", "MSCASA", etc.).
-    \param overwrite -- Overwrite existing file if one already exist for name
-           \e dsname. By default an already existing file is kept and only
-     opened -- if you want to overwrite use <tt>overwrite=true</tt>
+    \param overwrite -- Overwrite existing file if one already exists for name
+           \e filename. By default an already existing file is kept and only
+	   opened -- if you want to overwrite use <tt>overwrite=true</tt>
   */
-  dalDataset::dalDataset( const char * dsname,
+  dalDataset::dalDataset( const char * filename,
                           std::string filetype,
                           const bool &overwrite)
   {
-    init();
-
-    name = stringify( dsname );
-    type = filetype;  // set the global class variable: type
-
-    if ( filetype == H5TYPE )
-      {
-        /*
-         * Check if the provided name belongs to an already existing dataset;
-         * if this is the case, open the dataset instead of blindly creating
-         * it (and thereby potentially overwriting the existing one).
-         */
-        if (overwrite)
-          {
-            /* Directly try to create the dataset */
-            if ( ( h5fh_p = H5Fcreate( dsname,
-                                       H5F_ACC_TRUNC,
-                                       H5P_DEFAULT,
-                                       H5P_DEFAULT ) ) < 0 )
-              {
-                std::cerr << "ERROR: Could not create file '" << dsname << "'."
-                          << std::endl;
-              }
-          }
-        else
-          {
-            FILE * pFile;
-            pFile = fopen ( dsname, "r" );
-            if ( pFile == NULL )  /* check to see if the file exists */
-              {
-                /* if not, create it */
-                if ( ( h5fh_p = H5Fcreate( dsname,
-                                           H5F_ACC_TRUNC,
-                                           H5P_DEFAULT,
-                                           H5P_DEFAULT ) ) < 0 )
-                  std::cerr << "ERROR: Could not create file '" << dsname << "'.\n";
-              }
-            else  /* if it does exist, try to reopen it as a hdf5 file */
-              {
-                if ( 0 != fclose( pFile ) )
-                  std::cerr << "ERROR: Could not close file '" << dsname << "'.\n";
-
-                /* if it does reopen it as an hdf5 file */
-                if ( ( h5fh_p = H5Fopen(dsname, H5F_ACC_RDWR, H5P_DEFAULT ) ) > 0 )
-                  std::cerr << "SUCCESS: Opened file '" << dsname << "'.\n";
-                else
-                  {
-                    std::cerr << "ERROR: There was a problem opening the file '"
-                              << dsname << "'.\n";
-                    exit(9);
-                  }
-              }
-
-            file = &h5fh_p;
-          }
-      }
+    init (filename,
+	  filetype,
+	  overwrite);
+    
+    if ( filetype == H5TYPE ) {
+      /*
+       * Check if the provided name belongs to an already existing dataset;
+       * if this is the case, open the dataset instead of blindly creating
+       * it (and thereby potentially overwriting the existing one).
+       */
+      if (overwrite_p)
+	{
+	  /* Directly try to create the dataset */
+	  if ( ( h5fh_p = H5Fcreate( filename,
+				     H5F_ACC_TRUNC,
+				     H5P_DEFAULT,
+				     H5P_DEFAULT ) ) < 0 )
+	    {
+	      std::cerr << "ERROR: Could not create file '" << filename << "'."
+			<< std::endl;
+	    }
+	}
+      else
+	{
+	  FILE * pFile;
+	  pFile = fopen ( filename, "r" );
+	  if ( pFile == NULL )  /* check to see if the file exists */
+	    {
+	      /* if not, create it */
+	      if ( ( h5fh_p = H5Fcreate( filename,
+					 H5F_ACC_TRUNC,
+					 H5P_DEFAULT,
+					 H5P_DEFAULT ) ) < 0 )
+		std::cerr << "ERROR: Could not create file '" << filename << "'.\n";
+	    }
+	  else  /* if it does exist, try to reopen it as a hdf5 file */
+	    {
+	      if ( 0 != fclose( pFile ) )
+		std::cerr << "ERROR: Could not close file '" << filename << "'.\n";
+	      
+	      /* if it does reopen it as an hdf5 file */
+	      if ( ( h5fh_p = H5Fopen(filename, H5F_ACC_RDWR, H5P_DEFAULT ) ) > 0 )
+		std::cerr << "SUCCESS: Opened file '" << filename << "'.\n";
+	      else
+		{
+		  std::cerr << "ERROR: There was a problem opening the file '"
+			    << filename << "'.\n";
+		  exit(9);
+		}
+	    }
+	  
+	  file = &h5fh_p;
+	}
+    }
     else if ( filetype == FITSTYPE )
       {
 #ifdef HAVE_CFITSIO
         fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
         int status;
-        fits_create_file(&fptr, dsname, &status); /*create new file*/
+        fits_create_file(&fptr, filename, &status); /*create new file*/
 #else
         std::cerr << "ERROR: CFITSIO libraries not found.\n";
 #endif
@@ -134,33 +128,51 @@ namespace DAL {
                   << "\' not supported for this operation." << endl;
       }
   }
-
-
-  // ----------------------------------------------------------------------- init
-
+  
+  //_____________________________________________________________________________
+  //                                                                         init
+  
   void dalDataset::init()
+  {
+    init ("UNDEFINED",
+	  "UNDEFINED",
+	  false);
+  }
+
+  //_____________________________________________________________________________
+  //                                                                         init
+  
+  /*!
+    \param filename  -- The name of the dataset/file to open.
+    \param filetype  -- Type of file to open ("HDF5", "MSCASA", etc.).
+    \param overwrite -- Overwrite existing file if one already exists for name
+           \e filename. By default an already existing file is kept and only
+	   opened -- if you want to overwrite use <tt>overwrite=true</tt>
+  */
+  void dalDataset::init (const char * filename,
+			 std::string filetype,
+			 const bool &overwrite)
   {
 #ifdef PYTHON
     Py_Initialize();
 #endif
 
-    file = NULL;
-    type = "UNDEFINED";
-    name = "UNDEFINED";
-    h5fh_p = 0;   // hdf5 file handle
-
 #ifdef HAVE_CASA
-    ms = NULL;
+    ms        = NULL;
     ms_reader = NULL;
 #endif
 
+    file        = NULL;
+    name        = stringify( filename );
+    type        = filetype;
+    overwrite_p = overwrite;
+    h5fh_p      = 0;
   }
 
-  // ------------------------------------------------------------------ summary
-
+  //_____________________________________________________________________________
+  //                                                                      summary
+  
   /*!
-    \brief Provide a summary of the internal status
-
     \param os -- Output stream to which the summary is written.
   */
   void dalDataset::summary (std::ostream &os)
@@ -176,59 +188,55 @@ namespace DAL {
      * to a dataset.
      */
 
-    if (getName() != "UNDEFINED")
-      {
-        std::vector<std::string> groupNames = getGroupNames();
-
-        os << "-- Group names      = [";
-        for (unsigned int n(0); n<groupNames.size(); n++)
-          {
-            os << " " << groupNames[n];
-          }
-        os << " ]" << std::endl;
+    if (getName() != "UNDEFINED") {
+      std::vector<std::string> groupNames = getGroupNames();
+      
+      os << "-- Group names      = [";
+      for (unsigned int n(0); n<groupNames.size(); n++) {
+	os << " " << groupNames[n];
       }
+      os << " ]" << std::endl;
+    }
   }
+  
+  //_____________________________________________________________________________
+  //                                                                     openFITS
 
-  // ---------------------------------------------------------- openFITS
-
-  /****************************************************************
-   *  Sub-routine to open a FITS file
-   *
-   *****************************************************************/
-  bool openFITS( const char * fname )
+  /*!
+    \param filename  -- The name of the dataset/file to open.
+  */  
+  bool dalDataset::openFITS ( const char * fname )
   {
-
+    
 #ifdef HAVE_CFITSIO
-
+    
     fitsfile * fptr = NULL;
     int status      = 0;  /* MUST initialize status */
     int nkeys       = 0;
     int ii          = 0;
     char card [500 ];
     memset( card, '\0', 500);
-
+    
     fits_open_file(&fptr, fname, READONLY, &status);
-
-    if (status)          /* print any error messages */
-      {
-        return DAL::FAIL;
+    
+    /* print any error messages */
+    if (status) {
+      return DAL::FAIL;
+    }
+    else {
+      fits_get_hdrspace(fptr, &nkeys, NULL, &status);
+      
+      for (ii = 1; ii <= nkeys; ii++) {
+	fits_read_record(fptr, ii, card, &status); /* read keyword */
+	printf("%s\n", card);
       }
-    else
-      {
-        fits_get_hdrspace(fptr, &nkeys, NULL, &status);
-
-        for (ii = 1; ii <= nkeys; ii++)
-          {
-            fits_read_record(fptr, ii, card, &status); /* read keyword */
-            printf("%s\n", card);
-          }
-
-        fits_close_file(fptr, &status);
-
-        return DAL::SUCCESS;
-      }
+      
+      fits_close_file(fptr, &status);
+      
+      return DAL::SUCCESS;
+    }
 #else
-
+    
     fname = fname; // to get rid of unused var compiler warning
     return DAL::FAIL;
 
@@ -236,13 +244,13 @@ namespace DAL {
 
   }
 
-  // ---------------------------------------------------------- openHDF5
-
-  /****************************************************************
-   *  Sub-routine to open a HDF5 file
-   *
-   *****************************************************************/
-  hid_t openHDF5( const char * fname )
+  //_____________________________________________________________________________
+  //                                                                     openHDF5
+  
+  /*!
+    \param filename  -- The name of the dataset/file to open.
+  */  
+  hid_t dalDataset::openHDF5 (const char * fname)
   {
     // the following returns an integer file handle
 
@@ -274,27 +282,26 @@ namespace DAL {
     return fh;
   }
 
-  // ---------------------------------------------------------- open
+  //_____________________________________________________________________________
+  //                                                                         open
+
   /*!
-    \brief Open the dataset.
-
-    Open the dataset (file).
-
     \param filename The name of the file to open.
     \return bool -- DAL::FAIL or DAL::SUCCESS
-     */
-  bool dalDataset::open( const char * fname )
+  */
+  bool dalDataset::open (const char * fname)
   {
     std::string lcltype;
-
-    if ( DAL::SUCCESS == openFITS( fname ) )
-      {
-        lcltype = FITSTYPE;
-        type = lcltype;
-        std::cerr << lcltype << " file opened, but other FITS operations are not "
-                  << "yet supported.  Sorry." << endl;
-        return DAL::SUCCESS;
-      }
+    
+    if ( DAL::SUCCESS == openFITS( fname ) ) {
+      // store the type of the dataset
+      lcltype = FITSTYPE;
+      type    = lcltype;
+      // report successful opening of file
+      std::cerr << lcltype << " file opened, but other FITS operations are not "
+		<< "yet supported.  Sorry." << endl;
+      return DAL::SUCCESS;
+    }
     else if ( (h5fh_p = openHDF5( fname )) >= 0 )
       {
         file = &h5fh_p;
@@ -341,13 +348,10 @@ namespace DAL {
       }
   }
 
-  // ---------------------------------------------------------- close
+  //_____________________________________________________________________________
+  //                                                                        close
 
   /*!
-    \brief Close the dataset.
-
-    Close the dataset.
-
     \return bool -- DAL::FAIL or DAL::SUCCESS
    */
   bool dalDataset::close()
@@ -372,8 +376,8 @@ namespace DAL {
     return DAL::FAIL;
   }
 
-
-  // ---------------------------------------------------------- getAttributes
+  //_____________________________________________________________________________
+  //                                                                getAttributes
 
   /*!
     \brief Print the group attributes.
@@ -389,25 +393,12 @@ namespace DAL {
         std::cerr << "ERROR: Could not iterate over dataset attributes.\n";
         return DAL::FAIL;
       }
-    else
+    else {
       return DAL::SUCCESS;
+    }
 
   }
-
-// ------------------------------------------------------------ getId
-
-  /*!
-    \brief Get the group ID.
-
-    Retrieve the identifier for the group.
-
-    \return The group identifier as an integer.
-  */
-  hid_t dalDataset::getId()
-  {
-    return h5fh_p;
-  }
-
+  
   //_____________________________________________________________________________
   //                                                                 setAttribute
 
@@ -564,7 +555,8 @@ namespace DAL {
     return h5setAttribute_string( h5fh_p, attrname, &data, 1 );
   }
 
-  // ---------------------------------------------- setAttribute_string
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \param attrname -- The name of the attribute you want to create.
@@ -578,8 +570,8 @@ namespace DAL {
     return h5setAttribute_string ( h5fh_p, attrname, data, size );
   }
 
-
-  // ------------------------------------------------- setAttribute_string
+  //_____________________________________________________________________________
+  //                                                          setAttribute_string
 
   /*!
     \brief Define a string attribute.
@@ -644,36 +636,33 @@ namespace DAL {
 
   }
 
-
-  // ---------------------------------------------------------- createGroup
+  //_____________________________________________________________________________
+  //                                                                  createGroup
 
   /*!
     \brief Create a new group.
 
     \param groupname -- The name of the group to be created
-    \return dalGroup
+    \return dalGroup -- Pointer to a dalGroup object
   */
   dalGroup * dalDataset::createGroup( const char * gname )
   {
-    if ( type == H5TYPE )
-      {
-        dalGroup * lg = NULL;
-        lg = new dalGroup( gname, &h5fh_p );
-        return lg;
-      }
-    else
-      {
-        std::cerr << "ERROR: Operation not supported for filetype ("
-                  << type << ").\n";
-        return NULL;
-      }
+    if ( type == H5TYPE ) {
+      dalGroup * lg = NULL;
+      lg = new dalGroup( gname, &h5fh_p );
+      return lg;
+    }
+    else {
+      std::cerr << "ERROR: Operation not supported for filetype ("
+		<< type << ").\n";
+      return NULL;
+    }
   }
-
-  // ---------------------------------------------------------- listTables
+  
+  //_____________________________________________________________________________
+  //                                                                   listTables
 
   /*!
-    \brief List the tables in a dataset.
-
     List the tables in a dataset; keep in mind, that this operation only is
     supported for data set of appropriate internal structure, such e.g.
     MeasurementSets.
@@ -708,33 +697,30 @@ namespace DAL {
       }
   }
 
-
-  // ---------------------------------------------------------- setFilter
-
+  //_____________________________________________________________________________
+  //                                                                    setFilter
+  
   /*!
-  \brief Set table filter.
-
-  \param columns A string containing a comma-separated list of columns to
-                 include in a filtered dataset.
+    \param columns A string containing a comma-separated list of columns to
+           include in a filtered dataset.
   */
-  void dalDataset::setFilter( std::string columns )
+  void dalDataset::setFilter ( std::string columns )
   {
     filter.setFiletype( type );
     filter.set(columns);
   }
 
-
-  // ---------------------------------------------------------- setFilter
+  //_____________________________________________________________________________
+  //                                                                    setFilter
 
   /*!
-  \brief Set table filter.
-
-  \param columns A string containing a comma-separated list of columns to
-                 include in a filtered dataset.
-  \param conditions A string describing restraints on which rows are
-                 included in an opened dataset.  For example: "time>100".
+    \param columns A string containing a comma-separated list of columns to
+           include in a filtered dataset.
+    \param conditions A string describing restraints on which rows are
+           included in an opened dataset.  For example: "time>100".
   */
-  void dalDataset::setFilter( std::string columns, std::string conditions )
+  void dalDataset::setFilter (std::string columns,
+			      std::string conditions)
   {
     filter.setFiletype( type );
     filter.set(columns,conditions);
@@ -744,7 +730,6 @@ namespace DAL {
   // ---------------------------------------------------------- createArray
 
   /*!
-    \brief Create a new array in the root group.
     \param arrayname The name of the array you want to create.
     \param data_object A pointer to a data object containing the intitial
                        data you want to include in the array.
@@ -790,7 +775,6 @@ namespace DAL {
    *
    *****************************************************************/
   /*!
-    \brief Create a new extendible integer array in the root group.
     \param arrayname The name of the array you want to create.
     \param dims A vector containing the dimensions of the array.
     \param data An array of integer values.
@@ -830,7 +814,6 @@ namespace DAL {
    *
    *****************************************************************/
   /*!
-    \brief Create a new extendible floating point array in the root group.
     \param arrayname The name of the array you want to create.
     \param dims A vector containing the dimensions of the array.
     \param data An array of floating point values.
@@ -921,14 +904,12 @@ namespace DAL {
       }
   }
 
-  // ---------------------------------------------------------- createTable
-
-  /****************************************************************
-   *  Creates a table in a group (mainly for hdf5)
-   *
-   *****************************************************************/
+  //_____________________________________________________________________________
+  //                                                                  createTable
 
   /*!
+    Creates a table in a group (mainly for hdf5)
+
     \brief create a new table in a specified group
     \param tablename -- Name of the table to be created
     \param groupname -- Name of the group within which the table is to be
@@ -952,21 +933,13 @@ namespace DAL {
       }
   }
 
-  // ---------------------------------------------------------- openTable
-
-  /****************************************************************
-   *  Opens a table at the higest level of a dataset.
-   *
-   *****************************************************************/
+  //_____________________________________________________________________________
+  //                                                                    openTable
 
   /*!
-  \brief Open a table (that's not in a group) by name.
-
-  Open a table (that's not in a group) by name.
-
-  \param tablename The name of the table you want to open
-  \return dalTable * A pointer to a table object.
-   */
+    \param tablename The name of the table you want to open
+    \return dalTable * A pointer to a table object.
+  */
   dalTable * dalDataset::openTable( std::string tablename )
   {
     if ( type == MSCASATYPE )
@@ -1002,12 +975,8 @@ namespace DAL {
       }
   }
 
-  // ---------------------------------------------------------- openTable
-
-  /****************************************************************
-   *  Opens a table in a group (mainly for hdf5)
-   *
-   *****************************************************************/
+  //_____________________________________________________________________________
+  //                                                                    openTable
 
   /*!
     \param tablename The name of the table to open.
@@ -1044,22 +1013,14 @@ namespace DAL {
       return NULL;
   }
 
-  // ---------------------------------------------------------- openArray
-
-  /****************************************************************
-   *  Opens an array at the higest level of a dataset.
-   *
-   *****************************************************************/
+  //_____________________________________________________________________________
+  //                                                                    openArray
 
   /*!
-    \brief Open a array.
-
-    Open a array.
-
     \param arrayname The name of the array to open.
     \return dalArray * A pointer to a array object.
    */
-  dalArray * dalDataset::openArray( std::string arrayname )
+  dalArray * dalDataset::openArray (std::string arrayname)
   {
     if ( type == MSCASATYPE )
       {
@@ -1081,35 +1042,28 @@ namespace DAL {
       return NULL;
   }
 
-  // ---------------------------------------------------------- openArray
-
-  /****************************************************************
-   *  Opens an array in a group.
-   *
-   *****************************************************************/
+  //_____________________________________________________________________________
+  //                                                                    openArray
 
   /*!
-    \brief Open an array in a group.
-
     \param arrayname The name of the array to open.
     \param groupname The name of the group containing the array.
     \return dalArray * A pointer to a array object.
    */
-  dalArray * dalDataset::openArray( std::string arrayname, std::string groupname )
+  dalArray * dalDataset::openArray (std::string arrayname,
+				    std::string groupname)
   {
-    if ( type == MSCASATYPE )
-      {
-        std::cerr << "dalDataset::openArray MSCASA Type not yet supported.\n";
-        return NULL;
-      }
-    else if ( type == H5TYPE )
-      {
-        dalArray * test = new dalArray;
-        delete test;
-        dalArray * la = new dalArray;
-        la->open( file, '/' + groupname + '/' + arrayname );
-        return la;
-      }
+    if ( type == MSCASATYPE ) {
+      std::cerr << "dalDataset::openArray MSCASA Type not yet supported.\n";
+      return NULL;
+    }
+    else if ( type == H5TYPE ) {
+      dalArray * test = new dalArray;
+      delete test;
+      dalArray * la = new dalArray;
+      la->open( file, '/' + groupname + '/' + arrayname );
+      return la;
+    }
     else if ( type == FITSTYPE )
       {
         std::cerr << "dalDataset::openArray FITS Type not yet supported.\n";
@@ -1118,23 +1072,21 @@ namespace DAL {
     else
       return NULL;
   }
-
-
-  // -------------------------------------------- dalDataset_file_info
+  
+  //_____________________________________________________________________________
+  //                                                                  getFileInfo
 
   /*!
-    \brief Get type of the object and display its name and type
-
-    \param loc_id --
+    \param loc_id -- HDF5 identifier 
     \param name   --
     \param opdata --
    */
-  herr_t dalDataset_file_info(hid_t loc_id,
-                              const char *name,
-                              void *opdata)
+  herr_t getFileInfo (hid_t loc_id,
+		      const char *name,
+		      void *opdata)
   {
     H5G_stat_t statbuf;
-
+    
     /*
      * Get type of the object and display its name and type.
      * The name of the object is passed to this function by
@@ -1154,28 +1106,28 @@ namespace DAL {
     return 0;
   }
 
-
-  // -------------------------------------------------------------- getGroupNames
+  //_____________________________________________________________________________
+  //                                                                getGroupNames
 
   /*!
-    \brief Get a list of groups in the dataset.
-
     \return A vector of group names.
    */
   std::vector<std::string> dalDataset::getGroupNames()
   {
     std::vector<std::string> group_names;
-    H5Giterate( h5fh_p, "/", NULL, dalDataset_file_info, &group_names );
+
+    H5Giterate (h5fh_p,      /* File or group identifier                    */
+		"/",         /* Group over which the iteration is performed */
+		NULL,        /* Location at which to begin the iteration    */
+		getFileInfo,
+		&group_names );
+
     return group_names;
   }
 
-  // ---------------------------------------------------------- openGroup
-
-  /****************************************************************
-   *  Opens a group (mainly for hdf5)
-   *
-   *****************************************************************/
-
+  //_____________________________________________________________________________
+  //                                                                    openGroup
+  
   /*!
     \brief Open a group in a dataset.
 
@@ -1208,30 +1160,10 @@ namespace DAL {
       }
   }
 
-  // ---------------------------------------------------------- getType
-
-  /****************************************************************
-   *  Return the type of file the dataset represents
-   *    (HDF5, FITS, CASA, etc.)
-   *
-   *****************************************************************/
+  //_____________________________________________________________________________
+  //                                                                     read_tbb
 
   /*!
-    \brief Retrieve the dataset type ("HDF5", "MSCASA", etc.).
-
-    \return type -- A string describing the file format ("HDF5", "MSCASA", etc.)
-  */
-  std::string dalDataset::getType()
-  {
-    return type;
-  }
-
-
-  // ---------------------------------------------------------- read_tbb
-
-  /*!
-    \brief Read TBB data.
-
     Read the transient buffer board (TBB) data out of a file that is in
     a predefined format.  This format is described in the Time Series
     Interface Control Document.
@@ -1307,66 +1239,66 @@ namespace DAL {
         std::cerr << "ERROR: could not read array.(dalDataset::read_tbb)\n";
       }
   }
-
-
+  
+  // ============================================================================
+  //
+  //  The following functions are boost wrappers to allow some previously
+  //  defined functions to be easily called from a python prompt.
+  //
+  // ============================================================================
+  
 #ifdef PYTHON
-  /************************************************************************
-   *
-   * The following functions are boost wrappers to allow some previously
-   *   defined functions to be easily called from a python prompt.
-   *
-   ************************************************************************/
 
-  /******************************************************
-   * wrappers for createTable
-   ******************************************************/
-
-  // ---------------------------------------------------------- ct1_boost
+  //_____________________________________________________________________________
+  //                                                                    ct1_boost
 
   /*!
-    \brief Create a new table
-
     \param a -- The name of the table to be created
   */
-  dalTable * dalDataset::ct1_boost(std::string a)
+  dalTable * dalDataset::ct1_boost (std::string a)
   {
     dalTable * ret;
     ret = dalDataset::createTable(a);
     return ret;
   }
 
-  // ---------------------------------------------------------- ct2_boost
+  //_____________________________________________________________________________
+  //                                                                    ct2_boost
 
   /*!
-    \brief Create a new table
-
     \param a -- The name of the group within which the new table is created.
     \param b -- The name of the table to be created
    */
-  dalTable * dalDataset::ct2_boost( std::string a,
+  dalTable * dalDataset::ct2_boost (std::string a,
                                     std::string b)
   {
     dalTable * ret;
     ret = dalDataset::createTable(a,b);
     return ret;
   }
+  
+  //_____________________________________________________________________________
+  //                                                                    ot1_boost
 
-  /******************************************************
-   * wrappers for openTable
-   ******************************************************/
-
-  // ---------------------------------------------------------- ot1_boost
-
-  dalTable * dalDataset::ot1_boost(std::string a)
+  /*!
+    \param a -- The name of the table to be opened
+  */
+  dalTable * dalDataset::ot1_boost (std::string a)
   {
     dalTable * ret;
     ret = openTable(a);
     return ret;
   }
 
-  // ---------------------------------------------------------- ot2_boost
+  //_____________________________________________________________________________
+  //                                                                    ot2_boost
 
-  dalTable * dalDataset::ot2_boost(std::string a, std::string b)
+  /*
+    \param a -- The name of the group within which the table resides.
+    \param b -- The name of the table to be opened.
+  */
+  dalTable * dalDataset::ot2_boost (std::string a,
+				    std::string b)
   {
     dalTable * ret;
     ret = openTable(a,b);
@@ -1378,100 +1310,108 @@ namespace DAL {
    ******************************************************/
 
   // ---------------------------------------------------------- cia_boost1
-
-  dalArray * dalDataset::cia_boost1( std::string arrayname, bpl::list pydims,
+  
+  dalArray * dalDataset::cia_boost1 (std::string arrayname,
+				     bpl::list pydims,
                                      bpl::list pydata )
   {
     bpl::list cdims;
-
-    for (int ii=0; ii<bpl::len(pydims); ii++)
+    
+    for (int ii=0; ii<bpl::len(pydims); ii++) {
       cdims.append(10);
-
+    }
+    
     dalArray * array;
     array = cia_boost2( arrayname, pydims, pydata, cdims );
 
+    /* Return pointer to the created array */
     return array;
   }
 
   // ---------------------------------------------------------- cia_boost2
-
-  dalArray * dalDataset::cia_boost2(
-    std::string arrayname,
-    bpl::list pydims,
-    bpl::list pydata,
-    bpl::list cdims )
+  
+  dalArray * dalDataset::cia_boost2 (std::string arrayname,
+				     bpl::list pydims,
+				     bpl::list pydata,
+				     bpl::list cdims )
   {
-
     std::vector<int> dims;
     std::vector<int> chnkdims;
-
-    for (int ii=0; ii<bpl::len(pydims); ii++)
+    
+    for (int ii=0; ii<bpl::len(pydims); ii++) {
       dims.push_back(bpl::extract<int>(pydims[ii]));
-
-    for (int ii=0; ii<bpl::len(cdims); ii++)
+    }
+    
+    for (int ii=0; ii<bpl::len(cdims); ii++) {
       chnkdims.push_back(bpl::extract<int>(cdims[ii]));
-
+    }
+    
     long size = bpl::len(pydata);
     int * data = NULL;
     data = new int[size];
-
-    for (int ii=0; ii<size; ii++)
+    
+    for (int ii=0; ii<size; ii++) {
       data[ii] = bpl::extract<int>(pydata[ii]);
+    }
 
     dalArray * array = createIntArray(arrayname, dims, data, chnkdims);
 
+    /* Release allocated memory */
     delete [] data;
-
+    /* Return pointer to created array */
     return array;
   }
 
   // ----------------------------------------------------- cia_boost_numarray1
-
-  dalArray * dalDataset::cia_boost_numarray1(
-    std::string arrayname,
-    bpl::list pydims,
-    bpl::numeric::array pydata )
+  
+  dalArray * dalDataset::cia_boost_numarray1 (std::string arrayname,
+					      bpl::list pydims,
+					      bpl::numeric::array pydata )
   {
-
     bpl::list cdims;
 
-    for (int ii=0; ii<bpl::len(pydims); ii++)
+    for (int ii=0; ii<bpl::len(pydims); ii++) {
       cdims.append(10);
+    }
 
     dalArray * array;
     array = cia_boost_numarray2(arrayname, pydims, pydata, cdims);
 
+    /* Return pointer to created array */
     return array;
   }
 
   // ----------------------------------------------- cia_boost_numarray2
 
-  dalArray * dalDataset::cia_boost_numarray2(
-    std::string arrayname,
-    bpl::list pydims,
-    bpl::numeric::array pydata,
-    bpl::list cdims )
+  dalArray * dalDataset::cia_boost_numarray2 (std::string arrayname,
+					      bpl::list pydims,
+					      bpl::numeric::array pydata,
+					      bpl::list cdims )
   {
     std::vector<int> dims;
     std::vector<int> chnkdims;
-
-    for (int ii=0; ii<bpl::len(pydims); ii++)
+    
+    for (int ii=0; ii<bpl::len(pydims); ii++) {
       dims.push_back(bpl::extract<int>(pydims[ii]));
-
-    for (int ii=0; ii<bpl::len(cdims); ii++)
+    }
+    
+    for (int ii=0; ii<bpl::len(cdims); ii++) {
       chnkdims.push_back(bpl::extract<int>(cdims[ii]));
-
+    }
+    
     int size = num_util::size(pydata);
     int * data = NULL;
     data = new int[size];
-
-    for (int ii=0; ii<size; ii++)
+    
+    for (int ii=0; ii<size; ii++) {
       data[ii] = bpl::extract<int>(pydata[ii]);
-
+    }
+    
     dalArray * array = createIntArray(arrayname, dims, data, chnkdims);
-
+    
+    /* Release allocated memory */
     delete [] data;
-
+    /* Return pointer to created array */
     return array;
   }
 
@@ -1481,39 +1421,44 @@ namespace DAL {
 
   // ---------------------------------------------------------- cfa_boost
 
-  dalArray * dalDataset::cfa_boost( std::string arrayname, bpl::list pydims,
-                                    bpl::list pydata, bpl::list cdims )
+  dalArray * dalDataset::cfa_boost (std::string arrayname,
+				    bpl::list pydims,
+                                    bpl::list pydata,
+				    bpl::list cdims)
   {
-
     std::vector<int> dims;
     std::vector<int> chnkdims;
-
-    for (int ii=0; ii<bpl::len(pydims); ii++)
+    
+    for (int ii=0; ii<bpl::len(pydims); ii++) {
       dims.push_back(bpl::extract<int>(pydims[ii]));
-
-    for (int ii=0; ii<bpl::len(cdims); ii++)
+    }
+    
+    for (int ii=0; ii<bpl::len(cdims); ii++) {
       chnkdims.push_back(bpl::extract<int>(cdims[ii]));
-
+    }
+    
     long size = bpl::len(pydata);
     float * data = NULL;
     data = new float[size];
-
-    for (int ii=0; ii<size; ii++)
+    
+    for (int ii=0; ii<size; ii++) {
       data[ii] = bpl::extract<float>(pydata[ii]);
-
+    }
+    
     dalArray * array = createFloatArray( arrayname, dims, data, chnkdims );
-
+    
+    /* Release allocated memory */
     delete [] data;
-
+    /* Return pointer to created array */
     return array;
   }
 
   // ------------------------------------------------------ cfa_boost_numarray
 
-  dalArray * dalDataset::cfa_boost_numarray( std::string arrayname,
-      bpl::list pydims,
-      bpl::numeric::array pydata,
-      bpl::list cdims )
+  dalArray * dalDataset::cfa_boost_numarray (std::string arrayname,
+					     bpl::list pydims,
+					     bpl::numeric::array pydata,
+					     bpl::list cdims )
   {
     std::vector<int> dims;
     std::vector<int> chnkdims;
@@ -1533,15 +1478,15 @@ namespace DAL {
 
     dalArray * array = createFloatArray(arrayname, dims, data, chnkdims);
 
+    /* Release allocated memory */
     delete [] data;
-
+    /* Return pointer to created array */
     return array;
-
   }
 
   // ---------------------------------------------------------- ria_boost
 
-  bpl::numeric::array dalDataset::ria_boost( std::string arrayname )
+  bpl::numeric::array dalDataset::ria_boost (std::string arrayname )
   {
     hid_t lclfile;
     hid_t  status;
@@ -1557,32 +1502,35 @@ namespace DAL {
 
     int size = 1;
     std::vector<int> dimensions;
-    for (int ii=0; ii<data_rank; ii++)
-      {
-        size *= dims[ii];
-        dimensions.push_back(dims[ii]);
-      }
-
+    for (int ii=0; ii<data_rank; ii++) {
+      size *= dims[ii];
+      dimensions.push_back(dims[ii]);
+    }
+    
     int * data = NULL;
     data = new int[size];
-
+    /* Read data from HDF5 file */
     status = H5LTread_dataset_int( h5fh_p, arrayname.c_str(), data );
+    /* Convert data array */
     bpl::numeric::array nadata = num_util::makeNum( (int*)data, dimensions );
+    
+    /* Release allocated memory */
     delete data;
+    /* Return result */
     return nadata;
   }
-
+  
   // ---------------------------------------------------------- rfa_boost
-
-  bpl::numeric::array dalDataset::rfa_boost( std::string arrayname )
+  
+  bpl::numeric::array dalDataset::rfa_boost (std::string arrayname )
   {
     hid_t lclfile;
     hid_t status;
-
+    
     // get the dataspace
     lclfile = H5Dopen1(h5fh_p, arrayname.c_str());
     hid_t filespace = H5Dget_space(lclfile);
-
+    
     // what is the rank of the array?
     hid_t data_rank = H5Sget_simple_extent_ndims(filespace);
     hsize_t dims[ data_rank ];
@@ -1603,7 +1551,10 @@ namespace DAL {
 
     status = H5LTread_dataset_float( h5fh_p, arrayname.c_str(), data );
     bpl::numeric::array nadata = num_util::makeNum( (float*)data, dimensions );
+
+    /* Release allocated memory */
     delete data;
+    /* Return result */
     return nadata;
   }
 
@@ -1613,14 +1564,15 @@ namespace DAL {
 
   // -------------------------------------------------------- setFilter_boost1
 
-  void dalDataset::setFilter_boost1( std::string columns )
+  void dalDataset::setFilter_boost1 (std::string columns )
   {
     setFilter( columns );
   }
 
   // -------------------------------------------------------- setFilter_boost2
 
-  void dalDataset::setFilter_boost2( std::string columns, std::string conditions )
+  void dalDataset::setFilter_boost2 (std::string columns,
+				     std::string conditions)
   {
     setFilter( columns, conditions );
   }
@@ -1631,46 +1583,45 @@ namespace DAL {
   {
     std::vector<std::string> lcltabs = listTables();
     bpl::list lcllist;
-    for (uint idx=0; idx<lcltabs.size(); idx++)
-      {
-        lcllist.append( lcltabs[idx] );
-      }
+    for (uint idx=0; idx<lcltabs.size(); idx++) {
+      lcllist.append( lcltabs[idx] );
+    }
     return lcllist;
   }
-
-  bool dalDataset::setAttribute_char( std::string attrname, char data )
+  
+  bool dalDataset::setAttribute_char (std::string attrname, char data )
   {
-    return setAttribute( attrname, &data );
+    return setAttribute (attrname, &data );
   }
-  bool dalDataset::setAttribute_short( std::string attrname, short data )
+  bool dalDataset::setAttribute_short (std::string attrname, short data )
   {
-    return setAttribute( attrname, &data );
+    return setAttribute (attrname, &data );
   }
-  bool dalDataset::setAttribute_int( std::string attrname, int data )
+  bool dalDataset::setAttribute_int (std::string attrname, int data )
   {
-    return setAttribute( attrname, &data );
+    return setAttribute (attrname, &data );
   }
-  bool dalDataset::setAttribute_uint( std::string attrname, uint data )
+  bool dalDataset::setAttribute_uint (std::string attrname, uint data )
   {
-    return setAttribute( attrname, &data );
+    return setAttribute (attrname, &data );
   }
-  bool dalDataset::setAttribute_long( std::string attrname, long data )
+  bool dalDataset::setAttribute_long (std::string attrname, long data )
   {
-    return setAttribute( attrname, &data );
+    return setAttribute (attrname, &data );
   }
-  bool dalDataset::setAttribute_float( std::string attrname, float data )
+  bool dalDataset::setAttribute_float (std::string attrname, float data )
   {
-    return setAttribute( attrname, &data );
+    return setAttribute (attrname, &data );
   }
-  bool dalDataset::setAttribute_double( std::string attrname, double data )
+  bool dalDataset::setAttribute_double (std::string attrname, double data )
   {
-    return setAttribute( attrname, &data );
+    return setAttribute (attrname, &data );
   }
   bool dalDataset::setAttribute_string_boost(std::string attrname, std::string data )
   {
-    return setAttribute( attrname, &data );
+    return setAttribute (attrname, &data );
   }
-  bool dalDataset::setAttribute_char_vector( std::string attrname, bpl::list data )
+  bool dalDataset::setAttribute_char_vector (std::string attrname, bpl::list data )
   {
     int size = bpl::len(data);
     std::vector<char> mydata;
@@ -1678,9 +1629,9 @@ namespace DAL {
     for (int ii=0; ii<bpl::len(data); ii++)
       mydata.push_back(bpl::extract<char>(data[ii]));
 
-    return setAttribute( attrname, reinterpret_cast<char*>(&mydata[0]), size );
+    return setAttribute (attrname, reinterpret_cast<char*>(&mydata[0]), size );
   }
-  bool dalDataset::setAttribute_short_vector( std::string attrname, bpl::list data )
+  bool dalDataset::setAttribute_short_vector (std::string attrname, bpl::list data )
   {
     int size = bpl::len(data);
     std::vector<short> mydata;
@@ -1688,9 +1639,9 @@ namespace DAL {
     for (int ii=0; ii<bpl::len(data); ii++)
       mydata.push_back(bpl::extract<short>(data[ii]));
 
-    return setAttribute( attrname, reinterpret_cast<short*>(&mydata[0]), size );
+    return setAttribute (attrname, reinterpret_cast<short*>(&mydata[0]), size );
   }
-  bool dalDataset::setAttribute_int_vector( std::string attrname, bpl::list data )
+  bool dalDataset::setAttribute_int_vector (std::string attrname, bpl::list data )
   {
     int size = bpl::len(data);
     std::vector<int> mydata;
@@ -1698,9 +1649,9 @@ namespace DAL {
     for (int ii=0; ii<bpl::len(data); ii++)
       mydata.push_back(bpl::extract<int>(data[ii]));
 
-    return setAttribute( attrname, reinterpret_cast<int*>(&mydata[0]), size );
+    return setAttribute (attrname, reinterpret_cast<int*>(&mydata[0]), size );
   }
-  bool dalDataset::setAttribute_uint_vector( std::string attrname, bpl::list data )
+  bool dalDataset::setAttribute_uint_vector (std::string attrname, bpl::list data )
   {
     int size = bpl::len(data);
     std::vector<uint> mydata;
@@ -1708,9 +1659,9 @@ namespace DAL {
     for (int ii=0; ii<bpl::len(data); ii++)
       mydata.push_back(bpl::extract<uint>(data[ii]));
 
-    return setAttribute( attrname, reinterpret_cast<uint*>(&mydata[0]), size );
+    return setAttribute (attrname, reinterpret_cast<uint*>(&mydata[0]), size );
   }
-  bool dalDataset::setAttribute_long_vector( std::string attrname, bpl::list data )
+  bool dalDataset::setAttribute_long_vector (std::string attrname, bpl::list data )
   {
     int size = bpl::len(data);
     std::vector<long> mydata;
@@ -1718,9 +1669,9 @@ namespace DAL {
     for (int ii=0; ii<bpl::len(data); ii++)
       mydata.push_back(bpl::extract<long>(data[ii]));
 
-    return setAttribute( attrname, reinterpret_cast<long*>(&mydata[0]), size );
+    return setAttribute (attrname, reinterpret_cast<long*>(&mydata[0]), size );
   }
-  bool dalDataset::setAttribute_float_vector( std::string attrname, bpl::list data )
+  bool dalDataset::setAttribute_float_vector (std::string attrname, bpl::list data )
   {
     int size = bpl::len(data);
     std::vector<float> mydata;
@@ -1728,9 +1679,9 @@ namespace DAL {
     for (int ii=0; ii<bpl::len(data); ii++)
       mydata.push_back(bpl::extract<float>(data[ii]));
 
-    return setAttribute( attrname, reinterpret_cast<float*>(&mydata[0]), size );
+    return setAttribute (attrname, reinterpret_cast<float*>(&mydata[0]), size );
   }
-  bool dalDataset::setAttribute_double_vector( std::string attrname, bpl::list data )
+  bool dalDataset::setAttribute_double_vector (std::string attrname, bpl::list data )
   {
     int size = bpl::len(data);
     std::vector<double> mydata;
@@ -1738,9 +1689,9 @@ namespace DAL {
     for (int ii=0; ii<bpl::len(data); ii++)
       mydata.push_back(bpl::extract<double>(data[ii]));
 
-    return setAttribute( attrname, reinterpret_cast<double*>(&mydata[0]), size );
+    return setAttribute (attrname, reinterpret_cast<double*>(&mydata[0]), size );
   }
-  bool dalDataset::setAttribute_string_vector( std::string attrname, bpl::list data )
+  bool dalDataset::setAttribute_string_vector (std::string attrname, bpl::list data )
   {
     int size = bpl::len(data);
     std::vector<std::string> mydata;
@@ -1748,7 +1699,7 @@ namespace DAL {
     for (int ii=0; ii<bpl::len(data); ii++)
       mydata.push_back(bpl::extract<std::string>(data[ii]));
 
-    return setAttribute( attrname, reinterpret_cast<std::string*>(&mydata[0]), size );
+    return setAttribute (attrname, reinterpret_cast<std::string*>(&mydata[0]), size );
   }
 
 #endif  // end #ifdef PYTHON

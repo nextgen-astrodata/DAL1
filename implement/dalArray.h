@@ -28,44 +28,47 @@
 #include "dalBaseTypes.h"
 #endif
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   /*!
     \class dalArray
     \ingroup DAL
     \brief Represents an n-dimensional array.
     \author Joseph Masters
-
+    
     The dalArray object holds an n-dimensional array of a single datatype.
   */
+  
+  class dalArray {
+    
+    //! Number of dimensions
+    int rank_p;
+    //! Array datatype identifier
+    string datatype;
+    //! HDF5 return status
+    herr_t status;
+    
+  protected:
+    hid_t array_id;  //!< hdf5 object id for array
+    hid_t file_id;   //!< hdf5 file_id
+    string name;     //!< name of the array
+    
+  public:
 
-  class dalArray
-    {
-
-      int rank_p;        // number of dimensions
-      string datatype; // array datatype identifier
-      herr_t status;   // hdf5 return status
-
-    protected:
-      hid_t array_id;  //!< hdf5 object id for array
-      hid_t file_id;   //!< hdf5 file_id
-      string name;     //!< name of the array
-
-    public:
-
-      dalArray();
-      vector<int> dims();
-      std::string getName();
-      int open( void * file, string arrayname );
-      bool close();
-      hid_t getId();
-      int getRank ();
-      bool getAttributes();
-
-      // ---------------------------------------------------------- getAttribute
-
-      /*!
+    //! Default constructor
+    dalArray();
+    //! Get the shap of the array
+    vector<int> dims();
+    std::string getName();
+    int open( void * file, string arrayname );
+    bool close();
+    hid_t getId();
+    int getRank ();
+    bool getAttributes();
+    
+    // ---------------------------------------------------------- getAttribute
+    
+    /*!
         \brief Get the value of an attribute.
 
         Get the value of an attribute.  This is different from printAttribute

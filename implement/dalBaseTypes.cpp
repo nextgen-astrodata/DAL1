@@ -29,49 +29,23 @@
 #include <dalBaseTypes.h>
 #endif
 
-namespace DAL
-  {
-
-  bool BigEndian( void )
+namespace DAL {
+  
+  //_____________________________________________________________________________
+  //                                                                    BigEndian
+  
+  bool BigEndian ( void )
   {
     unsigned char SwapTest[2] = { 1, 0 };
-
-    if ( *(short *) SwapTest == 1 )
-      {
-        //little endian
-        return false;
-      }
-    else
-      {
-        //big endian
-        return true;
-      }
+    
+    if ( *(short *) SwapTest == 1 ) {
+      //little endian
+      return false;
+    }
+    else {
+      //big endian
+      return true;
+    }
   }
-
-  void swapbytes(char *addr, int8_t nbytes)
-  {
-    char buf;
-    int i;
-
-    /* byte swap routine - more cryptic - but it is */
-    /* generic. Does the swap shown below */
-
-    //buf1[0] = buf2[7];  buf1[1] = buf2[6];
-    //buf1[2] = buf2[5];  buf1[3] = buf2[4];
-    //buf1[4] = buf2[3];  buf1[5] = buf2[2];
-    //buf1[6] = buf2[1];  buf1[7] = buf2[0];
-
-    //  buf3=buf2[0];buf2[0]=buf2[7];buf2[7]=buf3;
-    //  buf3=buf2[1];buf2[1]=buf2[6];buf2[6]=buf3;
-    //  buf3=buf2[2];buf2[2]=buf2[5];buf2[5]=buf3;
-    //  buf3=buf2[3];buf2[3]=buf2[4];buf2[4]=buf3;
-
-    for (i=0;i<nbytes/2;i++)
-      {
-        buf=addr[i];
-        addr[i] = addr[nbytes - (i+1)];
-        addr[nbytes - (i+1)] = buf;
-      }
-  }
-
+  
 } // namespace DAL

@@ -2,7 +2,7 @@
  | $Id::                                                                 $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
- *   Copyright (C) 2008                                                    *
+ *   Copyright (C) 2008-2009                                               *
  *   Joseph Masters (J.S.Masters@uva.nl)                                   *
  *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
@@ -44,10 +44,14 @@ using std::endl;
 #include <casa/OS/SymLink.h>
 #include <measures/Measures/MDirection.h>
 #include <measures/Measures/MPosition.h>
-using casa::MDirection;
+using casa::IPosition;
 using casa::MPosition;
 using casa::MVPosition;
 using casa::Quantity;
+#endif
+
+#ifdef HAVE_CFITSIO
+#include <fitsio.h>
 #endif
 
 #ifdef HAVE_MPATROL
@@ -89,6 +93,7 @@ using casa::Quantity;
       <li><a href="http://www.astron.nl/casacore/doc/html">API
       Specification</a>
     </ul>
+    <li>CFITSIO library
   </ul>
 
   <h3>Synopsis</h3>
@@ -114,6 +119,10 @@ namespace DAL {
   //
   // ============================================================================
   
+  //! Byte swap routine
+  void swapbytes (char *addr,
+		  int8_t nbytes);
+
   //! Convert UNIX time in to Julian Day
   long double julday (time_t seconds,
                       long *intmjd,

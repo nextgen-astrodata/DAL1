@@ -25,27 +25,24 @@
 #include "dalArray.h"
 #endif
 
-namespace DAL
-  {
+namespace DAL {
 
-  // ------------------------------------------------------------ dalArray
-  /*!
-    \brief Default constructor.
-
-    Default constructor.
-  */
+  //_____________________________________________________________________________
+  //                                                                     dalArray
+  
   dalArray::dalArray()
   {
     array_id = 0;
     file_id  = 0;
     rank_p   = 0;
     datatype = "UNKNOWN";
-    status = 0;
-    name = "UNKNOWN";
+    status   = 0;
+    name     = "UNKNOWN";
   }
-
-
-  // ------------------------------------------------------------ open
+  
+  //_____________________________________________________________________________
+  //                                                                         open
+  
   /*!
     \brief Open an existing array.
     \param file A pointer to the file.
@@ -67,8 +64,9 @@ namespace DAL
     return( array_id );
   }
 
-  // ------------------------------------------------------------ getId
-
+  //_____________________________________________________________________________
+  //                                                                        getId
+  
   /*!
     \brief Get the array ID.
 
@@ -76,13 +74,14 @@ namespace DAL
 
     \return The array identifier as an integer.
   */
-  hid_t dalArray::getId()
+  hid_t dalArray::getId ()
   {
     return array_id;
   }
 
-  // ---------------------------------------------------------- getRank
-
+  //_____________________________________________________________________________
+  //                                                                      getRank
+  
   /*!
     \brief Get the rank of the array, i.e. the number of dimensions
 
@@ -93,30 +92,29 @@ namespace DAL
     return rank_p;
   }
 
-  // ------------------------------------------------------------ close
+  //_____________________________________________________________________________
+  //                                                                        close
+  
   /*!
     \brief Close an existing array.
-
-    Close an existing array.
 
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalArray::close()
   {
-    if ( H5Dclose(array_id) < 0 )
-      {
-        std::cerr << "ERROR: dalArray::close() failed.\n";
-        return DAL::FAIL;
-      }
-
+    if ( H5Dclose(array_id) < 0 ) {
+      std::cerr << "ERROR: dalArray::close() failed.\n";
+      return DAL::FAIL;
+    }
+    
     return DAL::SUCCESS;
   }
-
-
+  
+  
   // ------------------------------------------------------------ write (int)
   /*!
     \brief Write int to an array.
-
+    
     Write data to an array, usually after extending it's dimensions.
 
    \param offset Position to begin writing array.
@@ -1439,56 +1437,71 @@ namespace DAL
       {
         std::cerr << "ERROR: Could not write array '" << arrayname << "'\n";
       }
-
+    
     // close local hdf5 objects
-    if ( H5Sclose( dataspace ) < 0 )
-      {
-        std::cerr << "ERROR: Could not close dataspace for '"
-                  << arrayname << "'.\n";
-      }
-
-    if ( H5Tclose( datatype ) < 0 )
-      {
-        std::cerr << "ERROR: Could not close datatype for '"
-                  << arrayname << "'.\n";
-      }
-
+    if ( H5Sclose( dataspace ) < 0 ) {
+      std::cerr << "ERROR: Could not close dataspace for '"
+		<< arrayname << "'.\n";
+    }
+    
+    if ( H5Tclose( datatype ) < 0 ) {
+      std::cerr << "ERROR: Could not close datatype for '"
+		<< arrayname << "'.\n";
+    }
+    
   }
-
+  
+  // ============================================================================
+  //
+  //  The following functions are boost wrappers to allow some previously
+  //  defined functions to be easily called from a python prompt.
+  //
+  // ============================================================================
+  
 #ifdef PYTHON
-  /************************************************************************
-   *
-   * The following functions are boost wrappers to allow some previously
-   *   defined functions to be easily called from a python prompt.
-   *
-   ************************************************************************/
-
-// ------------------------------------------------------------ extend_boost
-  /******************************************************
-   * wrapper for dalArray::extend
-   ******************************************************/
-  void dalArray::extend_boost( bpl::list pydims )
+  
+  //_____________________________________________________________________________
+  //                                                                 extend_boost
+  
+  //! Wrapper for dalArray::extend
+  void dalArray::extend_boost (bpl::list pydims )
   {
-    vector<int> dims;
-
-    for (int ii=0; ii<bpl::len(pydims); ii++)
+    std::vector<int> dims;
+    
+    for (int ii=0; ii<bpl::len(pydims); ii++) {
       dims.push_back(bpl::extract<int>(pydims[ii]));
-
+    }
+    
     extend( dims );
   }
-
+  
+  //_____________________________________________________________________________
+  //                                                            setAttribute_char
+  
   bool dalArray::setAttribute_char( std::string attrname, char data )
   {
     return setAttribute( attrname, &data );
   }
+  
+  //_____________________________________________________________________________
+  //                                                           setAttribute_short
+  
   bool dalArray::setAttribute_short( std::string attrname, short data )
   {
     return setAttribute( attrname, &data );
   }
+  
+  //_____________________________________________________________________________
+  //                                                             setAttribute_int
+  
   bool dalArray::setAttribute_int( std::string attrname, int data )
   {
     return setAttribute( attrname, &data );
   }
+  
+  //_____________________________________________________________________________
+  //                                                            setAttribute_uint
+  
   bool dalArray::setAttribute_uint( std::string attrname, uint data )
   {
     return setAttribute( attrname, &data );
@@ -1510,5 +1523,5 @@ namespace DAL
     return setAttribute( attrname, &data );
   }
 #endif // end #ifdef PYTHON
-
+  
 } // end namespace DAL

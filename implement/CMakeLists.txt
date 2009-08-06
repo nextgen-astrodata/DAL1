@@ -187,11 +187,7 @@ if (DAL_PYTHON_BINDINGS)
     pywrapper.cpp
     )
   include_directories (
-#    ${BOOST_INCLUDES}
-#    ${BOOST_INCLUDES}/boost
-#    ${PYTHON_INCLUDES}
     ${NUM_UTIL_INCLUDES}
-#    ${NUMPY_INCLUDES}
     )
   ## linker instructions
   target_link_libraries(pydal

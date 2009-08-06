@@ -21,7 +21,6 @@
 #ifndef DALFITS_H
 #define DALFITS_H
 
-
 // C++ Standard library
 #include <stdio.h>
 #include <fstream>
@@ -30,9 +29,8 @@
 #include <vector>
 #include <sstream>	// string strings
 
-// cfitsio
+// CFITSIO header files
 #include <fitsio.h>
-
 
 // AIPS++/CASA header files
 #include <casa/aips.h>
@@ -70,9 +68,7 @@ namespace DAL {
     
     \test tdalFITS.cpp
   */
-  class dalFITS
-  {
-    
+  class dalFITS {
     
   private:
     //! file handle for direct file access
@@ -183,12 +179,15 @@ namespace DAL {
     //! Set Lattice in object
     void getLattice();
     std::string getFitsError();
+    //! Get the number of HDUs in the FITS file
     int readNumHDUs();
+    //! Read the current header postion (HDU) in FITS file
     int readCurrentHDU();
     void copyCHDU(dalFITS const &other);
+    //! Move to HDU unit given by \e hdu
     void moveAbsoluteHDU(int hdu);
     void moveRelativeHDU(int hdu);
-    //! Move to hdu extension with name, extname
+    //! Move to hdu extension with name, \e extname
     int moveNameHDU (const std::string &extname);
     void updateImageDimensions();
     int readHDUType();
@@ -300,13 +299,23 @@ namespace DAL {
     //
     //===============================================================
     
-    void writeKey(int datatype, std::string keyname, void *value, std::string comment);
-    void updateKey(int datatype, std::string &keyname, void *value, std::string &comment);
-    void writeRecord(std::string &card);
-    void modifyComment(std::string &keyname, std::string &comment);
-    void writeKeyUnit(std::string &keyname, std::string &unit);
-    void writeComment(std::string &comment);
-    void writeHistory(std::string &history);
+    void writeKey (int datatype,
+		   std::string keyname,
+		   void *value,
+		   std::string comment);
+    void updateKey (int datatype,
+		    std::string &keyname,
+		    void *value,
+		    std::string &comment);
+    void writeRecord (std::string &card);
+    void modifyComment (std::string &keyname,
+		       std::string &comment);
+    void writeKeyUnit (std::string &keyname,
+		       std::string &unit);
+    //! Write a comment to the CHDU
+    void writeComment (std::string &comment);
+    //! Write a HISTORY entry to the CHDU
+    void writeHistory (std::string &history);
     //! Write the current date to the CHDU
     void writeDate();
     //! Delete a record from the CHDU

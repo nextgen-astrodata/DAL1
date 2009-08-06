@@ -181,8 +181,8 @@ namespace DAL {  // Namespace DAL -- begin
     os << "-- World axis units      = " << axisUnits_p    << std::endl;
 //     os << "-- Reference value       = " << refValue_p     << std::endl;
 //     os << "-- Reference pixel       = " << refPixel_p     << std::endl;
-    os << "-- Increment             = " << increment_p    << std::endl;
-    os << "-- Transformation matrix = " << pc_p           << std::endl;
+//     os << "-- Increment             = " << increment_p    << std::endl;
+//     os << "-- Transformation matrix = " << pc_p           << std::endl;
     os << "-- Pixel values          = " << pixelValues_p  << std::endl;
     os << "-- World values          = " << worldValues_p  << std::endl;
   }
@@ -206,9 +206,9 @@ namespace DAL {  // Namespace DAL -- begin
     DAL::h5get_attribute( groupID, "NOF_AXES",         nofAxes_p );
     DAL::h5get_attribute( groupID, "AXIS_NAMES",       axisNames_p );
     DAL::h5get_attribute( groupID, "AXIS_UNITS",       axisUnits_p );
+//     DAL::h5get_attribute( groupID, "INCREMENT",        increment_p );
     DAL::h5get_attribute( groupID, "REFERENCE_PIXEL",  refPixel_p );
     DAL::h5get_attribute( groupID, "REFERENCE_VALUE",  refValue_p );
-    DAL::h5get_attribute( groupID, "INCREMENT",        increment_p );
   }
 
   //_____________________________________________________________________________
@@ -243,10 +243,10 @@ namespace DAL {  // Namespace DAL -- begin
     DAL::h5set_attribute( groupID, "NOF_AXES",         nofAxes_p );
     DAL::h5set_attribute( groupID, "AXIS_NAMES",       axisNames_p );
     DAL::h5set_attribute( groupID, "AXIS_UNITS",       axisUnits_p );
-    DAL::h5set_attribute( groupID, "REFERENCE_PIXEL",  refPixel_p );
-    DAL::h5set_attribute( groupID, "REFERENCE_VALUE",  refValue_p );
-    DAL::h5set_attribute( groupID, "INCREMENT",        increment_p );
-    DAL::h5set_attribute( groupID, "PC",               pc_p );
+//     DAL::h5set_attribute( groupID, "REFERENCE_PIXEL",  refPixel_p );
+//     DAL::h5set_attribute( groupID, "REFERENCE_VALUE",  refValue_p );
+//     DAL::h5set_attribute( groupID, "INCREMENT",        increment_p );
+//     DAL::h5set_attribute( groupID, "PC",               pc_p );
     DAL::h5set_attribute( groupID, "PIXEL_VALUES",     pixelValues_p );
     DAL::h5set_attribute( groupID, "WORLD_VALUES",     worldValues_p );
   }

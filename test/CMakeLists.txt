@@ -73,7 +73,7 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 
 ## [2] casacore & HDF5
 
-if (HAVE_CASACORE AND HAVE_HDF5)
+if (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES)
 
   foreach (src
       tMS_dal 
@@ -89,12 +89,12 @@ if (HAVE_CASACORE AND HAVE_HDF5)
     ## linker instructions
     target_link_libraries (${src}
       dal
+      ${dal_link_libraries}
       ${CASA_LIBRARIES}
       ${LAPACK_LIBRARIES}
       ${CFITSIO_LIBRARIES}
       ${WCSLIB_LIBRARIES}
       ${GFORTRAN_LIBRARIES}
-      ${dal_link_libraries}
       )
     ## installation
     list (APPEND tests ${src})
@@ -104,11 +104,11 @@ if (HAVE_CASACORE AND HAVE_HDF5)
     endif (DAL_ENABLE_TESTING)
   endforeach (src)
 
-else (HAVE_CASACORE AND HAVE_HDF5)
+else (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES)
 
   message (STATUS "Skipping test programs that require casacore and HDF5!")
 
-endif (HAVE_CASACORE AND HAVE_HDF5)
+endif (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES)
 
 ## ==============================================================================
 ##

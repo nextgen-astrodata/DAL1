@@ -239,20 +239,38 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get the numerical value of the antenna position
     bool antenna_position_value (std::vector<double> &value);
 
+    //! Set the numerical value of the antenna position
+    bool set_antenna_position_value (std::vector<double> const &value);
+
     //! Get the physical unit within which the antenna position is given
     bool antenna_position_unit (std::vector<std::string> &unit);
+
+    //! Set the physical unit within which the antenna position is given
+    bool set_antenna_position_unit (std::vector<std::string> const &unit);
 
     //! Get the numerical values describing the antenna orientation
     bool antenna_orientation_value (std::vector<double> &value);
 
+    //! Set the numerical values describing the antenna orientation
+    bool set_antenna_orientation_value (std::vector<double> const &value);
+
     //! Get the physical unit within which the antenna orientation is given
     bool antenna_orientation_unit (std::vector<std::string> &unit);
+
+    //! Set the physical unit within which the antenna orientation is given
+    bool set_antenna_orientation_unit (std::vector<std::string> const &unit);
 
     //! Get the identifier for the reference frame of the antenna position
     std::string antenna_position_frame ();
     
+    //! Set the identifier for the reference frame of the antenna position
+    bool set_antenna_position_frame (std::string const &frame);
+    
     //! Get the identifier for the reference frame of the antenna orientation
     std::string antenna_orientation_frame ();
+    
+    //! Set the identifier for the reference frame of the antenna orientation
+    bool set_antenna_orientation_frame (std::string const &frame);
     
     /*!
       \brief Get the name of the class
@@ -295,8 +313,14 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get the numerical value of the antenna position
     bool antenna_position_value (casa::Vector<double> &value);
 
+    //! Set the numerical value of the antenna position
+    bool set_antenna_position_value (casa::Vector<double> const &value);
+
     //! Get the physical unit within which the antenna position is given
     bool antenna_position_unit (casa::Vector<casa::String> &unit);
+
+    //! Set the physical unit within which the antenna position is given
+    bool set_antenna_position_unit (casa::Vector<casa::String> const &unit);
 
     //! Get the antenna position as a measure
     casa::MPosition antenna_position ();

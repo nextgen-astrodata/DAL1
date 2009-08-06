@@ -59,6 +59,7 @@ if (NOT DAL_VERBOSE_CONFIGURE)
   set (BOOST_FIND_QUIETLY     YES )
   set (CASACORE_FIND_QUIETLY  YES )
   set (CFITSIO_FIND_QUIETLY   YES )
+  set (GFORTRAN_FIND_QUIETLY  YES )
   set (GSL_FIND_QUIETLY       YES )
   set (HDF5_FIND_QUIETLY      YES )
   set (LAPACK_FIND_QUIETLY    YES )
@@ -200,6 +201,13 @@ endif (NOT HAVE_MYSQL)
 if (NOT HAVE_GSL)
   include (FindGSL)
 endif (NOT HAVE_GSL)
+
+##__________________________________________________________
+## GFortran library
+
+if (NOT HAVE_GFORTRAN)
+  include (FindGFortran)
+endif (NOT HAVE_GFORTRAN)
 
 ##__________________________________________________________
 ## PYTHON (we use custom module in place of FindPythonLibs)

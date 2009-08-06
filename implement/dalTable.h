@@ -138,23 +138,23 @@ namespace DAL
                       casa::MSReader * reader,
                       dalFilter * filter );
       //! Get keyword of type casa::String
-      casa::Bool GetKeyword( casa::String const KeywordName,
-                             casa::String *result);
+      bool GetKeyword( casa::String const KeywordName,
+		       casa::String *result);
       //! Get keyword of type casa::Double
-      casa::Bool GetKeyword( casa::String const KeywordName,
-                             casa::Double *result);
+      bool GetKeyword( casa::String const KeywordName,
+		       casa::Double *result);
       //! Get keyword of type casa::Float
-      casa::Bool GetKeyword( casa::String const KeywordName,
-                             casa::Float *result);
-      casa::Bool GetKeyword( casa::String const KeywordName,
-                             casa::DComplex *result);
-      casa::Bool GetKeyword( casa::String const KeywordName,
-                             casa::Array<casa::Double> *result);
-      casa::Bool GetKeyword( casa::String const KeywordName,
-                             casa::Array<casa::DComplex> *result);
+      bool GetKeyword( casa::String const KeywordName,
+		       casa::Float *result);
+      bool GetKeyword( casa::String const KeywordName,
+		       casa::DComplex *result);
+      bool GetKeyword( casa::String const KeywordName,
+		       casa::Array<casa::Double> *result);
+      bool GetKeyword( casa::String const KeywordName,
+		       casa::Array<casa::DComplex> *result);
       casa::String GetKeywordType(casa::String const KeywordName);
 #endif
-
+      
       void createTable( void * voidfile, string tablename, string groupname );
       //! Get a column object
       dalColumn * getColumn_complexInt16( string colname );

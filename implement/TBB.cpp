@@ -25,8 +25,7 @@
 #include "TBB.h"
 #endif
 
-namespace DAL
-  {
+namespace DAL {
 
   // ============================================================================
   //
@@ -477,45 +476,40 @@ namespace DAL
         nFramesWaiting++;
         inBufStorID = newBufID;
       };
-    if (nFramesWaiting > maxWaitingFrames)
-      {
-        maxWaitingFrames = nFramesWaiting;
+    if (nFramesWaiting > maxWaitingFrames) {
+      maxWaitingFrames = nFramesWaiting;
+    };
+    if ( inBufStorID == inBufProcessID) {
+      // that means input buffer is empty
+      readTimeout.tv_sec = timeoutRead_p.tv_sec;
+      readTimeout.tv_usec = timeoutRead_p.tv_usec;
+      FD_ZERO(&readSet);
+      FD_SET(main_socket, &readSet);
+      status = select(main_socket + 1, &readSet, NULL, NULL, &readTimeout);
+      if (status) {
+	inBufStorID++;
+	if (inBufStorID >= INPUT_BUFFER_SIZE) {
+	  inBufStorID =0;
+	}
+	rr = recvfrom( main_socket, (inputBuffer_P+(inBufStorID*UDP_PACKET_BUFFER_SIZE)),
+		       UDP_PACKET_BUFFER_SIZE, 0, (sockaddr *) &incoming_addr, &socklen);
+      }
+      else {
+	// we waited for "timeoutRead_p" but still no data -> end of data
+	cout << "TBB::readSocketBuffer: Data stopped coming" << endl;
+	cout << "TBB::readSocketBuffer: inBufProcessID: " << inBufProcessID
+	     << " inBufStorID: " << inBufStorID << " select-status:" << status
+	     << " remaining-sec: " << readTimeout.tv_sec << " -usec: " << readTimeout.tv_usec << endl;
+	cout << "TBB::readSocketBuffer: Max no. of frames waiting: " << maxWaitingFrames
+	     << " number of discarded frames: " << noFramesDropped << endl;
+	return FAIL;
       };
-    if ( inBufStorID == inBufProcessID)
-      {
-        // that means input buffer is empty
-        readTimeout.tv_sec = timeoutRead_p.tv_sec;
-        readTimeout.tv_usec = timeoutRead_p.tv_usec;
-        FD_ZERO(&readSet);
-        FD_SET(main_socket, &readSet);
-        if (status = select(main_socket + 1, &readSet, NULL, NULL, &readTimeout) )
-          {
-            inBufStorID++;
-            if (inBufStorID >= INPUT_BUFFER_SIZE)
-              {
-                inBufStorID =0;
-              }
-            rr = recvfrom( main_socket, (inputBuffer_P+(inBufStorID*UDP_PACKET_BUFFER_SIZE)),
-                           UDP_PACKET_BUFFER_SIZE, 0, (sockaddr *) &incoming_addr, &socklen);
-          }
-        else
-          {
-            // we waited for "timeoutRead_p" but still no data -> end of data
-            cout << "TBB::readSocketBuffer: Data stopped coming" << endl;
-            cout << "TBB::readSocketBuffer: inBufProcessID: " << inBufProcessID
-                 << " inBufStorID: " << inBufStorID << " select-status:" << status
-                 << " remaining-sec: " << readTimeout.tv_sec << " -usec: " << readTimeout.tv_usec << endl;
-            cout << "TBB::readSocketBuffer: Max no. of frames waiting: " << maxWaitingFrames
-                 << " number of discarded frames: " << noFramesDropped << endl;
-            return FAIL;
-          };
-      };
+    };
 #ifdef DEBUGGING_MESSAGES
-    if (inBufStorID == inBufProcessID)
-      {
-        cerr << "TBB::readSocketBuffer: Empty buffer at end of method!" << endl;
-        return Fail;
-      };
+    if (inBufStorID == inBufProcessID) {
+      cerr << "TBB::readSocketBuffer: Empty buffer at end of method!" << endl;
+      return Fail;
+    };
 #endif
     inBufProcessID++;
     if (inBufProcessID >= INPUT_BUFFER_SIZE)
@@ -526,10 +520,10 @@ namespace DAL
     return SUCCESS;
   };
 #endif
-
+  
   //_____________________________________________________________________________
   // Read the 88-byte TBB frame header
-
+  
   bool TBB::readRawSocketBlockHeader()
   {
 #ifdef USE_INPUT_BUFFER
@@ -539,24 +533,22 @@ namespace DAL
     // read a single full UDP-datagram, as otherwise the remainder may be flushed by the OS
     status = readsocket( UDP_PACKET_BUFFER_SIZE, udpBuff_p );
 #endif
-    if (FAIL == status)
-      {
-        return false;
-      }
-
+    if (FAIL == status) {
+      return false;
+    }
+    
     // set the headerpointer to the just read data
     headerp_p = (TBB_Header*)udpBuff_p;
 
     // reverse fields if big endian
-    if ( bigendian_p )
-      {
-        swapbytes( (char *)&(headerp_p->seqnr), 4 );
-        swapbytes( (char *)&(headerp_p->time), 4 );
-        swapbytes( (char *)&(headerp_p->sample_nr), 4 );
-        swapbytes( (char *)&(headerp_p->n_samples_per_frame), 2);
-        swapbytes( (char *)&(headerp_p->n_freq_bands), 2 );
-      }
-
+    if ( bigendian_p ) {
+      swapbytes( (char *)&(headerp_p->seqnr), 4 );
+      swapbytes( (char *)&(headerp_p->time), 4 );
+      swapbytes( (char *)&(headerp_p->sample_nr), 4 );
+      swapbytes( (char *)&(headerp_p->n_samples_per_frame), 2);
+      swapbytes( (char *)&(headerp_p->n_freq_bands), 2 );
+    }
+    
     // Convert the time (seconds since 1 Jan 1970) to a human-readable string
     // "The samplenr field is used together with the time field to get
     //  an absolute time reference.  The samplenr field holds the number of
@@ -601,15 +593,14 @@ namespace DAL
     headerp_p = &header;
 
     // reverse fields if big endian
-    if ( bigendian_p )
-      {
-        swapbytes( (char *)&(headerp_p->seqnr), 4 );
-        swapbytes( (char *)&(headerp_p->time), 4 );
-        swapbytes( (char *)&(headerp_p->sample_nr), 4 );
-        swapbytes( (char *)&(headerp_p->n_samples_per_frame), 2);
-        swapbytes( (char *)&(headerp_p->n_freq_bands), 2 );
-      }
-
+    if ( bigendian_p ) {
+      swapbytes( (char *)&(headerp_p->seqnr), 4 );
+      swapbytes( (char *)&(headerp_p->time), 4 );
+      swapbytes( (char *)&(headerp_p->sample_nr), 4 );
+      swapbytes( (char *)&(headerp_p->n_samples_per_frame), 2);
+      swapbytes( (char *)&(headerp_p->n_freq_bands), 2 );
+    }
+    
     /*
      * Convert the time (seconds since 1 Jan 1970) to a human-readable string
      */
@@ -654,10 +645,10 @@ namespace DAL
       printf("%X,", headerp_p->bandsel[idx]);
     printf("\n");
   }
-
+  
   // Generic CRC16 method working on 16-bit unsigned data
   // adapted from Python script by Gijs Schoonderbeek.
-
+  
   uint16_t TBB::CRC16(uint16_t * buffer, uint32_t length)
   {
     uint16_t CRC = 0;
@@ -665,39 +656,40 @@ namespace DAL
     const uint16_t bits = 16;
     uint32_t data = 0;
     const uint32_t CRC_div = (CRC_poly & 0x7fffffff) << 15;
-
+    
     data = (buffer[0] & 0x7fffffff) << 16;
-    for (uint32_t i=1; i<length; i++)
-      {
-        data += buffer[i];
-        for (uint16_t j=0; j<bits; j++)
-          {
-            if ((data & 0x80000000) != 0)
-              {
-                data ^= CRC_div;
-              }
-            data &= 0x7fffffff;
-            data <<= 1;
-          }
+    for (uint32_t i=1; i<length; i++) {
+      data += buffer[i];
+      for (uint16_t j=0; j<bits; j++) {
+	if ((data & 0x80000000) != 0) {
+	  data ^= CRC_div;
+	}
+	data &= 0x7fffffff;
+	data <<= 1;
       }
+    }
     CRC = data >> 16;
     return CRC;
   }
+  
+  //_____________________________________________________________________________
+  //                                                                    headerCRC
 
-  // Check the CRC of a TBB frame header. Uses CRC16. Returns TRUE if OK, FALSE otherwise
+  /*!
+    Check the CRC of a TBB frame header. Uses CRC16. Returns TRUE if OK, FALSE
+    otherwise
+  */
   bool TBB::headerCRC()
   {
     unsigned int seqnr = headerp_p->seqnr; // temporary; we need to zero this out for CRC check
     headerp_p->seqnr = 0;
-
+    
     uint16_t * headerBuf = reinterpret_cast<uint16_t*> (headerp_p);
     uint16_t CRC = this->CRC16(headerBuf, sizeof(TBB_Header) / sizeof(uint16_t));
     headerp_p->seqnr = seqnr; // and set it back again
-
+    
     return (CRC == 0);
   }
-
-
 
   //_____________________________________________________________________________
   // Check if the group for a given station exists within the HDF5 file
@@ -794,18 +786,16 @@ namespace DAL
                                   trigger_offset );
     stationGroup_p->setAttribute( attribute_name(TRIGGERED_ANTENNAS),
                                   triggered_antennas);
-    if ( 0 == headerPtr->n_freq_bands )
-      {
-        stationGroup_p->setAttribute( attribute_name(OBSERVATION_MODE),
-                                      std::string("Transient") );
-      }
-    else
-      {
-        stationGroup_p->setAttribute( attribute_name(OBSERVATION_MODE),
-                                      std::string("Sub-band") );
-      };
-
-
+    if ( 0 == headerPtr->n_freq_bands ) {
+      stationGroup_p->setAttribute( attribute_name(OBSERVATION_MODE),
+				    std::string("Transient") );
+    }
+    else {
+      stationGroup_p->setAttribute( attribute_name(OBSERVATION_MODE),
+				    std::string("Sub-band") );
+    };
+    
+    
     //As there is a new Station, then there is also a new dipole!
     /* Generate channel ID for the individual dipole */
     sprintf(uid, "%03d%03d%03d",
@@ -818,30 +808,30 @@ namespace DAL
 
   // ------------------------------------------------------------ makeNewDipole
 
-  void TBB::makeNewDipole(string newuid, dalGroup * stationGroupPtr, TBB_Header * headerPtr)
+  void TBB::makeNewDipole (string newuid,
+			   dalGroup * stationGroupPtr,
+			   TBB_Header * headerPtr)
   {
     vector<int> firstdims;
     firstdims.push_back( 0 );
 
-    if ( 0 == headerPtr->n_freq_bands )
-      {
-        short nodata[0];
-        dipoleArray_p = stationGroupPtr->createShortArray( newuid,
-                        firstdims,
-                        nodata,
-                        cdims );
-      }
-    else
-      {
-        complex<Int16> nodata[0];
-        dipoleArray_p = stationGroupPtr->createComplexShortArray( newuid,
-                        firstdims,
-                        nodata,
-                        cdims );
-        stationGroupPtr->setAttribute( attribute_name(OBSERVATION_MODE),
-                                       std::string("Sub-band") );
-      }
-
+    if ( 0 == headerPtr->n_freq_bands ) {
+      short nodata[0];
+      dipoleArray_p = stationGroupPtr->createShortArray( newuid,
+							 firstdims,
+							 nodata,
+							 cdims );
+    }
+    else {
+      complex<Int16> nodata[0];
+      dipoleArray_p = stationGroupPtr->createComplexShortArray( newuid,
+								firstdims,
+								nodata,
+								cdims );
+      stationGroupPtr->setAttribute( attribute_name(OBSERVATION_MODE),
+				     std::string("Sub-band") );
+    }
+    
     unsigned int sid = headerPtr->stationid;
     unsigned int rsp = headerPtr->rspid;
     unsigned int rcu = headerPtr->rcuid;
@@ -852,7 +842,7 @@ namespace DAL
     unsigned int nyquist_zone            = 1;
     double antenna_position_value[3]     = { 0, 0, 0 };
     std::string antenna_position_unit[3] = { "m", "m", "m" };
-
+    
     dipoleArray_p->setAttribute( attribute_name(STATION_ID), &sid );
     dipoleArray_p->setAttribute( attribute_name(RSP_ID), &rsp );
     dipoleArray_p->setAttribute( attribute_name(RCU_ID), &rcu );

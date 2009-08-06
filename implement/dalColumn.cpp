@@ -939,23 +939,22 @@ namespace DAL
 
   bpl::numeric::array dalColumn::data_boost3( int64_t offset, int32_t length )
   {
-    if ( MSCASATYPE == filetype )
-      {
+    if ( MSCASATYPE == filetype ) {
 #ifdef HAVE_CASA
-
-        if ( "unknown" == casa_datatype )
-          {
-            bpl::list lcllist;
-            return num_util::makeNum(lcllist);
-          }
-
-        try
-          {
-            if ( isScalar() )
-              {
-                switch ( casa_col_desc.dataType() )
-                  {
-                  case casa::TpInt:
+      
+      if ( "unknown" == casa_datatype )
+	{
+	  bpl::list lcllist;
+	  return num_util::makeNum(lcllist);
+	}
+      
+      try
+	{
+	  if ( isScalar() )
+	    {
+	      switch ( casa_col_desc.dataType() )
+		{
+		case casa::TpInt:
                   {
                     rosc_int = new casa::ROScalarColumn<casa::Int>( *casa_column );
                     scalar_vals_int = rosc_int->getColumn();
@@ -964,25 +963,25 @@ namespace DAL
                     return data_object->get_boost3( offset, length );
                   }
                   break;
-                  case casa::TpBool:
-                  {
-                    rosc_bool = new casa::ROScalarColumn<casa::Bool>( *casa_column );
-                    scalar_vals_bool = rosc_bool->getColumn();
-                    data_object = new dalData( filetype, dal_BOOL, shape(), nrows() );
-                    data_object->data = (int *)scalar_vals_bool.getStorage(deleteIt);
-                    return data_object->get_boost3( offset, length );
-                  }
-                  break;
-                  case casa::TpDouble:
-                  {
-                    rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
+		case casa::TpBool:
+		  {
+		    rosc_bool = new casa::ROScalarColumn<bool>( *casa_column );
+		    scalar_vals_bool = rosc_bool->getColumn();
+		    data_object = new dalData( filetype, dal_BOOL, shape(), nrows() );
+		    data_object->data = (int *)scalar_vals_bool.getStorage(deleteIt);
+		    return data_object->get_boost3( offset, length );
+		  }
+		  break;
+		case casa::TpDouble:
+		  {
+		    rosc_dbl = new casa::ROScalarColumn<casa::Double>( *casa_column );
                     scalar_vals_dbl = rosc_dbl->getColumn();
                     data_object = new dalData( filetype, dal_DOUBLE, shape(), nrows() );
                     data_object->data = (double *)scalar_vals_dbl.getStorage(deleteIt);
                     return data_object->get_boost3( offset, length );
                   }
                   break;
-                  case casa::TpComplex:
+		case casa::TpComplex:
                   {
                     rosc_comp = new casa::ROScalarColumn<casa::Complex>( *casa_column );
                     scalar_vals_comp = rosc_comp->getColumn();
@@ -992,7 +991,7 @@ namespace DAL
                     return data_object->get_boost3( offset, length );
                   }
                   break;
-                  case casa::TpString:
+		case casa::TpString:
                   {
                     rosc_string = new casa::ROScalarColumn<casa::String>( *casa_column );
                     scalar_vals_string = rosc_string->getColumn();
@@ -1005,7 +1004,7 @@ namespace DAL
                   /************************************
                    * ADD MORE TYPES HERES
                    ************************************/
-                  default:
+		default:
                   {
                     std::cerr << "dalColumn::data() Column type not yet supported."
                               << endl;
@@ -1014,13 +1013,13 @@ namespace DAL
                     bpl::numeric::array nadata(tmp_list);
                     return nadata;
                   }
-                  }
-              }
-            else if ( isArray() )
-              {
-                switch ( casa_col_desc.dataType() )
-                  {
-                  case casa::TpInt:
+		}
+	    }
+	  else if ( isArray() )
+	    {
+	      switch ( casa_col_desc.dataType() )
+		{
+		case casa::TpInt:
                   {
                     roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
                     array_vals_int = roac_int->getColumn();
@@ -1029,7 +1028,7 @@ namespace DAL
                     return data_object->get_boost3( offset, length );
                   }
                   break;
-                  case casa::TpDouble:
+		case casa::TpDouble:
                   {
                     roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
                     array_vals_dbl = roac_dbl->getColumn();
@@ -1038,7 +1037,7 @@ namespace DAL
                     return data_object->get_boost3( offset, length );
                   }
                   break;
-                  case casa::TpComplex:
+		case casa::TpComplex:
                   {
                     roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
                     array_vals_comp = roac_comp->getColumn();
@@ -1048,7 +1047,7 @@ namespace DAL
                     return data_object->get_boost3( offset, length );
                   }
                   break;
-                  case casa::TpString:
+		case casa::TpString:
                   {
                     roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
                     array_vals_string = roac_string->getColumn();
@@ -1060,61 +1059,59 @@ namespace DAL
                   /************************************
                    * ADD MORE TYPES HERES
                    ************************************/
-                  default:
+		default:
                   {
                     std::cerr <<
-                              "dalColumn::data() Column type not yet supported.\n";
-
+		      "dalColumn::data() Column type not yet supported.\n";
+		    
                     bpl::list tmp_list;
                     tmp_list.append(0);
                     bpl::numeric::array nadata(tmp_list);
                     return nadata;
                   }
-                  }
-              }
-            else
-              {
-
-                std::cerr
-                  << "dalColumn::data() Column is neither scalar nor array.  "
-                  << "Do not know how to handle.\n";
-
-                bpl::list tmp_list;
-                tmp_list.append(0);
-                bpl::numeric::array nadata(tmp_list);
-                return nadata;
-              }
-          }
-        catch (casa::AipsError x)
-          {
-            std::cerr << "ERROR: " << x.getMesg() << endl;
-            bpl::list tmp_list;
-            tmp_list.append(0);
-            bpl::numeric::array nadata(tmp_list);
-            return nadata;
-          }
+		}
+	    }
+	  else
+	    {
+	      
+	      std::cerr
+		<< "dalColumn::data() Column is neither scalar nor array.  "
+		<< "Do not know how to handle.\n";
+	      
+	      bpl::list tmp_list;
+	      tmp_list.append(0);
+	      bpl::numeric::array nadata(tmp_list);
+	      return nadata;
+	    }
+	}
+      catch (casa::AipsError x)
+	{
+	  std::cerr << "ERROR: " << x.getMesg() << endl;
+	  bpl::list tmp_list;
+	  tmp_list.append(0);
+	  bpl::numeric::array nadata(tmp_list);
+	  return nadata;
+	}
 #endif // HAVE_CASA
-      }
-    else if ( H5TYPE == filetype )
-      {
-        std::cerr << "ERROR: hdf5 not supported [dalColumn.data - python]\n";
-        int start = 0;
-        int length = -1;
-        data_object = data(start,length);
-        return data_object->get_boost3( offset, length );
-      }
-    else
-      {
-        std::cerr <<
-                  "ERROR: filetype not supported [dalColumn.data - python]\n";
-      }
-
+    }
+    else if ( H5TYPE == filetype ) {
+      std::cerr << "ERROR: hdf5 not supported [dalColumn.data - python]\n";
+      int start = 0;
+      int length = -1;
+      data_object = data(start,length);
+      return data_object->get_boost3( offset, length );
+    }
+    else {
+      std::cerr <<
+	"ERROR: filetype not supported [dalColumn.data - python]\n";
+    }
+    
     bpl::list tmp_list;
     tmp_list.append(0);
     bpl::numeric::array nadata(tmp_list);
     return nadata;
   }
-
+    
 #endif // PYTHON
-
+    
 } // DAL namespace

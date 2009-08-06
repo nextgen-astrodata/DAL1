@@ -35,6 +35,35 @@ namespace DAL {
   // ============================================================================
   
   //_____________________________________________________________________________
+  //                                                                    swapbytes
+  
+  void swapbytes (char *addr,
+		  int8_t nbytes)
+  {
+    char buf;
+    int i;
+    
+    /* byte swap routine - more cryptic - but it is */
+    /* generic. Does the swap shown below */
+
+    //buf1[0] = buf2[7];  buf1[1] = buf2[6];
+    //buf1[2] = buf2[5];  buf1[3] = buf2[4];
+    //buf1[4] = buf2[3];  buf1[5] = buf2[2];
+    //buf1[6] = buf2[1];  buf1[7] = buf2[0];
+
+    //  buf3=buf2[0];buf2[0]=buf2[7];buf2[7]=buf3;
+    //  buf3=buf2[1];buf2[1]=buf2[6];buf2[6]=buf3;
+    //  buf3=buf2[2];buf2[2]=buf2[5];buf2[5]=buf3;
+    //  buf3=buf2[3];buf2[3]=buf2[4];buf2[4]=buf3;
+    
+    for (i=0;i<nbytes/2;i++) {
+      buf=addr[i];
+      addr[i] = addr[nbytes - (i+1)];
+      addr[nbytes - (i+1)] = buf;
+    }
+  }
+  
+  //_____________________________________________________________________________
   //                                                                       julday
   
   long double julday (time_t seconds,
@@ -1271,10 +1300,10 @@ namespace DAL {
 
     \return direction -- The physical quantity.
   */
-  MDirection h5get_direction (hid_t const &location_id,
-                              Attributes const &value,
-                              Attributes const &unit,
-                              Attributes const &frame)
+  casa::MDirection h5get_direction (hid_t const &location_id,
+				    Attributes const &value,
+				    Attributes const &unit,
+				    Attributes const &frame)
   {
     return h5get_direction (location_id,
                             attribute_name(value),
@@ -1294,95 +1323,89 @@ namespace DAL {
 
     \return direction -- The physical quantity.
   */
-  MDirection h5get_direction (hid_t const &location_id,
+  casa::MDirection h5get_direction (hid_t const &location_id,
                               std::string const &value,
                               std::string const &unit,
                               std::string const &frame)
   {
-    MDirection dir = MDirection();
+    casa::MDirection dir = casa::MDirection();
 
-    if (location_id > 0)
-      {
-        casa::Vector<double> values;
-        casa::Vector<casa::String> units;
-        std::string refcode;
-        MDirection::Types tp;
-
-        //______________________________________________________________
-        // Retrieve components from dataset to construct MDirection
-
-        if (!h5get_attribute(location_id,
-                             value,
-                             values))
-          {
-            cerr << "[h5get_direction]"
-                 << " Error retrieving the numerical values of the position"
-                 << endl;
-            return dir;
-          }
-
-        if (!h5get_attribute(location_id,
-                             unit,
-                             units))
-          {
-            cerr << "[h5get_direction]"
-                 << " Error retrieving the physical units of the position"
-                 << endl;
-            return dir;
-          }
-
-        if (!h5get_attribute(location_id,
-                             frame,
-                             refcode))
-          {
-            cerr << "[h5get_direction]"
-                 << " Error retrieving the frame of the position"
-                 << endl;
-            return dir;
-          }
-
-        //______________________________________________________________
-        // Combine components into MDirection
-
-        if (MDirection::getType (tp,refcode))
-          {
-            if (values.nelements() == 2 && units.nelements() == 2)
-              {
-                // create MDirection object
-                dir = MDirection ( Quantity( values(0), units(0)),
-                                   Quantity( values(1), units(1)),
-                                   MDirection::Ref(tp));
-                // return result
-                return dir;
-              }
-            else
-              {
-                cerr << "[h5get_direction] Mismatching number of values and units!"
-                     << endl;
-                cerr << "-- Values = " << values << endl;
-                cerr << "-- Units  = " << units  << endl;
-                dir = MDirection();
-              }
-          }
-        else
-          {
-            cerr << "[h5get_direction] Error translating reference code into type!"
-                 << endl;
-            cerr << "-- Refcode = " << refcode << endl;
-            dir = MDirection();
-          }
+    if (location_id > 0) {
+      casa::Vector<double> values;
+      casa::Vector<casa::String> units;
+      std::string refcode;
+      casa::MDirection::Types tp;
+      
+      //______________________________________________________________
+      // Retrieve components from dataset to construct MDirection
+      
+      if (!h5get_attribute(location_id,
+			   value,
+			   values))
+	{
+	  cerr << "[h5get_direction]"
+	       << " Error retrieving the numerical values of the position"
+	       << endl;
+	  return dir;
+	}
+      
+      if (!h5get_attribute(location_id,
+			   unit,
+			   units))
+	{
+	  cerr << "[h5get_direction]"
+	       << " Error retrieving the physical units of the position"
+	       << endl;
+	  return dir;
+	}
+      
+      if (!h5get_attribute(location_id,
+			   frame,
+			   refcode))
+	{
+	  cerr << "[h5get_direction]"
+	       << " Error retrieving the frame of the position"
+	       << endl;
+	  return dir;
+	}
+      
+      //______________________________________________________________
+      // Combine components into MDirection
+      
+      if (casa::MDirection::getType (tp,refcode)) {
+	if (values.nelements() == 2 && units.nelements() == 2) {
+	  // create MDirection object
+	  dir = casa::MDirection ( Quantity( values(0), units(0)),
+				   Quantity( values(1), units(1)),
+				   casa::MDirection::Ref(tp));
+	  // return result
+	  return dir;
+	}
+	else {
+	  cerr << "[h5get_direction] Mismatching number of values and units!"
+	       << endl;
+	  cerr << "-- Values = " << values << endl;
+	  cerr << "-- Units  = " << units  << endl;
+	  dir = casa::MDirection();
+	}
       }
-    else
-      {
-        cerr << "[h5get_direction] Unusable ID for HDF5 object!" << endl;
-        dir = MDirection();
+      else {
+	cerr << "[h5get_direction] Error translating reference code into type!"
+	     << endl;
+	cerr << "-- Refcode = " << refcode << endl;
+	dir = casa::MDirection();
       }
-
+    }
+    else {
+      cerr << "[h5get_direction] Unusable ID for HDF5 object!" << endl;
+      dir = casa::MDirection();
+    }
+    
     return dir;
   }
-
+  
   // ------------------------------------------------------------- h5get_position
-
+  
   /*!
     \param location_id -- Identifier of the structure within the file, to which
            the attribut is attached to.
@@ -1501,16 +1524,16 @@ namespace DAL {
   //  Boost.Python wrappers
   //
   // ============================================================================
-
+  
 #ifdef PYTHON
-
+  
   // ------------------------------------------------------------- mjd2unix_boost
-
+  
   /*!
     - The Unix base date is MJD 40587.
     - 1 mjd Day = 24 hours or 1440 minutes or 86400 seconds
     - (unix seconds) = (mjd seconds) - ( unix base date in seconds )
-
+    
     \param mjd_time The time as Modified Julian Date.
   */
   bpl::numeric::array mjd2unix_boost( bpl::numeric::array mjd_time )

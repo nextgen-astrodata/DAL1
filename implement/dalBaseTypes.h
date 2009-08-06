@@ -52,6 +52,25 @@ extern "C"
 #endif
 
 /*
+   if there is a casa installation
+*/
+#ifdef HAVE_CASA
+#include <casa/aips.h>
+#include <casa/BasicMath/Math.h>
+#include <casa/Arrays.h>
+#include <casa/Arrays/IPosition.h>
+#include <ms/MeasurementSets.h>
+#include <ms/MeasurementSets/MSReader.h>
+#include <casa/aipstype.h>
+#include <casa/complex.h>
+#include <tables/Tables.h>
+#include <tables/Tables/Table.h>
+#include <tables/Tables/ScalarColumn.h>
+#include <tables/Tables/TableParse.h>
+#include <tables/Tables/TableKeyword.h>
+#endif
+
+/*
    if creating python bindings
 */
 #ifdef PYTHON
@@ -64,31 +83,13 @@ namespace bpl = boost::python;
 #include <num_util.h>
 #endif
 
-/*
-   if there is a casa installation
-*/
-#ifdef HAVE_CASA
-#include <casa/aips.h>
-#include <tables/Tables.h>
-#include <tables/Tables/Table.h>
-#include <ms/MeasurementSets.h>
-#include <ms/MeasurementSets/MSReader.h>
-#include <casa/aipstype.h>
-#include <casa/complex.h>
-#include <casa/BasicMath/Math.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/TableParse.h>
-#include <tables/Tables/TableKeyword.h>
-#endif
-
 // CHUNK_SIZE arbitrarily chosen, more research needed on this feature
 const int32_t CHUNK_SIZE = 5000;
 const int32_t MAX_COL_NAME_SIZE = 256;
 
 // ----------------------------------------------------- USG code
 
-namespace DAL
-  {
+namespace DAL {
 
   using namespace std;
 
@@ -151,7 +152,6 @@ namespace DAL
     };
 
   bool BigEndian( void );
-  void swapbytes(char *addr, int8_t nbytes);
 
 } // DAL namespace
 

@@ -767,7 +767,8 @@ namespace DAL {  // Namespace DAL -- begin
     }
   }
   
-  // ----------------------------------------------------------------------- feed
+  //_____________________________________________________________________________
+  //                                                                         feed
   
   /*!
     \return feed -- The type of antenna feed of this dipole
@@ -784,6 +785,26 @@ namespace DAL {  // Namespace DAL -- begin
     else {
       return std::string ("");
     }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                     set_feed
+  
+  bool TBB_DipoleDataset::set_feed (std::string const &feed)
+  {
+    bool status (true);
+    
+    if (datasetID_p > 0) {
+      status = DAL::h5set_attribute (datasetID_p,
+				     attribute_name(DAL::FEED),
+				     feed);
+    }
+    else {
+      cerr << "[TBB_DipoleDataset::set_feed] Dataset undefined!" << endl;
+      status = false;
+    }
+    
+    return status;
   }
   
   //_____________________________________________________________________________

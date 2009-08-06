@@ -25,7 +25,6 @@
 #include <sys/stat.h>	// needed to check for existence of a file
 
 using namespace std;
-using namespace casa;
 
 namespace DAL {
 
@@ -233,30 +232,32 @@ namespace DAL {
     
   }
   
+  //_____________________________________________________________________________
+  //                                                                   getLattice
   
   /*!
     \brief Get a (casa) Lattice<Float> to access the fits file
   */
   void dalFITS::getLattice()
-  //casa::Lattice<Float>* dalFITS::getLattice () // don't return, but set in object instead
   {
-    casa::LatticeBase *latticeBase;	// generic lattice variable for casa lattice
-    std::string filename;		// local string to hold filename
-    
-    FITSImage::registerOpenFunction();	// Register the FITS and Miriad image types.
+    /* Generic lattice variable for casa lattice */
+    casa::LatticeBase *latticeBase;
+    /* Local string to hold filename */
+    std::string filename;
+    /* Register the FITS and Miriad image types */
+    casa::FITSImage::registerOpenFunction();
     
     // Get filename of dalFITS object
     
+    /* Try open the file with generic casa function */
+    latticeBase=casa::ImageOpener::openImage (filename);
     
-    latticeBase=ImageOpener::openImage (filename);	// try open the file with generic casa function
-    
-    if (lattice_p==NULL)			// on error
-      {
-        throw "dalFITS::getLattice ";
-      }
+    if (lattice_p==NULL) {
+      throw "dalFITS::getLattice ";
+    }
     
     // Currently only support double lattices:
-    lattice_p=dynamic_cast<ImageInterface<Float>*>(latticeBase);
+    lattice_p=dynamic_cast<casa::ImageInterface<casa::Float>*>(latticeBase);
     
     /*
     // determine data type of lattice
@@ -331,28 +332,28 @@ namespace DAL {
     return (string) complete_error_message;
   }
 
+  //_____________________________________________________________________________
+  //                                                                  readNumHDUs
 
   /*!
-    \brief Get the number of HDUs in the FITS file
-
     \return numHDUS - number of HDUs in FITS file
   */
-  int dalFITS::readNumHDUs()
+  int dalFITS::readNumHDUs ()
   {
-    int hdunum=0;	// number of hdus in FITS file
+    int nofHDUs=0;	// number of hdus in FITS file
 
-    if (fits_get_num_hdus(fptr, &hdunum ,&fitsstatus_p))
+    if (fits_get_num_hdus(fptr, &nofHDUs ,&fitsstatus_p))
       {
         throw "dalFITS::readNumHDUs";
       }
 
-    return hdunum;
+    return nofHDUs;
   }
 
+  //_____________________________________________________________________________
+  //                                                              moveAbsoluteHDU
 
   /*!
-    \brief Move to HDU unit given by hdu
-
     \param hdu - move to HDU number
 
     \return hdutype - type of HDU moved to
@@ -390,10 +391,10 @@ namespace DAL {
 
   }
 
+  //_____________________________________________________________________________
+  //                                                               readCurrentHDU
 
   /*!
-    \brief Read the current header postion (HDU) in FITS file
-
     \return chdu - current HDU in FITS file
   */
   int dalFITS::readCurrentHDU()
@@ -937,7 +938,7 @@ namespace DAL {
     long nelements=0;	// number of elements to write
 
     // Check if Faraday plane has the same x-/y-dimensions as naxes dimensions of FITS
-    if (x!=dimensions_p[0] || y!=dimensions_p[1])
+    if ((long long)x!=dimensions_p[0] || (long long)y!=dimensions_p[1])
       {
         throw "dalFITS::writePlane dimensions do not match";
       }
@@ -1270,13 +1271,13 @@ namespace DAL {
       }
   }
 
+  //_____________________________________________________________________________
+  //                                                                 writeComment
 
   /*!
-    \brief Write a comment to the CHDU
-
     \param &comment - write a comment to the CHU
   */
-  void dalFITS::writeComment(std::string &comment)
+  void dalFITS::writeComment (std::string &comment)
   {
     if (fits_write_comment(fptr, const_cast<char *>(comment.c_str()),  &fitsstatus_p))
       {
@@ -1284,10 +1285,10 @@ namespace DAL {
       }
   }
 
+  //_____________________________________________________________________________
+  //                                                                 writeHistory
 
   /*!
-    \brief Write a HISTORY entry to the CHDU
-
     \param history - History text
   */
   void dalFITS::writeHistory(std::string &history)
@@ -1541,15 +1542,6 @@ namespace DAL {
 
     return(blnReturn);
   }
-
-  // ============================================================================
-  //
-  //	Table access functions (not necessary for RM cubes at the moment)
-  //
-  // ============================================================================
-
-  // Implement these in a dalFITSTable.h/.cpp class?
-
 
   // ============================================================================
   //
