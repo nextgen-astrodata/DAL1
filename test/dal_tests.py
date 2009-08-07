@@ -5,17 +5,14 @@ import unittest
 import os
 import numpy
 
-BIGNUM = 20000
+BIGNUM = 200
 
 #A testcase is created by subclassing unittest.TestCase. The three individual tests are defined with methods whose names start with the letters test. This naming convention informs the test runner about which methods represent tests.
 #
 #The crux of each test is a call to assertEqual() to check for an expected result; assert_() to verify a condition; or assertRaises() to verify that an expected exception gets raised. These methods are used instead of the assert statement so the test runner can accumulate all test results and produce a report.
 
-class dal_tests(unittest.TestCase):
-
-#    def setUp(self):
-
 # ------------------------------------------------------------------ dalDataset
+class dalDataset_tests(unittest.TestCase):
 
     def test_dataset_create(self):
     	self.assertEqual(type(ds),pydal.dalDataset)
@@ -126,9 +123,10 @@ class dal_tests(unittest.TestCase):
 
     def test_dataset_setFilter(self):
 		self.assertEqual(type(ds.setFilter()),pydal.dalFilter)
-		
-# ------------------------------------------------------------------ dalGroup
 
+# ------------------------------------------------------------------ dalGroup
+class dalGroup_tests(unittest.TestCase):
+		
     def test_group_createShortArray(self):  # depends on createGroup
         group = ds.openGroup("newgroup")
         arr = group.createShortArray("shortarray1",[2,2],[1,2,3,4])
@@ -179,6 +177,10 @@ class dal_tests(unittest.TestCase):
     def test_group_getAttribute_string(self):	# string
     	group = ds.openGroup("newgroup")
     	self.assertEqual(group.getAttribute("string_attribute"),"hello world")
+
+class dalTable_tests(unittest.TestCase):
+
+#    def setUp(self):
 
 # ------------------------------------------------------------------ dalTable
 
@@ -293,64 +295,68 @@ if __name__ == "__main__":
 	# create the file
 	ds = pydal.dalDataset("testfile.h5","HDF5")
 
-	suite = unittest.TestSuite()
-	suite.addTest(dal_tests("test_dataset_create"))
-#	suite.addTest(dal_tests("test_dataset_open"))
-	suite.addTest(dal_tests("test_dataset_createIntArray_with_list"))
-	suite.addTest(dal_tests("test_dataset_createIntArray_with_list_and_chunk_dimensions"))
-	suite.addTest(dal_tests("test_dataset_createIntArray_with_numpy_array"))
-	suite.addTest(dal_tests("test_dataset_createIntArray_with_numpy_array_and_chunk_dimensions"))
-	suite.addTest(dal_tests("test_dataset_createFloatArray_with_list"))
-	suite.addTest(dal_tests("test_dataset_createFloatArray_with_numpy_array"))
-	suite.addTest(dal_tests("test_dataset_createGroup"))
-	suite.addTest(dal_tests("test_dataset_createSubGroup"))
-	suite.addTest(dal_tests("test_dataset_createTable"))
-	suite.addTest(dal_tests("test_dataset_createTable_in_group"))
-#	suite.addTest(dal_tests("test_listTables"))
-	suite.addTest(dal_tests("test_dataset_setAttribute_char"))
-	suite.addTest(dal_tests("test_dataset_setAttribute_short"))
-	suite.addTest(dal_tests("test_dataset_setAttribute_int"))
-	suite.addTest(dal_tests("test_dataset_setAttribute_uint"))
-	suite.addTest(dal_tests("test_dataset_setAttribute_long"))
-	suite.addTest(dal_tests("test_dataset_setAttribute_float"))
-	suite.addTest(dal_tests("test_dataset_setAttribute_double"))
-	suite.addTest(dal_tests("test_dataset_setAttribute_string"))
-	suite.addTest(dal_tests("test_dataset_setAttribute_string_list"))
-	suite.addTest(dal_tests("test_dataset_openTable"))
-	suite.addTest(dal_tests("test_dataset_openTable_in_group"))
-	suite.addTest(dal_tests("test_dataset_openGroup"))
-	suite.addTest(dal_tests("test_dataset_getType"))
-	suite.addTest(dal_tests("test_dataset_readIntArray"))
-	suite.addTest(dal_tests("test_dataset_readFloatArray"))
-#	suite.addTest(dal_tests("test_dataset_setFilter"))
+	suite1 = unittest.TestSuite()
+	suite1.addTest(dalDataset_tests("test_dataset_create"))
+#	suite1.addTest(dalDataset_tests("test_dataset_open"))
+	suite1.addTest(dalDataset_tests("test_dataset_createIntArray_with_list"))
+	suite1.addTest(dalDataset_tests("test_dataset_createIntArray_with_list_and_chunk_dimensions"))
+	suite1.addTest(dalDataset_tests("test_dataset_createIntArray_with_numpy_array"))
+	suite1.addTest(dalDataset_tests("test_dataset_createIntArray_with_numpy_array_and_chunk_dimensions"))
+	suite1.addTest(dalDataset_tests("test_dataset_createFloatArray_with_list"))
+	suite1.addTest(dalDataset_tests("test_dataset_createFloatArray_with_numpy_array"))
+	suite1.addTest(dalDataset_tests("test_dataset_createGroup"))
+	suite1.addTest(dalDataset_tests("test_dataset_createSubGroup"))
+	suite1.addTest(dalDataset_tests("test_dataset_createTable"))
+	suite1.addTest(dalDataset_tests("test_dataset_createTable_in_group"))
+#	suite1.addTest(dalDataset_tests("test_listTables"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_char"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_short"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_int"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_uint"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_long"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_float"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_double"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_string"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_string_list"))
+	suite1.addTest(dalDataset_tests("test_dataset_openTable"))
+	suite1.addTest(dalDataset_tests("test_dataset_openTable_in_group"))
+	suite1.addTest(dalDataset_tests("test_dataset_openGroup"))
+	suite1.addTest(dalDataset_tests("test_dataset_getType"))
+	suite1.addTest(dalDataset_tests("test_dataset_readIntArray"))
+	suite1.addTest(dalDataset_tests("test_dataset_readFloatArray"))
+#	suite1.addTest(dalDataset_tests("test_dataset_setFilter"))
 
-	suite.addTest(dal_tests("test_group_getName"))
-	suite.addTest(dal_tests("test_group_createShortArray"))
-	suite.addTest(dal_tests("test_group_createIntArray"))
-	suite.addTest(dal_tests("test_group_setAttribute_char"))
-	suite.addTest(dal_tests("test_group_setAttribute_short"))
-	suite.addTest(dal_tests("test_group_setAttribute_int"))
-	suite.addTest(dal_tests("test_group_setAttribute_uint"))
-	suite.addTest(dal_tests("test_group_setAttribute_long"))
-	suite.addTest(dal_tests("test_group_setAttribute_float"))
-	suite.addTest(dal_tests("test_group_setAttribute_double"))
-	suite.addTest(dal_tests("test_group_setAttribute_string"))
+	suite2 = unittest.TestSuite()
+	suite2.addTest(dalGroup_tests("test_group_getName"))
+	suite2.addTest(dalGroup_tests("test_group_createShortArray"))
+	suite2.addTest(dalGroup_tests("test_group_createIntArray"))
+	suite2.addTest(dalGroup_tests("test_group_setAttribute_char"))
+	suite2.addTest(dalGroup_tests("test_group_setAttribute_short"))
+	suite2.addTest(dalGroup_tests("test_group_setAttribute_int"))
+	suite2.addTest(dalGroup_tests("test_group_setAttribute_uint"))
+	suite2.addTest(dalGroup_tests("test_group_setAttribute_long"))
+	suite2.addTest(dalGroup_tests("test_group_setAttribute_float"))
+	suite2.addTest(dalGroup_tests("test_group_setAttribute_double"))
+	suite2.addTest(dalGroup_tests("test_group_setAttribute_string"))
 	
-	suite.addTest(dal_tests("test_table_setAttribute_char"))
-	suite.addTest(dal_tests("test_table_setAttribute_short"))
-	suite.addTest(dal_tests("test_table_setAttribute_int"))
-	suite.addTest(dal_tests("test_table_setAttribute_uint"))
-	suite.addTest(dal_tests("test_table_setAttribute_long"))
-	suite.addTest(dal_tests("test_table_setAttribute_float"))
-	suite.addTest(dal_tests("test_table_setAttribute_double"))
-	suite.addTest(dal_tests("test_table_setAttribute_string"))
-	suite.addTest(dal_tests("test_table_addColumns"))
-	suite.addTest(dal_tests("test_table_appendRow"))
-	suite.addTest(dal_tests("test_table_appendRows"))
-	suite.addTest(dal_tests("test_table_write_col_data_by_index"))
-	suite.addTest(dal_tests("test_table_getNumberOfRows"))
-#	suite.addTest(dal_tests("test_table_readRows"))
+	suite3 = unittest.TestSuite()
+	suite3.addTest(dalTable_tests("test_table_setAttribute_char"))
+	suite3.addTest(dalTable_tests("test_table_setAttribute_short"))
+	suite3.addTest(dalTable_tests("test_table_setAttribute_int"))
+	suite3.addTest(dalTable_tests("test_table_setAttribute_uint"))
+	suite3.addTest(dalTable_tests("test_table_setAttribute_long"))
+	suite3.addTest(dalTable_tests("test_table_setAttribute_float"))
+	suite3.addTest(dalTable_tests("test_table_setAttribute_double"))
+	suite3.addTest(dalTable_tests("test_table_setAttribute_string"))
+	suite3.addTest(dalTable_tests("test_table_addColumns"))
+	suite3.addTest(dalTable_tests("test_table_appendRow"))
+	suite3.addTest(dalTable_tests("test_table_appendRows"))
+	suite3.addTest(dalTable_tests("test_table_write_col_data_by_index"))
+	suite3.addTest(dalTable_tests("test_table_getNumberOfRows"))
+#	suite3.addTest(dalTable_tests("test_table_readRows"))
 	
-	suite.addTest(dal_tests("test_dataset_close"))
+	suite3.addTest(dalDataset_tests("test_dataset_close"))
 	
-	unittest.TextTestRunner(verbosity=3).run(suite)
+	alltests = unittest.TestSuite((suite1, suite2, suite3))
+
+	unittest.TextTestRunner(verbosity=5).run(alltests)
