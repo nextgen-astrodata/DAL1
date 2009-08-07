@@ -149,22 +149,38 @@ BOOST_PYTHON_MODULE(pydal)
     .def( bpl::init<char*, string>() )
     .def( "setAttribute_char", &dalDataset::setAttribute_char,
 	  "Set a character attribute" )
+    .def( "setAttribute_char", &dalDataset::setAttribute_char_vector,
+	  "Set an attribute from a list of chars." )
     .def( "setAttribute_short", &dalDataset::setAttribute_short,
 	  "Set a short integer attribute" )
+    .def( "setAttribute_short", &dalDataset::setAttribute_short_vector,
+	  "Set an attribute from a list of shorts." )
     .def( "setAttribute_int", &dalDataset::setAttribute_int,
 	  "Set a integer attribute" )
+    .def( "setAttribute_int", &dalDataset::setAttribute_int_vector,
+	  "Set an attribute from a list of integers." )
     .def( "setAttribute_uint", &dalDataset::setAttribute_uint,
 	  "Set a unsigned integer attribute" )
+    .def( "setAttribute_uint", &dalDataset::setAttribute_uint_vector,
+	  "Set an attribute from a list of unsigned integers." )
     .def( "setAttribute_long", &dalDataset::setAttribute_long,
 	  "Set a long integer attribute" )
+    .def( "setAttribute_long", &dalDataset::setAttribute_long_vector,
+	  "Set an attribute from a list of longs." )
     .def( "setAttribute_float", &dalDataset::setAttribute_float,
 	  "Set a floating point attribute" )
+    .def( "setAttribute_float", &dalDataset::setAttribute_float_vector,
+	  "Set an attribute from a list of floats." )
     .def( "setAttribute_double", &dalDataset::setAttribute_double,
 	  "Set a double precision floating point attribute" )
+    .def( "setAttribute_double", &dalDataset::setAttribute_double_vector,
+	  "Set an attribute from a list of doubles." )
     .def( "setAttribute_string", &dalDataset::setAttribute_string_boost,
 	  "Set a string attribute" )
     .def( "setAttribute_string", &dalDataset::setAttribute_string_vector,
 	  "Set a string attribute" )
+	.def( "getAttribute_float", &dalDataset::getAttribute_float_boost,
+	  "Return a dalDataset attribute into a numpy array." )
     .def( "open", &dalDataset::open,
 	  ( bpl::arg("dataset_name") ),
 	  "Opens a dataset." )

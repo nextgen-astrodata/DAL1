@@ -1701,7 +1701,33 @@ namespace DAL {
 
     return setAttribute (attrname, reinterpret_cast<std::string*>(&mydata[0]), size );
   }
+  bpl::numeric::array dalDataset::getAttribute_float_boost ( std::string attrname )
+  {
+  	 std::vector<float> value;
+     h5get_attribute( h5fh_p, attrname.c_str(), value );
+     std::cerr << value << std::endl;
+     std::vector<int> dims;
+     dims.push_back( value.size() );
+  	 
+//  	 float * values = NULL;
 
+
+//     std::vector<int> mydims;
+//     mydims.push_back( value.size() );
+//
+//     for (int idx=0; idx++; idx<value.size() )
+//        values
+//     
+//      bpl::numeric::array narray = num_util::makeNum( values, mydims );
+//      delete [] values;
+//      values = NULL;
+//      return narray;
+
+
+     bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<float*>(&value[0]), dims );
+     return arr;
+  }
+  
 #endif  // end #ifdef PYTHON
 
 } // end namespace DAL

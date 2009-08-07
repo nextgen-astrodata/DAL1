@@ -66,23 +66,51 @@ class dalDataset_tests(unittest.TestCase):
     def test_dataset_setAttribute_char(self):	#char
         self.assertTrue(ds.setAttribute_char("char_attribute",'a'))
         
+    def test_dataset_setAttribute_char_list(self):		# int
+        self.assertTrue(ds.setAttribute_char("char_list_attribute",['a','b','c']))
+
     def test_dataset_setAttribute_short(self):	# short
         self.assertTrue(ds.setAttribute_short("short_attribute",-3872))
         
+    def test_dataset_setAttribute_short_list(self):		# int
+        self.assertTrue(ds.setAttribute_short("short_list_attribute",[-1,0,1,2,3]))
+
     def test_dataset_setAttribute_int(self):		# int
         self.assertTrue(ds.setAttribute_int("int_attribute",-23637))
         
+    def test_dataset_setAttribute_int_list(self):		# int
+        self.assertTrue(ds.setAttribute_int("int_list_attribute",[-1,0,1,2,3]))
+
     def test_dataset_setAttribute_uint(self):	# uint
         self.assertTrue(ds.setAttribute_uint("uint_attribute",92834))
         
+    def test_dataset_setAttribute_uint_list(self):		# int
+        self.assertTrue(ds.setAttribute_uint("uint_list_attribute",[1,2,3]))
+
     def test_dataset_setAttribute_long(self):	# long
-        self.assertTrue(ds.setAttribute_long("long_attribute",2398226))
+        self.assertTrue(ds.setAttribute_long("long_attribute",239822873648376436))
         
+    def test_dataset_setAttribute_long_list(self):		# int
+        self.assertTrue(ds.setAttribute_long("long_list_attribute",[932432432432732,823789,987987]))
+
     def test_dataset_setAttribute_float(self):	# float
         self.assertTrue(ds.setAttribute_float("float_attribute",87323.234))
         
+    def test_dataset_setAttribute_float_list(self):	# float
+        self.assertTrue(ds.setAttribute_float("float_list_attribute",[1.111,2.222,3.333]))
+        
+    def test_dataset_getAttribute_float_list(self):	# float
+    	a = numpy.array([1.111,2.222,3.333])
+    	b = ds.getAttribute_float("float_list_attribute")
+    	# should be updated to compare expected with returned vals,
+    	#  but needs the same precision.  Otherwise assertEqual fails.
+    	self.assertTrue(type(b)==numpy.ndarray)
+        
     def test_dataset_setAttribute_double(self):	# double
         self.assertTrue(ds.setAttribute_double("double_attribute",324.9287364))
+        
+    def test_dataset_setAttribute_double_list(self):	# double
+        self.assertTrue(ds.setAttribute_double("double_list_attribute",[324.9287364,2342343.2343,890897.2433]))
         
     def test_dataset_setAttribute_string(self):	# string
         self.assertTrue(ds.setAttribute_string("string_attribute","hello world"))
@@ -310,12 +338,20 @@ if __name__ == "__main__":
 	suite1.addTest(dalDataset_tests("test_dataset_createTable_in_group"))
 #	suite1.addTest(dalDataset_tests("test_listTables"))
 	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_char"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_char_list"))
 	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_short"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_short_list"))
 	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_int"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_int_list"))
 	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_uint"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_uint_list"))
 	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_long"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_long_list"))
 	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_float"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_float_list"))
+	suite1.addTest(dalDataset_tests("test_dataset_getAttribute_float_list"))
 	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_double"))
+	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_double_list"))
 	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_string"))
 	suite1.addTest(dalDataset_tests("test_dataset_setAttribute_string_list"))
 	suite1.addTest(dalDataset_tests("test_dataset_openTable"))
