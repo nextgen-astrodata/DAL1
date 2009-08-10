@@ -113,6 +113,12 @@ namespace DAL {
       void saf_boost( std::string attrname, float data );
       void extend_boost( bpl::list pydims );
 
+      dalArray * csa_boost_list( std::string arrayname, bpl::list dims, bpl::list data);
+      dalArray * cia_boost_list( std::string arrayname, bpl::list dims, bpl::list data);
+      dalArray * cfa_boost_list( std::string arrayname, bpl::list dims, bpl::list data );
+
+      bpl::numeric::array ria_boost( std::string arrayname );
+
       bool setAttribute_char( std::string attrname, char data );
       bool setAttribute_short( std::string attrname, short data );
       bool setAttribute_int( std::string attrname, int data );
@@ -121,6 +127,15 @@ namespace DAL {
       bool setAttribute_float( std::string attrname, float data );
       bool setAttribute_double( std::string attrname, double data );
       bool setAttribute_string( std::string attrname, std::string data );
+      bool setAttribute_char_vector( std::string attrname, bpl::list data );
+      bool setAttribute_short_vector( std::string attrname, bpl::list data );
+      bool setAttribute_int_vector( std::string attrname, bpl::list data );
+      bool setAttribute_uint_vector( std::string attrname, bpl::list data );
+      bool setAttribute_long_vector( std::string attrname, bpl::list data );
+      bool setAttribute_float_vector( std::string attrname, bpl::list data );
+      bool setAttribute_double_vector( std::string attrname, bpl::list data );
+      bool setAttribute_string_vector( std::string attrname, bpl::list data );
+      
 #endif
     };
 

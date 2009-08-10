@@ -75,19 +75,35 @@ BOOST_PYTHON_MODULE(pydal)
   bpl::class_<dalArray>("dalArray")
     .def( "setAttribute_char", &dalArray::setAttribute_char,
 	  "Set a character attribute" )
+    .def( "setAttribute_char", &dalArray::setAttribute_char_vector,
+	  "Set an attribute from a list of chars." )
     .def( "setAttribute_short", &dalArray::setAttribute_short,
 	  "Set a short integer attribute" )
+    .def( "setAttribute_short", &dalArray::setAttribute_short_vector,
+	  "Set an attribute from a list of shorts." )
     .def( "setAttribute_int", &dalArray::setAttribute_int,
 	  "Set a integer attribute" )
+    .def( "setAttribute_int", &dalArray::setAttribute_int_vector,
+	  "Set an attribute from a list of integers." )
     .def( "setAttribute_uint", &dalArray::setAttribute_uint,
 	  "Set a unsigned integer attribute" )
+    .def( "setAttribute_uint", &dalArray::setAttribute_uint_vector,
+	  "Set an attribute from a list of unsigned integers." )
     .def( "setAttribute_long", &dalArray::setAttribute_long,
 	  "Set a long integer attribute" )
+    .def( "setAttribute_long", &dalArray::setAttribute_long_vector,
+	  "Set an attribute from a list of longs." )
     .def( "setAttribute_float", &dalArray::setAttribute_float,
 	  "Set a floating point attribute" )
+    .def( "setAttribute_float", &dalArray::setAttribute_float_vector,
+	  "Set an attribute from a list of floats." )
     .def( "setAttribute_double", &dalArray::setAttribute_double,
 	  "Set a double precision floating point attribute" )
+    .def( "setAttribute_double", &dalArray::setAttribute_double_vector,
+	  "Set an attribute from a list of doubles." )
     .def( "setAttribute_string", &dalArray::setAttribute_string,
+	  "Set a string attribute" )
+    .def( "setAttribute_string", &dalArray::setAttribute_string_vector,
 	  "Set a string attribute" )
     .def( "getAttributes", &dalArray::getAttributes,
 	  "Print the attributes of the array." )
@@ -252,19 +268,35 @@ BOOST_PYTHON_MODULE(pydal)
     .def( bpl::init<hid_t,char*>())
     .def( "setAttribute_char", &dalGroup::setAttribute_char,
 	  "Set a character attribute" )
+    .def( "setAttribute_char", &dalGroup::setAttribute_char_vector,
+	  "Set an attribute from a list of chars." )
     .def( "setAttribute_short", &dalGroup::setAttribute_short,
 	  "Set a short integer attribute" )
+    .def( "setAttribute_short", &dalGroup::setAttribute_short_vector,
+	  "Set an attribute from a list of shorts." )
     .def( "setAttribute_int", &dalGroup::setAttribute_int,
 	  "Set a integer attribute" )
+    .def( "setAttribute_int", &dalGroup::setAttribute_int_vector,
+	  "Set an attribute from a list of integers." )
     .def( "setAttribute_uint", &dalGroup::setAttribute_uint,
 	  "Set a unsigned integer attribute" )
+    .def( "setAttribute_uint", &dalGroup::setAttribute_uint_vector,
+	  "Set an attribute from a list of unsigned integers." )
     .def( "setAttribute_long", &dalGroup::setAttribute_long,
 	  "Set a long integer attribute" )
+    .def( "setAttribute_long", &dalGroup::setAttribute_long_vector,
+	  "Set an attribute from a list of longs." )
     .def( "setAttribute_float", &dalGroup::setAttribute_float,
 	  "Set a floating point attribute" )
+    .def( "setAttribute_float", &dalGroup::setAttribute_float_vector,
+	  "Set an attribute from a list of floats." )
     .def( "setAttribute_double", &dalGroup::setAttribute_double,
 	  "Set a double precision floating point attribute" )
+    .def( "setAttribute_double", &dalGroup::setAttribute_double_vector,
+	  "Set an attribute from a list of doubles." )
     .def( "setAttribute_string", &dalGroup::setAttribute_string,
+	  "Set a string attribute" )
+    .def( "setAttribute_string", &dalGroup::setAttribute_string_vector,
 	  "Set a string attribute" )
     .def( "getName", &dalGroup::getName,
 	  "Return the group name." )

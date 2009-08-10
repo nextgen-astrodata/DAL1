@@ -1522,6 +1522,87 @@ namespace DAL {
   {
     return setAttribute( attrname, &data );
   }
+  bool dalArray::setAttribute_char_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<char> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<char>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<char*>(&mydata[0]), size );
+  }
+  bool dalArray::setAttribute_short_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<short> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<short>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<short*>(&mydata[0]), size );
+  }
+  bool dalArray::setAttribute_int_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<int> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<int>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<int*>(&mydata[0]), size );
+  }
+  bool dalArray::setAttribute_uint_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<uint> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<uint>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<uint*>(&mydata[0]), size );
+  }
+  bool dalArray::setAttribute_long_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<long> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<long>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<long*>(&mydata[0]), size );
+  }
+  bool dalArray::setAttribute_float_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<float> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<float>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<float*>(&mydata[0]), size );
+  }
+  bool dalArray::setAttribute_double_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<double> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<double>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<double*>(&mydata[0]), size );
+  }
+  bool dalArray::setAttribute_string_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<std::string> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<std::string>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<std::string*>(&mydata[0]), size );
+  }
+
 #endif // end #ifdef PYTHON
   
 } // end namespace DAL
