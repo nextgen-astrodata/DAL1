@@ -227,9 +227,6 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get the number of samples stored in this dataset
     uint data_length ();
     
-    //! Set the number of samples stored in this dataset
-    bool set_data_length (uint const &length);
-    
     //! Get the type of feed for this dipole
     std::string feed ();
     
@@ -328,8 +325,14 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get the numerical values describing the antenna orientation
     bool antenna_orientation_value (casa::Vector<double> &value);
 
+    //! Set the numerical values describing the antenna orientation
+    bool set_antenna_orientation_value (casa::Vector<double> const &value);
+
     //! Get the physical unit within which the antenna orientation is given
     bool antenna_orientation_unit (casa::Vector<casa::String> &unit);
+
+    //! Set the physical unit within which the antenna orientation is given
+    bool set_antenna_orientation_unit (casa::Vector<casa::String> const &unit);
 
     //! Get the ADC sample frequency as casa::Quantity
     bool sample_frequency (casa::Quantity &freq);

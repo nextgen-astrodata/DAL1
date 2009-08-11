@@ -48,7 +48,11 @@ ________________________________________________________________________________
 * All source files contain a Doxygen-based documentation of their methods.
   All classes/files are contained within the group "DAL".
 
-* Private variables end with "_p" to distinguish them from local variables.
+* Private variables end with "_p" to distinguish them from local variables, e.g.
+  "length_p".
+
+* Pointers should be marked by a leading "p"; e.g. "pShape" or -- in the case
+  of a private variable "pShape_p".
 
 _________________________________________________________________________________
 >>> Resolved issues

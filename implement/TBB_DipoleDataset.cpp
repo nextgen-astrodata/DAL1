@@ -158,81 +158,9 @@ namespace DAL {  // Namespace DAL -- begin
   
   // ============================================================================
   //
-  //  Parameters
+  //  Access to attributes
   //
   // ============================================================================
-  
-  // -------------------------------------------------------------- nofAttributes
-  
-  /*!
-    \return nofAttributes -- The number of attributes attached to the dataset;
-            if the dataset ID is properly connected to a dataset within the
-	    HDF5 file, the returned value will be zero or greater. If a
-	    negative value is returned, most likely te connection with the
-	    file is broken.
-  */
-  int TBB_DipoleDataset::nofAttributes ()
-  {
-    if (datasetID_p > 0) {
-      return H5Aget_num_attrs (datasetID_p);
-    }
-    else {
-      return -1;
-    }
-  }
-  
-  // -------------------------------------------------------------------- summary
-  
-  void TBB_DipoleDataset::summary (std::ostream &os)
-  {
-    os << "[TBB_DipoleDataset::summary]"   << endl;
-    os << "-- Dataset ID .............. = " << datasetID_p  << endl;
-    
-    if (datasetID_p) {
-      /*
-       * Additional check in the HDF5 dataset object; if it is valid, we should
-       * be able to retrieve the number of attributes attached to it.
-       */
-      int nofAttributes = H5Aget_num_attrs (datasetID_p);
-      
-      os << "-- nof. attributes ......... = " << nofAttributes << endl;
-      
-      if (nofAttributes < 0) {
-	os << "--> Illegal number of attached attributes!" << endl;
-      }
-      else {
-	std::vector<double> antennaPositionValue;
-	std::vector<std::string> antennaPositionUnit;
-	std::vector<double> antennaOrientationValue;
-	std::vector<std::string> antennaOrientationUnit;
-	// Retrieve attributes
-	antenna_position_value(antennaPositionValue);
-	antenna_position_unit(antennaPositionUnit);
-	antenna_orientation_value(antennaOrientationValue);
-	antenna_orientation_unit(antennaOrientationUnit);
-	/* Display attributes */
-	os << "-- STATION_ID .............. = " << station_id()                << endl;
-	os << "-- RSP_ID .................. = " << rsp_id()                    << endl;
-	os << "-- RCU_ID .................. = " << rcu_id()                    << endl;
-	os << "-- CHANNEL_ID .............. = " << channelName()               << endl;
-	os << "-- ANTENNA_POSITION_VALUE .. = " << antennaPositionValue    << endl;
-	os << "-- ANTENNA_POSITION_UNIT ... = " << antennaPositionUnit     << endl;
-	os << "-- ANTENNA_POSITION_FRAME .. = " << antenna_position_frame()    << endl;
-	os << "-- ANTENNA_ORIENTATION_VALUE = " << antennaOrientationValue << endl;
-	os << "-- ANTENNA_ORIENTATION_UNIT  = " << antennaOrientationUnit  << endl;
-	os << "-- ANTENNA_ORIENTATION_FRAME = " << antenna_orientation_frame() << endl;
-	os << "-- SAMPLE_FREQUENCY_VALUE .. = " << sample_frequency_value()    << endl;
-	os << "-- SAMPLE_FREQUENCY_UNIT ... = " << sample_frequency_unit()     << endl;
-	os << "-- NYQUIST_ZONE ............ = " << nyquist_zone()              << endl;
-	os << "-- TIME [Unix seconds]...... = " << time()                      << endl;
-	os << "-- TIME [  Julian Day] ..... = " << julianDay()                 << endl;
-	os << "-- SAMPLE_NUMBER ........... = " << sample_number()             << endl;
-	os << "-- SAMPLES_PER_FRAME ....... = " << samples_per_frame()         << endl;
-	os << "-- FEED .................... = " << feed()                      << endl;
-	os << "-- DATA_LENGTH ............. = " << data_length()               << endl;
-      }
-    }
-  }
   
   // ----------------------------------------------------------------- station_id
   
@@ -373,80 +301,6 @@ namespace DAL {  // Namespace DAL -- begin
     return status;
   }
   
-  // ----------------------------------------------------------------------- time
-  
-  /*!
-    \return time -- The (UNIX) time at which the data were recorded.
-  */
-  uint TBB_DipoleDataset::time ()
-  {
-    if (datasetID_p > 0) {
-      uint val (0);
-      if (DAL::h5get_attribute(datasetID_p,
-			       attribute_name(DAL::TIME),
-			       val)) {
-	return val;
-      }
-      else {
-	cerr << "[TBB_DipoleDataset::time]"
-	     << " Error retrieving attribute value!" << endl;
-	return 0;
-      }
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::time] Dataset undefined!"
-	   << endl;
-      return 0;
-    }
-  }
-  
-  // ------------------------------------------------------------------- set_time
-  
-  bool TBB_DipoleDataset::set_time (uint const &time)
-  {
-    bool status (true);
-    
-    if (datasetID_p > 0) {
-      status = DAL::h5set_attribute (datasetID_p,
-				     attribute_name(DAL::TIME),
-				     time);
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::set_time] Dataset undefined!" << endl;
-      status = false;
-    }
-    
-    return status;
-  }
-  
-  // ------------------------------------------------------------------ julianDay
-  
-  /*!
-    \param onlySeconds -- Fully quallified timestamp for the first sample? If
-           set to <tt>true</tt> only the UNIX time -- qualifying the full
-	   seconds -- will be returned.
-  */
-  double TBB_DipoleDataset::julianDay (bool const &onlySeconds)
-  {
-    uint seconds = time ();
-    double jd    = 0.0;
-
-    if (onlySeconds) {
-      jd = seconds/86400+2440587.5;
-    }
-    else {
-      // retrieve additional information
-      uint samplesSinceSecond = sample_number();
-      double sampleFrequency  = sample_frequency_value ();
-      // conversion
-      if (sampleFrequency > 0) {
-	jd = (seconds+samplesSinceSecond/sampleFrequency)/86400+2440587.5;
-      }
-    }
-    
-    return jd;
-  }
-
   //_____________________________________________________________________________
   //                                                       sample_frequency_value
   
@@ -578,6 +432,224 @@ namespace DAL {  // Namespace DAL -- begin
     }
   }
   
+  // ----------------------------------------------------------- set_nyquist_zone
+  
+  bool TBB_DipoleDataset::set_nyquist_zone (uint const &val)
+  {
+    bool status (true);
+    
+    if (datasetID_p > 0) {
+      status = DAL::h5set_attribute (datasetID_p,
+				     attribute_name(DAL::NYQUIST_ZONE),
+				     val);
+    }
+    else {
+      cerr << "[TBB_DipoleDataset::set_nyquist_zone] Dataset undefined!" << endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
+  // ----------------------------------------------------------------------- time
+  
+  /*!
+    \return time -- The (UNIX) time at which the data were recorded.
+  */
+  uint TBB_DipoleDataset::time ()
+  {
+    if (datasetID_p > 0) {
+      uint val (0);
+      if (DAL::h5get_attribute(datasetID_p,
+			       attribute_name(DAL::TIME),
+			       val)) {
+	return val;
+      }
+      else {
+	cerr << "[TBB_DipoleDataset::time]"
+	     << " Error retrieving attribute value!" << endl;
+	return 0;
+      }
+    }
+    else {
+      cerr << "[TBB_DipoleDataset::time] Dataset undefined!"
+	   << endl;
+      return 0;
+    }
+  }
+  
+  // ------------------------------------------------------------------- set_time
+  
+  bool TBB_DipoleDataset::set_time (uint const &time)
+  {
+    bool status (true);
+    
+    if (datasetID_p > 0) {
+      status = DAL::h5set_attribute (datasetID_p,
+				     attribute_name(DAL::TIME),
+				     time);
+    }
+    else {
+      cerr << "[TBB_DipoleDataset::set_time] Dataset undefined!" << endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
+  // -------------------------------------------------------------- sample_number
+
+  /*!
+    \return sample_number -- The timespan in samples since the last full
+            second, as stored in <i>time</i>; the absolute time for this
+      dataset thus is obtained by adding
+      <i>sample_number</i>/<i>sample_frequency</i> to the value of
+      <i>time</i>.
+  */
+  uint TBB_DipoleDataset::sample_number ()
+  {
+    if (datasetID_p > 0) {
+      uint val (0);
+      if (DAL::h5get_attribute(datasetID_p,
+			       attribute_name(DAL::SAMPLE_NUMBER),
+			       val)) {
+	return val;
+      }
+      else {
+	return 0;
+      }
+    }
+    else {
+      return 0;
+    }
+  }
+  
+  // ---------------------------------------------------------- set_sample_number
+  
+  bool TBB_DipoleDataset::set_sample_number (uint const &number)
+  {
+    bool status (true);
+    
+    if (datasetID_p > 0) {
+      status = DAL::h5set_attribute (datasetID_p,
+				     attribute_name(DAL::SAMPLE_NUMBER),
+				     number);
+    }
+    else {
+      cerr << "[TBB_DipoleDataset::set_sample_number] Dataset undefined!" << endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                            samples_per_frame
+
+  /*!
+    \return samplesPerFrame -- The number of samples originally transmitted
+            per frame of data sent from TBB to RSP.
+  */
+  uint TBB_DipoleDataset::samples_per_frame ()
+  {
+    if (datasetID_p > 0) {
+      uint val (0);
+      if (DAL::h5get_attribute(datasetID_p,
+			       attribute_name(DAL::SAMPLES_PER_FRAME),
+			       val)) {
+	return val;
+      }
+      else {
+	return 0;
+      }
+    }
+    else {
+      return 0;
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                        set_samples_per_frame
+  
+  bool TBB_DipoleDataset::set_samples_per_frame (uint const &samples)
+  {
+    bool status (true);
+    
+    if (datasetID_p > 0) {
+      status = DAL::h5set_attribute (datasetID_p,
+				     attribute_name(DAL::SAMPLES_PER_FRAME),
+				     samples);
+    }
+    else {
+      cerr << "[TBB_DipoleDataset::set_samples_per_frame] Dataset undefined!" << endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                  data_length
+  
+  /*!
+    \return dataLength -- The number of samples stored in this dataset; this
+            corresponds to the maximum blocksize, which can be set for this
+	    dataset.
+  */
+  uint TBB_DipoleDataset::data_length ()
+  {
+    uint val (0);
+    std::vector<uint> shape;
+
+    if (DAL::h5get_dataset_shape(datasetID_p,shape)) {
+      val = shape[0];
+      return val;
+    }
+    else {
+      return 0;
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                         feed
+  
+  /*!
+    \return feed -- The type of antenna feed of this dipole
+  */
+  std::string TBB_DipoleDataset::feed ()
+  {
+    std::string val;
+
+    if (DAL::h5get_attribute(datasetID_p,
+                             attribute_name(DAL::FEED),
+                             val)) {
+      return val;
+    }
+    else {
+      return std::string ("");
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                     set_feed
+  
+  bool TBB_DipoleDataset::set_feed (std::string const &feed)
+  {
+    bool status (true);
+    
+    if (datasetID_p > 0) {
+      status = DAL::h5set_attribute (datasetID_p,
+				     attribute_name(DAL::FEED),
+				     feed);
+    }
+    else {
+      cerr << "[TBB_DipoleDataset::set_feed] Dataset undefined!" << endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
   // ============================================================================
   //
   //  Methods
@@ -695,116 +767,76 @@ namespace DAL {  // Namespace DAL -- begin
     
   }
 
-  // -------------------------------------------------------------- sample_number
-
+  // -------------------------------------------------------------- nofAttributes
+  
   /*!
-    \return sample_number -- The timespan in samples since the last full
-            second, as stored in <i>time</i>; the absolute time for this
-      dataset thus is obtained by adding
-      <i>sample_number</i>/<i>sample_frequency</i> to the value of
-      <i>time</i>.
+    \return nofAttributes -- The number of attributes attached to the dataset;
+            if the dataset ID is properly connected to a dataset within the
+	    HDF5 file, the returned value will be zero or greater. If a
+	    negative value is returned, most likely te connection with the
+	    file is broken.
   */
-  uint TBB_DipoleDataset::sample_number ()
+  int TBB_DipoleDataset::nofAttributes ()
   {
     if (datasetID_p > 0) {
-      uint val (0);
-      if (DAL::h5get_attribute(datasetID_p,
-			       attribute_name(DAL::SAMPLE_NUMBER),
-			       val)) {
-	return val;
+      return H5Aget_num_attrs (datasetID_p);
+    }
+    else {
+      return -1;
+    }
+  }
+  
+  // -------------------------------------------------------------------- summary
+  
+  void TBB_DipoleDataset::summary (std::ostream &os)
+  {
+    os << "[TBB_DipoleDataset::summary]"   << endl;
+    os << "-- Dataset ID .............. = " << datasetID_p  << endl;
+    
+    if (datasetID_p) {
+      /*
+       * Additional check in the HDF5 dataset object; if it is valid, we should
+       * be able to retrieve the number of attributes attached to it.
+       */
+      int nofAttributes = H5Aget_num_attrs (datasetID_p);
+      
+      os << "-- nof. attributes ......... = " << nofAttributes << endl;
+      
+      if (nofAttributes < 0) {
+	os << "--> Illegal number of attached attributes!" << endl;
       }
       else {
-	return 0;
+	std::vector<double> antennaPositionValue;
+	std::vector<std::string> antennaPositionUnit;
+	std::vector<double> antennaOrientationValue;
+	std::vector<std::string> antennaOrientationUnit;
+	// Retrieve attributes
+	antenna_position_value(antennaPositionValue);
+	antenna_position_unit(antennaPositionUnit);
+	antenna_orientation_value(antennaOrientationValue);
+	antenna_orientation_unit(antennaOrientationUnit);
+	/* Display attributes */
+	os << "-- STATION_ID .............. = " << station_id()                << endl;
+	os << "-- RSP_ID .................. = " << rsp_id()                    << endl;
+	os << "-- RCU_ID .................. = " << rcu_id()                    << endl;
+	os << "-- CHANNEL_ID .............. = " << channelName()               << endl;
+	os << "-- ANTENNA_POSITION_VALUE .. = " << antennaPositionValue    << endl;
+	os << "-- ANTENNA_POSITION_UNIT ... = " << antennaPositionUnit     << endl;
+	os << "-- ANTENNA_POSITION_FRAME .. = " << antenna_position_frame()    << endl;
+	os << "-- ANTENNA_ORIENTATION_VALUE = " << antennaOrientationValue << endl;
+	os << "-- ANTENNA_ORIENTATION_UNIT  = " << antennaOrientationUnit  << endl;
+	os << "-- ANTENNA_ORIENTATION_FRAME = " << antenna_orientation_frame() << endl;
+	os << "-- SAMPLE_FREQUENCY_VALUE .. = " << sample_frequency_value()    << endl;
+	os << "-- SAMPLE_FREQUENCY_UNIT ... = " << sample_frequency_unit()     << endl;
+	os << "-- NYQUIST_ZONE ............ = " << nyquist_zone()              << endl;
+	os << "-- TIME [Unix seconds]...... = " << time()                      << endl;
+	os << "-- TIME [  Julian Day] ..... = " << julianDay()                 << endl;
+	os << "-- SAMPLE_NUMBER ........... = " << sample_number()             << endl;
+	os << "-- SAMPLES_PER_FRAME ....... = " << samples_per_frame()         << endl;
+	os << "-- FEED .................... = " << feed()                      << endl;
+	os << "-- DATA_LENGTH ............. = " << data_length()               << endl;
       }
     }
-    else {
-      return 0;
-    }
-  }
-  
-  // ---------------------------------------------------------- samples_per_frame
-
-  /*!
-    \return samplesPerFrame -- The number of samples originally transmitted
-            per frame of data sent from TBB to RSP.
-  */
-  uint TBB_DipoleDataset::samples_per_frame ()
-  {
-    if (datasetID_p > 0) {
-      uint val (0);
-      if (DAL::h5get_attribute(datasetID_p,
-			       attribute_name(DAL::SAMPLES_PER_FRAME),
-			       val)) {
-	return val;
-      }
-      else {
-	return 0;
-      }
-    }
-    else {
-      return 0;
-    }
-  }
-  
-  // ---------------------------------------------------------------- data_length
-  
-  /*!
-    \return dataLength -- The number of samples stored in this dataset; this
-            corresponds to the maximum blocksize, which can be set for this
-      dataset.
-  */
-  uint TBB_DipoleDataset::data_length ()
-  {
-    uint val (0);
-    std::vector<uint> shape;
-
-    if (DAL::h5get_dataset_shape(datasetID_p,shape)) {
-      val = shape[0];
-      return val;
-    }
-    else {
-      return 0;
-    }
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                         feed
-  
-  /*!
-    \return feed -- The type of antenna feed of this dipole
-  */
-  std::string TBB_DipoleDataset::feed ()
-  {
-    std::string val;
-
-    if (DAL::h5get_attribute(datasetID_p,
-                             attribute_name(DAL::FEED),
-                             val)) {
-      return val;
-    }
-    else {
-      return std::string ("");
-    }
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                     set_feed
-  
-  bool TBB_DipoleDataset::set_feed (std::string const &feed)
-  {
-    bool status (true);
-    
-    if (datasetID_p > 0) {
-      status = DAL::h5set_attribute (datasetID_p,
-				     attribute_name(DAL::FEED),
-				     feed);
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::set_feed] Dataset undefined!" << endl;
-      status = false;
-    }
-    
-    return status;
   }
   
   //_____________________________________________________________________________
@@ -930,6 +962,34 @@ namespace DAL {  // Namespace DAL -- begin
     std::string channelID (uid);
 
     return channelID;
+  }
+
+  // ------------------------------------------------------------------ julianDay
+  
+  /*!
+    \param onlySeconds -- Fully quallified timestamp for the first sample? If
+           set to <tt>true</tt> only the UNIX time -- qualifying the full
+	   seconds -- will be returned.
+  */
+  double TBB_DipoleDataset::julianDay (bool const &onlySeconds)
+  {
+    uint seconds = time ();
+    double jd    = 0.0;
+
+    if (onlySeconds) {
+      jd = seconds/86400+2440587.5;
+    }
+    else {
+      // retrieve additional information
+      uint samplesSinceSecond = sample_number();
+      double sampleFrequency  = sample_frequency_value ();
+      // conversion
+      if (sampleFrequency > 0) {
+	jd = (seconds+samplesSinceSecond/sampleFrequency)/86400+2440587.5;
+      }
+    }
+    
+    return jd;
   }
 
   // ------------------------------------------------------------------------- fx
