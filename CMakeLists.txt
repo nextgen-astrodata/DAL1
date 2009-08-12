@@ -129,10 +129,6 @@ if (SIZEOF_LONG_LONG)
   add_definitions (-DHAVE_LONG_LONG)
 endif (SIZEOF_LONG_LONG)
 
-if (SIZEOF_INT64_T EQUAL SIZEOF_LONG_INT)
-  add_definitions (-DINT64_IS_LONG_INT)
-endif (SIZEOF_INT64_T EQUAL SIZEOF_LONG_INT)
-
 ##__________________________________________________________
 ## Blitz++
 

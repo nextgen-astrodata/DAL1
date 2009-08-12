@@ -938,22 +938,20 @@ namespace DAL {
     long nelements=0;	// number of elements to write
 
     // Check if Faraday plane has the same x-/y-dimensions as naxes dimensions of FITS
-    if ((long long)x!=dimensions_p[0] || (long long)y!=dimensions_p[1])
-      {
-        throw "dalFITS::writePlane dimensions do not match";
-      }
-
+    if ((int64_t)x!=dimensions_p[0] || (int64_t)y!=dimensions_p[1]) {
+      throw "dalFITS::writePlane dimensions do not match";
+    }
+    
     // check if plane counter is above limit
-    if (z > dimensions_p[2])
-      {
-        throw "dalFITS::writePlane z out of range";
-      }
-
-    if (readHDUType()!=IMAGE_HDU)	// Check if current HDU is an image extension
-      {
-        throw "dalFITS::writePlane CHDU is not an image";
-      }
-
+    if (z > dimensions_p[2]) {
+      throw "dalFITS::writePlane z out of range";
+    }
+    
+    /* Check if current HDU is an image extension */
+    if (readHDUType()!=IMAGE_HDU) {
+      throw "dalFITS::writePlane CHDU is not an image";
+    }
+    
     // Read from FITS file one plane
     fpixel[0]=1;
     fpixel[1]=1;

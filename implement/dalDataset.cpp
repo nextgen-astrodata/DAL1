@@ -453,7 +453,6 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                 setAttribute
 
-#ifndef INT64_IS_LONG_INT
   /*!
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
@@ -471,7 +470,6 @@ namespace DAL {
     return h5set_attribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
 #endif
   }
-#endif
 
   //_____________________________________________________________________________
   //                                                                 setAttribute

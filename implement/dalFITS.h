@@ -77,39 +77,17 @@ namespace DAL {
     //! Status of last cfitsio operation
     int fitsstatus_p;
     
-    //! Filename associated with dalFITS object
-    //  std::string filename;
-    
-    //! CASAcore lattice handle
+    //! casacore lattice handle
     casa::Lattice<casa::Float>* lattice_p;
     
-    
     //! dimensions of FITS image
-    std::vector<unsigned long long> dimensions_p;
-    
-    /*
-    //! No. of axes in FITS file
-    //     long naxis;
-    
-    
-    //! Current hdu (chdu)
-    int chdu;
-    
-    //! type of current HDU
-    int hdutype;
-    
-    //! bzero value
-    //     double bzero;
-    
-    //! scaling factor
-    //     double bscale;
-    */
-    
+    std::vector<uint64_t> dimensions_p;
     
     //! define types of bins
-    enum DALbinType
-    {
+    enum DALbinType {
+      //! Frequency
       frequency,
+      //! Lambda squared
       lambda_sq
     };
     
