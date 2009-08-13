@@ -81,7 +81,7 @@ namespace DAL {
     casa::Lattice<casa::Float>* lattice_p;
     
     //! dimensions of FITS image
-    std::vector<uint64_t> dimensions_p;
+    std::vector<int64_t> dimensions_p;
     
     //! define types of bins
     enum DALbinType {
