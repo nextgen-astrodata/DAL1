@@ -25,6 +25,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include <boost/thread.hpp>
+
 #include "TBBraw.h"
 
 

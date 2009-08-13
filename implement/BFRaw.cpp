@@ -806,10 +806,10 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
     int breaks_in_data      = 0; // Any breaks in data?
     int dispersion_measure  = 0;
 //		int number_of_samples_per_block = header.nrSubbands * header.nrSamplesPerSubband;
-		long total_number_of_samples;
-		if (!doDownsample_p) {
-			total_number_of_samples = nrOfBlocks * header.nrSamplesPerSubband;
-		}
+    int32_t total_number_of_samples;
+    if (!doDownsample_p) {
+      total_number_of_samples = nrOfBlocks * header.nrSamplesPerSubband;
+    }
 #ifdef DEBUGGING_MESSAGES
     std::cout << "total_number_of_samples = " << total_number_of_samples << std::endl;
 #endif
@@ -820,17 +820,23 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
     int weather_humidity    = 0; // approx. %
     int tsys                = 0; // for various stations (K)
     std::string station_clock;
-    if (header.nrSamplesPerSubband == 155648) station_clock = std::string("160MHz");
-    else if (header.nrSamplesPerSubband == 196608) station_clock = std::string("200MHz");
-    else station_clock = std::string("unknown");
+    if (header.nrSamplesPerSubband == 155648) {
+      station_clock = std::string("160MHz");
+    }
+    else if (header.nrSamplesPerSubband == 196608) {
+      station_clock = std::string("200MHz");
+    }
+    else {
+      station_clock = std::string("unknown");
+    }
     
     // write headers using above
     dataset.setAttribute( "GROUPTYPE", std::string("Root") );
     dataset.setAttribute( "FILENAME", outputfilename.c_str() );
     dataset.setAttribute( "FILETYPE", std::string("bfstation") );
     dataset.setAttribute( "INPUT_FILESIZE", &file_byte_size);
-		dataset.setAttribute( "DOWNSAMPLE_RATE", &downsample_factor);
-		dataset.setAttribute( "OFF-/ONLINE_CREATION", off_online );
+    dataset.setAttribute( "DOWNSAMPLE_RATE", &downsample_factor);
+    dataset.setAttribute( "OFF-/ONLINE_CREATION", off_online );
     dataset.setAttribute( "TELESCOPE", std::string("LOFAR") );
     dataset.setAttribute( "OBSERVER", std::string("") );
     dataset.setAttribute( "PROJECT_ID", std::string("") );
@@ -874,33 +880,33 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
     beam_number = 0;
     sprintf( beamstr, "beam%03d", beam_number );
     beamGroup = dataset.createGroup( beamstr );
-
+    
     float ra_val  = header.beamDirections[beam_number+1][0];
     float dec_val = header.beamDirections[beam_number+1][1];
     beamGroup->setAttribute( "RA", &ra_val, 1 );
     beamGroup->setAttribute( "DEC", &dec_val, 1 );
-
+    
     int n_subbands[] = { header.nrSubbands };
     beamGroup->setAttribute( "NUMBER_OF_SUBBANDS", n_subbands );
-
+    
     delete beamGroup;
-
+    
 #ifdef DEBUGGING_MESSAGES
     std::cerr << "CREATED New beam group: " << std::string(beamstr) << std::endl;
     std::cerr << "   " << header.nrSubbands << " subbands" << std::endl;
 #endif
-
+    
     table = new dalTable * [ header.nrSubbands ];
     char * sbName = new char[8];
     int * center_frequency = new int[header.nrSubbands];
-
+    
     // nrSubbands is actually the number of subbands (see email from J.Romein)
     for (unsigned int idx=0; idx<header.nrSubbands; idx++)
       {
         sprintf( sbName, "SB%03d", idx );
         table[idx] = dataset.createTable( sbName, beamstr );
       }
-
+    
     for (unsigned int idx=0; idx<header.nrSubbands; idx++)
       {
         if ( doDownsample_p || DO_FLOAT32_INTENSITY )
@@ -918,42 +924,42 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
         center_frequency[idx] = (int)header.subbandFrequencies[ idx ];
         table[idx]->setAttribute( "CENTER_FREQUENCY", &center_frequency[idx] );
       }
-
+    
     delete [] sbName;
     sbName = NULL;
     delete [] center_frequency;
     center_frequency = NULL;
     delete [] beamstr;
     beamstr = NULL;
-
+    
   } // BFRaw::makeH5OutputFile
-
-
+  
+  
   // -------------------------------------------------------------- processBlocks
-
+  
   void BFRaw::processBlocks()
   {
 #ifdef DEBUGGING_MESSAGES
-		std::cout << "Starting to process blocks" << std::endl;
+    std::cout << "Starting to process blocks" << std::endl;
 #endif
-   // int16_t nseconds = 	20;
+    // int16_t nseconds = 	20;
     bool ret = true;
     do
       {
-				ret = processBlocks(20); // process blocks in 20 second chunks
+	ret = processBlocks(20); // process blocks in 20 second chunks
       }
     while ( true == ret );
   }
-
+  
   // -------------------------------------------------------------- processBlocks
-
+  
   bool BFRaw::processBlocks( int16_t blocks )
   {
-
+    
     bool retval = true;
-
+    
     int64_t blocksize = oneSecondBlockSize * blocks;
-
+    
     char * buf = NULL;
     try
       {
@@ -972,14 +978,14 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
         processBlocks( blocks/2 );
         return retval;
       }
-
+    
     rawfile->read( buf, blocksize ); // read all datablocks
-
+    
 #ifdef DEBUGGING_MESSAGES
     cerr << "read pointer position: " << rawfile->tellg() << endl;
     cerr << "bytes read:            " << rawfile->gcount() << endl;
 #endif
-
+    
     if ( rawfile->fail() || rawfile->eof() || (rawfile->gcount() != blocksize) )
       {
         blocksize = rawfile->gcount();

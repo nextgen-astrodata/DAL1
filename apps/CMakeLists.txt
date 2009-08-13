@@ -28,7 +28,14 @@ if (HAVE_CASA OR HAVE_CASACORE)
   list (APPEND tests ms2h5)
   list (APPEND tests lopes2h5)
   ## linker instructions
-  list (APPEND apps_link_libraries ${dal_link_libraries})
+  list (APPEND apps_link_libraries
+    ${dal_link_libraries}
+    ${CASA_LIBRARIES}
+    ${LAPACK_LIBRARIES}
+    ${CFITSIO_LIBRARIES}
+    ${WCSLIB_LIBRARIES}
+    ${GFORTRAN_LIBRARIES}
+    )
 else (HAVE_CASA OR HAVE_CASACORE)
   message (STATUS "[DAL] Unable to build applications: msread, ms2h5")
 endif (HAVE_CASA OR HAVE_CASACORE)
@@ -43,14 +50,17 @@ if (HAVE_BOOST)
   list (APPEND tests TBBraw2h5)
   ## linker instructions
   # boost_python won't work on some platforms unless libpython is also linked.
-  list (APPEND apps_link_libraries ${BOOST_LIBRARIES} ${CFITSIO_LIBRARIES} ${PYTHON_LIBRARIES})
+  list (APPEND apps_link_libraries
+    ${BOOST_LIBRARIES}
+    ${CFITSIO_LIBRARIES} ${PYTHON_LIBRARIES}
+    )
   # Is this needed for the applications? It might be nicer to strip it out...
-#  foreach (lib ${apps_link_libraries})
-#    string (REGEX MATCH ^.*python.* have_libboost_python ${lib})
-#    if (have_libboost_python)
-#      list (REMOVE_ITEM apps_link_libraries ${have_libboost_python})
-#    endif (have_libboost_python)
-#  endforeach (lib)
+  #  foreach (lib ${apps_link_libraries})
+  #    string (REGEX MATCH ^.*python.* have_libboost_python ${lib})
+  #    if (have_libboost_python)
+  #      list (REMOVE_ITEM apps_link_libraries ${have_libboost_python})
+  #    endif (have_libboost_python)
+  #  endforeach (lib)
 else (HAVE_BOOST)
   message (STATUS "[DAL] Unable to build applications: bf2h5, tbb2h5")
 endif (HAVE_BOOST)

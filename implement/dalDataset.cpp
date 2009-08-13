@@ -453,6 +453,25 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                 setAttribute
 
+#ifndef __WORDSIZE == 64
+  /*!
+    \param attrname The name of the attribute you want to create.
+    \param data The value of the attribute you want to create.
+    \param size Optional parameter specifying the array size of the
+                attribute.  Default is scalar.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalDataset::setAttribute( std::string attrname,
+                                 long * data,
+                                 int size )
+  {
+    return h5set_attribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
+  }
+#endif
+
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
+
   /*!
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
@@ -486,23 +505,6 @@ namespace DAL {
                                  int size )
   {
     return h5set_attribute( H5T_NATIVE_UINT, h5fh_p, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalDataset::setAttribute( std::string attrname,
-                                 long * data,
-                                 int size )
-  {
-    return h5set_attribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
   }
 
   //_____________________________________________________________________________
@@ -1603,10 +1605,12 @@ namespace DAL {
   {
     return setAttribute (attrname, &data );
   }
+#ifndef __WORDSIZE == 64
   bool dalDataset::setAttribute_long (std::string attrname, long data )
   {
     return setAttribute (attrname, &data );
   }
+#endif
   bool dalDataset::setAttribute_float (std::string attrname, float data )
   {
     return setAttribute (attrname, &data );
@@ -1659,6 +1663,7 @@ namespace DAL {
 
     return setAttribute (attrname, reinterpret_cast<uint*>(&mydata[0]), size );
   }
+#ifndef __WORDSIZE == 64
   bool dalDataset::setAttribute_long_vector (std::string attrname, bpl::list data )
   {
     int size = bpl::len(data);
@@ -1669,6 +1674,7 @@ namespace DAL {
 
     return setAttribute (attrname, reinterpret_cast<long*>(&mydata[0]), size );
   }
+#endif
   bool dalDataset::setAttribute_float_vector (std::string attrname, bpl::list data )
   {
     int size = bpl::len(data);
