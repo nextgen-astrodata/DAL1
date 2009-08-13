@@ -176,6 +176,33 @@ namespace DAL {  // Namespace DAL -- begin
     void exportCoordinate (casa::TabularCoordinate &coord);
 #endif
 
+    //___________________________________________________________________________
+    //                                     Overloading of methods from base class
+
+    //! Set the reference value
+    void setRefValue (std::vector<double> const &refValue) {
+      std::cerr << "[TabularCoordinate] No parameter reference value available!"
+		<< std::endl;
+    }
+
+    //! Set the reference pixel
+    void setRefPixel (std::vector<double> const &refPixel) {
+      std::cerr << "[TabularCoordinate] No parameter reference pixel available!"
+		<< std::endl;
+    }
+    
+    //! Set the coordinate axis increment
+    void setIncrement (std::vector<double> const &increment) {
+      std::cerr << "[TabularCoordinate] No parameter increment available!"
+		<< std::endl;
+    }
+    
+    //! Set the transformation matrix
+    void setPc (std::vector<double> const &pc) {
+      std::cerr << "[TabularCoordinate] No parameter transformation matrix available!"
+		<< std::endl;
+    }
+    
   private:
     
     //! Initialize internal parameters

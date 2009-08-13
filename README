@@ -37,9 +37,6 @@ ________________________________________________________________________________
   are multiple methods used internally to open a file (and/or testing for its
   type beforehand).
 
-* [2009/08/05] TabularCoordinate needs o overload functions to get/set reference
-  pixel, reference value, increment and transformation matrix.
-
 _________________________________________________________________________________
 >>> Coding conventions
 
@@ -64,3 +61,14 @@ ________________________________________________________________________________
   [04/08/2009] CMake script for DAL now tries to compile a simple test program
   which contains all the required include statements and even uses some of the
   newly defined variable types.
+
+* [12/08/2009] dalDataset now uses the same preprocessor directives as can be found in
+  stdin.h, in order to handle conflicts in type definitions. While this now seems to
+  build on all standard test platforms, there is still the issue if the
+  introduction of portable types (e.g. int32_p, int64_t) would not be better.
+
+* [2009/08/05] TabularCoordinate needs o overload functions to get/set reference
+  pixel, reference value, increment and transformation matrix.
+
+  [12/08/2009] Added function overloading; parameters are not defined for a 
+  tabulared axis, they should not be used.
