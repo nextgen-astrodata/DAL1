@@ -410,7 +410,7 @@ namespace DAL {
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-                                 char * data,
+                                 const char * data,
                                  int size )
   {
     return h5set_attribute( H5T_NATIVE_CHAR, h5fh_p, attrname, data, size );
@@ -427,7 +427,7 @@ namespace DAL {
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-                                 short * data,
+                                 const short * data,
                                  int size )
   {
     return h5set_attribute( H5T_NATIVE_SHORT, h5fh_p, attrname, data, size );
@@ -444,7 +444,7 @@ namespace DAL {
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-                                 int * data,
+                                 const int * data,
                                  int size )
   {
     return h5set_attribute( H5T_NATIVE_INT, h5fh_p, attrname, data, size );
@@ -462,7 +462,7 @@ namespace DAL {
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-                                 long * data,
+                                 const long * data,
                                  int size )
   {
     return h5set_attribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
@@ -480,7 +480,7 @@ namespace DAL {
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-                                 int64_t * data,
+                                 const int64_t * data,
                                  int size )
   {
 #ifdef HAVE_LONG_LONG
@@ -501,7 +501,7 @@ namespace DAL {
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-                                 uint * data,
+                                 const uint * data,
                                  int size )
   {
     return h5set_attribute( H5T_NATIVE_UINT, h5fh_p, attrname, data, size );
@@ -518,7 +518,7 @@ namespace DAL {
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-                                 float * data,
+                                 const float * data,
                                  int size )
   {
     return h5set_attribute( H5T_NATIVE_FLOAT, h5fh_p, attrname, data, size );
@@ -535,7 +535,7 @@ namespace DAL {
     \return bool    -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-                                 double * data,
+                                 const double * data,
                                  int size )
   {
     return h5set_attribute( H5T_NATIVE_DOUBLE, h5fh_p, attrname, data, size );
@@ -564,7 +564,7 @@ namespace DAL {
     \return bool    -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::setAttribute( std::string attrname,
-                                 std::string * data,
+                                 const std::string * data,
                                  int size )
   {
     return h5setAttribute_string ( h5fh_p, attrname, data, size );

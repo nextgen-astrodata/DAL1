@@ -161,27 +161,27 @@ namespace DAL {
       }
     
     //! Define an integer attribute.
-    bool setAttribute (std::string attrname, int64_t * data, int size=1 );
+    bool setAttribute (std::string attrname, const int64_t * data, int size=1 );
     //! Define a char attribute.
-    bool setAttribute (std::string attrname, char * data, int size=1 );
+    bool setAttribute (std::string attrname, const char * data, int size=1 );
     //! Define a short attribute.
-    bool setAttribute (std::string attrname, short * data, int size=1 );
+    bool setAttribute (std::string attrname, const short * data, int size=1 );
     //! Define an integer attribute.
-    bool setAttribute (std::string attrname, int * data, int size=1 );
+    bool setAttribute (std::string attrname, const int * data, int size=1 );
 #ifndef __WORDSIZE == 64
     //! Define a long attribute.
-    bool setAttribute (std::string attrname, long * data, int size=1 );
+    bool setAttribute (std::string attrname, const long * data, int size=1 );
 #endif
     //! Define an unsigned integer attribute.
-    bool setAttribute (std::string attrname, uint * data, int size=1 );
+    bool setAttribute (std::string attrname, const uint * data, int size=1 );
     //! Define a floating point attribute.
-    bool setAttribute (std::string attrname, float * data, int size=1 );
+    bool setAttribute (std::string attrname, const float * data, int size=1 );
     //! Define a double precision floating point attribute.
-    bool setAttribute (std::string attrname, double * data, int size=1 );
+    bool setAttribute (std::string attrname, const double * data, int size=1 );
     //! Define a string attribute.
     bool setAttribute (std::string attrname, std::string data );
     //! Define a string attribute.
-    bool setAttribute (std::string attrname, std::string * data, int size=1 );
+    bool setAttribute (std::string attrname, const std::string * data, int size=1 );
     //! Define a string attribute.
     bool setAttribute_string (std::string attrname,
 			      std::vector<std::string> data );
