@@ -1396,7 +1396,7 @@ namespace DAL
                 a scalar attribute.
   */
   bool dalTable::setAttribute( std::string attrname,
-                               char * data,
+															 char const * data,
                                int size )
   {
     return h5set_attribute( H5T_NATIVE_CHAR, tableID_p, attrname, data, size );
@@ -1416,7 +1416,7 @@ namespace DAL
                 a scalar attribute.
   */
   bool dalTable::setAttribute( std::string attrname,
-                               short * data,
+															 short const * data,
                                int size )
   {
     return h5set_attribute( H5T_NATIVE_SHORT, tableID_p, attrname, data, size );
@@ -1437,7 +1437,7 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
    */
   bool dalTable::setAttribute( std::string attrname,
-                               int * data,
+															 int const * data,
                                int size )
   {
     return h5set_attribute( H5T_NATIVE_INT, tableID_p, attrname, data, size );
@@ -1458,7 +1458,7 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalTable::setAttribute( std::string attrname,
-                               uint * data,
+                               uint const * data,
                                int size )
   {
     return h5set_attribute( H5T_NATIVE_UINT, tableID_p, attrname, data, size );
@@ -1478,7 +1478,7 @@ namespace DAL
                 a scalar attribute.
   */
   bool dalTable::setAttribute( std::string attrname,
-                               long * data,
+															 long const * data,
                                int size )
   {
     return h5set_attribute( H5T_NATIVE_LONG, tableID_p, attrname, data, size );
@@ -1498,7 +1498,7 @@ namespace DAL
                 a scalar attribute.
   */
   bool dalTable::setAttribute( std::string attrname,
-                               float * data,
+															 float const * data,
                                int size )
   {
     return h5set_attribute( H5T_NATIVE_FLOAT, tableID_p, attrname, data, size );
@@ -1519,7 +1519,7 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
    */
   bool dalTable::setAttribute( std::string attrname,
-                               double * data,
+															 double const * data,
                                int size )
   {
     return h5set_attribute( H5T_NATIVE_DOUBLE, tableID_p, attrname, data, size );
@@ -1550,7 +1550,7 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalTable::setAttribute( std::string attrname,
-                               std::string * data,
+															 std::string const * data,
                                int size )
   {
     return h5setAttribute_string( tableID_p, attrname, data, size );

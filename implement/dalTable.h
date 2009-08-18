@@ -198,15 +198,15 @@ namespace DAL
         return h5get_attribute( tableID_p, attrname, value );
       }
 
-      bool setAttribute( std::string attrname, char * data, int size=1 );
-      bool setAttribute( std::string attrname, short * data, int size=1 );
-      bool setAttribute( std::string attrname, int * data, int size=1 );
-      bool setAttribute( std::string attrname, uint * data, int size=1 );
-      bool setAttribute( std::string attrname, long * data, int size=1 );
-      bool setAttribute( std::string attrname, float * data, int size=1 );
-      bool setAttribute( std::string attrname, double * data, int size=1 );
+			bool setAttribute( std::string attrname, char const * data, int size=1 );
+			bool setAttribute( std::string attrname, short const * data, int size=1 );
+			bool setAttribute( std::string attrname, int const * data, int size=1 );
+			bool setAttribute( std::string attrname, uint const * data, int size=1 );
+			bool setAttribute( std::string attrname, long const * data, int size=1 );
+			bool setAttribute( std::string attrname, float const * data, int size=1 );
+			bool setAttribute( std::string attrname, double const * data, int size=1 );
       bool setAttribute( std::string attrname, std::string data );
-      bool setAttribute( std::string attrname, std::string * data, int size=1 );
+			bool setAttribute( std::string attrname, std::string const * data, int size=1 );
       //! Find an attribute associated with the table
       bool findAttribute( string attrname );
       //! Get the number of rows within the table

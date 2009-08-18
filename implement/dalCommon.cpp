@@ -678,7 +678,7 @@ namespace DAL {
    */
   bool h5setAttribute_string (hid_t const &obj_id,
                               std::string attrname,
-                              std::string * data,
+                              std::string const * data,
                               int size )
   {
     hid_t att       = 0;

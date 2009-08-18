@@ -208,7 +208,7 @@ namespace DAL {
   //! Set attribute of type \e string
   bool h5setAttribute_string( hid_t const &obj_id,
                               std::string attrname,
-                              std::string * data,
+                              std::string const * data,
                               int size );
 
   //_____________________________________________________________________________
