@@ -80,6 +80,7 @@ set (dal_sources
   BeamFormed.cpp
   BeamGroup.cpp
   BeamSubband.cpp
+  CommonAttributes.cpp
   Enumerations.cpp
   DataType.cpp
   TBB.cpp
