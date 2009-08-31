@@ -41,6 +41,7 @@
   <table border="0">
     <tr>
       <td class="indexkey">Core library classes</td>
+      <td class="indexkey">Common dataset support</td>
       <td class="indexkey">High-level dataset interfaces</td>
       <td class="indexkey">Application tools</td>
     </tr>
@@ -53,6 +54,13 @@
       - DAL::dalFilter
       - DAL::dalGroup
       - DAL::dalTable
+      </td>
+      <td>
+      - DAL::CommonAttributes
+      - DAL::Coordinate
+      - DAL::DirectionCoordinate
+      - DAL::LinearCoordinate
+      - DAL::TabularCoordinate
       </td>
       <td>
       - DAL::BeamFormed
