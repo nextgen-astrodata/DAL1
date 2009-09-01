@@ -127,6 +127,7 @@ check_type_size ("int64_t"       SIZEOF_INT64_T     )
 check_type_size ("uint32_t"      SIZEOF_UINT32_T     )
 check_type_size ("uint64_t"      SIZEOF_UINT64_T     )
 
+message (STATUS "Size of void*     = ${CMAKE_SIZEOF_VOID_P}")
 message (STATUS "Size of short     = ${SIZEOF_SHORT}")
 message (STATUS "Size of int       = ${SIZEOF_INT}")
 message (STATUS "Size of float     = ${SIZEOF_FLOAT}")
