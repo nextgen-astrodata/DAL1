@@ -145,8 +145,9 @@ if (SIZEOF_LONG_LONG)
   add_definitions (-DHAVE_LONG_LONG)
 endif (SIZEOF_LONG_LONG)
 
-if ()
-endif ()
+if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
+  add_definitions (-DWORDSIZE_IS_64)
+endif (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 
 ##__________________________________________________________
 ## Blitz++

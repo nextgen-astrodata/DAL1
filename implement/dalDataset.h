@@ -160,16 +160,19 @@ namespace DAL {
         return h5get_attribute (h5fh_p, attrname, value );
       }
     
-    //! Define an integer attribute.
-    bool setAttribute (std::string attrname, const int64_t * data, int size=1 );
     //! Define a char attribute.
     bool setAttribute (std::string attrname, const char * data, int size=1 );
     //! Define a short attribute.
     bool setAttribute (std::string attrname, const short * data, int size=1 );
     //! Define an integer attribute.
     bool setAttribute (std::string attrname, const int * data, int size=1 );
+#ifndef WORDSIZE_IS_64
+    //! Define an integer attribute.
+    bool setAttribute (std::string attrname, const int64_t * data, int size=1 );
+#else
     //! Define a long attribute.
     bool setAttribute (std::string attrname, const long * data, int size=1 );
+#endif
     //! Define an unsigned integer attribute.
     bool setAttribute (std::string attrname, const uint * data, int size=1 );
     //! Define a floating point attribute.
@@ -324,7 +327,11 @@ namespace DAL {
     bool setAttribute_short (std::string attrname, short data);
     bool setAttribute_int (std::string attrname, int data);
     bool setAttribute_uint (std::string attrname, uint data);
+#ifndef WORDSIZE_IS_64
+    bool setAttribute_long (std::string attrname, int64_t data);
+#else
     bool setAttribute_long (std::string attrname, long data);
+#endif
     bool setAttribute_float (std::string attrname, float data);
     bool setAttribute_double (std::string attrname, double data);
     bool setAttribute_string_boost (std::string attrname, std::string data);

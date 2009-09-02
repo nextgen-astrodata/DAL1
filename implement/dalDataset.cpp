@@ -460,23 +460,7 @@ namespace DAL {
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute( std::string attrname,
-                                 const long * data,
-                                 int size )
-  {
-    return h5set_attribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
+#ifndef WORDSIZE_IS_64
   bool dalDataset::setAttribute( std::string attrname,
                                  const int64_t * data,
                                  int size )
@@ -487,6 +471,14 @@ namespace DAL {
     return h5set_attribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
 #endif
   }
+#else
+  bool dalDataset::setAttribute( std::string attrname,
+                                 const long * data,
+                                 int size )
+  {
+    return h5set_attribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
+  }
+#endif
 
   //_____________________________________________________________________________
   //                                                                 setAttribute
@@ -1603,10 +1595,17 @@ namespace DAL {
   {
     return setAttribute (attrname, &data );
   }
+#ifndef WORDSIZE_IS_64
+  bool dalDataset::setAttribute_long (std::string attrname, int64_t data )
+  {
+    return setAttribute (attrname, &data );
+  }
+#else
   bool dalDataset::setAttribute_long (std::string attrname, long data )
   {
     return setAttribute (attrname, &data );
   }
+#endif
   bool dalDataset::setAttribute_float (std::string attrname, float data )
   {
     return setAttribute (attrname, &data );
@@ -1667,7 +1666,11 @@ namespace DAL {
     for (int ii=0; ii<bpl::len(data); ii++)
       mydata.push_back(bpl::extract<long>(data[ii]));
 
+#ifndef WORDSIZE_IS_64
+    return setAttribute (attrname, reinterpret_cast<int64_t*>(&mydata[0]), size );
+#else
     return setAttribute (attrname, reinterpret_cast<long*>(&mydata[0]), size );
+#endif
   }
   bool dalDataset::setAttribute_float_vector (std::string attrname, bpl::list data )
   {
