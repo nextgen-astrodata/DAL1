@@ -180,12 +180,10 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Set a unsigned integer attribute" )
     .def( "setAttribute_uint", &dalDataset::setAttribute_uint_vector,
 	  "Set an attribute from a list of unsigned integers." )
-#ifndef __WORDSIZE == 64
     .def( "setAttribute_long", &dalDataset::setAttribute_long,
 	  "Set a long integer attribute" )
     .def( "setAttribute_long", &dalDataset::setAttribute_long_vector,
 	  "Set an attribute from a list of longs." )
-#endif
     .def( "setAttribute_float", &dalDataset::setAttribute_float,
 	  "Set a floating point attribute" )
     .def( "setAttribute_float", &dalDataset::setAttribute_float_vector,

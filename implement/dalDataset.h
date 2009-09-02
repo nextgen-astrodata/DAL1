@@ -168,10 +168,8 @@ namespace DAL {
     bool setAttribute (std::string attrname, const short * data, int size=1 );
     //! Define an integer attribute.
     bool setAttribute (std::string attrname, const int * data, int size=1 );
-#ifndef __WORDSIZE == 64
     //! Define a long attribute.
     bool setAttribute (std::string attrname, const long * data, int size=1 );
-#endif
     //! Define an unsigned integer attribute.
     bool setAttribute (std::string attrname, const uint * data, int size=1 );
     //! Define a floating point attribute.
