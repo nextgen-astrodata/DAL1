@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2009                                                    *
- *   Lars Baehren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -30,12 +30,58 @@ namespace DAL { // Namespace DAL -- begin
   //  Construction
   //
   // ============================================================================
-  
+
+  //_____________________________________________________________________________
+  //                                                             CommonAttributes
+
+  /*!
+    Creates an object with just a minimal subset of its internal parameters
+    assigned:
+    - GROUPTYPE   = "Root"
+    - TELESCOPE   = "LOFAR"
+    - SYSTEM_TIME = "UTC"
+  */
   CommonAttributes::CommonAttributes ()
   {
     init ();
   }
   
+  //_____________________________________________________________________________
+  //                                                             CommonAttributes
+
+  /*!
+    \param filename -- The name of the file.
+    \param filetype -- The type of the file.
+    \param filedate -- The file creation date.
+   */
+  CommonAttributes::CommonAttributes (std::string const &filename,
+				      std::string const &filetype,
+				      std::string const &filedate)
+  {
+    // Initialize parameters to default values
+    init ();
+    // Set provided parameter values
+    setFilename (filename);
+    setFiletype (filetype);
+    setFiledate (filedate);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                             CommonAttributes
+  
+#ifdef HAVE_HDF5    
+  CommonAttributes::CommonAttributes (hid_t const &locationID)
+  {
+    // Initialize parameters to default values
+    init ();
+    // Read the attribute values from the file
+    h5read (locationID);
+  }
+#endif
+  
+  //_____________________________________________________________________________
+  //                                                             CommonAttributes
+
   CommonAttributes::CommonAttributes (CommonAttributes const &other)
   {
     copy (other);
@@ -61,6 +107,9 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                    operator=
+  
   CommonAttributes& CommonAttributes::operator= (CommonAttributes const &other)
   {
     if (this != &other) {
@@ -69,9 +118,21 @@ namespace DAL { // Namespace DAL -- begin
     }
     return *this;
   }
+
+  //_____________________________________________________________________________
+  //                                                                         copy
   
   void CommonAttributes::copy (CommonAttributes const &other)
-  {;}
+  {
+    groupType_p          = other.groupType_p;
+    filename_p           = other.filename_p;
+    filetype_p           = other.filetype_p;
+    filedate_p           = other.filedate_p;
+    telescope_p          = other.telescope_p;
+    projectID_p          = other.projectID_p;
+    projectName_p        = other.projectName_p;
+    projectDescription_p = other.projectDescription_p;
+  }
 
   // ============================================================================
   //
@@ -94,7 +155,7 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- Observer name(s)            = " << observer_p           << std::endl;
     os << "-- Observation ID              = " << observationID_p      << std::endl;
     os << "-- Observation date            = " << observationDate_p    << std::endl;
-    os << "-- Observation mode            = " << observationMode_p    << std::endl;
+    os << "-- Filter selection            = " << filterSelection_p    << std::endl;
     os << "-- Oberservation target(s)     = " << target_p             << std::endl;
     os << "-- Processing pipeline name    = " << pipelineName_p       << std::endl;
     os << "-- Processing pipeline version = " << pipelineVersion_p    << std::endl;
@@ -125,10 +186,14 @@ namespace DAL { // Namespace DAL -- begin
     observer_p           = "UNDEFINED";
     observationID_p      = "UNDEFINED";
     observationDate_p    = "UNDEFINED";
-    observationMode_p    = "UNDEFINED";
+    filterSelection_p    = "UNDEFINED";
     target_p             = "UNDEFINED";
     systemTime_p         = "UNDEFINED";
     systemVersion_p      = "UNDEFINED";
+    pipelineName_p       = "UNDEFINED";
+    pipelineVersion_p    = "UNDEFINED";
+    nofStations_p        = 0;
+    notes_p              = "UNDEFINED";
   }
   
 #ifdef HAVE_HDF5

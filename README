@@ -6,12 +6,6 @@
 _________________________________________________________________________________
 >>> Open issues
 
-* No new class/application to be created to support additional conversion mode
-  of beam-formed data; as agreed upon with Joe, the required implementation code
-  can become part of the exiting classes, the possibility to switch between 
-  different types of input can be provided through a command-line switch with
-  the bf2h5 application.
-
 * Check the code committed by Sven for generic functionality which can be
   integrated with the core classes. In principle we should not have a dalFITS,
   but rather a class for the rotation synthesis images, which build on top
@@ -37,6 +31,9 @@ ________________________________________________________________________________
   are multiple methods used internally to open a file (and/or testing for its
   type beforehand).
 
+* [2009/09/02] Build problems as reported on Forum:
+  http://usg.lofar.org/forum/index.php?topic=106.0 -> check 64 bit!! => liof
+
 _________________________________________________________________________________
 >>> Coding conventions
 
@@ -53,6 +50,12 @@ ________________________________________________________________________________
 
 _________________________________________________________________________________
 >>> Resolved issues
+
+* No new class/application to be created to support additional conversion mode
+  of beam-formed data; as agreed upon with Joe, the required implementation code
+  can become part of the exiting classes, the possibility to switch between 
+  different types of input can be provided through a command-line switch with
+  the bf2h5 application.
 
 * Better check of requirements for creating the Python bindings; in a number of
   cases the currently implemented checks are not sufficient, thereby not disabling

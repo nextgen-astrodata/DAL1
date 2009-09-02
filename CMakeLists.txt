@@ -145,6 +145,9 @@ if (SIZEOF_LONG_LONG)
   add_definitions (-DHAVE_LONG_LONG)
 endif (SIZEOF_LONG_LONG)
 
+if ()
+endif ()
+
 ##__________________________________________________________
 ## Blitz++
 

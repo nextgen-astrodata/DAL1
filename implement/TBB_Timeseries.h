@@ -34,7 +34,7 @@
 #include <casa/Arrays/Vector.h>
 #include <casa/BasicSL/String.h>
 
-#include <dalCommon.h>
+#include <CommonAttributes.h>
 #include <TBB_StationGroup.h>
 
 namespace DAL {  // Namespace DAL -- begin

@@ -17,6 +17,7 @@ set (tests
   tdal
   tdal_fits
   tpulsar_dal
+  tdalAttribute
   tdalCommon
   tdalDataset
   tdalTable

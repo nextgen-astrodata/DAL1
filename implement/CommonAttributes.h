@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2009                                                    *
- *   Lars Baehren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -54,6 +54,69 @@ namespace DAL { // Namespace DAL -- begin
     </ul>
     
     <h3>Synopsis</h3>
+
+    <table border="0">
+      <tr>
+        <td class="indexkey">Field/Keyword</td>
+        <td class="indexkey">Type</td>
+        <td class="indexkey">Default value</td>
+        <td class="indexkey">Description</td>
+      </tr>
+      <tr>
+        <td>GROUPTYPE</td>
+        <td>string</td>
+        <td>"Root"</td>
+        <td>LOFAR group type</td>
+      </tr>
+      <tr>
+        <td>FILENAME</td>
+        <td>string</td>
+        <td>--</td>
+        <td>File name</td>
+      </tr>
+      <tr>
+        <td>FILETYPE</td>
+        <td>string</td>
+        <td>--</td>
+        <td>File type</td>
+      </tr>
+      <tr>
+        <td>FILEDATE</td>
+        <td>string</td>
+        <td>--</td>
+        <td>File creation date (<tt>YYYY-MM-DDThh:mm:ss.s</tt>)</td>
+      </tr>
+      <tr>
+        <td>TELESCOPE</td>
+        <td>string</td>
+        <td>"LOFAR"</td>
+        <td>Telescope name</td>
+      </tr>
+      <tr>
+        <td>PROJECT_ID</td>
+        <td>string</td>
+        <td>--</td>
+        <td>Unique identifier for the project</td>
+      </tr>
+      <tr>
+        <td>PROJECT_NAME</td>
+        <td>string</td>
+        <td>--</td>
+        <td>Name of the project</td>
+      </tr>
+      <tr>
+        <td>PROJECT_DESCRIPTION</td>
+        <td>string</td>
+        <td>--</td>
+        <td>Brief description of the project</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
     
     <h3>Example(s)</h3>
     
@@ -82,8 +145,8 @@ namespace DAL { // Namespace DAL -- begin
     std::string observationID_p;
     //! Date of the observation
     std::string observationDate_p;
-    //! Observation mode
-    std::string observationMode_p;
+    //! Filter selection
+    std::string filterSelection_p;
     //! (List of) Oberservation target(s)
     std::string target_p;
     //! System time reference system
@@ -107,7 +170,17 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Default constructor
     CommonAttributes ();
-    
+
+    //! Argumented constructor
+    CommonAttributes (std::string const &filename,
+		      std::string const &filetype,
+		      std::string const &filedate);
+
+#ifdef HAVE_HDF5    
+    //! Argumented constructor
+    CommonAttributes (hid_t const &locationID);
+#endif
+
     /*!
       \brief Copy constructor
       
@@ -187,6 +260,36 @@ namespace DAL { // Namespace DAL -- begin
     inline void setTelescope (std::string const &telescope) {
       telescope_p = telescope;
     }
+
+    //! Get the unique identifier for the project
+    inline std::string projectID () const {
+      return projectID_p;
+    }
+
+    //! Set the unique identifier for the project
+    inline void setProjectID (std::string const &projectID) {
+      projectID_p = projectID;
+    }
+
+    //! Get the name of the project
+    inline std::string projectName () const {
+      return projectName_p;
+    }
+
+    //! Set the name of the project
+    inline void setProjectName (std::string const &projectName) {
+      projectName_p = projectName;
+    }
+    
+    //! Get the brief description of the project
+    inline std::string projectDescription () const {
+      return projectDescription_p;
+    }
+
+    //! Set the brief description of the project
+    inline void setProjectDescription (std::string const &projectDescription) {
+      projectDescription_p = projectDescription;
+    }
     
     /*!
       \brief Get the name of the class
@@ -197,9 +300,7 @@ namespace DAL { // Namespace DAL -- begin
       return "CommonAttributes";
     }
 
-    /*!
-      \brief Provide a summary of the internal status
-    */
+    //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
     }
@@ -214,17 +315,17 @@ namespace DAL { // Namespace DAL -- begin
     // ------------------------------------------------------------------ Methods
     
 #ifdef HAVE_HDF5
-    //! Write the coordinate object to a HDF5 file
+    //! Write the attributes to a HDF5 file
     void h5write (hid_t const &groupID);
     
-    //! Write the coordinate object to a HDF5 file
+    //! Write the attributes to a HDF5 file
     void h5write (hid_t const &locationID,
 		  std::string const &name);
     
-    //! Read the coordinate object from a HDF5 file
+    //! Read the attributes from a HDF5 file
     void h5read (hid_t const &groupID);
     
-    //! Read the coordinate object from a HDF5 file
+    //! Read the attributes from a HDF5 file
     void h5read (hid_t const &locationID,
 		 std::string const &name);
 #endif    

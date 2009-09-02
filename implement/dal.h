@@ -77,9 +77,45 @@
     </tr>
   </table>
 
+  Officially, the DAL supports three file types:
+  
+  <ul>
+    <li><b>HDF5</b> <br>
+    Hierarchical Data Format Version 5 (HDF5), is a relatively recent format
+    designed with particular attention to efficient operation on extremely large
+    data sets.  HDF5 is the intended format for LOFAR data products.  The reasons
+    for this decision are given in "Proposed Data Formats"<br>
+    HDF5 is organized much like a unix file system.  The internal structure consists
+    of a root group, '/', which may recursively contain subgroups.  Each of these
+    groups may, in turn, contain other groups or n-dimensional arrays of simple or
+    complex datatypes.  HDF5 tables are particular case of a HDF5 array and thus are
+    treated in a similar manner.  Almost all objects in a HDF5 file can hold
+    associated metadata in the form of an attribute.  For an abbreviated list of
+    HDF5 features see "HDF5 vs. CASA Tables".  For a complete
+    list see the hdfgroup website.<br>
+    HDF5 files can be both read and written by the DAL.
+
+    <li><b>CASA Tables</b> <br>
+    CASA Tables in general, and Measurement Sets in particular, are the primary data
+    product of the Westerbork Synthesis Radio Telescope (WSRT).  As WSRT is also
+    based at ASTRON (where there is a large community of experienced CASA users),
+    there is naturally a strong interest and advantage in building upon this
+    expertise for LOFAR. <br>
+    CASA tables can currently be read, but not written, by the DAL.
+
+    <li><b>FITS</b> <br>
+    FITS is the standard astronomical image format.  Among its advantages for
+    inclusion in the DAL is its widespread use and extensive toolset.  Among its
+    limitations is the fact that it was not designed for large and complex
+    datasets. <br>
+    FITS is the lowest of priority of the three supported formats and currently
+    has almost no actual support in the DAL.
+  </ul>
+
+  At present, each of these file types have varying levels of support.
+
   <h3>Related pages</h3>
 
-  - \ref dal_file_types
   - \ref dal_coding_guidelines
   - \ref dal_coding_cpp
     - \ref dal_code_tree

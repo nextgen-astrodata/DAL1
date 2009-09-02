@@ -159,7 +159,8 @@ BOOST_PYTHON_MODULE(pydal)
     .def( "get", &dalData::get_boost3, "Get the data." )
     ;
   
-  //------------------------------------------------------------------ dalDataset
+  //_____________________________________________________________________________
+  //                                                                   dalDataset
   
   bpl::class_<dalDataset>("dalDataset")
     .def( bpl::init<char*, string>() )
@@ -179,10 +180,12 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Set a unsigned integer attribute" )
     .def( "setAttribute_uint", &dalDataset::setAttribute_uint_vector,
 	  "Set an attribute from a list of unsigned integers." )
+#ifndef __WORDSIZE == 64
     .def( "setAttribute_long", &dalDataset::setAttribute_long,
 	  "Set a long integer attribute" )
     .def( "setAttribute_long", &dalDataset::setAttribute_long_vector,
 	  "Set an attribute from a list of longs." )
+#endif
     .def( "setAttribute_float", &dalDataset::setAttribute_float,
 	  "Set a floating point attribute" )
     .def( "setAttribute_float", &dalDataset::setAttribute_float_vector,
@@ -387,6 +390,33 @@ BOOST_PYTHON_MODULE(pydal)
 	  bpl::return_value_policy<bpl::manage_new_object>(),
 	  "Return a complex 32-bit floating point casa column." )
 #endif
+    ;
+
+  // ============================================================================
+  //
+  //  Common dataset support
+  //
+  // ============================================================================
+  
+  bpl::class_<CommonAttributes>("CommonAttributes")
+    .def( bpl::init<>())
+    .def( bpl::init<string,string,string>())
+    .def( "groupType", &CommonAttributes::groupType,
+	  "Get the LOFAR group type.")
+    .def( "setGroupType", &CommonAttributes::setGroupType,
+	  "Set the LOFAR group type.")
+    .def( "filename", &CommonAttributes::filename,
+	  "Get the name of the file.")
+    .def( "setFilename", &CommonAttributes::setFilename,
+	  "Set the name of the file.")
+    .def( "filetype", &CommonAttributes::filetype,
+	  "Get the type of the file.")
+    .def( "setFiletype", &CommonAttributes::setFiletype,
+	  "Set the type of the file.")
+    .def( "filedate", &CommonAttributes::filedate,
+	  "Get the file creation date.")
+    .def( "setFiledate", &CommonAttributes::setFiledate,
+	  "Set the file creation date.")
     ;
   
   // ============================================================================

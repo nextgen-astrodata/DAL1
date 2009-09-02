@@ -69,6 +69,7 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 
 set (dal_sources
   dalArray.cpp
+  dalAttribute.cpp
   dalBaseTypes.cpp
   dalColumn.cpp
   dalCommon.cpp
