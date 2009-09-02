@@ -223,14 +223,15 @@ if (DAL_ENABLE_TESTING)
 
   ## -----------------------------------------------------------------
   ## [7] Python scripts
-
+  
+  ## basic test of Python wrappers
+  add_test (dal_tests1 dal_tests.py)
+  ## basic test of Python wrappers
+  if (PYTHON_EXECUTABLE)
+    add_test (dal_tests2 ${PYTHON_EXECUTABLE} dal_tests.py)
+  endif (PYTHON_EXECUTABLE)
+  
   if (dataset_ms)
-    ## basic test of Python wrappers
-    add_test (dal_tests1 dal_tests.py)
-    ## basic test of Python wrappers
-    if (PYTHON_EXECUTABLE)
-      add_test (dal_tests2 ${PYTHON_EXECUTABLE} dal_tests.py)
-    endif (PYTHON_EXECUTABLE)
     ## show the coverage in the (u,v) plane
     add_test (datacube datacube.py ${dataset_ms} ${dataset_ms}.out 1 1 0)
     ## show the coverage in the (u,v) plane
