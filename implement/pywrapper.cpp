@@ -109,6 +109,8 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Print the attributes of the array." )
     .def( "extend", &dalArray::extend_boost,
 	  "Extend an array." )
+    .def( "close", &dalArray::close,
+          "Close an array." )
     ;
   
   //_____________________________________________________________________________
@@ -226,6 +228,9 @@ BOOST_PYTHON_MODULE(pydal)
     .def( "openGroup", &dalDataset::openGroup,
 	  bpl::return_value_policy<bpl::manage_new_object>(),
 	  "Open a group in the dataset.")
+    .def( "openArray", &dalDataset::open_array_boost,
+	  bpl::return_value_policy<bpl::manage_new_object>(),
+	  "Open an array in the dataset.")
     .def( "createIntArray", &dalDataset::cia_boost1,
 	  bpl::return_value_policy<bpl::manage_new_object>(),
 	  "Create an integer array in the dataset." )
@@ -325,19 +330,35 @@ BOOST_PYTHON_MODULE(pydal)
     .def( bpl::init<char*>())
     .def( "setAttribute_char", &dalTable::setAttribute_char,
 	  "Set a character attribute" )
+    .def( "setAttribute_char", &dalTable::setAttribute_char_vector,
+	  "Set an attribute from a list of chars." )
     .def( "setAttribute_short", &dalTable::setAttribute_short,
 	  "Set a short integer attribute" )
+    .def( "setAttribute_short", &dalTable::setAttribute_short_vector,
+	  "Set an attribute from a list of shorts." )
     .def( "setAttribute_int", &dalTable::setAttribute_int,
 	  "Set a integer attribute" )
+    .def( "setAttribute_int", &dalTable::setAttribute_int_vector,
+	  "Set an attribute from a list of integers." )
     .def( "setAttribute_uint", &dalTable::setAttribute_uint,
 	  "Set a unsigned integer attribute" )
+    .def( "setAttribute_uint", &dalTable::setAttribute_uint_vector,
+	  "Set an attribute from a list of unsigned integers." )
     .def( "setAttribute_long", &dalTable::setAttribute_long,
 	  "Set a long integer attribute" )
+    .def( "setAttribute_long", &dalTable::setAttribute_long_vector,
+	  "Set an attribute from a list of longs." )
     .def( "setAttribute_float", &dalTable::setAttribute_float,
 	  "Set a floating point attribute" )
+    .def( "setAttribute_float", &dalTable::setAttribute_float_vector,
+	  "Set an attribute from a list of floats." )
     .def( "setAttribute_double", &dalTable::setAttribute_double,
 	  "Set a double precision floating point attribute" )
+    .def( "setAttribute_double", &dalTable::setAttribute_double_vector,
+	  "Set an attribute from a list of doubles." )
     .def( "setAttribute_string", &dalTable::setAttribute_string,
+	  "Set a string attribute" )
+    .def( "setAttribute_string", &dalTable::setAttribute_string_vector,
 	  "Set a string attribute" )
     .def( "openTable", &dalTable::ot_hdf5,
 	  "Open an hdf5 table object." )
@@ -361,8 +382,8 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Print the column tables to the screen." )
     .def( "listColumns", &dalTable::listColumns_boost,
 	  "Return a list of the table columns." )
-    //    .def( "readRows", &dalTable::readRows_boost,
-    //	  "Read table rows." )
+    .def( "readRows", &dalTable::readRows_boost,
+    	  "Read table rows." )
     .def( "getAttribute", &dalTable::getAttribute_boost,
 	  "Return the value of a column attribute." )
     .def( "findAttribute", &dalTable::findAttribute,

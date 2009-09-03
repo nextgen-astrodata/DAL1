@@ -1578,7 +1578,15 @@ namespace DAL {
     }
     return lcllist;
   }
+
   
+  dalArray * dalDataset::open_array_boost( std::string arrayname )
+  {
+    dalArray * ret;
+    ret = openArray( arrayname );
+    return ret;
+  }
+
   bool dalDataset::setAttribute_char (std::string attrname, char data )
   {
     return setAttribute (attrname, &data );

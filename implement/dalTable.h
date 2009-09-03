@@ -224,14 +224,13 @@ namespace DAL
 #ifdef PYTHON
 
       void ot_hdf5( void * voidfile, string tablename, string groupname );
-//      bool append_row_boost( bpl::numeric::array data );
       bool append_row_boost( bpl::object data );
       bool append_rows_boost( bpl::object data, long nrows );
       void write_col_by_index_boost( bpl::numeric::array data, int index,
                                      int rownum, long nrecords );
       bpl::list listColumns_boost();
       bpl::numeric::array getAttribute_boost(std::string);
-//      bpl::numeric::array readRows_boost( long start, long nrecs );
+      PyObject* readRows_boost( int start, int nrecs );
 
       bool setAttribute_char( std::string attrname, char data );
       bool setAttribute_short( std::string attrname, short data );
@@ -241,6 +240,14 @@ namespace DAL
       bool setAttribute_float( std::string attrname, float data );
       bool setAttribute_double( std::string attrname, double data );
       bool setAttribute_string( std::string attrname, std::string data );
+      bool setAttribute_char_vector (std::string attrname, bpl::list data);
+      bool setAttribute_short_vector (std::string attrname, bpl::list data);
+      bool setAttribute_int_vector (std::string attrname, bpl::list data);
+      bool setAttribute_uint_vector (std::string attrname, bpl::list data);
+      bool setAttribute_long_vector (std::string attrname, bpl::list data);
+      bool setAttribute_float_vector (std::string attrname, bpl::list data);
+      bool setAttribute_double_vector (std::string attrname, bpl::list data);
+      bool setAttribute_string_vector (std::string attrname, bpl::list data);
 
 #ifdef HAVE_CASA
       void ot_nonMStable( string tablename );

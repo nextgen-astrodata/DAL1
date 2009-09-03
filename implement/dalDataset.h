@@ -323,6 +323,8 @@ namespace DAL {
     
     bpl::list listTables_boost();
     
+    dalArray * open_array_boost( std::string arrayname );
+
     bool setAttribute_char (std::string attrname, char data);
     bool setAttribute_short (std::string attrname, short data);
     bool setAttribute_int (std::string attrname, int data);

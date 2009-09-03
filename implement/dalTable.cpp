@@ -2168,8 +2168,199 @@ namespace DAL
    *****************************************************************/
   bool dalTable::append_rows_boost( bpl::object data, long nrows )
   {
-    appendRows(data.ptr(), nrows);
+    long list_length = bpl::len(data);
+    PyObject* list_item;
+    PyTypeObject* pytype;
+    const char * type_name;
+    char * buf;
+    size_t totalsize = 0;
+    size_t offset = 0;
+    buf = (char*) malloc ( 1 );
+    int int_value;
+    float  float_value;
+    double double_value;
+    short  short_value;
+    long   long_value;
+    char*  char_value;
+    
+    for (int idx=0; idx<list_length; idx++)
+    {
+       list_item = PyList_GetItem(data.ptr(), idx);
+       pytype = list_item->ob_type;
+       type_name = pytype->tp_name;
+       if ( 0 == strcmp( type_name, "int") )
+       {
+           offset = totalsize;
+           totalsize += sizeof(int);
+           buf = (char*) realloc ( buf, totalsize );
+           int_value = bpl::extract<int>(data[idx]);
+           memcpy ( (int*)(buf+offset), &int_value, sizeof(int) );
+       }
+       else if ( 0 == strcmp( type_name, "float") )
+       {
+           offset = totalsize;
+           totalsize += sizeof(float);
+           buf = (char*) realloc ( buf, totalsize );
+           float_value = bpl::extract<float>(data[idx]);
+           memcpy ( (float*)(buf+offset), &float_value, sizeof(float) );
+       }
+       else if ( 0 == strcmp( type_name, "short") )
+       {
+           offset = totalsize;
+           totalsize += sizeof(short);
+           buf = (char*) realloc ( buf, totalsize );
+           short_value = bpl::extract<short>(data[idx]);
+           memcpy ( (short*)(buf+offset), &short_value, sizeof(short) );
+       }
+       else if ( 0 == strcmp( type_name, "double") )
+       {
+           offset = totalsize;
+           totalsize += sizeof(double);
+           buf = (char*) realloc ( buf, totalsize );
+           double_value = bpl::extract<double>(data[idx]);
+           memcpy ( (double*)(buf+offset), &double_value, sizeof(double) );
+       }
+       else if ( 0 == strcmp( type_name, "long") )
+       {
+           offset = totalsize;
+           totalsize += sizeof(long);
+           buf = (char*) realloc ( buf, totalsize );
+           long_value = bpl::extract<long>(data[idx]);
+           memcpy ( (long*)(buf+offset), &long_value, sizeof(long) );
+       }
+       else if ( 0 == strcmp( type_name, "char") )
+       {
+           offset = totalsize;
+           totalsize += sizeof(char);
+           buf = (char*) realloc ( buf, totalsize );
+           char_value = bpl::extract<char>(data[idx]);
+           memcpy ( (char*)(buf+offset), &char_value, sizeof(char) );
+       }
+       else
+       {
+          cerr << "datatype not supported by python appendRows!" << endl;
+          cerr << "  it is a " << type_name << endl;
+       }
+    }
+    appendRows(buf, nrows);
+    free(buf);
     return PyList_Check(data.ptr());
+  }
+
+  PyObject* dalTable::readRows_boost( int start, int nrecs )
+  {
+    PyObject* py_list = PyList_New( 0 );
+    PyObject *py_item;
+    void * value;
+    if ( type == H5TYPE )
+      {
+        char * data_out;
+        data_out = (char*) malloc ( 1 );
+
+        size_t * field_sizes = NULL;
+        size_t * field_offsets = NULL;
+        size_t * size_out = NULL;
+
+        // retrieve the input fields needed for the append_records call
+        H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nrecords );
+
+        field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
+        field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
+        size_out = (size_t*)malloc( sizeof(size_t) );
+        field_names = (char**)malloc( nfields * sizeof(char*) );
+        for (unsigned int ii=0; ii<nfields; ii++)
+          {
+            field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE*sizeof(char));
+          }
+
+        status = H5TBget_field_info( fileID_p, name.c_str(), field_names,
+                                     field_sizes, field_offsets, size_out );
+
+        data_out = (char*) realloc ( data_out, (*size_out)*nrecs );
+
+        status = H5TBread_records( fileID_p, name.c_str(), start, nrecs,
+                                   size_out[0], field_offsets, field_sizes,
+                                   data_out );
+
+        for (int rec_idx=0; rec_idx<nrecs; rec_idx++)
+        {
+		for (int field_idx=0; field_idx<nfields; field_idx++)
+		{
+			hid_t table_type_id = H5Dget_type( tableID_p );
+			H5T_class_t field_type = H5Tget_member_class( table_type_id, field_idx );
+		
+			switch( field_type )
+			{
+			case H5T_FLOAT:
+			{
+				value = (float*)(data_out+field_offsets[field_idx]);
+				py_item = PyFloat_FromDouble(*((float*)value));
+				if (0 != PyList_Append( py_list, py_item ) )
+				cerr << "Could not append item to list in readRows_boost." << endl;
+				break;
+			}
+			case H5T_INTEGER:
+			{
+				hid_t member_type = H5Tget_member_type (table_type_id, field_idx);
+				hid_t native_type = H5Tget_native_type (member_type, H5T_DIR_ASCEND);
+				if  ( H5Tequal( native_type, H5T_NATIVE_CHAR ) > 0 )
+				{
+				  cerr << "native char" << endl;
+				}
+				else if  ( H5Tequal( native_type, H5T_NATIVE_SHORT ) > 0 )
+				{
+				  value = (short*)(data_out+field_offsets[field_idx]);
+				  py_item = PyInt_FromSsize_t( *((short*)value) );
+				  if (0 != PyList_Append( py_list, py_item ) )
+				    cerr << "Could not append item to list in readRows_boost." << endl;
+				}
+				else if  ( H5Tequal( native_type, H5T_NATIVE_INT ) > 0 )
+				{
+				  value = (int*)(data_out+field_offsets[field_idx]);
+				  py_item = PyInt_FromSsize_t( *((int*)value) );
+				  if (0 != PyList_Append( py_list, py_item ) )
+				    cerr << "Could not append item to list in readRows_boost." << endl;
+				}
+				else
+				  cerr << "member type not recognized in readRows_boost" << endl;
+
+				if ( H5Tclose( member_type  ) < 0 )
+				  cerr << "could not close member_type in readRows_boost" << endl;
+				if ( H5Tclose( native_type  ) < 0 )
+				  cerr << "could not close native_type in readRows_boost" << endl;
+
+				break;
+			}
+			default:
+				cerr << "field type is unknown in readRows_boost" << endl;
+			}
+			if ( H5Tclose( table_type_id  ) < 0 )
+				cerr << "could not close table type in readRows_boost" << endl;
+		}
+        }
+
+        free(field_sizes);
+        free(field_offsets);
+        free(size_out);
+        for (unsigned int ii=0; ii<nfields; ii++)
+          {
+            free(field_names[ii]);
+          }
+        free(field_names);
+        if (status < 0)
+          {
+            std::cerr << "ERROR: Problem reading records. Row buffer may be too big."
+                      << " Make sure the buffer is smaller than the size of the "
+                      << "table." << endl;
+          }
+      }
+    else
+      {
+        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+      }
+
+
+    return py_list;
   }
 
   void dalTable::write_col_by_index_boost( bpl::numeric::array data, int index,
@@ -2269,6 +2460,87 @@ namespace DAL
   }
 
 #endif // HAVE_CASA
+
+  bool dalTable::setAttribute_char_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<char> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<char>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<char*>(&mydata[0]), size );
+  }
+  bool dalTable::setAttribute_short_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<short> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<short>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<short*>(&mydata[0]), size );
+  }
+  bool dalTable::setAttribute_int_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<int> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<int>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<int*>(&mydata[0]), size );
+  }
+  bool dalTable::setAttribute_uint_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<uint> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<uint>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<uint*>(&mydata[0]), size );
+  }
+  bool dalTable::setAttribute_long_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<long> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<long>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<long*>(&mydata[0]), size );
+  }
+  bool dalTable::setAttribute_float_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<float> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<float>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<float*>(&mydata[0]), size );
+  }
+  bool dalTable::setAttribute_double_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<double> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<double>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<double*>(&mydata[0]), size );
+  }
+  bool dalTable::setAttribute_string_vector (std::string attrname, bpl::list data )
+  {
+    int size = bpl::len(data);
+    std::vector<std::string> mydata;
+
+    for (int ii=0; ii<bpl::len(data); ii++)
+      mydata.push_back(bpl::extract<std::string>(data[ii]));
+
+    return setAttribute (attrname, reinterpret_cast<std::string*>(&mydata[0]), size );
+  }
 
   // ----------------------------------------------------- getAttribute_boost
 
