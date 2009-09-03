@@ -2228,14 +2228,14 @@ namespace DAL
            long_value = bpl::extract<long>(data[idx]);
            memcpy ( (long*)(buf+offset), &long_value, sizeof(long) );
        }
-       else if ( 0 == strcmp( type_name, "char") )
-       {
-           offset = totalsize;
-           totalsize += sizeof(char);
-           buf = (char*) realloc ( buf, totalsize );
-           char_value = bpl::extract<char>(data[idx]);
-           memcpy ( (char*)(buf+offset), &char_value, sizeof(char) );
-       }
+       //else if ( 0 == strcmp( type_name, "char") )
+       //{
+       //    offset = totalsize;
+       //    totalsize += sizeof(char);
+       //    buf = (char*) realloc ( buf, totalsize );
+       //    char_value = bpl::extract<char>(data[idx]);
+       //    memcpy ( (char*)(buf+offset), &char_value, sizeof(char) );
+       //}
        else
        {
           cerr << "datatype not supported by python appendRows!" << endl;
