@@ -9,8 +9,11 @@
 ##    g++ -c *.cpp -ftemplate-depth-100 -fPIC -I/usr/include/python2.4 -I.
 ##    g++ *.o -lboost_python -lcfitsio -lhdf5 -lhdf5_hl -lhdf5_cpp -lz -lm -o dal.so -shared
 
-##_______________________________________________________________________________
-## Compiler flags
+## ==============================================================================
+##
+##  Compiler flags
+##
+## ==============================================================================
 
 if (DAL_COMPILER_WARNINGS)
   set(CMAKE_CXX_FLAGS "-W -g -Wall")
@@ -62,14 +65,35 @@ if (HAVE_CASA OR HAVE_CASACORE)
   endif (APPLE)
 endif (HAVE_CASA OR HAVE_CASACORE)
 
-## ------------------------------------------------------------------------------
-## Build the library, "libdal"
+## ==============================================================================
+##
+##  External libraries to link against
+##
+## ==============================================================================
 
-## List of source files included into the library
+
+## ==============================================================================
+##
+##  Build the library, "libdal"
+##
+## ==============================================================================
+
+##__________________________________________________________
+## Define the list of modules
+
+set (dal_modules
+  core
+  coordinates
+#  bindings
+  )
+
+##__________________________________________________________
+## Lists of source and header files
+
+file (GLOB dal_headers *.h)
 
 set (dal_sources
   dalArray.cpp
-  dalAttribute.cpp
   dalBaseTypes.cpp
   dalColumn.cpp
   dalCommon.cpp
@@ -91,19 +115,26 @@ set (dal_sources
   TBB_Timeseries.cpp
   BFRaw.cpp
   dalFITS.cpp
-  Coordinate.cpp
-  DirectionCoordinate.cpp
-  LinearCoordinate.cpp
-  TabularCoordinate.cpp
   )
 
 if ( HAVE_CASACORE )
   list ( APPEND dal_sources dalLopesEvent.cpp )
 endif ( HAVE_CASACORE )
 
-#if (HAVE_BLITZ)
-#  list (APPEND dal_sources LOFAR_AntennaArray.cpp)
-#endif (HAVE_BLITZ)
+##__________________________________________________________
+## Process the contents of the modules directories
+
+foreach (dal_module ${dal_modules})
+  ## Add include paths
+  include_directories (${DAL_SOURCE_DIR}/implement/${dal_module})
+  ## list of source files for this module
+  FILE (GLOB dal_${dal_module}_sources ${dal_module}/*.cpp)
+  ## list of header files for this module
+  FILE (GLOB dal_${dal_module}_headers ${dal_module}/*.h)
+  ## expand the list of source files
+  list (APPEND dal_sources ${dal_${dal_module}_sources})
+  list (APPEND dal_headers ${dal_${dal_module}_headers})
+endforeach (dal_module)
 
 ## [2] List of external libraries against which to link; even though we really
 ##     need the external libraries listed here, we should be a bit careful when
@@ -241,8 +272,6 @@ if (DAL_PYTHON_BINDINGS)
 endif (DAL_PYTHON_BINDINGS)
 
 ## installation of header files
-
-file (GLOB dal_headers *.h)
 
 install (FILES ${dal_headers}
   DESTINATION include/dal

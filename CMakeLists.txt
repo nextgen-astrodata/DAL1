@@ -6,7 +6,7 @@
 project (DAL)
 
 ## Minimum required version of CMake to configure the project
-cmake_minimum_required (VERSION 2.5)
+cmake_minimum_required (VERSION 2.6)
 
 ## ==============================================================================
 ##
@@ -292,18 +292,25 @@ if (NOT NUM_UTIL_INCLUDES)
   message (STATUS "[DAL] Unable to generate Python bindings; missing num_util headers!")
 endif (NOT NUM_UTIL_INCLUDES)
 
-## -----------------------------------------------------------------------------
-## Include directories
+## ==============================================================================
+##
+##  Include directories
+##
+## ==============================================================================
 
-## header files of the DAL itself
+##__________________________________________________________
+## Header files of the DAL itself
 
 include_directories (
   ${DAL_SOURCE_DIR}/implement
+  ${DAL_SOURCE_DIR}/implement/core
+  ${DAL_SOURCE_DIR}/implement/coordinates
   ${DAL_SOURCE_DIR}/test
   ${DAL_SOURCE_DIR}/apps
   )
 
-## header files of external packages
+##__________________________________________________________
+## Header files of external packages
 
 if (HAVE_BLITZ)
   include_directories (${BLITZ_INCLUDES})
@@ -477,7 +484,7 @@ endif (tar_executable AND gzip_executable)
 
 ## =============================================================================
 ##
-##  Subdirectories
+##  Project sub-directories
 ##
 ## =============================================================================
 
@@ -491,8 +498,11 @@ if (DAL_BUILD_APPS)
   add_subdirectory (apps)
 endif (DAL_BUILD_APPS)
 
-## -----------------------------------------------------------------------------
-## Feedback
+## =============================================================================
+##
+##  Feedback
+##
+## =============================================================================
 
 message (STATUS "+============================================================+")
 message (STATUS "| DAL: Summary of configuration settings                     |")
