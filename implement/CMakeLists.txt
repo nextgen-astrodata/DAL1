@@ -96,7 +96,6 @@ set (dal_sources
   dalArray.cpp
   dalBaseTypes.cpp
   dalColumn.cpp
-  dalCommon.cpp
   dalData.cpp
   dalDataset.cpp
   dalFilter.cpp
