@@ -404,21 +404,21 @@ class dalFITS {
     
     //! Write an image-plane to a FITS file
     void writePlane (double *plane,
-		     const long &x,
-		     const long &y,
-		     const long &z,
+		     const long x,
+		     const long y,
+		     const long z,
 		     void *nulval=NULL);
     //! Write a line of sight to a FITS file
     void writeLine(double *line,
-		   const long &x,
-		   const long &y,
+		   const long x,
+		   const long y,
 		   void *nulval=NULL);
     //! Write a tile to a FITS file
     void writeTile( double* tile,
-		    const long &x_size,
-		    const long &y_size,
-		    const long &x_pos,
-		    const long &y_pos);
+		    const long x_size,
+		    const long y_size,
+		    const long x_pos,
+		    const long y_pos);
     
     void writeCube(double* cube, const long x, const long y, const long z);
     

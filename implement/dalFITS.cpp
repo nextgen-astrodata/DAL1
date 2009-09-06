@@ -855,9 +855,9 @@ namespace DAL {
       }
 
     if (readHDUType()!=IMAGE_HDU)	// Check if current HDU is an image extension
-      {
-        throw "dalFITS::readLine CHDU is not an image";
-      }
+    {
+        throw "dalFITS::readPlane CHDU is not an image";
+    }
 
     // Read from FITS file one plane
     fpixel[0]=1;
@@ -868,14 +868,14 @@ namespace DAL {
 
 
     if (plane!=NULL)	// only if valid pointer is given
-      {
+    {
         readPix(TDOUBLE, fpixel, nelements, nulval, plane, &anynul);
-      }
+    }
     else
-      {
-        throw "dalFITS::readLine NULL pointer";
-      }
-  }
+    {
+        throw "dalFITS::readPlaneNULL pointer";
+    }
+}
 
 
   /*!
@@ -896,9 +896,9 @@ namespace DAL {
 
     // Check if vector has right dimension, same as z dimension of cube
     if (readHDUType()!=IMAGE_HDU)	 // Check if current HDU is an image extension
-      {
+    {
         throw "dalFITS::readLine CHDU is not an image";
-      }
+    }
 
     // Define first pixel to read, read along one line of sight
     fpixel[0]=x;
@@ -908,15 +908,19 @@ namespace DAL {
     lpixel[1]=y;
     lpixel[2]=dimensions_p[2];
 
-    // Read subset from FITS file
-    if (line==NULL)
-      {
+	 //-------------------------------------------------------
+	 // Check consistency of pixel data
+	 //
+	 if(x > static_cast<unsigned int>(dimensions_p[0]))
+		throw "dalFITS::readLine x is out of range";
+	 if(y > static_cast<unsigned int>(dimensions_p[1]))
+		throw "dalFITS::readLine y is out of range";
+  	 if(line==NULL)
         throw "dalFITS::readLine NULL pointer";
-      }
-    else
-      {
-        readSubset(TDOUBLE, fpixel, lpixel, NULL, line, nulval, &anynul);
-      }
+   
+	 //-------------------------------------------------------
+    // Read subset from FITS file
+    readSubset(TDOUBLE, fpixel, lpixel, NULL, line, nulval, &anynul);
   }
 
   //_____________________________________________________________________________
@@ -971,9 +975,9 @@ namespace DAL {
     \param nulval - pointer to data to be substituted for any 0 values encountered
   */
   void dalFITS::writePlane (double *plane,
-                            const long &x,
-                            const long &y,
-                            const long &z,
+                            const long x,
+                            const long y,
+                            const long z,
                             void *nulval)
   {
     long fpixel[3]; 	// first pixel position to read
@@ -1026,8 +1030,8 @@ namespace DAL {
     \param y - y position in pixels to write line to
   */
   void dalFITS::writeLine(double *line,
-                          const long &x,
-                          const long &y,
+                          const long x,
+                          const long y,
                           void *nulval)
   {
 
@@ -1045,10 +1049,10 @@ namespace DAL {
     \param y_size - vertical size of tile
   */
   void dalFITS::writeTile(double* tile,
-                          const long &x_pos,
-                          const long &y_pos,
-                          const long &x_size,
-                          const long &y_size
+                          const long x_pos,
+                          const long y_pos,
+                          const long x_size,
+                          const long y_size
                          )
   {
 
@@ -1122,6 +1126,8 @@ namespace DAL {
   }
 
   /*!
+	 \brief Read a header card
+
     \param keyname - name of key to read
     \param record - write the entire 80-character header record into this string
   */
