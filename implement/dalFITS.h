@@ -32,6 +32,7 @@
 // CFITSIO header files
 #include <fitsio.h>
 
+/*
 // AIPS++/CASA header files
 #include <casa/aips.h>
 #include <casa/Arrays.h>
@@ -54,6 +55,8 @@
 #include <tables/Tables/SetupNewTab.h>
 #include <tables/Tables/Table.h>
 #include <tables/Tables/TableRecord.h>
+*/
+
 
 namespace DAL {
   
@@ -68,7 +71,8 @@ namespace DAL {
     
     \test tdalFITS.cpp
   */
-  class dalFITS {
+  
+class dalFITS {
     
   private:
     //! file handle for direct file access
@@ -78,7 +82,7 @@ namespace DAL {
     int fitsstatus_p;
     
     //! casacore lattice handle
-    casa::Lattice<casa::Float>* lattice_p;
+//    casa::Lattice<casa::Float>* lattice_p;
     
     //! dimensions of FITS image
     std::vector<int64_t> dimensions_p;
@@ -167,8 +171,17 @@ namespace DAL {
     void moveRelativeHDU(int hdu);
     //! Move to hdu extension with name, \e extname
     int moveNameHDU (const std::string &extname);
-    void updateImageDimensions();
-    int readHDUType();
+	 
+	 //! Image dimension functions
+	 std::vector<int64_t> dimensions();
+	 long X();
+	 long Y();
+	 long Z();
+	
+	 void updateImageDimensions();
+    
+
+	 int readHDUType();
     std::string readFilename();
     int readFileMode();
     std::string readURLType();
