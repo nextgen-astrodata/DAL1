@@ -281,6 +281,7 @@ int test_image_size (int const &min=50,
 
   bool status;
   std::string sidelength;
+  std::string refcode ("J2000");
   casa::String error;
   casa::IPosition where (2,0,0);
   casa::IPosition stride (2,1,1);
@@ -295,21 +296,18 @@ int test_image_size (int const &min=50,
     std::cout << "-- Testing shape " << shape << " ..." << std::endl;
     
     // Create direction coordinate
-    std::cout << "--> creating direction coordinate ...." << std::endl;
     casa::DirectionCoordinate dir = direction_coordinate (shape,
-							  "2000",
+							  refcode,
 							  "STG");
     // Create coordinate system and add direction coordinate
-    std::cout << "--> creating coordinate system object ..." << std::endl;
     casa::CoordinateSystem csys;
     csys.addCoordinate (dir);
     // Set image filename
-    std::string filename ("image-J200-STG-"  + sidelength + ".h5");
-    std::string outfile  ("!image-J200-STG-" + sidelength + ".fits");
+    std::string filename ("image-" + refcode + "-STG-"  + sidelength + ".h5");
+    std::string outfile  ("!image-" + refcode + "-STG-" + sidelength + ".fits");
     
     /* Create image and provide a short summary of its properties */
     {
-      std::cout << "--> creating HDF5 image " << filename << " ..." << std::endl;
       casa::HDF5Image<float> image (tile,
 				    csys,
 				    filename);
@@ -337,7 +335,7 @@ int main (int argc,
   int nofFailedTests (0);
 
   nofFailedTests += test_direction_coordinate ();
-//   nofFailedTests += test_image_size ();
+  nofFailedTests += test_image_size (50,100,1);
   
   return nofFailedTests;
 }
