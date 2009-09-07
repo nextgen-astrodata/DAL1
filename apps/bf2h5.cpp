@@ -138,50 +138,49 @@ int main (int argc, char *argv[])
   std::string ip;
   std::string port;
   bool socketmode       = false;
-	bool non_interactive  = false;
+  bool non_interactive  = false;
   bool doIntensity      = false;
   bool doDownsample     = false;
   bool doChannelization = false;
   uint dsFactor            = 1;
-
-
+  
   // -----------------------------------------------------------------
   // Processing of command line options
 
   bpo::options_description desc ("[bf2h5] Available command line options");
 
   desc.add_options ()
-	("help,H", "Show help messages")
-	("factor,D", bpo::value<uint>(), "Downsample with this factor")
-	("infile,I", bpo::value<std::string>(), "Name of the input file")
-	("outfile,O",bpo::value<std::string>(), "Name of the output dataset")
-  //			("source,S", bpo::value<std::string>(), "the source IP address from which to accept the data")
-  ("port,P", bpo::value<std::string>(), "Port number to accept beam formed raw data from")
-  //("downsample", "Downsampling of the original data")
-	("intensity", "Compute total intensity")
-	("version", "Show bf2h5 version information")
-	("noninteractive", "non-interactive mode, automatically overwrites output file if it exists")
-			;
-
+    ("help,H", "Show help messages")
+    ("factor,D", bpo::value<uint>(), "Downsample with this factor")
+    ("infile,I", bpo::value<std::string>(), "Name of the input file")
+    ("outfile,O",bpo::value<std::string>(), "Name of the output dataset")
+    //			("source,S", bpo::value<std::string>(), "the source IP address from which to accept the data")
+    ("port,P", bpo::value<std::string>(), "Port number to accept beam formed raw data from")
+    //("downsample", "Downsampling of the original data")
+    ("intensity", "Compute total intensity")
+    ("version", "Show bf2h5 version information")
+    ("noninteractive", "non-interactive mode, automatically overwrites output file if it exists")
+    ;
+  
   bpo::variables_map vm;
   bpo::store (bpo::parse_command_line(argc,argv,desc), vm);
-
-	if (vm.count("version")) {
-		std::cout << "bf2h5 version: " << version << std::endl;
-		return 0;
-	}
-	
+  
+  if (vm.count("version")) {
+    std::cout << "bf2h5 version: " << version << std::endl;
+    return 0;
+  }
+  
   if (vm.count("help") || argc == 1)
     {
       std::cout << "\n" << desc << endl;
       return 0;
     }
-
+  
   if (vm.count("infile"))
     {
       infile = vm["infile"].as<std::string>();
     }
-
+  
   if (vm.count("outfile"))
     {
       outfile = vm["outfile"].as<std::string>();
@@ -192,25 +191,25 @@ int main (int argc, char *argv[])
       std::cout << "\n" << desc << endl;
       return 0;
     }
-
+  
   if (vm.count("port"))
     {
       port     = vm["port"].as<std::string>();
       socketmode = true;
     }
-
-/*  if (vm.count("downsample"))
-    {
+  
+  /*  if (vm.count("downsample"))
+      {
       doDownsample = true;
       // can't downsample w/o total intensities
       doIntensity = true;
-} */
-
+      } */
+  
   if (vm.count("intensity"))
     {
       doIntensity = true;
     }
-
+  
   if (vm.count("factor"))
     {
       dsFactor = vm["factor"].as<uint>();
@@ -219,15 +218,15 @@ int main (int argc, char *argv[])
         {
           dsFactor = 1;
         }
-				else if (dsFactor > 1) {
-					doIntensity = true;
-					doDownsample = true;
-				}
+      else if (dsFactor > 1) {
+	doIntensity = true;
+	doDownsample = true;
+      }
     }
-		if (vm.count("noninteractive")) {
-			non_interactive = true; 
-		}
-
+  if (vm.count("noninteractive")) {
+    non_interactive = true; 
+  }
+  
   // -----------------------------------------------------------------
   // Checks if parameters complete
 
@@ -266,10 +265,10 @@ int main (int argc, char *argv[])
           return DAL::FAIL;
         }
     }
-
+  
   // -----------------------------------------------------------------
   // Summary of the parameters provided from the command line
-
+  
   std::cout << "[bf2h5] Summary of input parameters." << endl;
   if (socketmode)
     {
@@ -286,16 +285,16 @@ int main (int argc, char *argv[])
   std::cout << "-- Compute total intensity : " << doIntensity  << endl;
   std::cout << "-- Downsampling of data .. : " << doDownsample << endl;
   std::cout << "-- Downsampling factor ... : " << dsFactor       << endl;
-
+  
   // -----------------------------------------------------------------
   // Start processing of the input data
-
+  
   DAL::BFRaw bf = DAL::BFRaw( outfile,
                               doIntensity,
                               doDownsample,
                               doChannelization,
                               dsFactor );
-
+  
   if (socketmode)
     {
       if (bf.connectsocket( port.c_str() ))   // server
@@ -308,39 +307,39 @@ int main (int argc, char *argv[])
     }
   else   // File mode
     {
-			std::fstream filestr;
-			filestr.open(outfile.data());
-			if ( filestr.is_open() ) {
-				if (!non_interactive) {
-				filestr.close();
-				std::string line;
-				std::cout << "Warning: output file exist. Do you want to overwrite? (y/n) [n]" << std::endl;
-				std::getline( std::cin, line );
-				if (!line.empty()) {
-					if (line == "n" | line == "N") return 0;
-					else if (line == "y" | line == "Y") {
-						if( remove( outfile.data() ) != 0 ) {
-							perror( "Error deleting file" );
-							std::cerr << "now exiting" << std::endl;
-							return 0;
-						}
-					}
-				} 
-				else return 0; // empty line, default answer is no
-				}
-				else { // non_interactive mode, delete file and continue
-					if( remove( outfile.data() ) != 0 ) {
-						perror( "Error deleting file" );
-						std::cerr << "now exiting" << std::endl;
-						return 0;
-					}
-				}
-			}
-			
-      	bf.openRawFile( infile.c_str() );
-      	bf.readRawFileHeader();
-      	bf.makeH5OutputFile();
-      	bf.processBlocks();
+      std::fstream filestr;
+      filestr.open(outfile.data());
+      if ( filestr.is_open() ) {
+	if (!non_interactive) {
+	  filestr.close();
+	  std::string line;
+	  std::cout << "Warning: output file exist. Do you want to overwrite? (y/n) [n]" << std::endl;
+	  std::getline( std::cin, line );
+	  if (!line.empty()) {
+	    if (line == "n" | line == "N") return 0;
+	    else if (line == "y" | line == "Y") {
+	      if( remove( outfile.data() ) != 0 ) {
+		perror( "Error deleting file" );
+		std::cerr << "now exiting" << std::endl;
+		return 0;
+	      }
+	    }
+	  } 
+	  else return 0; // empty line, default answer is no
+	}
+	else { // non_interactive mode, delete file and continue
+	  if( remove( outfile.data() ) != 0 ) {
+	    perror( "Error deleting file" );
+	    std::cerr << "now exiting" << std::endl;
+	    return 0;
+	  }
+	}
+      }
+      
+      bf.openRawFile( infile.c_str() );
+      bf.readRawFileHeader();
+      bf.makeH5OutputFile();
+      bf.processBlocks();
     }
   return 0;
 }

@@ -24,12 +24,19 @@
 /* Standard header files */
 #include <iostream>
 #include <string>
+#include <sstream>
 
 /* casacore header files */
+#include <casa/Arrays.h>
+#include <coordinates/Coordinates/CoordinateSystem.h>
 #include <coordinates/Coordinates/Projection.h>
 #include <coordinates/Coordinates/DirectionCoordinate.h>
 #include <images/Images/HDF5Image.h>
 #include <images/Images/PagedImage.h>
+#include <images/Images/ImageFITSConverter.h>
+
+/* DAL header files */
+#include <dalCommon.h>
 
 using std::cout;
 using std::cerr;
@@ -64,21 +71,23 @@ using std::endl;
 
 /*!
   \brief Get list of known celestial projections
-
+  
   Get list of known celestial map projections, as defined in
   <tt>coordinates/Coordinates/Projection.h</tt>
+  
+  \return names -- List of names of known celestial map projections.
 */
 std::vector<std::string> projections_list () 
 {
   std::vector<std::string> names;
-
+  
   names.push_back("AZP");    //  Zenithal/Azimuthal perspective
   names.push_back("SZP");    //  Slant zenithal perspective
   names.push_back("TAN");    //  Gnomonic
   names.push_back("SIN");    //  Orthographics/synthesis
   names.push_back("STG");    //  Stereographic
   names.push_back("ARC");    //  zenith/azimuthal equidistant
-  names.push_back("ZPN");    //  zenithal/azimuthal polynomial
+//   names.push_back("ZPN");    //  zenithal/azimuthal polynomial
   names.push_back("ZEA");    //  zenithal/azimuthal equal area
   names.push_back("AIR");    //  Airy
   names.push_back("CYP");    //  Cylindrical perspective
@@ -91,6 +100,9 @@ std::vector<std::string> projections_list ()
 //_______________________________________________________________________________
 //                                                               mdirections_list
 
+/*!
+  \brief Get the list of known celectial reference codes
+*/
 std::vector<std::string> mdirections_list () 
 {
   std::vector<std::string> names;
@@ -127,12 +139,12 @@ std::vector<std::string> mdirections_list ()
 /*!
   \brief Get a casa::DirectionCoordinate object
 
-  \param nelem      -- Number of element in the plane of the sky; the value is
+  \param shape      -- Number of element in the plane of the sky; the value is
          used to set the reference pixel.
   \param refcode    -- Reference code for the celestial coordinate system.
   \param projection -- Reference code for the spherical map projection.
 */
-casa::DirectionCoordinate direction_coordinate (std::vector<uint> const &nelem,
+casa::DirectionCoordinate direction_coordinate (casa::IPosition const &shape,
 						std::string const &refcode,
 						std::string const &projection)
 {
@@ -146,14 +158,14 @@ casa::DirectionCoordinate direction_coordinate (std::vector<uint> const &nelem,
   casa::Projection::Type projType (casa::Projection::STG);
   
   // Reference pixel is center of map for directional components
-  refPixel(0) = nelem[0]/2.0;
-  refPixel(1) = nelem[1]/2.0;
+  refPixel(0) = shape(0)/2.0;
+  refPixel(1) = shape(1)/2.0;
   // Reference value: local zenith
-  refValue(0) = casa::Quantum<double>(0,"deg");
+  refValue(0) = casa::Quantum<double>( 0,"deg");
   refValue(1) = casa::Quantum<double>(90,"deg");
   // Coordinate increment
   increment(0) = casa::Quantum<double>(-1,"deg");
-  increment(1) = casa::Quantum<double>(1,"deg");
+  increment(1) = casa::Quantum<double>( 1,"deg");
   // Linear transform
   xform            = 0.0;
   xform.diagonal() = 1.0;
@@ -174,36 +186,158 @@ casa::DirectionCoordinate direction_coordinate (std::vector<uint> const &nelem,
 }
 
 //_______________________________________________________________________________
+// 
+
+/*!
+  \brief Test combinations of celestial reference system and map projection
+
+  \param nelem -- The number of elements per coordinate axis; for a simple
+         two-dimensional image with only a longitudinal and and latitudinal
+	 coordinate the total number of pixels therefore will be
+	 <tt>nelem x nelem</tt>.
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_direction_coordinate (int const &nelem=50)
+{
+  cout << "\n[tcasacore_images::test_direction_coordinate]\n" << endl;
+
+  int nofFailedTests (0);
+
+  bool status;
+  casa::String error;
+  casa::IPosition shape (2,nelem,nelem);
+  casa::TiledShape tile (shape);
+  casa::Array<float> pixels (shape,1.0);
+  casa::IPosition where (2,0,0);
+  casa::IPosition stride (2,1,1);
+  std::vector<std::string> projections = projections_list();
+  std::vector<std::string> mdirections = mdirections_list();
+  
+  unsigned int nofProjections = projections.size();
+  unsigned int nofMDirections = mdirections.size();
+
+  /* Go through the combinations of celestial reference code and spherial
+     map projection and create a direction coordinate for it.
+  */
+  for (unsigned int n(0); n<nofMDirections; n++) {
+    for (unsigned int proj(0); proj<nofProjections; proj++) {
+      cout << "-- Testing combination ["
+	   << mdirections[n]
+	   << ","
+	   << projections[proj]
+	   << "] ..." << endl;
+      // Create direction coordinate
+      casa::DirectionCoordinate dir = direction_coordinate (shape,
+							    mdirections[n],
+							    projections[proj]);
+      // Create coordinate system and add direction coordinate
+      casa::CoordinateSystem csys;
+      csys.addCoordinate (dir);
+      // Set image filename
+      std::string filename ("image-"+mdirections[n]+"-"+projections[proj]+".h5");
+      std::string outfile  ("!image-"+mdirections[n]+"-"+projections[proj]+".fits");
+      
+      /* Create image and provide a short summary of its properties */
+      {
+	casa::HDF5Image<float> image (tile,
+				      csys,
+				      filename);
+	image.doPutSlice (pixels,where,stride);
+	DAL::summary (image);
+      }
+      /* Convert the previously created image to FITS */
+      {
+	casa::HDF5Image<float> image (filename);
+	status = casa::ImageFITSConverter::ImageToFITS (error,
+							image,
+							outfile);
+      }
+    }
+  }  
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                test_image_size
+
+/*!
+  \brief Test how export to FITS behaves under increasing images sizes
+
+  \param min  -- Minimum number of elements per coordinate axis.
+  \param max  -- Maximum number of elements per coordinate axis.
+  \param step -- Step width in which to increment the number of elements per
+         coordinate axis.
+*/
+int test_image_size (int const &min=50,
+		     int const &max=500,
+		     int const &step=10)
+{
+  cout << "\n[tcasacore_images::test_image_size]\n" << endl;
+
+  int nofFailedTests (0);
+
+  bool status;
+  std::string sidelength;
+  casa::String error;
+  casa::IPosition where (2,0,0);
+  casa::IPosition stride (2,1,1);
+  
+  for (int nelem=min; nelem<max; nelem+=step) {
+    
+    sidelength = DAL::to_string(nelem);
+    casa::IPosition shape (2,nelem,nelem);
+    casa::TiledShape tile (shape);
+    casa::Array<float> pixels (shape,1.0);
+    
+    std::cout << "-- Testing shape " << shape << " ..." << std::endl;
+    
+    // Create direction coordinate
+    std::cout << "--> creating direction coordinate ...." << std::endl;
+    casa::DirectionCoordinate dir = direction_coordinate (shape,
+							  "2000",
+							  "STG");
+    // Create coordinate system and add direction coordinate
+    std::cout << "--> creating coordinate system object ..." << std::endl;
+    casa::CoordinateSystem csys;
+    csys.addCoordinate (dir);
+    // Set image filename
+    std::string filename ("image-J200-STG-"  + sidelength + ".h5");
+    std::string outfile  ("!image-J200-STG-" + sidelength + ".fits");
+    
+    /* Create image and provide a short summary of its properties */
+    {
+      std::cout << "--> creating HDF5 image " << filename << " ..." << std::endl;
+      casa::HDF5Image<float> image (tile,
+				    csys,
+				    filename);
+      std::cout << "--> putting slice into image ..." << std::endl;
+      image.doPutSlice (pixels,where,stride);
+    }
+    /* Convert the previously created image to FITS */
+    {
+      casa::HDF5Image<float> image (filename);
+      status = casa::ImageFITSConverter::ImageToFITS (error,
+						      image,
+						      outfile);
+    }
+  }
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 int main (int argc,
           char *argv[])
 {
   int nofFailedTests (0);
-  
-  std::vector<uint> shape (2);
-  std::vector<std::string> projections = projections_list();
-  std::vector<std::string> mdirections = mdirections_list();
-  
-  unsigned int nofProjections = projections.size();
-  unsigned int nofMDirections = mdirections.size();
-  
-  shape[0] = 100;
-  shape[1] = 100;
-  
-  /* Go through the combinations of celestial reference code and spherial
-     map projection and create a direction coordinate for it.
-  */
-  for (unsigned int n(0); n<nofMDirections; n++) {
-    for (unsigned int proj(0); proj<nofProjections; proj++) {
-      // create direction coordinate ...
-      casa::DirectionCoordinate dir = direction_coordinate (shape,
-							    mdirections[n],
-							    projections[proj]);
-      // ... and display its properties
-      std::cout << "-- Direction type = " << dir.directionType() << std::endl;
-    }
-  }
+
+  nofFailedTests += test_direction_coordinate ();
+//   nofFailedTests += test_image_size ();
   
   return nofFailedTests;
 }

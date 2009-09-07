@@ -35,6 +35,10 @@
 using std::cout;
 using std::endl;
 
+#ifdef HAVE_CFITSIO
+#include <fitsio.h>
+#endif
+
 #ifdef HAVE_CASA
 #include <casa/Arrays/IPosition.h>
 #include <casa/Arrays/Vector.h>
@@ -42,16 +46,13 @@ using std::endl;
 #include <casa/OS/File.h>
 #include <casa/OS/Path.h>
 #include <casa/OS/SymLink.h>
+#include <images/Images/ImageInterface.h>
 #include <measures/Measures/MDirection.h>
 #include <measures/Measures/MPosition.h>
 using casa::IPosition;
 using casa::MPosition;
 using casa::MVPosition;
 using casa::Quantity;
-#endif
-
-#ifdef HAVE_CFITSIO
-#include <fitsio.h>
 #endif
 
 #ifdef HAVE_MPATROL
@@ -130,6 +131,21 @@ namespace DAL {
   
   //! Convert Modified Julian Date (mjd) to unix time
   double mjd2unix (double mjd_time);
+  
+  /*!
+    \brief Convert a variable to a string
+    
+    \param t -- The variable, e.g. an integer number, to be converted to a string.
+    
+    \return s -- The provided variable converted to a string.
+  */
+  template <class T>
+    inline std::string to_string (const T& t)
+    {
+      std::stringstream ss;
+      ss << t;
+      return ss.str();
+    }
   
   // ============================================================================
   //
@@ -664,15 +680,51 @@ namespace DAL {
     
     delete [] data;
   }
+  
+  /*!
+    \brief Provide a summary of the properties of a casa::ImageInterface object
 
+    Specific types of images (PagedImage, HDF5Image) within casacore are derived
+    from a base class (ImageInterface) defining a common interface.
+    
+    \param image -- Image object derived from the ImageInterface class.
+  */
+  template <class T>
+    void summary (casa::ImageInterface<T> &image)
+    {
+      casa::CoordinateSystem cs = image.coordinates();
+      casa::IPosition shape (image.shape());
+      int nofAxes (shape.nelements());
+      double nofPixels (1.0);
+      
+      for (int n(0); n<nofAxes; n++) {
+	nofPixels *= shape(n);
+      }
+      
+      cout << "-- Image type ............. : " << image.imageType()        << endl;
+      cout << "-- Table name ............. : " << image.name()             << endl;
+      cout << "-- Image shape ............ : " << shape                    << endl;
+      cout << "-- Number of pixels ....... : " << nofPixels                << endl;
+      cout << "-- World axis names ....... : " << cs.worldAxisNames()      << endl;
+      cout << "-- World axis units ....... : " << cs.worldAxisUnits()      << endl;
+      cout << "-- Referemce pixel ........ : " << cs.referencePixel()      << endl;
+      cout << "-- Reference value ........ : " << cs.referenceValue()      << endl;
+      cout << "-- Increment .............. : " << cs.increment()           << endl;
+      cout << "-- Maximum cache size ..... : " << image.maximumCacheSize() << endl;
+      cout << "-- Is the image paged? .... : " << image.isPaged()          << endl;
+      cout << "-- Is the image persistent? : " << image.isPersistent()     << endl;
+      cout << "-- Is the image writable?   : " << image.isWritable()       << endl;
+      cout << "-- Has the image a mask?    : " << image.hasPixelMask()     << endl;
+    }
+  
 #endif  // HAVE_CASA
-
+  
   // ============================================================================
   //
   //  Boost.Python wrappers
   //
   // ============================================================================
-
+  
 #ifdef PYTHON
   //! Convert Modified Julian Date (mjd) to unix time
   bpl::numeric::array mjd2unix_boost( bpl::numeric::array mjd_time );
