@@ -144,10 +144,6 @@ if (DAL_ENABLE_TESTING)
   add_test(tdal tdal)
   add_test(tCommonAttributes tCommonAttributes)
   add_test(tEnumerations tEnumerations)
-  add_test(tLOFAR_Image tLOFAR_Image)
-  add_test(tDirectionCoordinate tDirectionCoordinate)
-  add_test(tLinearCoordinate tLinearCoordinate)
-  add_test(tTabularCoordinate tTabularCoordinate)
 
   ## -----------------------------------------------------------------
   ## [2] tdalDataset

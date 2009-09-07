@@ -335,7 +335,8 @@ int main (int argc,
   int nofFailedTests (0);
 
   nofFailedTests += test_direction_coordinate ();
-  nofFailedTests += test_image_size (50,100,1);
+
+//   nofFailedTests += test_image_size (60,100,1);
   
   return nofFailedTests;
 }
