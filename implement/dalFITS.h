@@ -29,8 +29,8 @@
 #include <vector>
 #include <sstream>	// string strings
 
-// CFITSIO header files
-#include <fitsio.h>
+/* DAL header files */
+#include <dalBaseTypes.h>
 
 /*
 // AIPS++/CASA header files

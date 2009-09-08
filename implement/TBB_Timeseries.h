@@ -24,17 +24,10 @@
 #ifndef TBB_TIMESERIES_H
 #define TBB_TIMESERIES_H
 
-// Standard library header files
-#include <iostream>
-#include <string>
-#include <vector>
-
 // casacore header files
 #include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Vector.h>
 #include <casa/BasicSL/String.h>
 
-#include <CommonAttributes.h>
 #include <TBB_StationGroup.h>
 
 namespace DAL {  // Namespace DAL -- begin

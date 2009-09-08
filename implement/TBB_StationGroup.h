@@ -28,12 +28,8 @@
 #include <iostream>
 #include <string>
 
-#include <casa/aips.h>
 #include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Containers/Record.h>
 #include <measures/Measures/MDirection.h>
-#include <measures/Measures/MPosition.h>
 
 #ifndef TBB_DIPOLEDATASET_H
 #include <TBB_DipoleDataset.h>

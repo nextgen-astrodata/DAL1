@@ -119,7 +119,7 @@ namespace DAL {
     // The Unix base date is MJD 40587.
     // and 1 mjd Day = 24 hours or 1440 minutes or 86400 seconds
     // so (unix seconds) = (mjd seconds) - ( unix base date in seconds )
-    return ( mjd_time - (40587 * 86400) );
+    return ( mjd_time - (40587.0 * 86400.0) );
   }
 
   // ============================================================================

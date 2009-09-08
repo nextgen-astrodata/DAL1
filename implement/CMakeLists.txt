@@ -94,7 +94,6 @@ file (GLOB dal_headers *.h)
 
 set (dal_sources
   dalArray.cpp
-  dalBaseTypes.cpp
   dalColumn.cpp
   dalData.cpp
   dalDataset.cpp

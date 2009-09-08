@@ -35,9 +35,8 @@
 using std::cout;
 using std::endl;
 
-#ifdef HAVE_CFITSIO
-#include <fitsio.h>
-#endif
+#include <dalBaseTypes.h>
+#include <Enumerations.h>
 
 #ifdef HAVE_CASA
 #include <casa/Arrays/IPosition.h>
@@ -58,9 +57,6 @@ using casa::Quantity;
 #ifdef HAVE_MPATROL
 #include <mpatrol.h>
 #endif
-
-#include "dalBaseTypes.h"
-#include "Enumerations.h"
 
 /*!
   \file dalCommon.h

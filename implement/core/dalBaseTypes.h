@@ -30,6 +30,7 @@
 #ifndef DALBASETYPES_H
 #define DALBASETYPES_H
 
+/* Standard header files */
 #include <string>
 #include <vector>
 #include <iostream>
@@ -39,21 +40,13 @@
 #include <complex>  // for complex datatypes
 #include <time.h>   // for local time conversion
 
+/* HDF5 header files */
 #ifdef HAVE_HDF5
 #include <hdf5.h>
 #include <hdf5_hl.h>
 #endif
 
-#ifdef HAVE_CFITSIO
-extern "C"
-  {
-#include <fitsio.h>
-  }
-#endif
-
-/*
-   if there is a casa installation
-*/
+/* casacore header files */
 #ifdef HAVE_CASA
 #include <casa/aips.h>
 #include <casa/BasicMath/Math.h>
@@ -68,6 +61,13 @@ extern "C"
 #include <tables/Tables/ScalarColumn.h>
 #include <tables/Tables/TableParse.h>
 #include <tables/Tables/TableKeyword.h>
+#endif
+
+#ifdef HAVE_CFITSIO
+extern "C"
+  {
+#include <fitsio.h>
+  }
 #endif
 
 /*

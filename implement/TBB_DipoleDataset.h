@@ -36,13 +36,8 @@
 #include <measures/Measures/MPosition.h>
 #endif
 
-#ifndef DALCOMMON_H
-#include <dalCommon.h>
-#endif
-
-#ifndef ENUMERATIONS_H
+#include <CommonAttributes.h>
 #include <Enumerations.h>
-#endif
 
 namespace DAL {  // Namespace DAL -- begin
   
