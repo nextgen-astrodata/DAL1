@@ -225,7 +225,10 @@ namespace DAL {
   void dalFITS::openTable (const std::string &filename,
                            int iomode)
   {
-    if (fits_open_table(&fptr, const_cast<char *>(filename.c_str()), iomode, &fitsstatus_p))
+    if (fits_open_table(&fptr,
+			const_cast<char *>(filename.c_str()),
+			iomode,
+			&fitsstatus_p))
       {
         throw "dalFITS::openTable";
       }

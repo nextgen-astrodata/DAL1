@@ -29,7 +29,6 @@
 
 #include "TBBraw.h"
 
-
 /*!
   \file TBBraw2h5.cpp
 
@@ -606,12 +605,9 @@ int main(int argc, char *argv[])
     {
       readFromFile(infile, verboseMode);
     };
-
-
-
-
+  
   //finish up, print some statistics.
-  tbb->printStatistics();
-
+  tbb->summary();
+  
   return 0;
 };

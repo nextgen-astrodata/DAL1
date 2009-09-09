@@ -122,6 +122,42 @@ namespace DAL {
     return ( mjd_time - (40587.0 * 86400.0) );
   }
 
+  //_____________________________________________________________________________
+  //                                                                        crc16
+  
+  /*!
+    Generic CRC16 method working on 16-bit unsigned data adapted from Python
+    script by Gijs Schoonderbeek.
+
+    \param buffer -- Pointer to the data
+    \param length -- Length of the data in 16-bit words.
+    
+    \return crc -- Value of the CRC
+  */
+  uint16_t crc16 (uint16_t * buffer,
+		  uint32_t length)
+  {
+    uint16_t CRC            = 0;
+    const uint32_t CRC_poly = 0x18005;
+    const uint16_t bits     = 16;
+    uint32_t data           = 0;
+    const uint32_t CRC_div  = (CRC_poly & 0x7fffffff) << 15;
+    
+    data = (buffer[0] & 0x7fffffff) << 16;
+    for (uint32_t i=1; i<length; i++) {
+      data += buffer[i];
+      for (uint16_t j=0; j<bits; j++) {
+	if ((data & 0x80000000) != 0) {
+	  data ^= CRC_div;
+	}
+	data &= 0x7fffffff;
+	data <<= 1;
+      }
+    }
+    CRC = data >> 16;
+    return CRC;
+  }
+  
   // ============================================================================
   //
   //  Service routines

@@ -15,6 +15,10 @@ ________________________________________________________________________________
   case already with the beam-formed data and the TBB dumps).
   As a first step rename dalFITS -> RM_Cube
 
+* Check code in TBRRaw against what is in the original TBB class; if the latter
+  can be fully replaced, then do so -- if features need to be merged, this needs
+  to be done before discontinuing the earlier version.
+
 * The TBB_DipoleDataset, TBB_StationGroup and TBB_Timeseries need some cleaning
   up in the functions which make use of casacore; there are still quite a number
   functions which work with std::vector<T> and casa::Vector<T> -- those functions
@@ -30,9 +34,6 @@ ________________________________________________________________________________
 * [2009/08/04] dalDataset is in desparate need for a clean-up: currently there
   are multiple methods used internally to open a file (and/or testing for its
   type beforehand).
-
-* [2009/09/02] Build problems as reported on Forum:
-  http://usg.lofar.org/forum/index.php?topic=106.0 -> check 64 bit!! => liof
 
 _________________________________________________________________________________
 >>> Coding conventions
@@ -75,3 +76,13 @@ ________________________________________________________________________________
 
   [12/08/2009] Added function overloading; parameters are not defined for a 
   tabulared axis, they should not be used.
+
+* [2009/09/02] Build problems as reported on Forum:
+  http://usg.lofar.org/forum/index.php?topic=106.0 -> check 64 bit!! => liof
+
+  To my knowledge this has been resolved (at least for the time being). With the
+  new post-processing cluster coming online a new front-end node (lfe001) has 
+  become available, which is now on a routine basis used for test builds; it has
+  been agreed to assign high priority to getting everything to configure and build
+  on that machine, as it is considered as a reference platform for the compute
+  nodes of the post-processing cluster.

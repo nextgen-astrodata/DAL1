@@ -4,6 +4,7 @@
  ***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Andreas Horneffer (A.Horneffer@astro.ru.nl)                           *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -23,47 +24,62 @@
 
 #include <TBBraw.h>
 
-namespace DAL   // Namespace DAL -- begin
-  {
-
+namespace DAL {  // Namespace DAL -- begin
+  
   // ============================================================================
   //
   //  Construction, destruction, etc
   //
   // ============================================================================
-
-  // ------------------------------------------------------------- Constructors
-
-  TBBraw::TBBraw()
+  
+  //_____________________________________________________________________________
+  //                                                                       TBBraw
+  
+  TBBraw::TBBraw ()
   {
     init();
   }
 
-  TBBraw::TBBraw(string const &filename, string const &observer,
-                 string const &project, string const &observation_id,
-                 string const &observationMode, string const &telescope)
+  //_____________________________________________________________________________
+  //                                                                       TBBraw
+  
+  TBBraw::TBBraw (string const &filename,
+		  string const &observer,
+		  string const &project,
+		  string const &observation_id,
+		  string const &observationMode,
+		  string const &telescope)
   {
     init();
-    open_file(filename, observer, project, observation_id, observationMode, telescope);
+    open_file (filename,
+	       observer,
+	       project,
+	       observation_id,
+	       observationMode,
+	       telescope);
   }
-
-  // ------------------------------------------------------------- Destructors
+  
+  //_____________________________________________________________________________
+  //                                                                      ~TBBraw
+  
   TBBraw::~TBBraw()
   {
     destroy();
   }
 
-  // -------------------------------------------------- Init and Destruct Methods
-  void TBBraw::init()
+  //_____________________________________________________________________________
+  //                                                                         init
+  
+  void TBBraw::init ()
   {
-    bigendian_p  = BigEndian();
-    dataset_p = NULL;
+    bigendian_p    = BigEndian();
+    dataset_p      = NULL;
     do_headerCRC_p = true;
-    do_dataCRC_p = false;
+    do_dataCRC_p   = false;
 
-    fixTimes = 2;
-    noProcessed = 0;;
-    noDiscardedHeader = 0;
+    fixTimes_p           = 2;
+    nofProcessed_p       = 0;
+    nofDiscardedHeader_p = 0;
 
     //initialize the buffers
     int i;
@@ -79,16 +95,21 @@ namespace DAL   // Namespace DAL -- begin
         dipoleBuf[i].ID = 0;
         dipoleBuf[i].array = NULL;
       };
-
+    
   }
 
-  bool TBBraw::open_file(string const &filename, string const &observer,
-                         string const &project,	 string const &observation_id,
-                         string const &observationMode,  string const &telescope)
+  //_____________________________________________________________________________
+  //                                                                    open_file
+  
+  bool TBBraw::open_file (string const &filename,
+			  string const &observer,
+			  string const &project,
+			  string const &observation_id,
+			  string const &observationMode,
+			  string const &telescope)
   {
-
     struct stat filestat;
-
+    
     if ((stat(filename.c_str(), &filestat) != 0) && (errno == ENOENT))
       {
         cout << "TBBraw::open_file: Creating new dataset " << filename << endl;
@@ -122,7 +143,10 @@ namespace DAL   // Namespace DAL -- begin
       };
     return false;
   };
-
+  
+  //_____________________________________________________________________________
+  //                                                                      destroy
+  
   void TBBraw::destroy()
   {
     int i;
@@ -157,8 +181,12 @@ namespace DAL   // Namespace DAL -- begin
   //
   // ============================================================================
 
-  // ---------------------------------------------------------- processTBBrawBlock
-  bool TBBraw::processTBBrawBlock(char *inbuff, int datalen, bool bigEndian)
+  //_____________________________________________________________________________
+  //                                                           processTBBrawBlock
+  
+  bool TBBraw::processTBBrawBlock (char *inbuff,
+				   int datalen,
+				   bool bigEndian)
   {
     TBB_Header *headerp;
 
@@ -172,7 +200,7 @@ namespace DAL   // Namespace DAL -- begin
         cerr << "TBBraw::processTBBrawBlock: Block too small! datalen: " << datalen << endl;
         return false;
       };
-    noProcessed++;
+    nofProcessed_p++;
     headerp = (TBB_Header*)inbuff;
 
     if ( bigendian_p != bigEndian )
@@ -188,7 +216,7 @@ namespace DAL   // Namespace DAL -- begin
 
     if (do_headerCRC_p && !checkHeaderCRC(headerp))
       {
-        noDiscardedHeader++;
+        nofDiscardedHeader_p++;
         return false;
       };
 
@@ -198,11 +226,11 @@ namespace DAL   // Namespace DAL -- begin
         return false;
       };
 
-    if (fixTimes==2)
+    if (fixTimes_p==2)
       {
         fixDateNew(headerp);
       }
-    else if (fixTimes==1)
+    else if (fixTimes_p==1)
       {
         fixDateOld(headerp);
       };
@@ -222,62 +250,52 @@ namespace DAL   // Namespace DAL -- begin
     return true;
   };
 
-  void TBBraw::printStatistics()
+  //_____________________________________________________________________________
+  //                                                                      summary
+  
+  void TBBraw::summary (std::ostream &os)
   {
-    cout << "TBBraw::printStatistics: " << endl;
-    cout << "           Number of processed blocks: " << noProcessed << endl;
-    cout << "  Number of blocks with broken header: " << noDiscardedHeader << endl;
-    cout << "     Number of blocks written to file: " << (noProcessed-noDiscardedHeader) << endl;
-  };
-
-  // ============================================================================
-  //  Private Methods
-  // ============================================================================
-
-  // ------------------------------------------------------------------ CRC16
-  // Generic CRC16 method working on 16-bit unsigned data
-  // adapted from Python script by Gijs Schoonderbeek.
-  uint16_t TBBraw::CRC16(uint16_t * buffer, uint32_t length)
-  {
-    uint16_t CRC = 0;
-    const uint32_t CRC_poly = 0x18005;
-    const uint16_t bits = 16;
-    uint32_t data = 0;
-    const uint32_t CRC_div = (CRC_poly & 0x7fffffff) << 15;
-
-    data = (buffer[0] & 0x7fffffff) << 16;
-    for (uint32_t i=1; i<length; i++)
-      {
-        data += buffer[i];
-        for (uint16_t j=0; j<bits; j++)
-          {
-            if ((data & 0x80000000) != 0)
-              {
-                data ^= CRC_div;
-              }
-            data &= 0x7fffffff;
-            data <<= 1;
-          }
-      }
-    CRC = data >> 16;
-    return CRC;
+    os << "[TBB_Timeseries] Summary of internal parameters"              << endl;
+    // Basic properties and parameters
+    os << "-- Is the system big-endian ..... : " << bigendian_p          << endl;
+    os << "-- Check the header-CRC ......... : " << do_headerCRC_p       << endl;
+    os << "-- Check the data-CRC ........... : " << do_dataCRC_p         << endl;
+    os << "-- Fix broken time-stamps ....... : " << fixTimes_p           << endl;
+    // Processing statistics
+    os << "-- nof. processed data blocks ... : " << nofProcessed_p       << endl;
+    os << "-- nof. blocks with broken header : " << nofDiscardedHeader_p << endl;
+    os << "-- nof. blocks written to file .. : "
+       << (nofProcessed_p-nofDiscardedHeader_p) << endl;
   }
 
-  // ----------------------------------------------------------- checkHeaderCRC
-  // Check the CRC of a TBB frame header. Uses CRC16. Returns TRUE if OK, FALSE otherwise
+  // ============================================================================
+  //
+  //  Private Methods
+  //
+  // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                               checkHeaderCRC
+  
+  /*!
+    Check the CRC of a TBB frame header. Uses CRC16. Returns TRUE if OK, FALSE
+    otherwise.
+  */
   bool TBBraw::checkHeaderCRC(TBB_Header *headerp)
   {
     unsigned int seqnr = headerp->seqnr; // temporary; we need to zero this out for CRC check
     headerp->seqnr = 0;
 
     uint16_t * headerBuf = reinterpret_cast<uint16_t*> (headerp);
-    uint16_t CRC = this->CRC16(headerBuf, sizeof(TBB_Header) / sizeof(uint16_t));
+    uint16_t CRC = DAL::crc16(headerBuf, sizeof(TBB_Header) / sizeof(uint16_t));
     headerp->seqnr = seqnr; // and set it back again
 
     return (CRC == 0);
   }
 
-  // ----------------------------------------------------------- fixDateOld
+  //_____________________________________________________________________________
+  //                                                                   fixDateOld
+  
   void TBBraw::fixDateOld(TBB_Header *headerp)
   {
     static bool oddSecond = false;
@@ -318,7 +336,9 @@ namespace DAL   // Namespace DAL -- begin
       };
   };
 
-  // ----------------------------------------------------------- fixDateNew
+  //_____________________________________________________________________________
+  //                                                                   fixDateNew
+  
   void TBBraw::fixDateNew(TBB_Header *headerp)
   {
     if (headerp->sample_freq == 200)
@@ -337,7 +357,9 @@ namespace DAL   // Namespace DAL -- begin
       };
   };
 
-  // ----------------------------------------------------------- getDipoleIndex
+  //_____________________________________________________________________________
+  //                                                               getDipoleIndex
+  
   int TBBraw::getDipoleIndex(TBB_Header *headerp)
   {
     int i, dipoleIndex=-1;
@@ -367,7 +389,9 @@ namespace DAL   // Namespace DAL -- begin
       };
   };
 
-  // ----------------------------------------------------------- createNewDipole
+  //_____________________________________________________________________________
+  //                                                              createNewDipole
+  
   int TBBraw::createNewDipole(TBB_Header *headerp)
   {
     int i, stationIndex=-1, dipoleIndex=-1;
@@ -536,8 +560,9 @@ namespace DAL   // Namespace DAL -- begin
     return stationIndex;
   };
 
-
-  // ----------------------------------------------------------- addDataToDipole
+  //_____________________________________________________________________________
+  //                                                              addDataToDipole
+  
   bool TBBraw::addDataToDipole(int index, char *buffer, int bufflen, bool bigEndian)
   {
     int i;
