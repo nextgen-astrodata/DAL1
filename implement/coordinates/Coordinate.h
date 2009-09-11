@@ -70,8 +70,7 @@ namespace DAL {   // Namespace DAL -- begin
   public:
     
     //! Type of the coordinate; for definition and attributes see LOFAR-USG-ICD-004
-    enum Type
-    {
+    enum Type {
       //! Direction coordinate
       Direction,
       //! Spectral coordinate

@@ -107,21 +107,21 @@ std::vector<std::string> mdirections_list ()
 {
   std::vector<std::string> names;
 
-  names.push_back("J2000");
-  names.push_back("JMEAN");
-  names.push_back("JTRUE");
-  names.push_back("APP");
-  names.push_back("B1950");
-  names.push_back("B1950_VLA");
-  names.push_back("BMEAN");
-  names.push_back("BTRUE");
-  names.push_back("GALACTIC");
-  names.push_back("HADEC");
-  names.push_back("AZEL");
-  names.push_back("AZELSW");
-  names.push_back("AZELGEO");
-  names.push_back("AZELSWGEO");
-  names.push_back("JNAT");
+  names.push_back("J2000");      // mean equator and equinox at J2000.0 (FK5)
+  names.push_back("JNAT");       // geocentric natural frame
+  names.push_back("JMEAN");      // mean equator and equinox at frame epoch
+  names.push_back("JTRUE");      // true equator and equinox at frame epoch
+  names.push_back("APP");        // apparent geocentric position
+  names.push_back("B1950");      // mean epoch and ecliptic at B1950.0
+  names.push_back("B1950_VLA");  // mean epoch(1979.9)) and ecliptic at B1950.0
+  names.push_back("BMEAN");      // mean equator and equinox at frame epoch
+  names.push_back("BTRUE");      // true equator and equinox at frame epoch
+  names.push_back("GALACTIC");   // galactic coordinates
+  names.push_back("HADEC");      // topocentric HA and declination
+  names.push_back("AZEL");       // topocentric Azimuth and Elevation (N through E)
+  names.push_back("AZELSW");     // topocentric Azimuth and Elevation (S through W)
+  names.push_back("AZELGEO");    // topocentric Azimuth and Elevation (N through E)
+  names.push_back("AZELSWGEO");  // geodetic Azimuth and Elevation (N through E)
   names.push_back("ECLIPTIC");
   names.push_back("MECLIPTIC");
   names.push_back("TECLIPTIC");
