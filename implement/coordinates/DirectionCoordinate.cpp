@@ -220,10 +220,10 @@ namespace DAL {   // Namespace DAL -- begin
     DAL::h5get_attribute( groupID, "LATPOLE",          latpole );
 
     /* Store the retrieved values */
-    if (getType(coordinate_type) == Coordinate::Direction)
+    if (Coordinate::getType(coordinate_type) == Coordinate::Direction)
       {
         // basic parameters
-        coordinateType_p = getType(coordinate_type);
+        coordinateType_p = Coordinate::getType(coordinate_type);
         nofAxes_p        = nof_axes;
         // WCS parameters
         setAxisNames (axis_names);

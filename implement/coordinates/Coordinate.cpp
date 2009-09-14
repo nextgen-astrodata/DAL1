@@ -221,6 +221,9 @@ namespace DAL   // Namespace DAL -- begin
       case DAL::Coordinate::Linear:
         coordinateName="Linear";
         break;
+      case DAL::Coordinate::Spectral:
+        coordinateName="Spectral";
+        break;
       case DAL::Coordinate::Stokes:
         coordinateName="Stokes";
         break;
@@ -242,28 +245,26 @@ namespace DAL   // Namespace DAL -- begin
   {
     Coordinate::Type coordinateType (Coordinate::NONE);
 
-    if (name == "Direction")
-      {
-        coordinateType = Coordinate::Direction;
-      }
-    else if (name == "Frequency")
-      {
-        coordinateType = Coordinate::Frequency;
-      }
-    else if (name == "Linear")
-      {
-        coordinateType = Coordinate::Linear;
-      }
-    else if (name == "Stokes")
-      {
-        coordinateType = Coordinate::Stokes;
-      }
-    else if (name == "Tabular")
-      {
-        coordinateType = Coordinate::Tabular;
-      }
-
+    if (name == "Direction") {
+      coordinateType = Coordinate::Direction;
+    }
+    else if (name == "Frequency") {
+      coordinateType = Coordinate::Frequency;
+    }
+    else if (name == "Linear") {
+      coordinateType = Coordinate::Linear;
+    }
+    else if (name == "Spectral") {
+      coordinateType = Coordinate::Spectral;
+    }
+    else if (name == "Stokes") {
+      coordinateType = Coordinate::Stokes;
+    }
+    else if (name == "Tabular") {
+      coordinateType = Coordinate::Tabular;
+    }
+    
     return coordinateType;
   }
-
+    
 } // Namespace DAL -- end

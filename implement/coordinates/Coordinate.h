@@ -43,7 +43,6 @@ namespace DAL {   // Namespace DAL -- begin
     \class Coordinate
 
     \ingroup DAL
-
     \brief A basic container for a coordinate object added to a HDF5 file
 
     \author Lars B&auml;hren
@@ -77,6 +76,8 @@ namespace DAL {   // Namespace DAL -- begin
       Frequency,
       //! Linear coordinate
       Linear,
+      //! Spectral coordinate,
+      Spectral,
       //! Stokes parameters coordinate
       Stokes,
       //! Tabulated coordinate
@@ -147,6 +148,11 @@ namespace DAL {   // Namespace DAL -- begin
     }
     //! Get the coordinate type as name
     std::string name ();
+
+    //! Get the number of coordinate axes
+    inline int nofAxes () {
+      return nofAxes_p;
+    }
     
     //! Get the world axis names
     std::vector<std::string> axisNames () {
@@ -301,10 +307,11 @@ namespace DAL {   // Namespace DAL -- begin
     //! Unconditional copying
     void copy (Coordinate const &other);
     
-  private:
-    
+    //! Initilize the internal set of parameters
     void init ();
     
+  private:
+
     //! Unconditional deletion
     void destroy(void);
     

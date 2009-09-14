@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------*
- | $Id:: StokesCoordinate.cpp 2987 2009-09-04 12:43:48Z baehren          $ |
+ | $Id::                                                                 $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2009                                                    *
@@ -107,7 +107,11 @@ namespace DAL {  // Namespace DAL -- begin
   
   void StokesCoordinate::copy (StokesCoordinate const &other)
   {
+    // copy variables handled by the base class
     Coordinate::copy (other);
+    // copy variables handles by this class
+    values_p.resize(other.values_p.size());
+    values_p = other.values_p;
   }
   
   // ============================================================================
@@ -121,12 +125,6 @@ namespace DAL {  // Namespace DAL -- begin
     os << "[StokesCoordinate] Summary of internal parameters." << std::endl;
     os << "-- Coordinate type       = " << type() << " / " <<  name() << std::endl;
     os << "-- nof. axes             = " << nofAxes_p      << std::endl;
-    os << "-- World axis names      = " << axisNames_p    << std::endl;
-    os << "-- World axis units      = " << axisUnits_p    << std::endl;
-    os << "-- Reference value       = " << refValue_p     << std::endl;
-    os << "-- Reference pixel       = " << refPixel_p     << std::endl;
-    os << "-- Increment             = " << increment_p    << std::endl;
-    os << "-- Transformation matrix = " << pc_p           << std::endl;
   }
 
 
@@ -141,11 +139,15 @@ namespace DAL {  // Namespace DAL -- begin
   {
     // variables maintained by the base class
     coordinateType_p = Coordinate::Stokes;
-    nofAxes_p = values.size();
+    nofAxes_p        = 1;
+    Coordinate::init();
     // store the input list of Stokes values
-    values_p.resize (nofAxes_p);
+    values_p.resize (values.size());
     values_p = values;
   }
+
+  //_____________________________________________________________________________
+  //                                                                      getName
 
   std::string StokesCoordinate::getName (StokesCoordinate::Stokes const &type)
   {
@@ -196,6 +198,45 @@ namespace DAL {  // Namespace DAL -- begin
     return name;
   }
 
+  //_____________________________________________________________________________
+  //                                                                      getType
+
+  StokesCoordinate::Stokes StokesCoordinate::getType (std::string const &name)
+  {
+    StokesCoordinate::Stokes type;
+
+    if (name == "I") {
+      type = StokesCoordinate::I;
+    }
+    else if (name == "Q") {
+      type = StokesCoordinate::Q;
+    }
+    else if (name == "U") {
+      type = StokesCoordinate::U;
+    }
+    else if (name == "V") {
+      type = StokesCoordinate::V;
+    }
+    else if (name == "RR") {
+      type = StokesCoordinate::RR;
+    }
+    else if (name == "LL") {
+      type = StokesCoordinate::LL;
+    }
+    else if (name == "RL") {
+      type = StokesCoordinate::RL;
+    }
+    else if (name == "LR") {
+      type = StokesCoordinate::LR;
+    }
+    else {
+      std::cerr << "[StokesCoordinate::getType] Unknow name of Stokes value!"
+		<< std::endl;
+    }
+
+    return type;
+  }
+
 #ifdef HAVE_HDF5
 
   //_____________________________________________________________________________
@@ -236,6 +277,24 @@ namespace DAL {  // Namespace DAL -- begin
    */
   void StokesCoordinate::h5read (hid_t const &groupID)
   {
+    std::string coordinate_type;
+    unsigned int nof_axes;
+
+    /* Read the attributes from the HDF5 file */
+    DAL::h5get_attribute( groupID, "COORDINATE_TYPE",  coordinate_type );
+    DAL::h5get_attribute( groupID, "NOF_AXES",         nof_axes );
+    
+    /* Store the retrieved values */
+    if (Coordinate::getType(coordinate_type) == Coordinate::Stokes) {
+      // basic parameters
+      coordinateType_p = Coordinate::getType(coordinate_type);
+      nofAxes_p        = nof_axes;
+    }
+    else {
+      std::cerr << "[StokesCoordinate::h5read]"
+		<< " Encountered coordinate does not match expected type!"
+		<< std::endl;
+    }
   }
   
   //_____________________________________________________________________________
@@ -272,24 +331,6 @@ namespace DAL {  // Namespace DAL -- begin
     DAL::h5set_attribute( groupID, "PC",               pc_p );
   }
 
-#endif
-  
-  //_____________________________________________________________________________
-  //                                                             importCoordinate
-
-#ifdef HAVE_CASA
-  void StokesCoordinate::importCoordinate (casa::StokesCoordinate const &coord) 
-  {
-  }
-#endif
-  
-  //_____________________________________________________________________________
-  //                                                             exportCoordinate
-  
-#ifdef HAVE_CASA
-  void StokesCoordinate::exportCoordinate (casa::StokesCoordinate &coord) 
-  {
-  }
 #endif
   
 } // Namespace DAL -- end

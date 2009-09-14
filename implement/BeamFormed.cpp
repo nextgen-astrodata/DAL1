@@ -24,11 +24,10 @@
 #include "BeamFormed.h"
 #endif
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   // ---------------------------------------------------------- BeamFormed
-
+  
   BeamFormed::BeamFormed()
   {
     dataset_p  = NULL;
@@ -37,9 +36,9 @@ namespace DAL
     H5fileID_p = 0;
     beamGroups_p.clear();
   };
-
+  
   // ---------------------------------------------------------- BeamFormed
-
+  
   /*!
     \param filename -- Name of the file from which to read in the data
   */
@@ -50,83 +49,76 @@ namespace DAL
     filename_p = "";
     H5fileID_p = 0;
     beamGroups_p.clear();
-
+    
     filename_p = filename;
-
+    
     init();
   }
-
+  
   // ----------------------------------------------------------------------- init
-
+  
   /*!
     \brief Object initialization method
-
+    
     \return status -- Status of the operation; returns \e false in case an error
             was encountered.
   */
   bool BeamFormed::init ()
   {
-
     bool status (true);
-
+    
     // Connection to dataset via DAL layer
-
+    
     dataset_p = new dalDataset;
-    if ( DAL::FAIL == dataset_p->open( filename_p.c_str() ) )
-      {
-        std::cerr << "[BeamFormed::init] Error opening file into dalDataset!"
-                  << std::endl;
-        return false;
-      }
-
+    if ( DAL::FAIL == dataset_p->open( filename_p.c_str() ) ) {
+      std::cerr << "[BeamFormed::init] Error opening file into dalDataset!"
+		<< std::endl;
+      return false;
+    }
+    
     H5fileID_p = dataset_p->getFileHandle();
-
+    
     /*
       [1] If opening the data file was successful, we can continue. First we scan
       for the beam groups available in the file, since this is the basic unit
       within which the actual data for the individual sub-bands are stored.
     */
     std::vector<std::string> beamGroups = beams();
-
+    
     /* Always check if actually a list of groups has been extracted */
-    if ( beamGroups.size() > 0 )
-      {
-        for (uint beam(0); beam<beamGroups.size(); beam++)
-          {
-            // assemble internal list of beam groups
-            BeamGroup * group = new BeamGroup((*dataset_p), beamGroups[beam]);
-            beamGroups_p.push_back(group);
-          }
+    if ( beamGroups.size() > 0 ) {
+      for (uint beam(0); beam<beamGroups.size(); beam++) {
+	// assemble internal list of beam groups
+	BeamGroup * group = new BeamGroup((*dataset_p), beamGroups[beam]);
+	beamGroups_p.push_back(group);
       }
-    else
-      {
-        std::cerr << "[BeamFormed::init] No beam group found in data set!"
-                  << std::endl;
-        status = false;
-      }
-
+    }
+    else {
+      std::cerr << "[BeamFormed::init] No beam group found in data set!"
+		<< std::endl;
+      status = false;
+    }
+    
     return status;
   }
-
+  
   // ---------------------------------------------------------------- ~BeamFormed
-
+  
   BeamFormed::~BeamFormed()
   {
-    for (uint beam(0); beam<beamGroups_p.size(); beam++)
-      {
-        delete beamGroups_p[beam];
-      }
-
-    if ( NULL != dataset_p )
-      {
-        dataset_p->close();
-        delete dataset_p;
-        dataset_p = NULL;
-      }
+    for (uint beam(0); beam<beamGroups_p.size(); beam++) {
+      delete beamGroups_p[beam];
+    }
+    
+    if ( NULL != dataset_p ) {
+      dataset_p->close();
+      delete dataset_p;
+      dataset_p = NULL;
+    }
   }
-
+  
   // ---------------------------------------------------------- h5get_str_array_attr
-
+  
   /*!
     \brief Get a list of values for a string array attribute
     \param attrname       -- attribute name [I]
@@ -147,51 +139,48 @@ namespace DAL
     // get the shape of the dataspace
     status = h5get_dataspace_shape (attribute_id,shape);
 
-    if (shape.size() == 1)
-      {
-        // additional local variables
-        hid_t datatype_id  = H5Aget_type (attribute_id);
-        hsize_t dims[1] = { shape[0] };
-
-        char **data_in;
-
-        /* How many strings are in the string array? */
-        if (!(data_in = (char**)malloc(dims[0] * sizeof(char *))))
-          cerr << "ERROR! malloc " << attrname << endl;
-
-        /* Now read the array of strings. The HDF5 library will allocate
-         * space for each string. */
-        if ( H5Aread( attribute_id, datatype_id, data_in ) < 0)
-          cerr << "ERROR! h5aread "  << attrname << endl;
-
-        for (uint ii=0; ii<shape[0]; ii++)
-          lcl_sources.push_back( data_in[ii] );
-
-        for (uint ii=0; ii<shape[0]; ii++)
-          free( data_in[ii] );
-
-        free( data_in );
-
-        /* Close HDF5 stuff. */
-        if (H5Aclose(attribute_id) < 0)
-          cerr << "ERROR! h5aclose " << attrname << endl;
-        if (H5Tclose(datatype_id) < 0)
-          cerr << "ERROR! h5tclose " << attrname << endl;
-
-      }
-    else
-      {
-        cerr << "[dataset_p->getAttribute] Wrong shape of attribute dataspace!"
-             << std::endl;
-        status = false;
-      }
-
+    if (shape.size() == 1) {
+      // additional local variables
+      hid_t datatype_id  = H5Aget_type (attribute_id);
+      hsize_t dims[1] = { shape[0] };
+      
+      char **data_in;
+      
+      /* How many strings are in the string array? */
+      if (!(data_in = (char**)malloc(dims[0] * sizeof(char *))))
+	cerr << "ERROR! malloc " << attrname << endl;
+      
+      /* Now read the array of strings. The HDF5 library will allocate
+       * space for each string. */
+      if ( H5Aread( attribute_id, datatype_id, data_in ) < 0)
+	cerr << "ERROR! h5aread "  << attrname << endl;
+      
+      for (uint ii=0; ii<shape[0]; ii++)
+	lcl_sources.push_back( data_in[ii] );
+      
+      for (uint ii=0; ii<shape[0]; ii++)
+	free( data_in[ii] );
+      
+      free( data_in );
+      
+      /* Close HDF5 stuff. */
+      if (H5Aclose(attribute_id) < 0)
+	cerr << "ERROR! h5aclose " << attrname << endl;
+      if (H5Tclose(datatype_id) < 0)
+	cerr << "ERROR! h5tclose " << attrname << endl;
+      
+    }
+    else {
+      cerr << "[dataset_p->getAttribute] Wrong shape of attribute dataspace!"
+	   << std::endl;
+      status = false;
+    }
+    
     return lcl_sources;
-
   }
-
+  
   // ---------------------------------------------------------- summary
-
+  
   /*!
     \brief Provide a summary of the internal status
     \param os              -- output stream [I]
@@ -245,19 +234,17 @@ namespace DAL
         print_vector(os, temps);
         os << endl;
 
-        if (listBeams)
-          {
-            for (uint beam(0); beam<beamGroups_p.size(); beam++)
-              {
-                beamGroups_p[beam]->summary();
-              }
-          }
+        if (listBeams) {
+	  for (uint beam(0); beam<beamGroups_p.size(); beam++) {
+	    beamGroups_p[beam]->summary();
+	  }
+	}
       }
-
+    
   }
-
+  
   // ---------------------------------------------------------- getBeam
-
+  
   /*!
     \brief Get a beam group object
     \param beam       -- beam number [I]
@@ -283,27 +270,25 @@ namespace DAL
     dalGroup * beamgroup = NULL;
     std::vector< std::string > lcl_beams = dataset_p->getGroupNames();
 
-    for (uint beam=0; beam<lcl_beams.size(); beam++)
-      {
-
-        /* create ID string for the group */
-        sprintf( beamstr, "beam%03d", beam );
-
-        beamgroup = dataset_p->openGroup(beamstr);
-
-        if ( beamgroup )
-          {
-            beamGroups.push_back(beamstr);
-            delete beamgroup;
-          }
+    for (uint beam=0; beam<lcl_beams.size(); beam++) {
+      
+      /* create ID string for the group */
+      sprintf( beamstr, "beam%03d", beam );
+      
+      beamgroup = dataset_p->openGroup(beamstr);
+      
+      if ( beamgroup ) {
+	beamGroups.push_back(beamstr);
+	delete beamgroup;
       }
-
+    }
+    
     delete [] beamstr;
     beamstr = NULL;
-
+    
     return beamGroups;
   }
-
+  
   // ---------------------------------------------------------- filename
 
   /*!
@@ -314,20 +299,19 @@ namespace DAL
   {
     std::string filename ("");
 
-    if ( dataset_p->getName() != "UNDEFINED" )
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "FILENAME", filename ) )
-          {
-            std::cerr << "-- Error extracting attribute FILENAME\n";
-            filename = "";
-          }
-      }
-
+    if ( dataset_p->getName() != "UNDEFINED" ) {
+      if ( DAL::FAIL == dataset_p->getAttribute( "FILENAME", filename ) )
+	{
+	  std::cerr << "-- Error extracting attribute FILENAME\n";
+	  filename = "";
+	}
+    }
+    
     return filename;
   }
-
+  
   // ---------------------------------------------------------- telescope
-
+  
   /*!
     \return telescope -- The name of the telescope with which the data were
             recorded; returns an empty string in case no keyword value could

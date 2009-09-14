@@ -28,14 +28,13 @@
 #include <BeamGroup.h>
 #endif
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   /*!
     \class BeamFormed
-
+    
     \ingroup DAL
-
+    
     \brief High-level interface between beam-formed data and the DAL
 
     \author Joseph Masters
@@ -55,27 +54,27 @@ namespace DAL
     <table border="0">
       <tr>
         <td class="indexkey"></td>
-  <td class="indexkey">DAL::BeamFormed</td>
-  <td class="indexkey">DAL::BeamGroup</td>
-  <td class="indexkey">DAL::BeamSubband</td>
-      </tr>
+	<td class="indexkey">DAL::BeamFormed</td>
+	<td class="indexkey">DAL::BeamGroup</td>
+	<td class="indexkey">DAL::BeamSubband</td>
+	</tr>
       <tr>
         <td class="indexkey">DAL object</td>
-  <td>dalDataset *dataset_p;</td>
-  <td>dalGroup *group_p;</td>
-  <td>dalTable *table_p;</td>
+	<td>dalDataset *dataset_p;</td>
+	<td>dalGroup *group_p;</td>
+	<td>dalTable *table_p;</td>
       </tr>
       <tr>
         <td class="indexkey">HDF5 object IDs</td>
-  <td>hid_t H5fileID_p;</td>
-  <td>hid_t H5fileID_p;</td>
-  <td>hid_t H5fileID_p;</td>
+	<td>hid_t H5fileID_p;</td>
+	<td>hid_t H5fileID_p;</td>
+	<td>hid_t H5fileID_p;</td>
       </tr>
       <tr>
         <td class="indexkey">Subcomponents container</td>
-  <td>std::vector<BeamGroup*> beamGroups_p;</td>
-  <td>std::vector<BeamSubband*> beamSubbands_p;</td>
-  <td>-</td>
+	<td>std::vector<BeamGroup*> beamGroups_p;</td>
+	<td>std::vector<BeamSubband*> beamSubbands_p;</td>
+	<td>-</td>
       </tr>
     </table>
 

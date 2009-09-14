@@ -205,9 +205,9 @@ namespace DAL {  // Namespace DAL -- begin
     DAL::h5get_attribute( groupID, "PC",               pc );
 
     /* Store the retrieved values */
-    if (getType(coordinate_type) == Coordinate::Linear) {
+    if (Coordinate::getType(coordinate_type) == Coordinate::Linear) {
       // basic parameters
-      coordinateType_p = getType(coordinate_type);
+      coordinateType_p = Coordinate::getType(coordinate_type);
       nofAxes_p        = nof_axes;
       // WCS parameters
       setAxisNames (axis_names);
@@ -218,6 +218,9 @@ namespace DAL {  // Namespace DAL -- begin
       setPc        (pc);
     }
     else {
+      std::cerr << "[LinearCoordinate::h5read]"
+		<< " Encountered coordinate does not match expected type!"
+		<< std::endl;
     }
   }
   

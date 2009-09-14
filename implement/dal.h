@@ -60,7 +60,9 @@
       - DAL::Coordinate
       - DAL::DirectionCoordinate
       - DAL::LinearCoordinate
+      - DAL::StokesCoordinate
       - DAL::TabularCoordinate
+      - DAL::CoordinatesGroup
       </td>
       <td>
       - DAL::BeamFormed

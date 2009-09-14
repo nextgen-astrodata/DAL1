@@ -182,24 +182,28 @@ namespace DAL {  // Namespace DAL -- begin
     //! Set the reference value
     void setRefValue (std::vector<double> const &refValue) {
       std::cerr << "[TabularCoordinate] No parameter reference value available!"
+		<< " Not storing value " << refValue
 		<< std::endl;
     }
 
     //! Set the reference pixel
     void setRefPixel (std::vector<double> const &refPixel) {
       std::cerr << "[TabularCoordinate] No parameter reference pixel available!"
+		<< " Not storing value " << refPixel
 		<< std::endl;
     }
     
     //! Set the coordinate axis increment
     void setIncrement (std::vector<double> const &increment) {
       std::cerr << "[TabularCoordinate] No parameter increment available!"
+		<< " Not storing value " << increment
 		<< std::endl;
     }
     
     //! Set the transformation matrix
     void setPc (std::vector<double> const &pc) {
       std::cerr << "[TabularCoordinate] No parameter transformation matrix available!"
+		<< " Not storing value " << pc
 		<< std::endl;
     }
     

@@ -84,6 +84,7 @@ if (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
       tcasacore_images
       tDirectionCoordinate
       tLinearCoordinate
+      tStokesCoordinate
       tTabularCoordinate
       tLOFAR_Image
       )
