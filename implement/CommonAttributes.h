@@ -99,7 +99,7 @@ namespace DAL { // Namespace DAL -- begin
         <td>Unique identifier for the project</td>
       </tr>
       <tr>
-        <td>PROJECT_NAME</td>
+        <td>PROJECT_TITLE</td>
         <td>string</td>
         <td>--</td>
         <td>Name of the project</td>
@@ -136,7 +136,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Unique identifier for the project
     std::string projectID_p;
     //! Name of the project
-    std::string projectName_p;
+    std::string projectTitle_p;
     //! Brief project description
     std::string projectDescription_p;
     //! Name(s) of the observer(s)
@@ -272,13 +272,13 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Get the name of the project
-    inline std::string projectName () const {
-      return projectName_p;
+    inline std::string projectTitle () const {
+      return projectTitle_p;
     }
 
     //! Set the name of the project
-    inline void setProjectName (std::string const &projectName) {
-      projectName_p = projectName;
+    inline void setProjectTitle (std::string const &projectTitle) {
+      projectTitle_p = projectTitle;
     }
     
     //! Get the brief description of the project

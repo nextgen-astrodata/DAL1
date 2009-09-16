@@ -48,7 +48,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     \date 2009/06/24
 
-    \test tTabularCoordinate.cc
+    \test tTabularCoordinate.cpp
 
     <h3>Prerequisite</h3>
 

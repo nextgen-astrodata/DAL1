@@ -31,24 +31,23 @@
 #include "dalTable.h"
 #endif
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   // ============================================================================
   //
   //  Construction
   //
   // ============================================================================
-
+  
   // ------------------------------------------------------------------- dalTable
-
+  
   dalTable::dalTable()
   {
     filter = new dalFilter;
   }
-
+  
   // ------------------------------------------------------------------- dalTable
-
+  
   /*!
     \param filetype -- The type of table you want to create (i.e. "HDF5",
            "MSCASA", etc.)
@@ -845,14 +844,16 @@ namespace DAL
 
   }
 
+  //_____________________________________________________________________________
+  //                                                            h5addColumn_setup
+
   /*!
     \param column_name -- Name of the column to be added
     \param removedummy -- Remove dummy column
   */
-  void dalTable::h5addColumn_setup( std::string const column_name,
-                                    bool &removedummy )
+  void dalTable::h5addColumn_setup (std::string const column_name,
+                                    bool &removedummy)
   {
-
     // make sure the column name isn't blank
     if ( 0 == column_name.length() )
       {
@@ -897,7 +898,16 @@ namespace DAL
     free(field_names);
   }
 
-  void dalTable::h5addColumn_insert( uint const & indims,
+  //_____________________________________________________________________________
+  //                                                           h5addColumn_insert
+
+  /*!
+    \param indims       -- Numer of dimensions
+    \param colname      -- Name of the table column
+    \param field_type   -- 
+    \param removedummay -- 
+  */
+  void dalTable::h5addColumn_insert (uint const & indims,
                                      std::string const & colname,
                                      hid_t const & field_type,
                                      bool const & removedummy )
@@ -932,122 +942,121 @@ namespace DAL
                             std::string coltype,
                             uint indims )
   {
-    if ( type == H5TYPE )
-      {
-        bool removedummy = false;
-
-        h5addColumn_setup( colname, removedummy );
-
-        // set the column type
-        hsize_t dd = indims;
-        hsize_t * dims = &dd;
-        hid_t	field_type = 0;
-        hid_t   h5type = 0;
-
-        if ( dal_CHAR == coltype )
-          h5type =  H5T_NATIVE_CHAR;
-
-        else if ( dal_INT == coltype )
-          h5type =  H5T_NATIVE_INT;
-
-        else if ( dal_UINT == coltype )
-          h5type = H5T_NATIVE_UINT;
-
-        else if ( dal_SHORT == coltype )
-          h5type = H5T_NATIVE_SHORT;
-
-        else if ( dal_FLOAT == coltype )
-          h5type = H5T_NATIVE_FLOAT;
-
-        else if ( dal_DOUBLE == coltype )
-          h5type = H5T_NATIVE_DOUBLE;
-
-        else if ( dal_STRING == coltype )
-          h5type = H5T_NATIVE_CHAR;
-
-        else if ( dal_COMPLEX_CHAR == coltype || dal_COMPLEX == coltype ||
-                  dal_COMPLEX_SHORT == coltype )
-          {
-            std::vector<dalColumn> cv;
-            std::string component_type;
-
-            if ( dal_COMPLEX_CHAR == coltype )
-              component_type = dal_CHAR;
-
-            else if ( dal_COMPLEX == coltype )
-              component_type = dal_DOUBLE;
-
-            else if ( dal_COMPLEX_SHORT == coltype )
-              component_type = dal_SHORT;
-
-            dalColumn col_a( "r", component_type );  // real component
-            dalColumn col_b( "i", component_type );  // imaginary component
-
-            cv.push_back( col_a );
-            cv.push_back( col_b );
-
-            size_t sz = 0;
-
-            // compute the size of the compound column
-            for ( unsigned int ii=0; ii<cv.size(); ii++)
-              {
-                //cerr << "subcolumn name is " << foo[ii].getName()
-                //	 << ". Type is " << foo[ii].getType() << endl;
-                sz += cv[ii].getSize();
-              }
-
-            // create a compound type that can hold each field
-            h5type = H5Tcreate( H5T_COMPOUND, sz );
-
-            size_t offset = 0;
-            hid_t lcl_datatype = 0;
-            for ( unsigned int ii=0; ii<cv.size(); ii++)
-              {
-
-                if (0==ii)
-                  offset=0;
-                else
-                  offset += cv[ii-1].getSize();
-
-                if ( dal_CHAR == cv[ii].getType() )
-                  lcl_datatype = H5T_NATIVE_CHAR;
-
-                else if ( dal_SHORT == cv[ii].getType() )
-                  lcl_datatype = H5T_NATIVE_SHORT;
-
-                else if ( dal_INT == cv[ii].getType() )
-                  lcl_datatype = H5T_NATIVE_INT;
-
-                else if ( dal_FLOAT == cv[ii].getType() )
-                  lcl_datatype = H5T_NATIVE_FLOAT;
-
-                else if ( dal_DOUBLE == cv[ii].getType() )
-                  lcl_datatype = H5T_NATIVE_DOUBLE;
-
-                H5Tinsert( h5type, cv[ii].getName().c_str(), offset, lcl_datatype );
-              }
-          }
-        else
-          {
-            std::cerr << "ERROR: column type " << coltype << " is not supported."
-                      << endl;
-            return;
-          }
-        if ((*dims) > 1)
-          field_type = H5Tarray_create1( h5type, 1, dims, NULL );
-        else
-          field_type = h5type;
-
-        h5addColumn_insert( indims, colname, field_type, removedummy );
-      }
+    if ( type == H5TYPE ) {
+      bool removedummy = false;
+      
+      h5addColumn_setup( colname, removedummy );
+      
+      // set the column type
+      hsize_t dd = indims;
+      hsize_t * dims = &dd;
+      hid_t	field_type = 0;
+      hid_t   h5type = 0;
+      
+      if ( dal_CHAR == coltype )
+	h5type =  H5T_NATIVE_CHAR;
+      
+      else if ( dal_INT == coltype )
+	h5type =  H5T_NATIVE_INT;
+      
+      else if ( dal_UINT == coltype )
+	h5type = H5T_NATIVE_UINT;
+      
+      else if ( dal_SHORT == coltype )
+	h5type = H5T_NATIVE_SHORT;
+      
+      else if ( dal_FLOAT == coltype )
+	h5type = H5T_NATIVE_FLOAT;
+      
+      else if ( dal_DOUBLE == coltype )
+	h5type = H5T_NATIVE_DOUBLE;
+      
+      else if ( dal_STRING == coltype )
+	h5type = H5T_NATIVE_CHAR;
+      
+      else if ( dal_COMPLEX_CHAR == coltype || dal_COMPLEX == coltype ||
+		dal_COMPLEX_SHORT == coltype )
+	{
+	  std::vector<dalColumn> cv;
+	  std::string component_type;
+	  
+	  if ( dal_COMPLEX_CHAR == coltype )
+	    component_type = dal_CHAR;
+	  
+	  else if ( dal_COMPLEX == coltype )
+	    component_type = dal_DOUBLE;
+	  
+	  else if ( dal_COMPLEX_SHORT == coltype )
+	    component_type = dal_SHORT;
+	  
+	  dalColumn col_a( "r", component_type );  // real component
+	  dalColumn col_b( "i", component_type );  // imaginary component
+	  
+	  cv.push_back( col_a );
+	  cv.push_back( col_b );
+	  
+	  size_t sz = 0;
+	  
+	  // compute the size of the compound column
+	  for ( unsigned int ii=0; ii<cv.size(); ii++)
+	    {
+	      //cerr << "subcolumn name is " << foo[ii].getName()
+	      //	 << ". Type is " << foo[ii].getType() << endl;
+	      sz += cv[ii].getSize();
+	    }
+	  
+	  // create a compound type that can hold each field
+	  h5type = H5Tcreate( H5T_COMPOUND, sz );
+	  
+	  size_t offset = 0;
+	  hid_t lcl_datatype = 0;
+	  for ( unsigned int ii=0; ii<cv.size(); ii++)
+	    {
+	      
+	      if (0==ii)
+		offset=0;
+	      else
+		offset += cv[ii-1].getSize();
+	      
+	      if ( dal_CHAR == cv[ii].getType() )
+		lcl_datatype = H5T_NATIVE_CHAR;
+	      
+	      else if ( dal_SHORT == cv[ii].getType() )
+		lcl_datatype = H5T_NATIVE_SHORT;
+	      
+	      else if ( dal_INT == cv[ii].getType() )
+		lcl_datatype = H5T_NATIVE_INT;
+	      
+	      else if ( dal_FLOAT == cv[ii].getType() )
+		lcl_datatype = H5T_NATIVE_FLOAT;
+	      
+	      else if ( dal_DOUBLE == cv[ii].getType() )
+		lcl_datatype = H5T_NATIVE_DOUBLE;
+	      
+	      H5Tinsert( h5type, cv[ii].getName().c_str(), offset, lcl_datatype );
+	    }
+	}
+      else
+	{
+	  std::cerr << "ERROR: column type " << coltype << " is not supported."
+		    << endl;
+	  return;
+	}
+      if ((*dims) > 1)
+	field_type = H5Tarray_create1( h5type, 1, dims, NULL );
+      else
+	field_type = h5type;
+      
+      h5addColumn_insert( indims, colname, field_type, removedummy );
+    }
     else
       {
         std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
       }
   }
-
+  
   // -------------------------------------------------------- addComplexColumn
-
+  
   /*!
     Create an complex type column to the table.  This is usually called by the
     addColumn method when the addColumn datatype is dalCOMPLEX, and not by the
@@ -1218,18 +1227,21 @@ namespace DAL
   \param index The position of the column you want to write to.
   \param rownum The row position where you want to start writing data.
   */
-  void dalTable::writeDataByColNum( void * data, int index, int rownum, long nrecs )
+  void dalTable::writeDataByColNum (void * data,
+				    int index,
+				    int rownum,
+				    long nrecs)
   {
     if ( type == H5TYPE )
       {
-
+	
         size_t * field_sizes = NULL;
         size_t * field_offsets = NULL;
         size_t * size_out = NULL;
-
+	
         // retrieve the input fields needed for the append_records call
         H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nrecords );
-
+	
         field_sizes   = new size_t[ nfields ];
         field_offsets = new size_t[ nfields ];
         size_out      = new size_t[ 1 ];
@@ -1260,18 +1272,17 @@ namespace DAL
         size_out = NULL;
 
       }
-    else
-      {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
-      }
+    else {
+      std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+    }
   }
-
+  
   // ---------------------------------------------------------- appendRow
-
+  
   /*!
-  \brief Append a row to the table.
+    \brief Append a row to the table.
 
-  Append a row to the table.
+    Append a row to the table.
 
   \param data The data you want to write at the end of the table.  The
   		  structure of the data parameter should match that of the
@@ -1396,7 +1407,7 @@ namespace DAL
                 a scalar attribute.
   */
   bool dalTable::setAttribute( std::string attrname,
-															 char const * data,
+			       char const * data,
                                int size )
   {
     return h5set_attribute( H5T_NATIVE_CHAR, tableID_p, attrname, data, size );
@@ -1416,14 +1427,14 @@ namespace DAL
                 a scalar attribute.
   */
   bool dalTable::setAttribute( std::string attrname,
-															 short const * data,
+			       short const * data,
                                int size )
   {
     return h5set_attribute( H5T_NATIVE_SHORT, tableID_p, attrname, data, size );
   }
-
+  
   // ---------------------------------------------- setAttribute
-
+  
   /*!
     \brief Add a integer attribute.
 
@@ -1437,12 +1448,12 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
    */
   bool dalTable::setAttribute( std::string attrname,
-															 int const * data,
+			       int const * data,
                                int size )
   {
     return h5set_attribute( H5T_NATIVE_INT, tableID_p, attrname, data, size );
   }
-
+  
   // ---------------------------------------------- setAttribute
 
   /*!
@@ -1463,7 +1474,7 @@ namespace DAL
   {
     return h5set_attribute( H5T_NATIVE_UINT, tableID_p, attrname, data, size );
   }
-
+  
   // ---------------------------------------------- setAttribute
 
   /*!
@@ -1478,12 +1489,12 @@ namespace DAL
                 a scalar attribute.
   */
   bool dalTable::setAttribute( std::string attrname,
-															 long const * data,
+			       long const * data,
                                int size )
   {
     return h5set_attribute( H5T_NATIVE_LONG, tableID_p, attrname, data, size );
   }
-
+  
   // ---------------------------------------------- setAttribute
 
   /*!
@@ -1498,12 +1509,12 @@ namespace DAL
                 a scalar attribute.
   */
   bool dalTable::setAttribute( std::string attrname,
-															 float const * data,
+			       float const * data,
                                int size )
   {
     return h5set_attribute( H5T_NATIVE_FLOAT, tableID_p, attrname, data, size );
   }
-
+  
   // ---------------------------------------------- setAttribute
 
   /*!
@@ -1519,12 +1530,12 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
    */
   bool dalTable::setAttribute( std::string attrname,
-															 double const * data,
+			       double const * data,
                                int size )
   {
     return h5set_attribute( H5T_NATIVE_DOUBLE, tableID_p, attrname, data, size );
   }
-
+  
   // ---------------------------------------------- setAttribute_string
 
   /*!
@@ -1550,12 +1561,12 @@ namespace DAL
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalTable::setAttribute( std::string attrname,
-															 std::string const * data,
+			       std::string const * data,
                                int size )
   {
     return h5setAttribute_string( tableID_p, attrname, data, size );
   }
-
+  
   // ---------------------------------------------------------- listColumns
 
   /*!
@@ -2145,7 +2156,10 @@ namespace DAL
    *  wrapper for openTable (hdf5)
    *
    *****************************************************************/
-  void dalTable::ot_hdf5( void * voidfile, std::string tablename, std::string groupname )
+
+  void dalTable::ot_hdf5 (void * voidfile,
+			  std::string tablename,
+			  std::string groupname )
   {
     openTable( voidfile, tablename, groupname );
   }

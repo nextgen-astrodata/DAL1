@@ -47,7 +47,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/09/13
 
-    \test tCoordinatesGroup.cc
+    \test tCoordinatesGroup.cpp
     
     <h3>Prerequisite</h3>
     
@@ -151,6 +151,7 @@ namespace DAL { // Namespace DAL -- begin
     - cast embedded information into a casa::CoordinateSystem object; this
     however will be incomplete, as the latter only stores a subset of the
     information this classes handles.
+    - get/set reference lcoation as casa::MPosition
     
     <h3>Example(s)</h3>
     
@@ -164,6 +165,14 @@ namespace DAL { // Namespace DAL -- begin
     //! Reference system for Ra/Dec
     std::string system_radec_p;
 
+    //! Numerical value of the reference location
+    std::vector<double> refLocationValue_p;
+    //! Units attached to the numerical values of the reference location
+    std::vector<std::string> refLocationUnit_p;
+    //! Identifier for the reference location frame
+    std::string refLocationFrame_p;
+
+    //! container holding the actual coordinates which are parts of this group
     std::vector<Coordinate*> coordinates_p;
     
   public:
@@ -205,6 +214,32 @@ namespace DAL { // Namespace DAL -- begin
     //! Set the Equinox of the observation
     inline void setEquinox (std::string const &equinox) {
       equinox_p = equinox;
+    }
+
+    //! Get the numerical value of the reference location
+    inline std::vector<double> referenceLocationValue () {
+      return refLocationValue_p;
+    }
+
+    //! Set the numerical value of the reference location
+    bool setReferenceLocationValue (std::vector<double> const &value);
+    
+    //! Get the units attached to the numerical values of the reference location
+    inline std::vector<std::string> referenceLocationUnit () {
+      return refLocationUnit_p;
+    }
+
+    //! Set the units attached to the numerical values of the reference location
+    bool setReferenceLocationUnit (std::vector<double> const &unit);
+    
+    //! Get the identifier for the reference location frame
+    inline std::string referenceLocationFrame () {
+      return refLocationFrame_p;
+    }
+    
+    //! Get the identifier for the reference location frame
+    inline void setReferenceLocationFrame (std::string const &frame) {
+      refLocationFrame_p = frame;
     }
     
     //! Get the number of coordinates embedded within the group

@@ -35,24 +35,29 @@ namespace DAL {
     \ingroup DAL
     \brief Represents a table column.
     \author Joseph Masters
+    \date 12-11-2006
   */
   class dalColumn
   {
-    
-    std::string filetype;  // "HDF5", "MSCASA" or "FITS"; for example
-    std::string name; // column name
-    std::string tablename; // table name
-    std::string dal_datatype;  // column datatype
-    int size; // datatype size
-    uint num_of_rows;  // number of rows in the column
-    
-    // HDF5-specific variables
-    hid_t file_id; 	// hdf5 file_id
-    hid_t table_id;	// hdf5 table id
-    hsize_t nfields; // hdf5 field count
-    hsize_t nrecords; // hdf5 record count
+    std::string filetype;      // "HDF5", "MSCASA" or "FITS"; for example
+    std::string name;          // Column name
+    std::string tablename;     // Table name
+    std::string dal_datatype;  // Column datatype
+    int size;                  // Datatype size
+    uint num_of_rows;          // Number of rows in the column
+
+    //! HDF5 file object identifier
+    hid_t fileID_p;
+    //! HDF5 table object identifier
+    hid_t tableID_p;
+    //! HDF5 field count
+    hsize_t nofFields_p;
+    //! HDF5 record count
+    hsize_t nofRecords_p;
+    //! Identifier for the column type
     hid_t coltype;
-    herr_t  status;  // hdf5 call return status
+    //! HDF5 call return status
+    herr_t  status;
     
     dalData * data_object;  // object to hold column data
     
@@ -100,9 +105,12 @@ namespace DAL {
 		      int &length);
     
   public:
-    
+
+    //! Default constructor
     dalColumn();
+    //! Create a new complex column.
     dalColumn( std::string complexcolname );
+    //! Argumented constructor for a new column object.
     dalColumn( hid_t fileid,
 	       hid_t tableid,
 	       std::string filetype,
@@ -126,6 +134,7 @@ namespace DAL {
     void setFileType( std::string type );
     std::string getDataType();
     int getSize();
+    //! Close the column.
     void close();
     std::string getType();
     bool isArray();

@@ -1,79 +1,86 @@
-/*------------------------------------------------------------------------*
-| $Id::                                                                 $ |
-*-------------------------------------------------------------------------*
-***************************************************************************
-*   Copyright (C) 2007 by Joseph Masters                                  *
-*   jmasters@science.uva.nl                                               *
-*                                                                         *
-*   This program is free software; you can redistribute it and/or modify  *
-*   it under the terms of the GNU General Public License as published by  *
-*   the Free Software Foundation; either version 2 of the License, or     *
-*   (at your option) any later version.                                   *
-*                                                                         *
-*   This program is distributed in the hope that it will be useful,       *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
-*   GNU General Public License for more details.                          *
-*                                                                         *
-*   You should have received a copy of the GNU General Public License     *
-*   along with this program; if not, write to the                         *
-*   Free Software Foundation, Inc.,                                       *
-*   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
-***************************************************************************/
-
-/**
- * \file dalColumn.cpp
- * \author Joseph Masters
- * \date 12-11-06
- */
+/*-------------------------------------------------------------------------*
+ | $Id::                                                                 $ |
+ *-------------------------------------------------------------------------*
+ ***************************************************************************
+ *   Copyright (C) 2007 by Joseph Masters                                  *
+ *   jmasters@science.uva.nl                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 
 #ifndef DALCOLUMN_H
 #include "dalColumn.h"
 #endif
 
-namespace DAL
-  {
+namespace DAL {
 
-  // ------------------------------------------------------- dalColumn
+  // ============================================================================
+  //
+  //  Constructors
+  //
+  // ============================================================================
 
-  /*!
-    \brief Default constructor.
+  //_____________________________________________________________________________
+  //                                                                    dalColumn
 
-    Default constructor.
-  */
   dalColumn::dalColumn()
   {}
 
-
-  // ------------------------------------------------------- dalColumn
+  //_____________________________________________________________________________
+  //                                                                    dalColumn
 
   /*!
-    \brief Create a new column object.
+    Create a new column with a complex floating point datatype.
 
-    \param fileid
-    \param tableid
-    \param filetype
+    \param complexcolname Name of the column you want to create.
+  */
+  dalColumn::dalColumn( std::string complexcolname )
+  {
+    name = complexcolname;
+    dal_datatype = dal_COMPLEX;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                    dalColumn
+
+  /*!
+    \param fileid   -- Object identifier for the file
+    \param tableid  -- Object identifier for the table
+    \param filetype -- Type of dataset/file
     \param lcl_tablename
     \param colname
     \param coldatatype
   */
-  dalColumn::dalColumn( hid_t fileid,
+  dalColumn::dalColumn (hid_t fileid,
                         hid_t tableid,
                         std::string lcl_filetype,
                         std::string lcl_tablename,
                         std::string colname,
                         std::string coldatatype )
   {
-    file_id = fileid;
-    table_id = tableid;
-    filetype = lcl_filetype;
-    tablename = lcl_tablename;
-    name = colname;
+    fileID_p     = fileid;
+    tableID_p    = tableid;
+    filetype     = lcl_filetype;
+    tablename    = lcl_tablename;
+    name         = colname;
     dal_datatype = coldatatype;
   }
 
-
-  // ------------------------------------------------------- dalColumn
+  //_____________________________________________________________________________
+  //                                                                    dalColumn
 
   /*!
     \brief Create a new column object.
@@ -90,27 +97,10 @@ namespace DAL
     dal_datatype = type;
   }
 
-
-
-  // ------------------------------------------------------- dalColumn
-
-  /*!
-    \brief Create a new complex column.
-
-    Create a new column with a complex floating point datatype.
-
-    \param complexcolname Name of the column you want to create.
-  */
-  dalColumn::dalColumn( std::string complexcolname )
-  {
-    name = complexcolname;
-    dal_datatype = dal_COMPLEX;
-  }
+  //_____________________________________________________________________________
+  //                                                                    dalColumn
 
 #ifdef HAVE_CASA
-
-  // ------------------------------------------------------- dalColumn
-
   /*!
     \brief Create a new column object from a Casa table.
 
@@ -145,27 +135,22 @@ namespace DAL
   }
 #endif
 
+  //_____________________________________________________________________________
+  //                                                                        close
 
-  // ------------------------------------------------------- close
-
-  /*!
-    \brief Close the column.
-
-    Close the column.
-
-  */
   void dalColumn::close()
   {
 #ifdef HAVE_CASA
     delete casa_column;
 #endif
   }
-
-  // ------------------------------------------------------- getCasaDataType
+  
+  //_____________________________________________________________________________
+  //                                                              getCasaDataType
 
 #ifdef HAVE_CASA
 
-  std::string dalColumn::getCasaDataType()
+  std::string dalColumn::getCasaDataType ()
   {
     switch ( casa_col_desc.dataType() )
       {
@@ -534,9 +519,8 @@ namespace DAL
 
   dalData * dalColumn::CasaData_array( )
   {
-    switch ( casa_col_desc.dataType() )
-      {
-      case casa::TpInt:
+    switch ( casa_col_desc.dataType() ) {
+    case casa::TpInt:
       {
         roac_int = new casa::ROArrayColumn<casa::Int>( *casa_column );
         array_vals_int = roac_int->getColumn();
@@ -545,7 +529,7 @@ namespace DAL
         return data_object;
       }
       break;
-      case casa::TpDouble:
+    case casa::TpDouble:
       {
         roac_dbl = new casa::ROArrayColumn<casa::Double>( *casa_column );
         array_vals_dbl = roac_dbl->getColumn();
@@ -554,7 +538,7 @@ namespace DAL
         return data_object;
       }
       break;
-      case casa::TpComplex:
+    case casa::TpComplex:
       {
         dal_datatype = dal_COMPLEX;
         vector< complex< float > > ret_valvec;
@@ -574,7 +558,7 @@ namespace DAL
         return data_object;
       }
       break;
-      case casa::TpString:
+    case casa::TpString:
       {
         roac_string = new casa::ROArrayColumn<casa::String>( *casa_column );
         array_vals_string = roac_string->getColumn();
@@ -586,18 +570,18 @@ namespace DAL
       /************************************
        * ADD MORE TYPES HERES
        ************************************/
-      default:
+    default:
       {
         std::cerr << "dalColumn::data() Column type not yet supported."
                   << endl;
         return NULL;
       }
-      }
+    }
   }
 #endif
-
+  
   // ------------------------------------------------------- H5data
-
+  
   dalData * dalColumn::H5data (int &start,
                                int &length)
   {
@@ -606,47 +590,51 @@ namespace DAL
     size_t * field_offsets = NULL;
     size_t * size_out = NULL;
     bool column_in_table = false;
-
+    
     // retrieve the input fields needed for the append_records call
-    if ( H5TBget_table_info ( file_id, tablename.c_str(), &nfields, &nrecords )
+    if ( H5TBget_table_info ( fileID_p, tablename.c_str(), &nofFields_p, &nofRecords_p )
          < 0 )
       return NULL;
 
-    field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
-    field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
+    field_sizes = (size_t*)malloc( nofFields_p * sizeof(size_t) );
+    field_offsets = (size_t*)malloc( nofFields_p * sizeof(size_t) );
     size_out = (size_t*)malloc( sizeof(size_t) );
 
     /* Alocate space */
-    field_names = (char**)malloc( sizeof(char*) * (size_t)nfields );
-    for ( hsize_t ii = 0; ii < nfields; ii++)
+    field_names = (char**)malloc( sizeof(char*) * (size_t)nofFields_p );
+    for ( hsize_t ii = 0; ii < nofFields_p; ii++)
       field_names[ii] = (char*)malloc( sizeof(char) * MAX_COL_NAME_SIZE );
 
-    if ( H5TBget_field_info( file_id, tablename.c_str(), field_names,
+    if ( H5TBget_field_info( fileID_p, tablename.c_str(), field_names,
                              field_sizes, field_offsets, size_out ) < 0 )
       return NULL;
 
-    for ( hsize_t ii = 0; ii < nfields; ii++)
+    for ( hsize_t ii = 0; ii < nofFields_p; ii++)
       {
         if ( 0 == strcmp( field_names[ii], name.c_str() ) )
           column_in_table = true;
       }
-
-    for ( hsize_t ii = 0; ii < nfields; ii++)
+    
+    /* Release memory allocated for the columns of the table */
+    for ( hsize_t ii = 0; ii < nofFields_p; ii++) {
       free( field_names[ii] );
-
+    }
+    
     free( field_names );
-
-
+    
+    
     if ( !column_in_table )  // if column isn't found in the table
       {
         std::cerr << "ERROR: column not found in table.\n";
         return NULL;
       }
-
-    if ( start < 0 )
+    
+    if ( start < 0 ) {
       start = 0;
-    if ( length < 0 )
-      length = nrecords;
+    }
+    if ( length < 0 ) {
+      length = nofRecords_p;
+    }
 
     if ( dal_COMPLEX_SHORT == getType() )
       {
@@ -662,7 +650,7 @@ namespace DAL
             return NULL;
           }
 
-        if ( H5TBread_fields_name ( file_id, tablename.c_str(),
+        if ( H5TBread_fields_name ( fileID_p, tablename.c_str(),
                                     name.c_str(), start, length,
                                     sizeof(dalcomplex_int16),
                                     field_offsets, field_sizes,
@@ -692,7 +680,7 @@ namespace DAL
             return NULL;
           }
 
-        if ( H5TBread_fields_name (file_id, tablename.c_str(), name.c_str(),
+        if ( H5TBread_fields_name (fileID_p, tablename.c_str(), name.c_str(),
                                    start, length, sizeof(float), field_offsets, field_sizes,
                                    data ) < 0 )
           {

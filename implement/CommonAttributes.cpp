@@ -130,7 +130,7 @@ namespace DAL { // Namespace DAL -- begin
     filedate_p           = other.filedate_p;
     telescope_p          = other.telescope_p;
     projectID_p          = other.projectID_p;
-    projectName_p        = other.projectName_p;
+    projectTitle_p       = other.projectTitle_p;
     projectDescription_p = other.projectDescription_p;
   }
 
@@ -150,7 +150,7 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- File creation date          = " << filedate_p           << std::endl;
     os << "-- Telescope name              = " << telescope_p          << std::endl;
     os << "-- Project identifier          = " << projectID_p          << std::endl;
-    os << "-- Name of the project         = " << projectName_p        << std::endl;
+    os << "-- Project title               = " << projectTitle_p       << std::endl;
     os << "-- Project description         = " << projectDescription_p << std::endl;
     os << "-- Observer name(s)            = " << observer_p           << std::endl;
     os << "-- Observation ID              = " << observationID_p      << std::endl;
@@ -181,7 +181,7 @@ namespace DAL { // Namespace DAL -- begin
     filedate_p           = "UNDEFINED";
     telescope_p          = "LOFAR";
     projectID_p          = "UNDEFINED";
-    projectName_p        = "UNDEFINED";
+    projectTitle_p       = "UNDEFINED";
     projectDescription_p = "UNDEFINED";
     observer_p           = "UNDEFINED";
     observationID_p      = "UNDEFINED";
