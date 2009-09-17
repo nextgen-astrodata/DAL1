@@ -916,6 +916,88 @@ namespace DAL
 //    return setAttribute_string( attrname, mydata );
 //  }
 
+  bpl::numeric::array dalGroup::getAttribute_float_boost ( std::string attrname )
+  {
+  	 std::vector<float> value;
+     h5get_attribute( group_id, attrname.c_str(), value );
+     std::cerr << value << std::endl;
+     std::vector<int> dims;
+     dims.push_back( value.size() );
+  	 
+//  	 float * values = NULL;
+
+
+//     std::vector<int> mydims;
+//     mydims.push_back( value.size() );
+//
+//     for (int idx=0; idx++; idx<value.size() )
+//        values
+//     
+//      bpl::numeric::array narray = num_util::makeNum( values, mydims );
+//      delete [] values;
+//      values = NULL;
+//      return narray;
+
+
+     bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<float*>(&value[0]), dims );
+     return arr;
+  }
+  bpl::numeric::array dalGroup::getAttribute_double_boost ( std::string attrname )
+  {
+  	 std::vector<double> value;
+     h5get_attribute( group_id, attrname.c_str(), value );
+     std::cerr << value << std::endl;
+     std::vector<int> dims;
+     dims.push_back( value.size() );
+  	 
+     bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<double*>(&value[0]), dims );
+     return arr;
+  }
+  bpl::numeric::array dalGroup::getAttribute_long_boost ( std::string attrname )
+  {
+  	 std::vector<long> value;
+     h5get_attribute( group_id, attrname.c_str(), value );
+     std::cerr << value << std::endl;
+     std::vector<int> dims;
+     dims.push_back( value.size() );
+  	 
+     bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<long*>(&value[0]), dims );
+     return arr;
+  }
+  bpl::numeric::array dalGroup::getAttribute_short_boost ( std::string attrname )
+  {
+  	 std::vector<short> value;
+     h5get_attribute( group_id, attrname.c_str(), value );
+     std::cerr << value << std::endl;
+     std::vector<int> dims;
+     dims.push_back( value.size() );
+  	 
+     bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<short*>(&value[0]), dims );
+     return arr;
+  }
+  bpl::numeric::array dalGroup::getAttribute_int_boost ( std::string attrname )
+  {
+  	 std::vector<int> value;
+     h5get_attribute( group_id, attrname.c_str(), value );
+     std::cerr << value << std::endl;
+     std::vector<int> dims;
+     dims.push_back( value.size() );
+  	 
+     bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<int*>(&value[0]), dims );
+     return arr;
+  }
+  bpl::numeric::array dalGroup::getAttribute_uint_boost ( std::string attrname )
+  {
+  	 std::vector<uint> value;
+     h5get_attribute( group_id, attrname.c_str(), value );
+     std::cerr << value << std::endl;
+     std::vector<int> dims;
+     dims.push_back( value.size() );
+  	 
+     bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<uint*>(&value[0]), dims );
+     return arr;
+  }
+
 #endif // end #ifdef PYTHON
 
 } // end namespace DAL

@@ -199,7 +199,19 @@ BOOST_PYTHON_MODULE(pydal)
     .def( "setAttribute_string", &dalDataset::setAttribute_string_vector,
 	  "Set a string attribute" )
 	.def( "getAttribute_float", &dalDataset::getAttribute_float_boost,
-	  "Return a dalDataset attribute into a numpy array." )
+	  "Return a dalDataset float attribute into a numpy array." )
+	.def( "getAttribute_double", &dalDataset::getAttribute_double_boost,
+	  "Return a dalDataset double attribute into a numpy array." )
+	.def( "getAttribute_long", &dalDataset::getAttribute_long_boost,
+	  "Return a dalDataset long attribute into a numpy array." )
+	.def( "getAttribute_short", &dalDataset::getAttribute_short_boost,
+	  "Return a dalDataset short attribute into a numpy array." )
+	.def( "getAttribute_int", &dalDataset::getAttribute_int_boost,
+	  "Return a dalDataset int attribute into a numpy array." )
+	.def( "getAttribute_uint", &dalDataset::getAttribute_uint_boost,
+	  "Return a dalDataset uint attribute into a numpy array." )
+//	.def( "getAttribute_string", &dalDataset::getAttribute_string_boost,
+//	  "Return a dalDataset string attribute into a numpy array." )
     .def( "open", &dalDataset::open,
 	  ( bpl::arg("dataset_name") ),
 	  "Opens a dataset." )
@@ -304,6 +316,18 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Set a string attribute" )
     .def( "setAttribute_string", &dalGroup::setAttribute_string_vector,
 	  "Set a string attribute" )
+	.def( "getAttribute_float", &dalGroup::getAttribute_float_boost,
+	  "Return a dalGroup float attribute into a numpy array." )
+	.def( "getAttribute_double", &dalGroup::getAttribute_double_boost,
+	  "Return a dalGroup double attribute into a numpy array." )
+	.def( "getAttribute_long", &dalGroup::getAttribute_long_boost,
+	  "Return a dalGroup long attribute into a numpy array." )
+	.def( "getAttribute_short", &dalGroup::getAttribute_short_boost,
+	  "Return a dalGroup short attribute into a numpy array." )
+	.def( "getAttribute_int", &dalGroup::getAttribute_int_boost,
+	  "Return a dalGroup int attribute into a numpy array." )
+	.def( "getAttribute_uint", &dalGroup::getAttribute_uint_boost,
+	  "Return a dalGroup uint attribute into a numpy array." )
     .def( "getName", &dalGroup::getName,
 	  "Return the group name." )
     .def( "setName", &dalGroup::setName,

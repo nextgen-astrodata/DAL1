@@ -347,7 +347,13 @@ namespace DAL {
     bool setAttribute_string_vector (std::string attrname, bpl::list data);
     
     bpl::numeric::array getAttribute_float_boost (std::string attrname);
-    
+    bpl::numeric::array getAttribute_double_boost (std::string attrname);
+    bpl::numeric::array getAttribute_int_boost (std::string attrname);
+    bpl::numeric::array getAttribute_uint_boost (std::string attrname);
+    bpl::numeric::array getAttribute_short_boost (std::string attrname);
+    bpl::numeric::array getAttribute_long_boost (std::string attrname);
+//    bpl::list getAttribute_string_boost (std::string attrname);
+
 #endif  /* end PYTHON */
     
   };  /* end class dalDataset */
