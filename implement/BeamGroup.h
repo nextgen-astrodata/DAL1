@@ -209,6 +209,10 @@ namespace DAL
       float *  getIntensity( int &subband,
                              int &start,
                              int &length );
+	  //! Get total instensity squared data for a given subband
+	  float *  getIntensitySquared( int &subband,
+							 int &start,
+						     int &length );
       //! Get a subband from the beam
       BeamSubband * getSubband( int subband );
       //! Get a subband from the beam

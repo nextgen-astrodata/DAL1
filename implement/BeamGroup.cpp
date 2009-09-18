@@ -506,6 +506,48 @@ namespace DAL
     return values;
   }
 
+	  
+  // -------------------------------------------------------- getIntensitySquared
+  
+  /*!
+   \param subband Subband to get the data from.
+   \param start Start number of the cell in the column.
+   \param length The number of cells to retrieve.
+   \return intensities squared Array of intensities squared
+   */
+  float *
+  BeamGroup::getIntensitySquared( int &subband,
+						  int &start,
+						  int &length )
+  {
+	  dalTable * table;
+	  dalColumn * col;
+	  dalData * data;
+	  
+	  vector<string> memberNames = group_p->getMemberNames();
+	  
+	  table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
+	  if ( !table )
+	  {
+		  printf("ERROR: Subband %d does not exist for this beam\n", subband);
+		  return NULL;
+	  }
+	  
+	  col = table->getColumn_Float32("TOTAL_INTENSITY_SQUARED");
+	  data = col->data( start, length );
+	  if ( !data )
+	  {
+		  printf("ERROR: Column TOTAL_INTENSITY_SQUARED does not exist for this subband\n");
+		  return NULL;
+	  }
+	  
+	  float * values;
+	  values = (float*)data->data;
+	  
+	  return values;
+  }	  
+  
+	  
   // ---------------------------------------------------------- getSubbandData_X
 
   /*!
