@@ -21,42 +21,43 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <CommonAttributes.h>
+#include <CoordinatesGroup.h>
 
 // Namespace usage
-using DAL::CommonAttributes;
+using DAL::CoordinatesGroup;
 
 /*!
-  \file tCommonAttributes.cpp
+  \file tCoordinatesGroup.cpp
 
   \ingroup DAL
 
-  \brief A collection of test routines for the CommonAttributes class
+  \brief A collection of test routines for the CoordinatesGroup class
  
   \author Lars B&auml;hren
  
-  \date 2009/08/31
+  \date 2009/09/13
 */
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new CommonAttributes object
+  \brief Test constructors for a new CoordinatesGroup object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
 int test_constructors ()
 {
-  std::cout << "\n[tCommonAttributes::test_constructors]\n" << std::endl;
+  std::cout << "\n[tCoordinatesGroup::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
   
   std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
-    CommonAttributes newObject;
+    CoordinatesGroup coord;
     //
-    newObject.summary(); 
+    coord.summary(); 
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
@@ -65,7 +66,27 @@ int test_constructors ()
   return nofFailedTests;
 }
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                        test_io
+
+/*!
+  \brief Test reading/writing of the cordinates group to a file
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_io ()
+{
+  int nofFailedTests (0);
+
+#ifdef HAVE_HDF5
+#endif
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                           main
 
 int main ()
 {
@@ -73,6 +94,9 @@ int main ()
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
+  
+  // Test reading/writing of the cordinates group to a file
+  nofFailedTests += test_io ();
 
   return nofFailedTests;
 }

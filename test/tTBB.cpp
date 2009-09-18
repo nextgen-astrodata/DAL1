@@ -33,7 +33,7 @@ using std::cout;
 using DAL::TBB;
 
 /*!
-  \file tTBB.cc
+  \file tTBB.cpp
 
   \ingroup DAL
 

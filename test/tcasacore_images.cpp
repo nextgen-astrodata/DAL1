@@ -36,7 +36,7 @@
 #include <images/Images/ImageFITSConverter.h>
 
 /* DAL header files */
-#include <dalCommon.h>
+// #include <dalCommon.h>
 
 using std::cout;
 using std::cerr;
@@ -245,7 +245,7 @@ int test_direction_coordinate (int const &nelem=50)
 				      csys,
 				      filename);
 	image.doPutSlice (pixels,where,stride);
-	DAL::summary (image);
+// 	DAL::summary (image);
       }
       /* Convert the previously created image to FITS */
       {
@@ -280,7 +280,6 @@ int test_image_size (int const &min=50,
   int nofFailedTests (0);
 
   bool status;
-  std::string sidelength;
   std::string refcode ("J2000");
   casa::String error;
   casa::IPosition where (2,0,0);
@@ -288,12 +287,12 @@ int test_image_size (int const &min=50,
   
   for (int nelem=min; nelem<max; nelem+=step) {
     
-    sidelength = DAL::to_string(nelem);
+    std::ostringstream sidelength;
+    sidelength << nelem;
     casa::IPosition shape (2,nelem,nelem);
     casa::TiledShape tile (shape);
-    casa::Array<float> pixels (shape,1.0);
     
-    std::cout << "-- Testing shape " << shape << " ..." << std::endl;
+    std::cout << "-- Testing shape " << shape << " ..." << endl;
     
     // Create direction coordinate
     casa::DirectionCoordinate dir = direction_coordinate (shape,
@@ -303,20 +302,30 @@ int test_image_size (int const &min=50,
     casa::CoordinateSystem csys;
     csys.addCoordinate (dir);
     // Set image filename
-    std::string filename ("image-" + refcode + "-STG-"  + sidelength + ".h5");
-    std::string outfile  ("!image-" + refcode + "-STG-" + sidelength + ".fits");
+    std::string filename ("image-" + refcode + "-STG-"  + sidelength.str() + ".h5");
+    std::string outfile  ("!image-" + refcode + "-STG-" + sidelength.str() + ".fits");
     
     /* Create image and provide a short summary of its properties */
-    {
+    try {
+      std::cout << "--> creating image ..." << endl;
       casa::HDF5Image<float> image (tile,
 				    csys,
 				    filename);
-      std::cout << "--> putting slice into image ..." << std::endl;
+      //
+      std::cout << "--> putting slice into image ..." << endl;
+      casa::Array<float> pixels (shape,1.0);
       image.doPutSlice (pixels,where,stride);
+    } catch (std::string message) {
+      std::cerr << message << endl;
+      nofFailedTests++;
     }
+    
     /* Convert the previously created image to FITS */
     {
+      cout << "--> opening previously created image ..." << endl;
       casa::HDF5Image<float> image (filename);
+      //
+      cout << "--> converting image to FITS ..." << endl;
       status = casa::ImageFITSConverter::ImageToFITS (error,
 						      image,
 						      outfile);
@@ -336,7 +345,7 @@ int main (int argc,
 
   nofFailedTests += test_direction_coordinate ();
 
-//   nofFailedTests += test_image_size (60,100,1);
+  nofFailedTests += test_image_size (60,150,2);
   
   return nofFailedTests;
 }

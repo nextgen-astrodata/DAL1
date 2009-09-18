@@ -35,6 +35,8 @@ ________________________________________________________________________________
   are multiple methods used internally to open a file (and/or testing for its
   type beforehand).
 
+* [2009/09/16] Add function to allow renaming of attributes: dalCommon::h5_renameAttribute(locationID,nameOld,nameNew).
+
 _________________________________________________________________________________
 >>> Coding conventions
 

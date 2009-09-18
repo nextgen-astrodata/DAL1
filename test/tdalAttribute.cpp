@@ -27,7 +27,7 @@
 using DAL::dalAttribute;
 
 /*!
-  \file tdalAttribute.cc
+  \file tdalAttribute.cpp
 
   \ingroup IO
 

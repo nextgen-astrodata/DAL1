@@ -194,19 +194,6 @@ namespace DAL {
   void h5attribute_summary (std::ostream &os,
                             hid_t const &attribute_id);
 
-  //! Print an attribute value. (Used with H5Aiterate).
-  herr_t attr_info (hid_t loc_id,
-                    const char *name,
-                    void *opdata);
-
-  //! Get the shape of a dataset
-  bool h5get_dataset_shape (hid_t const &dataset_id,
-                            std::vector<uint> &shape,
-                            bool const &maxdims=false);
-  //! Get the shape of the dataspace associated with the attribute
-  bool h5get_dataspace_shape (hid_t const &attribute_id,
-                              std::vector<uint> &shape,
-                              bool const &maxdims=false);
   /*!
     \todo Function not yet implemented
     \brief Provide a summary of an attribute's internal structure
@@ -221,6 +208,24 @@ namespace DAL {
                             std::string const &name,
                             hid_t const &location_id);
 
+  //! Print an attribute value. (Used with H5Aiterate).
+  herr_t attr_info (hid_t loc_id,
+                    const char *name,
+                    void *opdata);
+
+  //! Rename an attribute
+  bool h5rename_attribute (hid_t const &location_id,
+			   std::string const &oldName,
+			   std::string const &newName);
+
+  //! Get the shape of a dataset
+  bool h5get_dataset_shape (hid_t const &dataset_id,
+                            std::vector<uint> &shape,
+                            bool const &maxdims=false);
+  //! Get the shape of the dataspace associated with the attribute
+  bool h5get_dataspace_shape (hid_t const &attribute_id,
+                              std::vector<uint> &shape,
+                              bool const &maxdims=false);
   //! Set attribute of type \e string
   bool h5setAttribute_string( hid_t const &obj_id,
                               std::string attrname,

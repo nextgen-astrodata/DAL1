@@ -24,7 +24,7 @@
 #include <LinearCoordinate.h>
 
 /*!
-  \file tLinearCoordinate.cc
+  \file tLinearCoordinate.cpp
 
   \ingroup DAL
 

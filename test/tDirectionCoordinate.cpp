@@ -24,7 +24,7 @@
 #include <DirectionCoordinate.h>
 
 /*!
-  \file tDirectionCoordinate.cc
+  \file tDirectionCoordinate.cpp
 
   \ingroup DAL
 

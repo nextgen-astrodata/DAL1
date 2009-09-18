@@ -24,7 +24,7 @@
 #include <StokesCoordinate.h>
 
 /*!
-  \file tStokesCoordinate.cc
+  \file tStokesCoordinate.cpp
 
   \ingroup DAL
 

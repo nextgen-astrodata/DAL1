@@ -82,6 +82,8 @@ if (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
       tdalFITS
       tcasacore_hdf5
       tcasacore_images
+      tcasacore_images2
+      tCoordinatesGroup
       tDirectionCoordinate
       tLinearCoordinate
       tStokesCoordinate

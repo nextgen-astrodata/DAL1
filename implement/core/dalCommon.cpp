@@ -535,44 +535,72 @@ namespace DAL {
 
     opdata = opdata;  // avoid compiler warnings of unused parameter
 
-    if (H5T_INTEGER == H5Tget_class(atype))
-      {
-        int point_out = 0;
-        ret  = H5Aread(attr, H5T_NATIVE_INT, &point_out);
-        cout << name << " = " << point_out << endl;
-      }
-    else if (H5T_FLOAT == H5Tget_class(atype))
-      {
-        size_t npoints = H5Sget_simple_extent_npoints(aspace);
-        float * float_array = new float[ npoints ];
-        if ( H5Aread( attr, H5T_NATIVE_FLOAT, float_array ) < 0 )
-          return 1;
-
-        std::cerr << name << " = ";
-        for (int i = 0; i < (int)npoints; i++) printf("%f ", float_array[i]);
-        printf("\n");
-        delete [] float_array;
-        float_array = 0;
-      }
-    else if (H5T_STRING == H5Tget_class (atype))
-      {
-        char * string_attr;
-        hid_t type = H5Tget_native_type( atype, H5T_DIR_ASCEND);
-        if ( H5Aread( attr, type, &string_attr) < 0 )
-          return 1;
-
-        fprintf(stderr, "%s = %s\n", name, string_attr );
-        free(string_attr);
-      }
-
+    if (H5T_INTEGER == H5Tget_class(atype)) {
+      int point_out = 0;
+      ret  = H5Aread(attr, H5T_NATIVE_INT, &point_out);
+      cout << name << " = " << point_out << endl;
+    }
+    else if (H5T_FLOAT == H5Tget_class(atype)) {
+      size_t npoints = H5Sget_simple_extent_npoints(aspace);
+      float * float_array = new float[ npoints ];
+      if ( H5Aread( attr, H5T_NATIVE_FLOAT, float_array ) < 0 )
+	return 1;
+      
+      std::cerr << name << " = ";
+      for (int i = 0; i < (int)npoints; i++) printf("%f ", float_array[i]);
+      printf("\n");
+      delete [] float_array;
+      float_array = 0;
+    }
+    else if (H5T_STRING == H5Tget_class (atype)) {
+      char * string_attr;
+      hid_t type = H5Tget_native_type( atype, H5T_DIR_ASCEND);
+      if ( H5Aread( attr, type, &string_attr) < 0 )
+	return 1;
+      
+      fprintf(stderr, "%s = %s\n", name, string_attr );
+      free(string_attr);
+    }
+    
     // close opened HDF5 objects
     ret = H5Tclose(atype);
     ret = H5Sclose(aspace);
     ret = H5Aclose(attr);
-
+    
     return 0;
   }
+  
+  //_____________________________________________________________________________
+  //                                                           h5rename_attribute
+  
+  /*!
+    \param location_id -- Location identifier of the HDF5 object to which the 
+           attribute is attached.
+    \param oldName     -- Old/current name of the attribute.
+    \param newName     -- New name of the attribute.
+   */
+  bool h5rename_attribute (hid_t const &location_id,
+			   std::string const &oldName,
+			   std::string const &newName)
+  {
+    herr_t status (0);
+    
+    status = H5Arename (location_id,
+			oldName.c_str(),
+			newName.c_str());
 
+    if (status > 0) {
+      std::cerr << "[h5rename_attribute] Error renaming attribute "
+		<< oldName 
+		<< " -> "
+		<< newName
+		<< std::endl;
+      return false;
+    } else {
+      return true;
+    }
+  }
+  
   //_____________________________________________________________________________
   //                                                          h5get_dataset_shape
 

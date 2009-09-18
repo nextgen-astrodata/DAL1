@@ -24,7 +24,7 @@
 #include <TabularCoordinate.h>
 
 /*!
-  \file tTabularCoordinate.cc
+  \file tTabularCoordinate.cpp
 
   \ingroup DAL
 

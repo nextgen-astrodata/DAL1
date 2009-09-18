@@ -46,6 +46,7 @@ option (DAL_DEBUGGING_MESSAGES "Print debugging information?"                 NO
 option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"         NO  )
 option (DAL_EXPERIMENTAL_CODE  "Include new expermetal code into build?"      NO  )
 
+##__________________________________________________________
 ## Handle option: testing mode on/off
 
 if (DAL_ENABLE_DASHBOARD OR DAL_ENABLE_TESTING)
@@ -54,6 +55,7 @@ if (DAL_ENABLE_DASHBOARD OR DAL_ENABLE_TESTING)
   enable_testing()
 endif (DAL_ENABLE_DASHBOARD OR DAL_ENABLE_TESTING)
 
+##__________________________________________________________
 ## Handle option: verbose mode during configuration on/off
 
 if (NOT DAL_VERBOSE_CONFIGURE)
@@ -73,6 +75,7 @@ if (NOT DAL_VERBOSE_CONFIGURE)
   set (WCSLIB_FIND_QUIETLY    YES )
 endif (NOT DAL_VERBOSE_CONFIGURE)
 
+##__________________________________________________________
 ## Handle option: debugging messages on/off
 
 if (DAL_DEBUGGING_MESSAGES)
