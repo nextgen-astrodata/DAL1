@@ -997,6 +997,20 @@ namespace DAL
      bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<uint*>(&value[0]), dims );
      return arr;
   }
+  bpl::list dalGroup::getAttribute_string_boost ( std::string attrname )
+  {
+     bpl::list data;
+  	 std::vector<string> value;
+     h5get_attribute( group_id, attrname.c_str(), value );
+     std::cerr << value << std::endl;
+     std::vector<int> dims;
+     dims.push_back( value.size() );
+  	        
+     for ( uint ii=0; ii < value.size() ; ii++ )
+        data.append( value[ii].c_str() );
+
+     return data;
+  }
 
 #endif // end #ifdef PYTHON
 

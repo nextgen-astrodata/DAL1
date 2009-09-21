@@ -1587,6 +1587,7 @@ namespace DAL {
     return ret;
   }
 
+  /*  setAttribute calls for all types, for single and vector values */
   bool dalDataset::setAttribute_char (std::string attrname, char data )
   {
     return setAttribute (attrname, &data );
@@ -1710,6 +1711,8 @@ namespace DAL {
 
     return setAttribute (attrname, reinterpret_cast<std::string*>(&mydata[0]), size );
   }
+
+  /*  getAttribute calls for all types, for single values */
   bpl::numeric::array dalDataset::getAttribute_float_boost ( std::string attrname )
   {
   	 std::vector<float> value;
@@ -1791,31 +1794,20 @@ namespace DAL {
      bpl::numeric::array arr = num_util::makeNum( reinterpret_cast<uint*>(&value[0]), dims );
      return arr;
   }
-  // A2 working on this - not quite correct
-//  bpl::list dalDataset::getAttribute_string_boost ( std::string attrname )
-//  {
-//  	 std::vector<char> value;
-//     h5get_attribute( h5fh_p, attrname.c_str(), value );
-//     std::cerr << value << std::endl;
-//     std::vector<int> dims;
-//     dims.push_back( value.size() );
-//  	 
-//  	 for (int ii=0; ii<dims; ii++)
-//        bpl::list data[ii] = ( reinterpret_cast<char*>(&value[0]), dims );
-//        
-//     return data;
-//  }
-//  bool dalDataset::setAttribute_char_vector (std::string attrname, bpl::list data )
-//  {
-//    int size = bpl::len(data);
-//    std::vector<char> mydata;
-//
-//    for (int ii=0; ii<bpl::len(data); ii++)
-//      mydata.push_back(bpl::extract<char>(data[ii]));
-//
-//    return setAttribute (attrname, reinterpret_cast<char*>(&mydata[0]), size );
-//  }
+  bpl::list dalDataset::getAttribute_string_boost ( std::string attrname )
+  {
+     bpl::list data;
+  	 std::vector<string> value;
+     h5get_attribute( h5fh_p, attrname.c_str(), value );
+     std::cerr << value << std::endl;
+     std::vector<int> dims;
+     dims.push_back( value.size() );
+  	        
+     for ( uint ii=0; ii < value.size() ; ii++ )
+        data.append( value[ii].c_str() );
 
+     return data;
+  }
   
 #endif  // end #ifdef PYTHON
 

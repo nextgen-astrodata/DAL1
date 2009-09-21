@@ -210,8 +210,8 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Return a dalDataset int attribute into a numpy array." )
 	.def( "getAttribute_uint", &dalDataset::getAttribute_uint_boost,
 	  "Return a dalDataset uint attribute into a numpy array." )
-//	.def( "getAttribute_string", &dalDataset::getAttribute_string_boost,
-//	  "Return a dalDataset string attribute into a numpy array." )
+	.def( "getAttribute_string", &dalDataset::getAttribute_string_boost,
+	  "Return a dalDataset string attribute into a numpy array." )
     .def( "open", &dalDataset::open,
 	  ( bpl::arg("dataset_name") ),
 	  "Opens a dataset." )
@@ -328,6 +328,8 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Return a dalGroup int attribute into a numpy array." )
 	.def( "getAttribute_uint", &dalGroup::getAttribute_uint_boost,
 	  "Return a dalGroup uint attribute into a numpy array." )
+	.def( "getAttribute_string", &dalGroup::getAttribute_string_boost,
+	  "Return a dalGroup string attribute into a numpy array." )
     .def( "getName", &dalGroup::getName,
 	  "Return the group name." )
     .def( "setName", &dalGroup::setName,
