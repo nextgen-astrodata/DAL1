@@ -139,30 +139,83 @@ namespace DAL { // Namespace DAL -- begin
   //  Parameters
   //
   // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                               setProjectInfo
+  
+  /*!
+    \param projectID          -- Unique identifier for the project
+    \param projectTitle       -- Name of the project
+    \param projectDescription -- Brief project description
+    \param projectPI          -- Name of the project's principal investigator
+  */
+  void CommonAttributes::setProjectInfo (std::string const &projectID,
+					 std::string const &projectTitle,
+					 std::string const &projectDescription,
+					 std::string const &projectPI)
+  {
+    setProjectID (projectID);
+    setProjectTitle (projectTitle);
+    setProjectDescription (projectDescription);
+    setProjectPI (projectPI);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                           setObservationInfo
+  
+  /*!
+    \param obsID        -- Unique identifier for the observation.
+    \param obsDateStart -- Start date of the observation.
+    \param obsDateEnd   -- End date of the observation.
+   */
+  void CommonAttributes::setObservationInfo (std::string const &obsID,
+					     std::string const &obsDateStart,
+					     std::string const &obsDateEnd)
+  {
+    setObservationID (obsID);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                      summary
   
   void CommonAttributes::summary (std::ostream &os)
   {
     os << "[CommonAttributes] Summary of internal parameters." << std::endl;
 
-    os << "-- Group type                  = " << groupType_p          << std::endl;
-    os << "-- File name                   = " << filename_p           << std::endl;
-    os << "-- File type                   = " << filetype_p           << std::endl;
-    os << "-- File creation date          = " << filedate_p           << std::endl;
-    os << "-- Telescope name              = " << telescope_p          << std::endl;
-    os << "-- Project identifier          = " << projectID_p          << std::endl;
-    os << "-- Project title               = " << projectTitle_p       << std::endl;
-    os << "-- Project description         = " << projectDescription_p << std::endl;
-    os << "-- Observer name(s)            = " << observer_p           << std::endl;
-    os << "-- Observation ID              = " << observationID_p      << std::endl;
-    os << "-- Observation date            = " << observationDate_p    << std::endl;
-    os << "-- Filter selection            = " << filterSelection_p    << std::endl;
-    os << "-- Oberservation target(s)     = " << target_p             << std::endl;
-    os << "-- Processing pipeline name    = " << pipelineName_p       << std::endl;
-    os << "-- Processing pipeline version = " << pipelineVersion_p    << std::endl;
+    os << "-- Group type                    = " << groupType_p
+       << std::endl;
+    os << "-- File name                     = " << filename_p
+       << std::endl;
+    os << "-- File type                     = " << filetype_p
+       << std::endl;
+    os << "-- File creation date            = " << filedate_p
+       << std::endl;
+    os << "-- Telescope name                = " << telescope_p
+       << std::endl;
+    os << "-- Project identifier            = " << projectID_p
+       << std::endl;
+    os << "-- Project title                 = " << projectTitle_p
+       << std::endl;
+    os << "-- Project description           = " << projectDescription_p
+       << std::endl;
+    os << "-- Observer name(s)              = " << observer_p
+       << std::endl;
+    os << "-- Observation ID                = " << observationID_p
+       << std::endl;
+    os << "-- Start date of the observation = " << observationDateStart_p
+       << std::endl;
+    os << "-- End date of the observtaion   = " << observationDateEnd_p
+       << std::endl;
+    os << "-- Filter selection              = " << filterSelection_p
+       << std::endl;
+    os << "-- Oberservation target(s)       = " << target_p
+       << std::endl;
+    os << "-- Processing pipeline name      = " << pipelineName_p
+       << std::endl;
+    os << "-- Processing pipeline version   = " << pipelineVersion_p
+       << std::endl;
 
   }
-  
-  
   
   // ============================================================================
   //
@@ -175,39 +228,52 @@ namespace DAL { // Namespace DAL -- begin
 
   void CommonAttributes::init ()
   {
-    groupType_p          = "Root";
-    filename_p           = "UNDEFINED";
-    filetype_p           = "UNDEFINED";
-    filedate_p           = "UNDEFINED";
-    telescope_p          = "LOFAR";
-    projectID_p          = "UNDEFINED";
-    projectTitle_p       = "UNDEFINED";
-    projectDescription_p = "UNDEFINED";
-    observer_p           = "UNDEFINED";
-    observationID_p      = "UNDEFINED";
-    observationDate_p    = "UNDEFINED";
-    filterSelection_p    = "UNDEFINED";
-    target_p             = "UNDEFINED";
-    systemTime_p         = "UNDEFINED";
-    systemVersion_p      = "UNDEFINED";
-    pipelineName_p       = "UNDEFINED";
-    pipelineVersion_p    = "UNDEFINED";
-    nofStations_p        = 0;
-    notes_p              = "UNDEFINED";
+    groupType_p            = "Root";
+    filename_p             = "UNDEFINED";
+    filetype_p             = "UNDEFINED";
+    filedate_p             = "UNDEFINED";
+    telescope_p            = "LOFAR";
+    projectID_p            = "UNDEFINED";
+    projectTitle_p         = "UNDEFINED";
+    projectDescription_p   = "UNDEFINED";
+    projectPI_p            = "UNDEFINED";
+    projectCO_I_p          = "UNDEFINED";
+    projectContact_p       = "UNDEFINED";
+    observer_p             = "UNDEFINED";
+    observationID_p        = "UNDEFINED";
+    observationDateStart_p = "UNDEFINED";
+    observationDateEnd_p   = "UNDEFINED";
+    filterSelection_p      = "UNDEFINED";
+    target_p               = "UNDEFINED";
+    systemTime_p           = "UNDEFINED";
+    systemVersion_p        = "UNDEFINED";
+    pipelineName_p         = "UNDEFINED";
+    pipelineVersion_p      = "UNDEFINED";
+    nofStations_p          = 0;
+    notes_p                = "UNDEFINED";
   }
   
 #ifdef HAVE_HDF5
   
   //_____________________________________________________________________________
   //                                                                       h5read
-  
+
+  /*!
+    \param groupID -- Identifier to the HDF5 group from which to read the
+           attributes
+  */
   void CommonAttributes::h5read (hid_t const &groupID)
   {
-    DAL::h5get_attribute( groupID, "GROUPTYPE", groupType_p );
-    DAL::h5get_attribute( groupID, "FILENAME",  filename_p  );
-    DAL::h5get_attribute( groupID, "FILETYPE",  filetype_p  );
-    DAL::h5get_attribute( groupID, "FILEDATE",  filedate_p  );
-    DAL::h5get_attribute( groupID, "TELESCOPE", telescope_p );
+    DAL::h5get_attribute( groupID, "GROUPTYPE",              groupType_p );
+    DAL::h5get_attribute( groupID, "FILENAME",               filename_p  );
+    DAL::h5get_attribute( groupID, "FILETYPE",               filetype_p  );
+    DAL::h5get_attribute( groupID, "FILEDATE",               filedate_p  );
+    DAL::h5get_attribute( groupID, "TELESCOPE",              telescope_p );
+    DAL::h5get_attribute( groupID, "PROJECT_ID",             projectID_p );
+    DAL::h5get_attribute( groupID, "PROJECT_TITLE",          projectTitle_p );
+    DAL::h5get_attribute( groupID, "PROJECT_DESCRIPTION",    projectDescription_p );
+    DAL::h5get_attribute( groupID, "OBSERVATION_DATE_START", observationDateStart_p );
+    DAL::h5get_attribute( groupID, "OBSERVATION_DATE_END",   observationDateEnd_p );
   }
   
   //_____________________________________________________________________________

@@ -28,6 +28,7 @@
 #include <casa/Arrays/Matrix.h>
 #include <casa/BasicSL/String.h>
 
+#include <CommonAttributes.h>
 #include <TBB_StationGroup.h>
 
 namespace DAL {  // Namespace DAL -- begin
@@ -52,8 +53,12 @@ namespace DAL {  // Namespace DAL -- begin
       <li>Classes handling the entities further down in the hierarchy of the
       dataset:
       <ul>
-        <li>DAL::TBB_StationGroup
-  <li>DAL::TBB_DipoleDataset
+        <li>DAL::CommonAttributes - Collection of attributes common to all
+	LOFAR datasets.
+        <li>DAL::TBB_StationGroup - Container for the data in the StationGroup
+	of LOFAR times-series data.
+	<li>DAL::TBB_DipoleDataset - Container for dipole-based data in a LOFAR
+	TBB time-series dataset.
       </ul>
       <li>Some of the direct interaction with a HDF5 dataset is implemented in
       dalCommon.h

@@ -27,40 +27,42 @@
 #include "dalBaseTypes.h"
 #endif
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   /*!
     \class dalFilter
     \brief Class representing a filter that can be applied to a table.
     \ingroup DAL
   */
+  
+  class dalFilter {
+    //! Table filter std::string
+    std::string filterstring;
+    //! File type: MSCASA, HDF5, FITS, etc.
+    std::string filetype;
+    //! Book-keeping whether a filter is set or not.
+    bool is_set;
+    
+  public:
 
-  class dalFilter
-    {
-      std::string filterstring;  // Table filter std::string
-      std::string filetype;  // MSCASA, HDF5, FITS, etc.
-      bool is_set;
-
-    public:
-
-      dalFilter();
-
-      dalFilter( std::string type,
-                 std::string columns );
-
-      dalFilter( std::string type,
-                 std::string columns,
-                 std::string conditions );
-
-      void set( std::string columns );
-      void set( std::string columns, std::string conditions );
-      void setFiletype( std::string type );
-      bool isSet();
-      std::string get();
-    };
-
-
+    //! Default constructor    
+    dalFilter();
+    //! Argumented constructor
+    dalFilter( std::string type,
+	       std::string columns );
+    
+    dalFilter( std::string type,
+	       std::string columns,
+	       std::string conditions );
+    
+    void set( std::string columns );
+    void set( std::string columns, std::string conditions );
+    void setFiletype( std::string type );
+    bool isSet();
+    std::string get();
+  };
+  
+  
 } // DAL namespace
 
 #endif  // DALFILTER_H

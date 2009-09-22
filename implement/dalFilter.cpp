@@ -25,27 +25,20 @@
 #include "dalFilter.h"
 #endif
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   // ---------------------------------------------------------- dalFilter
-
-  /*!
-    \brief Default constructor.
-
-    Default constructor.
-   */
+  
   dalFilter::dalFilter()
   {
     filterstring = "";
     filetype= "";
     is_set = false;
   }
-
+  
   // ---------------------------------------------------------- dalFilter
 
   /*!
-    \brief Constructor.
     \param type The type of file (i.e. H5TYPE, MSCASATYPE).
     \param columns A comma-separated list of the column names that you
                    want to pass the filter (i.e. "TIME,DATA,ANTENNA").

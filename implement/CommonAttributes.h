@@ -55,68 +55,7 @@ namespace DAL { // Namespace DAL -- begin
     
     <h3>Synopsis</h3>
 
-    <table border="0">
-      <tr>
-        <td class="indexkey">Field/Keyword</td>
-        <td class="indexkey">Type</td>
-        <td class="indexkey">Default value</td>
-        <td class="indexkey">Description</td>
-      </tr>
-      <tr>
-        <td>GROUPTYPE</td>
-        <td>string</td>
-        <td>"Root"</td>
-        <td>LOFAR group type</td>
-      </tr>
-      <tr>
-        <td>FILENAME</td>
-        <td>string</td>
-        <td>--</td>
-        <td>File name</td>
-      </tr>
-      <tr>
-        <td>FILETYPE</td>
-        <td>string</td>
-        <td>--</td>
-        <td>File type</td>
-      </tr>
-      <tr>
-        <td>FILEDATE</td>
-        <td>string</td>
-        <td>--</td>
-        <td>File creation date (<tt>YYYY-MM-DDThh:mm:ss.s</tt>)</td>
-      </tr>
-      <tr>
-        <td>TELESCOPE</td>
-        <td>string</td>
-        <td>"LOFAR"</td>
-        <td>Telescope name</td>
-      </tr>
-      <tr>
-        <td>PROJECT_ID</td>
-        <td>string</td>
-        <td>--</td>
-        <td>Unique identifier for the project</td>
-      </tr>
-      <tr>
-        <td>PROJECT_TITLE</td>
-        <td>string</td>
-        <td>--</td>
-        <td>Name of the project</td>
-      </tr>
-      <tr>
-        <td>PROJECT_DESCRIPTION</td>
-        <td>string</td>
-        <td>--</td>
-        <td>Brief description of the project</td>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-    </table>
+    \image html lofar_common_metadata.png
     
     <h3>Example(s)</h3>
     
@@ -139,12 +78,20 @@ namespace DAL { // Namespace DAL -- begin
     std::string projectTitle_p;
     //! Brief project description
     std::string projectDescription_p;
+    //! Name of the project's principal investigator
+    std::string projectPI_p;
+    //! Name(s) of the project's co-PI(s)
+    std::string projectCO_I_p;
+    //! Names/Email-addresses of the project's primary contact person(s)
+    std::string projectContact_p;
     //! Name(s) of the observer(s)
     std::string observer_p;
     //! Unique identifier for the observation
     std::string observationID_p;
-    //! Date of the observation
-    std::string observationDate_p;
+    //! Start date of the observation
+    std::string observationDateStart_p;
+    //! End date of the observation
+    std::string observationDateEnd_p;
     //! Filter selection
     std::string filterSelection_p;
     //! (List of) Oberservation target(s)
@@ -290,6 +237,36 @@ namespace DAL { // Namespace DAL -- begin
     inline void setProjectDescription (std::string const &projectDescription) {
       projectDescription_p = projectDescription;
     }
+
+    //! Get the name of the project's principal investigator
+    inline std::string projectPI () const {
+      return projectPI_p;
+    }
+    
+    //! Set the name of the project's principal investigator
+    inline void setProjectPI (std::string const &projectPI) {
+      projectPI_p = projectPI;
+    }
+    
+    //! Set the various infos on the project
+    void setProjectInfo (std::string const &projectID,
+			 std::string const &projectTitle,
+			 std::string const &projectDescription,
+			 std::string const &projectPI);
+
+    //! Get the  unique identifier for the observation
+    inline std::string observationID () const {
+      return observationID_p;
+    }
+
+    //! Set the  unique identifier for the observation
+    inline void setObservationID (std::string const &obsID) {
+      observationID_p = obsID;
+    }
+
+    void setObservationInfo (std::string const &obsID,
+			     std::string const &obsDateStart,
+			     std::string const &obsDateEnd);
     
     /*!
       \brief Get the name of the class
