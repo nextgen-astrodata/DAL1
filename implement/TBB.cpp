@@ -508,7 +508,7 @@ namespace DAL {
 #ifdef DEBUGGING_MESSAGES
     if (inBufStorID == inBufProcessID) {
       cerr << "TBB::readSocketBuffer: Empty buffer at end of method!" << endl;
-      return Fail;
+      return FAIL;
     };
 #endif
     inBufProcessID++;

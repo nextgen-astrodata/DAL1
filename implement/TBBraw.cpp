@@ -489,7 +489,7 @@ namespace DAL {  // Namespace DAL -- begin
         std::string("MHz") );
 #ifdef DEBUGGING_MESSAGES
     /* Feedback */
-    cout << "CREATED New dipole group: " << newDipoleID << endl;
+    cout << "CREATED New dipole group: " << newDipoleIDstr << endl;
 #endif
 
     return dipoleIndex;
@@ -598,7 +598,7 @@ namespace DAL {  // Namespace DAL -- begin
     dipoleBuf[index].array->getAttribute( attribute_name(RCU_ID), rcu );
     std::cout << "Station: " << sid << " RSP: " << rsp << " RCU: " << rcu
               << " Sequence-Nr: " << headerp->seqnr << endl;
-    std::cout << " starttime:"<< starttime << " startsamplenum:" << startsamplenum
+    std::cout << " starttime:"<< headerp->time-dipoleBuf[index].starttime << " startsamplenum:" << headerp->sample_nr-dipoleBuf[index].startsamplenum
               << " writeOffset:" << writeOffset << endl;
 #endif
     //only write data if this block comes after the first block
@@ -610,7 +610,7 @@ namespace DAL {  // Namespace DAL -- begin
           {
 #ifdef DEBUGGING_MESSAGES
             cout << "extending array to:" << writeOffset+ headerp->n_samples_per_frame
-                 << " from:" << dims << endl;
+                 << " from:" << dipoleBuf[index].dimensions[0] << endl;
 #endif
             dipoleBuf[index].dimensions[0] = writeOffset+ headerp->n_samples_per_frame;
             dipoleBuf[index].array->extend(dipoleBuf[index].dimensions);
