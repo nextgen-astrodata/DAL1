@@ -106,7 +106,7 @@ if (DAL_ENABLE_TESTING)
   add_test (bf2h5_test1 bf2h5)
   add_test (bf2h5_test2 bf2h5 -H)
   add_test (bf2h5_test3 bf2h5 --help)
-  add_test (bf2h5_test4 bf2h5 --downsample)
+#  add_test (bf2h5_test4 bf2h5 --downsample)
   add_test (bf2h5_test5 bf2h5 --intensity)
   
   if (dataset_bf_raw)
