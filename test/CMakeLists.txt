@@ -79,7 +79,6 @@ if (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
 
   foreach (src
       tMS_dal 
-      tdalFITS
       tcasacore_hdf5
       tcasacore_images
       tcasacore_images2
@@ -114,6 +113,32 @@ else (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
 
   message (STATUS "Skipping test programs that require casacore and HDF5!")
 
+endif (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
+
+##__________________________________________________________
+## tdalFITS
+
+if (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
+
+  ## compiler instructions
+  add_executable (tdalFITS tdalFITS.cpp)
+  ## linker instructions
+  target_link_libraries (tdalFITS
+    dal
+    ${dal_link_libraries}
+    ${CASA_LIBRARIES}
+    ${LAPACK_LIBRARIES}
+    ${CFITSIO_LIBRARIES}
+    ${WCSLIB_LIBRARIES}
+    ${GFORTRAN_LIBRARIES}
+    )
+  ## installation
+  list (APPEND tests tdalFITS)
+  
+  if (DAL_ENABLE_TESTING AND dataset_fits)
+    add_test (tdalFITS tdalFITS ${dataset_fits})
+  endif (DAL_ENABLE_TESTING AND dataset_fits)
+  
 endif (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
 
 ## ==============================================================================

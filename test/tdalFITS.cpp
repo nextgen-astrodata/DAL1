@@ -27,8 +27,6 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-// -----------------------------------------------------------------------------
-
 /*!
   \file tdalFITS.cpp
 
@@ -41,7 +39,8 @@ using std::endl;
   \date 2008/11/11
 */
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                              test_constructors
 
 int test_constructors ()
 {
@@ -50,7 +49,8 @@ int test_constructors ()
   return nofFailedTests;
 }
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                           main
 
 int main (int argc,
           char *argv[])
@@ -60,24 +60,22 @@ int main (int argc,
 
   //__________________________________________________________________
   // Check the input parameters provided form the command line
-
-  if (argc < 2)
-    {
-      std::cerr << "[tdalFITS] Missing name of test input file!" << std::endl;
-      std::cerr << "" << std::endl;
-      std::cerr << "  tdalFITS <FITS file>" << std::endl;
-      std::cerr << "" << std::endl;
-      return 1;
-    }
-  else
-    {
-      filename = argv[1];
-    }
-
+  
+  if (argc < 2) {
+    std::cerr << "[tdalFITS] Missing name of test input file!" << std::endl;
+    std::cerr << "" << std::endl;
+    std::cerr << "  tdalFITS <FITS file>" << std::endl;
+    std::cerr << "" << std::endl;
+    return 1;
+  }
+  else {
+    filename = argv[1];
+  }
+  
   //__________________________________________________________________
   // Run the tests
-
+  
   nofFailedTests += test_constructors ();
-
+  
   return nofFailedTests;
 }
