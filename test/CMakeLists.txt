@@ -203,6 +203,8 @@ if (DAL_ENABLE_TESTING)
   
   if (dataset_tbb AND dataset_beamformed)
     add_test (tdalCommon tdalCommon ${dataset_tbb} ${dataset_beamformed})
+  else (dataset_tbb AND dataset_beamformed)
+    add_test (tdalCommon tdalCommon)
   endif (dataset_tbb AND dataset_beamformed)
   
   ## -----------------------------------------------------------------
@@ -236,7 +238,7 @@ if (DAL_ENABLE_TESTING)
     add_test (tBeamGroup tBeamGroup ${dataset_beamformed})
     add_test (tBeamSubband tBeamSubband ${dataset_beamformed})
   else (dataset_beamformed)
-    message (STATUS "Unable to find LOFAR beam-formed dataset; skipping tests.")
+    add_test (tdalTable tdalTable)
   endif (dataset_beamformed)
   
   ## -----------------------------------------------------------------

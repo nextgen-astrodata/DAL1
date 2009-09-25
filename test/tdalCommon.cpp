@@ -549,9 +549,6 @@ int test_hdf5_attributes ()
   
   cout << "[9] Update the value of attributes after their creation ..." << endl;
   try {
-    
-    //____________________________________________
-    
     cout << "-- manipulating variable of type double ..." << endl;
     
     double var_double (0);

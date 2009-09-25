@@ -23,7 +23,7 @@
 
   \ingroup DAL
 
-  \brief Test program for table within a dataset
+  \brief A collection of test routines for the DAL::dalTable class
 
   \author Lars B&auml;hren
 
@@ -38,70 +38,72 @@
 /*!
   \brief Test the various constructors for an object of type dalTable
 
-  \param filename -- Name of the input data file
+  Test the various constructors for an object of type dalTable. If no input 
+  dataset is available (<tt>haveDataset=false</tt>), only the subset of tests
+  will be performed, which in fact do not require the existence of a dataset.
+
+  \param filename    -- Name of the input data file
+  \param haveDataset -- Is an input dataset provided to perform access tests?
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
-int test_constructors (std::string const &filename)
+int test_constructors (std::string const &filename,
+		       bool const &haveDataset)
 {
   std::cout << "\n[tdalTable::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
 
   std::cout << "[1] Default constructor..." << std::endl;
-  try
-    {
-      DAL::dalTable table;
-      //
-      table.summary();
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  try {
+    DAL::dalTable table;
+    //
+    table.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   std::cout << "[2] Construct object for table of type HDF5..." << std::endl;
-  try
-    {
-      DAL::dalTable table ("HDF5");
-      table.summary();
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  try {
+    DAL::dalTable table ("HDF5");
+    table.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   std::cout << "[3] Construct object for table of type FITS..." << std::endl;
-  try
-    {
-      DAL::dalTable table ("FITS");
-      table.summary();
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  try {
+    DAL::dalTable table ("FITS");
+    table.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   std::cout << "[4] Construction from dalDataset..." << std::endl;
-  try
-    {
+  try {
+    if (haveDataset) {
       DAL::dalDataset dataset;
       dataset.open(filename.c_str());
       dataset.summary();
       //
       DAL::dalTable * table = dataset.openTable ("/beam000","SB000");
       table->summary();
+    } else {
+      std::cout << "--> Skipping test - missing input dataset." << std::endl;
     }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
@@ -110,28 +112,33 @@ int test_constructors (std::string const &filename)
 /*!
   \brief Test the various methods to access parameters to the class
 
-  \param filename -- Name of the input data file
+  \param filename    -- Name of the input data file
+  \param haveDataset -- Is an input dataset provided to perform access tests?
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
-int test_parameters (std::string const &filename)
+int test_parameters (std::string const &filename,
+		     bool const &haveDataset)
 {
   std::cout << "\n[tdalTable::test_parameters]\n" << std::endl;
 
   int nofFailedTests (0);
 
-  try
-    {
+  std::cout << "[1] Getting group names from dataset ..." << std::endl;
+  try {
+    if (haveDataset) {
       DAL::dalDataset dataset (filename.c_str(),"HDF5");
       std::vector<std::string> groupNames = dataset.getGroupNames();
+    } else {
+      std::cout << "--> Skipping test - missing input dataset." << std::endl;
     }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
@@ -139,18 +146,23 @@ int test_parameters (std::string const &filename)
 
 /*!
   \brief Test the various methods for working with metadata
-
-  \param filename -- Name of the input data file
+  
+  \param filename    -- Name of the input data file
+  \param haveDataset -- Is an input dataset provided to perform access tests?
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
-int test_methods (std::string const &filename)
+int test_methods (std::string const &filename,
+		  bool const &haveDataset)
 {
   std::cout << "\n[tdalTable::test_methods]\n" << std::endl;
-
+  
   int nofFailedTests (0);
-  DAL::dalDataset dataset (filename.c_str(),"HDF5");
+
+  if (haveDataset) {
+    DAL::dalDataset dataset (filename.c_str(),"HDF5");
+  }
 
   return nofFailedTests;
 }
@@ -162,26 +174,26 @@ int main (int argc,char *argv[])
   int nofFailedTests (0);
   std::string filename;
   std::string tableName ("SB000");
+  bool haveDataset (true);
 
   /* Check command line parameters */
 
-  if (argc > 1)
-    {
-      filename = std::string(argv[1]);
-    }
-  else
-    {
-      std::cout << "[tdalTable] Missing name of input test file." << std::endl;
-      return(DAL::FAIL);
-    }
-
+  if (argc > 1) {
+    filename    = std::string(argv[1]);
+    haveDataset = false;
+  }
+  else {
+    std::cout << "[tdalTable] Missing name of input test file." << std::endl;
+    return(DAL::FAIL);
+  }
+  
   /* Test the constructors */
-  nofFailedTests += test_constructors(filename);
-
+  nofFailedTests += test_constructors(filename, haveDataset);
+  
   if (nofFailedTests == 0)
     {
-      nofFailedTests += test_parameters(filename);
-      nofFailedTests += test_methods(filename);
+      nofFailedTests += test_parameters(filename, haveDataset);
+      nofFailedTests += test_methods(filename, haveDataset);
     }
 
   return nofFailedTests;

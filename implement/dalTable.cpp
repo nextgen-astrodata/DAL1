@@ -59,126 +59,117 @@ namespace DAL {
     type = filetype;
     columns.clear();  // clear the columns vector
     firstrecord = true;
-
-    if ( type == MSCASATYPE )
-      {
+    
+    if ( type == MSCASATYPE ) {
 #ifdef HAVE_CASA
-        casa_table_handle = new casa::Table;
+      casa_table_handle = new casa::Table;
 #else
-        std::cerr << "CASA support not enabled." << endl;
+      std::cerr << "CASA support not enabled." << endl;
 #endif
-      }
+    }
   }
-
+  
   // ---------------------------------------------------------- ~dalTable
-
+  
   dalTable::~dalTable()
   {
     delete filter;
-    if ( type == MSCASATYPE )
-      {
+    if ( type == MSCASATYPE ) {
 #ifdef HAVE_CASA
-        delete casa_table_handle;
+      delete casa_table_handle;
 #endif
-      }
+    }
   }
-
+  
   // -------------------------------------------------------------------- summary
-
+  
   /*!
     \param os -- The output stream to which the summary is going to be written
   */
   void dalTable::summary(std::ostream &os)
   {
     unsigned int nofColumns = columns.size();
-
+    
     os << "\n[dalTable] Summary of object properties"  << endl;
 
-    if (name != "")
-      {
-        os << "-- Table name    = " << name << std::endl;
-        os << "-- Table type    = " << type << std::endl;
-        os << "-- nof. rows     = " << getNumberOfRows() << std::endl;
-        os << "-- nof. columns  = " << nofColumns << std::endl;
-      }
-
+    if (name != "") {
+      os << "-- Table name    = " << name << std::endl;
+      os << "-- Table type    = " << type << std::endl;
+      os << "-- nof. rows     = " << getNumberOfRows() << std::endl;
+      os << "-- nof. columns  = " << nofColumns << std::endl;
+    }
+    
     /* If the table contains a non-zero number of columns, list their names.
      */
-    if (nofColumns > 0)
-      {
-        os << "-- Column names  = [";
-        for (unsigned int n(0); n<nofColumns; n++)
-          {
-            os << " " << columns[n].getName();
-          }
-        os << " ]" << std::endl;
-      }
-
+    if (nofColumns > 0) {
+      os << "-- Column names  = [";
+      for (unsigned int n(0); n<nofColumns; n++)
+	{
+	  os << " " << columns[n].getName();
+	}
+      os << " ]" << std::endl;
+    }
+    
     /* If the table is working with HDF5 as back-end, provide a summary of the
      * identifiers and properties.
      */
-    if (type == H5TYPE && fileID_p > 0)
-      {
-        os << "-- HDF5 file ID  = " << fileID_p  << std::endl;
-        os << "-- HDF5 table ID = " << tableID_p << std::endl;
-        os << "-- nof. fields   = " << nfields  << std::endl;
-        os << "-- nof. records  = " << nrecords << std::endl;
-      }
-    else
-      {
-        os << "-- File type is HDF5, but object not connected to file!"
-        << std::endl;
-      }
+    if (type == H5TYPE && fileID_p > 0) {
+      os << "-- HDF5 file ID  = " << fileID_p  << std::endl;
+      os << "-- HDF5 table ID = " << tableID_p << std::endl;
+      os << "-- nof. fields   = " << nfields  << std::endl;
+      os << "-- nof. records  = " << nrecords << std::endl;
+    }
+    else {
+      os << "-- File type is HDF5, but object not connected to file!"
+	 << std::endl;
+    }
   }
-
+  
   // ---------------------------------------------------------- getColumn
-
+  
   /*!
     \param colname The name of the column to retrieve.
     \return Pointer to dalColumn object.
   */
   dalColumn * dalTable::getColumn( std::string colname )
   {
-    if ( type == MSCASATYPE )
-      {
+    if ( type == MSCASATYPE ) {
 #ifdef HAVE_CASA
-        // using the dalColumn class
-        dalColumn * lclcol = NULL;
-        lclcol = new dalColumn( *casa_table_handle, colname );
-
+      // using the dalColumn class
+      dalColumn * lclcol = NULL;
+      lclcol = new dalColumn( *casa_table_handle, colname );
+      
 #ifdef DEBUGGING_MESSAGES
-        lclcol->getType();
-        if ( lclcol->isScalar() )
-          std::cerr << colname << " is SCALAR" << endl;
-        if ( lclcol->isArray() )
-          std::cerr << colname << " is ARRAY" << endl;
+      lclcol->getType();
+      if ( lclcol->isScalar() )
+	std::cerr << colname << " is SCALAR" << endl;
+      if ( lclcol->isArray() )
+	std::cerr << colname << " is ARRAY" << endl;
 #endif
-
-        return lclcol;
-
+      
+      return lclcol;
+      
 #else
-
-        std::cerr << "ERROR: casacore not installed" << endl;
-
-        // prevent unsused var build warning when casacore isn't installed
-        colname = colname;
-        return NULL;
+      
+      std::cerr << "ERROR: casacore not installed" << endl;
+      
+      // prevent unsused var build warning when casacore isn't installed
+      colname = colname;
+      return NULL;
 #endif
-      }
-    else if ( type == H5TYPE )
-      {
-        std::cerr << "ERROR: hdf5 not yet supported for this function."
-                  << " Try getColumn_Float32, etc." << endl;
-        return NULL;
-      }
-    else
-      {
-        return NULL;
-      }
+    }
+    else if ( type == H5TYPE ) {
+      std::cerr << "ERROR: hdf5 not yet supported for this function."
+		<< " Try getColumn_Float32, etc." << endl;
+      return NULL;
+    }
+    else {
+      return NULL;
+    }
   }
-
+  
   // ------------------------------------------------------- getColumn_Float32
-
+  
   /*!
   \brief Get a column object from a table.
 
@@ -189,35 +180,37 @@ namespace DAL {
   */
   dalColumn * dalTable::getColumn_Float32( std::string colname )
   {
-    if ( type == MSCASATYPE )
-      {
+    if ( type == MSCASATYPE ) {
 #ifdef HAVE_CASA
-        // using the dalColumn class
-        dalColumn * lclcol = NULL;
-        lclcol = new dalColumn( *casa_table_handle, colname );
+      // using the dalColumn class
+      dalColumn * lclcol = NULL;
+      lclcol = new dalColumn( *casa_table_handle, colname );
 #ifdef DEBUGGING_MESSAGES
-        lclcol->getType();
-        if ( lclcol->isScalar() )
-          std::cerr << colname << " is SCALAR" << endl;
-        if ( lclcol->isArray() )
-          std::cerr << colname << " is ARRAY" << endl;
+      lclcol->getType();
+      if ( lclcol->isScalar() )
+	std::cerr << colname << " is SCALAR" << endl;
+      if ( lclcol->isArray() )
+	std::cerr << colname << " is ARRAY" << endl;
 #endif
-        return lclcol;
+      return lclcol;
 #endif
-      }
-    else if ( type == H5TYPE )
-      {
-        dalColumn * lclcol;
-        lclcol = new dalColumn( fileID_p, tableID_p, H5TYPE, name, colname,
-                                dal_FLOAT );
-
-        return lclcol;
-      }
+    }
+    else if ( type == H5TYPE ) {
+      dalColumn * lclcol;
+      lclcol = new dalColumn (fileID_p,
+			      tableID_p,
+			      H5TYPE,
+			      name,
+			      colname,
+			      dal_FLOAT);
+      
+      return lclcol;
+    }
     return NULL;
   }
-
+  
   // ---------------------------------------------- getColumn_complexFloat32
-
+  
   /*!
   \brief Get a column object from a table.
 
@@ -781,8 +774,6 @@ namespace DAL {
   // ---------------------------------------------------------- createTable
 
   /*!
-    \brief Create a new table.
-
     Create a new table in the dataset, possibly within a group.  This
     function is usually called by dalDataset, and not by the developer.
 
@@ -2150,13 +2141,10 @@ namespace DAL {
    ************************************************************************/
 #ifdef PYTHON
 
-  // ---------------------------------------------------------- ot_hdf5
+  //_____________________________________________________________________________
+  //                                                                      ot_hdf5
 
-  /****************************************************************
-   *  wrapper for openTable (hdf5)
-   *
-   *****************************************************************/
-
+  //! Wrapper for openTable (HDF5)
   void dalTable::ot_hdf5 (void * voidfile,
 			  std::string tablename,
 			  std::string groupname )
@@ -2164,23 +2152,24 @@ namespace DAL {
     openTable( voidfile, tablename, groupname );
   }
 
-  // -------------------------------------------------------- append_row_boost
+  //_____________________________________________________________________________
+  //                                                             append_row_boost
 
-  /****************************************************************
-   *  wrapper for appendRow (hdf5)
-   *
-   *****************************************************************/
+  //! Wrapper for appendRow (hdf5)
   bool dalTable::append_row_boost( bpl::object data )
   {
-//  	printf("list size: %d\n",PyList_Size( data.ptr() ) );
+#ifdef DEBUGGING_MESSAGES
+    printf("list size: %d\n",PyList_Size( data.ptr() ) );
+#endif
     return append_rows_boost(data,1);
   }
 
-  /****************************************************************
-   *  wrapper for appendRows (hdf5)
-   *
-   *****************************************************************/
-  bool dalTable::append_rows_boost( bpl::object data, long nrows )
+  //_____________________________________________________________________________
+  //                                                            append_rows_boost
+
+  //! Wrapper for appendRows (hdf5)
+  bool dalTable::append_rows_boost (bpl::object data,
+				    long nrows)
   {
     long list_length = bpl::len(data);
     PyObject* list_item;
@@ -2195,7 +2184,7 @@ namespace DAL {
     double double_value;
     short  short_value;
     long   long_value;
-    char*  char_value;
+//     char*  char_value;
     
     for (int idx=0; idx<list_length; idx++)
     {
@@ -2261,138 +2250,139 @@ namespace DAL {
     return PyList_Check(data.ptr());
   }
 
-  PyObject* dalTable::readRows_boost( int start, int nrecs )
+  //_____________________________________________________________________________
+  //                                                               readRows_boost
+
+  PyObject* dalTable::readRows_boost (int start,
+				      int nrecs )
   {
     PyObject* py_list = PyList_New( 0 );
     PyObject *py_item;
     void * value;
-    if ( type == H5TYPE )
-      {
-        char * data_out;
-        data_out = (char*) malloc ( 1 );
-
-        size_t * field_sizes = NULL;
-        size_t * field_offsets = NULL;
-        size_t * size_out = NULL;
-
-        // retrieve the input fields needed for the append_records call
-        H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nrecords );
-
-        field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
-        field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
-        size_out = (size_t*)malloc( sizeof(size_t) );
-        field_names = (char**)malloc( nfields * sizeof(char*) );
-        for (unsigned int ii=0; ii<nfields; ii++)
-          {
-            field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE*sizeof(char));
-          }
-
-        status = H5TBget_field_info( fileID_p, name.c_str(), field_names,
-                                     field_sizes, field_offsets, size_out );
-
-        data_out = (char*) realloc ( data_out, (*size_out)*nrecs );
-
-        status = H5TBread_records( fileID_p, name.c_str(), start, nrecs,
-                                   size_out[0], field_offsets, field_sizes,
-                                   data_out );
-
-        for (int rec_idx=0; rec_idx<nrecs; rec_idx++)
-        {
-		for (int field_idx=0; field_idx<nfields; field_idx++)
-		{
-			hid_t table_type_id = H5Dget_type( tableID_p );
-			H5T_class_t field_type = H5Tget_member_class( table_type_id, field_idx );
-		
-			switch( field_type )
-			{
-			case H5T_FLOAT:
-			{
-				value = (float*)(data_out+field_offsets[field_idx]);
-				py_item = PyFloat_FromDouble(*((float*)value));
-				if (0 != PyList_Append( py_list, py_item ) )
-				cerr << "Could not append item to list in readRows_boost." << endl;
-				break;
-			}
-			case H5T_INTEGER:
-			{
-				hid_t member_type = H5Tget_member_type (table_type_id, field_idx);
-				hid_t native_type = H5Tget_native_type (member_type, H5T_DIR_ASCEND);
-				if  ( H5Tequal( native_type, H5T_NATIVE_CHAR ) > 0 )
-				{
-				  cerr << "native char" << endl;
-				}
-				else if  ( H5Tequal( native_type, H5T_NATIVE_SHORT ) > 0 )
-				{
-				  value = (short*)(data_out+field_offsets[field_idx]);
-				  py_item = PyInt_FromSsize_t( *((short*)value) );
-				  if (0 != PyList_Append( py_list, py_item ) )
-				    cerr << "Could not append item to list in readRows_boost." << endl;
-				}
-				else if  ( H5Tequal( native_type, H5T_NATIVE_INT ) > 0 )
-				{
-				  value = (int*)(data_out+field_offsets[field_idx]);
-				  py_item = PyInt_FromSsize_t( *((int*)value) );
-				  if (0 != PyList_Append( py_list, py_item ) )
-				    cerr << "Could not append item to list in readRows_boost." << endl;
-				}
-				else
-				  cerr << "member type not recognized in readRows_boost" << endl;
-
-				if ( H5Tclose( member_type  ) < 0 )
-				  cerr << "could not close member_type in readRows_boost" << endl;
-				if ( H5Tclose( native_type  ) < 0 )
-				  cerr << "could not close native_type in readRows_boost" << endl;
-
-				break;
-			}
-			default:
-				cerr << "field type is unknown in readRows_boost" << endl;
-			}
-			if ( H5Tclose( table_type_id  ) < 0 )
-				cerr << "could not close table type in readRows_boost" << endl;
-		}
-        }
-
-        free(field_sizes);
-        free(field_offsets);
-        free(size_out);
-        for (unsigned int ii=0; ii<nfields; ii++)
-          {
-            free(field_names[ii]);
-          }
-        free(field_names);
-        if (status < 0)
-          {
-            std::cerr << "ERROR: Problem reading records. Row buffer may be too big."
-                      << " Make sure the buffer is smaller than the size of the "
-                      << "table." << endl;
-          }
+    if ( type == H5TYPE ) {
+      char * data_out;
+      data_out = (char*) malloc ( 1 );
+      
+      size_t * field_sizes   = NULL;
+      size_t * field_offsets = NULL;
+      size_t * size_out      = NULL;
+      
+      // retrieve the input fields needed for the append_records call
+      H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nrecords );
+      
+      field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
+      field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
+      size_out = (size_t*)malloc( sizeof(size_t) );
+      field_names = (char**)malloc( nfields * sizeof(char*) );
+      for (unsigned int ii=0; ii<nfields; ii++) {
+	field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE*sizeof(char));
       }
-    else
-      {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+      
+      status = H5TBget_field_info( fileID_p, name.c_str(), field_names,
+				   field_sizes, field_offsets, size_out );
+      
+      data_out = (char*) realloc ( data_out, (*size_out)*nrecs );
+      
+      status = H5TBread_records( fileID_p, name.c_str(), start, nrecs,
+				 size_out[0], field_offsets, field_sizes,
+				 data_out );
+      
+      for (int rec_idx=0; rec_idx<nrecs; rec_idx++) {
+	for (int field_idx=0; field_idx<nfields; field_idx++) {
+	  hid_t table_type_id = H5Dget_type( tableID_p );
+	  H5T_class_t field_type = H5Tget_member_class( table_type_id, field_idx );
+	  
+	  switch( field_type ) {
+	  case H5T_FLOAT:
+	    {
+	      value = (float*)(data_out+field_offsets[field_idx]);
+	      py_item = PyFloat_FromDouble(*((float*)value));
+	      if (0 != PyList_Append( py_list, py_item ) )
+		cerr << "Could not append item to list in readRows_boost." << endl;
+	      break;
+	    }
+	  case H5T_INTEGER:
+	    {
+	      hid_t member_type = H5Tget_member_type (table_type_id, field_idx);
+	      hid_t native_type = H5Tget_native_type (member_type, H5T_DIR_ASCEND);
+	      if  ( H5Tequal( native_type, H5T_NATIVE_CHAR ) > 0 ) {
+		cerr << "native char" << endl;
+	      }
+	      else if  ( H5Tequal( native_type, H5T_NATIVE_SHORT ) > 0 ) {
+		value = (short*)(data_out+field_offsets[field_idx]);
+		py_item = PyInt_FromSsize_t( *((short*)value) );
+		if (0 != PyList_Append( py_list, py_item ) )
+		  cerr << "Could not append item to list in readRows_boost." << endl;
+	      }
+	      else if  ( H5Tequal( native_type, H5T_NATIVE_INT ) > 0 ) {
+		value = (int*)(data_out+field_offsets[field_idx]);
+		py_item = PyInt_FromSsize_t( *((int*)value) );
+		if (0 != PyList_Append( py_list, py_item ) )
+		  cerr << "Could not append item to list in readRows_boost." << endl;
+	      }
+	      else {
+		cerr << "member type not recognized in readRows_boost" << endl;
+	      }
+	      
+	      if ( H5Tclose( member_type  ) < 0 ) {
+		cerr << "could not close member_type in readRows_boost" << endl;
+	      }
+	      if ( H5Tclose( native_type  ) < 0 ) {
+		cerr << "could not close native_type in readRows_boost" << endl;
+	      }
+	      
+	      break;
+	    }
+	  default:
+	    cerr << "field type is unknown in readRows_boost" << endl;
+	  }
+	  if ( H5Tclose( table_type_id  ) < 0 ) {
+	    cerr << "could not close table type in readRows_boost" << endl;
+	  }
+	}
       }
-
-
+      
+      free(field_sizes);
+      free(field_offsets);
+      free(size_out);
+      for (unsigned int ii=0; ii<nfields; ii++) {
+	free(field_names[ii]);
+      }
+      free(field_names);
+      if (status < 0) {
+	std::cerr << "ERROR: Problem reading records. Row buffer may be too big."
+		  << " Make sure the buffer is smaller than the size of the "
+		  << "table." << endl;
+      }
+    }
+    else {
+      std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+    }
+    
     return py_list;
   }
 
-  void dalTable::write_col_by_index_boost( bpl::numeric::array data, int index,
-      int rownum, long nrecords )
+  //_____________________________________________________________________________
+  //                                                     write_col_by_index_boost
+  
+  void dalTable::write_col_by_index_boost (bpl::numeric::array data,
+					   int index,
+					   int rownum,
+					   long nrecords )
   {
     void * mydata = num_util::data(data);
     writeDataByColNum( mydata, index, rownum, nrecords );
   }
-
-//  bool dalTable::append_row_boost( bpl::numeric::array data )
-//  {
-//  	void * mydata = num_util::data(data);
-//    appendRow(mydata);
-//    return true;
-//  }
-
+  
+  //  bool dalTable::append_row_boost( bpl::numeric::array data )
+  //  {
+  //  	void * mydata = num_util::data(data);
+  //    appendRow(mydata);
+  //    return true;
+  //  }
+  
   // ------------------------------------------------------- listColumns_boost
-
+  
   /****************************************************************
    *  wrapper for listColumns
    *

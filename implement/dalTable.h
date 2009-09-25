@@ -102,29 +102,24 @@ namespace DAL {
     // -------------------------------------------- Parameter access
     
     //! Get the HDF5 file identifier
-    inline hid_t fileID () const
-    {
+    inline hid_t fileID () const {
       return fileID_p;
     }
     //! Get the HDF5 table object identifier
-    inline hid_t tableID () const
-    {
+    inline hid_t tableID () const {
       return tableID_p;
     }
     //! Get the number of fields within the table
-    inline hsize_t nofFields () const
-    {
+    inline hsize_t nofFields () const {
       return nfields;
     }
     //! Get the numbe of records within the table
-    inline hsize_t nofRecords () const
-    {
+    inline hsize_t nofRecords () const {
       return nrecords;
     }
     
     void printColumns();
-    inline void summary()
-    {
+    inline void summary() {
       summary(std::cout);
     }
     void summary(std::ostream &os);
@@ -159,7 +154,10 @@ namespace DAL {
     casa::String GetKeywordType(casa::String const KeywordName);
 #endif
     
-    void createTable( void * voidfile, string tablename, string groupname );
+    //! Create a new table
+    void createTable (void * voidfile,
+		      string tablename,
+		      string groupname);
     //! Get a column object
     dalColumn * getColumn_complexInt16( string colname );
     //! Get a column object
