@@ -24,9 +24,8 @@
 #ifndef BEAMFORMED_H
 #define BEAMFORMED_H
 
-#ifndef BEAMGROUP_H
+#include <CommonAttributes.h>
 #include <BeamGroup.h>
-#endif
 
 namespace DAL {
   
@@ -97,147 +96,140 @@ namespace DAL {
     </ol>
   */
 
-  class BeamFormed
-    {
+  class BeamFormed {
+    
+  private:
+    
+    bool status;
+    //! LOFAR common attributes
+    CommonAttributes commonAttributes_p;
+    //! Filename of the dataset
+    std::string filename_p;
+    //! HDF5 file handle ID
+    hid_t H5fileID_p;
+    //! DAL Dataset object to handle the basic I/O
+    dalDataset * dataset_p;
+    //! Vector of beam groups within the dataset
+    std::vector<BeamGroup*> beamGroups_p;
+    //! Initialize the object's internal parameters
+    bool init();
+    
+  public:
+    
+    //! Default constructor
+    BeamFormed ();
+    //! Argumented constructor
+    BeamFormed (std::string const &filename);
+    //! Argumented constructor
+    BeamFormed (CommonAttributes const &commonAttributes);
+    //! Destructor
+    ~BeamFormed ();
 
-    private:
+    //___________________________________________________________________________
+    //                                                       Access to attributes
 
-      bool status;
-      //! Filename of the dataset
-      std::string filename_p;
-      //! HDF5 file handle ID
-      hid_t H5fileID_p;
-      //! DAL Dataset object to handle the basic I/O
-      dalDataset * dataset_p;
-      //! Vector of beam groups within the dataset
-      std::vector<BeamGroup*> beamGroups_p;
-      //! Initialize the object's internal parameters
-      bool init();
-
-    public:
-
-      //! Default constructor
-      BeamFormed();
-      //! Argumented constructor
-      BeamFormed(std::string const &filename);
-      //! Destructor
-      ~BeamFormed();
-
-
-      // ---------------------------------------------------------- print_vector
-
-      /*!
-        \brief Print a list of vector elements
-        \param os        -- output stream [I]
-        \param vec       -- vector [I]
-      */
-      template<class T>
-      void print_vector ( std::ostream& os,
-                          std::vector<T> &vec)
-      {
-        for (uint n(0); n<vec.size(); n++)
-          {
-            os << vec[n] << ", ";
-          }
-      }
-
-      std::vector< std::string > h5get_str_array_attr( std::string attrname,
-          hid_t obj_id );
-      /*! \brief Provide a summary of the internal status */
-      inline void summary ()
-      {
-        summary (cout, true);
-      }
-      void summary (ostream &os, bool const &listBeams=false);
-      std::vector<std::string> beams();
-      BeamGroup * getBeam( int beam );
-      std::string filename();
-      //! Get the name of the telescope
-      std::string telescope();
-      //! Get the number of stations
-      int nofStations();
-      //! Get the data type
-      std::string datatype();
-      std::string emband();
-      //! Get the source list
-      std::vector<std::string> sources();
-      //! Get the observation identifier
-      std::string observation_id();
-      //! Get the project identifier
-      std::string proj_id();
-      //! RA of the beam pointing direction
-      std::string point_ra();
-      //! DEC of the beam pointing direction
-      std::string point_dec();
-      //! Get the name of the observer
-      std::string observer();
-      //! The observation epoch as Median Julian Day (MJD)
-      std::string epoch_mjd();
-      //! The observation epoch as data
-      std::string epoch_date();
-      //! The observation epoch as UTC
-      std::string epoch_utc();
-      std::string epoch_lst();
-      //! Get the diameter of the main beam
-      int main_beam_diam();
-      //! Get the center frequency
-      int center_freq();
-      int bandwidth();
-      double total_integration_time();
-      int breaks();
-      //! Get the dispersion measure
-      int dispersion_measure();
-      int number_of_samples();
-      double sampling_time();
-      int number_of_beams();
-      int sub_beam_diameter();
-      int weather_temperature();
-      int weather_humidity();
-      std::vector<int> station_temperatures();
-      //! Get the notes attached to the data set
-      std::string notes();
-
-      // --------------------------------------------------------------------------
-      // Access to the data stored in the sub-bands
-
-      //! Get the X column data for a given subband.
-      void getSubbandData_X (int &beam,
-                             int &subband,
-                             int &start,
-                             int &length,
-                             std::vector<complex<short> > &data);
-      //! Get the Y column data for a given subband.
-      void getSubbandData_Y (int &beam,
-                             int &subband,
-                             int &start,
-                             int &length,
-                             std::vector<complex<short> > &data);
-
-      /************************************************************************
-       *
-       * The following functions are boost wrappers to allow some previously
-       *   defined functions to be easily called from a python prompt.
-       *
-       ************************************************************************/
+    //! Get LOFAR common attributes
+    inline CommonAttributes commonAttributes () const {
+      return commonAttributes_p;
+    }
+    bool setCommonAttributes (CommonAttributes const &attributes);
+    
+    std::vector< std::string > h5get_str_array_attr( std::string attrname,
+						     hid_t obj_id );
+    std::vector<std::string> beams();
+    BeamGroup * getBeam( int beam );
+    std::string filename();
+    //! Get the name of the telescope
+    std::string telescope();
+    //! Get the number of stations
+    int nofStations();
+    //! Get the data type
+    std::string datatype();
+    std::string emband();
+    //! Get the source list
+    std::vector<std::string> sources();
+    //! Get the observation identifier
+    std::string observation_id();
+    //! Get the project identifier
+    std::string proj_id();
+    //! RA of the beam pointing direction
+    std::string point_ra();
+    //! DEC of the beam pointing direction
+    std::string point_dec();
+    //! Get the name of the observer
+    std::string observer();
+    //! The observation epoch as Median Julian Day (MJD)
+    std::string epoch_mjd();
+    //! The observation epoch as data
+    std::string epoch_date();
+    //! The observation epoch as UTC
+    std::string epoch_utc();
+    std::string epoch_lst();
+    //! Get the diameter of the main beam
+    int main_beam_diam();
+    //! Get the center frequency
+    int center_freq();
+    int bandwidth();
+    double total_integration_time();
+    int breaks();
+    //! Get the dispersion measure
+    int dispersion_measure();
+    int number_of_samples();
+    double sampling_time();
+    int number_of_beams();
+    int sub_beam_diameter();
+    int weather_temperature();
+    int weather_humidity();
+    std::vector<int> station_temperatures();
+    //! Get the notes attached to the data set
+    std::string notes();
+    /*! \brief Provide a summary of the internal status */
+    inline void summary () {
+      summary (cout, true);
+    }
+    void summary (ostream &os, bool const &listBeams=false);
+    
+    // --------------------------------------------------------------------------
+    // Access to the data stored in the sub-bands
+    
+    //! Get the X column data for a given subband.
+    void getSubbandData_X (int &beam,
+			   int &subband,
+			   int &start,
+			   int &length,
+			   std::vector<complex<short> > &data);
+    //! Get the Y column data for a given subband.
+    void getSubbandData_Y (int &beam,
+			   int &subband,
+			   int &start,
+			   int &length,
+			   std::vector<complex<short> > &data);
+    
+    /************************************************************************
+     *
+     * The following functions are boost wrappers to allow some previously
+     *   defined functions to be easily called from a python prompt.
+     *
+     ************************************************************************/
 #ifdef PYTHON
-
-      void summary_boost();
-      bpl::list beams_boost();
-      bpl::list source_boost();
-
-      // ---------------------------------------------------------- vector2list
-
-      /* utility to turn a vector into a python list */
-
-      template <class T>
+    
+    void summary_boost();
+    bpl::list beams_boost();
+    bpl::list source_boost();
+    
+    // ---------------------------------------------------------- vector2list
+    
+    /* utility to turn a vector into a python list */
+    
+    template <class T>
       bpl::list vector2list( std::vector<T> vec )
       {
         bpl::list mylist;
-
+	
         typename std::vector<T>::iterator it;
         for ( it=vec.begin(); it < vec.end(); it++ )
           mylist.append( *it );
-
+	
         return mylist;
       }
 

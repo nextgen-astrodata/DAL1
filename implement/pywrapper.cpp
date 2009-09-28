@@ -462,6 +462,22 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Get the file creation date.")
     .def( "setFiledate", &CommonAttributes::setFiledate,
 	  "Set the file creation date.")
+    .def( "telescope", &CommonAttributes::telescope,
+	  "Get the name of the telescope.")
+    .def( "setTelescope", &CommonAttributes::setTelescope,
+	  "Set the name of the telescope.")
+    .def( "projectID", &CommonAttributes::projectID,
+	  "Get the unique identifier for the project.")
+    .def( "setProjectID", &CommonAttributes::setProjectID,
+	  "Set the unique identifier for the project.")
+    .def( "projectTitle", &CommonAttributes::projectTitle,
+	  "Get the name of the project.")
+    .def( "setProjectTitle", &CommonAttributes::setProjectTitle,
+	  "Set the name of the project.")
+    .def( "projectPI", &CommonAttributes::projectPI,
+	  "Get the name of the project's principal investigator.")
+    .def( "setProjectPI", &CommonAttributes::setProjectPI,
+	  "Set the name of the project's principal investigator.")
     ;
   
   // ============================================================================

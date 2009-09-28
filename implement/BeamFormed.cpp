@@ -25,13 +25,17 @@
 #endif
 
 namespace DAL {
+
+  // ============================================================================
+  //
+  //  Construction
+  //
+  // ============================================================================
   
   // ---------------------------------------------------------- BeamFormed
   
   BeamFormed::BeamFormed()
   {
-    dataset_p  = NULL;
-    status     = true;
     filename_p = "";
     H5fileID_p = 0;
     beamGroups_p.clear();
@@ -44,13 +48,23 @@ namespace DAL {
   */
   BeamFormed::BeamFormed(std::string const &filename)
   {
-    dataset_p  = NULL;
-    status     = true;
     filename_p = "";
     H5fileID_p = 0;
     beamGroups_p.clear();
     
     filename_p = filename;
+    
+    init();
+  }
+
+  //_____________________________________________________________________________
+  // BeamFormed
+
+  BeamFormed::BeamFormed (CommonAttributes const &commonAttributes)
+  {
+    commonAttributes_p = commonAttributes;
+    H5fileID_p = 0;
+    beamGroups_p.clear();
     
     init();
   }
@@ -66,6 +80,11 @@ namespace DAL {
   bool BeamFormed::init ()
   {
     bool status (true);
+
+    // Initialize interal variables
+
+    dataset_p  = NULL;
+    status     = true;
     
     // Connection to dataset via DAL layer
     
@@ -197,15 +216,15 @@ namespace DAL {
 
     if (dataset_p != NULL)
       {
+        std::vector< std::string > srcs = sources();
+        std::vector< int > temps        = station_temperatures();
+
         os << "-- Telesope ............. : " << telescope()         << endl;
         os << "-- Number of Stations ... : " << nofStations()       << endl;
         os << "-- Datatype ............. : " << datatype()          << endl;
         os << "-- Emband   ............. : " << emband()            << endl;
 
-        std::vector< std::string > srcs = sources();
-        os << "-- Source(s) ............ : ";
-        print_vector(os, srcs);
-        os << endl;
+        os << "-- Source(s) ............ : " << srcs                << endl;
 
         os << "-- Observation Id ....... : " << observation_id()        << endl;
         os << "-- Project Id ........... : " << proj_id()               << endl;
@@ -229,10 +248,7 @@ namespace DAL {
         os << "-- FWHM of the sub-beams  : " << sub_beam_diameter()     << endl;
         os << "-- Weather temperature .. : " << weather_temperature()   << endl;
         os << "-- Weather humidity ..... : " << weather_humidity()      << endl;
-        std::vector< int > temps = station_temperatures();
-        os << "-- Station temperature(s) : ";
-        print_vector(os, temps);
-        os << endl;
+        os << "-- Station temperature(s) : " << temps                   << endl;
 
         if (listBeams) {
 	  for (uint beam(0); beam<beamGroups_p.size(); beam++) {
@@ -287,6 +303,24 @@ namespace DAL {
     beamstr = NULL;
     
     return beamGroups;
+  }
+
+  // ============================================================================
+  //
+  //  Access to attributes
+  //
+  // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                          setCommonAttributes
+
+  bool BeamFormed::setCommonAttributes (CommonAttributes const &attributes)
+  {
+    bool status (true);
+
+    commonAttributes_p = attributes;
+
+    return status;
   }
   
   // ---------------------------------------------------------- filename

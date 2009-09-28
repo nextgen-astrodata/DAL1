@@ -50,7 +50,10 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>[start filling in your text here]
+      <li>LOFAR Data Format ICD: TBB Time-series data (LOFAR-USG-ICD-001)
+      <li>LOFAR Data Format ICD: Beam-Formed Data (LOFAR-USG-ICD-003)
+      <li>LOFAR Data Format ICD: LOFAR Sky Image (LOFAR-USG-ICD-004)
+      <li>LOFAR Data Format ICD: Naming conventions (LOFAR-USG-ICD-005)
     </ul>
     
     <h3>Synopsis</h3>
@@ -76,8 +79,6 @@ namespace DAL { // Namespace DAL -- begin
     std::string projectID_p;
     //! Name of the project
     std::string projectTitle_p;
-    //! Brief project description
-    std::string projectDescription_p;
     //! Name of the project's principal investigator
     std::string projectPI_p;
     //! Name(s) of the project's co-PI(s)
@@ -88,16 +89,20 @@ namespace DAL { // Namespace DAL -- begin
     std::string observer_p;
     //! Unique identifier for the observation
     std::string observationID_p;
+    //! Reference system for time
+    std::string observationTimeSys_p;
     //! Start date of the observation
     std::string observationDateStart_p;
     //! End date of the observation
     std::string observationDateEnd_p;
+    //! Antenna set specification of observation
+    std::string antennaSet_p;
     //! Filter selection
     std::string filterSelection_p;
+    //! Clock frequency of the observation
+    int clockFrequency_p;
     //! (List of) Oberservation target(s)
     std::string target_p;
-    //! System time reference system
-    std::string systemTime_p;
     //! Data processing system name and version number
     std::string systemVersion_p;
     //! Processing pipeline name
@@ -228,16 +233,6 @@ namespace DAL { // Namespace DAL -- begin
       projectTitle_p = projectTitle;
     }
     
-    //! Get the brief description of the project
-    inline std::string projectDescription () const {
-      return projectDescription_p;
-    }
-
-    //! Set the brief description of the project
-    inline void setProjectDescription (std::string const &projectDescription) {
-      projectDescription_p = projectDescription;
-    }
-
     //! Get the name of the project's principal investigator
     inline std::string projectPI () const {
       return projectPI_p;
@@ -247,12 +242,33 @@ namespace DAL { // Namespace DAL -- begin
     inline void setProjectPI (std::string const &projectPI) {
       projectPI_p = projectPI;
     }
-    
+
+    //! Get the name(s) of the project's co-PI(s)
+    inline std::string projectCO_I () const {
+      return projectCO_I_p;
+    }
+
+    //! Set the name(s) of the project's co-PI(s)
+    inline void setProjectCO_I (std::string const &projectCO_I) {
+      projectCO_I_p = projectCO_I;
+    }
+
+    //! Get the names/Email-addresses of the project's primary contact person(s)
+    inline std::string projectContact () const {
+      return projectContact_p;
+    }
+
+    //! Set the names/Email-addresses of the project's primary contact person(s)
+    inline void setProjectContact (std::string const &projectContact) {
+      projectContact_p = projectContact;
+    }
+
     //! Set the various infos on the project
     void setProjectInfo (std::string const &projectID,
 			 std::string const &projectTitle,
-			 std::string const &projectDescription,
-			 std::string const &projectPI);
+			 std::string const &projectPI,
+			 std::string const &projectCO_I,
+			 std::string const &projectContact);
 
     //! Get the  unique identifier for the observation
     inline std::string observationID () const {
@@ -264,10 +280,96 @@ namespace DAL { // Namespace DAL -- begin
       observationID_p = obsID;
     }
 
+    //! Get the reference system for time
+    inline std::string observationTimeSys () const {
+      return observationTimeSys_p;
+    }
+
+    //! Set the reference system for time
+    inline void setObservationTimeSys (std::string const &obsTimeSys) {
+      observationTimeSys_p = obsTimeSys;
+    }
+
+    //! Get start date of the observation
+    inline std::string observationDateStart () const {
+      return observationDateStart_p;
+    }
+
+    //! Set start date of the observation
+    inline void setObservationDateStart (std::string const &obsDateStart) {
+      observationDateStart_p = obsDateStart;
+    }
+
+    //! Get start date of the observation
+    inline std::string observationDateEnd () const {
+      return observationDateEnd_p;
+    }
+
+    //! Set start date of the observation
+    inline void setObservationDateEnd (std::string const &obsDateEnd) {
+      observationDateEnd_p = obsDateEnd;
+    }
+
+    //! Set basic information on the observation
     void setObservationInfo (std::string const &obsID,
 			     std::string const &obsDateStart,
-			     std::string const &obsDateEnd);
+			     std::string const &obsDateEnd,
+			     std::string const &obsTimeSys="UTC");
     
+    //! Get the antenna set specification of observation
+    inline std::string antennaSet () const {
+      return antennaSet_p;
+    }
+    
+    //! Set the antenna set specification of observation
+    inline void setAntennaSet (std::string const &antennaSet)  {
+      antennaSet_p = antennaSet;
+    }
+    
+    //! Get the filter selection
+    inline std::string filterSelection () const {
+      return filterSelection_p;
+    }
+    
+    //! Set the filter selection
+    inline void setFilterSelection (std::string const &filterSelection) {
+      filterSelection_p = filterSelection;
+    }
+
+    //! Get the number of stations used during the observation
+    inline int nofStations () const {
+      return nofStations_p;
+    }
+    
+    //! Set the number of stations used during the observation
+    inline void nofStations (int const &nofStations) {
+      nofStations_p = nofStations;
+    }
+
+    //! Get the processing pipeline name
+    inline std::string pipelineName () const {
+      return pipelineName_p;
+    }
+
+    //! Set the processing pipeline name
+    inline void setPipelineName (std::string const &name) {
+      pipelineName_p = name;
+    }
+
+    //! Get the processing pipeline version number
+    inline std::string pipelineVersion () const {
+      return pipelineVersion_p;
+    }
+
+    //! Get the processing pipeline version number
+    inline void setPipelineVersion (std::string const &version) {
+      pipelineVersion_p = version;
+    }
+
+    //! Set information on the processing pipeline
+    void setPipelineInfo (std::string const &name,
+			  std::string const &version);
+
     /*!
       \brief Get the name of the class
       
