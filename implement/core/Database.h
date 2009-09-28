@@ -25,50 +25,64 @@
 #define DATABASE_H
 
 #include <string>
+#ifdef HAVE_MYSQL
 #include <mysql/mysql.h>
+#endif
 
 #ifndef DAL_H
 #include "dal.h"
 #endif
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   /*!
     \class Database
     \ingroup DAL
     \brief Class to allow database connections
+  */
+  class Database {
+    
+    //! The name of the server to connect to
+    std::string server_p;
+    //! The user name
+    std::string username;
+    //! The user password
+    std::string password;
+    //! The port number to which to connect (if required)
+    std::string port_p;
+    //! The name of the database to work with
+    std::string database;
+    
+#ifdef HAVE_MYSQL
+    //! Connector to the database
+    MYSQL *conn;
+    //! Result from database query
+    MYSQL_RES *res;
+    MYSQL_ROW row;
+#endif
+    
+  public:
+    
+    // Constructor
+    Database( std::string const& server,
+	      std::string const& username,
+	      std::string const& password,
+	      std::string const& database );
+    //! Destructor
+    ~Database();
+    
+    //! Query the database
+    bool query(std::string const & querystr);
+    
+    //! Provide a summary of the internal status
+    inline void summary () {
+      summary (std::cout);
+    }
+    //! Provide a summary of the internal status
+    void summary (std::ostream &os);    
 
-    Class to allow database connections
-
-   */
-  class Database
-    {
-      std::string server;
-      std::string username;
-      std::string password;
-      std::string port;  // if needed
-      std::string database;
-
-      MYSQL *conn;  // DB connection
-      MYSQL_RES *res;  // result
-      MYSQL_ROW row;
-
-    public:
-
-      // constructor
-      Database( std::string const& server,
-                std::string const& username,
-                std::string const& password,
-                std::string const& database );
-
-      // destructor
-      ~Database();
-
-      bool query(std::string const & querystr);
-
-    }; // end class
-
+  }; // end class
+  
 } // end namespace DAL
 
 #endif // DATABASE_H

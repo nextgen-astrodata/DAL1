@@ -84,7 +84,7 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 set (dal_modules
   core
   coordinates
-#  bindings
+  data_common
   )
 
 ##__________________________________________________________
@@ -184,7 +184,6 @@ if (libutil)
 endif (libutil)
 
 if (HAVE_MYSQL)
-  list (APPEND dal_sources Database.cpp)
   list (APPEND dal_link_libraries ${MYSQL_LIBRARIES})
 endif (HAVE_MYSQL)
 

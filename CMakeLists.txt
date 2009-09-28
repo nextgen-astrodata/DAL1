@@ -244,7 +244,7 @@ endif (NOT HAVE_PYTHON)
 ## WCS Library
 
 if (NOT HAVE_WCS)
-  include (FindWCS)
+  include (FindWCSLIB)
 endif (NOT HAVE_WCS)
 
 ## ---------------------------------------------------------

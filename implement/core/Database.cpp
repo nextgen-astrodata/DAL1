@@ -22,66 +22,84 @@
  ***************************************************************************/
 
 #ifndef DATABASE_H
-#include "Database.h"
+#include <Database.h>
 #endif
 
-namespace DAL
-  {
+namespace DAL {
 
-// ----------------------------------------------------- Database
+  // ============================================================================
+  //
+  //  Construction
+  //
+  // ============================================================================
 
+  //_____________________________________________________________________________
+  //                                                                     Database
+  
   /*!
-    \brief Constructor
-    \param server Name of the server to connect to.
-    \param username Database username.
-    \param password Database password.
-    \param database Name of database.
-   */
+    \param server   -- Name of the server to connect to.
+    \param username -- Database username.
+    \param password -- Database password.
+    \param database -- Name of database.
+  */
   Database::Database( std::string const& lcl_server,
                       std::string const& lcl_username,
                       std::string const& lcl_password,
                       std::string const& lcl_database )
   {
-    server = lcl_server;
+    server_p = lcl_server;
     username = lcl_username;
     password = lcl_password;
     database = lcl_database;
-    port = "";
-
+    port_p   = "";
+    
+#ifdef HAVE_MYSQL
     conn = mysql_init(NULL);
-
+    
     /* Connect to database */
-    if ( !mysql_real_connect(conn, server.c_str(),
-                             username.c_str(), password.c_str(),
-                             database.c_str(), 0, NULL, 0))
+    if ( !mysql_real_connect(conn,
+			     server_p.c_str(),
+                             username.c_str(),
+			     password.c_str(),
+                             database.c_str(),
+			     0, NULL, 0))
       {
         fprintf(stderr, "%s\n", mysql_error(conn));
       }
+#endif
 
   }
 
-// ----------------------------------------------------- ~Database
-
-  /*!
-    \brief Destructor
-   */
+  //_____________________________________________________________________________
+  //                                                                    ~Database
+  
   Database::~Database()
   {
+#ifdef HAVE_MYSQL
     if (conn)
       {
         /* close connection */
         mysql_close(conn);
       }
+#endif
   }
-
-// ----------------------------------------------------- query
-
+  
+  // ============================================================================
+  //
+  //  Methods
+  //
+  // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                        query
+  
   /*!
     \brief Query the database.
     \param querystr Query string to send to database.
-   */
+  */
   bool Database::query( std::string const & querystr )
   {
+#ifdef HAVE_MYSQL
     /* send SQL query */
     if (mysql_query(conn, querystr.c_str()))
       {
@@ -101,8 +119,28 @@ namespace DAL
     mysql_free_result(res);
 
     return DAL::SUCCESS;
+#else
+    std::cerr << "[Database::query] Unable to send query \"" << querystr
+	      << "\" to database! Code disable due to missing MySQL!"
+	      << std::endl;
+    return DAL::FAIL;
+#endif
   }
 
+  //_____________________________________________________________________________
+  //                                                                      summary
+  
+  void Database::summary (std::ostream &os)
+  {
+    os << "[Database] Summary of internal parameters." << std::endl;
+
+    os << "-- The name of the server = " << server_p << std::endl;
+    os << "-- Database user name     = " << username << std::endl;
+    os << "-- Database user password = " << password << std::endl;
+    os << "-- Port number on server  = " << port_p   << std::endl;
+    os << "-- Name of the database   = " << database << std::endl;
+  }
+  
 } // end namespace DAL
 
 // #endif // HAVE_MYSQL
