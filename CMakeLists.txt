@@ -151,6 +151,7 @@ if (SIZEOF_LONG_LONG)
 endif (SIZEOF_LONG_LONG)
 
 if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
+  message (STATUS "Adding compiler flag -DWORDSIZE_IS_64")
   add_definitions (-DWORDSIZE_IS_64)
 endif (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 
@@ -308,6 +309,7 @@ include_directories (
   ${DAL_SOURCE_DIR}/implement
   ${DAL_SOURCE_DIR}/implement/core
   ${DAL_SOURCE_DIR}/implement/coordinates
+  ${DAL_SOURCE_DIR}/implement/data_common
   ${DAL_SOURCE_DIR}/test
   ${DAL_SOURCE_DIR}/apps
   )
@@ -510,6 +512,7 @@ endif (DAL_BUILD_APPS)
 message (STATUS "+============================================================+")
 message (STATUS "| DAL: Summary of configuration settings                     |")
 message (STATUS "+------------------------------------------------------------+")
+message (STATUS " Size of void*              = ${CMAKE_SIZEOF_VOID_P}")
 message (STATUS " Print debugging messages   = ${DAL_DEBUGGING_MESSAGES}")
 message (STATUS " Enable Dashboard server    = ${DAL_ENABLE_DASHBOARD}")
 message (STATUS " Enable Python bindings     = ${DAL_PYTHON_BINDINGS}")
