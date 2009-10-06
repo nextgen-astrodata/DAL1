@@ -822,16 +822,16 @@ namespace DAL {
       \param *lpixel - array giving upper right corner of writing
       \param *array - array containing data
   */
-  void dalFITS::writeSubset(int datatype, long *fpixel, long *lpixel, double *array)
+  void dalFITS::writeSubset (int datatype,
+			     long *fpixel,
+			     long *lpixel,
+			     double *array)
   {
     if (fits_write_subset(fptr, datatype, fpixel, lpixel, array, &fitsstatus_p))
       {
         throw "dalFITS::writeSubset";
       }
   }
-
-
-
 
   // ============================================================================
   //
@@ -932,6 +932,8 @@ namespace DAL {
   /*!
     \brief Read a subCube from a FITS image
 
+    \todo Function not implemented yet!
+
     \param *subCube - pointer to array holding the data read from the image
     \param x_pos - lower left corner x position of subCube
     \param y_pos - lower left corner y position of subCube
@@ -944,21 +946,22 @@ namespace DAL {
                              unsigned long x_size,
                              unsigned long y_size)
   {
+    /* ATTENTION: temporary assignment to avoid compiler warnings! */
+    x_size = y_size = x_pos = y_pos = 0;
+
     long fpixel[3];	// first pixel definition
     long lpixel[3];	// last pixel definition
 
     fpixel[0]=1;
-
-    if (readHDUType()!=IMAGE_HDU)   // Check if current HDU is an image extension
-      {
-        throw "dalFITS::readLine CHDU is not an image";
-      }
-
+    
+    if (readHDUType()!=IMAGE_HDU) {
+      // Check if current HDU is an image extension
+      throw "dalFITS::readLine CHDU is not an image";
+    }
+    
     // Read subset from FITS Image
 
-
   }
-
 
   // ============================================================================
   //
@@ -988,12 +991,12 @@ namespace DAL {
 
     // Check if Faraday plane has the same x-/y-dimensions as naxes dimensions of FITS
     if ((int64_t)x!=dimensions_p[0] || (int64_t)y!=dimensions_p[1]) {
-      throw "dalFITS::writePlane dimensions do not match";
+      throw "[dalFITS::writePlane] Dimensions do not match";
     }
     
     // check if plane counter is above limit
     if (z > dimensions_p[2]) {
-      throw "dalFITS::writePlane z out of range";
+      throw "[dalFITS::writePlane] z out of range";
     }
     
     /* Check if current HDU is an image extension */
@@ -1009,57 +1012,54 @@ namespace DAL {
     nelements=dimensions_p[0]*dimensions_p[1];	// compute nelements in plane
 
     // Write to FITS file
-    if (plane==NULL)
-      {
-        throw "dalFITS::writePlane NULL pointer";
-      }
-    else if (nulval==NULL)
-      {
-        writePix(TDOUBLE, fpixel, nelements, plane);
-      }
-    else	// write pixels with substituting null value
-      {
-        writePixNull(TDOUBLE, fpixel, nelements, plane, nulval);
-      }
+    if (plane==NULL) {
+      throw "dalFITS::writePlane NULL pointer";
+    }
+    else if (nulval==NULL) {
+      writePix(TDOUBLE, fpixel, nelements, plane);
+    }
+    else {
+      // write pixels with substituting null value
+      writePixNull(TDOUBLE, fpixel, nelements, plane, nulval);
+    }
   }
-
 
   //_____________________________________________________________________________
   //                                                                    writeLine
-
+  
   /*!
+    \todo Function not implemented yet!
+
     \param faradayLine - contains line of sight along Faraday Depths with RM intensity
     \param x - x position in pixels to write line to
     \param y - y position in pixels to write line to
   */
-  void dalFITS::writeLine(double *line,
-                          const long x,
-                          const long y,
-                          void *nulval)
-  {
-
-
-  }
+//   void dalFITS::writeLine (double *line,
+// 			   const long x,
+// 			   const long y,
+// 			   void *nulval)
+//   {
+//   }
 
   //_____________________________________________________________________________
   //                                                                    writeTile
 
   /*!
+    \todo Function not implemented yet!
+
     \param tile - buffer containing tile data
     \param x_pos - x position in pixels to write tile to
     \param y_pos - y position in pixels to write tile to
     \param x_size - horizontal size of tile
     \param y_size - vertical size of tile
   */
-  void dalFITS::writeTile(double* tile,
-                          const long x_pos,
-                          const long y_pos,
-                          const long x_size,
-                          const long y_size
-                         )
-  {
-
-  }
+//   void dalFITS::writeTile (double* tile,
+// 			   const long x_pos,
+// 			   const long y_pos,
+// 			   const long x_size,
+// 			   const long y_size)
+//   {
+//   }
 
   //_____________________________________________________________________________
   //                                                                 writeSubCube
@@ -1067,37 +1067,33 @@ namespace DAL {
   /*!
     \brief Write a SubCube to a FITS file
 
+    \todo Function not implemented yet!
+
     \param cube - Array that contains data
     \param x_pos - x position in pixels to write cube to
     \param y_pos - y position in pixels to write cube to
     \param x_size - x-dimension of cube in pixels
     \param y_size - y-dimension of cube in pixels
   */
-  void dalFITS::writeSubCube( double* subcube,
-                              long x_size,
-                              long y_size,
-                              long x_pos,
-                              long y_pos)
-  {
-    /* ATTENTION: temporary assignment to avoid compiler warnings! */
-    x_size = y_size = x_pos = y_pos = 0;
-
-    // Check if position is valid
-
-    // check if size goes beyond limits of cube
-
-    // Write to FITS file
-  }
-
-
-
-
+//   void dalFITS::writeSubCube (double* subcube,
+//                               long x_size,
+//                               long y_size,
+//                               long x_pos,
+//                               long y_pos)
+//   {
+//     // Check if position is valid
+    
+//     // check if size goes beyond limits of cube
+    
+//     // Write to FITS file
+//   }
+  
   // ============================================================================
   //
   //  Header access functions (keywords etc.)
   //
   // ============================================================================
-
+  
   // Methods for reading keywords and records from a dalFITS file
 
 

@@ -513,6 +513,7 @@ message (STATUS "+============================================================+"
 message (STATUS "| DAL: Summary of configuration settings                     |")
 message (STATUS "+------------------------------------------------------------+")
 message (STATUS " Size of void*              = ${CMAKE_SIZEOF_VOID_P}")
+message (STATUS " Python version             = ${PYTHON_VERSION}")
 message (STATUS " Print debugging messages   = ${DAL_DEBUGGING_MESSAGES}")
 message (STATUS " Enable Dashboard server    = ${DAL_ENABLE_DASHBOARD}")
 message (STATUS " Enable Python bindings     = ${DAL_PYTHON_BINDINGS}")

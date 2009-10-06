@@ -103,7 +103,6 @@ set (dal_sources
   BeamFormed.cpp
   BeamGroup.cpp
   BeamSubband.cpp
-  CommonAttributes.cpp
   Enumerations.cpp
   DataType.cpp
   TBB.cpp
@@ -228,6 +227,9 @@ if (DAL_PYTHON_BINDINGS)
     ${CFITSIO_LIBRARIES}
     ${WCSLIB_LIBRARIES}
     ${LAPACK_LIBRARIES}
+    ${libdl}
+    ${libpthread}
+    ${libutil}
     )
   ## additional target properties
   if (APPLE)

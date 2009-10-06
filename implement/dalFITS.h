@@ -409,24 +409,27 @@ class dalFITS {
 		     const long z,
 		     void *nulval=NULL);
     //! Write a line of sight to a FITS file
-    void writeLine(double *line,
-		   const long x,
-		   const long y,
-		   void *nulval=NULL);
+    void writeLine (double *line,
+		    const long x,
+		    const long y,
+		    void *nulval=NULL);
     //! Write a tile to a FITS file
-    void writeTile( double* tile,
+    void writeTile (double* tile,
 		    const long x_size,
 		    const long y_size,
 		    const long x_pos,
 		    const long y_pos);
+    //! Write a cube to a FITS file
+    void writeCube (double* cube,
+		    const long x,
+		    const long y,
+		    const long z);
     
-    void writeCube(double* cube, const long x, const long y, const long z);
-    
-    void writeSubCube(  double* subcube,
-			const long x_size,
-			const long y_size,
-			const long x_pos,
-			const long y_pos);
+    void writeSubCube (double* subcube,
+		       const long x_size,
+		       const long y_size,
+		       const long x_pos,
+		       const long y_pos);
     
     
     // ============================================================================

@@ -64,7 +64,7 @@ namespace DAL { // Namespace DAL -- begin
     
   */  
   class CommonAttributes {
-
+    
     //! LOFAR group type ("Root")
     std::string groupType_p;
     //! File name
@@ -100,7 +100,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Filter selection
     std::string filterSelection_p;
     //! Clock frequency of the observation
-    int clockFrequency_p;
+    double clockFrequency_p;
+    //! Physical unit associated with the clock frequency
+    std::string clockFrequencyUnit_p;
     //! (List of) Oberservation target(s)
     std::string target_p;
     //! Data processing system name and version number
@@ -334,6 +336,26 @@ namespace DAL { // Namespace DAL -- begin
     //! Set the filter selection
     inline void setFilterSelection (std::string const &filterSelection) {
       filterSelection_p = filterSelection;
+    }
+
+    //! Get the clock frequency of the observation
+    inline int clockFrequency () const {
+      return clockFrequency_p;
+    }
+    
+    //! Set the clock frequency of the observation
+    inline void setClockFrequency (int const &clockFrequency) {
+      clockFrequency_p = clockFrequency;
+    }
+
+    //! Get the physical unit associated with the clock frequency
+    inline std::string clockFrequencyUnit () const {
+      return clockFrequencyUnit_p;
+    }
+
+    //! Set the physical unit associated with the clock frequency
+    inline void setClockFrequencyUnit (std::string const &unit) {
+      clockFrequencyUnit_p = unit;
     }
 
     //! Get the number of stations used during the observation
