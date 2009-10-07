@@ -1,68 +1,73 @@
 #!/usr/bin/env ipython
 
-# Program for ploting a spectrum from beam formed HDF5 files
+"""Program for ploting a spectrum from beam formed HDF5 files."""
 
-import sys
-import pydal
-import scipy
-import pylab
-import time
+import pydal, pylab, numpy, time, sys, warnings
 
-if (len(sys.argv) > 1):
-  fn=sys.argv[1] #file.filename()
-  file = pydal.BeamFormed(fn)
-  ds=pydal.dalDataset(fn,"HDF5")
-  #file.summary()
-else:
-  print "Please provide a beam-formed hdf5 file as input."
-  sys.exit(1)
+if (len(sys.argv) < 2): sys.exit("Name to beam-formed.h5 file needed")
 
-tmax=1  #time in seconds, 0 uses full range
-vmax=None #1e10 #limit intensity maximum, None is disabled
-interpolation='bilinear' #'bilinear'  'nearest'
+dt=100     #time in seconds, 0 uses full range
+imax=None #imax=None #1e10 #limit intensity maximum, None is disabled
+subbands=248; pixels=800; spectrum=numpy.empty((subbands,pixels))
 
-tstart=time.time()
-beam = file.getBeam(0)
-nsub=beam.nofSubbands()
-beamg=ds.openGroup("beam000")
-fmin=beamg.getAttribute_int("CENTER_FREQUENCY_SB000")/1e6
-fmax=beamg.getAttribute_int("CENTER_FREQUENCY_SB"+str(nsub-1).zfill(3))/1e6
-ntot=ds.openTable("beam000/SB000").getNumberOfRows()
-tend=ntot*ds.getAttribute_int("DOWNSAMPLE_RATE") \
-         /ds.getAttribute_double("SAMPLE_RATE")
-if (tmax): ns=int(ntot*tmax/tend)
-else: ns=ntot
+def config():
+  pylab.ion()
+  pylab.rcParams['font.size'] = 18
+  pylab.hold(False)
+  pylab.draw()
+  warnings.simplefilter("ignore",DeprecationWarning)
+config()
 
-#UTC=ds.getAttribute_string("EPOCH_UTC")
-#UTC_DATE=ds.getAttribute_string("EPOCH_DATE")
+def downsample(vector, n):
+    """
+    Sum up n neighboring elements and return a new vector of length/n.
+    Prerequisite: the length of vector/n has to be integer.
+    """
+    if (len(vector) % n):
+        print "Length of 'vector' has to be an integer multiple of 'n'=%d!" % n
+        return 0
+    newvector = numpy.reshape(vector, (len(vector)/n, n))
+    return numpy.add.reduce(newvector, 1)
 
-#print beam.ra()
-#sys.exit()
+filename=sys.argv[1]
+file = pydal.BeamFormed(filename)
+Beam = file.getBeam(0)
+DDS=pydal.dalDataset(filename,"HDF5")
+BG=DDS.openGroup("beam000")
+fmin=BG.getAttribute_int("CENTER_FREQUENCY_SB000")[0]/1e6
+fmax=240 #BG.getAttribute_int("CENTER_FREQUENCY_SB"+
+         #                str(Beam.nofSubbands()-1).zfill(3))/1e6
+samples=DDS.openTable("beam000/SB000").getNumberOfRows()
+duration=samples*DDS.getAttribute_int("DOWNSAMPLE_RATE") \
+         /DDS.getAttribute_double("SAMPLE_RATE")
+if(dt): ns=int(samples*dt/duration)
+else: ns=samples;
 
-for i in range(0, nsub):
-  try: spec
-  except NameError:    spec=beam.getIntensity(i, 0, ns)
-  print "reading subband", i, ", center frequency="
-  beamg.getAttribute_int("CENTER_FREQUENCY_SB"+str(i).zfill(3))
-  spec=scipy.vstack([spec, beam.getIntensity(i, 0, ns)])
+ds=ns/pixels+1
+if ds*pixels>samples: ds=ds-1
+ns=ds*pixels
+dt=duration*ns/samples
+print "fmin=", fmin, fmax, dt, ds, ns, ns*pixels
 
-fs=20
-params = {'axes.labelsize': fs,
-          'axes.titlesize': 1.2*fs,
-          'text.fontsize': fs,
-          'legend.fontsize': fs,
-          'xtick.labelsize': .8*fs,
-          'ytick.labelsize': .8*fs}
-pylab.rcParams.update(params)
+for s in range(Beam.nofSubbands()):
+  tstart=time.time()
+  sb=downsample(Beam.getIntensity(s,0,ns), ds)
+  spectrum[s,]=numpy.sqrt(sb)
+  if(s % 5): continue
+  print 'duration:' , time.time()-tstart
+  sp=pylab.imshow(numpy.log(spectrum),extent=(0,dt,fmax,fmin), aspect='auto', \
+                  interpolation='nearest', vmax=imax)
+  canvas=sp.figure.canvas
+  canvas.blit(sp.figure.bbox)
 
-pylab.imshow(pylab.log(spec), aspect='auto', extent=(0,tmax,fmax,fmin), interpolation=str(interpolation), vmax=vmax)
-#interpolation='nearest', aspect=.7*ns/nsub
+
+pylab.imshow(numpy.log(spectrum), extent=(0,dt,fmax,fmin), aspect='auto', \
+             vmax=imax, interpolation='nearest')
+#aspect=.7*ns/nsub
 pylab.colorbar(fraction=0.07, pad=0)
 pylab.xlabel('time [s]')
 pylab.ylabel('frequency [MHz]')
-pylab.title(fn)
-#pylab.title("")
-pylab.savefig(fn+".png")
+pylab.title(filename)
+#pylab.savefig(filename+".png")
 print time.time()-tstart, "seconds"
 pylab.show()
-
