@@ -37,11 +37,13 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
+// casacore header files
 #include <casa/Arrays/Array.h>
 
+// DAL header files
 #include <dalCommon.h>
 #include <dalDataset.h>
-
+#include <CommonAttributes.h>
 
 namespace DAL {  // Namespace DAL -- begin
   
@@ -87,6 +89,8 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! pointer to the dataset (i.e. the file itself)
     dalDataset * dataset_p;
+
+    CommonAttributes commonAttributes_p;
     
     //! Check the header-CRC
     bool do_headerCRC_p;
@@ -163,7 +167,6 @@ namespace DAL {  // Namespace DAL -- begin
       UInt16 crc;
     };
     
-    
     /*!
       \brief check the header CRC.
       
@@ -181,6 +184,14 @@ namespace DAL {  // Namespace DAL -- begin
       \brief Default constructor
     */
     TBBraw();
+
+    /*!
+      \brief Argumented Constructor
+
+      \param commonAttributes -- LOFAR common attribute attached to the root
+             group of the file.
+    */
+    TBBraw (CommonAttributes const &commonAttributes);
     
     /*!
       \brief Argumented Constructor
@@ -192,12 +203,12 @@ namespace DAL {  // Namespace DAL -- begin
       \param observationMode -- name of the observation mode
       \param telescope -- name of the telescope (usually "LOFAR")
     */
-    TBBraw(string const &filename,
-	   string const &observer="John Doe",
-	   string const &project="UNDEFINED",
-	   string const &observation_id="UNDEFINED",
-	   string const &observationMode="UNDEFINED",
-	   string const &telescope="LOFAR");
+    TBBraw (string const &filename,
+	    string const &observer="John Doe",
+	    string const &project="UNDEFINED",
+	    string const &observation_id="UNDEFINED",
+	    string const &observationMode="UNDEFINED",
+	    string const &telescope="LOFAR");
     
     // -------------------------------------------------------------- Destruction
     
@@ -248,17 +259,34 @@ namespace DAL {  // Namespace DAL -- begin
     {
       fixTimes_p=fixlevel;
     };
+
+    //! Get the LOFAR common attributes attached to the root level of the file
+    inline CommonAttributes commonAttributes () const {
+      return commonAttributes_p;
+    }
     
     
     // ------------------------------------------------------------------ Methods
     
     /*!
       \brief Open (create) new file
+
+      \return <tt>true</tt> if file is created successfully
       
-      \param filename -- name of the output file to be created
-      \param observer -- name of the observer
-      \param project -- name of the project
-      \param observation_id -- name of the observation ID
+      Creating more than one file with one instance of TBBraw is deprecated!
+      Destroy the TBBraw object and create a new one instead!
+      Currently only creates new files, and fails if a file with \t filename
+      already exists.
+    */
+    bool open_file ();
+    
+    /*!
+      \brief Open (create) new file
+      
+      \param filename        -- Name of the output file to be created
+      \param observer        -- Name of the observer
+      \param project         -- Name of the project
+      \param observation_id  -- Name of the observation ID
       \param observationMode -- name of the observation mode
       \param telescope -- name of the telescope (usually "LOFAR")
       

@@ -148,7 +148,7 @@
 #endif
 #endif
 
-#ifndef TBB_TIMESERIES
+#ifndef TBB_TIMESERIES_H
 #include "TBB_Timeseries.h"
 #endif
 

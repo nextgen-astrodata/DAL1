@@ -126,43 +126,6 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
 
-  // ------------------------------------------------------------------ telescope
-
-  /*!
-    \return telescope -- The name of the telescope with which the data were
-            recorded; returns an empty string in case no keyword value could be
-      extracted.
-  */
-  std::string TBB_Timeseries::telescope ()
-  {
-    std::string val;
-    
-    if (DAL::h5get_attribute(fileID_p,
-                             attribute_name(DAL::TELESCOPE),
-                             val)) {
-      return val;
-    }
-    else {
-      return std::string ("UNDEFINED");
-    }
-  }
-  
-  // ------------------------------------------------------------------- observer
-
-  std::string TBB_Timeseries::observer ()
-  {
-    std::string val;
-    
-    if (DAL::h5get_attribute(fileID_p,
-                             attribute_name(DAL::OBSERVER),
-                             val)) {
-      return val;
-    }
-    else {
-      return std::string ("UNDEFINED");
-    }
-  }
-  
   // -------------------------------------------------------------------- project
   
   std::string TBB_Timeseries::project ()
@@ -171,22 +134,6 @@ namespace DAL {  // Namespace DAL -- begin
     
     if (DAL::h5get_attribute(fileID_p,
                              attribute_name(DAL::PROJECT),
-                             val)) {
-      return val;
-    }
-    else {
-      return std::string ("UNDEFINED");
-    }
-  }
-  
-  // ------------------------------------------------------------- observation_id
-
-  std::string TBB_Timeseries::observation_id ()
-  {
-    std::string val;
-    
-    if (DAL::h5get_attribute(fileID_p,
-                             attribute_name(DAL::OBSERVATION_ID),
                              val)) {
       return val;
     }
@@ -247,9 +194,9 @@ namespace DAL {  // Namespace DAL -- begin
     filename_p = "UNDEFINED";
     fileID_p   = -1;
   }
-
+  
   // ----------------------------------------------------------------------- init
-
+  
   void TBB_Timeseries::init (std::string const &filename)
   {
     // try to open the HDF5 file
@@ -262,6 +209,15 @@ namespace DAL {  // Namespace DAL -- begin
       bool status (true);
       // Store the filename
       filename_p = filename;
+      // Read the attributes attached to the root group of the file
+      try {
+	attributes_p.h5read(fileID_p);
+      } catch (std::string message) {
+	std::cerr << "[TBB_Timeseries::init] Error reading common attributes"
+		  << " attached to root group. => "
+		  << message
+		  << std::endl;
+      }
       // locate and register the station groups
       try {
 	status = setStationGroups ();

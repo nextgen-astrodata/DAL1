@@ -43,6 +43,15 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                       TBBraw
   
+  TBBraw::TBBraw (CommonAttributes const &commonAttributes)
+  {
+    init();
+    commonAttributes_p = commonAttributes;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                       TBBraw
+  
   TBBraw::TBBraw (string const &filename,
 		  string const &observer,
 		  string const &project,
@@ -72,10 +81,11 @@ namespace DAL {  // Namespace DAL -- begin
   
   void TBBraw::init ()
   {
-    bigendian_p    = BigEndian();
-    dataset_p      = NULL;
-    do_headerCRC_p = true;
-    do_dataCRC_p   = false;
+    commonAttributes_p = CommonAttributes();
+    bigendian_p        = BigEndian();
+    dataset_p          = NULL;
+    do_headerCRC_p     = true;
+    do_dataCRC_p       = false;
 
     fixTimes_p           = 2;
     nofProcessed_p       = 0;
@@ -108,7 +118,24 @@ namespace DAL {  // Namespace DAL -- begin
 			  string const &observationMode,
 			  string const &telescope)
   {
+    /* Store the common attributes attached to the root group of the file */
+    commonAttributes_p.setFilename (filename);
+    commonAttributes_p.setObserver (observer);
+    commonAttributes_p.setProjectTitle (project);
+    commonAttributes_p.setObservationID (observation_id);
+    commonAttributes_p.setFilterSelection (observationMode);
+    commonAttributes_p.setTelescope(telescope);
+    /* Open the file */
+    return open_file();
+  };
+  
+  //_____________________________________________________________________________
+  //                                                                    open_file
+  
+  bool TBBraw::open_file ()
+  {
     struct stat filestat;
+    std::string filename = commonAttributes_p.filename();
     
     if ((stat(filename.c_str(), &filestat) != 0) && (errno == ENOENT))
       {
@@ -123,26 +150,21 @@ namespace DAL {  // Namespace DAL -- begin
             init();
           };
         dataset_p = new dalDataset( filename.c_str(), "HDF5" );
-        if (dataset_p != NULL)
-          {
-            dataset_p->setAttribute( attribute_name(TELESCOPE), telescope);
-            dataset_p->setAttribute( attribute_name(OBSERVER), observer);
-            dataset_p->setAttribute( attribute_name(PROJECT), project );
-            dataset_p->setAttribute( attribute_name(OBSERVATION_ID), observation_id);
-            dataset_p->setAttribute( attribute_name(OBSERVATION_MODE), observationMode );
-            return true;
-          }
-        else
-          {
-            cerr << "TBBraw::open_file: Error during creation of dataset." << endl;
-          };
+	/* Set the attributes attached to the root group of the file. */
+        if (dataset_p != NULL) {
+	  hid_t groupID = dataset_p->getId();
+	  commonAttributes_p.h5write(groupID);
+	  return true;
+	}
+        else {
+	  cerr << "TBBraw::open_file: Error during creation of dataset." << endl;
+	};
       }
-    else
-      {
-        cerr << "TBBraw::open_file: Error \"stat-ing\" filename. File already exists?" << endl;
-      };
+    else {
+      cerr << "TBBraw::open_file: Error \"stat-ing\" filename. File already exists?" << endl;
+    };
     return false;
-  };
+  }
   
   //_____________________________________________________________________________
   //                                                                      destroy
@@ -174,7 +196,7 @@ namespace DAL {  // Namespace DAL -- begin
     delete [] stationBuf;
     delete [] dipoleBuf;
   }
-
+  
   // ============================================================================
   //
   //  Methods
@@ -500,12 +522,11 @@ namespace DAL {  // Namespace DAL -- begin
   {
     int stationIndex;
 
-    if (dataset_p == NULL)
-      {
-        cerr << "TBBraw::createNewStation: \"dataset_p == NULL\" Not attached to a file!" <<endl;
-        return -1;
-      };
-
+    if (dataset_p == NULL) {
+      cerr << "TBBraw::createNewStation: \"dataset_p == NULL\" Not attached to a file!" <<endl;
+      return -1;
+    };
+    
     // find an empty station index
     for (stationIndex=0; stationIndex<MAX_NO_STATIONS; stationIndex++)
       {
@@ -519,14 +540,14 @@ namespace DAL {  // Namespace DAL -- begin
         cerr << "TBBraw::createNewStation: Buffer \"dipoleBuf\" is full, cannot create new dipole!" <<endl;
         return -1;
       };
-
+    
     // We got our stationIndex -> create the station group
     char newStationIDstr[10];
     sprintf( newStationIDstr, "Station%03d", headerp->stationid );
     stationBuf[stationIndex].group = dataset_p->createGroup( newStationIDstr );
-
+    
     stationBuf[stationIndex].ID = headerp->stationid;
-
+    
     double trigger_offset[1]             = { 0 };
     int triggered_antennas[1]            = { 0 };
     double station_position_value[3]     = { 0, 0, 0 };
@@ -535,31 +556,31 @@ namespace DAL {  // Namespace DAL -- begin
     double beam_direction_value[2]       = { 0, 90 };
     string beam_direction_unit[2]        = { "deg", "deg"};
     string beam_direction_frame          = "AZEL";
-
+    
     // Add attributes to "Station" group
     stationBuf[stationIndex].group->setAttribute( attribute_name(STATION_POSITION_VALUE),
-        station_position_value, 3 );
+						  station_position_value, 3 );
     stationBuf[stationIndex].group->setAttribute( attribute_name(STATION_POSITION_UNIT),
-        station_position_unit, 3 );
+						  station_position_unit, 3 );
     stationBuf[stationIndex].group->setAttribute( attribute_name(STATION_POSITION_FRAME),
-        station_position_frame );
+						  station_position_frame );
     stationBuf[stationIndex].group->setAttribute( attribute_name(BEAM_DIRECTION_VALUE),
-        beam_direction_value, 2 );
+						  beam_direction_value, 2 );
     stationBuf[stationIndex].group->setAttribute( attribute_name(BEAM_DIRECTION_UNIT),
-        beam_direction_unit, 2 );
+						  beam_direction_unit, 2 );
     stationBuf[stationIndex].group->setAttribute( attribute_name(BEAM_DIRECTION_FRAME),
-        beam_direction_frame );
+						  beam_direction_frame );
     stationBuf[stationIndex].group->setAttribute( attribute_name(TRIGGER_TYPE),
-        string("UNDEFINED") );
+						  string("UNDEFINED") );
     stationBuf[stationIndex].group->setAttribute( attribute_name(TRIGGER_OFFSET),
-        trigger_offset );
+						  trigger_offset );
     stationBuf[stationIndex].group->setAttribute( attribute_name(TRIGGERED_ANTENNAS),
-        triggered_antennas);
+						  triggered_antennas);
     stationBuf[stationIndex].group->setAttribute( attribute_name(OBSERVATION_MODE),
-        string("Transient") );
+						  string("Transient") );
     return stationIndex;
   };
-
+  
   //_____________________________________________________________________________
   //                                                              addDataToDipole
   
@@ -575,11 +596,11 @@ namespace DAL {  // Namespace DAL -- begin
              << " bytes" << endl;
         return false;
       };
-
+    
     //set sdata to the (hopefully correct) position in the udp-buffer
     char *tmpptr = buffer+sizeof(TBB_Header);
     short *sdata = (short *)(tmpptr);
-
+    
     if ( bigendian_p != bigEndian )
       {
         for ( i=0; i < headerp->n_samples_per_frame; i++ )

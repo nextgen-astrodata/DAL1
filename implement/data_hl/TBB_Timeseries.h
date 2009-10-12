@@ -80,7 +80,9 @@ namespace DAL {  // Namespace DAL -- begin
   class TBB_Timeseries {
     
   protected:
-    
+
+    //! LOFAR common root attributes
+    CommonAttributes attributes_p;
     //! Name of the data file
     std::string filename_p;
     //! File handle identifier
@@ -117,6 +119,11 @@ namespace DAL {  // Namespace DAL -- begin
     
     // --------------------------------------------------------------- Parameters
     
+    //! Get the common attributes attached to the root group
+    inline CommonAttributes commonAttributes () const {
+      return attributes_p;
+    }
+    
     /*!
       \brief Get the name of the data file
       
@@ -136,15 +143,14 @@ namespace DAL {  // Namespace DAL -- begin
     }
     
     //! Get the name of the telescope
-    std::string telescope ();
+    inline std::string telescope () const {
+      return attributes_p.telescope();
+    }
     
-    /*!
-      \brief Get the name of the observer
-      
-      \return observer -- The name of the observer; returns an empty string in
-              case no keyword value could be extracted.
-    */
-    std::string observer ();
+    //! Get the name of the observer
+    inline std::string observer () const {
+      return attributes_p.observer();
+    }
     
     /*!
       \brief Get the project name/description
@@ -155,13 +161,10 @@ namespace DAL {  // Namespace DAL -- begin
     */
     std::string project ();
     
-    /*!
-      \brief Get the observation ID
-      
-      \return observation_id -- The observation ID; returns an empty string in
-              case no keyword value could be extracted.
-    */
-    std::string observation_id ();
+    //! Get the observation ID
+    inline std::string observation_id () const {
+      return attributes_p.observationID();
+    };
     
     /*!
       \brief Get the description of the observation mode

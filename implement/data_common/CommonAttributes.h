@@ -50,18 +50,28 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>LOFAR Data Format ICD: TBB Time-series data (LOFAR-USG-ICD-001)
-      <li>LOFAR Data Format ICD: Beam-Formed Data (LOFAR-USG-ICD-003)
-      <li>LOFAR Data Format ICD: LOFAR Sky Image (LOFAR-USG-ICD-004)
-      <li>LOFAR Data Format ICD: Naming conventions (LOFAR-USG-ICD-005)
+      <li>LOFAR Data Format ICDs:
+      <ul>
+        <li>TBB Time-series data (LOFAR-USG-ICD-001)
+	<li>Beam-Formed Data (LOFAR-USG-ICD-003)
+	<li>LOFAR Sky Image (LOFAR-USG-ICD-004)
+	<li>Naming conventions (LOFAR-USG-ICD-005)
+      </ul>
+      <li>Components of the LOFAR system software:
+      <ul>
+        <li>LCS/ApplCommon/include/ApplCommon/Observation.h
+      </ul>
     </ul>
     
     <h3>Synopsis</h3>
 
+    This class implements the set of <i>LOFAR Common Root Attributes</i>, as they
+    are listed in the LOFAR Data Format ICDs.
+    
     \image html lofar_common_metadata.png
     
     <h3>Example(s)</h3>
-    
+
   */  
   class CommonAttributes {
     
@@ -82,7 +92,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Name of the project's principal investigator
     std::string projectPI_p;
     //! Name(s) of the project's co-PI(s)
-    std::string projectCO_I_p;
+    std::string projectCoI_p;
     //! Names/Email-addresses of the project's primary contact person(s)
     std::string projectContact_p;
     //! Name(s) of the observer(s)
@@ -100,7 +110,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Filter selection
     std::string filterSelection_p;
     //! Clock frequency of the observation
-    double clockFrequency_p;
+    int clockFrequency_p;
     //! Physical unit associated with the clock frequency
     std::string clockFrequencyUnit_p;
     //! (List of) Oberservation target(s)
@@ -124,17 +134,23 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Default constructor
     CommonAttributes ();
-
+    
     //! Argumented constructor
     CommonAttributes (std::string const &filename,
 		      std::string const &filetype,
 		      std::string const &filedate);
 
+    //! Argumented constructor
+    CommonAttributes (std::string const &observationID,
+		      std::string const &observationTimeSys,
+		      std::string const &observationDateStart,
+		      std::string const &observationDateEnd);
+    
 #ifdef HAVE_HDF5    
     //! Argumented constructor
     CommonAttributes (hid_t const &locationID);
 #endif
-
+    
     /*!
       \brief Copy constructor
       
@@ -246,13 +262,13 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Get the name(s) of the project's co-PI(s)
-    inline std::string projectCO_I () const {
-      return projectCO_I_p;
+    inline std::string projectCoI () const {
+      return projectCoI_p;
     }
 
     //! Set the name(s) of the project's co-PI(s)
-    inline void setProjectCO_I (std::string const &projectCO_I) {
-      projectCO_I_p = projectCO_I;
+    inline void setProjectCoI (std::string const &projectCoI) {
+      projectCoI_p = projectCoI;
     }
 
     //! Get the names/Email-addresses of the project's primary contact person(s)
@@ -269,8 +285,18 @@ namespace DAL { // Namespace DAL -- begin
     void setProjectInfo (std::string const &projectID,
 			 std::string const &projectTitle,
 			 std::string const &projectPI,
-			 std::string const &projectCO_I,
+			 std::string const &projectCoI,
 			 std::string const &projectContact);
+
+    //! Get the name(s) of the observer(s)
+    inline std::string observer () const {
+      return observer_p;
+    }
+
+    //! Set the name(s) of the observer(s)
+    inline void setObserver (std::string const &observer) {
+      observer_p = observer;
+    }
 
     //! Get the  unique identifier for the observation
     inline std::string observationID () const {
@@ -358,16 +384,6 @@ namespace DAL { // Namespace DAL -- begin
       clockFrequencyUnit_p = unit;
     }
 
-    //! Get the number of stations used during the observation
-    inline int nofStations () const {
-      return nofStations_p;
-    }
-    
-    //! Set the number of stations used during the observation
-    inline void nofStations (int const &nofStations) {
-      nofStations_p = nofStations;
-    }
-
     //! Get the processing pipeline name
     inline std::string pipelineName () const {
       return pipelineName_p;
@@ -391,6 +407,33 @@ namespace DAL { // Namespace DAL -- begin
     //! Set information on the processing pipeline
     void setPipelineInfo (std::string const &name,
 			  std::string const &version);
+
+    //! Get the number of stations used during the observation
+    inline int nofStations () const {
+      return nofStations_p;
+    }
+
+    //! Get the list of stations used during the observation
+    inline std::vector<std::string> stationsList () const {
+      return stationsList_p;
+    }
+
+    //! Set the list of stations used during the observation
+    inline void setStationsLists (std::vector<std::string> const &stations) {
+      nofStations_p = stations.size();
+      stationsList_p.resize(nofStations_p);
+      stationsList_p = stations;
+    }
+
+    //! Get notes and/or comments
+    inline std::string notes () const {
+      return notes_p;
+    }
+
+    //! Set notes and/or comments
+    inline void setNotes (std::string const &notes) {
+      notes_p = notes;
+    }
 
     /*!
       \brief Get the name of the class

@@ -24,6 +24,8 @@
 #include <CommonAttributes.h>
 
 // Namespace usage
+using std::cout;
+using std::endl;
 using DAL::CommonAttributes;
 
 /*!
@@ -38,7 +40,8 @@ using DAL::CommonAttributes;
   \date 2009/08/31
 */
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                              test_constructors
 
 /*!
   \brief Test constructors for a new CommonAttributes object
@@ -48,24 +51,112 @@ using DAL::CommonAttributes;
 */
 int test_constructors ()
 {
-  std::cout << "\n[tCommonAttributes::test_constructors]\n" << std::endl;
+  cout << "\n[tCommonAttributes::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  cout << "[1] Testing default constructor ..." << endl;
   try {
-    CommonAttributes newObject;
+    CommonAttributes attributes;
     //
-    newObject.summary(); 
+    attributes.summary(); 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[2] Testing argumented constructor ..." << endl;
+  try {
+    std::string filename ("TBB_Dataset.h5");
+    std::string filetype ("tbb");
+    std::string filedate ("2009-10-10T00:00:00.0");
+    CommonAttributes attributes (filename,
+				 filetype,
+				 filedate);
+    //
+    attributes.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[3] Testing argumented constructor ..." << endl;
+  try {
+    std::string observationID ("1234567890");
+    std::string observationTimeSys ("UTC");
+    std::string observationDateStart ("2009-10-10T00:00:00.0");
+    std::string observationDateEnd ("2009-10-10T01:00:00.0");
+    CommonAttributes attributes (observationID,
+				 observationTimeSys,
+				 observationDateStart,
+				 observationDateEnd);
+    //
+    attributes.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[4] Testing copy constructor ..." << endl;
+  try {
+    std::string observationID ("1234567890");
+    std::string observationTimeSys ("UTC");
+    std::string observationDateStart ("2009-10-10T00:00:00.0");
+    std::string observationDateEnd ("2009-10-10T01:00:00.0");
+    //
+    CommonAttributes attributes (observationID,
+				 observationTimeSys,
+				 observationDateStart,
+				 observationDateEnd);
+    attributes.summary();
+    //
+    CommonAttributes attributesCopy (attributes);
+    attributesCopy.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   
   return nofFailedTests;
 }
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                test_attributes
+
+/*!
+  \brief Test access to the individual attributes
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_attributes ()
+{
+  cout << "\n[tCommonAttributes::test_attributes]\n" << endl;
+
+  int nofFailedTests (0);
+  CommonAttributes attributes;
+
+  attributes.setFilename ("LOFAR_TBB.h5");
+  attributes.setFiletype ("tbb");
+  attributes.setFiledate ("2009-10-10T01:00:00.0");
+  attributes.setTelescope ("LOFAR");
+  attributes.setProjectID ("CR-2009-10-10");
+  attributes.setProjectTitle ("CR test observation");
+  attributes.setProjectPI ("Mr. CR");
+
+  cout << "-- Filename           = " << attributes.filename()     << endl;
+  cout << "-- Filetype           = " << attributes.filetype()     << endl;
+  cout << "-- File creation date = " << attributes.filedate()     << endl;
+  cout << "-- Telescope name     = " << attributes.telescope()    << endl;
+  cout << "-- Project ID         = " << attributes.projectID()    << endl;
+  cout << "-- Project title      = " << attributes.projectTitle() << endl;
+  cout << "-- Project PI         = " << attributes.projectPI()    << endl;
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                           main
 
 int main ()
 {
@@ -73,6 +164,8 @@ int main ()
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
+  // Test access to the individual attributes
+  nofFailedTests += test_attributes ();
 
   return nofFailedTests;
 }

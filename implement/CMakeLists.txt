@@ -85,6 +85,7 @@ set (dal_modules
   core
   coordinates
   data_common
+  data_hl
   )
 
 ##__________________________________________________________
@@ -100,16 +101,10 @@ set (dal_sources
   dalFilter.cpp
   dalGroup.cpp
   dalTable.cpp
-  BeamFormed.cpp
-  BeamGroup.cpp
-  BeamSubband.cpp
   Enumerations.cpp
   DataType.cpp
   TBB.cpp
   TBBraw.cpp
-  TBB_DipoleDataset.cpp
-  TBB_StationGroup.cpp
-  TBB_Timeseries.cpp
   BFRaw.cpp
   dalFITS.cpp
   )
