@@ -26,6 +26,7 @@ set (tests
   tBeamSubband
   tCommonAttributes
   tEnumerations
+  tFilename
   tTBB
   tTBB_DipoleDataset
   tTBB_StationGroup
@@ -169,9 +170,10 @@ if (DAL_ENABLE_TESTING)
   ## -----------------------------------------------------------------
   ## [1] simple tests which do not require sample data
 
-  add_test(tdal tdal)
-  add_test(tCommonAttributes tCommonAttributes)
-  add_test(tEnumerations tEnumerations)
+  add_test (tdal tdal)
+  add_test (tCommonAttributes tCommonAttributes)
+  add_test (tEnumerations tEnumerations)
+  add_test (tFilename tFilename)
 
   ## -----------------------------------------------------------------
   ## [2] tdalDataset

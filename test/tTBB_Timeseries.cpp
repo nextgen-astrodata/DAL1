@@ -163,13 +163,11 @@ int test_methods (std::string const &filename)
     std::string observer         = ts.observer();
     std::string project          = ts.project();
     std::string observation_id   = ts.observation_id();
-    std::string observation_mode = ts.observation_mode();
     //
     cout << "-- TELESCOPE ...... = " << telescope        << endl;
     cout << "-- OBSERVER ....... = " << observer         << endl;
     cout << "-- PROJECT ........ = " << project          << endl;
     cout << "-- OBSERVATION_ID   = " << observation_id   << endl;
-    cout << "-- OBSERVATION_MODE = " << observation_mode << endl;
   }
   catch (std::string message) {
     cerr << message << endl;

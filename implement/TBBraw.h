@@ -196,18 +196,19 @@ namespace DAL {  // Namespace DAL -- begin
     /*!
       \brief Argumented Constructor
       
-      \param filename -- name of the output file to be created
-      \param observer -- name of the observer
-      \param project -- name of the project
-      \param observation_id -- name of the observation ID
-      \param observationMode -- name of the observation mode
+      \param filename        -- Name of the output file to be created
+      \param observer        -- Name of the observer
+      \param project         -- Name of the project
+      \param observation_id  -- Name of the observation ID
+      \param filterSelection -- Filter (frequency-width) selection of the
+             observation
       \param telescope -- name of the telescope (usually "LOFAR")
     */
     TBBraw (string const &filename,
 	    string const &observer="John Doe",
 	    string const &project="UNDEFINED",
 	    string const &observation_id="UNDEFINED",
-	    string const &observationMode="UNDEFINED",
+	    string const &filterSelection="UNDEFINED",
 	    string const &telescope="LOFAR");
     
     // -------------------------------------------------------------- Destruction
@@ -243,11 +244,10 @@ namespace DAL {  // Namespace DAL -- begin
     */
     inline void doDataCRC(const bool doit=true)
     {
-      if (doit)
-	{
-	  cout << "TBBraw::doDataCRC: Data CRC-checking not (yet) implemented!" << endl;
-	  //      do_dataCRC_p=doit;
-	};
+      if (doit) {
+	cout << "TBBraw::doDataCRC: Data CRC-checking not (yet) implemented!" << endl;
+	//      do_dataCRC_p=doit;
+      };
     };
     
     /*!
@@ -259,7 +259,7 @@ namespace DAL {  // Namespace DAL -- begin
     {
       fixTimes_p=fixlevel;
     };
-
+    
     //! Get the LOFAR common attributes attached to the root level of the file
     inline CommonAttributes commonAttributes () const {
       return commonAttributes_p;
@@ -270,7 +270,7 @@ namespace DAL {  // Namespace DAL -- begin
     
     /*!
       \brief Open (create) new file
-
+      
       \return <tt>true</tt> if file is created successfully
       
       Creating more than one file with one instance of TBBraw is deprecated!
@@ -287,7 +287,8 @@ namespace DAL {  // Namespace DAL -- begin
       \param observer        -- Name of the observer
       \param project         -- Name of the project
       \param observation_id  -- Name of the observation ID
-      \param observationMode -- name of the observation mode
+      \param filterSelection -- Filter (frequency-width) selection of the
+             observation
       \param telescope -- name of the telescope (usually "LOFAR")
       
       \return <tt>true</tt> if file is created successfully
@@ -301,7 +302,7 @@ namespace DAL {  // Namespace DAL -- begin
 		   string const &observer="John Doe",
 		   string const &project="UNDEFINED",
 		   string const &observation_id="UNDEFINED",
-		   string const &observationMode="UNDEFINED",
+		   string const &filterSelection="UNDEFINED",
 		   string const &telescope="LOFAR");
     
     /*!
@@ -320,7 +321,9 @@ namespace DAL {  // Namespace DAL -- begin
       is untested. (Actually: Only processing little endian data on little endian
       machines is tested.)
     */
-    bool processTBBrawBlock(char *inbuff, int datalen, bool bigEndian=false);
+    bool processTBBrawBlock (char *inbuff,
+			     int datalen,
+			     bool bigEndian=false);
     
     //! Provide a summary of the internal status and processing statistics
     inline void summary () {
@@ -332,14 +335,11 @@ namespace DAL {  // Namespace DAL -- begin
     
   private:
     // ----------------------------------------------------------- Private Methods
-    /*!
-      \brief Initialize the internal dataspace of the object
-    */
+
+    //! Initialize the internal dataspace of the object
     void init();
     
-    /*!
-      \brief Release all temporary structures
-    */
+    //! Release all temporary structures
     void destroy();
     
     /*!
@@ -393,8 +393,10 @@ namespace DAL {  // Namespace DAL -- begin
       
       \return <tt>true</tt> if successful
     */
-    bool addDataToDipole(int index, char *buffer, int bufflen, bool bigEndian=false);
-    
+    bool addDataToDipole (int index,
+			  char *buffer,
+			  int bufflen,
+			  bool bigEndian=false);
     
   }; // class TBBraw -- end
   

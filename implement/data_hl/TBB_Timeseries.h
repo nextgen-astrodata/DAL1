@@ -167,13 +167,6 @@ namespace DAL {  // Namespace DAL -- begin
     };
     
     /*!
-      \brief Get the description of the observation mode
-      
-      \return observation_mode -- Description/type of observation mode
-    */
-    std::string observation_mode ();
-    
-    /*!
       \brief Get the name of the class
       
       \return className -- The name of the class, TBB_Timeseries.

@@ -115,7 +115,7 @@ namespace DAL {  // Namespace DAL -- begin
 			  string const &observer,
 			  string const &project,
 			  string const &observation_id,
-			  string const &observationMode,
+			  string const &filterSelection,
 			  string const &telescope)
   {
     /* Store the common attributes attached to the root group of the file */
@@ -123,7 +123,7 @@ namespace DAL {  // Namespace DAL -- begin
     commonAttributes_p.setObserver (observer);
     commonAttributes_p.setProjectTitle (project);
     commonAttributes_p.setObservationID (observation_id);
-    commonAttributes_p.setFilterSelection (observationMode);
+    commonAttributes_p.setFilterSelection (filterSelection);
     commonAttributes_p.setTelescope(telescope);
     /* Open the file */
     return open_file();

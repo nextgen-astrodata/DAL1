@@ -31,6 +31,7 @@
 
 // DAL header files
 #include <dalCommon.h>
+#include <Filename.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -45,7 +46,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/08/31
 
-    \test tCommonAttributes.cc
+    \test tCommonAttributes.cpp
     
     <h3>Prerequisite</h3>
     
@@ -56,6 +57,10 @@ namespace DAL { // Namespace DAL -- begin
 	<li>Beam-Formed Data (LOFAR-USG-ICD-003)
 	<li>LOFAR Sky Image (LOFAR-USG-ICD-004)
 	<li>Naming conventions (LOFAR-USG-ICD-005)
+      </ul>
+      <li>Components of the LOFAR user software:
+      <ul>
+        <li>Filename -- Class to filenames matching convention
       </ul>
       <li>Components of the LOFAR system software:
       <ul>
@@ -181,14 +186,6 @@ namespace DAL { // Namespace DAL -- begin
     */
     inline std::string groupType () const {
       return groupType_p;
-    }
-
-    /*!
-      \brief Set the LOFAR group type
-      \param groupName -- The name of the LOFAR group.
-    */
-    inline void setGroupType (std::string const &groupType) {
-      groupType_p = groupType;
     }
 
     //! Get the name of the file
@@ -384,11 +381,31 @@ namespace DAL { // Namespace DAL -- begin
       clockFrequencyUnit_p = unit;
     }
 
+    //! Get the (List of) Oberservation target(s)
+    inline std::string target () const {
+      return target_p;
+    }
+
+    //! Set the (List of) Oberservation target(s)
+    inline void setTarget (std::string const &target) {
+      target_p = target;
+    }
+
+    //! Get the data processing system name and version number
+    inline std::string systemVersion () const {
+      return systemVersion_p;
+    }
+    
+    //! Set the data processing system name and version number
+    inline void setSystemVersion (std::string const &systemVersion) {
+      systemVersion_p = systemVersion;
+    }
+    
     //! Get the processing pipeline name
     inline std::string pipelineName () const {
       return pipelineName_p;
     }
-
+    
     //! Set the processing pipeline name
     inline void setPipelineName (std::string const &name) {
       pipelineName_p = name;
@@ -419,7 +436,7 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Set the list of stations used during the observation
-    inline void setStationsLists (std::vector<std::string> const &stations) {
+    inline void setStationsList (std::vector<std::string> const &stations) {
       nofStations_p = stations.size();
       stationsList_p.resize(nofStations_p);
       stationsList_p = stations;

@@ -142,22 +142,6 @@ namespace DAL {  // Namespace DAL -- begin
     }
   }
   
-  // ----------------------------------------------------------- observation_mode
-
-  std::string TBB_Timeseries::observation_mode ()
-  {
-    std::string val;
-    
-    if (DAL::h5get_attribute(fileID_p,
-                             attribute_name(DAL::OBSERVATION_MODE),
-                             val)) {
-      return val;
-    }
-    else {
-      return std::string ("UNDEFINED");
-    }
-  }
-  
   // -------------------------------------------------------------------- summary
 
   void TBB_Timeseries::summary (std::ostream &os)
@@ -175,7 +159,6 @@ namespace DAL {  // Namespace DAL -- begin
       os << "-- Observer             : " << observer()          << endl;
       os << "-- Project              : " << project()           << endl;
       os << "-- Observation ID       : " << observation_id()    << endl;
-      os << "-- Observation mode     : " << observation_mode()  << endl;
       os << "-- nof. station groups  : " << groups_p.size()     << endl;
       os << "-- nof. dipole datasets : " << nofDipoleDatasets() << endl;
     }
@@ -1101,8 +1084,6 @@ namespace DAL {  // Namespace DAL -- begin
 		 project());
       rec.define(casa::RecordFieldId(attribute_name(DAL::OBSERVATION_ID)),
 		 observation_id());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::OBSERVATION_MODE)),
-		 observation_mode());
     }
     catch (std::string message) {
       std::cerr << "[TBB_Timeseries::attributes2record]" << message << std::endl;

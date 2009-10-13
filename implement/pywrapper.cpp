@@ -448,8 +448,6 @@ BOOST_PYTHON_MODULE(pydal)
     .def( bpl::init<string,string,string>())
     .def( "groupType", &CommonAttributes::groupType,
 	  "Get the LOFAR group type.")
-    .def( "setGroupType", &CommonAttributes::setGroupType,
-	  "Set the LOFAR group type.")
     .def( "filename", &CommonAttributes::filename,
 	  "Get the name of the file.")
     .def( "setFilename", &CommonAttributes::setFilename,
@@ -678,8 +676,6 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Get the project name/description." )
     .def( "observation_id", &TBB_Timeseries::observation_id,
 	  "Get the observation ID." )
-    .def( "observation_mode", &TBB_Timeseries::observation_mode,
-	  "Get the description of the observation mode." )
     .def( "nofStationGroups", &TBB_Timeseries::nofStationGroups,
 	  "Get the number of station groups collected into this file." )
     .def( "nofDipoleDatasets", &TBB_Timeseries::nofDipoleDatasets,
