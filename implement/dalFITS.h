@@ -29,10 +29,10 @@
 #include <vector>
 #include <sstream>	// string strings
 
-/* DAL header files */
-#include <dalBaseTypes.h>
+// CFITSIO header files
+#include <fitsio.h>
 
-/*
+
 // AIPS++/CASA header files
 #include <casa/aips.h>
 #include <casa/Arrays.h>
@@ -55,7 +55,7 @@
 #include <tables/Tables/SetupNewTab.h>
 #include <tables/Tables/Table.h>
 #include <tables/Tables/TableRecord.h>
-*/
+
 
 
 namespace DAL {
@@ -81,8 +81,10 @@ class dalFITS {
     //! Status of last cfitsio operation
     int fitsstatus_p;
     
-    //! casacore lattice handle
-//    casa::Lattice<casa::Float>* lattice_p;
+   //! FITS error message
+   char fits_error_message[255];
+   //! casacore lattice handle
+   casa::Lattice<casa::Float>* lattice_p;
     
     //! dimensions of FITS image
     std::vector<int64_t> dimensions_p;
@@ -232,7 +234,14 @@ class dalFITS {
 		    long *inc,
 		    void *nulval,
 		    void *array,
-		    int *anynul);
+		    int *anynul);	
+    void readSubset(int  datatype, 
+	      long *fpixel,
+			     long *lpixel, 
+			     long *inc, void *nulval,
+			     std::vector<double> &vec,
+			     int *anynul);	    
+		    
     void writeSubset( int datatype,
 		      long *fpixel,
 		      long *lpixel,
@@ -385,11 +394,18 @@ class dalFITS {
 		    const unsigned long z,
 		    void *nulval=NULL);
     
-    void readLine (double *line,
+    void readLine (std::vector<double> &line,
 		   const unsigned long x,
 		   const unsigned long y,
+		   long *inc,
 		   void *nulval=NULL);
-    
+
+  void readLine (  double *line,
+		   const unsigned long x,
+		   const unsigned long y,
+			long *inc,
+		   void *nulval=NULL);
+
     void readSubCube (double *subCube,
 		      const unsigned long x_pos,
 		      const unsigned long y_pos,
@@ -409,27 +425,24 @@ class dalFITS {
 		     const long z,
 		     void *nulval=NULL);
     //! Write a line of sight to a FITS file
-    void writeLine (double *line,
-		    const long x,
-		    const long y,
-		    void *nulval=NULL);
+    void writeLine(double *line,
+		   const long x,
+		   const long y,
+		   void *nulval=NULL);
     //! Write a tile to a FITS file
-    void writeTile (double* tile,
+    void writeTile( double* tile,
 		    const long x_size,
 		    const long y_size,
 		    const long x_pos,
 		    const long y_pos);
-    //! Write a cube to a FITS file
-    void writeCube (double* cube,
-		    const long x,
-		    const long y,
-		    const long z);
     
-    void writeSubCube (double* subcube,
-		       const long x_size,
-		       const long y_size,
-		       const long x_pos,
-		       const long y_pos);
+    void writeCube(double* cube, const long x, const long y, const long z);
+    
+    void writeSubCube(  double* subcube,
+			const long x_size,
+			const long y_size,
+			const long x_pos,
+			const long y_pos);
     
     
     // ============================================================================

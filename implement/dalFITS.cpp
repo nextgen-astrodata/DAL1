@@ -42,7 +42,7 @@ namespace DAL {
     // initialise critical pointers
     fptr         = NULL;
     fitsstatus_p = 0;
-//    lattice_p    = NULL;
+    lattice_p    = NULL;
   }
   
   
@@ -58,32 +58,41 @@ namespace DAL {
   {
     fptr         = NULL;    // initialise FITS filepointer
     fitsstatus_p = 0;       // initialise FITS status
-//    lattice_p    = NULL;    // initialise casa lattice
+    lattice_p    = NULL;    // initialise casa lattice
     
     // Check if file exists: if it exists open in iomode
     if (fileExists(filename))
-      {
+    {
         // Depending on iomode: OPEN for READING,WRITING, RW or CREATE a FITS file
         if (fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus_p))
-          {
-            throw "dalFITS::open";	// get fits error from fitsstatus property later
-          }
-	
-      }
+        {
+	    		if(fitsstatus_p)
+	    		{
+	      		fits_get_errstatus(fitsstatus_p, fits_error_message);
+	      		cout << fits_error_message << endl;
+	      		throw "dalFITS::open could not open file";	// get fits error from fitsstatus property later
+	    		}
+	 		}
+	 }
     else
-      {
+    {
         // if file didnt exist, create a new one ...
         if (fits_create_file(&fptr, const_cast<char *>(filename.c_str()), &fitsstatus_p))
-          {
+        {
+	      	fits_get_errstatus(fitsstatus_p, fits_error_message);
+	      	cout << fits_error_message << endl;	
             throw "dalFITS::open could not create file";
-          }
+        }
 	
-        // ... and open it
+    	/*    // ... and open it
         if (fits_open_file(&fptr, filename.c_str(), iomode, &fitsstatus_p))
-          {
+        {
             throw "dalFITS::open";	// get fits error from fitsstatus property later
-          }
-      }
+        }
+      */
+
+		}
+		
   }
   
   //_____________________________________________________________________________
@@ -225,10 +234,7 @@ namespace DAL {
   void dalFITS::openTable (const std::string &filename,
                            int iomode)
   {
-    if (fits_open_table(&fptr,
-			const_cast<char *>(filename.c_str()),
-			iomode,
-			&fitsstatus_p))
+    if (fits_open_table(&fptr, const_cast<char *>(filename.c_str()), iomode, &fitsstatus_p))
       {
         throw "dalFITS::openTable";
       }
@@ -237,14 +243,13 @@ namespace DAL {
   
   //_____________________________________________________________________________
   //                                                                   getLattice
-  
   /*!
     \brief Get a (casa) Lattice<Float> to access the fits file
   */
-	/*
+/*  
   void dalFITS::getLattice()
   {
-    // Generic lattice variable for casa lattice
+    // Generic lattice variable for w lattice
     casa::LatticeBase *latticeBase;
     // Local string to hold filename 
     std::string filename;
@@ -284,7 +289,7 @@ namespace DAL {
     
     // check if data type is in accordance with FITS header entry
   }
-  */
+*/
 
   //_____________________________________________________________________________
   //                                                                        close
@@ -727,11 +732,21 @@ namespace DAL {
   */
   void dalFITS::createImg(int bitpix, int naxis, long *naxes)
   {
+    //-----------------------------------------------------------
+    // Check input parameters
+    //
+    if(bitpix != -32)
+    {
+      throw "dalFITS::createImg bitpix is not TDOUBLE_IMG";
+    }
     if (naxis==0 || naxes==NULL)
-      {
+    {
         throw "dalFITS::createImg naxis or naxes NULL";
-      }
+    }
+    
+	cout << "naxis = " << naxis << "  naxes[0]=" << naxes[0] << "  naxes[1]=" << naxes[1] << "  naxes[2]=" << naxes[2] << endl;
 
+    //-----------------------------------------------------------
     if (fits_create_img(fptr, bitpix, naxis , naxes, &fitsstatus_p))
       {
         throw "dalFITS::createImg";
@@ -807,12 +822,64 @@ namespace DAL {
                            long *lpixel, long *inc, void *nulval,  void *array,
                            int *anynul)
   {
-    if (fits_read_subset(fptr, datatype, fpixel, lpixel, inc, nulval, array, anynul, &fitsstatus_p))
+	fits_read_subset(fptr, datatype, fpixel, lpixel, inc, nulval, array, anynul, &fitsstatus_p);
+	if(fitsstatus_p) 
+	{
+	  fits_get_errstatus(fitsstatus_p, fits_error_message);
+	  cout << fits_error_message << endl;
+	  throw "dalFITS::readSubset";
+	}
+  }
+
+
+  /*!
+    \brief Read a subset of a FITS image into a vector
+
+    \param datatype - datatype contained in array
+    \param *fpixel - array giving lower left corner of reading
+    \param *lpixel - array giving upper right corner of reading
+    \param *inc - increment step
+    \param *nulval - nulval used if NULL pixels are read
+    \param vec - vector to read into
+    \param *anynul - if any null vallue was encountered
+  */
+  void dalFITS::readSubset(int  datatype, long *fpixel,
+                           long *lpixel, long *inc, void *nulval,  vector<double> &vec,
+                           int *anynul)
+  {
+      unsigned int nelements=1;		// compute number of elements to read
+  
+      if(fpixel==NULL)
+	throw "dalFITS::readSubset lpixel is NULL pointer";
+      if(lpixel==NULL)
+	throw "dalFITS::readSubset fpixel is NULL pointer";
+      if(vec.size()!=dimensions_p.size())
+
+      //-------------------------------------------------------
+
+
+  //    cout << dimensions_p.size() << endl;
+      for(unsigned int i=0; i < dimensions_p.size(); i++)
       {
+	 nelements*=(lpixel[i]-fpixel[i]+1);
+//	 cout << "lpixel = " << lpixel[i] << "  fpixel = " << fpixel[i] << endl;     
+     }
+     cout.flush();
+  
+      if(nelements > vec.size())
+	throw "dalFITS::readSubset nelements to read exceeds vec.size()";
+  
+  //    cout << "nelements = " << nelements << endl;
+  //    cout << "vev.size() = " << vec.size() << endl;
+  
+      fits_read_subset(fptr, datatype, fpixel, lpixel, inc, nulval, static_cast<void*>(&vec[0]), anynul, &fitsstatus_p);
+      if(fitsstatus_p) 
+      {
+	fits_get_errstatus(fitsstatus_p, fits_error_message);
+	cout << fits_error_message << endl;
         throw "dalFITS::readSubset";
       }
   }
-
 
   /*!
       \brief Write a subset to a FITS image
@@ -822,16 +889,16 @@ namespace DAL {
       \param *lpixel - array giving upper right corner of writing
       \param *array - array containing data
   */
-  void dalFITS::writeSubset (int datatype,
-			     long *fpixel,
-			     long *lpixel,
-			     double *array)
+  void dalFITS::writeSubset(int datatype, long *fpixel, long *lpixel, double *array)
   {
     if (fits_write_subset(fptr, datatype, fpixel, lpixel, array, &fitsstatus_p))
       {
         throw "dalFITS::writeSubset";
       }
   }
+
+
+
 
   // ============================================================================
   //
@@ -884,14 +951,73 @@ namespace DAL {
   /*!
     \brief Read a line from a FITS image
 
-    \param line - pointer to array holding the data read from the image
+    \param line - vector holding the data read from the image
     \param x - x axis lower left corner position to read line from
     \param y - y axis lower left corner position to read line from
+	 \param inc - increment of elements to skip
+	 \param nulval - value used for nulls found in image
+  */
+  void dalFITS::readLine (vector<double> &line,
+			  const unsigned long x,
+			  const unsigned long y,
+			  long *inc,
+			  void *nulval)
+  {
+    long fpixel[3];
+    long lpixel[3];
+    int anynul=0;
+
+    // Check if vector has right dimension, same as z dimension of cube
+    if (readHDUType()!=IMAGE_HDU)	 // Check if current HDU is an image extension
+    {
+        throw "dalFITS::readLine CHDU is not an image";
+    }
+
+    // Define first pixel to read, read along one line of sight
+    fpixel[0]=x;
+    fpixel[1]=y;
+    fpixel[2]=1;
+    lpixel[0]=x;
+    lpixel[1]=y;
+    lpixel[2]=dimensions_p[2];
+
+	 //-------------------------------------------------------
+	 // Check consistency of pixel data
+	 //
+	 if(x > static_cast<unsigned int>(dimensions_p[0]))
+		throw "dalFITS::readLine x is out of range";
+	 if(y > static_cast<unsigned int>(dimensions_p[1]))
+		throw "dalFITS::readLine y is out of range";
+	 if(dimensions_p[2]==0)
+		throw "dalFITS::readLine image is only 2-D";
+    //-------------------------------------------------------
+    //line.resize(dimensions_p[2]);
+    // Read subset from FITS file
+    readSubset(TDOUBLE, fpixel, lpixel, inc, nulval, line, &anynul);
+    if(fitsstatus_p)
+    {
+	fits_get_errstatus(fitsstatus_p, fits_error_message);		
+	cout << fits_error_message << endl;
+	throw "dalFITS::readLine readSubset failed";
+    }	
+
+}
+
+
+  /*!
+    \brief Read a line from a FITS image
+
+    \param line - double array holding the data read from the image
+    \param x - x axis lower left corner position to read line from
+    \param y - y axis lower left corner position to read line from
+	 \param inc - increment of elements to skip
+	 \param nulval - value used for nulls found in image
   */
   void dalFITS::readLine (double *line,
 			  const unsigned long x,
 			  const unsigned long y,
-			  void* nulval)
+			  long *inc,
+			  void *nulval)
   {
     long fpixel[3];
     long lpixel[3];
@@ -919,20 +1045,29 @@ namespace DAL {
 	 if(y > static_cast<unsigned int>(dimensions_p[1]))
 		throw "dalFITS::readLine y is out of range";
   	 if(line==NULL)
-        throw "dalFITS::readLine NULL pointer";
+		throw "dalFITS::readLine NULL pointer";
    
+//	 void dalFITS::readSubset(int  datatype, long *fpixel,
+//		                           long *lpixel, long *inc, void *nulval,  void *array,
+//	                           int *anynul)
+
 	 //-------------------------------------------------------
     // Read subset from FITS file
-    readSubset(TDOUBLE, fpixel, lpixel, NULL, line, nulval, &anynul);
-  }
+    readSubset(TFLOAT, fpixel, lpixel, inc, nulval, line, &anynul);
+    if(fitsstatus_p)
+    {
+	fits_get_errstatus(fitsstatus_p, fits_error_message);		
+	cout << fits_error_message << endl;
+	throw "dalFITS::readLine readSubset failed";
+    }	
+
+}
 
   //_____________________________________________________________________________
   //                                                                  readSubCube
 
   /*!
     \brief Read a subCube from a FITS image
-
-    \todo Function not implemented yet!
 
     \param *subCube - pointer to array holding the data read from the image
     \param x_pos - lower left corner x position of subCube
@@ -946,22 +1081,21 @@ namespace DAL {
                              unsigned long x_size,
                              unsigned long y_size)
   {
-    /* ATTENTION: temporary assignment to avoid compiler warnings! */
-    x_size = y_size = x_pos = y_pos = 0;
-
     long fpixel[3];	// first pixel definition
     long lpixel[3];	// last pixel definition
 
     fpixel[0]=1;
-    
-    if (readHDUType()!=IMAGE_HDU) {
-      // Check if current HDU is an image extension
-      throw "dalFITS::readLine CHDU is not an image";
-    }
-    
+
+    if (readHDUType()!=IMAGE_HDU)   // Check if current HDU is an image extension
+      {
+        throw "dalFITS::readLine CHDU is not an image";
+      }
+
     // Read subset from FITS Image
 
+
   }
+
 
   // ============================================================================
   //
@@ -990,13 +1124,14 @@ namespace DAL {
     long nelements=0;	// number of elements to write
 
     // Check if Faraday plane has the same x-/y-dimensions as naxes dimensions of FITS
-    if ((int64_t)x!=dimensions_p[0] || (int64_t)y!=dimensions_p[1]) {
-      throw "[dalFITS::writePlane] Dimensions do not match";
+	 updateImageDimensions();
+    if ((int64_t)x > dimensions_p[0] || (int64_t)y > dimensions_p[1]) {
+      throw "dalFITS::writePlane dimensions do not match";
     }
     
     // check if plane counter is above limit
     if (z > dimensions_p[2]) {
-      throw "[dalFITS::writePlane] z out of range";
+      throw "dalFITS::writePlane z out of range";
     }
     
     /* Check if current HDU is an image extension */
@@ -1012,54 +1147,57 @@ namespace DAL {
     nelements=dimensions_p[0]*dimensions_p[1];	// compute nelements in plane
 
     // Write to FITS file
-    if (plane==NULL) {
-      throw "dalFITS::writePlane NULL pointer";
+    if (plane==NULL)
+    {
+        throw "dalFITS::writePlane NULL pointer";
     }
-    else if (nulval==NULL) {
-      writePix(TDOUBLE, fpixel, nelements, plane);
+    else if (nulval==NULL)
+    {
+        writePix(TDOUBLE, fpixel, nelements, plane);
     }
-    else {
-      // write pixels with substituting null value
-      writePixNull(TDOUBLE, fpixel, nelements, plane, nulval);
-    }
+    else	// write pixels with substituting null value
+    {
+        writePixNull(TDOUBLE, fpixel, nelements, plane, nulval);
+   }
   }
+
 
   //_____________________________________________________________________________
   //                                                                    writeLine
-  
-  /*!
-    \todo Function not implemented yet!
 
+  /*!
     \param faradayLine - contains line of sight along Faraday Depths with RM intensity
     \param x - x position in pixels to write line to
     \param y - y position in pixels to write line to
   */
-//   void dalFITS::writeLine (double *line,
-// 			   const long x,
-// 			   const long y,
-// 			   void *nulval)
-//   {
-//   }
+  void dalFITS::writeLine(double *line,
+                          const long x,
+                          const long y,
+                          void *nulval)
+  {
+
+
+  }
 
   //_____________________________________________________________________________
   //                                                                    writeTile
 
   /*!
-    \todo Function not implemented yet!
-
     \param tile - buffer containing tile data
     \param x_pos - x position in pixels to write tile to
     \param y_pos - y position in pixels to write tile to
     \param x_size - horizontal size of tile
     \param y_size - vertical size of tile
   */
-//   void dalFITS::writeTile (double* tile,
-// 			   const long x_pos,
-// 			   const long y_pos,
-// 			   const long x_size,
-// 			   const long y_size)
-//   {
-//   }
+  void dalFITS::writeTile(double* tile,
+                          const long x_pos,
+                          const long y_pos,
+                          const long x_size,
+                          const long y_size
+                         )
+  {
+
+  }
 
   //_____________________________________________________________________________
   //                                                                 writeSubCube
@@ -1067,33 +1205,37 @@ namespace DAL {
   /*!
     \brief Write a SubCube to a FITS file
 
-    \todo Function not implemented yet!
-
     \param cube - Array that contains data
     \param x_pos - x position in pixels to write cube to
     \param y_pos - y position in pixels to write cube to
     \param x_size - x-dimension of cube in pixels
     \param y_size - y-dimension of cube in pixels
   */
-//   void dalFITS::writeSubCube (double* subcube,
-//                               long x_size,
-//                               long y_size,
-//                               long x_pos,
-//                               long y_pos)
-//   {
-//     // Check if position is valid
-    
-//     // check if size goes beyond limits of cube
-    
-//     // Write to FITS file
-//   }
-  
+  void dalFITS::writeSubCube( double* subcube,
+                              long x_size,
+                              long y_size,
+                              long x_pos,
+                              long y_pos)
+  {
+    /* ATTENTION: temporary assignment to avoid compiler warnings! */
+    x_size = y_size = x_pos = y_pos = 0;
+
+    // Check if position is valid
+
+    // check if size goes beyond limits of cube
+
+    // Write to FITS file
+  }
+
+
+
+
   // ============================================================================
   //
   //  Header access functions (keywords etc.)
   //
   // ============================================================================
-  
+
   // Methods for reading keywords and records from a dalFITS file
 
 
@@ -1543,8 +1685,8 @@ namespace DAL {
   {
     moveAbsoluteHDU(hdu);
 
-    // Check if it is an image extension
-
+    if(readHDUType()!=IMAGE_HDU) // Check if it is an image extension
+      throw "dalFITS:writeRMHeader HDU is not an image extension";
     // Copy dalFITS image header
 
     // Write individual header keywords to FITS
