@@ -38,7 +38,9 @@
 #include <netdb.h>
 
 // casacore header files
+#ifdef HAVE_CASA
 #include <casa/Arrays/Array.h>
+#endif
 
 // DAL header files
 #include <dalCommon.h>

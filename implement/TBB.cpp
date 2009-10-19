@@ -1123,74 +1123,7 @@ namespace DAL {
   }
 
   //_____________________________________________________________________________
-  // Set the antenna array position metadata from calibration file
-
-#ifdef HAVE_BLITZ
-  /*!
-    \param infile -- Calibration file containing the antenna array positions
-    \param name   -- Name of the group of antenna array positions
-  */
-  bool TBB::writeAntennaArrayPositions (std::string const &infile,
-                                        std::string const &name)
-  {
-    bool status (true);
-    std::ifstream m_file;
-    std::string m_name (name);
-    blitz::Array<double,1> m_geoloc;
-    blitz::Array<double,3> m_positions;
-
-    /* Open calibration file with positions */
-    m_file.open(infile.c_str());
-
-    /* Check status of file stream */
-    if (!m_file.good())
-      {
-        m_file.close();
-        return false;
-      }
-
-    /* Get the name of the antenna array positions */
-    std::getline(m_file, m_name);
-    if ("" == m_name)
-      {
-        m_file.close();
-        return false;
-      }
-
-    /* Get geographical location: 1-d array with 3 elements */
-    try
-      {
-        m_file >> m_geoloc;
-      }
-    catch (std::string message)
-      {
-        std::cerr << "[TBB::writeAntennaArrayPositions] " << message << std::endl;
-        return false;
-      }
-
-    if ((1 != m_geoloc.dimensions()) || (3 != m_geoloc.extent(blitz::firstDim)))
-      {
-        std::cerr << "[TBB::writeAntennaArrayPositions] "
-                  << "Wrong shape of array storing geographic location!" << std::endl;
-        return false;
-      }
-
-    /* Get the antenna positions */
-
-    try
-      {
-        m_file >> m_positions;
-        m_file.ignore(80,'\n');
-      }
-    catch (std::string message)
-      {
-        std::cerr << "[TBB::writeAntennaArrayPositions] " << message << std::endl;
-        return false;
-      }
-
-    return status;
-  }
-#endif
+  //                                                                      cleanup
 
   void TBB::cleanup()
   {

@@ -8,6 +8,7 @@
 
 - \ref dal_formats_beamformed
 - \ref dal_formats_tbb
+- \ref dal_formats_parameterset
 
 <hr>
 
@@ -382,5 +383,37 @@ representing a hierarchical level in the setup of the telecope.
   </table>
   <br>
 </ol>
+
+\section dal_formats_parameterset ParameterSet
+
+Include hierarchy for the parameter set within the LOFAR system software:
+
+\verbatim
+Common/Parameterset.h
+|-- Common/ParameterSetImpl.h
+|   |-- Common/ParameterValue.h
+|   |   |-- Common/LofarTypes.h
+|   |   |   |-- Common/LofarTypedefs.h
+|   |   |   `-- Common/lofar_complex.h
+|   |   |-- Common/lofar_string.h
+|   |   |-- Common/lofar_vector.h
+|   |   `-- Common/StringUtil.h
+|   |-- Common/LofarTypes.h
+|   |-- Common/lofar_map.h
+|   |-- Common/lofar_string.h
+|   |-- Common/lofar_vector.h
+|   |-- Common/lofar_iostream.h
+|   |-- Common/lofar_sstream.h
+|   `-- Common/StringUtil.h
+|   |   |-- Common/LofarTypes.h
+|   |   |-- Common/lofar_string.h
+|   |   |-- Common/lofar_vector.h
+|   |   `-- Common/Exception.h
+`-- Common/KVpair.h
+    |-- Common/lofar_map.h
+    |   `-- map.h
+    |-- Common/lofar_vector.h
+    `-- Common/lofar_string.h
+\endverbatim
 
 */

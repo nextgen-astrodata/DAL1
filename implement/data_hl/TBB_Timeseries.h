@@ -25,8 +25,9 @@
 #define TBB_TIMESERIES_H
 
 // casacore header files
-#include <casa/Arrays/Matrix.h>
+#ifdef HAVE_CASA
 #include <casa/BasicSL/String.h>
+#endif
 
 #include <CommonAttributes.h>
 #include <TBB_StationGroup.h>

@@ -140,9 +140,9 @@ int test_attributes ()
   cout << "[1] Assign new values to the attributes ..." << endl;
   try {
     std::vector<std::string> stations;
-    stations.push_back("Station001");
-    stations.push_back("Station002");
-    stations.push_back("Station003");
+    stations.push_back("CS001");
+    stations.push_back("CS003");
+    stations.push_back("CS005");
 
     attr.setFilename (filename);
     attr.setFiletype ("tbb");

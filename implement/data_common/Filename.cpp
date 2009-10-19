@@ -94,6 +94,26 @@ namespace DAL { // Namespace DAL -- begin
   //  Parameters
   //
   // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                       setOptionalDescription
+  
+  /*!
+    \param optionalDescription -- Optional descriptor(s)
+    
+    Before accepting a new value, a few basic checks need to passed:
+    <ul>
+      <li>There is no leading underscore ("_").
+      <li>Sub-strings are not separated by a hyphen ("-").
+    </ul>
+  */
+  void Filename::setOptionalDescription (std::string const &optionalDescription)
+  {
+    optionalDescription_p = optionalDescription;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                      summary
   
   void Filename::summary (std::ostream &os)
   {

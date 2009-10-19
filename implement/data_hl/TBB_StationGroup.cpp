@@ -21,8 +21,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <casa/Arrays/ArrayIO.h>
-
 #include <Enumerations.h>
 #include <TBB_StationGroup.h>
 
@@ -652,36 +650,32 @@ namespace DAL {  // Namespace DAL -- begin
 
     if (DAL::h5get_attribute(groupID_p,
                              attribute_name(DAL::BEAM_DIRECTION_VALUE),
-                             val))
-      {
-        return val;
-      }
-    else
-      {
-        return casa::Vector<double> (1);
-      }
+                             val)) {
+      return val;
+    }
+    else {
+      return casa::Vector<double> (1);
+    }
   }
 #else
-  std::vector<double> beam_direction_value ()
+  std::vector<double> TBB_StationGroup::beam_direction_value ()
   {
     std::vector<double> val;
-
+    
     if (DAL::h5get_attribute(groupID_p,
                              attribute_name(DAL::BEAM_DIRECTION_VALUE),
-                             val))
-      {
-        return val;
-      }
-    else
-      {
-        return std::vector<double> (1);
-      }
+                             val)) {
+      return val;
+    }
+    else {
+      return std::vector<double> (1);
+    }
   }
 #endif
-
-
+  
+  
   // -------------------------------------------------------- beam_direction_unit
-
+  
   /*!
     \return unit -- The physical units within which the beam direction
             is given; this might be <i>radian</i> or <i>degree</i>
@@ -778,47 +772,45 @@ namespace DAL {  // Namespace DAL -- begin
     uint nofDatasets (datasets_p.size());
     casa::Vector<uint> station_id (nofDatasets);
 
-    for (uint n(0); n<nofDatasets; n++)
-      {
-        station_id(n) = datasets_p[n].station_id();
-      }
-
+    for (uint n(0); n<nofDatasets; n++) {
+      station_id(n) = datasets_p[n].station_id();
+    }
+    
     return station_id;
   }
 #else
   std::vector<uint> TBB_StationGroup::station_id ()
   {
-    std::vector<double> station_id;
-
-    for (uint n(0); n<datasets_p.size(); n++)
-      {
-        station_id.push_back(datasets_p[n].station_id());
-      }
-
+    std::vector<uint> station_id;
+    
+    for (unsigned int n(0); n<datasets_p.size(); n++) {
+      station_id.push_back(datasets_p[n].station_id());
+    }
+    
     return station_id;
   }
 #endif
-
+  
   // --------------------------------------------------------------------- rsp_id
-
+  
 #ifdef HAVE_CASA
   casa::Vector<uint> TBB_StationGroup::rsp_id ()
   {
     uint nofDatasets (datasets_p.size());
     casa::Vector<uint> rsp_id (nofDatasets);
-
+    
     for (uint n(0); n<nofDatasets; n++)
       {
         rsp_id(n) = datasets_p[n].rsp_id();
       }
-
+    
     return rsp_id;
   }
 #else
   std::vector<uint> TBB_StationGroup::rsp_id ()
   {
-    std::vector<double> rsp_id;
-
+    std::vector<uint> rsp_id;
+    
     for (uint n(0); n<datasets_p.size(); n++) {
       rsp_id.push_back(datasets_p[n].rsp_id());
     }
@@ -844,7 +836,7 @@ namespace DAL {  // Namespace DAL -- begin
 #else
   std::vector<uint> TBB_StationGroup::rcu_id ()
   {
-    std::vector<double> rcu_id;
+    std::vector<uint> rcu_id;
     
     for (uint n(0); n<datasets_p.size(); n++) {
       rcu_id.push_back(datasets_p[n].rcu_id());
@@ -899,9 +891,9 @@ namespace DAL {  // Namespace DAL -- begin
     return unit;
   }
 #else
-  std::vector<double> TBB_StationGroup::sample_frequency_unit ()
+  std::vector<std::string> TBB_StationGroup::sample_frequency_unit ()
   {
-    std::vector<double> unit;
+    std::vector<std::string> unit;
 
     for (uint n(0); n<datasets_p.size(); n++) {
       unit.push_back(datasets_p[n].sample_frequency_unit());
@@ -1042,7 +1034,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::vector<int> offset (nofDipoles);
 
     for (uint n(0); n<nofDipoles; n++) {
-      offset[n] = valTime[n]-valTime(refAntenna) + valSample[n]-valSample[refAntenna];
+      offset[n] = valTime[n]-valTime[refAntenna] + valSample[n]-valSample[refAntenna];
     }
     
     return offset;

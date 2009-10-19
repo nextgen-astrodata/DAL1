@@ -28,8 +28,11 @@
 #include <iostream>
 #include <string>
 
+#ifdef HAVE_CASA
+#include <casa/Arrays/ArrayIO.h>
 #include <casa/Arrays/Matrix.h>
 #include <measures/Measures/MDirection.h>
+#endif
 
 #ifndef TBB_DIPOLEDATASET_H
 #include <TBB_DipoleDataset.h>

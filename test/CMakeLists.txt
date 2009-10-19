@@ -27,6 +27,7 @@ set (tests
   tCommonAttributes
   tEnumerations
   tFilename
+  tTimestamp
   tTBB
   tTBB_DipoleDataset
   tTBB_StationGroup
@@ -174,6 +175,7 @@ if (DAL_ENABLE_TESTING)
   add_test (tCommonAttributes tCommonAttributes)
   add_test (tEnumerations tEnumerations)
   add_test (tFilename tFilename)
+  add_test (tTimestamp tTimestamp)
 
   ## -----------------------------------------------------------------
   ## [2] tdalDataset

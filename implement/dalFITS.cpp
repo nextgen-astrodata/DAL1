@@ -42,7 +42,9 @@ namespace DAL {
     // initialise critical pointers
     fptr         = NULL;
     fitsstatus_p = 0;
+#ifdef HAVE_CASA
     lattice_p    = NULL;
+#endif
   }
   
   
@@ -58,7 +60,9 @@ namespace DAL {
   {
     fptr         = NULL;    // initialise FITS filepointer
     fitsstatus_p = 0;       // initialise FITS status
+#ifdef HAVE_CASA
     lattice_p    = NULL;    // initialise casa lattice
+#endif
     
     // Check if file exists: if it exists open in iomode
     if (fileExists(filename))

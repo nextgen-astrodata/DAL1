@@ -28,10 +28,6 @@
 #include <dalDataset.h>
 #endif
 
-#ifdef HAVE_BLITZ
-#include <blitz/array.h>
-#endif
-
 // socket headers
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,26 +54,25 @@
 //(the vBuf of the system on the storage nodes can store ca. 3600 frames!)
 #define INPUT_BUFFER_SIZE 50000
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   /*!
     \class TBB
-
+    
     \ingroup DAL
-
+    
     \brief High-level interface between TBB data and the DAL
-
+    
     \author Joseph Masters, Lars B&auml;hren, Andreas Horneffer
-
+    
     \test tTBB.cpp
-
+    
     <h3>Prerequisite</h3>
-
+    
     <ul type="square">
-      <li>
+    <li>
     </ul>
-
+    
     <h3>Synopsis</h3>
 
 
@@ -255,72 +250,61 @@ namespace DAL
         \brief Get the name of the telescope
         \return telescope -- The name of the telescope
       */
-      inline std::string telescope ()        const
-        {
-          return telescope_p;
-        }
+      inline std::string telescope () const {
+	return telescope_p;
+      }
       /*!
         \brief Get the name of the observer
         \return observer -- The name of the observer
       */
-      inline std::string observer ()         const
-        {
-          return observer_p;
-        }
+      inline std::string observer () const {
+	return observer_p;
+      }
       /*!
         \brief Get the name of the project
         \return project -- The name of the project
       */
-      inline std::string project ()          const
-        {
-          return project_p;
-        }
+      inline std::string project () const {
+	return project_p;
+      }
       //! Get the identifier for the observation
-      inline std::string observation_id ()   const
-        {
-          return observation_id_p;
-        }
+      inline std::string observation_id () const {
+	return observation_id_p;
+      }
       //! Set the telescope observation mode
-      inline std::string observation_mode () const
-        {
-          return observationMode_p;
-        }
-
+      inline std::string observation_mode () const {
+	return observationMode_p;
+      }
       /*!
         \brief Set the name of the telescope
         \param telescope -- The name of the telescope
       */
-      inline void setTelescope (std::string const &telescope)
-      {
+      inline void setTelescope (std::string const &telescope) {
         telescope_p = telescope;
       }
       /*!
         \brief Set the name of the observer
         \param observer -- The name of the observer
       */
-      inline void setObserver (std::string const &observer)
-      {
+      inline void setObserver (std::string const &observer) {
         observer_p = observer;
       }
       /*!
         \brief Set the name of the project
         \param project -- The name of the project
       */
-      inline void setProject (std::string const &project)
-      {
+      inline void setProject (std::string const &project) {
         project_p = project;
       }
       //! Set the identifier for the observation
-      inline void setObservation_id (std::string const &observation_id)
-      {
+      inline void setObservation_id (std::string const &observation_id) {
         observation_id_p = observation_id;
       }
       //! Set the telescope observation mode
-      inline void setObservation_mode (std::string const &observation_mode)
-      {
+      inline void setObservation_mode (std::string const &observation_mode) {
         observationMode_p = observation_mode;
       }
-
+      
       //! Get the time-out before dropping socket connection at connect
       inline void timeoutStart (unsigned int &time_sec,
                                 unsigned int &time_usec)
@@ -402,12 +386,6 @@ namespace DAL
       }
       //! Provide a summary of the internal status
       void summary (std::ostream &os);
-
-#ifdef HAVE_BLITZ
-      //! Set the antenna array position metadata from calibration file
-      bool writeAntennaArrayPositions (std::string const &infile,
-                                       std::string const &name);
-#endif
 
     private:
 

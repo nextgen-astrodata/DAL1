@@ -573,7 +573,7 @@ namespace DAL {  // Namespace DAL -- begin
     return channelIDvalues;
   }
 #else
-  std::vector<uint> TBB_Timeseries::channelID ()
+  std::vector<int> TBB_Timeseries::channelID ()
   {
     uint n           = 0;
     uint station     = 0;
@@ -583,23 +583,21 @@ namespace DAL {  // Namespace DAL -- begin
     std::vector<int> channelIDvalues (nofDipoles);
     std::vector<int> tmp;
 
-    for (station=0; station<nofStations; station++)
-      {
-        tmp        = groups_p[station].channelID();
-        nofDipoles = groups_p[station].nofDipoleDatasets();
-        for (dipole=0; dipole<nofDipoles; dipole++)
-          {
-            channelIDvalues[n] = tmp[dipole];
-            n++;
-          }
+    for (station=0; station<nofStations; station++) {
+      tmp        = groups_p[station].channelID();
+      nofDipoles = groups_p[station].nofDipoleDatasets();
+      for (dipole=0; dipole<nofDipoles; dipole++) {
+	channelIDvalues[n] = tmp[dipole];
+	n++;
       }
-
+    }
+    
     return channelIDvalues;
   }
 #endif
-
+  
   // ----------------------------------------------------------------------- time
-
+  
 #ifdef HAVE_CASA
   casa::Vector<uint> TBB_Timeseries::time ()
   {
@@ -835,7 +833,7 @@ namespace DAL {  // Namespace DAL -- begin
     return units;
   }
 #else
-  std::vector<std::string> TBB_Timeseries::sample_frequency_unit ();
+  std::vector<std::string> TBB_Timeseries::sample_frequency_unit ()
   {
     uint n           = 0;
     uint station     = 0;
@@ -844,24 +842,22 @@ namespace DAL {  // Namespace DAL -- begin
     uint nofStations = nofStationGroups();
     std::vector<std::string> units (nofDipoles);
     std::vector<std::string> tmp;
-
-    for (station=0; station<nofStations; station++)
-      {
-        tmp = groups_p[station].sample_frequency_unit();
-        nofDipoles = groups_p[station].nofDipoleDatasets();
-        for (dipole=0; dipole<nofDipoles; dipole++)
-          {
-            units[n] = tmp[dipole];
-            n++;
-          }
+    
+    for (station=0; station<nofStations; station++) {
+      tmp = groups_p[station].sample_frequency_unit();
+      nofDipoles = groups_p[station].nofDipoleDatasets();
+      for (dipole=0; dipole<nofDipoles; dipole++) {
+	units[n] = tmp[dipole];
+	n++;
       }
-
+    }
+    
     return units;
   }
 #endif
-
+  
   // ---------------------------------------------------------------- data_length
-
+  
 #ifdef HAVE_CASA
   casa::Vector<uint> TBB_Timeseries::data_length ()
   {

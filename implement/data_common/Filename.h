@@ -189,19 +189,19 @@ namespace DAL { // Namespace DAL -- begin
       observationID_p = observationID;
     }
 
+    //! Get optional descriptors
     inline std::string optionalDescription () const {
       return optionalDescription_p;
     }
 
-    inline void setOptionalDescription (std::string const &optionalDescription) {
-      optionalDescription_p = optionalDescription;
-    }
-
+    //! Set optional descriptors
+    void setOptionalDescription (std::string const &optionalDescription);
+    
     //! Get the file type
     inline FileType filetype () const {
       return filetype_p;
     }
-
+    
     //! Get the file type name
     inline std::string filetypeName () const {
       return getName(filetype_p);

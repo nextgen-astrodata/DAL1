@@ -31,11 +31,13 @@ ________________________________________________________________________________
   present in underlying class as private variable which is used each time a new
   DipoleArray is created.
 
-* [2009/08/04] dalDataset is in desparate need for a clean-up: currently there
-  are multiple methods used internally to open a file (and/or testing for its
-  type beforehand).
+* [2009/09/16] Add function to allow renaming of attributes: 
+  dalCommon::h5_renameAttribute(locationID,nameOld,nameNew).
 
-* [2009/09/16] Add function to allow renaming of attributes: dalCommon::h5_renameAttribute(locationID,nameOld,nameNew).
+* [2009/10/16] Evaluate how much work is required to bring the high-level
+  interfaces to the beamformed data in sync with the structure as defined within
+  the ICD; what is the amount of required modifications, how many new classes are
+  required to represented the newly added hierarchical structure?
 
 _________________________________________________________________________________
 >>> Coding conventions

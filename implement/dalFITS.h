@@ -1,22 +1,25 @@
-/***************************************************************************
-*   Copyright (C) 2008                                                    *
-*   Sven Duscha (sduscha@mpa-garching.mpg.de)                                                        *
-*                                                                         *
-*   This program is free software; you can redistribute it and/or modify  *
-*   it under the terms of the GNU General Public License as published by  *
-*   the Free Software Foundation; either version 2 of the License, or     *
-*   (at your option) any later version.                                   *
-*                                                                         *
-*   This program is distributed in the hope that it will be useful,       *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
-*   GNU General Public License for more details.                          *
-*                                                                         *
-*   You should have received a copy of the GNU General Public License     *
-*   along with this program; if not, write to the                         *
-*   Free Software Foundation, Inc.,                                       *
-*   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
-***************************************************************************/
+/*-------------------------------------------------------------------------*
+ | $Id::                                                                 $ |
+ *-------------------------------------------------------------------------*
+ ***************************************************************************
+ *   Copyright (C) 2008                                                    *
+ *   Sven Duscha (sduscha@mpa-garching.mpg.de)                             *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 
 #ifndef DALFITS_H
 #define DALFITS_H
@@ -34,6 +37,7 @@
 
 
 // AIPS++/CASA header files
+#ifdef HAVE_CASA
 #include <casa/aips.h>
 #include <casa/Arrays.h>
 #include <casa/BasicSL/Complex.h>
@@ -55,8 +59,7 @@
 #include <tables/Tables/SetupNewTab.h>
 #include <tables/Tables/Table.h>
 #include <tables/Tables/TableRecord.h>
-
-
+#endif
 
 namespace DAL {
   
@@ -75,80 +78,81 @@ namespace DAL {
 class dalFITS {
     
   private:
-    //! file handle for direct file access
-    fitsfile *fptr;
-    
-    //! Status of last cfitsio operation
-    int fitsstatus_p;
-    
-   //! FITS error message
-   char fits_error_message[255];
-   //! casacore lattice handle
-   casa::Lattice<casa::Float>* lattice_p;
-    
-    //! dimensions of FITS image
-    std::vector<int64_t> dimensions_p;
-    
-    //! define types of bins
-    enum DALbinType {
-      //! Frequency
-      frequency,
-      //! Lambda squared
-      lambda_sq
-    };
-    
-    DALbinType binType;
-    
-    //! define bin units (Hz, MHz, etc)
-    enum DALbinUnit
-    {
-      Hz,
-      kHz,
-      MHz
-    };
-    //! Bin type of the image
-    DALbinUnit binUnit;
-    
-    //! frequency bins (central frequencies) or lambda squareds
-    std::vector<double> bins;
-    
-    //! bin deltas (width of each bin)
-    std::vector<double> binWidths;
-    
-    
-    //! data type of FITS Image (in accordance with casacore naming scheme)
-    enum DALimageType
-    {
-      TpFloat,
-      TpDouble,
-      TpComplex,
-      TpDComplex
-    };
-    
-    DALimageType imageType;
-    
-  public:
-    
-    //___________________________________________________________________________
-    //                                                   Construction/Destruction
-    
-    //! Default constructor, creating an initialised, but empty object
-    dalFITS ();
-    //! Constructor with associated filename
-    dalFITS (const std::string &,
-	     int mode);
-    //! Copy constructor
-    dalFITS (dalFITS const& other);
-    //! Copy constructor
-    dalFITS(dalFITS const &other,
-	    bool previous,
-	    bool current,
-	    bool following);
-    //! Destructor
-    ~dalFITS ();
-    
-    //________________________________________________________________
-    //
+
+  //! file handle for direct file access
+  fitsfile *fptr;
+  //! Status of last cfitsio operation
+  int fitsstatus_p;
+  //! FITS error message
+  char fits_error_message[255];
+  //! casacore lattice handle
+#ifdef HAVE_CASA
+  casa::Lattice<casa::Float>* lattice_p;
+#endif
+  
+  //! dimensions of FITS image
+  std::vector<int64_t> dimensions_p;
+  
+  //! define types of bins
+  enum DALbinType {
+    //! Frequency
+    frequency,
+    //! Lambda squared
+    lambda_sq
+  };
+  
+  DALbinType binType;
+  
+  //! define bin units (Hz, MHz, etc)
+  enum DALbinUnit
+  {
+    Hz,
+    kHz,
+    MHz
+  };
+  //! Bin type of the image
+  DALbinUnit binUnit;
+  
+  //! frequency bins (central frequencies) or lambda squareds
+  std::vector<double> bins;
+  
+  //! bin deltas (width of each bin)
+  std::vector<double> binWidths;
+  
+  
+  //! data type of FITS Image (in accordance with casacore naming scheme)
+  enum DALimageType
+  {
+    TpFloat,
+    TpDouble,
+    TpComplex,
+    TpDComplex
+  };
+  
+  DALimageType imageType;
+  
+ public:
+  
+  //___________________________________________________________________________
+  //                                                   Construction/Destruction
+  
+  //! Default constructor, creating an initialised, but empty object
+  dalFITS ();
+  //! Constructor with associated filename
+  dalFITS (const std::string &,
+	   int mode);
+  //! Copy constructor
+  dalFITS (dalFITS const& other);
+  //! Copy constructor
+  dalFITS(dalFITS const &other,
+	  bool previous,
+	  bool current,
+	  bool following);
+  //! Destructor
+  ~dalFITS ();
+  
+  //________________________________________________________________
+  //
     // Methods
     //________________________________________________________________
     
