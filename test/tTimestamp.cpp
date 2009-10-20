@@ -209,7 +209,7 @@ int test_attributes ()
     std::cerr << message << endl;
     nofFailedTests++;
   }
-  
+
   return nofFailedTests;
 }
 

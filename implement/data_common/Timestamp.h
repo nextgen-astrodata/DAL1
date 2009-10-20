@@ -24,6 +24,7 @@
 #ifndef TIMESTAMP_H
 #define TIMESTAMP_H
 
+#include <iostream>
 #include <math.h>
 #include <stdio.h>
 #include <string>
@@ -336,7 +337,8 @@ namespace DAL { // Namespace DAL -- begin
     //! Set the time
     void setTime (time_t const &rawtime);
     
-    /*   void setTime (long const &unixTime); */
+    //! Get the name of the day of the week
+    std::string dayOfWeek (bool const &longName=false);
     
     /*!
       \brief Get string combining year, month and day
@@ -361,18 +363,25 @@ namespace DAL { // Namespace DAL -- begin
     */
     std::string hms (std::string const &sep=":");
     
-    /*!
-      \brief Retrieve ISO 8601 conform version of the timestamp string
-      
-      \return iso -- ISO 8601 conform version of the timestamp string
-    */
+    //! Retrieve ISO 8601 conform version of the timestamp string
     std::string iso8601 ();
 
-    //! Get formated time information
+    //! Retrieve RCF 2822 conform version of the timestamp string
     inline std::string rfc2822 () const {
       std::string out (ctime(&rawtime_p));
       return out;
     }
+
+#ifdef PYTHON
+    //! [Boost.Python] Set the numerical value of the month
+    inline void setMonth1 (int const &month) {
+      setMonth (month);
+    }
+    //! [Boost.Python] Set the numerical value of the month
+    inline void setMonth2 (Month const &month) {
+      setMonth (month);
+    }
+#endif
     
     // ------------------------------------------------------------ private methods
     

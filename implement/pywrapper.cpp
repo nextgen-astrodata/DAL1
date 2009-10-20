@@ -24,9 +24,11 @@
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 
 #include "dal.h"
+// [data_common]
+#include "CommonAttributes.h"
+#include "Timestamp.h"
 
 using namespace DAL;
-// using namespace boost::python;
 
 /*!
   \file pywrapper.cpp
@@ -39,19 +41,47 @@ using namespace DAL;
 
   <h3>Synopsis</h3>
 
-  Core library classes:
-  <ul>
-    <li>DAL::dalArray
-    <li>DAL::dalColumn
-    <li>DAL::dalData
-  </ul>
-
-  High-level dataset interfaces
-  <ul>
-    <li>DAL::BeamGroup
-    <li>DAL::BeamFormed
-    <li>DAL::TBB_DipoleDataset
-  </ul>
+  <table border="0">
+    <tr>
+      <td class="indexkey">Core library classes</td>
+      <td class="indexkey">Common dataset support</td>
+      <td class="indexkey">High-level dataset interfaces</td>
+      <td class="indexkey">Application tools</td>
+    </tr>
+    <tr valign="top">
+      <td>
+      - DAL::dalArray
+      - DAL::dalColumn
+      - DAL::dalData
+      - DAL::dalDataset
+      - DAL::dalFilter
+      - DAL::dalGroup
+      - DAL::dalTable
+      </td>
+      <td>
+      - DAL::CommonAttributes
+      - DAL::Timestamp
+      - DAL::Coordinate
+      - DAL::DirectionCoordinate
+      - DAL::LinearCoordinate
+      - DAL::StokesCoordinate
+      - DAL::TabularCoordinate
+      - DAL::CoordinatesGroup
+      </td>
+      <td>
+      - DAL::BeamFormed
+      - DAL::BeamGroup
+      - DAL::BeamSubband
+      - DAL::TBB_Timeseries
+      - DAL::TBB_StationGroup
+      - DAL::TBB_DipoleDataset
+      </td>
+      <td>
+      - bf2h5.cpp
+      - tbb2h5.cpp
+      </td>
+    </tr>
+  </table>
 */
 
 BOOST_PYTHON_MODULE(pydal)
@@ -68,6 +98,12 @@ BOOST_PYTHON_MODULE(pydal)
        "The Unix base date is MJD 40587 and 1 mjd Day = 24 hours \n"
        "or 1440 minutes or 86400 seconds so: \n"
        "(unix seconds) = (mjd seconds) - ( unix base date in seconds )." );
+  
+  // ============================================================================
+  //
+  //  [core] Core classes
+  //
+  // ============================================================================
   
   //_____________________________________________________________________________
   //                                                                     dalArray
@@ -439,9 +475,12 @@ BOOST_PYTHON_MODULE(pydal)
 
   // ============================================================================
   //
-  //  Common dataset support
+  //  [data_common] Common dataset support
   //
   // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                             CommonAttributes
   
   bpl::class_<CommonAttributes>("CommonAttributes")
     .def( bpl::init<>())
@@ -478,9 +517,71 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Set the name of the project's principal investigator.")
     ;
   
+  //_____________________________________________________________________________
+  //                                                                    Timestamp
+  
+  /* Enumeration: Month of the year */
+  bpl::enum_<Timestamp::Month>("Month")
+    .value("Jan",Timestamp::Jan)
+    .value("Feb",Timestamp::Feb)
+    .value("Mar",Timestamp::Mar)
+    .value("Apr",Timestamp::Apr)
+    .value("May",Timestamp::May)
+    .value("Jun",Timestamp::Jun)
+    .value("Jul",Timestamp::Jul)
+    .value("Aug",Timestamp::Aug)
+    .value("Sep",Timestamp::Sep)
+    .value("Oct",Timestamp::Oct)
+    .value("Nov",Timestamp::Nov)
+    .value("Dec",Timestamp::Dec)
+    ;
+  
+  bpl::class_<Timestamp>("Timestamp")
+    .def( bpl::init<>())
+    .def( bpl::init<int,int,int,int,int,double>())
+    .def( "year", &Timestamp::year,
+	  "Get the numerical value of the year.")
+    .def( "setYear", &Timestamp::setYear,
+	  "Set the numerical value of the year.")
+    .def( "month", &Timestamp::month,
+	  "Get the numerical value of the month.")
+    .def( "setMonth", &Timestamp::setMonth1,
+	  "Set the numerical value of the month.")
+    .def( "setMonth", &Timestamp::setMonth2,
+	  "Set the numerical value of the month.")
+    .def( "day", &Timestamp::day,
+	  "Get the numerical value of the day.")
+    .def( "setDay", &Timestamp::setDay,
+	  "Set the numerical value of the day.")
+    .def( "hour", &Timestamp::hour,
+	  "Get the numerical value of the hour.")
+    .def( "setHour", &Timestamp::setHour,
+	  "Set the numerical value of the hour.")
+    .def( "minute", &Timestamp::minute,
+	  "Get the numerical value of the minute.")
+    .def( "setMinute", &Timestamp::setMinute,
+	  "Set the numerical value of the minute.")
+    .def( "second", &Timestamp::second,
+	  "Get the numerical value of the second.")
+    .def( "setSecond", &Timestamp::setSecond,
+	  "Set the numerical value of the second.")
+    .def( "fractionOfSecond", &Timestamp::fractionOfSecond,
+	  "Get the fraction of the second.")
+    .def( "dayOfWeek", &Timestamp::dayOfWeek,
+	  "Get the name of the day of the week.")
+    .def( "ymd", &Timestamp::ymd,
+	  "Get string combining year, month and day.")
+    .def( "hms", &Timestamp::hms,
+	  "Get the time of day.")
+    .def( "iso8601", &Timestamp::iso8601,
+	  "Retrieve ISO 8601 conform version of the timestamp string.")
+    .def( "rfc2822", &Timestamp::rfc2822,
+	  "Retrieve RCF 2822 conform version of the timestamp string.")
+    ;
+  
   // ============================================================================
   //
-  //  High-level interfaces to specific data
+  //  [data_hl] High-level interfaces to specific data
   //
   // ============================================================================
   
@@ -640,7 +741,7 @@ BOOST_PYTHON_MODULE(pydal)
     .def( bpl::init<string,string>())
     .def( bpl::init<uint,string>())
     .def( bpl::init<uint>())
-    /* Acces to internal parameters */
+    /* Access to internal parameters */
     .def( "group_id", &TBB_StationGroup::group_id,
 	  "Get the identifier for this group within the HDF5 file." )
     .def( "group_name", &TBB_StationGroup::group_name,
@@ -664,6 +765,7 @@ BOOST_PYTHON_MODULE(pydal)
     /* Construction */
     .def( bpl::init<>())
     .def( bpl::init<string>())
+    /* Access to internal parameters */
     .def( "filename", &TBB_Timeseries::filename,
 	  "Get the name of the data file." )
     .def( "file_id", &TBB_Timeseries::file_id,

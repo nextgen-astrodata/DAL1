@@ -39,6 +39,10 @@ ________________________________________________________________________________
   the ICD; what is the amount of required modifications, how many new classes are
   required to represented the newly added hierarchical structure?
 
+* [2009/10/19] Add methods to set dipole positions from level higher up in the
+  hierarchy:
+  setAntennaPosition (std::string const &id, std::vector<double> const &pos);
+
 _________________________________________________________________________________
 >>> Coding conventions
 

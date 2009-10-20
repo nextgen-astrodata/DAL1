@@ -21,7 +21,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <iostream>
 #include <Timestamp.h>
 
 namespace DAL {
@@ -356,6 +355,50 @@ namespace DAL {
   }
 
   //_____________________________________________________________________________
+  //                                                                    dayOfWeek
+
+  /*!
+    \param longName -- Return the name of the day in its long format? If set 
+           <tt>true</tt> then e.g. in instead of <i>Mon</i> the full name of the
+	   day will be return -- in this case <i>Monday</i>.
+  */
+  std::string Timestamp::dayOfWeek (bool const &longName)
+  {
+    std::string wday;
+    const char* tmp = rfc2822().c_str();
+
+    wday += tmp[0];
+    wday += tmp[1];
+    wday += tmp[2];
+
+    if (longName) {
+      if (wday == "Mon") {
+	wday = "Monday";
+      }
+      else if (wday == "Tue") {
+	wday = "Tuesday";
+      }
+      else if (wday == "Wed") {
+	wday = "Wednesday";
+      }
+      else if (wday == "Thu") {
+	wday = "Thursday";
+      }
+      else if (wday == "Friday") {
+	wday = "Friday";
+      }
+      else if (wday == "Sat") {
+	wday = "Saturday";
+      }
+      else {
+	wday = "Sunday";
+      }
+    }
+
+    return wday;
+  }
+
+  //_____________________________________________________________________________
   //                                                                          hms
 
   /*!
@@ -409,10 +452,13 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                      iso8601
   
+  /*!
+    \return iso -- ISO 8601 conform version of the timestamp string
+  */
   std::string Timestamp::iso8601 ()
   {
     std::stringstream out;
-
+    
     out << ymd() << "T" << hms() << ".00Z";
     
     return out.str();

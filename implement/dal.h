@@ -57,6 +57,7 @@
       </td>
       <td>
       - DAL::CommonAttributes
+      - DAL::Timestamp
       - DAL::Coordinate
       - DAL::DirectionCoordinate
       - DAL::LinearCoordinate
