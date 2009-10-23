@@ -603,6 +603,8 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Return number of subbands")
     .def( "getIntensity", &BeamGroup::getIntensity_boost,
 	  "Get a numpy array of intensities for a given subband")
+    .def( "getIntensitySquared", &BeamGroup::getIntensity_boost,
+	  "Get a numpy array of squared intensities for a given subband")
     .def( "getSubbandData_X", &BeamGroup::getSubbandData_X_boost,
 	  "Get a numpy array of values for a given subband")
     .def( "getSubbandData_Y", &BeamGroup::getSubbandData_Y_boost,
