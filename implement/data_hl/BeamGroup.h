@@ -255,6 +255,9 @@ namespace DAL
       bpl::numeric::array getIntensity_boost( int subband,
                                               int start,
                                               int length );
+      bpl::numeric::array getIntensitySquared_boost( int subband,
+                                              int start,
+                                              int length );
       bpl::numeric::array getSubbandData_X_boost( int subband,
           int start,
           int length );

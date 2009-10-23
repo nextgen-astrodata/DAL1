@@ -689,6 +689,20 @@ namespace DAL
     return narray;
   }
 
+  bpl::numeric::array BeamGroup::getIntensitySquared_boost( int subband,
+      int start,
+      int length )
+  {
+    float * values = NULL;
+    values = getIntensitySquared( subband, start, length );
+    std::vector<int> mydims;
+    mydims.push_back( length );
+    bpl::numeric::array narray = num_util::makeNum( values, mydims );
+    delete [] values;
+    values = NULL;
+    return narray;
+  }
+
 
   // ----------------------------------------------------- getSubbandData_X_boost
 
