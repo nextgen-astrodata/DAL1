@@ -38,6 +38,7 @@ namespace DAL {  // Namespace DAL -- begin
     \class TBB_Timeseries
 
     \ingroup DAL
+    \ingroup data_hl
 
     \brief Brief description for class TBB_Timeseries
 

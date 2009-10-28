@@ -21,54 +21,90 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DALARRAY_H
-#define DALARRAY_H
+#ifndef DALGROUP_H
+#define DALGROUP_H
 
-#ifndef DALBASETYPES_H
-#include "dalBaseTypes.h"
+#ifndef DALTABLE_H
+#include "dalTable.h"
 #endif
 
-namespace DAL {
-  
-  /*!
-    \class dalArray
-    \ingroup DAL
-    \brief Represents an n-dimensional array.
-    \author Joseph Masters
-    
-    The dalArray object holds an n-dimensional array of a single datatype.
-  */
-  
-  class dalArray {
-    
-    //! Number of dimensions
-    int rank_p;
-    //! Array datatype identifier
-    string datatype;
-    //! HDF5 return status
-    herr_t status;
-    
-  protected:
-    hid_t array_id;  //!< hdf5 object id for array
-    hid_t file_id;   //!< hdf5 file_id
-    string name;     //!< name of the array
-    
-  public:
+#ifndef DALARRAY_H
+#include "dalArray.h"
+#endif
 
-    //! Default constructor
-    dalArray();
-    //! Get the shap of the array
-    vector<int> dims();
-    std::string getName();
-    int open( void * file, string arrayname );
-    bool close();
-    hid_t getId();
-    int getRank ();
-    bool getAttributes();
-    
-    // ---------------------------------------------------------- getAttribute
-    
-    /*!
+namespace DAL
+  {
+
+  /*!
+    \class dalGroup
+    \ingroup DAL
+    \ingroup core
+    \brief Represents a group of tables, arrays or sub-groups.
+  */
+  class dalGroup
+    {
+
+    protected:
+
+      void * file; // can be HDF5File, FITS, MS
+      string groupname; // group name
+      string groupname_full;
+      void * group;
+      dalFilter * filter; // filter associated with group
+      hid_t file_id; // hdf5 file_id
+      hid_t group_id; // hdf5 group_id
+      herr_t status;
+
+    public:
+
+      // Default constructor
+      dalGroup();
+      dalGroup( const char * groupname, void * file );
+      dalGroup( hid_t group_id, const char * gname );
+      ~dalGroup();
+      int open( void * file, std::string groupname );
+      bool close();
+      std::string getName();
+      bool setName( string gname );
+
+      //! Provide a summary of the object's properties
+      inline void summary()
+      {
+        summary(std::cout);
+      }
+      //! Provide a summary of the object's properties
+      void summary(std::ostream &os);
+
+      dalArray * createShortArray(        std::string arrayname,
+                                          std::vector<int> dims,
+                                          short data[],
+                                          std::vector<int>cdims);
+
+      dalArray * createIntArray(          std::string arrayname,
+                                          std::vector<int> dims,
+                                          int data[],
+                                          std::vector<int>cdims);
+
+      dalArray * createFloatArray(        std::string arrayname,
+                                          std::vector<int> dims,
+                                          float data[],
+                                          std::vector<int>cdims);
+
+      dalArray * createComplexFloatArray( std::string arrayname,
+                                          std::vector<int> dims,
+                                          complex<float> data[],
+                                          std::vector<int>cdims );
+
+      dalArray * createComplexShortArray( std::string arrayname,
+                                          std::vector<int> dims,
+                                          complex<Int16> data[],
+                                          std::vector<int>cdims );
+      hid_t getId();
+      std::vector<std::string> getMemberNames();
+
+      // ------------------------------------------------------- getAttribute
+
+      /*!
         \brief Get the value of an attribute.
 
         Get the value of an attribute.  This is different from printAttribute
@@ -76,13 +112,13 @@ namespace DAL {
         instead of simply printing.
 
         \param attrname The name of the attribute you want to retrieve.
-        \param value Attribute value to return.
+        \param value The value of the attribute.
         \return bool -- DAL::FAIL or DAL::SUCCESS
       */
       template <class T>
       bool getAttribute( std::string attrname, T &value )
       {
-        return h5get_attribute( array_id, attrname, value );
+        return h5get_attribute( group_id, attrname, value );
       }
 
       bool setAttribute( std::string attrname, char * data, int size=1 );
@@ -95,24 +131,15 @@ namespace DAL {
       bool setAttribute( std::string attrname, std::string data );
       bool setAttribute( std::string attrname, std::string * data, int size=1 );
 
-      bool extend( vector<int> dims );
-      bool write(int offset, short data[], int arraysize);
-      bool write(int offset, int data[], int arraysize);
-      bool write( int offset, complex<float> data[], int arraysize );
-      bool write( int offset, complex<Int16> data[], int arraysize );
+      dalGroup * createGroup( const char * gname );
 
-      /************************************************************************
+      /******************************************************************
        *
        * The following functions are boost wrappers to allow some previously
        *   defined functions to be easily called from a python prompt.
        *
-       ************************************************************************/
+       ******************************************************************/
 #ifdef PYTHON
-
-      void sai_boost( std::string attrname, int data );
-      void saf_boost( std::string attrname, float data );
-      void extend_boost( bpl::list pydims );
-
       dalArray * csa_boost_list( std::string arrayname, bpl::list dims, bpl::list data);
       dalArray * cia_boost_list( std::string arrayname, bpl::list dims, bpl::list data);
       dalArray * cfa_boost_list( std::string arrayname, bpl::list dims, bpl::list data );
@@ -136,53 +163,17 @@ namespace DAL {
       bool setAttribute_double_vector( std::string attrname, bpl::list data );
       bool setAttribute_string_vector( std::string attrname, bpl::list data );
       
-#endif
-    };
+      bpl::numeric::array getAttribute_float_boost (std::string attrname);
+      bpl::numeric::array getAttribute_double_boost (std::string attrname);
+      bpl::numeric::array getAttribute_int_boost (std::string attrname);
+      bpl::numeric::array getAttribute_uint_boost (std::string attrname);
+      bpl::numeric::array getAttribute_short_boost (std::string attrname);
+      bpl::numeric::array getAttribute_long_boost (std::string attrname);
+      bpl::list getAttribute_string_boost (std::string attrname);
 
-  class dalShortArray: public dalArray
-    {
-
-    public:
-      dalShortArray( hid_t obj_id, std::string arrayname, std::vector<int> dims,
-                     short data[], std::vector<int>chnkdims);
-      short * readShortArray( hid_t obj_id, std::string arrayname );
-    };
-
-  class dalIntArray: public dalArray
-    {
-
-    public:
-      dalIntArray( hid_t obj_id, string arrayname, vector<int> dims,
-                   int data[], vector<int>chnkdims );
-      int * readIntArray( hid_t obj_id, string arrayname );
-    };
-
-  class dalFloatArray: public dalArray
-    {
-
-    public:
-      dalFloatArray( hid_t obj_id, string arrayname, vector<int> dims,
-                     float data[], vector<int>chnkdims);
-    };
-
-  class dalComplexArray_float32: public dalArray
-    {
-
-    public:
-      dalComplexArray_float32( hid_t objfile, string arrayname,
-                               vector<int> dims, complex<float> data[],
-                               vector<int>chnkdims);
-    };
-
-  class dalComplexArray_int16: public dalArray
-    {
-
-    public:
-      dalComplexArray_int16( hid_t objfile, string arrayname,
-                             vector<int> dims, complex<Int16> data[],
-                             vector<int>chnkdims);
+#endif // end #ifdef PYTHON
     };
 
 } // end namespace DAL
 
-#endif // end #ifndef DALARRAY_H
+#endif  // end #ifndef DALGROUP_H

@@ -40,6 +40,7 @@ namespace DAL { // Namespace DAL -- begin
     \class CoordinatesGroup
     
     \ingroup DAL
+    \ingroup coordinates
     
     \brief Brief description for class CoordinatesGroup
     

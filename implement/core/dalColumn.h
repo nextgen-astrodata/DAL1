@@ -33,6 +33,7 @@ namespace DAL {
   /*!
     \class dalColumn
     \ingroup DAL
+    \ingroup core
     \brief Represents a table column.
     \author Joseph Masters
     \date 12-11-2006

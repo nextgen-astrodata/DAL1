@@ -37,6 +37,7 @@ namespace DAL { // Namespace DAL -- begin
     \class Timestamp
     
     \ingroup DAL
+    \ingroup data_common
     
     \brief Wrapper for the time information in its various formats
     

@@ -33,6 +33,7 @@ namespace DAL {
     \class BeamFormed
     
     \ingroup DAL
+    \ingroup data_hl
     
     \brief High-level interface between beam-formed data and the DAL
 

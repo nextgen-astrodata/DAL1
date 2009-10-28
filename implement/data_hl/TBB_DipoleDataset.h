@@ -45,6 +45,7 @@ namespace DAL {  // Namespace DAL -- begin
     \class TBB_DipoleDataset
     
     \ingroup DAL
+    \ingroup data_hl
     
     \brief Container for dipole-based data in a LOFAR TBB time-series dataset
 

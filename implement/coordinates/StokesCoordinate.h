@@ -41,6 +41,7 @@ namespace DAL {  // Namespace DAL -- begin
     \class StokesCoordinate
     
     \ingroup DAL
+    \ingroup coordinates
     
     \brief Brief description for class StokesCoordinate
     

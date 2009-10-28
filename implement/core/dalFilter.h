@@ -31,8 +31,9 @@ namespace DAL {
   
   /*!
     \class dalFilter
-    \brief Class representing a filter that can be applied to a table.
     \ingroup DAL
+    \ingroup core
+    \brief Class representing a filter that can be applied to a table.
   */
   
   class dalFilter {

@@ -35,6 +35,7 @@ namespace DAL { // Namespace DAL -- begin
     \class Filename
     
     \ingroup DAL
+    \ingroup data_common
     
     \brief Class to filenames matching convention
     

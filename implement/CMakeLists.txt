@@ -94,13 +94,7 @@ set (dal_modules
 file (GLOB dal_headers *.h)
 
 set (dal_sources
-  dalArray.cpp
-  dalColumn.cpp
   dalData.cpp
-  dalDataset.cpp
-  dalFilter.cpp
-  dalGroup.cpp
-  dalTable.cpp
   Enumerations.cpp
   DataType.cpp
   TBB.cpp

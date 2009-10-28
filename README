@@ -43,6 +43,9 @@ ________________________________________________________________________________
   hierarchy:
   setAntennaPosition (std::string const &id, std::vector<double> const &pos);
 
+* [2009/10/26] Check TBB_Timeseries for memory leaks; according to Sef and Andreas
+  there is a build-up of allocated memory when reading a sequence of data blocks.
+
 _________________________________________________________________________________
 >>> Coding conventions
 

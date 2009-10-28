@@ -34,6 +34,7 @@ namespace DAL {
     \class dalDataset
 
     \ingroup DAL
+    \ingroup core
 
     \brief Represents the file containing all sub-structures (tables, arrays, etc.)
     

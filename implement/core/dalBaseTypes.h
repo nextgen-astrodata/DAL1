@@ -24,6 +24,7 @@
 /*!
   \class dalBaseTypes
   \ingroup DAL
+  \ingroup core
   \brief Basic type definitions and byte swapping routines.
 */
 

@@ -42,6 +42,7 @@ namespace DAL {   // Namespace DAL -- begin
     \class DirectionCoordinate
 
     \ingroup DAL
+    \ingroup coordinates
 
     \brief Brief description for class DirectionCoordinate
 

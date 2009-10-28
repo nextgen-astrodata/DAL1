@@ -44,6 +44,7 @@ namespace DAL {   // Namespace DAL -- begin
     \class TBB_StationGroup
 
     \ingroup DAL
+    \ingroup data_hl
 
     \brief Container for the data in the StationGroup of LOFAR times-series data
 

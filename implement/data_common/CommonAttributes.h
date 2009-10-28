@@ -39,6 +39,7 @@ namespace DAL { // Namespace DAL -- begin
     \class CommonAttributes
     
     \ingroup DAL
+    \ingroup data_common
     
     \brief Collection of attributes common to all LOFAR datasets
     

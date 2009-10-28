@@ -43,6 +43,8 @@ namespace DAL {   // Namespace DAL -- begin
     \class Coordinate
 
     \ingroup DAL
+    \ingroup coordinates
+
     \brief A basic container for a coordinate object added to a HDF5 file
 
     \author Lars B&auml;hren

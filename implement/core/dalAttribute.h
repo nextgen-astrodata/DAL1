@@ -33,7 +33,8 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \class dalAttribute
     
-    \ingroup DAL
+  \ingroup DAL
+  \ingroup core
     
     \brief Collection of attributes/keywords used throughout the DAL
     

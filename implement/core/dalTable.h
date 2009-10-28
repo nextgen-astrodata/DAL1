@@ -38,6 +38,7 @@ namespace DAL {
     \class dalTable
     
     \ingroup DAL
+    \ingroup core
     
     \brief Object representing a table within a dataset.
     

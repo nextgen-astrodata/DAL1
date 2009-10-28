@@ -1010,23 +1010,22 @@ namespace DAL {  // Namespace DAL -- begin
   {
     if (datasetID_p > 0) {
       herr_t h5error (0);
-      hid_t filespaceID (0);
+      hid_t dataspace_id (0);
       int rank (0);
       
       /* Retrieve the identifier of the dataspace associated with the dataset */
       
-      filespaceID = H5Dget_space(datasetID_p);
+      dataspace_id = H5Dget_space(datasetID_p);
       
-      if (filespaceID < 0)
-	{
-	  cerr << "[TBB_DipoleDataset::fx]"
-	       << " Error retrieving filespace of dataset!" << endl;
-	  return false;
-	}
+      if (dataspace_id < 0) {
+	cerr << "[TBB_DipoleDataset::fx]"
+	     << " Error retrieving filespace of dataset!" << endl;
+	return false;
+      }
       
       /* Retrieve the rank of the dataspace asssociated with the dataset */
       
-      rank = H5Sget_simple_extent_ndims(filespaceID);
+      rank = H5Sget_simple_extent_ndims(dataspace_id);
       
       if (rank < 0) {
 	cerr << "[TBB_DipoleDataset::fx]"
@@ -1037,7 +1036,7 @@ namespace DAL {  // Namespace DAL -- begin
       /* Retrieve the dimension of the dataspace, i.e. the number of samples */
       
       hsize_t shape[1];
-      h5error = H5Sget_simple_extent_dims (filespaceID,
+      h5error = H5Sget_simple_extent_dims (dataspace_id,
 					   shape,
 					   NULL);
       if (h5error < 0) {
@@ -1056,7 +1055,7 @@ namespace DAL {  // Namespace DAL -- begin
 					 shape);
       hsize_t offset[1];
       
-      if (filespaceID < 0) {
+      if (dataspace_id < 0) {
 	cerr << "[TBB_DipoleDataset::fx]"
 	     << " Error creating memory space for reading in data!"
 	     << endl;
@@ -1068,7 +1067,7 @@ namespace DAL {  // Namespace DAL -- begin
       
       /* Select the hyperslab through the data volume */
       
-      h5error = H5Sselect_hyperslab (filespaceID,
+      h5error = H5Sselect_hyperslab (dataspace_id,
 				     H5S_SELECT_SET,
 				     offset,
 				     NULL,
@@ -1082,21 +1081,22 @@ namespace DAL {  // Namespace DAL -- begin
 	return false;
       }
       
-      /* Retrieve the actual data from the file */
-      
+      // Retrieve the actual data from the file ...
       h5error = H5Dread (datasetID_p,
 			 H5T_NATIVE_SHORT,
 			 memspace,
-			 filespaceID,
+			 dataspace_id,
 			 H5P_DEFAULT,
 			 data);
-      
+      // ... and indicate if there was an error during that procedure
       if (h5error < 0) {
 	cerr << "[TBB_DipoleDataset::fx]"
 	     << " Error reading data from file into buffer!"
 	     << endl;
 	return false;
       }
+      // Close the previously opened dataspace
+      h5error = H5Sclose (dataspace_id);
     }
     else {
       cerr << "[TBB_DipoleDataset::fx]"

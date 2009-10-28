@@ -62,6 +62,7 @@ using casa::Quantity;
   \file dalCommon.h
 
   \ingroup DAL
+  \ingroup core
 
   \brief A collection of commonly used routines (for the Data Access Library)
 

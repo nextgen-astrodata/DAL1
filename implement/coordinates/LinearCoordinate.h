@@ -41,6 +41,7 @@ namespace DAL {  // Namespace DAL -- begin
     \class LinearCoordinate
     
     \ingroup DAL
+    \ingroup coordinates
     
     \brief Brief description for class LinearCoordinate
     
