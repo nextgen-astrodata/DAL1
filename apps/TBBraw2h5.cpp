@@ -114,8 +114,8 @@
       50000, which is about 100MByte. </td>
     </tr>
     <tr>
-      <td>--verbose</td>
-      <td>Enable verbose mode, showing status messages during processing. (Not yet implemented.)</td>
+      <td>-V [--verbose]</td>
+      <td>Enable verbose mode, showing status messages during processing.</td>
     </tr>
   </table>
 

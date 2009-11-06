@@ -1097,6 +1097,8 @@ namespace DAL {  // Namespace DAL -- begin
       }
       // Close the previously opened dataspace
       h5error = H5Sclose (dataspace_id);
+      // Close the previously created memoryspace
+      h5error = H5Sclose (memspace);
     }
     else {
       cerr << "[TBB_DipoleDataset::fx]"
