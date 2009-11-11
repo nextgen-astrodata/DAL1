@@ -534,6 +534,30 @@ namespace DAL {
     \param value       -- Value of the attribute
   */
   template <typename T>
+    bool h5set_attribute (hid_t location_id,
+			  std::string name,
+			  std::set<T> const &value)
+    {
+      std::vector<T> data (value.size());
+      typename std::set<T>::iterator itSet=value.begin();
+      typename std::vector<T>::iterator itVect=data.begin();
+      
+      for (; itSet!=value.end(); ++itSet) {
+	*itVect = *itSet;
+	++itVect;
+      }
+      
+      return h5set_attribute (location_id,
+			      name,
+			      data);
+    }
+  
+  /*!
+    \param location_id -- HDF5 identifier of the attribute within the file
+    \param name        -- Name of the attribute
+    \param value       -- Value of the attribute
+  */
+  template <typename T>
   bool h5set_attribute (hid_t location_id,
                         std::string name,
                         T const &value)

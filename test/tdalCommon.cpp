@@ -224,12 +224,11 @@ int test_operators ()
     m["000001000"] = 2;
     m["000001001"] = 3;
     //
-//     cout << "-- map<string,int> = " << m << endl;
-//     cout << "-- map<string,int> = [";
-//     for (it=m.begin(); it!=m.end(); ++it) {
-//       cout << " (" << it->first << "," << it->second << ")";
-//     }
-//     cout << " ]" << endl;
+    cout << "-- map<string,int> = [";
+    for (it=m.begin(); it!=m.end(); ++it) {
+      cout << " (" << it->first << "," << it->second << ")";
+    }
+    cout << " ]" << endl;
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
@@ -330,7 +329,7 @@ int test_hdf5_attributes ()
     data_bool[1] = false;
     data_bool[2] = true;
     DAL::h5set_attribute (fileID,
-			  "ATTRIBUTE_BOOL_ARRAY",
+			  "ATTRIBUTE_ARRAY_BOOL",
 			  data_bool,
 			  3);
     //
@@ -340,7 +339,7 @@ int test_hdf5_attributes ()
     data_int[1] = 2;
     data_int[2] = 3;
     DAL::h5set_attribute (fileID,
-			  "ATTRIBUTE_INT_ARRAY",
+			  "ATTRIBUTE_ARRAY_INT",
 			  data_int,
 			  3);
     //
@@ -350,7 +349,7 @@ int test_hdf5_attributes ()
     data_uint[1] = 2;
     data_uint[2] = 3;
     DAL::h5set_attribute (fileID,
-			  "ATTRIBUTE_UINT_ARRAY",
+			  "ATTRIBUTE_ARRAY_UINT",
 			  data_uint,
 			  3);
     //
@@ -493,6 +492,45 @@ int test_hdf5_attributes ()
   
   //__________________________________________________________________
   
+  cout << "[4] Set attributes of type std::set<T> ..." << endl;
+  try {
+    int array_int[] = {0,1,2,3,4};
+    std::set<int> set_int (&array_int[0], &array_int[5]);
+    DAL::h5set_attribute (fileID,
+			  "ATTRIBUTE_SET_INT",
+			  set_int);
+    //
+    long array_long[] = {0,1,2,3,4};
+    std::set<long> set_long (&array_long[0], &array_long[5]);
+    DAL::h5set_attribute (fileID,
+			  "ATTRIBUTE_SET_LONG",
+			  set_long);
+    //
+    short array_short[] = {0,1,2,3,4};
+    std::set<short> set_short (&array_short[0], &array_short[5]);
+    DAL::h5set_attribute (fileID,
+			  "ATTRIBUTE_SET_SHORT",
+			  set_short);
+    //
+    float array_float[] = {0.0,0.1,0.2,0.3,0.4};
+    std::set<float> set_float (&array_float[0], &array_float[5]);
+    DAL::h5set_attribute (fileID,
+			  "ATTRIBUTE_SET_FLOAT",
+			  set_float);
+    //
+    double array_double[] = {0.1,0.12,0.123,0.1234,0.12345};
+    std::set<double> set_double (&array_double[0], &array_double[5]);
+    DAL::h5set_attribute (fileID,
+			  "ATTRIBUTE_SET_DOUBLE",
+			  set_double);
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  //__________________________________________________________________
+  
   cout << "[5] Close and reopen HDF5 file for testing ..." << endl;
   try {
     cout << "-- Closing file ... " << endl;
@@ -559,30 +597,30 @@ int test_hdf5_attributes ()
     std::vector<double> data_double(nelem);
     std::vector<std::string> data_string(nelem);
     //
-    DAL::h5get_attribute (fileID, "ATTRIBUTE_BOOL_ARRAY", data_bool);
-    DAL::h5get_attribute (fileID, "ATTRIBUTE_INT_ARRAY", data_int);
-    DAL::h5get_attribute (fileID, "ATTRIBUTE_UINT_ARRAY", data_uint);
-    DAL::h5get_attribute (fileID, "ATTRIBUTE_SHORT_ARRAY", data_short);
-    DAL::h5get_attribute (fileID, "ATTRIBUTE_LONG_ARRAY", data_long);
-    DAL::h5get_attribute (fileID, "ATTRIBUTE_FLOAT_ARRAY", data_float);
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_ARRAY_BOOL",   data_bool);
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_ARRAY_INT",    data_int);
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_ARRAY_UINT",   data_uint);
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_SHORT_ARRAY",  data_short);
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_LONG_ARRAY",   data_long);
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_FLOAT_ARRAY",  data_float);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_DOUBLE_ARRAY", data_double);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_STRING_ARRAY", data_string);
     //
-    cout << "-- ATTRIBUTE_BOOL_ARRAY   = " << data_bool   << endl;
-    cout << "-- ATTRIBUTE_INT_ARRAY    = " << data_int    << endl;
-    cout << "-- ATTRIBUTE_UINT_ARRAY   = " << data_uint   << endl;
+    cout << "-- ATTRIBUTE_ARRAY_BOOL   = " << data_bool   << endl;
+    cout << "-- ATTRIBUTE_ARRAY_INT    = " << data_int    << endl;
+    cout << "-- ATTRIBUTE_ARRAY_UINT   = " << data_uint   << endl;
     cout << "-- ATTRIBUTE_SHORT_ARRAY  = " << data_short  << endl;
     cout << "-- ATTRIBUTE_LONG_ARRAY   = " << data_long   << endl;
     cout << "-- ATTRIBUTE_FLOAT_ARRAY  = " << data_float  << endl;
     cout << "-- ATTRIBUTE_DOUBLE_ARRAY = " << data_double << endl;
     cout << "-- ATTRIBUTE_STRING_ARRAY = " << data_string << endl;
     //
-    DAL::h5get_attribute (fileID, "ATTRIBUTE_BOOL_VECTOR", data_bool);
-    DAL::h5get_attribute (fileID, "ATTRIBUTE_INT_VECTOR", data_int);
-    DAL::h5get_attribute (fileID, "ATTRIBUTE_UINT_VECTOR", data_uint);
-    DAL::h5get_attribute (fileID, "ATTRIBUTE_SHORT_VECTOR", data_short);
-    DAL::h5get_attribute (fileID, "ATTRIBUTE_LONG_VECTOR", data_long);
-    DAL::h5get_attribute (fileID, "ATTRIBUTE_FLOAT_VECTOR", data_float);
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_BOOL_VECTOR",   data_bool);
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_INT_VECTOR",    data_int);
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_UINT_VECTOR",   data_uint);
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_SHORT_VECTOR",  data_short);
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_LONG_VECTOR",   data_long);
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_FLOAT_VECTOR",  data_float);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_DOUBLE_VECTOR", data_double);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_STRING_VECTOR", data_string);
     //
