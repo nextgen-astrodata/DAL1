@@ -238,7 +238,36 @@ namespace DAL { // Namespace DAL -- begin
     setPipelineName (name);
     setPipelineVersion (version);
   }
+
+  //_____________________________________________________________________________
+  //                                                                      summary
   
+  /*!
+    \param station -- Name of the station to be added to the list of stations
+  */
+  void CommonAttributes::addStationsList (std::string const &station)
+  {
+    bool newStation (true);
+
+    /* If the list just has been initialized and no actual data have been added
+       we can simply overwrite the first element, which was a placeholder anyway.
+     */
+    if (nofStations() == 1 && stationsList_p[0] == "UNDEFINED") {
+      stationsList_p[0] == station;
+    }
+
+    for (unsigned int n(0); n<stationsList_p.size(); ++n) {
+      if (stationsList_p[n] == station) {
+	newStation = false;
+	n=stationsList_p.size();
+      }
+    }
+    
+    if (newStation) {
+      stationsList_p.push_back(station);
+    }
+  }
+
   //_____________________________________________________________________________
   //                                                                      summary
   

@@ -28,6 +28,8 @@ set (tests
   tEnumerations
   tFilename
   tTimestamp
+  tBF_Dataset
+  tBF_StationBeam
   tTBB
   tTBB_DipoleDataset
   tTBB_StationGroup

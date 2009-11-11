@@ -109,6 +109,10 @@ namespace DAL {  // Namespace DAL -- begin
   
   // ----------------------------------------------------------------------- copy
 
+  /*!
+    \param other -- Another TBB_Timeseries object from which to create this new
+           one.
+  */
   void TBB_Timeseries::copy (TBB_Timeseries const &other)
   {
     if (other.fileID_p < 0) {
@@ -180,6 +184,9 @@ namespace DAL {  // Namespace DAL -- begin
   
   // ----------------------------------------------------------------------- init
   
+  /*!
+    \param filename -- Name of the data file
+  */
   void TBB_Timeseries::init (std::string const &filename)
   {
     // try to open the HDF5 file
@@ -224,7 +231,11 @@ namespace DAL {  // Namespace DAL -- begin
   }
   
   // ----------------------------------------------------------- setStationGroups
-
+  
+  /*!
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered.
+  */
   bool TBB_Timeseries::setStationGroups ()
   {
     /* Check minimal condition for operations below. */

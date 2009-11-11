@@ -98,10 +98,8 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! Default constructor
     TBB_Timeseries ();
-    
     //! Construction using filename of dataset
     TBB_Timeseries (std::string const &filename);
-    
     //! Copy constructor
     TBB_Timeseries (TBB_Timeseries const &other);
     
@@ -331,32 +329,14 @@ namespace DAL {  // Namespace DAL -- begin
     
   private:
     
-    /*!
-      \brief Unconditional copying
-      
-      \param other -- Another TBB_Timeseries object from which to create
-             this new one.
-    */
+    //! Unconditional copying
     void copy (TBB_Timeseries const &other);
-    
     //! Initialize the internal dataspace of the object
     void init ();
-    
-    /*!
-      \brief Initialize the internal dataspace of the object
-      
-      \param filename -- Name of the data file
-    */
+    //! Initialize the internal dataspace of the object
     void init (std::string const &filename);
-    
-    /*!
-      \brief Locate and register the station groups contained within the file
-      
-      \return status -- Status of the operation; returns <tt>false</tt> in case
-      an error was encountered.
-    */
+    //! Locate and register the station groups contained within the file
     bool setStationGroups ();
-    
     //! Unconditional deletion
     void destroy(void);
     

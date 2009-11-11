@@ -43,9 +43,6 @@ ________________________________________________________________________________
   hierarchy:
   setAntennaPosition (std::string const &id, std::vector<double> const &pos);
 
-* [2009/10/26] Check TBB_Timeseries for memory leaks; according to Sef and Andreas
-  there is a build-up of allocated memory when reading a sequence of data blocks.
-
 _________________________________________________________________________________
 >>> Coding conventions
 
@@ -97,3 +94,9 @@ ________________________________________________________________________________
   been agreed to assign high priority to getting everything to configure and build
   on that machine, as it is considered as a reference platform for the compute
   nodes of the post-processing cluster.
+
+* [2009/10/26] Check TBB_Timeseries for memory leaks; according to Sef and Andreas
+  there is a build-up of allocated memory when reading a sequence of data blocks.
+
+  As encountered earlier a dataspace had been opened but not closed after reading
+  was completed; this has been corrected.

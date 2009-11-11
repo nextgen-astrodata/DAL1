@@ -443,6 +443,9 @@ namespace DAL { // Namespace DAL -- begin
       stationsList_p.resize(nofStations_p);
       stationsList_p = stations;
     }
+    
+    //! Add a station to the list of stations
+    void addStationsList (std::string const &station);
 
     //! Get notes and/or comments
     inline std::string notes () const {

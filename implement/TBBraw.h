@@ -206,7 +206,7 @@ namespace DAL {  // Namespace DAL -- begin
              observation
       \param telescope -- name of the telescope (usually "LOFAR")
     */
-    TBBraw (string const &filename,
+    TBBraw (Filename const &filename,
 	    string const &observer="John Doe",
 	    string const &project="UNDEFINED",
 	    string const &observation_id="UNDEFINED",
@@ -300,7 +300,7 @@ namespace DAL {  // Namespace DAL -- begin
       Currently only creates new files, and fails if a file with \t filename
       already exists.
     */
-    bool open_file(string const &filename,
+    bool open_file(Filename const &filename,
 		   string const &observer="John Doe",
 		   string const &project="UNDEFINED",
 		   string const &observation_id="UNDEFINED",

@@ -30,6 +30,8 @@
 #include <string>
 #include <sstream>
 #include <assert.h>
+#include <map>
+#include <set>
 #include <vector>
 
 using std::cout;
@@ -280,7 +282,7 @@ namespace DAL {
     std::cout << "-- Attribute value = " << value        << std::endl;
 #endif
 
-    // fix leak: close the type identifier (modified by A. Corstanje, June 3rd 2009). See http://www.hdfgroup.org/HDF5/doc/RM/RM_H5A.html#Annot-GetType
+    // close the type identifier
     H5Tclose(h5datatype);
     // clean up the error message buffer
     h5error = H5Eclear1();
@@ -795,10 +797,62 @@ template <typename T>
 std::ostream& operator<< (std::ostream &os,
                           const std::vector<T> &vec)
 {
+  uint nelem = vec.size();
+ 
   os << "[";
-
-  for (uint n(0); n<vec.size(); n++) {
+  
+  for (uint n(0); n<nelem; n++) {
     os << " " << vec[n];
+  }
+  
+  os << " ]";
+  
+  return os;
+}
+
+// ------------------------------------------------------------------------------
+
+/*!
+  \brief Overloading of output operator to display std::set<T>
+  
+  \param os -- Output stream to which the result will be written to
+  \param s  -- The set to be displayed
+*/
+template <typename T>
+std::ostream& operator<< (std::ostream &os,
+                          const std::set<T> &s)
+{
+  typename std::set<T>::iterator it;
+  
+  os << "[";
+  
+  for (it=s.begin(); it!=s.end(); ++it) {
+    cout << " " << *it;
+  }
+  
+  os << " ]";
+  
+  return os;
+}
+
+// ------------------------------------------------------------------------------
+
+/*!
+  \brief Overloading of output operator to display std::map<K,V>
+  
+  \param os -- Output stream to which the result will be written to
+  \param m  -- The map to be displayed
+*/
+template <typename K, typename V>
+std::ostream& operator<< (std::ostream &os,
+                          const std::map<K,V> &m)
+{
+  typename std::map<K,V>::iterator it;
+  
+  os << "[";
+  
+  for (it=m.begin(); it!=m.end(); ++it) {
+    os << " (" << it->first << "," << it->second << ")";
   }
   
   os << " ]";

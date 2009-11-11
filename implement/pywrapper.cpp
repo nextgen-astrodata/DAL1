@@ -26,6 +26,7 @@
 #include "dal.h"
 // [data_common]
 #include "CommonAttributes.h"
+#include "Filename.h"
 #include "Timestamp.h"
 
 using namespace DAL;
@@ -480,11 +481,68 @@ BOOST_PYTHON_MODULE(pydal)
   // ============================================================================
   
   //_____________________________________________________________________________
+  //                                                                     Filename
+
+  /* Enumeration: File type */
+  bpl::enum_<Filename::FileType>("FileType")
+    .value("uv",Filename::uv)
+    .value("sky",Filename::sky)
+    .value("rm",Filename::rm)
+    .value("nfi",Filename::nfi)
+    .value("dynspec",Filename::dynspec)
+    .value("bf",Filename::bf)
+    .value("tbb",Filename::tbb)
+    ;
+  
+  /* Enumeration: File extension */
+  bpl::enum_<Filename::FileExtension>("FileExtension")
+    .value("MS",Filename::MS)
+    .value("h5",Filename::h5)
+    .value("fits",Filename::fits)
+    .value("log",Filename::log)
+    .value("parset",Filename::parset)
+    .value("lsm",Filename::lsm)
+    .value("IM",Filename::IM)
+    .value("PD",Filename::PD)
+    .value("vds",Filename::vds)
+    .value("gds",Filename::gds)
+    .value("conf",Filename::conf)
+    ;
+  
+  bpl::class_<Filename>("Filename")
+    .def( bpl::init<>())
+    .def( bpl::init<string,string,Filename::FileType,Filename::FileExtension>())
+    .def( "observationID", &Filename::observationID,
+	  "Get the unique observation ID.")
+    .def( "setObservationID", &Filename::setObservationID,
+	  "Set the unique observation ID.")
+    .def( "optionalDescription", &Filename::optionalDescription,
+	  "Get optional descriptors.")
+    .def( "setOptionalDescription", &Filename::setOptionalDescription,
+	  "Set optional descriptors.")
+    .def( "filetype", &Filename::filetype,
+	  "Get the file type.")
+    .def( "filetypeName", &Filename::filetypeName,
+	  "Get the file type name.")
+    .def( "setFiletype", &Filename::setFiletype,
+	  "Set the file type.")
+    .def( "extension", &Filename::extension,
+	  "Get the file extension type.")
+    .def( "extensionName", &Filename::extensionName,
+	  "Get the file extension name.")
+    .def( "setExtension", &Filename::setExtension,
+	  "Set the file extension type.")
+    .def( "filename", &Filename::filename,
+	  "Get the name of the file.")
+    ;
+
+  //_____________________________________________________________________________
   //                                                             CommonAttributes
   
   bpl::class_<CommonAttributes>("CommonAttributes")
     .def( bpl::init<>())
-    .def( bpl::init<string,string,string>())
+    .def( bpl::init<Filename,string,string>())
+    .def( bpl::init<string,string,string,string>())
     .def( "groupType", &CommonAttributes::groupType,
 	  "Get the LOFAR group type.")
     .def( "filename", &CommonAttributes::filename,

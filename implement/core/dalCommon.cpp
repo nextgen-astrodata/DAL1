@@ -188,15 +188,11 @@ namespace DAL {
       return false;
     }
     
-    //______________________________________________________
-    // Retrive the name of the object within the HDF5 file
-
-    ssize_t name_length = 0;
-    size_t buffer_size  = 10;
-
     //________________________________________________________________
     // Determine the proper length of the name string
 
+    ssize_t name_length = 0;
+    size_t buffer_size  = 10;
     char *buffer        = new char[buffer_size];
 
     switch (objectType) {
@@ -215,6 +211,7 @@ namespace DAL {
     delete [] buffer;
     
     //________________________________________________________________
+    // Retrive the name of the object within the HDF5 file
     
     if (name_length > 0) {
       
@@ -873,7 +870,60 @@ namespace DAL {
   
   //_____________________________________________________________________________
   //                                                              h5get_attribute
-
+  
+  /*!
+    As HDF5 does not have a datatype <tt>bool</tt>, we are using <tt>int</tt> 
+    for storage instead; as a consequence of this an explicit implentation is
+    required to deal with the backwards conversion when reading from a file.
+   */
+  template <>
+  bool h5get_attribute (hid_t const &attribute_id,
+			std::vector<bool> &value)
+  {
+    bool status                   = true;
+    herr_t h5error                = 0;
+    hid_t datatype_id             = H5Aget_type (attribute_id);
+    hid_t native_datatype_id      = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
+    std::vector<uint> shape;
+    
+    status = h5get_dataspace_shape (attribute_id,shape);
+    
+    if (shape.size() > 0) {
+      // Buffer for the underlying HDF5 library call
+      int *buffer = new int [shape[0]];
+      // read attribute value into buffer
+      h5error = H5Aread (attribute_id,
+			 native_datatype_id,
+			 buffer);
+      // copy retrieved data to returned vector
+      if (h5error == 0) {
+	// adjust size of vector returning the result
+	value.resize(shape[0]);
+	// copy the contents of the buffer
+	for (uint n(0); n<shape[0]; n++) {
+	  value[n] = bool(buffer[n]);
+	}
+      }
+      else {
+	cerr << "[h5get_attribute] Error reading value of attribute." << endl;
+	status = false;
+      }
+      // release memory allocated for temporary buffer
+      delete [] buffer;
+      buffer = 0;
+    }
+    else {
+      cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
+	   << endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                              h5get_attribute
+  
   /*!
     \param attribute_id -- Identifier of the attribute within the HDF5 file
     \retval value       -- Value of the attribute
@@ -1014,6 +1064,36 @@ namespace DAL {
   
   //_____________________________________________________________________________
   // Set the value of an attribute attached to a group or dataset
+
+  /*!
+    As HDF5 does not have a datatype <tt>boolean</tt>, we to cast such variables
+    to a different type; we are using <tt>integer</tt> to store boolean
+    variables.
+
+    \param location_id -- HDF5 identifier of the attribute within the file
+    \param name        -- Name of the attribute
+    \param value       -- Value of the attribute
+    \param size        -- The size of the attribute
+  */
+  template <>
+  bool h5set_attribute (hid_t const &location_id,
+                        std::string name,
+                        bool * value,
+                        int size)
+  {
+    int * data  = new int [size];
+    
+    for (int n(0); n<size; n++) {
+      data[n] = int(value[n]);
+    }
+    /* Forward the function call */
+    hid_t datatype = H5T_NATIVE_INT;
+    return h5set_attribute (datatype,
+                            location_id,
+                            name,
+                            data,
+                            size);
+  }
 
   /*!
     \param location_id -- HDF5 identifier of the attribute within the file

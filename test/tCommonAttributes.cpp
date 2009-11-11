@@ -67,7 +67,7 @@ int test_constructors ()
   
   cout << "[2] Testing argumented constructor ..." << endl;
   try {
-    std::string filename ("TBB_Dataset.h5");
+    DAL::Filename filename ("123456789","",DAL::Filename::uv,DAL::Filename::h5);
     std::string filetype ("tbb");
     std::string filedate ("2009-10-10T00:00:00.0");
     CommonAttributes attributes (filename,
@@ -134,7 +134,7 @@ int test_attributes ()
   cout << "\n[tCommonAttributes::test_attributes]\n" << endl;
 
   int nofFailedTests (0);
-  std::string filename ("LOFAR_TBB.h5");
+  DAL::Filename filename ("123456789","",DAL::Filename::uv,DAL::Filename::h5);
   CommonAttributes attr;
 
   cout << "[1] Assign new values to the attributes ..." << endl;
@@ -246,7 +246,7 @@ int test_attributes ()
     hid_t fileID (0);
     herr_t h5error (0);
     // create a new HDF5 file
-    fileID = H5Fcreate (filename.c_str(),
+    fileID = H5Fcreate (filename.filename().c_str(),
 			H5F_ACC_TRUNC,
 			H5P_DEFAULT,
 			H5P_DEFAULT);
@@ -264,7 +264,7 @@ int test_attributes ()
     hid_t fileID (0);
     herr_t h5error (0);
     // open the file from which to read in the attributes
-    fileID = H5Fopen (filename.c_str(),
+    fileID = H5Fopen (filename.filename().c_str(),
 		      H5F_ACC_RDWR,
 		      H5P_DEFAULT);
     // close the HDF5 file once we are done

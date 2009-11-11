@@ -133,6 +133,7 @@ namespace DAL {
     inline CommonAttributes commonAttributes () const {
       return commonAttributes_p;
     }
+    //! Set LOFAR common attributes
     bool setCommonAttributes (CommonAttributes const &attributes);
     
     std::vector< std::string > h5get_str_array_attr( std::string attrname,

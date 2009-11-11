@@ -491,10 +491,7 @@ namespace DAL {
   		return this->dimensions_p;
   }
 
-
-  /*!
-    \brief Update the information contained in the dimensions-vector of the dalFITS object
-  */
+  //! Update the information contained in the dimensions-vector of the dalFITS object
   void dalFITS::updateImageDimensions()
   {
     int i=0;
@@ -552,10 +549,7 @@ namespace DAL {
     return filename;
   }
 
-
-  /*!
-    \brief Read the IO mode of the currently opened FITS file
-  */
+  //! Read the IO mode of the currently opened FITS file
   int dalFITS::readFileMode()
   {
     int mode;
@@ -568,10 +562,7 @@ namespace DAL {
     return mode;
   }
 
-
-  /*!
-    \brief Read the url type, e.g. file://, ftp:// of the currently opened FITS file
-  */
+  //! Read the url type, e.g. file://, ftp:// of the currently opened FITS file
   std::string dalFITS::readURLType()
   {
     string urltype;
@@ -584,10 +575,7 @@ namespace DAL {
     return urltype;
   }
 
-
-  /*!
-    \brief Delete the fitsfile of the dalFITS object
-  */
+  //! Delete the fitsfile of the dalFITS object
   void dalFITS::deleteFITSfile()
   {
     if (fits_delete_file(fptr, &fitsstatus_p))
@@ -596,10 +584,7 @@ namespace DAL {
       }
   }
 
-
-  /*!
-    \brief Flush the FITS file, close and reopen
-  */
+  //! Flush the FITS file, close and reopen
   void dalFITS::flushFITSfile()
   {
     if (fits_flush_file(fptr, &fitsstatus_p))
@@ -608,10 +593,7 @@ namespace DAL {
       }
   }
 
-
-  /*!
-    \brief Flush buffer (without proper closing and reopening)
-  */
+  //! Flush buffer (without proper closing and reopening)
   void dalFITS::flushFITSBuffer()
   {
     if (fits_flush_buffer(fptr, 0, &fitsstatus_p))

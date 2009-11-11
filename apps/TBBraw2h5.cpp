@@ -433,7 +433,7 @@ bool readFromFile(string infile, bool verbose=false)
 int main(int argc, char *argv[])
 {
   std::string infile;
-  std::string outfile("test-TBBraw.h5");
+  std::string outfile("test-TBBraw");
   std::string ip("All Hosts");
   int port;
   bool verboseMode(false);
@@ -551,60 +551,59 @@ int main(int argc, char *argv[])
   // -----------------------------------------------------------------
   // Feedback on the settings
 
+  DAL::Filename filename ("",
+			  outfile,
+			  DAL::Filename::tbb,
+			  DAL::Filename::h5);
+  
   if (verboseMode)
     {
-      std::cout << "[TBBraw2h5] Summary of parameters"  << std::endl;
-      std::cout << "-- Socket mode  = " << socketmode << std::endl;
-      std::cout << "-- Output file  = " << outfile    << std::endl;
-      std::cout << "-- CRC checking = " << doCheckCRC << std::endl;
-      std::cout << "-- Fix Times    = " << fixTransientTimes << std::endl;
-      if (socketmode)
-        {
-          std::cout << "-- IP address      = " << ip           << std::endl;
-          std::cout << "-- Port number     = " << port         << std::endl;
-          std::cout << "-- Timeout (start) = " << timeoutStart << std::endl;
-          std::cout << "-- Timeout (read)  = " << timeoutRead  << std::endl;
-        }
-      else
-        {
-          std::cout << "-- Input file   = " << infile  << std::endl;
-        }
+      std::cout << "[TBBraw2h5] Summary of parameters."        << std::endl;
+      std::cout << "-- Socket mode  = " << socketmode          << std::endl;
+      std::cout << "-- Output file  = " << filename.filename() << std::endl;
+      std::cout << "-- CRC checking = " << doCheckCRC          << std::endl;
+      std::cout << "-- Fix Times    = " << fixTransientTimes   << std::endl;
+      if (socketmode) {
+	std::cout << "-- IP address      = " << ip             << std::endl;
+	std::cout << "-- Port number     = " << port           << std::endl;
+	std::cout << "-- Timeout (start) = " << timeoutStart   << std::endl;
+	std::cout << "-- Timeout (read)  = " << timeoutRead    << std::endl;
+      }
+      else {
+	std::cout << "-- Input file   = " << infile  << std::endl;
+      }
     }
-
+  
   // -----------------------------------------------------------------
   // Generate TBBraw object and open output file
 
-  tbb = new TBBraw(outfile);
+  tbb = new TBBraw(filename);
   if ( !tbb->isConnected() )
     {
       cout << "[TBBraw2h5] Failed to open output file." << endl;
       return 1;
     };
-
+  
   // -----------------------------------------------------------------
   // Set the options in the TBBraw object
 
-  if (doCheckCRC>0)
-    {
-      tbb->doHeaderCRC(true);
-    }
-  else
-    {
-      tbb->doHeaderCRC(false);
-    };
+  if (doCheckCRC>0) {
+    tbb->doHeaderCRC(true);
+  }
+  else {
+    tbb->doHeaderCRC(false);
+  };
   tbb->setFixTimes(fixTransientTimes);
-
+  
   // -----------------------------------------------------------------
   // call the conversion routines
-
-  if (socketmode)
-    {
-      readFromSocket(port, ip, timeoutStart, timeoutRead, verboseMode);
-    }
-  else
-    {
-      readFromFile(infile, verboseMode);
-    };
+  
+  if (socketmode) {
+    readFromSocket(port, ip, timeoutStart, timeoutRead, verboseMode);
+  }
+  else {
+    readFromFile(infile, verboseMode);
+  };
   
   //finish up, print some statistics.
   tbb->summary();

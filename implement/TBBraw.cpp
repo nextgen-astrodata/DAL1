@@ -52,7 +52,7 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                       TBBraw
   
-  TBBraw::TBBraw (string const &filename,
+  TBBraw::TBBraw (Filename const &filename,
 		  string const &observer,
 		  string const &project,
 		  string const &observation_id,
@@ -111,7 +111,7 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    open_file
   
-  bool TBBraw::open_file (string const &filename,
+  bool TBBraw::open_file (Filename const &filename,
 			  string const &observer,
 			  string const &project,
 			  string const &observation_id,

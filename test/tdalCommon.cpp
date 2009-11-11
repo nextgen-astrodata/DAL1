@@ -120,28 +120,33 @@ int test_operators ()
 
   cout << "[1] Testing show(std::ostream&,T const *,uint const &) ..." << endl;
   try {
+    bool * arr_bool;
     int * arr_int;
     float * arr_float;
     double * arr_double;
     std::complex<double> * arr_complex;
     //
+    arr_bool    = new bool [nelem];
     arr_int     = new int [nelem];
     arr_float   = new float [nelem];
     arr_double  = new double [nelem];
     arr_complex = new std::complex<double> [nelem];
     //
     for (uint n(0); n<nelem; n++) {
+      arr_bool[n]    = true;
       arr_int[n]     = int(n);
       arr_float[n]   = float(n);
       arr_double[n]  = double(n);
       arr_complex[n] = std::complex<double>(n);
     }
     //
+    show (cout,arr_bool,nelem);
     show (cout,arr_int,nelem);
     show (cout,arr_float,nelem);
     show (cout,arr_double,nelem);
     show (cout,arr_complex,nelem);
     //
+    delete [] arr_bool;
     delete [] arr_int;
     delete [] arr_float;
     delete [] arr_double;
@@ -154,12 +159,14 @@ int test_operators ()
   
   cout << "[2] Test overloading of operator<< for std::vector<T> ..." << endl;
   try {
+    std::vector<bool> vec_bool (nelem);
     std::vector<int> vec_int (nelem);
     std::vector<long> vec_long (nelem);
     std::vector<short> vec_short (nelem);
     std::vector<float> vec_float (nelem);
     std::vector<double> vec_double (nelem);
     
+    cout << "-- vector<bool>   = " << vec_bool   << endl;
     cout << "-- vector<int>    = " << vec_int    << endl;
     cout << "-- vector<long>   = " << vec_long   << endl;
     cout << "-- vector<short>  = " << vec_short  << endl;
@@ -171,6 +178,63 @@ int test_operators ()
     nofFailedTests++;
   }
   
+  cout << "[3] Test overloading of operator<< for std::set<T> ..." << endl;
+  try {
+    bool array_bool[] = {true,false,true,false,true};
+    std::set<bool> set_bool (&array_bool[0], &array_bool[5]);
+    //
+    int array_int[] = {0,1,2,3,4};
+    std::set<int> set_int (&array_int[0], &array_int[5]);
+    //
+    long array_long[] = {0,1,2,3,4};
+    std::set<long> set_long (&array_long[0], &array_long[5]);
+    //
+    short array_short[] = {0,1,2,3,4};
+    std::set<short> set_short (&array_short[0], &array_short[5]);
+    //
+    float array_float[] = {0.0,0.1,0.2,0.3,0.4};
+    std::set<float> set_float (&array_float[0], &array_float[5]);
+    //
+    double array_double[] = {0.1,0.12,0.123,0.1234,0.12345};
+    std::set<double> set_double (&array_double[0], &array_double[5]);
+    //
+    std::string array_string[] = {"a","b","c","d","e"};
+    std::set<std::string> set_string (&array_string[0], &array_string[5]);
+    
+    cout << "-- set<bool>   = " << set_bool   << endl;
+    cout << "-- set<int>    = " << set_int    << endl;
+    cout << "-- set<long>   = " << set_long   << endl;
+    cout << "-- set<short>  = " << set_short  << endl;
+    cout << "-- set<float>  = " << set_float  << endl;
+    cout << "-- set<double> = " << set_double << endl;
+    cout << "-- set<string> = " << set_string << endl;
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[3] Test overloading of operator<< for std::map<K,V> ..." << endl;
+  try {
+    std::map<std::string,int> m;
+    std::map<std::string,int>::iterator it;
+    //
+    m["000000000"] = 0;
+    m["000000001"] = 1;
+    m["000001000"] = 2;
+    m["000001001"] = 3;
+    //
+//     cout << "-- map<string,int> = " << m << endl;
+//     cout << "-- map<string,int> = [";
+//     for (it=m.begin(); it!=m.end(); ++it) {
+//       cout << " (" << it->first << "," << it->second << ")";
+//     }
+//     cout << " ]" << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
@@ -178,7 +242,7 @@ int test_operators ()
 
 /*!
   \brief Test of the routines providing access to HDF5 attributes
-
+  
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
@@ -210,6 +274,10 @@ int test_hdf5_attributes ()
   
   cout << "[2] Set attributes of single value ..." << endl;
   try {
+    cout << "-- Attribute of type bool ..." << endl;
+    bool data_bool (true);
+    DAL::h5set_attribute( fileID, "ATTRIBUTE_BOOL", data_bool );
+    //
     cout << "-- Attribute of type int ..." << endl;
     int data_int (1);
     DAL::h5set_attribute( fileID, "ATTRIBUTE_INT", data_int );
@@ -247,6 +315,7 @@ int test_hdf5_attributes ()
 
   cout << "[3] Set attributes of type array ..." << endl;
   try {
+    bool *data_bool;
     int *data_int;
     uint *data_uint;
     short *data_short;
@@ -254,6 +323,16 @@ int test_hdf5_attributes ()
     float *data_float;
     double *data_double;
     std::string  *data_string;
+    //
+    cout << "-- Attribute of type bool[3] ..." << endl;
+    data_bool = new bool[3];
+    data_bool[0] = true;
+    data_bool[1] = false;
+    data_bool[2] = true;
+    DAL::h5set_attribute (fileID,
+			  "ATTRIBUTE_BOOL_ARRAY",
+			  data_bool,
+			  3);
     //
     cout << "-- Attribute of type int[3] ..." << endl;
     data_int = new int[3];
@@ -334,15 +413,22 @@ int test_hdf5_attributes ()
   
   cout << "[4] Set attributes of type std::vector<T> ..." << endl;
   try {
-    std::vector<int> data_int(nelem);
-    std::vector<uint> data_uint(nelem);
-    std::vector<short> data_short(nelem);
     std::vector<long> data_long(nelem);
     std::vector<float> data_float(nelem);
     std::vector<double> data_double(nelem);
     std::vector<std::string> data_string(nelem);
     //
+    cout << "-- Attribute of type std::vector<bool> ..." << endl;
+    std::vector<bool> data_bool(nelem);
+    data_bool[0] = true;
+    data_bool[1] = false;
+    data_bool[2] = true;
+    DAL::h5set_attribute (fileID,
+			  "ATTRIBUTE_BOOL_VECTOR",
+			  data_bool);
+    //
     cout << "-- Attribute of type std::vector<int> ..." << endl;
+    std::vector<int> data_int(nelem);
     data_int[0] = 1;
     data_int[1] = 2;
     data_int[2] = 3;
@@ -351,6 +437,7 @@ int test_hdf5_attributes ()
 			  data_int);
     //
     cout << "-- Attribute of type std::vector<uint> ..." << endl;
+    std::vector<uint> data_uint(nelem);
     data_uint[0] = 4;
     data_uint[1] = 5;
     data_uint[2] = 6;
@@ -359,6 +446,7 @@ int test_hdf5_attributes ()
 			  data_uint);
     //
     cout << "-- Attribute of type std::vector<short> ..." << endl;
+    std::vector<short> data_short(nelem);
     data_short[0] = 7;
     data_short[1] = 8;
     data_short[2] = 9;
@@ -425,6 +513,7 @@ int test_hdf5_attributes ()
 
   cout << "[6] Read attributes of single value ..." << endl;
   try {
+    bool data_bool;
     int data_int;
     uint data_uint;
     short data_short;
@@ -433,6 +522,7 @@ int test_hdf5_attributes ()
     double data_double;
     std::string data_string;
     //
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_BOOL", data_bool);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_INT", data_int);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_UINT", data_uint);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_SHORT", data_short);
@@ -441,6 +531,7 @@ int test_hdf5_attributes ()
     DAL::h5get_attribute (fileID, "ATTRIBUTE_DOUBLE", data_double);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_STRING", data_string);
     //
+    cout << "-- ATTRIBUTE_BOOL   = " << data_bool   << endl;
     cout << "-- ATTRIBUTE_INT    = " << data_int    << endl;
     cout << "-- ATTRIBUTE_UINT   = " << data_uint   << endl;
     cout << "-- ATTRIBUTE_SHORT  = " << data_short  << endl;
@@ -459,6 +550,7 @@ int test_hdf5_attributes ()
 
   cout << "[7] Read attributes of type std::vector<T> ..." << endl;
   try {
+    std::vector<bool> data_bool(nelem);
     std::vector<int> data_int(nelem);
     std::vector<uint> data_uint(nelem);
     std::vector<short> data_short(nelem);
@@ -467,6 +559,7 @@ int test_hdf5_attributes ()
     std::vector<double> data_double(nelem);
     std::vector<std::string> data_string(nelem);
     //
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_BOOL_ARRAY", data_bool);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_INT_ARRAY", data_int);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_UINT_ARRAY", data_uint);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_SHORT_ARRAY", data_short);
@@ -475,6 +568,7 @@ int test_hdf5_attributes ()
     DAL::h5get_attribute (fileID, "ATTRIBUTE_DOUBLE_ARRAY", data_double);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_STRING_ARRAY", data_string);
     //
+    cout << "-- ATTRIBUTE_BOOL_ARRAY   = " << data_bool   << endl;
     cout << "-- ATTRIBUTE_INT_ARRAY    = " << data_int    << endl;
     cout << "-- ATTRIBUTE_UINT_ARRAY   = " << data_uint   << endl;
     cout << "-- ATTRIBUTE_SHORT_ARRAY  = " << data_short  << endl;
@@ -483,6 +577,7 @@ int test_hdf5_attributes ()
     cout << "-- ATTRIBUTE_DOUBLE_ARRAY = " << data_double << endl;
     cout << "-- ATTRIBUTE_STRING_ARRAY = " << data_string << endl;
     //
+    DAL::h5get_attribute (fileID, "ATTRIBUTE_BOOL_VECTOR", data_bool);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_INT_VECTOR", data_int);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_UINT_VECTOR", data_uint);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_SHORT_VECTOR", data_short);
@@ -491,6 +586,7 @@ int test_hdf5_attributes ()
     DAL::h5get_attribute (fileID, "ATTRIBUTE_DOUBLE_VECTOR", data_double);
     DAL::h5get_attribute (fileID, "ATTRIBUTE_STRING_VECTOR", data_string);
     //
+    cout << "-- ATTRIBUTE_BOOL_VECTOR   = " << data_bool   << endl;
     cout << "-- ATTRIBUTE_INT_VECTOR    = " << data_int    << endl;
     cout << "-- ATTRIBUTE_UINT_VECTOR   = " << data_uint   << endl;
     cout << "-- ATTRIBUTE_SHORT_VECTOR  = " << data_short  << endl;
