@@ -61,7 +61,7 @@ namespace DAL { // Namespace DAL -- begin
       </ul>
       <li>Components of the LOFAR user software:
       <ul>
-        <li>Filename -- Class to filenames matching convention
+        <li>Filename -- Class to generate filenames matching the LOFAR convention
       </ul>
       <li>Components of the LOFAR system software:
       <ul>
@@ -142,7 +142,7 @@ namespace DAL { // Namespace DAL -- begin
     CommonAttributes ();
     
     //! Argumented constructor
-    CommonAttributes (std::string const &filename,
+    CommonAttributes (Filename const &filename,
 		      std::string const &filetype,
 		      std::string const &filedate);
 
@@ -195,8 +195,9 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Set the name of the file
-    inline void setFilename (std::string const &filename) {
-      filename_p = filename;
+    inline void setFilename (Filename const &name) {
+      Filename tmp = name;
+      filename_p = tmp.filename();
     }
     
     //! Get the type of the file

@@ -37,7 +37,7 @@ namespace DAL { // Namespace DAL -- begin
     \ingroup DAL
     \ingroup data_common
     
-    \brief Class to filenames matching convention
+    \brief Class to generate filenames matching the LOFAR convention
     
     \author Lars B&auml;hren
 

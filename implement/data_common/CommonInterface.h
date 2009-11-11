@@ -26,6 +26,7 @@
 
 // Standard library header files
 #include <iostream>
+#include <map>
 #include <set>
 #include <string>
 
@@ -47,9 +48,9 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/10/29
 
-    \test tCommonInterface.cpp
-    
-    <h3>Synopsis</h3>
+    \todo Enable checking of attribute names before attempting to read/write.
+
+    <h3 name="synopsis">Synopsis</h3>
     
     Bearing in mind the internal organization of the Data Access Library, there
     are quite a number of classes, which provide a simple and high-level interface
@@ -57,8 +58,25 @@ namespace DAL { // Namespace DAL -- begin
     element within the hierarchical structure of a dataset. This class aims at 
     proving a minimum amount of common functionality across these classes.
 
-    <h3>Example(s)</h3>
-    
+    Independent of the specific hierarchical stucture, there are a number of 
+    book-keeping and access operations which need to be in place:
+    <ul>
+      <li>Keep track of the (HDF5) location identifier, which is used to access 
+      the current structure within a file.
+      <li>Keep a list of the attributes which are attached to the current
+      structure.
+      <li>Provide read/write access to the attributes attached to the current
+      structure.
+    </ul>
+
+    <h3 name="attributes">Working with the attached attributes</h3>
+
+    The collection of attributes attached to a given structure is stored as
+    a STL set:
+    \code
+    std::set<std::string> attributes_p;
+    \endcode
+
   */  
   class CommonInterface {
 
@@ -68,10 +86,17 @@ namespace DAL { // Namespace DAL -- begin
     hid_t location_p;
     //! Names of the attributes attached to the structure
     std::set<std::string> attributes_p;
-
+    //! Set up the list of attributes attached to the structure
+    virtual void setAttributes () = 0;
     /*!
       \brief Open a structure (file, group, dataset, etc.)
 
+      Though this signature it rather generatic, there is at least one case,
+      where not all of the input parameters can be utilized: when opening a file
+      (e.g. with BF_Dataset) the <tt>location</tt> will not be evaluated.
+
+      \param location -- Identifier of the location to which the to be opened
+             structure is attached
       \param name   -- Name of the structure (file, group, dataset, etc.) to be
              opened.
       \param create -- Create the corresponding data structure, if it does not 
@@ -80,7 +105,8 @@ namespace DAL { // Namespace DAL -- begin
       \return status -- Status of the operation; returns <tt>false</tt> in case
               an error was encountered.
     */
-    virtual bool open (std::string const &name,
+    virtual bool open (hid_t const &location,
+		       std::string const &name,
 		       bool const &create=true) = 0;
     
   public:
@@ -91,7 +117,7 @@ namespace DAL { // Namespace DAL -- begin
     CommonInterface ();
     
     // -------------------------------------------------------------- Destruction
-
+    
     //! Destructor
     virtual ~CommonInterface ();
     
@@ -117,7 +143,12 @@ namespace DAL { // Namespace DAL -- begin
     inline unsigned int nofAttributes () const {
       return attributes_p.size();
     }
-
+    //! Is an attribute of given name atached to the structure?
+    inline bool haveAttribute (std::string const &name) const {
+      return static_cast<bool>(attributes_p.count(name));
+    }
+    //! Get the attribute name by index
+    std::string attribute (unsigned int const &index);
     /*!
       \brief Get the name of the class
       
@@ -127,9 +158,7 @@ namespace DAL { // Namespace DAL -- begin
       return "CommonInterface";
     }
 
-    /*!
-      \brief Provide a summary of the internal status
-    */
+    //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
     }

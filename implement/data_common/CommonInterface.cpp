@@ -53,7 +53,7 @@ namespace DAL { // Namespace DAL -- begin
   //  Parameters
   //
   // ============================================================================
-  
+
   bool CommonInterface::setAttributes (std::set<std::string> const &attributes)
   {
     bool status (true);
@@ -72,12 +72,52 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
   
+  //_____________________________________________________________________________
+  //                                                                    attribute
+
+  /*!
+    \param index -- The index number within the set, for which the attribute name
+           is requested.
+
+    \param name -- The name of the attribute at position <tt>index</tt> within
+           the internal list
+  */
+  std::string CommonInterface::attribute (unsigned int const &index)
+  {
+    unsigned int n (0);
+    std::set<std::string>::iterator it;
+
+    for (it=attributes_p.begin(); n<index; ++it) {
+      ++n;
+    }
+    return *it;
+  }
   
   // ============================================================================
   //
   //  Methods
   //
   // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                 locationName
+  
+  std::string CommonInterface::locationName ()
+  {
+    std::string name;
+
+    if (!h5get_name(name,location_p)) {
+      std::cerr << "[CommonInterface::locationName]"
+		<< " Unable to retrieve name of location!"
+		<< std::endl;
+      name = "UNDEFINED";
+    }
+
+    return name;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                      summary
   
   void CommonInterface::summary (std::ostream &os)
   {

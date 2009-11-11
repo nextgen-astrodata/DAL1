@@ -54,7 +54,7 @@ namespace DAL { // Namespace DAL -- begin
     \param filetype -- The type of the file.
     \param filedate -- The file creation date.
    */
-  CommonAttributes::CommonAttributes (std::string const &filename,
+  CommonAttributes::CommonAttributes (Filename const &filename,
 				      std::string const &filetype,
 				      std::string const &filedate)
   {
@@ -328,8 +328,10 @@ namespace DAL { // Namespace DAL -- begin
     systemVersion_p        = "UNDEFINED";
     pipelineName_p         = "UNDEFINED";
     pipelineVersion_p      = "UNDEFINED";
-    nofStations_p          = 0;
     notes_p                = "UNDEFINED";
+    
+    std::vector<std::string> names (1,"UNDEFINED");
+    setStationsList (names);
   }
   
 #ifdef HAVE_HDF5
