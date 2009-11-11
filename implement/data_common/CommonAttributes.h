@@ -445,7 +445,7 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     //! Add a station to the list of stations
-    void addStationsList (std::string const &station);
+    bool addStationsList (std::string const &station);
 
     //! Get notes and/or comments
     inline std::string notes () const {

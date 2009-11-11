@@ -238,10 +238,30 @@ int test_attributes ()
     std::cerr << message << endl;
     nofFailedTests++;
   }
+
+  cout << "[4] Adjust the list of stations ..." << endl;
+  try {
+    bool status (true);
+    //
+    status = attr.addStationsList("CS001");
+    std::cout << "-- addStationsList(CS001) -> " << status << " -> "
+	      << attr.stationsList() << std::endl;
+    //
+    status = attr.addStationsList("CS002");
+    std::cout << "-- addStationsList(CS002) -> " << status << " -> "
+	      << attr.stationsList() << std::endl;
+    //
+    status =  attr.addStationsList("CS003");
+    std::cout << "-- addStationsList(CS003) -> " << status << " -> "
+	      << attr.stationsList() << std::endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
   
 #ifdef HAVE_HDF5
-
-  cout << "[4] Write attribute to file ..." << endl;
+  
+  cout << "[5] Write attribute to file ..." << endl;
   try {
     hid_t fileID (0);
     herr_t h5error (0);

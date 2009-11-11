@@ -244,9 +244,13 @@ namespace DAL { // Namespace DAL -- begin
   
   /*!
     \param station -- Name of the station to be added to the list of stations
+
+    \param status -- Status of the operation; returns <tt>false</tt> in case
+           the station has been found to be in the list already.
   */
-  void CommonAttributes::addStationsList (std::string const &station)
+  bool CommonAttributes::addStationsList (std::string const &station)
   {
+    bool status (true);
     bool newStation (true);
 
     /* If the list just has been initialized and no actual data have been added
@@ -254,6 +258,7 @@ namespace DAL { // Namespace DAL -- begin
      */
     if (nofStations() == 1 && stationsList_p[0] == "UNDEFINED") {
       stationsList_p[0] == station;
+      return true;
     }
 
     for (unsigned int n(0); n<stationsList_p.size(); ++n) {
@@ -265,16 +270,21 @@ namespace DAL { // Namespace DAL -- begin
     
     if (newStation) {
       stationsList_p.push_back(station);
+      ++nofStations_p;
+    } else {
+      status = false;
     }
-  }
 
+    return status;
+  }
+  
   //_____________________________________________________________________________
   //                                                                      summary
   
   void CommonAttributes::summary (std::ostream &os)
   {
     os << "[CommonAttributes] Summary of internal parameters." << std::endl;
-
+    
     os << "-- Group type                    = " << groupType_p
        << std::endl;
     os << "-- File name                     = " << filename_p
