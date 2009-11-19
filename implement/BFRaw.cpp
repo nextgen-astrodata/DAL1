@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2008 by Joseph Masters & Alwin de Jong                  *
- *   J.S.Masters@uva.nl                   																 *
+ *   J.S.Masters@uva.nl                                                    *
  *   jong@astron.nl                                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -27,7 +27,6 @@
 #endif
 
 #include <signal.h>
-
 
 /*
 dataStruct * channelize( dataStruct * data,
@@ -95,42 +94,39 @@ namespace DAL {
     \param doChannelization -- Compute channelization of the original data
     \param factor           -- Downsampling factor
   */
-		BFRaw::BFRaw( string const& filename,
-									bool doIntensity,
-									bool doDownsample,
-									bool doChannelization,
+  BFRaw::BFRaw( string const& filename,
+		bool doIntensity,
+		bool doDownsample,
+		bool doChannelization,
 		int factor ) :
-				rawfile(0),
-		outputfilename(filename),
-//server_socket(0),
-		socklen(sizeof(incoming_addr)),
-		blockHeaderSize(sizeof(blockheader)),
-		dataSize(0),
-		sampledata(0),
-		block_nr(0),
-		index(0),
-		first_block(true),
-		downsample_factor(factor),
-		doDownsample_p(doDownsample),
-		DO_FLOAT32_INTENSITY(doIntensity),
-		DO_CHANNELIZATION(doChannelization),
-		ds_data(0),
-		totalintensity(0),
-		nrOfBlocks(0)
-		{
-    	// initializations (private)
-			bigendian = BigEndian();	
-  	}
+    rawfile(0),
+    outputfilename(filename),
+    //server_socket(0),
+    socklen(sizeof(incoming_addr)),
+    blockHeaderSize(sizeof(blockheader)),
+    dataSize(0),
+    sampledata(0),
+    block_nr(0),
+    index(0),
+    first_block(true),
+    downsample_factor(factor),
+    doDownsample_p(doDownsample),
+    DO_FLOAT32_INTENSITY(doIntensity),
+    DO_CHANNELIZATION(doChannelization),
+    ds_data(0),
+    totalintensity(0),
+    nrOfBlocks(0)
+  {
+    // initializations (private)
+    bigendian = BigEndian();	
+  }
   
   // ============================================================================
   //
   //  Destruction
   //
   // ============================================================================
-
-  /*!
-    \brief Destructor
-  */
+  
   BFRaw::~BFRaw()
   {
     if (server_socket)
@@ -140,42 +136,42 @@ namespace DAL {
         if (rawfile->is_open())
           {
             rawfile->close();
-					}
+	  }
         delete rawfile;
         rawfile = NULL;
       }
-	if (sampledata){		
-		delete [] sampledata;
-		sampledata = NULL;
-	}
-	if (ds_data) {
-		delete [] ds_data;
-		ds_data = NULL;
-	}
-	if (totalintensity) {
-		delete [] totalintensity;
-		totalintensity = NULL;
+    if (sampledata){		
+      delete [] sampledata;
+      sampledata = NULL;
+    }
+    if (ds_data) {
+      delete [] ds_data;
+      ds_data = NULL;
+    }
+    if (totalintensity) {
+      delete [] totalintensity;
+      totalintensity = NULL;
+    }
   }
-	}
   
   // ============================================================================
   //
   //  Methods
   //
   // ============================================================================
-
+  
   /*!
     \param os -- Output stream to which the summary is going to be written
   */
   void BFRaw::summary (std::ostream &os)
   {
     os << "[BFRaw] Summary of object properties." << endl;
-
+    
     os << "-- Name of output file  = " << outputfilename    << std::endl;
     os << "-- Downsampling of data = " << doDownsample_p    << std::endl;
     os << "-- Downsample factor    = " << downsample_factor << std::endl;
   }
-
+  
   // ------------------------------------------------------------------------ eof
 
   /*!
@@ -769,31 +765,34 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
 //delete singleSubbandDataBuf;
 }
 
-  // --------------------------------------------------------------convertEndian
-	void BFRaw::convertEndian(BlockHeader* blockheader)	{
-		swapbytes((char *)&blockheader->magic,4);
-		for ( uint ii = 0; ii < 8; ii++ )
-			{
-				swapbytes((char *)&blockheader->coarseDelayApplied[ ii ],4);
-				swapbytes((char *)&blockheader->fineDelayRemainingAtBegin[ ii ],8);
-				swapbytes((char *)&blockheader->fineDelayRemainingAfterEnd[ ii ],8);
-				swapbytes((char *)&blockheader->time[ ii ],8);
-				swapbytes((char *)&blockheader->flags[ ii ].nrFlagsRanges,4);
-//				swapbytes((char *)&blockheader.nrFlagsRanges[ ii ],4);
-				for ( uint jj = 0; jj < 16; jj++ )
-					{
-						swapbytes( (char *)&blockheader->flags[ ii ].flagsRanges[ jj ].begin,4 );
-						swapbytes( (char *)&blockheader->flags[ ii ].flagsRanges[ jj ].end,4 );
-/*						swapbytes( (char *)&blockheader.flagsRanges[ ii ][ jj ].begin,4 );
-						swapbytes( (char *)&blockheader.flagsRanges[ ii ][ jj ].end,4 ); */
-					}
-			}
-	}
+  //_____________________________________________________________________________
+  //                                                                convertEndian
 
+  void BFRaw::convertEndian (BlockHeader* blockheader)
+  {
+    swapbytes((char *)&blockheader->magic,4);
+    for ( uint ii = 0; ii < 8; ii++ )
+      {
+	swapbytes((char *)&blockheader->coarseDelayApplied[ ii ],4);
+	swapbytes((char *)&blockheader->fineDelayRemainingAtBegin[ ii ],8);
+	swapbytes((char *)&blockheader->fineDelayRemainingAfterEnd[ ii ],8);
+	swapbytes((char *)&blockheader->time[ ii ],8);
+	swapbytes((char *)&blockheader->flags[ ii ].nrFlagsRanges,4);
+	//				swapbytes((char *)&blockheader.nrFlagsRanges[ ii ],4);
+	for ( uint jj = 0; jj < 16; jj++ )
+	  {
+	    swapbytes( (char *)&blockheader->flags[ ii ].flagsRanges[ jj ].begin,4 );
+	    swapbytes( (char *)&blockheader->flags[ ii ].flagsRanges[ jj ].end,4 );
+	    /*						swapbytes( (char *)&blockheader.flagsRanges[ ii ][ jj ].begin,4 );
+							swapbytes( (char *)&blockheader.flagsRanges[ ii ][ jj ].end,4 ); */
+	  }
+      }
+  }
 
-// ----------------------------------------------------------- makeH5OutputFile
+  //_____________________________________________________________________________
+  //                                                             makeH5OutputFile
 
-  void BFRaw::makeH5OutputFile(void)
+  void BFRaw::makeH5OutputFile (void)
   {
     dataset = dalDataset( outputfilename.c_str(), "HDF5" );
     
@@ -805,7 +804,7 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
     int bandwidth           = 0; // Total bandwidth (MHz)
     int breaks_in_data      = 0; // Any breaks in data?
     int dispersion_measure  = 0;
-//		int number_of_samples_per_block = header.nrSubbands * header.nrSamplesPerSubband;
+    //		int number_of_samples_per_block = header.nrSubbands * header.nrSamplesPerSubband;
     int32_t total_number_of_samples;
     if (!doDownsample_p) {
       total_number_of_samples = nrOfBlocks * header.nrSamplesPerSubband;
@@ -941,9 +940,9 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
     
   } // BFRaw::makeH5OutputFile
   
-  
-  // -------------------------------------------------------------- processBlocks
-  
+  //_____________________________________________________________________________
+  //                                                                processBlocks
+
   void BFRaw::processBlocks()
   {
 #ifdef DEBUGGING_MESSAGES
@@ -958,24 +957,22 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
     while ( true == ret );
   }
   
-  // -------------------------------------------------------------- processBlocks
-  
-  bool BFRaw::processBlocks( int16_t blocks )
+  //_____________________________________________________________________________
+  //                                                                processBlocks
+
+  bool BFRaw::processBlocks (int16_t blocks )
   {
-    
-    bool retval = true;
-    
+    bool retval       = true;
     int64_t blocksize = oneSecondBlockSize * blocks;
-    
-    char * buf = NULL;
-    try
-      {
+    char * buf        = NULL;
+
+    try {
 #ifdef DEBUGGING_MESSAGES
-	std::cout << "Allocating " << blocksize << " bytes (" << blocks 
-		  << " seconds)" << std::endl;
+      std::cout << "Allocating " << blocksize << " bytes (" << blocks 
+		<< " seconds)" << std::endl;
 #endif
-        buf = new char[ blocksize ];
-      }
+      buf = new char[ blocksize ];
+    }
     catch (bad_alloc)
       {
         printf("WARNING: Can't allocate memory buffer for %d seconds of data.\n",
@@ -999,27 +996,27 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
         blocks = blocksize / oneSecondBlockSize;
         retval = false;
       }
-
+    
 #ifdef DEBUGGING_MESSAGES
     cerr << "blocksize " << blocksize << endl;
     cerr << "blocks    " << blocks << endl;
 #endif
-
+    
     BlockHeader * pbuf = NULL;
-
-/*#ifdef DEBUGGING_MESSAGES
-		cout << " allocating " << sizeof(Sample) * header.nrSamplesPerSubband << " bytes for sample data." << endl;
-#endif*/
+    
+    /*#ifdef DEBUGGING_MESSAGES
+      cout << " allocating " << sizeof(Sample) * header.nrSamplesPerSubband << " bytes for sample data." << endl;
+      #endif*/
     for ( int blk=0 ; blk < blocks ; blk++ )
       {
 #ifdef DEBUGGING_MESSAGES
-std::cout << "processing block " << blk << std::endl;
+	std::cout << "processing block " << blk << std::endl;
 #endif
         pbuf = reinterpret_cast<BlockHeader*>(&(buf[ blk * (blocksize/blocks) ]));
-
+	
         // convert endian when necessary
         if (!bigendian) { convertEndian(pbuf); }
-				
+	
         if ( first_block )
           {
             time_t utc;
@@ -1156,15 +1153,15 @@ cout << "sample[0].xx: " << sample[0].xx << ", sample[0].yy: " << sample[0].yy <
 
   inline void
   BFRaw::compute_float32_intensity( Sample * data,
-																		uint32_t start,
-																		uint32_t arraylength,
-																		Float32 * totalintensity )
+				    uint32_t start,
+				    uint32_t arraylength,
+				    Float32 * totalintensity )
   {
-		uint32_t xx_intensity(0);
-		uint32_t yy_intensity(0);
-//     Float32 * totalintensity = NULL;
-//     try
-//       {
+    uint32_t xx_intensity(0);
+    uint32_t yy_intensity(0);
+    //     Float32 * totalintensity = NULL;
+    //     try
+    //       {
 //         totalintensity = new Float32[ arraylength ];
 //       }
 //     catch (bad_alloc)

@@ -28,6 +28,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <set>
 
 // DAL header files
 #include <dalCommon.h>
@@ -80,6 +81,9 @@ namespace DAL { // Namespace DAL -- begin
 
   */  
   class CommonAttributes {
+
+    //! Names of the attributes attached to the structure
+    std::set<std::string> attributes_p;
     
     //! LOFAR group type ("Root")
     std::string groupType_p;
@@ -152,7 +156,7 @@ namespace DAL { // Namespace DAL -- begin
 		      std::string const &observationDateStart,
 		      std::string const &observationDateEnd);
     
-#ifdef HAVE_HDF5    
+#ifdef HAVE_HDF5
     //! Argumented constructor
     CommonAttributes (hid_t const &locationID);
 #endif
@@ -181,6 +185,10 @@ namespace DAL { // Namespace DAL -- begin
     
     // --------------------------------------------------------------- Parameters
 
+    //! Get a set with the list of attribute names
+    inline std::set<std::string> attributes () const {
+      return attributes_p;
+    }
     /*!
       \brief Get the LOFAR group type
       \return groupName -- The name of the LOFAR group
@@ -479,6 +487,11 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // ------------------------------------------------------------------ Methods
+
+    //! Do the common attributes contain an attribute <i>name</i>?
+    inline bool haveAttribute (std::string const &name) const {
+      return static_cast<bool>(attributes_p.count(name));
+    }
     
 #ifdef HAVE_HDF5
     //! Write the attributes to a HDF5 file
@@ -497,13 +510,13 @@ namespace DAL { // Namespace DAL -- begin
 #endif    
     
   private:
-    
+
+    //! Set up the list of attributes attached to the structure
+    void setAttributes ();
     //! Unconditional copying
     void copy (CommonAttributes const &other);
-    
     //! Unconditional deletion 
     void destroy(void);
-
     //! Initialize the object's internal parameters
     void init ();
     

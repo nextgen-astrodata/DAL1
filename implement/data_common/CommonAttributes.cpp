@@ -344,6 +344,10 @@ namespace DAL { // Namespace DAL -- begin
 
   void CommonAttributes::init ()
   {
+    /* Set up the list of attributes */
+    CommonAttributes::setAttributes ();
+
+    /* Set the default values for the attributes */
     groupType_p            = "Root";
     filename_p             = "UNDEFINED";
     filetype_p             = "UNDEFINED";
@@ -372,7 +376,42 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<std::string> names (1,"UNDEFINED");
     setStationsList (names);
   }
+
+  //_____________________________________________________________________________
+  //                                                                setAttributes
   
+  void CommonAttributes::setAttributes ()
+  {
+    attributes_p.clear();
+
+    attributes_p.insert("GROUPTYPE");
+    attributes_p.insert("FILENAME");
+    attributes_p.insert("FILETYPE");
+    attributes_p.insert("FILEDATE");
+    attributes_p.insert("TELESCOPE");
+    attributes_p.insert("PROJECT_ID");
+    attributes_p.insert("PROJECT_TITLE");
+    attributes_p.insert("PROJECT_PI");
+    attributes_p.insert("PROJECT_CO_I");
+    attributes_p.insert("PROJECT_CONTACT");
+    attributes_p.insert("OBSERVER");
+    attributes_p.insert("OBSERVATION_ID");
+    attributes_p.insert("OBSERVATION_TIMESYS");
+    attributes_p.insert("OBSERVATION_DATE_START");
+    attributes_p.insert("OBSERVATION_DATE_END");
+    attributes_p.insert("ANTENNA_SET");
+    attributes_p.insert("FILTER_SELECTION");
+    attributes_p.insert("CLOCK_FREQUENCY");
+    attributes_p.insert("CLOCK_FREQUENCY_UNIT");
+    attributes_p.insert("TARGET");
+    attributes_p.insert("SYSTEM_VERSION");
+    attributes_p.insert("PIPELINE_NAME");
+    attributes_p.insert("PIPELINE_VERSION");
+    attributes_p.insert("NOF_STATIONS");
+    attributes_p.insert("STATIONS_LIST");
+    attributes_p.insert("NOTES");
+  }
+
 #ifdef HAVE_HDF5
   
   //_____________________________________________________________________________

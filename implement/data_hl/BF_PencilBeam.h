@@ -117,6 +117,8 @@ namespace DAL { // Namespace DAL -- begin
 
   private:
     
+    void setAttributes ();
+
     //! Unconditional deletion 
     void destroy(void);
     

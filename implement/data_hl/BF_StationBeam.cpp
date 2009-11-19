@@ -85,6 +85,20 @@ namespace DAL { // Namespace DAL -- begin
      attributes_p.insert("TRACKING");
      attributes_p.insert("POINT_ALTITUDE");
      attributes_p.insert("POINT_AZIMUTH");
+     attributes_p.insert("CLOCK_RATE");
+     attributes_p.insert("CLOCK_RATE_UNIT");
+     attributes_p.insert("NOF_SAMPLES");
+     attributes_p.insert("SAMPLING_RATE");
+     attributes_p.insert("SAMPLING_RATE_UNIT");
+     attributes_p.insert("SAMPLING_TIME");
+     attributes_p.insert("SAMPLING_TIME_UNIT");
+     attributes_p.insert("TOTAL_INTEGRATION_TIME");
+     attributes_p.insert("TOTAL_INTEGRATION_TIME_UNIT");
+     attributes_p.insert("CHANNELS_PER_SUBBAND");
+     attributes_p.insert("SUBBAND_WIDTH");
+     attributes_p.insert("SUBBAND_WIDTH_UNIT");
+     attributes_p.insert("CHANNEL_WIDTH");
+     attributes_p.insert("CHANNEL_WIDTH_UNIT");
      attributes_p.insert("NOF_PENCIL_BEAMS");
   }
   
@@ -108,10 +122,69 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
 
-    location_p = H5Gopen2 (location,name.c_str(),H5P_DEFAULT);
+    /* Try to open the group */
+    location_p = H5Gopen2 (location,
+			   name.c_str(),
+			   H5P_DEFAULT);
+    
+    if (location_p > 0) {
+      status = true;
+    } else {
+      /* If failed to open the group, check if we are supposed to create one */
+      if (create) {
+	location_p = H5Gcreate (location,
+				name.c_str(),
+				H5F_ACC_TRUNC,
+				H5P_DEFAULT,
+				H5P_DEFAULT);
+	/* If creation was sucessful, add attributes with default values */
+	if (location_p > 0) {
+	  std::vector<std::string> vect (1,"UNDEFINED");
+	  std::string string_group ("StatBeam");
+	  std::string string_mhz ("MHz");
+	  std::string string_off ("OFF");
+	  std::string string_s ("s");
+	  std::string string_us ("us");
+	  // write the attributes
+	  h5set_attribute (location_p,"GROUPTYPE",                string_group );
+	  h5set_attribute (location_p,"NOF_STATIONS",             int(0)     );
+	  h5set_attribute (location_p,"STATIONS_LIST",            vect       );
+	  h5set_attribute (location_p,"POINT_RA",                 float(0.0) );
+	  h5set_attribute (location_p,"POINT_DEC",                float(0.0) );
+	  h5set_attribute (location_p,"TRACKING",                 string_off );
+	  h5set_attribute (location_p,"POINT_ALTITUDE",           float(0.0) );
+	  h5set_attribute (location_p,"POINT_AZIMUTH",            float(0.0) );
+	  h5set_attribute (location_p,"CLOCK_RATE",               int(0)     );
+	  h5set_attribute (location_p,"CLOCK_RATE_UNIT",          string_mhz );
+	  h5set_attribute (location_p,"NOF_SAMPLES",              int(0)     );
+	  h5set_attribute (location_p,"SAMPLING_RATE",            float(0.0) );
+	  h5set_attribute (location_p,"SAMPLING_RATE_UNIT",       string_mhz );
+	  h5set_attribute (location_p,"SAMPLING_TIME",            float(0.0) );
+	  h5set_attribute (location_p,"SAMPLING_TIME_UNIT",       string_us  );
+	  h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME",   float(0.0) );
+	  h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME_UNIT", string_s );
+	  h5set_attribute (location_p,"CHANNELS_PER_SUBBAND",     int(0)     );
+	  h5set_attribute (location_p,"SUBBAND_WIDTH",            float(0.0) );
+	  h5set_attribute (location_p,"SUBBAND_WIDTH_UNIT",       string_mhz );
+	  h5set_attribute (location_p,"CHANNEL_WIDTH",            float(0.0) );
+	  h5set_attribute (location_p,"CHANNEL_WIDTH_UNIT",       string_mhz );
+	  h5set_attribute (location_p,"NOF_PENCIL_BEAMS",         int(0)     );
+	} else {
+	  std::cerr << "[BF_StationBeam::open] Failed to create group "
+		    << name
+		    << std::endl;
+	  status = false;
+	}
+      } else {
+	std::cerr << "[BF_StationBeam::open] Failed to open group "
+		  << name
+		  << std::endl;
+	status = false;
+      }
+    }
     
     return status;
   }
-
-
+  
+  
 } // Namespace DAL -- end

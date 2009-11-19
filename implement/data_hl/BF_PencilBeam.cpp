@@ -70,6 +70,33 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                setAttributes
   
+  void BF_PencilBeam::setAttributes ()
+  {
+    attributes_p.clear();
 
+    attributes_p.insert("GROUPTYPE");
+    attributes_p.insert("TARGET");
+    attributes_p.insert("POINT_RA");
+    attributes_p.insert("POINT_DEC");
+    attributes_p.insert("POSITION_OFFSET_RA");
+    attributes_p.insert("POSITION_OFFSET_DEC");
+    attributes_p.insert("PB_DIAMETER_RA");
+    attributes_p.insert("PB_DIAMETER_DEC");
+    attributes_p.insert("PB_CENTER_FREQUENCY");
+    attributes_p.insert("PB_CENTER_FREQUENCY_UNIT");
+    attributes_p.insert("FOLDED_DATA");
+    attributes_p.insert("FOLD_PERIOD");
+    attributes_p.insert("FOLD_PERIOD_UNIT");
+    attributes_p.insert("DEDISPERSION");
+    attributes_p.insert("DISPERSION_MEASURE");
+    attributes_p.insert("DISPERSION_MEASURE_UNIT");
+    attributes_p.insert("BARYCENTER");
+    attributes_p.insert("STOKES_COMPONENTS");
+    attributes_p.insert("COMPLEX_VOLTAGE");
+    attributes_p.insert("SIGNAL_SUM");
+  }
+  
 } // Namespace DAL -- end

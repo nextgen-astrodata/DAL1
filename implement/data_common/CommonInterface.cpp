@@ -92,6 +92,38 @@ namespace DAL { // Namespace DAL -- begin
     }
     return *it;
   }
+
+  //_____________________________________________________________________________
+  //                                                                 addAttribute
+
+  /*!
+    \return status -- Returns <tt>false</tt> if the provided attribute name
+            already was in the internally kept list of attributes; if the 
+	    attribute wasn't in the list previously and has been added as new
+	    <tt>true</tt> is returned.
+  */
+  bool CommonInterface::addAttribute (std::string const &name)
+  {
+    if (static_cast<bool>(attributes_p.count(name))) {
+      return false;
+    } else {
+      attributes_p.insert(name);
+      return true;
+    }
+  }
+
+  //_____________________________________________________________________________
+  //                                                              removeAttribute
+
+  /*!
+    \return status -- Returns <tt>True</tt> if the element of <i>name</i>
+            was removed from the set, <tt>False</tt> is the set did not contain
+	    an element <i>name</i>.
+  */
+  bool CommonInterface::removeAttribute (std::string const &name)
+  {
+    return attributes_p.erase(name);
+  }
   
   // ============================================================================
   //

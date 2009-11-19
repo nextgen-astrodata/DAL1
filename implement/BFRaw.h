@@ -63,36 +63,38 @@ namespace DAL {
     
     High-level interface between raw beam-formed data and the DAL.
   */
-  
   class BFRaw : public BFRawFormat
   {
    public:
-    char * DECrad2deg( const float &rad );
-    char * RArad2deg( const float &rad );
+    //! Conversion of radian to degrees
+    char * DECrad2deg ( const float &rad );
+    //! Conversion of radian to degrees
+    char * RArad2deg ( const float &rad );
     
-	private:
+  private:
     // declare handle for the input file
     dalTable ** table;
     fstream * rawfile;
     string outputfilename;
     dalDataset dataset;
+    //! Header structure of the raw BF data
     BFRaw_Header header;
-
-		// following used in socket mode
+    
+    // following used in socket mode
 //    fd_set readSet; 
 //    struct timeval timeVal;
     //int server_socket;
     struct sockaddr_in incoming_addr;
-		socklen_t socklen;
+    socklen_t socklen;
     BlockHeader blockheader;
-		size_t blockHeaderSize;
-		size_t dataSize;
-		//char * pData; // pointer to temporary buffer to store data samples of one subband
-		Sample * sampledata;
-		uint32_t block_nr;
-		// end used in socket mode
-
-		int32_t index;
+    size_t blockHeaderSize;
+    size_t dataSize;
+    //char * pData; // pointer to temporary buffer to store data samples of one subband
+    Sample * sampledata;
+    uint32_t block_nr;
+    // end used in socket mode
+    
+    int32_t index;
     bool bigendian;
     bool first_block;
     int downsample_factor;
@@ -100,29 +102,39 @@ namespace DAL {
     bool DO_FLOAT32_INTENSITY;
     bool DO_CHANNELIZATION;
     bool processBlocks( int16_t );
+    
+    /*! Pointer to dynamically allocated buffer which will hold the downsampled
+      data
+    */
+    Float32 * ds_data;
+    Float32 * totalintensity;
+    /*! = header.nrSamplesPerSubband / downsample_factor = the size of the ds_data buffer in Float32 units
+     */
+    uint32_t ds_size;
+    
+    //    Float32 * downsample_to_float32_intensity( Sample *, int32_t, const uint64_t, int32_t );
+    void downsampleSingleSubband ( Sample *,
+				   uint16_t,
+				   Float32 *,
+				   uint );
+    //    Float32 * compute_float32_intensity( Sample * data, int32_t start, const uint64_t arraylength );
+    void compute_float32_intensity (Sample * data,
+				    uint32_t start,
+				    uint32_t arraylength,
+				    Float32 * totalintensity);
+    
+  public:
 
-		Float32 * ds_data; // pointer to dynamically allocated buffer which will hold the downsampled data
-		Float32 * totalintensity;
-		uint32_t ds_size; // = header.nrSamplesPerSubband / downsample_factor = the size of the ds_data buffer in Float32 units
-
-//    Float32 * downsample_to_float32_intensity( Sample *, int32_t, const uint64_t, int32_t );
-		void downsampleSingleSubband( Sample *, uint16_t, Float32 *, uint );
-//    Float32 * compute_float32_intensity( Sample * data, int32_t start, const uint64_t arraylength );
-    void compute_float32_intensity( Sample * data, uint32_t start, uint32_t arraylength, Float32 * totalintensity );
-
-	public:
     //! Argumented constructor
-    BFRaw( string const& name,
-	   bool doIntensity=false,
-	   bool doDownsample=false,
-	   bool doChannelization=false,
-	   int factor=1 );
-    
-    /* Destruction */
-    
+    BFRaw ( string const& name,
+	    bool doIntensity=false,
+	    bool doDownsample=false,
+	    bool doChannelization=false,
+	    int factor=1 );
+    //! Destruction
     ~BFRaw();
-
-public:
+    
+  public:
     //! Provide a summary of the object's properties
     inline void summary () { summary(std::cout); }
     //! Provide a summary of the object's properties
@@ -135,19 +147,19 @@ public:
     void makeH5OutputFile(void);
     //! Open file with raw output of beamformer
     void openRawFile(const char*);
-		//! read and process the BFRaw data blocks from socket
-		bool processBFRawDataBlockFromSocket(void);
-		//! writes the currently stored BFRaw data block to the output file
-		void writeBFRawDataBlockToFile(void);
+    //! read and process the BFRaw data blocks from socket
+    bool processBFRawDataBlockFromSocket(void);
+    //! writes the currently stored BFRaw data block to the output file
+    void writeBFRawDataBlockToFile(void);
     //! Read the main header block of the file with the raw data
     void readRawFileHeader();
-		//! reads the main header block from the main_socket connection
+    //! reads the main header block from the main_socket connection
     bool readRawSocketHeader();
     //! Processing of the data blocks within the input file
     void processBlocks();
     //! Check for reaching end-of-file
     bool eof();
-
+    
   private:
     //! reads upto nrOfBytesToRead from socket and checks for end ans reading errors
     int receiveBytes(void *storage, size_t nrOfBytesToRead);

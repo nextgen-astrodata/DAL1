@@ -175,9 +175,10 @@ namespace DAL { // Namespace DAL -- begin
 	commonAttributes_p.h5write(location_p);
 	/* Write the additional attributes attached to the root group */
 	std::string undefined ("UNDEFINED");
+	std::vector<float> vect (1,0.0);
+	//
  	h5set_attribute (location_p,"CREATE_OFFLINE_ONLINE",true);
- 	h5set_attribute (location_p,"BF_RAW",true);
- 	h5set_attribute (location_p,"BF_PROCESSSED",false);
+ 	h5set_attribute (location_p,"BF_FORMAT",undefined);
 	h5set_attribute (location_p,"BF_VERSION",undefined);
 	h5set_attribute (location_p,"EXPTIME_START_UTC",undefined);
 	h5set_attribute (location_p,"EXPTIME_STOP_UTC",undefined);
@@ -186,10 +187,10 @@ namespace DAL { // Namespace DAL -- begin
 	h5set_attribute (location_p,"STATION_BEAM_DIAMETER",int(0));
 	h5set_attribute (location_p,"BANDWIDTH",float(0.0));
 	h5set_attribute (location_p,"PENCIL_BEAM_DIAMETER",int(0));
-// 	h5set_attribute (location_p,"WEATHER_TEMPERATURE",std::vector<float>);
-// 	h5set_attribute (location_p,"WEATHER_HUMIDITY");
-// 	h5set_attribute (location_p,"SYSTEM_TEMPERATURE");
-// 	h5set_attribute (location_p,"PHASE_CENTER");
+ 	h5set_attribute (location_p,"WEATHER_TEMPERATURE",vect);
+	h5set_attribute (location_p,"WEATHER_HUMIDITY",vect);
+ 	h5set_attribute (location_p,"SYSTEM_TEMPERATURE",vect);
+ 	h5set_attribute (location_p,"PHASE_CENTER",vect);
 	h5set_attribute (location_p,"NOF_BEAMS",int(0));
       } else {
 	std::cerr << "[BF_Dataset::open] Failed to open file "
@@ -204,37 +205,36 @@ namespace DAL { // Namespace DAL -- begin
   
   //_____________________________________________________________________________
   //                                                                setAttributes
-
-   void BF_Dataset::setAttributes ()
-   {
-     attributes_p.clear();
-
-     attributes_p.insert("CREATE_OFFLINE_ONLINE");
-     attributes_p.insert("BF_RAW");
-     attributes_p.insert("BF_PROCESSSED");
-     attributes_p.insert("BF_VERSION");
-     attributes_p.insert("EXPTIME_START_UTC");
-     attributes_p.insert("EXPTIME_STOP_UTC");
-     attributes_p.insert("TOTAL_INTEGRATION_TIME");
-     attributes_p.insert("OBS_DATATYPE");
-     attributes_p.insert("STATION_BEAM_DIAMETER");
-     attributes_p.insert("BANDWIDTH");
-     attributes_p.insert("PENCIL_BEAM_DIAMETER");
-     attributes_p.insert("WEATHER_TEMPERATURE");
-     attributes_p.insert("WEATHER_HUMIDITY");
-     attributes_p.insert("SYSTEM_TEMPERATURE");
-     attributes_p.insert("PHASE_CENTER");
-     attributes_p.insert("NOF_BEAMS");
+  
+  void BF_Dataset::setAttributes ()
+  {
+    attributes_p.clear();
+    
+    attributes_p.insert("CREATE_OFFLINE_ONLINE");
+    attributes_p.insert("BF_FORMAT");
+    attributes_p.insert("BF_VERSION");
+    attributes_p.insert("EXPTIME_START_UTC");
+    attributes_p.insert("EXPTIME_STOP_UTC");
+    attributes_p.insert("TOTAL_INTEGRATION_TIME");
+    attributes_p.insert("OBS_DATATYPE");
+    attributes_p.insert("BANDWIDTH");
+    attributes_p.insert("STATION_BEAM_DIAMETER");
+    attributes_p.insert("PENCIL_BEAM_DIAMETER");
+    attributes_p.insert("WEATHER_TEMPERATURE");
+    attributes_p.insert("WEATHER_HUMIDITY");
+    attributes_p.insert("SYSTEM_TEMPERATURE");
+    attributes_p.insert("PHASE_CENTER");
+    attributes_p.insert("NOF_BEAMS");
   }
-
+  
   //_____________________________________________________________________________
   //                                                            stationBeamGroups
-
+  
   std::vector<std::string> BF_Dataset::stationBeamGroups ()
   {
     std::vector<std::string> names (nofStationBeams());
     std::map<std::string,BF_StationBeam>::iterator n;
-
+    
     /* Iterate through the map containing the station beam groups and extract the
        group name.
     */

@@ -48,8 +48,6 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/10/29
 
-    \todo Enable checking of attribute names before attempting to read/write.
-
     <h3 name="synopsis">Synopsis</h3>
     
     Bearing in mind the internal organization of the Data Access Library, there
@@ -69,8 +67,6 @@ namespace DAL { // Namespace DAL -- begin
       structure.
     </ul>
 
-    <h3 name="attributes">Working with the attached attributes</h3>
-
     The collection of attributes attached to a given structure is stored as
     a STL set:
     \code
@@ -84,6 +80,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! HDF5 identifier for the location
     hid_t location_p;
+
     //! Names of the attributes attached to the structure
     std::set<std::string> attributes_p;
     //! Set up the list of attributes attached to the structure
@@ -108,7 +105,7 @@ namespace DAL { // Namespace DAL -- begin
     virtual bool open (hid_t const &location,
 		       std::string const &name,
 		       bool const &create=true) = 0;
-    
+
   public:
     
     // ------------------------------------------------------------- Construction
@@ -149,6 +146,10 @@ namespace DAL { // Namespace DAL -- begin
     }
     //! Get the attribute name by index
     std::string attribute (unsigned int const &index);
+    //! Add an attribute to the interally cached list
+    bool addAttribute (std::string const &name);
+    //! Removed an attribute from the interally cached list
+    bool removeAttribute (std::string const &name);
     /*!
       \brief Get the name of the class
       
@@ -187,10 +188,18 @@ namespace DAL { // Namespace DAL -- begin
       {
 	/* Check if connected to a file */
 	if (location_p > 0) {
-	  /* Forward the function call to perform the actual retrieval */
-	  return DAL::h5get_attribute(location_p,
-				      name,
-				      val);
+	  /* Check if the attribute name is valid */
+	  if (haveAttribute(name)) {
+	    /* Forward the function call to perform the actual retrieval */
+	    return DAL::h5get_attribute(location_p,
+					name,
+					val);
+	  } else {
+	    std::cerr << "[BF_Dataset::getAttribute]"
+		      << " Invalid attribute name " << name
+		      << std::endl;
+	    return false;
+	  }
 	} else {
 	  std::cerr << "[BF_Dataset::getAttribute]"
 		    << " No connection to dataset or file!"
@@ -198,7 +207,7 @@ namespace DAL { // Namespace DAL -- begin
 	  return false;
 	}
       }
-
+    
     /*!
       \brief Get the value of an attribute
       
@@ -214,10 +223,18 @@ namespace DAL { // Namespace DAL -- begin
       {
 	/* Check if connected to a file */
 	if (location_p > 0) {
-	  /* Forward the function call to perform the actual retrieval */
-	  return DAL::h5get_attribute(location_p,
-				      name,
-				      val);
+	  /* Check if the attribute name is valid */
+	  if (haveAttribute(name)) {
+	    /* Forward the function call to perform the actual retrieval */
+	    return DAL::h5get_attribute(location_p,
+					name,
+					val);
+	  } else {
+	    std::cerr << "[BF_Dataset::getAttribute]"
+		      << " Invalid attribute name " << name
+		      << std::endl;
+	    return false;
+	  }
 	} else {
 	  std::cerr << "[BF_Dataset::getAttribute]"
 		    << " No connection to dataset or file!"
@@ -225,7 +242,7 @@ namespace DAL { // Namespace DAL -- begin
 	  return false;
 	}
       }
-
+    
     /*!
       \brief Set the value of an attribute
       
@@ -241,9 +258,18 @@ namespace DAL { // Namespace DAL -- begin
       {
 	/* Check if connected to a file */
 	if (location_p > 0) {
-	  return setAttribute (location_p,
-			       name,
-			       val);
+	  /* Check if the attribute name is valid */
+	  if (haveAttribute(name)) {
+	    /* Forward the function call to perform the actual write */
+	    return setAttribute (location_p,
+				 name,
+				 val);
+	  } else {
+	    std::cerr << "[BF_Dataset::setAttribute]"
+		      << " Invalid attribute name " << name
+		      << std::endl;
+	    return false;
+	  }
 	} else {
 	  std::cerr << "[BF_Dataset::setAttribute]"
 		    << " No connection to dataset or file!"
@@ -267,9 +293,18 @@ namespace DAL { // Namespace DAL -- begin
       {
 	/* Check if connected to a file */
 	if (location_p > 0) {
-	  return setAttribute (location_p,
-			       name,
-			       val);
+	  /* Check if the attribute name is valid */
+	  if (haveAttribute(name)) {
+	    /* Forward the function call to perform the actual write */
+	    return setAttribute (location_p,
+				 name,
+				 val);
+	  } else {
+	    std::cerr << "[BF_Dataset::setAttribute]"
+		      << " Invalid attribute name " << name
+		      << std::endl;
+	    return false;
+	  }
 	} else {
 	  std::cerr << "[BF_Dataset::setAttribute]"
 		    << " No connection to dataset or file!"

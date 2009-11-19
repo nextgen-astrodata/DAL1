@@ -141,7 +141,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Get the object for a specific station beam
     BF_StationBeam stationBeam (std::string const &beam);
-    
+
   protected:
     
     //! Open the file containing the beamformed data.
