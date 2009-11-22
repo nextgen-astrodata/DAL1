@@ -127,6 +127,10 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // ------------------------------------------------------------------ Methods
+
+    //! Open a station beam group
+    bool stationBeam (unsigned int const &id,
+		      bool const &create=true);
     
     //! Get the number of station beam objects attached to the root group
     inline unsigned int nofStationBeams () const {
@@ -148,14 +152,16 @@ namespace DAL { // Namespace DAL -- begin
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
-    
+    //! Open the structures embedded within the current one
+    bool openEmbedded ();
+    //! Set up the list of attributes attached to the structure
     void setAttributes ();
-    
+
   private:
     
     //! Initialize the internal settings of the object
     void init (CommonAttributes const &attributes);
-    
+
     //! Unconditional deletion 
     void destroy(void);
     

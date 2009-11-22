@@ -186,5 +186,13 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
   
+  //_____________________________________________________________________________
+  //                                                                 openEmbedded
+  
+  bool BF_StationBeam::openEmbedded ()
+  {
+    return false;
+  }
+  
   
 } // Namespace DAL -- end

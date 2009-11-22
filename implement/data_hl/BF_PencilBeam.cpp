@@ -98,5 +98,34 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.insert("COMPLEX_VOLTAGE");
     attributes_p.insert("SIGNAL_SUM");
   }
+
+  //_____________________________________________________________________________
+  //                                                                         open
+  
+  /*!
+    \param location -- Identifier of the location to which the to be opened
+           structure is attached.
+    \param name   -- Name of the structure (file, group, dataset, etc.) to be
+           opened.
+    \param create -- Create the corresponding data structure, if it does not 
+           exist yet?
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered.
+  */
+  bool BF_PencilBeam::open (hid_t const &location,
+			    std::string const &name,
+			    bool const &create)
+  {
+    return false;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                 openEmbedded
+  
+  bool BF_PencilBeam::openEmbedded ()
+  {
+    return false;
+  }
   
 } // Namespace DAL -- end

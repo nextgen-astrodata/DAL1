@@ -94,9 +94,6 @@ set (dal_modules
 file (GLOB dal_headers *.h)
 
 set (dal_sources
-  dalData.cpp
-  Enumerations.cpp
-  DataType.cpp
   TBB.cpp
   TBBraw.cpp
   BFRaw.cpp

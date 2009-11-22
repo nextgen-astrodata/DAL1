@@ -613,8 +613,8 @@ namespace DAL {
                             std::vector<uint> &shape,
                             bool const &maxdims)
   {
-    bool status (true);
-    herr_t h5error;
+    bool status        = true;
+    herr_t h5error     = 0;
     hid_t dataspace_id = H5Dget_space (dataset_id);
     int rank           = H5Sget_simple_extent_ndims (dataspace_id);
 
@@ -792,6 +792,11 @@ namespace DAL {
       free( string_attr[ii] );
     }
     free( string_attr );
+
+    /* release HDF5 handlers */
+    H5Aclose (att);
+    H5Sclose (dataspace);
+    H5Tclose (type);
     
     return DAL::SUCCESS;
   }
@@ -858,9 +863,12 @@ namespace DAL {
 	}
 	
       } // END: (datatype_class_id == H5T_STRING)
+      
+      /* release HDF5 handlers */
+      H5Tclose (native_datatype_id);
     }
     
-    // Release identifiers
+    /* release HDF5 handlers */
     H5Tclose (datatype_id);
     // clean up the error message buffer
     h5error = H5Eclear1();
@@ -875,15 +883,15 @@ namespace DAL {
     As HDF5 does not have a datatype <tt>bool</tt>, we are using <tt>int</tt> 
     for storage instead; as a consequence of this an explicit implentation is
     required to deal with the backwards conversion when reading from a file.
-   */
+  */
   template <>
   bool h5get_attribute (hid_t const &attribute_id,
 			std::vector<bool> &value)
   {
-    bool status                   = true;
-    herr_t h5error                = 0;
-    hid_t datatype_id             = H5Aget_type (attribute_id);
-    hid_t native_datatype_id      = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
+    bool status              = true;
+    herr_t h5error           = 0;
+    hid_t datatype_id        = H5Aget_type (attribute_id);
+    hid_t native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
     std::vector<uint> shape;
     
     status = h5get_dataspace_shape (attribute_id,shape);
@@ -917,6 +925,10 @@ namespace DAL {
 	   << endl;
       status = false;
     }
+
+    /* release HDF5 handlers */
+    H5Aclose (datatype_id);
+    H5Tclose (native_datatype_id);
     
     return status;
   }
@@ -935,10 +947,10 @@ namespace DAL {
   bool h5get_attribute (hid_t const &attribute_id,
                         std::vector<std::string> &value)
   {
-    bool status                   = true;
-    herr_t h5error                = 0;
-    hid_t datatype_id             = H5Aget_type (attribute_id);
-    hid_t native_datatype_id      = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
+    bool status              = true;
+    herr_t h5error           = 0;
+    hid_t datatype_id        = H5Aget_type (attribute_id);
+    hid_t native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
     std::vector<uint> shape;
 
     status = h5get_dataspace_shape (attribute_id,shape);
@@ -962,6 +974,10 @@ namespace DAL {
 	   << endl;
       status = false;
     }
+    
+    /* release HDF5 handlers */
+    H5Aclose (datatype_id);
+    H5Tclose (native_datatype_id);
     
     return status;
   }
@@ -1058,6 +1074,9 @@ namespace DAL {
       free( string_attr[ii] );
     }
     free( string_attr );
+
+    /* release HDF5 handlers */
+    H5Sclose (dataspace_id);
     
     return true;
   }
@@ -1372,13 +1391,16 @@ namespace DAL {
               }
           }
       }
-    else
-      {
-        cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
-             << endl;
-        status = false;
-      }
+    else {
+      cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
+	   << endl;
+      status = false;
+    }
 
+    /* release HDF5 handlers */
+    H5Aclose (datatype_id);
+    H5Tclose (native_datatype_id);
+    
     return status;
   }
 
@@ -1412,26 +1434,23 @@ namespace DAL {
                                   attribute_name(unit),
                                   qUnit);
         // put together the Quantity object
-        if (status)
-          {
-            Quantity val = Quantity (qValue,
-                                     casa::Unit(qUnit));
-            return val;
-          }
-        else
-          {
-            return Quantity();
-          }
+        if (status) {
+	  Quantity val = Quantity (qValue,
+				   casa::Unit(qUnit));
+	  return val;
+	}
+        else {
+	  return Quantity();
+	}
       }
-    else
-      {
-        cerr << "[h5get_quantity] Unusable ID for HDF5 object!" << endl;
-        return Quantity();
-      }
+    else {
+      cerr << "[h5get_quantity] Unusable ID for HDF5 object!" << endl;
+      return Quantity();
+    }
   }
-
+  
   // ------------------------------------------------------------ h5get_direction
-
+  
   /*!
     \param location_id -- Identifier of the structure within the file, to which
            the attribut is attached to.

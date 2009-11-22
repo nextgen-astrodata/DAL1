@@ -163,7 +163,7 @@ namespace DAL { // Namespace DAL -- begin
 			  H5P_DEFAULT);
     
     if (location_p > 0) {
-      status = true;
+      openEmbedded ();
     } else {
       /* If failed to open file, check if we are supposed to create one */
       if (create) {
@@ -225,6 +225,33 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.insert("SYSTEM_TEMPERATURE");
     attributes_p.insert("PHASE_CENTER");
     attributes_p.insert("NOF_BEAMS");
+  }
+  
+  //_____________________________________________________________________________
+  //                                                             openStationBeams
+  
+  /*!
+    \return status -- Status of the operation; returns <tt>False</tt> in case
+            no station groups were found.
+   */
+  bool BF_Dataset::openEmbedded ()
+  {
+    bool status (true);
+    std::vector<std::string> groupnames;
+
+    status = h5get_names (groupnames,
+			  location_p,
+			  H5G_GROUP);
+
+    if (status) {
+      std::cout << "[BF_Dataset::openStationBeams] Found station beam groups."
+		<< std::endl;
+    } else {
+      std::cerr << "[BF_Dataset::openStationBeams] No station beam groups found!"
+		<< std::endl;
+    }
+
+    return status;
   }
   
   //_____________________________________________________________________________

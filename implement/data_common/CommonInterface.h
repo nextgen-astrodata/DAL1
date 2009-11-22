@@ -73,18 +73,32 @@ namespace DAL { // Namespace DAL -- begin
     std::set<std::string> attributes_p;
     \endcode
 
+    <ul>
+      <li>Open a new structure (file, group, dataset, table):
+      \code
+      bool open (hid_t const &location,
+                 std::string const &name,
+		 bool const &create);
+      \endcode
+      The first operation will be attempting to open the structure; if this fails
+      because the structure has not been created yet, the <tt>create</tt>
+      parameter will be used to decide whether or not the requested structure
+      is being created.
+    </ul>
   */  
   class CommonInterface {
 
   protected:
 
+    /* === Protected data which are used by derived classes === */
+
     //! HDF5 identifier for the location
     hid_t location_p;
-
     //! Names of the attributes attached to the structure
     std::set<std::string> attributes_p;
-    //! Set up the list of attributes attached to the structure
-    virtual void setAttributes () = 0;
+
+    /* === Protected functions which define basic interface === */
+
     /*!
       \brief Open a structure (file, group, dataset, etc.)
 
@@ -105,6 +119,10 @@ namespace DAL { // Namespace DAL -- begin
     virtual bool open (hid_t const &location,
 		       std::string const &name,
 		       bool const &create=true) = 0;
+    //! Open the structures embedded within the current one
+    virtual bool openEmbedded () = 0;
+    //! Set up the list of attributes attached to the structure
+    virtual void setAttributes () = 0;
 
   public:
     

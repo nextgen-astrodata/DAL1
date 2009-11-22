@@ -117,12 +117,18 @@ namespace DAL { // Namespace DAL -- begin
 
   protected:
     
+  protected:
+    
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
     
+    //! Open the structures embedded within the current one
+    bool openEmbedded ();
+    //! Set up the list of attributes attached to the structure
     void setAttributes ();
+
 
   private:
     
