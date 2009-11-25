@@ -163,7 +163,7 @@ namespace DAL { // Namespace DAL -- begin
 			  H5P_DEFAULT);
     
     if (location_p > 0) {
-      openEmbedded ();
+      openEmbedded (false);
     } else {
       /* If failed to open file, check if we are supposed to create one */
       if (create) {
@@ -234,7 +234,7 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>False</tt> in case
             no station groups were found.
    */
-  bool BF_Dataset::openEmbedded ()
+  bool BF_Dataset::openEmbedded (bool const &create)
   {
     bool status (true);
     std::vector<std::string> groupnames;
@@ -281,5 +281,21 @@ namespace DAL { // Namespace DAL -- begin
     return beams;
   }
 
+  //_____________________________________________________________________________
+  //                                                              stationBeamName
+  
+  std::string BF_Dataset::stationBeamName (unsigned int const &index)
+  {
+    char uid[10];
+    sprintf(uid,
+            "%03d",
+	    index);
+
+    std::string name (uid);
+
+    name = "StationBeam" + name;
+
+    return name;
+  }
 
 } // Namespace DAL -- end

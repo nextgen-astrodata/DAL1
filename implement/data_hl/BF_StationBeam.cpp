@@ -189,7 +189,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool BF_StationBeam::openEmbedded ()
+  bool BF_StationBeam::openEmbedded (bool const &create)
   {
     return false;
   }

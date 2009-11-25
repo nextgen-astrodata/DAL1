@@ -111,7 +111,7 @@ foreach (dal_module ${dal_modules})
   ## Add include paths
   include_directories (${DAL_SOURCE_DIR}/implement/${dal_module})
   ## list of source files for this module
-  FILE (GLOB dal_${dal_module}_sources ${dal_module}/*.cpp)
+  FILE (GLOB dal_${dal_module}_sources ${dal_module}/*.cpp ${dal_module}/*.cc)
   ## list of header files for this module
   FILE (GLOB dal_${dal_module}_headers ${dal_module}/*.h)
   ## expand the list of source files

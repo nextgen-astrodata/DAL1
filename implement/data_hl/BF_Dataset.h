@@ -129,8 +129,13 @@ namespace DAL { // Namespace DAL -- begin
     // ------------------------------------------------------------------ Methods
 
     //! Open a station beam group
-    bool stationBeam (unsigned int const &id,
-		      bool const &create=true);
+    bool openStationBeam (unsigned int const &stationID,
+			  bool const &create=true);
+    
+    //! Open a pencil beam group
+    bool openStationBeam (unsigned int const &stationID,
+			  unsigned int const &pencilID,
+			  bool const &create=true);
     
     //! Get the number of station beam objects attached to the root group
     inline unsigned int nofStationBeams () const {
@@ -143,9 +148,6 @@ namespace DAL { // Namespace DAL -- begin
     //! Get the station beam objects attached to the root group of the file
     std::vector<BF_StationBeam> stationBeams ();
     
-    //! Get the object for a specific station beam
-    BF_StationBeam stationBeam (std::string const &beam);
-
   protected:
     
     //! Open the file containing the beamformed data.
@@ -153,7 +155,7 @@ namespace DAL { // Namespace DAL -- begin
 	       std::string const &name,
 	       bool const &create=true);
     //! Open the structures embedded within the current one
-    bool openEmbedded ();
+    bool openEmbedded (bool const &create);
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 
@@ -161,6 +163,9 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Initialize the internal settings of the object
     void init (CommonAttributes const &attributes);
+
+    //! Convert StationBeam index to name of the HDF5 group
+    std::string stationBeamName (unsigned int const &index);
 
     //! Unconditional deletion 
     void destroy(void);

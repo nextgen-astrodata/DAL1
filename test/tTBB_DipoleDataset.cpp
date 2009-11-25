@@ -895,7 +895,7 @@ int test_data (std::string const &name_file,
   TBB_DipoleDataset dataset (name_file,
                              path_dataset);
 
-  std::cout << "[1] Retrieve data via pointer to array ..." << std::endl;
+  cout << "[1] Retrieve data via pointer to array ..." << std::endl;
   try {
     short *dataBuffer;
     
@@ -906,16 +906,16 @@ int test_data (std::string const &name_file,
 			dataBuffer);
     
     if (status) {
-      std::cout << "-- Channel name = " << dataset.channelName() << std::endl;
-      std::cout << "-- Data start   = " << start     << std::endl;
-      std::cout << "-- Blocksize    = " << blocksize << std::endl;
-      std::cout << "-- Channel data = ["
-		<< dataBuffer[0] << ", "
-		<< dataBuffer[1] << ", "
-		<< dataBuffer[2] << ", "
-		<< dataBuffer[3] << ", .. "
-		<< dataBuffer[blocksize-1] << " ]"
-		<< std::endl;
+      cout << "-- Channel name = " << dataset.channelName() << std::endl;
+      cout << "-- Data start   = " << start     << std::endl;
+      cout << "-- Blocksize    = " << blocksize << std::endl;
+      cout << "-- Channel data = ["
+	   << dataBuffer[0] << ", "
+	   << dataBuffer[1] << ", "
+	   << dataBuffer[2] << ", "
+	   << dataBuffer[3] << ", .. "
+	   << dataBuffer[blocksize-1] << " ]"
+	   << std::endl;
     }
     else {
       std::cerr << "--> Error retrieving time-series data!" << std::endl;
@@ -954,6 +954,7 @@ int test_data (std::string const &name_file,
     uint nofBlocks (15);
     casa::Vector<double> data (blocksize);
     
+    std::cout << "\tblock\tstart" << std::endl;
     for (uint n(0); n<nofBlocks; n++) {
       data = dataset.fx (start,blocksize);
       // feedback
@@ -1041,12 +1042,60 @@ int test_export2record (std::string const &name_file,
 }
 
 //_______________________________________________________________________________
+//                                                          test_accessParameters
+
+int test_accessParameters ()
+{
+  cout << "\n[test_accessParameters]\n" << endl;
+
+  int nofFailedTests (0);
+
+  unsigned int nelem (20);
+  int offset (-5);
+  int *data = new int[nelem];
+
+  cout << "-- setting up array holding the data ..." << endl;
+  try {
+    for (unsigned int n(0); n<nelem; ++n) {
+      data[n] = n+offset;
+    }
+    show (data,nelem);
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "-- create pointers to the various elements of the data ..." << endl;
+  try{
+    unsigned int n (10);
+    int *subset = new int[n];
+    subset = &data[5];
+    show (subset,n);
+    //
+    for (unsigned int nn(0); nn<n; ++nn) {
+      subset[nn] = nn+100;
+    }
+    show (subset,n);
+    show (data,nelem);
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 int main (int argc,
           char *argv[])
 {
   int nofFailedTests (0);
+  bool haveDataset (true);
   
   //__________________________________________________________________
   // Process parameters from the command line
@@ -1056,35 +1105,36 @@ int main (int argc,
     cerr << "" << endl;
     cerr << "  tTBB_DipoleDataset <filename> <station group> <dipole dataset>" << endl;
     cerr << "" << endl;
-    return -1;
+    haveDataset = false;
   }
-  
-  std::string name_file     = argv[1];
-  std::string name_station;
-  std::string name_dataset;
-
-  get_names (name_file,
-	     name_station,
-	     name_dataset);
   
   //__________________________________________________________________
   // Run the tests
 
-  // Test low-level access to the dataset through the HDF5 library directly
-  nofFailedTests += test_dataset (name_file);
-  // Test for the constructor(s)
-  nofFailedTests += test_construction (name_file, name_station, name_dataset);
-  // Test working with collection of multiple objects
-  nofFailedTests += test_datasets (name_file, name_station, name_dataset);
-  // Test retrieval of parameters/attributes attached to the dataset
-  nofFailedTests += test_parameters (name_file, name_station, name_dataset);
-  // Test retrieval of the actual TBB time-series values
-  nofFailedTests += test_data (name_file, name_station, name_dataset);
+  nofFailedTests += test_accessParameters ();
 
+  if (haveDataset) {
+    std::string name_file = argv[1];
+    std::string name_station;
+    std::string name_dataset;
+    get_names (name_file,
+	       name_station,
+	       name_dataset);
+    // Test low-level access to the dataset through the HDF5 library directly
+    nofFailedTests += test_dataset (name_file);
+    // Test for the constructor(s)
+    nofFailedTests += test_construction (name_file, name_station, name_dataset);
+    // Test working with collection of multiple objects
+    nofFailedTests += test_datasets (name_file, name_station, name_dataset);
+    // Test retrieval of parameters/attributes attached to the dataset
+    nofFailedTests += test_parameters (name_file, name_station, name_dataset);
+    // Test retrieval of the actual TBB time-series values
+    nofFailedTests += test_data (name_file, name_station, name_dataset);  
 #ifdef HAVE_CASA
-  // Test exporting the attributes to a casa::Record
-  nofFailedTests += test_export2record (name_file, name_station, name_dataset);
+    // Test exporting the attributes to a casa::Record
+    nofFailedTests += test_export2record (name_file, name_station, name_dataset);
 #endif
-
+  }
+  
   return nofFailedTests;
 }

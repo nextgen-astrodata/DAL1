@@ -118,9 +118,17 @@ namespace DAL { // Namespace DAL -- begin
     */
     virtual bool open (hid_t const &location,
 		       std::string const &name,
-		       bool const &create=true) = 0;
-    //! Open the structures embedded within the current one
-    virtual bool openEmbedded () = 0;
+		       bool const &create) = 0;
+    /*!
+      \brief Open the structures embedded within the current one
+
+      \param create -- Create the corresponding data structure, if it does not 
+             exist yet?
+      
+      \return status -- Status of the operation; returns <tt>false</tt> in case
+              an error was encountered.
+    */
+    virtual bool openEmbedded (bool const &create) = 0;
     //! Set up the list of attributes attached to the structure
     virtual void setAttributes () = 0;
 

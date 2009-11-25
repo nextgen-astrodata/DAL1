@@ -125,7 +125,7 @@ namespace DAL { // Namespace DAL -- begin
 	       bool const &create=true);
     
     //! Open the structures embedded within the current one
-    bool openEmbedded ();
+    bool openEmbedded (bool const &create);
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 

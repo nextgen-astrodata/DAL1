@@ -992,9 +992,19 @@ namespace DAL {  // Namespace DAL -- begin
     return jd;
   }
 
-  // ------------------------------------------------------------------------- fx
+  //_____________________________________________________________________________
+  //                                                                           fx
 
   /*!
+    Basically we need to be able to deal with three different cases:
+      a) all of the requested data are outside the valid range
+      b) parts of the requested data are outside the valid range
+      c) all of the requested data are within the valid range
+    If parts of the requested data are outside the valid range of points which 
+    can be requested from the file we need to 1) shift the position of the first
+    data point requested from the file and then 2) adjust the number of
+    datapoints to be requested from the file.
+
     \param start      -- Number of the sample at which to start reading
     \param nofSamples -- Number of samples to read, starting from the position
            given by <tt>start</tt>.
@@ -1008,6 +1018,48 @@ namespace DAL {  // Namespace DAL -- begin
                               int const &nofSamples,
                               short *data)
   {
+    bool status (true);
+
+    /*
+     *  Set up the logic for secure access to the underlying data
+     */
+    int dataStart;
+    int dataEnd (start+nofSamples-1);
+    int dataLength;
+    int dataOffset;
+    short *dataBuffer;
+    
+    if (start<0) {
+      if (dataEnd<0) {
+	for (int n(0); n<nofSamples; ++n) {
+	  data[n] = 0;
+	}
+	return false;
+      } else {
+	dataStart = 0;
+	/* Shift the position of the first data point requested from the file */
+	dataOffset = -start;
+	/* Adjust the number of datapoints to be requested from the file */
+	dataLength = nofSamples-dataOffset;
+      }
+    } else {
+      dataStart  = start;
+      dataOffset = 0;
+      dataLength = nofSamples;
+    }
+
+    dataBuffer = new short[dataLength];
+    dataBuffer = &data[dataOffset];
+
+#ifdef DEBUGGING_MESSAGES
+    std::cout << "[TBB_DipoleDataset::fx]" << std::endl;
+    std::cout << "-- Data start  = " << dataStart  << std::endl;
+    std::cout << "-- Data offset = " << dataOffset << std::endl;
+    std::cout << "-- Data length = " << dataLength << std::endl;
+#endif
+
+    /* Start accessing the data within the HDF5 file */
+    
     if (datasetID_p > 0) {
       int rank          = 0;
       herr_t h5error    = 0;
@@ -1041,7 +1093,7 @@ namespace DAL {  // Namespace DAL -- begin
 	return false;
       }
       else {
-	shape[0] = nofSamples;
+	shape[0] = dataLength;
       }
       
       /* Set up memory space to retrieve the data read from the file */
@@ -1058,7 +1110,7 @@ namespace DAL {  // Namespace DAL -- begin
 	return false;
       }
       else {
-	offset[0] = start;
+	offset[0] = dataStart;
       }
       
       /* Select the hyperslab through the data volume */
@@ -1088,7 +1140,7 @@ namespace DAL {  // Namespace DAL -- begin
 	cerr << "[TBB_DipoleDataset::fx]"
 	     << " Error reading data from file into buffer!"
 	     << endl;
-	return false;
+	status = false;
       }
       /* release HDF5 handlers */
       h5error = H5Sclose (dataspaceID);
@@ -1098,10 +1150,10 @@ namespace DAL {  // Namespace DAL -- begin
       cerr << "[TBB_DipoleDataset::fx]"
 	   << " Unable to read with connection to dataset object!"
 	   << endl;
-      return false;
-    }
+      status = false;
+    } // END  ::  if (datasetID_p > 0)
     
-    return true;
+    return status;
   }
   
   // ============================================================================

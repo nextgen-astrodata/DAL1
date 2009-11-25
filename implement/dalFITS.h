@@ -75,84 +75,84 @@ namespace DAL {
     \test tdalFITS.cpp
   */
   
-class dalFITS {
+  class dalFITS {
     
   private:
-
-  //! file handle for direct file access
-  fitsfile *fptr;
-  //! Status of last cfitsio operation
-  int fitsstatus_p;
-  //! FITS error message
-  char fits_error_message[255];
-  //! casacore lattice handle
+    
+    //! file handle for direct file access
+    fitsfile *fptr;
+    //! Status of last cfitsio operation
+    int fitsstatus_p;
+    //! FITS error message
+    char fits_error_message[255];
+    //! casacore lattice handle
 #ifdef HAVE_CASA
-  casa::Lattice<casa::Float>* lattice_p;
+    casa::Lattice<casa::Float>* lattice_p;
 #endif
-  
-  //! dimensions of FITS image
-  std::vector<int64_t> dimensions_p;
-  
-  //! define types of bins
-  enum DALbinType {
-    //! Frequency
-    frequency,
-    //! Lambda squared
-    lambda_sq
-  };
-  
-  DALbinType binType;
-  
-  //! define bin units (Hz, MHz, etc)
-  enum DALbinUnit
-  {
-    Hz,
-    kHz,
-    MHz
-  };
-  //! Bin type of the image
-  DALbinUnit binUnit;
-  
-  //! frequency bins (central frequencies) or lambda squareds
-  std::vector<double> bins;
-  
-  //! bin deltas (width of each bin)
-  std::vector<double> binWidths;
-  
-  
-  //! data type of FITS Image (in accordance with casacore naming scheme)
-  enum DALimageType
-  {
-    TpFloat,
-    TpDouble,
-    TpComplex,
-    TpDComplex
-  };
-  
-  DALimageType imageType;
-  
- public:
-  
-  //___________________________________________________________________________
-  //                                                   Construction/Destruction
-  
-  //! Default constructor, creating an initialised, but empty object
-  dalFITS ();
-  //! Constructor with associated filename
-  dalFITS (const std::string &,
-	   int mode);
-  //! Copy constructor
-  dalFITS (dalFITS const& other);
-  //! Copy constructor
-  dalFITS(dalFITS const &other,
-	  bool previous,
-	  bool current,
-	  bool following);
-  //! Destructor
-  ~dalFITS ();
-  
-  //________________________________________________________________
-  //
+    
+    //! dimensions of FITS image
+    std::vector<int64_t> dimensions_p;
+    
+    //! define types of bins
+    enum DALbinType {
+      //! Frequency
+      frequency,
+      //! Lambda squared
+      lambda_sq
+    };
+    
+    DALbinType binType;
+    
+    //! define bin units (Hz, MHz, etc)
+    enum DALbinUnit
+    {
+      Hz,
+      kHz,
+      MHz
+    };
+    //! Bin type of the image
+    DALbinUnit binUnit;
+    
+    //! frequency bins (central frequencies) or lambda squareds
+    std::vector<double> bins;
+    
+    //! bin deltas (width of each bin)
+    std::vector<double> binWidths;
+    
+    
+    //! data type of FITS Image (in accordance with casacore naming scheme)
+    enum DALimageType
+    {
+      TpFloat,
+      TpDouble,
+      TpComplex,
+      TpDComplex
+    };
+    
+    DALimageType imageType;
+    
+  public:
+    
+    //___________________________________________________________________________
+    //                                                   Construction/Destruction
+    
+    //! Default constructor, creating an initialised, but empty object
+    dalFITS ();
+    //! Constructor with associated filename
+    dalFITS (const std::string &,
+	     int mode);
+    //! Copy constructor
+    dalFITS (dalFITS const& other);
+    //! Copy constructor
+    dalFITS(dalFITS const &other,
+	    bool previous,
+	    bool current,
+	    bool following);
+    //! Destructor
+    ~dalFITS ();
+    
+    //________________________________________________________________
+    //
     // Methods
     //________________________________________________________________
     
@@ -177,17 +177,17 @@ class dalFITS {
     void moveRelativeHDU(int hdu);
     //! Move to hdu extension with name, \e extname
     int moveNameHDU (const std::string &extname);
-	 
-	 //! Image dimension functions
-	 std::vector<int64_t> dimensions();
-	 long X();
-	 long Y();
-	 long Z();
-	
-	 void updateImageDimensions();
     
-
-	 int readHDUType();
+    //! Image dimension functions
+    std::vector<int64_t> dimensions();
+    long X();
+    long Y();
+    long Z();
+    
+    void updateImageDimensions();
+    
+    
+    int readHDUType();
     std::string readFilename();
     int readFileMode();
     std::string readURLType();
@@ -240,12 +240,12 @@ class dalFITS {
 		    void *array,
 		    int *anynul);	
     void readSubset(int  datatype, 
-	      long *fpixel,
-			     long *lpixel, 
-			     long *inc, void *nulval,
-			     std::vector<double> &vec,
-			     int *anynul);	    
-		    
+		    long *fpixel,
+		    long *lpixel, 
+		    long *inc, void *nulval,
+		    std::vector<double> &vec,
+		    int *anynul);	    
+    
     void writeSubset( int datatype,
 		      long *fpixel,
 		      long *lpixel,
@@ -313,7 +313,7 @@ class dalFITS {
 		    std::string &comment);
     void writeRecord (std::string &card);
     void modifyComment (std::string &keyname,
-		       std::string &comment);
+			std::string &comment);
     void writeKeyUnit (std::string &keyname,
 		       std::string &unit);
     //! Write a comment to the CHDU
@@ -343,13 +343,12 @@ class dalFITS {
     //! Parse the template of a card
     int parseTemplate(std::string &templatec, std::string &card);
     
-    //===============================================================
+    //===========================================================================
     //
     // RM specific header functions
     //
-    //===============================================================
-    
-    
+    //===========================================================================
+
     // Strictly speaking: writeRMHeader and bin-functions should be part of
     // RM class?
     
@@ -362,8 +361,7 @@ class dalFITS {
       
       \return binUnit - unit associated with bins
     */
-    inline DALbinUnit getBinUnit () const
-    {
+    inline DALbinUnit getBinUnit () const {
       return binUnit;
     }
     
@@ -372,12 +370,10 @@ class dalFITS {
       
       \return bins - can be frequency or lambda squared
     */
-    inline std::vector<double> getBins () const
-    {
+    inline std::vector<double> getBins () const {
       return bins;
     }
-    
-    
+
     /*!
       \brief Get widths (for RM integration) of a FITS object (not necessarily in the image)
       
@@ -390,64 +386,62 @@ class dalFITS {
     
     // ============================================================================
     //
-    //  RM-Cube input functions
+    //  RM-Cube access functions
     //
     // ============================================================================
     
+    //! Read an image-plane from a FITS file
     void readPlane (double *plane,
 		    const unsigned long z,
 		    void *nulval=NULL);
-    
-    void readLine (std::vector<double> &line,
-		   const unsigned long x,
-		   const unsigned long y,
-		   long *inc,
-		   void *nulval=NULL);
-
-  void readLine (  double *line,
-		   const unsigned long x,
-		   const unsigned long y,
-			long *inc,
-		   void *nulval=NULL);
-
-    void readSubCube (double *subCube,
-		      const unsigned long x_pos,
-		      const unsigned long y_pos,
-		      const unsigned long x_size,
-		      const unsigned long y_size);
-    
-    // ============================================================================
-    //
-    //  RM-Cube output functions
-    //
-    // ============================================================================
-    
     //! Write an image-plane to a FITS file
     void writePlane (double *plane,
 		     const long x,
 		     const long y,
 		     const long z,
 		     void *nulval=NULL);
-    //! Write a line of sight to a FITS file
-    void writeLine(double *line,
-		   const long x,
-		   const long y,
+
+    //! Read a line of sight from a FITS file
+    void readLine (std::vector<double> &line,
+		   const unsigned long x,
+		   const unsigned long y,
+		   long *inc,
 		   void *nulval=NULL);
+    //! Read a line of sight from a FITS file
+    void readLine (  double *line,
+		     const unsigned long x,
+		     const unsigned long y,
+		     long *inc,
+		     void *nulval=NULL);
+    //! Write a line of sight to a FITS file
+/*     void writeLine(double *line, */
+/* 		   const long x, */
+/* 		   const long y, */
+/* 		   void *nulval=NULL); */
+    
+    void readSubCube (double *subCube,
+		      const unsigned long &x_pos,
+		      const unsigned long &y_pos,
+		      const unsigned long &x_size,
+		      const unsigned long &y_size);
+    
     //! Write a tile to a FITS file
-    void writeTile( double* tile,
-		    const long x_size,
-		    const long y_size,
-		    const long x_pos,
-		    const long y_pos);
-    
-    void writeCube(double* cube, const long x, const long y, const long z);
-    
-    void writeSubCube(  double* subcube,
-			const long x_size,
-			const long y_size,
-			const long x_pos,
-			const long y_pos);
-    
+/*     void writeTile( double* tile, */
+/* 		    const long x_size, */
+/* 		    const long y_size, */
+/* 		    const long x_pos, */
+/* 		    const long y_pos); */
+    //! Write a cube to a FITS file
+    void writeCube (double* cube,
+		    const long x,
+		    const long y,
+		    const long z);
+    //! Write a sub-cube to a FITS file
+/*     void writeSubCube(  double* subcube, */
+/* 			const long x_size, */
+/* 			const long y_size, */
+/* 			const long x_pos, */
+/* 			const long y_pos); */
     
     // ============================================================================
     //
@@ -456,14 +450,12 @@ class dalFITS {
     // ============================================================================
     
     //! Get the name of the class
-    std::string className () const
-      {
-	return "dalFITS";
-      }
+    std::string className () const {
+      return "dalFITS";
+    }
     
     //! Provide a summary of the internal status
-    inline void summary ()
-    {
+    inline void summary () {
       summary (std::cout);
     }
     

@@ -42,6 +42,24 @@ using DAL::BF_Dataset;
 */
 
 //_______________________________________________________________________________
+//                                                                stationBeamName
+
+//! Convert StationBeam index to name of the HDF5 group
+std::string stationBeamName (unsigned int const &index)
+{
+  char uid[10];
+  sprintf(uid,
+	  "%03d",
+	  index);
+  
+  std::string name (uid);
+  
+  name = "StationBeam" + name;
+  
+  return name;
+}
+
+//_______________________________________________________________________________
 //                                                              test_constructors
 
 /*!
@@ -89,6 +107,35 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
+//                                                               test_stationBeam
+
+/*!
+  \brief Test working with the embedded StationBeam groups
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_stationBeam ()
+{
+  std::cout << "\n[tBF_Dataset::test_stationBeam]\n" << std::endl;
+
+  int nofFailedTests (0);
+  
+  std::cout << "[1] Get name of StationBeam group from index ..." << std::endl;
+  try {
+    unsigned int nofStations (20);
+    for (unsigned int n(0); n<nofStations; ++n) {
+      std::cout << "\t" << n << "\t" << stationBeamName(n) << std::endl;
+    }
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 int main ()
@@ -97,6 +144,8 @@ int main ()
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
+  // Test working with the embedded StationBeam groups
+  nofFailedTests += test_stationBeam ();
 
   return nofFailedTests;
 }

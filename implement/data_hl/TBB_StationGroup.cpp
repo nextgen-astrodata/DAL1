@@ -232,26 +232,24 @@ namespace DAL {  // Namespace DAL -- begin
     
     /* Set internal variables */
 
-    if (group_id > 0)
-      {
-        groupID_p              = group_id;
+    if (group_id > 0) {
+      groupID_p              = group_id;
 #ifdef HAVE_CASA
-        nofTriggeredAntennas_p = triggered_antennas().nelements();
+      nofTriggeredAntennas_p = triggered_antennas().nelements();
 #else
-        nofTriggeredAntennas_p = triggered_antennas().size();
+      nofTriggeredAntennas_p = triggered_antennas().size();
 #endif
-      }
-    else
-      {
-        groupID_p = 0;
-      }
-
+    }
+    else {
+      groupID_p = 0;
+    }
+    
     /* Set up the list of dipole datasets contained within this group */
     status = setDipoleDatasets ();
   }
-
+  
   // ---------------------------------------------------------- setDipoleDatasets
-
+  
   /*!
     Essentially there are two ways by which to construct the list of dipole
     datasets contained within this station group:
@@ -268,17 +266,16 @@ namespace DAL {  // Namespace DAL -- begin
   bool TBB_StationGroup::setDipoleDatasets ()
   {
     /* Check minimal condition for operations below. */
-    if (groupID_p < 1)
-      {
-        std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
-                  << " Unable to set dipole datasets; not connected to HDF5 group!"
-                  << endl;
-        return false;
-      }
-
+    if (groupID_p < 1) {
+      std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
+		<< " Unable to set dipole datasets; not connected to HDF5 group!"
+		<< endl;
+      return false;
+    }
+    
     //________________________________________________________________
     // Local variables.
-
+    
     bool status (true);
     std::string nameDataset;
     hsize_t nofObjects (0);
@@ -290,64 +287,57 @@ namespace DAL {  // Namespace DAL -- begin
     h5error = H5Gget_num_objs(groupID_p,
                               &nofObjects);
 
-    if (h5error > 0)
-      {
-        std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
-                  << " Error retrieving the number of objects attached to"
-                  << " the station group!"
-                  << std::endl;
-        return false;
-      }
-    else if (nofObjects == 0)
-      {
-        std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
-                  << " No dipole datasets found attached to station group!"
-                  << std::endl;
-        return false;
-      }
-
+    if (h5error > 0) {
+      std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
+		<< " Error retrieving the number of objects attached to"
+		<< " the station group!"
+		<< std::endl;
+      return false;
+    } else if (nofObjects == 0) {
+      std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
+		<< " No dipole datasets found attached to station group!"
+		<< std::endl;
+      return false;
+    }
+    
     //________________________________________________________________
     // Iterate through the objects within the station group and create
     // a new object for each dipole dataset
-
-    try
-      {
-        // Iterate through the list of objects
-        for (hsize_t idx (0); idx<nofObjects; idx++)
-          {
-            // get the type of the object
-            if (H5G_DATASET == H5Gget_objtype_by_idx (groupID_p,idx))
-              {
-                // get the name of the dataset
-                status = DAL::h5get_name (nameDataset,
-                                          groupID_p,
-                                          idx);
-                // if name retrieval was successful, create new TBB_DipoleDataset
-                if (status)
-                  {
-                    datasets_p.push_back(DAL::TBB_DipoleDataset (groupID_p,
-                                         nameDataset));
-                  }
-                else
-                  {
-                    std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
-                              << " Failed to open dataset!"
-                              << std::endl;
-                  }
-              }
-          }
-      }
-    catch (std::string message)
-      {
-        std::cerr << "[TBB_StationGroup::setDipoleDatasets] "
-                  << message
-                  << std::endl;
-        return false;
-      }
-
+    
+    try {
+      // Iterate through the list of objects
+      for (hsize_t idx (0); idx<nofObjects; idx++)
+	{
+	  // get the type of the object
+	  if (H5G_DATASET == H5Gget_objtype_by_idx (groupID_p,idx))
+	    {
+	      // get the name of the dataset
+	      status = DAL::h5get_name (nameDataset,
+					groupID_p,
+					idx);
+	      // if name retrieval was successful, create new TBB_DipoleDataset
+	      if (status) {
+		datasets_p.push_back(DAL::TBB_DipoleDataset (groupID_p,
+							     nameDataset));
+	      }
+	      else {
+		std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
+			  << " Failed to open dataset!"
+			  << std::endl;
+	      }
+	    }
+	}
+    }
+    catch (std::string message) {
+      std::cerr << "[TBB_StationGroup::setDipoleDatasets] "
+		<< message
+		<< std::endl;
+      return false;
+    }
+    
     return true;
   }
-
+  
   // ============================================================================
   //
   //  Destruction

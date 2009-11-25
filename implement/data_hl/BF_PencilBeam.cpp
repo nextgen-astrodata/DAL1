@@ -123,7 +123,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool BF_PencilBeam::openEmbedded ()
+  bool BF_PencilBeam::openEmbedded (bool const &create)
   {
     return false;
   }
