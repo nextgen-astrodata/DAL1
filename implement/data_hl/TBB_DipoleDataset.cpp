@@ -1041,6 +1041,10 @@ namespace DAL {  // Namespace DAL -- begin
 	dataOffset = -start;
 	/* Adjust the number of datapoints to be requested from the file */
 	dataLength = nofSamples-dataOffset;
+	/* Initialize the array elements which will not be used for actual data */
+	for (int n(0); n<dataOffset; ++n) {
+	  data[n] = 0;
+	}
       }
     } else {
       dataStart  = start;
