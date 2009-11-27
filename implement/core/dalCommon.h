@@ -798,21 +798,6 @@ namespace DAL {
 //
 // ==============================================================================
 
-/*!
-  \brief Display the elements stored in an array
-  
-  \param arr   -- Pointer to the array with the data to be displayed
-  \param nelem -- The number of elements stored within the array
-*/
-template <typename T, typename S>
-void show (T const *arr,
-           S const &nelem)
-{
-  show (std::cout,
-        arr,
-        nelem);
-}
-
 // ------------------------------------------------------------------------------
 
 /*!
@@ -834,6 +819,21 @@ void show (std::ostream& os,
   }
   
   os << " ]" << endl;
+}
+
+/*!
+  \brief Display the elements stored in an array
+  
+  \param arr   -- Pointer to the array with the data to be displayed
+  \param nelem -- The number of elements stored within the array
+*/
+template <typename T, typename S>
+void show (T const *arr,
+           S const &nelem)
+{
+  show (std::cout,
+        arr,
+        nelem);
 }
 
 // ------------------------------------------------------------------------------
