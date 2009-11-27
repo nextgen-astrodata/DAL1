@@ -21,8 +21,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef BF_PENCILBEAM_H
-#define BF_PENCILBEAM_H
+#ifndef BF_SYSLOG_H
+#define BF_SYSLOG_H
 
 // Standard library header files
 #include <iostream>
@@ -34,18 +34,18 @@
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class BF_PencilBeam
+    \class BF_SysLog
     
     \ingroup DAL
     \ingroup data_hl
     
-    \brief High-level interface to the station beam of a beamformed dataset
+    \brief High-level interface to the system logs attached to a beamformed dataset
     
     \author Lars B&auml;hren
 
-    \date 2009/10/28
+    \date 2009/11/26
 
-    \test tBF_PencilBeam.cpp
+    \test tBF_SysLog.cpp
     
     <h3>Prerequisite</h3>
     
@@ -71,32 +71,32 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class BF_PencilBeam : public CommonInterface {
+  class BF_SysLog : public CommonInterface {
     
   public:
     
     // ------------------------------------------------------------- Construction
     
     //! Default constructor
-    BF_PencilBeam ();
+    BF_SysLog ();
     
     //! Argumented constructor
-    BF_PencilBeam (CommonAttributes const &commonAttributes);
+    BF_SysLog (CommonAttributes const &commonAttributes);
     
     // -------------------------------------------------------------- Destruction
 
     //! Destructor
-    ~BF_PencilBeam ();
+    ~BF_SysLog ();
     
     // --------------------------------------------------------------- Parameters
 
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, BF_PencilBeam.
+      \return className -- The name of the class, BF_SysLog.
     */
     inline std::string className () const {
-      return "BF_PencilBeam";
+      return "BF_SysLog";
     }
 
     /*!
@@ -119,7 +119,6 @@ namespace DAL { // Namespace DAL -- begin
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
-
   protected:
     
     //! Open the structures embedded within the current one
@@ -132,9 +131,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class BF_PencilBeam -- end
+  }; // Class BF_SysLog -- end
   
 } // Namespace DAL -- end
 
-#endif /* BF_DATASET_H */
+#endif /* BF_SYSLOG_H */
   

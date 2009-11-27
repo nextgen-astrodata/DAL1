@@ -115,14 +115,12 @@ namespace DAL { // Namespace DAL -- begin
 
     // ------------------------------------------------------------------ Methods
 
-  protected:
-    
-  protected:
-    
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
+    
+  protected:
     
     //! Open the structures embedded within the current one
     bool openEmbedded (bool const &create);

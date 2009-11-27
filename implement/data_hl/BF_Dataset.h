@@ -32,6 +32,7 @@
 #include <CommonInterface.h>
 #include <BF_Dataset.h>
 #include <BF_StationBeam.h>
+#include <BF_SysLog.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -79,10 +80,15 @@ namespace DAL { // Namespace DAL -- begin
     CommonAttributes commonAttributes_p;
     //! Station beams
     std::map<std::string,BF_StationBeam> stationBeams_p;
+    //! Container for system-wide logs
+    std::map<std::string,BF_SysLog> sysLog_p;
 
   public:
     
     // ------------------------------------------------------------- Construction
+    
+    //! Argumented constructor
+    BF_Dataset (std::string const &filename);
     
     //! Argumented constructor
     BF_Dataset (Filename const &filename);
@@ -128,14 +134,22 @@ namespace DAL { // Namespace DAL -- begin
 
     // ------------------------------------------------------------------ Methods
 
+    //! Open the file containing the beamformed data.
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       bool const &create=true);
+
+    //! Open a system log group
+    bool openSysLog (bool const &create=true);
+    
     //! Open a station beam group
     bool openStationBeam (unsigned int const &stationID,
 			  bool const &create=true);
     
     //! Open a pencil beam group
-    bool openStationBeam (unsigned int const &stationID,
-			  unsigned int const &pencilID,
-			  bool const &create=true);
+    bool openPencilBeam (unsigned int const &stationID,
+			 unsigned int const &pencilID,
+			 bool const &create=true);
     
     //! Get the number of station beam objects attached to the root group
     inline unsigned int nofStationBeams () const {
@@ -150,10 +164,6 @@ namespace DAL { // Namespace DAL -- begin
     
   protected:
     
-    //! Open the file containing the beamformed data.
-    bool open (hid_t const &location,
-	       std::string const &name,
-	       bool const &create=true);
     //! Open the structures embedded within the current one
     bool openEmbedded (bool const &create);
     //! Set up the list of attributes attached to the structure

@@ -100,26 +100,6 @@ namespace DAL { // Namespace DAL -- begin
     /* === Protected functions which define basic interface === */
 
     /*!
-      \brief Open a structure (file, group, dataset, etc.)
-
-      Though this signature it rather generatic, there is at least one case,
-      where not all of the input parameters can be utilized: when opening a file
-      (e.g. with BF_Dataset) the <tt>location</tt> will not be evaluated.
-
-      \param location -- Identifier of the location to which the to be opened
-             structure is attached
-      \param name   -- Name of the structure (file, group, dataset, etc.) to be
-             opened.
-      \param create -- Create the corresponding data structure, if it does not 
-             exist yet?
-      
-      \return status -- Status of the operation; returns <tt>false</tt> in case
-              an error was encountered.
-    */
-    virtual bool open (hid_t const &location,
-		       std::string const &name,
-		       bool const &create) = 0;
-    /*!
       \brief Open the structures embedded within the current one
 
       \param create -- Create the corresponding data structure, if it does not 
@@ -198,6 +178,27 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // ------------------------------------------------------------------ Methods
+
+    /*!
+      \brief Open a structure (file, group, dataset, etc.)
+
+      Though this signature it rather generatic, there is at least one case,
+      where not all of the input parameters can be utilized: when opening a file
+      (e.g. with BF_Dataset) the <tt>location</tt> will not be evaluated.
+
+      \param location -- Identifier of the location to which the to be opened
+             structure is attached
+      \param name   -- Name of the structure (file, group, dataset, etc.) to be
+             opened.
+      \param create -- Create the corresponding data structure, if it does not 
+             exist yet?
+      
+      \return status -- Status of the operation; returns <tt>false</tt> in case
+              an error was encountered.
+    */
+    virtual bool open (hid_t const &location,
+		       std::string const &name,
+		       bool const &create) = 0;
 
     /*!
       \brief Get the value of an attribute

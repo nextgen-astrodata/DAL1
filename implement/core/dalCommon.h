@@ -187,6 +187,11 @@ namespace DAL {
 		    hid_t const &location_id,
 		    int const &type=H5G_GROUP);
   
+  //! Retrieve list of objects of a certain type attached to a group
+  bool h5get_names (std::set<std::string> &names,
+		    hid_t const &location_id,
+		    int const &type=H5G_GROUP);
+  
   // ============================================================================
   //
   //  Access to HDF5 attributes
@@ -799,11 +804,11 @@ namespace DAL {
   \param arr   -- Pointer to the array with the data to be displayed
   \param nelem -- The number of elements stored within the array
 */
-template <typename T>
+template <typename T, typename S>
 void show (T const *arr,
-           uint const &nelem)
+           S const &nelem)
 {
-  show (cout,
+  show (std::cout,
         arr,
         nelem);
 }
@@ -817,14 +822,14 @@ void show (T const *arr,
   \param arr   -- Pointer to the array with the data to be displayed
   \param nelem -- The number of elements stored within the array
 */
-template <typename T>
+template <typename T, typename S>
 void show (std::ostream& os,
            T const *arr,
-           uint const &nelem)
+           S const &nelem)
 {
   os << "[";
   
-  for (uint n(0); n<nelem; n++) {
+  for (S n(0); n<nelem; n++) {
     os << " " << arr[n];
   }
   

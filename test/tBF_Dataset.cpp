@@ -107,19 +107,24 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
-//                                                               test_stationBeam
+//                                                                 test_subGroups
 
 /*!
-  \brief Test working with the embedded StationBeam groups
+  \brief Test working with the embedded groups
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_stationBeam ()
+int test_subGroups ()
 {
-  std::cout << "\n[tBF_Dataset::test_stationBeam]\n" << std::endl;
+  std::cout << "\n[tBF_Dataset::test_subGroups]\n" << std::endl;
 
   int nofFailedTests (0);
+  Filename file ("123456789",
+		 "test",
+		 Filename::bf,
+		 Filename::h5);
+  BF_Dataset dataset (file);
   
   std::cout << "[1] Get name of StationBeam group from index ..." << std::endl;
   try {
@@ -127,6 +132,14 @@ int test_stationBeam ()
     for (unsigned int n(0); n<nofStations; ++n) {
       std::cout << "\t" << n << "\t" << stationBeamName(n) << std::endl;
     }
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  std::cout << "[2] Open SysLog group ..." << std::endl;
+  try {
+    dataset.openSysLog();
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
@@ -144,8 +157,8 @@ int main ()
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
-  // Test working with the embedded StationBeam groups
-  nofFailedTests += test_stationBeam ();
+  // Test working with the embedded groups
+  nofFailedTests += test_subGroups ();
 
   return nofFailedTests;
 }

@@ -94,14 +94,14 @@ set (dal_modules
 file (GLOB dal_headers *.h)
 
 set (dal_sources
-  TBB.cpp
-  TBBraw.cpp
-  BFRaw.cpp
-  dalFITS.cpp
+  TBB.cc
+  TBBraw.cc
+  BFRaw.cc
+  dalFITS.cc
   )
 
 if ( HAVE_CASACORE )
-  list ( APPEND dal_sources dalLopesEvent.cpp )
+  list ( APPEND dal_sources dalLopesEvent.cc )
 endif ( HAVE_CASACORE )
 
 ##__________________________________________________________
@@ -199,7 +199,7 @@ if (DAL_PYTHON_BINDINGS)
   ## Source files entering the library
   add_library(pydal MODULE
     ${dal_sources}
-    pywrapper.cpp
+    pywrapper.cc
     )
   include_directories (
     ${NUM_UTIL_INCLUDES}

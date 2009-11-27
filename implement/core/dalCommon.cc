@@ -397,15 +397,56 @@ namespace DAL {
 
     \return status -- Status of the operation; returns \e false in case an error
             was encountered.
-   */
+  */
   bool h5get_names (std::vector<std::string> &names,
+		    hid_t const &location_id,
+		    int const &type)
+  {
+    /* Forwarding of the function call */
+    std::set<std::string> namesSet;
+    bool status = h5get_names (namesSet,
+			       location_id,
+			       type);
+    /* Adjust the size of the vector to return the data */
+    names.resize(namesSet.size());
+    /* Set up iterators to access the underlying data */
+    std::set<std::string>::iterator itSet=namesSet.begin();
+    std::vector<std::string>::iterator itVect=names.begin();
+    
+    for (; itSet!=namesSet.end(); ++itSet) {
+      *itVect = *itSet;
+      ++itVect;
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                  h5get_names
+  
+  /*!
+    \retval names -- Set with the names of the groups/datasets attached to the
+            object identified by \e location_id.
+    \param location_id -- Identifier of the object for which to retrieve the list
+           of names.
+    \param type -- Type of attached objects for which to get the list of names;
+           can be either \e H5G_GROUP or \e H5G_DATASET. By default this function
+	   will look for groups.
+
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
+  */
+  bool h5get_names (std::set<std::string> &names,
 		    hid_t const &location_id,
 		    int const &type)
   {
     bool status        = true;
     hsize_t nofObjects = 0;
     herr_t h5error     = 0;
-    
+
+    /* Clear the set returning the results */
+    names.clear();
+
     /* Get the number of objects attached to this object */
     h5error = H5Gget_num_objs(location_id,
                               &nofObjects);
@@ -413,31 +454,26 @@ namespace DAL {
     if (h5error > 0) {
       std::cerr << "[h5get_groupnames] Error retrieving number of attached groups!"
 		<< std::endl;
-      return false;
+      status = false;
     }
-    
-    /* Iterate through the list of attached objects and check whether they are a 
-     * group; is this indeed is the case add the name of the group to the list of
-     * names.
-     */
-  
-    std::string tmp;
-    names = std::vector<std::string>();
-    
-    for (hsize_t idx (0); idx<nofObjects; idx++) {
-      /* Get the type of the attached object */
-      if (type == H5Gget_objtype_by_idx (location_id,idx)) {
-	/* If the attached object is a group, retrieve its name */
-	status = DAL::h5get_name (tmp,
-				  location_id,
-				  idx);
-	/* If retrieval of the name was successful, add it to the list */
-	if (status) {
-	  names.push_back(tmp);
+    else {
+      std::string tmp;
+      
+      for (hsize_t idx (0); idx<nofObjects; idx++) {
+	/* Get the type of the attached object */
+	if (type == H5Gget_objtype_by_idx (location_id,idx)) {
+	  /* If the attached object is a group, retrieve its name */
+	  status = DAL::h5get_name (tmp,
+				    location_id,
+				    idx);
+	  /* If retrieval of the name was successful, add it to the list */
+	  if (status) {
+	    names.insert(tmp);
+	  }
 	}
       }
     }
-    
+
     return status;
   }
   

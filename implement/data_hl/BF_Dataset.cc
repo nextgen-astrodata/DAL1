@@ -34,6 +34,21 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   BF_Dataset
 
+  /*!
+    \param filename -- Name of the dataset to open.
+  */
+  BF_Dataset::BF_Dataset (std::string const &filename)
+  {
+    //! \todo Function not yet implemented.
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                   BF_Dataset
+
+  /*!
+    \param filename -- Filename object from which the actual file name of the
+           dataset is derived.
+  */
   BF_Dataset::BF_Dataset (Filename const &filename)
   {
     CommonAttributes attr;
@@ -228,6 +243,19 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
+  //                                                                   openSysLog
+  
+  bool BF_Dataset::openSysLog (bool const &create)
+  {
+    bool status (true);
+
+    std::cout << "-- Check if SysLog is already opened and attached ..."
+	      << std::endl;
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
   //                                                             openStationBeams
   
   /*!
@@ -237,20 +265,32 @@ namespace DAL { // Namespace DAL -- begin
   bool BF_Dataset::openEmbedded (bool const &create)
   {
     bool status (true);
-    std::vector<std::string> groupnames;
+    std::set<std::string> groupnames;
 
+    /* Retrieve the names of the groups attached to the root group */
     status = h5get_names (groupnames,
 			  location_p,
 			  H5G_GROUP);
 
-    if (status) {
-      std::cout << "[BF_Dataset::openStationBeams] Found station beam groups."
-		<< std::endl;
-    } else {
-      std::cerr << "[BF_Dataset::openStationBeams] No station beam groups found!"
-		<< std::endl;
+    if (status && groupnames.size()>0) {
+      /* Open SysLog group */
+      if (static_cast<bool>(groupnames.count("SYSLOG"))) {
+	std::cout << "[BF_Dataset::openEmbedded] Found SYSLOG group."
+		  << std::endl;
+// 	sysLog_p.open(location_p,"SYSLOG",false);
+      }
+      else if (static_cast<bool>(groupnames.count("SysLog"))) {
+	std::cout << "[BF_Dataset::openEmbedded] Found SysLog group."
+		  << std::endl;
+// 	sysLog_p.open(location_p,"SysLog",false);
+      }
+      else {
+	std::cout << "[BF_Dataset::openEmbedded] No SYSLOG group found."
+		  << std::endl;
+      }
+      /* Open StationBeam groups */
     }
-
+    
     return status;
   }
   
