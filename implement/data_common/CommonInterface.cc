@@ -151,6 +151,9 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      summary
   
+  /*!
+    \param os -- Output stream to which the summary is written.
+  */
   void CommonInterface::summary (std::ostream &os)
   {
     os << "[CommonInterface] Summary of internal parameters." << std::endl;

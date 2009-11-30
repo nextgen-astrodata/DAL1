@@ -81,15 +81,17 @@ namespace DAL { // Namespace DAL -- begin
     BF_SysLog ();
     
     //! Argumented constructor
-    BF_SysLog (CommonAttributes const &commonAttributes);
+    BF_SysLog (hid_t const &location,
+	       std::string const &name,
+	       bool const &create);
     
     // -------------------------------------------------------------- Destruction
-
+    
     //! Destructor
     ~BF_SysLog ();
     
     // --------------------------------------------------------------- Parameters
-
+    
     /*!
       \brief Get the name of the class
       
@@ -98,10 +100,8 @@ namespace DAL { // Namespace DAL -- begin
     inline std::string className () const {
       return "BF_SysLog";
     }
-
-    /*!
-      \brief Provide a summary of the internal status
-    */
+    
+    //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
     }

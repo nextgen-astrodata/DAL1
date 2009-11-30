@@ -1126,8 +1126,18 @@ int test_timeseries (std::string const &filename)
   return nofFailedTests;
 }
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                test_beamformed
 
+/*!
+  \brief Test access to a beam-formed dataset
+
+  \param infile -- Name of the input HDF5 file on which the access routines are
+         tested.
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function
+*/
 int test_beamformed (std::string const &infile)
 {
   cout << "\n[tdalCommon::test_beamformed]\n" << endl;
@@ -1171,7 +1181,45 @@ int test_beamformed (std::string const &infile)
   }
   catch (std::string message) {
     cerr << message << endl;
-    nofFailedTests++;
+    ++nofFailedTests;
+  }
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                           test_hdf5_inspection
+
+/*!
+  \brief Test the various functions for inspection of a HDF5 file
+  
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function
+*/
+int test_hdf5_inspection ()
+{
+  cout << "\n[tdalCommon::test_hdf5_inspection]\n" << endl;
+
+  int nofFailedTests (0);
+  std::string filename ("tdalCommon.h5");
+  std::set<std::string> names;
+
+  hid_t fileID = H5Fopen (filename.c_str(),
+			  H5F_ACC_RDWR,
+			  H5P_DEFAULT);
+  
+  if (fileID < 0) {
+    cerr << "Failed to open file " << filename << endl;
+    return 1;
+  }
+  
+  cout << "[1] Get names of the groups attached to the root group ..." << endl;
+  try {
+    DAL::h5get_names(names,fileID);
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    ++nofFailedTests;
   }
   
   return nofFailedTests;
@@ -1187,7 +1235,7 @@ int main (int argc,
   std::string data_timeseries;
   std::string data_beamformed;
   bool have_datasets (false);
-
+  
   /* Check for command-line parameters */
   if (argc > 2) {
     data_timeseries = argv[1];
@@ -1200,6 +1248,8 @@ int main (int argc,
 #endif
   nofFailedTests += test_operators ();
   nofFailedTests += test_hdf5_attributes ();
+  // Test the various functions for inspection of a HDF5 file
+  nofFailedTests += test_hdf5_inspection ();
   
   if (have_datasets) {
     test_timeseries (data_timeseries);

@@ -252,7 +252,7 @@ namespace DAL {   // Namespace DAL -- begin
   {
     hid_t groupID (0);
     // create HDF5 group
-    groupID = H5Gcreate( locationID,
+    groupID = H5Gcreate (locationID,
                          name.c_str(),
                          H5P_DEFAULT,
                          H5P_DEFAULT,

@@ -117,7 +117,12 @@ namespace DAL { // Namespace DAL -- begin
 			    std::string const &name,
 			    bool const &create)
   {
-    return false;
+    bool status (true);
+
+    /* Set up the list of attributes attached to the root group */
+    setAttributes();
+
+    return status;
   }
 
   //_____________________________________________________________________________

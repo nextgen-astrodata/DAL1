@@ -57,29 +57,32 @@ int test_constructors ()
   std::cout << "\n[tBF_StationBeam::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
-  Filename file ("123456789",
-		 "test",
-		 Filename::bf,
-		 Filename::h5);
+  std::string filename ("tBF_StationBeam.h5");
   
-  std::cout << "[1] Testing construction with Filename ..." << std::endl;
+  std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
-    BF_Dataset dataset (file);
-    //
-    dataset.summary(); 
+    BF_StationBeam beam;
+    beam.summary();
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
   
-  std::cout << "[2] Testing construction with CommonAttributes ..." << std::endl;
+  std::cout << "[2] Testing argumented constructor ..." << std::endl;
   try {
-    CommonAttributes commonAttr;
-    commonAttr.setFilename (file);
-    //
-    BF_Dataset dataset (commonAttr);
-    //
-    dataset.summary(); 
+    // create HDF5 file to which the StationBeam group is getting attached
+    hid_t fileID = H5Fcreate (filename.c_str(),
+			      H5F_ACC_TRUNC,
+			      H5P_DEFAULT,
+			      H5P_DEFAULT);
+    if (fileID>0) {
+      BF_StationBeam beam1 (fileID,"StationBeam001",true);
+      BF_StationBeam beam2 (fileID,"StationBeam002",true);
+      BF_StationBeam beam3 (fileID,"StationBeam003",true);
+      //
+      beam1.summary();
+    }
+    H5Fclose (fileID);
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;

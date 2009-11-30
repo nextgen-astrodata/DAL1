@@ -164,17 +164,11 @@ namespace DAL { // Namespace DAL -- begin
     inline std::string className () const {
       return "CommonInterface";
     }
-
     //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
     }
-
-    /*!
-      \brief Provide a summary of the internal status
-
-      \param os -- Output stream to which the summary is written.
-    */
+    //! Provide a summary of the internal status
     void summary (std::ostream &os);    
 
     // ------------------------------------------------------------------ Methods

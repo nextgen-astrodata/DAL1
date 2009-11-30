@@ -22,128 +22,65 @@
  ***************************************************************************/
 
 #include <CommonAttributes.h>
-#include <BF_Dataset.h>
+#include <BF_SysLog.h>
 
 // Namespace usage
 using DAL::CommonAttributes;
 using DAL::Filename;
-using DAL::BF_Dataset;
+using DAL::BF_SysLog;
 
 /*!
-  \file tBF_Dataset.cpp
+  \file tBF_SysLog.cpp
 
   \ingroup DAL
 
-  \brief A collection of test routines for the BF_Dataset class
+  \brief A collection of test routines for the BF_SysLog class
  
   \author Lars B&auml;hren
  
-  \date 2009/10/28
+  \date 2009/11/27
 */
-
-//_______________________________________________________________________________
-//                                                                stationBeamName
-
-//! Convert StationBeam index to name of the HDF5 group
-std::string stationBeamName (unsigned int const &index)
-{
-  char uid[10];
-  sprintf(uid,
-	  "%03d",
-	  index);
-  
-  std::string name (uid);
-  
-  name = "StationBeam" + name;
-  
-  return name;
-}
 
 //_______________________________________________________________________________
 //                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new BF_Dataset object
+  \brief Test constructors for a new BF_SysLog object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
 int test_constructors ()
 {
-  std::cout << "\n[tBF_Dataset::test_constructors]\n" << std::endl;
+  std::cout << "\n[tBF_SysLog::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
-  Filename file ("123456789",
-		 "test",
-		 Filename::bf,
-		 Filename::h5);
-  
-  std::cout << "[1] Testing construction with Filename ..." << std::endl;
+  std::string filename ("tBF_SysLog.h5");
+
+  std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
-    BF_Dataset dataset (file);
-    //
-    dataset.summary();
-    //
-    std::cout << "-- attribute[1] " << dataset.attribute(1) << std::endl;
+    BF_SysLog log;
+    log.summary();
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
   
-  std::cout << "[2] Testing construction with CommonAttributes ..." << std::endl;
+  std::cout << "[2] Testing argumented constructor ..." << std::endl;
   try {
-    CommonAttributes commonAttr;
-    commonAttr.setFilename (file);
-    //
-    BF_Dataset dataset (commonAttr);
-    //
-    dataset.summary(); 
+    // create HDF5 file to which the StationBeam group is getting attached
+    hid_t fileID = H5Fcreate (filename.c_str(),
+			      H5F_ACC_TRUNC,
+			      H5P_DEFAULT,
+			      H5P_DEFAULT);
+    // create system log inside the root level of the HDF5 file
+    BF_SysLog log (fileID,"SysLog",true);
+    // release file handle
+    H5Fclose (fileID);
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
-  
-  return nofFailedTests;
-}
-
-//_______________________________________________________________________________
-//                                                                 test_subGroups
-
-/*!
-  \brief Test working with the embedded groups
-
-  \return nofFailedTests -- The number of failed tests encountered within this
-          function.
-*/
-int test_subGroups ()
-{
-  std::cout << "\n[tBF_Dataset::test_subGroups]\n" << std::endl;
-
-  int nofFailedTests (0);
-  Filename file ("123456789",
-		 "test",
-		 Filename::bf,
-		 Filename::h5);
-  BF_Dataset dataset (file);
-  
-  std::cout << "[1] Get name of StationBeam group from index ..." << std::endl;
-  try {
-    unsigned int nofStations (20);
-    for (unsigned int n(0); n<nofStations; ++n) {
-      std::cout << "\t" << n << "\t" << stationBeamName(n) << std::endl;
-    }
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-
-//   std::cout << "[2] Open SysLog group ..." << std::endl;
-//   try {
-//     dataset.openSysLog();
-//   } catch (std::string message) {
-//     std::cerr << message << std::endl;
-//     nofFailedTests++;
-//   }
   
   return nofFailedTests;
 }
@@ -154,11 +91,9 @@ int test_subGroups ()
 int main ()
 {
   int nofFailedTests (0);
-
+  
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
-  // Test working with the embedded groups
-  nofFailedTests += test_subGroups ();
-
+  
   return nofFailedTests;
 }

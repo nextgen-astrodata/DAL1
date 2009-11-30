@@ -391,9 +391,9 @@ namespace DAL {
             object identified by \e location_id.
     \param location_id -- Identifier of the object for which to retrieve the list
            of names.
-    \param type -- Type of attached objects for which to get the list of names;
-           can be either \e H5G_GROUP or \e H5G_DATASET. By default this function
-	   will look for groups.
+    \param type -- The type field contains the type of the object, one of
+           H5G_GROUP, H5G_DATASET, H5G_LINK, or H5G_TYPE. By default this
+	   function will look for groups.
 
     \return status -- Status of the operation; returns \e false in case an error
             was encountered.
@@ -425,8 +425,13 @@ namespace DAL {
   //                                                                  h5get_names
   
   /*!
+    <i>Note:</i> This function might need to be updated at some point, as the 
+    internally used HDF5 function <tt>H5Gget_num_objs()</tt> is considered
+    depricated.
+
     \retval names -- Set with the names of the groups/datasets attached to the
-            object identified by \e location_id.
+            object identified by \e location_id. If no objects were found, an 
+	    empty list is returned.
     \param location_id -- Identifier of the object for which to retrieve the list
            of names.
     \param type -- Type of attached objects for which to get the list of names;
@@ -454,9 +459,10 @@ namespace DAL {
     if (h5error > 0) {
       std::cerr << "[h5get_groupnames] Error retrieving number of attached groups!"
 		<< std::endl;
-      status = false;
+      return false;
     }
-    else {
+    
+    if (nofObjects>0) {
       std::string tmp;
       
       for (hsize_t idx (0); idx<nofObjects; idx++) {
@@ -472,8 +478,10 @@ namespace DAL {
 	  }
 	}
       }
+    } else {
+      status = false;
     }
-
+    
     return status;
   }
   

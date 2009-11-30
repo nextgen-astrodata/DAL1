@@ -30,6 +30,7 @@ set (tests
   tTimestamp
   tBF_Dataset
   tBF_StationBeam
+  tBF_SysLog
   tTBB
   tTBB_DipoleDataset
   tTBB_StationGroup

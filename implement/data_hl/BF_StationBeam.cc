@@ -31,8 +31,23 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                               BF_StationBeam
+
   BF_StationBeam::BF_StationBeam ()
-  {;}
+  {
+    location_p = 0;
+  }
+
+  //_____________________________________________________________________________
+  //                                                               BF_StationBeam
+
+  BF_StationBeam::BF_StationBeam (hid_t const &location,
+				  std::string const &name,
+				  bool const &create)
+  {
+    open (location,name,create);
+  }
   
   // ============================================================================
   //
@@ -60,10 +75,11 @@ namespace DAL { // Namespace DAL -- begin
   void BF_StationBeam::summary (std::ostream &os)
   {
     os << "[BF_StationBeam] Summary of internal parameters." << std::endl;
+    os << "-- Location ID     = " << location_p          << std::endl;
+    os << "-- nof. attributes = " << attributes_p.size() << std::endl;
+    os << "-- Attributes      = " << attributes_p        << std::endl;
   }
-  
-  
-  
+
   // ============================================================================
   //
   //  Methods
@@ -122,10 +138,21 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
 
-    /* Try to open the group */
-    location_p = H5Gopen2 (location,
-			   name.c_str(),
-			   H5P_DEFAULT);
+    /* Set up the list of attributes attached to the root group */
+    setAttributes();
+
+    /* Try to open the group: get list of groups attached to 'location' and
+       check if 'name' is part of it.
+    */
+    std::set<std::string> groups;
+    h5get_names (groups,location,H5G_GROUP);
+    if (static_cast<bool>(attributes_p.count(name))) {
+      location_p = H5Gopen2 (location,
+			     name.c_str(),
+			     H5P_DEFAULT);
+    } else {
+      location_p = 0;
+    }
     
     if (location_p > 0) {
       status = true;
@@ -134,7 +161,7 @@ namespace DAL { // Namespace DAL -- begin
       if (create) {
 	location_p = H5Gcreate (location,
 				name.c_str(),
-				H5F_ACC_TRUNC,
+				H5P_DEFAULT,
 				H5P_DEFAULT,
 				H5P_DEFAULT);
 	/* If creation was sucessful, add attributes with default values */

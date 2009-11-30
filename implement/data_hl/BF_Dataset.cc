@@ -39,7 +39,11 @@ namespace DAL { // Namespace DAL -- begin
   */
   BF_Dataset::BF_Dataset (std::string const &filename)
   {
-    //! \todo Function not yet implemented.
+    if (!open (0,filename,false)) {
+      std::cerr << "[BF_Dataset::BF_Dataset] Failed to open file "
+		<< filename
+		<< std::endl;
+    }
   }
   
   //_____________________________________________________________________________
@@ -78,8 +82,10 @@ namespace DAL { // Namespace DAL -- begin
   void BF_Dataset::destroy ()
   {
     if (location_p > 0) {
-      herr_t h5error (0);
-      h5error = H5Fclose (location_p);
+      herr_t h5error = H5Fclose (location_p);
+      if (h5error != 0) {
+	std::cerr << "Error closing HDF5 dataset." << std::endl;
+      }
     }
   }
   
@@ -171,14 +177,19 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
 
+    /* Initialize private variables*/
     location_p = location;
+    stationBeams_p.clear();
+    sysLog_p.clear();
+
     /* Try to open the file */
     location_p = H5Fopen (name.c_str(),
 			  H5F_ACC_RDWR,
 			  H5P_DEFAULT);
     
     if (location_p > 0) {
-      openEmbedded (false);
+      // Read the common LOFAR attributes
+      commonAttributes_p.h5read(location_p);
     } else {
       /* If failed to open file, check if we are supposed to create one */
       if (create) {
@@ -215,6 +226,9 @@ namespace DAL { // Namespace DAL -- begin
       }
     }
     
+    // Open embedded groups
+    openEmbedded (create);
+    
     return status;
   }
   
@@ -243,20 +257,7 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                   openSysLog
-  
-  bool BF_Dataset::openSysLog (bool const &create)
-  {
-    bool status (true);
-
-    std::cout << "-- Check if SysLog is already opened and attached ..."
-	      << std::endl;
-
-    return status;
-  }
-
-  //_____________________________________________________________________________
-  //                                                             openStationBeams
+  //                                                                 openEmbedded
   
   /*!
     \return status -- Status of the operation; returns <tt>False</tt> in case
@@ -266,34 +267,39 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
     std::set<std::string> groupnames;
-
+    
     /* Retrieve the names of the groups attached to the root group */
     status = h5get_names (groupnames,
 			  location_p,
 			  H5G_GROUP);
 
+    std::cout << "[BF_Dataset::openEmbedded]" << std::endl;
+    std::cout << "-- Location ID = " << location_p        << std::endl;
+    std::cout << "-- nof. groups = " << groupnames.size() << std::endl;
+    
     if (status && groupnames.size()>0) {
-      /* Open SysLog group */
-      if (static_cast<bool>(groupnames.count("SYSLOG"))) {
-	std::cout << "[BF_Dataset::openEmbedded] Found SYSLOG group."
-		  << std::endl;
-// 	sysLog_p.open(location_p,"SYSLOG",false);
-      }
-      else if (static_cast<bool>(groupnames.count("SysLog"))) {
-	std::cout << "[BF_Dataset::openEmbedded] Found SysLog group."
-		  << std::endl;
-// 	sysLog_p.open(location_p,"SysLog",false);
-      }
-      else {
-	std::cout << "[BF_Dataset::openEmbedded] No SYSLOG group found."
-		  << std::endl;
-      }
+      /* Open system log */
+      status = openSysLog (create);
       /* Open StationBeam groups */
     }
     
     return status;
   }
   
+  //_____________________________________________________________________________
+  //                                                                   openSysLog
+  
+  bool BF_Dataset::openSysLog (bool const &create)
+  {
+    bool status (true);
+
+    if (sysLog_p.size() == 0 && location_p > 0) {
+      sysLog_p["SysLog"] = BF_SysLog (location_p,"SysLog",create);
+    }
+    
+    return status;
+  }
+
   //_____________________________________________________________________________
   //                                                            stationBeamGroups
   

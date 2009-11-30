@@ -81,7 +81,9 @@ namespace DAL { // Namespace DAL -- begin
     BF_StationBeam ();
     
     //! Argumented constructor
-    BF_StationBeam (CommonAttributes const &commonAttributes);
+    BF_StationBeam (hid_t const &location,
+		    std::string const &name,
+		    bool const &create);
     
     // -------------------------------------------------------------- Destruction
 
