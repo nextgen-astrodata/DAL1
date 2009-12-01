@@ -21,8 +21,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef BF_STATIONBEAM_H
-#define BF_STATIONBEAM_H
+#ifndef BF_PROCESSINGHISTORY_H
+#define BF_PROCESSINGHISTORY_H
 
 // Standard library header files
 #include <iostream>
@@ -34,18 +34,18 @@
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class BF_StationBeam
+    \class BF_ProcessingHistory
     
     \ingroup DAL
     \ingroup data_hl
     
-    \brief High-level interface to the station beam of a BF dataset
+    \brief High-level interface to the processing history attached to a BF dataset
     
     \author Lars B&auml;hren
 
-    \date 2009/10/28
+    \date 2009/11/26
 
-    \test tBF_StationBeam.cpp
+    \test tBF_ProcessingHistory.cpp
     
     <h3>Prerequisite</h3>
     
@@ -71,39 +71,36 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class BF_StationBeam : public CommonInterface {
+  class BF_ProcessingHistory : public CommonInterface {
     
   public:
     
     // ------------------------------------------------------------- Construction
     
     //! Default constructor
-    BF_StationBeam ();
+    BF_ProcessingHistory ();
     
     //! Argumented constructor
-    BF_StationBeam (hid_t const &location,
-		    unsigned int const &index,
-		    bool const &create);
+    BF_ProcessingHistory (hid_t const &location,
+			  bool const &create);
     
     // -------------------------------------------------------------- Destruction
-
+    
     //! Destructor
-    ~BF_StationBeam ();
+    ~BF_ProcessingHistory ();
     
     // --------------------------------------------------------------- Parameters
-
+    
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, BF_StationBeam.
+      \return className -- The name of the class, BF_ProcessingHistory.
     */
     inline std::string className () const {
-      return "BF_StationBeam";
+      return "BF_ProcessingHistory";
     }
-
-    /*!
-      \brief Provide a summary of the internal status
-    */
+    
+    //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
     }
@@ -117,14 +114,10 @@ namespace DAL { // Namespace DAL -- begin
 
     // ------------------------------------------------------------------ Methods
 
-    //! Convert StationBeam index to name of the HDF5 group
-    static std::string getName (unsigned int const &index);
-
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
-    
   protected:
     
     //! Open the structures embedded within the current one
@@ -132,15 +125,14 @@ namespace DAL { // Namespace DAL -- begin
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 
-
   private:
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class BF_StationBeam -- end
+  }; // Class BF_ProcessingHistory -- end
   
 } // Namespace DAL -- end
 
-#endif /* BF_DATASET_H */
+#endif /* BF_PROCESSINGHISTORY_H */
   

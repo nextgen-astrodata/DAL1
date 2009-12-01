@@ -2288,7 +2288,7 @@ namespace DAL {
 				 data_out );
       
       for (int rec_idx=0; rec_idx<nrecs; rec_idx++) {
-	for (int field_idx=0; field_idx<nfields; field_idx++) {
+	for (unsigned int field_idx=0; field_idx<nfields; field_idx++) {
 	  hid_t table_type_id = H5Dget_type( tableID_p );
 	  H5T_class_t field_type = H5Tget_member_class( table_type_id, field_idx );
 	  

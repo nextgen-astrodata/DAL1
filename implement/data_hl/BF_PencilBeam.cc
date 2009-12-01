@@ -31,8 +31,23 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                BF_PencilBeam
+
   BF_PencilBeam::BF_PencilBeam ()
-  {;}
+  {
+    location_p = 0;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                BF_PencilBeam
+
+  BF_PencilBeam::BF_PencilBeam (hid_t const &location,
+				unsigned int const &index,
+				bool const &create)
+  {
+    open (location,getName(index),create);
+  }
   
   // ============================================================================
   //
@@ -119,9 +134,70 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
 
-    /* Set up the list of attributes attached to the root group */
+    /* Set up the list of attributes attached to the PencilBeam group */
     setAttributes();
 
+    /* Try to open the group: get list of groups attached to 'location' and
+       check if 'name' is part of it.
+    */
+    std::set<std::string> groups;
+    h5get_names (groups,location,H5G_GROUP);
+    if (static_cast<bool>(attributes_p.count(name))) {
+      location_p = H5Gopen2 (location,
+			     name.c_str(),
+			     H5P_DEFAULT);
+    } else {
+      location_p = 0;
+    }
+    
+    if (location_p > 0) {
+      status = true;
+    } else {
+      /* If failed to open the group, check if we are supposed to create one */
+      if (create) {
+	location_p = H5Gcreate (location,
+				name.c_str(),
+				H5P_DEFAULT,
+				H5P_DEFAULT,
+				H5P_DEFAULT);
+	/* If creation was sucessful, add attributes with default values */
+	if (location_p > 0) {
+	  std::string groupname ("PencilBeam");
+	  // write the attributes
+	  h5set_attribute (location_p,"GROUPTYPE",          groupname );
+	  h5set_attribute (location_p,"TARGET",             defaultString ());
+	  h5set_attribute (location_p,"POINT_RA",           defaultFloat());
+	  h5set_attribute (location_p,"POINT_DEC",          defaultFloat());
+	  h5set_attribute (location_p,"POSITION_OFFSET_RA", defaultFloat());
+	  h5set_attribute (location_p,"POSITION_OFFSET_DEC",defaultFloat());
+	  h5set_attribute (location_p,"PB_DIAMETER_RA",     defaultFloat());
+	  h5set_attribute (location_p,"PB_DIAMETER_DEC",    defaultFloat());
+	  h5set_attribute (location_p,"PB_CENTER_FREQUENCY",defaultFloat());
+	  h5set_attribute (location_p,"PB_CENTER_FREQUENCY_UNIT",defaultString ());
+	  h5set_attribute (location_p,"FOLDED_DATA",        defaultBool());
+	  h5set_attribute (location_p,"FOLD_PERIOD",        defaultFloat());
+	  h5set_attribute (location_p,"FOLD_PERIOD_UNIT",   defaultString ());
+	  h5set_attribute (location_p,"DEDISPERSION",       defaultString ());
+	  h5set_attribute (location_p,"DISPERSION_MEASURE", defaultFloat());
+ 	  h5set_attribute (location_p,"DISPERSION_MEASURE_UNIT",defaultString ());
+ 	  h5set_attribute (location_p,"BARYCENTER",         defaultBool());
+ 	  h5set_attribute (location_p,"STOKES_COMPONENTS",  defaultVector(defaultString()));
+ 	  h5set_attribute (location_p,"COMPLEX_VOLTAGE",    defaultBool());
+	  h5set_attribute (location_p,"SIGNAL_SUM",         defaultString ());
+	} else {
+	  std::cerr << "[BF_PencilBeam::open] Failed to create group "
+		    << name
+		    << std::endl;
+	  status = false;
+	}
+      } else {
+	std::cerr << "[BF_PencilBeam::open] Failed to open group "
+		  << name
+		  << std::endl;
+	status = false;
+      }
+    }
+    
     return status;
   }
 
@@ -131,6 +207,29 @@ namespace DAL { // Namespace DAL -- begin
   bool BF_PencilBeam::openEmbedded (bool const &create)
   {
     return false;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                      getName
+  
+  /*!
+    \param index -- Index identifying the pencil beam.
+
+    \return name -- The name of the pencil beam group,
+            <tt>PencilBeam<index></tt>
+  */
+  std::string BF_PencilBeam::getName (unsigned int const &index)
+  {
+    char uid[10];
+    sprintf(uid,
+            "%03d",
+	    index);
+    
+    std::string name (uid);
+    
+    name = "PencilBeam" + name;
+    
+    return name;
   }
   
 } // Namespace DAL -- end

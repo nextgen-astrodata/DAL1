@@ -333,6 +333,27 @@ namespace DAL { // Namespace DAL -- begin
 	  return false;
 	}
       }
+
+    //! Get default value of boolean-type attribute
+    inline bool defaultBool () const {
+      return false;
+    }
+
+    //! Get default value of float-type attribute
+    inline float defaultFloat () const {
+      return 0.0;
+    }
+
+    //! Get default value of string-type attribute
+    inline std::string defaultString () const {
+      return std::string ("UNDEFINED");
+    }
+
+    //! Get default value of vector<T>-type attribute
+    template <typename T>
+      inline std::vector<T> defaultVector (T const &val) const {
+      return std::vector<T> (1,val);
+    }
     
   private:
     

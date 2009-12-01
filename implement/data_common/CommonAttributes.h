@@ -48,7 +48,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/08/31
 
-    \test tCommonAttributes.cpp
+    \test tCommonAttributes.cc
     
     <h3>Prerequisite</h3>
     

@@ -2,14 +2,41 @@
 ## $Id::                                                                        $
 ## ------------------------------------------------------------------------------
 
-set(CMAKE_CXX_FLAGS "-W -Wall")
-message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
+## ==============================================================================
+##
+##  Common settings for all test programs
+##
+## ==============================================================================
+
+set (CMAKE_CXX_FLAGS "-W -Wall")
+
+macro (build_test arg_source arg_link arg_run)
+  ## get the name of the file without the extension
+  get_filename_component (_file ${arg_source} NAME_WE)
+  ## compiler instructions
+  add_executable(${_file} ${_file}.cc)
+  ## linker instructions
+  target_link_libraries (${_file} ${arg_link})
+  ## installation instructions
+  install (TARGETS ${_file}
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    )
+  ## run the test?
+  if (arg_run)
+    add_test (${_file} ${_file})
+  endif (arg_run)
+endmacro (build_test)
 
 ## ==============================================================================
 ##
 ##  Build the test programs
 ##
 ## ==============================================================================
+
+add_subdirectory (coordinates)
+add_subdirectory (data_common)
+add_subdirectory (data_hl)
 
 ## Set up list of source files
 
@@ -24,13 +51,8 @@ set (tests
   tBeamFormed
   tBeamGroup
   tBeamSubband
-  tCommonAttributes
   tEnumerations
-  tFilename
   tTimestamp
-  tBF_Dataset
-  tBF_StationBeam
-  tBF_SysLog
   tTBB
   tTBB_DipoleDataset
   tTBB_StationGroup
@@ -41,7 +63,7 @@ set (tests
 
 foreach (src ${tests})
   ## executable and its source
-  add_executable(${src} ${src}.cpp)
+  add_executable(${src} ${src}.cc)
   ## libraries against which to link
   if (HAVE_CASA OR HAVE_CASACORE)
     target_link_libraries(${src}
@@ -68,7 +90,7 @@ if (HAVE_CASA OR HAVE_CASACORE)
   add_definitions (-DHAVE_CASA)
   foreach (src tMeasurementSets tdalLopesEvent)
     ## compiler instructions
-    add_executable (${src} ${src}.cpp)
+    add_executable (${src} ${src}.cc)
     ## linker instructions
     target_link_libraries (${src} dal ${dal_link_libraries})
     ## installation
@@ -87,15 +109,10 @@ if (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
       tcasacore_hdf5
       tcasacore_images
       tcasacore_images2
-      tCoordinatesGroup
-      tDirectionCoordinate
-      tLinearCoordinate
-      tStokesCoordinate
-      tTabularCoordinate
       tLOFAR_Image
       )
     ## compiler instructions
-    add_executable (${src} ${src}.cpp)
+    add_executable (${src} ${src}.cc)
     ## linker instructions
     target_link_libraries (${src}
       dal
@@ -126,7 +143,7 @@ endif (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
 if (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
 
   ## compiler instructions
-  add_executable (tdalFITS tdalFITS.cpp)
+  add_executable (tdalFITS tdalFITS.cc)
   ## linker instructions
   target_link_libraries (tdalFITS
     dal
@@ -175,9 +192,7 @@ if (DAL_ENABLE_TESTING)
   ## [1] simple tests which do not require sample data
 
   add_test (tdal tdal)
-  add_test (tCommonAttributes tCommonAttributes)
   add_test (tEnumerations tEnumerations)
-  add_test (tFilename tFilename)
   add_test (tTimestamp tTimestamp)
 
   ## -----------------------------------------------------------------

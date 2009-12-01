@@ -6,12 +6,6 @@
 _________________________________________________________________________________
 >>> Open issues
 
-* Build error on cluster:
-
-/home/bahren/usg/code/trunk/src/DAL/implement/core/dalCommon.h: In function ‘void show(const T*, const uint&) [with T = int]’:
-/home/bahren/usg/code/trunk/src/DAL/test/tTBB_DipoleDataset.cpp:1062:   instantiated from here
-/home/bahren/usg/code/trunk/src/DAL/implement/core/dalCommon.h:806: error: no matching function for call to ‘show(std::ostream&, const int*&, const unsigned int&)’
-
 * Check the code committed by Sven for generic functionality which can be
   integrated with the core classes. In principle we should not have a dalFITS,
   but rather a class for the rotation synthesis images, which build on top

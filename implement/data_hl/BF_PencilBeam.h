@@ -39,7 +39,7 @@ namespace DAL { // Namespace DAL -- begin
     \ingroup DAL
     \ingroup data_hl
     
-    \brief High-level interface to the station beam of a beamformed dataset
+    \brief High-level interface to the station beam of a BF dataset
     
     \author Lars B&auml;hren
 
@@ -81,10 +81,12 @@ namespace DAL { // Namespace DAL -- begin
     BF_PencilBeam ();
     
     //! Argumented constructor
-    BF_PencilBeam (CommonAttributes const &commonAttributes);
-    
-    // -------------------------------------------------------------- Destruction
+    BF_PencilBeam (hid_t const &location,
+		   unsigned int const &index,
+		   bool const &create);
 
+    // -------------------------------------------------------------- Destruction
+    
     //! Destructor
     ~BF_PencilBeam ();
     
@@ -114,6 +116,9 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // ------------------------------------------------------------------ Methods
+
+    //! Convert Pencil beam index to name of the HDF5 group
+    static std::string getName (unsigned int const &index);
 
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,

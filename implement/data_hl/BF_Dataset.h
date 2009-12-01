@@ -48,7 +48,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/10/28
 
-    \test tBF_Dataset.cpp
+    \test tBF_Dataset.cc
     
     <h3>Prerequisite</h3>
     
@@ -173,9 +173,6 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Initialize the internal settings of the object
     void init (CommonAttributes const &attributes);
-
-    //! Convert StationBeam index to name of the HDF5 group
-    std::string stationBeamName (unsigned int const &index);
 
     //! Unconditional deletion 
     void destroy(void);

@@ -157,6 +157,30 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
+  //                                                                setAttributes
+  
+  void BF_Dataset::setAttributes ()
+  {
+    attributes_p.clear();
+    
+    attributes_p.insert("CREATE_OFFLINE_ONLINE");
+    attributes_p.insert("BF_FORMAT");
+    attributes_p.insert("BF_VERSION");
+    attributes_p.insert("EXPTIME_START_UTC");
+    attributes_p.insert("EXPTIME_STOP_UTC");
+    attributes_p.insert("TOTAL_INTEGRATION_TIME");
+    attributes_p.insert("OBS_DATATYPE");
+    attributes_p.insert("BANDWIDTH");
+    attributes_p.insert("STATION_BEAM_DIAMETER");
+    attributes_p.insert("PENCIL_BEAM_DIAMETER");
+    attributes_p.insert("WEATHER_TEMPERATURE");
+    attributes_p.insert("WEATHER_HUMIDITY");
+    attributes_p.insert("SYSTEM_TEMPERATURE");
+    attributes_p.insert("PHASE_CENTER");
+    attributes_p.insert("NOF_BEAMS");
+  }
+  
+  //_____________________________________________________________________________
   //                                                                         open
   
   /*!
@@ -183,7 +207,7 @@ namespace DAL { // Namespace DAL -- begin
     sysLog_p.clear();
 
     /* Try to open the file */
-    location_p = H5Fopen (name.c_str(),
+     location_p = H5Fopen (name.c_str(),
 			  H5F_ACC_RDWR,
 			  H5P_DEFAULT);
     
@@ -233,30 +257,6 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                setAttributes
-  
-  void BF_Dataset::setAttributes ()
-  {
-    attributes_p.clear();
-    
-    attributes_p.insert("CREATE_OFFLINE_ONLINE");
-    attributes_p.insert("BF_FORMAT");
-    attributes_p.insert("BF_VERSION");
-    attributes_p.insert("EXPTIME_START_UTC");
-    attributes_p.insert("EXPTIME_STOP_UTC");
-    attributes_p.insert("TOTAL_INTEGRATION_TIME");
-    attributes_p.insert("OBS_DATATYPE");
-    attributes_p.insert("BANDWIDTH");
-    attributes_p.insert("STATION_BEAM_DIAMETER");
-    attributes_p.insert("PENCIL_BEAM_DIAMETER");
-    attributes_p.insert("WEATHER_TEMPERATURE");
-    attributes_p.insert("WEATHER_HUMIDITY");
-    attributes_p.insert("SYSTEM_TEMPERATURE");
-    attributes_p.insert("PHASE_CENTER");
-    attributes_p.insert("NOF_BEAMS");
-  }
-  
-  //_____________________________________________________________________________
   //                                                                 openEmbedded
   
   /*!
@@ -273,15 +273,8 @@ namespace DAL { // Namespace DAL -- begin
 			  location_p,
 			  H5G_GROUP);
 
-    std::cout << "[BF_Dataset::openEmbedded]" << std::endl;
-    std::cout << "-- Location ID = " << location_p        << std::endl;
-    std::cout << "-- nof. groups = " << groupnames.size() << std::endl;
-    
-    if (status && groupnames.size()>0) {
-      /* Open system log */
-      status = openSysLog (create);
-      /* Open StationBeam groups */
-    }
+    /* Open system log group */
+    status = openSysLog (create);
     
     return status;
   }
@@ -300,6 +293,23 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
 
+  //_____________________________________________________________________________
+  //                                                              openStationBeam
+  
+  bool BF_Dataset::openStationBeam (unsigned int const &stationID,
+				    bool const &create)
+  {
+    bool status (true);
+
+    std::string name = BF_StationBeam::getName (stationID);
+
+    if (sysLog_p.size() == 0 && location_p > 0) {
+      stationBeams_p["name"] = BF_StationBeam (location_p,stationID,create);
+    }
+    
+    return status;
+  }
+  
   //_____________________________________________________________________________
   //                                                            stationBeamGroups
   
@@ -325,23 +335,6 @@ namespace DAL { // Namespace DAL -- begin
     std::map<std::string,BF_StationBeam>::iterator n;
 
     return beams;
-  }
-
-  //_____________________________________________________________________________
-  //                                                              stationBeamName
-  
-  std::string BF_Dataset::stationBeamName (unsigned int const &index)
-  {
-    char uid[10];
-    sprintf(uid,
-            "%03d",
-	    index);
-
-    std::string name (uid);
-
-    name = "StationBeam" + name;
-
-    return name;
   }
 
 } // Namespace DAL -- end
