@@ -121,8 +121,8 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Provide a summary of the internal status
-    inline void summary () {
-      summary (std::cout);
+    inline void summary (bool const &showAttributes=false) {
+      summary (std::cout,showAttributes);
     }
     
     /*!
@@ -130,7 +130,8 @@ namespace DAL { // Namespace DAL -- begin
       
       \param os -- Output stream to which the summary is written.
     */
-    void summary (std::ostream &os);    
+    void summary (std::ostream &os,
+		  bool const &showAttributes=false);    
 
     // ------------------------------------------------------------------ Methods
 

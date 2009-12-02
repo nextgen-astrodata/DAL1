@@ -31,12 +31,24 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  CoordinatesGroup::CoordinatesGroup ()
-  {;}
+  //_____________________________________________________________________________
+  //                                                             CoordinatesGroup
   
-  CoordinatesGroup::CoordinatesGroup (CoordinatesGroup const &other)
+  CoordinatesGroup::CoordinatesGroup ()
   {
-    copy (other);
+    init ();
+  }
+  
+  //_____________________________________________________________________________
+  //                                                             CoordinatesGroup
+  
+  CoordinatesGroup::CoordinatesGroup (hid_t const &location,
+				      bool const &create)
+  {
+    init ();
+    open (location,
+	  groupType_p,
+	  create);
   }
   
   // ============================================================================
@@ -50,118 +62,22 @@ namespace DAL { // Namespace DAL -- begin
     destroy();
   }
   
-  //_____________________________________________________________________________
-  //                                                                      destroy
-
   void CoordinatesGroup::destroy ()
-  {
-    /* Release memory allocated for the embedded coordinate objects */
-    if (coordinates_p.size()) {
-      for (unsigned int n(0); n<coordinates_p.size(); n++) {
-	delete [] coordinates_p[n];
-      }
-    }
-  }
-  
-  // ============================================================================
-  //
-  //  Operators
-  //
-  // ============================================================================
-  
-  CoordinatesGroup& CoordinatesGroup::operator= (CoordinatesGroup const &other)
-  {
-    if (this != &other) {
-      destroy ();
-      copy (other);
-    }
-    return *this;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                         copy
-
-  void CoordinatesGroup::copy (CoordinatesGroup const &other)
-  {
-    grouptype_p    = other.grouptype_p;
-    equinox_p      = other.equinox_p;
-    system_radec_p = other.system_radec_p;
-
-    /* Check if tere are already some coordinate objects stored; if this is the
-     * case, we need to purge them.
-     */
-    if (coordinates_p.size()) {
-      for (unsigned int n(0); n<coordinates_p.size(); n++) {
-	delete [] coordinates_p[n];
-      }
-    }
-    // adjust the size of the vector storing the coordinate objects
-    coordinates_p.resize(other.coordinates_p.size());
-    // copy coordinate objects from the other instance
-    for (unsigned int n(0); n<coordinates_p.size(); n++) {
-      coordinates_p[n] = other.coordinates_p[n];
-    }
-  }
+  {;}
   
   // ============================================================================
   //
   //  Parameters
   //
   // ============================================================================
-  
-  //_____________________________________________________________________________
-  //                                                                      nofAxes
-  
-  int CoordinatesGroup::nofAxes ()
-  {
-    int naxes (0);
 
-    for (unsigned int n(0); n<coordinates_p.size(); n++) {
-      naxes += coordinates_p[n]->nofAxes();
-    }
-
-    return naxes;
-  }
-
-  //_____________________________________________________________________________
-  //                                                              coordinateTypes
-  
-  std::vector<Coordinate::Type> CoordinatesGroup::coordinateTypes ()
-  {
-    std::vector<Coordinate::Type> types;
-
-    for (unsigned int n(0); n<coordinates_p.size(); n++) {
-      types.push_back(coordinates_p[n]->type());
-    }
-    return types;
-  }
-
-  //_____________________________________________________________________________
-  //                                                              coordinateNames
-  
-  std::vector<std::string> CoordinatesGroup::coordinateNames ()
-  {
-    std::vector<std::string> names;
-    
-    for (unsigned int n(0); n<coordinates_p.size(); n++) {
-      names.push_back(coordinates_p[n]->name());
-    }
-    return names;
-  }
-  
   //_____________________________________________________________________________
   //                                                                      summary
   
   void CoordinatesGroup::summary (std::ostream &os)
   {
-    os << "[CoordinatesGroup] Summary of internal parameters."   << std::endl;
-    os << "-- Equinox                  = " << equinox_p          << std::endl;
-    os << "-- System Ra/Dec            = " << system_radec_p     << std::endl;
-    os << "-- Reference location value = " << refLocationValue_p << std::endl;
-    os << "-- Reference location unit  = " << refLocationUnit_p  << std::endl;
-    os << "-- nof. coordinates         = " << nofCoordinates()   << std::endl;
-    os << "-- nof. coordinate axes     = " << nofAxes()          << std::endl;
-    os << "-- Coordinate types         = " << coordinateNames()  << std::endl;
+    os << "[CoordinatesGroup] Summary of internal parameters." << std::endl;
+    os << "-- Location ID = " << location_p << std::endl;
   }
   
   // ============================================================================
@@ -170,57 +86,166 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  //_____________________________________________________________________________
-  //                                                                         init
-  
   void CoordinatesGroup::init ()
   {
-    grouptype_p    = "Coordinates";
-    equinox_p      = "UNDEFINED";
-    system_radec_p = "UNDEFINED";
+    /* Variables declared by the base class*/
+    location_p = 0;
 
-    refLocationValue_p.resize(3);
-    refLocationUnit_p.resize(3);
-    
-    refLocationValue_p = std::vector<double> (3,0.0);
-    refLocationUnit_p  = std::vector<std::string> (3,"UNDEFINED");
-    refLocationFrame_p = "UNDEFINED";
+    /* Internal variables*/
+    groupType_p        = "CoordinatesGroup";
+    refLocationValue_p = std::vector<double> (3, 0.0);
+    refLocationUnit_p  = std::vector<std::string> (3, defaultString());
+    refLocationFrame_p = defaultString();
+    nofCoordinates_p   = 0;
+    nofAxes_p          = 0;
+    coordinateTypes_p  = std::vector<std::string> (1, defaultString());
   }
 
   //_____________________________________________________________________________
-  //                                                                         init
+  //                                                                setAttributes
   
-  void CoordinatesGroup::h5write (hid_t const &groupID)
+  void CoordinatesGroup::setAttributes ()
   {
-    std::string attrGrouptype = "Coordinates";
-    int attrNofCoordinates    = nofCoordinates();
-    int attrNofAxes           = nofAxes();
+    attributes_p.clear();
 
-    /* Write the attributes to the group */
-    DAL::h5set_attribute( groupID,
-			  "GROUPTYPE",       attrGrouptype       );
-    DAL::h5set_attribute( groupID,
-			  "EQUINOX",         equinox_p           );
-    DAL::h5set_attribute( groupID,
-			  "SYSTEM_RADEC",    system_radec_p      );
-    DAL::h5set_attribute( groupID,
-			  "REFERENCE_LOCATION_VALUE", refLocationValue_p );
-    DAL::h5set_attribute( groupID,
-			  "REFERENCE_LOCATION_UNIT", refLocationUnit_p );
-    DAL::h5set_attribute( groupID,
-			  "REFERENCE_LOCATION_FRAME", refLocationFrame_p );
-    DAL::h5set_attribute( groupID,
-			  "NOF_COORDINATES", attrNofCoordinates  );
-    DAL::h5set_attribute( groupID,
-			  "NOF_AXES",        attrNofAxes         );
-
-    /* Write the cordinate objects themselves */
-    for (unsigned int n(0); coordinates_p.size(); n++) {
-      // name of the group holding the coordinate object
-      std::string groupName = "COORDINATE"+to_string(n);
-      // write coordinate object
-      coordinates_p[n]->h5write(groupID,groupName);
-    }
+    attributes_p.insert("GROUPTYPE");
+    attributes_p.insert("REF_LOCATION_VALUE");
+    attributes_p.insert("REF_LOCATION_UNIT");
+    attributes_p.insert("REF_LOCATION_FRAME");
+    attributes_p.insert("NOF_COORDINATES");
+    attributes_p.insert("NOF_AXES");
+    attributes_p.insert("COORDINATE_TYPES");
   }
 
+  //_____________________________________________________________________________
+  //                                                                         open
+  
+  /*!
+    \param location -- Identifier of the location to which the to be opened
+           structure is attached.
+    \param name   -- Name of the structure (file, group, dataset, etc.) to be
+           opened.
+    \param create -- Create the corresponding data structure, if it does not 
+           exist yet?
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered.
+  */
+  bool CoordinatesGroup::open (hid_t const &location,
+			       std::string const &name,
+			       bool const &create)
+  {
+    bool status (true);
+
+    /* Set up the list of attributes attached to the root group */
+    setAttributes();
+
+    /* Try to open the group: get list of groups attached to 'location' and
+       check if 'name' is part of it.
+    */
+    std::set<std::string> groups;
+    h5get_names (groups,location,H5G_GROUP);
+    if (static_cast<bool>(attributes_p.count(name))) {
+      location_p = H5Gopen2 (location,
+			     name.c_str(),
+			     H5P_DEFAULT);
+    } else {
+      location_p = 0;
+    }
+      
+    if (location_p > 0) {
+      status = true;
+    } else {
+      /* If failed to open the group, check if we are supposed to create one */
+      if (create) {
+	location_p = H5Gcreate (location,
+				name.c_str(),
+				H5P_DEFAULT,
+				H5P_DEFAULT,
+				H5P_DEFAULT);
+	/* If creation was sucessful, add attributes with default values */
+	if (location_p > 0) {
+	  // write the attributes
+	  h5set_attribute (location_p, "GROUPTYPE",          groupType_p);
+	  h5set_attribute (location_p, "REF_LOCATION_VALUE", refLocationValue_p);
+	  h5set_attribute (location_p, "REF_LOCATION_UNIT",  refLocationUnit_p);
+	  h5set_attribute (location_p, "REF_LOCATION_FRAME", refLocationFrame_p);
+	  h5set_attribute (location_p, "NOF_COORDINATES",    nofCoordinates_p);
+	  h5set_attribute (location_p, "NOF_AXES",           nofAxes_p);
+	  h5set_attribute (location_p, "COORDINATE_TYPES",
+			   defaultVector(defaultString()));
+	} else {
+	  std::cerr << "[CoordinatesGroup::open] Failed to create group "
+		    << name
+		    << std::endl;
+	  status = false;
+	}
+      } else {
+	std::cerr << "[CoordinatesGroup::open] Failed to open group "
+		  << name
+		  << std::endl;
+	status = false;
+      }
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                 openEmbedded
+  
+  bool CoordinatesGroup::openEmbedded (bool const &create)
+  {
+    return false;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                    groupType
+  
+  std::string CoordinatesGroup::groupType ()
+  {
+    if (location_p>0) {
+      getAttribute ("GROUPTYPE", groupType_p);
+    }
+
+    return groupType_p;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                             refLocationValue
+  
+  std::vector<double> CoordinatesGroup::refLocationValue ()
+  {
+    if (location_p>0) {
+      getAttribute ("REF_LOCATION_VALUE", refLocationValue_p);
+    }
+
+    return refLocationValue_p;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                              refLocationUnit
+  
+  std::vector<std::string> CoordinatesGroup::refLocationUnit ()
+  {
+    if (location_p>0) {
+      getAttribute ("REF_LOCATION_UNIT", refLocationUnit_p);
+    }
+
+    return refLocationUnit_p;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                             refLocationFrame
+  
+  std::string CoordinatesGroup::refLocationFrame ()
+  {
+    if (location_p>0) {
+      getAttribute ("REF_LOCATION_FRAME", refLocationFrame_p);
+    }
+
+    return refLocationFrame_p;
+  }
+
+  
 } // Namespace DAL -- end

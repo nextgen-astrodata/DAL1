@@ -137,13 +137,29 @@ int test_subGroups ()
     nofFailedTests++;
   }
 
-//   std::cout << "[2] Open SysLog group ..." << std::endl;
-//   try {
-//     dataset.openSysLog();
-//   } catch (std::string message) {
-//     std::cerr << message << std::endl;
-//     nofFailedTests++;
-//   }
+  std::cout << "[2] Open SysLog group ..." << std::endl;
+  try {
+    dataset.openSysLog();
+    dataset.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[3] Open StationBeam groups ..." << std::endl;
+  try {
+    dataset.openStationBeam(0,true);
+    dataset.openStationBeam(1,true);
+    dataset.openStationBeam(2,true);
+    dataset.openStationBeam(3,true);
+    //
+    dataset.openStationBeam(0,true);
+    //
+    dataset.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
   
   return nofFailedTests;
 }

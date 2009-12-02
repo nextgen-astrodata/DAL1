@@ -37,27 +37,16 @@
   \endverbatim
 */
 
+#include <fstream>
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#ifndef DAL_H
 #include "dal.h"
-#endif
-
-#ifndef DALDATASET_H
 #include "dalDataset.h"
-#endif
-
-#ifndef DALGROUP_H
 #include "dalGroup.h"
-#endif
-
-#ifndef TBB_H
 #include <TBB.h>
-#endif
-
-#include <fstream>
 #include <dalLopesEvent.h>
 
 using namespace DAL;
@@ -155,67 +144,63 @@ int main (int argc, char *argv[])
 
       dalLopesEvent event (filename);
       const unsigned int BUFSIZE=10000;
-      typedef struct CosmicRayStruct
-        {
-          //int nofDatapoints;
-          Int16 data;
-        };
-      typedef struct CRwritebuffer
-        {
-          CosmicRayStruct cr[ BUFSIZE ];
-        } CRwritebuffer;
+      typedef struct CosmicRayStruct {
+	//int nofDatapoints;
+	Int16 data;
+      };
+      typedef struct CRwritebuffer {
+	CosmicRayStruct cr[ BUFSIZE ];
+      } CRwritebuffer;
       CRwritebuffer wb;
-
+      
       nofAntennas = event.nofAntennas();
       stationGroup->setAttribute("NUM_ANTS", &nofAntennas );
-
+      
       blocksize   = event.blocksize();
-
+      
       unsigned int samps =  blocksize;
       stationGroup->setAttribute("NUMSAMPS", &samps );
-
+      
       data = new short[ blocksize ];
-
+      
       for (unsigned int antenna(0); antenna<nofAntennas; antenna++)
         {
-
+	  
           string antName = "ANTENNA" + stringify(antenna);
           dalTable * AntennaTable = dataset->createTable( antName, "Station" );
           int ri = 1;
           AntennaTable->setAttribute("RSP_ID", &ri );
           AntennaTable->addColumn( "DATA", dal_SHORT );
-
+	  
           event.data(data,antenna);
           unsigned int jj=0;
-
+	  
           // for all of the datapoint for an antenna
-          while (jj < blocksize)
-            {
-              // fill a write buffer, checking to make sure we haven't
-              //   reached the end of the input data array
-              unsigned int ii;
-              for (ii=0;
-                   (ii < BUFSIZE) && ((jj+ii)<blocksize);
-                   ii++ )
-                {
-                  wb.cr[ii].data = data[jj+ii];
-                }
-              // write the data buffer to the output file
-              AntennaTable->appendRows(&wb,ii);
-              jj += BUFSIZE;
-            }
+          while (jj < blocksize) {
+	    // fill a write buffer, checking to make sure we haven't
+	    //   reached the end of the input data array
+	    unsigned int ii;
+	    for (ii=0;
+		 (ii < BUFSIZE) && ((jj+ii)<blocksize);
+		 ii++ )
+	      {
+		wb.cr[ii].data = data[jj+ii];
+	      }
+	    // write the data buffer to the output file
+	    AntennaTable->appendRows(&wb,ii);
+	    jj += BUFSIZE;
+	  }
           delete AntennaTable;
         }
-
+      
     }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-    }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+  }
   /**************************/
-
+  
   delete stationGroup;
   delete dataset;
-
+  
   return 0;
 }

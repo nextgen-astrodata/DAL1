@@ -29,10 +29,9 @@
 #include <string>
 
 // DAL header files
+#include <CommonInterface.h>
 #include <DirectionCoordinate.h>
 #include <LinearCoordinate.h>
-#include <StokesCoordinate.h>
-#include <TabularCoordinate.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -42,138 +41,63 @@ namespace DAL { // Namespace DAL -- begin
     \ingroup DAL
     \ingroup coordinates
     
-    \brief Brief description for class CoordinatesGroup
+    \brief High-level interface to the system logs attached to a beamformed dataset
     
     \author Lars B&auml;hren
 
-    \date 2009/09/13
+    \date 2009/11/26
 
     \test tCoordinatesGroup.cpp
     
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>DirectionCoordinate
-      <li>LinearCoordinate
-      <li>StokesCoordinate
-      <li>TabularCoordinate
+      <li>LOFAR Data Format ICDs:
+      <ul>
+	<li>LOFAR Data Format ICD: Beam-Formed Data (LOFAR-USG-ICD-003)
+	<li>LOFAR Data Format ICD: LOFAR Sky Image (LOFAR-USG-ICD-004)
+      </ul>
+      <li>Components of the LOFAR user software:
+      <ul>
+	<li>CommonInterface -- Common functionality for the high-level
+	interfaces to the datasets
+      </ul>
     </ul>
+    
+    \todo addCoordinate -- add a further coordinate object to the coordinates group.
+    \todo getCoordinate -- retrieve an individual coordinate embedded within this
+          group write coordinates group to a HDF5 file
+    \todo cast embedded information into a casa::CoordinateSystem object; this
+          however will be incomplete, as the latter only stores a subset of the
+	  information this classes handles.
+    \todo get/set reference lcoation as casa::MPosition
     
     <h3>Synopsis</h3>
 
-    The coordinates group, as defined through LOFAR-USG-ICD-004, works as 
-    a container to collect coordinate descriptions as attached to an image or
+    The coordinates group, as defined through LOFAR-USG-ICD-004, works as a
+    container to collect coordinate descriptions as attached to an image or
     some other LOFAR data-set.
 
-    <table border=0>
-      <tr>
-        <td class="indexkey">Field/Keyword
-	<td class="indexkey">H5Type
-	<td class="indexkey">Type
-	<td class="indexkey">Unit
-	<td class="indexkey">Description
-      </tr>
-      <tr>
-        <td>GROUPTYPE
-	<td>Attribute
-	<td>string
-	<td>`Coordinates'
-	<td>This is a <tt>Coordinates Group</tt>
-      </tr>
-      <tr>
-        <td>EQUINOX
-	<td>Attribute
-	<td>string
-	<td>`J2000'
-	<td>Equinox of the observation
-      </tr>
-      <tr>
-        <td>SYSTEM_RADEC
-	<td>Attribute
-	<td>string
-	<td>`FK5'
-	<td>System Ra and Dec
-      </tr>
-      <tr>
-        <td>REFERENCE_LOCATION_VALUE
-	<td>Attribute
-	<td>array<double,1>
-	<td>---
-	<td>Numerical value(s) of the reference location
-      </tr>
-      <tr>
-        <td>REFERENCE_LOCATION_UNIT
-	<td>Attribute
-	<td>array<string,1>
-	<td>---
-	<td>Physical unit(s) for the reference location
-      </tr>
-      <tr>
-        <td>REFERENCE_LOCATION_FRAME
-	<td>Attribute
-	<td>string
-	<td>---
-	<td>Identifier for the reference frame of the reference position
-      </tr>
-      <tr>
-        <td>NOF_COORDINATES
-	<td>Attribute
-	<td>int
-	<td>---
-	<td>N of coordinate objects
-      </tr>
-      <tr>
-        <td>NOF_AXES
-	<td>Attribute
-	<td>int
-	<td>---
-	<td>N of coordinate axes
-      </tr>
-      <tr>
-        <td>COORDINATE_TYPES
-	<td>Attribute
-	<td>array <string,1>
-	<td>---
-	<td>embedded coordinate object types
-      </tr>
-      <tr>
-        <td>COORDINATE{N}
-	<td>Group
-	<td>---
-	<td>---
-	<td>coordinate object container
-      </tr>
-    </table>
-
-    Missing methods:
-    - addCoordinate -- add a further coordinate object to the coordinates group.
-    - getCoordinate -- retrieve an individual coordinate embedded within this group
-    - write coordinates group to a HDF5 file
-    - cast embedded information into a casa::CoordinateSystem object; this
-    however will be incomplete, as the latter only stores a subset of the
-    information this classes handles.
-    - get/set reference lcoation as casa::MPosition
-    
     <h3>Example(s)</h3>
     
   */  
-  class CoordinatesGroup {
+  class CoordinatesGroup : public CommonInterface {
 
-    //! Type of LOFAR group, "Coordinates"
-    std::string grouptype_p;
-    //! Equinox of the observation
-    std::string equinox_p;
-    //! Reference system for Ra/Dec
-    std::string system_radec_p;
-
-    //! Numerical value of the reference location
+    //! Group type descriptor
+    std::string groupType_p;
+    //! Reference location value
     std::vector<double> refLocationValue_p;
-    //! Units attached to the numerical values of the reference location
+    //! Reference location unit
     std::vector<std::string> refLocationUnit_p;
-    //! Identifier for the reference location frame
+    //! Reference location frame
     std::string refLocationFrame_p;
-
-    //! container holding the actual coordinates which are parts of this group
+    //! nof. embedded coordinate objects
+    int nofCoordinates_p;
+    //! nof. coordinate axes
+    int nofAxes_p;
+    //! Container for book-keeping on the embedded coordinate objects
+    std::vector<std::string> coordinateTypes_p;
+    //! Container for the coordinate objects embedded within this group
     std::vector<Coordinate*> coordinates_p;
     
   public:
@@ -183,80 +107,17 @@ namespace DAL { // Namespace DAL -- begin
     //! Default constructor
     CoordinatesGroup ();
     
-    /*!
-      \brief Copy constructor
-      
-      \param other -- Another CoordinatesGroup object from which to create this new
-             one.
-    */
-    CoordinatesGroup (CoordinatesGroup const &other);
+    //! Argumented constructor
+    CoordinatesGroup (hid_t const &location,
+		      bool const &create);
     
     // -------------------------------------------------------------- Destruction
-
+    
     //! Destructor
     ~CoordinatesGroup ();
     
-    // ---------------------------------------------------------------- Operators
-    
-    /*!
-      \brief Overloading of the copy operator
-      
-      \param other -- Another CoordinatesGroup object from which to make a copy.
-    */
-    CoordinatesGroup& operator= (CoordinatesGroup const &other); 
-    
     // --------------------------------------------------------------- Parameters
-
-    //! Get the Equinox of the observation
-    inline std::string equinox () {
-      return equinox_p;
-    }
-
-    //! Set the Equinox of the observation
-    inline void setEquinox (std::string const &equinox) {
-      equinox_p = equinox;
-    }
-
-    //! Get the numerical value of the reference location
-    inline std::vector<double> referenceLocationValue () {
-      return refLocationValue_p;
-    }
-
-    //! Set the numerical value of the reference location
-    bool setReferenceLocationValue (std::vector<double> const &value);
     
-    //! Get the units attached to the numerical values of the reference location
-    inline std::vector<std::string> referenceLocationUnit () {
-      return refLocationUnit_p;
-    }
-
-    //! Set the units attached to the numerical values of the reference location
-    bool setReferenceLocationUnit (std::vector<double> const &unit);
-    
-    //! Get the identifier for the reference location frame
-    inline std::string referenceLocationFrame () {
-      return refLocationFrame_p;
-    }
-    
-    //! Get the identifier for the reference location frame
-    inline void setReferenceLocationFrame (std::string const &frame) {
-      refLocationFrame_p = frame;
-    }
-    
-    //! Get the number of coordinates embedded within the group
-    inline int nofCoordinates () {
-      return coordinates_p.size();
-    }
-
-    //! Get the number of coordinate axes
-    int nofAxes ();
-
-    //! Get the types of the embedded coordinates
-    std::vector<Coordinate::Type> coordinateTypes ();
-
-    //! Get the names of the embedded coordinates
-    std::vector<std::string> coordinateNames ();
-
     /*!
       \brief Get the name of the class
       
@@ -265,47 +126,44 @@ namespace DAL { // Namespace DAL -- begin
     inline std::string className () const {
       return "CoordinatesGroup";
     }
-
-    /*!
-      \brief Provide a summary of the internal status
-    */
+    
+    //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
     }
-
+    
     /*!
       \brief Provide a summary of the internal status
-
+      
       \param os -- Output stream to which the summary is written.
     */
     void summary (std::ostream &os);    
-
+    
     // ------------------------------------------------------------------ Methods
     
-#ifdef HAVE_HDF5
-    //! Read the coordinate object from a HDF5 file
-    void h5read (hid_t const &groupID);
-    
-    //! Read the coordinate object from a HDF5 file
-    void h5read (hid_t const &locationID,
-		 std::string const &name);
-    
-    //! Write the coordinate object to a HDF5 file
-    void h5write (hid_t const &groupID);
-    
-    //! Write the coordinate object to a HDF5 file
-    void h5write (hid_t const &locationID,
-		  std::string const &name);
-#endif
+    //! Open the file containing the beamformed data.
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       bool const &create=true);
+    //! Get the group type identifier
+    std::string groupType ();
+    //! Get the reference location value
+    std::vector<double> refLocationValue ();
+    //! Get the reference location unit
+    std::vector<std::string> refLocationUnit ();
+    //! Get the reference location frame identifier
+    std::string refLocationFrame ();
 
+  protected:
+    
+    //! Open the structures embedded within the current one
+    bool openEmbedded (bool const &create);
+    //! Set up the list of attributes attached to the structure
+    void setAttributes ();
     
   private:
 
-    //! Initialize the internal parameters of the object
     void init ();
-    
-    //! Unconditional copying
-    void copy (CoordinatesGroup const &other);
     
     //! Unconditional deletion 
     void destroy(void);
@@ -315,4 +173,4 @@ namespace DAL { // Namespace DAL -- begin
 } // Namespace DAL -- end
 
 #endif /* COORDINATESGROUP_H */
-  
+

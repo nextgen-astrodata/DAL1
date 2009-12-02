@@ -52,12 +52,28 @@ int test_constructors ()
   std::cout << "\n[tCoordinatesGroup::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
+  std::string filename ("tCoordinatesGroup.h5");
   
   std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
     CoordinatesGroup coord;
-    //
     coord.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Testing argumented constructor ..." << std::endl;
+  try {
+    // create HDF5 file to which the StationBeam group is getting attached
+    hid_t fileID = H5Fcreate (filename.c_str(),
+			      H5F_ACC_TRUNC,
+			      H5P_DEFAULT,
+			      H5P_DEFAULT);
+    // create system log inside the root level of the HDF5 file
+    CoordinatesGroup coords (fileID,true);
+    // release file handle
+    H5Fclose (fileID);
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
@@ -78,9 +94,6 @@ int test_constructors ()
 int test_io ()
 {
   int nofFailedTests (0);
-
-#ifdef HAVE_HDF5
-#endif
 
   return nofFailedTests;
 }

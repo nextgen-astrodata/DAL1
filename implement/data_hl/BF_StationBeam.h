@@ -30,6 +30,7 @@
 
 // DAL header files
 #include <CommonInterface.h>
+#include <BF_PencilBeam.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -73,6 +74,9 @@ namespace DAL { // Namespace DAL -- begin
   */  
   class BF_StationBeam : public CommonInterface {
     
+    //! Station beams
+    std::map<std::string,BF_PencilBeam> pencilBeams_p;
+
   public:
     
     // ------------------------------------------------------------- Construction
@@ -124,6 +128,10 @@ namespace DAL { // Namespace DAL -- begin
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
+    
+    //! Open a pencil beam group
+    bool openPencilBeam (unsigned int const &pencilID,
+			 bool const &create=true);
     
   protected:
     

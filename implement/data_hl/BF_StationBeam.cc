@@ -209,6 +209,14 @@ namespace DAL { // Namespace DAL -- begin
       }
     }
     
+    // Open embedded groups
+    if (status) {
+      status = openEmbedded (create);
+    } else {
+      std::cerr << "[BF_StationBeam::open] Skip opening embedded groups!"
+		<< std::endl;
+    }
+ 
     return status;
   }
   
@@ -217,7 +225,37 @@ namespace DAL { // Namespace DAL -- begin
   
   bool BF_StationBeam::openEmbedded (bool const &create)
   {
-    return false;
+    bool status (true);
+    std::set<std::string> groupnames;
+    
+    /* Retrieve the names of the groups attached to the StationBeam group */
+    status = h5get_names (groupnames,
+			  location_p,
+			  H5G_GROUP);
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                               openPencilBeam
+  
+  bool BF_StationBeam::openPencilBeam (unsigned int const &pencilID,
+				       bool const &create)
+  {
+    bool status      = true;
+    std::string name = BF_PencilBeam::getName (pencilID);
+    size_t haveGroup = pencilBeams_p.count (name);
+
+    try {
+      if (location_p > 0 && haveGroup == 0) {
+	pencilBeams_p[name] = BF_PencilBeam (location_p,pencilID,create);
+      }
+    } catch (std::string message) {
+      std::cerr << "[BF_StationBeam::openPencilBeam] " << message << std::endl;
+      status = false;
+    }
+    
+    return status;
   }
   
   //_____________________________________________________________________________

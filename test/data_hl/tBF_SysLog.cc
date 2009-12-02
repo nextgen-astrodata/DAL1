@@ -21,11 +21,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <CommonAttributes.h>
 #include <BF_SysLog.h>
 
 // Namespace usage
-using DAL::CommonAttributes;
 using DAL::Filename;
 using DAL::BF_SysLog;
 

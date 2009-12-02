@@ -122,13 +122,19 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      summary
   
-  void BF_Dataset::summary (std::ostream &os)
+  void BF_Dataset::summary (std::ostream &os,
+			    bool const &showAttributes)
   {
     os << "[BF_Dataset] Summary of internal parameters." << std::endl;
-    os << "-- Filename        = " << commonAttributes_p.filename() << std::endl;
-    os << "-- Location ID     = " << location_p          << std::endl;
-    os << "-- nof. attributes = " << attributes_p.size() << std::endl;
-    os << "-- Attributes      = " << attributes_p        << std::endl;
+    os << "-- Filename                = " << commonAttributes_p.filename()
+       << std::endl ;
+    os << "-- Location ID             = " << location_p            << std::endl;
+    os << "-- nof. attributes         = " << attributes_p.size()   << std::endl;
+    if (showAttributes) {
+      os << "-- Attributes              = " << attributes_p          << std::endl;
+    }
+    os << "-- nof. SysLog groups      = " << sysLog_p.size()       << std::endl;
+    os << "-- nof. StationBeam groups = " << stationBeams_p.size() << std::endl;
   }
   
   
@@ -251,8 +257,13 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     // Open embedded groups
-    openEmbedded (create);
-    
+    if (status) {
+      status = openEmbedded (create);
+    } else {
+      std::cerr << "[BF_Dataset::open] Skip opening embedded groups!"
+		<< std::endl;
+    }
+ 
     return status;
   }
   
@@ -299,12 +310,36 @@ namespace DAL { // Namespace DAL -- begin
   bool BF_Dataset::openStationBeam (unsigned int const &stationID,
 				    bool const &create)
   {
-    bool status (true);
-
+    bool status      = true;
     std::string name = BF_StationBeam::getName (stationID);
-
-    if (sysLog_p.size() == 0 && location_p > 0) {
-      stationBeams_p["name"] = BF_StationBeam (location_p,stationID,create);
+    size_t haveGroup = stationBeams_p.count (name);
+    
+    try {
+      if (location_p > 0 && haveGroup == 0) {
+	stationBeams_p[name] = BF_StationBeam (location_p,stationID,create);
+      }
+    } catch (std::string message) {
+      std::cerr << "[BF_Dataset::openStationBeam] " << message << std::endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                            stationBeamGroups
+  
+  bool BF_Dataset::openPencilBeam (unsigned int const &stationID,
+				   unsigned int const &pencilID,
+				   bool const &create)
+  {
+    bool status = openStationBeam (stationID,
+				   create);
+    std::string name = BF_StationBeam::getName (stationID);
+    std::map<std::string,BF_StationBeam>::iterator it = stationBeams_p.find(name);
+    
+    if (it!=stationBeams_p.end()) {
+      status = it->second.openPencilBeam(pencilID,create);
     }
     
     return status;
