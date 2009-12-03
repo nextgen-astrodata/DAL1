@@ -315,9 +315,13 @@ namespace DAL { // Namespace DAL -- begin
     size_t haveGroup = stationBeams_p.count (name);
     
     try {
+      // create the StationBeam group ...
       if (location_p > 0 && haveGroup == 0) {
 	stationBeams_p[name] = BF_StationBeam (location_p,stationID,create);
       }
+      // ... and do the book-keeping
+      int nofStations = stationBeams_p.size();
+      h5set_attribute (location_p,"NOF_STATIONS",nofStations);
     } catch (std::string message) {
       std::cerr << "[BF_Dataset::openStationBeam] " << message << std::endl;
       status = false;

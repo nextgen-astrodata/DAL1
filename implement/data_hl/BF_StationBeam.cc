@@ -249,9 +249,13 @@ namespace DAL { // Namespace DAL -- begin
     size_t haveGroup = pencilBeams_p.count (name);
 
     try {
+      // create the PencilBeam group ...
       if (location_p > 0 && haveGroup == 0) {
 	pencilBeams_p[name] = BF_PencilBeam (location_p,pencilID,create);
       }
+      // ... and do the book-keeping
+      int nofBeams = pencilBeams_p.size();
+      h5set_attribute (location_p,"NOF_PENCIL_BEAMS",nofBeams);
     } catch (std::string message) {
       std::cerr << "[BF_StationBeam::openPencilBeam] " << message << std::endl;
       status = false;
