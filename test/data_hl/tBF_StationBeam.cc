@@ -92,6 +92,37 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
+//                                                                 test_subGroups
+
+/*!
+  \brief Test working with the embedded groups
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_subGroups ()
+{
+  std::cout << "\n[tBF_StationBeam::test_subGroups]\n" << std::endl;
+
+  int nofFailedTests (0);
+  std::string filename ("tBF_StationBeam.h5");
+  hid_t fileID = H5Fopen (filename.c_str(),
+			  H5F_ACC_RDWR,
+			  H5P_DEFAULT);
+
+  if (fileID) {
+    // open StationBeam group
+    BF_StationBeam beam (fileID,1,true);
+    // open/create PencilBeam groups
+    beam.openPencilBeam (0,true);
+    beam.openPencilBeam (1,true);
+    beam.openPencilBeam (2,true);
+  }
+    
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 int main ()
@@ -100,6 +131,8 @@ int main ()
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
+  // Test working with the embedded groups
+  nofFailedTests += test_subGroups ();
 
   return nofFailedTests;
 }

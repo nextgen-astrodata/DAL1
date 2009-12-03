@@ -47,7 +47,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/11/26
 
-    \test tCoordinatesGroup.cpp
+    \test tCoordinatesGroup.cc
     
     <h3>Prerequisite</h3>
     

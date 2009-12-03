@@ -211,9 +211,9 @@ namespace DAL { // Namespace DAL -- begin
     location_p = location;
     stationBeams_p.clear();
     sysLog_p.clear();
-
+    
     /* Try to open the file */
-     location_p = H5Fopen (name.c_str(),
+    location_p = H5Fopen (name.c_str(),
 			  H5F_ACC_RDWR,
 			  H5P_DEFAULT);
     
@@ -298,7 +298,7 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
 
     if (sysLog_p.size() == 0 && location_p > 0) {
-      sysLog_p["SysLog"] = BF_SysLog (location_p,"SysLog",create);
+      sysLog_p["SysLog"] = BF_SysLog (location_p,create);
     }
     
     return status;
@@ -327,19 +327,41 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                            stationBeamGroups
+  //                                                               openPencilBeam
   
   bool BF_Dataset::openPencilBeam (unsigned int const &stationID,
 				   unsigned int const &pencilID,
 				   bool const &create)
   {
-    bool status = openStationBeam (stationID,
-				   create);
-    std::string name = BF_StationBeam::getName (stationID);
-    std::map<std::string,BF_StationBeam>::iterator it = stationBeams_p.find(name);
-    
-    if (it!=stationBeams_p.end()) {
-      status = it->second.openPencilBeam(pencilID,create);
+    bool status (true);
+
+    if (location_p > 0) {
+      // open StationBeam group within which the PencilBeam is emmbedded
+      status           = openStationBeam (stationID, create);
+      // convert StationBeam ID to name
+      std::string name = BF_StationBeam::getName (stationID);
+      // get pointer to StationBeam object
+      std::map<std::string,BF_StationBeam>::iterator it = stationBeams_p.find(name);
+      
+      if( it == stationBeams_p.end() ) {
+	std::cerr << "[BF_Dataset::openStationBeam] Unable to find StationBeam!"
+		  << std::endl;
+	status = false;
+      } else {
+	// Feedback
+	std::cout << "[BF_Dataset::openStationBeam]"     << std::endl;
+	std::cout << "-- Station ID     = " << stationID << std::endl;
+	std::cout << "-- Station name   = " << name      << std::endl;
+	std::cout << "-- Pencil beam ID = " << pencilID  << std::endl;
+	std::cout << "-- create group?  = " << create    << std::endl;
+	// open PencilBeam
+	it->second.openPencilBeam(pencilID,create);
+      }
+      
+    } else {
+      std::cerr << "[BF_Dataset::openStationBeam] No connection to dataset!"
+		<< std::endl;
+      status = false;
     }
     
     return status;

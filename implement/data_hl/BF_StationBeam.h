@@ -31,6 +31,7 @@
 // DAL header files
 #include <CommonInterface.h>
 #include <BF_PencilBeam.h>
+#include <CoordinatesGroup.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -46,7 +47,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/10/28
 
-    \test tBF_StationBeam.cpp
+    \test tBF_StationBeam.cc
     
     <h3>Prerequisite</h3>
     
@@ -76,7 +77,9 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Station beams
     std::map<std::string,BF_PencilBeam> pencilBeams_p;
-
+    //! Coordinates group
+    std::map<std::string,CoordinatesGroup> coordinates_p;
+    
   public:
     
     // ------------------------------------------------------------- Construction
@@ -90,12 +93,12 @@ namespace DAL { // Namespace DAL -- begin
 		    bool const &create);
     
     // -------------------------------------------------------------- Destruction
-
+    
     //! Destructor
     ~BF_StationBeam ();
     
     // --------------------------------------------------------------- Parameters
-
+    
     /*!
       \brief Get the name of the class
       
@@ -104,10 +107,8 @@ namespace DAL { // Namespace DAL -- begin
     inline std::string className () const {
       return "BF_StationBeam";
     }
-
-    /*!
-      \brief Provide a summary of the internal status
-    */
+    
+    //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
     }
@@ -133,13 +134,15 @@ namespace DAL { // Namespace DAL -- begin
     bool openPencilBeam (unsigned int const &pencilID,
 			 bool const &create=true);
     
+    //! Open the coordinates group
+    bool openCoordinatesGroup (bool const &create=true);
+    
   protected:
     
     //! Open the structures embedded within the current one
     bool openEmbedded (bool const &create);
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
-
 
   private:
     

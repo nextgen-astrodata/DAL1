@@ -141,19 +141,18 @@ namespace DAL { // Namespace DAL -- begin
     /* Set up the list of attributes attached to the root group */
     setAttributes();
 
-    /* Try to open the group: get list of groups attached to 'location' and
-       check if 'name' is part of it.
-    */
+    /* Get the list of groups attached to this group */
     std::set<std::string> groups;
     h5get_names (groups,location,H5G_GROUP);
-    if (static_cast<bool>(attributes_p.count(name))) {
-      location_p = H5Gopen2 (location,
-			     name.c_str(),
-			     H5P_DEFAULT);
+
+    if (static_cast<bool>(groups.count(name))) {
+      location_p = H5Gopen (location,
+			    name.c_str(),
+			    H5P_DEFAULT);
     } else {
       location_p = 0;
     }
-    
+
     if (location_p > 0) {
       status = true;
     } else {
@@ -233,6 +232,9 @@ namespace DAL { // Namespace DAL -- begin
 			  location_p,
 			  H5G_GROUP);
 
+    /* Open coordinates group */
+    status = openCoordinatesGroup (create);
+
     return status;
   }
 
@@ -257,7 +259,21 @@ namespace DAL { // Namespace DAL -- begin
     
     return status;
   }
+
+  //_____________________________________________________________________________
+  //                                                         openCoordinatesGroup
   
+  bool BF_StationBeam::openCoordinatesGroup (bool const &create)
+  {
+    bool status (true);
+
+    if (coordinates_p.size() == 0 && location_p > 0) {
+      coordinates_p["CoordinatesGroup"] = CoordinatesGroup (location_p,create);
+    }
+    
+    return status;
+  }
+
   //_____________________________________________________________________________
   //                                                                      getName
   

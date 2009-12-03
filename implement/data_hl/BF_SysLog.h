@@ -45,7 +45,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/11/26
 
-    \test tBF_SysLog.cpp
+    \test tBF_SysLog.cc
     
     <h3>Prerequisite</h3>
     
@@ -82,7 +82,6 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor
     BF_SysLog (hid_t const &location,
-	       std::string const &name,
 	       bool const &create);
     
     // -------------------------------------------------------------- Destruction

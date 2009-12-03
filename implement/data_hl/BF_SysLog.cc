@@ -43,11 +43,10 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                    BF_SysLog
   
   BF_SysLog::BF_SysLog (hid_t const &location,
-			std::string const &name,
 			bool const &create)
   {
     open (location,
-	  name,
+	  "SysLog",
 	  create);
   }
   

@@ -72,7 +72,7 @@ int test_constructors ()
 			      H5P_DEFAULT,
 			      H5P_DEFAULT);
     // create system log inside the root level of the HDF5 file
-    BF_SysLog log (fileID,"SysLog",true);
+    BF_SysLog log (fileID,true);
     // release file handle
     H5Fclose (fileID);
   } catch (std::string message) {

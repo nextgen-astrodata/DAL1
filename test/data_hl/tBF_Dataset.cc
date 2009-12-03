@@ -126,18 +126,7 @@ int test_subGroups ()
 		 Filename::h5);
   BF_Dataset dataset (file);
   
-  std::cout << "[1] Get name of StationBeam group from index ..." << std::endl;
-  try {
-    unsigned int nofStations (20);
-    for (unsigned int n(0); n<nofStations; ++n) {
-      std::cout << "\t" << n << "\t" << stationBeamName(n) << std::endl;
-    }
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-
-  std::cout << "[2] Open SysLog group ..." << std::endl;
+  std::cout << "[1] Open SysLog group ..." << std::endl;
   try {
     dataset.openSysLog();
     dataset.summary(); 
@@ -146,7 +135,7 @@ int test_subGroups ()
     nofFailedTests++;
   }
   
-  std::cout << "[3] Open StationBeam groups ..." << std::endl;
+  std::cout << "[2] Open StationBeam groups ..." << std::endl;
   try {
     dataset.openStationBeam(0,true);
     dataset.openStationBeam(1,true);
@@ -154,6 +143,24 @@ int test_subGroups ()
     dataset.openStationBeam(3,true);
     //
     dataset.openStationBeam(0,true);
+    //
+    dataset.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[3] Open PencilBeam groups ..." << std::endl;
+  try {
+    // open PencilBeam groups within existing StationBeam group
+    dataset.openPencilBeam(0,0,true);
+    dataset.openPencilBeam(0,1,true);
+    dataset.openPencilBeam(0,2,true);
+    // open PencilBeamGroups without previously existing StationBeam group
+    dataset.openPencilBeam(10,0,true);
+    dataset.openPencilBeam(10,1,true);
+    dataset.openPencilBeam(10,2,true);
+    dataset.openPencilBeam(10,3,true);
     //
     dataset.summary(); 
   } catch (std::string message) {
