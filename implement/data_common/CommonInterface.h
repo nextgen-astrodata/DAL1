@@ -114,13 +114,13 @@ namespace DAL { // Namespace DAL -- begin
 
   public:
     
-    // ------------------------------------------------------------- Construction
-    
+    // === Construction =========================================================
+
     //! Default constructor
     CommonInterface ();
     
-    // -------------------------------------------------------------- Destruction
-    
+    // === Destruction ==========================================================
+
     //! Destructor
     virtual ~CommonInterface ();
     

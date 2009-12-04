@@ -34,6 +34,8 @@ endmacro (build_test)
 ##
 ## ==============================================================================
 
+add_subdirectory (hdf5)
+add_subdirectory (core)
 add_subdirectory (coordinates)
 add_subdirectory (data_common)
 add_subdirectory (data_hl)
@@ -44,15 +46,10 @@ set (tests
   tdal
   tdal_fits
   tpulsar_dal
-  tdalAttribute
-  tdalCommon
-  tdalDataset
-  tdalTable
   tBeamFormed
   tBeamGroup
   tBeamSubband
   tEnumerations
-  tTimestamp
   tTBB
   tTBB_DipoleDataset
   tTBB_StationGroup
@@ -193,27 +190,7 @@ if (DAL_ENABLE_TESTING)
 
   add_test (tdal tdal)
   add_test (tEnumerations tEnumerations)
-  add_test (tTimestamp tTimestamp)
 
-  ## -----------------------------------------------------------------
-  ## [2] tdalDataset
-
-  if (dataset_ms)
-    add_test (tdalDataset_ms tdalDataset ${dataset_ms})
-  endif (dataset_ms)
-  
-  if (dataset_beamformed)
-    add_test (tdalDataset_hdf5_bf tdalDataset ${dataset_beamformed})
-  endif (dataset_beamformed)
-  
-  if (dataset_tbb)
-    add_test (tdalDataset_hdf5_tbb tdalDataset ${dataset_tbb})
-  endif (dataset_tbb)
-  
-  if (dataset_fits)
-    add_test (tdalDataset_fits tdalDataset ${dataset_fits})
-  endif (dataset_fits)
-  
   ## -----------------------------------------------------------------
   ## [3] Processing tests which require sample datasets
   
@@ -222,12 +199,6 @@ if (DAL_ENABLE_TESTING)
   else (dataset_ms)
     message (STATUS "Unable to find MS dataset; skipping tests.")
   endif (dataset_ms)
-  
-  if (dataset_tbb AND dataset_beamformed)
-    add_test (tdalCommon tdalCommon ${dataset_tbb} ${dataset_beamformed})
-  else (dataset_tbb AND dataset_beamformed)
-    add_test (tdalCommon tdalCommon)
-  endif (dataset_tbb AND dataset_beamformed)
   
   ## -----------------------------------------------------------------
   ## [3] Tests using LopesEvent datasets
@@ -255,12 +226,9 @@ if (DAL_ENABLE_TESTING)
   ## [5] Tests using HDF5-based beam-formed data
 
   if (dataset_beamformed)
-    add_test (tdalTable tdalTable ${dataset_beamformed})
     add_test (tBeamFormed tBeamFormed ${dataset_beamformed})
     add_test (tBeamGroup tBeamGroup ${dataset_beamformed})
     add_test (tBeamSubband tBeamSubband ${dataset_beamformed})
-  else (dataset_beamformed)
-    add_test (tdalTable tdalTable)
   endif (dataset_beamformed)
   
   ## -----------------------------------------------------------------

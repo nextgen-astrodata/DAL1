@@ -96,6 +96,18 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
 
   //_____________________________________________________________________________
+  //                                                             commonAttributes
+  
+  CommonAttributes BF_Dataset::commonAttributes ()
+  {
+    if (location_p > 0) {
+      commonAttributes_p.h5read (location_p);
+    }
+
+    return commonAttributes_p;
+  }
+
+  //_____________________________________________________________________________
   //                                                          setCommonAttributes
   
   /*!

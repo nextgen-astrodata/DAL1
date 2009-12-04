@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2009                                                    *
- *   Lars B"ahren (<mail>)                                                 *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,58 +21,72 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <dalAttribute.h>
-
-// Namespace usage
-using DAL::dalAttribute;
-
 /*!
-  \file tdalAttribute.cc
+  \file tHDF5_Dataset.cc
 
-  \ingroup IO
+  \ingroup DAL
 
-  \brief A collection of test routines for the dalAttribute class
+  \brief A collection of tests for working with a HDF5 Dataset object
  
-  \author Lars Baehren
+  \author Lars B&auml;hren
  
-  \date 2009/09/02
+  \date 2009/12/03
 */
 
-// -----------------------------------------------------------------------------
+#include <iostream>
+#include <string>
+
+#include <dalCommon.h>
+#include "H5Dataset.h"
+
+//_______________________________________________________________________________
+//                                                                    test_create
 
 /*!
-  \brief Test constructors for a new dalAttribute object
+  \brief Test the creation of a Dataset object within a file
 
-  \return nofFailedTests -- The number of failed tests encountered within this
-          function.
+  \param fileID -- File identifier
 */
-int test_constructors ()
+int test_create (hid_t const &fileID)
 {
-  std::cout << "\n[tdalAttribute::test_constructors]\n" << std::endl;
-
   int nofFailedTests (0);
-  
-  std::cout << "[1] Testing default constructor ..." << std::endl;
-  try {
-    dalAttribute newObject;
-    //
-    newObject.summary(); 
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
+  std::string name ("Data");
+  std::vector<hsize_t> shape (2);
+
+  shape[0] = 1024;
+  shape[1] = 4;
+
+  //! Create the HDF5 Dataset
+  DAL::H5Dataset (fileID,
+		  name,
+		  shape);
   
   return nofFailedTests;
 }
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                           main
 
 int main ()
 {
   int nofFailedTests (0);
+  std::string filename ("Dataset.h5");
 
-  // Test for the constructor(s)
-  nofFailedTests += test_constructors ();
+  // open the file to work with
+  hid_t fileID = H5Fcreate (filename.c_str(),
+			    H5F_ACC_TRUNC,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT);
 
+  if (fileID > 0) {
+    nofFailedTests += test_create (fileID);
+  } else {
+    std::cerr << "[tHDF5_Dataset] Failed to open file - skipping tests."
+	      << std::endl;
+  }
+  
+  // close the file
+  H5Fclose(fileID);
+  
   return nofFailedTests;
 }

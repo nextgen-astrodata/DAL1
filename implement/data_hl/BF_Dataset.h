@@ -104,9 +104,7 @@ namespace DAL { // Namespace DAL -- begin
     // --------------------------------------------------------------- Parameters
 
     //! Get the set of common attributes attached to the root group of the file
-    inline CommonAttributes commonAttributes () const {
-      return commonAttributes_p;
-    }
+    CommonAttributes commonAttributes ();
 
     //! Set the set of common attributes attached to the root group of the file
     bool setCommonAttributes (CommonAttributes const &attributes);

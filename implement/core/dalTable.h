@@ -42,8 +42,11 @@ namespace DAL {
     
     \brief Object representing a table within a dataset.
     
-    \test tdalTable.cpp
+    \test tdalTable.cc
     
+    \author Joseph Masters
+    \date 12-04-2006
+
     A dalTable can reside within a dataset, or within a group that is within
     a dataset.
   */
@@ -88,19 +91,19 @@ namespace DAL {
     
   public:
     
-    // ------------------------------------------------ Construction
-    
+    // === Construction =========================================================
+
     //! Default table constructor
     dalTable();
     //! Table constructor for a specific file format.
     dalTable( string filetype );
     
-    // ------------------------------------------------- Destruction
-    
+    // === Destruction ==========================================================
+
     //! Destructor
     ~dalTable();
     
-    // -------------------------------------------- Parameter access
+    // === Parameter access =====================================================
     
     //! Get the HDF5 file identifier
     inline hid_t fileID () const {

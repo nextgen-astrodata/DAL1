@@ -2,40 +2,40 @@
 ##_______________________________________________________________________________
 ##                                                           List of source files
 
-set (tests_data_hl 
-  tFilename
-  tCommonAttributes
-  )
+#file (GLOB tests_hdf5 *.cc)
+
+set (tests_hdf5 tHDF5_Dataset.cc)
 
 ##_______________________________________________________________________________
 ##                                                     Build/Install instructions
 
-foreach (src ${tests_data_hl})
+add_library (dal_hdf5
+  H5Dataset.cc
+  H5Hyperslab.cc
+  )
+
+foreach (src ${tests_hdf5})
+  ## get the name of the file without the extension
+  get_filename_component (src ${src} NAME_WE)
   ## compiler instructions
   add_executable(${src} ${src}.cc)
   ## linker instructions
-  if (HAVE_CASA OR HAVE_CASACORE)
-    target_link_libraries(${src}
-      ${CASA_LIBRARIES}
-      dal
-      ${CASA_LIBRARIES}
-      ${CFITSIO_LIBRARIES}
-      ${dal_link_libraries}
-      ${HAVE_MALLOC_DEBUG}
-      )
-  else (HAVE_CASA OR HAVE_CASACORE)
-    target_link_libraries(${src} dal)
-  endif (HAVE_CASA OR HAVE_CASACORE)
+  target_link_libraries(${src}
+    dal_hdf5
+    dal
+    ${CASA_LIBRARIES}
+    ${CFITSIO_LIBRARIES}
+    ${dal_link_libraries}
+    ${HAVE_MALLOC_DEBUG}
+    )
   ## installation instructions
   install (TARGETS ${src}
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  )
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    )
 endforeach (src)
 
 ##_______________________________________________________________________________
 ##                                                           Testing instructions
 
-add_test (tTimestamp tTimestamp)
-add_test (tFilename tFilename)
-add_test (tCommonAttributes tCommonAttributes)
+add_test (tHDF5_Dataset tHDF5_Dataset)

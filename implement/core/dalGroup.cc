@@ -25,52 +25,41 @@
 #include "dalGroup.h"
 #endif
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   // ============================================================================
   //
   //  Construction
   //
   // ============================================================================
-
+  
   //_____________________________________________________________________________
   //                                                                     dalGroup
-
+  
   dalGroup::dalGroup()
   {
-    file           = NULL;
-    groupname      = "UNKNOWN";
-    groupname_full = "UNKNOWN";
-    group          = NULL;
-    filter         = NULL;
-    file_id        = 0;
-    group_id       = 0;
-    status         = 0;
+    init ();
   }
-
 
   //_____________________________________________________________________________
   //                                                                     dalGroup
-
+  
   /*!
-    \brief Create a group in a certain file.
-
     Create a group in a certain file.
-
+    
     \param groupname The name of the group to create.
     \param file A pointer to the file where you want to create the group.
   */
-  dalGroup::dalGroup( const char * gname, void * voidfile )
+  dalGroup::dalGroup (const char * gname,
+		      void * voidfile)
   {
-
-    dalGroup();
+    init ();
 
     hid_t * lclfile = (hid_t*)voidfile; // H5File object
-    file = lclfile;
-    file_id = *lclfile;  // get the file handle
+    file            = lclfile;
+    file_id         = *lclfile;  // get the file handle
 
-    groupname = gname;
+    groupname_p    = gname;
     groupname_full = "/" + stringify(gname);
     if ( ( group_id = H5Gcreate( file_id, groupname_full.c_str(),  H5P_DEFAULT,
                                  H5P_DEFAULT, H5P_DEFAULT ) ) < 0 )
@@ -86,18 +75,17 @@ namespace DAL
   //                                                                     dalGroup
 
   /*!
-    \brief Create a subgroup.
-
     Create a subgroup in an existing group.
-
+    
     \param group_id The parent group identifier.
     \param gname The name of the subgroup.
-   */
-  dalGroup::dalGroup( hid_t obj_id, const char * gname )
+  */
+  dalGroup::dalGroup (hid_t location_id,
+		      const char * gname )
   {
-    dalGroup();
-
-    if ( ( group_id = H5Gcreate( obj_id, gname, H5P_DEFAULT, H5P_DEFAULT,
+    init();
+    
+    if ( ( group_id = H5Gcreate( location_id, gname, H5P_DEFAULT, H5P_DEFAULT,
                                  H5P_DEFAULT ) ) < 0 )
       {
         std::cerr << "ERROR: Could not create group'" << string( gname )
@@ -110,24 +98,19 @@ namespace DAL
   //                                                                         open
 
   /*!
-    \brief Open an existing group.
-
-    Open an existing group.
-
     \param file A pointer to the file.
     \param groupname The name of the group you want to open.
     \return An identifier for the new group.
    */
-  int dalGroup::open( void * voidfile, std::string gname )
+  int dalGroup::open (void * voidfile,
+		      std::string gname)
   {
-
-    groupname = gname;
-
     hid_t * lclfile = (hid_t*)voidfile; // H5File object
-    file = lclfile;
-    file_id = *lclfile;  // get the file handle
+    file            = lclfile;
+    file_id         = *lclfile;  // get the file handle
+    groupname_p     = gname;
 
-    groupname_full = "/" + groupname;
+    groupname_full = "/" + groupname_p;
     if ( ( group_id = H5Gopen1( file_id, groupname_full.c_str() ) ) < 0 )
       {
         std::cerr << "ERROR: Could not create group'" << groupname_full
@@ -141,64 +124,84 @@ namespace DAL
   //_____________________________________________________________________________
   //                                                                        close
 
-  /*!
-    \brief Close a group.
-
-    Cloase a group.
-
-   */
   bool dalGroup::close()
   {
-    if ( 0 != group_id )
-      {
-        if ( H5Gclose(group_id) < 0 )
-          {
-            std::cerr << "ERROR: dalGroup::close() failed.\n";
-            return DAL::FAIL;
-          }
-        group_id = 0;
+    if ( 0 != group_id ) {
+      if ( H5Gclose(group_id) < 0 ) {
+	std::cerr << "ERROR: dalGroup::close() failed.\n";
+	return DAL::FAIL;
       }
+      group_id = 0;
+    }
     return DAL::SUCCESS;
   }
-
-
-// ------------------------------------------------------------ ~dalGroup
-
-  /*!
-    \brief Default destructor.
-
-    Default destructor.
-   */
+  
+  // ============================================================================
+  //
+  //  Destruction
+  //
+  // ============================================================================
+  
   dalGroup::~dalGroup()
   {
-    if ( 0 != group_id )
-      {
-        if ( H5Gclose(group_id) < 0 )
-          {
-            std::cerr << "ERROR: dalGroup::close() failed.\n";
-          }
-        group_id = 0;
+    if ( 0 != group_id ) {
+      if ( H5Gclose(group_id) < 0 ) {
+	std::cerr << "ERROR: dalGroup::close() failed.\n";
       }
+      group_id = 0;
+    }
   }
-
+  
   // ============================================================================
   //
   //  Parameters
   //
   // ============================================================================
 
+  //_____________________________________________________________________________
+  //                                                                        getId
+  
+  /*!
+    \return The group identifier as an integer.
+  */
+  hid_t dalGroup::getId()
+  {
+    return group_id;
+  }
+  
+  // ============================================================================
+  //
+  //  Methods
+  //
+  // ============================================================================
+  
+  void dalGroup::init () 
+  {
+    file           = NULL;
+    groupname_p    = "UNKNOWN";
+    groupname_full = "UNKNOWN";
+    group          = NULL;
+    filter         = NULL;
+    file_id        = 0;
+    group_id       = 0;
+    status         = 0;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                      summary
+  
   /*!
     \param os -- Output stream to which the summary will be written.
   */
   void dalGroup::summary(std::ostream &os)
   {
     os << "[dalGroup] Summary of object properties"  << endl;
-
-    os << "-- File ID            = " << file_id   << std::endl;
-    os << "-- Group ID           = " << group_id  << std::endl;
-    os << "-- Group name         = " << groupname << std::endl;
-    os << "-- Status             = " << status    << std::endl;
-
+    
+    os << "-- File ID            = " << file_id     << std::endl;
+    os << "-- Group ID           = " << group_id    << std::endl;
+    os << "-- Group name         = " << groupname_p << std::endl;
+    os << "-- Status             = " << status      << std::endl;
+    
     std::vector<std::string> memberNames = getMemberNames();
     os << "-- nof. group members = " << memberNames.size() << std::endl;
     os << "-- Member names       = [";
@@ -207,21 +210,7 @@ namespace DAL
         os << " " << memberNames[n];
       }
     os << " ]" << std::endl;
-
-  }
-
-  // ------------------------------------------------------------ getId
-
-  /*!
-    \brief Get the group ID.
-
-    Retrieve the identifier for the group.
-
-    \return The group identifier as an integer.
-  */
-  hid_t dalGroup::getId()
-  {
-    return group_id;
+    
   }
 
   // -------------------------------------------------- dalGroup_file_info
@@ -258,28 +247,39 @@ namespace DAL
     return 0;
   }
 
-
-// ------------------------------------------------------------ getMemberNames
+  //_____________________________________________________________________________
+  //                                                               getMemberNames
 
   /*!
-    \brief Retrieve the array or table member names.
-
-    Retrief the array or table member names from the group.
-
     \return A vector of strings representing the member names.
    */
-  vector<string> dalGroup::getMemberNames()
+  vector<string> dalGroup::getMemberNames ()
   {
     vector<string> member_names;
-    H5Giterate( file_id, groupname.c_str(), NULL, dalGroup_file_info, &member_names );
+    H5G_info_t groupInfo;
+    herr_t h5error = H5Gget_info (group_id, &groupInfo);
+
+    if (h5error == 0) {
+      // Summary of group info
+      std::cout << "[dalGroup::getMemberNames]" << std::endl;
+      std::cout << "-- group name       = " << groupname_full    << std::endl;
+      std::cout << "-- nof. links       = " << groupInfo.nlinks  << std::endl;
+      std::cout << "-- has mounted file = " << groupInfo.mounted << std::endl;
+      //
+      H5Giterate (file_id,
+		  groupname_full.c_str(),
+		  NULL,
+		  dalGroup_file_info,
+		  &member_names);
+    }
+
     return member_names;
   }
 
-// ------------------------------------------------------------ setName
+  //_____________________________________________________________________________
+  //                                                                      setName
 
   /*!
-    \brief Set group name.
-
     Set the name of the group.
 
     \param gname The name of the group.
@@ -287,27 +287,23 @@ namespace DAL
    */
   bool dalGroup::setName ( std::string gname )
   {
-    if ( gname.length() > 0 )
-      {
-        groupname = gname;
-        return SUCCESS;
-      }
-    else
-      {
-        std::cerr << "Error:  Group name must not be empty.\n";
-        return FAIL;
-      }
+    if ( gname.length() > 0 ) {
+      groupname_p = gname;
+      return SUCCESS;
+    }
+    else {
+      std::cerr << "Error:  Group name must not be empty.\n";
+      return FAIL;
+    }
   }
-
-
-// ------------------------------------------------------- createShortArray
-
+  
+  
+  // ------------------------------------------------------- createShortArray
+  
   /*!
-    \brief Create an array of shorts within the group.
-
     Create an array of shorts with any dimensions.  This is usually
     called from the dataset object and not from the developer.
-
+    
     \param arrayname A string containing he name of the array.
     \param dims A vector specifying the array dimensions.
     \param data A structure containing the data to be written.  The size
@@ -442,22 +438,19 @@ namespace DAL
     return la;
   }
 
-// ------------------------------------------------------------ getName
+  //_____________________________________________________________________________
+  //                                                                      getName
 
   /*!
-     \brief Get group name.
-
-    Retrieve the name of the group object.
-
     \return The name of the group.
-   */
+  */
   string dalGroup::getName ()
   {
-    return groupname;
+    return groupname_p;
   }
 
-
-  // ---------------------------------------------- setAttribute
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \brief Define a char attribute.
@@ -470,12 +463,15 @@ namespace DAL
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalGroup::setAttribute( std::string attrname, char * data, int size )
+  bool dalGroup::setAttribute (std::string attrname,
+			       char * data,
+			       int size)
   {
     return h5set_attribute( H5T_NATIVE_CHAR, group_id, attrname, data, size );
   }
 
-  // ---------------------------------------------- setAttribute
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \brief Define a short attribute.
@@ -493,7 +489,8 @@ namespace DAL
     return h5set_attribute( H5T_NATIVE_SHORT, group_id, attrname, data, size );
   }
 
-  // ---------------------------------------------- setAttribute
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \brief Define a integer attribute.
@@ -529,7 +526,8 @@ namespace DAL
     return h5set_attribute( H5T_NATIVE_UINT, group_id, attrname, data, size );
   }
 
-  // ---------------------------------------------- setAttribute
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \brief Define a long integer attribute.
@@ -547,7 +545,8 @@ namespace DAL
     return h5set_attribute( H5T_NATIVE_LONG, group_id, attrname, data, size );
   }
 
-  // ---------------------------------------------- setAttribute
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \brief Define a floating point attribute.
@@ -565,7 +564,8 @@ namespace DAL
     return h5set_attribute( H5T_NATIVE_FLOAT, group_id, attrname, data, size );
   }
 
-  // ---------------------------------------------- setAttribute
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \brief Define a double precision floating point attribute.
@@ -583,7 +583,8 @@ namespace DAL
     return h5set_attribute( H5T_NATIVE_DOUBLE, group_id, attrname, data, size );
   }
 
-  // ---------------------------------------------- setAttribute_string
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
 
   /*!
     \brief Define a string attribute.

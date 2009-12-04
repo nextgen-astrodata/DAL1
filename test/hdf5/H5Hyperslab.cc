@@ -1,9 +1,9 @@
 /*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
+ | $Id:: NewClass.cc 1964 2008-09-06 17:52:38Z baehren                   $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2009                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <dalAttribute.h>
+#include "H5Hyperslab.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -31,16 +31,10 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  dalAttribute::dalAttribute ()
-  {
-  }
-
-  dalAttribute::dalAttribute (Name const &id)
-  {
-    attributeID_p = id;
-  }
+  H5Hyperslab::H5Hyperslab ()
+  {;}
   
-  dalAttribute::dalAttribute (dalAttribute const &other)
+  H5Hyperslab::H5Hyperslab (H5Hyperslab const &other)
   {
     copy (other);
   }
@@ -51,13 +45,16 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  dalAttribute::~dalAttribute ()
+  H5Hyperslab::~H5Hyperslab ()
   {
     destroy();
   }
   
-  void dalAttribute::destroy ()
-  {;}
+  void H5Hyperslab::destroy ()
+  {
+    /* Release HDF5 object handler */
+    H5Dclose (datasetID_p);
+  }
   
   // ============================================================================
   //
@@ -65,7 +62,7 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  dalAttribute& dalAttribute::operator= (dalAttribute const &other)
+  H5Hyperslab& H5Hyperslab::operator= (H5Hyperslab const &other)
   {
     if (this != &other) {
       destroy ();
@@ -74,10 +71,8 @@ namespace DAL { // Namespace DAL -- begin
     return *this;
   }
   
-  void dalAttribute::copy (dalAttribute const &other)
-  {
-    attributeID_p = other.attributeID_p;
-  }
+  void H5Hyperslab::copy (H5Hyperslab const &other)
+  {;}
 
   // ============================================================================
   //
@@ -85,9 +80,9 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  void dalAttribute::summary (std::ostream &os)
+  void H5Hyperslab::summary (std::ostream &os)
   {
-    os << "[dalAttribute] Summary of internal parameters." << std::endl;
+    os << "[H5Hyperslab] Summary of internal parameters." << std::endl;
   }
   
   
@@ -97,69 +92,35 @@ namespace DAL { // Namespace DAL -- begin
   //  Methods
   //
   // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                                  openDataset
   
-  std::string dalAttribute::getName (Name const &id)
+  bool H5Hyperslab::openDataset (hid_t const &location,
+				 std::string const &name)
   {
-    std::string name;
+    bool status (true);
+    hid_t dataset_id (0);
     
-    switch (id) {
-      /************************************************************************
-       * Common attributes to be attached to the root group of every data-set
-       ************************************************************************/
-    case GROUPTYPE:
-      name = "GROUPTYPE";
-      break;
-    case FILENAME:
-      name = "FILENAME";
-      break;
-    case FILETYPE:
-      name = "FILETYPE";
-      break;
-    case FILEDATE:
-      name = "FILEDATE";
-      break;
-    case TELESCOPE:
-      name = "TELESCOPE";
-      break;
-    case PROJECT_ID:
-      name = "PROJECT_ID";
-      break;
-    case PROJECT_NAME:
-      name = "PROJECT_NAME";
-      break;
-    case PROJECT_DESCRIPTION:
-      name = "PROJECT_DESCRIPTION";
-      break;
-      /************************************************************************
-       * Attributes required for TBB data
-       ************************************************************************/
-    case STATION_ID:
-      name = "STATION_ID";
-      break;
-    case RSP_ID:
-      name = "RSP_ID";
-      break;
-    case RCU_ID:
-      name = "RCU_ID";
-      break;
-    case ANTENNA_POSITION_VALUE:
-      name = "ANTENNA_POSITION_VALUE";
-      break;
-    case ANTENNA_POSITION_UNIT:
-      name = "ANTENNA_POSITION_UNIT";
-      break;
-    case ANTENNA_POSITION_FRAME:
-      name = "ANTENNA_POSITION_FRAME";
-      break;
-      /************************************************************************
-       * Default value (in case attribute is unknown)
-       ************************************************************************/
-    default:
-      name = "UNDEFINED";
-      break;
-    };
+    try {
+      dataset_id = H5Dopen (location,
+			    name.c_str(),
+			    H5P_DEFAULT);
+    }
+    catch (std::string message) {
+      std::cerr << "[H5Hyperslab::openDataset] " << message << std::endl;
+      status = false;
+    }
     
-    return name;
+    if (dataset_id > 0) {
+      datasetID_p = dataset_id;
+    }
+    else {
+      datasetID_p = 0;
+      status = false;
+    }
+    
+    return status;
   }
   
 } // Namespace DAL -- end
