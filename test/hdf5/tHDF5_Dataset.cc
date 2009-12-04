@@ -57,9 +57,13 @@ int test_create (hid_t const &fileID)
   shape[1] = 4;
 
   //! Create the HDF5 Dataset
-  DAL::H5Dataset (fileID,
-		  name,
-		  shape);
+  DAL::H5Dataset dataset (fileID,
+			  name,
+			  shape);
+  
+  dataset.setAttribute ("NOF_AXES", int(2)        );
+  dataset.setAttribute ("NAXIS1",   int(shape[0]) );
+  dataset.setAttribute ("NAXIS2",   int(shape[1]) );
   
   return nofFailedTests;
 }

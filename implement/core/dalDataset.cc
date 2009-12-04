@@ -874,7 +874,6 @@ namespace DAL {
    *****************************************************************/
 
   /*!
-    \brief create a new table in the root group
     \param tablename
     \return dalTable
   */
@@ -900,7 +899,6 @@ namespace DAL {
   /*!
     Creates a table in a group (mainly for hdf5)
 
-    \brief create a new table in a specified group
     \param tablename -- Name of the table to be created
     \param groupname -- Name of the group within which the table is to be
            created.

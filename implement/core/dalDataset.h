@@ -204,7 +204,9 @@ namespace DAL {
 					std::vector<int> dims,
 					complex<float> data[],
 					std::vector<int>cdims );
+    //! Create a new table in the root group
     dalTable * createTable (std::string tablename );
+    //! Create a new table in a specified group
     dalTable * createTable (std::string tablename, std::string groupname );
     dalGroup * createGroup (const char * groupname );
     //! Set table filter.

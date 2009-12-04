@@ -282,9 +282,9 @@ namespace DAL { // Namespace DAL -- begin
 	  /* Check if the attribute name is valid */
 	  if (haveAttribute(name)) {
 	    /* Forward the function call to perform the actual write */
-	    return setAttribute (location_p,
-				 name,
-				 val);
+	    return h5set_attribute (location_p,
+				    name,
+				    val);
 	  } else {
 	    std::cerr << "[BF_Dataset::setAttribute]"
 		      << " Invalid attribute name " << name
@@ -317,9 +317,9 @@ namespace DAL { // Namespace DAL -- begin
 	  /* Check if the attribute name is valid */
 	  if (haveAttribute(name)) {
 	    /* Forward the function call to perform the actual write */
-	    return setAttribute (location_p,
-				 name,
-				 val);
+	    return h5set_attribute (location_p,
+				    name,
+				    val);
 	  } else {
 	    std::cerr << "[BF_Dataset::setAttribute]"
 		      << " Invalid attribute name " << name
@@ -333,7 +333,7 @@ namespace DAL { // Namespace DAL -- begin
 	  return false;
 	}
       }
-
+    
     //! Get default value of boolean-type attribute
     inline bool defaultBool () const {
       return false;

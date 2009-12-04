@@ -74,19 +74,75 @@ namespace DAL {
 
     // === Methods ==============================================================
 
-    //! Open the dataset
-    bool open (hid_t const &location,
-	       std::string const &name,
-	       std::vector<hsize_t> const &shape,
-	       hid_t const &datatype=H5T_NATIVE_DOUBLE);
-    
     //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
     }
 
     //! Provide a summary of the internal status
-    void summary (std::ostream &os);    
+    void summary (std::ostream &os);
+
+    //! Open the dataset
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       std::vector<hsize_t> const &shape,
+	       hid_t const &datatype=H5T_NATIVE_DOUBLE);
+    
+    /*!
+      \brief Get the value of an attribute
+      
+      \param name -- Name of the attribute for which the value is about to be
+             retrieved.
+      \retval val -- The value of the attribute.
+      \return status -- The status of the operation; returns <tt>false</tt> in
+              case an error was encountered.
+    */
+    template <class T>
+      inline bool getAttribute (std::string const &name,
+				T &val)
+      {
+	bool status (true);
+
+	if (datasetID_p > 0) {
+	  status = h5get_attribute (datasetID_p,
+				    name,
+				    val);
+	} else {
+	  std::cerr << "[H5Dataset::getAttribute] Not connected to Dataset!"
+		    << std::endl;
+	  status = false;
+	}
+
+	return status;
+      }
+
+    /*!
+      \brief Set the value of an attribute
+      
+      \param name -- Name of the attribute for which the value is about to be
+             retrieved.
+      \retval val -- The value of the attribute.
+      \return status -- The status of the operation; returns <tt>false</tt> in
+              case an error was encountered.
+    */
+    template <class T>
+      inline bool setAttribute (std::string const &name,
+				T const &val)
+      {
+	bool status (true);
+
+	if (datasetID_p > 0) {
+	  status = h5set_attribute (datasetID_p,
+				    name,
+				    val);
+	} else {
+	  std::cerr << "[H5Dataset::setAttribute] Not connected to Dataset!"
+		    << std::endl;
+	  status = false;
+	}
+
+	return status;
+      }
 
   private:
     
