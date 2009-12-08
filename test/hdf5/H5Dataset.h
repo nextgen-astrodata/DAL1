@@ -33,25 +33,29 @@ namespace DAL {
 
     //! Default constuctor
     H5Dataset ();
+
+    //! Argumented constructor
+    H5Dataset (hid_t const &location,
+	       std::string const &name);
     
     //! Argumented constructor
     H5Dataset (hid_t const &location,
 	       std::string const &name,
 	       std::vector<hsize_t> const &shape,
 	       hid_t const &datatype=H5T_NATIVE_DOUBLE);
-
+    
     // === Destruction ==========================================================
-
+    
     // Destructor
     ~H5Dataset ();
-
+    
     // === Parameter access =====================================================
-
+    
     //! Get the name of the dataset
     inline std::string name () const {
       return name_p;
     }
-
+    
     //! Get the shape of the dataset
     inline std::vector<hsize_t> shape () const {
       return shape_p;

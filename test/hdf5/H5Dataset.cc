@@ -15,6 +15,17 @@ namespace DAL {
   }
 
   /*!
+    \param location -- Identifier for the location to which the dataset is
+           attached.
+    \param name     -- Name of the dataset.
+  */
+  H5Dataset::H5Dataset (hid_t const &location,
+			std::string const &name)
+  {
+    
+  }
+  
+  /*!
     \param location -- Identifier for the location at which the dataset is about
            to be created.
     \param name     -- Name of the dataset.
