@@ -423,10 +423,27 @@ namespace DAL {  // Namespace DAL -- begin
   // ============================================================================
 
   /*!
+    \param index -- The index identifying the station
+  */
+  std::string TBB_StationGroup::getName (unsigned int const &index)
+  {
+    char uid[10];
+    sprintf(uid,
+            "%03d",
+	    index);
+    
+    std::string name (uid);
+    
+    name = "Station" + name;
+    
+    return name;
+  }
+  
+  /*!
     \param stripPath -- Strip away the path and just return the name of the
            group? By default the full path is returned, so make sure to set
-     <tt>stripPath=true</tt> if you want the name only.
-
+	   <tt>stripPath=true</tt> if you want the name only.
+    
     \return name -- The name for this group within the HDF5 file
   */
   std::string TBB_StationGroup::group_name (bool const &stripPath)

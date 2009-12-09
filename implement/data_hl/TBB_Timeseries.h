@@ -30,6 +30,7 @@
 #endif
 
 #include <CommonAttributes.h>
+#include <CommonInterface.h>
 #include <TBB_StationGroup.h>
 
 namespace DAL {  // Namespace DAL -- begin
@@ -79,36 +80,34 @@ namespace DAL {  // Namespace DAL -- begin
     <h3>Example(s)</h3>
 
   */
-  class TBB_Timeseries {
+  class TBB_Timeseries : public CommonInterface {
     
   protected:
 
-    //! LOFAR common root attributes
-    CommonAttributes attributes_p;
     //! Name of the data file
     std::string filename_p;
-    //! File handle identifier
-    hid_t fileID_p;
     //! Station groups contained within this file
-    std::vector<TBB_StationGroup> groups_p;
+    std::map<std::string,TBB_StationGroup> stationGroups_p;
     
   public:
     
-    // ------------------------------------------------------------- Construction
+    // === Construction =========================================================
     
     //! Default constructor
     TBB_Timeseries ();
-    //! Construction using filename of dataset
+    //! Open an existing dataset 
     TBB_Timeseries (std::string const &filename);
+    //! Create a new dataset from LOFAR common attributes
+    TBB_Timeseries (CommonAttributes const &attributes);
     //! Copy constructor
     TBB_Timeseries (TBB_Timeseries const &other);
     
-    // -------------------------------------------------------------- Destruction
+    // === Destruction ==========================================================
     
     //! Destructor
     ~TBB_Timeseries ();
     
-    // ---------------------------------------------------------------- Operators
+    // === Operators ============================================================
     
     /*!
       \brief Overloading of the copy operator
@@ -117,12 +116,7 @@ namespace DAL {  // Namespace DAL -- begin
     */
     TBB_Timeseries& operator= (TBB_Timeseries const &other);
     
-    // --------------------------------------------------------------- Parameters
-    
-    //! Get the common attributes attached to the root group
-    inline CommonAttributes commonAttributes () const {
-      return attributes_p;
-    }
+    // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the data file
@@ -132,39 +126,6 @@ namespace DAL {  // Namespace DAL -- begin
     inline std::string filename () const {
       return filename_p;
     }
-    
-    /*!
-      \brief Get the object identifier for the data file
-      
-      \return file_id -- The object identifier for the data file
-    */
-    inline hid_t file_id () const {
-      return fileID_p;
-    }
-    
-    //! Get the name of the telescope
-    inline std::string telescope () const {
-      return attributes_p.telescope();
-    }
-    
-    //! Get the name of the observer
-    inline std::string observer () const {
-      return attributes_p.observer();
-    }
-    
-    /*!
-      \brief Get the project name/description
-      
-      \return project -- Name/Description of the project for which this
-              observation was carried out; returns an empty string in case no
-	      keyword value could be extracted.
-    */
-    std::string project ();
-    
-    //! Get the observation ID
-    inline std::string observation_id () const {
-      return attributes_p.observationID();
-    };
     
     /*!
       \brief Get the name of the class
@@ -183,54 +144,41 @@ namespace DAL {  // Namespace DAL -- begin
     //! Provide a summary of the internal status
     void summary (std::ostream &os);
     
-    // ==========================================================================
-    //
-    //  Parameter access - TBB time-series
-    //
-    // ==========================================================================
+    // === Parameter access - TBB time-series ===================================
+
+    //! Get the LOFAR common attributes for this dataset
+    CommonAttributes commonAttributes ();
     
     /*!
       \brief Get the number of station groups collected into this file
       
       \return nofStationGroups -- The number of station groups collected into
-      this file
+              this file
     */
     inline uint nofStationGroups () const {
-      return groups_p.size();
+      return stationGroups_p.size();
     }
     
     /*!
       \brief Get the number of dipole datasets collected into this file
       
       \return nofDipoleDatasets -- The number of dipole datasets collected into
-      this file.
+              this file.
     */
-    inline uint nofDipoleDatasets () {
-      uint nofDatasets (0);
-      for (uint n(0); n<groups_p.size(); n++) {
-	nofDatasets += groups_p[n].nofDipoleDatasets();
-      }
-      return nofDatasets;
-    }
+    uint nofDipoleDatasets ();
     
     /*!
       \brief Get station groups embedded within the dataset
       
       \return stationGroups -- Vector with a set of TBB_StationGroup objects,
-      encapsulating the contents of the groups within the dataset.
+              encapsulating the contents of the groups within the dataset.
     */
-    inline std::vector<TBB_StationGroup> stationGroups () const {
-      return groups_p;
-    }
+    std::vector<TBB_StationGroup> stationGroups ();
     
     //! Get one of the embedded station group objects
     TBB_StationGroup stationGroup (uint const &station);
     
-    // ==========================================================================
-    //
-    //  Parameter access - station group
-    //
-    // ==========================================================================
+    // === Parameter access - station group =====================================
     
 #ifdef HAVE_CASA
     //! Get the type of trigger causing the dump of the TBB data
@@ -326,22 +274,34 @@ namespace DAL {  // Namespace DAL -- begin
     //! Create casa::Record used as header record for the CR::DataReader class
     casa::Record attributes2headerRecord ();
 #endif
+
+    // === Methods ==============================================================
     
+    //! Open the file containing the TBB time-series data.
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       bool const &create=true);
+    
+  protected:
+    
+    //! Open the structures embedded within the current one
+    bool openEmbedded (bool const &create);
+    //! Set up the list of attributes attached to the structure
+    void setAttributes ();
+
   private:
     
     //! Unconditional copying
     void copy (TBB_Timeseries const &other);
     //! Initialize the internal dataspace of the object
     void init ();
-    //! Initialize the internal dataspace of the object
-    void init (std::string const &filename);
     //! Locate and register the station groups contained within the file
-    bool setStationGroups ();
+    bool openStationGroups ();
     //! Unconditional deletion
     void destroy(void);
     
-  };
+  };  // end -- class TBB_Timeseries
   
-} // Namespace DAL -- end
+} // end -- namespace DAL
 
 #endif /* TBB_TIMESERIES_H */

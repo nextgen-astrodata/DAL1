@@ -176,7 +176,9 @@ namespace DAL { // Namespace DAL -- begin
   
   bool BF_ProcessingHistory::openEmbedded (bool const &create)
   {
-    return false;
+    bool status = create;
+    
+    return status;
   }
   
 } // Namespace DAL -- end

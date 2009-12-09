@@ -27,9 +27,11 @@
 // Standard library header files
 #include <iostream>
 #include <string>
+#include <map>
 
 // DAL header files
 #include <CommonInterface.h>
+#include <BF_ProcessingHistory.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -72,6 +74,8 @@ namespace DAL { // Namespace DAL -- begin
     
   */  
   class BF_PencilBeam : public CommonInterface {
+
+    std::map<std::string,BF_ProcessingHistory> processingHistory_p;
     
   public:
     
@@ -124,6 +128,9 @@ namespace DAL { // Namespace DAL -- begin
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
+
+    //! Open the processing history group
+    bool openProcessingHistory (bool const &create=true);
 
   protected:
     

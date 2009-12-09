@@ -28,6 +28,7 @@
 #include "CommonAttributes.h"
 #include "Filename.h"
 #include "Timestamp.h"
+#include "SAS_Settings.h"
 
 using namespace DAL;
 
@@ -637,6 +638,15 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Retrieve RCF 2822 conform version of the timestamp string.")
     ;
   
+  //_____________________________________________________________________________
+  //                                                                 SAS_Settings
+
+  bpl::class_<SAS_Settings>("SAS_Settings")
+    .def( bpl::init<>())
+    .def( "className", &SAS_Settings::className,
+	  "Get the name of the class.")
+    ;  
+  
   // ============================================================================
   //
   //  [data_hl] High-level interfaces to specific data
@@ -828,16 +838,8 @@ BOOST_PYTHON_MODULE(pydal)
     /* Access to internal parameters */
     .def( "filename", &TBB_Timeseries::filename,
 	  "Get the name of the data file." )
-    .def( "file_id", &TBB_Timeseries::file_id,
+    .def( "locationID", &TBB_Timeseries::locationID,
 	  "Get the object identifier for the data file." )
-    .def( "telescope", &TBB_Timeseries::telescope,
-	  "Get the name of the telescope." )
-    .def( "observer", &TBB_Timeseries::observer,
-	  "Get the name of the observer." )
-    .def( "project", &TBB_Timeseries::project,
-	  "Get the project name/description." )
-    .def( "observation_id", &TBB_Timeseries::observation_id,
-	  "Get the observation ID." )
     .def( "nofStationGroups", &TBB_Timeseries::nofStationGroups,
 	  "Get the number of station groups collected into this file." )
     .def( "nofDipoleDatasets", &TBB_Timeseries::nofDipoleDatasets,

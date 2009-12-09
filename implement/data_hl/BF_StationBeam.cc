@@ -88,34 +88,34 @@ namespace DAL { // Namespace DAL -- begin
   
   //_____________________________________________________________________________
   //                                                                setAttributes
-
-   void BF_StationBeam::setAttributes ()
-   {
-     attributes_p.clear();
-
-     attributes_p.insert("GROUPTYPE");
-     attributes_p.insert("NOF_STATIONS");
-     attributes_p.insert("STATIONS_LIST");
-     attributes_p.insert("POINT_RA");
-     attributes_p.insert("POINT_DEC");
-     attributes_p.insert("TRACKING");
-     attributes_p.insert("POINT_ALTITUDE");
-     attributes_p.insert("POINT_AZIMUTH");
-     attributes_p.insert("CLOCK_RATE");
-     attributes_p.insert("CLOCK_RATE_UNIT");
-     attributes_p.insert("NOF_SAMPLES");
-     attributes_p.insert("SAMPLING_RATE");
-     attributes_p.insert("SAMPLING_RATE_UNIT");
-     attributes_p.insert("SAMPLING_TIME");
-     attributes_p.insert("SAMPLING_TIME_UNIT");
-     attributes_p.insert("TOTAL_INTEGRATION_TIME");
-     attributes_p.insert("TOTAL_INTEGRATION_TIME_UNIT");
-     attributes_p.insert("CHANNELS_PER_SUBBAND");
-     attributes_p.insert("SUBBAND_WIDTH");
-     attributes_p.insert("SUBBAND_WIDTH_UNIT");
-     attributes_p.insert("CHANNEL_WIDTH");
-     attributes_p.insert("CHANNEL_WIDTH_UNIT");
-     attributes_p.insert("NOF_PENCIL_BEAMS");
+  
+  void BF_StationBeam::setAttributes ()
+  {
+    attributes_p.clear();
+    
+    attributes_p.insert("GROUPTYPE");
+    attributes_p.insert("NOF_STATIONS");
+    attributes_p.insert("STATIONS_LIST");
+    attributes_p.insert("POINT_RA");
+    attributes_p.insert("POINT_DEC");
+    attributes_p.insert("TRACKING");
+    attributes_p.insert("POINT_ALTITUDE");
+    attributes_p.insert("POINT_AZIMUTH");
+    attributes_p.insert("CLOCK_RATE");
+    attributes_p.insert("CLOCK_RATE_UNIT");
+    attributes_p.insert("NOF_SAMPLES");
+    attributes_p.insert("SAMPLING_RATE");
+    attributes_p.insert("SAMPLING_RATE_UNIT");
+    attributes_p.insert("SAMPLING_TIME");
+    attributes_p.insert("SAMPLING_TIME_UNIT");
+    attributes_p.insert("TOTAL_INTEGRATION_TIME");
+    attributes_p.insert("TOTAL_INTEGRATION_TIME_UNIT");
+    attributes_p.insert("CHANNELS_PER_SUBBAND");
+    attributes_p.insert("SUBBAND_WIDTH");
+    attributes_p.insert("SUBBAND_WIDTH_UNIT");
+    attributes_p.insert("CHANNEL_WIDTH");
+    attributes_p.insert("CHANNEL_WIDTH_UNIT");
+    attributes_p.insert("NOF_PENCIL_BEAMS");
   }
   
   //_____________________________________________________________________________

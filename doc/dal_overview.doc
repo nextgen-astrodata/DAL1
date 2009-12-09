@@ -120,11 +120,11 @@
   \ingroup DAL
   \brief Coodinates to connect pixel values to world values
 
-  \defgroup data_common DAL :: Common dataset support
+  \defgroup data_common DAL :: Dataset support - common functionality
   \ingroup DAL
   \brief Common (low-level) support for the various types of datasets
 
-  \defgroup data_hl DAL :: High-level dataset interfaces
+  \defgroup data_hl DAL :: Dataset support - high-level interfaces
   \ingroup DAL
   \brief High-level dataset interfaces to the various types of datasets
 */

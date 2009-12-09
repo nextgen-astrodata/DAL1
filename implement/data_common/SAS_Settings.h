@@ -21,86 +21,89 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef BF_PROCESSINGHISTORY_H
-#define BF_PROCESSINGHISTORY_H
+#ifndef SAS_SETTINGS_H
+#define SAS_SETTINGS_H
 
 // Standard library header files
 #include <iostream>
+#include <set>
+#include <map>
 #include <string>
 
 // DAL header files
-#include <CommonInterface.h>
+#include <dalCommon.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class BF_ProcessingHistory
+    \class SAS_Settings
     
     \ingroup DAL
-    \ingroup data_hl
+    \ingroup data_common
     
-    \brief High-level interface to the processing history attached to a BF dataset
+    \brief Brief description for class SAS_Settings
     
     \author Lars B&auml;hren
 
-    \date 2009/11/26
+    \date 2009/12/09
 
-    \test tBF_ProcessingHistory.cpp
-    
-    <h3>Prerequisite</h3>
-    
-    <ul type="square">
-      <li>LOFAR Data Format ICDs:
-      <ul>
-	<li>Beam-Formed Data (LOFAR-USG-ICD-003)
-	<li>Naming conventions (LOFAR-USG-ICD-005)
-      </ul>
-      <li>Components of the LOFAR user software:
-      <ul>
-        <li>Filename -- Class to filenames matching convention
-        <li>CommonAttributes -- Collection of attributes common to all LOFAR
-	datasets
-	<li>CommonInterface -- Common functionality for the high-level
-	interfaces to the datasets
-      </ul>
-    </ul>
+    \test tSAS_Settings.cc
     
     <h3>Synopsis</h3>
-
     
     <h3>Example(s)</h3>
     
   */  
-  class BF_ProcessingHistory : public CommonInterface {
+  class SAS_Settings {
+
+    //! Values for the AntennaSet field in SAS
+    std::set<std::string> antennaSet_p;
+    //! Values for the FilterSelection field in SAS
+    std::set<std::string> filterSelection_p;
     
   public:
     
     // ------------------------------------------------------------- Construction
     
     //! Default constructor
-    BF_ProcessingHistory ();
+    SAS_Settings ();
     
-    //! Argumented constructor
-    BF_ProcessingHistory (hid_t const &location,
-			  bool const &create);
+    /*!
+      \brief Copy constructor
+      
+      \param other -- Another SAS_Settings object from which to create this new
+             one.
+    */
+    SAS_Settings (SAS_Settings const &other);
     
     // -------------------------------------------------------------- Destruction
-    
+
     //! Destructor
-    ~BF_ProcessingHistory ();
+    ~SAS_Settings ();
+    
+    // ---------------------------------------------------------------- Operators
+    
+    /*!
+      \brief Overloading of the copy operator
+      
+      \param other -- Another SAS_Settings object from which to make a copy.
+    */
+    SAS_Settings& operator= (SAS_Settings const &other); 
     
     // --------------------------------------------------------------- Parameters
     
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, BF_ProcessingHistory.
+      \return className -- The name of the class, SAS_Settings.
     */
     inline std::string className () const {
-      return "BF_ProcessingHistory";
+      return "SAS_Settings";
     }
-    
-    //! Provide a summary of the internal status
+
+    /*!
+      \brief Provide a summary of the internal status
+    */
     inline void summary () {
       summary (std::cout);
     }
@@ -114,26 +117,40 @@ namespace DAL { // Namespace DAL -- begin
 
     // ------------------------------------------------------------------ Methods
 
-    //! Open the file containing the beamformed data.
-    bool open (hid_t const &location,
-	       std::string const &name,
-	       bool const &create=true);
+    //! Get the values for the AntennaSet field in SAS
+    inline std::set<std::string> antennaSet () {
+      return antennaSet_p;
+    }
 
-  protected:
+    //! Is <tt>name</tt> a valid value for the AntennaSet field in SAS?
+    inline bool antennaSet (std::string const &name) const {
+      return static_cast<bool>(antennaSet_p.count(name));
+    }
+
+    //! Get the values for the FilterSelection field in SAS
+    inline std::set<std::string> filterSelection () {
+      return filterSelection_p;
+    }
     
-    //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
-    //! Set up the list of attributes attached to the structure
-    void setAttributes ();
+    //! Is <tt>name</tt> a valid value for the FilterSelection field in SAS?
+    inline bool filterSelection (std::string const &name) const {
+      return static_cast<bool>(filterSelection_p.count(name));
+    }
 
   private:
+
+    //! Set the values for the various SAS settings
+    void setValues ();
+    
+    //! Unconditional copying
+    void copy (SAS_Settings const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class BF_ProcessingHistory -- end
+  }; // Class SAS_Settings -- end
   
 } // Namespace DAL -- end
 
-#endif /* BF_PROCESSINGHISTORY_H */
+#endif /* SAS_SETTINGS_H */
   

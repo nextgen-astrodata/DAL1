@@ -233,7 +233,7 @@ namespace DAL {   // Namespace DAL -- begin
     */
     void summary (std::ostream &os);
     
-    // ------------------------------------------------------------------ Methods
+    // === Methods ==============================================================
     
     /*!
       \brief Get the number of dipole datasets within this station group
@@ -245,6 +245,11 @@ namespace DAL {   // Namespace DAL -- begin
     {
       return datasets_p.size();
     }
+
+    /*!
+      \brief Get the groupname for a station identified by <tt>index</tt>
+    */
+    static std::string getName (unsigned int const &index);
     
     // ==========================================================================
     //

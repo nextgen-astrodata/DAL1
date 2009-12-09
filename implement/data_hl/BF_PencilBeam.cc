@@ -198,6 +198,14 @@ namespace DAL { // Namespace DAL -- begin
       }
     }
     
+    // Open embedded groups
+    if (status) {
+      status = openEmbedded (create);
+    } else {
+      std::cerr << "[BF_StationBeam::open] Skip opening embedded groups!"
+		<< std::endl;
+    }
+ 
     return status;
   }
 
@@ -206,7 +214,32 @@ namespace DAL { // Namespace DAL -- begin
   
   bool BF_PencilBeam::openEmbedded (bool const &create)
   {
-    return false;
+    bool status (true);
+    std::set<std::string> groupnames;
+    
+    /* Retrieve the names of the groups attached to the StationBeam group */
+    status = h5get_names (groupnames,
+			  location_p,
+			  H5G_GROUP);
+
+    /* Open the processing history group */
+    status = openProcessingHistory (create);
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                        openProcessingHistory
+  
+  bool BF_PencilBeam::openProcessingHistory (bool const &create)
+  {
+    bool status (true);
+
+    if (processingHistory_p.size() == 0 && location_p > 0) {
+      processingHistory_p["ProcessingHistory"] = BF_ProcessingHistory (location_p,create);
+    }
+
+    return status;
   }
   
   //_____________________________________________________________________________

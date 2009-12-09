@@ -85,6 +85,77 @@ namespace DAL { // Namespace DAL -- begin
       parameter will be used to decide whether or not the requested structure
       is being created.
     </ul>
+
+    <h3>Requirements for derived classes</h3>
+
+    The CommonInterface requires derived classes to implement the following
+    methods:
+
+    <ol>
+      <li><b>setAttributes()</b> -- Set up the list of attributes attached to
+      the structure.
+      \code
+      void BF_StationBeam::setAttributes ()
+      {
+        attributes_p.clear();
+	
+	attributes_p.insert("GROUPTYPE");
+	attributes_p.insert("NOF_STATIONS");
+	attributes_p.insert("STATIONS_LIST");
+	attributes_p.insert("POINT_RA");
+	attributes_p.insert("POINT_DEC");
+	attributes_p.insert("TRACKING");
+      }
+      \endcode
+      <li><b>open (hid_t const &, std::string const &, bool const &)</b> --
+      Open a structure (file, group, dataset, etc.). Though this signature it
+      rather generatic, there is at least one case, where not all of the input
+      parameters can be utilized: when opening a file (e.g. with BF_Dataset)
+      the <tt>location</tt> will not be evaluated.
+      \code
+      bool BF_StationBeam::open (hid_t const &location,
+                                 std::string const &name,
+				 bool const &create)
+      {
+        bool status (true);
+	
+	// Set up the list of attributes attached to the root group
+	setAttributes();
+	
+	// Get the list of groups attached to this group
+	std::set<std::string> groups;
+	h5get_names (groups,location,H5G_GROUP);
+	
+	if (static_cast<bool>(groups.count(name))) {
+	  location_p = H5Gopen (location,
+	                        name.c_str(),
+				H5P_DEFAULT);
+	} else {
+	  location_p = 0;
+	}
+      
+      }
+      \endcode
+      <li><b>openEmbedded (bool const &)</b> -- Open the structures embedded
+      within the current one.
+      \code
+      bool BF_StationBeam::openEmbedded (bool const &create)
+      {
+        bool status (true);
+	std::set<std::string> groupnames;
+      
+	// Get names of the embedded groups
+	status = h5get_names (groupnames,
+	                      location_p,
+			      H5G_GROUP);
+      
+	// Open the embedded group(s)
+	status = openCoordinatesGroup (create);
+	
+	return status;
+      }
+      \endcode
+    </ol>
   */  
   class CommonInterface {
 
