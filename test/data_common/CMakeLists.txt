@@ -8,6 +8,8 @@ file (GLOB tests_data_common *.cc)
 ##                                                     Build/Install instructions
 
 foreach (src ${tests_data_common})
+  ## get the name of the file without the extension
+  get_filename_component (src ${src} NAME_WE)
   ## compiler instructions
   add_executable(${src} ${src}.cc)
   ## linker instructions
