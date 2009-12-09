@@ -2,15 +2,12 @@
 ##_______________________________________________________________________________
 ##                                                           List of source files
 
-set (tests_data_hl 
-  tFilename
-  tCommonAttributes
-  )
+file (GLOB tests_data_common *.cc)
 
 ##_______________________________________________________________________________
 ##                                                     Build/Install instructions
 
-foreach (src ${tests_data_hl})
+foreach (src ${tests_data_common})
   ## compiler instructions
   add_executable(${src} ${src}.cc)
   ## linker instructions
