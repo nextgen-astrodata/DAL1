@@ -94,7 +94,7 @@ int test_construction (std::string const &filename)
       // construct new object
       TBB_Timeseries ts;
       // probe the newly created object
-      fileID = ts.file_id();
+      fileID = ts.locationID();
     }
     std::cout << "--> " << nofIterations << " object constructions completed."
 	      << std::endl;
@@ -159,15 +159,20 @@ int test_methods (std::string const &filename)
 
   cout << "[1] Retrieve attributes attached to the root group ..." << endl;
   try {
-    std::string telescope        = ts.telescope();
-    std::string observer         = ts.observer();
-    std::string project          = ts.project();
-    std::string observation_id   = ts.observation_id();
-    //
-    cout << "-- TELESCOPE ...... = " << telescope        << endl;
-    cout << "-- OBSERVER ....... = " << observer         << endl;
-    cout << "-- PROJECT ........ = " << project          << endl;
-    cout << "-- OBSERVATION_ID   = " << observation_id   << endl;
+    std::string telescope;
+    std::string observer;
+    std::string project;
+    std::string observationID;
+
+    ts.getAttribute("TELESCOPE",     telescope);
+    ts.getAttribute("OBSERVER",      observer);
+    ts.getAttribute("PROJECT_TITLE", project);
+    ts.getAttribute("OBSERVATION_ID",observationID);
+
+    cout << "-- TELESCOPE ...... = " << telescope      << endl;
+    cout << "-- OBSERVER ....... = " << observer       << endl;
+    cout << "-- PROJECT ........ = " << project        << endl;
+    cout << "-- OBSERVATION_ID   = " << observationID  << endl;
   }
   catch (std::string message) {
     cerr << message << endl;

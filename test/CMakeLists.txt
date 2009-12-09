@@ -51,9 +51,6 @@ set (tests
   tBeamSubband
   tEnumerations
   tTBB
-  tTBB_DipoleDataset
-  tTBB_StationGroup
-  tTBB_Timeseries
   )
 
 ## Build instructions
@@ -169,23 +166,6 @@ endif (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
 if (DAL_ENABLE_TESTING)
   
   ## -----------------------------------------------------------------
-  ## Shell scripts which provide a wrapper around the test programs
-
-  find_program (BASH_EXCUTABLE bash ${bin_locations})
-  
-  configure_file (${DAL_SOURCE_DIR}/test/tTBB_DipoleDataset.sh
-    ${DAL_BINARY_DIR}/test/tTBB_DipoleDataset.sh
-    )
-  
-  configure_file (${DAL_SOURCE_DIR}/test/tTBB_StationGroup.sh
-    ${DAL_BINARY_DIR}/test/tTBB_StationGroup.sh
-    )
-  
-  configure_file (${DAL_SOURCE_DIR}/test/tTBB_Timeseries.sh
-    ${DAL_BINARY_DIR}/test/tTBB_Timeseries.sh
-    )
-  
-  ## -----------------------------------------------------------------
   ## [1] simple tests which do not require sample data
 
   add_test (tdal tdal)
@@ -215,9 +195,6 @@ if (DAL_ENABLE_TESTING)
   if (dataset_tbb)
     add_test (tTBB_test1 tTBB tTBB.h5)
     add_test (tTBB_test2 tTBB tTBB.h5 ${dataset_tbb})
-    add_test (tTBB_DipoleDataset ${BASH_EXCUTABLE} tTBB_DipoleDataset.sh)
-    add_test (tTBB_StationGroup ${BASH_EXCUTABLE} tTBB_StationGroup.sh)
-    add_test (tTBB_Timeseries ${BASH_EXCUTABLE} tTBB_Timeseries.sh)
   else (dataset_tbb)
     message (STATUS "Unable to find LOFAR time-series dataset; skipping tests.")
   endif (dataset_tbb)
