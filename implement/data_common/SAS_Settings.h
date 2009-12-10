@@ -52,6 +52,14 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Synopsis</h3>
     
     <h3>Example(s)</h3>
+
+    Get the valid values for the AntennaSet field in SAS:
+    \code
+    // Create new object ...
+    SAS_Settings settings;
+    // ... and retrieve the settings for the AntennaSet field
+    std::set<std::string> antennaSet = settings.antennaSet();
+    \endcode
     
   */  
   class SAS_Settings {
