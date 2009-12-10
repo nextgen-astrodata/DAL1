@@ -167,14 +167,6 @@ namespace DAL {  // Namespace DAL -- begin
     */
     uint nofDipoleDatasets ();
     
-    /*!
-      \brief Get station groups embedded within the dataset
-      
-      \return stationGroups -- Vector with a set of TBB_StationGroup objects,
-              encapsulating the contents of the groups within the dataset.
-    */
-    std::vector<TBB_StationGroup> stationGroups ();
-    
     //! Get one of the embedded station group objects
     TBB_StationGroup stationGroup (uint const &station);
     
