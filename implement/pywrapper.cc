@@ -645,6 +645,16 @@ BOOST_PYTHON_MODULE(pydal)
     .def( bpl::init<>())
     .def( "className", &SAS_Settings::className,
 	  "Get the name of the class.")
+    .def( "antennaSet", &SAS_Settings::antennaSet,
+	  "Get the values for the AntennaSet field in SAS.")
+    .def( "antennaSet", &SAS_Settings::antennaSet,
+	  "Get the values for the AntennaSet field in SAS.")
+    .def( "haveAntennaSet", &SAS_Settings::haveAntennaSet,
+	  "Is name a valid value for the AntennaSet field in SAS?")
+    .def( "filterSelection", &SAS_Settings::filterSelection,
+	  "Get the values for the FilterSelection field in SAS.")
+    .def( "haveFilterSelection", &SAS_Settings::haveFilterSelection,
+	  "Is name a valid value for the AntennaSet field in SAS?")
     ;  
   
   // ============================================================================
@@ -766,24 +776,14 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Get the number of attributes attached to the dataset." )
     .def( "station_id", &TBB_DipoleDataset::station_id,
 	  "Get the ID of the LOFAR station this dipole belongs to." )
-    .def( "set_station_id", &TBB_DipoleDataset::set_station_id,
-	  "Set the ID of the LOFAR station this dipole belongs to." )
     .def( "rsp_id", &TBB_DipoleDataset::rsp_id,
 	  "Get the ID of the RSP board this dipole is connected with." )
-    .def( "set_rsp_id", &TBB_DipoleDataset::set_rsp_id,
-	  "Set the ID of the RSP board this dipole is connected with." )
     .def( "rcu_id", &TBB_DipoleDataset::rcu_id,
 	  "Get the ID of the receiver unit (RCU) this dipole is connected with." )
-    .def( "set_rcu_id", &TBB_DipoleDataset::set_rcu_id,
-	  "Set the ID of the receiver unit (RCU) this dipole is connected with." )
     .def( "sample_frequency_value", &TBB_DipoleDataset::sample_frequency_value,
 	  "Get the numerical value of the ADC sample frequency." )
-    .def( "set_sample_frequency_value", &TBB_DipoleDataset::set_sample_frequency_value,
-	  "Set the numerical value of the ADC sample frequency." )
     .def( "sample_frequency_unit", &TBB_DipoleDataset::sample_frequency_unit,
 	  "Get the physical unit associated with the ADC sample frequency." )
-    .def( "set_sample_frequency_unit", &TBB_DipoleDataset::set_sample_frequency_unit,
-	  "Set the physical unit associated with the ADC sample frequency." )
     .def( "time", &TBB_DipoleDataset::time,
 	  "Get the (UNIX) time at which the data were recorded." )
     .def( "set_time", &TBB_DipoleDataset::set_time,
@@ -798,8 +798,6 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Get the number of samples stored in this dataset." )
     .def( "feed", &TBB_DipoleDataset::feed,
 	  "Get the type of feed for this dipole." )
-    .def( "set_feed", &TBB_DipoleDataset::set_feed,
-	  "Set the type of feed for this dipole." )
     ;
   
   //_____________________________________________________________________________

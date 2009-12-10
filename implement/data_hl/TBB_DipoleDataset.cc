@@ -38,8 +38,9 @@ namespace DAL {  // Namespace DAL -- begin
   // ---------------------------------------------------------- TBB_DipoleDataset
   
   TBB_DipoleDataset::TBB_DipoleDataset ()
+    : CommonInterface ()
   {
-    init ();
+    location_p = 0;
   }
   
   // ---------------------------------------------------------- TBB_DipoleDataset
@@ -52,6 +53,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   TBB_DipoleDataset::TBB_DipoleDataset (std::string const &filename,
                                         std::string const &dataset)
+    : CommonInterface ()
   {
     init (filename,
           dataset);
@@ -66,9 +68,10 @@ namespace DAL {  // Namespace DAL -- begin
   */
   TBB_DipoleDataset::TBB_DipoleDataset (hid_t const &location,
                                         std::string const &dataset)
+    : CommonInterface ()
   {
     // Initialize internal variables
-    datasetID_p = 0;
+    location_p = 0;
     
     init (location,
           dataset);
@@ -81,6 +84,7 @@ namespace DAL {  // Namespace DAL -- begin
            file
   */
   TBB_DipoleDataset::TBB_DipoleDataset (hid_t const &dataset_id)
+    : CommonInterface ()
   {
     init (dataset_id);
   }
@@ -92,9 +96,10 @@ namespace DAL {  // Namespace DAL -- begin
            this new one.
   */
   TBB_DipoleDataset::TBB_DipoleDataset (TBB_DipoleDataset const &other)
+    : CommonInterface ()
   {
     // Initialize internal variables
-    datasetID_p = 0;
+    location_p = 0;
 
     copy (other);
   }
@@ -118,10 +123,10 @@ namespace DAL {  // Namespace DAL -- begin
       If an identifier to the dataset was assigned, we need to release it; if
       no assignment was done, there is nothing else to be done here.
     */
-    if (datasetID_p > 0) {
+    if (location_p > 0) {
       herr_t h5error (0);
       
-      h5error = H5Dclose (datasetID_p);
+      h5error = H5Dclose (location_p);
       h5error = H5Eclear1 ();
     }
   }
@@ -148,11 +153,11 @@ namespace DAL {  // Namespace DAL -- begin
   
   void TBB_DipoleDataset::copy (TBB_DipoleDataset const &other)
   {
-    if (other.datasetID_p > 0) {
-      init (other.datasetID_p);
+    if (other.location_p > 0) {
+      init (other.location_p);
     }
     else {
-      datasetID_p = 0;
+      location_p = 0;
     }
   }
   
@@ -169,45 +174,15 @@ namespace DAL {  // Namespace DAL -- begin
   */
   uint TBB_DipoleDataset::station_id ()
   {
-    if (datasetID_p > 0) {
-      uint val (0);
-      if (DAL::h5get_attribute(datasetID_p,
-			       attribute_name(DAL::STATION_ID),
-			       val)) {
-	return val;
-      }
-      else {
-	cerr << "[TBB_DipoleDataset::station_id]"
-	     << " Error retrieving attribute value!" << endl;
-	return 0;
-      }
+    uint val (0);
+
+    if (!getAttribute("STATION_ID",val)) {
+      val=0;
     }
-    else {
-      cerr << "[TBB_DipoleDataset::station_id] Dataset undefined!"
-	   << endl;;
-      return 0;
-    }
+
+    return val;
   }
 
-  // ------------------------------------------------------------- set_station_id
-  
-  bool TBB_DipoleDataset::set_station_id (uint const &id)
-  {
-    bool status (true);
-    
-    if (datasetID_p > 0) {
-      status = DAL::h5set_attribute (datasetID_p,
-				     attribute_name(DAL::STATION_ID),
-				     id);
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::set_station_id] Dataset undefined!" << endl;
-      status = false;
-    }
-    
-    return status;
-  }
-  
   // --------------------------------------------------------------------- rsp_id
   
   /*!
@@ -216,43 +191,13 @@ namespace DAL {  // Namespace DAL -- begin
   */
   uint TBB_DipoleDataset::rsp_id ()
   {
-    if (datasetID_p > 0) {
-      uint val (0);
-      if (DAL::h5get_attribute(datasetID_p,
-			       attribute_name(DAL::RSP_ID),
-			       val)) {
-	return val;
-      }
-      else {
-	cerr << "[TBB_DipoleDataset::rsp_id]"
-	     << " Error retrieving attribute value!" << endl;
-	return 0;
-      }
+    uint val (0);
+
+    if (!getAttribute("RSP_ID",val)) {
+      val=0;
     }
-    else {
-      cerr << "[TBB_DipoleDataset::rsp_id] Dataset undefined!"
-	   << endl;
-      return 0;
-    }
-  }
-  
-  // ----------------------------------------------------------------- set_rsp_id
-  
-  bool TBB_DipoleDataset::set_rsp_id (uint const &id)
-  {
-    bool status (true);
-    
-    if (datasetID_p > 0) {
-      status = DAL::h5set_attribute (datasetID_p,
-				     attribute_name(DAL::RSP_ID),
-				     id);
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::set_rsp_id] Dataset undefined!" << endl;
-      status = false;
-    }
-    
-    return status;
+
+    return val;
   }
   
   // --------------------------------------------------------------------- rcu_id
@@ -262,43 +207,13 @@ namespace DAL {  // Namespace DAL -- begin
   */
   uint TBB_DipoleDataset::rcu_id ()
   {
-    if (datasetID_p > 0) {
-      uint val (0);
-      if (DAL::h5get_attribute(datasetID_p,
-			       attribute_name(DAL::RCU_ID),
-			       val)) {
-	return val;
-      }
-      else {
-	cerr << "[TBB_DipoleDataset::rcu_id]"
-	     << " Error retrieving attribute value!" << endl;
-	return 0;
-      }
+    uint val (0);
+
+    if (!getAttribute("RCU_ID",val)) {
+      val=0;
     }
-    else {
-      cerr << "[TBB_DipoleDataset::rcu_id] Dataset undefined!"
-	   << endl;
-      return 0;
-    }
-  }
-  
-  // ----------------------------------------------------------------- set_rcu_id
-  
-  bool TBB_DipoleDataset::set_rcu_id (uint const &id)
-  {
-    bool status (true);
-    
-    if (datasetID_p > 0) {
-      status = DAL::h5set_attribute (datasetID_p,
-				     attribute_name(DAL::RCU_ID),
-				     id);
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::set_rcu_id] Dataset undefined!" << endl;
-      status = false;
-    }
-    
-    return status;
+
+    return val;
   }
   
   //_____________________________________________________________________________
@@ -309,12 +224,12 @@ namespace DAL {  // Namespace DAL -- begin
   */
   double TBB_DipoleDataset::sample_frequency_value ()
   {
-    if (datasetID_p > 0) {
+    if (location_p > 0) {
       bool status (true);
       double val (0);
       std::string unit;
       
-      status = DAL::h5get_attribute(datasetID_p,
+      status = DAL::h5get_attribute(location_p,
 				    attribute_name(DAL::SAMPLE_FREQUENCY_VALUE),
 				    val);
       unit = sample_frequency_unit ();
@@ -344,27 +259,6 @@ namespace DAL {  // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                   set_sample_frequency_value
-
-  bool TBB_DipoleDataset::set_sample_frequency_value (double const &val)
-  {
-    bool status (true);
-    
-    if (datasetID_p > 0) {
-      status = DAL::h5set_attribute (datasetID_p,
-				     attribute_name(DAL::SAMPLE_FREQUENCY_VALUE),
-				     val);
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::set_sample_frequency_value] Dataset undefined!"
-	   << endl;
-      status = false;
-    }
-    
-    return status;
-  }
-  
-  //_____________________________________________________________________________
   //                                                        sample_frequency_unit
   
   /*!
@@ -373,37 +267,13 @@ namespace DAL {  // Namespace DAL -- begin
   */
   std::string TBB_DipoleDataset::sample_frequency_unit ()
   {
-    std::string val;
+    std::string unit;
 
-    if (DAL::h5get_attribute(datasetID_p,
-                             attribute_name(DAL::SAMPLE_FREQUENCY_UNIT),
-                             val)) {
-      return val;
+    if (!getAttribute("SAMPLE_FREQUENCY_UNIT",unit)) {
+      unit = "UNDEFINED";
     }
-    else {
-      return std::string ("UNDEFINED");
-    }
-  }
-  
-  //_____________________________________________________________________________
-  //                                                    set_sample_frequency_unit
 
-  bool TBB_DipoleDataset::set_sample_frequency_unit (std::string const &val)
-  {
-    bool status (true);
-    
-    if (datasetID_p > 0) {
-      status = DAL::h5set_attribute (datasetID_p,
-				     attribute_name(DAL::SAMPLE_FREQUENCY_UNIT),
-				     val);
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::set_sample_frequency_unit] Dataset undefined!"
-	   << endl;
-      status = false;
-    }
-    
-    return status;
+    return unit;
   }
   
   // --------------------------------------------------------------- nyquist_zone
@@ -414,41 +284,20 @@ namespace DAL {  // Namespace DAL -- begin
   */
   uint TBB_DipoleDataset::nyquist_zone ()
   {
-    if (datasetID_p > 0) {
-      uint val (0);
-      if (DAL::h5get_attribute(datasetID_p,
-			       attribute_name(DAL::NYQUIST_ZONE),
-			       val)) {
-	return val;
-      }
-      else {
-	return 0;
-      }
+    uint val;
+
+    if (!getAttribute("NYQUIST_ZONE",val)) {
+      val = 0;
     }
-    else {
-      cerr << "[TBB_DipoleDataset::nyquist_zone] Dataset undefined!"
-	   << endl;
-      return 0;
-    }
+
+    return val;
   }
   
   // ----------------------------------------------------------- set_nyquist_zone
   
   bool TBB_DipoleDataset::set_nyquist_zone (uint const &val)
   {
-    bool status (true);
-    
-    if (datasetID_p > 0) {
-      status = DAL::h5set_attribute (datasetID_p,
-				     attribute_name(DAL::NYQUIST_ZONE),
-				     val);
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::set_nyquist_zone] Dataset undefined!" << endl;
-      status = false;
-    }
-    
-    return status;
+    return setAttribute("NYQUIST_ZONE",val);
   }
   
   // ----------------------------------------------------------------------- time
@@ -458,9 +307,9 @@ namespace DAL {  // Namespace DAL -- begin
   */
   uint TBB_DipoleDataset::time ()
   {
-    if (datasetID_p > 0) {
+    if (location_p > 0) {
       uint val (0);
-      if (DAL::h5get_attribute(datasetID_p,
+      if (DAL::h5get_attribute(location_p,
 			       attribute_name(DAL::TIME),
 			       val)) {
 	return val;
@@ -482,19 +331,7 @@ namespace DAL {  // Namespace DAL -- begin
   
   bool TBB_DipoleDataset::set_time (uint const &time)
   {
-    bool status (true);
-    
-    if (datasetID_p > 0) {
-      status = DAL::h5set_attribute (datasetID_p,
-				     attribute_name(DAL::TIME),
-				     time);
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::set_time] Dataset undefined!" << endl;
-      status = false;
-    }
-    
-    return status;
+    return setAttribute("TIME",time);
   }
   
   // -------------------------------------------------------------- sample_number
@@ -508,9 +345,9 @@ namespace DAL {  // Namespace DAL -- begin
   */
   uint TBB_DipoleDataset::sample_number ()
   {
-    if (datasetID_p > 0) {
+    if (location_p > 0) {
       uint val (0);
-      if (DAL::h5get_attribute(datasetID_p,
+      if (DAL::h5get_attribute(location_p,
 			       attribute_name(DAL::SAMPLE_NUMBER),
 			       val)) {
 	return val;
@@ -528,19 +365,7 @@ namespace DAL {  // Namespace DAL -- begin
   
   bool TBB_DipoleDataset::set_sample_number (uint const &number)
   {
-    bool status (true);
-    
-    if (datasetID_p > 0) {
-      status = DAL::h5set_attribute (datasetID_p,
-				     attribute_name(DAL::SAMPLE_NUMBER),
-				     number);
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::set_sample_number] Dataset undefined!" << endl;
-      status = false;
-    }
-    
-    return status;
+    return setAttribute("SAMPLE_NUMBER",number);
   }
   
   //_____________________________________________________________________________
@@ -552,9 +377,9 @@ namespace DAL {  // Namespace DAL -- begin
   */
   uint TBB_DipoleDataset::samples_per_frame ()
   {
-    if (datasetID_p > 0) {
+    if (location_p > 0) {
       uint val (0);
-      if (DAL::h5get_attribute(datasetID_p,
+      if (DAL::h5get_attribute(location_p,
 			       attribute_name(DAL::SAMPLES_PER_FRAME),
 			       val)) {
 	return val;
@@ -573,19 +398,7 @@ namespace DAL {  // Namespace DAL -- begin
   
   bool TBB_DipoleDataset::set_samples_per_frame (uint const &samples)
   {
-    bool status (true);
-    
-    if (datasetID_p > 0) {
-      status = DAL::h5set_attribute (datasetID_p,
-				     attribute_name(DAL::SAMPLES_PER_FRAME),
-				     samples);
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::set_samples_per_frame] Dataset undefined!" << endl;
-      status = false;
-    }
-    
-    return status;
+    return setAttribute("SAMPLES_PER_FRAME",samples);
   }
   
   //_____________________________________________________________________________
@@ -601,7 +414,7 @@ namespace DAL {  // Namespace DAL -- begin
     uint val (0);
     std::vector<uint> shape;
 
-    if (DAL::h5get_dataset_shape(datasetID_p,shape)) {
+    if (DAL::h5get_dataset_shape(location_p,shape)) {
       val = shape[0];
       return val;
     }
@@ -620,7 +433,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::string val;
 
-    if (DAL::h5get_attribute(datasetID_p,
+    if (DAL::h5get_attribute(location_p,
                              attribute_name(DAL::FEED),
                              val)) {
       return val;
@@ -630,38 +443,11 @@ namespace DAL {  // Namespace DAL -- begin
     }
   }
   
-  //_____________________________________________________________________________
-  //                                                                     set_feed
-  
-  bool TBB_DipoleDataset::set_feed (std::string const &feed)
-  {
-    bool status (true);
-    
-    if (datasetID_p > 0) {
-      status = DAL::h5set_attribute (datasetID_p,
-				     attribute_name(DAL::FEED),
-				     feed);
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::set_feed] Dataset undefined!" << endl;
-      status = false;
-    }
-    
-    return status;
-  }
-  
   // ============================================================================
   //
   //  Methods
   //
   // ============================================================================
-
-  // ----------------------------------------------------------------------- init
-
-  void TBB_DipoleDataset::init ()
-  {
-    datasetID_p = 0;
-  }
 
   // ----------------------------------------------------------------------- init
 
@@ -711,7 +497,7 @@ namespace DAL {  // Namespace DAL -- begin
     herr_t h5error (0);
 
     // Initialize internal variables
-    datasetID_p = 0;
+    location_p = 0;
 
     // open the file
     file_id = H5Fopen (filename.c_str(),
@@ -742,63 +528,122 @@ namespace DAL {  // Namespace DAL -- begin
   void TBB_DipoleDataset::init (hid_t const &location,
                                 std::string const &dataset)
   {
-    bool status (true);
-    hid_t dataset_id (0);
-
-    /*
-      Try to open the dataset within the HDF5 file; the dataset is expected
-      to reside below the object identified by "location".
-    */
-    try {
-      dataset_id = H5Dopen1 (location,
-			     dataset.c_str());
-    }
-    catch (std::string message) {
-      cerr << "[TBB_DipoleDataset::init] " << message << endl;
-      status = false;
-    }
-    
-    if (dataset_id > 0) {
-      datasetID_p = dataset_id;
-    }
-    else {
-      datasetID_p = 0;
-    }
-    
+    open (location,dataset);
   }
 
-  // -------------------------------------------------------------- nofAttributes
-  
-  /*!
-    \return nofAttributes -- The number of attributes attached to the dataset;
-            if the dataset ID is properly connected to a dataset within the
-	    HDF5 file, the returned value will be zero or greater. If a
-	    negative value is returned, most likely te connection with the
-	    file is broken.
-  */
-  int TBB_DipoleDataset::nofAttributes ()
+  //_____________________________________________________________________________
+  //                                                                setAttributes
+
+  void TBB_DipoleDataset::setAttributes ()
   {
-    if (datasetID_p > 0) {
-      return H5Aget_num_attrs (datasetID_p);
+    attributes_p.clear();
+
+    attributes_p.insert("GROUPTYPE");
+    attributes_p.insert("STATION_ID");
+    attributes_p.insert("RSP_ID");
+    attributes_p.insert("RCU_ID");
+    attributes_p.insert("SAMPLE_FREQUENCY_VALUE");
+    attributes_p.insert("SAMPLE_FREQUENCY_UNIT");
+    attributes_p.insert("TIME");
+    attributes_p.insert("SAMPLE_NR");
+    attributes_p.insert("SAMPLES_PER_FRAME");
+    attributes_p.insert("DATA_LENGTH");
+    attributes_p.insert("NYQUIST_ZONE");
+    attributes_p.insert("FEED");
+    attributes_p.insert("ANTENNA_POSITION_VALUE");
+    attributes_p.insert("ANTENNA_POSITION_UNIT");
+    attributes_p.insert("ANTENNA_POSITION_FRAME");
+    attributes_p.insert("ANTENNA_ORIENTATION_VALUE");
+    attributes_p.insert("ANTENNA_ORIENTATION_UNIT");
+    attributes_p.insert("ANTENNA_ORIENTATION_FRAME");
+  }
+
+  //_____________________________________________________________________________
+  //                                                                 openEmbedded
+
+  bool TBB_DipoleDataset::open (hid_t const &location,
+				std::string const &name,
+				bool const &create)
+  {
+    bool status (true);
+
+    /* Set up the list of attributes attached to the root group */
+    setAttributes();
+
+    /* Get the list of groups attached to this group */
+    std::set<std::string> groups;
+    h5get_names (groups,location,H5G_GROUP);
+
+    if (static_cast<bool>(groups.count(name))) {
+      location_p = H5Gopen (location,
+			    name.c_str(),
+			    H5P_DEFAULT);
+    } else {
+      location_p = 0;
     }
-    else {
-      return -1;
+
+    if (location_p > 0) {
+      status = true;
+    } else {
+      /* If failed to open the group, check if we are supposed to create one */
+      if (create) {
+	location_p = H5Gcreate (location,
+				name.c_str(),
+				H5P_DEFAULT,
+				H5P_DEFAULT,
+				H5P_DEFAULT);
+	/* If creation was sucessful, add attributes with default values */
+	if (location_p > 0) {
+	  // write the attributes
+	} else {
+	  std::cerr << "[TBB_DipoleDataset::open] Failed to create group "
+		    << name
+		    << std::endl;
+	  status = false;
+	}
+      } else {
+	std::cerr << "[TBB_DipoleDataset::open] Failed to open group "
+		  << name
+		  << std::endl;
+	status = false;
+      }
     }
+    
+    // Open embedded groups
+    if (status) {
+      status = openEmbedded (create);
+    } else {
+      std::cerr << "[TBB_DipoleDataset::open] Skip opening embedded groups!"
+		<< std::endl;
+    }
+ 
+    return status;
   }
   
-  // -------------------------------------------------------------------- summary
+  //_____________________________________________________________________________
+  //                                                                 openEmbedded
   
+  bool TBB_DipoleDataset::openEmbedded (bool const &create)
+  {
+    bool status = create;
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                      summary
+
   void TBB_DipoleDataset::summary (std::ostream &os)
   {
     os << "[TBB_DipoleDataset::summary]"   << endl;
-    os << "-- Dataset ID .............. = " << datasetID_p  << endl;
+    os << "-- Dataset ID .............. = " << location_p  << endl;
     
-    if (datasetID_p) {
+    if (location_p) {
       /*
        * Additional check in the HDF5 dataset object; if it is valid, we should
        * be able to retrieve the number of attributes attached to it.
        */
-      int nofAttributes = H5Aget_num_attrs (datasetID_p);
+      int nofAttributes = H5Aget_num_attrs (location_p);
       
       os << "-- nof. attributes ......... = " << nofAttributes << endl;
       
@@ -848,7 +693,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   bool TBB_DipoleDataset::antenna_position_value (std::vector<double> &value)
   {
-    return DAL::h5get_attribute(datasetID_p,
+    return DAL::h5get_attribute(location_p,
 				attribute_name(DAL::ANTENNA_POSITION_VALUE),
 				value);
   }
@@ -858,7 +703,7 @@ namespace DAL {  // Namespace DAL -- begin
 
   bool TBB_DipoleDataset::antenna_position_unit (std::vector<std::string> &unit)
   {
-    return DAL::h5get_attribute(datasetID_p,
+    return DAL::h5get_attribute(location_p,
 				attribute_name(DAL::ANTENNA_POSITION_UNIT),
 				unit);
   }
@@ -873,7 +718,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::string val;
 
-    if (DAL::h5get_attribute(datasetID_p,
+    if (DAL::h5get_attribute(location_p,
                              attribute_name(DAL::ANTENNA_POSITION_FRAME),
                              val)) {
       return val;
@@ -891,7 +736,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   bool TBB_DipoleDataset::antenna_orientation_value (std::vector<double> &value)
   {
-    return DAL::h5get_attribute(datasetID_p,
+    return DAL::h5get_attribute(location_p,
 				attribute_name(DAL::ANTENNA_ORIENTATION_VALUE),
 				value);
   }
@@ -905,7 +750,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   bool TBB_DipoleDataset::antenna_orientation_unit (std::vector<std::string> &unit)
   {
-    return DAL::h5get_attribute(datasetID_p,
+    return DAL::h5get_attribute(location_p,
 				attribute_name(DAL::ANTENNA_ORIENTATION_UNIT),
 				unit);
   }
@@ -920,7 +765,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::string val;
 
-    if (DAL::h5get_attribute(datasetID_p,
+    if (DAL::h5get_attribute(location_p,
                              attribute_name(DAL::ANTENNA_ORIENTATION_FRAME),
                              val)) {
       return val;
@@ -1064,10 +909,10 @@ namespace DAL {  // Namespace DAL -- begin
 
     /* Start accessing the data within the HDF5 file */
     
-    if (datasetID_p > 0) {
+    if (location_p > 0) {
       int rank          = 0;
       herr_t h5error    = 0;
-      hid_t dataspaceID = H5Dget_space(datasetID_p);
+      hid_t dataspaceID = H5Dget_space(location_p);
       
       if (dataspaceID < 0) {
 	cerr << "[TBB_DipoleDataset::fx]"
@@ -1133,7 +978,7 @@ namespace DAL {  // Namespace DAL -- begin
       }
       
       // Retrieve the actual data from the file ...
-      h5error = H5Dread (datasetID_p,
+      h5error = H5Dread (location_p,
 			 H5T_NATIVE_SHORT,
 			 memspaceID,
 			 dataspaceID,
@@ -1155,7 +1000,7 @@ namespace DAL {  // Namespace DAL -- begin
 	   << " Unable to read with connection to dataset object!"
 	   << endl;
       status = false;
-    } // END  ::  if (datasetID_p > 0)
+    } // END  ::  if (location_p > 0)
     
     return status;
   }
@@ -1173,7 +1018,7 @@ namespace DAL {  // Namespace DAL -- begin
   
   bool TBB_DipoleDataset::antenna_position_value (casa::Vector<double> &value)
   {
-    return DAL::h5get_attribute(datasetID_p,
+    return DAL::h5get_attribute(location_p,
 				attribute_name(DAL::ANTENNA_POSITION_VALUE),
 				value);
   }
@@ -1187,7 +1032,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   bool TBB_DipoleDataset::antenna_position_unit (casa::Vector<casa::String> &unit)
   {
-    return DAL::h5get_attribute(datasetID_p,
+    return DAL::h5get_attribute(location_p,
 				attribute_name(DAL::ANTENNA_POSITION_UNIT),
 				unit);
   }
@@ -1202,7 +1047,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   casa::MPosition TBB_DipoleDataset::antenna_position ()
   {
-    return DAL::h5get_position (datasetID_p,
+    return DAL::h5get_position (location_p,
                                 DAL::ANTENNA_POSITION_VALUE,
                                 DAL::ANTENNA_POSITION_UNIT,
                                 DAL::ANTENNA_POSITION_FRAME);
@@ -1213,7 +1058,7 @@ namespace DAL {  // Namespace DAL -- begin
   
   bool TBB_DipoleDataset::antenna_orientation_value (casa::Vector<double> &value)
   {
-    return DAL::h5get_attribute(datasetID_p,
+    return DAL::h5get_attribute(location_p,
 				attribute_name(DAL::ANTENNA_ORIENTATION_VALUE),
 				value);
   }
@@ -1223,7 +1068,7 @@ namespace DAL {  // Namespace DAL -- begin
   
   bool TBB_DipoleDataset::antenna_orientation_unit (casa::Vector<casa::String> &unit)
   {
-    return DAL::h5get_attribute(datasetID_p,
+    return DAL::h5get_attribute(location_p,
 				attribute_name(DAL::ANTENNA_ORIENTATION_UNIT),
 				unit);
   }
@@ -1233,8 +1078,8 @@ namespace DAL {  // Namespace DAL -- begin
   
   bool TBB_DipoleDataset::sample_frequency (casa::Quantity &freq)
   { 
-    if (datasetID_p > 0) {
-      freq = DAL::h5get_quantity (datasetID_p,
+    if (location_p > 0) {
+      freq = DAL::h5get_quantity (location_p,
 				  DAL::SAMPLE_FREQUENCY_VALUE,
 				  DAL::SAMPLE_FREQUENCY_UNIT);
       return true;
@@ -1251,8 +1096,8 @@ namespace DAL {  // Namespace DAL -- begin
   
   bool TBB_DipoleDataset::sample_frequency (casa::MFrequency &freq)
   {
-    if (datasetID_p > 0) {
-      casa::Quantity qFreq = DAL::h5get_quantity (datasetID_p,
+    if (location_p > 0) {
+      casa::Quantity qFreq = DAL::h5get_quantity (location_p,
 						  DAL::SAMPLE_FREQUENCY_VALUE,
 						  DAL::SAMPLE_FREQUENCY_UNIT);
       freq = casa::MFrequency (qFreq,
@@ -1275,9 +1120,11 @@ namespace DAL {  // Namespace DAL -- begin
   bool TBB_DipoleDataset::set_sample_frequency (casa::Quantity const &freq)
   {
     bool status (true);
+    double val       = freq.getValue();
+    std::string unit = freq.getUnit();
     
-    status *= set_sample_frequency_value (freq.getValue());
-    status *= set_sample_frequency_unit (freq.getUnit());
+    status *= setAttribute ("SAMPLE_FREQUENCY_VALUE",val);
+    status *= setAttribute ("SAMPLE_FREQUENCY_UNIT",unit);
     
     return status;
   }
@@ -1410,7 +1257,7 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Vector<double> TBB_DipoleDataset::fx (int const &start,
 					      int const &nofSamples)
   {
-    if (datasetID_p > 0) {
+    if (location_p > 0) {
       bool status   = true;
       short *buffer = new short [nofSamples];
       
@@ -1450,5 +1297,5 @@ namespace DAL {  // Namespace DAL -- begin
   }
   
 #endif
-  
+
 } // Namespace DAL -- end

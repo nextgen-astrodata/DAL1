@@ -36,7 +36,7 @@
 #include <measures/Measures/MPosition.h>
 #endif
 
-#include <CommonAttributes.h>
+#include <CommonInterface.h>
 #include <Enumerations.h>
 
 namespace DAL {  // Namespace DAL -- begin
@@ -117,14 +117,11 @@ namespace DAL {  // Namespace DAL -- begin
   </ul>
 
   */
-  class TBB_DipoleDataset {
-    
-    //! Identifier for this dataset within the HDF5 file
-    hid_t datasetID_p;
+  class TBB_DipoleDataset : public CommonInterface {
     
   public:
-    
-    // ------------------------------------------------------------- Construction
+
+    // === Construction =========================================================
     
     //! Default constructor
     TBB_DipoleDataset ();
@@ -139,59 +136,32 @@ namespace DAL {  // Namespace DAL -- begin
     //! Copy constructor
     TBB_DipoleDataset (TBB_DipoleDataset const &other);
     
-    // -------------------------------------------------------------- Destruction
+    // === Destruction ==========================================================
     
     //! Destructor
     ~TBB_DipoleDataset ();
     
-    // ---------------------------------------------------------------- Operators
+    // === Methods ==============================================================
     
     //! Overloading of the copy operator
     TBB_DipoleDataset& operator= (TBB_DipoleDataset const &other);
     
-    // --------------------------------------------------------------- Parameters
-    
-    /*!
-      \brief Get the identifier for this dataset within the HDF5 file
-      
-      \return H5datasetID -- The identifier for this dataset within the HDF5 file
-    */
-    inline hid_t dataset_id () const {
-      return datasetID_p;
-    }
-    
-    //! Get the number of attributes attached to the dataset
-    int nofAttributes ();
+    // === Parameter access =====================================================
     
     //! Get the ID of the LOFAR station this dipole belongs to
     uint station_id ();
     
-    //! Set the ID of the LOFAR station this dipole belongs to
-    bool set_station_id (uint const &id);
-    
     //! Get the ID of the RSP board this dipole is connected with
     uint rsp_id ();
-    
-    //! Set the ID of the RSP board this dipole is connected with
-    bool set_rsp_id (uint const &id);
     
     //! Get the ID of the receiver unit (RCU) this dipole is connected with
     uint rcu_id ();
     
-    //! Set the ID of the receiver unit (RCU) this dipole is connected with
-    bool set_rcu_id (uint const &id);
-    
     //! Get the numerical value of the ADC sample frequency
     double sample_frequency_value ();
     
-    //! Set the numerical value of the ADC sample frequency
-    bool set_sample_frequency_value (double const &value);
-    
     //! Get the physical unit associated with the ADC sample frequency
     std::string sample_frequency_unit ();
-    
-    //! Set the physical unit associated with the ADC sample frequency
-    bool set_sample_frequency_unit (std::string const &unit);
     
     //! Get the Nyquist zone in which the ADC is performed
     uint nyquist_zone ();
@@ -225,9 +195,6 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! Get the type of feed for this dipole
     std::string feed ();
-    
-    //! Set the type of feed for this dipole
-    bool set_feed (std::string const &feed);
     
     //! Get the numerical value of the antenna position
     bool antenna_position_value (std::vector<double> &value);
@@ -282,7 +249,12 @@ namespace DAL {  // Namespace DAL -- begin
     //! Provide a summary of the internal status
     void summary (std::ostream &os);
     
-    // ------------------------------------------------------------------ Methods
+    // === Methods ==============================================================
+    
+    //! Open a dipole dataset
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       bool const &create=true);
     
     //! Get the unique channel/dipole identifier
     int channelID ();
@@ -295,59 +267,38 @@ namespace DAL {  // Namespace DAL -- begin
 	     int const &nofSamples,
 	     short *data);
     
-  // ============================================================================
-  //
-  //  Methods using casacore
-  //
-  // ============================================================================
-      
 #ifdef HAVE_CASA
 
     //! Get the numerical value of the antenna position
     bool antenna_position_value (casa::Vector<double> &value);
-
     //! Set the numerical value of the antenna position
     bool set_antenna_position_value (casa::Vector<double> const &value);
-
     //! Get the physical unit within which the antenna position is given
     bool antenna_position_unit (casa::Vector<casa::String> &unit);
-
     //! Set the physical unit within which the antenna position is given
     bool set_antenna_position_unit (casa::Vector<casa::String> const &unit);
-
     //! Get the antenna position as a measure
     casa::MPosition antenna_position ();
-
     //! Get the numerical values describing the antenna orientation
     bool antenna_orientation_value (casa::Vector<double> &value);
-
     //! Set the numerical values describing the antenna orientation
     bool set_antenna_orientation_value (casa::Vector<double> const &value);
-
     //! Get the physical unit within which the antenna orientation is given
     bool antenna_orientation_unit (casa::Vector<casa::String> &unit);
-
     //! Set the physical unit within which the antenna orientation is given
     bool set_antenna_orientation_unit (casa::Vector<casa::String> const &unit);
-
     //! Get the ADC sample frequency as casa::Quantity
     bool sample_frequency (casa::Quantity &freq);
-
     //! Get the ADC sample frequency as casa::Measure
     bool sample_frequency (casa::MFrequency &freq);
-
     //! Set the ADC sample frequency as casa::Quantity
     bool set_sample_frequency (casa::Quantity const &freq);
-
     //! Get a casa::RecordDesc object describing the structure of the record
     casa::RecordDesc recordDescription ();
-
     //! Get a casa::Record containing the values of the attributes
     casa::Record attributes2record ();
-
     //! Get a casa::Record containing the values of the attributes
     bool attributes2record (casa::Record &rec);
-
     //! Get a number of data values as recorded for this dipole
     casa::Vector<double> fx (int const &start=0,
 			     int const &nofSamples=1);
@@ -356,9 +307,11 @@ namespace DAL {  // Namespace DAL -- begin
     
   private:
     
-    //! Initialize the internal dataspace
-    void init ();
-    
+    //! Open the structures embedded within the current one
+    bool openEmbedded (bool const &create);
+    //! Set up the list of attributes attached to the structure
+    void setAttributes ();
+
     /*!
       \brief Initialize the internal dataspace
       

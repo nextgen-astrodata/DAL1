@@ -123,5 +123,4 @@ namespace DAL { // Namespace DAL -- begin
     filterSelection_p.insert("HBA_210_250");
   }
   
-
 } // Namespace DAL -- end

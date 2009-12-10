@@ -123,7 +123,7 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Is <tt>name</tt> a valid value for the AntennaSet field in SAS?
-    inline bool antennaSet (std::string const &name) const {
+    inline bool haveAntennaSet (std::string const &name) const {
       return static_cast<bool>(antennaSet_p.count(name));
     }
 
@@ -133,7 +133,7 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     //! Is <tt>name</tt> a valid value for the FilterSelection field in SAS?
-    inline bool filterSelection (std::string const &name) const {
+    inline bool haveFilterSelection (std::string const &name) const {
       return static_cast<bool>(filterSelection_p.count(name));
     }
 

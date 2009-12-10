@@ -756,7 +756,7 @@ int test_datasets (std::string const &name_file,
 	TBB_DipoleDataset dataset (dataset_id);
 	datasets.push_back (TBB_DipoleDataset(dataset_id));
 	// feedback
-	cout << "--> Dateset ID      = " << dataset.dataset_id()    << endl;
+	cout << "--> Dateset ID      = " << dataset.locationID()    << endl;
 	cout << "--> nof. attributes = " << dataset.nofAttributes() << endl;
       }
       // release the identifier for the located dataset object
@@ -807,7 +807,7 @@ int test_parameters (std::string const &name_file,
   cout << "[1] Retrieve object parameters ..." << endl;
   try {
     cout << "-- Class name = " << dataset.className()  << endl;
-    cout << "-- Dataset ID = " << dataset.dataset_id() << endl;
+    cout << "-- Dataset ID = " << dataset.locationID() << endl;
   }
   catch (std::string message) {
     cerr << message << endl;

@@ -1196,7 +1196,7 @@ namespace DAL {  // Namespace DAL -- begin
     casa::Vector<hid_t> dataset_ids (nofDatasets);
     
     for (uint n(0); n<nofDatasets; n++) {
-      dataset_ids(n) = datasets_p[n].dataset_id();
+      dataset_ids(n) = datasets_p[n].locationID();
     }
     
     return dataset_ids;
@@ -1207,7 +1207,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::vector<hid_t> dataset_ids;
     
     for (uint n(0); n<datasets_p.size(); n++) {
-      dataset_ids.push_back(datasets_p[n].dataset_id());
+      dataset_ids.push_back(datasets_p[n].locationID());
     }
     
     return dataset_ids;
