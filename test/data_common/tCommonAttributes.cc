@@ -80,34 +80,14 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[3] Testing argumented constructor ..." << endl;
+  cout << "[3] Testing copy constructor ..." << endl;
   try {
-    std::string observationID ("1234567890");
-    std::string observationTimeSys ("UTC");
-    std::string observationDateStart ("2009-10-10T00:00:00.0");
-    std::string observationDateEnd ("2009-10-10T01:00:00.0");
-    CommonAttributes attributes (observationID,
-				 observationTimeSys,
-				 observationDateStart,
-				 observationDateEnd);
-    //
-    attributes.summary(); 
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  cout << "[4] Testing copy constructor ..." << endl;
-  try {
-    std::string observationID ("1234567890");
-    std::string observationTimeSys ("UTC");
-    std::string observationDateStart ("2009-10-10T00:00:00.0");
-    std::string observationDateEnd ("2009-10-10T01:00:00.0");
-    //
-    CommonAttributes attributes (observationID,
-				 observationTimeSys,
-				 observationDateStart,
-				 observationDateEnd);
+    DAL::Filename filename ("123456789","",DAL::Filename::uv,DAL::Filename::h5);
+    std::string filetype ("tbb");
+    std::string filedate ("2009-10-10T00:00:00.0");
+    CommonAttributes attributes (filename,
+				 filetype,
+				 filedate);
     attributes.summary();
     //
     CommonAttributes attributesCopy (attributes);
@@ -155,9 +135,6 @@ int test_attributes ()
     attr.setProjectContact ("cr@lofar.org");
     attr.setObserver("Mr. LOFAR");
     attr.setObservationID ("1234567890");
-    attr.setObservationTimeSys ("MET");
-    attr.setObservationDateStart ("2009-10-10T00:00:00.0");
-    attr.setObservationDateEnd ("2009-10-10T01:00:00.0");
     attr.setAntennaSet ("LBA_X");
     attr.setFilterSelection ("LBH_30_80");
     attr.setClockFrequency (200);
@@ -175,31 +152,7 @@ int test_attributes ()
 
   cout << "[2] Show new values of the attributes ..." << endl;
   try {
-    cout << "-- FILENAME               = " << attr.filename()             << endl;
-    cout << "-- FILETYPE               = " << attr.filetype()             << endl;
-    cout << "-- FILEDATE               = " << attr.filedate()             << endl;
-    cout << "-- TELESCOPE              = " << attr.telescope()            << endl;
-    cout << "-- PROJECT_ID             = " << attr.projectID()            << endl;
-    cout << "-- PROJECT_TITLE          = " << attr.projectTitle()         << endl;
-    cout << "-- PROJECT_PI             = " << attr.projectPI()            << endl;
-    cout << "-- PROJECT_CO_I           = " << attr.projectCoI()           << endl;
-    cout << "-- PROJECT_CONTACT        = " << attr.projectContact()       << endl;
-    cout << "-- OBSERVER               = " << attr.observer()             << endl;
-    cout << "-- OBSERVATION_ID         = " << attr.observationID()        << endl;
-    cout << "-- OBSERVATION_TIMESYS    = " << attr.observationTimeSys()   << endl;
-    cout << "-- OBSERVATION_DATE_START = " << attr.observationDateStart() << endl;
-    cout << "-- OBSERVATION_DATE_END   = " << attr.observationDateEnd()   << endl;
-    cout << "-- ANTENNA_SET            = " << attr.antennaSet()           << endl;
-    cout << "-- FILTER_SELECTION       = " << attr.filterSelection()      << endl;
-    cout << "-- CLOCK_FREQUENCY        = " << attr.clockFrequency()       << endl;
-    cout << "-- CLOCK_FREQUENCY_UNIT   = " << attr.clockFrequencyUnit()   << endl;
-    cout << "-- TARGET                 = " << attr.target()               << endl;
-    cout << "-- SYSTEM_VERSION         = " << attr.systemVersion()        << endl;
-    cout << "-- PIPELINE_NAME          = " << attr.pipelineName()         << endl;
-    cout << "-- PIPELINE_VERSION       = " << attr.pipelineVersion()      << endl;
-    cout << "-- NOF_STATIONS           = " << attr.nofStations()          << endl;
-    cout << "-- STATIONS               = " << attr.stationsList()         << endl;
-    cout << "-- NOTES                  = " << attr.notes()                << endl;
+    attr.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -209,31 +162,7 @@ int test_attributes ()
   try {
     CommonAttributes attrCopy (attr);
     //
-    cout << "-- FILENAME               = " << attrCopy.filename()             << endl;
-    cout << "-- FILETYPE               = " << attrCopy.filetype()             << endl;
-    cout << "-- FILEDATE               = " << attrCopy.filedate()             << endl;
-    cout << "-- TELESCOPE              = " << attrCopy.telescope()            << endl;
-    cout << "-- PROJECT_ID             = " << attrCopy.projectID()            << endl;
-    cout << "-- PROJECT_TITLE          = " << attrCopy.projectTitle()         << endl;
-    cout << "-- PROJECT_PI             = " << attrCopy.projectPI()            << endl;
-    cout << "-- PROJECT_CO_I           = " << attrCopy.projectCoI()           << endl;
-    cout << "-- PROJECT_CONTACT        = " << attrCopy.projectContact()       << endl;
-    cout << "-- OBSERVER               = " << attrCopy.observer()             << endl;
-    cout << "-- OBSERVATION_ID         = " << attrCopy.observationID()        << endl;
-    cout << "-- OBSERVATION_TIMESYS    = " << attrCopy.observationTimeSys()   << endl;
-    cout << "-- OBSERVATION_DATE_START = " << attrCopy.observationDateStart() << endl;
-    cout << "-- OBSERVATION_DATE_END   = " << attrCopy.observationDateEnd()   << endl;
-    cout << "-- ANTENNA_SET            = " << attrCopy.antennaSet()           << endl;
-    cout << "-- FILTER_SELECTION       = " << attrCopy.filterSelection()      << endl;
-    cout << "-- CLOCK_FREQUENCY        = " << attrCopy.clockFrequency()       << endl;
-    cout << "-- CLOCK_FREQUENCY_UNIT   = " << attrCopy.clockFrequencyUnit()   << endl;
-    cout << "-- TARGET                 = " << attrCopy.target()               << endl;
-    cout << "-- SYSTEM_VERSION         = " << attrCopy.systemVersion()        << endl;
-    cout << "-- PIPELINE_NAME          = " << attrCopy.pipelineName()         << endl;
-    cout << "-- PIPELINE_VERSION       = " << attrCopy.pipelineVersion()      << endl;
-    cout << "-- NOF_STATIONS           = " << attrCopy.nofStations()          << endl;
-    cout << "-- STATIONS               = " << attrCopy.stationsList()         << endl;
-    cout << "-- NOTES                  = " << attrCopy.notes()                << endl;
+    attrCopy.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;

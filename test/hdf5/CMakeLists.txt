@@ -2,9 +2,7 @@
 ##_______________________________________________________________________________
 ##                                                           List of source files
 
-#file (GLOB tests_hdf5 *.cc)
-
-set (tests_hdf5 tHDF5_Dataset.cc)
+file (GLOB tests_hdf5 tH5*.cc)
 
 ##_______________________________________________________________________________
 ##                                                     Build/Install instructions
@@ -38,4 +36,5 @@ endforeach (src)
 ##_______________________________________________________________________________
 ##                                                           Testing instructions
 
-add_test (tHDF5_Dataset tHDF5_Dataset)
+add_test (tH5Dataset tH5Dataset)
+add_test (tH5Hyperslab tH5Hyperslab)

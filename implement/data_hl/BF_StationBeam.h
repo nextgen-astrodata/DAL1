@@ -31,7 +31,6 @@
 // DAL header files
 #include <CommonInterface.h>
 #include <BF_PencilBeam.h>
-#include <CoordinatesGroup.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -77,8 +76,6 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Station beams
     std::map<std::string,BF_PencilBeam> pencilBeams_p;
-    //! Coordinates group
-    std::map<std::string,CoordinatesGroup> coordinates_p;
     
   public:
     
@@ -133,9 +130,6 @@ namespace DAL { // Namespace DAL -- begin
     //! Open a pencil beam group
     bool openPencilBeam (unsigned int const &pencilID,
 			 bool const &create=true);
-    
-    //! Open the coordinates group
-    bool openCoordinatesGroup (bool const &create=true);
     
   protected:
     

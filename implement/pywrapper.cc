@@ -543,7 +543,6 @@ BOOST_PYTHON_MODULE(pydal)
   bpl::class_<CommonAttributes>("CommonAttributes")
     .def( bpl::init<>())
     .def( bpl::init<Filename,string,string>())
-    .def( bpl::init<string,string,string,string>())
     .def( "groupType", &CommonAttributes::groupType,
 	  "Get the LOFAR group type.")
     .def( "filename", &CommonAttributes::filename,
@@ -774,20 +773,10 @@ BOOST_PYTHON_MODULE(pydal)
     /* Access to internal parameters */
     .def( "nofAttributes", &TBB_DipoleDataset::nofAttributes,
 	  "Get the number of attributes attached to the dataset." )
-    .def( "station_id", &TBB_DipoleDataset::station_id,
-	  "Get the ID of the LOFAR station this dipole belongs to." )
-    .def( "rsp_id", &TBB_DipoleDataset::rsp_id,
-	  "Get the ID of the RSP board this dipole is connected with." )
-    .def( "rcu_id", &TBB_DipoleDataset::rcu_id,
-	  "Get the ID of the receiver unit (RCU) this dipole is connected with." )
     .def( "sample_frequency_value", &TBB_DipoleDataset::sample_frequency_value,
 	  "Get the numerical value of the ADC sample frequency." )
     .def( "sample_frequency_unit", &TBB_DipoleDataset::sample_frequency_unit,
 	  "Get the physical unit associated with the ADC sample frequency." )
-    .def( "time", &TBB_DipoleDataset::time,
-	  "Get the (UNIX) time at which the data were recorded." )
-    .def( "set_time", &TBB_DipoleDataset::set_time,
-	  "Set the (UNIX) time at which the data were recorded." )
     .def( "julianDay", &TBB_DipoleDataset::julianDay,
 	  "Get the time as Julian Day." )
     .def( "sample_number", &TBB_DipoleDataset::sample_number,

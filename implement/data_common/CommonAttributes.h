@@ -27,12 +27,14 @@
 // Standard library header files
 #include <iostream>
 #include <string>
-#include <vector>
+#include <map>
 #include <set>
+#include <vector>
 
 // DAL header files
 #include <dalCommon.h>
 #include <Filename.h>
+#include <CommonInterface.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -85,6 +87,11 @@ namespace DAL { // Namespace DAL -- begin
     //! Names of the attributes attached to the structure
     std::set<std::string> attributes_p;
     
+    //! Attributes with value of type string
+    std::map<std::string,std::string> attributesString_p;
+    //! Attributes with value of type double
+    std::map<std::string,double> attributesDouble_p;
+
     //! LOFAR group type ("Root")
     std::string groupType_p;
     //! File name
@@ -109,12 +116,18 @@ namespace DAL { // Namespace DAL -- begin
     std::string observer_p;
     //! Unique identifier for the observation
     std::string observationID_p;
-    //! Reference system for time
-    std::string observationTimeSys_p;
-    //! Start date of the observation
-    std::string observationDateStart_p;
-    //! End date of the observation
-    std::string observationDateEnd_p;
+    //! Start date of the observation (MJD)
+    std::string observationStartMJD_p;
+    //! Start date of the observation (TAI)
+    std::string observationStartTAI_p;
+    //! Start date of the observation (UTC)
+    std::string observationStartUTC_p;
+    //! End date of the observation (MJD)
+    std::string observationEndMJD_p;
+    //! End date of the observation (TAI)
+    std::string observationEndTAI_p;
+    //! End date of the observation (UTC)
+    std::string observationEndUTC_p;
     //! Antenna set specification of observation
     std::string antennaSet_p;
     //! Filter selection
@@ -140,7 +153,7 @@ namespace DAL { // Namespace DAL -- begin
     
   public:
     
-    // ------------------------------------------------------------- Construction
+    // === Construction =========================================================
     
     //! Default constructor
     CommonAttributes ();
@@ -150,12 +163,6 @@ namespace DAL { // Namespace DAL -- begin
 		      std::string const &filetype,
 		      std::string const &filedate);
 
-    //! Argumented constructor
-    CommonAttributes (std::string const &observationID,
-		      std::string const &observationTimeSys,
-		      std::string const &observationDateStart,
-		      std::string const &observationDateEnd);
-    
 #ifdef HAVE_HDF5
     //! Argumented constructor
     CommonAttributes (hid_t const &locationID);
@@ -169,12 +176,12 @@ namespace DAL { // Namespace DAL -- begin
     */
     CommonAttributes (CommonAttributes const &other);
     
-    // -------------------------------------------------------------- Destruction
+    // === Destruction ==========================================================
 
     //! Destructor
     ~CommonAttributes ();
-    
-    // ---------------------------------------------------------------- Operators
+
+    // === Operators ============================================================
     
     /*!
       \brief Overloading of the copy operator
@@ -183,11 +190,15 @@ namespace DAL { // Namespace DAL -- begin
     */
     CommonAttributes& operator= (CommonAttributes const &other); 
     
-    // --------------------------------------------------------------- Parameters
+    // === Parameter access =====================================================
 
     //! Get a set with the list of attribute names
     inline std::set<std::string> attributes () const {
       return attributes_p;
+    }
+    //! Is an attribute of given name part of the LOFAR common attributes?
+    inline bool haveAttribute (std::string const &name) const {
+      return static_cast<bool>(attributes_p.count(name));
     }
     /*!
       \brief Get the LOFAR group type
@@ -196,12 +207,12 @@ namespace DAL { // Namespace DAL -- begin
     inline std::string groupType () const {
       return groupType_p;
     }
-
+    
     //! Get the name of the file
     inline std::string filename () const {
       return filename_p;
     }
-
+    
     //! Set the name of the file
     inline void setFilename (Filename const &name) {
       Filename tmp = name;
@@ -212,7 +223,7 @@ namespace DAL { // Namespace DAL -- begin
     inline std::string filetype () const {
       return filetype_p;
     }
-
+    
     //! Set the type of the file
     inline void setFiletype (std::string const &filetype) {
       filetype_p = filetype;
@@ -245,7 +256,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Set the unique identifier for the project
     inline void setProjectID (std::string const &projectID) {
-      projectID_p = projectID;
+      attributesString_p["PROJECT_ID"] = projectID_p = projectID;
     }
 
     //! Get the name of the project
@@ -255,7 +266,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Set the name of the project
     inline void setProjectTitle (std::string const &projectTitle) {
-      projectTitle_p = projectTitle;
+      attributesString_p["PROJECT_TITLE"] = projectTitle_p = projectTitle;
     }
     
     //! Get the name of the project's principal investigator
@@ -265,7 +276,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Set the name of the project's principal investigator
     inline void setProjectPI (std::string const &projectPI) {
-      projectPI_p = projectPI;
+      attributesString_p["PROJECT_PI"] = projectPI_p = projectPI;
     }
 
     //! Get the name(s) of the project's co-PI(s)
@@ -285,7 +296,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Set the names/Email-addresses of the project's primary contact person(s)
     inline void setProjectContact (std::string const &projectContact) {
-      projectContact_p = projectContact;
+      attributesString_p["PROJECT_CONTACT"] = projectContact_p = projectContact;
     }
 
     //! Set the various infos on the project
@@ -302,7 +313,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Set the name(s) of the observer(s)
     inline void setObserver (std::string const &observer) {
-      observer_p = observer;
+      attributesString_p["OBSERVER"] = observer_p = observer;
     }
 
     //! Get the  unique identifier for the observation
@@ -315,42 +326,66 @@ namespace DAL { // Namespace DAL -- begin
       observationID_p = obsID;
     }
 
-    //! Get the reference system for time
-    inline std::string observationTimeSys () const {
-      return observationTimeSys_p;
+    //! Get start date of the observation (MJD)
+    inline std::string observationStartMJD () const {
+      return observationStartMJD_p;
     }
 
-    //! Set the reference system for time
-    inline void setObservationTimeSys (std::string const &obsTimeSys) {
-      observationTimeSys_p = obsTimeSys;
+    //! Set start date of the observation (MJD)
+    inline void setObservationStartMJD (std::string const &obsDateStart) {
+      observationStartMJD_p = obsDateStart;
     }
 
-    //! Get start date of the observation
-    inline std::string observationDateStart () const {
-      return observationDateStart_p;
+    //! Get start date of the observation (MJD)
+    inline std::string observationEndMJD () const {
+      return observationEndMJD_p;
     }
 
-    //! Set start date of the observation
-    inline void setObservationDateStart (std::string const &obsDateStart) {
-      observationDateStart_p = obsDateStart;
+    //! Set start date of the observation (MJD)
+    inline void setObservationEndMJD (std::string const &obsDateEnd) {
+      observationEndMJD_p = obsDateEnd;
     }
 
-    //! Get start date of the observation
-    inline std::string observationDateEnd () const {
-      return observationDateEnd_p;
+    //! Get start date of the observation (TAI)
+    inline std::string observationStartTAI () const {
+      return observationStartTAI_p;
     }
 
-    //! Set start date of the observation
-    inline void setObservationDateEnd (std::string const &obsDateEnd) {
-      observationDateEnd_p = obsDateEnd;
+    //! Set start date of the observation (TAI)
+    inline void setObservationStartTAI (std::string const &obsDateStart) {
+      observationStartTAI_p = obsDateStart;
     }
 
-    //! Set basic information on the observation
-    void setObservationInfo (std::string const &obsID,
-			     std::string const &obsDateStart,
-			     std::string const &obsDateEnd,
-			     std::string const &obsTimeSys="UTC");
-    
+    //! Get start date of the observation (TAI)
+    inline std::string observationEndTAI () const {
+      return observationEndTAI_p;
+    }
+
+    //! Set start date of the observation (TAI)
+    inline void setObservationEndTAI (std::string const &obsDateEnd) {
+      observationEndTAI_p = obsDateEnd;
+    }
+
+    //! Get start date of the observation (UTC)
+    inline std::string observationStartUTC () const {
+      return observationStartUTC_p;
+    }
+
+    //! Set start date of the observation (UTC)
+    inline void setObservationStartUTC (std::string const &obsDateStart) {
+      observationStartUTC_p = obsDateStart;
+    }
+
+    //! Get start date of the observation (UTC)
+    inline std::string observationEndUTC () const {
+      return observationEndUTC_p;
+    }
+
+    //! Set start date of the observation (UTC)
+    inline void setObservationEndUTC (std::string const &obsDateEnd) {
+      observationEndUTC_p = obsDateEnd;
+    }
+
     //! Get the antenna set specification of observation
     inline std::string antennaSet () const {
       return antennaSet_p;
@@ -486,13 +521,8 @@ namespace DAL { // Namespace DAL -- begin
     */
     void summary (std::ostream &os);    
 
-    // ------------------------------------------------------------------ Methods
+    // === Methods ==============================================================
 
-    //! Do the common attributes contain an attribute <i>name</i>?
-    inline bool haveAttribute (std::string const &name) const {
-      return static_cast<bool>(attributes_p.count(name));
-    }
-    
 #ifdef HAVE_HDF5
     //! Write the attributes to a HDF5 file
     void h5write (hid_t const &groupID);
@@ -511,6 +541,32 @@ namespace DAL { // Namespace DAL -- begin
     
   private:
 
+    template <typename T>
+      bool getAttribute (std::string const &name,
+			 T &value)
+      {
+	bool status (true);
+	typename std::map<std::string,T>::iterator it;
+	
+	if (static_cast<bool>(attributesString_p.count(name))) {
+	  it = attributesString_p.find(name);
+	  if (it != attributesString_p.end()) {
+	    value = (*it).second;
+	  }
+	}
+	else if (static_cast<bool>(attributesDouble_p.count(name))) {
+	  it = attributesDouble_p.find(name);
+	  if (it != attributesDouble_p.end()) {
+	    value = (*it).second;
+	  }
+	}
+	else {
+	  status = false;
+	}
+	
+	return status;
+      }
+    
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
     //! Unconditional copying

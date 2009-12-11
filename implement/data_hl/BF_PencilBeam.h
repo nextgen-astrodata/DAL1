@@ -31,6 +31,7 @@
 
 // DAL header files
 #include <CommonInterface.h>
+#include <CoordinatesGroup.h>
 #include <BF_ProcessingHistory.h>
 
 namespace DAL { // Namespace DAL -- begin
@@ -75,8 +76,11 @@ namespace DAL { // Namespace DAL -- begin
   */  
   class BF_PencilBeam : public CommonInterface {
 
+    //! Procesing history group
     std::map<std::string,BF_ProcessingHistory> processingHistory_p;
-    
+    //! Coordinates group
+    std::map<std::string,CoordinatesGroup> coordinates_p;
+
   public:
     
     // ------------------------------------------------------------- Construction
@@ -132,6 +136,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Open the processing history group
     bool openProcessingHistory (bool const &create=true);
 
+    //! Open the coordinates group
+    bool openCoordinatesGroup (bool const &create=true);
+    
   protected:
     
     //! Open the structures embedded within the current one

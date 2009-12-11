@@ -88,17 +88,19 @@ namespace DAL { // Namespace DAL -- begin
   
   void CoordinatesGroup::init ()
   {
+    std::string undefined ("UNDEFINED");
+
     /* Variables declared by the base class*/
     location_p = 0;
 
     /* Internal variables*/
     groupType_p        = "CoordinatesGroup";
     refLocationValue_p = std::vector<double> (3, 0.0);
-    refLocationUnit_p  = std::vector<std::string> (3, defaultString());
-    refLocationFrame_p = defaultString();
+    refLocationUnit_p  = std::vector<std::string> (3, undefined);
+    refLocationFrame_p = undefined;
     nofCoordinates_p   = 0;
     nofAxes_p          = 0;
-    coordinateTypes_p  = std::vector<std::string> (1, defaultString());
+    coordinateTypes_p  = std::vector<std::string> (1, undefined);
   }
 
   //_____________________________________________________________________________
@@ -165,15 +167,16 @@ namespace DAL { // Namespace DAL -- begin
 				H5P_DEFAULT);
 	/* If creation was sucessful, add attributes with default values */
 	if (location_p > 0) {
+	  std::string undefined ("UNDEFINED");
+	  std::vector<std::string> types (1,undefined);
 	  // write the attributes
-	  h5set_attribute (location_p, "GROUPTYPE",          groupType_p);
+	  h5set_attribute (location_p, "GROUPTYPE",          groupType_p       );
 	  h5set_attribute (location_p, "REF_LOCATION_VALUE", refLocationValue_p);
-	  h5set_attribute (location_p, "REF_LOCATION_UNIT",  refLocationUnit_p);
+	  h5set_attribute (location_p, "REF_LOCATION_UNIT",  refLocationUnit_p );
 	  h5set_attribute (location_p, "REF_LOCATION_FRAME", refLocationFrame_p);
-	  h5set_attribute (location_p, "NOF_COORDINATES",    nofCoordinates_p);
-	  h5set_attribute (location_p, "NOF_AXES",           nofAxes_p);
-	  h5set_attribute (location_p, "COORDINATE_TYPES",
-			   defaultVector(defaultString()));
+	  h5set_attribute (location_p, "NOF_COORDINATES",    nofCoordinates_p  );
+	  h5set_attribute (location_p, "NOF_AXES",           nofAxes_p         );
+	  h5set_attribute (location_p, "COORDINATE_TYPES",   types             );
 	} else {
 	  std::cerr << "[CoordinatesGroup::open] Failed to create group "
 		    << name

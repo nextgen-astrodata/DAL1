@@ -499,50 +499,7 @@ int test_construction (std::string const &name_file,
   // construct a new object directly from a provided identifier for
   // the dataset within the HDF5 file.
 
-  cout << "[5] Testing argumented constructor with dataset identifier ..." << endl;
-  try {
-    // open file first
-    hid_t file_id = H5Fopen (name_file.c_str(),
-			     H5F_ACC_RDONLY,
-			     H5P_DEFAULT);
-    
-    if (file_id > 0) {
-      // open dataset within which the dataset is located
-      hid_t dataset_id = H5Dopen1 (file_id,
-				   path_dataset.c_str());
-      
-      if (dataset_id > 0) {
-	// create new object
-	TBB_DipoleDataset dataset (dataset_id);
-	// provide summary of object's properties
-	dataset.summary();
-	// release dataset ID
-	h5error = H5Dclose (dataset_id);
-      }
-      else {
-	cerr << "-- Error opening dipole dataaset!" << endl;
-	nofFailedTests++;
-      }
-      
-      // release file ID
-      h5error = H5Fclose (file_id);
-    }
-    else {
-      cerr << "-- Error opening HDF5 file " << name_file << endl;
-      nofFailedTests++;
-    }
-  }
-  catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-  h5error = H5Eclear1();
-  
-  //__________________________________________________________________
-  // Test copy constructor, as required to directly construct a new
-  // object from an existing one.
-  
-  cout << "[6] Testing copy constructor ..." << endl;
+  cout << "[5] Testing copy constructor ..." << endl;
   try {
     cout << "-- creating original object ..." << endl;
     TBB_DipoleDataset dataset (name_file,
@@ -564,7 +521,7 @@ int test_construction (std::string const &name_file,
   // the multiple datasets contained within a station group.
 
   if (name_dataset == "001000001") {
-    cout << "[7] Collecting objects for multiple datasets into vector..." << endl;
+    cout << "[6] Collecting objects for multiple datasets into vector..." << endl;
     try {
       cout << "-- opening HDF5 file ...." << endl;
       hid_t file_id = H5Fopen (name_file.c_str(),
@@ -745,16 +702,12 @@ int test_datasets (std::string const &name_file,
     std::vector<DAL::TBB_DipoleDataset> datasets;
     
     for (uint n(0); n<nofDatasets; n++) {
-      // try to open the dataset
-      dataset_id = H5Dopen1 (file_id,
-			     dataset_names[n].c_str());
-      h5error = H5Eclear1();
-      // if HDF5 object exists, create TBB_DipoleDataset object for it
-      if (dataset_id > 0) {
+      if (file_id > 0) {
 	cout << "-- " << dataset_names[n] << endl;
 	// create TBB_DipoleDataset object new to the list
-	TBB_DipoleDataset dataset (dataset_id);
-	datasets.push_back (TBB_DipoleDataset(dataset_id));
+	TBB_DipoleDataset dataset (file_id,
+				   dataset_names[n].c_str());
+	datasets.push_back (dataset);
 	// feedback
 	cout << "--> Dateset ID      = " << dataset.locationID()    << endl;
 	cout << "--> nof. attributes = " << dataset.nofAttributes() << endl;
@@ -817,16 +770,22 @@ int test_parameters (std::string const &name_file,
   
   cout << "[2] Retrieve atomic valued attributes ..." << endl;
   try {
-    uint station_id         = dataset.station_id();
-    uint rsp_id             = dataset.rsp_id();
-    uint rcu_id             = dataset.rcu_id();
+    uint station_id;
+    uint rsp_id;
+    uint rcu_id;
     double sample_frequency = dataset.sample_frequency_value();
-    uint nyquist_zone       = dataset.nyquist_zone();
-    uint time               = dataset.time();
+    uint nyquist_zone;
+    uint time;
     uint sample_number      = dataset.sample_number();
     uint samples_per_frame  = dataset.samples_per_frame();
     // extra values derived from attributes
     double julianDay        = dataset.julianDay();
+    //
+    dataset.getAttribute ("STATION_ID",   station_id);
+    dataset.getAttribute ("RSP_ID",       rsp_id);
+    dataset.getAttribute ("RCU_ID",       rcu_id);
+    dataset.getAttribute ("NYQUIST_ZONE", nyquist_zone);
+    dataset.getAttribute ("TIME",         time);
     //
     cout << "-- STATION_ID          = " << station_id        << endl;
     cout << "-- RSP_ID              = " << rsp_id            << endl;

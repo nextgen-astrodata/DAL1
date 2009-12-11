@@ -131,8 +131,6 @@ namespace DAL {  // Namespace DAL -- begin
     //! Argumented constructor
     TBB_DipoleDataset (hid_t const &location,
 		       std::string const &dataset);
-    //! Argumented constructor
-    TBB_DipoleDataset (hid_t const &dataset_id);
     //! Copy constructor
     TBB_DipoleDataset (TBB_DipoleDataset const &other);
     
@@ -148,32 +146,11 @@ namespace DAL {  // Namespace DAL -- begin
     
     // === Parameter access =====================================================
     
-    //! Get the ID of the LOFAR station this dipole belongs to
-    uint station_id ();
-    
-    //! Get the ID of the RSP board this dipole is connected with
-    uint rsp_id ();
-    
-    //! Get the ID of the receiver unit (RCU) this dipole is connected with
-    uint rcu_id ();
-    
     //! Get the numerical value of the ADC sample frequency
     double sample_frequency_value ();
     
     //! Get the physical unit associated with the ADC sample frequency
     std::string sample_frequency_unit ();
-    
-    //! Get the Nyquist zone in which the ADC is performed
-    uint nyquist_zone ();
-    
-    //! Set the Nyquist zone in which the ADC is performed
-    bool set_nyquist_zone (uint const &zone);
-    
-    //! Get the (UNIX) time at which the data were recorded
-    uint time ();
-    
-    //! Set the (UNIX) time at which the data were recorded
-    bool set_time (uint const &time);
     
     //! Get the time as Julian Day
     double julianDay (bool const &onlySeconds=false);
@@ -181,14 +158,8 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get the timespan in samples since the last full second
     uint sample_number ();
     
-    //! Set the timespan in samples since the last full second
-    bool set_sample_number (uint const &number);
-    
     //! The number of samples per original TBB-RSP frame
     uint samples_per_frame ();
-    
-    //! Set the number of samples per original TBB-RSP frame
-    bool set_samples_per_frame (uint const &samples);
     
     //! Get the number of samples stored in this dataset
     uint data_length ();
@@ -199,38 +170,20 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get the numerical value of the antenna position
     bool antenna_position_value (std::vector<double> &value);
 
-    //! Set the numerical value of the antenna position
-    bool set_antenna_position_value (std::vector<double> const &value);
-
     //! Get the physical unit within which the antenna position is given
     bool antenna_position_unit (std::vector<std::string> &unit);
-
-    //! Set the physical unit within which the antenna position is given
-    bool set_antenna_position_unit (std::vector<std::string> const &unit);
 
     //! Get the numerical values describing the antenna orientation
     bool antenna_orientation_value (std::vector<double> &value);
 
-    //! Set the numerical values describing the antenna orientation
-    bool set_antenna_orientation_value (std::vector<double> const &value);
-
     //! Get the physical unit within which the antenna orientation is given
     bool antenna_orientation_unit (std::vector<std::string> &unit);
-
-    //! Set the physical unit within which the antenna orientation is given
-    bool set_antenna_orientation_unit (std::vector<std::string> const &unit);
 
     //! Get the identifier for the reference frame of the antenna position
     std::string antenna_position_frame ();
     
-    //! Set the identifier for the reference frame of the antenna position
-    bool set_antenna_position_frame (std::string const &frame);
-    
     //! Get the identifier for the reference frame of the antenna orientation
     std::string antenna_orientation_frame ();
-    
-    //! Set the identifier for the reference frame of the antenna orientation
-    bool set_antenna_orientation_frame (std::string const &frame);
     
     /*!
       \brief Get the name of the class

@@ -777,10 +777,12 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Vector<uint> TBB_StationGroup::station_id ()
   {
     uint nofDatasets (datasets_p.size());
+    uint id;
     casa::Vector<uint> station_id (nofDatasets);
 
     for (uint n(0); n<nofDatasets; n++) {
-      station_id(n) = datasets_p[n].station_id();
+      datasets_p[n].getAttribute("STATION_ID",id);
+      station_id(n) = id;
     }
     
     return station_id;
@@ -804,12 +806,13 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Vector<uint> TBB_StationGroup::rsp_id ()
   {
     uint nofDatasets (datasets_p.size());
+    uint id;
     casa::Vector<uint> rsp_id (nofDatasets);
     
-    for (uint n(0); n<nofDatasets; n++)
-      {
-        rsp_id(n) = datasets_p[n].rsp_id();
-      }
+    for (uint n(0); n<nofDatasets; n++) {
+      datasets_p[n].getAttribute("RSP_ID",id);
+      rsp_id(n) = id;
+    }
     
     return rsp_id;
   }
@@ -832,10 +835,12 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Vector<uint> TBB_StationGroup::rcu_id ()
   {
     uint nofDatasets (datasets_p.size());
+    uint id;
     casa::Vector<uint> rcu_id (nofDatasets);
     
     for (uint n(0); n<nofDatasets; n++) {
-      rcu_id(n) = datasets_p[n].rcu_id();
+      datasets_p[n].getAttribute("RCU_ID",id);
+      rcu_id(n) = id;
     }
     
     return rcu_id;
@@ -916,10 +921,12 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Vector<uint> TBB_StationGroup::nyquist_zone ()
   {
     uint nofDatasets (datasets_p.size());
+    uint val;
     casa::Vector<uint> zone (nofDatasets);
     
-    for (uint n(0); n<nofDatasets; n++) {
-      zone(n) = datasets_p[n].nyquist_zone();
+    for (uint n(0); n<nofDatasets; ++n) {
+      datasets_p[n].getAttribute("NYQUIST_ZONE",val);
+      zone(n) = val;
     }
     
     return zone;
@@ -927,13 +934,16 @@ namespace DAL {  // Namespace DAL -- begin
 #else
   std::vector<uint> TBB_StationGroup::nyquist_zone ()
   {
-    std::vector<uint> zone;
+    uint nofDatasets (datasets_p.size());
+    uint val;
+    std::vector<uint> result;
     
-    for (uint n(0); n<datasets_p.size(); n++) {
-      zone.push_back(datasets_p[n].nyquist_zone());
+    for (uint n(0); n<nofDatasets; n++) {
+      datasets_p[n].getAttribute("NYQUIST_ZONE",val);
+      result.push_back(val);
     }
     
-    return zone;
+    return result;
   }
 #endif
   
@@ -943,10 +953,12 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Vector<uint> TBB_StationGroup::time ()
   {
     uint nofDatasets (datasets_p.size());
+    uint val;
     casa::Vector<uint> time (nofDatasets);
     
     for (uint n(0); n<nofDatasets; n++) {
-      time(n) = datasets_p[n].time();
+      datasets_p[n].getAttribute("TIME",val);
+      time(n) = val;
     }
     
     return time;

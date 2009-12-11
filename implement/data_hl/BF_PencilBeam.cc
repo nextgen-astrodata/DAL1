@@ -162,28 +162,31 @@ namespace DAL { // Namespace DAL -- begin
 				H5P_DEFAULT);
 	/* If creation was sucessful, add attributes with default values */
 	if (location_p > 0) {
-	  std::string groupname ("PencilBeam");
+	  std::string grouptype ("PencilBeam");
+	  std::string undefined ("UNDEFINED");
+	  bool ok (false);
+	  std::vector<std::string> stokes (1,undefined);
 	  // write the attributes
-	  h5set_attribute (location_p,"GROUPTYPE",          groupname );
-	  h5set_attribute (location_p,"TARGET",             defaultString ());
-	  h5set_attribute (location_p,"POINT_RA",           defaultFloat());
-	  h5set_attribute (location_p,"POINT_DEC",          defaultFloat());
-	  h5set_attribute (location_p,"POSITION_OFFSET_RA", defaultFloat());
-	  h5set_attribute (location_p,"POSITION_OFFSET_DEC",defaultFloat());
-	  h5set_attribute (location_p,"PB_DIAMETER_RA",     defaultFloat());
-	  h5set_attribute (location_p,"PB_DIAMETER_DEC",    defaultFloat());
-	  h5set_attribute (location_p,"PB_CENTER_FREQUENCY",defaultFloat());
-	  h5set_attribute (location_p,"PB_CENTER_FREQUENCY_UNIT",defaultString ());
-	  h5set_attribute (location_p,"FOLDED_DATA",        defaultBool());
-	  h5set_attribute (location_p,"FOLD_PERIOD",        defaultFloat());
-	  h5set_attribute (location_p,"FOLD_PERIOD_UNIT",   defaultString ());
-	  h5set_attribute (location_p,"DEDISPERSION",       defaultString ());
-	  h5set_attribute (location_p,"DISPERSION_MEASURE", defaultFloat());
- 	  h5set_attribute (location_p,"DISPERSION_MEASURE_UNIT",defaultString ());
- 	  h5set_attribute (location_p,"BARYCENTER",         defaultBool());
- 	  h5set_attribute (location_p,"STOKES_COMPONENTS",  defaultVector(defaultString()));
- 	  h5set_attribute (location_p,"COMPLEX_VOLTAGE",    defaultBool());
-	  h5set_attribute (location_p,"SIGNAL_SUM",         defaultString ());
+	  h5set_attribute (location_p,"GROUPTYPE",                grouptype  );
+	  h5set_attribute (location_p,"TARGET",                   undefined  );
+	  h5set_attribute (location_p,"POINT_RA",                 float(0.0) );
+	  h5set_attribute (location_p,"POINT_DEC",                float(0.0) );
+	  h5set_attribute (location_p,"POSITION_OFFSET_RA",       float(0.0) );
+	  h5set_attribute (location_p,"POSITION_OFFSET_DEC",      float(0.0) );
+	  h5set_attribute (location_p,"PB_DIAMETER_RA",           float(0.0) );
+	  h5set_attribute (location_p,"PB_DIAMETER_DEC",          float(0.0) );
+	  h5set_attribute (location_p,"PB_CENTER_FREQUENCY",      float(0.0) );
+	  h5set_attribute (location_p,"PB_CENTER_FREQUENCY_UNIT", undefined  );
+	  h5set_attribute (location_p,"FOLDED_DATA",              ok         );
+	  h5set_attribute (location_p,"FOLD_PERIOD",              float(0.0) );
+	  h5set_attribute (location_p,"FOLD_PERIOD_UNIT",         undefined  );
+	  h5set_attribute (location_p,"DEDISPERSION",             undefined  );
+	  h5set_attribute (location_p,"DISPERSION_MEASURE",       float(0.0) );
+ 	  h5set_attribute (location_p,"DISPERSION_MEASURE_UNIT",  undefined  );
+ 	  h5set_attribute (location_p,"BARYCENTER",               ok         );
+ 	  h5set_attribute (location_p,"STOKES_COMPONENTS",        stokes     );
+ 	  h5set_attribute (location_p,"COMPLEX_VOLTAGE",          ok         );
+	  h5set_attribute (location_p,"SIGNAL_SUM",               undefined  );
 	} else {
 	  std::cerr << "[BF_PencilBeam::open] Failed to create group "
 		    << name
@@ -224,6 +227,8 @@ namespace DAL { // Namespace DAL -- begin
 
     /* Open the processing history group */
     status = openProcessingHistory (create);
+    /* Open coordinates group */
+    status = openCoordinatesGroup (create);
 
     return status;
   }
@@ -242,6 +247,20 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
   
+  //_____________________________________________________________________________
+  //                                                         openCoordinatesGroup
+  
+  bool BF_PencilBeam::openCoordinatesGroup (bool const &create)
+  {
+    bool status (true);
+
+    if (coordinates_p.size() == 0 && location_p > 0) {
+      coordinates_p["CoordinatesGroup"] = CoordinatesGroup (location_p,create);
+    }
+    
+    return status;
+  }
+
   //_____________________________________________________________________________
   //                                                                      getName
   

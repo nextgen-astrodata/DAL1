@@ -245,21 +245,21 @@ namespace DAL { // Namespace DAL -- begin
 	std::string undefined ("UNDEFINED");
 	std::vector<float> vect (1,0.0);
 	//
- 	h5set_attribute (location_p,"CREATE_OFFLINE_ONLINE",true);
- 	h5set_attribute (location_p,"BF_FORMAT",undefined);
-	h5set_attribute (location_p,"BF_VERSION",undefined);
-	h5set_attribute (location_p,"EXPTIME_START_UTC",undefined);
-	h5set_attribute (location_p,"EXPTIME_STOP_UTC",undefined);
-	h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME",float(0.0));
-	h5set_attribute (location_p,"OBS_DATATYPE",undefined);
-	h5set_attribute (location_p,"STATION_BEAM_DIAMETER",int(0));
-	h5set_attribute (location_p,"BANDWIDTH",float(0.0));
-	h5set_attribute (location_p,"PENCIL_BEAM_DIAMETER",int(0));
- 	h5set_attribute (location_p,"WEATHER_TEMPERATURE",vect);
-	h5set_attribute (location_p,"WEATHER_HUMIDITY",vect);
- 	h5set_attribute (location_p,"SYSTEM_TEMPERATURE",vect);
- 	h5set_attribute (location_p,"PHASE_CENTER",vect);
-	h5set_attribute (location_p,"NOF_BEAMS",int(0));
+ 	h5set_attribute (location_p,"CREATE_OFFLINE_ONLINE",  true       );
+ 	h5set_attribute (location_p,"BF_FORMAT",              undefined  );
+	h5set_attribute (location_p,"BF_VERSION",             undefined  );
+	h5set_attribute (location_p,"EXPTIME_START_UTC",      undefined  );
+	h5set_attribute (location_p,"EXPTIME_STOP_UTC",       undefined  );
+	h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME", float(0.0) );
+	h5set_attribute (location_p,"OBS_DATATYPE",           undefined  );
+	h5set_attribute (location_p,"STATION_BEAM_DIAMETER",  int(0)     );
+	h5set_attribute (location_p,"BANDWIDTH",              float(0.0) );
+	h5set_attribute (location_p,"PENCIL_BEAM_DIAMETER",   int(0)     );
+ 	h5set_attribute (location_p,"WEATHER_TEMPERATURE",    vect       );
+	h5set_attribute (location_p,"WEATHER_HUMIDITY",       vect       );
+ 	h5set_attribute (location_p,"SYSTEM_TEMPERATURE",     vect       );
+ 	h5set_attribute (location_p,"PHASE_CENTER",           vect       );
+	h5set_attribute (location_p,"NOF_BEAMS",              int(0)     );
       } else {
 	std::cerr << "[BF_Dataset::open] Failed to open file "
 		  << name

@@ -196,7 +196,6 @@ namespace DAL {  // Namespace DAL -- begin
   
   void TBB_Timeseries::init ()
   {
-    filename_p = "UNDEFINED";
     location_p = -1;
   }
   
