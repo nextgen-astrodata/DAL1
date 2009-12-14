@@ -96,40 +96,47 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 
 ## [2] casacore & HDF5
 
-if (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
-
-  foreach (src
-      tMS_dal 
-      tcasacore_hdf5
-      tcasacore_images
-      tcasacore_images2
-      tLOFAR_Image
-      )
-    ## compiler instructions
-    add_executable (${src} ${src}.cc)
-    ## linker instructions
-    target_link_libraries (${src}
-      dal
-      ${dal_link_libraries}
-      ${CASA_LIBRARIES}
-      ${LAPACK_LIBRARIES}
-      ${CFITSIO_LIBRARIES}
-      ${WCSLIB_LIBRARIES}
-      ${GFORTRAN_LIBRARIES}
-      )
-    ## installation
-    list (APPEND tests ${src})
-    ## testing
-    if (DAL_ENABLE_TESTING)
-      add_test (${src} ${src})
-    endif (DAL_ENABLE_TESTING)
-  endforeach (src)
-
-else (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
-
-  message (STATUS "Skipping test programs that require casacore and HDF5!")
-
-endif (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
+if (HAVE_CASACORE)
+  if (HAVE_HDF5)
+    if (GFORTRAN_LIBRARIES)
+      if (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
+	## list of source files
+	foreach (src
+	    tMS_dal 
+	    tcasacore_hdf5
+	    tcasacore_images
+	    tcasacore_images2
+	    tLOFAR_Image
+	    )
+	  ## compiler instructions
+	  add_executable (${src} ${src}.cc)
+	  ## linker instructions
+	  target_link_libraries (${src}
+	    dal
+	    ${dal_link_libraries}
+	    ${CASA_LIBRARIES}
+	    ${LAPACK_LIBRARIES}
+	    ${CFITSIO_LIBRARIES}
+	    ${WCSLIB_LIBRARIES}
+	    ${GFORTRAN_LIBRARIES}
+	    )
+	  ## installation
+	  list (APPEND tests ${src})
+	  ## testing
+	  if (DAL_ENABLE_TESTING)
+	    add_test (${src} ${src})
+	  endif (DAL_ENABLE_TESTING)
+	endforeach (src)
+      else (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
+	message (WARNING "Skipping tests - missing LAPACK.")
+      endif (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
+    endif (LAPACK_LAPACK_LIBRARY)
+  else (HAVE_HDF5)
+    message (WARNING "Skipping tests - missing HDF5.")
+  endif (HAVE_HDF5)
+else (HAVE_CASACORE)
+  message (WARNING "Skipping tests - missing casacore.")
+endif (HAVE_CASACORE)
 
 ##__________________________________________________________
 ## tdalFITS
