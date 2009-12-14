@@ -130,7 +130,7 @@ if (HAVE_CASACORE)
       else (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
 	message (WARNING "Skipping tests - missing LAPACK.")
       endif (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
-    endif (LAPACK_LAPACK_LIBRARY)
+    endif (GFORTRAN_LIBRARIES)
   else (HAVE_HDF5)
     message (WARNING "Skipping tests - missing HDF5.")
   endif (HAVE_HDF5)
@@ -142,7 +142,7 @@ endif (HAVE_CASACORE)
 ## tdalFITS
 
 if (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
-
+  
   ## compiler instructions
   add_executable (tdalFITS tdalFITS.cc)
   ## linker instructions
