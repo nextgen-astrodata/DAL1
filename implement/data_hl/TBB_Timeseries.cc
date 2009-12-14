@@ -323,7 +323,7 @@ namespace DAL {  // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  // Get one of the embedded station group objects
+  //                                                                 stationGroup
 
   /*!
     \param station -- Number of the TBB_StationGroup object embedded within this
@@ -331,7 +331,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     return stationGroup -- The requested station group object; if the provided
            index is outside the valid range, an empty StationGroup object is
-     returned.
+	   returned.
   */
   TBB_StationGroup TBB_Timeseries::stationGroup (uint const &station)
   {
@@ -392,7 +392,8 @@ namespace DAL {  // Namespace DAL -- begin
     return trigger;
   }
 
-  // ------------------------------------------------------------- trigger_offset
+  //_____________________________________________________________________________
+  //                                                               trigger_offset
 
   casa::Vector<double> TBB_Timeseries::trigger_offset ()
   {
@@ -409,7 +410,8 @@ namespace DAL {  // Namespace DAL -- begin
     return trigger;
   }
 
-  // ----------------------------------------------------- station_position_value
+  //_____________________________________________________________________________
+  //                                                       station_position_value
 
   casa::Matrix<double> TBB_Timeseries::station_position_value ()
   {
@@ -426,7 +428,8 @@ namespace DAL {  // Namespace DAL -- begin
     return values;
   }
 
-  // ------------------------------------------------------ station_position_unit
+  //_____________________________________________________________________________
+  //                                                        station_position_unit
 
   casa::Matrix<casa::String> TBB_Timeseries::station_position_unit ()
   {
@@ -443,7 +446,8 @@ namespace DAL {  // Namespace DAL -- begin
     return units;
   }
 
-  // ----------------------------------------------------- station_position_frame
+  //_____________________________________________________________________________
+  //                                                       station_position_frame
 
   casa::Vector<casa::String> TBB_Timeseries::station_position_frame ()
   {
@@ -460,7 +464,8 @@ namespace DAL {  // Namespace DAL -- begin
     return frame;
   }
 
-  // ----------------------------------------------------------- station_position
+  //_____________________________________________________________________________
+  //                                                             station_position
 
   casa::Vector<casa::MPosition> TBB_Timeseries::station_position ()
   {
@@ -477,7 +482,8 @@ namespace DAL {  // Namespace DAL -- begin
     return positions;
   }
 
-  // ------------------------------------------------------- beam_direction_value
+  //_____________________________________________________________________________
+  //                                                         beam_direction_value
 
   casa::Matrix<double> TBB_Timeseries::beam_direction_value ()
   {
@@ -607,24 +613,6 @@ namespace DAL {  // Namespace DAL -- begin
   //  Access to attributes attached to the dipole datasets
   //
   // ============================================================================
-
-  // -------------------------------------------------------------- channelNames
-
-#ifdef HAVE_CASA
-  casa::Vector<casa::String> TBB_Timeseries::channelNames ()
-  {
-    casa::Vector<casa::String> names;
-
-    return names;
-  }
-#else
-  std::vector<std::string> TBB_Timeseries::channelNames ()
-  {
-    std::vector<std::string> names;
-
-    return names;
-  }
-#endif
 
   // ---------------------------------------------------------------- channelID
 

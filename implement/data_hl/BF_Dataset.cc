@@ -38,6 +38,7 @@ namespace DAL { // Namespace DAL -- begin
     \param filename -- Name of the dataset to open.
   */
   BF_Dataset::BF_Dataset (std::string const &filename)
+    : CommonInterface()
   {
     if (!open (0,filename,false)) {
       std::cerr << "[BF_Dataset::BF_Dataset] Failed to open file "
@@ -52,20 +53,37 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param filename -- Filename object from which the actual file name of the
            dataset is derived.
+    \param create   -- Create the corresponding data structure, if it does not 
+           exist yet?
   */
-  BF_Dataset::BF_Dataset (Filename const &filename)
+  BF_Dataset::BF_Dataset (DAL::Filename &infile,
+			  bool const &create)
+    : CommonInterface()
   {
-    CommonAttributes attr;
-    attr.setFilename (filename);
-    init (attr);
+    if (!open (0,infile.filename(),create)) {
+      std::cerr << "[BF_Dataset::BF_Dataset] Failed to open file "
+		<< infile.filename()
+		<< std::endl;
+    }
   }
   
   //_____________________________________________________________________________
   //                                                                   BF_Dataset
 
-  BF_Dataset::BF_Dataset (CommonAttributes const &commonAttributes)
+  /*!
+    \param attributes -- CommonAttributes object from which the actual file name
+           of the dataset is extracted.
+    \param create -- Create the corresponding data structure, if it does not 
+           exist yet?
+  */
+  BF_Dataset::BF_Dataset (CommonAttributes const &attributes,
+			  bool const &create)
   {
-    init (commonAttributes);
+    if (!open (0,attributes.filename(),create)) {
+      std::cerr << "[BF_Dataset::BF_Dataset] Failed to open file "
+		<< attributes.filename()
+		<< std::endl;
+    }
   }
   
   // ============================================================================
@@ -78,6 +96,9 @@ namespace DAL { // Namespace DAL -- begin
   {
     destroy();
   }
+  
+  //_____________________________________________________________________________
+  //                                                                      destroy
   
   void BF_Dataset::destroy ()
   {
@@ -243,23 +264,24 @@ namespace DAL { // Namespace DAL -- begin
 	commonAttributes_p.h5write(location_p);
 	/* Write the additional attributes attached to the root group */
 	std::string undefined ("UNDEFINED");
-	std::vector<float> vect (1,0.0);
+	std::vector<float> vectF (1,0.0);
+	std::vector<double> vectD (1,0.0);
 	//
- 	h5set_attribute (location_p,"CREATE_OFFLINE_ONLINE",  true       );
- 	h5set_attribute (location_p,"BF_FORMAT",              undefined  );
-	h5set_attribute (location_p,"BF_VERSION",             undefined  );
-	h5set_attribute (location_p,"EXPTIME_START_UTC",      undefined  );
-	h5set_attribute (location_p,"EXPTIME_STOP_UTC",       undefined  );
-	h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME", float(0.0) );
-	h5set_attribute (location_p,"OBS_DATATYPE",           undefined  );
-	h5set_attribute (location_p,"STATION_BEAM_DIAMETER",  int(0)     );
-	h5set_attribute (location_p,"BANDWIDTH",              float(0.0) );
-	h5set_attribute (location_p,"PENCIL_BEAM_DIAMETER",   int(0)     );
- 	h5set_attribute (location_p,"WEATHER_TEMPERATURE",    vect       );
-	h5set_attribute (location_p,"WEATHER_HUMIDITY",       vect       );
- 	h5set_attribute (location_p,"SYSTEM_TEMPERATURE",     vect       );
- 	h5set_attribute (location_p,"PHASE_CENTER",           vect       );
-	h5set_attribute (location_p,"NOF_BEAMS",              int(0)     );
+ 	h5set_attribute (location_p,"CREATE_OFFLINE_ONLINE",  true        );
+ 	h5set_attribute (location_p,"BF_FORMAT",              undefined   );
+	h5set_attribute (location_p,"BF_VERSION",             undefined   );
+	h5set_attribute (location_p,"EXPTIME_START_UTC",      undefined   );
+	h5set_attribute (location_p,"EXPTIME_STOP_UTC",       undefined   );
+	h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME", float(0.0)  );
+	h5set_attribute (location_p,"OBS_DATATYPE",           undefined   );
+	h5set_attribute (location_p,"STATION_BEAM_DIAMETER",  int(0)      );
+	h5set_attribute (location_p,"BANDWIDTH",              double(0.0) );
+	h5set_attribute (location_p,"PENCIL_BEAM_DIAMETER",   float(0.0)  );
+ 	h5set_attribute (location_p,"WEATHER_TEMPERATURE",    vectF       );
+	h5set_attribute (location_p,"WEATHER_HUMIDITY",       vectF       );
+ 	h5set_attribute (location_p,"SYSTEM_TEMPERATURE",     vectF       );
+ 	h5set_attribute (location_p,"PHASE_CENTER",           vectD       );
+	h5set_attribute (location_p,"NOF_BEAMS",              int(0)      );
       } else {
 	std::cerr << "[BF_Dataset::open] Failed to open file "
 		  << name

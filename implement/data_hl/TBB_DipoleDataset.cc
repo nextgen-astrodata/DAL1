@@ -437,7 +437,7 @@ namespace DAL {  // Namespace DAL -- begin
     h5get_names (groups,location,H5G_DATASET);
 
     if (static_cast<bool>(groups.count(name))) {
-      location_p = H5Gopen (location,
+      location_p = H5Dopen (location,
 			    name.c_str(),
 			    H5P_DEFAULT);
     } else {
@@ -449,7 +449,7 @@ namespace DAL {  // Namespace DAL -- begin
     } else {
       /* If failed to open the group, check if we are supposed to create one */
       if (create) {
-	location_p = H5Gcreate (location,
+	location_p = H5Dcreate (location,
 				name.c_str(),
 				H5P_DEFAULT,
 				H5P_DEFAULT,

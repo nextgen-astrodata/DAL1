@@ -87,11 +87,6 @@ namespace DAL { // Namespace DAL -- begin
     //! Names of the attributes attached to the structure
     std::set<std::string> attributes_p;
     
-    //! Attributes with value of type string
-    std::map<std::string,std::string> attributesString_p;
-    //! Attributes with value of type double
-    std::map<std::string,double> attributesDouble_p;
-
     //! LOFAR group type ("Root")
     std::string groupType_p;
     //! File name
@@ -133,7 +128,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Filter selection
     std::string filterSelection_p;
     //! Clock frequency of the observation
-    int clockFrequency_p;
+    double clockFrequency_p;
     //! Physical unit associated with the clock frequency
     std::string clockFrequencyUnit_p;
     //! (List of) Oberservation target(s)
@@ -256,7 +251,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Set the unique identifier for the project
     inline void setProjectID (std::string const &projectID) {
-      attributesString_p["PROJECT_ID"] = projectID_p = projectID;
+      projectID_p = projectID;
     }
 
     //! Get the name of the project
@@ -266,7 +261,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Set the name of the project
     inline void setProjectTitle (std::string const &projectTitle) {
-      attributesString_p["PROJECT_TITLE"] = projectTitle_p = projectTitle;
+      projectTitle_p = projectTitle;
     }
     
     //! Get the name of the project's principal investigator
@@ -276,7 +271,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Set the name of the project's principal investigator
     inline void setProjectPI (std::string const &projectPI) {
-      attributesString_p["PROJECT_PI"] = projectPI_p = projectPI;
+      projectPI_p = projectPI;
     }
 
     //! Get the name(s) of the project's co-PI(s)
@@ -296,7 +291,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Set the names/Email-addresses of the project's primary contact person(s)
     inline void setProjectContact (std::string const &projectContact) {
-      attributesString_p["PROJECT_CONTACT"] = projectContact_p = projectContact;
+      projectContact_p = projectContact;
     }
 
     //! Set the various infos on the project
@@ -313,7 +308,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Set the name(s) of the observer(s)
     inline void setObserver (std::string const &observer) {
-      attributesString_p["OBSERVER"] = observer_p = observer;
+      observer_p = observer;
     }
 
     //! Get the  unique identifier for the observation
@@ -407,12 +402,12 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Get the clock frequency of the observation
-    inline int clockFrequency () const {
+    inline double clockFrequency () const {
       return clockFrequency_p;
     }
     
     //! Set the clock frequency of the observation
-    inline void setClockFrequency (int const &clockFrequency) {
+    inline void setClockFrequency (double const &clockFrequency) {
       clockFrequency_p = clockFrequency;
     }
 
@@ -541,40 +536,12 @@ namespace DAL { // Namespace DAL -- begin
     
   private:
 
-    template <typename T>
-      bool getAttribute (std::string const &name,
-			 T &value)
-      {
-	bool status (true);
-	typename std::map<std::string,T>::iterator it;
-	
-	if (static_cast<bool>(attributesString_p.count(name))) {
-	  it = attributesString_p.find(name);
-	  if (it != attributesString_p.end()) {
-	    value = (*it).second;
-	  }
-	}
-	else if (static_cast<bool>(attributesDouble_p.count(name))) {
-	  it = attributesDouble_p.find(name);
-	  if (it != attributesDouble_p.end()) {
-	    value = (*it).second;
-	  }
-	}
-	else {
-	  status = false;
-	}
-	
-	return status;
-      }
-    
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
     //! Unconditional copying
     void copy (CommonAttributes const &other);
     //! Unconditional deletion 
     void destroy(void);
-    //! Initialize the object's internal parameters
-    void init ();
     
   }; // Class CommonAttributes -- end
   

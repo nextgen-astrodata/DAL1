@@ -39,11 +39,10 @@ namespace DAL { // Namespace DAL -- begin
     assigned:
     - GROUPTYPE   = "Root"
     - TELESCOPE   = "LOFAR"
-    - SYSTEM_TIME = "UTC"
   */
   CommonAttributes::CommonAttributes ()
   {
-    init ();
+    setAttributes ();
   }
   
   //_____________________________________________________________________________
@@ -59,7 +58,7 @@ namespace DAL { // Namespace DAL -- begin
 				      std::string const &filedate)
   {
     // Initialize parameters to default values
-    init ();
+    setAttributes ();
     // Set provided parameter values
     setFilename (filename);
     setFiletype (filetype);
@@ -73,7 +72,7 @@ namespace DAL { // Namespace DAL -- begin
   CommonAttributes::CommonAttributes (hid_t const &locationID)
   {
     // Initialize parameters to default values
-    init ();
+    setAttributes ();
     // Read the attribute values from the file
     h5read (locationID);
   }
@@ -132,12 +131,16 @@ namespace DAL { // Namespace DAL -- begin
     projectID_p            = other.projectID_p;
     projectTitle_p         = other.projectTitle_p;
     projectPI_p            = other.projectPI_p;
-    projectCoI_p          = other.projectCoI_p;
+    projectCoI_p           = other.projectCoI_p;
     projectContact_p       = other.projectContact_p;
     observer_p             = other.observer_p;
     observationID_p        = other.observationID_p;
-    observationStartMJD_p = other.observationStartMJD_p;
-    observationEndMJD_p   = other.observationEndMJD_p;
+    observationStartMJD_p  = other.observationStartMJD_p;
+    observationStartTAI_p  = other.observationStartTAI_p;
+    observationStartUTC_p  = other.observationStartUTC_p;
+    observationEndMJD_p    = other.observationEndMJD_p;
+    observationEndTAI_p    = other.observationEndTAI_p;
+    observationEndUTC_p    = other.observationEndUTC_p;
     antennaSet_p           = other.antennaSet_p;
     filterSelection_p      = other.filterSelection_p;
     clockFrequency_p       = other.clockFrequency_p;
@@ -280,18 +283,6 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
 
   //_____________________________________________________________________________
-  //                                                                         init
-
-  void CommonAttributes::init ()
-  {
-    /* Set up the list of attributes */
-    CommonAttributes::setAttributes ();
-
-    std::vector<std::string> names (1,"UNDEFINED");
-    setStationsList (names);
-  }
-
-  //_____________________________________________________________________________
   //                                                                setAttributes
   
   void CommonAttributes::setAttributes ()
@@ -327,34 +318,39 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.insert("NOF_STATIONS");
     attributes_p.insert("STATIONS_LIST");
     attributes_p.insert("NOTES");
-    /* Attributes with value of type string */
-    attributesString_p.clear() ;
-    attributesString_p["GROUPTYPE"]             = "Root";
-    attributesString_p["FILENAME"]              = "UNDEFINED";
-    attributesString_p["FILETYPE"]              = "UNDEFINED";
-    attributesString_p["FILEDATE"]              = "UNDEFINED";
-    attributesString_p["TELESCOPE"]             = "LOFAR";
-    attributesString_p["PROJECT_ID"]            = "UNDEFINED";
-    attributesString_p["PROJECT_TITLE"]         = "UNDEFINED";
-    attributesString_p["PROJECT_PI"]            = "UNDEFINED";
-    attributesString_p["PROJECT_CO_I"]          = "UNDEFINED";
-    attributesString_p["PROJECT_CONTACT"]       = "UNDEFINED";
-    attributesString_p["OBSERVER"]              = "UNDEFINED";
-    attributesString_p["OBSERVATION_ID"]        = "UNDEFINED";
-    attributesString_p["OBSERVATION_START_MJD"] = "UNDEFINED";
-    attributesString_p["OBSERVATION_START_UTC"] = "UNDEFINED";
-    attributesString_p["OBSERVATION_START_TAI"] = "UNDEFINED";
-    attributesString_p["OBSERVATION_END_MJD"]   = "UNDEFINED";
-    attributesString_p["OBSERVATION_END_UTC"]   = "UNDEFINED";
-    attributesString_p["OBSERVATION_END_TAI"]   = "UNDEFINED";
-    attributesString_p["ANTENNA_SET"]           = "UNDEFINED";
-    attributesString_p["FILTER_SELECTION"]      = "UNDEFINED";
-    attributesString_p["CLOCK_FREQUENCY_UNIT"]  = "UNDEFINED";
-    attributesString_p["TARGET"]                = "UNDEFINED";
-    attributesString_p["SYSTEM_VERSION"]        = "UNDEFINED";
-    attributesString_p["PIPELINE_NAME"]         = "UNDEFINED";
-    attributesString_p["PIPELINE_VERSION"]      = "UNDEFINED";
-    attributesString_p["NOTES"]                 = "UNDEFINED";
+    /* Default values of the attributes */
+    std::string undefined ("UNDEFINED");
+    std::vector<std::string> stations (1,undefined);
+    //
+    groupType_p          = "Root";
+    filename_p           = undefined;
+    filetype_p           = undefined;
+    filedate_p           = undefined;
+    telescope_p          = "LOFAR";
+    projectID_p          = undefined;
+    projectTitle_p       = undefined;
+    projectPI_p          = undefined;
+    projectCoI_p          = undefined;
+    projectContact_p      = undefined;
+    observer_p            = undefined;
+    observationID_p       = undefined;
+    observationStartMJD_p = undefined;
+    observationStartTAI_p = undefined;
+    observationStartUTC_p = undefined;
+    observationEndMJD_p   = undefined;
+    observationEndTAI_p   = undefined;
+    observationEndUTC_p   = undefined;
+    antennaSet_p          = undefined;
+    filterSelection_p     = undefined;
+    clockFrequency_p      = 0.0;
+    clockFrequencyUnit_p  = undefined;
+    target_p              = undefined;
+    systemVersion_p       = undefined;
+    pipelineName_p        = undefined;
+    pipelineVersion_p     = undefined;
+    nofStations_p         = stations.size();
+    stationsList_p        = stations;
+    notes_p               = undefined;
   }
 
 #ifdef HAVE_HDF5

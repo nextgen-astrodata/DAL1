@@ -209,8 +209,6 @@ namespace DAL {  // Namespace DAL -- begin
     // ==========================================================================
     
 #ifdef HAVE_CASA
-    //! Retrieve the list of channel names (i.e. as string)
-    casa::Vector<casa::String> channelNames ();
     //! Retrieve the list of channel IDs
     casa::Vector<int> channelID ();
     //! Get the values of TIME for all present datasets
@@ -228,8 +226,6 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get the values of DATA_LENGTH for all present datasets
     casa::Vector<uint> data_length ();
 #else
-    //! Retrieve the list of channel names (i.e. as string)
-    std::vector<std::string> channelNames ();
     //! Retrieve the list of channel IDs
     std::vector<int> channelID ();
     //! Get the values of TIME for all present datasets

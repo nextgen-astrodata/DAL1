@@ -30,6 +30,7 @@
 
 // DAL header files
 #include <CommonInterface.h>
+#include <Filename.h>
 #include <BF_Dataset.h>
 #include <BF_StationBeam.h>
 #include <BF_SysLog.h>
@@ -91,13 +92,15 @@ namespace DAL { // Namespace DAL -- begin
     BF_Dataset (std::string const &filename);
     
     //! Argumented constructor
-    BF_Dataset (Filename const &filename);
+    BF_Dataset (DAL::Filename &infile,
+		bool const &create=true);
     
     //! Argumented constructor
-    BF_Dataset (CommonAttributes const &commonAttributes);
+    BF_Dataset (CommonAttributes const &attributes,
+		bool const &create=true);
     
     // -------------------------------------------------------------- Destruction
-
+    
     //! Destructor
     ~BF_Dataset ();
     
