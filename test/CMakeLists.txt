@@ -36,9 +36,14 @@ endmacro (build_test)
 
 add_subdirectory (hdf5)
 add_subdirectory (core)
-add_subdirectory (coordinates)
 add_subdirectory (data_common)
 add_subdirectory (data_hl)
+
+if (HAVE_CASACORE AND LAPACK_LAPACK_LIBRARY)
+  add_subdirectory (coordinates)
+else (HAVE_CASACORE AND LAPACK_LAPACK_LIBRARY)
+  message (STATUS "[DAL] Skipping tests in test/coordinates.")
+endif (HAVE_CASACORE AND LAPACK_LAPACK_LIBRARY)
 
 ## Set up list of source files
 
@@ -128,14 +133,14 @@ if (HAVE_CASACORE)
 	  endif (DAL_ENABLE_TESTING)
 	endforeach (src)
       else (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
-	message (WARNING "Skipping tests - missing LAPACK.")
+	message (STATUS "[DAL] Skipping tests - missing LAPACK.")
       endif (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
     endif (GFORTRAN_LIBRARIES)
   else (HAVE_HDF5)
-    message (WARNING "Skipping tests - missing HDF5.")
+    message (STATUS "[DAL] Skipping tests - missing HDF5.")
   endif (HAVE_HDF5)
 else (HAVE_CASACORE)
-  message (WARNING "Skipping tests - missing casacore.")
+  message (STATUS "[DAL] Skipping tests - missing casacore.")
 endif (HAVE_CASACORE)
 
 ##__________________________________________________________

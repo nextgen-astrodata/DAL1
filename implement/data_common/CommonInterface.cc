@@ -45,19 +45,47 @@ namespace DAL { // Namespace DAL -- begin
     destroy();
   }
   
+  //_____________________________________________________________________________
+  //                                                                      destroy
+
   void CommonInterface::destroy ()
-  {;}
+  {
+    if (location_p > 0) {
+      H5I_type_t object_type = H5Iget_type(location_p);
+      switch (object_type) {
+      case H5I_FILE:
+	H5Fclose (location_p);
+	break;
+      case H5I_GROUP:
+	H5Gclose (location_p);
+	break;
+      case H5I_DATATYPE:
+	H5Dclose (location_p);
+	break;
+      case H5I_DATASPACE:
+	H5Sclose (location_p);
+	break;
+      case H5I_ATTR:
+	H5Aclose (location_p);
+	break;
+      default:
+	std::cerr << "[CommonInterface::destroy] Invalid identifier!"
+		  << std::endl;
+	break;
+      }
+    }
+  }
   
   // ============================================================================
   //
   //  Parameters
   //
   // ============================================================================
-
+  
   bool CommonInterface::setAttributes (std::set<std::string> const &attributes)
   {
     bool status (true);
-
+    
     /* Clear the current set and copy the provided values */
     attributes_p.clear();
     attributes_p = attributes;
