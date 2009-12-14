@@ -498,6 +498,7 @@ endif (tar_executable AND gzip_executable)
 ##
 ## =============================================================================
 
+add_subdirectory (scripts)
 add_subdirectory (implement)
 
 if (DAL_BUILD_TESTS)
