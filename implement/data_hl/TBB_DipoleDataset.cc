@@ -453,6 +453,8 @@ namespace DAL {  // Namespace DAL -- begin
 				name.c_str(),
 				H5P_DEFAULT,
 				H5P_DEFAULT,
+				H5P_DEFAULT,
+				H5P_DEFAULT,
 				H5P_DEFAULT);
 	/* If creation was sucessful, add attributes with default values */
 	if (location_p > 0) {
