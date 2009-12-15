@@ -65,6 +65,9 @@ namespace DAL { // Namespace DAL -- begin
       case H5I_DATASPACE:
 	H5Sclose (location_p);
 	break;
+      case H5I_DATASET:
+	H5Dclose (location_p);
+	break;
       case H5I_ATTR:
 	H5Aclose (location_p);
 	break;
@@ -158,6 +161,18 @@ namespace DAL { // Namespace DAL -- begin
   //  Methods
   //
   // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                                 locationName
+  
+  H5I_type_t CommonInterface::objectType ()
+  {
+    if (location_p>0) {
+      return H5Iget_type (location_p);
+    } else {
+      return H5I_BADID;
+    }
+  }
   
   //_____________________________________________________________________________
   //                                                                 locationName

@@ -244,6 +244,9 @@ namespace DAL { // Namespace DAL -- begin
 
     // ------------------------------------------------------------------ Methods
 
+    //! Get the type (File, Group, Dataset, etc.) of the object
+    H5I_type_t objectType ();
+
     /*!
       \brief Open a structure (file, group, dataset, etc.)
 
@@ -287,13 +290,13 @@ namespace DAL { // Namespace DAL -- begin
 					name,
 					val);
 	  } else {
-	    std::cerr << "[BF_Dataset::getAttribute]"
+	    std::cerr << "[CommonInterface::getAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[BF_Dataset::getAttribute]"
+	  std::cerr << "[CommonInterface::getAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -322,13 +325,13 @@ namespace DAL { // Namespace DAL -- begin
 					name,
 					val);
 	  } else {
-	    std::cerr << "[BF_Dataset::getAttribute]"
+	    std::cerr << "[CommonInterface::getAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[BF_Dataset::getAttribute]"
+	  std::cerr << "[CommonInterface::getAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -357,13 +360,13 @@ namespace DAL { // Namespace DAL -- begin
 				    name,
 				    val);
 	  } else {
-	    std::cerr << "[BF_Dataset::setAttribute]"
+	    std::cerr << "[CommonInterface::setAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[BF_Dataset::setAttribute]"
+	  std::cerr << "[CommonInterface::setAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -392,13 +395,13 @@ namespace DAL { // Namespace DAL -- begin
 				    name,
 				    val);
 	  } else {
-	    std::cerr << "[BF_Dataset::setAttribute]"
+	    std::cerr << "[CommonInterface::setAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[BF_Dataset::setAttribute]"
+	  std::cerr << "[CommonInterface::setAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;

@@ -9,10 +9,16 @@ namespace DAL {
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                    H5Dataset
+
   H5Dataset::H5Dataset ()
   {
     init();
   }
+
+  //_____________________________________________________________________________
+  //                                                                    H5Dataset
 
   /*!
     \param location -- Identifier for the location to which the dataset is
@@ -25,6 +31,9 @@ namespace DAL {
     
   }
   
+  //_____________________________________________________________________________
+  //                                                                    H5Dataset
+
   /*!
     \param location -- Identifier for the location at which the dataset is about
            to be created.

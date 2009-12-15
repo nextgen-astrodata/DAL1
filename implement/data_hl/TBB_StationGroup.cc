@@ -893,25 +893,29 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Vector<casa::String>
   TBB_StationGroup::sample_frequency_unit ()
   {
+    std::string unit;
     uint nofDatasets (datasets_p.size());
-    casa::Vector<casa::String> unit (nofDatasets);
+    casa::Vector<casa::String> units (nofDatasets);
 
     for (uint n(0); n<nofDatasets; n++) {
-      unit(n) = datasets_p[n].sample_frequency_unit();
+      datasets_p[n].getAttribute("SAMPLE_FREQUENCY_UNIT",unit);
+      units(n) = unit;
     }
     
-    return unit;
+    return units;
   }
 #else
   std::vector<std::string> TBB_StationGroup::sample_frequency_unit ()
   {
-    std::vector<std::string> unit;
+    std::string unit;
+    std::vector<std::string> units
 
     for (uint n(0); n<datasets_p.size(); n++) {
-      unit.push_back(datasets_p[n].sample_frequency_unit());
+      datasets_p[n].getAttribute("SAMPLE_FREQUENCY_UNIT",unit);
+      units.push_back(unit);
     }
     
-    return unit;
+    return units;
   }
 #endif
   

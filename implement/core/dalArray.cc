@@ -645,8 +645,10 @@ namespace DAL {
                 of the array.
     \param chnkdims Specifies the chunk size for extendible arrays.
    */
-  dalShortArray::dalShortArray( hid_t obj_id, string arrayname,
-                                vector<int> dims, short data[],
+  dalShortArray::dalShortArray( hid_t obj_id,
+				string arrayname,
+                                vector<int> dims,
+				short data[],
                                 vector<int> chnkdims )
   {
     hid_t datatype  = 0;

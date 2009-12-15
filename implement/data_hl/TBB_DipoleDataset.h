@@ -119,6 +119,13 @@ namespace DAL {  // Namespace DAL -- begin
   */
   class TBB_DipoleDataset : public CommonInterface {
     
+    //! Datatype identifier
+    hid_t datatype_p;
+    //! Dataspace identifier
+    hid_t dataspace_p;
+    //! Shape of the dataset
+    std::vector<hsize_t> shape_p;    
+    
   public:
 
     // === Construction =========================================================
@@ -130,7 +137,14 @@ namespace DAL {  // Namespace DAL -- begin
 		       std::string const &dataset);
     //! Argumented constructor
     TBB_DipoleDataset (hid_t const &location,
-		       std::string const &dataset);
+		       std::string const &name);
+    //! Argumented constructor
+    TBB_DipoleDataset (hid_t const &location,
+		       uint const &stationID,
+		       uint const &rspID,
+		       uint const &rcuID,
+		       std::vector<hsize_t> const &shape,
+		       hid_t const &datatype=H5T_NATIVE_SHORT);
     //! Copy constructor
     TBB_DipoleDataset (TBB_DipoleDataset const &other);
     
@@ -145,12 +159,19 @@ namespace DAL {  // Namespace DAL -- begin
     TBB_DipoleDataset& operator= (TBB_DipoleDataset const &other);
     
     // === Parameter access =====================================================
+
+    //! Get the datatype of the individual array elements
+    inline hid_t datatype () const {
+      return datatype_p;
+    }
     
+    //! Get the shape of the data array
+    inline std::vector<hsize_t> shape () const {
+      return shape_p;
+    }
+
     //! Get the numerical value of the ADC sample frequency
     double sample_frequency_value ();
-    
-    //! Get the physical unit associated with the ADC sample frequency
-    std::string sample_frequency_unit ();
     
     //! Get the time as Julian Day
     double julianDay (bool const &onlySeconds=false);
@@ -172,9 +193,6 @@ namespace DAL {  // Namespace DAL -- begin
 
     //! Get the physical unit within which the antenna position is given
     bool antenna_position_unit (std::vector<std::string> &unit);
-
-    //! Get the numerical values describing the antenna orientation
-    bool antenna_orientation_value (std::vector<double> &value);
 
     //! Get the physical unit within which the antenna orientation is given
     bool antenna_orientation_unit (std::vector<std::string> &unit);
@@ -209,11 +227,24 @@ namespace DAL {  // Namespace DAL -- begin
 	       std::string const &name,
 	       bool const &create=true);
     
+    //! Open a dipole dataset
+    bool open (hid_t const &location,
+	       uint const &stationID,
+	       uint const &rspID,
+	       uint const &rcuID,
+	       std::vector<hsize_t> const &shape,
+	       hid_t const &datatype=H5T_NATIVE_SHORT);
+    
     //! Get the unique channel/dipole identifier
     int channelID ();
     
     //! Get the unique channel/dipole identifier
     std::string channelName ();
+    
+    //! Get the unique channel/dipole identifier
+    static std::string channelName (uint const &station,
+				    uint const &rsp,
+				    uint const &rcu);
     
     //! Get a number of data values as recorded for this dipole
     bool fx (int const &start,
@@ -280,16 +311,6 @@ namespace DAL {  // Namespace DAL -- begin
       \param dataset  -- Name of the dataset which this object is to encapsulate.
     */
     void init (std::string const &filename,
-	       std::string const &dataset);
-    
-    /*!
-      \brief Initialize the internal dataspace
-      
-      \param location -- Location below which the dataset is found within the
-             file.
-      \param dataset  -- Name of the dataset which this object if to encapsulate.
-    */
-    void init (hid_t const &location,
 	       std::string const &dataset);
     
     /*!

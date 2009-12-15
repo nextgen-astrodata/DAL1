@@ -388,37 +388,34 @@ namespace DAL {  // Namespace DAL -- begin
     unsigned int dipoleID;
 
     dipoleID = headerp->stationid*1000000 + headerp->rspid*1000 + headerp->rcuid;
-
-    for (i=0; i<MAX_NO_DIPOLES; i++)
-      {
-        if ( dipoleBuf[i].ID == dipoleID)
-          {
-            dipoleIndex=i;
-            break;
-          };
-        if (dipoleBuf[i].array == NULL)
-          {
-            break;
-          };
-      }
-    if (dipoleIndex != -1)
-      {
-        return dipoleIndex;
-      }
-    else
-      {
-        return createNewDipole(headerp);
+    
+    for (i=0; i<MAX_NO_DIPOLES; i++) {
+      if ( dipoleBuf[i].ID == dipoleID) {
+	dipoleIndex=i;
+	break;
       };
+      if (dipoleBuf[i].array == NULL) {
+	break;
+      };
+    }
+    if (dipoleIndex != -1) {
+      return dipoleIndex;
+    }
+    else {
+      return createNewDipole(headerp);
+    };
   };
-
+  
   //_____________________________________________________________________________
   //                                                              createNewDipole
   
   int TBBraw::createNewDipole(TBB_Header *headerp)
   {
-    int i, stationIndex=-1, dipoleIndex=-1;
+    int i            = 0;
+    int stationIndex = -1;
+    int dipoleIndex  = -1;
     unsigned int stationID, dipoleID;
-
+    
     // find the corresponding staion index
     stationID = headerp->stationid;
     for (i=0; i<MAX_NO_STATIONS; i++)
@@ -455,13 +452,13 @@ namespace DAL {  // Namespace DAL -- begin
         cerr << "TBBraw::createNewDipole: Buffer \"dipoleBuf\" is full, cannot create new dipole!" <<endl;
         return -1;
       };
-
+    
     // Now we have the station and dipole index -> create the dipole
-
+    
     vector<int> firstdims(1,0);
     vector<int> cdims(1,CHUNK_SIZE);
     short nodata[0];
-
+    
     char newDipoleIDstr[10];
     sprintf(newDipoleIDstr, "%03d%03d%03d", headerp->stationid, headerp->rspid, headerp->rcuid);
     dipoleBuf[dipoleIndex].array =  //see next line

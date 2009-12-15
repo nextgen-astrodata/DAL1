@@ -775,8 +775,6 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Get the number of attributes attached to the dataset." )
     .def( "sample_frequency_value", &TBB_DipoleDataset::sample_frequency_value,
 	  "Get the numerical value of the ADC sample frequency." )
-    .def( "sample_frequency_unit", &TBB_DipoleDataset::sample_frequency_unit,
-	  "Get the physical unit associated with the ADC sample frequency." )
     .def( "julianDay", &TBB_DipoleDataset::julianDay,
 	  "Get the time as Julian Day." )
     .def( "sample_number", &TBB_DipoleDataset::sample_number,
