@@ -63,8 +63,8 @@ endif (dataset_beamformed)
 
 ## tdalCommon
   
-add_test (tdalCommon1 tdalCommon)
+add_test (tdalCommon_test1 tdalCommon)
 
 if (dataset_tbb AND dataset_beamformed)
-  add_test (tdalCommon2 tdalCommon ${dataset_tbb} ${dataset_beamformed})
+  add_test (tdalCommon_test2 tdalCommon ${dataset_tbb} ${dataset_beamformed})
 endif (dataset_tbb AND dataset_beamformed)

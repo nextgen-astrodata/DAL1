@@ -779,8 +779,6 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Get the time as Julian Day." )
     .def( "sample_number", &TBB_DipoleDataset::sample_number,
 	  "Get the timespan in samples since the last full second." )
-    .def( "samples_per_frame", &TBB_DipoleDataset::samples_per_frame,
-	  "The number of samples per original TBB-RSP frame." )
     .def( "data_length", &TBB_DipoleDataset::data_length,
 	  "Get the number of samples stored in this dataset." )
     .def( "feed", &TBB_DipoleDataset::feed,

@@ -191,7 +191,7 @@ namespace DAL {
   bool h5get_names (std::set<std::string> &names,
 		    hid_t const &location_id,
 		    int const &type=H5G_GROUP);
-  
+
   // ============================================================================
   //
   //  Access to HDF5 attributes

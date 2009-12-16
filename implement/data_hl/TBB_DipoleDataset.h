@@ -142,6 +142,11 @@ namespace DAL {  // Namespace DAL -- begin
     TBB_DipoleDataset (hid_t const &location,
 		       uint const &stationID,
 		       uint const &rspID,
+		       uint const &rcuID);
+    //! Argumented constructor
+    TBB_DipoleDataset (hid_t const &location,
+		       uint const &stationID,
+		       uint const &rspID,
 		       uint const &rcuID,
 		       std::vector<hsize_t> const &shape,
 		       hid_t const &datatype=H5T_NATIVE_SHORT);
@@ -179,21 +184,12 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get the timespan in samples since the last full second
     uint sample_number ();
     
-    //! The number of samples per original TBB-RSP frame
-    uint samples_per_frame ();
-    
     //! Get the number of samples stored in this dataset
     uint data_length ();
     
     //! Get the type of feed for this dipole
     std::string feed ();
     
-    //! Get the numerical value of the antenna position
-    bool antenna_position_value (std::vector<double> &value);
-
-    //! Get the physical unit within which the antenna position is given
-    bool antenna_position_unit (std::vector<std::string> &unit);
-
     //! Get the physical unit within which the antenna orientation is given
     bool antenna_orientation_unit (std::vector<std::string> &unit);
 

@@ -844,21 +844,21 @@ int test_timeseries (std::string const &filename)
 {
   cout << "\n[tdalCommon::test_timeseries]\n" << endl;
 
-  int nofFailedTests (0);
-  bool status (true);
-  hid_t file_id (-1);
-  hid_t group_id (-1);
-  hid_t dataset_id (-1);
+  int nofFailedTests = 0;
+  bool status        = true;
+  hid_t fileID       = -1;
+  hid_t groupID      = -1;
+  hid_t datasetID    = -1;
 
   //__________________________________________________________________
   // Open the HDF5 dataset
 
   cout << "[1] opening HDF5 file ..." << endl;
-  file_id = H5Fopen (filename.c_str(),
+  fileID = H5Fopen (filename.c_str(),
                      H5F_ACC_RDWR,
                      H5P_DEFAULT);
 
-  if (file_id < 0) {
+  if (fileID < 0) {
     cerr << "Failed to open file " << filename << endl;
     return 1;
   }
@@ -876,12 +876,12 @@ int test_timeseries (std::string const &filename)
     std::string observation_id;
     std::string observation_mode;
     //
-    DAL::h5get_name (name,file_id);
-    DAL::h5get_attribute (file_id,"TELESCOPE",telescope);
-    DAL::h5get_attribute (file_id,"OBSERVER",observer);
-    DAL::h5get_attribute (file_id,"PROJECT",project);
-    DAL::h5get_attribute (file_id,"OBSERVATION_ID",observation_id);
-    DAL::h5get_attribute (file_id,"OBSERVATION_MODE",observation_mode);
+    DAL::h5get_name (name,fileID);
+    DAL::h5get_attribute (fileID,"TELESCOPE",telescope);
+    DAL::h5get_attribute (fileID,"OBSERVER",observer);
+    DAL::h5get_attribute (fileID,"PROJECT",project);
+    DAL::h5get_attribute (fileID,"OBSERVATION_ID",observation_id);
+    DAL::h5get_attribute (fileID,"OBSERVATION_MODE",observation_mode);
     //
     cout << "-- TELESCOPE ...... = " << telescope        << endl;
     cout << "-- OBSERVER ....... = " << observer         << endl;
@@ -904,11 +904,11 @@ int test_timeseries (std::string const &filename)
     std::string observation_mode;
     
     for (uint n(0); n<nofTrials; n++) {
-      DAL::h5get_attribute (file_id,"TELESCOPE",telescope);
-      DAL::h5get_attribute (file_id,"OBSERVER",observer);
-      DAL::h5get_attribute (file_id,"PROJECT",project);
-      DAL::h5get_attribute (file_id,"OBSERVATION_ID",observation_id);
-      DAL::h5get_attribute (file_id,"OBSERVATION_MODE",observation_mode);
+      DAL::h5get_attribute (fileID,"TELESCOPE",telescope);
+      DAL::h5get_attribute (fileID,"OBSERVER",observer);
+      DAL::h5get_attribute (fileID,"PROJECT",project);
+      DAL::h5get_attribute (fileID,"OBSERVATION_ID",observation_id);
+      DAL::h5get_attribute (fileID,"OBSERVATION_MODE",observation_mode);
     }
     cout << "-- " << nofTrials << " read completed." << endl;
   }
@@ -925,19 +925,19 @@ int test_timeseries (std::string const &filename)
     std::string observer;
     std::string project;
     //
-    DAL::h5get_attribute (file_id,"OBSERVER",observer);
-    DAL::h5get_attribute (file_id,"PROJECT",project);
+    DAL::h5get_attribute (fileID,"OBSERVER",observer);
+    DAL::h5get_attribute (fileID,"PROJECT",project);
     cout << "-- original values:" << endl;
     cout << "--> OBSERVER = " << observer << endl;
     cout << "--> PROJECT  = " << project  << endl;
     //
     observer = "Lars Baehren";
     project  = "CR";
-    status = DAL::h5set_attribute (file_id,"OBSERVER",observer);
-    status = DAL::h5set_attribute (file_id,"PROJECT",project);
+    status = DAL::h5set_attribute (fileID,"OBSERVER",observer);
+    status = DAL::h5set_attribute (fileID,"PROJECT",project);
     if (status) {
-      DAL::h5get_attribute (file_id,"OBSERVER",observer);
-      DAL::h5get_attribute (file_id,"PROJECT",project);
+      DAL::h5get_attribute (fileID,"OBSERVER",observer);
+      DAL::h5get_attribute (fileID,"PROJECT",project);
       cout << "-- new values:" << endl;
       cout << "--> OBSERVER = " << observer << endl;
       cout << "--> PROJECT  = " << project  << endl;
@@ -945,8 +945,8 @@ int test_timeseries (std::string const &filename)
     //
     observer = "UNDEFINED";
     project  = "UNDEFINED";
-    status = DAL::h5set_attribute (file_id,"OBSERVER",observer);
-    status = DAL::h5set_attribute (file_id,"PROJECT",project);
+    status = DAL::h5set_attribute (fileID,"OBSERVER",observer);
+    status = DAL::h5set_attribute (fileID,"PROJECT",project);
     cout << "-- reverted to original values" << endl;
   }
   catch (std::string message) {
@@ -961,14 +961,14 @@ int test_timeseries (std::string const &filename)
   try {
     std::vector<std::string> names;
     // Get the names of the groups attached to the root group of the file
-    status = DAL::h5get_names (names,file_id,H5G_GROUP);
+    status = DAL::h5get_names (names,fileID,H5G_GROUP);
     // Open up the first station group
     if (status) {
       cout << "-- Station groups = " << names << endl;
-      group_id = H5Gopen1 (file_id,names[0].c_str());
+      groupID = H5Gopen1 (fileID,names[0].c_str());
     }
     // If opening of group failed, do not continue
-    if (group_id < 0) {
+    if (groupID < 0) {
       cerr << "Error opening the station group!" << endl;
       return 1;
     }
@@ -993,14 +993,14 @@ int test_timeseries (std::string const &filename)
     std::vector<std::string> beam_direction_unit;
     std::string beam_direction_frame;
     //
-    DAL::h5get_attribute (group_id, "TRIGGER_TYPE", trigger_type);
-    DAL::h5get_attribute (group_id, "TRIGGER_OFFSET", trigger_offset);
-    DAL::h5get_attribute (group_id, "STATION_POSITION_VALUE", station_position_value);
-    DAL::h5get_attribute (group_id, "STATION_POSITION_UNIT", station_position_unit);
-    DAL::h5get_attribute (group_id, "STATION_POSITION_FRAME", station_position_frame);
-    DAL::h5get_attribute (group_id, "BEAM_DIRECTION_VALUE", beam_direction_value);
-    DAL::h5get_attribute (group_id, "BEAM_DIRECTION_UNIT", beam_direction_unit);
-    DAL::h5get_attribute (group_id, "BEAM_DIRECTION_FRAME", beam_direction_frame);
+    DAL::h5get_attribute (groupID, "TRIGGER_TYPE", trigger_type);
+    DAL::h5get_attribute (groupID, "TRIGGER_OFFSET", trigger_offset);
+    DAL::h5get_attribute (groupID, "STATION_POSITION_VALUE", station_position_value);
+    DAL::h5get_attribute (groupID, "STATION_POSITION_UNIT", station_position_unit);
+    DAL::h5get_attribute (groupID, "STATION_POSITION_FRAME", station_position_frame);
+    DAL::h5get_attribute (groupID, "BEAM_DIRECTION_VALUE", beam_direction_value);
+    DAL::h5get_attribute (groupID, "BEAM_DIRECTION_UNIT", beam_direction_unit);
+    DAL::h5get_attribute (groupID, "BEAM_DIRECTION_FRAME", beam_direction_frame);
     //
     cout << "-- TRIGGER_TYPE ......... = " << trigger_type           << endl;
     cout << "-- TRIGGER_OFFSET ....... = " << trigger_offset         << endl;
@@ -1023,14 +1023,14 @@ int test_timeseries (std::string const &filename)
   try {
     std::vector<std::string> names;
     // Get the names of the groups attached to the root group of the file
-    status = DAL::h5get_names (names, group_id, H5G_DATASET);
+    status = DAL::h5get_names (names, groupID, H5G_DATASET);
     // Open up the first station group
     if (status) {
       cout << "-- Dipole datasets = " << names << endl;
-      dataset_id = H5Dopen1 (group_id, names[0].c_str());
+      datasetID = H5Dopen1 (groupID, names[0].c_str());
     }
     // Check if dataset was opened successfully
-    if (dataset_id < 0) {
+    if (datasetID < 0) {
       cerr << "Error opening the dipole dataset!" << endl;
       return 1;
     }
@@ -1058,20 +1058,20 @@ int test_timeseries (std::string const &filename)
     std::vector<std::string> antenna_orientation_unit;
     std::string antenna_orientation_frame;
     //
-    DAL::h5get_attribute (dataset_id,"STATION_ID", station_id);
-    DAL::h5get_attribute (dataset_id,"RSP_ID", rsp_id);
-    DAL::h5get_attribute (dataset_id,"RCU_ID", rcu_id);
-    DAL::h5get_attribute (dataset_id,"TIME", time);
-    DAL::h5get_attribute (dataset_id,"SAMPLE_FREQUENCY_VALUE", sample_frequency_value);
-    DAL::h5get_attribute (dataset_id,"SAMPLE_FREQUENCY_UNIT", sample_frequency_unit);
-    DAL::h5get_attribute (dataset_id,"SAMPLE_FREQUENCY_VALUE", sample_frequency_value);
-    DAL::h5get_attribute (dataset_id,"SAMPLE_FREQUENCY_UNIT", sample_frequency_unit);
-    DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_VALUE", antenna_position_value);
-    DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_UNIT", antenna_position_unit);
-    DAL::h5get_attribute (dataset_id,"ANTENNA_POSITION_FRAME", antenna_position_frame);
-    DAL::h5get_attribute (dataset_id,"ANTENNA_ORIENTATION_VALUE", antenna_orientation_value);
-    DAL::h5get_attribute (dataset_id,"ANTENNA_ORIENTATION_UNIT", antenna_orientation_unit);
-    DAL::h5get_attribute (dataset_id,"ANTENNA_ORIENTATION_FRAME", antenna_orientation_frame);
+    DAL::h5get_attribute (datasetID,"STATION_ID", station_id);
+    DAL::h5get_attribute (datasetID,"RSP_ID", rsp_id);
+    DAL::h5get_attribute (datasetID,"RCU_ID", rcu_id);
+    DAL::h5get_attribute (datasetID,"TIME", time);
+    DAL::h5get_attribute (datasetID,"SAMPLE_FREQUENCY_VALUE", sample_frequency_value);
+    DAL::h5get_attribute (datasetID,"SAMPLE_FREQUENCY_UNIT", sample_frequency_unit);
+    DAL::h5get_attribute (datasetID,"SAMPLE_FREQUENCY_VALUE", sample_frequency_value);
+    DAL::h5get_attribute (datasetID,"SAMPLE_FREQUENCY_UNIT", sample_frequency_unit);
+    DAL::h5get_attribute (datasetID,"ANTENNA_POSITION_VALUE", antenna_position_value);
+    DAL::h5get_attribute (datasetID,"ANTENNA_POSITION_UNIT", antenna_position_unit);
+    DAL::h5get_attribute (datasetID,"ANTENNA_POSITION_FRAME", antenna_position_frame);
+    DAL::h5get_attribute (datasetID,"ANTENNA_ORIENTATION_VALUE", antenna_orientation_value);
+    DAL::h5get_attribute (datasetID,"ANTENNA_ORIENTATION_UNIT", antenna_orientation_unit);
+    DAL::h5get_attribute (datasetID,"ANTENNA_ORIENTATION_FRAME", antenna_orientation_frame);
     //
     cout << "-- STATION_ID .............. = " << station_id << endl;
     cout << "-- RSP_ID .................. = " << rsp_id     << endl;
@@ -1100,15 +1100,15 @@ int test_timeseries (std::string const &filename)
     casa::MPosition antenna_position;
     casa::MDirection beam_direction;
     //
-    station_position = DAL::h5get_position (group_id,
+    station_position = DAL::h5get_position (groupID,
 					    "STATION_POSITION_VALUE",
 					    "STATION_POSITION_UNIT",
 					    "STATION_POSITION_FRAME");
-    beam_direction = DAL::h5get_direction (group_id,
+    beam_direction = DAL::h5get_direction (groupID,
 					   "BEAM_DIRECTION_VALUE",
 					   "BEAM_DIRECTION_UNIT",
 					   "BEAM_DIRECTION_FRAME");
-    antenna_position = DAL::h5get_position (dataset_id,
+    antenna_position = DAL::h5get_position (datasetID,
 					    "ANTENNA_POSITION_VALUE",
 					    "ANTENNA_POSITION_UNIT",
 					    "ANTENNA_POSITION_FRAME");

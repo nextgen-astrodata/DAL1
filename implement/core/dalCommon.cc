@@ -442,18 +442,15 @@ namespace DAL {
             was encountered.
   */
   bool h5get_names (std::set<std::string> &names,
-		    hid_t const &location_id,
+		    hid_t const &locationID,
 		    int const &type)
   {
-    bool status        = true;
-    hsize_t nofObjects = 0;
-    herr_t h5error     = 0;
-
-    /* Clear the set returning the results */
-    names.clear();
+    bool status           = true;
+    hsize_t nofObjects    = 0;
+    herr_t h5error        = 0;
 
     /* Get the number of objects attached to this object */
-    h5error = H5Gget_num_objs(location_id,
+    h5error = H5Gget_num_objs(locationID,
                               &nofObjects);
     
     if (h5error > 0) {
@@ -467,10 +464,10 @@ namespace DAL {
       
       for (hsize_t idx (0); idx<nofObjects; idx++) {
 	/* Get the type of the attached object */
-	if (type == H5Gget_objtype_by_idx (location_id,idx)) {
+	if (type == H5Gget_objtype_by_idx (locationID,idx)) {
 	  /* If the attached object is a group, retrieve its name */
 	  status = DAL::h5get_name (tmp,
-				    location_id,
+				    locationID,
 				    idx);
 	  /* If retrieval of the name was successful, add it to the list */
 	  if (status) {
@@ -484,7 +481,7 @@ namespace DAL {
     
     return status;
   }
-  
+
   // ============================================================================
   //
   //  Get HDF5 attributes

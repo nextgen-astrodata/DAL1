@@ -222,8 +222,9 @@ namespace DAL {  // Namespace DAL -- begin
       to reside below the object identified by "location".
     */
     try {
-      group_id = H5Gopen1 (location,
-			   group.c_str());
+      group_id = H5Gopen (location,
+			  group.c_str(),
+			  H5P_DEFAULT);
     }
     catch (std::string message) {
       std::cerr << "[TBB_StationGroup::init] " << message << std::endl;
@@ -395,27 +396,23 @@ namespace DAL {  // Namespace DAL -- begin
   */
   void TBB_StationGroup::copy (TBB_StationGroup const &other)
   {
-    if (other.groupID_p > 0)
-      {
-        try
-          {
-            init (other.groupID_p);
-          }
-        catch (std::string message)
-          {
-            std::cerr << "[TBB_StationGroup::copy] " << message << std::endl;
-          }
+    if (other.groupID_p > 0) {
+      try {
+	init (other.groupID_p);
       }
-    else
-      {
-        /*
-         * if previous operation failed, at least ensure internal handling remains
-         * consistent
-         */
-        groupID_p = 0;
+      catch (std::string message) {
+	std::cerr << "[TBB_StationGroup::copy] " << message << std::endl;
       }
+    }
+    else {
+      /*
+       * if previous operation failed, at least ensure internal handling remains
+       * consistent
+       */
+      groupID_p = 0;
+    }
   }
-
+  
   // ============================================================================
   //
   //  Parameter access - station group
@@ -1013,10 +1010,12 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Vector<uint> TBB_StationGroup::samples_per_frame ()
   {
     uint nofDatasets (datasets_p.size());
+    uint samples;
     casa::Vector<uint> samples_per_frame (nofDatasets);
     
     for (uint n(0); n<nofDatasets; n++) {
-      samples_per_frame(n) = datasets_p[n].samples_per_frame();
+      datasets_p[n].getAttribute("SAMPLES_PER_FRAME",samples);
+      samples_per_frame(n) = samples;
     }
     
     return samples_per_frame;

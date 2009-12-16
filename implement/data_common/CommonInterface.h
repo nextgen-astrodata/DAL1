@@ -249,11 +249,11 @@ namespace DAL { // Namespace DAL -- begin
 
     /*!
       \brief Open a structure (file, group, dataset, etc.)
-
+      
       Though this signature it rather generatic, there is at least one case,
       where not all of the input parameters can be utilized: when opening a file
       (e.g. with BF_Dataset) the <tt>location</tt> will not be evaluated.
-
+      
       \param location -- Identifier of the location to which the to be opened
              structure is attached
       \param name   -- Name of the structure (file, group, dataset, etc.) to be

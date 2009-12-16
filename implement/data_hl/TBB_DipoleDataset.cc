@@ -39,16 +39,16 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                            TBB_DipoleDataset
   
   TBB_DipoleDataset::TBB_DipoleDataset ()
-    : CommonInterface ()
   {
-    datatype_p = -1;
-    location_p = -1;
+    datatype_p  = -1;
+    dataspace_p = -1;
+    location_p  = -1;
+    shape_p     = std::vector<hsize_t>();
   }
   
   //_____________________________________________________________________________
   //                                                            TBB_DipoleDataset
-  
-  /*!
+/*!
     \param filename -- Name of the HDF5 file within which the dataset is
            contained.
     \param dataset  -- Name of the dataset, in this case the full path from
@@ -58,10 +58,12 @@ namespace DAL {  // Namespace DAL -- begin
                                         std::string const &dataset)
     : CommonInterface ()
   {
-    datatype_p = -1;
-    location_p = -1;
-    init (filename,
-          dataset);
+    datatype_p  = -1;
+    dataspace_p = -1;
+    location_p  = -1;
+    shape_p     = std::vector<hsize_t>();
+    //
+    init (filename, dataset);
   }
   
   //_____________________________________________________________________________
@@ -73,13 +75,41 @@ namespace DAL {  // Namespace DAL -- begin
     \param dataset  -- Name of the dataset.
   */
   TBB_DipoleDataset::TBB_DipoleDataset (hid_t const &location,
-                                        std::string const &dataset)
+                                        std::string const &name)
     : CommonInterface ()
   {
-    datatype_p = -1;
-    location_p = -1;
-    open (location,dataset,false);
+    datatype_p  = -1;
+    dataspace_p = -1;
+    location_p  = -1;
+    shape_p     = std::vector<hsize_t>();
+    //
+    open (location,name,false);
   }
+
+  //_____________________________________________________________________________
+  //                                                            TBB_DipoleDataset
+  
+  /*!
+    \param location -- Identifier for the location within the HDF5 file, below
+           which the dataset is placed.
+    \param station  -- Station identifier.
+    \param rsp      -- RSP identifier.
+    \param rcu      -- RCU identifier.
+  */
+  TBB_DipoleDataset::TBB_DipoleDataset (hid_t const &location,
+					uint const &stationID,
+					uint const &rspID,
+					uint const &rcuID)
+  {
+    datatype_p  = -1;
+    dataspace_p = -1;
+    location_p  = -1;
+    shape_p     = std::vector<hsize_t>();
+    std::string name = channelName (stationID, rspID, rcuID);
+
+    open (location,name,false);
+  }
+  
 
   //_____________________________________________________________________________
   //                                                            TBB_DipoleDataset
@@ -100,6 +130,11 @@ namespace DAL {  // Namespace DAL -- begin
 					std::vector<hsize_t> const &shape,
 					hid_t const &datatype)
   {
+    datatype_p  = -1;
+    dataspace_p = -1;
+    location_p  = -1;
+    shape_p     = std::vector<hsize_t>();
+
     open (location,
 	  stationID,
 	  rspID,
@@ -118,8 +153,10 @@ namespace DAL {  // Namespace DAL -- begin
   TBB_DipoleDataset::TBB_DipoleDataset (TBB_DipoleDataset const &other)
     : CommonInterface ()
   {
-    // Initialize internal variables
-    location_p = 0;
+    datatype_p  = -1;
+    dataspace_p = -1;
+    location_p  = -1;
+    shape_p     = std::vector<hsize_t>();
 
     copy (other);
   }
@@ -147,7 +184,6 @@ namespace DAL {  // Namespace DAL -- begin
     if (dataspace_p>0) {
       H5Sclose (dataspace_p);
     }
-
   }
   
   // ============================================================================
@@ -173,12 +209,18 @@ namespace DAL {  // Namespace DAL -- begin
   
   void TBB_DipoleDataset::copy (TBB_DipoleDataset const &other)
   {
-    if (other.location_p > 0) {
-      init (other.location_p);
+    location_p  = other.location_p;
+    datatype_p  = other.datatype_p;
+    dataspace_p = other.dataspace_p;
+
+    std::set<std::string>::iterator it = other.attributes_p.begin();
+    attributes_p.clear();
+    for (; it!=other.attributes_p.end(); ++it) {
+      attributes_p.insert((*it));
     }
-    else {
-      location_p = 0;
-    }
+
+    shape_p.resize(other.shape_p.size());
+    shape_p = other.shape_p;
   }
   
   // ============================================================================
@@ -245,31 +287,6 @@ namespace DAL {  // Namespace DAL -- begin
     }
 
     return val;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                            samples_per_frame
-
-  /*!
-    \return samplesPerFrame -- The number of samples originally transmitted
-            per frame of data sent from TBB to RSP.
-  */
-  uint TBB_DipoleDataset::samples_per_frame ()
-  {
-    if (location_p > 0) {
-      uint val (0);
-      if (DAL::h5get_attribute(location_p,
-			       attribute_name(DAL::SAMPLES_PER_FRAME),
-			       val)) {
-	return val;
-      }
-      else {
-	return 0;
-      }
-    }
-    else {
-      return 0;
-    }
   }
   
   //_____________________________________________________________________________
@@ -433,15 +450,14 @@ namespace DAL {  // Namespace DAL -- begin
   {
     bool status (true);
     bool ok (true);
+    std::set<std::string> datasets;
 
-    /* Set up the list of attributes attached to the root group */
+    /* Set up the list of attributes */
     setAttributes();
+    /* Get names of datasets attached */
+    h5get_names (datasets,location,H5G_DATASET);
 
-    /* Get the list of datasets attached to this group */
-    std::set<std::string> groups;
-    h5get_names (groups,location,H5G_DATASET);
-
-    if (static_cast<bool>(groups.count(name))) {
+    if (static_cast<bool>(datasets.count(name))) {
       location_p = H5Dopen (location,
 			    name.c_str(),
 			    H5P_DEFAULT);
@@ -508,7 +524,7 @@ namespace DAL {  // Namespace DAL -- begin
 	  status = false;
 	}
       } else {
-	std::cerr << "[TBB_DipoleDataset::open] Failed to open group "
+	std::cerr << "[TBB_DipoleDataset::open] Failed to open dataset "
 		  << name
 		  << std::endl;
 	status = false;
@@ -548,9 +564,13 @@ namespace DAL {  // Namespace DAL -- begin
     bool status (true);
 
     // store variables describing the array
-    datatype_p = H5Tcopy(datatype);
-    shape_p.resize(shape.size());
-    shape_p = shape;
+    if (datatype != H5I_BADID) {
+      datatype_p = H5Tcopy(datatype);
+      shape_p.resize(shape.size());
+      shape_p = shape;
+    } else {
+      datatype_p = -1;
+    }
 
     // convert IDs to name
     std::string name = channelName (stationID,rspID,rcuID);
@@ -603,6 +623,7 @@ namespace DAL {  // Namespace DAL -- begin
 	uint rcuID;
 	uint nyquist_zone;
 	uint time;
+	uint samplesPerFrame;
 	std::string sampleFreqUnit;
 	std::vector<double> antennaPositionValue;
 	std::vector<std::string> antennaPositionUnit;
@@ -614,10 +635,11 @@ namespace DAL {  // Namespace DAL -- begin
 	getAttribute ("RCU_ID",                    rcuID);
 	getAttribute ("NYQUIST_ZONE",              nyquist_zone);
 	getAttribute ("TIME",                      time);
+	getAttribute ("SAMPLES_PER_FRAME",         samplesPerFrame);
 	getAttribute ("SAMPLE_FREQUENCY_UNIT",     sampleFreqUnit);
+	getAttribute ("ANTENNA_POSITION_VALUE",    antennaPositionValue);
+	getAttribute ("ANTENNA_POSITION_UNIT",     antennaPositionUnit);
 	getAttribute ("ANTENNA_ORIENTATION_VALUE", antennaOrientationValue);
-	antenna_position_value(antennaPositionValue);
-	antenna_position_unit(antennaPositionUnit);
 	antenna_orientation_unit(antennaOrientationUnit);
 	/* Display attributes */
 	os << "-- STATION_ID .............. = " << stationID             << endl;
@@ -636,35 +658,11 @@ namespace DAL {  // Namespace DAL -- begin
 	os << "-- TIME [Unix seconds]...... = " << time << endl;
 	os << "-- TIME [  Julian Day] ..... = " << julianDay() << endl;
 	os << "-- SAMPLE_NUMBER ........... = " << sample_number() << endl;
-	os << "-- SAMPLES_PER_FRAME ....... = " << samples_per_frame() << endl;
+	os << "-- SAMPLES_PER_FRAME ....... = " << samplesPerFrame << endl;
 	os << "-- FEED .................... = " << feed() << endl;
 	os << "-- DATA_LENGTH ............. = " << data_length()               << endl;
       }
     }
-  }
-  
-  //_____________________________________________________________________________
-  //                                                       antenna_position_value
-
-  /*!
-    \return value -- Numerical value of the antenna position coordinates, e.g.
-            <tt>value=[10,12,0]</tt>
-  */
-  bool TBB_DipoleDataset::antenna_position_value (std::vector<double> &value)
-  {
-    return DAL::h5get_attribute(location_p,
-				attribute_name(DAL::ANTENNA_POSITION_VALUE),
-				value);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                        antenna_position_unit
-
-  bool TBB_DipoleDataset::antenna_position_unit (std::vector<std::string> &unit)
-  {
-    return DAL::h5get_attribute(location_p,
-				attribute_name(DAL::ANTENNA_POSITION_UNIT),
-				unit);
   }
   
   // ----------------------------------------------------- antenna_position_frame
@@ -1177,17 +1175,19 @@ namespace DAL {  // Namespace DAL -- begin
       uint rcu_id;
       uint nyquist_zone;
       uint time;
+      uint samplesPerFrame;
       casa::Vector<double> antennaPositionValue;
       casa::Vector<casa::String> antennaPositionUnit;
       casa::Vector<double> antennaOrientationValue;
       casa::Vector<casa::String> antennaOrientationUnit;
 
       // Retrieve attribute values
-      getAttribute ("STATION_ID",   station_id);
-      getAttribute ("RSP_ID",       rsp_id);
-      getAttribute ("RCU_ID",       rcu_id);
-      getAttribute ("NYQUIST_ZONE", nyquist_zone);
-      getAttribute ("TIME",         time);
+      getAttribute ("STATION_ID",         station_id);
+      getAttribute ("RSP_ID",             rsp_id);
+      getAttribute ("RCU_ID",             rcu_id);
+      getAttribute ("NYQUIST_ZONE",       nyquist_zone);
+      getAttribute ("TIME",               time);
+      getAttribute ("SAMPLES_PER_FRAME",  samplesPerFrame);
       antenna_position_value (antennaPositionValue);
       antenna_position_unit  (antennaPositionUnit);
       antenna_orientation_value (antennaOrientationValue);
@@ -1207,7 +1207,7 @@ namespace DAL {  // Namespace DAL -- begin
       rec.define(casa::RecordFieldId(attribute_name(DAL::SAMPLE_NUMBER)),
 		 sample_number());
       rec.define(casa::RecordFieldId(attribute_name(DAL::SAMPLES_PER_FRAME)),
-		 samples_per_frame());
+		 samplesPerFrame);
       rec.define(casa::RecordFieldId(attribute_name(DAL::FEED)),
 		 feed());
       rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_POSITION_VALUE)),
