@@ -102,12 +102,6 @@ namespace DAL { // Namespace DAL -- begin
   
   void BF_Dataset::destroy ()
   {
-    if (location_p > 0) {
-      herr_t h5error = H5Fclose (location_p);
-      if (h5error != 0) {
-	std::cerr << "Error closing HDF5 dataset." << std::endl;
-      }
-    }
   }
   
   // ============================================================================
@@ -240,12 +234,12 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
 
-    /* Initialize private variables*/
+    // Initialize private variables ________________________
     location_p = location;
     stationBeams_p.clear();
     sysLog_p.clear();
     
-    /* Try to open the file */
+    // Try to open the file ________________________________
     location_p = H5Fopen (name.c_str(),
 			  H5F_ACC_RDWR,
 			  H5P_DEFAULT);

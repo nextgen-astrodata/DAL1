@@ -25,6 +25,9 @@
 #include <BF_Dataset.h>
 
 // Namespace usage
+using std::cerr;
+using std::cout;
+using std::endl;
 using DAL::CommonAttributes;
 using DAL::Filename;
 using DAL::BF_Dataset;
@@ -70,27 +73,27 @@ std::string stationBeamName (unsigned int const &index)
 */
 int test_constructors ()
 {
-  std::cout << "\n[tBF_Dataset::test_constructors]\n" << std::endl;
+  std::cout << "\n[tBF_Dataset::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   Filename file ("123456789",
 		 "test",
 		 Filename::bf,
 		 Filename::h5);
+
+  cout << "-- Filename = " << file.filename() << endl;
   
-  std::cout << "[1] Testing construction with Filename ..." << std::endl;
+  std::cout << "[1] Testing construction with Filename ..." << endl;
   try {
     BF_Dataset dataset (file);
     //
     dataset.summary();
-    //
-    std::cout << "-- attribute[1] " << dataset.attribute(1) << std::endl;
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
-  std::cout << "[2] Testing construction with CommonAttributes ..." << std::endl;
+  std::cout << "[2] Testing construction with CommonAttributes ..." << endl;
   try {
     CommonAttributes commonAttr;
     commonAttr.setFilename (file);
@@ -99,7 +102,7 @@ int test_constructors ()
     //
     dataset.summary(); 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -117,7 +120,7 @@ int test_constructors ()
 */
 int test_subGroups ()
 {
-  std::cout << "\n[tBF_Dataset::test_subGroups]\n" << std::endl;
+  std::cout << "\n[tBF_Dataset::test_subGroups]\n" << endl;
 
   int nofFailedTests (0);
   Filename file ("123456789",
@@ -126,16 +129,16 @@ int test_subGroups ()
 		 Filename::h5);
   BF_Dataset dataset (file);
   
-  std::cout << "[1] Open SysLog group ..." << std::endl;
+  std::cout << "[1] Open SysLog group ..." << endl;
   try {
     dataset.openSysLog();
     dataset.summary(); 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
-  std::cout << "[2] Open StationBeam groups ..." << std::endl;
+  std::cout << "[2] Open StationBeam groups ..." << endl;
   try {
     dataset.openStationBeam(0,true);
     dataset.openStationBeam(1,true);
@@ -146,11 +149,11 @@ int test_subGroups ()
     //
     dataset.summary(); 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
-  std::cout << "[3] Open PencilBeam groups ..." << std::endl;
+  std::cout << "[3] Open PencilBeam groups ..." << endl;
   try {
     // open PencilBeam groups within existing StationBeam group
     dataset.openPencilBeam(0,0,true);
@@ -164,7 +167,7 @@ int test_subGroups ()
     //
     dataset.summary(); 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   

@@ -30,6 +30,11 @@
 #include <set>
 #include <string>
 
+// casacore header files
+#ifdef HAVE_CASA
+#include <casa/Arrays/Vector.h>
+#endif
+
 // DAL header files
 #include <dalCommon.h>
 #include <CommonAttributes.h>
@@ -210,9 +215,6 @@ namespace DAL { // Namespace DAL -- begin
       return attributes_p;
     }
 
-    //! Set the names of the attributes attached to the structure
-    bool setAttributes (std::set<std::string> const &attributes);
-
     //! Get the number of attributes attached to the structure
     inline unsigned int nofAttributes () const {
       return attributes_p.size();
@@ -337,6 +339,43 @@ namespace DAL { // Namespace DAL -- begin
 	  return false;
 	}
       }
+
+#ifdef HAVE_CASA
+    /*!
+      \brief Get the value of an attribute
+      
+      \param name -- Name of the attribute for which the value is about to be
+             retrieved.
+      \retval val -- The value of the attribute.
+      \return status -- The status of the operation; returns <tt>false</tt> in
+              case an error was encountered.
+    */
+    template <class T>
+      inline bool getAttribute (std::string const &name,
+				casa::Vector<T> &val)
+      {
+	/* Check if connected to a file */
+	if (location_p > 0) {
+	  /* Check if the attribute name is valid */
+	  if (haveAttribute(name)) {
+	    /* Forward the function call to perform the actual retrieval */
+	    return DAL::h5get_attribute(location_p,
+					name,
+					val);
+	  } else {
+	    std::cerr << "[CommonInterface::getAttribute]"
+		      << " Invalid attribute name " << name
+		      << std::endl;
+	    return false;
+	  }
+	} else {
+	  std::cerr << "[CommonInterface::getAttribute]"
+		    << " No connection to dataset or file!"
+		    << std::endl;
+	  return false;
+	}
+      }
+#endif
     
     /*!
       \brief Set the value of an attribute
@@ -407,6 +446,43 @@ namespace DAL { // Namespace DAL -- begin
 	  return false;
 	}
       }
+
+#ifdef HAVE_CASA
+    /*!
+      \brief Set the value of an attribute
+      
+      \param name -- Name of the attribute for which the value is about to be
+             retrieved.
+      \retval val -- The value of the attribute.
+      \return status -- The status of the operation; returns <tt>false</tt> in
+              case an error was encountered.
+    */
+    template <class T>
+      inline bool setAttribute (std::string const &name,
+				casa::Vector<T> const &val)
+      {
+	/* Check if connected to a file */
+	if (location_p > 0) {
+	  /* Check if the attribute name is valid */
+	  if (haveAttribute(name)) {
+	    /* Forward the function call to perform the actual write */
+	    return h5set_attribute (location_p,
+				    name,
+				    val);
+	  } else {
+	    std::cerr << "[CommonInterface::setAttribute]"
+		      << " Invalid attribute name " << name
+		      << std::endl;
+	    return false;
+	  }
+	} else {
+	  std::cerr << "[CommonInterface::setAttribute]"
+		    << " No connection to dataset or file!"
+		    << std::endl;
+	  return false;
+	}
+      }
+#endif
     
   private:
     

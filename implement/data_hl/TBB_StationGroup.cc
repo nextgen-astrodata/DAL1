@@ -36,7 +36,8 @@ namespace DAL {  // Namespace DAL -- begin
   // ============================================================================
 
   //_____________________________________________________________________________
-
+  //                                                             TBB_StationGroup
+  
   /*!
     Default constructor does not connect to a file, but simply sets up internal
     parameters.
@@ -47,7 +48,8 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-
+  //                                                             TBB_StationGroup
+  
   /*!
     \param filename -- Name of the HDF5 file within which the group is
            contained.
@@ -62,7 +64,8 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-
+  //                                                             TBB_StationGroup
+  
   /*!
     \param location -- Identifier for the location within the HDF5 file, below
            which the group is placed.    \param group    -- Name of the group.
@@ -78,7 +81,8 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-
+  //                                                             TBB_StationGroup
+  
   /*!
     \param groupID -- Object identifier for the group within the HDF5 dataset
   */
@@ -88,7 +92,8 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-
+  //                                                             TBB_StationGroup
+  
   /*!
     \param other -- Another TBB_StationGroup object from which to create
            this new one.
@@ -101,16 +106,18 @@ namespace DAL {  // Namespace DAL -- begin
     copy (other);
   }
 
-  // ----------------------------------------------------------------------- init
-
+  //_____________________________________________________________________________
+  //                                                                         init
+  
   void TBB_StationGroup::init ()
   {
     groupID_p              = 0;
     nofTriggeredAntennas_p = -1;
   }
 
-  // ----------------------------------------------------------------------- init
-
+  //_____________________________________________________________________________
+  //                                                                         init
+  
   /*!
     \param dataset_id -- Identifier for the group within the HDF5 file
   */
@@ -161,7 +168,8 @@ namespace DAL {  // Namespace DAL -- begin
     
   }
   
-  // ----------------------------------------------------------------------- init
+  //_____________________________________________________________________________
+  //                                                                         init
   
   /*!
     \param filename -- HDF5 file within which the dataset in question is contained
@@ -205,8 +213,9 @@ namespace DAL {  // Namespace DAL -- begin
     
   }
 
-  // ----------------------------------------------------------------------- init
-
+  //_____________________________________________________________________________
+  //                                                                         init
+  
   /*!
     \param location -- Location below which the group is found within the file.
     \param group    -- Name of the group which this object is to encapsulate.
@@ -249,7 +258,8 @@ namespace DAL {  // Namespace DAL -- begin
     status = setDipoleDatasets ();
   }
   
-  // ---------------------------------------------------------- setDipoleDatasets
+  //_____________________________________________________________________________
+  //                                                            setDipoleDatasets
   
   /*!
     Essentially there are two ways by which to construct the list of dipole
@@ -266,77 +276,35 @@ namespace DAL {  // Namespace DAL -- begin
   */
   bool TBB_StationGroup::setDipoleDatasets ()
   {
-    /* Check minimal condition for operations below. */
-    if (groupID_p < 1) {
-      std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
-		<< " Unable to set dipole datasets; not connected to HDF5 group!"
-		<< endl;
-      return false;
-    }
-    
-    //________________________________________________________________
-    // Local variables.
-    
     bool status (true);
-    std::string nameDataset;
-    hsize_t nofObjects (0);
-    herr_t h5error (0);
 
-    //________________________________________________________________
-    // Obtain the number of objects contained within the station group
+    if (groupID_p > 0) {
+      std::set<std::string> names;
+      std::set<std::string>::iterator it;
 
-    h5error = H5Gget_num_objs(groupID_p,
-                              &nofObjects);
+      h5get_names (names,groupID_p,H5G_DATASET);
 
-    if (h5error > 0) {
-      std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
-		<< " Error retrieving the number of objects attached to"
-		<< " the station group!"
-		<< std::endl;
-      return false;
-    } else if (nofObjects == 0) {
-      std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
-		<< " No dipole datasets found attached to station group!"
-		<< std::endl;
-      return false;
-    }
-    
-    //________________________________________________________________
-    // Iterate through the objects within the station group and create
-    // a new object for each dipole dataset
-    
-    try {
-      // Iterate through the list of objects
-      for (hsize_t idx (0); idx<nofObjects; idx++)
-	{
-	  // get the type of the object
-	  if (H5G_DATASET == H5Gget_objtype_by_idx (groupID_p,idx))
-	    {
-	      // get the name of the dataset
-	      status = DAL::h5get_name (nameDataset,
-					groupID_p,
-					idx);
-	      // if name retrieval was successful, create new TBB_DipoleDataset
-	      if (status) {
-		datasets_p.push_back(DAL::TBB_DipoleDataset (groupID_p,
-							     nameDataset));
-	      }
-	      else {
-		std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
-			  << " Failed to open dataset!"
-			  << std::endl;
-	      }
-	    }
+      std::cout << "-- Datasets = " << names << std::endl;
+
+      if (names.size() > 0) {
+	for (it=names.begin(); it!=names.end(); ++it) {
+	  datasets_p.push_back(TBB_DipoleDataset());
+	  datasets_p[datasets_p.size()-1].open(groupID_p,*it,false);
 	}
-    }
-    catch (std::string message) {
-      std::cerr << "[TBB_StationGroup::setDipoleDatasets] "
-		<< message
+      } else {
+	std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
+		  << " No dipole datasets found!"
+		  << std::endl;
+	status = false;
+      }
+    } else {
+      std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
+		<< " Unable to open dipole dataset - no connect to group!"
 		<< std::endl;
-      return false;
+      status = false;
     }
-    
-    return true;
+
+    return false;
   }
   
   // ============================================================================
@@ -967,10 +935,13 @@ namespace DAL {  // Namespace DAL -- begin
 #else
   std::vector<uint> TBB_StationGroup::time ()
   {
-    std::vector<uint> time;
+    uint nofDatasets (datasets_p.size());
+    uint val;
+    std::vector<uint> time (nofDatasets);
     
-    for (uint n(0); n<datasets_p.size(); n++) {
-      time.push_back(datasets_p[n].time());
+    for (uint n(0); n<nofDatasets; n++) {
+      datasets_p[n].getAttribute("TIME",val);
+      time[n] = val;
     }
     
     return time;
@@ -983,10 +954,12 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Vector<uint> TBB_StationGroup::sample_number ()
   {
     uint nofDatasets (datasets_p.size());
+    uint tmp;
     casa::Vector<uint> sample_number (nofDatasets);
 
     for (uint n(0); n<nofDatasets; n++) {
-      sample_number(n) = datasets_p[n].sample_number();
+      datasets_p[n].getAttribute("SAMPLE_NUMBER",tmp);
+      sample_number(n) = tmp;
     }
     
     return sample_number;
@@ -994,10 +967,12 @@ namespace DAL {  // Namespace DAL -- begin
 #else
   std::vector<uint> TBB_StationGroup::sample_number ()
   {
+    uint tmp;
     std::vector<uint> sample_number;
     
     for (uint n(0); n<datasets_p.size(); n++) {
-      sample_number.push_back(datasets_p[n].sample_number());
+      datasets_p[n].getAttribute("SAMPLE_NUMBER",tmp);
+      sample_number.push_back(tmp);
     }
     
     return sample_number;
@@ -1073,24 +1048,29 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Vector<uint> TBB_StationGroup::data_length ()
   {
     uint nofDatasets (datasets_p.size());
-    casa::Vector<uint> data_length (nofDatasets);
+    uint tmp;
+    casa::Vector<uint> dataLength (nofDatasets);
 
     for (uint n(0); n<nofDatasets; n++) {
-      data_length(n) = datasets_p[n].data_length();
+      datasets_p[n].getAttribute("DATA_LENGTH",tmp);
+      dataLength(n) = tmp;
     }
     
-    return data_length;
+    return dataLength;
   }
 #else
   std::vector<uint> TBB_StationGroup::data_length ()
   {
-    std::vector<uint> data_length;
+    uint nofDatasets (datasets_p.size());
+    uint tmp;
+    std::vector<uint> dataLength (nofDatasets);
 
-    for (uint n(0); n<datasets_p.size(); n++) {
-      data_length.push_back(datasets_p[n].data_length());
+    for (uint n(0); n<nofDatasets; n++) {
+      datasets_p[n].getAttribute("DATA_LENGTH",tmp);
+      dataLength[n] = tmp;
     }
     
-    return data_length;
+    return dataLength;
   }
 #endif
   
@@ -1100,10 +1080,12 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Vector<casa::String> TBB_StationGroup::feed ()
   {
     uint nofDatasets (datasets_p.size());
+    casa::String tmp;
     casa::Vector<casa::String> feed (nofDatasets);
 
     for (uint n(0); n<nofDatasets; n++) {
-      feed(n) = datasets_p[n].feed();
+      datasets_p[n].getAttribute("FEED",tmp);
+      feed(n) = tmp;
     }
     
     return feed;
@@ -1111,10 +1093,12 @@ namespace DAL {  // Namespace DAL -- begin
 #else
   std::vector<std::string> TBB_StationGroup::feed ()
   {
+    std::string tmp;
     std::vector<std::string> feed;
 
     for (uint n(0); n<datasets_p.size(); n++) {
-      feed.push_back(datasets_p[n].feed());
+      datasets_p[n].getAttribute("FEED",tmp);
+      feed.push_back(tmp);
     }
     
     return feed;

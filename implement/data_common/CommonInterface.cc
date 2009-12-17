@@ -71,8 +71,18 @@ namespace DAL { // Namespace DAL -- begin
       case H5I_ATTR:
 	H5Aclose (location_p);
 	break;
+      case H5I_ERROR_STACK:
+	H5Eclose_stack (location_p);
+	break;
+      case H5I_BADID:
+	std::cerr << "[CommonInterface::destroy] Invalid identifier "
+		  << location_p
+		  << " (H5I_BADID)"
+		  << std::endl;
+	break;
       default:
-	std::cerr << "[CommonInterface::destroy] Invalid identifier!"
+	std::cerr << "[CommonInterface::destroy] Unknown identifier "
+		  << location_p
 		  << std::endl;
 	break;
       }
@@ -84,24 +94,6 @@ namespace DAL { // Namespace DAL -- begin
   //  Parameters
   //
   // ============================================================================
-  
-  bool CommonInterface::setAttributes (std::set<std::string> const &attributes)
-  {
-    bool status (true);
-    
-    /* Clear the current set and copy the provided values */
-    attributes_p.clear();
-    attributes_p = attributes;
-    /* Check consistency between internal and provided set */
-    if (attributes_p.size() != attributes.size()) {
-      std::cerr << "[CommonInterface::setAttributes]"
-		<< " Mismatch in number of set elements!"
-		<< std::endl;
-      status = false;
-    }
-    
-    return status;
-  }
   
   //_____________________________________________________________________________
   //                                                                    attribute

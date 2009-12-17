@@ -241,14 +241,11 @@ namespace DAL {   // Namespace DAL -- begin
       \return nofDipoleDatasets -- The number of dipole datasets contained with
       this station group.
     */
-    inline uint nofDipoleDatasets ()
-    {
+    inline uint nofDipoleDatasets () {
       return datasets_p.size();
     }
-
-    /*!
-      \brief Get the groupname for a station identified by <tt>index</tt>
-    */
+    
+    //! Get the groupname for a station identified by <tt>index</tt>
     static std::string getName (unsigned int const &index);
     
     // ==========================================================================

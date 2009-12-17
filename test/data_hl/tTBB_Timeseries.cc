@@ -38,6 +38,7 @@ using DAL::TBB_Timeseries;
   \file tTBB_Timeseries.cc
 
   \ingroup DAL
+  \ingroup data_hl
 
   \brief A collection of test routines for the TBB_Timeseries class
 

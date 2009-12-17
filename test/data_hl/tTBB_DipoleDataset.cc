@@ -29,9 +29,10 @@ using DAL::TBB_DipoleDataset;
 using std::endl;
 
 /*!
-  \file tTBB_DipoleDataset_test1.cc
+  \file tTBB_DipoleDataset.cc
 
   \ingroup DAL
+  \ingroup data_hl
 
   \brief A collection of test routines for the TBB_DipoleDataset class
  
@@ -235,11 +236,147 @@ int test_constructors (std::string const &filename)
   // Open the dipole datasets ______________________________
 
   if (names.size() > 0) {
-    for (it=names.begin(); it!=names.end(); ++it) {
-      std::cout << "-- opening dataset " << *it << endl;
-      TBB_DipoleDataset data (groupID,*it);
-      data.summary();
+
+    cout << "[1] Testing argumented constructor ..." << endl;
+    try {
+      for (it=names.begin(); it!=names.end(); ++it) {
+	std::cout << "-- opening dataset " << *it << endl;
+	TBB_DipoleDataset data (groupID,*it);
+	data.summary();
+      }
+    } catch (std::string message) {
+      std::cerr << message << endl;
+      nofFailedTests++;
     }
+    
+    cout << "[2] Testing copy constructor ..." << endl;
+    try {
+      it=names.begin();
+      //
+      TBB_DipoleDataset data (groupID,*it);
+      TBB_DipoleDataset dataCopy (data);
+      //
+      cout << "--> Summary of original object:" << endl;
+      data.summary();
+      cout << "--> Summary of object copy:" << endl;
+      dataCopy.summary();
+    } catch (std::string message) {
+      std::cerr << message << endl;
+      nofFailedTests++;
+    }
+    
+  } else {
+    std::cerr << "Skipping tests - no datasets found." << endl;
+    return -1;
+  }
+  
+  // Release HDF5 object identifiers _______________________
+  
+  h5error = H5Fclose (fileID);
+  h5error = H5Gclose (groupID);
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                test_attributes
+
+int test_attributes (std::string const &filename)
+{
+  std::cout << "\n[tTBB_DipoleDataset::test_attributes]\n" << endl;
+
+  int nofFailedTests (0);
+  hid_t fileID;
+  hid_t groupID;
+  herr_t h5error;
+  std::set<std::string> names;
+  std::set<std::string>::iterator it;
+
+  // Open HDF5 file and embedeed groups ____________________
+
+  fileID = H5Fopen (filename.c_str(),
+		    H5F_ACC_RDWR,
+		    H5P_DEFAULT);
+
+  if (fileID > 0) {
+    names.clear();
+    DAL::h5get_names (names,fileID,H5G_GROUP);
+    //
+    if (names.size() > 0) {
+      it      = names.begin();
+      groupID = H5Gopen (fileID,
+			 it->c_str(),
+			 H5P_DEFAULT);
+    } else {
+      std::cerr << "Skipping tests - unable to open group." << endl;
+      return -1;
+    }
+  } else {
+    std::cerr << "Skipping tests - unable to open file." << endl;
+    return -1;
+  }
+
+  if (groupID > 0) {
+    names.clear();
+    DAL::h5get_names (names,groupID,H5G_DATASET);
+  } else {
+    std::cerr << "Skipping tests - unable to open group." << endl;
+    return -1;
+  }
+
+  // Read attributes attached to the dataset _______________
+
+  if (names.size() > 0) {
+    it = names.begin();
+    TBB_DipoleDataset data (groupID,*it);
+    //
+    uint                     stationID;
+    uint                     rspID;
+    uint                     rcuID;
+    uint                     time;
+    uint                     sampleNumber;
+    uint                     samplesPerFrame;
+    uint                     nyquistZone;
+    uint                     dataLength;
+    std::string              feed;
+    std::vector<double>      antennaPositionValue;
+    std::vector<std::string> antennaPositionUnit;
+    std::string              antennaPositionFrame;
+    std::vector<double>      antennaOrientationValue;
+    std::vector<std::string> antennaOrientationUnit;
+    std::string              antennaOrientationFrame;
+    //
+    data.getAttribute ("STATION_ID",stationID);
+    data.getAttribute ("RSP_ID",rspID);
+    data.getAttribute ("RCU_ID",rcuID);
+    data.getAttribute ("TIME",time);
+    data.getAttribute ("SAMPLE_NUMBER",sampleNumber);
+    data.getAttribute ("SAMPLES_PER_FRAME",samplesPerFrame);
+    data.getAttribute ("NYQUIST_ZONE",nyquistZone);
+    data.getAttribute ("DATA_LENGTH",            dataLength);
+    data.getAttribute ("FEED",                   feed);
+    data.getAttribute ("ANTENNA_POSITION_VALUE", antennaPositionValue);
+    data.getAttribute ("ANTENNA_POSITION_UNIT",  antennaPositionUnit);
+    data.getAttribute ("ANTENNA_POSITION_FRAME", antennaPositionFrame);
+    data.getAttribute ("ANTENNA_ORIENTATION_VALUE", antennaOrientationValue);
+    data.getAttribute ("ANTENNA_ORIENTATION_UNIT",  antennaOrientationUnit);
+    data.getAttribute ("ANTENNA_ORIENTATION_FRAME", antennaOrientationFrame);
+    //
+    cout << "-- STATION_ID                 = " << stationID        << endl;
+    cout << "-- RSP_ID                     = " << rspID            << endl;
+    cout << "-- RCU_ID                     = " << rcuID            << endl;
+    cout << "-- TIME                       = " << time             << endl;
+    cout << "-- SAMPLE_NUMBER              = " << sampleNumber     << endl;
+    cout << "-- SAMPLES_PER_FRAME          = " << samplesPerFrame  << endl;
+    cout << "-- NYQUIST_ZONE               = " << nyquistZone      << endl;
+    cout << "-- DATA_LENGTH                = " << dataLength       << endl;
+    cout << "-- FEED                       = " << feed             << endl;
+    cout << "-- ANTENNA_POSITION_VALUE     = " << antennaPositionValue  << endl;
+    cout << "-- ANTENNA_POSITION_UNIT      = " << antennaPositionUnit   << endl;
+    cout << "-- ANTENNA_POSITION_FRAME     = " << antennaPositionFrame  << endl;
+    cout << "-- ANTENNA_ORIENTATION_VALUE  = " << antennaOrientationValue << endl;
+    cout << "-- ANTENNA_ORIENTATION_UNIT   = " << antennaOrientationUnit  << endl;
+    cout << "-- ANTENNA_ORIENTATION_FRAME  = " << antennaOrientationFrame << endl;
   } else {
     std::cerr << "Skipping tests - no datasets found." << endl;
     return -1;
@@ -260,9 +397,7 @@ int main (int argc, char *argv[])
 {
   int nofFailedTests (0);
   bool haveDataset (true);
-  std::string nameFile ("UNDEFINED");
-  std::string nameStation ("UNDEFINED");
-  std::string nameDataset ("UNDEFINED");
+  std::string filename ("UNDEFINED");
 
   //________________________________________________________
   // Process parameters from the command line
@@ -270,7 +405,7 @@ int main (int argc, char *argv[])
   if (argc < 2) {
     haveDataset = false;
   } else {
-    nameFile = argv[1];
+    filename    = argv[1];
     haveDataset = true;
   }
 
@@ -282,7 +417,9 @@ int main (int argc, char *argv[])
 
   if (haveDataset) {
     // Test for the constructor(s)
-    nofFailedTests += test_constructors (nameFile);
+    nofFailedTests += test_constructors (filename);
+    // Test access to the attributes attached to the dataset
+    nofFailedTests += test_attributes (filename);
   } else {
     std::cout << "\n[tTBB_DipoleDataset] Skipping tests which input dataset.\n"
 	      << endl;

@@ -53,7 +53,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     \date 2008/01/10
 
-    \test tTBB_DipoleDataset.cpp
+    \test tTBB_DipoleDataset.cc
 
     <h3>Prerequisite</h3>
 
@@ -66,31 +66,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     <h3>Synopsis</h3>
 
-    <ol>
-      <li>Structure of the HDF5 dataset inside the time-series data format:
-      \verbatim
-      /                             ... Group
-      |-- Station001                ... Group
-      |   |--
-      |   |-- 001000000                   ... Dataset        ... array<uint,1>
-      |   |   |-- STATION_ID              ... Attribute      ... uint
-      |   |   |-- RSP_ID                  ... Attribute      ... uint
-      |   |   |-- RCU_ID                  ... Attribute      ... uint
-      |   |   |-- SAMPLE_FREQUENCY_VALUE  ... Attribute      ... double
-      |   |   |-- SAMPLE_FREQUENCY_UNIT   ... Attribute      ... double
-      |   |   |-- TIME                    ... Attribute      ... uint
-      |   |   |-- SAMPLE_NR               ... Attribute      ... uint
-      |   |   |-- SAMPLES_PER_FRAME       ... Attribute      ... uint
-      |   |   |-- NYQUIST_ZONE            ... Attribute      ... uint
-      |   |   |-- FEED                    ... Attribute      ... string
-      |   |   |-- ANT_POSITION_VALUE      ... Attribute      ... array<double,1>
-      |   |   |-- ANT_POSITION_UNIT       ... Attribute      ... array<string,1>
-      |   |   |-- ANT_POSITION_FRAME      ... Attribute      ... string
-      |   |   |-- ANT_ORIENTATION_VALUE   ... Attribute      ... array<double,1>
-      |   |   |-- ANT_ORIENTATION_UNIT    ... Attribute      ... array<string,1>
-      |   |   `-- ANT_ORIENTATION_FRAME   ... Attribute      ... string
-      \endverbatim
-    </ol>
+    \image html TBB_DipoleDataset.png
 
     <h3>Example(s)</h3>
 
@@ -180,24 +156,6 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! Get the time as Julian Day
     double julianDay (bool const &onlySeconds=false);
-    
-    //! Get the timespan in samples since the last full second
-    uint sample_number ();
-    
-    //! Get the number of samples stored in this dataset
-    uint data_length ();
-    
-    //! Get the type of feed for this dipole
-    std::string feed ();
-    
-    //! Get the physical unit within which the antenna orientation is given
-    bool antenna_orientation_unit (std::vector<std::string> &unit);
-
-    //! Get the identifier for the reference frame of the antenna position
-    std::string antenna_position_frame ();
-    
-    //! Get the identifier for the reference frame of the antenna orientation
-    std::string antenna_orientation_frame ();
     
     /*!
       \brief Get the name of the class

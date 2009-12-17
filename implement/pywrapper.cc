@@ -773,16 +773,8 @@ BOOST_PYTHON_MODULE(pydal)
     /* Access to internal parameters */
     .def( "nofAttributes", &TBB_DipoleDataset::nofAttributes,
 	  "Get the number of attributes attached to the dataset." )
-    .def( "sample_frequency_value", &TBB_DipoleDataset::sample_frequency_value,
-	  "Get the numerical value of the ADC sample frequency." )
     .def( "julianDay", &TBB_DipoleDataset::julianDay,
 	  "Get the time as Julian Day." )
-    .def( "sample_number", &TBB_DipoleDataset::sample_number,
-	  "Get the timespan in samples since the last full second." )
-    .def( "data_length", &TBB_DipoleDataset::data_length,
-	  "Get the number of samples stored in this dataset." )
-    .def( "feed", &TBB_DipoleDataset::feed,
-	  "Get the type of feed for this dipole." )
     ;
   
   //_____________________________________________________________________________

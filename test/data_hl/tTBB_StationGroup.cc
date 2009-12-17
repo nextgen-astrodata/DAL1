@@ -44,6 +44,7 @@ using DAL::TBB_StationGroup;
   \file tTBB_StationGroup.cc
 
   \ingroup DAL
+  \ingroup data_hl
 
   \brief A collection of test routines for the TBB_StationGroup class
 
@@ -138,7 +139,8 @@ int test_datasets (std::string const &name_file,
   return nofFailedTests;
 }
 
-// ------------------------------------------------------------ test_construction
+//_______________________________________________________________________________
+//                                                              test_constructors
 
 /*!
   \brief Test constructors for a new TBB_StationGroup object
@@ -163,103 +165,101 @@ int test_datasets (std::string const &name_file,
 
   \return nofFailedTests -- The number of failed tests.
 */
-int test_construction (std::string const &name_file,
-                       std::string const &name_station)
+int test_constructors (std::string const &filename)
 {
-  cout << "\n[test_construction]\n" << endl;
+  std::cout << "\n[tTBB_StationGroup::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
-  herr_t h5error (0);
+  hid_t fileID;
+  herr_t h5error;
+  std::string groupname;
+  std::set<std::string> names;
+  std::set<std::string>::iterator it;
+
+  // Open HDF5 file and embedeed groups ____________________
+
+  fileID = H5Fopen (filename.c_str(),
+		    H5F_ACC_RDWR,
+		    H5P_DEFAULT);
+
+  if (fileID > 0) {
+    DAL::h5get_names (names,fileID,H5G_GROUP);
+  } else {
+    std::cerr << "Skipping tests - unable to open file." << endl;
+    return -1;
+  }
+
+  if (names.size() > 0) {
+    it = names.begin();
+    groupname = *it;
+  } else {
+    std::cerr << "Skipping tests - no station group found." << endl;
+    return -1;
+  }
 
   //__________________________________________________________________
   // TEST: Default constructor
 
   cout << "[1] Testing default constructor ..." << endl;
-  try
-    {
-      TBB_StationGroup group;
-      group.summary();
-    }
-  catch (std::string message)
-    {
-      cerr << message << endl;
-      nofFailedTests++;
-    }
+  try {
+    TBB_StationGroup group;
+    group.summary();
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
   h5error = H5Eclear1();
-
+  
   //__________________________________________________________________
   // TEST: Argumented constructor using name_file and name of the group as
   //       input parameters.
 
   cout << "[2] Construction from file- and group-name ..." << endl;
-  try
-    {
-      TBB_StationGroup group (name_file,
-                              name_station);
-      group.summary();
-    }
-  catch (std::string message)
-    {
-      cerr << message << endl;
-      nofFailedTests++;
-    }
+  try {
+    TBB_StationGroup group (filename,groupname);
+    group.summary();
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
   h5error = H5Eclear1();
-
+  
   //__________________________________________________________________
   // TEST: Argumented constructor using file identifier (as obtained from
   //       previous call to HDF5 library) and group name as input parameters.
-
+  
   cout << "[3] Construction from filename and group ID ..." << endl;
-  try
-    {
-      // Open HDF5 file to get its object ID
-      hid_t file_id = H5Fopen (name_file.c_str(),
-                               H5F_ACC_RDONLY,
-                               H5P_DEFAULT);
-
-      if (file_id > 0)
-        {
-          TBB_StationGroup group (file_id,
-                                  name_station);
-          group.summary();
-        }
-      else
-        {
-          cerr << "--> Unable to perform test; invalid file ID!" << endl;
-        }
-
-      // release file identifier
-      h5error = H5Fclose (file_id);
-    }
-  catch (std::string message)
-    {
-      cerr << message << endl;
-      nofFailedTests++;
-    }
+  try {
+    TBB_StationGroup group (fileID, groupname);
+    group.summary();
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
   h5error = H5Eclear1();
-
+  
   //__________________________________________________________________
   // TEST: Copy constructor
 
   cout << "[4] Testing copy constructor ..." << endl;
-  try
-    {
-      cout << "--> creating original object ..." << endl;
-      TBB_StationGroup group (name_file,
-                              name_station);
-      group.summary();
-      //
-      cout << "--> creating new object as copy ..." << endl;
-      TBB_StationGroup groupCopy (group);
-      groupCopy.summary();
-    }
-  catch (std::string message)
-    {
-      cerr << message << endl;
-      nofFailedTests++;
-    }
+  try {
+    cout << "--> creating original object ..." << endl;
+    TBB_StationGroup group (filename, groupname);
+    group.summary();
+    //
+    cout << "--> creating new object as copy ..." << endl;
+    TBB_StationGroup groupCopy (group);
+    groupCopy.summary();
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
   h5error = H5Eclear1();
-
+  
   return nofFailedTests;
 }
 
@@ -267,7 +267,7 @@ int test_construction (std::string const &name_file,
 
 /*!
   \brief Test identification and access of groups a root level of the HDF5 file
-
+  
   \param name_file -- Data file used for testing
 
   \return nofFailedTests -- The number of failed tests.
@@ -600,72 +600,29 @@ int main (int argc,
           char *argv[])
 {
   int nofFailedTests (0);
+  bool haveDataset (true);
+  std::string filename ("UNDEFINED");
 
-  //__________________________________________________________________
-  // Check parameters provided from the command line
+  //________________________________________________________
+  // Process parameters from the command line
+  
+  if (argc < 2) {
+    haveDataset = false;
+  } else {
+    filename    = argv[1];
+    haveDataset = true;
+  }
 
-  if (argc < 2)
-    {
-      cerr << "[tTBB_StationGroup] Too few parameters!" << endl;
-      cerr << "" << endl;
-      cerr << "  tTBB_StationGroup <name_file>" << endl;
-      cerr << "" << endl;
-      return -1;
-    }
-
-  std::string name_file     = argv[1];
-  std::string name_station = "Station010";
-  std::string name_dataset = "010008064";
-
-  if (argc == 3)
-    {
-      name_station = argv[2];
-    }
-
-  if (argc == 4)
-    {
-      name_dataset = argv[3];
-    }
-
-  cout << "[tTBB_StationGroup]" << endl;
-  cout << "-- File name .... = " << name_file    << endl;
-  cout << "-- Station group  = " << name_station << endl;
-  cout << "-- Dipole dataset = " << name_dataset << endl;
-
-  //__________________________________________________________________
+  //________________________________________________________
   // Run the tests
 
-  // Test localization and handling of datasets inside the group
-  nofFailedTests += test_datasets (name_file,
-                                   name_station);
-
-  // Test for the constructor(s)
-  nofFailedTests += test_construction (name_file,
-                                       name_station);
-
-  if (nofFailedTests == 0)
-    {
-
-      nofFailedTests += test_groups(name_file);
-
-      // Test the varios methods implemented in the class
-      nofFailedTests += test_methods (name_file,
-                                      name_station);
-
-      // Test extraction of channel data
-      nofFailedTests += test_data(name_file,
-                                  name_station);
-
-      // Test exporting the attributes to a casa::Record
-      nofFailedTests += test_export2record (name_file,
-                                            name_station);
-    }
-  else
-    {
-      std::cerr << "[tTBB_StationGroup] Skipping further tests because testing of"
-                << " constructor returned non-zero value!"
-                << endl;
-    }
+  if (haveDataset) {
+    // Test for the constructor(s)
+    nofFailedTests += test_constructors (filename);
+  } else {
+    std::cout << "\n[tTBB_StationGroup] Skipping tests which input dataset.\n"
+	      << endl;
+  }
 
   return nofFailedTests;
 }

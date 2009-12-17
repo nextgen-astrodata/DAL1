@@ -210,9 +210,9 @@ namespace DAL {  // Namespace DAL -- begin
   void TBB_DipoleDataset::copy (TBB_DipoleDataset const &other)
   {
     location_p  = other.location_p;
-    datatype_p  = other.datatype_p;
-    dataspace_p = other.dataspace_p;
-
+    datatype_p  = H5Dget_type (location_p);
+    dataspace_p = H5Dget_space (location_p);
+    
     std::set<std::string>::iterator it = other.attributes_p.begin();
     attributes_p.clear();
     for (; it!=other.attributes_p.end(); ++it) {
@@ -221,6 +221,18 @@ namespace DAL {  // Namespace DAL -- begin
 
     shape_p.resize(other.shape_p.size());
     shape_p = other.shape_p;
+
+    // Check identifiers after copy ________________________
+
+    if (H5Iget_type(location_p) == H5I_BADID) {
+      std::cerr << "[TBB_DipoleDataset::copy] Invalid Dataset object identifier!"
+		<< std::endl;
+    }
+
+    if (H5Iget_type(datatype_p) == H5I_BADID) {
+      std::cerr << "[TBB_DipoleDataset::copy] Invalid Datatype object identifier!"
+		<< std::endl;
+    }
   }
   
   // ============================================================================
@@ -267,65 +279,6 @@ namespace DAL {  // Namespace DAL -- begin
 	   << endl;
       return 0;
     }
-  }
-  
-  // -------------------------------------------------------------- sample_number
-
-  /*!
-    \return sample_number -- The timespan in samples since the last full
-            second, as stored in <i>time</i>; the absolute time for this
-      dataset thus is obtained by adding
-      <i>sample_number</i>/<i>sample_frequency</i> to the value of
-      <i>time</i>.
-  */
-  uint TBB_DipoleDataset::sample_number ()
-  {
-    uint val;
-
-    if (!getAttribute("SAMPLE_NUMBER",val)) {
-      val = 0;
-    }
-
-    return val;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                  data_length
-  
-  /*!
-    \return dataLength -- The number of samples stored in this dataset; this
-            corresponds to the maximum blocksize, which can be set for this
-	    dataset.
-  */
-  uint TBB_DipoleDataset::data_length ()
-  {
-    uint val (0);
-    std::vector<uint> shape;
-
-    if (DAL::h5get_dataset_shape(location_p,shape)) {
-      val = shape[0];
-      return val;
-    }
-    else {
-      return 0;
-    }
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                         feed
-  
-  /*!
-    \return feed -- The type of antenna feed of this dipole
-  */
-  std::string TBB_DipoleDataset::feed ()
-  {
-    std::string val;
-
-    if (!getAttribute("FEED",val)) {
-      val = std::string ("");
-    }
-
-    return val;
   }
   
   // ============================================================================
@@ -466,6 +419,22 @@ namespace DAL {  // Namespace DAL -- begin
     }
 
     if (location_p > 0) {
+      datatype_p  = H5Dget_type (location_p);
+      dataspace_p = H5Dget_space (location_p);
+      int rank    = H5Sget_simple_extent_ndims (dataspace_p);
+      if (rank>0) {
+	shape_p.resize(rank);
+	hsize_t * dims    = new hsize_t[rank];
+	hsize_t * maxdims = new hsize_t[rank];
+	rank              = H5Sget_simple_extent_dims (dataspace_p, dims, maxdims);
+	for (int n(0); n<rank; ++n) {
+	  shape_p[n] = dims[n];
+	}
+	// release allocated memory
+	delete [] dims;
+	delete [] maxdims;
+      }
+      // update status
       status = true;
     } else {
       /* Check conditions to enable creation of a new dataset */
@@ -593,20 +562,28 @@ namespace DAL {  // Namespace DAL -- begin
   
   bool TBB_DipoleDataset::openEmbedded (bool const &create)
   {
-    bool status = create;
-    status      = true;
+    bool status (create);
+    std::vector<uint> shape;
+    
+    status = h5get_dataset_shape(location_p,shape);
+
+    if (status && shape.size() > 0) {
+      status *= setAttribute("DATA_LENGTH",shape[0]);
+    }
+    
     return status;
   }
 
-  //_____________________________________________________________________________
+//_____________________________________________________________________________
   //                                                                      summary
 
   void TBB_DipoleDataset::summary (std::ostream &os)
   {
-    os << "[TBB_DipoleDataset::summary]"                   << std::endl;
-    os << "-- Dataset ID .............. = " << location_p  << std::endl;
-    os << "-- Dataset datatype ........ = " << datatype_p  << std::endl;
-    os << "-- Data array shape ........ = " << shape_p     << std::endl;
+    os << "[TBB_DipoleDataset::summary]"                    << std::endl;
+    os << "-- Dataset ID .............. = " << location_p   << std::endl;
+    os << "-- Dataspace ID ............ = " << dataspace_p  << std::endl;
+    os << "-- Dataset datatype ........ = " << datatype_p   << std::endl;
+    os << "-- Data array shape ........ = " << shape_p      << std::endl;
     
     if (location_p>0) {
       /*
@@ -623,99 +600,55 @@ namespace DAL {  // Namespace DAL -- begin
 	uint rcuID;
 	uint nyquist_zone;
 	uint time;
+	uint sampleNumber;
 	uint samplesPerFrame;
+	uint dataLength;
+	std::string feed;
 	std::string sampleFreqUnit;
 	std::vector<double> antennaPositionValue;
 	std::vector<std::string> antennaPositionUnit;
+	std::string antennaPositionFrame;
 	std::vector<double> antennaOrientationValue;
 	std::vector<std::string> antennaOrientationUnit;
+	std::string antennaOrientationFrame;
 	// Retrieve attributes
 	getAttribute ("STATION_ID",                stationID);
 	getAttribute ("RSP_ID",                    rspID);
 	getAttribute ("RCU_ID",                    rcuID);
 	getAttribute ("NYQUIST_ZONE",              nyquist_zone);
 	getAttribute ("TIME",                      time);
+	getAttribute ("SAMPLE_NUMBER",             sampleNumber);
 	getAttribute ("SAMPLES_PER_FRAME",         samplesPerFrame);
 	getAttribute ("SAMPLE_FREQUENCY_UNIT",     sampleFreqUnit);
+	getAttribute ("DATA_LENGTH",               dataLength);
+	getAttribute ("FEED",                      feed);
 	getAttribute ("ANTENNA_POSITION_VALUE",    antennaPositionValue);
 	getAttribute ("ANTENNA_POSITION_UNIT",     antennaPositionUnit);
+	getAttribute ("ANTENNA_POSITION_FRAME",    antennaPositionFrame);
 	getAttribute ("ANTENNA_ORIENTATION_VALUE", antennaOrientationValue);
-	antenna_orientation_unit(antennaOrientationUnit);
+	getAttribute ("ANTENNA_ORIENTATION_UNIT",  antennaOrientationUnit);
+	getAttribute ("ANTENNA_ORIENTATION_FRAME", antennaOrientationFrame);
 	/* Display attributes */
-	os << "-- STATION_ID .............. = " << stationID             << endl;
-	os << "-- RSP_ID .................. = " << rspID                 << endl;
-	os << "-- RCU_ID .................. = " << rcuID                 << endl;
-	os << "-- CHANNEL_ID .............. = " << channelName()         << endl;
-	os << "-- ANTENNA_POSITION_VALUE .. = " << antennaPositionValue    << endl;
-	os << "-- ANTENNA_POSITION_UNIT ... = " << antennaPositionUnit     << endl;
-	os << "-- ANTENNA_POSITION_FRAME .. = " << antenna_position_frame()    << endl;
+	os << "-- STATION_ID .............. = " << stationID << endl;
+	os << "-- RSP_ID .................. = " << rspID << endl;
+	os << "-- RCU_ID .................. = " << rcuID << endl;
+	os << "-- CHANNEL_ID .............. = " << channelName() << endl;
+	os << "-- ANTENNA_POSITION_VALUE .. = " << antennaPositionValue << endl;
+	os << "-- ANTENNA_POSITION_UNIT ... = " << antennaPositionUnit << endl;
+	os << "-- ANTENNA_POSITION_FRAME .. = " << antennaPositionFrame << endl;
 	os << "-- ANTENNA_ORIENTATION_VALUE = " << antennaOrientationValue << endl;
 	os << "-- ANTENNA_ORIENTATION_UNIT  = " << antennaOrientationUnit  << endl;
-	os << "-- ANTENNA_ORIENTATION_FRAME = " << antenna_orientation_frame() << endl;
+	os << "-- ANTENNA_ORIENTATION_FRAME = " << antennaOrientationFrame << endl;
 	os << "-- SAMPLE_FREQUENCY_VALUE .. = " << sample_frequency_value()    << endl;
 	os << "-- SAMPLE_FREQUENCY_UNIT ... = " << sampleFreqUnit << endl;
 	os << "-- NYQUIST_ZONE ............ = " << nyquist_zone << endl;
 	os << "-- TIME [Unix seconds]...... = " << time << endl;
 	os << "-- TIME [  Julian Day] ..... = " << julianDay() << endl;
-	os << "-- SAMPLE_NUMBER ........... = " << sample_number() << endl;
+	os << "-- SAMPLE_NUMBER ........... = " << sampleNumber << endl;
 	os << "-- SAMPLES_PER_FRAME ....... = " << samplesPerFrame << endl;
-	os << "-- FEED .................... = " << feed() << endl;
-	os << "-- DATA_LENGTH ............. = " << data_length()               << endl;
+	os << "-- FEED .................... = " << feed       << endl;
+	os << "-- DATA_LENGTH ............. = " << dataLength << endl;
       }
-    }
-  }
-  
-  // ----------------------------------------------------- antenna_position_frame
-
-  /*!
-    \return frame -- Identifier for the reference frame within which the antenna
-            position is provided, e.g. <tt>frame="ITRF"</tt>
-  */
-  std::string TBB_DipoleDataset::antenna_position_frame ()
-  {
-    std::string val;
-
-    if (DAL::h5get_attribute(location_p,
-                             attribute_name(DAL::ANTENNA_POSITION_FRAME),
-                             val)) {
-      return val;
-    }
-    else {
-      return std::string ("UNDEFINED");
-    }
-  }
-  
-  // --------------------------------------------------- antenna_orientation_unit
-
-  /*!
-    \return unit -- Physical unit associated with the numerical values for the
-            antenna orientation; depending on the parametrization this can be
-      <tt>unit="rad"</tt>, <tt>unit="deg"</tt> or <tt>unit="m"</tt>.
-  */
-  bool TBB_DipoleDataset::antenna_orientation_unit (std::vector<std::string> &unit)
-  {
-    return DAL::h5get_attribute(location_p,
-				attribute_name(DAL::ANTENNA_ORIENTATION_UNIT),
-				unit);
-  }
-  
-  // -------------------------------------------------- antenna_orientation_frame
-
-  /*!
-    \return frame -- Identifier for the reference frame within which the antenna
-            orientation is provided, e.g. <tt>frame="ITRF"</tt>
-  */
-  std::string TBB_DipoleDataset::antenna_orientation_frame ()
-  {
-    std::string val;
-
-    if (DAL::h5get_attribute(location_p,
-                             attribute_name(DAL::ANTENNA_ORIENTATION_FRAME),
-                             val)) {
-      return val;
-    }
-    else {
-      return std::string ("UNDEFINED");
     }
   }
   
@@ -807,8 +740,10 @@ namespace DAL {  // Namespace DAL -- begin
     }
     else {
       // retrieve additional information
-      uint samplesSinceSecond = sample_number();
+      uint samplesSinceSecond;
       double sampleFrequency  = sample_frequency_value ();
+      //
+      getAttribute ("SAMPLE_NUMBER", samplesSinceSecond);
       // conversion
       if (sampleFrequency > 0) {
 	jd = (seconds+samplesSinceSecond/sampleFrequency)/86400+2440587.5;
@@ -1122,22 +1057,23 @@ namespace DAL {  // Namespace DAL -- begin
   {
     casa::RecordDesc desc;
 
-    desc.addField (DAL::attribute_name(DAL::STATION_ID),casa::TpUInt);
-    desc.addField (DAL::attribute_name(DAL::RSP_ID),casa::TpUInt);
-    desc.addField (DAL::attribute_name(DAL::RCU_ID),casa::TpUInt);
-    desc.addField (DAL::attribute_name(DAL::TIME),casa::TpUInt);
-    desc.addField (DAL::attribute_name(DAL::SAMPLE_FREQUENCY_VALUE),casa::TpDouble);
-    desc.addField (DAL::attribute_name(DAL::SAMPLE_FREQUENCY_UNIT),casa::TpString);
-    desc.addField (DAL::attribute_name(DAL::NYQUIST_ZONE),casa::TpUInt);
-    desc.addField (DAL::attribute_name(DAL::SAMPLE_NUMBER),casa::TpUInt);
-    desc.addField (DAL::attribute_name(DAL::SAMPLES_PER_FRAME),casa::TpUInt);
-    desc.addField (DAL::attribute_name(DAL::ANTENNA_POSITION_VALUE),casa::TpDouble);
-    desc.addField (DAL::attribute_name(DAL::ANTENNA_POSITION_UNIT),casa::TpString);
-    desc.addField (DAL::attribute_name(DAL::ANTENNA_POSITION_FRAME),casa::TpString);
-    desc.addField (DAL::attribute_name(DAL::ANTENNA_ORIENTATION_VALUE),casa::TpDouble);
-    desc.addField (DAL::attribute_name(DAL::ANTENNA_ORIENTATION_UNIT),casa::TpString);
-    desc.addField (DAL::attribute_name(DAL::ANTENNA_ORIENTATION_FRAME),casa::TpString);
-    desc.addField (DAL::attribute_name(DAL::FEED),casa::TpString);
+    desc.addField ("GROUPTYPE",                 casa::TpString);
+    desc.addField ("STATION_ID",                casa::TpUInt);
+    desc.addField ("RSP_ID",                    casa::TpUInt);
+    desc.addField ("RCU_ID",                    casa::TpUInt);
+    desc.addField ("TIME",                      casa::TpUInt);
+    desc.addField ("SAMPLE_FREQUENCY_VALUE",    casa::TpDouble);
+    desc.addField ("SAMPLE_FREQUENCY_UNIT",     casa::TpString);
+    desc.addField ("NYQUIST_ZONE",              casa::TpUInt);
+    desc.addField ("SAMPLE_NUMBER",             casa::TpUInt);
+    desc.addField ("SAMPLES_PER_FRAME",         casa::TpUInt);
+    desc.addField ("ANTENNA_POSITION_VALUE",    casa::TpDouble);
+    desc.addField ("ANTENNA_POSITION_UNIT",     casa::TpString);
+    desc.addField ("ANTENNA_POSITION_FRAME",    casa::TpString);
+    desc.addField ("ANTENNA_ORIENTATION_VALUE", casa::TpDouble);
+    desc.addField ("ANTENNA_ORIENTATION_UNIT",  casa::TpString);
+    desc.addField ("ANTENNA_ORIENTATION_FRAME", casa::TpString);
+    desc.addField ("FEED",                      casa::TpString);
 
     return desc;
   }
@@ -1175,55 +1111,55 @@ namespace DAL {  // Namespace DAL -- begin
       uint rcu_id;
       uint nyquist_zone;
       uint time;
+      uint sampleNumber;
       uint samplesPerFrame;
-      casa::Vector<double> antennaPositionValue;
+      uint dataLength;
+      casa::String feed;
+      casa::Vector<double>       antennaPositionValue;
       casa::Vector<casa::String> antennaPositionUnit;
-      casa::Vector<double> antennaOrientationValue;
+      casa::String               antennaPositionFrame;
+      casa::Vector<double>       antennaOrientationValue;
       casa::Vector<casa::String> antennaOrientationUnit;
+      casa::String               antennaOrientationFrame;
 
       // Retrieve attribute values
-      getAttribute ("STATION_ID",         station_id);
-      getAttribute ("RSP_ID",             rsp_id);
-      getAttribute ("RCU_ID",             rcu_id);
-      getAttribute ("NYQUIST_ZONE",       nyquist_zone);
-      getAttribute ("TIME",               time);
-      getAttribute ("SAMPLES_PER_FRAME",  samplesPerFrame);
-      antenna_position_value (antennaPositionValue);
-      antenna_position_unit  (antennaPositionUnit);
-      antenna_orientation_value (antennaOrientationValue);
-      antenna_orientation_unit (antennaOrientationUnit);
-
+      getAttribute ("STATION_ID",                station_id);
+      getAttribute ("RSP_ID",                    rsp_id);
+      getAttribute ("RCU_ID",                    rcu_id);
+      getAttribute ("NYQUIST_ZONE",              nyquist_zone);
+      getAttribute ("TIME",                      time);
+      getAttribute ("SAMPLE_NUMBER",             sampleNumber);
+      getAttribute ("SAMPLES_PER_FRAME",         samplesPerFrame);
+      getAttribute ("FEED",                      feed);
+      getAttribute ("ANTENNA_POSITION_VALUE",    antennaPositionValue);
+      getAttribute ("ANTENNA_POSITION_UNIT",     antennaPositionUnit);
+      getAttribute ("ANTENNA_POSITION_FRAME",    antennaPositionFrame);
+      getAttribute ("ANTENNA_ORIENTATION_VALUE", antennaOrientationValue);
+      getAttribute ("ANTENNA_ORIENTATION_UNIT",  antennaOrientationUnit);
+      getAttribute ("ANTENNA_ORIENTATION_FRAME", antennaOrientationFrame);
+ 
       // Fill record
-      rec.define(casa::RecordFieldId(attribute_name(DAL::STATION_ID)),
-		 station_id);
-      rec.define(casa::RecordFieldId(attribute_name(DAL::RSP_ID)),
-		 rsp_id);
-      rec.define(casa::RecordFieldId(attribute_name(DAL::RCU_ID)),
-		 rcu_id);
-      rec.define(casa::RecordFieldId(attribute_name(DAL::TIME)),
-		 time);
-      rec.define(casa::RecordFieldId(attribute_name(DAL::NYQUIST_ZONE)),
-		 nyquist_zone);
-      rec.define(casa::RecordFieldId(attribute_name(DAL::SAMPLE_NUMBER)),
-		 sample_number());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::SAMPLES_PER_FRAME)),
-		 samplesPerFrame);
-      rec.define(casa::RecordFieldId(attribute_name(DAL::FEED)),
-		 feed());
+      rec.define("STATION_ID",        station_id);
+      rec.define("RSP_ID",            rsp_id);
+      rec.define("RCU_ID",            rcu_id);
+      rec.define("TIME",              time);
+      rec.define("NYQUIST_ZONE",      nyquist_zone);
+      rec.define("SAMPLE_NUMBER",     sampleNumber);
+      rec.define("SAMPLES_PER_FRAME", samplesPerFrame);
+      rec.define("DATA_LENGTH",       dataLength);
+      rec.define("FEED",              feed);
       rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_POSITION_VALUE)),
 		 antennaPositionValue);
       rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_POSITION_UNIT)),
 		 antennaPositionUnit);
       rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_POSITION_FRAME)),
-		 antenna_position_frame());
+		 antennaPositionFrame);
       rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_ORIENTATION_VALUE)),
 		 antennaOrientationValue);
       rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_ORIENTATION_UNIT)),
 		 antennaOrientationUnit);
       rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_ORIENTATION_FRAME)),
-		 antenna_orientation_frame());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::DATA_LENGTH)),
-		 data_length());
+		 antennaOrientationFrame);
     }
     catch (std::string message) {
       cerr << "[TBB_DipoleDataset::attributes2record] "

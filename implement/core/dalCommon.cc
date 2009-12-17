@@ -659,55 +659,48 @@ namespace DAL {
     hid_t dataspace_id = H5Dget_space (dataset_id);
     int rank           = H5Sget_simple_extent_ndims (dataspace_id);
 
-    if (rank > 0)
-      {
-        shape.resize(rank);
-        hsize_t * dataset_dims    = new hsize_t[rank];
-        hsize_t * dataset_maxdims = new hsize_t[rank];
-        //
-        h5error = H5Sget_simple_extent_dims(dataspace_id,
-                                            dataset_dims,
-                                            dataset_maxdims);
-        // copy retrieved values to returned variable
-        if (maxdims)
-          {
-            for (int n(0); n<rank; n++)
-              {
-                shape[n] = dataset_maxdims[n];
-              }
-          }
-        else
-          {
-            for (int n(0); n<rank; n++)
-              {
-                shape[n] = dataset_dims[n];
-              }
-          }
-
-        // release allocated memory
-        delete [] dataset_dims;
-        delete [] dataset_maxdims;
+    if (rank > 0) {
+      shape.resize(rank);
+      hsize_t * dataset_dims    = new hsize_t[rank];
+      hsize_t * dataset_maxdims = new hsize_t[rank];
+      //
+      h5error = H5Sget_simple_extent_dims(dataspace_id,
+					  dataset_dims,
+					  dataset_maxdims);
+      // copy retrieved values to returned variable
+      if (maxdims) {
+	for (int n(0); n<rank; n++) {
+	  shape[n] = dataset_maxdims[n];
+	}
       }
-    else
-      {
-        shape.resize(1);
-        shape[0] = 0;
-        status   = false;
+      else {
+	for (int n(0); n<rank; n++) {
+	  shape[n] = dataset_dims[n];
+	}
       }
-
+      
+      // release allocated memory
+      delete [] dataset_dims;
+      delete [] dataset_maxdims;
+    }
+    else {
+      shape.resize(1);
+      shape[0] = 0;
+      status   = false;
+    }
+    
     // release allocated identifiers
-    if (dataspace_id > 0)
-      {
-        h5error = H5Sclose (dataspace_id);
-        h5error = H5Eclear1 ();
-      }
-
+    if (dataspace_id > 0) {
+      h5error = H5Sclose (dataspace_id);
+      h5error = H5Eclear1 ();
+    }
+    
     return status;
   }
-
+  
   //_____________________________________________________________________________
   //                                                        h5get_dataspace_shape
-
+  
   /*!
     \param attribute_id -- Identifier of the attribute within the HDF5 file
     \reval shape -- The shape of the dataspace attached to the attribute, i.e.

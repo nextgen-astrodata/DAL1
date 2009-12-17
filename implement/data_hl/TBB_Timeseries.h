@@ -47,7 +47,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     \date 2008/02/06
 
-    \test tTBB_Timeseries.cpp
+    \test tTBB_Timeseries.cc
 
     <h3>Prerequisite</h3>
 
