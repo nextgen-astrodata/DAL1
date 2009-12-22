@@ -48,26 +48,6 @@ namespace DAL {  // Namespace DAL -- begin
   
   //_____________________________________________________________________________
   //                                                            TBB_DipoleDataset
-/*!
-    \param filename -- Name of the HDF5 file within which the dataset is
-           contained.
-    \param dataset  -- Name of the dataset, in this case the full path from
-           the base of the hierarchical structure within the HDF5 file.
-  */
-  TBB_DipoleDataset::TBB_DipoleDataset (std::string const &filename,
-                                        std::string const &dataset)
-    : CommonInterface ()
-  {
-    datatype_p  = -1;
-    dataspace_p = -1;
-    location_p  = -1;
-    shape_p     = std::vector<hsize_t>();
-    //
-    init (filename, dataset);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                            TBB_DipoleDataset
   
   /*!
     \param location -- Identifier for the location within the HDF5 file, below
@@ -210,75 +190,10 @@ namespace DAL {  // Namespace DAL -- begin
   void TBB_DipoleDataset::copy (TBB_DipoleDataset const &other)
   {
     location_p  = other.location_p;
-    datatype_p  = H5Dget_type (location_p);
-    dataspace_p = H5Dget_space (location_p);
-    
-    std::set<std::string>::iterator it = other.attributes_p.begin();
-    attributes_p.clear();
-    for (; it!=other.attributes_p.end(); ++it) {
-      attributes_p.insert((*it));
-    }
+    datatype_p  = other.datatype_p;
+    dataspace_p = other.dataspace_p;
 
-    shape_p.resize(other.shape_p.size());
-    shape_p = other.shape_p;
-
-    // Check identifiers after copy ________________________
-
-    if (H5Iget_type(location_p) == H5I_BADID) {
-      std::cerr << "[TBB_DipoleDataset::copy] Invalid Dataset object identifier!"
-		<< std::endl;
-    }
-
-    if (H5Iget_type(datatype_p) == H5I_BADID) {
-      std::cerr << "[TBB_DipoleDataset::copy] Invalid Datatype object identifier!"
-		<< std::endl;
-    }
-  }
-  
-  // ============================================================================
-  //
-  //  Access to attributes
-  //
-  // ============================================================================
-  
-  //_____________________________________________________________________________
-  //                                                       sample_frequency_value
-  
-  /*!
-    \return value -- The numerical value of the ADC sample frequency, [Hz].
-  */
-  double TBB_DipoleDataset::sample_frequency_value ()
-  {
-    if (location_p > 0) {
-      bool status (true);
-      double val (0);
-      std::string unit;
-      
-      status  = getAttribute ("SAMPLE_FREQUENCY_VALUE",val);
-      status *= getAttribute ("SAMPLE_FREQUENCY_UNIT",unit);
-      
-      if (status) {
-	/* Do some checking on the value to be returned. */
-	if (val < 1e3) {
-	  if (unit == "Hz") {
-	    val *= 1e6;
-	  }
-	  else if (unit == "kHz") {
-	    val *= 1e3;
-	  }
-	}
-	/* Return the value of the sampling frequency. */
-	return val;
-      }
-      else {
-	return 0;
-      }
-    }
-    else {
-      cerr << "[TBB_DipoleDataset::sample_frequency_value] Dataset undefined!"
-	   << endl;
-      return 0;
-    }
+    open (other.location_p);
   }
   
   // ============================================================================
@@ -287,45 +202,6 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
 
-  // ----------------------------------------------------------------------- init
-
-  void TBB_DipoleDataset::init (hid_t const &dataset_id)
-  {
-    bool status (true);
-    std::string filename;
-    std::string dataset;
-
-    //________________________________________________________________
-    // Get filename and dataset name from the dataset ID
-
-    status = DAL::h5get_filename (filename,
-                                  dataset_id);
-
-    if (status) {
-      status = DAL::h5get_name (dataset,
-				dataset_id);
-    }
-    
-    //________________________________________________________________
-    // Debugging messages
-
-#ifdef DEBUGGING_MESSAGES
-    std::cout << "[TBB_DipoleDataset::init]" << std::endl;
-    std::cout << "-- Filename     = " << filename << std::endl;
-    std::cout << "-- Dataset name = " << dataset    << std::endl;
-    std::cout << "-- Dataset ID   = " << dataset_id << std::endl;
-#endif
-
-    /*
-     * Forward the reverse engineered information to the init() function to
-     * set up a new object identifier for the dataset in question.
-     */
-    if (status) {
-      init (filename,
-	    dataset);
-    }
-  }
-  
   // ----------------------------------------------------------------------- init
 
   void TBB_DipoleDataset::init (std::string const &filename,
@@ -390,6 +266,36 @@ namespace DAL {  // Namespace DAL -- begin
 
   //_____________________________________________________________________________
   //                                                                         open
+  
+  bool TBB_DipoleDataset::open (hid_t const &location)
+  {
+    bool status (true);
+    bool absolutePath (false);
+    herr_t h5error;
+    std::string filename;
+    std::string dataset;
+    
+    // Get name of file and dataset ________________________
+    
+    status  = DAL::h5get_filename (filename, location);
+    status *= DAL::h5get_name (dataset, location,absolutePath);
+
+    if (status) {
+      // open the file
+      hid_t fileID = H5Fopen (filename.c_str(),
+			      H5F_ACC_RDWR,
+			      H5P_DEFAULT);
+      // open the dataset
+      status = open (fileID,dataset,false);
+      // release file handler
+      h5error = H5Fclose (fileID);
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                         open
 
   /*!
     \param location -- Identifier for the location within the HDF5 file, below
@@ -403,14 +309,15 @@ namespace DAL {  // Namespace DAL -- begin
   {
     bool status (true);
     bool ok (true);
+    H5I_type_t objectType = H5Iget_type(location);
     std::set<std::string> datasets;
 
     /* Set up the list of attributes */
     setAttributes();
-    /* Get names of datasets attached */
+    /* Get names of datasets attached to "location" */
     h5get_names (datasets,location,H5G_DATASET);
 
-    if (static_cast<bool>(datasets.count(name))) {
+    if (static_cast<bool>(datasets.count(name)) || objectType==H5I_FILE) {
       location_p = H5Dopen (location,
 			    name.c_str(),
 			    H5P_DEFAULT);
@@ -604,6 +511,7 @@ namespace DAL {  // Namespace DAL -- begin
 	uint samplesPerFrame;
 	uint dataLength;
 	std::string feed;
+	double sampleFreqValue;
 	std::string sampleFreqUnit;
 	std::vector<double> antennaPositionValue;
 	std::vector<std::string> antennaPositionUnit;
@@ -619,6 +527,7 @@ namespace DAL {  // Namespace DAL -- begin
 	getAttribute ("TIME",                      time);
 	getAttribute ("SAMPLE_NUMBER",             sampleNumber);
 	getAttribute ("SAMPLES_PER_FRAME",         samplesPerFrame);
+	getAttribute ("SAMPLE_FREQUENCY_VALUE",    sampleFreqValue);
 	getAttribute ("SAMPLE_FREQUENCY_UNIT",     sampleFreqUnit);
 	getAttribute ("DATA_LENGTH",               dataLength);
 	getAttribute ("FEED",                      feed);
@@ -639,7 +548,7 @@ namespace DAL {  // Namespace DAL -- begin
 	os << "-- ANTENNA_ORIENTATION_VALUE = " << antennaOrientationValue << endl;
 	os << "-- ANTENNA_ORIENTATION_UNIT  = " << antennaOrientationUnit  << endl;
 	os << "-- ANTENNA_ORIENTATION_FRAME = " << antennaOrientationFrame << endl;
-	os << "-- SAMPLE_FREQUENCY_VALUE .. = " << sample_frequency_value()    << endl;
+	os << "-- SAMPLE_FREQUENCY_VALUE .. = " << sampleFreqValue << endl;
 	os << "-- SAMPLE_FREQUENCY_UNIT ... = " << sampleFreqUnit << endl;
 	os << "-- NYQUIST_ZONE ............ = " << nyquist_zone << endl;
 	os << "-- TIME [Unix seconds]...... = " << time << endl;
@@ -741,9 +650,10 @@ namespace DAL {  // Namespace DAL -- begin
     else {
       // retrieve additional information
       uint samplesSinceSecond;
-      double sampleFrequency  = sample_frequency_value ();
+      double sampleFrequency;
       //
       getAttribute ("SAMPLE_NUMBER", samplesSinceSecond);
+      getAttribute ("SAMPLE_FREQUENCY_VALUE", sampleFrequency);
       // conversion
       if (sampleFrequency > 0) {
 	jd = (seconds+samplesSinceSecond/sampleFrequency)/86400+2440587.5;

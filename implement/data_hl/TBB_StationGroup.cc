@@ -51,33 +51,21 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             TBB_StationGroup
   
   /*!
-    \param filename -- Name of the HDF5 file within which the group is
-           contained.
-    \param group    -- Name of the group, in this case the full path from
-           the base of the hierarchical structure within the HDF5 file.
-  */
-  TBB_StationGroup::TBB_StationGroup (std::string const &filename,
-                                      std::string const &group)
-  {
-    init (filename,
-          group);
-  }
-
-  //_____________________________________________________________________________
-  //                                                             TBB_StationGroup
-  
-  /*!
-    \param location -- Identifier for the location within the HDF5 file, below
-           which the group is placed.    \param group    -- Name of the group.
+    \param location -- Identifier of the location to which the to be opened
+           structure is attached.
+    \param name   -- Name of the structure (file, group, dataset, etc.) to be
+           opened.
+    \param create -- Create the corresponding data structure, if it does not 
+           exist yet?
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered.
   */
   TBB_StationGroup::TBB_StationGroup (hid_t const &location,
-                                      std::string const &group)
+                                      std::string const &group,
+				      bool const &create)
   {
-    // Initialize internal variables
-    groupID_p = 0;
-
-    init (location,
-          group);
+    open (location, group, create);
   }
 
   //_____________________________________________________________________________
@@ -88,7 +76,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   TBB_StationGroup::TBB_StationGroup (hid_t const &groupID)
   {
-    init (groupID);
+    open (groupID);
   }
 
   //_____________________________________________________________________________
@@ -99,9 +87,10 @@ namespace DAL {  // Namespace DAL -- begin
            this new one.
   */
   TBB_StationGroup::TBB_StationGroup (TBB_StationGroup const &other)
+    : CommonInterface()
   {
     // Initialize internal variables
-    groupID_p = 0;
+    location_p = 0;
 
     copy (other);
   }
@@ -111,227 +100,29 @@ namespace DAL {  // Namespace DAL -- begin
   
   void TBB_StationGroup::init ()
   {
-    groupID_p              = 0;
+    location_p              = 0;
     nofTriggeredAntennas_p = -1;
   }
 
-  //_____________________________________________________________________________
-  //                                                                         init
-  
-  /*!
-    \param dataset_id -- Identifier for the group within the HDF5 file
-  */
-  void TBB_StationGroup::init (hid_t const &group_id)
-  {
-    bool status (true);
-    std::string filename;
-    std::string group;
-
-    //________________________________________________________________
-    // Get filename and group name from the group ID
-
-    status = DAL::h5get_filename (filename,
-                                  group_id);
-
-    if (status) {
-      status = DAL::h5get_name (group,
-				group_id);
-    }
-    else {
-      std::cerr << "[TBB_StationGroup::init] Failed to get filename from group ID!"
-		<< std::endl;
-    }
-    
-    //________________________________________________________________
-    // Debugging messages
-
-#ifdef DEBUGGING_MESSAGES
-    std::cout << "[TBB_StationGroup::init]" << std::endl;
-    std::cout << "-- Filename   = " << filename << std::endl;
-    std::cout << "-- Group name = " << group    << std::endl;
-    std::cout << "-- Group ID   = " << group_id << std::endl;
-#endif
-
-    //________________________________________________________________
-    // Forward the reverse engineered information to the init() function
-    // to set up a new object identifier for the group in question.
-    
-    if (status) {
-      init (filename,
-	    group);
-    }
-    else {
-      std::cerr << "[TBB_StationGroup::init] "
-		<< "Incomplete information to initialize new object!"
-		<< std::endl;
-    }
-    
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                         init
-  
-  /*!
-    \param filename -- HDF5 file within which the dataset in question is contained
-    \param group    -- Name of the group which this object is to encapsulate.
-  */
-  void TBB_StationGroup::init (std::string const &filename,
-                               std::string const &group)
-  {
-    hid_t file_id (0);
-    herr_t h5error (0);
-
-    //________________________________________________________________
-    // Open the HDF5 file containing the station group
-
-    try {
-      file_id = H5Fopen (filename.c_str(),
-			 H5F_ACC_RDONLY,
-			 H5P_DEFAULT);
-    }
-    catch (std::string message) {
-      std::cerr << "[TBB_StationGroup::init] Error while opening HDF5 file: "
-		<< message << std::endl;
-    }
-    
-    //________________________________________________________________
-    // If the file was opened successfully, open the station group
-    
-    if (file_id > 0) {
-      init (file_id,
-	    group);
-      // release the global file handle and clear the error stack
-      h5error = H5Fclose (file_id);
-      h5error = H5Eclear1 ();
-    }
-    else {
-      std::cerr << "[TBB_StationGroup::init] Error opening HDF5 file "
-		<< filename
-		<< " !"
-		<< std::endl;
-    }
-    
-  }
-
-  //_____________________________________________________________________________
-  //                                                                         init
-  
-  /*!
-    \param location -- Location below which the group is found within the file.
-    \param group    -- Name of the group which this object is to encapsulate.
-  */
-  void TBB_StationGroup::init (hid_t const &location,
-                               std::string const &group)
-  {
-    bool status (true);
-    hid_t group_id (0);
-
-    /*
-      Try to open the group within the HDF5 file; the group is expected
-      to reside below the object identified by "location".
-    */
-    try {
-      group_id = H5Gopen (location,
-			  group.c_str(),
-			  H5P_DEFAULT);
-    }
-    catch (std::string message) {
-      std::cerr << "[TBB_StationGroup::init] " << message << std::endl;
-      status = false;
-    }
-    
-    /* Set internal variables */
-
-    if (group_id > 0) {
-      groupID_p              = group_id;
-#ifdef HAVE_CASA
-      nofTriggeredAntennas_p = triggered_antennas().nelements();
-#else
-      nofTriggeredAntennas_p = triggered_antennas().size();
-#endif
-    }
-    else {
-      groupID_p = 0;
-    }
-    
-    /* Set up the list of dipole datasets contained within this group */
-    status = setDipoleDatasets ();
-  }
-  
-  //_____________________________________________________________________________
-  //                                                            setDipoleDatasets
-  
-  /*!
-    Essentially there are two ways by which to construct the list of dipole
-    datasets contained within this station group:
-    <ol>
-       <li>Test if the possible names for the datasets belong to a valid
-       object.
-       <li>Scan the elements within the station group to separate datasets from
-       attached attributes.
-    </ol>
-
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered.
-  */
-  bool TBB_StationGroup::setDipoleDatasets ()
-  {
-    bool status (true);
-
-    if (groupID_p > 0) {
-      std::set<std::string> names;
-      std::set<std::string>::iterator it;
-
-      h5get_names (names,groupID_p,H5G_DATASET);
-
-      std::cout << "-- Datasets = " << names << std::endl;
-
-      if (names.size() > 0) {
-	for (it=names.begin(); it!=names.end(); ++it) {
-	  datasets_p.push_back(TBB_DipoleDataset());
-	  datasets_p[datasets_p.size()-1].open(groupID_p,*it,false);
-	}
-      } else {
-	std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
-		  << " No dipole datasets found!"
-		  << std::endl;
-	status = false;
-      }
-    } else {
-      std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
-		<< " Unable to open dipole dataset - no connect to group!"
-		<< std::endl;
-      status = false;
-    }
-
-    return false;
-  }
-  
   // ============================================================================
   //
   //  Destruction
   //
   // ============================================================================
 
+  //_____________________________________________________________________________
+  //                                                            ~TBB_StationGroup
+  
   TBB_StationGroup::~TBB_StationGroup ()
   {
     destroy();
   }
 
+  //_____________________________________________________________________________
+  //                                                                      destroy
+  
   void TBB_StationGroup::destroy ()
   {
-    if (datasets_p.size() > 0)
-      {
-        datasets_p.clear();
-      }
-
-    if (groupID_p > 0)
-      {
-        herr_t h5error (0);
-
-        h5error = H5Gclose (groupID_p);
-        h5error = H5Eclear1 ();
-      }
   }
 
   // ============================================================================
@@ -364,21 +155,9 @@ namespace DAL {  // Namespace DAL -- begin
   */
   void TBB_StationGroup::copy (TBB_StationGroup const &other)
   {
-    if (other.groupID_p > 0) {
-      try {
-	init (other.groupID_p);
-      }
-      catch (std::string message) {
-	std::cerr << "[TBB_StationGroup::copy] " << message << std::endl;
-      }
-    }
-    else {
-      /*
-       * if previous operation failed, at least ensure internal handling remains
-       * consistent
-       */
-      groupID_p = 0;
-    }
+    location_p  = other.location_p;
+
+    open (other.location_p);
   }
   
   // ============================================================================
@@ -387,6 +166,181 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
 
+  //_____________________________________________________________________________
+  //                                                                setAttributes
+  
+  void TBB_StationGroup::setAttributes ()
+  {
+    attributes_p.clear();
+
+    attributes_p.insert("GROUPTYPE");
+    attributes_p.insert("STATION_POSITION_VALUE");
+    attributes_p.insert("STATION_POSITION_UNIT");
+    attributes_p.insert("STATION_POSITION_FRAME");
+    attributes_p.insert("BEAM_DIRECTION_VALUE");
+    attributes_p.insert("BEAM_DIRECTION_UNIT");
+    attributes_p.insert("BEAM_DIRECTION_FRAME");
+    attributes_p.insert("TRIGGER_TYPE");
+    attributes_p.insert("TRIGGER_OFFSET");
+    attributes_p.insert("TRIGGERED_ANTENNAS");
+    attributes_p.insert("NOF_DIPOLES");
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                         open
+  
+  bool TBB_StationGroup::open (hid_t const &location)
+  {
+    bool status (true);
+    bool absolutePath (false);
+    herr_t h5error;
+    std::string filename;
+    std::string dataset;
+    
+    // Get name of file and dataset ________________________
+    
+    status  = DAL::h5get_filename (filename, location);
+    status *= DAL::h5get_name (dataset, location,absolutePath);
+    
+    if (status) {
+      // open the file
+      hid_t fileID = H5Fopen (filename.c_str(),
+			      H5F_ACC_RDWR,
+			      H5P_DEFAULT);
+      // open the dataset
+      status = open (fileID,dataset,false);
+      // release file handler
+      h5error = H5Fclose (fileID);
+    }
+    
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                         open
+  
+  /*!
+    \param location -- Identifier of the location to which the to be opened
+           structure is attached.
+    \param name   -- Name of the structure (file, group, dataset, etc.) to be
+           opened.
+    \param create -- Create the corresponding data structure, if it does not 
+           exist yet?
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered.
+  */
+  bool TBB_StationGroup::open (hid_t const &location,
+			       std::string const &name,
+			       bool const &create)
+  {
+    bool status (true);
+    H5I_type_t objectType = H5Iget_type(location);
+    std::set<std::string> groups;
+
+    /* Set up the list of attributes attached to the root group */
+    setAttributes();
+    /* Get the list of groups attached to this group */
+    h5get_names (groups,location,H5G_GROUP);
+
+    if (static_cast<bool>(groups.count(name))) {
+      location_p = H5Gopen (location,
+			    name.c_str(),
+			    H5P_DEFAULT);
+    } else {
+      location_p = 0;
+    }
+
+    if (location_p > 0) {
+      status = true;
+    } else {
+      /* If failed to open the group, check if we are supposed to create one */
+      if (create) {
+	location_p = H5Gcreate (location,
+				name.c_str(),
+				H5P_DEFAULT,
+				H5P_DEFAULT,
+				H5P_DEFAULT);
+	/* If creation was sucessful, add attributes with default values */
+	if (location_p > 0) {
+	  std::string grouptype ("StationGroup");
+	  std::string undefined ("UNDEFINED");
+	  std::vector<uint> triggered (1,0);
+	  std::vector<double> vectD (3,0.0);
+	  std::vector<std::string> vectUnits (3,undefined);
+	  // write the attributes
+	  h5set_attribute (location_p,"GROUPTYPE",                grouptype   );
+	  h5set_attribute (location_p,"STATION_POSITION_VALUE",   vectD       );
+	  h5set_attribute (location_p,"STATION_POSITION_UNIT",    vectUnits   );
+	  h5set_attribute (location_p,"STATION_POSITION_FRAME",   undefined   );
+	  h5set_attribute (location_p,"BEAM_DIRECTION_VALUE",     vectD       );
+	  h5set_attribute (location_p,"BEAM_DIRECTION_UNIT",      vectUnits   );
+	  h5set_attribute (location_p,"BEAM_DIRECTION_FRAME",     undefined   );
+ 	  h5set_attribute (location_p,"TRIGGER_TYPE",             undefined   );
+ 	  h5set_attribute (location_p,"TRIGGER_OFFSET",           double(0.0) );
+ 	  h5set_attribute (location_p,"TRIGGERED_ANTENNAS",       triggered   );
+	  h5set_attribute (location_p,"NOF_DIPOLES",              uint(0)     );
+	} else {
+	  std::cerr << "[TBB_StationGroup::open] Failed to create group "
+		    << name
+		    << std::endl;
+	  status = false;
+	}
+      } else {
+	std::cerr << "[TBB_StationGroup::open] Failed to open group "
+		  << name
+		  << std::endl;
+	status = false;
+      }
+    }
+    
+    // Open embedded groups
+    if (status) {
+      status = openEmbedded (create);
+    } else {
+      std::cerr << "[TBB_StationGroup::open] Skip opening embedded groups!"
+		<< std::endl;
+    }
+ 
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                 openEmbedded
+  
+  bool TBB_StationGroup::openEmbedded (bool const &create)
+  {
+    bool status = create;
+
+    // Open dipole datasets ________________________________
+
+    if (location_p > 0) {
+      std::set<std::string> names;
+      std::set<std::string>::iterator it;
+
+      h5get_names (names,location_p,H5G_DATASET);
+
+      if (names.size() > 0) {
+	datasets_p.clear();
+	for (it=names.begin(); it!=names.end(); ++it) {
+	  datasets_p[*it] = TBB_DipoleDataset(location_p,*it);
+	}
+      } else {
+	status = false;
+      }
+    } else {
+      std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
+		<< " Unable to open dipole dataset - no connect to group!"
+		<< std::endl;
+      status = false;
+    }
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                      getName
+  
   /*!
     \param index -- The index identifying the station
   */
@@ -416,33 +370,30 @@ namespace DAL {  // Namespace DAL -- begin
     bool status (true);
     std::string name ("UNDEFINED");
 
-    status = DAL::h5get_name (name,groupID_p);
+    status = DAL::h5get_name (name,location_p);
 
-    if (status)
-      {
-        if (stripPath)
-          {
-            return name.substr(1);
-          }
+    if (status) {
+      if (stripPath) {
+	return name.substr(1);
       }
-    else
-      {
-        std::cerr <<  "[TBB_StationGroup::group_name] "
-                  << "Error retrieving name of HDF5 group!"
-                  << std::endl;
-      }
-
+    }
+    else {
+      std::cerr <<  "[TBB_StationGroup::group_name] "
+		<< "Error retrieving name of HDF5 group!"
+		<< std::endl;
+    }
+    
     return name;
   }
-
+  
   // ----------------------------------------------------- station_position_value
-
+  
 #ifdef HAVE_CASA
   casa::Vector<double> TBB_StationGroup::station_position_value ()
   {
     casa::Vector<double> val;
 
-    if (DAL::h5get_attribute(groupID_p,
+    if (DAL::h5get_attribute(location_p,
                              attribute_name(DAL::STATION_POSITION_VALUE),
                              val)) {
       return val;
@@ -456,7 +407,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<double> val;
 
-    if (DAL::h5get_attribute(groupID_p,
+    if (DAL::h5get_attribute(location_p,
                              attribute_name(DAL::STATION_POSITION_VALUE),
                              val)) {
       return val;
@@ -474,7 +425,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     casa::Vector<casa::String> val;
 
-    if (DAL::h5get_attribute(groupID_p,
+    if (DAL::h5get_attribute(location_p,
                              DAL::attribute_name(DAL::STATION_POSITION_UNIT),
                              val)) {
       return val;
@@ -488,7 +439,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<std::string> val;
 
-    if (DAL::h5get_attribute(groupID_p,
+    if (DAL::h5get_attribute(location_p,
                              DAL::attribute_name(DAL::STATION_POSITION_UNIT),
                              val))
       {
@@ -501,111 +452,15 @@ namespace DAL {  // Namespace DAL -- begin
   }
 #endif
 
-  // ----------------------------------------------------- station_position_frame
-
-  std::string TBB_StationGroup::station_position_frame ()
-  {
-    std::string val;
-
-    if (DAL::h5get_attribute(groupID_p,
-                             attribute_name(DAL::STATION_POSITION_FRAME),
-                             val)) {
-      return val;
-    }
-    else {
-      return std::string ("UNDEFINED");
-    }
-  }
-  
   // ----------------------------------------------------------- station_position
   
 #ifdef HAVE_CASA
   casa::MPosition TBB_StationGroup::station_position ()
   {
-    return DAL::h5get_position (groupID_p,
+    return DAL::h5get_position (location_p,
                                 DAL::STATION_POSITION_VALUE,
                                 DAL::STATION_POSITION_UNIT,
                                 DAL::STATION_POSITION_FRAME);
-  }
-#endif
-
-  // --------------------------------------------------------------- trigger_type
-
-  /*!
-    \return trigger_type -- The trigger type which cause recording this data
-  */
-  std::string TBB_StationGroup::trigger_type ()
-  {
-    std::string val;
-
-    if (DAL::h5get_attribute(groupID_p,
-                             attribute_name(DAL::TRIGGER_TYPE),
-                             val))
-      {
-        return val;
-      }
-    else
-      {
-        return std::string ("");
-      }
-  }
-
-  // ------------------------------------------------------------- trigger_offset
-
-  /*!
-    \return trigger_offset -- The trigger offset.
-  */
-  double TBB_StationGroup::trigger_offset ()
-  {
-    double val (0);
-
-    if (DAL::h5get_attribute(groupID_p,
-                             attribute_name(DAL::TRIGGER_OFFSET),
-                             val)) {
-      return val;
-    }
-    else {
-      return 0.0;
-    }
-  }
-  
-  // --------------------------------------------------------- triggered_antennas
-
-  /*!
-    \return triggered_antennas -- List of antennas, for which the trigger
-            condition was fullfilled.
-  */
-#ifdef HAVE_CASA
-  casa::Vector<uint> TBB_StationGroup::triggered_antennas ()
-  {
-    casa::Vector<uint> val;
-
-    if (DAL::h5get_attribute(groupID_p,
-                             attribute_name(DAL::TRIGGERED_ANTENNAS),
-                             val))
-      {
-        return val;
-      }
-    else
-      {
-        return casa::Vector<uint> (1,0);
-      }
-  }
-#else
-  std::vector<uint> TBB_StationGroup::triggered_antennas ()
-  {
-    std::vector<uint> val;
-
-    if (DAL::h5get_attribute(groupID_p,
-                             attribute_name(DAL::TRIGGERED_ANTENNAS),
-                             val))
-      {
-        return val;
-      }
-    else
-      {
-        return std::vector<uint> (1,0);
-      }
   }
 #endif
 
@@ -620,7 +475,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     casa::Vector<double> val;
 
-    if (DAL::h5get_attribute(groupID_p,
+    if (DAL::h5get_attribute(location_p,
                              attribute_name(DAL::BEAM_DIRECTION_VALUE),
                              val)) {
       return val;
@@ -634,7 +489,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<double> val;
     
-    if (DAL::h5get_attribute(groupID_p,
+    if (DAL::h5get_attribute(location_p,
                              attribute_name(DAL::BEAM_DIRECTION_VALUE),
                              val)) {
       return val;
@@ -657,7 +512,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     casa::Vector<casa::String> val;
 
-    if (DAL::h5get_attribute(groupID_p,
+    if (DAL::h5get_attribute(location_p,
                              attribute_name(DAL::BEAM_DIRECTION_UNIT),
                              val))
       {
@@ -673,7 +528,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::vector<std::string> val;
 
-    if (DAL::h5get_attribute(groupID_p,
+    if (DAL::h5get_attribute(location_p,
                              attribute_name(DAL::BEAM_DIRECTION_UNIT),
                              val))
       {
@@ -686,335 +541,59 @@ namespace DAL {  // Namespace DAL -- begin
   }
 #endif
 
-  // ------------------------------------------------------- beam_direction_frame
-
-  std::string TBB_StationGroup::beam_direction_frame ()
-  {
-    std::string val;
-
-    if (DAL::h5get_attribute(groupID_p,
-                             attribute_name(DAL::BEAM_DIRECTION_FRAME),
-                             val))
-      {
-        return val;
-      }
-    else
-      {
-        return std::string ("UNDEFINED");
-      }
-  }
-
   // -------------------------------------------------------------------- summary
 
   void TBB_StationGroup::summary (std::ostream &os)
   {
     os << "[TBB_StationGroup] Summary of object properties"     << endl;
 
-    os << "-- Group ID  .............. : " << groupID_p           << endl;
+    os << "-- Group ID  .............. : " << location_p           << endl;
 
-    if (groupID_p > 0)
-      {
-        os << "-- Group name ............. : " << group_name(true)         << endl;
-        os << "-- nof. dipole datasets ... : " << nofDipoleDatasets()      << endl;
-        os << "-- Station position (Value) : " << station_position_value() << endl;
-        os << "-- Station position (Unit)  : " << station_position_unit()  << endl;
-        os << "-- Station position (Frame) : " << station_position_frame() << endl;
-        os << "-- Beam direction (Value) . : " << beam_direction_value()   << endl;
-        os << "-- Beam direction (Unit) .. : " << beam_direction_unit()    << endl;
-        os << "-- Beam direction (Frame).. : " << beam_direction_frame()   << endl;
-        os << "-- Trigger type ........... : " << trigger_type()           << endl;
-        os << "-- Trigger offset ......... : " << trigger_offset()         << endl;
-        os << "-- nof. triggered antennas  : " << nofTriggeredAntennas()   << endl;
-        os << "-- Triggered antennas ..... : " << triggered_antennas()     << endl;
-      }
-
+    if (location_p > 0) {
+      std::string triggerType;
+      double triggerOffset;
+      std::vector<uint> triggeredAntennas;
+      std::string stationPositionFrame;
+      std::string beamDirectionFrame;
+      //
+      getAttribute ("TRIGGER_TYPE",           triggerType);
+      getAttribute ("TRIGGER_OFFSET",         triggerOffset);
+      getAttribute ("TRIGGERED_ANTENNAS",     triggeredAntennas);
+      getAttribute ("STATION_POSITION_FRAME", stationPositionFrame);
+      getAttribute ("BEAM_DIRECTION_FRAME",   beamDirectionFrame);
+      //
+      os << "-- Group name ............. : " << group_name(true)         << endl;
+      os << "-- nof. dipole datasets ... : " << nofDipoleDatasets()      << endl;
+      os << "-- Station position (Value) : " << station_position_value() << endl;
+      os << "-- Station position (Unit)  : " << station_position_unit()  << endl;
+      os << "-- Station position (Frame) : " << stationPositionFrame     << endl;
+      os << "-- Beam direction (Value) . : " << beam_direction_value()   << endl;
+      os << "-- Beam direction (Unit) .. : " << beam_direction_unit()    << endl;
+      os << "-- Beam direction (Frame).. : " << beamDirectionFrame       << endl;
+      os << "-- Trigger type ........... : " << triggerType              << endl;
+      os << "-- Trigger offset ......... : " << triggerOffset            << endl;
+      os << "-- nof. triggered antennas  : " << nofTriggeredAntennas()   << endl;
+      os << "-- Triggered antennas ..... : " << triggeredAntennas        << endl;
+    }
+    
   }
-
+  
   // ============================================================================
   //
   //  Parameter access - dipole dataset
   //
   // ============================================================================
 
-  // ----------------------------------------------------------------- station_id
-
-#ifdef HAVE_CASA
-  casa::Vector<uint> TBB_StationGroup::station_id ()
-  {
-    uint nofDatasets (datasets_p.size());
-    uint id;
-    casa::Vector<uint> station_id (nofDatasets);
-
-    for (uint n(0); n<nofDatasets; n++) {
-      datasets_p[n].getAttribute("STATION_ID",id);
-      station_id(n) = id;
-    }
-    
-    return station_id;
-  }
-#else
-  std::vector<uint> TBB_StationGroup::station_id ()
-  {
-    std::vector<uint> station_id;
-    
-    for (unsigned int n(0); n<datasets_p.size(); n++) {
-      station_id.push_back(datasets_p[n].station_id());
-    }
-    
-    return station_id;
-  }
-#endif
-  
-  // --------------------------------------------------------------------- rsp_id
-  
-#ifdef HAVE_CASA
-  casa::Vector<uint> TBB_StationGroup::rsp_id ()
-  {
-    uint nofDatasets (datasets_p.size());
-    uint id;
-    casa::Vector<uint> rsp_id (nofDatasets);
-    
-    for (uint n(0); n<nofDatasets; n++) {
-      datasets_p[n].getAttribute("RSP_ID",id);
-      rsp_id(n) = id;
-    }
-    
-    return rsp_id;
-  }
-#else
-  std::vector<uint> TBB_StationGroup::rsp_id ()
-  {
-    std::vector<uint> rsp_id;
-    
-    for (uint n(0); n<datasets_p.size(); n++) {
-      rsp_id.push_back(datasets_p[n].rsp_id());
-    }
-    
-    return rsp_id;
-  }
-#endif
-  
-  // --------------------------------------------------------------------- rcu_id
-  
-#ifdef HAVE_CASA
-  casa::Vector<uint> TBB_StationGroup::rcu_id ()
-  {
-    uint nofDatasets (datasets_p.size());
-    uint id;
-    casa::Vector<uint> rcu_id (nofDatasets);
-    
-    for (uint n(0); n<nofDatasets; n++) {
-      datasets_p[n].getAttribute("RCU_ID",id);
-      rcu_id(n) = id;
-    }
-    
-    return rcu_id;
-  }
-#else
-  std::vector<uint> TBB_StationGroup::rcu_id ()
-  {
-    std::vector<uint> rcu_id;
-    
-    for (uint n(0); n<datasets_p.size(); n++) {
-      rcu_id.push_back(datasets_p[n].rcu_id());
-    }
-    
-    return rcu_id;
-  }
-#endif
-  
-  // ----------------------------------------------------- sample_frequency_value
-  
-#ifdef HAVE_CASA
-  casa::Vector<double>
-  TBB_StationGroup::sample_frequency_value ()
-  {
-    uint nofDatasets (datasets_p.size());
-    casa::Vector<double> sample_frequency (nofDatasets);
-
-    for (uint n(0); n<nofDatasets; n++)
-      {
-        sample_frequency(n) = datasets_p[n].sample_frequency_value();
-      }
-
-    return sample_frequency;
-  }
-#else
-  std::vector<double> TBB_StationGroup::sample_frequency_value ()
-  {
-    std::vector<double> sample_frequency;
-
-    for (uint n(0); n<datasets_p.size(); n++) {
-      sample_frequency.push_back(datasets_p[n].sample_frequency_value());
-    }
-    
-    return sample_frequency;
-  }
-#endif
-  
-  // ------------------------------------------------------ sample_frequency_unit
-  
-#ifdef HAVE_CASA
-  casa::Vector<casa::String>
-  TBB_StationGroup::sample_frequency_unit ()
-  {
-    std::string unit;
-    uint nofDatasets (datasets_p.size());
-    casa::Vector<casa::String> units (nofDatasets);
-
-    for (uint n(0); n<nofDatasets; n++) {
-      datasets_p[n].getAttribute("SAMPLE_FREQUENCY_UNIT",unit);
-      units(n) = unit;
-    }
-    
-    return units;
-  }
-#else
-  std::vector<std::string> TBB_StationGroup::sample_frequency_unit ()
-  {
-    std::string unit;
-    std::vector<std::string> units
-
-    for (uint n(0); n<datasets_p.size(); n++) {
-      datasets_p[n].getAttribute("SAMPLE_FREQUENCY_UNIT",unit);
-      units.push_back(unit);
-    }
-    
-    return units;
-  }
-#endif
-  
-    // --------------------------------------------------------------- nyquist_zone
-    
-#ifdef HAVE_CASA
-  casa::Vector<uint> TBB_StationGroup::nyquist_zone ()
-  {
-    uint nofDatasets (datasets_p.size());
-    uint val;
-    casa::Vector<uint> zone (nofDatasets);
-    
-    for (uint n(0); n<nofDatasets; ++n) {
-      datasets_p[n].getAttribute("NYQUIST_ZONE",val);
-      zone(n) = val;
-    }
-    
-    return zone;
-  }
-#else
-  std::vector<uint> TBB_StationGroup::nyquist_zone ()
-  {
-    uint nofDatasets (datasets_p.size());
-    uint val;
-    std::vector<uint> result;
-    
-    for (uint n(0); n<nofDatasets; n++) {
-      datasets_p[n].getAttribute("NYQUIST_ZONE",val);
-      result.push_back(val);
-    }
-    
-    return result;
-  }
-#endif
-  
-  // ----------------------------------------------------------------------- time
-  
-#ifdef HAVE_CASA
-  casa::Vector<uint> TBB_StationGroup::time ()
-  {
-    uint nofDatasets (datasets_p.size());
-    uint val;
-    casa::Vector<uint> time (nofDatasets);
-    
-    for (uint n(0); n<nofDatasets; n++) {
-      datasets_p[n].getAttribute("TIME",val);
-      time(n) = val;
-    }
-    
-    return time;
-  }
-#else
-  std::vector<uint> TBB_StationGroup::time ()
-  {
-    uint nofDatasets (datasets_p.size());
-    uint val;
-    std::vector<uint> time (nofDatasets);
-    
-    for (uint n(0); n<nofDatasets; n++) {
-      datasets_p[n].getAttribute("TIME",val);
-      time[n] = val;
-    }
-    
-    return time;
-  }
-#endif
-  
-  // -------------------------------------------------------------- sample_number
-
-#ifdef HAVE_CASA
-  casa::Vector<uint> TBB_StationGroup::sample_number ()
-  {
-    uint nofDatasets (datasets_p.size());
-    uint tmp;
-    casa::Vector<uint> sample_number (nofDatasets);
-
-    for (uint n(0); n<nofDatasets; n++) {
-      datasets_p[n].getAttribute("SAMPLE_NUMBER",tmp);
-      sample_number(n) = tmp;
-    }
-    
-    return sample_number;
-  }
-#else
-  std::vector<uint> TBB_StationGroup::sample_number ()
-  {
-    uint tmp;
-    std::vector<uint> sample_number;
-    
-    for (uint n(0); n<datasets_p.size(); n++) {
-      datasets_p[n].getAttribute("SAMPLE_NUMBER",tmp);
-      sample_number.push_back(tmp);
-    }
-    
-    return sample_number;
-  }
-#endif
-  
-  // ---------------------------------------------------------- samples_per_frame
-  
-#ifdef HAVE_CASA
-  casa::Vector<uint> TBB_StationGroup::samples_per_frame ()
-  {
-    uint nofDatasets (datasets_p.size());
-    uint samples;
-    casa::Vector<uint> samples_per_frame (nofDatasets);
-    
-    for (uint n(0); n<nofDatasets; n++) {
-      datasets_p[n].getAttribute("SAMPLES_PER_FRAME",samples);
-      samples_per_frame(n) = samples;
-    }
-    
-    return samples_per_frame;
-  }
-#else
-  std::vector<uint> TBB_StationGroup::samples_per_frame ()
-  {
-    std::vector<uint> samples_per_frame;
-
-    for (uint n(0); n<datasets_p.size(); n++) {
-      samples_per_frame.push_back(datasets_p[n].samples_per_frame());
-    }
-    
-    return samples_per_frame;
-  }
-#endif
-  
 #ifdef HAVE_CASA
   casa::Vector<int> TBB_StationGroup::sample_offset (uint const &refAntenna)
   {
     uint nofDipoles              = nofDipoleDatasets();
-    casa::Vector<uint> valTime   = time();
-    casa::Vector<uint> valSample = sample_number();
+    casa::Vector<uint> valTime;
+    casa::Vector<uint> valSample;
     casa::Vector<int> offset (nofDipoles);
+
+    getAttributes ("TIME",          valTime);
+    getAttributes ("SAMPLE_NUMBER", valSample);
 
     for (uint n(0); n<nofDipoles; n++) {
       offset(n) = valTime(n)-valTime(refAntenna) + valSample(n)-valSample(refAntenna);
@@ -1026,9 +605,12 @@ namespace DAL {  // Namespace DAL -- begin
   std::vector<int> TBB_StationGroup::sample_offset (uint const &refAntenna)
   {
     uint nofDipoles             = nofDipoleDatasets();
-    std::vector<uint> valTime   = time();
-    std::vector<uint> valSample = sample_number();
+    std::vector<uint> valTime;
+    std::vector<uint> valSample;
     std::vector<int> offset (nofDipoles);
+
+    getAttributes ("TIME",          valTime);
+    getAttributes ("SAMPLE_NUMBER", valSample);
 
     for (uint n(0); n<nofDipoles; n++) {
       offset[n] = valTime[n]-valTime[refAntenna] + valSample[n]-valSample[refAntenna];
@@ -1038,83 +620,18 @@ namespace DAL {  // Namespace DAL -- begin
   }
 #endif
   
-  // --------------------------------------------------------------- data_length
-  
-  /*!
-    \return data_lengths -- Values of the DATA_LENGTH attribute for all
-            datasets present in this station group
-  */
-#ifdef HAVE_CASA
-  casa::Vector<uint> TBB_StationGroup::data_length ()
-  {
-    uint nofDatasets (datasets_p.size());
-    uint tmp;
-    casa::Vector<uint> dataLength (nofDatasets);
-
-    for (uint n(0); n<nofDatasets; n++) {
-      datasets_p[n].getAttribute("DATA_LENGTH",tmp);
-      dataLength(n) = tmp;
-    }
-    
-    return dataLength;
-  }
-#else
-  std::vector<uint> TBB_StationGroup::data_length ()
-  {
-    uint nofDatasets (datasets_p.size());
-    uint tmp;
-    std::vector<uint> dataLength (nofDatasets);
-
-    for (uint n(0); n<nofDatasets; n++) {
-      datasets_p[n].getAttribute("DATA_LENGTH",tmp);
-      dataLength[n] = tmp;
-    }
-    
-    return dataLength;
-  }
-#endif
-  
-  // ----------------------------------------------------------------------- feed
-
-#ifdef HAVE_CASA
-  casa::Vector<casa::String> TBB_StationGroup::feed ()
-  {
-    uint nofDatasets (datasets_p.size());
-    casa::String tmp;
-    casa::Vector<casa::String> feed (nofDatasets);
-
-    for (uint n(0); n<nofDatasets; n++) {
-      datasets_p[n].getAttribute("FEED",tmp);
-      feed(n) = tmp;
-    }
-    
-    return feed;
-  }
-#else
-  std::vector<std::string> TBB_StationGroup::feed ()
-  {
-    std::string tmp;
-    std::vector<std::string> feed;
-
-    for (uint n(0); n<datasets_p.size(); n++) {
-      datasets_p[n].getAttribute("FEED",tmp);
-      feed.push_back(tmp);
-    }
-    
-    return feed;
-  }
-#endif
-  
   // ----------------------------------------------------------- antenna_position
   
 #ifdef HAVE_CASA
   casa::Vector<casa::MPosition> TBB_StationGroup::antenna_position ()
   {
-    uint nofDatasets (datasets_p.size());
-    casa::Vector<casa::MPosition> position (nofDatasets);
+    uint n (0);
+    std::map<std::string,TBB_DipoleDataset>::iterator it;
+    casa::Vector<casa::MPosition> position (datasets_p.size());
 
-    for (uint n(0); n<nofDatasets; n++) {
-      position(n) = datasets_p[n].antenna_position();
+    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+      position(n) = it->second.antenna_position();
+      ++n;
     }
     
     return position;
@@ -1130,11 +647,13 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef HAVE_CASA
   casa::Vector<int> TBB_StationGroup::channelID ()
   {
-    uint nofDatasets (datasets_p.size());
-    casa::Vector<int> id (nofDatasets);
+    uint n (0);
+    std::map<std::string,TBB_DipoleDataset>::iterator it;
+    casa::Vector<int> id (datasets_p.size());
 
-    for (uint n(0); n<nofDatasets; n++) {
-      id(n) = datasets_p[n].channelID();
+    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+      id(n) = it->second.channelID();
+      ++n;
     }
     
     return id;
@@ -1142,10 +661,13 @@ namespace DAL {  // Namespace DAL -- begin
 #else
   std::vector<int> TBB_StationGroup::channelID ()
   {
-    std::vector<int> id;
+    uint n (0);
+    std::map<std::string,TBB_DipoleDataset>::iterator it;
+    std::vector<int> id (datasets_p.size());
 
-    for (uint n(0); n<datasets_p.size(); n++) {
-        id.push_back(datasets_p[n].channelID());
+    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+      id[n] = it->second.channelID();
+      ++n;
     }
     
     return id;
@@ -1161,10 +683,13 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef HAVE_CASA
   casa::Vector<casa::String> TBB_StationGroup::channelNames ()
   {
+    uint n (0);
+    std::map<std::string,TBB_DipoleDataset>::iterator it;
     casa::Vector<casa::String> names (datasets_p.size());
     
-    for (uint n(0); n<datasets_p.size(); n++) {
-      names(n) = datasets_p[n].channelName();
+    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+      names(n) = it->second.channelName();
+      ++n;
     }
     
     return names;
@@ -1172,10 +697,13 @@ namespace DAL {  // Namespace DAL -- begin
 #else
   std::vector<std::string> TBB_StationGroup::channelNames ()
   {
+    uint n (0);
+    std::map<std::string,TBB_DipoleDataset>::iterator it;
     std::vector<std::string> names (datasets_p.size());
     
-    for (uint n(0); n<datasets_p.size(); n++) {
-      names[n] = datasets_p[n].channelName();
+    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+      names[n] = it->second.channelName();
+      ++n;
     }
     
     return names;
@@ -1191,108 +719,33 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef HAVE_CASA
   casa::Vector<hid_t> TBB_StationGroup::datasetIDs ()
   {
-    uint nofDatasets (datasets_p.size());
-    casa::Vector<hid_t> dataset_ids (nofDatasets);
-    
-    for (uint n(0); n<nofDatasets; n++) {
-      dataset_ids(n) = datasets_p[n].locationID();
+    uint n (0);
+    std::map<std::string,TBB_DipoleDataset>::iterator it;
+    casa::Vector<hid_t> id (datasets_p.size());
+
+    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+      id(n) = it->second.locationID();
+      ++n;
     }
     
-    return dataset_ids;
+    return id;
   }
 #else
   std::vector<hid_t> TBB_StationGroup::datasetIDs ()
   {
-    std::vector<hid_t> dataset_ids;
-    
-    for (uint n(0); n<datasets_p.size(); n++) {
-      dataset_ids.push_back(datasets_p[n].locationID());
+    uint n (0);
+    std::map<std::string,TBB_DipoleDataset>::iterator it;
+    std::vector<hid_t> id (datasets_p.size());
+
+    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+      id[n] = it->second.locationID();
+      ++n;
     }
     
-    return dataset_ids;
+    return id;
   }
 #endif
-  
-  // ------------------------------------------------------------------------- fx
-  
-  /*!
-    \param start      -- Number of the sample at which to start reading
-    \param nofSamples -- Number of samples to read, starting from the position
-           given by <tt>start</tt>.
 
-    \return fx -- [nofSamples,dipole] Array of raw ADC samples representing
-            the electric field strength as function of time.
-  */
-#ifdef HAVE_CASA
-  casa::Matrix<double> TBB_StationGroup::fx (int const &start,
-					     int const &nofSamples)
-  {
-    /* Check minimal condition for operations below. */
-    if (groupID_p < 1) {
-      return casa::Matrix<double> (1,1,0);
-    }
-    
-    casa::Matrix<double> data (nofSamples,datasets_p.size());
-    casa::Vector<double> tmp (nofSamples);
-    
-#ifdef DEBUGGING_MESSAGES
-    std::cout << "[TBB_StationGroup::fx]"             << std::endl;
-    std::cout << "-- nof. samples = " << nofSamples   << std::endl;
-    std::cout << "-- shape(data)  = " << data.shape() << std::endl;
-    std::cout << "-- shape(tmp)   = " << tmp.shape()  << std::endl;
-#endif
-    
-    for (uint n(0); n<datasets_p.size(); n++) {
-      // get the channel data ...
-      tmp = datasets_p[n].fx(start,nofSamples);
-      // ... and add them to the returned array
-      data.column(n) = tmp;
-    }
-    
-    return data;
-  }
-#endif
-  
-  // ------------------------------------------------------------------------- fx
-
-  /*!
-    \param start      -- Number of the sample at which to start reading
-    \param nofSamples -- Number of samples to read, starting from the position
-           given by <tt>start</tt>.
-    \param dipoleSelection -- Selection of dipoles, for which to retrieve the
-           data.
-
-    \return fx -- [nofSamples,dipole] Vector of raw ADC samples representing
-            the electric field strength as function of time.
-  */
-#ifdef HAVE_CASA
-  casa::Matrix<double> TBB_StationGroup::fx (int const &start,
-      int const &nofSamples,
-      std::vector<uint> const &dipoleSelection)
-  {
-    /* Check minimal condition for operations below. */
-    if (groupID_p < 1) {
-      return casa::Matrix<double> (1,1,0);
-    }
-    
-    uint nofDipoles = dipoleSelection.size();
-    casa::Matrix<double> data (nofSamples,nofDipoles);
-    
-    /* Go through the set of dipole datasets and retrieve the data */
-    
-    casa::Vector<double> tmp (nofSamples);
-    
-    for (uint n(0); n<nofDipoles; n++) {
-      // get the channel data ...
-      tmp = datasets_p[dipoleSelection[n]].fx(start,nofSamples);
-      // ... and add them to the returned array
-      data.column(n) = tmp;
-    }
-    
-    return data;
-  }
-#endif
-  
   // ============================================================================
   //
   //  Methods using casacore
@@ -1302,15 +755,78 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef HAVE_CASA
   
   //_____________________________________________________________________________
-  //                                                               beam_direction
+  //                                                                           fx
+  
+  /*!
+    \param start      -- Number of the sample at which to start reading
+    \param nofSamples -- Number of samples to read, starting from the position
+           given by <tt>start</tt>.
 
+    \return fx -- [nofSamples,dipole] Array of raw ADC samples representing
+            the electric field strength as function of time.
+  */
+  casa::Matrix<double> TBB_StationGroup::fx (int const &start,
+					     int const &nofSamples)
+  {
+    casa::Vector<casa::String> dipoles (datasets_p.size());
+    std::map<std::string,TBB_DipoleDataset>::iterator it;
+    uint n (0);
+    
+    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+      dipoles(n) = it->first;
+      ++n;
+    }
+
+    return fx (start,
+	       nofSamples,
+	       dipoles);
+  }
+
+  //_____________________________________________________________________________
+  //                                                                           fx
+  
+  /*!
+    \param start      -- Number of the sample at which to start reading
+    \param nofSamples -- Number of samples to read, starting from the position
+           given by <tt>start</tt>.
+    \param dipoles    -- identifiers of the dipoles, for which to retrieve the
+           data.
+
+    \return fx -- [nofSamples,dipole] Array of raw ADC samples representing
+            the electric field strength as function of time.
+  */
+  casa::Matrix<double> TBB_StationGroup::fx (int const &start,
+					     int const &nofSamples,
+					     casa::Vector<casa::String> const &dipoles)
+  {
+    uint nofDipoles (dipoles.nelements());
+    casa::Matrix<double> data (nofSamples,nofDipoles);
+    casa::Vector<double> tmp (nofSamples);
+    std::map<std::string,TBB_DipoleDataset>::iterator it;
+    
+    for (uint n(0); n<nofDipoles; ++n) {
+      it = datasets_p.find(dipoles(n));
+      if (it != datasets_p.end()) {
+	tmp = it->second.fx(start,nofSamples);
+      } else {
+	tmp = 0.0;
+      }
+      data.column(n) = tmp;
+    }
+    
+    return data;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                               beam_direction
+  
   /*!
     \return direction -- The pointing direction of the station beam as a
             casa::Measure
   */
   casa::MDirection TBB_StationGroup::beam_direction ()
   {
-    return DAL::h5get_direction (groupID_p,
+    return DAL::h5get_direction (location_p,
                                  DAL::BEAM_DIRECTION_VALUE,
                                  DAL::BEAM_DIRECTION_UNIT,
                                  DAL::BEAM_DIRECTION_FRAME);
@@ -1328,10 +844,13 @@ namespace DAL {  // Namespace DAL -- begin
     unsigned int nofDipoles = datasets_p.size();
     casa::Matrix<double> positionValues (nofDipoles,3);
     casa::Vector<double> tmp;
+    std::map<std::string,TBB_DipoleDataset>::iterator it;
+    uint n (0);
 
-    for (unsigned int n(0); n<nofDipoles; n++) {
-      datasets_p[n].antenna_position_value(tmp);
+    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+      it->second.antenna_position_value(tmp);
       positionValues.row(n) = tmp;
+      ++n;
     }
     
     return positionValues;
@@ -1349,10 +868,13 @@ namespace DAL {  // Namespace DAL -- begin
     unsigned int nofDipoles = datasets_p.size();
     casa::Matrix<casa::String> antennaPositionUnits (nofDipoles,3);
     casa::Vector<casa::String> tmp;
+    std::map<std::string,TBB_DipoleDataset>::iterator it;
+    uint n (0);
 
-    for (unsigned int n(0); n<nofDipoles; n++) {
-      datasets_p[n].antenna_position_unit(tmp);
+    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+      it->second.antenna_position_unit(tmp);
       antennaPositionUnits.row(n) = tmp;
+      ++n;
     }
     
     return antennaPositionUnits;
@@ -1364,12 +886,14 @@ namespace DAL {  // Namespace DAL -- begin
   bool TBB_StationGroup::sample_frequency (casa::Vector<casa::MFrequency> &freq)
   {
     bool status (true);
-    uint nofDatasets (datasets_p.size());
+    std::map<std::string,TBB_DipoleDataset>::iterator it;
+    uint n (0);
     
-    freq.resize (nofDatasets);
-    
-    for (uint n(0); n<nofDatasets; n++) {
-      status *= datasets_p[n].sample_frequency(freq(n));
+    freq.resize (datasets_p.size());
+
+    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+      status *= it->second.sample_frequency(freq(n));
+      ++n;
     }
     
     return status;
@@ -1397,34 +921,43 @@ namespace DAL {  // Namespace DAL -- begin
   
   //_____________________________________________________________________________
   //                                                            attributes2record
-
+  
   bool TBB_StationGroup::attributes2record (casa::Record &rec,
-      bool const &recursive)
+					    bool const &recursive)
   {
     bool status (true);
-
+    
     //________________________________________________________________
     // Retrieve the attributes attached to the station group
-
+    
+    std::string triggerType;
+    double triggerOffset;
+    casa::Vector<uint> triggeredAntennas;
+    std::string beamDirectionFrame;
+    std::string stationPositionFrame;
+    //
+    getAttribute ("TRIGGER_TYPE",           triggerType);
+    getAttribute ("TRIGGER_OFFSET",         triggerOffset);
+    getAttribute ("TRIGGERED_ANTENNAS",     triggeredAntennas);
+    getAttribute ("BEAM_DIRECTION_FRAME",   beamDirectionFrame);
+    getAttribute ("STATION_POSITION_FRAME", stationPositionFrame);
+    
     try {
       rec.define(casa::RecordFieldId(attribute_name(DAL::STATION_POSITION_VALUE)),
 		 station_position_value());
       rec.define(casa::RecordFieldId(attribute_name(DAL::STATION_POSITION_UNIT)),
 		 station_position_unit());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::STATION_POSITION_FRAME)),
-		 station_position_frame());
+      rec.define(casa::RecordFieldId("STATION_POSITION_FRAME"),
+		 stationPositionFrame );
       rec.define(casa::RecordFieldId(attribute_name(DAL::BEAM_DIRECTION_VALUE)),
 		 beam_direction_value());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::BEAM_DIRECTION_UNIT)),
+      rec.define(casa::RecordFieldId("BEAM_DIRECTION_UNIT"),
 		 beam_direction_unit());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::BEAM_DIRECTION_FRAME)),
-		 beam_direction_frame());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::TRIGGER_TYPE)),
-		 trigger_type());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::TRIGGER_OFFSET)),
-		 trigger_offset());
-      rec.define(casa::RecordFieldId(attribute_name(DAL::TRIGGERED_ANTENNAS)),
-		 triggered_antennas());
+      rec.define(casa::RecordFieldId("BEAM_DIRECTION_FRAME"),
+		 beamDirectionFrame);
+      rec.define("TRIGGER_TYPE",         triggerType            );
+      rec.define("TRIGGER_OFFSET",       triggerOffset          );
+      rec.define("TRIGGERED_ANTENNAS",   triggeredAntennas      );
     }
     catch (std::string message) {
       std::cerr << "[TBB_StationGroup::attributes2record] "
@@ -1437,16 +970,21 @@ namespace DAL {  // Namespace DAL -- begin
     //________________________________________________________________
     // Recursive retrieval of the attributes attached to the dipole
     // datasets.
-
+    
     if (recursive) {
       std::string name;
       casa::Record recordDipole;
-      for (uint n(0); n<datasets_p.size(); n++) {
-	name = datasets_p[n].channelName();
+      std::map<std::string,TBB_DipoleDataset>::iterator it;
+      uint n (0);
+      
+      for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+	name = it->second.channelName();
 	// retrieve the attributes for the dipole data-set as record
-	recordDipole = datasets_p[n].attributes2record();
+	recordDipole = it->second.attributes2record();
 	// ... and add it to the existing record
 	rec.defineRecord (name,recordDipole);
+	// increment counter
+	++n;
       }
     }
     

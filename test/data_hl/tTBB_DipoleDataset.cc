@@ -41,6 +41,10 @@ using std::endl;
   \date 2009/10/28
 */
 
+int test_constructors ();
+int test_constructors (std::string const &filename);
+int test_attributes (std::string const &filename);
+
 //_______________________________________________________________________________
 //                                                              test_constructors
 
@@ -170,11 +174,36 @@ int test_constructors ()
     std::cerr << message << endl;
     nofFailedTests++;
   }
+
+  std::cout << "[5] Testing copy constructor ..." << endl;
+  try {
+    std::string name;
+    //
+    station = 0;
+    rsp     = 0;
+    for (rcu=0; rcu<5; ++rcu) {
+      // convert IDs to name
+      name = TBB_DipoleDataset::channelName(station,rsp,rcu);
+      // create original object
+      TBB_DipoleDataset data (fileID,station,rsp,rcu);
+      cout << "-- Channel name (original) = " << data.channelName() << endl;
+      // create copy 
+      TBB_DipoleDataset dataCopy (data);
+      cout << "-- Channel name (copy)     = " << dataCopy.channelName() << endl;
+    }
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
   
   // release HDF5 object identifiers _______________________
 
   h5error = H5Gclose (groupID);
   h5error = H5Fclose (fileID);
+  
+  // Test access to the attributes _________________________
+
+  nofFailedTests += test_attributes (filename);
   
   return nofFailedTests;
 }
@@ -253,11 +282,13 @@ int test_constructors (std::string const &filename)
     try {
       it=names.begin();
       //
+      cout << "--> Creating original object ..." << endl;
       TBB_DipoleDataset data (groupID,*it);
-      TBB_DipoleDataset dataCopy (data);
-      //
       cout << "--> Summary of original object:" << endl;
       data.summary();
+      //
+      cout << "--> Creating copy ..." << endl;
+      TBB_DipoleDataset dataCopy (data);
       cout << "--> Summary of object copy:" << endl;
       dataCopy.summary();
     } catch (std::string message) {
@@ -274,7 +305,7 @@ int test_constructors (std::string const &filename)
   
   h5error = H5Fclose (fileID);
   h5error = H5Gclose (groupID);
-  
+
   return nofFailedTests;
 }
 

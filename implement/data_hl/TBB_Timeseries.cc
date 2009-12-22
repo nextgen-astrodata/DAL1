@@ -385,7 +385,7 @@ namespace DAL {  // Namespace DAL -- begin
     int n (0);
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      trigger(n) = (*it).second.trigger_type();
+      it->second.getAttribute("TRIGGER_TYPE",trigger(n));
       ++n;
     }
 
@@ -403,7 +403,7 @@ namespace DAL {  // Namespace DAL -- begin
     int n (0);
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      trigger(n) = (*it).second.trigger_offset();
+      it->second.getAttribute("TRIGGER_OFFSET",trigger(n));
       ++n;
     }
 
@@ -439,7 +439,7 @@ namespace DAL {  // Namespace DAL -- begin
     int n (0);
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      units.row(n) = (*it).second.station_position_unit();
+      units.row(n) = it->second.station_position_unit();
       ++n;
     }
     
@@ -454,10 +454,12 @@ namespace DAL {  // Namespace DAL -- begin
     uint nofStations = nofStationGroups();
     casa::Vector<casa::String> frame (nofStations);
     std::map<std::string,TBB_StationGroup>::iterator it;
+    std::string tmp;
     int n (0);
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      frame(n) = (*it).second.station_position_frame();
+      it->second.getAttribute("STATION_POSITION_FRAME",tmp);
+      frame(n) = tmp;
       ++n;
     }
 
@@ -524,10 +526,12 @@ namespace DAL {  // Namespace DAL -- begin
     uint nofStations = nofStationGroups();
     casa::Vector<casa::String> frame (nofStations);
     std::map<std::string,TBB_StationGroup>::iterator it;
+    std::string tmp;
     int n (0);
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      frame(n) = (*it).second.beam_direction_frame();
+      it->second.getAttribute("BEAM_DIRECTION_FRAME",tmp);
+      frame(n) = tmp;
       ++n;
     }
     
@@ -682,7 +686,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      tmp        = (*it).second.time();
+      it->second.getAttributes("TIME",tmp);
       nofDipoles = (*it).second.nofDipoleDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
@@ -707,7 +711,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      tmp        = (*it).second.time();
+      it->second.getAttributes("TIME",tmp);
       nofDipoles = (*it).second.nofDipoleDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
@@ -736,7 +740,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      tmp        = (*it).second.sample_number();
+      it->second.getAttributes("SAMPLE_NUMBER",tmp);
       nofDipoles = (*it).second.nofDipoleDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
@@ -761,7 +765,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      tmp        = (*it).second.sample_number();
+      it->second.getAttributes("SAMPLE_NUMBER",tmp);
       nofDipoles = (*it).second.nofDipoleDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
@@ -791,7 +795,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      tmp        = (*it).second.nyquist_zone();
+      it->second.getAttributes("NYQUIST_ZONE",tmp);
       nofDipoles = (*it).second.nofDipoleDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
@@ -847,7 +851,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      tmp        = (*it).second.sample_frequency_value();
+      it->second.getAttributes("SAMPLE_FREQUENCY_VALUE",tmp);
       nofDipoles = (*it).second.nofDipoleDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
@@ -873,7 +877,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      tmp        = (*it).second.sample_frequency_value();
+      it->second.getAttributes("SAMPLE_FREQUENCY_VALUE",tmp);
       nofDipoles = (*it).second.nofDipoleDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
@@ -902,7 +906,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      tmp        = (*it).second.sample_frequency_unit();
+      it->second.getAttributes("SAMPLE_FREQUENCY_UNIT",tmp);
       nofDipoles = (*it).second.nofDipoleDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
@@ -928,7 +932,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      tmp        = (*it).second.sample_frequency_unit();
+      it->second.getAttributes("SAMPLE_FREQUENCY_UNIT",tmp);
       nofDipoles = (*it).second.nofDipoleDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
@@ -957,7 +961,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      tmp        = (*it).second.data_length();
+      it->second.getAttributes("DATA_LENGTH",tmp);
       nofDipoles = (*it).second.nofDipoleDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
@@ -1021,8 +1025,9 @@ namespace DAL {  // Namespace DAL -- begin
     return offset;
   }
 
-  // ------------------------------------------------------------------------- fx
-
+  //_____________________________________________________________________________
+  //                                                                           fx
+  
   /*!
     \param start      -- Number of the sample at which to start reading.
     \param nofSamples -- Number of samples to read, starting from the position
@@ -1032,15 +1037,18 @@ namespace DAL {  // Namespace DAL -- begin
             the electric field strength as function of time.
   */
   casa::Matrix<double> TBB_Timeseries::fx (int const &start,
-      int const &nofSamples)
+					   int const &nofSamples)
   {
-    uint nofDipoles  = nofDipoleDatasets();
-    std::vector<int> startPositions (nofDipoles,start);
-
+    uint nofDipoles = nofDipoleDatasets();
+    casa::Vector<int> startPositions (nofDipoles,start);
+    
     return fx (startPositions,
-               nofSamples);
+	       nofSamples);
   }
-
+  
+  //_____________________________________________________________________________
+  //                                                                           fx
+  
   /*!
     \param start      -- Number of the sample at which to start reading; w.r.t.
            to the variant where just a single value is provided, this function
@@ -1051,50 +1059,44 @@ namespace DAL {  // Namespace DAL -- begin
     \return fx -- [nofSamples,dipole] Array of raw ADC samples representing
             the electric field strength as function of time.
   */
-  casa::Matrix<double> TBB_Timeseries::fx (std::vector<int> const &start,
-      int const &nofSamples)
+  casa::Matrix<double> TBB_Timeseries::fx (casa::Vector<int> const &start,
+					   int const &nofSamples)
   {
     uint nofDipoles  = nofDipoleDatasets();
-    std::vector<uint> selection (1);
     casa::Matrix<double> data (nofSamples,nofDipoles);
-    casa::Vector<double> tmp (nofSamples);
+    
+    // Check input parameters ______________________________
+    
+    if (location_p < 1) {
+      std::cerr << "[TBB_Timeseries::fx] Not connected to data set!" << std::endl;
+      return casa::Matrix<double> (1,1,0);
+    }
+    
+    if (start.nelements() != nofDipoles) {
+      std::cerr << "[TBB_Timeseries::fx] Invalid number of elements in vector"
+		<< " for selection of start position!" << std::endl;
+      return casa::Matrix<double> (1,1,0);
+    }
 
-    //______________________________________________________
-    // Check input parameters
-
-    if (location_p < 1)
-      {
-        std::cerr << "[TBB_Timeseries::fx] Not connected to data set!" << std::endl;
-        return casa::Matrix<double> (1,1,0);
-      }
-
-    if (start.size() != nofDipoles)
-      {
-        std::cerr << "[TBB_Timeseries::fx] Invalid number of elements in vector"
-                  << " for selection of start position!" << std::endl;
-        return casa::Matrix<double> (1,1,0);
-      }
-
-    //______________________________________________________
-    // Start retrieving the data from the file
+    // Retrieve data from file _____________________________
 
     uint n       = 0;
     uint dipole  = 0;
+    casa::Vector<casa::String> channel (1);
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      // get the number dipoles
-      nofDipoles = (*it).second.nofDipoleDatasets();
-      // loop through the dipoles of the given station
-      for (dipole=0; dipole<nofDipoles; dipole++) {
-	selection[0] = dipole;
-	// get the channel data ...
-	tmp = (*it).second.fx(start[n],
-			      nofSamples,
-			      selection);
-	// ... and add them to the returned array
-	data.column(n) = tmp;
-	// increment the counter for the number of dipoles
+      // Get the channel names for the dipoles within the station
+      casa::Vector<casa::String> dipoleNames = it->second.channelNames();
+      nofDipoles = dipoleNames.nelements();
+      // Retrieve the data for all dipoles from that station
+      for (dipole=0; dipole<nofDipoles; ++dipole) {
+	channel                  = dipoleNames(dipole);
+	casa::Matrix<double> tmp = it->second.fx(start(n),
+						 nofSamples,
+						 channel);
+	// Append the data to the array returned by this function
+	data.column(n) = tmp.column(0);
 	n++;
       }
     }

@@ -78,20 +78,27 @@ namespace DAL { // Namespace DAL -- begin
     std::set<std::string> attributes_p;
     \endcode
 
-    <ul>
-      <li>Open a new structure (file, group, dataset, table):
-      \code
-      bool open (hid_t const &location,
-                 std::string const &name,
-		 bool const &create);
-      \endcode
-      The first operation will be attempting to open the structure; if this fails
-      because the structure has not been created yet, the <tt>create</tt>
-      parameter will be used to decide whether or not the requested structure
-      is being created.
-    </ul>
-
     <h3>Requirements for derived classes</h3>
+
+    The classes derived from CommonInterface should support the following 
+    constructors:
+    <ol>
+      <li>Default constuctor:
+      \code
+      MyClass ();
+      \endcode
+      <li>Argumented construtor with <tt>location</tt> below which a structure 
+      of given <tt>name</tt> is to be opened/cerated:
+      \code
+      MyClass (hid_t const &location,
+               std::string const &name,
+               bool const &create);
+      \endcode
+      <li>Copy constuctor:
+      \code
+      MyClass (MyClass const &other);
+      \endcode
+    </ol>
 
     The CommonInterface requires derived classes to implement the following
     methods:
@@ -196,7 +203,7 @@ namespace DAL { // Namespace DAL -- begin
     CommonInterface ();
     
     // === Destruction ==========================================================
-
+    
     //! Destructor
     virtual ~CommonInterface ();
     
@@ -248,6 +255,9 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Get the type (File, Group, Dataset, etc.) of the object
     H5I_type_t objectType ();
+
+    //! Open a structure (file, group, dataset, etc.)
+    bool open (hid_t const &location);
 
     /*!
       \brief Open a structure (file, group, dataset, etc.)

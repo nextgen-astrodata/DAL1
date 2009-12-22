@@ -26,6 +26,7 @@
 
 // Standard library header files
 #include <iostream>
+#include <map>
 #include <string>
 
 #ifdef HAVE_CASA
@@ -34,9 +35,8 @@
 #include <measures/Measures/MDirection.h>
 #endif
 
-#ifndef TBB_DIPOLEDATASET_H
+#include <CommonInterface.h>
 #include <TBB_DipoleDataset.h>
-#endif
 
 namespace DAL {   // Namespace DAL -- begin
 
@@ -52,7 +52,7 @@ namespace DAL {   // Namespace DAL -- begin
 
     \date 2007/12/10
 
-    \test tTBB_StationGroup.cpp
+    \test tTBB_StationGroup.cc
 
     <h3>Prerequisite</h3>
 
@@ -106,33 +106,24 @@ namespace DAL {   // Namespace DAL -- begin
     </ol>
 
   */
-  class TBB_StationGroup {
+  class TBB_StationGroup : public CommonInterface {
     
-    //! Identifier for this group within the HDF5 file
-    hid_t groupID_p;
     //! Datasets contained within this group
-    std::vector<TBB_DipoleDataset> datasets_p;
+    std::map<std::string,TBB_DipoleDataset> datasets_p;
     //! Number of triggered antennas at this station
     uint nofTriggeredAntennas_p;
     
   public:
     
-    // ==========================================================================
-    //
-    //  Construction / Destruction
-    //
-    // ==========================================================================
+    // === Construction =========================================================
     
     //! Default constructor
     TBB_StationGroup ();
     
     //! Argumented constructor
-    TBB_StationGroup (std::string const &filename,
-		      std::string const &group);
-    
-    //! Argumented constructor
     TBB_StationGroup (hid_t const &location,
-		      std::string const &group);
+		      std::string const &group,
+		      bool const &create=true);
     
     //! Argumented constructor
     TBB_StationGroup (hid_t const &groupID);
@@ -140,48 +131,21 @@ namespace DAL {   // Namespace DAL -- begin
     //! Copy constructor
     TBB_StationGroup (TBB_StationGroup const &other);
     
+    // === Destruction ==========================================================
+
     //! Destructor
     ~TBB_StationGroup ();
     
-    // ==========================================================================
-    //
-    //  Operators
-    //
-    // ==========================================================================
+    // === Operators ============================================================
     
     //! Overloading of the copy operator
     TBB_StationGroup& operator= (TBB_StationGroup const &other);
     
-    // ==========================================================================
-    //
-    //  Parameter access - station group
-    //
-    // ==========================================================================
+    // === Parameter access =====================================================
     
-    /*!
-      \brief Get the identifier for this group within the HDF5 file
-      
-      \return groupID -- The identifier for this group within the HDF5 file
-    */
-    inline hid_t group_id () const {
-      return groupID_p;
-    }
     
     //! Get the name for this group within the HDF5 file
     std::string group_name (bool const &stripPath=false);
-    
-    //! Get the trigger type which cause recording this data
-    std::string trigger_type ();
-    
-    //! Get the trigger offset
-    double trigger_offset ();
-    
-    //! Get the list of triggered antennas
-#ifdef HAVE_CASA
-    casa::Vector<uint> triggered_antennas ();
-#else
-    std::vector<uint> triggered_antennas ();
-#endif
     
     //! Get the number of triggered antennas at this station
     inline uint nofTriggeredAntennas () const {
@@ -208,12 +172,6 @@ namespace DAL {   // Namespace DAL -- begin
     std::vector<std::string> station_position_unit ();
 #endif
     
-    //! Get the coordinate frame identifier for the beam direction
-    std::string beam_direction_frame ();
-    
-    //! Get the identifier for the station position reference frame
-    std::string station_position_frame ();
-    
     /*!
       \brief Get the name of the class
       
@@ -235,6 +193,14 @@ namespace DAL {   // Namespace DAL -- begin
     
     // === Methods ==============================================================
     
+    //! Open a structure (file, group, dataset, etc.)
+    bool open (hid_t const &location);
+
+    //! Open a station group
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       bool const &create=true);
+    
     /*!
       \brief Get the number of dipole datasets within this station group
       
@@ -253,122 +219,84 @@ namespace DAL {   // Namespace DAL -- begin
     //  Parameter access - dipole dataset
     //
     // ==========================================================================
+
+    //! Get attributes <tt>name</tt> from the embedded dipole datasets
+    template <typename T>
+      bool getAttributes (std::string const &name,
+			  std::vector<T> &result)
+      {
+	bool status (true);
+	
+	if (location_p > 0) {
+	  uint n(0);
+	  T tmp;
+	  std::map<std::string,TBB_DipoleDataset>::iterator it;
+	  
+	  result.resize(datasets_p.size());
+	  
+	  for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+	    it->second.getAttribute(name,tmp);
+	    result[n] = tmp;
+	    ++n;
+	  }
+	} else {
+	  status = false;
+	}
+	return status;
+      }
     
-    /*!
-      \brief Retrieve the station IDs from the antenna datasets within this group
-      
-      \return stationIDs -- The station IDs from the antenna datasets within this
-      group
-    */
+    //! Get attributes <tt>name</tt> from the embedded dipole datasets
 #ifdef HAVE_CASA
-    casa::Vector<uint> station_id ();
-#else
-    std::vector<uint> station_id ();
-#endif
-    
-    /*!
-      \brief Retrieve the RSP IDs from the antenna datasets within this group
-      
-      \return rspIDs -- The RSP IDs from the antenna datasets within this
-      group
-    */
-#ifdef HAVE_CASA
-    casa::Vector<uint> rsp_id ();
-#else
-    std::vector<uint> rsp_id ();
-#endif
-    
-    /*!
-      \brief Retrieve the RCU IDs from the antenna datasets within this group
-      
-      \return rcuIDs -- The RCU IDs from the antenna datasets within this
-      group
-    */
-#ifdef HAVE_CASA
-    casa::Vector<uint> rcu_id ();
-#else
-    std::vector<uint> rcu_id ();
-#endif
-    
-    //! Get the numerical value of the sample frequencies
-#ifdef HAVE_CASA
-    casa::Vector<double> sample_frequency_value ();
-#else
-    std::vector<double> sample_frequency_value ();
-#endif
-    
-    //! Get the physical unit of the sample frequencies
-#ifdef HAVE_CASA
-    casa::Vector<casa::String> sample_frequency_unit ();
-#else
-    std::vector<std::string> sample_frequency_unit ();
-#endif
-    
-#ifdef HAVE_CASA
+    template <typename T>
+      bool getAttributes (std::string const &name,
+			  casa::Vector<T> &result)
+      {
+	bool status (true);
+	
+	if (location_p > 0) {
+	  uint n(0);
+	  T tmp;
+	  std::map<std::string,TBB_DipoleDataset>::iterator it;
+	  
+	  result.resize(datasets_p.size());
+	  
+	  for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+	    it->second.getAttribute(name,tmp);
+	    result(n) = tmp;
+	    ++n;
+	  }
+	} else {
+	  status = false;
+	}
+	return status;
+      }
     //! Get the sample frequencies as casa::Quantity
     bool sample_frequency (casa::Vector<casa::Quantity> &freq);
     //! Get the sample frequencies as casa::Measure
     bool sample_frequency (casa::Vector<casa::MFrequency> &freq);
-#endif
-    
-    /*!
-      \brief Get the Nyquist zone in which the ADC is performed
-      
-      \return zone -- The Nyquist zone in which the analog-to-digital conversion
-      (ADC) is performed
-    */
-#ifdef HAVE_CASA
-    casa::Vector<uint> nyquist_zone ();
-#else
-    std::vector<uint> nyquist_zone ();
-#endif
-    
-#ifdef HAVE_CASA
-    //! Get the values of TIME for all present datasets
-    casa::Vector<uint> time ();
-    //! Get the offset in number of samples from the last full second
-    casa::Vector<uint> sample_number ();
-    //! Get the number of samples contained in the original data frames
-    casa::Vector<uint> samples_per_frame ();
     //! Time offset between the individual antennas in units of samples
     casa::Vector<int> sample_offset (uint const &refAntenna=0);
-    //! Get the values of DATA_LENGTH for all present datasets
-    casa::Vector<uint> data_length ();
-    //! Get the type of the feeds.
-    casa::Vector<casa::String> feed ();
     //! Get the numerical values of the antenna positions within this station.
     casa::Matrix<double> antenna_position_value ();
     //! Get the physical units for the antenna positions within this station.
     casa::Matrix<casa::String> antenna_position_unit ();
     //! Get the positions of the antennas within this station as Measure.
     casa::Vector<casa::MPosition> antenna_position ();
+    //! Retrieve the list of channels IDs contained within this group
+    casa::Vector<int> channelID ();
+    //! Retrieve the list of channels names contained within this group
+    casa::Vector<casa::String> channelNames ();
+    //! Get identifiers to the datasets within the station group
+    casa::Vector<hid_t> datasetIDs ();
 #else
-    //! Get the values of TIME for all present datasets
-    std::vector<uint> time ();
-    //! Get the offset in number of samples from the last full second
-    std::vector<uint> sample_number ();
-    //! Get the number of samples contained in the original data frames
-    std::vector<uint> samples_per_frame ();
     //! Time offset between the individual antennas in units of samples
     std::vector<int> sample_offset (uint const &refAntenna=0);
-    //! Get the values of DATA_LENGTH for all present datasets
-    std::vector<uint> data_length ();
-    //! Get the type of the feeds.
-    std::vector<std::string> feed ();
-#endif
-    
     //! Retrieve the list of channels IDs contained within this group
-#ifdef HAVE_CASA
-    casa::Vector<int> channelID ();
-#else
     std::vector<int> channelID ();
-#endif
-    
     //! Retrieve the list of channels names contained within this group
-#ifdef HAVE_CASA
-    casa::Vector<casa::String> channelNames ();
-#else
     std::vector<std::string> channelNames ();
+    //! Get identifiers to the datasets within the station group
+    std::vector<hid_t> datasetIDs ();
 #endif
     
     /*!
@@ -395,13 +323,6 @@ namespace DAL {   // Namespace DAL -- begin
       return channel_id;
     }
     
-    //! Get identifiers to the datasets within the station group
-#ifdef HAVE_CASA
-    casa::Vector<hid_t> datasetIDs ();
-#else
-    std::vector<hid_t> datasetIDs ();
-#endif
-    
     // ============================================================================
     //
     //  Methods using casacore
@@ -426,39 +347,33 @@ namespace DAL {   // Namespace DAL -- begin
     //! Retrieve a block of ADC values for the dipoles in this station
     casa::Matrix<double> fx (int const &start,
 			     int const &nofSamples,
-			     std::vector<uint> const &dipoleSelection);
+			     casa::Vector<casa::String> const &dipoles);
     
     //! Get a casa::Record containing the values of the attributes
     casa::Record attributes2record (bool const &recursive=false);
     
+    //! Get a casa::Record containing the values of the attributes
     bool attributes2record (casa::Record &rec,
 			    bool const &recursive=false);
 #endif
     
+  protected:
+    
+    //! Set up the list of attributes attached to the structure
+    void setAttributes ();
+    //! Open the structures embedded within the current one
+    bool openEmbedded (bool const &create);
+
   private:
     
     //! Initialize the internal dataspace
     void init ();
-    
-    //! Initialize the internal dataspace
-    void init (hid_t const &group_id);
-    
-    //! Initialize the internal dataspace
-    void init (std::string const &filename,
-	       std::string const &group);
-    
-    //! Initialize the internal dataspace
-    void init (hid_t const &location,
-	       std::string const &group);
     
     //! Unconditional copying
     void copy (TBB_StationGroup const &other);
     
     //! Unconditional deletion
     void destroy(void);
-    
-    //! Set up the list of dipole datasets contained within this group
-    bool setDipoleDatasets ();
     
   };
   

@@ -109,9 +109,6 @@ namespace DAL {  // Namespace DAL -- begin
     //! Default constructor
     TBB_DipoleDataset ();
     //! Argumented constructor
-    TBB_DipoleDataset (std::string const &filename,
-		       std::string const &dataset);
-    //! Argumented constructor
     TBB_DipoleDataset (hid_t const &location,
 		       std::string const &name);
     //! Argumented constructor
@@ -151,9 +148,6 @@ namespace DAL {  // Namespace DAL -- begin
       return shape_p;
     }
 
-    //! Get the numerical value of the ADC sample frequency
-    double sample_frequency_value ();
-    
     //! Get the time as Julian Day
     double julianDay (bool const &onlySeconds=false);
     
@@ -176,6 +170,9 @@ namespace DAL {  // Namespace DAL -- begin
     
     // === Methods ==============================================================
     
+    //! Open a structure (file, group, dataset, etc.)
+    bool open (hid_t const &location);
+
     //! Open a dipole dataset
     bool open (hid_t const &location,
 	       std::string const &name,
@@ -250,13 +247,6 @@ namespace DAL {  // Namespace DAL -- begin
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 
-    /*!
-      \brief Initialize the internal dataspace
-      
-      \param dataset_id -- Identifier for the dataset within the HDF5 file
-    */
-    void init (hid_t const &dataset_id);
-    
     /*!
       \brief Initialize the internal dataspace
       

@@ -171,7 +171,8 @@ namespace DAL {
   
   //! Retrieve the name of an object based on the object identifier
   bool h5get_name (std::string &name,
-                   hid_t const &object_id);
+                   hid_t const &object_id,
+		   bool const &absolute=true);
 
   //! Retrieve the name of an object based on the object identifier
   bool h5get_name (std::string &name,

@@ -55,7 +55,75 @@ using DAL::TBB_Timeseries;
   where the <i>filename</i> points to an existing HDF5 time-series dataset.
 */
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                   test_dataset
+
+/*!
+  \brief Check the dataset provided for testing
+
+  \param filename -- Name of the HDF5 file used for testing
+
+  \return nofFailedTests -- The number of failed tests.
+*/
+int test_dataset (std::string const &filename)
+{
+  cout << "\n[tTBB_Timeseries::test_dataset]\n" << endl;
+
+  int nofFailedTests (0);
+  hid_t fileID;
+  hid_t groupID;
+  herr_t h5error;
+  std::set<std::string> stationGroups;
+  std::set<std::string> dipoleDatasets;
+  std::set<std::string>::iterator it;
+
+  // Open HDF5 file and embedeed groups ____________________
+
+  fileID = H5Fopen (filename.c_str(),
+		    H5F_ACC_RDWR,
+		    H5P_DEFAULT);
+
+  if (fileID > 0) {
+    DAL::h5get_names (stationGroups,fileID,H5G_GROUP);
+    //
+    if (stationGroups.size() > 0) {
+      it      = stationGroups.begin();
+      groupID = H5Gopen (fileID,
+			 it->c_str(),
+			 H5P_DEFAULT);
+    } else {
+      std::cerr << "Skipping tests - unable to open group." << endl;
+      return -1;
+    }
+  } else {
+    std::cerr << "Skipping tests - unable to open file." << endl;
+    return -1;
+  }
+
+  if (groupID > 0) {
+    DAL::h5get_names (dipoleDatasets,groupID,H5G_DATASET);
+  } else {
+    std::cerr << "Skipping tests - unable to open group." << endl;
+    return -1;
+  }
+
+  std::cout << "-- Station groups  = " << stationGroups  << std::endl;
+  std::cout << "-- Dipole datasets = " << dipoleDatasets << std::endl;
+
+  // Attributes attached to the root group _________________
+
+  
+
+  // Release HDF5 object identifiers _______________________
+  
+  h5error = H5Fclose (fileID);
+  h5error = H5Gclose (groupID);
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                              test_construction
 
 /*!
   \brief Test constructors for a new TBB_Timeseries object
@@ -66,7 +134,7 @@ using DAL::TBB_Timeseries;
 */
 int test_construction (std::string const &filename)
 {
-  cout << "\n[test_construction]\n" << endl;
+  cout << "\n[tTBB_Timeseries::test_construction]\n" << endl;
 
   int nofFailedTests (0);
   int nofIterations (500);
@@ -110,9 +178,9 @@ int test_construction (std::string const &filename)
 
   cout << "[3] Testing argumented constructor ..." << endl;
   try {
-    TBB_Timeseries newTBB_Timeseries (filename);
+    TBB_Timeseries ts (filename);
     //
-    newTBB_Timeseries.summary();
+    ts.summary();
   }
   catch (std::string message) {
     std::cerr << message << endl;
@@ -125,12 +193,12 @@ int test_construction (std::string const &filename)
   cout << "[4] Testing copy constructor ..." << endl;
   try {
     cout << "--> creating original object ..." << endl;
-    TBB_Timeseries timeseries (filename);
-    timeseries.summary();
+    TBB_Timeseries ts (filename);
+    ts.summary();
     //
     cout << "--> creating new object by copy ..." << endl;
-    TBB_Timeseries timeseriesCopy (timeseries);
-    timeseriesCopy.summary();
+    TBB_Timeseries tsCopy (ts);
+    tsCopy.summary();
   }
   catch (std::string message) {
     std::cerr << message << endl;
@@ -383,44 +451,43 @@ int test_data (std::string const &filename)
   return nofFailedTests;
 }
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                           main
 
 int main (int argc,
           char *argv[])
 {
   int nofFailedTests (0);
+  bool haveDataset (true);
+  std::string filename ("UNDEFINED");
 
-  //__________________________________________________________________
-  // Check the input parameters provided form the command line
-
+  //________________________________________________________
+  // Process parameters from the command line
+  
   if (argc < 2) {
-    std::cerr << "[tTBB_Timeseries] Too few parameters!" << endl;
-    std::cerr << "" << endl;
-    std::cerr << "  tTBB_Timeseries <filename>" << endl;
-    std::cerr << "" << endl;
-    return -1;
+    haveDataset = false;
+  } else {
+    filename    = argv[1];
+    haveDataset = true;
   }
-  
-  std::string filename = argv[1];
-  
-  //__________________________________________________________________
+
+  std::cout << "[tTBB_Timeseries]" << std::endl;
+  std::cout << "-- have dataset = " << haveDataset << std::endl;
+  std::cout << "-- Filename     = " << filename    << std::endl;
+
+  //________________________________________________________
   // Run the tests
 
-  assert (nofFailedTests == 0);
-
-  // Test for the constructor(s)
-  nofFailedTests += test_construction (filename);
-
-  assert (nofFailedTests == 0);
-
-  if (nofFailedTests == 0) {
+  if (haveDataset) {
+    // Some basic tests on the provided dataset
+    nofFailedTests += test_dataset (filename);
+    // Test constructors for TBB_Timeseries object
+    nofFailedTests += test_construction (filename);
     nofFailedTests += test_methods (filename);
     nofFailedTests += test_attributes2record (filename);
     nofFailedTests += test_data (filename);
-  }
-  else {
-    std::cerr << "[tTBB_Timeseries]"
-	      << " Skipping tests after testing constructors returned errors!"
+  } else {
+    std::cout << "\n[tTBB_Timeseries] Skipping tests with input dataset.\n"
 	      << endl;
   }
   

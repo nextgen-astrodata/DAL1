@@ -202,11 +202,31 @@ namespace DAL {  // Namespace DAL -- begin
     std::vector<std::string> station_position_frame ();
 #endif
     
-    // ==========================================================================
-    //
-    //  Parameter access - dipole dataset
-    //
-    // ==========================================================================
+    // === Methods ==============================================================
+    
+    //! Open the file containing the TBB time-series data.
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       bool const &create=true);
+    
+    //  High-level access to data and attributes ___________
+    
+#ifdef HAVE_CASA
+    //! Time offset between the individual antennas in units of samples
+    casa::Vector<int> sample_offset (uint const &refAntenna=0);
+    //! Retrieve a block of ADC values per dipole
+    casa::Matrix<double> fx (int const &start=0,
+			     int const &nofSamples=1);
+    //! Retrieve a block of ADC values per dipole
+    casa::Matrix<double> fx (casa::Vector<int> const &start,
+			     int const &nofSamples=1);
+    //! Get a casa::Record containing the values of the attributes
+    casa::Record attributes2record (bool const &recursive=false);
+    //! Create casa::Record used as header record for the CR::DataReader class
+    casa::Record attributes2headerRecord ();
+#endif
+
+    //  Parameter access - dipole dataset __________________
     
 #ifdef HAVE_CASA
     //! Retrieve the list of channel IDs
@@ -242,40 +262,12 @@ namespace DAL {  // Namespace DAL -- begin
     std::vector<uint> data_length ();
 #endif
     
-    // ==========================================================================
-    //
-    //  High-level access to data and attributes
-    //
-    // ==========================================================================
-    
-#ifdef HAVE_CASA
-    //! Time offset between the individual antennas in units of samples
-    casa::Vector<int> sample_offset (uint const &refAntenna=0);
-    //! Retrieve a block of ADC values per dipole
-    casa::Matrix<double> fx (int const &start=0,
-			     int const &nofSamples=1);
-    //! Retrieve a block of ADC values per dipole
-    casa::Matrix<double> fx (std::vector<int> const &start,
-			     int const &nofSamples=1);
-    //! Get a casa::Record containing the values of the attributes
-    casa::Record attributes2record (bool const &recursive=false);
-    //! Create casa::Record used as header record for the CR::DataReader class
-    casa::Record attributes2headerRecord ();
-#endif
-
-    // === Methods ==============================================================
-    
-    //! Open the file containing the TBB time-series data.
-    bool open (hid_t const &location,
-	       std::string const &name,
-	       bool const &create=true);
-    
   protected:
     
-    //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
+    //! Open the structures embedded within the current one
+    bool openEmbedded (bool const &create);
 
   private:
     

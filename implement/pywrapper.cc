@@ -24,11 +24,12 @@
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 
 #include "dal.h"
-// [data_common]
 #include "CommonAttributes.h"
 #include "Filename.h"
 #include "Timestamp.h"
 #include "SAS_Settings.h"
+#include "TBB_Timeseries.h"
+#include "TBB_StationGroup.h"
 
 using namespace DAL;
 
@@ -769,7 +770,6 @@ BOOST_PYTHON_MODULE(pydal)
   bpl::class_<TBB_DipoleDataset>("TBB_DipoleDataset")
     /* Construction */
     .def( bpl::init<>())
-    .def( bpl::init<string,string>())
     /* Access to internal parameters */
     .def( "nofAttributes", &TBB_DipoleDataset::nofAttributes,
 	  "Get the number of attributes attached to the dataset." )
@@ -783,24 +783,11 @@ BOOST_PYTHON_MODULE(pydal)
   bpl::class_<TBB_StationGroup>("TBB_StationGroup")
     /* Construction */
     .def( bpl::init<>())
-    .def( bpl::init<string,string>())
     .def( bpl::init<uint,string>())
     .def( bpl::init<uint>())
     /* Access to internal parameters */
-    .def( "group_id", &TBB_StationGroup::group_id,
-	  "Get the identifier for this group within the HDF5 file." )
     .def( "group_name", &TBB_StationGroup::group_name,
 	  "Get the name for this group within the HDF5 file." )
-    .def( "trigger_type", &TBB_StationGroup::trigger_type,
-	  "Get the trigger type which cause recording this data." )
-    .def( "trigger_offset", &TBB_StationGroup::trigger_offset,
-	  "Get the trigger offset." )
-    //     .def( "", &TBB_StationGroup::,
-    // 	  "" )
-    .def( "beam_direction_frame", &TBB_StationGroup::beam_direction_frame,
-	  "Get the coordinate frame identifier for the beam direction." )
-    .def( "station_position_frame", &TBB_StationGroup::station_position_frame,
-	  "Get the identifier for the station position reference frame." )
     ;
   
   //_____________________________________________________________________________

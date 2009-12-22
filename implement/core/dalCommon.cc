@@ -171,12 +171,16 @@ namespace DAL {
     \retval name     -- Name of the object (if set or defined).
     \param object_id -- Identifier for the objects of which to retrieve the
            name.
+    \retval absolute -- Return the absolute path to the object? If
+            <tt>absolute=true</tt> the full path w.r.t. the file root is
+	    returned.
 
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered
   */
   bool h5get_name (std::string &name,
-                   hid_t const &object_id)
+                   hid_t const &object_id,
+		   bool const &absolute)
   {
     bool status (true);
     H5I_type_t objectType = H5Iget_type (object_id);
@@ -233,9 +237,18 @@ namespace DAL {
 	break;
       }
       
-      // copy the result to the returned variable
+      // (optional) Conversion to relative path ____________
+
       std::string tmp = buffer;
-      name = tmp;
+      
+      if (absolute) {
+	name = tmp;
+      } else {
+	if (!tmp.compare(0,1,"/")) {
+	  tmp.erase(0,1);
+	}
+	name = tmp;
+      }
       
       // Release allocated memory
       delete [] buffer;

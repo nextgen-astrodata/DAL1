@@ -1171,8 +1171,6 @@ int test_beamformed (std::string const &infile)
     int nofStations;
     //
     DAL::h5get_name (name,fileID);
-    //     DAL::h5get_attribute (fileID,"FILENAME",filename);
-    //     DAL::h5get_attribute (fileID,"TELESCOPE",telescope);
     DAL::h5get_attribute (fileID,"NUMBER_OF_STATIONS",nofStations);
     //
     cout << "-- FILENAME ......... = " << filename     << endl;

@@ -31,6 +31,9 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                              CommonInterface
+
   CommonInterface::CommonInterface ()
   {;}
   
@@ -167,19 +170,49 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
+  //                                                                         open
+  
+  bool CommonInterface::open (hid_t const &location)
+  {
+    bool status (true);
+    bool absolutePath (false);
+    herr_t h5error;
+    std::string filename;
+    std::string dataset;
+    
+    // Get name of file and dataset ________________________
+    
+    status  = DAL::h5get_filename (filename, location);
+    status *= DAL::h5get_name (dataset, location,absolutePath);
+    
+    if (status) {
+      // open the file
+      hid_t fileID = H5Fopen (filename.c_str(),
+			      H5F_ACC_RDWR,
+			      H5P_DEFAULT);
+      // open the dataset
+      status = open (fileID,dataset,false);
+      // release file handler
+      h5error = H5Fclose (fileID);
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
   //                                                                 locationName
   
   std::string CommonInterface::locationName ()
   {
     std::string name;
-
+    
     if (!h5get_name(name,location_p)) {
       std::cerr << "[CommonInterface::locationName]"
 		<< " Unable to retrieve name of location!"
 		<< std::endl;
       name = "UNDEFINED";
     }
-
+    
     return name;
   }
   
