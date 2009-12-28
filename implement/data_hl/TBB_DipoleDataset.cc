@@ -123,24 +123,6 @@ namespace DAL {  // Namespace DAL -- begin
 	  datatype);
   }
   
-  //_____________________________________________________________________________
-  //                                                            TBB_DipoleDataset
-  
-  /*!
-    \param other -- Another TBB_DipoleDataset object from which to create
-           this new one.
-  */
-  TBB_DipoleDataset::TBB_DipoleDataset (TBB_DipoleDataset const &other)
-    : CommonInterface ()
-  {
-    datatype_p  = -1;
-    dataspace_p = -1;
-    location_p  = -1;
-    shape_p     = std::vector<hsize_t>();
-
-    copy (other);
-  }
-
   // ============================================================================
   //
   //  Destruction

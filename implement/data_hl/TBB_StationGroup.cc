@@ -201,7 +201,7 @@ namespace DAL {  // Namespace DAL -- begin
     
     status  = DAL::h5get_filename (filename, location);
     status *= DAL::h5get_name (dataset, location,absolutePath);
-    
+
     if (status) {
       // open the file
       hid_t fileID = H5Fopen (filename.c_str(),

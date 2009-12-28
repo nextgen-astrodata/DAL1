@@ -40,6 +40,7 @@ using std::endl;
   \file tdalCommon.cc
 
   \ingroup DAL
+  \ingroup core
 
   \brief A collection of test routines for the routines contained in dalCommon
 
@@ -53,7 +54,8 @@ using std::endl;
   result in a number of tests which do not require any existing data-sets.
 */
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                        test_casacore_variables
 
 /*!
   \brief Test operation performed with/on casacore variable types
@@ -237,7 +239,48 @@ int test_operators ()
   return nofFailedTests;
 }
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                 test_iterators
+
+/*!
+  \brief Test working with C++ iterators on various types of arrays
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function
+*/
+int test_iterators ()
+{
+  cout << "\n[tdalCommon::test_iterators]\n" << endl;
+
+  int nofFailedTests (0);
+  unsigned int nelem (10);
+  unsigned int n(0);
+  std::vector<double>::iterator it;
+
+  // Create 1-dim arrays of different types
+  double * arr = new double [nelem];
+  std::vector<double> vec (nelem);
+
+  // Assign values to the c-array
+  for (n=0; n<nelem; ++n) {
+    arr[n] = 0.5*n;
+  }
+
+  for (it=vec.begin(), n=0; it!=vec.end(); ++it, ++n) {
+    *it = arr[n];
+  }
+
+  std::cout << "-- STL vector<T> = " << vec                   << std::endl;
+  std::cout << "-- (end-begin)   = " << vec.end()-vec.begin() << std::endl;
+  std::cout << "-- nof. elements = " << vec.size()            << std::endl;
+
+  delete [] arr;
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                           test_hdf5_attributes
 
 /*!
   \brief Test of the routines providing access to HDF5 attributes
@@ -834,6 +877,8 @@ int test_hdf5_attributes ()
 //                                                                test_timeseries
 
 /*!
+  \brief Test access to a TBB time-series dataset
+
   \param filename -- Name of the input HDF5 file on which the access routines are
          tested.
 
@@ -1245,6 +1290,7 @@ int main (int argc,
   nofFailedTests += test_casacore_variables ();
 #endif
   nofFailedTests += test_operators ();
+  nofFailedTests += test_iterators ();
   nofFailedTests += test_hdf5_attributes ();
   // Test the various functions for inspection of a HDF5 file
   nofFailedTests += test_hdf5_inspection ();

@@ -770,6 +770,7 @@ BOOST_PYTHON_MODULE(pydal)
   bpl::class_<TBB_DipoleDataset>("TBB_DipoleDataset")
     /* Construction */
     .def( bpl::init<>())
+    .def( bpl::init<uint,string>())
     /* Access to internal parameters */
     .def( "nofAttributes", &TBB_DipoleDataset::nofAttributes,
 	  "Get the number of attributes attached to the dataset." )

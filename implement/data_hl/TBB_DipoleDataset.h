@@ -123,8 +123,6 @@ namespace DAL {  // Namespace DAL -- begin
 		       uint const &rcuID,
 		       std::vector<hsize_t> const &shape,
 		       hid_t const &datatype=H5T_NATIVE_SHORT);
-    //! Copy constructor
-    TBB_DipoleDataset (TBB_DipoleDataset const &other);
     
     // === Destruction ==========================================================
     
