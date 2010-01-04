@@ -422,6 +422,84 @@ int test_attributes (std::string const &filename)
 }
 
 //_______________________________________________________________________________
+//                                                                      test_data
+
+int test_data (std::string const &filename)
+{
+  std::cout << "\n[tTBB_DipoleDataset::test_data]\n" << endl;
+
+  int nofFailedTests (0);
+  hid_t fileID;
+  hid_t groupID;
+  herr_t h5error;
+  std::set<std::string> names;
+  std::set<std::string>::iterator it;
+
+  // Open HDF5 file and embedeed groups ____________________
+
+  fileID = H5Fopen (filename.c_str(),
+		    H5F_ACC_RDWR,
+		    H5P_DEFAULT);
+
+  if (fileID > 0) {
+    names.clear();
+    DAL::h5get_names (names,fileID,H5G_GROUP);
+    //
+    if (names.size() > 0) {
+      it      = names.begin();
+      groupID = H5Gopen (fileID,
+			 it->c_str(),
+			 H5P_DEFAULT);
+    } else {
+      std::cerr << "Skipping tests - unable to open group." << endl;
+      return -1;
+    }
+  } else {
+    std::cerr << "Skipping tests - unable to open file." << endl;
+    return -1;
+  }
+
+  if (groupID > 0) {
+    names.clear();
+    DAL::h5get_names (names,groupID,H5G_DATASET);
+  } else {
+    std::cerr << "Skipping tests - unable to open group." << endl;
+    return -1;
+  }
+
+  if (names.size() > 0) {
+    it = names.begin();
+    TBB_DipoleDataset dataset (groupID,*it);
+    //
+    int start (0);
+    int blocksize (1024);
+    short * data = new short [blocksize];
+    //
+    dataset.fx (start,blocksize,data);
+    std::cout << "[" 
+	      << data[0] << ","
+	      << data[1] << ","
+	      << data[2] << ","
+	      << data[3] << ","
+	      << data[4] << ","
+	      << data[5] << ",..]"
+	      << std::endl;
+    //
+    delete [] data;
+  } else {
+    std::cerr << "Skipping tests - no datasets found." << endl;
+    return -1;
+  }
+
+  // Release HDF5 object identifiers _______________________
+  
+  h5error = H5Fclose (fileID);
+  h5error = H5Gclose (groupID);
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 int main (int argc, char *argv[])
@@ -451,6 +529,8 @@ int main (int argc, char *argv[])
     nofFailedTests += test_constructors (filename);
     // Test access to the attributes attached to the dataset
     nofFailedTests += test_attributes (filename);
+    // Test access to the data
+    nofFailedTests += test_data (filename);
   } else {
     std::cout << "\n[tTBB_DipoleDataset] Skipping tests which input dataset.\n"
 	      << endl;

@@ -237,72 +237,8 @@ int test_constructors (std::string const &filename)
   return nofFailedTests;
 }
 
-// ------------------------------------------------------------------ test_groups
-
-/*!
-  \brief Test identification and access of groups a root level of the HDF5 file
-  
-  \param name_file -- Data file used for testing
-
-  \return nofFailedTests -- The number of failed tests.
-*/
-int test_groups (std::string const &name_file)
-{
-  cout << "\n[test_groups]\n" << endl;
-
-  bool status        = true;
-  int nofFailedTests = 0;
-  hsize_t nofObjects = 0;
-  int objectType     = 0;
-  std::string name;
-  herr_t h5error     = 0;
-
-  // open the HDF5 for further access
-  hid_t fileID = H5Fopen (name_file.c_str(),
-                          H5F_ACC_RDONLY,
-                          H5P_DEFAULT);
-
-  h5error = H5Gget_num_objs(fileID,
-                            &nofObjects);
-
-  std::cout << "-- File ID      = " << fileID     << std::endl;
-  std::cout << "-- nof. objects = " << nofObjects << std::endl;
-
-  for (hsize_t n(0); n<nofObjects; n++)
-    {
-      // retrieve the object type
-      objectType = H5Gget_objtype_by_idx (fileID,
-                                          n);
-      // ... and report the finding
-      switch (objectType)
-        {
-        case H5G_DATASET:
-          std::cout << "--> Object " << n << " is of type H5G_DATASET." << std::endl;
-          break;
-        case H5G_GROUP:
-          std::cout << "--> Object " << n << " is of type H5G_GROUP." << std::endl;
-          // get the name of the group
-          status = DAL::h5get_name (name,
-                                    fileID,
-                                    n);
-          if (status)
-            {
-              std::cout << "--> Group name = " << name << std::endl;
-            }
-          break;
-        case H5G_LINK:
-          std::cout << "--> Object " << n << " is of type H5G_LINK." << std::endl;
-          break;
-        }
-    }
-
-  // release the file ID
-  h5error = H5Fclose (fileID);
-
-  return nofFailedTests;
-}
-
-// ----------------------------------------------------------------- test_methods
+//_______________________________________________________________________________
+//                                                                   test_methods
 
 /*!
   \brief Test the various methods provided by the class
@@ -363,7 +299,7 @@ int test_methods (std::string const &filename)
       casa::Vector<uint> triggered_antennas;
       casa::Vector<double> station_position_value;
       casa::Vector<casa::String> station_position_unit;
-      std::string station_position_frame;
+      std::string stationPositionFrame;
       casa::Vector<double> beam_direction_value;
       casa::Vector<casa::String> beam_direction_unit;
       std::string beam_direction_frame;
@@ -371,7 +307,7 @@ int test_methods (std::string const &filename)
       std::vector<uint> triggered_antennas;
       std::vector<double> station_position_value;
       std::vector<std::string> station_position_unit;
-      std::string station_position_frame;
+      std::string stationPositionFrame;
       std::vector<double> beam_direction_value;
       std::vector<std::string> beam_direction_unit;
       std::string beam_direction_frame;
@@ -380,19 +316,19 @@ int test_methods (std::string const &filename)
       group.getAttribute ("TRIGGER_TYPE",           trigger_type);
       group.getAttribute ("TRIGGER_OFFSET",         trigger_offset);
       group.getAttribute ("TRIGGERED_ANTENNAS",     triggered_antennas);
-      group.getAttribute ("STATION_POSITION_FRAME", station_position_frame);
+      group.getAttribute ("STATION_POSITION_VALUE", station_position_value);
+      group.getAttribute ("STATION_POSITION_UNIT",  station_position_unit);
+      group.getAttribute ("STATION_POSITION_FRAME", stationPositionFrame);
+      group.getAttribute ("BEAM_DIRECTION_VALUE",   beam_direction_value);
+      group.getAttribute ("BEAM_DIRECTION_UNIT",    beam_direction_unit);
       group.getAttribute ("BEAM_DIRECTION_FRAME",   beam_direction_frame);
-      station_position_value = group.station_position_value();
-      station_position_unit  = group.station_position_unit();
-      beam_direction_value   = group.beam_direction_value();
-      beam_direction_unit    = group.beam_direction_unit();
       //... and display them
-      cout << "-- TRIGGER_TYPE           = " << trigger_type << endl;
-      cout << "-- TRIGGER_OFFSET         = " << trigger_offset << endl;
-      cout << "-- TRIGGERED_ANTENNAS     = " << triggered_antennas << endl;
+      cout << "-- TRIGGER_TYPE           = " << trigger_type           << endl;
+      cout << "-- TRIGGER_OFFSET         = " << trigger_offset         << endl;
+      cout << "-- TRIGGERED_ANTENNAS     = " << triggered_antennas     << endl;
       cout << "-- STATION_POSITION_VALUE = " << station_position_value << endl;
       cout << "-- STATION_POSITION_UNIT  = " << station_position_unit  << endl;
-      cout << "-- STATION_POSITION_FRAME = " << station_position_frame << endl;
+      cout << "-- STATION_POSITION_FRAME = " << stationPositionFrame   << endl;
       cout << "-- BEAM_DIRECTION_VALUE   = " << beam_direction_value   << endl;
       cout << "-- BEAM_DIRECTION_UNIT    = " << beam_direction_unit    << endl;
       cout << "-- BEAM_DIRECTION_FRAME   = " << beam_direction_frame   << endl;
@@ -489,7 +425,8 @@ int test_methods (std::string const &filename)
   return nofFailedTests;
 }
 
-// ---------------------------------------------------------- test_export2record
+//_______________________________________________________________________________
+//                                                             test_export2record
 
 /*!
   \brief Test export of the attributes to a casa::Record container
@@ -588,7 +525,8 @@ int test_export2record (std::string const &filename)
   return nofFailedTests;
 }
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                      test_data
 
 /*!
   \brief Test retrieval of the actual time-series data form the dipoles
@@ -599,7 +537,7 @@ int test_export2record (std::string const &filename)
 */
 int test_data (std::string const &filename)
 {
-  cout << "\n[test_data]\n" << endl;
+  cout << "\n[tTBB_DipoleDataset::test_data]\n" << endl;
 
   int nofFailedTests (0);
   hid_t fileID;
@@ -637,27 +575,26 @@ int test_data (std::string const &filename)
   // Perform the tests _____________________________________
 
   std::cout << "[1] Retrieve data for all dipoles ..." << std::endl;
-  try
-    {
-      casa::Matrix<double> data = group.fx (start,
-                                            blocksize);
-      // feedback
-      std::cout << "-- Data start     = " << start        << std::endl;
-      std::cout << "-- Data blocksize = " << blocksize    << std::endl;
-      std::cout << "-- Data array     = " << data.shape() << std::endl;
-      std::cout << "-- Data [0,]      = " << data.row(0)  << std::endl;
-      std::cout << "-- Data [1,]      = " << data.row(1)  << std::endl;
-    }
-  catch (std::string message)
-    {
-      cerr << message << endl;
-      nofFailedTests++;
-    }
-
+  try {
+    casa::Matrix<double> data = group.fx (start,
+					  blocksize);
+    // feedback
+    std::cout << "-- Data start     = " << start        << std::endl;
+    std::cout << "-- Data blocksize = " << blocksize    << std::endl;
+    std::cout << "-- Data array     = " << data.shape() << std::endl;
+    std::cout << "-- Data [0,]      = " << data.row(0)  << std::endl;
+    std::cout << "-- Data [1,]      = " << data.row(1)  << std::endl;
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                           main
 
 int main (int argc,
           char *argv[])
@@ -665,7 +602,7 @@ int main (int argc,
   int nofFailedTests (0);
   bool haveDataset (true);
   std::string filename ("UNDEFINED");
-
+  
   //________________________________________________________
   // Process parameters from the command line
   
@@ -675,7 +612,7 @@ int main (int argc,
     filename    = argv[1];
     haveDataset = true;
   }
-
+  
   //________________________________________________________
   // Run the tests
 
@@ -686,6 +623,8 @@ int main (int argc,
     nofFailedTests += test_constructors (filename);
     // Test methods to retrieve attributes
     nofFailedTests += test_methods (filename);
+    // Test access to the data
+    nofFailedTests += test_data (filename);
   } else {
     std::cout << "\n[tTBB_StationGroup] Skipping tests with input dataset.\n"
 	      << endl;

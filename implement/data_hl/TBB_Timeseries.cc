@@ -43,7 +43,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   TBB_Timeseries::TBB_Timeseries ()
   {
-    init ();
+    location_p = -1;
   }
   
   //_____________________________________________________________________________
@@ -81,9 +81,6 @@ namespace DAL {  // Namespace DAL -- begin
   TBB_Timeseries::TBB_Timeseries (TBB_Timeseries const &other)
     : CommonInterface ()
   {
-    // Initialize internal variables
-    init ();
-    // copy the internal parameters of the other object
     copy (other);
   }
 
@@ -100,11 +97,6 @@ namespace DAL {  // Namespace DAL -- begin
   
   void TBB_Timeseries::destroy ()
   {
-    if (location_p > 0) {
-      herr_t h5error (0);
-      // Close the HDF5 file
-      h5error = H5Fclose (location_p);
-    }
   }
   
   // ============================================================================
@@ -113,7 +105,8 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
   
-  // ------------------------------------------------------------------ operator=
+  //_____________________________________________________________________________
+  //                                                                    operator=
   
   TBB_Timeseries& TBB_Timeseries::operator= (TBB_Timeseries const &other)
   {
@@ -124,21 +117,18 @@ namespace DAL {  // Namespace DAL -- begin
     return *this;
   }
   
-  // ----------------------------------------------------------------------- copy
-
+  //_____________________________________________________________________________
+  //                                                                         copy
+  
   /*!
     \param other -- Another TBB_Timeseries object from which to create this new
            one.
   */
   void TBB_Timeseries::copy (TBB_Timeseries const &other)
   {
-    if (other.location_p < 0) {
-      init ();
-    }
-    else {
-      filename_p = other.filename_p;
-      open (0,other.filename_p,true);
-    }
+    location_p           = -1;
+    std::string filename = other.filename_p;
+    open (0,filename,false);
   }
   
   // ============================================================================
@@ -161,28 +151,28 @@ namespace DAL {  // Namespace DAL -- begin
     return attr;
   }
 
-  // -------------------------------------------------------------------- summary
+  //_____________________________________________________________________________
+  //                                                                      summary
   
   void TBB_Timeseries::summary (std::ostream &os)
   {
     os << "[TBB_Timeseries] Summary of object properties"       << endl;
     os << "-- File name  ........  : " << filename_p            << endl;
     os << "-- Location ID .......  : " << locationID()          << endl;
-    os << "-- Location name .....  : " << locationName()        << endl;
 
     /*
       Further output is conditional - only makes sense if successfully connected
       to a file
     */
-    if (location_p > 0) {
-      CommonAttributes attr = commonAttributes();
-      os << "-- Telescope            : " << attr.telescope()       << endl;
-      os << "-- Observer             : " << attr.observer()        << endl;
-      os << "-- Project              : " << attr.projectTitle()    << endl;
-      os << "-- Observation ID       : " << attr.observationID()   << endl;
-      os << "-- nof. station groups  : " << stationGroups_p.size() << endl;
-      os << "-- nof. dipole datasets : " << nofDipoleDatasets()    << endl;
-    }
+//     if (location_p > 0) {
+//       CommonAttributes attr = commonAttributes();
+//       os << "-- Telescope            : " << attr.telescope()       << endl;
+//       os << "-- Observer             : " << attr.observer()        << endl;
+//       os << "-- Project              : " << attr.projectTitle()    << endl;
+//       os << "-- Observation ID       : " << attr.observationID()   << endl;
+//       os << "-- nof. station groups  : " << stationGroups_p.size() << endl;
+//       os << "-- nof. dipole datasets : " << nofDipoleDatasets()    << endl;
+//     }
   }
 
   // ============================================================================
@@ -190,14 +180,6 @@ namespace DAL {  // Namespace DAL -- begin
   //  Methods
   //
   // ============================================================================
-  
-  //_____________________________________________________________________________
-  //                                                                         init
-  
-  void TBB_Timeseries::init ()
-  {
-    location_p = -1;
-  }
   
   //_____________________________________________________________________________
   //                                                                setAttributes
@@ -213,6 +195,18 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         open
   
+  /*!
+    \param location -- Identifier of the location to which the to be opened
+           structure is attached; parameter inherited through CommonInterface,
+	   but not evaluated here.
+    \param name   -- Name of the structure (file, group, dataset, etc.) to be
+           opened.
+    \param create -- Create the corresponding data structure, if it does not 
+           exist yet?
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered.
+  */
   bool TBB_Timeseries::open (hid_t const &location,
 			     std::string const &name,
 			     bool const &create)
@@ -221,6 +215,8 @@ namespace DAL {  // Namespace DAL -- begin
 
     /* Initialize private variables*/
     location_p = location;
+    filename_p = name;
+    setAttributes ();
     
     /* Try to open the file */
     location_p = H5Fopen (name.c_str(),
@@ -416,12 +412,14 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Matrix<double> TBB_Timeseries::station_position_value ()
   {
     uint nofStations = nofStationGroups();
+    casa::Vector<double> tmp;
     casa::Matrix<double> values (nofStations,3);
     std::map<std::string,TBB_StationGroup>::iterator it;
     int n (0);
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      values.row(n) = (*it).second.station_position_value();
+      it->second.getAttribute("STATION_POSITION_VALUE",tmp);
+      values.row(n) = tmp;
       ++n;
     }
 
@@ -434,12 +432,14 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Matrix<casa::String> TBB_Timeseries::station_position_unit ()
   {
     uint nofStations = nofStationGroups();
+    casa::Vector<casa::String> tmp;
     casa::Matrix<casa::String> units (nofStations,3);
     std::map<std::string,TBB_StationGroup>::iterator it;
     int n (0);
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      units.row(n) = it->second.station_position_unit();
+      it->second.getAttribute("STATION_POSITION_UNIT",tmp);
+      units.row(n) = tmp;
       ++n;
     }
     
@@ -490,12 +490,14 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Matrix<double> TBB_Timeseries::beam_direction_value ()
   {
     uint nofStations = nofStationGroups();
-    casa::Matrix<double> values (nofStations,3);
+    casa::Vector<double> tmp;
+    casa::Matrix<double> values (nofStations,2);
     std::map<std::string,TBB_StationGroup>::iterator it;
     int n (0);
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      values.row(n) = (*it).second.beam_direction_value();
+      it->second.getAttribute("BEAM_DIRECTION_VALUE",tmp);
+      values.row(n) = tmp;
       ++n;
     }
 
@@ -507,15 +509,17 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Matrix<casa::String> TBB_Timeseries::beam_direction_unit ()
   {
     uint nofStations = nofStationGroups();
-    casa::Matrix<casa::String> units (nofStations,3);
+    casa::Vector<casa::String> tmp;
+    casa::Matrix<casa::String> units (nofStations,2);
     std::map<std::string,TBB_StationGroup>::iterator it;
     int n (0);
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      units.row(n) = (*it).second.beam_direction_unit();
+      it->second.getAttribute("BEAM_DIRECTION_UNIT",tmp);
+      units.row(n) = tmp;
       ++n;
     }
-
+    
     return units;
   }
   
@@ -1080,8 +1084,10 @@ namespace DAL {  // Namespace DAL -- begin
 
     // Retrieve data from file _____________________________
 
+    bool status (true);
     uint n       = 0;
     uint dipole  = 0;
+    casa::Matrix<double> tmp;
     casa::Vector<casa::String> channel (1);
     std::map<std::string,TBB_StationGroup>::iterator it;
 
@@ -1091,10 +1097,11 @@ namespace DAL {  // Namespace DAL -- begin
       nofDipoles = dipoleNames.nelements();
       // Retrieve the data for all dipoles from that station
       for (dipole=0; dipole<nofDipoles; ++dipole) {
-	channel                  = dipoleNames(dipole);
-	casa::Matrix<double> tmp = it->second.fx(start(n),
-						 nofSamples,
-						 channel);
+	channel = dipoleNames(dipole);
+	status  = it->second.fx(data,
+				start(n),
+				nofSamples,
+				channel);
 	// Append the data to the array returned by this function
 	data.column(n) = tmp.column(0);
 	n++;

@@ -822,30 +822,6 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef HAVE_CASA
 
   //_____________________________________________________________________________
-  //                                                       antenna_position_value
-  
-  bool TBB_DipoleDataset::antenna_position_value (casa::Vector<double> &value)
-  {
-    return DAL::h5get_attribute(location_p,
-				attribute_name(DAL::ANTENNA_POSITION_VALUE),
-				value);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                        antenna_position_unit
-  
-  /*!
-    \return unit -- Physical unit associated with the numerical values for the
-            antenna position, e.g. <tt>unit="m"</tt>
-  */
-  bool TBB_DipoleDataset::antenna_position_unit (casa::Vector<casa::String> &unit)
-  {
-    return DAL::h5get_attribute(location_p,
-				attribute_name(DAL::ANTENNA_POSITION_UNIT),
-				unit);
-  }
-
-  //_____________________________________________________________________________
   //                                                             antenna_position
 
   /*!
@@ -859,26 +835,6 @@ namespace DAL {  // Namespace DAL -- begin
                                 DAL::ANTENNA_POSITION_VALUE,
                                 DAL::ANTENNA_POSITION_UNIT,
                                 DAL::ANTENNA_POSITION_FRAME);
-  }
-
-  //_____________________________________________________________________________
-  //                                                    antenna_orientation_value
-  
-  bool TBB_DipoleDataset::antenna_orientation_value (casa::Vector<double> &value)
-  {
-    return DAL::h5get_attribute(location_p,
-				attribute_name(DAL::ANTENNA_ORIENTATION_VALUE),
-				value);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                     antenna_orientation_unit
-  
-  bool TBB_DipoleDataset::antenna_orientation_unit (casa::Vector<casa::String> &unit)
-  {
-    return DAL::h5get_attribute(location_p,
-				attribute_name(DAL::ANTENNA_ORIENTATION_UNIT),
-				unit);
   }
 
   //_____________________________________________________________________________

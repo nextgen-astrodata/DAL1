@@ -128,9 +128,6 @@ namespace DAL {   // Namespace DAL -- begin
     //! Argumented constructor
     TBB_StationGroup (hid_t const &groupID);
     
-    //! Copy constructor
-    TBB_StationGroup (TBB_StationGroup const &other);
-    
     // === Destruction ==========================================================
 
     //! Destructor
@@ -151,26 +148,6 @@ namespace DAL {   // Namespace DAL -- begin
     inline uint nofTriggeredAntennas () const {
       return nofTriggeredAntennas_p;
     }
-    
-#ifdef HAVE_CASA
-    //! Get the numerical value of the beam pointing direction.
-    casa::Vector<double> beam_direction_value ();
-    //! Get the physical units for the beam direction
-    casa::Vector<casa::String> beam_direction_unit ();
-    //! Get the numerical values of the station position
-    casa::Vector<double> station_position_value ();
-    //! Get the physical units for the station position
-    casa::Vector<casa::String> station_position_unit ();
-#else
-    //! Get the numerical value of the beam pointing direction.
-    std::vector<double> beam_direction_value ();
-    //! Get the physical units for the beam direction
-    std::vector<std::string> beam_direction_unit ();
-    //! Get the numerical values of the station position
-    std::vector<double> station_position_value ();
-    //! Get the physical units for the station position
-    std::vector<std::string> station_position_unit ();
-#endif
     
     /*!
       \brief Get the name of the class
@@ -303,14 +280,14 @@ namespace DAL {   // Namespace DAL -- begin
       \brief Convert individual ID number to joint unique ID
       
       \param station_id -- Identification number of the LOFAR station within the
-      complete array.
+             complete array.
       \param rsp_id -- Identification number of a Remote Station Processing
-      (RSP) board within a given LOFAR station.
+             (RSP) board within a given LOFAR station.
       \param rcu_id -- Identification number of a Receiver Unit (RCU) attached to
-      a given RSP board.
+             a given RSP board.
       
       \return channel_id -- Unique identifier string for an individual dipole
-      within the full LOFAR array.
+              within the full LOFAR array.
     */
     inline std::string channelID (unsigned int const &station_id,
 				  unsigned int const &rsp_id,
@@ -345,9 +322,10 @@ namespace DAL {   // Namespace DAL -- begin
 			     int const &nofSamples=1);
     
     //! Retrieve a block of ADC values for the dipoles in this station
-    casa::Matrix<double> fx (int const &start,
-			     int const &nofSamples,
-			     casa::Vector<casa::String> const &dipoles);
+    bool fx (casa::Matrix<double> &data,
+	     int const &start,
+	     int const &nofSamples,
+	     casa::Vector<casa::String> const &dipoles);
     
     //! Get a casa::Record containing the values of the attributes
     casa::Record attributes2record (bool const &recursive=false);
@@ -365,9 +343,6 @@ namespace DAL {   // Namespace DAL -- begin
     bool openEmbedded (bool const &create);
 
   private:
-    
-    //! Initialize the internal dataspace
-    void init ();
     
     //! Unconditional copying
     void copy (TBB_StationGroup const &other);

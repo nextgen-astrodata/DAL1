@@ -202,24 +202,8 @@ namespace DAL {  // Namespace DAL -- begin
     
 #ifdef HAVE_CASA
 
-    //! Get the numerical value of the antenna position
-    bool antenna_position_value (casa::Vector<double> &value);
-    //! Set the numerical value of the antenna position
-    bool set_antenna_position_value (casa::Vector<double> const &value);
-    //! Get the physical unit within which the antenna position is given
-    bool antenna_position_unit (casa::Vector<casa::String> &unit);
-    //! Set the physical unit within which the antenna position is given
-    bool set_antenna_position_unit (casa::Vector<casa::String> const &unit);
     //! Get the antenna position as a measure
     casa::MPosition antenna_position ();
-    //! Get the numerical values describing the antenna orientation
-    bool antenna_orientation_value (casa::Vector<double> &value);
-    //! Set the numerical values describing the antenna orientation
-    bool set_antenna_orientation_value (casa::Vector<double> const &value);
-    //! Get the physical unit within which the antenna orientation is given
-    bool antenna_orientation_unit (casa::Vector<casa::String> &unit);
-    //! Set the physical unit within which the antenna orientation is given
-    bool set_antenna_orientation_unit (casa::Vector<casa::String> const &unit);
     //! Get the ADC sample frequency as casa::Quantity
     bool sample_frequency (casa::Quantity &freq);
     //! Get the ADC sample frequency as casa::Measure

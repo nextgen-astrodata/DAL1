@@ -273,8 +273,6 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! Unconditional copying
     void copy (TBB_Timeseries const &other);
-    //! Initialize the internal dataspace of the object
-    void init ();
     //! Locate and register the station groups contained within the file
     bool openStationGroups ();
     //! Unconditional deletion
