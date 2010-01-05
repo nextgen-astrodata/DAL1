@@ -489,79 +489,63 @@ namespace DAL {  // Namespace DAL -- begin
 #endif
   
   //_____________________________________________________________________________
-  //                                                                    channelID
+  //                                                                  dipoleNames
   
-  /*!
-    \return channelID -- A list of the channel IDs for all the dipoles within
-            this LOFAR station.
-  */
-#ifdef HAVE_CASA
-  casa::Vector<int> TBB_StationGroup::channelID ()
+  void TBB_StationGroup::dipoleNames (std::vector<std::string> &names)
   {
-    uint n (0);
     std::map<std::string,TBB_DipoleDataset>::iterator it;
-    casa::Vector<int> id (datasets_p.size());
 
-    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-      id(n) = it->second.channelID();
-      ++n;
-    }
+    names.clear();
     
-    return id;
+    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+      names.push_back(it->second.dipoleName());
+    }
   }
-#else
-  std::vector<int> TBB_StationGroup::channelID ()
+
+#ifdef HAVE_CASA
+  void TBB_StationGroup::dipoleNames (casa::Vector<casa::String> &names)
   {
-    uint n (0);
+    int n (0);
     std::map<std::string,TBB_DipoleDataset>::iterator it;
-    std::vector<int> id (datasets_p.size());
+
+    names.resize (datasets_p.size());
 
     for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-      id[n] = it->second.channelID();
+      names(n) = it->second.dipoleName();
       ++n;
     }
-    
-    return id;
   }
 #endif
-  
+
   //_____________________________________________________________________________
-  //                                                                 channelNames
+  //                                                                dipoleNumbers
   
-  /*!
-    \return channelNames -- A list of the channel names for all the dipoles
-            within this LOFAR station.
-  */
-#ifdef HAVE_CASA
-  casa::Vector<casa::String> TBB_StationGroup::channelNames ()
+  void TBB_StationGroup::dipoleNumbers (std::vector<int> &ids)
   {
-    uint n (0);
     std::map<std::string,TBB_DipoleDataset>::iterator it;
-    casa::Vector<casa::String> names (datasets_p.size());
-    
+
+    ids.clear();
+
     for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-      names(n) = it->second.channelName();
-      ++n;
+      ids.push_back(it->second.dipoleNumber());
     }
-    
-    return names;
   }
-#else
-  std::vector<std::string> TBB_StationGroup::channelNames ()
+
+#ifdef HAVE_CASA
+  void TBB_StationGroup::dipoleNumbers (casa::Vector<int> &names)
   {
-    uint n (0);
+    int n (0);
     std::map<std::string,TBB_DipoleDataset>::iterator it;
-    std::vector<std::string> names (datasets_p.size());
-    
+
+    names.resize (datasets_p.size());
+
     for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-      names[n] = it->second.channelName();
+      names(n) = it->second.dipoleNumber();
       ++n;
     }
-    
-    return names;
   }
 #endif
-  
+
   //_____________________________________________________________________________
   //                                                                   datasetIDs
   
@@ -847,7 +831,7 @@ namespace DAL {  // Namespace DAL -- begin
       uint n (0);
       
       for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-	name = it->second.channelName();
+	name = it->second.dipoleName();
 	// retrieve the attributes for the dipole data-set as record
 	recordDipole = it->second.attributes2record();
 	// ... and add it to the existing record

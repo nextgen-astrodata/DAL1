@@ -185,15 +185,15 @@ namespace DAL {  // Namespace DAL -- begin
 	       hid_t const &datatype=H5T_NATIVE_SHORT);
     
     //! Get the unique channel/dipole identifier
-    int channelID ();
+    int dipoleNumber ();
     
     //! Get the unique channel/dipole identifier
-    std::string channelName ();
+    std::string dipoleName ();
     
     //! Get the unique channel/dipole identifier
-    static std::string channelName (uint const &station,
-				    uint const &rsp,
-				    uint const &rcu);
+    static std::string dipoleName (unsigned int const &station,
+				   unsigned int const &rsp,
+				   unsigned int const &rcu);
     
     //! Get a number of data values as recorded for this dipole
     bool fx (int const &start,

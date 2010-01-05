@@ -636,7 +636,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      tmp        = (*it).second.channelID();
+      (*it).second.dipoleNumbers(tmp);
       nofDipoles = (*it).second.nofDipoleDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
@@ -661,7 +661,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      tmp        = (*it).second.channelID();
+      (*it).second.dipoleNumbers(tmp);
       nofDipoles = (*it).second.nofDipoleDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
@@ -1089,11 +1089,12 @@ namespace DAL {  // Namespace DAL -- begin
     uint dipole  = 0;
     casa::Matrix<double> tmp;
     casa::Vector<casa::String> channel (1);
+    casa::Vector<casa::String> dipoleNames;
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
       // Get the channel names for the dipoles within the station
-      casa::Vector<casa::String> dipoleNames = it->second.channelNames();
+      it->second.dipoleNames(dipoleNames);
       nofDipoles = dipoleNames.nelements();
       // Retrieve the data for all dipoles from that station
       for (dipole=0; dipole<nofDipoles; ++dipole) {

@@ -259,21 +259,27 @@ namespace DAL {   // Namespace DAL -- begin
     casa::Matrix<casa::String> antenna_position_unit ();
     //! Get the positions of the antennas within this station as Measure.
     casa::Vector<casa::MPosition> antenna_position ();
-    //! Retrieve the list of channels IDs contained within this group
-    casa::Vector<int> channelID ();
-    //! Retrieve the list of channels names contained within this group
-    casa::Vector<casa::String> channelNames ();
     //! Get identifiers to the datasets within the station group
     casa::Vector<hid_t> datasetIDs ();
 #else
     //! Time offset between the individual antennas in units of samples
     std::vector<int> sample_offset (uint const &refAntenna=0);
-    //! Retrieve the list of channels IDs contained within this group
-    std::vector<int> channelID ();
-    //! Retrieve the list of channels names contained within this group
-    std::vector<std::string> channelNames ();
     //! Get identifiers to the datasets within the station group
     std::vector<hid_t> datasetIDs ();
+#endif
+
+    //! Retrieve the list of channels names contained within this group
+    void dipoleNames (std::vector<std::string> &names);
+#ifdef HAVE_CASA
+    //! Retrieve the list of channels names contained within this group
+    void dipoleNames (casa::Vector<casa::String> &names);
+#endif
+
+    //! Retrieve the list of channels IDs contained within this group
+    void dipoleNumbers (std::vector<int> &ids);
+#ifdef HAVE_CASA
+    //! Retrieve the list of channels IDs contained within this group
+    void dipoleNumbers (casa::Vector<int> &ids);
 #endif
     
     /*!
@@ -293,11 +299,9 @@ namespace DAL {   // Namespace DAL -- begin
 				  unsigned int const &rsp_id,
 				  unsigned int const &rcu_id)
     {
-      char uid[10];
-      sprintf(uid, "%03d%03d%03d",
-	      station_id,rsp_id,rcu_id);
-      std::string channel_id (uid);
-      return channel_id;
+      return TBB_DipoleDataset::dipoleName(station_id,
+					   rsp_id,
+					   rcu_id);
     }
     
     // ============================================================================

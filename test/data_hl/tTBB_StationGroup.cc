@@ -392,12 +392,30 @@ int test_methods (std::string const &filename)
       cout << "-- samples_per_frame .... = " << samples_per_frame << endl;
       cout << "-- sample_offset ........ = " << sample_offset     << endl;
       cout << "-- Data lengths ......... = " << data_length       << endl;
-    }
-  catch (std::string message)
-    {
-      cerr << message << endl;
-      nofFailedTests++;
-    }
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  //__________________________________________________________________
+  // Retrieve additional properties of the dipole datasets
+  
+  cout << "[3] Retrieve additional properties of the dipole datasets ..." << endl;
+  try {
+    std::vector<std::string> dipoleNames;
+    std::vector<int> dipoleNumbers;
+    //
+    group.dipoleNames (dipoleNames);
+    group.dipoleNumbers (dipoleNumbers);
+    //
+    cout << "-- Dipole names = " << dipoleNames   << endl;
+    cout << "-- Dipole IDs   = " << dipoleNumbers << endl;
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
 
   //__________________________________________________________________
   // Test construction of higher-level products from the attributes
@@ -584,6 +602,15 @@ int test_data (std::string const &filename)
     std::cout << "-- Data array     = " << data.shape() << std::endl;
     std::cout << "-- Data [0,]      = " << data.row(0)  << std::endl;
     std::cout << "-- Data [1,]      = " << data.row(1)  << std::endl;
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Retrieve data for selected dipoles ..." << std::endl;
+  try {
+    
   }
   catch (std::string message) {
     cerr << message << endl;
