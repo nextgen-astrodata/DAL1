@@ -126,9 +126,9 @@ endforeach (dal_module)
 
 set (dal_link_libraries "")
 
-if (libz)
-  list (APPEND dal_link_libraries ${libz})
-endif (libz)
+if (HAVE_LIBZ)
+  list (APPEND dal_link_libraries ${HAVE_LIBZ})
+endif (HAVE_LIBZ)
 
 if (CASA_LIBRARIES)
   list (APPEND dal_link_libraries ${CASA_LIBRARIES})
@@ -141,32 +141,32 @@ else (HDF5_LIBRARIES)
 endif (HDF5_LIBRARIES)
 
 if (LAPACK_LIBRARIES)
-  list (APPEND cr_link_libraries ${LAPACK_LIBRARIES})
+  list (APPEND dal_link_libraries ${LAPACK_LIBRARIES})
 endif (LAPACK_LIBRARIES)
 
 if (CFITSIO_LIBRARIES)
-  list (APPEND cr_link_libraries ${CFITSIO_LIBRARIES})
+  list (APPEND dal_link_libraries ${CFITSIO_LIBRARIES})
 endif (CFITSIO_LIBRARIES)
 
 if (WCSLIB_LIBRARIES)
-  list (APPEND cr_link_libraries ${WCSLIB_LIBRARIES})
+  list (APPEND dal_link_libraries ${WCSLIB_LIBRARIES})
 endif (WCSLIB_LIBRARIES)
 
-if (libdl)
-  list (APPEND dal_link_libraries ${libdl})
-endif (libdl)
+if (HAVE_LIBDL)
+  list (APPEND dal_link_libraries ${HAVE_LIBDL})
+endif (HAVE_LIBDL)
 
-if (libm)
-  list (APPEND dal_link_libraries ${libm})
-endif (libm)
+if (HAVE_LIBM)
+  list (APPEND dal_link_libraries ${HAVE_LIBM})
+endif (HAVE_LIBM)
 
-if (libpthread)
-  list (APPEND dal_link_libraries ${libpthread})
-endif (libpthread)
+if (HAVE_LIBPTHREAD)
+  list (APPEND dal_link_libraries ${HAVE_LIBPTHREAD})
+endif (HAVE_LIBPTHREAD)
 
-if (libutil)
-  list (APPEND dal_link_libraries ${libutil})
-endif (libutil)
+if (HAVE_LIBUTIL)
+  list (APPEND dal_link_libraries ${HAVE_LIBUTIL})
+endif (HAVE_LIBUTIL)
 
 if (HAVE_MYSQL)
   list (APPEND dal_link_libraries ${MYSQL_LIBRARIES})
@@ -213,9 +213,9 @@ if (DAL_PYTHON_BINDINGS)
     ${CFITSIO_LIBRARIES}
     ${WCSLIB_LIBRARIES}
     ${LAPACK_LIBRARIES}
-    ${libdl}
-    ${libpthread}
-    ${libutil}
+    ${HAVE_LIBDL}
+    ${HAVE_LIBPTHREAD}
+    ${HAVE_LIBUTIL}
     )
   ## additional target properties
   if (APPLE)

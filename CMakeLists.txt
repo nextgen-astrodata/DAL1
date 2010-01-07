@@ -93,44 +93,7 @@ include (CPack)
 set (NO_DEFAULT_PATH YES)
 
 ##__________________________________________________________
-## System header files
-
-find_path (HAVE_LIBGEN_H     libgen.h      PATHS ${include_locations} )
-find_path (HAVE_STDINT_H     stdint.h      PATHS ${include_locations} )
-find_path (HAVE_STDLIB_H     stdlib.h      PATHS ${include_locations} )
-find_path (HAVE_STRING_H     string.h      PATHS ${include_locations} )
-find_path (HAVE_STRINGS_H    strings.h     PATHS ${include_locations} )
-find_path (HAVE_SYS_STAT_H   sys/stat.h    PATHS ${include_locations} )
-find_path (HAVE_SYS_TIME_H   sys/time.h    PATHS ${include_locations} )
-find_path (HAVE_SYS_TYPES_H  sys/types.h   PATHS ${include_locations} )
-find_path (HAVE_SYS_UTIME_H  sys/utime.h   PATHS ${include_locations} )
-
-##__________________________________________________________
-## System Libraries
-
-find_library (libdl      dl       ${lib_locations})
-find_library (libm       m        ${lib_locations})
-find_library (libpthread pthread  ${lib_locations})
-find_library (libutil    util     ${lib_locations})
-find_library (libz       z        ${lib_locations})
-
-##__________________________________________________________
 ## Type sizes
-
-include (CheckTypeSize)
-
-check_type_size ("short"         SIZEOF_SHORT       )
-check_type_size ("int"           SIZEOF_INT         )
-check_type_size ("float"         SIZEOF_FLOAT       )
-check_type_size ("double"        SIZEOF_DOUBLE      )
-check_type_size ("long"          SIZEOF_LONG        )
-check_type_size ("long int"      SIZEOF_LONG_INT    )
-check_type_size ("long long"     SIZEOF_LONG_LONG   )
-check_type_size ("uint"          SIZEOF_UINT        )
-check_type_size ("int32_t"       SIZEOF_INT32_T     )
-check_type_size ("int64_t"       SIZEOF_INT64_T     )
-check_type_size ("uint32_t"      SIZEOF_UINT32_T     )
-check_type_size ("uint64_t"      SIZEOF_UINT64_T     )
 
 if (DAL_VERBOSE_CONFIGURE)
   message (STATUS "Size of void*     = ${CMAKE_SIZEOF_VOID_P}")
@@ -518,7 +481,6 @@ endif (DAL_BUILD_APPS)
 message (STATUS "+============================================================+")
 message (STATUS "| DAL: Summary of configuration settings                     |")
 message (STATUS "+------------------------------------------------------------+")
-message (STATUS " Size of void*              = ${CMAKE_SIZEOF_VOID_P}")
 message (STATUS " Python version             = ${PYTHON_VERSION}")
 message (STATUS " Print debugging messages   = ${DAL_DEBUGGING_MESSAGES}")
 message (STATUS " Enable Dashboard server    = ${DAL_ENABLE_DASHBOARD}")
