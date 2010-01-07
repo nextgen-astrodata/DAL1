@@ -65,11 +65,18 @@ namespace DAL { // Namespace DAL -- begin
 	datasets
 	<li>CommonInterface -- Common functionality for the high-level
 	interfaces to the datasets
+	<li>CoordinatesGroup
+	<li>BF_ProcessingHistory
       </ul>
     </ul>
     
     <h3>Synopsis</h3>
 
+    \verbatim
+    PencilBeam000
+    |-- CoordinatesGroup
+    `-- ProcessingHistory
+    \endverbatim
     
     <h3>Example(s)</h3>
     
@@ -83,7 +90,7 @@ namespace DAL { // Namespace DAL -- begin
 
   public:
     
-    // ------------------------------------------------------------- Construction
+    // === Construction =========================================================
     
     //! Default constructor
     BF_PencilBeam ();
@@ -93,12 +100,12 @@ namespace DAL { // Namespace DAL -- begin
 		   unsigned int const &index,
 		   bool const &create);
 
-    // -------------------------------------------------------------- Destruction
+    // === Destruction =========================================================
     
-    //! Destructor
+    //! Default destructor
     ~BF_PencilBeam ();
     
-    // --------------------------------------------------------------- Parameters
+    // === Parameter access =====================================================
 
     /*!
       \brief Get the name of the class
@@ -109,9 +116,7 @@ namespace DAL { // Namespace DAL -- begin
       return "BF_PencilBeam";
     }
 
-    /*!
-      \brief Provide a summary of the internal status
-    */
+    //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
     }
@@ -146,11 +151,6 @@ namespace DAL { // Namespace DAL -- begin
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 
-  private:
-    
-    //! Unconditional deletion 
-    void destroy(void);
-    
   }; // Class BF_PencilBeam -- end
   
 } // Namespace DAL -- end

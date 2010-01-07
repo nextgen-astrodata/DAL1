@@ -66,11 +66,25 @@ namespace DAL { // Namespace DAL -- begin
 	datasets
 	<li>CommonInterface -- Common functionality for the high-level
 	interfaces to the datasets
+	<li>BF_StationBeam
+	<li>BF_SysLog
       </ul>
     </ul>
     
     <h3>Synopsis</h3>
 
+    Basic hierarchical structure used DAL classes:
+    \verbatim
+    /
+    |-- StationBeam000
+    |   |-- PencilBeam000
+    |   |-- PencilBeam000
+    |   |
+    |
+    |-- StationBeam001
+    |
+    `-- SysLog
+    \endverbatim
     
     <h3>Example(s)</h3>
     
@@ -86,9 +100,9 @@ namespace DAL { // Namespace DAL -- begin
 
   public:
     
-    // ------------------------------------------------------------- Construction
+    // === Construction =========================================================
     
-    //! Argumented constructor
+    //! Default constructor
     BF_Dataset (std::string const &filename);
     
     //! Argumented constructor
@@ -99,9 +113,9 @@ namespace DAL { // Namespace DAL -- begin
     BF_Dataset (CommonAttributes const &attributes,
 		bool const &create=true);
     
-    // -------------------------------------------------------------- Destruction
+    // === Destruction ==========================================================
     
-    //! Destructor
+    //! Default destructor
     ~BF_Dataset ();
     
     // --------------------------------------------------------------- Parameters
@@ -176,9 +190,6 @@ namespace DAL { // Namespace DAL -- begin
     //! Initialize the internal settings of the object
     void init (CommonAttributes const &attributes);
 
-    //! Unconditional deletion 
-    void destroy(void);
-    
   }; // Class BF_Dataset -- end
   
 } // Namespace DAL -- end

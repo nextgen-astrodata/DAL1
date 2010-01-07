@@ -57,11 +57,18 @@ namespace DAL { // Namespace DAL -- begin
   
   BF_StationBeam::~BF_StationBeam ()
   {
-    destroy();
+    if (location_p > 0) {
+      // clear maps with embedded objects
+      pencilBeams_p.clear();
+      // release HDF5 object
+      herr_t h5error;
+      H5I_type_t object_type = H5Iget_type(location_p);
+      if (object_type == H5I_GROUP) {
+	h5error = H5Gclose(location_p);
+	location_p = 0;
+      }
+    }
   }
-  
-  void BF_StationBeam::destroy ()
-  {;}
   
   // ============================================================================
   //

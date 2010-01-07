@@ -139,12 +139,21 @@ namespace DAL {  // Namespace DAL -- begin
   
   void TBB_DipoleDataset::destroy ()
   {
-    if (datatype_p>0) {
-      H5Tclose (datatype_p);
+    herr_t h5error;
+
+    if (datatype_p>0 && location_p > 0) {
+      h5error = H5Tclose (datatype_p);
+      datatype_p = 0;
     }
 
-    if (dataspace_p>0) {
-      H5Sclose (dataspace_p);
+    if (dataspace_p > 0 && location_p > 0) {
+      h5error = H5Sclose (dataspace_p);
+      dataspace_p = 0;
+    }
+
+    if (location_p > 0) {
+      h5error = H5Dclose (location_p);
+      location_p = 0;
     }
   }
   
@@ -303,10 +312,11 @@ namespace DAL {  // Namespace DAL -- begin
       location_p = H5Dopen (location,
 			    name.c_str(),
 			    H5P_DEFAULT);
-    } else {
+    }
+    else {
       location_p = 0;
     }
-
+    
     if (location_p > 0) {
       datatype_p  = H5Dget_type (location_p);
       dataspace_p = H5Dget_space (location_p);
@@ -388,7 +398,7 @@ namespace DAL {  // Namespace DAL -- begin
 	status = false;
       }
     }
-    
+
     // Open embedded groups
     if (status) {
       status = openEmbedded (create);
@@ -469,9 +479,11 @@ namespace DAL {  // Namespace DAL -- begin
   void TBB_DipoleDataset::summary (std::ostream &os)
   {
     os << "[TBB_DipoleDataset::summary]"                      << std::endl;
-    os << "-- Dataset ID .............. = " << locationID()   << std::endl;
-    os << "-- Dataset name ............ = " << locationName() << std::endl;
-    os << "-- Channel name (ID) ....... = " << dipoleName()   << std::endl;
+    os << "-- Dataset ID .............. = " << location_p     << std::endl;
+    if (location_p > 0) {
+      os << "-- Dataset name ............ = " << locationName() << std::endl;
+      os << "-- Channel name (ID) ....... = " << dipoleName()   << std::endl;
+    }
     os << "-- Dataspace ID ............ = " << dataspace_p    << std::endl;
     os << "-- Dataset datatype ........ = " << datatype_p     << std::endl;
     os << "-- Data array shape ........ = " << shape_p        << std::endl;

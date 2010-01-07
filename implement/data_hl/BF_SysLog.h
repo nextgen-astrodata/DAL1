@@ -75,7 +75,7 @@ namespace DAL { // Namespace DAL -- begin
     
   public:
     
-    // ------------------------------------------------------------- Construction
+    // === Construction =========================================================
     
     //! Default constructor
     BF_SysLog ();
@@ -84,12 +84,12 @@ namespace DAL { // Namespace DAL -- begin
     BF_SysLog (hid_t const &location,
 	       bool const &create);
     
-    // -------------------------------------------------------------- Destruction
+    // === Destruction ==========================================================
     
-    //! Destructor
+    //! Default destructor
     ~BF_SysLog ();
     
-    // --------------------------------------------------------------- Parameters
+    // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class
@@ -125,11 +125,6 @@ namespace DAL { // Namespace DAL -- begin
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 
-  private:
-    
-    //! Unconditional deletion 
-    void destroy(void);
-    
   }; // Class BF_SysLog -- end
   
 } // Namespace DAL -- end

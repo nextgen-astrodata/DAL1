@@ -196,18 +196,12 @@ namespace DAL { // Namespace DAL -- begin
     virtual void setAttributes () = 0;
 
   public:
-    
-    // === Construction =========================================================
 
-    //! Default constructor
-    CommonInterface ();
-    
     // === Destruction ==========================================================
+
+    virtual ~CommonInterface () {};
     
-    //! Destructor
-    virtual ~CommonInterface ();
-    
-    // --------------------------------------------------------------- Parameters
+    // === Parameter accesss ====================================================
     
     //! Get the identifier for the location (within a dataset)
     inline hid_t locationID () const {
@@ -493,11 +487,6 @@ namespace DAL { // Namespace DAL -- begin
 	}
       }
 #endif
-    
-  private:
-    
-    //! Unconditional deletion 
-    void destroy(void);
     
   }; // Class CommonInterface -- end
   

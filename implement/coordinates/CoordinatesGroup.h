@@ -102,7 +102,7 @@ namespace DAL { // Namespace DAL -- begin
     
   public:
     
-    // ------------------------------------------------------------- Construction
+    // === Construction =========================================================
     
     //! Default constructor
     CoordinatesGroup ();
@@ -111,10 +111,10 @@ namespace DAL { // Namespace DAL -- begin
     CoordinatesGroup (hid_t const &location,
 		      bool const &create);
     
-    // -------------------------------------------------------------- Destruction
+    // === Destruction =========================================================
     
-    //! Destructor
-    ~CoordinatesGroup ();
+    //! Default destructor
+    virtual ~CoordinatesGroup ();
     
     // --------------------------------------------------------------- Parameters
     

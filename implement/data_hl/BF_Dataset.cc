@@ -91,17 +91,21 @@ namespace DAL { // Namespace DAL -- begin
   //  Destruction
   //
   // ============================================================================
-  
+
   BF_Dataset::~BF_Dataset ()
   {
-    destroy();
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                      destroy
-  
-  void BF_Dataset::destroy ()
-  {
+    if (location_p > 0) {
+      // clear maps with embedded objects
+      stationBeams_p.clear();
+      sysLog_p.clear();
+      // release HDF5 object
+      herr_t h5error;
+      H5I_type_t object_type = H5Iget_type(location_p);
+      if (object_type == H5I_FILE) {
+	h5error = H5Fclose(location_p);
+	location_p = 0;
+      }
+    }
   }
   
   // ============================================================================
@@ -109,7 +113,7 @@ namespace DAL { // Namespace DAL -- begin
   //  Parameters
   //
   // ============================================================================
-
+  
   //_____________________________________________________________________________
   //                                                             commonAttributes
   
@@ -157,6 +161,7 @@ namespace DAL { // Namespace DAL -- begin
        << std::endl ;
     os << "-- Location ID             = " << location_p            << std::endl;
     os << "-- nof. attributes         = " << attributes_p.size()   << std::endl;
+    os << "-- nof. station beams      = " << nofStationBeams()     << std::endl;
     if (showAttributes) {
       os << "-- Attributes              = " << attributes_p          << std::endl;
     }

@@ -58,20 +58,28 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                        ~BF_ProcessingHistory
+  
   BF_ProcessingHistory::~BF_ProcessingHistory ()
   {
-    destroy();
+    if (location_p > 0) {
+      herr_t h5error;
+      H5I_type_t object_type = H5Iget_type(location_p);
+      // release HDF5 object
+      if (object_type == H5I_GROUP) {
+	h5error = H5Gclose(location_p);
+	location_p = 0;
+      }
+    }
   }
-  
-  void BF_ProcessingHistory::destroy ()
-  {;}
   
   // ============================================================================
   //
   //  Parameters
   //
   // ============================================================================
-
+  
   //_____________________________________________________________________________
   //                                                                      summary
   

@@ -63,7 +63,17 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   void CoordinatesGroup::destroy ()
-  {;}
+  {
+    if (location_p > 0) {
+      // release HDF5 object
+      herr_t h5error;
+      H5I_type_t object_type = H5Iget_type(location_p);
+      if (object_type == H5I_GROUP) {
+	h5error = H5Gclose(location_p);
+	location_p = 0;
+      }
+    }
+  }
   
   // ============================================================================
   //
@@ -77,7 +87,10 @@ namespace DAL { // Namespace DAL -- begin
   void CoordinatesGroup::summary (std::ostream &os)
   {
     os << "[CoordinatesGroup] Summary of internal parameters." << std::endl;
-    os << "-- Location ID = " << location_p << std::endl;
+    os << "-- Location ID         = " << location_p            << std::endl;
+    os << "-- Ref. location value = " << refLocationValue_p    << std::endl;
+    os << "-- Ref. location unit  = " << refLocationUnit_p     << std::endl;
+    os << "-- Ref. location frame = " << refLocationFrame_p    << std::endl;
   }
   
   // ============================================================================

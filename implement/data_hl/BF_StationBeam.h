@@ -68,6 +68,17 @@ namespace DAL { // Namespace DAL -- begin
     
     <h3>Synopsis</h3>
 
+    \verbatim
+    StationBeam001
+    |-- PencilBeam000
+    |   |-- CoordinatesGroup
+    |   `-- ProcessingHistory
+    |-- PencilBeam001
+    |   |-- CoordinatesGroup
+    |   `-- ProcessingHistory
+    |-- PencilBeam002
+    |
+    \endverbatim
     
     <h3>Example(s)</h3>
     
@@ -79,7 +90,7 @@ namespace DAL { // Namespace DAL -- begin
     
   public:
     
-    // ------------------------------------------------------------- Construction
+    // === Construction =========================================================
     
     //! Default constructor
     BF_StationBeam ();
@@ -89,9 +100,9 @@ namespace DAL { // Namespace DAL -- begin
 		    unsigned int const &index,
 		    bool const &create);
     
-    // -------------------------------------------------------------- Destruction
+    // === Destruction ==========================================================
     
-    //! Destructor
+    //! Default destructor
     ~BF_StationBeam ();
     
     // --------------------------------------------------------------- Parameters
@@ -130,6 +141,11 @@ namespace DAL { // Namespace DAL -- begin
     //! Open a pencil beam group
     bool openPencilBeam (unsigned int const &pencilID,
 			 bool const &create=true);
+
+    //! Get the number of embedded PencilBeam object/groups
+    inline unsigned int nofPencilBeams () {
+      return pencilBeams_p.size();
+    }
     
   protected:
     
@@ -138,11 +154,6 @@ namespace DAL { // Namespace DAL -- begin
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 
-  private:
-    
-    //! Unconditional deletion 
-    void destroy(void);
-    
   }; // Class BF_StationBeam -- end
   
 } // Namespace DAL -- end

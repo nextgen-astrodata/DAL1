@@ -37,8 +37,10 @@ namespace DAL { // Namespace DAL -- begin
   BF_PencilBeam::BF_PencilBeam ()
   {
     location_p = 0;
+    processingHistory_p.clear();
+    coordinates_p.clear();
   }
-
+  
   //_____________________________________________________________________________
   //                                                                BF_PencilBeam
 
@@ -51,33 +53,60 @@ namespace DAL { // Namespace DAL -- begin
   
   // ============================================================================
   //
-  //  Destruction
+  //  Construction
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                               ~BF_PencilBeam
+
   BF_PencilBeam::~BF_PencilBeam ()
   {
-    destroy();
+    if (location_p > 0) {
+      herr_t h5error;
+      H5I_type_t object_type = H5Iget_type(location_p);
+      // clear maps with embedded objects
+      processingHistory_p.clear();
+      coordinates_p.clear();
+      // release HDF5 object
+      if (object_type == H5I_GROUP) {
+	h5error = H5Gclose(location_p);
+	location_p = 0;
+      }
+    }
   }
-  
-  void BF_PencilBeam::destroy ()
-  {;}
   
   // ============================================================================
   //
   //  Parameters
   //
   // ============================================================================
-
+  
   //_____________________________________________________________________________
   //                                                                      summary
   
   void BF_PencilBeam::summary (std::ostream &os)
   {
+    std::map<std::string,BF_ProcessingHistory>::iterator hist;
+    std::map<std::string,CoordinatesGroup>::iterator coord;
+
+    hist  = processingHistory_p.begin();
+    coord = coordinates_p.begin();
+
     os << "[BF_PencilBeam] Summary of internal parameters." << std::endl;
+    os << "-- Location ID                   = " << location_p
+       << std::endl;
+
+    if (processingHistory_p.size() > 0) {
+    os << "-- Location ID ProcessingHistory = " << hist->second.locationID()
+       << std::endl;
+    }
+
+    if (coordinates_p.size() > 0) {
+    os << "-- Location ID CoordinatesGroup  = " << coord->second.locationID()
+       << std::endl;
+    }
   }
-  
-  
   
   // ============================================================================
   //

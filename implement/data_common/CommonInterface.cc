@@ -24,74 +24,7 @@
 #include <CommonInterface.h>
 
 namespace DAL { // Namespace DAL -- begin
-  
-  // ============================================================================
-  //
-  //  Construction
-  //
-  // ============================================================================
-  
-  //_____________________________________________________________________________
-  //                                                              CommonInterface
 
-  CommonInterface::CommonInterface ()
-  {;}
-  
-  // ============================================================================
-  //
-  //  Destruction
-  //
-  // ============================================================================
-  
-  CommonInterface::~CommonInterface ()
-  {
-    destroy();
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                      destroy
-
-  void CommonInterface::destroy ()
-  {
-    if (location_p > 0) {
-      H5I_type_t object_type = H5Iget_type(location_p);
-      switch (object_type) {
-      case H5I_FILE:
-	H5Fclose (location_p);
-	break;
-      case H5I_GROUP:
-	H5Gclose (location_p);
-	break;
-      case H5I_DATATYPE:
-	H5Tclose (location_p);
-	break;
-      case H5I_DATASPACE:
-	H5Sclose (location_p);
-	break;
-      case H5I_DATASET:
-	H5Dclose (location_p);
-	break;
-      case H5I_ATTR:
-	H5Aclose (location_p);
-	break;
-      case H5I_ERROR_STACK:
-	H5Eclose_stack (location_p);
-	break;
-      case H5I_BADID:
-	std::cerr << "[CommonInterface::destroy] Invalid identifier "
-		  << location_p
-		  << " (H5I_BADID)"
-		  << std::endl;
-	break;
-      default:
-	std::cerr << "[CommonInterface::destroy] Unknown identifier "
-		  << location_p
-		  << std::endl;
-	break;
-      }
-    }
-  }
-  
   // ============================================================================
   //
   //  Parameters
