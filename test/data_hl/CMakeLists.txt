@@ -35,16 +35,21 @@ endforeach (src)
 ##_______________________________________________________________________________
 ##                                                            Testing preparation
 
-find_program (BASH_EXCUTABLE bash ${bin_locations})
-
-foreach (testScript
-    tTBB_DipoleDataset
-    tTBB_StationGroup
-    tTBB_Timeseries)
-  configure_file (${DAL_SOURCE_DIR}/test/data_hl/${testScript}.sh
-    ${DAL_BINARY_DIR}/test/data_hl/${testScript}.sh
-    )
-endforeach (testScript)
+if (dataset_tbb)
+  
+  find_program (BASH_EXCUTABLE bash ${bin_locations})
+  get_filename_component (dataset_tbb_local ${dataset_tbb} NAME)
+  
+  foreach (testScript
+      tTBB_DipoleDataset
+      tTBB_StationGroup
+      tTBB_Timeseries)
+    configure_file (${DAL_SOURCE_DIR}/test/data_hl/${testScript}.sh
+      ${DAL_BINARY_DIR}/test/data_hl/${testScript}.sh
+      )
+  endforeach (testScript)
+  
+endif (dataset_tbb)
 
 ##_______________________________________________________________________________
 ##                                                           Testing instructions

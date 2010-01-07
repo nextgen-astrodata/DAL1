@@ -77,12 +77,18 @@ int test_constructors ()
 			      H5F_ACC_TRUNC,
 			      H5P_DEFAULT,
 			      H5P_DEFAULT);
+    
+    std::cout << "--> File ID = " << fileID << std::endl;
+
     if (fileID>0) {
       BF_PencilBeam beam1 (fileID,1,true);
-      BF_PencilBeam beam2 (fileID,2,true);
-      BF_PencilBeam beam3 (fileID,3,true);
-      //
       beam1.summary();
+      //
+      BF_PencilBeam beam2 (fileID,2,true);
+      beam2.summary();
+      //
+      BF_PencilBeam beam3 (fileID,3,true);
+      beam3.summary();
     }
     H5Fclose (fileID);
   } catch (std::string message) {

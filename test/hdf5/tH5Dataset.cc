@@ -50,20 +50,53 @@
 int test_create (hid_t const &fileID)
 {
   int nofFailedTests (0);
-  std::string name ("Data");
-  std::vector<hsize_t> shape (2);
+  std::string name;
 
-  shape[0] = 1024;
-  shape[1] = 4;
+  std::cout << "[1] Creating 2D dataset ..." << std::endl;
+  try {
+    std::vector<hsize_t> shape (2);
 
-  //! Create the HDF5 Dataset
-  DAL::H5Dataset dataset (fileID,
-			  name,
-			  shape);
+    name     = "Data2D";
+    shape[0] = 1024;
+    shape[1] = 4;
+    
+    //! Create the HDF5 Dataset
+    DAL::H5Dataset dataset (fileID,
+			    name,
+			    shape);
+    dataset.summary();
+    
+    dataset.setAttribute ("NOF_AXES", int(2)        );
+    dataset.setAttribute ("NAXIS1",   int(shape[0]) );
+    dataset.setAttribute ("NAXIS2",   int(shape[1]) );
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    ++nofFailedTests;
+  }
   
-  dataset.setAttribute ("NOF_AXES", int(2)        );
-  dataset.setAttribute ("NAXIS1",   int(shape[0]) );
-  dataset.setAttribute ("NAXIS2",   int(shape[1]) );
+  std::cout << "[2] Creating 3D dataset ..." << std::endl;
+  try {
+    std::vector<hsize_t> shape (3);
+    
+    name     = "Data3D";
+    shape[0] = 1024;
+    shape[1] = 1024;
+    shape[2] = 3;
+    
+    //! Create the HDF5 Dataset
+    DAL::H5Dataset dataset (fileID,
+			    name,
+			    shape);
+    dataset.summary();
+    
+    dataset.setAttribute ("NOF_AXES", int(shape.size()) );
+    dataset.setAttribute ("NAXIS1",   int(shape[0]) );
+    dataset.setAttribute ("NAXIS2",   int(shape[1]) );
+    dataset.setAttribute ("NAXIS3",   int(shape[2]) );
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    ++nofFailedTests;
+  }
   
   return nofFailedTests;
 }

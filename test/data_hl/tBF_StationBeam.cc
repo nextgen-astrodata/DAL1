@@ -26,6 +26,8 @@
 #include <BF_StationBeam.h>
 
 // Namespace usage
+using std::cout;
+using std::endl;
 using DAL::CommonAttributes;
 using DAL::Filename;
 using DAL::BF_Dataset;
@@ -58,6 +60,7 @@ int test_constructors ()
 
   int nofFailedTests (0);
   std::string filename ("tBF_StationBeam.h5");
+  herr_t h5error;
   
   std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
@@ -82,7 +85,8 @@ int test_constructors ()
       //
       beam1.summary();
     }
-    H5Fclose (fileID);
+    // release HDF5 file handler
+    h5error = H5Fclose (fileID);
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
@@ -106,19 +110,44 @@ int test_subGroups ()
 
   int nofFailedTests (0);
   std::string filename ("tBF_StationBeam.h5");
+  herr_t h5error;
   hid_t fileID = H5Fopen (filename.c_str(),
 			  H5F_ACC_RDWR,
 			  H5P_DEFAULT);
 
+  cout << "[1] Create PencilBeams within existing StationBeam ..." << endl;
   if (fileID) {
     // open StationBeam group
     BF_StationBeam beam (fileID,1,true);
+    cout << "-- nof. pencil beams = " << beam.nofPencilBeams() << endl;
     // open/create PencilBeam groups
     beam.openPencilBeam (0,true);
+    cout << "-- nof. pencil beams = " << beam.nofPencilBeams() << endl;
     beam.openPencilBeam (1,true);
+    cout << "-- nof. pencil beams = " << beam.nofPencilBeams() << endl;
     beam.openPencilBeam (2,true);
+    cout << "-- nof. pencil beams = " << beam.nofPencilBeams() << endl;
+  }
+
+  cout << "[2] Create PencilBeams within new StationBeam ..." << endl;
+  if (fileID) {
+    // open StationBeam group
+    BF_StationBeam beam (fileID,10,true);
+    cout << "-- nof. pencil beams = " << beam.nofPencilBeams() << endl;
+    // open/create PencilBeam groups
+    beam.openPencilBeam (0,true);
+    cout << "-- nof. pencil beams = " << beam.nofPencilBeams() << endl;
+    beam.openPencilBeam (1,true);
+    cout << "-- nof. pencil beams = " << beam.nofPencilBeams() << endl;
+    beam.openPencilBeam (2,true);
+    cout << "-- nof. pencil beams = " << beam.nofPencilBeams() << endl;
+    beam.openPencilBeam (3,true);
+    cout << "-- nof. pencil beams = " << beam.nofPencilBeams() << endl;
   }
     
+  // release HDF5 file handler
+  h5error = H5Fclose (fileID);
+  
   return nofFailedTests;
 }
 

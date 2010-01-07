@@ -26,6 +26,7 @@
 
 // Namespace usage
 using DAL::TBB_DipoleDataset;
+using std::cout;
 using std::endl;
 
 /*!
@@ -56,7 +57,7 @@ int test_attributes (std::string const &filename);
 */
 int test_constructors ()
 {
-  std::cout << "\n[tTBB_DipoleDataset::test_constructors]\n" << endl;
+  cout << "\n[tTBB_DipoleDataset::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   uint station (0);
@@ -72,7 +73,7 @@ int test_constructors ()
 
   // Open/Create HDF5 file _________________________________
 
-  std::cout << "-- Opening file " << filename << "  ..." << endl;
+  cout << "-- Opening file " << filename << "  ..." << endl;
   
   fileID = H5Fcreate (filename.c_str(),
 		      H5F_ACC_TRUNC,
@@ -115,7 +116,7 @@ int test_constructors ()
   
   // Perform the tests _____________________________________
   
-  std::cout << "[1] Testing default constructor ..." << endl;
+  cout << "[1] Testing default constructor ..." << endl;
   try {
     TBB_DipoleDataset dataset;
     dataset.summary();
@@ -124,7 +125,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  std::cout << "[2] Testing argumented constructor ..." << endl;
+  cout << "[2] Testing construction with location and dataset name ..." << endl;
   try {
     TBB_DipoleDataset dataset (fileID,"DipoleDataset");
     dataset.summary();
@@ -133,7 +134,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  std::cout << "[3] Testing argumented constructor ..." << endl;
+  cout << "[3] Testing construction with IDs ..." << endl;
   try {
     std::string name;
     std::vector<hsize_t> shape (1,1024);
@@ -143,7 +144,7 @@ int test_constructors ()
     for (rcu=0; rcu<5; ++rcu) {
       name = TBB_DipoleDataset::dipoleName(station,rsp,rcu);
       TBB_DipoleDataset data (fileID,station,rsp,rcu,shape);
-      std::cout << "-- created dataset " << name << endl;
+      cout << "-- created dataset " << name << endl;
     }
     //
     station = 1;
@@ -151,7 +152,7 @@ int test_constructors ()
       for (rcu=0; rcu<5; ++rcu) {
 	name = TBB_DipoleDataset::dipoleName(station,rsp,rcu);
 	TBB_DipoleDataset data (groupID,station,rsp,rcu,shape);
-	std::cout << "-- created dataset " << name << endl;
+	cout << "-- created dataset " << name << endl;
       }
     }
   } catch (std::string message) {
@@ -159,7 +160,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  std::cout << "[4] Reopening previously created datasets ..." << endl;
+  cout << "[4] Reopening previously created datasets ..." << endl;
   try {
     std::string name;
     //
@@ -168,14 +169,14 @@ int test_constructors ()
     for (rcu=0; rcu<5; ++rcu) {
       name = TBB_DipoleDataset::dipoleName(station,rsp,rcu);
       TBB_DipoleDataset data (fileID,station,rsp,rcu);
-      std::cout << "-- opened dataset " << name << endl;
+      cout << "-- opened dataset " << name << endl;
     }
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
 
-  std::cout << "[5] Testing copy constructor ..." << endl;
+  cout << "[5] Testing copy constructor ..." << endl;
   try {
     std::string name;
     //
@@ -219,7 +220,7 @@ int test_constructors ()
 */
 int test_constructors (std::string const &filename)
 {
-  std::cout << "\n[tTBB_DipoleDataset::test_constructors]\n" << endl;
+  cout << "\n[tTBB_DipoleDataset::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   hid_t fileID;
@@ -239,7 +240,7 @@ int test_constructors (std::string const &filename)
     DAL::h5get_names (names,fileID,H5G_GROUP);
     //
     if (names.size() > 0) {
-      std::cout << "-- Groups  = " << names << endl;
+      cout << "-- Groups  = " << names << endl;
       it      = names.begin();
       groupID = H5Gopen (fileID,
 			 it->c_str(),
@@ -256,7 +257,7 @@ int test_constructors (std::string const &filename)
   if (groupID > 0) {
     names.clear();
     DAL::h5get_names (names,groupID,H5G_DATASET);
-    std::cout << "-- Datasets = " << names << endl;
+    cout << "-- Datasets = " << names << endl;
   } else {
     std::cerr << "Skipping tests - unable to open group." << endl;
     return -1;
@@ -269,7 +270,7 @@ int test_constructors (std::string const &filename)
     cout << "[1] Testing argumented constructor ..." << endl;
     try {
       for (it=names.begin(); it!=names.end(); ++it) {
-	std::cout << "-- opening dataset " << *it << endl;
+	cout << "-- opening dataset " << *it << endl;
 	TBB_DipoleDataset data (groupID,*it);
 	data.summary();
       }
@@ -314,7 +315,7 @@ int test_constructors (std::string const &filename)
 
 int test_attributes (std::string const &filename)
 {
-  std::cout << "\n[tTBB_DipoleDataset::test_attributes]\n" << endl;
+  cout << "\n[tTBB_DipoleDataset::test_attributes]\n" << endl;
 
   int nofFailedTests (0);
   hid_t fileID;
@@ -426,7 +427,7 @@ int test_attributes (std::string const &filename)
 
 int test_data (std::string const &filename)
 {
-  std::cout << "\n[tTBB_DipoleDataset::test_data]\n" << endl;
+  cout << "\n[tTBB_DipoleDataset::test_data]\n" << endl;
 
   int nofFailedTests (0);
   hid_t fileID;
@@ -476,21 +477,18 @@ int test_data (std::string const &filename)
     short * data = new short [blocksize];
     //
     dataset.fx (start,blocksize,data);
-    std::cout << "[" 
-	      << data[0] << ","
-	      << data[1] << ","
-	      << data[2] << ","
-	      << data[3] << ","
-	      << data[4] << ","
-	      << data[5] << ",..]"
-	      << std::endl;
+    cout << "[" 
+	 << data[0] << "," << data[1] << "," << data[2] << ","
+	 << data[3] << "," << data[4] << "," << data[5] << ","
+	 << data[6] << "," << data[7] << "," << data[8] <<",..]"
+	 << std::endl;
     //
     delete [] data;
   } else {
     std::cerr << "Skipping tests - no datasets found." << endl;
     return -1;
   }
-
+  
   // Release HDF5 object identifiers _______________________
   
   h5error = H5Fclose (fileID);
@@ -507,7 +505,7 @@ int main (int argc, char *argv[])
   int nofFailedTests (0);
   bool haveDataset (true);
   std::string filename ("UNDEFINED");
-
+  
   //________________________________________________________
   // Process parameters from the command line
   
@@ -532,9 +530,9 @@ int main (int argc, char *argv[])
     // Test access to the data
     nofFailedTests += test_data (filename);
   } else {
-    std::cout << "\n[tTBB_DipoleDataset] Skipping tests which input dataset.\n"
-	      << endl;
+    cout << "\n[tTBB_DipoleDataset] Skipping tests which input dataset.\n"
+	 << endl;
   }
-
+  
   return nofFailedTests;
 }

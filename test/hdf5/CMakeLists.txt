@@ -8,6 +8,7 @@ file (GLOB tests_hdf5 tH5*.cc)
 ##                                                     Build/Install instructions
 
 add_library (dal_hdf5
+  H5Base.cc
   H5Dataset.cc
   H5Hyperslab.cc
   )
