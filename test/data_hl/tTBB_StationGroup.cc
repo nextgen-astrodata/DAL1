@@ -110,6 +110,8 @@ int test_constructors ()
     nofFailedTests++;
   }
 
+  // Construction with location and name ___________________
+
   cout << "[2] Testing argumented constructor ..." << endl;
   try {
     TBB_StationGroup group (fileID,groupname);
@@ -120,11 +122,10 @@ int test_constructors ()
     nofFailedTests++;
   }
 
-  // Construction with location and name ___________________
-
-  cout << "[2] Construction from file ID and groupname ..." << endl;
+  cout << "[3] Construction from file ID and station ID ..." << endl;
   try {
-    TBB_StationGroup group (fileID, groupname,true);
+    unsigned int stationID (10);
+    TBB_StationGroup group (fileID, stationID,true);
     group.summary();
   }
   catch (std::string message) {
@@ -405,12 +406,14 @@ int test_methods (std::string const &filename)
   try {
     std::vector<std::string> dipoleNames;
     std::vector<int> dipoleNumbers;
+    std::set<std::string> selectedDipoles = group.selectedDipoles();
     //
     group.dipoleNames (dipoleNames);
     group.dipoleNumbers (dipoleNumbers);
     //
-    cout << "-- Dipole names = " << dipoleNames   << endl;
-    cout << "-- Dipole IDs   = " << dipoleNumbers << endl;
+    cout << "-- Dipole names     = " << dipoleNames     << endl;
+    cout << "-- Dipole IDs       = " << dipoleNumbers   << endl;
+    cout << "-- Selected dipoles = " << selectedDipoles << endl;
   }
   catch (std::string message) {
     cerr << message << endl;

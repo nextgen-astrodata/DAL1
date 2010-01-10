@@ -44,8 +44,9 @@ namespace DAL {  // Namespace DAL -- begin
   */
   TBB_StationGroup::TBB_StationGroup ()
   {
-    location_p              = 0;
-    nofTriggeredAntennas_p = -1;
+    location_p             = 0;
+    nofTriggeredAntennas_p = 0;
+    selectedDipoles_p.clear();
   }
 
   //_____________________________________________________________________________
@@ -63,12 +64,22 @@ namespace DAL {  // Namespace DAL -- begin
             an error was encountered.
   */
   TBB_StationGroup::TBB_StationGroup (hid_t const &location,
-                                      std::string const &group,
-				      bool const &create)
+                                      std::string const &group)
   {
-    open (location, group, create);
+    open (location, group, false);
   }
 
+  //_____________________________________________________________________________
+  //                                                             TBB_StationGroup
+  
+  TBB_StationGroup::TBB_StationGroup (hid_t const &location,
+				      unsigned int const &stationID,
+				      bool const &create)
+  {
+    std::string name = getName (stationID);
+    open (location, name, create);
+  }
+  
   //_____________________________________________________________________________
   //                                                             TBB_StationGroup
   
@@ -79,13 +90,13 @@ namespace DAL {  // Namespace DAL -- begin
   {
     open (groupID);
   }
-
+  
   // ============================================================================
   //
   //  Destruction
   //
   // ============================================================================
-
+  
   //_____________________________________________________________________________
   //                                                            ~TBB_StationGroup
   
@@ -106,6 +117,8 @@ namespace DAL {  // Namespace DAL -- begin
       h5error = H5Gclose(location_p);
       location_p = 0;
     }
+    // clear standard containers
+    selectedDipoles_p.clear();
   }
   
   // ============================================================================
@@ -219,14 +232,12 @@ namespace DAL {  // Namespace DAL -- begin
 			       bool const &create)
   {
     bool status (true);
-    std::set<std::string> groups;
 
-    /* Set up the list of attributes attached to the root group */
+    /* Internal setup */
     setAttributes();
-    /* Get the list of groups attached to this group */
-    h5get_names (groups,location,H5G_GROUP);
+    nofTriggeredAntennas_p = 0;
 
-    if (static_cast<bool>(groups.count(name))) {
+    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
       location_p = H5Gopen (location,
 			    name.c_str(),
 			    H5P_DEFAULT);
@@ -305,8 +316,10 @@ namespace DAL {  // Namespace DAL -- begin
 
       if (names.size() > 0) {
 	datasets_p.clear();
+	selectedDipoles_p.clear();
 	for (it=names.begin(); it!=names.end(); ++it) {
 	  datasets_p[*it] = TBB_DipoleDataset(location_p,*it);
+	  selectedDipoles_p.insert(*it);
 	}
       } else {
 	status = false;
@@ -384,7 +397,47 @@ namespace DAL {  // Namespace DAL -- begin
                                 DAL::STATION_POSITION_FRAME);
   }
 #endif
+  
+  //_____________________________________________________________________________
+  //                                                           setSelectedDipoles
+  
+  /*!
+    \param selection -- std::set with the names of dipoles to be selected; if the 
+           provided set is empty no changes to the internal settings are made.
 
+    \return status -- Status of the operation; returns \e true in case the new
+            values successfully have been stored.
+  */
+  bool TBB_StationGroup::setSelectedDipoles (std::set<std::string> const &selection)
+  {
+    bool status (true);
+
+    if (selection.empty()) {
+      status = false;
+    } else {
+      std::set<std::string> tmp;
+      std::set<std::string>::iterator it = selection.begin();
+      std::map<std::string,TBB_DipoleDataset>::iterator dat;
+      /* Got through the provided selection set */
+      for (; it!=selection.end(); ++it) {
+	/* If the dipole in the selection is ok, accept it */
+	dat = datasets_p.find(*it);
+	if (dat != datasets_p.end()) {
+	  tmp.insert(*it);
+	}
+      }
+      /* Store the temporary selection set */
+      if (tmp.size() > 0) {
+	selectedDipoles_p.clear();
+	selectedDipoles_p = tmp;
+      } else {
+	status = false;
+      }
+    }
+    
+    return status;
+  }
+  
   //_____________________________________________________________________________
   //                                                                      summary
   
@@ -427,6 +480,7 @@ namespace DAL {  // Namespace DAL -- begin
       os << "-- Trigger offset ......... : " << triggerOffset           << endl;
       os << "-- nof. triggered antennas  : " << nofTriggeredAntennas()  << endl;
       os << "-- Triggered antennas ..... : " << triggeredAntennas       << endl;
+      os << "-- Selected dipoles ....... : " << selectedDipoles_p       << endl;
     }
     
   }
@@ -505,7 +559,7 @@ namespace DAL {  // Namespace DAL -- begin
     names.clear();
     
     for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-      names.push_back(it->second.dipoleName());
+      names.push_back(it->second.getName());
     }
   }
 
@@ -518,7 +572,7 @@ namespace DAL {  // Namespace DAL -- begin
     names.resize (datasets_p.size());
 
     for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-      names(n) = it->second.dipoleName();
+      names(n) = it->second.getName();
       ++n;
     }
   }
@@ -838,7 +892,7 @@ namespace DAL {  // Namespace DAL -- begin
       uint n (0);
       
       for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-	name = it->second.dipoleName();
+	name = it->second.getName();
 	// retrieve the attributes for the dipole data-set as record
 	recordDipole = it->second.attributes2record();
 	// ... and add it to the existing record

@@ -188,12 +188,12 @@ namespace DAL {  // Namespace DAL -- begin
     int dipoleNumber ();
     
     //! Get the unique channel/dipole identifier
-    std::string dipoleName ();
+    std::string getName ();
     
     //! Get the unique channel/dipole identifier
-    static std::string dipoleName (unsigned int const &station,
-				   unsigned int const &rsp,
-				   unsigned int const &rcu);
+    static std::string getName (unsigned int const &station,
+				unsigned int const &rsp,
+				unsigned int const &rcu);
     
     //! Get a number of data values as recorded for this dipole
     bool fx (int const &start,
@@ -201,7 +201,7 @@ namespace DAL {  // Namespace DAL -- begin
 	     short *data);
     
 #ifdef HAVE_CASA
-
+    
     //! Get the antenna position as a measure
     casa::MPosition antenna_position ();
     //! Get the ADC sample frequency as casa::Quantity

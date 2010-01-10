@@ -107,9 +107,13 @@ namespace DAL {   // Namespace DAL -- begin
 
   */
   class TBB_StationGroup : public CommonInterface {
-    
+
+    //! Station identifier
+    unsigned int stationID_p;
     //! Datasets contained within this group
     std::map<std::string,TBB_DipoleDataset> datasets_p;
+    //! Selected dipoles
+    std::set<std::string> selectedDipoles_p;
     //! Number of triggered antennas at this station
     uint nofTriggeredAntennas_p;
     
@@ -122,7 +126,11 @@ namespace DAL {   // Namespace DAL -- begin
     
     //! Argumented constructor
     TBB_StationGroup (hid_t const &location,
-		      std::string const &group,
+		      std::string const &group);
+    
+    //! Argumented constructor
+    TBB_StationGroup (hid_t const &location,
+		      unsigned int const &stationID,
 		      bool const &create=true);
     
     //! Argumented constructor
@@ -140,10 +148,17 @@ namespace DAL {   // Namespace DAL -- begin
     
     // === Parameter access =====================================================
     
-    
     //! Get the name for this group within the HDF5 file
     std::string group_name (bool const &stripPath=false);
+
+    //! Get the set of selected dipoles
+    inline std::set<std::string> selectedDipoles () const {
+      return selectedDipoles_p;
+    }
     
+    //! Set the set of selected dipoles
+    bool setSelectedDipoles (std::set<std::string> const &selection);
+
     //! Get the number of triggered antennas at this station
     inline uint nofTriggeredAntennas () const {
       return nofTriggeredAntennas_p;
@@ -177,6 +192,11 @@ namespace DAL {   // Namespace DAL -- begin
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
+    
+    //! Open a dipole dataset
+    bool openDipoleDataset (unsigned int const &rspID,
+			    unsigned int const &rcuID,
+			    bool const &create=true);
     
     /*!
       \brief Get the number of dipole datasets within this station group
@@ -299,9 +319,9 @@ namespace DAL {   // Namespace DAL -- begin
 				  unsigned int const &rsp_id,
 				  unsigned int const &rcu_id)
     {
-      return TBB_DipoleDataset::dipoleName(station_id,
-					   rsp_id,
-					   rcu_id);
+      return TBB_DipoleDataset::getName(station_id,
+					rsp_id,
+					rcu_id);
     }
     
     // ============================================================================

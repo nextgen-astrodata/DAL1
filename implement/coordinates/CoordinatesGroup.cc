@@ -158,16 +158,14 @@ namespace DAL { // Namespace DAL -- begin
     /* Try to open the group: get list of groups attached to 'location' and
        check if 'name' is part of it.
     */
-    std::set<std::string> groups;
-    h5get_names (groups,location,H5G_GROUP);
-    if (static_cast<bool>(attributes_p.count(name))) {
+    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
       location_p = H5Gopen2 (location,
 			     name.c_str(),
 			     H5P_DEFAULT);
     } else {
       location_p = 0;
     }
-      
+    
     if (location_p > 0) {
       status = true;
     } else {
@@ -212,7 +210,8 @@ namespace DAL { // Namespace DAL -- begin
   
   bool CoordinatesGroup::openEmbedded (bool const &create)
   {
-    return false;
+    bool status = create;
+    return status;
   }
   
   //_____________________________________________________________________________

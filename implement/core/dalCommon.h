@@ -449,10 +449,33 @@ namespace DAL {
   
   //_____________________________________________________________________________
   //                                                              h5set_attribute
-
+  
+  template <typename T>
+    bool h5set_attribute (hid_t const &locationID,
+			  std::string name,
+			  T * value,
+			  int size,
+			  hid_t const &datatype,
+			  bool const &ignoreType=false)
+    {
+      bool status       = true;
+      hid_t attributeID = 0;
+      
+      if (H5Aexists(locationID,name.c_str())) {
+	attributeID = H5Aopen (locationID,
+			       name.c_str(),
+			       H5P_DEFAULT);
+      }
+      
+      return status;
+    }
+  
+  //_____________________________________________________________________________
+  //                                                              h5set_attribute
+  
   /*!
     \brief Set the value of an attribute attached to a group or dataset
-
+    
     \param datatype    -- HDF5 datatype of the attribute
     \param location_id -- HDF5 identifier of the attribute within the file
     \param name        -- Name of the attribute

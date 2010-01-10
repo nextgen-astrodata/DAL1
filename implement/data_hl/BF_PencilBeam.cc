@@ -169,9 +169,7 @@ namespace DAL { // Namespace DAL -- begin
     /* Try to open the group: get list of groups attached to 'location' and
        check if 'name' is part of it.
     */
-    std::set<std::string> groups;
-    h5get_names (groups,location,H5G_GROUP);
-    if (static_cast<bool>(groups.count(name))) {
+    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
       location_p = H5Gopen2 (location,
 			     name.c_str(),
 			     H5P_DEFAULT);

@@ -144,15 +144,11 @@ namespace DAL { // Namespace DAL -- begin
 			     bool const &create)
   {
     bool status (true);
-
+    
     /* Set up the list of attributes attached to the root group */
     setAttributes();
-
-    /* Get the list of groups attached to this group */
-    std::set<std::string> groups;
-    h5get_names (groups,location,H5G_GROUP);
-
-    if (static_cast<bool>(groups.count(name))) {
+    
+    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
       location_p = H5Gopen (location,
 			    name.c_str(),
 			    H5P_DEFAULT);
@@ -232,7 +228,7 @@ namespace DAL { // Namespace DAL -- begin
   
   bool BF_StationBeam::openEmbedded (bool const &create)
   {
-    bool status (true);
+    bool status (create);
     std::set<std::string> groupnames;
     
     /* Retrieve the names of the groups attached to the StationBeam group */

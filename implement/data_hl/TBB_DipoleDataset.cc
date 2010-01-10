@@ -85,7 +85,7 @@ namespace DAL {  // Namespace DAL -- begin
     dataspace_p = -1;
     location_p  = -1;
     shape_p     = std::vector<hsize_t>();
-    std::string name = dipoleName (stationID, rspID, rcuID);
+    std::string name = getName (stationID, rspID, rcuID);
 
     open (location,name,false);
   }
@@ -142,17 +142,17 @@ namespace DAL {  // Namespace DAL -- begin
     herr_t h5error;
 
     if (datatype_p>0 && location_p > 0) {
-      h5error = H5Tclose (datatype_p);
+      h5error    = H5Tclose (datatype_p);
       datatype_p = 0;
     }
 
     if (dataspace_p > 0 && location_p > 0) {
-      h5error = H5Sclose (dataspace_p);
+      h5error     = H5Sclose (dataspace_p);
       dataspace_p = 0;
     }
 
     if (location_p > 0) {
-      h5error = H5Dclose (location_p);
+      h5error    = H5Dclose (location_p);
       location_p = 0;
     }
   }
@@ -300,15 +300,11 @@ namespace DAL {  // Namespace DAL -- begin
   {
     bool status (true);
     bool ok (true);
-    H5I_type_t objectType = H5Iget_type(location);
-    std::set<std::string> datasets;
 
     /* Set up the list of attributes */
     setAttributes();
-    /* Get names of datasets attached to "location" */
-    h5get_names (datasets,location,H5G_DATASET);
-
-    if (static_cast<bool>(datasets.count(name)) || objectType==H5I_FILE) {
+    
+    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
       location_p = H5Dopen (location,
 			    name.c_str(),
 			    H5P_DEFAULT);
@@ -441,7 +437,7 @@ namespace DAL {  // Namespace DAL -- begin
     }
 
     // convert IDs to name
-    std::string name = dipoleName (stationID,rspID,rcuID);
+    std::string name = getName (stationID,rspID,rcuID);
 
     // open the dataset
     status = open (location,name,true);
@@ -482,7 +478,7 @@ namespace DAL {  // Namespace DAL -- begin
     os << "-- Dataset ID .............. = " << location_p     << std::endl;
     if (location_p > 0) {
       os << "-- Dataset name ............ = " << locationName() << std::endl;
-      os << "-- Channel name (ID) ....... = " << dipoleName()   << std::endl;
+      os << "-- Channel name (ID) ....... = " << getName()   << std::endl;
     }
     os << "-- Dataspace ID ............ = " << dataspace_p    << std::endl;
     os << "-- Dataset datatype ........ = " << datatype_p     << std::endl;
@@ -537,7 +533,7 @@ namespace DAL {  // Namespace DAL -- begin
 	os << "-- STATION_ID .............. = " << stationID               << endl;
 	os << "-- RSP_ID .................. = " << rspID                   << endl;
 	os << "-- RCU_ID .................. = " << rcuID                   << endl;
-	os << "-- DIPOLE_ID .,............. = " << dipoleName()            << endl;
+	os << "-- DIPOLE_ID .,............. = " << getName()            << endl;
 	os << "-- ANTENNA_POSITION_VALUE .. = " << antennaPositionValue    << endl;
 	os << "-- ANTENNA_POSITION_UNIT ... = " << antennaPositionUnit     << endl;
 	os << "-- ANTENNA_POSITION_FRAME .. = " << antennaPositionFrame    << endl;
@@ -581,14 +577,14 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                                   dipoleName
+  //                                                                      getName
 
   /*!
     \return channel_id -- The unique identifier for a signal channel/dipole
             within the whole LOFAR array; this ID is created from a combination
 	    of station ID, RSP ID and RCU ID.
   */
-  std::string TBB_DipoleDataset::dipoleName ()
+  std::string TBB_DipoleDataset::getName ()
   {
     uint station;
     uint rsp;
@@ -598,11 +594,11 @@ namespace DAL {  // Namespace DAL -- begin
     getAttribute ("RSP_ID",    rsp);
     getAttribute ("RCU_ID",    rcu);
 
-    return dipoleName (station,rsp,rcu);
+    return getName (station,rsp,rcu);
   }
 
   //_____________________________________________________________________________
-  //                                                                   dipoleName
+  //                                                                      getName
 
   /*!
     \param station -- 
@@ -612,9 +608,9 @@ namespace DAL {  // Namespace DAL -- begin
             within the whole LOFAR array; this ID is created from a combination
 	    of station ID, RSP ID and RCU ID.
   */
-  std::string TBB_DipoleDataset::dipoleName (unsigned int const &station,
-					     unsigned int const &rsp,
-					     unsigned int const &rcu)
+  std::string TBB_DipoleDataset::getName (unsigned int const &station,
+					  unsigned int const &rsp,
+					  unsigned int const &rcu)
   {
     char uid[10];
     
