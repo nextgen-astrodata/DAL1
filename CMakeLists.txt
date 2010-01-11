@@ -388,8 +388,72 @@ if (DAL_MEMORY_CHECKING)
   
 endif (DAL_MEMORY_CHECKING)
 
-## -----------------------------------------------------------------------------
-## Installation
+## =============================================================================
+##
+##  List of external libraries against which to link; even though we really
+##  need the external libraries listed here, we should be a bit careful when
+##  dealing with the related CMake variables - check first if the variable is
+##  set before adding it to the list of link libraries.
+##
+## =============================================================================
+
+set (dal_link_libraries "")
+
+if (HAVE_LIBZ)
+  list (APPEND dal_link_libraries ${HAVE_LIBZ})
+endif (HAVE_LIBZ)
+
+if (CASA_LIBRARIES)
+  list (APPEND dal_link_libraries ${CASA_LIBRARIES})
+endif (CASA_LIBRARIES)
+
+if (HDF5_LIBRARIES)
+  list (APPEND dal_link_libraries ${HDF5_LIBRARIES})
+else (HDF5_LIBRARIES)
+  message (FATAL_ERROR "[DAL] Missing HDF5 library file(s)!")
+endif (HDF5_LIBRARIES)
+
+if (LAPACK_LIBRARIES)
+  list (APPEND dal_link_libraries ${LAPACK_LIBRARIES})
+endif (LAPACK_LIBRARIES)
+
+if (CFITSIO_LIBRARIES)
+  list (APPEND dal_link_libraries ${CFITSIO_LIBRARIES})
+endif (CFITSIO_LIBRARIES)
+
+if (WCSLIB_LIBRARIES)
+  list (APPEND dal_link_libraries ${WCSLIB_LIBRARIES})
+endif (WCSLIB_LIBRARIES)
+
+if (HAVE_LIBDL)
+  list (APPEND dal_link_libraries ${HAVE_LIBDL})
+endif (HAVE_LIBDL)
+
+if (HAVE_LIBM)
+  list (APPEND dal_link_libraries ${HAVE_LIBM})
+endif (HAVE_LIBM)
+
+if (HAVE_LIBPTHREAD)
+  list (APPEND dal_link_libraries ${HAVE_LIBPTHREAD})
+endif (HAVE_LIBPTHREAD)
+
+if (HAVE_LIBUTIL)
+  list (APPEND dal_link_libraries ${HAVE_LIBUTIL})
+endif (HAVE_LIBUTIL)
+
+if (HAVE_MYSQL)
+  list (APPEND dal_link_libraries ${MYSQL_LIBRARIES})
+endif (HAVE_MYSQL)
+
+if (DAL_MEMORY_CHECKING AND HAVE_MALLOC_DEBUG)
+  list (APPEND dal_link_libraries ${HAVE_MALLOC_DEBUG})
+endif (DAL_MEMORY_CHECKING AND HAVE_MALLOC_DEBUG)
+
+## =============================================================================
+##
+##  Installation
+##
+## =============================================================================
 
 find_path (prefix release_area.txt
   PATHS
