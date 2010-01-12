@@ -200,6 +200,11 @@ namespace DAL {  // Namespace DAL -- begin
 	     int const &nofSamples,
 	     short *data);
     
+    //! Get a number of data values as recorded for this dipole
+/*     bool fx (int const &start, */
+/* 	     int const &nofSamples, */
+/* 	     std::vector<short> &data); */
+    
 #ifdef HAVE_CASA
     
     //! Get the antenna position as a measure

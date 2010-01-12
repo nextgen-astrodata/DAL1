@@ -47,18 +47,18 @@
 #define ANAME  "Float attribute"      /* Name of the array attribute */
 #define ANAMES "Character attribute" /* Name of the string attribute */
 
-                                     //! Operator function
+//! Operator function
 static herr_t attr_info (hid_t loc_id,
 			 const char *name,
 			 const H5A_info_t *ainfo,
 			 void *opdata);
 
-int
-main (void)
+//_______________________________________________________________________________
+//                                                                           main
+
+int main (void)
 {
-  
   hid_t   file, dataset;       /* File and dataset identifiers */
-  
   hid_t   fid;                 /* Dataspace identifier */
   hid_t   attr1, attr2, attr3; /* Attribute identifiers */
   hid_t   attr;
@@ -265,8 +265,8 @@ static herr_t attr_info (hid_t loc_id,
    */
   atype  = H5Aget_type(attr);
   aspace = H5Aget_space(attr);
-  rank = H5Sget_simple_extent_ndims(aspace);
-  ret = H5Sget_simple_extent_dims(aspace, sdim, NULL);
+  rank   = H5Sget_simple_extent_ndims(aspace);
+  ret    = H5Sget_simple_extent_dims(aspace, sdim, NULL);
   
   /*
    *  Display rank and dimension sizes for the array attribute.

@@ -505,55 +505,91 @@ namespace DAL {
   //                                                          h5attribute_summary
   
   /*!
+    \param location_id -- Identifier of the structure within the file, to which
+           the attribut is attached to.
+    \param name        -- Name of the attribute, as which it is attached to
+           another structure within the file
+    \param os          -- Output stream to which the summary is written
+  */
+  void h5attribute_summary (hid_t const &location_id,
+			    std::string const &name,
+			    std::ostream &os)
+  {
+    if (H5Aexists(location_id, name.c_str())) {
+      // Open the attribute
+      hid_t attribute_id = H5Aopen (location_id,
+				    name.c_str(),
+				    H5P_DEFAULT);
+      // Summary of the attribute
+      h5attribute_summary (attribute_id,
+			   os);
+      // Close the attribute
+      if (H5Iis_valid(attribute_id)) {
+	H5Aclose (attribute_id);
+      }
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                          h5attribute_summary
+  
+  /*!
     \param os           -- Output stream to which the summary is written
     \param attribute_id -- HDF5 identifier pointing at the attribute to show
   */
-  void h5attribute_summary (std::ostream &os,
-                            hid_t const &attribute_id)
+  void h5attribute_summary (hid_t const &attribute_id,
+			    std::ostream &os)
   {
-    bool status (true);
+    if (H5Iget_type (attribute_id) == H5I_ATTR) {
 
-    /*
-     * Datatype of the attribute
-     */
-    hid_t datatype_id        = H5Aget_type (attribute_id);
-    hsize_t datatype_size    = H5Tget_size (datatype_id);
-    bool datatype_is_integer = H5Tdetect_class (datatype_id,H5T_INTEGER);
-    bool datatype_is_float   = H5Tdetect_class (datatype_id,H5T_FLOAT);
-    bool datatype_is_string  = H5Tdetect_class (datatype_id,H5T_STRING);
-
-    os << "\t-- Datatype ID             = " << datatype_id  << endl;
-    os << "\t-- Datatype size [Bytes]   = " << datatype_size << endl;
-    os << "\t-- Datatype is H5T_INTEGER = " << datatype_is_integer << endl;
-    os << "\t-- Datatype is H5T_FLOAT   = " << datatype_is_float << endl;
-    os << "\t-- Datatype is H5T_STRING  = " << datatype_is_string << endl;
-
-    H5Tclose (datatype_id);
-
-    /*
-     * Dataspace of the attribute
-     */
-    int rank (0);
-    hid_t dataspace_id       = H5Aget_space (attribute_id);
-    bool dataspace_is_simple = H5Sis_simple(dataspace_id);
-    herr_t h5error;
-
-    try {
-      rank = H5Sget_simple_extent_ndims (dataspace_id);
-    }
-    catch (std::string message) {
-      cerr << "[h5attribute_summary] " << message << endl;
-      status = false;
+      bool status (true);
+      herr_t h5error;
+      
+      /*
+       * Datatype of the attribute
+       */
+      hid_t datatype_id        = H5Aget_type (attribute_id);
+      hsize_t datatype_size    = H5Tget_size (datatype_id);
+      bool datatype_is_integer = H5Tdetect_class (datatype_id,H5T_INTEGER);
+      bool datatype_is_float   = H5Tdetect_class (datatype_id,H5T_FLOAT);
+      bool datatype_is_string  = H5Tdetect_class (datatype_id,H5T_STRING);
+      
+      if (H5Iis_valid(datatype_id)) H5Tclose (datatype_id);
+      
+      /*
+       * Dataspace of the attribute
+       */
+      int rank (0);
+      hid_t dataspace_id       = H5Aget_space (attribute_id);
+      bool dataspace_is_simple = H5Sis_simple(dataspace_id);
+      
+      try {
+	rank = H5Sget_simple_extent_ndims (dataspace_id);
+      }
+      catch (std::string message) {
+	cerr << "[h5attribute_summary] " << message << endl;
+	status = false;
+      }
+      
+      os << "\t-- Datatype ID             = " << datatype_id         << endl;
+      os << "\t-- Datatype size [Bytes]   = " << datatype_size       << endl;
+      os << "\t-- Datatype is H5T_INTEGER = " << datatype_is_integer << endl;
+      os << "\t-- Datatype is H5T_FLOAT   = " << datatype_is_float   << endl;
+      os << "\t-- Datatype is H5T_STRING  = " << datatype_is_string  << endl;
+      os << "\t-- Dataspace ID            = " << dataspace_id        << endl;
+      os << "\t-- Dataspace is simple?    = " << dataspace_is_simple << endl;
+      os << "\t-- Rank of the data array  = " << rank                << endl;
+      
+      if (H5Iis_valid(dataspace_id)) {
+	h5error = H5Sclose (dataspace_id);
+	h5error = H5Eclear1 ();
+      }
+    }  // end -- (H5Iget_type () == H5I_ATTR)
+    else {
+      os << "[h5attribute_summary] Provided HDF5 object is not an attribute!" 
+	 << std::endl;
     }
     
-    os << "\t-- Dataspace ID            = " << dataspace_id << endl;
-    os << "\t-- Dataspace is simple?    = " << dataspace_is_simple << endl;
-    os << "\t-- Rank of the data array  = " << rank << endl;
-    
-    if (dataspace_id > 0) {
-      h5error = H5Sclose (dataspace_id);
-      h5error = H5Eclear1 ();
-    }
   }
   
   //_____________________________________________________________________________
@@ -614,9 +650,9 @@ namespace DAL {
     }
     
     // close opened HDF5 objects
-    ret = H5Tclose(atype);
-    ret = H5Sclose(aspace);
-    ret = H5Aclose(attr);
+    if (H5Iis_valid(atype))  ret = H5Tclose(atype);
+    if (H5Iis_valid(aspace)) ret = H5Sclose(aspace);
+    if (H5Iis_valid(attr))   ret = H5Aclose(attr);
     
     return 0;
   }
@@ -703,7 +739,7 @@ namespace DAL {
     }
     
     // release allocated identifiers
-    if (dataspace_id > 0) {
+    if (H5Iis_valid(dataspace_id)) {
       h5error = H5Sclose (dataspace_id);
       h5error = H5Eclear1 ();
     }
@@ -763,7 +799,7 @@ namespace DAL {
     }
     
     // release allocated identifiers
-    if (dataspace_id > 0) {
+    if (H5Iis_valid(dataspace_id)) {
       h5error = H5Sclose (dataspace_id);
       h5error = H5Eclear1 ();
     }
@@ -830,20 +866,15 @@ namespace DAL {
       return DAL::FAIL;
     }
     
-    if (  H5Aclose( att ) < 0 ) {
-      std::cerr << "ERROR: Could not close attribute '" << attrname << "'.\n";
-      return DAL::FAIL;
-    }
-    
     for ( int ii = 0; ii < size; ii++ ) {
       free( string_attr[ii] );
     }
     free( string_attr );
 
     /* release HDF5 handlers */
-    H5Aclose (att);
-    H5Sclose (dataspace);
-    H5Tclose (type);
+    if (H5Iis_valid(att))       H5Aclose (att);
+    if (H5Iis_valid(dataspace)) H5Sclose (dataspace);
+    if (H5Iis_valid(type))      H5Tclose (type);
     
     return DAL::SUCCESS;
   }
@@ -912,11 +943,11 @@ namespace DAL {
       } // END: (datatype_class_id == H5T_STRING)
       
       /* release HDF5 handlers */
-      H5Tclose (native_datatype_id);
+      if (H5Iis_valid(native_datatype_id)) H5Tclose (native_datatype_id);
     }
     
     /* release HDF5 handlers */
-    H5Tclose (datatype_id);
+    if (H5Iis_valid(datatype_id)) H5Tclose (datatype_id);
     // clean up the error message buffer
     h5error = H5Eclear1();
     
@@ -974,8 +1005,8 @@ namespace DAL {
     }
 
     /* release HDF5 handlers */
-    H5Aclose (datatype_id);
-    H5Tclose (native_datatype_id);
+    if (H5Iis_valid(datatype_id))        H5Tclose (datatype_id);
+    if (H5Iis_valid(native_datatype_id)) H5Tclose (native_datatype_id);
     
     return status;
   }
@@ -1023,8 +1054,8 @@ namespace DAL {
     }
     
     /* release HDF5 handlers */
-    H5Aclose (datatype_id);
-    H5Tclose (native_datatype_id);
+    if (H5Iis_valid(datatype_id)) H5Tclose (datatype_id);
+    if (H5Iis_valid(native_datatype_id)) H5Tclose (native_datatype_id);
     
     return status;
   }
@@ -1123,7 +1154,7 @@ namespace DAL {
     free( string_attr );
 
     /* release HDF5 handlers */
-    H5Sclose (dataspace_id);
+    if (H5Iis_valid(dataspace_id)) H5Sclose (dataspace_id);
     
     return true;
   }
@@ -1445,7 +1476,7 @@ namespace DAL {
     }
 
     /* release HDF5 handlers */
-    H5Aclose (datatype_id);
+    H5Tclose (datatype_id);
     H5Tclose (native_datatype_id);
     
     return status;

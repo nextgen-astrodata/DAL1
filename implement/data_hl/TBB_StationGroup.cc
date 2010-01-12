@@ -113,7 +113,7 @@ namespace DAL {  // Namespace DAL -- begin
     herr_t h5error;
     H5I_type_t object_type = H5Iget_type(location_p);
     // release HDF5 object
-    if (object_type == H5I_GROUP) {
+    if (object_type == H5I_GROUP && H5Iis_valid(location_p)) {
       h5error = H5Gclose(location_p);
       location_p = 0;
     }

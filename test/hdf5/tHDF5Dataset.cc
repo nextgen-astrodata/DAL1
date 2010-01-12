@@ -37,7 +37,7 @@
 #include <string>
 
 #include <dalCommon.h>
-#include "H5Dataset.h"
+#include "HDF5Dataset.h"
 
 //_______________________________________________________________________________
 //                                                                    test_create
@@ -61,9 +61,9 @@ int test_create (hid_t const &fileID)
     shape[1] = 4;
     
     //! Create the HDF5 Dataset
-    DAL::H5Dataset dataset (fileID,
-			    name,
-			    shape);
+    DAL::HDF5Dataset dataset (fileID,
+			      name,
+			      shape);
     dataset.summary();
     
     dataset.setAttribute ("NOF_AXES", int(2)        );
@@ -84,9 +84,9 @@ int test_create (hid_t const &fileID)
     shape[2] = 3;
     
     //! Create the HDF5 Dataset
-    DAL::H5Dataset dataset (fileID,
-			    name,
-			    shape);
+    DAL::HDF5Dataset dataset (fileID,
+			      name,
+			      shape);
     dataset.summary();
     
     dataset.setAttribute ("NOF_AXES", int(shape.size()) );

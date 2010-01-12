@@ -2,14 +2,14 @@
 ##_______________________________________________________________________________
 ##                                                           List of source files
 
-file (GLOB tests_hdf5 tH5*.cc h5*.c)
+file (GLOB tests_hdf5 tHDF5*.cc h5*.c)
 
 ##_______________________________________________________________________________
 ##                                                     Build/Install instructions
 
 add_library (dal_hdf5
-  H5Base.cc
-  H5Dataset.cc
+  HDF5Attribute.cc
+  HDF5Dataset.cc
   H5Hyperslab.cc
   )
 
@@ -38,8 +38,23 @@ endforeach (src)
 ##_______________________________________________________________________________
 ##                                                           Testing instructions
 
+find_file (dataset L123456789_test_bf.h5
+  PATHS ${USG_ROOT}
+  PATH_SUFFIXES data/test
+  )
+
+## Test programs which come as part of the HDF5 library
+
 add_test (h5_attribute h5_attribute)
 add_test (h5_group h5_group)
 
-add_test (tH5Dataset tH5Dataset)
-add_test (tH5Hyperslab tH5Hyperslab)
+## Test programs for the custom classes
+
+add_test (tHDF5Dataset tHDF5Dataset)
+add_test (tHDF5Hyperslab tHDF5Hyperslab)
+
+if (dataset)
+  add_test (tHDF5Attribute tHDF5Attribute ${dataset})
+else (dataset_tbb)
+  add_test (tHDF5Attribute tHDF5Attribute)
+endif (dataset)

@@ -360,7 +360,7 @@ int test_hdf5_attributes ()
     cerr << message << endl;
     nofFailedTests++;
   }
-  
+
   //__________________________________________________________________
   // Write attributes from c-array
 
@@ -459,7 +459,7 @@ int test_hdf5_attributes ()
     cerr << message << endl;
     nofFailedTests++;
   }
-  
+
   //__________________________________________________________________
   // Write attributes from std::vector<T>
   
@@ -542,7 +542,7 @@ int test_hdf5_attributes ()
     cerr << message << endl;
     nofFailedTests++;
   }
-  
+
   //__________________________________________________________________
   // Write attributes from std::set<T>
   
@@ -645,7 +645,7 @@ int test_hdf5_attributes ()
     nofFailedTests++;
   }
 #endif
-  
+
   //__________________________________________________________________
   
   cout << "[6] Close and reopen HDF5 file for testing ..." << endl;
@@ -699,7 +699,7 @@ int test_hdf5_attributes ()
     cerr << message << endl;
     nofFailedTests++;
   }
-  
+
   //__________________________________________________________________
   // Test reading attributes into std::vector<T>
 

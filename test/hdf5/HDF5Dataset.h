@@ -1,4 +1,7 @@
 
+#ifndef HDF5DATASET_H
+#define HDF5DATASET_H
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -8,13 +11,13 @@
 namespace DAL {
   
   /*!
-    \class H5Dataset
+    \class HDF5Dataset
     \ingroup DAL
     \brief A class to encapsulate the operations required to work with a dataset
     \author Lars B&auml;hren
     \date 2009/12/04
   */
-  class H5Dataset {
+  class HDF5Dataset {
     
     //! Name of the dataset
     std::string name_p;
@@ -32,22 +35,22 @@ namespace DAL {
     // === Construction =========================================================
 
     //! Default constuctor
-    H5Dataset ();
-
-    //! Argumented constructor
-    H5Dataset (hid_t const &location,
-	       std::string const &name);
+    HDF5Dataset ();
     
     //! Argumented constructor
-    H5Dataset (hid_t const &location,
-	       std::string const &name,
-	       std::vector<hsize_t> const &shape,
-	       hid_t const &datatype=H5T_NATIVE_DOUBLE);
+    HDF5Dataset (hid_t const &location,
+		 std::string const &name);
+    
+    //! Argumented constructor
+    HDF5Dataset (hid_t const &location,
+		 std::string const &name,
+		 std::vector<hsize_t> const &shape,
+		 hid_t const &datatype=H5T_NATIVE_DOUBLE);
     
     // === Destruction ==========================================================
     
     // Destructor
-    ~H5Dataset ();
+    ~HDF5Dataset ();
     
     // === Parameter access =====================================================
     
@@ -60,32 +63,32 @@ namespace DAL {
     inline std::vector<hsize_t> shape () const {
       return shape_p;
     }
-
+    
     //! Get the rank (i.e. the number of axes) of the dataset
     inline int rank () const {
       return shape_p.size();
     }
-
+    
     //! Get the dataspace identifier
     inline hid_t dataspaceID () const {
       return dataspaceID_p;
     }
-
+    
     //! Get the datatype identifier
     inline hid_t datatypeID () const {
       return datatypeID_p;
     }
-
+    
     // === Methods ==============================================================
-
+    
     //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
     }
-
+    
     //! Provide a summary of the internal status
     void summary (std::ostream &os);
-
+    
     //! Open the dataset
     bool open (hid_t const &location,
 	       std::string const &name,
@@ -106,13 +109,13 @@ namespace DAL {
 				T &val)
       {
 	bool status (true);
-
+	
 	if (datasetID_p > 0) {
 	  status = h5get_attribute (datasetID_p,
 				    name,
 				    val);
 	} else {
-	  std::cerr << "[H5Dataset::getAttribute] Not connected to Dataset!"
+	  std::cerr << "[HDF5Dataset::getAttribute] Not connected to Dataset!"
 		    << std::endl;
 	  status = false;
 	}
@@ -140,7 +143,7 @@ namespace DAL {
 				    name,
 				    val);
 	} else {
-	  std::cerr << "[H5Dataset::setAttribute] Not connected to Dataset!"
+	  std::cerr << "[HDF5Dataset::setAttribute] Not connected to Dataset!"
 		    << std::endl;
 	  status = false;
 	}
@@ -153,6 +156,8 @@ namespace DAL {
     //! Initialize the internal parameters
     void init ();
     
-  }; // end class H5Dataset
+  }; // end class HDF5Dataset
   
 } // end namespace DAL
+
+#endif

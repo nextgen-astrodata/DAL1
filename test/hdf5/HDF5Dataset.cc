@@ -1,5 +1,5 @@
 
-#include "H5Dataset.h"
+#include "HDF5Dataset.h"
 
 namespace DAL {
 
@@ -10,29 +10,29 @@ namespace DAL {
   // ============================================================================
   
   //_____________________________________________________________________________
-  //                                                                    H5Dataset
+  //                                                                  HDF5Dataset
 
-  H5Dataset::H5Dataset ()
+  HDF5Dataset::HDF5Dataset ()
   {
     init();
   }
 
   //_____________________________________________________________________________
-  //                                                                    H5Dataset
+  //                                                                  HDF5Dataset
 
   /*!
     \param location -- Identifier for the location to which the dataset is
            attached.
     \param name     -- Name of the dataset.
   */
-  H5Dataset::H5Dataset (hid_t const &location,
-			std::string const &name)
+  HDF5Dataset::HDF5Dataset (hid_t const &location,
+			    std::string const &name)
   {
     
   }
   
   //_____________________________________________________________________________
-  //                                                                    H5Dataset
+  //                                                                  HDF5Dataset
 
   /*!
     \param location -- Identifier for the location at which the dataset is about
@@ -41,10 +41,10 @@ namespace DAL {
     \param shape    -- Shape of the dataset.
     \param datatype -- Datatype for the elements within the Dataset
   */
-  H5Dataset::H5Dataset (hid_t const &location,
-			std::string const &name,
-			std::vector<hsize_t> const &shape,
-			hid_t const &datatype)
+  HDF5Dataset::HDF5Dataset (hid_t const &location,
+			    std::string const &name,
+			    std::vector<hsize_t> const &shape,
+			    hid_t const &datatype)
   {
     // initialize internal parameters
     init ();
@@ -61,7 +61,7 @@ namespace DAL {
   //
   // ============================================================================
   
-  H5Dataset::~H5Dataset ()
+  HDF5Dataset::~HDF5Dataset ()
   {
     H5Sclose (dataspaceID_p);
     H5Tclose (datatypeID_p);
@@ -77,7 +77,7 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                         init
 
-  void H5Dataset::init ()
+  void HDF5Dataset::init ()
   {
     name_p        = "Dataset";
     dataspaceID_p = 0;
@@ -95,13 +95,13 @@ namespace DAL {
     \param shape    -- Shape of the dataset.
     \param datatype -- Datatype for the elements within the Dataset
   */
-  bool H5Dataset::open (hid_t const &location,
-			std::string const &name,
-			std::vector<hsize_t> const &shape,
-			hid_t const &datatype)
+  bool HDF5Dataset::open (hid_t const &location,
+			  std::string const &name,
+			  std::vector<hsize_t> const &shape,
+			  hid_t const &datatype)
   {
     bool status (true);
-
+    
     // update internal parameters
     name_p = name;
     shape_p.resize(shape.size());
@@ -136,12 +136,11 @@ namespace DAL {
   /*
     \param os -- Output stream to which the summary is written.
   */
-  void H5Dataset::summary (std::ostream &os)
+  void HDF5Dataset::summary (std::ostream &os)
   {
-    os << "[H5Dataset]" << std::endl;
+    os << "[HDF5Dataset]" << std::endl;
     os << "-- Dataset name  = " << name_p  << std::endl;
     os << "-- Dataset shape = " << shape_p << std::endl;
   }
-
   
 } // end namespace DAL

@@ -200,33 +200,20 @@ namespace DAL {
   // ============================================================================
   
   //! Provide a summary of an attribute's internal structure
-  void h5attribute_summary (std::ostream &os,
-                            hid_t const &attribute_id);
-
-  /*!
-    \todo Function not yet implemented
-    \brief Provide a summary of an attribute's internal structure
-
-    \param os          -- Output stream to which the summary is written
-    \param name        -- Name of the attribute, as which it is attached to
-           another structure within the file
-    \param location_id -- Identifier of the structure within the file, to which
-           the attribut is attached to.
-  */
-  void h5attribute_summary (std::ostream &os,
-                            std::string const &name,
-                            hid_t const &location_id);
-
+  void h5attribute_summary (hid_t const &location_id,
+			    std::string const &name,
+			    std::ostream &os=std::cout);
+  //! Provide a summary of an attribute's internal structure
+  void h5attribute_summary (hid_t const &attribute_id,
+			    std::ostream &os=std::cout);
   //! Print an attribute value. (Used with H5Aiterate).
   herr_t attr_info (hid_t loc_id,
                     const char *name,
                     void *opdata);
-
   //! Rename an attribute
   bool h5rename_attribute (hid_t const &location_id,
 			   std::string const &oldName,
 			   std::string const &newName);
-
   //! Get the shape of a dataset
   bool h5get_dataset_shape (hid_t const &dataset_id,
                             std::vector<uint> &shape,
@@ -281,15 +268,8 @@ namespace DAL {
 			 h5datatype,
 			 &value);
       
-#ifdef DEBUGGING_MESSAGES
-      std::cout << "[h5get_attribute]" << std::endl;
-      std::cout << "-- Attribute ID    = " << attribute_id << std::endl;
-      std::cout << "-- H5 datatype     = " << h5datatype   << std::endl;
-      std::cout << "-- Attribute value = " << value        << std::endl;
-#endif
-      
       // close the type identifier
-      H5Tclose(h5datatype);
+      if (H5Iis_valid(h5datatype)) H5Tclose(h5datatype);
       // clean up the error message buffer
       h5error = H5Eclear1();
       
@@ -338,7 +318,9 @@ namespace DAL {
       status = h5get_attribute (attribute_id,
 				value);
       /* release the identifier used for retrieval of the value */
-      h5error = H5Aclose (attribute_id);
+      if (H5Iis_valid(attribute_id)) {
+	h5error = H5Aclose (attribute_id);
+      }
       /* clean up the error message buffer */
       h5error = H5Eclear1();
     }
@@ -398,8 +380,8 @@ namespace DAL {
         status = false;
       }
       
-      H5Tclose (datatype_id);
-      H5Tclose (native_datatype_id);
+      if (H5Iis_valid(datatype_id)) H5Tclose (datatype_id);
+      if (H5Iis_valid(native_datatype_id)) H5Tclose (native_datatype_id);
 
       return status;
     }
@@ -420,55 +402,30 @@ namespace DAL {
                         std::vector<T> &value)
   {
     bool status (true);
-    hid_t attribute_id (0);
-    herr_t h5error (0);
-
-    // get the identifier for the attribute
-    attribute_id = H5Aopen (location_id,
-                            name.c_str(),
-                            H5P_DEFAULT);
-
-    if (attribute_id > 0) {
+    
+    if (H5Aexists(location_id, name.c_str())) {
+      hid_t attribute_id = 0;
+      herr_t h5error     = 0;
+      // get the identifier for the attribute
+      attribute_id = H5Aopen (location_id,
+			      name.c_str(),
+			      H5P_DEFAULT);
       /* forward the call to retrieve the actual value of the attribute */
       status = h5get_attribute (attribute_id,
 				value);
       /* release the identifier used for retrieval of the value */
-      h5error = H5Aclose (attribute_id);
+      if (H5Iis_valid(attribute_id)) {
+	h5error = H5Aclose (attribute_id);
+      }
       /* clean up the error message buffer */
       h5error = H5Eclear1();
     }
     else {
-      std::cerr << "[h5get_attribute] No valid ID for attribute "
-		<< name
-		<< endl;
       status = false;
     }
     
     return status;
   }
-  
-  //_____________________________________________________________________________
-  //                                                              h5set_attribute
-  
-  template <typename T>
-    bool h5set_attribute (hid_t const &locationID,
-			  std::string name,
-			  T * value,
-			  int size,
-			  hid_t const &datatype,
-			  bool const &ignoreType=false)
-    {
-      bool status       = true;
-      hid_t attributeID = 0;
-      
-      if (H5Aexists(locationID,name.c_str())) {
-	attributeID = H5Aopen (locationID,
-			       name.c_str(),
-			       H5P_DEFAULT);
-      }
-      
-      return status;
-    }
   
   //_____________________________________________________________________________
   //                                                              h5set_attribute
@@ -492,7 +449,6 @@ namespace DAL {
                         T * value,
                         int size)
   {
-    bool status          = true;
     hid_t   attribute_id = 0;
     hid_t   dataspace_id = 0;
     hsize_t dims[1]      = { size };
@@ -529,9 +485,8 @@ namespace DAL {
       return false;
     }
     
-    if ( H5Aclose( attribute_id ) < 0 ) {
-      std::cerr << "ERROR: Could not close attribute '" << name << "'.\n";
-      status = false;
+    if (H5Iis_valid(attribute_id)) {
+      H5Aclose (attribute_id);
     }
     
     return true;
@@ -571,6 +526,9 @@ namespace DAL {
       
       delete [] data;
     }
+  
+  //_____________________________________________________________________________
+  //                                                              h5set_attribute
   
   /*!
     \param location_id -- HDF5 identifier of the attribute within the file
@@ -679,8 +637,8 @@ namespace DAL {
       }
 
       // release HDF5 identifiers
-      H5Tclose (datatype_id);
-      H5Tclose (native_datatype_id);
+      if (H5Iis_valid(datatype_id))        { H5Tclose (datatype_id);        }
+      if (H5Iis_valid(native_datatype_id)) { H5Tclose (native_datatype_id); }
 
       return status;
     }
@@ -704,7 +662,9 @@ namespace DAL {
 	status = h5get_attribute (attribute_id,
 				  value);
 	/* release the identifier used for retrieval of the value */
-	h5error = H5Aclose (attribute_id);
+	if (H5Iis_valid(attribute_id)) {
+	  h5error = H5Aclose (attribute_id);
+	}
         /* clean up the error message buffer */
         h5error = H5Eclear1();
       }

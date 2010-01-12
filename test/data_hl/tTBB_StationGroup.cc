@@ -411,8 +411,8 @@ int test_methods (std::string const &filename)
     group.dipoleNames (dipoleNames);
     group.dipoleNumbers (dipoleNumbers);
     //
-    cout << "-- Dipole names     = " << dipoleNames     << endl;
     cout << "-- Dipole IDs       = " << dipoleNumbers   << endl;
+    cout << "-- Dipole names     = " << dipoleNames     << endl;
     cout << "-- Selected dipoles = " << selectedDipoles << endl;
   }
   catch (std::string message) {

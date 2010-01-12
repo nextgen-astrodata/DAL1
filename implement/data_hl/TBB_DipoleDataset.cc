@@ -141,17 +141,17 @@ namespace DAL {  // Namespace DAL -- begin
   {
     herr_t h5error;
 
-    if (datatype_p>0 && location_p > 0) {
+    if (datatype_p>0 && H5Iis_valid(datatype_p)) {
       h5error    = H5Tclose (datatype_p);
       datatype_p = 0;
     }
 
-    if (dataspace_p > 0 && location_p > 0) {
+    if (dataspace_p > 0 && H5Iis_valid(dataspace_p)) {
       h5error     = H5Sclose (dataspace_p);
       dataspace_p = 0;
     }
 
-    if (location_p > 0) {
+    if (location_p > 0 && H5Iis_valid(location_p)) {
       h5error    = H5Dclose (location_p);
       location_p = 0;
     }
@@ -683,9 +683,9 @@ namespace DAL {  // Namespace DAL -- begin
   {
     bool status (true);
 
-    /*
-     *  Set up the logic for secure access to the underlying data
-     */
+    //______________________________________________________
+    // Set up the logic for secure access to the underlying data
+
     int dataStart;
     int dataEnd (start+nofSamples-1);
     int dataLength;
@@ -698,7 +698,8 @@ namespace DAL {  // Namespace DAL -- begin
 	  data[n] = 0;
 	}
 	return false;
-      } else {
+      } // end -- (dataEnd<0) 
+      else {
 	dataStart = 0;
 	/* Shift the position of the first data point requested from the file */
 	dataOffset = -start;
@@ -717,13 +718,6 @@ namespace DAL {  // Namespace DAL -- begin
 
 //     dataBuffer = new short[dataLength];
 //     dataBuffer = &data[dataOffset];
-
-#ifdef DEBUGGING_MESSAGES
-    std::cout << "[TBB_DipoleDataset::fx]" << std::endl;
-    std::cout << "-- Data start  = " << dataStart  << std::endl;
-    std::cout << "-- Data offset = " << dataOffset << std::endl;
-    std::cout << "-- Data length = " << dataLength << std::endl;
-#endif
 
     /* Start accessing the data within the HDF5 file */
     
