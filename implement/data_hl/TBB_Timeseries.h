@@ -137,12 +137,13 @@ namespace DAL {  // Namespace DAL -- begin
     }
     
     //! Provide a summary of the internal status
-    inline void summary () {
-      summary (std::cout);
-    }
+    void summary (std::ostream &os=std::cout);
+
+    //! Get the set of selected dipoles
+    std::set<std::string> selectedDipoles ();
     
-    //! Provide a summary of the internal status
-    void summary (std::ostream &os);
+    //! Set the set of selected dipoles
+    bool setSelectedDipoles (std::set<std::string> const &selection);
     
     // === Parameter access - TBB time-series ===================================
 

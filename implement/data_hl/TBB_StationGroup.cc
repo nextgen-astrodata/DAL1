@@ -437,6 +437,35 @@ namespace DAL {  // Namespace DAL -- begin
     
     return status;
   }
+
+  //_____________________________________________________________________________
+  //                                                             selectAllDipoles
+
+  /*!
+    This method can be used to undo a previous selection of individual dipoles.
+
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
+   */
+  bool TBB_StationGroup::selectAllDipoles ()
+  {
+    bool status (true);
+    std::set<std::string> selection;
+    std::map<std::string,TBB_DipoleDataset>::iterator it = datasets_p.begin();
+
+    for (; it!=datasets_p.end(); ++it) {
+      selection.insert(it->first);
+    }
+
+    if (!selection.empty()) {
+      selectedDipoles_p.clear();
+      selectedDipoles_p = selection;
+    } else {
+      status = false;
+    }
+
+    return status;
+  }
   
   //_____________________________________________________________________________
   //                                                                      summary
@@ -656,40 +685,67 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                                           fx
   
   /*!
+    \retval data -- [nofSamples,dipole] Array of raw ADC samples representing
+            the electric field strength as function of time.
     \param start      -- Number of the sample at which to start reading
     \param nofSamples -- Number of samples to read, starting from the position
            given by <tt>start</tt>.
-    \param dipoles    -- identifiers of the dipoles, for which to retrieve the
-           data.
-
-    \return fx -- [nofSamples,dipole] Array of raw ADC samples representing
-            the electric field strength as function of time.
   */
   bool TBB_StationGroup::fx (casa::Matrix<double> &data,
-			     int const &start,
-			     int const &nofSamples,
-			     casa::Vector<casa::String> const &dipoles)
+			     casa::Vector<int> const &start,
+			     int const &nofSamples)
   {
-    bool status (true);
-    uint nofDipoles (dipoles.nelements());
+    uint nofDipoles = selectedDipoles_p.size();
+    uint nelem      = start.nelements();
     casa::IPosition shape (2,nofSamples,nofDipoles);
-    casa::Vector<double> tmp (nofSamples);
-    std::map<std::string,TBB_DipoleDataset>::iterator it;
 
+    // Check input parameters ______________________________
+
+    if (nelem != nofDipoles) {
+      std::cerr << "[TBB_StationGroup::fx]"
+		<< " Wrong length of vector with start positions!"
+		<< std::endl;
+      std::cerr << " -- nof. selected dipoles   = " << nofDipoles << std::endl;
+      std::cerr << " -- nof. elements in vector = " << nelem      << std::endl;
+      //
+      data.resize(shape);
+      data = 0.0;
+      return false;
+    }
+
+    // Retrieve data from file _____________________________
+    
+    bool status (true);
+    uint n (0);
+    casa::Vector<double> tmp (nofSamples);
+    std::set<std::string>::iterator it;
+    std::map<std::string,TBB_DipoleDataset>::iterator itMap;
+    
+    // Check the shape of the matrix returning the values
     if (data.shape() != shape) {
       data.resize(shape);
     }
     
-    for (uint n(0); n<nofDipoles; ++n) {
-      it = datasets_p.find(dipoles(n));
-      if (it != datasets_p.end()) {
-	tmp = it->second.fx(start,nofSamples);
-      } else {
-	tmp = 0.0;
-      }
+    for (it=selectedDipoles_p.begin(); it!=selectedDipoles_p.end(); ++it) {
+      // get pointer to the dipole dataset
+      itMap = datasets_p.find(*it);
+      // retrieve dipole data
+      tmp = itMap->second.fx(start(n),nofSamples);
+      // copy data
       data.column(n) = tmp;
+      // increment counter
+      ++n;
     }
-    
+
+    // Feedback ____________________________________________
+
+#ifdef DEBUGGING_MESSAGES
+    std::cout << "[TBB_StationGroup::fx]" << std::endl;
+    std::cout << " -- start            = " << start             << std::endl;
+    std::cout << " -- selected dipoles = " << selectedDipoles_p << std::endl;
+    std::cout << " -- shape(data)      = " << data.shape()      << std::endl;
+#endif
+
     return status;
   }
   
@@ -697,34 +753,24 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                                           fx
   
   /*!
+    \retval data -- [nofSamples,dipole] Array of raw ADC samples representing
+            the electric field strength as function of time.
     \param start      -- Number of the sample at which to start reading
     \param nofSamples -- Number of samples to read, starting from the position
            given by <tt>start</tt>.
-
-    \return fx -- [nofSamples,dipole] Array of raw ADC samples representing
-            the electric field strength as function of time.
   */
-  casa::Matrix<double> TBB_StationGroup::fx (int const &start,
-					     int const &nofSamples)
+  bool TBB_StationGroup::fx (casa::Matrix<double> &data,
+			     int const &start,
+			     int const &nofSamples)
   {
-    bool status (true);
-    casa::Matrix<double> data;
-    casa::Vector<casa::String> dipoles (datasets_p.size());
-    std::map<std::string,TBB_DipoleDataset>::iterator it;
-    uint n (0);
-    
-    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-      dipoles(n) = it->first;
-      ++n;
-    }
+    uint nofDipoles (selectedDipoles_p.size());
+    casa::Vector<int> startVect (nofDipoles,start);
 
-    status = fx (data,
-		 start,
-		 nofSamples,
-		 dipoles);
-    return data;
+    return fx (data,
+	       startVect,
+	       nofSamples);
   }
-
+  
   //_____________________________________________________________________________
   //                                                               beam_direction
   

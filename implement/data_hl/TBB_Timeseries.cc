@@ -361,6 +361,46 @@ namespace DAL {  // Namespace DAL -- begin
 
     return nofDatasets;
   }
+
+  //_____________________________________________________________________________
+  //                                                              selectedDipoles
+
+  /*!
+    \return selectedDipoles -- A set of the selected dipoles within the dataset
+   */
+  std::set<std::string> TBB_Timeseries::selectedDipoles ()
+  {
+    std::set<std::string> dipoles;
+    std::set<std::string> tmp;
+    std::set<std::string>::iterator it;
+    std::map<std::string,TBB_StationGroup>::iterator itMap;
+
+    for (itMap = stationGroups_p.begin(); itMap!=stationGroups_p.end(); ++itMap) {
+      // get the selected dipoles for this group
+      tmp = itMap->second.selectedDipoles();
+      // append the selected dipoles
+      for (it=tmp.begin(); it!=tmp.end(); ++it) {
+	dipoles.insert(*it);
+      }
+    }
+
+    return dipoles;
+  }
+
+  //_____________________________________________________________________________
+  //                                                           setSelectedDipoles
+
+  bool TBB_Timeseries::setSelectedDipoles (std::set<std::string> const &selection)
+  {
+    bool status (true);
+    std::map<std::string,TBB_StationGroup>::iterator it;
+
+    for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
+      status *= it->second.setSelectedDipoles(selection);
+    }
+    
+    return status;
+  }
   
   // ============================================================================
   //
@@ -1066,47 +1106,55 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Matrix<double> TBB_Timeseries::fx (casa::Vector<int> const &start,
 					   int const &nofSamples)
   {
-    uint nofDipoles  = nofDipoleDatasets();
-    casa::Matrix<double> data (nofSamples,nofDipoles);
+    uint nofDipoles = 0;
+    uint nelem      = start.nelements();
+    std::map<std::string,TBB_StationGroup>::iterator it;
     
     // Check input parameters ______________________________
     
-    if (location_p < 1) {
-      std::cerr << "[TBB_Timeseries::fx] Not connected to data set!" << std::endl;
+    if (location_p > 0) {
+      
+      
+      // Check the size of the 'start' vector
+      for (it=stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
+	nofDipoles += it->second.selectedDipoles().size();
+      }
+      if (nelem != nofDipoles) {
+	std::cerr << "[TBB_Timeseries::fx]"
+		  << " Wrong length of vector with start positions!"
+		  << std::endl;
+	std::cerr << " -- nof. selected dipoles   = " << nofDipoles << std::endl;
+	std::cerr << " -- nof. elements in vector = " << nelem      << std::endl;
+	//
+	return casa::Matrix<double> (1,1,0);
+      }
+      
+    }  //  end -- (location_p>0)
+    else {
+      std::cerr << "[TBB_Timeseries::fx] Object not connected to dataset"
+		<< std::endl;
       return casa::Matrix<double> (1,1,0);
     }
     
-    if (start.nelements() != nofDipoles) {
-      std::cerr << "[TBB_Timeseries::fx] Invalid number of elements in vector"
-		<< " for selection of start position!" << std::endl;
-      return casa::Matrix<double> (1,1,0);
-    }
-
     // Retrieve data from file _____________________________
-
+    
+    casa::Matrix<double> data (nofSamples,nofDipoles);
+    casa::Matrix<double> tmpData;
+    casa::Vector<int> tmpStart;
+    uint offsetStart (0);
     bool status (true);
-    uint n       = 0;
-    uint dipole  = 0;
-    casa::Matrix<double> tmp;
-    casa::Vector<casa::String> channel (1);
-    casa::Vector<casa::String> dipoleNames;
-    std::map<std::string,TBB_StationGroup>::iterator it;
-
-    for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      // Get the channel names for the dipoles within the station
-      it->second.dipoleNames(dipoleNames);
-      nofDipoles = dipoleNames.nelements();
-      // Retrieve the data for all dipoles from that station
-      for (dipole=0; dipole<nofDipoles; ++dipole) {
-	channel = dipoleNames(dipole);
-	status  = it->second.fx(data,
-				start(n),
-				nofSamples,
-				channel);
-	// Append the data to the array returned by this function
-	data.column(n) = tmp.column(0);
-	n++;
+    
+    for (it=stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
+      // get the number of dipoles for this station
+      nofDipoles += it->second.selectedDipoles().size();
+      // set up start position values
+      tmpStart.resize(nofDipoles);
+      for (uint dipole(0); dipole<nofDipoles; ++dipole) {
+	tmpStart(dipole) = start(offsetStart+dipole);
+	++offsetStart;
       }
+      // get the data for the dipoles of that station
+      status = it->second.fx(tmpData,tmpStart,nofSamples);
     }
     
     return data;

@@ -592,14 +592,20 @@ int test_data (std::string const &filename)
 
   std::cout << "--> opening station group ..." << std::endl;
   TBB_StationGroup group (fileID,groupname);
+  group.summary();
 
   // Perform the tests _____________________________________
 
   std::cout << "[1] Retrieve data for all dipoles ..." << std::endl;
   try {
-    casa::Matrix<double> data = group.fx (start,
-					  blocksize);
+    bool status (true);
+    casa::Matrix<double> data;
+
+    // get the data
+    status = group.fx (data, start, blocksize);
+
     // feedback
+    std::cout << "-- Status         = " << status       << std::endl;
     std::cout << "-- Data start     = " << start        << std::endl;
     std::cout << "-- Data blocksize = " << blocksize    << std::endl;
     std::cout << "-- Data array     = " << data.shape() << std::endl;

@@ -159,6 +159,9 @@ namespace DAL {   // Namespace DAL -- begin
     //! Set the set of selected dipoles
     bool setSelectedDipoles (std::set<std::string> const &selection);
 
+    //! Selected all dipoles from the station
+    bool selectAllDipoles ();
+
     //! Get the number of triggered antennas at this station
     inline uint nofTriggeredAntennas () const {
       return nofTriggeredAntennas_p;
@@ -342,14 +345,14 @@ namespace DAL {   // Namespace DAL -- begin
     casa::MPosition station_position ();
     
     //! Retrieve a block of ADC values for the dipoles in this station
-    casa::Matrix<double> fx (int const &start=0,
-			     int const &nofSamples=1);
+    bool fx (casa::Matrix<double> &data,
+	     int const &start,
+	     int const &nofSamples);
     
     //! Retrieve a block of ADC values for the dipoles in this station
     bool fx (casa::Matrix<double> &data,
-	     int const &start,
-	     int const &nofSamples,
-	     casa::Vector<casa::String> const &dipoles);
+	     casa::Vector<int> const &start,
+	     int const &nofSamples);
     
     //! Get a casa::Record containing the values of the attributes
     casa::Record attributes2record (bool const &recursive=false);
