@@ -66,7 +66,7 @@ namespace DAL {  // Namespace DAL -- begin
     // open the new dataset
     open (0,attr.filename(),true);
     // write the LOFAR common attributes
-    if (location_p > 0) {
+    if (location_p>0 && H5Iis_valid(location_p)) {
       attr.h5write(location_p);
     }
   }
@@ -153,26 +153,25 @@ namespace DAL {  // Namespace DAL -- begin
 
   //_____________________________________________________________________________
   //                                                                      summary
-  
+
+  /*!
+    \param os -- Output stream to which the summary is written.
+  */
   void TBB_Timeseries::summary (std::ostream &os)
   {
-    os << "[TBB_Timeseries] Summary of object properties"       << endl;
-    os << "-- File name  ........  : " << filename_p            << endl;
-    os << "-- Location ID .......  : " << locationID()          << endl;
+    os << "[TBB_Timeseries] Summary of object properties"        << endl;
+    os << "-- File name  ........  : " << filename_p             << endl;
+    os << "-- Location ID .......  : " << locationID()           << endl;
+    os << "-- nof. station groups  : " << stationGroups_p.size() << endl;
 
-    /*
-      Further output is conditional - only makes sense if successfully connected
-      to a file
-    */
-//     if (location_p > 0) {
+    if (location_p > 0) {
 //       CommonAttributes attr = commonAttributes();
 //       os << "-- Telescope            : " << attr.telescope()       << endl;
 //       os << "-- Observer             : " << attr.observer()        << endl;
 //       os << "-- Project              : " << attr.projectTitle()    << endl;
 //       os << "-- Observation ID       : " << attr.observationID()   << endl;
-//       os << "-- nof. station groups  : " << stationGroups_p.size() << endl;
-//       os << "-- nof. dipole datasets : " << nofDipoleDatasets()    << endl;
-//     }
+      os << "-- nof. dipole datasets : " << nofDipoleDatasets()    << endl;
+    }
   }
 
   // ============================================================================
@@ -355,11 +354,11 @@ namespace DAL {  // Namespace DAL -- begin
     uint nofDatasets (0);
     std::map<std::string,TBB_StationGroup>::iterator it;
 
-    for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      nofDatasets += (*it).second.nofDipoleDatasets();
+    for (it=stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
+      nofDatasets += it->second.nofDipoleDatasets();
     }
 
-    return nofDatasets;
+     return nofDatasets;
   }
 
   //_____________________________________________________________________________
@@ -1061,32 +1060,32 @@ namespace DAL {  // Namespace DAL -- begin
     casa::Vector<uint> valSample = sample_number();
     casa::Vector<int> offset (nofDipoles);
 
-    for (uint n(0); n<nofDipoles; n++)
-      {
-        offset(n) = valTime(n)-valTime(refAntenna) + valSample(n)-valSample(refAntenna);
-      }
-
+    for (uint n(0); n<nofDipoles; n++) {
+      offset(n) = valTime(n)-valTime(refAntenna) + valSample(n)-valSample(refAntenna);
+    }
+    
     return offset;
   }
-
+  
   //_____________________________________________________________________________
   //                                                                           fx
   
   /*!
+    \retval data -- [nofSamples,dipole] Array of raw ADC samples representing
+            the electric field strength as function of time.
     \param start      -- Number of the sample at which to start reading.
     \param nofSamples -- Number of samples to read, starting from the position
            given by <tt>start</tt>.
-
-    \return fx -- [nofSamples,dipole] Array of raw ADC samples representing
-            the electric field strength as function of time.
   */
-  casa::Matrix<double> TBB_Timeseries::fx (int const &start,
-					   int const &nofSamples)
+  void TBB_Timeseries::fx (casa::Matrix<double> &data,
+			   int const &start,
+			   int const &nofSamples)
   {
     uint nofDipoles = nofDipoleDatasets();
     casa::Vector<int> startPositions (nofDipoles,start);
-    
-    return fx (startPositions,
+
+    return fx (data,
+	       startPositions,
 	       nofSamples);
   }
   
@@ -1094,30 +1093,29 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                                           fx
   
   /*!
+    \retval data -- [nofSamples,dipole] Array of raw ADC samples representing
+            the electric field strength as function of time.
     \param start      -- Number of the sample at which to start reading; w.r.t.
            to the variant where just a single value is provided, this function
            allows to set the starting point for each dipole individually
     \param nofSamples -- Number of samples to read, starting from the position
            given by <tt>start</tt>.
-
-    \return fx -- [nofSamples,dipole] Array of raw ADC samples representing
-            the electric field strength as function of time.
   */
-  casa::Matrix<double> TBB_Timeseries::fx (casa::Vector<int> const &start,
-					   int const &nofSamples)
+  void TBB_Timeseries::fx (casa::Matrix<double> &data,
+			   casa::Vector<int> const &start,
+			   int const &nofSamples)
   {
-    uint nofDipoles = 0;
     uint nelem      = start.nelements();
+    uint nofDipoles = 0;
     std::map<std::string,TBB_StationGroup>::iterator it;
-    
+
     // Check input parameters ______________________________
     
     if (location_p > 0) {
       
-      
       // Check the size of the 'start' vector
       for (it=stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-	nofDipoles += it->second.selectedDipoles().size();
+	nofDipoles += (it->second.selectedDipoles().size());
       }
       if (nelem != nofDipoles) {
 	std::cerr << "[TBB_Timeseries::fx]"
@@ -1126,27 +1124,29 @@ namespace DAL {  // Namespace DAL -- begin
 	std::cerr << " -- nof. selected dipoles   = " << nofDipoles << std::endl;
 	std::cerr << " -- nof. elements in vector = " << nelem      << std::endl;
 	//
-	return casa::Matrix<double> (1,1,0);
+	data = casa::Matrix<double> (1,1,0);
       }
       
     }  //  end -- (location_p>0)
     else {
       std::cerr << "[TBB_Timeseries::fx] Object not connected to dataset"
 		<< std::endl;
-      return casa::Matrix<double> (1,1,0);
+      data = casa::Matrix<double> (1,1,0);
     }
     
     // Retrieve data from file _____________________________
     
-    casa::Matrix<double> data (nofSamples,nofDipoles);
     casa::Matrix<double> tmpData;
     casa::Vector<int> tmpStart;
+    uint nDipole (0);
     uint offsetStart (0);
     bool status (true);
+
+    data.resize (nofSamples,nofDipoles);
     
     for (it=stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
       // get the number of dipoles for this station
-      nofDipoles += it->second.selectedDipoles().size();
+      nofDipoles = it->second.selectedDipoles().size();
       // set up start position values
       tmpStart.resize(nofDipoles);
       for (uint dipole(0); dipole<nofDipoles; ++dipole) {
@@ -1155,9 +1155,13 @@ namespace DAL {  // Namespace DAL -- begin
       }
       // get the data for the dipoles of that station
       status = it->second.fx(tmpData,tmpStart,nofSamples);
+      // copy the data
+      for (uint dipole(0); dipole<nofDipoles; ++dipole) {
+	data.column(nDipole) = tmpData.column(dipole);
+	++nDipole;
+      }
     }
     
-    return data;
   }
   
 #endif

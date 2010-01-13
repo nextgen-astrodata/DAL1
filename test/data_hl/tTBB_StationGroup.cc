@@ -74,7 +74,7 @@ using DAL::TBB_StationGroup;
 */
 int test_constructors ()
 {
-  std::cout << "\n[tTBB_StationGroup::test_constructors]\n" << endl;
+  cout << "\n[tTBB_StationGroup::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   hid_t fileID;
@@ -94,9 +94,9 @@ int test_constructors ()
     return -1;
   }
 
-  std::cout << "-- Filename  = " << filename  << std::endl;
-  std::cout << "-- File ID   = " << fileID    << std::endl;
-  std::cout << "-- Groupname = " << groupname << std::endl;
+  cout << "-- Filename  = " << filename  << endl;
+  cout << "-- File ID   = " << fileID    << endl;
+  cout << "-- Groupname = " << groupname << endl;
 
   // Test default constructor ______________________________
 
@@ -154,7 +154,7 @@ int test_constructors ()
 */
 int test_constructors (std::string const &filename)
 {
-  std::cout << "\n[tTBB_StationGroup::test_constructors]\n" << endl;
+  cout << "\n[tTBB_StationGroup::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   hid_t fileID;
@@ -184,10 +184,10 @@ int test_constructors (std::string const &filename)
     return -1;
   }
 
-  std::cout << "-- Filename        = " << filename  << std::endl;
-  std::cout << "-- File identifier = " << fileID    << std::endl;
-  std::cout << "-- Station groups  = " << names     << std::endl;
-  std::cout << "-- Groupname       = " << groupname << std::endl;
+  cout << "-- Filename        = " << filename  << endl;
+  cout << "-- File identifier = " << fileID    << endl;
+  cout << "-- Station groups  = " << names     << endl;
+  cout << "-- Groupname       = " << groupname << endl;
 
   //__________________________________________________________________
   // TEST: Default constructor
@@ -265,7 +265,7 @@ int test_methods (std::string const &filename)
 
   // Open HDF5 file and station group ______________________
 
-  std::cout << "--> opening file ..." << std::endl;
+  cout << "--> opening file ..." << endl;
   fileID = H5Fopen (filename.c_str(),
 		    H5F_ACC_RDWR,
 		    H5P_DEFAULT);
@@ -285,7 +285,7 @@ int test_methods (std::string const &filename)
     return -1;
   }
 
-  std::cout << "--> opening station group ..." << std::endl;
+  cout << "--> opening station group ..." << endl;
   TBB_StationGroup group (fileID,groupname);
 
   //__________________________________________________________________
@@ -459,7 +459,7 @@ int test_methods (std::string const &filename)
 */
 int test_export2record (std::string const &filename)
 {
-  std::cout << "\n[test_export2record]\n" << std::endl;
+  cout << "\n[test_export2record]\n" << endl;
 
   int nofFailedTests (0);
   hid_t fileID;
@@ -469,7 +469,7 @@ int test_export2record (std::string const &filename)
 
   // Open HDF5 file and station group ______________________
 
-  std::cout << "--> opening file ..." << std::endl;
+  cout << "--> opening file ..." << endl;
   fileID = H5Fopen (filename.c_str(),
 		    H5F_ACC_RDWR,
 		    H5P_DEFAULT);
@@ -489,18 +489,18 @@ int test_export2record (std::string const &filename)
     return -1;
   }
 
-  std::cout << "--> opening station group ..." << std::endl;
+  cout << "--> opening station group ..." << endl;
   TBB_StationGroup group (fileID,groupname);
 
   // Perform the tests _____________________________________
 
-  std::cout << "[1] Retreiving attributes of group into record ..." << std::endl;
+  cout << "[1] Retreiving attributes of group into record ..." << endl;
   try
     {
       // retrieve attributes into record
       casa::Record rec = group.attributes2record ();
       // display the record
-      std::cout << rec << std::endl;
+      cout << rec << endl;
     }
   catch (std::string message)
     {
@@ -508,14 +508,14 @@ int test_export2record (std::string const &filename)
       nofFailedTests++;
     }
 
-  std::cout << "[2] Retreiving attributes of group into record (recursive) ..."
-            << std::endl;
+  cout << "[2] Retreiving attributes of group into record (recursive) ..."
+            << endl;
   try
     {
       // retrieve attributes into record
       casa::Record rec = group.attributes2record (true);
       // display the record
-      std::cout << rec << std::endl;
+      cout << rec << endl;
     }
   catch (std::string message)
     {
@@ -523,7 +523,7 @@ int test_export2record (std::string const &filename)
       nofFailedTests++;
     }
 
-  std::cout << "[3] Combined multiple station group records ..." << std::endl;
+  cout << "[3] Combined multiple station group records ..." << endl;
   try
     {
       // retrieve attributes into record
@@ -535,7 +535,7 @@ int test_export2record (std::string const &filename)
       record.defineRecord ("Station003",rec);
       record.defineRecord ("Station004",rec);
       // display the record
-      std::cout << record << std::endl;
+      cout << record << endl;
     }
   catch (std::string message)
     {
@@ -570,7 +570,7 @@ int test_data (std::string const &filename)
 
   // Open HDF5 file and station group ______________________
 
-  std::cout << "--> opening file ..." << std::endl;
+  cout << "--> opening file ..." << endl;
   fileID = H5Fopen (filename.c_str(),
 		    H5F_ACC_RDWR,
 		    H5P_DEFAULT);
@@ -590,13 +590,13 @@ int test_data (std::string const &filename)
     return -1;
   }
 
-  std::cout << "--> opening station group ..." << std::endl;
+  cout << "--> opening station group ..." << endl;
   TBB_StationGroup group (fileID,groupname);
   group.summary();
 
   // Perform the tests _____________________________________
 
-  std::cout << "[1] Retrieve data for all dipoles ..." << std::endl;
+  cout << "[1] Retrieve data for all dipoles ..." << endl;
   try {
     bool status (true);
     casa::Matrix<double> data;
@@ -605,25 +605,43 @@ int test_data (std::string const &filename)
     status = group.fx (data, start, blocksize);
 
     // feedback
-    std::cout << "-- Status         = " << status       << std::endl;
-    std::cout << "-- Data start     = " << start        << std::endl;
-    std::cout << "-- Data blocksize = " << blocksize    << std::endl;
-    std::cout << "-- Data array     = " << data.shape() << std::endl;
-    std::cout << "-- Data [0,]      = " << data.row(0)  << std::endl;
-    std::cout << "-- Data [1,]      = " << data.row(1)  << std::endl;
+    cout << "-- Status         = " << status       << endl;
+    cout << "-- Data start     = " << start        << endl;
+    cout << "-- Data blocksize = " << blocksize    << endl;
+    cout << "-- Data array     = " << data.shape() << endl;
+    cout << "-- Data [0,]      = " << data.row(0)  << endl;
+    cout << "-- Data [1,]      = " << data.row(1)  << endl;
   }
   catch (std::string message) {
     cerr << message << endl;
-    nofFailedTests++;
+    ++nofFailedTests;
   }
   
-  std::cout << "[2] Retrieve data for selected dipoles ..." << std::endl;
+  cout << "[2] Retrieve data for selected dipoles ..." << endl;
   try {
-    
+    bool status (true);
+    casa::Matrix<double> data;
+    std::set<std::string> dipoles = group.selectedDipoles();
+    uint nofDipoles               = dipoles.size();
+    std::set<std::string>::iterator it;
+
+    for (uint n(0); n<nofDipoles/2; ++n) {
+      // remove the first element from the selection
+      it = dipoles.begin();
+      cout << "-- removing dipole " << *it << " from the selection ..." << endl;
+      dipoles.erase(it);
+      // set the new selection
+      group.setSelectedDipoles(dipoles);
+      status = group.fx (data, start, blocksize);
+      //
+      cout << " --> Dipoles     = " << group.selectedDipoles() << endl;
+      cout << " --> shape(data) = " << data.shape()            << endl;
+      cout << " --> data [0,]   = " << data.row(0)             << endl;
+    }
   }
   catch (std::string message) {
     cerr << message << endl;
-    nofFailedTests++;
+    ++nofFailedTests;
   }
   
   return nofFailedTests;
@@ -662,9 +680,9 @@ int main (int argc,
     // Test access to the data
     nofFailedTests += test_data (filename);
   } else {
-    std::cout << "\n[tTBB_StationGroup] Skipping tests with input dataset.\n"
-	      << endl;
+    cout << "\n[tTBB_StationGroup] Skipping tests with input dataset.\n"
+	 << endl;
   }
-
+  
   return nofFailedTests;
 }

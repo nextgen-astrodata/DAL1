@@ -216,11 +216,13 @@ namespace DAL {  // Namespace DAL -- begin
     //! Time offset between the individual antennas in units of samples
     casa::Vector<int> sample_offset (uint const &refAntenna=0);
     //! Retrieve a block of ADC values per dipole
-    casa::Matrix<double> fx (int const &start=0,
-			     int const &nofSamples=1);
+    void fx (casa::Matrix<double> &data,
+	     int const &start=0,
+	     int const &nofSamples=1);
     //! Retrieve a block of ADC values per dipole
-    casa::Matrix<double> fx (casa::Vector<int> const &start,
-			     int const &nofSamples=1);
+    void fx (casa::Matrix<double> &data,
+	     casa::Vector<int> const &start,
+	     int const &nofSamples=1);
     //! Get a casa::Record containing the values of the attributes
     casa::Record attributes2record (bool const &recursive=false);
     //! Create casa::Record used as header record for the CR::DataReader class
