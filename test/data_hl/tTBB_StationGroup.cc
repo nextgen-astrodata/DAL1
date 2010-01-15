@@ -625,7 +625,7 @@ int test_data (std::string const &filename)
     uint nofDipoles               = dipoles.size();
     std::set<std::string>::iterator it;
 
-    for (uint n(0); n<nofDipoles/2; ++n) {
+    for (uint n(0); n<(nofDipoles-1); ++n) {
       // remove the first element from the selection
       it = dipoles.begin();
       cout << "-- removing dipole " << *it << " from the selection ..." << endl;

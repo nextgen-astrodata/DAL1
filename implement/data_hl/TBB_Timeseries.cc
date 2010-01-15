@@ -401,6 +401,21 @@ namespace DAL {  // Namespace DAL -- begin
     return status;
   }
   
+  //_____________________________________________________________________________
+  //                                                             selectAllDipoles
+
+  bool TBB_Timeseries::selectAllDipoles ()
+  {
+    bool status (true);
+    std::map<std::string,TBB_StationGroup>::iterator it;
+
+    for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
+      status *= it->second.selectAllDipoles();
+    }
+    
+    return status;
+  }
+  
   // ============================================================================
   //
   //  Access to attributes attached to the station groups
@@ -1081,7 +1096,7 @@ namespace DAL {  // Namespace DAL -- begin
 			   int const &start,
 			   int const &nofSamples)
   {
-    uint nofDipoles = nofDipoleDatasets();
+    uint nofDipoles = selectedDipoles().size();
     casa::Vector<int> startPositions (nofDipoles,start);
 
     return fx (data,
@@ -1133,7 +1148,7 @@ namespace DAL {  // Namespace DAL -- begin
 		<< std::endl;
       data = casa::Matrix<double> (1,1,0);
     }
-    
+
     // Retrieve data from file _____________________________
     
     casa::Matrix<double> tmpData;
@@ -1143,7 +1158,7 @@ namespace DAL {  // Namespace DAL -- begin
     bool status (true);
 
     data.resize (nofSamples,nofDipoles);
-    
+
     for (it=stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
       // get the number of dipoles for this station
       nofDipoles = it->second.selectedDipoles().size();
@@ -1151,8 +1166,8 @@ namespace DAL {  // Namespace DAL -- begin
       tmpStart.resize(nofDipoles);
       for (uint dipole(0); dipole<nofDipoles; ++dipole) {
 	tmpStart(dipole) = start(offsetStart+dipole);
-	++offsetStart;
       }
+      offsetStart += nofDipoles;
       // get the data for the dipoles of that station
       status = it->second.fx(tmpData,tmpStart,nofSamples);
       // copy the data

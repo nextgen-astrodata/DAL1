@@ -269,22 +269,20 @@ int test_attributes2record (std::string const &filename)
 */
 int test_data (std::string const &filename)
 {
-  cout << "\n[test_data]\n" << endl;
+  cout << "\n[tTBB_Timeseries::test_data]\n" << endl;
 
   int nofFailedTests = 0;
   int start          = 0;
   int nofSamples     = 1024;
-  TBB_Timeseries timeseries (filename);
-
-  cout << "[1] Retrieve time-series data without channel selection"
-       << endl;
+  TBB_Timeseries ts (filename);
+  std::set<std::string> dipoles = ts.selectedDipoles();
+  
+  cout << "[1] Retrieve time-series data without channel selection" << endl;
   try {
     casa::Matrix<double> data;
+    
+    ts.fx (data, start, nofSamples);
 
-    timeseries.fx (data,
-		   start,
-		   nofSamples);
-    // feedback
     cout << "-- Data start     = " << start        << endl;
     cout << "-- Data blocksize = " << nofSamples   << endl;
     cout << "-- Data array     = " << data.shape() << endl;
@@ -296,6 +294,51 @@ int test_data (std::string const &filename)
     std::cerr << message << endl;
     nofFailedTests++;
   }
+
+  cout << "[2] Retrieve data for selected dipoles ..." << endl;
+  try {
+    casa::Matrix<double> data;
+    uint nofDipoles = dipoles.size();
+    std::set<std::string>::iterator it;
+
+    for (uint n(0); n<(nofDipoles-1); ++n) {
+      // remove the first element from the selection
+      it = dipoles.begin();
+      cout << "-- removing dipole " << *it << " from the selection ..." << endl;
+      dipoles.erase(it);
+      // set the new selection ...
+      ts.setSelectedDipoles(dipoles);
+      // ... and retrieve the data
+      ts.fx (data, start, nofSamples);
+      //
+      cout << " --> Dipoles     = " << ts.selectedDipoles() << endl;
+      cout << " --> shape(data) = " << data.shape()         << endl;
+      cout << " --> data [0,]   = " << data.row(0)          << endl;
+    }
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    ++nofFailedTests;
+  }
+
+  cout << "[3] Retrieve data after selecting all dipoles ..." << endl;
+  try {
+    casa::Matrix<double> data;
+    // Reset the dipole selection and retrive the data
+    ts.selectAllDipoles();
+    ts.fx (data, start, nofSamples);
+    //
+    cout << " --> Dipoles     = " << ts.selectedDipoles() << endl;
+    cout << " --> shape(data) = " << data.shape()         << endl;
+    cout << " --> data [0,]   = " << data.row(0)          << endl;
+    cout << " --> data [1,]   = " << data.row(1)          << endl;
+    cout << " --> data [2,]   = " << data.row(2)          << endl;
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    ++nofFailedTests;
+  }
+  
   
   return nofFailedTests;
 }

@@ -144,6 +144,9 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! Set the set of selected dipoles
     bool setSelectedDipoles (std::set<std::string> const &selection);
+
+    //! Select all dipoles within the dataset
+    bool selectAllDipoles ();
     
     // === Parameter access - TBB time-series ===================================
 
@@ -227,11 +230,9 @@ namespace DAL {  // Namespace DAL -- begin
     casa::Record attributes2record (bool const &recursive=false);
     //! Create casa::Record used as header record for the CR::DataReader class
     casa::Record attributes2headerRecord ();
-#endif
 
     //  Parameter access - dipole dataset __________________
     
-#ifdef HAVE_CASA
     //! Retrieve the list of channel IDs
     casa::Vector<int> channelID ();
     //! Get the values of TIME for all present datasets
