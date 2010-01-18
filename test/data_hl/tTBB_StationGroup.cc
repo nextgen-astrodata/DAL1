@@ -524,25 +524,23 @@ int test_export2record (std::string const &filename)
     }
 
   cout << "[3] Combined multiple station group records ..." << endl;
-  try
-    {
-      // retrieve attributes into record
-      casa::Record rec = group.attributes2record (true);
-      // set up recording holding multiple station group records
-      casa::Record record;
-      record.defineRecord ("Station001",rec);
-      record.defineRecord ("Station002",rec);
-      record.defineRecord ("Station003",rec);
-      record.defineRecord ("Station004",rec);
-      // display the record
-      cout << record << endl;
-    }
-  catch (std::string message)
-    {
-      cerr << message << endl;
-      nofFailedTests++;
-    }
-
+  try {
+    // retrieve attributes into record
+    casa::Record rec = group.attributes2record (true);
+    // set up recording holding multiple station group records
+    casa::Record record;
+    record.defineRecord ("Station001",rec);
+    record.defineRecord ("Station002",rec);
+    record.defineRecord ("Station003",rec);
+    record.defineRecord ("Station004",rec);
+    // display the record
+    cout << record << endl;
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
@@ -551,9 +549,9 @@ int test_export2record (std::string const &filename)
 
 /*!
   \brief Test retrieval of the actual time-series data form the dipoles
-
+  
   \param name_file -- Data file used for testing
-
+  
   \return nofFailedTests -- The number of failed tests.
 */
 int test_data (std::string const &filename)

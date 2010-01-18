@@ -40,6 +40,15 @@ namespace DAL { // Namespace DAL -- begin
     processingHistory_p.clear();
     coordinates_p.clear();
   }
+
+  //_____________________________________________________________________________
+  //                                                                BF_PencilBeam
+
+  BF_PencilBeam::BF_PencilBeam (hid_t const &location,
+				std::string const &name)
+  {
+    open (location,name,false);
+  }
   
   //_____________________________________________________________________________
   //                                                                BF_PencilBeam
@@ -123,6 +132,8 @@ namespace DAL { // Namespace DAL -- begin
 
     attributes_p.insert("GROUPTYPE");
     attributes_p.insert("TARGET");
+    attributes_p.insert("NOF_STATIONS");
+    attributes_p.insert("STATIONS_LIST");
     attributes_p.insert("POINT_RA");
     attributes_p.insert("POINT_DEC");
     attributes_p.insert("POSITION_OFFSET_RA");
@@ -192,10 +203,13 @@ namespace DAL { // Namespace DAL -- begin
 	  std::string grouptype ("PencilBeam");
 	  std::string undefined ("UNDEFINED");
 	  bool ok (false);
+	  std::vector<std::string> stations (1,undefined);
 	  std::vector<std::string> stokes (1,undefined);
 	  // write the attributes
 	  h5set_attribute (location_p,"GROUPTYPE",                grouptype   );
 	  h5set_attribute (location_p,"TARGET",                   undefined   );
+	  h5set_attribute (location_p,"NOF_STATIONS",             int(0)      );
+	  h5set_attribute (location_p,"STATIONS_LIST",            stations    );
 	  h5set_attribute (location_p,"POINT_RA",                 double(0.0) );
 	  h5set_attribute (location_p,"POINT_DEC",                double(0.0) );
 	  h5set_attribute (location_p,"POSITION_OFFSET_RA",       double(0.0) );

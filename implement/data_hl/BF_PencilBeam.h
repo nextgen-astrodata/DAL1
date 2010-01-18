@@ -94,7 +94,9 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Default constructor
     BF_PencilBeam ();
-    
+    //! Argumented constructor
+    BF_PencilBeam (hid_t const &location,
+		   std::string const &name);
     //! Argumented constructor
     BF_PencilBeam (hid_t const &location,
 		   unsigned int const &index,
