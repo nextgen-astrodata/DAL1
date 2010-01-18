@@ -2,8 +2,8 @@
 | $Id::                                                                 $ |
 *-------------------------------------------------------------------------*
 ***************************************************************************
-*   Copyright (C) 2009 by Alwin de Jong                                   *
-*   jong@astron.nl                                                        *
+*   Copyright (C) 2009 by ASTRON                                          *
+*    Author: Alwin de Jong ( jong@astron.nl )                             *
 *                                                                         *
 *   This program is free software; you can redistribute it and/or modify  *
 *   it under the terms of the GNU General Public License as published by  *
@@ -47,7 +47,6 @@ StationBeamReader::StationBeamReader(BF2H5 *parent, bool socket_mode)
 
 StationBeamReader::~StationBeamReader() {
 	// close sockets and input file if open
-//	cout << "destructor StationBeamReader executing" << endl;
 	if (server_socket)
 		close(server_socket);
 	if (rawfile)
@@ -84,7 +83,6 @@ bool StationBeamReader::openRawFile( std::string &filename )
 	rawfile = new std::fstream( filename.data(), ios::binary|ios::in );
 	rawfile->seekg(0, ios::end); // move to end of file to determine its file size
 	file_byte_size = static_cast<size_t>(rawfile->tellg())-2; // see how many bytes in file
-    //std::cout << "filesize in bytes: " << file_byte_size << std::endl;
 	rawfile->seekg(0, ios::beg);  // move to start of file
 	return rawfile->is_open();
 }

@@ -2,8 +2,8 @@
 | $Id::                                                                 $ |
 *-------------------------------------------------------------------------*
 ***************************************************************************
-*   Copyright (C) 2009 by Alwin de Jong                                   *
-*   jong@astron.nl                                                        *
+*   Copyright (C) 2009 by ASTRON                                          *
+*    Author: Alwin de Jong ( jong@astron.nl )                             *
 *                                                                         *
 *   This program is free software; you can redistribute it and/or modify  *
 *   it under the terms of the GNU General Public License as published by  *
@@ -50,7 +50,6 @@ waitForDataTimeOut(0), foundDataForCurrentBlock(false), outputBlockSize(output_b
 
 
 HDF5Writer::~HDF5Writer() {
-//	cout << "destructor HDF5Writer executing" << endl;
 	pthread_mutex_destroy(&writeMapMutex);
 	delete [] zeroBlock;
 	delete [] subbandReady;
@@ -226,14 +225,11 @@ bool HDF5Writer::stop(void) {
 	cout << "Stopping thr writer" << endl;
 #endif 
 	stopWriting = true;
-//	cout << "trying to join writer thread" << endl;
 	status = pthread_join (itsWriteThread, &thread_result);
 	if (status != 0) {
-//		cout << "writer thread returned " << status << endl;
 		bResult = false;
 	}
 	if (thread_result != NULL) {
-//		cout << "writer thread non NULL result value" << endl;
 		bResult = false;
 	}
 	return bResult;
@@ -272,14 +268,12 @@ bool HDF5Writer::getDataForCurrentBlock(void) {
 			dataPair = it->second.front();
 			
 			foundDataForCurrentBlock = true;
-//			cout << "found data subband " << static_cast<int>(dataPair.first) << ", block " << currentBlockNr << "pointer=" << dataPair.second << endl << endl;
 			it->second.pop_front();
 			pthread_mutex_unlock(&writeMapMutex);
 			return true;
 		}
 	}
 	pthread_mutex_unlock(&writeMapMutex);
-//	cout << "no data found for block " << currentBlockNr << endl;
 	return false; // no data found for current block
 }
 
@@ -355,7 +349,6 @@ cout << "HDF5Writer is done." << endl;
 		rawfile = new std::fstream( filename, ios::binary|ios::in );
 		rawfile->seekg(0, ios::end); // move to end of file to determine its file size
 		file_byte_size = static_cast<unsigned long int>(rawfile->tellg())-2; // see how many bytes in file
-    //std::cout << "filesize in bytes: " << file_byte_size << std::endl;
 		rawfile->seekg(0, ios::beg);  // move to start of file
 	}
 	
