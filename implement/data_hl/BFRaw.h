@@ -56,6 +56,7 @@ namespace DAL {
     \class BFRaw
 
     \ingroup DAL
+    \ingroup data_hl
 
     \brief High-level interface between raw beam-formed data and the DAL.
 
@@ -63,9 +64,9 @@ namespace DAL {
     
     High-level interface between raw beam-formed data and the DAL.
   */
-  class BFRaw : public BFRawFormat
-  {
-   public:
+  class BFRaw : public BFRawFormat {
+    
+  public:
     //! Conversion of radian to degrees
     char * DECrad2deg ( const float &rad );
     //! Conversion of radian to degrees

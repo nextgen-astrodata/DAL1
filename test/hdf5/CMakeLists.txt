@@ -3,15 +3,12 @@
 ##                                                           List of source files
 
 file (GLOB tests_hdf5 tHDF5*.cc h5*.c)
+file (GLOB dal_hdf5_sources HDF5*.cc)
 
 ##_______________________________________________________________________________
 ##                                                     Build/Install instructions
 
-add_library (dal_hdf5
-  HDF5Attribute.cc
-  HDF5Dataset.cc
-  H5Hyperslab.cc
-  )
+add_library (dal_hdf5 ${dal_hdf5_sources})
 
 foreach (src ${tests_hdf5})
   ## get the name of the file without the extension

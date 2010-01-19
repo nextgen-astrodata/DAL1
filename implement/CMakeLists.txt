@@ -94,9 +94,6 @@ set (dal_modules
 file (GLOB dal_headers *.h)
 
 set (dal_sources
-  TBB.cc
-  TBBraw.cc
-  BFRaw.cc
   dalFITS.cc
   )
 

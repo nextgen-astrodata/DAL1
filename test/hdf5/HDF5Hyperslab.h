@@ -21,8 +21,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef H5HYPERSLAB_H
-#define H5HYPERSLAB_H
+#ifndef HDF5HYPERSLAB_H
+#define HDF5HYPERSLAB_H
 
 // Standard library header files
 #include <iostream>
@@ -34,17 +34,17 @@
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class H5Hyperslab
+    \class HDF5Hyperslab
     
     \ingroup data_common
     
-    \brief Brief description for class H5Hyperslab
+    \brief Brief description for class HDF5Hyperslab
     
     \author Lars B&auml;hren
 
     \date 2009/11/25
 
-    \test tH5Hyperslab.cc
+    \test tHDF5Hyperslab.cc
     
     <h3>Prerequisite</h3>
     
@@ -57,7 +57,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class H5Hyperslab {
+  class HDF5Hyperslab {
     
     //! Identifier for this dataset within the HDF5 file
     hid_t datasetID_p;
@@ -77,13 +77,13 @@ namespace DAL { // Namespace DAL -- begin
     // ------------------------------------------------------------- Construction
     
     //! Default constructor
-    H5Hyperslab ();
+    HDF5Hyperslab ();
     
     //! Argumented constructor
-    H5Hyperslab (hid_t const &location);
+    HDF5Hyperslab (hid_t const &location);
     
     //! Argumented constructor
-    H5Hyperslab (hid_t const &location,
+    HDF5Hyperslab (hid_t const &location,
 		      std::vector<int> const &start,
 		      std::vector<int> const &stride,
 		      std::vector<int> const &count,
@@ -92,34 +92,34 @@ namespace DAL { // Namespace DAL -- begin
     /*!
       \brief Copy constructor
       
-      \param other -- Another H5Hyperslab object from which to create this new
+      \param other -- Another HDF5Hyperslab object from which to create this new
              one.
     */
-    H5Hyperslab (H5Hyperslab const &other);
+    HDF5Hyperslab (HDF5Hyperslab const &other);
     
     // -------------------------------------------------------------- Destruction
 
     //! Destructor
-    ~H5Hyperslab ();
+    ~HDF5Hyperslab ();
     
     // ---------------------------------------------------------------- Operators
     
     /*!
       \brief Overloading of the copy operator
       
-      \param other -- Another H5Hyperslab object from which to make a copy.
+      \param other -- Another HDF5Hyperslab object from which to make a copy.
     */
-    H5Hyperslab& operator= (H5Hyperslab const &other); 
+    HDF5Hyperslab& operator= (HDF5Hyperslab const &other); 
     
     // --------------------------------------------------------------- Parameters
     
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, H5Hyperslab.
+      \return className -- The name of the class, HDF5Hyperslab.
     */
     inline std::string className () const {
-      return "H5Hyperslab";
+      return "HDF5Hyperslab";
     }
 
     /*!
@@ -145,14 +145,14 @@ namespace DAL { // Namespace DAL -- begin
   private:
     
     //! Unconditional copying
-    void copy (H5Hyperslab const &other);
+    void copy (HDF5Hyperslab const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class H5Hyperslab -- end
+  }; // Class HDF5Hyperslab -- end
   
 } // Namespace DAL -- end
 
-#endif /* H5HYPERSLAB_H */
+#endif /* HDF5HYPERSLAB_H */
   

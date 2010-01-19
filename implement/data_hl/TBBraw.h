@@ -53,6 +53,7 @@ namespace DAL {  // Namespace DAL -- begin
     \class TBBraw
     
     \ingroup DAL
+    \ingroup data_hl
     
     \brief Class to generate HDF5 files from raw TBB data-frames
     

@@ -21,17 +21,17 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "H5Hyperslab.h"
+#include "HDF5Hyperslab.h"
 
 // Namespace usage
-using DAL::H5Hyperslab;
+using DAL::HDF5Hyperslab;
 
 /*!
-  \file tH5Hyperslab.cc
+  \file tHDF5Hyperslab.cc
 
   \ingroup DAL
 
-  \brief A collection of test routines for the H5Hyperslab class
+  \brief A collection of test routines for the HDF5Hyperslab class
  
   \author Lars B&auml;hren
  
@@ -55,7 +55,7 @@ int test_constructors ()
   
   std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
-    H5Hyperslab newObject;
+    HDF5Hyperslab newObject;
     //
     newObject.summary(); 
   } catch (std::string message) {

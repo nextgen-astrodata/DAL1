@@ -39,7 +39,6 @@
 
   \date 2007/04/12
 
-
   <h3>Usage</h3>
 
   In order to really test the reading of data, the test program needs to be
@@ -50,7 +49,8 @@
 
 */
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                    export_data
 
 /*!
   \brief Export the antenna-/channeldata to an ASCII-table
@@ -99,7 +99,8 @@ void export_data (std::string const &filename,
 
 }
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                    export_data
 
 /*!
   \brief Export the antenna-/channeldata to an ASCII-table
@@ -154,7 +155,8 @@ void export_data (std::string const &filename,
 
 }
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                   compare_data
 
 /*!
   \brief Element-by-element comparison of the data in the two arrays
@@ -185,7 +187,8 @@ void compare_data (casa::Vector<short> const &array1D,
     }
 }
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                              test_constructors
 
 /*!
   \brief Test constructors for a new dalLopesEvent object
@@ -194,26 +197,24 @@ void compare_data (casa::Vector<short> const &array1D,
 */
 int test_constructors (std::string const &filename)
 {
-  std::cout << "\n[test_constructors]\n" << std::endl;
+  std::cout << "\n[tdalLopesEvent::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
 
   std::cout << "[1] Testing default constructor..." << std::endl;
-  try
-    {
-      dalLopesEvent event;
-      event.summary();
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  try {
+    DAL::dalLopesEvent event;
+    event.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   std::cout << "[2] Testing argumented constructor..." << std::endl;
   try
     {
-      dalLopesEvent event (filename);
+      DAL::dalLopesEvent event (filename);
       event.summary();
     }
   catch (std::string message)
@@ -221,11 +222,12 @@ int test_constructors (std::string const &filename)
       std::cerr << message << std::endl;
       nofFailedTests++;
     }
-
+  
   return nofFailedTests;
 }
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                               test_channeldata
 
 /*!
   \brief Test retrieving and working with the channeldata
@@ -234,7 +236,7 @@ int test_constructors (std::string const &filename)
 */
 int test_channeldata (std::string const &filename)
 {
-  std::cout << "\n[test_channeldata]\n" << std::endl;
+  std::cout << "\n[tdalLopesEvent::test_channeldata]\n" << std::endl;
 
   int nofFailedTests (0);
   unsigned int nofAntennas (0);
@@ -244,44 +246,42 @@ int test_channeldata (std::string const &filename)
   try
     {
       std::cout << "-- Opening file " << filename << " ..." << std::endl;
-      dalLopesEvent event (filename);
+      DAL::dalLopesEvent event (filename);
       std::cout << "-- Retrieving data ..." << std::endl;
       casa::Matrix<short> data = event.channeldata();
       // export data to file
       export_data ("lopesevent.data",data);
     }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   std::cout << "[2] Get data per antenna as casa::Vector ..." << std::endl;
-  try
-    {
-      std::cout << "-- Opening file " << filename << " ..." << std::endl;
-      dalLopesEvent event (filename);
-      nofAntennas = event.nofAntennas();
-      casa::Vector<short> data;
-      std::cout << "-- Retrieving data for individual antennas ..." << std::endl;
-      for (unsigned int ant(0); ant<nofAntennas; ant++)
-        {
-          data = event.channeldata (ant);
-        }
-    }
+  try {
+    std::cout << "-- Opening file " << filename << " ..." << std::endl;
+    DAL::dalLopesEvent event (filename);
+    nofAntennas = event.nofAntennas();
+    casa::Vector<short> data;
+    std::cout << "-- Retrieving data for individual antennas ..." << std::endl;
+    for (unsigned int ant(0); ant<nofAntennas; ant++)
+      {
+	data = event.channeldata (ant);
+      }
+  }
   catch (std::string message)
     {
       std::cerr << message << std::endl;
       nofFailedTests++;
     }
-
+  
   std::cout << "[3] Get all data as C++ array..." << std::endl;
   try
     {
       short *data;
-
+      
       std::cout << "-- Opening file " << filename << " ..." << std::endl;
-      dalLopesEvent event (filename);
+      DAL::dalLopesEvent event (filename);
       nofAntennas = event.nofAntennas();
       blocksize   = event.blocksize();
       std::cout << "-- Adjusting array to receive data ..." << std::endl;
@@ -294,78 +294,75 @@ int test_channeldata (std::string const &filename)
                    nofAntennas,
                    blocksize);
     }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   std::cout << "[4] Get data per antenna as C++ array..." << std::endl;
-  try
-    {
-      short *data;
-
-      std::cout << "-- Opening file " << filename << " ..." << std::endl;
-      dalLopesEvent event (filename);
-      nofAntennas = event.nofAntennas();
-      blocksize   = event.blocksize();
-      std::cout << "-- Adjusting array to receive data ..." << std::endl;
-      data = new short[blocksize];
-      std::cout << "-- Retrieving data ..." << std::endl;
-      for (unsigned int antenna(0); antenna<nofAntennas; antenna++)
-        {
-          event.data(data,antenna);
-//       std::cout << "\t(" << antenna << ")\t"
-// 		<< data[0] << " (" << &data[0] << ") .. "
-// 		<< data[1] << " (" << &data[1] << ") .. "
-// 		<< data[2] << " (" << &data[2] << ") "
-// 		<< std::endl;
-        }
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  try {
+    short *data;
+    
+    std::cout << "-- Opening file " << filename << " ..." << std::endl;
+    DAL::dalLopesEvent event (filename);
+    nofAntennas = event.nofAntennas();
+    blocksize   = event.blocksize();
+    std::cout << "-- Adjusting array to receive data ..." << std::endl;
+    data = new short[blocksize];
+    std::cout << "-- Retrieving data ..." << std::endl;
+    for (unsigned int antenna(0); antenna<nofAntennas; antenna++)
+      {
+	event.data(data,antenna);
+	//       std::cout << "\t(" << antenna << ")\t"
+	// 		<< data[0] << " (" << &data[0] << ") .. "
+	// 		<< data[1] << " (" << &data[1] << ") .. "
+	// 		<< data[2] << " (" << &data[2] << ") "
+	// 		<< std::endl;
+      }
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   std::cout << "[5] Compare retrieval using C++ and CASA arrays..." << std::endl;
-  try
-    {
-      short *data;
-      unsigned int nofAntennas (0);
-      unsigned int blocksize (0);
-
-      std::cout << "-- Opening file " << filename << " ..." << std::endl;
-      dalLopesEvent event (filename);
-      nofAntennas = event.nofAntennas();
-      blocksize   = event.blocksize();
-      std::cout << "-- Adjusting array to receive data ..." << std::endl;
-      data = new short[blocksize];
-      casa::Vector<short> channeldata (blocksize);
-      std::cout << "-- Retrieving data ..." << std::endl;
-      for (unsigned int antenna(0); antenna<nofAntennas; antenna++)
-        {
-          channeldata = event.channeldata (antenna);
-          event.data(data,antenna);
-          //
-          cout << " ant=" << antenna
-               << "\t" << channeldata(0) << " .. " << data[0]
-               << "\t" << channeldata(1) << " .. " << data[1]
-               << "\t" << channeldata(2) << " .. " << data[2]
-               << endl;
-          //
-          compare_data (channeldata,data);
-        }
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  try {
+    short *data;
+    unsigned int nofAntennas (0);
+    unsigned int blocksize (0);
+    
+    std::cout << "-- Opening file " << filename << " ..." << std::endl;
+    DAL::dalLopesEvent event (filename);
+    nofAntennas = event.nofAntennas();
+    blocksize   = event.blocksize();
+    std::cout << "-- Adjusting array to receive data ..." << std::endl;
+    data = new short[blocksize];
+    casa::Vector<short> channeldata (blocksize);
+    std::cout << "-- Retrieving data ..." << std::endl;
+    for (unsigned int antenna(0); antenna<nofAntennas; antenna++)
+      {
+	channeldata = event.channeldata (antenna);
+	event.data(data,antenna);
+	//
+	cout << " ant=" << antenna
+	     << "\t" << channeldata(0) << " .. " << data[0]
+	     << "\t" << channeldata(1) << " .. " << data[1]
+	     << "\t" << channeldata(2) << " .. " << data[2]
+	     << endl;
+	//
+	compare_data (channeldata,data);
+      }
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
-// ------------------------------------------------------------------------------
+
+//_______________________________________________________________________________
+//                                                                test_statistics
 
 /*!
   \brief Generate some statistics for the input data
@@ -389,7 +386,7 @@ int test_statistics (std::string const &filename)
   std::ofstream outfile;
 
   std::cout << "-- Opening file " << filename << " ..." << std::endl;
-  dalLopesEvent event (filename);
+  DAL::dalLopesEvent event (filename);
   // get the number of antenna in the data set
   unsigned int nofAntennas (event.nofAntennas());
   // Array for taking up the data
@@ -397,25 +394,25 @@ int test_statistics (std::string const &filename)
 
   std::cout << "-- Generating and exporting statistics ..." << std::endl;
   outfile.open("lopesevent_statistics.data");
-  for (unsigned int ant(0); ant<nofAntennas; ant++)
-    {
-      data = event.channeldata (ant);
-      // generate statistics and report them
-      outfile << ant << "\t"
-// 	    << min(data) << "\t"
-// 	    << mean(data) << "\t"
-// 	    << max(data) << "\t"
-// 	    << sum(data) << "\t"
-// 	    << count(data > 0.25*max(data)) << "\t"
-      << std::endl;
-    }
+  for (unsigned int ant(0); ant<nofAntennas; ant++) {
+    data = event.channeldata (ant);
+    // generate statistics and report them
+    outfile << ant << "\t"
+      // 	    << min(data) << "\t"
+      // 	    << mean(data) << "\t"
+      // 	    << max(data) << "\t"
+      // 	    << sum(data) << "\t"
+      // 	    << count(data > 0.25*max(data)) << "\t"
+	    << std::endl;
+  }
   outfile.close();
   std::cout << "-- Done." << std::endl;
-
+  
   return nofFailedTests;
 }
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                           main
 
 /*!
   \brief Main routine of the test program
@@ -425,22 +422,25 @@ int test_statistics (std::string const &filename)
 int main (int argc, char *argv[])
 {
   int nofFailedTests (0);
+  bool haveDataset (false);
   std::string filename ("UNDEFINED");
 
-  if (argc < 2)
-    {
-      cerr << "[tLopesEvent] Missing name of event file!" << endl;
-    }
-  else
-    {
-      filename = argv[1];
-    }
-
-  nofFailedTests += test_constructors (filename);
-
-  nofFailedTests += test_channeldata (filename);
-
-  nofFailedTests += test_statistics (filename);
-
+  if (argc < 2) {
+    cerr << "[tLopesEvent] Missing name of event file!" << endl;
+  }
+  else {
+    filename    = argv[1];
+    haveDataset = true;
+  }
+  
+  if (haveDataset) {
+    // Test the constructors for a LopesEvent object
+    nofFailedTests += test_constructors (filename);
+    // Test access to the data
+    nofFailedTests += test_channeldata (filename);
+    // Generate some statistics from the data
+    nofFailedTests += test_statistics (filename);
+  }
+  
   return nofFailedTests;
 }

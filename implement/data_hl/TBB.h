@@ -60,6 +60,7 @@ namespace DAL {
     \class TBB
     
     \ingroup DAL
+    \ingroup data_hl
     
     \brief High-level interface between TBB data and the DAL
     

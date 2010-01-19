@@ -42,16 +42,15 @@ using std::endl;
   \date 2009/10/28
 */
 
+//! Test constructors for a new TBB_DipoleDataset object
 int test_constructors ();
-int test_constructors (std::string const &filename);
+//! Test access to the attributes attached to the dipole dataset
 int test_attributes (std::string const &filename);
 
 //_______________________________________________________________________________
 //                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new TBB_DipoleDataset object
-
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
@@ -394,18 +393,18 @@ int test_attributes (std::string const &filename)
     data.getAttribute ("ANTENNA_ORIENTATION_UNIT",  antennaOrientationUnit);
     data.getAttribute ("ANTENNA_ORIENTATION_FRAME", antennaOrientationFrame);
     //
-    cout << "-- STATION_ID                 = " << stationID        << endl;
-    cout << "-- RSP_ID                     = " << rspID            << endl;
-    cout << "-- RCU_ID                     = " << rcuID            << endl;
-    cout << "-- TIME                       = " << time             << endl;
-    cout << "-- SAMPLE_NUMBER              = " << sampleNumber     << endl;
-    cout << "-- SAMPLES_PER_FRAME          = " << samplesPerFrame  << endl;
-    cout << "-- NYQUIST_ZONE               = " << nyquistZone      << endl;
-    cout << "-- DATA_LENGTH                = " << dataLength       << endl;
-    cout << "-- FEED                       = " << feed             << endl;
-    cout << "-- ANTENNA_POSITION_VALUE     = " << antennaPositionValue  << endl;
-    cout << "-- ANTENNA_POSITION_UNIT      = " << antennaPositionUnit   << endl;
-    cout << "-- ANTENNA_POSITION_FRAME     = " << antennaPositionFrame  << endl;
+    cout << "-- STATION_ID                 = " << stationID               << endl;
+    cout << "-- RSP_ID                     = " << rspID                   << endl;
+    cout << "-- RCU_ID                     = " << rcuID                   << endl;
+    cout << "-- TIME                       = " << time                    << endl;
+    cout << "-- SAMPLE_NUMBER              = " << sampleNumber            << endl;
+    cout << "-- SAMPLES_PER_FRAME          = " << samplesPerFrame         << endl;
+    cout << "-- NYQUIST_ZONE               = " << nyquistZone             << endl;
+    cout << "-- DATA_LENGTH                = " << dataLength              << endl;
+    cout << "-- FEED                       = " << feed                    << endl;
+    cout << "-- ANTENNA_POSITION_VALUE     = " << antennaPositionValue    << endl;
+    cout << "-- ANTENNA_POSITION_UNIT      = " << antennaPositionUnit     << endl;
+    cout << "-- ANTENNA_POSITION_FRAME     = " << antennaPositionFrame    << endl;
     cout << "-- ANTENNA_ORIENTATION_VALUE  = " << antennaOrientationValue << endl;
     cout << "-- ANTENNA_ORIENTATION_UNIT   = " << antennaOrientationUnit  << endl;
     cout << "-- ANTENNA_ORIENTATION_FRAME  = " << antennaOrientationFrame << endl;
@@ -413,7 +412,7 @@ int test_attributes (std::string const &filename)
     std::cerr << "Skipping tests - no datasets found." << endl;
     return -1;
   }
-  
+
   // Release HDF5 object identifiers _______________________
   
   h5error = H5Fclose (fileID);

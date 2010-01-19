@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "H5Hyperslab.h"
+#include "HDF5Hyperslab.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -31,10 +31,10 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  H5Hyperslab::H5Hyperslab ()
+  HDF5Hyperslab::HDF5Hyperslab ()
   {;}
   
-  H5Hyperslab::H5Hyperslab (H5Hyperslab const &other)
+  HDF5Hyperslab::HDF5Hyperslab (HDF5Hyperslab const &other)
   {
     copy (other);
   }
@@ -45,12 +45,12 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  H5Hyperslab::~H5Hyperslab ()
+  HDF5Hyperslab::~HDF5Hyperslab ()
   {
     destroy();
   }
   
-  void H5Hyperslab::destroy ()
+  void HDF5Hyperslab::destroy ()
   {
     /* Release HDF5 object handler */
     H5Dclose (datasetID_p);
@@ -62,7 +62,7 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  H5Hyperslab& H5Hyperslab::operator= (H5Hyperslab const &other)
+  HDF5Hyperslab& HDF5Hyperslab::operator= (HDF5Hyperslab const &other)
   {
     if (this != &other) {
       destroy ();
@@ -71,7 +71,7 @@ namespace DAL { // Namespace DAL -- begin
     return *this;
   }
   
-  void H5Hyperslab::copy (H5Hyperslab const &other)
+  void HDF5Hyperslab::copy (HDF5Hyperslab const &other)
   {;}
 
   // ============================================================================
@@ -80,9 +80,9 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  void H5Hyperslab::summary (std::ostream &os)
+  void HDF5Hyperslab::summary (std::ostream &os)
   {
-    os << "[H5Hyperslab] Summary of internal parameters." << std::endl;
+    os << "[HDF5Hyperslab] Summary of internal parameters." << std::endl;
   }
   
   
@@ -96,7 +96,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                  openDataset
   
-  bool H5Hyperslab::openDataset (hid_t const &location,
+  bool HDF5Hyperslab::openDataset (hid_t const &location,
 				 std::string const &name)
   {
     bool status (true);
@@ -108,7 +108,7 @@ namespace DAL { // Namespace DAL -- begin
 			    H5P_DEFAULT);
     }
     catch (std::string message) {
-      std::cerr << "[H5Hyperslab::openDataset] " << message << std::endl;
+      std::cerr << "[HDF5Hyperslab::openDataset] " << message << std::endl;
       status = false;
     }
     
