@@ -59,6 +59,7 @@ add_test (tBF_PencilBeam tBF_PencilBeam)
 add_test (tBF_ProcessingHistory tBF_ProcessingHistory)
 add_test (tBF_StationBeam tBF_StationBeam)
 add_test (tBF_SysLog tBF_SysLog)
+add_test (tTBB_TriggerTable tTBB_TriggerTable)
 
 if (dataset_tbb)
   add_test (tTBB_DipoleDataset ${BASH_EXCUTABLE} tTBB_DipoleDataset.sh)

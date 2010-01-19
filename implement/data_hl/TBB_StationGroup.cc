@@ -57,11 +57,6 @@ namespace DAL {  // Namespace DAL -- begin
            structure is attached.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
-    
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered.
   */
   TBB_StationGroup::TBB_StationGroup (hid_t const &location,
                                       std::string const &group)
