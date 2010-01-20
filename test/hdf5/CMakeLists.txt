@@ -2,7 +2,7 @@
 ##_______________________________________________________________________________
 ##                                                           List of source files
 
-file (GLOB tests_hdf5 tHDF5*.cc h5*.c)
+file (GLOB tests_hdf5 tHDF5*.cc h5*.c ex_table*.c)
 file (GLOB dal_hdf5_sources HDF5*.cc)
 
 ##_______________________________________________________________________________

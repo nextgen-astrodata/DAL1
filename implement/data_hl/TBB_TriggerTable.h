@@ -92,7 +92,8 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor
     TBB_TriggerTable (hid_t const &location,
-		      std::string const &name="TriggerTable");
+		      std::string const &name="TriggerTable",
+		      bool const &create=true);
     
     // === Destruction ==========================================================
 
@@ -113,22 +114,16 @@ namespace DAL { // Namespace DAL -- begin
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, TBB_TriggerTable.
+      \return className -- The name of the class, `TBB_TriggerTable`.
     */
     inline std::string className () const {
       return "TBB_TriggerTable";
     }
-
-    //! Provide a summary of the internal status
+    //! Provide a summary of the object's internal parameters and status
     inline void summary () {
       summary (std::cout);
     }
-
-    /*!
-      \brief Provide a summary of the internal status
-
-      \param os -- Output stream to which the summary is written.
-    */
+    //! Provide a summary of the object's internal parameters and status
     void summary (std::ostream &os);    
 
     // === Methods ==============================================================

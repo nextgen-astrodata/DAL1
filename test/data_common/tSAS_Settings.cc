@@ -34,7 +34,7 @@ using DAL::SAS_Settings;
   \ingroup DAL
   \ingroup data_common
 
-  \brief A collection of test routines for the SAS_Settings class
+  \brief A collection of test routines for the DAL::SAS_Settings class
  
   \author Lars B&auml;hren
  

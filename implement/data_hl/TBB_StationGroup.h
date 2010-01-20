@@ -175,15 +175,11 @@ namespace DAL {   // Namespace DAL -- begin
     std::string className () const {
       return "TBB_StationGroup";
     }
-    
-    //! Provide a summary of the internal status
+    //! Provide a summary of the object's internal parameters and status
     inline void summary () {
       summary (std::cout);
     }
-    
-    /*!
-      \brief Provide a summary of the internal status
-    */
+    //! Provide a summary of the object's internal parameters and status
     void summary (std::ostream &os);
     
     // === Methods ==============================================================

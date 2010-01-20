@@ -39,6 +39,7 @@ using DAL::Timestamp;
   \file tTimestamp.cc
 
   \ingroup DAL
+  \ingroup data_common
 
   \brief A collection of test routines for the DAL::Timestamp class
  

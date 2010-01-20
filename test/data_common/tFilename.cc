@@ -32,6 +32,7 @@ using DAL::Filename;
   \file tFilename.cc
 
   \ingroup DAL
+  \ingroup data_common
 
   \brief A collection of test routines for the Filename class
  

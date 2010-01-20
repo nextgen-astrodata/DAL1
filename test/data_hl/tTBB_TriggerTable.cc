@@ -24,6 +24,7 @@
 #include <TBB_TriggerTable.h>
 
 // Namespace usage
+using std::endl;
 using DAL::TBB_TriggerTable;
 
 /*!
@@ -50,11 +51,31 @@ using DAL::TBB_TriggerTable;
 */
 int test_constructors ()
 {
-  std::cout << "\n[tTBB_TriggerTable::test_constructors]\n" << std::endl;
+  std::cout << "\n[tTBB_TriggerTable::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
+  hid_t fileID;
+  herr_t h5error;
+  std::string filename ("tTBB_TriggerTable.h5");
   
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  // Open/Create HDF5 file _________________________________
+
+  fileID = H5Fcreate (filename.c_str(),
+		      H5F_ACC_TRUNC,
+		      H5P_DEFAULT,
+		      H5P_DEFAULT);
+  
+  if (fileID < 0) {
+    std::cerr << "ERROR : Failed to open/create file." << endl;
+    return -1;
+  }
+
+  cout << "-- Filename  = " << filename  << endl;
+  cout << "-- File ID   = " << fileID    << endl;
+
+  // Test default constructor ______________________________
+
+  std::cout << "[1] Testing default constructor ..." << endl;
   try {
     TBB_TriggerTable table;
     //
@@ -63,6 +84,33 @@ int test_constructors ()
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
+  
+  // Construction with location and name ___________________
+
+  std::cout << "[2] Testing argumented constructor ..." << endl;
+  try {
+    TBB_TriggerTable table (fileID);
+    table.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  std::cout << "[3] Testing argumented constructor ..." << endl;
+  try {
+    std::string tableName ("TRIGGER_TABLE");
+    TBB_TriggerTable table (fileID, tableName);
+    table.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  // release HDF5 object identifiers _______________________
+
+  h5error = H5Fclose (fileID);
   
   return nofFailedTests;
 }

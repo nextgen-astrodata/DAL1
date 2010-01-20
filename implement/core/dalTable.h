@@ -62,7 +62,7 @@ namespace DAL {
     //! HDF5 field count
     hsize_t nfields;
     //! HDF5 record count
-    hsize_t nrecords;
+    hsize_t nofRecords_p;
     //! HDF5 return status
     herr_t status;
     //! HDF5 list of columns
@@ -119,19 +119,23 @@ namespace DAL {
     }
     //! Get the numbe of records within the table
     inline hsize_t nofRecords () const {
-      return nrecords;
+      return nofRecords_p;
     }
-    
+    //! Print a list of the columns contained in the table.
     void printColumns();
+    //! Provide a summary of the object's internal parameters and status
     inline void summary() {
       summary(std::cout);
     }
+    //! Provide a summary of the object's internal parameters and status
     void summary(std::ostream &os);
+    //! Open the table.  Called from dalDataset, not from the user.
     void openTable( void * voidfile,
 		    string tablename,
 		    string groupname );
     
 #ifdef HAVE_CASA
+    //! Open a CASA table, not in a MeasurementSet.
     void openTable( string tablename );
     //! Open the table in a measurement set.
     void openTable( string tablename,
@@ -219,7 +223,8 @@ namespace DAL {
     long getNumberOfRows();
     //! Print the name of the table
     void getName();
-    void * getColumnData( string colname );
+    //! Retrieve a dalColumn by name.
+    void * getColumnData ( string colname );
     
     /************************************************************************
      *
@@ -238,13 +243,21 @@ namespace DAL {
     bpl::numeric::array getAttribute_boost(std::string);
     PyObject* readRows_boost( int start, int nrecs );
     
+    //! Set attribute of type \e char
     bool setAttribute_char( std::string attrname, char data );
+    //! Set attribute of type \e short
     bool setAttribute_short( std::string attrname, short data );
+    //! Set attribute of type \e int
     bool setAttribute_int( std::string attrname, int data );
+    //! Set attribute of type \e uint
     bool setAttribute_uint( std::string attrname, uint data );
+    //! Set attribute of type \e long
     bool setAttribute_long( std::string attrname, long data );
+    //! Set attribute of type \e float
     bool setAttribute_float( std::string attrname, float data );
+    //! Set attribute of type \e double
     bool setAttribute_double( std::string attrname, double data );
+    //! Set attribute of type \e string
     bool setAttribute_string( std::string attrname, std::string data );
     bool setAttribute_char_vector (std::string attrname, bpl::list data);
     bool setAttribute_short_vector (std::string attrname, bpl::list data);

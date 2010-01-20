@@ -32,6 +32,7 @@
 #include <CommonAttributes.h>
 #include <CommonInterface.h>
 #include <TBB_StationGroup.h>
+#include <TBB_TriggerTable.h>
 
 namespace DAL {  // Namespace DAL -- begin
 
@@ -58,6 +59,7 @@ namespace DAL {  // Namespace DAL -- begin
       <ul>
         <li>DAL::CommonAttributes - Collection of attributes common to all
 	LOFAR datasets.
+	<li>DAL::TriggerTable -- Container for the trigger parameter data.
         <li>DAL::TBB_StationGroup - Container for the data in the StationGroup
 	of LOFAR times-series data.
 	<li>DAL::TBB_DipoleDataset - Container for dipole-based data in a LOFAR
@@ -86,7 +88,9 @@ namespace DAL {  // Namespace DAL -- begin
 
     //! Name of the data file
     std::string filename_p;
-    //! Station groups contained within this file
+    //! Trigger table attached to the root group of the file
+    std::map<std::string,TBB_TriggerTable> triggerTable_p;
+    //! Station groups attached to the root group of the file
     std::map<std::string,TBB_StationGroup> stationGroups_p;
     
   public:
@@ -136,7 +140,7 @@ namespace DAL {  // Namespace DAL -- begin
       return "TBB_Timeseries";
     }
     
-    //! Provide a summary of the internal status
+    //! Provide a summary of the object's internal parameters and status
     void summary (std::ostream &os=std::cout);
 
     //! Get the set of selected dipoles
@@ -272,6 +276,8 @@ namespace DAL {  // Namespace DAL -- begin
     void setAttributes ();
     //! Open the structures embedded within the current one
     bool openEmbedded (bool const &create);
+    //! Open the group with the trigger table
+    bool openTriggerTable (bool const &create=true);
 
   private:
     

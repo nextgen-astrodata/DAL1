@@ -49,9 +49,10 @@ namespace DAL { // Namespace DAL -- begin
            opened.
   */
   TBB_TriggerTable::TBB_TriggerTable (hid_t const &location,
-				      std::string const &name)
+				      std::string const &name,
+				      bool const &create)
   {
-    open (location, name, true);
+    open (location, name, create);
   }
   
   // ============================================================================

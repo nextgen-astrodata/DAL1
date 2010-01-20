@@ -63,7 +63,11 @@ namespace DAL {
     }
   }
   
-  // ---------------------------------------------------------- ~dalTable
+  // ============================================================================
+  //
+  //  Destruction
+  //
+  // ============================================================================
   
   dalTable::~dalTable()
   {
@@ -111,7 +115,7 @@ namespace DAL {
       os << "-- HDF5 file ID  = " << fileID_p  << std::endl;
       os << "-- HDF5 table ID = " << tableID_p << std::endl;
       os << "-- nof. fields   = " << nfields  << std::endl;
-      os << "-- nof. records  = " << nrecords << std::endl;
+      os << "-- nof. records  = " << nofRecords_p << std::endl;
     }
     else {
       os << "-- File type is HDF5, but object not connected to file!"
@@ -332,9 +336,6 @@ namespace DAL {
   // ---------------------------------------------------------- getColumnData
 
   /*!
-    \brief Retrieve a dalColumn by name.
-
-    Retrieve a dalColumn by name.
     \param colname The name of the column to retrieve.
     \return A generic pointer to the column data.
    */
@@ -541,8 +542,9 @@ namespace DAL {
       }
   }
 
-  // ---------------------------------------------------------- getName
-
+  //_____________________________________________________________________________
+  //                                                                      getName
+  
   void dalTable::getName()
   {
     if ( type == MSCASATYPE )
@@ -563,57 +565,48 @@ namespace DAL {
 
 #ifdef HAVE_CASA
 
-  // ---------------------------------------------------------- openTable
-
+  //_____________________________________________________________________________
+  //                                                                    openTable
+  
   /*!
-  \brief Open a CASA table, not in a MeasurementSet.
-
-  Open a CASA table, not in a MeasurementSet.
-
-  \param tablename The name of the table you want to open.
+    \param tablename The name of the table you want to open.
   */
   void dalTable::openTable( std::string tablename )
   {
-    if ( type == MSCASATYPE )
-      {
+    if ( type == MSCASATYPE ) {
 #ifdef HAVE_CASA
-        if ( filter->isSet() )
-          {
-            try
-              {
-                *casa_table_handle = casa::Table( tablename );
-                *casa_table_handle = casa::tableCommand( filter->get(),
-                                     *casa_table_handle );
-              }
-            catch (casa::AipsError x)
-              {
-                std::cerr << "ERROR: " << x.getMesg() << endl;
-              }
-          }
-        else
-          {
-            try
-              {
-                *casa_table_handle = casa::Table( tablename );
-              }
-            catch (casa::AipsError x)
-              {
-                std::cerr << "ERROR: " << x.getMesg() << endl;
-              }
-          }
+      if ( filter->isSet() ) {
+	try {
+	  *casa_table_handle = casa::Table( tablename );
+	  *casa_table_handle = casa::tableCommand( filter->get(),
+						   *casa_table_handle );
+	}
+	catch (casa::AipsError x)
+	  {
+	    std::cerr << "ERROR: " << x.getMesg() << endl;
+	  }
+      }
+      else {
+	try {
+	  *casa_table_handle = casa::Table( tablename );
+	}
+	catch (casa::AipsError x) {
+	  std::cerr << "ERROR: " << x.getMesg() << endl;
+	}
+      }
 #else
-        std::cerr << "ERROR: CASA support not enabled.\n";
+      std::cerr << "ERROR: CASA support not enabled.\n";
 #endif
-      }
-    else
-      {
-        std::cerr << "ERROR: dalTable::openTable operation not supported for type "
-                  << type << endl;
-      }
+    }
+    else {
+      std::cerr << "ERROR: dalTable::openTable operation not supported for type "
+		<< type << endl;
+    }
   }
 
-  // ---------------------------------------------------------- openTable
-
+  //_____________________________________________________________________________
+  //                                                                    openTable
+  
   /*!
     \param tablename The name of the table you want to open.
     \param reader The CASA MS table reader object.
@@ -643,8 +636,9 @@ namespace DAL {
       }
   }
 
-  // ------------------------------------------------------------------ openTable
-
+  //_____________________________________________________________________________
+  //                                                                    openTable
+  
   /*!
     \param tablename -- Name of the table
     \param reader    -- MeasurementSet reader
@@ -679,43 +673,36 @@ namespace DAL {
   }
 #endif
 
-  // ---------------------------------------------------------- openTable
-
+  //_____________________________________________________________________________
+  //                                                                    openTable
+  
   /*!
-  \brief Open the table.  Called from dalDataset, not from the user.
-
-  Open the table.  Called from dalDataset, not from the user.
-
-  \param voidfile A pointer to the file you want to open.
-  \param tablename The name of the table you want to open.
-  \param groupname The name of the group containing the table you want
-                   to open.
+    \param voidfile A pointer to the file you want to open.
+    \param tablename The name of the table you want to open.
+    \param groupname The name of the group containing the table you want
+           to open.
   */
   void dalTable::openTable( void * voidfile,
                             std::string tablename,
                             std::string groupname )
   {
-    if ( type == H5TYPE )
-      {
-        name = groupname + '/' + tablename;
-        hid_t * lclfile = (hid_t*)voidfile; // H5File object
-        file = lclfile;
-        fileID_p = *lclfile;  // get the file handle
-
-        tableID_p = H5Dopen1 ( fileID_p, name.c_str() );
-      }
-    else
-      {
-        std::cerr << "dalTable::openTable operation not supported for type "
-                  << type << endl;
-      }
+    if ( type == H5TYPE ) {
+      name = groupname + '/' + tablename;
+      hid_t * lclfile = (hid_t*)voidfile; // H5File object
+      file = lclfile;
+      fileID_p = *lclfile;  // get the file handle
+      
+      tableID_p = H5Dopen1 ( fileID_p, name.c_str() );
+    }
+    else {
+      std::cerr << "dalTable::openTable operation not supported for type "
+		<< type << endl;
+    }
   }
-
+  
   // ---------------------------------------------------------- printColumns
-
+  
   /*!
-    \brief Print a list of the columns contained in the table.
-
     Print a list of the columns contained in the table.
   */
   void dalTable::printColumns()
@@ -727,7 +714,7 @@ namespace DAL {
         size_t * size_out = NULL;
 
         // retrieve the input fields needed for the append_records call
-        H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nrecords );
+        H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
 
         field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
         field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
@@ -759,14 +746,14 @@ namespace DAL {
         std::cerr << "ERROR: CASA support not enabled.\n";
 #endif
       }
-    else
-      {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
-      }
+    else {
+      std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+    }
   }
-
-  // ---------------------------------------------------------- createTable
-
+  
+  //_____________________________________________________________________________
+  //                                                                  createTable
+  
   /*!
     Create a new table in the dataset, possibly within a group.  This
     function is usually called by dalDataset, and not by the developer.
@@ -847,7 +834,7 @@ namespace DAL {
       }
 
     // retrieve table information
-    H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nrecords );
+    H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
 
 
     // allocate space for the column/field names and retrieve them from
@@ -915,8 +902,9 @@ namespace DAL {
 
   }
 
-  // ---------------------------------------------------------- addColumn
-
+  //_____________________________________________________________________________
+  //                                                                    addColumn
+  
   /*!
     \param colname Name of the column you want to add.
     \param coltype Datatype of the column you want to add (i.e. dalINT,
@@ -1040,7 +1028,8 @@ namespace DAL {
       }
   }
   
-  // -------------------------------------------------------- addComplexColumn
+  //_____________________________________________________________________________
+  //                                                             addComplexColumn
   
   /*!
     Create an complex type column to the table.  This is usually called by the
@@ -1138,8 +1127,9 @@ namespace DAL {
 
   }
 
-  // ---------------------------------------------------------- removeColumn
-
+  //_____________________________________________________________________________
+  //                                                                 removeColumn
+  
   /*!
     \param colname Name of the column you want to remove from the table.
   */
@@ -1147,7 +1137,7 @@ namespace DAL {
   {
     if ( type == H5TYPE )
       {
-        status = H5TBget_table_info( fileID_p, name.c_str(), &nfields, &nrecords );
+        status = H5TBget_table_info( fileID_p, name.c_str(), &nfields, &nofRecords_p );
         if ( nfields < 2 )
           {
             std::cerr << "WARNING: Cannot delete last column." << endl;
@@ -1177,7 +1167,7 @@ namespace DAL {
                                            field_names[ii]);
 
                 status = H5TBget_table_info ( fileID_p, name.c_str(),
-                                              &nfields, &nrecords );
+                                              &nfields, &nofRecords_p );
                 columnpresent = true;
                 break;
 
@@ -1225,7 +1215,7 @@ namespace DAL {
         size_t * size_out = NULL;
 	
         // retrieve the input fields needed for the append_records call
-        H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nrecords );
+        H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
 	
         field_sizes   = new size_t[ nfields ];
         field_offsets = new size_t[ nfields ];
@@ -1262,7 +1252,8 @@ namespace DAL {
     }
   }
   
-  // ---------------------------------------------------------- appendRow
+  //_____________________________________________________________________________
+  //                                                                    appendRow
   
   /*!
     \brief Append a row to the table.
@@ -1283,7 +1274,7 @@ namespace DAL {
         size_t * size_out      = NULL;
 
         // retrieve the input fields needed for the append_records call
-        H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nrecords );
+        H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
 
         field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
         field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
@@ -1317,8 +1308,9 @@ namespace DAL {
       }
   }
 
-  // ---------------------------------------------------------- appendRows
-
+  //_____________________________________________________________________________
+  //                                                                   appendRows
+  
   /*!
     \brief Append multiple rows.
 
@@ -1338,7 +1330,7 @@ namespace DAL {
         size_t * size_out = NULL;
 
         // retrieve the input fields needed for the append_records call
-        H5TBget_table_info( fileID_p, name.c_str(), &nfields, &nrecords );
+        H5TBget_table_info( fileID_p, name.c_str(), &nfields, &nofRecords_p );
 
         field_sizes  = (size_t *)malloc((size_t)nfields * sizeof(size_t));
         field_offsets = (size_t *)malloc((size_t)nfields * sizeof(size_t));
@@ -1378,8 +1370,9 @@ namespace DAL {
   }
 
 
-  // ---------------------------------------------- setAttribute
-
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
+  
   /*!
     \brief Add a character attribute.
 
@@ -1398,8 +1391,9 @@ namespace DAL {
     return h5set_attribute( H5T_NATIVE_CHAR, tableID_p, attrname, data, size );
   }
 
-  // ---------------------------------------------- setAttribute
-
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
+  
   /*!
     \brief Add a short attribute.
 
@@ -1418,7 +1412,8 @@ namespace DAL {
     return h5set_attribute( H5T_NATIVE_SHORT, tableID_p, attrname, data, size );
   }
   
-  // ---------------------------------------------- setAttribute
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
   
   /*!
     \brief Add a integer attribute.
@@ -1439,8 +1434,9 @@ namespace DAL {
     return h5set_attribute( H5T_NATIVE_INT, tableID_p, attrname, data, size );
   }
   
-  // ---------------------------------------------- setAttribute
-
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
+  
   /*!
     \brief Add a unsigned integer attribute.
 
@@ -1460,8 +1456,9 @@ namespace DAL {
     return h5set_attribute( H5T_NATIVE_UINT, tableID_p, attrname, data, size );
   }
   
-  // ---------------------------------------------- setAttribute
-
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
+  
   /*!
     \brief Add a long attribute.
 
@@ -1480,8 +1477,9 @@ namespace DAL {
     return h5set_attribute( H5T_NATIVE_LONG, tableID_p, attrname, data, size );
   }
   
-  // ---------------------------------------------- setAttribute
-
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
+  
   /*!
     \brief Add a float attribute.
 
@@ -1500,8 +1498,9 @@ namespace DAL {
     return h5set_attribute( H5T_NATIVE_FLOAT, tableID_p, attrname, data, size );
   }
   
-  // ---------------------------------------------- setAttribute
-
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
+  
   /*!
     \brief Add a double precision floating point attribute.
 
@@ -1521,8 +1520,9 @@ namespace DAL {
     return h5set_attribute( H5T_NATIVE_DOUBLE, tableID_p, attrname, data, size );
   }
   
-  // ---------------------------------------------- setAttribute_string
-
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
+  
   /*!
     \brief Define a string attribute.
 
@@ -1536,8 +1536,9 @@ namespace DAL {
     return h5setAttribute_string( tableID_p, attrname, &data, 1 );
   }
 
-  // ---------------------------------------------- setAttribute_string
-
+  //_____________________________________________________________________________
+  //                                                                 setAttribute
+  
   /*!
     \brief Define a string attribute.
 
@@ -1552,8 +1553,9 @@ namespace DAL {
     return h5setAttribute_string( tableID_p, attrname, data, size );
   }
   
-  // ---------------------------------------------------------- listColumns
-
+  //_____________________________________________________________________________
+  //                                                                  listColumns
+  
   /*!
     \brief List the table columns.
 
@@ -1564,36 +1566,35 @@ namespace DAL {
     std::vector<std::string> colnames;
     colnames.clear();
 
-    if ( type == H5TYPE )
-      {
-        size_t * field_sizes = NULL;
-        size_t * field_offsets = NULL;
-        size_t * size_out = NULL;
-
-        // retrieve the input fields needed for the append_records call
-        H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nrecords );
-
-        field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
-        field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
-        size_out = (size_t*)malloc( sizeof(size_t) );
-
-        /* Alocate space */
-        field_names = (char**)malloc( sizeof(char*) * (size_t)nfields );
-        for ( unsigned int i = 0; i < nfields; i++)
-          {
-            field_names[i]=(char*)malloc(sizeof(char) * MAX_COL_NAME_SIZE );
-          }
-        status = H5TBget_field_info( fileID_p, name.c_str(), field_names,
-                                     field_sizes, field_offsets, size_out );
-
-        for (unsigned int ii=0; ii<nfields; ii++)
-          {
-            colnames.push_back( field_names[ii] );
-            free(field_names[ii]);
-          }
-        free(field_names);
-        return colnames;
-      }
+    if ( type == H5TYPE ) {
+      size_t * field_sizes = NULL;
+      size_t * field_offsets = NULL;
+      size_t * size_out = NULL;
+      
+      // retrieve the input fields needed for the append_records call
+      H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
+      
+      field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
+      field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
+      size_out = (size_t*)malloc( sizeof(size_t) );
+      
+      /* Alocate space */
+      field_names = (char**)malloc( sizeof(char*) * (size_t)nfields );
+      for ( unsigned int i = 0; i < nfields; i++)
+	{
+	  field_names[i]=(char*)malloc(sizeof(char) * MAX_COL_NAME_SIZE );
+	}
+      status = H5TBget_field_info( fileID_p, name.c_str(), field_names,
+				   field_sizes, field_offsets, size_out );
+      
+      for (unsigned int ii=0; ii<nfields; ii++)
+	{
+	  colnames.push_back( field_names[ii] );
+	  free(field_names[ii]);
+	}
+      free(field_names);
+      return colnames;
+    }
     else if ( type == MSCASATYPE )
       {
 #ifdef HAVE_CASA
@@ -1609,48 +1610,45 @@ namespace DAL {
         std::cerr << "ERROR: CASA support not enabled.\n";
 #endif
       }
-    else
-      {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
-        return colnames;
-      }
-
+    else {
+      std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+      return colnames;
+    }
+    
   }
-
-  // ------------------------------------------------------------ getNumberOfRows
-
+  
+  //_____________________________________________________________________________
+  //                                                              getNumberOfRows
+  
   /*!
     \brief Get the number of rows in a table.
-
+    
     \return nofRows -- The number of rows in the table as a long precision
             integer.
   */
   long dalTable::getNumberOfRows()
   {
-    if ( type == H5TYPE )
-      {
-        if (fileID_p > 0)
-          {
-            H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nrecords );
-          }
-        else if (tableID_p > 0)
-          {
-            H5TBget_table_info ( tableID_p, name.c_str(), &nfields, &nrecords );
-          }
-        return nrecords;
+    if ( type == H5TYPE ) {
+      if (fileID_p > 0) {
+	H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
       }
-    else
-      {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
-        return(-1);
+      else if (tableID_p > 0) {
+	H5TBget_table_info ( tableID_p, name.c_str(), &nfields, &nofRecords_p );
       }
+      return nofRecords_p;
+    }
+    else {
+      std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+      return(-1);
+    }
   }
-
-  // ------------------------------------------------------------------- readRows
-
+  
+  //_____________________________________________________________________________
+  //                                                                     readRows
+  
   /*!
     \brief Read rows from the table.
-
+    
     \param data_out A structure which the data will be read in to.  It should
            match the structure of the table itself.
     \param start The row number to start reading from.
@@ -1670,7 +1668,7 @@ namespace DAL {
         size_t * size_out = NULL;
 
         // retrieve the input fields needed for the append_records call
-        H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nrecords );
+        H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
 
         field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
         field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
@@ -2262,7 +2260,7 @@ namespace DAL {
       size_t * size_out      = NULL;
       
       // retrieve the input fields needed for the append_records call
-      H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nrecords );
+      H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
       
       field_sizes = (size_t*)malloc( nfields * sizeof(size_t) );
       field_offsets = (size_t*)malloc( nfields * sizeof(size_t) );
@@ -2540,8 +2538,9 @@ namespace DAL {
     return setAttribute (attrname, reinterpret_cast<std::string*>(&mydata[0]), size );
   }
 
-  // ----------------------------------------------------- getAttribute_boost
-
+  //_____________________________________________________________________________
+  //                                                           getAttribute_boost
+  
   bpl::numeric::array dalTable::getAttribute_boost(std::string attrname)
   {
     std::vector<int> mydims;

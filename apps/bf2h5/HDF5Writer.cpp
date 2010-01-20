@@ -120,7 +120,7 @@ void HDF5Writer::createHDF5File(void) {
 	dataset.setAttribute( "BANDWIDTH", &bandwidth );
 	dataset.setAttribute( "BREAKS_IN_DATA", &breaks_in_data );
 	dataset.setAttribute( "DISPERSION_MEASURE", &dispersion_measure );
-	dataset.setAttribute( "SECONDS_OF_DATA", &nrOfBlocks );
+// 	dataset.setAttribute( "SECONDS_OF_DATA", &nrOfBlocks );
 	dataset.setAttribute( "SAMPLE_RATE", &header.sampleRate );
 	dataset.setAttribute( "NOF_SAMPLES_PER_SUBBAND", &header.nrSamplesPerSubband );
 	dataset.setAttribute( "TOTAL_NUMBER_OF_SAMPLES", &total_number_of_samples );

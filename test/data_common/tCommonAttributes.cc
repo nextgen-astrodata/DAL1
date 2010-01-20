@@ -32,6 +32,7 @@ using DAL::CommonAttributes;
   \file tCommonAttributes.cc
 
   \ingroup DAL
+  \ingroup data_common
 
   \brief A collection of test routines for the CommonAttributes class
  

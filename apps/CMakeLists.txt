@@ -11,6 +11,8 @@ message(STATUS "CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
 ##
 ## ==============================================================================
 
+add_subdirectory (bf2h5)
+
 ##____________________________________________________________________
 ## Applications with no further external dependencies
 
@@ -45,7 +47,7 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 
 if (HAVE_BOOST)
   ## source files
-  list (APPEND tests bf2h5)
+  list (APPEND tests bf2h5_old)
   list (APPEND tests tbb2h5)
   list (APPEND tests TBBraw2h5)
   ## linker instructions
@@ -62,7 +64,7 @@ if (HAVE_BOOST)
   #    endif (have_libboost_python)
   #  endforeach (lib)
 else (HAVE_BOOST)
-  message (STATUS "[DAL] Unable to build applications: bf2h5, tbb2h5")
+  message (STATUS "[DAL] Unable to build applications: bf2h5_old, tbb2h5")
 endif (HAVE_BOOST)
 
 ##____________________________________________________________________
@@ -101,17 +103,17 @@ if (DAL_ENABLE_TESTING)
     add_test (tbb2h5_test12 tbb2h5 --infile ${dataset_tbb_raw} --outfile testdata.h5)
   endif (dataset_tbb_raw)
 
-  ## Test bf2h5 with various command line parameters
+  ## Test bf2h5_old with various command line parameters
 
-  add_test (bf2h5_test1 bf2h5)
-  add_test (bf2h5_test2 bf2h5 -H)
-  add_test (bf2h5_test3 bf2h5 --help)
-  add_test (bf2h5_test4 bf2h5 --intensity)
+  add_test (bf2h5_old_test1 bf2h5_old)
+  add_test (bf2h5_old_test2 bf2h5_old -H)
+  add_test (bf2h5_old_test3 bf2h5_old --help)
+  add_test (bf2h5_old_test4 bf2h5_old --intensity)
   
   if (dataset_bf_raw)
-    add_test (bf2h5_test6 bf2h5 -I ${dataset_bf_raw} -O testdata_bf.h5)
+    add_test (bf2h5_old_test6 bf2h5_old -I ${dataset_bf_raw} -O testdata_bf.h5)
   else (dataset_bf_raw)
-    message (STATUS "[DAL] Skipping bf2h5 conversion tests - no input file!")
+    message (STATUS "[DAL] Skipping bf2h5_old conversion tests - no input file!")
   endif (dataset_bf_raw)
   
 endif (DAL_ENABLE_TESTING)

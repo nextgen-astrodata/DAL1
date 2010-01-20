@@ -157,13 +157,11 @@ namespace DAL {  // Namespace DAL -- begin
     inline std::string className () const {
       return "TBB_DipoleDataset";
     }
-    
-    //! Provide a summary of the internal status
+    //! Provide a summary of the object's internal parameters and status
     inline void summary () {
       summary (std::cout);
     }
-    
-    //! Provide a summary of the internal status
+    //! Provide a summary of the object's internal parameters and status
     void summary (std::ostream &os);
     
     // === Methods ==============================================================

@@ -279,6 +279,7 @@ include_directories (
   ${DAL_SOURCE_DIR}/implement/data_common
   ${DAL_SOURCE_DIR}/implement/data_hl
   ${DAL_SOURCE_DIR}/test
+  ${DAL_SOURCE_DIR}/test/hdf5
   ${DAL_SOURCE_DIR}/apps
   )
 

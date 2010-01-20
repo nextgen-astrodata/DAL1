@@ -132,6 +132,7 @@ int test_constructors ()
     cerr << message << endl;
     nofFailedTests++;
   }
+
   // release HDF5 object identifiers _______________________
 
   h5error = H5Fclose (fileID);
