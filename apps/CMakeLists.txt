@@ -53,8 +53,9 @@ if (HAVE_BOOST)
   ## linker instructions
   # boost_python won't work on some platforms unless libpython is also linked.
   list (APPEND apps_link_libraries
-    ${BOOST_LIBRARIES}
-    ${CFITSIO_LIBRARIES} ${PYTHON_LIBRARIES}
+    ${BOOST_PROGRAM_OPTIONS_LIBRARY}
+    ${CFITSIO_LIBRARIES}
+    ${PYTHON_LIBRARIES}
     )
   # Is this needed for the applications? It might be nicer to strip it out...
   #  foreach (lib ${apps_link_libraries})

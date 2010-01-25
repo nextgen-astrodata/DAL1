@@ -36,6 +36,7 @@ using DAL::BF_Dataset;
   \file tBF_Dataset.cc
 
   \ingroup DAL
+  \ingroup data_hl
 
   \brief A collection of test routines for the BF_Dataset class
  
@@ -45,21 +46,16 @@ using DAL::BF_Dataset;
 */
 
 //_______________________________________________________________________________
-//                                                                stationBeamName
+//                                                              test_constructors
 
-//! Convert StationBeam index to name of the HDF5 group
-std::string stationBeamName (unsigned int const &index)
+DAL::Filename getFilename ()
 {
-  char uid[10];
-  sprintf(uid,
-	  "%03d",
-	  index);
-  
-  std::string name (uid);
-  
-  name = "StationBeam" + name;
-  
-  return name;
+  Filename file ("123456789",
+		 "test",
+		 Filename::bf,
+		 Filename::h5);
+
+  return file;
 }
 
 //_______________________________________________________________________________
@@ -76,10 +72,7 @@ int test_constructors ()
   std::cout << "\n[tBF_Dataset::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
-  Filename file ("123456789",
-		 "test",
-		 Filename::bf,
-		 Filename::h5);
+  Filename file = getFilename();
 
   cout << "-- Filename = " << file.filename() << endl;
   
@@ -123,10 +116,7 @@ int test_subGroups ()
   std::cout << "\n[tBF_Dataset::test_subGroups]\n" << endl;
 
   int nofFailedTests (0);
-  Filename file ("123456789",
-		 "test",
-		 Filename::bf,
-		 Filename::h5);
+  Filename file = getFilename();
   BF_Dataset dataset (file);
   
   std::cout << "[1] Open SysLog group ..." << endl;
@@ -135,9 +125,9 @@ int test_subGroups ()
     dataset.summary(); 
   } catch (std::string message) {
     cerr << message << endl;
-    nofFailedTests++;
+    ++nofFailedTests;
   }
-  
+
   std::cout << "[2] Open StationBeam groups ..." << endl;
   try {
     dataset.openStationBeam(0,true);
@@ -152,7 +142,7 @@ int test_subGroups ()
     cerr << message << endl;
     nofFailedTests++;
   }
-  
+
   std::cout << "[3] Open PencilBeam groups ..." << endl;
   try {
     // open PencilBeam groups within existing StationBeam group

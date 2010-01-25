@@ -33,6 +33,7 @@
   \file TBBraw2h5.cpp
 
   \ingroup DAL
+  \ingroup dal_apps
 
   \brief Read TBB time-series data from a socket or file and generate an HDF5 file.
 

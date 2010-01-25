@@ -25,6 +25,7 @@
   \file tbb2h5.cpp
 
   \ingroup DAL
+  \ingroup dal_apps
 
   \brief Write TBB time-series data into an HDF5 file.
 

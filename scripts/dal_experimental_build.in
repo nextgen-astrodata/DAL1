@@ -1,8 +1,17 @@
 #!${bash_executable}
 
+## Set environment variables
+
 export LOFARSOFT=${USG_ROOT}
 . $LOFARSOFT/devel_common/scripts/init.sh
 
 cd $LOFARSOFT
-./devel_common/scripts/clean_rebuild dal Experimental
+
+rm -rf release build
+svn up
+cd build
+./bootstrap
+make dal
+cd dal
+make Experimental
 

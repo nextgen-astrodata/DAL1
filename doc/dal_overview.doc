@@ -127,5 +127,9 @@
   \defgroup data_hl DAL :: Dataset support - high-level interfaces
   \ingroup DAL
   \brief High-level dataset interfaces to the various types of datasets
+
+  \defgroup dal_apps DAL :: Application collection
+  \ingroup DAL
+  \brief Application programs build in top of the DAL 
 */
 

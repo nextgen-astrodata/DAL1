@@ -243,11 +243,20 @@ namespace DAL { // Namespace DAL -- begin
     location_p = location;
     stationBeams_p.clear();
     sysLog_p.clear();
+    setAttributes();
     
     // Try to open the file ________________________________
-    location_p = H5Fopen (name.c_str(),
-			  H5F_ACC_RDWR,
-			  H5P_DEFAULT);
+
+    FILE * pFile = fopen ( name.c_str(), "r" );
+    
+    if ( pFile != NULL ) {
+      // If the file exists, release it ...
+      fclose( pFile );
+      // ... and open it as HDF5 file
+      location_p = H5Fopen (name.c_str(),
+			    H5F_ACC_RDWR,
+			    H5P_DEFAULT);
+    }
     
     if (location_p > 0) {
       // Read the common LOFAR attributes
@@ -340,23 +349,33 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                              openStationBeam
   
+  /*!
+    \param stationID -- 
+    \param create    -- 
+   */
   bool BF_Dataset::openStationBeam (unsigned int const &stationID,
 				    bool const &create)
   {
     bool status      = true;
-    std::string name = BF_StationBeam::getName (stationID);
-    size_t haveGroup = stationBeams_p.count (name);
     
-    try {
-      // create the StationBeam group ...
-      if (location_p > 0 && haveGroup == 0) {
-	stationBeams_p[name] = BF_StationBeam (location_p,stationID,create);
+    if (location_p > 0) {
+      std::string name;
+      int nofStations;
+      std::map<std::string,BF_StationBeam>::iterator it;
+      // convert station ID to group name
+      name = BF_StationBeam::getName (stationID);
+      // open/create the station beam group
+      stationBeams_p[name] = BF_StationBeam (location_p,stationID,create);
+      // attributes for book-keeping
+      nofStations = stationBeams_p.size();
+      setAttribute ("NOF_BEAMS",nofStations);
+      // check if the station beam group indeed exists
+      it = stationBeams_p.find(name);
+      if (it==stationBeams_p.end()) {
+	status = false;
       }
-      // ... and do the book-keeping
-      int nofStations = stationBeams_p.size();
-      h5set_attribute (location_p,"NOF_STATIONS",nofStations);
-    } catch (std::string message) {
-      std::cerr << "[BF_Dataset::openStationBeam] " << message << std::endl;
+    }
+    else {
       status = false;
     }
     
@@ -366,6 +385,11 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                               openPencilBeam
   
+  /*!
+    \param stationID -- 
+    \param pencilID  -- 
+    \param create    -- 
+   */
   bool BF_Dataset::openPencilBeam (unsigned int const &stationID,
 				   unsigned int const &pencilID,
 				   bool const &create)
@@ -373,30 +397,31 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
 
     if (location_p > 0) {
-      // open StationBeam group within which the PencilBeam is emmbedded
-      status           = openStationBeam (stationID, create);
-      // convert StationBeam ID to name
-      std::string name = BF_StationBeam::getName (stationID);
-      // get pointer to StationBeam object
-      std::map<std::string,BF_StationBeam>::iterator it = stationBeams_p.find(name);
-      
-      if( it == stationBeams_p.end() ) {
-	std::cerr << "[BF_Dataset::openStationBeam] Unable to find StationBeam!"
+      /* Open StationBeam group */
+      status = openStationBeam (stationID, create);
+
+      /* Open PencilBeam group */
+      if (status) {
+	std::string name;
+	std::map<std::string,BF_StationBeam>::iterator it;
+	// get pointer to StationBeam object
+	name = BF_StationBeam::getName (stationID);
+	it   = stationBeams_p.find(name);
+	// forward function call to open pencil beam
+	if ( it != stationBeams_p.end() ) {
+	  std::cout << "--> opening pencil beam in  "
+		    << it->second.locationName() 
+		    << std::endl;
+	  it->second.openPencilBeam(pencilID,create);
+	}
+      } else {
+	std::cerr << "[BF_Dataset::openPencilBeam] Failed to open StationGroup!"
 		  << std::endl;
 	status = false;
-      } else {
-	// Feedback
-	std::cout << "[BF_Dataset::openStationBeam]"     << std::endl;
-	std::cout << "-- Station ID     = " << stationID << std::endl;
-	std::cout << "-- Station name   = " << name      << std::endl;
-	std::cout << "-- Pencil beam ID = " << pencilID  << std::endl;
-	std::cout << "-- create group?  = " << create    << std::endl;
-	// open PencilBeam
-	it->second.openPencilBeam(pencilID,create);
       }
-      
-    } else {
-      std::cerr << "[BF_Dataset::openStationBeam] No connection to dataset!"
+    }  //  end -- (location_p>0)
+    else {
+      std::cerr << "[BF_Dataset::openPencilBeam] No connection to dataset!"
 		<< std::endl;
       status = false;
     }
