@@ -4,15 +4,15 @@
 
 find_package(LOFAR)
 
-if (LOFAR_FOUND)
- include_directories (${LOFAR_INCLUDE_DIRECTORIES})
+if (HAVE_LOFAR)
+ include_directories (${LOFAR_INCLUDES})
  add_definitions (-DHAVE_LOFAR)
-endif (LOFAR_FOUND)
+endif (HAVE_LOFAR)
 
 ##__________________________________________________________
 ## Build executable
 
-if (LOFAR_FOUND AND BOOST_PROGRAM_OPTIONS_LIBRARY)
+if (HAVE_LOFAR AND BOOST_PROGRAM_OPTIONS_LIBRARY)
 
   ## Compiler instructions
   add_executable (bf2h5
@@ -37,6 +37,6 @@ if (LOFAR_FOUND AND BOOST_PROGRAM_OPTIONS_LIBRARY)
     LIBRARY DESTINATION lib
     )
   
-else (LOFAR_FOUND AND BOOST_PROGRAM_OPTIONS_LIBRARY)
+else (HAVE_LOFAR AND BOOST_PROGRAM_OPTIONS_LIBRARY)
   message (STATUS "[DAL] Unable to build bf2h5 -- missing external dependencies.")
-endif (LOFAR_FOUND AND BOOST_PROGRAM_OPTIONS_LIBRARY)
+endif (HAVE_LOFAR AND BOOST_PROGRAM_OPTIONS_LIBRARY)
