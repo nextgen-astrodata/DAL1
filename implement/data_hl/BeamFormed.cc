@@ -48,11 +48,9 @@ namespace DAL {
   */
   BeamFormed::BeamFormed(std::string const &filename)
   {
-    filename_p = "";
+    filename_p = filename;
     H5fileID_p = 0;
     beamGroups_p.clear();
-    
-    filename_p = filename;
     
     init();
   }
@@ -198,7 +196,8 @@ namespace DAL {
     return lcl_sources;
   }
   
-  // ---------------------------------------------------------- summary
+  //_____________________________________________________________________________
+  //                                                                      summary
   
   /*!
     \brief Provide a summary of the internal status
@@ -214,52 +213,52 @@ namespace DAL {
     os << "-- Filename ............. : " << filename_p << endl;
     os << "-- HDF5 file ID ......... : " << H5fileID_p << endl;
 
-    if (dataset_p != NULL)
-      {
-        std::vector< std::string > srcs = sources();
-        std::vector< int > temps        = station_temperatures();
-
-        os << "-- Telesope ............. : " << telescope()         << endl;
-        os << "-- Number of Stations ... : " << nofStations()       << endl;
-        os << "-- Datatype ............. : " << datatype()          << endl;
-        os << "-- Emband   ............. : " << emband()            << endl;
-
-        os << "-- Source(s) ............ : " << srcs                << endl;
-
-        os << "-- Observation Id ....... : " << observation_id()        << endl;
-        os << "-- Project Id ........... : " << proj_id()               << endl;
-
-        os << "-- Point RA ............. : " << point_ra()              << endl;
-        os << "-- Point DEC ............ : " << point_dec()             << endl;
-        os << "-- Observer ............. : " << observer()              << endl;
-        os << "-- Epoch MJD ............ : " << epoch_mjd()             << endl;
-        os << "-- Epoch Date ........... : " << epoch_date()            << endl;
-        os << "-- Epoch UTC ............ : " << epoch_utc()             << endl;
-        os << "-- Epoch LST ............ : " << epoch_lst()             << endl;
-        os << "-- FWHM of the main beam  : " << main_beam_diam()        << endl;
-        os << "-- Bandwidth ............ : " << bandwidth()             << endl;
-
-        os << "-- Breaks in the data ... : " << breaks()                << endl;
-        os << "-- Dispersion measure ... : " << dispersion_measure()    << endl;
-        os << "-- Number of time samples : " << number_of_samples()     << endl;
-        os << "-- Sampling time (Hz).... : " << sampling_time()         << endl;
-        os << "-- Notes ................ : " << notes()                 << endl;
-        os << "-- Number of beams ...... : " << number_of_beams()       << endl;
-        os << "-- FWHM of the sub-beams  : " << sub_beam_diameter()     << endl;
-        os << "-- Weather temperature .. : " << weather_temperature()   << endl;
-        os << "-- Weather humidity ..... : " << weather_humidity()      << endl;
-        os << "-- Station temperature(s) : " << temps                   << endl;
-
-        if (listBeams) {
-	  for (uint beam(0); beam<beamGroups_p.size(); beam++) {
-	    beamGroups_p[beam]->summary();
-	  }
+    if (dataset_p != NULL) {
+      std::vector< std::string > srcs = sources();
+      std::vector< int > temps        = station_temperatures();
+      
+      os << "-- Telesope ............. : " << telescope()         << endl;
+      os << "-- Number of Stations ... : " << nofStations()       << endl;
+      os << "-- Datatype ............. : " << datatype()          << endl;
+      os << "-- Emband   ............. : " << emband()            << endl;
+      
+      os << "-- Source(s) ............ : " << srcs                << endl;
+      
+      os << "-- Observation Id ....... : " << observation_id()        << endl;
+      os << "-- Project Id ........... : " << proj_id()               << endl;
+      
+      os << "-- Point RA ............. : " << point_ra()              << endl;
+      os << "-- Point DEC ............ : " << point_dec()             << endl;
+      os << "-- Observer ............. : " << observer()              << endl;
+      os << "-- Epoch MJD ............ : " << epoch_mjd()             << endl;
+      os << "-- Epoch Date ........... : " << epoch_date()            << endl;
+      os << "-- Epoch UTC ............ : " << epoch_utc()             << endl;
+      os << "-- Epoch LST ............ : " << epoch_lst()             << endl;
+      os << "-- FWHM of the main beam  : " << main_beam_diam()        << endl;
+      os << "-- Bandwidth ............ : " << bandwidth()             << endl;
+      
+      os << "-- Breaks in the data ... : " << breaks()                << endl;
+      os << "-- Dispersion measure ... : " << dispersion_measure()    << endl;
+      os << "-- Number of time samples : " << number_of_samples()     << endl;
+      os << "-- Sampling time (Hz).... : " << sampling_time()         << endl;
+      os << "-- Notes ................ : " << notes()                 << endl;
+      os << "-- Number of beams ...... : " << number_of_beams()       << endl;
+      os << "-- FWHM of the sub-beams  : " << sub_beam_diameter()     << endl;
+      os << "-- Weather temperature .. : " << weather_temperature()   << endl;
+      os << "-- Weather humidity ..... : " << weather_humidity()      << endl;
+      os << "-- Station temperature(s) : " << temps                   << endl;
+      
+      if (listBeams) {
+	for (uint beam(0); beam<beamGroups_p.size(); beam++) {
+	  beamGroups_p[beam]->summary();
 	}
       }
+    }
     
   }
   
-  // ---------------------------------------------------------- getBeam
+  //_____________________________________________________________________________
+  //                                                                      getBeam
   
   /*!
     \brief Get a beam group object
@@ -273,8 +272,9 @@ namespace DAL {
     return group;
   }
 
-  // ---------------------------------------------------------- beams
-
+  //_____________________________________________________________________________
+  //                                                                        beams
+  
   /*!
     \brief Print beam groups embedded within the dataset
     \return beams - a vector of strings representing the names of the beams

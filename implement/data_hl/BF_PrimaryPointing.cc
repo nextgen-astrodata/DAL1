@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <BF_PencilBeam.h>
+#include <BF_PrimaryPointing.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -32,52 +32,37 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   //_____________________________________________________________________________
-  //                                                                BF_PencilBeam
-
-  BF_PencilBeam::BF_PencilBeam ()
+  //                                                           BF_PrimaryPointing
+  
+  BF_PrimaryPointing::BF_PrimaryPointing ()
   {
     location_p = 0;
-    processingHistory_p.clear();
-    coordinates_p.clear();
-  }
-
-  //_____________________________________________________________________________
-  //                                                                BF_PencilBeam
-
-  BF_PencilBeam::BF_PencilBeam (hid_t const &location,
-				std::string const &name)
-  {
-    open (location,name,false);
   }
   
   //_____________________________________________________________________________
-  //                                                                BF_PencilBeam
-
-  BF_PencilBeam::BF_PencilBeam (hid_t const &location,
-				unsigned int const &index,
-				bool const &create)
+  //                                                           BF_PrimaryPointing
+  
+  BF_PrimaryPointing::BF_PrimaryPointing (hid_t const &location,
+					  unsigned int const &index,
+					  bool const &create)
   {
     open (location,getName(index),create);
   }
   
   // ============================================================================
   //
-  //  Construction
+  //  Destruction
   //
   // ============================================================================
   
-  //_____________________________________________________________________________
-  //                                                               ~BF_PencilBeam
-
-  BF_PencilBeam::~BF_PencilBeam ()
+  BF_PrimaryPointing::~BF_PrimaryPointing ()
   {
     if (location_p > 0) {
+      // clear maps with embedded objects
+      beams_p.clear();
+      // release HDF5 object
       herr_t h5error;
       H5I_type_t object_type = H5Iget_type(location_p);
-      // clear maps with embedded objects
-      processingHistory_p.clear();
-      coordinates_p.clear();
-      // release HDF5 object
       if (object_type == H5I_GROUP) {
 	h5error = H5Gclose(location_p);
 	location_p = 0;
@@ -90,33 +75,18 @@ namespace DAL { // Namespace DAL -- begin
   //  Parameters
   //
   // ============================================================================
-  
+
   //_____________________________________________________________________________
   //                                                                      summary
   
-  void BF_PencilBeam::summary (std::ostream &os)
+  void BF_PrimaryPointing::summary (std::ostream &os)
   {
-    std::map<std::string,BF_ProcessingHistory>::iterator hist;
-    std::map<std::string,CoordinatesGroup>::iterator coord;
-
-    hist  = processingHistory_p.begin();
-    coord = coordinates_p.begin();
-
-    os << "[BF_PencilBeam] Summary of internal parameters." << std::endl;
-    os << "-- Location ID                   = " << location_p
-       << std::endl;
-
-    if (processingHistory_p.size() > 0) {
-    os << "-- Location ID ProcessingHistory = " << hist->second.locationID()
-       << std::endl;
-    }
-
-    if (coordinates_p.size() > 0) {
-    os << "-- Location ID CoordinatesGroup  = " << coord->second.locationID()
-       << std::endl;
-    }
+    os << "[BF_PrimaryPointing] Summary of internal parameters." << std::endl;
+    os << "-- Location ID     = " << location_p          << std::endl;
+    os << "-- nof. attributes = " << attributes_p.size() << std::endl;
+    os << "-- Attributes      = " << attributes_p        << std::endl;
   }
-  
+
   // ============================================================================
   //
   //  Methods
@@ -126,34 +96,35 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                setAttributes
   
-  void BF_PencilBeam::setAttributes ()
+  void BF_PrimaryPointing::setAttributes ()
   {
     attributes_p.clear();
-
+    
     attributes_p.insert("GROUPTYPE");
-    attributes_p.insert("TARGET");
     attributes_p.insert("NOF_STATIONS");
     attributes_p.insert("STATIONS_LIST");
     attributes_p.insert("POINT_RA");
     attributes_p.insert("POINT_DEC");
-    attributes_p.insert("POSITION_OFFSET_RA");
-    attributes_p.insert("POSITION_OFFSET_DEC");
-    attributes_p.insert("PB_DIAMETER_RA");
-    attributes_p.insert("PB_DIAMETER_DEC");
-    attributes_p.insert("PB_CENTER_FREQUENCY");
-    attributes_p.insert("PB_CENTER_FREQUENCY_UNIT");
-    attributes_p.insert("FOLDED_DATA");
-    attributes_p.insert("FOLD_PERIOD");
-    attributes_p.insert("FOLD_PERIOD_UNIT");
-    attributes_p.insert("DEDISPERSION");
-    attributes_p.insert("DISPERSION_MEASURE");
-    attributes_p.insert("DISPERSION_MEASURE_UNIT");
-    attributes_p.insert("BARYCENTER");
-    attributes_p.insert("STOKES_COMPONENTS");
-    attributes_p.insert("COMPLEX_VOLTAGE");
-    attributes_p.insert("SIGNAL_SUM");
+    attributes_p.insert("TRACKING");
+    attributes_p.insert("POINT_ALTITUDE");
+    attributes_p.insert("POINT_AZIMUTH");
+    attributes_p.insert("CLOCK_RATE");
+    attributes_p.insert("CLOCK_RATE_UNIT");
+    attributes_p.insert("NOF_SAMPLES");
+    attributes_p.insert("SAMPLING_RATE");
+    attributes_p.insert("SAMPLING_RATE_UNIT");
+    attributes_p.insert("SAMPLING_TIME");
+    attributes_p.insert("SAMPLING_TIME_UNIT");
+    attributes_p.insert("TOTAL_INTEGRATION_TIME");
+    attributes_p.insert("TOTAL_INTEGRATION_TIME_UNIT");
+    attributes_p.insert("CHANNELS_PER_SUBBAND");
+    attributes_p.insert("SUBBAND_WIDTH");
+    attributes_p.insert("SUBBAND_WIDTH_UNIT");
+    attributes_p.insert("CHANNEL_WIDTH");
+    attributes_p.insert("CHANNEL_WIDTH_UNIT");
+    attributes_p.insert("NOF_BEAMS");
   }
-
+  
   //_____________________________________________________________________________
   //                                                                         open
   
@@ -168,26 +139,23 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
-  bool BF_PencilBeam::open (hid_t const &location,
-			    std::string const &name,
-			    bool const &create)
+  bool BF_PrimaryPointing::open (hid_t const &location,
+				 std::string const &name,
+				 bool const &create)
   {
     bool status (true);
-
-    /* Set up the list of attributes attached to the PencilBeam group */
+    
+    /* Set up the list of attributes attached to the root group */
     setAttributes();
-
-    /* Try to open the group: get list of groups attached to 'location' and
-       check if 'name' is part of it.
-    */
+    
     if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
-      location_p = H5Gopen2 (location,
-			     name.c_str(),
-			     H5P_DEFAULT);
+      location_p = H5Gopen (location,
+			    name.c_str(),
+			    H5P_DEFAULT);
     } else {
       location_p = 0;
     }
-    
+
     if (location_p > 0) {
       status = true;
     } else {
@@ -200,42 +168,44 @@ namespace DAL { // Namespace DAL -- begin
 				H5P_DEFAULT);
 	/* If creation was sucessful, add attributes with default values */
 	if (location_p > 0) {
-	  std::string grouptype ("PencilBeam");
-	  std::string undefined ("UNDEFINED");
-	  bool ok (false);
-	  std::vector<std::string> stations (1,undefined);
-	  std::vector<std::string> stokes (1,undefined);
+	  std::string grouptype ("StatBeam");
+	  std::string mhz ("MHz");
+	  std::string tracking ("OFF");
+	  std::string second ("s");
+	  std::string usecond ("us");
+	  std::vector<std::string> stationsList (1,"UNDEFINED");
 	  // write the attributes
 	  h5set_attribute (location_p,"GROUPTYPE",                grouptype   );
-	  h5set_attribute (location_p,"TARGET",                   undefined   );
 	  h5set_attribute (location_p,"NOF_STATIONS",             int(0)      );
-	  h5set_attribute (location_p,"STATIONS_LIST",            stations    );
+	  h5set_attribute (location_p,"STATIONS_LIST",            stationsList);
 	  h5set_attribute (location_p,"POINT_RA",                 double(0.0) );
 	  h5set_attribute (location_p,"POINT_DEC",                double(0.0) );
-	  h5set_attribute (location_p,"POSITION_OFFSET_RA",       double(0.0) );
-	  h5set_attribute (location_p,"POSITION_OFFSET_DEC",      double(0.0) );
-	  h5set_attribute (location_p,"PB_DIAMETER_RA",           double(0.0) );
-	  h5set_attribute (location_p,"PB_DIAMETER_DEC",          double(0.0) );
-	  h5set_attribute (location_p,"PB_CENTER_FREQUENCY",      double(0.0) );
-	  h5set_attribute (location_p,"PB_CENTER_FREQUENCY_UNIT", undefined   );
-	  h5set_attribute (location_p,"FOLDED_DATA",              ok          );
-	  h5set_attribute (location_p,"FOLD_PERIOD",              float(0.0)  );
-	  h5set_attribute (location_p,"FOLD_PERIOD_UNIT",         undefined   );
-	  h5set_attribute (location_p,"DEDISPERSION",             undefined   );
-	  h5set_attribute (location_p,"DISPERSION_MEASURE",       float(0.0)  );
- 	  h5set_attribute (location_p,"DISPERSION_MEASURE_UNIT",  undefined   );
- 	  h5set_attribute (location_p,"BARYCENTER",               ok          );
- 	  h5set_attribute (location_p,"STOKES_COMPONENTS",        stokes      );
- 	  h5set_attribute (location_p,"COMPLEX_VOLTAGE",          ok          );
-	  h5set_attribute (location_p,"SIGNAL_SUM",               undefined   );
+	  h5set_attribute (location_p,"TRACKING",                 tracking    );
+	  h5set_attribute (location_p,"POINT_ALTITUDE",           double(0.0) );
+	  h5set_attribute (location_p,"POINT_AZIMUTH",            double(0.0) );
+	  h5set_attribute (location_p,"CLOCK_RATE",               double(0.0) );
+	  h5set_attribute (location_p,"CLOCK_RATE_UNIT",          mhz         );
+	  h5set_attribute (location_p,"NOF_SAMPLES",              int(0)      );
+	  h5set_attribute (location_p,"SAMPLING_RATE",            double(0.0) );
+	  h5set_attribute (location_p,"SAMPLING_RATE_UNIT",       mhz         );
+	  h5set_attribute (location_p,"SAMPLING_TIME",            float(0.0)  );
+	  h5set_attribute (location_p,"SAMPLING_TIME_UNIT",       usecond     );
+	  h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME",   double(0.0) );
+	  h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME_UNIT", second   );
+	  h5set_attribute (location_p,"CHANNELS_PER_SUBBAND",     int(0)      );
+	  h5set_attribute (location_p,"SUBBAND_WIDTH",            double(0.0) );
+	  h5set_attribute (location_p,"SUBBAND_WIDTH_UNIT",       mhz         );
+	  h5set_attribute (location_p,"CHANNEL_WIDTH",            double(0.0) );
+	  h5set_attribute (location_p,"CHANNEL_WIDTH_UNIT",       mhz         );
+	  h5set_attribute (location_p,"NOF_BEAMS",                int(0)      );
 	} else {
-	  std::cerr << "[BF_PencilBeam::open] Failed to create group "
+	  std::cerr << "[BF_PrimaryPointing::open] Failed to create group "
 		    << name
 		    << std::endl;
 	  status = false;
 	}
       } else {
-	std::cerr << "[BF_PencilBeam::open] Failed to open group "
+	std::cerr << "[BF_PrimaryPointing::open] Failed to open group "
 		  << name
 		  << std::endl;
 	status = false;
@@ -246,72 +216,77 @@ namespace DAL { // Namespace DAL -- begin
     if (status) {
       status = openEmbedded (create);
     } else {
-      std::cerr << "[BF_StationBeam::open] Skip opening embedded groups!"
+      std::cerr << "[BF_PrimaryPointing::open] Skip opening embedded groups!"
 		<< std::endl;
     }
  
     return status;
   }
-
+  
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool BF_PencilBeam::openEmbedded (bool const &create)
+  bool BF_PrimaryPointing::openEmbedded (bool const &create)
   {
-    bool status (true);
+    bool status (create);
     std::set<std::string> groupnames;
+    std::set<std::string>::iterator it;
     
-    /* Retrieve the names of the groups attached to the StationBeam group */
+    /* Retrieve the names of the groups attached to the PrimaryPointing group */
     status = h5get_names (groupnames,
 			  location_p,
 			  H5G_GROUP);
-
-    /* Open the processing history group */
-    status = openProcessingHistory (create);
-    /* Open coordinates group */
-    status = openCoordinatesGroup (create);
-
-    return status;
-  }
-
-  //_____________________________________________________________________________
-  //                                                        openProcessingHistory
-  
-  bool BF_PencilBeam::openProcessingHistory (bool const &create)
-  {
-    bool status (true);
-
-    if (processingHistory_p.size() == 0 && location_p > 0) {
-      processingHistory_p["ProcessingHistory"] = BF_ProcessingHistory (location_p,create);
-    }
-
-    return status;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                         openCoordinatesGroup
-  
-  bool BF_PencilBeam::openCoordinatesGroup (bool const &create)
-  {
-    bool status (true);
-
-    if (coordinates_p.size() == 0 && location_p > 0) {
-      coordinates_p["CoordinatesGroup"] = CoordinatesGroup (location_p,create);
+    
+    if (groupnames.size() > 0) {
+      for (it=groupnames.begin(); it!=groupnames.end(); ++it) {
+	beams_p[*it] = BF_Beam (location_p,*it);
+      }
     }
     
     return status;
   }
 
+  //_____________________________________________________________________________
+  //                                                               openBeam
+  
+  /*!
+    \param beamID -- 
+    \param create -- 
+  */
+  bool BF_PrimaryPointing::openBeam (unsigned int const &beamID,
+					   bool const &create)
+  {
+    bool status      = true;
+    std::string name = BF_Beam::getName (beamID);
+    
+    if (location_p > 0 && H5Iis_valid(location_p)) {
+      // open Beam group
+      BF_Beam beam (location_p,beamID,create);
+      beams_p[name] = beam;
+      // book-keeping
+      int nofBeams = beams_p.size();
+      h5set_attribute (location_p,"NOF_BEAMS",nofBeams);
+    } else {
+      std::cerr << "[BF_PrimaryPointing::openBeam] Not connected to dataset."
+		<< std::endl;
+      std::cerr << "-- Location ID = " << location_p << std::endl;
+      std::cerr << "-- Beam group  = " << name       << std::endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
   //_____________________________________________________________________________
   //                                                                      getName
   
   /*!
-    \param index -- Index identifying the pencil beam.
-
-    \return name -- The name of the pencil beam group,
-            <tt>PencilBeam<index></tt>
+    \param index -- Index identifying the station beam.
+    
+    \return name -- The name of the station beam group,
+            <tt>PrimaryPointing<index></tt>
   */
-  std::string BF_PencilBeam::getName (unsigned int const &index)
+  std::string BF_PrimaryPointing::getName (unsigned int const &index)
   {
     char uid[10];
     sprintf(uid,
@@ -320,7 +295,7 @@ namespace DAL { // Namespace DAL -- begin
     
     std::string name (uid);
     
-    name = "PencilBeam" + name;
+    name = "PrimaryPointing" + name;
     
     return name;
   }

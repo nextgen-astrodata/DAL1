@@ -21,34 +21,32 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef BF_PENCILBEAM_H
-#define BF_PENCILBEAM_H
+#ifndef BF_PRIMARYPOINTING_H
+#define BF_PRIMARYPOINTING_H
 
 // Standard library header files
 #include <iostream>
 #include <string>
-#include <map>
 
 // DAL header files
 #include <CommonInterface.h>
-#include <CoordinatesGroup.h>
-#include <BF_ProcessingHistory.h>
+#include <BF_Beam.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class BF_PencilBeam
+    \class BF_PrimaryPointing
     
     \ingroup DAL
     \ingroup data_hl
     
-    \brief High-level interface to the station beam of a BF dataset
+    \brief High-level interface to the Primary Pointing Direction of a BF dataset
     
     \author Lars B&auml;hren
 
     \date 2009/10/28
 
-    \test tBF_PencilBeam.cpp
+    \test tBF_PrimaryPointing.cc
     
     <h3>Prerequisite</h3>
     
@@ -65,59 +63,59 @@ namespace DAL { // Namespace DAL -- begin
 	datasets
 	<li>CommonInterface -- Common functionality for the high-level
 	interfaces to the datasets
-	<li>CoordinatesGroup
-	<li>BF_ProcessingHistory
       </ul>
     </ul>
     
     <h3>Synopsis</h3>
 
     \verbatim
-    PencilBeam000
-    |-- CoordinatesGroup
-    `-- ProcessingHistory
+    PrimaryPointing001
+    |-- Beam000
+    |   |-- CoordinatesGroup
+    |   `-- ProcessingHistory
+    |-- Beam001
+    |   |-- CoordinatesGroup
+    |   `-- ProcessingHistory
+    |-- Beam002
+    |
     \endverbatim
     
     <h3>Example(s)</h3>
     
   */  
-  class BF_PencilBeam : public CommonInterface {
-
-    //! Procesing history group
-    std::map<std::string,BF_ProcessingHistory> processingHistory_p;
-    //! Coordinates group
-    std::map<std::string,CoordinatesGroup> coordinates_p;
-
+  class BF_PrimaryPointing : public CommonInterface {
+    
+    //! Station beams
+    std::map<std::string,BF_Beam> beams_p;
+    
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    BF_PencilBeam ();
+    BF_PrimaryPointing ();
+    
     //! Argumented constructor
-    BF_PencilBeam (hid_t const &location,
-		   std::string const &name);
-    //! Argumented constructor
-    BF_PencilBeam (hid_t const &location,
-		   unsigned int const &index,
-		   bool const &create);
-
-    // === Destruction =========================================================
+    BF_PrimaryPointing (hid_t const &location,
+		    unsigned int const &index,
+		    bool const &create);
+    
+    // === Destruction ==========================================================
     
     //! Default destructor
-    ~BF_PencilBeam ();
+    ~BF_PrimaryPointing ();
     
-    // === Parameter access =====================================================
-
+    // --------------------------------------------------------------- Parameters
+    
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, BF_PencilBeam.
+      \return className -- The name of the class, BF_PrimaryPointing.
     */
     inline std::string className () const {
-      return "BF_PencilBeam";
+      return "BF_PrimaryPointing";
     }
-
+    
     //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
@@ -132,30 +130,33 @@ namespace DAL { // Namespace DAL -- begin
 
     // ------------------------------------------------------------------ Methods
 
-    //! Convert Pencil beam index to name of the HDF5 group
+    //! Convert PrimaryPointing index to name of the HDF5 group
     static std::string getName (unsigned int const &index);
 
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
+    
+    //! Open a beam group
+    bool openBeam (unsigned int const &beamID,
+			 bool const &create=true);
 
-    //! Open the processing history group
-    bool openProcessingHistory (bool const &create=true);
-
-    //! Open the coordinates group
-    bool openCoordinatesGroup (bool const &create=true);
+    //! Get the number of embedded Beam object/groups
+    inline unsigned int nofBeams () {
+      return beams_p.size();
+    }
     
   protected:
     
-    //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
+    //! Open the structures embedded within the current one
+    bool openEmbedded (bool const &create);
 
-  }; // Class BF_PencilBeam -- end
+  }; // Class BF_PrimaryPointing -- end
   
 } // Namespace DAL -- end
 
-#endif /* BF_DATASET_H */
+#endif /* BF_PRIMARYPOINTING_H */
   

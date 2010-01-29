@@ -1,3 +1,25 @@
+/*-------------------------------------------------------------------------*
+ | $Id::                                                                 $ |
+ *-------------------------------------------------------------------------*
+ ***************************************************************************
+ *   Copyright (C) 2010                                                    *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 
 #ifndef HDF5DATASET_H
 #define HDF5DATASET_H
@@ -12,10 +34,18 @@ namespace DAL {
   
   /*!
     \class HDF5Dataset
+
     \ingroup DAL
+    \ingroup data_common
+
     \brief A class to encapsulate the operations required to work with a dataset
+
     \author Lars B&auml;hren
+
     \date 2009/12/04
+    
+    \todo Implement read function to access data array within the dataset.
+    \todo Implement Hyperslab to access multidimensional datasets/arrays.
   */
   class HDF5Dataset {
     

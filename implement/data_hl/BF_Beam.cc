@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <BF_StationBeam.h>
+#include <BF_Beam.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -32,37 +32,52 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   //_____________________________________________________________________________
-  //                                                               BF_StationBeam
+  //                                                                      BF_Beam
 
-  BF_StationBeam::BF_StationBeam ()
+  BF_Beam::BF_Beam ()
   {
     location_p = 0;
+    processingHistory_p.clear();
+    coordinates_p.clear();
   }
 
   //_____________________________________________________________________________
-  //                                                               BF_StationBeam
+  //                                                                      BF_Beam
 
-  BF_StationBeam::BF_StationBeam (hid_t const &location,
-				  unsigned int const &index,
-				  bool const &create)
+  BF_Beam::BF_Beam (hid_t const &location,
+				std::string const &name)
+  {
+    open (location,name,false);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                      BF_Beam
+
+  BF_Beam::BF_Beam (hid_t const &location,
+				unsigned int const &index,
+				bool const &create)
   {
     open (location,getName(index),create);
   }
   
   // ============================================================================
   //
-  //  Destruction
+  //  Construction
   //
   // ============================================================================
   
-  BF_StationBeam::~BF_StationBeam ()
+  //_____________________________________________________________________________
+  //                                                                     ~BF_Beam
+
+  BF_Beam::~BF_Beam ()
   {
     if (location_p > 0) {
-      // clear maps with embedded objects
-      pencilBeams_p.clear();
-      // release HDF5 object
       herr_t h5error;
       H5I_type_t object_type = H5Iget_type(location_p);
+      // clear maps with embedded objects
+      processingHistory_p.clear();
+      coordinates_p.clear();
+      // release HDF5 object
       if (object_type == H5I_GROUP) {
 	h5error = H5Gclose(location_p);
 	location_p = 0;
@@ -75,18 +90,33 @@ namespace DAL { // Namespace DAL -- begin
   //  Parameters
   //
   // ============================================================================
-
+  
   //_____________________________________________________________________________
   //                                                                      summary
   
-  void BF_StationBeam::summary (std::ostream &os)
+  void BF_Beam::summary (std::ostream &os)
   {
-    os << "[BF_StationBeam] Summary of internal parameters." << std::endl;
-    os << "-- Location ID     = " << location_p          << std::endl;
-    os << "-- nof. attributes = " << attributes_p.size() << std::endl;
-    os << "-- Attributes      = " << attributes_p        << std::endl;
-  }
+    std::map<std::string,BF_ProcessingHistory>::iterator hist;
+    std::map<std::string,CoordinatesGroup>::iterator coord;
 
+    hist  = processingHistory_p.begin();
+    coord = coordinates_p.begin();
+
+    os << "[BF_Beam] Summary of internal parameters." << std::endl;
+    os << "-- Location ID                   = " << location_p
+       << std::endl;
+
+    if (processingHistory_p.size() > 0) {
+    os << "-- Location ID ProcessingHistory = " << hist->second.locationID()
+       << std::endl;
+    }
+
+    if (coordinates_p.size() > 0) {
+    os << "-- Location ID CoordinatesGroup  = " << coord->second.locationID()
+       << std::endl;
+    }
+  }
+  
   // ============================================================================
   //
   //  Methods
@@ -96,35 +126,34 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                setAttributes
   
-  void BF_StationBeam::setAttributes ()
+  void BF_Beam::setAttributes ()
   {
     attributes_p.clear();
-    
+
     attributes_p.insert("GROUPTYPE");
+    attributes_p.insert("TARGET");
     attributes_p.insert("NOF_STATIONS");
     attributes_p.insert("STATIONS_LIST");
     attributes_p.insert("POINT_RA");
     attributes_p.insert("POINT_DEC");
-    attributes_p.insert("TRACKING");
-    attributes_p.insert("POINT_ALTITUDE");
-    attributes_p.insert("POINT_AZIMUTH");
-    attributes_p.insert("CLOCK_RATE");
-    attributes_p.insert("CLOCK_RATE_UNIT");
-    attributes_p.insert("NOF_SAMPLES");
-    attributes_p.insert("SAMPLING_RATE");
-    attributes_p.insert("SAMPLING_RATE_UNIT");
-    attributes_p.insert("SAMPLING_TIME");
-    attributes_p.insert("SAMPLING_TIME_UNIT");
-    attributes_p.insert("TOTAL_INTEGRATION_TIME");
-    attributes_p.insert("TOTAL_INTEGRATION_TIME_UNIT");
-    attributes_p.insert("CHANNELS_PER_SUBBAND");
-    attributes_p.insert("SUBBAND_WIDTH");
-    attributes_p.insert("SUBBAND_WIDTH_UNIT");
-    attributes_p.insert("CHANNEL_WIDTH");
-    attributes_p.insert("CHANNEL_WIDTH_UNIT");
-    attributes_p.insert("NOF_PENCIL_BEAMS");
+    attributes_p.insert("POSITION_OFFSET_RA");
+    attributes_p.insert("POSITION_OFFSET_DEC");
+    attributes_p.insert("PB_DIAMETER_RA");
+    attributes_p.insert("PB_DIAMETER_DEC");
+    attributes_p.insert("PB_CENTER_FREQUENCY");
+    attributes_p.insert("PB_CENTER_FREQUENCY_UNIT");
+    attributes_p.insert("FOLDED_DATA");
+    attributes_p.insert("FOLD_PERIOD");
+    attributes_p.insert("FOLD_PERIOD_UNIT");
+    attributes_p.insert("DEDISPERSION");
+    attributes_p.insert("DISPERSION_MEASURE");
+    attributes_p.insert("DISPERSION_MEASURE_UNIT");
+    attributes_p.insert("BARYCENTER");
+    attributes_p.insert("STOKES_COMPONENTS");
+    attributes_p.insert("COMPLEX_VOLTAGE");
+    attributes_p.insert("SIGNAL_SUM");
   }
-  
+
   //_____________________________________________________________________________
   //                                                                         open
   
@@ -139,23 +168,26 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
-  bool BF_StationBeam::open (hid_t const &location,
-			     std::string const &name,
-			     bool const &create)
+  bool BF_Beam::open (hid_t const &location,
+			    std::string const &name,
+			    bool const &create)
   {
     bool status (true);
-    
-    /* Set up the list of attributes attached to the root group */
+
+    /* Set up the list of attributes attached to the Beam group */
     setAttributes();
-    
+
+    /* Try to open the group: get list of groups attached to 'location' and
+       check if 'name' is part of it.
+    */
     if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
-      location_p = H5Gopen (location,
-			    name.c_str(),
-			    H5P_DEFAULT);
+      location_p = H5Gopen2 (location,
+			     name.c_str(),
+			     H5P_DEFAULT);
     } else {
       location_p = 0;
     }
-
+    
     if (location_p > 0) {
       status = true;
     } else {
@@ -168,44 +200,42 @@ namespace DAL { // Namespace DAL -- begin
 				H5P_DEFAULT);
 	/* If creation was sucessful, add attributes with default values */
 	if (location_p > 0) {
-	  std::string grouptype ("StatBeam");
-	  std::string mhz ("MHz");
-	  std::string tracking ("OFF");
-	  std::string second ("s");
-	  std::string usecond ("us");
-	  std::vector<std::string> stationsList (1,"UNDEFINED");
+	  std::string grouptype ("Beam");
+	  std::string undefined ("UNDEFINED");
+	  bool ok (false);
+	  std::vector<std::string> stations (1,undefined);
+	  std::vector<std::string> stokes (1,undefined);
 	  // write the attributes
 	  h5set_attribute (location_p,"GROUPTYPE",                grouptype   );
+	  h5set_attribute (location_p,"TARGET",                   undefined   );
 	  h5set_attribute (location_p,"NOF_STATIONS",             int(0)      );
-	  h5set_attribute (location_p,"STATIONS_LIST",            stationsList);
+	  h5set_attribute (location_p,"STATIONS_LIST",            stations    );
 	  h5set_attribute (location_p,"POINT_RA",                 double(0.0) );
 	  h5set_attribute (location_p,"POINT_DEC",                double(0.0) );
-	  h5set_attribute (location_p,"TRACKING",                 tracking    );
-	  h5set_attribute (location_p,"POINT_ALTITUDE",           double(0.0) );
-	  h5set_attribute (location_p,"POINT_AZIMUTH",            double(0.0) );
-	  h5set_attribute (location_p,"CLOCK_RATE",               double(0.0) );
-	  h5set_attribute (location_p,"CLOCK_RATE_UNIT",          mhz         );
-	  h5set_attribute (location_p,"NOF_SAMPLES",              int(0)      );
-	  h5set_attribute (location_p,"SAMPLING_RATE",            double(0.0) );
-	  h5set_attribute (location_p,"SAMPLING_RATE_UNIT",       mhz         );
-	  h5set_attribute (location_p,"SAMPLING_TIME",            float(0.0)  );
-	  h5set_attribute (location_p,"SAMPLING_TIME_UNIT",       usecond     );
-	  h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME",   double(0.0) );
-	  h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME_UNIT", second   );
-	  h5set_attribute (location_p,"CHANNELS_PER_SUBBAND",     int(0)      );
-	  h5set_attribute (location_p,"SUBBAND_WIDTH",            double(0.0) );
-	  h5set_attribute (location_p,"SUBBAND_WIDTH_UNIT",       mhz         );
-	  h5set_attribute (location_p,"CHANNEL_WIDTH",            double(0.0) );
-	  h5set_attribute (location_p,"CHANNEL_WIDTH_UNIT",       mhz         );
-	  h5set_attribute (location_p,"NOF_PENCIL_BEAMS",         int(0)      );
+	  h5set_attribute (location_p,"POSITION_OFFSET_RA",       double(0.0) );
+	  h5set_attribute (location_p,"POSITION_OFFSET_DEC",      double(0.0) );
+	  h5set_attribute (location_p,"PB_DIAMETER_RA",           double(0.0) );
+	  h5set_attribute (location_p,"PB_DIAMETER_DEC",          double(0.0) );
+	  h5set_attribute (location_p,"PB_CENTER_FREQUENCY",      double(0.0) );
+	  h5set_attribute (location_p,"PB_CENTER_FREQUENCY_UNIT", undefined   );
+	  h5set_attribute (location_p,"FOLDED_DATA",              ok          );
+	  h5set_attribute (location_p,"FOLD_PERIOD",              float(0.0)  );
+	  h5set_attribute (location_p,"FOLD_PERIOD_UNIT",         undefined   );
+	  h5set_attribute (location_p,"DEDISPERSION",             undefined   );
+	  h5set_attribute (location_p,"DISPERSION_MEASURE",       float(0.0)  );
+ 	  h5set_attribute (location_p,"DISPERSION_MEASURE_UNIT",  undefined   );
+ 	  h5set_attribute (location_p,"BARYCENTER",               ok          );
+ 	  h5set_attribute (location_p,"STOKES_COMPONENTS",        stokes      );
+ 	  h5set_attribute (location_p,"COMPLEX_VOLTAGE",          ok          );
+	  h5set_attribute (location_p,"SIGNAL_SUM",               undefined   );
 	} else {
-	  std::cerr << "[BF_StationBeam::open] Failed to create group "
+	  std::cerr << "[BF_Beam::open] Failed to create group "
 		    << name
 		    << std::endl;
 	  status = false;
 	}
       } else {
-	std::cerr << "[BF_StationBeam::open] Failed to open group "
+	std::cerr << "[BF_Beam::open] Failed to open group "
 		  << name
 		  << std::endl;
 	status = false;
@@ -222,13 +252,13 @@ namespace DAL { // Namespace DAL -- begin
  
     return status;
   }
-  
+
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool BF_StationBeam::openEmbedded (bool const &create)
+  bool BF_Beam::openEmbedded (bool const &create)
   {
-    bool status (create);
+    bool status (true);
     std::set<std::string> groupnames;
     
     /* Retrieve the names of the groups attached to the StationBeam group */
@@ -236,30 +266,37 @@ namespace DAL { // Namespace DAL -- begin
 			  location_p,
 			  H5G_GROUP);
 
+    /* Open the processing history group */
+    status = openProcessingHistory (create);
+    /* Open coordinates group */
+    status = openCoordinatesGroup (create);
+
     return status;
   }
 
   //_____________________________________________________________________________
-  //                                                               openPencilBeam
+  //                                                        openProcessingHistory
   
-  bool BF_StationBeam::openPencilBeam (unsigned int const &pencilID,
-				       bool const &create)
+  bool BF_Beam::openProcessingHistory (bool const &create)
   {
-    bool status      = true;
-    std::string name = BF_PencilBeam::getName (pencilID);
-    size_t haveGroup = pencilBeams_p.count (name);
+    bool status (true);
 
-    try {
-      // create the PencilBeam group ...
-      if (location_p > 0 && haveGroup == 0) {
-	pencilBeams_p[name] = BF_PencilBeam (location_p,pencilID,create);
-      }
-      // ... and do the book-keeping
-      int nofBeams = pencilBeams_p.size();
-      h5set_attribute (location_p,"NOF_PENCIL_BEAMS",nofBeams);
-    } catch (std::string message) {
-      std::cerr << "[BF_StationBeam::openPencilBeam] " << message << std::endl;
-      status = false;
+    if (processingHistory_p.size() == 0 && location_p > 0) {
+      processingHistory_p["ProcessingHistory"] = BF_ProcessingHistory (location_p,create);
+    }
+
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                         openCoordinatesGroup
+  
+  bool BF_Beam::openCoordinatesGroup (bool const &create)
+  {
+    bool status (true);
+
+    if (coordinates_p.size() == 0 && location_p > 0) {
+      coordinates_p["CoordinatesGroup"] = CoordinatesGroup (location_p,create);
     }
     
     return status;
@@ -269,12 +306,11 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                      getName
   
   /*!
-    \param index -- Index identifying the station beam.
+    \param index -- Index identifying the beam.
 
-    \return name -- The name of the station beam group,
-            <tt>StationBeam<index></tt>
+    \return name -- The name of the beam group, <tt>Beam<index></tt>
   */
-  std::string BF_StationBeam::getName (unsigned int const &index)
+  std::string BF_Beam::getName (unsigned int const &index)
   {
     char uid[10];
     sprintf(uid,
@@ -283,7 +319,7 @@ namespace DAL { // Namespace DAL -- begin
     
     std::string name (uid);
     
-    name = "StationBeam" + name;
+    name = "Beam" + name;
     
     return name;
   }

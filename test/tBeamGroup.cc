@@ -22,6 +22,7 @@
   \file tBeamGroup.cc
 
   \ingroup DAL
+  \ingroup data_hl
 
   \brief A collection of test routines for the DAL::BeamGroup class
   \author Lars B&auml;hren

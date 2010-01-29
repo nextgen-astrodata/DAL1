@@ -96,7 +96,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     if (location_p > 0) {
       // clear maps with embedded objects
-      stationBeams_p.clear();
+      primaryPointings_p.clear();
       sysLog_p.clear();
       // release HDF5 object
       herr_t h5error;
@@ -157,16 +157,16 @@ namespace DAL { // Namespace DAL -- begin
 			    bool const &showAttributes)
   {
     os << "[BF_Dataset] Summary of internal parameters." << std::endl;
-    os << "-- Filename                = " << commonAttributes_p.filename()
-       << std::endl ;
+    os << "-- Filename                = " << filename_p            << std::endl;
     os << "-- Location ID             = " << location_p            << std::endl;
     os << "-- nof. attributes         = " << attributes_p.size()   << std::endl;
-    os << "-- nof. station beams      = " << nofStationBeams()     << std::endl;
+    os << "-- nof. station beams      = " << nofPrimaryPointings()     << std::endl;
+    os << "-- nof. SysLog groups      = " << sysLog_p.size()       << std::endl;
+    os << "-- nof. PrimaryPointing groups = " << primaryPointings_p.size() << std::endl;
+
     if (showAttributes) {
       os << "-- Attributes              = " << attributes_p          << std::endl;
     }
-    os << "-- nof. SysLog groups      = " << sysLog_p.size()       << std::endl;
-    os << "-- nof. StationBeam groups = " << stationBeams_p.size() << std::endl;
   }
   
   
@@ -241,21 +241,26 @@ namespace DAL { // Namespace DAL -- begin
 
     // Initialize private variables ________________________
     location_p = location;
-    stationBeams_p.clear();
-    sysLog_p.clear();
+    filename_p = name;
     setAttributes();
+    primaryPointings_p.clear();
+    sysLog_p.clear();
     
     // Try to open the file ________________________________
 
-    FILE * pFile = fopen ( name.c_str(), "r" );
-    
-    if ( pFile != NULL ) {
-      // If the file exists, release it ...
-      fclose( pFile );
+    std::ifstream infile;
+    infile.open (name.c_str(), std::ifstream::in);
+
+    if (infile.is_open() && infile.good()) {
+      // If the file already exists, close it ...
+      infile.close();
       // ... and open it as HDF5 file
       location_p = H5Fopen (name.c_str(),
 			    H5F_ACC_RDWR,
 			    H5P_DEFAULT);
+    } else {
+      infile.close();
+      location_p = 0;
     }
     
     if (location_p > 0) {
@@ -268,13 +273,14 @@ namespace DAL { // Namespace DAL -- begin
 				H5F_ACC_TRUNC,
 				H5P_DEFAULT,
 				H5P_DEFAULT);
-	/* Write the common attributes attached to the root group */
+	/* Write LOFAR common attribute to the root group of the file */
 	commonAttributes_p.h5write(location_p);
 	/* Write the additional attributes attached to the root group */
 	std::string undefined ("UNDEFINED");
 	std::vector<float> vectF (1,0.0);
 	std::vector<double> vectD (1,0.0);
 	//
+	h5set_attribute (location_p,"FILENAME",               name        );
  	h5set_attribute (location_p,"CREATE_OFFLINE_ONLINE",  true        );
  	h5set_attribute (location_p,"BF_FORMAT",              undefined   );
 	h5set_attribute (location_p,"BF_VERSION",             undefined   );
@@ -290,6 +296,8 @@ namespace DAL { // Namespace DAL -- begin
  	h5set_attribute (location_p,"SYSTEM_TEMPERATURE",     vectF       );
  	h5set_attribute (location_p,"PHASE_CENTER",           vectD       );
 	h5set_attribute (location_p,"NOF_BEAMS",              int(0)      );
+	/* Read back in the common attributes after storing default values */
+	commonAttributes_p.h5read(location_p);
       } else {
 	std::cerr << "[BF_Dataset::open] Failed to open file "
 		  << name
@@ -347,31 +355,32 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                              openStationBeam
+  //                                                              openPrimaryPointing
   
   /*!
-    \param stationID -- 
+    \param pointingID -- 
     \param create    -- 
    */
-  bool BF_Dataset::openStationBeam (unsigned int const &stationID,
+  bool BF_Dataset::openPrimaryPointing (unsigned int const &pointingID,
 				    bool const &create)
   {
-    bool status      = true;
+    bool status (true);
     
     if (location_p > 0) {
       std::string name;
       int nofStations;
-      std::map<std::string,BF_StationBeam>::iterator it;
+      std::map<std::string,BF_PrimaryPointing>::iterator it;
       // convert station ID to group name
-      name = BF_StationBeam::getName (stationID);
+      name = BF_PrimaryPointing::getName (pointingID);
       // open/create the station beam group
-      stationBeams_p[name] = BF_StationBeam (location_p,stationID,create);
+      BF_PrimaryPointing beam (location_p,pointingID,create);
+      primaryPointings_p[name] = beam;
       // attributes for book-keeping
-      nofStations = stationBeams_p.size();
-      setAttribute ("NOF_BEAMS",nofStations);
+      nofStations = primaryPointings_p.size();
+      h5set_attribute (location_p, "NOF_BEAMS", nofStations);
       // check if the station beam group indeed exists
-      it = stationBeams_p.find(name);
-      if (it==stationBeams_p.end()) {
+      it = primaryPointings_p.find(name);
+      if (it==primaryPointings_p.end()) {
 	status = false;
       }
     }
@@ -383,45 +392,46 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                               openPencilBeam
+  //                                                               openBeam
   
   /*!
-    \param stationID -- 
-    \param pencilID  -- 
+    \param pointingID -- 
+    \param beamID  -- 
     \param create    -- 
-   */
-  bool BF_Dataset::openPencilBeam (unsigned int const &stationID,
-				   unsigned int const &pencilID,
+  */
+  bool BF_Dataset::openBeam (unsigned int const &pointingID,
+				   unsigned int const &beamID,
 				   bool const &create)
   {
     bool status (true);
 
     if (location_p > 0) {
-      /* Open StationBeam group */
-      status = openStationBeam (stationID, create);
+      /* Open PrimaryPointing group */
+      status = openPrimaryPointing (pointingID, create);
 
-      /* Open PencilBeam group */
+      /* Open Beam group */
       if (status) {
 	std::string name;
-	std::map<std::string,BF_StationBeam>::iterator it;
-	// get pointer to StationBeam object
-	name = BF_StationBeam::getName (stationID);
-	it   = stationBeams_p.find(name);
-	// forward function call to open pencil beam
-	if ( it != stationBeams_p.end() ) {
-	  std::cout << "--> opening pencil beam in  "
-		    << it->second.locationName() 
+	std::map<std::string,BF_PrimaryPointing>::iterator it;
+	// get pointer to PrimaryPointing object
+	name = BF_PrimaryPointing::getName (pointingID);
+	it = primaryPointings_p.find(name);
+	// forward function call to open beam
+	if ( it != primaryPointings_p.end() ) {
+	  std::cout << "--> opening beam " << beamID << " in "
+		    << it->first
+		    << " (" << it->second.locationID() << ") ..."
 		    << std::endl;
-	  it->second.openPencilBeam(pencilID,create);
+	  it->second.openBeam(beamID,create);
 	}
       } else {
-	std::cerr << "[BF_Dataset::openPencilBeam] Failed to open StationGroup!"
+	std::cerr << "[BF_Dataset::openBeam] Failed to open StationGroup!"
 		  << std::endl;
 	status = false;
       }
     }  //  end -- (location_p>0)
     else {
-      std::cerr << "[BF_Dataset::openPencilBeam] No connection to dataset!"
+      std::cerr << "[BF_Dataset::openBeam] No connection to dataset!"
 		<< std::endl;
       status = false;
     }
@@ -434,13 +444,13 @@ namespace DAL { // Namespace DAL -- begin
   
   std::vector<std::string> BF_Dataset::stationBeamGroups ()
   {
-    std::vector<std::string> names (nofStationBeams());
-    std::map<std::string,BF_StationBeam>::iterator n;
+    std::vector<std::string> names (nofPrimaryPointings());
+    std::map<std::string,BF_PrimaryPointing>::iterator n;
     
     /* Iterate through the map containing the station beam groups and extract the
        group name.
     */
-    n = stationBeams_p.begin();
+    n = primaryPointings_p.begin();
     
     return names;
   }
@@ -448,10 +458,10 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 stationBeams
 
-  std::vector<BF_StationBeam> BF_Dataset::stationBeams ()
+  std::vector<BF_PrimaryPointing> BF_Dataset::stationBeams ()
   {
-    std::vector<BF_StationBeam> beams (nofStationBeams());
-    std::map<std::string,BF_StationBeam>::iterator n;
+    std::vector<BF_PrimaryPointing> beams (nofPrimaryPointings());
+    std::map<std::string,BF_PrimaryPointing>::iterator n;
 
     return beams;
   }

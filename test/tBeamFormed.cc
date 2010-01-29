@@ -22,6 +22,7 @@
   \file tBeamFormed.cc
 
   \ingroup DAL
+  \ingroup data_hl
 
   \brief Test program for beam-formed functionality.
 
@@ -98,38 +99,37 @@ int test_attributes (std::string const &filename)
   int nofBeams = bf.number_of_beams();
 
   cout << "[1] Attributes of the root group..." << endl;
-  try
-    {
-      cout << "-- Filename             = " << bf.filename()               << endl;
-      cout << "-- Telescope            = " << bf.telescope()              << endl;
-      cout << "-- nof. stations        = " << bf.nofStations()            << endl;
-      cout << "-- Datatype             = " << bf.datatype()               << endl;
-      cout << "-- EM band              = " << bf.emband()                 << endl;
-      cout << "-- List of sources      = " << bf.sources()                << endl;
-      cout << "-- Observation ID       = " << bf.observation_id()         << endl;
-      cout << "-- Project ID           = " << bf.proj_id()                << endl;
-      cout << "-- RA of pointing       = " << bf.point_ra()               << endl;
-      cout << "-- DEC of pointing      = " << bf.point_dec()              << endl;
-      cout << "-- Observer             = " << bf.observer()               << endl;
-      cout << "-- Epoch (MJD)          = " << bf.epoch_mjd()              << endl;
-      cout << "-- Epoch (Date)         = " << bf.epoch_date()             << endl;
-      cout << "-- Epoch (UTC)          = " << bf.epoch_utc()              << endl;
-      cout << "-- Epoch (LST)          = " << bf.epoch_lst()              << endl;
-      cout << "-- Main beam diam.      = " << bf.main_beam_diam()         << endl;
-      cout << "-- Center frequency     = " << bf.center_freq()            << endl;
-      cout << "-- Bandwidth            = " << bf.bandwidth()              << endl;
-      cout << "-- Integration time     = " << bf.total_integration_time() << endl;
-      cout << "-- nof. breaks          = " << bf.breaks()                 << endl;
-      cout << "-- Dispersion measure   = " << bf.dispersion_measure()     << endl;
-      cout << "-- nof. samples         = " << bf.number_of_samples()      << endl;
-      cout << "-- Sampling time        = " << bf.sampling_time()          << endl;
-      cout << "-- nof. beams           = " << bf.number_of_beams()        << endl;
-      cout << "-- Sub-beam diameter    = " << bf.sub_beam_diameter()      << endl;
-      cout << "-- Weather temperature  = " << bf.weather_temperature()    << endl;
-      cout << "-- Weather humidity     = " << bf.weather_humidity()       << endl;
-      cout << "-- Station temperatures = " << bf.station_temperatures()   << endl;
-      cout << "-- Notes                = " << bf.notes()                  << endl;
-    }
+  try {
+    cout << "-- Filename             = " << bf.filename()               << endl;
+    cout << "-- Telescope            = " << bf.telescope()              << endl;
+    cout << "-- nof. stations        = " << bf.nofStations()            << endl;
+    cout << "-- Datatype             = " << bf.datatype()               << endl;
+    cout << "-- EM band              = " << bf.emband()                 << endl;
+    cout << "-- List of sources      = " << bf.sources()                << endl;
+    cout << "-- Observation ID       = " << bf.observation_id()         << endl;
+    cout << "-- Project ID           = " << bf.proj_id()                << endl;
+    cout << "-- RA of pointing       = " << bf.point_ra()               << endl;
+    cout << "-- DEC of pointing      = " << bf.point_dec()              << endl;
+    cout << "-- Observer             = " << bf.observer()               << endl;
+    cout << "-- Epoch (MJD)          = " << bf.epoch_mjd()              << endl;
+    cout << "-- Epoch (Date)         = " << bf.epoch_date()             << endl;
+    cout << "-- Epoch (UTC)          = " << bf.epoch_utc()              << endl;
+    cout << "-- Epoch (LST)          = " << bf.epoch_lst()              << endl;
+    cout << "-- Main beam diam.      = " << bf.main_beam_diam()         << endl;
+    cout << "-- Center frequency     = " << bf.center_freq()            << endl;
+    cout << "-- Bandwidth            = " << bf.bandwidth()              << endl;
+    cout << "-- Integration time     = " << bf.total_integration_time() << endl;
+    cout << "-- nof. breaks          = " << bf.breaks()                 << endl;
+    cout << "-- Dispersion measure   = " << bf.dispersion_measure()     << endl;
+    cout << "-- nof. samples         = " << bf.number_of_samples()      << endl;
+    cout << "-- Sampling time        = " << bf.sampling_time()          << endl;
+    cout << "-- nof. beams           = " << bf.number_of_beams()        << endl;
+    cout << "-- Sub-beam diameter    = " << bf.sub_beam_diameter()      << endl;
+    cout << "-- Weather temperature  = " << bf.weather_temperature()    << endl;
+    cout << "-- Weather humidity     = " << bf.weather_humidity()       << endl;
+    cout << "-- Station temperatures = " << bf.station_temperatures()   << endl;
+    cout << "-- Notes                = " << bf.notes()                  << endl;
+  }
   catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -138,26 +138,24 @@ int test_attributes (std::string const &filename)
   if (nofBeams > 0) {
     cout << "[2] Attributes of the beam groups..." << endl;
     DAL::BeamGroup *group;
-    for (int beam(0); beam<nofBeams; beam++)
-      {
-	try
-	  {
-	    /* Retrieve the beam group */
-	    group = bf.getBeam(beam);
-	    /* Display the attribute of this group */
-	    cout << "-- Group number    = " << beam                 << endl;
-	    cout << "-- HDF5 file ID    = " << group->fileID()      << endl;
-	    cout << "-- HDF5 group ID   = " << group->groupID()     << endl;
-	    cout << "-- HDF5 group name = " << group->groupName()   << endl;
-	    cout << "-- RA of the beam  = " << group->ra()          << endl;
-	    cout << "-- Dec of the beam = " << group->dec()         << endl;
-	    cout << "-- nof. subbands   = " << group->nofSubbands() << endl;
-	  }
-	catch (std::string message) {
-	  std::cerr << message << endl;
-	  nofFailedTests++;
-	}
+    for (int beam(0); beam<nofBeams; beam++) {
+      try {
+	/* Retrieve the beam group */
+	group = bf.getBeam(beam);
+	/* Display the attribute of this group */
+	cout << "-- Group number    = " << beam                 << endl;
+	cout << "-- HDF5 file ID    = " << group->fileID()      << endl;
+	cout << "-- HDF5 group ID   = " << group->groupID()     << endl;
+	cout << "-- HDF5 group name = " << group->groupName()   << endl;
+	cout << "-- RA of the beam  = " << group->ra()          << endl;
+	cout << "-- Dec of the beam = " << group->dec()         << endl;
+	cout << "-- nof. subbands   = " << group->nofSubbands() << endl;
       }
+      catch (std::string message) {
+	std::cerr << message << endl;
+	nofFailedTests++;
+      }
+    }
   }
   
   return nofFailedTests;
@@ -253,22 +251,25 @@ int test_getData (std::string const &filename)
 int main(int argc,char *argv[])
 {
   int nofFailedTests (0);
-  
-  std::string filename;
+  bool haveDataset (true);
+  std::string filename ("UNDEFINED");
 
-  if (argc > 1) {
-    filename = std::string(argv[1]);
-  }
-  else {
-    std::cerr << "Please provide a HDF5 filename.\n";
-    return(DAL::FAIL);
+  //________________________________________________________
+  // Process parameters from the command line
+  
+  if (argc < 2) {
+    haveDataset = false;
+  } else {
+    filename    = argv[1];
+    haveDataset = true;
   }
   
-  /* Test for the constructors */
-  nofFailedTests += test_constructors(filename);
-  
-  if (nofFailedTests == 0) {
+  if (haveDataset) {
+    /* Test for the constructors */
+    nofFailedTests += test_constructors(filename);
+    /* Test access to the attributes */
     nofFailedTests += test_attributes (filename);
+    /* Test access to the data */
     nofFailedTests += test_getData (filename);
   }
   

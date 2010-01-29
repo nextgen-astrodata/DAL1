@@ -1,8 +1,8 @@
 /*-------------------------------------------------------------------------*
- | $Id:: NewClass.h 2286 2009-02-03 10:50:48Z baehren                    $ |
+ | $Id::                                                                 $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
- *   Copyright (C) 2009                                                    *
+ *   Copyright (C) 2010                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -21,102 +21,97 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef BF_STATIONBEAM_H
-#define BF_STATIONBEAM_H
+#ifndef TBB_STATIONCALIBRATION_H
+#define TBB_STATIONCALIBRATION_H
 
 // Standard library header files
 #include <iostream>
 #include <string>
 
-// DAL header files
+#include <CoordinatesGroup.h>
 #include <CommonInterface.h>
-#include <BF_PencilBeam.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class BF_StationBeam
+    \class TBB_StationCalibration
     
     \ingroup DAL
     \ingroup data_hl
     
-    \brief High-level interface to the station beam of a BF dataset
+    \brief Brief description for class TBB_StationCalibration
     
     \author Lars B&auml;hren
 
-    \date 2009/10/28
+    \date 2010/01/26
 
-    \test tBF_StationBeam.cc
+    \test tTBB_StationCalibration.cc
     
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>LOFAR Data Format ICDs:
-      <ul>
-	<li>Beam-Formed Data (LOFAR-USG-ICD-003)
-	<li>Naming conventions (LOFAR-USG-ICD-005)
-      </ul>
-      <li>Components of the LOFAR user software:
-      <ul>
-        <li>Filename -- Class to filenames matching convention
-        <li>CommonAttributes -- Collection of attributes common to all LOFAR
-	datasets
-	<li>CommonInterface -- Common functionality for the high-level
-	interfaces to the datasets
-      </ul>
+      <li>[start filling in your text here]
     </ul>
     
     <h3>Synopsis</h3>
-
-    \verbatim
-    StationBeam001
-    |-- PencilBeam000
-    |   |-- CoordinatesGroup
-    |   `-- ProcessingHistory
-    |-- PencilBeam001
-    |   |-- CoordinatesGroup
-    |   `-- ProcessingHistory
-    |-- PencilBeam002
-    |
-    \endverbatim
     
     <h3>Example(s)</h3>
     
   */  
-  class BF_StationBeam : public CommonInterface {
+  class TBB_StationCalibration : public CommonInterface {
     
-    //! Station beams
-    std::map<std::string,BF_PencilBeam> pencilBeams_p;
+    //! Complex electronic gain as function of frequency
+    hid_t gainCurve_p;
+    //! Coordinates attached to the gain curve data
+    CoordinatesGroup gainCurveCoordinates_p;
+    //! Complex system noice as function of frequency
+    hid_t noiseCurve_p;
+    //! Coordinates attached to the noise curve data
+    CoordinatesGroup noiseCurveCoordinates_p;
+    //! Complex beam pattern as function of direction and frequency
+    hid_t beamShape_p;
     
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    BF_StationBeam ();
+    TBB_StationCalibration ();
     
-    //! Argumented constructor
-    BF_StationBeam (hid_t const &location,
-		    unsigned int const &index,
-		    bool const &create);
+    /*!
+      \brief Copy constructor
+      
+      \param other -- Another TBB_StationCalibration object from which to create this new
+             one.
+    */
+    TBB_StationCalibration (TBB_StationCalibration const &other);
     
     // === Destruction ==========================================================
+
+    //! Destructor
+    ~TBB_StationCalibration ();
     
-    //! Default destructor
-    ~BF_StationBeam ();
+    // === Operators ============================================================
     
-    // --------------------------------------------------------------- Parameters
+    /*!
+      \brief Overloading of the copy operator
+      
+      \param other -- Another TBB_StationCalibration object from which to make a copy.
+    */
+    TBB_StationCalibration& operator= (TBB_StationCalibration const &other); 
+    
+    // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, BF_StationBeam.
+      \return className -- The name of the class, TBB_StationCalibration.
     */
     inline std::string className () const {
-      return "BF_StationBeam";
+      return "TBB_StationCalibration";
     }
-    
-    //! Provide a summary of the internal status
+
+    //! Provide a summary of the object's internal parameters and status
     inline void summary () {
       summary (std::cout);
     }
@@ -128,35 +123,30 @@ namespace DAL { // Namespace DAL -- begin
     */
     void summary (std::ostream &os);    
 
-    // ------------------------------------------------------------------ Methods
-
-    //! Convert StationBeam index to name of the HDF5 group
-    static std::string getName (unsigned int const &index);
-
-    //! Open the file containing the beamformed data.
+    // === Methods ==============================================================
+    
+    //! Open a station calibration group
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
-    
-    //! Open a pencil beam group
-    bool openPencilBeam (unsigned int const &pencilID,
-			 bool const &create=true);
 
-    //! Get the number of embedded PencilBeam object/groups
-    inline unsigned int nofPencilBeams () {
-      return pencilBeams_p.size();
-    }
+  private:
     
-  protected:
-    
-    //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 
-  }; // Class BF_StationBeam -- end
+    //! Open the structures embedded within the current one
+    bool openEmbedded (bool const &create);
+
+    //! Unconditional copying
+    void copy (TBB_StationCalibration const &other);
+    
+    //! Unconditional deletion 
+    void destroy(void);
+    
+  }; // Class TBB_StationCalibration -- end
   
 } // Namespace DAL -- end
 
-#endif /* BF_DATASET_H */
+#endif /* TBB_STATIONCALIBRATION_H */
   

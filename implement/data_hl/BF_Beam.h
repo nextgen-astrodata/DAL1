@@ -21,35 +21,34 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef BF_DATASET_H
-#define BF_DATASET_H
+#ifndef BF_BEAM_H
+#define BF_BEAM_H
 
 // Standard library header files
 #include <iostream>
 #include <string>
+#include <map>
 
 // DAL header files
 #include <CommonInterface.h>
-#include <Filename.h>
-#include <BF_Dataset.h>
-#include <BF_PrimaryPointing.h>
-#include <BF_SysLog.h>
+#include <CoordinatesGroup.h>
+#include <BF_ProcessingHistory.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class BF_Dataset
+    \class BF_Beam
     
     \ingroup DAL
     \ingroup data_hl
     
-    \brief High-level interface to the root-group of a beamformed dataset
+    \brief High-level interface to the station beam of a BF dataset
     
     \author Lars B&auml;hren
 
     \date 2009/10/28
 
-    \test tBF_Dataset.cc
+    \test tBF_Beam.cpp
     
     <h3>Prerequisite</h3>
     
@@ -66,119 +65,86 @@ namespace DAL { // Namespace DAL -- begin
 	datasets
 	<li>CommonInterface -- Common functionality for the high-level
 	interfaces to the datasets
-	<li>BF_PrimaryPointing
-	<li>BF_SysLog
+	<li>CoordinatesGroup
+	<li>BF_ProcessingHistory
       </ul>
     </ul>
     
     <h3>Synopsis</h3>
 
-    Basic hierarchical structure used DAL classes:
     \verbatim
-    /
-    |-- PrimaryPointing000
-    |   |-- Beam000
-    |   |-- Beam000
-    |   |
-    |
-    |-- PrimaryPointing001
-    |
-    `-- SysLog
+    Beam000
+    |-- CoordinatesGroup
+    `-- ProcessingHistory
     \endverbatim
     
     <h3>Example(s)</h3>
     
   */  
-  class BF_Dataset : public CommonInterface {
+  class BF_Beam : public CommonInterface {
 
-    //! Name of the data file
-    std::string filename_p;
-    //! LOFAR common attributes attached to the root group of the dataset
-    CommonAttributes commonAttributes_p;
-    //! Primary Pointing Directions
-    std::map<std::string,BF_PrimaryPointing> primaryPointings_p;
-    //! Container for system-wide logs
-    std::map<std::string,BF_SysLog> sysLog_p;
+    //! Procesing history group
+    std::map<std::string,BF_ProcessingHistory> processingHistory_p;
+    //! Coordinates group
+    std::map<std::string,CoordinatesGroup> coordinates_p;
 
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    BF_Dataset (std::string const &filename);
-    
+    BF_Beam ();
     //! Argumented constructor
-    BF_Dataset (DAL::Filename &infile,
-		bool const &create=true);
-    
+    BF_Beam (hid_t const &location,
+	     std::string const &name);
     //! Argumented constructor
-    BF_Dataset (CommonAttributes const &attributes,
-		bool const &create=true);
+    BF_Beam (hid_t const &location,
+	     unsigned int const &index,
+	     bool const &create);
     
-    // === Destruction ==========================================================
+    // === Destruction =========================================================
     
     //! Default destructor
-    ~BF_Dataset ();
+    ~BF_Beam ();
     
-    // --------------------------------------------------------------- Parameters
-
-    //! Get the set of common attributes attached to the root group of the file
-    CommonAttributes commonAttributes ();
-
-    //! Set the set of common attributes attached to the root group of the file
-    bool setCommonAttributes (CommonAttributes const &attributes);
-
+    // === Parameter access =====================================================
+    
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, BF_Dataset.
+      \return className -- The name of the class, BF_Beam.
     */
     inline std::string className () const {
-      return "BF_Dataset";
+      return "BF_Beam";
     }
 
     //! Provide a summary of the internal status
-    inline void summary (bool const &showAttributes=false) {
-      summary (std::cout,showAttributes);
+    inline void summary () {
+      summary (std::cout);
     }
-    
+
     /*!
       \brief Provide a summary of the internal status
-      
+
       \param os -- Output stream to which the summary is written.
     */
-    void summary (std::ostream &os,
-		  bool const &showAttributes=false);    
+    void summary (std::ostream &os);    
 
     // ------------------------------------------------------------------ Methods
+
+    //! Convert beam index to name of the HDF5 group
+    static std::string getName (unsigned int const &index);
 
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
 
-    //! Open a system log group
-    bool openSysLog (bool const &create=true);
-    
-    //! Open a PrimaryPointing direction group
-    bool openPrimaryPointing (unsigned int const &pointingID,
-			      bool const &create=true);
-    
-    //! Open a beam group
-    bool openBeam (unsigned int const &pointingID,
-		   unsigned int const &beamID,
-		   bool const &create=true);
-    
-    //! Get the number of station beam objects attached to the root group
-    inline unsigned int nofPrimaryPointings () const {
-      return primaryPointings_p.size();
-    }
+    //! Open the processing history group
+    bool openProcessingHistory (bool const &create=true);
 
-    //! Get the names of the groups holding station beam data
-    std::vector<std::string> stationBeamGroups ();
-
-    //! Get the station beam objects attached to the root group of the file
-    std::vector<BF_PrimaryPointing> stationBeams ();
+    //! Open the coordinates group
+    bool openCoordinatesGroup (bool const &create=true);
     
   protected:
     
@@ -187,12 +153,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 
-  private:
-    
-    //! Initialize the internal settings of the object
-    void init (CommonAttributes const &attributes);
-
-  }; // Class BF_Dataset -- end
+  }; // Class BF_Beam -- end
   
 } // Namespace DAL -- end
 

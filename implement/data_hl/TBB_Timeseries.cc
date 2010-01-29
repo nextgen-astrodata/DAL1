@@ -219,10 +219,22 @@ namespace DAL {  // Namespace DAL -- begin
     filename_p = name;
     setAttributes ();
     
-    /* Try to open the file */
-    location_p = H5Fopen (name.c_str(),
-			  H5F_ACC_RDWR,
-			  H5P_DEFAULT);
+    // Try to open the file ________________________________
+
+    std::ifstream infile;
+    infile.open (name.c_str(), std::ifstream::in);
+
+    if (infile.is_open() && infile.good()) {
+      // If the file already exists, close it ...
+      infile.close();
+      // ... and open it as HDF5 file
+      location_p = H5Fopen (name.c_str(),
+			    H5F_ACC_RDWR,
+			    H5P_DEFAULT);
+    } else {
+      infile.close();
+      location_p = 0;
+    }
     
     if (location_p > 0) {
       status = true;

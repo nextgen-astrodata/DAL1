@@ -99,6 +99,18 @@ int test_constructors ()
     nofFailedTests++;
   }
   
+  std::cout << "[3] Testing construction with filename ..." << endl;
+  try {
+    std::string filename = file.filename();
+    //
+    BF_Dataset dataset (filename);
+    //
+    dataset.summary(); 
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
@@ -128,14 +140,14 @@ int test_subGroups ()
     ++nofFailedTests;
   }
 
-  std::cout << "[2] Open StationBeam groups ..." << endl;
+  std::cout << "[2] Open PrimaryPointing groups ..." << endl;
   try {
-    dataset.openStationBeam(0,true);
-    dataset.openStationBeam(1,true);
-    dataset.openStationBeam(2,true);
-    dataset.openStationBeam(3,true);
+    dataset.openPrimaryPointing(0,true);
+    dataset.openPrimaryPointing(1,true);
+    dataset.openPrimaryPointing(2,true);
+    dataset.openPrimaryPointing(3,true);
     //
-    dataset.openStationBeam(0,true);
+    dataset.openPrimaryPointing(0,true);
     //
     dataset.summary(); 
   } catch (std::string message) {
@@ -143,17 +155,17 @@ int test_subGroups ()
     nofFailedTests++;
   }
 
-  std::cout << "[3] Open PencilBeam groups ..." << endl;
+  std::cout << "[3] Open Beam groups ..." << endl;
   try {
-    // open PencilBeam groups within existing StationBeam group
-    dataset.openPencilBeam(0,0,true);
-    dataset.openPencilBeam(0,1,true);
-    dataset.openPencilBeam(0,2,true);
-    // open PencilBeamGroups without previously existing StationBeam group
-    dataset.openPencilBeam(10,0,true);
-    dataset.openPencilBeam(10,1,true);
-    dataset.openPencilBeam(10,2,true);
-    dataset.openPencilBeam(10,3,true);
+    // open Beam groups within existing PrimaryPointing group
+    dataset.openBeam(0,0,true);
+    dataset.openBeam(0,1,true);
+    dataset.openBeam(0,2,true);
+    // open Beam groups without previously existing PrimaryPointing group
+    dataset.openBeam(10,0,true);
+    dataset.openBeam(10,1,true);
+    dataset.openBeam(10,2,true);
+    dataset.openBeam(10,3,true);
     //
     dataset.summary(); 
   } catch (std::string message) {
@@ -167,9 +179,25 @@ int test_subGroups ()
 //_______________________________________________________________________________
 //                                                                           main
 
-int main ()
+int main (int argc,
+          char *argv[])
 {
   int nofFailedTests (0);
+  bool haveDataset (true);
+  std::string filename ("UNDEFINED");
+
+  //________________________________________________________
+  // Process parameters from the command line
+  
+  if (argc < 2) {
+    haveDataset = false;
+  } else {
+    filename    = argv[1];
+    haveDataset = true;
+  }
+
+  //________________________________________________________
+  // Run the tests
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();

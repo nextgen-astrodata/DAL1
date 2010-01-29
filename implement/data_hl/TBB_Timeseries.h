@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2008                                                    *
- *   Lars B"ahren (lbaehren@gmail.com)                                     *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -59,7 +59,7 @@ namespace DAL {  // Namespace DAL -- begin
       <ul>
         <li>DAL::CommonAttributes - Collection of attributes common to all
 	LOFAR datasets.
-	<li>DAL::TriggerTable -- Container for the trigger parameter data.
+	<li>DAL::TBB_TriggerTable -- Container for the trigger parameter data.
         <li>DAL::TBB_StationGroup - Container for the data in the StationGroup
 	of LOFAR times-series data.
 	<li>DAL::TBB_DipoleDataset - Container for dipole-based data in a LOFAR
@@ -79,8 +79,40 @@ namespace DAL {  // Namespace DAL -- begin
     layers - such as dalDataset or dalGroup - but directly performs the required
     operations through the HDF5 library.
 
+    \verbatim
+    OBSERVATION
+    |-- Station000                            ...  Group
+    |   |-- 000000000                         ...  Dataset
+    |   |   |-- STATION_ID                    ...  Attribute
+    |   |   |-- RSP_ID                        ...  Attribute
+    |   |   |-- RCU_ID                        ...  Attribute
+    |   |   |
+    |   |
+    |   |-- 000000001                         ...  Dataset
+    |   |
+    |   `-- StationCalibration                ...  Group
+    |       |-- GainCurve                     ...  Dataset
+    |       |   `-- CoordinatesGroup          ...  Group
+    |       |       `-- FrequencyCoordinate   ...  Group
+    |       |-- NoiseCurve                    ...  Dataset
+    |       |   `-- CoordinatesGroup          ...  Group
+    |       |       `-- FrequencyCoordinate   ...  Group
+    |       `-- BeamShape                     ...  Dataset
+    |           `-- CoordinatesGroup          ...  Group
+    |               |-- DirectionCoordinate   ...  Group
+    |               `-- FrequencyCoordinate   ...  Group
+    |
+    |-- Station001                            ...  Group
+    |   |-- 001000000                         ...  Dataset
+    |   |-- 001000001                         ...  Dataset
+    |   |
+    |   `-- Calibration                       ...  Group
+    |
+    `-- TriggerTable                          ...  Group
+    \endverbatim
+    
     <h3>Example(s)</h3>
-
+    
   */
   class TBB_Timeseries : public CommonInterface {
     
