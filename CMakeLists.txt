@@ -368,6 +368,8 @@ if (DAL_PYTHON_BINDINGS)
     include_directories (${PYTHON_INCLUDES})
     include_directories (${NUMPY_INCLUDES})
     include_directories (${NUM_UTIL_INCLUDES} ${NUM_UTIL_INCLUDES}/num_util)
+  else (DAL_PYTHON_BINDINGS)
+      message (STATUS "[DAL] Test compilation of Python bindings failed; disabling")
   endif (DAL_PYTHON_BINDINGS)
   
 endif (DAL_PYTHON_BINDINGS)
