@@ -24,6 +24,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sstream>
 
 #include <boost/thread.hpp>
 
@@ -113,6 +114,10 @@
     <td>-B [--bufferSize] arg</td>
       <td> Size of the input buffer (in frames) when reading from a socket. The default is 
       50000, which is about 100MByte. </td>
+    </tr>
+    <tr>
+      <td>-K [--keepRunning]</td>
+      <td>Keep running, i.e. process more than one event by restarting the procedure.</td>
     </tr>
     <tr>
       <td>-V [--verbose]</td>
@@ -299,6 +304,7 @@ void socketReaderThread(int port, string ip, double startTimeout,
     boost::mutex::scoped_lock lock(writeMutex);
     noRunning--;
   };
+  close(main_socket);
   return;
 };
 
@@ -369,6 +375,7 @@ bool readFromSocket(int port, string ip, float startTimeout,
       inBufProcessID = processingID;
     };
   readerTread.join();
+  delete inputBuffer_p;
   if (verbose)
     {
       cout << "Socket and Buffer Stats: Maximum # of waiting frames:" << maxWaitingFrames << endl;
@@ -434,7 +441,7 @@ bool readFromFile(string infile, bool verbose=false)
 int main(int argc, char *argv[])
 {
   std::string infile;
-  std::string outfile("test-TBBraw");
+  std::string outfile("test-TBBraw"),outfileOrig;
   std::string ip("All Hosts");
   int port;
   bool verboseMode(false);
@@ -443,6 +450,8 @@ int main(int argc, char *argv[])
   int fixTransientTimes(2);
   int doCheckCRC(1);
   int socketmode(-1);
+  bool keepRunning(false);
+  int runNumber(0);
 
   input_buffer_size = 50000;
   
@@ -460,6 +469,7 @@ int main(int argc, char *argv[])
   ("fixTimes,F", bpo::value<int>(), "Fix broken time-stamps old style (1), new style (2, default), or not (0)")
   ("doCheckCRC,C", bpo::value<int>(), "Check the CRCs: (0) no check, (1,default) check header.")
   ("bufferSize,B", bpo::value<int>(), "Size of the input buffer, [frames] (default=50000, about 100MB).")
+  ("keepRunning,K", "Keep running, i.e. process more than one event by restarting the procedure.")
   ("verbose,V", "Verbose mode on")
   ;
 
@@ -476,6 +486,11 @@ int main(int argc, char *argv[])
   if (vm.count("verbose"))
     {
       verboseMode=true;
+    }
+
+  if (vm.count("keepRunning"))
+    {
+      keepRunning=true;
     }
 
   if (vm.count("infile"))
@@ -549,6 +564,12 @@ int main(int argc, char *argv[])
       input_buffer_size = 50000;
     };
 
+  if (keepRunning && !socketmode)
+    {
+      cout << "[TBBraw2h5] KeepRunning only usefull in socketmode, option disabled!" << endl;
+      keepRunning = false;
+    };
+
   // -----------------------------------------------------------------
   // Feedback on the settings
 
@@ -570,39 +591,66 @@ int main(int argc, char *argv[])
       }
     }
   
-  // -----------------------------------------------------------------
-  // Generate TBBraw object and open output file
 
-  tbb = new TBBraw(outfile);
-  if ( !tbb->isConnected() )
-    {
-      cout << "[TBBraw2h5] Failed to open output file." << endl;
-      return 1;
+  if (keepRunning) 
+    { 
+      outfileOrig = outfile ; 
     };
-  
   // -----------------------------------------------------------------
-  // Set the options in the TBBraw object
+  // Begin of "keepRunning" loop
+  do 
+    {
+    if (keepRunning) 
+      {
+	ostringstream temp;
+	temp << outfileOrig << "-" << runNumber;
+	outfile = temp.str();
+	runNumber++;
+      };
+    
+    // -----------------------------------------------------------------
+    // Generate TBBraw object and open output file
+    
+    tbb = new TBBraw(outfile);
+    if ( !tbb->isConnected() )
+      {
+	cout << "[TBBraw2h5] Failed to open output file." << endl;
+	return 1;
+      };
+    
+    // -----------------------------------------------------------------
+    // Set the options in the TBBraw object
+    
+    if (doCheckCRC>0) {
+      tbb->doHeaderCRC(true);
+    }
+    else {
+      tbb->doHeaderCRC(false);
+    };
+    tbb->setFixTimes(fixTransientTimes);
+    
+    // -----------------------------------------------------------------
+    // call the conversion routines
+    
+    if (socketmode) {
+      readFromSocket(port, ip, timeoutStart, timeoutRead, verboseMode);
+    }
+    else {
+      readFromFile(infile, verboseMode);
+    };
+    
+    // -----------------------------------------------------------------
+    //finish up, print some statistics.
+    tbb->summary();
 
-  if (doCheckCRC>0) {
-    tbb->doHeaderCRC(true);
-  }
-  else {
-    tbb->doHeaderCRC(false);
-  };
-  tbb->setFixTimes(fixTransientTimes);
-  
-  // -----------------------------------------------------------------
-  // call the conversion routines
-  
-  if (socketmode) {
-    readFromSocket(port, ip, timeoutStart, timeoutRead, verboseMode);
-  }
-  else {
-    readFromFile(infile, verboseMode);
-  };
-  
-  //finish up, print some statistics.
-  tbb->summary();
+    // and free the memory:
+    delete tbb;
+
+    
+    // -----------------------------------------------------------------
+    // End of "keepRunning" loop
+    } 
+  while (keepRunning);
   
   return 0;
 };

@@ -137,7 +137,9 @@ namespace DAL {  // Namespace DAL -- begin
   bool TBBraw::open_file ()
   {
     struct stat filestat;
-    std::string filename = commonAttributes_p.filename();
+    // This doesn't work yet, as a DAL::Filename object cannot store a path
+    //std::string filename = commonAttributes_p.filename();
+    std::string filename = filename_p;
     
     if ((stat(filename.c_str(), &filestat) != 0) && (errno == ENOENT))
       {
