@@ -83,6 +83,7 @@ int test_constructors ()
       BF_PrimaryPointing beam1 (fileID,1,true);
       BF_PrimaryPointing beam2 (fileID,2,true);
       BF_PrimaryPointing beam3 (fileID,3,true);
+      BF_PrimaryPointing beam4 (fileID,4,true);
       //
       beam1.summary();
     }
@@ -120,6 +121,7 @@ int test_subGroups ()
   if (fileID) {
     // open StationBeam group
     BF_PrimaryPointing beam (fileID,1,true);
+    cout << "-- group name = " << beam.getName(1) << endl;
     cout << "-- nof. beams = " << beam.nofBeams() << endl;
     // open/create Beam groups
     beam.openBeam (0,true);

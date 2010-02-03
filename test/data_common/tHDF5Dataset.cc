@@ -25,6 +25,7 @@
   \file tHDF5_Dataset.cc
 
   \ingroup DAL
+  \ingroup data_common
 
   \brief A collection of tests for working with a HDF5 Dataset object
  

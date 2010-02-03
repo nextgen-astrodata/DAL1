@@ -46,13 +46,14 @@ namespace DAL {  // Namespace DAL -- begin
   TBBraw::TBBraw (CommonAttributes const &commonAttributes)
   {
     init();
+    filename_p         = commonAttributes.filename();
     commonAttributes_p = commonAttributes;
   }
   
   //_____________________________________________________________________________
   //                                                                       TBBraw
   
-  TBBraw::TBBraw (Filename const &filename,
+  TBBraw::TBBraw (std::string const &filename,
 		  string const &observer,
 		  string const &project,
 		  string const &observation_id,
@@ -81,6 +82,7 @@ namespace DAL {  // Namespace DAL -- begin
   
   void TBBraw::init ()
   {
+    filename_p         = "TBBraw.h5";
     commonAttributes_p = CommonAttributes();
     bigendian_p        = BigEndian();
     dataset_p          = NULL;
@@ -111,15 +113,15 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    open_file
   
-  bool TBBraw::open_file (Filename const &filename,
+  bool TBBraw::open_file (std::string const &filename,
 			  string const &observer,
 			  string const &project,
 			  string const &observation_id,
 			  string const &filterSelection,
 			  string const &telescope)
   {
+    filename_p = filename;
     /* Store the common attributes attached to the root group of the file */
-    commonAttributes_p.setFilename (filename);
     commonAttributes_p.setObserver (observer);
     commonAttributes_p.setProjectTitle (project);
     commonAttributes_p.setObservationID (observation_id);
@@ -154,6 +156,7 @@ namespace DAL {  // Namespace DAL -- begin
         if (dataset_p != NULL) {
 	  hid_t groupID = dataset_p->getId();
 	  commonAttributes_p.h5write(groupID);
+	  h5set_attribute (groupID,"FILENAME",filename_p);
 	  return true;
 	}
         else {

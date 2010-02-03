@@ -169,17 +169,11 @@ namespace DAL { // Namespace DAL -- begin
 		   unsigned int const &beamID,
 		   bool const &create=true);
     
-    //! Get the number of station beam objects attached to the root group
+    //! Get the number of primary pointing direction objects attached to the root group
     inline unsigned int nofPrimaryPointings () const {
       return primaryPointings_p.size();
     }
 
-    //! Get the names of the groups holding station beam data
-    std::vector<std::string> stationBeamGroups ();
-
-    //! Get the station beam objects attached to the root group of the file
-    std::vector<BF_PrimaryPointing> stationBeams ();
-    
   protected:
     
     //! Open the structures embedded within the current one

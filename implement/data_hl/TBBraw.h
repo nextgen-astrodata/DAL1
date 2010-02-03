@@ -92,12 +92,12 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! pointer to the dataset (i.e. the file itself)
     dalDataset * dataset_p;
-
+    //! Filename
+    std::string filename_p;
+    //! LOFAR common attributes attached to the root group of the file
     CommonAttributes commonAttributes_p;
-    
     //! Check the header-CRC
     bool do_headerCRC_p;
-    
     //! Check the data-CRC
     bool do_dataCRC_p;
     
@@ -207,7 +207,7 @@ namespace DAL {  // Namespace DAL -- begin
              observation
       \param telescope -- name of the telescope (usually "LOFAR")
     */
-    TBBraw (Filename const &filename,
+    TBBraw (std::string const &filename,
 	    string const &observer="John Doe",
 	    string const &project="UNDEFINED",
 	    string const &observation_id="UNDEFINED",
@@ -301,7 +301,7 @@ namespace DAL {  // Namespace DAL -- begin
       Currently only creates new files, and fails if a file with \t filename
       already exists.
     */
-    bool open_file(Filename const &filename,
+    bool open_file(std::string const &filename,
 		   string const &observer="John Doe",
 		   string const &project="UNDEFINED",
 		   string const &observation_id="UNDEFINED",

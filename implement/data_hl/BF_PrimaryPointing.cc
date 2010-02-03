@@ -168,7 +168,7 @@ namespace DAL { // Namespace DAL -- begin
 				H5P_DEFAULT);
 	/* If creation was sucessful, add attributes with default values */
 	if (location_p > 0) {
-	  std::string grouptype ("StatBeam");
+	  std::string grouptype ("PrimaryPointingDirection");
 	  std::string mhz ("MHz");
 	  std::string tracking ("OFF");
 	  std::string second ("s");
@@ -247,19 +247,20 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                               openBeam
+  //                                                                     openBeam
   
   /*!
     \param beamID -- 
     \param create -- 
   */
   bool BF_PrimaryPointing::openBeam (unsigned int const &beamID,
-					   bool const &create)
+				     bool const &create)
   {
-    bool status      = true;
-    std::string name = BF_Beam::getName (beamID);
+    bool status          = true;
+    htri_t validLocation = H5Iis_valid(location_p);
+    std::string name     = BF_Beam::getName (beamID);
     
-    if (location_p > 0 && H5Iis_valid(location_p)) {
+    if (location_p > 0 && validLocation) {
       // open Beam group
       BF_Beam beam (location_p,beamID,create);
       beams_p[name] = beam;
@@ -269,8 +270,9 @@ namespace DAL { // Namespace DAL -- begin
     } else {
       std::cerr << "[BF_PrimaryPointing::openBeam] Not connected to dataset."
 		<< std::endl;
-      std::cerr << "-- Location ID = " << location_p << std::endl;
-      std::cerr << "-- Beam group  = " << name       << std::endl;
+      std::cerr << "-- Location ID       = " << location_p    << std::endl;
+      std::cerr << "-- Valid HDF5 object = " << validLocation << std::endl;
+      std::cerr << "-- Beam group        = " << name          << std::endl;
       status = false;
     }
     
@@ -295,7 +297,7 @@ namespace DAL { // Namespace DAL -- begin
     
     std::string name (uid);
     
-    name = "PrimaryPointing" + name;
+    name = "PrimaryPointingDirection" + name;
     
     return name;
   }

@@ -552,16 +552,11 @@ int main(int argc, char *argv[])
   // -----------------------------------------------------------------
   // Feedback on the settings
 
-  DAL::Filename filename ("",
-			  outfile,
-			  DAL::Filename::tbb,
-			  DAL::Filename::h5);
-  
   if (verboseMode)
     {
       std::cout << "[TBBraw2h5] Summary of parameters."        << std::endl;
       std::cout << "-- Socket mode  = " << socketmode          << std::endl;
-      std::cout << "-- Output file  = " << filename.filename() << std::endl;
+      std::cout << "-- Output file  = " << outfile             << std::endl;
       std::cout << "-- CRC checking = " << doCheckCRC          << std::endl;
       std::cout << "-- Fix Times    = " << fixTransientTimes   << std::endl;
       if (socketmode) {
@@ -578,7 +573,7 @@ int main(int argc, char *argv[])
   // -----------------------------------------------------------------
   // Generate TBBraw object and open output file
 
-  tbb = new TBBraw(filename);
+  tbb = new TBBraw(outfile);
   if ( !tbb->isConnected() )
     {
       cout << "[TBBraw2h5] Failed to open output file." << endl;

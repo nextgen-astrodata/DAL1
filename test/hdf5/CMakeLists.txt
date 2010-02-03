@@ -47,7 +47,6 @@ add_test (h5_group h5_group)
 
 ## Test programs for the custom classes
 
-add_test (tHDF5Dataset tHDF5Dataset)
 add_test (tHDF5Hyperslab tHDF5Hyperslab)
 
 if (dataset)

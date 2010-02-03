@@ -160,7 +160,7 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- Filename                = " << filename_p            << std::endl;
     os << "-- Location ID             = " << location_p            << std::endl;
     os << "-- nof. attributes         = " << attributes_p.size()   << std::endl;
-    os << "-- nof. station beams      = " << nofPrimaryPointings()     << std::endl;
+    os << "-- nof. primary pointings  = " << nofPrimaryPointings() << std::endl;
     os << "-- nof. SysLog groups      = " << sysLog_p.size()       << std::endl;
     os << "-- nof. PrimaryPointing groups = " << primaryPointings_p.size() << std::endl;
 
@@ -322,7 +322,7 @@ namespace DAL { // Namespace DAL -- begin
   
   /*!
     \return status -- Status of the operation; returns <tt>False</tt> in case
-            no station groups were found.
+            no primary pointing direction groups were found.
    */
   bool BF_Dataset::openEmbedded (bool const &create)
   {
@@ -360,28 +360,32 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param pointingID -- 
     \param create    -- 
-   */
+  */
   bool BF_Dataset::openPrimaryPointing (unsigned int const &pointingID,
-				    bool const &create)
+					bool const &create)
   {
     bool status (true);
-    
-    if (location_p > 0) {
+    htri_t validLocation = H5Iis_valid(location_p);
+
+    if (location_p > 0 && validLocation) {
       std::string name;
       int nofStations;
       std::map<std::string,BF_PrimaryPointing>::iterator it;
       // convert station ID to group name
       name = BF_PrimaryPointing::getName (pointingID);
-      // open/create the station beam group
-      BF_PrimaryPointing beam (location_p,pointingID,create);
-      primaryPointings_p[name] = beam;
-      // attributes for book-keeping
-      nofStations = primaryPointings_p.size();
-      h5set_attribute (location_p, "NOF_BEAMS", nofStations);
+      it   = primaryPointings_p.find(name);
       // check if the station beam group indeed exists
-      it = primaryPointings_p.find(name);
-      if (it==primaryPointings_p.end()) {
-	status = false;
+      if (it == primaryPointings_p.end()) {
+	// open/create the station beam group
+	BF_PrimaryPointing beam (location_p,pointingID,create);
+	primaryPointings_p[name] = beam;
+	// attributes for book-keeping
+	nofStations = primaryPointings_p.size();
+	h5set_attribute (location_p, "NOF_BEAMS", nofStations);
+	// feedback
+	it = primaryPointings_p.find(name);
+	std::cout << "-- Group name              = " << name << std::endl;
+	std::cout << "-- Primary direction group = " << it->first << std::endl;
       }
     }
     else {
@@ -392,20 +396,22 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                               openBeam
+  //                                                                     openBeam
   
   /*!
-    \param pointingID -- 
-    \param beamID  -- 
-    \param create    -- 
+    \param pointingID -- Identifier for the primary pointing direction.
+    \param beamID     -- Identifier for the beam within the primary pointing
+           direction.
+    \param create     -- Create the group if it does not exist yet?
   */
   bool BF_Dataset::openBeam (unsigned int const &pointingID,
-				   unsigned int const &beamID,
-				   bool const &create)
+			     unsigned int const &beamID,
+			     bool const &create)
   {
     bool status (true);
+    htri_t validLocation = H5Iis_valid(location_p);
 
-    if (location_p > 0) {
+    if (location_p > 0 && validLocation) {
       /* Open PrimaryPointing group */
       status = openPrimaryPointing (pointingID, create);
 
@@ -415,14 +421,19 @@ namespace DAL { // Namespace DAL -- begin
 	std::map<std::string,BF_PrimaryPointing>::iterator it;
 	// get pointer to PrimaryPointing object
 	name = BF_PrimaryPointing::getName (pointingID);
-	it = primaryPointings_p.find(name);
+	it   = primaryPointings_p.find(name);
 	// forward function call to open beam
 	if ( it != primaryPointings_p.end() ) {
-	  std::cout << "--> opening beam " << beamID << " in "
+	  std::cout << "--> opening " << BF_Beam::getName(beamID) << " in "
 		    << it->first
 		    << " (" << it->second.locationID() << ") ..."
 		    << std::endl;
 	  it->second.openBeam(beamID,create);
+	}
+	else {
+	  std::cout << "[BF_Dataset::openBeam] " << BF_Beam::getName(beamID)
+		    << " already exists."
+		    << std::endl;
 	}
       } else {
 	std::cerr << "[BF_Dataset::openBeam] Failed to open StationGroup!"
@@ -433,37 +444,12 @@ namespace DAL { // Namespace DAL -- begin
     else {
       std::cerr << "[BF_Dataset::openBeam] No connection to dataset!"
 		<< std::endl;
+      std::cerr << "-- Location ID       = " << location_p    << std::endl;
+      std::cerr << "-- Valid HDF5 object = " << validLocation << std::endl;
       status = false;
     }
     
     return status;
   }
   
-  //_____________________________________________________________________________
-  //                                                            stationBeamGroups
-  
-  std::vector<std::string> BF_Dataset::stationBeamGroups ()
-  {
-    std::vector<std::string> names (nofPrimaryPointings());
-    std::map<std::string,BF_PrimaryPointing>::iterator n;
-    
-    /* Iterate through the map containing the station beam groups and extract the
-       group name.
-    */
-    n = primaryPointings_p.begin();
-    
-    return names;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                 stationBeams
-
-  std::vector<BF_PrimaryPointing> BF_Dataset::stationBeams ()
-  {
-    std::vector<BF_PrimaryPointing> beams (nofPrimaryPointings());
-    std::map<std::string,BF_PrimaryPointing>::iterator n;
-
-    return beams;
-  }
-
 } // Namespace DAL -- end
