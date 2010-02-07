@@ -1097,27 +1097,23 @@ namespace DAL {
     \param x_size - size in x direction in pixels
     \param y_size - size in y direction in pixels
   */
-  void dalFITS::readSubCube (double *subCube,
-			     const unsigned long &x_pos,
-			     const unsigned long &y_pos,
-			     const unsigned long &x_size,
-			     const unsigned long &y_size)
-  {
-    long fpixel[3];	// first pixel definition
-    long lpixel[3];	// last pixel definition
-
-    fpixel[0]=1;
-
-    if (readHDUType()!=IMAGE_HDU)   // Check if current HDU is an image extension
-      {
-        throw "dalFITS::readLine CHDU is not an image";
-      }
-
-    // Read subset from FITS Image
-
-
-  }
-
+//   void dalFITS::readSubCube (double *subCube,
+// 			     const unsigned long &x_pos,
+// 			     const unsigned long &y_pos,
+// 			     const unsigned long &x_size,
+// 			     const unsigned long &y_size)
+//   {
+//     long fpixel[3];	// first pixel definition
+//     long lpixel[3];	// last pixel definition
+//
+//     fpixel[0]=1;
+//
+//     if (readHDUType()!=IMAGE_HDU)   // Check if current HDU is an image extension
+//       {
+//         throw "dalFITS::readLine CHDU is not an image";
+//       }
+//     // Read subset from FITS Image
+//   }
 
   // ============================================================================
   //

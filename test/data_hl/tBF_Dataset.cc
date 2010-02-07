@@ -31,6 +31,7 @@ using std::endl;
 using DAL::CommonAttributes;
 using DAL::Filename;
 using DAL::BF_Dataset;
+using DAL::BF_SysLog;
 
 /*!
   \file tBF_Dataset.cc
@@ -69,14 +70,14 @@ DAL::Filename getFilename ()
 */
 int test_constructors ()
 {
-  std::cout << "\n[tBF_Dataset::test_constructors]\n" << endl;
+  cout << "\n[tBF_Dataset::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   Filename file = getFilename();
 
   cout << "-- Filename = " << file.filename() << endl;
   
-  std::cout << "[1] Testing construction with Filename ..." << endl;
+  cout << "[1] Testing construction with Filename ..." << endl;
   try {
     BF_Dataset dataset (file);
     //
@@ -86,7 +87,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  std::cout << "[2] Testing construction with CommonAttributes ..." << endl;
+  cout << "[2] Testing construction with CommonAttributes ..." << endl;
   try {
     CommonAttributes commonAttr;
     commonAttr.setFilename (file);
@@ -99,7 +100,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  std::cout << "[3] Testing construction with filename ..." << endl;
+  cout << "[3] Testing construction with filename ..." << endl;
   try {
     std::string filename = file.filename();
     //
@@ -115,6 +116,42 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
+//                                                                   test_methods
+
+/*!
+  \brief Test the various methods of the class
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_methods ()
+{
+  cout << "\n[tBF_Dataset::test_methods]\n" << endl;
+
+  int nofFailedTests (0);
+  Filename file (getFilename());
+  BF_Dataset dataset (file);
+
+  cout << "[1] Extract SysLog from BF dataset ..." << endl;
+  try {
+    BF_SysLog sysLog = dataset.sysLog();
+    //
+    std::string groupType;
+    sysLog.getAttribute("GROUPTYPE",groupType);
+    //
+    cout << "-- Location ID = " << sysLog.locationID() << endl;
+    cout << "-- Attributes  = " << sysLog.attributes() << endl;
+    cout << "-- GROUPTYPE   = " << groupType           << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    ++nofFailedTests;
+  }
+
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                 test_subGroups
 
 /*!
@@ -125,13 +162,13 @@ int test_constructors ()
 */
 int test_subGroups ()
 {
-  std::cout << "\n[tBF_Dataset::test_subGroups]\n" << endl;
+  cout << "\n[tBF_Dataset::test_subGroups]\n" << endl;
 
   int nofFailedTests (0);
   Filename file = getFilename();
   BF_Dataset dataset (file);
   
-  std::cout << "[1] Open SysLog group ..." << endl;
+  cout << "[1] Open SysLog group ..." << endl;
   try {
     dataset.openSysLog();
     dataset.summary(); 
@@ -140,7 +177,7 @@ int test_subGroups ()
     ++nofFailedTests;
   }
 
-  std::cout << "[2] Open PrimaryPointing groups ..." << endl;
+  cout << "[2] Open PrimaryPointing groups ..." << endl;
   try {
     dataset.openPrimaryPointing(0,true);
     dataset.openPrimaryPointing(1,true);
@@ -155,17 +192,17 @@ int test_subGroups ()
     nofFailedTests++;
   }
 
-  std::cout << "[3] Open Beam groups ..." << endl;
+  cout << "[3] Open Beam groups ..." << endl;
   try {
+    unsigned int nofBeams (5);
     // open Beam groups within existing PrimaryPointing group
     dataset.openBeam(0,0,true);
     dataset.openBeam(0,1,true);
     dataset.openBeam(0,2,true);
     // open Beam groups without previously existing PrimaryPointing group
-    dataset.openBeam(10,0,true);
-    dataset.openBeam(10,1,true);
-    dataset.openBeam(10,2,true);
-    dataset.openBeam(10,3,true);
+    for (unsigned int beam(0); beam<nofBeams; ++beam) {
+      dataset.openBeam(10,beam,true);
+    }
     //
     dataset.summary(); 
   } catch (std::string message) {
@@ -201,6 +238,8 @@ int main (int argc,
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
+  // Test the various methods 
+  nofFailedTests += test_methods ();
   // Test working with the embedded groups
   nofFailedTests += test_subGroups ();
 

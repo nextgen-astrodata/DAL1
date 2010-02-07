@@ -27,6 +27,57 @@ namespace DAL { // Namespace DAL -- begin
 
   // ============================================================================
   //
+  //  Destruction
+  //
+  // ============================================================================
+
+  void CommonInterface::destroy ()
+  {
+    if (hasValidID()) {
+      // Close the object
+      H5Oclose (location_p);
+      // Decrement reference count for the object
+      if (H5Iis_valid(location_p)) {
+	H5Idec_ref(location_p);
+      }
+    }
+  }
+  
+  // ============================================================================
+  //
+  //  Operators
+  //
+  // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                                    operator=
+  
+  CommonInterface& CommonInterface::operator= (CommonInterface const &other)
+  {
+    if (this != &other) {
+      destroy ();
+      copy (other);
+    }
+    return *this;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                         copy
+  
+  void CommonInterface::copy (CommonInterface const &other)
+  {
+    // Initialize internal variables
+    location_p = 0;
+    attributes_p.clear();
+    // Copy variable values from other object
+    location_p   = other.location_p;
+    attributes_p = other.attributes_p;
+    // Book-keeping
+    incrementRefCount ();
+  }
+  
+  // ============================================================================
+  //
   //  Parameters
   //
   // ============================================================================
@@ -56,6 +107,7 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                 addAttribute
 
   /*!
+    \param name -- Name of the attribute to be added to the internally kept set.
     \return status -- Returns <tt>false</tt> if the provided attribute name
             already was in the internally kept list of attributes; if the 
 	    attribute wasn't in the list previously and has been added as new
@@ -72,6 +124,23 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
+  //                                                                addAttributes
+
+  /*!
+    \param names -- Names of the attributes to be added.
+  */
+  bool CommonInterface::addAttributes (std::set<std::string> const &names)
+  {
+    bool status (true);
+    std::set<std::string>::iterator iterBegin = names.begin();
+    std::set<std::string>::iterator iterEnd   = names.end();
+
+    attributes_p.insert (iterBegin, iterEnd);
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
   //                                                              removeAttribute
 
   /*!
@@ -84,6 +153,21 @@ namespace DAL { // Namespace DAL -- begin
     return attributes_p.erase(name);
   }
   
+  //_____________________________________________________________________________
+  //                                                              removeAttribute
+  
+  bool CommonInterface::removeAttributes (std::set<std::string> const &names)
+  {
+    bool status (true);
+    std::set<std::string>::iterator it;
+
+    for (it=names.begin(); it!=names.end(); ++it) {
+      status *= removeAttribute (*it);
+    }
+   
+    return status;
+  }
+  
   // ============================================================================
   //
   //  Methods
@@ -91,15 +175,71 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
 
   //_____________________________________________________________________________
+  //                                                            incrementRefCount
+
+  void CommonInterface::incrementRefCount ()
+  {
+    if (hasValidID()) {
+      if (H5Iinc_ref(location_p) < 0) {
+	std::cerr << "[CommonInterface::incrementRefCount]"
+		  << " Failed to increment object reference count!"
+		  << std::endl;
+      }
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                   hasValidID
+
+  bool CommonInterface::hasValidID ()
+  {
+    return hasValidID (location_p);
+  }
+  
+  bool CommonInterface::hasValidID (hid_t const &object_id)
+  {
+    H5I_type_t id_type = H5Iget_type(object_id);
+    if (id_type <= H5I_BADID || id_type >= H5I_NTYPES)
+      return false;
+    else
+      return true;
+  }
+  
+  //_____________________________________________________________________________
   //                                                                   objectType
   
   H5I_type_t CommonInterface::objectType ()
   {
-    if (location_p>0) {
-      return H5Iget_type (location_p);
+    return objectType(location_p);
+  }
+
+  /*!
+    \param object_id -- Identifier for the object for which to check the type.
+    \return type     -- The type identifier of the object.
+  */
+  H5I_type_t CommonInterface::objectType (hid_t const &object_id)
+  {
+    if (H5Iis_valid(object_id)) {
+      return H5Iget_type (object_id);
     } else {
       return H5I_BADID;
     }
+  }
+
+  //_____________________________________________________________________________
+  //                                                                   objectName
+  
+  std::string CommonInterface::objectName ()
+  {
+    std::string name;
+
+    if (H5Iis_valid(location_p)) {
+      h5get_name (name,location_p);
+    } else {
+      name = "";
+    }
+
+    return name;
   }
   
   //_____________________________________________________________________________

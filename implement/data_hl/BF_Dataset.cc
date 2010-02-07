@@ -215,7 +215,7 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.insert("WEATHER_HUMIDITY");
     attributes_p.insert("SYSTEM_TEMPERATURE");
     attributes_p.insert("PHASE_CENTER");
-    attributes_p.insert("NOF_BEAMS");
+    attributes_p.insert("NOF_POINTINGS");
   }
   
   //_____________________________________________________________________________
@@ -295,7 +295,7 @@ namespace DAL { // Namespace DAL -- begin
 	h5set_attribute (location_p,"WEATHER_HUMIDITY",       vectF       );
  	h5set_attribute (location_p,"SYSTEM_TEMPERATURE",     vectF       );
  	h5set_attribute (location_p,"PHASE_CENTER",           vectD       );
-	h5set_attribute (location_p,"NOF_BEAMS",              int(0)      );
+	h5set_attribute (location_p,"NOF_POINTINGS",          int(0)      );
 	/* Read back in the common attributes after storing default values */
 	commonAttributes_p.h5read(location_p);
       } else {
@@ -355,7 +355,7 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                              openPrimaryPointing
+  //                                                          openPrimaryPointing
   
   /*!
     \param pointingID -- 
@@ -369,7 +369,7 @@ namespace DAL { // Namespace DAL -- begin
 
     if (location_p > 0 && validLocation) {
       std::string name;
-      int nofStations;
+      int nofPointings;
       std::map<std::string,BF_PrimaryPointing>::iterator it;
       // convert station ID to group name
       name = BF_PrimaryPointing::getName (pointingID);
@@ -377,15 +377,10 @@ namespace DAL { // Namespace DAL -- begin
       // check if the station beam group indeed exists
       if (it == primaryPointings_p.end()) {
 	// open/create the station beam group
-	BF_PrimaryPointing beam (location_p,pointingID,create);
-	primaryPointings_p[name] = beam;
+	primaryPointings_p[name] = BF_PrimaryPointing (location_p,pointingID,create);
 	// attributes for book-keeping
-	nofStations = primaryPointings_p.size();
-	h5set_attribute (location_p, "NOF_BEAMS", nofStations);
-	// feedback
-	it = primaryPointings_p.find(name);
-	std::cout << "-- Group name              = " << name << std::endl;
-	std::cout << "-- Primary direction group = " << it->first << std::endl;
+	nofPointings = primaryPointings_p.size();
+	h5set_attribute (location_p, "NOF_POINTINGS", nofPointings);
       }
     }
     else {
@@ -424,10 +419,10 @@ namespace DAL { // Namespace DAL -- begin
 	it   = primaryPointings_p.find(name);
 	// forward function call to open beam
 	if ( it != primaryPointings_p.end() ) {
-	  std::cout << "--> opening " << BF_Beam::getName(beamID) << " in "
-		    << it->first
-		    << " (" << it->second.locationID() << ") ..."
-		    << std::endl;
+// 	  std::cout << "--> opening " << BF_Beam::getName(beamID) << " in "
+// 		    << it->first
+// 		    << " (" << it->second.locationID() << ") ..."
+// 		    << std::endl;
 	  it->second.openBeam(beamID,create);
 	}
 	else {
@@ -451,5 +446,37 @@ namespace DAL { // Namespace DAL -- begin
     
     return status;
   }
+
+  //_____________________________________________________________________________
+  //                                                              primaryPointing
   
+  /*!
+    \param pointingID -- Identifier for the primary pointing direction.
+  */
+  BF_PrimaryPointing BF_Dataset::primaryPointing (unsigned int const &pointingID)
+  {
+    std::string name;
+    std::map<std::string,BF_PrimaryPointing>::iterator it;
+
+    name = BF_PrimaryPointing::getName (pointingID);
+    it   = primaryPointings_p.find(name);
+
+    if (it != primaryPointings_p.end()) {
+      return it->second;
+    } else {
+      return BF_PrimaryPointing();
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                       sysLog
+
+  BF_SysLog BF_Dataset::sysLog ()
+  {
+    std::map<std::string,BF_SysLog>::iterator it;
+    it = sysLog_p.begin();
+    return it->second;
+  }
+
+
 } // Namespace DAL -- end

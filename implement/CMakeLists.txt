@@ -19,8 +19,6 @@ if (DAL_COMPILER_WARNINGS)
   set(CMAKE_CXX_FLAGS "-W -g -Wall")
 endif (DAL_COMPILER_WARNINGS)
 
-message(STATUS "cflags: ${CMAKE_CXX_FLAGS}")
-
 add_definitions (
   -DMPICH_IGNORE_CXX_SEEK
   -D_FILE_OFFSET_BITS=64

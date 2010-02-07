@@ -29,6 +29,7 @@
 #include <vector>
 
 #include <dalCommon.h>
+#include <CommonInterface.h>
 
 namespace DAL {
   
@@ -47,7 +48,7 @@ namespace DAL {
     \todo Implement read function to access data array within the dataset.
     \todo Implement Hyperslab to access multidimensional datasets/arrays.
   */
-  class HDF5Dataset {
+  class HDF5Dataset : public CommonInterface {
     
     //! Name of the dataset
     std::string name_p;
@@ -57,8 +58,6 @@ namespace DAL {
     hid_t dataspaceID_p;
     //! Datatype identifier
     hid_t datatypeID_p;
-    //! Dataset identifier
-    hid_t datasetID_p;
     
   public:
     
@@ -111,13 +110,10 @@ namespace DAL {
     
     // === Methods ==============================================================
     
-    //! Provide a summary of the internal status
-    inline void summary () {
-      summary (std::cout);
-    }
-    
-    //! Provide a summary of the internal status
-    void summary (std::ostream &os);
+    //! Open the dataset
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       bool const &create=false);
     
     //! Open the dataset
     bool open (hid_t const &location,
@@ -125,66 +121,22 @@ namespace DAL {
 	       std::vector<hsize_t> const &shape,
 	       hid_t const &datatype=H5T_NATIVE_DOUBLE);
     
-    /*!
-      \brief Get the value of an attribute
-      
-      \param name -- Name of the attribute for which the value is about to be
-             retrieved.
-      \retval val -- The value of the attribute.
-      \return status -- The status of the operation; returns <tt>false</tt> in
-              case an error was encountered.
-    */
-    template <class T>
-      inline bool getAttribute (std::string const &name,
-				T &val)
-      {
-	bool status (true);
-	
-	if (datasetID_p > 0) {
-	  status = h5get_attribute (datasetID_p,
-				    name,
-				    val);
-	} else {
-	  std::cerr << "[HDF5Dataset::getAttribute] Not connected to Dataset!"
-		    << std::endl;
-	  status = false;
-	}
-
-	return status;
-      }
-
-    /*!
-      \brief Set the value of an attribute
-      
-      \param name -- Name of the attribute for which the value is about to be
-             retrieved.
-      \retval val -- The value of the attribute.
-      \return status -- The status of the operation; returns <tt>false</tt> in
-              case an error was encountered.
-    */
-    template <class T>
-      inline bool setAttribute (std::string const &name,
-				T const &val)
-      {
-	bool status (true);
-
-	if (datasetID_p > 0) {
-	  status = h5set_attribute (datasetID_p,
-				    name,
-				    val);
-	} else {
-	  std::cerr << "[HDF5Dataset::setAttribute] Not connected to Dataset!"
-		    << std::endl;
-	  status = false;
-	}
-
-	return status;
-      }
+    //! Provide a summary of the internal status
+    inline void summary () {
+      summary (std::cout);
+    }
+    
+    //! Provide a summary of the internal status
+    void summary (std::ostream &os);
 
   private:
     
     //! Initialize the internal parameters
     void init ();
+    //! Set up the list of attributes attached to the dataset
+    void setAttributes ();
+    //! Open the structures embedded within the current one
+    bool openEmbedded (bool const &create);
     
   }; // end class HDF5Dataset
   

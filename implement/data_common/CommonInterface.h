@@ -80,34 +80,14 @@ namespace DAL { // Namespace DAL -- begin
 
     <h3>Requirements for derived classes</h3>
 
-    The classes derived from CommonInterface should support the following 
-    constructors:
-    <ol>
-      <li>Default constuctor:
-      \code
-      MyClass ();
-      \endcode
-      <li>Argumented construtor with <tt>location</tt> below which a structure 
-      of given <tt>name</tt> is to be opened/cerated:
-      \code
-      MyClass (hid_t const &location,
-               std::string const &name,
-               bool const &create);
-      \endcode
-      <li>Copy constuctor:
-      \code
-      MyClass (MyClass const &other);
-      \endcode
-    </ol>
-
     The CommonInterface requires derived classes to implement the following
     methods:
 
     <ol>
-      <li><b>setAttributes()</b> -- Set up the list of attributes attached to
-      the structure.
+      <li><b>setAttributes()</b> <br> Set up the list of attributes attached
+      to the structure.
       \code
-      void BF_StationBeam::setAttributes ()
+      void BF_PrimaryPointing::setAttributes ()
       {
         attributes_p.clear();
 	
@@ -119,51 +99,87 @@ namespace DAL { // Namespace DAL -- begin
 	attributes_p.insert("TRACKING");
       }
       \endcode
-      <li><b>open (hid_t const &, std::string const &, bool const &)</b> --
+      <li><b>open (hid_t const &, std::string const &, bool const &)</b> <br>
       Open a structure (file, group, dataset, etc.). Though this signature it
       rather generatic, there is at least one case, where not all of the input
       parameters can be utilized: when opening a file (e.g. with BF_Dataset)
       the <tt>location</tt> will not be evaluated.
       \code
-      bool BF_StationBeam::open (hid_t const &location,
-                                 std::string const &name,
+  bool BF_PrimaryPointing::open (hid_t const &location,
+				 std::string const &name,
 				 bool const &create)
-      {
-        bool status (true);
-	
-	// Set up the list of attributes attached to the root group
-	setAttributes();
-	
-	// Get the list of groups attached to this group
-	std::set<std::string> groups;
-	h5get_names (groups,location,H5G_GROUP);
-	
-	if (static_cast<bool>(groups.count(name))) {
-	  location_p = H5Gopen (location,
-	                        name.c_str(),
+  {
+    bool status (true);
+    
+    // Set up the list of attributes attached to the root group
+    setAttributes();
+    
+    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
+      location_p = H5Gopen (location,
+			    name.c_str(),
+			    H5P_DEFAULT);
+    } else {
+      location_p = 0;
+    }
+
+    if (location_p > 0) {
+      status = true;
+    } else {
+      // If failed to open the group, check if we are supposed to create one
+      if (create) {
+	location_p = H5Gcreate (location,
+				name.c_str(),
+				H5P_DEFAULT,
+				H5P_DEFAULT,
 				H5P_DEFAULT);
+	// If creation was sucessful, add attributes with default values
+	if (location_p > 0) {
+	  // ... write default values for the attributes
 	} else {
-	  location_p = 0;
+	  std::cerr << "[BF_PrimaryPointing::open] Failed to create group "
+		    << name
+		    << std::endl;
+	  status = false;
 	}
-      
+      } else {
+	std::cerr << "[BF_PrimaryPointing::open] Failed to open group "
+		  << name
+		  << std::endl;
+	status = false;
       }
+    }
+    
+    // Open embedded groups
+    if (status) {
+      status = openEmbedded (create);
+    } else {
+      std::cerr << "[BF_PrimaryPointing::open] Skip opening embedded groups!"
+		<< std::endl;
+    }
+ 
+    return status;
+  }
       \endcode
-      <li><b>openEmbedded (bool const &)</b> -- Open the structures embedded
+      <li><b>openEmbedded (bool const &)</b> <br> Open the structures embedded
       within the current one.
       \code
-      bool BF_StationBeam::openEmbedded (bool const &create)
+      bool BF_PrimaryPointing::openEmbedded (bool const &create)
       {
-        bool status (true);
+        bool status (create);
 	std::set<std::string> groupnames;
-      
-	// Get names of the embedded groups
+	std::set<std::string>::iterator it;
+	
+	// Retrieve the names of the groups attached to the PrimaryPointing group
 	status = h5get_names (groupnames,
 	                      location_p,
 			      H5G_GROUP);
-      
-	// Open the embedded group(s)
-	status = openCoordinatesGroup (create);
 	
+	if (groupnames.size() > 0) {
+	  for (it=groupnames.begin(); it!=groupnames.end(); ++it) {
+	    beams_p[*it] = BF_Beam (location_p,*it);
+	  }
+	}
+      
 	return status;
       }
       \endcode
@@ -200,6 +216,11 @@ namespace DAL { // Namespace DAL -- begin
     // === Destruction ==========================================================
 
     virtual ~CommonInterface () {};
+
+    // === Operators ============================================================
+
+    //! Copy operator
+    CommonInterface& operator= (CommonInterface const &other); 
     
     // === Parameter accesss ====================================================
     
@@ -228,8 +249,12 @@ namespace DAL { // Namespace DAL -- begin
     std::string attribute (unsigned int const &index);
     //! Add an attribute to the interally cached list
     bool addAttribute (std::string const &name);
-    //! Removed an attribute from the interally cached list
+    //! Add attributes to the interally kept set
+    bool addAttributes (std::set<std::string> const &names);
+    //! Remove an attribute from the interally cached list
     bool removeAttribute (std::string const &name);
+    //! Remove attributes from the interally kept set
+    bool removeAttributes (std::set<std::string> const &names);
     /*!
       \brief Get the name of the class
       
@@ -245,14 +270,26 @@ namespace DAL { // Namespace DAL -- begin
     //! Provide a summary of the internal status
     void summary (std::ostream &os);    
 
-    // ------------------------------------------------------------------ Methods
+    // === Methods ==============================================================
 
+    //! Verify the ID so it can be passed into an H5I C function.
+    bool hasValidID ();
+
+    //! Verify a given ID is a valid id so it can be passed into an H5I C function.
+    static bool hasValidID (hid_t const &object_id);
+    
     //! Get the type (File, Group, Dataset, etc.) of the object
     H5I_type_t objectType ();
 
+    //! Get the type (File, Group, Dataset, etc.) of an object
+    static H5I_type_t objectType (hid_t const &object_id);
+    
+    //! Get the name of the object
+    std::string objectName ();
+    
     //! Open a structure (file, group, dataset, etc.)
     bool open (hid_t const &location);
-
+    
     /*!
       \brief Open a structure (file, group, dataset, etc.)
       
@@ -487,7 +524,20 @@ namespace DAL { // Namespace DAL -- begin
 	}
       }
 #endif
+
+    // === Private methods ======================================================
+
+  private:
+
+    //! Increment the reference count for a HDF5 object
+    void incrementRefCount ();
+
+    //! Unconditional copying
+    void copy (CommonInterface const &other);
     
+    //! Unconditional deletion 
+    void destroy(void);
+
   }; // Class CommonInterface -- end
   
 } // Namespace DAL -- end

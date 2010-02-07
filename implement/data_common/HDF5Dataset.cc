@@ -36,7 +36,7 @@ namespace DAL {
 
   HDF5Dataset::HDF5Dataset ()
   {
-    init();
+    init ();
   }
 
   //_____________________________________________________________________________
@@ -50,7 +50,8 @@ namespace DAL {
   HDF5Dataset::HDF5Dataset (hid_t const &location,
 			    std::string const &name)
   {
-    
+    init ();
+    open (location,name,false);
   }
   
   //_____________________________________________________________________________
@@ -87,7 +88,6 @@ namespace DAL {
   {
     H5Sclose (dataspaceID_p);
     H5Tclose (datatypeID_p);
-    H5Dclose (datasetID_p);
   }
   
   // ============================================================================
@@ -102,14 +102,93 @@ namespace DAL {
   void HDF5Dataset::init ()
   {
     name_p        = "Dataset";
+    location_p    = 0;
     dataspaceID_p = 0;
     datatypeID_p  = 0;
-    datasetID_p   = 0;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                setAttributes
+
+  void HDF5Dataset::setAttributes ()
+  {
+    attributes_p.clear();
   }
 
   //_____________________________________________________________________________
   //                                                                         open
 
+  /*!
+    \param location -- Identifier of the location to which the to be opened
+           structure is attached.
+    \param name   -- Name of the structure (file, group, dataset, etc.) to be
+           opened.
+    \param create -- Create the corresponding data structure, if it does not 
+           exist yet?
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered.
+  */
+  bool HDF5Dataset::open (hid_t const &location,
+			  std::string const &name,
+			  bool const &create)
+  {
+    bool status (true);
+    
+    /* Set up the list of attributes attached to the root group */
+    setAttributes();
+    
+    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
+      location_p = H5Dopen (location,
+			    name.c_str(),
+			    H5P_DEFAULT);
+    } else {
+      location_p = 0;
+    }
+    
+    if (location_p > 0) {
+      status = true;
+    } else {
+      /* If failed to open the group, check if we are supposed to create one */
+      if (create && dataspaceID_p && datatypeID_p) {
+	location_p = H5Dcreate (location,
+				name_p.c_str(),
+				datatypeID_p,
+				dataspaceID_p,
+				H5P_DEFAULT,
+				H5P_DEFAULT,
+				H5P_DEFAULT);
+	/* If creation was sucessful, add attributes with default values */
+	if (location_p > 0) {
+	  /* write attribute attached to the dataset */
+	} else {
+	  std::cerr << "[HDF5Dataset::open] Failed to create dataset "
+		    << name
+		    << std::endl;
+	  status = false;
+	}
+      } else {
+	std::cerr << "[HDF5Dataset::open] Failed to open dataset "
+		  << name
+		  << std::endl;
+	status = false;
+      }
+    }
+    
+    // Open embedded groups
+    if (status) {
+      status = openEmbedded (create);
+    } else {
+      std::cerr << "[BF_PrimaryPointing::open] Skip opening embedded groups!"
+		<< std::endl;
+    }
+ 
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                         open
+  
   /*!
     \param location -- Identifier for the location at which the dataset is about
            to be created.
@@ -141,14 +220,23 @@ namespace DAL {
     datatypeID_p  = H5Tcopy (datatype);
 
     // Create the Dataset
-    datasetID_p = H5Dcreate (location,
-			     name_p.c_str(),
-			     datatypeID_p,
-			     dataspaceID_p,
-			     H5P_DEFAULT,
-			     H5P_DEFAULT,
-			     H5P_DEFAULT);
+    location_p = H5Dcreate (location,
+			    name_p.c_str(),
+			    datatypeID_p,
+			    dataspaceID_p,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT);
+    
+    return status;
+  }
 
+  //_____________________________________________________________________________
+  //                                                                 openEmbedded
+
+  bool HDF5Dataset::openEmbedded (bool const &create)
+  {
+    bool status = create;
     return status;
   }
 

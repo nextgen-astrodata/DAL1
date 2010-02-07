@@ -150,30 +150,42 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os,
 		  bool const &showAttributes=false);    
 
-    // ------------------------------------------------------------------ Methods
+    // === Methods ==============================================================
 
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
 
-    //! Open a system log group
-    bool openSysLog (bool const &create=true);
-    
+    /* Primary pointing direction */
+
     //! Open a PrimaryPointing direction group
     bool openPrimaryPointing (unsigned int const &pointingID,
 			      bool const &create=true);
+
+    //! Get the number of primary pointing direction objects
+    inline unsigned int nofPrimaryPointings () const {
+      return primaryPointings_p.size();
+    }
+
+    //! Get a primary pointing direction group
+    BF_PrimaryPointing primaryPointing (unsigned int const &pointingID);
+
+    /* Beam */
     
     //! Open a beam group
     bool openBeam (unsigned int const &pointingID,
 		   unsigned int const &beamID,
 		   bool const &create=true);
-    
-    //! Get the number of primary pointing direction objects attached to the root group
-    inline unsigned int nofPrimaryPointings () const {
-      return primaryPointings_p.size();
-    }
 
+    /* SysLog */
+    
+    //! Open a system log group
+    bool openSysLog (bool const &create=true);
+
+    //! Get the SysLog group
+    BF_SysLog sysLog ();
+    
   protected:
     
     //! Open the structures embedded within the current one

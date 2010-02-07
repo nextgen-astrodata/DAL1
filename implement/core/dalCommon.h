@@ -168,6 +168,15 @@ namespace DAL {
     }
     return false;
   }
+
+  //! Verify a given ID is a valid id so it can be passed into an H5I C function.
+  inline bool h5is_validID (hid_t const &object_id) {
+    H5I_type_t id_type = H5Iget_type(object_id);
+    if (id_type <= H5I_BADID || id_type >= H5I_NTYPES)
+      return false;
+    else
+      return true;
+  }
   
   //! Retrieve the name of an object based on the object identifier
   bool h5get_name (std::string &name,

@@ -65,6 +65,9 @@ int test_create (hid_t const &fileID)
     DAL::HDF5Dataset dataset (fileID,
 			      name,
 			      shape);
+    dataset.addAttribute("NOF_AXES");
+    dataset.addAttribute("NAXIS1");
+    dataset.addAttribute("NAXIS2");
     dataset.summary();
     
     dataset.setAttribute ("NOF_AXES", int(2)        );
@@ -88,6 +91,10 @@ int test_create (hid_t const &fileID)
     DAL::HDF5Dataset dataset (fileID,
 			      name,
 			      shape);
+    dataset.addAttribute("NOF_AXES");
+    dataset.addAttribute("NAXIS1");
+    dataset.addAttribute("NAXIS2");
+    dataset.addAttribute("NAXIS3");
     dataset.summary();
     
     dataset.setAttribute ("NOF_AXES", int(shape.size()) );

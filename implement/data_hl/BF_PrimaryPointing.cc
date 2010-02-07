@@ -250,7 +250,8 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                     openBeam
   
   /*!
-    \param beamID -- 
+    \param beamID -- Identifier for the Beam within the Primary Pointing 
+           Direction group.
     \param create -- 
   */
   bool BF_PrimaryPointing::openBeam (unsigned int const &beamID,

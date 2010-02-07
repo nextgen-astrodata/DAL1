@@ -419,11 +419,11 @@ namespace DAL {
 /* 		   const long y, */
 /* 		   void *nulval=NULL); */
     
-    void readSubCube (double *subCube,
-		      const unsigned long &x_pos,
-		      const unsigned long &y_pos,
-		      const unsigned long &x_size,
-		      const unsigned long &y_size);
+/*     void readSubCube (double *subCube, */
+/* 		      const unsigned long &x_pos, */
+/* 		      const unsigned long &y_pos, */
+/* 		      const unsigned long &x_size, */
+/* 		      const unsigned long &y_size); */
     
     //! Write a tile to a FITS file
 /*     void writeTile( double* tile, */

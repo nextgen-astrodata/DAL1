@@ -1002,6 +1002,7 @@ int test_timeseries (std::string const &filename)
     DAL::h5get_attribute (fileID,"OBSERVATION_ID",observation_id);
     DAL::h5get_attribute (fileID,"OBSERVATION_MODE",observation_mode);
     //
+    cout << "-- Filename ....... = " << name             << endl;
     cout << "-- TELESCOPE ...... = " << telescope        << endl;
     cout << "-- OBSERVER ....... = " << observer         << endl;
     cout << "-- PROJECT ........ = " << project          << endl;
@@ -1102,6 +1103,7 @@ int test_timeseries (std::string const &filename)
   
   cout << "[6] Reading attributes attached to station group ..." << endl;
   try {
+    std::string name;
     std::string trigger_type;
     double trigger_offset;
     std::vector<uint> triggered_antennas;
@@ -1112,6 +1114,7 @@ int test_timeseries (std::string const &filename)
     std::vector<std::string> beam_direction_unit;
     std::string beam_direction_frame;
     //
+    DAL::h5get_name (name,groupID);
     DAL::h5get_attribute (groupID, "TRIGGER_TYPE", trigger_type);
     DAL::h5get_attribute (groupID, "TRIGGER_OFFSET", trigger_offset);
     DAL::h5get_attribute (groupID, "STATION_POSITION_VALUE", station_position_value);
@@ -1121,14 +1124,15 @@ int test_timeseries (std::string const &filename)
     DAL::h5get_attribute (groupID, "BEAM_DIRECTION_UNIT", beam_direction_unit);
     DAL::h5get_attribute (groupID, "BEAM_DIRECTION_FRAME", beam_direction_frame);
     //
-    cout << "-- TRIGGER_TYPE ......... = " << trigger_type           << endl;
-    cout << "-- TRIGGER_OFFSET ....... = " << trigger_offset         << endl;
+    cout << "-- Group name             = " << name                   << endl;
+    cout << "-- TRIGGER_TYPE           = " << trigger_type           << endl;
+    cout << "-- TRIGGER_OFFSET         = " << trigger_offset         << endl;
     cout << "-- STATION_POSITION_VALUE = " << station_position_value << endl;
     cout << "-- STATION_POSITION_UNIT  = " << station_position_unit  << endl;
     cout << "-- STATION_POSITION_FRAME = " << station_position_frame << endl;
-    cout << "-- BEAM_DIRECTION_VALUE . = " << beam_direction_value   << endl;
-    cout << "-- BEAM_DIRECTION_UNIT .. = " << beam_direction_unit    << endl;
-    cout << "-- BEAM_DIRECTION_FRAME . = " << beam_direction_frame   << endl;
+    cout << "-- BEAM_DIRECTION_VALUE   = " << beam_direction_value   << endl;
+    cout << "-- BEAM_DIRECTION_UNIT    = " << beam_direction_unit    << endl;
+    cout << "-- BEAM_DIRECTION_FRAME   = " << beam_direction_frame   << endl;
   }
   catch (std::string message) {
     cerr << message << endl;
