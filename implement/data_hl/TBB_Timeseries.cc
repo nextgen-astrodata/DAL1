@@ -356,6 +356,24 @@ namespace DAL {  // Namespace DAL -- begin
     
     return true;
   }
+
+  //_____________________________________________________________________________
+  //                                                            stationGroupNames
+  
+  /*!
+    \return names -- A set with the names of the embedded station group objects.
+  */
+  std::set<std::string> TBB_Timeseries::stationGroupNames ()
+  {
+    std::map<std::string,TBB_StationGroup>::iterator it;
+    std::set<std::string> names;
+
+    for (it=stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
+      names.insert(it->first);
+    }
+
+    return names;
+  }
   
   //_____________________________________________________________________________
   //                                                                 stationGroup
@@ -371,6 +389,22 @@ namespace DAL {  // Namespace DAL -- begin
   TBB_StationGroup TBB_Timeseries::stationGroup (uint const &station)
   {
     std::string name = TBB_StationGroup::getName (station);
+    return stationGroup (name);
+  }
+
+  //_____________________________________________________________________________
+  //                                                                 stationGroup
+
+  /*!
+    \param name -- Name of the TBB_StationGroup object embedded within this
+           TBB_Timeseries object.
+
+    return stationGroup -- The requested station group object; if the provided
+           index is outside the valid range, an empty StationGroup object is
+	   returned.
+  */
+  TBB_StationGroup TBB_Timeseries::stationGroup (std::string const &name)
+  {
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     it = stationGroups_p.find(name);

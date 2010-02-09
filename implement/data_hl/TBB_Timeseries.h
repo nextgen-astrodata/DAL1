@@ -198,6 +198,15 @@ namespace DAL {  // Namespace DAL -- begin
     inline uint nofStationGroups () const {
       return stationGroups_p.size();
     }
+
+    //! Get the names of the embedded station group objects
+    std::set<std::string> stationGroupNames ();
+    
+    //! Get one of the embedded station group objects
+    TBB_StationGroup stationGroup (uint const &station);
+    
+    //! Get one of the embedded station group objects
+    TBB_StationGroup stationGroup (std::string const &name);
     
     /*!
       \brief Get the number of dipole datasets collected into this file
@@ -206,9 +215,6 @@ namespace DAL {  // Namespace DAL -- begin
               this file.
     */
     uint nofDipoleDatasets ();
-    
-    //! Get one of the embedded station group objects
-    TBB_StationGroup stationGroup (uint const &station);
     
     // === Parameter access - station group =====================================
     

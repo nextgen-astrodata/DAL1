@@ -128,7 +128,8 @@ int test_construction (std::string const &filename)
 
   \param filename -- Name of the HDF5 file used for testing
 
-  \return nofFailedTests -- The number of failed tests.
+  \return nofFailedTests -- The number of failed tests encountered within this 
+          function.
 */
 int test_attributes (std::string const &filename)
 {
@@ -187,13 +188,54 @@ int test_attributes (std::string const &filename)
   return nofFailedTests;
 }
 
+//_______________________________________________________________________________
+//                                                                   test_methods
+
+/*!
+  \brief Test the various methods 
+
+  \param filename -- Name of the HDF5 file used for testing
+
+  \return nofFailedTests -- The number of failed tests encountered within this 
+          function.
+*/
+int test_methods (std::string const &filename)
+{
+  cout << "\n[tTBB_Timeseries::test_methods]\n" << endl;
+
+  int nofFailedTests (0);
+  TBB_Timeseries ts (filename);
+
+  cout << "[1] Access to embedded StationGroup objects ..." << endl;
+  {
+    uint nofStations              = ts.nofStationGroups();
+    std::set<std::string> names   = ts.stationGroupNames();
+    DAL::TBB_StationGroup station = ts.stationGroup(10);
+    // Methods of the embedded StationGroup object
+    std::string groupName = station.group_name();
+    std::string groupType;
+    uint nofDipoles;
+    // Retrieve attribute values
+    station.getAttribute ("GROUPTYPE", groupType);
+    station.getAttribute ("NOF_DIPOLES", nofDipoles);
+    //
+    cout << "-- nof. station groups = " << nofStations << endl;
+    cout << "-- Station group names = " << names       << endl;
+    cout << "-- Station group name  = " << groupName   << endl;
+    cout << "-- GROUPTYPE           = " << groupType   << endl;
+    cout << "-- NOF_DIPOLES         = " << nofDipoles  << endl;
+  }
+  
+  return nofFailedTests;
+}
+
 // -----------------------------------------------------------------------------
 
 /*!
   \brief Test export of the attribute values to a casa::Record object
-
+  
   \param filename -- Name of the HDF5 file, within which the dataset is located
-
+  
   \return nofFailedTests -- The number of failed tests.
 */
 int test_attributes2record (std::string const &filename)
@@ -258,7 +300,8 @@ int test_attributes2record (std::string const &filename)
   return nofFailedTests;
 }
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                      test_data
 
 /*!
   \brief Test retrieval of TBB data
@@ -375,6 +418,8 @@ int main (int argc,
     nofFailedTests += test_construction (filename);
     // Test access to the attributes
     nofFailedTests += test_attributes (filename);
+    // Test test various methods provided by the class
+    nofFailedTests += test_methods (filename);
 //     nofFailedTests += test_attributes2record (filename);
     // Test access to the data stored within the dipole datasets
     nofFailedTests += test_data (filename);
