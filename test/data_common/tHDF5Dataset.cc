@@ -46,12 +46,26 @@
 /*!
   \brief Test the creation of a Dataset object within a file
 
-  \param fileID -- File identifier
+  \return nofFailedTests -- The number of failed tests encountered within this
+          functions.
 */
-int test_create (hid_t const &fileID)
+int test_create ()
 {
   int nofFailedTests (0);
   std::string name;
+  std::string filename ("Dataset.h5");
+
+  //________________________________________________________
+  // Create the file to work with
+
+  hid_t fileID = H5Fcreate (filename.c_str(),
+			    H5F_ACC_TRUNC,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT);
+
+
+  //________________________________________________________
+  // Run the tests
 
   std::cout << "[1] Creating 2D dataset ..." << std::endl;
   try {
@@ -106,32 +120,38 @@ int test_create (hid_t const &fileID)
     ++nofFailedTests;
   }
   
+  //________________________________________________________
+  // Close the file
+
+  H5Fclose(fileID);
+  
   return nofFailedTests;
 }
 
 //_______________________________________________________________________________
 //                                                                           main
 
-int main ()
+int main (int argc,
+          char *argv[])
 {
   int nofFailedTests (0);
+  bool haveDataset (true);
   std::string filename ("Dataset.h5");
 
-  // open the file to work with
-  hid_t fileID = H5Fcreate (filename.c_str(),
-			    H5F_ACC_TRUNC,
-			    H5P_DEFAULT,
-			    H5P_DEFAULT);
-
-  if (fileID > 0) {
-    nofFailedTests += test_create (fileID);
-  } else {
-    std::cerr << "[tHDF5_Dataset] Failed to open file - skipping tests."
-	      << std::endl;
-  }
+  //________________________________________________________
+  // Process parameters from the command line
   
-  // close the file
-  H5Fclose(fileID);
+  if (argc < 2) {
+    haveDataset = false;
+  } else {
+    filename    = argv[1];
+    haveDataset = true;
+  }
+
+  //________________________________________________________
+  // Run the tests
+
+  nofFailedTests += test_create ();
   
   return nofFailedTests;
 }

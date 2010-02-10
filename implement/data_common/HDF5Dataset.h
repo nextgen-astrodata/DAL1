@@ -30,6 +30,7 @@
 
 #include <dalCommon.h>
 #include <CommonInterface.h>
+#include <HDF5Hyperslab.h>
 
 namespace DAL {
   
@@ -47,17 +48,24 @@ namespace DAL {
     
     \todo Implement read function to access data array within the dataset.
     \todo Implement Hyperslab to access multidimensional datasets/arrays.
+
+    <h3>Synopsis</h3>
+
+    <h3>Example(s)</h3>
+    
   */
   class HDF5Dataset : public CommonInterface {
     
     //! Name of the dataset
     std::string name_p;
+    //! Dataspace identifier
+    hid_t dataspace_p;
+    //! Datatype identifier
+    hid_t datatype_p;
     //! Shape of the dataset
     std::vector<hsize_t> shape_p;
-    //! Dataspace identifier
-    hid_t dataspaceID_p;
-    //! Datatype identifier
-    hid_t datatypeID_p;
+    //! Number of Hyperslab assigned to the dataspace
+    unsigned int nofHyperslabs_p;
     
   public:
     
@@ -100,12 +108,17 @@ namespace DAL {
     
     //! Get the dataspace identifier
     inline hid_t dataspaceID () const {
-      return dataspaceID_p;
+      return dataspace_p;
     }
     
     //! Get the datatype identifier
     inline hid_t datatypeID () const {
-      return datatypeID_p;
+      return datatype_p;
+    }
+
+    //! Get the number of Hyperslabs assigned to the dataspace
+    inline unsigned int nofHyperslabs () const {
+      return nofHyperslabs_p;
     }
     
     // === Methods ==============================================================
@@ -120,6 +133,18 @@ namespace DAL {
 	       std::string const &name,
 	       std::vector<hsize_t> const &shape,
 	       hid_t const &datatype=H5T_NATIVE_DOUBLE);
+
+    //! Select a hyperslab for the dataspace attached to the dataset
+    bool setHyperslab (std::vector<int> const &start,
+		       std::vector<int> const &count,
+		       H5S_seloper_t const &selection=H5S_SELECT_SET);
+    
+    //! Select a hyperslab for the dataspace attached to the dataset
+    bool setHyperslab (std::vector<int> const &start,
+		       std::vector<int> const &stride,
+		       std::vector<int> const &count,
+		       std::vector<int> const &block,
+		       H5S_seloper_t const &selection=H5S_SELECT_SET);
     
     //! Provide a summary of the internal status
     inline void summary () {

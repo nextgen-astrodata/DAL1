@@ -86,8 +86,8 @@ namespace DAL {
   
   HDF5Dataset::~HDF5Dataset ()
   {
-    H5Sclose (dataspaceID_p);
-    H5Tclose (datatypeID_p);
+    H5Tclose (datatype_p);
+    H5Sclose (dataspace_p);
   }
   
   // ============================================================================
@@ -101,10 +101,12 @@ namespace DAL {
 
   void HDF5Dataset::init ()
   {
-    name_p        = "Dataset";
-    location_p    = 0;
-    dataspaceID_p = 0;
-    datatypeID_p  = 0;
+    name_p          = "Dataset";
+    location_p      = 0;
+    dataspace_p     = 0;
+    datatype_p      = 0;
+    nofHyperslabs_p = 0;
+    shape_p.clear();
   }
 
   //_____________________________________________________________________________
@@ -150,11 +152,11 @@ namespace DAL {
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
-      if (create && dataspaceID_p && datatypeID_p) {
+      if (create && dataspace_p && datatype_p) {
 	location_p = H5Dcreate (location,
 				name_p.c_str(),
-				datatypeID_p,
-				dataspaceID_p,
+				datatype_p,
+				dataspace_p,
 				H5P_DEFAULT,
 				H5P_DEFAULT,
 				H5P_DEFAULT);
@@ -179,7 +181,7 @@ namespace DAL {
     if (status) {
       status = openEmbedded (create);
     } else {
-      std::cerr << "[BF_PrimaryPointing::open] Skip opening embedded groups!"
+      std::cerr << "[HDF5Dataset::open] Skip opening embedded groups!"
 		<< std::endl;
     }
  
@@ -214,16 +216,16 @@ namespace DAL {
     for (int n(0); n<rank; ++n) {
       dimensions[n] = shape_p[n];
     }
-    dataspaceID_p = H5Screate_simple (rank,dimensions,NULL);
+    dataspace_p = H5Screate_simple (rank,dimensions,NULL);
 
     // Set the datatype for the elements within the Dataset
-    datatypeID_p  = H5Tcopy (datatype);
+    datatype_p  = H5Tcopy (datatype);
 
     // Create the Dataset
     location_p = H5Dcreate (location,
 			    name_p.c_str(),
-			    datatypeID_p,
-			    dataspaceID_p,
+			    datatype_p,
+			    dataspace_p,
 			    H5P_DEFAULT,
 			    H5P_DEFAULT,
 			    H5P_DEFAULT);
@@ -241,16 +243,100 @@ namespace DAL {
   }
 
   //_____________________________________________________________________________
-  //                                                                      summary
+  //                                                                 setHyperslab
+  
+  /*!
+    \param start     -- Offset of the starting element of the specified hyperslab
+    \param count     -- The number of elements or blocks to select along each
+           dimension.
+    \param selection -- Selection operator to determine how the new selection is
+           to be combined with the already existing selection for the dataspace.
 
+    \return status -- Status of the operation; returns \e false in case an error 
+            was encountered.
+  */
+  bool HDF5Dataset::setHyperslab (std::vector<int> const &start,
+				  std::vector<int> const &count,
+				  H5S_seloper_t const &selection)
+  {
+    std::vector<int> stride;
+    std::vector<int> block;
+    
+    return setHyperslab (start,stride,count,block,selection);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                 setHyperslab
+  
+  /*!
+    \param start     -- Offset of the starting element of the specified hyperslab
+    \param stride    -- Number of elements to separate each element or block to
+           be selected
+    \param count     -- The number of elements or blocks to select along each
+           dimension.
+    \param block     -- The size of the block selected from the dataspace
+    \param selection -- Selection operator to determine how the new selection is
+           to be combined with the already existing selection for the dataspace.
+
+    \return status -- Status of the operation; returns \e false in case an error 
+            was encountered.
+  */
+  bool HDF5Dataset::setHyperslab (std::vector<int> const &start,
+				  std::vector<int> const &stride,
+				  std::vector<int> const &count,
+				  std::vector<int> const &block,
+				  H5S_seloper_t const &selection)
+  {
+    bool status (true);
+
+    //____________________________________________
+    // Check the input parameters
+
+    /* Minimal requirement: start and count must be of the same size */
+    if (start.size() != count.size()) {
+      std::cerr << "[HDF5Dataset::setHyperslab] Parameter mismatch: start - count."
+		<< std::endl;
+      std::cerr << "-- start = " << start << std::endl;
+      std::cerr << "-- count = " << count << std::endl;
+      return false;
+    }
+    else {
+      if (start.size() != shape_p.size()) {
+      std::cerr << "[HDF5Dataset::setHyperslab] Parameter mismatch: start - shape."
+		<< std::endl;
+      std::cerr << "-- start = " << start   << std::endl;
+      std::cerr << "-- shape = " << shape_p << std::endl;
+      return false;
+      }
+    }
+
+    //____________________________________________
+    // Set up the hyperslab
+
+    //____________________________________________
+    // Book-keeping
+
+    if (status) {
+      ++nofHyperslabs_p;
+    }
+
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                      summary
+  
   /*
     \param os -- Output stream to which the summary is written.
   */
   void HDF5Dataset::summary (std::ostream &os)
   {
-    os << "[HDF5Dataset]" << std::endl;
-    os << "-- Dataset name  = " << name_p  << std::endl;
-    os << "-- Dataset shape = " << shape_p << std::endl;
+    os << "[HDF5Dataset] Summary of internal parameters" << std::endl;
+    os << "-- Dataset name  = " << name_p      << std::endl;
+    os << "-- Dataset ID    = " << location_p  << std::endl;
+    os << "-- Dataspace ID  = " << dataspace_p << std::endl;
+    os << "-- Datatype ID   = " << datatype_p  << std::endl;
+    os << "-- Dataset shape = " << shape_p     << std::endl;
   }
   
 } // end namespace DAL

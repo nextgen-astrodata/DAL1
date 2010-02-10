@@ -226,58 +226,48 @@ int main(int argc, char *argv[])
       verboseMode=true;
     }
 
-  if (vm.count("infile"))
-    {
-      infile     = vm["infile"].as<std::string>();
-      socketmode = 0;
-    }
-
-  if (vm.count("outfile"))
-    {
-      outfile = vm["outfile"].as<std::string>();
-    }
-
-  if (vm.count("antpos"))
-    {
-      outfile = vm["antpos"].as<std::string>();
-    }
-
-  if (vm.count("ip"))
-    {
-      ip = vm["ip"].as<std::string>();
-      socketmode = 1;
-    }
-
-  if (vm.count("port"))
-    {
-      port = vm["port"].as<std::string>();
-      socketmode = 1;
-    }
-
-  if (vm.count("mode"))
-    {
-      socketmode = vm["mode"].as<int>();
-    }
-
-  if (vm.count("timeoutStart"))
-    {
-      timeoutStart = vm["timeoutStart"].as<double>();
-    }
-
-  if (vm.count("timeoutRead"))
-    {
-      timeoutRead = vm["timeoutRead"].as<double>();
-    }
-
-  if (vm.count("fixTimes"))
-    {
-      fixTransientTimes = vm["fixTimes"].as<int>();
-    }
-
-  if (vm.count("doCheckCRC"))
-    {
-      doCheckCRC = vm["doCheckCRC"].as<int>();
-    }
+  if (vm.count("infile")) {
+    infile     = vm["infile"].as<std::string>();
+    socketmode = 0;
+  }
+  
+  if (vm.count("outfile")) {
+    outfile = vm["outfile"].as<std::string>();
+  }
+  
+  if (vm.count("antpos")) {
+    outfile = vm["antpos"].as<std::string>();
+  }
+  
+  if (vm.count("ip")) {
+    ip = vm["ip"].as<std::string>();
+    socketmode = 1;
+  }
+  
+  if (vm.count("port")) {
+    port = vm["port"].as<std::string>();
+    socketmode = 1;
+  }
+  
+  if (vm.count("mode")) {
+    socketmode = vm["mode"].as<int>();
+  }
+  
+  if (vm.count("timeoutStart")) {
+    timeoutStart = vm["timeoutStart"].as<double>();
+  }
+  
+  if (vm.count("timeoutRead")) {
+    timeoutRead = vm["timeoutRead"].as<double>();
+  }
+  
+  if (vm.count("fixTimes")) {
+    fixTransientTimes = vm["fixTimes"].as<int>();
+  }
+  
+  if (vm.count("doCheckCRC")) {
+    doCheckCRC = vm["doCheckCRC"].as<int>();
+  }
 
   // -----------------------------------------------------------------
   // Check the provided input
