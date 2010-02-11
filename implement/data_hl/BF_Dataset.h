@@ -157,8 +157,6 @@ namespace DAL { // Namespace DAL -- begin
 	       std::string const &name,
 	       bool const &create=true);
 
-    /* Primary pointing direction */
-
     //! Open a PrimaryPointing direction group
     bool openPrimaryPointing (unsigned int const &pointingID,
 			      bool const &create=true);
@@ -171,15 +169,11 @@ namespace DAL { // Namespace DAL -- begin
     //! Get a primary pointing direction group
     BF_PrimaryPointing primaryPointing (unsigned int const &pointingID);
 
-    /* Beam */
-    
     //! Open a beam group
     bool openBeam (unsigned int const &pointingID,
 		   unsigned int const &beamID,
 		   bool const &create=true);
 
-    /* SysLog */
-    
     //! Open a system log group
     bool openSysLog (bool const &create=true);
 
@@ -197,7 +191,9 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Initialize the internal settings of the object
     void init (CommonAttributes const &attributes);
-
+    //! Open a PrimaryPointing direction group
+    bool openPrimaryPointing (std::string const &name);
+      
   }; // Class BF_Dataset -- end
   
 } // Namespace DAL -- end

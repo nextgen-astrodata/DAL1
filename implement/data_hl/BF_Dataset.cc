@@ -157,11 +157,11 @@ namespace DAL { // Namespace DAL -- begin
 			    bool const &showAttributes)
   {
     os << "[BF_Dataset] Summary of internal parameters." << std::endl;
-    os << "-- Filename                = " << filename_p            << std::endl;
-    os << "-- Location ID             = " << location_p            << std::endl;
-    os << "-- nof. attributes         = " << attributes_p.size()   << std::endl;
-    os << "-- nof. primary pointings  = " << nofPrimaryPointings() << std::endl;
-    os << "-- nof. SysLog groups      = " << sysLog_p.size()       << std::endl;
+    os << "-- Filename                    = " << filename_p            << std::endl;
+    os << "-- Location ID                 = " << location_p            << std::endl;
+    os << "-- nof. attributes             = " << attributes_p.size()   << std::endl;
+    os << "-- nof. primary pointings      = " << nofPrimaryPointings() << std::endl;
+    os << "-- nof. SysLog groups          = " << sysLog_p.size()       << std::endl;
     os << "-- nof. PrimaryPointing groups = " << primaryPointings_p.size() << std::endl;
 
     if (showAttributes) {
@@ -206,16 +206,19 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.insert("BF_VERSION");
     attributes_p.insert("EXPTIME_START_UTC");
     attributes_p.insert("EXPTIME_STOP_UTC");
+    attributes_p.insert("EXPTIME_START_MJD");
+    attributes_p.insert("EXPTIME_STOP_MJD");
+    attributes_p.insert("EXPTIME_START_TAI");
+    attributes_p.insert("EXPTIME_STOP_TAI");
     attributes_p.insert("TOTAL_INTEGRATION_TIME");
     attributes_p.insert("OBS_DATATYPE");
+    attributes_p.insert("PRIMARY_POINTING_DIAMETER");
     attributes_p.insert("BANDWIDTH");
-    attributes_p.insert("STATION_BEAM_DIAMETER");
-    attributes_p.insert("PENCIL_BEAM_DIAMETER");
+    attributes_p.insert("BEAM_DIAMETER");
     attributes_p.insert("WEATHER_TEMPERATURE");
     attributes_p.insert("WEATHER_HUMIDITY");
     attributes_p.insert("SYSTEM_TEMPERATURE");
-    attributes_p.insert("PHASE_CENTER");
-    attributes_p.insert("NOF_POINTINGS");
+    attributes_p.insert("NOF_PRIMARY_BEAMS");
   }
   
   //_____________________________________________________________________________
@@ -280,22 +283,25 @@ namespace DAL { // Namespace DAL -- begin
 	std::vector<float> vectF (1,0.0);
 	std::vector<double> vectD (1,0.0);
 	//
-	h5set_attribute (location_p,"FILENAME",               name        );
- 	h5set_attribute (location_p,"CREATE_OFFLINE_ONLINE",  true        );
- 	h5set_attribute (location_p,"BF_FORMAT",              undefined   );
-	h5set_attribute (location_p,"BF_VERSION",             undefined   );
-	h5set_attribute (location_p,"EXPTIME_START_UTC",      undefined   );
-	h5set_attribute (location_p,"EXPTIME_STOP_UTC",       undefined   );
-	h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME", float(0.0)  );
-	h5set_attribute (location_p,"OBS_DATATYPE",           undefined   );
-	h5set_attribute (location_p,"STATION_BEAM_DIAMETER",  int(0)      );
-	h5set_attribute (location_p,"BANDWIDTH",              double(0.0) );
-	h5set_attribute (location_p,"PENCIL_BEAM_DIAMETER",   float(0.0)  );
- 	h5set_attribute (location_p,"WEATHER_TEMPERATURE",    vectF       );
-	h5set_attribute (location_p,"WEATHER_HUMIDITY",       vectF       );
- 	h5set_attribute (location_p,"SYSTEM_TEMPERATURE",     vectF       );
- 	h5set_attribute (location_p,"PHASE_CENTER",           vectD       );
-	h5set_attribute (location_p,"NOF_POINTINGS",          int(0)      );
+	h5set_attribute (location_p,"FILENAME",                  name        );
+ 	h5set_attribute (location_p,"CREATE_OFFLINE_ONLINE",     true        );
+ 	h5set_attribute (location_p,"BF_FORMAT",                 undefined   );
+	h5set_attribute (location_p,"BF_VERSION",                undefined   );
+	h5set_attribute (location_p,"EXPTIME_START_UTC",         undefined   );
+	h5set_attribute (location_p,"EXPTIME_STOP_UTC",          undefined   );
+	h5set_attribute (location_p,"EXPTIME_START_MJD",         undefined   );
+	h5set_attribute (location_p,"EXPTIME_STOP_MJD",          undefined   );
+	h5set_attribute (location_p,"EXPTIME_START_TAI",         undefined   );
+	h5set_attribute (location_p,"EXPTIME_STOP_TAI",          undefined   );
+	h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME",    float(0.0)  );
+	h5set_attribute (location_p,"OBS_DATATYPE",              undefined   );
+	h5set_attribute (location_p,"PRIMARY_POINTING_DIAMETER", float(0.0)  );
+	h5set_attribute (location_p,"BANDWIDTH",                 double(0.0) );
+	h5set_attribute (location_p,"BEAM_DIAMETER",             float(0.0)  );
+	h5set_attribute (location_p,"WEATHER_TEMPERATURE",       vectF       );
+	h5set_attribute (location_p,"WEATHER_HUMIDITY",          vectF       );
+	h5set_attribute (location_p,"SYSTEM_TEMPERATURE",        vectF       );
+	h5set_attribute (location_p,"NOF_PRIMARY_BEAMS",         int(0)      );
 	/* Read back in the common attributes after storing default values */
 	commonAttributes_p.h5read(location_p);
       } else {
@@ -327,15 +333,23 @@ namespace DAL { // Namespace DAL -- begin
   bool BF_Dataset::openEmbedded (bool const &create)
   {
     bool status (true);
-    std::set<std::string> groupnames;
-    
+    std::set<std::string> groups;
+    std::set<std::string>::iterator it;
+
     /* Retrieve the names of the groups attached to the root group */
-    status = h5get_names (groupnames,
+    status = h5get_names (groups,
 			  location_p,
 			  H5G_GROUP);
-
-    /* Open system log group */
+    
+    /* Open system log group ... */
     status = openSysLog (create);
+    /* ... and remove its name from the previously retrieved list */
+    groups.erase("SysLog");
+
+    /* Open the PrimaryPointingDirection groups */
+    for (it=groups.begin(); it!=groups.end(); ++it) {
+      status *= openPrimaryPointing (*it);
+    }
     
     return status;
   }
@@ -366,24 +380,53 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
     htri_t validLocation = H5Iis_valid(location_p);
+    std::string name = BF_PrimaryPointing::getName (pointingID);
 
     if (location_p > 0 && validLocation) {
-      std::string name;
-      int nofPointings;
+      int nofPrimaryBeams;
       std::map<std::string,BF_PrimaryPointing>::iterator it;
       // convert station ID to group name
-      name = BF_PrimaryPointing::getName (pointingID);
       it   = primaryPointings_p.find(name);
       // check if the station beam group indeed exists
       if (it == primaryPointings_p.end()) {
 	// open/create the station beam group
 	primaryPointings_p[name] = BF_PrimaryPointing (location_p,pointingID,create);
 	// attributes for book-keeping
-	nofPointings = primaryPointings_p.size();
-	h5set_attribute (location_p, "NOF_POINTINGS", nofPointings);
+	nofPrimaryBeams = primaryPointings_p.size();
+	h5set_attribute (location_p, "NOF_PRIMARY_BEAMS", nofPrimaryBeams);
       }
     }
     else {
+      status = false;
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                          openPrimaryPointing
+  
+  /*!
+    \param name   -- 
+    \param create -- 
+  */
+  bool BF_Dataset::openPrimaryPointing (std::string const &name)
+  {
+    bool status (true);
+
+    if (location_p > 0 && H5Iis_valid(location_p)) {
+      std::map<std::string,BF_PrimaryPointing>::iterator it;
+      // convert station ID to group name
+      it = primaryPointings_p.find(name);
+      // check if the station beam group indeed exists
+      if (it == primaryPointings_p.end()) {
+	// open the primary pointing direction group
+	primaryPointings_p[name] = BF_PrimaryPointing (location_p,name);
+      }
+    }
+    else {
+      std::cerr << "[BF_Dataset::openPrimaryPointing] Not attached to file!"
+		<< std::endl;
       status = false;
     }
     
@@ -419,10 +462,6 @@ namespace DAL { // Namespace DAL -- begin
 	it   = primaryPointings_p.find(name);
 	// forward function call to open beam
 	if ( it != primaryPointings_p.end() ) {
-// 	  std::cout << "--> opening " << BF_Beam::getName(beamID) << " in "
-// 		    << it->first
-// 		    << " (" << it->second.locationID() << ") ..."
-// 		    << std::endl;
 	  it->second.openBeam(beamID,create);
 	}
 	else {
@@ -455,22 +494,34 @@ namespace DAL { // Namespace DAL -- begin
   */
   BF_PrimaryPointing BF_Dataset::primaryPointing (unsigned int const &pointingID)
   {
-    std::string name;
-    std::map<std::string,BF_PrimaryPointing>::iterator it;
+    BF_PrimaryPointing pointing;      
+      
+    if (H5Iis_valid(location_p)) {
+      std::string name;
+      std::map<std::string,BF_PrimaryPointing>::iterator it;
+      
+      name = BF_PrimaryPointing::getName (pointingID);
+      it   = primaryPointings_p.find(name);
 
-    name = BF_PrimaryPointing::getName (pointingID);
-    it   = primaryPointings_p.find(name);
-
-    if (it != primaryPointings_p.end()) {
-      return it->second;
-    } else {
-      return BF_PrimaryPointing();
+      if (it != primaryPointings_p.end()) {
+	pointing = it->second;
+      } else {
+	std::cerr << "[BF_Dataset::primaryPointing] No such group "
+		  << "\"" << name << "\""
+		  << std::endl;
+      }
     }
+    else {
+      std::cerr << "[BF_Dataset::primaryPointing] Not connected to file!"
+		<< std::endl;
+    }
+    
+    return pointing;
   }
   
   //_____________________________________________________________________________
   //                                                                       sysLog
-
+  
   BF_SysLog BF_Dataset::sysLog ()
   {
     std::map<std::string,BF_SysLog>::iterator it;

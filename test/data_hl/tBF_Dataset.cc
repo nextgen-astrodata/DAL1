@@ -31,7 +31,6 @@ using std::endl;
 using DAL::CommonAttributes;
 using DAL::Filename;
 using DAL::BF_Dataset;
-using DAL::BF_SysLog;
 
 /*!
   \file tBF_Dataset.cc
@@ -116,42 +115,6 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
-//                                                                   test_methods
-
-/*!
-  \brief Test the various methods of the class
-
-  \return nofFailedTests -- The number of failed tests encountered within this
-          function.
-*/
-int test_methods ()
-{
-  cout << "\n[tBF_Dataset::test_methods]\n" << endl;
-
-  int nofFailedTests (0);
-  Filename file (getFilename());
-  BF_Dataset dataset (file);
-
-  cout << "[1] Extract SysLog from BF dataset ..." << endl;
-  try {
-    BF_SysLog sysLog = dataset.sysLog();
-    //
-    std::string groupType;
-    sysLog.getAttribute("GROUPTYPE",groupType);
-    //
-    cout << "-- Location ID = " << sysLog.locationID() << endl;
-    cout << "-- Attributes  = " << sysLog.attributes() << endl;
-    cout << "-- GROUPTYPE   = " << groupType           << endl;
-  } catch (std::string message) {
-    cerr << message << endl;
-    ++nofFailedTests;
-  }
-
-
-  return nofFailedTests;
-}
-
-//_______________________________________________________________________________
 //                                                                 test_subGroups
 
 /*!
@@ -214,6 +177,56 @@ int test_subGroups ()
 }
 
 //_______________________________________________________________________________
+//                                                                   test_methods
+
+/*!
+  \brief Test the various methods of the class
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_methods ()
+{
+  cout << "\n[tBF_Dataset::test_methods]\n" << endl;
+
+  int nofFailedTests (0);
+  Filename file (getFilename());
+  BF_Dataset dataset (file);
+
+  cout << "[1] Extract SysLog from BF dataset ..." << endl;
+  try {
+    DAL::BF_SysLog sysLog = dataset.sysLog();
+    //
+    std::string groupType;
+    sysLog.getAttribute("GROUPTYPE",groupType);
+    //
+    cout << "-- Location ID = " << sysLog.locationID() << endl;
+    cout << "-- Attributes  = " << sysLog.attributes() << endl;
+    cout << "-- GROUPTYPE   = " << groupType           << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    ++nofFailedTests;
+  }
+
+  cout << "[2] Extract PrimaryPointing group from BF dataset ..." << endl;
+  try {
+    DAL::BF_PrimaryPointing pointing = dataset.primaryPointing (0);
+    //
+    std::string groupType;
+    pointing.getAttribute("GROUPTYPE",groupType);
+    //
+    cout << "-- Location ID = " << pointing.locationID() << endl;
+    cout << "-- Attributes  = " << pointing.attributes() << endl;
+    cout << "-- GROUPTYPE   = " << groupType             << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    ++nofFailedTests;
+  }
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 int main (int argc,
@@ -238,10 +251,10 @@ int main (int argc,
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
-  // Test the various methods 
-  nofFailedTests += test_methods ();
   // Test working with the embedded groups
   nofFailedTests += test_subGroups ();
+  // Test the various methods 
+  nofFailedTests += test_methods ();
 
   return nofFailedTests;
 }

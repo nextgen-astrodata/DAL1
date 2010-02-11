@@ -43,6 +43,15 @@ namespace DAL { // Namespace DAL -- begin
   //                                                           BF_PrimaryPointing
   
   BF_PrimaryPointing::BF_PrimaryPointing (hid_t const &location,
+					  std::string const &name)
+  {
+    open (location,name,false);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                           BF_PrimaryPointing
+  
+  BF_PrimaryPointing::BF_PrimaryPointing (hid_t const &location,
 					  unsigned int const &index,
 					  bool const &create)
   {

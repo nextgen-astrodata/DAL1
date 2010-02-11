@@ -95,10 +95,14 @@ namespace DAL { // Namespace DAL -- begin
     //! Default constructor
     BF_PrimaryPointing ();
     
+    //! Default constructor
+    BF_PrimaryPointing (hid_t const &location,
+			std::string const &name);
+    
     //! Argumented constructor
     BF_PrimaryPointing (hid_t const &location,
-		    unsigned int const &index,
-		    bool const &create);
+			unsigned int const &index,
+			bool const &create);
     
     // === Destruction ==========================================================
     
