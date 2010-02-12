@@ -278,7 +278,7 @@ namespace DAL {
 			 &value);
       
       // close the type identifier
-      if (H5Iis_valid(h5datatype)) H5Tclose(h5datatype);
+      if (H5Iis_valid(h5datatype)) { H5Tclose(h5datatype); }
       // clean up the error message buffer
       h5error = H5Eclear1();
       
@@ -307,7 +307,6 @@ namespace DAL {
   {
     bool status (true);
     hid_t attribute_id (0);
-    herr_t h5error (0);
 
     /* Check if the requested attribute exists; if this is the case, retrieve
      * its HDF5 object ID - else return error message.
@@ -324,14 +323,7 @@ namespace DAL {
     
     if (attribute_id > 0) {
       /* Forward the call to retrieve the actual value of the attribute */
-      status = h5get_attribute (attribute_id,
-				value);
-      /* release the identifier used for retrieval of the value */
-      if (H5Iis_valid(attribute_id)) {
-	h5error = H5Aclose (attribute_id);
-      }
-      /* clean up the error message buffer */
-      h5error = H5Eclear1();
+      status = h5get_attribute (attribute_id, value);
     }
     else {
       std::cerr << "[h5get_attribute] No valid ID for attribute "
@@ -339,13 +331,17 @@ namespace DAL {
 		<< endl;
       status = false;
     }
+
+    if (H5Iis_valid(attribute_id)) {
+      H5Aclose (attribute_id);
+    }
     
     return status;
   }
   
   //_____________________________________________________________________________
   //                                                              h5get_attribute
-
+  
   //! Get the value of an attribute attached to a group or dataset
   template <typename T>
     bool h5get_attribute (hid_t const &attribute_id,
@@ -494,9 +490,8 @@ namespace DAL {
       return false;
     }
     
-    if (H5Iis_valid(attribute_id)) {
-      H5Aclose (attribute_id);
-    }
+    if (H5Iis_valid(attribute_id)) { H5Aclose (attribute_id); }
+    if (H5Iis_valid(dataspace_id)) { H5Sclose (dataspace_id); }
     
     return true;
   }
@@ -521,6 +516,7 @@ namespace DAL {
 			  std::string name,
 			  std::vector<T> const &value)
     {
+      bool status (true);
       int nelem = value.size();
       T * data  = new T [nelem];
       
@@ -528,12 +524,13 @@ namespace DAL {
 	data[n] = value[n];
       }
       
-      return h5set_attribute (location_id,
-			      name,
-			      data,
-			      nelem);
-      
+      status = h5set_attribute (location_id,
+				name,
+				data,
+				nelem);
       delete [] data;
+
+      return status;
     }
   
   //_____________________________________________________________________________
@@ -576,17 +573,18 @@ namespace DAL {
 			  std::string name,
 			  T const &value)
     {
+      bool status (true);
       int nelem (1);
       T * data = new T [nelem];
       
       data[0] = value;
-      
-      return h5set_attribute (location_id,
-			      name,
-			      data,
-			      nelem);
-      
+      status  = h5set_attribute (location_id,
+				 name,
+				 data,
+				 nelem);
       delete [] data;
+
+      return status;
     }
   
   //_____________________________________________________________________________
@@ -659,7 +657,6 @@ namespace DAL {
     {
       bool status (true);
       hid_t attribute_id (0);
-      herr_t h5error (0);
       
       // get the identifier for the attribute
       attribute_id = H5Aopen(location_id,
@@ -670,12 +667,6 @@ namespace DAL {
 	/* forward the call to retrieve the actual value of the attribute */
 	status = h5get_attribute (attribute_id,
 				  value);
-	/* release the identifier used for retrieval of the value */
-	if (H5Iis_valid(attribute_id)) {
-	  h5error = H5Aclose (attribute_id);
-	}
-        /* clean up the error message buffer */
-        h5error = H5Eclear1();
       }
       else {
         std::cerr << "[h5get_attribute] No valid ID for attribute "
@@ -683,6 +674,8 @@ namespace DAL {
                   << endl;
         status = false;
       }
+      
+      if (H5Iis_valid(attribute_id)) { H5Aclose (attribute_id); }
       
       return status;
     }
@@ -716,6 +709,7 @@ namespace DAL {
 			  std::string name,
 			  casa::Vector<T> const &value)
     {
+      bool status (true);
       T * data;
       int nelem = value.nelements();
       
@@ -725,12 +719,14 @@ namespace DAL {
 	data[n] = value(n);
       }
       
-      return h5set_attribute (location_id,
-			      name,
-			      data,
-			      nelem);
+      status = h5set_attribute (location_id,
+				name,
+				data,
+				nelem);
       
       delete [] data;
+
+      return status;
     }
   
   /*!
@@ -791,7 +787,36 @@ namespace DAL {
 //
 // ==============================================================================
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                           show
+
+/*!
+  \brief Write elements of an array/vector/set to an output stream
+  
+  \param os    -- Stream to which the output is written.
+  \param start -- Iterator pointing to the first element.
+  \param end   -- Iterator pointing to the position after the last element.
+*/
+template <typename T>
+std::ostream& show (std::ostream& os,
+		     T start,
+		     T end)
+{
+  T it;
+  
+  os << " data = [";
+  
+  for (it=start; it!=end; ++it) {
+    os << " " << *it;
+  }
+  
+  os << " ]" << std::endl;
+  
+  return os;
+}
+
+//_______________________________________________________________________________
+//                                                                           show
 
 /*!
   \brief Write elements of an array to an output stream
@@ -800,19 +825,24 @@ namespace DAL {
   \param arr   -- Pointer to the array with the data to be displayed
   \param nelem -- The number of elements stored within the array
 */
-template <typename T, typename S>
-void show (std::ostream& os,
-           T const *arr,
-           S const &nelem)
+template <typename T>
+std::ostream&  show (std::ostream& os,
+		     T *arr,
+		     uint const &nelem)
 {
-  os << "[";
+  os << " data = [";
   
-  for (S n(0); n<nelem; n++) {
+  for (uint n(0); n<nelem; ++n) {
     os << " " << arr[n];
   }
   
-  os << " ]" << endl;
+  os << " ]" << std::endl;
+  
+  return os;
 }
+
+//_______________________________________________________________________________
+//                                                                           show
 
 /*!
   \brief Display the elements stored in an array
@@ -821,15 +851,19 @@ void show (std::ostream& os,
   \param nelem -- The number of elements stored within the array
 */
 template <typename T, typename S>
-void show (T const *arr,
+void show (T *arr,
            S const &nelem)
 {
+  typedef typename std::vector<T>::iterator it;
+  it dataStart = static_cast<it> (arr);
+
   show (std::cout,
-        arr,
-        nelem);
+	dataStart,
+	dataStart+nelem);
 }
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                     operator<<
 
 /*!
   \brief Overloading of output operator to display std::vector<T>
@@ -841,20 +875,11 @@ template <typename T>
 std::ostream& operator<< (std::ostream &os,
                           const std::vector<T> &vec)
 {
-  uint nelem = vec.size();
-  
-  os << "[";
-  
-  for (uint n(0); n<nelem; n++) {
-    os << " " << vec[n];
-  }
-  
-  os << " ]";
-  
-  return os;
+  return show (os, vec.begin(), vec.end());
 }
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                     operator<<
 
 /*!
   \brief Overloading of output operator to display std::set<T>
@@ -866,20 +891,11 @@ template <typename T>
 std::ostream& operator<< (std::ostream &os,
                           const std::set<T> &s)
 {
-  typename std::set<T>::iterator it;
-  
-  os << "[";
-  
-  for (it=s.begin(); it!=s.end(); ++it) {
-    cout << " " << *it;
-  }
-  
-  os << " ]";
-  
-  return os;
+  return show (os, s.begin(), s.end());
 }
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                     operator<<
 
 /*!
   \brief Overloading of output operator to display std::map<K,V>

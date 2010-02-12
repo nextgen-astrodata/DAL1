@@ -75,17 +75,15 @@ namespace DAL {
     int yday (0);
     int hour (0);
     int min (0);
+    unsigned int nd(0);
     struct tm *ptr = 0;
-    
-    unsigned int nd;
     
     ptr = gmtime(&seconds);
     assert (ptr);
     
     hour = ptr->tm_hour;
-    min = ptr->tm_min;
-    sec = (long double)ptr->tm_sec;
-    
+    min  = ptr->tm_min;
+    sec  = (long double)ptr->tm_sec;
     year = ptr->tm_year;
     yday = ptr->tm_yday + 1;
     
@@ -102,6 +100,9 @@ namespace DAL {
     assert (fracmjd);
     
     jd = (long double)nd + dayfrac - 0.5L;
+
+    // release allocated memory
+    delete ptr;
     
     return jd;
   }
@@ -354,44 +355,29 @@ namespace DAL {
   bool h5get_filename (std::string &filename,
                        hid_t const &object_id)
   {
+    bool status (true);
+    H5I_type_t objectType;
 
     //________________________________________________________________
     // Basic check for the provided object ID
-
-    if (object_id < 1) {
-      std::cout << "[h5get_filename] Invalid value of object identifier;"
-		<< " must be greater zero!"
-		<< endl;
-      return false;
-    }
     
-    bool status (true);
-    herr_t h5error (0);
-    H5I_type_t objectType;
-    
-    /*
-     * If the provided object ID does not belong to a file already, we first need
-     * to obtain extactly this ID based on the object's ID.
-     */
-    objectType = H5Iget_type(object_id);
-    
-    if (objectType == H5I_BADID) {
-      std::cerr << "[h5get_filename] Bad object type - aborting now!" << endl;
-      return false;
-    }
-    else if (objectType == H5I_FILE) {
-      status = h5get_name (filename,
-			   object_id);
+    if (H5Iis_valid(object_id)) {
+      objectType = H5Iget_type(object_id);
+      
+      if (objectType == H5I_FILE) {
+	status = h5get_name (filename,
+			     object_id);
+      }
+      else {
+	hid_t file_id = H5Iget_file_id (object_id);
+	status = h5get_name (filename,
+			     file_id);
+	H5Fclose (file_id);
+      }
     }
     else {
-      hid_t file_id = H5Iget_file_id (object_id);
-      status = h5get_name (filename,
-			   file_id);
-      h5error = H5Fclose (file_id);
+      status = false;
     }
-    
-    /* clean up the error message buffer */
-    h5error = H5Eclear1();
     
     return status;
   }
@@ -543,7 +529,6 @@ namespace DAL {
     if (H5Iget_type (attribute_id) == H5I_ATTR) {
 
       bool status (true);
-      herr_t h5error;
       
       /*
        * Datatype of the attribute
@@ -553,9 +538,7 @@ namespace DAL {
       bool datatype_is_integer = H5Tdetect_class (datatype_id,H5T_INTEGER);
       bool datatype_is_float   = H5Tdetect_class (datatype_id,H5T_FLOAT);
       bool datatype_is_string  = H5Tdetect_class (datatype_id,H5T_STRING);
-      
-      if (H5Iis_valid(datatype_id)) H5Tclose (datatype_id);
-      
+
       /*
        * Dataspace of the attribute
        */
@@ -570,7 +553,8 @@ namespace DAL {
 	cerr << "[h5attribute_summary] " << message << endl;
 	status = false;
       }
-      
+
+      // Display properties
       os << "\t-- Datatype ID             = " << datatype_id         << endl;
       os << "\t-- Datatype size [Bytes]   = " << datatype_size       << endl;
       os << "\t-- Datatype is H5T_INTEGER = " << datatype_is_integer << endl;
@@ -579,11 +563,11 @@ namespace DAL {
       os << "\t-- Dataspace ID            = " << dataspace_id        << endl;
       os << "\t-- Dataspace is simple?    = " << dataspace_is_simple << endl;
       os << "\t-- Rank of the data array  = " << rank                << endl;
-      
-      if (H5Iis_valid(dataspace_id)) {
-	h5error = H5Sclose (dataspace_id);
-	h5error = H5Eclear1 ();
-      }
+
+      // close HDF5 objects
+      if (H5Iis_valid(datatype_id))  { H5Tclose (datatype_id);  }
+      if (H5Iis_valid(dataspace_id)) { H5Sclose (dataspace_id); }
+
     }  // end -- (H5Iget_type () == H5I_ATTR)
     else {
       os << "[h5attribute_summary] Provided HDF5 object is not an attribute!" 
@@ -616,7 +600,8 @@ namespace DAL {
     hid_t aspace = H5Aget_space(attr);
 
     hsize_t * sdim = new hsize_t[ 64 ];
-    herr_t ret = H5Sget_simple_extent_dims(aspace, sdim, 0);
+    herr_t ret     = H5Sget_simple_extent_dims(aspace, sdim, 0);
+    // release allocated memory
     delete [] sdim;
     sdim = 0;
 
@@ -764,8 +749,8 @@ namespace DAL {
   {
     bool status (true);
     herr_t h5error;
-    hid_t dataspace_id   = H5Aget_space (attribute_id);
-    int rank             = H5Sget_simple_extent_ndims (dataspace_id);
+    hid_t dataspace_id = H5Aget_space (attribute_id);
+    int rank           = H5Sget_simple_extent_ndims (dataspace_id);
 
     if (rank > 0) {
       // set array sizes
@@ -893,17 +878,17 @@ namespace DAL {
   bool h5get_attribute (hid_t const &attribute_id,
                         std::string &value)
   {
-    bool status       = true;
-    herr_t h5error    = 0;
-    hid_t datatype_id = H5Aget_type (attribute_id);
+    bool status              = true;
+    herr_t h5error           = 0;
+    hid_t datatype_id        = H5Aget_type (attribute_id);
+    hid_t native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
 
     if (datatype_id > 0) {
       
       H5T_class_t datatype_class_id = H5Tget_class (datatype_id);
-      hid_t native_datatype_id      = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
       
       if (datatype_class_id == H5T_STRING) {
-	htri_t is_variable_string     = H5Tis_variable_str(datatype_id);
+	htri_t is_variable_string = H5Tis_variable_str(datatype_id);
 	char *data;
 	
 #ifdef DEBUGGING_MESSAGES
@@ -935,19 +920,17 @@ namespace DAL {
 	}
 	
 	// release allocated memory
-	if (data != 0) {
-	  delete [] data;
-	  data = 0;
-	}
+	delete data;
+//  	delete [] data;
+//  	data = 0;
 	
       } // END: (datatype_class_id == H5T_STRING)
       
-      /* release HDF5 handlers */
-      if (H5Iis_valid(native_datatype_id)) H5Tclose (native_datatype_id);
     }
     
     /* release HDF5 handlers */
-    if (H5Iis_valid(datatype_id)) H5Tclose (datatype_id);
+    if (H5Iis_valid(native_datatype_id)) { H5Tclose (native_datatype_id); }
+    if (H5Iis_valid(datatype_id))        { H5Tclose (datatype_id);        }
     // clean up the error message buffer
     h5error = H5Eclear1();
     
@@ -1155,6 +1138,7 @@ namespace DAL {
 
     /* release HDF5 handlers */
     if (H5Iis_valid(dataspace_id)) H5Sclose (dataspace_id);
+    if (H5Iis_valid(attribute_id)) H5Aclose (attribute_id);
     
     return true;
   }

@@ -301,13 +301,15 @@ namespace DAL {  // Namespace DAL -- begin
   {
     bool status = create;
 
-    // Open dipole datasets ________________________________
-
-    if (location_p > 0) {
+    if (H5Iis_valid(location_p)) {
       std::set<std::string> names;
       std::set<std::string>::iterator it;
 
       h5get_names (names,location_p,H5G_DATASET);
+
+      // Open station calibration group ____________________
+
+      // Open dipole datasets ______________________________
 
       if (names.size() > 0) {
 	datasets_p.clear();

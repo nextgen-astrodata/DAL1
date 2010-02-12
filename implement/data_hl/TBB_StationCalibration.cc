@@ -34,11 +34,6 @@ namespace DAL { // Namespace DAL -- begin
   TBB_StationCalibration::TBB_StationCalibration ()
   {;}
   
-  TBB_StationCalibration::TBB_StationCalibration (TBB_StationCalibration const &other)
-  {
-    copy (other);
-  }
-  
   // ============================================================================
   //
   //  Destruction
@@ -110,16 +105,91 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         open
 
+  /*!
+    \param location -- Identifier of the location to which the to be opened
+           structure is attached.
+    \param create -- Create the corresponding data structure, if it does not 
+           exist yet?
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered.
+  */
+  bool TBB_StationCalibration::open (hid_t const &location,
+				     bool const &create)
+  {
+    std::string name ("StationCalibration");
+
+    return open (location, name, create);
+  }
+
+  //_____________________________________________________________________________
+  //                                                                         open
+
+  /*!
+    \param location -- Identifier of the location to which the to be opened
+           structure is attached.
+    \param name   -- Name of the structure (file, group, dataset, etc.) to be
+           opened.
+    \param create -- Create the corresponding data structure, if it does not 
+           exist yet?
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered.
+  */
   bool TBB_StationCalibration::open (hid_t const &location,
 				     std::string const &name,
 				     bool const &create)
   {
-    bool status (create);
+    bool status (true);
 
-    std::cout << "[TBB_StationCalibration::open]" << std::endl;
-    std::cout << "-- location = " << location     << std::endl;
-    std::cout << "-- name     = " << name         << std::endl;
+    /* Internal setup */
+    setAttributes();
+
+    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
+      location_p = H5Gopen (location,
+			    name.c_str(),
+			    H5P_DEFAULT);
+    } else {
+      location_p = 0;
+    }
+
+    if (location_p > 0) {
+      status = true;
+    } else {
+      /* If failed to open the group, check if we are supposed to create one */
+      if (create) {
+	location_p = H5Gcreate (location,
+				name.c_str(),
+				H5P_DEFAULT,
+				H5P_DEFAULT,
+				H5P_DEFAULT);
+	/* If creation was sucessful, add attributes with default values */
+	if (location_p > 0) {
+	  std::string grouptype ("StationGroup");
+	  // write the attributes
+	  h5set_attribute (location_p,"GROUPTYPE", grouptype);
+	} else {
+	  std::cerr << "[TBB_StationCalibration::open] Failed to create group "
+		    << name
+		    << std::endl;
+	  status = false;
+	}
+      } else {
+	std::cerr << "[TBB_StationCalibration::open] Failed to open group "
+		  << name
+		  << std::endl;
+	status = false;
+      }
+    }
     
+    // Open embedded groups
+    if (status) {
+      status = openEmbedded (create);
+    } else {
+      std::cerr << "[TBB_StationCalibration::open] Skip opening embedded groups!"
+		<< std::endl;
+    }
+ 
     return status;
   }
   

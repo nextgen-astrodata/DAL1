@@ -78,14 +78,6 @@ namespace DAL { // Namespace DAL -- begin
     //! Default constructor
     TBB_StationCalibration ();
     
-    /*!
-      \brief Copy constructor
-      
-      \param other -- Another TBB_StationCalibration object from which to create this new
-             one.
-    */
-    TBB_StationCalibration (TBB_StationCalibration const &other);
-    
     // === Destruction ==========================================================
 
     //! Destructor
@@ -127,13 +119,17 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Open a station calibration group
     bool open (hid_t const &location,
-	       std::string const &name,
 	       bool const &create=true);
 
   private:
     
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
+
+    //! Open a station calibration group
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       bool const &create=true);
 
     //! Open the structures embedded within the current one
     bool openEmbedded (bool const &create);

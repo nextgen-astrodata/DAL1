@@ -210,6 +210,7 @@ int test_operators ()
     cout << "-- set<float>  = " << set_float  << endl;
     cout << "-- set<double> = " << set_double << endl;
     cout << "-- set<string> = " << set_string << endl;
+
   }
   catch (std::string message) {
     cerr << message << endl;
@@ -454,6 +455,15 @@ int test_hdf5_attributes ()
 			  "ARRAY_STRING",
 			  data_string,
 			  3);
+    // release allocated memory
+    delete [] data_bool;
+    delete [] data_int;
+    delete [] data_uint;
+    delete [] data_short;
+    delete [] data_long;
+    delete [] data_float;
+    delete [] data_double;
+    delete [] data_string;
   }
   catch (std::string message) {
     cerr << message << endl;
@@ -1245,6 +1255,13 @@ int test_timeseries (std::string const &filename)
     nofFailedTests++;
   }
 #endif
+
+  //__________________________________________________________________
+  // Release HDF5 object identifiers
+
+  if (H5Iis_valid(fileID))    { H5Fclose(fileID);    }
+  if (H5Iis_valid(groupID))   { H5Gclose(groupID);   }
+  if (H5Iis_valid(datasetID)) { H5Dclose(datasetID); }
   
   return nofFailedTests;
 }
