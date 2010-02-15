@@ -40,17 +40,86 @@ namespace DAL {
     \ingroup DAL
     \ingroup data_common
 
-    \brief A class to encapsulate the operations required to work with a dataset
+    \brief A class to encapsulate the operations required to work with a HDF5 dataset
 
     \author Lars B&auml;hren
 
     \date 2009/12/04
     
     \todo Implement read function to access data array within the dataset.
-    \todo Implement Hyperslab to access multidimensional datasets/arrays.
 
     <h3>Synopsis</h3>
 
+    Main encapsulated HDF5 library functions:
+    <ol>
+      <li>\b H5Dread
+      \code
+      herr_t H5Dread (hid_t dataset_id,
+                      hid_t mem_type_id,
+		      hid_t mem_space_id,
+		      hid_t file_space_id,
+		      hid_t xfer_plist_id,
+		      void * buf) 
+      \endcode
+      H5Dread reads a (partial) dataset, specified by its identifier
+      <i>dataset_id</i>, from the file into an application memory buffer
+      <i>buf</i>. Data transfer properties are defined by the argument
+      <i>xfer_plist_id</i>. The memory datatype of the (partial) dataset is
+      identified by the identifier <i>mem_type_id</i>. The part of the dataset
+      to read is defined by <i>mem_space_id</i> and <i>file_space_id</i>.
+
+      <i>file_space_id</i> is used to specify only the selection within the
+      file dataset's dataspace. Any dataspace specified in <i>file_space_id</i>
+      is ignored by the library and the dataset's dataspace is always used.
+      <i>file_space_id</i> can be the constant H5S_ALL. which indicates that 
+      the entire file dataspace, as defined by the current dimensions of the
+      dataset, is to be selected.
+
+      <i>mem_space_id</i> is used to specify both the memory dataspace and the
+      selection within that dataspace. <i>mem_space_id</i> can be the constant
+      H5S_ALL, in which case the file dataspace is used for the memory dataspace
+      and the selection defined with <i>file_space_id</i> is used for the
+      selection within that dataspace.
+
+      If raw data storage space has not been allocated for the dataset and a fill
+      value has been defined, the returned buffer <i>buf</i> is filled with the
+      fill value.
+
+      <li>\b H5Dwrite
+      \code
+      herr_t H5Dwrite (hid_t dataset_id,
+                       hid_t mem_type_id,
+		       hid_t mem_space_id,
+		       hid_t file_space_id,
+		       hid_t xfer_plist_id,
+		       const void * buf) 
+      \endcode
+      H5Dwrite writes a (partial) dataset, specified by its identifier
+      <i>dataset_id</i>, from the application memory buffer <i>buf</i> into the
+      file. Data transfer properties are defined by the argument
+      <i>xfer_plist_id</i>. The memory datatype of the (partial) dataset is
+      identified by the identifier <i>mem_type_id</i>. The part of the dataset to
+      write is defined by <i>mem_space_id</i> and <i>file_space_id</i>.
+      
+      <i>file_space_id</i> is used to specify only the selection within the file
+      dataset's dataspace. Any dataspace specified in <i>file_space_id</i> is
+      ignored by the library and the dataset's dataspace is always used.
+      <i>file_space_id</i> can be the constant H5S_ALL. which indicates that the
+      entire file dataspace, as defined by the current dimensions of the dataset,
+      is to be selected.
+
+      <i>mem_space_id</i> is used to specify both the memory dataspace and the
+      selection within that dataspace. <i>mem_space_id</i> can be the constant
+      H5S_ALL, in which case the file dataspace is used for the memory dataspace
+      and the selection defined with <i>file_space_id</i> is used for the
+      selection within that dataspace. 
+
+      Examples:
+      \code
+      H5Dread (dset, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, rdata[0]);
+      \endcode
+    </ol>
+      
     <h3>Example(s)</h3>
     
   */
@@ -64,8 +133,6 @@ namespace DAL {
     hid_t datatype_p;
     //! Shape of the dataset
     std::vector<hsize_t> shape_p;
-    //! Number of Hyperslab assigned to the dataspace
-    unsigned int nofHyperslabs_p;
     
   public:
     
@@ -116,11 +183,6 @@ namespace DAL {
       return datatype_p;
     }
 
-    //! Get the number of Hyperslabs assigned to the dataspace
-    inline unsigned int nofHyperslabs () const {
-      return nofHyperslabs_p;
-    }
-    
     // === Methods ==============================================================
     
     //! Open the dataset
@@ -145,6 +207,27 @@ namespace DAL {
 		       std::vector<int> const &count,
 		       std::vector<int> const &block,
 		       H5S_seloper_t const &selection=H5S_SELECT_SET);
+    //! Read data
+    template <class T>
+      bool readData (T data[]);
+
+    //! Read data
+    template <class T>
+      bool readData (T data[],
+		     hid_t const &datatype)
+      {
+	bool status (true);
+	herr_t h5error;
+	
+	h5error = H5Dread (location_p,
+			   datatype,
+			   H5S_ALL,
+			   dataspace_p,
+			   H5P_DEFAULT,
+			   data);
+	
+	return status;
+      }
     
     //! Provide a summary of the internal status
     inline void summary () {
@@ -153,7 +236,7 @@ namespace DAL {
     
     //! Provide a summary of the internal status
     void summary (std::ostream &os);
-
+    
   private:
     
     //! Initialize the internal parameters

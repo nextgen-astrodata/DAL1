@@ -51,6 +51,8 @@
 */
 int test_create ()
 {
+  std::cout << "\n[tHDF5Datatset::test_create]\n" << std::endl;
+
   int nofFailedTests (0);
   std::string name;
   std::string filename ("Dataset.h5");
@@ -62,7 +64,6 @@ int test_create ()
 			    H5F_ACC_TRUNC,
 			    H5P_DEFAULT,
 			    H5P_DEFAULT);
-
 
   //________________________________________________________
   // Run the tests
@@ -119,7 +120,50 @@ int test_create ()
     std::cerr << message << std::endl;
     ++nofFailedTests;
   }
+
+  cout << "[3] Open previously created dataset ..." << endl;
+  try {
+    //! Create the HDF5 Dataset
+    DAL::HDF5Dataset dataset (fileID,
+			      name);
+    dataset.summary();
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    ++nofFailedTests;
+  }
   
+  //________________________________________________________
+  // Close the file
+
+  H5Fclose(fileID);
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                 test_hyperslab
+
+/*!
+  \brief Test selecting a hyperslab for the dataspace attached to the dataset. 
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          functions.
+*/
+int test_hyperslab ()
+{
+  std::cout << "\n[tHDF5Datatset::test_hyperslab]\n" << std::endl;
+
+  int nofFailedTests (0);
+  std::string name;
+  std::string filename ("Dataset.h5");
+
+  //________________________________________________________
+  // Open the file to work with
+
+  hid_t fileID = H5Fopen (filename.c_str(),
+			  H5F_ACC_RDWR,
+			  H5P_DEFAULT);
+
   //________________________________________________________
   // Close the file
 
@@ -152,6 +196,7 @@ int main (int argc,
   // Run the tests
 
   nofFailedTests += test_create ();
+  nofFailedTests += test_hyperslab ();
   
   return nofFailedTests;
 }

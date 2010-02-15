@@ -1146,6 +1146,8 @@ namespace DAL {
   //_____________________________________________________________________________
   // Set the value of an attribute attached to a group or dataset
 
+  /// @cond TEMPLATE_SPECIALIZATIONS
+
   /*!
     As HDF5 does not have a datatype <tt>boolean</tt>, we to cast such variables
     to a different type; we are using <tt>integer</tt> to store boolean
@@ -1292,6 +1294,7 @@ namespace DAL {
                             size);
   }
 
+  /// @endcond
 
   // ============================================================================
   //

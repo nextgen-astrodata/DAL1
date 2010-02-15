@@ -105,7 +105,6 @@ namespace DAL {
     location_p      = 0;
     dataspace_p     = 0;
     datatype_p      = 0;
-    nofHyperslabs_p = 0;
     shape_p.clear();
   }
 
@@ -141,9 +140,13 @@ namespace DAL {
     setAttributes();
     
     if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
+      // Open the dataset
       location_p = H5Dopen (location,
 			    name.c_str(),
 			    H5P_DEFAULT);
+      // Get dataspace and datatype
+      dataspace_p = H5Dget_space (location_p);
+      datatype_p  = H5Dget_type (location_p);
     } else {
       location_p = 0;
     }
@@ -288,6 +291,8 @@ namespace DAL {
 				  H5S_seloper_t const &selection)
   {
     bool status (true);
+    bool haveStride (false);
+    bool haveBlock (false);
 
     //____________________________________________
     // Check the input parameters
@@ -309,19 +314,124 @@ namespace DAL {
       return false;
       }
     }
-
+    
+    if (stride.size() != shape_p.size()) {
+      haveStride = false;
+    }
+    
+    if (block.size() != shape_p.size()) {
+      haveBlock = false;
+    }
+    
     //____________________________________________
     // Set up the hyperslab
+    
+    herr_t h5error;
+    hsize_t tmpStart [rank()];
+    hsize_t tmpStride[rank()];
+    hsize_t tmpCount [rank()];
+    hsize_t tmpBlock [rank()];
 
-    //____________________________________________
-    // Book-keeping
-
-    if (status) {
-      ++nofHyperslabs_p;
+    for (unsigned int n(0); n<shape_p.size(); ++n) {
+      tmpStart[n] = start[n];
+      tmpCount[n] = count[n];
     }
-
+    
+    if (haveStride) {
+      for (unsigned int n(0); n<shape_p.size(); ++n) {
+	tmpStride[n] = stride[n];
+      }
+    }
+    
+    if (haveBlock) {
+      for (unsigned int n(0); n<shape_p.size(); ++n) {
+	tmpBlock[n] = block[n];
+      }
+    }
+    
+    if (haveStride) {
+      if (haveBlock) {
+	// stride=true, block=true
+	h5error = H5Sselect_hyperslab (dataspace_p,
+				       selection,
+				       tmpStart,      // start
+				       tmpStride,     // stride
+				       tmpCount,      // count
+				       tmpBlock);     // block
+      } else {
+	// stride=true, block=false
+	h5error = H5Sselect_hyperslab (dataspace_p,
+				       selection,
+				       tmpStart,      // start
+				       tmpStride,     // stride
+				       tmpCount,      // count
+				       NULL);         // block
+      }
+    } else {
+      if (haveBlock) {
+	// stride=false, block=true
+	h5error = H5Sselect_hyperslab (dataspace_p,
+				       selection,
+				       tmpStart,      // start
+				       NULL,          // stride
+				       tmpCount,      // count
+				       tmpBlock);     // block
+      } else {
+	// stride=false, block=false
+	h5error = H5Sselect_hyperslab (dataspace_p,
+				       selection,
+				       tmpStart,      // start
+				       NULL,          // stride
+				       tmpCount,      // count
+				       NULL);         // block
+      }
+    }
+    
     return status;
   }
+
+  //_____________________________________________________________________________
+  //                                                                     readData
+  
+  /// @cond TEMPLATE_SPECIALIZATIONS
+
+  template <>
+  bool HDF5Dataset::readData (int data[])
+  {
+    return readData (data, H5T_NATIVE_INT);
+  }
+  
+  template <>
+  bool HDF5Dataset::readData (uint data[])
+  {
+    return readData (data, H5T_NATIVE_UINT);
+  }
+  
+  template <>
+  bool HDF5Dataset::readData (short data[])
+  {
+    return readData (data, H5T_NATIVE_SHORT);
+  }
+  
+  template <>
+  bool HDF5Dataset::readData (long data[])
+  {
+    return readData (data, H5T_NATIVE_LONG);
+  }
+  
+  template <>
+  bool HDF5Dataset::readData (float data[])
+  {
+    return readData (data, H5T_NATIVE_FLOAT);
+  }
+  
+  template <>
+  bool HDF5Dataset::readData (double data[])
+  {
+    return readData (data, H5T_NATIVE_DOUBLE);
+  }
+
+  /// @endcond
   
   //_____________________________________________________________________________
   //                                                                      summary
