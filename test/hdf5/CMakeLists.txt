@@ -44,6 +44,7 @@ find_file (dataset L123456789_test_bf.h5
 
 add_test (h5_attribute h5_attribute)
 add_test (h5_group h5_group)
+add_test (h5_dataset_hyperslab h5_dataset_hyperslab)
 
 ## Test programs for the custom classes
 
