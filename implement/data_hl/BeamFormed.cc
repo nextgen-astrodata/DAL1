@@ -151,7 +151,7 @@ namespace DAL {
     attribute_id = H5Aopen_name( obj_id, attrname.c_str() );
 
     bool status (true);
-    std::vector<uint> shape;
+    std::vector<hsize_t> shape;
 
     // get the shape of the dataspace
     status = h5get_dataspace_shape (attribute_id,shape);

@@ -367,7 +367,6 @@ int test_hdf5_attributes ()
 
   cout << "[3] Set attributes of type array ..." << endl;
   try {
-    bool *data_bool;
     int *data_int;
     uint *data_uint;
     short *data_short;
@@ -377,14 +376,17 @@ int test_hdf5_attributes ()
     std::string  *data_string;
     //
     cout << "-- Attribute of type bool[3] ..." << endl;
-    data_bool = new bool[3];
-    data_bool[0] = true;
-    data_bool[1] = false;
-    data_bool[2] = true;
-    DAL::h5set_attribute (fileID,
-			  "ARRAY_BOOL",
-			  data_bool,
-			  3);
+    {
+      bool *data_bool = new bool[3];
+      data_bool[0] = true;
+      data_bool[1] = false;
+      data_bool[2] = true;
+      DAL::h5set_attribute (fileID,
+			    "ARRAY_BOOL",
+			    data_bool,
+			    3);
+      delete [] data_bool;
+    }
     //
     cout << "-- Attribute of type int[3] ..." << endl;
     data_int = new int[3];
@@ -456,7 +458,6 @@ int test_hdf5_attributes ()
 			  data_string,
 			  3);
     // release allocated memory
-    delete [] data_bool;
     delete [] data_int;
     delete [] data_uint;
     delete [] data_short;

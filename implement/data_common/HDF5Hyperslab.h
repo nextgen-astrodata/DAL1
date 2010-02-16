@@ -138,11 +138,22 @@ namespace DAL { // Namespace DAL -- begin
     HDF5Hyperslab ();
 
     //! Argumented constructor
-    HDF5Hyperslab (std::vector<int> const &start,
+    HDF5Hyperslab (std::vector<hsize_t> const &shape);
+
+    //! Argumented constructor
+    HDF5Hyperslab (std::vector<hsize_t> const &shape,
+		   std::vector<int> const &start,
+		   std::vector<int> const &count,
+		   H5S_seloper_t const &selection=H5S_SELECT_SET);
+
+    //! Argumented constructor
+    HDF5Hyperslab (std::vector<hsize_t> const &shape,
+		   std::vector<int> const &start,
 		   std::vector<int> const &stride,
 		   std::vector<int> const &count,
 		   std::vector<int> const &block,
 		   H5S_seloper_t const &selection=H5S_SELECT_SET);
+
     /*!
       \brief Copy constructor
       
@@ -167,6 +178,11 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Parameter access =====================================================
 
+    //! Get the shape of the array to which the hyperslab is applied
+    inline std::vector<hsize_t> shape () const {
+      return shape_p;
+    }
+
     //! Get the offset of the starting element of the specified hyperslab
     inline std::vector<int> start () const {
       return start_p;
@@ -174,6 +190,28 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Set the offset of the starting element of the specified hyperslab
     bool setStart (std::vector<int> const &start);
+
+    //! Get the number of elements to separate each element or block to be selected
+    inline std::vector<int> stride () const {
+      return stride_p;
+    }
+
+    //! Set the number of elements to separate each element or block to be selected
+    bool setStride (std::vector<int> const &stride);
+
+    //! Get the number of elements or blocks to select along each dimension
+    inline std::vector<int> count () const {
+      return count_p;
+    }
+
+    //! Set the number of elements or blocks to select along each dimension
+    bool setCount (std::vector<int> const &count);
+
+    inline std::vector<int> block () const {
+      return block_p;
+    }
+
+    bool setBlock (std::vector<int> const &block);
 
     inline H5S_seloper_t selection () const {
       return selection_p;
@@ -204,9 +242,26 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Methods ==============================================================
     
+    //! Set the Hyperslab for the dataspace attached to a dataset
+    bool setHyperslab (hid_t const &location);
     
+    //! Set the Hyperslab for the dataspace attached to a dataset
+    static bool setHyperslab (hid_t const &location,
+			      std::vector<int> const &start,
+			      std::vector<int> const &count,
+			      H5S_seloper_t const &selection=H5S_SELECT_SET);
+    
+    //! Set the Hyperslab for the dataspace attached to a dataset
+    static bool setHyperslab (hid_t const &location,
+			      std::vector<int> const &start,
+			      std::vector<int> const &stride,
+			      std::vector<int> const &count,
+			      std::vector<int> const &block,
+			      H5S_seloper_t const &selection=H5S_SELECT_SET);
     
   private:
+    
+    void init ();
     
     //! Unconditional copying
     void copy (HDF5Hyperslab const &other);

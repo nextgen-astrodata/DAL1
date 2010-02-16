@@ -22,6 +22,7 @@
   \file tdalDataset.cc
 
   \ingroup DAL
+  \ingroup core
 
   \brief A collection of test routines for the DAL::dalDataset class
 

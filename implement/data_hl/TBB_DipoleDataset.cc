@@ -458,9 +458,9 @@ namespace DAL {  // Namespace DAL -- begin
   bool TBB_DipoleDataset::openEmbedded (bool const &create)
   {
     bool status (create);
-    std::vector<uint> shape;
+    std::vector<hsize_t> shape;
     
-    status = h5get_dataset_shape(location_p,shape);
+    status = h5get_dataspace_shape(location_p,shape);
 
     if (status && shape.size() > 0) {
       status *= setAttribute("DATA_LENGTH",shape[0]);

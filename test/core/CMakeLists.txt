@@ -49,6 +49,10 @@ if (dataset_fits)
   add_test (tdalDataset_fits tdalDataset ${dataset_fits})
 endif (dataset_fits)
 
+## tdalArray
+
+add_test (tdalArray tdalArray)
+
 ## tdalGroup
 
 add_test (tdalGroup tdalGroup)

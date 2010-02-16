@@ -48,6 +48,12 @@ namespace DAL {
     
     \todo Implement read function to access data array within the dataset.
 
+    <h3>Prerequisite</h3>
+
+    <ul type="square">
+      <li>DAL::HDF5Hyperslab
+    </ul>
+
     <h3>Synopsis</h3>
 
     Main encapsulated HDF5 library functions:
@@ -85,6 +91,11 @@ namespace DAL {
       value has been defined, the returned buffer <i>buf</i> is filled with the
       fill value.
 
+      Examples:
+      \code
+      H5Dread (dset, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, rdata[0]);
+      \endcode
+
       <li>\b H5Dwrite
       \code
       herr_t H5Dwrite (hid_t dataset_id,
@@ -113,11 +124,6 @@ namespace DAL {
       H5S_ALL, in which case the file dataspace is used for the memory dataspace
       and the selection defined with <i>file_space_id</i> is used for the
       selection within that dataspace. 
-
-      Examples:
-      \code
-      H5Dread (dset, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, rdata[0]);
-      \endcode
     </ol>
       
     <h3>Example(s)</h3>
@@ -133,6 +139,8 @@ namespace DAL {
     hid_t datatype_p;
     //! Shape of the dataset
     std::vector<hsize_t> shape_p;
+    //! Hyperslab for the dataspace attached to the dataset
+    std::vector<DAL::HDF5Hyperslab> hyperslab_p;
     
   public:
     
@@ -169,9 +177,12 @@ namespace DAL {
     }
     
     //! Get the rank (i.e. the number of axes) of the dataset
-    inline int rank () const {
+    inline unsigned int rank () const {
       return shape_p.size();
     }
+
+    //! Get the nof. datapoints (i.e. array elements) of the dataset
+    unsigned int nofDatapoints ();
     
     //! Get the dataspace identifier
     inline hid_t dataspaceID () const {
@@ -207,24 +218,120 @@ namespace DAL {
 		       std::vector<int> const &count,
 		       std::vector<int> const &block,
 		       H5S_seloper_t const &selection=H5S_SELECT_SET);
-    //! Read data
-    template <class T>
-      bool readData (T data[]);
 
     //! Read data
     template <class T>
-      bool readData (T data[],
+      bool readData (T *data);
+
+    /*!
+      \brief Write the data
+      \param data  -- Array with the data.
+      \param start -- Starting point within the data volume
+      \param count -- Number of data points along each axis
+      \return status -- Status of the operation; returns \e false in case an error
+              was encountered.
+    */
+    template <class T>
+      bool readData (T *data,
+		      std::vector<int> const &start,
+		      std::vector<int> const &count)
+      {
+	bool status (true);
+	status *= setHyperslab (start,count);
+	status *= readData (data);
+	return status;
+      }
+    
+    /*!
+      \brief Read the data
+      \param data    -- Array with the data.
+      \return status -- Status of the operation; returns \e false in case an error
+              was encountered.
+    */
+    template <class T>
+      bool readData (T *data,
 		     hid_t const &datatype)
       {
 	bool status (true);
 	herr_t h5error;
+	hsize_t tmpRank [rank()];
+	hsize_t tmpShape [rank()];
+/* 	hid_t memspaceID = H5Screate_simple (rank, */
+/* 				       shape, */
+/* 				       shape); */
 	
-	h5error = H5Dread (location_p,
-			   datatype,
-			   H5S_ALL,
-			   dataspace_p,
-			   H5P_DEFAULT,
-			   data);
+	if (rank()==1) {
+	  //
+	  std::cout << "[" << data[0] << "," << data[1] << ",..]" << std::endl;
+	  //
+	  h5error = H5Dread (location_p,
+			     datatype,
+			     H5S_ALL,
+			     dataspace_p,
+			     H5P_DEFAULT,
+			     data);
+	  //
+	  std::cout << "[" << data[0] << "," << data[1] << ",..]" << std::endl;
+	  //
+	} else {
+	  std::cerr << "[HDF5Dataset::readData] Support for multi-dimensional"
+		    << " datasets is not available yet :-("
+		    << std::endl;
+	  status = false;
+	}
+	
+	return status;
+      }
+    
+    /*!
+      \brief Write the data
+      \param data  -- Array with the data.
+      \param start -- Starting point within the data volume
+      \param count -- Number of data points along each axis
+      \return status -- Status of the operation; returns \e false in case an error
+              was encountered.
+    */
+    template <class T>
+      bool writeData (T const data[],
+		      std::vector<int> const &start,
+		      std::vector<int> const &count)
+      {
+	bool status (true);
+	status *= setHyperslab (start,count);
+	status *= writeData (data);
+	return status;
+      }
+    
+    /*!
+      \brief Write the data
+      \retval param  -- Array with the data.
+      \return status -- Status of the operation; returns \e false in case an error
+              was encountered.
+    */
+    template <class T>
+      bool writeData (T const data[]);
+    
+    //! Write the data
+    template <class T>
+      bool writeData (T data[],
+		      hid_t const &datatype)
+      {
+	bool status (true);
+	herr_t h5error;
+
+	if (rank()==1) {
+	  h5error = H5Dwrite (location_p,
+			      datatype,
+			      H5S_ALL,
+			      dataspace_p,
+			      H5P_DEFAULT,
+			      data);
+	} else {
+	  std::cerr << "[HDF5Dataset::writeDate] Support for multi-dimensional"
+		    << " datasets is not available yet :-("
+		    << std::endl;
+	  status = false;
+	}
 	
 	return status;
       }

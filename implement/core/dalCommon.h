@@ -223,13 +223,9 @@ namespace DAL {
   bool h5rename_attribute (hid_t const &location_id,
 			   std::string const &oldName,
 			   std::string const &newName);
-  //! Get the shape of a dataset
-  bool h5get_dataset_shape (hid_t const &dataset_id,
-                            std::vector<uint> &shape,
-                            bool const &maxdims=false);
   //! Get the shape of the dataspace associated with the attribute
   bool h5get_dataspace_shape (hid_t const &attribute_id,
-                              std::vector<uint> &shape,
+                              std::vector<hsize_t> &shape,
                               bool const &maxdims=false);
   //! Set attribute of type \e string
   bool h5setAttribute_string( hid_t const &obj_id,
@@ -351,7 +347,7 @@ namespace DAL {
       herr_t h5error           = 0;
       hid_t datatype_id        = H5Aget_type (attribute_id);
       hid_t native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
-      std::vector<uint> shape;
+      std::vector<hsize_t> shape;
       
       status = h5get_dataspace_shape (attribute_id,shape);
       
@@ -609,7 +605,7 @@ namespace DAL {
       herr_t h5error                = 0;
       hid_t datatype_id             = H5Aget_type (attribute_id);
       hid_t native_datatype_id      = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
-      std::vector<uint> shape;
+      std::vector<hsize_t> shape;
       
       status = h5get_dataspace_shape (attribute_id,shape);
       
@@ -804,13 +800,13 @@ std::ostream& show (std::ostream& os,
 {
   T it;
   
-  os << " data = [";
+  os << "[";
   
   for (it=start; it!=end; ++it) {
     os << " " << *it;
   }
   
-  os << " ]" << std::endl;
+  os << " ]";
   
   return os;
 }

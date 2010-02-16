@@ -27,6 +27,12 @@
 
 namespace DAL {
 
+  // ============================================================================
+  //
+  //  Construction
+  //
+  // ============================================================================
+
   //_____________________________________________________________________________
   //                                                                     dalArray
   
@@ -44,12 +50,9 @@ namespace DAL {
   //                                                                         open
   
   /*!
-    \brief Open an existing array.
     \param file A pointer to the file.
     \param arrayname The name of the array you want to open.
     \return An identifier for the array.
-
-    Open an existing array.
   */
   int dalArray::open( void * voidfile,
                       string arrayname )
@@ -65,39 +68,9 @@ namespace DAL {
   }
 
   //_____________________________________________________________________________
-  //                                                                        getId
-  
-  /*!
-    \brief Get the array ID.
-
-    Retrieve the identifier for the array.
-
-    \return The array identifier as an integer.
-  */
-  hid_t dalArray::getId ()
-  {
-    return array_id;
-  }
-
-  //_____________________________________________________________________________
-  //                                                                      getRank
-  
-  /*!
-    \brief Get the rank of the array, i.e. the number of dimensions
-
-    \return rank -- The rank of the array.
-  */
-  int dalArray::getRank ()
-  {
-    return rank_p;
-  }
-
-  //_____________________________________________________________________________
   //                                                                        close
   
   /*!
-    \brief Close an existing array.
-
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalArray::close()
@@ -110,33 +83,49 @@ namespace DAL {
     return DAL::SUCCESS;
   }
   
-  
-  // ------------------------------------------------------------ write (int)
-  /*!
-    \brief Write int to an array.
-    
-    Write data to an array, usually after extending it's dimensions.
+  // ============================================================================
+  //
+  //  Methods
+  //
+  // ============================================================================
 
-   \param offset Position to begin writing array.
-   \param data Data array to write.
-   \param arraysize Size of the array to write.
-   \return bool -- DAL::FAIL or DAL::SUCCESS
-   */
-  bool dalArray::write( int offset, int data[], int arraysize )
+  /*!
+    \param os -- Output stream to which the summary is written to.
+  */
+  void dalArray::summary (std::ostream &os)
+  {
+    os << "[dalArray] Summary of object properties" << std::endl;
+    os << "-- File ID           = " << file_id      << std::endl;
+    os << "-- Array ID          = " << array_id     << std::endl;
+    os << "-- Array name        = " << name         << std::endl;
+    os << "-- Rank of the array = " << getRank()    << std::endl;
+  }
+
+  // ------------------------------------------------------------ write (int)
+
+  /*!
+    \brief Write data to an array, usually after extending it's dimensions.
+    
+    \param offset Position to begin writing array.
+    \param data Data array to write.
+    \param arraysize Size of the array to write.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
+  */
+  bool dalArray::write ( int offset, int data[], int arraysize )
   {
     hsize_t      dims[1] = { arraysize };
     int32_t      rank_p  = 1;
     hsize_t      off[1]  = { offset };
     hid_t filespace      = 0;
     hid_t dataspace      = 0;
-
+    
     /* Select a hyperslab  */
     if ( ( filespace = H5Dget_space( array_id ) ) < 0 )
       {
         std::cerr << "ERROR: Could not get filespace for array.\n";
         return DAL::FAIL;
       }
-
+    
     if ( H5Sselect_hyperslab( filespace, H5S_SELECT_SET, off, NULL,
                               dims, NULL) < 0 )
       {
@@ -144,7 +133,7 @@ namespace DAL {
         H5Sclose(filespace);
         return DAL::FAIL;
       }
-
+    
     /* Define memory space */
     if ( ( dataspace = H5Screate_simple (rank_p, dims, NULL) ) < 0 )
       {
@@ -169,18 +158,16 @@ namespace DAL {
 
     return DAL::SUCCESS;
   }
-
-
-// ------------------------------------------------------------ write (short)
+  
+  // ------------------------------------------------------------ write (short)
+  
   /*!
-    \brief Write short data to an array.
-
-    Write data to an array, usually after extending it's dimensions.
-
-   \param offset Position to begin writing array.
-   \param data Data array to write.
-   \param arraysize Size of the array to write.
-   \return bool -- DAL::FAIL or DAL::SUCCESS
+    \brief Write data to an array, usually after extending it's dimensions.
+    
+    \param offset Position to begin writing array.
+    \param data Data array to write.
+    \param arraysize Size of the array to write.
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalArray::write( int offset, short data[], int arraysize )
   {
@@ -189,7 +176,7 @@ namespace DAL {
     hsize_t      off[1]  = { offset };
     hid_t filespace      = 0;
     hid_t dataspace      = 0;
-
+    
     /* Select a hyperslab  */
     if ( ( filespace = H5Dget_space( array_id ) ) < 0 )
       {
@@ -233,16 +220,16 @@ namespace DAL {
 
 // --------------------------------------------------- write (complex<float>)
   /*!
-    \brief Write complex to an array.
-
-    Write data to an array, usually after extending it's dimensions.
+    \brief Write data to an array, usually after extending it's dimensions.
 
    \param offset Position to begin writing array.
    \param data Data array to write.
    \param arraysize Size of the array to write.
    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalArray::write( int offset, complex<float> data[], int arraysize )
+  bool dalArray::write (int offset,
+			complex<float> data[],
+			int arraysize)
   {
     hsize_t      dims[1] = { arraysize };
     hsize_t      off[1]  = { offset };
@@ -407,21 +394,11 @@ namespace DAL {
     return return_values;
   }
 
-// ------------------------------------------------------------ getName
-  /*!
-    \brief Retrieve the name of an array
-    \return The name of the array
-   */
-  std::string dalArray::getName()
-  {
-    return name;
-  }
-
-
-// ------------------------------------------------------------ extend
+  // ------------------------------------------------------------ extend
+  
   /*!
     \brief Extend an array.
-
+    
     Increase the dimensions of the array.
 
     \param dims The new desired dimensions of the array.  The extend method

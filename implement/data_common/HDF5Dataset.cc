@@ -106,6 +106,7 @@ namespace DAL {
     dataspace_p     = 0;
     datatype_p      = 0;
     shape_p.clear();
+    hyperslab_p.clear();
   }
 
   //_____________________________________________________________________________
@@ -144,9 +145,12 @@ namespace DAL {
       location_p = H5Dopen (location,
 			    name.c_str(),
 			    H5P_DEFAULT);
-      // Get dataspace and datatype
+      // Assign internal parameters
+      name_p      = name;
       dataspace_p = H5Dget_space (location_p);
       datatype_p  = H5Dget_type (location_p);
+      // Get the shape of the dataset array
+      DAL::h5get_dataspace_shape(location_p, shape_p);
     } else {
       location_p = 0;
     }
@@ -244,7 +248,21 @@ namespace DAL {
     bool status = create;
     return status;
   }
+  
+  //_____________________________________________________________________________
+  //                                                                nofDatapoints
 
+  unsigned int HDF5Dataset::nofDatapoints ()
+  {
+    unsigned int nofPoints (1);
+
+    for (unsigned int n(0); n<shape_p.size(); ++n) {
+      nofPoints *= shape_p[n];
+    }
+
+    return nofPoints;
+  }
+  
   //_____________________________________________________________________________
   //                                                                 setHyperslab
   
@@ -262,10 +280,10 @@ namespace DAL {
 				  std::vector<int> const &count,
 				  H5S_seloper_t const &selection)
   {
-    std::vector<int> stride;
-    std::vector<int> block;
-    
-    return setHyperslab (start,stride,count,block,selection);
+    return HDF5Hyperslab::setHyperslab (location_p,
+					start,
+					count,
+					selection);
   }
   
   //_____________________________________________________________________________
@@ -290,104 +308,12 @@ namespace DAL {
 				  std::vector<int> const &block,
 				  H5S_seloper_t const &selection)
   {
-    bool status (true);
-    bool haveStride (false);
-    bool haveBlock (false);
-
-    //____________________________________________
-    // Check the input parameters
-
-    /* Minimal requirement: start and count must be of the same size */
-    if (start.size() != count.size()) {
-      std::cerr << "[HDF5Dataset::setHyperslab] Parameter mismatch: start - count."
-		<< std::endl;
-      std::cerr << "-- start = " << start << std::endl;
-      std::cerr << "-- count = " << count << std::endl;
-      return false;
-    }
-    else {
-      if (start.size() != shape_p.size()) {
-      std::cerr << "[HDF5Dataset::setHyperslab] Parameter mismatch: start - shape."
-		<< std::endl;
-      std::cerr << "-- start = " << start   << std::endl;
-      std::cerr << "-- shape = " << shape_p << std::endl;
-      return false;
-      }
-    }
-    
-    if (stride.size() != shape_p.size()) {
-      haveStride = false;
-    }
-    
-    if (block.size() != shape_p.size()) {
-      haveBlock = false;
-    }
-    
-    //____________________________________________
-    // Set up the hyperslab
-    
-    herr_t h5error;
-    hsize_t tmpStart [rank()];
-    hsize_t tmpStride[rank()];
-    hsize_t tmpCount [rank()];
-    hsize_t tmpBlock [rank()];
-
-    for (unsigned int n(0); n<shape_p.size(); ++n) {
-      tmpStart[n] = start[n];
-      tmpCount[n] = count[n];
-    }
-    
-    if (haveStride) {
-      for (unsigned int n(0); n<shape_p.size(); ++n) {
-	tmpStride[n] = stride[n];
-      }
-    }
-    
-    if (haveBlock) {
-      for (unsigned int n(0); n<shape_p.size(); ++n) {
-	tmpBlock[n] = block[n];
-      }
-    }
-    
-    if (haveStride) {
-      if (haveBlock) {
-	// stride=true, block=true
-	h5error = H5Sselect_hyperslab (dataspace_p,
-				       selection,
-				       tmpStart,      // start
-				       tmpStride,     // stride
-				       tmpCount,      // count
-				       tmpBlock);     // block
-      } else {
-	// stride=true, block=false
-	h5error = H5Sselect_hyperslab (dataspace_p,
-				       selection,
-				       tmpStart,      // start
-				       tmpStride,     // stride
-				       tmpCount,      // count
-				       NULL);         // block
-      }
-    } else {
-      if (haveBlock) {
-	// stride=false, block=true
-	h5error = H5Sselect_hyperslab (dataspace_p,
-				       selection,
-				       tmpStart,      // start
-				       NULL,          // stride
-				       tmpCount,      // count
-				       tmpBlock);     // block
-      } else {
-	// stride=false, block=false
-	h5error = H5Sselect_hyperslab (dataspace_p,
-				       selection,
-				       tmpStart,      // start
-				       NULL,          // stride
-				       tmpCount,      // count
-				       NULL);         // block
-      }
-    }
-    
-    return status;
+    return HDF5Hyperslab::setHyperslab (location_p,
+					start,
+					stride,
+					count,
+					block,
+					selection);
   }
 
   //_____________________________________________________________________________
@@ -395,40 +321,71 @@ namespace DAL {
   
   /// @cond TEMPLATE_SPECIALIZATIONS
 
-  template <>
-  bool HDF5Dataset::readData (int data[])
+  template <> bool HDF5Dataset::readData (int *data)
   {
     return readData (data, H5T_NATIVE_INT);
   }
   
-  template <>
-  bool HDF5Dataset::readData (uint data[])
+  template <> bool HDF5Dataset::readData (uint *data)
   {
     return readData (data, H5T_NATIVE_UINT);
   }
   
-  template <>
-  bool HDF5Dataset::readData (short data[])
+  template <> bool HDF5Dataset::readData (short *data)
   {
     return readData (data, H5T_NATIVE_SHORT);
   }
   
-  template <>
-  bool HDF5Dataset::readData (long data[])
+  template <> bool HDF5Dataset::readData (long *data)
   {
     return readData (data, H5T_NATIVE_LONG);
   }
   
-  template <>
-  bool HDF5Dataset::readData (float data[])
+  template <> bool HDF5Dataset::readData (float *data)
   {
     return readData (data, H5T_NATIVE_FLOAT);
   }
   
-  template <>
-  bool HDF5Dataset::readData (double data[])
+  template <> bool HDF5Dataset::readData (double *data)
   {
     return readData (data, H5T_NATIVE_DOUBLE);
+  }
+
+  /// @endcond
+  
+  //_____________________________________________________________________________
+  //                                                                    writeData
+  
+  /// @cond TEMPLATE_SPECIALIZATIONS
+
+  template <> bool HDF5Dataset::writeData (int const data[])
+  {
+    return writeData (data, H5T_NATIVE_INT);
+  }
+  
+  template <> bool HDF5Dataset::writeData (uint const data[])
+  {
+    return writeData (data, H5T_NATIVE_UINT);
+  }
+  
+  template <> bool HDF5Dataset::writeData (short const data[])
+  {
+    return writeData (data, H5T_NATIVE_SHORT);
+  }
+  
+  template <> bool HDF5Dataset::writeData (long const data[])
+  {
+    return writeData (data, H5T_NATIVE_LONG);
+  }
+  
+  template <> bool HDF5Dataset::writeData (float const data[])
+  {
+    return writeData (data, H5T_NATIVE_FLOAT);
+  }
+  
+  template <> bool HDF5Dataset::writeData (double const data[])
+  {
+    return writeData (data, H5T_NATIVE_DOUBLE);
   }
 
   /// @endcond
@@ -442,11 +399,13 @@ namespace DAL {
   void HDF5Dataset::summary (std::ostream &os)
   {
     os << "[HDF5Dataset] Summary of internal parameters" << std::endl;
-    os << "-- Dataset name  = " << name_p      << std::endl;
-    os << "-- Dataset ID    = " << location_p  << std::endl;
-    os << "-- Dataspace ID  = " << dataspace_p << std::endl;
-    os << "-- Datatype ID   = " << datatype_p  << std::endl;
-    os << "-- Dataset shape = " << shape_p     << std::endl;
+    os << "-- Dataset name    = " << name_p          << std::endl;
+    os << "-- Dataset ID      = " << location_p      << std::endl;
+    os << "-- Dataspace ID    = " << dataspace_p     << std::endl;
+    os << "-- Datatype ID     = " << datatype_p      << std::endl;
+    os << "-- Dataset rank    = " << rank()          << std::endl;
+    os << "-- Dataset shape   = " << shape_p         << std::endl;
+    os << "-- nof. datapoints = " << nofDatapoints() << std::endl;
   }
   
 } // end namespace DAL

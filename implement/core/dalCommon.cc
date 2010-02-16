@@ -674,83 +674,62 @@ namespace DAL {
   }
   
   //_____________________________________________________________________________
-  //                                                          h5get_dataset_shape
-
-  /*!
-    \param dataset_id -- Identifier of the dataset within the HDF5 file
-    \reval shape -- The shape of the dataset i.e.the length of the array axes in
-                    case of multidimensional data
-
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered
-  */
-  bool h5get_dataset_shape (hid_t const &dataset_id,
-                            std::vector<uint> &shape,
-                            bool const &maxdims)
-  {
-    bool status        = true;
-    herr_t h5error     = 0;
-    hid_t dataspace_id = H5Dget_space (dataset_id);
-    int rank           = H5Sget_simple_extent_ndims (dataspace_id);
-
-    if (rank > 0) {
-      shape.resize(rank);
-      hsize_t * dataset_dims    = new hsize_t[rank];
-      hsize_t * dataset_maxdims = new hsize_t[rank];
-      //
-      h5error = H5Sget_simple_extent_dims(dataspace_id,
-					  dataset_dims,
-					  dataset_maxdims);
-      // copy retrieved values to returned variable
-      if (maxdims) {
-	for (int n(0); n<rank; n++) {
-	  shape[n] = dataset_maxdims[n];
-	}
-      }
-      else {
-	for (int n(0); n<rank; n++) {
-	  shape[n] = dataset_dims[n];
-	}
-      }
-      
-      // release allocated memory
-      delete [] dataset_dims;
-      delete [] dataset_maxdims;
-    }
-    else {
-      shape.resize(1);
-      shape[0] = 0;
-      status   = false;
-    }
-    
-    // release allocated identifiers
-    if (H5Iis_valid(dataspace_id)) {
-      h5error = H5Sclose (dataspace_id);
-      h5error = H5Eclear1 ();
-    }
-    
-    return status;
-  }
-  
-  //_____________________________________________________________________________
   //                                                        h5get_dataspace_shape
   
   /*!
-    \param attribute_id -- Identifier of the attribute within the HDF5 file
+    \param location -- Identifier for the HDF5 object (dataset, dataspace,
+           attribute) to work with.
     \reval shape -- The shape of the dataspace attached to the attribute, i.e.
            the length of the array axes in case of multidimensional data
+    \param maxdims -- Get the maximum dimensions instead of the actual ones?
 
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered
   */
-  bool h5get_dataspace_shape (hid_t const &attribute_id,
-                              std::vector<uint> &shape,
+  bool h5get_dataspace_shape (hid_t const &location,
+                              std::vector<hsize_t> &shape,
                               bool const &maxdims)
   {
     bool status (true);
-    herr_t h5error;
-    hid_t dataspace_id = H5Aget_space (attribute_id);
-    int rank           = H5Sget_simple_extent_ndims (dataspace_id);
+    
+    //____________________________________________
+    // Check the object to work with
+    
+    if (!H5Iis_valid(location)) {
+      std::cerr << "[h5get_dataspace_shape] Invalid object ID!" << std::endl;
+      return false;
+    }
+    
+    //____________________________________________
+    // Get object identifier for the dataspace
+    
+    hid_t dataspaceID (0);
+    H5I_type_t objectType = H5Iget_type (location);
+    bool locationIsDataspace (false);
+    
+    if (objectType == H5I_DATASPACE) {
+      locationIsDataspace = true;
+      dataspaceID         = location;
+    }
+    else if (objectType == H5I_DATASET) {
+      locationIsDataspace = false;
+      dataspaceID         = H5Dget_space (location);
+    }
+    else if (objectType == H5I_ATTR) {
+      locationIsDataspace = false;
+      dataspaceID         = H5Aget_space (location);
+    }
+    else {
+      std::cerr << "[HDF5Hyperslab::setHyperslab] Unusable location;"
+		<< " expecting dataset or dataspace!"
+		<< std::endl;
+      return false;
+    }
+
+    //____________________________________________
+    // Extract the shape of the dataspace
+
+    int rank = H5Sget_simple_extent_ndims (dataspaceID);
 
     if (rank > 0) {
       // set array sizes
@@ -758,9 +737,9 @@ namespace DAL {
       hsize_t * dataspace_dims    = new hsize_t[rank];
       hsize_t * dataspace_maxdims = new hsize_t[rank];
       // get dataspace dimensions
-      h5error = H5Sget_simple_extent_dims(dataspace_id,
-					  dataspace_dims,
-					  dataspace_maxdims);
+      H5Sget_simple_extent_dims(dataspaceID,
+				dataspace_dims,
+				dataspace_maxdims);
       // copy dataspace information to return value
       if (maxdims) {
 	for (int n(0); n<rank; n++) {
@@ -783,10 +762,11 @@ namespace DAL {
       status   = false;
     }
     
-    // release allocated identifiers
-    if (H5Iis_valid(dataspace_id)) {
-      h5error = H5Sclose (dataspace_id);
-      h5error = H5Eclear1 ();
+    //____________________________________________
+    // Release HDF5 object identifier
+
+    if (!locationIsDataspace) {
+      H5Oclose (dataspaceID);
     }
     
     return status;
@@ -953,7 +933,7 @@ namespace DAL {
     herr_t h5error           = 0;
     hid_t datatype_id        = H5Aget_type (attribute_id);
     hid_t native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
-    std::vector<uint> shape;
+    std::vector<hsize_t> shape;
     
     status = h5get_dataspace_shape (attribute_id,shape);
     
@@ -1012,7 +992,7 @@ namespace DAL {
     herr_t h5error           = 0;
     hid_t datatype_id        = H5Aget_type (attribute_id);
     hid_t native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
-    std::vector<uint> shape;
+    std::vector<hsize_t> shape;
 
     status = h5get_dataspace_shape (attribute_id,shape);
 
@@ -1425,7 +1405,8 @@ namespace DAL {
     return status;
   }
 
-  // ------------------------------------------------------------ h5get_attribute
+  //_____________________________________________________________________________
+  //                                                              h5get_attribute
 
   template <>
   bool h5get_attribute (hid_t const &attribute_id,
@@ -1435,7 +1416,7 @@ namespace DAL {
     herr_t h5error           = 0;
     hid_t datatype_id        = H5Aget_type (attribute_id);
     hid_t native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
-    std::vector<uint> shape;
+    std::vector<hsize_t> shape;
 
     status = h5get_dataspace_shape (attribute_id,shape);
 
