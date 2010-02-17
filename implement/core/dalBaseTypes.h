@@ -119,14 +119,15 @@ namespace DAL {
   const std::string dal_COMPLEX_SHORT = "dalCOMPLEX_SHORT";
 
   // define a few datatypes
-  typedef unsigned char   UInt8;
-  typedef unsigned short UInt16;
-  typedef short           Int16;
-  typedef unsigned int   UInt32;
-  typedef int             Int32;
-  typedef float         Float32;
-  typedef long long       Int64;
-  typedef double        Float64;
+  typedef unsigned char         UInt8;
+  typedef unsigned short       UInt16;
+  typedef short                 Int16;
+  typedef unsigned int         UInt32;
+  typedef int                   Int32;
+  typedef float               Float32;
+  typedef long long             Int64;
+  typedef unsigned long long   UInt64;
+  typedef double              Float64;
 
   struct dalcomplex
     {

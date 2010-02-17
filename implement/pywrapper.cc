@@ -24,8 +24,10 @@
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 
 #include "dal.h"
+#include "dalCommon.h"
 #include "CommonAttributes.h"
 #include "Filename.h"
+#include "HDF5Hyperslab.h"
 #include "Timestamp.h"
 #include "SAS_Settings.h"
 #include "TBB_Timeseries.h"
@@ -655,6 +657,21 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Get the values for the FilterSelection field in SAS.")
     .def( "haveFilterSelection", &SAS_Settings::haveFilterSelection,
 	  "Is name a valid value for the AntennaSet field in SAS?")
+    ;  
+  
+  //_____________________________________________________________________________
+  //                                                                HDF5Hyperslab
+
+  bpl::class_<HDF5Hyperslab>("HDF5Hyperslab")
+    .def( bpl::init<>())
+    .def( "className", &HDF5Hyperslab::className,
+	  "Get the name of the class.")
+    .def( "shape", &HDF5Hyperslab::shape,
+	  "Get the shape of the array to which the hyperslab is applied.")
+    .def( "start", &HDF5Hyperslab::start,
+	  "Get the offset of the starting element of the specified hyperslab.")
+    .def( "setStart", &HDF5Hyperslab::setStart,
+	  "Set the offset of the starting element of the specified hyperslab.")
     ;  
   
   // ============================================================================

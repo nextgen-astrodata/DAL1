@@ -703,34 +703,32 @@ namespace DAL {
     //____________________________________________
     // Get object identifier for the dataspace
     
-    hid_t dataspaceID (0);
+    hid_t dataspaceID;
     H5I_type_t objectType = H5Iget_type (location);
-    bool locationIsDataspace (false);
     
-    if (objectType == H5I_DATASPACE) {
-      locationIsDataspace = true;
-      dataspaceID         = location;
-    }
-    else if (objectType == H5I_DATASET) {
-      locationIsDataspace = false;
-      dataspaceID         = H5Dget_space (location);
-    }
-    else if (objectType == H5I_ATTR) {
-      locationIsDataspace = false;
-      dataspaceID         = H5Aget_space (location);
-    }
-    else {
-      std::cerr << "[HDF5Hyperslab::setHyperslab] Unusable location;"
+    switch (objectType) {
+    case H5I_DATASPACE:
+      dataspaceID = H5Scopy (location);
+      break;
+    case H5I_DATASET:
+      dataspaceID = H5Dget_space (location);
+      break;
+    case H5I_ATTR:
+      dataspaceID = H5Aget_space (location);
+      break;
+    default:
+      std::cerr << "[h5get_dataspace_shape] Unusable location;"
 		<< " expecting dataset or dataspace!"
 		<< std::endl;
       return false;
-    }
-
+      break;
+    };
+    
     //____________________________________________
     // Extract the shape of the dataspace
-
+    
     int rank = H5Sget_simple_extent_ndims (dataspaceID);
-
+    
     if (rank > 0) {
       // set array sizes
       shape.resize(rank);
@@ -764,21 +762,22 @@ namespace DAL {
     
     //____________________________________________
     // Release HDF5 object identifier
-
-    if (!locationIsDataspace) {
-      H5Oclose (dataspaceID);
+    
+    if (H5Iis_valid(dataspaceID)) {
+      H5Sclose (dataspaceID);
     }
     
     return status;
   }
   
-  // ------------------------------------------------------ h5setAttribute_string
+  //_____________________________________________________________________________
+  //                                                        h5setAttribute_string
   
   /*!
     \brief Add a string attribute.
-
+    
     Add a string attribute to the hdf5 object.
-
+    
     \param obj_id The hdf5 object identifier.
     \param attrname The name of the attribute you want to add.
     \param data The value of the attribute you want to add.
@@ -1218,6 +1217,12 @@ namespace DAL {
                             size);
   }
 
+  /*!
+    \param location_id -- HDF5 identifier of the attribute within the file
+    \param name        -- Name of the attribute
+    \param value       -- Value of the attribute
+    \param size        -- The size of the attribute
+  */
   template <>
   bool h5set_attribute (hid_t const &location_id,
                         std::string name,
@@ -1232,6 +1237,32 @@ namespace DAL {
                             size);
   }
 
+  /*!
+    \param location_id -- HDF5 identifier of the attribute within the file
+    \param name        -- Name of the attribute
+    \param value       -- Value of the attribute
+    \param size        -- The size of the attribute
+  */
+  template <>
+  bool h5set_attribute (hid_t const &location_id,
+                        std::string name,
+                        unsigned long long * value,
+                        int size)
+  {
+    hid_t datatype = H5T_NATIVE_ULLONG;
+    return h5set_attribute (datatype,
+                            location_id,
+                            name,
+                            value,
+                            size);
+  }
+
+  /*!
+    \param location_id -- HDF5 identifier of the attribute within the file
+    \param name        -- Name of the attribute
+    \param value       -- Value of the attribute
+    \param size        -- The size of the attribute
+  */
   template <>
   bool h5set_attribute (hid_t const &location_id,
                         std::string name,
@@ -1246,11 +1277,23 @@ namespace DAL {
                             size);
   }
 
+  /*!
+    \param location_id -- HDF5 identifier of the attribute within the file
+    \param name        -- Name of the attribute
+    \param value       -- Value of the attribute
+    \param size        -- The size of the attribute
+  */
   template <>
   bool h5set_attribute (hid_t const &location_id,
                         std::string name,
                         double * value,
                         int size)
+  /*!
+    \param location_id -- HDF5 identifier of the attribute within the file
+    \param name        -- Name of the attribute
+    \param value       -- Value of the attribute
+    \param size        -- The size of the attribute
+  */
   {
     hid_t datatype = H5T_NATIVE_DOUBLE;
     return h5set_attribute (datatype,
@@ -1260,6 +1303,12 @@ namespace DAL {
                             size);
   }
 
+  /*!
+    \param location_id -- HDF5 identifier of the attribute within the file
+    \param name        -- Name of the attribute
+    \param value       -- Value of the attribute
+    \param size        -- The size of the attribute
+  */
   template <>
   bool h5set_attribute (hid_t const &location_id,
                         std::string name,

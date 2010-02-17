@@ -232,6 +232,9 @@ int test_hyperslab ()
       std::cout << " " << data[n];
     }
     std::cout << " ]" << std::endl;
+
+    // release allocated memory
+    delete [] data;
     
   } catch (std::string message) {
     std::cerr << message << std::endl;
