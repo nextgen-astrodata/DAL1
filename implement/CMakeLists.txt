@@ -120,21 +120,32 @@ add_library(dal STATIC ${dal_sources})
 target_link_libraries(dal ${dal_link_libraries})
 
 ## ------------------------------------------------------------------------------
-## Build the library for the Python bindings, "libpydal"
+## Build the library for the Python bindings, "pydal"
 
 if (DAL_PYTHON_BINDINGS)
-  ## compiler instructions
+
+  ##______________________________________________
+  ## Source files with the wrapping code
+
+  file (GLOB pydal_sources bindings/*.cc)
+  
+  ##______________________________________________
+  ## Compiler instructions
+  
   remove_definitions (-dynamiclib -install_name)
-  ## Source files entering the library
-  add_library(pydal MODULE
-    ${dal_sources}
-    bindings/pydal_data_common.cc
-    pywrapper.cc
-    )
+
   include_directories (
     ${NUM_UTIL_INCLUDES}
     )
+  
+  add_library(pydal MODULE
+    ${dal_sources}
+    ${pydal_sources}
+    )
+  
+  ##______________________________________________
   ## linker instructions
+  
   target_link_libraries(pydal
     ${dal_link_libraries}
     ${PYTHON_LIBRARIES}
@@ -147,7 +158,10 @@ if (DAL_PYTHON_BINDINGS)
     ${HAVE_LIBPTHREAD}
     ${HAVE_LIBUTIL}
     )
-  ## additional target properties
+  
+  ##______________________________________________
+  ## Additional target properties
+  
   if (APPLE)
     set_target_properties (pydal
       PROPERTIES
@@ -165,6 +179,15 @@ if (DAL_PYTHON_BINDINGS)
       LINK_FLAGS "-fPIC -shared"
       )
   endif (APPLE)
+  
+  ##______________________________________________
+  ## Installation instructions
+  
+  install (
+    TARGETS pydal
+    LIBRARY DESTINATION lib/python
+    )
+  
 endif (DAL_PYTHON_BINDINGS)
 
 ## ------------------------------------------------------------------------------
@@ -178,13 +201,6 @@ install (
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   )
-
-if (DAL_PYTHON_BINDINGS)
-  install (
-    TARGETS pydal
-    LIBRARY DESTINATION lib/python
-    )
-endif (DAL_PYTHON_BINDINGS)
 
 ## installation of header files
 

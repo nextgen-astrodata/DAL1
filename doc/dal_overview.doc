@@ -152,10 +152,19 @@
 */
 
 //_______________________________________________________________________________
-//                                                                   applications
+//                                                                           apps
 
 /*!
   \defgroup dal_apps DAL :: Application collection
   \ingroup DAL
   \brief Application programs build in top of the DAL 
+*/
+
+//_______________________________________________________________________________
+//                                                                       bindings
+
+/*!
+  \defgroup pydal DAL :: Python module
+  \ingroup DAL
+  \brief Python bindings to the C++ library
 */

@@ -1,18 +1,44 @@
+/*-------------------------------------------------------------------------*
+ | $Id:: pywrapper.cc 4184 2010-02-18 14:14:48Z baehren                  $ |
+ *-------------------------------------------------------------------------*
+ ***************************************************************************
+ *   Copyright (C) 2010                                                    *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
+/*!
+  \file pydal_data_common.cc
+
+  \ingroup DAL
+  \ingroup pydal
+
+  \brief Python bindings DAL C++ classes in the \e data_common directory
+
+  \author Lars B&auml;hren
+*/
 
 // DAL headers
-#include "dal.h"
-#include "dalCommon.h"
-#include "CommonAttributes.h"
-#include "Filename.h"
-#include "Timestamp.h"
-#include "SAS_Settings.h"
-#include "HDF5Hyperslab.h"
-
-// Boost.Python headers
-#include <boost/python.hpp>
-
-// Namespace usage
-using namespace DAL;
+#include "pydal.h"
+#include <CommonAttributes.h>
+#include <Filename.h>
+#include <HDF5Hyperslab.h>
+#include <Timestamp.h>
+#include <SAS_Settings.h>
 
 //_____________________________________________________________________________
 //                                                             CommonAttributes
