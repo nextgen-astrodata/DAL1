@@ -111,25 +111,51 @@
 //
 // ==============================================================================
 
+//_______________________________________________________________________________
+//                                                                           core
+
 /*!
   \defgroup core DAL :: Core library classes
   \ingroup DAL
   \brief Core classes of the Data Access Library
+*/
 
+//_______________________________________________________________________________
+//                                                                    coordinates
+
+/*!
   \defgroup coordinates DAL :: Coordinates
   \ingroup DAL
   \brief Coodinates to connect pixel values to world values
+*/
 
+//_______________________________________________________________________________
+//                                                                    data_common
+
+/*!
   \defgroup data_common DAL :: Dataset support - common functionality
   \ingroup DAL
   \brief Common (low-level) support for the various types of datasets
 
+  The \b data_common directory collects a number of classes and routines, which
+  act as a foundation to the various classes providing a high-level interface
+  to access LOFAR standard datasets.
+*/
+
+//_______________________________________________________________________________
+//                                                                        data_hl
+
+/*!
   \defgroup data_hl DAL :: Dataset support - high-level interfaces
   \ingroup DAL
   \brief High-level dataset interfaces to the various types of datasets
+*/
 
+//_______________________________________________________________________________
+//                                                                   applications
+
+/*!
   \defgroup dal_apps DAL :: Application collection
   \ingroup DAL
   \brief Application programs build in top of the DAL 
 */
-

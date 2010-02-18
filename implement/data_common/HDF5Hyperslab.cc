@@ -42,6 +42,9 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                HDF5Hyperslab
 
+  /*!
+    \param shape -- Shape of the dataset
+  */
   HDF5Hyperslab::HDF5Hyperslab (std::vector<hsize_t> const &shape)
   {
     init();
@@ -51,22 +54,38 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                HDF5Hyperslab
   
+  /*!
+    \param shape     -- Shape of the dataset.
+    \param start     -- Offset of the starting element of the specified hyperslab.
+    \param block     -- The size of the block selected from the dataspace.
+    \param selection --  
+  */
   HDF5Hyperslab::HDF5Hyperslab (std::vector<hsize_t> const &shape,
 				std::vector<int> const &start,
-				std::vector<int> const &count,
+				std::vector<int> const &block,
 				H5S_seloper_t const &selection)
   {
     init();
     
     shape_p     = shape;
     setStart (start);
-    count_p     = count;
+    setBlock (block);
     selection_p = selection;
   }
   
   //_____________________________________________________________________________
   //                                                                HDF5Hyperslab
   
+  /*!
+    \param shape     -- Shape of the dataset.
+    \param start     -- Offset of the starting element of the specified hyperslab.
+    \param stride    -- Number of elements to separate each element or block to
+           be selected.
+    \param count     -- The number of elements or blocks to select along each
+           dimension.
+    \param block     -- The size of the block selected from the dataspace.
+    \param selection --  
+  */
   HDF5Hyperslab::HDF5Hyperslab (std::vector<hsize_t> const &shape,
 				std::vector<int> const &start,
 				std::vector<int> const &stride,
@@ -77,11 +96,12 @@ namespace DAL { // Namespace DAL -- begin
     init();
     
     shape_p     = shape;
-    setStart (start);
-    stride_p    = stride;
-    count_p     = count;
-    block_p     = block;
     selection_p = selection;
+
+    setStart  (start);
+    setStride (stride);
+    setCount  (count);
+    setBlock  (block);
   }
 
   //_____________________________________________________________________________
@@ -104,7 +124,13 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   void HDF5Hyperslab::destroy ()
-  {;}
+  {
+    shape_p.clear();
+    start_p.clear();
+    stride_p.clear();
+    count_p.clear();
+    block_p.clear();
+  }
   
   // ============================================================================
   //
@@ -148,39 +174,165 @@ namespace DAL { // Namespace DAL -- begin
   //  Parameters
   //
   // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                                     setStart
   
-  bool HDF5Hyperslab::setStart (std::vector<int> const &start)
+  bool HDF5Hyperslab::setStart (std::vector<int> const &start,
+				bool const &ignoreShape)
   {
     bool status (true);
 
-    if (shape_p.empty()) {
-      std::cerr << "[HDF5Hyperslab::setStart] Shape undefined!" << std::endl;
-      status = false;
-    } else {
-      unsigned int nelem = shape_p.size();
-      if (nelem == start.size()) {
-	start_p.resize(nelem);
-	for (unsigned int n(0); n<nelem; ++n) {
-	  if (start[n] < int(shape_p[n])) {
-	    start_p[n] = start[n];
-	  } else {
-	    start_p[n] = 0;
-	    std::cerr << "[HDF5Hyperslab::setStart] Start position outside shape!"
-		      << std::endl;
-	    status = false;
-	  }
-	}
+    if (ignoreShape) {
+      if (start.size() == start_p.size()) {
+	start_p = start;
       } else {
-	std::cerr << "[HDF5Hyperslab::setStart] Rank mismatch!" << std::endl;
-	std::cerr << "-- Shape : " << shape_p << std::endl;
-	std::cerr << "-- Start : " << start   << std::endl;
 	status = false;
       }
-    } 
+    } else {
+      if (shape_p.empty()) {
+	std::cerr << "[HDF5Hyperslab::setStart] Shape undefined!" << std::endl;
+	status = false;
+      } else {
+	unsigned int nelem = shape_p.size();
+	if (nelem == start.size()) {
+	  start_p.resize(nelem);
+	  for (unsigned int n(0); n<nelem; ++n) {
+	    if (start[n] < int(shape_p[n])) {
+	      start_p[n] = start[n];
+	    } else {
+	      start_p[n] = 0;
+	      std::cerr << "[HDF5Hyperslab::setStart] Start position outside shape!"
+			<< std::endl;
+	      status = false;
+	    }
+	  }
+	} else {
+	  std::cerr << "[HDF5Hyperslab::setStart] Rank mismatch!" << std::endl;
+	  std::cerr << "-- Shape : " << shape_p << std::endl;
+	  std::cerr << "-- Start : " << start   << std::endl;
+	  status = false;
+	}
+      }
+    }
     
     return status;
   }
 
+  //_____________________________________________________________________________
+  //                                                                    setStride
+  
+  bool HDF5Hyperslab::setStride (std::vector<int> const &stride,
+				 bool const &ignoreShape)
+  {
+    bool status (true);
+    unsigned int nelem = stride.size();
+
+    if (ignoreShape) {
+      if (nelem == stride_p.size()) {
+	stride_p = stride;
+      } else {
+	status = false;
+      }
+    } else {
+      if (shape_p.empty()) {
+	std::cerr << "[HDF5Hyperslab::setStride] Shape undefined!" << std::endl;
+	status = false;
+      } else {
+	if (nelem == shape_p.size()) {
+	  stride_p = stride;
+	} else {
+	  std::cerr << "[HDF5Hyperslab::setStride] Rank mismatch!" << std::endl;
+	  std::cerr << "-- Shape  : " << shape_p << std::endl;
+	  std::cerr << "-- Stride : " << stride  << std::endl;
+	  status = false;
+	}
+      }
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                     setCount
+  
+  bool HDF5Hyperslab::setCount (std::vector<int> const &count,
+				bool const &ignoreShape)
+  {
+    bool status (true);
+    unsigned int nelem = count.size();
+    
+    if (ignoreShape) {
+      if (nelem == count_p.size()) {
+	count_p = count;
+      } else {
+	status = false;
+      }
+    } else {
+      if (shape_p.empty()) {
+	std::cerr << "[HDF5Hyperslab::setCount] Shape undefined!" << std::endl;
+	status = false;
+      } else {
+	if (nelem == shape_p.size()) {
+	  count_p = count;
+	} else {
+	  std::cerr << "[HDF5Hyperslab::setCount] Rank mismatch!" << std::endl;
+	  std::cerr << "-- Shape : " << shape_p << std::endl;
+	  std::cerr << "-- Count : " << count   << std::endl;
+	  status = false;
+	}
+      }
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                     setBlock
+  
+  bool HDF5Hyperslab::setBlock (std::vector<int> const &block,
+				bool const &ignoreShape)
+  {
+    bool status (true);
+    unsigned int nelem = block.size();
+    
+    if (ignoreShape) {
+      if (nelem == block_p.size()) {
+	block_p = block;
+      } else {
+	status = false;
+      }
+    } else {
+      if (shape_p.empty()) {
+	std::cerr << "[HDF5Hyperslab::setBlock] Shape undefined!" << std::endl;
+	status = false;
+      } else {
+	if (nelem == shape_p.size()) {
+	  /* Resize the internal array */
+	  block_p.resize(nelem);
+	  /* Check the individual entries before accepting them */
+	  for (unsigned int n(0); n<nelem; ++n) {
+	    if (block[n] > int(shape_p[n])) {
+	      block_p[n] = int(shape_p[n]);
+	      std::cerr << "[HDF5Hyperslab::setStart] Start position outside shape!"
+			<< std::endl;
+	      status = false;
+	    } else {
+	      block_p[n] = block[n];
+	    }
+	  }
+	} else {
+	  std::cerr << "[HDF5Hyperslab::setBlock] Rank mismatch!" << std::endl;
+	  std::cerr << "-- Shape : " << shape_p << std::endl;
+	  std::cerr << "-- Block : " << block   << std::endl;
+	  status = false;
+	}
+      }
+    }
+    
+    return status;
+  }
+  
   //_____________________________________________________________________________
   //                                                                      summary
   
@@ -242,11 +394,11 @@ namespace DAL { // Namespace DAL -- begin
   */
   bool HDF5Hyperslab::setHyperslab (hid_t const &location,
 				    std::vector<int> const &start,
-				    std::vector<int> const &count,
+				    std::vector<int> const &block,
 				    H5S_seloper_t const &selection)
   {
     std::vector<int> stride;
-    std::vector<int> block;
+    std::vector<int> count;
 
     return setHyperslab (location,
 			 start,
@@ -317,35 +469,35 @@ namespace DAL { // Namespace DAL -- begin
     //____________________________________________
     // Check parameters for the Hyperslab
 
-    bool haveStride (true);
-    bool haveBlock (true);
+    unsigned int nelem;
     std::vector<hsize_t> shape;
+    bool haveStride (true);
+    bool haveCount (true);
 
     DAL::h5get_dataspace_shape (location,shape);
+    nelem = shape.size();
     
-    if (start.size() != count.size()) {
-      std::cerr << "[HDF5Hyperslab::setHyperslab] Parameter mismatch: start - count."
-		<< std::endl;
-      std::cerr << "-- start = " << start << std::endl;
-      std::cerr << "-- count = " << count << std::endl;
-      return false;
-    }
-    else {
-      if (start.size() != shape.size()) {
+    if (start.size() != nelem) {
       std::cerr << "[HDF5Hyperslab::setHyperslab] Parameter mismatch: start - shape."
 		<< std::endl;
       std::cerr << "-- start = " << start << std::endl;
       std::cerr << "-- shape = " << shape << std::endl;
       return false;
-      }
+    }
+    else if (block.size() != nelem) {
+      std::cerr << "[HDF5Hyperslab::setHyperslab] Parameter mismatch: block - shape."
+		<< std::endl;
+      std::cerr << "-- block = " << block << std::endl;
+      std::cerr << "-- shape = " << shape << std::endl;
+      return false;
     }
     
-    if (stride.size() != shape.size()) {
+    if (stride.size() != nelem || stride.empty()) {
       haveStride = false;
     }
     
-    if (block.size() != shape.size()) {
-      haveBlock = false;
+    if (count.size() != nelem || count.empty()) {
+      haveCount = false;
     }
     
     //____________________________________________
@@ -358,64 +510,40 @@ namespace DAL { // Namespace DAL -- begin
     hsize_t tmpCount [rank];
     hsize_t tmpBlock [rank];
 
-    for (unsigned int n(0); n<shape.size(); ++n) {
-      tmpStart[n] = start[n];
-      tmpCount[n] = count[n];
+    /* Copy the input parameters to be passed on */
+    for (unsigned int n(0); n<nelem; ++n) {
+      tmpStart[n]  = start[n];
+      tmpBlock[n]  = block[n];
     }
-    
-    if (haveStride) {
-      for (unsigned int n(0); n<shape.size(); ++n) {
-	tmpStride[n] = stride[n];
-      }
-    }
-    
-    if (haveBlock) {
-      for (unsigned int n(0); n<shape.size(); ++n) {
-	tmpBlock[n] = block[n];
+
+    if (!haveStride) {
+      for (unsigned int n(0); n<nelem; ++n) {
+	tmpStride[n] = 1;
       }
     }
     
-    if (haveStride) {
-      if (haveBlock) {
-	// stride=true, block=true
-	h5error = H5Sselect_hyperslab (dataspaceID,
-				       selection,
-				       tmpStart,      // start
-				       tmpStride,     // stride
-				       tmpCount,      // count
-				       tmpBlock);     // block
-      } else {
-	// stride=true, block=false
-	h5error = H5Sselect_hyperslab (dataspaceID,
-				       selection,
-				       tmpStart,      // start
-				       tmpStride,     // stride
-				       tmpCount,      // count
-				       NULL);         // block
+    if (!haveCount) {
+      for (unsigned int n(0); n<nelem; ++n) {
+	tmpCount[n] = 1;
       }
-    } else {
-      if (haveBlock) {
-	// stride=false, block=true
-	h5error = H5Sselect_hyperslab (dataspaceID,
-				       selection,
-				       tmpStart,      // start
-				       NULL,          // stride
-				       tmpCount,      // count
-				       tmpBlock);     // block
-      } else {
-	// stride=false, block=false
-	h5error = H5Sselect_hyperslab (dataspaceID,
-				       selection,
-				       tmpStart,      // start
-				       NULL,          // stride
-				       tmpCount,      // count
-				       NULL);         // block
-      }
+    }
+    
+    /* Select the hyperslab */
+    h5error = H5Sselect_hyperslab (dataspaceID,
+				   selection,
+				   tmpStart,      // start
+				   tmpStride,     // stride
+				   tmpCount,      // count
+				   tmpBlock);     // block
+
+    if (!H5Sselect_valid (dataspaceID)) {
+      std::cerr << "[HDF5Hyperslab::setHyperslab]"
+		<< " Selection is not contained within the extent of the dataspace."
+		<< std::endl;
+      status = false;
     }
     
     return status;
-  }
-
-
+  }  
   
 } // Namespace DAL -- end

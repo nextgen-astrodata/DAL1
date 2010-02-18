@@ -178,6 +178,7 @@ int test_hyperslab ()
   int nofFailedTests (0);
   std::string filename ("tHDF5Dataset.h5");
   std::string name;
+  std::vector<hsize_t> shape;
   std::vector<int> start;
   std::vector<int> stride;
   std::vector<int> count;
@@ -193,9 +194,10 @@ int test_hyperslab ()
   //________________________________________________________
   // Run the tests
 
-  std::cout << "[1] Opening 1D dataset ..." << std::endl;
+  std::cout << "[1] Write data to 1D dataset ..." << std::endl;
   try {
     name = "Data1D";
+    unsigned int nofSteps (16);
     
     // Open the HDF5 Dataset
     DAL::HDF5Dataset dataset (fileID,
@@ -203,35 +205,29 @@ int test_hyperslab ()
     dataset.summary();
 
     // Set the parameters for the Hyperslab
-    std::vector<hsize_t> shape = dataset.shape();
+    shape = dataset.shape();
 
     start.resize(shape.size());
-    count.resize(shape.size());
-    
-    count[0] = shape[0]/2;
-    
-    // Set up the data to be written to the file
-    double *data = new double [count[0]];
-    
-    for (int n(0); n<count[0]; ++n) {
-      data[n] = n+1;
+    block.resize(shape.size());
+
+    block[0]     = shape[0]/nofSteps;
+    double *data = new double [block[0]];
+
+    for (unsigned int step(0); step<nofSteps; ++step) {
+      // set the starting position
+      start[0] = step*shape[0]/nofSteps;
+      // assign data values to be written to the dataset
+      for (int n(0); n<block[0]; ++n) {
+	data[n] = step+1;
+      }
+      // summary
+      std::cout << "-- Hyperslab " << step << " :"
+		<< "\tStart = " << start
+		<< "\tBlock = " << block
+		<< std::endl;
+      // Write the data
+      dataset.writeData (data,start,block);
     }
-
-    // Write the data
-    dataset.writeData (data,start,count);
-
-    // Set the hyperslab for reading back in the data
-    start[0] = shape[0]/4;
-    
-    // Read the data back in from the file
-    dataset.readData (data,start,count);
-
-    // Show the read data
-    std::cout << "[";
-    for (int n(0); n<count[0]; ++n) {
-      std::cout << " " << data[n];
-    }
-    std::cout << " ]" << std::endl;
 
     // release allocated memory
     delete [] data;
@@ -241,27 +237,46 @@ int test_hyperslab ()
     ++nofFailedTests;
   }
   
-  std::cout << "[2] Opening 2D dataset ..." << std::endl;
+  std::cout << "[1] Read data from 1D dataset ..." << std::endl;
   try {
-    name = "Data2D";
+    name = "Data1D";
+    unsigned int nofSteps (8);
     
-    //! Open the HDF5 Dataset
+    // Open the HDF5 Dataset
     DAL::HDF5Dataset dataset (fileID,
 			      name);
     dataset.summary();
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    ++nofFailedTests;
-  }
-  
-  std::cout << "[3] Opening 3D dataset ..." << std::endl;
-  try {
-    name = "Data3D";
+
+    // Set the parameters for the Hyperslab
+    shape = dataset.shape();
+
+    start.resize(shape.size());
+    block.resize(shape.size());
+
+    block[0]     = shape[0]/nofSteps;
+    double *data = new double [block[0]];
+
+    for (unsigned int step(0); step<nofSteps; ++step) {
+      // set the starting position
+      start[0] = step*shape[0]/nofSteps;
+      // summary
+      std::cout << "-- Hyperslab " << step << " :"
+		<< "\tStart = " << start
+		<< "\tBlock = " << block
+		<< std::endl;
+      // Write the data
+      dataset.readData (data,start,block);
+      // Show the data
+      cout << "[";
+      for (int n(0); n<block[0]; ++n) {
+	cout << " " << data[n];
+      }
+      cout << " ]" << endl;
+    }
+
+    // release allocated memory
+    delete [] data;
     
-    //! Open the HDF5 Dataset
-    DAL::HDF5Dataset dataset (fileID,
-			      name);
-    dataset.summary();
   } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;

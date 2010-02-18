@@ -41,7 +41,7 @@ namespace DAL { // Namespace DAL -- begin
     
     \brief A hyperslab region for selective access to a dataspace
     
-    \author Lars B&aulm;hren
+    \author Lars B&auml;hren
 
     \date 2010/02/09
 
@@ -67,14 +67,14 @@ namespace DAL { // Namespace DAL -- begin
     \endcode
 
     selects a hyperslab region to add to the current selected region for the
-    dataspace specified by \e space_id.
+    dataspace specified by \b space_id.
     
-    The \e start, \e stride, \e count, and \e block arrays must be the same size
+    The \b start, \b stride, \b count, and \b block arrays must be the same size
     as the rank of the dataspace. For example, if the dataspace is 4-dimensional,
     each of these parameters must be a 1-dimensional array of size 4. 
     
-    The selection operator op determines how the new selection is to be combined
-    with the already existing selection for the dataspace. The following
+    The selection operator \b op determines how the new selection is to be
+    combined with the already existing selection for the dataspace. The following
     operators are supported:
 
     - H5S_SELECT_SET -- Replaces the existing selection with the parameters from
@@ -90,29 +90,78 @@ namespace DAL { // Namespace DAL -- begin
     - H5S_SELECT_NOTA -- Retains only elements of the new selection that are not
     in the existing selection.
     
-    The start array specifies the offset of the starting element of the specified
+    The \b start array specifies the offset of the starting element of the specified
     hyperslab.
     
-    The stride array chooses array locations from the dataspace with each value
-    in the stride array determining how many elements to move in each dimension.
-    Setting a value in the stride array to 1 moves to each element in that
+    The \b stride array chooses array locations from the dataspace with each value
+    in the \b stride array determining how many elements to move in each dimension.
+    Setting a value in the \b stride array to 1 moves to each element in that
     dimension of the dataspace; setting a value of 2 in allocation in the stride
     array moves to every other element in that dimension of the dataspace. In
     other words, the stride determines the number of elements to move from the
     start location in each dimension. Stride values of 0 are not allowed. If the
     stride parameter is NULL, a contiguous hyperslab is selected (as if each value
-    in the stride array were set to 1). 
+    in the stride array were set to 1).
+
+    The \b count array determines how many blocks to select from the dataspace,
+    in each dimension.
+
+    The \b block array determines the size of the element block selected from the
+    dataspace. If the block parameter is set to NULL, the block size defaults to
+    a single element in each dimension (as if each value in the block array were
+    set to 1).
+
+    For example, consider a 2-dimensional dataspace with hyperslab selection
+    settings as follows:
+
+    - the start offset is specified as [1,1],
+    - stride is [4,4],
+    - count is [3,7],
+    - and block is [2,2].
+
+    In C, these settings will specify a hyperslab consisting of 21 2x2 blocks of
+    array elements starting with location (1,1) with the selected blocks at
+    locations (1,1), (5,1), (9,1), (1,5), (5,5), etc.; in Fortran, they will
+    specify a hyperslab consisting of 21 2x2 blocks of array elements starting
+    with location (2,2) with the selected blocks at locations (2,2), (6,2),
+    (10,2), (2,6), (6,6), etc. 
     
     <h3>Example(s)</h3>
-    
-    \code
-    H5Sselect_hyperslab (dataspaceID,
-                         H5S_SELECT_SET,
-			 offset,
-			 NULL,
-			 dimensions,
-			 NULL)
-    \endcode
+
+    <ol>
+      <li>Simplest Hyperslab: consider all of the dataspace to be selected:
+      \code
+      std::vector<hsize_t> shape(2);
+
+      // Set the shape of the dataset, i.e. the number of elements along the axes
+      shape[0] = 1024;
+      shape[1] = 200;
+
+      // create Hyperslab object
+      HDF5Hyperslab slab (shape);
+      \endcode
+
+      <li>Create a Hyperslab which selects all the entries along the first axis:
+      \code
+      int rank (2);
+      std::vector<hsize_t> shape(rank);
+      std::vector<int> start (rank);
+      std::vector<int> block (rank);
+
+      // Set the shape of the dataset, i.e. the number of elements along the axes
+      shape[0] = 1024;
+      shape[1] = 200;
+      // Set the starting point
+      start[0] = 0;
+      start[1] = 0;
+      // Set the shape of the elements block read from the data
+      block[0] = shape[0];
+      block[1] = 1;
+
+      // create Hyperslab object
+      HDF5Hyperslab slab (shape,start,block);
+      \endcode
+    </ol>
     
   */  
   class HDF5Hyperslab {
@@ -143,7 +192,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Argumented constructor
     HDF5Hyperslab (std::vector<hsize_t> const &shape,
 		   std::vector<int> const &start,
-		   std::vector<int> const &count,
+		   std::vector<int> const &block,
 		   H5S_seloper_t const &selection=H5S_SELECT_SET);
 
     //! Argumented constructor
@@ -189,7 +238,8 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Set the offset of the starting element of the specified hyperslab
-    bool setStart (std::vector<int> const &start);
+    bool setStart (std::vector<int> const &start,
+		   bool const &ignoreShape=false);
 
     //! Get the number of elements to separate each element or block to be selected
     inline std::vector<int> stride () const {
@@ -197,28 +247,35 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Set the number of elements to separate each element or block to be selected
-    bool setStride (std::vector<int> const &stride);
-
+    bool setStride (std::vector<int> const &stride,
+		    bool const &ignoreShape=false);
+    
     //! Get the number of elements or blocks to select along each dimension
     inline std::vector<int> count () const {
       return count_p;
     }
 
     //! Set the number of elements or blocks to select along each dimension
-    bool setCount (std::vector<int> const &count);
-
+    bool setCount (std::vector<int> const &count,
+		   bool const &ignoreShape=false);
+    
+    //! Get the size of the element block selected from the dataspace
     inline std::vector<int> block () const {
       return block_p;
     }
 
-    bool setBlock (std::vector<int> const &block);
+    //! Set the size of the element block selected from the dataspace
+    bool setBlock (std::vector<int> const &block,
+		   bool const &ignoreShape=false);
 
+    //! Get the selection operator
     inline H5S_seloper_t selection () const {
       return selection_p;
     }
-
+    
+    //! Set the selection operator
     bool setselection (H5S_seloper_t const &selection);
-
+    
     /*!
       \brief Get the name of the class
       
@@ -248,7 +305,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Set the Hyperslab for the dataspace attached to a dataset
     static bool setHyperslab (hid_t const &location,
 			      std::vector<int> const &start,
-			      std::vector<int> const &count,
+			      std::vector<int> const &block,
 			      H5S_seloper_t const &selection=H5S_SELECT_SET);
     
     //! Set the Hyperslab for the dataspace attached to a dataset

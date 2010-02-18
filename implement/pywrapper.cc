@@ -672,6 +672,18 @@ BOOST_PYTHON_MODULE(pydal)
 	  "Get the offset of the starting element of the specified hyperslab.")
     .def( "setStart", &HDF5Hyperslab::setStart,
 	  "Set the offset of the starting element of the specified hyperslab.")
+    .def( "stride", &HDF5Hyperslab::stride,
+	  "Get the number of elements to separate each element or block.")
+    .def( "setStride", &HDF5Hyperslab::setStride,
+	  "Set the number of elements to separate each element or block.")
+    .def( "count", &HDF5Hyperslab::count,
+	  "Get the number of elements or blocks to select along each dimension.")
+    .def( "setCount", &HDF5Hyperslab::setCount,
+	  "Set the number of elements or blocks to select along each dimension.")
+    .def( "block", &HDF5Hyperslab::block,
+	  "Get the size of the element block selected from the dataspace.")
+    .def( "setBlock", &HDF5Hyperslab::setBlock,
+	  "Set the size of the element block selected from the dataspace.")
     ;  
   
   // ============================================================================

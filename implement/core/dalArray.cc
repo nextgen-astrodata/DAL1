@@ -111,7 +111,9 @@ namespace DAL {
     \param arraysize Size of the array to write.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalArray::write ( int offset, int data[], int arraysize )
+  bool dalArray::write (int offset,
+			int data[],
+			int arraysize )
   {
     hsize_t      dims[1] = { arraysize };
     int32_t      rank_p  = 1;
@@ -143,8 +145,12 @@ namespace DAL {
       }
 
     /* Write the data to the hyperslab  */
-    if ( H5Dwrite( array_id, H5T_NATIVE_INT, dataspace, filespace,
-                   H5P_DEFAULT, data ) < 0 )
+    if ( H5Dwrite( array_id,
+		   H5T_NATIVE_INT,
+		   dataspace,
+		   filespace,
+                   H5P_DEFAULT,
+		   data ) < 0 )
       {
         std::cerr << "ERROR: Could not write integer array.\n";
         H5Sclose(dataspace);

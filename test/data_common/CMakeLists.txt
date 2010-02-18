@@ -35,8 +35,16 @@ endforeach (src)
 ##_______________________________________________________________________________
 ##                                                           Testing instructions
 
+## C++ library
+
 add_test (tTimestamp tTimestamp)
 add_test (tFilename tFilename)
 add_test (tCommonAttributes tCommonAttributes)
 add_test (tSAS_Settings tSAS_Settings)
+add_test (tHDF5Hyperslab tHDF5Hyperslab)
 add_test (tHDF5Dataset tHDF5Dataset)
+
+## Python bindings
+
+add_test (tHDF5Hyperslab_py ${PYTHON_EXECUTABLE} tHDF5Hyperslab.py)
+add_test (tHDF5Dataset_py ${PYTHON_EXECUTABLE} tHDF5Dataset.py)

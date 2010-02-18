@@ -320,74 +320,98 @@ namespace DAL {
   //                                                                     readData
   
   /// @cond TEMPLATE_SPECIALIZATIONS
-
-  template <> bool HDF5Dataset::readData (int *data)
+  
+  template <> bool HDF5Dataset::readData (int data[],
+					  std::vector<int> &start,
+					  std::vector<int> &block)
   {
-    return readData (data, H5T_NATIVE_INT);
+    return readData (data, start, block, H5T_NATIVE_INT);
   }
   
-  template <> bool HDF5Dataset::readData (uint *data)
+  template <> bool HDF5Dataset::readData (uint data[],
+					  std::vector<int> &start,
+					  std::vector<int> &block)
   {
-    return readData (data, H5T_NATIVE_UINT);
+    return readData (data, start, block, H5T_NATIVE_UINT);
   }
   
-  template <> bool HDF5Dataset::readData (short *data)
+  template <> bool HDF5Dataset::readData (short data[],
+					  std::vector<int> &start,
+					  std::vector<int> &block)
   {
-    return readData (data, H5T_NATIVE_SHORT);
+    return readData (data, start, block, H5T_NATIVE_SHORT);
   }
   
-  template <> bool HDF5Dataset::readData (long *data)
+  template <> bool HDF5Dataset::readData (long data[],
+					  std::vector<int> &start,
+					  std::vector<int> &block)
   {
-    return readData (data, H5T_NATIVE_LONG);
+    return readData (data, start, block, H5T_NATIVE_LONG);
   }
   
-  template <> bool HDF5Dataset::readData (float *data)
+  template <> bool HDF5Dataset::readData (float data[],
+					  std::vector<int> &start,
+					  std::vector<int> &block)
   {
-    return readData (data, H5T_NATIVE_FLOAT);
+    return readData (data, start, block, H5T_NATIVE_FLOAT);
   }
   
-  template <> bool HDF5Dataset::readData (double *data)
+  template <> bool HDF5Dataset::readData (double data[],
+					  std::vector<int> &start,
+					  std::vector<int> &block)
   {
-    return readData (data, H5T_NATIVE_DOUBLE);
+    return readData (data, start, block, H5T_NATIVE_DOUBLE);
   }
-
+  
   /// @endcond
   
   //_____________________________________________________________________________
   //                                                                    writeData
   
   /// @cond TEMPLATE_SPECIALIZATIONS
-
-  template <> bool HDF5Dataset::writeData (int const data[])
+  
+  template <> bool HDF5Dataset::writeData (int const data[],
+					   std::vector<int> const &start,
+					   std::vector<int> const &block)
   {
-    return writeData (data, H5T_NATIVE_INT);
+    return writeData (data, start, block, H5T_NATIVE_INT);
   }
   
-  template <> bool HDF5Dataset::writeData (uint const data[])
+  template <> bool HDF5Dataset::writeData (uint const data[],
+					   std::vector<int> const &start,
+					   std::vector<int> const &block)
   {
-    return writeData (data, H5T_NATIVE_UINT);
+    return writeData (data, start, block, H5T_NATIVE_UINT);
   }
   
-  template <> bool HDF5Dataset::writeData (short const data[])
+  template <> bool HDF5Dataset::writeData (short const data[],
+					   std::vector<int> const &start,
+					   std::vector<int> const &block)
   {
-    return writeData (data, H5T_NATIVE_SHORT);
+    return writeData (data, start, block, H5T_NATIVE_SHORT);
   }
   
-  template <> bool HDF5Dataset::writeData (long const data[])
+  template <> bool HDF5Dataset::writeData (long const data[],
+					   std::vector<int> const &start,
+					   std::vector<int> const &block)
   {
-    return writeData (data, H5T_NATIVE_LONG);
+    return writeData (data, start, block, H5T_NATIVE_LONG);
   }
   
-  template <> bool HDF5Dataset::writeData (float const data[])
+  template <> bool HDF5Dataset::writeData (float const data[],
+					   std::vector<int> const &start,
+					   std::vector<int> const &block)
   {
-    return writeData (data, H5T_NATIVE_FLOAT);
+    return writeData (data, start, block, H5T_NATIVE_FLOAT);
   }
   
-  template <> bool HDF5Dataset::writeData (double const data[])
+  template <> bool HDF5Dataset::writeData (double const data[],
+					   std::vector<int> const &start,
+					   std::vector<int> const &block)
   {
-    return writeData (data, H5T_NATIVE_DOUBLE);
+    return writeData (data, start, block, H5T_NATIVE_DOUBLE);
   }
-
+  
   /// @endcond
   
   //_____________________________________________________________________________
