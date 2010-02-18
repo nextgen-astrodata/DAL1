@@ -128,6 +128,7 @@ if (DAL_PYTHON_BINDINGS)
   ## Source files entering the library
   add_library(pydal MODULE
     ${dal_sources}
+    bindings/pydal_data_common.cc
     pywrapper.cc
     )
   include_directories (
