@@ -127,6 +127,21 @@ namespace DAL {
     </ol>
       
     <h3>Example(s)</h3>
+
+    <ol>
+      <li>Open dataset \e Array1D attached to the root group of a file:
+      \code
+      // Open the HDF5 file
+      hid_t fileID = H5Fopen (filename.c_str(),
+                              H5F_ACC_RDWR,
+			      H5P_DEFAULT);
+
+      // Open the dataset
+      std::string name ("Array1D");
+      DAL::HDF5Dataset dataset (fileID,
+                                name);
+      \endcode
+    </ol>
     
   */
   class HDF5Dataset : public CommonInterface {
