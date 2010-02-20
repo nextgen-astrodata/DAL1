@@ -56,6 +56,7 @@ int test_create ()
   int nofFailedTests (0);
   std::string name;
   std::string filename ("tHDF5Dataset.h5");
+  std::string groupname ("Group");
 
   //________________________________________________________
   // Create the file to work with
@@ -64,18 +65,23 @@ int test_create ()
 			    H5F_ACC_TRUNC,
 			    H5P_DEFAULT,
 			    H5P_DEFAULT);
-
+  hid_t groupID = H5Gcreate (fileID,
+			     groupname.c_str(),
+			     H5P_DEFAULT,
+			     H5P_DEFAULT,
+			     H5P_DEFAULT);
+  
   //________________________________________________________
   // Run the tests
-
+  
   std::cout << "[1] Creating 1D dataset ..." << std::endl;
   try {
     std::vector<hsize_t> shape (1);
-
+    
     name     = "Data1D";
     shape[0] = 1024;
     
-    //! Create the HDF5 Dataset
+    /* Create HDF5 Dataset at the root level of the file */
     DAL::HDF5Dataset dataset (fileID,
 			      name,
 			      shape);
@@ -85,6 +91,15 @@ int test_create ()
     
     dataset.setAttribute ("NOF_AXES", int(shape.size()) );
     dataset.setAttribute ("NAXIS1",   int(shape[0])     );
+
+    /* Create HDF5 dataset within group */
+    DAL::HDF5Dataset datasetGroup (groupID,
+				   name,
+				   shape);
+    datasetGroup.addAttribute("NOF_AXES");
+    datasetGroup.addAttribute("NAXIS1");
+    datasetGroup.setAttribute ("NOF_AXES", int(shape.size()) );
+    datasetGroup.setAttribute ("NAXIS1",   int(shape[0])     );
   } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
@@ -98,7 +113,7 @@ int test_create ()
     shape[0] = 1024;
     shape[1] = 4;
     
-    //! Create the HDF5 Dataset
+    /* Create HDF5 Dataset at the root level of the file */
     DAL::HDF5Dataset dataset (fileID,
 			      name,
 			      shape);
@@ -110,6 +125,17 @@ int test_create ()
     dataset.setAttribute ("NOF_AXES", int(shape.size()) );
     dataset.setAttribute ("NAXIS1",   int(shape[0])     );
     dataset.setAttribute ("NAXIS2",   int(shape[1])     );
+
+    /* Create HDF5 dataset within group */
+    DAL::HDF5Dataset datasetGroup (groupID,
+				   name,
+				   shape);
+    datasetGroup.addAttribute("NOF_AXES");
+    datasetGroup.addAttribute("NAXIS1");
+    datasetGroup.addAttribute("NAXIS2");
+    datasetGroup.setAttribute ("NOF_AXES", int(shape.size()) );
+    datasetGroup.setAttribute ("NAXIS1",   int(shape[0])     );
+    datasetGroup.setAttribute ("NAXIS2",   int(shape[1])     );
   } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
@@ -124,7 +150,7 @@ int test_create ()
     shape[1] = 1024;
     shape[2] = 3;
     
-    //! Create the HDF5 Dataset
+    /* Create HDF5 Dataset at the root level of the file */
     DAL::HDF5Dataset dataset (fileID,
 			      name,
 			      shape);
@@ -138,17 +164,34 @@ int test_create ()
     dataset.setAttribute ("NAXIS1",   int(shape[0]) );
     dataset.setAttribute ("NAXIS2",   int(shape[1]) );
     dataset.setAttribute ("NAXIS3",   int(shape[2]) );
+
+    /* Create HDF5 dataset within group */
+    DAL::HDF5Dataset datasetGroup (groupID,
+				   name,
+				   shape);
+    datasetGroup.addAttribute("NOF_AXES");
+    datasetGroup.addAttribute("NAXIS1");
+    datasetGroup.addAttribute("NAXIS2");
+    datasetGroup.addAttribute("NAXIS3");
+    datasetGroup.setAttribute ("NOF_AXES", int(shape.size()) );
+    datasetGroup.setAttribute ("NAXIS1",   int(shape[0]) );
+    datasetGroup.setAttribute ("NAXIS2",   int(shape[1]) );
+    datasetGroup.setAttribute ("NAXIS3",   int(shape[2]) );
   } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
   }
 
-  cout << "[4] Open previously created dataset ..." << endl;
+  cout << "[4] Open previously created dataset(s) ..." << endl;
   try {
-    //! Create the HDF5 Dataset
+    /* Open HDF5 Dataset at the root level of the file */
     DAL::HDF5Dataset dataset (fileID,
 			      name);
     dataset.summary();
+    /* Open HDF5 dataset within a subgroup */
+    DAL::HDF5Dataset datasetGroup (groupID,
+				   name);
+    datasetGroup.summary();
   } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
@@ -156,8 +199,9 @@ int test_create ()
   
   //________________________________________________________
   // Close the file
-
+  
   H5Fclose(fileID);
+  H5Gclose (groupID);
   
   return nofFailedTests;
 }
@@ -177,6 +221,7 @@ int test_hyperslab ()
 
   int nofFailedTests (0);
   std::string filename ("tHDF5Dataset.h5");
+  std::string groupname ("Group");
   std::string name;
   std::vector<hsize_t> shape;
   std::vector<int> start;
@@ -190,11 +235,14 @@ int test_hyperslab ()
   hid_t fileID = H5Fopen (filename.c_str(),
 			  H5F_ACC_RDWR,
 			  H5P_DEFAULT);
+  hid_t groupID = H5Gopen (fileID,
+			   groupname.c_str(),
+			   H5P_DEFAULT);
 
   //________________________________________________________
   // Run the tests
 
-  std::cout << "[1] Write data to 1D dataset ..." << std::endl;
+  std::cout << "[1] Write data to 1D dataset in root group ..." << std::endl;
   try {
     name = "Data1D";
     unsigned int nofSteps (16);
@@ -237,7 +285,50 @@ int test_hyperslab ()
     ++nofFailedTests;
   }
   
-  std::cout << "[1] Read data from 1D dataset ..." << std::endl;
+  std::cout << "[2] Write data to 1D dataset in subgroup ..." << std::endl;
+  try {
+    name = "Data1D";
+    unsigned int nofSteps (16);
+    
+    // Open the HDF5 Dataset
+    DAL::HDF5Dataset dataset (groupID,
+			      name);
+    dataset.summary();
+
+    // Set the parameters for the Hyperslab
+    shape = dataset.shape();
+
+    start.resize(shape.size());
+    block.resize(shape.size());
+
+    block[0]     = shape[0]/nofSteps;
+    double *data = new double [block[0]];
+
+    for (unsigned int step(0); step<nofSteps; ++step) {
+      // set the starting position
+      start[0] = step*shape[0]/nofSteps;
+      // assign data values to be written to the dataset
+      for (int n(0); n<block[0]; ++n) {
+	data[n] = step+1;
+      }
+      // summary
+      std::cout << "-- Hyperslab " << step << " :"
+		<< "\tStart = " << start
+		<< "\tBlock = " << block
+		<< std::endl;
+      // Write the data
+      dataset.writeData (data,start,block);
+    }
+
+    // release allocated memory
+    delete [] data;
+    
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    ++nofFailedTests;
+  }
+  
+  std::cout << "[3] Read data from 1D dataset ..." << std::endl;
   try {
     name = "Data1D";
     unsigned int nofSteps (8);
@@ -286,6 +377,7 @@ int test_hyperslab ()
   // Close the file
 
   H5Fclose(fileID);
+  H5Gclose(groupID);
   
   return nofFailedTests;
 }
