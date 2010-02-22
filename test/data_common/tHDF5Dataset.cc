@@ -22,12 +22,12 @@
  ***************************************************************************/
 
 /*!
-  \file tHDF5_Dataset.cc
+  \file tHDF5Dataset.cc
 
   \ingroup DAL
   \ingroup data_common
 
-  \brief A collection of tests for working with a HDF5 Dataset object
+  \brief A collection of tests for working with the DAL::HDF5Dataset class
  
   \author Lars B&auml;hren
  
@@ -45,6 +45,18 @@
 
 /*!
   \brief Test the creation of a Dataset object within a file
+
+  The generated HDF5 file will have the following structure:
+  \verbatim
+  /
+  |-- Array1D            ...  Dataset
+  |-- Array1D            ...  Dataset
+  |-- Array1D            ...  Dataset
+  `-- Group              ...  Group
+      |-- Array1D        ...  Dataset
+      |-- Array1D        ...  Dataset
+      `-- Array1D        ...  Dataset
+  \endverbatim
 
   \return nofFailedTests -- The number of failed tests encountered within this
           functions.
@@ -93,13 +105,23 @@ int test_create ()
     dataset.setAttribute ("NAXIS1",   int(shape[0])     );
 
     /* Create HDF5 dataset within group */
-    DAL::HDF5Dataset datasetGroup (groupID,
+    DAL::HDF5Dataset datasetGroup1 (groupID,
 				   name,
 				   shape);
-    datasetGroup.addAttribute("NOF_AXES");
-    datasetGroup.addAttribute("NAXIS1");
-    datasetGroup.setAttribute ("NOF_AXES", int(shape.size()) );
-    datasetGroup.setAttribute ("NAXIS1",   int(shape[0])     );
+    datasetGroup1.addAttribute("NOF_AXES");
+    datasetGroup1.addAttribute("NAXIS1");
+    datasetGroup1.setAttribute ("NOF_AXES", int(shape.size()) );
+    datasetGroup1.setAttribute ("NAXIS1",   int(shape[0])     );
+
+    /* Create HDF5 dataset within group */
+    std::string path = "/" + groupname + "/Array1D";
+    DAL::HDF5Dataset datasetGroup2 (fileID,
+				    path.c_str(),
+				    shape);
+    datasetGroup2.addAttribute("NOF_AXES");
+    datasetGroup2.addAttribute("NAXIS1");
+    datasetGroup2.setAttribute ("NOF_AXES", int(shape.size()) );
+    datasetGroup2.setAttribute ("NAXIS1",   int(shape[0])     );
   } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
@@ -108,7 +130,7 @@ int test_create ()
   std::cout << "[2] Creating 2D dataset ..." << std::endl;
   try {
     std::vector<hsize_t> shape (2);
-
+    
     name     = "Data2D";
     shape[0] = 1024;
     shape[1] = 4;
@@ -182,16 +204,33 @@ int test_create ()
     ++nofFailedTests;
   }
 
-  cout << "[4] Open previously created dataset(s) ..." << endl;
+  cout << "[4] Open dataset attached to root group ..." << endl;
   try {
-    /* Open HDF5 Dataset at the root level of the file */
     DAL::HDF5Dataset dataset (fileID,
 			      name);
     dataset.summary();
-    /* Open HDF5 dataset within a subgroup */
-    DAL::HDF5Dataset datasetGroup (groupID,
-				   name);
-    datasetGroup.summary();
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    ++nofFailedTests;
+  }
+  
+  cout << "[5] Open dataset attached to sub-group ..." << endl;
+  try {
+    DAL::HDF5Dataset dataset (groupID,
+			      name);
+    dataset.summary();
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    ++nofFailedTests;
+  }
+  
+  cout << "[6] Open dataset attached to sub-group ..." << endl;
+  try {
+    // adjust the name
+    name = "/" + groupname + "/" + name;
+    DAL::HDF5Dataset dataset (fileID,
+			      name);
+    dataset.summary();
   } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
