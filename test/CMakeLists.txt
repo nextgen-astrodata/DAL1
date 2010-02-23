@@ -45,6 +45,10 @@ else (HAVE_CASACORE AND LAPACK_LAPACK_LIBRARY)
   message (STATUS "[DAL] Skipping tests in test/coordinates.")
 endif (HAVE_CASACORE AND LAPACK_LAPACK_LIBRARY)
 
+if (DAL_PYTHON_BINDINGS)
+  add_subdirectory (bindings)
+endif (DAL_PYTHON_BINDINGS)
+
 ## Set up list of source files
 
 set (tests
@@ -230,22 +234,27 @@ if (DAL_ENABLE_TESTING)
   ## -----------------------------------------------------------------
   ## [7] Python scripts
   
+  file (GLOB have_dal_tests dal_tests.py)
+  file (GLOB have_datacube datacube.py)
+  file (GLOB have_uv_coverage uv_coverage.py)
+  file (GLOB have_baseline_intensity baseline_intensity.py)
+
   ## basic test of Python wrappers
-  add_test (dal_tests1 dal_tests.py)
+  add_test (dal_tests1 ${have_dal_tests})
   ## basic test of Python wrappers
   if (PYTHON_EXECUTABLE)
-    add_test (dal_tests2 ${PYTHON_EXECUTABLE} dal_tests.py)
+    add_test (dal_tests2 ${PYTHON_EXECUTABLE} ${have_dal_tests})
   endif (PYTHON_EXECUTABLE)
   
   if (dataset_ms)
     ## show the coverage in the (u,v) plane
-    add_test (datacube datacube.py ${dataset_ms} ${dataset_ms}.out 1 1 0)
+    add_test (datacube ${PYTHON_EXECUTABLE} ${have_datacube} ${dataset_ms} ${dataset_ms}.out 1 1 0)
     ## show the coverage in the (u,v) plane
-    add_test (uv_coverage uv_coverage.py ${dataset_ms})
+    add_test (uv_coverage ${PYTHON_EXECUTABLE} ${have_uv_coverage} ${dataset_ms})
     ## auto-correlated intensity in the first frequency band
-    add_test (baseline_intensity1 baseline_intensity.py ${dataset_ms} 1 1 0)
+    add_test (baseline_intensity1 ${PYTHON_EXECUTABLE} ${have_baseline_intensity} ${dataset_ms} 1 1 0)
     ## auto-correlated intensity in the first frequency band, channel 0
-    add_test (baseline_intensity2 baseline_intensity.py ${dataset_ms} 1 1 0 0)
+    add_test (baseline_intensity2 ${PYTHON_EXECUTABLE} ${have_baseline_intensity} ${dataset_ms} 1 1 0 0)
   endif (dataset_ms)
   
 endif (DAL_ENABLE_TESTING)

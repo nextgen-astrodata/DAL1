@@ -111,10 +111,17 @@ void export_Filename ()
     .value("gds",Filename::gds)
     .value("conf",Filename::conf)
     ;
+
+  void (Filename::*summary1)() 
+    = &Filename::summary;
+  void (Filename::*summary2)(std::ostream &) 
+    = &Filename::summary;
   
   bpl::class_<Filename>("Filename")
+    // Construction
     .def( bpl::init<>())
     .def( bpl::init<string,string,Filename::FileType,Filename::FileExtension>())
+    // Parameters
     .def( "observationID", &Filename::observationID,
 	  "Get the unique observation ID.")
     .def( "setObservationID", &Filename::setObservationID,
@@ -137,6 +144,9 @@ void export_Filename ()
 	  "Set the file extension type.")
     .def( "filename", &Filename::filename,
 	  "Get the name of the file.")
+    // Methods
+    .def("summary", summary1)
+    .def("summary", summary2)
     ;
 }
 
@@ -232,10 +242,22 @@ void export_SAS_Settings ()
 
 void export_HDF5Hyperslab ()
 {
+  bool (HDF5Hyperslab::*setHyperslab1)(hid_t const &) 
+    = &HDF5Hyperslab::setHyperslab;
+//   bool (HDF5Hyperslab::*setHyperslab2)(hid_t const &,
+// 				       std::vector<int> const &,
+// 				       std::vector<int> const &,
+// 				       H5S_seloper_t const &) 
+//     = &HDF5Hyperslab::setHyperslab;
+  void (HDF5Hyperslab::*summary1)() 
+    = &HDF5Hyperslab::summary;
+  void (HDF5Hyperslab::*summary2)(std::ostream &) 
+    = &HDF5Hyperslab::summary;
+  
   bpl::class_<HDF5Hyperslab>("HDF5Hyperslab")
     .def( bpl::init<>())
-    .def( "className", &HDF5Hyperslab::className,
-	  "Get the name of the class.")
+    .def( bpl::init<std::vector<hsize_t> const &>())
+    // Parameter access
     .def( "shape", &HDF5Hyperslab::shape,
 	  "Get the shape of the array to which the hyperslab is applied.")
     .def( "start", &HDF5Hyperslab::start,
@@ -254,5 +276,12 @@ void export_HDF5Hyperslab ()
 	  "Get the size of the element block selected from the dataspace.")
     .def( "setBlock", &HDF5Hyperslab::setBlock,
 	  "Set the size of the element block selected from the dataspace.")
+    // Methods
+    .def( "setHyperslab", setHyperslab1,
+	  "Set the Hyperslab for the dataspace attached to a dataset.")
+    .def( "className", &HDF5Hyperslab::className,
+	  "Get the name of the class.")
+    .def("summary", summary1)
+    .def("summary", summary2)
     ; 
 }
