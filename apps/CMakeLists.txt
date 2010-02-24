@@ -113,19 +113,14 @@ if (DAL_ENABLE_TESTING)
   
   if (dataset_bf_raw)
     add_test (bf2h5_old_test6 bf2h5_old -I ${dataset_bf_raw} -O testdata_bf.h5)
+    set_tests_properties (
+      bf2h5_old_test6
+      PROPERTIES
+      TIMEOUT 600
+      )
   else (dataset_bf_raw)
-    message (STATUS "[DAL] Skipping bf2h5_old conversion tests - no input file!")
+    message (STATUS "[DAL] Skipping bf2h5_old_test6 - no input file!")
   endif (dataset_bf_raw)
-
-  set_tests_properties (
-    bf2h5_old_test1
-    bf2h5_old_test2
-    bf2h5_old_test3
-    bf2h5_old_test4
-    bf2h5_old_test6
-    PROPERTIES
-    TIMEOUT 600
-    )
   
 endif (DAL_ENABLE_TESTING)
 
