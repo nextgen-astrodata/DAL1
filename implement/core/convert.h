@@ -21,6 +21,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+/*!
+    \file convert.h
+    \ingroup DAL
+    \ingroup core
+*/
+
 #ifndef CONVERT_H
 #define CONVERT_H
 

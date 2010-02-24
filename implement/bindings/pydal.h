@@ -51,6 +51,16 @@ void export_dalArray ();
 void export_dalColumn ();
 //! Bindings for DAL::dalData
 void export_dalData ();
+//! Bindings for DAL::dalDataset
+void export_dalDataset ();
+//! Bindings for DAL::dalGroup
+void export_dalGroup ();
+//! Bindings for DAL::dalTable
+void export_dalTable ();
+
+// === coordinates ==============================================================
+
+
 
 // === data_common ==============================================================
 
@@ -77,3 +87,5 @@ void export_TBB_Timeseries();
 void export_TBB_StationGroup();
 //! Bindings for DAL::TBB_DipoleDataset
 void export_TBB_DipoleDataset();
+//! Bindings for DAL::LOPES_EventFile
+void export_LOPES_EventFile();

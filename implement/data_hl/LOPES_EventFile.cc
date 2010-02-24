@@ -4,7 +4,7 @@
  ***************************************************************************
  *   Copyright (C) 2006                                                    *
  *   Andreas Horneffer (<mail>)                                            *
- *   Lars B"ahren (lbaehren@gmail.com)                                     *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -22,7 +22,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <dalLopesEvent.h>
+#include <LOPES_EventFile.h>
 
 namespace DAL {  // Namespace DAL -- begin
   
@@ -32,7 +32,7 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
   
-  dalLopesEvent::dalLopesEvent()
+  LOPES_EventFile::LOPES_EventFile()
   {
     init();
   }
@@ -40,13 +40,13 @@ namespace DAL {  // Namespace DAL -- begin
   /*!
     \param filename -- name (incl. path) of the lopes-eventfile to be read.
   */
-  dalLopesEvent::dalLopesEvent (std::string filename)
+  LOPES_EventFile::LOPES_EventFile (std::string filename)
   {
     init();
     attachFile(filename);
   }
   
-  void dalLopesEvent::init()
+  void LOPES_EventFile::init()
   {
     nofAntennas_p = 0;
     filename_p    = "";
@@ -60,12 +60,12 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
   
-  dalLopesEvent::~dalLopesEvent()
+  LOPES_EventFile::~LOPES_EventFile()
   {
     destroy();
   }
   
-  void dalLopesEvent::destroy()
+  void LOPES_EventFile::destroy()
   {
     // release the memory allocated for the header structure
     free(headerpoint_p);
@@ -85,7 +85,7 @@ namespace DAL {  // Namespace DAL -- begin
     
     \return ok -- True if successfull
   */
-  bool dalLopesEvent::attachFile (std::string filename)
+  bool LOPES_EventFile::attachFile (std::string filename)
   {
     int i (0);
     unsigned int ui (0);
@@ -193,7 +193,7 @@ namespace DAL {  // Namespace DAL -- begin
 	    antenna.
 
     \code
-    dalLopesEvent event (filename);           // new dalLopesEvent object
+    LOPES_EventFile event (filename);         // new LOPES_EventFile object
     short *data;                              // array for the extracted data
     
     data = new short[event.nofDatapoints()];  // adjust array size
@@ -201,7 +201,7 @@ namespace DAL {  // Namespace DAL -- begin
     data = event.data();                      // get the data from the object
     \endcode
   */
-  short* dalLopesEvent::data ()
+  short* LOPES_EventFile::data ()
   {
     short *data = NULL;
     unsigned int nofElements = channeldata_p.nelements();
@@ -211,7 +211,7 @@ namespace DAL {  // Namespace DAL -- begin
       data = channeldata_p.data();
     }
     catch (std::string message) {
-      std::cerr << "[dalLopesEvent::channeldata] " << message << std::endl;
+      std::cerr << "[LOPES_EventFile::channeldata] " << message << std::endl;
     }
     
     return data;
@@ -220,11 +220,11 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         data
   
-  void dalLopesEvent::data (short *data,
-			    unsigned int const &channel)
+  void LOPES_EventFile::data (short *data,
+			      unsigned int const &channel)
   {
     // Retrieve the data for the selected channel
-    casa::Vector<short> channeldata = dalLopesEvent::channeldata(channel);
+    casa::Vector<short> channeldata = LOPES_EventFile::channeldata(channel);
     
     unsigned int nofSamples (channeldata.nelements());
     
@@ -240,7 +240,7 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
   
-  void dalLopesEvent::summary (std::ostream &os)
+  void LOPES_EventFile::summary (std::ostream &os)
   {
     // data available as individual data elements
     os << "-- Filename                        : " << filename_p            << endl;

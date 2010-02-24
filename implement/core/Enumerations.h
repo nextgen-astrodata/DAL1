@@ -35,6 +35,7 @@ namespace DAL   // Namespace DAL -- begin
     \file Enumerations.h
 
     \ingroup DAL
+    \ingroup core
 
     \brief List of attributes used within a LOFAR time-series dataset
 

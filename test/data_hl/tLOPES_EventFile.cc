@@ -26,14 +26,15 @@
 #endif
 
 #include <fstream>
-#include <dalLopesEvent.h>
+#include <LOPES_EventFile.h>
 
 /*!
-  \file tdalLopesEvent.cc
+  \file tLOPES_EventFile.cc
 
   \ingroup DAL
+  \ingroup data_hl
 
-  \brief A collection of tests for the dalLopesEvent class
+  \brief A collection of tests for the LOPES_EventFile class
 
   \author Lars B&auml;hren
 
@@ -44,7 +45,7 @@
   In order to really test the reading of data, the test program needs to be
   provided with the path to a LOPES data file, e.g.:
   \verbatim
-  ./tdalLopesEvent 2007.01.31.23\:59\:33.960.event
+  ./tLOPES_EventFile 2007.01.31.23\:59\:33.960.event
   \endverbatim
 
 */
@@ -191,19 +192,19 @@ void compare_data (casa::Vector<short> const &array1D,
 //                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new dalLopesEvent object
+  \brief Test constructors for a new LOPES_EventFile object
 
   \return nofFailedTests -- The number of failed tests
 */
 int test_constructors (std::string const &filename)
 {
-  std::cout << "\n[tdalLopesEvent::test_constructors]\n" << std::endl;
+  std::cout << "\n[tLOPES_EventFile::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
 
   std::cout << "[1] Testing default constructor..." << std::endl;
   try {
-    DAL::dalLopesEvent event;
+    DAL::LOPES_EventFile event;
     event.summary();
   }
   catch (std::string message) {
@@ -214,7 +215,7 @@ int test_constructors (std::string const &filename)
   std::cout << "[2] Testing argumented constructor..." << std::endl;
   try
     {
-      DAL::dalLopesEvent event (filename);
+      DAL::LOPES_EventFile event (filename);
       event.summary();
     }
   catch (std::string message)
@@ -236,7 +237,7 @@ int test_constructors (std::string const &filename)
 */
 int test_channeldata (std::string const &filename)
 {
-  std::cout << "\n[tdalLopesEvent::test_channeldata]\n" << std::endl;
+  std::cout << "\n[tLOPES_EventFile::test_channeldata]\n" << std::endl;
 
   int nofFailedTests (0);
   unsigned int nofAntennas (0);
@@ -246,7 +247,7 @@ int test_channeldata (std::string const &filename)
   try
     {
       std::cout << "-- Opening file " << filename << " ..." << std::endl;
-      DAL::dalLopesEvent event (filename);
+      DAL::LOPES_EventFile event (filename);
       std::cout << "-- Retrieving data ..." << std::endl;
       casa::Matrix<short> data = event.channeldata();
       // export data to file
@@ -260,7 +261,7 @@ int test_channeldata (std::string const &filename)
   std::cout << "[2] Get data per antenna as casa::Vector ..." << std::endl;
   try {
     std::cout << "-- Opening file " << filename << " ..." << std::endl;
-    DAL::dalLopesEvent event (filename);
+    DAL::LOPES_EventFile event (filename);
     nofAntennas = event.nofAntennas();
     casa::Vector<short> data;
     std::cout << "-- Retrieving data for individual antennas ..." << std::endl;
@@ -281,7 +282,7 @@ int test_channeldata (std::string const &filename)
       short *data;
       
       std::cout << "-- Opening file " << filename << " ..." << std::endl;
-      DAL::dalLopesEvent event (filename);
+      DAL::LOPES_EventFile event (filename);
       nofAntennas = event.nofAntennas();
       blocksize   = event.blocksize();
       std::cout << "-- Adjusting array to receive data ..." << std::endl;
@@ -304,7 +305,7 @@ int test_channeldata (std::string const &filename)
     short *data;
     
     std::cout << "-- Opening file " << filename << " ..." << std::endl;
-    DAL::dalLopesEvent event (filename);
+    DAL::LOPES_EventFile event (filename);
     nofAntennas = event.nofAntennas();
     blocksize   = event.blocksize();
     std::cout << "-- Adjusting array to receive data ..." << std::endl;
@@ -332,7 +333,7 @@ int test_channeldata (std::string const &filename)
     unsigned int blocksize (0);
     
     std::cout << "-- Opening file " << filename << " ..." << std::endl;
-    DAL::dalLopesEvent event (filename);
+    DAL::LOPES_EventFile event (filename);
     nofAntennas = event.nofAntennas();
     blocksize   = event.blocksize();
     std::cout << "-- Adjusting array to receive data ..." << std::endl;
@@ -386,7 +387,7 @@ int test_statistics (std::string const &filename)
   std::ofstream outfile;
 
   std::cout << "-- Opening file " << filename << " ..." << std::endl;
-  DAL::dalLopesEvent event (filename);
+  DAL::LOPES_EventFile event (filename);
   // get the number of antenna in the data set
   unsigned int nofAntennas (event.nofAntennas());
   // Array for taking up the data
@@ -422,17 +423,22 @@ int test_statistics (std::string const &filename)
 int main (int argc, char *argv[])
 {
   int nofFailedTests (0);
-  bool haveDataset (false);
+  bool haveDataset (true);
   std::string filename ("UNDEFINED");
 
+  //________________________________________________________
+  // Process parameters from the command line
+  
   if (argc < 2) {
-    cerr << "[tLopesEvent] Missing name of event file!" << endl;
-  }
-  else {
+    haveDataset = false;
+  } else {
     filename    = argv[1];
     haveDataset = true;
   }
-  
+
+  //________________________________________________________
+  // Run the tests
+
   if (haveDataset) {
     // Test the constructors for a LopesEvent object
     nofFailedTests += test_constructors (filename);

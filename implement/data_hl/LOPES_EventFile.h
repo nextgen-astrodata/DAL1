@@ -21,8 +21,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef LOPESEVENTIN_H
-#define LOPESEVENTIN_H
+#ifndef LOPES_EVENTFILE_H
+#define LOPES_EVENTFILE_H
 
 #include <string>
 #include <iostream>
@@ -50,9 +50,10 @@ namespace DAL {  // Namespace DAL -- begin
 #define LOPES_NYQUIST_ZONE 2
   
   /*!
-    \class dalLopesEvent
+    \class LOPES_EventFile
     
     \ingroup DAL
+    \ingroup data_hl
     
     \brief Read in LOPES event files
     
@@ -60,7 +61,7 @@ namespace DAL {  // Namespace DAL -- begin
     
     \date 2006/12/14
     
-    \test tdalLopesEvent.cc
+    \test tLOPES_EventFile.cc
     
     <h3>Prerequisite</h3>
     
@@ -73,10 +74,10 @@ namespace DAL {  // Namespace DAL -- begin
     
     <h3>Example(s)</h3>
     
-    Here is a simple example fro creating a an dalLopesEvent object to read in
+    Here is a simple example fro creating a an LOPES_EventFile object to read in
     the data stored in a file:
     \code
-    dalLopesEvent event (filename);                    // Create new object
+    LOPES_EventFile event (filename);                    // Create new object
     casa::Matrix<short> data = event.channeldata();    // Retrieve the data
     \endcode
     If you do not want to retrieve the data themselves in the form of a CASA
@@ -88,7 +89,7 @@ namespace DAL {  // Namespace DAL -- begin
     \endcode
     
   */
-  class dalLopesEvent {
+  class LOPES_EventFile {
     
   public:
     
@@ -138,14 +139,14 @@ namespace DAL {  // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    dalLopesEvent();
+    LOPES_EventFile();
     //! Augmented constructor
-    dalLopesEvent(std::string filename);
+    LOPES_EventFile(std::string filename);
     
     // === Destruction ==========================================================
     
     //! Default destructor
-    virtual ~dalLopesEvent();
+    virtual ~LOPES_EventFile();
 
     // === Parameter access =====================================================
 
@@ -228,7 +229,7 @@ namespace DAL {  // Namespace DAL -- begin
       
       Keep in mind that memory has to be alloacted properly in advance:
       \code
-      dalLopesEvent event (filename);                // new object for data file
+      LOPES_EventFile event (filename);                // new object for data file
       
       unsigned int blocksize (event.blocksize());    // the nof. sampler per antenna
       unsigned int nofAntennas (event.nofAntennas()) // nof. antennas in the data set
@@ -355,10 +356,10 @@ namespace DAL {  // Namespace DAL -- begin
 
     /*!
       \brief Get the name of the class
-      \return className -- The name of the class, dalLopesEvent.
+      \return className -- The name of the class, LOPES_EventFile.
     */
     virtual std::string className () const {
-      return "dalLopesEvent";
+      return "LOPES_EventFile";
     }
     
     //! Provide a summary of the objects's internal data
@@ -386,14 +387,14 @@ namespace DAL {  // Namespace DAL -- begin
   private:
 
     //! Unconditional copying
-    void copy (dalLopesEvent const &other);
+    void copy (LOPES_EventFile const &other);
     //! Unconditional deletion
     void destroy(void);
     //! Initialization
     void init ();
 
-  };  //  end -- class dalLopesEvent
+  };  //  end -- class LOPES_EventFile
 
 }  //  end -- namespace DAL
 
-#endif /* LOPESEVENTIN_H */
+#endif /* LOPES_EVENTFILE_H */

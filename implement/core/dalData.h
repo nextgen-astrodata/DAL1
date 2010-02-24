@@ -29,60 +29,98 @@
 #endif
 
 
-namespace DAL
-  {
-
+namespace DAL {
+  
   /*!
     \class dalData
-    \brief Represents container of data.
     \ingroup DAL
-
+    \ingroup core
+    \brief Represents container of data.
+    
     <h3>Synopsis</h3>
+    
     The dalData object represents an n-dimensional array of data regardless of
     the underlying format.  In the case of CASA measurement sets, the data
     is stored in row-major (FORTRAN) order.  For HDF5, and probably FITS, the
     data is stored in column-major (C) order.  The dalData object abstracts this
     away from the user and developer.  The data object might hold data for a
     single table column, or perhaps another data structure.
-
+    
     There will also be a way for the developer to get access to the c-array,
     exactly as it is stored.
   */
 
-  class dalData
-    {
-      std::string dtype;  // i.e. "dal_COMPLEX", "dal_INT", "dal_FLOAT"
-      std::string filetype;  // i.e. "MSCASA", "FITS", "HDF5"
-      std::string array_order; // i.e. "fortran", "c"
-
+  class dalData {
+    
+    //! Type of the data,  i.e. "dal_COMPLEX", "dal_INT", "dal_FLOAT"
+    std::string dataType_p;
+    //! i.e. "MSCASA", "FITS", "HDF5"
+    std::string filetype_p;
+    std::string array_order; // i.e. "fortran", "c"
+    
     public:
 
-      void * data;  // pointer to the actual c-array data
-      void * data2;  // used to convert one datatype to another
+      //! Pointer to the actual c-array data
+      void * data;
+      //! Used to convert one datatype to another
+      void * data2;
+      //! Get the shape of the data array
       std::vector<int> shape;
+      //! Get the number of rows inside the array
       long nrows;
 
+      // === Construction =======================================================
+
+      //! Default constructor
       dalData();
-      dalData( std::string lclfiletype,  std::string lcldatatype,
-               std::vector<int> lclshape, long lclnrows);
-      ~dalData();
+      //! Argumented constructor with a specific file type.
+      dalData (std::string lclfiletype,
+	       std::string lcldatatype,
+               std::vector<int> lclshape,
+	       long lclnrows);
 
-      unsigned long fortran_index(long idx1, long idx2, long idx3);
-      unsigned long c_index(long idx1, long idx2, long idx3);
+      // === Destruction ========================================================
 
-      /*!
-        \brief Get datatype.
-
-        Get the type of data held by dalData object.
-
-        \return string -- i.e. dal_INT, dal_FLOAT, etc.
-       */
-      inline std::string datatype()
-      {
-        return dtype;
+      //! Destructor
+      ~dalData() {
+	if ( data )
+	  free(data);
       }
-      void * get(long idx1=-1, long idx2=-1, long idx3=-1);
+      
+      // === Parameter access ===================================================
+      
+      //! Get the type of data held by the object, i.e. dal_INT, dal_FLOAT, etc.
+      inline std::string datatype() {
+        return dataType_p;
+      }
+      
+      //! Get the filetype, i.e. "MSCASA", "FITS", "HDF5"
+      inline std::string filetype() {
+        return filetype_p;
+      }
+      
+      //! Get the axis ordering of the data array, i.e. "fortran", "c"
+      inline std::string arrayOrder () {
+        return array_order;
+      }
+      
+      // === Methods ============================================================
+      
+      //! Get the fortran index value of up to a three-dimensional array.
+      unsigned long fortran_index (long idx1,
+				   long idx2,
+				   long idx3);
 
+      //! Get the C index value of up to a three-dimensional array
+      unsigned long c_index (long idx1,
+			     long idx2,
+			     long idx3);
+      
+      //! Get the value of an individual data array element
+      void * get (long idx1=-1,
+		  long idx2=-1,
+		  long idx3=-1);
+      
 #ifdef PYTHON
       bpl::numeric::array get_boost1();
       bpl::numeric::array get_boost2( int32_t length );

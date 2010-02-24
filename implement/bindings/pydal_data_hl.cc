@@ -39,9 +39,13 @@
 #include <TBB_Timeseries.h>
 #include <TBB_StationGroup.h>
 #include <TBB_DipoleDataset.h>
+#include <LOPES_EventFile.h>
 
-//_______________________________________________________________________________
+// ==============================================================================
+//
 //                                                                 TBB_Timeseries
+//
+// ==============================================================================
 
 void export_TBB_Timeseries ()
 {  
@@ -61,9 +65,12 @@ void export_TBB_Timeseries ()
     ;
 }
 
-  //_____________________________________________________________________________
-  //                                                             TBB_StationGroup
-  
+// ==============================================================================
+//
+//                                                               TBB_StationGroup
+//
+// ==============================================================================
+
 void export_TBB_StationGroup () 
 {
   bpl::class_<TBB_StationGroup>("TBB_StationGroup")
@@ -77,25 +84,66 @@ void export_TBB_StationGroup ()
     ;
 }
 
-//_______________________________________________________________________________
+// ==============================================================================
+//
 //                                                              TBB_DipoleDataset
+//
+// ==============================================================================
 
 void export_TBB_DipoleDataset()
 {
+  void (TBB_DipoleDataset::*summary1)()                = &TBB_DipoleDataset::summary;
+  void (TBB_DipoleDataset::*summary2)(ostream &)       = &TBB_DipoleDataset::summary;
+  bool (TBB_DipoleDataset::*open1)(hid_t const &)      = &TBB_DipoleDataset::open;
+  bool (TBB_DipoleDataset::*open2)(hid_t const &,
+				   std::string const &,
+				   bool const &)       = &TBB_DipoleDataset::open;
+  bool (TBB_DipoleDataset::*open3)(hid_t const &,
+				   uint const &,
+				   uint const &,
+				   uint const &,
+				   std::vector<hsize_t> const &,
+				   hid_t const &)      = &TBB_DipoleDataset::open;
+  std::string (TBB_DipoleDataset::*getName1)()         = &TBB_DipoleDataset::getName;
+//   std::string (TBB_DipoleDataset::*getName2)(unsigned int const &,
+// 					     unsigned int const &,
+// 					     unsigned int const &)
+//     = &TBB_DipoleDataset::getName;
+  
   bpl::class_<TBB_DipoleDataset>("TBB_DipoleDataset")
     /* Construction */
     .def( bpl::init<>())
-    .def( bpl::init<uint,string>())
+    .def( bpl::init<hid_t const &, std::string const &>())
+    .def( bpl::init<hid_t const &, uint const &, uint const &, uint const &>())
     /* Access to internal parameters */
     .def( "nofAttributes", &TBB_DipoleDataset::nofAttributes,
 	  "Get the number of attributes attached to the dataset." )
     .def( "julianDay", &TBB_DipoleDataset::julianDay,
 	  "Get the time as Julian Day." )
+    .def("summary", summary1,
+	 "Provide a summary of the internal status.")
+    .def("summary", summary2,
+	 "Provide a summary of the internal status.")
+    .def("open", open1,
+	 "Open a dipole dataset.")
+    .def("open", open2,
+	 "Open a dipole dataset.")
+    .def("open", open3,
+	 "Open a dipole dataset.")
+    .def( "dipoleNumber", &TBB_DipoleDataset::dipoleNumber,
+	  "Get the unique channel/dipole identifier." )
+    .def( "getName", getName1,
+	  "Get the unique channel/dipole identifier." )
+//     .def( "getName", getName2,
+// 	  "Get the unique channel/dipole identifier." )
     ;
 }
 
-//_______________________________________________________________________________
+// ==============================================================================
+//
 //                                                                      BeamGroup
+//
+// ==============================================================================
 
 void export_BeamGroup ()
 {
@@ -198,5 +246,45 @@ void export_BeamFormed ()
     .def( "getBeam", &BeamFormed::getBeam,
 	  bpl::return_value_policy<bpl::manage_new_object>(),
 	  "Return a beam object from the file." )
+    ;
+}
+
+// ==============================================================================
+//
+//                                                                LOPES_EventFile
+//
+// ==============================================================================
+
+void export_LOPES_EventFile ()
+{
+  /* Enumeration: Event type */
+  bpl::enum_<LOPES_EventFile::EvType>("EvType")
+    .value("Unspecified",LOPES_EventFile::Unspecified)
+    .value("Cosmic",LOPES_EventFile::Cosmic)
+    .value("Simulation",LOPES_EventFile::Simulation)
+    .value("Test",LOPES_EventFile::Test)
+    .value("SolarFlare",LOPES_EventFile::SolarFlare)
+    .value("Other",LOPES_EventFile::Other)
+    ;
+  
+  /* Enumeration: Observatory */
+  bpl::enum_<LOPES_EventFile::Observatory>("Observatory")
+    .value("LOPES",LOPES_EventFile::LOPES)
+    .value("LORUN",LOPES_EventFile::LORUN)
+    ;
+  
+  bpl::class_<LOPES_EventFile>("LOPES_EventFile")
+    .def( bpl::init<>())
+    .def( bpl::init<string>())
+    .def( "filename", &LOPES_EventFile::filename,
+	  "Get the name of the data file." )
+    .def( "samplerate", &LOPES_EventFile::samplerate,
+	  "Get the samplerate of the A/D conversion." )
+    .def( "nyquistZone", &LOPES_EventFile::nyquistZone,
+	  "Get the Nyquist zone in which the data are sampled." )
+    .def( "nofAntennas", &LOPES_EventFile::nofAntennas,
+	  "Get the number of antennas in the data set." )
+    .def( "nofDatapoints", &LOPES_EventFile::nofDatapoints,
+	  "Get the number of data points stored." )
     ;
 }

@@ -406,10 +406,6 @@ int main (int argc,
     haveDataset = true;
   }
 
-  std::cout << "[tTBB_Timeseries]" << std::endl;
-  std::cout << "-- have dataset = " << haveDataset << std::endl;
-  std::cout << "-- Filename     = " << filename    << std::endl;
-
   //________________________________________________________
   // Run the tests
 

@@ -78,7 +78,7 @@ namespace DAL { // Namespace DAL -- begin
     /
     |-- PrimaryPointing000
     |   |-- Beam000
-    |   |-- Beam000
+    |   |-- Beam001
     |   |
     |
     |-- PrimaryPointing001
@@ -87,6 +87,55 @@ namespace DAL { // Namespace DAL -- begin
     \endverbatim
     
     <h3>Example(s)</h3>
+
+    <ol>
+      <li>Open an existing BF dataset \e filename:
+      \code
+      std:string filename ("data.h5");
+      
+      BF_Dataset bf (filename);
+      \endcode
+      Once the dataset has been opened its contents can be accessed; to get a
+      basic idea of the contents, use
+      \code
+      bf.summary();
+      \endcode
+      In order to retrieve a list of the attributes attached to the root group of
+      the file
+      \code
+      std::set<std::string> attr = bf.attributes();
+      \endcode
+
+      <li>Retrieve the value of an individual attribute:
+      \code
+      std::string lofar;
+      std::string projectID;
+      std::string projectTitle;
+      
+      bf.getAttribute ("TELESCOPE",     lofar);
+      bf.getAttribute ("PROJECT_ID",    projectID);
+      bf.getAttribute ("PROJECT_TITLE", projectTitle);
+      \endcode
+      Retrieve the collection of LOFAR Common Attributes:
+      \code
+      CommonAttributes common = bf.commonAttributes ();
+      \endcode
+
+      <li>Creating a new Beam group (BF_Beam) might require the previous creation
+      of Primary Pointing Direction group (BF_PrimaryPointing):
+      \code
+      unsigned int pointingID (10);
+      unsigned int beamID (3);
+      
+      bf.openBeam (pointingID, beamID);
+      \endcode
+      The resulting structure within the file will be:
+      \verbatim
+      /                            ...  Root group
+      `-- PrimaryPointing010       ...  Primary pointing direction group
+          `-- Beam003              ...  Beam group
+      \endverbatim
+    </ol>
     
   */  
   class BF_Dataset : public CommonInterface {

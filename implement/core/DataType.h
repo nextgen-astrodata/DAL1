@@ -34,6 +34,7 @@ namespace DAL {  // Namespace DAL -- begin
     \class DataType
     
     \ingroup DAL
+    \ingroup core
     
     \brief Type descriptors for standard LOFAR data products
     

@@ -91,7 +91,7 @@ endforeach (src)
 if (HAVE_CASA OR HAVE_CASACORE)
   ## additional compiler flags
   add_definitions (-DHAVE_CASA)
-  foreach (src tMeasurementSets tdalLopesEvent)
+  foreach (src tMeasurementSets)
     ## compiler instructions
     add_executable (${src} ${src}.cc)
     ## linker instructions
@@ -195,15 +195,6 @@ if (DAL_ENABLE_TESTING)
   else (dataset_ms)
     message (STATUS "Unable to find MS dataset; skipping tests.")
   endif (dataset_ms)
-  
-  ## -----------------------------------------------------------------
-  ## [3] Tests using LopesEvent datasets
-  
-  if (dataset_lopes)
-    add_test (tdalLopesEvent tdalLopesEvent ${dataset_lopes})
-  else (dataset_lopes)
-    message (STATUS "Unable to find LopesEvent dataset; skipping tests.")
-  endif (dataset_lopes)
   
   ## -----------------------------------------------------------------
   ## [4] Tests using HDF5-based time-series dataset

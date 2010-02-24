@@ -20,6 +20,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #ifdef PYTHON
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 #define NO_IMPORT_ARRAY
@@ -30,25 +31,28 @@
 #endif
 
 namespace DAL {
+
+  // ============================================================================
+  //
+  //  Construction
+  //
+  // ============================================================================
   
-  // ------------------------------------------------------------ dalData
+  //_____________________________________________________________________________
+  //                                                                      dalData
   
-  /*!
-    \brief Default constructor.
-  */
-  dalData::dalData()
+  dalData::dalData ()
   {
-    dtype       = "UNKNOWN";
-    filetype    = "UNKNOWN";
+    dataType_p  = "UNKNOWN";
+    filetype_p  = "UNKNOWN";
     array_order = "UNKNOWN";
     data        = NULL;
   }
   
-  // ------------------------------------------------------------ dalData
+  //_____________________________________________________________________________
+  //                                                                      dalData
   
   /*!
-    \brief Constructor with a specific file type.
-
     \param lclfiletype The file type (i.e. "MSCASA", "HDF5", etc.)
     \param lcldatatype The data type this instance of the class will
                        contain.
@@ -58,22 +62,27 @@ namespace DAL {
   dalData::dalData(std::string lclfiletype, std::string lcldatatype,
                    std::vector<int> lclshape, long lclnrows)
   {
-    filetype = lclfiletype;
+    filetype_p = lclfiletype;
     if ( MSCASATYPE == lclfiletype )
       array_order = "fortran";
     else if ( H5TYPE == lclfiletype )
       array_order = "c";
-    dtype = lcldatatype;
+    dataType_p = lcldatatype;
     shape = lclshape;
     nrows = lclnrows;
     data = NULL;
   }
   
-  // ------------------------------------------------------------ fortran_index
+  // ============================================================================
+  //
+  //  Methods
+  //
+  // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                fortran_index
   
   /*!
-    \brief Get the fortran index value of up to a three-dimensional array.
-
     This is a helper function that is usually called by the dataset
     object and not by the developer.  Its purpose is to find a single
     index value within a multi-dimensional array, but that index depends
@@ -121,11 +130,10 @@ namespace DAL {
     return index;
   }
   
-  // ------------------------------------------------------------ c_index
+  //_____________________________________________________________________________
+  //                                                                      c_index
   
   /*!
-    \brief Get the C index value of up to a three-dimensional array.
-    
     This is a helper function that is usually called by the dataset
     object and not by the developer.  Its purpose is to find a single
     index value within a multi-dimensional array, but that index depends
@@ -175,27 +183,9 @@ namespace DAL {
     return index;
   }
 
-
-// ------------------------------------------------------------ ~dalData
-
-  /*!
-    \brief Default destructor.
-
-    Defulat data object destructor.
-   */
-  dalData::~dalData()
-  {
-    if ( data )
-      free(data);
-  }
-  
   // ------------------------------------------------------------ get
   
   /*!
-    \brief Get the data.
-
-    Retrieve the data out of the object.
-
     \param idx1 Optional parameter specifying the first index.
     \param idx2 Optional parameter specifying the second index.
     \param idx3 Optional parameter specifying the third index.
@@ -212,11 +202,11 @@ namespace DAL {
     // Determine the correct index value, depending on the order
     //   of the underlying array (determined by the filetype)
     //
-    if ( MSCASATYPE == filetype )
+    if ( MSCASATYPE == filetype_p )
       {
         index = fortran_index( idx1, idx2, idx3 );
       }
-    else if ( H5TYPE == filetype )
+    else if ( H5TYPE == filetype_p )
       {
         index = c_index( idx1, idx2, idx3 );
       }
@@ -226,31 +216,31 @@ namespace DAL {
         return NULL;
       }
 
-    if ( dal_COMPLEX == dtype )
+    if ( dal_COMPLEX == dataType_p )
       return (&(((complex<float>*)data)[ index ]));
 
-    else if ( dal_COMPLEX_CHAR == dtype )
+    else if ( dal_COMPLEX_CHAR == dataType_p )
       return (&(((complex<char>*)data)[ index ]));
 
-    else if ( dal_COMPLEX_SHORT == dtype )
+    else if ( dal_COMPLEX_SHORT == dataType_p )
       return (&(((complex<short>*)data)[ index ]));
 
-    else if ( dal_DOUBLE == dtype )
+    else if ( dal_DOUBLE == dataType_p )
       return (&(((double*)data)[ index ]));
 
-    else if ( dal_INT == dtype )
+    else if ( dal_INT == dataType_p )
       return (&(((int*)data)[ index ]));
 
-    else if ( dal_SHORT == dtype )
+    else if ( dal_SHORT == dataType_p )
       return (&(((short*)data)[ index ]));
 
-    else if ( dal_FLOAT == dtype )
+    else if ( dal_FLOAT == dataType_p )
       return (&(((float*)data)[ index ]));
 
-    else if ( dal_CHAR == dtype )
+    else if ( dal_CHAR == dataType_p )
       return (&(((char*)data)[ index ]));
 
-    else if ( dal_STRING == dtype )
+    else if ( dal_STRING == dataType_p )
       return (&(((std::string*)data)[ index ]));
 
     return NULL;
@@ -295,32 +285,32 @@ namespace DAL {
       mydims.push_back(shape[hh]);
     }
     
-    if ( dal_CHAR == dtype ) {
+    if ( dal_CHAR == dataType_p ) {
       return num_util::makeNum( ((char*)data) + offset, mydims );
     }
-    else if ( dal_BOOL == dtype ) {
+    else if ( dal_BOOL == dataType_p ) {
       return num_util::makeNum( ((unsigned char*)data) + offset, mydims );
     }
-    else if ( dal_INT == dtype )
+    else if ( dal_INT == dataType_p )
       {
         return num_util::makeNum( ((int*)data) + offset, mydims );
       }
-    else if ( dal_FLOAT == dtype ) {
+    else if ( dal_FLOAT == dataType_p ) {
       return num_util::makeNum(((float*)data)+offset,mydims);
     }
-    else if ( dal_DOUBLE == dtype ) {
+    else if ( dal_DOUBLE == dataType_p ) {
       return num_util::makeNum(((double*)data)+offset,mydims);
     }
-    else if ( dal_COMPLEX == dtype ) {
+    else if ( dal_COMPLEX == dataType_p ) {
       return num_util::makeNum(((complex<float>*)data)+offset,mydims);
     }
-    else if ( dal_COMPLEX_CHAR == dtype ) {
+    else if ( dal_COMPLEX_CHAR == dataType_p ) {
       return num_util::makeNum(((complex<char>*)data)+offset,mydims);
     }
-    else if ( dal_COMPLEX_SHORT == dtype ) {
+    else if ( dal_COMPLEX_SHORT == dataType_p ) {
       return num_util::makeNum(((complex<short>*)data)+offset,mydims);
     }
-    else if ( dal_STRING == dtype ) {
+    else if ( dal_STRING == dataType_p ) {
       bpl::list data_list;
       
       if ( 1 == shape.size() ) // 1D case
@@ -352,7 +342,7 @@ namespace DAL {
       return narray;
     }
     else {
-      std::cerr << "ERROR:  Datatype '" << dtype
+      std::cerr << "ERROR:  Datatype '" << dataType_p
 		<< "' not yet supported.  (dalData::get_boost)\n";
       
       for (int ii=0; ii<1; ii++)

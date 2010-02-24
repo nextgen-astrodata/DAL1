@@ -93,10 +93,6 @@ set (dal_sources
   dalFITS.cc
   )
 
-if ( HAVE_CASACORE )
-  list ( APPEND dal_sources dalLopesEvent.cc )
-endif ( HAVE_CASACORE )
-
 ##__________________________________________________________
 ## Process the contents of the modules directories
 

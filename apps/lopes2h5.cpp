@@ -23,6 +23,7 @@
   \file lopes2h5.cpp
 
   \ingroup DAL
+  \ingroup dal_apps
 
   \brief Convert LopesEvent format data to HDF5-based time-series format
 
@@ -43,11 +44,11 @@
 #include <config.h>
 #endif
 
-#include "dal.h"
-#include "dalDataset.h"
-#include "dalGroup.h"
+#include <dal.h>
+#include <dalDataset.h>
+#include <dalGroup.h>
 #include <TBB.h>
-#include <dalLopesEvent.h>
+#include <LOPES_EventFile.h>
 
 using namespace DAL;
 
@@ -142,7 +143,7 @@ int main (int argc, char *argv[])
 
 
 
-      dalLopesEvent event (filename);
+      LOPES_EventFile event (filename);
       const unsigned int BUFSIZE=10000;
       typedef struct CosmicRayStruct {
 	//int nofDatapoints;

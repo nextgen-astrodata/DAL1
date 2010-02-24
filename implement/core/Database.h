@@ -37,8 +37,8 @@ namespace DAL {
   
   /*!
     \class Database
-  \ingroup DAL
-  \ingroup core
+    \ingroup DAL
+    \ingroup core
     \brief Class to allow database connections
   */
   class Database {
