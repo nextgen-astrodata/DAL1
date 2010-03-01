@@ -155,7 +155,27 @@ namespace DAL {
   //  Service routines
   //
   // ============================================================================
+  
+  /*!
+    \brief Allocate the memory for a dynamic 2-dimensional array
+    \param shape -- Shape of the array, i.e. the number of elements along the axes.
+    \return arr  -- Pointer to the allocated memory space
+  */
+  template <typename T> 
+    T * AllocateDynamicArray (std::vector<unsigned int> const &shape)
+    {
+      unsigned int rank  = shape.size();
+      unsigned int nelem = 1;
 
+      for (unsigned int n(0); n<rank; ++n) {
+	nelem *= shape[n];
+      }
+
+      T * arr = new T [nelem];
+
+      return arr;
+    }
+  
   //! Check if an object exists in a vector
   template <typename T>
   bool it_exists( std::vector<T> vec, T item )

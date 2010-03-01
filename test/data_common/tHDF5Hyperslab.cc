@@ -117,13 +117,19 @@ int test_constructors ()
     start[1]  = 2;
     stride[0] = 1;
     stride[1] = 1;
-    count[0]  = 2;
+    count[0]  = 1;
     count[1]  = 1;
     block[0]  = shape[0]/2;
     block[1]  = shape[1]/2;
     //
     HDF5Hyperslab slab (shape,start,stride,count,block);
     slab.summary(); 
+    //
+    count[0]  = 2;
+    count[1]  = 2;
+    //
+    HDF5Hyperslab slab2 (shape,start,stride,count,block);
+    slab2.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;

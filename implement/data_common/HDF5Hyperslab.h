@@ -125,7 +125,13 @@ namespace DAL { // Namespace DAL -- begin
     specify a hyperslab consisting of 21 2x2 blocks of array elements starting
     with location (2,2) with the selected blocks at locations (2,2), (6,2),
     (10,2), (2,6), (6,6), etc. 
-    
+
+    The extend of the data segments can be computed from the input paraneters as
+    follows:
+    \verbatim
+    start[i]+count[i]*block[i]
+    \endverbatim
+
     <h3>Example(s)</h3>
 
     <ol>
@@ -301,7 +307,12 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Set the Hyperslab for the dataspace attached to a dataset
     bool setHyperslab (hid_t const &location);
+
+    //! Get the number of data points returned for the given Hyperslab
+    unsigned int nofDatapoints ();
     
+    // === Static Methods =======================================================
+
     //! Set the Hyperslab for the dataspace attached to a dataset
     static bool setHyperslab (hid_t const &location,
 			      std::vector<int> const &start,
@@ -315,6 +326,10 @@ namespace DAL { // Namespace DAL -- begin
 			      std::vector<int> const &count,
 			      std::vector<int> const &block,
 			      H5S_seloper_t const &selection=H5S_SELECT_SET);
+
+    //! Get the number of data points returned for a given Hyperslab
+    static unsigned int nofDatapoints (std::vector<int> const &count,
+				       std::vector<int> const &block);
     
   private:
     

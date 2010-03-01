@@ -339,11 +339,12 @@ namespace DAL { // Namespace DAL -- begin
   void HDF5Hyperslab::summary (std::ostream &os)
   {
     os << "[HDF5Hyperslab] Summary of internal parameters." << std::endl;
-    os << "-- Shape  = " << shape_p   << std::endl;
-    os << "-- Start  = " << start_p   << std::endl;
-    os << "-- Stride = " << stride_p  << std::endl;
-    os << "-- Count  = " << count_p   << std::endl;
-    os << "-- Block  = " << block_p   << std::endl;
+    os << "-- Shape           = " << shape_p         << std::endl;
+    os << "-- Start           = " << start_p         << std::endl;
+    os << "-- Stride          = " << stride_p        << std::endl;
+    os << "-- Count           = " << count_p         << std::endl;
+    os << "-- Block           = " << block_p         << std::endl;
+    os << "-- nof. datapoints = " << nofDatapoints() << std::endl;
   }
 
   // ============================================================================
@@ -516,13 +517,21 @@ namespace DAL { // Namespace DAL -- begin
       tmpBlock[n]  = block[n];
     }
 
-    if (!haveStride) {
+    if (haveStride) {
+      for (unsigned int n(0); n<nelem; ++n) {
+	tmpStride[n] = stride[n];
+      }
+    } else {
       for (unsigned int n(0); n<nelem; ++n) {
 	tmpStride[n] = 1;
       }
     }
     
-    if (!haveCount) {
+    if (haveCount) {
+      for (unsigned int n(0); n<nelem; ++n) {
+	tmpCount[n] = count[n];
+      }
+    } else {
       for (unsigned int n(0); n<nelem; ++n) {
 	tmpCount[n] = 1;
       }
@@ -540,10 +549,74 @@ namespace DAL { // Namespace DAL -- begin
       std::cerr << "[HDF5Hyperslab::setHyperslab]"
 		<< " Selection is not contained within the extent of the dataspace."
 		<< std::endl;
+      //
+      for (unsigned int n(0); n<nelem; ++n) {
+	std::cout << "\t[ " << tmpStart[n]
+		  << " .. " << tmpStart[n]+tmpCount[n]*tmpBlock[n]
+		  << " ]" << std::endl;
+      }
+      //
       status = false;
     }
     
     return status;
   }  
+
+  //_____________________________________________________________________________
+  //                                                                nofDatapoints
+  
+  unsigned int HDF5Hyperslab::nofDatapoints ()
+  {
+    return nofDatapoints (count_p,
+			  block_p);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                nofDatapoints
+  
+  /*!
+    \param count     -- The number of elements or blocks to select along each
+           dimension.
+    \param block     -- The size of the block selected from the dataspace.
+
+    \return nofDatapoints -- The number of datapoints returned using a given 
+            hyperslab.
+  */
+  unsigned int HDF5Hyperslab::nofDatapoints (std::vector<int> const &count,
+					     std::vector<int> const &block)
+  {
+    unsigned int sizeCount = count.size();
+    unsigned int sizeBlock = block.size();
+    unsigned int nelem (1);
+    
+    if (sizeCount) {
+      if (sizeBlock) {
+	if (sizeCount == sizeBlock) {
+	  for (unsigned int n(0); n<sizeCount; ++n) {
+	    nelem *= count[n]*block[n];
+	  }
+	} else {
+	  std::cerr << "[HDF5Hyperslab::nofDatapoints] Size mismatch!" << std::endl;
+	  std::cerr << "-- shape(count) = " << sizeCount << std::endl;
+	  std::cerr << "-- shape(block) = " << sizeBlock << std::endl;
+	}
+      } else {
+	for (unsigned int n(0); n<sizeCount; ++n) {
+	  nelem *= count[n];
+	}
+      }
+    }  //  end : if (sizeCount)
+    else {
+      if (sizeBlock) {
+	for (unsigned int n(0); n<sizeBlock; ++n) {
+	  nelem *= block[n];
+	}
+      } else {
+	nelem = 0;
+      }
+    }
+    
+    return nelem;
+  }
   
 } // Namespace DAL -- end
