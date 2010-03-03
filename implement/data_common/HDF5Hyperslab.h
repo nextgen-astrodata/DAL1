@@ -132,6 +132,21 @@ namespace DAL { // Namespace DAL -- begin
     start[i]+count[i]*block[i]
     \endverbatim
 
+    <table border=0>
+      <tr align=center>
+        <td width=20%><img src="images/Hyperslab_2D_row.png"></td>
+        <td width=20%><img src="images/Hyperslab_2D_column.png"></td>
+        <td width=20%><img src="images/Hyperslab_2D_sub-array.png"></td>
+        <td width=20%><img src="images/Hyperslab_2D_sub-arrays.png"></td>
+      </tr>
+      <tr valign=top>
+        <td><b>Fig 1.</b><br> Read/write by row.</td>
+        <td><b>Fig 2.</b><br> Read/write by column</td>
+        <td><b>Fig 3.</b><br> Read/write sub-array of same rank.</td>
+        <td><b>Fig 4.</b><br> Read/write group of sub-arrays of same rank.</td>
+      </tr>
+    </table>
+
     <h3>Example(s)</h3>
 
     <ol>
@@ -166,6 +181,44 @@ namespace DAL { // Namespace DAL -- begin
 
       // create Hyperslab object
       HDF5Hyperslab slab (shape,start,block);
+      \endcode
+
+      <li>Access the \e row of a two-dimension dataset (Fig. 1):
+      \code
+      // Row of the array to access
+      unsigned int row (10);
+      // Get shape of the array
+      std::vector<hsize_t> shape = slab.shape();
+
+      start[0] = row;
+      start[1] = 0;
+      count[0] = 1;
+      count[1] = 1;
+      block[0] = 1;
+      block[1] = shape[1];
+
+      slab.setStart (start);
+      slab.setCount (count);
+      slab.setBlock (block);
+      \endcode
+
+      <li>Access the \e column of a two-dimension dataset (Fig. 2):
+      \code
+      // Column of the array to access
+      unsigned int col (10);
+      // Get shape of the array
+      std::vector<hsize_t> shape = slab.shape();
+
+      start[0] = 0;
+      start[1] = col;
+      count[0] = 1;
+      count[1] = 1;
+      block[0] = shape[0];
+      block[1] = 1;
+
+      slab.setStart (start);
+      slab.setCount (count);
+      slab.setBlock (block);
       \endcode
     </ol>
     

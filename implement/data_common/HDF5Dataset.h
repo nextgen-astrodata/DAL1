@@ -46,7 +46,7 @@ namespace DAL {
 
     \date 2009/12/04
     
-    \todo Implement read function to access data array within the dataset.
+    \test tHDF5Dataset.cc
 
     <h3>Prerequisite</h3>
 
@@ -126,6 +126,21 @@ namespace DAL {
       selection within that dataspace. 
     </ol>
       
+    <table border=0>
+      <tr align=center>
+        <td width=20%><img src="images/Hyperslab_2D_row.png"></td>
+        <td width=20%><img src="images/Hyperslab_2D_column.png"></td>
+        <td width=20%><img src="images/Hyperslab_2D_sub-array.png"></td>
+        <td width=20%><img src="images/Hyperslab_2D_sub-arrays.png"></td>
+      </tr>
+      <tr valign=top bgcolor=#eeeeee>
+        <td><b>Fig 1.</b><br> Read/write by row.</td>
+        <td><b>Fig 2.</b><br> Read/write by column</td>
+        <td><b>Fig 3.</b><br> Read/write sub-array of same rank.</td>
+        <td><b>Fig 4.</b><br> Read/write group of sub-arrays of same rank.</td>
+      </tr>
+    </table>
+
     <h3>Example(s)</h3>
 
     <ol>
@@ -141,6 +156,51 @@ namespace DAL {
       DAL::HDF5Dataset dataset (fileID,
                                 name);
       \endcode
+
+      <li>Access the \e row of a two-dimension dataset (Fig. 1):
+      \code
+      // Row of the array to access
+      unsigned int row (10);
+      // Get shape of the array
+      std::vector<hsize_t> shape = dataset.shape();
+
+      start[0] = row;
+      start[1] = 0;
+      count[0] = 1;
+      count[1] = 1;
+      block[0] = 1;
+      block[1] = shape[1];
+
+      // Get the number of datapoints resulting from the hyperslab selection
+      unsigned int nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+      double *data               = new double [nofDatapoints];
+
+      // Read the data selection from the dataset
+      dataset.readData (data,start,block);
+      \endcode
+      Access the \e column of a two-dimension dataset (Fig. 2):
+      \code
+      // Column of the array to access
+      unsigned int col (10);
+      // Get shape of the array
+      std::vector<hsize_t> shape = dataset.shape();
+
+      start[0] = 0;
+      start[1] = col;
+      count[0] = 1;
+      count[1] = 1;
+      block[0] = shape[0];
+      block[1] = 1;
+
+      // Get the number of datapoints resulting from the hyperslab selection
+      unsigned int nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+      double *data               = new double [nofDatapoints];
+
+      // Read the data selection from the dataset
+      dataset.readData (data,start,block);
+      \endcode
+      For further background information on how to define hyperslabs to select
+      regions within a dataset, consult the documentation for DAL::HDF5Hyperslab.
     </ol>
     
   */
@@ -236,48 +296,6 @@ namespace DAL {
 
     // === Read the data ========================================================
 
-    template <class T>
-      bool readData (T data[],
-		     HDF5Hyperslab &slab,
-		     hid_t const &datatype)
-      {
-	bool status (true);
-	
-	/* Set the Hyperslab for the dataspace attached to a dataset */
-	status = slab.setHyperslab (dataspace_p);
-	
-	if (status) {
-	  /* Local variables */
-	  unsigned int nelem (rank());
-	  hsize_t dimensions[nelem];
-	  herr_t h5error;
-	  std::vector<int> stride = slab.stride();
-	  std::vector<int> block  = slab.block();
-	  /* Setup the memory space */
-	  for (unsigned int n(0); n<nelem; ++n) {
-	    dimensions[n] = block[n];
-	  }
-	  hid_t memorySpace = H5Screate_simple (nelem,
-						dimensions,
-						NULL);
-	  /* Read the data from the dataset */
-	  h5error = H5Dread (location_p,
-			     datatype,
-			     memorySpace,
-			     dataspace_p,
-			     H5P_DEFAULT,
-			     data);
-	  /* Release HDF5 object identifier */
-	  H5Sclose (memorySpace);
-	} else {
-	  std::cerr << "[HDF5Dataset::readData] Failed to properly set up Hyperslab!"
-		    << std::endl;
-	  status = false;
-	}
-	
-	return status;
-      }
-
     /*!
       \brief Read the data
       \param data    -- Array with the data to be written.
@@ -350,55 +368,6 @@ namespace DAL {
       }
     
     // === Write the data =======================================================
-
-    /*!
-      \brief Write the data
-      \param data    -- Array with the data to be written.
-      \param slab    -- Hyberslab defining a selection of the data.
-      \param datatype -- Datatype of the array elements.
-      \return status -- Status of the operation; returns \e false in case an
-              error was encountered.
-    */
-    template <class T>
-      bool writeData (T const data[],
-		      HDF5Hyperslab &slab,
-		      hid_t const &datatype)
-      {
-	bool status (true);
-	
-	/* Set the Hyperslab for the dataspace attached to a dataset */
-	status = slab.setHyperslab (dataspace_p);
-	
-	if (status) {
-	  /* Local variables */
-	  unsigned int nelem (rank());
-	  hsize_t dimensions[nelem];
-	  herr_t h5error;
-	  std::vector<int> block = slab.block();
-	  /* Setup the memory space */
-	  for (unsigned int n(0); n<nelem; ++n) {
-	    dimensions[n] = block[n];
-	  }
-	  hid_t memorySpace = H5Screate_simple (nelem,
-						dimensions,
-						NULL);
-	  /* Read the data from the dataset */
-	  h5error = H5Dwrite (location_p,
-			      datatype,
-			      memorySpace,
-			      dataspace_p,
-			      H5P_DEFAULT,
-			      data);
-	  /* Release HDF5 object identifier */
-	  H5Sclose (memorySpace);
-	} else {
-	  std::cerr << "[HDF5Dataset::writeDate] Failed to properly set up Hyperslab!"
-		    << std::endl;
-	  status = false;
-	}
-	
-	return status;
-      }
 
     /*!
       \brief Write the data
@@ -490,6 +459,105 @@ namespace DAL {
     //! Open the structures embedded within the current one
     bool openEmbedded (bool const &create);
     
+    /*!
+      \brief Read the data
+      \param data     -- Array with the data to be written.
+      \param slab     -- Hyberslab defining a selection of the data.
+      \param datatype -- Type of the individual elements in the dataset.
+      \return status  -- Status of the operation; returns \e false in case an
+              error was encountered.
+    */
+    template <class T>
+      bool readData (T data[],
+		     HDF5Hyperslab &slab,
+		     hid_t const &datatype)
+      {
+	bool status (true);
+	
+	/* Set the Hyperslab for the dataspace attached to a dataset */
+	status = slab.setHyperslab (dataspace_p);
+	
+	if (status) {
+	  /* Local variables */
+	  unsigned int nelem (rank());
+	  hsize_t dimensions[nelem];
+	  herr_t h5error;
+	  std::vector<int> stride = slab.stride();
+	  std::vector<int> block  = slab.block();
+	  /* Setup the memory space */
+	  for (unsigned int n(0); n<nelem; ++n) {
+	    dimensions[n] = block[n];
+	  }
+	  hid_t memorySpace = H5Screate_simple (nelem,
+						dimensions,
+						NULL);
+	  /* Read the data from the dataset */
+	  h5error = H5Dread (location_p,
+			     datatype,
+			     memorySpace,
+			     dataspace_p,
+			     H5P_DEFAULT,
+			     data);
+	  /* Release HDF5 object identifier */
+	  H5Sclose (memorySpace);
+	} else {
+	  std::cerr << "[HDF5Dataset::readData] Failed to properly set up Hyperslab!"
+		    << std::endl;
+	  status = false;
+	}
+	
+	return status;
+      }
+
+    /*!
+      \brief Write the data
+      \param data     -- Array with the data to be written.
+      \param slab     -- Hyberslab defining a selection of the data.
+      \param datatype -- Type of the individual elements in the dataset.
+      \return status  -- Status of the operation; returns \e false in case an
+              error was encountered.
+    */
+    template <class T>
+      bool writeData (T const data[],
+		      HDF5Hyperslab &slab,
+		      hid_t const &datatype)
+      {
+	bool status (true);
+	
+	/* Set the Hyperslab for the dataspace attached to a dataset */
+	status = slab.setHyperslab (dataspace_p);
+	
+	if (status) {
+	  /* Local variables */
+	  unsigned int nelem (rank());
+	  hsize_t dimensions[nelem];
+	  herr_t h5error;
+	  std::vector<int> block = slab.block();
+	  /* Setup the memory space */
+	  for (unsigned int n(0); n<nelem; ++n) {
+	    dimensions[n] = block[n];
+	  }
+	  hid_t memorySpace = H5Screate_simple (nelem,
+						dimensions,
+						NULL);
+	  /* Read the data from the dataset */
+	  h5error = H5Dwrite (location_p,
+			      datatype,
+			      memorySpace,
+			      dataspace_p,
+			      H5P_DEFAULT,
+			      data);
+	  /* Release HDF5 object identifier */
+	  H5Sclose (memorySpace);
+	} else {
+	  std::cerr << "[HDF5Dataset::writeDate] Failed to properly set up Hyperslab!"
+		    << std::endl;
+	  status = false;
+	}
+	
+	return status;
+      }
+
   }; // end class HDF5Dataset
   
 } // end namespace DAL
