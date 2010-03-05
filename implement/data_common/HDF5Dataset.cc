@@ -190,13 +190,13 @@ namespace DAL {
     } else {
       /* If failed to open the group, check if we are supposed to create one */
       if (create && dataspace_p && datatype_p) {
-	location_p = H5Dcreate (location,
-				name_p.c_str(),
-				datatype_p,
-				dataspace_p,
-				H5P_DEFAULT,
-				H5P_DEFAULT,
-				H5P_DEFAULT);
+	location_p = H5Dcreate2 (location,
+				 name_p.c_str(),
+				 datatype_p,
+				 dataspace_p,
+				 H5P_DEFAULT,
+				 H5P_DEFAULT,
+				 H5P_DEFAULT);
 	/* If creation was sucessful, add attributes with default values */
 	if (location_p > 0) {
 	  /* write attribute attached to the dataset */
@@ -307,13 +307,13 @@ namespace DAL {
     // Set the datatype for the elements within the Dataset
     datatype_p  = H5Tcopy (datatype);
     // Create the Dataset
-    location_p  = H5Dcreate (location,
-			     name_p.c_str(),
-			     datatype_p,
-			     dataspace_p,
-			     H5P_DEFAULT,
-			     chunkParam,
-			     H5P_DEFAULT);
+    location_p  = H5Dcreate2 (location,
+			      name_p.c_str(),
+			      datatype_p,
+			      dataspace_p,
+			      H5P_DEFAULT,
+			      chunkParam,
+			      H5P_DEFAULT);
     
     // Release HDF5 object identifiers
     H5Pclose (chunkParam);

@@ -147,32 +147,6 @@ else (HAVE_CASACORE)
   message (STATUS "[DAL] Skipping tests - missing casacore.")
 endif (HAVE_CASACORE)
 
-##__________________________________________________________
-## tdalFITS
-
-if (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
-  
-  ## compiler instructions
-  add_executable (tdalFITS tdalFITS.cc)
-  ## linker instructions
-  target_link_libraries (tdalFITS
-    dal
-    ${dal_link_libraries}
-    ${CASA_LIBRARIES}
-    ${LAPACK_LIBRARIES}
-    ${CFITSIO_LIBRARIES}
-    ${WCSLIB_LIBRARIES}
-    ${GFORTRAN_LIBRARIES}
-    )
-  ## installation
-  list (APPEND tests tdalFITS)
-  
-  if (DAL_ENABLE_TESTING AND dataset_fits)
-    add_test (tdalFITS tdalFITS ${dataset_fits})
-  endif (DAL_ENABLE_TESTING AND dataset_fits)
-  
-endif (HAVE_CASACORE AND HAVE_HDF5 AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
-
 ## ==============================================================================
 ##
 ##  Testing
