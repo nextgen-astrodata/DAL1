@@ -58,11 +58,11 @@ namespace DAL {
   //                                                                  HDF5Dataset
 
   /*!
-    \param location -- Identifier for the location at which the dataset is about
+    \param location  -- Identifier for the location at which the dataset is about
            to be created.
-    \param name     -- Name of the dataset.
-    \param shape    -- Shape of the dataset.
-    \param datatype -- Datatype for the elements within the Dataset
+    \param name      -- Name of the dataset.
+    \param shape     -- Shape of the dataset.
+    \param datatype  -- Datatype for the elements within the Dataset
   */
   HDF5Dataset::HDF5Dataset (hid_t const &location,
 			    std::string const &name,
@@ -75,6 +75,33 @@ namespace DAL {
     open (location,
 	  name,
 	  shape,
+	  datatype);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                  HDF5Dataset
+
+  /*!
+    \param location  -- Identifier for the location at which the dataset is about
+           to be created.
+    \param name      -- Name of the dataset.
+    \param shape     -- Shape of the dataset.
+    \param chunksize -- Chunk size for extendible array
+    \param datatype  -- Datatype for the elements within the Dataset
+  */
+  HDF5Dataset::HDF5Dataset (hid_t const &location,
+			    std::string const &name,
+			    std::vector<hsize_t> const &shape,
+			    std::vector<hsize_t> const &chunksize,
+			    hid_t const &datatype)
+  {
+    // initialize internal parameters
+    init ();
+    // open the dataset
+    open (location,
+	  name,
+	  shape,
+	  chunksize,
 	  datatype);
   }
   
@@ -106,6 +133,7 @@ namespace DAL {
     dataspace_p     = 0;
     datatype_p      = 0;
     shape_p.clear();
+    chunksize_p.clear();
     hyperslab_p.clear();
   }
 
@@ -151,6 +179,8 @@ namespace DAL {
       datatype_p  = H5Dget_type (location_p);
       // Get the shape of the dataset array
       DAL::h5get_dataspace_shape(location_p, shape_p);
+      // Retrieve the size of chunks for the raw data
+      status = getChunksize ();
     } else {
       location_p = 0;
     }
@@ -210,32 +240,83 @@ namespace DAL {
 			  std::vector<hsize_t> const &shape,
 			  hid_t const &datatype)
   {
-    bool status (true);
+    std::vector<hsize_t> chunksize;
     
-    // update internal parameters
-    name_p = name;
-    shape_p.resize(shape.size());
-    shape_p = shape;
+    return open (location,
+		 name,
+		 shape,
+		 chunksize,
+		 datatype);
+  }
     
-    // Create Dataspace
-    int rank = shape_p.size();
-    hsize_t dimensions [rank];
-    for (int n(0); n<rank; ++n) {
-      dimensions[n] = shape_p[n];
-    }
-    dataspace_p = H5Screate_simple (rank,dimensions,NULL);
+  //_____________________________________________________________________________
+  //                                                                         open
+  
+  /*!
+    \param location  -- Identifier for the location at which the dataset is about
+           to be created.
+    \param name      -- Name of the dataset.
+    \param shape     -- Shape of the dataset.
+    \param chunksize -- Chunk size for extendible array.
+    \param datatype  -- Datatype for the elements within the Dataset
+  */
+  bool HDF5Dataset::open (hid_t const &location,
+			  std::string const &name,
+			  std::vector<hsize_t> const &shape,
+			  std::vector<hsize_t> const &chunksize,
+			  hid_t const &datatype)
+  {
+    bool status = true;
+    int rank    = shape.size();
 
+    //____________________________________________
+    // Update internal parameters
+
+    shape_p.resize(rank);
+    chunksize_p.resize(rank);
+
+    name_p  = name;
+    shape_p = shape;
+
+    if (chunksize.empty() || chunksize.size() != shape.size()) {
+      chunksize_p = shape_p;
+    } else {
+      chunksize_p = chunksize;
+    }
+
+    //____________________________________________
+    // Create Dataspace
+
+    hsize_t dims [rank];
+    hsize_t maxdims [rank];
+    hsize_t chunkdims [rank];
+    hid_t chunkParam;
+    herr_t h5error;
+
+    for (int n(0); n<rank; ++n) {
+      dims[n]      = shape_p[n];
+      maxdims[n]   = H5S_UNLIMITED;
+      chunkdims[n] = chunksize_p[n];
+    }
+
+    dataspace_p = H5Screate_simple (rank, dims, maxdims);
+    // Create the dataset creation property list
+    chunkParam  = H5Pcreate (H5P_DATASET_CREATE);
+    // Set the chunk size
+    h5error     = H5Pset_chunk (chunkParam, rank, chunkdims);
     // Set the datatype for the elements within the Dataset
     datatype_p  = H5Tcopy (datatype);
-
     // Create the Dataset
-    location_p = H5Dcreate (location,
-			    name_p.c_str(),
-			    datatype_p,
-			    dataspace_p,
-			    H5P_DEFAULT,
-			    H5P_DEFAULT,
-			    H5P_DEFAULT);
+    location_p  = H5Dcreate (location,
+			     name_p.c_str(),
+			     datatype_p,
+			     dataspace_p,
+			     H5P_DEFAULT,
+			     chunkParam,
+			     H5P_DEFAULT);
+    
+    // Release HDF5 object identifiers
+    H5Pclose (chunkParam);
     
     return status;
   }
@@ -248,10 +329,44 @@ namespace DAL {
     bool status = create;
     return status;
   }
+
+  //_____________________________________________________________________________
+  //                                                                 getChunksize
+
+  bool HDF5Dataset::getChunksize ()
+  {
+    bool status (true);
+    hid_t propertyID (0);
+    int rank (shape_p.size());
+    int nofAxes (rank);
+    hsize_t chunksize[rank];
+
+    // Get the creation property list for the dataset
+    propertyID = H5Dget_create_plist (location_p);
+
+    // Retrieve the size of chunks for the raw data of a chunked layout dataset
+    if (H5Iis_valid(propertyID)) {
+      rank  = H5Pget_chunk (propertyID, nofAxes, chunksize);
+    } else {
+      std::cerr << "[HDF5Dataset::getChunksize]"
+		<< " Failed to get creation property list for the dataset!"
+		<< std::endl;
+      status = false;
+    }
+
+    if (rank>0 && nofAxes>0) {
+      chunksize_p.resize(nofAxes);
+      for (int n(0); n<nofAxes; ++n) {
+	chunksize_p[n] = chunksize[n];
+      }
+    }
+    
+    return status;
+  }
   
   //_____________________________________________________________________________
   //                                                                nofDatapoints
-
+  
   unsigned int HDF5Dataset::nofDatapoints ()
   {
     unsigned int nofPoints (1);
@@ -417,6 +532,7 @@ namespace DAL {
     os << "-- Datatype ID     = " << datatype_p      << std::endl;
     os << "-- Dataset rank    = " << rank()          << std::endl;
     os << "-- Dataset shape   = " << shape_p         << std::endl;
+    os << "-- Chunk size      = " << chunksize_p     << std::endl;
     os << "-- nof. datapoints = " << nofDatapoints() << std::endl;
   }
   

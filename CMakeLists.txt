@@ -40,6 +40,7 @@ option (DAL_BUILD_APPS         "Build the applications?"                      YE
 option (DAL_ENABLE_TESTING     "Build the test programs?"                     YES )
 option (DAL_ENABLE_DASHBOARD   "Send a build report to the Dashboard server?" YES )
 option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?"    ON  )
+option (DAL_HDF5_MACROS        "HDF5 compatibility macros version"            YES )
 option (DAL_MEMORY_CHECKING    "Enable checking against memory leaks?"        NO  )
 option (DAL_PYTHON_BINDINGS    "Create python bindings?"                      YES )
 option (DAL_DEBUGGING_MESSAGES "Print debugging information?"                 NO  )
@@ -391,6 +392,13 @@ if (DAL_MEMORY_CHECKING)
   
 endif (DAL_MEMORY_CHECKING)
 
+##__________________________________________________________
+## Option: Compatibility macros to version 2
+
+if (DAL_HDF5_MACROS)
+  add_definitions (-DHDF5_MACROS_VERS2)
+endif (DAL_HDF5_MACROS)
+
 ## =============================================================================
 ##
 ##  List of external libraries against which to link; even though we really
@@ -524,36 +532,6 @@ endif (tar_executable AND gzip_executable)
 
 ## =============================================================================
 ##
-##  Set all compatibility macros to version 2 (ie, HDF5 1.8).
-##
-## =============================================================================
-add_definitions (
-  -DH5Acreate_vers=2
-  -DH5Adelete_vers=2
-  -DH5Aiterate_vers=2
-  -DH5Arename_vers=2
-  -DH5Dcreate_vers=2
-  -DH5Dopen_vers=2
-  -DH5Eclear_vers=2
-  -DH5Eprint_vers=2
-  -DH5Epush_vers=2
-  -DH5Eset_auto_vers=2
-  -DH5Eget_auto_vers=2
-  -DH5Ewalk_vers=2
-  -DH5Gcreate_vers=2
-  -DH5Gopen_vers=2
-  -DH5Pget_filter_vers=2
-  -DH5Pinsert_vers=2
-  -DH5Pregister_vers=2
-  -DH5Rget_obj_type_vers=2
-  -DH5Tarray_create_vers=2
-  -DH5Tcommit_vers=2
-  -DH5Tget_array_dims_vers=2
-  -DH5Topen_vers=2
-)
-
-## =============================================================================
-##
 ##  Project sub-directories
 ##
 ## =============================================================================
@@ -578,15 +556,16 @@ endif (DAL_BUILD_APPS)
 message (STATUS "+============================================================+")
 message (STATUS "| DAL: Summary of configuration settings                     |")
 message (STATUS "+------------------------------------------------------------+")
-message (STATUS " Python version             = ${PYTHON_VERSION}"        )
-message (STATUS " Print debugging messages   = ${DAL_DEBUGGING_MESSAGES}")
-message (STATUS " Enable Dashboard server    = ${DAL_ENABLE_DASHBOARD}"  )
-message (STATUS " Enable Python bindings     = ${DAL_PYTHON_BINDINGS}"   )
-message (STATUS " Enable code using Blitz++  = ${HAVE_BLITZ}"            )
-message (STATUS " Enable code using casacore = ${HAVE_CASACORE}"         )
-message (STATUS " Enable code using CFITSIO  = ${HAVE_CFITSIO}"          )
-message (STATUS " Enable code using GSL      = ${HAVE_GSL}"              )
-message (STATUS " Enable code using MySQL    = ${HAVE_MYSQL}"            )
+message (STATUS " Python version                   = ${PYTHON_VERSION}"         )
+message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}" )
+message (STATUS " Enable Dashboard server          = ${DAL_ENABLE_DASHBOARD}"   )
+message (STATUS " Enable Python bindings           = ${DAL_PYTHON_BINDINGS}"    )
+message (STATUS " Enable HDF5 compatibility macros = ${DAL_HDF5_MACROS}"        )
+message (STATUS " Enable code using Blitz++        = ${HAVE_BLITZ}"             )
+message (STATUS " Enable code using casacore       = ${HAVE_CASACORE}"          )
+message (STATUS " Enable code using CFITSIO        = ${HAVE_CFITSIO}"           )
+message (STATUS " Enable code using GSL            = ${HAVE_GSL}"               )
+message (STATUS " Enable code using MySQL          = ${HAVE_MYSQL}"             )
 
 if (DAL_VERBOSE_CONFIGURE)
   message (STATUS "+------------------------------------------------------------+")

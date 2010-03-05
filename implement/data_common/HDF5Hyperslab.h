@@ -50,7 +50,8 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>[start filling in your text here]
+      <li><a href="http://www.hdfgroup.org/HDF5/doc/UG/UG_frame12Dataspaces.html">HDF5
+      Dataspaces and Partial I/O</a>
     </ul>
     
     <h3>Synopsis</h3>
@@ -126,11 +127,52 @@ namespace DAL { // Namespace DAL -- begin
     with location (2,2) with the selected blocks at locations (2,2), (6,2),
     (10,2), (2,6), (6,6), etc. 
 
-    The extend of the data segments can be computed from the input paraneters as
-    follows:
-    \verbatim
-    start[i]+count[i]*block[i]
-    \endverbatim
+    <b>Rules for Defining Selections</b>
+
+    A selection must have the same number of dimensions (rank) as the dataspace
+    it is applied to, although it may select from only a small region, e.g., a
+    plane from a 3D dataspace. Selections do not affect the extent of the
+    dataspace, the selection may be larger than the dataspace. The boundaries of
+    selections are reconciled with the extent at the time of the data transfer.
+
+    <b>Data Transfer with Selections</b>
+    
+    A data transfer (read or write) with selections is the same as any read or
+    write, except the source and destination dataspace have compatible selections.
+    
+    During the data transfer, the following steps are executed by the library.
+    
+    <ol>
+      <li>The source and destination dataspaces are checked to assure that the
+      selections are compatible.
+      <ol>
+        <li>Each selection must be within the current extent of the dataspace.
+	A selection may be defined to extend outside the current extent of the
+	dataspace, but the dataspace cannot be accessed if the selection is not
+	valid at the time of the access.
+	<li>The total number of points selected in the source and destination
+	must be the same. Note that the dimensionality of the source and
+	destination can be different (e.g., the source could be 2D, the destination
+	1D or 3D), and the shape can be different, but the number of elements
+	selected must be the same.
+      </ol>
+      <li>The data is transferred, element by element.
+    </ol>
+    
+    Selections have an iteration order for the points selected, which can be any
+    permutation of the dimensions involved (defaulting to 'C' array order) or a
+    specific order for the selected points, for selections composed of single
+    array elements with H5Sselect_elements.
+    
+    The elements of the selections are transferred in row-major, or C order. That
+    is, it is assumed that the first dimension varies slowest, the second next
+    slowest, and so forth. For hyperslab selections, the order can be any
+    permutation of the dimensions involved (defaulting to 'C' array order). When
+    multiple hyperslabs are combined, the hyperslabs are coalesced into contiguous
+    reads and writes
+    
+    In the case of point selections, the points are read and written in the order
+    specified.
 
     <table border=0>
       <tr align=center>

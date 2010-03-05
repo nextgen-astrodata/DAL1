@@ -214,6 +214,8 @@ namespace DAL {
     hid_t datatype_p;
     //! Shape of the dataset
     std::vector<hsize_t> shape_p;
+    //! Chunk size for extendible array
+    std::vector<hsize_t> chunksize_p;
     //! Hyperslab for the dataspace attached to the dataset
     std::vector<DAL::HDF5Hyperslab> hyperslab_p;
     
@@ -234,6 +236,13 @@ namespace DAL {
 		 std::vector<hsize_t> const &shape,
 		 hid_t const &datatype=H5T_NATIVE_DOUBLE);
     
+    //! Argumented constructor
+    HDF5Dataset (hid_t const &location,
+		 std::string const &name,
+		 std::vector<hsize_t> const &shape,
+		 std::vector<hsize_t> const &chunksize,
+		 hid_t const &datatype=H5T_NATIVE_DOUBLE);
+    
     // === Destruction ==========================================================
     
     // Destructor
@@ -249,6 +258,11 @@ namespace DAL {
     //! Get the shape of the dataset
     inline std::vector<hsize_t> shape () const {
       return shape_p;
+    }
+    
+    //! Get the chunk size
+    inline std::vector<hsize_t> chunksize () const {
+      return chunksize_p;
     }
     
     //! Get the rank (i.e. the number of axes) of the dataset
@@ -276,6 +290,13 @@ namespace DAL {
 	       std::string const &name,
 	       bool const &create=false);
     
+    //! Open the dataset
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       std::vector<hsize_t> const &shape,
+	       std::vector<hsize_t> const &chunksize,
+	       hid_t const &datatype=H5T_NATIVE_DOUBLE);
+
     //! Open the dataset
     bool open (hid_t const &location,
 	       std::string const &name,
@@ -458,6 +479,8 @@ namespace DAL {
     void setAttributes ();
     //! Open the structures embedded within the current one
     bool openEmbedded (bool const &create);
+    //! Retrieve the size of chunks for the raw data of a chunked layout dataset. 
+    bool getChunksize ();
     
     /*!
       \brief Read the data

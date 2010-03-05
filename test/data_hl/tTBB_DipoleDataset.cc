@@ -26,6 +26,7 @@
 
 // Namespace usage
 using DAL::TBB_DipoleDataset;
+using std::cerr;
 using std::cout;
 using std::endl;
 
@@ -80,7 +81,7 @@ int test_constructors ()
 		      H5P_DEFAULT);
   
   if (fileID < 0) {
-    std::cerr << "ERROR : Failed to open/create file." << endl;
+    cerr << "ERROR : Failed to open/create file." << endl;
     return -1;
   }
   
@@ -104,12 +105,12 @@ int test_constructors ()
 			     H5P_DEFAULT);
     }
   } else {
-    std::cerr << "Skipping tests - unable to open file." << endl;
+    cerr << "Skipping tests - unable to open file." << endl;
     return -1;
   }
   
   if (groupID < 0) {
-    std::cerr << "ERROR : Failed to open/create group." << endl;
+    cerr << "ERROR : Failed to open/create group." << endl;
     return -1;
   }
   
@@ -120,7 +121,7 @@ int test_constructors ()
     TBB_DipoleDataset dataset;
     dataset.summary();
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -129,7 +130,7 @@ int test_constructors ()
     TBB_DipoleDataset dataset (fileID,"DipoleDataset");
     dataset.summary();
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -155,7 +156,7 @@ int test_constructors ()
       }
     }
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -171,7 +172,7 @@ int test_constructors ()
       cout << "-- opened dataset " << name << endl;
     }
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
 
@@ -192,7 +193,7 @@ int test_constructors ()
       cout << "-- Channel name (copy)     = " << dataCopy.getName() << endl;
     }
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -213,6 +214,8 @@ int test_constructors ()
 
 /*!
   \brief Test constructors for a new TBB_DipoleDataset object
+
+  \param filename  -- Name of the HDF5 file to  work with
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
@@ -245,11 +248,11 @@ int test_constructors (std::string const &filename)
 			 it->c_str(),
 			 H5P_DEFAULT);
     } else {
-      std::cerr << "Skipping tests - unable to open group." << endl;
+      cerr << "Skipping tests - unable to open group." << endl;
       return -1;
     }
   } else {
-    std::cerr << "Skipping tests - unable to open file." << endl;
+    cerr << "Skipping tests - unable to open file." << endl;
     return -1;
   }
 
@@ -258,7 +261,7 @@ int test_constructors (std::string const &filename)
     DAL::h5get_names (names,groupID,H5G_DATASET);
     cout << "-- Datasets = " << names << endl;
   } else {
-    std::cerr << "Skipping tests - unable to open group." << endl;
+    cerr << "Skipping tests - unable to open group." << endl;
     return -1;
   }
 
@@ -274,7 +277,7 @@ int test_constructors (std::string const &filename)
 	data.summary();
       }
     } catch (std::string message) {
-      std::cerr << message << endl;
+      cerr << message << endl;
       nofFailedTests++;
     }
     
@@ -292,12 +295,12 @@ int test_constructors (std::string const &filename)
       cout << "--> Summary of object copy:" << endl;
       dataCopy.summary();
     } catch (std::string message) {
-      std::cerr << message << endl;
+      cerr << message << endl;
       nofFailedTests++;
     }
     
   } else {
-    std::cerr << "Skipping tests - no datasets found." << endl;
+    cerr << "Skipping tests - no datasets found." << endl;
     return -1;
   }
   
@@ -339,11 +342,11 @@ int test_attributes (std::string const &filename)
 			 it->c_str(),
 			 H5P_DEFAULT);
     } else {
-      std::cerr << "Skipping tests - unable to open group." << endl;
+      cerr << "Skipping tests - unable to open group." << endl;
       return -1;
     }
   } else {
-    std::cerr << "Skipping tests - unable to open file." << endl;
+    cerr << "Skipping tests - unable to open file." << endl;
     return -1;
   }
 
@@ -351,7 +354,7 @@ int test_attributes (std::string const &filename)
     names.clear();
     DAL::h5get_names (names,groupID,H5G_DATASET);
   } else {
-    std::cerr << "Skipping tests - unable to open group." << endl;
+    cerr << "Skipping tests - unable to open group." << endl;
     return -1;
   }
 
@@ -409,7 +412,7 @@ int test_attributes (std::string const &filename)
     cout << "-- ANTENNA_ORIENTATION_UNIT   = " << antennaOrientationUnit  << endl;
     cout << "-- ANTENNA_ORIENTATION_FRAME  = " << antennaOrientationFrame << endl;
   } else {
-    std::cerr << "Skipping tests - no datasets found." << endl;
+    cerr << "Skipping tests - no datasets found." << endl;
     return -1;
   }
 
@@ -424,6 +427,14 @@ int test_attributes (std::string const &filename)
 //_______________________________________________________________________________
 //                                                                      test_data
 
+/*!
+  \brief Test accessing the underlying dataset
+
+  \param filename  -- Name of the HDF5 file to  work with
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
 int test_data (std::string const &filename)
 {
   cout << "\n[tTBB_DipoleDataset::test_data]\n" << endl;
@@ -451,11 +462,11 @@ int test_data (std::string const &filename)
 			 it->c_str(),
 			 H5P_DEFAULT);
     } else {
-      std::cerr << "Skipping tests - unable to open group." << endl;
+      cerr << "Skipping tests - unable to open group." << endl;
       return -1;
     }
   } else {
-    std::cerr << "Skipping tests - unable to open file." << endl;
+    cerr << "Skipping tests - unable to open file." << endl;
     return -1;
   }
 
@@ -463,29 +474,41 @@ int test_data (std::string const &filename)
     names.clear();
     DAL::h5get_names (names,groupID,H5G_DATASET);
   } else {
-    std::cerr << "Skipping tests - unable to open group." << endl;
+    cerr << "Skipping tests - unable to open group." << endl;
     return -1;
   }
 
-  if (names.size() > 0) {
+  if (names.empty()) {
+    cerr << "-- Skipping tests - unable to find dataset in file" << endl;
+    return -1;
+  }
+
+  //________________________________________________________
+  // Run the tests
+
+  cout << "[1] Read a sequence of blocks from the  dataset ..." << endl;
+  try{
     it = names.begin();
     TBB_DipoleDataset dataset (groupID,*it);
     //
-    int start (0);
-    int blocksize (1024);
-    short * data = new short [blocksize];
-    //
-    dataset.fx (start,blocksize,data);
-    cout << "[" 
-	 << data[0] << "," << data[1] << "," << data[2] << ","
-	 << data[3] << "," << data[4] << "," << data[5] << ","
-	 << data[6] << "," << data[7] << "," << data[8] <<",..]"
-	 << std::endl;
-    //
+    int blocksize = 512;
+    short * data  = new short [blocksize];
+    int start     = 0;
+    unsigned int nofSteps (10);
+    
+    for (unsigned int n(0); n<nofSteps; ++n, start+=blocksize/2) {
+      cout << "-- Start = " << start << endl;
+      // Read in the data ...
+      dataset.fx (start,blocksize,data);
+      // ... and display them
+      show (data,blocksize);
+      cout << endl;
+    }
+    
     delete [] data;
-  } else {
-    std::cerr << "Skipping tests - no datasets found." << endl;
-    return -1;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
   }
   
   // Release HDF5 object identifiers _______________________
