@@ -382,7 +382,6 @@ int test_data (std::string const &filename)
     ++nofFailedTests;
   }
   
-  
   return nofFailedTests;
 }
 

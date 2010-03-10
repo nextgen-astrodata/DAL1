@@ -240,7 +240,7 @@ int test_constructors (std::string const &filename)
 }
 
 //_______________________________________________________________________________
-//                                                                   test_methods
+//                                                                   test_attributes
 
 /*!
   \brief Test the various methods provided by the class
@@ -253,9 +253,9 @@ int test_constructors (std::string const &filename)
 
   \return nofFailedTests -- The number of failed tests.
 */
-int test_methods (std::string const &filename)
+int test_attributes (std::string const &filename)
 {
-  cout << "\n[tTBB_StationGroup::test_methods]\n" << endl;
+  cout << "\n[tTBB_StationGroup::test_attributes]\n" << endl;
 
   int nofFailedTests (0);
   hid_t fileID;
@@ -298,7 +298,7 @@ int test_methods (std::string const &filename)
       std::string trigger_type;
       double trigger_offset;
 #ifdef HAVE_CASA
-      casa::Vector<uint> triggered_antennas;
+//       casa::Vector<uint> triggered_antennas;
       casa::Vector<double> station_position_value;
       casa::Vector<casa::String> station_position_unit;
       std::string stationPositionFrame;
@@ -306,7 +306,7 @@ int test_methods (std::string const &filename)
       casa::Vector<casa::String> beam_direction_unit;
       std::string beam_direction_frame;
 #else
-      std::vector<uint> triggered_antennas;
+//       std::vector<uint> triggered_antennas;
       std::vector<double> station_position_value;
       std::vector<std::string> station_position_unit;
       std::string stationPositionFrame;
@@ -317,7 +317,7 @@ int test_methods (std::string const &filename)
       // retrieve the values ...
       group.getAttribute ("TRIGGER_TYPE",           trigger_type);
       group.getAttribute ("TRIGGER_OFFSET",         trigger_offset);
-      group.getAttribute ("TRIGGERED_ANTENNAS",     triggered_antennas);
+//       group.getAttribute ("TRIGGERED_ANTENNAS",     triggered_antennas);
       group.getAttribute ("STATION_POSITION_VALUE", station_position_value);
       group.getAttribute ("STATION_POSITION_UNIT",  station_position_unit);
       group.getAttribute ("STATION_POSITION_FRAME", stationPositionFrame);
@@ -327,7 +327,7 @@ int test_methods (std::string const &filename)
       //... and display them
       cout << "-- TRIGGER_TYPE           = " << trigger_type           << endl;
       cout << "-- TRIGGER_OFFSET         = " << trigger_offset         << endl;
-      cout << "-- TRIGGERED_ANTENNAS     = " << triggered_antennas     << endl;
+//       cout << "-- TRIGGERED_ANTENNAS     = " << triggered_antennas     << endl;
       cout << "-- STATION_POSITION_VALUE = " << station_position_value << endl;
       cout << "-- STATION_POSITION_UNIT  = " << station_position_unit  << endl;
       cout << "-- STATION_POSITION_FRAME = " << stationPositionFrame   << endl;
@@ -335,65 +335,47 @@ int test_methods (std::string const &filename)
       cout << "-- BEAM_DIRECTION_UNIT    = " << beam_direction_unit    << endl;
       cout << "-- BEAM_DIRECTION_FRAME   = " << beam_direction_frame   << endl;
     }
-  catch (std::string message)
-    {
-      cerr << message << endl;
-      nofFailedTests++;
-    }
-
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   //__________________________________________________________________
   // Retrieve attributes attached to the dipole datasets
-
+  
   cout << "[2] Retrieve attributes attached to the dipole datasets ..." << endl;
   try {
-#ifdef HAVE_CASA
-      // retrieve the values ...
-      casa::Vector<uint> station_id;
-      casa::Vector<uint> rsp_id;
-      casa::Vector<uint> rcu_id;
-      casa::Vector<double> sample_freq_value;
-      casa::Vector<casa::String> sample_freq_unit;
-      casa::Vector<uint> nyquist_zone;
-      casa::Vector<uint> time;
-      casa::Vector<uint> sample_number;
-      casa::Vector<uint> samples_per_frame;
-      casa::Vector<int> sample_offset;
-      casa::Vector<uint> data_length;
-#else
-      // retrieve the values ...
-      std::vector<uint> station_id;
-      std::vector<uint> rsp_id;
-      std::vector<uint> rcu_id;
-      std::vector<double> sample_freq_value;
-      std::vector<std::string> sample_freq_unit;
-      std::vector<uint> nyquist_zone;
-      std::vector<uint> time;
-      std::vector<uint> sample_number;
-      std::vector<uint> samples_per_frame;
-      std::vector<uint> data_length;
-#endif
-      // retrieve the values ...
-      group.getAttributes("STATION_ID",             station_id);
-      group.getAttributes("RSP_ID",                 rsp_id);
-      group.getAttributes("RCU_ID",                 rcu_id);
-      group.getAttributes("SAMPLE_NUMBER",          sample_number);
-      group.getAttributes("SAMPLES_PER_FRAME",      samples_per_frame);
-      group.getAttributes("TIME",                   time);
-      group.getAttributes("NYQUIST_ZONE",           nyquist_zone);
-      group.getAttributes("SAMPLE_FREQUENCY_VALUE", sample_freq_value);
-      group.getAttributes("SAMPLE_FREQUENCY_UNIT",  sample_freq_unit);
-      // ... and display them
-      cout << "-- station_id ........... = " << station_id        << endl;
-      cout << "-- rsp_id ............... = " << rsp_id            << endl;
-      cout << "-- rcu_id ............... = " << rcu_id            << endl;
-      cout << "-- sample_frequency_value = " << sample_freq_value << endl;
-      cout << "-- sample_frequency_unit  = " << sample_freq_unit  << endl;
-      cout << "-- nyquist_zone ......... = " << nyquist_zone      << endl;
-      cout << "-- time ................. = " << time              << endl;
-      cout << "-- sample_number ........ = " << sample_number     << endl;
-      cout << "-- samples_per_frame .... = " << samples_per_frame << endl;
-      cout << "-- sample_offset ........ = " << sample_offset     << endl;
-      cout << "-- Data lengths ......... = " << data_length       << endl;
+    std::vector<uint> station_id;
+    std::vector<uint> rsp_id;
+    std::vector<uint> rcu_id;
+    std::vector<double> sample_freq_value;
+    std::vector<std::string> sample_freq_unit;
+    std::vector<uint> nyquist_zone;
+    std::vector<uint> time;
+    std::vector<uint> sample_number;
+    std::vector<uint> samples_per_frame;
+    std::vector<uint> data_length;
+    // retrieve the values ...
+    group.getAttributes("STATION_ID",             station_id);
+    group.getAttributes("RSP_ID",                 rsp_id);
+    group.getAttributes("RCU_ID",                 rcu_id);
+    group.getAttributes("SAMPLE_NUMBER",          sample_number);
+    group.getAttributes("SAMPLES_PER_FRAME",      samples_per_frame);
+    group.getAttributes("TIME",                   time);
+    group.getAttributes("NYQUIST_ZONE",           nyquist_zone);
+    group.getAttributes("SAMPLE_FREQUENCY_VALUE", sample_freq_value);
+    group.getAttributes("SAMPLE_FREQUENCY_UNIT",  sample_freq_unit);
+    // ... and display them
+    cout << "-- station_id ........... = " << station_id        << endl;
+    cout << "-- rsp_id ............... = " << rsp_id            << endl;
+    cout << "-- rcu_id ............... = " << rcu_id            << endl;
+    cout << "-- sample_frequency_value = " << sample_freq_value << endl;
+    cout << "-- sample_frequency_unit  = " << sample_freq_unit  << endl;
+    cout << "-- nyquist_zone ......... = " << nyquist_zone      << endl;
+    cout << "-- time ................. = " << time              << endl;
+    cout << "-- sample_number ........ = " << sample_number     << endl;
+    cout << "-- samples_per_frame .... = " << samples_per_frame << endl;
+    cout << "-- Data lengths ......... = " << data_length       << endl;
   }
   catch (std::string message) {
     cerr << message << endl;
@@ -421,31 +403,37 @@ int test_methods (std::string const &filename)
     nofFailedTests++;
   }
 
-  //__________________________________________________________________
-  // Test construction of higher-level products from the attributes
-
-#ifdef HAVE_CASA
-  cout << "[3] Higher-level products derived from the attributes" << endl;
-  try
-    {
-      casa::MPosition station_position = group.station_position();
-      casa::MDirection beam_direction  = group.beam_direction();
-      //
-      cout << "-- Station position = " << station_position << endl;
-      cout << "-- Beam direction   = " << beam_direction   << endl;
-    }
-  catch (std::string message)
-    {
-      cerr << message << endl;
-      nofFailedTests++;
-    }
-#endif
-
   // release the file ID
   h5error = H5Fclose (fileID);
 
   return nofFailedTests;
 }
+
+//_______________________________________________________________________________
+//                                                                  test_measures
+
+// int test_measures (std::string const &filename)
+// {
+//   cout << "\n[test_measures]\n" << endl;
+
+//   int nofFailedTests (0);
+
+//   cout << "[1] Higher-level products derived from the attributes" << endl;
+//   try
+//     {
+//       casa::MPosition station_position = group.station_position();
+//       casa::MDirection beam_direction  = group.beam_direction();
+//       //
+//       cout << "-- Station position = " << station_position << endl;
+//       cout << "-- Beam direction   = " << beam_direction   << endl;
+//     }
+//   catch (std::string message) {
+//     cerr << message << endl;
+//     nofFailedTests++;
+//   }
+  
+//   return nofFailedTests;
+// }
 
 //_______________________________________________________________________________
 //                                                             test_export2record
@@ -675,9 +663,17 @@ int main (int argc,
     // Test for the constructor(s)
     nofFailedTests += test_constructors (filename);
     // Test methods to retrieve attributes
-    nofFailedTests += test_methods (filename);
+    nofFailedTests += test_attributes (filename);
     // Test access to the data
     nofFailedTests += test_data (filename);
+
+    // Specific tests which require casacore
+    
+// #ifdef HAVE_CASA
+//     nofFailedTests += test_measures (filename);
+//     nofFailedTests += test_export2record (filename);
+// #endif
+    
   } else {
     cout << "\n[tTBB_StationGroup] Skipping tests with input dataset.\n"
 	 << endl;
