@@ -31,7 +31,7 @@ endforeach (src)
 ##_______________________________________________________________________________
 ##                                                           Testing instructions
 
-## tdalDataset
+## tdalDataset ___________________________________
 
 if (dataset_ms)
   add_test (tdalDataset_ms tdalDataset ${dataset_ms})
@@ -49,15 +49,19 @@ if (dataset_fits)
   add_test (tdalDataset_fits tdalDataset ${dataset_fits})
 endif (dataset_fits)
 
-## tdalArray
+## tdalArray _____________________________________
 
 add_test (tdalArray tdalArray)
 
-## tdalGroup
+## tdalFilter ____________________________________
+
+add_test (tdalFilter tdalFilter)
+
+## tdalGroup _____________________________________
 
 add_test (tdalGroup tdalGroup)
 
-## tdalTable
+## tdalTable _____________________________________
 
 add_test (tdalTable1 tdalTable)
 
@@ -65,7 +69,7 @@ if (dataset_beamformed)
   add_test (tdalTable2 tdalTable ${dataset_beamformed})
 endif (dataset_beamformed)
 
-## tdalCommon
+## tdalCommon ____________________________________
   
 add_test (tdalCommon_test1 tdalCommon)
 

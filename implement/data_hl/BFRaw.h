@@ -75,8 +75,8 @@ namespace DAL {
   private:
     // declare handle for the input file
     dalTable ** table;
-    fstream * rawfile;
-    string outputfilename;
+    std::fstream * rawfile;
+    std::string outputfilename;
     dalDataset dataset;
     //! Header structure of the raw BF data
     BFRaw_Header header;

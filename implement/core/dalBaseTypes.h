@@ -22,10 +22,14 @@
  ***************************************************************************/
 
 /*!
-  \class dalBaseTypes
+  \file dalBaseTypes.h
+
   \ingroup DAL
   \ingroup core
+
   \brief Basic type definitions and byte swapping routines.
+
+  \author Joseph Masters, Lars B&auml;hren
 */
 
 #ifndef DALBASETYPES_H
@@ -88,37 +92,55 @@ namespace bpl = boost::python;
 const int32_t CHUNK_SIZE = 5000;
 const int32_t MAX_COL_NAME_SIZE = 256;
 
-// ----------------------------------------------------- USG code
-
 namespace DAL {
 
-  using namespace std;
+  // === Enumerations ===========================================================
 
+  //! Underlying file type
+  enum dalFileType {
+    //! HDF5 file
+    HDF5,
+    //! FITS file
+    FITS,
+    //! CASA MeasurementSet
+    MSCASA,
+    //! Undefined type of file
+    UNDEFINED
+  };
+
+  //! Convert file type to name
+  std::string fileType (DAL::dalFileType const &type);
+  //! Convert file type name to type
+  DAL::dalFileType fileType (std::string const &name);
+
+  // === Constant global variables ==============================================
+  
   const std::string H5TYPE     = "HDF5";
   const std::string FITSTYPE   = "FITS";
   const std::string MSCASATYPE = "MSCASA";
-
+  
   const bool SUCCESS = true;
-  const bool FAIL = false;
-
+  const bool FAIL    = false;
+  
   const std::string dal_CHAR   = "dalCHAR";
   const std::string dal_STRING = "dalSTRING";
   const std::string dal_BOOL   = "dalBOOL";
-
+  
   const std::string dal_SHORT         = "dalSHORT";
   const std::string dal_INT           = "dalINT";
   const std::string dal_UINT          = "dalINT";
   const std::string dal_LONG          = "dalLONG";
-
+  
   const std::string dal_FLOAT         = "dalFLOAT";
   const std::string dal_DOUBLE        = "dalDOUBLE";
-
+  
   const std::string dal_COMPLEX       = "dalCOMPLEX";
   const std::string dal_DCOMPLEX      = "dalDCOMPLEX";
   const std::string dal_COMPLEX_CHAR  = "dalCOMPLEX_CHAR";
   const std::string dal_COMPLEX_SHORT = "dalCOMPLEX_SHORT";
 
-  // define a few datatypes
+  // === Type definitions =======================================================
+  
   typedef unsigned char         UInt8;
   typedef unsigned short       UInt16;
   typedef short                 Int16;
@@ -129,32 +151,32 @@ namespace DAL {
   typedef unsigned long long   UInt64;
   typedef double              Float64;
 
+  // === Structs ================================================================
+  
   struct dalcomplex
-    {
-      Float64 r;  // real
-      Float64 i;  // imaginary
-    };
-
+  {
+    Float64 r;  // real
+    Float64 i;  // imaginary
+  };
+  
   struct dalcomplex_float32
-    {
-      Float32 r;  // real
-      Float32 i;  // imaginary
-    };
-
+  {
+    Float32 r;  // real
+    Float32 i;  // imaginary
+  };
+  
   struct dalcomplex_int16
-    {
-      Int16 r;  // real
-      Int16 i;  // imaginary
-    };
-
+  {
+    Int16 r;  // real
+    Int16 i;  // imaginary
+  };
+  
   struct dalcomplex_char
-    {
-      char r;  // real
-      char i;  // imaginary
-    };
-
-  bool BigEndian( void );
-
+  {
+    char r;  // real
+    char i;  // imaginary
+  };
+  
 } // DAL namespace
 
 #ifndef CONVERT_H

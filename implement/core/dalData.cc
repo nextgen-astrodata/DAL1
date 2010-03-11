@@ -217,13 +217,13 @@ namespace DAL {
       }
 
     if ( dal_COMPLEX == dataType_p )
-      return (&(((complex<float>*)data)[ index ]));
+      return (&(((std::complex<float>*)data)[ index ]));
 
     else if ( dal_COMPLEX_CHAR == dataType_p )
-      return (&(((complex<char>*)data)[ index ]));
+      return (&(((std::complex<char>*)data)[ index ]));
 
     else if ( dal_COMPLEX_SHORT == dataType_p )
-      return (&(((complex<short>*)data)[ index ]));
+      return (&(((std::complex<short>*)data)[ index ]));
 
     else if ( dal_DOUBLE == dataType_p )
       return (&(((double*)data)[ index ]));
@@ -302,13 +302,13 @@ namespace DAL {
       return num_util::makeNum(((double*)data)+offset,mydims);
     }
     else if ( dal_COMPLEX == dataType_p ) {
-      return num_util::makeNum(((complex<float>*)data)+offset,mydims);
+      return num_util::makeNum(((std::complex<float>*)data)+offset,mydims);
     }
     else if ( dal_COMPLEX_CHAR == dataType_p ) {
-      return num_util::makeNum(((complex<char>*)data)+offset,mydims);
+      return num_util::makeNum(((std::complex<char>*)data)+offset,mydims);
     }
     else if ( dal_COMPLEX_SHORT == dataType_p ) {
-      return num_util::makeNum(((complex<short>*)data)+offset,mydims);
+      return num_util::makeNum(((std::complex<short>*)data)+offset,mydims);
     }
     else if ( dal_STRING == dataType_p ) {
       bpl::list data_list;

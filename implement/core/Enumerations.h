@@ -28,8 +28,7 @@
 #include <iostream>
 #include <string>
 
-namespace DAL   // Namespace DAL -- begin
-  {
+namespace DAL {   // Namespace DAL -- begin
 
   /*!
     \file Enumerations.h

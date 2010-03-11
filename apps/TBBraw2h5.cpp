@@ -592,8 +592,7 @@ int main(int argc, char *argv[])
     }
   
 
-  if (keepRunning) 
-    { 
+  if (keepRunning) { 
       outfileOrig = outfile ; 
     };
   // -----------------------------------------------------------------
@@ -602,7 +601,7 @@ int main(int argc, char *argv[])
     {
     if (keepRunning) 
       {
-	ostringstream temp;
+	std::ostringstream temp;
 	temp << outfileOrig << "-" << runNumber;
 	outfile = temp.str();
 	runNumber++;

@@ -33,7 +33,26 @@
 #include <dal.h>
 #include <dalCommon.h>
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                      test_H5TB
+
+/*!
+  \brief Test the various methods of the HDF5 Table API
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function
+*/
+int test_H5TB ()
+{
+  std::cout << "\n[tdalTable::test_H5TB]\n" << std::endl;
+
+  int nofFailedTests (0);
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                              test_constructors
 
 /*!
   \brief Test the various constructors for an object of type dalTable

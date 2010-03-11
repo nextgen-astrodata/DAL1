@@ -33,14 +33,16 @@ namespace DAL {
   //
   // ============================================================================
   
-  // ------------------------------------------------------------------- dalTable
+  //_____________________________________________________________________________
+  //                                                                    dalFilter
   
   dalTable::dalTable()
   {
     filter = new dalFilter;
   }
   
-  // ------------------------------------------------------------------- dalTable
+  //_____________________________________________________________________________
+  //                                                                    dalFilter
   
   /*!
     \param filetype -- The type of table you want to create (i.e. "HDF5",
@@ -69,6 +71,9 @@ namespace DAL {
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                   ~dalFilter
+  
   dalTable::~dalTable()
   {
     delete filter;
@@ -79,7 +84,14 @@ namespace DAL {
     }
   }
   
-  // -------------------------------------------------------------------- summary
+  // ============================================================================
+  //
+  //  Methods
+  //
+  // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                      summary
   
   /*!
     \param os -- The output stream to which the summary is going to be written
@@ -123,13 +135,14 @@ namespace DAL {
     }
   }
   
-  // ---------------------------------------------------------- getColumn
+  //_____________________________________________________________________________
+  //                                                                    getColumn
   
   /*!
     \param colname The name of the column to retrieve.
     \return Pointer to dalColumn object.
   */
-  dalColumn * dalTable::getColumn( std::string colname )
+  dalColumn * dalTable::getColumn ( std::string colname )
   {
     if ( type == MSCASATYPE ) {
 #ifdef HAVE_CASA
@@ -166,7 +179,8 @@ namespace DAL {
     }
   }
   
-  // ------------------------------------------------------- getColumn_Float32
+  //_____________________________________________________________________________
+  //                                                            getColumn_Float32
   
   /*!
   \brief Get a column object from a table.
@@ -207,15 +221,16 @@ namespace DAL {
     return NULL;
   }
   
-  // ---------------------------------------------- getColumn_complexFloat32
+  //_____________________________________________________________________________
+  //                                                     getColumn_complexFloat32
   
   /*!
-  \brief Get a column object from a table.
-
-   Gets a column object from a table object.
-
-   \param colname The name of the column you want to get from the table.
-   \return dalColumn Pointer to a column object.
+    \brief Get a column object from a table.
+    
+    Gets a column object from a table object.
+    
+    \param colname The name of the column you want to get from the table.
+    \return dalColumn Pointer to a column object.
   */
   dalColumn * dalTable::getColumn_complexFloat32( std::string colname )
   {
@@ -246,9 +261,9 @@ namespace DAL {
     return NULL;
   }
 
-
-  // ------------------------------------------------ getColumn_complexInt16
-
+  //_____________________________________________________________________________
+  //                                                       getColumn_complexInt16
+  
   /*!
   \brief Get a column object from a table.
 
@@ -294,9 +309,9 @@ namespace DAL {
       }
   }
 
-
-  // ---------------------------------------------------------- setFilter
-
+  //_____________________________________________________________________________
+  //                                                                    setFilter
+  
   /*!
   \brief Set a filter on the table.
 
@@ -313,26 +328,26 @@ namespace DAL {
     filter->set(columns);
   }
 
-
-  // ---------------------------------------------------------- setFilter
-
+  //_____________________________________________________________________________
+  //                                                                    setFilter
+  
   /*!
-  \brief Set a filter on the table.
-
-  Sets a filter on the table so that when it is opened, it will only
-  contain a subset of information contained within the full dataset table.
-
-  \param columns A comma-separated list of columns you wish read from the
-                 table.
-  \param conditions The condition you wish to apply to the columns in the
-                   filter.  For example: "TIME>100".
+    \brief Set a filter on the table.
+    
+    Sets a filter on the table so that when it is opened, it will only
+    contain a subset of information contained within the full dataset table.
+    
+    \param columns A comma-separated list of columns you wish read from the
+           table.
+    \param conditions The condition you wish to apply to the columns in the
+           filter.  For example: "TIME>100".
   */
   void dalTable::setFilter( std::string columns, std::string conditions )
   {
     filter->setFiletype( type );
     filter->set(columns,conditions);
   }
-
+  
   // ---------------------------------------------------------- getColumnData
 
   /*!
@@ -396,7 +411,7 @@ namespace DAL {
                 std::cerr << "shape: " << array_vals_comp.shape() << endl;
                 std::cerr << "size: " << array_vals_comp.size() << endl;
 #endif
-                std::vector< complex< float > > valvec;
+                std::vector< std::complex< float > > valvec;
                 array_vals_comp.tovector( valvec );
 #ifdef DEBUGGING_MESSAGES
                 std::cerr << valvec[0] << valvec[1] << valvec[2] << endl;
@@ -731,7 +746,7 @@ namespace DAL {
 
         for (unsigned int ii=0; ii<nfields; ii++)
           {
-            std::cerr << setw(17) << field_names[ii];
+            std::cerr << std::setw(17) << field_names[ii];
             free(field_names[ii]);
           }
         free(field_names);
@@ -827,49 +842,45 @@ namespace DAL {
                                     bool &removedummy)
   {
     // make sure the column name isn't blank
-    if ( 0 == column_name.length() )
-      {
-        std::cerr << "WARNING: Trying to add column without a name.\n";
-        return;
-      }
-
+    if ( 0 == column_name.length() ) {
+      std::cerr << "WARNING: Trying to add column without a name.\n";
+      return;
+    }
+    
     // retrieve table information
-    H5TBget_table_info ( fileID_p, name.c_str(), &nfields, &nofRecords_p );
-
-
-    // allocate space for the column/field names and retrieve them from
-    // the table
+    H5TBget_table_info (fileID_p,
+			name.c_str(),
+			&nfields,
+			&nofRecords_p);
+    
+    /* Allocate space for the column/field names and retrieve them from
+       the table */
     field_names = (char**)malloc( nfields * sizeof(char*) );
-    for (unsigned int ii=0; ii<nfields; ii++)
-      {
-        field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
-      }
+    for (unsigned int ii=0; ii<nfields; ii++) {
+      field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+    }
     status = H5TBget_field_info( fileID_p, name.c_str(), field_names, NULL,
                                  NULL, NULL );
-
+    
     // check to make sure column doesn't already exist
-    for (unsigned int ii=0; ii<nfields; ii++)
-      {
-        if (0 == strcmp( column_name.c_str(), field_names[ii] ))
-          {
-            std::cerr << "WARNING: Cannot create column \'"
-                      << column_name.c_str()
-                      <<	"\'. Column already exists." << endl;
-            return;
-          }
-        else if (0 == strcmp("000dummy000",field_names[ii]))
-          {
-            removedummy = true;
-          }
+    for (unsigned int ii=0; ii<nfields; ii++) {
+      if (0 == strcmp( column_name.c_str(), field_names[ii] )) {
+	std::cerr << "WARNING: Cannot create column \'"
+		  << column_name.c_str()
+		  <<	"\'. Column already exists." << endl;
+	return;
       }
-
-    for (unsigned int ii=0; ii<nfields; ii++)
-      {
-        free(field_names[ii]);
+      else if (0 == strcmp("000dummy000",field_names[ii])) {
+	removedummy = true;
       }
+    }
+    
+    for (unsigned int ii=0; ii<nfields; ii++) {
+      free(field_names[ii]);
+    }
     free(field_names);
   }
-
+  
   //_____________________________________________________________________________
   //                                                           h5addColumn_insert
 
@@ -886,20 +897,27 @@ namespace DAL {
   {
     // set additional required fields for new column call
     int * data = NULL;
-    data = new int[ indims ];
-    for (unsigned int idx=0; idx<indims; idx++)
+    data       = new int[indims];
+
+    for (unsigned int idx=0; idx<indims; idx++) {
       data[idx] = 0;
+    }
 
     // create the new column
-    status = H5TBinsert_field( fileID_p, name.c_str(), colname.c_str(),
-                               field_type, nfields, data, data );
+    status = H5TBinsert_field (fileID_p,
+			       name.c_str(),
+			       colname.c_str(),
+                               field_type,
+			       nfields,
+			       data,
+			       data);
 
     delete [] data;
     data = NULL;
 
-    if ( removedummy )
+    if ( removedummy ) {
       removeColumn("000dummy000");
-
+    }
   }
 
   //_____________________________________________________________________________
@@ -1009,12 +1027,11 @@ namespace DAL {
 	      H5Tinsert( h5type, cv[ii].getName().c_str(), offset, lcl_datatype );
 	    }
 	}
-      else
-	{
-	  std::cerr << "ERROR: column type " << coltype << " is not supported."
-		    << endl;
-	  return;
-	}
+      else {
+	std::cerr << "ERROR: column type " << coltype << " is not supported."
+		  << endl;
+	return;
+      }
       if ((*dims) > 1)
 	field_type = H5Tarray_create1( h5type, 1, dims, NULL );
       else
@@ -1022,10 +1039,9 @@ namespace DAL {
       
       h5addColumn_insert( indims, colname, field_type, removedummy );
     }
-    else
-      {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
-      }
+    else {
+      std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+    }
   }
   
   //_____________________________________________________________________________
@@ -1091,19 +1107,17 @@ namespace DAL {
                 H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,
                            H5T_NATIVE_INT);
               }
-            else if ( dal_FLOAT == foo[ii].getType() )
-              {
-                H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,
-                           H5T_NATIVE_FLOAT);
-              }
-            else if ( dal_DOUBLE == foo[ii].getType() )
-              {
-                H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,
-                           H5T_NATIVE_DOUBLE);
-              }
+            else if ( dal_FLOAT == foo[ii].getType() ) {
+	      H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,
+			 H5T_NATIVE_FLOAT);
+	    }
+            else if ( dal_DOUBLE == foo[ii].getType() ) {
+	      H5Tinsert( fieldtype, foo[ii].getName().c_str(), offset,
+			 H5T_NATIVE_DOUBLE);
+	    }
           }
-
-// ----------   end complex column-specific code. -------------
+	
+	// ----------   end complex column-specific code. -------------
 
         h5addColumn_insert( subfields, compname, fieldtype, removedummy );
 
@@ -1157,50 +1171,46 @@ namespace DAL {
                                      NULL, NULL );
 
         bool columnpresent = false;
-        for (unsigned int ii=0; ii < nfields; ii++)
-          {
-
-            if (0 == strcmp(colname.c_str(),field_names[ii]))
-              {
-
-                status = H5TBdelete_field( fileID_p, name.c_str(),
-                                           field_names[ii]);
-
-                status = H5TBget_table_info ( fileID_p, name.c_str(),
-                                              &nfields, &nofRecords_p );
-                columnpresent = true;
-                break;
-
-              }
-          }
-
-        for (unsigned int ii=0; ii<nfields_start; ii++)
-          {
-            free(field_names[ii]);
-          }
+        for (unsigned int ii=0; ii < nfields; ii++) {
+	  
+	  if (0 == strcmp(colname.c_str(),field_names[ii])) {
+	    
+	    status = H5TBdelete_field( fileID_p, name.c_str(),
+				       field_names[ii]);
+	    
+	    status = H5TBget_table_info ( fileID_p, name.c_str(),
+					  &nfields, &nofRecords_p );
+	    columnpresent = true;
+	    break;
+	    
+	  }
+	}
+	
+        for (unsigned int ii=0; ii<nfields_start; ii++) {
+	  free(field_names[ii]);
+	}
         free(field_names);
-
+	
         if ( !columnpresent )
           std::cerr << "WARNING: Column \'" << colname <<
-                    "\' not present.  Cannot delete." << endl;
+	    "\' not present.  Cannot delete." << endl;
       }
-    else
-      {
-        std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
-      }
+    else {
+      std::cerr << "Operation not yet supported for type " << type << ".  Sorry.\n";
+    }
   }
-
+  
   // ----------------------------------------------------- writeDataByColNum
-
+  
   /*!
-  \brief Write data to a column identified by it's position.
-
-  Write data to a column identified by it's position within the table.
-
-  \param data A pointer to a structure containing the data you want
-                   to write.
-  \param index The position of the column you want to write to.
-  \param rownum The row position where you want to start writing data.
+    \brief Write data to a column identified by it's position.
+    
+    Write data to a column identified by it's position within the table.
+    
+    \param data A pointer to a structure containing the data you want
+    to write.
+    \param index The position of the column you want to write to.
+    \param rownum The row position where you want to start writing data.
   */
   void dalTable::writeDataByColNum (void * data,
 				    int index,

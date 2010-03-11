@@ -234,7 +234,7 @@ namespace DAL {
    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalArray::write (int offset,
-			complex<float> data[],
+			std::complex<float> data[],
 			int arraysize)
   {
     hsize_t      dims[1] = { arraysize };
@@ -312,7 +312,9 @@ namespace DAL {
    \param arraysize Size of the array to write.
    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalArray::write( int offset, complex<Int16> data[], int arraysize )
+  bool dalArray::write( int offset,
+			std::complex<Int16> data[],
+			int arraysize)
   {
     hsize_t      dims[1] = { arraysize };
     hsize_t      off[1]  = { offset };
@@ -788,31 +790,30 @@ namespace DAL {
 
     short * data = NULL;  // declare a pointer to the data
 
-    try
-      {
-        data = new short[size];  // allocate space for the data
-      }
-    catch ( bad_alloc )
+    try {
+      data = new short[size];  // allocate space for the data
+    }
+    catch ( std::bad_alloc )
       {
         std::cerr << "Can't allocate memory for reading short array '"
                   << arrayname << "'.\n";
         return NULL;
       }
-
+    
     // read the data into the local array
     if ( ( H5LTread_dataset_short( obj_id, arrayname.c_str(), data ) ) < 0 )
       {
         std::cerr << "ERROR: Could not read array '" << arrayname << "'.\n";
         return NULL;
       }
-
+    
     return data;  // return the data pointer
-
+    
   }
-
-
-// ------------------------------------------------------------ dalIntArray
-
+  
+  
+  // ------------------------------------------------------------ dalIntArray
+  
   /********************************************************************
    *  dalIntArray constructor creates an n-dimensional
    *    array of Integers.
@@ -991,7 +992,7 @@ namespace DAL {
       {
         data = new int[size];  // allocate space for the data
       }
-    catch ( bad_alloc )
+    catch ( std::bad_alloc )
       {
         std::cerr << "Can't allocate memory for reading array '"
                   << arrayname << "'.\n";
@@ -1165,7 +1166,7 @@ namespace DAL {
     hid_t obj_id,
     string arrayname,
     vector<int> dims,
-    complex<float> data[],
+    std::complex<float> data[],
     vector<int> chnkdims )
   {
     // declare a few h5 variables
@@ -1313,14 +1314,13 @@ namespace DAL {
                 array.  The size of the structure should match the dimensions
                of the array.
     \param chnkdims Specifies the chunk size for extendible arrays.
-   */
-  dalComplexArray_int16::dalComplexArray_int16( hid_t obj_id,
-      string arrayname,
-      vector<int> dims,
-      complex<Int16> data[],
-      vector<int> chnkdims )
+  */
+  dalComplexArray_int16::dalComplexArray_int16 (hid_t obj_id,
+						string arrayname,
+						vector<int> dims,
+						std::complex<Int16> data[],
+						vector<int> chnkdims )
   {
-
     // declare a few h5 variables
     hid_t datatype  = 0;
     hid_t dataspace = 0;

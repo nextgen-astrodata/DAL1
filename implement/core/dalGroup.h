@@ -119,12 +119,12 @@ namespace DAL {
     
     dalArray * createComplexFloatArray( std::string arrayname,
 					std::vector<int> dims,
-					complex<float> data[],
+					std::complex<float> data[],
 					std::vector<int>cdims );
     
     dalArray * createComplexShortArray( std::string arrayname,
 					std::vector<int> dims,
-					complex<Int16> data[],
+					std::complex<Int16> data[],
 					std::vector<int>cdims );
     //! Retrief the array or table member names from the group.
     std::vector<std::string> getMemberNames();

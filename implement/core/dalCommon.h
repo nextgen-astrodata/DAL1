@@ -34,6 +34,7 @@
 #include <set>
 #include <vector>
 
+using std::cerr;
 using std::cout;
 using std::endl;
 
@@ -105,7 +106,9 @@ using casa::Quantity;
     - DAL::mjd2unix
   - Service functions
     - DAL::it_exists
+    - DAL::BigEndian
   - Routines for the access of HDF5 attributes
+    - DAL::h5attribute_summary
   - Boost.Python wrappers
     - DAL::mjd2unix_boost
 
@@ -118,11 +121,11 @@ namespace DAL {
   //  Conversion/Computation routines
   //
   // ============================================================================
-  
+
   //! Byte swap routine
   void swapbytes (char *addr,
 		  int8_t nbytes);
-
+  
   //! Convert UNIX time in to Julian Day
   long double julday (time_t seconds,
                       long *intmjd,
@@ -155,6 +158,9 @@ namespace DAL {
   //  Service routines
   //
   // ============================================================================
+  
+  //! Test if the system is big endian
+  bool BigEndian ( void );
   
   /*!
     \brief Allocate the memory for a dynamic 2-dimensional array

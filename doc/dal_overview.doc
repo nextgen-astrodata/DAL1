@@ -140,6 +140,12 @@
   The \b data_common directory collects a number of classes and routines, which
   act as a foundation to the various classes providing a high-level interface
   to access LOFAR standard datasets.
+
+  The more specific classes cover the creation of and interaction with HDF5 data
+  structures:
+  - DAL::HDF5Dataset
+  - DAL::HDF5Hyperslab
+  - DAL::HDF5Table
 */
 
 //_______________________________________________________________________________

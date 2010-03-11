@@ -295,11 +295,14 @@ namespace DAL {
   {
     off_online = std::string("offline");
     delete rawfile;
-    rawfile = new fstream( filename, ios::binary|ios::in );
-    rawfile->seekg(0, ios::end); // move to end of file to determine its file size
-    file_byte_size = static_cast<unsigned long int>(rawfile->tellg())-2; // see how many bytes in file
+    rawfile = new std::fstream( filename, std::ios::binary|std::ios::in );
+    /* Move to end of file to determine its file size */
+    rawfile->seekg(0, std::ios::end);
+    /* See how many bytes are in the file */
+    file_byte_size = static_cast<unsigned long int>(rawfile->tellg())-2;
     //std::cout << "filesize in bytes: " << file_byte_size << std::endl;
-    rawfile->seekg(0, ios::beg);  // move to start of file
+    /* Move to the begin of the file */
+    rawfile->seekg(0, std::ios::beg);
   }
   
   // ---------------------------------------------------------- readRawFileHeader
@@ -312,80 +315,77 @@ namespace DAL {
         cout << "ERROR: problem with read (header)." << endl;
         cout << "read pointer position: " << rawfile->tellg() << endl;
       }
-
+    
 #ifdef DEBUGGING_MESSAGES
     printf("size of file header: %lu\n", sizeof(header));
     cout << "read pointer position: " << rawfile->tellg() << endl;
 #endif
-
+    
     // swap values when necessary
     if ( !bigendian )
       {
         // change byte order for all frequencies.
-        for (int ii = 0; ii < maxNrSubbands; ii++)
-          {
-            swapbytes((char *)&header.subbandFrequencies[ii],8);
-            swapbytes((char *)&header.subbandToBeamMapping,2);
-          }
-
-        for (int ii=0;ii<8;ii++)
-          {
-            for (int jj=0;jj<2;jj++)
-              {
-                swapbytes((char *)&header.beamDirections[ii][jj],8);
-              }
-          }
-
+        for (int ii = 0; ii < maxNrSubbands; ii++) {
+	  swapbytes((char *)&header.subbandFrequencies[ii],8);
+	  swapbytes((char *)&header.subbandToBeamMapping,2);
+	}
+	
+        for (int ii=0;ii<8;ii++) {
+	  for (int jj=0;jj<2;jj++) {
+	    swapbytes((char *)&header.beamDirections[ii][jj],8);
+	  }
+	}
+	
         // change byte order for subbands.
         swapbytes((char *)&header.nrSubbands,2);
-
+	
         // change byte order for nrSamplesPerSubband
         swapbytes((char *)&header.nrSamplesPerSubband,4);
-
+	
         // change byte order for sampleRate
         swapbytes((char *)&header.sampleRate,8);
-
+	
         // change byte order for Magic Number
         swapbytes((char *)&header.magic,4);
-
+	
       }
-			// calculate the size of a one second datablock
-			oneSecondBlockSize =
-					sizeof(blockheader)
-					+
-					(	header.nrSamplesPerSubband * header.nrSubbands * sizeof(Sample) );
-			
-			nrOfBlocks = (file_byte_size - sizeof(header)) / oneSecondBlockSize;
-			std::cout << "Number of one second blocks in file: " << nrOfBlocks << std::endl;
-
-			// allocating memory for possible downsampling and intensity calculations
-			ds_size = header.nrSamplesPerSubband / downsample_factor;
-			if ( doDownsample_p ) { // if downsampling
-				try {
+    // calculate the size of a one second datablock
+    oneSecondBlockSize =
+      sizeof(blockheader)
+      +
+      (	header.nrSamplesPerSubband * header.nrSubbands * sizeof(Sample) );
+    
+    nrOfBlocks = (file_byte_size - sizeof(header)) / oneSecondBlockSize;
+    std::cout << "Number of one second blocks in file: " << nrOfBlocks << std::endl;
+    
+    // allocating memory for possible downsampling and intensity calculations
+    ds_size = header.nrSamplesPerSubband / downsample_factor;
+    if ( doDownsample_p ) { // if downsampling
+      try {
 #ifdef DEBUGGING_MESSAGES
-				std::cout << "Allocating " << ds_size * sizeof(Float32) << " bytes for downsampled data..." << std::endl;
+	std::cout << "Allocating " << ds_size * sizeof(Float32) << " bytes for downsampled data..." << std::endl;
 #endif
-					ds_data = new Float32[ ds_size ];
-				}
-				catch (bad_alloc) {
-					cerr << "Can't allocate memory for downsampled array." << endl;
-				}
-				memset(ds_data, 0, ds_size * sizeof(Float32) );
-			}
-			else {
-				if ( DO_FLOAT32_INTENSITY ) {
-					try
-					{
-						totalintensity = new Float32[ header.nrSamplesPerSubband ];
-					}
-					catch (bad_alloc)
-					{
-						cerr << "Can't allocate memory for total intensity array." << endl;
-					}
-					memset(totalintensity, 0, header.nrSamplesPerSubband * sizeof(Float32) );
-				}
-			}
-			
+	ds_data = new Float32[ ds_size ];
+      }
+      catch (std::bad_alloc) {
+	cerr << "Can't allocate memory for downsampled array." << endl;
+      }
+      memset(ds_data, 0, ds_size * sizeof(Float32) );
+    }
+    else {
+      if ( DO_FLOAT32_INTENSITY ) {
+	try
+	  {
+	    totalintensity = new Float32[ header.nrSamplesPerSubband ];
+	  }
+	catch (std::bad_alloc)
+	  {
+	    cerr << "Can't allocate memory for total intensity array." << endl;
+	  }
+	memset(totalintensity, 0, header.nrSamplesPerSubband * sizeof(Float32) );
+      }
+    }
+    
 #ifdef DEBUGGING_MESSAGES
     printf("Magic number: %8X\n",header.magic);
     printf("bits per sample: %u\n",header.bitsPerSample);
@@ -423,18 +423,18 @@ namespace DAL {
       }
 #endif
   }
-
+  
   // ---------------------------------------------------------- readRawSocketHeader
-
+  
   bool BFRaw::readRawSocketHeader()
   {
-		if (recvfrom(server_socket, reinterpret_cast<char *>(&header), sizeof(header),0,  (sockaddr *) &incoming_addr, &socklen) < static_cast<int>(sizeof(header))) {
-			cerr << "error reading header from socket" << endl;
-			close(server_socket);
-			perror("readRawSocketHeader");
+    if (recvfrom(server_socket, reinterpret_cast<char *>(&header), sizeof(header),0,  (sockaddr *) &incoming_addr, &socklen) < static_cast<int>(sizeof(header))) {
+      cerr << "error reading header from socket" << endl;
+      close(server_socket);
+      perror("readRawSocketHeader");
       return false;
-		}
-
+    }
+    
     // swap values when necessary
     if ( !bigendian )
       {
@@ -444,7 +444,7 @@ namespace DAL {
             swapbytes((char *)&header.subbandFrequencies[ii],8);
             swapbytes((char *)&header.subbandToBeamMapping,2);
           }
-
+	
         for (int ii=0;ii<8;ii++)
           {
             for (int jj=0;jj<2;jj++)
@@ -452,7 +452,7 @@ namespace DAL {
                 swapbytes((char *)&header.beamDirections[ii][jj],8);
               }
           }
-
+	
         // change byte order for beamlets.
         swapbytes((char *)&header.nrSubbands,2);
         // change byte order for nrSamplesPerSubband
@@ -461,50 +461,48 @@ namespace DAL {
         swapbytes((char *)&header.sampleRate,8);
         // change byte order for Magic Number
         swapbytes((char *)&header.magic,4);
-
-      }
 	
-	dataSize = header.nrSamplesPerSubband*header.nrSubbands;
-
+      }
+    
+    dataSize = header.nrSamplesPerSubband*header.nrSubbands;
+    
 #ifdef DEBUGGING_MESSAGES
-			cout << "Allocating " << sizeof(Sample) * dataSize << " bytes for input databuffer" << endl;
+    cout << "Allocating " << sizeof(Sample) * dataSize << " bytes for input databuffer" << endl;
 #endif
-		sampledata = new Sample[ dataSize ]; // sample contains 8 bytes
-			
-			// allocating memory for possible down sampling and intensity calculations
-//			ds_data = NULL;
-//			totalintensity = NULL;
-			ds_size = header.nrSamplesPerSubband / downsample_factor; // the number of samples in the output downsampled data buffer
-			if ( doDownsample_p ) { // if downsampling
+    sampledata = new Sample[ dataSize ]; // sample contains 8 bytes
+    
+    // allocating memory for possible down sampling and intensity calculations
+    //			ds_data = NULL;
+    //			totalintensity = NULL;
+    ds_size = header.nrSamplesPerSubband / downsample_factor; // the number of samples in the output downsampled data buffer
+    if ( doDownsample_p ) { // if downsampling
 #ifdef DEBUGGING_MESSAGES
-			std::cout << "Allocating " << ds_size * sizeof(Float32) << " bytes for output downsampled databuffer" << std::endl;
+      std::cout << "Allocating " << ds_size * sizeof(Float32) << " bytes for output downsampled databuffer" << std::endl;
 #endif
-				try {
-					ds_data = new Float32[ ds_size ];
-				}
-				catch (bad_alloc) {
-					cerr << "Can't allocate memory for downsampled databuffer." << endl;
-				}
-				memset(ds_data, 0, ds_size * sizeof(Float32) );
-			}
-			else {
-				if ( DO_FLOAT32_INTENSITY ) {
+      try {
+	ds_data = new Float32[ ds_size ];
+      }
+      catch (std::bad_alloc) {
+	cerr << "Can't allocate memory for downsampled databuffer." << endl;
+      }
+      memset(ds_data, 0, ds_size * sizeof(Float32) );
+    }
+    else {
+      if ( DO_FLOAT32_INTENSITY ) {
 #ifdef DEBUGGING_MESSAGES
-			std::cout << "Allocating " << header.nrSamplesPerSubband * sizeof(Float32) << " bytes for output intensity databuffer" << std::endl;
+	std::cout << "Allocating " << header.nrSamplesPerSubband * sizeof(Float32) << " bytes for output intensity databuffer" << std::endl;
 #endif
-					try
-					{
-						totalintensity = new Float32[ header.nrSamplesPerSubband ];
-					}
-					catch (bad_alloc)
-					{
-						cerr << "Can't allocate memory for total intensity array." << endl;
-					}
-					memset(totalintensity, 0, header.nrSamplesPerSubband * sizeof(Float32) );
-				}
-			}
-
-
+	try {
+	  totalintensity = new Float32[ header.nrSamplesPerSubband ];
+	}
+	catch (std::bad_alloc) {
+	  cerr << "Can't allocate memory for total intensity array." << endl;
+	}
+	memset(totalintensity, 0, header.nrSamplesPerSubband * sizeof(Float32) );
+      }
+    }
+    
+    
 #ifdef DEBUGGING_MESSAGES
     printf("Magic number: %8X\n",header.magic);
     printf("bits per sample: %u\n",header.bitsPerSample);
@@ -514,11 +512,10 @@ namespace DAL {
     printf("Station ID: %s\n", header.station);
     printf("Sample rate: %g\n", header.sampleRate);
     printf("Centre Freq. of subbands (MHz): \n");
-    for (int ii=0;ii<header.nrSubbands;ii++)
-      {
-        printf("%9.6f ",header.subbandFrequencies[ii]/1000000.0);
-        if (((ii+1)%4) == 0 ) printf("\n");
-      }
+    for (int ii=0;ii<header.nrSubbands;ii++) {
+      printf("%9.6f ",header.subbandFrequencies[ii]/1000000.0);
+      if (((ii+1)%4) == 0 ) printf("\n");
+    }
     printf("Beam Directions J2000 radians:\n");
     char * ra = NULL;
     char * dec = NULL;
@@ -541,233 +538,235 @@ namespace DAL {
         dec = NULL;
       }
 #endif
-	return true;
+    return true;
   }
-
-
-int BFRaw::receiveBytes(void *storage, size_t nrOfBytesToRead) {
-	int bytes_read = 0;
-	int8_t *bytepointer = reinterpret_cast<int8_t *>(storage);
-	while (true) {
-	bytes_read = recvfrom(server_socket, bytepointer, nrOfBytesToRead, 0, (sockaddr *) &incoming_addr, &socklen);
-	if (bytes_read == -1) { // error reading
-		shutdown(server_socket, SHUT_RDWR);
-		close(server_socket);
-		return -1;
-	}
-	else if (bytes_read == 0) { // end of stream?
-		 return 0;
-	}
-	nrOfBytesToRead -= bytes_read;
-	bytepointer += bytes_read;
-	if (nrOfBytesToRead == 0) { // did we read enough?
-		return bytes_read;
-	}
-	}
-}
-
-  //_________________________________________________processBFRawDataBlockFromSocket
-	bool BFRaw::processBFRawDataBlockFromSocket(void) {
-
-if (receiveBytes(reinterpret_cast<char *>(&blockheader), blockHeaderSize) == -1) {
-			perror("Error, receiving the first data block header");
-      throw "Error, receiving the first data block header";
-	}
-
-	if (!bigendian) { convertEndian(&blockheader); }
-
-	makeH5OutputFile();
-
-	// write the utc time to hdf5 file according to header time info
-	time_t utc;
-	utc = (time_t)(blockheader.time[0]/(Int64)header.sampleRate);
-	char * timeDateString = NULL;
-	uint16_t buf_size = 128;
-	if (!timeDateString) {
-		timeDateString = new char[buf_size*sizeof(char)];
-	}
-	memset (timeDateString,'\0',buf_size);
-	strftime(timeDateString, buf_size, "%T", gmtime(&utc));
-	dataset.setAttribute( "EPOCH_UTC", timeDateString );
-
-	memset (timeDateString,'\0',buf_size);
-	strftime(timeDateString, buf_size, "%d/%m/%y", gmtime(&utc));
-	dataset.setAttribute( "EPOCH_DATE", timeDateString );
-
-	memset (timeDateString,'\0',buf_size);
-
-
-	delete[] timeDateString;
-	first_block = false;
-
-// read the first datablock in the temporary storage
-	if ( receiveBytes( sampledata, dataSize * sizeof(Sample)) == -1) { // read all subbands for this datablock into sampledata buffer
-			perror("Error, reading the first data block!");
-			throw "Error reading the first data block!";
-		}
-	
-		writeBFRawDataBlockToFile();
-	 ++block_nr;
-
-	// read rest of datablocks and write to file
-	int result;
-	
-	// enable time out alarm
-	// set a time out alarm
-	time_out = false;
-	signal( SIGALRM, timeout_alarm );
-	alarm( 7 );
-	
-	while (!time_out) { // process all next data blocks
-cout << "block_nr: " << block_nr << endl;
-
-	result = receiveBytes(reinterpret_cast<char *>(&blockheader), blockHeaderSize);
-	
-	if (!time_out) {
-		if (result == 0) {
-			std::cout << "shutdown connection by remote" << std::endl;
-			break;  // read end of stream
-		}
-		else if (result < -1) {
-			std::cerr << "Error, read of data block: " << block_nr << " !" << std::endl;
-			perror("processBFRawDataBlockFromSocket");
-			throw "Error read data block!";
-		}
-		result = receiveBytes(sampledata, dataSize * sizeof(Sample));
-		
-		if (!time_out) {
-			if (result == -1) {
-				std::cerr << "Error, read of data block: " << block_nr << " !" << std::endl;
-				perror("processBFRawDataBlockFromSocket");
-				throw "Error read data block!";
-			} else {
-				alarm(7); // reset time out alarm
-			}
-		}
-	}
-//	std::cout << "sampledata[0]= " << sampledata[0].xx << ", " << sampledata[0].yy << std::endl;
-	if (!bigendian) { convertEndian(&blockheader); }
-//	std::cout << "processing block " << block_nr << std::endl;
-	writeBFRawDataBlockToFile();
-		++block_nr;
-} // while
-alarm (0); // cancel time out alarm
-
-
-// shutdown and close socket connection
-if (!time_out) { // if server socket was not yet closed in time out event handler
+  
+  //_____________________________________________________________________________
+  //                                                                 receiveBytes
+  
+  int BFRaw::receiveBytes (void *storage, size_t nrOfBytesToRead) {
+    int bytes_read = 0;
+    int8_t *bytepointer = reinterpret_cast<int8_t *>(storage);
+    while (true) {
+      bytes_read = recvfrom(server_socket, bytepointer, nrOfBytesToRead, 0, (sockaddr *) &incoming_addr, &socklen);
+      if (bytes_read == -1) { // error reading
 	shutdown(server_socket, SHUT_RDWR);
 	close(server_socket);
-	std::cout << "connection closed" << std::endl;
-}
-
-
-return true;
-}
-
- // ---------------------------------------------------------writeBFRawDataBlock
-void BFRaw::writeBFRawDataBlockToFile(void) {
+	return -1;
+      }
+      else if (bytes_read == 0) { // end of stream?
+	return 0;
+      }
+      nrOfBytesToRead -= bytes_read;
+      bytepointer += bytes_read;
+      if (nrOfBytesToRead == 0) { // did we read enough?
+	return bytes_read;
+      }
+    }
+  }
+  
+  //_________________________________________________processBFRawDataBlockFromSocket
+  bool BFRaw::processBFRawDataBlockFromSocket(void) {
+    
+    if (receiveBytes(reinterpret_cast<char *>(&blockheader), blockHeaderSize) == -1) {
+      perror("Error, receiving the first data block header");
+      throw "Error, receiving the first data block header";
+    }
+    
+    if (!bigendian) { convertEndian(&blockheader); }
+    
+    makeH5OutputFile();
+    
+    // write the utc time to hdf5 file according to header time info
+    time_t utc;
+    utc = (time_t)(blockheader.time[0]/(Int64)header.sampleRate);
+    char * timeDateString = NULL;
+    uint16_t buf_size = 128;
+    if (!timeDateString) {
+      timeDateString = new char[buf_size*sizeof(char)];
+    }
+    memset (timeDateString,'\0',buf_size);
+    strftime(timeDateString, buf_size, "%T", gmtime(&utc));
+    dataset.setAttribute( "EPOCH_UTC", timeDateString );
+    
+    memset (timeDateString,'\0',buf_size);
+    strftime(timeDateString, buf_size, "%d/%m/%y", gmtime(&utc));
+    dataset.setAttribute( "EPOCH_DATE", timeDateString );
+    
+    memset (timeDateString,'\0',buf_size);
+    
+    
+    delete[] timeDateString;
+    first_block = false;
+    
+    // read the first datablock in the temporary storage
+    if ( receiveBytes( sampledata, dataSize * sizeof(Sample)) == -1) { // read all subbands for this datablock into sampledata buffer
+      perror("Error, reading the first data block!");
+      throw "Error reading the first data block!";
+    }
+    
+    writeBFRawDataBlockToFile();
+    ++block_nr;
+    
+    // read rest of datablocks and write to file
+    int result;
+    
+    // enable time out alarm
+    // set a time out alarm
+    time_out = false;
+    signal( SIGALRM, timeout_alarm );
+    alarm( 7 );
+    
+    while (!time_out) { // process all next data blocks
+      cout << "block_nr: " << block_nr << endl;
+      
+      result = receiveBytes(reinterpret_cast<char *>(&blockheader), blockHeaderSize);
+      
+      if (!time_out) {
+	if (result == 0) {
+	  std::cout << "shutdown connection by remote" << std::endl;
+	  break;  // read end of stream
+	}
+	else if (result < -1) {
+	  std::cerr << "Error, read of data block: " << block_nr << " !" << std::endl;
+	  perror("processBFRawDataBlockFromSocket");
+	  throw "Error read data block!";
+	}
+	result = receiveBytes(sampledata, dataSize * sizeof(Sample));
+	
+	if (!time_out) {
+	  if (result == -1) {
+	    std::cerr << "Error, read of data block: " << block_nr << " !" << std::endl;
+	    perror("processBFRawDataBlockFromSocket");
+	    throw "Error read data block!";
+	  } else {
+	    alarm(7); // reset time out alarm
+	  }
+	}
+      }
+      //	std::cout << "sampledata[0]= " << sampledata[0].xx << ", " << sampledata[0].yy << std::endl;
+      if (!bigendian) { convertEndian(&blockheader); }
+      //	std::cout << "processing block " << block_nr << std::endl;
+      writeBFRawDataBlockToFile();
+      ++block_nr;
+    } // while
+    alarm (0); // cancel time out alarm
+    
+    
+    // shutdown and close socket connection
+    if (!time_out) { // if server socket was not yet closed in time out event handler
+      shutdown(server_socket, SHUT_RDWR);
+      close(server_socket);
+      std::cout << "connection closed" << std::endl;
+    }
+    
+    
+    return true;
+  }
+  
+  // ---------------------------------------------------------writeBFRawDataBlock
+  void BFRaw::writeBFRawDataBlockToFile(void) {
 #ifdef _OPENMP
 #pragma omp parallel for ordered schedule(dynamic)
 #endif
-// Float32 * ds_data = NULL;
-// Float32 * totalintensity = NULL;
-// const int ds_size = header.nrSamplesPerSubband / downsample_factor;
-// if ( doDownsample_p ) { // if downsampling
-// 	try {
-// 		ds_data = new Float32[ ds_size ];
-// 	}
-// 	catch (bad_alloc) {
-// 		cerr << "Can't allocate memory for downsampled array." << endl;
-// 	}
-// 	memset(ds_data, 0, ds_size * sizeof(Float32) );
-// }
-// else {
-// 	if ( DO_FLOAT32_INTENSITY ) {
-// 		try
-// 		{
-// 			totalintensity = new Float32[ header.nrSamplesPerSubband ];
-// 		}
-// 		catch (bad_alloc)
-// 		{
-// 			cerr << "Can't allocate memory for total intensity array." << endl;
-// 		}
-// 		memset(totalintensity, 0, header.nrSamplesPerSubband * sizeof(Float32) );
-// 	}
-// }
-//uint64_t subbandFirstSampleIdx;
-//Sample * sample = new Sample[ fileheader.nrSamplesPerBeamlet ];
-//Sample * singleSubbandDataBuf = new Sample[ header.nrSamplesPerSubband ];
-
-for ( uint subband=0; subband < header.nrSubbands; ++subband )
-{
+    // Float32 * ds_data = NULL;
+    // Float32 * totalintensity = NULL;
+    // const int ds_size = header.nrSamplesPerSubband / downsample_factor;
+    // if ( doDownsample_p ) { // if downsampling
+    // 	try {
+    // 		ds_data = new Float32[ ds_size ];
+    // 	}
+    // 	catch (bad_alloc) {
+    // 		cerr << "Can't allocate memory for downsampled array." << endl;
+    // 	}
+    // 	memset(ds_data, 0, ds_size * sizeof(Float32) );
+    // }
+    // else {
+    // 	if ( DO_FLOAT32_INTENSITY ) {
+    // 		try
+    // 		{
+    // 			totalintensity = new Float32[ header.nrSamplesPerSubband ];
+    // 		}
+    // 		catch (bad_alloc)
+    // 		{
+    // 			cerr << "Can't allocate memory for total intensity array." << endl;
+    // 		}
+    // 		memset(totalintensity, 0, header.nrSamplesPerSubband * sizeof(Float32) );
+    // 	}
+    // }
+    //uint64_t subbandFirstSampleIdx;
+    //Sample * sample = new Sample[ fileheader.nrSamplesPerBeamlet ];
+    //Sample * singleSubbandDataBuf = new Sample[ header.nrSamplesPerSubband ];
+    
+    for ( uint subband=0; subband < header.nrSubbands; ++subband )
+      {
 	//index = sizeof(blockheader) +	subband * header.nrSamplesPerSubband * 4 * header.bitsPerSample/8;
-//	subbandFirstSampleIdx = subband * header.nrSamplesPerSubband;// * 4 * header.bitsPerSample/8; // index is the byte index to the first sample of a subband
-//	std::cout << "subbandIndex = " << subbandFirstSampleIdx << std::endl;
-/*
-#ifdef DEBUGGING_MESSAGES
-	cout << "sampledata[0].xx: " << sampledata[0].xx << ", sampledata[0].yy: " << sampledata[0].yy <<  "sampledata[10].xx: " << sampledata[10].xx << ", sampledata[10].yy: " << sampledata[10].yy << endl;
-#endif
-*/
+	//	subbandFirstSampleIdx = subband * header.nrSamplesPerSubband;// * 4 * header.bitsPerSample/8; // index is the byte index to the first sample of a subband
+	//	std::cout << "subbandIndex = " << subbandFirstSampleIdx << std::endl;
+	/*
+	  #ifdef DEBUGGING_MESSAGES
+	  cout << "sampledata[0].xx: " << sampledata[0].xx << ", sampledata[0].yy: " << sampledata[0].yy <<  "sampledata[10].xx: " << sampledata[10].xx << ", sampledata[10].yy: " << sampledata[10].yy << endl;
+	  #endif
+	*/
 	
 	/*
-	index = blk *
-			(
-			(fileheader.nrSamplesPerBeamlet * 8) *
-			fileheader.nrBeamlets
-			)
-			+ (blk+1) * sizeof(blockheader) +
-			subband * fileheader.nrSamplesPerBeamlet * 8;
-
-	sample = reinterpret_cast<Sample*>(&( buf[ index ]));
+	  index = blk *
+	  (
+	  (fileheader.nrSamplesPerBeamlet * 8) *
+	  fileheader.nrBeamlets
+	  )
+	  + (blk+1) * sizeof(blockheader) +
+	  subband * fileheader.nrSamplesPerBeamlet * 8;
+	  
+	  sample = reinterpret_cast<Sample*>(&( buf[ index ]));
 	*/
 	//sample = reinterpret_cast<Sample*>(&( buf[ index ]));
 	// should subbandIndex be a SAMPLE index instead of a BYTE index?
-//	singleSubbandDataBuf = reinterpret_cast<Sample*>(&( sampledata[ subbandFirstSampleIdx ])); // sampledata buffer holds the samples of all the subbands of 1 datablock
-//	singleSubbandDataBuf = sampledata[ subbandFirstSampleIdx ];
+	//	singleSubbandDataBuf = reinterpret_cast<Sample*>(&( sampledata[ subbandFirstSampleIdx ])); // sampledata buffer holds the samples of all the subbands of 1 datablock
+	//	singleSubbandDataBuf = sampledata[ subbandFirstSampleIdx ];
 	
-//	std::cout << "first sample: xx=" << sampledata[subbandFirstSampleIdx].xx << ", yy = " << sampledata[subbandFirstSampleIdx].yy << std::endl;
+	//	std::cout << "first sample: xx=" << sampledata[subbandFirstSampleIdx].xx << ", yy = " << sampledata[subbandFirstSampleIdx].yy << std::endl;
 	
 	if ( doDownsample_p )  // if downsampling
-	{
-//		downsampleSingleSubband( sampledata, 0, downsample_factor, ds_data, ds_size );
-//		std::cout << "downsampling subband " << subband << std::endl;
-//		std::cout << "first sample: xx=" << sampledata[subband * header.nrSamplesPerSubband].xx << ", yy = " << sampledata[subband * header.nrSamplesPerSubband].yy << "adres: " << &(sampledata[ subband * header.nrSamplesPerSubband ]) << std::endl;
-		downsampleSingleSubband( &(sampledata[ subband * header.nrSamplesPerSubband]), downsample_factor, ds_data, ds_size );
+	  {
+	    //		downsampleSingleSubband( sampledata, 0, downsample_factor, ds_data, ds_size );
+	    //		std::cout << "downsampling subband " << subband << std::endl;
+	    //		std::cout << "first sample: xx=" << sampledata[subband * header.nrSamplesPerSubband].xx << ", yy = " << sampledata[subband * header.nrSamplesPerSubband].yy << "adres: " << &(sampledata[ subband * header.nrSamplesPerSubband ]) << std::endl;
+	    downsampleSingleSubband( &(sampledata[ subband * header.nrSamplesPerSubband]), downsample_factor, ds_data, ds_size );
 #ifdef _OPENMP
 #pragma omp ordered
 #endif
-		table[subband]->appendRows( ds_data, ds_size ); // writes header.nrSamplesPerSubband / downsample_factor  samples
-	// initialize the downdample data buffer again	
-	memset(ds_data, 0, ds_size * sizeof(Float32) );		
-/*		delete [] ds_data;
-		ds_data = NULL;*/
-	}
+	    table[subband]->appendRows( ds_data, ds_size ); // writes header.nrSamplesPerSubband / downsample_factor  samples
+	    // initialize the downdample data buffer again	
+	    memset(ds_data, 0, ds_size * sizeof(Float32) );		
+	    /*		delete [] ds_data;
+			ds_data = NULL;*/
+	  }
 	else  // no downsampling
-	{
-		if ( DO_FLOAT32_INTENSITY )
-		{
-			compute_float32_intensity( &(sampledata[subband * header.nrSamplesPerSubband]), 0, header.nrSamplesPerSubband, totalintensity );
+	  {
+	    if ( DO_FLOAT32_INTENSITY )
+	      {
+		compute_float32_intensity( &(sampledata[subband * header.nrSamplesPerSubband]), 0, header.nrSamplesPerSubband, totalintensity );
 #ifdef _OPENMP
 #pragma omp ordered
 #endif
-										table[subband]->appendRows( totalintensity, header.nrSamplesPerSubband );
-					//					delete [] totalintensity;
-					//					totalintensity = NULL;
-		}
-		else
-		{
-			table[subband]->appendRows( &(sampledata[subband * header.nrSamplesPerSubband]), header.nrSamplesPerSubband );
-		}
-	}
-
-} // for subband
-//delete singleSubbandDataBuf;
-}
-
+		table[subband]->appendRows( totalintensity, header.nrSamplesPerSubband );
+		//					delete [] totalintensity;
+		//					totalintensity = NULL;
+	      }
+	    else
+	      {
+		table[subband]->appendRows( &(sampledata[subband * header.nrSamplesPerSubband]), header.nrSamplesPerSubband );
+	      }
+	  }
+	
+      } // for subband
+    //delete singleSubbandDataBuf;
+  }
+  
   //_____________________________________________________________________________
   //                                                                convertEndian
-
+  
   void BFRaw::convertEndian (BlockHeader* blockheader)
   {
     swapbytes((char *)&blockheader->magic,4);
@@ -788,10 +787,10 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
 	  }
       }
   }
-
+  
   //_____________________________________________________________________________
   //                                                             makeH5OutputFile
-
+  
   void BFRaw::makeH5OutputFile (void)
   {
     dataset = dalDataset( outputfilename.c_str(), "HDF5" );
@@ -973,15 +972,14 @@ for ( uint subband=0; subband < header.nrSubbands; ++subband )
 #endif
       buf = new char[ blocksize ];
     }
-    catch (bad_alloc)
-      {
-        printf("WARNING: Can't allocate memory buffer for %d seconds of data.\n",
-               blocks );
-        printf("    Retrying with %d seconds of data.\n", blocks/2 );
-        delete [] buf;
-        processBlocks( blocks/2 );
-        return retval;
-      }
+    catch (std::bad_alloc) {
+      printf("WARNING: Can't allocate memory buffer for %d seconds of data.\n",
+	     blocks );
+      printf("    Retrying with %d seconds of data.\n", blocks/2 );
+      delete [] buf;
+      processBlocks( blocks/2 );
+      return retval;
+    }
     
     rawfile->read( buf, blocksize ); // read all datablocks
     

@@ -126,7 +126,7 @@ namespace DAL {
       //! Sample when using TBB in spectral mode
       struct SpectralSample
         {
-          complex<Int16> value;
+	  std::complex<Int16> value;
         };
 
       //! Structure storing metadata stored in the TBB header block
@@ -220,9 +220,9 @@ namespace DAL {
       TransientSample tran_sample;
       SpectralSample spec_sample;
       // for file i/o
-      ifstream::pos_type size;
+      std::ifstream::pos_type size;
       unsigned char * memblock;
-      fstream * rawfile_p;
+      std::fstream * rawfile_p;
       Int16 real_part, imag_part;
 
     public:

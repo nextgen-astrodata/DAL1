@@ -31,38 +31,89 @@ namespace DAL {
   
   /*!
     \class dalFilter
+
     \ingroup DAL
     \ingroup core
+
     \brief Class representing a filter that can be applied to a table.
+
+    \author Joseph Masters, Lars B&auml;hren
   */
   
   class dalFilter {
+
     //! Table filter std::string
-    std::string filterstring;
+    std::string filterstring_p;
     //! File type: MSCASA, HDF5, FITS, etc.
-    std::string filetype;
+    DAL::dalFileType filetype_p;
     //! Book-keeping whether a filter is set or not.
     bool is_set;
     
   public:
 
+    // === Construction =========================================================
+
     //! Default constructor    
     dalFilter();
     //! Argumented constructor
+    dalFilter (DAL::dalFileType const &type,
+	       std::string columns);
+    //! Argumented constructor
     dalFilter( std::string type,
-	       std::string columns );
-    
+	       std::string columns);
+    //! Argumented constructor
+    dalFilter (DAL::dalFileType const &type,
+	       std::string columns,
+	       std::string conditions);
+    //! Argumented constructor
     dalFilter( std::string type,
 	       std::string columns,
-	       std::string conditions );
+	       std::string conditions);
     
-    void set( std::string columns );
-    void set( std::string columns, std::string conditions );
-    void setFiletype( std::string type );
-    bool isSet();
-    std::string get();
+    // === Methods ==============================================================
+
+    //! Restrict the opening of a table to particular columns.
+    bool set (std::string columns);
+
+    //! Restrict the opening of a table to particular columns.
+    bool set (std::vector<std::string> const &columns);
+
+    //! Restrict the opening of a table to particular columns and conditions.
+    void set (std::string columns,
+	      std::string conditions);
+
+    //! Get the type of the file
+    inline std::string filetype () {
+      return fileType (filetype_p);
+    }
+
+    //! Declare the type of the file
+    bool setFiletype (DAL::dalFileType const &type);
+
+    //! Declare the type of the file (i.e. "MSCASA", "HDF5", etc.)
+    bool setFiletype (std::string const &type);
+
+    //! Check to see if the filter is defined.
+    bool isSet ();
+
+    //! Retrieve the filter string.
+    inline std::string get () {
+      return filterstring_p;
+    }
+
+    //! Provide a summary of the internal status
+    inline void summary () {
+      summary (std::cout);
+    }
+    //! Provide a summary of the internal status
+    void summary (std::ostream &os);    
+    
+  private:
+
+    //! Initialize internal parameters
+    void init ();
+    
   };
-  
   
 } // DAL namespace
 

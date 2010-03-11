@@ -189,7 +189,8 @@ namespace DAL {
     inline void summary () {
       summary (cout, true);
     }
-    void summary (ostream &os, bool const &listBeams=false);
+    void summary (std::ostream &os,
+		  bool const &listBeams=false);
     
     // --------------------------------------------------------------------------
     // Access to the data stored in the sub-bands
@@ -199,13 +200,13 @@ namespace DAL {
 			   int &subband,
 			   int &start,
 			   int &length,
-			   std::vector<complex<short> > &data);
+			   std::vector<std::complex<short> > &data);
     //! Get the Y column data for a given subband.
     void getSubbandData_Y (int &beam,
 			   int &subband,
 			   int &start,
 			   int &length,
-			   std::vector<complex<short> > &data);
+			   std::vector<std::complex<short> > &data);
     
     /************************************************************************
      *

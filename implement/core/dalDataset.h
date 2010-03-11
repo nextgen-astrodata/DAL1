@@ -202,7 +202,7 @@ namespace DAL {
 				 std::vector<int>cdims);
     dalArray * createComplexFloatArray (std::string arrayname,
 					std::vector<int> dims,
-					complex<float> data[],
+					std::complex<float> data[],
 					std::vector<int>cdims );
     //! Create a new table in the root group
     dalTable * createTable (std::string tablename );

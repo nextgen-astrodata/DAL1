@@ -485,7 +485,7 @@ namespace DAL {
         scalar_vals_comp = rosc_comp->getColumn();
         data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
         data_object->data =
-          (complex<float> *)scalar_vals_comp.getStorage(deleteIt);
+          (std::complex<float> *)scalar_vals_comp.getStorage(deleteIt);
         return data_object;
       }
       break;
@@ -541,7 +541,7 @@ namespace DAL {
     case casa::TpComplex:
       {
         dal_datatype = dal_COMPLEX;
-        vector< complex< float > > ret_valvec;
+	std::vector< std::complex< float > > ret_valvec;
         try
           {
             roac_comp = new casa::ROArrayColumn<casa::Complex>( *casa_column );
@@ -554,7 +554,7 @@ namespace DAL {
         array_vals_comp = roac_comp->getColumn( );
         data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
         data_object->data =
-          (complex<float> *)array_vals_comp.getStorage(deleteIt);
+          (std::complex<float> *)array_vals_comp.getStorage(deleteIt);
         return data_object;
       }
       break;
@@ -643,7 +643,7 @@ namespace DAL {
           {
             data = (dalcomplex_int16*)malloc(sizeof(dalcomplex_int16)*length);
           }
-        catch ( bad_alloc )
+        catch ( std::bad_alloc )
           {
             std::cerr <<
                       "ERROR: Could not allocate memory buffer for dalColumn\n";
@@ -673,7 +673,7 @@ namespace DAL {
           {
             data = (float*)malloc(sizeof(float)*length);
           }
-        catch ( bad_alloc )
+        catch ( std::bad_alloc )
           {
             std::cerr << "ERROR: Could not allocate memory buffer for " <<
                       "dalColumn\n";
@@ -880,51 +880,51 @@ namespace DAL {
       }
   }
 
-  /************************************************************************
-   *
-   * The following functions are boost wrappers to allow some previously
-   *   defined functions to be easily called from a python prompt.
-   *
-   ************************************************************************/
+  // ============================================================================
+  //
+  //  Boost.Python wrapper functions
+  //
+  // ============================================================================
+  
 #ifdef PYTHON
 
-// ------------------------------------------------------- shape_boost
-
+  //_____________________________________________________________________________
+  //                                                                  shape_boost
+  
   bpl::tuple dalColumn::shape_boost()
   {
     vector<int> lclvals;
     lclvals = shape();
     bpl::list lcllist;
-
+    
     vector<int>::iterator iter;
-    for (iter=lclvals.begin(); iter < lclvals.end(); iter++)
-      {
-        lcllist.append(*iter);
-      }
-
+    for (iter=lclvals.begin(); iter < lclvals.end(); iter++) {
+      lcllist.append(*iter);
+    }
+    
     bpl::tuple lcl_tuple;
     lcl_tuple = bpl::make_tuple(lcllist);
-
+    
     return lcl_tuple;
   }
-
-// ------------------------------------------------------- data_boost1
-
+  
+  // ------------------------------------------------------- data_boost1
+  
   bpl::numeric::array dalColumn::data_boost1()
   {
     return data_boost3( 0, -1 );
   }
-
-// ------------------------------------------------------- data_boost2
-
+  
+  // ------------------------------------------------------- data_boost2
+  
   bpl::numeric::array dalColumn::data_boost2( int32_t length )
   {
     return data_boost3( 0, length );
-
+    
   }
-
-// ------------------------------------------------------- data_boost3
-
+  
+  // ------------------------------------------------------- data_boost3
+  
   bpl::numeric::array dalColumn::data_boost3( int64_t offset, int32_t length )
   {
     if ( MSCASATYPE == filetype ) {
@@ -975,7 +975,7 @@ namespace DAL {
                     scalar_vals_comp = rosc_comp->getColumn();
                     data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
                     data_object->data =
-                      (complex<float> *)scalar_vals_comp.getStorage(deleteIt);
+                      (std::complex<float> *)scalar_vals_comp.getStorage(deleteIt);
                     return data_object->get_boost3( offset, length );
                   }
                   break;
@@ -1031,7 +1031,7 @@ namespace DAL {
                     array_vals_comp = roac_comp->getColumn();
                     data_object = new dalData( filetype, dal_COMPLEX, shape(), nrows() );
                     data_object->data =
-                      (complex<float> *)array_vals_comp.getStorage(deleteIt);
+                      (std::complex<float> *)array_vals_comp.getStorage(deleteIt);
                     return data_object->get_boost3( offset, length );
                   }
                   break;

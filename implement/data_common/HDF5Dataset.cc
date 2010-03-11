@@ -354,10 +354,15 @@ namespace DAL {
       status = false;
     }
 
-    if (rank>0 && nofAxes>0) {
-      chunksize_p.resize(nofAxes);
-      for (int n(0); n<nofAxes; ++n) {
-	chunksize_p[n] = chunksize[n];
+    if (rank<0) {
+      /* There was an error trying to retrieve chunking information */
+    } else {
+      /* H5Pget_chunk returned valid result */
+      if (nofAxes>0) {
+	chunksize_p.resize(nofAxes);
+	for (int n(0); n<nofAxes; ++n) {
+	  chunksize_p[n] = chunksize[n];
+	}
       }
     }
     

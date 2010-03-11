@@ -30,22 +30,54 @@
 #endif
 
 namespace DAL {
-  
+
   //_____________________________________________________________________________
-  //                                                                    BigEndian
+  //                                                                     fileType
   
-  bool BigEndian ( void )
+  /*!
+    \param type  -- File type to convert to corresponding string
+    \return name -- File type name.
+  */
+  std::string fileType (DAL::dalFileType const &type)
   {
-    unsigned char SwapTest[2] = { 1, 0 };
+    std::string name;
+
+    switch (type) {
+    case DAL::HDF5:
+      name = "HDF5";
+      break;
+    case DAL::FITS:
+      name = "FITS";
+      break;
+    case DAL::MSCASA:
+      name = "MSCASA";
+      break;
+    default:
+      name = "UNDEFINED";
+      break;
+    };
     
-    if ( *(short *) SwapTest == 1 ) {
-      //little endian
-      return false;
+    return name;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                     fileType
+  
+  DAL::dalFileType fileType (std::string const &name)
+  {
+    DAL::dalFileType type = DAL::UNDEFINED;
+
+    if (name == "HDF5") {
+      type = DAL::HDF5;
+    } else if (name == "FITS") {
+      type = DAL::FITS;
+    } else if (name == "MSCASA") {
+      type = DAL::MSCASA;
+    } else {
+      type = DAL::UNDEFINED;
     }
-    else {
-      //big endian
-      return true;
-    }
+
+    return type;
   }
   
-} // namespace DAL
+}

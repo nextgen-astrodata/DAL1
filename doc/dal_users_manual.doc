@@ -1,0 +1,352 @@
+/*!
+  \page dal_users_manual DAL:: Users Manual
+
+  - \ref dal_um_intro
+  - \ref dal_um_motivation
+  - \ref dal_um_types
+  - \ref dal_um_structure
+  - \ref dal_um_examples
+    - \ref dal_um_examples_cpp
+    - \ref dal_um_examples_python
+
+  <p><hr><p>
+
+  \section dal_um_intro Introduction
+
+  The purpose of this document is to make it easier to work with the LOFAR Data
+  Access Library (DAL). This is not intended to be a reference to all the class
+  methods. For that purpose see the <a href="http://usg.lofar.org/doxygen">online
+  documentation</a>.
+
+  The DAL is both a C++ library (libdal) and a Python module (pydal). The C++
+  interface is intended primarily, but not exlusively, for developers. Likewise,
+  the python module is intended primarily, but not exlusively, for astronomers.
+  The python interface is, and will likely remain, a subset of the methods
+  available in C++.
+
+  The \e primary classes in the DAL are: \texttt{dalDatast},
+  \texttt{dalGroup}, \texttt{dalTable}, \texttt{dalColumn}, \texttt{dalData},
+  \texttt{dalArray} and \texttt{dalFilter}. These are the generic classes used to
+  operate on a file of an unspecified type.
+
+  A set of \textit{supporting} classes also exist in the DAL, but they are
+  generally not interesting to the developer. There purpose is to provide common
+  methods used by the primary classes mentioned above. These supporting classes
+  are: \texttt{Common}, \texttt{Database}, and \texttt{HDF5Common}.
+
+  Finally, the DAL includes \textit{format-specific} classes. These classes are
+  designed to work with a single type of LOFAR data product such as beam-formed or
+  transient buffer board data. The format-specific classes are: \texttt{BFRaw},
+  \texttt{BeamFormed}, \texttt{BeamGroup}, \texttt{BeamSubband},
+  \texttt{Enumerations}, \texttt{TBB}, \texttt{dalLopesEvent} and
+  \texttt{lopesevent}.
+
+This document describes only the \e primary classes.
+
+  \subsection dal_um_note A Note on the Examples
+
+  Please keep in mind that Python examples assume you imported the pydal module:
+  \code
+  $ python
+  > from pydal import *
+  \endcode
+  C++ examples assume the inclusion of \t dal.h:
+  \code
+  #include "dal.h"
+  \endcode
+
+  For simplicity, none of the examples include error checking on the return
+  values.
+
+  <p><hr><p>
+
+  \section dal_um_motivation Motivation
+
+  The purpose of the DAL is to abstract the data product implementation details
+  from the user.  In this way, the user can generally ignore the nuances of the
+  underlying file format and focus instead on the high level objects reperesented
+  therin (i.e. tables, arrays, attributes, etc.).  Although significant, the
+  storage mechanism is not scientifically interesting to the typical researcher.
+
+  <p><hr><p>
+
+  \section dal_um_types File Types
+
+  Officially, the DAL supports three file types: HDF5, CASA Tables and FITS.  At
+  present, each of these file types have varying levels of support.
+
+  \subsection dal_um_types_hdf5 HDF5
+
+Hierarchical Data Format Version 5 (HDF5), is a relatively recent format
+designed with particular attention to efficient operation on extremely large
+data sets.  HDF5 is the intended format for LOFAR data products.  The reasons
+for this decision are given in {\em ``Proposed Data Formats``} \cite{Cadot}.
+
+HDF5 is organized much like a unix file system.  The internal structure consists
+of a root group, '/', which may recursively contain subgroups.  Each of these
+groups may, in turn, contain other groups or n-dimensional arrays of simple or
+complex datatypes.  HDF5 tables are particular case of a HDF5 array and thus are
+treated in a similar manner.  Almost all objects in a HDF5 file can hold
+associated metadata in the form of an attribute.  For an abbreviated list of
+HDF5 features see {\em ``HDF5 vs. CASA Tables''} \cite{Diepen}.  For a complete
+list see the hdfgroup website \cite{hdfgroup}.
+
+HDF5 files can be both read and written by the DAL.
+
+\subsection dal_um_types_casa CASA Tables
+
+CASA Tables in general, and Measurement Sets in particular, are the primary data
+product of the Westerbork Synthesis Radio Telescope (WSRT).  As WSRT is also
+based at ASTRON (where there is a large community of experienced CASA users),
+there is naturally a strong interest and advantage in building upon this
+expertise for LOFAR.
+
+CASA tables can currently be read, but not written, by the DAL.
+
+\subsection dal_um_types_fits FITS
+
+FITS is the standard astronomical image format.  Among its advantages for
+inclusion in the DAL is its widespread use and extensive toolset.  Among its
+limitations is the fact that it was not designed for large and complex datasets.
+
+FITS is the lowest of priority of the three supported formats and currently has
+almost no actual support in the DAL.
+
+  <p><hr><p>
+
+  \section dal_um_structure Library structure
+
+  \subsection dal_library_structure_overview Overview
+  
+  The DAL is designed, generally, around a superset of the features of the
+  underlying formats. CASA supports a set of hierarchical tables, arrays and
+  attributes. FITS supports multiple tables or arrays and associated keywords.
+  HDF5 supports all of the above, including groups, as well as metadata in the
+  form of attributes.
+
+  In addition to generic support of different file types, the DAL also supports
+  the LOFAR-specific support of data products. For example, the beam-formed
+  classes (BFRaw, BeamFormed, BeamGroup and BeamSubband) are intended for use only
+  with the LOFAR Beam-formed data product. The transient buffer board class (TBB)
+  is likewise meant to be used only with its associated LOFAR data product.
+
+  The code examples below are meant as a guide to using the non-LOFAR-specific
+  parts of the library. 
+
+  \section dal_library_structure_primary Primary classes
+  
+  <ul>
+    <li>\b dalDataset <br>
+    At the highest level, a LOFAR data product is represented by the dalDataset
+    object. A dalDataset may contain any number of dalGroup, dalTable and dalArray
+    objects. A dalDataset represents the file as a whole and may have associated
+    metadata.
+  
+    <li>\b dalGroup <br>
+    At the moment, the group object within the DAL is unique to HDF5. A group may
+    contain sub-groups, arrays or tables. Additionally, attributes can be attached
+    to a group object.
+  
+    <li>\b dalTable <br>
+    DAL tables can be located at the root level of a file, or within a group. A
+    dalTable consits of dalColumn objects and may have associated attributes.
+  
+    <li>\b dalColumn <br>
+    DAL columns are the components of the dalTable object. The dalData object holds
+    the actual data of each column.
+  
+    <li>\b dalArray <br>
+    DAL arrays can be located at the root level of a file, or within a group. A
+    dalArray may have attribute data.
+  
+    <li>\b dalData <br>
+    The dalData object holds the actual data from a dalColumn. This allows the
+    column information to be stored seperately from the information about the layout
+    of the data.
+  
+    <li>\b dalFilter <br>
+    The filter object can be applied to CASA tables before opening. In the future,
+    the same syntax may become available for HDF5 and FITS.
+  </ul>
+
+  \subsection dal_um_specific Format-specific classes
+
+  <ul>  
+    <li>\b BFRaw -- High-level interface between raw beam-formed data and the DAL. 
+    <li>\b BeamFormed -- High-level interface between beam-formed data and the DAL.
+    <li>\b BeamGroup -- High-level interface between beam-formed data and the DAL.
+    <li>\b BeamSubband -- High-level interface between beam-formed data and the DAL.
+    <li>\b TBB -- High-level interface between TBB data and the DAL.
+  </ul>
+
+  <p><hr><p>
+
+  \section dal_um_examples Examples
+
+  \subsection dal_um_examples_cpp C++
+
+  <ol>
+    <li>Open and read CASA MeasurementSet data.
+
+    <li>Create and close a new HDF5 file:
+    \code
+    dalDataset * ds = NULL;
+    ds = new dalDataset( FILENAME, "HDF5" );
+
+    ds->close();
+
+    delete ds;
+    \endcode
+
+    <li>Open and close an existing file:
+    \code
+    dalDataset ds;
+
+    ds.open( FILENAME );
+    ds.close();
+    \endcode
+
+    <li>Set attributes in a (HDF5) dataset:
+    \code
+    dalDataset ds;
+    ds.open( FILENAME );
+
+    std::string sval = "string test value";
+    ds.setAttribute( "STRING_ATTR", sval );
+
+    std::vector<std::string> svals;
+    svals.push_back("string");
+    svals.push_back("vector");
+    svals.push_back("test");
+    ds.setAttribute_string( "STRING_ATTRS", svals );
+
+    int ival = 1;
+    ds.setAttribute( "INT_ATTR", &ival );
+
+    int ivals[] = { 1, 2, 3 };
+    ds.setAttribute( "INT_ATTRS", ivals, 3 );
+
+    uint uival = 2;
+    ds.setAttribute( "UINT_ATTR", &uival );
+
+    uint uivals[] = { 1, 2, 3};
+    ds.setAttribute( "UINT_ATTRS", uivals, 3 );
+
+    float fval = 3.0;
+    ds.setAttribute( "FLOAT_ATTR", &fval );
+
+    float fvals[] = { 1.0, 2.0, 3.0 };
+    ds.setAttribute( "FLOAT_ATTRS", fvals, 3 );
+
+    double dval = 3.0;
+    ds.setAttribute( "DOUBLE_ATTR", &dval );
+
+    double dvals[] = { 1.0, 2.0, 3.0 };
+    ds.setAttribute( "DOUBLE_ATTRS", dvals, 3 );
+
+    ds.close();
+    \endcode
+    Once the above operations are completed, the HDF5 file will have the following
+    structure and contents:
+    \verbatim
+    .
+    |-- STRING_ATTR    = "string test value"
+    |-- STRING_ATTRS   = {"string","vector","test"}
+    |-- INT_ATTR       = 1
+    |-- INT_ATTRS      = { 1, 2, 3 }
+    |-- UINT_ATTR      = 2
+    |-- UINT_ATTRS     = { 1, 2, 3 }
+    |-- FLOAT_ATTR     = 3.0
+    |-- FLOAT_ATTRS    = { 1.0, 2.0, 3.0 }
+    \endverbatim
+
+  <li>Create a (HDF5) integer array within a dataset:
+  \code
+  dalDataset ds;
+  ds.open( FILENAME );
+
+  // define dimensions of array
+  vector<int> dims;
+  dims.push_back(4);
+  dims.push_back(5);
+  dims.push_back(6);
+  vector<int> cdims;
+
+  int data[4*5*6];
+  for (int gg=0; gg<(4*5*6); gg++)
+    data[gg] = gg;
+
+  DAL::dalArray * array = ds.createIntArray( "int_array", dims,
+                                        data, cdims );
+  array->close();
+  delete array;
+  \endcode
+
+  <li>Create a (HDF5) group:
+  \code
+  DAL::dalDataset ds;
+  ds.open( FILENAME );
+
+  DAL::dalGroup * group = ds.createGroup( "group" );
+  group->close();
+  delete group;
+  \endcode
+
+  <li>Get a list of groups in a file:
+  \code
+  dalDataset ds;
+  ds.open( FILENAME );
+
+  vector<string> groupnames = ds.getGroupNames();
+
+  ds.close();
+  \endcode
+
+  <li>Get a list of members of a group:
+  \code
+  DAL::dalDataset ds;
+  ds.open( FILENAME );
+
+  dalGroup * mygroup = ds.openGroup( "groupname" );
+  vector<string> memnames = mygroup->getMemberNames();
+
+  ds.close();
+  \endcode
+
+  <li>Open an existing group:
+  \code
+  DAL::dalDataset * ds = new dalDataset;
+  ds->open( "somefile.h5" );
+  dalGroup * mygroup = ds->openGroup( "groupname" );
+  \endcode
+
+  <li>Read an attribute from a dataset:
+  \code
+  DAL::dalDataset ds;
+  ds.open( FILENAME );
+
+  std::string attr_name("INT_ATTR");
+  int iattr = 0;
+
+  ds.getAttribute( attr_name, iattr );
+
+  ds.close();
+  \endcode
+
+  <li>Read a array dimensions:
+  \code
+  uint ret = 0;
+
+  DAL::dalDataset ds;
+  ds.open( FILENAME );
+
+  DAL::dalArray * array = ds.openArray( "int_array" );
+
+  std::vector<int> dims =  array->dims();
+
+  array->close;
+  delete array;
+  \endcode
+  </ol>
+
+*/

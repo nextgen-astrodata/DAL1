@@ -401,8 +401,8 @@ namespace DAL {
   dalArray *
   dalGroup::createComplexFloatArray( string arrayname,
                                      vector<int> dims,
-                                     complex<float> data[],
-                                     vector<int> cdims )
+                                     std::complex<float> data[],
+                                     std::vector<int> cdims )
   {
     dalComplexArray_float32 * la;
     la = new dalComplexArray_float32( group_id, arrayname, dims, data, cdims );
@@ -430,8 +430,8 @@ namespace DAL {
   dalArray *
   dalGroup::createComplexShortArray( string arrayname,
                                      vector<int> dims,
-                                     complex<Int16> data[],
-                                     vector<int> cdims )
+                                     std::complex<Int16> data[],
+                                     std::vector<int> cdims )
   {
     dalComplexArray_int16 * la;
     la = new dalComplexArray_int16( group_id, arrayname, dims, data, cdims );

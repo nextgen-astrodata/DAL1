@@ -45,6 +45,9 @@ using namespace DAL;
 
 // === core =====================================================================
 
+//! Bindings for the methods in dalCommon
+void export_dalCommon();
+
 //! Bindings for DAL::dalArray
 void export_dalArray ();
 //! Bindings for DAL::dalColumn

@@ -72,13 +72,13 @@ namespace DAL {
     // COLUMNs
     casa::ROArrayColumn<int> * roac_int;
     casa::ROArrayColumn<double> * roac_dbl;
-    casa::ROArrayColumn< complex< float > > * roac_comp;
+    casa::ROArrayColumn< std::complex< float > > * roac_comp;
     casa::ROArrayColumn<casa::String> * roac_string;
     
     casa::ROScalarColumn<int> * rosc_int;
     casa::ROScalarColumn<bool> * rosc_bool;
     casa::ROScalarColumn<double> * rosc_dbl;
-    casa::ROScalarColumn< complex< float > > * rosc_comp;
+    casa::ROScalarColumn< std::complex< float > > * rosc_comp;
     casa::ROScalarColumn<casa::String> * rosc_string;
     
     // ARRAYs
@@ -93,7 +93,7 @@ namespace DAL {
     casa::Vector<casa::Int> scalar_vals_int;
     casa::Vector<casa::String> scalar_vals_string;
     casa::Vector<bool> scalar_vals_bool;
-    vector< complex< float > > stl_vec_comp;
+    vector< std::complex< float > > stl_vec_comp;
     
     bool deleteIt;
     

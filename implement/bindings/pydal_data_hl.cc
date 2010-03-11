@@ -93,7 +93,7 @@ void export_TBB_StationGroup ()
 void export_TBB_DipoleDataset()
 {
   void (TBB_DipoleDataset::*summary1)()                = &TBB_DipoleDataset::summary;
-  void (TBB_DipoleDataset::*summary2)(ostream &)       = &TBB_DipoleDataset::summary;
+  void (TBB_DipoleDataset::*summary2)(std::ostream &)  = &TBB_DipoleDataset::summary;
   bool (TBB_DipoleDataset::*open1)(hid_t const &)      = &TBB_DipoleDataset::open;
   bool (TBB_DipoleDataset::*open2)(hid_t const &,
 				   std::string const &,

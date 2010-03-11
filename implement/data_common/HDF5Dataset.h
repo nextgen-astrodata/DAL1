@@ -48,6 +48,12 @@ namespace DAL {
     
     \test tHDF5Dataset.cc
 
+    \todo Detection of datatype (e.g. <tt>H5T_COMPOUND</tt>, <tt>H5T_ENUM</tt>)
+    \todo Check if dataspace was created with chunking enabled
+    \todo Enable selection of whether or not to employ chunking; right now chunking
+    is enabled as default, but there also might be cases where a finite dataspace
+    without chunking is required.
+
     <h3>Prerequisite</h3>
 
     <ul type="square">

@@ -30,6 +30,7 @@
 
 #define FILENAME "tdal.h5"
 
+using std::complex;
 using namespace DAL;
 
 #ifdef HAVE_MYSQL

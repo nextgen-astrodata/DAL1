@@ -89,10 +89,6 @@ set (dal_modules
 
 file (GLOB dal_headers *.h)
 
-set (dal_sources
-  dalFITS.cc
-  )
-
 ##__________________________________________________________
 ## Process the contents of the modules directories
 

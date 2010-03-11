@@ -202,27 +202,24 @@ int test_MeasurementSet (std::string const &filename_ms)
       if ( data_col->isArray() )  cout << "ARRAY" << endl;
       unsigned int nrows3 = data_col->nrows();
       cout << "Number of rows: " << nrows3 << endl;
-      complex<float> * value3;
+      std::complex<float> * value3;
       int pol    = 0;
       int chan   = 3;
       int xx_min = 79;
       int xx_max = 89;
-      if ( pol < shape3[0] && chan < shape3[1] && xx_max < shape3[2] )
-        {
-          for (int xx = xx_min; xx < xx_max; xx++)
-            {
-              value3 = (complex<float>*)data_object->get(pol,chan,xx);
-              cout << "[" << pol << "][" << chan << "][" << xx << "]: " << *value3 << endl;
-            }
-        }
-
+      if ( pol < shape3[0] && chan < shape3[1] && xx_max < shape3[2] ) {
+	for (int xx = xx_min; xx < xx_max; xx++) {
+	  value3 = (std::complex<float>*)data_object->get(pol,chan,xx);
+	  cout << "[" << pol << "][" << chan << "][" << xx << "]: " << *value3 << endl;
+	}
+      }
+      
     }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
@@ -230,7 +227,7 @@ int test_MeasurementSet (std::string const &filename_ms)
 
 /*!
   \param filename_ms -- Name of the MeasurementSet to use for testing
-
+  
   \return nofFailedTests -- The number failed tests encountered within this
           function.
 */
@@ -254,19 +251,19 @@ int test_createHDF5 (std::string const &filename_ms,
   // define a vector for chunking dimensions
   vector<int> cdims;
   long indx;
-  complex<float> * cdata;
-  complex<float> * value3;
+  std::complex<float> * cdata;
+  std::complex<float> * value3;
   long mysize = 1;
   for (unsigned int ll=0; ll<shape3.size(); ll++)
     mysize *= shape3[ll];
-  cdata = new complex<float>[ mysize ];
+  cdata = new std::complex<float>[ mysize ];
 
 //#pragma omp parallel for
   for (int xx=0; xx<shape3[0]; xx++)
     for (int yy=0; yy<shape3[1]; yy++)
       for (int zz=0; zz<shape3[2]; zz++)
         {
-          value3 = (complex<float>*)data_object->get(xx,yy,zz);
+          value3 = (std::complex<float>*)data_object->get(xx,yy,zz);
           indx = data_object->c_index(xx,yy,zz);
           cdata[ indx ] = *value3;
         }

@@ -729,20 +729,20 @@ namespace DAL {
                                       dalData * data_object )
   {
     std::vector<int> cdims;
-    complex<float> * cdata;
+    std::complex<float> * cdata;
     long indx   = 0;
     long mysize = 1;
 
     for (unsigned int ll=0; ll<data_object->shape.size(); ll++)
       mysize *= data_object->shape[ll];
 
-    cdata = new complex<float>[ mysize ];
+    cdata = new std::complex<float>[ mysize ];
     for (int xx=0; xx<data_object->shape[0]; xx++)
       for (int yy=0; yy<data_object->shape[1]; yy++)
         for (int zz=0; zz<data_object->shape[2]; zz++)
           {
             indx = data_object->c_index(xx,yy,zz);
-            cdata[ indx ] = *( (complex<float>*)data_object->get(xx,yy,zz) );
+            cdata[ indx ] = *( (std::complex<float>*)data_object->get(xx,yy,zz) );
           }
 
     if ( dal_COMPLEX == data_object->datatype() )
@@ -849,7 +849,7 @@ namespace DAL {
   dalArray *
   dalDataset::createComplexFloatArray( std::string arrayname,
                                        std::vector<int> dims,
-                                       complex<float> data[],
+                                       std::complex<float> data[],
                                        std::vector<int> cdims )
   {
     if ( type == H5TYPE )

@@ -135,8 +135,8 @@ namespace DAL {
     bool extend( vector<int> dims );
     bool write(int offset, short data[], int arraysize);
     bool write(int offset, int data[], int arraysize);
-    bool write( int offset, complex<float> data[], int arraysize );
-    bool write( int offset, complex<Int16> data[], int arraysize );
+    bool write( int offset, std::complex<float> data[], int arraysize );
+    bool write( int offset, std::complex<Int16> data[], int arraysize );
     
     /************************************************************************
      *
@@ -206,8 +206,10 @@ namespace DAL {
   {
     
   public:
-    dalComplexArray_float32( hid_t objfile, string arrayname,
-			     vector<int> dims, complex<float> data[],
+    dalComplexArray_float32( hid_t objfile,
+			     string arrayname,
+			     vector<int> dims,
+			     std::complex<float> data[],
 			     vector<int>chnkdims);
   };
   
@@ -216,7 +218,8 @@ namespace DAL {
     
   public:
     dalComplexArray_int16( hid_t objfile, string arrayname,
-			   vector<int> dims, complex<Int16> data[],
+			   vector<int> dims,
+			   std::complex<Int16> data[],
 			   vector<int>chnkdims);
   };
   

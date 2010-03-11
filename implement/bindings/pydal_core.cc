@@ -43,6 +43,23 @@
 
 // ==============================================================================
 //
+//                                                                      dalCommon
+//
+// ==============================================================================
+
+void export_dalCommon ()
+{
+  def( "mjd2unix", &mjd2unix_boost,
+       "Convert Modified Julian Date (mjd) to unix time.\n"
+       "The Unix base date is MJD 40587 and 1 mjd Day = 24 hours \n"
+       "or 1440 minutes or 86400 seconds so: \n"
+       "(unix seconds) = (mjd seconds) - ( unix base date in seconds )." );
+//   def( "BigEndian", &BigEndian,
+//        "Test of the system is big endian." );
+}
+
+// ==============================================================================
+//
 //                                                                       dalArray
 //
 // ==============================================================================

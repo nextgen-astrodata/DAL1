@@ -923,7 +923,7 @@ namespace DAL {
                                      int &subband,
                                      int &start,
                                      int &length,
-                                     std::vector<complex<short> > &data)
+                                     std::vector<std::complex<short> > &data)
   {
     beamGroups_p[beam]->getSubbandData_X(subband,
                                          start,
@@ -942,7 +942,7 @@ namespace DAL {
                                      int &subband,
                                      int &start,
                                      int &length,
-                                     std::vector<complex<short> > &data)
+                                     std::vector<std::complex<short> > &data)
   {
     beamGroups_p[beam]->getSubbandData_Y(subband,
                                          start,

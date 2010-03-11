@@ -384,7 +384,7 @@ namespace DAL {
   bool TBB::openRawFile( const char* filename )
   {
     delete rawfile_p;
-    rawfile_p = new fstream( filename, ios::binary|ios::in );
+    rawfile_p = new std::fstream( filename, std::ios::binary|std::ios::in );
     if ( !rawfile_p->is_open() )
       {
         std::cerr << "Error opening intput file: " << std::string(filename)
@@ -393,7 +393,7 @@ namespace DAL {
       }
     else
       {
-        rawfile_p->seekg (0, ios::beg);  // move to start of file
+        rawfile_p->seekg (0, std::ios::beg);  // move to start of file
         return true;
       }
   }
@@ -823,7 +823,7 @@ namespace DAL {
 							 cdims );
     }
     else {
-      complex<Int16> nodata[0];
+      std::complex<Int16> nodata[0];
       dipoleArray_p = stationGroupPtr->createComplexShortArray( newuid,
 								firstdims,
 								nodata,
@@ -1093,7 +1093,7 @@ namespace DAL {
 
   void TBB::processSpectralFileDataBlock()
   {
-    complex<Int16> csdata[ headerp_p->n_samples_per_frame];
+    std::complex<Int16> csdata[ headerp_p->n_samples_per_frame];
 
     for ( short zz=0; zz < headerp_p->n_samples_per_frame; zz++ )
       {
@@ -1109,7 +1109,7 @@ namespace DAL {
             swapbytes( (char *)&imag_part, 2 );
           }
 
-        csdata[zz] = complex<Int16>( real_part, imag_part );
+        csdata[zz] = std::complex<Int16>( real_part, imag_part );
       }
 
     dims[0] += headerp_p->n_samples_per_frame;
