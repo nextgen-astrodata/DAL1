@@ -632,6 +632,69 @@ int test_chunking (std::string const &filename="tHDF5Dataset.h5")
 }
 
 //_______________________________________________________________________________
+//                                                               test_openDataset
+
+/*!
+  \brief Test opening an existing dataset
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          functions.
+*/
+int test_openDataset (std::string const &filename)
+{
+  cout << "\n[tHDF5Datatset::test_openDataset]\n" << endl;
+
+  int nofFailedTests (0);
+  std::set<std::string> names;
+  std::set<std::string>::iterator it;
+  std::vector<int> start;
+  std::vector<int> block;
+
+  //________________________________________________________
+  // Open the file to work with
+  
+  hid_t fileID = H5Fopen (filename.c_str(),
+			  H5F_ACC_RDWR,
+			  H5P_DEFAULT);
+
+  if (!H5Iis_valid(fileID)) {
+    std::cerr << "-- Failed to open file " << filename << endl;
+    return 0;
+  } else {
+    std::cout << "-- Succefully opened file " << filename << std::endl;
+  }
+
+  DAL::h5get_names (names,fileID,H5G_DATASET);
+  
+  if (names.empty()) {
+    std::cerr << "-- Unable to find dataset within file!" << endl;
+    return 0;
+  } else {
+    it = names.begin();
+    std::cout << "-- Found dataset " << *it << " in within file." << std::endl;
+  }
+
+  //________________________________________________________
+  // Run the tests
+
+  std::cout << "[1]  Open dataset " << *it << " ..." << std::endl;
+  try {
+    DAL::HDF5Dataset data (fileID,*it);
+    data.summary();
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    ++nofFailedTests;
+  }
+
+  //________________________________________________________
+  // Close the file
+
+  H5Fclose(fileID);
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 int main (int argc,
@@ -662,6 +725,10 @@ int main (int argc,
   nofFailedTests += test_array2d ();
   // Test chunking schemes
   nofFailedTests += test_chunking ();
+
+  if (haveDataset) {
+    nofFailedTests += test_openDataset (filename);
+  }
   
   return nofFailedTests;
 }

@@ -132,6 +132,7 @@ namespace DAL {
     location_p      = 0;
     dataspace_p     = 0;
     datatype_p      = 0;
+    layout_p        = H5D_COMPACT;
     shape_p.clear();
     chunksize_p.clear();
     hyperslab_p.clear();
@@ -344,20 +345,28 @@ namespace DAL {
     // Get the creation property list for the dataset
     propertyID = H5Dget_create_plist (location_p);
 
-    // Retrieve the size of chunks for the raw data of a chunked layout dataset
+    // Return the layout of the raw data for a dataset. 
     if (H5Iis_valid(propertyID)) {
-      rank  = H5Pget_chunk (propertyID, nofAxes, chunksize);
+      layout_p = H5Pget_layout (propertyID);
     } else {
       std::cerr << "[HDF5Dataset::getChunksize]"
 		<< " Failed to get creation property list for the dataset!"
 		<< std::endl;
       status = false;
     }
+    
+    // Retrieve the size of chunks for the raw data of a chunked layout dataset
+    if (layout_p == H5D_CHUNKED) {
+      rank  = H5Pget_chunk (propertyID, nofAxes, chunksize);
+    } else {
+      rank = -1;
+    }
+
+    /* Process the result from the inspection of the dataset */
 
     if (rank<0) {
-      /* There was an error trying to retrieve chunking information */
+      chunksize_p.clear();
     } else {
-      /* H5Pget_chunk returned valid result */
       if (nofAxes>0) {
 	chunksize_p.resize(nofAxes);
 	for (int n(0); n<nofAxes; ++n) {
@@ -531,14 +540,15 @@ namespace DAL {
   void HDF5Dataset::summary (std::ostream &os)
   {
     os << "[HDF5Dataset] Summary of internal parameters" << std::endl;
-    os << "-- Dataset name    = " << name_p          << std::endl;
-    os << "-- Dataset ID      = " << location_p      << std::endl;
-    os << "-- Dataspace ID    = " << dataspace_p     << std::endl;
-    os << "-- Datatype ID     = " << datatype_p      << std::endl;
-    os << "-- Dataset rank    = " << rank()          << std::endl;
-    os << "-- Dataset shape   = " << shape_p         << std::endl;
-    os << "-- Chunk size      = " << chunksize_p     << std::endl;
-    os << "-- nof. datapoints = " << nofDatapoints() << std::endl;
+    os << "-- Dataset name           = " << name_p          << std::endl;
+    os << "-- Dataset ID             = " << location_p      << std::endl;
+    os << "-- Dataspace ID           = " << dataspace_p     << std::endl;
+    os << "-- Datatype ID            = " << datatype_p      << std::endl;
+    os << "-- Dataset rank           = " << rank()          << std::endl;
+    os << "-- Dataset shape          = " << shape_p         << std::endl;
+    os << "-- Layout of the raw data = " << layout_p        << std::endl;
+    os << "-- Chunk size             = " << chunksize_p     << std::endl;
+    os << "-- nof. datapoints        = " << nofDatapoints() << std::endl;
   }
   
 } // end namespace DAL

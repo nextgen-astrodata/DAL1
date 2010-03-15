@@ -220,6 +220,8 @@ namespace DAL {
     hid_t datatype_p;
     //! Shape of the dataset
     std::vector<hsize_t> shape_p;
+    //! Layout of the raw data of the dataset
+    H5D_layout_t layout_p;
     //! Chunk size for extendible array
     std::vector<hsize_t> chunksize_p;
     //! Hyperslab for the dataspace attached to the dataset
@@ -264,6 +266,11 @@ namespace DAL {
     //! Get the shape of the dataset
     inline std::vector<hsize_t> shape () const {
       return shape_p;
+    }
+
+    //! Get the layout of the raw data of the dataset
+    inline H5D_layout_t layout () const {
+      return layout_p;
     }
     
     //! Get the chunk size
