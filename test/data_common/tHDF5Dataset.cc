@@ -40,6 +40,7 @@
 #include <dalCommon.h>
 #include "HDF5Dataset.h"
 
+using std::cerr;
 using std::cout;
 using std::endl;
 
@@ -647,8 +648,6 @@ int test_openDataset (std::string const &filename)
   int nofFailedTests (0);
   std::set<std::string> names;
   std::set<std::string>::iterator it;
-  std::vector<int> start;
-  std::vector<int> block;
 
   //________________________________________________________
   // Open the file to work with
@@ -686,6 +685,33 @@ int test_openDataset (std::string const &filename)
     ++nofFailedTests;
   }
 
+  std::cout << "[2] Retrieving data ..." << std::endl;
+  try {
+    DAL::HDF5Dataset data (fileID,*it);
+    //
+    unsigned int nofDatapoints;
+    std::vector<hsize_t> shape = data.shape();
+    std::vector<int> start (shape.size(),0);
+    std::vector<int> count (shape.size(),1);
+    std::vector<int> block (shape.size());
+
+    for (unsigned int n(0); n<shape.size(); ++n) {
+      block[n] = shape[n];
+    }
+
+    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    
+    /* Feedback */
+    std::cout << "-- Shape            = " << shape << std::endl;
+    std::cout << "-- Count            = " << count << std::endl;
+    std::cout << "-- Block            = " << block << std::endl;
+    std::cout << "-- nof. data points = " << nofDatapoints << std::endl;
+    
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    ++nofFailedTests;
+  }
+  
   //________________________________________________________
   // Close the file
 

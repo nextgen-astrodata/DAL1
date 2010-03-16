@@ -342,10 +342,10 @@ namespace DAL {
     int nofAxes (rank);
     hsize_t chunksize[rank];
 
-    // Get the creation property list for the dataset
+    /* Get the creation property list for the dataset */
     propertyID = H5Dget_create_plist (location_p);
 
-    // Return the layout of the raw data for a dataset. 
+    /* Return the layout of the raw data for a dataset. */
     if (H5Iis_valid(propertyID)) {
       layout_p = H5Pget_layout (propertyID);
     } else {
@@ -355,7 +355,7 @@ namespace DAL {
       status = false;
     }
     
-    // Retrieve the size of chunks for the raw data of a chunked layout dataset
+    /* Retrieve the size of chunks for the raw data of a chunked layout dataset */
     if (layout_p == H5D_CHUNKED) {
       rank  = H5Pget_chunk (propertyID, nofAxes, chunksize);
     } else {
@@ -363,7 +363,6 @@ namespace DAL {
     }
 
     /* Process the result from the inspection of the dataset */
-
     if (rank<0) {
       chunksize_p.clear();
     } else {

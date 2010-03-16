@@ -112,7 +112,83 @@ namespace DAL { // Namespace DAL -- begin
     \endcode
 
     <h3>Synopsis</h3>
+
+    Encapsulated HDF5 library functions:
     
+    <ol>
+      <li>\b H5TBmake_table creates and writes a dataset named \e table_name
+      attached to the object specified by the identifier \e loc_id. 
+      \code
+      herr_t H5TBmake_table (const char *table_title,
+                             hid_t loc_id,
+			     const char *dset_name,
+			     hsize_t nfields,
+			     const hsize_t nrecords,
+			     size_t type_size,
+			     const char *field_names [ ],
+			     const size_t *field_offset,
+			     const hid_t *field_types,
+			     hsize_t chunk_size,
+			     void *fill_data,
+			     int compress,
+			     const void *data) 
+      \endcode
+
+      <li>\b H5TBread_table reads a table named \e table_name attached to the
+      object specified by the identifier \e loc_id.
+      \code
+      herr_t H5TBread_table (hid_t  loc_id,
+                             const char *table_name,
+			     size_t  dst_size,
+			     const size_t *dst_offset,
+			     const size_t  *dst_sizes,
+			     void  *dst_buf)
+      \endcode
+      
+      <li>\b H5TBread_records reads some records identified from a dataset named
+      \e table_name attached to the object specified by the identifier \e loc_id.
+      \code
+      herr_t H5TBread_records (hid_t  loc_id,
+                               const char *table_name,
+			       hsize_t start,
+			       hsize_t nrecords,
+			       size_t type_size,
+			       const size_t *field_offset,
+			       const size_t *dst_sizes,
+			       void  *data)
+      \endcode
+
+      <li>\b H5TBread_fields_name reads the fields identified by \e field_names
+      from a dataset named \e table_name attached to the object specified by the
+      identifier \e loc_id.
+
+      <li>\b H5TBread_fields_index reads the fields identified by \e field_index
+      from a dataset named \e table_name attached to the object specified by the
+      identifier \e loc_id.
+
+      <li>\b H5TBget_dimensions retrieves the table dimensions from a dataset
+      named \e table_name attached to the object specified by the identifier
+      \e loc_id.
+      \code
+      herr_t H5TBget_table_info (hid_t  loc_id,
+                                 const char *table_name,
+				 hsize_t *nfields,
+				 hsize_t *nrecords)
+      \endcode
+
+      <li>\b H5TBget_field_info gets information about a dataset named
+      \e table_name  attached to the object specified by the identifier
+      \e loc_id.
+      \code
+      herr_t H5TBget_field_info (hid_t  loc_id,
+                                 const char *table_name,
+				 char *field_names[],
+				 size_t  *field_sizes,
+				 size_t *field_offsets,
+				 size_t *type_size)
+      \endcode
+    </ol>
+
     <h3>Example(s)</h3>
     
   */  

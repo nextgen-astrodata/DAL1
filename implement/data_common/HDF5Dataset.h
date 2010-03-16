@@ -129,8 +129,36 @@ namespace DAL {
       selection within that dataspace. <i>mem_space_id</i> can be the constant
       H5S_ALL, in which case the file dataspace is used for the memory dataspace
       and the selection defined with <i>file_space_id</i> is used for the
-      selection within that dataspace. 
+      selection within that dataspace.
     </ol>
+
+    Furthermore HDF5Dataset encapsulates a number of functions to inspect and
+    return properties of the dataset:
+    <ul>
+      <li>\b H5Pset_layout -- Sets the type of storage used to store the raw
+      data for a dataset. 
+      \code
+      herr_t H5Pset_layout (hid_t plist, H5D_layout_t layout)
+      \endcode
+      <li>\b H5Pget_layout -- Returns the layout of the raw data for a dataset. 
+      \code
+      H5D_layout_t H5Pget_layout (hid_t plist)
+      \endcode
+      <li>\b H5Pset_chunk -- Sets the size of the chunks used to store a chunked
+      layout dataset. 
+      \code
+      herr_t H5Pset_chunk (hid_t plist, int ndims, const hsize_t * dim) 
+      \endcode
+      <li>\b H5Pget_chunk -- Retrieves the size of chunks for the raw data of a
+      chunked layout dataset.
+      \code
+      int H5Pget_chunk (hid_t plist, int max_ndims, hsize_t * dims)
+      \endcode
+      <li>\b H5Pset_chunk_cache -- Sets the raw data chunk cache parameters.
+      \code
+      herr_t H5Pset_chunk_cache (hid_t dapl_id, size_t rdcc_nslots, size_t rdcc_nbytes, double rdcc_w0)
+      \endcode
+    </ul>
       
     <table border=0>
       <tr align=center>
