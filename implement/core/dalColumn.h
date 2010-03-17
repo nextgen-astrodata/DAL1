@@ -107,6 +107,8 @@ namespace DAL {
     
   public:
 
+    // === Construction =========================================================
+
     //! Default constructor
     dalColumn();
     //! Create a new complex column.
@@ -118,13 +120,17 @@ namespace DAL {
 	       std::string lcl_tablename,
 	       std::string colname,
 	       std::string coldatatype );
-    dalColumn( std::string colname,
+    //! Argumented constructor for a new column object.
+   dalColumn( std::string colname,
 	       std::string coltype );
     
 #ifdef HAVE_CASA
-    dalColumn( casa::Table table,
-	       std::string colname );
+    //! Create a new column object from a CASA table.
+    dalColumn (casa::Table table,
+	       std::string colname);
 #endif
+
+    // === Methods ==============================================================
     
     void addMember( std::string member_name, std::string type );
     //! Get the name of the column.
@@ -137,8 +143,12 @@ namespace DAL {
     int getSize();
     //! Close the column.
     void close();
-    std::string getType();
+    //! Retrieve the datatype of the column.
+    inline std::string getType() {
+      return dal_datatype;
+    }
     bool isArray();
+    //! Is the column a scalar?
     bool isScalar();
     vector<int> shape();
     //! Get the number of dimensions of the column.
@@ -150,12 +160,8 @@ namespace DAL {
     //! Get the data object for the column.
     dalData * data();
     
-    /************************************************************************
-     *
-     * The following functions are boost wrappers to allow some previously
-     *   defined functions to be easily called from a python prompt.
-     *
-     ************************************************************************/
+    // === Boost.Python wrappers ================================================
+
 #ifdef PYTHON
     
     bpl::tuple shape_boost();

@@ -58,32 +58,89 @@ using std::endl;
 bool find_dataset (std::string const &filename,
 		   std::string &dataset)
 {
-  bool status (false);
-  hid_t fileID;
+  bool haveDataset (false);
+  hid_t location;
+  std::string name;
+  std::vector<hid_t> locations;
+  std::vector<hid_t>::reverse_iterator loc;
   std::set<std::string> names;
   std::set<std::string>::iterator it;
 
-  /* Open the HDF5 file to inspect */
-  fileID = H5Fopen (filename.c_str(),
-		    H5F_ACC_RDWR,
-		    H5P_DEFAULT);
-  if (!H5Iis_valid(fileID)) {
-    status = false;
+  dataset="";
+
+  //______________________________________________
+  // Open the HDF5 file to inspect
+  
+  location = H5Fopen (filename.c_str(),
+		      H5F_ACC_RDWR,
+		      H5P_DEFAULT);
+  if (H5Iis_valid(location)) {
+    locations.push_back(location);
+  } else {
+    return false;
+  }
+  
+  //______________________________________________
+  // Go through the data structure
+
+  while (!haveDataset) {
+    // Check for dataset attached to the current location
+    cout << "-- Checking for datasets location " << location << " ..." << endl;
+    names.clear();
+    DAL::h5get_names (names,location,H5G_DATASET);
+    // Did we find a dataset?
+    if (names.empty()) {
+      // Check for groups attached to the current location
+      cout << "-- Checking for groups location " << location << " ..." << endl;
+      names.clear();
+      DAL::h5get_names (names,location,H5G_GROUP);
+      // Did we find a group? If not, that's it.
+      if (names.empty()) {
+	return false;
+      }
+      else {
+	it    = names.begin();
+	name += "/" + *it;
+	// Open HDF5 group
+	cout << "-- Opening group " << name << " ..." << endl;
+	location = H5Gopen (locations[0],
+			    name.c_str(),
+			    H5P_DEFAULT);
+	// Store object identifier
+	if (H5Iis_valid(location)) {
+	  locations.push_back(location);
+	}
+      }
+    }
+    else {
+      it          = names.begin();
+      dataset     = name + "/" + *it;
+      haveDataset = true;
+    }
+  }  //  END -- while (!haveDataset)
+  
+  //______________________________________________
+  // Close HDF5 object identifiers
+
+  for (loc=locations.rbegin(); loc!=locations.rend(); ++loc) {
+    if (H5Iis_valid(*loc)) {
+      switch (H5Iget_type(*loc)) {
+      case H5I_FILE:
+	cout << "-- Closing HDF5 file " << *loc << " ..." << endl;
+	H5Fclose(*loc);
+	break;
+      case H5I_GROUP:
+	cout << "-- Closing HDF5 group " << *loc << " ..." << endl;
+	H5Gclose(*loc);
+	break;
+      default:
+	H5Oclose(*loc);
+      break;
+      }
+    }
   }
 
-  /* Check for datasets attached to the root group of the file */
-  DAL::h5get_names (names,fileID,H5G_DATASET);
-  
-  if (!names.empty()) {
-    it      = names.begin();
-    dataset = *it;
-    status  = true;
-  }
-
-  /* Close HDF5 object identifiers */
-  H5Fclose (fileID);
-  
-  return status;
+  return haveDataset;
 }
 
 //_______________________________________________________________________________
@@ -697,6 +754,7 @@ int test_openDataset (std::string const &filename)
     std::cerr << "-- Unable to find dataset within HDF5 file "
 	      << filename
 	      << std::endl;
+    return 0;
   }
 
   hid_t fileID = H5Fopen (filename.c_str(),

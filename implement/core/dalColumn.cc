@@ -83,10 +83,6 @@ namespace DAL {
   //                                                                    dalColumn
 
   /*!
-    \brief Create a new column object.
-
-    Create a new column object.
-
     \param colname The name of the column you want to create.
     \param coltype The datatype of the column you want to craete (i.e.
     dalINT, dalFLOAT, dalSTRING, etc.)
@@ -102,10 +98,6 @@ namespace DAL {
 
 #ifdef HAVE_CASA
   /*!
-    \brief Create a new column object from a Casa table.
-
-    Create a new column object from a Casa table.
-
     \param table A casa table object.
     \param colname Name of the column.
   */
@@ -145,6 +137,12 @@ namespace DAL {
 #endif
   }
   
+  // ============================================================================
+  //
+  //  Methods
+  //
+  // ============================================================================
+
   //_____________________________________________________________________________
   //                                                              getCasaDataType
 
@@ -218,14 +216,10 @@ namespace DAL {
       }
   }
 
-
-  // ------------------------------------------------------- isScalar
+  //_____________________________________________________________________________
+  //                                                                     isScalar
 
   /*!
-    \brief Is the column a scalar?
-
-    Check to see if the column is scalar.
-
     \return Non-zero if the column is scalar.
   */
   bool dalColumn::isScalar()
@@ -250,8 +244,8 @@ namespace DAL {
       }
   }
 
-
-  // ------------------------------------------------------- isArray
+  //_____________________________________________________________________________
+  //                                                                      isArray
 
   /*!
     \brief Is the column an array?
@@ -282,8 +276,8 @@ namespace DAL {
       }
   }
 
-
-  // ------------------------------------------------------- shape
+  //_____________________________________________________________________________
+  //                                                                        shape
 
   /*!
     \brief Get the shape of the column.
@@ -334,8 +328,8 @@ namespace DAL {
       }
   }
 
-
-  // ------------------------------------------------------- ndims
+  //_____________________________________________________________________________
+  //                                                                        ndims
 
   /*!
     \return ndims -- An integer specifying the number of column dimensions.
@@ -364,8 +358,8 @@ namespace DAL {
       }
   }
 
-
-  // ------------------------------------------------------- setName
+  //_____________________________________________________________________________
+  //                                                                      setName
 
   /*!
     \param colname -- The name of the column.
@@ -375,8 +369,8 @@ namespace DAL {
     name = colname;
   }
 
-
-  // ------------------------------------------------------- setFileType
+  //_____________________________________________________________________________
+  //                                                                  setFileType
 
   /*!
     \param -- type The type of file.
@@ -386,8 +380,8 @@ namespace DAL {
     filetype = type;
   }
 
-
-  // ------------------------------------------------------- getName
+  //_____________________________________________________________________________
+  //                                                                      getName
 
   /*!
     \return name -- The name of the column.
@@ -397,9 +391,8 @@ namespace DAL {
     return name;
   }
 
-
-
-  // ------------------------------------------------------- nrows
+  //_____________________________________________________________________________
+  //                                                                        nrows
 
   /*!
     \return A number specifying the number of column rows.
@@ -424,36 +417,21 @@ namespace DAL {
       }
   }
 
-
-  // ------------------------------------------------------- getType
-
-  /*!
-    \brief Get the data type.
-
-    Retrieve the datatype of the column.
-
-    \return A string describing the column datatype.
-  */
-  std::string dalColumn::getType()
-  {
-    return dal_datatype;
-  }
-
-
-  // ------------------------------------------------------- data
+  //_____________________________________________________________________________
+  //                                                                         data
 
   /*!
     \return A dalData object containing the column data.
   */
   dalData * dalColumn::data()
   {
-    int start = -1;
+    int start  = -1;
     int length = -1;
     return data( start, length );
   }
 
-
-  // ------------------------------------------------------- CasaData_scalar
+  //_____________________________________________________________________________
+  //                                                              CasaData_scalar
 
 #ifdef HAVE_CASA
 
@@ -513,7 +491,8 @@ namespace DAL {
   }
 #endif
 
-  // ------------------------------------------------------- CasaData_array
+  //_____________________________________________________________________________
+  //                                                               CasaData_array
 
 #ifdef HAVE_CASA
 
@@ -580,16 +559,17 @@ namespace DAL {
   }
 #endif
   
-  // ------------------------------------------------------- H5data
-  
+  //_____________________________________________________________________________
+  //                                                                       H5data
+
   dalData * dalColumn::H5data (int &start,
                                int &length)
   {
     char  ** field_names;
-    size_t * field_sizes = NULL;
+    size_t * field_sizes   = NULL;
     size_t * field_offsets = NULL;
-    size_t * size_out = NULL;
-    bool column_in_table = false;
+    size_t * size_out      = NULL;
+    bool column_in_table   = false;
     
     // retrieve the input fields needed for the append_records call
     if ( H5TBget_table_info ( fileID_p, tablename.c_str(), &nofFields_p, &nofRecords_p )
@@ -606,14 +586,15 @@ namespace DAL {
       field_names[ii] = (char*)malloc( sizeof(char) * MAX_COL_NAME_SIZE );
 
     if ( H5TBget_field_info( fileID_p, tablename.c_str(), field_names,
-                             field_sizes, field_offsets, size_out ) < 0 )
+                             field_sizes, field_offsets, size_out ) < 0 ) {
       return NULL;
+    }
 
-    for ( hsize_t ii = 0; ii < nofFields_p; ii++)
-      {
-        if ( 0 == strcmp( field_names[ii], name.c_str() ) )
-          column_in_table = true;
+    for ( hsize_t ii = 0; ii < nofFields_p; ii++) {
+      if ( 0 == strcmp( field_names[ii], name.c_str() ) ) {
+	column_in_table = true;
       }
+    }
     
     /* Release memory allocated for the columns of the table */
     for ( hsize_t ii = 0; ii < nofFields_p; ii++) {
@@ -643,13 +624,12 @@ namespace DAL {
           {
             data = (dalcomplex_int16*)malloc(sizeof(dalcomplex_int16)*length);
           }
-        catch ( std::bad_alloc )
-          {
-            std::cerr <<
-                      "ERROR: Could not allocate memory buffer for dalColumn\n";
-            return NULL;
-          }
-
+        catch ( std::bad_alloc ) {
+	  std::cerr <<
+	    "ERROR: Could not allocate memory buffer for dalColumn\n";
+	  return NULL;
+	}
+	
         if ( H5TBread_fields_name ( fileID_p, tablename.c_str(),
                                     name.c_str(), start, length,
                                     sizeof(dalcomplex_int16),
@@ -659,58 +639,56 @@ namespace DAL {
             std::cerr << "ERROR: H5TBread_fields_name failed.\n";
             return NULL;
           }
-
+	
         vector<int> shape(1);
-
+	
         data_object = new dalData( filetype, dal_COMPLEX_SHORT,
                                    shape, length );
         data_object->data = (dalcomplex_int16 *)data;
       }
-    else if ( dal_FLOAT == getType() )
-      {
-        float * data = NULL;
-        try
-          {
-            data = (float*)malloc(sizeof(float)*length);
-          }
-        catch ( std::bad_alloc )
-          {
-            std::cerr << "ERROR: Could not allocate memory buffer for " <<
-                      "dalColumn\n";
-            return NULL;
-          }
-
-        if ( H5TBread_fields_name (fileID_p, tablename.c_str(), name.c_str(),
-                                   start, length, sizeof(float), field_offsets, field_sizes,
-                                   data ) < 0 )
-          {
-            std::cerr << "ERROR: H5TBread_fields_name failed.\n";
-            return NULL;
-          }
-
-        vector<int> shape(1);
-
-        data_object = new dalData( filetype, dal_FLOAT, shape, length );
-        data_object->data = (float *)data;
+    else if ( dal_FLOAT == getType() ) {
+      float * data = NULL;
+      try {
+	data = (float*)malloc(sizeof(float)*length);
       }
-    else
-      {
-        std::cerr << "ERROR: datatype not supported [dalColumn.data]\n";
-        free( field_sizes );
-        free( field_offsets );
-        free( size_out );
-        return NULL;
+      catch ( std::bad_alloc ) {
+	std::cerr << "ERROR: Could not allocate memory buffer for " <<
+	  "dalColumn\n";
+	return NULL;
       }
+      
+      if ( H5TBread_fields_name (fileID_p, tablename.c_str(), name.c_str(),
+				 start, length, sizeof(float), field_offsets, field_sizes,
+				 data ) < 0 )
+	{
+	  std::cerr << "ERROR: H5TBread_fields_name failed.\n";
+	  return NULL;
+	}
+      
+      vector<int> shape(1);
+      
+      data_object = new dalData( filetype, dal_FLOAT, shape, length );
+      data_object->data = (float *)data;
+    }
+    else {
+      std::cerr << "ERROR: datatype not supported [dalColumn.data]\n";
+      free( field_sizes );
+      free( field_offsets );
+      free( size_out );
+      return NULL;
+    }
 
+    // Release allocated memory
     free( field_sizes );
     free( field_offsets );
     free( size_out );
-
+    
     return data_object;
-
+    
   }
-
-// ------------------------------------------------------- data
+  
+  //_____________________________________________________________________________
+  //                                                                         data
 
   /*!
     \brief Get column data.
@@ -767,7 +745,8 @@ namespace DAL {
       }
   }
 
-// ------------------------------------------------------- getSize
+  //_____________________________________________________________________________
+  //                                                                      getSize
 
   /*!
     \brief Get the size of the column.
@@ -819,23 +798,24 @@ namespace DAL {
       }
   }
 
-
-// ------------------------------------------------------- addMember
+  //_____________________________________________________________________________
+  //                                                                    addMember
 
   /*!
-   \brief Add a member to a compound column.
-
-   Add a member to a compound column.  A compound column is made up of
-   several simple datatypes.  For example a compound column might be two
-   integers and a floating point.
-
-   \param member_name The name of the member you want to add.
-   \param type The datatype of the column member you  want to add.
-   */
-  void dalColumn::addMember( std::string member_name, std::string member_type )
+    \brief Add a member to a compound column.
+    
+    Add a member to a compound column.  A compound column is made up of
+    several simple datatypes.  For example a compound column might be two
+    integers and a floating point.
+    
+    \param member_name The name of the member you want to add.
+    \param type The datatype of the column member you  want to add.
+  */
+  void dalColumn::addMember (std::string member_name,
+			     std::string member_type)
   {
     /*    array_tid = H5Tarray_create(H5T_NATIVE_CHAR, ARRAY_RANK,
-    		    array_dim, NULL);
+	  array_dim, NULL);
     */
     if ( H5TYPE == filetype )
       {
@@ -873,13 +853,12 @@ namespace DAL {
                       << member_type << " not supported.\n";
           }
       }
-    else
-      {
-        std::cerr << "dalColumn::addMember not yet supported for filetype " <<
-                  filetype << endl;
-      }
+    else {
+      std::cerr << "dalColumn::addMember not yet supported for filetype "
+		<< filetype << endl;
+    }
   }
-
+  
   // ============================================================================
   //
   //  Boost.Python wrapper functions
@@ -887,7 +866,7 @@ namespace DAL {
   // ============================================================================
   
 #ifdef PYTHON
-
+  
   //_____________________________________________________________________________
   //                                                                  shape_boost
   

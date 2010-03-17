@@ -24,22 +24,20 @@
   The python interface is, and will likely remain, a subset of the methods
   available in C++.
 
-  The \e primary classes in the DAL are: \texttt{dalDatast},
-  \texttt{dalGroup}, \texttt{dalTable}, \texttt{dalColumn}, \texttt{dalData},
-  \texttt{dalArray} and \texttt{dalFilter}. These are the generic classes used to
-  operate on a file of an unspecified type.
+  The \e primary classes in the DAL are: \e dalDataset, \e dalGroup, \e dalTable,
+  \e dalColumn, \e dalData, \e dalArray and \e dalFilter. These are the generic
+  classes used to operate on a file of an unspecified type.
 
   A set of \textit{supporting} classes also exist in the DAL, but they are
   generally not interesting to the developer. There purpose is to provide common
   methods used by the primary classes mentioned above. These supporting classes
-  are: \texttt{Common}, \texttt{Database}, and \texttt{HDF5Common}.
+  are: \e Common, \e Database, and \e HDF5Common.
 
   Finally, the DAL includes \textit{format-specific} classes. These classes are
   designed to work with a single type of LOFAR data product such as beam-formed or
-  transient buffer board data. The format-specific classes are: \texttt{BFRaw},
-  \texttt{BeamFormed}, \texttt{BeamGroup}, \texttt{BeamSubband},
-  \texttt{Enumerations}, \texttt{TBB}, \texttt{dalLopesEvent} and
-  \texttt{lopesevent}.
+  transient buffer board data. The format-specific classes are: \e BFRaw,
+  \e BeamFormed, \e BeamGroup, \e BeamSubband, \e Enumerations, \e TBB,
+  \e dalLopesEvent and \e lopesevent.
 
 This document describes only the \e primary classes.
 
@@ -77,40 +75,40 @@ This document describes only the \e primary classes.
 
   \subsection dal_um_types_hdf5 HDF5
 
-Hierarchical Data Format Version 5 (HDF5), is a relatively recent format
-designed with particular attention to efficient operation on extremely large
-data sets.  HDF5 is the intended format for LOFAR data products.  The reasons
-for this decision are given in {\em ``Proposed Data Formats``} \cite{Cadot}.
+  Hierarchical Data Format Version 5 (HDF5), is a relatively recent format
+  designed with particular attention to efficient operation on extremely large
+  data sets.  HDF5 is the intended format for LOFAR data products.  The reasons
+  for this decision are given in {\em ``Proposed Data Formats``} \cite{Cadot}.
 
-HDF5 is organized much like a unix file system.  The internal structure consists
-of a root group, '/', which may recursively contain subgroups.  Each of these
-groups may, in turn, contain other groups or n-dimensional arrays of simple or
-complex datatypes.  HDF5 tables are particular case of a HDF5 array and thus are
-treated in a similar manner.  Almost all objects in a HDF5 file can hold
-associated metadata in the form of an attribute.  For an abbreviated list of
-HDF5 features see {\em ``HDF5 vs. CASA Tables''} \cite{Diepen}.  For a complete
-list see the hdfgroup website \cite{hdfgroup}.
+  HDF5 is organized much like a unix file system.  The internal structure consists
+  of a root group, '/', which may recursively contain subgroups.  Each of these
+  groups may, in turn, contain other groups or n-dimensional arrays of simple or
+  complex datatypes.  HDF5 tables are particular case of a HDF5 array and thus are
+  treated in a similar manner.  Almost all objects in a HDF5 file can hold
+  associated metadata in the form of an attribute.  For an abbreviated list of
+  HDF5 features see {\em ``HDF5 vs. CASA Tables''} \cite{Diepen}.  For a complete
+  list see the hdfgroup website \cite{hdfgroup}.
 
-HDF5 files can be both read and written by the DAL.
+  HDF5 files can be both read and written by the DAL.
 
-\subsection dal_um_types_casa CASA Tables
+  \subsection dal_um_types_casa CASA Tables
 
-CASA Tables in general, and Measurement Sets in particular, are the primary data
-product of the Westerbork Synthesis Radio Telescope (WSRT).  As WSRT is also
-based at ASTRON (where there is a large community of experienced CASA users),
-there is naturally a strong interest and advantage in building upon this
-expertise for LOFAR.
+  CASA Tables in general, and Measurement Sets in particular, are the primary data
+  product of the Westerbork Synthesis Radio Telescope (WSRT).  As WSRT is also
+  based at ASTRON (where there is a large community of experienced CASA users),
+  there is naturally a strong interest and advantage in building upon this
+  expertise for LOFAR.
 
-CASA tables can currently be read, but not written, by the DAL.
+  CASA tables can currently be read, but not written, by the DAL.
 
-\subsection dal_um_types_fits FITS
+  \subsection dal_um_types_fits FITS
+  
+  FITS is the standard astronomical image format.  Among its advantages for
+  inclusion in the DAL is its widespread use and extensive toolset.  Among its
+  limitations is the fact that it was not designed for large and complex datasets.
 
-FITS is the standard astronomical image format.  Among its advantages for
-inclusion in the DAL is its widespread use and extensive toolset.  Among its
-limitations is the fact that it was not designed for large and complex datasets.
-
-FITS is the lowest of priority of the three supported formats and currently has
-almost no actual support in the DAL.
+  FITS is the lowest of priority of the three supported formats and currently has
+  almost no actual support in the DAL.
 
   <p><hr><p>
 

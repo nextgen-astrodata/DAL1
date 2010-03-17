@@ -161,6 +161,30 @@ namespace DAL { // Namespace DAL -- begin
       <li>\b H5TBread_fields_name reads the fields identified by \e field_names
       from a dataset named \e table_name attached to the object specified by the
       identifier \e loc_id.
+      \code
+      herr_t H5TBread_fields_name (hid_t loc_id,
+                                   const char *table_name,
+				   const char * field_names,
+				   hsize_t start,
+				   hsize_t nrecords,
+				   size_t type_size,
+				   const size_t *field_offset,
+				   const size_t *dst_sizes,
+				   void *data)
+      \endcode
+      Parameters:
+      - hid_t loc_id [IN] Identifier of the file or group to read the table within. 
+      - const char *table_name [IN] The name of the dataset to read. 
+      - const char * field_names [IN] An array containing the names of the fields
+      to read. 
+      - hsize_t  start [IN] The start record to read from. 
+      - hsize_t nrecords [IN] The number of records to read. 
+      - hsize_t type_size [IN] The size in bytes of the structure associated with
+      the table. This value is obtained with sizeof. 
+      - const size_t *field_offset [IN] An array containing the offsets of the fields.
+      - const size_t *dst_sizes [IN] An array containing the size in bytes of the
+      fields. 
+      - void *data [OUT] Buffer with data. 
 
       <li>\b H5TBread_fields_index reads the fields identified by \e field_index
       from a dataset named \e table_name attached to the object specified by the
