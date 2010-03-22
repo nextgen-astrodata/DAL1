@@ -56,9 +56,9 @@ int test_constructors ()
   
   std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
-    HDF5Table newObject;
+    HDF5Table table;
     //
-    newObject.summary(); 
+    table.summary(); 
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
@@ -68,14 +68,83 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
+//                                                              test_constructors
+
+/*!
+  \brief Test constructors for a new HDF5Table object
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_constructors (std::string const &filename)
+{
+  std::cout << "\n[tHDF5Table::test_constructors]\n" << std::endl;
+
+  int nofFailedTests (0);
+
+  //________________________________________________________
+  // Open the file to work with
+  
+  hid_t fileID = H5Fopen (filename.c_str(),
+			  H5F_ACC_RDWR,
+			  H5P_DEFAULT);
+  
+  if (!H5Iis_valid(fileID)) {
+    std::cerr << "Failed to open file " << filename << endl;
+    return 0;
+  }
+  
+  //________________________________________________________
+  // Run the tests
+
+
+  std::cout << "[1] Testing default constructor ..." << std::endl;
+  try {
+    HDF5Table table;
+    //
+    table.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  //________________________________________________________
+  // Close the file
+
+  H5Fclose(fileID);
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
-int main ()
+int main (int argc,
+          char *argv[])
 {
   int nofFailedTests (0);
+  bool haveTable (true);
+  std::string filename ("tHDF5Table.h5");
+
+  //________________________________________________________
+  // Process parameters from the command line
+  
+  if (argc < 2) {
+    haveTable = false;
+  } else {
+    filename  = argv[1];
+    haveTable = true;
+  }
+
+  //________________________________________________________
+  // Run the tests
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
+
+  if (haveTable) {
+//     nofFailedTests += test_constructors (filename);
+  }
 
   return nofFailedTests;
 }

@@ -113,9 +113,13 @@ bool find_dataset (std::string const &filename,
       }
     }
     else {
+      // Store information
       it          = names.begin();
       dataset     = name + "/" + *it;
       haveDataset = true;
+      // Feedback
+      std::cout << "-- Dataset       = " << dataset      << std::endl;
+      std::cout << "-- nof. datasets = " << names.size() << std::endl;
     }
   }  //  END -- while (!haveDataset)
   

@@ -30,6 +30,7 @@
 
 #include <dalCommon.h>
 #include <CommonInterface.h>
+#include <HDF5Dataset.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -112,6 +113,16 @@ namespace DAL { // Namespace DAL -- begin
     \endcode
 
     <h3>Synopsis</h3>
+    
+    A generic table is a sequence of records, each record has a name and a type.
+    Table data is stored as an HDF5 one dimensional compound dataset. A table
+    is defined as a collection of records whose values are stored in fixed-length
+    fields. All records have the same structure and all values in each field have
+    the same data type.
+    
+    The dataset for a table is distinguished from other datasets by giving it an
+    attribute "CLASS=TABLE". Optional attributes allow the storage of a title for
+    the Table and for each column, and a fill value for each column. 
 
     Encapsulated HDF5 library functions:
     
@@ -172,19 +183,55 @@ namespace DAL { // Namespace DAL -- begin
 				   const size_t *dst_sizes,
 				   void *data)
       \endcode
-      Parameters:
-      - hid_t loc_id [IN] Identifier of the file or group to read the table within. 
-      - const char *table_name [IN] The name of the dataset to read. 
-      - const char * field_names [IN] An array containing the names of the fields
-      to read. 
-      - hsize_t  start [IN] The start record to read from. 
-      - hsize_t nrecords [IN] The number of records to read. 
-      - hsize_t type_size [IN] The size in bytes of the structure associated with
-      the table. This value is obtained with sizeof. 
-      - const size_t *field_offset [IN] An array containing the offsets of the fields.
-      - const size_t *dst_sizes [IN] An array containing the size in bytes of the
-      fields. 
-      - void *data [OUT] Buffer with data. 
+
+      <table border=0>
+        <tr valign="top">
+	  <td>hid_t loc_id</td>
+	  <td>IN</td>
+	  <td>Identifier of the file or group to read the table within.</td>
+	</tr>
+        <tr valign="top">
+	  <td>const char *table_name</td>
+	  <td>IN</td>
+	  <td>The name of the dataset to read.</td>
+	</tr>
+        <tr valign="top">
+	  <td>const char * field_names</td>
+	  <td>IN</td>
+	  <td>An array containing the names of the fields to read.</td>
+	</tr>
+        <tr valign="top">
+	  <td>hsize_t start</td>
+	  <td>IN</td>
+	  <td>The start record to read from.</td>
+	</tr>
+        <tr valign="top">
+	  <td>hsize_t nrecords</td>
+	  <td>IN</td>
+	  <td>The number of records to read.</td>
+	</tr>
+        <tr valign="top">
+	  <td>hsize_t type_size</td>
+	  <td>IN</td>
+	  <td>The size in bytes of the structure associated with the table. This
+	  value is obtained with sizeof.</td>
+	</tr>
+        <tr valign="top">
+	  <td>const size_t *field_offset</td>
+	  <td>IN</td>
+	  <td>An array containing the offsets of the fields.</td>
+	</tr>
+        <tr valign="top">
+	  <td>const size_t *dst_sizes</td>
+	  <td>IN</td>
+	  <td>An array containing the size in bytes of the fields.</td>
+	</tr>
+        <tr valign="top">
+	  <td>void *data</td>
+	  <td>OUT &nbsp;</td>
+	  <td>Buffer with data.</td>
+	</tr>
+      </table>
 
       <li>\b H5TBread_fields_index reads the fields identified by \e field_index
       from a dataset named \e table_name attached to the object specified by the
@@ -211,14 +258,51 @@ namespace DAL { // Namespace DAL -- begin
 				 size_t *field_offsets,
 				 size_t *type_size)
       \endcode
+
+      <table border=0>
+        <tr>
+	  <td>hid_t loc_id</td>
+	  <td>IN</td>
+	  <td>Identifier of the file or group to read the table within.</td>
+	</tr>
+        <tr>
+	  <td>const char *table_name</td>
+	  <td>IN</td>
+	  <td>The name of the dataset to read.</td>
+	</tr>
+        <tr valign="top">
+	  <td>char *field_names[]</td>
+	  <td>OUT</td>
+	  <td>An array containing the names of the fields.</td>
+	</tr>
+        <tr valign="top">
+	  <td>size_t *field_sizes</td>
+	  <td>OUT</td>
+	  <td>An array containing the size of the fields.</td>
+	</tr>
+        <tr valign="top">
+	  <td>size_t *field_offsets</td>
+	  <td>OUT</td>
+	  <td>An array containing the offsets of the fields.</td>
+	</tr>
+        <tr valign="top">
+	  <td>size_t *type_size</td>
+	  <td>OUT &nbsp;</td>
+	  <td>The size of the HDF5 datatype associated with the table. <br>
+	  More specifically, the size in bytes of the HDF5 compound datatype used
+	  to define a row, or record, in the table.</td>
+	</tr>
+      </table>
     </ol>
 
     <h3>Example(s)</h3>
     
   */  
-  class HDF5Table {
-
-    //! Names of the table columns
+  class HDF5Table : public CommonInterface {
+    
+    //! Table name
+    std::string tableName_p;
+    //! Column names
     std::vector<std::string> columnNames_p;
     
   public:
@@ -229,23 +313,24 @@ namespace DAL { // Namespace DAL -- begin
     HDF5Table ();
     
     //! Argumented constructor
-    HDF5Table (hid_t const &location);
+    HDF5Table (hid_t const &location,
+	       std::string const &name);
     
     // === Destruction ==========================================================
-
+    
     //! Destructor
     ~HDF5Table ();
     
     // === Parameter access =====================================================
 
-    //! Get the names of the table columns
+    //! Get the name of the table
+    inline std::string tableName () const {
+      return tableName_p;
+    }
+    
+    //! Get the name of the table columns
     inline std::vector<std::string> columnNames () const {
       return columnNames_p;
-    }
-
-    //! Get the number of table columns
-    inline unsigned int nofColumns () {
-      return columnNames_p.size();
     }
     
     /*!
@@ -267,16 +352,24 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Methods ==============================================================
     
-    
+    //! Open the table
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       bool const &create=false);
+
+    //! Get the shape of table, i.e. the number of rows and columns
+    std::vector<hid_t> shape();
     
   private:
 
-    //! Initialize the internal parameters/data
+    //! Initialize the internal parameters
     void init ();
-    
+    //! Set up the list of attributes attached to the dataset
+    void setAttributes ();
+    //! Open the structures embedded within the current one
+    bool openEmbedded (bool const &create);
     //! Unconditional copying
     void copy (HDF5Table const &other);
-    
     //! Unconditional deletion 
     void destroy(void);
     

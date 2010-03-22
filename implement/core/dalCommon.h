@@ -71,7 +71,7 @@ using casa::Quantity;
 
   \author Joseph Masters, Lars B&auml;hren
 
-  \test tdalCommon.cpp
+  \test tdalCommon.cc
 
   <h3>Prerequisite</h3>
 

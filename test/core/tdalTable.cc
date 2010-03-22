@@ -186,34 +186,37 @@ int test_methods (std::string const &filename,
   return nofFailedTests;
 }
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                           main
 
-int main (int argc,char *argv[])
+int main (int argc,
+          char *argv[])
 {
   int nofFailedTests (0);
-  std::string filename;
-  std::string tableName ("SB000");
   bool haveDataset (true);
+  std::string filename ("tHDF5Dataset.h5");
+  std::string tableName ("SB000");
 
-  /* Check command line parameters */
-
-  if (argc > 1) {
-    filename    = std::string(argv[1]);
+  //________________________________________________________
+  // Process parameters from the command line
+  
+  if (argc < 2) {
     haveDataset = false;
+  } else {
+    filename    = argv[1];
+    haveDataset = true;
   }
-  else {
-    std::cout << "[tdalTable] Missing name of input test file." << std::endl;
-    return(DAL::FAIL);
-  }
-  
-  /* Test the constructors */
-  nofFailedTests += test_constructors(filename, haveDataset);
-  
-  if (nofFailedTests == 0)
-    {
-      nofFailedTests += test_parameters(filename, haveDataset);
-      nofFailedTests += test_methods(filename, haveDataset);
-    }
 
+  //________________________________________________________
+  // Run the tests
+
+  if (haveDataset) {
+    nofFailedTests += test_constructors(filename, haveDataset);
+    nofFailedTests += test_parameters(filename, haveDataset);
+    nofFailedTests += test_methods(filename, haveDataset);
+  } else {
+    std::cerr << "[tdalTable] Skipping tests - no input file!" << std::endl;
+  }
+  
   return nofFailedTests;
 }

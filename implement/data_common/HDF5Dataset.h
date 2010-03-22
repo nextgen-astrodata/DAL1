@@ -49,7 +49,6 @@ namespace DAL {
     \test tHDF5Dataset.cc
 
     \todo Detection of datatype (e.g. <tt>H5T_COMPOUND</tt>, <tt>H5T_ENUM</tt>)
-    \todo Check if dataspace was created with chunking enabled
     \todo Enable selection of whether or not to employ chunking; right now chunking
     is enabled as default, but there also might be cases where a finite dataspace
     without chunking is required.
@@ -144,16 +143,26 @@ namespace DAL {
       \code
       H5D_layout_t H5Pget_layout (hid_t plist)
       \endcode
+      Valid return values are:
+      <ul>
+        <li>\e H5D_COMPACT -- Raw data is stored in the object header in the file. 
+	<li>\e H5D_CONTIGUOUS -- Raw data is stored separately from the object
+	header in one contiguous chunk in the file.
+	<li>\e H5D_CHUNKED -- Raw data is stored separately from the object
+	header in chunks in separate locations in the file. 
+      </ul>
       <li>\b H5Pset_chunk -- Sets the size of the chunks used to store a chunked
       layout dataset. 
       \code
       herr_t H5Pset_chunk (hid_t plist, int ndims, const hsize_t * dim) 
       \endcode
       <li>\b H5Pget_chunk -- Retrieves the size of chunks for the raw data of a
-      chunked layout dataset.
+      chunked layout dataset. This function is only valid for dataset creation
+      property lists. At most, max_ndims elements of dims  will be initialized. 
       \code
       int H5Pget_chunk (hid_t plist, int max_ndims, hsize_t * dims)
       \endcode
+      Returns chunk dimensionality if successful; otherwise returns a negative value. 
       <li>\b H5Pset_chunk_cache -- Sets the raw data chunk cache parameters.
       \code
       herr_t H5Pset_chunk_cache (hid_t dapl_id, size_t rdcc_nslots, size_t rdcc_nbytes, double rdcc_w0)
@@ -356,8 +365,22 @@ namespace DAL {
 		       std::vector<int> const &block,
 		       H5S_seloper_t const &selection=H5S_SELECT_SET);
 
+    //! Get the address in the file, expressed in bytes from the beginning of the file. 
+    inline haddr_t offset () {
+      if (H5Iis_valid(location_p)) {
+	return H5Dget_offset (location_p);
+      } else {
+	return HADDR_UNDEF;
+      }
+    }
+    
+    //! Get the datatype class identifier. 
+    inline H5T_class_t datatypeClass () {
+      return datatypeClass (datatype_p);
+    }
+    
     // === Read the data ========================================================
-
+    
     /*!
       \brief Read the data
       \param data    -- Array with the data to be written.
@@ -501,8 +524,24 @@ namespace DAL {
 			  start,
 			  block);
       }
+
+    // === Static methods =======================================================
     
-    // ==========================================================================
+    /*!
+      \brief Get the datatype class identifier.
+      \return class -- H5T_INTEGER, H5T_FLOAT, H5T_STRING, H5T_BITFIELD,
+              H5T_OPAQUE, H5T_COMPOUND, H5T_REFERENCE, H5T_ENUM, H5T_VLEN,
+	      H5T_ARRAY.
+    */
+    static H5T_class_t datatypeClass (hid_t const &location) {
+      if (H5Iis_valid(location)) {
+	return H5Tget_class (location);
+      } else {
+	return H5T_NO_CLASS;
+      }
+    }
+    
+    // === Summary ==============================================================
     
     //! Provide a summary of the internal status
     inline void summary () {

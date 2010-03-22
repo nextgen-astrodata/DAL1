@@ -31,9 +31,24 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                    HDF5Table
+  
   HDF5Table::HDF5Table ()
   {
     init ();
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                    HDF5Table
+  
+  HDF5Table::HDF5Table (hid_t const &location,
+			std::string const &name)
+  {
+    //! Initialize internal parameters
+    init();
+    // Open the table
+    open (location,name,false);
   }
   
   // ============================================================================
@@ -73,7 +88,9 @@ namespace DAL { // Namespace DAL -- begin
   
   void HDF5Table::summary (std::ostream &os)
   {
-    os << "[HDF5Table] Summary of internal parameters." << std::endl;
+    os << "[HDF5Table] Summary of internal parameters."  << std::endl;
+    os << "-- Table name   = " << tableName_p            << std::endl;
+    os << "-- Column names = " << columnNames_p          << std::endl;
   }
 
   // ============================================================================
@@ -82,9 +99,71 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                         init
+  
   void HDF5Table::init ()
   {
+    tableName_p = "";
+
     columnNames_p.clear();
   }
+
+  //_____________________________________________________________________________
+  //                                                                setAttributes
+  
+  void HDF5Table::setAttributes ()
+  {
+    attributes_p.clear();
+    
+    /* Attributes of an Table Dataset */
+    attributes_p.insert("CLASS");
+    attributes_p.insert("VERSION");
+    attributes_p.insert("TITLE");
+  }
+
+  //_____________________________________________________________________________
+  //                                                                         open
+
+  bool HDF5Table::open (hid_t const &location,
+			std::string const &name,
+			bool const &create)
+  {
+    bool status = create;
+
+    /* Set up the list of attributes attached to the group */
+    setAttributes();
+    
+    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
+      // Open the dataset
+      location_p = H5Dopen (location,
+			    name.c_str(),
+			    H5P_DEFAULT);
+    } else {
+      location_p = 0;
+    }
+    
+    return status;
+  }
+    
+  //_____________________________________________________________________________
+  //                                                                 openEmbedded
+
+  bool HDF5Table::openEmbedded (bool const &create)
+  {
+    bool status = create;
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                        shape
+  
+  std::vector<hid_t> HDF5Table::shape()
+  {
+    std::vector<hid_t> shape (2);
+
+    return shape;
+  }
+
 
 } // Namespace DAL -- end

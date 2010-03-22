@@ -31,6 +31,14 @@ endforeach (src)
 ##_______________________________________________________________________________
 ##                                                           Testing instructions
 
+## tdalCommon ____________________________________
+  
+add_test (tdalCommon_test1 tdalCommon)
+
+if (dataset_tbb AND dataset_beamformed)
+  add_test (tdalCommon_test2 tdalCommon ${dataset_tbb} ${dataset_beamformed})
+endif (dataset_tbb AND dataset_beamformed)
+
 ## tdalDataset ___________________________________
 
 if (dataset_ms)
@@ -63,16 +71,13 @@ add_test (tdalGroup tdalGroup)
 
 ## tdalTable _____________________________________
 
-add_test (tdalTable1 tdalTable)
-
 if (dataset_beamformed)
   add_test (tdalTable2 tdalTable ${dataset_beamformed})
+else (dataset_beamformed)
+  add_test (tdalTable2 tdalTable)
 endif (dataset_beamformed)
 
-## tdalCommon ____________________________________
-  
-add_test (tdalCommon_test1 tdalCommon)
+## tDatabase _____________________________________
 
-if (dataset_tbb AND dataset_beamformed)
-  add_test (tdalCommon_test2 tdalCommon ${dataset_tbb} ${dataset_beamformed})
-endif (dataset_tbb AND dataset_beamformed)
+add_test (tDatabase tDatabase)
+

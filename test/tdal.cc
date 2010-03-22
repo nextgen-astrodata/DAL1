@@ -33,26 +33,6 @@
 using std::complex;
 using namespace DAL;
 
-#ifdef HAVE_MYSQL
-
-// ---------------------------------------------------- connect_mysql_database
-
-uint connect_mysql_database()
-{
-  uint ret = 0;
-
-  string server("pc-swinbank");
-  string name("lofar");
-  string passwd("cs1");
-  string database("pipeline");
-  Database db( server, name, passwd, database );
-  if ( DAL::FAIL == db.query("show tables;") )
-    ret++;
-
-  return ret;
-}
-#endif
-
 // ---------------------------------------------------- create_hdf5_dataset
 
 uint create_hdf5_dataset()
@@ -784,20 +764,13 @@ uint list_groups()
   return ret;
 }
 
-
-// ---------------------------------------------------- main
+//_______________________________________________________________________________
+//                                                                           main
 
 int main()
 {
-
-  uint ret = 0;
-  uint failed_tests = 0;
-
-#ifdef HAVE_MYSQL
-  std::cerr << "\n[ connect_mysql_database ]\n";
-  std::cerr << "-----------------------------------------------------\n";
-  connect_mysql_database();
-#endif
+  uint ret (0);
+  uint failed_tests (0);
 
 // HDF5
 

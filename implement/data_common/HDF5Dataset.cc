@@ -166,7 +166,7 @@ namespace DAL {
   {
     bool status (true);
     
-    /* Set up the list of attributes attached to the root group */
+    /* Set up the list of attributes attached to the group */
     setAttributes();
     
     if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
