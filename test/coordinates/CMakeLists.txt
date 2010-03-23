@@ -16,11 +16,11 @@ foreach (src ${tests_data_hl})
   target_link_libraries(${src}
     dal
     ${dal_link_libraries}
-    ${CASA_LIBRARIES}
-    ${LAPACK_LIBRARIES}
-    ${CFITSIO_LIBRARIES}
-    ${WCSLIB_LIBRARIES}
-    ${GFORTRAN_LIBRARIES}
+#    ${CASA_LIBRARIES}
+#    ${LAPACK_LIBRARIES}
+#    ${CFITSIO_LIBRARIES}
+#    ${WCSLIB_LIBRARIES}
+#    ${GFORTRAN_LIBRARIES}
     )
   ## installation instructions
   install (TARGETS ${src}

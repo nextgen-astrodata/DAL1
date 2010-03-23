@@ -44,7 +44,6 @@ namespace DAL {  // Namespace DAL -- begin
   TBB_Timeseries::TBB_Timeseries ()
   {
     location_p = -1;
-    triggerTable_p.clear();
     stationGroups_p.clear();
   }
   
@@ -274,36 +273,8 @@ namespace DAL {  // Namespace DAL -- begin
   {
     bool status = create;
 
-    /* Open the TriggerTable */
-    status = openTriggerTable (create);
     /* Open the station groups */
     status = openStationGroups();
-
-    return status;
-  }
-
-  //_____________________________________________________________________________
-  //                                                            openTriggerTable
-  
-  bool TBB_Timeseries::openTriggerTable (bool const &create)
-  {
-    bool status (create);
-    std::string tableName ("TriggerTable");
-
-    if (H5Lexists (location_p, tableName.c_str(), H5P_DEFAULT)) {
-      triggerTable_p[tableName] = DAL::TBB_TriggerTable(location_p,
-							tableName);
-      status = true;
-    } else {
-      if (create) {
-	triggerTable_p[tableName] = DAL::TBB_TriggerTable(location_p,
-							  tableName,
-							  create);
-	status = true;
-      } else {
-	status = false;
-      }
-    }
 
     return status;
   }

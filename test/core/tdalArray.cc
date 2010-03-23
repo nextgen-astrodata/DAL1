@@ -79,6 +79,21 @@ int test_constructors (std::string const &filename)
 
   int nofFailedTests (0);
 
+  //______________________________________________
+  // Open the HDF5 file to inspect
+  
+  hid_t fileID = H5Fopen (filename.c_str(),
+			  H5F_ACC_RDWR,
+			  H5P_DEFAULT);
+
+  if (!H5Iis_valid(fileID)) {
+    std::cerr << "-- Failed to open file " << filename << std::endl;
+    return 0;
+  }
+
+  //______________________________________________
+  // Run the tests
+
   std::cout << "[1] Default constructor..." << std::endl;
   try {
     DAL::dalArray arr;
@@ -89,6 +104,11 @@ int test_constructors (std::string const &filename)
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
+
+  //______________________________________________
+  // Close HDF5 object identifiers
+
+  H5Fclose (fileID);
   
   return nofFailedTests;
 }

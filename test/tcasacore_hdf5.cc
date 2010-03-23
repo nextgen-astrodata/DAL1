@@ -66,47 +66,45 @@ int test_HDF5File ()
   cout << "\n[tcasacore_hdf5::test_HDF5File]\n" << endl;
 
   int nofFailedTests (0);
-
+  
   cout << "[1] Creating new HDF5 file ..." << endl;
-  try
-    {
-      // create new file
-      casa::HDF5File f ("testfile1.h5", casa::ByteIO::New);
-      // show file properties
-      cout << "-- File is writable          = " << f.isWritable()        << endl;
-      cout << "-- File is opened for delete = " << f.isOpenedForDelete() << endl;
-      cout << "-- File temporarily closed   = " << f.isClosed()          << endl;
-    }
-  catch (std::string message)
-    {
-      cerr << message << endl;
-      nofFailedTests++;
-    }
-
+  try {
+    // create new file
+    casa::HDF5File f ("tcasacore_hdf5.h5", casa::ByteIO::New);
+    // show file properties
+    cout << "-- File is writable          = " << f.isWritable()        << endl;
+    cout << "-- File is opened for delete = " << f.isOpenedForDelete() << endl;
+    cout << "-- File temporarily closed   = " << f.isClosed()          << endl;
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   cout << "[2] Reopen previously created HDF5 file as RO ..." << endl;
-  try
-    {
-      // open the file
-      casa::HDF5File f ("testfile1.h5", casa::ByteIO::Old);
-      // show file properties
-      cout << "-- File is writable          = " << f.isWritable()        << endl;
-      cout << "-- File is opened for delete = " << f.isOpenedForDelete() << endl;
-      cout << "-- File temporarily closed   = " << f.isClosed()          << endl;
-    }
-  catch (std::string message)
-    {
-      cerr << message << endl;
-      nofFailedTests++;
-    }
-
+  try {
+    // open the file
+    casa::HDF5File f ("tcasacore_hdf5.h5", casa::ByteIO::Old);
+    // show file properties
+    cout << "-- File is writable          = " << f.isWritable()        << endl;
+    cout << "-- File is opened for delete = " << f.isOpenedForDelete() << endl;
+    cout << "-- File temporarily closed   = " << f.isClosed()          << endl;
+  }
+  catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
 //_______________________________________________________________________________
-//
+//                                                                test_HDF5Record
 
 int test_HDF5Record ()
 {
+  cout << "\n[tcasacore_hdf5::test_HDF5Record]\n" << endl;
+
   int nofFailedTests (0);
 
   return nofFailedTests;
@@ -119,8 +117,24 @@ int main (int argc,
           char *argv[])
 {
   int nofFailedTests (0);
+  bool haveTestfile (true);
+  std::string filename;
+
+  //________________________________________________________
+  // Process parameters from the command line
+  
+  if (argc < 2) {
+    haveTestfile = false;
+  } else {
+    filename     = argv[1];
+    haveTestfile = true;
+  }
+
+  //________________________________________________________
+  // Run the tests
 
   nofFailedTests += test_HDF5File ();
+  nofFailedTests += test_HDF5Record ();
 
   return nofFailedTests;
 }

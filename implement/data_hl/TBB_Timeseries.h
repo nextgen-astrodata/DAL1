@@ -32,7 +32,7 @@
 #include <CommonAttributes.h>
 #include <CommonInterface.h>
 #include <TBB_StationGroup.h>
-#include <TBB_TriggerTable.h>
+#include <TBB_StationTrigger.h>
 
 namespace DAL {  // Namespace DAL -- begin
 
@@ -120,8 +120,6 @@ namespace DAL {  // Namespace DAL -- begin
 
     //! Name of the data file
     std::string filename_p;
-    //! Trigger table attached to the root group of the file
-    std::map<std::string,TBB_TriggerTable> triggerTable_p;
     //! Station groups attached to the root group of the file
     std::map<std::string,TBB_StationGroup> stationGroups_p;
     
@@ -314,8 +312,6 @@ namespace DAL {  // Namespace DAL -- begin
     void setAttributes ();
     //! Open the structures embedded within the current one
     bool openEmbedded (bool const &create);
-    //! Open the group with the trigger table
-    bool openTriggerTable (bool const &create=true);
 
   private:
     

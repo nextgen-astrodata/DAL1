@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <TBB_TriggerTable.h>
+#include <TBB_StationTrigger.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -32,15 +32,15 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   //_____________________________________________________________________________
-  //                                                             TBB_TriggerTable
+  //                                                             TBB_StationTrigger
 
-  TBB_TriggerTable::TBB_TriggerTable ()
+  TBB_StationTrigger::TBB_StationTrigger ()
   {
     location_p = 0;
   }
 
   //_____________________________________________________________________________
-  //                                                             TBB_TriggerTable
+  //                                                             TBB_StationTrigger
 
   /*!
     \param location -- Identifier of the location to which the to be opened
@@ -48,7 +48,7 @@ namespace DAL { // Namespace DAL -- begin
     \param name -- Name of the structure (file, group, dataset, etc.) to be
            opened.
   */
-  TBB_TriggerTable::TBB_TriggerTable (hid_t const &location,
+  TBB_StationTrigger::TBB_StationTrigger (hid_t const &location,
 				      std::string const &name,
 				      bool const &create)
   {
@@ -61,12 +61,12 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  TBB_TriggerTable::~TBB_TriggerTable ()
+  TBB_StationTrigger::~TBB_StationTrigger ()
   {
     destroy();
   }
   
-  void TBB_TriggerTable::destroy ()
+  void TBB_StationTrigger::destroy ()
   {;}
   
   // ============================================================================
@@ -78,7 +78,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    operator=
   
-  TBB_TriggerTable& TBB_TriggerTable::operator= (TBB_TriggerTable const &other)
+  TBB_StationTrigger& TBB_StationTrigger::operator= (TBB_StationTrigger const &other)
   {
     if (this != &other) {
       destroy ();
@@ -90,7 +90,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
-  void TBB_TriggerTable::copy (TBB_TriggerTable const &other)
+  void TBB_StationTrigger::copy (TBB_StationTrigger const &other)
   {
     location_p  = other.location_p;
   }
@@ -104,9 +104,9 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      summary
   
-  void TBB_TriggerTable::summary (std::ostream &os)
+  void TBB_StationTrigger::summary (std::ostream &os)
   {
-    os << "[TBB_TriggerTable] Summary of internal parameters." << std::endl;
+    os << "[TBB_StationTrigger] Summary of internal parameters." << std::endl;
     os << "-- Trigger table ID = " << location_p               << std::endl;
   }
 
@@ -119,7 +119,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                setAttributes
   
-  void TBB_TriggerTable::setAttributes ()
+  void TBB_StationTrigger::setAttributes ()
   {
     attributes_p.clear();
 
@@ -140,7 +140,7 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
-  bool TBB_TriggerTable::open (hid_t const &location,
+  bool TBB_StationTrigger::open (hid_t const &location,
 			       std::string const &name,
 			       bool const &create)
   {
@@ -169,17 +169,17 @@ namespace DAL { // Namespace DAL -- begin
 				H5P_DEFAULT);
 	/* If creation was sucessful, add attributes with default values */
 	if (location_p > 0) {
-	  std::string grouptype ("TriggerTable");
+	  std::string grouptype ("StationTrigger");
 	  // write the attributes
 	  h5set_attribute (location_p, "GROUPTYPE", grouptype);
 	} else {
-	  std::cerr << "[TBB_TriggerTable::open] Failed to create group "
+	  std::cerr << "[TBB_StationTrigger::open] Failed to create group "
 		    << name
 		    << std::endl;
 	  status = false;
 	}
       } else {
-	std::cerr << "[TBB_TriggerTable::open] Failed to open group "
+	std::cerr << "[TBB_StationTrigger::open] Failed to open group "
 		  << name
 		  << std::endl;
 	status = false;
@@ -190,7 +190,7 @@ namespace DAL { // Namespace DAL -- begin
     if (status) {
       status = openEmbedded (create);
     } else {
-      std::cerr << "[TBB_TriggerTable::open] Skip opening embedded groups!"
+      std::cerr << "[TBB_StationTrigger::open] Skip opening embedded groups!"
 		<< std::endl;
     }
  
@@ -200,7 +200,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool TBB_TriggerTable::openEmbedded (bool const &create)
+  bool TBB_StationTrigger::openEmbedded (bool const &create)
   {
     bool status = create;
     status      = true;

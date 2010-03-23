@@ -15,12 +15,8 @@ foreach (src ${tests_data_hl})
   ## linker instructions
   if (HAVE_CASA OR HAVE_CASACORE)
     target_link_libraries(${src}
-      ${CASA_LIBRARIES}
       dal
-      ${CASA_LIBRARIES}
-      ${CFITSIO_LIBRARIES}
       ${dal_link_libraries}
-      ${HAVE_MALLOC_DEBUG}
       )
   else (HAVE_CASA OR HAVE_CASACORE)
     target_link_libraries(${src} dal)
@@ -59,7 +55,7 @@ add_test (tBF_Beam tBF_Beam)
 add_test (tBF_ProcessingHistory tBF_ProcessingHistory)
 add_test (tBF_PrimaryPointing tBF_PrimaryPointing)
 add_test (tBF_SysLog tBF_SysLog)
-add_test (tTBB_TriggerTable tTBB_TriggerTable)
+add_test (tTBB_StationTrigger tTBB_StationTrigger)
 
 if (dataset_tbb)
   add_test (tTBB_DipoleDataset ${BASH_EXCUTABLE} tTBB_DipoleDataset.sh)

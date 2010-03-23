@@ -21,8 +21,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef TBB_TRIGGERTABLE_H
-#define TBB_TRIGGERTABLE_H
+#ifndef TBB_STATIONTRIGGER_H
+#define TBB_STATIONTRIGGER_H
 
 // Standard library header files
 #include <iostream>
@@ -33,18 +33,18 @@
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class TBB_TriggerTable
+    \class TBB_StationTrigger
     
     \ingroup DAL
     \ingroup data_hl
     
-    \brief Container for the trigger parameter data
+    \brief Container for the parameters generated from the station trigger
     
     \author Lars B&auml;hren
 
     \date 2010/01/19
 
-    \test tTBB_TriggerTable.cc
+    \test tTBB_StationTrigger.cc
     
     <h3>Prerequisite</h3>
     
@@ -59,65 +59,43 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class TBB_TriggerTable : public CommonInterface {
-
-  protected:
-    
-    //! Struct definiting the elements of a row within the trigger table
-    struct TriggerTableRow {
-      //! Source from which the trigger originated (TBB, LCU, CEP)
-      std::string triggerSource;
-      //! Identifier for the station
-      unsigned int stationID;
-      //! Identifier for the RSP board
-      unsigned int rspID;
-      //! Identifier for the RCU
-      unsigned int rcuID;
-      //! Time instance in full seconds
-      unsigned int time;
-      //! Number of samples passed since \e time
-      unsigned int sampleNumber;
-      //! Width of the pulse
-      int pulseWidth;
-      //! Height of the pulse
-      int pulseHeight;
-    };
+  class TBB_StationTrigger : public CommonInterface {
     
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    TBB_TriggerTable ();
+    TBB_StationTrigger ();
     
     //! Argumented constructor
-    TBB_TriggerTable (hid_t const &location,
-		      std::string const &name="TriggerTable",
+    TBB_StationTrigger (hid_t const &location,
+		      std::string const &name="StationTrigger",
 		      bool const &create=true);
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~TBB_TriggerTable ();
+    ~TBB_StationTrigger ();
     
     // === Operators ============================================================
     
     /*!
       \brief Overloading of the copy operator
       
-      \param other -- Another TBB_TriggerTable object from which to make a copy.
+      \param other -- Another TBB_StationTrigger object from which to make a copy.
     */
-    TBB_TriggerTable& operator= (TBB_TriggerTable const &other); 
+    TBB_StationTrigger& operator= (TBB_StationTrigger const &other); 
     
     // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, `TBB_TriggerTable`.
+      \return className -- The name of the class, `TBB_StationTrigger`.
     */
     inline std::string className () const {
-      return "TBB_TriggerTable";
+      return "TBB_StationTrigger";
     }
     //! Provide a summary of the object's internal parameters and status
     inline void summary () {
@@ -140,13 +118,13 @@ namespace DAL { // Namespace DAL -- begin
     //! Open the structures embedded within the current one
     bool openEmbedded (bool const &create);
     //! Unconditional copying
-    void copy (TBB_TriggerTable const &other);
+    void copy (TBB_StationTrigger const &other);
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class TBB_TriggerTable -- end
+  }; // Class TBB_StationTrigger -- end
   
 } // Namespace DAL -- end
 
-#endif /* TBB_TRIGGERTABLE_H */
+#endif /* TBB_STATIONTRIGGER_H */
   

@@ -21,19 +21,19 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <TBB_TriggerTable.h>
+#include <TBB_StationTrigger.h>
 
 // Namespace usage
 using std::endl;
-using DAL::TBB_TriggerTable;
+using DAL::TBB_StationTrigger;
 
 /*!
-  \file tTBB_TriggerTable.cc
+  \file tTBB_StationTrigger.cc
   
   \ingroup DAL
   \ingroup data_hl
   
-  \brief A collection of test routines for the DAL::TBB_TriggerTable class
+  \brief A collection of test routines for the DAL::TBB_StationTrigger class
   
   \author Lars B&auml;hren
   
@@ -44,19 +44,19 @@ using DAL::TBB_TriggerTable;
 //                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new TBB_TriggerTable object
+  \brief Test constructors for a new TBB_StationTrigger object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
 int test_constructors ()
 {
-  std::cout << "\n[tTBB_TriggerTable::test_constructors]\n" << endl;
+  std::cout << "\n[tTBB_StationTrigger::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   hid_t fileID;
   herr_t h5error;
-  std::string filename ("tTBB_TriggerTable.h5");
+  std::string filename ("tTBB_StationTrigger.h5");
   
   // Open/Create HDF5 file _________________________________
 
@@ -77,7 +77,7 @@ int test_constructors ()
 
   std::cout << "[1] Testing default constructor ..." << endl;
   try {
-    TBB_TriggerTable table;
+    TBB_StationTrigger table;
     //
     table.summary(); 
   } catch (std::string message) {
@@ -89,7 +89,7 @@ int test_constructors ()
 
   std::cout << "[2] Testing argumented constructor ..." << endl;
   try {
-    TBB_TriggerTable table (fileID);
+    TBB_StationTrigger table (fileID);
     table.summary();
   }
   catch (std::string message) {
@@ -100,7 +100,7 @@ int test_constructors ()
   std::cout << "[3] Testing argumented constructor ..." << endl;
   try {
     std::string tableName ("TRIGGER_TABLE");
-    TBB_TriggerTable table (fileID, tableName);
+    TBB_StationTrigger table (fileID, tableName);
     table.summary();
   }
   catch (std::string message) {
