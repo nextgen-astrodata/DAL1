@@ -62,7 +62,7 @@ int test_constructors (std::string const &server="pc-swinbank",
   std::cout << "[1] Argumented constructor..." << std::endl;
   try {
     // Create object
-    Database db (server, name, passwd, database);
+    DAL::Database db (server, name, passwd, database);
     // Perform query
     if ( DAL::FAIL == db.query("show tables;") ) {
       ++nofFailedTests;
