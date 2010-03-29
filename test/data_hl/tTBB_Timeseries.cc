@@ -229,77 +229,6 @@ int test_methods (std::string const &filename)
   return nofFailedTests;
 }
 
-// -----------------------------------------------------------------------------
-
-/*!
-  \brief Test export of the attribute values to a casa::Record object
-  
-  \param filename -- Name of the HDF5 file, within which the dataset is located
-  
-  \return nofFailedTests -- The number of failed tests.
-*/
-int test_attributes2record (std::string const &filename)
-{
-  cout << "\n[test_attributes2record]\n" << endl;
-
-  int nofFailedTests (0);
-  TBB_Timeseries ts (filename);
-
-  cout << "[1] Retreiving attributes of group into record ..." << endl;
-  try {
-    // retrieve attributes into record
-    casa::Record rec = ts.attributes2record ();
-    // display the contents of the record
-    std::cout << rec << endl;
-  }
-  catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  cout << "[2] Retreiving attributes of group into record (recursive) ..."
-       << endl;
-  try {
-    // retrieve attributes into record
-    casa::Record rec = ts.attributes2record (true);
-    // display the contents of the record
-    std::cout << rec << endl;
-  }
-  catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  return nofFailedTests;
-  
-  cout << "[3] Retrieve attributes into a header record for the DR ..." << endl;
-  try {
-    // retrieve the attrbutes into the record
-    casa::Record rec = ts.attributes2headerRecord();
-    // display the contents of the record
-    std::cout << rec << endl;
-  }
-  catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  cout << "[4] Test operations on parameters " << endl;
-  try {
-    uint min_times      = min(ts.time());
-    uint min_dataLength = min(ts.data_length());
-    //
-    cout << "-- min(times)       = " << min_times      << endl;
-    cout << "-- min(data_length) = " << min_dataLength << endl;
-  }
-  catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  return nofFailedTests;
-}
-
 //_______________________________________________________________________________
 //                                                                      test_data
 
@@ -415,7 +344,6 @@ int main (int argc,
     nofFailedTests += test_attributes (filename);
     // Test test various methods provided by the class
     nofFailedTests += test_methods (filename);
-//     nofFailedTests += test_attributes2record (filename);
     // Test access to the data stored within the dipole datasets
     nofFailedTests += test_data (filename);
   } else {

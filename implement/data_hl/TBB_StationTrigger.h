@@ -105,6 +105,11 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // === Methods ==============================================================
+
+    //! Get the name of the group
+    static std::string getName () {
+      return "StationTrigger";
+    }
     
     //! Open a station group
     bool open (hid_t const &location,

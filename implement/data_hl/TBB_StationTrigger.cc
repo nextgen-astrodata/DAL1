@@ -124,6 +124,29 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.clear();
 
     attributes_p.insert("GROUPTYPE");
+    attributes_p.insert("TRIGGER_TYPE");
+    attributes_p.insert("TRIGGER_SOURCE");
+    attributes_p.insert("TRIGGER_TIME");
+    attributes_p.insert("TRIGGER_SAMPLE_NUMBER");
+    attributes_p.insert("PARAM_COINCIDENCE_CHANNELS");
+    attributes_p.insert("PARAM_COINCIDENCE_TIME");
+    attributes_p.insert("PARAM_DIRECTION_FIT");
+    attributes_p.insert("PARAM_ELEVATION_MIN");
+    attributes_p.insert("PARAM_FIT_VARIANCE_MAX");
+    attributes_p.insert("COINCIDENCE_CHANNELS");
+    attributes_p.insert("RCU_ID");
+    attributes_p.insert("TIME");
+    attributes_p.insert("SAMPLE_NUMBER");
+    attributes_p.insert("PULSE_SUM");
+    attributes_p.insert("PULSE_WIDTH");
+    attributes_p.insert("PULSE_PEAK");
+    attributes_p.insert("PULSE_POWER_PRE");
+    attributes_p.insert("PULSE_POWER_POST");
+    attributes_p.insert("NOF_MISSED_TRIGGERS");
+    attributes_p.insert("DIRECTION_AZIMUTH");
+    attributes_p.insert("DIRECTION_ELEVATION");
+    attributes_p.insert("DIRECTION_DISTANCE");
+    attributes_p.insert("DIRECTION_VARIANCE");
   }
 
   //_____________________________________________________________________________
@@ -170,8 +193,28 @@ namespace DAL { // Namespace DAL -- begin
 	/* If creation was sucessful, add attributes with default values */
 	if (location_p > 0) {
 	  std::string grouptype ("StationTrigger");
+	  std::string triggerType ("VHECR");
+	  std::string triggerSource ("LCU");
+	  std::vector<int> vecInt (1,0);
+	  std::string simple ("simple");
 	  // write the attributes
-	  h5set_attribute (location_p, "GROUPTYPE", grouptype);
+	  h5set_attribute (location_p, "GROUPTYPE",                  grouptype     );
+	  h5set_attribute (location_p, "TRIGGER_TYPE",               triggerType   );
+	  h5set_attribute (location_p, "TRIGGER_SOURCE",             triggerSource );
+	  h5set_attribute (location_p, "TRIGGER_TIME",               int(0)        );
+	  h5set_attribute (location_p, "TRIGGER_SAMPLE_NUMBER",      int(0)        );
+	  h5set_attribute (location_p, "PARAM_COINCIDENCE_CHANNELS", int(0)        );
+	  h5set_attribute (location_p, "PARAM_COINCIDENCE_TIME",     float(0)      );
+	  h5set_attribute (location_p, "PARAM_DIRECTION_FIT",        simple        );
+	  h5set_attribute (location_p, "RCU_ID",                     vecInt        );
+	  h5set_attribute (location_p, "TIME",                       vecInt        );
+	  h5set_attribute (location_p, "SAMPLE_NUMBER",              vecInt        );
+	  h5set_attribute (location_p, "PULSE_SUM",                  vecInt        );
+	  h5set_attribute (location_p, "PULSE_WIDTH",                vecInt        );
+	  h5set_attribute (location_p, "PULSE_PEAK",                 vecInt        );
+	  h5set_attribute (location_p, "PULSE_POWER_PRE",            vecInt        );
+	  h5set_attribute (location_p, "PULSE_POWER_POST",           vecInt        );
+	  h5set_attribute (location_p, "NOF_MISSED_TRIGGERS",        vecInt        );
 	} else {
 	  std::cerr << "[TBB_StationTrigger::open] Failed to create group "
 		    << name

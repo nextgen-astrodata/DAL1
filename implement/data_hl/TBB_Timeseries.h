@@ -112,6 +112,14 @@ namespace DAL {  // Namespace DAL -- begin
     \endverbatim
     
     <h3>Example(s)</h3>
+
+    <ol>
+      <li>Access to attributes attached to the dipole datasets
+      \code
+      // Get the values of DATA_LENGTH for all present datasets
+      std::vector<uint> dataength = ts.data_length ();
+      \endcode
+    </ol>
     
   */
   class TBB_Timeseries : public CommonInterface {
@@ -255,6 +263,9 @@ namespace DAL {  // Namespace DAL -- begin
     
     //  High-level access to data and attributes ___________
     
+    //! Get the values of DATA_LENGTH for all present datasets
+    std::vector<uint> data_length ();
+
 #ifdef HAVE_CASA
     //! Time offset between the individual antennas in units of samples
     casa::Vector<int> sample_offset (uint const &refAntenna=0);
@@ -266,10 +277,6 @@ namespace DAL {  // Namespace DAL -- begin
     void fx (casa::Matrix<double> &data,
 	     casa::Vector<int> const &start,
 	     int const &nofSamples=1);
-    //! Get a casa::Record containing the values of the attributes
-    casa::Record attributes2record (bool const &recursive=false);
-    //! Create casa::Record used as header record for the CR::DataReader class
-    casa::Record attributes2headerRecord ();
 
     //  Parameter access - dipole dataset __________________
     
@@ -287,8 +294,6 @@ namespace DAL {  // Namespace DAL -- begin
     casa::Vector<casa::String> sample_frequency_unit ();
     //! Get the sample frequency as vector of casa::MFrequency
     casa::Vector<casa::MFrequency> sample_frequency ();
-    //! Get the values of DATA_LENGTH for all present datasets
-    casa::Vector<uint> data_length ();
 #else
     //! Retrieve the list of channel IDs
     std::vector<int> channelID ();
@@ -302,8 +307,6 @@ namespace DAL {  // Namespace DAL -- begin
     std::vector<double> sample_frequency_value ();
     //! Get the unit of the ADC sample frequency
     std::vector<std::string> sample_frequency_unit ();
-    //! Get the values of DATA_LENGTH for all present datasets
-    std::vector<uint> data_length ();
 #endif
     
   protected:

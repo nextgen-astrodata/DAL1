@@ -302,19 +302,29 @@ namespace DAL {  // Namespace DAL -- begin
     bool status = create;
 
     if (H5Iis_valid(location_p)) {
-      std::set<std::string> names;
+      std::set<std::string> groups;
+      std::set<std::string> datasets;
       std::set<std::string>::iterator it;
 
-      h5get_names (names,location_p,H5G_DATASET);
+      h5get_names (groups,location_p,H5G_GROUP);
+      h5get_names (datasets,location_p,H5G_DATASET);
 
       // Open station calibration group ____________________
 
+      // Open station trigger group ________________________
+
+      it = groups.find(TBB_StationTrigger::getName());
+
+      stationTrigger_p = TBB_StationTrigger (location_p,
+					     TBB_StationTrigger::getName(),
+					     create);
+
       // Open dipole datasets ______________________________
 
-      if (names.size() > 0) {
+      if (datasets.size() > 0) {
 	datasets_p.clear();
 	selectedDipoles_p.clear();
-	for (it=names.begin(); it!=names.end(); ++it) {
+	for (it=datasets.begin(); it!=datasets.end(); ++it) {
 	  datasets_p[*it] = TBB_DipoleDataset(location_p,*it);
 	  selectedDipoles_p.insert(*it);
 	}

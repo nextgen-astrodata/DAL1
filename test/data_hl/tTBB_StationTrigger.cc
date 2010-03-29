@@ -57,6 +57,7 @@ int test_constructors ()
   hid_t fileID;
   herr_t h5error;
   std::string filename ("tTBB_StationTrigger.h5");
+  std::string tablename ("StationTrigger");
   
   // Open/Create HDF5 file _________________________________
 
@@ -69,9 +70,6 @@ int test_constructors ()
     std::cerr << "ERROR : Failed to open/create file." << endl;
     return -1;
   }
-
-  cout << "-- Filename  = " << filename  << endl;
-  cout << "-- File ID   = " << fileID    << endl;
 
   // Test default constructor ______________________________
 
@@ -89,18 +87,7 @@ int test_constructors ()
 
   std::cout << "[2] Testing argumented constructor ..." << endl;
   try {
-    TBB_StationTrigger table (fileID);
-    table.summary();
-  }
-  catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-
-  std::cout << "[3] Testing argumented constructor ..." << endl;
-  try {
-    std::string tableName ("TRIGGER_TABLE");
-    TBB_StationTrigger table (fileID, tableName);
+    TBB_StationTrigger table (fileID,tablename);
     table.summary();
   }
   catch (std::string message) {

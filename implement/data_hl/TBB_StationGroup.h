@@ -37,6 +37,7 @@
 
 #include <CommonInterface.h>
 #include <TBB_DipoleDataset.h>
+#include <TBB_StationTrigger.h>
 
 namespace DAL {   // Namespace DAL -- begin
 
@@ -59,6 +60,7 @@ namespace DAL {   // Namespace DAL -- begin
     <ul type="square">
       <li>Definition of the LOFAR time-series data format
       <li>DAL::TBB_Timeseries
+      <li>DAL::TBB_StationTrigger
       <li>DAL::TBB_DipoleDataset
       <li>CR::LOFAR_TBB -- Interface between Data Access Library (DAL) and
       CR::DataReader framework
@@ -112,6 +114,8 @@ namespace DAL {   // Namespace DAL -- begin
     unsigned int stationID_p;
     //! Datasets contained within this group
     std::map<std::string,TBB_DipoleDataset> datasets_p;
+    //! Station trigger group
+    TBB_StationTrigger stationTrigger_p;
     //! Selected dipoles
     std::set<std::string> selectedDipoles_p;
     //! Number of triggered antennas at this station
