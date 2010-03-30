@@ -336,16 +336,53 @@ int test_image_size (int const &min=50,
 }
 
 //_______________________________________________________________________________
+//                                                                 test_openImage
+
+/*!
+  \brief Test opening a existing image
+*/
+int test_openImage (std::string const &filename)
+{
+  cout << "\n[tcasacore_images::test_openImage]\n" << endl;
+
+  int nofFailedTests (0);
+
+  std::cout << "-- Opening image file " << filename << std::endl;
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 int main (int argc,
           char *argv[])
 {
   int nofFailedTests (0);
+  bool haveDataset (true);
+  std::string filename ("UNDEFINED");
 
+  //________________________________________________________
+  // Process parameters from the command line
+  
+  if (argc < 2) {
+    haveDataset = false;
+  } else {
+    filename    = argv[1];
+    haveDataset = true;
+  }
+
+  //________________________________________________________
+  // Run the tests
+
+  // Test creation of direction coordinate
   nofFailedTests += test_direction_coordinate ();
-
+  // Test creation of image
   nofFailedTests += test_image_size (60,150,2);
+
+  if (haveDataset) {
+    nofFailedTests += test_openImage (filename);
+  }
   
   return nofFailedTests;
 }

@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2008                                                    *
- *   Lars B"ahren (lbaehren@gmail.com)                                     *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -61,6 +61,49 @@ using DAL::TBB_Timeseries;
 /*!
   \brief Test constructors for a new TBB_Timeseries object
 
+  \return nofFailedTests -- The number of failed tests.
+*/
+int test_construction ()
+{
+  cout << "\n[tTBB_Timeseries::test_construction]\n" << endl;
+
+  int nofFailedTests (0);
+  std::string filename ("tTBB_Timeseries.h5");
+
+  //__________________________________________________________________
+  // Test the default constructor
+
+  cout << "[1] Testing TBB_Timeseries() ..." << endl;
+  try {
+    TBB_Timeseries ts;
+    //
+    ts.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[2] Testing TBB_Timeseries(std::string) ..." << endl;
+  try {
+    TBB_Timeseries ts (filename);
+    //
+    ts.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                              test_construction
+
+/*!
+  \brief Test constructors for a new TBB_Timeseries object
+
   \param filename -- Name of the HDF5 file used for testing
 
   \return nofFailedTests -- The number of failed tests.
@@ -74,21 +117,7 @@ int test_construction (std::string const &filename)
   //__________________________________________________________________
   // Test the default constructor
 
-  cout << "[1] Testing default constructor ..." << endl;
-  try {
-    TBB_Timeseries ts;
-    //
-    ts.summary();
-  }
-  catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  //__________________________________________________________________
-  // Test the argumented constructor taking filename as input
-
-  cout << "[2] Testing argumented constructor ..." << endl;
+  cout << "[1] Testing argumented constructor ..." << endl;
   try {
     TBB_Timeseries ts (filename);
     //
@@ -102,7 +131,7 @@ int test_construction (std::string const &filename)
   //__________________________________________________________________
   // Test the copy constructor
 
-  cout << "[3] Testing copy constructor ..." << endl;
+  cout << "[2] Testing copy constructor ..." << endl;
   try {
     cout << "--> creating original object ..." << endl;
     TBB_Timeseries ts (filename);
@@ -336,6 +365,10 @@ int main (int argc,
 
   //________________________________________________________
   // Run the tests
+
+  nofFailedTests += test_construction ();
+
+  return 0;
 
   if (haveDataset) {
     // Test constructors for TBB_Timeseries object

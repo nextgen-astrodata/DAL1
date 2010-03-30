@@ -4,7 +4,7 @@
  ***************************************************************************
  *   Copyright (C) 2008                                                    *
  *   Joseph Masters <jmasters@science.uva.nl>                              *
- *   Lars B"ahren <lbaehren@gmail.com>                                     *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *

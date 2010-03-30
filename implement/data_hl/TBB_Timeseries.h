@@ -137,7 +137,7 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! Default constructor
     TBB_Timeseries ();
-    //! Open an existing dataset 
+    //! Argumented constructor
     TBB_Timeseries (std::string const &filename);
     //! Create a new dataset from LOFAR common attributes
     TBB_Timeseries (CommonAttributes const &attributes);
@@ -263,12 +263,24 @@ namespace DAL {  // Namespace DAL -- begin
     
     //  High-level access to data and attributes ___________
     
+    //! Get the values of TIME for all present datasets
+    std::vector<uint> time ();
+    //! Get the number of samples elapsed since the last full second
+    std::vector<uint> sample_number ();
     //! Get the values of DATA_LENGTH for all present datasets
     std::vector<uint> data_length ();
+    //! Get the values of the ADC sample frequency
+    std::vector<double> sample_frequency_value ();
+    //! Get the unit of the ADC sample frequency
+    std::vector<std::string> sample_frequency_unit ();
+    //! Time offset between the individual antennas in units of samples
+    std::vector<int> sample_offset (uint const &refAntenna);
+    //! Retrieve the list of channel IDs
+    std::vector<int> channelID ();
+    //! Get the Nyquist zone for the A/D conversion
+    std::vector<uint> nyquist_zone ();
 
 #ifdef HAVE_CASA
-    //! Time offset between the individual antennas in units of samples
-    casa::Vector<int> sample_offset (uint const &refAntenna=0);
     //! Retrieve a block of ADC values per dipole
     void fx (casa::Matrix<double> &data,
 	     int const &start=0,
@@ -280,33 +292,8 @@ namespace DAL {  // Namespace DAL -- begin
 
     //  Parameter access - dipole dataset __________________
     
-    //! Retrieve the list of channel IDs
-    casa::Vector<int> channelID ();
-    //! Get the values of TIME for all present datasets
-    casa::Vector<uint> time ();
-    //! Get the number of samples elapsed since the last full second
-    casa::Vector<uint> sample_number ();
-    //! Get the Nyquist zone for the A/D conversion
-    casa::Vector<uint> nyquist_zone ();
-    //! Get the values of the ADC sample frequency
-    casa::Vector<double> sample_frequency_value ();
-    //! Get the unit of the ADC sample frequency
-    casa::Vector<casa::String> sample_frequency_unit ();
     //! Get the sample frequency as vector of casa::MFrequency
     casa::Vector<casa::MFrequency> sample_frequency ();
-#else
-    //! Retrieve the list of channel IDs
-    std::vector<int> channelID ();
-    //! Get the values of TIME for all present datasets
-    std::vector<uint> time ();
-    //! Get the number of samples elapsed since the last full second
-    std::vector<uint> sample_number ();
-    //! Get the Nyquist zone for the A/D conversion
-    std::vector<uint> nyquist_zone ();
-    //! Get the values of the ADC sample frequency
-    std::vector<double> sample_frequency_value ();
-    //! Get the unit of the ADC sample frequency
-    std::vector<std::string> sample_frequency_unit ();
 #endif
     
   protected:
