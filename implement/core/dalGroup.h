@@ -24,13 +24,9 @@
 #ifndef DALGROUP_H
 #define DALGROUP_H
 
-#ifndef DALTABLE_H
 #include "dalTable.h"
-#endif
-
-#ifndef DALARRAY_H
 #include "dalArray.h"
-#endif
+#include "dalShortArray.h"
 
 namespace DAL {
   

@@ -29,7 +29,9 @@
 #include <string>
 
 #ifdef HAVE_CASA
+#ifndef WCSLIB_GETWCSTAB
 #define WCSLIB_GETWCSTAB 1
+#endif
 #include <coordinates/Coordinates/Projection.h>
 #include <measures/Measures/MDirection.h>
 #endif
