@@ -79,7 +79,7 @@
     </tr>
     <tr>
       <td>--ip arg</td>
-      <td>Hostname/IP address from which to accept the data (currently not used)</td>
+      <td>Hostname/IP address on which to accept the data (currently not used)</td>
     </tr>
     <tr>
       <td>-S [--timeoutStart] arg</td>
@@ -162,6 +162,8 @@ int input_buffer_size;
 int inBufProcessID,inBufStorID;
 //!the Input Buffer
 char * inputBuffer_p;
+//!end all running reader threads
+bool terminateThreads;
 //!maximum number of frames waiting in the vBuf while reading
 int maxWaitingFrames;
 //!maximum number of frames in the buffer
@@ -178,7 +180,7 @@ boost::mutex writeMutex;
   \brief Thread that creates and then reads from a socket into the buffer
 
   \param port -- UDP port number to read data from
-  \param ip -- Hostname (ip-address) to read data from (not used)
+  \param ip -- Hostname (ip-address) to bind to (not used)
   \param startTimeout -- Timeout when opening socket connection [in sec]
   \param readTimeout -- Timeout while reading from the socket [in sec]
   \param verbose -- Produce more output
@@ -221,22 +223,37 @@ void socketReaderThread(int port, string ip, double startTimeout,
   //Wait for the first data to arrive
   cout << "TBBraw2h5::socketReaderThread:"<<port<<": Waiting for data." << endl;
   FD_ZERO(&readSet);
-  FD_SET(main_socket, &readSet);
-  if (startTimeout > 0)
-    {
-      TimeoutWait.tv_sec = floor(startTimeout);
-      TimeoutWait.tv_usec = (startTimeout-TimeoutWait.tv_sec)*1e6;
-      select( main_socket + 1, &readSet, NULL, NULL, &TimeoutWait );
+  if (startTimeout > 0) {
+    while (!terminateThreads && (startTimeout>0)){
+      if (startTimeout>5) {
+	TimeoutWait.tv_sec = 5;
+	TimeoutWait.tv_usec = 0;
+	startTimeout -= 5;
+      } else {
+	TimeoutWait.tv_sec = floor(startTimeout);
+	TimeoutWait.tv_usec = (startTimeout-TimeoutWait.tv_sec)*1e6;
+	startTimeout = 0;
+      };
+      FD_SET(main_socket, &readSet);
+      if (select( main_socket + 1, &readSet, NULL, NULL, &TimeoutWait ) != 0){
+	break;
+      };
     }
-  else
-    {
-      select( main_socket + 1, &readSet, NULL, NULL, NULL );
+  } else {
+    while (!terminateThreads){
+      TimeoutWait.tv_sec = 5;
+      TimeoutWait.tv_usec = 0;
+      FD_SET(main_socket, &readSet);
+      if (select( main_socket + 1, &readSet, NULL, NULL, &TimeoutWait ) != 0){
+	break;
+      };
     };
+  };
   bool ImRunning=true;
   int status, numWaiting=0, newBufID;
   struct sockaddr_in incoming_addr;
   socklen_t socklen = sizeof(incoming_addr);
-  while (ImRunning)
+  while (ImRunning && !terminateThreads)
     {
       if (verbose)
         {
@@ -300,6 +317,9 @@ void socketReaderThread(int port, string ip, double startTimeout,
           ImRunning=false;
         };
     };
+  if (verbose && ImRunning && terminateThreads ) {
+    cout << "TBBraw2h5::socketReaderThread:"<<port<<": stopped because terminateThreads was set!" << endl;
+  };
   {
     boost::mutex::scoped_lock lock(writeMutex);
     noRunning--;
@@ -311,79 +331,97 @@ void socketReaderThread(int port, string ip, double startTimeout,
 
 // -----------------------------------------------------------------
 /*!
-  \brief Read the TBB-data from an udp socket
+  \brief Read the TBB-data from several udp sockets
 
-  \param port -- UDP port number to read data from
-  \param ip -- Hostname (ip-address) to read data from (not used)
+  \param ports -- Vector with UDP port numbers to read data from
+  \param ip -- Hostname (ip-address) to bind to (not used!)
   \param startTimeout -- Timeout when opening socket connection [in sec]
   \param readTimeout -- Timeout while reading from the socket [in sec]
   \param verbose -- Produce more output
+  \param waitForAllPorts -- Wait until all reader-threads have received some data (Or kill the threads that got no data)
 
   \return \t true if successful
 */
-bool readFromSocket(int port, string ip, float startTimeout,
-                    float readTimeout, bool verbose=false)
+bool readFromSockets(std::vector<int> ports, string ip, float startTimeout,
+		     float readTimeout, bool verbose=false, bool waitForAllPorts=false)
 {
+  uint i;
   // initialize the buffer
+  terminateThreads=false;
   maxCachedFrames = maxWaitingFrames = 0;
   inBufProcessID = inBufStorID =0;
   noRunning = 0;
   inputBuffer_p = new char[(input_buffer_size*UDP_PACKET_BUFFER_SIZE)];
-  if (inputBuffer_p == NULL)
-    {
-      cerr << "TBBraw2h5::readFromSocket: Failed to allocate input buffer!" <<endl;
+  if (inputBuffer_p == NULL) {
+    cerr << "TBBraw2h5::readFromSockets: Failed to allocate input buffer!" <<endl;
+    return false;
+  } else if (verbose) {
+    cout << "TBBraw2h5::readFromSockets: Allocated " << input_buffer_size*UDP_PACKET_BUFFER_SIZE
+	 << " bytes for the input buffer." << endl;
+  };
+
+  // start the reader-threads
+  boost::thread **readerThreads;
+  readerThreads = new boost::thread*[ports.size()];
+  for (i=0; i < ports.size(); i++) {
+    readerThreads[i] = new boost::thread(boost::bind(socketReaderThread, ports[i], ip,
+						     startTimeout, readTimeout, verbose));
+    if (readerThreads[i]->joinable() ) {
+      noRunning++;
+    } else {
+      cout << "TBBraw2h5::readFromSockets: Failed to start reader thread for port :" << ports[i] << endl;
+      cout << "  Aborting!!! " << endl;
       return false;
-    }
-  else if (verbose)
-    {
-      cout << "TBBraw2h5::readFromSocket: Allocated " << input_buffer_size*UDP_PACKET_BUFFER_SIZE
-           << " bytes for the input buffer." << endl;
     };
-  // start the reader-thread
-  boost::thread readerTread(boost::bind(socketReaderThread, port, ip,
-                                        startTimeout, readTimeout, verbose));
-  noRunning++;
+  };
   int processingID, tmpint;
   int amWaiting=0;
-  while ((noRunning>0) || (inBufStorID != inBufProcessID) )
-    {
-      if (inBufStorID == inBufProcessID)
-        {
-          if (verbose && ((amWaiting%100)==1) )
-            {
-              cout << "TBBraw2h5::readFromSocket: Buffer is empty! waiting." << endl;
-              cout << "  Status: inBufStorID:" << inBufStorID << " inBufProcessID: " << inBufProcessID
-                   << " noRunning: " << noRunning << " waiting for: " << amWaiting*0.11 << " sec."<< endl;
-            };
-          amWaiting++;
-          usleep(100000);
-          continue;
-        };
-      amWaiting=0;
-      tmpint = (inBufStorID-inBufProcessID+input_buffer_size)%input_buffer_size;
-      if (tmpint > maxCachedFrames)
-        {
-          maxCachedFrames = tmpint;
-        };
-      processingID = inBufProcessID+1;
-      if (processingID >= input_buffer_size)
-        {
-          processingID -= input_buffer_size;
-        };
-      tbb->processTBBrawBlock( (inputBuffer_p + (processingID*UDP_PACKET_BUFFER_SIZE)),
-                               UDP_PACKET_BUFFER_SIZE);
-      inBufProcessID = processingID;
+  while ((noRunning>0) || (inBufStorID != inBufProcessID) )  {
+    if (inBufStorID == inBufProcessID)  {
+      if (verbose && ((amWaiting%100)==1) ) {
+	cout << "TBBraw2h5::readFromSockets: Status report: Buffer is empty! waiting." << endl;
+	cout << "  Status: inBufStorID:" << inBufStorID << " inBufProcessID: " << inBufProcessID
+	     << " noRunning: " << noRunning << " waiting for: " << amWaiting*0.10 << " sec."<< endl;
+      };
+      amWaiting++;
+      usleep(100000);
+      if (!waitForAllPorts && maxCachedFrames>0 && (amWaiting*0.10 > readTimeout)){
+	if (verbose && ! terminateThreads) {
+	  cout << "TBBraw2h5::readFromSockets: Stopping all other reader-threads." << endl;
+	};
+	terminateThreads = true;
+      };
+      continue;
     };
-  readerTread.join();
+    amWaiting=0;
+    tmpint = (inBufStorID-inBufProcessID+input_buffer_size)%input_buffer_size;
+    if (tmpint > maxCachedFrames) {
+      maxCachedFrames = tmpint;
+    };
+    processingID = inBufProcessID+1;
+    if (processingID >= input_buffer_size) {
+      processingID -= input_buffer_size;
+    };
+    tbb->processTBBrawBlock( (inputBuffer_p + (processingID*UDP_PACKET_BUFFER_SIZE)),
+			     UDP_PACKET_BUFFER_SIZE);
+    inBufProcessID = processingID;
+  };
+  terminateThreads = true;
+  for (i=0;  i< ports.size(); i++){
+    readerThreads[i]->join();
+    delete readerThreads[i];
+  };
+  delete [] readerThreads;
   delete inputBuffer_p;
-  if (verbose)
-    {
-      cout << "Socket and Buffer Stats: Maximum # of waiting frames:" << maxWaitingFrames << endl;
-      cout << "                        Maximum # of frames in cache:" << maxCachedFrames << endl;
-      cout << "     Number of frames dropped due to buffer overflow:" << noFramesDropped << endl;
-    };
+  if (verbose) {
+    cout << "Socket and Buffer Stats: Maximum # of waiting frames:" << maxWaitingFrames << endl;
+    cout << "                        Maximum # of frames in cache:" << maxCachedFrames << endl;
+    cout << "     Number of frames dropped due to buffer overflow:" << noFramesDropped << endl;
+  };
   return true;
 };
+
+
 
 
 // -----------------------------------------------------------------
@@ -443,7 +481,8 @@ int main(int argc, char *argv[])
   std::string infile;
   std::string outfile("test-TBBraw"),outfileOrig;
   std::string ip("All Hosts");
-  int port;
+  //  int port;
+  vector<int> ports;
   bool verboseMode(false);
   float timeoutStart(0);
   float timeoutRead(.5);
@@ -451,6 +490,7 @@ int main(int argc, char *argv[])
   int doCheckCRC(1);
   int socketmode(-1);
   bool keepRunning(false);
+  bool waitForAll(false);
   int runNumber(0);
 
   input_buffer_size = 50000;
@@ -462,14 +502,15 @@ int main(int argc, char *argv[])
   ("help,H", "Show help messages")
   ("outfile,O",bpo::value<std::string>(), "Name of the output dataset")
   ("infile,I", bpo::value<std::string>(), "Name of the input file, Mutually exclusive to -P")
-  ("port,P", bpo::value<int>(), "Port number to accept data from, Mutually exclusive to -I")
-  ("ip", bpo::value<std::string>(), "Hostname/IP address from which to accept the data")
+  ("port,P", bpo::value< vector<int> >(), "Port numbers to accept data from; Can be specified multiple times; Mutually exclusive to -I")
+  ("ip", bpo::value<std::string>(), "Hostname/IP address on which to accept the data (not implemented)")
   ("timeoutStart,S", bpo::value<float>(), "Time-out when opening socket connection, [sec].")
   ("timeoutRead,R", bpo::value<float>(), "Time-out when while reading from socket, [sec].")
   ("fixTimes,F", bpo::value<int>(), "Fix broken time-stamps old style (1), new style (2, default), or not (0)")
   ("doCheckCRC,C", bpo::value<int>(), "Check the CRCs: (0) no check, (1,default) check header.")
   ("bufferSize,B", bpo::value<int>(), "Size of the input buffer, [frames] (default=50000, about 100MB).")
   ("keepRunning,K", "Keep running, i.e. process more than one event by restarting the procedure.")
+  ("waitForAll,W", "Wait until (some) data was received on all ports.")
   ("verbose,V", "Verbose mode on")
   ;
 
@@ -486,6 +527,11 @@ int main(int argc, char *argv[])
   if (vm.count("verbose"))
     {
       verboseMode=true;
+    }
+
+  if (vm.count("waitForAll"))
+    {
+      waitForAll=true;
     }
 
   if (vm.count("keepRunning"))
@@ -511,8 +557,10 @@ int main(int argc, char *argv[])
 
   if (vm.count("port"))
     {
-      port = vm["port"].as<int>();
+      ports = vm["port"].as< vector<int> >();
       socketmode = 1;
+      //      port = ports[0];
+      cout << " specified ports: " << ports << endl;
     }
 
   if (vm.count("timeoutStart"))
@@ -582,9 +630,12 @@ int main(int argc, char *argv[])
       std::cout << "-- Fix Times    = " << fixTransientTimes   << std::endl;
       if (socketmode) {
 	std::cout << "-- IP address      = " << ip             << std::endl;
-	std::cout << "-- Port number     = " << port           << std::endl;
+	//	std::cout << "-- Port number     = " << port           << std::endl;
+	std::cout << "-- Port numbers    = " << ports          << std::endl;
 	std::cout << "-- Timeout (start) = " << timeoutStart   << std::endl;
 	std::cout << "-- Timeout (read)  = " << timeoutRead    << std::endl;
+	std::cout << "-- Wait for ports  = " << waitForAll     << std::endl;
+	std::cout << "-- Keep Running    = " << keepRunning    << std::endl;
       }
       else {
 	std::cout << "-- Input file   = " << infile  << std::endl;
@@ -632,7 +683,7 @@ int main(int argc, char *argv[])
     // call the conversion routines
     
     if (socketmode) {
-      readFromSocket(port, ip, timeoutStart, timeoutRead, verboseMode);
+      readFromSockets(ports, ip, timeoutStart, timeoutRead, verboseMode, waitForAll);
     }
     else {
       readFromFile(infile, verboseMode);
