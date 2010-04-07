@@ -54,7 +54,7 @@ add_test (tBF_Dataset tBF_Dataset)
 add_test (tBF_Beam tBF_Beam)
 add_test (tBF_ProcessingHistory tBF_ProcessingHistory)
 add_test (tBF_PrimaryPointing tBF_PrimaryPointing)
-add_test (tBF_SysLog tBF_SysLog)
+add_test (tSysLog tSysLog)
 add_test (tTBB_StationTrigger tTBB_StationTrigger)
 
 if (dataset_tbb)

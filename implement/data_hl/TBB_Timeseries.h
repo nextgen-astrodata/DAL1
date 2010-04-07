@@ -31,6 +31,7 @@
 
 #include <CommonAttributes.h>
 #include <CommonInterface.h>
+#include <SysLog.h>
 #include <TBB_StationGroup.h>
 #include <TBB_StationTrigger.h>
 
@@ -123,13 +124,15 @@ namespace DAL {  // Namespace DAL -- begin
     
   */
   class TBB_Timeseries : public CommonInterface {
-    
-  protected:
 
+  protected:
+    
     //! Name of the data file
     std::string filename_p;
     //! Station groups attached to the root group of the file
     std::map<std::string,TBB_StationGroup> stationGroups_p;
+    //! Container for system-wide logs
+    SysLog sysLog_p;
     
   public:
     
@@ -194,6 +197,11 @@ namespace DAL {  // Namespace DAL -- begin
 
     //! Get the LOFAR common attributes for this dataset
     CommonAttributes commonAttributes ();
+
+    //! Get the container for system-wide logs
+    inline SysLog sysLog () const {
+      return sysLog_p;
+    }
     
     /*!
       \brief Get the number of station groups collected into this file
@@ -307,6 +315,8 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! Unconditional copying
     void copy (TBB_Timeseries const &other);
+    //! Open the group acting as a container for system-wide logs
+    bool openSysLog (bool const &create);
     //! Locate and register the station groups contained within the file
     bool openStationGroups ();
     //! Unconditional deletion

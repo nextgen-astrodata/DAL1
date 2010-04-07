@@ -21,8 +21,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef BF_SYSLOG_H
-#define BF_SYSLOG_H
+#ifndef SYSLOG_H
+#define SYSLOG_H
 
 // Standard library header files
 #include <iostream>
@@ -34,7 +34,7 @@
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class BF_SysLog
+    \class SysLog
     
     \ingroup DAL
     \ingroup data_hl
@@ -45,7 +45,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/11/26
 
-    \test tBF_SysLog.cc
+    \test tSysLog.cc
     
     <h3>Prerequisite</h3>
     
@@ -71,33 +71,33 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class BF_SysLog : public CommonInterface {
+  class SysLog : public CommonInterface {
     
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    BF_SysLog ();
+    SysLog ();
     
     //! Argumented constructor
-    BF_SysLog (hid_t const &location,
+    SysLog (hid_t const &location,
 	       bool const &create);
     
     // === Destruction ==========================================================
     
     //! Default destructor
-    ~BF_SysLog ();
+    ~SysLog ();
     
     // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, BF_SysLog.
+      \return className -- The name of the class, SysLog.
     */
     inline std::string className () const {
-      return "BF_SysLog";
+      return "SysLog";
     }
     
     //! Provide a summary of the internal status
@@ -125,9 +125,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 
-  }; // Class BF_SysLog -- end
+  }; // Class SysLog -- end
   
 } // Namespace DAL -- end
 
-#endif /* BF_SYSLOG_H */
+#endif /* SYSLOG_H */
   

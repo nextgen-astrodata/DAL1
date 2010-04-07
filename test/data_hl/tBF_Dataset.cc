@@ -131,16 +131,7 @@ int test_subGroups ()
   Filename file = getFilename();
   BF_Dataset dataset (file);
   
-  cout << "[1] Open SysLog group ..." << endl;
-  try {
-    dataset.openSysLog();
-    dataset.summary(); 
-  } catch (std::string message) {
-    cerr << message << endl;
-    ++nofFailedTests;
-  }
-
-  cout << "[2] Open PrimaryPointing groups ..." << endl;
+  cout << "[1] Open PrimaryPointing groups ..." << endl;
   try {
     dataset.openPrimaryPointing(0,true);
     dataset.openPrimaryPointing(1,true);
@@ -195,7 +186,7 @@ int test_methods ()
 
   cout << "[1] Extract SysLog from BF dataset ..." << endl;
   try {
-    DAL::BF_SysLog sysLog = dataset.sysLog();
+    DAL::SysLog sysLog = dataset.sysLog();
     //
     std::string groupType;
     sysLog.getAttribute("GROUPTYPE",groupType);

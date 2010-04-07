@@ -369,6 +369,13 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 setHyperslab
   
+  /*!
+    \param location -- HDF5 object identifier for the dataset or dataspace to
+           to which the Hyperslab is going to be applied.
+
+    \return status -- Status of the operation; returns \e false in case an error 
+            was encountered.
+  */
   bool HDF5Hyperslab::setHyperslab (hid_t const &location)
   {
     return setHyperslab (location,
@@ -383,7 +390,8 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                 setHyperslab
   
   /*!
-    \param location  -- Identifier for the HDF5 object to work with
+    \param location  -- HDF5 object identifier for the dataset or dataspace to
+           to which the Hyperslab is going to be applied.
     \param start     -- Offset of the starting element of the specified hyperslab
     \param count     -- The number of elements or blocks to select along each
            dimension.
@@ -413,7 +421,8 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                 setHyperslab
   
   /*!
-    \param location  -- Identifier for the HDF5 object to work with
+    \param location  -- HDF5 object identifier for the dataset or dataspace to
+           to which the Hyperslab is going to be applied.
     \param start     -- Offset of the starting element of the specified hyperslab
     \param stride    -- Number of elements to separate each element or block to
            be selected
@@ -434,7 +443,8 @@ namespace DAL { // Namespace DAL -- begin
 				    H5S_seloper_t const &selection)
   {
     bool status (true);
-    
+    herr_t h5error;
+
     //____________________________________________
     // Check the object to work with
     
@@ -467,8 +477,7 @@ namespace DAL { // Namespace DAL -- begin
       return false;
     }
 
-    //____________________________________________
-    // Check parameters for the Hyperslab
+    // Check parameters for the Hyperslab ________
 
     unsigned int nelem;
     std::vector<hsize_t> shape;
@@ -500,23 +509,52 @@ namespace DAL { // Namespace DAL -- begin
     if (count.size() != nelem || count.empty()) {
       haveCount = false;
     }
+
+    // Adjust the size of the dataset ____________
+
+    std::vector<unsigned int> endHyperslab = end (start,stride,count,block);
+    bool extendDataset (false);
+
+    for (unsigned int n(0); n<nelem; ++n) {
+      if (endHyperslab[n]>shape[n]) {
+	extendDataset=true;
+      }
+    }
     
-    //____________________________________________
-    // Set up the hyperslab
+    if (extendDataset) {
+      if (objectType == H5I_DATASET) {
+	hsize_t tmpSize [nelem];
+	for (unsigned int n(0); n<nelem; ++n) {
+	  tmpSize[n] = endHyperslab[n];
+	}
+	//
+	std::cout << "[HDF5Hyperslab::setHyperslab] Extending dataset: "
+		  << shape << " -> " << endHyperslab
+		  << std::endl;
+	// Extend the size of the dataset
+	h5error = H5Dset_extent (location, tmpSize);
+      }
+      else {
+	std::cerr << "[HDF5Hyperslab::setHyperslab] Unable to extend dataset size;"
+		  << " provided HDF5 object is not a dataset!"
+		  << std::endl;
+      }
+    }
     
-    herr_t h5error;
+    // Set up the hyperslab ______________________
+    
     hsize_t rank (shape.size());
     hsize_t tmpStart [rank];
     hsize_t tmpStride[rank];
     hsize_t tmpCount [rank];
     hsize_t tmpBlock [rank];
-
+    
     /* Copy the input parameters to be passed on */
     for (unsigned int n(0); n<nelem; ++n) {
       tmpStart[n]  = start[n];
       tmpBlock[n]  = block[n];
     }
-
+    
     if (haveStride) {
       for (unsigned int n(0); n<nelem; ++n) {
 	tmpStride[n] = stride[n];
@@ -617,6 +655,95 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     return nelem;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                          end
+
+  std::vector<unsigned int> HDF5Hyperslab::end ()
+  {
+    return end (start_p,
+		stride_p,
+		count_p,
+		block_p);
+  }
+
+  //_____________________________________________________________________________
+  //                                                                          end
+
+  /*!
+    \param start     -- Offset of the starting element of the specified hyperslab,
+           \f$ N_{\rm start} \f$ .
+    \param stride    -- Number of elements to separate each element or block to
+           be selected, \f$ N_{\rm stride} \f$ .
+    \param count     -- The number of elements or blocks to select along each
+           dimension, \f$ N_{\rm count} \f$ .
+    \param block     -- The size of the block selected from the dataspace,
+           \f$ N_{\rm block} \f$ .
+    
+    \return end -- The offset of the last element of the specified hyperslab; given
+            above input parameters the range of elements defined by the hyperslab
+	    becomes
+	    \f[ \left[ n_{\rm start} , n_{\rm start} + n_{\rm block} \cdot
+	    n_{\rm stride} \cdot n_{\rm count} - 1 \right]
+	    \f]
+  */
+  std::vector<unsigned int> HDF5Hyperslab::end (std::vector<int> const &start,
+						std::vector<int> const &stride,
+						std::vector<int> const &count,
+						std::vector<int> const &block)
+  {
+    unsigned int sizeStart  = start.size();
+    unsigned int sizeStride = stride.size();
+    unsigned int sizeCount  = count.size();
+    unsigned int sizeBlock  = block.size();
+    std::vector<int> varStride (sizeStart,1);
+    
+    std::vector<unsigned int> pos;
+    
+    // Check input parameters ____________________
+    
+    if (sizeStart  != sizeBlock) {
+      std::cerr << "[HDF5Hyperslab::end] Size mismatch!" << std::endl;
+      std::cerr << "-- start = " << start << std::endl;
+      std::cerr << "-- block = " << block << std::endl;
+      return pos;
+    }
+    
+    
+    // Compute end position ______________________
+
+    pos.resize(sizeStart);
+    
+    if (sizeCount != sizeStart || count.empty()) {
+      if (sizeStride != sizeStart || stride.empty()) {
+	// count=1, stride=1
+	for (unsigned int n(0); n<sizeStart; ++n) {
+	  pos[n] = start[n] + block[n] - 1;
+	}
+      }
+      else {
+	// count=1
+	for (unsigned int n(0); n<sizeStart; ++n) {
+	  pos[n] = start[n] + block[n]*stride[n] - 1;
+	}
+      }
+    }
+    else {
+      if (sizeStride != sizeStart || stride.empty()) {
+	// stride=1
+	for (unsigned int n(0); n<sizeStart; ++n) {
+	  pos[n] = start[n] + block[n]*count[n] - 1;
+	}
+      }
+      else {
+	for (unsigned int n(0); n<sizeStart; ++n) {
+	  pos[n] = start[n] + block[n]*count[n]*stride[n] - 1;
+	}
+      }
+    }
+
+    return pos;
   }
   
 } // Namespace DAL -- end

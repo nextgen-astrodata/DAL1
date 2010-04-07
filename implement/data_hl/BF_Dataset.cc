@@ -362,7 +362,7 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
 
     if (sysLog_p.size() == 0 && location_p > 0) {
-      sysLog_p["SysLog"] = BF_SysLog (location_p,create);
+      sysLog_p["SysLog"] = SysLog (location_p,create);
     }
     
     return status;
@@ -522,9 +522,9 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                       sysLog
   
-  BF_SysLog BF_Dataset::sysLog ()
+  SysLog BF_Dataset::sysLog ()
   {
-    std::map<std::string,BF_SysLog>::iterator it;
+    std::map<std::string,SysLog>::iterator it;
     it = sysLog_p.begin();
     return it->second;
   }

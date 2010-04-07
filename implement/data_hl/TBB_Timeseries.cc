@@ -274,10 +274,32 @@ namespace DAL {  // Namespace DAL -- begin
   
   bool TBB_Timeseries::openEmbedded (bool const &create)
   {
-    bool status = create;
+    bool status (true);
 
-    /* Open the station groups */
-    status = openStationGroups();
+    // Open system-wide logs _____________________
+    status *= openSysLog (create);
+
+    // Open the station groups ___________________
+    status *= openStationGroups();
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                   openSysLog
+  
+  bool TBB_Timeseries::openSysLog (bool const &create)
+  {
+    bool status (true);
+
+    if (H5Lexists (location_p, "SysLog", H5P_DEFAULT)) {
+      sysLog_p = SysLog (location_p,false);
+    }
+    else {
+      if (create) {
+	sysLog_p = SysLog (location_p,true);
+      }
+    }
 
     return status;
   }

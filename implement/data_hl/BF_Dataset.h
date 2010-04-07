@@ -33,7 +33,7 @@
 #include <Filename.h>
 #include <BF_Dataset.h>
 #include <BF_PrimaryPointing.h>
-#include <BF_SysLog.h>
+#include <SysLog.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -67,7 +67,7 @@ namespace DAL { // Namespace DAL -- begin
 	<li>CommonInterface -- Common functionality for the high-level
 	interfaces to the datasets
 	<li>BF_PrimaryPointing
-	<li>BF_SysLog
+	<li>SysLog
       </ul>
     </ul>
     
@@ -147,7 +147,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Primary Pointing Directions
     std::map<std::string,BF_PrimaryPointing> primaryPointings_p;
     //! Container for system-wide logs
-    std::map<std::string,BF_SysLog> sysLog_p;
+    std::map<std::string,SysLog> sysLog_p;
 
   public:
     
@@ -223,11 +223,8 @@ namespace DAL { // Namespace DAL -- begin
 		   unsigned int const &beamID,
 		   bool const &create=true);
 
-    //! Open a system log group
-    bool openSysLog (bool const &create=true);
-
     //! Get the SysLog group
-    BF_SysLog sysLog ();
+    SysLog sysLog ();
     
   protected:
     
@@ -240,6 +237,8 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Initialize the internal settings of the object
     void init (CommonAttributes const &attributes);
+    //! Open a system log group
+    bool openSysLog (bool const &create=true);
     //! Open a PrimaryPointing direction group
     bool openPrimaryPointing (std::string const &name);
       

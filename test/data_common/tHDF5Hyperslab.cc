@@ -139,14 +139,74 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
+//                                                          test_static_functions
+
+/*!
+  \brief Test the static methods
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_static_functions ()
+{
+  cout << "\n[tHDF5Hyperslab::test_test_static_functions]\n" << endl;
+
+  int nofFailedTests (0);
+
+  try {
+    unsigned int nelem (3);
+    std::vector<int> start (nelem,0);
+    std::vector<int> block (nelem,10);
+    std::vector<int> stride;
+    std::vector<int> count;
+
+    cout << "-- start=" << start 
+	 << ", block=" << block
+	 << ", stride=" << stride
+	 << ", count=" << count << endl;
+    cout << "--> end         = " << HDF5Hyperslab::end (start,stride,count,block) << endl;
+    cout << "--> nof. points = " << HDF5Hyperslab::nofDatapoints (count,block) << endl;
+
+    count.resize(nelem);
+    count = std::vector<int> (nelem,5);
+
+    cout << "-- start=" << start 
+	 << ", block=" << block
+	 << ", stride=" << stride
+	 << ", count=" << count << endl;
+    cout << "--> end         = " << HDF5Hyperslab::end (start,stride,count,block) << endl;
+    cout << "--> nof. points = " << HDF5Hyperslab::nofDatapoints (count,block) << endl;
+    
+    stride.resize(nelem);
+    stride = std::vector<int> (nelem,2);
+
+    cout << "-- start=" << start 
+	 << ", block=" << block
+	 << ", stride=" << stride
+	 << ", count=" << count << endl;
+    cout << "--> end         = " << HDF5Hyperslab::end (start,stride,count,block) << endl;
+    cout << "--> nof. points = " << HDF5Hyperslab::nofDatapoints (count,block) << endl;
+    
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
+//! Main function
 int main ()
 {
   int nofFailedTests (0);
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
+  // Test the static methods
+  nofFailedTests += test_static_functions ();
 
   return nofFailedTests;
 }

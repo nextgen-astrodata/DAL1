@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <BF_SysLog.h>
+#include <SysLog.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -32,17 +32,17 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   //_____________________________________________________________________________
-  //                                                                    BF_SysLog
+  //                                                                       SysLog
   
-  BF_SysLog::BF_SysLog ()
+  SysLog::SysLog ()
   {
     location_p = 0;
   }
   
   //_____________________________________________________________________________
-  //                                                                    BF_SysLog
+  //                                                                       SysLog
   
-  BF_SysLog::BF_SysLog (hid_t const &location,
+  SysLog::SysLog (hid_t const &location,
 			bool const &create)
   {
     open (location,
@@ -56,7 +56,7 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  BF_SysLog::~BF_SysLog ()
+  SysLog::~SysLog ()
   {
     if (location_p > 0) {
       herr_t h5error;
@@ -78,9 +78,9 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      summary
   
-  void BF_SysLog::summary (std::ostream &os)
+  void SysLog::summary (std::ostream &os)
   {
-    os << "[BF_SysLog] Summary of internal parameters." << std::endl;
+    os << "[SysLog] Summary of internal parameters." << std::endl;
     os << "-- Location ID = " << location_p << std::endl;
   }
   
@@ -93,7 +93,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                setAttributes
   
-  void BF_SysLog::setAttributes ()
+  void SysLog::setAttributes ()
   {
     attributes_p.clear();
 
@@ -114,7 +114,7 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
-  bool BF_SysLog::open (hid_t const &location,
+  bool SysLog::open (hid_t const &location,
 			std::string const &name,
 			bool const &create)
   {
@@ -150,13 +150,13 @@ namespace DAL { // Namespace DAL -- begin
 	  // write the attributes
 	  h5set_attribute (location_p, "GROUPTYPE", string_group);
 	} else {
-	  std::cerr << "[BF_SysLog::open] Failed to create group "
+	  std::cerr << "[SysLog::open] Failed to create group "
 		    << name
 		    << std::endl;
 	  status = false;
 	}
       } else {
-	std::cerr << "[BF_SysLog::open] Failed to open group "
+	std::cerr << "[SysLog::open] Failed to open group "
 		  << name
 		  << std::endl;
 	status = false;
@@ -169,7 +169,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool BF_SysLog::openEmbedded (bool const &create)
+  bool SysLog::openEmbedded (bool const &create)
   {
     bool status = create;
     return status;
