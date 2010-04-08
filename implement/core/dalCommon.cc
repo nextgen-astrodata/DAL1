@@ -872,10 +872,17 @@ namespace DAL {
   bool h5get_attribute (hid_t const &attribute_id,
                         std::string &value)
   {
-    bool status              = true;
-    herr_t h5error           = 0;
-    hid_t datatype_id        = H5Aget_type (attribute_id);
-    hid_t native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
+    bool status (true);
+    herr_t h5error (0);
+    hid_t datatype_id (0);
+    hid_t native_datatype_id (0);
+
+    if (H5Iis_valid(attribute_id)) {
+      datatype_id        = H5Aget_type (attribute_id);
+      native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
+    } else {
+      return false;
+    }
 
     if (datatype_id > 0) {
       
@@ -915,10 +922,8 @@ namespace DAL {
 	
 	// release allocated memory
 	delete data;
-//  	delete [] data;
-//  	data = 0;
 	
-      } // END: (datatype_class_id == H5T_STRING)
+      } // END -- (datatype_class_id == H5T_STRING)
       
     }
     
@@ -1002,14 +1007,20 @@ namespace DAL {
   bool h5get_attribute (hid_t const &attribute_id,
                         std::vector<std::string> &value)
   {
-    bool status              = true;
-    herr_t h5error           = 0;
-    hid_t datatype_id        = H5Aget_type (attribute_id);
-    hid_t native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
+    bool status (true);
+    herr_t h5error (0);
+    hid_t datatype_id;
+    hid_t native_datatype_id;
     std::vector<hsize_t> shape;
-
-    status = h5get_dataspace_shape (attribute_id,shape);
-
+    
+    if (H5Iis_valid(attribute_id)) {
+      datatype_id        = H5Aget_type (attribute_id);
+      native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
+      status             = h5get_dataspace_shape (attribute_id,shape);
+    } else {
+      return false;
+    }
+    
     if (shape.size() > 0) {
       char * buffer[shape[0]];
       // Read the attribute data from the file
@@ -1064,8 +1075,17 @@ namespace DAL {
     hid_t   dataspace_id = 0;  /* Attribute dataspace identifier */
     hsize_t dims[1]      = { size };
 
-    if (datatype != H5T_STRING) {
-      std::cerr << "[dalCommon::h5set_attribute] Wrong input datatype!"
+    /* Check object identifier and data type */
+
+    if (H5Iis_valid(location_id)) {
+      if (datatype != H5T_STRING) {
+	std::cerr << "[dalCommon::h5set_attribute] Wrong input datatype!"
+		  << std::endl;
+	return false;
+      }
+    } else {
+      std::cerr << "[dalCommon::h5set_attribute]"
+		<< " Unable to set attribute - invalid object identifier!"
 		<< std::endl;
       return false;
     }

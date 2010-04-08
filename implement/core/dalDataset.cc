@@ -2,8 +2,9 @@
  | $Id::                                                                 $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
- *   Copyright (C) 2006 by Joseph Masters                                  *
- *   jmasters@science.uva.nl                                               *
+ *   Copyright (C) 2006                                                    *
+ *   Joseph Masters (jmasters@science.uva.nl)                              *
+ *   :ars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -26,9 +27,7 @@
 #define NO_IMPORT_ARRAY
 #endif
 
-#ifndef DALDATASET_H
 #include "dalDataset.h"
-#endif
 
 namespace DAL {
   
@@ -38,15 +37,17 @@ namespace DAL {
   //
   // ============================================================================
   
-  // ----------------------------------------------------------------  dalDataset
+  //_____________________________________________________________________________
+  //                                                                   dalDataset
   
   dalDataset::dalDataset()
   {
     init();
   }
 
-  // ----------------------------------------------------------------  dalDataset
-
+  //_____________________________________________________________________________
+  //                                                                   dalDataset
+  
   /*!
     \param filename  -- The name of the dataset/file to open.
     \param filetype  -- Type of file to open ("HDF5", "MSCASA", etc.).
@@ -68,49 +69,47 @@ namespace DAL {
        * if this is the case, open the dataset instead of blindly creating
        * it (and thereby potentially overwriting the existing one).
        */
-      if (overwrite_p)
-	{
-	  /* Directly try to create the dataset */
-	  if ( ( h5fh_p = H5Fcreate( filename,
-				     H5F_ACC_TRUNC,
-				     H5P_DEFAULT,
-				     H5P_DEFAULT ) ) < 0 )
-	    {
-	      std::cerr << "ERROR: Could not create file '" << filename << "'."
-			<< std::endl;
-	    }
-	}
-      else
-	{
-	  FILE * pFile;
-	  pFile = fopen ( filename, "r" );
-	  if ( pFile == NULL )  /* check to see if the file exists */
-	    {
-	      /* if not, create it */
-	      if ( ( h5fh_p = H5Fcreate( filename,
-					 H5F_ACC_TRUNC,
-					 H5P_DEFAULT,
-					 H5P_DEFAULT ) ) < 0 )
-		std::cerr << "ERROR: Could not create file '" << filename << "'.\n";
-	    }
-	  else  /* if it does exist, try to reopen it as a hdf5 file */
-	    {
-	      if ( 0 != fclose( pFile ) )
-		std::cerr << "ERROR: Could not close file '" << filename << "'.\n";
-	      
-	      /* if it does reopen it as an hdf5 file */
-	      if ( ( h5fh_p = H5Fopen(filename, H5F_ACC_RDWR, H5P_DEFAULT ) ) > 0 )
-		std::cerr << "SUCCESS: Opened file '" << filename << "'.\n";
-	      else
-		{
-		  std::cerr << "ERROR: There was a problem opening the file '"
-			    << filename << "'.\n";
-		  exit(9);
-		}
-	    }
-	  
-	  file = &h5fh_p;
-	}
+      if (overwrite_p) {
+	/* Directly try to create the dataset */
+	if ( ( h5fh_p = H5Fcreate( filename,
+				   H5F_ACC_TRUNC,
+				   H5P_DEFAULT,
+				   H5P_DEFAULT ) ) < 0 )
+	  {
+	    std::cerr << "ERROR: Could not create file '" << filename << "'."
+		      << std::endl;
+	  }
+      }  // END -- if (overwrite_p)
+      else {
+	FILE * pFile;
+	pFile = fopen ( filename, "r" );
+	if ( pFile == NULL )  /* check to see if the file exists */
+	  {
+	    /* if not, create it */
+	    if ( ( h5fh_p = H5Fcreate( filename,
+				       H5F_ACC_TRUNC,
+				       H5P_DEFAULT,
+				       H5P_DEFAULT ) ) < 0 )
+	      std::cerr << "ERROR: Could not create file '" << filename << "'.\n";
+	  }
+	else  /* if it does exist, try to reopen it as a hdf5 file */
+	  {
+	    if ( 0 != fclose( pFile ) )
+	      std::cerr << "ERROR: Could not close file '" << filename << "'.\n";
+	    
+	    /* if it does reopen it as an hdf5 file */
+	    if ( ( h5fh_p = H5Fopen(filename, H5F_ACC_RDWR, H5P_DEFAULT ) ) > 0 )
+	      std::cerr << "SUCCESS: Opened file '" << filename << "'.\n";
+	    else
+	      {
+		std::cerr << "ERROR: There was a problem opening the file '"
+			  << filename << "'.\n";
+		exit(9);
+	      }
+	  }
+	
+	pFile_p = &h5fh_p;
+      }
     }
     else if ( filetype == FITSTYPE )
       {
@@ -122,12 +121,41 @@ namespace DAL {
         std::cerr << "ERROR: CFITSIO libraries not found.\n";
 #endif
       }
-    else
-      {
-        std::cerr << "(dalDataset::dalDataset) Data format \'" << type
-                  << "\' not supported for this operation." << endl;
-      }
+    else if (filetype == MSCASATYPE) {
+    }
+    else {
+      std::cerr << "(dalDataset::dalDataset) Data format \'" << type
+		<< "\' not supported for this operation." << endl;
+    }
   }
+  
+  // ============================================================================
+  //
+  //  Destruction
+  //
+  // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                  ~dalDataset
+  
+  dalDataset::~dalDataset()
+  {
+    /* Release file pointer */
+    if (pFile_p != NULL) {
+      pFile_p = NULL;
+    }
+
+    /* Release HDF5 object identifier */
+    if (H5Iis_valid(h5fh_p)) {
+      H5Fclose (h5fh_p);
+    }
+  }
+  
+  // ============================================================================
+  //
+  //  Methods
+  //
+  // ============================================================================
   
   //_____________________________________________________________________________
   //                                                                         init
@@ -162,8 +190,8 @@ namespace DAL {
     ms_reader = NULL;
 #endif
 
-    file        = NULL;
-    name        = stringify( filename );
+    pFile_p     = NULL;
+    name        = stringify (filename);
     type        = filetype;
     overwrite_p = overwrite;
     h5fh_p      = 0;
@@ -304,7 +332,7 @@ namespace DAL {
     }
     else if ( (h5fh_p = openHDF5( fname )) >= 0 )
       {
-        file = &h5fh_p;
+        pFile_p = &h5fh_p;
         lcltype = H5TYPE;
         type = lcltype;
         name = fname;
@@ -323,25 +351,24 @@ namespace DAL {
               {
                 casa::SymLink link( msfile );
                 casa::Path realFileName = link.followSymLink();
-                ms = new casa::MeasurementSet( realFileName.absoluteName() );
-                file = &ms;
+                ms        = new casa::MeasurementSet( realFileName.absoluteName() );
+                pFile_p   = &ms;
                 ms_reader = new casa::MSReader( *ms );
-                name = fname;
+                name      = fname;
                 return DAL::SUCCESS;
               }
             else // treat it as a regular file
               {
-                ms = new casa::MeasurementSet( fname );
-                file = &ms;
+                ms        = new casa::MeasurementSet( fname );
+                pFile_p   = &ms;
                 ms_reader = new casa::MSReader( *ms );
-                name = fname;
+                name      = fname;
                 return DAL::SUCCESS;
               }
           }
-        catch (casa::AipsError x)
-          {
-            return DAL::FAIL;
-          }
+        catch (casa::AipsError x) {
+	  return DAL::FAIL;
+	}
 #else
         return DAL::FAIL;
 #endif
@@ -353,55 +380,71 @@ namespace DAL {
 
   /*!
     \return bool -- DAL::FAIL or DAL::SUCCESS
-   */
+  */
   bool dalDataset::close()
   {
-    if ( type == MSCASATYPE )
-      {
-#ifdef HAVE_CASA
-        delete ms;
-        return DAL::SUCCESS;
-#else
-        std::cerr << "ERROR: CASA support not enabled.\n";
-        return DAL::FAIL;
-#endif
-      }
-    else if ( type == H5TYPE )
-      {
-        if ( H5Fclose( h5fh_p ) < 0 )
-          return DAL::FAIL;
-        else
-          return DAL::SUCCESS;
-      }
-    return DAL::FAIL;
-  }
+    bool status (true);
 
+    std::cout << "[dalDataset::close]" << std::endl;
+    std::cout << "-- Dataset type     = " << getType()       << std::endl << std::flush;
+    std::cout << "-- Dataset name     = " << getName()       << std::endl << std::flush;
+    std::cout << "-- HDF5 file handle = " << getFileHandle() << std::endl << std::flush;
+    std::cout << "-- HDF5 group ID    = " << getId()         << std::endl << std::flush;
+    
+    if ( type == MSCASATYPE ) {
+#ifdef HAVE_CASA
+      delete ms;
+#else
+      std::cerr << "ERROR: CASA support not enabled.\n";
+      status = false;
+#endif
+    }
+    else if ( type == H5TYPE ) {
+      if (H5Iis_valid(h5fh_p)) {
+	H5Oclose (h5fh_p);
+      } else {
+	status = false;
+      }
+      
+    }
+    
+    return status;
+  }
+  
   //_____________________________________________________________________________
   //                                                                getAttributes
-
+  
   /*!
     \brief Print the group attributes.
-
-    Print the group attributes.
-
+    
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalDataset::getAttributes()
   {
-    if ( H5Aiterate1( h5fh_p, NULL, attr_info, NULL ) < 0 )
-      {
-        std::cerr << "ERROR: Could not iterate over dataset attributes.\n";
-        return DAL::FAIL;
+    if (H5Iis_valid(h5fh_p)) {
+      if ( H5Aiterate1( h5fh_p, NULL, attr_info, NULL ) < 0 )
+	{
+	  std::cerr << "[dalDataset::getAttributes]"
+		    << " Could not iterate over dataset attributes."
+		    << std::endl;
+	  return false;
+	}
+      else {
+	return true;
       }
-    else {
-      return DAL::SUCCESS;
     }
-
+    else {
+      std::cout << "[dalDataset::getAttributes]"
+		<< " Unable to get attributes - invalid object identifier!"
+		<< std::endl;
+      return false;
+    }
+    
   }
   
   //_____________________________________________________________________________
   //                                                                 setAttribute
-
+  
   /*!
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
@@ -409,11 +452,23 @@ namespace DAL {
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute( std::string attrname,
+  bool dalDataset::setAttribute (std::string attrname,
                                  const char * data,
                                  int size )
   {
-    return h5set_attribute( H5T_NATIVE_CHAR, h5fh_p, attrname, data, size );
+    if (H5Iis_valid(h5fh_p)) {
+      return h5set_attribute (H5T_NATIVE_CHAR,
+			      h5fh_p,
+			      attrname,
+			      data,
+			      size);
+    }
+    else {
+      std::cout << "[dalDataset::setAttribute]"
+		<< " Unable to set attribute - invalid object identifier!"
+		<< std::endl;
+      return false;
+    }
   }
 
   //_____________________________________________________________________________
@@ -426,16 +481,28 @@ namespace DAL {
                 attribute.  Default is scalar.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalDataset::setAttribute( std::string attrname,
+  bool dalDataset::setAttribute (std::string attrname,
                                  const short * data,
                                  int size )
   {
-    return h5set_attribute( H5T_NATIVE_SHORT, h5fh_p, attrname, data, size );
+    if (H5Iis_valid(h5fh_p)) {
+      return h5set_attribute (H5T_NATIVE_SHORT,
+			      h5fh_p,
+			      attrname,
+			      data,
+			      size);
+    }
+    else {
+      std::cout << "[dalDataset::setAttribute]"
+		<< " Unable to set attribute - invalid object identifier!"
+		<< std::endl;
+      return false;
+    }
   }
-
+  
   //_____________________________________________________________________________
   //                                                                 setAttribute
-
+  
   /*!
     \param attrname The name of the attribute you want to create.
     \param data The value of the attribute you want to create.
@@ -447,9 +514,21 @@ namespace DAL {
                                  const int * data,
                                  int size )
   {
-    return h5set_attribute( H5T_NATIVE_INT, h5fh_p, attrname, data, size );
+    if (H5Iis_valid(h5fh_p)) {
+      return h5set_attribute (H5T_NATIVE_INT,
+			      h5fh_p,
+			      attrname,
+			      data,
+			      size);
+    }
+    else {
+      std::cerr << "[dalDataset::setAttribute]"
+		<< " Unable to set attribute - invalid object identifier!"
+		<< std::endl;
+      return false;
+    }
   }
-
+  
   //_____________________________________________________________________________
   //                                                                 setAttribute
 
@@ -879,23 +958,21 @@ namespace DAL {
   */
   dalTable * dalDataset::createTable( std::string tablename )
   {
-    if ( type == H5TYPE )
-      {
-        dalTable * lt = new dalTable( H5TYPE );
-        lt->createTable( file, tablename, "/" );
-        return lt;
-      }
-    else
-      {
-        std::cerr << "(dalDataset::createTable) Filetype \'" << type
-                  << "\' not yet supported.\n";
-        return NULL;
-      }
+    if ( type == H5TYPE ) {
+      dalTable * lt = new dalTable( H5TYPE );
+      lt->createTable( pFile_p, tablename, "/" );
+      return lt;
+    }
+    else {
+      std::cerr << "(dalDataset::createTable) Filetype \'" << type
+		<< "\' not yet supported.\n";
+      return NULL;
+    }
   }
-
+  
   //_____________________________________________________________________________
   //                                                                  createTable
-
+  
   /*!
     Creates a table in a group (mainly for hdf5)
 
@@ -910,7 +987,7 @@ namespace DAL {
     if ( type == H5TYPE )
       {
         dalTable * lt = new dalTable( H5TYPE );
-        lt->createTable( file, tablename, groupname );
+        lt->createTable( pFile_p, tablename, groupname );
         return lt;
       }
     else
@@ -947,7 +1024,7 @@ namespace DAL {
     else if ( type == H5TYPE )
       {
         dalTable * lt = new dalTable( H5TYPE );
-        lt->openTable( file, tablename, "/" );
+        lt->openTable( pFile_p, tablename, "/" );
         return lt;
       }
     else if ( type == FITSTYPE )
@@ -984,7 +1061,7 @@ namespace DAL {
         dalTable * lt = new dalTable( H5TYPE );
         try
           {
-            lt->openTable( file, tablename, '/' + groupname );
+            lt->openTable( pFile_p, tablename, '/' + groupname );
           }
         catch (std::string message)
           {
@@ -1018,7 +1095,7 @@ namespace DAL {
     else if ( type == H5TYPE )
       {
         dalArray * la = new dalArray;
-        la->open( file, arrayname );
+        la->open( pFile_p, arrayname );
         return la;
       }
     else if ( type == FITSTYPE )
@@ -1049,7 +1126,7 @@ namespace DAL {
       dalArray * test = new dalArray;
       delete test;
       dalArray * la = new dalArray;
-      la->open( file, '/' + groupname + '/' + arrayname );
+      la->open( pFile_p, '/' + groupname + '/' + arrayname );
       return la;
     }
     else if ( type == FITSTYPE )
@@ -1098,29 +1175,32 @@ namespace DAL {
   //                                                                getGroupNames
 
   /*!
-    \return A vector of group names.
+    \return groupNames --  A vector of group names; returns an empty vector in
+            case no sub-groups exist or the operation is not defined with the
+	    current state of the object (e.g. because it is not connected to an
+	    actual dataset).
    */
   std::vector<std::string> dalDataset::getGroupNames()
   {
     std::vector<std::string> group_names;
 
-    H5Giterate (h5fh_p,      /* File or group identifier                    */
-		"/",         /* Group over which the iteration is performed */
-		NULL,        /* Location at which to begin the iteration    */
-		getFileInfo,
-		&group_names );
-
+    if (H5Iis_valid(h5fh_p)) {
+      H5Giterate (h5fh_p,      /* File or group identifier                    */
+		  "/",         /* Group over which the iteration is performed */
+		  NULL,        /* Location at which to begin the iteration    */
+		  getFileInfo,
+		  &group_names );
+    }
+    
     return group_names;
   }
-
+  
   //_____________________________________________________________________________
   //                                                                    openGroup
   
   /*!
     \brief Open a group in a dataset.
-
-    Open a group in a dataset.
-
+    
     \param groupname The name of the group to open
     \return dalGroup * A pointer to a group object.
    */
@@ -1130,24 +1210,22 @@ namespace DAL {
       {
         dalGroup * group = new dalGroup;
         //cerr << "Trying to open group " << groupname << endl;
-        int retval = group->open( file, groupname );
+        int retval = group->open( pFile_p, groupname );
         if ( retval < 0 )
           return NULL;
         else
           return group;
       }
-    else if ( type == FITSTYPE )
-      {
-        std::cerr << "dalDataset::openGroup FITS Type.\n";
-        return NULL;
-      }
-    else
-      {
-        std::cerr << "dalDataset::openGroup type not supported.\n";
-        return NULL;
-      }
+    else if ( type == FITSTYPE ) {
+      std::cerr << "dalDataset::openGroup FITS Type.\n";
+      return NULL;
+    }
+    else {
+      std::cerr << "dalDataset::openGroup type not supported.\n";
+      return NULL;
+    }
   }
-
+  
   //_____________________________________________________________________________
   //                                                                     read_tbb
 
@@ -1185,26 +1263,23 @@ namespace DAL {
         std::cerr << "ERROR: could not get filespace.(dalDataset::read_tbb)\n";
       }
     int rank = H5Sget_simple_extent_ndims( filespace );
-    if (rank < 0)
-      {
-        std::cerr << "ERROR: could not get filespace rank.(dalDataset::read_tbb)\n";
-      }
-
+    if (rank < 0) {
+      std::cerr << "ERROR: could not get filespace rank.(dalDataset::read_tbb)\n";
+    }
+    
     hsize_t dimsr[1];
-
-    if ( H5Sget_simple_extent_dims( filespace, dimsr, NULL ) < 0 )
-      {
-        std::cerr << "ERROR: could not get filespace dims.(dalDataset::read_tbb)\n";
-      }
-
+    
+    if ( H5Sget_simple_extent_dims( filespace, dimsr, NULL ) < 0 ) {
+      std::cerr << "ERROR: could not get filespace dims.(dalDataset::read_tbb)\n";
+    }
+    
     dimsr[0]=length;
-
+    
     hid_t memspace = H5Screate_simple( rank, dimsr, NULL );
-    if (memspace < 0)
-      {
-        std::cerr << "ERROR: could not create memory space.(dalDataset::read_tbb)\n";
-      }
-
+    if (memspace < 0) {
+      std::cerr << "ERROR: could not create memory space.(dalDataset::read_tbb)\n";
+    }
+    
     hsize_t     offset[1];
     hsize_t     offset_out[1];         /* hyperslab offset in memory */
     offset[0] = start;

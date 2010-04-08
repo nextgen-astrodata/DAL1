@@ -24,9 +24,8 @@
 #ifndef DALDATASET_H
 #define DALDATASET_H
 
-#ifndef DALGROUP_H
+#include "dalFileType.h"
 #include "dalGroup.h"
-#endif
 
 namespace DAL {
   
@@ -37,6 +36,10 @@ namespace DAL {
     \ingroup core
 
     \brief Represents the file containing all sub-structures (tables, arrays, etc.)
+
+    \author Joseph Masters, Lars B&auml;hren
+
+    \test tdalDataset.cc
     
     <h3>Prerequisite</h3>
 
@@ -99,8 +102,10 @@ namespace DAL {
 
   class dalDataset {
     
-    //! can be HDF5File, FITS, MS
-    void * file;
+    //! File pointer (can be HDF5, FITS or CASA MS)
+    void * pFile_p;
+    //! File type
+    dalFileType filetype_p;
     //! "HDF5", "MSCASA" or "FITS"; for example
     std::string type;
     //! Dataset name
@@ -119,22 +124,37 @@ namespace DAL {
 #endif
     
   public:
+
+    // === Construction =========================================================
+    
     //! Default constructor
     dalDataset();
+
     //! Argumented constructor
     dalDataset (const char * name,
 		std::string filetype,
 		const bool &overwrite=false);
+
+    // === Destruction ==========================================================
+
+    //! Default destructor
+    ~dalDataset();
+
+    // === Parameter access =====================================================
+
+    //! Retrieve the identifier for the group.
+    inline hid_t getId () {
+      return h5fh_p;
+    }
+
+    // === Methods ==============================================================
+
     //! Open the dataset
     bool open (const char * filename);
     //! Close the dataset
     bool close();
     //! Get the attributes of the dataset
     bool getAttributes();
-    //! Retrieve the identifier for the group.
-    inline hid_t getId () {
-      return h5fh_p;
-    }
     //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
@@ -158,7 +178,11 @@ namespace DAL {
     template <class T>
       bool getAttribute (std::string attrname, T &value )
       {
-        return h5get_attribute (h5fh_p, attrname, value );
+	if (H5Iis_valid(h5fh_p)) {
+	  return h5get_attribute (h5fh_p, attrname, value );
+	} else {
+	  return false;
+	}
       }
     
     //! Define a char attribute.

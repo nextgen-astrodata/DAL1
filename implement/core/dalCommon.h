@@ -277,12 +277,18 @@ namespace DAL {
     {
       herr_t h5error (0);
       hid_t h5datatype (0);
+
+      if (H5Iis_valid(attribute_id)) {
+	h5datatype = H5Aget_type (attribute_id);
+      } else {
+	return false;
+      }
       
       /*
        * Get the datatype of the attribute's value; for a few cases we might
        * need to adjust the returned value to match the native HDF5 datatype.
        */
-      if ( (h5datatype = H5Aget_type (attribute_id)) > 0 ) {
+      if ( h5datatype > 0 ) {
 	switch (h5datatype) {
 	case H5T_FLOAT:
 	  h5datatype = H5T_NATIVE_FLOAT;
@@ -330,6 +336,10 @@ namespace DAL {
     bool status (true);
     hid_t attribute_id (0);
 
+    if (!H5Iis_valid(location_id)) {
+      return false;
+    }
+
     /* Check if the requested attribute exists; if this is the case, retrieve
      * its HDF5 object ID - else return error message.
      */
@@ -369,14 +379,20 @@ namespace DAL {
     bool h5get_attribute (hid_t const &attribute_id,
 			  std::vector<T> &value)
     {
-      bool status              = true;
-      herr_t h5error           = 0;
-      hid_t datatype_id        = H5Aget_type (attribute_id);
-      hid_t native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
+      bool status (true);
+      herr_t h5error (0);
+      hid_t datatype_id;
+      hid_t native_datatype_id;
       std::vector<hsize_t> shape;
-      
-      status = h5get_dataspace_shape (attribute_id,shape);
-      
+
+      if (H5Iis_valid(attribute_id)) {
+	datatype_id        = H5Aget_type (attribute_id);
+	native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
+	status             = h5get_dataspace_shape (attribute_id,shape);
+      } else {
+	return false;
+      }
+
       if (shape.size() > 0) {
 	// Buffer for the underlying HDF5 library call
 	T *buffer = new T [shape[0]];
@@ -481,6 +497,15 @@ namespace DAL {
     hsize_t dims[1]      = { size };
     hsize_t *maxdims     = 0;
 
+    /* Check if location_id points to a valid HDF5 object */
+
+    if (!H5Iis_valid(location_id)) {
+      std::cerr << "[dalCommon::h5set_attribute]"
+		<< " Unable to set attribute - invalid object identifier!"
+		<< std::endl;
+      return false;
+    }
+    
     /* Check if the attribute already exists; if this is the case we update
      * the contents - otherwise we newly create the attribute.
      */

@@ -39,7 +39,8 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-// ------------------------------------------------------------ test_constructors
+//_______________________________________________________________________________
+//                                                              test_constructors
 
 /*!
   \brief Test the various constructors for an object of type BeamFormed
@@ -55,7 +56,7 @@ int test_constructors (std::string const &filename)
 
   int nofFailedTests (0);
 
-  cout << "[1] Test default constructor ..." << endl;
+  cout << "[1] Testing BeamFormed() ..." << endl;
   try {
     DAL::BeamFormed bf;
     //
@@ -66,7 +67,7 @@ int test_constructors (std::string const &filename)
     nofFailedTests++;
   }
   
-  cout << "[2] Test argumented constructor ..." << endl;
+  cout << "[2] Testing BeamFormed(string) ..." << endl;
   try {
     DAL::BeamFormed bf (filename);
     //
@@ -80,7 +81,8 @@ int test_constructors (std::string const &filename)
   return nofFailedTests;
 }
 
-// -------------------------------------------------------------- test_attributes
+//_______________________________________________________________________________
+//                                                                test_attributes
 
 /*!
   \brief Test the various methods for the retrieval of the attributes
@@ -246,17 +248,19 @@ int test_getData (std::string const &filename)
   return nofFailedTests;
 }
 
-// ------------------------------------------------------------------------- main
+//_______________________________________________________________________________
+//                                                                           main
 
-int main(int argc,char *argv[])
+int main (int argc,
+	  char *argv[])
 {
   int nofFailedTests (0);
   bool haveDataset (true);
   std::string filename ("UNDEFINED");
 
   //________________________________________________________
-  // Process parameters from the command line
-  
+  // Run the tests
+
   if (argc < 2) {
     haveDataset = false;
   } else {
@@ -264,6 +268,9 @@ int main(int argc,char *argv[])
     haveDataset = true;
   }
   
+  //________________________________________________________
+  // Run the tests
+
   if (haveDataset) {
     /* Test for the constructors */
     nofFailedTests += test_constructors(filename);

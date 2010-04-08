@@ -31,6 +31,14 @@ endforeach (src)
 ##_______________________________________________________________________________
 ##                                                           Testing instructions
 
+## tdalBaseTypes _________________________________
+  
+add_test (tdalBaseTypes tdalBaseTypes)
+
+## tdalFileType __________________________________
+  
+add_test (tdalFileType tdalFileType)
+
 ## tdalCommon ____________________________________
   
 add_test (tdalCommon_test1 tdalCommon)
@@ -42,7 +50,7 @@ endif (dataset_tbb AND dataset_beamformed)
 ## tdalDataset ___________________________________
 
 if (dataset_ms)
-  add_test (tdalDataset_ms tdalDataset ${dataset_ms})
+  add_test (tdalDataset_ms tdalDataset ${dataset_ms} MSCASA)
 endif (dataset_ms)
 
 if (dataset_beamformed)
@@ -54,7 +62,7 @@ if (dataset_tbb)
 endif (dataset_tbb)
 
 if (dataset_fits)
-  add_test (tdalDataset_fits tdalDataset ${dataset_fits})
+  add_test (tdalDataset_fits tdalDataset ${dataset_fits} FITS)
 endif (dataset_fits)
 
 ## tdalArray _____________________________________

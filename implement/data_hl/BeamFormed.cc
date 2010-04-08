@@ -32,42 +32,105 @@ namespace DAL {
   //
   // ============================================================================
   
-  // ---------------------------------------------------------- BeamFormed
+  //_____________________________________________________________________________
+  //                                                                   BeamFormed
   
   BeamFormed::BeamFormed()
   {
-    filename_p = "";
-    H5fileID_p = 0;
-    beamGroups_p.clear();
+    init ();
   };
   
-  // ---------------------------------------------------------- BeamFormed
+  //_____________________________________________________________________________
+  //                                                                   BeamFormed
   
   /*!
     \param filename -- Name of the file from which to read in the data
   */
   BeamFormed::BeamFormed(std::string const &filename)
   {
-    filename_p = filename;
-    H5fileID_p = 0;
-    beamGroups_p.clear();
-    
-    init();
+    init ();
+    init (filename);
   }
 
   //_____________________________________________________________________________
-  // BeamFormed
-
+  //                                                                   BeamFormed
+  
   BeamFormed::BeamFormed (CommonAttributes const &commonAttributes)
   {
-    commonAttributes_p = commonAttributes;
-    H5fileID_p = 0;
-    beamGroups_p.clear();
-    
-    init();
+    init ();
+    init (commonAttributes);
   }
   
-  // ----------------------------------------------------------------------- init
+  // ============================================================================
+  //
+  //  Destruction
+  //
+  // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                  ~BeamFormed
+  
+  BeamFormed::~BeamFormed()
+  {
+    // Clear beam groups _________________________
+
+    std::cout << "[BeamFormed] Clearing beam groups ..." << std::endl << std::flush;
+
+    if (!beamGroups_p.empty()) {
+      for (uint beam(0); beam<beamGroups_p.size(); beam++) {
+	delete beamGroups_p[beam];
+      }
+    }
+
+    // Clear dalDataset __________________________
+    
+    std::cout << "[BeamFormed] Clearing dalDataset ..." << std::endl << std::flush;
+
+    if ( dataset_p != NULL && H5Iis_valid(dataset_p->getId()) ) {
+      std::cout << "-- closing dataset ..." << std::endl << std::flush;
+      dataset_p->close();
+      std::cout << "-- deleting pointer ..." << std::endl << std::flush;
+      delete dataset_p;
+      std::cout << "-- zero pointer ..." << std::endl << std::flush;
+      dataset_p = NULL;
+    }
+
+    std::cout << "[BeamFormed] Done." << std::endl << std::flush;
+  }
+  
+  // ============================================================================
+  //
+  //  Methods
+  //
+  // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                                         init
+  
+  bool BeamFormed::init ()
+  {
+    status             = false;
+    commonAttributes_p = CommonAttributes();
+    filename_p         = "";
+    H5fileID_p         = 0;
+    dataset_p          = NULL;
+    beamGroups_p.clear();
+
+    return true;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                         init
+
+  bool BeamFormed::init (CommonAttributes const &commonAttributes)
+  {
+    commonAttributes_p = CommonAttributes();
+
+    return init (commonAttributes.filename());
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                         init
   
   /*!
     \brief Object initialization method
@@ -75,16 +138,13 @@ namespace DAL {
     \return status -- Status of the operation; returns \e false in case an error
             was encountered.
   */
-  bool BeamFormed::init ()
+  bool BeamFormed::init (std::string const &filename)
   {
-    bool status (true);
+    // Store filename ____________________________
 
-    // Initialize interal variables
+    filename_p = filename;
 
-    dataset_p  = NULL;
-    status     = true;
-    
-    // Connection to dataset via DAL layer
+    // Open file through dalDataset ______________
     
     dataset_p = new dalDataset;
     if ( DAL::FAIL == dataset_p->open( filename_p.c_str() ) ) {
@@ -119,22 +179,8 @@ namespace DAL {
     return status;
   }
   
-  // ---------------------------------------------------------------- ~BeamFormed
-  
-  BeamFormed::~BeamFormed()
-  {
-    for (uint beam(0); beam<beamGroups_p.size(); beam++) {
-      delete beamGroups_p[beam];
-    }
-    
-    if ( NULL != dataset_p ) {
-      dataset_p->close();
-      delete dataset_p;
-      dataset_p = NULL;
-    }
-  }
-  
-  // ---------------------------------------------------------- h5get_str_array_attr
+  //_____________________________________________________________________________
+  //                                                         h5get_str_array_attr
   
   /*!
     \brief Get a list of values for a string array attribute
@@ -142,7 +188,7 @@ namespace DAL {
     \param obj_id         -- hdf5 object identifier [I]
   */
   std::vector< std::string >
-  BeamFormed::h5get_str_array_attr( std::string attrname,
+  BeamFormed::h5get_str_array_attr (std::string attrname,
                                     hid_t obj_id )
   {
     status = true;
@@ -205,54 +251,56 @@ namespace DAL {
     \param listBeams       -- flag to determine whether or not to list beam
            summaries [I]
   */
-  void BeamFormed::summary (std::ostream &os, bool const &listBeams)
+  void BeamFormed::summary (std::ostream &os,
+			    bool const &listBeams)
   {
-    os << "\n[BeamFormed Data] Summary of object properties"     << endl;
+    os << "[BeamFormed] Summary of object properties"     << endl;
 
     os << "-- Status ............... : " << status     << endl;
     os << "-- Filename ............. : " << filename_p << endl;
     os << "-- HDF5 file ID ......... : " << H5fileID_p << endl;
 
-    if (dataset_p != NULL) {
+    if (H5Iis_valid(H5fileID_p) && H5Iis_valid(dataset_p->getId())) {
       std::vector< std::string > srcs = sources();
       std::vector< int > temps        = station_temperatures();
       
-      os << "-- Telesope ............. : " << telescope()         << endl;
-      os << "-- Number of Stations ... : " << nofStations()       << endl;
-      os << "-- Datatype ............. : " << datatype()          << endl;
-      os << "-- Emband   ............. : " << emband()            << endl;
-      
-      os << "-- Source(s) ............ : " << srcs                << endl;
-      
-      os << "-- Observation Id ....... : " << observation_id()        << endl;
-      os << "-- Project Id ........... : " << proj_id()               << endl;
-      
-      os << "-- Point RA ............. : " << point_ra()              << endl;
-      os << "-- Point DEC ............ : " << point_dec()             << endl;
-      os << "-- Observer ............. : " << observer()              << endl;
-      os << "-- Epoch MJD ............ : " << epoch_mjd()             << endl;
-      os << "-- Epoch Date ........... : " << epoch_date()            << endl;
-      os << "-- Epoch UTC ............ : " << epoch_utc()             << endl;
-      os << "-- Epoch LST ............ : " << epoch_lst()             << endl;
-      os << "-- FWHM of the main beam  : " << main_beam_diam()        << endl;
-      os << "-- Bandwidth ............ : " << bandwidth()             << endl;
-      
-      os << "-- Breaks in the data ... : " << breaks()                << endl;
-      os << "-- Dispersion measure ... : " << dispersion_measure()    << endl;
-      os << "-- Number of time samples : " << number_of_samples()     << endl;
-      os << "-- Sampling time (Hz).... : " << sampling_time()         << endl;
-      os << "-- Notes ................ : " << notes()                 << endl;
-      os << "-- Number of beams ...... : " << number_of_beams()       << endl;
-      os << "-- FWHM of the sub-beams  : " << sub_beam_diameter()     << endl;
-      os << "-- Weather temperature .. : " << weather_temperature()   << endl;
-      os << "-- Weather humidity ..... : " << weather_humidity()      << endl;
-      os << "-- Station temperature(s) : " << temps                   << endl;
+      os << "-- Telesope ............. : " << telescope()            << endl;
+      os << "-- Number of Stations ... : " << nofStations()          << endl;
+      os << "-- Datatype ............. : " << datatype()             << endl;
+      os << "-- EM-band  ............. : " << emband()               << endl;
+      os << "-- Source(s) ............ : " << srcs                   << endl;
+      os << "-- Observation Id ....... : " << observation_id()       << endl;
+      os << "-- Project Id ........... : " << proj_id()              << endl;
+      os << "-- Point RA ............. : " << point_ra()             << endl;
+      os << "-- Point DEC ............ : " << point_dec()            << endl;
+      os << "-- Observer ............. : " << observer()             << endl;
+      os << "-- Epoch MJD ............ : " << epoch_mjd()            << endl;
+      os << "-- Epoch Date ........... : " << epoch_date()           << endl;
+      os << "-- Epoch UTC ............ : " << epoch_utc()            << endl;
+      os << "-- Epoch LST ............ : " << epoch_lst()            << endl;
+      os << "-- FWHM of the main beam  : " << main_beam_diam()       << endl;
+      os << "-- Bandwidth ............ : " << bandwidth()            << endl;
+      os << "-- Breaks in the data ... : " << breaks()               << endl;
+      os << "-- Dispersion measure ... : " << dispersion_measure()   << endl;
+      os << "-- Number of time samples : " << number_of_samples()    << endl;
+      os << "-- Sampling time (Hz).... : " << sampling_time()        << endl;
+      os << "-- Notes ................ : " << notes()                << endl;
+      os << "-- Number of beams ...... : " << number_of_beams()      << endl;
+      os << "-- FWHM of the sub-beams  : " << sub_beam_diameter()    << endl;
+      os << "-- Weather temperature .. : " << weather_temperature()  << endl;
+      os << "-- Weather humidity ..... : " << weather_humidity()     << endl;
+      os << "-- Station temperature(s) : " << temps                  << endl;
       
       if (listBeams) {
 	for (uint beam(0); beam<beamGroups_p.size(); beam++) {
 	  beamGroups_p[beam]->summary();
 	}
       }
+    } else {
+      os << "-- Telesope ............. : UNDEFINED" << endl;
+      os << "-- nof stations ......... : UNDEFINED" << endl;
+      os << "-- Datatype ............. : UNDEFINED" << endl;
+      os << "-- EM-band .............. : UNDEFINED" << endl;
     }
     
   }
@@ -311,6 +359,23 @@ namespace DAL {
   //
   // ============================================================================
 
+  std::string BeamFormed::getAttribute (std::string const &name)
+  {
+    std::string val = "";
+    hid_t location  = dataset_p->getId();
+    
+    if (H5Iis_valid(location)) {
+      if (h5get_attribute (location,name,val)) {
+	return val;
+      } else {
+	std::cerr << "[BeamFormed] Error extracting attribute " << name
+		  << std::endl;
+      }
+    }
+    
+    return val;
+  }
+  
   //_____________________________________________________________________________
   //                                                          setCommonAttributes
 
@@ -323,29 +388,20 @@ namespace DAL {
     return status;
   }
   
-  // ---------------------------------------------------------- filename
+  //_____________________________________________________________________________
+  //                                                                     filename
 
   /*!
-    \brief Get the name of the data file
     \return filename - The name of the data file
   */
   std::string BeamFormed::filename ()
   {
-    std::string filename ("");
-
-    if ( dataset_p->getName() != "UNDEFINED" ) {
-      if ( DAL::FAIL == dataset_p->getAttribute( "FILENAME", filename ) )
-	{
-	  std::cerr << "-- Error extracting attribute FILENAME\n";
-	  filename = "";
-	}
-    }
-    
-    return filename;
+    return getAttribute ("FILENAME");
   }
   
-  // ---------------------------------------------------------- telescope
-  
+  //_____________________________________________________________________________
+  //                                                                    telescope
+
   /*!
     \return telescope -- The name of the telescope with which the data were
             recorded; returns an empty string in case no keyword value could
@@ -353,78 +409,55 @@ namespace DAL {
   */
   std::string BeamFormed::telescope ()
   {
-    std::string telescope ("");
-
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL ==  dataset_p->getAttribute( "TELESCOPE", telescope ) )
-          {
-            std::cerr << "-- Error extracting attribute TELESCOPE\n";
-            telescope = "";
-          }
-      }
-    return telescope;
+    return getAttribute ("TELESCOPE");
   }
 
-  // ---------------------------------------------------------------- nofStations
+  //_____________________________________________________________________________
+  //                                                                  nofStations
 
   /*!
-    \return nstations - the number of stations in the file
+    \return nstations - The number of stations in the file
   */
   int BeamFormed::nofStations ()
   {
-    int nstations = -1;
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "NUMBER_OF_STATIONS",
-             nstations ) )
-          {
-            std::cerr << "-- Error extracting attribute NUMBER_OF_STATIONS\n";
-          }
-      }
-    return nstations;
+    std::string name ("NUMBER_OF_STATIONS");
+    int val (-1);
+    hid_t location = dataset_p->getId();
+    bool status    = h5get_attribute (location,name,val);
+    
+    if (!status) {
+      std::cerr << "[BeamFormed] Error extracting attribute " << name
+		<< std::endl;
+      val = -1;
+    }
+    
+    return val;
   }
-
-  // ---------------------------------------------------------- datatype
+  
+  //_____________________________________________________________________________
+  //                                                                     datatype
 
   /*!
     \return datatype - the datatype of the observation
   */
   std::string BeamFormed::datatype ()
   {
-    std::string datatype ("");
-
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL ==  dataset_p->getAttribute( "DATATYPE", datatype ) )
-          {
-            std::cerr << "-- Error extracting attribute DATATYPE\n";
-          }
-      }
-    return datatype;
+    return getAttribute ("DATATYPE");
   }
 
-  // ---------------------------------------------------------- emband
+  //_____________________________________________________________________________
+  //                                                                       emband
 
   /*!
-    \brief Get the emband
-    \return emband
+    \return emband -- Selected EM-band
   */
   std::string BeamFormed::emband ()
   {
-    std::string emband ("");
-
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "EMBAND", emband ) )
-          {
-            std::cerr << "-- Error extracting attribute EMBAND\n";
-          }
-      }
-    return emband;
+    return getAttribute ("EMBAND");
   }
 
-  // ---------------------------------------------------------- sources
+  //_____________________________________________________________________________
+  //                                                                      sources
 
   /*!
     \return source list - a vector of source ids
@@ -434,267 +467,188 @@ namespace DAL {
     return h5get_str_array_attr( "SOURCE", H5fileID_p );
   }
 
-  // ---------------------------------------------------------- notes
+  //_____________________________________________________________________________
+  //                                                                        notes
 
   /*!
     \return notes - a string of notes from associated with the observation
   */
   std::string BeamFormed::notes()
   {
-    std::string notes ("");
-
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "NOTES", notes ) )
-          {
-            std::cerr << "-- Error extracting attribute NOTES\n";
-          }
-      }
-    return notes;
+    return getAttribute ("NOTES");
   }
 
-  // ---------------------------------------------------------- observation_id
-
+  //_____________________________________________________________________________
+  //                                                               observation_id
+  
   /*!
     \return obs_id - the observation identifier
   */
   std::string BeamFormed::observation_id ()
   {
-    std::string observation_id ("");
-
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "OBSERVATION_ID",
-             observation_id ) )
-          {
-            std::cerr << "-- Error extracting attribute OBSERVATION_ID\n";
-          }
-      }
-    return observation_id;
+    return getAttribute ("OBSERVATION_ID");
   }
 
-  // ---------------------------------------------------------- proj_id
-
+  //_____________________________________________________________________________
+  //                                                                      proj_id
+  
   /*!
     \brief Get the project identifier
     \return proj_id - the project identifier
   */
   std::string BeamFormed::proj_id ()
   {
-    std::string proj_id ("");
-
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "PROJ_ID", proj_id ) )
-          {
-            std::cerr << "-- Error extracting attribute PROJ_ID\n";
-          }
-      }
-    return proj_id;
+    return getAttribute ("PROJ_ID");
   }
 
-  // ---------------------------------------------------------- pointing_ra
-
+  //_____________________________________________________________________________
+  //                                                                     point_ra
+  
   /*!
     \return ra - the RA pointing direction
   */
   std::string BeamFormed::point_ra ()
   {
-    std::string point_ra ("");
-
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "POINT_RA", point_ra ) )
-          {
-            std::cerr << "-- Error extracting attribute POINT_RA\n";
-          }
-      }
-    return point_ra;
+    return getAttribute ("POINT_RA");
   }
 
-
-  // ---------------------------------------------------------- pointing_dec
-
+  //_____________________________________________________________________________
+  //                                                                    point_dec
+  
   /*!
     \return dec - the dec pointing direction
   */
   std::string BeamFormed::point_dec ()
   {
-    std::string point_dec ("");
-
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "POINT_DEC", point_dec ) )
-          {
-            std::cerr << "-- Error extracting attribute POINT_DEC\n";
-          }
-      }
-    return point_dec;
+    return getAttribute ("POINT_DEC");
   }
 
-
-  // ---------------------------------------------------------- observer
-
+  //_____________________________________________________________________________
+  //                                                                     observer
+  
   /*!
     \return observer -- The name of the observer; returns an empty string in
             case no keyword value could be extracted.
   */
   std::string BeamFormed::observer ()
   {
-    std::string observer ("");
-
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "OBSERVER", observer ) )
-          {
-            std::cerr << "-- Error extracting attribute OBSERVER\n";
-          }
-      }
-    return observer;
+    return getAttribute ("OBSERVER");
   }
 
-  // ---------------------------------------------------------- epoch_mjd
-
-
+  //_____________________________________________________________________________
+  //                                                                    epoch_mjd
+  
   /*!
     \brief Get the epoch mjd
     \return epoch_mjd
   */
   std::string BeamFormed::epoch_mjd ()
   {
-    std::string epoch_mjd ("");
-
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "EPOCH_MJD", epoch_mjd ) )
-          {
-            std::cerr << "-- Error extracting attribute EPOCH_MJD\n";
-          }
-      }
-    return epoch_mjd;
+    return getAttribute ("EPOCH_MJD");
   }
 
-
-  // ---------------------------------------------------------- epoch_date
-
+  //_____________________________________________________________________________
+  //                                                                   epoch_date
+  
   /*!
     \brief Get the epoch date
     \return epoch_date
   */
   std::string BeamFormed::epoch_date ()
   {
-    std::string epoch_date ("");
-
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "EPOCH_DATE", epoch_date ) )
-          {
-            std::cerr << "-- Error extracting attribute EPOCH_DATE\n";
-          }
-      }
-    return epoch_date;
+    return getAttribute ("EPOCH_DATE");
   }
 
-
-  // ---------------------------------------------------------- epoch_utc
-
+  //_____________________________________________________________________________
+  //                                                                    epoch_utc
+  
   /*!
     \brief Get the epoch utc
     \return epoch utc
   */
   std::string BeamFormed::epoch_utc ()
   {
-    std::string epoch_utc ("");
-
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "EPOCH_UTC", epoch_utc ) )
-          {
-            std::cerr << "-- Error extracting attribute EPOCH_UTC\n";
-          }
-      }
-    return epoch_utc;
+    return getAttribute ("EPOCH_UTC");
   }
 
-  // ---------------------------------------------------------- epoch_lst
-
+  //_____________________________________________________________________________
+  //                                                                    epoch_lst
+  
   /*!
     \brief Get the epoch lst
     \return epoch lst
   */
   std::string BeamFormed::epoch_lst ()
   {
-    std::string epoch_lst ("");
-
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "EPOCH_LST", epoch_lst ) )
-          {
-            std::cerr << "-- Error extracting attribute EPOCH_LST\n";
-          }
-      }
-    return epoch_lst;
+    return getAttribute ("EPOCH_LST");
   }
 
-
-  // ---------------------------------------------------------- main_beam_diam
-
+  //_____________________________________________________________________________
+  //                                                               main_beam_diam
+  
   /*!
     \brief Get the main beam diameter
     \return main beam diameter
   */
   int BeamFormed::main_beam_diam ()
   {
-    int main_beam_diam = -1;
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "MAIN_BEAM_DIAM",
-             main_beam_diam ) )
-          {
-            std::cerr << "-- Error extracting attribute MAIN_BEAM_DIAM\n";
-          }
-      }
-    return main_beam_diam;
+    std::string name ("MAIN_BEAM_DIAM");
+    int val (-1);
+    hid_t location = dataset_p->getId();
+    bool status    = h5get_attribute (location,name,val);
+    
+    if (!status) {
+      std::cerr << "[BeamFormed] Error extracting attribute " << name
+		<< std::endl;
+      val = -1;
+    }
+    
+    return val;
   }
 
-
-  // ---------------------------------------------------------- center_freq
-
+  //_____________________________________________________________________________
+  //                                                                  center_freq
+  
   /*!
     \return center frequency
   */
   int BeamFormed::center_freq ()
   {
-    int center_freq = -1;
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "CENTER_FREQUENCY",
-             center_freq ) )
-          {
-            std::cerr << "-- Error extracting attribute CENTER_FREQUENCY\n";
-          }
-      }
-    return center_freq;
+    std::string name ("CENTER_FREQUENCY");
+    int val (-1);
+    hid_t location = dataset_p->getId();
+    bool status    = h5get_attribute (location,name,val);
+    
+    if (!status) {
+      std::cerr << "[BeamFormed] Error extracting attribute " << name
+		<< std::endl;
+      val = -1;
+    }
+    
+    return val;
   }
 
-
-  // ---------------------------------------------------------- bandwidth
-
+  //_____________________________________________________________________________
+  //                                                                    bandwidth
+  
   /*!
     \brief Get the bandwidth
     \return bandwidth
   */
   int BeamFormed::bandwidth ()
   {
-    int bandwidth = -1;
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "BANDWIDTH", bandwidth ) )
-          {
-            std::cerr << "-- Error extracting attribute BANDWIDTH\n";
-          }
-      }
-    return bandwidth;
+    std::string name ("BANDWIDTH");
+    int val (-1);
+    hid_t location = dataset_p->getId();
+    bool status    = h5get_attribute (location,name,val);
+    
+    if (!status) {
+      std::cerr << "[BeamFormed] Error extracting attribute " << name
+		<< std::endl;
+      val = -1;
+    }
+    
+    return val;
   }
 
 
@@ -727,15 +681,18 @@ namespace DAL {
   */
   int BeamFormed::breaks ()
   {
-    int breaks = -1;
-    if (dataset_p->getName() != "UNDEFINED")
-      {
-        if ( DAL::FAIL == dataset_p->getAttribute( "BREAKS_IN_DATA", breaks ) )
-          {
-            std::cerr << "-- Error extracting attribute BREAKS_IN_DATA\n";
-          }
-      }
-    return breaks;
+    std::string name ("BREAKS_IN_DATA");
+    int val (-1);
+    hid_t location = dataset_p->getId();
+    bool status    = h5get_attribute (location,name,val);
+    
+    if (!status) {
+      std::cerr << "[BeamFormed] Error extracting attribute " << name
+		<< std::endl;
+      val = -1;
+    }
+    
+    return val;
   }
 
 
@@ -895,17 +852,15 @@ namespace DAL {
   std::vector< int > BeamFormed::station_temperatures ()
   {
     std::vector<int> station_temperatures;
-    try
-      {
-        status = h5get_attribute( H5fileID_p, "TSYS", station_temperatures );
-      }
-    catch (std::string message)
-      {
-        cerr << message << endl;
-      }
+    try {
+      status = h5get_attribute( H5fileID_p, "TSYS", station_temperatures );
+    }
+    catch (std::string message) {
+      cerr << message << endl;
+    }
     return station_temperatures;
   }
-
+  
   // ============================================================================
   //
   //  Access to the data stored in the sub-bands

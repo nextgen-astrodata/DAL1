@@ -112,17 +112,20 @@ namespace DAL {
     dalDataset * dataset_p;
     //! Vector of beam groups within the dataset
     std::vector<BeamGroup*> beamGroups_p;
-    //! Initialize the object's internal parameters
-    bool init();
     
   public:
+
+    // === Construction =========================================================
     
     //! Default constructor
     BeamFormed ();
+
     //! Argumented constructor
     BeamFormed (std::string const &filename);
+
     //! Argumented constructor
     BeamFormed (CommonAttributes const &commonAttributes);
+
     //! Destructor
     ~BeamFormed ();
 
@@ -140,6 +143,7 @@ namespace DAL {
 						     hid_t obj_id );
     std::vector<std::string> beams();
     BeamGroup * getBeam( int beam );
+    //! Get the name of the data file
     std::string filename();
     //! Get the name of the telescope
     std::string telescope();
@@ -147,6 +151,7 @@ namespace DAL {
     int nofStations();
     //! Get the data type
     std::string datatype();
+    //! Get the EM-band
     std::string emband();
     //! Get the source list
     std::vector<std::string> sources();
@@ -238,8 +243,20 @@ namespace DAL {
 
 #endif // PYTHON
 
-    }; // BeamFormed class
+  private:
 
+    //! Initialize the object's internal parameters
+    bool init ();
+    //! Initialize the object's internal parameters
+    bool init (std::string const &filename);
+    //! Initialize the object's internal parameters
+    bool init (CommonAttributes const &commonAttributes);
+
+    //! Get attribute of type string
+    std::string getAttribute (std::string const &name);
+
+  }; // BeamFormed class
+  
 } // namespace DAL
 
 #endif // BEAMFORMED_H

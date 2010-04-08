@@ -23,9 +23,8 @@
 #ifndef DALFILTER_H
 #define DALFILTER_H
 
-#ifndef DALBASETYPES_H
 #include "dalBaseTypes.h"
-#endif
+#include "dalFileType.h"
 
 namespace DAL {
   
@@ -45,9 +44,9 @@ namespace DAL {
     //! Table filter std::string
     std::string filterstring_p;
     //! File type: MSCASA, HDF5, FITS, etc.
-    DAL::dalFileType filetype_p;
+    dalFileType filetype_p;
     //! Book-keeping whether a filter is set or not.
-    bool is_set;
+    bool filterIsSet_p;
     
   public:
 
@@ -84,7 +83,7 @@ namespace DAL {
 
     //! Get the type of the file
     inline std::string filetype () {
-      return fileType (filetype_p);
+      return filetype_p.name();
     }
 
     //! Declare the type of the file
@@ -94,7 +93,9 @@ namespace DAL {
     bool setFiletype (std::string const &type);
 
     //! Check to see if the filter is defined.
-    bool isSet ();
+    inline bool isSet () const {
+      return filterIsSet_p;
+    }
 
     //! Retrieve the filter string.
     inline std::string get () {

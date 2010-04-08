@@ -30,6 +30,8 @@
   \brief Basic type definitions and byte swapping routines.
 
   \author Joseph Masters, Lars B&auml;hren
+
+  \test tdalBaseTypes.cc
 */
 
 #ifndef DALBASETYPES_H
@@ -93,25 +95,6 @@ const int32_t CHUNK_SIZE = 5000;
 const int32_t MAX_COL_NAME_SIZE = 256;
 
 namespace DAL {
-
-  // === Enumerations ===========================================================
-
-  //! Underlying file type
-  enum dalFileType {
-    //! HDF5 file
-    HDF5,
-    //! FITS file
-    FITS,
-    //! CASA MeasurementSet
-    MSCASA,
-    //! Undefined type of file
-    UNDEFINED
-  };
-
-  //! Convert file type to name
-  std::string fileType (DAL::dalFileType const &type);
-  //! Convert file type name to type
-  DAL::dalFileType fileType (std::string const &name);
 
   // === Constant global variables ==============================================
   

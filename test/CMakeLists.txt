@@ -55,9 +55,6 @@ set (tests
   tdal
   tdal_fits
   tpulsar_dal
-  tBeamFormed
-  tBeamGroup
-  tBeamSubband
   tEnumerations
   tTBB
   )
@@ -178,15 +175,6 @@ if (DAL_ENABLE_TESTING)
   else (dataset_tbb)
     message (STATUS "Unable to find LOFAR time-series dataset; skipping tests.")
   endif (dataset_tbb)
-
-  ## -----------------------------------------------------------------
-  ## [5] Tests using HDF5-based beam-formed data
-
-  if (dataset_beamformed)
-    add_test (tBeamFormed tBeamFormed ${dataset_beamformed})
-    add_test (tBeamGroup tBeamGroup ${dataset_beamformed})
-    add_test (tBeamSubband tBeamSubband ${dataset_beamformed})
-  endif (dataset_beamformed)
   
   ## -----------------------------------------------------------------
   ## [6] Tests using FITS file format data

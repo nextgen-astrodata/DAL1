@@ -130,8 +130,8 @@ namespace DAL {
   void dalFilter::init ()
   {
     filterstring_p = "";
-    filetype_p     = DAL::UNDEFINED;
-    is_set         = false;
+    filetype_p     = dalFileType();
+    filterIsSet_p         = false;
   }
 
   //_____________________________________________________________________________
@@ -145,14 +145,14 @@ namespace DAL {
   {
     bool status (true);
     
-    switch (filetype_p) {
-    case DAL::MSCASA:
+    switch (filetype_p.type()) {
+    case dalFileType::MSCASA:
       filterstring_p = "Select " + cols + " from $1";
-      is_set         = true;
+      filterIsSet_p         = true;
       break;
     default:
       std::cerr << "Operation not yet supported for type: "
-		<< fileType(filetype_p) << ". Sorry.\n";
+		<< filetype_p.name() << ". Sorry.\n";
       status = false;
       break;
     };
@@ -195,14 +195,14 @@ namespace DAL {
   void dalFilter::set (std::string cols,
 		       std::string conditions)
   {
-    switch (filetype_p) {
-    case DAL::MSCASA:
+    switch (filetype_p.type()) {
+    case dalFileType::MSCASA:
       break;
         filterstring_p = "Select " + cols + " from $1 where " + conditions;
-        is_set         = true;
+        filterIsSet_p         = true;
     default:
       std::cerr << "Operation not yet supported for type: " 
-		<< fileType (filetype_p)
+		<< filetype_p.name()
 		<< ". Sorry.\n";
       break;
     };
@@ -216,8 +216,8 @@ namespace DAL {
    */
   bool dalFilter::setFiletype (std::string const &type)
   {
-    DAL::dalFileType t = fileType (type);
-    return setFiletype (t);
+    filetype_p = dalFileType (type);
+    return true;
   }
 
   //_____________________________________________________________________________
@@ -225,37 +225,8 @@ namespace DAL {
   
   bool dalFilter::setFiletype (DAL::dalFileType const &type)
   {
-    bool status (true);
-
-    switch (type) {
-    case DAL::HDF5:
-    case DAL::FITS:
-    case DAL::MSCASA:
-      filetype_p = type;
-      break;
-    default:
-      filetype_p = DAL::UNDEFINED;
-      status     = false;
-      break;
-    };
-
+    filetype_p = type;
     return true;
-  }
-
-  //_____________________________________________________________________________
-  //                                                                        isSet
-  
-  /*!
-    \return True if the filter is set.  False if filter is not set.
-   */
-  bool dalFilter::isSet ()
-  {
-    if (is_set) {
-      return true;
-    }
-    else {
-      return false;
-    }
   }
 
   //_____________________________________________________________________________
@@ -265,8 +236,8 @@ namespace DAL {
   {
     os << "[dalFilter] Summary of internal parameters."   << std::endl;
     os << "-- Filter string = " << filterstring_p         << std::endl;
-    os << "-- File type     = " << fileType(filetype_p) << std::endl;
-    os << "-- Filter is set = " << is_set                 << std::endl;
+    os << "-- File type     = " << filetype_p.name()      << std::endl;
+    os << "-- Filter is set = " << filterIsSet_p          << std::endl;
   }
   
 } // DAL namespace

@@ -42,11 +42,13 @@
   \brief Test the various constructors for an object of type DAL::dalDataset
 
   \param filename -- Name of the input HDF5 data file
+  \param dalType  -- Type of the dataset to open
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
-int test_constructors (std::string const &filename)
+int test_constructors (std::string const &filename,
+		       std::string const &dalType)
 {
   std::cout << "\n[tdalDataset::test_constructors]\n" << std::endl;
 
@@ -66,7 +68,7 @@ int test_constructors (std::string const &filename)
   std::cout << "[2] Argumented constructor..." << std::endl;
   try {
     DAL::dalDataset dataset (filename.c_str(),
-			     "HDF5");
+			     dalType);
     //
     dataset.summary();
   }
@@ -84,16 +86,18 @@ int test_constructors (std::string const &filename)
   \brief Test the various methods which provide access to internal parameters
   
   \param filename -- Name of the input HDF5 data file
+  \param dalType  -- Type of the dataset to open
   
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
-int test_parameters (std::string const &filename)
+int test_parameters (std::string const &filename,
+		     std::string const dalType)
 {
   std::cout << "\n[tdalDataset::test_parameters]\n" << std::endl;
 
   int nofFailedTests (0);
-  DAL::dalDataset dataset (filename.c_str(),"HDF5");
+  DAL::dalDataset dataset (filename.c_str(),dalType);
 
   try {
     std::cout << "-- getId ()         = " << dataset.getId ()         << std::endl;
@@ -116,12 +120,13 @@ int test_parameters (std::string const &filename)
 
   \brief filename -- Name of the dataset to be created and used for the test
 */
-int test_setAttributes (std::string const &filename)
+int test_setAttributes (std::string const &filename,
+			std::string const dalType)
 {
   std::cout << "\n[tdalDataset::test_setAttributes]\n" << std::endl;
 
   int nofFailedTests (0);
-  DAL::dalDataset dataset (filename.c_str(),"HDF5");
+  DAL::dalDataset dataset (filename.c_str(),dalType);
 
 
   return nofFailedTests;
@@ -133,29 +138,34 @@ int main (int argc,char *argv[])
 {
   int nofFailedTests (0);
   std::string filename;
+  std::string dalType ("HDF5");
 
-  /* Check command line parameters */
+  //________________________________________________________
+  // Process parameters from the command line
+  
+  if (argc > 1) {
+    filename = std::string(argv[1]);
+  }
+  else {
+    std::cout << "[tdalDataset] Missing name of input test file." << std::endl;
+    return(DAL::FAIL);
+  }
 
-  if (argc > 1)
-    {
-      filename = std::string(argv[1]);
-    }
-  else
-    {
-      std::cout << "[tdalDataset] Missing name of input test file." << std::endl;
-      return(DAL::FAIL);
-    }
+  if (argc > 2) {
+    dalType = std::string(argv[2]);
+  }
+  
+  //________________________________________________________
+  // Run the tests
 
-  /* Test the constructors */
-  nofFailedTests += test_constructors(filename);
-
-  if (nofFailedTests == 0)
-    {
-      // Test access to the parameters of the object
-      nofFailedTests += test_parameters (filename);
-      // Test writing attributes to the dataset
-      nofFailedTests += test_setAttributes (filename);
-    }
-
+  nofFailedTests += test_constructors(filename,dalType);
+  
+  if (nofFailedTests == 0) {
+    // Test access to the parameters of the object
+    nofFailedTests += test_parameters (filename,dalType);
+    // Test writing attributes to the dataset
+    nofFailedTests += test_setAttributes (filename,dalType);
+  }
+  
   return nofFailedTests;
 }

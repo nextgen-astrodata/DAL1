@@ -251,34 +251,28 @@ namespace DAL {
   //                                                               getMemberNames
 
   /*!
-    \return A vector of strings representing the member names.
-   */
+    \return memberNames -- A vector of strings representing the member names; if
+            the group contains no members or is invalid itself, an empty list will
+	    be returned.
+  */
   vector<string> dalGroup::getMemberNames ()
   {
     vector<string> member_names;
-    H5G_info_t groupInfo;
-    herr_t h5error = H5Gget_info (group_id, &groupInfo);
-
-    if (h5error == 0) {
-      // Summary of group info
-      std::cout << "[dalGroup::getMemberNames]" << std::endl;
-      std::cout << "-- group name       = " << groupname_full    << std::endl;
-      std::cout << "-- nof. links       = " << groupInfo.nlinks  << std::endl;
-      std::cout << "-- has mounted file = " << groupInfo.mounted << std::endl;
-      //
+    
+    if (H5Iis_valid(file_id)) {
       H5Giterate (file_id,
 		  groupname_full.c_str(),
 		  NULL,
 		  dalGroup_file_info,
 		  &member_names);
     }
-
+    
     return member_names;
   }
-
+  
   //_____________________________________________________________________________
   //                                                                      setName
-
+  
   /*!
     Set the name of the group.
 
