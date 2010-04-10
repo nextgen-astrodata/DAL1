@@ -348,8 +348,7 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Set the number of elements to separate each element or block to be selected
-    bool setStride (std::vector<int> const &stride,
-		    bool const &ignoreShape=false);
+    bool setStride (std::vector<int> const &stride);
     
     //! Get the number of elements or blocks to select along each dimension
     inline std::vector<int> count () const {
@@ -357,8 +356,7 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Set the number of elements or blocks to select along each dimension
-    bool setCount (std::vector<int> const &count,
-		   bool const &ignoreShape=false);
+    bool setCount (std::vector<int> const &count);
     
     //! Get the size of the element block selected from the dataspace
     inline std::vector<int> block () const {
@@ -368,6 +366,12 @@ namespace DAL { // Namespace DAL -- begin
     //! Set the size of the element block selected from the dataspace
     bool setBlock (std::vector<int> const &block,
 		   bool const &ignoreShape=false);
+
+    //! Get the size of the gap between two subsequent blocks
+    std::vector<int> gap ();
+
+    //! Set the size of the gap between two subsequent blocks
+    bool setGap (std::vector<int> const &gap);
 
     //! Get the selection operator
     inline H5S_seloper_t selection () const {

@@ -44,18 +44,18 @@ main (void)
                     ndims,
                     i, j;
 
-    /*
-     * Initialize data.
-     */
-    for (i=0; i<DIM0; i++)
-        for (j=0; j<DIM1; j++)
-            wdata[i][j] = i * j - j;
-
+    /* Initialize data. */
+    for (i=0; i<DIM0; i++) {
+      for (j=0; j<DIM1; j++) {
+	wdata[i][j] = i * j - j;
+      }
+    }
+    
     /*
      * Create a new file using the default properties.
      */
     file = H5Fcreate (FILE, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
-
+    
     /*
      * Create dataspace with unlimited dimensions.
      */
@@ -73,8 +73,13 @@ main (void)
     /*
      * Create the unlimited dataset.
      */
-    dset = H5Dcreate (file, DATASET, H5T_STD_I32LE, space, H5P_DEFAULT, dcpl,
-                H5P_DEFAULT);
+    dset = H5Dcreate (file,
+		      DATASET,
+		      H5T_STD_I32LE,
+		      space, 
+		      H5P_DEFAULT,
+		      dcpl,
+		      H5P_DEFAULT);
 
     /*
      * Write the data to the dataset.

@@ -636,9 +636,10 @@ namespace DAL {
 	  hsize_t dimensions[nelem];
 	  herr_t h5error;
 	  std::vector<int> block = slab.block();
+	  std::vector<int> count = slab.count();
 	  /* Setup the memory space */
 	  for (unsigned int n(0); n<nelem; ++n) {
-	    dimensions[n] = block[n];
+	    dimensions[n] = block[n]*count[n];
 	  }
 	  hid_t memorySpace = H5Screate_simple (nelem,
 						dimensions,

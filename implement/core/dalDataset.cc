@@ -1283,8 +1283,12 @@ namespace DAL {
     hsize_t     offset[1];
     hsize_t     offset_out[1];         /* hyperslab offset in memory */
     offset[0] = start;
-    if ( H5Sselect_hyperslab( filespace, H5S_SELECT_SET, offset, NULL,
-                              dimsr, NULL ) < 0 )
+    if ( H5Sselect_hyperslab (filespace,
+			      H5S_SELECT_SET,
+			      offset,
+			      NULL,
+                              dimsr,
+			      NULL) < 0 )
       {
         std::cerr << "ERROR: could not select hyperslab.(dalDataset::read_tbb)\n";
       }

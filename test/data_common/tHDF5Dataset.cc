@@ -43,6 +43,8 @@
 using std::cerr;
 using std::cout;
 using std::endl;
+using DAL::HDF5Dataset;
+using DAL::HDF5Hyperslab;
 
 //_______________________________________________________________________________
 //                                                                    test_create
@@ -200,20 +202,20 @@ int test_create (std::string const &filename="tHDF5Dataset.h5")
     shape[0] = 1024;
     
     /* Create HDF5 Dataset at the root level of the file */
-    DAL::HDF5Dataset dataset (fileID,
-			      name,
-			      shape);
+    HDF5Dataset dataset (fileID,
+			 name,
+			 shape);
     dataset.addAttribute("NOF_AXES");
     dataset.addAttribute("NAXIS1");
     dataset.summary();
     
     dataset.setAttribute ("NOF_AXES", int(shape.size()) );
     dataset.setAttribute ("NAXIS1",   int(shape[0])     );
-
+    
     /* Create HDF5 dataset within group */
-    DAL::HDF5Dataset datasetGroup1 (groupID,
-				   name,
-				   shape);
+    HDF5Dataset datasetGroup1 (groupID,
+			       name,
+			       shape);
     datasetGroup1.addAttribute("NOF_AXES");
     datasetGroup1.addAttribute("NAXIS1");
     datasetGroup1.setAttribute ("NOF_AXES", int(shape.size()) );
@@ -697,6 +699,189 @@ int test_array2d (std::string const &filename="tHDF5Dataset.h5")
 }
 
 //_______________________________________________________________________________
+//                                                                 test_hyperslab
+
+int test_hyperslab (std::string const &filename="tHDF5Dataset.h5")
+{
+  cout << "\n[tHDF5Datatset::test_hyperslab]\n" << endl;
+
+  int nofFailedTests (0);
+
+  //________________________________________________________
+  // Open the file to work with
+  
+  hid_t fileID = H5Fopen (filename.c_str(),
+			  H5F_ACC_RDWR,
+			  H5P_DEFAULT);
+
+  if (!H5Iis_valid(fileID)) {
+    std::cerr << "Failed to open file " << filename << endl;
+    return 0;
+  }
+
+  hid_t groupID = H5Gcreate (fileID,
+			     "Hyperslabs",
+			     H5P_DEFAULT,
+			     H5P_DEFAULT,
+			     H5P_DEFAULT);
+
+  //________________________________________________________
+  // Set attributes attached to the datasets
+
+  std::set<std::string> attributes;
+
+  attributes.insert("shape");
+  attributes.insert("start");
+  attributes.insert("stride");
+  attributes.insert("count");
+  attributes.insert("block");
+  attributes.insert("end");
+
+  //________________________________________________________
+  // Run the tests
+
+  unsigned int rank (2);
+  unsigned int sidelength (1024);
+  unsigned int nofDatapoints (16);
+  std::vector<hsize_t> shape (rank,sidelength);
+  std::vector<int> start (rank);
+  std::vector<int> block (rank);
+
+  cout << "[1] Create reference dataset" << endl;
+  try {
+    DAL::HDF5Dataset dataset (groupID,
+			      "test0",
+			      shape);
+    
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    ++nofFailedTests;
+  }
+  
+  cout << "[2] Write single block of data" << endl;
+  try {
+    std::vector<int> count;
+
+    start[0] = 10;
+    start[1] = 10;
+    block[0] = 4;
+    block[1] = 4;
+
+    cout << "-- start = " << start << endl;
+    cout << "-- count = " << count << endl;
+    cout << "-- block = " << block << endl;
+
+    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    double *data  = new double [nofDatapoints];
+    
+    for (unsigned int n(0); n<nofDatapoints; ++n) {
+      data[n] = n+1.0;
+    } 
+    
+    DAL::HDF5Dataset dataset (groupID, "test1", shape);
+
+    dataset.addAttributes (attributes);
+    dataset.setAttribute ("start",start);
+    dataset.setAttribute ("block",block);
+
+    dataset.writeData (data,start,block);
+    
+    delete [] data;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    ++nofFailedTests;
+  }
+  
+  cout << "[3] Write multiple blocks" << endl;
+  try {
+    std::vector<int> stride (rank);
+    std::vector<int> count (rank);
+    
+    start[0]  = 5;
+    start[1]  = 5;
+    stride[0] = 10;
+    stride[1] = 10;
+    count[0]  = 2;
+    count[1]  = 2;
+    block[0]  = 5;
+    block[1]  = 5;
+
+    cout << "-- start  = " << start  << endl;
+    cout << "-- stride = " << stride << endl;
+    cout << "-- count  = " << count  << endl;
+    cout << "-- block  = " << block  << endl;
+
+    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    double *data  = new double [nofDatapoints];
+    
+    for (unsigned int n(0); n<nofDatapoints; ++n) {
+      data[n] = n+1.0;
+    } 
+    
+    HDF5Dataset dataset (groupID, "test2", shape);
+    HDF5Hyperslab slab (shape,start,stride,count,block);
+
+    dataset.addAttributes (attributes);
+    dataset.setAttribute ("start",start);
+    dataset.setAttribute ("stride",stride);
+    dataset.setAttribute ("count",count);
+    dataset.setAttribute ("block",block);
+
+    dataset.writeData (data,slab);
+
+    delete [] data;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    ++nofFailedTests;
+  }
+  
+  cout << "[4] Write multiple blocks" << endl;
+  try {
+    std::vector<int> stride (rank);
+    std::vector<int> count (rank);
+    
+    start[0]  = 5;
+    start[1]  = 5;
+    stride[0] = 5;
+    stride[1] = 5;
+    count[0]  = 2;
+    count[1]  = 2;
+    block[0]  = 5;
+    block[1]  = 5;
+
+    cout << "-- start  = " << start  << endl;
+    cout << "-- stride = " << stride << endl;
+    cout << "-- count  = " << count  << endl;
+    cout << "-- block  = " << block  << endl;
+
+    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    double *data  = new double [nofDatapoints];
+    
+    for (unsigned int n(0); n<nofDatapoints; ++n) {
+      data[n] = n+1.0;
+    } 
+    
+    HDF5Dataset dataset (groupID, "test3", shape);
+    HDF5Hyperslab slab (shape,start,stride,count,block);
+
+    dataset.writeData (data,slab);
+
+    delete [] data;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    ++nofFailedTests;
+  }
+  
+  //________________________________________________________
+  // Close the file
+
+  H5Gclose(groupID);
+  H5Fclose(fileID);
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                  test_chunking
 
 /*!
@@ -841,8 +1026,10 @@ int main (int argc,
   nofFailedTests += test_array1d ();
   // Test access R/W access to 2-dim data arrays
   nofFailedTests += test_array2d ();
+  // Test the effect of the various Hyperslab parameters
+  nofFailedTests += test_hyperslab ();
   // Test chunking schemes
-  nofFailedTests += test_chunking ();
+//   nofFailedTests += test_chunking ();
 
   if (haveDataset) {
     nofFailedTests += test_openDataset (filename);

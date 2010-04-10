@@ -99,9 +99,9 @@ namespace DAL { // Namespace DAL -- begin
     selection_p = selection;
 
     setStart  (start);
-    setStride (stride);
-    setCount  (count);
     setBlock  (block);
+    setCount  (count);
+    setStride (stride);
   }
 
   //_____________________________________________________________________________
@@ -221,32 +221,34 @@ namespace DAL { // Namespace DAL -- begin
 
   //_____________________________________________________________________________
   //                                                                    setStride
-  
-  bool HDF5Hyperslab::setStride (std::vector<int> const &stride,
-				 bool const &ignoreShape)
+
+  /*!
+    \param stride -- Number of elements to separate each element or block to be
+           selected. If provided an empty vector, the stride will be set to 1 along
+	   each axis.
+    
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
+  */
+  bool HDF5Hyperslab::setStride (std::vector<int> const &stride)
   {
     bool status (true);
-    unsigned int nelem = stride.size();
+    unsigned int nelem = shape_p.size();
 
-    if (ignoreShape) {
-      if (nelem == stride_p.size()) {
-	stride_p = stride;
-      } else {
-	status = false;
-      }
-    } else {
-      if (shape_p.empty()) {
-	std::cerr << "[HDF5Hyperslab::setStride] Shape undefined!" << std::endl;
-	status = false;
-      } else {
-	if (nelem == shape_p.size()) {
-	  stride_p = stride;
-	} else {
-	  std::cerr << "[HDF5Hyperslab::setStride] Rank mismatch!" << std::endl;
-	  std::cerr << "-- Shape  : " << shape_p << std::endl;
-	  std::cerr << "-- Stride : " << stride  << std::endl;
-	  status = false;
+    if (stride.size() == nelem) {
+      stride_p = stride;
+    }
+    else if (stride.empty()) {
+      stride_p.clear();
+    }
+    else {
+      if (stride.size() > nelem) {
+	stride_p.resize(nelem);
+	for (unsigned int n(0); n< nelem; ++n) {
+	  stride_p[n] = stride[n];
 	}
+      } else {
+	status = false;
       }
     }
     
@@ -256,34 +258,28 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                     setCount
   
-  bool HDF5Hyperslab::setCount (std::vector<int> const &count,
-				bool const &ignoreShape)
+  bool HDF5Hyperslab::setCount (std::vector<int> const &count)
   {
     bool status (true);
-    unsigned int nelem = count.size();
-    
-    if (ignoreShape) {
-      if (nelem == count_p.size()) {
-	count_p = count;
-      } else {
-	status = false;
-      }
-    } else {
-      if (shape_p.empty()) {
-	std::cerr << "[HDF5Hyperslab::setCount] Shape undefined!" << std::endl;
-	status = false;
-      } else {
-	if (nelem == shape_p.size()) {
-	  count_p = count;
-	} else {
-	  std::cerr << "[HDF5Hyperslab::setCount] Rank mismatch!" << std::endl;
-	  std::cerr << "-- Shape : " << shape_p << std::endl;
-	  std::cerr << "-- Count : " << count   << std::endl;
-	  status = false;
+    unsigned int nelem = shape_p.size();
+
+    if (count.size() == nelem) {
+      count_p = count;
+    }
+    else if (count.empty()) {
+      count_p.clear();
+    }
+    else {
+      if (count.size() > nelem) {
+	count_p.resize(nelem);
+	for (unsigned int n(0); n< nelem; ++n) {
+	  count_p[n] = count[n];
 	}
+      } else {
+	status = false;
       }
     }
-    
+
     return status;
   }
   
@@ -334,8 +330,87 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
+  //                                                                          gap
+  
+  /*!
+    \return gap -- The size of the gap between two subsequent blocks, i.e.
+            \f$ N_{\rm stride} - N_{\rm block} \f$.
+  */
+  std::vector<int> HDF5Hyperslab::gap ()
+  {
+    unsigned int nelem = shape_p.size();
+    std::vector<int> val (nelem);
+
+    if (stride_p.empty()) {
+      for (unsigned int n(0); n<nelem; ++n) {
+	val[n] = 1;
+      }
+    } else {
+      for (unsigned int n(0); n<nelem; ++n) {
+	val[n] = stride_p[n];
+      }
+    }
+
+    if (block_p.empty()) {
+      for (unsigned int n(0); n<nelem; ++n) {
+	val[n] -= 1;
+      }
+    } else {
+      for (unsigned int n(0); n<nelem; ++n) {
+	val[n] -= block_p[n];
+      }
+    }
+    
+    return val;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                       setGap
+  
+  /*!
+    \param gap -- The size of the gap between two subsequent blocks, i.e.
+           \f$ N_{\rm stride} - N_{\rm block} \f$.
+
+    \return status -- Status of the operation; return \e false in case an error
+            was encountered, e.g. that there was a rank mismatch.
+  */
+  bool HDF5Hyperslab::setGap (std::vector<int> const &gap)
+  {
+    unsigned int nelem = shape_p.size();
+    bool status (true);
+    
+    if (gap.size() == nelem) {
+      
+      if (stride_p.empty()) {
+	stride_p.resize(nelem);
+      }
+      
+      if (block_p.empty()) {
+	for (unsigned int n(0); n<nelem; ++n) {
+	  stride_p[n] = 1 + gap[n];
+	}
+      } else {
+	for (unsigned int n(0); n<nelem; ++n) {
+	  stride_p[n] = block_p[n] + gap[n];
+	}
+      }
+      
+    } else {
+      std::cerr << "[HDF5Hyperslab::setGap] Rank mismatch!" << std::endl;
+      std::cerr << "-- Shape : " << shape_p << std::endl;
+      std::cerr << "-- Gap   : " << gap     << std::endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
   //                                                                      summary
   
+  /*!
+    \brief os -- Output stream to which the summary is going to be written.
+  */
   void HDF5Hyperslab::summary (std::ostream &os)
   {
     os << "[HDF5Hyperslab] Summary of internal parameters." << std::endl;
@@ -344,6 +419,7 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- Stride          = " << stride_p        << std::endl;
     os << "-- Count           = " << count_p         << std::endl;
     os << "-- Block           = " << block_p         << std::endl;
+    os << "-- End position    = " << end()           << std::endl;
     os << "-- nof. datapoints = " << nofDatapoints() << std::endl;
   }
 
@@ -684,8 +760,17 @@ namespace DAL { // Namespace DAL -- begin
     \return end -- The offset of the last element of the specified hyperslab; given
             above input parameters the range of elements defined by the hyperslab
 	    becomes
-	    \f[ \left[ n_{\rm start} , n_{\rm start} + n_{\rm block} \cdot
-	    n_{\rm stride} \cdot n_{\rm count} - 1 \right]
+	    \f[
+	    N_{\rm end} \ = \ N_{\rm start} + N_{\rm block} \cdot n_{\rm count} - 1
+	    + (N_{\rm block}-N_{\rm stride}) \cdot (N_{\rm count}-1)
+	    \f]
+	    For this we have two special cases:
+	    \f[
+	    N_{\rm end} \ = \ \left\{  \begin{array}{lcl}
+	    N_{\rm start} + N_{\rm block} -1 & \hbox{if} &  N_{\rm count} \equiv 1 \\[3mm]
+	    N_{\rm start} + \left( 2 N_{\rm block} - 1 \right) \cdot N_{\rm count}
+	    - N_{\rm block} & \hbox{if} &  N_{\rm stride} \equiv 1
+	    \end{array} \right.
 	    \f]
   */
   std::vector<unsigned int> HDF5Hyperslab::end (std::vector<int> const &start,
@@ -697,7 +782,8 @@ namespace DAL { // Namespace DAL -- begin
     unsigned int sizeStride = stride.size();
     unsigned int sizeCount  = count.size();
     unsigned int sizeBlock  = block.size();
-    std::vector<int> varStride (sizeStart,1);
+    std::vector<int> tmpStride (sizeStart);
+    std::vector<int> tmpCount (sizeStart);
     
     std::vector<unsigned int> pos;
     
@@ -710,39 +796,27 @@ namespace DAL { // Namespace DAL -- begin
       return pos;
     }
     
+    if (sizeStride != sizeStart || stride.empty()) {
+      tmpStride = std::vector<int> (sizeStart,1);
+    } else {
+      tmpStride = stride;
+    }
+    
+    if (sizeCount != sizeStart || count.empty()) {
+      tmpCount = std::vector<int> (sizeStart,1);
+    } else {
+      tmpCount = count;
+    }
     
     // Compute end position ______________________
 
     pos.resize(sizeStart);
     
-    if (sizeCount != sizeStart || count.empty()) {
-      if (sizeStride != sizeStart || stride.empty()) {
-	// count=1, stride=1
-	for (unsigned int n(0); n<sizeStart; ++n) {
-	  pos[n] = start[n] + block[n] - 1;
-	}
-      }
-      else {
-	// count=1
-	for (unsigned int n(0); n<sizeStart; ++n) {
-	  pos[n] = start[n] + block[n]*stride[n] - 1;
-	}
-      }
+    for (unsigned int n(0); n<sizeStart; ++n) {
+      pos[n] = start[n];
+      pos[n] += tmpCount[n]*block[n] - 1 + (block[n]-tmpStride[n])*(tmpCount[n]-1);
     }
-    else {
-      if (sizeStride != sizeStart || stride.empty()) {
-	// stride=1
-	for (unsigned int n(0); n<sizeStart; ++n) {
-	  pos[n] = start[n] + block[n]*count[n] - 1;
-	}
-      }
-      else {
-	for (unsigned int n(0); n<sizeStart; ++n) {
-	  pos[n] = start[n] + block[n]*count[n]*stride[n] - 1;
-	}
-      }
-    }
-
+    
     return pos;
   }
   

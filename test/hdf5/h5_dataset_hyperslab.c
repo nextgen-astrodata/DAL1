@@ -26,13 +26,13 @@
 int
 main (void)
 {
-  hid_t       file, space, dset;          /* Handles */
-  herr_t      status;
-  hsize_t     dims[2] = {DIM0, DIM1};
-  hsize_t start[2],
-    stride[2],
-    count[2],
-    block[2];
+  hid_t   file, space, dset;          /* Handles */
+  herr_t  status;
+  hsize_t dims[2] = {DIM0, DIM1};
+  hsize_t start[2];
+  hsize_t stride[2];
+  hsize_t count[2];
+  hsize_t block[2];
   int wdata[DIM0][DIM1];          /* Write buffer */
   int rdata[DIM0][DIM1];          /* Read buffer */
   int i;

@@ -113,8 +113,8 @@ int test_constructors ()
     //
     shape[0]  = 1024;
     shape[1]  = 10;
-    start[0]  = 0;
-    start[1]  = 2;
+    start[0]  = shape[0]/4;
+    start[1]  = shape[1]/4;
     stride[0] = 1;
     stride[1] = 1;
     count[0]  = 1;
@@ -160,30 +160,32 @@ int test_static_functions ()
     std::vector<int> stride;
     std::vector<int> count;
 
-    cout << "-- start=" << start 
-	 << ", block=" << block
-	 << ", stride=" << stride
-	 << ", count=" << count << endl;
+    cout << "-- start        = " << start  << endl;
+    cout << "-- block        = " << block  << endl;
+    cout << "-- stride       = " << stride << endl;
+    cout << "-- count        = " << count  << endl;
     cout << "--> end         = " << HDF5Hyperslab::end (start,stride,count,block) << endl;
     cout << "--> nof. points = " << HDF5Hyperslab::nofDatapoints (count,block) << endl;
+    cout << endl;
 
     count.resize(nelem);
     count = std::vector<int> (nelem,5);
 
-    cout << "-- start=" << start 
-	 << ", block=" << block
-	 << ", stride=" << stride
-	 << ", count=" << count << endl;
+    cout << "-- start        = " << start  << endl;
+    cout << "-- block        = " << block  << endl;
+    cout << "-- stride       = " << stride << endl;
+    cout << "-- count        = " << count  << endl;
     cout << "--> end         = " << HDF5Hyperslab::end (start,stride,count,block) << endl;
     cout << "--> nof. points = " << HDF5Hyperslab::nofDatapoints (count,block) << endl;
+    cout << endl;
     
     stride.resize(nelem);
     stride = std::vector<int> (nelem,2);
 
-    cout << "-- start=" << start 
-	 << ", block=" << block
-	 << ", stride=" << stride
-	 << ", count=" << count << endl;
+    cout << "-- start        = " << start  << endl;
+    cout << "-- block        = " << block  << endl;
+    cout << "-- stride       = " << stride << endl;
+    cout << "-- count        = " << count  << endl;
     cout << "--> end         = " << HDF5Hyperslab::end (start,stride,count,block) << endl;
     cout << "--> nof. points = " << HDF5Hyperslab::nofDatapoints (count,block) << endl;
     
