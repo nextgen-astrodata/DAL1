@@ -152,6 +152,38 @@ namespace DAL {
   //! Calculate a 16-bit CRC
   uint16_t crc16 (uint16_t * buffer,
 		  uint32_t length);
+
+#ifdef HAVE_CASA
+  
+  //! Convert std::vector<T> to casac::Vector<T>
+  template <class T, class S>
+    void convertVector (casa::Vector<T> &to,
+			std::vector<S> const &from)
+  {
+    unsigned int nelem = from.size();
+    // adjust the shape of the returned casa::Vector<T>
+    to.resize(nelem);
+    
+    for (unsigned int n(0); n<nelem; ++n) {
+      to(n) = (T)from[n];
+    }
+  }
+  
+  //! Convert std::vector<T> to casac::Vector<T>
+  template <class T, class S>
+    void convertVector (std::vector<T> & to,
+			const casa::Vector<S> from)
+  {
+    unsigned int nelem = from.size();
+    // adjust the shape of the returned casa::Vector<T>
+	to.resize(nelem);
+	
+	for (unsigned int n(0); n<nelem; ++n) {
+	  to(n) = (T)from[n];
+	}
+  }
+  
+#endif
   
   // ============================================================================
   //
