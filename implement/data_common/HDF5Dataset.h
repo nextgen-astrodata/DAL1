@@ -635,8 +635,9 @@ namespace DAL {
 	  unsigned int nelem (rank());
 	  hsize_t dimensions[nelem];
 	  herr_t h5error;
-	  std::vector<int> block = slab.block();
-	  std::vector<int> count = slab.count();
+	  std::vector<int> block   = slab.block();
+	  std::vector<int> count   = slab.count();
+	  std::vector<hsize_t> end = slab.end();
 	  /* Setup the memory space */
 	  for (unsigned int n(0); n<nelem; ++n) {
 	    dimensions[n] = block[n]*count[n];

@@ -588,7 +588,7 @@ namespace DAL { // Namespace DAL -- begin
 
     // Adjust the size of the dataset ____________
 
-    std::vector<unsigned int> endHyperslab = end (start,stride,count,block);
+    std::vector<hsize_t> endHyperslab = end (start,stride,count,block);
     bool extendDataset (false);
 
     for (unsigned int n(0); n<nelem; ++n) {
@@ -736,7 +736,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                          end
 
-  std::vector<unsigned int> HDF5Hyperslab::end ()
+  std::vector<hsize_t> HDF5Hyperslab::end ()
   {
     return end (start_p,
 		stride_p,
@@ -773,10 +773,10 @@ namespace DAL { // Namespace DAL -- begin
 	    \end{array} \right.
 	    \f]
   */
-  std::vector<unsigned int> HDF5Hyperslab::end (std::vector<int> const &start,
-						std::vector<int> const &stride,
-						std::vector<int> const &count,
-						std::vector<int> const &block)
+  std::vector<hsize_t> HDF5Hyperslab::end (std::vector<int> const &start,
+					   std::vector<int> const &stride,
+					   std::vector<int> const &count,
+					   std::vector<int> const &block)
   {
     unsigned int sizeStart  = start.size();
     unsigned int sizeStride = stride.size();
@@ -785,7 +785,7 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<int> tmpStride (sizeStart);
     std::vector<int> tmpCount (sizeStart);
     
-    std::vector<unsigned int> pos;
+    std::vector<hsize_t> pos;
     
     // Check input parameters ____________________
     

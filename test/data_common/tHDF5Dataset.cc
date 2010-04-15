@@ -882,19 +882,25 @@ int test_hyperslab (std::string const &filename="tHDF5Dataset.h5")
 }
 
 //_______________________________________________________________________________
-//                                                                  test_chunking
+//                                                                 test_expansion
 
 /*!
-  \brief Test chunking schemes
+  \brief Test expansion of extendable datasets
 
   \return nofFailedTests -- The number of failed tests encountered within this
           functions.
 */
-int test_chunking (std::string const &filename="tHDF5Dataset.h5")
+int test_expansion (std::string const &filename="tHDF5Dataset.h5")
 {
-  cout << "\n[tHDF5Datatset::test_chunking]\n" << endl;
+  cout << "\n[tHDF5Datatset::test_expansion]\n" << endl;
 
   int nofFailedTests (0);
+  unsigned int rank (2);
+  unsigned int sidelength (1024);
+  std::vector<hsize_t> shape (rank,sidelength);
+  std::vector<int> start (rank);
+  std::vector<int> count (rank);
+  std::vector<int> block (rank);
 
   //________________________________________________________
   // Open the file to work with
@@ -908,9 +914,20 @@ int test_chunking (std::string const &filename="tHDF5Dataset.h5")
     return 0;
   }
 
+  DAL::HDF5Dataset dataset (fileID, "ExtendableDataset", shape);
+  dataset.summary();
+
   //________________________________________________________
   // Run the tests
 
+  // Write first block of data, completely fitting into existing dataspace
+
+  start[0] = sidelength/4;
+  start[1] = sidelength/4;
+  block[0] = sidelength/2;
+  block[1] = sidelength/2;
+  count[0] = 1;
+  count[1] = 1;
 
   //________________________________________________________
   // Close the file
@@ -1028,8 +1045,8 @@ int main (int argc,
   nofFailedTests += test_array2d ();
   // Test the effect of the various Hyperslab parameters
   nofFailedTests += test_hyperslab ();
-  // Test chunking schemes
-//   nofFailedTests += test_chunking ();
+  // Test expansion of extendable datasets
+  nofFailedTests += test_expansion ();
 
   if (haveDataset) {
     nofFailedTests += test_openDataset (filename);

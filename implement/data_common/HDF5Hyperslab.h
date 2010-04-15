@@ -411,7 +411,7 @@ namespace DAL { // Namespace DAL -- begin
     unsigned int nofDatapoints ();
 
     //! Get the offset of the last element of the specified hyperslab.
-    std::vector<unsigned int> end ();
+    std::vector<hsize_t> end ();
     
     // === Static Methods =======================================================
 
@@ -434,10 +434,10 @@ namespace DAL { // Namespace DAL -- begin
 				       std::vector<int> const &block);
 
     //! Get the offset of the last element of the specified hyperslab.
-    static std::vector<unsigned int> end (std::vector<int> const &start,
-					  std::vector<int> const &stride,
-					  std::vector<int> const &count,
-					  std::vector<int> const &block);
+    static std::vector<hsize_t> end (std::vector<int> const &start,
+				     std::vector<int> const &stride,
+				     std::vector<int> const &count,
+				     std::vector<int> const &block);
     
   private:
     
