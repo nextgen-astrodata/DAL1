@@ -111,6 +111,30 @@ namespace DAL {  // Namespace DAL -- begin
     |
     `-- TriggerTable                          ...  Group
     \endverbatim
+
+    In order to provide the positions of the antennas/dipoles for which data
+    where received from the TBBs the following set of metadata is required:
+    \verbatim
+    STATION  NAME    STATION_ID  RSP_ID  RCU_ID  POLARIZATION  POSITION  ORIENTATION
+    CS001    center  001         -1      -1      -1            [x,y,z]   [a,b,c]
+    CS001    lba0    001         000     000      x            [x,y,z]   [a,b,c]
+    CS001    lba0    001         000     001      y            [x,y,z]   [a,b,c]
+    CS001    lba1    001         000     002      x            [x,y,z]   [a,b,c]
+    CS001    lba1    001         000     003      y            [x,y,z]   [a,b,c]
+    CS001    lba2    001         000     004      x            [x,y,z]   [a,b,c]
+    CS001    lba2    001         000     005      y            [x,y,z]   [a,b,c]
+    CS001    lba3    001         000     006      x            [x,y,z]   [a,b,c]
+    CS001    lba3    001         000     007      y            [x,y,z]   [a,b,c]
+    CS001    lba4    001         001     008      x            [x,y,z]   [a,b,c]
+    CS001    lba4    001         001     009      y            [x,y,z]   [a,b,c]
+    \endverbatim
+    Notes:
+    <ul>
+      <li>Even though in principle one might want/need to account for changes in
+      orientation of the dipoles w.r.t. the underlying reference frame, the
+      additional values almost certainly will not be used (at least not for a
+      long time).
+    </ul>
     
     <h3>Example(s)</h3>
 
