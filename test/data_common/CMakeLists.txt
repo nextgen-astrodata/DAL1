@@ -35,6 +35,8 @@ endforeach (src)
 ##_______________________________________________________________________________
 ##                                                           Testing instructions
 
+find_program (h5ls_executable h5ls ${bin_locations})
+
 ## C++ library
 
 add_test (tTimestamp tTimestamp)
@@ -43,4 +45,7 @@ add_test (tCommonAttributes tCommonAttributes)
 add_test (tSAS_Settings tSAS_Settings)
 add_test (tHDF5Hyperslab tHDF5Hyperslab)
 add_test (tHDF5Dataset tHDF5Dataset)
-add_test (tHDF5Dataset_h5ls h5ls -f -r tHDF5Dataset.h5)
+
+if (h5ls_executable)
+  add_test (tHDF5Dataset_h5ls ${h5ls_executable} -f -r tHDF5Dataset.h5)
+endif (h5ls_executable)
