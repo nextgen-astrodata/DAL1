@@ -409,7 +409,7 @@ int test_array1d (std::string const &filename="tHDF5Dataset.h5")
 
     nofSteps      = 16;
     count[0]      = 1;
-    block[0]      = shape[0]/nofSteps;    
+    block[0]      = shape[0]/nofSteps;
     nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
     double *data  = new double [nofDatapoints];
     

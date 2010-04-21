@@ -395,9 +395,48 @@ namespace DAL {
   //                                                                 setHyperslab
   
   /*!
+    \param slab          -- The HDF5Hyperslab, which will be applied to the
+           dataset; internal book-keeping is done to track if multiple hyperslabs
+	   have been applied to the dataset.
+    \param resizeDataset -- Resize the dataset to the dimensions defined by the 
+           Hyperslab?
+
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
+   */
+  bool HDF5Dataset::setHyperslab (HDF5Hyperslab &slab,
+				  bool const &resizeDataset)
+  {
+    bool status (true);
+    
+    status = slab.setHyperslab (dataspace_p);
+
+    /* Book-keeping: store the assigned hyperslab for later inspection. */
+
+    switch (slab.selection()) {
+    case H5S_SELECT_SET:
+      hyperslab_p.empty();
+      hyperslab_p.push_back(slab);
+      break;
+    default:
+      hyperslab_p.push_back(slab);
+      break;
+    };
+
+    /* As the dataset might have been resized, the "shape" parameter needs to be
+       updated to the current value.
+    */
+    DAL::h5get_dataspace_shape(location_p, shape_p);
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                 setHyperslab
+  
+  /*!
     \param start     -- Offset of the starting element of the specified hyperslab
-    \param count     -- The number of elements or blocks to select along each
-           dimension.
+    \param block     -- The size of the block selected from the dataspace
     \param selection -- Selection operator to determine how the new selection is
            to be combined with the already existing selection for the dataspace.
 
@@ -405,13 +444,13 @@ namespace DAL {
             was encountered.
   */
   bool HDF5Dataset::setHyperslab (std::vector<int> const &start,
-				  std::vector<int> const &count,
+				  std::vector<int> const &block,
 				  H5S_seloper_t const &selection)
   {
-    return HDF5Hyperslab::setHyperslab (location_p,
-					start,
-					count,
-					selection);
+    /* Create Hyperslab object ...*/
+    HDF5Hyperslab slab (shape_p,start,block,selection);
+    /* ... and apply it to the dataset */
+    return setHyperslab (slab,true);
   }
   
   //_____________________________________________________________________________
@@ -436,12 +475,10 @@ namespace DAL {
 				  std::vector<int> const &block,
 				  H5S_seloper_t const &selection)
   {
-    return HDF5Hyperslab::setHyperslab (location_p,
-					start,
-					stride,
-					count,
-					block,
-					selection);
+    /* Create Hyperslab object ...*/
+    HDF5Hyperslab slab (shape_p,start,stride,count,block,selection);
+    /* ... and apply it to the dataset */
+    return setHyperslab (slab,true);
   }
 
   //_____________________________________________________________________________
@@ -538,16 +575,17 @@ namespace DAL {
   */
   void HDF5Dataset::summary (std::ostream &os)
   {
-    os << "[HDF5Dataset] Summary of internal parameters" << std::endl;
-    os << "-- Dataset name           = " << name_p          << std::endl;
-    os << "-- Dataset ID             = " << location_p      << std::endl;
-    os << "-- Dataspace ID           = " << dataspace_p     << std::endl;
-    os << "-- Datatype ID            = " << datatype_p      << std::endl;
-    os << "-- Dataset rank           = " << rank()          << std::endl;
-    os << "-- Dataset shape          = " << shape_p         << std::endl;
-    os << "-- Layout of the raw data = " << layout_p        << std::endl;
-    os << "-- Chunk size             = " << chunksize_p     << std::endl;
-    os << "-- nof. datapoints        = " << nofDatapoints() << std::endl;
+    os << "[HDF5Dataset] Summary of internal parameters"       << std::endl;
+    os << "-- Dataset name           = " << name_p             << std::endl;
+    os << "-- Dataset ID             = " << location_p         << std::endl;
+    os << "-- Dataspace ID           = " << dataspace_p        << std::endl;
+    os << "-- Datatype ID            = " << datatype_p         << std::endl;
+    os << "-- Dataset rank           = " << rank()             << std::endl;
+    os << "-- Dataset shape          = " << shape_p            << std::endl;
+    os << "-- Layout of the raw data = " << layout_p           << std::endl;
+    os << "-- Chunk size             = " << chunksize_p        << std::endl;
+    os << "-- nof. datapoints        = " << nofDatapoints()    << std::endl;
+    os << "-- nof. active hyperslabs = " << hyperslab_p.size() << std::endl;
   }
   
 } // end namespace DAL

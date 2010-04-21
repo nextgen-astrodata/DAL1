@@ -261,7 +261,7 @@ namespace DAL {
     H5D_layout_t layout_p;
     //! Chunk size for extendible array
     std::vector<hsize_t> chunksize_p;
-    //! Hyperslab for the dataspace attached to the dataset
+    //! Hyperslabs for the dataspace attached to the dataset
     std::vector<DAL::HDF5Hyperslab> hyperslab_p;
     
   public:
@@ -353,9 +353,14 @@ namespace DAL {
 	       std::vector<hsize_t> const &shape,
 	       hid_t const &datatype=H5T_NATIVE_DOUBLE);
 
+    //! Get the Hyperslabs for the dataspace attached to the dataset
+    inline std::vector<DAL::HDF5Hyperslab> hyperslabs () const {
+      return hyperslab_p;
+    }
+    
     //! Select a hyperslab for the dataspace attached to the dataset
     bool setHyperslab (std::vector<int> const &start,
-		       std::vector<int> const &count,
+		       std::vector<int> const &block,
 		       H5S_seloper_t const &selection=H5S_SELECT_SET);
     
     //! Select a hyperslab for the dataspace attached to the dataset
@@ -561,6 +566,9 @@ namespace DAL {
     bool openEmbedded (bool const &create);
     //! Retrieve the size of chunks for the raw data of a chunked layout dataset. 
     bool getChunksize ();
+    //! Select a hyperslab for the dataspace attached to the dataset
+    bool setHyperslab (HDF5Hyperslab &slab,
+		       bool const &resizeDataset);
     
     /*!
       \brief Read the data
@@ -578,7 +586,7 @@ namespace DAL {
 	bool status (true);
 	
 	/* Set the Hyperslab for the dataspace attached to a dataset */
-	status = slab.setHyperslab (dataspace_p);
+	status = setHyperslab (slab, false);
 	
 	if (status) {
 	  /* Local variables */
@@ -628,7 +636,7 @@ namespace DAL {
 	bool status (true);
 	
 	/* Set the Hyperslab for the dataspace attached to a dataset */
-	status = slab.setHyperslab (dataspace_p);
+	status = setHyperslab (slab, true);
 	
 	if (status) {
 	  /* Local variables */

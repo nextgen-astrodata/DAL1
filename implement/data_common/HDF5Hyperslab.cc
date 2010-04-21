@@ -530,7 +530,7 @@ namespace DAL { // Namespace DAL -- begin
 		<< std::endl;
       return false;
     }
-    
+
     //__________________________________________
     // Get object identifier for the dataspace
 
@@ -616,6 +616,22 @@ namespace DAL { // Namespace DAL -- begin
 		  << std::endl;
       }
     }
+
+    // Debugging feedback ________________________
+
+#ifdef DEBUGGING_MESSAGES
+    std::cout << "[HDF5Hyperslab::setHyperslab]" << std::endl;
+    std::cout << "-- location            = " << location     << std::endl;
+    std::cout << "-- start               = " << start        << std::endl;
+    std::cout << "-- stride              = " << stride       << std::endl;
+    std::cout << "-- count               = " << count        << std::endl;
+    std::cout << "-- block               = " << block        << std::endl;
+    std::cout << "-- end                 = " << endHyperslab << std::endl;
+    
+    std::cout << "-- Location is dataset = " << locationIsDataset << std::endl;
+    std::cout << "-- Have stride         = " << haveStride << std::endl;
+    std::cout << "-- Have count          = " << haveCount  << std::endl;
+#endif
     
     // Set up the hyperslab ______________________
     
