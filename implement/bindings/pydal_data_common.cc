@@ -242,7 +242,7 @@ void export_SAS_Settings ()
 
 void export_HDF5Hyperslab ()
 {
-  bool (HDF5Hyperslab::*setHyperslab1)(hid_t const &) 
+  bool (HDF5Hyperslab::*setHyperslab1)(hid_t const &, bool const &) 
     = &HDF5Hyperslab::setHyperslab;
 //   bool (HDF5Hyperslab::*setHyperslab2)(hid_t const &,
 // 				       std::vector<int> const &,

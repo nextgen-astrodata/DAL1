@@ -25,6 +25,7 @@
 #define _StationBeamReader_
 
 #include <string>
+#include <sstream>
 #include <netdb.h>
 
 #include <sys/socket.h>
@@ -35,6 +36,12 @@
 class fstream;
 class BF2H5;
 
+/*!
+	\class StationBeamReader
+	\ingroup DAL
+	\ingroup data_common
+	\author Alwin de Jong
+*/
 class StationBeamReader {
 public:
 	StationBeamReader(BF2H5 *parent, bool socket_mode);

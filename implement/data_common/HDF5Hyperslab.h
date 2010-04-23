@@ -404,16 +404,25 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Methods ==============================================================
     
-    //! Set the Hyperslab for the dataspace attached to a dataset
-    bool setHyperslab (hid_t const &location);
-
     //! Get the number of data points returned for the given Hyperslab
     unsigned int nofDatapoints ();
+
+    //! Get the number of data points returned for a given Hyperslab
+    static unsigned int nofDatapoints (std::vector<int> const &count,
+				       std::vector<int> const &block);
 
     //! Get the offset of the last element of the specified hyperslab.
     std::vector<hsize_t> end ();
     
-    // === Static Methods =======================================================
+    //! Get the offset of the last element of the specified hyperslab.
+    static std::vector<hsize_t> end (std::vector<int> const &start,
+				     std::vector<int> const &stride,
+				     std::vector<int> const &count,
+				     std::vector<int> const &block);
+    
+    //! Set the Hyperslab for the dataspace attached to a dataset
+    bool setHyperslab (hid_t const &location,
+		       bool const &resizeDataset);
 
     //! Set the Hyperslab for the dataspace attached to a dataset
     static bool setHyperslab (hid_t const &location,
@@ -429,18 +438,9 @@ namespace DAL { // Namespace DAL -- begin
 			      std::vector<int> const &block,
 			      H5S_seloper_t const &selection=H5S_SELECT_SET);
 
-    //! Get the number of data points returned for a given Hyperslab
-    static unsigned int nofDatapoints (std::vector<int> const &count,
-				       std::vector<int> const &block);
-
-    //! Get the offset of the last element of the specified hyperslab.
-    static std::vector<hsize_t> end (std::vector<int> const &start,
-				     std::vector<int> const &stride,
-				     std::vector<int> const &count,
-				     std::vector<int> const &block);
-    
   private:
     
+    //! Initialize the internal parameters
     void init ();
     
     //! Unconditional copying

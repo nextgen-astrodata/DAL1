@@ -38,6 +38,12 @@ typedef std::map<long int, std::deque<std::pair<uint8_t, float *> > > writeMap;
 
 class BF2H5;
 
+/*!
+	\class HDF5Writer
+	\ingroup DAL
+	\ingroup data_common
+	\author Alwin de Jong
+*/
 class HDF5Writer {
 public:
 	HDF5Writer(BF2H5 *parent, const std::string &output_file, size_t output_block_size, uint8_t nr_subbands);

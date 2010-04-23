@@ -346,10 +346,10 @@ cout << "HDF5Writer is done." << endl;
 		if (rawfile) {
 			delete rawfile; 
 		}
-		rawfile = new std::fstream( filename, ios::binary|ios::in );
-		rawfile->seekg(0, ios::end); // move to end of file to determine its file size
+		rawfile = new std::fstream( filename, std::ios::binary|std::ios::in );
+		rawfile->seekg(0, std::ios::end); // move to end of file to determine its file size
 		file_byte_size = static_cast<unsigned long int>(rawfile->tellg())-2; // see how many bytes in file
-		rawfile->seekg(0, ios::beg);  // move to start of file
+		rawfile->seekg(0, std::ios::beg);  // move to start of file
 	}
 	
 

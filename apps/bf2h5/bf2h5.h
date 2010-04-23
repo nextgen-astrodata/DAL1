@@ -39,57 +39,63 @@ typedef std::vector<BFRawFormat::Sample *> sampleBuffers;
 // bufferTracker key = nr of sample buffer, value = current block using the sample buffer (-1 = not in use)
 typedef std::map<uint8_t, long int> bufferTracker;
 
+/*!
+	\class BF2H5
+	\ingroup DAL
+	\ingroup data_common
+	\author Alwin de Jong
+*/
 class BF2H5 {
-public:
+ public:
   BF2H5(const std::string &outfile, uint downsample_factor, bool do_intensity);
-	~BF2H5();
-	
-	void setSocketMode(uint port);
-	void setFileMode(std::string &infile);
-	
-	void start(void); // starts the bf2h5 main process
-	
-	// access function for sample data and BFRawFormat headers
-	const BFRawFormat::Sample &getSampleData(void) const {return *itsSampleBuffers[itsReadBuffer];}
-	const BFRawFormat::BFRaw_Header &getMainHeader(void) const {return BFMainHeader;}
-	BFRawFormat::BFRaw_Header &getMainHeaderForWrite(void) {return BFMainHeader;}
-	
-	uint32_t getNrSamplesPerSubband(void) const { return BFMainHeader.nrSamplesPerSubband;}
-	uint16_t getNrSubbands(void) const {return BFMainHeader.nrSubbands;}
-			    
-	// signaling functions for threads
-	void calculatorDataReady(unsigned blockNr, unsigned subband, float * calculator_data) {itsWriter->writeSubband(blockNr, subband, calculator_data);}; // non-blocking write
-	void blockComplete(long int blockNr); // called by the calculator when a block of subbands was completed
-	
-	const std::string &getEpochUTC(void) const { return EpochUTC; }
-	const std::string &getEpochDate(void) const { return EpochDate; }
-	bool doDownSampling(void) const {return itsDoDownSample;}
-	bool doIntensity(void) const {return itsDoIntensity;}
-	uint getDownSampleFactor(void) const {return itsDownsampleFactor;}
-
-private:
+  ~BF2H5();
+  
+  void setSocketMode(uint port);
+  void setFileMode(std::string &infile);
+  
+  void start(void); // starts the bf2h5 main process
+  
+  // access function for sample data and BFRawFormat headers
+  const BFRawFormat::Sample &getSampleData(void) const {return *itsSampleBuffers[itsReadBuffer];}
+  const BFRawFormat::BFRaw_Header &getMainHeader(void) const {return BFMainHeader;}
+  BFRawFormat::BFRaw_Header &getMainHeaderForWrite(void) {return BFMainHeader;}
+  
+  uint32_t getNrSamplesPerSubband(void) const { return BFMainHeader.nrSamplesPerSubband;}
+  uint16_t getNrSubbands(void) const {return BFMainHeader.nrSubbands;}
+  
+  // signaling functions for threads
+  void calculatorDataReady(unsigned blockNr, unsigned subband, float * calculator_data) {itsWriter->writeSubband(blockNr, subband, calculator_data);}; // non-blocking write
+  void blockComplete(long int blockNr); // called by the calculator when a block of subbands was completed
+  
+  const std::string &getEpochUTC(void) const { return EpochUTC; }
+  const std::string &getEpochDate(void) const { return EpochDate; }
+  bool doDownSampling(void) const {return itsDoDownSample;}
+  bool doIntensity(void) const {return itsDoIntensity;}
+  uint getDownSampleFactor(void) const {return itsDownsampleFactor;}
+  
+ private:
   void getTimeFromBlockHeader(void);
   bool allocateSampleBuffers(void);
   bool switchReadBuffer(long int block_nr); // switch to the next unused readbuffer, to be used by block: block_nr
-	
-private:
-	bool socketmode;
-	uint itsDownsampleFactor;
-	bool itsDoDownSample;
-	bool itsDoIntensity;
-	
-	// some main header parameters we need to know here
-	std::string inputFile;
-	std::string outputFile;
-	uint tcpPort;
-	Bf2h5Calculator *itsCalculator;
-	HDF5Writer *itsWriter;
-	StationBeamReader *itsReader;
-	
-	// data structures:
-	
-	BFRawFormat::BFRaw_Header BFMainHeader; // holds the main header
-	BFRawFormat::BlockHeader firstBlockHeader; // will hold the header of the first data block
+  
+ private:
+  bool socketmode;
+  uint itsDownsampleFactor;
+  bool itsDoDownSample;
+  bool itsDoIntensity;
+  
+  // some main header parameters we need to know here
+  std::string inputFile;
+  std::string outputFile;
+  uint tcpPort;
+  Bf2h5Calculator *itsCalculator;
+  HDF5Writer *itsWriter;
+  StationBeamReader *itsReader;
+  
+  // data structures:
+  
+  BFRawFormat::BFRaw_Header BFMainHeader; // holds the main header
+  BFRawFormat::BlockHeader firstBlockHeader; // will hold the header of the first data block
 	
 	size_t oneBlockdataSize;
 	//sample buffers things

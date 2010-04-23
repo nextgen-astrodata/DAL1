@@ -57,7 +57,8 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    operator=
   
-  TBB_StationCalibration& TBB_StationCalibration::operator= (TBB_StationCalibration const &other)
+  TBB_StationCalibration&
+  TBB_StationCalibration::operator= (TBB_StationCalibration const &other)
   {
     if (this != &other) {
       destroy ();
@@ -69,8 +70,17 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
+  /*!
+    \param other -- Other TBB_StationCalibration object to make a copy of.
+  */
   void TBB_StationCalibration::copy (TBB_StationCalibration const &other)
-  {;}
+  {
+    gainCurve_p             = other.gainCurve_p;
+    gainCurveCoordinates_p  = other.gainCurveCoordinates_p;
+    noiseCurve_p            = other.noiseCurve_p;
+    noiseCurveCoordinates_p = other.noiseCurveCoordinates_p;
+    beamShape_p             = other.beamShape_p;
+  }
 
   // ============================================================================
   //

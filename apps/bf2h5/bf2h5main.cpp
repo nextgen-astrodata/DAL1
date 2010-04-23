@@ -52,14 +52,14 @@ using std::endl;
  */
 void print_examples (std::ostream &os)
 {
-	os << "[bf2h5] Usage examples." << endl;
-	os << endl;
-	os << "1) Convert file with dump of BF data to a HDF5 file:" << endl;
-	os << "  bf2h5 --infile <raw data> --outfile <HDF5 output>" << endl;
-	os << endl;
-	os << "2) Read data from TCP stream to a HDF5 file:" << endl;
-	os << "  bf2h5 --port <port number> --outfile <HDF5 output>" << endl;
-	os << endl;
+  os << "[bf2h5] Usage examples." << endl;
+  os << endl;
+  os << "1) Convert file with dump of BF data to a HDF5 file:" << endl;
+  os << "  bf2h5 --infile <raw data> --outfile <HDF5 output>" << endl;
+  os << endl;
+  os << "2) Read data from TCP stream to a HDF5 file:" << endl;
+  os << "  bf2h5 --port <port number> --outfile <HDF5 output>" << endl;
+  os << endl;
 }
 
 //_______________________________________________________________________________
@@ -67,20 +67,20 @@ void print_examples (std::ostream &os)
 
 int main (int argc, char *argv[])
 {
-	std::string infile;
-	std::string outfile;
-	std::string parsetfile;
-	std::string ip;
-	uint port;
-//	bool useParset			  = false;
-	bool socketmode       = false;
-	bool non_interactive  = false;
-	bool doIntensity      = false;
-	bool doDownsample     = false;
-//	bool doChannelization = false;
-	uint dsFactor            = 1;
-
-
+  std::string infile;
+  std::string outfile;
+  std::string parsetfile;
+  std::string ip;
+  uint port;
+  //	bool useParset			  = false;
+  bool socketmode       = false;
+  bool non_interactive  = false;
+  bool doIntensity      = false;
+  bool doDownsample     = false;
+  //	bool doChannelization = false;
+  uint dsFactor            = 1;
+  
+  
   // -----------------------------------------------------------------
   // Processing of command line options
 
@@ -173,34 +173,34 @@ int main (int argc, char *argv[])
 
   // -----------------------------------------------------------------
   // Checks if parameters complete
-
+	
 	if (socketmode)
-	{
-		if (!vm.count("outfile"))
-		{
-			std::cerr << "Output file name not specified!" << endl;
-			std::cerr << desc << endl;
-			print_examples(std::cerr);
-			return 1;
-		}
-	}
+	  {
+	    if (!vm.count("outfile"))
+	      {
+		std::cerr << "Output file name not specified!" << endl;
+		std::cerr << desc << endl;
+		print_examples(std::cerr);
+		return 1;
+	      }
+	  }
 	else   // file mode
-	{
-		if (!vm.count("infile") || !vm.count("outfile"))
-		{
-			std::cerr << "Both infile and outfile need to be specified for file mode!" << endl;
-			std::cerr << desc << endl;
-			print_examples(std::cerr);
-			return 1;
-		}
-	}
-
-  // -----------------------------------------------------------------
-  // Summary of the parameters provided from the command line
-
+	  {
+	    if (!vm.count("infile") || !vm.count("outfile"))
+	      {
+		std::cerr << "Both infile and outfile need to be specified for file mode!" << endl;
+		std::cerr << desc << endl;
+		print_examples(std::cerr);
+		return 1;
+	      }
+	  }
+	
+	// -----------------------------------------------------------------
+	// Summary of the parameters provided from the command line
+	
 	std::cout << "[bf2h5] Summary of input parameters." << endl;
 	/*
-	if (useParset) {
+	  if (useParset) {
 	std::cout << "-- Using parset file ..... : " << parsetfile << endl;
 } */
 	if (socketmode)
@@ -221,7 +221,7 @@ int main (int argc, char *argv[])
 
   // -----------------------------------------------------------------
   // Start processing of the input data
-
+	
 	//check if output file exists
 	std::fstream filestr;
 	filestr.open(outfile.data());
@@ -253,17 +253,19 @@ int main (int argc, char *argv[])
 			}
 		}
 	}
+	
+	/* Create object to work with; this contains all required methods */
 	BF2H5 bf2h5(outfile, dsFactor, doIntensity);
 	
 	if (socketmode)
-	{
-		bf2h5.setSocketMode(port);
-
-	}
+	  {
+	    bf2h5.setSocketMode(port);
+	    
+	  }
 	else   // File mode
-	{
-		bf2h5.setFileMode(infile);
-	}
+	  {
+	    bf2h5.setFileMode(infile);
+	  }
 	
 	bf2h5.start();	
 	

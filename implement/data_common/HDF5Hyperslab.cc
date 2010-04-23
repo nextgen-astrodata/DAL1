@@ -448,11 +448,14 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param location -- HDF5 object identifier for the dataset or dataspace to
            to which the Hyperslab is going to be applied.
+    \param resizeDataset -- Resize the dataset to the dimensions defined by the 
+           Hyperslab?
 
     \return status -- Status of the operation; returns \e false in case an error 
             was encountered.
   */
-  bool HDF5Hyperslab::setHyperslab (hid_t const &location)
+  bool HDF5Hyperslab::setHyperslab (hid_t const &location,
+				    bool const &resizeDataset)
   {
     return setHyperslab (location,
 			 start_p,

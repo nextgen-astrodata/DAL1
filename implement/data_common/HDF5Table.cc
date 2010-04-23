@@ -75,7 +75,12 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                         copy
   
   void HDF5Table::copy (HDF5Table const &other)
-  {;}
+  {
+    columnNames_p.resize(other.columnNames_p.size());
+
+    tableName_p   = other.tableName_p;
+    columnNames_p = other.columnNames_p;
+  }
 
   // ============================================================================
   //

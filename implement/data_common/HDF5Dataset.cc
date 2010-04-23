@@ -409,7 +409,7 @@ namespace DAL {
   {
     bool status (true);
     
-    status = slab.setHyperslab (dataspace_p);
+    status = slab.setHyperslab (dataspace_p,resizeDataset);
 
     /* Book-keeping: store the assigned hyperslab for later inspection. */
 

@@ -32,6 +32,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 using std::ios;
+using std::stringstream;
 using namespace DAL;
 
 int StationBeamReader::server_socket = 0;
@@ -398,7 +399,7 @@ const std::string &StationBeamReader::RArad2deg( const float &rad )
 	float  sec = (deg_min - min) * 60;
 
 	//sprintf(ra_string,"%02d:%02d:%02.4f",  , min, sec);
-	stringstream rass;
+	std::stringstream rass;
 	rass << hour << ":" << min << ":" << sec;
 	rass >> ra_str;
 	
