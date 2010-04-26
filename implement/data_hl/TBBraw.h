@@ -180,12 +180,10 @@ namespace DAL {  // Namespace DAL -- begin
     bool checkHeaderCRC(TBB_Header *headerp);
     
   public:
+
+    // === Construction =========================================================
     
-    // ------------------------------------------------------------- Construction
-    
-    /*!
-      \brief Default constructor
-    */
+    //! Default constructor
     TBBraw();
 
     /*!
@@ -213,13 +211,13 @@ namespace DAL {  // Namespace DAL -- begin
 	    string const &observation_id="UNDEFINED",
 	    string const &filterSelection="UNDEFINED",
 	    string const &telescope="LOFAR");
-    
-    // -------------------------------------------------------------- Destruction
+
+    // === Destruction ==========================================================
     
     //! Destructor
     ~TBBraw();
-    
-    // --------------------------------------------------------------- Parameters
+
+    // === Parameter access =====================================================
     
     /*!
       \brief Is this object connected to an output file?

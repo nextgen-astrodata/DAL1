@@ -46,7 +46,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-#define PI 3.141592653589793238462643
+#include <CoordinateConversion.h>
 
 #define _OPENMP
 

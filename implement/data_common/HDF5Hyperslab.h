@@ -426,17 +426,19 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Set the Hyperslab for the dataspace attached to a dataset
     static bool setHyperslab (hid_t const &location,
+			      H5S_seloper_t const &selection,
 			      std::vector<int> const &start,
 			      std::vector<int> const &block,
-			      H5S_seloper_t const &selection=H5S_SELECT_SET);
+			      bool const &resizeDataset);
     
     //! Set the Hyperslab for the dataspace attached to a dataset
     static bool setHyperslab (hid_t const &location,
+			      H5S_seloper_t const &selection,
 			      std::vector<int> const &start,
 			      std::vector<int> const &stride,
 			      std::vector<int> const &count,
 			      std::vector<int> const &block,
-			      H5S_seloper_t const &selection=H5S_SELECT_SET);
+			      bool const &resizeDataset);
 
   private:
     

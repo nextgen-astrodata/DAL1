@@ -198,7 +198,7 @@ namespace DAL {
   {
     char * ra_string = new char[14];
 
-    float deg_hour = ( rad * (180./PI) ) / 15.;
+    float deg_hour = ( rad * (180./DAL::PI) ) / 15.;
     int   hour = (int)deg_hour;
     float deg_min = (deg_hour - hour) * 60.;
     int    min = int( deg_min );
@@ -222,7 +222,7 @@ namespace DAL {
   {
     char * ra_string = new char[14];
 
-    float deg_hour = ( rad * (180./PI) );
+    float deg_hour = ( rad * (180./DAL::PI) );
     int   hour = int( deg_hour );
     float deg_min = (deg_hour - hour) * 60.;
     int    min = int( deg_min );

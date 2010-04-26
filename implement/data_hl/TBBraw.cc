@@ -149,7 +149,8 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef DEBUGGING_MESSAGES
             cout << "TBBraw::open_file: Opening a file for the second time. This is deprecated." << endl;
 #endif
-            // We are already connected to a file, so delete everything, and initialize everything.
+            /* We are already connected to a file, so delete everything, and
+	       initialize everything. */
             destroy();
             init();
           };
@@ -519,7 +520,9 @@ namespace DAL {  // Namespace DAL -- begin
     return dipoleIndex;
   };
 
-  // ----------------------------------------------------------- createNewStation
+  //_____________________________________________________________________________
+  //                                                             createNewStation
+
   int TBBraw::createNewStation(TBB_Header *headerp)
   {
     int stationIndex;
@@ -586,7 +589,10 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                              addDataToDipole
   
-  bool TBBraw::addDataToDipole(int index, char *buffer, int bufflen, bool bigEndian)
+  bool TBBraw::addDataToDipole (int index,
+				char *buffer,
+				int bufflen,
+				bool bigEndian)
   {
     int i;
     TBB_Header *headerp = (TBB_Header*)buffer;

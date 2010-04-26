@@ -458,11 +458,12 @@ namespace DAL { // Namespace DAL -- begin
 				    bool const &resizeDataset)
   {
     return setHyperslab (location,
+			 selection_p,
 			 start_p,
 			 stride_p,
 			 count_p,
 			 block_p,
-			 selection_p);
+			 resizeDataset);
   }
 
   //_____________________________________________________________________________
@@ -471,29 +472,33 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param location  -- HDF5 object identifier for the dataset or dataspace to
            to which the Hyperslab is going to be applied.
+    \param selection -- Selection operator to determine how the new selection is
+           to be combined with the already existing selection for the dataspace.
     \param start     -- Offset of the starting element of the specified hyperslab
     \param count     -- The number of elements or blocks to select along each
            dimension.
-    \param selection -- Selection operator to determine how the new selection is
-           to be combined with the already existing selection for the dataspace.
+    \param resizeDataset -- Resize the dataset to the dimensions defined by the 
+           Hyperslab?
 
     \return status -- Status of the operation; returns \e false in case an error 
             was encountered.
   */
   bool HDF5Hyperslab::setHyperslab (hid_t const &location,
+				    H5S_seloper_t const &selection,
 				    std::vector<int> const &start,
 				    std::vector<int> const &block,
-				    H5S_seloper_t const &selection)
+				    bool const &resizeDataset)
   {
     std::vector<int> stride;
     std::vector<int> count;
-
+    
     return setHyperslab (location,
+			 selection,
 			 start,
 			 stride,
 			 count,
 			 block,
-			 selection);
+			 resizeDataset);
   }
   
   //_____________________________________________________________________________
@@ -502,28 +507,31 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param location  -- HDF5 object identifier for the dataset or dataspace to
            to which the Hyperslab is going to be applied.
+    \param selection -- Selection operator to determine how the new selection is
+           to be combined with the already existing selection for the dataspace.
     \param start     -- Offset of the starting element of the specified hyperslab
     \param stride    -- Number of elements to separate each element or block to
            be selected
     \param count     -- The number of elements or blocks to select along each
            dimension.
     \param block     -- The size of the block selected from the dataspace
-    \param selection -- Selection operator to determine how the new selection is
-           to be combined with the already existing selection for the dataspace.
+    \param resizeDataset -- Resize the dataset to the dimensions defined by the 
+           Hyperslab?
 
     \return status -- Status of the operation; returns \e false in case an error 
             was encountered.
   */
   bool HDF5Hyperslab::setHyperslab (hid_t const &location,
+				    H5S_seloper_t const &selection,
 				    std::vector<int> const &start,
 				    std::vector<int> const &stride,
 				    std::vector<int> const &count,
 				    std::vector<int> const &block,
-				    H5S_seloper_t const &selection)
+				    bool const &resizeDataset)
   {
     bool status (true);
     herr_t h5error;
-
+    
     //____________________________________________
     // Check the object to work with
     
@@ -600,7 +608,7 @@ namespace DAL { // Namespace DAL -- begin
       }
     }
     
-    if (extendDataset) {
+    if (extendDataset && resizeDataset) {
       if (objectType == H5I_DATASET) {
 	hsize_t tmpSize [nelem];
 	for (unsigned int n(0); n<nelem; ++n) {

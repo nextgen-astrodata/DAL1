@@ -27,9 +27,9 @@
 #include <pthread.h>
 #include <map>
 #include <deque>
+#include <string>
 
 #include <BFRawFormat.h>
-#include <string>
 
 class BF2H5;
 //                 block                               subband       pointer to data

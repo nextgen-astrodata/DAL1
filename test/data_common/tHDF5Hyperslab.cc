@@ -198,6 +198,42 @@ int test_static_functions ()
 }
 
 //_______________________________________________________________________________
+//                                                              test_setHyperslab
+
+/*!
+  \brief Test setting hyperslab selection for a dataset
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_setHyperslab ()
+{
+  cout << "\n[tHDF5Hyperslab::test_setHyperslab]\n" << endl;
+
+  int nofFailedTests (0);
+  std::string filename ("tHDF5Hyperslab.h5");
+
+  //________________________________________________________
+  // Open the file to work with
+  
+  hid_t fileID = H5Fopen (filename.c_str(),
+			  H5F_ACC_RDWR,
+			  H5P_DEFAULT);
+
+  if (!H5Iis_valid(fileID)) {
+    std::cerr << "Failed to open file " << filename << endl;
+    return 0;
+  }
+
+  //________________________________________________________
+  // Close the file
+
+  H5Fclose(fileID);
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 //! Main function
@@ -209,6 +245,8 @@ int main ()
   nofFailedTests += test_constructors ();
   // Test the static methods
   nofFailedTests += test_static_functions ();
+  //! Test setting hyperslab selection for a dataset
+  nofFailedTests += test_setHyperslab ();
 
   return nofFailedTests;
 }

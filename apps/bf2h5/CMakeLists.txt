@@ -12,33 +12,27 @@ endif (HAVE_LOFAR)
 ##__________________________________________________________
 ## Build executable
 
+set (bf2h5_sources
+  bf2h5main.cpp
+  StationBeamReader.cpp
+  HDF5Writer.cpp 
+  Bf2h5Calculator.cpp
+  bf2h5.cpp
+  )
+
 if (BOOST_PROGRAM_OPTIONS_LIBRARY)
+
+  ## Compiler instructions
+  add_executable (bf2h5 ${bf2h5_sources})
   
+  ## Linker instructions
   if (HAVE_LOFAR)
-    ## Compiler instructions
-    add_executable (bf2h5
-      bf2h5main.cpp
-      StationBeamReader.cpp
-      HDF5Writer.cpp 
-      Bf2h5Calculator.cpp
-      bf2h5.cpp
-      )
-    ## Linker instructions
     target_link_libraries (bf2h5
       dal
       ${BOOST_PROGRAM_OPTIONS_LIBRARY}
       ${HDF5_LIBRARIES}
       )
   else (HAVE_LOFAR)
-    ## Compiler instructions
-    add_executable (bf2h5
-      bf2h5main.cpp
-      StationBeamReader.cpp
-      HDF5Writer.cpp 
-      Bf2h5Calculator.cpp
-      bf2h5.cpp
-      )
-    ## Linker instructions
     target_link_libraries (bf2h5
       dal
       ${BOOST_PROGRAM_OPTIONS_LIBRARY}

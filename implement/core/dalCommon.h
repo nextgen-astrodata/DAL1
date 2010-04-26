@@ -60,7 +60,7 @@ using casa::Quantity;
 #ifdef HAVE_MPATROL
 #include <mpatrol.h>
 #endif
-
+  
 /*!
   \file dalCommon.h
 
@@ -115,7 +115,7 @@ using casa::Quantity;
 */
 
 namespace DAL {
-  
+
   // ============================================================================
   //
   //  Conversion/Computation routines
