@@ -499,7 +499,7 @@ int test_data (std::string const &filename)
     for (unsigned int n(0); n<nofSteps; ++n, start+=blocksize/2) {
       cout << "-- Start = " << start << endl;
       // Read in the data ...
-      dataset.fx (start,blocksize,data);
+      dataset.readData (start,blocksize,data);
       // ... and display them
       show (data,blocksize);
       cout << endl;

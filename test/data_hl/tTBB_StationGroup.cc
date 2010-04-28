@@ -387,12 +387,9 @@ int test_attributes (std::string const &filename)
   
   cout << "[3] Retrieve additional properties of the dipole datasets ..." << endl;
   try {
-    std::vector<std::string> dipoleNames;
-    std::vector<int> dipoleNumbers;
+    std::vector<std::string> dipoleNames  = group.dipoleNames ();
+    std::vector<int> dipoleNumbers        = group.dipoleNumbers ();
     std::set<std::string> selectedDipoles = group.selectedDipoles();
-    //
-    group.dipoleNames (dipoleNames);
-    group.dipoleNumbers (dipoleNumbers);
     //
     cout << "-- Dipole IDs       = " << dipoleNumbers   << endl;
     cout << "-- Dipole names     = " << dipoleNames     << endl;
@@ -589,7 +586,7 @@ int test_data (std::string const &filename)
     casa::Matrix<double> data;
 
     // get the data
-    status = group.fx (data, start, blocksize);
+    status = group.readData (data, start, blocksize);
 
     // feedback
     cout << "-- Status         = " << status       << endl;
@@ -618,8 +615,8 @@ int test_data (std::string const &filename)
       cout << "-- removing dipole " << *it << " from the selection ..." << endl;
       dipoles.erase(it);
       // set the new selection
-      group.setSelectedDipoles(dipoles);
-      status = group.fx (data, start, blocksize);
+      group.selectDipoles(dipoles);
+      status = group.readData (data, start, blocksize);
       //
       cout << " --> Dipoles     = " << group.selectedDipoles() << endl;
       cout << " --> shape(data) = " << data.shape()            << endl;

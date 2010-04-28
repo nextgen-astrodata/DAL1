@@ -456,15 +456,15 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                           setSelectedDipoles
+  //                                                                selectDipoles
 
-  bool TBB_Timeseries::setSelectedDipoles (std::set<std::string> const &selection)
+  bool TBB_Timeseries::selectDipoles (std::set<std::string> const &selection)
   {
     bool status (true);
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      status *= it->second.setSelectedDipoles(selection);
+      status *= it->second.selectDipoles(selection);
     }
     
     return status;
@@ -759,7 +759,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      (*it).second.dipoleNumbers(tmp);
+      tmp        = (*it).second.dipoleNumbers();
       nofDipoles = (*it).second.nofDipoleDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
@@ -967,7 +967,7 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef HAVE_CASA
 
   //_____________________________________________________________________________
-  //                                                                           fx
+  //                                                                     readData
   
   /*!
     \retval data -- [nofSamples,dipole] Array of raw ADC samples representing
@@ -976,20 +976,20 @@ namespace DAL {  // Namespace DAL -- begin
     \param nofSamples -- Number of samples to read, starting from the position
            given by <tt>start</tt>.
   */
-  void TBB_Timeseries::fx (casa::Matrix<double> &data,
+  void TBB_Timeseries::readData (casa::Matrix<double> &data,
 			   int const &start,
 			   int const &nofSamples)
   {
     uint nofDipoles = selectedDipoles().size();
     casa::Vector<int> startPositions (nofDipoles,start);
 
-    return fx (data,
+    return readData (data,
 	       startPositions,
 	       nofSamples);
   }
   
   //_____________________________________________________________________________
-  //                                                                           fx
+  //                                                                     readData
   
   /*!
     \retval data -- [nofSamples,dipole] Array of raw ADC samples representing
@@ -1000,7 +1000,7 @@ namespace DAL {  // Namespace DAL -- begin
     \param nofSamples -- Number of samples to read, starting from the position
            given by <tt>start</tt>.
   */
-  void TBB_Timeseries::fx (casa::Matrix<double> &data,
+  void TBB_Timeseries::readData (casa::Matrix<double> &data,
 			   casa::Vector<int> const &start,
 			   int const &nofSamples)
   {
@@ -1017,7 +1017,7 @@ namespace DAL {  // Namespace DAL -- begin
 	nofDipoles += (it->second.selectedDipoles().size());
       }
       if (nelem != nofDipoles) {
-	std::cerr << "[TBB_Timeseries::fx]"
+	std::cerr << "[TBB_Timeseries::readData]"
 		  << " Wrong length of vector with start positions!"
 		  << std::endl;
 	std::cerr << " -- nof. selected dipoles   = " << nofDipoles << std::endl;
@@ -1028,7 +1028,7 @@ namespace DAL {  // Namespace DAL -- begin
       
     }  //  end -- (location_p>0)
     else {
-      std::cerr << "[TBB_Timeseries::fx] Object not connected to dataset"
+      std::cerr << "[TBB_Timeseries::readData] Object not connected to dataset"
 		<< std::endl;
       data = casa::Matrix<double> (1,1,0);
     }
@@ -1053,7 +1053,7 @@ namespace DAL {  // Namespace DAL -- begin
       }
       offsetStart += nofDipoles;
       // get the data for the dipoles of that station
-      status = it->second.fx(tmpData,tmpStart,nofSamples);
+      status = it->second.readData(tmpData,tmpStart,nofSamples);
       // copy the data
       for (uint dipole(0); dipole<nofDipoles; ++dipole) {
 	data.column(nDipole) = tmpData.column(dipole);

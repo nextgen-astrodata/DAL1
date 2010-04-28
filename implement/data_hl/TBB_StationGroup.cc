@@ -406,7 +406,7 @@ namespace DAL {  // Namespace DAL -- begin
 #endif
   
   //_____________________________________________________________________________
-  //                                                           setSelectedDipoles
+  //                                                                selectDipoles
   
   /*!
     \param selection -- std::set with the names of dipoles to be selected; if the 
@@ -415,7 +415,7 @@ namespace DAL {  // Namespace DAL -- begin
     \return status -- Status of the operation; returns \e true in case the new
             values successfully have been stored.
   */
-  bool TBB_StationGroup::setSelectedDipoles (std::set<std::string> const &selection)
+  bool TBB_StationGroup::selectDipoles (std::set<std::string> const &selection)
   {
     bool status (true);
 
@@ -588,60 +588,32 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                  dipoleNames
   
-  void TBB_StationGroup::dipoleNames (std::vector<std::string> &names)
+  std::vector<std::string> TBB_StationGroup::dipoleNames ()
   {
+    std::vector<std::string> names;
     std::map<std::string,TBB_DipoleDataset>::iterator it;
 
-    names.clear();
-    
     for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
       names.push_back(it->second.getName());
     }
+
+    return names;
   }
-
-#ifdef HAVE_CASA
-  void TBB_StationGroup::dipoleNames (casa::Vector<casa::String> &names)
-  {
-    int n (0);
-    std::map<std::string,TBB_DipoleDataset>::iterator it;
-
-    names.resize (datasets_p.size());
-
-    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-      names(n) = it->second.getName();
-      ++n;
-    }
-  }
-#endif
 
   //_____________________________________________________________________________
   //                                                                dipoleNumbers
   
-  void TBB_StationGroup::dipoleNumbers (std::vector<int> &ids)
+  std::vector<int> TBB_StationGroup::dipoleNumbers ()
   {
+    std::vector<int> numbers;
     std::map<std::string,TBB_DipoleDataset>::iterator it;
 
-    ids.clear();
-
     for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-      ids.push_back(it->second.dipoleNumber());
+      numbers.push_back(it->second.dipoleNumber());
     }
+
+    return numbers;
   }
-
-#ifdef HAVE_CASA
-  void TBB_StationGroup::dipoleNumbers (casa::Vector<int> &names)
-  {
-    int n (0);
-    std::map<std::string,TBB_DipoleDataset>::iterator it;
-
-    names.resize (datasets_p.size());
-
-    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-      names(n) = it->second.dipoleNumber();
-      ++n;
-    }
-  }
-#endif
 
   //_____________________________________________________________________________
   //                                                                   datasetIDs
@@ -689,7 +661,7 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef HAVE_CASA
   
   //_____________________________________________________________________________
-  //                                                                           fx
+  //                                                                           readData
   
   /*!
     \retval data -- [nofSamples,dipole] Array of raw ADC samples representing
@@ -698,7 +670,7 @@ namespace DAL {  // Namespace DAL -- begin
     \param nofSamples -- Number of samples to read, starting from the position
            given by <tt>start</tt>.
   */
-  bool TBB_StationGroup::fx (casa::Matrix<double> &data,
+  bool TBB_StationGroup::readData (casa::Matrix<double> &data,
 			     casa::Vector<int> const &start,
 			     int const &nofSamples)
   {
@@ -709,7 +681,7 @@ namespace DAL {  // Namespace DAL -- begin
     // Check input parameters ______________________________
 
     if (nelem != nofDipoles) {
-      std::cerr << "[TBB_StationGroup::fx]"
+      std::cerr << "[TBB_StationGroup::readData]"
 		<< " Wrong length of vector with start positions!"
 		<< std::endl;
       std::cerr << " -- nof. selected dipoles   = " << nofDipoles << std::endl;
@@ -737,7 +709,7 @@ namespace DAL {  // Namespace DAL -- begin
       // get pointer to the dipole dataset
       itMap = datasets_p.find(*it);
       // retrieve dipole data
-      tmp = itMap->second.fx(start(n),nofSamples);
+      tmp = itMap->second.readData(start(n),nofSamples);
       // copy data
       data.column(n) = tmp;
       // increment counter
@@ -747,7 +719,7 @@ namespace DAL {  // Namespace DAL -- begin
     // Feedback ____________________________________________
 
 #ifdef DEBUGGING_MESSAGES
-    std::cout << "[TBB_StationGroup::fx]" << std::endl;
+    std::cout << "[TBB_StationGroup::readData]" << std::endl;
     std::cout << " -- start            = " << start             << std::endl;
     std::cout << " -- selected dipoles = " << selectedDipoles_p << std::endl;
     std::cout << " -- shape(data)      = " << data.shape()      << std::endl;
@@ -757,7 +729,7 @@ namespace DAL {  // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                           fx
+  //                                                                           readData
   
   /*!
     \retval data -- [nofSamples,dipole] Array of raw ADC samples representing
@@ -766,14 +738,14 @@ namespace DAL {  // Namespace DAL -- begin
     \param nofSamples -- Number of samples to read, starting from the position
            given by <tt>start</tt>.
   */
-  bool TBB_StationGroup::fx (casa::Matrix<double> &data,
+  bool TBB_StationGroup::readData (casa::Matrix<double> &data,
 			     int const &start,
 			     int const &nofSamples)
   {
     uint nofDipoles (selectedDipoles_p.size());
     casa::Vector<int> startVect (nofDipoles,start);
 
-    return fx (data,
+    return readData (data,
 	       startVect,
 	       nofSamples);
   }

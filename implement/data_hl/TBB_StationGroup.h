@@ -62,8 +62,6 @@ namespace DAL {   // Namespace DAL -- begin
       <li>DAL::TBB_Timeseries
       <li>DAL::TBB_StationTrigger
       <li>DAL::TBB_DipoleDataset
-      <li>CR::LOFAR_TBB -- Interface between Data Access Library (DAL) and
-      CR::DataReader framework
     </ul>
 
     <h3>Synopsis</h3>
@@ -102,7 +100,7 @@ namespace DAL {   // Namespace DAL -- begin
       // set the number of samples to read per data channel (dipole)
       int nofSamples = 1024;
 
-      casa::Matrix<short> data = group.fx (start,
+      casa::Matrix<short> data = group.readData (start,
                                            nofSamples);
       \endcode
     </ol>
@@ -161,7 +159,7 @@ namespace DAL {   // Namespace DAL -- begin
     }
     
     //! Set the set of selected dipoles
-    bool setSelectedDipoles (std::set<std::string> const &selection);
+    bool selectDipoles (std::set<std::string> const &selection);
 
     //! Selected all dipoles from the station
     bool selectAllDipoles ();
@@ -292,18 +290,9 @@ namespace DAL {   // Namespace DAL -- begin
 #endif
 
     //! Retrieve the list of channels names contained within this group
-    void dipoleNames (std::vector<std::string> &names);
-#ifdef HAVE_CASA
-    //! Retrieve the list of channels names contained within this group
-    void dipoleNames (casa::Vector<casa::String> &names);
-#endif
-
+    std::vector<std::string> dipoleNames ();
     //! Retrieve the list of channels IDs contained within this group
-    void dipoleNumbers (std::vector<int> &ids);
-#ifdef HAVE_CASA
-    //! Retrieve the list of channels IDs contained within this group
-    void dipoleNumbers (casa::Vector<int> &ids);
-#endif
+    std::vector<int> dipoleNumbers ();
     
     /*!
       \brief Convert individual ID number to joint unique ID
@@ -345,12 +334,12 @@ namespace DAL {   // Namespace DAL -- begin
     casa::MPosition station_position ();
     
     //! Retrieve a block of ADC values for the dipoles in this station
-    bool fx (casa::Matrix<double> &data,
+    bool readData (casa::Matrix<double> &data,
 	     int const &start,
 	     int const &nofSamples);
     
     //! Retrieve a block of ADC values for the dipoles in this station
-    bool fx (casa::Matrix<double> &data,
+    bool readData (casa::Matrix<double> &data,
 	     casa::Vector<int> const &start,
 	     int const &nofSamples);
     

@@ -656,7 +656,7 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                                           fx
+  //                                                                           readData
 
   /*!
     Basically we need to be able to deal with three different cases:
@@ -677,7 +677,7 @@ namespace DAL {  // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
-  bool TBB_DipoleDataset::fx (int const &start,
+  bool TBB_DipoleDataset::readData (int const &start,
                               int const &nofSamples,
                               short *data)
   {
@@ -727,7 +727,7 @@ namespace DAL {  // Namespace DAL -- begin
       hid_t dataspaceID = H5Dget_space(location_p);
       
       if (dataspaceID < 0) {
-	cerr << "[TBB_DipoleDataset::fx]"
+	cerr << "[TBB_DipoleDataset::readData]"
 	     << " Error retrieving filespace of dataset!" << endl;
 	return false;
       }
@@ -737,7 +737,7 @@ namespace DAL {  // Namespace DAL -- begin
       rank = H5Sget_simple_extent_ndims(dataspaceID);
       
       if (rank < 0) {
-	cerr << "[TBB_DipoleDataset::fx]"
+	cerr << "[TBB_DipoleDataset::readData]"
 	     << " Error retrieving rank of dataspace!" << endl;
 	return false;
       }
@@ -749,7 +749,7 @@ namespace DAL {  // Namespace DAL -- begin
 					   shape,
 					   NULL);
       if (h5error < 0) {
-	cerr << "[TBB_DipoleDataset::fx]"
+	cerr << "[TBB_DipoleDataset::readData]"
 	     << " Error retrieving dataspace dimension!" << endl;
 	return false;
       }
@@ -765,7 +765,7 @@ namespace DAL {  // Namespace DAL -- begin
       hsize_t offset[1];
       
       if (dataspaceID < 0) {
-	cerr << "[TBB_DipoleDataset::fx]"
+	cerr << "[TBB_DipoleDataset::readData]"
 	     << " Error creating memory space for reading in data!"
 	     << endl;
 	return false;
@@ -783,7 +783,7 @@ namespace DAL {  // Namespace DAL -- begin
 				     NULL);
       
       if (h5error < 0) {
-	cerr << "[TBB_DipoleDataset::fx]"
+	cerr << "[TBB_DipoleDataset::readData]"
 	     << " Error selecting hyperslab through the data!"
 	     << endl;
 	return false;
@@ -798,7 +798,7 @@ namespace DAL {  // Namespace DAL -- begin
 			 data);
       // ... and indicate if there was an error during that procedure
       if (h5error < 0) {
-	cerr << "[TBB_DipoleDataset::fx]"
+	cerr << "[TBB_DipoleDataset::readData]"
 	     << " Error reading data from file into buffer!"
 	     << endl;
 	status = false;
@@ -808,7 +808,7 @@ namespace DAL {  // Namespace DAL -- begin
       h5error = H5Sclose (memspaceID);
     }
     else {
-      cerr << "[TBB_DipoleDataset::fx]"
+      cerr << "[TBB_DipoleDataset::readData]"
 	   << " Unable to read with connection to dataset object!"
 	   << endl;
       status = false;
@@ -1025,17 +1025,17 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                                           fx
+  //                                                                           readData
   
   /*!
     \param start      -- Number of the sample at which to start reading
     \param nofSamples -- Number of samples to read, starting from the position
            given by <tt>start</tt>.
 
-    \return fx -- [nofSamples] Vector of raw ADC samples representing the
+    \return readData -- [nofSamples] Vector of raw ADC samples representing the
             electric field strength as function of time.
   */
-  casa::Vector<double> TBB_DipoleDataset::fx (int const &start,
+  casa::Vector<double> TBB_DipoleDataset::readData (int const &start,
 					      int const &nofSamples)
   {
     if (location_p > 0) {
@@ -1045,7 +1045,7 @@ namespace DAL {  // Namespace DAL -- begin
       //______________________________________________________________
       // Retrieve the data from the file
       
-      status = fx (start,
+      status = readData (start,
 		   nofSamples,
 		   buffer);
       

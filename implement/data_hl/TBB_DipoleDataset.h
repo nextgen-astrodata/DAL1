@@ -194,12 +194,12 @@ namespace DAL {  // Namespace DAL -- begin
 				unsigned int const &rcu);
     
     //! Get a number of data values as recorded for this dipole
-    bool fx (int const &start,
+    bool readData (int const &start,
 	     int const &nofSamples,
 	     short *data);
     
     //! Get a number of data values as recorded for this dipole
-/*     bool fx (int const &start, */
+/*     bool readData (int const &start, */
 /* 	     int const &nofSamples, */
 /* 	     std::vector<short> &data); */
     
@@ -220,7 +220,7 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get a casa::Record containing the values of the attributes
     bool attributes2record (casa::Record &rec);
     //! Get a number of data values as recorded for this dipole
-    casa::Vector<double> fx (int const &start=0,
+    casa::Vector<double> readData (int const &start=0,
 			     int const &nofSamples=1);
 
 #endif

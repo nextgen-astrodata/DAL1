@@ -212,7 +212,7 @@ namespace DAL {  // Namespace DAL -- begin
     std::set<std::string> selectedDipoles ();
     
     //! Set the set of selected dipoles
-    bool setSelectedDipoles (std::set<std::string> const &selection);
+    bool selectDipoles (std::set<std::string> const &selection);
 
     //! Select all dipoles within the dataset
     bool selectAllDipoles ();
@@ -314,11 +314,11 @@ namespace DAL {  // Namespace DAL -- begin
 
 #ifdef HAVE_CASA
     //! Retrieve a block of ADC values per dipole
-    void fx (casa::Matrix<double> &data,
+    void readData (casa::Matrix<double> &data,
 	     int const &start=0,
 	     int const &nofSamples=1);
     //! Retrieve a block of ADC values per dipole
-    void fx (casa::Matrix<double> &data,
+    void readData (casa::Matrix<double> &data,
 	     casa::Vector<int> const &start,
 	     int const &nofSamples=1);
 

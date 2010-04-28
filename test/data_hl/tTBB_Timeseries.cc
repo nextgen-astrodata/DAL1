@@ -282,7 +282,7 @@ int test_data (std::string const &filename)
   try {
     casa::Matrix<double> data;
     
-    ts.fx (data, start, nofSamples);
+    ts.readData (data, start, nofSamples);
 
     cout << "-- Data start     = " << start        << endl;
     cout << "-- Data blocksize = " << nofSamples   << endl;
@@ -308,9 +308,9 @@ int test_data (std::string const &filename)
       cout << "-- removing dipole " << *it << " from the selection ..." << endl;
       dipoles.erase(it);
       // set the new selection ...
-      ts.setSelectedDipoles(dipoles);
+      ts.selectDipoles(dipoles);
       // ... and retrieve the data
-      ts.fx (data, start, nofSamples);
+      ts.readData (data, start, nofSamples);
       //
       cout << " --> Dipoles     = " << ts.selectedDipoles() << endl;
       cout << " --> shape(data) = " << data.shape()         << endl;
@@ -327,7 +327,7 @@ int test_data (std::string const &filename)
     casa::Matrix<double> data;
     // Reset the dipole selection and retrive the data
     ts.selectAllDipoles();
-    ts.fx (data, start, nofSamples);
+    ts.readData (data, start, nofSamples);
     //
     cout << " --> Dipoles     = " << ts.selectedDipoles() << endl;
     cout << " --> shape(data) = " << data.shape()         << endl;
@@ -367,8 +367,6 @@ int main (int argc,
   // Run the tests
 
   nofFailedTests += test_construction ();
-
-  return 0;
 
   if (haveDataset) {
     // Test constructors for TBB_Timeseries object
