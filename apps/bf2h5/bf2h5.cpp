@@ -30,10 +30,12 @@ using std::cerr;
 using std::endl;
 using std::bad_alloc;
 
-
-BF2H5::BF2H5(const std::string &outfile, uint downsample_factor, bool do_intensity)
+BF2H5::BF2H5(const std::string &outfile, const std::string &parset_filename, uint downsample_factor, bool do_intensity)
   :	socketmode(false), itsDownsampleFactor(downsample_factor), itsDoIntensity(do_intensity), outputFile(outfile), itsCalculator(0), itsWriter(0), itsReader(0), oneBlockdataSize(0), itsReadBuffer(0), itsCurrentNrOfReadBuffers(INITIAL_NR_OF_READ_BUFFERS)
 {
+  // create parset
+  itsPS = new LOFAR::RTCP::Parset(parset_filename.c_str());
+  
   if (downsample_factor > 1) {
     itsDoDownSample = true;
     itsDoIntensity = true;
@@ -51,6 +53,7 @@ BF2H5::~BF2H5()
   for (sampleBuffers::iterator it = itsSampleBuffers.begin(); it != itsSampleBuffers.end(); ++it) {
     delete [] *it;
   }
+  delete itsPS;
 }
 
 void BF2H5::setSocketMode(uint port) {
@@ -157,12 +160,18 @@ void BF2H5::start(void) {
   }
   if (result)	{
     if (itsReader->readMainHeader(getMainHeaderForWrite())) {
+      
+      std::cout << "BFMainHeader.nrSamplesPerSubband=" << BFMainHeader.nrSamplesPerSubband << std::endl
+          << "BFMainHeader.nrSubbands=" << BFMainHeader.nrSubbands << std::endl;
+      std::cout << "parset:nrSubbandSamples=" << itsPS->nrSubbandSamples() << std::endl
+          << "parset.nrSubbands=" << itsPS->nrSubbands() << std::endl;
+      
       oneBlockdataSize = BFMainHeader.nrSamplesPerSubband * BFMainHeader.nrSubbands;
       size_t downSampledDataSize = BFMainHeader.nrSamplesPerSubband / itsDownsampleFactor;
       if (allocateSampleBuffers()) {
 		//start the calculator
         itsCalculator = new Bf2h5Calculator(this, BFMainHeader.nrSubbands, getNrSamplesPerSubband());
-        itsWriter = new HDF5Writer(this, outputFile, downSampledDataSize, BFMainHeader.nrSubbands);
+        itsWriter = new HDF5Writer(this, outputFile, itsPS, downSampledDataSize, BFMainHeader.nrSubbands);
         if (itsReader->readFirstDataBlock(firstBlockHeader, itsSampleBuffers[itsReadBuffer], oneBlockdataSize * sizeof(BFRawFormat::Sample))) {
           getTimeFromBlockHeader();
           if (itsWriter->start()) { // starts the writer, it will wait for data

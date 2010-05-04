@@ -23,7 +23,7 @@
 
 #define DEBUGGING_MESSAGES
 
-const static char *version = "4.0";
+extern const char *WRITER_SOFTWARE_VERSION = "4.0-offline";
 
 #include <iostream> // for cout
 #include <iomanip>  // for cout field width
@@ -67,20 +67,20 @@ void print_examples (std::ostream &os)
 
 int main (int argc, char *argv[])
 {
-  std::string infile;
-  std::string outfile;
-  std::string parsetfile;
-  std::string ip;
-  uint port;
-  //	bool useParset			  = false;
-  bool socketmode       = false;
-  bool non_interactive  = false;
-  bool doIntensity      = false;
-  bool doDownsample     = false;
-  //	bool doChannelization = false;
-  uint dsFactor            = 1;
-  
-  
+	std::string infile;
+	std::string outfile;
+	std::string parsetFilename;
+	std::string ip;
+	uint port;
+	bool useParset			  = false;
+	bool socketmode       = false;
+	bool non_interactive  = false;
+	bool doIntensity      = false;
+	bool doDownsample     = false;
+//	bool doChannelization = false;
+	uint dsFactor            = 1;
+
+
   // -----------------------------------------------------------------
   // Processing of command line options
 
@@ -104,7 +104,7 @@ int main (int argc, char *argv[])
 	bpo::store (bpo::parse_command_line(argc,argv,desc), vm);
 
 	if (vm.count("version")) {
-		std::cout << "bf2h5 version: " << version << std::endl;
+		std::cout << "bf2h5 version: " << WRITER_SOFTWARE_VERSION << std::endl;
 		return 0;
 	}
 	
@@ -113,13 +113,13 @@ int main (int argc, char *argv[])
 		std::cout << "\n" << desc << endl;
 		return 0;
 	}
-	/*
+	
 	if (vm.count("parsetfile"))
 	{
-	parsetfile = vm["parsetfile"].as<std::string>();
-	useParset = true;
-}
-	*/
+	  parsetFilename = vm["parsetfile"].as<std::string>();
+	  useParset = true;
+  }
+
 	if (vm.count("infile"))
 	{
 		infile = vm["infile"].as<std::string>();
@@ -199,10 +199,10 @@ int main (int argc, char *argv[])
 	// Summary of the parameters provided from the command line
 	
 	std::cout << "[bf2h5] Summary of input parameters." << endl;
-	/*
+	
 	  if (useParset) {
-	std::cout << "-- Using parset file ..... : " << parsetfile << endl;
-} */
+	  std::cout << "-- Using parset file ..... : " << parsetFilename << endl;
+  }
 	if (socketmode)
 	{
 		std::cout << "   Socket mode:" << endl;
@@ -253,9 +253,7 @@ int main (int argc, char *argv[])
 			}
 		}
 	}
-	
-	/* Create object to work with; this contains all required methods */
-	BF2H5 bf2h5(outfile, dsFactor, doIntensity);
+	BF2H5 bf2h5(outfile, parsetFilename, dsFactor, doIntensity);
 	
 	if (socketmode)
 	  {

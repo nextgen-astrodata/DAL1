@@ -30,6 +30,7 @@
 #include "Bf2h5Calculator.h"
 #include "StationBeamReader.h"
 #include <BFRawFormat.h>
+#include <Interface/Parset.h>
 
 #define DEBUGGING_MESSAGES
 
@@ -47,7 +48,7 @@ typedef std::map<uint8_t, long int> bufferTracker;
 */
 class BF2H5 {
  public:
-  BF2H5(const std::string &outfile, uint downsample_factor, bool do_intensity);
+  BF2H5(const std::string &outfile, const std::string &parset_filename, uint downsample_factor, bool do_intensity);
   ~BF2H5();
   
   void setSocketMode(uint port);
@@ -107,7 +108,7 @@ class BF2H5 {
 		
 		//TODO: instead of reading a main header from file or socket a lot of information needs to come from a parset file
 		// LCSCommon needs to be integrated to use the parset reader
-		
+   const LOFAR::RTCP::Parset *itsPS;
 };
 
 #endif // _BF2H5_

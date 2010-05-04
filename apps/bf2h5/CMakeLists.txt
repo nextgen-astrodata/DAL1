@@ -4,7 +4,7 @@
 
 find_package(LOFAR)
 
-if (HAVE_LOFAR)
+if (LOFAR_FOUND)
  include_directories (${LOFAR_INCLUDES})
  add_definitions (-DHAVE_LOFAR)
 endif (HAVE_LOFAR)
