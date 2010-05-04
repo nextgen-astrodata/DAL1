@@ -11,7 +11,9 @@ message(STATUS "CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
 ##
 ## ==============================================================================
 
-add_subdirectory (bf2h5)
+if (LOFAR_FOUND)
+  add_subdirectory (bf2h5)
+endif (LOFAR_FOUND)
 
 ##____________________________________________________________________
 ## Applications with no further external dependencies

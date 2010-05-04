@@ -172,6 +172,13 @@ if (NOT HAVE_LAPACK)
 endif (NOT HAVE_LAPACK)
 
 ##__________________________________________________________
+## LOFAR system software
+
+if (NOT HAVE_LOFAR)
+  find_package(LOFAR)
+endif (NOT HAVE_LOFAR)
+
+##__________________________________________________________
 ## mpatrol
 
 if (NOT HAVE_MPATROL)
@@ -323,6 +330,11 @@ if (HAVE_HDF5)
 else (HAVE_HDF5)
   message (STATUS "[DAL] HDF5 installation incomplete!")
 endif (HAVE_HDF5)
+
+if (LOFAR_FOUND)
+  include_directories (${LOFAR_INCLUDES})
+  add_definitions (-DHAVE_LOFAR)
+endif (LOFAR_FOUND)
 
 if (HAVE_MYSQL)
   include_directories (${MYSQL_INCLUDES})
@@ -500,8 +512,8 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH YES)
 ##
 ## =============================================================================
 
-find_program (tar_executable tar ${bin_locations})
-find_program (gzip_executable gzip ${bin_locations})
+find_program (tar_executable tar   ${bin_locations} )
+find_program (gzip_executable gzip ${bin_locations} )
 
 if (tar_executable AND gzip_executable)
 

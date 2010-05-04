@@ -1,15 +1,5 @@
 
 ##__________________________________________________________
-## Find LOFAR components
-
-find_package(LOFAR)
-
-if (LOFAR_FOUND)
- include_directories (${LOFAR_INCLUDES})
- add_definitions (-DHAVE_LOFAR)
-endif (HAVE_LOFAR)
-
-##__________________________________________________________
 ## Build executable
 
 set (bf2h5_sources
