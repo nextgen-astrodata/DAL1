@@ -32,6 +32,7 @@ endforeach (src)
 ##_______________________________________________________________________________
 ##                                                           Testing instructions
 
+add_test (tRaDec tRaDec)
 add_test (tDirectionCoordinate tDirectionCoordinate)
 add_test (tLinearCoordinate tLinearCoordinate)
 add_test (tStokesCoordinate tStokesCoordinate)
