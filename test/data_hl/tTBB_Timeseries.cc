@@ -236,7 +236,7 @@ int test_methods (std::string const &filename)
   TBB_Timeseries ts (filename);
 
   cout << "[1] Access to embedded StationGroup objects ..." << endl;
-  {
+  try {
     uint nofStations              = ts.nofStationGroups();
     std::set<std::string> names   = ts.stationGroupNames();
     DAL::TBB_StationGroup station = ts.stationGroup(10);
@@ -253,6 +253,21 @@ int test_methods (std::string const &filename)
     cout << "-- Station group name  = " << groupName   << endl;
     cout << "-- GROUPTYPE           = " << groupType   << endl;
     cout << "-- NOF_DIPOLES         = " << nofDipoles  << endl;
+  }
+  catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[2] Access to embedded dipole datasets ..." << endl;
+  try {
+    std::vector<std::string> dipoleNames = ts.dipoleNames();
+
+    cout << "-- Dipole names = " << dipoleNames << endl;
+  }
+  catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
   }
   
   return nofFailedTests;

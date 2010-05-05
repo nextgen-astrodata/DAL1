@@ -22,7 +22,6 @@
  ***************************************************************************/
 
 #include <iostream>
-//#include <sstream> // only for whatAreYouDoing
 #include "Bf2h5Calculator.h"
 #include "bf2h5.h"
 
@@ -33,243 +32,256 @@ using std::real;
 using std::imag;
 using std::bad_alloc;
 
-// ==============================================================================
-//
-//  Construction
-//
-// ==============================================================================
-
-Bf2h5Calculator::Bf2h5Calculator (BF2H5 *its_parent,
-				  uint8_t nr_subbands,
-				  uint32_t nr_samples_subband)
-  : level(0), itsParent(its_parent), nrOfSubbands(nr_subbands), 
-    nrSamplesPerSubband(nr_samples_subband), checking_completeness(false), itsStopProcessing(false), currentBlockNr(0)
-{
-  pthread_mutex_init(&calculationMapMutex, 0);
-  pthread_cond_init(&condition, 0);
+namespace DAL { // Namespace DAL -- begin
   
-  itsDownSampleFactor = itsParent->getDownSampleFactor();
-  itsSingleSubbandNrOutputSamples = nr_samples_subband / itsDownSampleFactor;
+  // ==============================================================================
+  //
+  //  Construction
+  //
+  // ==============================================================================
   
-  for (unsigned short i = 0; i < NUM_CALCULATION_THREADS; ++i) {
-    thread_data_array[i].busy = false;
-    //		thread_data_array[i].threadID = 0;
-    thread_data_array[i].blockNr = 0;
-    thread_data_array[i].subbandNr = 0;
-    thread_data_array[i].input_data = 0;
-    thread_data_array[i].subband_output_data = 0;
-    thread_data_array[i].This = this;
-  }
-  
-  subbandReady = new bool [nrOfSubbands];
-  for (uint8_t i=0; i < nrOfSubbands; ++i) {
-    subbandReady[i] = false;
-  }
-  
-  allocateMemory();
-}
-
-// ==============================================================================
-//
-//  Destruction
-//
-// ==============================================================================
-
-Bf2h5Calculator::~Bf2h5Calculator() {
-  pthread_mutex_destroy(&calculationMapMutex);
-  pthread_cond_destroy(&condition);
-  //	cout << "destructor Bf2h5Calculator executing" << endl;
-  delete [] subbandReady;
-  //	cout << "deleted subbandReady array" << endl;
-  for (uint8_t i=0; i < nrOfSubbands; ++i) {
-    delete [] dataBlockOutput[i];
-    //			cout << "deleted dataBlockOutput[" << static_cast<int>(i) << "]" << endl;
-  }
-  delete [] dataBlockOutput;
-  //	cout << "deleted dataBlockOutput array" << endl;
-}
-
-// ==============================================================================
-//
-//  Methods
-//
-// ==============================================================================
-
-void Bf2h5Calculator::allocateMemory(void) {
-  // allocate memory for output data buffers
-  try {
-#ifdef DEBUGGING_MESSAGES
-    std::cout << "Allocating " << nrOfSubbands * itsSingleSubbandNrOutputSamples * sizeof(float) << " bytes for downsampled data..." << std::endl;
-#endif
-    
-    dataBlockOutput = new float * [nrOfSubbands];
-    for (uint8_t i = 0; i < nrOfSubbands; ++i) {
-      dataBlockOutput[i] = new float [itsSingleSubbandNrOutputSamples];
-      memset(dataBlockOutput[i], 0, itsSingleSubbandNrOutputSamples * sizeof(float));
-    }
-  }
-  catch (bad_alloc)
-    {
-      cerr << "Bf2h5Calculator: Could not allocate memory." << endl;
-      return;
-    }
-  return;
-}
-
-/*
-  void Bf2h5Calculator::wakeUpCall(void) {
-  pthread_mutex_lock (&calculationMapMutex);
-  pthread_cond_broadcast(&condition);
-  pthread_mutex_unlock(&calculationMapMutex);
-  }
-*/
-
-//_______________________________________________________________________________
-//                                                             calculateDataBlock
-
-// CalculateDataBlock adds a datablock for writing
-void Bf2h5Calculator::calculateDataBlock (long int blockNr,
-					  BFRawFormat::Sample *sampleData)
-{
-  std::pair<unsigned int, BFRawFormat::Sample *> dataPair;
-  pthread_mutex_lock (&calculationMapMutex);
-  for (uint8_t subband = 0; subband < nrOfSubbands; ++subband) {
-    dataPair.first = subband;
-    dataPair.second = &(sampleData[ subband * nrSamplesPerSubband]);
-    //	itsData.insert(std::pair<unsigned int, std::pair<unsigned int, BFRawFormat::Sample *> >(blockNr, dataPair));
-    itsData[blockNr].push_back(dataPair);
-  }
-  level += nrOfSubbands;
-  pthread_cond_broadcast(&condition);
-  pthread_mutex_unlock(&calculationMapMutex);
-  return;
-}
-
-/*
-  bool Bf2h5Calculator::unscheduledDataLeft(void) {
-  pthread_mutex_lock (&calculationMapMutex);
-  for (calculationMap::const_iterator it = itsData.begin(); it != itsData.end(); ++it) {
-  if (!(it->second.empty())) {
-  pthread_mutex_unlock(&calculationMapMutex);
-  return true;
-  }
-  }
-  pthread_mutex_unlock(&calculationMapMutex);
-	return false;
-}
-
-
-bool Bf2h5Calculator::stillProcessing(void) {
-	if (unscheduledDataLeft()) {
-		return true;
-	}
-	// now also check if all threads are finished processing
-	for (unsigned short i = 0; i < NUM_CALCULATION_THREADS; ++i) { 
-		if (thread_data_array[i].busy == true) {
-			return true;
-		}
-	}
-	return false;
-}
-*/
-
-//_______________________________________________________________________________
-//                                                                stillProcessing
-
-bool Bf2h5Calculator::stillProcessing(void)
-{
-  /* This should actually be done while mutex is locked, but because the answer
-     may lag a bit with reality it's no problem, and speeds up the processing at
-     the end (when the reader is already done, see bf2h5.cpp) 
+  /*!
+    \param its_parent         -- Pointer to the parent object from which the 
+    calculator is called.
+    \param nofSubbands        -- The number of subbands.
+    \param nr_samples_subband -- 
   */
-  return ((level > 0));
-}
-
-//_______________________________________________________________________________
-//                                                                           stop
-
-/*!
-  \return status -- Status of the operation; returns \e false in case an error
-          was encountered while trying to stop the processing.
-*/
-bool Bf2h5Calculator::stop (void)
-{
-  bool bResult (true);
-  int status;
-  void *thread_result;
-#ifdef DEBUGGING_MESSAGES
-  cout << "Stopping the calculator" << endl;
-#endif 
-  pthread_mutex_lock (&calculationMapMutex);
-  itsStopProcessing = true;
-  level = 10;
-  pthread_cond_broadcast(&condition);
-  pthread_mutex_unlock (&calculationMapMutex);
-  //	cout << "trying to join calculator threads" << endl;
-  for (unsigned short threadIdx = 0; threadIdx < NUM_CALCULATION_THREADS; ++threadIdx) {
-    status = pthread_join (itsCalculationThread[threadIdx], &thread_result);
-    if (status != 0) {
-      std::cerr << "[Bf2h5Calculator::stop]" << " Calculator thread "
-		<< threadIdx << " returned " << status
-		<< std::endl;
-      bResult = false;
+  Bf2h5Calculator::Bf2h5Calculator (BF2H5 *its_parent,
+				    uint8_t nofSubbands,
+				    uint32_t nr_samples_subband)
+    : level(0),
+      itsParent(its_parent),
+      nrOfSubbands(nofSubbands), 
+      nrSamplesPerSubband(nr_samples_subband),
+      checking_completeness(false),
+      itsStopProcessing(false),
+      currentBlockNr(0)
+  {
+    pthread_mutex_init(&calculationMapMutex, 0);
+    pthread_cond_init(&condition, 0);
+    
+    itsDownSampleFactor = itsParent->getDownSampleFactor();
+    itsSingleSubbandNrOutputSamples = nr_samples_subband / itsDownSampleFactor;
+    
+    for (unsigned short i = 0; i < NUM_CALCULATION_THREADS; ++i) {
+      thread_data_array[i].busy                = false;
+      //		thread_data_array[i].threadID = 0;
+      thread_data_array[i].blockNr             = 0;
+      thread_data_array[i].subbandNr           = 0;
+      thread_data_array[i].input_data          = 0;
+      thread_data_array[i].subband_output_data = 0;
+      thread_data_array[i].This                = this;
     }
-    if (thread_result != NULL) {
-      //			cout << "calculator thread " << threadIdx << " non NULL result value" << endl;
-      bResult = false;
+    
+    subbandReady = new bool [nrOfSubbands];
+    for (uint8_t i=0; i < nrOfSubbands; ++i) {
+      subbandReady[i] = false;
     }
+    
+    allocateMemory();
   }
-  return bResult;
-}
-
-//_______________________________________________________________________________
-//                                                                whatAreYouDoing
-
-std::string Bf2h5Calculator::whatAreYouDoing(void)
-{
-  //	pthread_mutex_lock (&calculationMapMutex);
-  for (calculationMap::const_iterator it = itsData.begin(); it != itsData.end(); ++it) {
-    if (!(it->second.empty())) {
-      char buf[10];
-      std::string ss("Calculator says: I am still processing block ");
-      sprintf(buf, "%ld, ", it->first);
-      ss += buf;
-      ss += " and subband(s) ";
-      
-      for (std::deque<std::pair<uint8_t, BFRawFormat::Sample *> >::const_iterator cit = it->second.begin();
-	   cit != it->second.end(); ++cit) {
-	sprintf(buf, "%u, ", cit->first);
-	ss += buf;
-      }
-      pthread_mutex_unlock(&calculationMapMutex);
-      return ss;
-    }
-  }
-  //	pthread_mutex_unlock(&calculationMapMutex);
   
-  for (unsigned short i = 0; i < NUM_CALCULATION_THREADS; ++i) {
-    if (thread_data_array[i].busy == true) {
-      char buf[10];
-      std::string ss("Calculator says: my thread ");
-      sprintf(buf, "%d", i);
-      ss += buf;
-      ss += " is still processing block ";
-      sprintf(buf, "%ld", thread_data_array[i].blockNr);
-      ss += buf;
-      ss += " and subband ";
-      sprintf(buf, "%u", thread_data_array[i].subbandNr);
-      ss += buf;
-      return ss;
+  // ==============================================================================
+  //
+  //  Destruction
+  //
+  // ==============================================================================
+  
+  Bf2h5Calculator::~Bf2h5Calculator() {
+    pthread_mutex_destroy(&calculationMapMutex);
+    pthread_cond_destroy(&condition);
+    //	cout << "destructor Bf2h5Calculator executing" << endl;
+    delete [] subbandReady;
+    //	cout << "deleted subbandReady array" << endl;
+    for (uint8_t i=0; i < nrOfSubbands; ++i) {
+      delete [] dataBlockOutput[i];
+      //			cout << "deleted dataBlockOutput[" << static_cast<int>(i) << "]" << endl;
     }
+    delete [] dataBlockOutput;
+    //	cout << "deleted dataBlockOutput array" << endl;
   }
-  return std::string("Calculator says: I don't know what I am doing, but I'm surely busy with something...");
-}
-
-//_______________________________________________________________________________
-//                                                                startProcessing
-
-void Bf2h5Calculator::startProcessing(void)
-{
+  
+  // ==============================================================================
+  //
+  //  Methods
+  //
+  // ==============================================================================
+  
+  void Bf2h5Calculator::allocateMemory(void) {
+    // allocate memory for output data buffers
+    try {
+#ifdef DEBUGGING_MESSAGES
+      std::cout << "Allocating " << nrOfSubbands * itsSingleSubbandNrOutputSamples * sizeof(float) << " bytes for downsampled data..." << std::endl;
+#endif
+      
+      dataBlockOutput = new float * [nrOfSubbands];
+      for (uint8_t i = 0; i < nrOfSubbands; ++i) {
+	dataBlockOutput[i] = new float [itsSingleSubbandNrOutputSamples];
+	memset(dataBlockOutput[i], 0, itsSingleSubbandNrOutputSamples * sizeof(float));
+      }
+    }
+    catch (bad_alloc)
+      {
+	cerr << "Bf2h5Calculator: Could not allocate memory." << endl;
+	return;
+      }
+    return;
+  }
+  
+  /*
+    void Bf2h5Calculator::wakeUpCall(void) {
+    pthread_mutex_lock (&calculationMapMutex);
+    pthread_cond_broadcast(&condition);
+    pthread_mutex_unlock(&calculationMapMutex);
+    }
+  */
+  
+  //_______________________________________________________________________________
+  //                                                             calculateDataBlock
+  
+  // CalculateDataBlock adds a datablock for writing
+  void Bf2h5Calculator::calculateDataBlock (long int blockNr,
+					    BFRawFormat::Sample *sampleData)
+  {
+    std::pair<unsigned int, BFRawFormat::Sample *> dataPair;
+    pthread_mutex_lock (&calculationMapMutex);
+    for (uint8_t subband = 0; subband < nrOfSubbands; ++subband) {
+      dataPair.first = subband;
+      dataPair.second = &(sampleData[ subband * nrSamplesPerSubband]);
+      //	itsData.insert(std::pair<unsigned int, std::pair<unsigned int, BFRawFormat::Sample *> >(blockNr, dataPair));
+      itsData[blockNr].push_back(dataPair);
+    }
+    level += nrOfSubbands;
+    pthread_cond_broadcast(&condition);
+    pthread_mutex_unlock(&calculationMapMutex);
+    return;
+  }
+  
+  /*
+    bool Bf2h5Calculator::unscheduledDataLeft(void) {
+    pthread_mutex_lock (&calculationMapMutex);
+    for (calculationMap::const_iterator it = itsData.begin(); it != itsData.end(); ++it) {
+    if (!(it->second.empty())) {
+    pthread_mutex_unlock(&calculationMapMutex);
+    return true;
+    }
+    }
+    pthread_mutex_unlock(&calculationMapMutex);
+    return false;
+    }
+    
+    
+    bool Bf2h5Calculator::stillProcessing(void) {
+    if (unscheduledDataLeft()) {
+    return true;
+    }
+    // now also check if all threads are finished processing
+    for (unsigned short i = 0; i < NUM_CALCULATION_THREADS; ++i) { 
+    if (thread_data_array[i].busy == true) {
+    return true;
+    }
+    }
+    return false;
+    }
+  */
+  
+  //_______________________________________________________________________________
+  //                                                                stillProcessing
+  
+  bool Bf2h5Calculator::stillProcessing(void)
+  {
+    /* This should actually be done while mutex is locked, but because the answer
+       may lag a bit with reality it's no problem, and speeds up the processing at
+       the end (when the reader is already done, see bf2h5.cpp) 
+    */
+    return ((level > 0));
+  }
+  
+  //_______________________________________________________________________________
+  //                                                                           stop
+  
+  /*!
+    \return status -- Status of the operation; returns \e false in case an error
+    was encountered while trying to stop the processing.
+  */
+  bool Bf2h5Calculator::stop (void)
+  {
+    bool bResult (true);
+    int status;
+    void *thread_result;
+#ifdef DEBUGGING_MESSAGES
+    cout << "Stopping the calculator" << endl;
+#endif 
+    pthread_mutex_lock (&calculationMapMutex);
+    itsStopProcessing = true;
+    level = 10;
+    pthread_cond_broadcast(&condition);
+    pthread_mutex_unlock (&calculationMapMutex);
+    //	cout << "trying to join calculator threads" << endl;
+    for (unsigned short threadIdx = 0; threadIdx < NUM_CALCULATION_THREADS; ++threadIdx) {
+      status = pthread_join (itsCalculationThread[threadIdx], &thread_result);
+      if (status != 0) {
+	std::cerr << "[Bf2h5Calculator::stop]" << " Calculator thread "
+		  << threadIdx << " returned " << status
+		  << std::endl;
+	bResult = false;
+      }
+      if (thread_result != NULL) {
+	//			cout << "calculator thread " << threadIdx << " non NULL result value" << endl;
+	bResult = false;
+      }
+    }
+    return bResult;
+  }
+  
+  //_______________________________________________________________________________
+  //                                                                whatAreYouDoing
+  
+  std::string Bf2h5Calculator::whatAreYouDoing(void)
+  {
+    //	pthread_mutex_lock (&calculationMapMutex);
+    for (calculationMap::const_iterator it = itsData.begin(); it != itsData.end(); ++it) {
+      if (!(it->second.empty())) {
+	char buf[10];
+	std::string ss("Calculator says: I am still processing block ");
+	sprintf(buf, "%ld, ", it->first);
+	ss += buf;
+	ss += " and subband(s) ";
+	
+	for (std::deque<std::pair<uint8_t, BFRawFormat::Sample *> >::const_iterator cit = it->second.begin();
+	     cit != it->second.end(); ++cit) {
+	  sprintf(buf, "%u, ", cit->first);
+	  ss += buf;
+	}
+	pthread_mutex_unlock(&calculationMapMutex);
+	return ss;
+      }
+    }
+    //	pthread_mutex_unlock(&calculationMapMutex);
+    
+    for (unsigned short i = 0; i < NUM_CALCULATION_THREADS; ++i) {
+      if (thread_data_array[i].busy == true) {
+	char buf[10];
+	std::string ss("Calculator says: my thread ");
+	sprintf(buf, "%d", i);
+	ss += buf;
+	ss += " is still processing block ";
+	sprintf(buf, "%ld", thread_data_array[i].blockNr);
+	ss += buf;
+	ss += " and subband ";
+	sprintf(buf, "%u", thread_data_array[i].subbandNr);
+	ss += buf;
+	return ss;
+      }
+    }
+    return std::string("Calculator says: I don't know what I am doing, but I'm surely busy with something...");
+  }
+  
+  //_______________________________________________________________________________
+  //                                                                startProcessing
+  
+  void Bf2h5Calculator::startProcessing(void)
+  {
   // start the calculation threads
   for (unsigned short threadIdx = 0; threadIdx < NUM_CALCULATION_THREADS; ++threadIdx) {
     if (pthread_create(&itsCalculationThread[threadIdx], NULL, startInternalThread, (void *) &thread_data_array[threadIdx]) != 0) {
@@ -416,4 +428,5 @@ void Bf2h5Calculator::showStatus(void)
     }
   }
 }
-
+  
+} // Namespace DAL -- end

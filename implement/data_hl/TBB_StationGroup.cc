@@ -590,11 +590,13 @@ namespace DAL {  // Namespace DAL -- begin
   
   std::vector<std::string> TBB_StationGroup::dipoleNames ()
   {
-    std::vector<std::string> names;
+    std::vector<std::string> names (datasets_p.size());
     std::map<std::string,TBB_DipoleDataset>::iterator it;
+    unsigned int n (0);
 
     for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-      names.push_back(it->second.getName());
+      names[n] = it->second.getName();
+      ++n;
     }
 
     return names;

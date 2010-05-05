@@ -21,11 +21,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <HDF5Dataset.h>
 #include <HDF5Hyperslab.h>
 
 // Namespace usage
 using std::cout;
 using std::endl;
+using DAL::HDF5Dataset;
 using DAL::HDF5Hyperslab;
 
 /*!
@@ -216,14 +218,34 @@ int test_setHyperslab ()
   //________________________________________________________
   // Open the file to work with
   
-  hid_t fileID = H5Fopen (filename.c_str(),
-			  H5F_ACC_RDWR,
-			  H5P_DEFAULT);
-
-  if (!H5Iis_valid(fileID)) {
+  hid_t fileID = H5Fcreate (filename.c_str(),
+			    H5F_ACC_TRUNC,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT);
+  
+  if (H5Iis_valid(fileID)) {
+    std::cout << "-- Create file " << filename << std::endl;
+  } else {
     std::cerr << "Failed to open file " << filename << endl;
     return 0;
   }
+  
+  //________________________________________________________
+  // Create datasets
+  
+  std::cout << "-- Creating datasets ..." << std::endl;
+
+  unsigned int nofAxes (3);
+  std::vector<hsize_t> shape (nofAxes);
+
+  shape[0] = 200;
+  shape[1] = 200;
+  shape[2] = 512;
+
+  HDF5Dataset data1 (fileID,"Dataset1",shape);
+  HDF5Dataset data2 (fileID,"Dataset2",shape);
+  HDF5Dataset data3 (fileID,"Dataset3",shape);
+  HDF5Dataset data4 (fileID,"Dataset4",shape);
 
   //________________________________________________________
   // Close the file

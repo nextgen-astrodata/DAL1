@@ -112,12 +112,18 @@ namespace DAL { // Namespace DAL -- begin
     */
     void summary (std::ostream &os);    
 
-    // ------------------------------------------------------------------ Methods
+    // === Methods ==============================================================
 
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
+
+    //! Get the name of the group
+    static std::string getName () {
+      return "SysLog";
+    }
+
   protected:
     
     //! Open the structures embedded within the current one

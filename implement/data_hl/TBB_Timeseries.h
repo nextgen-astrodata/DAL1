@@ -155,8 +155,8 @@ namespace DAL {  // Namespace DAL -- begin
     std::string filename_p;
     //! Station groups attached to the root group of the file
     std::map<std::string,TBB_StationGroup> stationGroups_p;
-    //! Container for system-wide logs
-    SysLog sysLog_p;
+    //! Container for system-wide logs attached to the root group of the file
+    std::map<std::string,SysLog> sysLog_p;
     
   public:
     
@@ -223,9 +223,7 @@ namespace DAL {  // Namespace DAL -- begin
     CommonAttributes commonAttributes ();
 
     //! Get the container for system-wide logs
-    inline SysLog sysLog () const {
-      return sysLog_p;
-    }
+    SysLog sysLog ();
     
     /*!
       \brief Get the number of station groups collected into this file
@@ -295,6 +293,8 @@ namespace DAL {  // Namespace DAL -- begin
     
     //  High-level access to data and attributes ___________
     
+    //! Retrieve the list of channels names contained within this data file
+    std::vector<std::string> dipoleNames ();
     //! Get the values of TIME for all present datasets
     std::vector<uint> time ();
     //! Get the number of samples elapsed since the last full second

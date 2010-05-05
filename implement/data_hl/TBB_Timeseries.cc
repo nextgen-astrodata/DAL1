@@ -154,6 +154,25 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
+  //                                                                       sysLog
+
+  /*!
+    \return sysLog -- Container for system-wide logs.
+   */
+  SysLog TBB_Timeseries::sysLog ()
+  {
+    std::map<std::string,SysLog>::iterator it;
+
+    if (sysLog_p.empty()) {
+      std::cerr << "[TBB_Timeseries::sysLog] No system log group." << std::endl;
+      return SysLog ();
+    } else {
+      sysLog_p.begin();
+      return (*it).second;
+    }
+  }
+
+  //_____________________________________________________________________________
   //                                                                      summary
 
   /*!
@@ -291,19 +310,20 @@ namespace DAL {  // Namespace DAL -- begin
   bool TBB_Timeseries::openSysLog (bool const &create)
   {
     bool status (true);
+    std::string groupName = SysLog::getName();
 
-    if (H5Lexists (location_p, "SysLog", H5P_DEFAULT)) {
-      sysLog_p = SysLog (location_p,false);
+    if (H5Lexists (location_p, groupName.c_str(), H5P_DEFAULT)) {
+      sysLog_p[groupName] = SysLog (location_p,false);
     }
     else {
       if (create) {
-	sysLog_p = SysLog (location_p,true);
+	sysLog_p[groupName] = SysLog (location_p,false);
       }
     }
-
+    
     return status;
   }
-
+  
   //_____________________________________________________________________________
   //                                                            openStationGroups
   
@@ -412,7 +432,6 @@ namespace DAL {  // Namespace DAL -- begin
 		<< std::endl;
       return TBB_StationGroup();
     }
-
   }
 
   //_____________________________________________________________________________
@@ -430,6 +449,26 @@ namespace DAL {  // Namespace DAL -- begin
      return nofDatasets;
   }
 
+  //_____________________________________________________________________________
+  //                                                                  dipoleNames
+
+  std::vector<std::string> TBB_Timeseries::dipoleNames ()
+  {
+    std::vector<std::string> names;
+    std::vector<std::string> tmp;
+    std::map<std::string,TBB_StationGroup>::iterator it;
+
+    for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
+      tmp.clear();
+      tmp = it->second.dipoleNames();
+      for (unsigned int n(0); n<tmp.size(); ++n) {
+	names.push_back(tmp[n]);
+      }
+    }
+
+    return names;
+  }
+  
   //_____________________________________________________________________________
   //                                                              selectedDipoles
 
@@ -772,7 +811,7 @@ namespace DAL {  // Namespace DAL -- begin
     
     return channelIDvalues;
   }
-  
+
   //_____________________________________________________________________________
   //                                                                         time
 

@@ -128,11 +128,12 @@ namespace DAL {
 
   void HDF5Dataset::init ()
   {
-    name_p          = "Dataset";
-    location_p      = 0;
-    dataspace_p     = 0;
-    datatype_p      = 0;
-    layout_p        = H5D_COMPACT;
+    name_p         = "Dataset";
+    location_p     = 0;
+    dataspace_p    = 0;
+    datatype_p     = 0;
+    layout_p       = H5D_COMPACT;
+    maxChunksize_p = 4294967296.;
     shape_p.clear();
     chunksize_p.clear();
     hyperslab_p.clear();

@@ -1,25 +1,25 @@
-/*------------------------------------------------------------------------*
-| $Id::                                                                 $ |
-*-------------------------------------------------------------------------*
-***************************************************************************
-*   Copyright (C) 2009 by ASTRON                                          *
-*    Author: Alwin de Jong ( jong@astron.nl )                             *
-*                                                                         *
-*   This program is free software; you can redistribute it and/or modify  *
-*   it under the terms of the GNU General Public License as published by  *
-*   the Free Software Foundation; either version 2 of the License, or     *
-*   (at your option) any later version.                                   *
-*                                                                         *
-*   This program is distributed in the hope that it will be useful,       *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
-*   GNU General Public License for more details.                          *
-*                                                                         *
-*   You should have received a copy of the GNU General Public License     *
-*   along with this program; if not, write to the                         *
-*   Free Software Foundation, Inc.,                                       *
-*   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
-***************************************************************************/
+/*-------------------------------------------------------------------------*
+ | $Id:: TBB_Timeseries.h 4783 2010-04-28 09:49:12Z baehren              $ |
+ *-------------------------------------------------------------------------*
+ ***************************************************************************
+ *   Copyright (C) 2009                                                    *
+ *   Alwin de Jong <jong@astron.nl>                                        *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 
 #include "bf2h5.h"
 #include <iostream>
@@ -30,11 +30,37 @@ using std::cerr;
 using std::endl;
 using std::bad_alloc;
 
-BF2H5::BF2H5(const std::string &outfile, const std::string &parset_filename, uint downsample_factor, bool do_intensity)
-  :	socketmode(false), itsDownsampleFactor(downsample_factor), itsDoIntensity(do_intensity), outputFile(outfile), itsCalculator(0), itsWriter(0), itsReader(0), oneBlockdataSize(0), itsReadBuffer(0), itsCurrentNrOfReadBuffers(INITIAL_NR_OF_READ_BUFFERS)
+// ==============================================================================
+//
+//  Construction
+//
+// ==============================================================================
+
+/*!
+  \param outfile -- Name of the output HDF5 dataset.
+  \param parset_filename -- Name of the parameter set file.
+  \param downsample_factor -- Downsample factor.
+  \param do_intensity -- Compute intensities?
+*/
+BF2H5::BF2H5 (const std::string &outfile,
+	      const std::string &parset_filename,
+	      uint downsample_factor,
+	      bool do_intensity)
+  : socketmode(false),
+    itsDownsampleFactor(downsample_factor),
+    itsDoIntensity(do_intensity),
+    outputFile(outfile),
+    itsCalculator(0),
+    itsWriter(0),
+    itsReader(0),
+    oneBlockdataSize(0),
+    itsReadBuffer(0),
+    itsCurrentNrOfReadBuffers(INITIAL_NR_OF_READ_BUFFERS)
 {
+#ifdef HAVE_LOFAR
   // create parset
-  itsPS = new LOFAR::RTCP::Parset(parset_filename.c_str());
+  itsParset = new LOFAR::RTCP::Parset(parset_filename.c_str());
+#endif
   
   if (downsample_factor > 1) {
     itsDoDownSample = true;
@@ -45,6 +71,12 @@ BF2H5::BF2H5(const std::string &outfile, const std::string &parset_filename, uin
   }
 }
 
+// ==============================================================================
+//
+//  Destruction
+//
+// ==============================================================================
+
 BF2H5::~BF2H5()
 {
   delete itsReader;
@@ -53,21 +85,42 @@ BF2H5::~BF2H5()
   for (sampleBuffers::iterator it = itsSampleBuffers.begin(); it != itsSampleBuffers.end(); ++it) {
     delete [] *it;
   }
-  delete itsPS;
+
+#ifdef HAVE_LOFAR
+  delete itsParset;
+#endif
 }
 
-void BF2H5::setSocketMode(uint port) {
-  tcpPort = port;
+// ==============================================================================
+//
+//  Destruction
+//
+// ==============================================================================
+
+//_______________________________________________________________________________
+//                                                                  setSocketMode
+
+void BF2H5::setSocketMode(uint port)
+{
+  tcpPort    = port;
   socketmode = true;
 }
-  
-void BF2H5::setFileMode(std::string &infile){
-  inputFile = infile;
+
+//_______________________________________________________________________________
+//                                                                    setFileMode
+
+void BF2H5::setFileMode(std::string &infile)
+{
+  inputFile  = infile;
   socketmode = false;
 }
 
-void BF2H5::getTimeFromBlockHeader(void) {
-	// write the utc time to hdf5 file according to header time info
+//_______________________________________________________________________________
+//                                                         getTimeFromBlockHeader
+
+void BF2H5::getTimeFromBlockHeader(void)
+{
+  // write the utc time to hdf5 file according to header time info
   time_t utc;
   utc = (time_t)(firstBlockHeader.time[0]/(int64_t)BFMainHeader.sampleRate);
   uint16_t buf_size(128);
@@ -75,8 +128,8 @@ void BF2H5::getTimeFromBlockHeader(void) {
   memset (time_date,'\0',buf_size);
   strftime(time_date, buf_size, "%H:%M:%S", gmtime(&utc));
   EpochUTC = time_date;
-	
-	//dataset.setAttribute( "EPOCH_UTC", time_date );
+  
+  //dataset.setAttribute( "EPOCH_UTC", time_date );
   
   memset (time_date,'\0',buf_size);
   strftime(time_date, buf_size, "%d/%m/%y", gmtime(&utc));
@@ -86,8 +139,11 @@ void BF2H5::getTimeFromBlockHeader(void) {
   delete [] time_date;
 }
 
+//_______________________________________________________________________________
+//                                                          allocateSampleBuffers
 
-bool BF2H5::allocateSampleBuffers(void) {
+bool BF2H5::allocateSampleBuffers(void)
+{
 #ifdef DEBUGGING_MESSAGES
   cout << "BF2H5::allocateSampleBuffers: allocating " << itsCurrentNrOfReadBuffers * oneBlockdataSize * sizeof(BFRawFormat::Sample) << " bytes for sample input data" << endl;
 #endif
@@ -107,32 +163,42 @@ bool BF2H5::allocateSampleBuffers(void) {
   return true;
 }
 
+//_______________________________________________________________________________
+//                                                                  blockComplete
 
-void BF2H5::blockComplete(long int blockNr) {
+void BF2H5::blockComplete (long int blockNr)
+{
   for (bufferTracker::iterator it = itsBufferTracker.begin(); it != itsBufferTracker.end(); ++it) {
     if (it->second == blockNr) {
       it->second = -1;
       return;
     }
   }
-  cerr << "BF2H5::calculatorDataReady: ERROR, trying to free a read buffer for block " << blockNr << " that doesn't have a read buffer!" << endl;
+  std::cerr << "[BF2H5::blockComplete] ERROR, trying to free a read buffer for block "
+	    << blockNr
+	    << " that doesn't have a read buffer!"
+	    << endl;
 }
 
+//_______________________________________________________________________________
+//                                                               switchReadBuffer
 
-bool BF2H5::switchReadBuffer(long int block_nr) {
+bool BF2H5::switchReadBuffer (long int block_nr)
+{
   for (bufferTracker::iterator it = itsBufferTracker.begin(); it != itsBufferTracker.end(); ++it) {
     if (it->second == -1) { // not in use
-      it->second = block_nr;
+      it->second    = block_nr;
       itsReadBuffer = it->first;
       return true;
     }
   }
-	// we didn't find a free read buffer, allocat a new buffer
+
+  // we didn't find a free read buffer, allocat a new buffer
   try {
 #ifdef DEBUGGING_MESSAGES
     cout << "BF2H5::switchReadBuffer, Calculation not fast enough, adding read buffer no. " << static_cast<int>(itsCurrentNrOfReadBuffers) << " for block " << block_nr << endl;
 #endif
-    BFRawFormat::Sample *pbuf = new BFRawFormat::Sample[ oneBlockdataSize ];
+    BFRawFormat::Sample *pbuf = new BFRawFormat::Sample[oneBlockdataSize];
     itsSampleBuffers.push_back(pbuf);
   }
   catch (bad_alloc) {
@@ -146,35 +212,65 @@ bool BF2H5::switchReadBuffer(long int block_nr) {
   return true;
 }
 
+//_______________________________________________________________________________
+//                                                                          start
 
-void BF2H5::start(void) {
-	// start the reader
-  bool result;
-  unsigned int blockNr(0);
-  itsReader = new StationBeamReader(this, socketmode);
+void BF2H5::start (bool const &verbose)
+{
+  bool result          = true;
+  unsigned int blockNr = 0;
+  itsReader            = new DAL::StationBeamReader(this, socketmode);
+
+  /* Connect to the input source */
   if (socketmode) {
     result = itsReader->setSocketMode(tcpPort);
   }
   else {
     result = itsReader->setFileMode(inputFile);
   }
-  if (result)	{
+
+  if (result) {
     if (itsReader->readMainHeader(getMainHeaderForWrite())) {
       
-      std::cout << "BFMainHeader.nrSamplesPerSubband=" << BFMainHeader.nrSamplesPerSubband << std::endl
-          << "BFMainHeader.nrSubbands=" << BFMainHeader.nrSubbands << std::endl;
-      std::cout << "parset:nrSubbandSamples=" << itsPS->nrSubbandSamples() << std::endl
-          << "parset.nrSubbands=" << itsPS->nrSubbands() << std::endl;
+      if (verbose) {
+	std::cout << "[BF2H5::start]" << std::endl;
+	std::cout << "-- BFMainHeader.nrSamplesPerSubband = "
+		  << BFMainHeader.nrSamplesPerSubband         << std::endl;
+	std::cout << "-- BFMainHeader.nrSubbands          = "
+		  << BFMainHeader.nrSubbands                  << std::endl;
+#ifdef HAVE_LOFAR
+	std::cout << "-- parset:nrSubbandSamples          = "
+		  << itsParset->nrSubbandSamples()            << std::endl;
+	std::cout << "-- parset.nrSubbands                = "
+		  << itsParset->nrSubbands()                  << std::endl;
+#endif
+      }  // END : if (verbose)
       
       oneBlockdataSize = BFMainHeader.nrSamplesPerSubband * BFMainHeader.nrSubbands;
       size_t downSampledDataSize = BFMainHeader.nrSamplesPerSubband / itsDownsampleFactor;
+
       if (allocateSampleBuffers()) {
-		//start the calculator
-        itsCalculator = new Bf2h5Calculator(this, BFMainHeader.nrSubbands, getNrSamplesPerSubband());
-        itsWriter = new HDF5Writer(this, outputFile, itsPS, downSampledDataSize, BFMainHeader.nrSubbands);
+
+	// Start the calculator
+        itsCalculator = new DAL::Bf2h5Calculator (this,
+						  BFMainHeader.nrSubbands,
+						  getNrSamplesPerSubband());
+	// Start the writer
+#ifdef HAVE_LOFAR
+        itsWriter = new HDF5Writer (this,
+				    outputFile,
+				    itsParset,
+				    downSampledDataSize,
+				    BFMainHeader.nrSubbands);
+#else
+	itsWriter = NULL;
+#endif
+
         if (itsReader->readFirstDataBlock(firstBlockHeader, itsSampleBuffers[itsReadBuffer], oneBlockdataSize * sizeof(BFRawFormat::Sample))) {
           getTimeFromBlockHeader();
-          if (itsWriter->start()) { // starts the writer, it will wait for data
+	  
+	  /* Start up the writer to listen for incoming data */
+          if (itsWriter->start()) {
             itsCalculator->startProcessing();
             itsCalculator->calculateDataBlock(blockNr++, itsSampleBuffers[itsReadBuffer]); // calculator will call calculationFinished when done
             switchReadBuffer(blockNr);
@@ -183,41 +279,44 @@ void BF2H5::start(void) {
               itsCalculator->calculateDataBlock(blockNr++, itsSampleBuffers[itsReadBuffer]); // non-blocking calculator will call calculationFinished
               switchReadBuffer(blockNr);
             }
-            cout << "Reader finished, connection closed" << endl;
+            cout << "[BF2H5::start] Reader finished, connection closed" << endl;
             while ((itsCalculator->stillProcessing()) || (itsWriter->dataLeft())) {
-              cout << "still processing last received data..." << endl;
+              cout << "[BF2H5::start] Still processing last received data..." << endl;
               /*
-#ifdef DEBUGGING_MESSAGES
-              if (itsCalculator->stillProcessing()) {
-              cout << "calculator says it's still processing..." << endl;
-              cout << itsCalculator->whatAreYouDoing() << endl;
-            }
-              if (itsWriter->dataLeft()) {
-              cout << "writer says it has still data left to write..." << endl;
+		#ifdef DEBUGGING_MESSAGES
+		if (itsCalculator->stillProcessing()) {
+		cout << "calculator says it's still processing..." << endl;
+		cout << itsCalculator->whatAreYouDoing() << endl;
+		}
+		if (itsWriter->dataLeft()) {
+		cout << "writer says it has still data left to write..." << endl;
             }
 #endif
               */
               sleep(1); // calculator or hdf5 writer still busy
             }
-							// stop all threads
-	//					cout << "calling calculator stop" << endl;
+
             if (!itsCalculator->stop()) {
-              cerr << "calculator didn't stop all its threads correctly!" << endl;
+              cerr << "[BF2H5::start] Calculator didn't stop all its threads correctly!"
+		   << endl;
             }
+
             if (!itsWriter->stop()) {
-              cerr << "writer thread didn't stop correctly!" << endl;
+              cerr << "[BF2H5::start] Writer thread didn't stop correctly!" << endl;
             }
+	    
             cout << "HDF5 file " << inputFile << " has been written." << endl
-                << "all done!" << endl;
-          }
+		 << "all done!" << endl;
+          } // END : if (itsWriter->start())
           else {
-            cerr << "Could not start writer thread!" << endl;
+            cerr << "[BF2H5::start] Could not start writer thread!" << endl;
           }
         }
         else {
-          cerr << "error reading first data block!" << endl;
+          cerr << "[BF2H5::start] Error reading first data block!" << endl;
         }
       }
     }
-  }
+  }  // END : if (result)
+
 }

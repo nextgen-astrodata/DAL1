@@ -248,6 +248,8 @@ namespace DAL {
     
   */
   class HDF5Dataset : public CommonInterface {
+
+    double maxChunksize_p;
     
     //! Name of the dataset
     std::string name_p;
