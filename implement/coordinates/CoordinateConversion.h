@@ -57,10 +57,6 @@ namespace DAL { // Namespace DAL -- begin
     
   */  
   
-  // === Numerical constants ====================================================
-
-  const double PI = 3.141592653589793238462643;
-  
   // === Conversion between angles and degrees ==================================
 
   //! Convert radian to degrees
