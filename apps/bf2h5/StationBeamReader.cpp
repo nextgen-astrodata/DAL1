@@ -25,7 +25,6 @@
 #include <iostream> // for cout,cerr etc.
 #include <fstream> // for file mode
 #include <signal.h> // for time-out on socket
-#include <sstream> // for RArad2deg and DECrad2deg
 #include "bf2h5.h"
 
 using std::cerr;
@@ -432,64 +431,12 @@ namespace DAL { // Namespace DAL -- begin
 	  {
 	    cout << header.beamDirections[ii][jj] << "   ";
 	    if ( 0 == jj )
-	      RArad2deg( header.beamDirections[ii][jj] );
+	      ra_str = RaDec::toDegreesRA ( header.beamDirections[ii][jj] );
 	    else
-	      DECrad2deg( header.beamDirections[ii][jj] );
+	      dec_str = RaDec::toDegreesDec ( header.beamDirections[ii][jj] );
 	  }
 	cout << "[ " << ra_str << ", " << dec_str << "]" << endl;
       }
   }
   
-  //_____________________________________________________________________________
-  //                                                                    RArad2deg
-
-  /*!
-    \brief Convert RA position (in radian) to degrees
-    
-    \param rad -- The RA position in radian
-    
-    \return deg -- The RA position in degrees
-  */
-  const std::string &StationBeamReader::RArad2deg( const float &rad )
-  {
-    ra_str = "";
-    float deg_hour = ( rad * (180./PI) ) / 15.;
-    int   hour     = (int)deg_hour;
-    float deg_min  = (deg_hour - hour) * 60.;
-    int    min     = int( deg_min );
-    float  sec     = (deg_min - min) * 60;
-    
-    //sprintf(ra_string,"%02d:%02d:%02.4f",  , min, sec);
-    std::stringstream rass;
-    rass << hour << ":" << min << ":" << sec;
-    rass >> ra_str;
-    
-    return ra_str;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                   DECrad2deg
-
-  /*!
-    \brief Convert Dec position (in radian) to degrees
-    
-    \param rad -- The Dec position in radian
-    
-    \return deg -- The Dec position in degrees
-  */
-  const std::string &StationBeamReader::DECrad2deg( const float &dec )
-  {
-    float deg_hour = ( dec * (180./PI) );
-    int   hour     = int( deg_hour );
-    float deg_min  = (deg_hour - hour) * 60.;
-    int   min      = int( deg_min );
-    float sec      = (deg_min - min) * 60;
-    
-    stringstream dess;
-    dess << hour << ":" << min << ":" << sec;
-    dess >> dec_str;
-    
-    return dec_str;
-  }
-
 } // END : namespace DAL

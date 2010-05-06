@@ -30,6 +30,7 @@
 #include <sys/socket.h>
 
 #include <BFRawFormat.h>
+#include <RaDec.h>
 
 // Forward declarations
 class fstream;
@@ -104,8 +105,6 @@ namespace DAL { // Namespace DAL -- begin
     //! Swap the byte endians if not in bigendian
     void swapHeaderEndians(BFRawFormat::BFRaw_Header &header);
     void convertEndian(BFRawFormat::BlockHeader *pBlockHeader);
-    const std::string &RArad2deg( const float &rad );
-    const std::string &DECrad2deg( const float &dec );
     //! Close the socket or file and sets the finished_reading flag
     void finishReading(void);
     
@@ -126,11 +125,12 @@ namespace DAL { // Namespace DAL -- begin
     BF2H5 * itsParent;
     bool socketmode;
     bool memAllocOK;
-    std::string ra_str,dec_str;
+    std::string ra_str;
+    std::string dec_str;
     size_t dataBlockSize; // the size of a data block (excluded its header)
     size_t blockHeaderSize;
   };
-
+  
 } // END : namespace DAL
 
 #endif // _StationBeamReader_
