@@ -30,12 +30,6 @@
 #include <config.h>
 #endif
 
-#ifndef DALDATASET_H
-#include <dalDataset.h>
-#endif
-
-#include <BFRawFormat.h>
-
 // socket headers
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,7 +40,9 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-#include <CoordinateConversion.h>
+#include <dalDataset.h>
+#include <BFRawFormat.h>
+#include <Angle.h>
 
 #define _OPENMP
 

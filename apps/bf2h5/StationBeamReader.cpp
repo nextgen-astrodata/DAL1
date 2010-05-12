@@ -431,9 +431,9 @@ namespace DAL { // Namespace DAL -- begin
 	  {
 	    cout << header.beamDirections[ii][jj] << "   ";
 	    if ( 0 == jj )
-	      ra_str = RaDec::toDegreesRA ( header.beamDirections[ii][jj] );
+	      ra_str = Angle::rad2hms ( header.beamDirections[ii][jj] );
 	    else
-	      dec_str = RaDec::toDegreesDec ( header.beamDirections[ii][jj] );
+	      dec_str = Angle::rad2hms ( header.beamDirections[ii][jj] );
 	  }
 	cout << "[ " << ra_str << ", " << dec_str << "]" << endl;
       }

@@ -44,15 +44,9 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                        Angle
   
   Angle::Angle (double const &val,
-		bool const &AngleInDegrees)
+		bool const &angleInDegrees)
   {
-    if (AngleInDegrees) {
-      deg_p = val;
-      rad_p = deg2rad (val);
-    } else {
-      rad_p = val;
-      deg_p = rad2deg (val);
-    }
+    setAngle (val, angleInDegrees);
   }
   
   //_____________________________________________________________________________
@@ -68,11 +62,6 @@ namespace DAL { // Namespace DAL -- begin
   //  Destruction
   //
   // ============================================================================
-  
-  Angle::~Angle ()
-  {
-    destroy();
-  }
   
   void Angle::destroy ()
   {;}
@@ -106,10 +95,30 @@ namespace DAL { // Namespace DAL -- begin
 
   // ============================================================================
   //
-  //  Parameters
+  //  Parameter access
   //
   // ============================================================================
   
+  void Angle::setAngle (double const &val,
+			bool const &angleInDegrees)
+  {
+    if (angleInDegrees) {
+      deg_p = val;
+      rad_p = deg2rad (val);
+    } else {
+      rad_p = val;
+      deg_p = rad2deg (val);
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                         hms
+  
+  std::string Angle::hms ()
+  {
+    return rad2hms (rad_p);
+  }
+
   //_____________________________________________________________________________
   //                                                                      summary
   

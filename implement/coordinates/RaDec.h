@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------*
- | $Id:: NewClass.h 4027 2010-01-21 13:05:37Z baehren                    $ |
+ | $Id::                                                                 $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2010                                                    *
@@ -27,10 +27,10 @@
 // Standard library header files
 #include <iostream>
 #include <string>
-#include <sstream>
 #include <vector>
 
-#include <dalCommon.h>
+// DAL header files
+#include <Angle.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -40,47 +40,28 @@ namespace DAL { // Namespace DAL -- begin
     \ingroup DAL
     \ingroup coordinates
     
-    \brief Representation of a RA-DEC coordinate
+    \brief Brief description for class RaDec
     
     \author Lars B&auml;hren
 
-    \date 2010/05/05
+    \date 2010/05/11
 
     \test tRaDec.cc
     
+    <h3>Prerequisite</h3>
+    
+    <ul type="square">
+      <li>[start filling in your text here]
+    </ul>
+    
     <h3>Synopsis</h3>
-
-    A simple container for holding the components of a (RA,Dec) position.
     
     <h3>Example(s)</h3>
-
-    <ol>
-      <li>Use public static functions to convert position from radian to degrees:
-      \code
-      double RA_radian (2.0);
-      std::string RA_degrees;
-
-      RA_degrees = RaDec::toDegreesRA (RA_radian);
-      \endcode
-      Instead of retrieving the position in degrees as a formatted string, it also
-      is possible to retrieve the individual components:
-      \code
-      double RA_radian (2.0);
-      int hour;
-      int min;
-      double sec;
-
-      RaDec::toDegreesRA (hour, min, sec, RA_radian);
-      \endcode
-    </ol>
     
   */  
   class RaDec {
 
-    //! (RA,Dec) direction in radian
-    std::vector<double> radian_p;
-    //! (RA,Dec) direction in degrees
-    std::vector<std::string> degrees_p;
+    std::vector<DAL::Angle> radec_p;
     
   public:
     
@@ -91,10 +72,11 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor
     RaDec (double const &ra,
-	   double const &dec);
+	   double const &dec,
+	   bool const &angleInDegrees=false);
     
     //! Argumented constructor
-    RaDec (std::vector<double> const &direction);
+    RaDec (std::vector<DAL::Angle> const &angles);
     
     /*!
       \brief Copy constructor
@@ -119,33 +101,23 @@ namespace DAL { // Namespace DAL -- begin
     RaDec& operator= (RaDec const &other); 
     
     // === Parameter access =====================================================
-
-    //! Get (RA,Dec) direction (in radian)
-    std::vector<double> radian () const {
-      return radian_p;
-    }
-
-    //! Get (RA,Dec) direction (in degrees)
-    std::vector<std::string> degrees () const {
-      return degrees_p;
-    }
-
-    //! Get the Right Ascension (in radian)
-    inline double RA () const {
-      return radian_p[0];
-    }
-
-    //! Set the Right Ascension
-    bool setRA (double const &ra);
-
-    //! Get the Declination (in radian)
-    inline double dec () const {
-      return radian_p[1];
-    }
-
-    //! Set the Declination
-    bool setDec (double const &dec);
-
+    
+    //! Set Right Ascension angle
+    bool setRA (double const &ra,
+		bool const &angleInDegrees=false);
+    
+    //! Set Declination angle
+    bool setDec (double const &dec,
+		 bool const &angleInDegrees=false);
+    
+    //! Set both Right Ascension (RA) and Declination (Dec) angle
+    bool setAngles (double const &ra,
+		    double const &dec,
+		    bool const &angleInDegrees=false);
+    
+    //! Set both Right Ascension (RA) and Declination (Dec) angle
+    bool setAngles (std::vector<DAL::Angle> const &angles);
+    
     /*!
       \brief Get the name of the class
       
@@ -164,35 +136,10 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // === Methods ==============================================================
-
-    //! Convert Right Ascension from radian to degrees
-    static std::string toDegreesRA (double const &ra);
-    //! Convert Right Ascension from radian to degrees
-    static void toDegreesRA (int &hour,
-			     int &min,
-			     double &sec,
-			     double const &ra);
-    //! Convert Declination from radian to degrees
-    static std::string toDegreesDec (double const &dec);
-    //! Convert Declination from radian to degrees
-    static void toDegreesDec (int &hour,
-			     int &min,
-			     double &sec,
-			     double const &dec);
+    
+    
     
   private:
-
-    //! Initialize the internal parameters
-    bool init (double const &ra,
-	       double const &dec);
-
-    //! Convert representation from radian to degrees
-    static std::string rad2deg (double const &rad);
-    //! Convert representation from radian to degrees
-    static void rad2deg (int &hour,
-			 int &min,
-			 double &sec,
-			 double const &rad);
     
     //! Unconditional copying
     void copy (RaDec const &other);
@@ -205,4 +152,4 @@ namespace DAL { // Namespace DAL -- begin
 } // Namespace DAL -- end
 
 #endif /* RADEC_H */
-
+  

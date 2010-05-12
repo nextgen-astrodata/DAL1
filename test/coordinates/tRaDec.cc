@@ -82,110 +82,6 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
-//                                                           test_staticFunctions
-
-/*!
-  \brief Test the public static functions
-
-  \return nofFailedTests -- The number of failed tests encountered within this
-          function.
-*/
-int test_staticFunctions ()
-{
-  std::cout << "\n[tRaDec::test_staticFunctions]\n" << endl;
-
-  int nofFailedTests (0);
-  
-  std::cout << "[1] Testing toDegreesRA (double) ..." << endl;
-  try {
-    double ra;
-
-    ra = 1.0;
-    std::cout << "    " << ra << " -> " << RaDec::toDegreesRA(ra) << endl;
-
-    ra = 2.0;
-    std::cout << "    " << ra << " -> " << RaDec::toDegreesRA(ra) << endl;
-
-    ra = 4.0;
-    std::cout << "    " << ra << " -> " << RaDec::toDegreesRA(ra) << endl;
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-
-  std::cout << "[2] Testing toDegreesRA (int,int,double,double) ..." << endl;
-  try {
-    double ra;
-    int hour;
-    int min;
-    double sec;
-
-    ra = 1.0;
-    RaDec::toDegreesRA(hour, min, sec, ra);
-    std::cout << "    " << ra
-	      << " -> " << hour << " : " << min << " : " << sec << endl;
-
-    ra = 2.0;
-    RaDec::toDegreesRA(hour, min, sec, ra);
-    std::cout << "    " << ra
-	      << " -> " << hour << " : " << min << " : " << sec << endl;
-
-    ra = 4.0;
-    RaDec::toDegreesRA(hour, min, sec, ra);
-    std::cout << "    " << ra
-	      << " -> " << hour << " : " << min << " : " << sec << endl;
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-
-  std::cout << "[3] Testing toDegreesDec (double) ..." << endl;
-  try {
-    double dec;
-
-    dec = 1.0;
-    std::cout << "    " << dec << " -> " << RaDec::toDegreesDec(dec) << endl;
-
-    dec = 2.0;
-    std::cout << "    " << dec << " -> " << RaDec::toDegreesDec(dec) << endl;
-
-    dec = 4.0;
-    std::cout << "    " << dec << " -> " << RaDec::toDegreesDec(dec) << endl;
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-
-  std::cout << "[4] Testing toDegreesDec (int,int,double,double) ..." << endl;
-  try {
-    double dec;
-    int hour;
-    int min;
-    double sec;
-
-    dec = 1.0;
-    RaDec::toDegreesDec(hour, min, sec, dec);
-    std::cout << "    " << dec
-	      << " -> " << hour << " : " << min << " : " << sec << endl;
-
-    dec = 2.0;
-    RaDec::toDegreesDec(hour, min, sec, dec);
-    std::cout << "    " << dec
-	      << " -> " << hour << " : " << min << " : " << sec << endl;
-
-    dec = 4.0;
-    RaDec::toDegreesDec(hour, min, sec, dec);
-    std::cout << "    " << dec
-	      << " -> " << hour << " : " << min << " : " << sec << endl;
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-
-  return nofFailedTests;
-}
-
-//_______________________________________________________________________________
 //                                                                           main
 
 int main ()
@@ -194,8 +90,6 @@ int main ()
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
-  // Test the public static functions
-  nofFailedTests += test_staticFunctions ();
 
   return nofFailedTests;
 }

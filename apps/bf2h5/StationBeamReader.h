@@ -30,7 +30,7 @@
 #include <sys/socket.h>
 
 #include <BFRawFormat.h>
-#include <RaDec.h>
+#include <Angle.h>
 
 // Forward declarations
 class fstream;
