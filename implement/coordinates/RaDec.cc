@@ -36,6 +36,7 @@ namespace DAL { // Namespace DAL -- begin
   
   RaDec::RaDec ()
   {
+    init ();
     setAngles (0.0, 0.0);
   }
   
@@ -46,6 +47,7 @@ namespace DAL { // Namespace DAL -- begin
 		double const &dec,
 		bool const &angleInDegrees)
   {
+    init ();
     setAngles (ra, dec, angleInDegrees);
   }
   
@@ -106,6 +108,45 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
 
   //_____________________________________________________________________________
+  //                                                                       radian
+
+  std::vector<double> RaDec::radian ()
+  {
+    std::vector<double> rad (2);
+
+    rad[0] = radec_p[0].rad();
+    rad[1] = radec_p[1].rad();
+
+    return rad;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                      degrees
+
+  std::vector<double> RaDec::degrees ()
+  {
+    std::vector<double> deg (2);
+
+    deg[0] = radec_p[0].deg();
+    deg[1] = radec_p[1].deg();
+
+    return deg;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                          hms
+
+  std::vector<std::string> RaDec::hms ()
+  {
+    std::vector<std::string> val (2);
+
+    val[0] = radec_p[0].hms();
+    val[1] = radec_p[1].hms();
+
+    return val;
+  }
+
+  //_____________________________________________________________________________
   //                                                                        setRA
   
   bool RaDec::setRA (double const &ra,
@@ -160,7 +201,8 @@ namespace DAL { // Namespace DAL -- begin
     if (angles.size() == 2) {
       radec_p = angles;
     } else {
-      std::cerr << "[RaDec::setAngles]" << std::endl;
+      std::cerr << "[RaDec::setAngles] Input vector has wrong number of elements!"
+		<< std::endl;
       status = false;
     }
 
@@ -176,6 +218,9 @@ namespace DAL { // Namespace DAL -- begin
   void RaDec::summary (std::ostream &os)
   {
     os << "[RaDec] Summary of internal parameters." << std::endl;
+    os << "-- (RA,Dec) in radian           = " << radian()  << std::endl;
+    os << "-- (RA,Dec) in degrees          = " << degrees() << std::endl;
+    os << "-- (RA,Dec) as formatted string = " << hms()     << std::endl;
   }
   
   // ============================================================================
@@ -184,6 +229,10 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  
+  void RaDec::init ()
+  {
+    radec_p.clear();
+    radec_p.resize(2);
+  }
 
 } // Namespace DAL -- end

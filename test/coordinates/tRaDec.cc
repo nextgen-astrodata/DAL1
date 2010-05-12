@@ -24,6 +24,7 @@
 #include <RaDec.h>
 
 // Namespace usage
+using std::cout;
 using std::endl;
 using DAL::RaDec;
 
@@ -51,11 +52,11 @@ using DAL::RaDec;
 */
 int test_constructors ()
 {
-  std::cout << "\n[tRaDec::test_constructors]\n" << endl;
+  cout << "\n[tRaDec::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   
-  std::cout << "[1] Testing RaDec() ..." << endl;
+  cout << "[1] Testing RaDec() ..." << endl;
   try {
     RaDec radec;
     //
@@ -65,7 +66,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  std::cout << "[2] Testing RaDec(double,double) ..." << endl;
+  cout << "[2] Testing RaDec(double,double) ..." << endl;
   try {
     double ra (1.0);
     double dec (2.0);

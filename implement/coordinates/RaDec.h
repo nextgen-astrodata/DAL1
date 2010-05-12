@@ -61,6 +61,7 @@ namespace DAL { // Namespace DAL -- begin
   */  
   class RaDec {
 
+    //! (RA,Dec) angles
     std::vector<DAL::Angle> radec_p;
     
   public:
@@ -101,6 +102,15 @@ namespace DAL { // Namespace DAL -- begin
     RaDec& operator= (RaDec const &other); 
     
     // === Parameter access =====================================================
+
+    //! Get (RA,Dec) in radian
+    std::vector<double> radian ();
+    
+    //! Get (RA,Dec) in degrees
+    std::vector<double> degrees ();
+    
+    //! Get (RA,Dec) as formatted string (HH:MM:SS)
+    std::vector<std::string> hms ();
     
     //! Set Right Ascension angle
     bool setRA (double const &ra,
@@ -141,6 +151,9 @@ namespace DAL { // Namespace DAL -- begin
     
   private:
     
+    //! Initialize internal parameters
+    void init ();
+
     //! Unconditional copying
     void copy (RaDec const &other);
     

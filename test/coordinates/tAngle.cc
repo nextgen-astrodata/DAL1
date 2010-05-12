@@ -32,7 +32,7 @@ using DAL::Angle;
   \ingroup DAL
   \ingroup coordinates
 
-  \brief A collection of test routines for the Angle class
+  \brief A collection of test routines for the DAL::Angle class
  
   \author Lars B&auml;hren
  
@@ -98,6 +98,12 @@ int test_constructors ()
 //_______________________________________________________________________________
 //                                                                test_parameters
 
+/*!
+  \brief Test access to the internal parameters
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
 int test_parameters ()
 {
   std::cout << "\n[tAngle::test_parameters]\n" << std::endl;
@@ -132,11 +138,59 @@ int test_parameters ()
 //_______________________________________________________________________________
 //                                                           test_staticFunctions
 
+/*!
+  \brief Test the public static functions
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
 int test_staticFunctions ()
 {
   std::cout << "\n[tAngle::test_staticFunctions]\n" << std::endl;
 
   int nofFailedTests (0);
+  double rad;
+  double deg;
+  
+  std::cout << "[1] Test conversion from radian to degrees ..." << std::endl;
+  try {
+    rad = DAL::PI;
+    deg = DAL::Angle::rad2deg (rad);
+    std::cout << "  " << rad << " -> " << deg << std::endl;
+    //
+    rad /= 2;
+    DAL::Angle::rad2deg (deg, rad);
+    std::cout << "  " << rad << " -> " << deg << std::endl;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  std::cout << "[2] Test conversion from degrees to radian ..." << std::endl;
+  try {
+    deg = 90;
+    rad = DAL::Angle::deg2rad (deg);
+    std::cout << "  " << deg << " -> " << rad << std::endl;
+    //
+    deg = 180;
+    DAL::Angle::deg2rad (rad, deg);
+    std::cout << "  " << deg << " -> " << rad << std::endl;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  std::cout << "[3] Test conversion to formatted string ..." << std::endl;
+  try {
+    deg = 90;
+    rad = DAL::PI;
+    //
+    std::cout << "  " << deg << " deg -> " << DAL::Angle::deg2hms(deg) << std::endl;
+    std::cout << "  " << rad << " rad -> " << DAL::Angle::rad2hms(rad) << std::endl;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
 
   return nofFailedTests;
 }
