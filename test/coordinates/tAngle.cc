@@ -1,9 +1,9 @@
 /*-------------------------------------------------------------------------*
- | $Id:: tNewClass.cc 3179 2009-10-14 13:20:10Z baehren                  $ |
+ | $Id::                                                                 $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
- *   Copyright (C) 2010                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Copyright (C) 2010                                                  *
+ *   Lars Baehren (<mail>)                                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,20 +21,50 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <CoordinateConversion.h>
+#include <coordinates/Angle.h>
+
+// Namespace usage
+using DAL::Angle;
 
 /*!
-  \file tCoordinateConversion.cc
+  \file tAngle.cc
 
-  \ingroup DAL
   \ingroup coordinates
 
-  \brief A collection of test routines for the CoordinateConversion class
+  \brief A collection of test routines for the Angle class
  
-  \author Lars B&auml;hren
+  \author Lars Baehren
  
-  \date 2010/04/23
+  \date 2010/05/11
 */
+
+//_______________________________________________________________________________
+//                                                              test_constructors
+
+/*!
+  \brief Test constructors for a new Angle object
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_constructors ()
+{
+  std::cout << "\n[tAngle::test_constructors]\n" << std::endl;
+
+  int nofFailedTests (0);
+  
+  std::cout << "[1] Testing default constructor ..." << std::endl;
+  try {
+    Angle newObject;
+    //
+    newObject.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  return nofFailedTests;
+}
 
 //_______________________________________________________________________________
 //                                                                           main
@@ -42,6 +72,9 @@
 int main ()
 {
   int nofFailedTests (0);
+
+  // Test for the constructor(s)
+  nofFailedTests += test_constructors ();
 
   return nofFailedTests;
 }
