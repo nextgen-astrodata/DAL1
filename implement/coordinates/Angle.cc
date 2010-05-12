@@ -128,6 +128,9 @@ namespace DAL { // Namespace DAL -- begin
   void Angle::summary (std::ostream &os)
   {
     os << "[Angle] Summary of internal parameters." << std::endl;
+    os << "-- Angle in radian   = " << rad() << std::endl;
+    os << "-- Angle in degrees  = " << deg() << std::endl;
+    os << "-- Angle in HH:MM:SS = " << hms() << std::endl;
   }
   
   // ============================================================================

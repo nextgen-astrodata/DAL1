@@ -2,8 +2,8 @@
  | $Id::                                                                 $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
- *   Copyright (C) 2010                                                  *
- *   Lars Baehren (<mail>)                                                     *
+ *   Copyright (C) 2010                                                    *
+ *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <coordinates/Angle.h>
+#include <Angle.h>
 
 // Namespace usage
 using DAL::Angle;
@@ -29,11 +29,12 @@ using DAL::Angle;
 /*!
   \file tAngle.cc
 
+  \ingroup DAL
   \ingroup coordinates
 
   \brief A collection of test routines for the Angle class
  
-  \author Lars Baehren
+  \author Lars B&auml;hren
  
   \date 2010/05/11
 */
@@ -53,16 +54,90 @@ int test_constructors ()
 
   int nofFailedTests (0);
   
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  std::cout << "[1] Testing Angle() ..." << std::endl;
   try {
-    Angle newObject;
+    Angle angle;
     //
-    newObject.summary(); 
+    angle.summary(); 
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
   
+  std::cout << "[2] Testing Angle(double,bool) ..." << std::endl;
+  try {
+    double val (1.0);
+    //
+    Angle angle1 (val,false);
+    Angle angle2 (val,true);
+    //
+    angle1.summary(); 
+    angle2.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[3] Testing Angle(Angle) ..." << std::endl;
+  try {
+    double val (1.0);
+    //
+    Angle angle (val,true);
+    Angle angle_copy (angle);
+    //
+    angle.summary(); 
+    angle_copy.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                test_parameters
+
+int test_parameters ()
+{
+  std::cout << "\n[tAngle::test_parameters]\n" << std::endl;
+
+  int nofFailedTests (0);
+  double val (DAL::PI);
+  Angle angle (val,false);
+  
+  std::cout << "[1] Retrieve internal parameters ..." << std::endl;
+  try {
+    std::cout << "-- deg()       = " << angle.deg() << std::endl;
+    std::cout << "-- rad()       = " << angle.rad() << std::endl;
+    std::cout << "-- hms()       = " << angle.hms() << std::endl;
+    std::cout << "-- className() = " << angle.className() << std::endl;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Set angle to new value ..." << std::endl;
+  try {
+    angle.setAngle (DAL::PI/2);
+    angle.summary();
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                           test_staticFunctions
+
+int test_staticFunctions ()
+{
+  std::cout << "\n[tAngle::test_staticFunctions]\n" << std::endl;
+
+  int nofFailedTests (0);
+
   return nofFailedTests;
 }
 
@@ -75,6 +150,10 @@ int main ()
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
+  // Test access to the internal parameters
+  nofFailedTests += test_parameters ();
+  // Test the public static functions
+  nofFailedTests += test_staticFunctions ();
 
   return nofFailedTests;
 }
