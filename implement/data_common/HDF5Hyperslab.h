@@ -31,8 +31,6 @@
 // DAL header files
 #include <dalCommon.h>
 
-#define H5S_HYPERSLAB_MAX 4294967296
-
 namespace DAL { // Namespace DAL -- begin
   
   /*!

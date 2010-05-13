@@ -238,8 +238,8 @@ int test_setHyperslab ()
   unsigned int nofAxes (3);
   std::vector<hsize_t> shape (nofAxes);
 
-  shape[0] = 200;
-  shape[1] = 200;
+  shape[0] = 1024;
+  shape[1] = 1024;
   shape[2] = 512;
 
   HDF5Dataset data1 (fileID,"Dataset1",shape);

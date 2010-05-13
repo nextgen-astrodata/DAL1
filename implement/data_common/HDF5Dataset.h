@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2010                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -31,6 +31,8 @@
 #include <dalCommon.h>
 #include <CommonInterface.h>
 #include <HDF5Hyperslab.h>
+
+#define H5S_CHUNKSIZE_MAX  ((uint32_t)(-1))  /* (4GB - 1) */
 
 namespace DAL {
   
@@ -249,8 +251,6 @@ namespace DAL {
   */
   class HDF5Dataset : public CommonInterface {
 
-    double maxChunksize_p;
-    
     //! Name of the dataset
     std::string name_p;
     //! Dataspace identifier
@@ -262,10 +262,10 @@ namespace DAL {
     //! Layout of the raw data of the dataset
     H5D_layout_t layout_p;
     //! Chunk size for extendible array
-    std::vector<hsize_t> chunksize_p;
+    std::vector<hsize_t> chunking_p;
     //! Hyperslabs for the dataspace attached to the dataset
     std::vector<DAL::HDF5Hyperslab> hyperslab_p;
-    
+
   public:
     
     // === Construction =========================================================
@@ -314,7 +314,7 @@ namespace DAL {
     
     //! Get the chunk size
     inline std::vector<hsize_t> chunksize () const {
-      return chunksize_p;
+      return chunking_p;
     }
     
     //! Get the rank (i.e. the number of axes) of the dataset
@@ -566,6 +566,11 @@ namespace DAL {
     void setAttributes ();
     //! Open the structures embedded within the current one
     bool openEmbedded (bool const &create);
+    //! Set the size of chunks for the raw data of a chunked layout dataset. 
+    bool setShape (std::vector<hsize_t> const &shape,
+		   std::vector<hsize_t> const &chunksize);
+    //! Adjust the size of chunks for the raw data of a chunked layout dataset. 
+    bool adjustChunksize ();
     //! Retrieve the size of chunks for the raw data of a chunked layout dataset. 
     bool getChunksize ();
     //! Select a hyperslab for the dataspace attached to the dataset

@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2010                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -119,13 +119,59 @@ namespace DAL {
   
   // ============================================================================
   //
+  //  Parameter access
+  //
+  // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                 setChunksize
+
+  /*!
+    \param shape     -- Shape of the dataset.
+    \param chunksize -- Chunk size for extendible array.
+  */
+  bool HDF5Dataset::setShape (std::vector<hsize_t> const &shape,
+			      std::vector<hsize_t> const &chunksize)
+  {
+    bool status    = true;
+    size_t rank    = shape.size();
+
+    // Store the shape of the dataset ______________________
+
+    if (shape_p.empty() || shape_p.size() != rank) {
+      shape_p.resize(rank);
+    }
+
+    shape_p = shape;
+
+    // Store the chunksize of the dataset __________________
+
+    /* Check dimensions of the internal array */
+    if (chunking_p.empty() || chunking_p.size() != rank) {
+      chunking_p.resize(rank);
+    }
+
+    /* Check dimensions of the input array */
+    if (chunksize.empty() || chunksize.size() != rank) {
+      chunking_p = shape_p;
+    } else {
+      chunking_p = chunksize;
+    }
+    
+    adjustChunksize();
+    
+    return status;
+  }
+  
+  // ============================================================================
+  //
   //  Methods
   //
   // ============================================================================
   
   //_____________________________________________________________________________
   //                                                                         init
-
+  
   void HDF5Dataset::init ()
   {
     name_p         = "Dataset";
@@ -133,9 +179,8 @@ namespace DAL {
     dataspace_p    = 0;
     datatype_p     = 0;
     layout_p       = H5D_COMPACT;
-    maxChunksize_p = 4294967296.;
     shape_p.clear();
-    chunksize_p.clear();
+    chunking_p.clear();
     hyperslab_p.clear();
   }
 
@@ -268,27 +313,20 @@ namespace DAL {
 			  std::vector<hsize_t> const &chunksize,
 			  hid_t const &datatype)
   {
-    bool status = true;
-    int rank    = shape.size();
+    bool status (true);
 
     //____________________________________________
     // Update internal parameters
 
-    shape_p.resize(rank);
-    chunksize_p.resize(rank);
+    name_p     = name;
+    datatype_p = H5Tcopy (datatype);
 
-    name_p  = name;
-    shape_p = shape;
-
-    if (chunksize.empty() || chunksize.size() != shape.size()) {
-      chunksize_p = shape_p;
-    } else {
-      chunksize_p = chunksize;
-    }
+    setShape (shape, chunksize);
 
     //____________________________________________
     // Create Dataspace
 
+    int rank = shape.size();
     hsize_t dims [rank];
     hsize_t maxdims [rank];
     hsize_t chunkdims [rank];
@@ -298,7 +336,7 @@ namespace DAL {
     for (int n(0); n<rank; ++n) {
       dims[n]      = shape_p[n];
       maxdims[n]   = H5S_UNLIMITED;
-      chunkdims[n] = chunksize_p[n];
+      chunkdims[n] = chunking_p[n];
     }
 
     dataspace_p = H5Screate_simple (rank, dims, maxdims);
@@ -306,8 +344,6 @@ namespace DAL {
     chunkParam  = H5Pcreate (H5P_DATASET_CREATE);
     // Set the chunk size
     h5error     = H5Pset_chunk (chunkParam, rank, chunkdims);
-    // Set the datatype for the elements within the Dataset
-    datatype_p  = H5Tcopy (datatype);
     // Create the Dataset
     location_p  = H5Dcreate2 (location,
 			      name_p.c_str(),
@@ -365,16 +401,44 @@ namespace DAL {
 
     /* Process the result from the inspection of the dataset */
     if (rank<0) {
-      chunksize_p.clear();
+      chunking_p.clear();
     } else {
       if (nofAxes>0) {
-	chunksize_p.resize(nofAxes);
+	chunking_p.resize(nofAxes);
 	for (int n(0); n<nofAxes; ++n) {
-	  chunksize_p[n] = chunksize[n];
+	  chunking_p[n] = chunksize[n];
 	}
       }
     }
     
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                              adjustChunksize
+  
+  bool HDF5Dataset::adjustChunksize ()
+  {
+    bool status         = true;
+    size_t datatypeSize = H5Tget_size (datatype_p);
+    size_t rank         = chunking_p.size();
+    uint64_t nelem      = datatypeSize;
+
+    /* Check the number of datapoints per chunk */
+    for (size_t n(0); n<rank; ++n) {
+      nelem *= (uint64_t)chunking_p[n];
+    }
+
+    /* Check for chunk larger than can be represented in 32-bits */
+    if (nelem > (uint64_t)0xffffffff) {
+      std::cerr << "-- Adjusting chunking from " << chunking_p;
+      for (size_t n(0); n<rank; ++n) {
+	chunking_p[n] /= 2;
+      }
+      std::cerr << " -> " << chunking_p << std::endl;
+      adjustChunksize ();
+    }
+
     return status;
   }
   
@@ -584,7 +648,7 @@ namespace DAL {
     os << "-- Dataset rank           = " << rank()             << std::endl;
     os << "-- Dataset shape          = " << shape_p            << std::endl;
     os << "-- Layout of the raw data = " << layout_p           << std::endl;
-    os << "-- Chunk size             = " << chunksize_p        << std::endl;
+    os << "-- Chunk size             = " << chunking_p         << std::endl;
     os << "-- nof. datapoints        = " << nofDatapoints()    << std::endl;
     os << "-- nof. active hyperslabs = " << hyperslab_p.size() << std::endl;
   }
