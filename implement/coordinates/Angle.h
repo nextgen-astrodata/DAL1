@@ -73,7 +73,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Default constructor
     Angle (double const &val,
-	   bool const &angleInDegrees=false);
+	   bool const &AngleInDegrees=false);
     
     /*!
       \brief Copy constructor
@@ -82,6 +82,11 @@ namespace DAL { // Namespace DAL -- begin
              one.
     */
     Angle (Angle const &other);
+    
+    // === Destruction ==========================================================
+
+    //! Destructor
+    ~Angle ();
     
     // === Operators ============================================================
     
@@ -129,8 +134,6 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // === Methods ==============================================================
-
-    /* Convert radian to degree */
     
     //! Convert radian to degrees
     static double rad2deg (double const &rad);
@@ -140,8 +143,6 @@ namespace DAL { // Namespace DAL -- begin
     //! Convert radian to degrees
     static vector<double> rad2deg (vector<double> const &rad);
 
-    /* Convert degree to radian */
-    
     //! Convert radian to degrees
     static double deg2rad (double const &deg);  
     //! Convert radian to degrees
@@ -150,8 +151,6 @@ namespace DAL { // Namespace DAL -- begin
     //! Convert radian to degrees
     static vector<double> deg2rad (vector<double> const &deg);
 
-    /* Convert angle to formatted string */
-    
     //! Convert angle to formatted string (H:M:S)
     static std::string angle2hms (double const &angle,
 				  bool const &angleInDegrees=false);
