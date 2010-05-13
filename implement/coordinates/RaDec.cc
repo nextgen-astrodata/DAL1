@@ -37,7 +37,6 @@ namespace DAL { // Namespace DAL -- begin
   RaDec::RaDec ()
   {
     init ();
-    setAngles (0.0, 0.0);
   }
   
   //_____________________________________________________________________________
@@ -48,7 +47,6 @@ namespace DAL { // Namespace DAL -- begin
 		bool const &angleInDegrees)
   {
     init ();
-    setAngles (ra, dec, angleInDegrees);
   }
   
   //_____________________________________________________________________________
