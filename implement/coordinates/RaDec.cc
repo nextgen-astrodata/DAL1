@@ -47,6 +47,8 @@ namespace DAL { // Namespace DAL -- begin
 		bool const &angleInDegrees)
   {
     init ();
+    setRA (ra, angleInDegrees);
+    setDec (dec, angleInDegrees);
   }
   
   //_____________________________________________________________________________
