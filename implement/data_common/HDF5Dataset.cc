@@ -417,21 +417,28 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                              adjustChunksize
   
+  /*!
+    As explained in the source code documentation of the HDF5 library (see
+    H5Dchunk.c), chunks cannot be larger than can be represented in 32-bits; in
+    order to avoid running in error when assigning the chunking, we check the
+    chunking before applying it to the extendable dataset.
+   */
   bool HDF5Dataset::adjustChunksize ()
   {
     bool status         = true;
     size_t datatypeSize = H5Tget_size (datatype_p);
     size_t rank         = chunking_p.size();
-    uint64_t nelem      = datatypeSize;
+    uint64_t chunkSize  = datatypeSize;
 
     /* Check the number of datapoints per chunk */
     for (size_t n(0); n<rank; ++n) {
-      nelem *= (uint64_t)chunking_p[n];
+      chunkSize *= (uint64_t)chunking_p[n];
     }
 
     /* Check for chunk larger than can be represented in 32-bits */
-    if (nelem > (uint64_t)0xffffffff) {
-      std::cerr << "-- Adjusting chunking from " << chunking_p;
+    if (chunkSize > (uint64_t)0xffffffff) {
+      std::cerr << "[HDF5Dataset::adjustChunksize] Adjusting chunking from "
+		<< chunking_p;
       for (size_t n(0); n<rank; ++n) {
 	chunking_p[n] /= 2;
       }

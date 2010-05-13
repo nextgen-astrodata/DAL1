@@ -312,8 +312,8 @@ namespace DAL {
       return layout_p;
     }
     
-    //! Get the chunk size
-    inline std::vector<hsize_t> chunksize () const {
+    //! Get the chunking size
+    inline std::vector<hsize_t> chunking () const {
       return chunking_p;
     }
     
