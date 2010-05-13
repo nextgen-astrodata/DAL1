@@ -187,4 +187,3 @@ namespace DAL { // Namespace DAL -- begin
 } // Namespace DAL -- end
 
 #endif /* ANGLE_H */
-
