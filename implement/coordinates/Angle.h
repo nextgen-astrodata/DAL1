@@ -83,11 +83,6 @@ namespace DAL { // Namespace DAL -- begin
     */
     Angle (Angle const &other);
     
-    // === Destruction ==========================================================
-
-    //! Destructor
-    ~Angle ();
-    
     // === Operators ============================================================
     
     /*!
