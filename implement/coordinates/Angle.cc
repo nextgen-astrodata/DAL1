@@ -44,9 +44,21 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                        Angle
   
   Angle::Angle (double const &val,
+<<<<<<< HEAD
 		bool const &angleInDegrees)
   {
     setAngle (val, angleInDegrees);
+=======
+		bool const &AngleInDegrees)
+  {
+    if (AngleInDegrees) {
+      deg_p = val;
+      rad_p = deg2rad (val);
+    } else {
+      rad_p = val;
+      deg_p = rad2deg (val);
+    }
+>>>>>>> New class for the representation of an angle and to generate various ways to represent it.
   }
   
   //_____________________________________________________________________________
@@ -63,6 +75,14 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+<<<<<<< HEAD
+=======
+  Angle::~Angle ()
+  {
+    destroy();
+  }
+  
+>>>>>>> New class for the representation of an angle and to generate various ways to represent it.
   void Angle::destroy ()
   {;}
   

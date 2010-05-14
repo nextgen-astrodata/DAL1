@@ -73,7 +73,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Default constructor
     Angle (double const &val,
-	   bool const &angleInDegrees=false);
+	   bool const &AngleInDegrees=false);
     
     /*!
       \brief Copy constructor
@@ -82,6 +82,11 @@ namespace DAL { // Namespace DAL -- begin
              one.
     */
     Angle (Angle const &other);
+    
+    // === Destruction ==========================================================
+
+    //! Destructor
+    ~Angle ();
     
     // === Operators ============================================================
     
