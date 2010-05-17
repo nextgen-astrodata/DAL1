@@ -53,6 +53,7 @@ option (DAL_EXPERIMENTAL_CODE  "Include new expermetal code into build?"      NO
 if (DAL_ENABLE_DASHBOARD OR DAL_ENABLE_TESTING)
   ## Include CTest module
   include (CTest)
+  include (FindTestDatasets)
   enable_testing()
 endif (DAL_ENABLE_DASHBOARD OR DAL_ENABLE_TESTING)
 
