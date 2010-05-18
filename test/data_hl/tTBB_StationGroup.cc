@@ -543,7 +543,15 @@ int test_parameters (std::string const &filename)
 
   TBB_StationGroup group (fileID,groupname);
 
-  cout << "[1] Testing TBB_StationGroup::attributes() ..." << endl;
+  cout << "[1] Testing objectName() ..." << endl;
+  try {
+    cout << "-- HDF5 object name = " << group.objectName() << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[2] Testing attributes() ..." << endl;
   try {
     cout << "-- TBB_StationGroup attributes = " << group.attributes() << endl;
   } catch (std::string message) {
@@ -551,9 +559,17 @@ int test_parameters (std::string const &filename)
     nofFailedTests++;
   }
   
-  cout << "[2] Testing TBB_StationGroup::selectedDipoles() ..." << endl;
+  cout << "[3] Testing selectedDipoles() ..." << endl;
   try {
     cout << "-- Selected dipoles = " << group.selectedDipoles() << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[4] Testing nofTriggeredAntennas() ..." << endl;
+  try {
+    cout << "-- nof. triggered antennas = " << group.nofTriggeredAntennas() << endl;
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
