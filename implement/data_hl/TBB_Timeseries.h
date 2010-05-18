@@ -148,15 +148,20 @@ namespace DAL {  // Namespace DAL -- begin
     
   */
   class TBB_Timeseries : public CommonInterface {
-
+    
+    //! Typedef for the iterator on the map holding the TBB_DipoleDataset
+    typedef std::map<std::string,TBB_DipoleDataset>::iterator iterDipoleDataset;
+    
   protected:
     
     //! Name of the data file
     std::string filename_p;
-    //! Station groups attached to the root group of the file
-    std::map<std::string,TBB_StationGroup> stationGroups_p;
     //! Container for system-wide logs attached to the root group of the file
     std::map<std::string,SysLog> sysLog_p;
+    //! Station groups attached to the root group of the file
+    std::map<std::string,TBB_StationGroup> stationGroups_p;
+    //! Selected dipoles
+    std::map<std::string,iterDipoleDataset> selectedDatasets_p;
     
   public:
     
@@ -214,6 +219,11 @@ namespace DAL {  // Namespace DAL -- begin
     //! Set the set of selected dipoles
     bool selectDipoles (std::set<std::string> const &selection);
 
+    //! Get the map constaining the actual dipole dataset selection
+    inline std::map<std::string,iterDipoleDataset> dipoleSelection () const {
+      return selectedDatasets_p;
+    }
+    
     //! Select all dipoles within the dataset
     bool selectAllDipoles ();
     

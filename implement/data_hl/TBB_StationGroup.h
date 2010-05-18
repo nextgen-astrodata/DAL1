@@ -107,17 +107,20 @@ namespace DAL {   // Namespace DAL -- begin
 
   */
   class TBB_StationGroup : public CommonInterface {
-
+    
+    //! Typedef for the iterator on the map holding the TBB_DipoleDataset
+    typedef std::map<std::string,TBB_DipoleDataset>::iterator iterDipoleDataset;
+    
     //! Station identifier
     unsigned int stationID_p;
-    //! Datasets contained within this group
-    std::map<std::string,TBB_DipoleDataset> datasets_p;
     //! Station trigger group
     TBB_StationTrigger stationTrigger_p;
-    //! Selected dipoles
-    std::set<std::string> selectedDipoles_p;
     //! Number of triggered antennas at this station
     uint nofTriggeredAntennas_p;
+    //! Datasets contained within this group
+    std::map<std::string,TBB_DipoleDataset> datasets_p;
+    //! Selected dipoles
+    std::map<std::string,iterDipoleDataset> selectedDatasets_p;
     
   public:
     
@@ -154,8 +157,11 @@ namespace DAL {   // Namespace DAL -- begin
     std::string group_name (bool const &stripPath=false);
 
     //! Get the set of selected dipoles
-    inline std::set<std::string> selectedDipoles () const {
-      return selectedDipoles_p;
+    std::set<std::string> selectedDipoles ();
+
+    //! Get the map constaining the actual dipole dataset selection
+    inline std::map<std::string,iterDipoleDataset> dipoleSelection () const {
+      return selectedDatasets_p;
     }
     
     //! Set the set of selected dipoles
@@ -335,13 +341,13 @@ namespace DAL {   // Namespace DAL -- begin
     
     //! Retrieve a block of ADC values for the dipoles in this station
     bool readData (casa::Matrix<double> &data,
-	     int const &start,
-	     int const &nofSamples);
+		   int const &start,
+		   int const &nofSamples);
     
     //! Retrieve a block of ADC values for the dipoles in this station
     bool readData (casa::Matrix<double> &data,
-	     casa::Vector<int> const &start,
-	     int const &nofSamples);
+		   casa::Vector<int> const &start,
+		   int const &nofSamples);
     
     //! Get a casa::Record containing the values of the attributes
     casa::Record attributes2record (bool const &recursive=false);

@@ -46,7 +46,8 @@ namespace DAL {  // Namespace DAL -- begin
   {
     location_p             = 0;
     nofTriggeredAntennas_p = 0;
-    selectedDipoles_p.clear();
+    datasets_p.clear();    
+    selectedDatasets_p.clear();
   }
 
   //_____________________________________________________________________________
@@ -113,7 +114,7 @@ namespace DAL {  // Namespace DAL -- begin
       location_p = 0;
     }
     // clear standard containers
-    selectedDipoles_p.clear();
+    selectedDatasets_p.clear();
   }
   
   // ============================================================================
@@ -323,14 +324,15 @@ namespace DAL {  // Namespace DAL -- begin
 
       if (datasets.size() > 0) {
 	datasets_p.clear();
-	selectedDipoles_p.clear();
 	for (it=datasets.begin(); it!=datasets.end(); ++it) {
 	  datasets_p[*it] = TBB_DipoleDataset(location_p,*it);
-	  selectedDipoles_p.insert(*it);
 	}
       } else {
 	status = false;
       }
+
+      status *= selectAllDipoles ();
+
     } else {
       std::cerr << "[TBB_StationGroup::setDipoleDatasets]"
 		<< " Unable to open dipole dataset - no connect to group!"
@@ -404,6 +406,21 @@ namespace DAL {  // Namespace DAL -- begin
                                 DAL::STATION_POSITION_FRAME);
   }
 #endif
+
+  //_____________________________________________________________________________
+  //                                                              selectedDipoles
+  
+  std::set<std::string> TBB_StationGroup::selectedDipoles ()
+  {
+    std::set<std::string> selection;
+    std::map<std::string,iterDipoleDataset>::iterator it;
+
+    for (it=selectedDatasets_p.begin(); it!=selectedDatasets_p.end(); ++it) {
+      selection.insert(it->first);
+    }    
+
+    return selection;
+  }
   
   //_____________________________________________________________________________
   //                                                                selectDipoles
@@ -417,37 +434,45 @@ namespace DAL {  // Namespace DAL -- begin
   */
   bool TBB_StationGroup::selectDipoles (std::set<std::string> const &selection)
   {
-    bool status (true);
-
+    /* If the input is empty, abort ... */
     if (selection.empty()) {
+      return false;
+    }
+
+    /* ... else continue making the selection. */
+    
+    bool status (true);
+    std::set<std::string>::iterator iterInput;
+    std::map<std::string,iterDipoleDataset> tmpSelection;
+    iterDipoleDataset iterSelection;
+    
+    for (iterInput=selection.begin(); iterInput!=selection.end(); ++iterInput) {
+      /* Get pointer to the selected dataset. */
+      iterSelection = datasets_p.find(*iterInput);
+      /* If the selection is valid, accept it. */
+      if (iterSelection!=datasets_p.end()) {
+	tmpSelection[*iterInput] = iterSelection;
+      }
+    }
+
+    /* If selection is non-empty, store the result. */
+    
+    if (tmpSelection.empty()) {
+      std::cerr << "[TBB_StationGroup::selectDipoles]"
+		<< " No valid selection of dipoles!"
+		<< std::endl;
       status = false;
     } else {
-      std::set<std::string> tmp;
-      std::set<std::string>::iterator it = selection.begin();
-      std::map<std::string,TBB_DipoleDataset>::iterator dat;
-      /* Got through the provided selection set */
-      for (; it!=selection.end(); ++it) {
-	/* If the dipole in the selection is ok, accept it */
-	dat = datasets_p.find(*it);
-	if (dat != datasets_p.end()) {
-	  tmp.insert(*it);
-	}
-      }
-      /* Store the temporary selection set */
-      if (tmp.size() > 0) {
-	selectedDipoles_p.clear();
-	selectedDipoles_p = tmp;
-      } else {
-	status = false;
-      }
+      selectedDatasets_p.clear();
+      selectedDatasets_p = tmpSelection;
     }
     
     return status;
   }
-
+  
   //_____________________________________________________________________________
   //                                                             selectAllDipoles
-
+  
   /*!
     This method can be used to undo a previous selection of individual dipoles.
 
@@ -457,18 +482,16 @@ namespace DAL {  // Namespace DAL -- begin
   bool TBB_StationGroup::selectAllDipoles ()
   {
     bool status (true);
-    std::set<std::string> selection;
-    std::map<std::string,TBB_DipoleDataset>::iterator it = datasets_p.begin();
+    std::map<std::string,iterDipoleDataset> selection;
+    iterDipoleDataset it;
 
-    for (; it!=datasets_p.end(); ++it) {
-      selection.insert(it->first);
+    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
+      selection[it->first] = it;
     }
 
     if (!selection.empty()) {
-      selectedDipoles_p.clear();
-      selectedDipoles_p = selection;
-    } else {
-      status = false;
+      selectedDatasets_p.clear();
+      selectedDatasets_p = selection;
     }
 
     return status;
@@ -516,7 +539,7 @@ namespace DAL {  // Namespace DAL -- begin
       os << "-- Trigger offset ......... : " << triggerOffset           << endl;
       os << "-- nof. triggered antennas  : " << nofTriggeredAntennas()  << endl;
       os << "-- Triggered antennas ..... : " << triggeredAntennas       << endl;
-      os << "-- Selected dipoles ....... : " << selectedDipoles_p       << endl;
+      os << "-- Selected dipoles ....... : " << selectedDipoles()       << endl;
     }
     
   }
@@ -663,7 +686,7 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef HAVE_CASA
   
   //_____________________________________________________________________________
-  //                                                                           readData
+  //                                                                     readData
   
   /*!
     \retval data -- [nofSamples,dipole] Array of raw ADC samples representing
@@ -673,10 +696,10 @@ namespace DAL {  // Namespace DAL -- begin
            given by <tt>start</tt>.
   */
   bool TBB_StationGroup::readData (casa::Matrix<double> &data,
-			     casa::Vector<int> const &start,
-			     int const &nofSamples)
+				   casa::Vector<int> const &start,
+				   int const &nofSamples)
   {
-    uint nofDipoles = selectedDipoles_p.size();
+    uint nofDipoles = selectedDatasets_p.size();
     uint nelem      = start.nelements();
     casa::IPosition shape (2,nofSamples,nofDipoles);
 
@@ -694,27 +717,25 @@ namespace DAL {  // Namespace DAL -- begin
       return false;
     }
 
+    // Check the shape of the matrix returning the values
+    if (data.shape() != shape) {
+      data.resize(shape);
+    }
+
     // Retrieve data from file _____________________________
     
     bool status (true);
     uint n (0);
     casa::Vector<double> tmp (nofSamples);
-    std::set<std::string>::iterator it;
-    std::map<std::string,TBB_DipoleDataset>::iterator itMap;
+    std::map<std::string,iterDipoleDataset>::iterator it;
     
-    // Check the shape of the matrix returning the values
-    if (data.shape() != shape) {
-      data.resize(shape);
-    }
-    
-    for (it=selectedDipoles_p.begin(); it!=selectedDipoles_p.end(); ++it) {
-      // get pointer to the dipole dataset
-      itMap = datasets_p.find(*it);
-      // retrieve dipole data
-      tmp = itMap->second.readData(start(n),nofSamples);
-      // copy data
+    /* Iterate over the selected dipoles */
+    for (it=selectedDatasets_p.begin(); it!=selectedDatasets_p.end(); ++it) {
+      /* Retrieve dipole data */
+      tmp = (it->second)->second.readData(start(n),nofSamples);
+      /* Copy the data to the returned array */
       data.column(n) = tmp;
-      // increment counter
+      /* Increment data array column counter */
       ++n;
     }
 
@@ -723,7 +744,7 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef DEBUGGING_MESSAGES
     std::cout << "[TBB_StationGroup::readData]" << std::endl;
     std::cout << " -- start            = " << start             << std::endl;
-    std::cout << " -- selected dipoles = " << selectedDipoles_p << std::endl;
+    std::cout << " -- selected dipoles = " << selectedDipoles() << std::endl;
     std::cout << " -- shape(data)      = " << data.shape()      << std::endl;
 #endif
 
@@ -731,7 +752,7 @@ namespace DAL {  // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                           readData
+  //                                                                     readData
   
   /*!
     \retval data -- [nofSamples,dipole] Array of raw ADC samples representing
@@ -741,10 +762,10 @@ namespace DAL {  // Namespace DAL -- begin
            given by <tt>start</tt>.
   */
   bool TBB_StationGroup::readData (casa::Matrix<double> &data,
-			     int const &start,
-			     int const &nofSamples)
+				   int const &start,
+				   int const &nofSamples)
   {
-    uint nofDipoles (selectedDipoles_p.size());
+    uint nofDipoles (selectedDatasets_p.size());
     casa::Vector<int> startVect (nofDipoles,start);
 
     return readData (data,

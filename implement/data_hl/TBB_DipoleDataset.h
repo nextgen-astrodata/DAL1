@@ -40,7 +40,7 @@
 #include <Enumerations.h>
 
 namespace DAL {  // Namespace DAL -- begin
-  
+
   /*!
     \class TBB_DipoleDataset
     

@@ -240,7 +240,7 @@ int test_constructors (std::string const &filename)
 }
 
 //_______________________________________________________________________________
-//                                                                   test_attributes
+//                                                                test_attributes
 
 /*!
   \brief Test the various methods provided by the class
@@ -407,32 +407,6 @@ int test_attributes (std::string const &filename)
 }
 
 //_______________________________________________________________________________
-//                                                                  test_measures
-
-// int test_measures (std::string const &filename)
-// {
-//   cout << "\n[test_measures]\n" << endl;
-
-//   int nofFailedTests (0);
-
-//   cout << "[1] Higher-level products derived from the attributes" << endl;
-//   try
-//     {
-//       casa::MPosition station_position = group.station_position();
-//       casa::MDirection beam_direction  = group.beam_direction();
-//       //
-//       cout << "-- Station position = " << station_position << endl;
-//       cout << "-- Beam direction   = " << beam_direction   << endl;
-//     }
-//   catch (std::string message) {
-//     cerr << message << endl;
-//     nofFailedTests++;
-//   }
-  
-//   return nofFailedTests;
-// }
-
-//_______________________________________________________________________________
 //                                                             test_export2record
 
 /*!
@@ -527,6 +501,67 @@ int test_export2record (std::string const &filename)
     nofFailedTests++;
   }
   
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                test_parameters
+
+int test_parameters (std::string const &filename)
+{
+  cout << "\n[tTBB_DipoleDataset::test_parameters]\n" << endl;
+
+  int nofFailedTests (0);
+  hid_t fileID;
+  herr_t h5error;
+  std::string groupname;
+  std::set<std::string> names;
+  std::set<std::string>::iterator it;
+
+  // Open HDF5 file and embedeed groups ____________________
+
+  fileID = H5Fopen (filename.c_str(),
+		    H5F_ACC_RDWR,
+		    H5P_DEFAULT);
+
+  if (fileID > 0) {
+    DAL::h5get_names (names,fileID,H5G_GROUP);
+  } else {
+    std::cerr << "Skipping tests - unable to open file." << endl;
+    return -1;
+  }
+
+  if (names.size() > 0) {
+    it = names.begin();
+    groupname = *it;
+  } else {
+    std::cerr << "Skipping tests - no station group found." << endl;
+    return -1;
+  }
+
+  // Perform the tests _____________________________________
+
+  TBB_StationGroup group (fileID,groupname);
+
+  cout << "[1] Testing TBB_StationGroup::attributes() ..." << endl;
+  try {
+    cout << "-- TBB_StationGroup attributes = " << group.attributes() << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[2] Testing TBB_StationGroup::selectedDipoles() ..." << endl;
+  try {
+    cout << "-- Selected dipoles = " << group.selectedDipoles() << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  // release the file ID
+  h5error = H5Fclose (fileID);
+
   return nofFailedTests;
 }
 
@@ -661,13 +696,14 @@ int main (int argc,
     nofFailedTests += test_constructors (filename);
     // Test methods to retrieve attributes
     nofFailedTests += test_attributes (filename);
+    // Test access to the parameters
+    nofFailedTests += test_parameters (filename);
     // Test access to the data
     nofFailedTests += test_data (filename);
 
     // Specific tests which require casacore
     
 // #ifdef HAVE_CASA
-//     nofFailedTests += test_measures (filename);
 //     nofFailedTests += test_export2record (filename);
 // #endif
     
