@@ -180,10 +180,11 @@ namespace DAL {  // Namespace DAL -- begin
   */
   void TBB_Timeseries::summary (std::ostream &os)
   {
-    os << "[TBB_Timeseries] Summary of object properties"        << endl;
-    os << "-- File name  ........  : " << filename_p             << endl;
-    os << "-- Location ID .......  : " << locationID()           << endl;
-    os << "-- nof. station groups  : " << stationGroups_p.size() << endl;
+    os << "[TBB_Timeseries] Summary of object properties"             << endl;
+    os << "-- File name  ........... : " << filename_p                << endl;
+    os << "-- Location ID .......... : " << locationID()              << endl;
+    os << "-- nof. station groups .. : " << stationGroups_p.size()    << endl;
+    os << "-- nof. selected datasets : " << selectedDatasets_p.size() << endl;
 
     if (location_p > 0) {
 //       CommonAttributes attr = commonAttributes();
@@ -191,7 +192,8 @@ namespace DAL {  // Namespace DAL -- begin
 //       os << "-- Observer             : " << attr.observer()        << endl;
 //       os << "-- Project              : " << attr.projectTitle()    << endl;
 //       os << "-- Observation ID       : " << attr.observationID()   << endl;
-      os << "-- nof. dipole datasets : " << nofDipoleDatasets()    << endl;
+      os << "-- nof. dipole datasets . : " << nofDipoleDatasets()       << endl;
+      os << "-- nof. selected datasets : " << selectedDatasets_p.size() << endl;
     }
   }
 
@@ -367,9 +369,12 @@ namespace DAL {  // Namespace DAL -- begin
       std::cerr << "[TBB_Timeseries::openStationGroups]"
 		<< " No station groups found!"
 		<< std::endl;
+      status = false;
     }
+
+    status *= setSelectedDatasets ();
     
-    return true;
+    return status;
   }
 
   //_____________________________________________________________________________
@@ -473,26 +478,20 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                              selectedDipoles
 
   /*!
-    \return selectedDipoles -- A set of the selected dipoles within the dataset
-   */
+    \return selection -- Names of the selected dipole datasets.
+  */
   std::set<std::string> TBB_Timeseries::selectedDipoles ()
   {
-    std::set<std::string> dipoles;
-    std::set<std::string> tmp;
-    std::set<std::string>::iterator it;
-    std::map<std::string,TBB_StationGroup>::iterator itMap;
+    std::set<std::string> selection;
+    std::map<std::string,iterDipoleDataset>::iterator it;
 
-    for (itMap = stationGroups_p.begin(); itMap!=stationGroups_p.end(); ++itMap) {
-      // get the selected dipoles for this group
-      tmp = itMap->second.selectedDipoles();
-      // append the selected dipoles
-      for (it=tmp.begin(); it!=tmp.end(); ++it) {
-	dipoles.insert(*it);
-      }
-    }
+    for (it=selectedDatasets_p.begin(); it!=selectedDatasets_p.end(); ++it) {
+      selection.insert(it->first);
+    }    
 
-    return dipoles;
+    return selection;
   }
+  
 
   //_____________________________________________________________________________
   //                                                                selectDipoles
@@ -501,26 +500,62 @@ namespace DAL {  // Namespace DAL -- begin
   {
     bool status (true);
     std::map<std::string,TBB_StationGroup>::iterator it;
-
+    
+    /* Forward selection instruction to the underlying station groups */
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
       status *= it->second.selectDipoles(selection);
     }
+    
+    /* Local book-keeping */
+    status *= setSelectedDatasets ();
     
     return status;
   }
   
   //_____________________________________________________________________________
   //                                                             selectAllDipoles
-
+  
   bool TBB_Timeseries::selectAllDipoles ()
   {
     bool status (true);
     std::map<std::string,TBB_StationGroup>::iterator it;
 
+    /* Forward selection instruction to the underlying station groups */
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
       status *= it->second.selectAllDipoles();
     }
     
+    /* Local book-keeping */
+    status *= setSelectedDatasets ();
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                          setSelectedDatasets
+
+  bool TBB_Timeseries::setSelectedDatasets ()
+  {
+    bool status (true);
+    std::map<std::string,TBB_StationGroup>::iterator iterStation;
+    std::map<std::string,iterDipoleDataset> tmp;
+    std::map<std::string,iterDipoleDataset>::iterator it;
+
+    selectedDatasets_p.clear();
+
+    for (iterStation=stationGroups_p.begin();
+	 iterStation!=stationGroups_p.end();
+	 ++iterStation) {
+      /* Clear temporary map */
+      tmp.clear();
+      /* Get selection from the current station group */
+      tmp = iterStation->second.dipoleSelection();
+      /* Add the elements from the selection for the station */
+      for (it=tmp.begin(); it!=tmp.end(); ++it) {
+	selectedDatasets_p[it->first] = it->second;
+      }
+    }
+
     return status;
   }
   
@@ -1015,16 +1050,16 @@ namespace DAL {  // Namespace DAL -- begin
     \param nofSamples -- Number of samples to read, starting from the position
            given by <tt>start</tt>.
   */
-  void TBB_Timeseries::readData (casa::Matrix<double> &data,
-			   int const &start,
-			   int const &nofSamples)
+  bool TBB_Timeseries::readData (casa::Matrix<double> &data,
+				 int const &start,
+				 int const &nofSamples)
   {
     uint nofDipoles = selectedDipoles().size();
     casa::Vector<int> startPositions (nofDipoles,start);
-
+    
     return readData (data,
-	       startPositions,
-	       nofSamples);
+		     startPositions,
+		     nofSamples);
   }
   
   //_____________________________________________________________________________
@@ -1039,67 +1074,60 @@ namespace DAL {  // Namespace DAL -- begin
     \param nofSamples -- Number of samples to read, starting from the position
            given by <tt>start</tt>.
   */
-  void TBB_Timeseries::readData (casa::Matrix<double> &data,
-			   casa::Vector<int> const &start,
-			   int const &nofSamples)
+  bool TBB_Timeseries::readData (casa::Matrix<double> &data,
+				 casa::Vector<int> const &start,
+				 int const &nofSamples)
   {
+    uint nofDipoles = selectedDatasets_p.size();
     uint nelem      = start.nelements();
-    uint nofDipoles = 0;
-    std::map<std::string,TBB_StationGroup>::iterator it;
-
+    casa::IPosition shape (2,nofSamples,nofDipoles);
+    
     // Check input parameters ______________________________
     
-    if (location_p > 0) {
-      
-      // Check the size of the 'start' vector
-      for (it=stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-	nofDipoles += (it->second.selectedDipoles().size());
-      }
-      if (nelem != nofDipoles) {
-	std::cerr << "[TBB_Timeseries::readData]"
-		  << " Wrong length of vector with start positions!"
-		  << std::endl;
-	std::cerr << " -- nof. selected dipoles   = " << nofDipoles << std::endl;
-	std::cerr << " -- nof. elements in vector = " << nelem      << std::endl;
-	//
-	data = casa::Matrix<double> (1,1,0);
-      }
-      
-    }  //  end -- (location_p>0)
-    else {
-      std::cerr << "[TBB_Timeseries::readData] Object not connected to dataset"
+    if (nelem != nofDipoles) {
+      std::cerr << "[TBB_Timeseries::readData]"
+		<< " Wrong length of vector with start positions!"
 		<< std::endl;
-      data = casa::Matrix<double> (1,1,0);
+      std::cerr << " -- nof. selected dipoles   = " << nofDipoles << std::endl;
+      std::cerr << " -- nof. elements in vector = " << nelem      << std::endl;
+      //
+      data.resize(shape);
+      data = 0.0;
+      return false;
     }
-
+    
+    // Check the shape of the matrix returning the values
+    if (data.shape() != shape) {
+      data.resize(shape);
+    }
+    
     // Retrieve data from file _____________________________
     
-    casa::Matrix<double> tmpData;
-    casa::Vector<int> tmpStart;
-    uint nDipole (0);
-    uint offsetStart (0);
     bool status (true);
-
-    data.resize (nofSamples,nofDipoles);
-
-    for (it=stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      // get the number of dipoles for this station
-      nofDipoles = it->second.selectedDipoles().size();
-      // set up start position values
-      tmpStart.resize(nofDipoles);
-      for (uint dipole(0); dipole<nofDipoles; ++dipole) {
-	tmpStart(dipole) = start(offsetStart+dipole);
-      }
-      offsetStart += nofDipoles;
-      // get the data for the dipoles of that station
-      status = it->second.readData(tmpData,tmpStart,nofSamples);
-      // copy the data
-      for (uint dipole(0); dipole<nofDipoles; ++dipole) {
-	data.column(nDipole) = tmpData.column(dipole);
-	++nDipole;
-      }
-    }
+    uint n (0);
+    casa::Vector<double> tmp (nofSamples);
+    std::map<std::string,iterDipoleDataset>::iterator it;
     
+    /* Iterate over the selected dipoles */
+    for (it=selectedDatasets_p.begin(); it!=selectedDatasets_p.end(); ++it) {
+      /* Retrieve dipole data */
+      tmp = (it->second)->second.readData(start(n),nofSamples);
+      /* Copy the data to the returned array */
+      data.column(n) = tmp;
+      /* Increment data array column counter */
+      ++n;
+    }
+
+    // Feedback ____________________________________________
+
+#ifdef DEBUGGING_MESSAGES
+    std::cout << "[TBB_Timeseries::readData]" << std::endl;
+    std::cout << " -- start            = " << start             << std::endl;
+    std::cout << " -- selected dipoles = " << selectedDipoles() << std::endl;
+    std::cout << " -- shape(data)      = " << data.shape()      << std::endl;
+#endif
+
+    return status;
   }
   
 #endif

@@ -213,20 +213,6 @@ namespace DAL {  // Namespace DAL -- begin
     //! Provide a summary of the object's internal parameters and status
     void summary (std::ostream &os=std::cout);
 
-    //! Get the set of selected dipoles
-    std::set<std::string> selectedDipoles ();
-    
-    //! Set the set of selected dipoles
-    bool selectDipoles (std::set<std::string> const &selection);
-
-    //! Get the map constaining the actual dipole dataset selection
-    inline std::map<std::string,iterDipoleDataset> dipoleSelection () const {
-      return selectedDatasets_p;
-    }
-    
-    //! Select all dipoles within the dataset
-    bool selectAllDipoles ();
-    
     // === Parameter access - TBB time-series ===================================
 
     //! Get the LOFAR common attributes for this dataset
@@ -300,6 +286,16 @@ namespace DAL {  // Namespace DAL -- begin
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
+    //! Get the set of selected dipoles
+    std::set<std::string> selectedDipoles ();
+    //! Set the set of selected dipoles
+    bool selectDipoles (std::set<std::string> const &selection);
+    //! Get the map constaining the actual dipole dataset selection
+    inline std::map<std::string,iterDipoleDataset> dipoleSelection () const {
+      return selectedDatasets_p;
+    }
+    //! Select all dipoles within the dataset
+    bool selectAllDipoles ();
     
     //  High-level access to data and attributes ___________
     
@@ -324,14 +320,14 @@ namespace DAL {  // Namespace DAL -- begin
 
 #ifdef HAVE_CASA
     //! Retrieve a block of ADC values per dipole
-    void readData (casa::Matrix<double> &data,
-	     int const &start=0,
-	     int const &nofSamples=1);
+    bool readData (casa::Matrix<double> &data,
+		   int const &start=0,
+		   int const &nofSamples=1);
     //! Retrieve a block of ADC values per dipole
-    void readData (casa::Matrix<double> &data,
-	     casa::Vector<int> const &start,
-	     int const &nofSamples=1);
-
+    bool readData (casa::Matrix<double> &data,
+		   casa::Vector<int> const &start,
+		   int const &nofSamples=1);
+    
     //  Parameter access - dipole dataset __________________
     
     //! Get the sample frequency as vector of casa::MFrequency
@@ -346,13 +342,15 @@ namespace DAL {  // Namespace DAL -- begin
     bool openEmbedded (bool const &create);
 
   private:
-    
-    //! Unconditional copying
-    void copy (TBB_Timeseries const &other);
+
     //! Open the group acting as a container for system-wide logs
     bool openSysLog (bool const &create);
     //! Locate and register the station groups contained within the file
     bool openStationGroups ();
+    //! Set local map used for book-keeping on selected dipole datasets
+    bool setSelectedDatasets ();
+    //! Unconditional copying
+    void copy (TBB_Timeseries const &other);
     //! Unconditional deletion
     void destroy(void);
     

@@ -541,6 +541,7 @@ int test_parameters (std::string const &filename)
 
   // Perform the tests _____________________________________
 
+  typedef std::map<std::string,DAL::TBB_DipoleDataset>::iterator iterDipoleDataset;
   TBB_StationGroup group (fileID,groupname);
 
   cout << "[1] Testing objectName() ..." << endl;
@@ -570,6 +571,35 @@ int test_parameters (std::string const &filename)
   cout << "[4] Testing nofTriggeredAntennas() ..." << endl;
   try {
     cout << "-- nof. triggered antennas = " << group.nofTriggeredAntennas() << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[5] Testing dipoleSelection() ..." << endl;
+  try {
+    std::map<std::string,iterDipoleDataset> datasets = group.dipoleSelection();
+    std::map<std::string,iterDipoleDataset>::iterator it;
+    //
+    cout << "-- nof. selected datasets = " << datasets.size() << endl;
+    //
+    cout << "-- selected datasets      = [";
+    for (it=datasets.begin(); it!=datasets.end(); ++it) {
+      cout << " " << it->first;
+    }
+    cout << " ]" << endl;
+    //
+    cout << "-- HDF5 location ID       = [";
+    for (it=datasets.begin(); it!=datasets.end(); ++it) {
+      cout << " " << (it->second)->second.locationID();
+    }
+    cout << " ]" << endl;
+    //
+    cout << "-- Dipole number          = [";
+    for (it=datasets.begin(); it!=datasets.end(); ++it) {
+      cout << " " << (it->second)->second.dipoleNumber();
+    }
+    cout << " ]" << endl;
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;

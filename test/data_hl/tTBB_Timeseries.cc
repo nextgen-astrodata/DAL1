@@ -114,9 +114,6 @@ int test_construction (std::string const &filename)
 
   int nofFailedTests (0);
 
-  //__________________________________________________________________
-  // Test the default constructor
-
   cout << "[1] Testing argumented constructor ..." << endl;
   try {
     TBB_Timeseries ts (filename);
@@ -128,9 +125,6 @@ int test_construction (std::string const &filename)
     nofFailedTests++;
   }
   
-  //__________________________________________________________________
-  // Test the copy constructor
-
   cout << "[2] Testing copy constructor ..." << endl;
   try {
     cout << "--> creating original object ..." << endl;
@@ -172,14 +166,26 @@ int test_attributes (std::string const &filename)
     std::string telescope;
     std::string observer;
     std::string observationID;
+    std::string projectID;
+    std::string projectTitle;
+    std::string projectPI;
+    std::string projectContact;
     //
     ts.getAttribute("TELESCOPE",telescope);
     ts.getAttribute("OBSERVER",observer);
     ts.getAttribute("OBSERVATION_ID",observationID);
+    ts.getAttribute("PROJECT_ID",projectID);
+    ts.getAttribute("PROJECT_TITLE",projectTitle);
+    ts.getAttribute("PROJECT_PI",projectPI);
+    ts.getAttribute("PROJECT_CONTACT",projectContact);
     //
     std::cout << "-- TELESCOPE       = " << telescope      << endl;
     std::cout << "-- OBSERVER        = " << observer       << endl;
     std::cout << "-- OBSERVATION_ID  = " << observationID  << endl;
+    std::cout << "-- PROJECT_ID      = " << projectID      << endl;
+    std::cout << "-- PROJECT_TITLE   = " << projectTitle   << endl;
+    std::cout << "-- PROJECT_PI      = " << projectPI      << endl;
+    std::cout << "-- PROJECT_CONTACT = " << projectContact << endl;
   }
   catch (std::string message) {
     std::cerr << message << endl;
@@ -211,6 +217,45 @@ int test_attributes (std::string const &filename)
   }
   catch (std::string message) {
     std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                test_parameters
+
+int test_parameters (std::string const &filename)
+{
+  cout << "\n[tTBB_Timeseries::test_parameters]\n" << endl;
+
+  int nofFailedTests (0);
+  TBB_Timeseries ts (filename);
+
+  // Perform the tests _____________________________________
+
+  cout << "[1] Testing objectName() ..." << endl;
+  try {
+    cout << "-- HDF5 object name = " << ts.objectName() << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[2] Testing attributes() ..." << endl;
+  try {
+    cout << "-- TBB_StationGroup attributes = " << ts.attributes() << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[3] Testing selectedDipoles() ..." << endl;
+  try {
+    cout << "-- Selected dipoles = " << ts.selectedDipoles() << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
     nofFailedTests++;
   }
 
@@ -259,17 +304,6 @@ int test_methods (std::string const &filename)
     nofFailedTests++;
   }
 
-  cout << "[2] Access to embedded dipole datasets ..." << endl;
-  try {
-    std::vector<std::string> dipoleNames = ts.dipoleNames();
-
-    cout << "-- Dipole names = " << dipoleNames << endl;
-  }
-  catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-  
   return nofFailedTests;
 }
 
@@ -388,6 +422,8 @@ int main (int argc,
     nofFailedTests += test_construction (filename);
     // Test access to the attributes
     nofFailedTests += test_attributes (filename);
+    // Test access to the parameters
+    nofFailedTests += test_parameters (filename);
     // Test test various methods provided by the class
     nofFailedTests += test_methods (filename);
     // Test access to the data stored within the dipole datasets

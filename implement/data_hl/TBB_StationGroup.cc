@@ -410,11 +410,14 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                              selectedDipoles
   
+  /*!
+    \return selection -- Names of the selected dipole datasets.
+  */
   std::set<std::string> TBB_StationGroup::selectedDipoles ()
   {
     std::set<std::string> selection;
     std::map<std::string,iterDipoleDataset>::iterator it;
-
+    
     for (it=selectedDatasets_p.begin(); it!=selectedDatasets_p.end(); ++it) {
       selection.insert(it->first);
     }    
