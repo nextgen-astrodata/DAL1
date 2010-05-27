@@ -1036,7 +1036,7 @@ namespace DAL {  // Namespace DAL -- begin
             electric field strength as function of time.
   */
   casa::Vector<double> TBB_DipoleDataset::readData (int const &start,
-					      int const &nofSamples)
+						    int const &nofSamples)
   {
     if (location_p > 0) {
       bool status   = true;
