@@ -621,7 +621,7 @@ namespace DAL {  // Namespace DAL -- begin
     unsigned int n (0);
 
     for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-      names[n] = it->second.getName();
+      names[n] = it->second.dipoleName();
       ++n;
     }
 
@@ -943,7 +943,7 @@ namespace DAL {  // Namespace DAL -- begin
       uint n (0);
       
       for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-	name = it->second.getName();
+	name = it->second.dipoleName();
 	// retrieve the attributes for the dipole data-set as record
 	recordDipole = it->second.attributes2record();
 	// ... and add it to the existing record

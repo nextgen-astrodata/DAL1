@@ -317,9 +317,9 @@ namespace DAL {   // Namespace DAL -- begin
 				  unsigned int const &rsp_id,
 				  unsigned int const &rcu_id)
     {
-      return TBB_DipoleDataset::getName(station_id,
-					rsp_id,
-					rcu_id);
+      return TBB_DipoleDataset::dipoleName(station_id,
+					   rsp_id,
+					   rcu_id);
     }
     
     // ============================================================================

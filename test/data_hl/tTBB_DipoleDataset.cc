@@ -142,7 +142,7 @@ int test_constructors ()
     station = 0;
     rsp     = 0;
     for (rcu=0; rcu<5; ++rcu) {
-      name = TBB_DipoleDataset::getName(station,rsp,rcu);
+      name = TBB_DipoleDataset::dipoleName(station,rsp,rcu);
       TBB_DipoleDataset data (fileID,station,rsp,rcu,shape);
       cout << "-- created dataset " << name << endl;
     }
@@ -150,7 +150,7 @@ int test_constructors ()
     station = 1;
     for (rsp=0; rsp<5; ++rsp) {
       for (rcu=0; rcu<5; ++rcu) {
-	name = TBB_DipoleDataset::getName(station,rsp,rcu);
+	name = TBB_DipoleDataset::dipoleName(station,rsp,rcu);
 	TBB_DipoleDataset data (groupID,station,rsp,rcu,shape);
 	cout << "-- created dataset " << name << endl;
       }
@@ -167,7 +167,7 @@ int test_constructors ()
     station = 0;
     rsp     = 0;
     for (rcu=0; rcu<5; ++rcu) {
-      name = TBB_DipoleDataset::getName(station,rsp,rcu);
+      name = TBB_DipoleDataset::dipoleName(station,rsp,rcu);
       TBB_DipoleDataset data (fileID,station,rsp,rcu);
       cout << "-- opened dataset " << name << endl;
     }
@@ -184,13 +184,13 @@ int test_constructors ()
     rsp     = 0;
     for (rcu=0; rcu<5; ++rcu) {
       // convert IDs to name
-      name = TBB_DipoleDataset::getName(station,rsp,rcu);
+      name = TBB_DipoleDataset::dipoleName(station,rsp,rcu);
       // create original object
       TBB_DipoleDataset data (fileID,station,rsp,rcu);
-      cout << "-- Channel name (original) = " << data.getName() << endl;
+      cout << "-- Channel name (original) = " << data.dipoleName() << endl;
       // create copy 
       TBB_DipoleDataset dataCopy (data);
-      cout << "-- Channel name (copy)     = " << dataCopy.getName() << endl;
+      cout << "-- Channel name (copy)     = " << dataCopy.dipoleName() << endl;
     }
   } catch (std::string message) {
     cerr << message << endl;

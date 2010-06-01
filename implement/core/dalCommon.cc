@@ -920,8 +920,8 @@ namespace DAL {
 			    &value);
 	}
 	
-	// release allocated memory
-	delete data;
+	// // release allocated memory
+	// if (data!=NULL) delete data;
 	
       } // END -- (datatype_class_id == H5T_STRING)
       

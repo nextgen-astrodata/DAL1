@@ -104,11 +104,12 @@ void export_TBB_DipoleDataset()
 				   uint const &,
 				   std::vector<hsize_t> const &,
 				   hid_t const &)      = &TBB_DipoleDataset::open;
-  std::string (TBB_DipoleDataset::*getName1)()         = &TBB_DipoleDataset::getName;
-//   std::string (TBB_DipoleDataset::*getName2)(unsigned int const &,
+  int (TBB_DipoleDataset::*dipoleNumber1)()      = &TBB_DipoleDataset::dipoleNumber;
+  std::string (TBB_DipoleDataset::*dipoleName1)()      = &TBB_DipoleDataset::dipoleName;
+//   std::string (TBB_DipoleDataset::*dipoleName2)(unsigned int const &,
 // 					     unsigned int const &,
 // 					     unsigned int const &)
-//     = &TBB_DipoleDataset::getName;
+//     = &TBB_DipoleDataset::dipoleName;
   
   bpl::class_<TBB_DipoleDataset>("TBB_DipoleDataset")
     /* Construction */
@@ -130,11 +131,11 @@ void export_TBB_DipoleDataset()
 	 "Open a dipole dataset.")
     .def("open", open3,
 	 "Open a dipole dataset.")
-    .def( "dipoleNumber", &TBB_DipoleDataset::dipoleNumber,
+    .def( "dipoleNumber", dipoleNumber1,
 	  "Get the unique channel/dipole identifier." )
-    .def( "getName", getName1,
+    .def( "getName", dipoleName1,
 	  "Get the unique channel/dipole identifier." )
-//     .def( "getName", getName2,
+//     .def( "getName", dipoleName2,
 // 	  "Get the unique channel/dipole identifier." )
     ;
 }

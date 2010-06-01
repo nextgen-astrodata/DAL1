@@ -455,6 +455,26 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
+  //                                                                dipoleNumbers
+
+  std::vector<int> TBB_Timeseries::dipoleNumbers ()
+  {
+    std::vector<int> numbers;
+    std::vector<int> tmp;
+    std::map<std::string,TBB_StationGroup>::iterator it;
+
+    for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
+      tmp.clear();
+      tmp = it->second.dipoleNumbers();
+      for (unsigned int n(0); n<tmp.size(); ++n) {
+	numbers.push_back(tmp[n]);
+      }
+    }
+
+    return numbers;
+  }
+  
+  //_____________________________________________________________________________
   //                                                                  dipoleNames
 
   std::vector<std::string> TBB_Timeseries::dipoleNames ()
@@ -496,6 +516,9 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                selectDipoles
 
+  /*!
+    \return selection -- Names of the dipole datasets to be selected.
+  */
   bool TBB_Timeseries::selectDipoles (std::set<std::string> const &selection)
   {
     bool status (true);
@@ -1056,7 +1079,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     uint nofDipoles = selectedDipoles().size();
     casa::Vector<int> startPositions (nofDipoles,start);
-    
+
     return readData (data,
 		     startPositions,
 		     nofSamples);
@@ -1078,18 +1101,18 @@ namespace DAL {  // Namespace DAL -- begin
 				 casa::Vector<int> const &start,
 				 int const &nofSamples)
   {
-    uint nofDipoles = selectedDatasets_p.size();
-    uint nelem      = start.nelements();
-    casa::IPosition shape (2,nofSamples,nofDipoles);
+    uint sizeSelection = selectedDatasets_p.size();
+    uint sizeStart     = start.nelements();
+    casa::IPosition shape (2,nofSamples,sizeSelection);
     
     // Check input parameters ______________________________
     
-    if (nelem != nofDipoles) {
+    if (sizeStart != sizeSelection) {
       std::cerr << "[TBB_Timeseries::readData]"
 		<< " Wrong length of vector with start positions!"
 		<< std::endl;
-      std::cerr << " -- nof. selected dipoles   = " << nofDipoles << std::endl;
-      std::cerr << " -- nof. elements in vector = " << nelem      << std::endl;
+      std::cerr << " -- size(selection) = " << sizeSelection << std::endl;
+      std::cerr << " -- size(start)     = " << sizeStart     << std::endl;
       //
       data.resize(shape);
       data = 0.0;

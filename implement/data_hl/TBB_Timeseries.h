@@ -286,6 +286,10 @@ namespace DAL {  // Namespace DAL -- begin
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
+    //! Retrieve the list of dipole number contained within this data file
+    std::vector<int> dipoleNumbers ();
+    //! Retrieve the list of dipole names contained within this data file
+    std::vector<std::string> dipoleNames ();
     //! Get the set of selected dipoles
     std::set<std::string> selectedDipoles ();
     //! Set the set of selected dipoles
@@ -299,8 +303,6 @@ namespace DAL {  // Namespace DAL -- begin
     
     //  High-level access to data and attributes ___________
     
-    //! Retrieve the list of channels names contained within this data file
-    std::vector<std::string> dipoleNames ();
     //! Get the values of TIME for all present datasets
     std::vector<uint> time ();
     //! Get the number of samples elapsed since the last full second
