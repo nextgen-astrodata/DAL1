@@ -76,7 +76,9 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                         copy
   
   void CoordinateGenerator::copy (CoordinateGenerator const &other)
-  {;}
+  {
+    haveCASA_p = other.haveCASA_p;
+  }
 
   // ============================================================================
   //
