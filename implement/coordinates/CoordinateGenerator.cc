@@ -33,13 +33,13 @@ namespace DAL { // Namespace DAL -- begin
   
   CoordinateGenerator::CoordinateGenerator ()
   {
-#ifdef HAVE_CASA
-    haveCASA_p = true;
-#else
-    haveCASA_p = false;
-#endif
+    init ();
   }
   
+  /*!
+    \param other -- Another CoordinateGenerator object from which to create this new
+           one.
+  */
   CoordinateGenerator::CoordinateGenerator (CoordinateGenerator const &other)
   {
     copy (other);
@@ -75,9 +75,15 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
+  /*!
+    \param other -- Another CoordinateGenerator object from which to make a copy.
+  */
   void CoordinateGenerator::copy (CoordinateGenerator const &other)
   {
     haveCASA_p = other.haveCASA_p;
+
+    projections_p.clear();
+    projections_p = other.projections_p;
   }
 
   // ============================================================================
@@ -95,6 +101,8 @@ namespace DAL { // Namespace DAL -- begin
   void CoordinateGenerator::summary (std::ostream &os)
   {
     os << "[CoordinateGenerator] Summary of internal parameters." << std::endl;
+    os << "-- Have CASA/casacore   = " << haveCASA()        << std::endl;
+    os << "-- Map projection names = " << projectionNames() << std::endl;
   }
   
   // ============================================================================
@@ -103,6 +111,68 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                         init
+  
+  void CoordinateGenerator::init ()
+  {
+#ifdef HAVE_CASA
+    haveCASA_p = true;
+#else
+    haveCASA_p = false;
+#endif
+
+    setProjections ();
+  }
+
+  //_____________________________________________________________________________
+  //                                                               setProjections
+  
+  void CoordinateGenerator::setProjections ()
+  {
+    projections_p.clear();
+
+    projections_p["AIR"] = "Airy";
+    projections_p["AIT"] = "Hammer-Aitoff";
+    projections_p["CAR"] = "Cartesian";
+    projections_p["MER"] = "Mercator";
+    projections_p["MOL"] = "Molweide";
+    projections_p["SIN"] = "Orthographics/synthesis";
+    projections_p["STG"] = "Stereographic";
+    projections_p["TAN"] = "Gnomonic";
+  }
+
+  //_____________________________________________________________________________
+  //                                                              projectionNames
+  
+  std::vector<std::string> CoordinateGenerator::projectionNames ()
+  {
+    std::map<std::string,std::string>::iterator it;
+    std::vector<std::string> names;
+
+    for (it=projections_p.begin(); it!=projections_p.end(); ++it) {
+      names.push_back (it->first);
+    }
+    
+    return names;
+  }
+
+  //_____________________________________________________________________________
+  //                                                       projectionDescriptions
+  
+  std::vector<std::string> CoordinateGenerator::projectionDescriptions ()
+  {
+    std::map<std::string,std::string>::iterator it;
+    std::vector<std::string> info;
+
+    for (it=projections_p.begin(); it!=projections_p.end(); ++it) {
+      info.push_back (it->second);
+    }
+    
+    return info;
+  }
+
+
   // ============================================================================
   //
   //   Static methods
@@ -113,12 +183,66 @@ namespace DAL { // Namespace DAL -- begin
   
   //_____________________________________________________________________________
   //                                                               makeCoordinate
+
+  /*!
+    \retval coord     -- casa::DirectionCoordinate object created from the input
+            parameters.
+    \param refcode    -- Reference code for the celestial coordinate frame
+    \param projection -- Reference code for the sphercial map projection
+    \param refValue   -- Reference value, CRVAL
+    \param increment  -- Coordinate increment, CDELT
+    \param refPixel   -- Reference pixel, CRPIX
+    \return status    -- Status of the operation; return \e false in case an
+            error was encountered, \e true otherwise.
+  */
+  bool CoordinateGenerator::makeCoordinate (casa::DirectionCoordinate &coord,
+					    casa::MDirection::Types const &refcode,
+					    casa::Projection::Type const &projection,
+					    Vector<Quantum<double> > const &refValue,
+					    Vector<Quantum<double> > const &increment,
+					    Vector<double> const &refPixel)
+  {
+    bool status (true);
+    unsigned int rank (2);
+    
+    /* Check the dimensions of the vectors with the input parameters */
+    
+    if (refValue.nelements() == rank
+	&& increment.nelements() == rank
+	&& refPixel.nelements() == rank) {
+      /* Set linear transformation matrix */
+      casa::Matrix<casa::Double> xform (rank,rank);
+      xform            = 0.0;
+      xform.diagonal() = 1.0;
+      /* Create DirectionCoordinate object */
+      coord = casa::DirectionCoordinate (refcode,
+					 casa::Projection(projection),
+					 refValue(0),
+					 refValue(1),
+					 increment(0),
+					 increment(1),
+					 xform,
+					 refPixel(0),
+					 refPixel(1));
+    } else {
+      status = false;
+      coord  = casa::DirectionCoordinate ();
+    }
+
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                               makeCoordinate
   
   /*!
-    \retval coord  -- 
+    \retval coord  -- casa::LinearCoordinate object created from the input
+            parameters.
     \param nofAxes -- The number of axes for which to create the coordinate
     \param names   -- World axis names of the coordinate.
     \param units   -- World axis units of the coordinate.
+    \return status   -- Status of the operation; return \e false in case an
+            error was encountered, \e true otherwise.
   */
   bool CoordinateGenerator::makeCoordinate (casa::LinearCoordinate &coord,
 					    unsigned int const &nofAxes,
@@ -164,13 +288,16 @@ namespace DAL { // Namespace DAL -- begin
   //                                                               makeCoordinate
   
   /*!
-    \retval coord    -- 
+    \retval coord    -- casa::LinearCoordinate object created from the input
+            parameters.
     \param nofAxes   -- The number of axes for which to create the coordinate
     \param names     -- World axis names of the coordinate.
     \param units     -- World axis units of the coordinate.
     \param refValue  -- Reference value, CRVAL.
     \param increment -- Coordinate increment, CDELT.
     \param refPixel  -- Reference pixel, CRPIX.
+    \return status   -- Status of the operation; return \e false in case an
+            error was encountered, \e true otherwise.
   */
   bool CoordinateGenerator::makeCoordinate (casa::LinearCoordinate &coord,
 					    unsigned int const &nofAxes,
@@ -198,12 +325,15 @@ namespace DAL { // Namespace DAL -- begin
   //                                                               makeCoordinate
   
   /*!
-    \retval coord    -- 
+    \retval coord    -- casa::LinearCoordinate object created from the input
+            parameters.
     \param names     -- World axis names of the coordinate.
     \param units     -- World axis units of the coordinate.
     \param refValue  -- Reference value, CRVAL.
     \param increment -- Coordinate increment, CDELT.
     \param refPixel  -- Reference pixel, CRPIX.
+    \return status   -- Status of the operation; return \e false in case an
+            error was encountered, \e true otherwise.
   */
   bool CoordinateGenerator::makeCoordinate (casa::LinearCoordinate &coord,
 					    casa::Vector<casa::String> const &names,
@@ -238,6 +368,58 @@ namespace DAL { // Namespace DAL -- begin
 				    pc,
 				    refPixel);
     }
+    
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                               makeCoordinate
+  
+  /*!
+    \retval coord    -- casa::SpectralCoordinate object created from the input
+            parameters.
+    \param refValue  -- Reference value, CRVAL, [s]
+    \param increment -- Coordinate increment, CDELT, [s]
+    \param refPixel  -- Reference pixel, CRPIX
+    \return status   -- Status of the operation; return \e false in case an
+            error was encountered, \e true otherwise.
+  */
+  bool CoordinateGenerator::makeCoordinate (casa::SpectralCoordinate &coord,
+					    double const &refValue,
+					    double const &increment,
+					    double const &refPixel)
+  {
+    bool status (true);
+    casa::Vector<casa::String> names (1,"Frequency");
+    
+    coord = casa::SpectralCoordinate (casa::MFrequency::TOPO,
+				      refValue,
+				      increment,
+				      refPixel);
+    coord.setWorldAxisNames(names);
+    
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                               makeCoordinate
+  
+  /*!
+    \retval coord    -- casa::StokesCoordinate object.
+    \return status   -- Status of the operation; return \e false in case an
+            error was encountered, \e true otherwise.
+  */
+  bool CoordinateGenerator::makeCoordinate (casa::StokesCoordinate &coord)
+  {
+    bool status (true);
+    casa::Vector<casa::Int> iquv (4);
+    
+    iquv(0) = casa::Stokes::I;
+    iquv(1) = casa::Stokes::Q;
+    iquv(2) = casa::Stokes::U;
+    iquv(3) = casa::Stokes::V;
+    
+    coord = casa::StokesCoordinate (iquv);
     
     return status;
   }

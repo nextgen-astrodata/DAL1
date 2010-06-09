@@ -2,8 +2,8 @@
  | $Id::                                                                 $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
- *   Copyright (C) 2010                                                  *
- *   Lars Baehren (<mail>)                                                     *
+ *   Copyright (C) 2010                                                    *
+ *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <coordinates/CoordinateGenerator.h>
+#include <CoordinateGenerator.h>
 
 // Namespace usage
 using DAL::CoordinateGenerator;
@@ -29,11 +29,12 @@ using DAL::CoordinateGenerator;
 /*!
   \file tCoordinateGenerator.cc
 
+  \ingroup DAL
   \ingroup coordinates
 
-  \brief A collection of test routines for the CoordinateGenerator class
+  \brief A collection of test routines for the DAL::CoordinateGenerator class
  
-  \author Lars Baehren
+  \author Lars B&auml;hren
  
   \date 2010/06/08
 */
@@ -55,9 +56,9 @@ int test_constructors ()
   
   std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
-    CoordinateGenerator newObject;
+    CoordinateGenerator coord;
     //
-    newObject.summary(); 
+    coord.summary(); 
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;

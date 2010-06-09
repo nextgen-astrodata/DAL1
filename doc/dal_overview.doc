@@ -125,7 +125,19 @@
 /*!
   \defgroup coordinates DAL :: Coordinates
   \ingroup DAL
-  \brief Coodinates to connect pixel values to world values
+  \brief Coordinates that serve to locate a measurement in some multidimensional parameter space
+
+  <h3>Prerequisite</h3>
+    
+  <ul type="square">
+    <li>E. W. Greisen & M. R. Calabretta (2002) Representations of world
+    coordinates in FITS. A&A, \b 395, p. 1061-1075.
+    <li>M. R. Calabretta & E. W. Greisen (2002) Representations of celestial
+    coordinates in FITS, A&A, \b 395, p. 1077-1122.
+    <li>E. W. Greisen, M. R. Calabretta, F. G. Valdes, & S. L. Allen, (2006)
+    Representations of spectral coordinates in FITS. A&A, \b 446, p. 747-771.
+  </ul>
+    
 */
 
 //_______________________________________________________________________________

@@ -26,9 +26,14 @@
 
 // Standard library header files
 #include <iostream>
+#include <map>
 #include <string>
+#include <vector>
 
 #ifdef HAVE_CASA
+#ifndef WCSLIB_GETWCSTAB
+#define WCSLIB_GETWCSTAB 1
+#endif
 #include <casa/Arrays/Matrix.h>
 #include <casa/Arrays/Vector.h>
 #include <casa/BasicSL/String.h>
@@ -39,7 +44,12 @@
 #include <coordinates/Coordinates/StokesCoordinate.h>
 #include <coordinates/Coordinates/SpectralCoordinate.h>
 #include <coordinates/Coordinates/TabularCoordinate.h>
+
+using casa::Quantum;
+using casa::Vector;
 #endif
+
+#include <dalCommon.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -60,7 +70,12 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>[start filling in your text here]
+      <li>E. W. Greisen & M. R. Calabretta (2002) Representations of world
+      coordinates in FITS. A&A, \b 395, p. 1061-1075.
+      <li>M. R. Calabretta & E. W. Greisen (2002) Representations of celestial
+      coordinates in FITS, A&A, \b 395, p. 1077-1122.
+      <li>E. W. Greisen, M. R. Calabretta, F. G. Valdes, & S. L. Allen, (2006)
+      Representations of spectral coordinates in FITS. A&A, \b 446, p. 747-771.
     </ul>
     
     <h3>Synopsis</h3>
@@ -70,7 +85,10 @@ namespace DAL { // Namespace DAL -- begin
   */  
   class CoordinateGenerator {
     
+    //! Do we have CASA or casacore?
     bool haveCASA_p;
+    //! Map with the reference codes and descriptions of projects
+    std::map<std::string,std::string> projections_p;
 
   public:
     
@@ -79,21 +97,12 @@ namespace DAL { // Namespace DAL -- begin
     //! Default constructor
     CoordinateGenerator ();
     
-    /*!
-      \brief Copy constructor
-      
-      \param other -- Another CoordinateGenerator object from which to create this new
-             one.
-    */
+    //! Copy constructor
     CoordinateGenerator (CoordinateGenerator const &other);
     
     // === Operators ============================================================
     
-    /*!
-      \brief Overloading of the copy operator
-      
-      \param other -- Another CoordinateGenerator object from which to make a copy.
-    */
+    //! Overloading of the copy operator
     CoordinateGenerator& operator= (CoordinateGenerator const &other); 
     
     // === Parameter access =====================================================
@@ -121,11 +130,36 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // === Methods ==============================================================
-    
+
+    //! Get the list of projection names/refcodes
+    std::vector<std::string> projectionNames ();
+
+    //! Get the descriptions of the projections
+    std::vector<std::string> projectionDescriptions ();
+
     // === Static methods =======================================================
     
 #ifdef HAVE_CASA
-    
+
+    //___________________________________________________________________________
+    //                                             Creation of coordinate objects
+
+    //! Create a casa::DirectionCoordinate object
+    /* static bool makeCoordinate (casa::DirectionCoordinate &coord, */
+    /* 				std::string const &refcode, */
+    /* 				std::string const &projection, */
+    /* 				casa::Vector<casa::Quantum<double> > const &refValue, */
+    /* 				casa::Vector<casa::Quantum<double> > const &increment, */
+    /* 				casa::Vector<double> const &refPixel); */
+
+    //! Create a casa::DirectionCoordinate object
+    static bool makeCoordinate (casa::DirectionCoordinate &coord,
+				casa::MDirection::Types const &refcode,
+				casa::Projection::Type const &projection,
+				casa::Vector<casa::Quantum<double> > const &refValue,
+				casa::Vector<casa::Quantum<double> > const &increment,
+				casa::Vector<double> const &refPixel);
+
     //! Create a casa::LinearCoordinate object
     static bool makeCoordinate (casa::LinearCoordinate &coord,
 				unsigned int const &nofAxes,
@@ -146,10 +180,26 @@ namespace DAL { // Namespace DAL -- begin
 				casa::Vector<double> const &refValue,
 				casa::Vector<double> const &increment,
 				casa::Vector<double> const &refPixel);
+
+    //! Create a casa::SpectralCoordinate object
+    static bool makeCoordinate (casa::SpectralCoordinate &coord,
+				double const &refValue=0,
+				double const &increment=0,
+				double const &refPixel=0);
+    
+    //! Create a casa::StokesCoordinate object
+    static bool makeCoordinate (casa::StokesCoordinate &coord);
+    
     
 #endif 
     
   private:
+
+    //! Initialize the internal parameters
+    void init ();
+
+    //! Set up the map with the projections
+    void setProjections ();
     
     //! Unconditional copying
     void copy (CoordinateGenerator const &other);

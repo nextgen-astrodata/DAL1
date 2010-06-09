@@ -34,6 +34,7 @@ endforeach (src)
 
 add_test (tAngle tAngle)
 add_test (tRaDec tRaDec)
+add_test (tCoordinateGenerator tCoordinateGenerator)
 add_test (tDirectionCoordinate tDirectionCoordinate)
 add_test (tLinearCoordinate tLinearCoordinate)
 add_test (tStokesCoordinate tStokesCoordinate)
