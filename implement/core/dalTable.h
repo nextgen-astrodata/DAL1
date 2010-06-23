@@ -76,7 +76,7 @@ namespace DAL {
     vector<dalColumn> columns; // list of table columns
     
 #ifdef HAVE_CASA
-    casa::Table * casa_table_handle;
+    casa::Table * casaTable_p;
     casa::Array<casa::Double> array_vals_dbl;
     casa::Array<casa::Complex> array_vals_comp;
     casa::ROTableColumn * casa_column;
@@ -136,28 +136,28 @@ namespace DAL {
     
 #ifdef HAVE_CASA
     //! Open a CASA table, not in a MeasurementSet.
-    void openTable( string tablename );
+    void openTable (string tablename);
     //! Open the table in a measurement set.
-    void openTable( string tablename,
+    void openTable (string tablename,
 		    casa::MSReader * reader );
     //! Open a filtered CASA measurement set table.
-    void openTable( string tablename,
+    void openTable (string tablename,
 		    casa::MSReader * reader,
 		    dalFilter * filter );
     //! Get keyword of type casa::String
-    bool GetKeyword( casa::String const KeywordName,
+    bool GetKeyword (casa::String const KeywordName,
 		     casa::String *result);
     //! Get keyword of type casa::Double
-    bool GetKeyword( casa::String const KeywordName,
+    bool GetKeyword (casa::String const KeywordName,
 		     casa::Double *result);
     //! Get keyword of type casa::Float
-    bool GetKeyword( casa::String const KeywordName,
+    bool GetKeyword (casa::String const KeywordName,
 		     casa::Float *result);
-    bool GetKeyword( casa::String const KeywordName,
+    bool GetKeyword (casa::String const KeywordName,
 		     casa::DComplex *result);
-    bool GetKeyword( casa::String const KeywordName,
+    bool GetKeyword (casa::String const KeywordName,
 		     casa::Array<casa::Double> *result);
-    bool GetKeyword( casa::String const KeywordName,
+    bool GetKeyword (casa::String const KeywordName,
 		     casa::Array<casa::DComplex> *result);
     casa::String GetKeywordType(casa::String const KeywordName);
 #endif

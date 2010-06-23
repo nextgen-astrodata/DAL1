@@ -274,10 +274,23 @@ namespace DAL {  // Namespace DAL -- begin
 
   //_____________________________________________________________________________
   //                                                             exportCoordinate
+
 #ifdef HAVE_CASA
   void TabularCoordinate::exportCoordinate (casa::TabularCoordinate &coord)
   {
-    
+    unsigned int nelem = pixelValues_p.size();
+    casa::Vector<double> pixel (nelem);
+    casa::Vector<double> world (nelem);
+
+    for (unsigned int n(0); n<nelem; ++n) {
+      pixel(n) = pixelValues_p[n];
+      world(n) = worldValues_p[n];
+    }
+
+    coord = casa::TabularCoordinate (pixel,
+				     world,
+				     axisUnits_p[0],
+				     axisNames_p[0]);
   }
 #endif
 
