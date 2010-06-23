@@ -252,6 +252,13 @@ namespace DAL {  // Namespace DAL -- begin
       location_p = H5Fopen (name.c_str(),
 			    H5F_ACC_RDWR,
 			    H5P_DEFAULT);
+      /* If opening the the file failed, this might have been due to wrong
+	 access permissions; check if the file can be opened as read-only. */
+      if (location_p<0) {
+	location_p = H5Fopen (name.c_str(),
+			      H5F_ACC_RDONLY,
+			      H5P_DEFAULT);
+      }
     } else {
       infile.close();
       location_p = 0;

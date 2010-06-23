@@ -256,10 +256,10 @@ void export_HDF5Hyperslab ()
   
   bpl::class_<HDF5Hyperslab>("HDF5Hyperslab")
     .def( bpl::init<>())
-    .def( bpl::init<std::vector<hsize_t> const &>())
+    .def( bpl::init<int const &>())
     // Parameter access
-    .def( "shape", &HDF5Hyperslab::shape,
-	  "Get the shape of the array to which the hyperslab is applied.")
+    .def( "shape", &HDF5Hyperslab::rank,
+	  "Get the rank of the array to which the hyperslab is applied.")
     .def( "start", &HDF5Hyperslab::start,
 	  "Get the offset of the starting element of the specified hyperslab.")
     .def( "setStart", &HDF5Hyperslab::setStart,

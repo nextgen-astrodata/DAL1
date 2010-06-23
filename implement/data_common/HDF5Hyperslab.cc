@@ -43,31 +43,28 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                HDF5Hyperslab
 
   /*!
-    \param shape -- Shape of the dataset
+    \param rank -- Rank of the dataset, i.e. the number of array axes.
   */
-  HDF5Hyperslab::HDF5Hyperslab (std::vector<hsize_t> const &shape)
+  HDF5Hyperslab::HDF5Hyperslab (int const &rank)
+    : rank_p (rank)
   {
     init();
-    shape_p = shape;
   }
   
   //_____________________________________________________________________________
   //                                                                HDF5Hyperslab
   
   /*!
-    \param shape     -- Shape of the dataset.
     \param start     -- Offset of the starting element of the specified hyperslab.
     \param block     -- The size of the block selected from the dataspace.
     \param selection --  
   */
-  HDF5Hyperslab::HDF5Hyperslab (std::vector<hsize_t> const &shape,
-				std::vector<int> const &start,
+  HDF5Hyperslab::HDF5Hyperslab (std::vector<int> const &start,
 				std::vector<int> const &block,
 				H5S_seloper_t const &selection)
   {
     init();
     
-    shape_p     = shape;
     setStart (start);
     setBlock (block);
     selection_p = selection;
@@ -77,7 +74,6 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                HDF5Hyperslab
   
   /*!
-    \param shape     -- Shape of the dataset.
     \param start     -- Offset of the starting element of the specified hyperslab.
     \param stride    -- Number of elements to separate each element or block to
            be selected.
@@ -86,8 +82,7 @@ namespace DAL { // Namespace DAL -- begin
     \param block     -- The size of the block selected from the dataspace.
     \param selection --  
   */
-  HDF5Hyperslab::HDF5Hyperslab (std::vector<hsize_t> const &shape,
-				std::vector<int> const &start,
+  HDF5Hyperslab::HDF5Hyperslab (std::vector<int> const &start,
 				std::vector<int> const &stride,
 				std::vector<int> const &count,
 				std::vector<int> const &block,
@@ -95,7 +90,6 @@ namespace DAL { // Namespace DAL -- begin
   {
     init();
     
-    shape_p     = shape;
     selection_p = selection;
 
     setStart  (start);
@@ -125,7 +119,6 @@ namespace DAL { // Namespace DAL -- begin
   
   void HDF5Hyperslab::destroy ()
   {
-    shape_p.clear();
     start_p.clear();
     stride_p.clear();
     count_p.clear();
@@ -155,13 +148,12 @@ namespace DAL { // Namespace DAL -- begin
   
   void HDF5Hyperslab::copy (HDF5Hyperslab const &other)
   {
-    shape_p.clear();
     start_p.clear();
     stride_p.clear();
     count_p.clear();
     block_p.clear();
 
-    shape_p     = other.shape_p;
+    rank_p      = other.rank_p;
     start_p     = other.start_p;
     stride_p    = other.stride_p;
     count_p     = other.count_p;
@@ -178,42 +170,31 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                     setStart
   
-  bool HDF5Hyperslab::setStart (std::vector<int> const &start,
-				bool const &ignoreShape)
+  bool HDF5Hyperslab::setStart (std::vector<int> const &start)
   {
     bool status (true);
+    int nelem = start.size();
 
-    if (ignoreShape) {
-      if (start.size() == start_p.size()) {
-	start_p = start;
-      } else {
-	status = false;
+    /* First check if the rank information has been initialized */
+    if (rank_p<0) {
+      rank_p = nelem;
+    }
+    
+    if (start.empty()) {
+      start_p.clear();
+      start_p.resize(rank_p);
+    }
+    
+    if (nelem == rank_p) {
+      start_p = start;
+    } else if (nelem > rank_p) {
+      for (int n(0); n< rank_p; ++n) {
+	start_p[n] = start[n];
       }
     } else {
-      if (shape_p.empty()) {
-	std::cerr << "[HDF5Hyperslab::setStart] Shape undefined!" << std::endl;
-	status = false;
-      } else {
-	unsigned int nelem = shape_p.size();
-	if (nelem == start.size()) {
-	  start_p.resize(nelem);
-	  for (unsigned int n(0); n<nelem; ++n) {
-	    if (start[n] < int(shape_p[n])) {
-	      start_p[n] = start[n];
-	    } else {
-	      start_p[n] = 0;
-	      std::cerr << "[HDF5Hyperslab::setStart] Start position outside shape!"
-			<< std::endl;
-	      status = false;
-	    }
-	  }
-	} else {
-	  std::cerr << "[HDF5Hyperslab::setStart] Rank mismatch!" << std::endl;
-	  std::cerr << "-- Shape : " << shape_p << std::endl;
-	  std::cerr << "-- Start : " << start   << std::endl;
-	  status = false;
-	}
-      }
+      std::cerr << "[HDF5Hyperslab::setStart] Input array has too few elements!"
+		<< std::endl;
+      status = false;
     }
     
     return status;
@@ -233,23 +214,28 @@ namespace DAL { // Namespace DAL -- begin
   bool HDF5Hyperslab::setStride (std::vector<int> const &stride)
   {
     bool status (true);
-    unsigned int nelem = shape_p.size();
+    int nelem = stride.size();
 
-    if (stride.size() == nelem) {
-      stride_p = stride;
+    /* First check if the rank information has been initialized */
+    if (rank_p<0) {
+      rank_p = nelem;
     }
-    else if (stride.empty()) {
+    
+    if (stride.empty()) {
       stride_p.clear();
+      stride_p.resize(rank_p);
     }
-    else {
-      if (stride.size() > nelem) {
-	stride_p.resize(nelem);
-	for (unsigned int n(0); n< nelem; ++n) {
-	  stride_p[n] = stride[n];
-	}
-      } else {
-	status = false;
+    
+    if (nelem == rank_p) {
+      stride_p = stride;
+    } else if (nelem > rank_p) {
+      for (int n(0); n< rank_p; ++n) {
+	stride_p[n] = stride[n];
       }
+    } else {
+      std::cerr << "[HDF5Hyperslab::setStride] Input array has too few elements!"
+		<< std::endl;
+      status = false;
     }
     
     return status;
@@ -261,69 +247,61 @@ namespace DAL { // Namespace DAL -- begin
   bool HDF5Hyperslab::setCount (std::vector<int> const &count)
   {
     bool status (true);
-    unsigned int nelem = shape_p.size();
+    int nelem = count.size();
 
-    if (count.size() == nelem) {
-      count_p = count;
+    /* First check if the rank information has been initialized */
+    if (rank_p<0) {
+      rank_p = nelem;
     }
-    else if (count.empty()) {
+    
+    if (count.empty()) {
       count_p.clear();
+      count_p.resize(rank_p);
     }
-    else {
-      if (count.size() > nelem) {
-	count_p.resize(nelem);
-	for (unsigned int n(0); n< nelem; ++n) {
-	  count_p[n] = count[n];
-	}
-      } else {
-	status = false;
+    
+    if (nelem == rank_p) {
+      count_p = count;
+    } else if (nelem > rank_p) {
+      for (int n(0); n< rank_p; ++n) {
+	count_p[n] = count[n];
       }
+    } else {
+      std::cerr << "[HDF5Hyperslab::setCount] Input array has too few elements!"
+		<< std::endl;
+      status = false;
     }
-
+    
     return status;
   }
   
   //_____________________________________________________________________________
   //                                                                     setBlock
   
-  bool HDF5Hyperslab::setBlock (std::vector<int> const &block,
-				bool const &ignoreShape)
+  bool HDF5Hyperslab::setBlock (std::vector<int> const &block)
   {
     bool status (true);
-    unsigned int nelem = block.size();
+    int nelem = block.size();
+
+    /* First check if the rank information has been initialized */
+    if (rank_p<0) {
+      rank_p = nelem;
+    }
     
-    if (ignoreShape) {
-      if (nelem == block_p.size()) {
-	block_p = block;
-      } else {
-	status = false;
+    if (block.empty()) {
+      block_p.clear();
+      block_p.resize(rank_p);
+    }
+    
+    if (nelem == rank_p) {
+      block_p = block;
+    } else if (nelem > rank_p) {
+      for (int n(0); n< rank_p; ++n) {
+	block_p[n] = block[n];
       }
     } else {
-      if (shape_p.empty()) {
-	std::cerr << "[HDF5Hyperslab::setBlock] Shape undefined!" << std::endl;
-	status = false;
-      } else {
-	if (nelem == shape_p.size()) {
-	  /* Resize the internal array */
-	  block_p.resize(nelem);
-	  /* Check the individual entries before accepting them */
-	  for (unsigned int n(0); n<nelem; ++n) {
-	    if (block[n] > int(shape_p[n])) {
-	      block_p[n] = int(shape_p[n]);
-	      std::cerr << "[HDF5Hyperslab::setStart] Start position outside shape!"
-			<< std::endl;
-	      status = false;
-	    } else {
-	      block_p[n] = block[n];
-	    }
-	  }
-	} else {
-	  std::cerr << "[HDF5Hyperslab::setBlock] Rank mismatch!" << std::endl;
-	  std::cerr << "-- Shape : " << shape_p << std::endl;
-	  std::cerr << "-- Block : " << block   << std::endl;
-	  status = false;
-	}
-      }
+      std::cerr << "[HDF5Hyperslab::setBlock] Input array has too few elements!"
+		<< std::endl;
+      status = false;
     }
     
     return status;
@@ -338,25 +316,24 @@ namespace DAL { // Namespace DAL -- begin
   */
   std::vector<int> HDF5Hyperslab::gap ()
   {
-    unsigned int nelem = shape_p.size();
-    std::vector<int> val (nelem);
-
+    std::vector<int> val (rank_p);
+    
     if (stride_p.empty()) {
-      for (unsigned int n(0); n<nelem; ++n) {
+      for (int n(0); n<rank_p; ++n) {
 	val[n] = 1;
       }
     } else {
-      for (unsigned int n(0); n<nelem; ++n) {
+      for (int n(0); n<rank_p; ++n) {
 	val[n] = stride_p[n];
       }
     }
-
+    
     if (block_p.empty()) {
-      for (unsigned int n(0); n<nelem; ++n) {
+      for (int n(0); n<rank_p; ++n) {
 	val[n] -= 1;
       }
     } else {
-      for (unsigned int n(0); n<nelem; ++n) {
+      for (int n(0); n<rank_p; ++n) {
 	val[n] -= block_p[n];
       }
     }
@@ -376,29 +353,29 @@ namespace DAL { // Namespace DAL -- begin
   */
   bool HDF5Hyperslab::setGap (std::vector<int> const &gap)
   {
-    unsigned int nelem = shape_p.size();
+    int nelem = gap.size();
     bool status (true);
     
-    if (gap.size() == nelem) {
+    if (nelem == rank_p) {
       
       if (stride_p.empty()) {
 	stride_p.resize(nelem);
       }
       
       if (block_p.empty()) {
-	for (unsigned int n(0); n<nelem; ++n) {
+	for (int n(0); n<nelem; ++n) {
 	  stride_p[n] = 1 + gap[n];
 	}
       } else {
-	for (unsigned int n(0); n<nelem; ++n) {
+	for (int n(0); n<nelem; ++n) {
 	  stride_p[n] = block_p[n] + gap[n];
 	}
       }
       
     } else {
       std::cerr << "[HDF5Hyperslab::setGap] Rank mismatch!" << std::endl;
-      std::cerr << "-- Shape : " << shape_p << std::endl;
-      std::cerr << "-- Gap   : " << gap     << std::endl;
+      std::cerr << "-- Rank : " << rank_p << std::endl;
+      std::cerr << "-- Gap  : " << gap    << std::endl;
       status = false;
     }
     
@@ -414,7 +391,7 @@ namespace DAL { // Namespace DAL -- begin
   void HDF5Hyperslab::summary (std::ostream &os)
   {
     os << "[HDF5Hyperslab] Summary of internal parameters." << std::endl;
-    os << "-- Shape           = " << shape_p         << std::endl;
+    os << "-- Rank            = " << rank_p          << std::endl;
     os << "-- Start           = " << start_p         << std::endl;
     os << "-- Stride          = " << stride_p        << std::endl;
     os << "-- Count           = " << count_p         << std::endl;
@@ -434,12 +411,12 @@ namespace DAL { // Namespace DAL -- begin
   
   void HDF5Hyperslab::init ()
   {
-    shape_p.clear();
+    rank_p      = -1;
+    selection_p = H5S_SELECT_SET;
     start_p.clear();
     stride_p.clear();
     count_p.clear();
     block_p.clear();
-    selection_p=H5S_SELECT_SET;
   }
   
   //_____________________________________________________________________________

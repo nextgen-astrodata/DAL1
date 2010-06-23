@@ -414,8 +414,7 @@ namespace DAL {
 		     std::vector<int> const &block)
       {
 	std::vector<int> stride (block.size(),1);
-	HDF5Hyperslab slab (shape_p,
-			    start,
+	HDF5Hyperslab slab (start,
 			    stride,
 			    count,
 			    block);
@@ -437,11 +436,11 @@ namespace DAL {
       {
 	std::vector<int> count (block.size(),1);
 	return readData (data,
-			  start,
-			  count,
-			  block);
+			 start,
+			 count,
+			 block);
       }
-
+    
     /*!
       \brief Read the data
       \param data    -- Array with the data to be written.
@@ -487,8 +486,7 @@ namespace DAL {
 		      std::vector<int> const &block)
       {
 	std::vector<int> stride (block.size(),1);
-	HDF5Hyperslab slab (shape_p,
-			    start,
+	HDF5Hyperslab slab (start,
 			    stride,
 			    count,
 			    block);

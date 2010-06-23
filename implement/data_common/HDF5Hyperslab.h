@@ -267,8 +267,8 @@ namespace DAL { // Namespace DAL -- begin
   */  
   class HDF5Hyperslab {
 
-    //! Shape of the dataset
-    std::vector<hsize_t> shape_p;
+    //! Rank of the dataset
+    int rank_p;
     //! Offset of the starting element of the specified hyperslab
     std::vector<int> start_p;
     //! Number of elements to separate each element or block to be selected
@@ -288,17 +288,15 @@ namespace DAL { // Namespace DAL -- begin
     HDF5Hyperslab ();
 
     //! Argumented constructor
-    HDF5Hyperslab (std::vector<hsize_t> const &shape);
+    HDF5Hyperslab (int const &rank);
 
     //! Argumented constructor
-    HDF5Hyperslab (std::vector<hsize_t> const &shape,
-		   std::vector<int> const &start,
+    HDF5Hyperslab (std::vector<int> const &start,
 		   std::vector<int> const &block,
 		   H5S_seloper_t const &selection=H5S_SELECT_SET);
 
     //! Argumented constructor
-    HDF5Hyperslab (std::vector<hsize_t> const &shape,
-		   std::vector<int> const &start,
+    HDF5Hyperslab (std::vector<int> const &start,
 		   std::vector<int> const &stride,
 		   std::vector<int> const &count,
 		   std::vector<int> const &block,
@@ -328,9 +326,9 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Parameter access =====================================================
 
-    //! Get the shape of the array to which the hyperslab is applied
-    inline std::vector<hsize_t> shape () const {
-      return shape_p;
+    //! Get the rank of the array to which the hyperslab is applied
+    inline int rank () const {
+      return rank_p;
     }
 
     //! Get the offset of the starting element of the specified hyperslab
@@ -339,8 +337,7 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Set the offset of the starting element of the specified hyperslab
-    bool setStart (std::vector<int> const &start,
-		   bool const &ignoreShape=false);
+    bool setStart (std::vector<int> const &start);
 
     //! Get the number of elements to separate each element or block to be selected
     inline std::vector<int> stride () const {
@@ -364,8 +361,7 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Set the size of the element block selected from the dataspace
-    bool setBlock (std::vector<int> const &block,
-		   bool const &ignoreShape=false);
+    bool setBlock (std::vector<int> const &block);
 
     //! Get the size of the gap between two subsequent blocks
     std::vector<int> gap ();
@@ -383,7 +379,6 @@ namespace DAL { // Namespace DAL -- begin
     
     /*!
       \brief Get the name of the class
-      
       \return className -- The name of the class, HDF5Hyperslab.
     */
     inline std::string className () const {

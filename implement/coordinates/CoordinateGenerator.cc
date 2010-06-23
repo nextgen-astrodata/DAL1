@@ -182,6 +182,30 @@ namespace DAL { // Namespace DAL -- begin
 #ifdef HAVE_CASA
   
   //_____________________________________________________________________________
+  //                                                                  makeObsInfo
+  
+  /*!
+    \retval info     -- casa::ObsInfo object created from the input parameters.
+    \param telescope -- Name of the telescope.
+    \param observer  -- Name of the observer.
+    \return status    -- Status of the operation; return \e false in case an
+            error was encountered, \e true otherwise.
+  */
+  bool CoordinateGenerator::makeObsInfo (casa::ObsInfo &info,
+					 std::string const &telescope,
+					 std::string const &observer)
+  {
+    bool status (true);
+
+    info.setTelescope(telescope);
+    info.setObserver(observer);
+
+    status = info.isTelescopePositionSet();
+
+    return status;
+  }
+  
+  //_____________________________________________________________________________
   //                                                               makeCoordinate
 
   /*!

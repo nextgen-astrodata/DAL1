@@ -38,6 +38,7 @@
 #include <casa/Arrays/Vector.h>
 #include <casa/BasicSL/String.h>
 #include <casa/Quanta/Quantum.h>
+#include <coordinates/Coordinates/ObsInfo.h>
 #include <coordinates/Coordinates/Coordinate.h>
 #include <coordinates/Coordinates/DirectionCoordinate.h>
 #include <coordinates/Coordinates/LinearCoordinate.h>
@@ -70,15 +71,34 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>E. W. Greisen & M. R. Calabretta (2002) Representations of world
-      coordinates in FITS. A&A, \b 395, p. 1061-1075.
-      <li>M. R. Calabretta & E. W. Greisen (2002) Representations of celestial
-      coordinates in FITS, A&A, \b 395, p. 1077-1122.
-      <li>E. W. Greisen, M. R. Calabretta, F. G. Valdes, & S. L. Allen, (2006)
-      Representations of spectral coordinates in FITS. A&A, \b 446, p. 747-771.
+      <li>The FITS "World Coordinate System" (WCS) convention defines keywords
+      and usage that provide for the description of astronomical coordinate
+      systems in a  FITS image header.
+      <ul>
+        <li>E. W. Greisen & M. R. Calabretta (2002) Representations of world
+	coordinates in FITS. A&A, \b 395, p. 1061-1075.
+	<li>M. R. Calabretta & E. W. Greisen (2002) Representations of celestial
+	coordinates in FITS, A&A, \b 395, p. 1077-1122.
+	<li>E. W. Greisen, M. R. Calabretta, F. G. Valdes, & S. L. Allen, (2006)
+	Representations of spectral coordinates in FITS. A&A, \b 446, p. 747-771.
+      </ul>
     </ul>
     
     <h3>Synopsis</h3>
+
+    <ul>
+      <li>Create a casa::ObsInfo object:
+      \verbatim
+      obsInfo                 casa::ObInfo
+      |-- telescope           string         = string
+      |-- epoch               casa::MEpoch
+      |   |-- time            double         = double
+      |   |-- frame           string         = string
+      `-- casa::MPosition
+          |-- position        vector<double> = [double,double,double]
+          `-- frame           string         = string
+      \endverbatim
+    <ul>
     
     <h3>Example(s)</h3>
     
@@ -140,6 +160,14 @@ namespace DAL { // Namespace DAL -- begin
     // === Static methods =======================================================
     
 #ifdef HAVE_CASA
+    
+    //___________________________________________________________________________
+    //                                     Creation of observation info container
+
+    //! Create a casa::ObsInfo object
+    static bool makeObsInfo (casa::ObsInfo &info,
+			     std::string const &telescope,
+			     std::string const &observer="UNDEFINED");
 
     //___________________________________________________________________________
     //                                             Creation of coordinate objects

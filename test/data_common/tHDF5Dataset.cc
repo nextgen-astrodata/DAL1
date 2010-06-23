@@ -819,7 +819,7 @@ int test_hyperslab (std::string const &filename="tHDF5Dataset.h5")
     } 
     
     HDF5Dataset dataset (groupID, "test2", shape);
-    HDF5Hyperslab slab (shape,start,stride,count,block);
+    HDF5Hyperslab slab (start,stride,count,block);
 
     dataset.addAttributes (attributes);
     dataset.setAttribute ("start",start);
@@ -862,7 +862,7 @@ int test_hyperslab (std::string const &filename="tHDF5Dataset.h5")
     } 
     
     HDF5Dataset dataset (groupID, "test3", shape);
-    HDF5Hyperslab slab (shape,start,stride,count,block);
+    HDF5Hyperslab slab (start,stride,count,block);
 
     dataset.writeData (data,slab);
 

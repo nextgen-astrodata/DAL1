@@ -53,7 +53,7 @@ namespace DAL {
   protected:
     
     //! HDF5 object ID for array
-    hid_t arrayID_p;
+    hid_t datasetID_p;
     //! HDF5 object ID for file
     hid_t fileID_p;
     //! Name of the array
@@ -81,7 +81,7 @@ namespace DAL {
     bool close();
     //! Get the array ID.
     inline hid_t getId() {
-      return arrayID_p;
+      return datasetID_p;
     }
     //! Get the rank of the array, i.e. the number of dimensions
     inline int getRank () {
@@ -115,7 +115,7 @@ namespace DAL {
       bool getAttribute( std::string attrname,
 			 T &value )
       {
-        return h5get_attribute( arrayID_p, attrname, value );
+        return h5get_attribute( datasetID_p, attrname, value );
       }
     
     //! Set attribute of \e char type
@@ -161,29 +161,35 @@ namespace DAL {
     
     bpl::numeric::array ria_boost( std::string arrayname );
     
-    //! Set attribute of tpe \e char
+    //! Set attribute of type \e char
     bool setAttribute_char (std::string attrname, char data);
-    //! Set attribute of tpe \e short
+    //! Set attribute of type \e short
     bool setAttribute_short( std::string attrname, short data );
-    //! Set attribute of tpe \e int
+    //! Set attribute of type \e int
     bool setAttribute_int( std::string attrname, int data );
-    //! Set attribute of tpe \e uint
+    //! Set attribute of type \e uint
     bool setAttribute_uint( std::string attrname, uint data );
-    //! Set attribute of tpe \e long
+    //! Set attribute of type \e long
     bool setAttribute_long( std::string attrname, long data );
-    //! Set attribute of tpe \e float
+    //! Set attribute of type \e float
     bool setAttribute_float( std::string attrname, float data );
-    //! Set attribute of tpe \e double
+    //! Set attribute of type \e double
     bool setAttribute_double( std::string attrname, double data );
-    //! Set attribute of tpe \e string
+    //! Set attribute of type \e string
     bool setAttribute_string( std::string attrname, std::string data );
     bool setAttribute_char_vector( std::string attrname, bpl::list data );
     bool setAttribute_short_vector( std::string attrname, bpl::list data );
+    //! Set attribute of type \e vector<int>
     bool setAttribute_int_vector( std::string attrname, bpl::list data );
+    //! Set attribute of type \e vector<uint>
     bool setAttribute_uint_vector( std::string attrname, bpl::list data );
+    //! Set attribute of type \e vector<long>
     bool setAttribute_long_vector( std::string attrname, bpl::list data );
+    //! Set attribute of type \e vector<float>
     bool setAttribute_float_vector( std::string attrname, bpl::list data );
+    //! Set attribute of type \e vector<double>
     bool setAttribute_double_vector( std::string attrname, bpl::list data );
+    //! Set attribute of type \e vector<string>
     bool setAttribute_string_vector( std::string attrname, bpl::list data );
     
 #endif

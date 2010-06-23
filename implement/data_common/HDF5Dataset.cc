@@ -520,7 +520,7 @@ namespace DAL {
 				  H5S_seloper_t const &selection)
   {
     /* Create Hyperslab object ...*/
-    HDF5Hyperslab slab (shape_p,start,block,selection);
+    HDF5Hyperslab slab (start,block,selection);
     /* ... and apply it to the dataset */
     return setHyperslab (slab,true);
   }
@@ -548,7 +548,7 @@ namespace DAL {
 				  H5S_seloper_t const &selection)
   {
     /* Create Hyperslab object ...*/
-    HDF5Hyperslab slab (shape_p,start,stride,count,block,selection);
+    HDF5Hyperslab slab (start,stride,count,block,selection);
     /* ... and apply it to the dataset */
     return setHyperslab (slab,true);
   }

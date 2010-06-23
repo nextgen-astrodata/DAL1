@@ -41,11 +41,9 @@ option (DAL_ENABLE_TESTING     "Build the test programs?"                     YE
 option (DAL_ENABLE_DASHBOARD   "Send a build report to the Dashboard server?" YES )
 option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?"    ON  )
 option (DAL_HDF5_MACROS        "HDF5 compatibility macros version"            YES )
-option (DAL_MEMORY_CHECKING    "Enable checking against memory leaks?"        NO  )
 option (DAL_PYTHON_BINDINGS    "Create python bindings?"                      YES )
 option (DAL_DEBUGGING_MESSAGES "Print debugging information?"                 NO  )
 option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"         NO  )
-option (DAL_EXPERIMENTAL_CODE  "Include new expermetal code into build?"      NO  )
 
 ##__________________________________________________________
 ## Handle option: testing mode on/off
@@ -389,23 +387,6 @@ if (DAL_PYTHON_BINDINGS)
 endif (DAL_PYTHON_BINDINGS)
 
 ##__________________________________________________________
-## Option: Enable checking against memory leaks
-
-if (DAL_MEMORY_CHECKING)
-  
-  if (APPLE)
-    find_library (HAVE_MALLOC_DEBUG MallocDebug ${lib_locations})
-    
-    if (HAVE_MALLOC_DEBUG)
-      message (STATUS "libMallocDebug = ${HAVE_MALLOC_DEBUG}")
-    else (HAVE_MALLOC_DEBUG)
-      set (HAVE_MALLOC_DEBUG NO)
-    endif (HAVE_MALLOC_DEBUG)
-  endif (APPLE) 
-  
-endif (DAL_MEMORY_CHECKING)
-
-##__________________________________________________________
 ## Option: Compatibility macros to version 2
 
 if (DAL_HDF5_MACROS)
@@ -468,10 +449,6 @@ endif (HAVE_LIBUTIL)
 if (HAVE_MYSQL)
   list (APPEND dal_link_libraries ${MYSQL_LIBRARIES})
 endif (HAVE_MYSQL)
-
-if (DAL_MEMORY_CHECKING AND HAVE_MALLOC_DEBUG)
-  list (APPEND dal_link_libraries ${HAVE_MALLOC_DEBUG})
-endif (DAL_MEMORY_CHECKING AND HAVE_MALLOC_DEBUG)
 
 ## =============================================================================
 ##

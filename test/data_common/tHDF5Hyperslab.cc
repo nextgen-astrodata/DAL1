@@ -68,22 +68,18 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[2] HDF5Hyperslab (shape) ..." << endl;
+  cout << "[2] HDF5Hyperslab (rank) ..." << endl;
   try {
     int rank (2);
-    std::vector<hsize_t> shape (rank);
     //
-    shape[0] = 1024;
-    shape[1] = 10;
-    //
-    HDF5Hyperslab slab (shape);
+    HDF5Hyperslab slab (rank);
     slab.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
   
-  cout << "[3] HDF5Hyperslab (shape,start,block) ..." << endl;
+  cout << "[3] HDF5Hyperslab (start,block) ..." << endl;
   try {
     int rank (2);
     std::vector<hsize_t> shape (rank);
@@ -97,14 +93,14 @@ int test_constructors ()
     block[0] = shape[0]/2;
     block[1] = shape[1]/2;
     //
-    HDF5Hyperslab slab (shape,start,block);
+    HDF5Hyperslab slab (start,block);
     slab.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
   
-  cout << "[4] HDF5Hyperslab (shape,start,stride,count,block) ..." << endl;
+  cout << "[4] HDF5Hyperslab (start,stride,count,block) ..." << endl;
   try {
     int rank (2);
     std::vector<hsize_t> shape (rank);
@@ -124,13 +120,13 @@ int test_constructors ()
     block[0]  = shape[0]/2;
     block[1]  = shape[1]/2;
     //
-    HDF5Hyperslab slab (shape,start,stride,count,block);
+    HDF5Hyperslab slab (start,stride,count,block);
     slab.summary(); 
     //
     count[0]  = 2;
     count[1]  = 2;
     //
-    HDF5Hyperslab slab2 (shape,start,stride,count,block);
+    HDF5Hyperslab slab2 (start,stride,count,block);
     slab2.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
