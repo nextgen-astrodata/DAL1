@@ -47,8 +47,6 @@ BF2H5::BF2H5 (const std::string &outfile,
 	      uint downsample_factor,
 	      bool do_intensity)
   : socketmode(false),
-    itsDownsampleFactor(downsample_factor),
-    itsDoIntensity(do_intensity),
     outputFile(outfile),
     itsCalculator(0),
     itsWriter(0),
@@ -57,10 +55,9 @@ BF2H5::BF2H5 (const std::string &outfile,
     itsReadBuffer(0),
     itsCurrentNrOfReadBuffers(INITIAL_NR_OF_READ_BUFFERS)
 {
-#ifdef HAVE_LOFAR
-  // create parset
-  itsParset = new LOFAR::RTCP::Parset(parset_filename.c_str());
-#endif
+  itsParseFile        = parset_filename;
+  itsDownsampleFactor = downsample_factor;
+  itsDoIntensity      = do_intensity;
   
   if (downsample_factor > 1) {
     itsDoDownSample = true;
@@ -69,6 +66,11 @@ BF2H5::BF2H5 (const std::string &outfile,
   else {
     itsDoDownSample = false;
   }
+
+#ifdef HAVE_LOFAR
+  // create parset
+  itsParset = new LOFAR::RTCP::Parset(parset_filename.c_str());
+#endif
 }
 
 // ==============================================================================
@@ -247,7 +249,7 @@ void BF2H5::start (bool const &verbose)
       }  // END : if (verbose)
       
       oneBlockdataSize = BFMainHeader.nrSamplesPerSubband * BFMainHeader.nrSubbands;
-      size_t downSampledDataSize = BFMainHeader.nrSamplesPerSubband / itsDownsampleFactor;
+      // size_t downSampledDataSize = BFMainHeader.nrSamplesPerSubband / itsDownsampleFactor;
 
       if (allocateSampleBuffers()) {
 

@@ -167,6 +167,7 @@ class BF2H5 {
   uint itsDownsampleFactor;
   
   // some main header parameters we need to know here
+  std::string itsParseFile;
   std::string inputFile;
   std::string outputFile;
   uint tcpPort;
