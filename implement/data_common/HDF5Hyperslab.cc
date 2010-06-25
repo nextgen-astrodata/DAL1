@@ -172,19 +172,22 @@ namespace DAL { // Namespace DAL -- begin
   
   bool HDF5Hyperslab::setStart (std::vector<int> const &start)
   {
-    bool status (true);
-    int nelem = start.size();
+    bool status = true;
+    int nelem   = start.size();
 
-    /* First check if the rank information has been initialized */
-    if (rank_p<0) {
-      rank_p = nelem;
-    }
-    
+    /* Check if input is empty vector; in that case clear the internally stored
+       value. */
     if (start.empty()) {
       start_p.clear();
-      start_p.resize(rank_p);
+      return status;
+    } else {
+      /* Check if rank has been initialized. */
+      if (rank_p<0) {
+	rank_p = nelem;
+      }
     }
-    
+
+    /* Process non-empty input vector. */
     if (nelem == rank_p) {
       start_p = start;
     } else if (nelem > rank_p) {
@@ -213,19 +216,22 @@ namespace DAL { // Namespace DAL -- begin
   */
   bool HDF5Hyperslab::setStride (std::vector<int> const &stride)
   {
-    bool status (true);
-    int nelem = stride.size();
+    bool status = true;
+    int nelem   = stride.size();
 
-    /* First check if the rank information has been initialized */
-    if (rank_p<0) {
-      rank_p = nelem;
-    }
-    
+    /* Check if input is empty vector; in that case clear the internally stored
+       value. */
     if (stride.empty()) {
       stride_p.clear();
-      stride_p.resize(rank_p);
+      return status;
+    } else {
+      /* Check if rank has been initialized. */
+      if (rank_p<0) {
+	rank_p = nelem;
+      }
     }
-    
+
+    /* Process non-empty input vector. */
     if (nelem == rank_p) {
       stride_p = stride;
     } else if (nelem > rank_p) {
@@ -246,19 +252,22 @@ namespace DAL { // Namespace DAL -- begin
   
   bool HDF5Hyperslab::setCount (std::vector<int> const &count)
   {
-    bool status (true);
-    int nelem = count.size();
+    bool status = true;
+    int nelem   = count.size();
 
-    /* First check if the rank information has been initialized */
-    if (rank_p<0) {
-      rank_p = nelem;
-    }
-    
+    /* Check if input is empty vector; in that case clear the internally stored
+       value. */
     if (count.empty()) {
       count_p.clear();
-      count_p.resize(rank_p);
+      return status;
+    } else {
+      /* Check if rank has been initialized. */
+      if (rank_p<0) {
+	rank_p = nelem;
+      }
     }
-    
+
+    /* Process non-empty input vector. */
     if (nelem == rank_p) {
       count_p = count;
     } else if (nelem > rank_p) {

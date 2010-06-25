@@ -136,6 +136,82 @@ int test_constructors ()
   return nofFailedTests;
 }
 
+
+//_______________________________________________________________________________
+//                                                          test_parameter_access
+
+/*!
+  \brief Test access to the object's internal parameters
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_parameter_access ()
+{
+  cout << "\n[tHDF5Hyperslab::test_parameter_access]\n" << endl;
+
+  int nofFailedTests (0);
+  int rank (3);
+
+  std::cout << "[1] HDF5Hyperslab::setStart(std::vector<int>) ..." << std::endl;
+  try {
+    std::vector<int> start (rank,100);
+    //
+    HDF5Hyperslab slab;
+    slab.setStart (start);
+    // 
+    std::cout << "-- start = " << slab.start() << std::endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  std::cout << "[2] HDF5Hyperslab::setStride(std::vector<int>) ..." << std::endl;
+  try {
+    std::vector<int> stride (rank,100);
+    //
+    HDF5Hyperslab slab;
+    slab.setStride (stride);
+    // 
+    std::cout << "-- stride = " << slab.stride() << std::endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  std::cout << "[3] HDF5Hyperslab::setCount(std::vector<int>) ..." << std::endl;
+  try {
+    std::vector<int> count (rank,100);
+    //
+    HDF5Hyperslab slab;
+    slab.setCount (count);
+    // 
+    std::cout << "-- count = " << slab.count() << std::endl;
+    //
+    count.clear();
+    slab.setCount (count);
+    std::cout << "-- count = " << slab.count() << std::endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  std::cout << "[4] HDF5Hyperslab::setBlock(std::vector<int>) ..." << std::endl;
+  try {
+    std::vector<int> block (rank,100);
+    //
+    HDF5Hyperslab slab;
+    slab.setBlock (block);
+    // 
+    std::cout << "-- block = " << slab.block() << std::endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  return nofFailedTests;
+}
+
 //_______________________________________________________________________________
 //                                                          test_static_functions
 
@@ -227,21 +303,44 @@ int test_setHyperslab ()
   }
   
   //________________________________________________________
-  // Create datasets
-  
-  std::cout << "-- Creating datasets ..." << std::endl;
+  // Create dataset used for testing
 
-  unsigned int nofAxes (3);
-  std::vector<hsize_t> shape (nofAxes);
+  int rank (3);
+  int nelem (1024);
+  std::vector<hsize_t> shape (rank,nelem);
 
-  shape[0] = 1024;
-  shape[1] = 1024;
-  shape[2] = 512;
+  HDF5Dataset dataset (fileID,
+		       "ExtendableDataset",
+		       shape,
+		       H5T_NATIVE_INT);
 
-  HDF5Dataset data1 (fileID,"Dataset1",shape);
-  HDF5Dataset data2 (fileID,"Dataset2",shape);
-  HDF5Dataset data3 (fileID,"Dataset3",shape);
-  HDF5Dataset data4 (fileID,"Dataset4",shape);
+  //________________________________________________________
+  // Write blocks of data to dataset
+
+  nelem = 100;
+  unsigned int nofBlocks (15);
+  std::vector<int> start (rank);
+  std::vector<int> block (rank,nelem);
+  std::vector<int> count;
+
+  unsigned int nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+  int *data                  = new int [nofDatapoints];
+
+  for (unsigned int numBlock(0); numBlock<nofBlocks; ++numBlock) {
+    /* Assign the data points */
+    for (unsigned int n(0); n<nofDatapoints; ++n) {
+      data[n] = numBlock+1;
+    }
+    /* Set starting point of hyperslab */
+    start[0] = start[1] = start[2] = numBlock*nelem;
+    /* Feedback */
+    std::cout << "-- block = " << numBlock
+	      << " , start = " << start
+	      << " , block = " << block
+	      << " , #data = " << nofDatapoints << std::endl << std::flush;
+    /* Write the block to data to the dataset */
+    dataset.writeData (data,start,count,block);
+  }
 
   //________________________________________________________
   // Close the file
@@ -261,6 +360,8 @@ int main ()
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
+  // Test the static methods
+  nofFailedTests += test_parameter_access ();
   // Test the static methods
   nofFailedTests += test_static_functions ();
   //! Test setting hyperslab selection for a dataset
