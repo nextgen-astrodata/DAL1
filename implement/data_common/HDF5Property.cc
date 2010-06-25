@@ -79,7 +79,10 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                         copy
   
   void HDF5Property::copy (HDF5Property const &other)
-  {;}
+  {
+    fileAccessFlag_p.clear();
+    fileAccessFlag_p = other.fileAccessFlag_p;
+  }
 
   // ============================================================================
   //
