@@ -518,7 +518,7 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
     herr_t h5error;
     
-    //____________________________________________
+    //______________________________________________________
     // Check the object to work with
     
     if (!H5Iis_valid(location)) {
@@ -528,7 +528,7 @@ namespace DAL { // Namespace DAL -- begin
       return false;
     }
 
-    //__________________________________________
+    //______________________________________________________
     // Get object identifier for the dataspace
 
     hid_t dataspaceID (0);
@@ -550,7 +550,7 @@ namespace DAL { // Namespace DAL -- begin
       return false;
     }
 
-    // Check parameters for the Hyperslab ________
+    // Check parameters for the Hyperslab __________________
 
     unsigned int nelem;
     std::vector<hsize_t> shape;
@@ -562,16 +562,16 @@ namespace DAL { // Namespace DAL -- begin
     
     if (start.size() != nelem) {
       std::cerr << "[HDF5Hyperslab::setHyperslab] Parameter mismatch: start - shape."
-		<< std::endl;
-      std::cerr << "-- start = " << start << std::endl;
-      std::cerr << "-- shape = " << shape << std::endl;
+		<< std::endl << std::flush;
+      std::cerr << "-- start = " << start << std::endl << std::flush;
+      std::cerr << "-- shape = " << shape << std::endl << std::flush;
       return false;
     }
     else if (block.size() != nelem) {
       std::cerr << "[HDF5Hyperslab::setHyperslab] Parameter mismatch: block - shape."
-		<< std::endl;
-      std::cerr << "-- block = " << block << std::endl;
-      std::cerr << "-- shape = " << shape << std::endl;
+		<< std::endl << std::flush;
+      std::cerr << "-- block = " << block << std::endl << std::flush;
+      std::cerr << "-- shape = " << shape << std::endl << std::flush;
       return false;
     }
     
@@ -583,7 +583,7 @@ namespace DAL { // Namespace DAL -- begin
       haveCount = false;
     }
 
-    // Adjust the size of the dataset ____________
+    // Adjust the size of the dataset ______________________
 
     std::vector<hsize_t> endHyperslab = end (start,stride,count,block);
     bool extendDataset (false);
@@ -594,6 +594,9 @@ namespace DAL { // Namespace DAL -- begin
       }
     }
     
+    DAL::h5get_dataspace_shape (location,shape);
+    std::cout << "--- shape[old] = " << shape << std::endl;
+
     if (extendDataset && resizeDataset) {
       if (objectType == H5I_DATASET) {
 	hsize_t tmpSize [nelem];
@@ -610,27 +613,14 @@ namespace DAL { // Namespace DAL -- begin
       else {
 	std::cerr << "[HDF5Hyperslab::setHyperslab] Unable to extend dataset size;"
 		  << " provided HDF5 object is not a dataset!"
-		  << std::endl;
+		  << std::endl << std::flush;
       }
     }
 
-    // Debugging feedback ________________________
+    DAL::h5get_dataspace_shape (location,shape);
+    std::cout << "--- shape[new] = " << shape << std::endl;
 
-#ifdef DEBUGGING_MESSAGES
-    std::cout << "[HDF5Hyperslab::setHyperslab]" << std::endl;
-    std::cout << "-- location            = " << location     << std::endl;
-    std::cout << "-- start               = " << start        << std::endl;
-    std::cout << "-- stride              = " << stride       << std::endl;
-    std::cout << "-- count               = " << count        << std::endl;
-    std::cout << "-- block               = " << block        << std::endl;
-    std::cout << "-- end                 = " << endHyperslab << std::endl;
-    
-    std::cout << "-- Location is dataset = " << locationIsDataset << std::endl;
-    std::cout << "-- Have stride         = " << haveStride << std::endl;
-    std::cout << "-- Have count          = " << haveCount  << std::endl;
-#endif
-    
-    // Set up the hyperslab ______________________
+    // Set up the hyperslab parameters _____________________
     
     hsize_t rank (shape.size());
     hsize_t tmpStart [rank];
@@ -664,7 +654,8 @@ namespace DAL { // Namespace DAL -- begin
       }
     }
     
-    /* Select the hyperslab */
+    // Select hyperslab from dataspace _____________________
+
     h5error = H5Sselect_hyperslab (dataspaceID,
 				   selection,
 				   tmpStart,      // start
@@ -672,17 +663,29 @@ namespace DAL { // Namespace DAL -- begin
 				   tmpCount,      // count
 				   tmpBlock);     // block
 
-    if (!H5Sselect_valid (dataspaceID)) {
+    if (h5error<0) {
+      std::cerr << "[HDF5Hyperslab::setHyperslab] Error selecting hyperslab!"
+		<< std::endl << std::flush;
+      status = false;
+    }
+
+    /*
+     * Returns a positive value, for TRUE, if the selection is contained within
+     * the extent or 0 (zero), for FALSE, if it is not. Returns a negative value
+     * on error conditions such as the selection or extent not being defined.
+     */
+
+    htri_t selectValid = H5Sselect_valid (dataspaceID);
+
+    if (selectValid==0) {
       std::cerr << "[HDF5Hyperslab::setHyperslab]"
-		<< " Selection is not contained within the extent of the dataspace."
-		<< std::endl;
-      //
-      for (unsigned int n(0); n<nelem; ++n) {
-	std::cout << "\t[ " << tmpStart[n]
-		  << " .. " << tmpStart[n]+tmpCount[n]*tmpBlock[n]
-		  << " ]" << std::endl;
-      }
-      //
+		<< " Selection is NOT contained within the extend of the dataset!"
+		<< std::endl << std::flush;
+      status = false;
+    } else if (selectValid<0) {
+      std::cerr << "[HDF5Hyperslab::setHyperslab]"
+		<< " Selection parameters NOT defined properly!"
+		<< std::endl << std::flush;
       status = false;
     }
     
