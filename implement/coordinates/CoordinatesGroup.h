@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2009                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -54,6 +54,8 @@ namespace DAL { // Namespace DAL -- begin
     <ul type="square">
       <li>LOFAR Data Format ICDs:
       <ul>
+	<li>LOFAR Data Format ICD: Representations of World Coordinates
+	(LOFAR-USG-ICD-002)
 	<li>LOFAR Data Format ICD: Beam-Formed Data (LOFAR-USG-ICD-003)
 	<li>LOFAR Data Format ICD: LOFAR Sky Image (LOFAR-USG-ICD-004)
       </ul>
@@ -74,7 +76,7 @@ namespace DAL { // Namespace DAL -- begin
     
     <h3>Synopsis</h3>
 
-    The coordinates group, as defined through LOFAR-USG-ICD-004, works as a
+    The coordinates group, as defined through LOFAR-USG-ICD-002, works as a
     container to collect coordinate descriptions as attached to an image or
     some other LOFAR data-set.
 
@@ -91,6 +93,12 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<std::string> refLocationUnit_p;
     //! Reference location frame
     std::string refLocationFrame_p;
+    //! Reference time value
+    double refTimeValue_p;
+    //! Reference time unit
+    std::string refTimeUnit_p;
+    //! Reference time frame
+    std::string refTimeFrame_p;
     //! nof. embedded coordinate objects
     int nofCoordinates_p;
     //! nof. coordinate axes
@@ -116,7 +124,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Default destructor
     virtual ~CoordinatesGroup ();
     
-    // --------------------------------------------------------------- Parameters
+    // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class
@@ -139,20 +147,49 @@ namespace DAL { // Namespace DAL -- begin
     */
     void summary (std::ostream &os);    
     
-    // ------------------------------------------------------------------ Methods
+    // === Methods ==============================================================
     
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
     //! Get the group type identifier
-    std::string groupType ();
+    inline std::string groupType () const {
+      return groupType_p;
+    }
     //! Get the reference location value
-    std::vector<double> refLocationValue ();
+    inline std::vector<double> refLocationValue () const {
+      return refLocationValue_p;
+    }
     //! Get the reference location unit
-    std::vector<std::string> refLocationUnit ();
+    inline std::vector<std::string> refLocationUnit () const {
+      return refLocationUnit_p;
+    }
     //! Get the reference location frame identifier
-    std::string refLocationFrame ();
+    inline std::string refLocationFrame () const {
+      return refLocationFrame_p;
+    }
+    //! Get the reference time value
+    inline double refTimeValue () const {
+      return refTimeValue_p;
+    }
+    //! Get the reference time unit
+    inline std::string refTimeUnit () const {
+      return refTimeUnit_p;
+    }
+    //! Get the reference time frame identifier
+    inline std::string refTimeFrame () const {
+      return refTimeFrame_p;
+    }
+
+    //! Get the nof. embedded coordinate objects
+    inline int nofCoordinates () const {
+      return nofCoordinates_p;
+    }
+    //! Get the nof. coordinate axes
+    inline int nofAxes () const {
+      return nofAxes_p;
+    }
 
   protected:
     
@@ -163,10 +200,14 @@ namespace DAL { // Namespace DAL -- begin
     
   private:
 
-    void init ();
-    
+    //! Initialize the internal parameter of the object
+    bool init ();
     //! Unconditional deletion 
     void destroy(void);
+    //! Read the values of the attributes from the dataset
+    bool readAttributes ();
+    //! Write the values of the attributes to the dataset
+    bool writeAttributes ();
     
   }; // Class CoordinatesGroup -- end
   

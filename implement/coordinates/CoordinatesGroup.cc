@@ -91,6 +91,9 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- Ref. location value = " << refLocationValue_p    << std::endl;
     os << "-- Ref. location unit  = " << refLocationUnit_p     << std::endl;
     os << "-- Ref. location frame = " << refLocationFrame_p    << std::endl;
+    os << "-- Ref. time value     = " << refLocationValue_p    << std::endl;
+    os << "-- Ref. time unit      = " << refLocationUnit_p     << std::endl;
+    os << "-- Ref. time frame     = " << refLocationFrame_p    << std::endl;
   }
   
   // ============================================================================
@@ -99,8 +102,9 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  void CoordinatesGroup::init ()
+  bool CoordinatesGroup::init ()
   {
+    bool status (true);
     std::string undefined ("UNDEFINED");
 
     /* Variables declared by the base class*/
@@ -111,9 +115,14 @@ namespace DAL { // Namespace DAL -- begin
     refLocationValue_p = std::vector<double> (3, 0.0);
     refLocationUnit_p  = std::vector<std::string> (3, undefined);
     refLocationFrame_p = undefined;
+    refTimeValue_p     = 0.0;
+    refTimeUnit_p      = "s";
+    refTimeFrame_p     = "UTC";
     nofCoordinates_p   = 0;
     nofAxes_p          = 0;
     coordinateTypes_p  = std::vector<std::string> (1, undefined);
+
+    return status;
   }
 
   //_____________________________________________________________________________
@@ -127,6 +136,9 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.insert("REF_LOCATION_VALUE");
     attributes_p.insert("REF_LOCATION_UNIT");
     attributes_p.insert("REF_LOCATION_FRAME");
+    attributes_p.insert("REF_TIME_VALUE");
+    attributes_p.insert("REF_TIME_UNIT");
+    attributes_p.insert("REF_TIME_FRAME");
     attributes_p.insert("NOF_COORDINATES");
     attributes_p.insert("NOF_AXES");
     attributes_p.insert("COORDINATE_TYPES");
@@ -185,6 +197,9 @@ namespace DAL { // Namespace DAL -- begin
 	  h5set_attribute (location_p, "REF_LOCATION_VALUE", refLocationValue_p);
 	  h5set_attribute (location_p, "REF_LOCATION_UNIT",  refLocationUnit_p );
 	  h5set_attribute (location_p, "REF_LOCATION_FRAME", refLocationFrame_p);
+	  h5set_attribute (location_p, "REF_TIME_VALUE",     refTimeValue_p    );
+	  h5set_attribute (location_p, "REF_TIME_UNIT",      refTimeUnit_p     );
+	  h5set_attribute (location_p, "REF_TIME_FRAME",     refTimeFrame_p    );
 	  h5set_attribute (location_p, "NOF_COORDINATES",    nofCoordinates_p  );
 	  h5set_attribute (location_p, "NOF_AXES",           nofAxes_p         );
 	  h5set_attribute (location_p, "COORDINATE_TYPES",   types             );
@@ -215,52 +230,45 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                    groupType
+  //                                                               readAttributes
   
-  std::string CoordinatesGroup::groupType ()
+  bool CoordinatesGroup::readAttributes ()
   {
-    if (location_p>0) {
-      getAttribute ("GROUPTYPE", groupType_p);
-    }
+    bool status (true);
 
-    return groupType_p;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                             refLocationValue
-  
-  std::vector<double> CoordinatesGroup::refLocationValue ()
-  {
     if (location_p>0) {
       getAttribute ("REF_LOCATION_VALUE", refLocationValue_p);
-    }
-
-    return refLocationValue_p;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                              refLocationUnit
-  
-  std::vector<std::string> CoordinatesGroup::refLocationUnit ()
-  {
-    if (location_p>0) {
-      getAttribute ("REF_LOCATION_UNIT", refLocationUnit_p);
-    }
-
-    return refLocationUnit_p;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                             refLocationFrame
-  
-  std::string CoordinatesGroup::refLocationFrame ()
-  {
-    if (location_p>0) {
+      getAttribute ("REF_LOCATION_UNIT",  refLocationUnit_p);
       getAttribute ("REF_LOCATION_FRAME", refLocationFrame_p);
+      getAttribute ("REF_TIME_VALUE",     refTimeValue_p);
+      getAttribute ("REF_TIME_UNIT",      refTimeUnit_p);
+      getAttribute ("REF_TIME_FRAME",     refTimeFrame_p);
+      getAttribute ("NOF_COORDINATES",    nofCoordinates_p);
+      getAttribute ("NOF_AXES",           nofAxes_p);
     }
 
-    return refLocationFrame_p;
+    return status;
   }
+  
+  //_____________________________________________________________________________
+  //                                                              writeAttributes
+  
+  bool CoordinatesGroup::writeAttributes ()
+  {
+    bool status (true);
 
+    if (location_p>0) {
+      setAttribute ("REF_LOCATION_VALUE", refLocationValue_p);
+      setAttribute ("REF_LOCATION_UNIT",  refLocationUnit_p);
+      setAttribute ("REF_LOCATION_FRAME", refLocationFrame_p);
+      setAttribute ("REF_TIME_VALUE",     refTimeValue_p);
+      setAttribute ("REF_TIME_UNIT",      refTimeUnit_p);
+      setAttribute ("REF_TIME_FRAME",     refTimeFrame_p);
+      setAttribute ("NOF_COORDINATES",    nofCoordinates_p);
+      setAttribute ("NOF_AXES",           nofAxes_p);
+    }
+
+    return status;
+  }
   
 } // Namespace DAL -- end
