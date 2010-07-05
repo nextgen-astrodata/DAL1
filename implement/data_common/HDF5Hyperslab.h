@@ -435,6 +435,10 @@ namespace DAL { // Namespace DAL -- begin
 			      std::vector<int> const &block,
 			      bool const &resizeDataset);
 
+    //! Check if Hyperslab selection is valid
+    static bool checkSelectionValid (hid_t const &location,
+				     htri_t &errorCode);
+
   private:
     
     //! Initialize the internal parameters

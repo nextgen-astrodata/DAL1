@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2010                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -574,30 +574,27 @@ namespace DAL { // Namespace DAL -- begin
       }
     }
     
-    DAL::h5get_dataspace_shape (location,shape);
-    std::cout << "--- shape[old] = " << shape << std::endl;
-
     if (extendDataset && resizeDataset) {
-      //
-      DAL::h5get_dataspace_shape (location,shape);
-      std::cout << "--- shape[old] = " << shape << std::endl << std::flush;
-      //
       if (objectType == H5I_DATASET) {
 	hsize_t tmpSize [nelem];
 	for (unsigned int n(0); n<nelem; ++n) {
-	  tmpSize[n] = endHyperslab[n];
+	  tmpSize[n] = endHyperslab[n]+1;
 	}
 	h5error = H5Dset_extent (location, tmpSize);
+	/* Check the error code */
+	if (h5error<0) {
+	  std::cerr << "[HDF5Hyperslab::setHyperslab] Error extending dataset!"
+		    << std::endl;
+	  status = false;
+	}
       }
       else {
 	std::cerr << "[HDF5Hyperslab::setHyperslab] Unable to extend dataset size;"
 		  << " provided HDF5 object is not a dataset!"
 		  << std::endl << std::flush;
       }
-    DAL::h5get_dataspace_shape (location,shape);
-    std::cout << "--- shape[new] = " << shape << std::endl << std::flush;
     }
-
+    
     // Set up the hyperslab parameters _____________________
     
     hsize_t rank (shape.size());
@@ -661,25 +658,11 @@ namespace DAL { // Namespace DAL -- begin
 		  << std::endl << std::flush;
 	status = false;
       } else {
-	htri_t selectValid = H5Sselect_valid (dataspaceID);
-	/*
-	 * Returns a positive value, for TRUE, if the selection is contained
-	 * within the extent or 0 (zero), for FALSE, if it is not. Returns a
-	 * negative value on error conditions such as the selection or extent
-	 * not being defined.
-	 */
-	if (selectValid==0) {
-	  std::cerr << "[HDF5Hyperslab::setHyperslab]"
-		    << " Selection is NOT contained within the extend of the dataset!"
-		    << std::endl << std::flush;
-	  status = false;
-	} else if (selectValid<0) {
-	  std::cerr << "[HDF5Hyperslab::setHyperslab]"
-		    << " Selection parameters NOT defined properly!"
-		    << std::endl << std::flush;
-	  status = false;
-	}
+	htri_t errorCode;
+	status = checkSelectionValid (dataspaceID,errorCode);
       }
+      /* Release the dataspace object ID */
+      H5Sclose (dataspaceID);
     } else {
       std::cerr << "[HDF5Hyperslab::setHyperslab] Invalid dataset object"
 		<< " -- skipping selection of hypeslab!" 
@@ -832,5 +815,52 @@ namespace DAL { // Namespace DAL -- begin
     
     return pos;
   }
+
+  //_____________________________________________________________________________
+  //                                                          checkSelectionValid
+
+  /*!
+    \param location   -- HDF5 object identifier for the dataspace to which a
+           hyperslab selection was performed.
+    \retval errorCode -- Returns a positive value, for TRUE, if the selection is
+            contained within the extent or 0 (zero), for FALSE, if it is not.
+	    Returns a negative value on error conditions such as the selection
+	    or extent not being defined.
+    \return status -- Returns \e true in case the selection was valid, \e false
+            otherwise.
+  */
+  bool HDF5Hyperslab::checkSelectionValid (hid_t const &location,
+					   htri_t &errorCode)
+  {
+    bool status;
+    
+    if (H5Iis_valid(location)) {
+      // check if the selection is valid
+      errorCode = H5Sselect_valid (location);
+      // process the returned error code
+      if (errorCode>0) {
+	status = true;
+      }
+      else if (errorCode==0) {
+	std::cerr << "[HDF5Hyperslab::checkSelectionValid]"
+		  << " Selection is NOT contained within the extend of the dataset!"
+		  << std::endl;
+	status = false;
+      } else if (errorCode<0) {
+	std::cerr << "[HDF5Hyperslab::checkSelectionValid]"
+		  << " Selection parameters NOT defined properly!"
+		  << std::endl;
+	status = false;
+      }
+    } else {
+      std::cerr << "[HDF5Hyperslab::checkSelectionValid]"
+		<< " Location is not valid HDF5 object!"
+		<< std::endl;
+      status = false;
+    }
+    
+    return status;
+  }
   
-} // Namespace DAL -- end
+  
+  } // Namespace DAL -- end

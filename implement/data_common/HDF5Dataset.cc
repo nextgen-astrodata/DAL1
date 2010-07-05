@@ -481,7 +481,12 @@ namespace DAL {
   {
     bool status (true);
     
+    /* Close dataspace before potentially extending the dataset */
+    H5Sclose (dataspace_p);
+    /* Assign the Hyperslab selection */
     status = slab.setHyperslab (location_p,resizeDataset);
+    /* Reopen the dataspace */
+    dataspace_p = H5Dget_space (location_p);
 
     /* Book-keeping: store the assigned hyperslab for later inspection. */
 

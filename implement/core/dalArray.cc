@@ -181,7 +181,9 @@ namespace DAL {
     \param arraysize Size of the array to write.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalArray::write( int offset, short data[], int arraysize )
+  bool dalArray::write (int offset,
+			short data[],
+			int arraysize)
   {
     hsize_t      dims[1] = { arraysize };
     int32_t      rank_p  = 1;

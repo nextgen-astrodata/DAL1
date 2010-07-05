@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2010                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -25,6 +25,7 @@
 #include <HDF5Hyperslab.h>
 
 // Namespace usage
+using std::cerr;
 using std::cout;
 using std::endl;
 using DAL::HDF5Dataset;
@@ -64,7 +65,7 @@ int test_constructors ()
     //
     slab.summary(); 
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -75,7 +76,7 @@ int test_constructors ()
     HDF5Hyperslab slab (rank);
     slab.summary(); 
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -96,7 +97,7 @@ int test_constructors ()
     HDF5Hyperslab slab (start,block);
     slab.summary(); 
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -129,7 +130,7 @@ int test_constructors ()
     HDF5Hyperslab slab2 (start,stride,count,block);
     slab2.summary(); 
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -153,59 +154,59 @@ int test_parameter_access ()
   int nofFailedTests (0);
   int rank (3);
 
-  std::cout << "[1] HDF5Hyperslab::setStart(std::vector<int>) ..." << endl;
+  cout << "[1] HDF5Hyperslab::setStart(std::vector<int>) ..." << endl;
   try {
     std::vector<int> start (rank,100);
     //
     HDF5Hyperslab slab;
     slab.setStart (start);
     // 
-    std::cout << "-- start = " << slab.start() << endl;
+    cout << "-- start = " << slab.start() << endl;
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
 
-  std::cout << "[2] HDF5Hyperslab::setStride(std::vector<int>) ..." << endl;
+  cout << "[2] HDF5Hyperslab::setStride(std::vector<int>) ..." << endl;
   try {
     std::vector<int> stride (rank,100);
     //
     HDF5Hyperslab slab;
     slab.setStride (stride);
     // 
-    std::cout << "-- stride = " << slab.stride() << endl;
+    cout << "-- stride = " << slab.stride() << endl;
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
 
-  std::cout << "[3] HDF5Hyperslab::setCount(std::vector<int>) ..." << endl;
+  cout << "[3] HDF5Hyperslab::setCount(std::vector<int>) ..." << endl;
   try {
     std::vector<int> count (rank,100);
     //
     HDF5Hyperslab slab;
     slab.setCount (count);
     // 
-    std::cout << "-- count = " << slab.count() << endl;
+    cout << "-- count = " << slab.count() << endl;
     //
     count.clear();
     slab.setCount (count);
-    std::cout << "-- count = " << slab.count() << endl;
+    cout << "-- count = " << slab.count() << endl;
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
 
-  std::cout << "[4] HDF5Hyperslab::setBlock(std::vector<int>) ..." << endl;
+  cout << "[4] HDF5Hyperslab::setBlock(std::vector<int>) ..." << endl;
   try {
     std::vector<int> block (rank,100);
     //
     HDF5Hyperslab slab;
     slab.setBlock (block);
     // 
-    std::cout << "-- block = " << slab.block() << endl;
+    cout << "-- block = " << slab.block() << endl;
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
 
@@ -264,7 +265,7 @@ int test_static_functions ()
     cout << "--> nof. points = " << HDF5Hyperslab::nofDatapoints (count,block) << endl;
     
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -277,15 +278,17 @@ int test_static_functions ()
 /*!
   \brief Test setting hyperslab selection for a dataset
 
+  \param filename -- Name of the file within within which the test datasets are
+         being created.
+
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_setHyperslab ()
+int test_setHyperslab (std::string const &filename)
 {
   cout << "\n[tHDF5Hyperslab::test_setHyperslab]\n" << endl;
 
   int nofFailedTests (0);
-  std::string filename ("tHDF5Hyperslab.h5");
 
   //________________________________________________________
   // Open the file to work with
@@ -296,14 +299,14 @@ int test_setHyperslab ()
 			    H5P_DEFAULT);
   
   if (H5Iis_valid(fileID)) {
-    std::cout << "-- Create file " << filename << endl;
+    cout << "-- Create file " << filename << endl;
   } else {
-    std::cerr << "Failed to open file " << filename << endl;
+    cerr << "Failed to open file " << filename << endl;
     return 0;
   }
   
   //________________________________________________________
-  // Create dataset used for testing
+  // Parameters for creating dataset
 
   int rank (3);
   int size (1024);
@@ -312,16 +315,82 @@ int test_setHyperslab ()
   unsigned int nofBlocks (15);
   std::vector<int> start (rank);
   std::vector<int> block (rank,nelem);
+  std::vector<int> stride;
   std::vector<int> count;
+
+  //________________________________________________________
+  // Apply hyperslab to dataset
+
+  cout << "[1] Assign Hyperslab to dataset create with H5Dcreate ..." << endl;
+  try {
+    hid_t dataspaceID;
+    hid_t datasetID;
+    hsize_t dims[rank];
+    hsize_t offset [rank];
+    htri_t selectValid;
+    std::string datasetName = "Dataset1";
+
+    /* Create dataset */
+    dims[0]     = 512;
+    dims[1]     = 1024;
+    dims[2]     = 1024;
+    dataspaceID = H5Screate_simple (rank, dims, NULL);
+    datasetID   = H5Dcreate2 (fileID,
+			      datasetName.c_str(),
+			      H5T_STD_I32LE,
+			      dataspaceID,
+			      H5P_DEFAULT,
+			      H5P_DEFAULT,
+			      H5P_DEFAULT);
+    
+    if (H5Iis_valid(datasetID)) {
+      DAL::h5get_dataspace_shape (datasetID,shape);
+      //
+      cout << "-- Opened dataset " << datasetName << endl;
+      cout << "-- Shape = " << shape << endl;
+    } else {
+      cerr << "Failed to open dataset " << datasetName << endl;
+      return 0;
+    }
+
+    /* Step through the dataset array using hyperslab definition */
+    dims[0] = 100;
+    dims[1] = 100;
+    dims[2] = 100;
+    for (unsigned int block(0); block<5; ++block) {
+      cout << "-- Assigning hyperslab for block " << block << " ..." << endl;
+      // Set offset marking start position of hyperset
+      offset[0] = offset[1] = offset[2] = block;
+      // Assign hyperslab
+      H5Sselect_hyperslab (dataspaceID,
+			   H5S_SELECT_SET,
+			   offset,
+			   NULL,
+			   dims,
+			   NULL);
+      // Check assignment of Hyperslab
+      DAL::HDF5Hyperslab::checkSelectionValid (dataspaceID,selectValid);
+    }
+    
+    /* Release HDF5 object handlers */
+    H5Dclose (datasetID);
+    H5Sclose (dataspaceID);
+    
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  std::cout << std::flush;
 
   //________________________________________________________
   // Assign hyperslab without writing of data
 
-  std::cout << "[1] Assign hyperslab without writing of data ..." << endl;
+  cout << "[2] Assign hyperslab without writing of data ..." << endl;
   try {
     // Create dataset
     HDF5Dataset dataset (fileID,
-			 "Dataset1",
+			 "Dataset2",
 			 shape,
 			 H5T_NATIVE_INT);
     // Walk through the data volume
@@ -331,24 +400,28 @@ int test_setHyperslab ()
       start[1] = numBlock*nelem;
       start[2] = numBlock*nelem;
       /* Feedback */
-      std::cout << "-- block = " << numBlock
+      cout << "-- block = " << numBlock
 		<< " , start = " << start
+		<< " , end = " << DAL::HDF5Hyperslab::end(start,stride,count,block)
 		<< std::endl << std::flush;
       /* Set the hyperslab */
       dataset.setHyperslab (start,block);
     }
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
+
+  std::cout << std::flush;
 
   //________________________________________________________
   // Write blocks of data to dataset
 
+  cout << "[3] Assign hyperslab before writing of data ..." << endl;
   try {
     // Create dataset
     HDF5Dataset dataset (fileID,
-			 "Dataset2",
+			 "Dataset3",
 			 shape,
 			 H5T_NATIVE_INT);
 
@@ -365,18 +438,23 @@ int test_setHyperslab ()
       /* Set starting point of hyperslab */
       start[0] = start[1] = start[2] = numBlock*nelem;
       /* Feedback */
-      std::cout << "-- block = " << numBlock
+      cout << "-- block = " << numBlock
 		<< " , start = " << start
 		<< " , block = " << block
 		<< " , #data = " << nofDatapoints << endl << std::flush;
       /* Write the block to data to the dataset */
       dataset.writeData (data,start,count,block);
     }
+
+    /* Release allocated memory */
+    delete [] data;
   } catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
+  std::cout << std::flush;
+
   //________________________________________________________
   // Close the file
 
@@ -386,12 +464,129 @@ int test_setHyperslab ()
 }
 
 //_______________________________________________________________________________
+//                                                                      test_hdf5
+
+/*!
+  \brief Test working with the low-level HDF5 library functions
+
+  While the rest of the test functions make use of functionality provided by the
+  DAL, this function should try some testing only using the bare HDF5 library 
+  methods, in order to help isolating errors in the more high-level interfaces
+  to datasets and Hyperslabs.
+
+  \param filename -- Name of the file within within which the test datasets are
+         being created.
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_hdf5 (std::string const &filename)
+{
+  cout << "\n[tHDF5Hyperslab::test_hdf5]\n" << endl;
+
+  int nofFailedTests (0);
+  std::string datasetName ("DatasetInt");
+  int rank (2);
+  hsize_t dims[rank];
+  hsize_t start[rank];
+  hsize_t count[rank];
+  herr_t  status;
+
+  //________________________________________________________
+  // Open the file to work with
+  
+  hid_t fileID = H5Fopen (filename.c_str(),
+			  H5F_ACC_RDWR,
+			  H5P_DEFAULT);
+  
+  if (H5Iis_valid(fileID)) {
+    cout << "-- Opened file " << filename << endl;
+  } else {
+    cerr << "Failed to open file " << filename << endl;
+    return 0;
+  }
+  
+  //________________________________________________________
+  // Create dataset to work with
+
+  dims[0] = 1024;
+  dims[1] = 1024;
+
+  // Create dataspace
+  hid_t dataspaceID = H5Screate_simple (rank, dims, NULL);
+
+  // Create dataset
+  hid_t datasetID = H5Dcreate (fileID,
+			       datasetName.c_str(),
+			       H5T_STD_I32LE,
+			       dataspaceID,
+			       H5P_DEFAULT,
+			       H5P_DEFAULT,
+			       H5P_DEFAULT);
+
+  if (H5Iis_valid(datasetID)) {
+    cout << "-- Opened dataset " << datasetName << " of shape ["
+	 << dims[0] << "," << dims[1] << "]" << endl;
+  } else {
+    cerr << "Failed to open dataset " << datasetName << endl;
+    return 0;
+  }
+  
+  //________________________________________________________
+  // Write single block of data
+
+  start[0]  = 0;
+  start[1]  = 0;
+  count[0]  = dims[0]/2;
+  count[1]  = dims[1]/2;
+  int nofDatapoints = count[0]*count[1];
+  int *data         = new int[nofDatapoints];
+
+
+  cout << "-- Assign values to be written to the dataset ..." << std::endl;
+  for (int n(0); n<nofDatapoints; ++n) {
+    data[n] = 1;
+  }
+  cout << "-- Assigned " << nofDatapoints << " data points." << std::endl;
+
+  cout << "-- Hyperslab selection on the dataset ..." << std::endl << std::flush;
+  status = H5Sselect_hyperslab (dataspaceID,
+				H5S_SELECT_SET,
+				start,
+				NULL, 
+				count,
+				NULL);
+
+  // cout << "-- Write data to dataset ..." << std::endl << std::flush;
+  // status = H5Dwrite (datasetID,
+  // 		     H5T_NATIVE_INT,
+  // 		     H5S_ALL,
+  // 		     dataspaceID,
+  // 		     H5P_DEFAULT,
+  // 		     data);
+  // cout << "-- Finished writing data." << std::endl << std::flush;
+  
+  //________________________________________________________
+  // Release HDF5 object handlers & allocated memory
+
+  delete [] data;
+
+  cout << "-- Release HDF5 object handlers ... " << std::endl;
+  status = H5Dclose (datasetID);
+  status = H5Sclose (dataspaceID);
+  status = H5Fclose(fileID);
+  
+  return nofFailedTests;
+}
+  
+//_______________________________________________________________________________
 //                                                                           main
 
 //! Main function
 int main ()
 {
   int nofFailedTests (0);
+  std::string filename ("tHDF5Hyperslab.h5");
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
@@ -400,7 +595,9 @@ int main ()
   // Test the static methods
   nofFailedTests += test_static_functions ();
   //! Test setting hyperslab selection for a dataset
-  nofFailedTests += test_setHyperslab ();
+  nofFailedTests += test_setHyperslab (filename);
+  //! Test working with the low-level HDF5 library functions
+  nofFailedTests += test_hdf5 (filename);  
 
   return nofFailedTests;
 }

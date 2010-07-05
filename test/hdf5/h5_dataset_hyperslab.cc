@@ -17,6 +17,7 @@
 #include "hdf5.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 
 #define FILE            "h5ex_d_hyper.h5"
 #define DATASET         "DS1"
@@ -191,6 +192,21 @@ main (void)
 				stride,
 				count,
 				block);
+
+  /*
+   * Check if selection is valid.
+   */
+  htri_t selectValid = H5Sselect_valid (space);
+
+  if (selectValid==0) {
+    std::cerr << "[h5_dataset_hyperslab]"
+	      << " Selection is NOT contained within the extend of the dataset!"
+	      << std::endl << std::flush;
+  } else if (selectValid<0) {
+    std::cerr << "[h5_dataset_hyperslab]"
+	      << " Selection parameters NOT defined properly!"
+	      << std::endl << std::flush;
+  }
   
   /*
    * Read the data using the previously defined hyperslab.
