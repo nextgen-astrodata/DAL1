@@ -54,7 +54,7 @@ typedef std::map<uint8_t, long int> bufferTracker;
   \class BF2H5
 
   \ingroup DAL
-  \ingroup data_common
+  \ingroup dal_apps
 
   \author Alwin de Jong
 

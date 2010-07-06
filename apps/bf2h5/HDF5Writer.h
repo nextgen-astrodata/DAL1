@@ -52,7 +52,7 @@ class BF2H5;
   \class HDF5Writer
   
   \ingroup DAL
-  \ingroup data_common
+  \ingroup dal_apps
 
   \author Alwin de Jong
 

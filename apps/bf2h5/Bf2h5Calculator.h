@@ -44,7 +44,7 @@ namespace DAL { // Namespace DAL -- begin
     \class Bf2h5Calculator
     
     \ingroup DAL
-    \ingroup data_common
+    \ingroup dal_apps
     
     \author Alwin de Jong
   */
@@ -123,19 +123,22 @@ namespace DAL { // Namespace DAL -- begin
   private:
     
     unsigned level;
-    //		bool memAllocOK; // No errors in allocation memory?
-    BF2H5 * itsParent; // parent application BF2H5
+    //! Parent application BF2H5    
+    BF2H5 * itsParent;
     unsigned short itsDownSampleFactor;
     uint8_t nrOfSubbands;
     uint32_t nrSamplesPerSubband;
-    bool * subbandReady; // points to array of flags marking subbands that have been written
+    //! Points to array of flags marking subbands that have been written
+    bool * subbandReady;
     bool checking_completeness;
     // the parallel threads for calculation
     pthread_t itsCalculationThread[NUM_CALCULATION_THREADS]; // the calculation threads
     // the tread_data_array contain input, settings and output data for that tread
     bool itsStopProcessing;
-    long int currentBlockNr;//, lastReadyBlock;
-    uint32_t itsSingleSubbandNrOutputSamples; // the size in float units of a single subband output data block
+    //! Number of the currently processed block
+    long int currentBlockNr;
+    //! The size in float units of a single subband output data block
+    uint32_t itsSingleSubbandNrOutputSamples;
     float ** dataBlockOutput; // the pointers to the output buffers for output data. Pointer to pointer to single subband output buffer
     
     // itsDatamap is protected by the calculationMapMutex and the pthread condition

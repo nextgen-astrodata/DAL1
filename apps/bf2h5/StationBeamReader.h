@@ -42,7 +42,7 @@ namespace DAL { // Namespace DAL -- begin
     \class StationBeamReader
     
     \ingroup DAL
-    \ingroup data_common
+    \ingroup dal_apps
     
     \author Alwin de Jong
   */
