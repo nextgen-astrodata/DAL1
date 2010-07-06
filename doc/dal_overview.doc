@@ -51,9 +51,10 @@
       - DAL::CoordinatesGroup
       </td>
       <td>
-      - DAL::BeamFormed
-      - DAL::BeamGroup
-      - DAL::BeamSubband
+      - DAL::BF_Dataset
+      - DAL::BF_PrimaryPointing
+      - DAL::BF_Beam
+      - DAL::BF_ProcessingHistory
       - DAL::TBB_Timeseries
       - DAL::TBB_StationGroup
       - DAL::TBB_DipoleDataset
