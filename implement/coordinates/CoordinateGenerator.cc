@@ -200,7 +200,7 @@ namespace DAL { // Namespace DAL -- begin
     info.setTelescope(telescope);
     info.setObserver(observer);
 
-    status = info.isTelescopePositionSet();
+    // status = info.isTelescopePositionSet();
 
     return status;
   }
