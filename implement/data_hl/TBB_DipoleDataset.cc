@@ -276,7 +276,14 @@ namespace DAL {  // Namespace DAL -- begin
       hid_t fileID = H5Fopen (filename.c_str(),
 			      H5F_ACC_RDWR,
 			      H5P_DEFAULT);
-      // open the dataset
+      /* If opening the the file failed, this might have been due to wrong
+	 access permissions; check if the file can be opened as read-only. */
+      if (fileID<0) {
+	fileID = H5Fopen (filename.c_str(),
+			  H5F_ACC_RDONLY,
+			  H5P_DEFAULT);
+      }
+        // open the dataset
       status = open (fileID,dataset,false);
       // release file handler
       h5error = H5Fclose (fileID);
