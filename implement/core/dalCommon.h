@@ -150,17 +150,40 @@ namespace DAL {
     \return s -- The provided variable converted to a string.
   */
   template <class T>
-    inline std::string to_string (const T& t)
+    inline std::string toString (const T& t)
     {
       std::stringstream ss;
       ss << t;
       return ss.str();
     }
-
+  
+  /*!
+    \brief Convert an array variable to a string
+    
+    \param arr   -- Pointer to the array with the data to be displayed.
+    \param nelem -- The number of elements stored within the array.
+    
+    \return s -- The provided variable converted to a string.
+  */
+  template <typename T, typename S>
+    inline std::string toString (T *arr,
+				 S const &nelem)
+  {
+    std::stringstream ss;
+    
+    ss << "["; 
+    for (S n(0); n<nelem; ++n) {
+      ss << " " << arr[n];
+    }
+    ss << " ]";
+    
+    return ss.str();
+  }
+  
   //! Calculate a 16-bit CRC
   uint16_t crc16 (uint16_t * buffer,
 		  uint32_t length);
-
+  
 #ifdef HAVE_CASA
   
   //! Convert std::vector<T> to casac::Vector<T>
@@ -912,20 +935,18 @@ std::ostream& show (std::ostream& os,
   \param arr   -- Pointer to the array with the data to be displayed
   \param nelem -- The number of elements stored within the array
 */
-template <typename T>
-std::ostream&  show (std::ostream& os,
-		     T *arr,
-		     uint const &nelem)
+template <typename T, typename S>
+  void show (std::ostream& os,
+	     T *arr,
+	     S const &nelem)
 {
-  os << " data = [";
+  os << "[";
   
-  for (uint n(0); n<nelem; ++n) {
+  for (S n(0); n<nelem; ++n) {
     os << " " << arr[n];
   }
   
-  os << " ]" << std::endl;
-  
-  return os;
+  os << " ]";
 }
 
 //_______________________________________________________________________________
@@ -938,15 +959,15 @@ std::ostream&  show (std::ostream& os,
   \param nelem -- The number of elements stored within the array
 */
 template <typename T, typename S>
-void show (T *arr,
-           S const &nelem)
+  std::ostream& show (T *arr,
+		      S const &nelem)
 {
   typedef typename std::vector<T>::iterator it;
   it dataStart = static_cast<it> (arr);
-
-  show (std::cout,
-	dataStart,
-	dataStart+nelem);
+  
+  return show (std::cout,
+	       dataStart,
+	       dataStart+nelem);
 }
 
 //_______________________________________________________________________________

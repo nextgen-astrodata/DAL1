@@ -644,21 +644,32 @@ namespace DAL {
 	status = setHyperslab (slab, true);
 	
 	if (status) {
-	  /* Local variables */
+	  
+	  // Local variables _____________________
+
 	  unsigned int nelem (rank());
 	  hsize_t dimensions[nelem];
 	  herr_t h5error;
 	  std::vector<int> block   = slab.block();
 	  std::vector<int> count   = slab.count();
 	  std::vector<hsize_t> end = slab.end();
-	  /* Setup the memory space */
+
+	  // Set up memory space _________________
+
 	  for (unsigned int n(0); n<nelem; ++n) {
 	    dimensions[n] = block[n]*count[n];
 	  }
+
 	  hid_t memorySpace = H5Screate_simple (nelem,
 						dimensions,
 						NULL);
-	  /* Read the data from the dataset */
+	  
+	  std::cout << "-- Memory space ID    = " << memorySpace << std::endl;
+	  std::cout << "-- Memory space shape = " << toString(dimensions,nelem)
+		    << std::endl;
+	  
+	  // Write data to dataset _______________
+
 	  h5error = H5Dwrite (location_p,
 			      datatype,
 			      memorySpace,

@@ -138,7 +138,7 @@ int test_operators ()
   cout << "\n[tdalCommon::test_operators]\n" << endl;
 
   int nofFailedTests (0);
-  uint nelem (10);
+  unsigned int nelem (10);
 
   cout << "[1] Testing show(std::ostream&,T const *,uint const &) ..." << endl;
   try {
@@ -154,7 +154,7 @@ int test_operators ()
     arr_double  = new double [nelem];
     arr_complex = new std::complex<double> [nelem];
     //
-    for (uint n(0); n<nelem; n++) {
+    for (unsigned int n(0); n<nelem; n++) {
       arr_bool[n]    = true;
       arr_int[n]     = int(n);
       arr_float[n]   = float(n);
@@ -162,11 +162,11 @@ int test_operators ()
       arr_complex[n] = std::complex<double>(n);
     }
     //
-    show (cout,arr_bool,nelem);
-    show (cout,arr_int,nelem);
-    show (cout,arr_float,nelem);
-    show (cout,arr_double,nelem);
-    show (cout,arr_complex,nelem);
+    std::cout << "-- bool*    = " << DAL::toString (arr_bool,nelem)    << endl;
+    std::cout << "-- int*     = " << DAL::toString (arr_int,nelem)     << endl;
+    std::cout << "-- float*   = " << DAL::toString (arr_float,nelem)   << endl;
+    std::cout << "-- double*  = " << DAL::toString (arr_double,nelem)  << endl;
+    std::cout << "-- complex* = " << DAL::toString (arr_complex,nelem) << endl;
     //
     delete [] arr_bool;
     delete [] arr_int;
