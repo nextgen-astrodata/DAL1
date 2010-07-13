@@ -57,10 +57,15 @@ namespace DAL { // Namespace DAL -- begin
     <ul type="square">
       <li>LOFAR Data Format ICDs:
       <ul>
-        <li>TBB Time-series data (LOFAR-USG-ICD-001)
-	<li>Beam-Formed Data (LOFAR-USG-ICD-003)
-	<li>LOFAR Sky Image (LOFAR-USG-ICD-004)
-	<li>Naming conventions (LOFAR-USG-ICD-005)
+        <li>LOFAR Data Format ICD: TBB Time-Series Data (LOFAR-USG-ICD-001)
+	<li>LOFAR Data Format ICD: Representations of World Coordinates
+	(LOFAR-USG-ICD-002)
+	<li>LOFAR Data Format ICD: Beam-Formed Data (LOFAR-USG-ICD-003)
+	<li>LOFAR Data Format ICD: Radio Sky Image Cubes (LOFAR-USG-ICD-004)
+	<li>LOFAR Data Format ICD: File Naming Conventions (LOFAR-USG-ICD-005)
+	<li>LOFAR Data Format ICD: Dynamic Spectrum Data (LOFAR-USG-ICD-006)
+	<li>LOFAR Data Format ICD: Visibility Data (LOFAR-USG-ICD-007)
+	<li>LOFAR Data Format ICD: Rotation Measure Synthesis Cubes (LOFAR-USG-ICD-008)
       </ul>
       <li>Components of the LOFAR user software:
       <ul>
@@ -518,6 +523,14 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Methods ==============================================================
 
+    //! Get the value of an attribute
+    template<class T >
+      bool getAttribute (std::string const &name, T &val);
+
+    //! Get the value of an attribute
+    template<class T >
+      bool getAttribute (std::string const &name, std::vector<T> &val);
+
 #ifdef HAVE_HDF5
     //! Write the attributes to a HDF5 file
     void h5write (hid_t const &groupID);
@@ -533,6 +546,14 @@ namespace DAL { // Namespace DAL -- begin
     void h5read (hid_t const &locationID,
 		 std::string const &name);
 #endif    
+
+#ifdef HAVE_CASA
+    //! Retrieve common attributes using csac::Record as container
+    casa::Record toRecord ();
+    //! Retrieve common attributes using csac::Record as container
+    bool toRecord (casa::Record &rec,
+		   bool const &overwrite=false);
+#endif 
     
   private:
 

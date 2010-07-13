@@ -302,11 +302,18 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.insert("OBSERVER");
     attributes_p.insert("OBSERVATION_ID");
     attributes_p.insert("OBSERVATION_START_MJD");
-    attributes_p.insert("OBSERVATION_START_UTC");
     attributes_p.insert("OBSERVATION_START_TAI");
+    attributes_p.insert("OBSERVATION_START_UTC");
     attributes_p.insert("OBSERVATION_END_MJD");
-    attributes_p.insert("OBSERVATION_END_UTC");
     attributes_p.insert("OBSERVATION_END_TAI");
+    attributes_p.insert("OBSERVATION_END_UTC");
+    attributes_p.insert("OBSERVATION_FREQUENCY_MAX");
+    attributes_p.insert("OBSERVATION_FREQUENCY_MIN");
+    attributes_p.insert("OBSERVATION_FREQUENCY_CENTER");
+    attributes_p.insert("OBSERVATION_FREQUENCY_UNIT");
+    attributes_p.insert("OBSERVATION_FREQUENCY_MAX");
+    attributes_p.insert("OBSERVATION_FREQUENCY_MIN");
+    attributes_p.insert("OBSERVATION_FREQUENCY_CENTER");
     attributes_p.insert("ANTENNA_SET");
     attributes_p.insert("FILTER_SELECTION");
     attributes_p.insert("CLOCK_FREQUENCY");
@@ -315,21 +322,21 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.insert("SYSTEM_VERSION");
     attributes_p.insert("PIPELINE_NAME");
     attributes_p.insert("PIPELINE_VERSION");
-    attributes_p.insert("NOF_STATIONS");
-    attributes_p.insert("STATIONS_LIST");
+    attributes_p.insert("OBSERVATION_NOF_STATIONS");
+    attributes_p.insert("OBSERVATION_STATIONS_LIST");
     attributes_p.insert("NOTES");
     /* Default values of the attributes */
     std::string undefined ("UNDEFINED");
     std::vector<std::string> stations (1,undefined);
     //
-    groupType_p          = "Root";
-    filename_p           = undefined;
-    filetype_p           = undefined;
-    filedate_p           = undefined;
-    telescope_p          = "LOFAR";
-    projectID_p          = undefined;
-    projectTitle_p       = undefined;
-    projectPI_p          = undefined;
+    groupType_p           = "Root";
+    filename_p            = undefined;
+    filetype_p            = undefined;
+    filedate_p            = undefined;
+    telescope_p           = "LOFAR";
+    projectID_p           = undefined;
+    projectTitle_p        = undefined;
+    projectPI_p           = undefined;
     projectCoI_p          = undefined;
     projectContact_p      = undefined;
     observer_p            = undefined;
@@ -352,7 +359,7 @@ namespace DAL { // Namespace DAL -- begin
     stationsList_p        = stations;
     notes_p               = undefined;
   }
-
+  
 #ifdef HAVE_HDF5
   
   //_____________________________________________________________________________
@@ -447,5 +454,53 @@ namespace DAL { // Namespace DAL -- begin
   }
 
 #endif
+
+  //_____________________________________________________________________________
+  //                                                                     toRecord
+  
+  /*!
+    \return rec -- casa::Record to which the list of common attributes have been 
+            written.
+  */
+  casa::Record CommonAttributes::toRecord ()
+  {
+    casa::Record rec;
+
+    toRecord (rec, true);
+
+    return rec;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                     toRecord
+
+  /*!
+    \retval rec      -- casa::Record to which the attribute values are written. 
+    \param overwrite -- Overwrite entries in the record?
     
+    \return status -- Status of the operation; return \e false in case an error
+            was encountered.
+  */
+  bool CommonAttributes::toRecord (casa::Record &rec,
+				   bool const &overwrite)
+  {
+    bool status (true);
+
+    rec.define("FILENAME",               filename()       );
+    rec.define("FILETYPE",               filetype()       );
+    rec.define("FILEDATE",               filedate()       );
+    rec.define("TELESCOPE",              telescope()      );
+    rec.define("PROJECT_ID",             projectID()      );
+    rec.define("PROJECT_TITLE",          projectTitle()   );
+    rec.define("PROJECT_PI",             projectPI()      );
+    rec.define("PROJECT_CO_I",           projectCoI()     );
+    rec.define("PROJECT_CONTACT",        projectContact() );
+    rec.define("OBSERVER",               observer()       );
+    rec.define("OBSERVATION_ID",         observationID()  );
+    rec.define("OBSERVATION_DATE_START", observationStartMJD() );
+    rec.define("OBSERVATION_DATE_END",   observationEndMJD()   );
+
+    return status;
+  }
+  
 } // Namespace DAL -- end

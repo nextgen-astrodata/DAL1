@@ -231,6 +231,44 @@ int test_attributes ()
 }
 
 //_______________________________________________________________________________
+//                                                                  test_toRecord
+
+#ifdef HAVE_CASA
+
+/*!
+  \brief Test export of attributes to casa::Record
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_toRecord ()
+{
+  cout << "\n[tCommonAttributes::test_toRecord]\n" << endl;
+
+  int nofFailedTests (0);
+  
+  /* Create CommonAttributes objects to work with */
+
+  DAL::Filename filename ("123456789","",DAL::Filename::uv,DAL::Filename::h5);
+  std::string filetype ("tbb");
+  std::string filedate ("2009-10-10T00:00:00.0");
+  CommonAttributes attributes (filename,
+			       filetype,
+			       filedate);
+  
+  cout << "[1] Testing toRecord() ..." << endl;
+  {
+    casa::Record rec = attributes.toRecord();
+    
+    cout << rec << endl;
+  }
+  
+  return nofFailedTests;
+}
+
+#endif
+
+//_______________________________________________________________________________
 //                                                                           main
 
 int main ()
@@ -241,6 +279,11 @@ int main ()
   nofFailedTests += test_constructors ();
   // Test access to the individual attributes
   nofFailedTests += test_attributes ();
+
+#ifdef HAVE_CASA
+  //! Test export of attributes to casa::Record
+  nofFailedTests += test_toRecord ();
+#endif
 
   return nofFailedTests;
 }

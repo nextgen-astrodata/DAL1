@@ -639,36 +639,55 @@ namespace DAL {
 		      hid_t const &datatype)
       {
 	bool status (true);
-	
-	/* Set the Hyperslab for the dataspace attached to a dataset */
+
+	// Set the Hyperslab selection _____________________
+
 	status = setHyperslab (slab, true);
+
+	{
+	  std::vector<hsize_t> start;
+	  std::vector<hsize_t> end;
+
+	  DAL::HDF5Hyperslab::getBoundingBox (location_p,
+					      start,
+					      end);
+
+	  std::cout << "-- Bounding box start = " << start << std::endl;
+	  std::cout << "-- Bounding box end   = " << end   << std::endl;
+				      
+	}
 	
 	if (status) {
 	  
-	  // Local variables _____________________
+	  // Local variables _______________________________
 
+	  unsigned int nofDatapoints (1);
 	  unsigned int nelem (rank());
-	  hsize_t dimensions[nelem];
+	  hsize_t dims[nelem];
 	  herr_t h5error;
 	  std::vector<int> block   = slab.block();
 	  std::vector<int> count   = slab.count();
 	  std::vector<hsize_t> end = slab.end();
 
-	  // Set up memory space _________________
-
-	  for (unsigned int n(0); n<nelem; ++n) {
-	    dimensions[n] = block[n]*count[n];
+	  // Set up memory space ___________________________
+	  
+	  if (count.empty()) {
+	    for (unsigned int n(0); n<nelem; ++n) {
+	      dims[n] = block[n];
+	      nofDatapoints *= dims[n];
+	    }
+	  } else {
+	    for (unsigned int n(0); n<nelem; ++n) {
+	      dims[n] = block[n]*count[n];
+	      nofDatapoints *= dims[n];
+	    }
 	  }
 
 	  hid_t memorySpace = H5Screate_simple (nelem,
-						dimensions,
+						dims,
 						NULL);
-	  
-	  std::cout << "-- Memory space ID    = " << memorySpace << std::endl;
-	  std::cout << "-- Memory space shape = " << toString(dimensions,nelem)
-		    << std::endl;
-	  
-	  // Write data to dataset _______________
+
+	  // Write data to dataset _________________________
 
 	  h5error = H5Dwrite (location_p,
 			      datatype,
@@ -676,6 +695,7 @@ namespace DAL {
 			      dataspace_p,
 			      H5P_DEFAULT,
 			      data);
+	  
 	  /* Release HDF5 object identifier */
 	  H5Sclose (memorySpace);
 	} else {

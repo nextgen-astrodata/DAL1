@@ -439,9 +439,10 @@ int test_setHyperslab (std::string const &filename)
       start[0] = start[1] = start[2] = numBlock*nelem;
       /* Feedback */
       cout << "-- block = " << numBlock
-		<< " , start = " << start
-		<< " , block = " << block
-		<< " , #data = " << nofDatapoints << endl << std::flush;
+	   << " , start = " << start
+	   << " , count = " << count
+	   << " , block = " << block
+	   << " , #data = " << nofDatapoints << endl << std::flush;
       /* Write the block to data to the dataset */
       dataset.writeData (data,start,count,block);
     }
@@ -486,11 +487,12 @@ int test_hdf5 (std::string const &filename)
 
   int nofFailedTests (0);
   std::string datasetName ("DatasetInt");
+  herr_t  status;
   int rank (2);
   hsize_t dims[rank];
   hsize_t start[rank];
   hsize_t count[rank];
-  herr_t  status;
+  unsigned int nofSteps (16);
 
   //________________________________________________________
   // Open the file to work with
@@ -533,42 +535,60 @@ int test_hdf5 (std::string const &filename)
   }
   
   //________________________________________________________
-  // Write single block of data
-
-  start[0]  = 0;
-  start[1]  = 0;
-  count[0]  = dims[0]/2;
-  count[1]  = dims[1]/2;
+  // Set up parameters for the data array to be written
+  
+  count[0]          = dims[0]/nofSteps;
+  count[1]          = dims[1]/nofSteps;
+  hid_t memspace    = H5Screate_simple(rank, count, NULL);
   int nofDatapoints = count[0]*count[1];
   int *data         = new int[nofDatapoints];
-
-
-  cout << "-- Assign values to be written to the dataset ..." << std::endl;
-  for (int n(0); n<nofDatapoints; ++n) {
-    data[n] = 1;
-  }
-  cout << "-- Assigned " << nofDatapoints << " data points." << std::endl;
-
-  cout << "-- Hyperslab selection on the dataset ..." << std::endl << std::flush;
-  status = H5Sselect_hyperslab (dataspaceID,
-				H5S_SELECT_SET,
-				start,
-				NULL, 
-				count,
-				NULL);
-
-  // cout << "-- Write data to dataset ..." << std::endl << std::flush;
-  // status = H5Dwrite (datasetID,
-  // 		     H5T_NATIVE_INT,
-  // 		     H5S_ALL,
-  // 		     dataspaceID,
-  // 		     H5P_DEFAULT,
-  // 		     data);
-  // cout << "-- Finished writing data." << std::endl << std::flush;
   
   //________________________________________________________
-  // Release HDF5 object handlers & allocated memory
+  // Write blocks of data without extending the dataset
 
+  cout << "[1] Write blocks of data without extending the dataset ..." << endl;
+  try {
+    for (unsigned int row(0); row<nofSteps; ++row) {
+      // Set offset from which to start writing data
+      start[0] = row*count[0];
+      for (unsigned int col(0); col<nofSteps; ++col) {
+	// Set offset from which to start writing data
+	start[1] = col*count[1];
+	// Assign values to the data array written to file
+	for (int n(0); n<nofDatapoints; ++n) {
+	  data[n] = 100*row+col;
+	}
+	// Hyperslab selection on dataspace
+	status = H5Sselect_hyperslab (dataspaceID,
+				      H5S_SELECT_SET,
+				      start,
+				      NULL, 
+				      count,
+				      NULL);
+	// Write the data to file
+	status = H5Dwrite (datasetID,
+			   H5T_NATIVE_INT,
+			   memspace,
+			   dataspaceID,
+			   H5P_DEFAULT,
+			   data);
+      }
+    }
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  //________________________________________________________
+  // Write blocks of data after extending the dataset
+
+  for (int n(0); n<rank; ++n) {
+    dims[n] *= 2;
+  }
+
+  //________________________________________________________
+  // Release HDF5 object handlers & allocated memory
+  
   delete [] data;
 
   cout << "-- Release HDF5 object handlers ... " << std::endl;

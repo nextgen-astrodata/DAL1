@@ -530,27 +530,23 @@ namespace DAL { // Namespace DAL -- begin
     herr_t h5error        = 0;
     H5I_type_t objectType = H5Iget_type (location);
 
-    // Check parameters for the Hyperslab __________________
+    // Check Hyperslab parameters __________________________
 
     unsigned int nelem;
     std::vector<hsize_t> shape;
     bool haveStride (true);
     bool haveCount (true);
+    bool haveBlock (true);
 
+    /* Get shape and rank of the dataspace */
     DAL::h5get_dataspace_shape (location,shape);
     nelem = shape.size();
     
+    /* Start position m1*/
     if (start.size() != nelem) {
       std::cerr << "[HDF5Hyperslab::setHyperslab] Parameter mismatch: start - shape."
 		<< std::endl << std::flush;
       std::cerr << "-- start = " << start << std::endl << std::flush;
-      std::cerr << "-- shape = " << shape << std::endl << std::flush;
-      return false;
-    }
-    else if (block.size() != nelem) {
-      std::cerr << "[HDF5Hyperslab::setHyperslab] Parameter mismatch: block - shape."
-		<< std::endl << std::flush;
-      std::cerr << "-- block = " << block << std::endl << std::flush;
       std::cerr << "-- shape = " << shape << std::endl << std::flush;
       return false;
     }
@@ -561,6 +557,10 @@ namespace DAL { // Namespace DAL -- begin
     
     if (count.size() != nelem || count.empty()) {
       haveCount = false;
+    }
+
+    if (block.size() != nelem || block.empty()) {
+      haveBlock = false;
     }
 
     // Adjust the size of the dataset ______________________
@@ -606,7 +606,6 @@ namespace DAL { // Namespace DAL -- begin
     /* Copy the input parameters to be passed on */
     for (unsigned int n(0); n<nelem; ++n) {
       tmpStart[n]  = start[n];
-      tmpBlock[n]  = block[n];
     }
     
     if (haveStride) {
@@ -628,7 +627,17 @@ namespace DAL { // Namespace DAL -- begin
 	tmpCount[n] = 1;
       }
     }
-    
+
+    if (haveBlock) {
+      for (unsigned int n(0); n<nelem; ++n) {
+	tmpBlock[n] = block[n];
+      }
+    } else {
+      for (unsigned int n(0); n<nelem; ++n) {
+	tmpBlock[n] = 1;
+      }
+    }
+
     // Select hyperslab from dataspace _____________________
 
     if (objectType == H5I_DATASPACE) {
@@ -862,5 +871,81 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
   
+  //_____________________________________________________________________________
+  //                                                               getBoundingBox
+
+  bool HDF5Hyperslab::getBoundingBox (hid_t const &location,
+				      std::vector<hsize_t> &start,
+				      std::vector<hsize_t> &end)
+  {
+    bool status (true);
+
+    if (H5Iis_valid(location)) {
+
+      bool inputIsDataset   = false;
+      H5I_type_t objectType = H5Iget_type (location);
+      unsigned int rank;
+      std::vector<hsize_t> shape;
+      hid_t dataspaceID;
+      herr_t h5error;
+      
+      if (objectType == H5I_DATASPACE) {
+	dataspaceID = location;
+      }
+      else if (objectType == H5I_DATASET) {
+	dataspaceID    = H5Dget_space (location);
+	inputIsDataset = true;
+      } else {
+	std::cerr << "[HDF5Hyperslab::getBoundingBox]"
+		  << " Invalid type of HDF5 object!" << std::endl;
+	return false;
+      }
+      
+      /* Retrieve the shape of the dataspace */
+      DAL::h5get_dataspace_shape (dataspaceID,shape);
+      if (shape.empty()) {
+	std::cerr << "[HDF5Hyperslab::getBoundingBox]"
+		  << " Failed to retrieve shape of dataspace!." << std::endl;
+	return false;
+      } else {
+	rank = shape.size();
+      }
+      
+      hsize_t *tmpStart = new hsize_t[rank];
+      hsize_t *tmpEnd   = new hsize_t[rank];
+
+      h5error = H5Sget_select_bounds (dataspaceID,
+      				      tmpStart,
+      				      tmpEnd);
+
+      if (h5error<0) {
+	std::cerr << "" << std::endl;
+      } else {
+	start.resize(rank);
+	end.resize(rank);
+
+	for (unsigned int n(0); n<rank; ++n) {
+	  start[n] = tmpStart[n];
+	  end[n]   = tmpEnd[n];
+	}
+      }
+
+      /* Release allocated memory */
+      delete [] tmpStart;
+      delete [] tmpEnd;
+      /* Release HDF5 object handle */
+      if (inputIsDataset) {
+	H5Sclose(dataspaceID);
+      }
+      
+    } else {
+      std::cerr << "[HDF5Hyperslab::getBoundingBox]"
+		<< " Location is not valid HDF5 object!"
+		<< std::endl;
+      status = false;
+    }
+
+    return status;
+  }
   
   } // Namespace DAL -- end

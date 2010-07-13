@@ -439,6 +439,11 @@ namespace DAL { // Namespace DAL -- begin
     static bool checkSelectionValid (hid_t const &location,
 				     htri_t &errorCode);
 
+    //! Get the bounding box conatining the current selection
+    static bool getBoundingBox (hid_t const &location,
+				std::vector<hsize_t> &start,
+				std::vector<hsize_t> &end);
+
   private:
     
     //! Initialize the internal parameters

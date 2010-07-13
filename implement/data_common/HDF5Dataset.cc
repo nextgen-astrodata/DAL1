@@ -480,31 +480,39 @@ namespace DAL {
 				  bool const &resizeDataset)
   {
     bool status (true);
+
+    if (H5Iis_valid(location_p)) {
+      
+      /* Close dataspace before potentially extending the dataset */
+      H5Sclose (dataspace_p);
+      /* Assign the Hyperslab selection */
+      status = slab.setHyperslab (location_p,resizeDataset);
+      /* Reopen the dataspace */
+      dataspace_p = H5Dget_space (location_p);
+      
+      /* Book-keeping: store the assigned hyperslab for later inspection. */
+      
+      switch (slab.selection()) {
+      case H5S_SELECT_SET:
+	hyperslab_p.empty();
+	hyperslab_p.push_back(slab);
+	break;
+      default:
+	hyperslab_p.push_back(slab);
+	break;
+      };
+      
+      /* As the dataset might have been resized, the "shape" parameter needs to be
+	 updated to the current value.
+      */
+      DAL::h5get_dataspace_shape(location_p, shape_p);
+      
+    } else {
+      std::cerr << "[HDF5Dataset::setHyperslab]"
+		<< " Unable to select hyperslab - invalid HDF5 object!"
+		<< std::endl;
+    }
     
-    /* Close dataspace before potentially extending the dataset */
-    H5Sclose (dataspace_p);
-    /* Assign the Hyperslab selection */
-    status = slab.setHyperslab (location_p,resizeDataset);
-    /* Reopen the dataspace */
-    dataspace_p = H5Dget_space (location_p);
-
-    /* Book-keeping: store the assigned hyperslab for later inspection. */
-
-    switch (slab.selection()) {
-    case H5S_SELECT_SET:
-      hyperslab_p.empty();
-      hyperslab_p.push_back(slab);
-      break;
-    default:
-      hyperslab_p.push_back(slab);
-      break;
-    };
-
-    /* As the dataset might have been resized, the "shape" parameter needs to be
-       updated to the current value.
-    */
-    DAL::h5get_dataspace_shape(location_p, shape_p);
-
     return status;
   }
 
