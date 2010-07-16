@@ -330,7 +330,7 @@ namespace DAL {
     hsize_t dims [rank];
     hsize_t maxdims [rank];
     hsize_t chunkdims [rank];
-    hid_t chunkParam;
+    hid_t dcpl;
     herr_t h5error;
 
     for (int n(0); n<rank; ++n) {
@@ -341,20 +341,20 @@ namespace DAL {
 
     dataspace_p = H5Screate_simple (rank, dims, maxdims);
     // Create the dataset creation property list
-    chunkParam  = H5Pcreate (H5P_DATASET_CREATE);
+    dcpl  = H5Pcreate (H5P_DATASET_CREATE);
     // Set the chunk size
-    h5error     = H5Pset_chunk (chunkParam, rank, chunkdims);
+    h5error     = H5Pset_chunk (dcpl, rank, chunkdims);
     // Create the Dataset
     location_p  = H5Dcreate2 (location,
 			      name_p.c_str(),
 			      datatype_p,
 			      dataspace_p,
 			      H5P_DEFAULT,
-			      chunkParam,
+			      dcpl,
 			      H5P_DEFAULT);
     
     // Release HDF5 object identifiers
-    H5Pclose (chunkParam);
+    H5Pclose (dcpl);
     
     return status;
   }
@@ -481,14 +481,20 @@ namespace DAL {
   {
     bool status (true);
 
-    if (H5Iis_valid(location_p)) {
+    if (H5Iis_valid(location_p) && H5Iis_valid(dataspace_p)) {
       
-      /* Close dataspace before potentially extending the dataset */
-      H5Sclose (dataspace_p);
       /* Assign the Hyperslab selection */
-      status = slab.setHyperslab (location_p,resizeDataset);
-      /* Reopen the dataspace */
-      dataspace_p = H5Dget_space (location_p);
+      status = slab.setHyperslab (location_p,
+				  dataspace_p,
+				  resizeDataset);
+#ifdef DEBUGGING_MESSAGES
+      {
+	std::vector<hsize_t> posStart;
+	std::vector<hsize_t> posEnd;
+	HDF5Hyperslab::getBoundingBox (dataspace_p, posStart, posEnd);
+	std::cout << "-- Bounding box = " << posStart << " .. " << posEnd << std::endl;
+      }
+#endif
       
       /* Book-keeping: store the assigned hyperslab for later inspection. */
       

@@ -440,10 +440,38 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns \e false in case an error 
             was encountered.
   */
-  bool HDF5Hyperslab::setHyperslab (hid_t const &location,
+  bool HDF5Hyperslab::setHyperslab (hid_t &location,
 				    bool const &resizeDataset)
   {
     return setHyperslab (location,
+			 selection_p,
+			 start_p,
+			 stride_p,
+			 count_p,
+			 block_p,
+			 resizeDataset);
+  }
+
+  //_____________________________________________________________________________
+  //                                                                 setHyperslab
+  
+  /*!
+    \param datasetID     -- HDF5 object identifier for the dataset which will be
+           extended, if required, to apply the hyperslab seection.
+    \param dataspaceID   -- HDF5 object identifier for the dataspace to which to
+           apply the hyperslab selection.
+    \param resizeDataset -- Resize the dataset to the dimensions defined by the 
+           Hyperslab?
+
+    \return status -- Status of the operation; returns \e false in case an error 
+            was encountered.
+  */
+  bool HDF5Hyperslab::setHyperslab (hid_t &datasetID,
+				    hid_t &dataspaceID,
+				    bool const &resizeDataset)
+  {
+    return setHyperslab (datasetID,
+			 dataspaceID,
 			 selection_p,
 			 start_p,
 			 stride_p,
@@ -469,22 +497,61 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns \e false in case an error 
             was encountered.
   */
-  bool HDF5Hyperslab::setHyperslab (hid_t const &location,
-				    H5S_seloper_t const &selection,
-				    std::vector<int> const &start,
-				    std::vector<int> const &block,
-				    bool const &resizeDataset)
+  bool HDF5Hyperslab::setHyperslab (hid_t &location,
+  				    H5S_seloper_t const &selection,
+  				    std::vector<int> const &start,
+  				    std::vector<int> const &count,
+  				    bool const &resizeDataset)
   {
     std::vector<int> stride;
-    std::vector<int> count;
+    std::vector<int> block;
     
     return setHyperslab (location,
-			 selection,
-			 start,
-			 stride,
-			 count,
-			 block,
-			 resizeDataset);
+  			 selection,
+  			 start,
+  			 stride,
+  			 count,
+  			 block,
+  			 resizeDataset);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                 setHyperslab
+  
+  /*!
+    \param datasetID     -- HDF5 object identifier for the dataset which will be
+           extended, if required, to apply the hyperslab seection.
+    \param dataspaceID   -- HDF5 object identifier for the dataspace to which to
+           apply the hyperslab selection.
+    \param selection -- Selection operator to determine how the new selection is
+           to be combined with the already existing selection for the dataspace.
+    \param start     -- Offset of the starting element of the specified hyperslab
+    \param count     -- The number of elements or blocks to select along each
+           dimension.
+    \param resizeDataset -- Resize the dataset to the dimensions defined by the 
+           Hyperslab?
+
+    \return status -- Status of the operation; returns \e false in case an error 
+            was encountered.
+  */
+  bool HDF5Hyperslab::setHyperslab (hid_t &datasetID,
+				    hid_t &dataspaceID,
+				    H5S_seloper_t const &selection,
+  				    std::vector<int> const &start,
+  				    std::vector<int> const &count,
+  				    bool const &resizeDataset)
+  {
+    std::vector<int> stride;
+    std::vector<int> block;
+    
+    return setHyperslab (datasetID,
+			 dataspaceID,
+  			 selection,
+  			 start,
+  			 stride,
+  			 count,
+  			 block,
+  			 resizeDataset);
   }
   
   //_____________________________________________________________________________
@@ -507,7 +574,7 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns \e false in case an error 
             was encountered.
   */
-  bool HDF5Hyperslab::setHyperslab (hid_t const &location,
+  bool HDF5Hyperslab::setHyperslab (hid_t &location,
 				    H5S_seloper_t const &selection,
 				    std::vector<int> const &start,
 				    std::vector<int> const &stride,
@@ -515,20 +582,108 @@ namespace DAL { // Namespace DAL -- begin
 				    std::vector<int> const &block,
 				    bool const &resizeDataset)
   {
-    //______________________________________________________
-    // Initial check and general local variables
+    bool status (true);
+
+    // Check HDF5 object handler ___________________________
+
+    if (H5Iis_valid(location)) {
+      /* Check if object handler points to dataset */
+      if (H5Iget_type (location) == H5I_DATASET) {
+	/* Get dataspace identifier */
+	hid_t dataspaceID = H5Dget_space (location);
+	/* Forward function call */
+	status = setHyperslab (location,
+			       dataspaceID,
+			       selection,
+			       start,
+			       stride,
+			       count,
+			       block,
+			       resizeDataset);
+	/* Release the dataspace object ID */
+	H5Sclose (dataspaceID);
+      } else {
+	std::cerr << "[HDF5Hyperslab::setHyperslab]"
+		  << " Identifier pointing to wrong object type - no dataset!"
+		  << std::endl;
+	return false;
+      }
+    } else {
+      std::cerr << "[HDF5Hyperslab::setHyperslab] Provided location not a valid"
+		<< " HDF5 object!"
+		<< std::endl;
+      return false;
+    }
     
-    if (!H5Iis_valid(location)) {
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                 setHyperslab
+  
+  /*!
+    \param datasetID     -- HDF5 object identifier for the dataset which will be
+           extended, if required, to apply the hyperslab seection.
+    \param dataspaceID   -- HDF5 object identifier for the dataspace to which to
+           apply the hyperslab selection.
+    \param selection     -- Selection operator to determine how the new selection
+           is to be combined with the already existing selection for the
+	   dataspace.
+    \param start         -- Offset of the starting element of the specified
+           hyperslab.
+    \param stride        -- Number of elements to separate each element or block
+           to be selected
+    \param count         -- The number of elements or blocks to select along each
+           dimension.
+    \param block         -- The size of the block selected from the dataspace
+    \param resizeDataset -- Resize the dataset to the dimensions defined by the 
+           Hyperslab?
+
+    \return status -- Status of the operation; returns \e false in case an error 
+            was encountered.
+  */
+  bool HDF5Hyperslab::setHyperslab (hid_t &datasetID,
+				    hid_t &dataspaceID,
+				    H5S_seloper_t const &selection,
+				    std::vector<int> const &start,
+				    std::vector<int> const &stride,
+				    std::vector<int> const &count,
+				    std::vector<int> const &block,
+				    bool const &resizeDataset)
+  {
+    bool status = true;
+
+    // Check HDF5 object handlers __________________________
+
+    /* Check the dataset */
+    if (H5Iis_valid(datasetID)) {
+      if (H5Iget_type (datasetID) != H5I_DATASET) {
+	std::cerr << "[HDF5Hyperslab::setHyperslab]"
+		  << " Identifier pointing to wrong object type - no dataset!"
+		  << std::endl;
+	return false;
+      }
+    } else {
       std::cerr << "[HDF5Hyperslab::setHyperslab] Provided location not a valid"
 		<< " HDF5 object!"
 		<< std::endl;
       return false;
     }
 
-    bool status           = true;
-    hid_t dataspaceID     = 0;
-    herr_t h5error        = 0;
-    H5I_type_t objectType = H5Iget_type (location);
+    /* Check the dataspace */
+    if (H5Iis_valid(dataspaceID)) {
+      if (H5Iget_type (dataspaceID) != H5I_DATASPACE) {
+	std::cerr << "[HDF5Hyperslab::setHyperslab]"
+		  << " Identifier pointing to wrong object type - no dataspace!"
+		  << std::endl;
+	return false;
+      }
+    } else {
+      std::cerr << "[HDF5Hyperslab::setHyperslab] Provided location not a valid"
+		<< " HDF5 object!"
+		<< std::endl;
+      return false;
+    }
 
     // Check Hyperslab parameters __________________________
 
@@ -537,9 +692,10 @@ namespace DAL { // Namespace DAL -- begin
     bool haveStride (true);
     bool haveCount (true);
     bool haveBlock (true);
+    herr_t h5error;
 
     /* Get shape and rank of the dataspace */
-    DAL::h5get_dataspace_shape (location,shape);
+    DAL::h5get_dataspace_shape (datasetID,shape);
     nelem = shape.size();
     
     /* Start position m1*/
@@ -565,22 +721,30 @@ namespace DAL { // Namespace DAL -- begin
 
     // Adjust the size of the dataset ______________________
 
-    std::vector<hsize_t> endHyperslab = end (start,stride,count,block);
-    bool extendDataset (false);
-
-    for (unsigned int n(0); n<nelem; ++n) {
-      if (endHyperslab[n]>shape[n]) {
-	extendDataset=true;
-      }
-    }
-    
-    if (extendDataset && resizeDataset) {
-      if (objectType == H5I_DATASET) {
-	hsize_t tmpSize [nelem];
-	for (unsigned int n(0); n<nelem; ++n) {
+    try {
+      std::vector<hsize_t> endHyperslab = end (start,stride,count,block);
+      bool extendDataset (false);
+      hsize_t tmpSize [nelem];
+      
+      for (unsigned int n(0); n<nelem; ++n) {
+	if (endHyperslab[n]>shape[n]) {
 	  tmpSize[n] = endHyperslab[n]+1;
+	  extendDataset=true;
+	} else {
+	  tmpSize[n] = shape[n];
 	}
-	h5error = H5Dset_extent (location, tmpSize);
+      }
+      
+      if (extendDataset && resizeDataset) {
+	/* Feedback */
+	std::cout << "-- Extending dataset : " << shape << " -> " 
+		  << toString(tmpSize,nelem) << std::endl;
+	/* Close the dataspace */
+	h5error = H5Sclose (dataspaceID);
+	/* Extend the dataset */
+	h5error = H5Dset_extent (datasetID, tmpSize);
+	/* Repoen the dataspace */
+	dataspaceID = H5Dget_space(datasetID);
 	/* Check the error code */
 	if (h5error<0) {
 	  std::cerr << "[HDF5Hyperslab::setHyperslab] Error extending dataset!"
@@ -588,11 +752,10 @@ namespace DAL { // Namespace DAL -- begin
 	  status = false;
 	}
       }
-      else {
-	std::cerr << "[HDF5Hyperslab::setHyperslab] Unable to extend dataset size;"
-		  << " provided HDF5 object is not a dataset!"
-		  << std::endl << std::flush;
-      }
+    } catch (std::string message) {
+      std::cerr << "[HDF5Hyperslab::setHyperslab] Error extending dataset!"
+		<< std::endl;
+      status = false;
     }
     
     // Set up the hyperslab parameters _____________________
@@ -637,49 +800,48 @@ namespace DAL { // Namespace DAL -- begin
 	tmpBlock[n] = 1;
       }
     }
-
+    
+#ifdef DEBUGGING_MESSAGES
+    std::cout << "-- start          = " << start << " -> "
+	      << toSTring(tmpStart,nelem) << std::endl;
+    std::cout << "-- Have stride    = " << haveStride << std::endl;
+    std::cout << "-- stride         = " << stride << " -> "
+	      << toSTring(tmpStride,nelem) << std::endl;
+    std::cout << "-- Have count     = " << haveCount  << std::endl;
+    std::cout << "-- count          = " << count << " -> "
+	      << toSTring(tmpCount,nelem) << std::endl;
+    std::cout << "-- Have block     = " << haveBlock  << std::endl;
+#endif
+    
     // Select hyperslab from dataspace _____________________
-
-    if (objectType == H5I_DATASPACE) {
-      dataspaceID       = location;
-    }
-    else if (objectType == H5I_DATASET) {
-      dataspaceID       = H5Dget_space (location);
-    }
-    else {
-      std::cerr << "[HDF5Hyperslab::setHyperslab] Unusable location;"
-		<< " expecting dataset or dataspace!"
+    
+    /* Assign the Hyperslab selection to the dataspace. */
+    h5error = H5Sselect_hyperslab (dataspaceID,
+				   selection,
+				   tmpStart,      // start
+				   tmpStride,     // stride
+				   tmpCount,      // count
+				   tmpBlock);     // block
+    
+    if (h5error<0) {
+      std::cerr << "[HDF5Hyperslab::setHyperslab] Error selecting hyperslab!"
 		<< std::endl << std::flush;
-      return false;
-    }
-
-    if (H5Iis_valid(dataspaceID)) {
-      /* Assign the Hyperslab selection to the dataspace. */
-      h5error = H5Sselect_hyperslab (dataspaceID,
-				     selection,
-				     tmpStart,      // start
-				     tmpStride,     // stride
-				     tmpCount,      // count
-				     tmpBlock);     // block
-      
-      if (h5error<0) {
-	std::cerr << "[HDF5Hyperslab::setHyperslab] Error selecting hyperslab!"
-		  << std::endl << std::flush;
-	status = false;
-      } else {
-	htri_t errorCode;
-	status = checkSelectionValid (dataspaceID,errorCode);
-      }
-      /* Release the dataspace object ID */
-      H5Sclose (dataspaceID);
+      status = false;
     } else {
-      std::cerr << "[HDF5Hyperslab::setHyperslab] Invalid dataset object"
-		<< " -- skipping selection of hypeslab!" 
-		<< std::endl << std::flush;
+      /* Check if the selection was valid */
+      htri_t errorCode;
+      status = checkSelectionValid (dataspaceID,errorCode);
+#ifdef DEBUGGING_MESSAGES
+      /* Get the bounding of the selection */
+      std::vector<hsize_t> posStart;
+      std::vector<hsize_t> posEnd;
+      getBoundingBox (dataspaceID, posStart, posEnd);
+      std::cout << "-- Bounding box = " << posStart << " .. " << posEnd << std::endl;
+#endif
     }
     
     return status;
-  }  
+  }
   
   //_____________________________________________________________________________
   //                                                                nofDatapoints
@@ -874,6 +1036,13 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                               getBoundingBox
 
+  /*!
+    \param location -- HDF5 object identifier for the dataspace to which a
+           hyperslab selection was performed.
+    \param start    -- Starting coordinates of the bounding box.
+    \param end      -- Ending coordinates of the bounding box, i.e., the
+           coordinates of the diagonally opposite corner.
+  */
   bool HDF5Hyperslab::getBoundingBox (hid_t const &location,
 				      std::vector<hsize_t> &start,
 				      std::vector<hsize_t> &end)

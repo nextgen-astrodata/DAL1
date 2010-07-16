@@ -485,7 +485,7 @@ namespace DAL {
 		      std::vector<int> const &count,
 		      std::vector<int> const &block)
       {
-	std::vector<int> stride (block.size(),1);
+	std::vector<int> stride;
 	HDF5Hyperslab slab (start,
 			    stride,
 			    count,
@@ -506,11 +506,14 @@ namespace DAL {
 		      std::vector<int> const &start,
 		      std::vector<int> const &block)
       {
-	std::vector<int> count (block.size(),1);
+	std::vector<int> stride;
+	std::vector<int> count;
+	HDF5Hyperslab slab (start,
+			    stride,
+			    count,
+			    block);
 	return writeData (data,
-			  start,
-			  count,
-			  block);
+			  slab);
       }
 
     /*!
@@ -643,22 +646,9 @@ namespace DAL {
 	// Set the Hyperslab selection _____________________
 
 	status = setHyperslab (slab, true);
-
-	{
-	  std::vector<hsize_t> start;
-	  std::vector<hsize_t> end;
-
-	  DAL::HDF5Hyperslab::getBoundingBox (location_p,
-					      start,
-					      end);
-
-	  std::cout << "-- Bounding box start = " << start << std::endl;
-	  std::cout << "-- Bounding box end   = " << end   << std::endl;
-				      
-	}
 	
 	if (status) {
-	  
+
 	  // Local variables _______________________________
 
 	  unsigned int nofDatapoints (1);
@@ -672,32 +662,58 @@ namespace DAL {
 	  // Set up memory space ___________________________
 	  
 	  if (count.empty()) {
-	    for (unsigned int n(0); n<nelem; ++n) {
-	      dims[n] = block[n];
-	      nofDatapoints *= dims[n];
+	    if (block.empty()) {
+	      // count=empty, block=empty
+	      std::cerr << "[HDF5Dataset::writeDate]"
+			<< " both block and count parameters undefined!" 
+			<< std::endl;
+	      return false;
+	    } else {
+	      // count=empty, block=[..]
+	      for (unsigned int n(0); n<nelem; ++n) {
+		dims[n] = block[n];
+		nofDatapoints *= dims[n];
+	      }
 	    }
 	  } else {
-	    for (unsigned int n(0); n<nelem; ++n) {
-	      dims[n] = block[n]*count[n];
-	      nofDatapoints *= dims[n];
+	    if (block.empty()) {
+	      // count=[..], block=empty
+	      for (unsigned int n(0); n<nelem; ++n) {
+		dims[n] = count[n];
+		nofDatapoints *= dims[n];
+	      }
+	    } else {
+	      // count=[..], block=[..]
+	      for (unsigned int n(0); n<nelem; ++n) {
+		dims[n] = block[n]*count[n];
+		nofDatapoints *= dims[n];
+	      }
 	    }
 	  }
-
-	  hid_t memorySpace = H5Screate_simple (nelem,
-						dims,
-						NULL);
-
+	  
+	  hid_t memspace = H5Screate_simple (nelem,
+					     dims,
+					     dims);
+	  
 	  // Write data to dataset _________________________
-
+	  
+#ifdef DEBUGGING_MESSAGES
+	  std::cout << "-- data = [ " 
+		    << data[0] << " , "
+		    << data[1] << " , "
+		    << data[2] << " , "
+		    << data[3] << " .. ]" << std::endl << std::flush;
+#endif	  
+	  
 	  h5error = H5Dwrite (location_p,
 			      datatype,
-			      memorySpace,
+			      memspace,
 			      dataspace_p,
 			      H5P_DEFAULT,
 			      data);
 	  
-	  /* Release HDF5 object identifier */
-	  H5Sclose (memorySpace);
+	  /* /\* Release HDF5 object identifier *\/ */
+	  /* H5Sclose (memspace); */
 	} else {
 	  std::cerr << "[HDF5Dataset::writeDate] Failed to properly set up Hyperslab!"
 		    << std::endl;

@@ -242,13 +242,6 @@ void export_SAS_Settings ()
 
 void export_HDF5Hyperslab ()
 {
-  bool (HDF5Hyperslab::*setHyperslab1)(hid_t const &, bool const &) 
-    = &HDF5Hyperslab::setHyperslab;
-//   bool (HDF5Hyperslab::*setHyperslab2)(hid_t const &,
-// 				       std::vector<int> const &,
-// 				       std::vector<int> const &,
-// 				       H5S_seloper_t const &) 
-//     = &HDF5Hyperslab::setHyperslab;
   void (HDF5Hyperslab::*summary1)() 
     = &HDF5Hyperslab::summary;
   void (HDF5Hyperslab::*summary2)(std::ostream &) 
@@ -277,8 +270,6 @@ void export_HDF5Hyperslab ()
     .def( "setBlock", &HDF5Hyperslab::setBlock,
 	  "Set the size of the element block selected from the dataspace.")
     // Methods
-    .def( "setHyperslab", setHyperslab1,
-	  "Set the Hyperslab for the dataspace attached to a dataset.")
     .def( "className", &HDF5Hyperslab::className,
 	  "Get the name of the class.")
     .def("summary", summary1)

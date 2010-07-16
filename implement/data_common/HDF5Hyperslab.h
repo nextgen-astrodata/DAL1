@@ -416,18 +416,41 @@ namespace DAL { // Namespace DAL -- begin
 				     std::vector<int> const &block);
     
     //! Set the Hyperslab for the dataspace attached to a dataset
-    bool setHyperslab (hid_t const &location,
+    bool setHyperslab (hid_t &location,
 		       bool const &resizeDataset);
 
     //! Set the Hyperslab for the dataspace attached to a dataset
-    static bool setHyperslab (hid_t const &location,
-			      H5S_seloper_t const &selection,
-			      std::vector<int> const &start,
-			      std::vector<int> const &block,
-			      bool const &resizeDataset);
+    bool setHyperslab (hid_t &datasetID,
+		       hid_t &dataspaceID,
+		       bool const &resizeDataset);
+
+    //! Set the Hyperslab for the dataspace attached to a dataset
+    static bool setHyperslab (hid_t &location,
+    			      H5S_seloper_t const &selection,
+    			      std::vector<int> const &start,
+    			      std::vector<int> const &count,
+    			      bool const &resizeDataset);
     
     //! Set the Hyperslab for the dataspace attached to a dataset
-    static bool setHyperslab (hid_t const &location,
+    static bool setHyperslab (hid_t &datasetID,
+    			      hid_t &dataspaceID,
+    			      H5S_seloper_t const &selection,
+    			      std::vector<int> const &start,
+    			      std::vector<int> const &count,
+    			      bool const &resizeDataset);
+    
+    //! Set the Hyperslab for the dataspace attached to a dataset
+    static bool setHyperslab (hid_t &location,
+			      H5S_seloper_t const &selection,
+			      std::vector<int> const &start,
+			      std::vector<int> const &stride,
+			      std::vector<int> const &count,
+			      std::vector<int> const &block,
+			      bool const &resizeDataset);
+
+    //! Set the Hyperslab for the dataspace attached to a dataset
+    static bool setHyperslab (hid_t &datasetID,
+			      hid_t &dataspaceID,
 			      H5S_seloper_t const &selection,
 			      std::vector<int> const &start,
 			      std::vector<int> const &stride,
