@@ -962,12 +962,12 @@ namespace DAL {  // Namespace DAL -- begin
       getAttribute ("SAMPLE_NUMBER",             sampleNumber);
       getAttribute ("SAMPLES_PER_FRAME",         samplesPerFrame);
       getAttribute ("FEED",                      feed);
-      getAttribute ("ANTENNA_POSITION_VALUE",    antennaPositionValue);
-      getAttribute ("ANTENNA_POSITION_UNIT",     antennaPositionUnit);
-      getAttribute ("ANTENNA_POSITION_FRAME",    antennaPositionFrame);
-      getAttribute ("ANTENNA_ORIENTATION_VALUE", antennaOrientationValue);
-      getAttribute ("ANTENNA_ORIENTATION_UNIT",  antennaOrientationUnit);
-      getAttribute ("ANTENNA_ORIENTATION_FRAME", antennaOrientationFrame);
+      // getAttribute ("ANTENNA_POSITION_VALUE",    antennaPositionValue);
+      // getAttribute ("ANTENNA_POSITION_UNIT",     antennaPositionUnit);
+      // getAttribute ("ANTENNA_POSITION_FRAME",    antennaPositionFrame);
+      // getAttribute ("ANTENNA_ORIENTATION_VALUE", antennaOrientationValue);
+      // getAttribute ("ANTENNA_ORIENTATION_UNIT",  antennaOrientationUnit);
+      // getAttribute ("ANTENNA_ORIENTATION_FRAME", antennaOrientationFrame);
  
       // Fill record
       rec.define("STATION_ID",                station_id              );

@@ -674,12 +674,12 @@ namespace DAL {
   //                                                              h5set_attribute
   
   /*!
-    \param location_id -- HDF5 identifier of the attribute within the file
+    \param location -- HDF5 identifier of the attribute within the file
     \param name        -- Name of the attribute
     \param value       -- Value of the attribute
   */
   template <typename T>
-    bool h5set_attribute (hid_t location_id,
+    bool h5set_attribute (hid_t location,
 			  std::string name,
 			  T const &value)
     {
@@ -688,12 +688,12 @@ namespace DAL {
       T * data = new T [nelem];
       
       data[0] = value;
-      status  = h5set_attribute (location_id,
+      status  = h5set_attribute (location,
 				 name,
 				 data,
 				 nelem);
       delete [] data;
-
+      
       return status;
     }
   
@@ -712,80 +712,37 @@ namespace DAL {
                               bool const &maxdims=false);
   //! Get the value of an attribute attached to a group or dataset
   template <typename T>
-    bool h5get_attribute (hid_t const &attribute_id,
+    bool h5get_attribute (hid_t const &location,
 			  casa::Vector<T> &value)
     {
-      bool status                   = true;
-      herr_t h5error                = 0;
-      hid_t datatype_id             = H5Aget_type (attribute_id);
-      hid_t native_datatype_id      = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
-      std::vector<hsize_t> shape;
-      
-      status = h5get_dataspace_shape (attribute_id,shape);
-      
-      if (shape.size() > 0) {
-	// Buffer for the underlying HDF5 library call
-	T *buffer = new T [shape[0]];
-	// read attribute value into buffer
-	h5error = H5Aread (attribute_id,
-			   native_datatype_id,
-			   buffer);
-	// copy retrieved data to returned vector
-	if (h5error == 0) {
-	  // adjust size of vector returning the result
-	  value.resize(shape[0]);
-	  // copy the contents of the buffer
-	  for (uint n(0); n<shape[0]; n++) {
-	    value(n) = buffer[n];
-	  }
-	}
-	else {
-	  cerr << "[h5get_attribute] Error reading value of attribute." << endl;
-	  status = false;
-	}
-	// release memory allocated for temporary buffer
-	delete [] buffer;
-	buffer = 0;
+      bool status (true);
+      std::vector<T> stdVector;
+      // retrieve the value of the attribute ...
+      status = h5get_attribute (location,
+				stdVector);
+      // ... and convert to casa::Vector
+      if (status) {
+	convertVector (value, stdVector);
       }
-      else {
-	cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
-	     << endl;
-	status = false;
-      }
-
-      // release HDF5 identifiers
-      if (H5Iis_valid(datatype_id))        { H5Tclose (datatype_id);        }
-      if (H5Iis_valid(native_datatype_id)) { H5Tclose (native_datatype_id); }
-
+      
       return status;
     }
   //! Get the value of an attribute attached to a group or dataset
   template <typename T>
-    bool h5get_attribute (hid_t const &location_id,
+    bool h5get_attribute (hid_t const &location,
 			  std::string const &name,
 			  casa::Vector<T> &value)
     {
       bool status (true);
-      hid_t attribute_id (0);
-      
-      // get the identifier for the attribute
-      attribute_id = H5Aopen(location_id,
-			     name.c_str(),
-			     H5P_DEFAULT);
-      
-      if (attribute_id > 0) {
-	/* forward the call to retrieve the actual value of the attribute */
-	status = h5get_attribute (attribute_id,
-				  value);
+      std::vector<T> stdVector;
+
+      status = h5get_attribute (location,
+				name,
+				stdVector);
+
+      if (status) {
+	convertVector (value, stdVector);
       }
-      else {
-        std::cerr << "[h5get_attribute] No valid ID for attribute "
-                  << name
-                  << endl;
-        status = false;
-      }
-      
-      if (H5Iis_valid(attribute_id)) { H5Aclose (attribute_id); }
       
       return status;
     }

@@ -531,6 +531,8 @@ namespace DAL { // Namespace DAL -- begin
     template<class T >
       bool getAttribute (std::string const &name, std::vector<T> &val);
 
+    // Methods which require HDF5 __________________________
+
 #ifdef HAVE_HDF5
     //! Write the attributes to a HDF5 file
     void h5write (hid_t const &groupID);
@@ -547,12 +549,11 @@ namespace DAL { // Namespace DAL -- begin
 		 std::string const &name);
 #endif    
 
+    // Methods which require casacore ______________________
+
 #ifdef HAVE_CASA
     //! Retrieve common attributes using csac::Record as container
-    casa::Record toRecord ();
-    //! Retrieve common attributes using csac::Record as container
-    bool toRecord (casa::Record &rec,
-		   bool const &overwrite=false);
+    bool getAttributes (casa::Record &rec);
 #endif 
     
   private:

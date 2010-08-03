@@ -456,51 +456,45 @@ namespace DAL { // Namespace DAL -- begin
 #endif
 
   //_____________________________________________________________________________
-  //                                                                     toRecord
-  
-  /*!
-    \return rec -- casa::Record to which the list of common attributes have been 
-            written.
-  */
-  casa::Record CommonAttributes::toRecord ()
-  {
-    casa::Record rec;
+  //                                                                getAttributes
 
-    toRecord (rec, true);
-
-    return rec;
-  }
-
-  //_____________________________________________________________________________
-  //                                                                     toRecord
+#ifdef HAVE_CASA
 
   /*!
-    \retval rec      -- casa::Record to which the attribute values are written. 
-    \param overwrite -- Overwrite entries in the record?
+    \retval rec -- casa::Record to which the attribute values are written. 
     
     \return status -- Status of the operation; return \e false in case an error
             was encountered.
   */
-  bool CommonAttributes::toRecord (casa::Record &rec,
-				   bool const &overwrite)
+  bool CommonAttributes::getAttributes (casa::Record &rec)
   {
     bool status (true);
 
-    rec.define("FILENAME",               filename()       );
-    rec.define("FILETYPE",               filetype()       );
-    rec.define("FILEDATE",               filedate()       );
-    rec.define("TELESCOPE",              telescope()      );
-    rec.define("PROJECT_ID",             projectID()      );
-    rec.define("PROJECT_TITLE",          projectTitle()   );
-    rec.define("PROJECT_PI",             projectPI()      );
-    rec.define("PROJECT_CO_I",           projectCoI()     );
-    rec.define("PROJECT_CONTACT",        projectContact() );
-    rec.define("OBSERVER",               observer()       );
-    rec.define("OBSERVATION_ID",         observationID()  );
-    rec.define("OBSERVATION_DATE_START", observationStartMJD() );
-    rec.define("OBSERVATION_DATE_END",   observationEndMJD()   );
-
+    try {
+      rec.define("FILENAME",               filename()            );
+      rec.define("FILETYPE",               filetype()            );
+      rec.define("FILEDATE",               filedate()            );
+      rec.define("TELESCOPE",              telescope()           );
+      rec.define("PROJECT_ID",             projectID()           );
+      rec.define("PROJECT_TITLE",          projectTitle()        );
+      rec.define("PROJECT_PI",             projectPI()           );
+      rec.define("PROJECT_CO_I",           projectCoI()          );
+      rec.define("PROJECT_CONTACT",        projectContact()      );
+      rec.define("OBSERVER",               observer()            );
+      rec.define("OBSERVATION_ID",         observationID()       );
+      rec.define("OBSERVATION_DATE_START", observationStartMJD() );
+      rec.define("OBSERVATION_DATE_END",   observationEndMJD()   );
+    }
+    catch (casa::AipsError x) {
+      cerr << "[CommonAttributes::getAttributes] "
+	   << "Error filling the record with attribute values!\n"
+	   << x.getMesg() << endl;
+      status = false;
+    }
+    
     return status;
   }
+
+#endif 
   
 } // Namespace DAL -- end

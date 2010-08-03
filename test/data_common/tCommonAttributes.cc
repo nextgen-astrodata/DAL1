@@ -118,6 +118,8 @@ int test_attributes ()
   DAL::Filename filename ("123456789","",DAL::Filename::uv,DAL::Filename::h5);
   CommonAttributes attr;
 
+  // Assign new values to the attributes ___________________
+
   cout << "[1] Assign new values to the attributes ..." << endl;
   try {
     std::vector<std::string> stations;
@@ -189,9 +191,11 @@ int test_attributes ()
     nofFailedTests++;
   }
   
+  // Write attributes to HDF5 file _________________________
+
 #ifdef HAVE_HDF5
   
-  cout << "[5] Write attribute to file ..." << endl;
+  cout << "[5] Write attributes to file ..." << endl;
   try {
     hid_t fileID (0);
     herr_t h5error (0);
@@ -226,47 +230,24 @@ int test_attributes ()
 
 
 #endif
-  
-  return nofFailedTests;
-}
 
-//_______________________________________________________________________________
-//                                                                  test_toRecord
+  // Retrieve attributes through casa::Record ______________
 
 #ifdef HAVE_CASA
 
-/*!
-  \brief Test export of attributes to casa::Record
-
-  \return nofFailedTests -- The number of failed tests encountered within this
-          function.
-*/
-int test_toRecord ()
-{
-  cout << "\n[tCommonAttributes::test_toRecord]\n" << endl;
-
-  int nofFailedTests (0);
-  
-  /* Create CommonAttributes objects to work with */
-
-  DAL::Filename filename ("123456789","",DAL::Filename::uv,DAL::Filename::h5);
-  std::string filetype ("tbb");
-  std::string filedate ("2009-10-10T00:00:00.0");
-  CommonAttributes attributes (filename,
-			       filetype,
-			       filedate);
-  
-  cout << "[1] Testing toRecord() ..." << endl;
+  cout << "[6] Testing getAttributes(casa::Record) ..." << endl;
   {
-    casa::Record rec = attributes.toRecord();
+    casa::Record rec;
+
+    attr.getAttributes (rec);
     
     cout << rec << endl;
   }
+
+#endif
   
   return nofFailedTests;
 }
-
-#endif
 
 //_______________________________________________________________________________
 //                                                                           main
@@ -279,11 +260,6 @@ int main ()
   nofFailedTests += test_constructors ();
   // Test access to the individual attributes
   nofFailedTests += test_attributes ();
-
-#ifdef HAVE_CASA
-  //! Test export of attributes to casa::Record
-  nofFailedTests += test_toRecord ();
-#endif
 
   return nofFailedTests;
 }
