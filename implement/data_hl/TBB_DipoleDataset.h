@@ -211,8 +211,6 @@ namespace DAL {  // Namespace DAL -- begin
     bool sample_frequency (casa::MFrequency &freq);
     //! Set the ADC sample frequency as casa::Quantity
     bool set_sample_frequency (casa::Quantity const &freq);
-    //! Get a casa::RecordDesc object describing the structure of the record
-    casa::RecordDesc recordDescription ();
     //! Get a casa::Record containing the values of the attributes
     bool getAttributes (casa::Record &rec);
     //! Get a number of data values as recorded for this dipole

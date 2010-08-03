@@ -360,6 +360,7 @@ int test_attributes (std::string const &filename)
 
   // Read attributes attached to the dataset _______________
 
+  std::cout << "[1] Retrieving attributes from dipole group ..." << std::endl;
   if (names.size() > 0) {
     it = names.begin();
     TBB_DipoleDataset data (groupID,*it);
@@ -420,11 +421,15 @@ int test_attributes (std::string const &filename)
 
 #ifdef HAVE_CASA
 
+  std::cout << "[2] Read attributes into casa::Record ..." << std::endl;
   if (names.size() > 0) {
     it = names.begin();
     TBB_DipoleDataset data (groupID,*it);
     //
     casa::Record rec;
+    data.getAttributes (rec);
+    //
+    cout << rec << endl;
   } else {
     cerr << "Skipping tests - no datasets found." << endl;
     return -1;

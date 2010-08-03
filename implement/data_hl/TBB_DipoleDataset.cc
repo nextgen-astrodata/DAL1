@@ -477,7 +477,7 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
 //_____________________________________________________________________________
-  //                                                                      summary
+  //                                                                    summary
 
   void TBB_DipoleDataset::summary (std::ostream &os)
   {
@@ -501,14 +501,14 @@ namespace DAL {  // Namespace DAL -- begin
       os << "-- nof. attributes ......... = " << nofAttributes << endl;
       
       if (nofAttributes > 0) {
-	uint stationID;
-	uint rspID;
-	uint rcuID;
-	uint nyquist_zone;
-	uint time;
-	uint sampleNumber;
-	uint samplesPerFrame;
-	uint dataLength;
+	uint stationID       = 0;
+	uint rspID           = 0;
+	uint rcuID           = 0;
+	uint nyquist_zone    = 0;
+	uint time            = 0;
+	uint sampleNumber    = 0;
+	uint samplesPerFrame = 0;
+	uint dataLength      = 0;
 	std::string feed;
 	double sampleFreqValue;
 	std::string sampleFreqUnit;
@@ -659,8 +659,8 @@ namespace DAL {  // Namespace DAL -- begin
   */
   double TBB_DipoleDataset::julianDay (bool const &onlySeconds)
   {
-    uint seconds;
-    double jd;
+    uint seconds = 0;
+    double jd    = 0;
 
     getAttribute ("TIME",seconds);
 
@@ -684,7 +684,7 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                                           readData
+  //                                                                     readData
 
   /*!
     Basically we need to be able to deal with three different cases:
@@ -926,39 +926,6 @@ namespace DAL {  // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                            recordDescription
-
-  /*!
-    \return recDesc -- Record descriptor containing the information on how to
-            structure the record as which the attributes attached to the dataset
-	    can be retrieved.
-  */
-  casa::RecordDesc TBB_DipoleDataset::recordDescription ()
-  {
-    casa::RecordDesc desc;
-
-    desc.addField ("GROUPTYPE",                 casa::TpString);
-    desc.addField ("STATION_ID",                casa::TpUInt);
-    desc.addField ("RSP_ID",                    casa::TpUInt);
-    desc.addField ("RCU_ID",                    casa::TpUInt);
-    desc.addField ("TIME",                      casa::TpUInt);
-    desc.addField ("SAMPLE_FREQUENCY_VALUE",    casa::TpDouble);
-    desc.addField ("SAMPLE_FREQUENCY_UNIT",     casa::TpString);
-    desc.addField ("NYQUIST_ZONE",              casa::TpUInt);
-    desc.addField ("SAMPLE_NUMBER",             casa::TpUInt);
-    desc.addField ("SAMPLES_PER_FRAME",         casa::TpUInt);
-    desc.addField ("ANTENNA_POSITION_VALUE",    casa::TpDouble);
-    desc.addField ("ANTENNA_POSITION_UNIT",     casa::TpString);
-    desc.addField ("ANTENNA_POSITION_FRAME",    casa::TpString);
-    desc.addField ("ANTENNA_ORIENTATION_VALUE", casa::TpDouble);
-    desc.addField ("ANTENNA_ORIENTATION_UNIT",  casa::TpString);
-    desc.addField ("ANTENNA_ORIENTATION_FRAME", casa::TpString);
-    desc.addField ("FEED",                      casa::TpString);
-
-    return desc;
-  }
-
-  //_____________________________________________________________________________
   //                                                                getAttributes
 
   /*!
@@ -970,14 +937,14 @@ namespace DAL {  // Namespace DAL -- begin
     bool status (true);
     
     try {
-      uint station_id;
-      uint rsp_id;
-      uint rcu_id;
-      uint nyquist_zone;
-      uint time;
-      uint sampleNumber;
-      uint samplesPerFrame;
-      uint dataLength;
+      uint station_id(0);
+      uint rsp_id(0);
+      uint rcu_id(0);
+      uint nyquist_zone(0);
+      uint time(0);
+      uint sampleNumber(0);
+      uint samplesPerFrame(0);
+      uint dataLength(0);
       casa::String feed;
       casa::Vector<double>       antennaPositionValue;
       casa::Vector<casa::String> antennaPositionUnit;
@@ -1003,33 +970,26 @@ namespace DAL {  // Namespace DAL -- begin
       getAttribute ("ANTENNA_ORIENTATION_FRAME", antennaOrientationFrame);
  
       // Fill record
-      rec.define("STATION_ID",        station_id);
-      rec.define("RSP_ID",            rsp_id);
-      rec.define("RCU_ID",            rcu_id);
-      rec.define("TIME",              time);
-      rec.define("NYQUIST_ZONE",      nyquist_zone);
-      rec.define("SAMPLE_NUMBER",     sampleNumber);
-      rec.define("SAMPLES_PER_FRAME", samplesPerFrame);
-      rec.define("DATA_LENGTH",       dataLength);
-      rec.define("FEED",              feed);
-      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_POSITION_VALUE)),
-		 antennaPositionValue);
-      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_POSITION_UNIT)),
-		 antennaPositionUnit);
-      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_POSITION_FRAME)),
-		 antennaPositionFrame);
-      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_ORIENTATION_VALUE)),
-		 antennaOrientationValue);
-      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_ORIENTATION_UNIT)),
-		 antennaOrientationUnit);
-      rec.define(casa::RecordFieldId(attribute_name(DAL::ANTENNA_ORIENTATION_FRAME)),
-		 antennaOrientationFrame);
+      rec.define("STATION_ID",                station_id              );
+      rec.define("RSP_ID",                    rsp_id                  );
+      rec.define("RCU_ID",                    rcu_id                  );
+      rec.define("TIME",                      time                    );
+      rec.define("NYQUIST_ZONE",              nyquist_zone            );
+      rec.define("SAMPLE_NUMBER",             sampleNumber            );
+      rec.define("SAMPLES_PER_FRAME",         samplesPerFrame         );
+      rec.define("DATA_LENGTH",               dataLength              );
+      rec.define("FEED",                      feed                    );
+      rec.define("ANTENNA_POSITION_VALUE",    antennaPositionValue    );
+      rec.define("ANTENNA_POSITION_UNIT",     antennaPositionUnit     );
+      rec.define("ANTENNA_POSITION_FRAME",    antennaPositionFrame    );
+      rec.define("ANTENNA_ORIENTATION_VALUE", antennaOrientationValue );
+      rec.define("ANTENNA_ORIENTATION_UNIT",  antennaOrientationUnit  );
+      rec.define("ANTENNA_ORIENTATION_FRAME", antennaOrientationFrame );
     }
-    catch (std::string message) {
+    catch (casa::AipsError x) {
       cerr << "[TBB_DipoleDataset::getAttributes] "
 	   << "Error filling the record with attribute values!\n"
-	   << message
-	   << endl;
+	   << x.getMesg() << endl;
       status = false;
     }
     

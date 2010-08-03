@@ -188,29 +188,29 @@ namespace DAL {
   
   //! Convert std::vector<T> to casac::Vector<T>
   template <class T, class S>
-    void convertVector (casa::Vector<T> &to,
-			std::vector<S> const &from)
+    void convertVector (casa::Vector<T> &casaVector,
+			std::vector<S> const &stdVector)
   {
-    unsigned int nelem = from.size();
+    unsigned int nelem = stdVector.size();
     // adjust the shape of the returned casa::Vector<T>
-    to.resize(nelem);
+    casaVector.resize(nelem);
     
     for (unsigned int n(0); n<nelem; ++n) {
-      to(n) = (T)from[n];
+      casaVector(n) = (T)stdVector[n];
     }
   }
   
-  //! Convert std::vector<T> to casac::Vector<T>
+  //! Convert std::vector<T> to casa::Vector<T>
   template <class T, class S>
-    void convertVector (std::vector<T> & to,
-			const casa::Vector<S> from)
+    void convertVector (std::vector<T> & stdVector,
+			const casa::Vector<S> casaVector)
   {
-    unsigned int nelem = from.size();
+    unsigned int nelem = casaVector.size();
     // adjust the shape of the returned casa::Vector<T>
-	to.resize(nelem);
+	stdVector.resize(nelem);
 	
 	for (unsigned int n(0); n<nelem; ++n) {
-	  to(n) = (T)from[n];
+	  stdVector(n) = (T)casaVector[n];
 	}
   }
   
