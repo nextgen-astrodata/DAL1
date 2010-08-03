@@ -959,29 +959,13 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                            attributes2record
-  
-  /*!
-      \return record -- A casa::Record container holding the values of the
-              attributes attached to the dataset for this dipole
-  */
-  casa::Record TBB_DipoleDataset::attributes2record ()
-  {
-    casa::Record rec;
-
-    attributes2record (rec);
-
-    return rec;
-  }
-
-  //_____________________________________________________________________________
-  //                                                            attributes2record
+  //                                                                getAttributes
 
   /*!
     \retval record -- A casa::Record container holding the values of the
             attributes attached to the dataset for this dipole
   */
-  bool TBB_DipoleDataset::attributes2record (casa::Record &rec)
+  bool TBB_DipoleDataset::getAttributes (casa::Record &rec)
   {
     bool status (true);
     
@@ -1042,7 +1026,7 @@ namespace DAL {  // Namespace DAL -- begin
 		 antennaOrientationFrame);
     }
     catch (std::string message) {
-      cerr << "[TBB_DipoleDataset::attributes2record] "
+      cerr << "[TBB_DipoleDataset::getAttributes] "
 	   << "Error filling the record with attribute values!\n"
 	   << message
 	   << endl;

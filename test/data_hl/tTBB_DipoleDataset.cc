@@ -416,6 +416,22 @@ int test_attributes (std::string const &filename)
     return -1;
   }
 
+  // Read attributes into casa::Record _____________________
+
+#ifdef HAVE_CASA
+
+  if (names.size() > 0) {
+    it = names.begin();
+    TBB_DipoleDataset data (groupID,*it);
+    //
+    casa::Record rec;
+  } else {
+    cerr << "Skipping tests - no datasets found." << endl;
+    return -1;
+  }
+
+#endif
+
   // Release HDF5 object identifiers _______________________
   
   h5error = H5Fclose (fileID);

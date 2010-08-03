@@ -214,9 +214,7 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get a casa::RecordDesc object describing the structure of the record
     casa::RecordDesc recordDescription ();
     //! Get a casa::Record containing the values of the attributes
-    casa::Record attributes2record ();
-    //! Get a casa::Record containing the values of the attributes
-    bool attributes2record (casa::Record &rec);
+    bool getAttributes (casa::Record &rec);
     //! Get a number of data values as recorded for this dipole
     casa::Vector<double> readData (int const &start=0,
 			     int const &nofSamples=1);

@@ -950,7 +950,7 @@ namespace DAL {  // Namespace DAL -- begin
       for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
 	name = it->second.dipoleName();
 	// retrieve the attributes for the dipole data-set as record
-	recordDipole = it->second.attributes2record();
+	it->second.getAttributes(recordDipole);
 	// ... and add it to the existing record
 	rec.defineRecord (name,recordDipole);
 	// increment counter
