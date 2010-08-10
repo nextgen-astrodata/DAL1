@@ -46,6 +46,12 @@ using std::endl;
 using DAL::HDF5Dataset;
 using DAL::HDF5Hyperslab;
 
+// ==============================================================================
+//
+//  Testing routines
+//
+// ==============================================================================
+
 //_______________________________________________________________________________
 //                                                                    test_create
 
@@ -170,7 +176,7 @@ bool find_dataset (std::string const &filename,
   \return nofFailedTests -- The number of failed tests encountered within this
           functions.
 */
-int test_create (std::string const &filename="tHDF5Dataset.h5")
+int test_create (std::string const &filename)
 {
   cout << "\n[tHDF5Datatset::test_create]\n" << endl;
 
@@ -882,62 +888,6 @@ int test_hyperslab (std::string const &filename="tHDF5Dataset.h5")
 }
 
 //_______________________________________________________________________________
-//                                                                 test_expansion
-
-/*!
-  \brief Test expansion of extendable datasets
-
-  \return nofFailedTests -- The number of failed tests encountered within this
-          functions.
-*/
-int test_expansion (std::string const &filename="tHDF5Dataset.h5")
-{
-  cout << "\n[tHDF5Datatset::test_expansion]\n" << endl;
-
-  int nofFailedTests (0);
-  unsigned int rank (2);
-  unsigned int sidelength (1024);
-  std::vector<hsize_t> shape (rank,sidelength);
-  std::vector<int> start (rank);
-  std::vector<int> count (rank);
-  std::vector<int> block (rank);
-
-  //________________________________________________________
-  // Open the file to work with
-  
-  hid_t fileID = H5Fopen (filename.c_str(),
-			  H5F_ACC_RDWR,
-			  H5P_DEFAULT);
-
-  if (!H5Iis_valid(fileID)) {
-    std::cerr << "Failed to open file " << filename << endl;
-    return 0;
-  }
-
-  DAL::HDF5Dataset dataset (fileID, "ExtendableDataset", shape);
-  dataset.summary();
-
-  //________________________________________________________
-  // Run the tests
-
-  // Write first block of data, completely fitting into existing dataspace
-
-  start[0] = sidelength/4;
-  start[1] = sidelength/4;
-  block[0] = sidelength/2;
-  block[1] = sidelength/2;
-  count[0] = 1;
-  count[1] = 1;
-
-  //________________________________________________________
-  // Close the file
-
-  H5Fclose(fileID);
-  
-  return nofFailedTests;
-}
-
-//_______________________________________________________________________________
 //                                                               test_openDataset
 
 /*!
@@ -1015,7 +965,60 @@ int test_openDataset (std::string const &filename)
 }
 
 //_______________________________________________________________________________
-//                                                                           main
+//                                                                 test_extension
+
+int test_extension (std::string const &filename)
+{
+  cout << "\n[tHDF5Datatset::test_extension]\n" << endl;
+
+  int nofFailedTests (0);
+  unsigned int rank (2);
+  unsigned int sidelength (1024);
+  std::vector<hsize_t> shape (rank,sidelength);
+  std::vector<int> start (rank);
+  std::vector<int> count (rank);
+  std::vector<int> block (rank);
+
+  //________________________________________________________
+  // Open the file to work with
+  
+  hid_t fileID = H5Fopen (filename.c_str(),
+			  H5F_ACC_RDWR,
+			  H5P_DEFAULT);
+
+  if (!H5Iis_valid(fileID)) {
+    std::cerr << "Failed to open file " << filename << endl;
+    return 0;
+  }
+
+  DAL::HDF5Dataset dataset (fileID, "ExtendableDataset", shape);
+  dataset.summary();
+
+  //________________________________________________________
+  // Run the tests
+
+  // Write first block of data, completely fitting into existing dataspace
+
+  start[0] = sidelength/4;
+  start[1] = sidelength/4;
+  block[0] = sidelength/2;
+  block[1] = sidelength/2;
+  count[0] = 1;
+  count[1] = 1;
+
+  //________________________________________________________
+  // Close the file
+
+  H5Fclose(fileID);
+  
+  return nofFailedTests;
+}
+
+// ==============================================================================
+//
+//  Main program routine
+//
+// ==============================================================================
 
 int main (int argc,
           char *argv[])
@@ -1038,7 +1041,7 @@ int main (int argc,
   // Run the tests
 
   // Test constructors for a HDF5Dataset object
-  nofFailedTests += test_create ();
+  nofFailedTests += test_create (filename);
   // Test access R/W access to 1-dim data arrays
   nofFailedTests += test_array1d ();
   // Test access R/W access to 2-dim data arrays
@@ -1046,7 +1049,7 @@ int main (int argc,
   // Test the effect of the various Hyperslab parameters
   nofFailedTests += test_hyperslab ();
   // Test expansion of extendable datasets
-  nofFailedTests += test_expansion ();
+  nofFailedTests += test_extension (filename);
 
   if (haveDataset) {
     nofFailedTests += test_openDataset (filename);

@@ -1003,7 +1003,7 @@ namespace DAL { // Namespace DAL -- begin
   bool HDF5Hyperslab::checkSelectionValid (hid_t const &location,
 					   htri_t &errorCode)
   {
-    bool status;
+    bool status = true;
     
     if (H5Iis_valid(location)) {
       // check if the selection is valid
