@@ -972,8 +972,9 @@ int test_extension (std::string const &filename)
   cout << "\n[tHDF5Datatset::test_extension]\n" << endl;
 
   int nofFailedTests (0);
+  unsigned int nofDatapoints;
   unsigned int rank (2);
-  unsigned int sidelength (1024);
+  unsigned int sidelength (128);
   std::vector<hsize_t> shape (rank,sidelength);
   std::vector<int> start (rank);
   std::vector<int> count (rank);
@@ -991,24 +992,41 @@ int test_extension (std::string const &filename)
     return 0;
   }
 
-  DAL::HDF5Dataset dataset (fileID, "ExtendableDataset", shape);
-  dataset.summary();
+  hid_t groupID = H5Gcreate (fileID,
+			     "ExtendableDatasets",
+			     H5P_DEFAULT,
+			     H5P_DEFAULT,
+			     H5P_DEFAULT);
 
   //________________________________________________________
   // Run the tests
 
-  // Write first block of data, completely fitting into existing dataspace
+  {
+    // create dataset
+    HDF5Dataset dataset (groupID, "test1", shape);
 
-  start[0] = sidelength/4;
-  start[1] = sidelength/4;
-  block[0] = sidelength/2;
-  block[1] = sidelength/2;
-  count[0] = 1;
-  count[1] = 1;
+    start[0] = sidelength/2;
+    start[1] = sidelength/2;
+    block[0] = sidelength;
+    block[1] = sidelength;
+    count.clear();
+    
+    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    double *data  = new double [nofDatapoints];
 
+    cout << "-- shape           = " << shape << endl;
+    cout << "-- start           = " << start << endl;
+    cout << "-- block           = " << block << endl;
+    cout << "-- nof. datapoints = " << nofDatapoints << endl;
+
+    // release allocated memory
+    delete [] data;
+  }
+  
   //________________________________________________________
   // Close the file
 
+  H5Gclose(groupID);
   H5Fclose(fileID);
   
   return nofFailedTests;
