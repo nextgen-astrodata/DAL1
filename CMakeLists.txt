@@ -71,6 +71,7 @@ if (NOT DAL_VERBOSE_CONFIGURE)
   set (NUM_UTIL_FIND_QUIETLY  YES )
   set (PYTHON_FIND_QUIETLY    YES )
   set (MPATROL_FIND_QUIETLY   YES )
+  set (MPI_FIND_QUIETLY       YES )
   set (MYSQL_FIND_QUIETLY     YES )
   set (WCSLIB_FIND_QUIETLY    YES )
 endif (NOT DAL_VERBOSE_CONFIGURE)
@@ -89,8 +90,26 @@ endif (DAL_DEBUGGING_MESSAGES)
 ## ==============================================================================
 
 include (CPack)
+include (IncludeFindModule)
 
 set (NO_DEFAULT_PATH YES)
+
+set (dal_cmake_modules
+  Blitz
+  CASACORE
+  CFITSIO
+  GFortran
+  GSL
+  HDF5
+  LAPACK
+  LOFAR
+  MPatrol
+  MPI
+  MySQL
+  WCSLIB
+  )
+
+include_find_module (${dal_cmake_modules} ${DAL_VERBOSE_CONFIGURE})
 
 ##__________________________________________________________
 ## Type sizes
@@ -123,13 +142,6 @@ if (CMAKE_SIZEOF_VOID_P)
 endif (CMAKE_SIZEOF_VOID_P)
 
 ##__________________________________________________________
-## Blitz++
-
-if (NOT HAVE_BLITZ)
-  include (FindBlitz)
-endif (NOT HAVE_BLITZ)
-
-##__________________________________________________________
 ## Boost
 
 set (BOOST_pythonOnly FALSE)
@@ -143,69 +155,6 @@ if (NOT HAVE_BOOST)
 endif (NOT HAVE_BOOST)
 
 ##__________________________________________________________
-## casacore
-
-if (NOT HAVE_CASACORE)
-  include (FindCASACORE)
-endif (NOT HAVE_CASACORE)
-
-##__________________________________________________________
-## CFITSIO
-
-if (NOT HAVE_CFITSIO)
-  include (FindCFITSIO)
-endif (NOT HAVE_CFITSIO)
-
-##__________________________________________________________
-## HDF5
-
-if (NOT HAVE_HDF5)
-  include (FindHDF5)
-endif (NOT HAVE_HDF5)
-
-##__________________________________________________________
-## LAPACK
-
-if (NOT HAVE_LAPACK)
-  include (FindLAPACK)
-endif (NOT HAVE_LAPACK)
-
-##__________________________________________________________
-## LOFAR system software
-
-if (NOT HAVE_LOFAR)
-  find_package(LOFAR)
-endif (NOT HAVE_LOFAR)
-
-##__________________________________________________________
-## mpatrol
-
-if (NOT HAVE_MPATROL)
-  include (FindMPatrol)
-endif (NOT HAVE_MPATROL)
-
-##__________________________________________________________
-## MySQL
-
-if (NOT HAVE_MYSQL)
-  include (FindMySQL)
-endif (NOT HAVE_MYSQL)
-
-##__________________________________________________________
-## GNU scientific library (GSL)
-
-if (NOT HAVE_GSL)
-  include (FindGSL)
-endif (NOT HAVE_GSL)
-
-##__________________________________________________________
-## GFortran library
-
-if (NOT HAVE_GFORTRAN)
-  include (FindGFortran)
-endif (NOT HAVE_GFORTRAN)
-
-##__________________________________________________________
 ## PYTHON (we use custom module in place of FindPythonLibs)
 
 if (NOT HAVE_PYTHON)
@@ -213,13 +162,6 @@ if (NOT HAVE_PYTHON)
   include (FindNumPy)
   include (FindNumUtil)
 endif (NOT HAVE_PYTHON)
-
-##__________________________________________________________
-## WCS Library
-
-if (NOT HAVE_WCS)
-  include (FindWCSLIB)
-endif (NOT HAVE_WCS)
 
 ## ---------------------------------------------------------
 ## optional external packages (required for Python bindings)
@@ -450,6 +392,24 @@ if (HAVE_MYSQL)
   list (APPEND dal_link_libraries ${MYSQL_LIBRARIES})
 endif (HAVE_MYSQL)
 
+## Parallel IO usage requires MPI to be Linked and Included
+
+if (MPI_FOUND AND HDF5_IS_PARALLEL)
+  ## compiler flags
+  if (MPI_COMPILE_FLAGS)
+    add_definitions (${MPI_COMPILE_FLAGS})
+  endif (MPI_COMPILE_FLAGS)
+  ## linker flags
+  if (MPI_LINK_FLAGS)
+    set (CMAKE_EXE_LINKER_FLAGS ${MPI_LINK_FLAGS} ${CMAKE_EXE_LINKER_FLAGS})
+  endif (MPI_LINK_FLAGS)
+  ## link libraries
+  list (APPEND dal_link_libraries ${MPI_LIBRARY})
+  if (MPI_EXTRA_LIBRARY)
+    list (APPEND dal_link_libraries ${MPI_EXTRA_LIBRARY})
+  endif (MPI_EXTRA_LIBRARY)
+endif (MPI_FOUND AND HDF5_IS_PARALLEL)
+
 ## =============================================================================
 ##
 ##  Installation
@@ -550,11 +510,17 @@ message (STATUS " Python version                   = ${PYTHON_VERSION}"         
 message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}" )
 message (STATUS " Enable Dashboard server          = ${DAL_ENABLE_DASHBOARD}"   )
 message (STATUS " Enable Python bindings           = ${DAL_PYTHON_BINDINGS}"    )
-message (STATUS " Enable HDF5 compatibility macros = ${DAL_HDF5_MACROS}"        )
 message (STATUS " Enable code using Blitz++        = ${HAVE_BLITZ}"             )
 message (STATUS " Enable code using casacore       = ${HAVE_CASACORE}"          )
 message (STATUS " Enable code using CFITSIO        = ${HAVE_CFITSIO}"           )
 message (STATUS " Enable code using GSL            = ${HAVE_GSL}"               )
+message (STATUS " Enable code using HDF5           = ${HAVE_HDF5}"              )
+message (STATUS " .. Parallel I/O                  = ${HDF5_IS_PARALLEL}"       )
+message (STATUS " .. Compatibility macros          = ${DAL_HDF5_MACROS}"        )
+message (STATUS " Enable code using MPI            = ${MPI_FOUND}"              )
+message (STATUS " .. MPI compiler                  = ${MPI_COMPILER}"           )
+message (STATUS " .. MPI compile flags             = ${MPI_COMPILE_FLAGS}"      )
+message (STATUS " .. MPI linking flags             = ${MPI_LINK_FLAGS}"         )
 message (STATUS " Enable code using MySQL          = ${HAVE_MYSQL}"             )
 
 if (DAL_VERBOSE_CONFIGURE)
