@@ -1024,7 +1024,7 @@ int test_extension (std::string const &filename)
 	std::cout << "-- start = " << start
 		  << ", block = " << block << std::endl;
 	// assign data array
-	for (unsigned int n=0; n<nofDatapoints; ++n) {
+	for (n=0; n<nofDatapoints; ++n) {
 	  data[n] = 1.0*(nofSteps*nx+ny);
 	}
 	// write the array to the dataset
@@ -1062,7 +1062,7 @@ int test_extension (std::string const &filename)
 	std::cout << "-- start = " << start
 		  << ", block = " << block << std::endl;
 	// assign data array
-	for (unsigned int n=0; n<nofDatapoints; ++n) {
+	for (n=0; n<nofDatapoints; ++n) {
 	  data[n] = 1.0*(nofSteps*nx+ny);
 	}
 	// write the array to the dataset
@@ -1073,7 +1073,44 @@ int test_extension (std::string const &filename)
     // release allocated memory
     delete [] data;
   }
-  
+ 
+  //__________________________________________________________________
+  // Test 3 : 
+ 
+  std::cout << "[3] Write data exceeding the original boundaries ..." << std::endl;
+  {
+    HDF5Dataset dataset (groupID, "test3", shape);
+    unsigned int nofSteps = 4;
+    unsigned int n        = 0;
+
+    block[0] = 2*sidelength/nofSteps;
+    block[1] = sidelength/nofSteps;
+    count.clear();
+
+    // allocate memory for the data array
+    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    double *data  = new double [nofDatapoints];
+
+    for (unsigned int nx=0; nx<nofSteps; ++nx) {
+      start[0] = nx*sidelength/nofSteps;
+      for (unsigned int ny=0; ny<nofSteps; ++ny) {
+	start[1] = ny*sidelength/nofSteps;
+	// hyperslab position
+	std::cout << "-- start = " << start
+		  << ", block = " << block << std::endl;
+	// assign data array
+	for (n=0; n<nofDatapoints; ++n) {
+	  data[n] = 1.0*(nofSteps*nx+ny);
+	}
+	// write the array to the dataset
+	dataset.writeData (data, start, count, block);
+      }
+    }
+
+    // release allocated memory
+    delete [] data;
+  }
+ 
   //________________________________________________________
   // Close the file
 
