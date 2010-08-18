@@ -435,58 +435,6 @@ int test_setHyperslab (std::string const &filename)
   std::cout << std::flush;
 
   //________________________________________________________
-  // Write blocks of data to dataset
-
-  cout << "[3] Assign hyperslab before writing of data ..." << endl;
-  try {
-    unsigned int numBlock (0);
-    // Create dataset
-    HDF5Dataset dataset (fileID,
-			 "Dataset3",
-			 shape,
-			 H5T_NATIVE_INT);
-    // Reset unused hyperslab parameters
-    stride.clear();
-    count.clear();
-    // Array with the data to be written
-    unsigned int nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
-    int *data                  = new int [nofDatapoints];
-
-    cout << "-- # datapoints = " << nofDatapoints << endl;
-
-    for (unsigned int nx(startBlock); nx<nofBlocks; ++nx) {
-      start[0] = nx*block[0];
-      for (unsigned int ny(startBlock); ny<nofBlocks; ++ny) {
-	start[1] = ny*block[1];
-	for (unsigned int nz(startBlock); nz<nofBlocks; ++nz) {
-	  start[2] = nz*block[2];
-	  // Assign values to the data array written to file
-	  for (unsigned int n(0); n<nofDatapoints; ++n) {
-	    data[n] = numBlock;
-	  }
-	  // Feedback
-	  cout << "-- # block = " << numBlock
-	       << " , start = " << start
-	       << " , block = " << block
-	       << " , end = " << DAL::HDF5Hyperslab::end(start,stride,count,block)
-	       << endl << std::flush;
-	  ++numBlock;
-	  // Write array to dataset
-	  dataset.writeData(data,start,count,block);
-	}
-      }
-    }
-    
-    /* Release allocated memory */
-    delete [] data;
-  } catch (std::string message) {
-    cerr << message << endl;
-    nofFailedTests++;
-  }
-  
-  std::cout << std::flush;
-
-  //________________________________________________________
   // Close the file
 
   H5Fclose(fileID);
