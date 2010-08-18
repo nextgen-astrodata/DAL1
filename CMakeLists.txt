@@ -14,7 +14,7 @@ cmake_minimum_required (VERSION 2.8)
 ##
 ## ==============================================================================
 
-find_path (USG_ROOT devel_common/cmake/CMakeSettings.cmake
+find_path (LUS_ROOT devel_common/cmake/CMakeSettings.cmake
   PATHS 
   ${DAL_SOURCE_DIR}
   ${DAL_SOURCE_DIR}/..
@@ -23,11 +23,11 @@ find_path (USG_ROOT devel_common/cmake/CMakeSettings.cmake
   $ENV{LOFARSOFT}
   )
 
-if (USG_ROOT)
-  include (${USG_ROOT}/devel_common/cmake/CMakeSettings.cmake)
-else (USG_ROOT)
+if (LUS_ROOT)
+  include (${LUS_ROOT}/devel_common/cmake/CMakeSettings.cmake)
+else (LUS_ROOT)
   message (FATAL_ERROR "Unable to locate additional CMake scripts!")
-endif (USG_ROOT)
+endif (LUS_ROOT)
 
 ## ==============================================================================
 ##
@@ -457,7 +457,7 @@ if (tar_executable AND gzip_executable)
 
   add_custom_target (tar_archive
     COMMENT "Creating tar-archive for DAL and required packages."
-    WORKING_DIRECTORY ${USG_ROOT}
+    WORKING_DIRECTORY ${LUS_ROOT}
     COMMAND ${tar_executable} -cvf dal.tar --exclude .svn CMakeLists.txt
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn devel_common
     COMMAND ${tar_executable} -rvf dal.tar --exclude .svn release/release_area.txt

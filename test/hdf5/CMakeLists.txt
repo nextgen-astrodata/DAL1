@@ -36,7 +36,7 @@ endforeach (src)
 ##                                                           Testing instructions
 
 find_file (dataset L123456789_test_bf.h5
-  PATHS ${USG_ROOT}
+  PATHS ${LUS_ROOT}
   PATH_SUFFIXES data/test
   )
 
