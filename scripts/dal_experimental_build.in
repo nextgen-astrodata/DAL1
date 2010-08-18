@@ -2,7 +2,7 @@
 
 ## Set environment variables
 
-export LOFARSOFT=${USG_ROOT}
+export LOFARSOFT=${LUS_ROOT}
 . $LOFARSOFT/devel_common/scripts/init.sh
 
 cd $LOFARSOFT

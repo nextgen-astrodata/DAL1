@@ -173,6 +173,9 @@ bool find_dataset (std::string const &filename,
       `-- Data3D         ...  Dataset
   \endverbatim
 
+  \param filename -- Name of the HDF5 file, within which the datasets are being
+         created.
+
   \return nofFailedTests -- The number of failed tests encountered within this
           functions.
 */
@@ -365,6 +368,9 @@ int test_create (std::string const &filename)
 /*!
   \brief Test application of hyperslab to write and read 1-dim array data
 
+  \param filename -- Name of the HDF5 file, within which the datasets are being
+         created.
+
   \return nofFailedTests -- The number of failed tests encountered within this
           functions.
 */
@@ -539,6 +545,9 @@ int test_array1d (std::string const &filename="tHDF5Dataset.h5")
   - Access data by row.
   - Access data by 2D sub-array.
 
+  \param filename -- Name of the HDF5 file, within which the datasets are being
+         created.
+
   \return nofFailedTests -- The number of failed tests encountered within this
           functions.
 */
@@ -707,6 +716,13 @@ int test_array2d (std::string const &filename="tHDF5Dataset.h5")
 //_______________________________________________________________________________
 //                                                                 test_hyperslab
 
+/*!
+  \param filename -- Name of the HDF5 file, within which the datasets are being
+         created.
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          functions.
+*/
 int test_hyperslab (std::string const &filename="tHDF5Dataset.h5")
 {
   cout << "\n[tHDF5Datatset::test_hyperslab]\n" << endl;
@@ -893,6 +909,9 @@ int test_hyperslab (std::string const &filename="tHDF5Dataset.h5")
 /*!
   \brief Test opening an existing dataset
 
+  \param filename -- Name of the HDF5 file, within which the datasets are being
+         created.
+
   \return nofFailedTests -- The number of failed tests encountered within this
           functions.
 */
@@ -967,6 +986,15 @@ int test_openDataset (std::string const &filename)
 //_______________________________________________________________________________
 //                                                                 test_extension
 
+/*!
+  \brief Test dynamic extension of a dataset
+
+  \param filename -- Name of the HDF5 file, within which the datasets are being
+         created.
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          functions.
+*/
 int test_extension (std::string const &filename)
 {
   cout << "\n[tHDF5Datatset::test_extension]\n" << endl;
