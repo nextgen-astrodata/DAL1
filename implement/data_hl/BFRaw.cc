@@ -666,7 +666,8 @@ namespace DAL {
   
   // ---------------------------------------------------------writeBFRawDataBlock
   void BFRaw::writeBFRawDataBlockToFile(void) {
-#ifdef _OPENMP
+
+#ifdef HAVE_OPENMP
 #pragma omp parallel for ordered schedule(dynamic)
 #endif
     // Float32 * ds_data = NULL;
@@ -733,7 +734,7 @@ namespace DAL {
 	    //		std::cout << "downsampling subband " << subband << std::endl;
 	    //		std::cout << "first sample: xx=" << sampledata[subband * header.nrSamplesPerSubband].xx << ", yy = " << sampledata[subband * header.nrSamplesPerSubband].yy << "adres: " << &(sampledata[ subband * header.nrSamplesPerSubband ]) << std::endl;
 	    downsampleSingleSubband( &(sampledata[ subband * header.nrSamplesPerSubband]), downsample_factor, ds_data, ds_size );
-#ifdef _OPENMP
+#ifdef HAVE_OPENMP
 #pragma omp ordered
 #endif
 	    table[subband]->appendRows( ds_data, ds_size ); // writes header.nrSamplesPerSubband / downsample_factor  samples
@@ -747,7 +748,7 @@ namespace DAL {
 	    if ( DO_FLOAT32_INTENSITY )
 	      {
 		compute_float32_intensity( &(sampledata[subband * header.nrSamplesPerSubband]), 0, header.nrSamplesPerSubband, totalintensity );
-#ifdef _OPENMP
+#ifdef HAVE_OPENMP
 #pragma omp ordered
 #endif
 		table[subband]->appendRows( totalintensity, header.nrSamplesPerSubband );
@@ -1038,7 +1039,7 @@ namespace DAL {
             first_block = false;
           }
 
-#ifdef _OPENMP
+#ifdef HAVE_OPENMP
 #pragma omp parallel for ordered schedule(dynamic)
 #endif
 
@@ -1100,7 +1101,7 @@ cout << "sample[0].xx: " << sample[0].xx << ", sample[0].yy: " << sample[0].yy <
 								*/
 								downsampleSingleSubband( sample, downsample_factor, ds_data, ds_size );
 								
-#ifdef _OPENMP
+#ifdef HAVE_OPENMP
 #pragma omp ordered
 #endif
                 table[subband]->appendRows( ds_data, ds_size );
@@ -1117,7 +1118,7 @@ cout << "sample[0].xx: " << sample[0].xx << ", sample[0].yy: " << sample[0].yy <
                                                  0,
                                                  header.nrSamplesPerSubband,
 																								 totalintensity );
-#ifdef _OPENMP
+#ifdef HAVE_OPENMP
 #pragma omp ordered
 #endif
                     table[subband]->appendRows( totalintensity,
@@ -1166,7 +1167,7 @@ cout << "sample[0].xx: " << sample[0].xx << ", sample[0].yy: " << sample[0].yy <
 //       {
 //         cerr << "Can't allocate memory for total intensity array." << endl;
 //       }
-#ifdef _OPENMP
+#ifdef HAVE_OPENMP
 #pragma omp parallel for ordered schedule(dynamic)
 #endif
     for ( uint count = 0; count < arraylength; ++count )
@@ -1224,7 +1225,7 @@ cout << "sample[0].xx: " << sample[0].xx << ", sample[0].yy: " << sample[0].yy <
 //         cerr << "Can't allocate memory for downsampled array." << endl;
 //       }
 
-#ifdef _OPENMP
+#ifdef HAVE_OPENMP
 #pragma omp parallel for ordered schedule(dynamic)
 #endif
 

@@ -83,6 +83,10 @@ if (DAL_DEBUGGING_MESSAGES)
   add_definitions (-DDEBUGGING_MESSAGES)
 endif (DAL_DEBUGGING_MESSAGES)
 
+if (HAVE_OPNEMP)
+  add_definitions (-DHAVE_OPNEMP)
+endif (HAVE_OPNEMP)
+
 ## ==============================================================================
 ##
 ##  External dependencies
@@ -522,6 +526,7 @@ message (STATUS " .. MPI compiler                  = ${MPI_COMPILER}"           
 message (STATUS " .. MPI compile flags             = ${MPI_COMPILE_FLAGS}"      )
 message (STATUS " .. MPI linking flags             = ${MPI_LINK_FLAGS}"         )
 message (STATUS " Enable code using MySQL          = ${HAVE_MYSQL}"             )
+message (STATUS " Enable code using OpenMP         = ${HAVE_OPENMP}"            )
 
 if (DAL_VERBOSE_CONFIGURE)
   message (STATUS "+------------------------------------------------------------+")
