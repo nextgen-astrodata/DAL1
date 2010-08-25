@@ -374,7 +374,7 @@ int test_create (std::string const &filename)
   \return nofFailedTests -- The number of failed tests encountered within this
           functions.
 */
-int test_array1d (std::string const &filename="tHDF5Dataset.h5")
+int test_array1d (std::string const &filename)
 {
   cout << "\n[tHDF5Datatset::test_array1d]\n" << endl;
 
@@ -551,7 +551,7 @@ int test_array1d (std::string const &filename="tHDF5Dataset.h5")
   \return nofFailedTests -- The number of failed tests encountered within this
           functions.
 */
-int test_array2d (std::string const &filename="tHDF5Dataset.h5")
+int test_array2d (std::string const &filename)
 {
   cout << "\n[tHDF5Datatset::test_array2d]\n" << endl;
 
@@ -723,7 +723,7 @@ int test_array2d (std::string const &filename="tHDF5Dataset.h5")
   \return nofFailedTests -- The number of failed tests encountered within this
           functions.
 */
-int test_hyperslab (std::string const &filename="tHDF5Dataset.h5")
+int test_hyperslab (std::string const &filename)
 {
   cout << "\n[tHDF5Datatset::test_hyperslab]\n" << endl;
 
@@ -1177,11 +1177,11 @@ int main (int argc,
   // Test constructors for a HDF5Dataset object
   nofFailedTests += test_create (filename);
   // Test access R/W access to 1-dim data arrays
-  nofFailedTests += test_array1d ();
+  nofFailedTests += test_array1d (filename);
   // Test access R/W access to 2-dim data arrays
-  nofFailedTests += test_array2d ();
+  nofFailedTests += test_array2d (filename);
   // Test the effect of the various Hyperslab parameters
-  nofFailedTests += test_hyperslab ();
+  nofFailedTests += test_hyperslab (filename);
   // Test expansion of extendable datasets
   nofFailedTests += test_extension (filename);
 
