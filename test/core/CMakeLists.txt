@@ -47,6 +47,10 @@ if (dataset_tbb AND dataset_beamformed)
   add_test (tdalCommon_test2 tdalCommon ${dataset_tbb} ${dataset_beamformed})
 endif (dataset_tbb AND dataset_beamformed)
 
+## tdalConversions _______________________________
+  
+add_test (tdalConversions tdalConversions)
+
 ## tdalDataset ___________________________________
 
 if (dataset_ms)

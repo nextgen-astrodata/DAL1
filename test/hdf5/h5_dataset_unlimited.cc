@@ -29,21 +29,20 @@
 int
 main (void)
 {
-    hid_t           file, space, dset, dcpl;    /* Handles */
-    herr_t          status;
-    hsize_t         dims[2] = {DIM0, DIM1},
-                    extdims[2] = {EDIM0, EDIM1},
-                    maxdims[2],
-                    chunk[2] = {CHUNK0, CHUNK1},
-                    start[2],
-                    count[2];
-    int             wdata[DIM0][DIM1],          /* Write buffer */
-                    wdata2[EDIM0][EDIM1],       /* Write buffer for
-                                                   extension */
-                    **rdata,                    /* Read buffer */
-                    ndims,
-                    i, j;
-
+    hid_t     file, space, dset, dcpl;    /* Handles */
+    herr_t    status;
+    hsize_t   dims[2] = {DIM0, DIM1};
+    hsize_t   extdims[2] = {EDIM0, EDIM1};
+    hsize_t   maxdims[2];
+    hsize_t   chunk[2] = {CHUNK0, CHUNK1};
+    hsize_t   start[2];
+    hsize_t   count[2];
+    hsize_t   i, j;                   /* Loop indices               */
+    int       wdata[DIM0][DIM1];      /* Write buffer               */
+    int       wdata2[EDIM0][EDIM1];   /* Write buffer for extension */
+    int **rdata;                      /* Read buffer                */
+    int ndims;
+    
     /* Initialize data. */
     for (i=0; i<DIM0; i++) {
       for (j=0; j<DIM1; j++) {
@@ -62,7 +61,7 @@ main (void)
     maxdims[0] = H5S_UNLIMITED;
     maxdims[1] = H5S_UNLIMITED;
     space = H5Screate_simple (2, dims, maxdims);
-
+    
     /*
      * Create the dataset creation property list, and set the chunk
      * size.

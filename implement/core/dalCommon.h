@@ -39,6 +39,7 @@ using std::cout;
 using std::endl;
 
 #include <dalBaseTypes.h>
+#include <dalConversions.h>
 #include <Enumerations.h>
 
 #ifdef HAVE_CASA
@@ -183,38 +184,6 @@ namespace DAL {
   //! Calculate a 16-bit CRC
   uint16_t crc16 (uint16_t * buffer,
 		  uint32_t length);
-  
-#ifdef HAVE_CASA
-  
-  //! Convert std::vector<T> to casac::Vector<T>
-  template <class T, class S>
-    void convertVector (casa::Vector<T> &casaVector,
-			std::vector<S> const &stdVector)
-  {
-    unsigned int nelem = stdVector.size();
-    // adjust the shape of the returned casa::Vector<T>
-    casaVector.resize(nelem);
-    
-    for (unsigned int n(0); n<nelem; ++n) {
-      casaVector(n) = (T)stdVector[n];
-    }
-  }
-  
-  //! Convert std::vector<T> to casa::Vector<T>
-  template <class T, class S>
-    void convertVector (std::vector<T> & stdVector,
-			const casa::Vector<S> casaVector)
-  {
-    unsigned int nelem = casaVector.size();
-    // adjust the shape of the returned casa::Vector<T>
-	stdVector.resize(nelem);
-	
-	for (unsigned int n(0); n<nelem; ++n) {
-	  stdVector(n) = (T)casaVector[n];
-	}
-  }
-  
-#endif
   
   // ============================================================================
   //

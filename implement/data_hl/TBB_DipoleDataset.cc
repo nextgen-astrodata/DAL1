@@ -948,7 +948,7 @@ namespace DAL {  // Namespace DAL -- begin
       casa::String feed;
       casa::Vector<double>       antennaPositionValue;
       casa::Vector<casa::String> antennaPositionUnit;
-      casa::String               antennaPositionFrame;
+      casa::Vector<casa::String> antennaPositionFrame;
       casa::Vector<double>       antennaOrientationValue;
       casa::Vector<casa::String> antennaOrientationUnit;
       casa::String               antennaOrientationFrame;
@@ -962,13 +962,13 @@ namespace DAL {  // Namespace DAL -- begin
       getAttribute ("SAMPLE_NUMBER",             sampleNumber);
       getAttribute ("SAMPLES_PER_FRAME",         samplesPerFrame);
       getAttribute ("FEED",                      feed);
-      // getAttribute ("ANTENNA_POSITION_VALUE",    antennaPositionValue);
+      getAttribute ("ANTENNA_POSITION_VALUE",    antennaPositionValue);
       // getAttribute ("ANTENNA_POSITION_UNIT",     antennaPositionUnit);
-      // getAttribute ("ANTENNA_POSITION_FRAME",    antennaPositionFrame);
-      // getAttribute ("ANTENNA_ORIENTATION_VALUE", antennaOrientationValue);
+      getAttribute ("ANTENNA_POSITION_FRAME",    antennaPositionFrame);
+      getAttribute ("ANTENNA_ORIENTATION_VALUE", antennaOrientationValue);
       // getAttribute ("ANTENNA_ORIENTATION_UNIT",  antennaOrientationUnit);
-      // getAttribute ("ANTENNA_ORIENTATION_FRAME", antennaOrientationFrame);
- 
+      getAttribute ("ANTENNA_ORIENTATION_FRAME", antennaOrientationFrame);
+      
       // Fill record
       rec.define("STATION_ID",                station_id              );
       rec.define("RSP_ID",                    rsp_id                  );
@@ -981,7 +981,7 @@ namespace DAL {  // Namespace DAL -- begin
       rec.define("FEED",                      feed                    );
       rec.define("ANTENNA_POSITION_VALUE",    antennaPositionValue    );
       rec.define("ANTENNA_POSITION_UNIT",     antennaPositionUnit     );
-      rec.define("ANTENNA_POSITION_FRAME",    antennaPositionFrame    );
+      rec.define("ANTENNA_POSITION_FRAME",    antennaPositionFrame(0) );
       rec.define("ANTENNA_ORIENTATION_VALUE", antennaOrientationValue );
       rec.define("ANTENNA_ORIENTATION_UNIT",  antennaOrientationUnit  );
       rec.define("ANTENNA_ORIENTATION_FRAME", antennaOrientationFrame );
