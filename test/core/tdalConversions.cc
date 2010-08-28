@@ -21,7 +21,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <dalCommon.h>
 #include <dalConversions.h>
+
+using std::cout;
+using std::endl;
 
 /*!
   \file tdalConversions.cc
@@ -50,11 +54,82 @@ int test_convertVector ()
   std::cout << "\n[tdalConversions::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
+  unsigned int nelem (10);
   
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  std::cout << "[1] Convert std::vector<int> to casa::Vector<T> ..." << std::endl;
   try {
-    // dalConversions newObject;
-    // newObject.summary(); 
+    std::vector<int> vectorInt (nelem);
+    casa::Vector<int> VectorInt;
+    casa::Vector<float> VectorFloat;
+    casa::Vector<double> VectorDouble;
+
+    // assign values to the original vector
+    for (unsigned int n(0); n<nelem; ++n) {
+      vectorInt[n] = n;
+    }
+
+    // convert vector and display results
+
+    DAL::convertVector (VectorInt, vectorInt);
+    DAL::convertVector (VectorFloat, vectorInt);
+    DAL::convertVector (VectorDouble, vectorInt);
+
+    cout << "-- <int> -> <int>    : " << vectorInt << " -> " << VectorInt    << endl;
+    cout << "-- <int> -> <float>  : " << vectorInt << " -> " << VectorFloat  << endl;
+    cout << "-- <int> -> <double> : " << vectorInt << " -> " << VectorDouble << endl;
+
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Convert std::vector<float> to casa::Vector<T> ..." << std::endl;
+  try {
+    std::vector<float> vectorFloat (nelem);
+    casa::Vector<int> VectorInt;
+    casa::Vector<float> VectorFloat;
+    casa::Vector<double> VectorDouble;
+
+    // assign values to the original vector
+    for (unsigned int n(0); n<nelem; ++n) {
+      vectorFloat[n] = n;
+    }
+
+    // convert vector and display results
+
+    DAL::convertVector (VectorInt, vectorFloat);
+    DAL::convertVector (VectorFloat, vectorFloat);
+    DAL::convertVector (VectorDouble, vectorFloat);
+
+    cout << "-- <float> -> <int>    : " << vectorFloat << " -> " << VectorInt    << endl;
+    cout << "-- <float> -> <float>  : " << vectorFloat << " -> " << VectorFloat  << endl;
+    cout << "-- <float> -> <double> : " << vectorFloat << " -> " << VectorDouble << endl;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[3] Convert std::vector<double> to casa::Vector<T> ..." << std::endl;
+  try {
+    std::vector<double> vectorDouble (nelem);
+    casa::Vector<int> VectorInt;
+    casa::Vector<float> VectorFloat;
+    casa::Vector<double> VectorDouble;
+
+    // assign values to the original vector
+    for (unsigned int n(0); n<nelem; ++n) {
+      vectorDouble[n] = n;
+    }
+
+    // convert vector and display results
+
+    DAL::convertVector (VectorInt, vectorDouble);
+    DAL::convertVector (VectorFloat, vectorDouble);
+    DAL::convertVector (VectorDouble, vectorDouble);
+
+    cout << "-- <float> -> <int>    : " << vectorDouble << " -> " << VectorInt    << endl;
+    cout << "-- <float> -> <float>  : " << vectorDouble << " -> " << VectorFloat  << endl;
+    cout << "-- <float> -> <double> : " << vectorDouble << " -> " << VectorDouble << endl;
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;

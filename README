@@ -1,38 +1,46 @@
-## ==============================================================================
-## $ID:$
-## ==============================================================================
+
+_________________________________________________________________________________
+>>> Getting the source code
+
+The offical address to obtain a working copy of the DAL as part of the LOFAR 
+User Software is from the SVN repository
+
+  svn co http://usg.lofar.org/svn/code/trunk lofarsoft
+
+As an alternative you also can clone from the respository on Github
+
+  git://github.com/lbaehren/lofarsoft.git lofarsoft
+
+Once checkout from the repository is complete, you can change into the "build"
+directory to run the bootstrap script.
+
+  cd build
+  ./bootstrap
+
+The the main job of the bootstrap script is to check whether or not a recent
+enough version of CMake (www.cmake.org) is installed on your system; if the found
+installation is too old or not available at all, a build from the provided
+sources is triggered and the resulting executables will be installed into
+"release/bin" (which of course then should be in your PATH).
+
+Once the bootstrap script has finished run
+
+  make dal
 
 
 _________________________________________________________________________________
->>> Open issues
+>>> DAL components
 
-* Check code in TBRRaw against what is in the original TBB class; if the latter
-  can be fully replaced, then do so -- if features need to be merged, this needs
-  to be done before discontinuing the earlier version.
+* C++ library (libdal)
 
-* The TBB_DipoleDataset, TBB_StationGroup and TBB_Timeseries need some cleaning
-  up in the functions which make use of casacore; there are still quite a number
-  functions which work with std::vector<T> and casa::Vector<T> -- those functions
-  should not be exclusive but available both at the same time. For this to happen
-  functions need to be changed from simply returning a result to returning the
-  result by reference.
+  The main component of the DAL is a C++ library, which can be used by an
+  application programmer to gain access to a number of LOFAR standard data
+  products.
 
-* [2009/08/04] Provide command line parameter to adjust Nyquist zone value (which
-  cannot be extracted from the TBB (meta-)data themselves. Value needs to be
-  present in underlying class as private variable which is used each time a new
-  DipoleArray is created.
+* Python module (pydal)
 
-* [2009/09/16] Add function to allow renaming of attributes: 
-  dalCommon::h5_renameAttribute(locationID,nameOld,nameNew).
-
-* [2009/10/16] Evaluate how much work is required to bring the high-level
-  interfaces to the beamformed data in sync with the structure as defined within
-  the ICD; what is the amount of required modifications, how many new classes are
-  required to represented the newly added hierarchical structure?
-
-* [2009/10/19] Add methods to set dipole positions from level higher up in the
-  hierarchy:
-  setAntennaPosition (std::string const &id, std::vector<double> const &pos);
+  The functionality of the C++ library is exposed to the Python environment
+  a thin layer of bindings, using Boost.Python.
 
 _________________________________________________________________________________
 >>> Coding conventions
@@ -47,47 +55,3 @@ ________________________________________________________________________________
 
 * Pointers should be marked by a leading "p"; e.g. "pShape" or -- in the case
   of a private variable "pShape_p".
-
-_________________________________________________________________________________
->>> Resolved issues
-
-* No new class/application to be created to support additional conversion mode
-  of beam-formed data; as agreed upon with Joe, the required implementation code
-  can become part of the exiting classes, the possibility to switch between 
-  different types of input can be provided through a command-line switch with
-  the bf2h5 application.
-
-* Better check of requirements for creating the Python bindings; in a number of
-  cases the currently implemented checks are not sufficient, thereby not disabling
-  the bindings, which in turns results in failure to build properly.
-
-  [04/08/2009] CMake script for DAL now tries to compile a simple test program
-  which contains all the required include statements and even uses some of the
-  newly defined variable types.
-
-* [12/08/2009] dalDataset now uses the same preprocessor directives as can be found in
-  stdin.h, in order to handle conflicts in type definitions. While this now seems to
-  build on all standard test platforms, there is still the issue if the
-  introduction of portable types (e.g. int32_p, int64_t) would not be better.
-
-* [2009/08/05] TabularCoordinate needs o overload functions to get/set reference
-  pixel, reference value, increment and transformation matrix.
-
-  [12/08/2009] Added function overloading; parameters are not defined for a 
-  tabulared axis, they should not be used.
-
-* [2009/09/02] Build problems as reported on Forum:
-  http://usg.lofar.org/forum/index.php?topic=106.0 -> check 64 bit!! => liof
-
-  To my knowledge this has been resolved (at least for the time being). With the
-  new post-processing cluster coming online a new front-end node (lfe001) has 
-  become available, which is now on a routine basis used for test builds; it has
-  been agreed to assign high priority to getting everything to configure and build
-  on that machine, as it is considered as a reference platform for the compute
-  nodes of the post-processing cluster.
-
-* [2009/10/26] Check TBB_Timeseries for memory leaks; according to Sef and Andreas
-  there is a build-up of allocated memory when reading a sequence of data blocks.
-
-  As encountered earlier a dataspace had been opened but not closed after reading
-  was completed; this has been corrected.

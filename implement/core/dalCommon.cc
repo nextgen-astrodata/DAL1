@@ -26,6 +26,8 @@
 #include "dalCommon.h"
 #endif
 
+using casa::MPosition;
+
 namespace DAL {
   
   // ============================================================================
@@ -107,22 +109,6 @@ namespace DAL {
     return jd;
   }
   
-  //_____________________________________________________________________________
-  //                                                                     mjd2unix
-  
-  /*!
-    \param mjd_time -- The time as Modified Julian Date
-    
-    \return unix -- The time as UNIX seconds
-  */
-  double mjd2unix (double mjd_time)
-  {
-    // The Unix base date is MJD 40587.
-    // and 1 mjd Day = 24 hours or 1440 minutes or 86400 seconds
-    // so (unix seconds) = (mjd seconds) - ( unix base date in seconds )
-    return ( mjd_time - (40587.0 * 86400.0) );
-  }
-
   //_____________________________________________________________________________
   //                                                                        crc16
   
@@ -1388,7 +1374,7 @@ namespace DAL {
     herr_t h5error (0);
     hid_t dataspace_id = H5Aget_space (attribute_id);
     int rank           = H5Sget_simple_extent_ndims (dataspace_id);
-
+    
     if (rank > 0)
       {
         shape.resize(rank);
@@ -1503,39 +1489,38 @@ namespace DAL {
     std::vector<hsize_t> shape;
 
     status = h5get_dataspace_shape (attribute_id,shape);
-
-    if (shape.size() > 0)
-      {
-        char * buffer[shape[0]];
-        // Read the attribute data from the file
-        h5error = H5Aread(attribute_id,
-                          native_datatype_id,
-                          &buffer);
-        // Copy the retrieved data to the returned variable
-        if (h5error == 0)
-          {
-            value.resize(shape[0]);
-            for (uint n(0); n<shape[0]; n++)
-              {
-                value(n) = buffer[n];
-              }
-          }
-      }
+    
+    if (shape.size() > 0) {
+      char * buffer[shape[0]];
+      // Read the attribute data from the file
+      h5error = H5Aread(attribute_id,
+			native_datatype_id,
+			&buffer);
+      // Copy the retrieved data to the returned variable
+      if (h5error == 0)
+	{
+	  value.resize(shape[0]);
+	  for (uint n(0); n<shape[0]; n++)
+	    {
+	      value(n) = buffer[n];
+	    }
+	}
+    }
     else {
       cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
 	   << endl;
       status = false;
     }
-
+    
     /* release HDF5 handlers */
     H5Tclose (datatype_id);
     H5Tclose (native_datatype_id);
     
     return status;
   }
-
+  
   // ------------------------------------------------------------- h5get_quantity
-
+  
   /*!
     \param location_id -- Identifier of the structure within the file, to which
            the attribut is attached to.
@@ -1546,9 +1531,9 @@ namespace DAL {
 
     \return quantity -- The physical quantity.
   */
-  Quantity h5get_quantity (hid_t const &location_id,
-                           Attributes const &value,
-                           Attributes const &unit)
+  casa::Quantity h5get_quantity (hid_t const &location_id,
+				 Attributes const &value,
+				 Attributes const &unit)
   {
     if (location_id > 0)
       {
@@ -1565,17 +1550,17 @@ namespace DAL {
                                   qUnit);
         // put together the Quantity object
         if (status) {
-	  Quantity val = Quantity (qValue,
-				   casa::Unit(qUnit));
+	  casa::Quantity val = casa::Quantity (qValue,
+					       casa::Unit(qUnit));
 	  return val;
 	}
         else {
-	  return Quantity();
+	  return casa::Quantity();
 	}
       }
     else {
       cerr << "[h5get_quantity] Unusable ID for HDF5 object!" << endl;
-      return Quantity();
+      return casa::Quantity();
     }
   }
   
@@ -1617,12 +1602,12 @@ namespace DAL {
     \return direction -- The physical quantity.
   */
   casa::MDirection h5get_direction (hid_t const &location_id,
-                              std::string const &value,
-                              std::string const &unit,
-                              std::string const &frame)
+				    std::string const &value,
+				    std::string const &unit,
+				    std::string const &frame)
   {
     casa::MDirection dir = casa::MDirection();
-
+    
     if (location_id > 0) {
       casa::Vector<double> values;
       casa::Vector<casa::String> units;
@@ -1668,8 +1653,8 @@ namespace DAL {
       if (casa::MDirection::getType (tp,refcode)) {
 	if (values.nelements() == 2 && units.nelements() == 2) {
 	  // create MDirection object
-	  dir = casa::MDirection ( Quantity( values(0), units(0)),
-				   Quantity( values(1), units(1)),
+	  dir = casa::MDirection ( casa::Quantity( values(0), units(0)),
+				   casa::Quantity( values(1), units(1)),
 				   casa::MDirection::Ref(tp));
 	  // return result
 	  return dir;
@@ -1711,17 +1696,17 @@ namespace DAL {
 
     \return position -- The position as casa::Measure.
   */
-  casa::MPosition h5get_position (hid_t const &location_id,
-                                  Attributes const &value,
-                                  Attributes const &unit,
-                                  Attributes const &frame)
+  MPosition h5get_position (hid_t const &location_id,
+			    Attributes const &value,
+			    Attributes const &unit,
+			    Attributes const &frame)
   {
     return h5get_position (location_id,
                            attribute_name(value),
                            attribute_name(unit),
                            attribute_name(frame));
   }
-
+  
   /*!
     \param location_id -- Identifier of the structure within the file, to which
            the attribut is attached to.
@@ -1734,13 +1719,13 @@ namespace DAL {
 
     \return position -- The position as casa::Measure.
   */
-  casa::MPosition h5get_position (hid_t const &location_id,
-                                  std::string const &value,
-                                  std::string const &unit,
-                                  std::string const &frame)
+  MPosition h5get_position (hid_t const &location_id,
+			    std::string const &value,
+			    std::string const &unit,
+			    std::string const &frame)
   {
     MPosition obs = MPosition();
-
+    
     if (location_id > 0) {
       bool status (true);
       casa::Vector<double> values;
@@ -1768,15 +1753,15 @@ namespace DAL {
 	  
 	  switch (tp) {
 	  case MPosition::ITRF:
-	    obs = MPosition ( MVPosition( values(0),
-					  values(1),
-					  values(2)),
+	    obs = MPosition ( casa::MVPosition( values(0),
+						values(1),
+						values(2)),
 			      MPosition::Ref(MPosition::ITRF));
 	    break;
 	  case MPosition::WGS84:
-	    obs = MPosition ( MVPosition( Quantity( values(0), units(0)),
-					  Quantity( values(1), units(1)),
-					  Quantity( values(2), units(2))),
+	    obs = MPosition ( casa::MVPosition( casa::Quantity( values(0), units(0)),
+						casa::Quantity( values(1), units(1)),
+						casa::Quantity( values(2), units(2))),
 			      MPosition::Ref(MPosition::WGS84));
 	    
 	    break;
@@ -1810,38 +1795,6 @@ namespace DAL {
     return obs;
   }
   
-#endif
-  
-  // ============================================================================
-  //
-  //  Boost.Python wrappers
-  //
-  // ============================================================================
-  
-#ifdef PYTHON
-  
-  // ------------------------------------------------------------- mjd2unix_boost
-  
-  /*!
-    - The Unix base date is MJD 40587.
-    - 1 mjd Day = 24 hours or 1440 minutes or 86400 seconds
-    - (unix seconds) = (mjd seconds) - ( unix base date in seconds )
-    
-    \param mjd_time The time as Modified Julian Date.
-  */
-  bpl::numeric::array mjd2unix_boost( bpl::numeric::array mjd_time )
-  {
-    int array_size           = bpl::len( mjd_time );
-    double unix_base_time    = 40587;
-    double seconds_per_day   = 86400;
-    double adjustment_factor = unix_base_time*seconds_per_day;
-
-    for ( int idx=0; idx < array_size; idx++ ) {
-      mjd_time[ idx ] = bpl::extract<double>( mjd_time[ idx ] ) - adjustment_factor;
-    }
-    
-    return mjd_time;
-  }
 #endif
   
 } // namespace DAL

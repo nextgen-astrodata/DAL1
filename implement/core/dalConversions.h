@@ -26,11 +26,23 @@
 
 // Standard library header files
 #include <iostream>
+#include <stdint.h>
 #include <string>
+#include <sstream>
 #include <vector>
 
 #ifdef HAVE_CASA
 #include <casa/Arrays/Vector.h>
+#endif
+
+#ifdef PYTHON
+#include <Python.h>
+#include <boost/python.hpp>
+#include <boost/python/object.hpp>
+#include <boost/python/list.hpp>
+#include <boost/python/extract.hpp>
+namespace bpl = boost::python;
+#include <num_util.h>
 #endif
 
 /*!
@@ -48,13 +60,82 @@
   \test tdalConversions.cc
   
   <h3>Synopsis</h3>
+
+  <ul>
+    <li>Conversion of type T to string
+    <li>Conversion between time formats
+    <li>Conversion between different types of vectors
+  </ul>
   
   <h3>Example(s)</h3>
   
 */  
 namespace DAL { // Namespace DAL -- begin
 
-  // === Conversion of vectors ==================================================
+  // ============================================================================
+  //
+  //  Conversion to string
+  //
+  // ============================================================================
+  
+  /*!
+    \brief Convert a variable to a string
+    
+    \param t -- The variable, e.g. an integer number, to be converted to a string.
+    
+    \return s -- The provided variable converted to a string.
+  */
+  template <class T>
+    inline std::string toString (const T& t)
+    {
+      std::stringstream ss;
+      ss << t;
+      return ss.str();
+    }
+  
+  /*!
+    \brief Convert an array variable to a string
+    
+    \param arr   -- Pointer to the array with the data to be displayed.
+    \param nelem -- The number of elements stored within the array.
+    
+    \return s -- The provided variable converted to a string.
+  */
+  template <typename T, typename S>
+    inline std::string toString (T *arr,
+				 S const &nelem)
+  {
+    std::stringstream ss;
+    
+    ss << "["; 
+    for (S n(0); n<nelem; ++n) {
+      ss << " " << arr[n];
+    }
+    ss << " ]";
+    
+    return ss.str();
+  }
+  
+  // ============================================================================
+  //
+  //  Conversion between time formats
+  //
+  // ============================================================================
+
+  //! Convert Modified Julian Date (mjd) to unix time
+  double mjd2unix (double mjd_time);
+  
+#ifdef PYTHON
+  //! Convert Modified Julian Date (mjd) to unix time
+  bpl::numeric::array mjd2unix_boost( bpl::numeric::array mjd_time );
+#endif
+  
+  // ============================================================================
+  //
+  //  Conversion between types of vectors
+  //
+  // ============================================================================
+  
   
 #ifdef HAVE_CASA
   
@@ -93,8 +174,6 @@ namespace DAL { // Namespace DAL -- begin
   
 #endif
 
-  // === Conversions to string ==================================================
-  
 } // Namespace DAL -- end
 
 #endif /* DALCONVERSIONS_H */

@@ -52,10 +52,6 @@ using std::endl;
 #include <images/Images/ImageInterface.h>
 #include <measures/Measures/MDirection.h>
 #include <measures/Measures/MPosition.h>
-using casa::IPosition;
-using casa::MPosition;
-using casa::MVPosition;
-using casa::Quantity;
 #endif
 
 #ifdef HAVE_MPATROL
@@ -139,47 +135,6 @@ namespace DAL {
   long double julday (time_t seconds,
                       long *intmjd,
                       long double *fracmjd);
-  
-  //! Convert Modified Julian Date (mjd) to unix time
-  double mjd2unix (double mjd_time);
-  
-  /*!
-    \brief Convert a variable to a string
-    
-    \param t -- The variable, e.g. an integer number, to be converted to a string.
-    
-    \return s -- The provided variable converted to a string.
-  */
-  template <class T>
-    inline std::string toString (const T& t)
-    {
-      std::stringstream ss;
-      ss << t;
-      return ss.str();
-    }
-  
-  /*!
-    \brief Convert an array variable to a string
-    
-    \param arr   -- Pointer to the array with the data to be displayed.
-    \param nelem -- The number of elements stored within the array.
-    
-    \return s -- The provided variable converted to a string.
-  */
-  template <typename T, typename S>
-    inline std::string toString (T *arr,
-				 S const &nelem)
-  {
-    std::stringstream ss;
-    
-    ss << "["; 
-    for (S n(0); n<nelem; ++n) {
-      ss << " " << arr[n];
-    }
-    ss << " ]";
-    
-    return ss.str();
-  }
   
   //! Calculate a 16-bit CRC
   uint16_t crc16 (uint16_t * buffer,
@@ -716,9 +671,9 @@ namespace DAL {
       return status;
     }
   //! Get physical quantity attribute as casa::Quantity
-  Quantity h5get_quantity (hid_t const &location_id,
-                           DAL::Attributes const &value,
-                           DAL::Attributes const &unit);
+  casa::Quantity h5get_quantity (hid_t const &location_id,
+				 DAL::Attributes const &value,
+				 DAL::Attributes const &unit);
   //! Get a physical quantity describing a direction within a frame
   casa::MDirection h5get_direction (hid_t const &location_id,
                                     DAL::Attributes const &value,
@@ -802,18 +757,7 @@ namespace DAL {
     }
   
 #endif  // HAVE_CASA
-  
-  // ============================================================================
-  //
-  //  Boost.Python wrappers
-  //
-  // ============================================================================
-  
-#ifdef PYTHON
-  //! Convert Modified Julian Date (mjd) to unix time
-  bpl::numeric::array mjd2unix_boost( bpl::numeric::array mjd_time );
-#endif
-  
+    
 } // namespace DAL
 
 
