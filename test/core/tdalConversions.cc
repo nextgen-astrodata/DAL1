@@ -24,6 +24,7 @@
 #include <dalCommon.h>
 #include <dalConversions.h>
 
+using std::cerr;
 using std::cout;
 using std::endl;
 
@@ -41,6 +42,40 @@ using std::endl;
 */
 
 //_______________________________________________________________________________
+//                                                               test_convertTime
+
+/*!
+  \brief Test conversion of time formats
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_convertTime ()
+{
+  std::cout << "\n[tdalConversions::test_convertTime]\n" << std::endl;
+
+  int nofFailedTests (0);
+
+  cout << "[1] Testing dalConversion::julday() ..." << endl;
+  try {
+    time_t seconds;
+    long intmjd           = 0;
+    long double fracmjd   = 0;
+    long double julianDay = 0;
+
+    julianDay = DAL::julday (seconds, intmjd, fracmjd);
+    cout << "-- Julian day, full     = " << julianDay << endl;
+    cout << "-- Julian day, int      = " << intmjd    << endl;
+    cout << "-- Julian day, fraction = " << fracmjd   << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                             test_convertVector
 
 /*!
@@ -51,7 +86,7 @@ using std::endl;
 */
 int test_convertVector ()
 {
-  std::cout << "\n[tdalConversions::test_constructors]\n" << std::endl;
+  std::cout << "\n[tdalConversions::test_convertVector]\n" << std::endl;
 
   int nofFailedTests (0);
   unsigned int nelem (10);
@@ -145,7 +180,9 @@ int main ()
 {
   int nofFailedTests (0);
 
-  // Test for the constructor(s)
+  // Test conversion of time formats
+  nofFailedTests += test_convertTime ();
+  // Test conversion between different types of vectors
   nofFailedTests += test_convertVector ();
 
   return nofFailedTests;

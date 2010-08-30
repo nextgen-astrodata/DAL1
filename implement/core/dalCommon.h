@@ -100,14 +100,11 @@ using std::endl;
   used routines:
   - Conversion routines
     - DAL::julday
-    - DAL::mjd2unix
   - Service functions
     - DAL::it_exists
     - DAL::BigEndian
   - Routines for the access of HDF5 attributes
     - DAL::h5attribute_summary
-  - Boost.Python wrappers
-    - DAL::mjd2unix_boost
 
 */
 
@@ -130,11 +127,6 @@ namespace DAL {
   //! Byte swap routine
   void swapbytes (char *addr,
 		  int8_t nbytes);
-  
-  //! Convert UNIX time in to Julian Day
-  long double julday (time_t seconds,
-                      long *intmjd,
-                      long double *fracmjd);
   
   //! Calculate a 16-bit CRC
   uint16_t crc16 (uint16_t * buffer,

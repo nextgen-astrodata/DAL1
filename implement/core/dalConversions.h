@@ -122,6 +122,11 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
 
+  //! Convert UNIX time in to Julian Day
+  long double julday (time_t seconds,
+                      long &intmjd,
+                      long double &fracmjd);
+
   //! Convert Modified Julian Date (mjd) to unix time
   double mjd2unix (double mjd_time);
   

@@ -66,50 +66,6 @@ namespace DAL {
   }
   
   //_____________________________________________________________________________
-  //                                                                       julday
-  
-  long double julday (time_t seconds,
-                      long *intmjd,
-                      long double *fracmjd)
-  {
-    long double dayfrac, jd, sec;
-    int year (0);
-    int yday (0);
-    int hour (0);
-    int min (0);
-    unsigned int nd(0);
-    struct tm *ptr = 0;
-    
-    ptr = gmtime(&seconds);
-    assert (ptr);
-    
-    hour = ptr->tm_hour;
-    min  = ptr->tm_min;
-    sec  = (long double)ptr->tm_sec;
-    year = ptr->tm_year;
-    yday = ptr->tm_yday + 1;
-    
-    dayfrac = ( (sec/60.0L + (long double) min)/60.0L + \
-                (long double)hour)/24.0L;
-    nd = year * 365;
-    nd += (year - 1)/4;
-    nd += yday + 2415020;
-    
-    *intmjd = nd - 2400001;
-    *fracmjd = dayfrac;
-    
-    assert (intmjd);
-    assert (fracmjd);
-    
-    jd = (long double)nd + dayfrac - 0.5L;
-
-    // release allocated memory
-    delete ptr;
-    
-    return jd;
-  }
-  
-  //_____________________________________________________________________________
   //                                                                        crc16
   
   /*!
