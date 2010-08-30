@@ -30,6 +30,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <assert.h>
 
 #ifdef HAVE_CASA
 #include <casa/Arrays/Vector.h>
