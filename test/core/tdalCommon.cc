@@ -97,26 +97,6 @@ int test_casacore_variables ()
     nofFailedTests++;
   }
 
-  cout << "[3] Conversion between std::vector<T> and casa::Vector<T> ..." << endl;
-  try {
-    unsigned int nelem (10);
-    std::vector<int> vectorSTL (nelem);
-    casa::Vector<int> vectorCASA;
-
-    for (unsigned int n(0); n<nelem; ++n) {
-      vectorSTL[n] = n+1;
-    }
-
-    DAL::convertVector (vectorCASA, vectorSTL);
-
-    cout << "-- std::vector<T>  = " << vectorSTL  << endl;
-    cout << "-- casa::Vector<T> = " << vectorCASA << endl;
-  }
-  catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-
   return nofFailedTests;
 }
 #endif

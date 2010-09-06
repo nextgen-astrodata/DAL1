@@ -42,6 +42,58 @@ using std::endl;
 */
 
 //_______________________________________________________________________________
+//                                                             test_convertString
+
+/*!
+  \brief Test conversion of string formats
+
+  While there are not too many different string representations we need to deal
+  there are at least std::string and casa::String.
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_convertString ()
+{
+  std::cout << "\n[tdalConversions::test_convertString]\n" << std::endl;
+
+  int nofFailedTests (0);
+  
+  cout << "[1] Test basic conversion between std::string and casa::String" << endl;
+#ifdef HAVE_CASA
+  try {
+    std::string stdString;
+    casa::String casaString;
+
+    // initial values
+    cout << "\tstd::string = " << stdString
+	 << "\tcasa::String = " << casaString << endl;
+
+    // assign value to std::string and then copy
+    stdString  = "std::string";
+    casaString = stdString;
+
+    cout << "\tstd::string = " << stdString
+	 << "\tcasa::String = " << casaString << endl;
+
+    // Assign value to casa::String and then copy
+    casaString = "casa::String";
+    stdString  = casaString;
+
+    cout << "\tstd::string = " << stdString
+	 << "\tcasa::String = " << casaString << endl;
+  } catch (std::string message) {
+    cerr << message << endl;
+    nofFailedTests++;
+  }
+#else
+  cout << "-- Missing casa - skipping test!" << endl;
+#endif
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                               test_convertTime
 
 /*!
@@ -180,6 +232,8 @@ int main ()
 {
   int nofFailedTests (0);
 
+  // Test conversion of string formats
+  nofFailedTests += test_convertString ();
   // Test conversion of time formats
   nofFailedTests += test_convertTime ();
   // Test conversion between different types of vectors

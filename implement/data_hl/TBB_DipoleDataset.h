@@ -215,8 +215,8 @@ namespace DAL {  // Namespace DAL -- begin
     bool getAttributes (casa::Record &rec);
     //! Get a number of data values as recorded for this dipole
     casa::Vector<double> readData (int const &start=0,
-			     int const &nofSamples=1);
-
+				   int const &nofSamples=1);
+    
 #endif
     
   private:
@@ -225,7 +225,7 @@ namespace DAL {  // Namespace DAL -- begin
     bool openEmbedded (bool const &create);
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
-
+    
     /*!
       \brief Initialize the internal dataspace
       

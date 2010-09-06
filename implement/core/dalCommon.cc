@@ -1120,6 +1120,7 @@ namespace DAL {
                         bool * value,
                         int size)
   {
+    bool status;
     int * data  = new int [size];
     
     for (int n(0); n<size; n++) {
@@ -1127,11 +1128,15 @@ namespace DAL {
     }
     /* Forward the function call */
     hid_t datatype = H5T_NATIVE_INT;
-    return h5set_attribute (datatype,
-                            location_id,
-                            name,
-                            data,
-                            size);
+    status = h5set_attribute (datatype,
+			      location_id,
+			      name,
+			      data,
+			      size);
+    // release allocated memory ...
+    delete [] data;
+    // ... before exiting function
+    return status;
   }
 
   /*!
