@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <BF_PrimaryPointing.h>
+#include <BF_SubArrayPointing.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -32,28 +32,28 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   //_____________________________________________________________________________
-  //                                                           BF_PrimaryPointing
+  //                                                          BF_SubArrayPointing
   
-  BF_PrimaryPointing::BF_PrimaryPointing ()
+  BF_SubArrayPointing::BF_SubArrayPointing ()
   {
     location_p = 0;
   }
   
   //_____________________________________________________________________________
-  //                                                           BF_PrimaryPointing
+  //                                                          BF_SubArrayPointing
   
-  BF_PrimaryPointing::BF_PrimaryPointing (hid_t const &location,
-					  std::string const &name)
+  BF_SubArrayPointing::BF_SubArrayPointing (hid_t const &location,
+					    std::string const &name)
   {
     open (location,name,false);
   }
   
   //_____________________________________________________________________________
-  //                                                           BF_PrimaryPointing
+  //                                                          BF_SubArrayPointing
   
-  BF_PrimaryPointing::BF_PrimaryPointing (hid_t const &location,
-					  unsigned int const &index,
-					  bool const &create)
+  BF_SubArrayPointing::BF_SubArrayPointing (hid_t const &location,
+					    unsigned int const &index,
+					    bool const &create)
   {
     open (location,getName(index),create);
   }
@@ -64,7 +64,7 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  BF_PrimaryPointing::~BF_PrimaryPointing ()
+  BF_SubArrayPointing::~BF_SubArrayPointing ()
   {
     if (location_p > 0) {
       // clear maps with embedded objects
@@ -88,9 +88,9 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      summary
   
-  void BF_PrimaryPointing::summary (std::ostream &os)
+  void BF_SubArrayPointing::summary (std::ostream &os)
   {
-    os << "[BF_PrimaryPointing] Summary of internal parameters." << std::endl;
+    os << "[BF_SubArrayPointing] Summary of internal parameters." << std::endl;
     os << "-- Location ID     = " << location_p          << std::endl;
     os << "-- nof. attributes = " << attributes_p.size() << std::endl;
     os << "-- Attributes      = " << attributes_p        << std::endl;
@@ -105,7 +105,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                setAttributes
   
-  void BF_PrimaryPointing::setAttributes ()
+  void BF_SubArrayPointing::setAttributes ()
   {
     attributes_p.clear();
     
@@ -148,9 +148,9 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
-  bool BF_PrimaryPointing::open (hid_t const &location,
-				 std::string const &name,
-				 bool const &create)
+  bool BF_SubArrayPointing::open (hid_t const &location,
+				  std::string const &name,
+				  bool const &create)
   {
     bool status (true);
     
@@ -208,13 +208,13 @@ namespace DAL { // Namespace DAL -- begin
 	  h5set_attribute (location_p,"CHANNEL_WIDTH_UNIT",       mhz         );
 	  h5set_attribute (location_p,"NOF_BEAMS",                int(0)      );
 	} else {
-	  std::cerr << "[BF_PrimaryPointing::open] Failed to create group "
+	  std::cerr << "[BF_SubArrayPointing::open] Failed to create group "
 		    << name
 		    << std::endl;
 	  status = false;
 	}
       } else {
-	std::cerr << "[BF_PrimaryPointing::open] Failed to open group "
+	std::cerr << "[BF_SubArrayPointing::open] Failed to open group "
 		  << name
 		  << std::endl;
 	status = false;
@@ -225,7 +225,7 @@ namespace DAL { // Namespace DAL -- begin
     if (status) {
       status = openEmbedded (create);
     } else {
-      std::cerr << "[BF_PrimaryPointing::open] Skip opening embedded groups!"
+      std::cerr << "[BF_SubArrayPointing::open] Skip opening embedded groups!"
 		<< std::endl;
     }
  
@@ -235,7 +235,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool BF_PrimaryPointing::openEmbedded (bool const &create)
+  bool BF_SubArrayPointing::openEmbedded (bool const &create)
   {
     bool status (create);
     std::set<std::string> groupnames;
@@ -263,8 +263,8 @@ namespace DAL { // Namespace DAL -- begin
            Direction group.
     \param create -- 
   */
-  bool BF_PrimaryPointing::openBeam (unsigned int const &beamID,
-				     bool const &create)
+  bool BF_SubArrayPointing::openBeam (unsigned int const &beamID,
+				      bool const &create)
   {
     bool status          = true;
     htri_t validLocation = H5Iis_valid(location_p);
@@ -278,7 +278,7 @@ namespace DAL { // Namespace DAL -- begin
       int nofBeams = beams_p.size();
       h5set_attribute (location_p,"NOF_BEAMS",nofBeams);
     } else {
-      std::cerr << "[BF_PrimaryPointing::openBeam] Not connected to dataset."
+      std::cerr << "[BF_SubArrayPointing::openBeam] Not connected to dataset."
 		<< std::endl;
       std::cerr << "-- Location ID       = " << location_p    << std::endl;
       std::cerr << "-- Valid HDF5 object = " << validLocation << std::endl;
@@ -298,7 +298,7 @@ namespace DAL { // Namespace DAL -- begin
     \return name -- The name of the station beam group,
             <tt>PrimaryPointing<index></tt>
   */
-  std::string BF_PrimaryPointing::getName (unsigned int const &index)
+  std::string BF_SubArrayPointing::getName (unsigned int const &index)
   {
     char uid[10];
     sprintf(uid,

@@ -23,7 +23,7 @@
 
 #include <CommonAttributes.h>
 #include <BF_Dataset.h>
-#include <BF_PrimaryPointing.h>
+#include <BF_SubArrayPointing.h>
 #include <BF_Beam.h>
 
 // Namespace usage
@@ -32,7 +32,7 @@ using std::endl;
 using DAL::CommonAttributes;
 using DAL::Filename;
 using DAL::BF_Dataset;
-using DAL::BF_PrimaryPointing;
+using DAL::BF_SubArrayPointing;
 using DAL::BF_Beam;
 
 /*!

@@ -35,7 +35,7 @@
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class BF_PrimaryPointing
+    \class BF_SubArrayPointing
     
     \ingroup DAL
     \ingroup data_hl
@@ -46,7 +46,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/10/28
 
-    \test tBF_PrimaryPointing.cc
+    \test tBF_SubArrayPointing.cc
     
     <h3>Prerequisite</h3>
     
@@ -83,7 +83,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class BF_PrimaryPointing : public CommonInterface {
+  class BF_SubArrayPointing : public CommonInterface {
     
     //! Station beams
     std::map<std::string,BF_Beam> beams_p;
@@ -93,31 +93,31 @@ namespace DAL { // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    BF_PrimaryPointing ();
+    BF_SubArrayPointing ();
     
     //! Default constructor
-    BF_PrimaryPointing (hid_t const &location,
+    BF_SubArrayPointing (hid_t const &location,
 			std::string const &name);
     
     //! Argumented constructor
-    BF_PrimaryPointing (hid_t const &location,
+    BF_SubArrayPointing (hid_t const &location,
 			unsigned int const &index,
 			bool const &create);
     
     // === Destruction ==========================================================
     
     //! Default destructor
-    ~BF_PrimaryPointing ();
+    ~BF_SubArrayPointing ();
     
     // --------------------------------------------------------------- Parameters
     
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, BF_PrimaryPointing.
+      \return className -- The name of the class, BF_SubArrayPointing.
     */
     inline std::string className () const {
-      return "BF_PrimaryPointing";
+      return "BF_SubArrayPointing";
     }
     
     //! Provide a summary of the internal status
@@ -158,7 +158,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Open the structures embedded within the current one
     bool openEmbedded (bool const &create);
 
-  }; // Class BF_PrimaryPointing -- end
+  }; // Class BF_SubArrayPointing -- end
   
 } // Namespace DAL -- end
 

@@ -23,7 +23,7 @@
 
 #include <CommonAttributes.h>
 #include <BF_Dataset.h>
-#include <BF_PrimaryPointing.h>
+#include <BF_SubArrayPointing.h>
 
 // Namespace usage
 using std::cout;
@@ -31,15 +31,15 @@ using std::endl;
 using DAL::CommonAttributes;
 using DAL::Filename;
 using DAL::BF_Dataset;
-using DAL::BF_PrimaryPointing;
+using DAL::BF_SubArrayPointing;
 
 /*!
-  \file tBF_PrimaryPointing.cc
+  \file tBF_SubArrayPointing.cc
 
   \ingroup DAL
   \ingroup data_hl
 
-  \brief A collection of test routines for the DAL::BF_PrimaryPointing class
+  \brief A collection of test routines for the DAL::BF_SubArrayPointing class
  
   \author Lars B&auml;hren
  
@@ -50,22 +50,22 @@ using DAL::BF_PrimaryPointing;
 //                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new BF_PrimaryPointing object
+  \brief Test constructors for a new BF_SubArrayPointing object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
 int test_constructors ()
 {
-  std::cout << "\n[tBF_PrimaryPointing::test_constructors]\n" << std::endl;
+  std::cout << "\n[tBF_SubArrayPointing::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
-  std::string filename ("tBF_PrimaryPointing.h5");
+  std::string filename ("tBF_SubArrayPointing.h5");
   herr_t h5error;
   
   std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
-    BF_PrimaryPointing beam;
+    BF_SubArrayPointing beam;
     beam.summary();
   } catch (std::string message) {
     std::cerr << message << std::endl;
@@ -80,10 +80,10 @@ int test_constructors ()
 			      H5P_DEFAULT,
 			      H5P_DEFAULT);
     if (fileID>0) {
-      BF_PrimaryPointing beam1 (fileID,1,true);
-      BF_PrimaryPointing beam2 (fileID,2,true);
-      BF_PrimaryPointing beam3 (fileID,3,true);
-      BF_PrimaryPointing beam4 (fileID,4,true);
+      BF_SubArrayPointing beam1 (fileID,1,true);
+      BF_SubArrayPointing beam2 (fileID,2,true);
+      BF_SubArrayPointing beam3 (fileID,3,true);
+      BF_SubArrayPointing beam4 (fileID,4,true);
       //
       beam1.summary();
     }
@@ -108,10 +108,10 @@ int test_constructors ()
 */
 int test_subGroups ()
 {
-  std::cout << "\n[tBF_PrimaryPointing::test_subGroups]\n" << endl;
+  std::cout << "\n[tBF_SubArrayPointing::test_subGroups]\n" << endl;
 
   int nofFailedTests (0);
-  std::string filename ("tBF_PrimaryPointing.h5");
+  std::string filename ("tBF_SubArrayPointing.h5");
   herr_t h5error;
   hid_t fileID = H5Fopen (filename.c_str(),
 			  H5F_ACC_RDWR,
@@ -120,7 +120,7 @@ int test_subGroups ()
   cout << "[1] Create Beams within existing StationBeam ..." << endl;
   if (fileID) {
     // open StationBeam group
-    BF_PrimaryPointing beam (fileID,1,true);
+    BF_SubArrayPointing beam (fileID,1,true);
     cout << "-- group name = " << beam.getName(1) << endl;
     cout << "-- nof. beams = " << beam.nofBeams() << endl;
     // open/create Beam groups
@@ -135,7 +135,7 @@ int test_subGroups ()
   cout << "[2] Create Beams within new StationBeam ..." << endl;
   if (fileID) {
     // open StationBeam group
-    BF_PrimaryPointing beam (fileID,10,true);
+    BF_SubArrayPointing beam (fileID,10,true);
     cout << "-- nof. beams = " << beam.nofBeams() << endl;
     // open/create Beam groups
     beam.openBeam (0,true);
@@ -158,14 +158,14 @@ int test_subGroups ()
 //                                                                test_containers
 
 /*!
-  \brief Test usage of std::map<std::string,DAL::BF_PrimaryPointing>
+  \brief Test usage of std::map<std::string,DAL::BF_SubArrayPointing>
 
-  Instead of directly handling objects of type BF_PrimaryPointing use 
+  Instead of directly handling objects of type BF_SubArrayPointing use 
   \code
-  std::map<std::string,DAL::BF_PrimaryPointing> stationBeams;
+  std::map<std::string,DAL::BF_SubArrayPointing> stationBeams;
   
-  name               = DAL::BF_PrimaryPointing::getName(pointingID);
-  stationBeams[name] = DAL::BF_PrimaryPointing (fileID, pointingID, true);
+  name               = DAL::BF_SubArrayPointing::getName(pointingID);
+  stationBeams[name] = DAL::BF_SubArrayPointing (fileID, pointingID, true);
   \endcode
   as a container.
 
@@ -174,25 +174,25 @@ int test_subGroups ()
 */
 int test_containers ()
 {
-  cout << "\n[tBF_PrimaryPointing::test_containers]\n" << endl;
+  cout << "\n[tBF_SubArrayPointing::test_containers]\n" << endl;
 
   int nofFailedTests (0);
-  std::string filename ("tBF_PrimaryPointing.h5");
+  std::string filename ("tBF_SubArrayPointing.h5");
   std::string name;
   std::string groupType;
   herr_t h5error;
   hid_t fileID = H5Fopen (filename.c_str(),
 			  H5F_ACC_RDWR,
 			  H5P_DEFAULT);
-  std::map<std::string,DAL::BF_PrimaryPointing> stationBeams;
-  std::map<std::string,DAL::BF_PrimaryPointing>::iterator it;
+  std::map<std::string,DAL::BF_SubArrayPointing> stationBeams;
+  std::map<std::string,DAL::BF_SubArrayPointing>::iterator it;
 
   //______________________________________________
   // Test creation of groups
 
   for (unsigned int pointingID(10); pointingID<15; ++pointingID) {
-    BF_PrimaryPointing beam (fileID, pointingID, true);
-    name               = BF_PrimaryPointing::getName(pointingID);
+    BF_SubArrayPointing beam (fileID, pointingID, true);
+    name               = BF_SubArrayPointing::getName(pointingID);
     stationBeams[name] = beam;
     it                 = stationBeams.find(name);
     // try accessing attributes

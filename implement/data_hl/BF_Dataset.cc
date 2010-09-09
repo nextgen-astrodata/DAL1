@@ -380,17 +380,17 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
     htri_t validLocation = H5Iis_valid(location_p);
-    std::string name = BF_PrimaryPointing::getName (pointingID);
+    std::string name = BF_SubArrayPointing::getName (pointingID);
 
     if (location_p > 0 && validLocation) {
       int nofPrimaryBeams;
-      std::map<std::string,BF_PrimaryPointing>::iterator it;
+      std::map<std::string,BF_SubArrayPointing>::iterator it;
       // convert station ID to group name
       it   = primaryPointings_p.find(name);
       // check if the station beam group indeed exists
       if (it == primaryPointings_p.end()) {
 	// open/create the station beam group
-	primaryPointings_p[name] = BF_PrimaryPointing (location_p,pointingID,create);
+	primaryPointings_p[name] = BF_SubArrayPointing (location_p,pointingID,create);
 	// attributes for book-keeping
 	nofPrimaryBeams = primaryPointings_p.size();
 	h5set_attribute (location_p, "NOF_PRIMARY_BEAMS", nofPrimaryBeams);
@@ -415,13 +415,13 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
 
     if (location_p > 0 && H5Iis_valid(location_p)) {
-      std::map<std::string,BF_PrimaryPointing>::iterator it;
+      std::map<std::string,BF_SubArrayPointing>::iterator it;
       // convert station ID to group name
       it = primaryPointings_p.find(name);
       // check if the station beam group indeed exists
       if (it == primaryPointings_p.end()) {
 	// open the primary pointing direction group
-	primaryPointings_p[name] = BF_PrimaryPointing (location_p,name);
+	primaryPointings_p[name] = BF_SubArrayPointing (location_p,name);
       }
     }
     else {
@@ -456,9 +456,9 @@ namespace DAL { // Namespace DAL -- begin
       /* Open Beam group */
       if (status) {
 	std::string name;
-	std::map<std::string,BF_PrimaryPointing>::iterator it;
+	std::map<std::string,BF_SubArrayPointing>::iterator it;
 	// get pointer to PrimaryPointing object
-	name = BF_PrimaryPointing::getName (pointingID);
+	name = BF_SubArrayPointing::getName (pointingID);
 	it   = primaryPointings_p.find(name);
 	// forward function call to open beam
 	if ( it != primaryPointings_p.end() ) {
@@ -492,15 +492,15 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param pointingID -- Identifier for the primary pointing direction.
   */
-  BF_PrimaryPointing BF_Dataset::primaryPointing (unsigned int const &pointingID)
+  BF_SubArrayPointing BF_Dataset::primaryPointing (unsigned int const &pointingID)
   {
-    BF_PrimaryPointing pointing;      
+    BF_SubArrayPointing pointing;      
       
     if (H5Iis_valid(location_p)) {
       std::string name;
-      std::map<std::string,BF_PrimaryPointing>::iterator it;
+      std::map<std::string,BF_SubArrayPointing>::iterator it;
       
-      name = BF_PrimaryPointing::getName (pointingID);
+      name = BF_SubArrayPointing::getName (pointingID);
       it   = primaryPointings_p.find(name);
 
       if (it != primaryPointings_p.end()) {

@@ -32,7 +32,7 @@
 #include <CommonInterface.h>
 #include <Filename.h>
 #include <BF_Dataset.h>
-#include <BF_PrimaryPointing.h>
+#include <BF_SubArrayPointing.h>
 #include <SysLog.h>
 
 namespace DAL { // Namespace DAL -- begin
@@ -66,7 +66,7 @@ namespace DAL { // Namespace DAL -- begin
 	datasets
 	<li>CommonInterface -- Common functionality for the high-level
 	interfaces to the datasets
-	<li>BF_PrimaryPointing
+	<li>BF_SubArrayPointing
 	<li>SysLog
       </ul>
     </ul>
@@ -122,7 +122,7 @@ namespace DAL { // Namespace DAL -- begin
       \endcode
 
       <li>Creating a new Beam group (BF_Beam) might require the previous creation
-      of Primary Pointing Direction group (BF_PrimaryPointing):
+      of Primary Pointing Direction group (BF_SubArrayPointing):
       \code
       unsigned int pointingID (10);
       unsigned int beamID (3);
@@ -145,7 +145,7 @@ namespace DAL { // Namespace DAL -- begin
     //! LOFAR common attributes attached to the root group of the dataset
     CommonAttributes commonAttributes_p;
     //! Primary Pointing Directions
-    std::map<std::string,BF_PrimaryPointing> primaryPointings_p;
+    std::map<std::string,BF_SubArrayPointing> primaryPointings_p;
     //! Container for system-wide logs
     std::map<std::string,SysLog> sysLog_p;
 
@@ -216,7 +216,7 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Get a primary pointing direction group
-    BF_PrimaryPointing primaryPointing (unsigned int const &pointingID);
+    BF_SubArrayPointing primaryPointing (unsigned int const &pointingID);
 
     //! Open a beam group
     bool openBeam (unsigned int const &pointingID,

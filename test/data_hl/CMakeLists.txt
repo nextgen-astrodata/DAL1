@@ -53,7 +53,7 @@ endif (dataset_tbb)
 add_test (tBF_Dataset tBF_Dataset)
 add_test (tBF_Beam tBF_Beam)
 add_test (tBF_ProcessingHistory tBF_ProcessingHistory)
-add_test (tBF_PrimaryPointing tBF_PrimaryPointing)
+add_test (tBF_SubArrayPointing tBF_SubArrayPointing)
 add_test (tSysLog tSysLog)
 add_test (tTBB_StationTrigger tTBB_StationTrigger)
 
