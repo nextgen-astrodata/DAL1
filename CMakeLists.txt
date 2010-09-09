@@ -59,7 +59,6 @@ endif (DAL_ENABLE_DASHBOARD OR DAL_ENABLE_TESTING)
 ## Handle option: verbose mode during configuration on/off
 
 if (NOT DAL_VERBOSE_CONFIGURE)
-  set (BLITZ_FIND_QUIETLY     YES )
   set (BOOST_FIND_QUIETLY     YES )
   set (CASACORE_FIND_QUIETLY  YES )
   set (CFITSIO_FIND_QUIETLY   YES )
@@ -99,7 +98,6 @@ include (IncludeFindModule)
 set (NO_DEFAULT_PATH YES)
 
 set (dal_cmake_modules
-  Blitz
   CASACORE
   CFITSIO
   GFortran
@@ -238,11 +236,6 @@ include_directories (
 
 ##__________________________________________________________
 ## Header files of external packages
-
-if (HAVE_BLITZ)
-  include_directories (${BLITZ_INCLUDES})
-  add_definitions (-DHAVE_BLITZ -DBZ_HAVE_NCEG_RESTRICT)
-endif (HAVE_BLITZ)
 
 if (HAVE_BOOST)
   include_directories (${BOOST_INCLUDES} ${BOOST_INCLUDES}/boost)
@@ -514,7 +507,6 @@ message (STATUS " Python version                   = ${PYTHON_VERSION}"         
 message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}" )
 message (STATUS " Enable Dashboard server          = ${DAL_ENABLE_DASHBOARD}"   )
 message (STATUS " Enable Python bindings           = ${DAL_PYTHON_BINDINGS}"    )
-message (STATUS " Enable code using Blitz++        = ${HAVE_BLITZ}"             )
 message (STATUS " Enable code using casacore       = ${HAVE_CASACORE}"          )
 message (STATUS " Enable code using CFITSIO        = ${HAVE_CFITSIO}"           )
 message (STATUS " Enable code using GSL            = ${HAVE_GSL}"               )
@@ -530,8 +522,6 @@ message (STATUS " Enable code using OpenMP         = ${HAVE_OPENMP}"            
 
 if (DAL_VERBOSE_CONFIGURE)
   message (STATUS "+------------------------------------------------------------+")
-  message (STATUS " Blitz++ includes         = ${BLITZ_INCLUDES}")
-  message (STATUS " Blitz++ library          = ${BLITZ_LIBRARIES}")
   message (STATUS " Boost includes           = ${BOOST_INCLUDES}")
   message (STATUS " Boost library            = ${BOOST_LIBRARIES}")
   message (STATUS " HDF5 includes            = ${HDF5_INCLUDES}")
