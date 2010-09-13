@@ -34,11 +34,6 @@ if (HAVE_CASA OR HAVE_CASACORE)
   ## linker instructions
   list (APPEND apps_link_libraries
     ${dal_link_libraries}
-#    ${CASA_LIBRARIES}
-#    ${LAPACK_LIBRARIES}
-#    ${CFITSIO_LIBRARIES}
-#    ${WCSLIB_LIBRARIES}
-#    ${GFORTRAN_LIBRARIES}
     )
 else (HAVE_CASA OR HAVE_CASACORE)
   message (STATUS "[DAL] Unable to build applications: msread, ms2h5")

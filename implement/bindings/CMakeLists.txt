@@ -1,7 +1,7 @@
 
 file (GLOB pydal_sources *.cc)
 
-## Compiler instructions
+## Compiler instructions _________________________
 
 remove_definitions (-dynamiclib -install_name)
 
@@ -14,22 +14,22 @@ include_directories (
   ${NUM_UTIL_INCLUDES}
   )
 
-## linker instructions
+## linker instructions ___________________________
 
 target_link_libraries(pydal
   ${dal_link_libraries}
   ${PYTHON_LIBRARIES}
-  ${BOOST_LIBRARIES}
-  ${NUM_UTIL_LIBRARIES}
-  ${CFITSIO_LIBRARIES}
-  ${WCSLIB_LIBRARIES}
-  ${LAPACK_LIBRARIES}
+#  ${BOOST_LIBRARIES}
+#  ${NUM_UTIL_LIBRARIES}
+#  ${CFITSIO_LIBRARIES}
+#  ${WCSLIB_LIBRARIES}
+#  ${LAPACK_LIBRARIES}
   ${HAVE_LIBDL}
   ${HAVE_LIBPTHREAD}
   ${HAVE_LIBUTIL}
   )
 
-## Additional target properties
+## Additional target properties __________________
 
 if (APPLE)
   set_target_properties (pydal

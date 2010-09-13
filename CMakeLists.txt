@@ -98,6 +98,7 @@ include (IncludeFindModule)
 set (NO_DEFAULT_PATH YES)
 
 set (dal_cmake_modules
+  Boost
   CASACORE
   CFITSIO
   GFortran
@@ -142,19 +143,6 @@ if (CMAKE_SIZEOF_VOID_P)
     add_definitions (-DWORDSIZE_IS_64)
   endif (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 endif (CMAKE_SIZEOF_VOID_P)
-
-##__________________________________________________________
-## Boost
-
-set (BOOST_pythonOnly FALSE)
-
-if (NOT DAL_PYTHON_BINDINGS)
-  set (BOOST_FIND_python FALSE)
-endif (NOT DAL_PYTHON_BINDINGS)
-
-if (NOT HAVE_BOOST)
-  include (FindBoost)
-endif (NOT HAVE_BOOST)
 
 ##__________________________________________________________
 ## PYTHON (we use custom module in place of FindPythonLibs)

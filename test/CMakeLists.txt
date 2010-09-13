@@ -120,9 +120,6 @@ if (HAVE_CASACORE)
 	  target_link_libraries (${src}
 	    dal
 	    ${dal_link_libraries}
-#	    ${CASA_LIBRARIES}
-#	    ${CFITSIO_LIBRARIES}
-#	    ${WCSLIB_LIBRARIES}
 	    ${GFORTRAN_LIBRARIES}
 	    )
 	  ## installation
