@@ -333,7 +333,29 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! Provide a summary of the internal status and processing statistics
     void summary (std::ostream &os);
-    
+
+    /*!
+      \brief return the station-id of the data-frame
+      
+      \param inbuff  -- pointer to one TBB data-frame (incl. header etc.)
+      
+      \return the station id      
+    */      
+    inline static unsigned char getStationId (char *inbuff) {
+      return ((TBB_Header*)inbuff)->stationid;
+    };
+
+    /*!
+      \brief return the (unix-like) time of the data-frame
+      
+      \param inbuff  -- pointer to one TBB data-frame (incl. header etc.)
+      
+      \return the time (seconds since the epoch)
+    */      
+    inline static Int32 getDataTime (char *inbuff) {
+      return ((TBB_Header*)inbuff)->time;
+    };
+
   private:
     // ----------------------------------------------------------- Private Methods
 
