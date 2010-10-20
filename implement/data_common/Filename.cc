@@ -31,22 +31,43 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                     Filename
+
   Filename::Filename ()
   {
     init ();
   }
   
+  //_____________________________________________________________________________
+  //                                                                     Filename
+
+  /*!
+    \param observationID       -- Unique identifier for the observation
+    \param optionalDescription -- Optional descriptors
+    \param filetype            -- Marker for the contents of the file
+    \param extension           -- Extension of the file
+    \param path                -- Path to the location of the file
+   */
   Filename::Filename (std::string const &observationID,
 		      std::string const &optionalDescription,
 		      FileType const &filetype,
-		      FileExtension const &extension)
+		      FileExtension const &extension,
+		      std::string const &path)
   {
     setObservationID (observationID);
     setOptionalDescription (optionalDescription);
     setFiletype (filetype);
     setExtension (extension);
+    setPath (path);
   }
 
+  //_____________________________________________________________________________
+  //                                                                     Filename
+
+  /*!
+    \param other -- Another Filename object from which to make a copy.
+  */
   Filename::Filename (Filename const &other)
   {
     copy (other);
@@ -72,6 +93,14 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                    operator=
+  
+  /*!
+    \param other -- Another Filename object from which to make a copy.
+
+    \return filename -- Pointer to a Filename reference object.
+  */
   Filename& Filename::operator= (Filename const &other)
   {
     if (this != &other) {
@@ -81,12 +110,19 @@ namespace DAL { // Namespace DAL -- begin
     return *this;
   }
   
+  //_____________________________________________________________________________
+  //                                                                         copy
+  
+  /*!
+    \param other -- Another Filename object from which to make a copy.
+  */
   void Filename::copy (Filename const &other)
   {
     observationID_p       = other.observationID_p;
     optionalDescription_p = other.optionalDescription_p;
     filetype_p            = other.filetype_p;
     extension_p           = other.extension_p;
+    path_p                = other.path_p;
   }
 
   // ============================================================================
@@ -115,14 +151,18 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      summary
   
+  /*!
+    \param os -- Output stream to which the summary is written.
+  */
   void Filename::summary (std::ostream &os)
   {
-    os << "[Filename] Summary of internal parameters." << std::endl;
+    os << "[Filename] Summary of internal parameters."          << std::endl;
     os << "-- Observation ID       = " << observationID_p       << std::endl;
     os << "-- Optional description = " << optionalDescription_p << std::endl;
     os << "-- File type            = " << getName(filetype_p)   << std::endl;
     os << "-- File extension       = " << getName(extension_p)  << std::endl;
     os << "-- Filename             = " << filename()            << std::endl;
+    os << "-- File path            = " << path()                << std::endl;
   }
   
   // ============================================================================
@@ -131,21 +171,35 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                         init
+
   void Filename::init ()
   {
     observationID_p       = "";
     optionalDescription_p = "";
     filetype_p            = Filename::uv;
     extension_p           = Filename::h5;
+    path_p                = "";
   }
 
   //_____________________________________________________________________________
   //                                                                     filename
 
-  std::string Filename::filename ()
+  /*!
+    \param fullpath -- Provide the full path to the file.
+  */
+  std::string Filename::filename (bool const &fullpath)
   {
-    std::string name ("L");
+    std::string name ("");
 
+    if (fullpath && path_p != "") {
+      name += path_p;
+      name += "/";
+    }
+
+    /* Construct the actual filename out of the individual components */
+    name += "L";
     name += observationID_p;
     if (optionalDescription_p != "") {
       name += "_";
@@ -162,6 +216,10 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      getName
 
+  /*!
+    \param extension -- Extension (suffix) of the file.
+    \return name     -- Extension (suffix) of the file.
+   */
   std::string Filename::getName (Filename::FileExtension const &extension)
   {
     std::string name ("UNDEFINED");
@@ -208,6 +266,10 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      getName
 
+  /*!
+    \param filetype -- Marker for the contents of the file.
+    \return name    -- The marker for the contents of the file as string.
+   */
   std::string Filename::getName (Filename::FileType const &filetype)
   {
     std::string name ("UNDEFINED");

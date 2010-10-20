@@ -55,6 +55,7 @@ int test_constructors ()
   cout << "\n[tFilename::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
+  std::string path ("/tmp/lofarsoft");
   
   cout << "[1] Testing default constructor ..." << endl;
   try {
@@ -79,12 +80,27 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[3] Testing copy constructor ..." << endl;
+  cout << "[3] Testing argumented constructor ..." << endl;
+  try {
+    Filename file ("1234567890",
+		   "TBBraw",
+		   Filename::tbb,
+		   Filename::h5,
+		   path);
+    //
+    file.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[4] Testing copy constructor ..." << endl;
   try {
     Filename file1 ("1234567890",
 		    "TBBraw",
 		    Filename::tbb,
-		    Filename::h5);
+		    Filename::h5,
+		    path);
     file1.summary();
     //
     Filename file2 (file1);
@@ -112,25 +128,31 @@ int test_attributes ()
   cout << "\n[tFilename::test_attributes]\n" << endl;
 
   int nofFailedTests (0);
+  std::string path ("/tmp/lofarsoft");
   Filename file;
 
   cout << "[1] Assigning attributes ..." << endl;
   try {
     file.setObservationID ("1234567890");
     cout << "-- Observation ID       = " << file.observationID() << endl;
-    cout << "--> " << file.filename() << endl;
+    cout << "--> " << file.filename()     << endl;
     //
     file.setOptionalDescription ("D20091010");
     cout << "-- Optional description = " << file.optionalDescription() << endl;
-    cout << "--> " << file.filename() << endl;
+    cout << "--> " << file.filename()     << endl;
     //
     file.setFiletype (Filename::tbb);
     cout << "-- Filetype             = " << file.filetypeName() << endl;
-    cout << "--> " << file.filename() << endl;
+    cout << "--> " << file.filename()     << endl;
     //
     file.setExtension (Filename::h5);
     cout << "-- File extension       = " << file.extensionName() << endl;
-    cout << "--> " << file.filename() << endl;
+    cout << "--> " << file.filename()     << endl;
+    //
+    file.setPath (path);
+    cout << "-- File path            = " << file.path() << endl;
+    cout << "--> " << file.filename()     << endl;
+    cout << "--> " << file.filename(true) << endl;
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
