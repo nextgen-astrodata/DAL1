@@ -499,6 +499,7 @@ message (STATUS " Enable code using casacore       = ${HAVE_CASACORE}"          
 message (STATUS " Enable code using CFITSIO        = ${HAVE_CFITSIO}"           )
 message (STATUS " Enable code using GSL            = ${HAVE_GSL}"               )
 message (STATUS " Enable code using HDF5           = ${HAVE_HDF5}"              )
+message (STATUS " .. Version                       = ${HDF5_VERSION}"           )
 message (STATUS " .. Parallel I/O                  = ${HDF5_IS_PARALLEL}"       )
 message (STATUS " .. Compatibility macros          = ${DAL_HDF5_MACROS}"        )
 message (STATUS " Enable code using MPI            = ${MPI_FOUND}"              )
