@@ -72,6 +72,10 @@ namespace DAL {  // Namespace DAL -- begin
       U,
       //! Standard Stokes circular
       V,
+      //! Right circular
+      R,
+      //! Left circular
+      L,
       //! Right-right circular
       RR,
       //! Left-left circular
@@ -80,6 +84,10 @@ namespace DAL {  // Namespace DAL -- begin
       RL,
       //! Left-right circular
       LR,
+      //! X linear
+      X,
+      //! Y linear
+      Y,
       //! X parallel linear
       XX,
       //! Y parallel linear

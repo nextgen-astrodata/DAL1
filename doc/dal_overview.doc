@@ -137,6 +137,8 @@
     coordinates in FITS, A&A, \b 395, p. 1077-1122.
     <li>E. W. Greisen, M. R. Calabretta, F. G. Valdes, & S. L. Allen, (2006)
     Representations of spectral coordinates in FITS. A&A, \b 446, p. 747-771.
+    <li>L. B&auml;hren, A. Alexov, K. Anderson, J.-M. Grie&szlig;meier, (2010)
+    LOFAR Data Format ICD: Representations of World Coordinates, LOFAR-USG-ICD-002
   </ul>
     
 */

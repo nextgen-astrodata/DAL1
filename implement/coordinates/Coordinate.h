@@ -76,16 +76,14 @@ namespace DAL {   // Namespace DAL -- begin
     enum Type {
       //! Direction coordinate
       Direction,
-      //! Spectral coordinate
-      Frequency,
       //! Linear coordinate
       Linear,
-      //! Spectral coordinate,
-      Spectral,
-      //! Stokes parameters coordinate
-      Stokes,
       //! Tabulated coordinate
       Tabular,
+      //! Stokes parameters coordinate
+      Stokes,
+      //! Spectral coordinate,
+      Spectral,
       //! Undefined coordinate type
       NONE
     };
@@ -111,7 +109,7 @@ namespace DAL {   // Namespace DAL -- begin
     
   public:
     
-    // ------------------------------------------------------------- Construction
+    // === Construction =========================================================
     
     //! Default constructor
     Coordinate ();
@@ -130,12 +128,12 @@ namespace DAL {   // Namespace DAL -- begin
     //! Copy constructor
     Coordinate (Coordinate const &other);
     
-    // -------------------------------------------------------------- Destruction
+    // === Destruction ==========================================================
     
     //! Destructor
     virtual ~Coordinate ();
     
-    // ---------------------------------------------------------------- Operators
+    // === Operators ============================================================
     
     /*!
       \brief Overloading of the copy operator
@@ -242,28 +240,21 @@ namespace DAL {   // Namespace DAL -- begin
     
     /*!
       \brief Get the name of the class
-      
       \return className -- The name of the class, Coordinate.
     */
     inline std::string className () const {
       return "Coordinate";
     }
     
-    /*!
-      \brief Provide a summary of the internal status
-    */
+    //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
     }
     
-    /*!
-      \brief Provide a summary of the internal status
-      
-      \param os -- Output stream to which the summary is written.
-    */
+    //! Provide a summary of the internal status
     void summary (std::ostream &os);
     
-    // ------------------------------------------------------------------ Methods
+    // === Methods ==============================================================
     
     //! Get name type of the coordinate as name
     static std::string getName (Coordinate::Type const &type);
@@ -312,7 +303,7 @@ namespace DAL {   // Namespace DAL -- begin
     void copy (Coordinate const &other);
     
     //! Initilize the internal set of parameters
-    void init ();
+    void init (unsigned int const &nofAxes=0);
     
   private:
 

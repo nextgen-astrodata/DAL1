@@ -23,31 +23,30 @@
 
 #include <Coordinate.h>
 
-namespace DAL   // Namespace DAL -- begin
-  {
-
+namespace DAL {
+  
   // ============================================================================
   //
   //  Construction
   //
   // ============================================================================
-
+  
   //_____________________________________________________________________________
   //                                                                   Coordinate
-
+  
   Coordinate::Coordinate ()
   {
     coordinateType_p = Coordinate::NONE;
     nofAxes_p        = 1;
     init();
   }
-
+  
   //_____________________________________________________________________________
   //                                                                   Coordinate
-
+  
   /*!
     \param coordinateType -- Type of coordinate for which the object is being
-           created.
+    created.
     \param nofAxes        -- Number of coordinate axes.
   */
   Coordinate::Coordinate (Coordinate::Type const &coordinateType,
@@ -57,10 +56,10 @@ namespace DAL   // Namespace DAL -- begin
     nofAxes_p        = nofAxes;
     init();
   }
-
+  
   //_____________________________________________________________________________
   //                                                                   Coordinate
-
+  
   Coordinate::Coordinate (Coordinate::Type const &coordinateType,
                           unsigned int const &nofAxes,
                           std::vector<std::string> const &axisNames,
@@ -81,10 +80,10 @@ namespace DAL   // Namespace DAL -- begin
     setIncrement (increment);
     setPc        (pc);
   }
-
+  
   //_____________________________________________________________________________
   //                                                                   Coordinate
-
+  
   /*!
     \param other -- Another Coordinate object from which to create this new
            one.
@@ -93,7 +92,7 @@ namespace DAL   // Namespace DAL -- begin
   {
     copy (other);
   }
-
+  
   // ============================================================================
   //
   //  Destruction
@@ -154,15 +153,18 @@ namespace DAL   // Namespace DAL -- begin
   //  Parameters
   //
   // ============================================================================
-
+  
   std::string Coordinate::name ()
   {
     return getName (coordinateType_p);
   }
-
+  
   //_____________________________________________________________________________
   //                                                                      summary
-
+  
+  /*!
+    \param os -- Output stream to which the summary is written.
+  */
   void Coordinate::summary (std::ostream &os)
   {
     os << "[Coordinate] Summary of internal parameters." << std::endl;
@@ -174,8 +176,7 @@ namespace DAL   // Namespace DAL -- begin
     os << "-- Reference pixel  = " << refPixel_p       << std::endl;
     os << "-- Increment        = " << increment_p      << std::endl;
   }
-
-
+  
   // ============================================================================
   //
   //  Methods
@@ -185,27 +186,64 @@ namespace DAL   // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         init
 
-  void Coordinate::init ()
+  /*!
+    \param nofAxes -- The number of coordinate axes.
+  */
+  void Coordinate::init (unsigned int const &nofAxes)
   {
-    /* Resize internal arrays */
-    axisNames_p.resize(nofAxes_p);
-    axisUnits_p.resize(nofAxes_p);
-    refValue_p.resize(nofAxes_p);
-    refPixel_p.resize(nofAxes_p);
-    increment_p.resize(nofAxes_p);
-    pc_p.resize(nofAxes_p*nofAxes_p);
+    unsigned int n;
+    unsigned int row;
+    unsigned int col;
 
-    axisNames_p = std::vector<std::string> (nofAxes_p,"UNDEFINED");
-    axisUnits_p = std::vector<std::string> (nofAxes_p,"UNDEFINED");
-    refValue_p  = std::vector<double> (nofAxes_p,0.0);
-    refPixel_p  = std::vector<double> (nofAxes_p,0.0);
-    increment_p = std::vector<double> (nofAxes_p,0.0);
-    pc_p        = std::vector<double> (pc_p.size(),1.0);
+    if (nofAxes <= 0) {
+      // Set the number of coordinate axes
+      nofAxes_p = 0;
+      // Reset the size of the internal arrays
+      axisNames_p.clear();
+      axisUnits_p.clear();
+      refValue_p.clear();
+      refPixel_p.clear();
+      increment_p.clear();
+      pc_p.clear();
+    } else {
+      // set the number of coordinate axes
+      nofAxes_p = nofAxes;
+      // Adjust the size of the internal arrays
+      axisNames_p.resize(nofAxes);
+      axisUnits_p.resize(nofAxes);
+      refValue_p.resize(nofAxes);
+      refPixel_p.resize(nofAxes);
+      increment_p.resize(nofAxes);
+      pc_p.resize(nofAxes*nofAxes);
+      // Fill in default values for the WCS parameters
+      axisNames_p = std::vector<std::string> (nofAxes,"UNDEFINED");
+      axisUnits_p = std::vector<std::string> (nofAxes,"UNDEFINED");
+      refValue_p  = std::vector<double> (nofAxes,0.0);
+      refPixel_p  = std::vector<double> (nofAxes,0.0);
+      increment_p = std::vector<double> (nofAxes,0.0);
+      
+      pc_p = std::vector<double> (pc_p.size(),0.0);
+      for (row=0; row<nofAxes; ++row) {
+	for (col=0; col<nofAxes; ++col) {
+	  if (row==col) {
+	    n = row*nofAxes+col;
+	    pc_p[n] = 1.0;
+	  }
+	}
+      }
+      
+    }
+    
   };
-
+  
   //_____________________________________________________________________________
   //                                                                      getName
 
+  /*!
+    \param type -- The type of coordinate.
+
+    \return name -- The type of the coordinate as string.
+  */
   std::string Coordinate::getName (Coordinate::Type const &type)
   {
     std::string coordinateName;
@@ -214,9 +252,6 @@ namespace DAL   // Namespace DAL -- begin
       {
       case DAL::Coordinate::Direction:
         coordinateName="Direction";
-        break;
-      case DAL::Coordinate::Frequency:
-        coordinateName="Frequency";
         break;
       case DAL::Coordinate::Linear:
         coordinateName="Linear";
@@ -247,9 +282,6 @@ namespace DAL   // Namespace DAL -- begin
 
     if (name == "Direction") {
       coordinateType = Coordinate::Direction;
-    }
-    else if (name == "Frequency") {
-      coordinateType = Coordinate::Frequency;
     }
     else if (name == "Linear") {
       coordinateType = Coordinate::Linear;
