@@ -44,6 +44,42 @@
 //
 // ==============================================================================
 
+void export_Angle ()
+{
+  //________________________________________________________
+  // Specialisation of overloaded methods
+
+  void (Angle::*summary1)() 
+    = &Angle::summary;
+  void (Angle::*summary2)(std::ostream &) 
+    = &Angle::summary;
+
+  //________________________________________________________
+  // Bindings for class and its methods
+
+  bpl::class_<Angle>("Angle")
+    // Construction
+    .def( bpl::init<>())
+    .def( bpl::init<double const &, bool const &>())
+    .def( bpl::init<Angle>())
+    // Parameter access
+    .def("setAngle", &Angle::setAngle, "Set the angle.")
+    .def("rad",      &Angle::rad,      "Get the angle in radian.")
+    .def("deg",      &Angle::deg,      "Get the angle in degrees.")
+    .def("hms",      &Angle::hms,      "Get the angle as formatted string (HH:MM:SS)")
+    .def("className",
+	 &Angle::className,
+	 "Get the name of the class.")
+    // Methods
+    .def("summary",
+	 summary1,
+	 "Summary of the object's internal parameters and status.")
+    .def("summary",
+	 summary2,
+	 "Summary of the object's internal parameters and status.")
+    // Static Public Member Functions
+    ;
+}
 
 // ==============================================================================
 //
@@ -51,6 +87,43 @@
 //
 // ==============================================================================
 
+void export_RaDec ()
+{
+  //________________________________________________________
+  // Specialisation of overloaded methods
+
+  void (RaDec::*summary1)() 
+    = &RaDec::summary;
+  void (RaDec::*summary2)(std::ostream &) 
+    = &RaDec::summary;
+
+  //________________________________________________________
+  // Bindings for class and its methods
+
+  bpl::class_<RaDec>("RaDec")
+    // Construction
+    .def( bpl::init<>())
+    .def( bpl::init<double const &, double const &, bool const &>())
+    .def( bpl::init<RaDec>())
+    // Parameter access
+    .def("setRA",    &RaDec::setRA,    "Set Right Ascension angle.")
+    .def("setDec",   &RaDec::setDec,    "Set Declination angle.")
+    .def("rad",      &RaDec::rad,      "Get (RA,Dec) in radian.")
+    .def("deg",      &RaDec::deg,      "Get (RA,Dec) in degrees.")
+    .def("hms",      &RaDec::hms,      "Get (RA,Dec) as formatted string (HH:MM:SS).")
+    .def("className",
+	 &RaDec::className,
+	 "Get the name of the class.")
+    // Methods
+    .def("summary",
+	 summary1,
+	 "Summary of the object's internal parameters and status.")
+    .def("summary",
+	 summary2,
+	 "Summary of the object's internal parameters and status.")
+    // Static Public Member Functions
+    ;
+}
 
 // ==============================================================================
 //

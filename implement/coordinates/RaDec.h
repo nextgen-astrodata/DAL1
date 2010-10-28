@@ -104,10 +104,10 @@ namespace DAL { // Namespace DAL -- begin
     // === Parameter access =====================================================
 
     //! Get (RA,Dec) in radian
-    std::vector<double> radian ();
+    std::vector<double> rad ();
     
     //! Get (RA,Dec) in degrees
-    std::vector<double> degrees ();
+    std::vector<double> deg ();
     
     //! Get (RA,Dec) as formatted string (HH:MM:SS)
     std::vector<std::string> hms ();

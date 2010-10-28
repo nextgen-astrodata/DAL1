@@ -40,7 +40,7 @@ using namespace DAL;
   \author Joseph Masters, Lars B&auml;hren
 
   <h3>Synopsis</h3>
-  
+
 */
 
 // === core =====================================================================
@@ -63,6 +63,10 @@ void export_dalTable ();
 
 // === coordinates ==============================================================
 
+//! Bindings for DAL::Angle
+void export_Angle ();
+//! Bindings for DAL::RaDec
+void export_RaDec ();
 //! Bindings for DAL::Stokes
 void export_Stokes ();
 

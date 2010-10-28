@@ -109,9 +109,9 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
 
   //_____________________________________________________________________________
-  //                                                                       radian
+  //                                                                          rad
 
-  std::vector<double> RaDec::radian ()
+  std::vector<double> RaDec::rad ()
   {
     std::vector<double> rad (2);
 
@@ -122,9 +122,9 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                                      degrees
+  //                                                                          deg
 
-  std::vector<double> RaDec::degrees ()
+  std::vector<double> RaDec::deg ()
   {
     std::vector<double> deg (2);
 
@@ -218,10 +218,10 @@ namespace DAL { // Namespace DAL -- begin
   */
   void RaDec::summary (std::ostream &os)
   {
-    os << "[RaDec] Summary of internal parameters." << std::endl;
-    os << "-- (RA,Dec) in radian           = " << radian()  << std::endl;
-    os << "-- (RA,Dec) in degrees          = " << degrees() << std::endl;
-    os << "-- (RA,Dec) as formatted string = " << hms()     << std::endl;
+    os << "[RaDec] Summary of internal parameters."      << std::endl;
+    os << "-- (RA,Dec) in radian           = " << rad()  << std::endl;
+    os << "-- (RA,Dec) in degrees          = " << deg()  << std::endl;
+    os << "-- (RA,Dec) as formatted string = " << hms()  << std::endl;
   }
   
   // ============================================================================
