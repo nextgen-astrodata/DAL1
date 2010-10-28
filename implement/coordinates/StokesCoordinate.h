@@ -27,9 +27,11 @@
 // Standard library header files
 #include <iostream>
 #include <string>
+#include <vector>
 
 // DAL header files
 #include <Coordinate.h>
+#include <Stokes.h>
 
 #ifdef HAVE_CASA
 #include <coordinates/Coordinates/StokesCoordinate.h>
@@ -53,65 +55,34 @@ namespace DAL {  // Namespace DAL -- begin
 
     <h3>Prerequisite</h3>
 
+    <ul>
+      <li>DAL::Stokes -- Components of a Stokes coordinate.
+    </ul>
+
     <h3>Synopsis</h3>
     
     <h3>Example(s)</h3>
     
   */
   class StokesCoordinate : public Coordinate {
-    
-  public:
-    
-    //! Conventional Stokes values
-    enum Stokes {
-      //! Standard Stokes unpolarized
-      I,
-      //! Standard Stokes linear
-      Q,
-      //! Standard Stokes linear
-      U,
-      //! Standard Stokes circular
-      V,
-      //! Right circular
-      R,
-      //! Left circular
-      L,
-      //! Right-right circular
-      RR,
-      //! Left-left circular
-      LL,
-      //! Right-left circular
-      RL,
-      //! Left-right circular
-      LR,
-      //! X linear
-      X,
-      //! Y linear
-      Y,
-      //! X parallel linear
-      XX,
-      //! Y parallel linear
-      YY,
-      //! XY cross linear
-      XY,
-      //! YX cross linear
-      YX
-    };
-    
-  private:
 
-    std::vector<StokesCoordinate::Stokes> values_p;
+    //! Set of Stokes components represented by this coordinate
+    std::vector<DAL::Stokes> values_p;
 
   public:
     
-    // ------------------------------------------------------------- Construction
+    // === Construction =========================================================
     
     //! Default constructor
     StokesCoordinate ();
     //! Argumented constructor
-    StokesCoordinate (StokesCoordinate::Stokes const &value);
+    StokesCoordinate (Stokes::Component const &value);
     //! Argumented constructor
-    StokesCoordinate (std::vector<StokesCoordinate::Stokes> const &values);
+    StokesCoordinate (DAL::Stokes const &value);
+    //! Argumented constructor
+    StokesCoordinate (std::vector<DAL::Stokes::Component> const &values);
+    //! Argumented constructor
+    StokesCoordinate (std::vector<DAL::Stokes> const &values);
 #ifdef HAVE_CASA
     //! Construction from casa::StokesCoordinate object
     StokesCoordinate (casa::StokesCoordinate const &coord) {
@@ -121,12 +92,12 @@ namespace DAL {  // Namespace DAL -- begin
     //! Copy constructor
     StokesCoordinate (StokesCoordinate const &other);
     
-    // -------------------------------------------------------------- Destruction
+    // === Destruction ==========================================================
     
     //! Destructor
     ~StokesCoordinate ();
     
-    // ---------------------------------------------------------------- Operators
+    // === Operators ============================================================
     
     /*!
       \brief Overloading of the copy operator
@@ -135,59 +106,35 @@ namespace DAL {  // Namespace DAL -- begin
     */
     StokesCoordinate& operator= (StokesCoordinate const &other);
     
-    // --------------------------------------------------------------- Parameters
+    // === Parameter access =====================================================
 
-    //! Get the types of Stokes values for this coordinate
-    inline std::vector<StokesCoordinate::Stokes> getTypes () {
-      return values_p;
-    }
-    
-    //! Get the names of Stokes values for this coordinate
-    inline std::vector<std::string> getName () {
-      std::vector<std::string> names;
-      for (unsigned int (n); n<values_p.size(); n++) {
-	names.push_back (getName(values_p[n]));
-      }
-      return names;
-    }
-    
     /*!
       \brief Get the name of the class
-      
       \return className -- The name of the class, StokesCoordinate.
     */
     inline std::string className () const {
       return "StokesCoordinate";
     }
     
-    /*!
-      \brief Provide a summary of the internal status
-    */
+    //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
     }
     
-    /*!
-      \brief Provide a summary of the internal status
-      
-      \param os -- Output stream to which the summary is written.
-    */
+    //! Provide a summary of the internal status
     void summary (std::ostream &os);
     
-    // ------------------------------------------------------------------ Methods
+    // === Methods ==============================================================
 
-    //! Get the name from the type of a Stokes value
-    static std::string getName (StokesCoordinate::Stokes const &type);
-
-    //! Get the type from the name of a Stokes value
-    static StokesCoordinate::Stokes getType (std::string const &name);
-
-    //! Get the types of Stokes values stored within this coordinate
-    inline std::vector<StokesCoordinate::Stokes> stokesTypes () {
+    //! Get the Stokes values represented by the coordinate
+    inline std::vector<DAL::Stokes> stokesValues () const {
       return values_p;
     }
 
-    //! Get the names of Stokes values stored within this coordinate
+    //! Get the Stokes component types represented by the coordinate
+    std::vector<DAL::Stokes::Component> stokesTypes ();
+
+    //! Get the Stokes component names represented by the coordinate
     std::vector<std::string> stokesNames ();
     
 #ifdef HAVE_HDF5
@@ -216,11 +163,11 @@ namespace DAL {  // Namespace DAL -- begin
   private:
 
     //! Initialize the internal parameters of the object
-    void init (std::vector<StokesCoordinate::Stokes> const &polarisation);
-    
+    void init (std::vector<DAL::Stokes::Component> const &values);
+    //! Initialize the internal parameters of the object
+    void init (std::vector<DAL::Stokes> const &values);
     //! Unconditional copying
     void copy (StokesCoordinate const &other);
-    
     //! Unconditional deletion
     void destroy(void);
     

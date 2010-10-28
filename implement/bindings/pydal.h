@@ -63,7 +63,8 @@ void export_dalTable ();
 
 // === coordinates ==============================================================
 
-
+//! Bindings for DAL::Stokes
+void export_Stokes ();
 
 // === data_common ==============================================================
 

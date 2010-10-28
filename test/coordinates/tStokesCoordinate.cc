@@ -23,10 +23,14 @@
 
 #include <StokesCoordinate.h>
 
+using std::cout;
+using std::endl;
+
 /*!
   \file tStokesCoordinate.cc
 
   \ingroup DAL
+  \ingroup coordinates
 
   \brief A collection of test routines for the StokesCoordinate class
  
@@ -34,73 +38,6 @@
  
   \date 2009/09/13
 */
-
-//_______________________________________________________________________________
-//                                                          test_static_functions
-
-/*!
-  \brief Test the static functions provided by the class
-
-  \return nofFailedTests -- The number of failed tests encountered within this
-          function.
-*/
-int test_static_functions ()
-{
-  std::cout << "\n[tStokesCoordinate::test_static_functions]\n" << std::endl;
-
-  int nofFailedTests (0);
-
-  std::vector<DAL::StokesCoordinate::Stokes> types;
-  std::vector<std::string> names;
-
-  types.push_back(DAL::StokesCoordinate::I);
-  types.push_back(DAL::StokesCoordinate::Q);
-  types.push_back(DAL::StokesCoordinate::U);
-  types.push_back(DAL::StokesCoordinate::V);
-  types.push_back(DAL::StokesCoordinate::RR);
-  types.push_back(DAL::StokesCoordinate::LL);
-  types.push_back(DAL::StokesCoordinate::RL);
-  types.push_back(DAL::StokesCoordinate::LR);
-
-  names.push_back("I");
-  names.push_back("Q");
-  names.push_back("U");
-  names.push_back("V");
-  names.push_back("RR");
-  names.push_back("LL");
-  names.push_back("RL");
-  names.push_back("LR");
-
-  std::cout << "[1] Get name from type ..." << std::endl;
-  try {
-    for (unsigned int n(0); n<types.size(); n++) {
-      std::cout << "\t"
-		<< types[n]
-		<< " -> "
-		<< DAL::StokesCoordinate::getName(types[n])
-		<< std::endl;
-    }
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-  
-  std::cout << "[1] Get type from name ..." << std::endl;
-  try {
-    for (unsigned int n(0); n<names.size(); n++) {
-      std::cout << "\t"
-		<< names[n]
-		<< " -> "
-		<< DAL::StokesCoordinate::getType(names[n])
-		<< std::endl;
-    }
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-  
-  return nofFailedTests;
-}
 
 //_______________________________________________________________________________
 //                                                              test_constructors
@@ -113,20 +50,133 @@ int test_static_functions ()
 */
 int test_constructors ()
 {
-  std::cout << "\n[tStokesCoordinate::test_constructors]\n" << std::endl;
+  cout << "\n[tStokesCoordinate::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  cout << "[1] Testing StokesCoordinate() ..." << endl;
   try {
     DAL::StokesCoordinate coord;
     //
     coord.summary(); 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[2] Testing StokesCoordinate (Stokes::Component) ..." << endl;
+  try {
+    DAL::StokesCoordinate stokesI (DAL::Stokes::I);
+    stokesI.summary();
+    //
+    DAL::StokesCoordinate stokesQ (DAL::Stokes::Q);
+    stokesQ.summary();
+    //
+    DAL::StokesCoordinate stokesU (DAL::Stokes::U);
+    stokesU.summary();
+    //
+    DAL::StokesCoordinate stokesV (DAL::Stokes::V);
+    stokesV.summary();
+    //
+    DAL::StokesCoordinate stokesR (DAL::Stokes::R);
+    stokesR.summary();
+    //
+    DAL::StokesCoordinate stokesL (DAL::Stokes::L);
+    stokesL.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[2] Testing StokesCoordinate (Stokes) ..." << endl;
+  try {
+    DAL::Stokes stokesI (DAL::Stokes::I);
+    DAL::Stokes stokesQ (DAL::Stokes::Q);
+    DAL::Stokes stokesR (DAL::Stokes::R);
+    DAL::Stokes stokesL (DAL::Stokes::L);
+    DAL::Stokes stokesX (DAL::Stokes::X);
+    DAL::Stokes stokesY (DAL::Stokes::Y);
+    //
+    DAL::StokesCoordinate coordI (stokesI);
+    coordI.summary();
+    //
+    DAL::StokesCoordinate coordQ (stokesQ);
+    coordQ.summary();
+    //
+    DAL::StokesCoordinate coordR (stokesR);
+    coordR.summary();
+    //
+    DAL::StokesCoordinate coordL (stokesL);
+    coordL.summary();
+    //
+    DAL::StokesCoordinate coordX (stokesX);
+    coordX.summary();
+    //
+    DAL::StokesCoordinate coordY (stokesY);
+    coordY.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   
+  cout << "[4] Testing StokesCoordinate(std::vector<DAL::Stokes::Component>) ..." << endl;
+  try {
+    unsigned int nelem (4);
+    std::vector<DAL::Stokes::Component> stokes (nelem);
+    //
+    stokes[0] = DAL::Stokes::I;
+    stokes[1] = DAL::Stokes::Q;
+    stokes[2] = DAL::Stokes::U;
+    stokes[3] = DAL::Stokes::V;
+    //
+    DAL::StokesCoordinate coord (stokes);
+    coord.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[5] Testing StokesCoordinate(std::vector<DAL::Stokes>) ..." << endl;
+  try {
+    unsigned int nelem (4);
+    std::vector<DAL::Stokes> stokes (nelem);
+    //
+    stokes[0] = DAL::Stokes(DAL::Stokes::X);
+    stokes[1] = DAL::Stokes(DAL::Stokes::Y);
+    stokes[2] = DAL::Stokes(DAL::Stokes::R);
+    stokes[3] = DAL::Stokes(DAL::Stokes::L);
+    //
+    DAL::StokesCoordinate coord (stokes);
+    coord.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[6] Testing StokesCoordinate(StokesCoordinate) ..." << endl;
+  try {
+    unsigned int nelem (8);
+    std::vector<DAL::Stokes> stokes (nelem);
+    //
+    stokes[0] = DAL::Stokes(DAL::Stokes::I);
+    stokes[1] = DAL::Stokes(DAL::Stokes::Q);
+    stokes[2] = DAL::Stokes(DAL::Stokes::U);
+    stokes[3] = DAL::Stokes(DAL::Stokes::V);
+    stokes[4] = DAL::Stokes(DAL::Stokes::X);
+    stokes[5] = DAL::Stokes(DAL::Stokes::Y);
+    stokes[6] = DAL::Stokes(DAL::Stokes::R);
+    stokes[7] = DAL::Stokes(DAL::Stokes::L);
+    //
+    DAL::StokesCoordinate coord (stokes);
+    coord.summary();
+    //
+    DAL::StokesCoordinate coordCopy (coord);
+    coordCopy.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
   return nofFailedTests;
 }
 
@@ -137,8 +187,6 @@ int main ()
 {
   int nofFailedTests (0);
 
-  // Test the static functions defined as part of the class
-  nofFailedTests += test_static_functions();
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
 

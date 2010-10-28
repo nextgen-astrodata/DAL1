@@ -31,32 +31,51 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
 
+
   //_____________________________________________________________________________
   //                                                             StokesCoordinate
-
+  
   StokesCoordinate::StokesCoordinate ()
-      : Coordinate(Coordinate::Stokes,
-                   1)
+    : Coordinate(Coordinate::Stokes, 1)
   {
-    std::vector<StokesCoordinate::Stokes> values(1);
-    values[0] = StokesCoordinate::I;
+    std::vector<Stokes::Component> stokes (1,Stokes::I);
+    init (stokes);
+  }
+
+  //_____________________________________________________________________________
+  //                                                             StokesCoordinate
+
+  StokesCoordinate::StokesCoordinate (Stokes::Component const &value)
+    : Coordinate(Coordinate::Stokes, 1)
+  {
+    std::vector<Stokes::Component> stokes (1,value);
+    init (stokes);
+  }
+
+  //_____________________________________________________________________________
+  //                                                             StokesCoordinate
+
+  StokesCoordinate::StokesCoordinate (DAL::Stokes const &value)
+    : Coordinate(Coordinate::Stokes, 1)
+  {
+    std::vector<DAL::Stokes> stokes (1,value);
+    init (stokes);
+  }
+
+  //_____________________________________________________________________________
+  //                                                             StokesCoordinate
+
+  StokesCoordinate::StokesCoordinate (std::vector<DAL::Stokes::Component> const &values)
+    : Coordinate(Coordinate::Stokes, 1)
+  {
     init (values);
   }
 
   //_____________________________________________________________________________
   //                                                             StokesCoordinate
 
-  StokesCoordinate::StokesCoordinate (StokesCoordinate::Stokes const &value)
-  {
-    std::vector<StokesCoordinate::Stokes> values(1);
-    values[0] = value;
-    init (values);
-  }
-
-  //_____________________________________________________________________________
-  //                                                             StokesCoordinate
-
-  StokesCoordinate::StokesCoordinate (std::vector<StokesCoordinate::Stokes> const &values)
+  StokesCoordinate::StokesCoordinate (std::vector<DAL::Stokes> const &values)
+    : Coordinate(Coordinate::Stokes, 1)
   {
     init (values);
   }
@@ -110,8 +129,7 @@ namespace DAL {  // Namespace DAL -- begin
     // copy variables handled by the base class
     Coordinate::copy (other);
     // copy variables handles by this class
-    values_p.resize(other.values_p.size());
-    values_p = other.values_p;
+    init (other.values_p);
   }
   
   // ============================================================================
@@ -119,15 +137,18 @@ namespace DAL {  // Namespace DAL -- begin
   //  Parameters
   //
   // ============================================================================
-  
+
+  /*!
+    \param os -- Output stream to which the summary is written.
+  */
   void StokesCoordinate::summary (std::ostream &os)
   {
     os << "[StokesCoordinate] Summary of internal parameters." << std::endl;
-    os << "-- Coordinate type       = " << type() << " / " <<  name() << std::endl;
-    os << "-- nof. axes             = " << nofAxes_p      << std::endl;
+    os << "-- Coordinate type        = " << type() << " / " <<  name() << std::endl;
+    os << "-- nof. axes              = " << nofAxes_p       << std::endl;
+    os << "-- nof. Stokes components = " << values_p.size() << std::endl;
+    os << "-- Stokes component names = " << stokesNames()   << std::endl;
   }
-
-
 
   // ============================================================================
   //
@@ -135,7 +156,25 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
 
-  void StokesCoordinate::init (std::vector<StokesCoordinate::Stokes> const &values)
+  //_____________________________________________________________________________
+  //                                                                         init
+  
+  void StokesCoordinate::init (std::vector<Stokes::Component> const &values)
+  {
+    unsigned int nelem = values.size();
+    std::vector<DAL::Stokes> stokes (nelem);
+
+    for (unsigned int n(0); n<nelem; ++n) {
+      stokes[n] = DAL::Stokes(values[n]);
+    }
+
+    init (stokes);
+  }
+
+  //_____________________________________________________________________________
+  //                                                                         init
+  
+  void StokesCoordinate::init (std::vector<DAL::Stokes> const &values)
   {
     // variables maintained by the base class
     coordinateType_p = Coordinate::Stokes;
@@ -147,95 +186,40 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                                      getName
-
-  std::string StokesCoordinate::getName (StokesCoordinate::Stokes const &type)
+  //                                                                  stokesTypes
+  
+  std::vector<Stokes::Component> StokesCoordinate::stokesTypes ()
   {
-    std::string name;
+    unsigned int nelem = values_p.size();
+    std::vector<DAL::Stokes::Component> val (nelem);
 
-    switch (type) {
-    case StokesCoordinate::I:
-      name = "I";
-      break;
-    case StokesCoordinate::Q:
-      name = "Q";
-      break;
-    case StokesCoordinate::U:
-      name = "U";
-      break;
-    case StokesCoordinate::V:
-      name = "V";
-      break;
-    case StokesCoordinate::RR:
-      name = "RR";
-      break;
-    case StokesCoordinate::LL:
-      name = "LL";
-      break;
-    case StokesCoordinate::RL:
-      name = "RL";
-      break;
-    case StokesCoordinate::LR:
-      name = "LR";
-      break;
-    case StokesCoordinate::XX:
-      name = "XX";
-      break;
-    case StokesCoordinate::YY:
-      name = "YY";
-      break;
-    case StokesCoordinate::XY:
-      name = "XY";
-      break;
-    case StokesCoordinate::YX:
-      name = "YX";
-      break;
-    default:
-      name = "UNDEFINED";
-      break;
-    };
-
-    return name;
+    for (unsigned int n(0); n<nelem; ++n) {
+      val[n] = values_p[n].type();
+    }
+    
+    return val;
   }
-
+  
   //_____________________________________________________________________________
-  //                                                                      getType
-
-  StokesCoordinate::Stokes StokesCoordinate::getType (std::string const &name)
+  //                                                                  stokesNames
+  
+  std::vector<std::string> StokesCoordinate::stokesNames ()
   {
-    StokesCoordinate::Stokes type;
+    unsigned int nelem = values_p.size();
+    std::vector<std::string> val (nelem);
 
-    if (name == "I") {
-      type = StokesCoordinate::I;
+    for (unsigned int n(0); n<nelem; ++n) {
+      val[n] = values_p[n].name();
     }
-    else if (name == "Q") {
-      type = StokesCoordinate::Q;
-    }
-    else if (name == "U") {
-      type = StokesCoordinate::U;
-    }
-    else if (name == "V") {
-      type = StokesCoordinate::V;
-    }
-    else if (name == "RR") {
-      type = StokesCoordinate::RR;
-    }
-    else if (name == "LL") {
-      type = StokesCoordinate::LL;
-    }
-    else if (name == "RL") {
-      type = StokesCoordinate::RL;
-    }
-    else if (name == "LR") {
-      type = StokesCoordinate::LR;
-    }
-    else {
-      std::cerr << "[StokesCoordinate::getType] Unknow name of Stokes value!"
-		<< std::endl;
-    }
-
-    return type;
+    
+    return val;
   }
+  
+  // ============================================================================
+  //
+  //  Methods (using HDF5 library)
+  //
+  // ============================================================================
 
 #ifdef HAVE_HDF5
 

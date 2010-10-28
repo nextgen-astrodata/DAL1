@@ -28,6 +28,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <vector>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -62,8 +63,8 @@ namespace DAL { // Namespace DAL -- begin
   class Stokes {
     
   public:
-
-        //! Recognized values for a Stokes component
+    
+    //! Recognized values for a Stokes component
     enum Component {
       /*! Standard Stokes total intensity, i.e. total Poynting vector of flux
 	density of the wave. */
@@ -107,11 +108,11 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Construction =========================================================
     
-    //! Default constructor
+    //! Default constructor; created Stokes::I component.
     Stokes ();
     
-    //! Arguented constructor
-    Stokes (Stokes::Component const &component);
+    //! Argumented constructor
+    Stokes (Stokes::Component const &type);
     
     //! Copy constructor
     Stokes (Stokes const &other);
@@ -129,7 +130,9 @@ namespace DAL { // Namespace DAL -- begin
     // === Parameter access =====================================================
 
     //! Get the type of the Stokes component
-    Stokes::Component type ();
+    inline Stokes::Component type () {
+      return component_p->first;
+    }
 
     //! Set the Stokes component by type
     bool setType (Stokes::Component const &type);
@@ -138,7 +141,9 @@ namespace DAL { // Namespace DAL -- begin
     bool setType (std::string const &name);
 
     //! Get the name of the Stokes component
-    std::string name ();
+    inline std::string name () {
+      return component_p->second;
+    }
 
     /*!
       \brief Get the name of the class
@@ -157,29 +162,37 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // === Public methods =======================================================
-    
-    static std::string name (Stokes::Component const &component);
+
+    //! Get list of component types
+    std::vector<Stokes::Component> componentTypes ();
+    //! Get list of component names
+    std::vector<std::string> componentNames ();
 
     //! Is the component linear?
-    static bool isLinear (Stokes::Component const &component);
-    
+    bool isLinear ();
+    //! Is the component linear?
+    static bool isLinear (Stokes::Component const &type);
     //! Is the component circular
-    static bool isCircular (Stokes::Component const &component);
-
+    bool isCircular ();
+    //! Is the component circular
+    static bool isCircular (Stokes::Component const &type);
     //! Is the component parallel?
-    static bool isParallel (Stokes::Component const &component);
-
+    bool isParallel ();
+    //! Is the component parallel?
+    static bool isParallel (Stokes::Component const &type);
     //! Is the component cross?
-    static bool isCross (Stokes::Component const &component);
+    bool isCross ();
+    //! Is the component cross?
+    static bool isCross (Stokes::Component const &type);
     
   private:
 
     // === Private variables ====================================================
 
-    //! Stokes component represented by this object
-    Stokes::Component component_p;
     //! List of Stokes components
     std::map<Stokes::Component,std::string> components_p;
+    //! Stokes component represented by this object
+    std::map<Stokes::Component,std::string>::iterator component_p;
 
     // === Private methods ======================================================
     
@@ -190,7 +203,7 @@ namespace DAL { // Namespace DAL -- begin
     void destroy(void);
 
     //! Initialize the object's internal parameters
-    void init (Stokes::Component const &component=Stokes::I);
+    void init (Stokes::Component const &type=Stokes::I);
     
   }; // Class Stokes -- end
   
