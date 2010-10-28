@@ -34,7 +34,23 @@
 
 // DAL headers
 #include "pydal.h"
+#include <Angle.h>
+#include <RaDec.h>
 #include <Stokes.h>
+
+// ==============================================================================
+//
+//                                                                          Angle
+//
+// ==============================================================================
+
+
+// ==============================================================================
+//
+//                                                                          RaDec
+//
+// ==============================================================================
+
 
 // ==============================================================================
 //
@@ -79,16 +95,12 @@ void export_Stokes ()
     = &Stokes::summary;
   bool (Stokes::*isLinear1)() 
     = &Stokes::isLinear;
-  // bool (Stokes::*isLinear2)(Stokes::Component const &) 
-  //   = &Stokes().isLinear;
   bool (Stokes::*isCircular1)() 
     = &Stokes::isCircular;
-  // static bool (Stokes::*isCircular2)(Stokes::Component const &) 
-  //   = &Stokes::isCircular;
   bool (Stokes::*isParallel1)() 
     = &Stokes::isParallel;
-  // static bool (Stokes::*isParallel2)(Stokes::Component const &) 
-  //   = &Stokes::isParallel;
+  bool (Stokes::*isCross1)() 
+    = &Stokes::isCross;
   
   //________________________________________________________
   // Bindings for class and its methods
@@ -124,15 +136,27 @@ void export_Stokes ()
     .def("isLinear",
 	 isLinear1,
 	 "Is the Stokes component linear?")
-    // .def("isLinear",
-    // 	 isLinear2,
-    // 	 "Is the Stokes component linear?")
+    .staticmethod("isLinear")
     .def("isCircular",
 	 isCircular1,
 	 "Is the Stokes component circular?")
+    .staticmethod("isCircular")
     .def("isParallel",
 	 isParallel1,
-	 "Is this a parallel combination of Stokes components?")
+	 "Is the combination of Stokes components parallel?")
+    .staticmethod("isParallel")
+    .def("isCross",
+	 isCross1,
+	 "Is the combination of Stokes components cross?")
+    .staticmethod("isCross")
     ;
   
 }
+
+// ==============================================================================
+//
+//                                                                     Coordinate
+//
+// ==============================================================================
+
+
