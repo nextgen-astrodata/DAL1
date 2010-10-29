@@ -30,6 +30,9 @@
 #include <string>
 #include <vector>
 
+// DAL header files
+#include <dalCommon.h>
+
 namespace DAL { // Namespace DAL -- begin
   
   /*!
@@ -162,12 +165,7 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // === Public methods =======================================================
-
-    //! Get list of component types
-    std::vector<Stokes::Component> componentTypes ();
-    //! Get list of component names
-    std::vector<std::string> componentNames ();
-
+    
     //! Is the component linear?
     bool isLinear ();
     //! Is the component linear?
@@ -185,6 +183,13 @@ namespace DAL { // Namespace DAL -- begin
     //! Is the component cross?
     static bool isCross (Stokes::Component const &type);
     
+    //! Get map of component types and names
+    static std::map<Stokes::Component,std::string> componentsMap ();
+    //! Get list of component types
+    static std::vector<Stokes::Component> componentsType ();
+    //! Get list of component names
+    static std::vector<std::string> componentsName ();
+
   private:
 
     // === Private variables ====================================================

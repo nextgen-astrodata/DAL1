@@ -135,29 +135,25 @@ namespace DAL {   // Namespace DAL -- begin
     
     // === Operators ============================================================
     
-    /*!
-      \brief Overloading of the copy operator
-      
-      \param other -- Another Coordinate object from which to make a copy.
-    */
+    //! Overloading of the copy operator
     Coordinate& operator= (Coordinate const &other);
     
-    // --------------------------------------------------------------- Parameters
+    // === Parameter access =====================================================
     
     //! Get the coordinate type
-    inline Coordinate::Type type () {
+    inline Coordinate::Type type () const {
       return coordinateType_p;
     }
     //! Get the coordinate type as name
     std::string name ();
 
     //! Get the number of coordinate axes
-    inline int nofAxes () {
+    inline int nofAxes () const {
       return nofAxes_p;
     }
     
     //! Get the world axis names
-    std::vector<std::string> axisNames () {
+    std::vector<std::string> axisNames () const {
       return axisNames_p;
     }
     //! Set the world axis names
@@ -168,7 +164,7 @@ namespace DAL {   // Namespace DAL -- begin
     }
     
     //! Get the world axis units
-    std::vector<std::string> axisUnits () {
+    std::vector<std::string> axisUnits () const {
       return axisUnits_p;
     }
     //! Set the world axis units

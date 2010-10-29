@@ -218,7 +218,12 @@ namespace DAL { // Namespace DAL -- begin
     //! Create a casa::StokesCoordinate object
     static bool makeCoordinate (casa::StokesCoordinate &coord);
     
-    
+    //___________________________________________________________________________
+    //                                           Summary of coordinate properties
+
+    static void summary (casa::Coordinate &coord,
+			 std::ostream &os=std::cout);
+
 #endif 
     
   private:

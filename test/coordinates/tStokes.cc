@@ -139,38 +139,113 @@ int test_methods ()
   std::cout << "\n[tStokes::test_methods]\n" << endl;
 
   int nofFailedTests (0);
+  Stokes stokes;
 
-  // objects with which to perform the tests
-  Stokes stokesI (Stokes::I);
-  Stokes stokesQ (Stokes::Q);
-  Stokes stokesU (Stokes::U);
-  Stokes stokesV (Stokes::V);
-  Stokes stokesR (Stokes::R);
-  Stokes stokesL (Stokes::L);
-  Stokes stokesX (Stokes::X);
-  Stokes stokesY (Stokes::Y);
-  
-  std::cout << "[1] Testing Stokes::I component ..." << endl;
+  std::cout << "[1] Testing setType(Stokes::Component) ..." << endl;
   try {
-    std::cout << "-- type()       = " << stokesI.type()       << endl;
-    std::cout << "-- name()       = " << stokesI.name()       << endl;
-    std::cout << "-- isLinear()   = " << stokesI.isLinear()   << endl;
-    std::cout << "-- isCircular() = " << stokesI.isCircular() << endl;
-    std::cout << "-- isParallel() = " << stokesI.isParallel() << endl;
-    std::cout << "-- isCross()    = " << stokesI.isCross()    << endl;
+    stokes.setType(Stokes::R);
+    stokes.summary();
+    //
+    stokes.setType(Stokes::X);
+    stokes.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
 
-  std::cout << "[2] Testing Stokes::X component ..." << endl;
-  try{
-    std::cout << "-- type()       = " << stokesX.type()       << endl;
-    std::cout << "-- name()       = " << stokesX.name()       << endl;
-    std::cout << "-- isLinear()   = " << stokesX.isLinear()   << endl;
-    std::cout << "-- isCircular() = " << stokesX.isCircular() << endl;
-    std::cout << "-- isParallel() = " << stokesX.isParallel() << endl;
-    std::cout << "-- isCross()    = " << stokesX.isCross()    << endl;
+  std::cout << "[2] Testing setType(std::string) ..." << endl;
+  try {
+    stokes.setType("I");
+    stokes.summary();
+    //
+    stokes.setType("Q");
+    stokes.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                            test_static_methods
+
+/*!
+  \brief Test the various static methods
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_static_methods ()
+{
+  std::cout << "\n[tStokes::test_static_methods]\n" << endl;
+
+  int nofFailedTests (0);
+
+  std::cout << "[1] Testing componentsMap() ..." << endl;
+  try {
+    std::map<Stokes::Component,std::string> components = Stokes::componentsMap();
+    std::map<Stokes::Component,std::string>::iterator it;
+    std::vector<Stokes::Component> types;
+    std::vector<std::string> names;
+    //
+    for (it=components.begin(); it!=components.end(); ++it){
+      types.push_back(it->first);
+      names.push_back(it->second);
+    }
+    //
+    std::cout << "-- nof. Stokes components = " << components.size() << endl;
+    std::cout << "-- Stokes component types = " << types             << endl;
+    std::cout << "-- Stokes component names = " << names             << endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Testing componentsType() ..." << endl;
+  try {
+    std::vector<Stokes::Component> types = Stokes::componentsType();
+    //
+    std::cout << "-- nof. Stokes components = " << types.size() << endl;
+    std::cout << "-- Stokes component types = " << types        << endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[3] Testing componentsName() ..." << endl;
+  try {
+    std::vector<std::string> names = Stokes::componentsName();
+    //
+    std::cout << "-- nof. Stokes components = " << names.size() << endl;
+    std::cout << "-- Stokes component names = " << names        << endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[4] Testing isLinear() ..." << endl;
+  try {
+    std::cout << "-- isLinear(Stokes::I) = " << Stokes::isLinear(Stokes::I) << endl;
+    std::cout << "-- isLinear(Stokes::Q) = " << Stokes::isLinear(Stokes::Q) << endl;
+    std::cout << "-- isLinear(Stokes::U) = " << Stokes::isLinear(Stokes::U) << endl;
+    std::cout << "-- isLinear(Stokes::V) = " << Stokes::isLinear(Stokes::V) << endl;
+    std::cout << "-- isLinear(Stokes::R) = " << Stokes::isLinear(Stokes::R) << endl;
+    std::cout << "-- isLinear(Stokes::X) = " << Stokes::isLinear(Stokes::X) << endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[5] Testing isCircular() ..." << endl;
+  try {
+    std::cout << "-- isCircular(Stokes::I) = " << Stokes::isCircular(Stokes::I) << endl;
+    std::cout << "-- isCircular(Stokes::Q) = " << Stokes::isCircular(Stokes::Q) << endl;
+    std::cout << "-- isCircular(Stokes::U) = " << Stokes::isCircular(Stokes::U) << endl;
+    std::cout << "-- isCircular(Stokes::V) = " << Stokes::isCircular(Stokes::V) << endl;
+    std::cout << "-- isCircular(Stokes::R) = " << Stokes::isCircular(Stokes::R) << endl;
+    std::cout << "-- isCircular(Stokes::X) = " << Stokes::isCircular(Stokes::X) << endl;
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -190,6 +265,8 @@ int main ()
   nofFailedTests += test_constructors ();
   // Test the various methods
   nofFailedTests += test_methods ();
+  // Test the static methods
+  nofFailedTests += test_static_methods ();
 
   return nofFailedTests;
 }

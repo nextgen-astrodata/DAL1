@@ -448,6 +448,37 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
   
+  //_____________________________________________________________________________
+  //                                                                      summary
+  
+  /*!
+    \param coord -- Coordinate object of which to provide a summary.
+    \param os    -- Output stream to which the summary is being written.
+   */
+  void CoordinateGenerator::summary (casa::Coordinate &coord,
+				     std::ostream &os)
+  {
+    casa::Matrix<casa::Double> xform = coord.linearTransform();
+    casa::IPosition shape      = xform.shape();
+
+    os << "[casa::Coordinate] Summary of object properties." << std::endl;
+    os << "-- Coordinate type  = " << coord.type() << " / " 
+                                   << coord.showType()       << std::endl;
+    os << "-- nof. pixel axes  = " << coord.nPixelAxes()     << std::endl;
+    os << "-- nof. world axes  = " << coord.nWorldAxes()     << std::endl;
+    os << "-- World axis names = " << coord.worldAxisNames() << std::endl;
+    os << "-- World axis units = " << coord.worldAxisUnits() << std::endl;
+    os << "-- Reference pixel  = " << coord.referencePixel() << std::endl;
+    os << "-- Linear transform = [";
+    for (int n(0); n<shape(0); ++n) {
+      os << " " << xform.row(n);
+    }
+    os << " ]" << std::endl;
+    os << "-- Increment        = " << coord.increment()      << std::endl;
+    os << "-- Reference value  = " << coord.referenceValue() << std::endl;
+  }
+
+  
 #endif
   
 } // Namespace DAL -- end

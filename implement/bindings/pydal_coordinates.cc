@@ -222,6 +222,9 @@ void export_Stokes ()
 	 isCross1,
 	 "Is the combination of Stokes components cross?")
     .staticmethod("isCross")
+    .staticmethod("componentsMap")
+    .staticmethod("componentsType")
+    .staticmethod("componentsName")
     ;
   
 }

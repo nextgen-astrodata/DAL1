@@ -24,6 +24,8 @@
 #include <CoordinateGenerator.h>
 
 // Namespace usage
+using std::cout;
+using std::endl;
 using DAL::CoordinateGenerator;
 
 /*!
@@ -68,6 +70,132 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
+//                                                               test_coordinates
+
+#ifdef HAVE_CASA
+
+/*!
+  \brief Test generation of the various coordinate objects
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_coordinates ()
+{
+  std::cout << "\n[tCoordinateGenerator::test_coordinates]\n" << std::endl;
+
+  int nofFailedTests (0);
+  
+  cout << "[1] Testing casa::DirectionCoordinate ..." << endl;
+  try {
+    casa::DirectionCoordinate coord;
+
+    casa::Vector<casa::Quantum<double> > refValue (2);
+    casa::Vector<casa::Quantum<double> > increment (2);
+    casa::Vector<double> refPixel (2);
+
+    refValue(0)  = casa::Quantum<double> (90.0, "deg");
+    refValue(1)  = casa::Quantum<double> ( 0.0, "deg");
+    increment(0) = casa::Quantum<double> ( 1.0, "deg");
+    increment(1) = casa::Quantum<double> ( 1.0, "deg");
+    refPixel(0)  = 100.0;
+    refPixel(1)  = 100.0;
+
+    CoordinateGenerator::makeCoordinate (coord,
+					 casa::MDirection::AZEL,
+					 casa::Projection::STG,
+					 refValue,
+					 increment,
+					 refPixel);
+
+    CoordinateGenerator::summary (coord);
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[2] Testing casa::LinearCoordinate ..." << endl;
+  try {
+    casa::LinearCoordinate coord;
+    unsigned int nofAxes (3);
+    casa::Vector<casa::String> names (nofAxes,"Length");
+    casa::Vector<casa::String> units (nofAxes,"m");
+
+    CoordinateGenerator::makeCoordinate (coord,
+					 nofAxes,
+					 names,
+					 units);
+
+    CoordinateGenerator::summary (coord);
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[3] Testing casa::LinearCoordinate ..." << endl;
+  try {
+    casa::LinearCoordinate coord;
+    unsigned int nofAxes (2);
+
+    CoordinateGenerator::makeCoordinate (coord,
+					 nofAxes);
+
+    CoordinateGenerator::summary (coord);
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[4] Testing casa::TabularCoordinate ..." << endl;
+  try {
+    double refPixel   = 1.0;
+    double increment  = 0.5;
+    double refValue   = 2.0;
+    casa::String unit = "km";
+    casa::String name = "Radius";
+
+    casa::TabularCoordinate coord (refPixel,
+				   increment,
+				   refValue,
+				   unit,
+				   name);
+
+    CoordinateGenerator::summary (coord);
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[5] Testing casa::TabularCoordinate ..." << endl;
+  try {
+    int nelem (10);
+    casa::Vector<double> pixelValues (nelem);
+    casa::Vector<double> worldValues (nelem);
+    casa::String unit = "km";
+    casa::String name = "Radius";
+
+    for (int n(0); n<nelem; ++n) {
+      pixelValues(n) = n;
+      worldValues(n) = 1.23456*n;
+    }
+
+    casa::TabularCoordinate coord (pixelValues,
+				   worldValues,
+				   unit,
+				   name);
+
+    CoordinateGenerator::summary (coord);
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  return nofFailedTests;
+}
+
+#endif
+
+//_______________________________________________________________________________
 //                                                                           main
 
 int main ()
@@ -76,6 +204,11 @@ int main ()
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
+
+#ifdef HAVE_CASA
+  // Test generation of various coordinates
+  nofFailedTests += test_coordinates ();
+#endif
 
   return nofFailedTests;
 }

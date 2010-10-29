@@ -115,6 +115,9 @@ namespace DAL {
   //
   // ============================================================================
 
+  /*!
+    \param other -- Another Coordinate object from which to make a copy.
+  */
   Coordinate& Coordinate::operator= (Coordinate const &other)
   {
     if (this != &other)

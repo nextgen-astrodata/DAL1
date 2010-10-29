@@ -161,7 +161,15 @@ namespace DAL { // Namespace DAL -- begin
   */
   bool Stokes::setType (std::string const &name)
   {
-    bool status (true);
+    bool status (false);
+    std::map<Stokes::Component,std::string>::iterator it;
+
+    for (it=components_p.begin(); it!=components_p.end(); ++it) {
+      if (it->second == name) {
+	component_p = it;
+	status = true;
+      }
+    }
 
     return status;
   }
@@ -200,36 +208,49 @@ namespace DAL { // Namespace DAL -- begin
 
     /* Set up the map for the available Stokes components */
     components_p.clear();
-    components_p[Stokes::I]  = "I";
-    components_p[Stokes::Q]  = "Q";
-    components_p[Stokes::U]  = "U";
-    components_p[Stokes::V]  = "V";
-    components_p[Stokes::R]  = "R";
-    components_p[Stokes::L]  = "L";
-    components_p[Stokes::RR] = "RR";
-    components_p[Stokes::LL] = "LL";
-    components_p[Stokes::RL] = "RL";
-    components_p[Stokes::LR] = "LR";
-    components_p[Stokes::X]  = "X";
-    components_p[Stokes::Y]  = "Y";
-    components_p[Stokes::XX] = "XX";
-    components_p[Stokes::YY] = "YY";
-    components_p[Stokes::XY] = "XY";
-    components_p[Stokes::YX] = "YX";
+    components_p = componentsMap ();
 
     /* Set the type of Stokes component */
     status = setType (type);
   }
 
   //_____________________________________________________________________________
-  //                                                               componentTypes
+  //                                                                componentsMap
   
-  std::vector<Stokes::Component> Stokes::componentTypes ()
+  std::map<Stokes::Component,std::string> Stokes::componentsMap ()
   {
+    std::map<Stokes::Component,std::string> components;
+
+    components[Stokes::I]  = "I";
+    components[Stokes::Q]  = "Q";
+    components[Stokes::U]  = "U";
+    components[Stokes::V]  = "V";
+    components[Stokes::R]  = "R";
+    components[Stokes::L]  = "L";
+    components[Stokes::RR] = "RR";
+    components[Stokes::LL] = "LL";
+    components[Stokes::RL] = "RL";
+    components[Stokes::LR] = "LR";
+    components[Stokes::X]  = "X";
+    components[Stokes::Y]  = "Y";
+    components[Stokes::XX] = "XX";
+    components[Stokes::YY] = "YY";
+    components[Stokes::XY] = "XY";
+    components[Stokes::YX] = "YX";
+
+    return components;
+  }
+
+  //_____________________________________________________________________________
+  //                                                               componentsType
+  
+  std::vector<Stokes::Component> Stokes::componentsType ()
+  {
+    std::map<Stokes::Component,std::string> components = componentsMap();
     std::map<Stokes::Component,std::string>::iterator it;
     std::vector<Stokes::Component> types;
 
-    for (it=components_p.begin(); it!=components_p.end(); ++it) {
+    for (it=components.begin(); it!=components.end(); ++it) {
       types.push_back(it->first);
     }
 
@@ -237,14 +258,15 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                               componentNames
+  //                                                               componentsName
   
-  std::vector<std::string> Stokes::componentNames ()
+  std::vector<std::string> Stokes::componentsName ()
   {
+    std::map<Stokes::Component,std::string> components = componentsMap();
     std::map<Stokes::Component,std::string>::iterator it;
     std::vector<std::string> names;
 
-    for (it=components_p.begin(); it!=components_p.end(); ++it) {
+    for (it=components.begin(); it!=components.end(); ++it) {
       names.push_back(it->second);
     }
 
