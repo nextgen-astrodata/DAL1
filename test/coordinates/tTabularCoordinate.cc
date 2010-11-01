@@ -27,6 +27,7 @@
   \file tTabularCoordinate.cc
 
   \ingroup DAL
+  \ingroup coordinates
 
   \brief A collection of test routines for the TabularCoordinate class
 

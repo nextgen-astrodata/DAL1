@@ -26,6 +26,7 @@
 
 /* Standard header files */
 #include <iostream>
+#include <set>
 #include <string>
 
 #ifdef HAVE_CASA
@@ -47,7 +48,7 @@ namespace DAL {   // Namespace DAL -- begin
     \ingroup DAL
     \ingroup coordinates
 
-    \brief A basic container for a coordinate object added to a HDF5 file
+    \brief A basic container for a coordinate object
 
     \author Lars B&auml;hren
 
@@ -56,7 +57,7 @@ namespace DAL {   // Namespace DAL -- begin
     <h3>Prerequisite</h3>
 
     <ul type="square">
-      <li>LOFAR data format ICD: LOFAR Sky Image (LOFAR-USG-ICD-004)
+      <li>Representations of World Coordinates. LOFAR-USG-ICD-002.
     </ul>
 
     <h3>Synopsis</h3>
@@ -72,7 +73,7 @@ namespace DAL {   // Namespace DAL -- begin
     
   public:
     
-    //! Type of the coordinate; for definition and attributes see LOFAR-USG-ICD-004
+    //! Type of the coordinate; for definition and attributes see LOFAR-USG-ICD-002
     enum Type {
       //! Direction coordinate
       Direction,
@@ -89,9 +90,12 @@ namespace DAL {   // Namespace DAL -- begin
     };
     
   protected:
-    
+
     //! The type of coordinate
     Coordinate::Type coordinateType_p;
+    //! Attributes attached to structure storing coordinate data
+    std::set<std::string> attributes_p;
+
     //! The number of coordinate axes
     unsigned int nofAxes_p;
     //! World axis names
@@ -104,7 +108,7 @@ namespace DAL {   // Namespace DAL -- begin
     std::vector<double> refPixel_p;
     //! Coordinate axis increment (CDELT)
     std::vector<double> increment_p;
-    //! Transformation matrix
+    //! Transformation matrix (PC)
     std::vector<double> pc_p;
     
   public:
@@ -115,7 +119,7 @@ namespace DAL {   // Namespace DAL -- begin
     Coordinate ();
     //! Argumented constructor
     Coordinate (Coordinate::Type const &coordinateType,
-		unsigned int const &nofAxes);
+		unsigned int const &nofAxes=0);
     //! Argumented constructor
     Coordinate (Coordinate::Type const &coordinateType,
 		unsigned int const &nofAxes,
@@ -175,7 +179,7 @@ namespace DAL {   // Namespace DAL -- begin
     }
     
     //! Get the reference value
-    std::vector<double> refValue () {
+    std::vector<double> refValue () const {
       return refValue_p;
     }
     //! Set the reference value
@@ -186,7 +190,7 @@ namespace DAL {   // Namespace DAL -- begin
     }
     
     //! Get the reference pixel
-    std::vector<double> refPixel () {
+    std::vector<double> refPixel () const {
       return refPixel_p;
     }
     //! Set the reference pixel
@@ -201,7 +205,7 @@ namespace DAL {   // Namespace DAL -- begin
       \brief Get the coordinate axis increment
       \return increment -- The increment along the coordinate axes
     */
-    std::vector<double> increment () {
+    std::vector<double> increment () const {
       return increment_p;
     }
     /*!
@@ -219,7 +223,7 @@ namespace DAL {   // Namespace DAL -- begin
       \return pc -- The transformation matrix, in row-wise ordering, e.g.
               [00,01,10,11]
     */
-    std::vector<double> pc () {
+    std::vector<double> pc () const {
       return pc_p;
     }
     /*!
@@ -241,6 +245,13 @@ namespace DAL {   // Namespace DAL -- begin
     inline std::string className () const {
       return "Coordinate";
     }
+
+    //! Attributes attached to structure storing coordinate data
+    inline std::set<std::string> attributes () const {
+      return attributes_p;
+    }
+    
+    // === Methods ==============================================================
     
     //! Provide a summary of the internal status
     inline void summary () {
@@ -249,8 +260,6 @@ namespace DAL {   // Namespace DAL -- begin
     
     //! Provide a summary of the internal status
     void summary (std::ostream &os);
-    
-    // === Methods ==============================================================
     
     //! Get name type of the coordinate as name
     static std::string getName (Coordinate::Type const &type);
@@ -300,6 +309,9 @@ namespace DAL {   // Namespace DAL -- begin
     
     //! Initilize the internal set of parameters
     void init (unsigned int const &nofAxes=0);
+
+    //! Set the basic set of attributes attached to the coordinate
+    void setAttributes ();
     
   private:
 

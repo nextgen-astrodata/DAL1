@@ -115,6 +115,9 @@ namespace DAL {
   //
   // ============================================================================
 
+  //_____________________________________________________________________________
+  //                                                                    operator=
+
   /*!
     \param other -- Another Coordinate object from which to make a copy.
   */
@@ -127,6 +130,9 @@ namespace DAL {
       }
     return *this;
   }
+
+  //_____________________________________________________________________________
+  //                                                                         copy
 
   void Coordinate::copy (Coordinate const &other)
   {
@@ -198,6 +204,8 @@ namespace DAL {
     unsigned int row;
     unsigned int col;
 
+    /* Initialize internal variables storing coordinate parameters */
+
     if (nofAxes <= 0) {
       // Set the number of coordinate axes
       nofAxes_p = 0;
@@ -224,7 +232,8 @@ namespace DAL {
       refValue_p  = std::vector<double> (nofAxes,0.0);
       refPixel_p  = std::vector<double> (nofAxes,0.0);
       increment_p = std::vector<double> (nofAxes,0.0);
-      
+
+      std::cout << "-- Initializing PC ..." << std::endl;
       pc_p = std::vector<double> (pc_p.size(),0.0);
       for (row=0; row<nofAxes; ++row) {
 	for (col=0; col<nofAxes; ++col) {
@@ -236,9 +245,31 @@ namespace DAL {
       }
       
     }
-    
+
+    /* Set up the basic set of attributes */
+    setAttributes();
   };
   
+  //_____________________________________________________________________________
+  //                                                                setAttributes
+
+  void Coordinate::setAttributes ()
+  {
+    // clear whatever pre-existing data
+    attributes_p.clear();
+    
+    // assign basic set of attributes/keywords
+    attributes_p.insert("GROUPTYPE");
+    attributes_p.insert("COORDINATE_TYPE");
+    attributes_p.insert("NOF_COORDINATES");
+    attributes_p.insert("AXIS_NAMES");
+    attributes_p.insert("AXIS_UNITS");
+    attributes_p.insert("REFERENCE_PIXEL");
+    attributes_p.insert("INCREMENT");
+    attributes_p.insert("PC");
+    attributes_p.insert("REFERENCE_VALUE");
+  }
+
   //_____________________________________________________________________________
   //                                                                      getName
 

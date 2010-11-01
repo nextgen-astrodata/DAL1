@@ -27,6 +27,7 @@
   \file tDirectionCoordinate.cc
 
   \ingroup DAL
+  \ingroup coordinates
 
   \brief A collection of test routines for the DirectionCoordinate class
 

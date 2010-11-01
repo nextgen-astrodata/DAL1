@@ -43,7 +43,7 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                             LinearCoordinate
 
-  LinearCoordinate::LinearCoordinate (double const &nofAxes)
+  LinearCoordinate::LinearCoordinate (unsigned int const &nofAxes)
       : Coordinate(Coordinate::Linear,
                    nofAxes)
   {
@@ -52,7 +52,7 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                             LinearCoordinate
 
-  LinearCoordinate::LinearCoordinate (double const &nofAxes,
+  LinearCoordinate::LinearCoordinate (unsigned int const &nofAxes,
                                       std::vector<std::string> const &axisNames,
                                       std::vector<std::string> const &axisUnits,
                                       std::vector<double> const &refValue,

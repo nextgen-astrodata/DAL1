@@ -27,6 +27,7 @@
   \file tLinearCoordinate.cc
 
   \ingroup DAL
+  \ingroup coordinates
 
   \brief A collection of test routines for the LinearCoordinate class
 
@@ -53,7 +54,7 @@ int test_constructors ()
 
   int nofFailedTests (0);
 
-  cout << "[1] Testing default constructor ..." << endl;
+  cout << "[1] Testing LinearCoordinate() ..." << endl;
   try {
     DAL::LinearCoordinate coord;
     //
@@ -64,9 +65,10 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[2] Testing argumented constructor ..." << endl;
+  cout << "[2] Testing LinearCoordinate(int) ..." << endl;
   try {
-    DAL::LinearCoordinate coord (3);
+    unsigned int nofAxes (3);
+    DAL::LinearCoordinate coord (nofAxes);
     //
     coord.summary();
   }
@@ -240,15 +242,17 @@ int test_parameters ()
 }
 
 //_______________________________________________________________________________
-//                                                                   test_methods
+//                                                                      test_hdf5
 
-int test_methods ()
+#ifdef HAVE_HDF5
+
+int test_hdf5 ()
 {
-  cout << "\n[tLinearCoordinate::test_methods]\n" << endl;
+  cout << "\n[tLinearCoordinate::test_hdf5]\n" << endl;
 
   int nofFailedTests (0);
   std::string filename ("tLinearCoordinate.h5");
-
+  
   unsigned int nofAxes (2);
   std::vector<std::string> worldAxisNames (nofAxes);
   std::vector<std::string> worldAxisUnits (nofAxes);
@@ -324,9 +328,27 @@ int test_methods ()
     std::cerr << message << endl;
     nofFailedTests++;
   }
-  
+
   return nofFailedTests;
 }
+
+#endif 
+
+//_______________________________________________________________________________
+//                                                                      test_casa
+
+#ifdef HAVE_CASA
+
+int test_casa ()
+{
+  cout << "\n[tLinearCoordinate::test_casa]\n" << endl;
+
+  int nofFailedTests (0);
+
+  return nofFailedTests;
+}
+
+#endif
 
 //_______________________________________________________________________________
 //                                                                           main
@@ -339,8 +361,16 @@ int main ()
   nofFailedTests += test_constructors ();
   // Test access to the internal paramters
   nofFailedTests += test_parameters();
-  // Test the various methods
-  nofFailedTests += test_methods();
-  
+
+#ifdef HAVE_CASA
+  // Test writing coordinate information to HDF5 file
+  nofFailedTests += test_casa();
+#endif
+
+#ifdef HAVE_HDF5
+  // Test writing coordinate information to HDF5 file
+  nofFailedTests += test_hdf5();
+#endif
+
   return nofFailedTests;
 }

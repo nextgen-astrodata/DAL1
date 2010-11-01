@@ -174,6 +174,7 @@ int test_coordinates ()
     casa::String unit = "km";
     casa::String name = "Radius";
 
+    // regularly spaced world axis points
     for (int n(0); n<nelem; ++n) {
       pixelValues(n) = n;
       worldValues(n) = 1.23456*n;
@@ -185,6 +186,45 @@ int test_coordinates ()
 				   name);
 
     CoordinateGenerator::summary (coord);
+    cout << "-- Pixel axis values = " << pixelValues << endl;
+    cout << "-- World axis values = " << worldValues << endl;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[6] Testing casa::TabularCoordinate ..." << endl;
+  try {
+    int nelem (10);
+    casa::Vector<double> pixelValues (nelem);
+    casa::Vector<double> worldValues (nelem);
+    casa::String unit = "km";
+    casa::String name = "Radius";
+
+    for (int n(0); n<nelem; ++n) {
+      pixelValues(n) = n;
+    }
+
+    /* non-regular gridding along the world axis coordinates */
+    worldValues(0) =  0.0;
+    worldValues(1) =  1.0;
+    worldValues(2) =  4.0;
+    worldValues(3) =  9.0;
+    worldValues(4) = 16.0;
+    worldValues(5) = 25.0;
+    worldValues(6) = 36.0;
+    worldValues(7) = 49.0;
+    worldValues(8) = 64.0;
+    worldValues(9) = 81.0;
+
+    casa::TabularCoordinate coord (pixelValues,
+				   worldValues,
+				   unit,
+				   name);
+
+    CoordinateGenerator::summary (coord);
+    cout << "-- Pixel axis values = " << pixelValues << endl;
+    cout << "-- World axis values = " << worldValues << endl;
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;

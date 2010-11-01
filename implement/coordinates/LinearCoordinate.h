@@ -96,9 +96,9 @@ namespace DAL {  // Namespace DAL -- begin
     //! Default constructor
     LinearCoordinate ();
     //! Argumented constructor
-    LinearCoordinate (double const &nofAxes);
+    LinearCoordinate (unsigned int const &nofAxes);
     //! Argumented constructor
-    LinearCoordinate (double const &nofAxes,
+    LinearCoordinate (unsigned int const &nofAxes,
 		      std::vector<std::string> const &axisNames,
 		      std::vector<std::string> const &axisUnits,
 		      std::vector<double> const &refValue,
@@ -179,7 +179,7 @@ namespace DAL {  // Namespace DAL -- begin
 #endif
     
   private:
-    
+
     //! Unconditional copying
     void copy (LinearCoordinate const &other);
     
