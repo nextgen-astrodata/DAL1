@@ -261,12 +261,6 @@ namespace DAL {   // Namespace DAL -- begin
     //! Provide a summary of the internal status
     void summary (std::ostream &os);
     
-    //! Get name type of the coordinate as name
-    static std::string getName (Coordinate::Type const &type);
-    
-    //! Get the type of the coordinate from its name
-    static Coordinate::Type getType (std::string const &name);
-    
 #ifdef HAVE_HDF5
     //! Write the coordinate object to a HDF5 file
     virtual void h5write (hid_t const &locationID) = 0;
@@ -282,6 +276,14 @@ namespace DAL {   // Namespace DAL -- begin
     virtual void h5read (hid_t const &groupID,
 			 std::string const &name) = 0;
 #endif
+
+    // === Static Methods =======================================================
+    
+    //! Get name type of the coordinate as name
+    static std::string getName (Coordinate::Type const &type);
+    
+    //! Get the type of the coordinate from its name
+    static Coordinate::Type getType (std::string const &name);
     
 #ifdef HAVE_CASA
     //! Get the type of a reference system from its name
