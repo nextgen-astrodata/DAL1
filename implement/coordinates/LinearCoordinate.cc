@@ -30,28 +30,28 @@ namespace DAL {  // Namespace DAL -- begin
   //  Construction
   //
   // ============================================================================
-
+  
   //_____________________________________________________________________________
   //                                                             LinearCoordinate
-
+  
   LinearCoordinate::LinearCoordinate ()
-      : Coordinate(Coordinate::Linear,
-                   1)
+    : CoordinateInterface(Coordinate::Linear,
+			  1)
   {
   }
-
+  
   //_____________________________________________________________________________
   //                                                             LinearCoordinate
-
+  
   LinearCoordinate::LinearCoordinate (unsigned int const &nofAxes)
-      : Coordinate(Coordinate::Linear,
-                   nofAxes)
+    : CoordinateInterface(Coordinate::Linear,
+			  nofAxes)
   {
   }
-
+  
   //_____________________________________________________________________________
   //                                                             LinearCoordinate
-
+  
   LinearCoordinate::LinearCoordinate (unsigned int const &nofAxes,
                                       std::vector<std::string> const &axisNames,
                                       std::vector<std::string> const &axisUnits,
@@ -59,16 +59,17 @@ namespace DAL {  // Namespace DAL -- begin
                                       std::vector<double> const &refPixel,
                                       std::vector<double> const &increment,
                                       std::vector<double> const &pc)
-      : Coordinate(Coordinate::Linear,
-                   nofAxes,
-                   axisNames,
-                   axisUnits,
-                   refValue,
-                   refPixel,
-                   increment,
-                   pc)
-  {}
-
+    : CoordinateInterface(Coordinate::Linear,
+			  nofAxes)
+  {
+    setAxisNames (axisNames);
+    setAxisUnits (axisUnits);
+    setRefValue (refValue);
+    setRefPixel (refPixel);
+    setIncrement (increment);
+    setPc (pc);
+  }
+  
   //_____________________________________________________________________________
   //                                                             LinearCoordinate
 
@@ -77,7 +78,7 @@ namespace DAL {  // Namespace DAL -- begin
            one.
   */
   LinearCoordinate::LinearCoordinate (LinearCoordinate const &other)
-    : Coordinate(other)
+    : CoordinateInterface(other)
   {
     copy (other);
   }
@@ -115,7 +116,7 @@ namespace DAL {  // Namespace DAL -- begin
   
   void LinearCoordinate::copy (LinearCoordinate const &other)
   {
-    Coordinate::copy (other);
+    CoordinateInterface::copy (other);
   }
   
   // ============================================================================
@@ -207,8 +208,8 @@ namespace DAL {  // Namespace DAL -- begin
     /* Store the retrieved values */
     if (Coordinate::getType(coordinate_type) == Coordinate::Linear) {
       // basic parameters
-      coordinateType_p = Coordinate::getType(coordinate_type);
-      nofAxes_p        = nof_axes;
+      coord_p   = DAL::Coordinate::getType(coordinate_type);
+      nofAxes_p = nof_axes;
       // WCS parameters
       setAxisNames (axis_names);
       setAxisUnits (axis_units);

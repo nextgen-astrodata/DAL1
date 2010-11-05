@@ -2,7 +2,7 @@
  | $Id::                                                                 $ |
  *-------------------------------------------------------------------------*
  ***************************************************************************
- *   Copyright (C) 2009                                                    *
+ *   Copyright (C) 2010                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -21,9 +21,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <Coordinate.h>
+#include "Coordinate.h"
 
-namespace DAL {
+namespace DAL { // Namespace DAL -- begin
   
   // ============================================================================
   //
@@ -31,61 +31,18 @@ namespace DAL {
   //
   // ============================================================================
   
-  //_____________________________________________________________________________
-  //                                                                   Coordinate
-  
   Coordinate::Coordinate ()
   {
-    coordinateType_p = Coordinate::NONE;
-    nofAxes_p        = 1;
-    init();
+    init(Coordinate::UNDEFINED);
   }
   
-  //_____________________________________________________________________________
-  //                                                                   Coordinate
-  
-  /*!
-    \param coordinateType -- Type of coordinate for which the object is being
-    created.
-    \param nofAxes        -- Number of coordinate axes.
-  */
-  Coordinate::Coordinate (Coordinate::Type const &coordinateType,
-                          unsigned int const &nofAxes)
+  Coordinate::Coordinate (Coordinate::Type const &type)
   {
-    coordinateType_p = coordinateType;
-    nofAxes_p        = nofAxes;
-    init();
+    init (type);
   }
-  
-  //_____________________________________________________________________________
-  //                                                                   Coordinate
-  
-  Coordinate::Coordinate (Coordinate::Type const &coordinateType,
-                          unsigned int const &nofAxes,
-                          std::vector<std::string> const &axisNames,
-                          std::vector<std::string> const &axisUnits,
-                          std::vector<double> const &refValue,
-                          std::vector<double> const &refPixel,
-                          std::vector<double> const &increment,
-                          std::vector<double> const &pc)
-  {
-    // store basic variables
-    coordinateType_p = coordinateType;
-    nofAxes_p        = nofAxes;
-    // store WCS parameters
-    setAxisNames (axisNames);
-    setAxisUnits (axisUnits);
-    setRefValue  (refValue);
-    setRefPixel  (refPixel);
-    setIncrement (increment);
-    setPc        (pc);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                   Coordinate
-  
+
   /*!
-    \param other -- Another Coordinate object from which to create this new
+    \param other -- Another HDF5Property object from which to create this new
            one.
   */
   Coordinate::Coordinate (Coordinate const &other)
@@ -98,63 +55,47 @@ namespace DAL {
   //  Destruction
   //
   // ============================================================================
-
+  
   Coordinate::~Coordinate ()
   {
     destroy();
   }
-
+  
   void Coordinate::destroy ()
-  {
-    ;
-  }
-
+  {;}
+  
   // ============================================================================
   //
   //  Operators
   //
   // ============================================================================
-
+  
   //_____________________________________________________________________________
   //                                                                    operator=
-
+  
   /*!
     \param other -- Another Coordinate object from which to make a copy.
   */
   Coordinate& Coordinate::operator= (Coordinate const &other)
   {
-    if (this != &other)
-      {
-        destroy ();
-        copy (other);
-      }
+    if (this != &other) {
+      destroy ();
+      copy (other);
+    }
     return *this;
   }
-
+  
   //_____________________________________________________________________________
   //                                                                         copy
-
+  
   void Coordinate::copy (Coordinate const &other)
   {
-    /* Copy basic attributes */
-    coordinateType_p = other.coordinateType_p;
-    nofAxes_p        = other.nofAxes_p;
-
-    /* Resize internal arrays */
-    axisNames_p.resize(nofAxes_p);
-    axisUnits_p.resize(nofAxes_p);
-    refValue_p.resize(nofAxes_p);
-    refPixel_p.resize(nofAxes_p);
-    increment_p.resize(nofAxes_p);
-    pc_p.resize(nofAxes_p*nofAxes_p);
-
-    /* Copy the values */
-    axisNames_p = other.axisNames_p;
-    axisUnits_p = other.axisUnits_p;
-    refValue_p  = other.refValue_p;
-    refPixel_p  = other.refPixel_p;
-    increment_p = other.increment_p;
-    pc_p        = other.pc_p;
+    // copy the list of recognized components
+    coordTypes_p.clear();
+    coordTypes_p = other.coordTypes_p;
+    // copy information which component has been selected
+    std::map<Coordinate::Type,std::string>::iterator it = other.coord_p;
+    setType(it->first);
   }
 
   // ============================================================================
@@ -162,11 +103,6 @@ namespace DAL {
   //  Parameters
   //
   // ============================================================================
-  
-  std::string Coordinate::name ()
-  {
-    return getName (coordinateType_p);
-  }
   
   //_____________________________________________________________________________
   //                                                                      summary
@@ -177,13 +113,8 @@ namespace DAL {
   void Coordinate::summary (std::ostream &os)
   {
     os << "[Coordinate] Summary of internal parameters." << std::endl;
-    os << "-- Coordinate type  = " << type() << " / " <<  name() << std::endl;
-    os << "-- nof. axes        = " << nofAxes_p        << std::endl;
-    os << "-- World axis names = " << axisNames_p      << std::endl;
-    os << "-- World axis units = " << axisUnits_p      << std::endl;
-    os << "-- Reference value  = " << refValue_p       << std::endl;
-    os << "-- Reference pixel  = " << refPixel_p       << std::endl;
-    os << "-- Increment        = " << increment_p      << std::endl;
+    os << "-- Coordinate type = " << name()              << std::endl;
+    os << "-- Has projection? = " << hasProjection()     << std::endl;
   }
   
   // ============================================================================
@@ -191,146 +122,171 @@ namespace DAL {
   //  Methods
   //
   // ============================================================================
-
-  //_____________________________________________________________________________
-  //                                                                         init
-
-  /*!
-    \param nofAxes -- The number of coordinate axes.
-  */
-  void Coordinate::init (unsigned int const &nofAxes)
-  {
-    unsigned int n;
-    unsigned int row;
-    unsigned int col;
-
-    /* Initialize internal variables storing coordinate parameters */
-
-    if (nofAxes <= 0) {
-      // Set the number of coordinate axes
-      nofAxes_p = 0;
-      // Reset the size of the internal arrays
-      axisNames_p.clear();
-      axisUnits_p.clear();
-      refValue_p.clear();
-      refPixel_p.clear();
-      increment_p.clear();
-      pc_p.clear();
-    } else {
-      // set the number of coordinate axes
-      nofAxes_p = nofAxes;
-      // Adjust the size of the internal arrays
-      axisNames_p.resize(nofAxes);
-      axisUnits_p.resize(nofAxes);
-      refValue_p.resize(nofAxes);
-      refPixel_p.resize(nofAxes);
-      increment_p.resize(nofAxes);
-      pc_p.resize(nofAxes*nofAxes);
-      // Fill in default values for the WCS parameters
-      axisNames_p = std::vector<std::string> (nofAxes,"UNDEFINED");
-      axisUnits_p = std::vector<std::string> (nofAxes,"UNDEFINED");
-      refValue_p  = std::vector<double> (nofAxes,0.0);
-      refPixel_p  = std::vector<double> (nofAxes,0.0);
-      increment_p = std::vector<double> (nofAxes,0.0);
-
-      std::cout << "-- Initializing PC ..." << std::endl;
-      pc_p = std::vector<double> (pc_p.size(),0.0);
-      for (row=0; row<nofAxes; ++row) {
-	for (col=0; col<nofAxes; ++col) {
-	  if (row==col) {
-	    n = row*nofAxes+col;
-	    pc_p[n] = 1.0;
-	  }
-	}
-      }
-      
-    }
-
-    /* Set up the basic set of attributes */
-    setAttributes();
-  };
   
   //_____________________________________________________________________________
-  //                                                                setAttributes
-
-  void Coordinate::setAttributes ()
+  //                                                                         init
+  
+  /*!
+    \param type -- A Stokes component.
+  */
+  void Coordinate::init (Coordinate::Type const &type)
   {
-    // clear whatever pre-existing data
-    attributes_p.clear();
-    
-    // assign basic set of attributes/keywords
-    attributes_p.insert("GROUPTYPE");
-    attributes_p.insert("COORDINATE_TYPE");
-    attributes_p.insert("NOF_COORDINATES");
-    attributes_p.insert("AXIS_NAMES");
-    attributes_p.insert("AXIS_UNITS");
-    attributes_p.insert("REFERENCE_PIXEL");
-    attributes_p.insert("INCREMENT");
-    attributes_p.insert("PC");
-    attributes_p.insert("REFERENCE_VALUE");
+    bool status (true);
+
+    /* Set up the map for the available Stokes components */
+    coordTypes_p.clear();
+    coordTypes_p = coordinatesMap ();
+
+    /* Set the type of Stokes component */
+    status = setType (type);
   }
 
   //_____________________________________________________________________________
-  //                                                                      getName
+  //                                                                      setType
 
   /*!
-    \param type -- The type of coordinate.
-
-    \return name -- The type of the coordinate as string.
-  */
-  std::string Coordinate::getName (Coordinate::Type const &type)
+    \param type    -- Identifier for the type of coordinate.
+    \return status -- Status of the operation; returns \e false in case an error 
+            was encountered.
+   */
+  bool Coordinate::setType (Coordinate::Type const &type)
   {
-    std::string coordinateName;
+    bool status (true);
+    std::map<Coordinate::Type,std::string>::iterator it = coordTypes_p.find(type);
 
-    switch (type)
-      {
-      case DAL::Coordinate::Direction:
-        coordinateName="Direction";
-        break;
-      case DAL::Coordinate::Linear:
-        coordinateName="Linear";
-        break;
-      case DAL::Coordinate::Spectral:
-        coordinateName="Spectral";
-        break;
-      case DAL::Coordinate::Stokes:
-        coordinateName="Stokes";
-        break;
-      case DAL::Coordinate::Tabular:
-        coordinateName="Tabular";
-        break;
-      case DAL::Coordinate::NONE:
-        coordinateName="NONE";
-        break;
-      };
+    /* If the provided type does not match any of the recognized types, set the
+       coordinate to UNDEFINED. */
+    if (it == coordTypes_p.end()) {
+      status = false;
+      it     = coordTypes_p.find(Coordinate::UNDEFINED);
+      // Error message 
+      std::cerr << "[Coordinate::setType] Undefined coordinate type "
+		<< type << std::endl;
+    }
 
-    return coordinateName;
+    coord_p = it;
+
+    return status;
   }
 
   //_____________________________________________________________________________
-  //                                                                      getName
+  //                                                               coordinatesMap
+
+  std::map<DAL::Coordinate::Type,std::string> Coordinate::coordinatesMap ()
+  {
+    std::map<DAL::Coordinate::Type,std::string> coordMap;
+
+    coordMap[DAL::Coordinate::Direction] = "Direction";
+    coordMap[DAL::Coordinate::Linear]    = "Linear";
+    coordMap[DAL::Coordinate::Tabular]   = "Tabular";
+    coordMap[DAL::Coordinate::Stokes]    = "Stokes";
+    coordMap[DAL::Coordinate::Spectral]  = "Spectral";
+    coordMap[DAL::Coordinate::UNDEFINED] = "UNDEFINED";
+
+    return coordMap;
+  }
+
+  //_____________________________________________________________________________
+  //                                                              coordinatesType
+
+  std::vector<DAL::Coordinate::Type> Coordinate::coordinatesType ()
+  {
+    std::map<DAL::Coordinate::Type,std::string> coordMap = coordinatesMap();
+    std::map<DAL::Coordinate::Type,std::string>::iterator it;
+    std::vector<DAL::Coordinate::Type> vec;
+
+    for (it=coordMap.begin(); it!=coordMap.end(); ++it) {
+      vec.push_back(it->first);
+    }
+    
+    return vec;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                              coordinatesName
+  
+  std::vector<std::string> Coordinate::coordinatesName ()
+  {
+    std::map<Coordinate::Type,std::string> coordMap = coordinatesMap();
+    std::map<Coordinate::Type,std::string>::iterator it;
+    std::vector<std::string> names;
+
+    for (it=coordMap.begin(); it!=coordMap.end(); ++it) {
+      names.push_back(it->second);
+    }
+    
+    return names;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                      getType
 
   Coordinate::Type Coordinate::getType (std::string const &name)
   {
-    Coordinate::Type coordinateType (Coordinate::NONE);
+    std::map<Coordinate::Type,std::string> coordMap = coordinatesMap();
+    std::map<Coordinate::Type,std::string>::iterator it;
+    Coordinate::Type type (Coordinate::UNDEFINED);
 
-    if (name == "Direction") {
-      coordinateType = Coordinate::Direction;
-    }
-    else if (name == "Linear") {
-      coordinateType = Coordinate::Linear;
-    }
-    else if (name == "Spectral") {
-      coordinateType = Coordinate::Spectral;
-    }
-    else if (name == "Stokes") {
-      coordinateType = Coordinate::Stokes;
-    }
-    else if (name == "Tabular") {
-      coordinateType = Coordinate::Tabular;
+    for (it=coordMap.begin(); it!=coordMap.end(); ++it) {
+      if (it->second == name) {
+	type = it->first;
+      }
     }
     
-    return coordinateType;
+    return type;
   }
-    
+  
+  //_____________________________________________________________________________
+  //                                                                      getName
+  
+  std::string Coordinate::getName (Coordinate::Type const &type)
+  {
+    std::map<Coordinate::Type,std::string> coordMap     = coordinatesMap();
+    std::map<Coordinate::Type,std::string>::iterator it = coordMap.find(type);
+
+    if (it == coordMap.end()) {
+      return "UNDEFINED";
+    } else {
+      return it->second;
+    }
+  }
+
+  //_____________________________________________________________________________
+  //                                                                hasProjection
+  
+  bool Coordinate::hasProjection (Coordinate::Type const &type)
+  {
+    bool status (true);
+
+    switch (type) {
+    case Coordinate::Direction:
+      status = true;
+      break;
+    default:
+      status = false;
+      break;
+    };
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                    isTabular
+  
+  bool Coordinate::isTabular (Coordinate::Type const &type)
+  {
+    bool status (true);
+
+    switch (type) {
+    case Coordinate::Tabular:
+      status = true;
+      break;
+    default:
+      status = false;
+      break;
+    };
+
+    return status;
+  }
+
 } // Namespace DAL -- end

@@ -24,17 +24,12 @@
 #ifndef DIRECTIONCOORDINATE_H
 #define DIRECTIONCOORDINATE_H
 
-// Standard library header files
-#include <iostream>
-#include <string>
+// DAL header files
+#include <CoordinateInterface.h>
 
 #ifdef HAVE_CASA
-#include <casa/Quanta/Quantum.h>
 #include <coordinates/Coordinates/DirectionCoordinate.h>
 #endif
-
-// DAL header files
-#include <Coordinate.h>
 
 namespace DAL {   // Namespace DAL -- begin
 
@@ -63,7 +58,7 @@ namespace DAL {   // Namespace DAL -- begin
     <h3>Example(s)</h3>
 
   */
-  class DirectionCoordinate : public Coordinate {
+  class DirectionCoordinate : public CoordinateInterface {
     
     //! Reference code for the celestial coordinate system
     std::string system_p;

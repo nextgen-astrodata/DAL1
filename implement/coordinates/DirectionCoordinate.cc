@@ -36,7 +36,7 @@ namespace DAL {   // Namespace DAL -- begin
   
   DirectionCoordinate::DirectionCoordinate (std::string const &system,
 					    std::string const &projection)
-    : Coordinate(Coordinate::Direction,
+    : CoordinateInterface(Coordinate::Direction,
 		 2)
   {
     init (system,
@@ -54,17 +54,19 @@ namespace DAL {   // Namespace DAL -- begin
 					    std::vector<double> const &pc,
 					    std::string const &system,
 					    std::string const &projection)
-    : Coordinate(Coordinate::Direction,
-		 2,
-		 axisNames,
-		 axisUnits,
-		 refValue,
-		 refPixel,
-		 increment,
-		 pc)
+    : CoordinateInterface(Coordinate::Direction,
+			  2)
   {
+    // Initialize the basic parameters
     init (system,
           projection);
+    // Store WCS parameters
+    setAxisNames (axisNames);
+    setAxisUnits (axisUnits);
+    setRefPixel  (refPixel);
+    setIncrement (increment);
+    setPc        (pc);
+    setRefValue  (refValue);
   }
   
   //_____________________________________________________________________________
@@ -75,7 +77,7 @@ namespace DAL {   // Namespace DAL -- begin
            new one.
   */
   DirectionCoordinate::DirectionCoordinate (DirectionCoordinate const &other)
-    : Coordinate(other)
+    : CoordinateInterface(other)
   {
     copy (other);
   }
@@ -120,7 +122,7 @@ namespace DAL {   // Namespace DAL -- begin
 
   void DirectionCoordinate::copy (DirectionCoordinate const &other)
   {
-    Coordinate::copy (other);
+    CoordinateInterface::copy (other);
   }
 
   // ============================================================================
@@ -220,11 +222,11 @@ namespace DAL {   // Namespace DAL -- begin
     DAL::h5get_attribute( groupID, "LATPOLE",          latpole );
 
     /* Store the retrieved values */
-    if (Coordinate::getType(coordinate_type) == Coordinate::Direction)
+    if (DAL::Coordinate::getType(coordinate_type) == Coordinate::Direction)
       {
         // basic parameters
-        coordinateType_p = Coordinate::getType(coordinate_type);
-        nofAxes_p        = nof_axes;
+        coord_p   = DAL::Coordinate::getType(coordinate_type);
+        nofAxes_p = nof_axes;
         // WCS parameters
         setAxisNames (axis_names);
         setAxisUnits (axis_units);

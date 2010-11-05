@@ -35,8 +35,8 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                            TabularCoordinate
   
   TabularCoordinate::TabularCoordinate ()
-    : Coordinate(Coordinate::Tabular,
-		 1)
+    : CoordinateInterface(Coordinate::Tabular,
+			  1)
   {
     init ();
   }
@@ -48,8 +48,8 @@ namespace DAL {  // Namespace DAL -- begin
                                         std::vector<std::string> const &axisUnits,
                                         std::vector<double> const &pixelValues,
                                         std::vector<double> const &worldValues)
-      : Coordinate(Coordinate::Tabular,
-                   1)
+    : CoordinateInterface(Coordinate::Tabular,
+			  1)
   {
     setAxisNames (axisNames);
     setAxisUnits (axisUnits);
@@ -59,9 +59,9 @@ namespace DAL {  // Namespace DAL -- begin
 
   //_____________________________________________________________________________
   //                                                            TabularCoordinate
-
+  
   TabularCoordinate::TabularCoordinate (TabularCoordinate const &other)
-      : Coordinate (other)
+    : CoordinateInterface (other)
   {
     copy (other);
   }
@@ -97,7 +97,7 @@ namespace DAL {  // Namespace DAL -- begin
   
   void TabularCoordinate::copy (TabularCoordinate const &other)
   {
-    Coordinate::copy (other);
+    CoordinateInterface::copy (other);
     
     pixelValues_p.resize(other.pixelValues_p.size());
     worldValues_p.resize(other.worldValues_p.size());
@@ -179,10 +179,10 @@ namespace DAL {  // Namespace DAL -- begin
     os << "-- nof. axes             = " << nofAxes_p      << std::endl;
     os << "-- World axis names      = " << axisNames_p    << std::endl;
     os << "-- World axis units      = " << axisUnits_p    << std::endl;
-//     os << "-- Reference value       = " << refValue_p     << std::endl;
-//     os << "-- Reference pixel       = " << refPixel_p     << std::endl;
+    os << "-- Reference value       = " << refValue_p     << std::endl;
+    os << "-- Reference pixel       = " << refPixel_p     << std::endl;
 //     os << "-- Increment             = " << increment_p    << std::endl;
-//     os << "-- Transformation matrix = " << pc_p           << std::endl;
+    os << "-- Transformation matrix = " << pc_p           << std::endl;
     os << "-- Pixel values          = " << pixelValues_p  << std::endl;
     os << "-- World values          = " << worldValues_p  << std::endl;
   }

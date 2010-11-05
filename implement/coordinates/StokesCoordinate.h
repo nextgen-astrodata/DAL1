@@ -24,14 +24,9 @@
 #ifndef STOKESCOORDINATE_H
 #define STOKESCOORDINATE_H
 
-// Standard library header files
-#include <iostream>
-#include <string>
-#include <vector>
-
 // DAL header files
-#include <Coordinate.h>
 #include <Stokes.h>
+#include <CoordinateInterface.h>
 
 #ifdef HAVE_CASA
 #include <coordinates/Coordinates/StokesCoordinate.h>
@@ -64,7 +59,7 @@ namespace DAL {  // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */
-  class StokesCoordinate : public Coordinate {
+  class StokesCoordinate : public CoordinateInterface {
 
     //! Set of Stokes components represented by this coordinate
     std::vector<DAL::Stokes> values_p;

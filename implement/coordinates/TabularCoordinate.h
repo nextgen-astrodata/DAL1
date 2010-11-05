@@ -24,12 +24,8 @@
 #ifndef TABULARCOORDINATE_H
 #define TABULARCOORDINATE_H
 
-// Standard library header files
-#include <iostream>
-#include <string>
-
 // DAL header files
-#include <Coordinate.h>
+#include <CoordinateInterface.h>
 
 #ifdef HAVE_CASA
 #include <coordinates/Coordinates/TabularCoordinate.h>
@@ -76,7 +72,7 @@ namespace DAL {  // Namespace DAL -- begin
     </ul>
     
   */
-  class TabularCoordinate : public Coordinate {
+  class TabularCoordinate : public CoordinateInterface {
     
     //! List of pixel values
     std::vector<double> pixelValues_p;
@@ -85,7 +81,7 @@ namespace DAL {  // Namespace DAL -- begin
     
   public:
     
-    // ------------------------------------------------------------- Construction
+    // === Construction =========================================================
     
     //! Default constructor
     TabularCoordinate ();
@@ -97,12 +93,12 @@ namespace DAL {  // Namespace DAL -- begin
     //! Copy constructor
     TabularCoordinate (TabularCoordinate const &other);
     
-    // -------------------------------------------------------------- Destruction
+    // === Destruction ==========================================================
     
     //! Destructor
     ~TabularCoordinate ();
     
-    // ---------------------------------------------------------------- Operators
+    // === Operators ============================================================
     
     /*!
       \brief Overloading of the copy operator
@@ -111,7 +107,7 @@ namespace DAL {  // Namespace DAL -- begin
     */
     TabularCoordinate& operator= (TabularCoordinate const &other);
     
-    // --------------------------------------------------------------- Parameters
+    // === Parameter access =====================================================
     
     //! Get the pixel values
     inline std::vector<double> pixelValues () {
@@ -152,7 +148,7 @@ namespace DAL {  // Namespace DAL -- begin
     */
     void summary (std::ostream &os);
     
-    // ------------------------------------------------------------------ Methods
+    // === Public methods =======================================================
 
 #ifdef HAVE_HDF5    
     //! Write the coordinate object to a HDF5 file

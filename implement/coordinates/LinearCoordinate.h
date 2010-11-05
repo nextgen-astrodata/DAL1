@@ -24,13 +24,10 @@
 #ifndef LINEARCOORDINATE_H
 #define LINEARCOORDINATE_H
 
-// Standard library header files
-#include <iostream>
-#include <string>
-
 // DAL header files
-#include <Coordinate.h>
+#include <CoordinateInterface.h>
 
+// casacore header files
 #ifdef HAVE_CASA
 #include <coordinates/Coordinates/LinearCoordinate.h>
 #endif
@@ -87,11 +84,11 @@ namespace DAL {  // Namespace DAL -- begin
     <h3>Example(s)</h3>
 
   */
-  class LinearCoordinate : public Coordinate {
+  class LinearCoordinate : public CoordinateInterface {
     
   public:
     
-    // ------------------------------------------------------------- Construction
+    // === Construction =========================================================
     
     //! Default constructor
     LinearCoordinate ();
@@ -114,12 +111,12 @@ namespace DAL {  // Namespace DAL -- begin
     //! Copy constructor
     LinearCoordinate (LinearCoordinate const &other);
     
-    // -------------------------------------------------------------- Destruction
+    // === Destruction ==========================================================
     
     //! Destructor
     ~LinearCoordinate ();
     
-    // ---------------------------------------------------------------- Operators
+    // === Operators ============================================================
     
     /*!
       \brief Overloading of the copy operator
@@ -128,7 +125,7 @@ namespace DAL {  // Namespace DAL -- begin
     */
     LinearCoordinate& operator= (LinearCoordinate const &other);
     
-    // --------------------------------------------------------------- Parameters
+    // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class

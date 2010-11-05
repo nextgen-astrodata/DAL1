@@ -21,11 +21,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <dalCommon.h>
 #include <Coordinate.h>
 
 // Namespace usage
+using std::cout;
 using std::endl;
-using DAL::Coordinate;
 
 /*!
   \file tCoordinate.cc
@@ -41,34 +42,58 @@ using DAL::Coordinate;
 */
 
 //_______________________________________________________________________________
-//                                                            test_static_methods
+//                                                              test_constructors
 
 /*!
-  \brief Test the various static methods
+  \brief Test constructors for a new Coordinate object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_static_methods ()
+int test_constructors ()
 {
-  std::cout << "\n[tCoordinate::test_static_methods]\n" << endl;
+  cout << "\n[tCoordinate::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
-
-  std::cout << "[1] Testing getName() ..." << endl;
+  
+  cout << "[1] Testing Coordinate() ..." << endl;
   try {
-
-    cout << "-- Coordinate::Direction = "
-	 << Coordinate::getName(Coordinate::Direction) << endl;
-    cout << "-- Coordinate::Linear    = "
-	 << Coordinate::getName(Coordinate::Linear) << endl;
-    cout << "-- Coordinate::Tabular   = "
-	 << Coordinate::getName(Coordinate::Tabular) << endl;
-    cout << "-- Coordinate::Stokes    = "
-	 << Coordinate::getName(Coordinate::Stokes) << endl;
-    cout << "-- Coordinate::Tabular   = "
-	 << Coordinate::getName(Coordinate::Tabular) << endl;
-
+    DAL::Coordinate coord;
+    //
+    coord.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[2] Testing Coordinate(Coordinate::Type) ..." << endl;
+  try {
+    DAL::Coordinate coordDirection (DAL::Coordinate::Direction);
+    coordDirection.summary();
+    //
+    DAL::Coordinate coordLinear (DAL::Coordinate::Linear);
+    coordLinear.summary();
+    //
+    DAL::Coordinate coordTabular (DAL::Coordinate::Tabular);
+    coordTabular.summary();
+    //
+    DAL::Coordinate coordStokes (DAL::Coordinate::Stokes);
+    coordStokes.summary();
+    //
+    DAL::Coordinate coordSpectral (DAL::Coordinate::Spectral);
+    coordSpectral.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[3] Testing Coordinate(Coordinate) ..." << endl;
+  try {
+    DAL::Coordinate coordStokes (DAL::Coordinate::Stokes);
+    coordStokes.summary();
+    //
+    DAL::Coordinate coord (coordStokes);
+    coord.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -78,13 +103,111 @@ int test_static_methods ()
 }
 
 //_______________________________________________________________________________
+//                                                            test_static_methods
+
+/*!
+  \brief Test for the various static methods
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_static_methods ()
+{
+  cout << "\n[tCoordinate::test_static_methods]\n" << endl;
+
+  int nofFailedTests (0);
+
+  cout << "[1] Testing coordinatesMap() ..." << endl;
+  try {
+    std::map<DAL::Coordinate::Type,std::string> coord;
+
+    coord = DAL::Coordinate::coordinatesMap();
+
+    cout << "-- nof. elements = " << coord.size() << endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[2] Testing coordinatesType() ..." << endl;
+  try {
+    unsigned int nelem;
+    std::vector<DAL::Coordinate::Type> coord;
+    
+    coord = DAL::Coordinate::coordinatesType();
+    nelem = coord.size();
+    //
+    cout << "-- nof. coord. types = " << nelem  << endl;
+    cout << "-- coordinate types  = " << coord  << endl;
+      
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[3] Testing coordinatesName() ..." << endl;
+  try {
+    std::vector<std::string> names = DAL::Coordinate::coordinatesName();
+    //
+    cout << "-- nof. coord. types = " << names.size() << endl;
+    cout << "-- coordinate names  = " << names        << endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[4] Testing getType() ..." << endl;
+  try {
+    std::vector<std::string> names = DAL::Coordinate::coordinatesName();
+    //
+    for (unsigned int n(0); n<names.size(); ++n) {
+      cout << "\t" << names[n] << "\t->\t" << DAL::Coordinate::getType(names[n])
+	   << endl;
+    }
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[5] Testing getName() ..." << endl;
+  try {
+    std::vector<DAL::Coordinate::Type> types = DAL::Coordinate::coordinatesType();
+    //
+    for (unsigned int n(0); n<types.size(); ++n) {
+      cout << "\t" << types[n] << "\t->\t" << DAL::Coordinate::getName(types[n])
+	   << endl;
+    }
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[6] Testing hasProjection() ..." << endl;
+  try {
+    std::vector<DAL::Coordinate::Type> types = DAL::Coordinate::coordinatesType();
+    //
+    for (unsigned int n(0); n<types.size(); ++n) {
+      cout << "\t" << types[n] << "\t->\t" << DAL::Coordinate::hasProjection(types[n])
+	   << endl;
+    }
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  return nofFailedTests;
+}
+  
+//_______________________________________________________________________________
 //                                                                           main
 
 int main ()
 {
   int nofFailedTests (0);
 
-  // Test the static methods
+  // Test for the constructor(s)
+  nofFailedTests += test_constructors ();
+  // Test for the various static methods
   nofFailedTests += test_static_methods ();
 
   return nofFailedTests;
