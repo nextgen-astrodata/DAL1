@@ -68,19 +68,19 @@ int test_constructors ()
   
   cout << "[2] Testing Coordinate(Coordinate::Type) ..." << endl;
   try {
-    DAL::Coordinate coordDirection (DAL::Coordinate::Direction);
+    DAL::Coordinate coordDirection (DAL::Coordinate::DIRECTION);
     coordDirection.summary();
     //
-    DAL::Coordinate coordLinear (DAL::Coordinate::Linear);
+    DAL::Coordinate coordLinear (DAL::Coordinate::LINEAR);
     coordLinear.summary();
     //
-    DAL::Coordinate coordTabular (DAL::Coordinate::Tabular);
+    DAL::Coordinate coordTabular (DAL::Coordinate::TABULAR);
     coordTabular.summary();
     //
-    DAL::Coordinate coordStokes (DAL::Coordinate::Stokes);
+    DAL::Coordinate coordStokes (DAL::Coordinate::STOKES);
     coordStokes.summary();
     //
-    DAL::Coordinate coordSpectral (DAL::Coordinate::Spectral);
+    DAL::Coordinate coordSpectral (DAL::Coordinate::SPECTRAL);
     coordSpectral.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -89,7 +89,7 @@ int test_constructors ()
   
   cout << "[3] Testing Coordinate(Coordinate) ..." << endl;
   try {
-    DAL::Coordinate coordStokes (DAL::Coordinate::Stokes);
+    DAL::Coordinate coordStokes (DAL::Coordinate::STOKES);
     coordStokes.summary();
     //
     DAL::Coordinate coord (coordStokes);

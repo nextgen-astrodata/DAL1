@@ -60,15 +60,15 @@ int test_static_methods ()
   try {
 
     cout << "-- Coordinate::Direction = "
-	 << Coordinate::getName(Coordinate::Direction) << endl;
+	 << Coordinate::getName(Coordinate::DIRECTION) << endl;
     cout << "-- Coordinate::Linear    = "
-	 << Coordinate::getName(Coordinate::Linear) << endl;
+	 << Coordinate::getName(Coordinate::LINEAR) << endl;
     cout << "-- Coordinate::Tabular   = "
-	 << Coordinate::getName(Coordinate::Tabular) << endl;
+	 << Coordinate::getName(Coordinate::TABULAR) << endl;
     cout << "-- Coordinate::Stokes    = "
-	 << Coordinate::getName(Coordinate::Stokes) << endl;
+	 << Coordinate::getName(Coordinate::STOKES) << endl;
     cout << "-- Coordinate::Tabular   = "
-	 << Coordinate::getName(Coordinate::Tabular) << endl;
+	 << Coordinate::getName(Coordinate::TABULAR) << endl;
 
   } catch (std::string message) {
     std::cerr << message << endl;

@@ -36,7 +36,7 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             StokesCoordinate
   
   StokesCoordinate::StokesCoordinate ()
-    : CoordinateInterface(Coordinate::Stokes, 1)
+    : CoordinateInterface(Coordinate::STOKES, 1)
   {
     std::vector<Stokes::Component> stokes (1,Stokes::I);
     init (stokes);
@@ -46,7 +46,7 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             StokesCoordinate
 
   StokesCoordinate::StokesCoordinate (Stokes::Component const &value)
-    : CoordinateInterface(Coordinate::Stokes, 1)
+    : CoordinateInterface(Coordinate::STOKES, 1)
   {
     std::vector<Stokes::Component> stokes (1,value);
     init (stokes);
@@ -56,7 +56,7 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             StokesCoordinate
 
   StokesCoordinate::StokesCoordinate (DAL::Stokes const &value)
-    : CoordinateInterface(Coordinate::Stokes, 1)
+    : CoordinateInterface(Coordinate::STOKES, 1)
   {
     std::vector<DAL::Stokes> stokes (1,value);
     init (stokes);
@@ -66,7 +66,7 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             StokesCoordinate
 
   StokesCoordinate::StokesCoordinate (std::vector<DAL::Stokes::Component> const &values)
-    : CoordinateInterface(Coordinate::Stokes, 1)
+    : CoordinateInterface(Coordinate::STOKES, 1)
   {
     init (values);
   }
@@ -75,7 +75,7 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             StokesCoordinate
 
   StokesCoordinate::StokesCoordinate (std::vector<DAL::Stokes> const &values)
-    : CoordinateInterface(Coordinate::Stokes, 1)
+    : CoordinateInterface(Coordinate::STOKES, 1)
   {
     init (values);
   }
@@ -177,7 +177,7 @@ namespace DAL {  // Namespace DAL -- begin
   void StokesCoordinate::init (std::vector<DAL::Stokes> const &values)
   {
     // variables maintained by the base class
-    coord_p   = DAL::Coordinate(DAL::Coordinate::Stokes);
+    coord_p   = DAL::Coordinate(DAL::Coordinate::STOKES);
     nofAxes_p = 1;
     CoordinateInterface::init();
     // store the input list of Stokes values
@@ -269,7 +269,7 @@ namespace DAL {  // Namespace DAL -- begin
     DAL::h5get_attribute( groupID, "NOF_AXES",         nof_axes );
     
     /* Store the retrieved values */
-    if (DAL::Coordinate::getType(coordinate_type) == DAL::Coordinate::Stokes) {
+    if (DAL::Coordinate::getType(coordinate_type) == DAL::Coordinate::STOKES) {
       // basic parameters
       coord_p   = DAL::Coordinate::getType(coordinate_type);
       nofAxes_p = nof_axes;

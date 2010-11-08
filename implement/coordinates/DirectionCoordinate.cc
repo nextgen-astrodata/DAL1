@@ -36,7 +36,7 @@ namespace DAL {   // Namespace DAL -- begin
   
   DirectionCoordinate::DirectionCoordinate (std::string const &system,
 					    std::string const &projection)
-    : CoordinateInterface(Coordinate::Direction,
+    : CoordinateInterface(Coordinate::DIRECTION,
 		 2)
   {
     init (system,
@@ -54,7 +54,7 @@ namespace DAL {   // Namespace DAL -- begin
 					    std::vector<double> const &pc,
 					    std::string const &system,
 					    std::string const &projection)
-    : CoordinateInterface(Coordinate::Direction,
+    : CoordinateInterface(Coordinate::DIRECTION,
 			  2)
   {
     // Initialize the basic parameters
@@ -222,7 +222,7 @@ namespace DAL {   // Namespace DAL -- begin
     DAL::h5get_attribute( groupID, "LATPOLE",          latpole );
 
     /* Store the retrieved values */
-    if (DAL::Coordinate::getType(coordinate_type) == Coordinate::Direction)
+    if (DAL::Coordinate::getType(coordinate_type) == Coordinate::DIRECTION)
       {
         // basic parameters
         coord_p   = DAL::Coordinate::getType(coordinate_type);

@@ -176,11 +176,11 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::map<DAL::Coordinate::Type,std::string> coordMap;
 
-    coordMap[DAL::Coordinate::Direction] = "Direction";
-    coordMap[DAL::Coordinate::Linear]    = "Linear";
-    coordMap[DAL::Coordinate::Tabular]   = "Tabular";
-    coordMap[DAL::Coordinate::Stokes]    = "Stokes";
-    coordMap[DAL::Coordinate::Spectral]  = "Spectral";
+    coordMap[DAL::Coordinate::DIRECTION] = "DIRECTION";
+    coordMap[DAL::Coordinate::LINEAR]    = "LINEAR";
+    coordMap[DAL::Coordinate::TABULAR]   = "TABULAR";
+    coordMap[DAL::Coordinate::STOKES]    = "STOKES";
+    coordMap[DAL::Coordinate::SPECTRAL]  = "SPECTRAL";
     coordMap[DAL::Coordinate::UNDEFINED] = "UNDEFINED";
 
     return coordMap;
@@ -259,7 +259,7 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
 
     switch (type) {
-    case Coordinate::Direction:
+    case Coordinate::DIRECTION:
       status = true;
       break;
     default:
@@ -278,7 +278,7 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
 
     switch (type) {
-    case Coordinate::Tabular:
+    case Coordinate::TABULAR:
       status = true;
       break;
     default:

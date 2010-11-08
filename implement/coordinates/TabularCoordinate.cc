@@ -35,7 +35,7 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                            TabularCoordinate
   
   TabularCoordinate::TabularCoordinate ()
-    : CoordinateInterface(Coordinate::Tabular,
+    : CoordinateInterface(Coordinate::TABULAR,
 			  1)
   {
     init ();
@@ -48,7 +48,7 @@ namespace DAL {  // Namespace DAL -- begin
                                         std::vector<std::string> const &axisUnits,
                                         std::vector<double> const &pixelValues,
                                         std::vector<double> const &worldValues)
-    : CoordinateInterface(Coordinate::Tabular,
+    : CoordinateInterface(Coordinate::TABULAR,
 			  1)
   {
     setAxisNames (axisNames);

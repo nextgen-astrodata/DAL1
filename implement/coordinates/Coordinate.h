@@ -73,15 +73,15 @@ namespace DAL { // Namespace DAL -- begin
     //! Types of coordinates; for definition and attributes see LOFAR-USG-ICD-002
     enum Type {
       //! Direction coordinate
-      Direction,
+      DIRECTION,
       //! Linear coordinate
-      Linear,
+      LINEAR,
       //! Tabulated coordinate
-      Tabular,
+      TABULAR,
       //! Stokes parameters coordinate
-      Stokes,
+      STOKES,
       //! Spectral coordinate,
-      Spectral,
+      SPECTRAL,
       //! Undefined coordinate type
       UNDEFINED
     };

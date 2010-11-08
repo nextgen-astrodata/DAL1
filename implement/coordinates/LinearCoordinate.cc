@@ -35,7 +35,7 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             LinearCoordinate
   
   LinearCoordinate::LinearCoordinate ()
-    : CoordinateInterface(Coordinate::Linear,
+    : CoordinateInterface(Coordinate::LINEAR,
 			  1)
   {
   }
@@ -44,7 +44,7 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             LinearCoordinate
   
   LinearCoordinate::LinearCoordinate (unsigned int const &nofAxes)
-    : CoordinateInterface(Coordinate::Linear,
+    : CoordinateInterface(Coordinate::LINEAR,
 			  nofAxes)
   {
   }
@@ -59,7 +59,7 @@ namespace DAL {  // Namespace DAL -- begin
                                       std::vector<double> const &refPixel,
                                       std::vector<double> const &increment,
                                       std::vector<double> const &pc)
-    : CoordinateInterface(Coordinate::Linear,
+    : CoordinateInterface(Coordinate::LINEAR,
 			  nofAxes)
   {
     setAxisNames (axisNames);
@@ -206,7 +206,7 @@ namespace DAL {  // Namespace DAL -- begin
     DAL::h5get_attribute( groupID, "PC",               pc );
 
     /* Store the retrieved values */
-    if (Coordinate::getType(coordinate_type) == Coordinate::Linear) {
+    if (Coordinate::getType(coordinate_type) == Coordinate::LINEAR) {
       // basic parameters
       coord_p   = DAL::Coordinate::getType(coordinate_type);
       nofAxes_p = nof_axes;
