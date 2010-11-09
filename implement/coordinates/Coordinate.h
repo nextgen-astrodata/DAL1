@@ -88,10 +88,8 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Construction =========================================================
     
-    //! Default constructor
-    Coordinate ();
     //! Argumented constructor
-    Coordinate (Coordinate::Type const &type);
+    Coordinate (Coordinate::Type const &type=DAL::Coordinate::UNDEFINED);
     //! Copy constructor
     Coordinate (Coordinate const &other);
     

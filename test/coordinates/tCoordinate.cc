@@ -103,6 +103,73 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
+//                                                                   test_methods
+
+/*!
+  \brief Test for the various public methods
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_methods ()
+{
+  cout << "\n[tCoordinate::test_methods]\n" << endl;
+
+  int nofFailedTests (0);
+  bool status (true);
+  DAL::Coordinate coord;
+
+  coord.summary();
+
+  cout << "[1] Testing setType(Coordinate::Type) ..." << endl;
+  try {
+    status = coord.setType (DAL::Coordinate::DIRECTION);
+    cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
+    //
+    status = coord.setType (DAL::Coordinate::LINEAR);
+    cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
+    //
+    status = coord.setType (DAL::Coordinate::TABULAR);
+    cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
+    //
+    status = coord.setType (DAL::Coordinate::STOKES);
+    cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
+    //
+    status = coord.setType (DAL::Coordinate::SPECTRAL);
+    cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[2] Testing setType(std::string) ..." << endl;
+  try {
+    status = coord.setType ("DIRECTION");
+    cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
+    //
+    status = coord.setType ("LINEAR");
+    cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
+    //
+    status = coord.setType ("TABULAR");
+    cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
+    //
+    status = coord.setType ("STOKES");
+    cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
+    //
+    status = coord.setType ("SPECTRAL");
+    cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
+    //
+    status = coord.setType ("J2000");
+    cout << "-- Coordinate type = " << coord.type() << "/" << coord.name() << endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                            test_static_methods
 
 /*!
@@ -205,10 +272,12 @@ int main ()
 {
   int nofFailedTests (0);
 
-  // Test for the constructor(s)
-  nofFailedTests += test_constructors ();
   // Test for the various static methods
   nofFailedTests += test_static_methods ();
+  // Test for the constructor(s)
+  nofFailedTests += test_constructors ();
+  // Test for the various public methods
+  nofFailedTests += test_methods ();
 
   return nofFailedTests;
 }

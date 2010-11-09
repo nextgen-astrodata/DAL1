@@ -61,6 +61,81 @@ namespace DAL {   // Namespace DAL -- begin
     object as being part of a HDF5-based LOFAR data-set (most prominently an
     image).
 
+    <table border=0>
+      <tr>
+        <td class="indexkey"></td>
+        <td class="indexkey">DirectionCoordinate</td>
+        <td class="indexkey">LinearCoordinate</td>
+        <td class="indexkey">TabularCoordinate</td>
+        <td class="indexkey">StokesCoordinate</td>
+        <td class="indexkey">SpectralCoordinate</td>
+      </tr>
+      <tr>
+        <td class="indexkey">GROUPTYPE</td>
+        <td>DirectionCoord</td>
+        <td>LinearCoord</td>
+        <td>TabularCoord</td>
+        <td>StokesCoord</td>
+        <td>SpectralCoord</td>
+      </tr>
+      <tr>
+        <td class="indexkey">COORDINATE_TYPE</td>
+        <td>DIRECTION</td>
+        <td>LINEAR</td>
+        <td>TABULAR</td>
+        <td>STOKES</td>
+        <td>SPECTRAL</td>
+      </tr>
+      <tr>
+        <td class="indexkey">NOF_AXES</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+      </tr>
+      <tr>
+        <td class="indexkey">AXIS_NAMES</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+      </tr>
+      <tr>
+        <td class="indexkey">AXIS_UNITS</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+      </tr>
+      <tr>
+        <td class="indexkey">REFERENCE_PIXEL</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+        <td>\e yes, refPixel[0]</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+      </tr>
+      <tr>
+        <td class="indexkey">REFERENCE_VALUE</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+        <td>\e yes, refValue[0]</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+      </tr>
+      <tr>
+        <td class="indexkey">PC</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+        <td>\e yes, pc[0]=1.0</td>
+        <td>\e yes</td>
+        <td>\e yes</td>
+      </tr>
+    </table>
+
     <h3>Example(s)</h3>
 
   */

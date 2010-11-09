@@ -31,11 +31,6 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  Coordinate::Coordinate ()
-  {
-    init(Coordinate::UNDEFINED);
-  }
-  
   Coordinate::Coordinate (Coordinate::Type const &type)
   {
     init (type);
@@ -165,6 +160,36 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     coord_p = it;
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                      setType
+
+  /*!
+    \param type    -- Identifier for the type of coordinate.
+    \return status -- Status of the operation; returns \e false in case an error 
+            was encountered.
+   */
+  bool Coordinate::setType (std::string const &type)
+  {
+    bool status (false);
+    std::map<Coordinate::Type,std::string>::iterator it;
+
+    for (it=coordTypes_p.begin(); it!=coordTypes_p.end(); ++it) {
+      if (it->second == type) {
+	coord_p = it;
+	status = true;
+      }
+    }
+
+    // Provide some feedback in case the provided coordinate ID was rejected
+    if (!status) {
+      std::cerr << "[Coordinate::setType] Invalid type of coordinate: " << type
+		<< " is not a recognized value! Keeping current settings."
+		<< std::endl;
+    }
 
     return status;
   }
