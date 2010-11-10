@@ -148,7 +148,7 @@ int main (int argc, char *argv[])
       typedef struct CosmicRayStruct {
 	//int nofDatapoints;
 	Int16 data;
-      };
+      } CosmicRayStruct;
       typedef struct CRwritebuffer {
 	CosmicRayStruct cr[ BUFSIZE ];
       } CRwritebuffer;
