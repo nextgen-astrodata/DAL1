@@ -35,8 +35,6 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                            TabularCoordinate
   
   TabularCoordinate::TabularCoordinate ()
-    : CoordinateInterface(Coordinate::TABULAR,
-			  1)
   {
     init ();
   }
@@ -48,9 +46,8 @@ namespace DAL {  // Namespace DAL -- begin
                                         std::vector<std::string> const &axisUnits,
                                         std::vector<double> const &pixelValues,
                                         std::vector<double> const &worldValues)
-    : CoordinateInterface(Coordinate::TABULAR,
-			  1)
   {
+    init ();
     setAxisNames (axisNames);
     setAxisUnits (axisUnits);
     setAxisValues (pixelValues,
@@ -192,9 +189,26 @@ namespace DAL {  // Namespace DAL -- begin
   //  Methods
   //
   // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                         init
 
+  void TabularCoordinate::init ()
+  {
+    /* Initialize base class */
+    CoordinateInterface::init (Coordinate::STOKES,
+			       1);
+    
+    /* Initialize coordinate axis data */
+    pixelValues_p.resize(nofAxes_p);
+    worldValues_p.resize(nofAxes_p);
+    
+    pixelValues_p = std::vector<double>(nofAxes_p,0.0);
+    worldValues_p = std::vector<double>(nofAxes_p,0.0);
+  }
+  
 #ifdef HAVE_HDF5
-
+  
   //_____________________________________________________________________________
   //                                                                       h5read
 

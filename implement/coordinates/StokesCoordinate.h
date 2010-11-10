@@ -161,6 +161,11 @@ namespace DAL {  // Namespace DAL -- begin
     void init (std::vector<DAL::Stokes::Component> const &values);
     //! Initialize the internal parameters of the object
     void init (std::vector<DAL::Stokes> const &values);
+    //! Set the attributes attached to the coordinate
+    inline void setAttributes ()
+    {
+      /* Nothing else to do here. */
+    }
     //! Unconditional copying
     void copy (StokesCoordinate const &other);
     //! Unconditional deletion

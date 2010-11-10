@@ -36,7 +36,6 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             StokesCoordinate
   
   StokesCoordinate::StokesCoordinate ()
-    : CoordinateInterface(Coordinate::STOKES, 1)
   {
     std::vector<Stokes::Component> stokes (1,Stokes::I);
     init (stokes);
@@ -46,7 +45,6 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             StokesCoordinate
 
   StokesCoordinate::StokesCoordinate (Stokes::Component const &value)
-    : CoordinateInterface(Coordinate::STOKES, 1)
   {
     std::vector<Stokes::Component> stokes (1,value);
     init (stokes);
@@ -56,7 +54,6 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             StokesCoordinate
 
   StokesCoordinate::StokesCoordinate (DAL::Stokes const &value)
-    : CoordinateInterface(Coordinate::STOKES, 1)
   {
     std::vector<DAL::Stokes> stokes (1,value);
     init (stokes);
@@ -66,7 +63,6 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             StokesCoordinate
 
   StokesCoordinate::StokesCoordinate (std::vector<DAL::Stokes::Component> const &values)
-    : CoordinateInterface(Coordinate::STOKES, 1)
   {
     init (values);
   }
@@ -75,7 +71,6 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             StokesCoordinate
 
   StokesCoordinate::StokesCoordinate (std::vector<DAL::Stokes> const &values)
-    : CoordinateInterface(Coordinate::STOKES, 1)
   {
     init (values);
   }
@@ -176,10 +171,10 @@ namespace DAL {  // Namespace DAL -- begin
   
   void StokesCoordinate::init (std::vector<DAL::Stokes> const &values)
   {
-    // variables maintained by the base class
-    coord_p   = DAL::Coordinate(DAL::Coordinate::STOKES);
-    nofAxes_p = 1;
-    CoordinateInterface::init();
+    /* Initialize base class */
+    CoordinateInterface::init (Coordinate::STOKES,
+			       1);
+
     // store the input list of Stokes values
     values_p.resize (values.size());
     values_p = values;

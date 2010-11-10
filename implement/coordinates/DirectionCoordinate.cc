@@ -36,8 +36,6 @@ namespace DAL {   // Namespace DAL -- begin
   
   DirectionCoordinate::DirectionCoordinate (std::string const &system,
 					    std::string const &projection)
-    : CoordinateInterface(Coordinate::DIRECTION,
-		 2)
   {
     init (system,
 	  projection);
@@ -54,8 +52,6 @@ namespace DAL {   // Namespace DAL -- begin
 					    std::vector<double> const &pc,
 					    std::string const &system,
 					    std::string const &projection)
-    : CoordinateInterface(Coordinate::DIRECTION,
-			  2)
   {
     // Initialize the basic parameters
     init (system,
@@ -160,8 +156,24 @@ namespace DAL {   // Namespace DAL -- begin
   //
   // ============================================================================
 
-#ifdef HAVE_HDF5
+  //_____________________________________________________________________________
+  //                                                                       h5read
 
+  void DirectionCoordinate::init (std::string const &system,
+				  std::string const &projection)
+  {
+    CoordinateInterface::init (Coordinate::DIRECTION,
+			       2);
+
+    system_p          = system;
+    projection_p      = projection;
+    projectionParam_p = std::vector<double>(1,0.0);
+    longpole_p        = 0.0;
+    latpole_p         = 0.0;
+  }
+  
+#ifdef HAVE_HDF5
+  
   //_____________________________________________________________________________
   //                                                                       h5read
 

@@ -55,7 +55,6 @@ set (tests
   tdal
   tdal_fits
   tpulsar_dal
-  tEnumerations
   tTBB
   )
 

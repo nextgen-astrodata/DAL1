@@ -134,6 +134,22 @@ namespace DAL {   // Namespace DAL -- begin
         <td>\e yes</td>
         <td>\e yes</td>
       </tr>
+      <tr>
+        <td class="indexkey">PIXEL_VALUES</td>
+        <td>\e --</td>
+        <td>\e ---</td>
+        <td>\e ---</td>
+        <td>\e yes</td>
+        <td>\e --</td>
+      </tr>
+      <tr>
+        <td class="indexkey">WORLD_VALUES</td>
+        <td>\e --</td>
+        <td>\e ---</td>
+        <td>\e ---</td>
+        <td>\e yes</td>
+        <td>\e --</td>
+      </tr>
     </table>
 
     <h3>Example(s)</h3>
@@ -147,7 +163,7 @@ namespace DAL {   // Namespace DAL -- begin
 
     //! The type of coordinate
     DAL::Coordinate coord_p;
-    //! Attributes attached to structure storing coordinate data
+    //! Attributes attached to the storage structure (typically HDF5)
     std::set<std::string> attributes_p;
 
     //! The number of coordinate axes
@@ -170,7 +186,8 @@ namespace DAL {   // Namespace DAL -- begin
     //! Unconditional copying
     void copy (CoordinateInterface const &other);
     //! Initilize the internal set of parameters
-    void init (unsigned int const &nofAxes=0);
+    void init (DAL::Coordinate const &coord=DAL::Coordinate(),
+	       unsigned int const &nofAxes=0);
 
   public:
     
@@ -178,12 +195,6 @@ namespace DAL {   // Namespace DAL -- begin
     
     //! Default constructor
     CoordinateInterface ();
-    //! Argumented constructor
-    CoordinateInterface (DAL::Coordinate::Type const &coord,
-			 unsigned int const &nofAxes=0);
-    //! Argumented constructor
-    CoordinateInterface (DAL::Coordinate const &coord,
-			 unsigned int const &nofAxes=0);
     //! Copy constructor
     CoordinateInterface (CoordinateInterface const &other);
     
@@ -206,6 +217,10 @@ namespace DAL {   // Namespace DAL -- begin
     //! Get the coordinate type as name
     inline std::string name () {
       return coord_p.name();
+    }
+    //! Get the names of the attributes attached to the storage structure
+    inline std::set<std::string> attributes () const {
+      return attributes_p;
     }
     //! Get the number of coordinate axes
     inline int nofAxes () const {
@@ -295,10 +310,6 @@ namespace DAL {   // Namespace DAL -- begin
     inline std::string className () const {
       return "Coordinate";
     }
-    //! Attributes attached to structure storing coordinate data
-    inline std::set<std::string> attributes () const {
-      return attributes_p;
-    }
     
     // === Public methods =======================================================
     
@@ -330,9 +341,8 @@ namespace DAL {   // Namespace DAL -- begin
 
   private:
 
-    //! Set the basic set of attributes attached to the coordinate
+    //! Set the attributes attached to the storage structure
     void setAttributes ();
-
     //! Unconditional deletion
     void destroy(void);
     

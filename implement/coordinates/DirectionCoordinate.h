@@ -104,7 +104,7 @@ namespace DAL {   // Namespace DAL -- begin
     */
     DirectionCoordinate& operator= (DirectionCoordinate const &other);
     
-    // --------------------------------------------------------------- Parameters
+    // === Parameter access =====================================================
     
     //! Get the projection parameters
     inline std::vector<double> projectionParameters () {
@@ -180,16 +180,16 @@ namespace DAL {   // Namespace DAL -- begin
   private:
     
     //! Initialize internal parameters
-    inline void init (std::string const &system,
-		      std::string const &projection)
-    {
-      system_p          = system;
-      projection_p      = projection;
-      projectionParam_p = std::vector<double>(1,0.0);
-      longpole_p        = 0.0;
-      latpole_p         = 0.0;
-    }
+    void init (std::string const &system,
+	       std::string const &projection);
     
+    //! Set the attributes attached to the coordinate
+    inline void setAttributes ()
+    {
+      attributes_p.insert("LONGPOLE");
+      attributes_p.insert("LATPOLE");
+    }
+
     //! Unconditional copying
     void copy (DirectionCoordinate const &other);
     

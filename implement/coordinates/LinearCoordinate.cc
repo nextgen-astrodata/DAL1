@@ -35,18 +35,16 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             LinearCoordinate
   
   LinearCoordinate::LinearCoordinate ()
-    : CoordinateInterface(Coordinate::LINEAR,
-			  1)
   {
+    init(1);
   }
   
   //_____________________________________________________________________________
   //                                                             LinearCoordinate
   
   LinearCoordinate::LinearCoordinate (unsigned int const &nofAxes)
-    : CoordinateInterface(Coordinate::LINEAR,
-			  nofAxes)
   {
+    init(nofAxes);
   }
   
   //_____________________________________________________________________________
@@ -59,9 +57,8 @@ namespace DAL {  // Namespace DAL -- begin
                                       std::vector<double> const &refPixel,
                                       std::vector<double> const &increment,
                                       std::vector<double> const &pc)
-    : CoordinateInterface(Coordinate::LINEAR,
-			  nofAxes)
   {
+    init(nofAxes);
     setAxisNames (axisNames);
     setAxisUnits (axisUnits);
     setRefValue (refValue);
@@ -121,10 +118,13 @@ namespace DAL {  // Namespace DAL -- begin
   
   // ============================================================================
   //
-  //  Parameters
+  //  Parameter access
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                      summary
+
   void LinearCoordinate::summary (std::ostream &os)
   {
     os << "[LinearCoordinate] Summary of internal parameters." << std::endl;
@@ -136,6 +136,7 @@ namespace DAL {  // Namespace DAL -- begin
     os << "-- Reference pixel       = " << refPixel_p     << std::endl;
     os << "-- Increment             = " << increment_p    << std::endl;
     os << "-- Transformation matrix = " << pc_p           << std::endl;
+    os << "-- Attribute names       = " << attributes_p   << std::endl;
   }
 
 
@@ -145,6 +146,32 @@ namespace DAL {  // Namespace DAL -- begin
   //  Methods
   //
   // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                                         init
+
+  void LinearCoordinate::init (unsigned int const &nofAxes)
+  {
+    /* Initialize base class */
+    CoordinateInterface::init (Coordinate::LINEAR,
+			       nofAxes);
+
+    /* Initialize internal variables storing WCS information */
+
+    axisNames_p.resize(nofAxes_p);
+    axisUnits_p.resize(nofAxes_p);
+    refValue_p.resize(nofAxes_p);
+    refPixel_p.resize(nofAxes_p);
+    increment_p.resize(nofAxes_p);
+
+    for (unsigned int n(0); n<nofAxes_p; ++n) {
+      axisNames_p[n]  = "UNDEFINED";
+      axisUnits_p[n]  = "UNDEFINED";
+      refValue_p[n]   = 0.0;
+      refPixel_p[n]   = 0.0;
+      increment_p[n]  = 0.0;
+    }
+  }
 
 #ifdef HAVE_HDF5
 

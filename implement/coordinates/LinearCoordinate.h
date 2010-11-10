@@ -177,9 +177,10 @@ namespace DAL {  // Namespace DAL -- begin
     
   private:
 
+    //! Initilize the internal set of parameters
+    void init (unsigned int const &nofAxes);
     //! Unconditional copying
     void copy (LinearCoordinate const &other);
-    
     //! Unconditional deletion
     void destroy(void);
     

@@ -36,38 +36,6 @@ namespace DAL {
   
   CoordinateInterface::CoordinateInterface ()
   {
-    coord_p   =  DAL::Coordinate();
-    nofAxes_p = 1;
-    init();
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                   Coordinate
-  
-  /*!
-    \param coord   -- Type of coordinate for which the object is being created.
-    \param nofAxes -- Number of coordinate axes.
-  */
-  CoordinateInterface::CoordinateInterface (Coordinate::Type const &coord,
-					    unsigned int const &nofAxes)
-  {
-    coord_p   =  DAL::Coordinate(coord);
-    nofAxes_p = nofAxes;
-    init();
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                   Coordinate
-  
-  /*!
-    \param coord   -- Type of coordinate for which the object is being created.
-    \param nofAxes -- Number of coordinate axes.
-  */
-  CoordinateInterface::CoordinateInterface (DAL::Coordinate const &coord,
-					    unsigned int const &nofAxes)
-  {
-    coord_p   =  coord;
-    nofAxes_p = nofAxes;
     init();
   }
   
@@ -96,7 +64,7 @@ namespace DAL {
 
   void CoordinateInterface::destroy ()
   {
-    ;
+    attributes_p.clear();
   }
 
   // ============================================================================
@@ -131,6 +99,7 @@ namespace DAL {
     nofAxes_p = other.nofAxes_p;
 
     /* Resize internal arrays */
+    attributes_p.clear();
     axisNames_p.resize(nofAxes_p);
     axisUnits_p.resize(nofAxes_p);
     refValue_p.resize(nofAxes_p);
@@ -139,12 +108,13 @@ namespace DAL {
     pc_p.resize(nofAxes_p*nofAxes_p);
 
     /* Copy the values */
-    axisNames_p = other.axisNames_p;
-    axisUnits_p = other.axisUnits_p;
-    refValue_p  = other.refValue_p;
-    refPixel_p  = other.refPixel_p;
-    increment_p = other.increment_p;
-    pc_p        = other.pc_p;
+    attributes_p = other.attributes_p;
+    axisNames_p  = other.axisNames_p;
+    axisUnits_p  = other.axisUnits_p;
+    refValue_p   = other.refValue_p;
+    refPixel_p   = other.refPixel_p;
+    increment_p  = other.increment_p;
+    pc_p         = other.pc_p;
   }
 
   // ============================================================================
@@ -181,15 +151,19 @@ namespace DAL {
   //                                                                         init
 
   /*!
+    \param coord   -- Type of coordinate.
     \param nofAxes -- The number of coordinate axes.
   */
-  void CoordinateInterface::init (unsigned int const &nofAxes)
+  void CoordinateInterface::init (DAL::Coordinate const &coord,
+				  unsigned int const &nofAxes)
   {
     unsigned int n;
     unsigned int row;
     unsigned int col;
 
     /* Initialize internal variables storing coordinate parameters */
+
+    coord_p = coord;
 
     if (nofAxes <= 0) {
       // Set the number of coordinate axes
@@ -232,18 +206,18 @@ namespace DAL {
     }
 
     /* Set up the basic set of attributes */
-    setAttributes();
+    setAttributes ();
   };
-  
+
   //_____________________________________________________________________________
   //                                                                setAttributes
 
   void CoordinateInterface::setAttributes ()
   {
-    // clear whatever pre-existing data
+    /* clear data container */
     attributes_p.clear();
-    
-    // assign basic set of attributes/keywords
+
+    /* set list of attributes common to all coordinates */
     attributes_p.insert("GROUPTYPE");
     attributes_p.insert("COORDINATE_TYPE");
     attributes_p.insert("NOF_COORDINATES");

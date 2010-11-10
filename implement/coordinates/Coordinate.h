@@ -178,18 +178,18 @@ namespace DAL { // Namespace DAL -- begin
       return prj.type(refcode);
     }
 #endif
-    
-  private:
-    
-    // === Private variables ====================================================
 
+  private:
+
+    // === Private  variables ===================================================
+    
     //! List of coordinate types
     std::map<Coordinate::Type,std::string> coordTypes_p;
     //! Stokes component represented by this object
     std::map<Coordinate::Type,std::string>::iterator coord_p;
 
     // === Private methods ======================================================
-    
+
     //! Initialize the object's internal parameters
     void init (Coordinate::Type const &type=Coordinate::UNDEFINED);
     

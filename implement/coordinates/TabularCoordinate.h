@@ -207,15 +207,14 @@ namespace DAL {  // Namespace DAL -- begin
   private:
     
     //! Initialize internal parameters
-    void init ()
-    {
-      pixelValues_p.resize(nofAxes_p);
-      worldValues_p.resize(nofAxes_p);
-      //
-      pixelValues_p = std::vector<double>(nofAxes_p,0.0);
-      worldValues_p = std::vector<double>(nofAxes_p,0.0);
-    }
+    void init ();
     
+    //! Set the attributes attached to the coordinate
+    inline void setAttributes ()
+    {
+      attributes_p.insert("PIXEL_VALUES");
+      attributes_p.insert("WORLD_VALUES");
+    }
     //! Unconditional copying
     void copy (TabularCoordinate const &other);
     
