@@ -144,100 +144,85 @@ int test_parameters ()
   DAL::LinearCoordinate coord (nofAxes);
 
   cout << "[1] Adjust world axis names ..." << endl;
-  try
-    {
-      std::vector<std::string> names = coord.axisNames();
-      cout << names << endl;
-
-      names[0] = "Time";
-      names[1] = "Frequency";
-
-      coord.setAxisNames(names);
-      cout << coord.axisNames() << endl;
-
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << endl;
-      nofFailedTests++;
-    }
-
+  try {
+    std::vector<std::string> names = coord.axisNames();
+    cout << names << endl;
+    
+    names[0] = "Time";
+    names[1] = "Frequency";
+    
+    coord.setAxisNames(names);
+    cout << coord.axisNames() << endl;
+    
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   cout << "[2] Adjust world axis units ..." << endl;
-  try
-    {
-      std::vector<std::string> units = coord.axisUnits();
-      cout << units << endl;
-
-      units[0] = "s";
-      units[1] = "Hz";
-
-      coord.setAxisUnits(units);
-      cout << coord.axisUnits() << endl;
-
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << endl;
-      nofFailedTests++;
-    }
-
+  try {
+    std::vector<std::string> units = coord.axisUnits();
+    cout << units << endl;
+    
+    units[0] = "s";
+    units[1] = "Hz";
+    
+    coord.setAxisUnits(units);
+    cout << coord.axisUnits() << endl;
+    
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   cout << "[3] Adjust reference value ..." << endl;
-  try
-    {
-      std::vector<double> refValue = coord.refValue();
-      cout << refValue << endl;
-
-      refValue[0] = 0.1;
-      refValue[1] = 30e06;
-
-      coord.setRefValue(refValue);
-      cout << coord.refValue() << endl;
-
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << endl;
-      nofFailedTests++;
-    }
-
+  try {
+    std::vector<double> refValue = coord.refValue();
+    cout << refValue << endl;
+    
+    refValue[0] = 0.1;
+    refValue[1] = 30e06;
+    
+    coord.setRefValue(refValue);
+    cout << coord.refValue() << endl;
+    
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   cout << "[4] Adjust reference pixel ..." << endl;
-  try
-    {
-      std::vector<double> refPixel = coord.refPixel();
-      cout << refPixel << endl;
-
-      refPixel[0] = 1;
-      refPixel[1] = 2;
-
-      coord.setRefPixel(refPixel);
-      cout << coord.refPixel() << endl;
-
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << endl;
-      nofFailedTests++;
-    }
-
+  try {
+    std::vector<double> refPixel = coord.refPixel();
+    cout << refPixel << endl;
+    
+    refPixel[0] = 1;
+    refPixel[1] = 2;
+    
+    coord.setRefPixel(refPixel);
+    cout << coord.refPixel() << endl;
+    
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   cout << "[5] Adjust coordinate axis increment ..." << endl;
-  try
-    {
-      std::vector<double> incr = coord.increment();
-      cout << incr << endl;
-
-      incr[0] = 0.1;
-      incr[1] = 1e06;
-
-      coord.setIncrement(incr);
-      cout << coord.increment() << endl;
-
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << endl;
-      nofFailedTests++;
-    }
-
+  try {
+    std::vector<double> incr = coord.increment();
+    cout << incr << endl;
+    
+    incr[0] = 0.1;
+    incr[1] = 1e06;
+    
+    coord.setIncrement(incr);
+    cout << coord.increment() << endl;
+    
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
@@ -246,89 +231,190 @@ int test_parameters ()
 
 #ifdef HAVE_HDF5
 
-int test_hdf5 ()
+int test_hdf5 (std::string const &filename="tLinearCoordinate.h5")
 {
   cout << "\n[tLinearCoordinate::test_hdf5]\n" << endl;
 
   int nofFailedTests (0);
-  std::string filename ("tLinearCoordinate.h5");
-  
-  unsigned int nofAxes (2);
-  std::vector<std::string> worldAxisNames (nofAxes);
-  std::vector<std::string> worldAxisUnits (nofAxes);
-  std::vector<double> refValue (nofAxes,0.0);
-  std::vector<double> refPixel (nofAxes,0.0);
-  std::vector<double> increment (nofAxes,1.0);
-  std::vector<double> pc (nofAxes*nofAxes);
+  unsigned int nofAxes;
+  std::vector<std::string> worldAxisNames;
+  std::vector<std::string> worldAxisUnits;
+  std::vector<double> refValue;
+  std::vector<double> refPixel;
+  std::vector<double> increment;
+  std::vector<double> pc;
 
-  worldAxisNames[0] = "Length";
-  worldAxisNames[1] = "Time";
-  worldAxisUnits[0] = "m";
-  worldAxisUnits[1] = "s";
-  pc[0]             = 1;
-  pc[1]             = 0;
-  pc[2]             = 0;
-  pc[3]             = 1;
+  //________________________________________________________
+  // Create HDF5 file to work with
 
-  DAL::LinearCoordinate coord (nofAxes,
-                               worldAxisNames,
-                               worldAxisUnits,
-                               refValue,
-                               refPixel,
-                               increment,
-                               pc);
-  coord.summary();
+  hid_t fileID = H5Fcreate (filename.c_str(),
+			    H5F_ACC_TRUNC,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT);
 
-  cout << "[1] Write coordinate to a HDF5 file ..." << endl;
+  /* test of file creation was successful */
+  if (H5Iis_valid(fileID)) {
+    cout << "-- Successfully opened file " << filename << endl;
+  } else {
+    cerr << "-- ERROR: Failed to open file " << filename << endl;
+    return -1;
+  }
+    
+  //________________________________________________________
+  // Test 1: Linear coordinate with 1 axis (default)
+
+  cout << "[1] Write linear coordinate with 1 axis (default) ..." << endl;
   try {
-    hid_t fileID;
+    // set number of axes
+    nofAxes = 1;
+    // create coordinate object
+    DAL::LinearCoordinate coord (nofAxes);
+    // show summary of object
+    coord.summary();
+    // write coordinate to file
+    coord.h5write(fileID,"LinearCoordinate1");
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  //________________________________________________________
+  // Test 2: Linear coordinate with 1 axis (custom)
+
+  cout << "[2] Write linear coordinate with 1 axis (custom) ..." << endl;
+  try {
+    // set number of axes
+    nofAxes = 1;
+    // resize arrays
+    worldAxisNames.resize(nofAxes);
+    worldAxisUnits.resize(nofAxes);
+    refPixel.resize(nofAxes);
+    refValue.resize(nofAxes);
+    increment.resize(nofAxes);
+    pc.resize(nofAxes*nofAxes);
+    // assign arrays
+    worldAxisNames[0] = "Length";
+    worldAxisUnits[0] = "m";
+    refPixel[0]       = 1.0;
+    refValue[0]       = 2.0;
+    increment[0]      = 0.5;
+    pc[0]             = 1.0;
+    // create coordinate object
+    DAL::LinearCoordinate coord (nofAxes);
+    // show summary of object
+    coord.summary();
+    // write coordinate to file
+    coord.h5write(fileID,"LinearCoordinate2");
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  //________________________________________________________
+  // Test 3: Linear coordinate with 2 axes
+
+  cout << "[3] Write linear coordinate with 2 axes ..." << endl;
+  try {
+    // set number of axes
+    nofAxes = 2;
+    // resize arrays
+    worldAxisNames.resize(nofAxes);
+    worldAxisUnits.resize(nofAxes);
+    refPixel.resize(nofAxes);
+    refValue.resize(nofAxes);
+    increment.resize(nofAxes);
+    pc.resize(nofAxes*nofAxes);
+    // assign arrays
+    worldAxisNames[0] = "Length";
+    worldAxisNames[1] = "Time";
+    worldAxisUnits[0] = "m";
+    worldAxisUnits[1] = "s";
+    refPixel[0]       = 1.0;
+    refPixel[1]       = 10.0;
+    refValue[0]       = 2.0;
+    refValue[1]       = 20.0;
+    increment[0]      = 0.5;
+    increment[1]      = 5.0;
+    pc[0]             = 1;
+    pc[1]             = 0;
+    pc[2]             = 0;
+    pc[3]             = 1;
     
-    cout << "-- Create HDF5 file to work with ..." << endl;
-    fileID = H5Fcreate (filename.c_str(),
-			H5F_ACC_TRUNC,
-			H5P_DEFAULT,
-			H5P_DEFAULT);
-    
-    cout << "-- Write the coordinate to the root group ..." << endl;
-    coord.h5write(fileID);
-    
-    cout << "-- Write the coordinate to new group within the file ..." << endl;
-    coord.h5write(fileID,"LinearCoordinate");
-    
-    cout << "-- Close the HDF5 file ..." << endl;
-    H5Fclose(fileID);
+    DAL::LinearCoordinate coord (nofAxes,
+				 worldAxisNames,
+				 worldAxisUnits,
+				 refValue,
+				 refPixel,
+				 increment,
+				 pc);
+    // show summary of object
+    coord.summary();
+    // write coordinate to file
+    coord.h5write(fileID,"LinearCoordinate3");
   }
   catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
   
-  cout << "[2] Read coordinate from a HDF5 file ..." << endl;
+  //________________________________________________________
+  // Test 4: Linear coordinate with 3 axes
+
+  cout << "[4] Linear coordinate with 3 axes ..." << endl;
   try {
-    hid_t fileID;
+    // set number of axes
+    nofAxes = 3;
+    // resize arrays
+    worldAxisNames.resize(nofAxes);
+    worldAxisUnits.resize(nofAxes);
+    refPixel.resize(nofAxes);
+    refValue.resize(nofAxes);
+    increment.resize(nofAxes);
+    pc.resize(nofAxes*nofAxes);
+    // assign arrays
+    worldAxisNames[0] = "x";
+    worldAxisNames[1] = "y";
+    worldAxisNames[2] = "z";
+    worldAxisUnits[0] = "m";
+    worldAxisUnits[1] = "m";
+    worldAxisUnits[2] = "m";
+    refPixel[0]       = 1.0;
+    refPixel[1]       = 1.0;
+    refPixel[2]       = 1.0;
+    refValue[0]       = 1.0;
+    refValue[1]       = 2.0;
+    refValue[2]       = 4.0;
+    increment[0]      = 0.1;
+    increment[1]      = 0.2;
+    increment[2]      = 0.4;
     
-    cout << "-- Open HDF5 file to work with ..." << endl;
-    fileID = H5Fopen (filename.c_str(),
-		      H5F_ACC_RDONLY,
-		      H5P_DEFAULT);
+    unsigned int n(0);
+    for (unsigned int i(0); i<nofAxes; ++i) {
+      for (unsigned int j(0); j<nofAxes; ++j,++n) {
+	if (i==j) {
+	  pc[n] = 1.0;
+	} else {
+	  pc[n] = 0.0;
+	}
+      }
+    } 
     
-    cout << "-- Read the coordinate from the root group ..." << endl;
-    DAL::LinearCoordinate coord1;
-    coord1.h5read(fileID);
-    coord1.summary();
-    
-    cout << "-- Read the coordinate from a group within the file ..." << endl;
-    coord.h5read(fileID,"LinearCoordinate");
-    coord1.summary();
-    
-    cout << "-- Close the HDF5 file ..." << endl;
-    H5Fclose(fileID);
+    DAL::LinearCoordinate coord (nofAxes,
+				 worldAxisNames,
+				 worldAxisUnits,
+				 refValue,
+				 refPixel,
+				 increment,
+				 pc);
+    coord.summary();
   }
   catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
 
+  H5Fclose(fileID);
+  
   return nofFailedTests;
 }
 

@@ -50,6 +50,15 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                             LinearCoordinate
   
+  /*!
+    \param nofAxes   -- 
+    \param axisNames -- 
+    \param axisUnits -- 
+    \param refValue  -- 
+    \param refPixel  -- 
+    \param increment -- 
+    \param pc        -- 
+   */
   LinearCoordinate::LinearCoordinate (unsigned int const &nofAxes,
                                       std::vector<std::string> const &axisNames,
                                       std::vector<std::string> const &axisUnits,
