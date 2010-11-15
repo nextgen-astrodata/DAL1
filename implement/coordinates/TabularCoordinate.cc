@@ -273,11 +273,18 @@ namespace DAL {  // Namespace DAL -- begin
   {
     hid_t groupID (0);
     // create HDF5 group
-    groupID = H5Gcreate( locationID,
-                         name.c_str(),
-                         H5P_DEFAULT,
-                         H5P_DEFAULT,
-                         H5P_DEFAULT );
+    if (H5Lexists (locationID, name.c_str(), H5P_DEFAULT)) {
+      groupID = H5Gopen (locationID,
+			 name.c_str(),
+			 H5P_DEFAULT);
+      
+    } else {
+      groupID = H5Gcreate( locationID,
+			   name.c_str(),
+			   H5P_DEFAULT,
+			   H5P_DEFAULT,
+			   H5P_DEFAULT );
+    }
     // write coordinate attributes
     h5write (groupID);
     // close the group after write
