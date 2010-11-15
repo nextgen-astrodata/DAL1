@@ -215,7 +215,7 @@ namespace DAL { // Namespace DAL -- begin
       os << "-- max of elements = " << max()         << std::endl;
     }
     
-    // === Methods ==============================================================
+    // === Public methods =======================================================
     
     //! Get the matrix elements of row \e n.
     inline std::valarray<T> row (size_t const &n) 
@@ -328,8 +328,13 @@ namespace DAL { // Namespace DAL -- begin
       }
     }
 #endif
+
+    // === Static methods =======================================================
+
     
   private:
+
+    // === Private methods ======================================================
     
     /*!
       \brief Unconditional copying
