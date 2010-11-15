@@ -25,8 +25,9 @@
   <table border="0">
     <tr>
       <td class="indexkey">Core library classes</td>
-      <td class="indexkey">Common dataset support</td>
-      <td class="indexkey">High-level dataset interfaces</td>
+      <td class="indexkey">World coordinates</td>
+      <td class="indexkey">Dataset support - common methods</td>
+      <td class="indexkey">Dataset support - high-level interfaces</td>
       <td class="indexkey">Application tools</td>
     </tr>
     <tr valign="top">
@@ -40,9 +41,9 @@
       - DAL::dalTable
       </td>
       <td>
-      - DAL::Filename
-      - DAL::Timestamp
-      - DAL::CommonAttributes
+      - DAL::Angle
+      - DAL::RaDec
+      - DAL::Stokes
       - DAL::Coordinate
       - DAL::DirectionCoordinate
       - DAL::LinearCoordinate
@@ -51,8 +52,16 @@
       - DAL::CoordinatesGroup
       </td>
       <td>
+      - DAL::CommonAttributes
+      - DAL::CommonInterface
+      - DAL::HDF5Dataset
+      - DAL::HDF5Hyperslab
+      - DAL::Filename
+      - DAL::Timestamp
+      </td>
+      <td>
       - DAL::BF_Dataset
-      - DAL::BF_PrimaryPointing
+      - DAL::BF_SubArrayPointing
       - DAL::BF_Beam
       - DAL::BF_ProcessingHistory
       - DAL::TBB_Timeseries
