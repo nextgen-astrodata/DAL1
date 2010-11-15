@@ -32,13 +32,30 @@ endforeach (src)
 ##_______________________________________________________________________________
 ##                                                           Testing instructions
 
+## run the actual tests
+
 add_test (tAngle tAngle)
 add_test (tRaDec tRaDec)
 add_test (tStokes tStokes)
 add_test (tCoordinate tCoordinate)
 add_test (tCoordinateGenerator tCoordinateGenerator)
-add_test (tDirectionCoordinate tDirectionCoordinate)
-add_test (tLinearCoordinate tLinearCoordinate)
-add_test (tStokesCoordinate tStokesCoordinate)
-add_test (tTabularCoordinate tTabularCoordinate)
 add_test (tCoordinatesGroup tCoordinatesGroup)
+
+foreach (_test
+    tDirectionCoordinate
+    tLinearCoordinate
+    tTabularCoordinate
+    tStokesCoordinate
+    )
+  ## add test to run
+  add_test (${_test} ${_test})
+  ## check the generated HDF5 files
+  if (H5CHECK_EXECUTABLE)
+    add_test (h5check_${_test} ${H5CHECK_EXECUTABLE} --verbose=1 ${_test}.h5)
+  endif (H5CHECK_EXECUTABLE)
+  ## display statistics for the generated HDF5 file
+  if (H5STAT_EXECUTABLE)
+    add_test (h5stat_${_test} ${H5STAT_EXECUTABLE} --file ${_test}.h5)
+  endif (H5STAT_EXECUTABLE)
+endforeach (_test)
+
