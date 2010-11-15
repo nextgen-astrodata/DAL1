@@ -32,6 +32,7 @@
 #include <assert.h>
 #include <map>
 #include <set>
+#include <valarray>
 #include <vector>
 
 using std::cerr;
@@ -846,6 +847,32 @@ std::ostream& operator<< (std::ostream &os,
                           const std::vector<T> &vec)
 {
   return show (os, vec.begin(), vec.end());
+}
+
+//_______________________________________________________________________________
+//                                                                     operator<<
+
+/*!
+  \brief Overloading of output operator to display std::valarray<T>
+  
+  \param os  -- Output stream to which the result will be written to
+  \param vec -- The valarray to be displayed
+*/
+template <typename T>
+std::ostream& operator<< (std::ostream &os,
+                          const std::valarray<T> &vec)
+{
+  size_t nelem = vec.size();
+  
+  os << "[";
+  
+  for (size_t n(0); n<nelem; ++n) {
+    os << " " << vec[n];
+  }
+  
+  os << " ]";
+
+  return os;
 }
 
 //_______________________________________________________________________________
