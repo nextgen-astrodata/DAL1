@@ -329,9 +329,6 @@ namespace DAL { // Namespace DAL -- begin
     }
 #endif
 
-    // === Static methods =======================================================
-
-    
   private:
 
     // === Private methods ======================================================

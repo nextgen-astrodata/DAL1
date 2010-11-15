@@ -135,12 +135,44 @@ namespace DAL {
   
   // ============================================================================
   //
-  //  Service routines
+  //  System inspection
   //
   // ============================================================================
   
   //! Test if the system is big endian
   bool BigEndian ( void );
+  
+  // ============================================================================
+  //
+  //  Array operations
+  //
+  // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                               IdentityMatrix
+  
+  /*!
+    \brief Set up vector representing an identity matrix of sidelength \f$ N \f$
+    \retval data      -- \f$ N \times N \f$ matrix represented as a linear array,
+            following C-type ordering of the matrix elements.
+    \param sidelength -- Sidelength of the matrix, \f$ N \f$.
+           \f[ I_{1} = \left[ 1 \right] , \quad
+               I_{2} = \left[ \begin{array}{cc} 1 & 0 \\ 0 & 1 end{array} \right] \f]
+  */
+  template <class T> void IdentityMatrix (std::vector<T> &data,
+				      unsigned int const &sidelength)
+    {
+      unsigned int nelem = sidelength*sidelength;
+      // Adjust the size of the vector storing the matrix
+      data.resize(nelem);
+      // Populate the vector according to the matrix layout
+      for (unsigned int n(0); n<sidelength; ++n) {
+	data[n*sidelength+n] = T(1);
+      }
+    }
+  
+  //_____________________________________________________________________________
+  //                                                         AllocateDynamicArray
   
   /*!
     \brief Allocate the memory for a dynamic 2-dimensional array

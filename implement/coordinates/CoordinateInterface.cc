@@ -157,10 +157,6 @@ namespace DAL {
   void CoordinateInterface::init (DAL::Coordinate const &coord,
 				  unsigned int const &nofAxes)
   {
-    unsigned int n;
-    unsigned int row;
-    unsigned int col;
-
     /* Initialize internal variables storing coordinate parameters */
 
     coord_p = coord;
@@ -184,7 +180,6 @@ namespace DAL {
       refValue_p.resize(nofAxes);
       refPixel_p.resize(nofAxes);
       increment_p.resize(nofAxes);
-      pc_p.resize(nofAxes*nofAxes);
       // Fill in default values for the WCS parameters
       axisNames_p = std::vector<std::string> (nofAxes,"UNDEFINED");
       axisUnits_p = std::vector<std::string> (nofAxes,"UNDEFINED");
@@ -193,16 +188,7 @@ namespace DAL {
       increment_p = std::vector<double> (nofAxes,0.0);
 
       std::cout << "-- Initializing PC ..." << std::endl;
-      pc_p = std::vector<double> (pc_p.size(),0.0);
-      for (row=0; row<nofAxes; ++row) {
-	for (col=0; col<nofAxes; ++col) {
-	  if (row==col) {
-	    n = row*nofAxes+col;
-	    pc_p[n] = 1.0;
-	  }
-	}
-      }
-      
+      DAL::IdentityMatrix (pc_p,nofAxes);
     }
 
     /* Set up the basic set of attributes */
