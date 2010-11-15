@@ -195,7 +195,18 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Methods ==============================================================
     
-    //! Sum of all matrix elements, \f$ \sum_{i,j} a_{ij} \f$
+    //! Get the matrix elements of row \e n.
+    inline std::valarray<T> row (size_t const &n) 
+      {
+	return data_p[std::slice(n*nofColumns_p,nofColumns_p,1)];
+      }
+    //! Set the matrix elements of row \e n to the value \e val.
+    inline void setRow (size_t const &n,
+			T const &val) 
+      {
+	data_p[std::slice(n*nofColumns_p,nofColumns_p,1)] = val;
+      }
+    //! Sum of all matrix elements, \f$ S = \sum_{i,j} a_{ij} \f$
     inline T sum () const {
       return data_p.sum();
     }
