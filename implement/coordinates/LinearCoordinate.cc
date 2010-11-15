@@ -161,25 +161,10 @@ namespace DAL {  // Namespace DAL -- begin
 
   void LinearCoordinate::init (unsigned int const &nofAxes)
   {
-    /* Initialize base class */
+    /* Initialize base class; no further initialization required, as no additional
+       parameters are getting defined here. */
     CoordinateInterface::init (Coordinate::LINEAR,
 			       nofAxes);
-
-    /* Initialize internal variables storing WCS information */
-
-    axisNames_p.resize(nofAxes_p);
-    axisUnits_p.resize(nofAxes_p);
-    refValue_p.resize(nofAxes_p);
-    refPixel_p.resize(nofAxes_p);
-    increment_p.resize(nofAxes_p);
-
-    for (unsigned int n(0); n<nofAxes_p; ++n) {
-      axisNames_p[n]  = "UNDEFINED";
-      axisUnits_p[n]  = "UNDEFINED";
-      refValue_p[n]   = 0.0;
-      refPixel_p[n]   = 0.0;
-      increment_p[n]  = 0.0;
-    }
   }
 
 #ifdef HAVE_HDF5

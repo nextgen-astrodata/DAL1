@@ -25,7 +25,7 @@
 #define TABULARCOORDINATE_H
 
 // DAL header files
-#include <CoordinateInterface.h>
+#include "CoordinateInterface.h"
 
 #ifdef HAVE_CASA
 #include <coordinates/Coordinates/TabularCoordinate.h>
@@ -86,8 +86,8 @@ namespace DAL {  // Namespace DAL -- begin
     //! Default constructor
     TabularCoordinate ();
     //! Argumented constructor
-    TabularCoordinate (std::vector<std::string> const &axisNames,
-		       std::vector<std::string> const &axisUnits,
+    TabularCoordinate (std::string const &axisNames,
+		       std::string const &axisUnits,
 		       std::vector<double> const &pixelValues,
 		       std::vector<double> const &worldValues);
     //! Copy constructor
@@ -207,7 +207,14 @@ namespace DAL {  // Namespace DAL -- begin
   private:
     
     //! Initialize internal parameters
-    void init ();
+    void init (std::string const &axisNames="UNDEFINED",
+	       std::string const &axisUnits="UNDEFINED");
+
+    //! Initialize internal parameters
+    void init (std::vector<std::string> const &axisNames,
+	       std::vector<std::string> const &axisUnits,
+	       std::vector<double> const &pixelValues,
+	       std::vector<double> const &worldValues);
     
     //! Set the attributes attached to the coordinate
     inline void setAttributes ()

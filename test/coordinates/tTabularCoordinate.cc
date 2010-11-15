@@ -29,14 +29,15 @@
   \ingroup DAL
   \ingroup coordinates
 
-  \brief A collection of test routines for the TabularCoordinate class
+  \brief A collection of test routines for the DAL::TabularCoordinate class
 
-  \author Lars Baehren
+  \author Lars B&auml;hren
 
   \date 2009/06/24
 */
 
-// -----------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                              test_constructors
 
 /*!
   \brief Test constructors for a new TabularCoordinate object
@@ -64,8 +65,8 @@ int test_constructors ()
   std::cout << "[2] Testing argumented constructor ..." << std::endl;
   try {
     unsigned int nelem (4);
-    std::vector<std::string> axisNames(1,"Length");
-    std::vector<std::string> axisUnits(1,"m");
+    std::string axisNames("Length");
+    std::string axisUnits("m");
     std::vector<double> pixelValues(nelem);
     std::vector<double> worldValues(nelem);
     //
@@ -102,13 +103,13 @@ int test_methods ()
 
   int nofFailedTests (0);
   std::string filename ("tTabularCoordinate.h5");
-
+  
   unsigned int nelem (4);
-  std::vector<std::string> axisNames(1,"Length");
-  std::vector<std::string> axisUnits(1,"m");
+  std::string axisNames("Length");
+  std::string axisUnits("m");
   std::vector<double> pixelValues(nelem);
   std::vector<double> worldValues(nelem);
-
+  
   pixelValues[0] = 1;
   pixelValues[1] = 2;
   pixelValues[2] = 3;
@@ -198,8 +199,8 @@ int example_beamformed ()
   //________________________________________________________
   // [2] Create the coordinate object
 
-  std::vector<std::string> axisNames(1,"Frequency");
-  std::vector<std::string> axisUnits(1,"MHz");
+  std::string axisNames("Length");
+  std::string axisUnits("m");
   
   DAL::TabularCoordinate coord (axisNames,
                                 axisUnits,

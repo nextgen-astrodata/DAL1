@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <TabularCoordinate.h>
+#include "TabularCoordinate.h"
 
 namespace DAL {  // Namespace DAL -- begin
 
@@ -38,22 +38,21 @@ namespace DAL {  // Namespace DAL -- begin
   {
     init ();
   }
-  
+
   //_____________________________________________________________________________
   //                                                            TabularCoordinate
   
-  TabularCoordinate::TabularCoordinate (std::vector<std::string> const &axisNames,
-                                        std::vector<std::string> const &axisUnits,
-                                        std::vector<double> const &pixelValues,
-                                        std::vector<double> const &worldValues)
+  TabularCoordinate::TabularCoordinate (std::string const &axisNames,
+					std::string const &axisUnits,
+					std::vector<double> const &pixelValues,
+					std::vector<double> const &worldValues)
   {
-    init ();
-    setAxisNames (axisNames);
-    setAxisUnits (axisUnits);
+    init (axisNames,
+	  axisUnits);
     setAxisValues (pixelValues,
                    worldValues);
   }
-
+  
   //_____________________________________________________________________________
   //                                                            TabularCoordinate
   
@@ -83,6 +82,9 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
 
+  //_____________________________________________________________________________
+  //                                                                    operator=
+
   TabularCoordinate& TabularCoordinate::operator= (TabularCoordinate const &other)
   {
     if (this != &other) {
@@ -92,6 +94,9 @@ namespace DAL {  // Namespace DAL -- begin
     return *this;
   }
   
+  //_____________________________________________________________________________
+  //                                                                         copy
+
   void TabularCoordinate::copy (TabularCoordinate const &other)
   {
     CoordinateInterface::copy (other);
@@ -176,36 +181,19 @@ namespace DAL {  // Namespace DAL -- begin
     os << "-- nof. axes             = " << nofAxes_p      << std::endl;
     os << "-- World axis names      = " << axisNames_p    << std::endl;
     os << "-- World axis units      = " << axisUnits_p    << std::endl;
-    os << "-- Reference value       = " << refValue_p     << std::endl;
-    os << "-- Reference pixel       = " << refPixel_p     << std::endl;
-//     os << "-- Increment             = " << increment_p    << std::endl;
-    os << "-- Transformation matrix = " << pc_p           << std::endl;
     os << "-- Pixel values          = " << pixelValues_p  << std::endl;
     os << "-- World values          = " << worldValues_p  << std::endl;
+    os << "-- Reference value       = " << refValue_p     << std::endl;
+    os << "-- Reference pixel       = " << refPixel_p     << std::endl;
+    // os << "-- Increment             = " << increment_p    << std::endl;
+    os << "-- Transformation matrix = " << pc_p           << std::endl;
   }
   
   // ============================================================================
   //
-  //  Methods
+  //  Public methods
   //
   // ============================================================================
-  
-  //_____________________________________________________________________________
-  //                                                                         init
-
-  void TabularCoordinate::init ()
-  {
-    /* Initialize base class */
-    CoordinateInterface::init (Coordinate::STOKES,
-			       1);
-    
-    /* Initialize coordinate axis data */
-    pixelValues_p.resize(nofAxes_p);
-    worldValues_p.resize(nofAxes_p);
-    
-    pixelValues_p = std::vector<double>(nofAxes_p,0.0);
-    worldValues_p = std::vector<double>(nofAxes_p,0.0);
-  }
   
 #ifdef HAVE_HDF5
   
@@ -220,7 +208,6 @@ namespace DAL {  // Namespace DAL -- begin
     DAL::h5get_attribute( groupID, "NOF_AXES",         nofAxes_p );
     DAL::h5get_attribute( groupID, "AXIS_NAMES",       axisNames_p );
     DAL::h5get_attribute( groupID, "AXIS_UNITS",       axisUnits_p );
-//     DAL::h5get_attribute( groupID, "INCREMENT",        increment_p );
     DAL::h5get_attribute( groupID, "REFERENCE_PIXEL",  refPixel_p );
     DAL::h5get_attribute( groupID, "REFERENCE_VALUE",  refValue_p );
   }
@@ -315,5 +302,51 @@ namespace DAL {  // Namespace DAL -- begin
   }
 #endif
 
+  // ============================================================================
+  //
+  //  Private methods
+  //
+  // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                         init
+
+  /*!
+    \param axisNames -- World axis names.
+    \param axisUnits -- World axis units.
+  */
+  void TabularCoordinate::init (std::string const &axisNames,
+				std::string const &axisUnits)
+  {
+    std::vector<std::string> names (1,axisNames);
+    std::vector<std::string> units (1,axisUnits);
+    std::vector<double> tmp;
+
+    init (names, units, tmp, tmp);
+  }
+
+  //_____________________________________________________________________________
+  //                                                                         init
+
+  /*!
+    \param axisNames   -- World axis names.
+    \param axisUnits   -- World axis units.
+    \param pixelValues -- 
+    \param worldValues -- 
+  */
+  void TabularCoordinate::init (std::vector<std::string> const &axisNames,
+				std::vector<std::string> const &axisUnits,
+				std::vector<double> const &pixelValues,
+				std::vector<double> const &worldValues)
+  {
+    /* Initialize base class */
+    CoordinateInterface::init (Coordinate::TABULAR,1);
+    
+    setAttributes ();
+    setAxisNames (axisNames);
+    setAxisUnits (axisUnits);
+    setAxisValues (pixelValues, worldValues);
+  }
+    
 
 } // Namespace DAL -- end

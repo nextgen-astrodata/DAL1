@@ -181,13 +181,14 @@ namespace DAL {
       refPixel_p.resize(nofAxes);
       increment_p.resize(nofAxes);
       // Fill in default values for the WCS parameters
-      axisNames_p = std::vector<std::string> (nofAxes,"UNDEFINED");
-      axisUnits_p = std::vector<std::string> (nofAxes,"UNDEFINED");
-      refValue_p  = std::vector<double> (nofAxes,0.0);
-      refPixel_p  = std::vector<double> (nofAxes,0.0);
-      increment_p = std::vector<double> (nofAxes,0.0);
-
-      std::cout << "-- Initializing PC ..." << std::endl;
+      for (unsigned int n(0); n<nofAxes; ++n) {
+	axisNames_p[n] = "UNDEFINED";
+	axisUnits_p[n] = "UNDEFINED";
+	refValue_p[n]  = 0.0;
+	refPixel_p[n]  = 0.0;
+	increment_p[n] = 0.0;
+      }
+      // Transformation is identity matrix
       DAL::IdentityMatrix (pc_p,nofAxes);
     }
 
