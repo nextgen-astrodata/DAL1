@@ -30,7 +30,7 @@ using DAL::ValMatrix;
   \file tValMatrix.cc
 
   \ingroup DAL
-  \ingroup coordinates
+  \ingroup core
 
   \brief A collection of test routines for the DAL::ValMatrix class
  

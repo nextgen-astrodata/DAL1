@@ -31,29 +31,29 @@ endforeach (src)
 ##_______________________________________________________________________________
 ##                                                           Testing instructions
 
-## tdalBaseTypes _________________________________
-  
-add_test (tdalBaseTypes tdalBaseTypes)
+## Test with no further conditions required ______
 
-## tdalFileType __________________________________
-  
-add_test (tdalFileType tdalFileType)
+foreach (_test
+    tdalBaseTypes
+    tdalCommon
+    tdalConversions
+    tEnumerations
+    tdalFileType
+    tdalArray
+    tdalFilter
+    tdalGroup
+    tDatabase
+    tValMatrix
+    )
+  add_test (${_test} ${_test})
+endforeach (_test)
 
 ## tdalCommon ____________________________________
-  
-add_test (tdalCommon_test1 tdalCommon)
 
 if (dataset_tbb AND dataset_beamformed)
-  add_test (tdalCommon_test2 tdalCommon ${dataset_tbb} ${dataset_beamformed})
+  add_test (tdalCommon_bf tdalCommon ${dataset_tbb} ${dataset_beamformed})
 endif (dataset_tbb AND dataset_beamformed)
 
-## tEnumerations ________________________________
-
-add_test (tEnumerations tEnumerations)
-
-## tdalConversions _______________________________
-
-add_test (tdalConversions tdalConversions)
 
 ## tdalDataset ___________________________________
 
@@ -73,18 +73,6 @@ if (dataset_fits)
   add_test (tdalDataset_fits tdalDataset ${dataset_fits} FITS)
 endif (dataset_fits)
 
-## tdalArray _____________________________________
-
-add_test (tdalArray tdalArray)
-
-## tdalFilter ____________________________________
-
-add_test (tdalFilter tdalFilter)
-
-## tdalGroup _____________________________________
-
-add_test (tdalGroup tdalGroup)
-
 ## tdalTable _____________________________________
 
 if (dataset_beamformed)
@@ -92,8 +80,4 @@ if (dataset_beamformed)
 else (dataset_beamformed)
   add_test (tdalTable2 tdalTable)
 endif (dataset_beamformed)
-
-## tDatabase _____________________________________
-
-add_test (tDatabase tDatabase)
 

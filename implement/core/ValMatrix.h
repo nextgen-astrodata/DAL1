@@ -36,7 +36,7 @@ namespace DAL { // Namespace DAL -- begin
     \class ValMatrix
     
     \ingroup DAL
-    \ingroup coordinates
+    \ingroup core
     
     \brief Encapsulation of matrix-type data
     
