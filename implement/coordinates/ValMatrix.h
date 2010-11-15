@@ -55,6 +55,28 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Synopsis</h3>
     
     <h3>Example(s)</h3>
+
+    <ol>
+      <li>Create a new matrix of singular shape:
+      \code
+      DAL::ValMatrix mat;
+      \endcode
+
+      <li>Create a new matrix of square shape with sidelength \e N:
+      \code
+      size_t N = 10;
+      DAL::ValMatrix mat (N);
+      \endcode
+      All matrix elements are initialized with 0.
+
+      <li>Create a new matrix of shape \f$ ( N_{\rm rows}, N_{\rm cols} ) \f$:
+      \code
+      size_t nofRows = 4;
+      size_t nofCols = 3;
+      DAL::ValMatrix mat (nofRows,nofCols);
+      \endcode
+      All matrix elements are initialized with 0.
+    </ol>
     
   */  
   template <class T> class ValMatrix {
