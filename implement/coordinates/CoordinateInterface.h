@@ -263,10 +263,9 @@ namespace DAL {   // Namespace DAL -- begin
     }
     //! Set the reference pixel
     virtual void setRefPixel (std::vector<double> const &refPixel) {
-      if (refPixel.size() == nofAxes_p)
-	{
-	  refPixel_p = refPixel;
-	}
+      if (refPixel.size() == nofAxes_p) {
+	refPixel_p = refPixel;
+      }
     }
     /*!
       \brief Get the coordinate axis increment
@@ -323,11 +322,11 @@ namespace DAL {   // Namespace DAL -- begin
     
 #ifdef HAVE_HDF5
     //! Write the coordinate object to a HDF5 file
-    virtual void h5write (hid_t const &locationID) = 0;
+    virtual void h5write (hid_t const &locationID);
     
     //! Write the coordinate object to a HDF5 file
     virtual void h5write (hid_t const &locationID,
-			  std::string const &name) = 0;
+			  std::string const &name);
     
     //! Read the coordinate object from a HDF5 file
     virtual void h5read (hid_t const &locationID) = 0;
