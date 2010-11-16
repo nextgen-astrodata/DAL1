@@ -50,12 +50,21 @@ endif (dataset_tbb)
 ##_______________________________________________________________________________
 ##                                                           Testing instructions
 
-add_test (tBF_Dataset tBF_Dataset)
-add_test (tBF_Beam tBF_Beam)
-add_test (tBF_ProcessingHistory tBF_ProcessingHistory)
-add_test (tBF_SubArrayPointing tBF_SubArrayPointing)
-add_test (tSysLog tSysLog)
-add_test (tTBB_StationTrigger tTBB_StationTrigger)
+## Tests without dependency on specific datasets
+
+foreach (_test
+    tBF_Dataset
+    tBF_Beam
+    tBF_ProcessingHistory
+    tBF_SubArrayPointing
+    tRM_RootGroup
+    tSysLog
+    tTBB_StationTrigger
+    )
+  add_test (${_test} ${_test})
+endforeach (_test)
+
+## Tests using TBB datasets
 
 if (dataset_tbb)
   add_test (tTBB_DipoleDataset ${BASH_EXCUTABLE} tTBB_DipoleDataset.sh)
@@ -66,6 +75,8 @@ else (dataset_tbb)
   add_test (tTBB_StationGroup tTBB_StationGroup)
   add_test (tTBB_Timeseries tTBB_Timeseries)
 endif (dataset_tbb)
+
+## Tests using BF datasets
 
 if (dataset_beamformed)
   add_test (tBeamFormed tBeamFormed ${dataset_beamformed})
