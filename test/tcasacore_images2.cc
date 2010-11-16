@@ -329,8 +329,7 @@ int test_image_size (int const &min=50,
 //_______________________________________________________________________________
 //                                                                           main
 
-int main (int argc,
-          char *argv[])
+int main ()
 {
   int nofFailedTests (0);
 
