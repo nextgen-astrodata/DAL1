@@ -297,11 +297,11 @@ int test_methods ()
 
       cout << "-- Read the coordinate from the root group ..." << endl;
       DAL::DirectionCoordinate coord1;
-      coord1.h5read(fileID);
+      coord1.read_hdf5(fileID);
       coord1.summary();
 
       cout << "-- Read the coordinate from a group within the file ..." << endl;
-      coord.h5read(fileID,"DirectionCoordinate");
+      coord.read_hdf5(fileID,"DirectionCoordinate");
       coord1.summary();
 
       cout << "-- Close the HDF5 file ..." << endl;

@@ -134,11 +134,11 @@ namespace DAL {  // Namespace DAL -- begin
     
 #ifdef HAVE_HDF5
     //! Read the coordinate object from a HDF5 file
-    void h5read (hid_t const &groupID);
+    void read_hdf5 (hid_t const &groupID);
     
     //! Read the coordinate object from a HDF5 file
-    void h5read (hid_t const &locationID,
-		 std::string const &name);
+    void read_hdf5 (hid_t const &locationID,
+		    std::string const &name);
     
     //! Write the coordinate object to a HDF5 file
     void write_hdf5 (hid_t const &groupID);
@@ -147,7 +147,7 @@ namespace DAL {  // Namespace DAL -- begin
     void write_hdf5 (hid_t const &locationID,
 		     std::string const &name);
 #endif
-
+    
 #ifdef HAVE_CASA
     //! Create coordinate from casa::Coordinate object
     void importCoordinate (casa::StokesCoordinate const &coord);

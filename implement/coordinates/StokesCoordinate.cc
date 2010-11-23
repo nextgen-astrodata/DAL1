@@ -219,7 +219,7 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef HAVE_HDF5
 
   //_____________________________________________________________________________
-  //                                                                       h5read
+  //                                                                    read_hdf5
 
   /*!
     \param locationID -- Identifier of the HDF5 object to which the coordinate
@@ -227,19 +227,19 @@ namespace DAL {  // Namespace DAL -- begin
     \param name       -- Name of the HDF5 group containing the coordinate
            parameters.
   */
-  void StokesCoordinate::h5read (hid_t const &locationID,
-                                 std::string const &name)
+  void StokesCoordinate::read_hdf5 (hid_t const &locationID,
+				    std::string const &name)
   {
     hid_t groupID (0);
-
+    
     groupID = H5Gopen1 (locationID,
                         name.c_str());
-
+    
     if (groupID) {
-      h5read (groupID);
+      read_hdf5 (groupID);
     }
     else {
-      std::cerr << "[StokesCoordinate::h5read] Error opening group "
+      std::cerr << "[StokesCoordinate::read_hdf5] Error opening group "
 		<< name
 		<< std::endl;
     }
@@ -248,13 +248,13 @@ namespace DAL {  // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                       h5read
-
+  //                                                                    read_hdf5
+  
   /*!
     \param groupID -- Identifier of the HDF5 group containing the coordinate 
            parameters.
-   */
-  void StokesCoordinate::h5read (hid_t const &groupID)
+  */
+  void StokesCoordinate::read_hdf5 (hid_t const &groupID)
   {
     std::string coordinate_type;
     unsigned int nof_axes;
@@ -270,7 +270,7 @@ namespace DAL {  // Namespace DAL -- begin
       nofAxes_p = nof_axes;
     }
     else {
-      std::cerr << "[StokesCoordinate::h5read]"
+      std::cerr << "[StokesCoordinate::read_hdf5]"
 		<< " Encountered coordinate does not match expected type!"
 		<< std::endl;
     }

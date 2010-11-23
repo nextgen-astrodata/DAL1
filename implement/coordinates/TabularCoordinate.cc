@@ -198,9 +198,9 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef HAVE_HDF5
   
   //_____________________________________________________________________________
-  //                                                                       h5read
+  //                                                                    read_hdf5
 
-  void TabularCoordinate::h5read (hid_t const &groupID)
+  void TabularCoordinate::read_hdf5 (hid_t const &groupID)
   {
     std::string coordinateTypeName;
 
@@ -213,21 +213,21 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                                       h5read
+  //                                                                    read_hdf5
 
-  void TabularCoordinate::h5read (hid_t const &locationID,
-                                  std::string const &name)
+  void TabularCoordinate::read_hdf5 (hid_t const &locationID,
+				     std::string const &name)
   {
     hid_t groupID (0);
-
+    
     groupID = H5Gopen1 (locationID,
                         name.c_str());
-
+    
     if (groupID) {
-      h5read (groupID);
+      read_hdf5 (groupID);
     }
     else {
-      std::cerr << "[TabularCoordinate::h5read] Error opening group "
+      std::cerr << "[TabularCoordinate::read_hdf5] Error opening group "
 		<< name
 		<< std::endl;
     }
@@ -236,7 +236,7 @@ namespace DAL {  // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                      write_hdf5
+  //                                                                   write_hdf5
   
   void TabularCoordinate::write_hdf5 (hid_t const &groupID)
   {

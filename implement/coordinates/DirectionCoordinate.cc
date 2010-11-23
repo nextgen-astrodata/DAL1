@@ -157,7 +157,7 @@ namespace DAL {   // Namespace DAL -- begin
   // ============================================================================
 
   //_____________________________________________________________________________
-  //                                                                       h5read
+  //                                                                         init
 
   void DirectionCoordinate::init (std::string const &system,
 				  std::string const &projection)
@@ -175,23 +175,23 @@ namespace DAL {   // Namespace DAL -- begin
 #ifdef HAVE_HDF5
   
   //_____________________________________________________________________________
-  //                                                                       h5read
-
-  void DirectionCoordinate::h5read (hid_t const &locationID,
-                                    std::string const &name)
+  //                                                                    read_hdf5
+  
+  void DirectionCoordinate::read_hdf5 (hid_t const &locationID,
+				       std::string const &name)
   {
     hid_t groupID (0);
-
+    
     groupID = H5Gopen1 (locationID,
                         name.c_str());
-
+    
     if (groupID)
       {
-        h5read (groupID);
+        read_hdf5 (groupID);
       }
     else
       {
-        std::cerr << "[DirectionCoordinate::h5read] Error opening group "
+        std::cerr << "[DirectionCoordinate::read_hdf5] Error opening group "
                   << name
                   << std::endl;
       }
@@ -200,9 +200,9 @@ namespace DAL {   // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                                       h5read
+  //                                                                    read_hdf5
 
-  void DirectionCoordinate::h5read (hid_t const &groupID)
+  void DirectionCoordinate::read_hdf5 (hid_t const &groupID)
   {
     std::string coordinate_type;
     unsigned int nof_axes;

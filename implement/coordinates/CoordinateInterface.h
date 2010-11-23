@@ -329,15 +329,15 @@ namespace DAL {   // Namespace DAL -- begin
 			  std::string const &name);
     
     //! Read the coordinate object from a HDF5 file
-    virtual void h5read (hid_t const &locationID) = 0;
+    virtual void read_hdf5 (hid_t const &locationID) = 0;
     
     //! Read the coordinate object from a HDF5 file
-    virtual void h5read (hid_t const &groupID,
-			 std::string const &name) = 0;
+    virtual void read_hdf5 (hid_t const &groupID,
+			    std::string const &name) = 0;
 #endif
-
+    
     // === Private Methods ======================================================
-
+    
   private:
 
     //! Set the attributes attached to the storage structure

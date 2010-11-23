@@ -159,11 +159,11 @@ namespace DAL {  // Namespace DAL -- begin
 		  std::string const &name);
     
     //! Read the coordinate object from a HDF5 file
-    void h5read (hid_t const &groupID);
+    void read_hdf5 (hid_t const &groupID);
     
     //! Read the coordinate object from a HDF5 file
-    void h5read (hid_t const &locationID,
-		 std::string const &name);
+    void read_hdf5 (hid_t const &locationID,
+		    std::string const &name);
 #endif
     
 #ifdef HAVE_CASA

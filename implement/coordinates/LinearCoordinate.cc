@@ -170,7 +170,7 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef HAVE_HDF5
 
   //_____________________________________________________________________________
-  //                                                                       h5read
+  //                                                                    read_hdf5
 
   /*!
     \param locationID -- Identifier of the HDF5 object to which the coordinate
@@ -178,8 +178,8 @@ namespace DAL {  // Namespace DAL -- begin
     \param name       -- Name of the HDF5 group containing the coordinate
            parameters.
   */
-  void LinearCoordinate::h5read (hid_t const &locationID,
-                                 std::string const &name)
+  void LinearCoordinate::read_hdf5 (hid_t const &locationID,
+				    std::string const &name)
   {
     hid_t groupID (0);
 
@@ -187,10 +187,10 @@ namespace DAL {  // Namespace DAL -- begin
                         name.c_str());
 
     if (groupID) {
-      h5read (groupID);
+      read_hdf5 (groupID);
     }
     else {
-      std::cerr << "[LinearCoordinate::h5read] Error opening group "
+      std::cerr << "[LinearCoordinate::read_hdf5] Error opening group "
 		<< name
 		<< std::endl;
     }
@@ -199,13 +199,13 @@ namespace DAL {  // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                       h5read
+  //                                                                    read_hdf5
 
   /*!
     \param groupID -- Identifier of the HDF5 group containing the coordinate 
            parameters.
    */
-  void LinearCoordinate::h5read (hid_t const &groupID)
+  void LinearCoordinate::read_hdf5 (hid_t const &groupID)
   {
     std::string coordinate_type;
     unsigned int nof_axes;
@@ -240,14 +240,14 @@ namespace DAL {  // Namespace DAL -- begin
       setPc        (pc);
     }
     else {
-      std::cerr << "[LinearCoordinate::h5read]"
+      std::cerr << "[LinearCoordinate::read_hdf5]"
 		<< " Encountered coordinate does not match expected type!"
 		<< std::endl;
     }
   }
   
   //_____________________________________________________________________________
-  //                                                                      write_hdf5
+  //                                                                   write_hdf5
   
   void LinearCoordinate::write_hdf5 (hid_t const &locationID,
                                   std::string const &name)
@@ -273,7 +273,7 @@ namespace DAL {  // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                                      write_hdf5
+  //                                                                   write_hdf5
 
   void LinearCoordinate::write_hdf5 (hid_t const &groupID)
   {
