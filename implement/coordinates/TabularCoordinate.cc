@@ -177,8 +177,11 @@ namespace DAL {  // Namespace DAL -- begin
   void TabularCoordinate::summary (std::ostream &os)
   {
     os << "[TabularCoordinate] Summary of internal parameters." << std::endl;
-    os << "-- Coordinate type       = " << type() << " / " <<  name() << std::endl;
-    os << "-- nof. axes             = " << nofAxes_p      << std::endl;
+    os << "-- Coordinate type       = " << type()
+       << " / " <<  name() << std::endl;
+    os << "-- Storage type          = " << storageType_p.type()
+       << " / " <<  storageType_p.name() << std::endl;
+    os << "-- nof. axes             = " << nofAxes_p        << std::endl;
     os << "-- World axis names      = " << axisNames_p    << std::endl;
     os << "-- World axis units      = " << axisUnits_p    << std::endl;
     os << "-- Pixel values          = " << pixelValues_p  << std::endl;
