@@ -137,15 +137,15 @@ namespace DAL {  // Namespace DAL -- begin
   void LinearCoordinate::summary (std::ostream &os)
   {
     os << "[LinearCoordinate] Summary of internal parameters." << std::endl;
-    os << "-- Coordinate type       = " << type() << " / " <<  name() << std::endl;
-    os << "-- nof. axes             = " << nofAxes_p      << std::endl;
-    os << "-- World axis names      = " << axisNames_p    << std::endl;
-    os << "-- World axis units      = " << axisUnits_p    << std::endl;
-    os << "-- Reference value       = " << refValue_p     << std::endl;
-    os << "-- Reference pixel       = " << refPixel_p     << std::endl;
-    os << "-- Increment             = " << increment_p    << std::endl;
-    os << "-- Transformation matrix = " << pc_p           << std::endl;
-    os << "-- Attribute names       = " << attributes_p   << std::endl;
+    os << "-- Coordinate type  = " << type() << " / " <<  name() << std::endl;
+    os << "-- Storage type     = " << storageType_p.type()
+       << " / " <<  storageType_p.name() << std::endl;
+    os << "-- nof. axes        = " << nofAxes_p        << std::endl;
+    os << "-- World axis names = " << axisNames_p      << std::endl;
+    os << "-- World axis units = " << axisUnits_p      << std::endl;
+    os << "-- Reference value  = " << refValue_p       << std::endl;
+    os << "-- Reference pixel  = " << refPixel_p       << std::endl;
+    os << "-- Increment        = " << increment_p      << std::endl;
   }
 
 

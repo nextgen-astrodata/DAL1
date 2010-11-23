@@ -119,7 +119,7 @@ namespace DAL {
 
   // ============================================================================
   //
-  //  Parameters
+  //  Parameter access
   //
   // ============================================================================
   
@@ -133,6 +133,8 @@ namespace DAL {
   {
     os << "[CoordinateInterface] Summary of internal parameters." << std::endl;
     os << "-- Coordinate type  = " << type() << " / " <<  name() << std::endl;
+    os << "-- Storage type     = " << storageType_p.type()
+       << " / " <<  storageType_p.name() << std::endl;
     os << "-- nof. axes        = " << nofAxes_p        << std::endl;
     os << "-- World axis names = " << axisNames_p      << std::endl;
     os << "-- World axis units = " << axisUnits_p      << std::endl;
@@ -159,7 +161,8 @@ namespace DAL {
   {
     /* Initialize internal variables storing coordinate parameters */
 
-    coord_p = coord;
+    coord_p       = coord;
+    storageType_p = coord;
 
     if (nofAxes <= 0) {
       // Set the number of coordinate axes
