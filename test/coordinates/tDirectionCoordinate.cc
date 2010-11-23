@@ -271,10 +271,10 @@ int test_methods ()
                           H5P_DEFAULT);
 
       cout << "-- Write the coordinate to the root group ..." << endl;
-      coord.h5write(fileID);
+      coord.write_hdf5(fileID);
 
       cout << "-- Write the coordinate to new group within the file ..." << endl;
-      coord.h5write(fileID,"DirectionCoordinate");
+      coord.write_hdf5(fileID,"DirectionCoordinate");
 
       cout << "-- Close the HDF5 file ..." << endl;
       H5Fclose(fileID);

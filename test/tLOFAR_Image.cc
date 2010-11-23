@@ -103,7 +103,7 @@ void create_direction_coordinate (hid_t const &locationID,
   coord.setLatpole (latpole);
   coord.setProjectionParameters (projectionParam);
 
-  coord.h5write (locationID,
+  coord.write_hdf5 (locationID,
                  groupName);
 
 }
@@ -144,7 +144,7 @@ void create_radius_coordinate (hid_t const &locationID,
                                increment,
                                pc);
 
-  coord.h5write (locationID,
+  coord.write_hdf5 (locationID,
                  groupName);
 }
 
@@ -184,7 +184,7 @@ void create_time_coordinate (hid_t const &locationID,
                                increment,
                                pc);
 
-  coord.h5write (locationID,
+  coord.write_hdf5 (locationID,
                  groupName);
 }
 

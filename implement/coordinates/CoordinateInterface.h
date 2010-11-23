@@ -72,11 +72,11 @@ namespace DAL {   // Namespace DAL -- begin
       </tr>
       <tr>
         <td class="indexkey">GROUPTYPE</td>
-        <td>DirectionCoord</td>
-        <td>LinearCoord</td>
-        <td>TabularCoord</td>
-        <td>StokesCoord</td>
-        <td>SpectralCoord</td>
+        <td>CoordDirection</td>
+        <td>CoordLinear</td>
+        <td>CoordTabular</td>
+        <td>CoordStokes</td>
+        <td>CoordSpectral</td>
       </tr>
       <tr>
         <td class="indexkey">COORDINATE_TYPE</td>
@@ -322,10 +322,10 @@ namespace DAL {   // Namespace DAL -- begin
     
 #ifdef HAVE_HDF5
     //! Write the coordinate object to a HDF5 file
-    virtual void h5write (hid_t const &locationID);
+    virtual void write_hdf5 (hid_t const &locationID);
     
     //! Write the coordinate object to a HDF5 file
-    virtual void h5write (hid_t const &locationID,
+    virtual void write_hdf5 (hid_t const &locationID,
 			  std::string const &name);
     
     //! Read the coordinate object from a HDF5 file

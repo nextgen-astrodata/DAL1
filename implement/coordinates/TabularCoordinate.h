@@ -152,10 +152,10 @@ namespace DAL {  // Namespace DAL -- begin
 
 #ifdef HAVE_HDF5    
     //! Write the coordinate object to a HDF5 file
-    void h5write (hid_t const &groupID);
+    void write_hdf5 (hid_t const &groupID);
     
     //! Write the coordinate object to a HDF5 file
-    void h5write (hid_t const &locationID,
+    void write_hdf5 (hid_t const &locationID,
 		  std::string const &name);
     
     //! Read the coordinate object from a HDF5 file

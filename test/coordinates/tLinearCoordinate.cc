@@ -272,7 +272,7 @@ int test_hdf5 (std::string const &filename="tLinearCoordinate.h5")
     // show summary of object
     coord.summary();
     // write coordinate to file
-    coord.h5write(fileID,"LinearCoordinate1");
+    coord.write_hdf5(fileID,"LinearCoordinate1");
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -304,7 +304,7 @@ int test_hdf5 (std::string const &filename="tLinearCoordinate.h5")
     // show summary of object
     coord.summary();
     // write coordinate to file
-    coord.h5write(fileID,"LinearCoordinate2");
+    coord.write_hdf5(fileID,"LinearCoordinate2");
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -350,7 +350,7 @@ int test_hdf5 (std::string const &filename="tLinearCoordinate.h5")
     // show summary of object
     coord.summary();
     // write coordinate to file
-    coord.h5write(fileID,"LinearCoordinate3");
+    coord.write_hdf5(fileID,"LinearCoordinate3");
   }
   catch (std::string message) {
     std::cerr << message << endl;

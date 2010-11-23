@@ -141,11 +141,11 @@ namespace DAL {  // Namespace DAL -- begin
 		 std::string const &name);
     
     //! Write the coordinate object to a HDF5 file
-    void h5write (hid_t const &groupID);
+    void write_hdf5 (hid_t const &groupID);
     
     //! Write the coordinate object to a HDF5 file
-    void h5write (hid_t const &locationID,
-		  std::string const &name);
+    void write_hdf5 (hid_t const &locationID,
+		     std::string const &name);
 #endif
 
 #ifdef HAVE_CASA

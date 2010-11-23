@@ -247,9 +247,9 @@ namespace DAL {  // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                      h5write
+  //                                                                      write_hdf5
   
-  void LinearCoordinate::h5write (hid_t const &locationID,
+  void LinearCoordinate::write_hdf5 (hid_t const &locationID,
                                   std::string const &name)
   {
     hid_t groupID (0);
@@ -267,15 +267,15 @@ namespace DAL {  // Namespace DAL -- begin
 			   H5P_DEFAULT );
     }
     // write coordinate attributes
-    h5write (groupID);
+    write_hdf5 (groupID);
     // close the group after write
     H5Gclose (groupID);
   }
 
   //_____________________________________________________________________________
-  //                                                                      h5write
+  //                                                                      write_hdf5
 
-  void LinearCoordinate::h5write (hid_t const &groupID)
+  void LinearCoordinate::write_hdf5 (hid_t const &groupID)
   {
     DAL::h5set_attribute( groupID, "COORDINATE_TYPE",  name() );
     DAL::h5set_attribute( groupID, "NOF_AXES",         nofAxes_p );
