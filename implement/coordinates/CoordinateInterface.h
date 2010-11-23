@@ -163,6 +163,8 @@ namespace DAL {   // Namespace DAL -- begin
 
     //! The type of coordinate
     DAL::Coordinate coord_p;
+    //! Storage type for the coordinate
+    DAL::Coordinate storageType_p;
     //! Attributes attached to the storage structure (typically HDF5)
     std::set<std::string> attributes_p;
 
@@ -217,6 +219,10 @@ namespace DAL {   // Namespace DAL -- begin
     //! Get the coordinate type as name
     inline std::string name () {
       return coord_p.name();
+    }
+    //! Get the storage type of the coordinate
+    inline DAL::Coordinate::Type storageType () {
+      return storageType_p.type();
     }
     //! Get the names of the attributes attached to the storage structure
     inline std::set<std::string> attributes () const {
@@ -322,11 +328,11 @@ namespace DAL {   // Namespace DAL -- begin
     
 #ifdef HAVE_HDF5
     //! Write the coordinate object to a HDF5 file
-    virtual void write_hdf5 (hid_t const &locationID);
+    virtual void write_hdf5 (hid_t const &locationID) = 0;
     
     //! Write the coordinate object to a HDF5 file
     virtual void write_hdf5 (hid_t const &locationID,
-			  std::string const &name);
+			     std::string const &name) = 0;
     
     //! Read the coordinate object from a HDF5 file
     virtual void read_hdf5 (hid_t const &locationID) = 0;

@@ -207,6 +207,7 @@ namespace DAL {
     /* set list of attributes common to all coordinates */
     attributes_p.insert("GROUPTYPE");
     attributes_p.insert("COORDINATE_TYPE");
+    attributes_p.insert("STORAGE_TYPE");
     attributes_p.insert("NOF_COORDINATES");
     attributes_p.insert("AXIS_NAMES");
     attributes_p.insert("AXIS_UNITS");
@@ -215,57 +216,5 @@ namespace DAL {
     attributes_p.insert("INCREMENT");
     attributes_p.insert("PC");
   }
-
-  // ============================================================================
-  //
-  //  Methods: HDF5 I/O
-  //
-  // ============================================================================
-
-#ifdef HAVE_HDF5
-  
-  //_____________________________________________________________________________
-  //                                                                   write_hdf5
-
-  void CoordinateInterface::write_hdf5 (hid_t const &locationID,
-				     std::string const &name)
-  {
-    hid_t groupID (0);
-    // create HDF5 group
-    if (H5Lexists (locationID, name.c_str(), H5P_DEFAULT)) {
-      groupID = H5Gopen (locationID,
-			 name.c_str(),
-			 H5P_DEFAULT);
-      
-    } else {
-      groupID = H5Gcreate( locationID,
-			   name.c_str(),
-			   H5P_DEFAULT,
-			   H5P_DEFAULT,
-			   H5P_DEFAULT );
-    }
-    // write coordinate attributes
-    write_hdf5 (groupID);
-    // close the group after write
-    H5Gclose (groupID);
-  }
-
-  //_____________________________________________________________________________
-  //                                                                   write_hdf5
-
-  void CoordinateInterface::write_hdf5 (hid_t const &groupID)
-  {
-    DAL::h5set_attribute( groupID, "COORDINATE_TYPE",  name() );
-    DAL::h5set_attribute( groupID, "NOF_AXES",         nofAxes_p );
-    DAL::h5set_attribute( groupID, "AXIS_NAMES",       axisNames_p );
-    DAL::h5set_attribute( groupID, "AXIS_UNITS",       axisUnits_p );
-    DAL::h5set_attribute( groupID, "REFERENCE_PIXEL",  refPixel_p );
-    DAL::h5set_attribute( groupID, "REFERENCE_VALUE",  refValue_p );
-    DAL::h5set_attribute( groupID, "INCREMENT",        increment_p );
-    DAL::h5set_attribute( groupID, "PC",               pc_p );
-  }
-
-
-#endif
 
 } // Namespace DAL -- end
