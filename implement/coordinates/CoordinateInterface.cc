@@ -316,6 +316,50 @@ namespace DAL {
   }
 
   //_____________________________________________________________________________
+  //                                                                        setPc
+  
+  bool CoordinateInterface::setPc (std::vector<double> const &pc)
+  {
+    bool status (true);
+
+    switch (storageType_p.type()) {
+    case Coordinate::DIRECTION:
+    case Coordinate::LINEAR:
+      {
+	// Get the number expected matrix elements
+	unsigned int nelem = nofAxes_p*nofAxes_p;
+	// Check shape of the provided matrix
+	if (pc.size() == nelem) {
+	  pc_p = pc;
+	} else {
+	  std::cerr << "[CoordinateInterface::setPc]"
+		    << " Error in number of matrix elements!"
+		    << std::endl;
+	  status = false;
+	}
+      }
+      break;
+    case Coordinate::TABULAR:
+      {
+	pc_p.resize(1);
+	pc_p[0] = 1.0;
+      }
+      break;
+    default:
+      {
+	std::cerr << "[CoordinateInterface::setPc]"
+		  << " Trnasformation matrix not defined for storage type "
+		  << storageType_p.name() << "!" 
+		  << std::endl;
+	status = false;
+      }
+      break;
+    };
+    
+    return status;
+  }
+
+  //_____________________________________________________________________________
   //                                                                      summary
   
   /*!

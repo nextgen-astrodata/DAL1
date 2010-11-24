@@ -283,12 +283,7 @@ namespace DAL {   // Namespace DAL -- begin
       \param pc -- The transformation matrix, in row-wise ordering, e.g.
              [00,01,10,11]
     */
-    virtual void setPc (std::vector<double> const &pc) {
-      unsigned int nelem = nofAxes_p*nofAxes_p;
-      if (pc.size() == nelem) {
-	pc_p = pc;
-      }
-    }
+    virtual bool setPc (std::vector<double> const &pc);
     /*!
       \brief Get the name of the class
       \return className -- The name of the class, Coordinate.
