@@ -182,6 +182,10 @@ namespace DAL {   // Namespace DAL -- begin
     std::vector<double> increment_p;
     //! Transformation matrix (PC)
     std::vector<double> pc_p;
+    //! List of pixel values
+    std::vector<double> pixelValues_p;
+    //! List of world values
+    std::vector<double> worldValues_p;
     
     // === Protected Methods ====================================================
 
@@ -259,21 +263,13 @@ namespace DAL {   // Namespace DAL -- begin
       return refValue_p;
     }
     //! Set the reference value
-    virtual void setRefValue (std::vector<double> const &refValue) {
-      if (refValue.size() == nofAxes_p) {
-	refValue_p = refValue;
-      }
-    }
+    virtual bool setRefValue (std::vector<double> const &refValue);
     //! Get the reference pixel
     inline std::vector<double> refPixel () const {
       return refPixel_p;
     }
     //! Set the reference pixel
-    virtual void setRefPixel (std::vector<double> const &refPixel) {
-      if (refPixel.size() == nofAxes_p) {
-	refPixel_p = refPixel;
-      }
-    }
+    virtual bool setRefPixel (std::vector<double> const &refPixel);
     /*!
       \brief Get the coordinate axis increment
       \return increment -- The increment along the coordinate axes

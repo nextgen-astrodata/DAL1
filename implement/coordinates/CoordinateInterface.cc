@@ -124,6 +124,108 @@ namespace DAL {
   // ============================================================================
   
   //_____________________________________________________________________________
+  //                                                                  setRefValue
+
+  /*!
+    \param refValue -- Reference value (CRVAL).
+    \return status  -- Status of the operation; returns \e false in case an error
+            was encountered.
+   */
+  bool CoordinateInterface::setRefValue (std::vector<double> const &refValue)
+  {
+    bool status (true);
+    
+    switch (storageType_p.type()) {
+    case Coordinate::LINEAR:
+      {
+	if (refValue.size() == nofAxes_p) {
+	  refValue_p = refValue;
+	} else {
+	  std::cerr << "[CoordinateInterface::setRefValue]"
+		    << " Error in length of input vector!"
+		    << std::endl;
+	  status = false;
+	}
+      }
+      break;
+    case Coordinate::TABULAR:
+      {
+	if (!refValue_p.empty()) {
+	  worldValues_p.resize(1);
+	  worldValues_p[0] = refValue_p[0];
+	}
+	std::cerr << "[CoordinateInterface::setRefValue]"
+		  << " Reference value not part of tabular coordinate!"
+		  << std::endl;
+	status = false;
+      }
+      break;
+    default:
+      {
+	std::cerr << "[CoordinateInterface::setRefValue]"
+		  << " Reference value not defined for storage type "
+		  << storageType_p.name() << "!" 
+		  << std::endl;
+	status = false;
+      }
+      break;
+    };
+    
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                  setRefPixel
+
+  /*!
+    \param refPixel -- Reference pixel (CRPIX).
+    \return status  -- Status of the operation; returns \e false in case an error
+            was encountered.
+   */
+  bool CoordinateInterface::setRefPixel (std::vector<double> const &refPixel)
+  {
+    bool status (true);
+    
+    switch (storageType_p.type()) {
+    case Coordinate::LINEAR:
+      {
+	if (refPixel.size() == nofAxes_p) {
+	  refPixel_p = refPixel;
+	} else {
+	  std::cerr << "[CoordinateInterface::setRefPixel]"
+		    << " Error in length of input vector!"
+		    << std::endl;
+	  status = false;
+	}
+      }
+      break;
+    case Coordinate::TABULAR:
+      {
+	if (!refPixel_p.empty()) {
+	  pixelValues_p.resize(1);
+	  pixelValues_p[0] = refPixel_p[0];
+	}
+	std::cerr << "[CoordinateInterface::setRefPixel]"
+		  << " Reference pixel not part of tabular coordinate!"
+		  << std::endl;
+	status = false;
+      }
+      break;
+    default:
+      {
+	std::cerr << "[CoordinateInterface::setRefPixel]"
+		  << " Reference pixel not defined for storage type "
+		  << storageType_p.name() << "!" 
+		  << std::endl;
+	status = false;
+      }
+      break;
+    };
+    
+    return status;
+  }
+
+  //_____________________________________________________________________________
   //                                                                      summary
   
   /*!
@@ -162,22 +264,23 @@ namespace DAL {
 				  unsigned int const &nofAxes,
 				  DAL::Coordinate const &storageType)
   {
+    /* Initialize the size of the internal arrays */
+
+    axisNames_p.clear();
+    axisUnits_p.clear();
+    refValue_p.clear();
+    refPixel_p.clear();
+    increment_p.clear();
+    pc_p.clear();
+    pixelValues_p.clear();
+    worldValues_p.clear();
+    
     /* Initialize internal variables storing coordinate parameters */
 
     coord_p       = coord;
     storageType_p = storageType;
 
-    if (nofAxes <= 0) {
-      // Set the number of coordinate axes
-      nofAxes_p = 0;
-      // Reset the size of the internal arrays
-      axisNames_p.clear();
-      axisUnits_p.clear();
-      refValue_p.clear();
-      refPixel_p.clear();
-      increment_p.clear();
-      pc_p.clear();
-    } else {
+    if (nofAxes > 0) {
       // set the number of coordinate axes
       nofAxes_p = nofAxes;
       // Adjust the size of the internal arrays
@@ -196,6 +299,9 @@ namespace DAL {
       }
       // Transformation is identity matrix
       DAL::IdentityMatrix (pc_p,nofAxes);
+    } else {
+      // set the number of coordinate axes
+      nofAxes_p = 0;
     }
 
     /* Set up the basic set of attributes */
@@ -221,6 +327,11 @@ namespace DAL {
     attributes_p.insert("REFERENCE_PIXEL");
     attributes_p.insert("INCREMENT");
     attributes_p.insert("PC");
-  }
 
+    if (storageType_p.type() == Coordinate::TABULAR) {
+      attributes_p.insert("PIXEL_VALUES");
+      attributes_p.insert("WORLD_VALUES");
+    }
+  }
+  
 } // Namespace DAL -- end
