@@ -277,15 +277,8 @@ namespace DAL {   // Namespace DAL -- begin
     inline std::vector<double> increment () const {
       return increment_p;
     }
-    /*!
-      \brief Set the coordinate axis increment
-      \param increment -- The increment along the coordinate axes
-    */
-    virtual void setIncrement (std::vector<double> const &increment) {
-      if (increment.size() == nofAxes_p) {
-	increment_p = increment;
-      }
-    }
+    //! Set the coordinate axis increment
+    virtual bool setIncrement (std::vector<double> const &increment);
     /*!
       \brief Get the transformation matrix
       \return pc -- The transformation matrix, in row-wise ordering, e.g.

@@ -136,6 +136,7 @@ namespace DAL {
     bool status (true);
     
     switch (storageType_p.type()) {
+    case Coordinate::DIRECTION:
     case Coordinate::LINEAR:
       {
 	if (refValue.size() == nofAxes_p) {
@@ -150,14 +151,12 @@ namespace DAL {
       break;
     case Coordinate::TABULAR:
       {
-	if (!refValue_p.empty()) {
-	  worldValues_p.resize(1);
-	  worldValues_p[0] = refValue_p[0];
+	if (!worldValues_p.empty()) {
+	  refValue_p.resize(1);
+	  refValue_p[0] = worldValues_p[0];
+	} else {
+	  status = false;
 	}
-	std::cerr << "[CoordinateInterface::setRefValue]"
-		  << " Reference value not part of tabular coordinate!"
-		  << std::endl;
-	status = false;
       }
       break;
     default:
@@ -187,6 +186,7 @@ namespace DAL {
     bool status (true);
     
     switch (storageType_p.type()) {
+    case Coordinate::DIRECTION:
     case Coordinate::LINEAR:
       {
 	if (refPixel.size() == nofAxes_p) {
@@ -201,19 +201,71 @@ namespace DAL {
       break;
     case Coordinate::TABULAR:
       {
-	if (!refPixel_p.empty()) {
-	  pixelValues_p.resize(1);
-	  pixelValues_p[0] = refPixel_p[0];
+	if (!pixelValues_p.empty()) {
+	  refPixel_p.resize(1);
+	  refPixel_p[0] = pixelValues_p[0];
+	} else {
+	  status = false;
 	}
-	std::cerr << "[CoordinateInterface::setRefPixel]"
-		  << " Reference pixel not part of tabular coordinate!"
-		  << std::endl;
-	status = false;
       }
       break;
     default:
       {
 	std::cerr << "[CoordinateInterface::setRefPixel]"
+		  << " Reference pixel not defined for storage type "
+		  << storageType_p.name() << "!" 
+		  << std::endl;
+	status = false;
+      }
+      break;
+    };
+    
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                 setIncrement
+  
+  /*!
+    \param increment -- Coordinate axis increment (CDELT).
+    \return status   -- Status of the operation; returns \e false in case an error
+            was encountered.
+   */
+  bool CoordinateInterface::setIncrement (std::vector<double> const &increment)
+  {
+    bool status (true);
+    
+    switch (storageType_p.type()) {
+    case Coordinate::DIRECTION:
+    case Coordinate::LINEAR:
+      {
+	if (increment.size() == nofAxes_p) {
+	  increment_p = increment;
+	} else {
+	  std::cerr << "[CoordinateInterface::setIncrement]"
+		    << " Error in length of input vector!"
+		    << std::endl;
+	  status = false;
+	}
+      }
+      break;
+    case Coordinate::TABULAR:
+      {
+	/* Minimum of two pixel values required for interpolation! */
+	if (pixelValues_p.size() < 2) {
+	  status = false;
+	} else {
+	  increment_p.resize(1);
+	  for (size_t n=1; n<pixelValues_p.size(); ++n) {
+	    increment_p[0] += pixelValues_p[n]-pixelValues_p[n-1];
+	  }
+	  increment_p[0] /= pixelValues_p.size()-1;
+	}
+      }
+      break;
+    default:
+      {
+	std::cerr << "[CoordinateInterface::setIncrement]"
 		  << " Reference pixel not defined for storage type "
 		  << storageType_p.name() << "!" 
 		  << std::endl;
