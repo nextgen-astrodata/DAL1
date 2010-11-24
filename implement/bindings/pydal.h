@@ -69,6 +69,8 @@ void export_Angle ();
 void export_RaDec ();
 //! Bindings for DAL::Stokes
 void export_Stokes ();
+//! Bindings for DAL::Coordinate
+void export_Coordinate ();
 
 // === data_common ==============================================================
 

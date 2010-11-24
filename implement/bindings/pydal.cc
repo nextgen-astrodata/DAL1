@@ -73,7 +73,8 @@ BOOST_PYTHON_MODULE(pydal)
   export_Angle ();  
   export_RaDec ();
   export_Stokes ();  
-  
+  export_Coordinate ();
+
   // ============================================================================
   //
   //  [data_common] Common dataset support

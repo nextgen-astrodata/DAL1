@@ -37,6 +37,7 @@
 #include <Angle.h>
 #include <RaDec.h>
 #include <Stokes.h>
+#include <Coordinate.h>
 
 // ==============================================================================
 //
@@ -235,4 +236,22 @@ void export_Stokes ()
 //
 // ==============================================================================
 
+void export_Coordinate ()
+{
+  //________________________________________________________
+  // Enumeration: Cordinate type
 
+  bpl::enum_<Coordinate::Type>("Type")
+    .value("DIRECTION", DAL::Coordinate::DIRECTION)
+    .value("LINEAR",    DAL::Coordinate::LINEAR)
+    .value("TABULAR",   DAL::Coordinate::TABULAR)
+    .value("STOKES",    DAL::Coordinate::STOKES)
+    .value("SPECTRAL",  DAL::Coordinate::SPECTRAL)
+    .value("UNDEFINED", DAL::Coordinate::UNDEFINED)
+    ;
+  
+  //________________________________________________________
+  // Bindings for class and its methods
+
+
+}

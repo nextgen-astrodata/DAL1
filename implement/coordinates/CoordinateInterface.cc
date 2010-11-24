@@ -124,6 +124,44 @@ namespace DAL {
   // ============================================================================
   
   //_____________________________________________________________________________
+  //                                                                 setAxisNames
+  
+  bool CoordinateInterface::setAxisNames (std::vector<std::string> const &axisNames)
+  {
+    bool status (true);
+    
+    if (axisNames.size() == nofAxes_p) {
+      axisNames_p = axisNames;
+    } else {
+      std::cerr << "[CoordinateInterface::setAxisNames]"
+		<< " Error in length of input vector!"
+		<< std::endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                 setAxisUnits
+  
+  bool CoordinateInterface::setAxisUnits (std::vector<std::string> const &axisUnits)
+  {
+    bool status (true);
+    
+    if (axisUnits.size() == nofAxes_p) {
+      axisUnits_p = axisUnits;
+    } else {
+      std::cerr << "[CoordinateInterface::setAxisUnits]"
+		<< " Error in length of input vector!"
+		<< std::endl;
+      status = false;
+    }
+    
+    return status;
+  }
+  
+  //_____________________________________________________________________________
   //                                                                  setRefValue
 
   /*!

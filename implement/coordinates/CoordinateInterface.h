@@ -242,22 +242,13 @@ namespace DAL {   // Namespace DAL -- begin
       return axisNames_p;
     }
     //! Set the world axis names
-    void setAxisNames (std::vector<std::string> const &axisNames) {
-      if (axisNames.size() == nofAxes_p) {
-	axisNames_p = axisNames;
-      }
-    }
+    bool setAxisNames (std::vector<std::string> const &axisNames);
     //! Get the world axis units
     inline std::vector<std::string> axisUnits () const {
       return axisUnits_p;
     }
     //! Set the world axis units
-    void setAxisUnits (std::vector<std::string> const &axisUnits) {
-      if (axisUnits.size() == nofAxes_p) {
-	axisUnits_p = axisUnits;
-      }
-    }
-    
+    bool setAxisUnits (std::vector<std::string> const &axisUnits);
     //! Get the reference value
     inline std::vector<double> refValue () const {
       return refValue_p;
