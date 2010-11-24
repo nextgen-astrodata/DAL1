@@ -164,7 +164,8 @@ namespace DAL {  // Namespace DAL -- begin
     /* Initialize base class; no further initialization required, as no additional
        parameters are getting defined here. */
     CoordinateInterface::init (Coordinate::LINEAR,
-			       nofAxes);
+			       nofAxes,
+			       Coordinate::LINEAR);
   }
 
 #ifdef HAVE_HDF5

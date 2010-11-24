@@ -153,16 +153,19 @@ namespace DAL {
   //                                                                         init
 
   /*!
-    \param coord   -- Type of coordinate.
-    \param nofAxes -- The number of coordinate axes.
+    \param coord       -- Type of coordinate.
+    \param nofAxes     -- The number of coordinate axes.
+    \parma storageType -- Storage type of the coordinate. i.e. container
+           internally used to represent the coordinate.
   */
   void CoordinateInterface::init (DAL::Coordinate const &coord,
-				  unsigned int const &nofAxes)
+				  unsigned int const &nofAxes,
+				  DAL::Coordinate const &storageType)
   {
     /* Initialize internal variables storing coordinate parameters */
 
     coord_p       = coord;
-    storageType_p = coord;
+    storageType_p = storageType;
 
     if (nofAxes <= 0) {
       // Set the number of coordinate axes

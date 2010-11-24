@@ -189,7 +189,8 @@ namespace DAL {   // Namespace DAL -- begin
     void copy (CoordinateInterface const &other);
     //! Initilize the internal set of parameters
     void init (DAL::Coordinate const &coord=DAL::Coordinate(),
-	       unsigned int const &nofAxes=0);
+	       unsigned int const &nofAxes=0,
+	       DAL::Coordinate const &storageType=DAL::Coordinate());
 
   public:
     

@@ -343,7 +343,9 @@ namespace DAL {  // Namespace DAL -- begin
 				std::vector<double> const &worldValues)
   {
     /* Initialize base class */
-    CoordinateInterface::init (Coordinate::TABULAR,1);
+    CoordinateInterface::init (Coordinate::TABULAR,
+			       1,
+			       Coordinate::TABULAR);
     
     setAttributes ();
     setAxisNames (axisNames);

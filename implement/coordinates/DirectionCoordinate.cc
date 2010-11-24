@@ -166,7 +166,8 @@ namespace DAL {   // Namespace DAL -- begin
 				  std::string const &projection)
   {
     CoordinateInterface::init (Coordinate::DIRECTION,
-			       2);
+			       2,
+			       Coordinate::DIRECTION);
 
     system_p          = system;
     projection_p      = projection;
