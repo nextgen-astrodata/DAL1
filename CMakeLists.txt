@@ -16,10 +16,10 @@ cmake_minimum_required (VERSION 2.8)
 
 find_path (LUS_ROOT devel_common/cmake/CMakeSettings.cmake
   PATHS 
-  ${DAL_SOURCE_DIR}
-  ${DAL_SOURCE_DIR}/..
-  ${DAL_SOURCE_DIR}/../..
-  ${DAL_SOURCE_DIR}/../../..
+  ${PROJECT_SOURCE_DIR}
+  ${PROJECT_SOURCE_DIR}/..
+  ${PROJECT_SOURCE_DIR}/../..
+  ${PROJECT_SOURCE_DIR}/../../..
   $ENV{LOFARSOFT}
   )
 
@@ -401,19 +401,12 @@ endif (MPI_FOUND AND HDF5_IS_PARALLEL)
 ##
 ## =============================================================================
 
-find_path (prefix release_area.txt
-  PATHS
-  ${DAL_SOURCE_DIR}
-  PATH_SUFFIXES
-  ../release
-  ../../release
-  NO_DEFAULT_PATH
-  )
-
-if (prefix)
+if (USG_INSTALL_PREFIX)
   message (STATUS "Installation area located for package DAL.")
-  set (CMAKE_INSTALL_PREFIX ${prefix}) 
-endif (prefix)
+  set (CMAKE_INSTALL_PREFIX ${USG_INSTALL_PREFIX}) 
+else (USG_INSTALL_PREFIX)
+  message (STATUS "No custom installation area defined - using ${CMAKE_INSTALL_PREFIX}")
+endif (USG_INSTALL_PREFIX)
 
 # skip the full RPATH for the build tree
 set (CMAKE_SKIP_BUILD_RPATH YES)
