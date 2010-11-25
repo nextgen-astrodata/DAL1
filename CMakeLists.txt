@@ -401,13 +401,6 @@ endif (MPI_FOUND AND HDF5_IS_PARALLEL)
 ##
 ## =============================================================================
 
-if (USG_INSTALL_PREFIX)
-  message (STATUS "Installation area located for package DAL.")
-  set (CMAKE_INSTALL_PREFIX ${USG_INSTALL_PREFIX}) 
-else (USG_INSTALL_PREFIX)
-  message (STATUS "No custom installation area defined - using ${CMAKE_INSTALL_PREFIX}")
-endif (USG_INSTALL_PREFIX)
-
 # skip the full RPATH for the build tree
 set (CMAKE_SKIP_BUILD_RPATH YES)
 
