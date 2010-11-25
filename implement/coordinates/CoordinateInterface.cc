@@ -318,6 +318,12 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                        setPc
   
+  /*!
+    \param pc -- The transformation matrix, in row-wise ordering, e.g.
+           [00,01,10,11]
+    \return status   -- Status of the operation; returns \e false in case an error
+            was encountered.
+  */
   bool CoordinateInterface::setPc (std::vector<double> const &pc)
   {
     bool status (true);

@@ -278,11 +278,7 @@ namespace DAL {   // Namespace DAL -- begin
     inline std::vector<double> pc () const {
       return pc_p;
     }
-    /*!
-      \brief Set the transformation matrix
-      \param pc -- The transformation matrix, in row-wise ordering, e.g.
-             [00,01,10,11]
-    */
+    //! Set the transformation matrix
     virtual bool setPc (std::vector<double> const &pc);
     /*!
       \brief Get the name of the class
