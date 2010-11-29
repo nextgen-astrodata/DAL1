@@ -280,6 +280,14 @@ namespace DAL {   // Namespace DAL -- begin
     }
     //! Set the transformation matrix
     virtual bool setPc (std::vector<double> const &pc);
+    //! Get tabulated pixel values
+    inline std::vector<double> pixelValues () const {
+      return pixelValues_p;
+    }
+    //! Get tabulated world values
+    inline std::vector<double> worldValues () const {
+      return worldValues_p;
+    }
     /*!
       \brief Get the name of the class
       \return className -- The name of the class, Coordinate.

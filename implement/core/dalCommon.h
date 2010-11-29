@@ -160,7 +160,7 @@ namespace DAL {
                I_{2} = \left[ \begin{array}{cc} 1 & 0 \\ 0 & 1 end{array} \right] \f]
   */
   template <class T> void IdentityMatrix (std::vector<T> &data,
-				      unsigned int const &sidelength)
+					  unsigned int const &sidelength)
     {
       unsigned int nelem = sidelength*sidelength;
       // Adjust the size of the vector storing the matrix

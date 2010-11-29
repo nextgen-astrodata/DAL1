@@ -29,7 +29,7 @@
   \ingroup DAL
   \ingroup coordinates
 
-  \brief A collection of test routines for the LinearCoordinate class
+  \brief A collection of test routines for the DAL::LinearCoordinate class
 
   \author Lars B&auml;hren
 
@@ -77,7 +77,28 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[3] Testing fully argumented constructor ..." << endl;
+  cout << "[3] Testing LinearCoordinate(int,vector<string>,vector<string>) ..." << endl;
+  try {
+    unsigned int nofAxes (2);
+    std::vector<std::string> worldAxisNames (nofAxes);
+    std::vector<std::string> worldAxisUnits (nofAxes);
+    //
+    worldAxisNames[0] = "Length";
+    worldAxisNames[1] = "Time";
+    worldAxisUnits[0] = "m";
+    worldAxisUnits[1] = "s";
+    //
+    DAL::LinearCoordinate coord (nofAxes,
+				 worldAxisNames,
+				 worldAxisUnits);
+    //
+    coord.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[4] Testing fully argumented constructor ..." << endl;
   try {
     unsigned int nofAxes (2);
     std::vector<std::string> worldAxisNames (nofAxes);
@@ -101,28 +122,23 @@ int test_constructors ()
 				 pc);
     //
     coord.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
   }
-  catch (std::string message)
-    {
-      std::cerr << message << endl;
-      nofFailedTests++;
-    }
   
-  cout << "[4] Testing copy constructor ..." << endl;
-  try
-    {
-      DAL::LinearCoordinate coord (3);
-      coord.summary();
-      //
-      DAL::LinearCoordinate coordCopy (coord);
-      coordCopy.summary();
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << endl;
-      nofFailedTests++;
-    }
-
+  cout << "[5] Testing copy constructor ..." << endl;
+  try {
+    DAL::LinearCoordinate coord (3);
+    coord.summary();
+    //
+    DAL::LinearCoordinate coordCopy (coord);
+    coordCopy.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
@@ -142,6 +158,8 @@ int test_parameters ()
   int nofFailedTests (0);
   unsigned int nofAxes (2);
   DAL::LinearCoordinate coord (nofAxes);
+  
+  coord.summary();
 
   cout << "[1] Adjust world axis names ..." << endl;
   try {
@@ -218,6 +236,33 @@ int test_parameters ()
     coord.setIncrement(incr);
     cout << coord.increment() << endl;
     
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[6] Adjust transformation matrix ..." << endl;
+  try {
+    std::vector<double> pc = coord.pc();
+    cout << pc << endl;
+    
+    pc[0] = 0.5;
+    pc[1] = 1.5;
+    pc[2] = 0.5;
+    pc[3] = 1.5;
+    
+    coord.setPc(pc);
+    cout << coord.pc() << endl;
+    
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[7] Retrive tabulated axis values ..." << endl;
+  try {
+    std::cout << "-- Pixel values = " << coord.pixelValues() << std::endl;
+    std::cout << "-- World values = " << coord.worldValues() << std::endl;
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;

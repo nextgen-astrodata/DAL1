@@ -46,7 +46,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     \date 2009/06/24
 
-    \test tLinearCoordinate.cpp
+    \test tLinearCoordinate.cc
 
     <h3>Prerequisite</h3>
 
@@ -97,6 +97,10 @@ namespace DAL {  // Namespace DAL -- begin
     //! Argumented constructor
     LinearCoordinate (unsigned int const &nofAxes,
 		      std::vector<std::string> const &axisNames,
+		      std::vector<std::string> const &axisUnits);
+    //! Argumented constructor
+    LinearCoordinate (unsigned int const &nofAxes,
+		      std::vector<std::string> const &axisNames,
 		      std::vector<std::string> const &axisUnits,
 		      std::vector<double> const &refValue,
 		      std::vector<double> const &refPixel,
@@ -105,7 +109,7 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef HAVE_CASA
     //! Construction from casa::LinearCoordinate object
     LinearCoordinate (casa::LinearCoordinate const &coord) {
-      importCoordinate (coord);
+      read_casa (coord);
     }
 #endif
     //! Copy constructor
@@ -170,9 +174,9 @@ namespace DAL {  // Namespace DAL -- begin
     
 #ifdef HAVE_CASA
     //! Create coordinate from casa::Coordinate object
-    void importCoordinate (casa::LinearCoordinate const &coord);
+    void read_casa (casa::LinearCoordinate const &coord);
     //! Create casa::Coordinate object from coordinate parameters
-    void exportCoordinate (casa::LinearCoordinate &coord);
+    void write_casa (casa::LinearCoordinate &coord);
 #endif
     
   private:

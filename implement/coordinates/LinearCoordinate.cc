@@ -42,6 +42,9 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                             LinearCoordinate
   
+  /*!
+    \param nofAxes   -- Number of coordinate axes.
+  */
   LinearCoordinate::LinearCoordinate (unsigned int const &nofAxes)
   {
     init(nofAxes);
@@ -51,13 +54,30 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                             LinearCoordinate
   
   /*!
-    \param nofAxes   -- 
-    \param axisNames -- 
-    \param axisUnits -- 
-    \param refValue  -- 
-    \param refPixel  -- 
-    \param increment -- 
-    \param pc        -- 
+    \param nofAxes   -- Number of coordinate axes.
+    \param axisNames -- World axis names.
+    \param axisUnits -- World axis units.
+  */
+  LinearCoordinate::LinearCoordinate (unsigned int const &nofAxes,
+                                      std::vector<std::string> const &axisNames,
+                                      std::vector<std::string> const &axisUnits)
+  {
+    init(nofAxes);
+    setAxisNames (axisNames);
+    setAxisUnits (axisUnits);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                             LinearCoordinate
+  
+  /*!
+    \param nofAxes   -- Number of coordinate axes.
+    \param axisNames -- World axis names.
+    \param axisUnits -- World axis units.
+    \param refValue  -- Reference value.
+    \param refPixel  -- Reference pixel.
+    \param increment -- Coordinate axis increment.
+    \param pc        -- Transformation matrix.
    */
   LinearCoordinate::LinearCoordinate (unsigned int const &nofAxes,
                                       std::vector<std::string> const &axisNames,
@@ -146,9 +166,8 @@ namespace DAL {  // Namespace DAL -- begin
     os << "-- Reference value  = " << refValue_p       << std::endl;
     os << "-- Reference pixel  = " << refPixel_p       << std::endl;
     os << "-- Increment        = " << increment_p      << std::endl;
+    os << "-- PC               = " << pc_p             << std::endl;
   }
-
-
 
   // ============================================================================
   //
@@ -291,10 +310,10 @@ namespace DAL {  // Namespace DAL -- begin
 #endif
   
   //_____________________________________________________________________________
-  //                                                             importCoordinate
+  //                                                                    read_casa
 
 #ifdef HAVE_CASA
-  void LinearCoordinate::importCoordinate (casa::LinearCoordinate const &coord) 
+  void LinearCoordinate::read_casa (casa::LinearCoordinate const &coord) 
   {
     /* Get the number of axes associated with the coordinate */
     nofAxes_p = (unsigned int)coord.worldAxisNames().nelements();
@@ -329,10 +348,10 @@ namespace DAL {  // Namespace DAL -- begin
 #endif
   
   //_____________________________________________________________________________
-  //                                                             exportCoordinate
+  //                                                                   write_casa
   
 #ifdef HAVE_CASA
-  void LinearCoordinate::exportCoordinate (casa::LinearCoordinate &coord) 
+  void LinearCoordinate::write_casa (casa::LinearCoordinate &coord) 
   {
     casa::Vector<casa::String> names (nofAxes_p);
     casa::Vector<casa::String> units (nofAxes_p);

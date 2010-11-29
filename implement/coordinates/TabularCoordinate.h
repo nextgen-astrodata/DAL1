@@ -104,16 +104,8 @@ namespace DAL {  // Namespace DAL -- begin
     
     // === Parameter access =====================================================
     
-    //! Get the pixel values
-    inline std::vector<double> pixelValues () const {
-      return pixelValues_p;
-    }
     //! Set the pixel values
     bool setPixelValues (std::vector<double> const &pixelValues);
-    //! Get the world values
-    inline std::vector<double> worldValues () const {
-      return worldValues_p;
-    }
     //! Set the world values
     bool setWorldValues (std::vector<double> const &worldValues);
     //! Set the values along the pixel and world axis
