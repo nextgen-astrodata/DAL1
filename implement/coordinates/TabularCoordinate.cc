@@ -42,15 +42,37 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                            TabularCoordinate
   
+  /*!
+    \param axisNames -- World axis names.
+    \param axisUnits -- World axis units.
+  */
+  TabularCoordinate::TabularCoordinate (std::string const &axisNames,
+					std::string const &axisUnits)
+  {
+    init (axisNames,
+	  axisUnits);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                            TabularCoordinate
+  
+  /*!
+    \param axisNames   -- World axis names.
+    \param axisUnits   -- World axis units.
+    \param pixelValues -- Pixel axis values.
+    \param worldValues -- World axis values.
+  */
   TabularCoordinate::TabularCoordinate (std::string const &axisNames,
 					std::string const &axisUnits,
 					std::vector<double> const &pixelValues,
 					std::vector<double> const &worldValues)
   {
+    // Initialize basic parameters
     init (axisNames,
 	  axisUnits);
+    // Set axis values
     setAxisValues (pixelValues,
-                   worldValues);
+		   worldValues);
   }
   
   //_____________________________________________________________________________
@@ -97,6 +119,9 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
 
+  /*!
+    \param other -- Other TabularCoordinate object to make copy of.
+   */
   void TabularCoordinate::copy (TabularCoordinate const &other)
   {
     CoordinateInterface::copy (other);
@@ -110,13 +135,48 @@ namespace DAL {  // Namespace DAL -- begin
 
   // ============================================================================
   //
-  //  Parameters
+  //  Parameter access 
   //
   // ============================================================================
 
   //_____________________________________________________________________________
   //                                                               setPixelValues
+  
+  /*!
+    \param names   -- World axis names.
+    \return status -- Status of the operation; returns \e false in case an 
+            error was encountered.
+  */
+  bool TabularCoordinate::setAxisNames (std::string const &names)
+  {
+    std::vector<std::string> tmp (1,names);
 
+    return CoordinateInterface::setAxisNames (tmp);
+  }
+
+  //_____________________________________________________________________________
+  //                                                               setPixelValues
+
+  /*!
+    \param units   -- World axis units.
+    \return status -- Status of the operation; returns \e false in case an 
+            error was encountered.
+  */
+  bool TabularCoordinate::setAxisUnits (std::string const &units)
+  {
+    std::vector<std::string> tmp (1,units);
+
+    return CoordinateInterface::setAxisUnits (tmp);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                               setPixelValues
+
+  /*!
+    \param pixelValues -- Values along the pixel axis.
+    \return status     -- Status of the operation; returns \e false in case an 
+            error was encountered.
+  */
   bool TabularCoordinate::setPixelValues (std::vector<double> const &pixelValues)
   {
     bool status (true);
@@ -134,6 +194,11 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                               setWorldValues
 
+  /*!
+    \param worldValues -- Values along the world axis.
+    \return status     -- Status of the operation; returns \e false in case an 
+            error was encountered.
+  */
   bool TabularCoordinate::setWorldValues (std::vector<double> const &worldValues)
   {
     bool status (true);
@@ -334,8 +399,8 @@ namespace DAL {  // Namespace DAL -- begin
   /*!
     \param axisNames   -- World axis names.
     \param axisUnits   -- World axis units.
-    \param pixelValues -- 
-    \param worldValues -- 
+    \param pixelValues -- Pixel axis values.
+    \param worldValues -- World axis values.
   */
   void TabularCoordinate::init (std::vector<std::string> const &axisNames,
 				std::vector<std::string> const &axisUnits,
@@ -347,9 +412,8 @@ namespace DAL {  // Namespace DAL -- begin
 			       1,
 			       Coordinate::TABULAR);
     
-    setAttributes ();
-    setAxisNames (axisNames);
-    setAxisUnits (axisUnits);
+    CoordinateInterface::setAxisNames (axisNames);
+    CoordinateInterface::setAxisUnits (axisUnits);
     setAxisValues (pixelValues, worldValues);
   }
     

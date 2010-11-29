@@ -51,7 +51,7 @@ int test_constructors ()
 
   int nofFailedTests (0);
 
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  std::cout << "[1] Testing TabularCoordinate() ..." << std::endl;
   try {
     DAL::TabularCoordinate coord;
     //
@@ -62,7 +62,21 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  std::cout << "[2] Testing argumented constructor ..." << std::endl;
+  std::cout << "[2] Testing TabularCoordinate(string,string) ..." << std::endl;
+  try {
+    std::string names ("Time");
+    std::string units ("s");
+    //
+    DAL::TabularCoordinate coord (names, units);
+    //
+    coord.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[3] Testing TabularCoordinate(string,string,vector<double>,vector<double>) ..." << std::endl;
   try {
     unsigned int nelem (4);
     std::string axisNames("Length");
@@ -97,9 +111,36 @@ int test_constructors ()
 //_______________________________________________________________________________
 //                                                                   test_methods
 
+/*!
+  \brief Test public methods
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
 int test_methods ()
 {
   cout << "\n[tTabularCoordinate::test_methods]\n" << endl;
+
+  int nofFailedTests (0);
+  DAL::TabularCoordinate coord;
+
+  std::cout << "[1] Testing setAxisNames(string) ..." << std::endl;
+  coord.setAxisNames ("Time");
+  std::cout << "--> World axis names = " << coord.axisNames() << std::endl;
+
+  std::cout << "[2] Testing setAxisUnits(string) ..." << std::endl;
+  coord.setAxisUnits ("s");
+  std::cout << "--> World axis units = " << coord.axisUnits() << std::endl;
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                      test_hdf5
+
+int test_hdf5 ()
+{
+  cout << "\n[tTabularCoordinate::test_hdf5]\n" << endl;
 
   int nofFailedTests (0);
   std::string filename ("tTabularCoordinate.h5");
@@ -246,8 +287,14 @@ int main ()
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
+  // Test public methods
+  nofFailedTests += test_methods ();
+
+#ifdef HAVE_HDF5
   // Test the various methods
-  nofFailedTests += test_methods();
+  nofFailedTests += test_hdf5();
+#endif
+
   // Coordinate example for non-linear frequency axis in beamformed data
   nofFailedTests += example_beamformed ();
 

@@ -45,7 +45,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     \date 2009/06/24
 
-    \test tTabularCoordinate.cpp
+    \test tTabularCoordinate.cc
 
     <h3>Prerequisite</h3>
 
@@ -82,6 +82,9 @@ namespace DAL {  // Namespace DAL -- begin
     TabularCoordinate ();
     //! Argumented constructor
     TabularCoordinate (std::string const &axisNames,
+		       std::string const &axisUnits);
+    //! Argumented constructor
+    TabularCoordinate (std::string const &axisNames,
 		       std::string const &axisUnits,
 		       std::vector<double> const &pixelValues,
 		       std::vector<double> const &worldValues);
@@ -103,6 +106,11 @@ namespace DAL {  // Namespace DAL -- begin
     TabularCoordinate& operator= (TabularCoordinate const &other);
     
     // === Parameter access =====================================================
+
+    //! Set world axis names
+    bool setAxisNames (std::string const &names);
+    //! Set world axis units
+    bool setAxisUnits (std::string const &units);
     
     //! Set the pixel values
     bool setPixelValues (std::vector<double> const &pixelValues);
@@ -172,12 +180,6 @@ namespace DAL {  // Namespace DAL -- begin
 	       std::vector<double> const &pixelValues,
 	       std::vector<double> const &worldValues);
     
-    //! Set the attributes attached to the coordinate
-    inline void setAttributes ()
-    {
-      attributes_p.insert("PIXEL_VALUES");
-      attributes_p.insert("WORLD_VALUES");
-    }
     //! Unconditional copying
     void copy (TabularCoordinate const &other);
     
