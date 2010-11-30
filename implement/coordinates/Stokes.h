@@ -78,7 +78,7 @@ namespace DAL { // Namespace DAL -- begin
       Q,
       /*! Standard Stokes linear; plane of polarization, i.e. the difference in
 	intensities between linearly polarized components oriented at
-	\$ \pm \pi/4 \$ w.r.t. the components of \f Q \f */
+	\f$ \pm \pi/4 \f$ w.r.t. the components of \f$ Q \f$ */
       U,
       /*! Standard Stokes circular; ellipticity, i.e. the differences in
 	intensities between right and left circular polarized components. */

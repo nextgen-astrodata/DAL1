@@ -139,10 +139,16 @@ namespace DAL {  // Namespace DAL -- begin
   void StokesCoordinate::summary (std::ostream &os)
   {
     os << "[StokesCoordinate] Summary of internal parameters." << std::endl;
-    os << "-- Coordinate type        = " << type() << " / " <<  name() << std::endl;
-    os << "-- nof. axes              = " << nofAxes_p       << std::endl;
-    os << "-- nof. Stokes components = " << values_p.size() << std::endl;
-    os << "-- Stokes component names = " << stokesNames()   << std::endl;
+    os << "-- Coordinate type  = " << type() << " / " <<  name() << std::endl;
+    os << "-- Storage type     = " << storageType_p.type()
+       << " / " <<  storageType_p.name() << std::endl;
+    os << "-- nof. axes        = " << nofAxes_p        << std::endl;
+    os << "-- World axis names = " << axisNames_p      << std::endl;
+    os << "-- World axis units = " << axisUnits_p      << std::endl;
+    os << "-- Reference value  = " << refValue_p       << std::endl;
+    os << "-- Reference pixel  = " << refPixel_p       << std::endl;
+    os << "-- Increment        = " << increment_p      << std::endl;
+    os << "-- PC               = " << pc_p             << std::endl;
   }
 
   // ============================================================================
@@ -171,12 +177,15 @@ namespace DAL {  // Namespace DAL -- begin
   
   void StokesCoordinate::init (std::vector<DAL::Stokes> const &values)
   {
+    unsigned int nelem = values.size();
+
     /* Initialize base class */
     CoordinateInterface::init (Coordinate::STOKES,
-			       1);
+			       1,
+			       Coordinate::TABULAR);
 
     // store the input list of Stokes values
-    values_p.resize (values.size());
+    values_p.resize (nelem);
     values_p = values;
   }
 
@@ -258,10 +267,14 @@ namespace DAL {  // Namespace DAL -- begin
   {
     std::string coordinate_type;
     unsigned int nof_axes;
+    std::vector<double> pixel;
+    std::vector<double> world;
 
     /* Read the attributes from the HDF5 file */
     DAL::h5get_attribute( groupID, "COORDINATE_TYPE",  coordinate_type );
     DAL::h5get_attribute( groupID, "NOF_AXES",         nof_axes );
+    DAL::h5get_attribute( groupID, "PIXEL_VALUES",     pixel    );
+    DAL::h5get_attribute( groupID, "WORLD_VALUES",     world    );
     
     /* Store the retrieved values */
     if (DAL::Coordinate::getType(coordinate_type) == DAL::Coordinate::STOKES) {

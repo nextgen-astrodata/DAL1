@@ -46,7 +46,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     \date 2009/09/10
 
-    \test tStokesCoordinate.cpp
+    \test tStokesCoordinate.cc
 
     <h3>Prerequisite</h3>
 
@@ -81,7 +81,7 @@ namespace DAL {  // Namespace DAL -- begin
 #ifdef HAVE_CASA
     //! Construction from casa::StokesCoordinate object
     StokesCoordinate (casa::StokesCoordinate const &coord) {
-      importCoordinate (coord);
+      read_casa (coord);
     }
 #endif
     //! Copy constructor
@@ -150,9 +150,9 @@ namespace DAL {  // Namespace DAL -- begin
     
 #ifdef HAVE_CASA
     //! Create coordinate from casa::Coordinate object
-    void importCoordinate (casa::StokesCoordinate const &coord);
+    void read_casa (casa::StokesCoordinate const &coord);
     //! Create casa::Coordinate object from coordinate parameters
-    void exportCoordinate (casa::StokesCoordinate &coord);
+    void write_casa (casa::StokesCoordinate &coord);
 #endif
     
   private:
