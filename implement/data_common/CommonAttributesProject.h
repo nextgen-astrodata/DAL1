@@ -131,11 +131,11 @@ namespace DAL { // Namespace DAL -- begin
       itsProjectCoI = projectCoI;
     }
 
-    //! Names/Email-addresses of the project's primary contact person(s)
+    //! Get names/Email-addresses of the project's primary contact person(s)
     inline std::string projectContact () const {
       return itsProjectContact;
     }
-    //! Names/Email-addresses of the project's primary contact person(s)
+    //! Set names/Email-addresses of the project's primary contact person(s)
     inline void setProjectContact (std::string const &contact) {
       itsProjectContact = contact;
     }

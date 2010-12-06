@@ -78,10 +78,27 @@ void export_CommonAttributesProject ()
   bpl::class_<CommonAttributesProject>("CommonAttributesProject")
     .def( bpl::init<>())
     .def( bpl::init<string,string,string,string,string>())
+    .def( bpl::init<CommonAttributesProject>())
     .def( "projectID", &CommonAttributesProject::projectID,
 	  "Unique identifier for the project.")
     .def( "setProjectID", &CommonAttributesProject::setProjectID,
 	  "Set unique identifier for the project.")
+    .def( "projectTitle", &CommonAttributesProject::projectTitle,
+	  "Get name/title of the project")
+    .def( "setProjectTitle", &CommonAttributesProject::setProjectTitle,
+	  "Set name/title of the project")
+    .def( "projectPI", &CommonAttributesProject::projectPI,
+	  "Get name of the project's principal investigator")
+    .def( "setProjectPI", &CommonAttributesProject::setProjectPI,
+	  "Set name of the project's principal investigator")
+    .def( "projectCoI", &CommonAttributesProject::projectCoI,
+	  "Get name(s) of the project's co-PI(s)")
+    .def( "setProjectCoI", &CommonAttributesProject::setProjectCoI,
+	  "Set name(s) of the project's co-PI(s)")
+    .def( "projectContact", &CommonAttributesProject::projectContact,
+	  "Get names/Email-addresses of the project's primary contact person(s)")
+    .def( "setProjectContact", &CommonAttributesProject::setProjectContact,
+	  "Set names/Email-addresses of the project's primary contact person(s)")
     ;
 }
 
