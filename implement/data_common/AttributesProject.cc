@@ -152,11 +152,11 @@ namespace DAL { // Namespace DAL -- begin
   void AttributesProject::summary (std::ostream &os)
   {
     os << "[AttributesProject] Summary of internal parameters." << std::endl;
-    os << "-- Project ID      = " << itsProjectID      << std::end;
-    os << "-- Project title   = " << itsProjectTitle   << std::end;
-    os << "-- Project PI      = " << itsProjectPI      << std::end;
-    os << "-- Project CoI     = " << itsProjectCoI     << std::end;
-    os << "-- Project contact = " << itsProjectContact << std::end;
+    os << "-- Project ID      = " << itsProjectID      << std::endl;
+    os << "-- Project title   = " << itsProjectTitle   << std::endl;
+    os << "-- Project PI      = " << itsProjectPI      << std::endl;
+    os << "-- Project CoI     = " << itsProjectCoI     << std::endl;
+    os << "-- Project contact = " << itsProjectContact << std::endl;
   }
 
   //_____________________________________________________________________________
