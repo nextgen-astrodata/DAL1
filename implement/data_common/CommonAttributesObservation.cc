@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <AttributesObservation.h>
+#include <CommonAttributesObservation.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -31,7 +31,7 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  AttributesObservation::AttributesObservation ()
+  CommonAttributesObservation::CommonAttributesObservation ()
   {
     itsObservationID   = "UNDEFINED";
     itsStartMJD        = "UNDEFINED";
@@ -49,29 +49,19 @@ namespace DAL { // Namespace DAL -- begin
 
     setAttributes();
   }
-  
-  /*!
-    \param other -- Another HDF5Property object from which to create this new
-           one.
-  */
-  AttributesObservation::AttributesObservation (AttributesObservation const &other)
-    : AttributesInterface (other)
-  {
-    copy (other);
-  }
-  
+    
   // ============================================================================
   //
   //  Destruction
   //
   // ============================================================================
   
-  AttributesObservation::~AttributesObservation ()
+  CommonAttributesObservation::~CommonAttributesObservation ()
   {
     destroy();
   }
   
-  void AttributesObservation::destroy ()
+  void CommonAttributesObservation::destroy ()
   {;}
   
   // ============================================================================
@@ -84,9 +74,9 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                    operator=
   
   /*!
-    \param other -- Another AttributesObservation object from which to make a copy.
+    \param other -- Another CommonAttributesObservation object from which to make a copy.
   */
-  AttributesObservation& AttributesObservation::operator= (AttributesObservation const &other)
+  CommonAttributesObservation& CommonAttributesObservation::operator= (CommonAttributesObservation const &other)
   {
     if (this != &other) {
       destroy ();
@@ -98,7 +88,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
-  void AttributesObservation::copy (AttributesObservation const &other)
+  void CommonAttributesObservation::copy (CommonAttributesObservation const &other)
   {
     itsStationsList.clear();
 
@@ -129,9 +119,9 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param os -- Output stream to which the summary is written.
   */
-  void AttributesObservation::summary (std::ostream &os)
+  void CommonAttributesObservation::summary (std::ostream &os)
   {
-    os << "[AttributesObservation] Summary of internal parameters." << std::endl;
+    os << "[CommonAttributesObservation] Summary of internal parameters." << std::endl;
   }
   
   // ============================================================================
@@ -143,7 +133,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                setAttributes
   
-  void AttributesObservation::setAttributes ()
+  void CommonAttributesObservation::setAttributes ()
   {
     itsAttributes.clear();
     
@@ -165,7 +155,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      h5write
   
-  bool AttributesObservation::h5write (hid_t const &groupID)
+  bool CommonAttributesObservation::h5write (hid_t const &groupID)
   {
     bool status (true);
     
@@ -189,7 +179,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                       h5read
   
-  bool AttributesObservation::h5read (hid_t const &groupID)
+  bool CommonAttributesObservation::h5read (hid_t const &groupID)
   {
     bool status (true);
     

@@ -30,7 +30,7 @@
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class AttributesObservation
+    \class CommonAttributesObservation
     
     \ingroup DAL
     \ingroup data_common
@@ -41,7 +41,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2010/12/03
 
-    \test tAttributesObservation.cc
+    \test tCommonAttributesObservation.cc
     
     <h3>Prerequisite</h3>
     
@@ -54,7 +54,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class AttributesObservation : public AttributesInterface {
+  class CommonAttributesObservation : public AttributesInterface {
 
     //! Unique identifier for the observation
     std::string itsObservationID;
@@ -88,45 +88,54 @@ namespace DAL { // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    AttributesObservation ();
+    CommonAttributesObservation ();
     
     //! Copy constructor
-    AttributesObservation (AttributesObservation const &other);
+    CommonAttributesObservation (CommonAttributesObservation const &other)
+      : AttributesInterface (other)
+    {
+      copy (other);
+    }
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~AttributesObservation ();
+    ~CommonAttributesObservation ();
     
     // === Operators ============================================================
     
     //! Overloading of the copy operator
-    AttributesObservation& operator= (AttributesObservation const &other); 
+    CommonAttributesObservation& operator= (CommonAttributesObservation const &other); 
     
     // === Parameter access =====================================================
     
-    //! Unique identifier for the observation
+    //! Get unique identifier for the observation
     inline std::string observationID () const {
       return itsObservationID;
     }
-    //! Unique identifier for the observation
+    //! Set unique identifier for the observation
     inline void setObservationID (std::string const &observationID) {
       itsObservationID = observationID;
     }
 
-    //! Start date of the observation (MJD)
+    //! Get start date of the observation (MJD)
     inline std::string startMJD () const {
       return itsStartMJD;
     }
-    //! Start date of the observation (MJD)
+    //! Set start date of the observation (MJD)
     inline void setStartMJD (std::string const &startMJD) {
       itsStartMJD = startMJD;
     }
 
-    //! Start date of the observation (TAI)
+    //! Get start date of the observation (TAI)
     inline std::string startTAI () const {
       return itsStartTAI;
     }
+    //! Set start date of the observation (TAI)
+    inline void setStartTAI (std::string const &startTAI) {
+      itsStartTAI = startTAI;
+    }
+
     //! Start date of the observation (UTC)
     inline std::string startUTC () const {
       return itsStartUTC;
@@ -172,10 +181,10 @@ namespace DAL { // Namespace DAL -- begin
     
     /*!
       \brief Get the name of the class
-      \return className -- The name of the class, AttributesObservation.
+      \return className -- The name of the class, CommonAttributesObservation.
     */
     inline std::string className () const {
-      return "AttributesObservation";
+      return "CommonAttributesObservation";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -200,12 +209,12 @@ namespace DAL { // Namespace DAL -- begin
     void setAttributes ();
 
     //! Unconditional copying
-    void copy (AttributesObservation const &other);
+    void copy (CommonAttributesObservation const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class AttributesObservation -- end
+  }; // Class CommonAttributesObservation -- end
   
 } // Namespace DAL -- end
 

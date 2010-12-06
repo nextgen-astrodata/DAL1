@@ -36,7 +36,7 @@
 #include <Filename.h>
 #include <CommonInterface.h>
 #include <CommonAttributesProject.h>
-#include <AttributesObservation.h>
+#include <CommonAttributesObservation.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -110,7 +110,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Common LOFAR attributes for description of project
     CommonAttributesProject attributesProject_p;
     //! Common LOFAR attributes for description of observation
-    AttributesObservation observation_p;
+    CommonAttributesObservation observation_p;
 
     //! Clock frequency (LOFAR: 200.0 or 160.0)
     double clockFrequency_p;
@@ -147,7 +147,7 @@ namespace DAL { // Namespace DAL -- begin
     CommonAttributes (CommonAttributesProject const &attributesProject);
 
     //! Argumented constructor
-    CommonAttributes (AttributesObservation const &attributesObservation);
+    CommonAttributes (CommonAttributesObservation const &attributesObservation);
 
 #ifdef HAVE_HDF5
     //! Argumented constructor
@@ -259,7 +259,7 @@ namespace DAL { // Namespace DAL -- begin
 			       std::string const &projectContact);
     
     //! Get common LOFAR attributes for description of observation
-    AttributesObservation attributesObservation () const {
+    CommonAttributesObservation attributesObservation () const {
       return observation_p;
     }
 

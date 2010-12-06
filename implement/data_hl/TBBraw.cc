@@ -126,8 +126,8 @@ namespace DAL {  // Namespace DAL -- begin
     CommonAttributesProject attrProject = commonAttributes_p.attributesProject();
     attrProject.setProjectTitle (project);
 
-    AttributesObservation attrObservation = commonAttributes_p.attributesObservation();
-    attrObservation.setObservationID (observation_id);
+    CommonAttributesObservation attribObs = commonAttributes_p.attributesObservation();
+    attribObs.setObservationID (observation_id);
 
     commonAttributes_p.setObserver (observer);
     commonAttributes_p.setFilterSelection (filterSelection);
