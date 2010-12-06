@@ -92,44 +92,44 @@ namespace DAL { // Namespace DAL -- begin
   class CommonAttributes {
 
     //! Names of the attributes attached to the structure
-    std::set<std::string> attributes_p;
+    std::set<std::string> itsAttributes;
     
     //! LOFAR group type ("Root")
-    std::string groupType_p;
+    std::string itsGroupType;
     //! File name
     std::string itsFilename;
     //! File creation date, YYYY-MM-DDThh:mm:ss.s
-    std::string filedate_p;
+    std::string itsFiledate;
     //! File type
-    std::string filetype_p;
+    std::string itsFiletype;
     //! Name of the telescope ("LOFAR")
-    std::string telescope_p;
+    std::string itsTelescope;
     //! Name(s) of the observer(s)
-    std::string observer_p;
+    std::string itsObserver;
 
     //! Common LOFAR attributes for description of project
-    CommonAttributesProject attributesProject_p;
+    CommonAttributesProject itsAttributesProject;
     //! Common LOFAR attributes for description of observation
-    CommonAttributesObservation observation_p;
+    CommonAttributesObservation itsAttributesObservation;
 
     //! Clock frequency (LOFAR: 200.0 or 160.0)
-    double clockFrequency_p;
+    double itsClockFrequency;
     //! Clock frequency physical unit
-    std::string clockFrequencyUnit_p;
+    std::string itsClockFrequencyUnit;
     //! Antenna set specification of observation
-    std::string antennaSet_p;
+    std::string itsAntennaSet;
     //! Filter selection
-    std::string filterSelection_p;
+    std::string itsFilterSelection;
     //! Single or list of observation targets/sources
-    std::string target_p;
+    std::string itsTarget;
     //! Processing system name/version
-    std::string systemVersion_p;
+    std::string itsSystemVersion;
     //! Processing pipeline name
-    std::string pipelineName_p;
+    std::string itsPipelineName;
     //! Processing pipeline version
-    std::string pipelineVersion_p;
+    std::string itsPipelineVersion;
     //! Notes or comments
-    std::string notes_p;
+    std::string itsNotes;
     
   public:
     
@@ -180,18 +180,18 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Get a set with the list of attribute names
     inline std::set<std::string> attributes () const {
-      return attributes_p;
+      return itsAttributes;
     }
     //! Is an attribute of given name part of the LOFAR common attributes?
     inline bool haveAttribute (std::string const &name) const {
-      return static_cast<bool>(attributes_p.count(name));
+      return static_cast<bool>(itsAttributes.count(name));
     }
     /*!
       \brief Get the LOFAR group type
       \return groupName -- The name of the LOFAR group
     */
     inline std::string groupType () const {
-      return groupType_p;
+      return itsGroupType;
     }
     
     //! Get the name of the file
@@ -207,45 +207,45 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Get the type of the file
     inline std::string filetype () const {
-      return filetype_p;
+      return itsFiletype;
     }
     
     //! Set the type of the file
     inline void setFiletype (std::string const &filetype) {
-      filetype_p = filetype;
+      itsFiletype = filetype;
     }
     
     //! Get the file creation date
     inline std::string filedate () const {
-      return filedate_p;
+      return itsFiledate;
     }
 
     //! Set the file creation date
     inline void setFiledate (std::string const &filedate) {
-      filedate_p = filedate;
+      itsFiledate = filedate;
     }
 
     //! Get the name of the telescope
     inline std::string telescope () const {
-      return telescope_p;
+      return itsTelescope;
     }
 
     //! Set the name of the telescope
     inline void setTelescope (std::string const &telescope) {
-      telescope_p = telescope;
+      itsTelescope = telescope;
     }
 
     //! Get the name(s) of the observer(s)
     inline std::string observer () const {
-      return observer_p;
+      return itsObserver;
     }
 
     inline void setObserver (std::string const &observer) {
-      observer_p = observer;
+      itsObserver = observer;
     }
 
     CommonAttributesProject attributesProject () const {
-      return attributesProject_p;
+      return itsAttributesProject;
     }
 
     //! Set the various infos on the project
@@ -260,7 +260,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Get common LOFAR attributes for description of observation
     CommonAttributesObservation attributesObservation () const {
-      return observation_p;
+      return itsAttributesObservation;
     }
 
     //! Set observation start date
@@ -275,83 +275,83 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Get clock frequency (LOFAR: 200.0 or 160.0)
     inline double clockFrequency () const {
-      return clockFrequency_p;
+      return itsClockFrequency;
     }
     //! Set clock frequency (LOFAR: 200.0 or 160.0)
     inline void setClockFrequency (double const &clockFrequency) {
-      clockFrequency_p = clockFrequency;
+      itsClockFrequency = clockFrequency;
     }
 
     //! Get clock frequency physical unit
     inline std::string clockFrequencyUnit () const {
-      return clockFrequencyUnit_p;
+      return itsClockFrequencyUnit;
     }
     //! Set clock frequency physical unit
     inline void setClockFrequencyUnit (std::string const &clockFrequencyUnit) {
-      clockFrequencyUnit_p = clockFrequencyUnit;
+      itsClockFrequencyUnit = clockFrequencyUnit;
     }
 
     //! Get antenna set specification of observation
     inline std::string antennaSet () const {
-      return antennaSet_p;
+      return itsAntennaSet;
     }
     //! Set antenna set specification of observation
     inline void setAntennaSet (std::string const &antennaSet) {
-      antennaSet_p = antennaSet;
+      itsAntennaSet = antennaSet;
     }
 
     //! Get filter selection
     inline std::string filterSelection () const {
-      return filterSelection_p;
+      return itsFilterSelection;
     }
     //! Set filter selection
     inline void setFilterSelection (std::string const &filterSelection) {
-      filterSelection_p = filterSelection;
+      itsFilterSelection = filterSelection;
     }
 
     //! Get single or list of observation targets/sources
     inline std::string target () const {
-      return target_p;
+      return itsTarget;
     }
     //! Set single or list of observation targets/sources
     inline void setTarget (std::string const &target) {
-      target_p = target;
+      itsTarget = target;
     }
 
     //! Get processing system name/version
     inline std::string systemVersion () const {
-      return systemVersion_p;
+      return itsSystemVersion;
     }
     //! Set processing system name/version
     inline void setSystemVersion (std::string const &systemVersion) {
-      systemVersion_p = systemVersion;
+      itsSystemVersion = systemVersion;
     }
 
     //! Processing pipeline name
     inline std::string pipelineName () const {
-      return pipelineName_p;
+      return itsPipelineName;
     }
     //! Set processing pipeline name
     inline void setPipelineName (std::string const &pipelineName) {
-      pipelineName_p = pipelineName;
+      itsPipelineName = pipelineName;
     }
 
     //! Processing pipeline version
     inline std::string pipelineVersion () const {
-      return pipelineVersion_p;
+      return itsPipelineVersion;
     }
     //! Set processing pipeline version
     inline void setPipelineVersion (std::string const &pipelineVersion) {
-      pipelineVersion_p = pipelineVersion;
+      itsPipelineVersion = pipelineVersion;
     }
 
     //! Notes or comments
     inline std::string notes () const {
-      return notes_p;
+      return itsNotes;
     }
     //! Notes or comments
     inline void setNotes (std::string const &notes) {
-      notes_p = notes;
+      itsNotes = notes;
     }
     
     // === Methods ==============================================================

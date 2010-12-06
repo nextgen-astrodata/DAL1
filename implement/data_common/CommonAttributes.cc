@@ -123,24 +123,24 @@ namespace DAL { // Namespace DAL -- begin
   
   void CommonAttributes::copy (CommonAttributes const &other)
   {
-    groupType_p            = other.groupType_p;
-    itsFilename             = other.itsFilename;
-    filetype_p             = other.filetype_p;
-    filedate_p             = other.filedate_p;
-    telescope_p            = other.telescope_p;
+    itsGroupType           = other.itsGroupType;
+    itsFilename            = other.itsFilename;
+    itsFiletype            = other.itsFiletype;
+    itsFiledate            = other.itsFiledate;
+    itsTelescope           = other.itsTelescope;
 
-    attributesProject_p    = other.attributesProject_p;
+    itsAttributesProject   = other.itsAttributesProject;
 
-    observer_p             = other.observer_p;
-    antennaSet_p           = other.antennaSet_p;
-    filterSelection_p      = other.filterSelection_p;
-    clockFrequency_p       = other.clockFrequency_p;
-    clockFrequencyUnit_p   = other.clockFrequencyUnit_p;
-    target_p               = other.target_p;
-    systemVersion_p        = other.systemVersion_p;
-    pipelineName_p         = other.pipelineName_p;
-    pipelineVersion_p      = other.pipelineVersion_p;
-    notes_p                = other.notes_p;
+    itsObserver            = other.itsObserver;
+    itsAntennaSet          = other.itsAntennaSet;
+    itsFilterSelection     = other.itsFilterSelection;
+    itsClockFrequency      = other.itsClockFrequency;
+    itsClockFrequencyUnit  = other.itsClockFrequencyUnit;
+    itsTarget              = other.itsTarget;
+    itsSystemVersion       = other.itsSystemVersion;
+    itsPipelineName        = other.itsPipelineName;
+    itsPipelineVersion     = other.itsPipelineVersion;
+    itsNotes               = other.itsNotes;
   }
 
   // ============================================================================
@@ -154,7 +154,7 @@ namespace DAL { // Namespace DAL -- begin
   
   void CommonAttributes::setAttributesProject (CommonAttributesProject const &attributesProject)
   {
-    attributesProject_p = attributesProject;
+    itsAttributesProject = attributesProject;
   }
 
   //_____________________________________________________________________________
@@ -190,21 +190,21 @@ namespace DAL { // Namespace DAL -- begin
   {
     os << "[CommonAttributes] Summary of internal parameters." << std::endl;
     
-    os << "-- GROUPTYPE              = " << groupType_p            << std::endl;
-    os << "-- FILENAME               = " << itsFilename             << std::endl;
-    os << "-- FILETYPE               = " << filetype_p             << std::endl;
-    os << "-- FILEDATE               = " << filedate_p             << std::endl;
-    os << "-- TELESCOPE              = " << telescope_p            << std::endl;
-    os << "-- OBSERVER               = " << observer_p             << std::endl;
-    os << "-- ANTENNA_SET            = " << antennaSet_p           << std::endl;
-    os << "-- FILTER_SELECTION       = " << filterSelection_p      << std::endl;
-    os << "-- CLOCK_FREQUENCY        = " << clockFrequency_p       << std::endl;
-    os << "-- CLOCK_FREQUENCY_UNIT   = " << clockFrequencyUnit_p   << std::endl;
-    os << "-- TARGET                 = " << target_p               << std::endl;
-    os << "-- SYSTEM_VERSION         = " << systemVersion_p        << std::endl;
+    os << "-- GROUPTYPE              = " << itsGroupType            << std::endl;
+    os << "-- FILENAME               = " << itsFilename            << std::endl;
+    os << "-- FILETYPE               = " << itsFiletype             << std::endl;
+    os << "-- FILEDATE               = " << itsFiledate            << std::endl;
+    os << "-- TELESCOPE              = " << itsTelescope           << std::endl;
+    os << "-- OBSERVER               = " << itsObserver            << std::endl;
+    os << "-- ANTENNA_SET            = " << itsAntennaSet           << std::endl;
+    os << "-- FILTER_SELECTION       = " << itsFilterSelection      << std::endl;
+    os << "-- CLOCK_FREQUENCY        = " << itsClockFrequency       << std::endl;
+    os << "-- CLOCK_FREQUENCY_UNIT   = " << itsClockFrequencyUnit   << std::endl;
+    os << "-- TARGET                 = " << itsTarget               << std::endl;
+    os << "-- SYSTEM_VERSION         = " << itsSystemVersion        << std::endl;
     os << "-- PIPELINE_NAME          = " << pipelineName()         << std::endl;
     os << "-- PIPELINE_VERSION       = " << pipelineVersion()      << std::endl;
-    os << "-- NOTES                  = " << notes_p                << std::endl;
+    os << "-- NOTES                  = " << itsNotes                << std::endl;
   }
   
   // ============================================================================
@@ -219,43 +219,43 @@ namespace DAL { // Namespace DAL -- begin
   void CommonAttributes::setAttributes ()
   {
     /* Set up the list of attributes */
-    attributes_p.clear();
-    attributes_p.insert("GROUPTYPE");
-    attributes_p.insert("FILENAME");
-    attributes_p.insert("FILETYPE");
-    attributes_p.insert("FILEDATE");
-    attributes_p.insert("TELESCOPE");
-    attributes_p.insert("OBSERVER");
-    attributes_p.insert("ANTENNA_SET");
-    attributes_p.insert("FILTER_SELECTION");
-    attributes_p.insert("CLOCK_FREQUENCY");
-    attributes_p.insert("CLOCK_FREQUENCY_UNIT");
-    attributes_p.insert("TARGET");
-    attributes_p.insert("SYSTEM_VERSION");
-    attributes_p.insert("PIPELINE_NAME");
-    attributes_p.insert("PIPELINE_VERSION");
-    attributes_p.insert("OBSERVATION_NOF_STATIONS");
-    attributes_p.insert("OBSERVATION_STATIONS_LIST");
-    attributes_p.insert("NOTES");
+    itsAttributes.clear();
+    itsAttributes.insert("GROUPTYPE");
+    itsAttributes.insert("FILENAME");
+    itsAttributes.insert("FILETYPE");
+    itsAttributes.insert("FILEDATE");
+    itsAttributes.insert("TELESCOPE");
+    itsAttributes.insert("OBSERVER");
+    itsAttributes.insert("ANTENNA_SET");
+    itsAttributes.insert("FILTER_SELECTION");
+    itsAttributes.insert("CLOCK_FREQUENCY");
+    itsAttributes.insert("CLOCK_FREQUENCY_UNIT");
+    itsAttributes.insert("TARGET");
+    itsAttributes.insert("SYSTEM_VERSION");
+    itsAttributes.insert("PIPELINE_NAME");
+    itsAttributes.insert("PIPELINE_VERSION");
+    itsAttributes.insert("OBSERVATION_NOF_STATIONS");
+    itsAttributes.insert("OBSERVATION_STATIONS_LIST");
+    itsAttributes.insert("NOTES");
     /* Default values of the attributes */
     std::string undefined ("UNDEFINED");
     std::vector<std::string> stations (1,undefined);
     //
-    groupType_p           = "Root";
-    itsFilename            = undefined;
-    filetype_p            = undefined;
-    filedate_p            = undefined;
-    telescope_p           = "LOFAR";
-    observer_p            = undefined;
-    antennaSet_p          = undefined;
-    filterSelection_p     = undefined;
-    clockFrequency_p      = 0.0;
-    clockFrequencyUnit_p  = undefined;
-    target_p              = undefined;
-    systemVersion_p       = undefined;
-    pipelineName_p        = undefined;
-    pipelineVersion_p     = undefined;
-    notes_p               = undefined;
+    itsGroupType           = "Root";
+    itsFilename           = undefined;
+    itsFiletype           = undefined;
+    itsFiledate           = undefined;
+    itsTelescope          = "LOFAR";
+    itsObserver           = undefined;
+    itsAntennaSet          = undefined;
+    itsFilterSelection     = undefined;
+    itsClockFrequency      = 0.0;
+    itsClockFrequencyUnit  = undefined;
+    itsTarget              = undefined;
+    itsSystemVersion       = undefined;
+    itsPipelineName        = undefined;
+    itsPipelineVersion     = undefined;
+    itsNotes               = undefined;
   }
   
 #ifdef HAVE_HDF5
@@ -265,25 +265,25 @@ namespace DAL { // Namespace DAL -- begin
   
   void CommonAttributes::h5write (hid_t const &groupID)
   {
-    DAL::h5set_attribute( groupID, "GROUPTYPE",              groupType_p );
+    DAL::h5set_attribute( groupID, "GROUPTYPE",              itsGroupType );
     DAL::h5set_attribute( groupID, "FILENAME",               itsFilename );
-    DAL::h5set_attribute( groupID, "FILETYPE",               filetype_p );
-    DAL::h5set_attribute( groupID, "FILEDATE",               filedate_p );
-    DAL::h5set_attribute( groupID, "TELESCOPE",              telescope_p );
-    DAL::h5set_attribute( groupID, "OBSERVER",               observer_p );
+    DAL::h5set_attribute( groupID, "FILETYPE",               itsFiletype );
+    DAL::h5set_attribute( groupID, "FILEDATE",               itsFiledate );
+    DAL::h5set_attribute( groupID, "TELESCOPE",              itsTelescope );
+    DAL::h5set_attribute( groupID, "OBSERVER",               itsObserver );
 
-    attributesProject_p.h5write(groupID);
-    observation_p.h5write(groupID);
+    itsAttributesProject.h5write(groupID);
+    itsAttributesObservation.h5write(groupID);
 
-    DAL::h5set_attribute( groupID, "ANTENNA_SET",            antennaSet_p );
-    DAL::h5set_attribute( groupID, "FILTER_SELECTION",       filterSelection_p );
-    DAL::h5set_attribute( groupID, "CLOCK_FREQUENCY",        clockFrequency_p );
-    DAL::h5set_attribute( groupID, "CLOCK_FREQUENCY_UNIT",   clockFrequencyUnit_p );
-    DAL::h5set_attribute( groupID, "TARGET",                 target_p );
-    DAL::h5set_attribute( groupID, "SYSTEM_VERSION",         systemVersion_p );
-    DAL::h5set_attribute( groupID, "PIPELINE_NAME",          pipelineName_p );
-    DAL::h5set_attribute( groupID, "PIPELINE_VERSION",       pipelineVersion_p );
-    DAL::h5set_attribute( groupID, "NOTES",                  notes_p );
+    DAL::h5set_attribute( groupID, "ANTENNA_SET",            itsAntennaSet );
+    DAL::h5set_attribute( groupID, "FILTER_SELECTION",       itsFilterSelection );
+    DAL::h5set_attribute( groupID, "CLOCK_FREQUENCY",        itsClockFrequency );
+    DAL::h5set_attribute( groupID, "CLOCK_FREQUENCY_UNIT",   itsClockFrequencyUnit );
+    DAL::h5set_attribute( groupID, "TARGET",                 itsTarget );
+    DAL::h5set_attribute( groupID, "SYSTEM_VERSION",         itsSystemVersion );
+    DAL::h5set_attribute( groupID, "PIPELINE_NAME",          itsPipelineName );
+    DAL::h5set_attribute( groupID, "PIPELINE_VERSION",       itsPipelineVersion );
+    DAL::h5set_attribute( groupID, "NOTES",                  itsNotes );
   }
   
   //_____________________________________________________________________________
@@ -295,25 +295,25 @@ namespace DAL { // Namespace DAL -- begin
   */
   void CommonAttributes::h5read (hid_t const &groupID)
   {
-    DAL::h5get_attribute( groupID, "GROUPTYPE",              groupType_p );
-    DAL::h5get_attribute( groupID, "FILENAME",               itsFilename );
-    DAL::h5get_attribute( groupID, "FILETYPE",               filetype_p );
-    DAL::h5get_attribute( groupID, "FILEDATE",               filedate_p );
-    DAL::h5get_attribute( groupID, "TELESCOPE",              telescope_p );
-    DAL::h5get_attribute( groupID, "OBSERVER",               observer_p );
+    DAL::h5get_attribute( groupID, "GROUPTYPE",             itsGroupType );
+    DAL::h5get_attribute( groupID, "FILENAME",              itsFilename );
+    DAL::h5get_attribute( groupID, "FILETYPE",              itsFiletype );
+    DAL::h5get_attribute( groupID, "FILEDATE",              itsFiledate );
+    DAL::h5get_attribute( groupID, "TELESCOPE",             itsTelescope );
+    DAL::h5get_attribute( groupID, "OBSERVER",              itsObserver );
 
-    attributesProject_p.h5read (groupID);
-    observation_p.h5read (groupID);
+    itsAttributesProject.h5read (groupID);
+    itsAttributesObservation.h5read (groupID);
 
-    DAL::h5get_attribute( groupID, "ANTENNA_SET",            antennaSet_p );
-    DAL::h5get_attribute( groupID, "FILTER_SELECTION",       filterSelection_p );
-    DAL::h5get_attribute( groupID, "CLOCK_FREQUENCY",        clockFrequency_p );
-    DAL::h5get_attribute( groupID, "CLOCK_FREQUENCY_UNIT",   clockFrequencyUnit_p );
-    DAL::h5get_attribute( groupID, "TARGET",                 target_p );
-    DAL::h5get_attribute( groupID, "SYSTEM_VERSION",         systemVersion_p );
-    DAL::h5get_attribute( groupID, "PIPELINE_NAME",          pipelineName_p );
-    DAL::h5get_attribute( groupID, "PIPELINE_VERSION",       pipelineVersion_p );
-    DAL::h5get_attribute( groupID, "NOTES",                  notes_p );
+    DAL::h5get_attribute( groupID, "ANTENNA_SET",           itsAntennaSet );
+    DAL::h5get_attribute( groupID, "FILTER_SELECTION",      itsFilterSelection );
+    DAL::h5get_attribute( groupID, "CLOCK_FREQUENCY",       itsClockFrequency );
+    DAL::h5get_attribute( groupID, "CLOCK_FREQUENCY_UNIT",  itsClockFrequencyUnit );
+    DAL::h5get_attribute( groupID, "TARGET",                itsTarget );
+    DAL::h5get_attribute( groupID, "SYSTEM_VERSION",        itsSystemVersion );
+    DAL::h5get_attribute( groupID, "PIPELINE_NAME",         itsPipelineName );
+    DAL::h5get_attribute( groupID, "PIPELINE_VERSION",      itsPipelineVersion );
+    DAL::h5get_attribute( groupID, "NOTES",                 itsNotes );
   }
   
   //_____________________________________________________________________________
