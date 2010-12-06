@@ -21,6 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <fstream>
 #include <CommonAttributesProject.h>
 
 // Namespace usage
@@ -90,7 +91,7 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
-//                                                              test_parameters
+//                                                                test_parameters
 
 /*!
   \brief Test access to internal parameters
@@ -126,6 +127,57 @@ int test_parameters ()
 }
 
 //_______________________________________________________________________________
+//                                                                test_hdf5
+
+/*!
+  \brief Test I/O of attributes as HDF5 group
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_hdf5 (std::string const &filename="tCommonAttributes.h5")
+{
+  cout << "\n[tCommonAttributesProject::test_hdf5]\n" << endl;
+
+  int nofFailedTests (0);
+  hid_t fileID (0);
+  herr_t h5error (0);
+  
+  //________________________________________________________
+  // Open HDF5 file and group to work with
+  
+  std::ifstream infile;
+  infile.open (filename.c_str(), std::ifstream::in);
+  
+  if (infile.is_open() && infile.good()) {
+    cout << "-- Opening existing file " << filename << " ..." << endl;
+    // If the file already exists, close it ...
+    infile.close();
+    // ... and open it as HDF5 file
+    fileID = H5Fopen (filename.c_str(),
+		      H5F_ACC_RDWR,
+		      H5P_DEFAULT);
+  } else {
+    cout << "-- Creating new file " << filename << " ..." << endl;
+    // If the file does not exist yet, close 
+    infile.close();
+    // create a new HDF5 file
+    fileID = H5Fcreate (filename.c_str(),
+			H5F_ACC_TRUNC,
+			H5P_DEFAULT,
+			H5P_DEFAULT);
+  }
+  
+  
+  //________________________________________________________
+  // close the HDF5 file once we are done
+  h5error = H5Fclose (fileID);
+  
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 int main ()
@@ -136,6 +188,10 @@ int main ()
   nofFailedTests += test_constructors ();
   // Test access to internal parameters
   nofFailedTests += test_parameters ();
+
+#ifdef HAVE_HDF5
+  nofFailedTests += test_hdf5 ();
+#endif
 
   return nofFailedTests;
 }
