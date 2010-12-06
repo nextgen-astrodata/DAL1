@@ -103,6 +103,67 @@ void export_CommonAttributesProject ()
 }
 
 //_______________________________________________________________________________
+//                                                    CommonAttributesObservation
+
+void export_CommonAttributesObservation () 
+{
+  bpl::class_<CommonAttributesObservation>("CommonAttributesObservation")
+    .def( bpl::init<>())
+    .def( bpl::init<CommonAttributesObservation>())
+    .def( "observationID", &CommonAttributesObservation::observationID,
+	  "Get unique identifier for the observation")
+    .def( "setObservationID", &CommonAttributesObservation::setObservationID,
+	  "Set unique identifier for the observation")
+    .def( "startMJD", &CommonAttributesObservation::startMJD,
+	  "Get start date of the observation (MJD)")
+    .def( "setStartMJD", &CommonAttributesObservation::setStartMJD,
+	  "Set start date of the observation (MJD)")
+    .def( "startTAI", &CommonAttributesObservation::startTAI,
+	  "Get start date of the observation (TAI)")
+    .def( "setStartTAI", &CommonAttributesObservation::setStartTAI,
+	  "Set start date of the observation (TAI)")
+    .def( "startUTC", &CommonAttributesObservation::startUTC,
+	  "Get start date of the observation (UTC)")
+    .def( "setStartUTC", &CommonAttributesObservation::setStartUTC,
+	  "Set start date of the observation (UTC)")
+    .def( "endMJD", &CommonAttributesObservation::endMJD,
+	  "Get end date of the observation (MJD)")
+    .def( "setEndMJD", &CommonAttributesObservation::setEndMJD,
+	  "Set end date of the observation (MJD)")
+    .def( "endTAI", &CommonAttributesObservation::endTAI,
+	  "Get end date of the observation (TAI)")
+    .def( "setEndTAI", &CommonAttributesObservation::setEndTAI,
+	  "Set end date of the observation (TAI)")
+    .def( "endUTC", &CommonAttributesObservation::endUTC,
+	  "Get end date of the observation (UTC)")
+    .def( "setEndUTC", &CommonAttributesObservation::setEndUTC,
+	  "Set end date of the observation (UTC)")
+    .def( "nofStations", &CommonAttributesObservation::nofStations,
+	  "nof. stations used during the observation")
+    .def( "stationsList", &CommonAttributesObservation::stationsList,
+	  "Get list of stations used during the observation")
+    .def( "setStationsList", &CommonAttributesObservation::setStationsList,
+	  "Set list of stations used during the observation")
+    .def( "frequencyMin", &CommonAttributesObservation::frequencyMin,
+	  "Observation minimum frequency")
+    .def( "setFrequencyMin", &CommonAttributesObservation::setFrequencyMin,
+	  "Set observation minimum frequency")
+    .def( "frequencyMax", &CommonAttributesObservation::frequencyMax,
+	  "Observation maximum frequency")
+    .def( "setFrequencyMax", &CommonAttributesObservation::setFrequencyMax,
+	  "Set observation maximum frequency")
+    .def( "frequencyCenter", &CommonAttributesObservation::frequencyCenter,
+	  "Observation center frequency")
+    .def( "setFrequencyCenter", &CommonAttributesObservation::setFrequencyCenter,
+	  "Set observation center frequency")
+    .def( "frequencyUnit", &CommonAttributesObservation::frequencyUnit,
+	  "Observation frequency physical units")
+    .def( "setFrequencyUnit", &CommonAttributesObservation::setFrequencyUnit,
+	  "Set observation frequency physical units")
+    ;
+}
+
+//_______________________________________________________________________________
 //                                                                       Filename
 
 void export_Filename ()
