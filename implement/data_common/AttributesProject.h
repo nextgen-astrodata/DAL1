@@ -54,6 +54,9 @@ namespace DAL { // Namespace DAL -- begin
     
   */  
   class AttributesProject {
+
+    //! Attributes names
+    std::set<std::string> itsAttributes;
     
     //! Unique identifier for the project
     std::string itsProjectID;
@@ -94,6 +97,15 @@ namespace DAL { // Namespace DAL -- begin
     AttributesProject& operator= (AttributesProject const &other); 
     
     // === Parameter access =====================================================
+
+    //! Attribute names
+    inline std::set<std::string> attributes () const {
+      return itsAttributes;
+    }
+    //! Is attribute of given \e name part of the group?
+    inline bool haveAttribute (std::string const &name) const {
+      return static_cast<bool>(itsAttributes.count(name));
+    }
 
     //! Unique identifier for the project
     inline std::string projectID () const {
@@ -167,6 +179,9 @@ namespace DAL { // Namespace DAL -- begin
 #endif    
     
   private:
+
+    //! Set the atttribute names
+    void setAttributes ();
     
     //! Unconditional copying
     void copy (AttributesProject const &other);

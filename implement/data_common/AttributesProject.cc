@@ -131,6 +131,17 @@ namespace DAL { // Namespace DAL -- begin
   //  Methods
   //
   // ============================================================================
+
+  void AttributesProject::setAttributes ()
+  {
+    itsAttributes.clear();
+
+    itsAttributes.insert("PROJECT_ID");
+    itsAttributes.insert("PROJECT_TITLE");
+    itsAttributes.insert("PROJECT_PI");
+    itsAttributes.insert("PROJECT_CO_I");
+    itsAttributes.insert("PROJECT_CONTACT");
+  }
   
   //_____________________________________________________________________________
   //                                                                      summary
