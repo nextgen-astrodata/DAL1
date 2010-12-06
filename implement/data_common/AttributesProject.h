@@ -24,7 +24,7 @@
 #ifndef ATTRIBUTESPROJECT_H
 #define ATTRIBUTESPROJECT_H
 
-#include <dalCommon.h>
+#include "AttributesInterface.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -53,11 +53,8 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class AttributesProject {
+  class AttributesProject : public AttributesInterface {
 
-    //! Attributes names
-    std::set<std::string> itsAttributes;
-    
     //! Unique identifier for the project
     std::string itsProjectID;
     //! Name of the project
@@ -97,15 +94,6 @@ namespace DAL { // Namespace DAL -- begin
     AttributesProject& operator= (AttributesProject const &other); 
     
     // === Parameter access =====================================================
-
-    //! Attribute names
-    inline std::set<std::string> attributes () const {
-      return itsAttributes;
-    }
-    //! Is attribute of given \e name part of the group?
-    inline bool haveAttribute (std::string const &name) const {
-      return static_cast<bool>(itsAttributes.count(name));
-    }
 
     //! Unique identifier for the project
     inline std::string projectID () const {
@@ -172,10 +160,10 @@ namespace DAL { // Namespace DAL -- begin
 
 #ifdef HAVE_HDF5
     //! Write the attributes to a HDF5 file
-    void h5write (hid_t const &groupID);
+    bool h5write (hid_t const &groupID);
     
     //! Read the attributes from a HDF5 file
-    void h5read (hid_t const &groupID);
+    bool h5read (hid_t const &groupID);
 #endif    
     
   private:

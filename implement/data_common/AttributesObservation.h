@@ -25,8 +25,7 @@
 #define ATTRIBUTESOBSERVATION_H
 
 // Standard library header files
-#include <iostream>
-#include <string>
+#include <AttributesInterface.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -55,10 +54,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class AttributesObservation {
-
-    //! Attributes names
-    std::set<std::string> itsAttributes;
+  class AttributesObservation : public AttributesInterface {
 
     //! Unique identifier for the observation
     std::string itsObservationID;
@@ -192,10 +188,10 @@ namespace DAL { // Namespace DAL -- begin
     
 #ifdef HAVE_HDF5
     //! Write the attributes to a HDF5 file
-    void h5write (hid_t const &groupID);
+    bool h5write (hid_t const &groupID);
     
     //! Read the attributes from a HDF5 file
-    void h5read (hid_t const &groupID);
+    bool h5read (hid_t const &groupID);
 #endif    
 
   private:

@@ -75,6 +75,7 @@ namespace DAL { // Namespace DAL -- begin
            one.
   */
   AttributesProject::AttributesProject (AttributesProject const &other)
+    : AttributesInterface (other)
   {
     copy (other);
   }
@@ -164,22 +165,30 @@ namespace DAL { // Namespace DAL -- begin
   
 #ifdef HAVE_HDF5
   
-  void AttributesProject::h5write (hid_t const &groupID)
+  bool AttributesProject::h5write (hid_t const &groupID)
   {
+    bool status (true);
+
     DAL::h5set_attribute( groupID, "PROJECT_ID",       itsProjectID );
     DAL::h5set_attribute( groupID, "PROJECT_TITLE",    itsProjectTitle );
     DAL::h5set_attribute( groupID, "PROJECT_PI",       itsProjectPI );
     DAL::h5set_attribute( groupID, "PROJECT_CO_I",     itsProjectCoI );
     DAL::h5set_attribute( groupID, "PROJECT_CONTACT",  itsProjectContact );
+
+    return status;
   }
   
-  void AttributesProject::h5read (hid_t const &groupID)
+  bool AttributesProject::h5read (hid_t const &groupID)
   {
+    bool status (true);
+
     DAL::h5get_attribute( groupID, "PROJECT_ID",       itsProjectID );
     DAL::h5get_attribute( groupID, "PROJECT_TITLE",    itsProjectTitle );
     DAL::h5get_attribute( groupID, "PROJECT_PI",       itsProjectPI );
     DAL::h5get_attribute( groupID, "PROJECT_CO_I",     itsProjectCoI );
     DAL::h5get_attribute( groupID, "PROJECT_CONTACT",  itsProjectContact );
+
+    return status;
   }
   
 #endif

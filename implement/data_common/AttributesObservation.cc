@@ -32,13 +32,30 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   AttributesObservation::AttributesObservation ()
-  {;}
+  {
+    itsObservationID   = "UNDEFINED";
+    itsStartMJD        = "UNDEFINED";
+    itsStartTAI        = "UNDEFINED";
+    itsStartUTC        = "UNDEFINED";
+    itsEndMJD          = "UNDEFINED";
+    itsEndTAI          = "UNDEFINED";
+    itsEndUTC          = "UNDEFINED";
+    itsNofStations     = 0;
+    itsStationsList.clear();
+    itsFrequencyMin    = 0.0;
+    itsFrequencyMax    = 0.0;
+    itsFrequencyCenter = 0.0;
+    itsFrequencyUnit   = "UNDEFINED";
+
+    setAttributes();
+  }
   
   /*!
     \param other -- Another HDF5Property object from which to create this new
            one.
   */
   AttributesObservation::AttributesObservation (AttributesObservation const &other)
+    : AttributesInterface (other)
   {
     copy (other);
   }
@@ -82,7 +99,23 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                         copy
   
   void AttributesObservation::copy (AttributesObservation const &other)
-  {;}
+  {
+    itsStationsList.clear();
+
+    itsObservationID   = other.itsObservationID;
+    itsStartMJD        = other.itsStartMJD;
+    itsStartTAI        = other.itsStartTAI;
+    itsStartUTC        = other.itsStartUTC;
+    itsEndMJD          = other.itsEndMJD;
+    itsEndTAI          = other.itsEndTAI;
+    itsEndUTC          = other.itsEndUTC;
+    itsNofStations     = other.itsNofStations;
+    itsStationsList    = other.itsStationsList;
+    itsFrequencyMin    = other.itsFrequencyMin;
+    itsFrequencyMax    = other.itsFrequencyMax;
+    itsFrequencyCenter = other.itsFrequencyCenter;
+    itsFrequencyUnit   = other.itsFrequencyUnit;
+  }
 
   // ============================================================================
   //
@@ -111,19 +144,19 @@ namespace DAL { // Namespace DAL -- begin
   {
     itsAttributes.clear();
 
-    attributes_p.insert("OBSERVATION_ID");
-    attributes_p.insert("OBSERVATION_START_MJD");
-    attributes_p.insert("OBSERVATION_START_TAI");
-    attributes_p.insert("OBSERVATION_START_UTC");
-    attributes_p.insert("OBSERVATION_END_MJD");
-    attributes_p.insert("OBSERVATION_END_TAI");
-    attributes_p.insert("OBSERVATION_END_UTC");
-    attributes_p.insert("OBSERVATION_NOF_STATIONS");
-    attributes_p.insert("OBSERVATION_STATIONS_LIST");
-    attributes_p.insert("OBSERVATION_FREQUENCY_MAX");
-    attributes_p.insert("OBSERVATION_FREQUENCY_MIN");
-    attributes_p.insert("OBSERVATION_FREQUENCY_CENTER");
-    attributes_p.insert("OBSERVATION_FREQUENCY_UNIT");
+    itsAttributes.insert("OBSERVATION_ID");
+    itsAttributes.insert("OBSERVATION_START_MJD");
+    itsAttributes.insert("OBSERVATION_START_TAI");
+    itsAttributes.insert("OBSERVATION_START_UTC");
+    itsAttributes.insert("OBSERVATION_END_MJD");
+    itsAttributes.insert("OBSERVATION_END_TAI");
+    itsAttributes.insert("OBSERVATION_END_UTC");
+    itsAttributes.insert("OBSERVATION_NOF_STATIONS");
+    itsAttributes.insert("OBSERVATION_STATIONS_LIST");
+    itsAttributes.insert("OBSERVATION_FREQUENCY_MAX");
+    itsAttributes.insert("OBSERVATION_FREQUENCY_MIN");
+    itsAttributes.insert("OBSERVATION_FREQUENCY_CENTER");
+    itsAttributes.insert("OBSERVATION_FREQUENCY_UNIT");
   }
 
 } // Namespace DAL -- end
