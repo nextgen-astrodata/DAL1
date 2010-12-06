@@ -32,9 +32,9 @@
 #include <vector>
 
 // DAL header files
-#include <dalCommon.h>
 #include <Filename.h>
 #include <CommonInterface.h>
+#include <AttributesInterface.h>
 #include <CommonAttributesProject.h>
 #include <CommonAttributesObservation.h>
 
@@ -89,11 +89,8 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
 
   */  
-  class CommonAttributes {
+  class CommonAttributes : public AttributesInterface {
 
-    //! Names of the attributes attached to the structure
-    std::set<std::string> itsAttributes;
-    
     //! LOFAR group type ("Root")
     std::string itsGroupType;
     //! File name
@@ -178,14 +175,6 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Parameter access =====================================================
 
-    //! Get a set with the list of attribute names
-    inline std::set<std::string> attributes () const {
-      return itsAttributes;
-    }
-    //! Is an attribute of given name part of the LOFAR common attributes?
-    inline bool haveAttribute (std::string const &name) const {
-      return static_cast<bool>(itsAttributes.count(name));
-    }
     /*!
       \brief Get the LOFAR group type
       \return groupName -- The name of the LOFAR group
@@ -239,19 +228,21 @@ namespace DAL { // Namespace DAL -- begin
     inline std::string observer () const {
       return itsObserver;
     }
-
+    
+    //! Name(s) of the observer(s)
     inline void setObserver (std::string const &observer) {
       itsObserver = observer;
     }
 
+    //! Common LOFAR attributes for description of project
     CommonAttributesProject attributesProject () const {
       return itsAttributesProject;
     }
 
-    //! Set the various infos on the project
+    //! Common LOFAR attributes for description of project
     void setAttributesProject (CommonAttributesProject const &attributesProject);
     
-    //! Set the various infos on the project
+    //! Common LOFAR attributes for description of project
     void setAttributesProject (std::string const &projectID,
 			       std::string const &projectTitle,
 			       std::string const &projectPI,
@@ -389,17 +380,17 @@ namespace DAL { // Namespace DAL -- begin
 
 #ifdef HAVE_HDF5
     //! Write the attributes to a HDF5 file
-    void h5write (hid_t const &groupID);
+    bool h5write (hid_t const &groupID);
     
     //! Write the attributes to a HDF5 file
-    void h5write (hid_t const &locationID,
+    bool h5write (hid_t const &locationID,
 		  std::string const &name);
     
     //! Read the attributes from a HDF5 file
-    void h5read (hid_t const &groupID);
+    bool h5read (hid_t const &groupID);
     
     //! Read the attributes from a HDF5 file
-    void h5read (hid_t const &locationID,
+    bool h5read (hid_t const &locationID,
 		 std::string const &name);
 #endif    
 

@@ -82,6 +82,7 @@ namespace DAL { // Namespace DAL -- begin
   //                                                             CommonAttributes
 
   CommonAttributes::CommonAttributes (CommonAttributes const &other)
+    : AttributesInterface (other)
   {
     copy (other);
   }
@@ -263,8 +264,10 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      h5write
   
-  void CommonAttributes::h5write (hid_t const &groupID)
+  bool CommonAttributes::h5write (hid_t const &groupID)
   {
+    bool status (true);
+    
     DAL::h5set_attribute( groupID, "GROUPTYPE",              itsGroupType );
     DAL::h5set_attribute( groupID, "FILENAME",               itsFilename );
     DAL::h5set_attribute( groupID, "FILETYPE",               itsFiletype );
@@ -284,6 +287,8 @@ namespace DAL { // Namespace DAL -- begin
     DAL::h5set_attribute( groupID, "PIPELINE_NAME",          itsPipelineName );
     DAL::h5set_attribute( groupID, "PIPELINE_VERSION",       itsPipelineVersion );
     DAL::h5set_attribute( groupID, "NOTES",                  itsNotes );
+
+    return status;
   }
   
   //_____________________________________________________________________________
@@ -293,8 +298,10 @@ namespace DAL { // Namespace DAL -- begin
     \param groupID -- Identifier to the HDF5 group from which to read the
            attributes
   */
-  void CommonAttributes::h5read (hid_t const &groupID)
+  bool CommonAttributes::h5read (hid_t const &groupID)
   {
+    bool status (true);
+
     DAL::h5get_attribute( groupID, "GROUPTYPE",             itsGroupType );
     DAL::h5get_attribute( groupID, "FILENAME",              itsFilename );
     DAL::h5get_attribute( groupID, "FILETYPE",              itsFiletype );
@@ -314,29 +321,35 @@ namespace DAL { // Namespace DAL -- begin
     DAL::h5get_attribute( groupID, "PIPELINE_NAME",         itsPipelineName );
     DAL::h5get_attribute( groupID, "PIPELINE_VERSION",      itsPipelineVersion );
     DAL::h5get_attribute( groupID, "NOTES",                 itsNotes );
+
+    return status;
   }
   
   //_____________________________________________________________________________
   //                                                                       h5read
   
-  void CommonAttributes::h5read (hid_t const &locationID,
+  bool CommonAttributes::h5read (hid_t const &locationID,
 				 std::string const &name)
   {
+    bool status (true);
     hid_t groupID (0);
     
     groupID = H5Gopen1 (locationID,
                         name.c_str());
     
     if (groupID) {
-      h5read (groupID);
+      status = h5read (groupID);
     }
     else {
       std::cerr << "[CommonAttributes::h5read] Error opening group "
 		<< name
 		<< std::endl;
+      status = false;
     }
     
     H5Gclose (groupID);
+
+    return status;
   }
 
 #endif
