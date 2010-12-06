@@ -43,7 +43,7 @@ namespace DAL {
     std::string filetype;      // "HDF5", "MSCASA" or "FITS"; for example
     std::string name;          // Column name
     std::string tablename;     // Table name
-    std::string dal_datatype;  // Column datatype
+    std::string itsDatatype;  // Column datatype
     int size;                  // Datatype size
     uint num_of_rows;          // Number of rows in the column
 
@@ -145,7 +145,7 @@ namespace DAL {
     void close();
     //! Retrieve the datatype of the column.
     inline std::string getType() {
-      return dal_datatype;
+      return itsDatatype;
     }
     bool isArray();
     //! Is the column a scalar?

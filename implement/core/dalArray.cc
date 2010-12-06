@@ -964,20 +964,19 @@ namespace DAL {
                 array.  The size of the structure should match the dimensions
                 of the array.
     \param chnkdims Specifies the chunk size for extendible arrays.
-   */
-  dalComplexArray_float32::dalComplexArray_float32(
-    hid_t obj_id,
-    string arrayname,
-    vector<int> dims,
-    std::complex<float> data[],
-    vector<int> chnkdims )
+  */
+  dalComplexArray_float32::dalComplexArray_float32(hid_t obj_id,
+						   string arrayname,
+						   vector<int> dims,
+						   std::complex<float> data[],
+						   vector<int> chnkdims )
   {
     // declare a few h5 variables
     hid_t datatype  = 0;
     hid_t dataspace = 0;
     name = arrayname;  // set the private name variable to the array name
     hid_t complex_id = 0;
-
+    
     // determine the rank from the size of the dimensions vector
     unsigned int rank = dims.size();
     hsize_t mydims[rank];  // declare a dimensions c-array
@@ -998,19 +997,19 @@ namespace DAL {
       }
 
     // create a new hdf5 datatype for complex values
-    if ( ( complex_id = H5Tcreate( H5T_COMPOUND, sizeof(dalcomplex_float32 )) )
+    if ( ( complex_id = H5Tcreate( H5T_COMPOUND, sizeof(DAL::Complex_Float32 )) )
          < 0 )
       {
         std::cerr << "ERROR: Could not create compound datatype.\n";
       }
 
-    if ( H5Tinsert( complex_id, "real", HOFFSET(dalcomplex_float32,r),
+    if ( H5Tinsert( complex_id, "real", HOFFSET(DAL::Complex_Float32,real),
                     H5T_NATIVE_FLOAT ) < 0 )
       {
         std::cerr << "ERROR: Could not create compound datatype (r).\n";
       }
 
-    if ( H5Tinsert ( complex_id, "imag", HOFFSET(dalcomplex_float32,i),
+    if ( H5Tinsert ( complex_id, "imag", HOFFSET(DAL::Complex_Float32,imag),
                      H5T_NATIVE_FLOAT) < 0 )
       {
         std::cerr << "ERROR: Could not create compound datatype (i).\n";
@@ -1150,19 +1149,19 @@ namespace DAL {
       }
 
     // create a new hdf5 datatype for complex values
-    if ( ( complex_id = H5Tcreate( H5T_COMPOUND, sizeof( dalcomplex_int16 )) )
+    if ( ( complex_id = H5Tcreate( H5T_COMPOUND, sizeof( DAL::Complex_Int16 )) )
          < 0 )
       {
         std::cerr << "ERROR: Could not create compound datatype.\n";
       }
 
-    if ( H5Tinsert( complex_id, "real", HOFFSET(dalcomplex_int16,r),
+    if ( H5Tinsert( complex_id, "real", HOFFSET(DAL::Complex_Int16,real),
                     H5T_NATIVE_SHORT) < 0 )
       {
         std::cerr << "ERROR: Could not create compound datatype (r).\n";
       }
 
-    if ( H5Tinsert( complex_id, "imag", HOFFSET(dalcomplex_int16,i),
+    if ( H5Tinsert( complex_id, "imag", HOFFSET(DAL::Complex_Int16,imag),
                     H5T_NATIVE_SHORT) < 0 )
       {
         std::cerr << "ERROR: Could not create compound datatype (i).\n";
@@ -1290,23 +1289,33 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                            setAttribute_uint
   
-  bool dalArray::setAttribute_uint( std::string attrname, uint data )
+  //! Set attribute of type \e uint
+  bool dalArray::setAttribute_uint (std::string attrname,
+				    uint data)
   {
     return setAttribute( attrname, &data );
   }
-  bool dalArray::setAttribute_long( std::string attrname, long data )
+  //! Set attrubute of type \e long
+  bool dalArray::setAttribute_long (std::string attrname,
+				    long data)
   {
     return setAttribute( attrname, &data );
   }
-  bool dalArray::setAttribute_float( std::string attrname, float data )
+  //! Set attribute of type \e float
+  bool dalArray::setAttribute_float (std::string attrname,
+				     float data)
   {
     return setAttribute( attrname, &data );
   }
-  bool dalArray::setAttribute_double( std::string attrname, double data )
+  //! Set attribute of type \e double
+  bool dalArray::setAttribute_double (std::string attrname,
+				      double data)
   {
     return setAttribute( attrname, &data );
   }
-  bool dalArray::setAttribute_string( std::string attrname, std::string data )
+  //! Set attribute of type \e string
+  bool dalArray::setAttribute_string (std::string attrname,
+				      std::string data)
   {
     return setAttribute( attrname, &data );
   }

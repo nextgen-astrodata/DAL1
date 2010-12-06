@@ -50,7 +50,7 @@ namespace DAL {
   dalColumn::dalColumn( std::string complexcolname )
   {
     name = complexcolname;
-    dal_datatype = dal_COMPLEX;
+    itsDatatype = dal_COMPLEX;
   }
 
   //_____________________________________________________________________________
@@ -76,7 +76,7 @@ namespace DAL {
     filetype     = lcl_filetype;
     tablename    = lcl_tablename;
     name         = colname;
-    dal_datatype = coldatatype;
+    itsDatatype = coldatatype;
   }
 
   //_____________________________________________________________________________
@@ -90,7 +90,7 @@ namespace DAL {
   dalColumn::dalColumn( std::string colname, std::string type )
   {
     name = colname;
-    dal_datatype = type;
+    itsDatatype = type;
   }
 
   //_____________________________________________________________________________
@@ -519,7 +519,7 @@ namespace DAL {
       break;
     case casa::TpComplex:
       {
-        dal_datatype = dal_COMPLEX;
+        itsDatatype = dal_COMPLEX;
 	std::vector< std::complex< float > > ret_valvec;
         try
           {
@@ -619,10 +619,10 @@ namespace DAL {
 
     if ( dal_COMPLEX_SHORT == getType() )
       {
-        dalcomplex_int16 * data = NULL;
+        DAL::Complex_Int16 * data = NULL;
         try
           {
-            data = (dalcomplex_int16*)malloc(sizeof(dalcomplex_int16)*length);
+            data = (DAL::Complex_Int16*)malloc(sizeof(DAL::Complex_Int16)*length);
           }
         catch ( std::bad_alloc ) {
 	  std::cerr <<
@@ -632,7 +632,7 @@ namespace DAL {
 	
         if ( H5TBread_fields_name ( fileID_p, tablename.c_str(),
                                     name.c_str(), start, length,
-                                    sizeof(dalcomplex_int16),
+                                    sizeof(DAL::Complex_Int16),
                                     field_offsets, field_sizes,
                                     data ) < 0 )
           {
@@ -644,7 +644,7 @@ namespace DAL {
 	
         data_object = new dalData( filetype, dal_COMPLEX_SHORT,
                                    shape, length );
-        data_object->data = (dalcomplex_int16 *)data;
+        data_object->data = (DAL::Complex_Int16 *)data;
       }
     else if ( dal_FLOAT == getType() ) {
       float * data = NULL;
@@ -750,9 +750,6 @@ namespace DAL {
 
   /*!
     \brief Get the size of the column.
-
-    Get the size of the column, in bytes.
-
     \return An integer describing the size, in bytes, of the column.
    */
   int dalColumn::getSize()
@@ -780,15 +777,15 @@ namespace DAL {
       }
     else if ( dal_COMPLEX == getType() )
       {
-        return sizeof( dalcomplex );
+        return sizeof( DAL::Complex_Double );
       }
     else if ( dal_COMPLEX_SHORT == getType() )
       {
-        return sizeof( dalcomplex_int16 );
+        return sizeof( DAL::Complex_Int16 );
       }
     else if ( dal_COMPLEX_CHAR == getType() )
       {
-        return sizeof( dalcomplex_char );
+        return sizeof( DAL::Complex_Char );
       }
     else
       {

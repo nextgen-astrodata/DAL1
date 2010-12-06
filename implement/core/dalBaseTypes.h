@@ -105,9 +105,9 @@ namespace DAL {
   const bool SUCCESS = true;
   const bool FAIL    = false;
   
-  const std::string dal_CHAR   = "dalCHAR";
-  const std::string dal_STRING = "dalSTRING";
-  const std::string dal_BOOL   = "dalBOOL";
+  const std::string dal_CHAR          = "dalCHAR";
+  const std::string dal_STRING        = "dalSTRING";
+  const std::string dal_BOOL          = "dalBOOL";
   
   const std::string dal_SHORT         = "dalSHORT";
   const std::string dal_INT           = "dalINT";
@@ -136,29 +136,64 @@ namespace DAL {
 
   // === Structs ================================================================
   
-  struct dalcomplex
-  {
-    Float64 r;  // real
-    Float64 i;  // imaginary
+  //! Complex number composed of two 8-bit unsigned integers
+  struct Complex_UInt8 {
+    UInt8 real;
+    UInt8 imag;
   };
+
+  //! Complex number composed of two 16-bit unsigned integers
+  struct Complex_UInt16 {
+    UInt16 real;
+    UInt16 imag;
+  };
+
+  //! Complex number composed of two 32-bit unsigned integers
+  struct Complex_UInt32 {
+    UInt32 real;
+    UInt32 imag;
+  };
+
+  //! Complex number composed of two 16-bit integers
+  struct Complex_Int16 {
+    Int16 real;
+    Int16 imag;
+  };
+
+  //! Complex number composed of two 32-bit integers
+  struct Complex_Int32 {
+    Int32 real;
+    Int32 imag;
+  };
+
+  //! Complex number composed of two 64-bit integers
+  struct Complex_Int64 {
+    Int64 real;
+    Int64 imag;
+  };
+
+  //! Complex number composed of two 32-bit floats 
+  struct Complex_Float32 {
+    Float32 real;
+    Float32 imag;
+  };
+
+  //! Complex number composed of two 64-bit floats 
+  struct Complex_Float64 {
+    Float64 real;
+    Float64 imag;
+  };
+
+  struct Complex_Char {
+    char real;  // real part
+    char imag;  // imaginary part
+  };
+
+  //________________________________________________________
+  // Additional type definitions
   
-  struct dalcomplex_float32
-  {
-    Float32 r;  // real
-    Float32 i;  // imaginary
-  };
-  
-  struct dalcomplex_int16
-  {
-    Int16 r;  // real
-    Int16 i;  // imaginary
-  };
-  
-  struct dalcomplex_char
-  {
-    char r;  // real
-    char i;  // imaginary
-  };
+  typedef Complex_Float32 Complex_Float;
+  typedef Complex_Float64 Complex_Double;
   
 } // DAL namespace
 
