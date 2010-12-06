@@ -136,45 +136,96 @@ namespace DAL { // Namespace DAL -- begin
       itsStartTAI = startTAI;
     }
 
-    //! Start date of the observation (UTC)
+    //! Get start date of the observation (UTC)
     inline std::string startUTC () const {
       return itsStartUTC;
     }
-    //! End date of the observation (MJD)
+    //! Set start date of the observation (UTC)
+    inline void setStartUTC (std::string const &startUTC) {
+      itsStartUTC = startUTC;
+    }
+
+    //! Get end date of the observation (MJD)
     inline std::string endMJD () const {
       return itsEndMJD;
     }
+    //! Set end date of the observation (MJD)
+    inline void setEndMJD (std::string const &endMJD) {
+      itsEndMJD = endMJD;
+    }
+
     //! End date of the observation (TAI)
     inline std::string endTAI () const {
       return itsEndTAI;
     }
+    //! End date of the observation (TAI)
+    inline void setEndTAI (std::string const &endTAI) {
+      itsEndTAI = endTAI;
+    }
+
     //! End date of the observation (UTC)
     inline std::string endUTC () const {
       return itsEndUTC;
     }
+    //! End date of the observation (UTC)
+    inline void setEndUTC (std::string const &endUTC) {
+      itsEndUTC = endUTC;
+    }
+
     //! nof. stations used during the observation
     inline int nofStations () const {
       return itsNofStations;
     }
+
     //! List of stations used during the observation
     inline std::vector<std::string> stationsList () const {
       return itsStationsList;
     }
+    //! List of stations used during the observation
+    inline void setStationsList (std::vector<std::string> const &stationsList) {
+      itsStationsList.clear();
+      if (stationsList.empty()) {
+	itsNofStations = 0;
+      } else {
+	itsNofStations = stationsList.size();
+	itsStationsList = stationsList;
+      }
+    }
+
     //! Observation minimum frequency
     inline double frequencyMin () const {
       return itsFrequencyMin;
     }
+    //! Observation minimum frequency
+    inline void setFrequencyMin (double const &frequencyMin) {
+      itsFrequencyMin = frequencyMin;
+    }
+    
     //! Observation maximum frequency
     inline double frequencyMax () const {
       return itsFrequencyMax;
     }
+    //! Observation maximum frequency
+    inline void setFrequencyMax (double const &frequencyMax) {
+      itsFrequencyMax = frequencyMax;
+    }
+    
     //! Observation center frequency
     inline double frequencyCenter () const {
       return itsFrequencyCenter;
     }
+    //! Observation center frequency
+    inline void setFrequencyCenter (double const &frequencyCenter) {
+      itsFrequencyCenter = frequencyCenter;
+    }
+    
     //! Observation frequency physical units
     inline std::string frequencyUnit () const {
       return itsFrequencyUnit;
+    }
+    //! Observation frequency physical units
+    inline void setFrequencyUnit (std::string const &frequencyUnit) {
+      itsFrequencyUnit = frequencyUnit;
     }
 
     // === Methods ==============================================================
