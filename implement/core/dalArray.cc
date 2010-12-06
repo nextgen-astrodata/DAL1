@@ -39,8 +39,8 @@ namespace DAL {
   dalArray::dalArray()
   {
     datasetID_p = 0;
-    fileID_p    = 0;
-    rank_p      = 0;
+    itsFileID   = 0;
+    itsRank     = 0;
     datatype    = "UNKNOWN";
     status      = 0;
     name        = "UNKNOWN";
@@ -57,11 +57,11 @@ namespace DAL {
   int dalArray::open( void * voidfile,
                       string arrayname )
   {
-    name = arrayname;
-    hid_t * lclfile = (hid_t*)voidfile; // H5File object
-    fileID_p = *lclfile;  // get the file handle
+    name            = arrayname;         // array name
+    hid_t * lclfile = (hid_t*)voidfile;  // H5File object
+    itsFileID       = *lclfile;          // get the file handle
 
-    if ( ( datasetID_p = H5Dopen( fileID_p, name.c_str(), H5P_DEFAULT ) ) < 0 )
+    if ( ( datasetID_p = H5Dopen( itsFileID, name.c_str(), H5P_DEFAULT ) ) < 0 )
       std::cerr << "ERROR: could not open array '" << arrayname << "'.\n";
 
     return( datasetID_p );
@@ -98,7 +98,7 @@ namespace DAL {
   void dalArray::summary (std::ostream &os)
   {
     os << "[dalArray] Summary of object properties" << std::endl;
-    os << "-- File ID            = " << fileID_p    << std::endl;
+    os << "-- File ID            = " << itsFileID   << std::endl;
     os << "-- Array ID           = " << getId()     << std::endl;
     os << "-- Array name         = " << name        << std::endl;
     os << "-- Rank of the array  = " << getRank()   << std::endl;
@@ -121,7 +121,7 @@ namespace DAL {
 			int arraysize )
   {
     hsize_t      dims[1] = { arraysize };
-    int32_t      rank_p  = 1;
+    int32_t      itsRank  = 1;
     hsize_t      off[1]  = { offset };
     hid_t filespace      = 0;
     hid_t dataspace      = 0;
@@ -142,7 +142,7 @@ namespace DAL {
       }
     
     /* Define memory space */
-    if ( ( dataspace = H5Screate_simple (rank_p, dims, NULL) ) < 0 )
+    if ( ( dataspace = H5Screate_simple (itsRank, dims, NULL) ) < 0 )
       {
         std::cerr << "ERROR: Could not create dataspace for array.\n";
         H5Sclose(filespace);
@@ -186,7 +186,7 @@ namespace DAL {
 			int arraysize)
   {
     hsize_t      dims[1] = { arraysize };
-    int32_t      rank_p  = 1;
+    int32_t      itsRank  = 1;
     hsize_t      off[1]  = { offset };
     hid_t filespace      = 0;
     hid_t dataspace      = 0;
@@ -207,7 +207,7 @@ namespace DAL {
       }
 
     /* Define memory space */
-    if ( ( dataspace = H5Screate_simple (rank_p, dims, NULL) ) < 0 )
+    if ( ( dataspace = H5Screate_simple (itsRank, dims, NULL) ) < 0 )
       {
         std::cerr << "ERROR: Could not create dataspace for array.\n";
         H5Sclose(filespace);
@@ -447,28 +447,25 @@ namespace DAL {
   //                                                                getAttributes
 
   /*!
-   \brief Print the attributes of the array.
-
-    Print the attributes of the array.
-
-   \return bool -- DAL::FAIL or DAL::SUCCESS
+    \brief Print the attributes of the array.
+    
+    \return bool -- DAL::FAIL or DAL::SUCCESS
   */
   bool dalArray::getAttributes()
   {
-
+    
     /*
-       The following function calls the attr_info function for each
+      The following function calls the attr_info function for each
        attribute associated with the object.
      */
-    if ( H5Aiterate1( datasetID_p, NULL, attr_info, NULL ) < 0 )
-      {
-        std::cerr << "ERROR: Could not iterate over array attributes.\n";
-        return DAL::FAIL;
-      }
-
+    if ( H5Aiterate1( datasetID_p, NULL, attr_info, NULL ) < 0 ) {
+      std::cerr << "ERROR: Could not iterate over array attributes.\n";
+      return DAL::FAIL;
+    }
+    
     return DAL::SUCCESS;
   }
-
+  
   //_____________________________________________________________________________
   //                                                                 setAttribute
 

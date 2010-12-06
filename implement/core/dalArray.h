@@ -44,7 +44,7 @@ namespace DAL {
   class dalArray {
     
     //! Number of dimensions
-    int rank_p;
+    int itsRank;
     //! Array datatype identifier
     string datatype;
     //! HDF5 return status
@@ -55,7 +55,7 @@ namespace DAL {
     //! HDF5 object ID for array
     hid_t datasetID_p;
     //! HDF5 object ID for file
-    hid_t fileID_p;
+    hid_t itsFileID;
     //! Name of the array
     string name;
     
@@ -84,8 +84,8 @@ namespace DAL {
       return datasetID_p;
     }
     //! Get the rank of the array, i.e. the number of dimensions
-    inline int getRank () {
-      return rank_p;
+    inline int getRank () const {
+      return itsRank;
     }
     
     bool getAttributes();
@@ -201,15 +201,17 @@ namespace DAL {
     \ingroup  core
     \brief Represents an n-dimensional array of type \e int
   */
-  class dalIntArray: public dalArray
-  {
+  class dalIntArray: public dalArray {
     
   public:
+
+    //! Argumented constructor
     dalIntArray (hid_t obj_id,
 		 string arrayname,
 		 vector<int> dims,
 		 int data[],
 		 vector<int>chnkdims );
+    //! Read array data from object \e obj_id
     int * readIntArray (hid_t obj_id,
 			string arrayname);
   };
@@ -224,6 +226,8 @@ namespace DAL {
   {
     
   public:
+
+    //! Argumented constructor
     dalFloatArray (hid_t obj_id,
 		   string arrayname,
 		   vector<int> dims,
@@ -231,10 +235,17 @@ namespace DAL {
 		   vector<int>chnkdims);
   };
   
-  class dalComplexArray_float32: public dalArray
-  {
+  /*!
+    \class dalComplexArray_float32
+    \ingroup DAL
+    \ingroup  core
+    \brief Represents an n-dimensional array of type \e complex<float32>
+  */
+  class dalComplexArray_float32: public dalArray {
     
   public:
+    
+    //! Argumented constructor
     dalComplexArray_float32( hid_t objfile,
 			     string arrayname,
 			     vector<int> dims,
@@ -242,10 +253,17 @@ namespace DAL {
 			     vector<int>chnkdims);
   };
   
-  class dalComplexArray_int16: public dalArray
-  {
+  /*!
+    \class dalComplexArray_int16
+    \ingroup DAL
+    \ingroup  core
+    \brief Represents an n-dimensional array of type \e complex<int16>
+  */
+  class dalComplexArray_int16: public dalArray {
     
   public:
+
+    //! Argumented constructor
     dalComplexArray_int16( hid_t objfile, string arrayname,
 			   vector<int> dims,
 			   std::complex<Int16> data[],
