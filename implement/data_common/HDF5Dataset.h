@@ -252,30 +252,35 @@ namespace DAL {
   class HDF5Dataset : public CommonInterface {
 
     //! Name of the dataset
-    std::string name_p;
+    std::string itsName;
     //! Dataspace identifier
-    hid_t dataspace_p;
+    hid_t itsDataspace;
     //! Datatype identifier
-    hid_t datatype_p;
+    hid_t itsDatatype;
     //! Shape of the dataset
-    std::vector<hsize_t> shape_p;
+    std::vector<hsize_t> itsShape;
     //! Layout of the raw data of the dataset
-    H5D_layout_t layout_p;
+    H5D_layout_t itsLayout;
     //! Chunk size for extendible array
-    std::vector<hsize_t> chunking_p;
+    std::vector<hsize_t> itsChunking;
     //! Hyperslabs for the dataspace attached to the dataset
-    std::vector<DAL::HDF5Hyperslab> hyperslab_p;
+    std::vector<DAL::HDF5Hyperslab> itsHyperslab;
 
   public:
     
     // === Construction =========================================================
-
+    
     //! Default constuctor
-    HDF5Dataset ();
+    HDF5Dataset () {
+      init ();
+    }
     
     //! Argumented constructor
     HDF5Dataset (hid_t const &location,
-		 std::string const &name);
+		 std::string const &name) {
+      init ();
+      open (location,name,false);
+    }
     
     //! Argumented constructor
     HDF5Dataset (hid_t const &location,
@@ -299,27 +304,27 @@ namespace DAL {
     
     //! Get the name of the dataset
     inline std::string name () const {
-      return name_p;
+      return itsName;
     }
     
     //! Get the shape of the dataset
     inline std::vector<hsize_t> shape () const {
-      return shape_p;
+      return itsShape;
     }
 
     //! Get the layout of the raw data of the dataset
     inline H5D_layout_t layout () const {
-      return layout_p;
+      return itsLayout;
     }
     
     //! Get the chunking size
     inline std::vector<hsize_t> chunking () const {
-      return chunking_p;
+      return itsChunking;
     }
     
     //! Get the rank (i.e. the number of axes) of the dataset
     inline unsigned int rank () const {
-      return shape_p.size();
+      return itsShape.size();
     }
 
     //! Get the nof. datapoints (i.e. array elements) of the dataset
@@ -327,12 +332,12 @@ namespace DAL {
     
     //! Get the dataspace identifier
     inline hid_t dataspaceID () const {
-      return dataspace_p;
+      return itsDataspace;
     }
     
     //! Get the datatype identifier
     inline hid_t datatypeID () const {
-      return datatype_p;
+      return itsDatatype;
     }
 
     // === Public Methods =======================================================
@@ -357,7 +362,7 @@ namespace DAL {
 
     //! Get the Hyperslabs for the dataspace attached to the dataset
     inline std::vector<DAL::HDF5Hyperslab> hyperslabs () const {
-      return hyperslab_p;
+      return itsHyperslab;
     }
     
     //! Select a hyperslab for the dataspace attached to the dataset
@@ -383,7 +388,7 @@ namespace DAL {
     
     //! Get the datatype class identifier. 
     inline H5T_class_t datatypeClass () {
-      return datatypeClass (datatype_p);
+      return datatypeClass (itsDatatype);
     }
     
     // === Read the data ========================================================
@@ -564,9 +569,14 @@ namespace DAL {
     //! Initialize the internal parameters
     void init ();
     //! Set up the list of attributes attached to the dataset
-    void setAttributes ();
+    inline void setAttributes () {
+      attributes_p.clear();
+    }
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    inline bool openEmbedded (bool const &create) {
+      bool status = create;
+      return status;
+    }
     //! Set the size of chunks for the raw data of a chunked layout dataset. 
     bool setShape (std::vector<hsize_t> const &shape,
 		   std::vector<hsize_t> const &chunksize);
@@ -614,7 +624,7 @@ namespace DAL {
 	  h5error = H5Dread (location_p,
 			     datatype,
 			     memorySpace,
-			     dataspace_p,
+			     itsDataspace,
 			     H5P_DEFAULT,
 			     data);
 	  /* Release HDF5 object identifier */
@@ -708,7 +718,7 @@ namespace DAL {
 	  h5error = H5Dwrite (location_p,
 			      datatype,
 			      memspace,
-			      dataspace_p,
+			      itsDataspace,
 			      H5P_DEFAULT,
 			      data);
 	  
