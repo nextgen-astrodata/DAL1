@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <CommonInterface.h>
+#include <HDF5CommonInterface.h>
 
 namespace DAL { // Namespace DAL -- begin
 
@@ -31,7 +31,7 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
 
-  void CommonInterface::destroy ()
+  void HDF5CommonInterface::destroy ()
   {
     if (hasValidID()) {
       // Close the object
@@ -52,7 +52,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    operator=
   
-  CommonInterface& CommonInterface::operator= (CommonInterface const &other)
+  HDF5CommonInterface& HDF5CommonInterface::operator= (HDF5CommonInterface const &other)
   {
     if (this != &other) {
       destroy ();
@@ -64,7 +64,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
-  void CommonInterface::copy (CommonInterface const &other)
+  void HDF5CommonInterface::copy (HDF5CommonInterface const &other)
   {
     // Initialize internal variables
     location_p = 0;
@@ -92,7 +92,7 @@ namespace DAL { // Namespace DAL -- begin
     \param name -- The name of the attribute at position <tt>index</tt> within
            the internal list
   */
-  std::string CommonInterface::attribute (unsigned int const &index)
+  std::string HDF5CommonInterface::attribute (unsigned int const &index)
   {
     unsigned int n (0);
     std::set<std::string>::iterator it;
@@ -113,7 +113,7 @@ namespace DAL { // Namespace DAL -- begin
 	    attribute wasn't in the list previously and has been added as new
 	    <tt>true</tt> is returned.
   */
-  bool CommonInterface::addAttribute (std::string const &name)
+  bool HDF5CommonInterface::addAttribute (std::string const &name)
   {
     if (static_cast<bool>(attributes_p.count(name))) {
       return false;
@@ -129,7 +129,7 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param names -- Names of the attributes to be added.
   */
-  bool CommonInterface::addAttributes (std::set<std::string> const &names)
+  bool HDF5CommonInterface::addAttributes (std::set<std::string> const &names)
   {
     bool status (true);
     std::set<std::string>::iterator iterBegin = names.begin();
@@ -148,7 +148,7 @@ namespace DAL { // Namespace DAL -- begin
             was removed from the set, <tt>False</tt> is the set did not contain
 	    an element <i>name</i>.
   */
-  bool CommonInterface::removeAttribute (std::string const &name)
+  bool HDF5CommonInterface::removeAttribute (std::string const &name)
   {
     return attributes_p.erase(name);
   }
@@ -156,7 +156,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                              removeAttribute
   
-  bool CommonInterface::removeAttributes (std::set<std::string> const &names)
+  bool HDF5CommonInterface::removeAttributes (std::set<std::string> const &names)
   {
     bool status (true);
     std::set<std::string>::iterator it;
@@ -177,11 +177,11 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                            incrementRefCount
 
-  void CommonInterface::incrementRefCount ()
+  void HDF5CommonInterface::incrementRefCount ()
   {
     if (hasValidID()) {
       if (H5Iinc_ref(location_p) < 0) {
-	std::cerr << "[CommonInterface::incrementRefCount]"
+	std::cerr << "[HDF5CommonInterface::incrementRefCount]"
 		  << " Failed to increment object reference count!"
 		  << std::endl;
       }
@@ -191,12 +191,12 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   hasValidID
 
-  bool CommonInterface::hasValidID ()
+  bool HDF5CommonInterface::hasValidID ()
   {
     return hasValidID (location_p);
   }
   
-  bool CommonInterface::hasValidID (hid_t const &object_id)
+  bool HDF5CommonInterface::hasValidID (hid_t const &object_id)
   {
     H5I_type_t id_type = H5Iget_type(object_id);
     if (id_type <= H5I_BADID || id_type >= H5I_NTYPES)
@@ -208,7 +208,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   objectType
   
-  H5I_type_t CommonInterface::objectType ()
+  H5I_type_t HDF5CommonInterface::objectType ()
   {
     return objectType(location_p);
   }
@@ -217,7 +217,7 @@ namespace DAL { // Namespace DAL -- begin
     \param object_id -- Identifier for the object for which to check the type.
     \return type     -- The type identifier of the object.
   */
-  H5I_type_t CommonInterface::objectType (hid_t const &object_id)
+  H5I_type_t HDF5CommonInterface::objectType (hid_t const &object_id)
   {
     if (H5Iis_valid(object_id)) {
       return H5Iget_type (object_id);
@@ -229,7 +229,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   objectName
   
-  std::string CommonInterface::objectName ()
+  std::string HDF5CommonInterface::objectName ()
   {
     std::string name;
 
@@ -245,7 +245,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         open
   
-  bool CommonInterface::open (hid_t const &location)
+  bool HDF5CommonInterface::open (hid_t const &location)
   {
     bool status (true);
     bool absolutePath (false);
@@ -280,12 +280,12 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 locationName
   
-  std::string CommonInterface::locationName ()
+  std::string HDF5CommonInterface::locationName ()
   {
     std::string name;
     
     if (!h5get_name(name,location_p)) {
-      std::cerr << "[CommonInterface::locationName]"
+      std::cerr << "[HDF5CommonInterface::locationName]"
 		<< " Unable to retrieve name of location!"
 		<< std::endl;
       name = "UNDEFINED";
@@ -300,9 +300,9 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param os -- Output stream to which the summary is written.
   */
-  void CommonInterface::summary (std::ostream &os)
+  void HDF5CommonInterface::summary (std::ostream &os)
   {
-    os << "[CommonInterface] Summary of internal parameters." << std::endl;
+    os << "[HDF5CommonInterface] Summary of internal parameters." << std::endl;
     os << "-- Location ID = " << location_p                   << std::endl;
   }
   

@@ -38,7 +38,7 @@ namespace DAL { // Namespace DAL -- begin
     \param filename -- Name of the dataset to open.
   */
   RM_RootGroup::RM_RootGroup (std::string const &filename)
-    : CommonInterface()
+    : HDF5CommonInterface()
   {
     if (!open (0,filename,false)) {
       std::cerr << "[RM_RootGroup::RM_RootGroup] Failed to open file "
@@ -58,7 +58,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   RM_RootGroup::RM_RootGroup (DAL::Filename &infile,
 			      bool const &create)
-    : CommonInterface()
+    : HDF5CommonInterface()
   {
     if (!open (0,infile.filename(),create)) {
       std::cerr << "[RM_RootGroup::RM_RootGroup] Failed to open file "
@@ -209,7 +209,7 @@ namespace DAL { // Namespace DAL -- begin
   
   /*!
     \param location -- Identifier of the location to which the to be opened
-           structure is attached; parameter inherited through CommonInterface,
+           structure is attached; parameter inherited through HDF5CommonInterface,
 	   but not evaluated here.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.

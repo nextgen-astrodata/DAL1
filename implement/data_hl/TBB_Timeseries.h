@@ -30,7 +30,7 @@
 #endif
 
 #include <CommonAttributes.h>
-#include <CommonInterface.h>
+#include <HDF5CommonInterface.h>
 #include <SysLog.h>
 #include <TBB_StationGroup.h>
 #include <TBB_StationTrigger.h>
@@ -147,7 +147,7 @@ namespace DAL {  // Namespace DAL -- begin
     </ol>
     
   */
-  class TBB_Timeseries : public CommonInterface {
+  class TBB_Timeseries : public HDF5CommonInterface {
     
     //! Typedef for the iterator on the map holding the TBB_DipoleDataset
     typedef std::map<std::string,TBB_DipoleDataset>::iterator iterDipoleDataset;

@@ -29,7 +29,7 @@
 #include <string>
 
 // DAL header files
-#include <CommonInterface.h>
+#include <HDF5CommonInterface.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -60,7 +60,7 @@ namespace DAL { // Namespace DAL -- begin
         <li>Filename -- Class to filenames matching convention
         <li>CommonAttributes -- Collection of attributes common to all LOFAR
 	datasets
-	<li>CommonInterface -- Common functionality for the high-level
+	<li>HDF5CommonInterface -- Common functionality for the high-level
 	interfaces to the datasets
       </ul>
     </ul>
@@ -71,7 +71,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class BF_ProcessingHistory : public CommonInterface {
+  class BF_ProcessingHistory : public HDF5CommonInterface {
     
   public:
     

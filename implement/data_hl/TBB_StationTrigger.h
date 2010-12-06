@@ -28,7 +28,7 @@
 #include <iostream>
 #include <string>
 
-#include <CommonInterface.h>
+#include <HDF5CommonInterface.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -50,7 +50,7 @@ namespace DAL { // Namespace DAL -- begin
     
     <ul type="square">
       <li>LOFAR Data Format ICD: TBB Time-series data (LOFAR-USG-ICD-001)
-      <li>DAL::CommonInterface
+      <li>DAL::HDF5CommonInterface
       <li>DAL::TBB_Timeseries
     </ul>
     
@@ -59,7 +59,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class TBB_StationTrigger : public CommonInterface {
+  class TBB_StationTrigger : public HDF5CommonInterface {
     
   public:
     

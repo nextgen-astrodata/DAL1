@@ -21,8 +21,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef COMMONINTERFACE_H
-#define COMMONINTERFACE_H
+#ifndef HDF5COMMONINTERFACE_H
+#define HDF5COMMONINTERFACE_H
 
 // Standard library header files
 #include <iostream>
@@ -42,7 +42,7 @@
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class CommonInterface
+    \class HDF5CommonInterface
 
     \ingroup DAL
     \ingroup data_common
@@ -80,7 +80,7 @@ namespace DAL { // Namespace DAL -- begin
 
     <h3>Requirements for derived classes</h3>
 
-    The CommonInterface requires derived classes to implement the following
+    The HDF5CommonInterface requires derived classes to implement the following
     methods:
 
     <ol>
@@ -185,7 +185,7 @@ namespace DAL { // Namespace DAL -- begin
       \endcode
     </ol>
   */  
-  class CommonInterface {
+  class HDF5CommonInterface {
 
   protected:
 
@@ -215,12 +215,12 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Destruction ==========================================================
 
-    virtual ~CommonInterface () {};
+    virtual ~HDF5CommonInterface () {};
 
     // === Operators ============================================================
 
     //! Copy operator
-    CommonInterface& operator= (CommonInterface const &other); 
+    HDF5CommonInterface& operator= (HDF5CommonInterface const &other); 
     
     // === Parameter accesss ====================================================
     
@@ -258,10 +258,10 @@ namespace DAL { // Namespace DAL -- begin
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, CommonInterface.
+      \return className -- The name of the class, HDF5CommonInterface.
     */
     inline std::string className () const {
-      return "CommonInterface";
+      return "HDF5CommonInterface";
     }
     //! Provide a summary of the internal status
     inline void summary () {
@@ -333,13 +333,13 @@ namespace DAL { // Namespace DAL -- begin
 					name,
 					val);
 	  } else {
-	    std::cerr << "[CommonInterface::getAttribute]"
+	    std::cerr << "[HDF5CommonInterface::getAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[CommonInterface::getAttribute]"
+	  std::cerr << "[HDF5CommonInterface::getAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -368,13 +368,13 @@ namespace DAL { // Namespace DAL -- begin
 					name,
 					val);
 	  } else {
-	    std::cerr << "[CommonInterface::getAttribute]"
+	    std::cerr << "[HDF5CommonInterface::getAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[CommonInterface::getAttribute]"
+	  std::cerr << "[HDF5CommonInterface::getAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -404,13 +404,13 @@ namespace DAL { // Namespace DAL -- begin
 					name,
 					val);
 	  } else {
-	    std::cerr << "[CommonInterface::getAttribute]"
+	    std::cerr << "[HDF5CommonInterface::getAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[CommonInterface::getAttribute]"
+	  std::cerr << "[HDF5CommonInterface::getAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -440,13 +440,13 @@ namespace DAL { // Namespace DAL -- begin
 				    name,
 				    val);
 	  } else {
-	    std::cerr << "[CommonInterface::setAttribute]"
+	    std::cerr << "[HDF5CommonInterface::setAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[CommonInterface::setAttribute]"
+	  std::cerr << "[HDF5CommonInterface::setAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -475,13 +475,13 @@ namespace DAL { // Namespace DAL -- begin
 				    name,
 				    val);
 	  } else {
-	    std::cerr << "[CommonInterface::setAttribute]"
+	    std::cerr << "[HDF5CommonInterface::setAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[CommonInterface::setAttribute]"
+	  std::cerr << "[HDF5CommonInterface::setAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -511,13 +511,13 @@ namespace DAL { // Namespace DAL -- begin
 				    name,
 				    val);
 	  } else {
-	    std::cerr << "[CommonInterface::setAttribute]"
+	    std::cerr << "[HDF5CommonInterface::setAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[CommonInterface::setAttribute]"
+	  std::cerr << "[HDF5CommonInterface::setAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -533,14 +533,14 @@ namespace DAL { // Namespace DAL -- begin
     void incrementRefCount ();
 
     //! Unconditional copying
-    void copy (CommonInterface const &other);
+    void copy (HDF5CommonInterface const &other);
     
     //! Unconditional deletion 
     void destroy(void);
 
-  }; // Class CommonInterface -- end
+  }; // Class HDF5CommonInterface -- end
   
 } // Namespace DAL -- end
 
-#endif /* COMMONINTERFACE_H */
+#endif /* HDF5COMMONINTERFACE_H */
   

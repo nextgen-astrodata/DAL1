@@ -29,7 +29,7 @@
 #include <string>
 
 #include <dalCommon.h>
-#include <CommonInterface.h>
+#include <HDF5CommonInterface.h>
 #include <HDF5Dataset.h>
 
 namespace DAL { // Namespace DAL -- begin
@@ -298,7 +298,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class HDF5Table : public CommonInterface {
+  class HDF5Table : public HDF5CommonInterface {
     
     //! Table name
     std::string tableName_p;

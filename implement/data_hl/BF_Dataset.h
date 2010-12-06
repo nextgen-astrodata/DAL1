@@ -29,7 +29,7 @@
 #include <string>
 
 // DAL header files
-#include <CommonInterface.h>
+#include <HDF5CommonInterface.h>
 #include <Filename.h>
 #include <BF_Dataset.h>
 #include <BF_SubArrayPointing.h>
@@ -64,7 +64,7 @@ namespace DAL { // Namespace DAL -- begin
         <li>Filename -- Class to filenames matching convention
         <li>CommonAttributes -- Collection of attributes common to all LOFAR
 	datasets
-	<li>CommonInterface -- Common functionality for the high-level
+	<li>HDF5CommonInterface -- Common functionality for the high-level
 	interfaces to the datasets
 	<li>BF_SubArrayPointing
 	<li>SysLog
@@ -138,7 +138,7 @@ namespace DAL { // Namespace DAL -- begin
     </ol>
     
   */  
-  class BF_Dataset : public CommonInterface {
+  class BF_Dataset : public HDF5CommonInterface {
 
     //! Name of the data file
     std::string filename_p;

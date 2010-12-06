@@ -56,7 +56,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   TBB_DipoleDataset::TBB_DipoleDataset (hid_t const &location,
                                         std::string const &name)
-    : CommonInterface ()
+    : HDF5CommonInterface ()
   {
     datatype_p  = -1;
     dataspace_p = -1;

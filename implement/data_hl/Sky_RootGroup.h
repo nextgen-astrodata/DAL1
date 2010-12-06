@@ -3,7 +3,7 @@
  *-------------------------------------------------------------------------*
  ***************************************************************************
  *   Copyright (C) 2010                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,36 +21,36 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef TBB_STATIONCALIBRATION_H
-#define TBB_STATIONCALIBRATION_H
+#ifndef SKY_ROOTGROUP_H
+#define SKY_ROOTGROUP_H
 
 // Standard library header files
 #include <iostream>
 #include <string>
 
-#include <CoordinatesGroup.h>
+// DAL header files
 #include <HDF5CommonInterface.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class TBB_StationCalibration
+    \class Sky_RootGroup
     
     \ingroup DAL
     \ingroup data_hl
     
-    \brief Brief description for class TBB_StationCalibration
+    \brief Root group of a Radio Sky Image Cube
     
     \author Lars B&auml;hren
 
-    \date 2010/01/26
+    \date 2010/10/19
 
-    \test tTBB_StationCalibration.cc
+    \test tSky_RootGroup.cc
     
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>[start filling in your text here]
+      <li>LOFAR Data Format ICD: Radio Sky Image Cubes (LOFAR-USG-ICD-004)
     </ul>
     
     <h3>Synopsis</h3>
@@ -58,49 +58,41 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class TBB_StationCalibration : public HDF5CommonInterface {
-    
-    //! Complex electronic gain as function of frequency
-    hid_t gainCurve_p;
-    //! Coordinates attached to the gain curve data
-    CoordinatesGroup gainCurveCoordinates_p;
-    //! Complex system noice as function of frequency
-    hid_t noiseCurve_p;
-    //! Coordinates attached to the noise curve data
-    CoordinatesGroup noiseCurveCoordinates_p;
-    //! Complex beam pattern as function of direction and frequency
-    hid_t beamShape_p;
+  class Sky_RootGroup {
     
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    TBB_StationCalibration ();
+    Sky_RootGroup ();
+    
+    //! Copy constructor
+    Sky_RootGroup (Sky_RootGroup const &other);
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~TBB_StationCalibration ();
+    ~Sky_RootGroup ();
     
     // === Operators ============================================================
     
     /*!
       \brief Overloading of the copy operator
       
-      \param other -- Another TBB_StationCalibration object from which to make a copy.
+      \param other -- Another Sky_RootGroup object from which to make a copy.
     */
-    TBB_StationCalibration& operator= (TBB_StationCalibration const &other); 
+    Sky_RootGroup& operator= (Sky_RootGroup const &other); 
     
     // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, TBB_StationCalibration.
+      \return className -- The name of the class, Sky_RootGroup.
     */
     inline std::string className () const {
-      return "TBB_StationCalibration";
+      return "Sky_RootGroup";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -108,41 +100,24 @@ namespace DAL { // Namespace DAL -- begin
       summary (std::cout);
     }
 
-    /*!
-      \brief Provide a summary of the internal status
-
-      \param os -- Output stream to which the summary is written.
-    */
+    //! Provide a summary of the object's internal parameters and status
     void summary (std::ostream &os);    
 
     // === Methods ==============================================================
     
-    //! Open a station calibration group
-    bool open (hid_t const &location,
-	       bool const &create=true);
-
+    
+    
   private:
     
-    //! Set up the list of attributes attached to the structure
-    void setAttributes ();
-
-    //! Open a station calibration group
-    bool open (hid_t const &location,
-	       std::string const &name,
-	       bool const &create=true);
-
-    //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
-
     //! Unconditional copying
-    void copy (TBB_StationCalibration const &other);
+    void copy (Sky_RootGroup const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class TBB_StationCalibration -- end
+  }; // Class Sky_RootGroup -- end
   
 } // Namespace DAL -- end
 
-#endif /* TBB_STATIONCALIBRATION_H */
+#endif /* SKY_ROOTGROUP_H */
   

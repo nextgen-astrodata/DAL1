@@ -36,7 +36,7 @@
 #include <measures/Measures/MPosition.h>
 #endif
 
-#include <CommonInterface.h>
+#include <HDF5CommonInterface.h>
 #include <Enumerations.h>
 
 namespace DAL {  // Namespace DAL -- begin
@@ -93,7 +93,7 @@ namespace DAL {  // Namespace DAL -- begin
   </ul>
 
   */
-  class TBB_DipoleDataset : public CommonInterface {
+  class TBB_DipoleDataset : public HDF5CommonInterface {
     
     //! Datatype identifier
     hid_t datatype_p;

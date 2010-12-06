@@ -35,7 +35,7 @@
 #include <measures/Measures/MDirection.h>
 #endif
 
-#include <CommonInterface.h>
+#include <HDF5CommonInterface.h>
 #include <TBB_DipoleDataset.h>
 #include <TBB_StationTrigger.h>
 
@@ -106,7 +106,7 @@ namespace DAL {   // Namespace DAL -- begin
     </ol>
 
   */
-  class TBB_StationGroup : public CommonInterface {
+  class TBB_StationGroup : public HDF5CommonInterface {
     
     //! Typedef for the iterator on the map holding the TBB_DipoleDataset
     typedef std::map<std::string,TBB_DipoleDataset>::iterator iterDipoleDataset;

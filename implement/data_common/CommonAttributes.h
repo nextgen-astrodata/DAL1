@@ -33,7 +33,7 @@
 
 // DAL header files
 #include <Filename.h>
-#include <CommonInterface.h>
+#include <HDF5CommonInterface.h>
 #include <AttributesInterface.h>
 #include <CommonAttributesProject.h>
 #include <CommonAttributesObservation.h>

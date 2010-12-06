@@ -30,7 +30,7 @@
 #include <map>
 
 // DAL header files
-#include <CommonInterface.h>
+#include <HDF5CommonInterface.h>
 #include <CoordinatesGroup.h>
 #include <BF_ProcessingHistory.h>
 
@@ -63,7 +63,7 @@ namespace DAL { // Namespace DAL -- begin
         <li>Filename -- Class to filenames matching convention
         <li>CommonAttributes -- Collection of attributes common to all LOFAR
 	datasets
-	<li>CommonInterface -- Common functionality for the high-level
+	<li>HDF5CommonInterface -- Common functionality for the high-level
 	interfaces to the datasets
 	<li>CoordinatesGroup
 	<li>BF_ProcessingHistory
@@ -81,7 +81,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class BF_Beam : public CommonInterface {
+  class BF_Beam : public HDF5CommonInterface {
 
     //! Procesing history group
     std::map<std::string,BF_ProcessingHistory> processingHistory_p;

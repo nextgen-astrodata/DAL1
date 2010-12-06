@@ -29,7 +29,7 @@
 #include <vector>
 
 #include <dalCommon.h>
-#include <CommonInterface.h>
+#include <HDF5CommonInterface.h>
 #include <HDF5Hyperslab.h>
 
 #define H5S_CHUNKSIZE_MAX  ((uint32_t)(-1))  /* (4GB - 1) */
@@ -249,7 +249,7 @@ namespace DAL {
     </ol>
     
   */
-  class HDF5Dataset : public CommonInterface {
+  class HDF5Dataset : public HDF5CommonInterface {
 
     //! Name of the dataset
     std::string itsName;

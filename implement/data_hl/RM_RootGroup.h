@@ -29,7 +29,7 @@
 #include <string>
 
 // DAL header files
-#include <CommonInterface.h>
+#include <HDF5CommonInterface.h>
 #include <Filename.h>
 #include <SysLog.h>
 
@@ -62,7 +62,7 @@ namespace DAL { // Namespace DAL -- begin
         <li>Filename -- Class to filenames matching convention
         <li>CommonAttributes -- Collection of attributes common to all LOFAR
 	datasets
-	<li>CommonInterface -- Common functionality for the high-level
+	<li>HDF5CommonInterface -- Common functionality for the high-level
 	interfaces to the datasets
 	<li>SysLog
       </ul>
@@ -121,7 +121,7 @@ namespace DAL { // Namespace DAL -- begin
     </ol>
     
   */  
-  class RM_RootGroup : public CommonInterface {
+  class RM_RootGroup : public HDF5CommonInterface {
 
     //! Name of the data file
     std::string filename_p;

@@ -81,7 +81,7 @@ namespace DAL {  // Namespace DAL -- begin
            new one.
   */
   TBB_Timeseries::TBB_Timeseries (TBB_Timeseries const &other)
-    : CommonInterface ()
+    : HDF5CommonInterface ()
   {
     copy (other);
   }
@@ -219,7 +219,7 @@ namespace DAL {  // Namespace DAL -- begin
   
   /*!
     \param location -- Identifier of the location to which the to be opened
-           structure is attached; parameter inherited through CommonInterface,
+           structure is attached; parameter inherited through HDF5CommonInterface,
 	   but not evaluated here.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.

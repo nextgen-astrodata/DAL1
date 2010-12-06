@@ -29,7 +29,7 @@
 #include <string>
 
 // DAL header files
-#include <CommonInterface.h>
+#include <HDF5CommonInterface.h>
 #include <DirectionCoordinate.h>
 #include <LinearCoordinate.h>
 
@@ -61,7 +61,7 @@ namespace DAL { // Namespace DAL -- begin
       </ul>
       <li>Components of the LOFAR user software:
       <ul>
-	<li>CommonInterface -- Common functionality for the high-level
+	<li>HDF5CommonInterface -- Common functionality for the high-level
 	interfaces to the datasets
       </ul>
     </ul>
@@ -83,7 +83,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class CoordinatesGroup : public CommonInterface {
+  class CoordinatesGroup : public HDF5CommonInterface {
 
     //! Group type descriptor
     std::string groupType_p;
