@@ -35,6 +35,7 @@
 // DAL headers
 #include "pydal.h"
 #include <CommonAttributes.h>
+#include <CommonAttributesProject.h>
 #include <Filename.h>
 #include <HDF5Hyperslab.h>
 #include <Timestamp.h>
@@ -66,18 +67,21 @@ void export_CommonAttributes ()
 	  "Get the name of the telescope.")
     .def( "setTelescope", &CommonAttributes::setTelescope,
 	  "Set the name of the telescope.")
-    .def( "projectID", &CommonAttributes::projectID,
-	  "Get the unique identifier for the project.")
-    .def( "setProjectID", &CommonAttributes::setProjectID,
-	  "Set the unique identifier for the project.")
-    .def( "projectTitle", &CommonAttributes::projectTitle,
-	  "Get the name of the project.")
-    .def( "setProjectTitle", &CommonAttributes::setProjectTitle,
-	  "Set the name of the project.")
-    .def( "projectPI", &CommonAttributes::projectPI,
-	  "Get the name of the project's principal investigator.")
-    .def( "setProjectPI", &CommonAttributes::setProjectPI,
-	  "Set the name of the project's principal investigator.")
+    ;
+}
+
+//_____________________________________________________________________________
+//                                                      CommonAttributesProject
+
+void export_CommonAttributesProject () 
+{
+  bpl::class_<CommonAttributesProject>("CommonAttributesProject")
+    .def( bpl::init<>())
+    .def( bpl::init<string,string,string,string,string>())
+    .def( "projectID", &CommonAttributesProject::projectID,
+	  "Unique identifier for the project.")
+    .def( "setProjectID", &CommonAttributesProject::setProjectID,
+	  "Set unique identifier for the project.")
     ;
 }
 

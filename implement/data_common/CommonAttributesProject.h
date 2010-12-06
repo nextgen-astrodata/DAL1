@@ -21,15 +21,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ATTRIBUTESPROJECT_H
-#define ATTRIBUTESPROJECT_H
+#ifndef COMMONATTRIBUTESPROJECT_H
+#define COMMONATTRIBUTESPROJECT_H
 
 #include "AttributesInterface.h"
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class AttributesProject
+    \class CommonAttributesProject
     
     \ingroup DAL
     \ingroup data_common
@@ -40,7 +40,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2010/12/03
 
-    \test tAttributesProject.cc
+    \test tCommonAttributesProject.cc
     
     <h3>Prerequisite</h3>
     
@@ -53,7 +53,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class AttributesProject : public AttributesInterface {
+  class CommonAttributesProject : public AttributesInterface {
 
     //! Unique identifier for the project
     std::string itsProjectID;
@@ -71,27 +71,27 @@ namespace DAL { // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    AttributesProject ();
+    CommonAttributesProject ();
     
     //! Argumented constructor
-    AttributesProject (std::string const &projectID,
-		       std::string const &projectTitle,
-		       std::string const &projectPI,
-		       std::string const &projectCoI,
-		       std::string const &projectContact);
+    CommonAttributesProject (std::string const &projectID,
+			     std::string const &projectTitle,
+			     std::string const &projectPI,
+			     std::string const &projectCoI,
+			     std::string const &projectContact);
     
     //! Copy constructor
-    AttributesProject (AttributesProject const &other);
+    CommonAttributesProject (CommonAttributesProject const &other);
     
     // === Destruction ==========================================================
-
+    
     //! Destructor
-    ~AttributesProject ();
+    ~CommonAttributesProject ();
     
     // === Operators ============================================================
     
     //! Overloading of the copy operator
-    AttributesProject& operator= (AttributesProject const &other); 
+    CommonAttributesProject& operator= (CommonAttributesProject const &other); 
     
     // === Parameter access =====================================================
 
@@ -100,8 +100,8 @@ namespace DAL { // Namespace DAL -- begin
       return itsProjectID;
     }
     //! Set unique identifier for the project
-    inline void setProjectID (std::string const &projectID) {
-      itsProjectID = projectID;
+    inline void setProjectID (std::string const &id) {
+      itsProjectID = id;
     }
 
     //! Name of the project
@@ -109,8 +109,8 @@ namespace DAL { // Namespace DAL -- begin
       return itsProjectTitle;
     }
     //! Set name of the project
-    inline void setProjectTitle (std::string const &projectTitle) {
-      itsProjectTitle = projectTitle;
+    inline void setProjectTitle (std::string const &title) {
+      itsProjectTitle = title;
     }
 
     //! Name of the project's principal investigator
@@ -136,18 +136,18 @@ namespace DAL { // Namespace DAL -- begin
       return itsProjectContact;
     }
     //! Names/Email-addresses of the project's primary contact person(s)
-    inline void setProjectContact (std::string const &projectContact) {
-      itsProjectContact = projectContact;
+    inline void setProjectContact (std::string const &contact) {
+      itsProjectContact = contact;
     }
     
     // === Methods ==============================================================
 
     /*!
       \brief Get the name of the class
-      \return className -- The name of the class, AttributesProject.
+      \return className -- The name of the class, CommonAttributesProject.
     */
     inline std::string className () const {
-      return "AttributesProject";
+      return "CommonAttributesProject";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -172,14 +172,14 @@ namespace DAL { // Namespace DAL -- begin
     void setAttributes ();
     
     //! Unconditional copying
-    void copy (AttributesProject const &other);
+    void copy (CommonAttributesProject const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class AttributesProject -- end
+  }; // Class CommonAttributesProject -- end
   
 } // Namespace DAL -- end
 
-#endif /* ATTRIBUTESPROJECT_H */
+#endif /* COMMONATTRIBUTESPROJECT_H */
   

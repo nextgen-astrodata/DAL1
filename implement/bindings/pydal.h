@@ -76,6 +76,8 @@ void export_Coordinate ();
 
 //! Bindings for DAL::Filename
 void export_Filename ();
+//! Bindings for DAL::CommonAttributesProject
+void export_CommonAttributesProject ();
 //! Bindings for DAL::CommonAttributes
 void export_CommonAttributes ();
 //! Bindings for DAL::Timestamp

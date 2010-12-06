@@ -124,23 +124,14 @@ namespace DAL { // Namespace DAL -- begin
   void CommonAttributes::copy (CommonAttributes const &other)
   {
     groupType_p            = other.groupType_p;
-    filename_p             = other.filename_p;
+    itsFilename             = other.itsFilename;
     filetype_p             = other.filetype_p;
     filedate_p             = other.filedate_p;
     telescope_p            = other.telescope_p;
-    projectID_p            = other.projectID_p;
-    projectTitle_p         = other.projectTitle_p;
-    projectPI_p            = other.projectPI_p;
-    projectCoI_p           = other.projectCoI_p;
-    projectContact_p       = other.projectContact_p;
+
+    attributesProject_p    = other.attributesProject_p;
+
     observer_p             = other.observer_p;
-    observationID_p        = other.observationID_p;
-    observationStartMJD_p  = other.observationStartMJD_p;
-    observationStartTAI_p  = other.observationStartTAI_p;
-    observationStartUTC_p  = other.observationStartUTC_p;
-    observationEndMJD_p    = other.observationEndMJD_p;
-    observationEndTAI_p    = other.observationEndTAI_p;
-    observationEndUTC_p    = other.observationEndUTC_p;
     antennaSet_p           = other.antennaSet_p;
     filterSelection_p      = other.filterSelection_p;
     clockFrequency_p       = other.clockFrequency_p;
@@ -149,9 +140,6 @@ namespace DAL { // Namespace DAL -- begin
     systemVersion_p        = other.systemVersion_p;
     pipelineName_p         = other.pipelineName_p;
     pipelineVersion_p      = other.pipelineVersion_p;
-    nofStations_p          = other.stationsList_p.size();
-    stationsList_p.resize(nofStations_p);
-    stationsList_p         = other.stationsList_p;
     notes_p                = other.notes_p;
   }
 
@@ -162,7 +150,15 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   //_____________________________________________________________________________
-  //                                                               setProjectInfo
+  //                                                         setAttributesProject
+  
+  void CommonAttributes::setAttributesProject (CommonAttributesProject const &attributesProject)
+  {
+    attributesProject_p = attributesProject;
+  }
+
+  //_____________________________________________________________________________
+  //                                                         setAttributesProject
   
   /*!
     \param projectID      -- Unique identifier for the project
@@ -172,70 +168,19 @@ namespace DAL { // Namespace DAL -- begin
     \param projectContact -- Names/Email-addresses of the project's primary
            contact person(s)
   */
-  void CommonAttributes::setProjectInfo (std::string const &projectID,
-					 std::string const &projectTitle,
-					 std::string const &projectPI,
-					 std::string const &projectCoI,
-					 std::string const &projectContact)
+  void CommonAttributes::setAttributesProject (std::string const &projectID,
+					       std::string const &projectTitle,
+					       std::string const &projectPI,
+					       std::string const &projectCoI,
+					       std::string const &projectContact)
   {
-    setProjectID (projectID);
-    setProjectTitle (projectTitle);
-    setProjectPI (projectPI);
-    setProjectCoI (projectCoI);
-    setProjectContact (projectContact);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                              setPipelineInfo
-  
-  /*!
-    \param pipelineName    -- Processing pipeline name
-    \param pipelineVersion -- Processing pipeline version number
-   */
-  void CommonAttributes::setPipelineInfo (std::string const &name,
-					  std::string const &version)
-  {
-    setPipelineName (name);
-    setPipelineVersion (version);
-  }
-
-  //_____________________________________________________________________________
-  //                                                                      summary
-  
-  /*!
-    \param station -- Name of the station to be added to the list of stations
-
-    \param status -- Status of the operation; returns <tt>false</tt> in case
-           the station has been found to be in the list already.
-  */
-  bool CommonAttributes::addStationsList (std::string const &station)
-  {
-    bool status (true);
-    bool newStation (true);
-
-    /* If the list just has been initialized and no actual data have been added
-       we can simply overwrite the first element, which was a placeholder anyway.
-     */
-    if (nofStations() == 1 && stationsList_p[0] == "UNDEFINED") {
-      stationsList_p[0] == station;
-      return true;
-    }
-
-    for (unsigned int n(0); n<stationsList_p.size(); ++n) {
-      if (stationsList_p[n] == station) {
-	newStation = false;
-	n=stationsList_p.size();
-      }
-    }
+    CommonAttributesProject attributes (projectID,
+					projectTitle,
+					projectPI,
+					projectCoI,
+					projectContact);
     
-    if (newStation) {
-      stationsList_p.push_back(station);
-      ++nofStations_p;
-    } else {
-      status = false;
-    }
-
-    return status;
+    setAttributesProject (attributes);
   }
   
   //_____________________________________________________________________________
@@ -245,35 +190,21 @@ namespace DAL { // Namespace DAL -- begin
   {
     os << "[CommonAttributes] Summary of internal parameters." << std::endl;
     
-    os << "-- GROUPTYPE              = " << groupType()            << std::endl;
-    os << "-- FILENAME               = " << filename()             << std::endl;
-    os << "-- FILETYPE               = " << filetype()             << std::endl;
-    os << "-- FILEDATE               = " << filedate()             << std::endl;
-    os << "-- TELESCOPE              = " << telescope()            << std::endl;
-    os << "-- PROJECT_ID             = " << projectID()            << std::endl;
-    os << "-- PROJECT_TITLE          = " << projectTitle()         << std::endl;
-    os << "-- PROJECT_PI             = " << projectPI()            << std::endl;
-    os << "-- PROJECT_CO_I           = " << projectCoI()           << std::endl;
-    os << "-- PROJECT_CONTACT        = " << projectContact()       << std::endl;
-    os << "-- OBSERVER               = " << observer()             << std::endl;
-    os << "-- OBSERVATION_ID         = " << observationID()        << std::endl;
-    os << "-- OBSERVATION_START_MJD  = " << observationStartMJD()  << std::endl;
-    os << "-- OBSERVATION_START_TAI  = " << observationStartTAI()  << std::endl;
-    os << "-- OBSERVATION_START_UTC  = " << observationStartUTC()  << std::endl;
-    os << "-- OBSERVATION_END_MJD    = " << observationEndMJD()    << std::endl;
-    os << "-- OBSERVATION_END_TAI    = " << observationEndTAI()    << std::endl;
-    os << "-- OBSERVATION_END_UTC    = " << observationEndUTC()    << std::endl;
-    os << "-- ANTENNA_SET            = " << antennaSet()           << std::endl;
-    os << "-- FILTER_SELECTION       = " << filterSelection()      << std::endl;
-    os << "-- CLOCK_FREQUENCY        = " << clockFrequency()       << std::endl;
-    os << "-- CLOCK_FREQUENCY_UNIT   = " << clockFrequencyUnit()   << std::endl;
-    os << "-- TARGET                 = " << target()               << std::endl;
-    os << "-- SYSTEM_VERSION         = " << systemVersion()        << std::endl;
+    os << "-- GROUPTYPE              = " << groupType_p            << std::endl;
+    os << "-- FILENAME               = " << itsFilename             << std::endl;
+    os << "-- FILETYPE               = " << filetype_p             << std::endl;
+    os << "-- FILEDATE               = " << filedate_p             << std::endl;
+    os << "-- TELESCOPE              = " << telescope_p            << std::endl;
+    os << "-- OBSERVER               = " << observer_p             << std::endl;
+    os << "-- ANTENNA_SET            = " << antennaSet_p           << std::endl;
+    os << "-- FILTER_SELECTION       = " << filterSelection_p      << std::endl;
+    os << "-- CLOCK_FREQUENCY        = " << clockFrequency_p       << std::endl;
+    os << "-- CLOCK_FREQUENCY_UNIT   = " << clockFrequencyUnit_p   << std::endl;
+    os << "-- TARGET                 = " << target_p               << std::endl;
+    os << "-- SYSTEM_VERSION         = " << systemVersion_p        << std::endl;
     os << "-- PIPELINE_NAME          = " << pipelineName()         << std::endl;
     os << "-- PIPELINE_VERSION       = " << pipelineVersion()      << std::endl;
-    os << "-- NOF_STATIONS           = " << nofStations()          << std::endl;
-    os << "-- STATIONS               = " << stationsList()         << std::endl;
-    os << "-- NOTES                  = " << notes()                << std::endl;
+    os << "-- NOTES                  = " << notes_p                << std::endl;
   }
   
   // ============================================================================
@@ -294,26 +225,7 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.insert("FILETYPE");
     attributes_p.insert("FILEDATE");
     attributes_p.insert("TELESCOPE");
-    attributes_p.insert("PROJECT_ID");
-    attributes_p.insert("PROJECT_TITLE");
-    attributes_p.insert("PROJECT_PI");
-    attributes_p.insert("PROJECT_CO_I");
-    attributes_p.insert("PROJECT_CONTACT");
     attributes_p.insert("OBSERVER");
-    attributes_p.insert("OBSERVATION_ID");
-    attributes_p.insert("OBSERVATION_START_MJD");
-    attributes_p.insert("OBSERVATION_START_TAI");
-    attributes_p.insert("OBSERVATION_START_UTC");
-    attributes_p.insert("OBSERVATION_END_MJD");
-    attributes_p.insert("OBSERVATION_END_TAI");
-    attributes_p.insert("OBSERVATION_END_UTC");
-    attributes_p.insert("OBSERVATION_FREQUENCY_MAX");
-    attributes_p.insert("OBSERVATION_FREQUENCY_MIN");
-    attributes_p.insert("OBSERVATION_FREQUENCY_CENTER");
-    attributes_p.insert("OBSERVATION_FREQUENCY_UNIT");
-    attributes_p.insert("OBSERVATION_FREQUENCY_MAX");
-    attributes_p.insert("OBSERVATION_FREQUENCY_MIN");
-    attributes_p.insert("OBSERVATION_FREQUENCY_CENTER");
     attributes_p.insert("ANTENNA_SET");
     attributes_p.insert("FILTER_SELECTION");
     attributes_p.insert("CLOCK_FREQUENCY");
@@ -330,23 +242,11 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<std::string> stations (1,undefined);
     //
     groupType_p           = "Root";
-    filename_p            = undefined;
+    itsFilename            = undefined;
     filetype_p            = undefined;
     filedate_p            = undefined;
     telescope_p           = "LOFAR";
-    projectID_p           = undefined;
-    projectTitle_p        = undefined;
-    projectPI_p           = undefined;
-    projectCoI_p          = undefined;
-    projectContact_p      = undefined;
     observer_p            = undefined;
-    observationID_p       = undefined;
-    observationStartMJD_p = undefined;
-    observationStartTAI_p = undefined;
-    observationStartUTC_p = undefined;
-    observationEndMJD_p   = undefined;
-    observationEndTAI_p   = undefined;
-    observationEndUTC_p   = undefined;
     antennaSet_p          = undefined;
     filterSelection_p     = undefined;
     clockFrequency_p      = 0.0;
@@ -355,8 +255,6 @@ namespace DAL { // Namespace DAL -- begin
     systemVersion_p       = undefined;
     pipelineName_p        = undefined;
     pipelineVersion_p     = undefined;
-    nofStations_p         = stations.size();
-    stationsList_p        = stations;
     notes_p               = undefined;
   }
   
@@ -368,19 +266,15 @@ namespace DAL { // Namespace DAL -- begin
   void CommonAttributes::h5write (hid_t const &groupID)
   {
     DAL::h5set_attribute( groupID, "GROUPTYPE",              groupType_p );
-    DAL::h5set_attribute( groupID, "FILENAME",               filename_p );
+    DAL::h5set_attribute( groupID, "FILENAME",               itsFilename );
     DAL::h5set_attribute( groupID, "FILETYPE",               filetype_p );
     DAL::h5set_attribute( groupID, "FILEDATE",               filedate_p );
     DAL::h5set_attribute( groupID, "TELESCOPE",              telescope_p );
-    DAL::h5set_attribute( groupID, "PROJECT_ID",             projectID_p );
-    DAL::h5set_attribute( groupID, "PROJECT_TITLE",          projectTitle_p );
-    DAL::h5set_attribute( groupID, "PROJECT_PI",             projectPI_p );
-    DAL::h5set_attribute( groupID, "PROJECT_CO_I",           projectCoI_p );
-    DAL::h5set_attribute( groupID, "PROJECT_CONTACT",        projectContact_p );
     DAL::h5set_attribute( groupID, "OBSERVER",               observer_p );
-    DAL::h5set_attribute( groupID, "OBSERVATION_ID",         observationID_p );
-    DAL::h5set_attribute( groupID, "OBSERVATION_DATE_START", observationStartMJD_p );
-    DAL::h5set_attribute( groupID, "OBSERVATION_DATE_END",   observationEndMJD_p );
+
+    attributesProject_p.h5write(groupID);
+    observation_p.h5write(groupID);
+
     DAL::h5set_attribute( groupID, "ANTENNA_SET",            antennaSet_p );
     DAL::h5set_attribute( groupID, "FILTER_SELECTION",       filterSelection_p );
     DAL::h5set_attribute( groupID, "CLOCK_FREQUENCY",        clockFrequency_p );
@@ -389,8 +283,6 @@ namespace DAL { // Namespace DAL -- begin
     DAL::h5set_attribute( groupID, "SYSTEM_VERSION",         systemVersion_p );
     DAL::h5set_attribute( groupID, "PIPELINE_NAME",          pipelineName_p );
     DAL::h5set_attribute( groupID, "PIPELINE_VERSION",       pipelineVersion_p );
-    DAL::h5set_attribute( groupID, "NOF_STATIONS",           nofStations_p );
-    DAL::h5set_attribute( groupID, "STATIONS_LIST",          stationsList_p );
     DAL::h5set_attribute( groupID, "NOTES",                  notes_p );
   }
   
@@ -404,19 +296,15 @@ namespace DAL { // Namespace DAL -- begin
   void CommonAttributes::h5read (hid_t const &groupID)
   {
     DAL::h5get_attribute( groupID, "GROUPTYPE",              groupType_p );
-    DAL::h5get_attribute( groupID, "FILENAME",               filename_p );
+    DAL::h5get_attribute( groupID, "FILENAME",               itsFilename );
     DAL::h5get_attribute( groupID, "FILETYPE",               filetype_p );
     DAL::h5get_attribute( groupID, "FILEDATE",               filedate_p );
     DAL::h5get_attribute( groupID, "TELESCOPE",              telescope_p );
-    DAL::h5get_attribute( groupID, "PROJECT_ID",             projectID_p );
-    DAL::h5get_attribute( groupID, "PROJECT_TITLE",          projectTitle_p );
-    DAL::h5get_attribute( groupID, "PROJECT_PI",             projectPI_p );
-    DAL::h5get_attribute( groupID, "PROJECT_CO_I",           projectCoI_p );
-    DAL::h5get_attribute( groupID, "PROJECT_CONTACT",        projectContact_p );
     DAL::h5get_attribute( groupID, "OBSERVER",               observer_p );
-    DAL::h5get_attribute( groupID, "OBSERVATION_ID",         observationID_p );
-    DAL::h5get_attribute( groupID, "OBSERVATION_DATE_START", observationStartMJD_p );
-    DAL::h5get_attribute( groupID, "OBSERVATION_DATE_END",   observationEndMJD_p );
+
+    attributesProject_p.h5read (groupID);
+    observation_p.h5read (groupID);
+
     DAL::h5get_attribute( groupID, "ANTENNA_SET",            antennaSet_p );
     DAL::h5get_attribute( groupID, "FILTER_SELECTION",       filterSelection_p );
     DAL::h5get_attribute( groupID, "CLOCK_FREQUENCY",        clockFrequency_p );
@@ -425,8 +313,6 @@ namespace DAL { // Namespace DAL -- begin
     DAL::h5get_attribute( groupID, "SYSTEM_VERSION",         systemVersion_p );
     DAL::h5get_attribute( groupID, "PIPELINE_NAME",          pipelineName_p );
     DAL::h5get_attribute( groupID, "PIPELINE_VERSION",       pipelineVersion_p );
-    DAL::h5get_attribute( groupID, "NOF_STATIONS",           nofStations_p );
-    DAL::h5get_attribute( groupID, "STATIONS_LIST",          stationsList_p );
     DAL::h5get_attribute( groupID, "NOTES",                  notes_p );
   }
   
@@ -471,21 +357,12 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
 
     try {
-      rec.define("FILENAME",               filename()            );
-      rec.define("FILETYPE",               filetype()            );
-      rec.define("FILEDATE",               filedate()            );
-      rec.define("TELESCOPE",              telescope()           );
-      rec.define("PROJECT_ID",             projectID()           );
-      rec.define("PROJECT_TITLE",          projectTitle()        );
-      rec.define("PROJECT_PI",             projectPI()           );
-      rec.define("PROJECT_CO_I",           projectCoI()          );
-      rec.define("PROJECT_CONTACT",        projectContact()      );
-      rec.define("OBSERVER",               observer()            );
-      rec.define("OBSERVATION_ID",         observationID()       );
-      rec.define("OBSERVATION_DATE_START", observationStartMJD() );
-      rec.define("OBSERVATION_DATE_END",   observationEndMJD()   );
-    }
-    catch (casa::AipsError x) {
+      rec.define("FILENAME",      filename()   );
+      rec.define("FILETYPE",      filetype()   );
+      rec.define("FILEDATE",      filedate()   );
+      rec.define("TELESCOPE",     telescope()  );
+      rec.define("OBSERVER",      observer()   );
+    } catch (casa::AipsError x) {
       cerr << "[CommonAttributes::getAttributes] "
 	   << "Error filling the record with attribute values!\n"
 	   << x.getMesg() << endl;

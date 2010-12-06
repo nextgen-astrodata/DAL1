@@ -131,14 +131,14 @@ int test_attributes ()
     attr.setFiletype ("tbb");
     attr.setFiledate ("2009-10-10T01:00:00.0");
     attr.setTelescope ("LOFAR");
-    attr.setProjectID ("CR-2009-10-10");
-    attr.setProjectTitle ("CR test observation");
-    attr.setProjectPI ("Mr. CR");
-    attr.setProjectCoI ("Mrs. CR");
-    attr.setProjectContact ("cr@lofar.org");
+    // attr.setProjectID ("CR-2009-10-10");
+    // attr.setProjectTitle ("CR test observation");
+    // attr.setProjectPI ("Mr. CR");
+    // attr.setProjectCoI ("Mrs. CR");
+    // attr.setProjectContact ("cr@lofar.org");
     attr.setObserver("Mr. LOFAR");
-    attr.setObservationID ("1234567890");
-    attr.setAntennaSet ("LBA_X");
+    // attr.setObservationID ("1234567890");
+    // attr.setAntennaSet ("LBA_X");
     attr.setFilterSelection ("LBH_30_80");
     attr.setClockFrequency (200);
     attr.setClockFrequencyUnit ("MHz");
@@ -146,7 +146,7 @@ int test_attributes ()
     attr.setSystemVersion ("LOFAR system v1.0");
     attr.setPipelineName ("CR_Offline");
     attr.setPipelineVersion ("v0.9");
-    attr.setStationsList (stations);
+    // attr.setStationsList (stations);
     attr.setNotes ("Life is a Lemmon");
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -171,31 +171,11 @@ int test_attributes ()
     nofFailedTests++;
   }
 
-  cout << "[4] Adjust the list of stations ..." << endl;
-  try {
-    bool status (true);
-    //
-    status = attr.addStationsList("CS001");
-    std::cout << "-- addStationsList(CS001) -> " << status << " -> "
-	      << attr.stationsList() << std::endl;
-    //
-    status = attr.addStationsList("CS002");
-    std::cout << "-- addStationsList(CS002) -> " << status << " -> "
-	      << attr.stationsList() << std::endl;
-    //
-    status =  attr.addStationsList("CS003");
-    std::cout << "-- addStationsList(CS003) -> " << status << " -> "
-	      << attr.stationsList() << std::endl;
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-  
   // Write attributes to HDF5 file _________________________
 
 #ifdef HAVE_HDF5
   
-  cout << "[5] Write attributes to file ..." << endl;
+  cout << "[4] Write attributes to file ..." << endl;
   try {
     hid_t fileID (0);
     herr_t h5error (0);

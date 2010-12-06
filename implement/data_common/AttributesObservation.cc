@@ -140,10 +140,13 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                setAttributes
+  
   void AttributesObservation::setAttributes ()
   {
     itsAttributes.clear();
-
+    
     itsAttributes.insert("OBSERVATION_ID");
     itsAttributes.insert("OBSERVATION_START_MJD");
     itsAttributes.insert("OBSERVATION_START_TAI");
@@ -153,10 +156,59 @@ namespace DAL { // Namespace DAL -- begin
     itsAttributes.insert("OBSERVATION_END_UTC");
     itsAttributes.insert("OBSERVATION_NOF_STATIONS");
     itsAttributes.insert("OBSERVATION_STATIONS_LIST");
-    itsAttributes.insert("OBSERVATION_FREQUENCY_MAX");
     itsAttributes.insert("OBSERVATION_FREQUENCY_MIN");
+    itsAttributes.insert("OBSERVATION_FREQUENCY_MAX");
     itsAttributes.insert("OBSERVATION_FREQUENCY_CENTER");
     itsAttributes.insert("OBSERVATION_FREQUENCY_UNIT");
   }
+  
+  //_____________________________________________________________________________
+  //                                                                      h5write
+  
+  bool AttributesObservation::h5write (hid_t const &groupID)
+  {
+    bool status (true);
+    
+    DAL::h5set_attribute(groupID, "OBSERVATION_ID",               itsObservationID);
+    DAL::h5set_attribute(groupID, "OBSERVATION_START_MJD",        itsStartMJD);
+    DAL::h5set_attribute(groupID, "OBSERVATION_START_TAI",        itsStartTAI);
+    DAL::h5set_attribute(groupID, "OBSERVATION_START_UTC",        itsStartUTC);
+    DAL::h5set_attribute(groupID, "OBSERVATION_END_MJD",          itsEndMJD);
+    DAL::h5set_attribute(groupID, "OBSERVATION_END_TAI",          itsEndMJD);
+    DAL::h5set_attribute(groupID, "OBSERVATION_END_UTC",          itsEndMJD);
+    DAL::h5set_attribute(groupID, "OBSERVATION_NOF_STATIONS",     itsNofStations);
+    DAL::h5set_attribute(groupID, "OBSERVATION_STATIONS_LIST",    itsStationsList);
+    DAL::h5set_attribute(groupID, "OBSERVATION_FREQUENCY_MIN",    itsFrequencyMin);
+    DAL::h5set_attribute(groupID, "OBSERVATION_FREQUENCY_MAX",    itsFrequencyMax);
+    DAL::h5set_attribute(groupID, "OBSERVATION_FREQUENCY_CENTER", itsFrequencyCenter);
+    DAL::h5set_attribute(groupID, "OBSERVATION_FREQUENCY_UNIT",   itsFrequencyUnit);
+    
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                       h5read
+  
+  bool AttributesObservation::h5read (hid_t const &groupID)
+  {
+    bool status (true);
+    
+    DAL::h5get_attribute(groupID, "OBSERVATION_ID",               itsObservationID);
+    DAL::h5get_attribute(groupID, "OBSERVATION_START_MJD",        itsStartMJD);
+    DAL::h5get_attribute(groupID, "OBSERVATION_START_TAI",        itsStartTAI);
+    DAL::h5get_attribute(groupID, "OBSERVATION_START_UTC",        itsStartUTC);
+    DAL::h5get_attribute(groupID, "OBSERVATION_END_MJD",          itsEndMJD);
+    DAL::h5get_attribute(groupID, "OBSERVATION_END_TAI",          itsEndMJD);
+    DAL::h5get_attribute(groupID, "OBSERVATION_END_UTC",          itsEndMJD);
+    DAL::h5get_attribute(groupID, "OBSERVATION_NOF_STATIONS",     itsNofStations);
+    DAL::h5get_attribute(groupID, "OBSERVATION_STATIONS_LIST",    itsStationsList);
+    DAL::h5get_attribute(groupID, "OBSERVATION_FREQUENCY_MIN",    itsFrequencyMin);
+    DAL::h5get_attribute(groupID, "OBSERVATION_FREQUENCY_MAX",    itsFrequencyMax);
+    DAL::h5get_attribute(groupID, "OBSERVATION_FREQUENCY_CENTER", itsFrequencyCenter);
+    DAL::h5get_attribute(groupID, "OBSERVATION_FREQUENCY_UNIT",   itsFrequencyUnit);
+    
+    return status;
+  }
+
 
 } // Namespace DAL -- end

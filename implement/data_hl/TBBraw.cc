@@ -114,17 +114,22 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                                    open_file
   
   bool TBBraw::open_file (std::string const &filename,
-			  string const &observer,
-			  string const &project,
-			  string const &observation_id,
-			  string const &filterSelection,
-			  string const &telescope)
+			  std::string const &observer,
+			  std::string const &project,
+			  std::string const &observation_id,
+			  std::string const &filterSelection,
+			  std::string const &telescope)
   {
     filename_p = filename;
     /* Store the common attributes attached to the root group of the file */
+
+    CommonAttributesProject attrProject = commonAttributes_p.attributesProject();
+    attrProject.setProjectTitle (project);
+
+    AttributesObservation attrObservation = commonAttributes_p.attributesObservation();
+    attrObservation.setObservationID (observation_id);
+
     commonAttributes_p.setObserver (observer);
-    commonAttributes_p.setProjectTitle (project);
-    commonAttributes_p.setObservationID (observation_id);
     commonAttributes_p.setFilterSelection (filterSelection);
     commonAttributes_p.setTelescope(telescope);
     /* Open the file */

@@ -83,6 +83,7 @@ BOOST_PYTHON_MODULE(pydal)
   
   export_Filename ();
   export_CommonAttributes ();
+  export_CommonAttributesProject ();
   export_Timestamp ();
   export_SAS_Settings ();
   export_HDF5Hyperslab ();

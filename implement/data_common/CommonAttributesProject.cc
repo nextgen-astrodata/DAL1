@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <AttributesProject.h>
+#include <CommonAttributesProject.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -32,9 +32,9 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   //_____________________________________________________________________________
-  //                                                            AttributesProject
+  //                                                      CommonAttributesProject
   
-  AttributesProject::AttributesProject ()
+  CommonAttributesProject::CommonAttributesProject ()
   {
     itsProjectID      = "UNDEFINED";
     itsProjectTitle   = "UNDEFINED";
@@ -44,7 +44,7 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                            AttributesProject
+  //                                                      CommonAttributesProject
   
   /*!
     \param projectID      -- Unique identifier for the project.
@@ -52,13 +52,13 @@ namespace DAL { // Namespace DAL -- begin
     \param projectPI      -- Name of the project's principal investigator.
     \param projectCoI     -- Name(s) of the project's co-PI(s).
     \param projectContact -- Names/Email-addresses of the project's primary
-           contact person(s).
-   */
-  AttributesProject::AttributesProject (std::string const &projectID,
-					std::string const &projectTitle,
-					std::string const &projectPI,
-					std::string const &projectCoI,
-					std::string const &projectContact)
+    contact person(s).
+  */
+  CommonAttributesProject::CommonAttributesProject (std::string const &projectID,
+						    std::string const &projectTitle,
+						    std::string const &projectPI,
+						    std::string const &projectCoI,
+						    std::string const &projectContact)
   {
     itsProjectID      = projectID;
     itsProjectTitle   = projectTitle;
@@ -68,13 +68,13 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                            AttributesProject
+  //                                                      CommonAttributesProject
   
   /*!
     \param other -- Another HDF5Property object from which to create this new
            one.
   */
-  AttributesProject::AttributesProject (AttributesProject const &other)
+  CommonAttributesProject::CommonAttributesProject (CommonAttributesProject const &other)
     : AttributesInterface (other)
   {
     copy (other);
@@ -86,12 +86,12 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  AttributesProject::~AttributesProject ()
+  CommonAttributesProject::~CommonAttributesProject ()
   {
     destroy();
   }
   
-  void AttributesProject::destroy ()
+  void CommonAttributesProject::destroy ()
   {;}
   
   // ============================================================================
@@ -104,9 +104,9 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                    operator=
   
   /*!
-    \param other -- Another AttributesProject object from which to make a copy.
+    \param other -- Another CommonAttributesProject object from which to make a copy.
   */
-  AttributesProject& AttributesProject::operator= (AttributesProject const &other)
+  CommonAttributesProject& CommonAttributesProject::operator= (CommonAttributesProject const &other)
   {
     if (this != &other) {
       destroy ();
@@ -118,7 +118,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
-  void AttributesProject::copy (AttributesProject const &other)
+  void CommonAttributesProject::copy (CommonAttributesProject const &other)
   {
     itsProjectID      = other.itsProjectID;
     itsProjectTitle   = other.itsProjectTitle;
@@ -126,17 +126,17 @@ namespace DAL { // Namespace DAL -- begin
     itsProjectCoI     = other.itsProjectCoI;
     itsProjectContact = other.itsProjectContact;
   }
-
+  
   // ============================================================================
   //
   //  Methods
   //
   // ============================================================================
-
-  void AttributesProject::setAttributes ()
+  
+  void CommonAttributesProject::setAttributes ()
   {
     itsAttributes.clear();
-
+    
     itsAttributes.insert("PROJECT_ID");
     itsAttributes.insert("PROJECT_TITLE");
     itsAttributes.insert("PROJECT_PI");
@@ -150,47 +150,47 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param os -- Output stream to which the summary is written.
   */
-  void AttributesProject::summary (std::ostream &os)
+  void CommonAttributesProject::summary (std::ostream &os)
   {
-    os << "[AttributesProject] Summary of internal parameters." << std::endl;
+    os << "[CommonAttributesProject] Summary of internal parameters." << std::endl;
     os << "-- Project ID      = " << itsProjectID      << std::endl;
     os << "-- Project title   = " << itsProjectTitle   << std::endl;
     os << "-- Project PI      = " << itsProjectPI      << std::endl;
     os << "-- Project CoI     = " << itsProjectCoI     << std::endl;
     os << "-- Project contact = " << itsProjectContact << std::endl;
   }
-
+  
   //_____________________________________________________________________________
   //                                                                      h5write
   
 #ifdef HAVE_HDF5
   
-  bool AttributesProject::h5write (hid_t const &groupID)
+  bool CommonAttributesProject::h5write (hid_t const &groupID)
   {
     bool status (true);
-
+    
     DAL::h5set_attribute( groupID, "PROJECT_ID",       itsProjectID );
     DAL::h5set_attribute( groupID, "PROJECT_TITLE",    itsProjectTitle );
     DAL::h5set_attribute( groupID, "PROJECT_PI",       itsProjectPI );
     DAL::h5set_attribute( groupID, "PROJECT_CO_I",     itsProjectCoI );
     DAL::h5set_attribute( groupID, "PROJECT_CONTACT",  itsProjectContact );
-
+    
     return status;
   }
   
-  bool AttributesProject::h5read (hid_t const &groupID)
+  bool CommonAttributesProject::h5read (hid_t const &groupID)
   {
     bool status (true);
-
+    
     DAL::h5get_attribute( groupID, "PROJECT_ID",       itsProjectID );
     DAL::h5get_attribute( groupID, "PROJECT_TITLE",    itsProjectTitle );
     DAL::h5get_attribute( groupID, "PROJECT_PI",       itsProjectPI );
     DAL::h5get_attribute( groupID, "PROJECT_CO_I",     itsProjectCoI );
     DAL::h5get_attribute( groupID, "PROJECT_CONTACT",  itsProjectContact );
-
+    
     return status;
   }
   
 #endif
-
+  
 } // Namespace DAL -- end

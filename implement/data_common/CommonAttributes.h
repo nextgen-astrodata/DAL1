@@ -35,6 +35,8 @@
 #include <dalCommon.h>
 #include <Filename.h>
 #include <CommonInterface.h>
+#include <CommonAttributesProject.h>
+#include <AttributesObservation.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -95,60 +97,38 @@ namespace DAL { // Namespace DAL -- begin
     //! LOFAR group type ("Root")
     std::string groupType_p;
     //! File name
-    std::string filename_p;
+    std::string itsFilename;
+    //! File creation date, YYYY-MM-DDThh:mm:ss.s
+    std::string filedate_p;
     //! File type
     std::string filetype_p;
-    //! File creation date
-    std::string filedate_p;
     //! Name of the telescope ("LOFAR")
     std::string telescope_p;
-    //! Unique identifier for the project
-    std::string projectID_p;
-    //! Name of the project
-    std::string projectTitle_p;
-    //! Name of the project's principal investigator
-    std::string projectPI_p;
-    //! Name(s) of the project's co-PI(s)
-    std::string projectCoI_p;
-    //! Names/Email-addresses of the project's primary contact person(s)
-    std::string projectContact_p;
     //! Name(s) of the observer(s)
     std::string observer_p;
-    //! Unique identifier for the observation
-    std::string observationID_p;
-    //! Start date of the observation (MJD)
-    std::string observationStartMJD_p;
-    //! Start date of the observation (TAI)
-    std::string observationStartTAI_p;
-    //! Start date of the observation (UTC)
-    std::string observationStartUTC_p;
-    //! End date of the observation (MJD)
-    std::string observationEndMJD_p;
-    //! End date of the observation (TAI)
-    std::string observationEndTAI_p;
-    //! End date of the observation (UTC)
-    std::string observationEndUTC_p;
+
+    //! Common LOFAR attributes for description of project
+    CommonAttributesProject attributesProject_p;
+    //! Common LOFAR attributes for description of observation
+    AttributesObservation observation_p;
+
+    //! Clock frequency (LOFAR: 200.0 or 160.0)
+    double clockFrequency_p;
+    //! Clock frequency physical unit
+    std::string clockFrequencyUnit_p;
     //! Antenna set specification of observation
     std::string antennaSet_p;
     //! Filter selection
     std::string filterSelection_p;
-    //! Clock frequency of the observation
-    double clockFrequency_p;
-    //! Physical unit associated with the clock frequency
-    std::string clockFrequencyUnit_p;
-    //! (List of) Oberservation target(s)
+    //! Single or list of observation targets/sources
     std::string target_p;
-    //! Data processing system name and version number
+    //! Processing system name/version
     std::string systemVersion_p;
     //! Processing pipeline name
     std::string pipelineName_p;
-    //! Processing pipeline version number
+    //! Processing pipeline version
     std::string pipelineVersion_p;
-    //! Number of stations used during the observation
-    int nofStations_p;
-    //! List of stations used during the observation
-    std::vector<std::string> stationsList_p;
-    //! Notes and/or comments
+    //! Notes or comments
     std::string notes_p;
     
   public:
@@ -162,6 +142,12 @@ namespace DAL { // Namespace DAL -- begin
     CommonAttributes (Filename const &filename,
 		      std::string const &filetype,
 		      std::string const &filedate);
+
+    //! Argumented constructor
+    CommonAttributes (CommonAttributesProject const &attributesProject);
+
+    //! Argumented constructor
+    CommonAttributes (AttributesObservation const &attributesObservation);
 
 #ifdef HAVE_HDF5
     //! Argumented constructor
@@ -210,13 +196,13 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Get the name of the file
     inline std::string filename () const {
-      return filename_p;
+      return itsFilename;
     }
     
     //! Set the name of the file
     inline void setFilename (Filename const &name) {
       Filename tmp = name;
-      filename_p = tmp.filename();
+      itsFilename = tmp.filename();
     }
     
     //! Get the type of the file
@@ -249,256 +235,134 @@ namespace DAL { // Namespace DAL -- begin
       telescope_p = telescope;
     }
 
-    //! Get the unique identifier for the project
-    inline std::string projectID () const {
-      return projectID_p;
-    }
-
-    //! Set the unique identifier for the project
-    inline void setProjectID (std::string const &projectID) {
-      projectID_p = projectID;
-    }
-
-    //! Get the name of the project
-    inline std::string projectTitle () const {
-      return projectTitle_p;
-    }
-
-    //! Set the name of the project
-    inline void setProjectTitle (std::string const &projectTitle) {
-      projectTitle_p = projectTitle;
-    }
-    
-    //! Get the name of the project's principal investigator
-    inline std::string projectPI () const {
-      return projectPI_p;
-    }
-    
-    //! Set the name of the project's principal investigator
-    inline void setProjectPI (std::string const &projectPI) {
-      projectPI_p = projectPI;
-    }
-
-    //! Get the name(s) of the project's co-PI(s)
-    inline std::string projectCoI () const {
-      return projectCoI_p;
-    }
-
-    //! Set the name(s) of the project's co-PI(s)
-    inline void setProjectCoI (std::string const &projectCoI) {
-      projectCoI_p = projectCoI;
-    }
-
-    //! Get the names/Email-addresses of the project's primary contact person(s)
-    inline std::string projectContact () const {
-      return projectContact_p;
-    }
-
-    //! Set the names/Email-addresses of the project's primary contact person(s)
-    inline void setProjectContact (std::string const &projectContact) {
-      projectContact_p = projectContact;
-    }
-
-    //! Set the various infos on the project
-    void setProjectInfo (std::string const &projectID,
-			 std::string const &projectTitle,
-			 std::string const &projectPI,
-			 std::string const &projectCoI,
-			 std::string const &projectContact);
-
     //! Get the name(s) of the observer(s)
     inline std::string observer () const {
       return observer_p;
     }
 
-    //! Set the name(s) of the observer(s)
     inline void setObserver (std::string const &observer) {
       observer_p = observer;
     }
 
-    //! Get the  unique identifier for the observation
-    inline std::string observationID () const {
-      return observationID_p;
+    CommonAttributesProject attributesProject () const {
+      return attributesProject_p;
     }
 
-    //! Set the  unique identifier for the observation
-    inline void setObservationID (std::string const &obsID) {
-      observationID_p = obsID;
-    }
-
-    //! Get start date of the observation (MJD)
-    inline std::string observationStartMJD () const {
-      return observationStartMJD_p;
-    }
-
-    //! Set start date of the observation (MJD)
-    inline void setObservationStartMJD (std::string const &obsDateStart) {
-      observationStartMJD_p = obsDateStart;
-    }
-
-    //! Get start date of the observation (MJD)
-    inline std::string observationEndMJD () const {
-      return observationEndMJD_p;
-    }
-
-    //! Set start date of the observation (MJD)
-    inline void setObservationEndMJD (std::string const &obsDateEnd) {
-      observationEndMJD_p = obsDateEnd;
-    }
-
-    //! Get start date of the observation (TAI)
-    inline std::string observationStartTAI () const {
-      return observationStartTAI_p;
-    }
-
-    //! Set start date of the observation (TAI)
-    inline void setObservationStartTAI (std::string const &obsDateStart) {
-      observationStartTAI_p = obsDateStart;
-    }
-
-    //! Get start date of the observation (TAI)
-    inline std::string observationEndTAI () const {
-      return observationEndTAI_p;
-    }
-
-    //! Set start date of the observation (TAI)
-    inline void setObservationEndTAI (std::string const &obsDateEnd) {
-      observationEndTAI_p = obsDateEnd;
-    }
-
-    //! Get start date of the observation (UTC)
-    inline std::string observationStartUTC () const {
-      return observationStartUTC_p;
-    }
-
-    //! Set start date of the observation (UTC)
-    inline void setObservationStartUTC (std::string const &obsDateStart) {
-      observationStartUTC_p = obsDateStart;
-    }
-
-    //! Get start date of the observation (UTC)
-    inline std::string observationEndUTC () const {
-      return observationEndUTC_p;
-    }
-
-    //! Set start date of the observation (UTC)
-    inline void setObservationEndUTC (std::string const &obsDateEnd) {
-      observationEndUTC_p = obsDateEnd;
-    }
-
-    //! Get the antenna set specification of observation
-    inline std::string antennaSet () const {
-      return antennaSet_p;
-    }
+    //! Set the various infos on the project
+    void setAttributesProject (CommonAttributesProject const &attributesProject);
     
-    //! Set the antenna set specification of observation
-    inline void setAntennaSet (std::string const &antennaSet)  {
-      antennaSet_p = antennaSet;
-    }
+    //! Set the various infos on the project
+    void setAttributesProject (std::string const &projectID,
+			       std::string const &projectTitle,
+			       std::string const &projectPI,
+			       std::string const &projectCoI,
+			       std::string const &projectContact);
     
-    //! Get the filter selection
-    inline std::string filterSelection () const {
-      return filterSelection_p;
-    }
-    
-    //! Set the filter selection
-    inline void setFilterSelection (std::string const &filterSelection) {
-      filterSelection_p = filterSelection;
+    //! Get common LOFAR attributes for description of observation
+    AttributesObservation attributesObservation () const {
+      return observation_p;
     }
 
-    //! Get the clock frequency of the observation
+    //! Set observation start date
+    void setObservationStart (std::string const &startMJD,
+			      std::string const &startTAI,
+			      std::string const &startUTC);
+
+    //! Set observation end date
+    void setObservationEnd (std::string const &endMJD,
+			    std::string const &endTAI,
+			    std::string const &endUTC);
+
+    //! Get clock frequency (LOFAR: 200.0 or 160.0)
     inline double clockFrequency () const {
       return clockFrequency_p;
     }
-    
-    //! Set the clock frequency of the observation
+    //! Set clock frequency (LOFAR: 200.0 or 160.0)
     inline void setClockFrequency (double const &clockFrequency) {
       clockFrequency_p = clockFrequency;
     }
 
-    //! Get the physical unit associated with the clock frequency
+    //! Get clock frequency physical unit
     inline std::string clockFrequencyUnit () const {
       return clockFrequencyUnit_p;
     }
-
-    //! Set the physical unit associated with the clock frequency
-    inline void setClockFrequencyUnit (std::string const &unit) {
-      clockFrequencyUnit_p = unit;
+    //! Set clock frequency physical unit
+    inline void setClockFrequencyUnit (std::string const &clockFrequencyUnit) {
+      clockFrequencyUnit_p = clockFrequencyUnit;
     }
 
-    //! Get the (List of) Oberservation target(s)
+    //! Get antenna set specification of observation
+    inline std::string antennaSet () const {
+      return antennaSet_p;
+    }
+    //! Set antenna set specification of observation
+    inline void setAntennaSet (std::string const &antennaSet) {
+      antennaSet_p = antennaSet;
+    }
+
+    //! Get filter selection
+    inline std::string filterSelection () const {
+      return filterSelection_p;
+    }
+    //! Set filter selection
+    inline void setFilterSelection (std::string const &filterSelection) {
+      filterSelection_p = filterSelection;
+    }
+
+    //! Get single or list of observation targets/sources
     inline std::string target () const {
       return target_p;
     }
-
-    //! Set the (List of) Oberservation target(s)
+    //! Set single or list of observation targets/sources
     inline void setTarget (std::string const &target) {
       target_p = target;
     }
 
-    //! Get the data processing system name and version number
+    //! Get processing system name/version
     inline std::string systemVersion () const {
       return systemVersion_p;
     }
-    
-    //! Set the data processing system name and version number
+    //! Set processing system name/version
     inline void setSystemVersion (std::string const &systemVersion) {
       systemVersion_p = systemVersion;
     }
-    
-    //! Get the processing pipeline name
+
+    //! Processing pipeline name
     inline std::string pipelineName () const {
       return pipelineName_p;
     }
-    
-    //! Set the processing pipeline name
-    inline void setPipelineName (std::string const &name) {
-      pipelineName_p = name;
+    //! Set processing pipeline name
+    inline void setPipelineName (std::string const &pipelineName) {
+      pipelineName_p = pipelineName;
     }
 
-    //! Get the processing pipeline version number
+    //! Processing pipeline version
     inline std::string pipelineVersion () const {
       return pipelineVersion_p;
     }
-
-    //! Get the processing pipeline version number
-    inline void setPipelineVersion (std::string const &version) {
-      pipelineVersion_p = version;
+    //! Set processing pipeline version
+    inline void setPipelineVersion (std::string const &pipelineVersion) {
+      pipelineVersion_p = pipelineVersion;
     }
 
-    //! Set information on the processing pipeline
-    void setPipelineInfo (std::string const &name,
-			  std::string const &version);
-
-    //! Get the number of stations used during the observation
-    inline int nofStations () const {
-      return nofStations_p;
-    }
-
-    //! Get the list of stations used during the observation
-    inline std::vector<std::string> stationsList () const {
-      return stationsList_p;
-    }
-
-    //! Set the list of stations used during the observation
-    inline void setStationsList (std::vector<std::string> const &stations) {
-      nofStations_p = stations.size();
-      stationsList_p.resize(nofStations_p);
-      stationsList_p = stations;
-    }
-    
-    //! Add a station to the list of stations
-    bool addStationsList (std::string const &station);
-
-    //! Get notes and/or comments
+    //! Notes or comments
     inline std::string notes () const {
       return notes_p;
     }
-
-    //! Set notes and/or comments
+    //! Notes or comments
     inline void setNotes (std::string const &notes) {
       notes_p = notes;
     }
+    
+    // === Methods ==============================================================
+    
+    //! Get the value of an attribute
+    template<class T >
+      bool getAttribute (std::string const &name, T &val);
+
+    //! Get the value of an attribute
+    template<class T >
+      bool getAttribute (std::string const &name, std::vector<T> &val);
 
     /*!
       \brief Get the name of the class
@@ -520,16 +384,6 @@ namespace DAL { // Namespace DAL -- begin
       \param os -- Output stream to which the summary is written.
     */
     void summary (std::ostream &os);    
-
-    // === Methods ==============================================================
-
-    //! Get the value of an attribute
-    template<class T >
-      bool getAttribute (std::string const &name, T &val);
-
-    //! Get the value of an attribute
-    template<class T >
-      bool getAttribute (std::string const &name, std::vector<T> &val);
 
     // Methods which require HDF5 __________________________
 
