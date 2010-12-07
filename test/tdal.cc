@@ -33,25 +33,6 @@
 using std::complex;
 using namespace DAL;
 
-// ---------------------------------------------------- create_hdf5_dataset
-
-uint create_hdf5_dataset()
-{
-  uint ret = 0;
-
-  dalDataset * ds = NULL;
-  ds = new dalDataset( FILENAME, "HDF5" );
-  if ( NULL == ds )
-    ret++;
-
-  if ( DAL::FAIL == ds->close() )
-    ret++;
-
-  delete ds;
-
-  return ret;
-}
-
 // --------------------------------------------- open_and_close_hdf5_dataset
 
 uint open_and_close_hdf5_dataset()
@@ -529,7 +510,9 @@ uint create_hdf5_float_array_in_group()
   return ret;
 }
 
-// --------------------------------  create_hdf5_complex_float_array_in_group
+//_______________________________________________________________________________
+//                                       create_hdf5_complex_float_array_in_group
+
 uint create_hdf5_complex_float_array_in_group()
 {
   uint ret = 0;
@@ -570,7 +553,8 @@ uint create_hdf5_complex_float_array_in_group()
   return ret;
 }
 
-// --------------------------------  create_hdf5_short_array_in_group
+//_______________________________________________________________________________
+//                                               create_hdf5_short_array_in_group
 
 uint create_hdf5_short_array_in_group()
 {
@@ -609,7 +593,9 @@ uint create_hdf5_short_array_in_group()
   return ret;
 }
 
-// ---------------------------------------------------- read_hdf5_dataset_attributes
+//_______________________________________________________________________________
+//                                                   read_hdf5_dataset_attributes
+
 uint read_hdf5_dataset_attributes()
 {
   uint ret = 0;
@@ -652,7 +638,8 @@ uint read_hdf5_dataset_attributes()
   return ret;
 }
 
-// ------------------------------------------------------ create_hdf5_table
+//_______________________________________________________________________________
+//                                                              create_hdf5_table
 
 uint create_hdf5_table()
 {
@@ -730,7 +717,8 @@ uint create_hdf5_table()
   return ret;
 }
 
-// ---------------------------------------------------- list_groups
+//_______________________________________________________________________________
+//                                                                    list_groups
 
 uint list_groups()
 {
@@ -773,16 +761,6 @@ int main()
   uint failed_tests (0);
 
 // HDF5
-
-// ---------- file creation, opening, closing
-
-  std::cerr << "\n[ create_and_close_hdf5_dataset ]\n";
-  std::cerr << "-----------------------------------------------------\n";
-  if ( 0 != ( ret = create_hdf5_dataset() ) )
-    {
-      std::cerr << "FAIL\n";
-      failed_tests += ret;
-    }
 
 //  std::cerr << "\n[ open_and_close_hdf5_dataset ]\n";
 //  std::cerr << "-----------------------------------------------------\n";
