@@ -49,10 +49,18 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>[start filling in your text here]
+      <li>DAL::BF_Beam
     </ul>
     
     <h3>Synopsis</h3>
+
+    Within each Beam group, there are either one or four Stokes Datasets; or the
+    Stokes Group contains BF RAW data with two 32-bit complex numbers (containing
+    Xreal, Ximg, Yreal and Yimg).  If the data are summed, then there is only one
+    Stokes I Group containing all the channel intensities per subbeam. If the
+    data are not summed, then there are four Stokes tables (\f$I, Q, U, V\f$ or
+    \f$XX, XY, YX, YY\f$), one per polarization, containing all the channel
+    intensities per subbeam.
     
     <h3>Example(s)</h3>
     
@@ -112,6 +120,17 @@ namespace DAL { // Namespace DAL -- begin
     
     
   private:
+
+    //! Set up the list of attributes attached to the structure
+    inline void setAttributes () {
+      attributes_p.clear();
+
+      attributes_p.insert("GROUPTYPE");
+      attributes_p.insert("DATATYPE");
+      attributes_p.insert("STOKES_COMPONENT");
+      attributes_p.insert("NOF_SUBBANDS");
+      attributes_p.insert("NOF_CHANNELS");
+    }
     
     //! Unconditional copying
     void copy (BF_StokesDataset const &other);

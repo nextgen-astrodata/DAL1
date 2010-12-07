@@ -67,21 +67,38 @@ namespace DAL { // Namespace DAL -- begin
 	<li>HDF5CommonInterface -- Common functionality for the high-level
 	interfaces to the datasets
 	<li>BF_SubArrayPointing
+	<li>BF_StokesDataset
 	<li>SysLog
       </ul>
     </ul>
     
     <h3>Synopsis</h3>
 
+    A LOFAR BF file will then comprise <i>System Log Group</i> just below the
+    root level which contains logs and parameter files which are relevant to the
+    entire BF file. Additionally just below the root level, the BF file will
+    contain an arbitrary, observation-dependent number of <i>Sub-Array Pointing
+    Groups</i> containing N <i>Beam Groups</i> each with it’s own pointing
+    information in the header; a <i>Processing History Group</i> at this level
+    keeps track of logs and parameter sets relevant to the <i>Sub-Array
+    Pointings</i>. Each <i>Beam Group</i> will contain a <i>Processing History
+    Group</i> (relevant to the Beams), a <i>Coordinates Group</i> as well as
+    one or four <i>Stokes Datasets</i>. The <i>Stokes Datasets</i> contain the
+    array data.
+
     Basic hierarchical structure used DAL classes:
     \verbatim
     /
-    |-- PrimaryPointing000
+    |-- SubArrayPointing000
     |   |-- Beam000
+    |   |   |-- Stokes0
+    |   |   |-- Stokes1
+    |   |   |-- Stokes2
+    |   |   `-- Stokes3
     |   |-- Beam001
     |   |
     |
-    |-- PrimaryPointing001
+    |-- SubArrayPointing001
     |
     `-- SysLog
     \endverbatim
