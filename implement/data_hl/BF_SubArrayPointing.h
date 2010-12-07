@@ -30,7 +30,7 @@
 
 // DAL header files
 #include <HDF5CommonInterface.h>
-#include <BF_Beam.h>
+#include <BF_BeamGroup.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -86,7 +86,7 @@ namespace DAL { // Namespace DAL -- begin
   class BF_SubArrayPointing : public HDF5CommonInterface {
     
     //! Station beams
-    std::map<std::string,BF_Beam> beams_p;
+    std::map<std::string,BF_BeamGroup> beams_p;
     
   public:
     

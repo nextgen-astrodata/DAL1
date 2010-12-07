@@ -248,7 +248,7 @@ namespace DAL { // Namespace DAL -- begin
     
     if (groupnames.size() > 0) {
       for (it=groupnames.begin(); it!=groupnames.end(); ++it) {
-	beams_p[*it] = BF_Beam (location_p,*it);
+	beams_p[*it] = BF_BeamGroup (location_p,*it);
       }
     }
     
@@ -268,11 +268,11 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status          = true;
     htri_t validLocation = H5Iis_valid(location_p);
-    std::string name     = BF_Beam::getName (beamID);
+    std::string name     = BF_BeamGroup::getName (beamID);
     
     if (location_p > 0 && validLocation) {
       // open Beam group
-      BF_Beam beam (location_p,beamID,create);
+      BF_BeamGroup beam (location_p,beamID,create);
       beams_p[name] = beam;
       // book-keeping
       int nofBeams = beams_p.size();

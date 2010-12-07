@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <BF_Beam.h>
+#include <BF_BeamGroup.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -32,30 +32,30 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   //_____________________________________________________________________________
-  //                                                                      BF_Beam
-
-  BF_Beam::BF_Beam ()
+  //                                                                BF_BeamGroup
+  
+  BF_BeamGroup::BF_BeamGroup ()
   {
     location_p = 0;
     processingHistory_p.clear();
     coordinates_p.clear();
   }
-
+  
   //_____________________________________________________________________________
-  //                                                                      BF_Beam
-
-  BF_Beam::BF_Beam (hid_t const &location,
-				std::string const &name)
+  //                                                                 BF_BeamGroup
+  
+  BF_BeamGroup::BF_BeamGroup (hid_t const &location,
+			      std::string const &name)
   {
     open (location,name,false);
   }
   
   //_____________________________________________________________________________
-  //                                                                      BF_Beam
-
-  BF_Beam::BF_Beam (hid_t const &location,
-				unsigned int const &index,
-				bool const &create)
+  //                                                                 BF_BeamGroup
+  
+  BF_BeamGroup::BF_BeamGroup (hid_t const &location,
+			      unsigned int const &index,
+			      bool const &create)
   {
     open (location,getName(index),create);
   }
@@ -67,9 +67,9 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   //_____________________________________________________________________________
-  //                                                                     ~BF_Beam
+  //                                                                     ~BF_BeamGroup
 
-  BF_Beam::~BF_Beam ()
+  BF_BeamGroup::~BF_BeamGroup ()
   {
     if (location_p > 0) {
       herr_t h5error;
@@ -94,7 +94,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      summary
   
-  void BF_Beam::summary (std::ostream &os)
+  void BF_BeamGroup::summary (std::ostream &os)
   {
     std::map<std::string,BF_ProcessingHistory>::iterator hist;
     std::map<std::string,CoordinatesGroup>::iterator coord;
@@ -102,7 +102,7 @@ namespace DAL { // Namespace DAL -- begin
     hist  = processingHistory_p.begin();
     coord = coordinates_p.begin();
 
-    os << "[BF_Beam] Summary of internal parameters." << std::endl;
+    os << "[BF_BeamGroup] Summary of internal parameters." << std::endl;
     os << "-- Location ID                   = " << location_p
        << std::endl;
 
@@ -126,7 +126,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                setAttributes
   
-  void BF_Beam::setAttributes ()
+  void BF_BeamGroup::setAttributes ()
   {
     attributes_p.clear();
 
@@ -168,9 +168,9 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
-  bool BF_Beam::open (hid_t const &location,
-			    std::string const &name,
-			    bool const &create)
+  bool BF_BeamGroup::open (hid_t const &location,
+			   std::string const &name,
+			   bool const &create)
   {
     bool status (true);
 
@@ -229,13 +229,13 @@ namespace DAL { // Namespace DAL -- begin
  	  h5set_attribute (location_p,"COMPLEX_VOLTAGE",          ok          );
 	  h5set_attribute (location_p,"SIGNAL_SUM",               undefined   );
 	} else {
-	  std::cerr << "[BF_Beam::open] Failed to create group "
+	  std::cerr << "[BF_BeamGroup::open] Failed to create group "
 		    << name
 		    << std::endl;
 	  status = false;
 	}
       } else {
-	std::cerr << "[BF_Beam::open] Failed to open group "
+	std::cerr << "[BF_BeamGroup::open] Failed to open group "
 		  << name
 		  << std::endl;
 	status = false;
@@ -256,7 +256,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool BF_Beam::openEmbedded (bool const &create)
+  bool BF_BeamGroup::openEmbedded (bool const &create)
   {
     bool status (true);
     std::set<std::string> groupnames;
@@ -277,7 +277,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                        openProcessingHistory
   
-  bool BF_Beam::openProcessingHistory (bool const &create)
+  bool BF_BeamGroup::openProcessingHistory (bool const &create)
   {
     bool status (true);
 
@@ -291,7 +291,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                         openCoordinatesGroup
   
-  bool BF_Beam::openCoordinatesGroup (bool const &create)
+  bool BF_BeamGroup::openCoordinatesGroup (bool const &create)
   {
     bool status (true);
 
@@ -310,7 +310,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \return name -- The name of the beam group, <tt>Beam<index></tt>
   */
-  std::string BF_Beam::getName (unsigned int const &index)
+  std::string BF_BeamGroup::getName (unsigned int const &index)
   {
     char uid[10];
     sprintf(uid,

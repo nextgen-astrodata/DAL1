@@ -465,7 +465,7 @@ namespace DAL { // Namespace DAL -- begin
 	  it->second.openBeam(beamID,create);
 	}
 	else {
-	  std::cout << "[BF_Dataset::openBeam] " << BF_Beam::getName(beamID)
+	  std::cout << "[BF_Dataset::openBeam] " << BF_BeamGroup::getName(beamID)
 		    << " already exists."
 		    << std::endl;
 	}

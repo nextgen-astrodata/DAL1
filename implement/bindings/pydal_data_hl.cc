@@ -36,10 +36,32 @@
 #include "pydal.h"
 #include <BeamFormed.h>
 #include <BeamGroup.h>
+#include <BF_BeamGroup.h>
 #include <TBB_Timeseries.h>
 #include <TBB_StationGroup.h>
 #include <TBB_DipoleDataset.h>
 #include <LOPES_EventFile.h>
+
+
+// ==============================================================================
+//
+//                                                                   BF_BeamGroup
+//
+// ==============================================================================
+
+void export_BF_BeamGroup ()
+{
+  bpl::class_<BF_BeamGroup>("BF_BeamGroup")
+    /* Construction */
+    .def( bpl::init<>())
+    .def( bpl::init<hid_t,string>())
+    /* Access to internal parameters */
+    .def( "locationID", &BF_BeamGroup::locationID,
+	  "Get the object identifier for the data file." )
+    .def( "className", &BF_BeamGroup::className,
+	  "Get name of the class." )
+    ;
+}
 
 // ==============================================================================
 //

@@ -21,8 +21,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef BF_BEAM_H
-#define BF_BEAM_H
+#ifndef BF_GROUPBEAM_H
+#define BF_GROUPBEAM_H
 
 // Standard library header files
 #include <iostream>
@@ -37,7 +37,7 @@
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class BF_Beam
+    \class BF_BeamGroup
     
     \ingroup DAL
     \ingroup data_hl
@@ -48,7 +48,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/10/28
 
-    \test tBF_Beam.cpp
+    \test tBF_BeamGroup.cc
     
     <h3>Prerequisite</h3>
     
@@ -81,7 +81,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class BF_Beam : public HDF5CommonInterface {
+  class BF_BeamGroup : public HDF5CommonInterface {
 
     //! Procesing history group
     std::map<std::string,BF_ProcessingHistory> processingHistory_p;
@@ -93,31 +93,31 @@ namespace DAL { // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    BF_Beam ();
+    BF_BeamGroup ();
     //! Argumented constructor
-    BF_Beam (hid_t const &location,
-	     std::string const &name);
+    BF_BeamGroup (hid_t const &location,
+		  std::string const &name);
     //! Argumented constructor
-    BF_Beam (hid_t const &location,
-	     unsigned int const &index,
-	     bool const &create);
+    BF_BeamGroup (hid_t const &location,
+		  unsigned int const &index,
+		  bool const &create);
     
     // === Destruction =========================================================
     
     //! Default destructor
-    ~BF_Beam ();
+    ~BF_BeamGroup ();
     
     // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, BF_Beam.
+      \return className -- The name of the class, BF_BeamGroup.
     */
     inline std::string className () const {
-      return "BF_Beam";
+      return "BF_BeamGroup";
     }
-
+    
     //! Provide a summary of the internal status
     inline void summary () {
       summary (std::cout);
@@ -130,7 +130,7 @@ namespace DAL { // Namespace DAL -- begin
     */
     void summary (std::ostream &os);    
 
-    // ------------------------------------------------------------------ Methods
+    // === Methods ==============================================================
 
     //! Convert beam index to name of the HDF5 group
     static std::string getName (unsigned int const &index);
@@ -153,9 +153,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 
-  }; // Class BF_Beam -- end
+  }; // Class BF_BeamGroup -- end
   
 } // Namespace DAL -- end
 
-#endif /* BF_DATASET_H */
+#endif /* BF_BEAMGROUP_H */
   

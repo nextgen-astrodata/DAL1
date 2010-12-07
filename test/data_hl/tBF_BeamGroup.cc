@@ -24,7 +24,7 @@
 #include <CommonAttributes.h>
 #include <BF_Dataset.h>
 #include <BF_SubArrayPointing.h>
-#include <BF_Beam.h>
+#include <BF_BeamGroup.h>
 
 // Namespace usage
 using std::cout;
@@ -33,15 +33,15 @@ using DAL::CommonAttributes;
 using DAL::Filename;
 using DAL::BF_Dataset;
 using DAL::BF_SubArrayPointing;
-using DAL::BF_Beam;
+using DAL::BF_BeamGroup;
 
 /*!
-  \file tBF_Beam.cc
+  \file tBF_BeamGroup.cc
 
   \ingroup DAL
   \ingroup data_hl
 
-  \brief A collection of test routines for the BF_Beam class
+  \brief A collection of test routines for the BF_BeamGroup class
  
   \author Lars B&auml;hren
  
@@ -52,14 +52,14 @@ using DAL::BF_Beam;
 //                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new BF_Beam object
+  \brief Test constructors for a new BF_BeamGroup object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
 int test_constructors (std::string const &filename)
 {
-  cout << "\n[tBF_Beam::test_constructors]\n" << endl;
+  cout << "\n[tBF_BeamGroup::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
 
@@ -75,7 +75,7 @@ int test_constructors (std::string const &filename)
   
   cout << "[1] Testing default constructor ..." << endl;
   try {
-    BF_Beam beam;
+    BF_BeamGroup beam;
     beam.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -85,13 +85,13 @@ int test_constructors (std::string const &filename)
   cout << "[2] Testing argumented constructor ..." << endl;
   try {
     if (fileID>0) {
-      BF_Beam beam1 (fileID,1,true);
+      BF_BeamGroup beam1 (fileID,1,true);
       beam1.summary();
       //
-      BF_Beam beam2 (fileID,2,true);
+      BF_BeamGroup beam2 (fileID,2,true);
       beam2.summary();
       //
-      BF_Beam beam3 (fileID,3,true);
+      BF_BeamGroup beam3 (fileID,3,true);
       beam3.summary();
     }
   } catch (std::string message) {
@@ -102,10 +102,10 @@ int test_constructors (std::string const &filename)
   cout << "[3] Testing copy constructor ..." << endl;
   try {
     if (fileID>0) {
-      BF_Beam beam (fileID,10,true);
+      BF_BeamGroup beam (fileID,10,true);
       beam.summary();
       //
-      BF_Beam beamCopy (beam);
+      BF_BeamGroup beamCopy (beam);
       beamCopy.summary();
     }
     H5Fclose (fileID);
@@ -132,7 +132,7 @@ int test_constructors (std::string const &filename)
 */
 int test_attributes (std::string const &filename)
 {
-  cout << "\n[tBF_Beam::test_attributes]\n" << endl;
+  cout << "\n[tBF_BeamGroup::test_attributes]\n" << endl;
 
   int nofFailedTests (0);
   std::string groupname;
@@ -162,7 +162,7 @@ int test_attributes (std::string const &filename)
   }
 
   cout << "-- opening Beam " << groupname << " ..." << endl;
-  BF_Beam beam (fileID,groupname);
+  BF_BeamGroup beam (fileID,groupname);
 
   // Carry out the tests ___________________________________
 
@@ -226,14 +226,14 @@ int test_attributes (std::string const &filename)
 //                                                                       test_map
 
 /*!
-  \brief Test usage of std::map<std::string,DAL::BF_Beam>
+  \brief Test usage of std::map<std::string,DAL::BF_BeamGroup>
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
 int test_map (std::string const &filename)
 {
-  cout << "\n[tBF_Beam::test_map]\n" << endl;
+  cout << "\n[tBF_BeamGroup::test_map]\n" << endl;
 
   int nofFailedTests (0);
   std::set<std::string> names;
@@ -256,14 +256,14 @@ int test_map (std::string const &filename)
   std::string groupType;
   std::vector<std::string> target;
   
-  // std::vector<DAL::BF_Beam> _______________________
+  // std::vector<DAL::BF_BeamGroup> _______________________
   
-  cout << "[1] Test using std::vector<DAL::BF_Beam> ..." << endl;
+  cout << "[1] Test using std::vector<DAL::BF_BeamGroup> ..." << endl;
   if (names.size() > 0) {
-    std::vector<DAL::BF_Beam> beams (1);
+    std::vector<DAL::BF_BeamGroup> beams (1);
     // open Beam group
     it             = names.begin();
-    BF_Beam beam (fileID, *it);
+    BF_BeamGroup beam (fileID, *it);
     beams[0] = beam;
     // get attribute values
     beams[0].getAttribute ("GROUPTYPE",groupType);
@@ -275,16 +275,16 @@ int test_map (std::string const &filename)
     cout << "-- Attribute TARGET              = " << target       << endl;
   }
   
-  // std::map<std::string,DAL::BF_Beam> ______________
+  // std::map<std::string,DAL::BF_BeamGroup> ______________
 
-  cout << "[2] Test using std::map<std::string,DAL::BF_Beam> ..." << endl;
+  cout << "[2] Test using std::map<std::string,DAL::BF_BeamGroup> ..." << endl;
   if (names.size() > 0) {
-    std::map<std::string,DAL::BF_Beam> beams;
-    std::map<std::string,DAL::BF_Beam>::iterator itMap;
+    std::map<std::string,DAL::BF_BeamGroup> beams;
+    std::map<std::string,DAL::BF_BeamGroup>::iterator itMap;
     
     for (it=names.begin(); it!=names.end(); ++it) {
       // open Beam group
-      BF_Beam beam (fileID, *it);
+      BF_BeamGroup beam (fileID, *it);
       beams[*it] = beam;
       // get pointer to the created group
       itMap = beams.find(*it);
@@ -315,13 +315,13 @@ int test_map (std::string const &filename)
 int main ()
 {
   int nofFailedTests (0);
-  std::string filename ("tBF_Beam.h5");
+  std::string filename ("tBF_BeamGroup.h5");
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors (filename);
   // Test access to the attributes
   nofFailedTests += test_attributes (filename);
-  // Test usage of std::map<std::string,DAL::BF_Beam>
+  // Test usage of std::map<std::string,DAL::BF_BeamGroup>
   nofFailedTests += test_map(filename);
 
   return nofFailedTests;

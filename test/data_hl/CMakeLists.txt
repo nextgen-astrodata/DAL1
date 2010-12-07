@@ -56,7 +56,7 @@ foreach (_test
     tBF_Dataset
     tBF_ProcessingHistory
     tBF_SubArrayPointing
-    tBF_Beam
+    tBF_BeamGroup
     tBF_StokesDataset
     tRM_RootGroup
     tSysLog

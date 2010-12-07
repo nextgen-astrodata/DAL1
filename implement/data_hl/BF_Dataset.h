@@ -138,8 +138,8 @@ namespace DAL { // Namespace DAL -- begin
       CommonAttributes common = bf.commonAttributes ();
       \endcode
 
-      <li>Creating a new Beam group (BF_Beam) might require the previous creation
-      of Primary Pointing Direction group (BF_SubArrayPointing):
+      <li>Creating a new Beam group (BF_BeamGroup) might require the previous
+      creation of Sub-Array Pointing group (BF_SubArrayPointing):
       \code
       unsigned int pointingID (10);
       unsigned int beamID (3);

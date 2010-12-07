@@ -95,6 +95,8 @@ void export_HDF5Hyperslab ();
 void export_BeamFormed();
 //! Bindings for DAL::BeamGroup
 void export_BeamGroup();
+//! Bindings for DAL::BF_BeamGroup
+void export_BF_BeamGroup();
 //! Bindings for DAL::TBB_Timeseries
 void export_TBB_Timeseries();
 //! Bindings for DAL::TBB_StationGroup
