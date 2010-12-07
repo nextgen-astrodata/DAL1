@@ -26,8 +26,6 @@
 
 // Standard library header files
 #include <iostream>
-#include <map>
-#include <set>
 #include <string>
 
 // casacore header files
