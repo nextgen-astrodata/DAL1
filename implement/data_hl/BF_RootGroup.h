@@ -21,8 +21,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef BF_DATASET_H
-#define BF_DATASET_H
+#ifndef BF_ROOTGROUP_H
+#define BF_ROOTGROUP_H
 
 // Standard library header files
 #include <iostream>
@@ -31,14 +31,13 @@
 // DAL header files
 #include <HDF5CommonInterface.h>
 #include <Filename.h>
-#include <BF_Dataset.h>
 #include <BF_SubArrayPointing.h>
 #include <SysLog.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class BF_Dataset
+    \class BF_RootGroup
     
     \ingroup DAL
     \ingroup data_hl
@@ -49,7 +48,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/10/28
 
-    \test tBF_Dataset.cc
+    \test tBF_RootGroup.cc
     
     <h3>Prerequisite</h3>
     
@@ -110,7 +109,7 @@ namespace DAL { // Namespace DAL -- begin
       \code
       std:string filename ("data.h5");
       
-      BF_Dataset bf (filename);
+      BF_RootGroup bf (filename);
       \endcode
       Once the dataset has been opened its contents can be accessed; to get a
       basic idea of the contents, use
@@ -155,7 +154,7 @@ namespace DAL { // Namespace DAL -- begin
     </ol>
     
   */  
-  class BF_Dataset : public HDF5CommonInterface {
+  class BF_RootGroup : public HDF5CommonInterface {
 
     //! Name of the data file
     std::string filename_p;
@@ -171,20 +170,20 @@ namespace DAL { // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    BF_Dataset (std::string const &filename);
+    BF_RootGroup (std::string const &filename);
     
     //! Argumented constructor
-    BF_Dataset (DAL::Filename &infile,
+    BF_RootGroup (DAL::Filename &infile,
 		bool const &create=true);
     
     //! Argumented constructor
-    BF_Dataset (CommonAttributes const &attributes,
+    BF_RootGroup (CommonAttributes const &attributes,
 		bool const &create=true);
     
     // === Destruction ==========================================================
     
     //! Default destructor
-    ~BF_Dataset ();
+    ~BF_RootGroup ();
     
     // --------------------------------------------------------------- Parameters
 
@@ -197,10 +196,10 @@ namespace DAL { // Namespace DAL -- begin
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, BF_Dataset.
+      \return className -- The name of the class, BF_RootGroup.
     */
     inline std::string className () const {
-      return "BF_Dataset";
+      return "BF_RootGroup";
     }
 
     //! Provide a summary of the internal status
@@ -259,9 +258,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Open a PrimaryPointing direction group
     bool openPrimaryPointing (std::string const &name);
       
-  }; // Class BF_Dataset -- end
+  }; // Class BF_RootGroup -- end
   
 } // Namespace DAL -- end
 
-#endif /* BF_DATASET_H */
+#endif /* BF_ROOTGROUP_H */
   

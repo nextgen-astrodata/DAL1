@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <BF_Dataset.h>
+#include <BF_RootGroup.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -32,23 +32,23 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
 
   //_____________________________________________________________________________
-  //                                                                   BF_Dataset
+  //                                                                   BF_RootGroup
 
   /*!
     \param filename -- Name of the dataset to open.
   */
-  BF_Dataset::BF_Dataset (std::string const &filename)
+  BF_RootGroup::BF_RootGroup (std::string const &filename)
     : HDF5CommonInterface()
   {
     if (!open (0,filename,false)) {
-      std::cerr << "[BF_Dataset::BF_Dataset] Failed to open file "
+      std::cerr << "[BF_RootGroup::BF_RootGroup] Failed to open file "
 		<< filename
 		<< std::endl;
     }
   }
   
   //_____________________________________________________________________________
-  //                                                                   BF_Dataset
+  //                                                                   BF_RootGroup
 
   /*!
     \param filename -- Filename object from which the actual file name of the
@@ -56,19 +56,19 @@ namespace DAL { // Namespace DAL -- begin
     \param create   -- Create the corresponding data structure, if it does not 
            exist yet?
   */
-  BF_Dataset::BF_Dataset (DAL::Filename &infile,
+  BF_RootGroup::BF_RootGroup (DAL::Filename &infile,
 			  bool const &create)
     : HDF5CommonInterface()
   {
     if (!open (0,infile.filename(),create)) {
-      std::cerr << "[BF_Dataset::BF_Dataset] Failed to open file "
+      std::cerr << "[BF_RootGroup::BF_RootGroup] Failed to open file "
 		<< infile.filename()
 		<< std::endl;
     }
   }
   
   //_____________________________________________________________________________
-  //                                                                   BF_Dataset
+  //                                                                   BF_RootGroup
 
   /*!
     \param attributes -- CommonAttributes object from which the actual file name
@@ -76,11 +76,11 @@ namespace DAL { // Namespace DAL -- begin
     \param create -- Create the corresponding data structure, if it does not 
            exist yet?
   */
-  BF_Dataset::BF_Dataset (CommonAttributes const &attributes,
+  BF_RootGroup::BF_RootGroup (CommonAttributes const &attributes,
 			  bool const &create)
   {
     if (!open (0,attributes.filename(),create)) {
-      std::cerr << "[BF_Dataset::BF_Dataset] Failed to open file "
+      std::cerr << "[BF_RootGroup::BF_RootGroup] Failed to open file "
 		<< attributes.filename()
 		<< std::endl;
     }
@@ -92,7 +92,7 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
 
-  BF_Dataset::~BF_Dataset ()
+  BF_RootGroup::~BF_RootGroup ()
   {
     if (location_p > 0) {
       // clear maps with embedded objects
@@ -117,7 +117,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                             commonAttributes
   
-  CommonAttributes BF_Dataset::commonAttributes ()
+  CommonAttributes BF_RootGroup::commonAttributes ()
   {
     if (location_p > 0) {
       commonAttributes_p.h5read (location_p);
@@ -136,14 +136,14 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
-  bool BF_Dataset::setCommonAttributes (CommonAttributes const &attributes)
+  bool BF_RootGroup::setCommonAttributes (CommonAttributes const &attributes)
   {
     bool status (true);
 
     try {
       commonAttributes_p = attributes;
     } catch (std::string message) {
-      std::cerr << "[BF_Dataset::setCommonAttributes] " << message << std::endl;
+      std::cerr << "[BF_RootGroup::setCommonAttributes] " << message << std::endl;
       status = false;
     }
 
@@ -153,10 +153,10 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      summary
   
-  void BF_Dataset::summary (std::ostream &os,
+  void BF_RootGroup::summary (std::ostream &os,
 			    bool const &showAttributes)
   {
-    os << "[BF_Dataset] Summary of internal parameters." << std::endl;
+    os << "[BF_RootGroup] Summary of internal parameters." << std::endl;
     os << "-- Filename                    = " << filename_p            << std::endl;
     os << "-- Location ID                 = " << location_p            << std::endl;
     os << "-- nof. attributes             = " << attributes_p.size()   << std::endl;
@@ -180,7 +180,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         init
   
-  void BF_Dataset::init (CommonAttributes const &attributes)
+  void BF_RootGroup::init (CommonAttributes const &attributes)
   {
     /* Store the common attributes */
     setCommonAttributes (attributes);
@@ -188,7 +188,7 @@ namespace DAL { // Namespace DAL -- begin
     setAttributes();
     /* Try opening the file holding the dataset */
     if (!open (0,commonAttributes_p.filename(),true)) {
-      std::cerr << "[BF_Dataset::init] Initialization of object failed!"
+      std::cerr << "[BF_RootGroup::init] Initialization of object failed!"
 		<< " Unable to access file holding the dataset!"
 		<< std::endl;
     }
@@ -197,7 +197,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                setAttributes
   
-  void BF_Dataset::setAttributes ()
+  void BF_RootGroup::setAttributes ()
   {
     attributes_p.clear();
     
@@ -236,7 +236,7 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
-  bool BF_Dataset::open (hid_t const &location,
+  bool BF_RootGroup::open (hid_t const &location,
 			 std::string const &name,
 			 bool const &create)
   {
@@ -305,7 +305,7 @@ namespace DAL { // Namespace DAL -- begin
 	/* Read back in the common attributes after storing default values */
 	commonAttributes_p.h5read(location_p);
       } else {
-	std::cerr << "[BF_Dataset::open] Failed to open file "
+	std::cerr << "[BF_RootGroup::open] Failed to open file "
 		  << name
 		  << std::endl;
 	status = false;
@@ -316,7 +316,7 @@ namespace DAL { // Namespace DAL -- begin
     if (status) {
       status = openEmbedded (create);
     } else {
-      std::cerr << "[BF_Dataset::open] Skip opening embedded groups!"
+      std::cerr << "[BF_RootGroup::open] Skip opening embedded groups!"
 		<< std::endl;
     }
  
@@ -330,7 +330,7 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>False</tt> in case
             no primary pointing direction groups were found.
    */
-  bool BF_Dataset::openEmbedded (bool const &create)
+  bool BF_RootGroup::openEmbedded (bool const &create)
   {
     bool status (true);
     std::set<std::string> groups;
@@ -357,7 +357,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   openSysLog
   
-  bool BF_Dataset::openSysLog (bool const &create)
+  bool BF_RootGroup::openSysLog (bool const &create)
   {
     bool status (true);
 
@@ -375,7 +375,7 @@ namespace DAL { // Namespace DAL -- begin
     \param pointingID -- 
     \param create    -- 
   */
-  bool BF_Dataset::openPrimaryPointing (unsigned int const &pointingID,
+  bool BF_RootGroup::openPrimaryPointing (unsigned int const &pointingID,
 					bool const &create)
   {
     bool status (true);
@@ -410,7 +410,7 @@ namespace DAL { // Namespace DAL -- begin
     \param name   -- 
     \param create -- 
   */
-  bool BF_Dataset::openPrimaryPointing (std::string const &name)
+  bool BF_RootGroup::openPrimaryPointing (std::string const &name)
   {
     bool status (true);
 
@@ -425,7 +425,7 @@ namespace DAL { // Namespace DAL -- begin
       }
     }
     else {
-      std::cerr << "[BF_Dataset::openPrimaryPointing] Not attached to file!"
+      std::cerr << "[BF_RootGroup::openPrimaryPointing] Not attached to file!"
 		<< std::endl;
       status = false;
     }
@@ -442,7 +442,7 @@ namespace DAL { // Namespace DAL -- begin
            direction.
     \param create     -- Create the group if it does not exist yet?
   */
-  bool BF_Dataset::openBeam (unsigned int const &pointingID,
+  bool BF_RootGroup::openBeam (unsigned int const &pointingID,
 			     unsigned int const &beamID,
 			     bool const &create)
   {
@@ -465,18 +465,18 @@ namespace DAL { // Namespace DAL -- begin
 	  it->second.openBeam(beamID,create);
 	}
 	else {
-	  std::cout << "[BF_Dataset::openBeam] " << BF_BeamGroup::getName(beamID)
+	  std::cout << "[BF_RootGroup::openBeam] " << BF_BeamGroup::getName(beamID)
 		    << " already exists."
 		    << std::endl;
 	}
       } else {
-	std::cerr << "[BF_Dataset::openBeam] Failed to open StationGroup!"
+	std::cerr << "[BF_RootGroup::openBeam] Failed to open StationGroup!"
 		  << std::endl;
 	status = false;
       }
     }  //  end -- (location_p>0)
     else {
-      std::cerr << "[BF_Dataset::openBeam] No connection to dataset!"
+      std::cerr << "[BF_RootGroup::openBeam] No connection to dataset!"
 		<< std::endl;
       std::cerr << "-- Location ID       = " << location_p    << std::endl;
       std::cerr << "-- Valid HDF5 object = " << validLocation << std::endl;
@@ -492,7 +492,7 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param pointingID -- Identifier for the primary pointing direction.
   */
-  BF_SubArrayPointing BF_Dataset::primaryPointing (unsigned int const &pointingID)
+  BF_SubArrayPointing BF_RootGroup::primaryPointing (unsigned int const &pointingID)
   {
     BF_SubArrayPointing pointing;      
       
@@ -506,13 +506,13 @@ namespace DAL { // Namespace DAL -- begin
       if (it != primaryPointings_p.end()) {
 	pointing = it->second;
       } else {
-	std::cerr << "[BF_Dataset::primaryPointing] No such group "
+	std::cerr << "[BF_RootGroup::primaryPointing] No such group "
 		  << "\"" << name << "\""
 		  << std::endl;
       }
     }
     else {
-      std::cerr << "[BF_Dataset::primaryPointing] Not connected to file!"
+      std::cerr << "[BF_RootGroup::primaryPointing] Not connected to file!"
 		<< std::endl;
     }
     
@@ -522,7 +522,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                       sysLog
   
-  SysLog BF_Dataset::sysLog ()
+  SysLog BF_RootGroup::sysLog ()
   {
     std::map<std::string,SysLog>::iterator it;
     it = sysLog_p.begin();

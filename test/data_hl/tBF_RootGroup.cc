@@ -22,7 +22,7 @@
  ***************************************************************************/
 
 #include <CommonAttributes.h>
-#include <BF_Dataset.h>
+#include <BF_RootGroup.h>
 
 // Namespace usage
 using std::cerr;
@@ -30,15 +30,15 @@ using std::cout;
 using std::endl;
 using DAL::CommonAttributes;
 using DAL::Filename;
-using DAL::BF_Dataset;
+using DAL::BF_RootGroup;
 
 /*!
-  \file tBF_Dataset.cc
+  \file tBF_RootGroup.cc
 
   \ingroup DAL
   \ingroup data_hl
 
-  \brief A collection of test routines for the BF_Dataset class
+  \brief A collection of test routines for the BF_RootGroup class
  
   \author Lars B&auml;hren
  
@@ -62,14 +62,14 @@ DAL::Filename getFilename ()
 //                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new BF_Dataset object
+  \brief Test constructors for a new BF_RootGroup object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
 int test_constructors ()
 {
-  cout << "\n[tBF_Dataset::test_constructors]\n" << endl;
+  cout << "\n[tBF_RootGroup::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   Filename file = getFilename();
@@ -78,7 +78,7 @@ int test_constructors ()
   
   cout << "[1] Testing construction with Filename ..." << endl;
   try {
-    BF_Dataset dataset (file);
+    BF_RootGroup dataset (file);
     //
     dataset.summary();
   } catch (std::string message) {
@@ -91,7 +91,7 @@ int test_constructors ()
     CommonAttributes commonAttr;
     commonAttr.setFilename (file);
     //
-    BF_Dataset dataset (commonAttr);
+    BF_RootGroup dataset (commonAttr);
     //
     dataset.summary(); 
   } catch (std::string message) {
@@ -103,7 +103,7 @@ int test_constructors ()
   try {
     std::string filename = file.filename();
     //
-    BF_Dataset dataset (filename);
+    BF_RootGroup dataset (filename);
     //
     dataset.summary(); 
   } catch (std::string message) {
@@ -125,11 +125,11 @@ int test_constructors ()
 */
 int test_subGroups ()
 {
-  cout << "\n[tBF_Dataset::test_subGroups]\n" << endl;
+  cout << "\n[tBF_RootGroup::test_subGroups]\n" << endl;
 
   int nofFailedTests (0);
   Filename file = getFilename();
-  BF_Dataset dataset (file);
+  BF_RootGroup dataset (file);
   
   cout << "[1] Open PrimaryPointing groups ..." << endl;
   try {
@@ -178,11 +178,11 @@ int test_subGroups ()
 */
 int test_methods ()
 {
-  cout << "\n[tBF_Dataset::test_methods]\n" << endl;
+  cout << "\n[tBF_RootGroup::test_methods]\n" << endl;
 
   int nofFailedTests (0);
   Filename file (getFilename());
-  BF_Dataset dataset (file);
+  BF_RootGroup dataset (file);
 
   cout << "[1] Extract SysLog from BF dataset ..." << endl;
   try {

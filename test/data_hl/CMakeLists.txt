@@ -53,7 +53,7 @@ endif (dataset_tbb)
 ## Tests without dependency on specific datasets
 
 foreach (_test
-    tBF_Dataset
+    tBF_RootGroup
     tBF_ProcessingHistory
     tBF_SubArrayPointing
     tBF_BeamGroup

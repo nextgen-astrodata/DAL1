@@ -22,7 +22,7 @@
  ***************************************************************************/
 
 #include <CommonAttributes.h>
-#include <BF_Dataset.h>
+#include <BF_RootGroup.h>
 #include <BF_SubArrayPointing.h>
 
 // Namespace usage
@@ -30,7 +30,7 @@ using std::cout;
 using std::endl;
 using DAL::CommonAttributes;
 using DAL::Filename;
-using DAL::BF_Dataset;
+using DAL::BF_RootGroup;
 using DAL::BF_SubArrayPointing;
 
 /*!
