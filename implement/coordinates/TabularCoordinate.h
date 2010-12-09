@@ -62,12 +62,13 @@ namespace DAL {  // Namespace DAL -- begin
       non-contiguous time-axis (e.g. due to the fact that parts of an observation
       were dropped during transfer).
       \verbatim
-      COORDINATE_TYPE = Tabular
-      NOF_AXES        = 1
-      AXIS_NAMES      = "Time"
-      AXIS_UNITS      = "s"
-      PIXEL_VALUES    = [0,1,2,3,4,5,6,7]
-      WORLD_VALUES    = [0,1,2,5,10,20,50,100]
+      COORDINATE_TYPE    = Tabular
+      NOF_AXES           = 1
+      AXIS_NAMES         = "Time"
+      AXIS_UNITS         = "s"
+      AXIS_LENGTH        = 8
+      AXIS_VALUES_PIXEL  = [0,1,2,3,4,5,6,7]
+      AXIS_VALUES_WORLD  = [0,1,2,5,10,20,50,100]
       \endverbatim
     </ul>
     

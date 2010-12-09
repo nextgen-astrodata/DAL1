@@ -135,7 +135,7 @@ namespace DAL {   // Namespace DAL -- begin
         <td>\e yes</td>
       </tr>
       <tr>
-        <td class="indexkey">PIXEL_VALUES</td>
+        <td class="indexkey">AXIS_VALUES_PIXEL</td>
         <td>\e --</td>
         <td>\e ---</td>
         <td>\e ---</td>
@@ -143,7 +143,7 @@ namespace DAL {   // Namespace DAL -- begin
         <td>\e --</td>
       </tr>
       <tr>
-        <td class="indexkey">WORLD_VALUES</td>
+        <td class="indexkey">AXIS_VALUES_WORLD</td>
         <td>\e --</td>
         <td>\e ---</td>
         <td>\e ---</td>

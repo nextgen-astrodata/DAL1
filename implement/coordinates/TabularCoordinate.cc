@@ -316,8 +316,8 @@ namespace DAL {  // Namespace DAL -- begin
 //     DAL::h5set_attribute( groupID, "REFERENCE_VALUE",  refValue_p );
 //     DAL::h5set_attribute( groupID, "INCREMENT",        increment_p );
 //     DAL::h5set_attribute( groupID, "PC",               pc_p );
-    DAL::h5set_attribute( groupID, "PIXEL_VALUES",     pixelValues_p );
-    DAL::h5set_attribute( groupID, "WORLD_VALUES",     worldValues_p );
+    DAL::h5set_attribute( groupID, "AXIS_VALUES_PIXEL",  pixelValues_p );
+    DAL::h5set_attribute( groupID, "AXIS_VALUES_WORLD",  worldValues_p );
   }
 
   //_____________________________________________________________________________

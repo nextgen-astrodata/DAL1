@@ -470,8 +470,8 @@ namespace DAL {
     attributes_p.insert("PC");
 
     if (storageType_p.type() == Coordinate::TABULAR) {
-      attributes_p.insert("PIXEL_VALUES");
-      attributes_p.insert("WORLD_VALUES");
+      attributes_p.insert("AXIS_VALUES_PIXEL");
+      attributes_p.insert("AXIS_VALUES_WORLD");
     }
   }
   

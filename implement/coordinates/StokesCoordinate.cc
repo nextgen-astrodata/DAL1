@@ -271,10 +271,10 @@ namespace DAL {  // Namespace DAL -- begin
     std::vector<double> world;
 
     /* Read the attributes from the HDF5 file */
-    DAL::h5get_attribute( groupID, "COORDINATE_TYPE",  coordinate_type );
-    DAL::h5get_attribute( groupID, "NOF_AXES",         nof_axes );
-    DAL::h5get_attribute( groupID, "PIXEL_VALUES",     pixel    );
-    DAL::h5get_attribute( groupID, "WORLD_VALUES",     world    );
+    DAL::h5get_attribute( groupID, "COORDINATE_TYPE",   coordinate_type );
+    DAL::h5get_attribute( groupID, "NOF_AXES",          nof_axes );
+    DAL::h5get_attribute( groupID, "AXIS_VALUES_PIXEL", pixel    );
+    DAL::h5get_attribute( groupID, "AXIS_VALUES_WORLD", world    );
     
     /* Store the retrieved values */
     if (DAL::Coordinate::getType(coordinate_type) == DAL::Coordinate::STOKES) {
