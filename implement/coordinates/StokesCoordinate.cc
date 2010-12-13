@@ -83,7 +83,7 @@ namespace DAL {  // Namespace DAL -- begin
            one.
   */
   StokesCoordinate::StokesCoordinate (StokesCoordinate const &other)
-    : CoordinateInterface(other)
+    : CoordinateInterface<std::string> (other)
   {
     copy (other);
   }
@@ -122,7 +122,7 @@ namespace DAL {  // Namespace DAL -- begin
   void StokesCoordinate::copy (StokesCoordinate const &other)
   {
     // copy variables handled by the base class
-    CoordinateInterface::copy (other);
+    CoordinateInterface<std::string>::copy (other);
     // copy variables handles by this class
     init (other.values_p);
   }
@@ -180,10 +180,10 @@ namespace DAL {  // Namespace DAL -- begin
     unsigned int nelem = values.size();
 
     /* Initialize base class */
-    CoordinateInterface::init (Coordinate::STOKES,
-			       1,
-			       Coordinate::TABULAR);
-
+    CoordinateInterface<std::string>::init (Coordinate::STOKES,
+					    1,
+					    Coordinate::TABULAR);
+    
     // store the input list of Stokes values
     values_p.resize (nelem);
     values_p = values;

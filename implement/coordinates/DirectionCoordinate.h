@@ -58,7 +58,7 @@ namespace DAL {   // Namespace DAL -- begin
     <h3>Example(s)</h3>
 
   */
-  class DirectionCoordinate : public CoordinateInterface {
+  class DirectionCoordinate : public CoordinateInterface<double> {
     
     //! Reference code for the celestial coordinate system
     std::string system_p;

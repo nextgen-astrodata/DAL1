@@ -73,7 +73,7 @@ namespace DAL {   // Namespace DAL -- begin
            new one.
   */
   DirectionCoordinate::DirectionCoordinate (DirectionCoordinate const &other)
-    : CoordinateInterface(other)
+    : CoordinateInterface<double>(other)
   {
     copy (other);
   }
@@ -118,7 +118,7 @@ namespace DAL {   // Namespace DAL -- begin
 
   void DirectionCoordinate::copy (DirectionCoordinate const &other)
   {
-    CoordinateInterface::copy (other);
+    CoordinateInterface<double>::copy (other);
   }
 
   // ============================================================================
@@ -165,10 +165,10 @@ namespace DAL {   // Namespace DAL -- begin
   void DirectionCoordinate::init (std::string const &system,
 				  std::string const &projection)
   {
-    CoordinateInterface::init (Coordinate::DIRECTION,
-			       2,
-			       Coordinate::DIRECTION);
-
+    CoordinateInterface<double>::init (Coordinate::DIRECTION,
+				       2,
+				       Coordinate::DIRECTION);
+    
     system_p          = system;
     projection_p      = projection;
     projectionParam_p = std::vector<double>(1,0.0);

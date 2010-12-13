@@ -73,14 +73,17 @@ namespace DAL {  // Namespace DAL -- begin
     </ul>
     
   */
-  class TabularCoordinate : public CoordinateInterface {
+  template <class T>
+  class TabularCoordinate : public CoordinateInterface<T> {
     
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    TabularCoordinate ();
+    TabularCoordinate () {
+      init();
+    }
     //! Argumented constructor
     TabularCoordinate (std::string const &axisNames,
 		       std::string const &axisUnits);
@@ -88,14 +91,16 @@ namespace DAL {  // Namespace DAL -- begin
     TabularCoordinate (std::string const &axisNames,
 		       std::string const &axisUnits,
 		       std::vector<double> const &pixelValues,
-		       std::vector<double> const &worldValues);
+		       std::vector<T> const &worldValues);
     //! Copy constructor
-    TabularCoordinate (TabularCoordinate const &other);
+    TabularCoordinate (TabularCoordinate<T> const &other);
     
     // === Destruction ==========================================================
     
     //! Destructor
-    ~TabularCoordinate ();
+    ~TabularCoordinate () {
+      destroy();
+    }
     
     // === Operators ============================================================
     
@@ -104,7 +109,13 @@ namespace DAL {  // Namespace DAL -- begin
       
       \param other -- Another TabularCoordinate object from which to make a copy.
     */
-    TabularCoordinate& operator= (TabularCoordinate const &other);
+    TabularCoordinate<T>& operator= (TabularCoordinate<T> const &other) {
+      if (this != &other) {
+	destroy ();
+	copy (other);
+      }
+      return *this;
+    }
     
     // === Parameter access =====================================================
 
@@ -112,14 +123,25 @@ namespace DAL {  // Namespace DAL -- begin
     bool setAxisNames (std::string const &names);
     //! Set world axis units
     bool setAxisUnits (std::string const &units);
-    
-    //! Set the pixel values
-    bool setPixelValues (std::vector<double> const &pixelValues);
-    //! Set the world values
-    bool setWorldValues (std::vector<double> const &worldValues);
     //! Set the values along the pixel and world axis
     bool setAxisValues (std::vector<double> const &pixelValues,
-			std::vector<double> const &worldValues);
+			std::vector<T> const &worldValues) {
+      bool status (true);
+      
+      if (pixelValues.size() == worldValues.size()) {
+	// adjust array sizes
+	this->pixelValues_p.resize(pixelValues.size());
+	this->worldValues_p.resize(worldValues.size());
+	// copy values
+	this->pixelValues_p = pixelValues;
+	this->worldValues_p = worldValues;
+      }
+      else {
+	status = false;
+      }
+      
+      return status;
+    }
     
     /*!
       \brief Get the name of the class
@@ -173,19 +195,27 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! Initialize internal parameters
     void init (std::string const &axisNames="UNDEFINED",
-	       std::string const &axisUnits="UNDEFINED");
+	       std::string const &axisUnits="UNDEFINED") {
+      // arrays to be passed on
+      std::vector<std::string> names (1,axisNames);
+      std::vector<std::string> units (1,axisUnits);
+      std::vector<double> pixel;
+      std::vector<T> world;
+      // forward function call
+      init (names, units, pixel, world);
+    }
 
     //! Initialize internal parameters
     void init (std::vector<std::string> const &axisNames,
 	       std::vector<std::string> const &axisUnits,
 	       std::vector<double> const &pixelValues,
-	       std::vector<double> const &worldValues);
+	       std::vector<T> const &worldValues);
     
     //! Unconditional copying
     void copy (TabularCoordinate const &other);
     
     //! Unconditional deletion
-    void destroy(void);
+    void destroy(void) {}
     
   }; // Class TabularCoordinate -- end
   

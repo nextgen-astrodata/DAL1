@@ -27,72 +27,15 @@ namespace DAL {
   
   // ============================================================================
   //
-  //  Construction
-  //
-  // ============================================================================
-  
-  //_____________________________________________________________________________
-  //                                                                   Coordinate
-  
-  CoordinateInterface::CoordinateInterface ()
-  {
-    init();
-  }
-  
-  //_____________________________________________________________________________
-  //                                                          CoordinateInterface
-  
-  /*!
-    \param other -- Another Coordinate object from which to create this new
-           one.
-  */
-  CoordinateInterface::CoordinateInterface (CoordinateInterface const &other)
-  {
-    copy (other);
-  }
-  
-  // ============================================================================
-  //
-  //  Destruction
-  //
-  // ============================================================================
-
-  CoordinateInterface::~CoordinateInterface ()
-  {
-    destroy();
-  }
-
-  void CoordinateInterface::destroy ()
-  {
-    attributes_p.clear();
-  }
-
-  // ============================================================================
-  //
   //  Operators
   //
   // ============================================================================
 
   //_____________________________________________________________________________
-  //                                                                    operator=
-
-  /*!
-    \param other -- Another Coordinate object from which to make a copy.
-  */
-  CoordinateInterface& CoordinateInterface::operator= (CoordinateInterface const &other)
-  {
-    if (this != &other)
-      {
-        destroy ();
-        copy (other);
-      }
-    return *this;
-  }
-
-  //_____________________________________________________________________________
   //                                                                         copy
 
-  void CoordinateInterface::copy (CoordinateInterface const &other)
+  template <class T>
+  void CoordinateInterface<T>::copy (CoordinateInterface const &other)
   {
     /* Copy basic attributes */
     coord_p   = other.coord_p;
@@ -115,6 +58,22 @@ namespace DAL {
     refPixel_p   = other.refPixel_p;
     increment_p  = other.increment_p;
     pc_p         = other.pc_p;
+
+    /* Coordinate values along the pixel axis */
+    if (pixelValues_p.empty()) {
+      pixelValues_p.clear();
+    } else {
+      pixelValues_p.resize(other.pixelValues_p.size());
+      pixelValues_p = other.pixelValues_p;
+    }
+
+    /* Coordinate values along the world axis */
+    if (worldValues_p.empty()) {
+      worldValues_p.clear();
+    } else {
+      worldValues_p.resize(other.worldValues_p.size());
+      worldValues_p = other.worldValues_p;
+    }
   }
 
   // ============================================================================
@@ -126,7 +85,8 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                 setAxisNames
   
-  bool CoordinateInterface::setAxisNames (std::vector<std::string> const &axisNames)
+  template <class T>
+  bool CoordinateInterface<T>::setAxisNames (std::vector<std::string> const &axisNames)
   {
     bool status (true);
     
@@ -145,7 +105,8 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                 setAxisUnits
   
-  bool CoordinateInterface::setAxisUnits (std::vector<std::string> const &axisUnits)
+  template <class T>
+  bool CoordinateInterface<T>::setAxisUnits (std::vector<std::string> const &axisUnits)
   {
     bool status (true);
     
@@ -169,7 +130,8 @@ namespace DAL {
     \return status  -- Status of the operation; returns \e false in case an error
             was encountered.
    */
-  bool CoordinateInterface::setRefValue (std::vector<double> const &refValue)
+  template <class T>
+  bool CoordinateInterface<T>::setRefValue (std::vector<T> const &refValue)
   {
     bool status (true);
     
@@ -218,8 +180,9 @@ namespace DAL {
     \param refPixel -- Reference pixel (CRPIX).
     \return status  -- Status of the operation; returns \e false in case an error
             was encountered.
-   */
-  bool CoordinateInterface::setRefPixel (std::vector<double> const &refPixel)
+  */
+  template <class T>
+  bool CoordinateInterface<T>::setRefPixel (std::vector<double> const &refPixel)
   {
     bool status (true);
     
@@ -269,7 +232,8 @@ namespace DAL {
     \return status   -- Status of the operation; returns \e false in case an error
             was encountered.
    */
-  bool CoordinateInterface::setIncrement (std::vector<double> const &increment)
+  template <class T>
+  bool CoordinateInterface<T>::setIncrement (std::vector<double> const &increment)
   {
     bool status (true);
     
@@ -324,7 +288,8 @@ namespace DAL {
     \return status   -- Status of the operation; returns \e false in case an error
             was encountered.
   */
-  bool CoordinateInterface::setPc (std::vector<double> const &pc)
+  template <class T>
+  bool CoordinateInterface<T>::setPc (std::vector<double> const &pc)
   {
     bool status (true);
 
@@ -366,26 +331,52 @@ namespace DAL {
   }
 
   //_____________________________________________________________________________
-  //                                                                      summary
-  
-  /*!
-    \param os -- Output stream to which the summary is written.
-  */
-  void CoordinateInterface::summary (std::ostream &os)
+  //                                                               setPixelValues
+
+  template <class T>
+  bool CoordinateInterface<T>::setPixelValues (std::vector<double> const &values)
   {
-    os << "[CoordinateInterface] Summary of internal parameters." << std::endl;
-    os << "-- Coordinate type  = " << type() << " / " <<  name() << std::endl;
-    os << "-- Storage type     = " << storageType_p.type()
-       << " / " <<  storageType_p.name() << std::endl;
-    os << "-- nof. axes        = " << nofAxes_p     << std::endl;
-    os << "-- World axis names = " << axisNames_p   << std::endl;
-    os << "-- World axis units = " << axisUnits_p   << std::endl;
-    os << "-- Reference value  = " << refValue_p    << std::endl;
-    os << "-- Reference pixel  = " << refPixel_p    << std::endl;
-    os << "-- Increment        = " << increment_p   << std::endl;
-    os << "-- PC               = " << pc_p          << std::endl;
+    bool status (true);
+    unsigned int nelem = values.size();
+
+    if (pixelValues_p.empty()) {
+      if (worldValues_p.empty()) {
+	/* If both pixel and world values are not defined yet, we can simply
+	   accept the provided values, as there is no further reference. */
+	pixelValues_p.resize(nelem);
+	pixelValues_p = values;
+      } else {
+	/* If the world axis values have been set already, enforce match in the
+	   size of the arrays. */
+	if (nelem = worldValues_p.size()) {
+	  pixelValues_p.resize(nelem);
+	  pixelValues_p = values;
+	} else {
+	  /* Reject input values if number of elements does not match that of
+	     the already assigned world axis values. */
+	  std::cerr << "[CoordinateInterface::setPixelValues]"
+		    << " Wrong number of elements in the provided array!"
+		    << std::endl;
+	  status = false;
+	}
+      }
+    } else {
+      if (nelem = pixelValues_p.size()) {
+	pixelValues_p = values;
+      } else {
+	std::cerr << "[CoordinateInterface::setPixelValues]"
+		  << " Wrong number of elements in the provided array!"
+		  << std::endl;
+	status = false;
+      }
+    }
+    
+    return status;
   }
   
+  //_____________________________________________________________________________
+  //                                                               setWorldValues
+
   // ============================================================================
   //
   //  Methods
@@ -401,12 +392,13 @@ namespace DAL {
     \parma storageType -- Storage type of the coordinate. i.e. container
            internally used to represent the coordinate.
   */
-  void CoordinateInterface::init (DAL::Coordinate const &coord,
-				  unsigned int const &nofAxes,
-				  DAL::Coordinate const &storageType)
+  template <class T>
+  void CoordinateInterface<T>::init (DAL::Coordinate const &coord,
+				     unsigned int const &nofAxes,
+				     DAL::Coordinate const &storageType)
   {
     /* Initialize the size of the internal arrays */
-
+    
     axisNames_p.clear();
     axisUnits_p.clear();
     refValue_p.clear();
@@ -434,9 +426,9 @@ namespace DAL {
       for (unsigned int n(0); n<nofAxes; ++n) {
 	axisNames_p[n] = "UNDEFINED";
 	axisUnits_p[n] = "UNDEFINED";
-	refValue_p[n]  = 0.0;
-	refPixel_p[n]  = 0.0;
-	increment_p[n] = 0.0;
+	refValue_p[n]  = 0;
+	refPixel_p[n]  = 0;
+	increment_p[n] = 0;
       }
       // Transformation is identity matrix
       DAL::IdentityMatrix (pc_p,nofAxes);
@@ -452,7 +444,8 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                setAttributes
 
-  void CoordinateInterface::setAttributes ()
+  template <class T>
+  void CoordinateInterface<T>::setAttributes ()
   {
     /* clear data container */
     attributes_p.clear();

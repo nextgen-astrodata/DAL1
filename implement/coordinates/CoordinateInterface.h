@@ -61,101 +61,13 @@ namespace DAL {   // Namespace DAL -- begin
     object as being part of a HDF5-based LOFAR data-set (most prominently an
     image).
 
-    <table border=0>
-      <tr>
-        <td class="indexkey"></td>
-        <td class="indexkey">DirectionCoordinate</td>
-        <td class="indexkey">LinearCoordinate</td>
-        <td class="indexkey">TabularCoordinate</td>
-        <td class="indexkey">StokesCoordinate</td>
-        <td class="indexkey">SpectralCoordinate</td>
-      </tr>
-      <tr>
-        <td class="indexkey">GROUPTYPE</td>
-        <td>CoordDirection</td>
-        <td>CoordLinear</td>
-        <td>CoordTabular</td>
-        <td>CoordStokes</td>
-        <td>CoordSpectral</td>
-      </tr>
-      <tr>
-        <td class="indexkey">COORDINATE_TYPE</td>
-        <td>DIRECTION</td>
-        <td>LINEAR</td>
-        <td>TABULAR</td>
-        <td>STOKES</td>
-        <td>SPECTRAL</td>
-      </tr>
-      <tr>
-        <td class="indexkey">NOF_AXES</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-      </tr>
-      <tr>
-        <td class="indexkey">AXIS_NAMES</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-      </tr>
-      <tr>
-        <td class="indexkey">AXIS_UNITS</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-      </tr>
-      <tr>
-        <td class="indexkey">REFERENCE_PIXEL</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-        <td>\e yes, refPixel[0]</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-      </tr>
-      <tr>
-        <td class="indexkey">REFERENCE_VALUE</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-        <td>\e yes, refValue[0]</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-      </tr>
-      <tr>
-        <td class="indexkey">PC</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-        <td>\e yes, pc[0]=1.0</td>
-        <td>\e yes</td>
-        <td>\e yes</td>
-      </tr>
-      <tr>
-        <td class="indexkey">AXIS_VALUES_PIXEL</td>
-        <td>\e --</td>
-        <td>\e ---</td>
-        <td>\e ---</td>
-        <td>\e yes</td>
-        <td>\e --</td>
-      </tr>
-      <tr>
-        <td class="indexkey">AXIS_VALUES_WORLD</td>
-        <td>\e --</td>
-        <td>\e ---</td>
-        <td>\e ---</td>
-        <td>\e yes</td>
-        <td>\e --</td>
-      </tr>
-    </table>
-
     <h3>Example(s)</h3>
 
+    As CoordinateInterface defines an abstract base class, it cannot be used
+    directly.
+
   */
-  class CoordinateInterface {
+  template <class T> class CoordinateInterface {
     
   protected:
 
@@ -175,7 +87,7 @@ namespace DAL {   // Namespace DAL -- begin
     //! World axis units
     std::vector<std::string> axisUnits_p;
     //! Reference value (CRVAL)
-    std::vector<double> refValue_p;
+    std::vector<T> refValue_p;
     //! Reference pixel (CRPIX)
     std::vector<double> refPixel_p;
     //! Coordinate axis increment (CDELT)
@@ -185,7 +97,7 @@ namespace DAL {   // Namespace DAL -- begin
     //! List of pixel values
     std::vector<double> pixelValues_p;
     //! List of world values
-    std::vector<double> worldValues_p;
+    std::vector<T> worldValues_p;
     
     // === Protected Methods ====================================================
 
@@ -201,19 +113,32 @@ namespace DAL {   // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    CoordinateInterface ();
+    CoordinateInterface () {
+      init ();
+    }
     //! Copy constructor
-    CoordinateInterface (CoordinateInterface const &other);
+    CoordinateInterface (CoordinateInterface const &other) {
+      copy (other);
+    }
     
     // === Destruction ==========================================================
     
     //! Destructor
-    virtual ~CoordinateInterface ();
+    virtual ~CoordinateInterface () {
+      destroy();
+    }
     
     // === Operators ============================================================
     
     //! Overloading of the copy operator
-    CoordinateInterface& operator= (CoordinateInterface const &other);
+    CoordinateInterface& operator= (CoordinateInterface const &other) {
+      if (this != &other)
+	{
+	  destroy ();
+	  copy (other);
+	}
+      return *this;
+    }
     
     // === Parameter access =====================================================
     
@@ -250,11 +175,11 @@ namespace DAL {   // Namespace DAL -- begin
     //! Set the world axis units
     bool setAxisUnits (std::vector<std::string> const &axisUnits);
     //! Get the reference value
-    inline std::vector<double> refValue () const {
+    inline std::vector<T> refValue () const {
       return refValue_p;
     }
     //! Set the reference value
-    virtual bool setRefValue (std::vector<double> const &refValue);
+    virtual bool setRefValue (std::vector<T> const &refValue);
     //! Get the reference pixel
     inline std::vector<double> refPixel () const {
       return refPixel_p;
@@ -280,12 +205,14 @@ namespace DAL {   // Namespace DAL -- begin
     }
     //! Set the transformation matrix
     virtual bool setPc (std::vector<double> const &pc);
-    //! Get tabulated pixel values
+    //! Get the tabulated values along the pixel axis
     inline std::vector<double> pixelValues () const {
       return pixelValues_p;
     }
+    //! Set the tabulated values along the pixel axis
+    virtual bool setPixelValues (std::vector<double> const &values);
     //! Get tabulated world values
-    inline std::vector<double> worldValues () const {
+    inline std::vector<T> worldValues () const {
       return worldValues_p;
     }
     /*!
@@ -304,7 +231,19 @@ namespace DAL {   // Namespace DAL -- begin
     }
     
     //! Provide a summary of the internal status
-    void summary (std::ostream &os);
+    void summary (std::ostream &os) {
+      os << "[CoordinateInterface] Summary of internal parameters." << std::endl;
+      os << "-- Coordinate type  = " << type() << " / " <<  name() << std::endl;
+      os << "-- Storage type     = " << storageType_p.type()
+	 << " / " <<  storageType_p.name() << std::endl;
+      os << "-- nof. axes        = " << nofAxes_p     << std::endl;
+      os << "-- World axis names = " << axisNames_p   << std::endl;
+      os << "-- World axis units = " << axisUnits_p   << std::endl;
+      os << "-- Reference value  = " << refValue_p    << std::endl;
+      os << "-- Reference pixel  = " << refPixel_p    << std::endl;
+      os << "-- Increment        = " << increment_p   << std::endl;
+      os << "-- PC               = " << pc_p          << std::endl;
+    }
     
 #ifdef HAVE_HDF5
     //! Write the coordinate object to a HDF5 file
@@ -329,7 +268,9 @@ namespace DAL {   // Namespace DAL -- begin
     //! Set the attributes attached to the storage structure
     void setAttributes ();
     //! Unconditional deletion
-    void destroy(void);
+    void destroy(void) {
+      attributes_p.clear();
+    }
     
   }; // Class Coordinate -- end
   

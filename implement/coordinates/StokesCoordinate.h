@@ -59,7 +59,7 @@ namespace DAL {  // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */
-  class StokesCoordinate : public CoordinateInterface {
+  class StokesCoordinate : public CoordinateInterface<std::string> {
 
     //! Set of Stokes components represented by this coordinate
     std::vector<DAL::Stokes> values_p;

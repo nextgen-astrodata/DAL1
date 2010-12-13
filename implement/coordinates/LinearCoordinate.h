@@ -84,7 +84,7 @@ namespace DAL {  // Namespace DAL -- begin
     <h3>Example(s)</h3>
 
   */
-  class LinearCoordinate : public CoordinateInterface {
+  class LinearCoordinate : public CoordinateInterface<double> {
     
   public:
     
