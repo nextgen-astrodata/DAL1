@@ -25,6 +25,7 @@ add_definitions (
   -D_LARGEFILE64_SOURCE
   -D_LARGEFILE_SOURCE
   -fPIC
+  -fpermissive
   -ftemplate-depth-100
   )
 
