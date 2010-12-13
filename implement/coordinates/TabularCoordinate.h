@@ -81,17 +81,30 @@ namespace DAL {  // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    TabularCoordinate () {
-      init();
-    }
+    TabularCoordinate ()
+      {
+	init();
+      }
     //! Argumented constructor
     TabularCoordinate (std::string const &axisNames,
-		       std::string const &axisUnits);
+		       std::string const &axisUnits)
+      {
+	init (axisNames,
+	      axisUnits);
+      }
     //! Argumented constructor
     TabularCoordinate (std::string const &axisNames,
 		       std::string const &axisUnits,
 		       std::vector<double> const &pixelValues,
-		       std::vector<T> const &worldValues);
+		       std::vector<T> const &worldValues)
+      {
+	// Initialize basic parameters
+	init (axisNames,
+	      axisUnits);
+	// Set axis values
+	setAxisValues (pixelValues,
+		       worldValues);
+      }
     //! Copy constructor
     TabularCoordinate (TabularCoordinate<T> const &other);
     
@@ -169,19 +182,79 @@ namespace DAL {  // Namespace DAL -- begin
     // === Public methods =======================================================
 
 #ifdef HAVE_HDF5    
+    //___________________________________________________________________________
+    //                                                                 write_hdf5
     //! Write the coordinate object to a HDF5 file
-    void write_hdf5 (hid_t const &groupID);
-    
+    void write_hdf5 (hid_t const &groupID)
+    {
+      DAL::h5set_attribute( groupID, "COORDINATE_TYPE",  this->name() );
+      DAL::h5set_attribute( groupID, "NOF_AXES",         this->nofAxes_p );
+      DAL::h5set_attribute( groupID, "AXIS_NAMES",       this->axisNames_p );
+      DAL::h5set_attribute( groupID, "AXIS_UNITS",       this->axisUnits_p );
+      DAL::h5set_attribute( groupID, "PIXEL_VALUES",     this->pixelValues_p );
+      DAL::h5set_attribute( groupID, "WORLD_VALUES",     this->worldValues_p );
+    }
+    //___________________________________________________________________________
+    //                                                                 write_hdf5
     //! Write the coordinate object to a HDF5 file
     void write_hdf5 (hid_t const &locationID,
-		  std::string const &name);
-    
+		     std::string const &name)
+    {
+      hid_t groupID (0);
+      // create HDF5 group
+      if (H5Lexists (locationID, name.c_str(), H5P_DEFAULT)) {
+	groupID = H5Gopen (locationID,
+			   name.c_str(),
+			   H5P_DEFAULT);
+	
+      } else {
+	groupID = H5Gcreate( locationID,
+			     name.c_str(),
+			     H5P_DEFAULT,
+			     H5P_DEFAULT,
+			     H5P_DEFAULT );
+      }
+      // write coordinate attributes
+      write_hdf5 (groupID);
+      // close the group after write
+      H5Gclose (groupID);
+    }
+    //___________________________________________________________________________
+    //                                                                  read_hdf5
     //! Read the coordinate object from a HDF5 file
-    void read_hdf5 (hid_t const &groupID);
-    
+    void read_hdf5 (hid_t const &groupID)
+    {
+      std::string coordinateTypeName;
+      
+      DAL::h5get_attribute( groupID, "COORDINATE_TYPE",  coordinateTypeName );
+      DAL::h5get_attribute( groupID, "NOF_AXES",         this->nofAxes_p );
+      DAL::h5get_attribute( groupID, "AXIS_NAMES",       this->axisNames_p );
+      DAL::h5get_attribute( groupID, "AXIS_UNITS",       this->axisUnits_p );
+      DAL::h5get_attribute( groupID, "PIXEL_VALUES",     this->pixelValues_p );
+      DAL::h5get_attribute( groupID, "WORLD_VALUES",     this->worldValues_p );
+    }
+    //___________________________________________________________________________
+    //                                                                  read_hdf5
     //! Read the coordinate object from a HDF5 file
     void read_hdf5 (hid_t const &locationID,
-		    std::string const &name);
+		    std::string const &name)
+    {
+      hid_t groupID (0);
+      
+      groupID = H5Gopen1 (locationID,
+			  name.c_str());
+      
+      if (groupID) {
+	read_hdf5 (groupID);
+      }
+      else {
+	std::cerr << "[TabularCoordinate::read_hdf5] Error opening group "
+		  << name
+		  << std::endl;
+      }
+      
+      H5Gclose (groupID);
+    }
 #endif
     
 #ifdef HAVE_CASA

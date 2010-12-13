@@ -2,13 +2,6 @@
 ## $Id::                                                                       $
 ##------------------------------------------------------------------------------
 
-## -----------------------------------------------------------------------------
-## TODO:
-## 
-## - translate the following build instructions to CMake settings:
-##    g++ -c *.cpp -ftemplate-depth-100 -fPIC -I/usr/include/python2.4 -I.
-##    g++ *.o -lboost_python -lcfitsio -lhdf5 -lhdf5_hl -lhdf5_cpp -lz -lm -o dal.so -shared
-
 ## ==============================================================================
 ##
 ##  Compiler flags
@@ -97,7 +90,7 @@ foreach (dal_module ${dal_modules})
   ## Add include paths
   include_directories (${DAL_SOURCE_DIR}/implement/${dal_module})
   ## list of source files for this module
-  FILE (GLOB dal_${dal_module}_sources ${dal_module}/*.cpp ${dal_module}/*.cc)
+  FILE (GLOB dal_${dal_module}_sources ${dal_module}/*.cc ${dal_module}/*.tcc)
   ## list of header files for this module
   FILE (GLOB dal_${dal_module}_headers ${dal_module}/*.h)
   ## expand the list of source files
