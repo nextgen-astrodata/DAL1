@@ -106,7 +106,11 @@ namespace DAL {  // Namespace DAL -- begin
 		       worldValues);
       }
     //! Copy constructor
-    TabularCoordinate (TabularCoordinate<T> const &other);
+    TabularCoordinate (TabularCoordinate<T> const &other)
+      : CoordinateInterface<T> (other)
+      {
+	copy (other);
+      }
     
     // === Destruction ==========================================================
     
@@ -132,27 +136,30 @@ namespace DAL {  // Namespace DAL -- begin
     
     // === Parameter access =====================================================
 
-    //! Set world axis names
-    bool setAxisNames (std::string const &names);
-    //! Set world axis units
-    bool setAxisUnits (std::string const &units);
     //! Set the values along the pixel and world axis
     bool setAxisValues (std::vector<double> const &pixelValues,
-			std::vector<T> const &worldValues) {
+			std::vector<T> const &worldValues)
+    {
       bool status (true);
       
-      if (pixelValues.size() == worldValues.size()) {
+      if (pixelValues.empty() && worldValues.empty()) {
+	this->itsPixelValues.clear();
+	this->itsWorldValues.clear();
+      } else if (pixelValues.size() == worldValues.size()) {
 	// adjust array sizes
-	this->pixelValues_p.resize(pixelValues.size());
-	this->worldValues_p.resize(worldValues.size());
+	this->itsPixelValues.resize(pixelValues.size());
+	this->itsWorldValues.resize(worldValues.size());
 	// copy values
-	this->pixelValues_p = pixelValues;
-	this->worldValues_p = worldValues;
+	this->itsPixelValues = pixelValues;
+	this->itsWorldValues = worldValues;
       }
       else {
+	std::cerr << "[TabularCoordinate::setAxisValues]" 
+		  << " Mismatch in length of input vectors!"
+		  << std::endl;
 	status = false;
       }
-      
+
       return status;
     }
     
@@ -177,7 +184,22 @@ namespace DAL {  // Namespace DAL -- begin
       
       \param os -- Output stream to which the summary is written.
     */
-    void summary (std::ostream &os);
+    void summary (std::ostream &os)
+    {
+      os << "[TabularCoordinate] Summary of internal parameters." << std::endl;
+      os << "-- Coordinate type       = " << this->type()
+	 << " / " <<  this->name() << std::endl;
+      os << "-- Storage type          = " << this->storageType_p.type()
+	 << " / " <<  this->storageType_p.name() << std::endl;
+      os << "-- nof. axes             = " << this->nofAxes_p     << std::endl;
+      os << "-- World axis names      = " << this->axisNames_p   << std::endl;
+      os << "-- World axis units      = " << this->axisUnits_p   << std::endl;
+      os << "-- Pixel values          = " << this->itsPixelValues << std::endl;
+      os << "-- World values          = " << this->itsWorldValues << std::endl;
+      os << "-- Reference value       = " << this->refValue_p    << std::endl;
+      os << "-- Reference pixel       = " << this->refPixel_p    << std::endl;
+      os << "-- Transformation matrix = " << this->pc_p          << std::endl;
+    }
     
     // === Public methods =======================================================
 
@@ -191,8 +213,8 @@ namespace DAL {  // Namespace DAL -- begin
       DAL::h5set_attribute( groupID, "NOF_AXES",         this->nofAxes_p );
       DAL::h5set_attribute( groupID, "AXIS_NAMES",       this->axisNames_p );
       DAL::h5set_attribute( groupID, "AXIS_UNITS",       this->axisUnits_p );
-      DAL::h5set_attribute( groupID, "PIXEL_VALUES",     this->pixelValues_p );
-      DAL::h5set_attribute( groupID, "WORLD_VALUES",     this->worldValues_p );
+      DAL::h5set_attribute( groupID, "PIXEL_VALUES",     this->itsPixelValues );
+      DAL::h5set_attribute( groupID, "WORLD_VALUES",     this->itsWorldValues );
     }
     //___________________________________________________________________________
     //                                                                 write_hdf5
@@ -230,8 +252,8 @@ namespace DAL {  // Namespace DAL -- begin
       DAL::h5get_attribute( groupID, "NOF_AXES",         this->nofAxes_p );
       DAL::h5get_attribute( groupID, "AXIS_NAMES",       this->axisNames_p );
       DAL::h5get_attribute( groupID, "AXIS_UNITS",       this->axisUnits_p );
-      DAL::h5get_attribute( groupID, "PIXEL_VALUES",     this->pixelValues_p );
-      DAL::h5get_attribute( groupID, "WORLD_VALUES",     this->worldValues_p );
+      DAL::h5get_attribute( groupID, "PIXEL_VALUES",     this->itsPixelValues );
+      DAL::h5get_attribute( groupID, "WORLD_VALUES",     this->itsWorldValues );
     }
     //___________________________________________________________________________
     //                                                                  read_hdf5
@@ -268,7 +290,9 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! Initialize internal parameters
     void init (std::string const &axisNames="UNDEFINED",
-	       std::string const &axisUnits="UNDEFINED") {
+	       std::string const &axisUnits="UNDEFINED")
+    {
+      std::cout << "[TabularCoordinate<T>::init(string,string)]" << std::endl;
       // arrays to be passed on
       std::vector<std::string> names (1,axisNames);
       std::vector<std::string> units (1,axisUnits);
@@ -282,7 +306,18 @@ namespace DAL {  // Namespace DAL -- begin
     void init (std::vector<std::string> const &axisNames,
 	       std::vector<std::string> const &axisUnits,
 	       std::vector<double> const &pixelValues,
-	       std::vector<T> const &worldValues);
+	       std::vector<T> const &worldValues)
+    {
+      std::cout << "[TabularCoordinate<T>::init(string,string,vector,vector)]" << std::endl;
+      /* Initialize base class */
+      CoordinateInterface<T>::init (Coordinate::TABULAR,
+				    1,
+				    Coordinate::TABULAR);
+      
+      CoordinateInterface<T>::setAxisNames (axisNames);
+      CoordinateInterface<T>::setAxisUnits (axisUnits);
+      setAxisValues (pixelValues, worldValues);
+    }
     
     //! Unconditional copying
     void copy (TabularCoordinate const &other);

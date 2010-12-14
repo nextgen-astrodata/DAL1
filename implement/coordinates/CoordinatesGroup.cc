@@ -47,7 +47,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     init ();
     open (location,
-	  groupType_p,
+	  itsGroupType,
 	  create);
   }
   
@@ -111,7 +111,7 @@ namespace DAL { // Namespace DAL -- begin
     location_p = 0;
 
     /* Internal variables*/
-    groupType_p        = "CoordinatesGroup";
+    itsGroupType       = "CoordinatesGroup";
     refLocationValue_p = std::vector<double> (3, 0.0);
     refLocationUnit_p  = std::vector<std::string> (3, undefined);
     refLocationFrame_p = undefined;
@@ -120,7 +120,7 @@ namespace DAL { // Namespace DAL -- begin
     refTimeFrame_p     = "UTC";
     nofCoordinates_p   = 0;
     nofAxes_p          = 0;
-    coordinateTypes_p  = std::vector<std::string> (1, undefined);
+    itsCoordinateTypes = std::vector<std::string> (1, undefined);
 
     return status;
   }
@@ -193,7 +193,7 @@ namespace DAL { // Namespace DAL -- begin
 	  std::string undefined ("UNDEFINED");
 	  std::vector<std::string> types (1,undefined);
 	  // write the attributes
-	  h5set_attribute (location_p, "GROUPTYPE",          groupType_p       );
+	  h5set_attribute (location_p, "GROUPTYPE",          itsGroupType      );
 	  h5set_attribute (location_p, "REF_LOCATION_VALUE", refLocationValue_p);
 	  h5set_attribute (location_p, "REF_LOCATION_UNIT",  refLocationUnit_p );
 	  h5set_attribute (location_p, "REF_LOCATION_FRAME", refLocationFrame_p);

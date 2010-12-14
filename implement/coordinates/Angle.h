@@ -60,9 +60,9 @@ namespace DAL { // Namespace DAL -- begin
   class Angle {
 
     //! Angle representation in Radian
-    double rad_p;
+    double itsRadian;
     //! Angle representation in degrees
-    double deg_p;
+    double itsDeg;
 
   public:
     
@@ -81,7 +81,9 @@ namespace DAL { // Namespace DAL -- begin
       \param other -- Another Angle object from which to create this new
              one.
     */
-    Angle (Angle const &other);
+    Angle (Angle const &other) {
+      *this = other;
+    }
     
     // === Operators ============================================================
     
@@ -100,16 +102,18 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Get the angle in radian
     inline double rad () const {
-      return rad_p;
+      return itsRadian;
     }
     
     //! Get the angle in degrees
     inline double deg () const {
-      return deg_p;
+      return itsDeg;
     }
     
     //! Get the angle as formatted string (HH:MM:SS)
-    std::string hms ();
+    inline std::string hms () {
+      return rad2hms (itsRadian);
+    }
     
     /*!
       \brief Get the name of the class
@@ -175,9 +179,6 @@ namespace DAL { // Namespace DAL -- begin
 			 double const &deg);
 
   private:
-    
-    //! Unconditional copying
-    void copy (Angle const &other);
     
     //! Unconditional deletion 
     void destroy(void);

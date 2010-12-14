@@ -36,6 +36,7 @@
   \date 2009/06/24
 */
 
+using std::cerr;
 using std::cout;
 using std::endl;
 
@@ -61,16 +62,27 @@ int test_constructors ()
     coord.summary();
   }
   catch (std::string message) {
-    std::cerr << message << endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
   cout << "[2] Testing LinearCoordinate(int) ..." << endl;
   try {
-    unsigned int nofAxes (3);
-    DAL::LinearCoordinate coord (nofAxes);
-    //
-    coord.summary();
+    
+    cout << "--> coordinate with 2 axes" << endl;
+
+    DAL::LinearCoordinate coord2d (2);
+    coord2d.summary();
+
+    cout << "--> coordinate with 3 axes" << endl;
+
+    DAL::LinearCoordinate coord3d (3);
+    coord3d.summary();
+
+    cout << "--> coordinate with 4 axes" << endl;
+
+    DAL::LinearCoordinate coord4d (4);
+    coord4d.summary();
   }
   catch (std::string message) {
     std::cerr << message << endl;
@@ -129,7 +141,18 @@ int test_constructors ()
   
   cout << "[5] Testing copy constructor ..." << endl;
   try {
-    DAL::LinearCoordinate coord (3);
+    unsigned int nofAxes (2);
+    std::vector<std::string> names (nofAxes);
+    std::vector<std::string> units (nofAxes);
+    //
+    names[0] = "Time";
+    names[1] = "Frequency";
+    units[0] = "s";
+    units[1] = "Hz";
+    //
+    DAL::LinearCoordinate coord (nofAxes);
+    coord.setAxisNames (names);
+    coord.setAxisUnits (units);
     coord.summary();
     //
     DAL::LinearCoordinate coordCopy (coord);
@@ -164,13 +187,13 @@ int test_parameters ()
   cout << "[1] Adjust world axis names ..." << endl;
   try {
     std::vector<std::string> names = coord.axisNames();
-    cout << names << endl;
+    cout << "-- old values = " << names << endl;
     
     names[0] = "Time";
     names[1] = "Frequency";
     
     coord.setAxisNames(names);
-    cout << coord.axisNames() << endl;
+    cout << "-- new values = " << coord.axisNames() << endl;
     
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -180,13 +203,13 @@ int test_parameters ()
   cout << "[2] Adjust world axis units ..." << endl;
   try {
     std::vector<std::string> units = coord.axisUnits();
-    cout << units << endl;
+    cout << "-- old values = " << units << endl;
     
     units[0] = "s";
     units[1] = "Hz";
     
     coord.setAxisUnits(units);
-    cout << coord.axisUnits() << endl;
+    cout << "-- new values = " << coord.axisUnits() << endl;
     
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -196,13 +219,13 @@ int test_parameters ()
   cout << "[3] Adjust reference value ..." << endl;
   try {
     std::vector<double> refValue = coord.refValue();
-    cout << refValue << endl;
+    cout << "-- old values = " << refValue << endl;
     
     refValue[0] = 0.1;
     refValue[1] = 30e06;
     
     coord.setRefValue(refValue);
-    cout << coord.refValue() << endl;
+    cout << "-- new values = " << coord.refValue() << endl;
     
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -212,13 +235,13 @@ int test_parameters ()
   cout << "[4] Adjust reference pixel ..." << endl;
   try {
     std::vector<double> refPixel = coord.refPixel();
-    cout << refPixel << endl;
+    cout << "-- old values = " << refPixel << endl;
     
     refPixel[0] = 1;
     refPixel[1] = 2;
     
     coord.setRefPixel(refPixel);
-    cout << coord.refPixel() << endl;
+    cout << "-- new values = " << coord.refPixel() << endl;
     
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -228,13 +251,13 @@ int test_parameters ()
   cout << "[5] Adjust coordinate axis increment ..." << endl;
   try {
     std::vector<double> incr = coord.increment();
-    cout << incr << endl;
+    cout << "-- old values = " << incr << endl;
     
     incr[0] = 0.1;
     incr[1] = 1e06;
     
     coord.setIncrement(incr);
-    cout << coord.increment() << endl;
+    cout << "-- new values = " << coord.increment() << endl;
     
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -244,7 +267,7 @@ int test_parameters ()
   cout << "[6] Adjust transformation matrix ..." << endl;
   try {
     std::vector<double> pc = coord.pc();
-    cout << pc << endl;
+    cout << "-- old values = " << pc << endl;
     
     pc[0] = 0.5;
     pc[1] = 1.5;
@@ -252,7 +275,7 @@ int test_parameters ()
     pc[3] = 1.5;
     
     coord.setPc(pc);
-    cout << coord.pc() << endl;
+    cout << "-- new values = " << coord.pc() << endl;
     
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -415,7 +438,6 @@ int test_hdf5 (std::string const &filename="tLinearCoordinate.h5")
     refPixel.resize(nofAxes);
     refValue.resize(nofAxes);
     increment.resize(nofAxes);
-    pc.resize(nofAxes*nofAxes);
     // assign arrays
     worldAxisNames[0] = "x";
     worldAxisNames[1] = "y";
@@ -433,16 +455,7 @@ int test_hdf5 (std::string const &filename="tLinearCoordinate.h5")
     increment[1]      = 0.2;
     increment[2]      = 0.4;
     
-    unsigned int n(0);
-    for (unsigned int i(0); i<nofAxes; ++i) {
-      for (unsigned int j(0); j<nofAxes; ++j,++n) {
-	if (i==j) {
-	  pc[n] = 1.0;
-	} else {
-	  pc[n] = 0.0;
-	}
-      }
-    } 
+    DAL::IdentityMatrix (pc, nofAxes);
     
     DAL::LinearCoordinate coord (nofAxes,
 				 worldAxisNames,

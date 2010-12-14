@@ -31,34 +31,33 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
 
-
   //_____________________________________________________________________________
   //                                                             StokesCoordinate
   
-  StokesCoordinate::StokesCoordinate ()
-  {
-    std::vector<Stokes::Component> stokes (1,Stokes::I);
-    init (stokes);
-  }
-
-  //_____________________________________________________________________________
-  //                                                             StokesCoordinate
-
   StokesCoordinate::StokesCoordinate (Stokes::Component const &value)
   {
     std::vector<Stokes::Component> stokes (1,value);
     init (stokes);
   }
-
+  
   //_____________________________________________________________________________
   //                                                             StokesCoordinate
-
+  
   StokesCoordinate::StokesCoordinate (DAL::Stokes const &value)
   {
     std::vector<DAL::Stokes> stokes (1,value);
     init (stokes);
   }
-
+  
+  //_____________________________________________________________________________
+  //                                                             StokesCoordinate
+  
+  StokesCoordinate::StokesCoordinate ()
+  {
+    std::vector<DAL::Stokes::Component> stokes (1,DAL::Stokes::I);
+    init (stokes);
+  }
+  
   //_____________________________________________________________________________
   //                                                             StokesCoordinate
 
@@ -85,7 +84,7 @@ namespace DAL {  // Namespace DAL -- begin
   StokesCoordinate::StokesCoordinate (StokesCoordinate const &other)
     : CoordinateInterface<std::string> (other)
   {
-    copy (other);
+    *this = other;
   }
   
   // ============================================================================
@@ -109,22 +108,52 @@ namespace DAL {  // Namespace DAL -- begin
   //  Operators
   //
   // ============================================================================
-
+  
+  /*!
+    \param other -- Another StokesCoordinate object from which to make a copy.
+  */
   StokesCoordinate& StokesCoordinate::operator= (StokesCoordinate const &other)
   {
     if (this != &other) {
-      destroy ();
-      copy (other);
+      /* Copy basic attributes */
+      coord_p       = other.coord_p;
+      nofAxes_p     = other.nofAxes_p;
+      storageType_p = other.storageType_p;
+      /* Resize internal arrays */
+      attributes_p.clear();
+      axisNames_p.resize(nofAxes_p);
+      axisUnits_p.resize(nofAxes_p);
+      refValue_p.resize(nofAxes_p);
+      refPixel_p.resize(nofAxes_p);
+      increment_p.resize(nofAxes_p);
+      pc_p.resize(nofAxes_p*nofAxes_p);
+      /* Copy the values */
+      attributes_p = other.attributes_p;
+      axisNames_p  = other.axisNames_p;
+      axisUnits_p  = other.axisUnits_p;
+      refValue_p   = other.refValue_p;
+      refPixel_p   = other.refPixel_p;
+      increment_p  = other.increment_p;
+      pc_p         = other.pc_p;
+      /* Coordinate values along the pixel axis */
+      if (itsPixelValues.empty()) {
+	itsPixelValues.clear();
+      } else {
+	itsPixelValues.resize(other.itsPixelValues.size());
+	itsPixelValues = other.itsPixelValues;
+      }
+      /* Coordinate values along the world axis */
+      if (itsWorldValues.empty()) {
+	itsWorldValues.clear();
+      } else {
+	itsWorldValues.resize(other.itsWorldValues.size());
+	itsWorldValues = other.itsWorldValues;
+      }
     }
-    return *this;
-  }
-  
-  void StokesCoordinate::copy (StokesCoordinate const &other)
-  {
-    // copy variables handled by the base class
-    CoordinateInterface<std::string>::copy (other);
     // copy variables handles by this class
-    init (other.values_p);
+    init (other.itsValues);
+    // Return pointer to object
+    return *this;
   }
   
   // ============================================================================
@@ -156,49 +185,85 @@ namespace DAL {  // Namespace DAL -- begin
   //  Methods
   //
   // ============================================================================
-
+  
   //_____________________________________________________________________________
   //                                                                         init
   
-  void StokesCoordinate::init (std::vector<Stokes::Component> const &values)
+  void StokesCoordinate::init (std::vector<DAL::Stokes::Component> const &values)
   {
     unsigned int nelem = values.size();
     std::vector<DAL::Stokes> stokes (nelem);
-
+    
     for (unsigned int n(0); n<nelem; ++n) {
       stokes[n] = DAL::Stokes(values[n]);
     }
-
+    
     init (stokes);
   }
-
+  
   //_____________________________________________________________________________
   //                                                                         init
   
   void StokesCoordinate::init (std::vector<DAL::Stokes> const &values)
   {
-    unsigned int nelem = values.size();
-
-    /* Initialize base class */
-    CoordinateInterface<std::string>::init (Coordinate::STOKES,
-					    1,
-					    Coordinate::TABULAR);
-    
     // store the input list of Stokes values
-    values_p.resize (nelem);
-    values_p = values;
-  }
+    itsValues.resize (values.size());
+    itsValues = values;
 
+    /* Initialize the size of the internal arrays */
+    
+    axisNames_p.clear();
+    axisUnits_p.clear();
+    refValue_p.clear();
+    refPixel_p.clear();
+    increment_p.clear();
+    pc_p.clear();
+    itsPixelValues.clear();
+    itsWorldValues.clear();
+    
+    /* Initialize internal variables storing coordinate parameters */
+
+    nofAxes_p     = 1;
+    coord_p       = DAL::Coordinate(Coordinate::STOKES);
+    storageType_p = DAL::Coordinate(Coordinate::TABULAR);
+    
+    if (nofAxes_p > 0) {
+      // Adjust the size of the internal arrays
+      axisNames_p.resize(nofAxes_p);
+      axisUnits_p.resize(nofAxes_p);
+      refValue_p.resize(nofAxes_p);
+      refPixel_p.resize(nofAxes_p);
+      increment_p.resize(nofAxes_p);
+      // Fill in default values for the WCS parameters
+      for (unsigned int n(0); n<nofAxes_p; ++n) {
+	axisNames_p[n] = "UNDEFINED";
+	axisUnits_p[n] = "UNDEFINED";
+	refValue_p[n]  = "UNDEFINED";
+	refPixel_p[n]  = 0;
+	increment_p[n] = 0;
+      }
+      // Transformation is identity matrix
+      DAL::IdentityMatrix (pc_p,nofAxes_p);
+    } else {
+      // set the number of coordinate axes
+      nofAxes_p = 0;
+    }
+    
+    /* Set up the basic set of attributes */
+    setAttributes ();
+
+  }
+  
   //_____________________________________________________________________________
   //                                                                  stokesTypes
   
   std::vector<Stokes::Component> StokesCoordinate::stokesTypes ()
   {
-    unsigned int nelem = values_p.size();
+    unsigned int nelem = itsValues.size();
     std::vector<DAL::Stokes::Component> val (nelem);
-
+    
     for (unsigned int n(0); n<nelem; ++n) {
-      val[n] = values_p[n].type();
+      val[n] = itsValues[n].type();
     }
     
     return val;
@@ -209,11 +274,11 @@ namespace DAL {  // Namespace DAL -- begin
   
   std::vector<std::string> StokesCoordinate::stokesNames ()
   {
-    unsigned int nelem = values_p.size();
+    unsigned int nelem = itsValues.size();
     std::vector<std::string> val (nelem);
 
     for (unsigned int n(0); n<nelem; ++n) {
-      val[n] = values_p[n].name();
+      val[n] = itsValues[n].name();
     }
     
     return val;
@@ -221,7 +286,7 @@ namespace DAL {  // Namespace DAL -- begin
   
   // ============================================================================
   //
-  //  Methods (using HDF5 library)
+  //  Methods (using HDF5)
   //
   // ============================================================================
 
@@ -332,4 +397,38 @@ namespace DAL {  // Namespace DAL -- begin
 
 #endif
   
+  // ============================================================================
+  //
+  //  Methods (using casacore)
+  //
+  // ============================================================================
+  
+#ifdef HAVE_CASA
+
+  //_____________________________________________________________________________
+  //                                                                    read_casa
+
+  bool StokesCoordinate::read_casa (casa::StokesCoordinate const &coord)
+  {
+    bool status (true);
+
+    nofAxes_p = coord.nPixelAxes();
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                   write_casa
+
+  bool StokesCoordinate::write_casa (casa::StokesCoordinate &coord)
+  {
+    bool status (true);
+    casa::Vector<casa::Int> components (1,casa::Stokes::I);
+
+    coord = casa::StokesCoordinate(components);
+
+    return status;
+  }
+#endif
+
 } // Namespace DAL -- end

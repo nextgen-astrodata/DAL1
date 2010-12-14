@@ -86,7 +86,7 @@ namespace DAL { // Namespace DAL -- begin
   class CoordinatesGroup : public HDF5CommonInterface {
 
     //! Group type descriptor
-    std::string groupType_p;
+    std::string itsGroupType;
     //! Reference location value
     std::vector<double> refLocationValue_p;
     //! Reference location unit
@@ -104,7 +104,7 @@ namespace DAL { // Namespace DAL -- begin
     //! nof. coordinate axes
     int nofAxes_p;
     //! Container for book-keeping on the embedded coordinate objects
-    std::vector<std::string> coordinateTypes_p;
+    std::vector<std::string> itsCoordinateTypes;
     //! Container for the coordinate objects embedded within this group
     std::vector<Coordinate*> coordinates_p;
     
@@ -155,7 +155,7 @@ namespace DAL { // Namespace DAL -- begin
 	       bool const &create=true);
     //! Get the group type identifier
     inline std::string groupType () const {
-      return groupType_p;
+      return itsGroupType;
     }
     //! Get the reference location value
     inline std::vector<double> refLocationValue () const {

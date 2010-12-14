@@ -43,13 +43,13 @@ namespace DAL {  // Namespace DAL -- begin
     \brief Brief description for class StokesCoordinate
     
     \author Lars B&auml;hren
-
+    
     \date 2009/09/10
-
+    
     \test tStokesCoordinate.cc
-
+    
     <h3>Prerequisite</h3>
-
+    
     <ul>
       <li>DAL::Stokes -- Components of a Stokes coordinate.
     </ul>
@@ -62,7 +62,7 @@ namespace DAL {  // Namespace DAL -- begin
   class StokesCoordinate : public CoordinateInterface<std::string> {
 
     //! Set of Stokes components represented by this coordinate
-    std::vector<DAL::Stokes> values_p;
+    std::vector<DAL::Stokes> itsValues;
 
   public:
     
@@ -78,12 +78,6 @@ namespace DAL {  // Namespace DAL -- begin
     StokesCoordinate (std::vector<DAL::Stokes::Component> const &values);
     //! Argumented constructor
     StokesCoordinate (std::vector<DAL::Stokes> const &values);
-#ifdef HAVE_CASA
-    //! Construction from casa::StokesCoordinate object
-    StokesCoordinate (casa::StokesCoordinate const &coord) {
-      read_casa (coord);
-    }
-#endif
     //! Copy constructor
     StokesCoordinate (StokesCoordinate const &other);
     
@@ -94,11 +88,7 @@ namespace DAL {  // Namespace DAL -- begin
     
     // === Operators ============================================================
     
-    /*!
-      \brief Overloading of the copy operator
-      
-      \param other -- Another StokesCoordinate object from which to make a copy.
-    */
+    //! Overloading of the copy operator
     StokesCoordinate& operator= (StokesCoordinate const &other);
     
     // === Parameter access =====================================================
@@ -123,7 +113,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     //! Get the Stokes values represented by the coordinate
     inline std::vector<DAL::Stokes> stokesValues () const {
-      return values_p;
+      return itsValues;
     }
 
     //! Get the Stokes component types represented by the coordinate
@@ -150,9 +140,9 @@ namespace DAL {  // Namespace DAL -- begin
     
 #ifdef HAVE_CASA
     //! Create coordinate from casa::Coordinate object
-    void read_casa (casa::StokesCoordinate const &coord);
+    bool read_casa (casa::StokesCoordinate const &coord);
     //! Create casa::Coordinate object from coordinate parameters
-    void write_casa (casa::StokesCoordinate &coord);
+    bool write_casa (casa::StokesCoordinate &coord);
 #endif
     
   private:
@@ -166,8 +156,6 @@ namespace DAL {  // Namespace DAL -- begin
     {
       /* Nothing else to do here. */
     }
-    //! Unconditional copying
-    void copy (StokesCoordinate const &other);
     //! Unconditional deletion
     void destroy(void);
     

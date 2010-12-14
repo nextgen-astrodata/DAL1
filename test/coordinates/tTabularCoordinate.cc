@@ -23,6 +23,10 @@
 
 #include <TabularCoordinate.h>
 
+using std::cerr;
+using std::cout;
+using std::endl;
+
 /*!
   \file tTabularCoordinate.cc
 
@@ -47,27 +51,39 @@
 */
 int test_constructors ()
 {
-  std::cout << "\n[tTabularCoordinate::test_constructors]\n" << std::endl;
+  cout << "\n[tTabularCoordinate::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
 
-  std::cout << "[1] Testing TabularCoordinate() ..." << std::endl;
+  cout << "[1] Testing TabularCoordinate() ..." << std::endl;
   try {
-    DAL::TabularCoordinate coord;
+    cout << "--> TabularCoordinate<int>" << endl;
+    DAL::TabularCoordinate<int> coordInt;
+    coordInt.summary();
     //
-    coord.summary();
+    cout << "--> TabularCoordinate<float>" << endl;
+    DAL::TabularCoordinate<float> coordFloat;
+    coordFloat.summary();
+    //
+    cout << "--> TabularCoordinate<double>" << endl;
+    DAL::TabularCoordinate<double> coordDouble;
+    coordDouble.summary();
+    //
+    cout << "--> TabularCoordinate<std::string>" << endl;
+    DAL::TabularCoordinate<std::string> coordString;
+    coordString.summary();
   }
   catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
   }
   
-  std::cout << "[2] Testing TabularCoordinate(string,string) ..." << std::endl;
+  cout << "[2] Testing TabularCoordinate(string,string) ..." << std::endl;
   try {
     std::string names ("Time");
     std::string units ("s");
     //
-    DAL::TabularCoordinate coord (names, units);
+    DAL::TabularCoordinate<double> coord (names, units);
     //
     coord.summary();
   }
@@ -76,7 +92,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  std::cout << "[3] Testing TabularCoordinate(string,string,vector<double>,vector<double>) ..." << std::endl;
+  cout << "[3] Testing TabularCoordinate(string,string,vector<double>,vector<double>) ..." << std::endl;
   try {
     unsigned int nelem (4);
     std::string axisNames("Length");
@@ -93,10 +109,10 @@ int test_constructors ()
     worldValues[2] = 5;
     worldValues[3] = 10;
     //
-    DAL::TabularCoordinate coord (axisNames,
-				  axisUnits,
-				  pixelValues,
-				  worldValues);
+    DAL::TabularCoordinate<double> coord (axisNames,
+					  axisUnits,
+					  pixelValues,
+					  worldValues);
     //
     coord.summary();
   }
@@ -122,15 +138,15 @@ int test_methods ()
   cout << "\n[tTabularCoordinate::test_methods]\n" << endl;
 
   int nofFailedTests (0);
-  DAL::TabularCoordinate coord;
+  DAL::TabularCoordinate<double> coord;
 
-  std::cout << "[1] Testing setAxisNames(string) ..." << std::endl;
+  cout << "[1] Testing setAxisNames(string) ..." << std::endl;
   coord.setAxisNames ("Time");
-  std::cout << "--> World axis names = " << coord.axisNames() << std::endl;
+  cout << "--> World axis names = " << coord.axisNames() << std::endl;
 
-  std::cout << "[2] Testing setAxisUnits(string) ..." << std::endl;
+  cout << "[2] Testing setAxisUnits(string) ..." << std::endl;
   coord.setAxisUnits ("s");
-  std::cout << "--> World axis units = " << coord.axisUnits() << std::endl;
+  cout << "--> World axis units = " << coord.axisUnits() << std::endl;
 
   return nofFailedTests;
 }
@@ -160,11 +176,11 @@ int test_hdf5 ()
   worldValues[2] = 5;
   worldValues[3] = 10;
 
-  DAL::TabularCoordinate coord (axisNames,
-                                axisUnits,
-                                pixelValues,
-                                worldValues);
-
+  DAL::TabularCoordinate<double> coord (axisNames,
+					axisUnits,
+					pixelValues,
+					worldValues);
+  
   cout << "[1] Write coordinate to a HDF5 file ..." << endl;
   try {
     hid_t fileID;
@@ -243,10 +259,10 @@ int example_beamformed ()
   std::string axisNames("Length");
   std::string axisUnits("m");
   
-  DAL::TabularCoordinate coord (axisNames,
-                                axisUnits,
-                                pixelValues,
-                                worldValues);
+  DAL::TabularCoordinate<double> coord (axisNames,
+					axisUnits,
+					pixelValues,
+					worldValues);
   
   //________________________________________________________
   // [3] Write coordinate object to HDF5 file as group

@@ -47,12 +47,11 @@ namespace DAL {   // Namespace DAL -- begin
 
     \date 2009/06/23
 
-    \test tCoordinateInterface.cc
-
     <h3>Prerequisite</h3>
 
     <ul type="square">
-      <li>Representations of World Coordinates. LOFAR-USG-ICD-002.
+      <li>LOFAR Data Format ICD: Representations of World Coordinates.
+          LOFAR-USG-ICD-002.
     </ul>
 
     <h3>Synopsis</h3>
@@ -95,71 +94,76 @@ namespace DAL {   // Namespace DAL -- begin
     //! Transformation matrix (PC)
     std::vector<double> pc_p;
     //! List of pixel values
-    std::vector<double> pixelValues_p;
+    std::vector<double> itsPixelValues;
     //! List of world values
-    std::vector<T> worldValues_p;
+    std::vector<T> itsWorldValues;
     
     // === Protected Methods ====================================================
 
     //___________________________________________________________________________
-    //                                                                       copy
-    //! Unconditional copying
-    void copy (CoordinateInterface const &other)
-    {
-      /* Copy basic attributes */
-      coord_p   = other.coord_p;
-      nofAxes_p = other.nofAxes_p;
-      
-      /* Resize internal arrays */
-      attributes_p.clear();
-      axisNames_p.resize(nofAxes_p);
-      axisUnits_p.resize(nofAxes_p);
-      refValue_p.resize(nofAxes_p);
-      refPixel_p.resize(nofAxes_p);
-      increment_p.resize(nofAxes_p);
-      pc_p.resize(nofAxes_p*nofAxes_p);
-      
-      /* Copy the values */
-      attributes_p = other.attributes_p;
-      axisNames_p  = other.axisNames_p;
-      axisUnits_p  = other.axisUnits_p;
-      refValue_p   = other.refValue_p;
-      refPixel_p   = other.refPixel_p;
-      increment_p  = other.increment_p;
-      pc_p         = other.pc_p;
-      
-      /* Coordinate values along the pixel axis */
-      if (pixelValues_p.empty()) {
-	pixelValues_p.clear();
-      } else {
-	pixelValues_p.resize(other.pixelValues_p.size());
-	pixelValues_p = other.pixelValues_p;
-      }
-      
-      /* Coordinate values along the world axis */
-      if (worldValues_p.empty()) {
-	worldValues_p.clear();
-      } else {
-	worldValues_p.resize(other.worldValues_p.size());
-	worldValues_p = other.worldValues_p;
-      }
-    }
+    //                                                                       init
     //! Initilize the internal set of parameters
     void init (DAL::Coordinate const &coord=DAL::Coordinate(),
 	       unsigned int const &nofAxes=0,
-	       DAL::Coordinate const &storageType=DAL::Coordinate());
+	       DAL::Coordinate const &storageType=DAL::Coordinate())
+    {
+      /* Initialize the size of the internal arrays */
+      
+      axisNames_p.clear();
+      axisUnits_p.clear();
+      refValue_p.clear();
+      refPixel_p.clear();
+      increment_p.clear();
+      pc_p.clear();
+      itsPixelValues.clear();
+      itsWorldValues.clear();
+      
+      /* Initialize internal variables storing coordinate parameters */
+      
+      coord_p       = coord;
+      storageType_p = storageType;
+      
+      if (nofAxes > 0) {
+	// set the number of coordinate axes
+	nofAxes_p = nofAxes;
+	// Adjust the size of the internal arrays
+	axisNames_p.resize(nofAxes);
+	axisUnits_p.resize(nofAxes);
+	refValue_p.resize(nofAxes);
+	refPixel_p.resize(nofAxes);
+	increment_p.resize(nofAxes);
+	// Fill in default values for the WCS parameters
+	for (unsigned int n(0); n<nofAxes; ++n) {
+	  axisNames_p[n] = "UNDEFINED";
+	  axisUnits_p[n] = "UNDEFINED";
+	  refValue_p[n]  = T();
+	  refPixel_p[n]  = 0;
+	  increment_p[n] = 0;
+	}
+	// Transformation is identity matrix
+	DAL::IdentityMatrix (pc_p,nofAxes);
+      } else {
+	// set the number of coordinate axes
+	nofAxes_p = 0;
+      }
+      
+      /* Set up the basic set of attributes */
+      setAttributes ();
+    };
     
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    CoordinateInterface () {
-      init ();
+    CoordinateInterface (DAL::Coordinate const &coord=DAL::Coordinate(),
+			 unsigned int const &nofAxes=0,
+			 DAL::Coordinate const &storageType=DAL::Coordinate()) {
+      init (coord, nofAxes, storageType);
     }
     //! Copy constructor
     CoordinateInterface (CoordinateInterface const &other) {
-      copy (other);
+      *this = other;
     }
     
     // === Destruction ==========================================================
@@ -172,12 +176,43 @@ namespace DAL {   // Namespace DAL -- begin
     // === Operators ============================================================
     
     //! Overloading of the copy operator
-    CoordinateInterface& operator= (CoordinateInterface const &other) {
-      if (this != &other)
-	{
-	  destroy ();
-	  copy (other);
+    CoordinateInterface<T>& operator= (CoordinateInterface<T> const &other) {
+      if (this != &other) {
+	/* Copy basic attributes */
+	coord_p       = other.coord_p;
+	nofAxes_p     = other.nofAxes_p;
+	storageType_p = other.storageType_p;
+	/* Resize internal arrays */
+	attributes_p.clear();
+	axisNames_p.resize(nofAxes_p);
+	axisUnits_p.resize(nofAxes_p);
+	refValue_p.resize(nofAxes_p);
+	refPixel_p.resize(nofAxes_p);
+	increment_p.resize(nofAxes_p);
+	pc_p.resize(nofAxes_p*nofAxes_p);
+	/* Copy the values */
+	attributes_p = other.attributes_p;
+	axisNames_p  = other.axisNames_p;
+	axisUnits_p  = other.axisUnits_p;
+	refValue_p   = other.refValue_p;
+	refPixel_p   = other.refPixel_p;
+	increment_p  = other.increment_p;
+	pc_p         = other.pc_p;
+	/* Coordinate values along the pixel axis */
+	if (itsPixelValues.empty()) {
+	  itsPixelValues.clear();
+	} else {
+	  itsPixelValues.resize(other.itsPixelValues.size());
+	  itsPixelValues = other.itsPixelValues;
 	}
+	/* Coordinate values along the world axis */
+	if (itsWorldValues.empty()) {
+	  itsWorldValues.clear();
+	} else {
+	  itsWorldValues.resize(other.itsWorldValues.size());
+	  itsWorldValues = other.itsWorldValues;
+	}
+      }
       return *this;
     }
     
@@ -210,6 +245,19 @@ namespace DAL {   // Namespace DAL -- begin
     //___________________________________________________________________________
     //                                                               setAxisNames
     //! Set the world axis names
+    bool setAxisNames (std::string const &names)
+    {
+      if (nofAxes_p > 0) {
+	std::vector<std::string> tmp (nofAxes_p,names);
+	return setAxisNames (tmp);
+      } else {
+	return false;
+      }
+
+    }
+    //___________________________________________________________________________
+    //                                                               setAxisNames
+    //! Set the world axis names
     bool setAxisNames (std::vector<std::string> const &axisNames)
     {
       bool status (true);
@@ -228,6 +276,19 @@ namespace DAL {   // Namespace DAL -- begin
     //! Get the world axis units
     inline std::vector<std::string> axisUnits () const {
       return axisUnits_p;
+    }
+    //___________________________________________________________________________
+    //                                                               setAxisUnits
+    //! Set the world axis units
+    bool setAxisUnits (std::string const &units)
+    {
+      if (nofAxes_p > 0) {
+	std::vector<std::string> tmp (nofAxes_p,units);
+	return setAxisUnits (tmp);
+      } else {
+	return false;
+      }
+
     }
     //___________________________________________________________________________
     //                                                               setAxisUnits
@@ -276,9 +337,9 @@ namespace DAL {   // Namespace DAL -- begin
 	break;
       case Coordinate::TABULAR:
 	{
-	  if (!worldValues_p.empty()) {
+	  if (!itsWorldValues.empty()) {
 	    refValue_p.resize(1);
-	    refValue_p[0] = worldValues_p[0];
+	    refValue_p[0] = itsWorldValues[0];
 	  } else {
 	    status = false;
 	  }
@@ -324,9 +385,9 @@ namespace DAL {   // Namespace DAL -- begin
 	break;
       case Coordinate::TABULAR:
 	{
-	  if (!pixelValues_p.empty()) {
+	  if (!itsPixelValues.empty()) {
 	    refPixel_p.resize(1);
-	    refPixel_p[0] = pixelValues_p[0];
+	    refPixel_p[0] = itsPixelValues[0];
 	  } else {
 	    status = false;
 	  }
@@ -445,7 +506,7 @@ namespace DAL {   // Namespace DAL -- begin
   }
     //! Get the tabulated values along the pixel axis
     inline std::vector<double> pixelValues () const {
-      return pixelValues_p;
+      return itsPixelValues;
     }
     //___________________________________________________________________________
     //                                                             setPixelValues
@@ -455,18 +516,18 @@ namespace DAL {   // Namespace DAL -- begin
       bool status (true);
       unsigned int nelem = values.size();
       
-      if (pixelValues_p.empty()) {
-	if (worldValues_p.empty()) {
+      if (itsPixelValues.empty()) {
+	if (itsWorldValues.empty()) {
 	  /* If both pixel and world values are not defined yet, we can simply
 	     accept the provided values, as there is no further reference. */
-	  pixelValues_p.resize(nelem);
-	  pixelValues_p = values;
+	  itsPixelValues.resize(nelem);
+	  itsPixelValues = values;
 	} else {
 	  /* If the world axis values have been set already, enforce match in the
 	     size of the arrays. */
-	  if ((nelem = worldValues_p.size())) {
-	    pixelValues_p.resize(nelem);
-	    pixelValues_p = values;
+	  if ((nelem = itsWorldValues.size())) {
+	    itsPixelValues.resize(nelem);
+	    itsPixelValues = values;
 	  } else {
 	    /* Reject input values if number of elements does not match that of
 	       the already assigned world axis values. */
@@ -477,8 +538,8 @@ namespace DAL {   // Namespace DAL -- begin
 	  }
 	}
       } else {
-	if ((nelem = pixelValues_p.size())) {
-	  pixelValues_p = values;
+	if ((nelem = itsPixelValues.size())) {
+	  itsPixelValues = values;
 	} else {
 	  std::cerr << "[CoordinateInterface::setPixelValues]"
 		    << " Wrong number of elements in the provided array!"
@@ -493,7 +554,7 @@ namespace DAL {   // Namespace DAL -- begin
     //                                                                worldValues
     //! Get tabulated world values
     inline std::vector<T> worldValues () const {
-      return worldValues_p;
+      return itsWorldValues;
     }
     //___________________________________________________________________________
     //                                                             setWorldValues
@@ -562,15 +623,24 @@ namespace DAL {   // Namespace DAL -- begin
       attributes_p.insert("NOF_COORDINATES");
       attributes_p.insert("AXIS_NAMES");
       attributes_p.insert("AXIS_UNITS");
-      attributes_p.insert("REFERENCE_VALUE");
-      attributes_p.insert("REFERENCE_PIXEL");
-      attributes_p.insert("INCREMENT");
-      attributes_p.insert("PC");
       
-      if (storageType_p.type() == Coordinate::TABULAR) {
-	attributes_p.insert("PIXEL_VALUES");
-	attributes_p.insert("WORLD_VALUES");
-      }
+      switch (storageType_p.type()) {
+      case Coordinate::LINEAR:
+      case Coordinate::DIRECTION:
+	attributes_p.insert("REFERENCE_VALUE");
+	attributes_p.insert("REFERENCE_PIXEL");
+	attributes_p.insert("INCREMENT");
+	attributes_p.insert("PC");
+	break;
+      case Coordinate::TABULAR:
+	attributes_p.insert("AXIS_LENGTH");
+	attributes_p.insert("AXIS_VALUES_PIXEL");
+	attributes_p.insert("AXIS_VALUES_WORLD");
+	break;
+      default:
+	break;
+      };
+      
     }
     //! Unconditional deletion
     void destroy(void) {

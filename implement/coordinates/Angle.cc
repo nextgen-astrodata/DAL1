@@ -36,8 +36,8 @@ namespace DAL { // Namespace DAL -- begin
   
   Angle::Angle ()
   {
-    rad_p = 0.0;
-    deg_p = 0.0;
+    itsRadian = 0.0;
+    itsDeg = 0.0;
   }
   
   //_____________________________________________________________________________
@@ -47,14 +47,6 @@ namespace DAL { // Namespace DAL -- begin
 		bool const &angleInDegrees)
   {
     setAngle (val, angleInDegrees);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                        Angle
-  
-  Angle::Angle (Angle const &other)
-  {
-    copy (other);
   }
   
   // ============================================================================
@@ -78,21 +70,12 @@ namespace DAL { // Namespace DAL -- begin
   Angle& Angle::operator= (Angle const &other)
   {
     if (this != &other) {
-      destroy ();
-      copy (other);
+      itsRadian = other.itsRadian;
+      itsDeg = other.itsDeg;
     }
     return *this;
   }
   
-  //_____________________________________________________________________________
-  //                                                                         copy
-  
-  void Angle::copy (Angle const &other)
-  {
-    rad_p = other.rad_p;
-    deg_p = other.deg_p;
-  }
-
   // ============================================================================
   //
   //  Parameter access
@@ -103,22 +86,14 @@ namespace DAL { // Namespace DAL -- begin
 			bool const &angleInDegrees)
   {
     if (angleInDegrees) {
-      deg_p = val;
-      rad_p = deg2rad (val);
+      itsDeg = val;
+      itsRadian = deg2rad (val);
     } else {
-      rad_p = val;
-      deg_p = rad2deg (val);
+      itsRadian = val;
+      itsDeg = rad2deg (val);
     }
   }
   
-  //_____________________________________________________________________________
-  //                                                                         hms
-  
-  std::string Angle::hms ()
-  {
-    return rad2hms (rad_p);
-  }
-
   //_____________________________________________________________________________
   //                                                                      summary
   

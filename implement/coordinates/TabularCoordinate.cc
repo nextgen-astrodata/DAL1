@@ -25,28 +25,24 @@
 
 namespace DAL {  // Namespace DAL -- begin
 
-  //_____________________________________________________________________________
-  //                                                            TabularCoordinate
-  
-  template <class T>
-  TabularCoordinate<T>::TabularCoordinate (TabularCoordinate<T> const &other)
-    : CoordinateInterface<T> (other)
-  {
-    copy (other);
-  }
-  
   // ============================================================================
   //
   //  Operators
   //
   // ============================================================================
 
+  template <>
+  TabularCoordinate<std::string>::TabularCoordinate ()
+  {
+    TabularCoordinate<std::string>::init();
+  }
+  
   //_____________________________________________________________________________
   //                                                                         copy
-
+  
   /*!
     \param other -- Other TabularCoordinate object to make copy of.
-   */
+  */
   template <class T>
   void TabularCoordinate<T>::copy (TabularCoordinate const &other)
   {
@@ -55,122 +51,49 @@ namespace DAL {  // Namespace DAL -- begin
 
   // ============================================================================
   //
-  //  Parameter access 
+  //  Methods
   //
   // ============================================================================
 
   //_____________________________________________________________________________
-  //                                                               setPixelValues
+  //                                                                         init
   
-  /*!
-    \param names   -- World axis names.
-    \return status -- Status of the operation; returns \e false in case an 
-            error was encountered.
-  */
-  template <class T>
-  bool TabularCoordinate<T>::setAxisNames (std::string const &names)
+  template <>
+  void TabularCoordinate<std::string>::init (std::vector<std::string> const &axisNames,
+					     std::vector<std::string> const &axisUnits,
+					     std::vector<double> const &pixelValues,
+					     std::vector<std::string> const &worldValues)
   {
-    std::vector<std::string> tmp (1,names);
-
-    return CoordinateInterface<T>::setAxisNames (tmp);
+    /* Initialize base class */
+    CoordinateInterface<std::string>::init (Coordinate::TABULAR,
+					    1,
+					    Coordinate::TABULAR);
+    CoordinateInterface<std::string>::setAxisNames (axisNames);
+    CoordinateInterface<std::string>::setAxisUnits (axisUnits);
+    setAxisValues (pixelValues, worldValues);
   }
-
-  //_____________________________________________________________________________
-  //                                                               setPixelValues
-
-  /*!
-    \param units   -- World axis units.
-    \return status -- Status of the operation; returns \e false in case an 
-            error was encountered.
-  */
-  template <class T>
-  bool TabularCoordinate<T>::setAxisUnits (std::string const &units)
-  {
-    std::vector<std::string> tmp (1,units);
-
-    return CoordinateInterface<T>::setAxisUnits (tmp);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                      summary
-
-  template <class T>
-  void TabularCoordinate<T>::summary (std::ostream &os)
-  {
-    os << "[TabularCoordinate] Summary of internal parameters." << std::endl;
-    os << "-- Coordinate type       = " << this->type()
-       << " / " <<  this->name() << std::endl;
-    os << "-- Storage type          = " << this->storageType_p.type()
-       << " / " <<  this->storageType_p.name() << std::endl;
-    os << "-- nof. axes             = " << this->nofAxes_p     << std::endl;
-    os << "-- World axis names      = " << this->axisNames_p   << std::endl;
-    os << "-- World axis units      = " << this->axisUnits_p   << std::endl;
-    os << "-- Pixel values          = " << this->pixelValues_p << std::endl;
-    os << "-- World values          = " << this->worldValues_p << std::endl;
-    os << "-- Reference value       = " << this->refValue_p    << std::endl;
-    os << "-- Reference pixel       = " << this->refPixel_p    << std::endl;
-    os << "-- Transformation matrix = " << this->pc_p          << std::endl;
-  }
-  
-  // ============================================================================
-  //
-  //  Public methods
-  //
-  // ============================================================================
   
   //_____________________________________________________________________________
   //                                                             exportCoordinate
-
+  
 #ifdef HAVE_CASA
   template <class T>
   void TabularCoordinate<T>::exportCoordinate (casa::TabularCoordinate &coord)
   {
-    unsigned int nelem = this->pixelValues_p.size();
+    unsigned int nelem = this->itsPixelValues.size();
     casa::Vector<double> pixel (nelem);
     casa::Vector<T> world (nelem);
-
+    
     for (unsigned int n(0); n<nelem; ++n) {
-      pixel(n) = this->pixelValues_p[n];
-      world(n) = this->worldValues_p[n];
+      pixel(n) = this->itsPixelValues[n];
+      world(n) = this->itsWorldValues[n];
     }
-
+    
     coord = casa::TabularCoordinate (pixel,
 				     world,
 				     this->axisUnits_p[0],
 				     this->axisNames_p[0]);
   }
 #endif
-
-  // ============================================================================
-  //
-  //  Private methods
-  //
-  // ============================================================================
-  
-  //_____________________________________________________________________________
-  //                                                                         init
-
-  /*!
-    \param axisNames   -- World axis names.
-    \param axisUnits   -- World axis units.
-    \param pixelValues -- Pixel axis values.
-    \param worldValues -- World axis values.
-  */
-  template <class T>
-  void TabularCoordinate<T>::init (std::vector<std::string> const &axisNames,
-				   std::vector<std::string> const &axisUnits,
-				   std::vector<double> const &pixelValues,
-				   std::vector<T> const &worldValues)
-  {
-    /* Initialize base class */
-    CoordinateInterface<T>::init (Coordinate::TABULAR,
-			       1,
-			       Coordinate::TABULAR);
-    
-    CoordinateInterface<T>::setAxisNames (axisNames);
-    CoordinateInterface<T>::setAxisUnits (axisUnits);
-    setAxisValues (pixelValues, worldValues);
-  }
-  
   
 } // Namespace DAL -- end

@@ -142,7 +142,28 @@ namespace DAL {  // Namespace DAL -- begin
   
   void LinearCoordinate::copy (LinearCoordinate const &other)
   {
-    CoordinateInterface<double>::copy (other);
+    /* Copy basic attributes */
+    coord_p       = other.coord_p;
+    nofAxes_p     = other.nofAxes_p;
+    storageType_p = other.storageType_p;
+    
+    /* Resize internal arrays */
+    attributes_p.clear();
+    axisNames_p.resize(nofAxes_p);
+    axisUnits_p.resize(nofAxes_p);
+    refValue_p.resize(nofAxes_p);
+    refPixel_p.resize(nofAxes_p);
+    increment_p.resize(nofAxes_p);
+    pc_p.resize(nofAxes_p*nofAxes_p);
+    
+    /* Copy the values */
+    attributes_p = other.attributes_p;
+    axisNames_p  = other.axisNames_p;
+    axisUnits_p  = other.axisUnits_p;
+    refValue_p   = other.refValue_p;
+    refPixel_p   = other.refPixel_p;
+    increment_p  = other.increment_p;
+    pc_p         = other.pc_p;
   }
   
   // ============================================================================
@@ -188,10 +209,10 @@ namespace DAL {  // Namespace DAL -- begin
   }
   
 #ifdef HAVE_HDF5
-
+  
   //_____________________________________________________________________________
   //                                                                    read_hdf5
-
+  
   /*!
     \param locationID -- Identifier of the HDF5 object to which the coordinate
            group is attached.
