@@ -68,7 +68,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     if (location_p > 0) {
       // clear maps with embedded objects
-      beams_p.clear();
+      itsBeams.clear();
       // release HDF5 object
       herr_t h5error;
       H5I_type_t object_type = H5Iget_type(location_p);
@@ -248,7 +248,7 @@ namespace DAL { // Namespace DAL -- begin
     
     if (groupnames.size() > 0) {
       for (it=groupnames.begin(); it!=groupnames.end(); ++it) {
-	beams_p[*it] = BF_BeamGroup (location_p,*it);
+	itsBeams[*it] = BF_BeamGroup (location_p,*it);
       }
     }
     
@@ -273,9 +273,9 @@ namespace DAL { // Namespace DAL -- begin
     if (location_p > 0 && validLocation) {
       // open Beam group
       BF_BeamGroup beam (location_p,beamID,create);
-      beams_p[name] = beam;
+      itsBeams[name] = beam;
       // book-keeping
-      int nofBeams = beams_p.size();
+      int nofBeams = itsBeams.size();
       h5set_attribute (location_p,"NOF_BEAMS",nofBeams);
     } else {
       std::cerr << "[BF_SubArrayPointing::openBeam] Not connected to dataset."

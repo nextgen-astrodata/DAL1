@@ -29,6 +29,7 @@
 #include <string>
 
 #include <HDF5Dataset.h>
+#include <Stokes.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -66,6 +67,9 @@ namespace DAL { // Namespace DAL -- begin
     
   */  
   class BF_StokesDataset : public HDF5Dataset {
+
+    //! Stokes component stored inside this dataset
+    DAL::Stokes itsStokesComponent;
     
   public:
     
@@ -82,7 +86,7 @@ namespace DAL { // Namespace DAL -- begin
     BF_StokesDataset (hid_t const &location,
 		      std::string const &name,
 		      std::vector<hsize_t> const &shape,
-		      hid_t const &datatype);
+		      hid_t const &datatype=H5T_NATIVE_FLOAT);
     
     //! Copy constructor
     BF_StokesDataset (BF_StokesDataset const &other);
@@ -131,9 +135,6 @@ namespace DAL { // Namespace DAL -- begin
       attributes_p.insert("NOF_SUBBANDS");
       attributes_p.insert("NOF_CHANNELS");
     }
-    
-    //! Unconditional copying
-    void copy (BF_StokesDataset const &other);
     
     //! Unconditional deletion 
     void destroy(void);

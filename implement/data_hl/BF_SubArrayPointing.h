@@ -86,7 +86,7 @@ namespace DAL { // Namespace DAL -- begin
   class BF_SubArrayPointing : public HDF5CommonInterface {
     
     //! Station beams
-    std::map<std::string,BF_BeamGroup> beams_p;
+    std::map<std::string,BF_BeamGroup> itsBeams;
     
   public:
     
@@ -148,7 +148,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Get the number of embedded Beam object/groups
     inline unsigned int nofBeams () {
-      return beams_p.size();
+      return itsBeams.size();
     }
     
   protected:

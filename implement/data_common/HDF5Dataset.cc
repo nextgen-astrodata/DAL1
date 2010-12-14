@@ -90,8 +90,14 @@ namespace DAL {
   
   HDF5Dataset::~HDF5Dataset ()
   {
-    H5Tclose (itsDatatype);
-    H5Sclose (itsDataspace);
+    /* Close dataspace identifier */
+    if (H5Iis_valid(itsDatatype)) {
+      H5Tclose (itsDatatype);
+    }
+    /* Close dataspace */
+    if (H5Iis_valid(itsDataspace)) {
+      H5Sclose (itsDataspace);
+    }
   }
   
   // ============================================================================
@@ -323,7 +329,11 @@ namespace DAL {
 			      H5P_DEFAULT);
     
     // Release HDF5 object identifiers
-    H5Pclose (dcpl);
+    if (H5Iis_valid(dcpl)) {
+      H5Pclose (dcpl);
+    } else {
+      status = false;
+    }
     
     return status;
   }

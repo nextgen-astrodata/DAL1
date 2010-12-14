@@ -37,8 +37,8 @@ namespace DAL { // Namespace DAL -- begin
   BF_BeamGroup::BF_BeamGroup ()
   {
     location_p = 0;
-    processingHistory_p.clear();
-    coordinates_p.clear();
+    itsProcessingHistory.clear();
+    itsCoordinates.clear();
   }
   
   //_____________________________________________________________________________
@@ -75,8 +75,8 @@ namespace DAL { // Namespace DAL -- begin
       herr_t h5error;
       H5I_type_t object_type = H5Iget_type(location_p);
       // clear maps with embedded objects
-      processingHistory_p.clear();
-      coordinates_p.clear();
+      itsProcessingHistory.clear();
+      itsCoordinates.clear();
       // release HDF5 object
       if (object_type == H5I_GROUP) {
 	h5error = H5Gclose(location_p);
@@ -99,19 +99,19 @@ namespace DAL { // Namespace DAL -- begin
     std::map<std::string,BF_ProcessingHistory>::iterator hist;
     std::map<std::string,CoordinatesGroup>::iterator coord;
 
-    hist  = processingHistory_p.begin();
-    coord = coordinates_p.begin();
+    hist  = itsProcessingHistory.begin();
+    coord = itsCoordinates.begin();
 
     os << "[BF_BeamGroup] Summary of internal parameters." << std::endl;
     os << "-- Location ID                   = " << location_p
        << std::endl;
 
-    if (processingHistory_p.size() > 0) {
+    if (itsProcessingHistory.size() > 0) {
     os << "-- Location ID ProcessingHistory = " << hist->second.locationID()
        << std::endl;
     }
 
-    if (coordinates_p.size() > 0) {
+    if (itsCoordinates.size() > 0) {
     os << "-- Location ID CoordinatesGroup  = " << coord->second.locationID()
        << std::endl;
     }
@@ -281,8 +281,8 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
 
-    if (processingHistory_p.size() == 0 && location_p > 0) {
-      processingHistory_p["ProcessingHistory"] = BF_ProcessingHistory (location_p,create);
+    if (itsProcessingHistory.size() == 0 && location_p > 0) {
+      itsProcessingHistory["ProcessingHistory"] = BF_ProcessingHistory (location_p,create);
     }
 
     return status;
@@ -295,8 +295,8 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
 
-    if (coordinates_p.size() == 0 && location_p > 0) {
-      coordinates_p["CoordinatesGroup"] = CoordinatesGroup (location_p,create);
+    if (itsCoordinates.size() == 0 && location_p > 0) {
+      itsCoordinates["CoordinatesGroup"] = CoordinatesGroup (location_p,create);
     }
     
     return status;

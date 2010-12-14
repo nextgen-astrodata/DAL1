@@ -157,13 +157,13 @@ namespace DAL { // Namespace DAL -- begin
   class BF_RootGroup : public HDF5CommonInterface {
 
     //! Name of the data file
-    std::string filename_p;
+    std::string itsFilename;
     //! LOFAR common attributes attached to the root group of the dataset
     CommonAttributes commonAttributes_p;
     //! Primary Pointing Directions
     std::map<std::string,BF_SubArrayPointing> primaryPointings_p;
     //! Container for system-wide logs
-    std::map<std::string,SysLog> sysLog_p;
+    std::map<std::string,SysLog> itsSystemLog;
 
   public:
     

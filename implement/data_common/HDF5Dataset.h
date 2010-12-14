@@ -251,6 +251,8 @@ namespace DAL {
   */
   class HDF5Dataset : public HDF5CommonInterface {
 
+  protected:
+
     //! Name of the dataset
     std::string itsName;
     //! Dataspace identifier

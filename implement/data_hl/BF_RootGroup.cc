@@ -32,7 +32,7 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
 
   //_____________________________________________________________________________
-  //                                                                   BF_RootGroup
+  //                                                                 BF_RootGroup
 
   /*!
     \param filename -- Name of the dataset to open.
@@ -48,7 +48,7 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                   BF_RootGroup
+  //                                                                 BF_RootGroup
 
   /*!
     \param filename -- Filename object from which the actual file name of the
@@ -68,7 +68,7 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                   BF_RootGroup
+  //                                                                 BF_RootGroup
 
   /*!
     \param attributes -- CommonAttributes object from which the actual file name
@@ -97,7 +97,7 @@ namespace DAL { // Namespace DAL -- begin
     if (location_p > 0) {
       // clear maps with embedded objects
       primaryPointings_p.clear();
-      sysLog_p.clear();
+      itsSystemLog.clear();
       // release HDF5 object
       herr_t h5error;
       H5I_type_t object_type = H5Iget_type(location_p);
@@ -157,11 +157,11 @@ namespace DAL { // Namespace DAL -- begin
 			    bool const &showAttributes)
   {
     os << "[BF_RootGroup] Summary of internal parameters." << std::endl;
-    os << "-- Filename                    = " << filename_p            << std::endl;
+    os << "-- Filename                    = " << itsFilename            << std::endl;
     os << "-- Location ID                 = " << location_p            << std::endl;
     os << "-- nof. attributes             = " << attributes_p.size()   << std::endl;
     os << "-- nof. primary pointings      = " << nofPrimaryPointings() << std::endl;
-    os << "-- nof. SysLog groups          = " << sysLog_p.size()       << std::endl;
+    os << "-- nof. SysLog groups          = " << itsSystemLog.size()       << std::endl;
     os << "-- nof. PrimaryPointing groups = " << primaryPointings_p.size() << std::endl;
 
     if (showAttributes) {
@@ -243,11 +243,11 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
 
     // Initialize private variables ________________________
-    location_p = location;
-    filename_p = name;
+    location_p  = location;
+    itsFilename = name;
     setAttributes();
     primaryPointings_p.clear();
-    sysLog_p.clear();
+    itsSystemLog.clear();
     
     // Try to open the file ________________________________
 
@@ -361,8 +361,8 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
 
-    if (sysLog_p.size() == 0 && location_p > 0) {
-      sysLog_p["SysLog"] = SysLog (location_p,create);
+    if (itsSystemLog.size() == 0 && location_p > 0) {
+      itsSystemLog["SysLog"] = SysLog (location_p,create);
     }
     
     return status;
@@ -525,7 +525,7 @@ namespace DAL { // Namespace DAL -- begin
   SysLog BF_RootGroup::sysLog ()
   {
     std::map<std::string,SysLog>::iterator it;
-    it = sysLog_p.begin();
+    it = itsSystemLog.begin();
     return it->second;
   }
 

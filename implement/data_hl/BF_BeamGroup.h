@@ -84,9 +84,9 @@ namespace DAL { // Namespace DAL -- begin
   class BF_BeamGroup : public HDF5CommonInterface {
 
     //! Procesing history group
-    std::map<std::string,BF_ProcessingHistory> processingHistory_p;
+    std::map<std::string,BF_ProcessingHistory> itsProcessingHistory;
     //! Coordinates group
-    std::map<std::string,CoordinatesGroup> coordinates_p;
+    std::map<std::string,CoordinatesGroup> itsCoordinates;
 
   public:
     

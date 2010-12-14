@@ -24,6 +24,8 @@
 #include <BF_StokesDataset.h>
 
 // Namespace usage
+using std::cout;
+using std::endl;
 using DAL::BF_StokesDataset;
 
 /*!
@@ -34,7 +36,7 @@ using DAL::BF_StokesDataset;
 
   \brief A collection of test routines for the DAL::BF_StokesDataset class
  
-  \author Lars Baehren
+  \author Lars B&auml;hren
  
   \date 2010/12/05
 */
@@ -48,22 +50,75 @@ using DAL::BF_StokesDataset;
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_constructors ()
+int test_constructors (std::string const &filename)
 {
-  std::cout << "\n[tBF_StokesDataset::test_constructors]\n" << std::endl;
+  std::cout << "\n[tBF_StokesDataset::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
+  std::string nameDataset ("StokesI");
+  std::vector<hsize_t> shape (2);
+
+  shape[0] = 100;
+  shape[1] = 1024;
   
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  //________________________________________________________
+  // Create HDF5 file to work with
+  
+  hid_t fileID = H5Fcreate (filename.c_str(),
+			    H5F_ACC_TRUNC,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT);
+  
+  /* test of file creation was successful */
+  if (H5Iis_valid(fileID)) {
+    cout << "-- Successfully opened file " << filename << endl;
+  } else {
+    cerr << "-- ERROR: Failed to open file " << filename << endl;
+    return -1;
+  }
+  
+  //________________________________________________________
+  // Test 1: Default constructor
+
+  std::cout << "[1] Testing BF_StokesDataset() ..." << endl;
   try {
-    BF_StokesDataset newObject;
+    BF_StokesDataset stokes;
     //
-    newObject.summary(); 
+    stokes.summary(); 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   
+  //________________________________________________________
+  // Test 2: Argumented constructor
+
+  std::cout << "[2] Testing BF_StokesDataset(hid_t, string) ..." << endl;
+  try {
+    BF_StokesDataset stokes (fileID, nameDataset);
+    //
+    stokes.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  //________________________________________________________
+  // Test 3: Argumented constructor
+
+  std::cout << "[3] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>) ..."
+	    << endl;
+  try {
+    BF_StokesDataset stokes (fileID, nameDataset,shape);
+    //
+    stokes.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  H5Fclose(fileID);
+
   return nofFailedTests;
 }
 
@@ -73,9 +128,10 @@ int test_constructors ()
 int main ()
 {
   int nofFailedTests (0);
+  std::string filename ("tBF_StokesDataset.h5");
 
   // Test for the constructor(s)
-  nofFailedTests += test_constructors ();
+  nofFailedTests += test_constructors (filename);
 
   return nofFailedTests;
 }
