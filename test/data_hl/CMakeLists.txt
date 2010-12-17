@@ -62,6 +62,7 @@ foreach (_test
     tSysLog
     tTBB_StationTrigger
     )
+  ## add entry to the list of tests
   add_test (${_test} ${_test})
 endforeach (_test)
 
@@ -90,3 +91,10 @@ if (dataset_its)
 else (dataset_its)
   add_test (tITS_ExperimentMeta tITS_ExperimentMeta)
 endif (dataset_its)
+
+## Tests working on the generated test datasets
+
+if (H5LS_EXECUTABLE)
+  add_test (tBF_StokesDataset_h5ls    ${H5LS_EXECUTABLE} -v tBF_StokesDataset.h5)
+  add_test (tBF_SubArrayPointing_h5ls ${H5LS_EXECUTABLE} -v tBF_SubArrayPointing.h5)
+endif (H5LS_EXECUTABLE)
