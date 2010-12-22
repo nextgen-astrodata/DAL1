@@ -50,7 +50,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>DAL::BF_Beam
+      <li>DAL::BF_BeamGroup
     </ul>
     
     <h3>Synopsis</h3>
@@ -59,8 +59,8 @@ namespace DAL { // Namespace DAL -- begin
     Stokes Group contains BF RAW data with two 32-bit complex numbers (containing
     Xreal, Ximg, Yreal and Yimg).  If the data are summed, then there is only one
     Stokes I Group containing all the channel intensities per subbeam. If the
-    data are not summed, then there are four Stokes tables (\f$I, Q, U, V\f$ or
-    \f$XX, XY, YX, YY\f$), one per polarization, containing all the channel
+    data are not summed, then there are four Stokes tables -- \f$ (I, Q, U, V) \f$
+    or \f$ (XX, XY, YX, YY) \f$ -- one per polarization, containing all the channel
     intensities per subbeam.
     
     <h3>Example(s)</h3>
@@ -86,6 +86,7 @@ namespace DAL { // Namespace DAL -- begin
     BF_StokesDataset (hid_t const &location,
 		      std::string const &name,
 		      std::vector<hsize_t> const &shape,
+		      DAL::Stokes::Component const &component=DAL::Stokes::I,
 		      hid_t const &datatype=H5T_NATIVE_FLOAT);
     
     //! Copy constructor
@@ -124,6 +125,9 @@ namespace DAL { // Namespace DAL -- begin
     
     
   private:
+
+    //! Initialize the object's internal parameters
+    void init ();
 
     //! Set up the list of attributes attached to the structure
     inline void setAttributes () {

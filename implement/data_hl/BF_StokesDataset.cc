@@ -36,7 +36,9 @@ namespace DAL { // Namespace DAL -- begin
   
   BF_StokesDataset::BF_StokesDataset ()
     : HDF5Dataset()
-  {;}
+  {
+    init();
+  }
   
   //_____________________________________________________________________________
   //                                                             BF_StokesDataset
@@ -50,9 +52,10 @@ namespace DAL { // Namespace DAL -- begin
 				      std::string const &name)
     : HDF5Dataset(location,
 		  name)
-  {;}
+  {
+    init();
+  }
   
-
   //_____________________________________________________________________________
   //                                                             BF_StokesDataset
   
@@ -61,18 +64,26 @@ namespace DAL { // Namespace DAL -- begin
            to be created.
     \param name      -- Name of the dataset.
     \param shape     -- Shape of the dataset.
+    \param component -- Stokes component stored within the dataset
     \param datatype  -- Datatype for the elements within the Dataset
   */
   BF_StokesDataset::BF_StokesDataset (hid_t const &location,
 				      std::string const &name,
 				      std::vector<hsize_t> const &shape,
+				      DAL::Stokes::Component const &component,
 				      hid_t const &datatype)
     : HDF5Dataset (location,
 		   name,
 		   shape,
 		   datatype)
-  {}
-
+  {
+    itsStokesComponent = DAL::Stokes(component);
+    init();
+  }
+  
+  //_____________________________________________________________________________
+  //                                                             BF_StokesDataset
+  
   /*!
     \param other -- Another HDF5Property object from which to create this new
            one.
@@ -121,7 +132,7 @@ namespace DAL { // Namespace DAL -- begin
   
   // ============================================================================
   //
-  //  Parameters
+  //  Methods
   //
   // ============================================================================
   
@@ -136,23 +147,30 @@ namespace DAL { // Namespace DAL -- begin
     os << "[BF_StokesDataset] Summary of internal parameters."  << std::endl;
     os << "-- Stokes component       = " << itsStokesComponent.name() << std::endl;
     os << "-- Dataset name           = " << itsName             << std::endl;
-    os << "-- Dataset ID             = " << location_p          << std::endl;
-    os << "-- Dataspace ID           = " << dataspaceID()       << std::endl;
-    os << "-- Datatype ID            = " << datatypeID()        << std::endl;
-    os << "-- Dataset rank           = " << rank()              << std::endl;
-    os << "-- Dataset shape          = " << shape()             << std::endl;
-    os << "-- Layout of the raw data = " << itsLayout           << std::endl;
-    os << "-- Chunk size             = " << itsChunking         << std::endl;
-    os << "-- nof. datapoints        = " << nofDatapoints()     << std::endl;
-    os << "-- nof. active hyperslabs = " << itsHyperslab.size() << std::endl;
+
+    if (location_p) {
+      os << "-- Dataset ID             = " << location_p          << std::endl;
+      os << "-- Dataspace ID           = " << dataspaceID()       << std::endl;
+      os << "-- Datatype ID            = " << datatypeID()        << std::endl;
+      os << "-- Dataset rank           = " << rank()              << std::endl;
+      os << "-- Dataset shape          = " << shape()             << std::endl;
+      os << "-- Layout of the raw data = " << itsLayout           << std::endl;
+      os << "-- Chunk size             = " << itsChunking         << std::endl;
+      os << "-- nof. datapoints        = " << nofDatapoints()     << std::endl;
+      os << "-- nof. active hyperslabs = " << itsHyperslab.size() << std::endl;
+    }
+
+    os << "-- nof. attributes        = " << attributes_p.size() << std::endl;
+    os << "-- Attributes             = " << attributes_p        << std::endl;
   }
   
-  // ============================================================================
-  //
-  //  Methods
-  //
-  // ============================================================================
-  
-  
+  //_____________________________________________________________________________
+  //                                                                         init
 
+  void BF_StokesDataset::init ()
+  {
+    /* Set up the list of attributes attached to the structure */
+    setAttributes();
+  }
+  
 } // Namespace DAL -- end
