@@ -54,6 +54,27 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                       Stokes
   
   /*!
+    \param type -- Name of the Stokes component.
+  */
+  Stokes::Stokes (std::string const &type)
+  {
+    init ();
+    
+    if (!setType(type)) {
+      /* Error message */
+      std::cerr << "[Stokes] Unrecognized Stokes component name "
+		<< type
+		<< " - reverting to default value (Stokes::I)!"
+		<< std::endl;
+      /* Assign fallback default value */
+      setType(DAL::Stokes::I);
+    }
+  }
+
+  //_____________________________________________________________________________
+  //                                                                       Stokes
+  
+  /*!
     \param other -- Another Stokes object from which to create this new
            one.
   */

@@ -117,6 +117,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Argumented constructor
     Stokes (Stokes::Component const &type);
     
+    //! Argumented constructor
+    Stokes (std::string const &type);
+    
     //! Copy constructor
     Stokes (Stokes const &other);
     
