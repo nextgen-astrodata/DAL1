@@ -50,7 +50,11 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>DAL::BF_BeamGroup
+      <li>LOFAR Data Format ICD: Beam-Formed Data (LOFAR-USG-ICD-003)
+      <li>DAL::Stokes -- Components of a Stokes coordinate.
+      <li>DAL::BF_BeamGroup -- High-level interface to the station beam of a BF
+          dataset.
+      <li>DAL::BF_SubArrayPointing
     </ul>
     
     <h3>Synopsis</h3>
@@ -62,6 +66,37 @@ namespace DAL { // Namespace DAL -- begin
     data are not summed, then there are four Stokes tables -- \f$ (I, Q, U, V) \f$
     or \f$ (XX, XY, YX, YY) \f$ -- one per polarization, containing all the channel
     intensities per subbeam.
+    
+    <table>
+      <tr>
+        <td class="indexkey">Description</td>
+        <td class="indexkey">Stokes</td>
+        <td class="indexkey">Datatype</td>
+        <td class="indexkey">Specification</td>
+        <td class="indexkey">HDF5 datatype</td>
+      </tr>
+      <tr>
+        <td>Complex voltages</td>
+        <td>\f$ (X,Y) \f$</td>
+        <td>fcomplex</td>
+        <td>2 x 32 bit IEEE floating point</td>
+	<td>(H5T_STD_B32BE,H5T_STD_B32BE)</td>
+      </tr>
+      <tr>
+        <td>Coherent Stokes</td>
+        <td>\f$ (I,Q,U,V) \f$</td>
+        <td>float</td>
+        <td>32 bit IEEE floating point</td>
+	<td>H5T_STD_B32BE</td>
+      </tr>
+      <tr>
+        <td>Incoherent Stokes</td>
+        <td>\f$ (I,Q,U,V) \f$</td>
+        <td>float</td>
+        <td>32 bit IEEE floating point</td>
+	<td>H5T_STD_B32BE</td>
+      </tr>
+    </table>
     
     <h3>Example(s)</h3>
     
@@ -78,16 +113,16 @@ namespace DAL { // Namespace DAL -- begin
     //! Default constructor
     BF_StokesDataset ();
     
-    //! Argumented constructor
+    //! Argumented constructor, opening an existing Stokes dataset
     BF_StokesDataset (hid_t const &location,
 		      std::string const &name);
 
-    //! Argumented constructor
+    //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
 		      std::string const &name,
 		      std::vector<hsize_t> const &shape,
 		      DAL::Stokes::Component const &component=DAL::Stokes::I,
-		      hid_t const &datatype=H5T_NATIVE_FLOAT);
+		      hid_t const &datatype=H5T_STD_B32BE);
     
     //! Copy constructor
     BF_StokesDataset (BF_StokesDataset const &other);
@@ -128,6 +163,9 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Initialize the object's internal parameters
     void init ();
+
+    //! Initialize the object's internal parameters
+    void init (DAL::Stokes::Component const &component);
 
     //! Set up the list of attributes attached to the structure
     inline void setAttributes () {

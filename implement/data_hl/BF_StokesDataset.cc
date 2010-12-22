@@ -77,8 +77,7 @@ namespace DAL { // Namespace DAL -- begin
 		   shape,
 		   datatype)
   {
-    itsStokesComponent = DAL::Stokes(component);
-    init();
+    init (component);
   }
   
   //_____________________________________________________________________________
@@ -171,6 +170,43 @@ namespace DAL { // Namespace DAL -- begin
   {
     /* Set up the list of attributes attached to the structure */
     setAttributes();
+
+    /* Assign Stokes component parameter based on STOKES_COMPONENT attribute. */
+    if (H5Iis_valid(location_p)) {
+      std::string stokesComponent;
+      
+      if ( h5get_attribute (location_p, "STOKES_COMPONENT", stokesComponent) ) {
+	itsStokesComponent.setType(stokesComponent);
+      }
+    }
   }
   
+  //_____________________________________________________________________________
+  //                                                                         init
+  
+  void BF_StokesDataset::init (DAL::Stokes::Component const &component)
+  {
+    /* Basic initialization */
+    init ();
+
+    /* Store which Stokes component is represented */
+    itsStokesComponent = DAL::Stokes(component);
+
+    /* Initiaize attributes attached to the dataset */
+    if (H5Iis_valid(location_p)) {
+      std::string grouptype       = "Data";
+      std::string datatype        = "float";
+      std::string stokesComponent = itsStokesComponent.name();
+      int nofSubbands             = shape()[0];
+      int nofChannels             = shape()[1];
+
+      h5set_attribute (location_p, "GROUPTYPE",         grouptype       );
+      h5set_attribute (location_p, "DATATYPE",          datatype        );
+      h5set_attribute (location_p, "STOKES_COMPONENT",  stokesComponent );
+      h5set_attribute (location_p, "NOF_SUBBANDS",      nofSubbands     );
+      h5set_attribute (location_p, "NOF_CHANNELS",      nofChannels     );
+    }
+    
+  }
+    
 } // Namespace DAL -- end
