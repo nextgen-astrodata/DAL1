@@ -1,0 +1,56 @@
+
+//_______________________________________________________________________________
+//                                                                           core
+
+/*!
+  \defgroup core DAL :: Core library classes
+  \ingroup DAL
+  \brief Core classes of the Data Access Library
+
+  <ul>
+    <li>\ref dal_primary_classes
+  </ul>
+
+  The DAL is designed, generally, around a superset of the features of the
+  underlying formats. CASA supports a set of hierarchical tables, arrays and
+  attributes. FITS supports multiple tables or arrays and associated keywords.
+  HDF5 supports all of the above, including groups, as well as metadata in the
+  form of attributes.
+
+  \section dal_primary_classes Primary classes
+
+  <ul>
+    <li>\b DAL::dalDataset <br>
+    At the highest level, a LOFAR data product is represented by the dalDataset
+    object. A dalDataset may contain any number of dalGroup, dalTable and dalArray
+    objects. A dalDataset represents the file as a whole and may have associated
+    metadata.
+  
+    <li>\b DAL::dalGroup <br>
+  At the moment, the group object within the DAL is unique to HDF5. A group may
+  contain sub\-groups, arrays or tables. Additionally, attributes can be attached
+  to a group object.
+  
+    <li>\b DAL::dalTable <br>
+    DAL tables can be located at the root level of a file, or within a group. A
+    dalTable consits of dalColumn objects and may have associated attributes.
+  
+    <li>\b DAL::dalColumn <br>
+    DAL columns are the components of the dalTable object. The dalData object holds
+    the actual data of each column.
+  
+    <li>\b DAL::dalArray <br>
+    DAL arrays can be located at the root level of a file, or within a group. A
+    dalArray may have attribute data.
+
+    <li>\b DAL::dalData <br>
+    The dalData object holds the actual data from a dalColumn. This allows the
+    column information to be stored seperately from the information about the layout
+    of the data.
+  
+    <li>\b DAL::dalFilter <br>
+    The filter object can be applied to CASA tables before opening. In the future,
+    the same syntax may become available for HDF5 and FITS.
+  </ul>
+
+*/

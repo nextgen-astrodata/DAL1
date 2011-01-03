@@ -8,13 +8,44 @@
   \brief Python bindings to the C++ library
 
   <ul>
+    <li>\ref dal_bindings_code
     <li>\ref dal_bindings_new
     <li>\ref dal_bindings_usage
   </ul>
 
+  \section dal_bindings_code Organization of the source code
+
+  The major portion of the code to generate the Python bindings to the
+  functionality of the C++ library (\e libdal) is contained with the 
+  directory <tt>implement/bindings</tt>:
+  \verbatim
+  implement/bindings/
+  ├── CMakeLists.txt
+  ├── pydal.cc
+  ├── pydal.h
+  ├── pydal_coordinates.cc
+  ├── pydal_core.cc
+  ├── pydal_data_common.cc
+  └── pydal_data_hl.cc
+  \endverbatim
+
+  The source code is organized as follows:
+  <ul>
+    <li>The header file <tt>pydal.h</tt> contains a collection of all function
+    prototypes; the is one function per class to be exposed to the scripting
+    layer, where the name of the function is constructed as follows:
+    \verbatim
+    export_<class name>
+    \endverbatim
+    So e.g. the class <tt>Angle</tt> will be exposed from within a function 
+    named <tt>export_Angle</tt>.
+    <li>The implementation file <tt>pydal.cc</tt> calls the various functions
+    exporting the individual classes.
+  </ul>
+
   \section dal_bindings_new Creating new bindings
 
-  How to create bindings for a new C++ class:
+  In order to create bindings for a new class, the following steps are required:
 
   <ol>
     <li>Add function prototype to <tt>pydal.h</tt>:

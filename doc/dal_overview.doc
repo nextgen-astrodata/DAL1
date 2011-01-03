@@ -10,7 +10,6 @@
   <ul>
     <li>\ref dal_coding_guidelines
     <li>\ref dal_coding_cpp
-    <li>\ref dal_coding_python
   </ul>
 
   <h3>Synopsis</h3>
@@ -20,59 +19,6 @@
   formats may include \ref dal_hdf5, AIPS++/CASA tables, \ref dal_fits or specific
   raw formats. This library is available to both the C/C++ developer and the
   Python user via the \e pydal module.
-
-  <table border="0">
-    <tr>
-      <td class="indexkey">Core library classes</td>
-      <td class="indexkey">World coordinates</td>
-      <td class="indexkey">Dataset support - common methods</td>
-      <td class="indexkey">Dataset support - high-level interfaces</td>
-      <td class="indexkey">Application tools</td>
-    </tr>
-    <tr valign="top">
-      <td>
-      - DAL::dalArray
-      - DAL::dalColumn
-      - DAL::dalData
-      - DAL::dalDataset
-      - DAL::dalFilter
-      - DAL::dalGroup
-      - DAL::dalTable
-      </td>
-      <td>
-      - DAL::Angle
-      - DAL::RaDec
-      - DAL::Stokes
-      - DAL::Coordinate
-      - DAL::DirectionCoordinate
-      - DAL::LinearCoordinate
-      - DAL::StokesCoordinate
-      - DAL::TabularCoordinate
-      - DAL::CoordinatesGroup
-      </td>
-      <td>
-      - DAL::CommonAttributes
-      - DAL::CommonInterface
-      - DAL::HDF5Dataset
-      - DAL::HDF5Hyperslab
-      - DAL::Filename
-      - DAL::Timestamp
-      </td>
-      <td>
-      - DAL::BF_Dataset
-      - DAL::BF_SubArrayPointing
-      - DAL::BF_Beam
-      - DAL::BF_ProcessingHistory
-      - DAL::TBB_Timeseries
-      - DAL::TBB_StationGroup
-      - DAL::TBB_DipoleDataset
-      </td>
-      <td>
-      - bf2h5.cpp
-      - tbb2h5.cpp
-      </td>
-    </tr>
-  </table>
 
   Officially, the DAL supports three file types:
   
@@ -118,15 +64,6 @@
 //  Group definitions
 //
 // ==============================================================================
-
-//_______________________________________________________________________________
-//                                                                           core
-
-/*!
-  \defgroup core DAL :: Core library classes
-  \ingroup DAL
-  \brief Core classes of the Data Access Library
-*/
 
 //_______________________________________________________________________________
 //                                                                    coordinates
