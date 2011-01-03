@@ -186,8 +186,8 @@ namespace DAL { // Namespace DAL -- begin
   
   void BF_StokesDataset::init (DAL::Stokes::Component const &component)
   {
-    /* Basic initialization */
-    init ();
+    /* Set up the list of attributes attached to the structure */
+    setAttributes();
 
     /* Store which Stokes component is represented */
     itsStokesComponent = DAL::Stokes(component);

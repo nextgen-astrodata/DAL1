@@ -124,6 +124,11 @@ namespace DAL { // Namespace DAL -- begin
 		      DAL::Stokes::Component const &component=DAL::Stokes::I,
 		      hid_t const &datatype=H5T_STD_B32BE);
     
+    //! Argumented constructor, creating a new Stokes dataset
+    BF_StokesDataset (hid_t const &location,
+		      std::vector<hsize_t> const &shape,
+		      DAL::Stokes::Component const &component=DAL::Stokes::I);
+    
     //! Copy constructor
     BF_StokesDataset (BF_StokesDataset const &other);
     
@@ -157,8 +162,21 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Methods ==============================================================
     
+    //! Get Stokes component stored within this dataset
+    inline DAL::Stokes stokesComponent () const {
+      return itsStokesComponent;
+    }
     
-    
+    //! Get name of Stokes component stored within this dataset
+    inline std::string stokesComponentName () const {
+      return itsStokesComponent.name();
+    }
+
+    //! Get type of Stokes component stored within this dataset
+    inline DAL::Stokes::Component stokesComponentType () const {
+      return itsStokesComponent.type();
+    }
+
   private:
 
     //! Initialize the object's internal parameters

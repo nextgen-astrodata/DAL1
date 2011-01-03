@@ -95,8 +95,8 @@ endif (dataset_its)
 ## Tests working on the generated test datasets
 
 if (H5DUMP_EXECUTABLE)
-  add_test (tBF_StokesDataset_h5ls    ${H5DUMP_EXECUTABLE} -A tBF_StokesDataset.h5)
-  add_test (tBF_SubArrayPointing_h5ls ${H5DUMP_EXECUTABLE} -A tBF_SubArrayPointing.h5)
+  add_test (tBF_StokesDataset_h5dump    ${H5DUMP_EXECUTABLE} -A tBF_StokesDataset.h5)
+  add_test (tBF_SubArrayPointing_h5dump ${H5DUMP_EXECUTABLE} -A tBF_SubArrayPointing.h5)
 endif (H5DUMP_EXECUTABLE)
 
 if (H5LS_EXECUTABLE)

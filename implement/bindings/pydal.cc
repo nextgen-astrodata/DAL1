@@ -56,7 +56,6 @@ BOOST_PYTHON_MODULE(pydal)
   // ============================================================================
 
   export_dalCommon();
-
   export_dalArray ();
   export_dalColumn ();
   export_dalData ();
