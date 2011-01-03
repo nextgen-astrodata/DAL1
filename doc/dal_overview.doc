@@ -108,15 +108,6 @@
 */
 
 //_______________________________________________________________________________
-//                                                                        data_hl
-
-/*!
-  \defgroup data_hl DAL :: Dataset support - high-level interfaces
-  \ingroup DAL
-  \brief High-level dataset interfaces to the various types of datasets
-*/
-
-//_______________________________________________________________________________
 //                                                                           apps
 
 /*!
