@@ -1,0 +1,111 @@
+
+//_______________________________________________________________________________
+//                                                                       bindings
+
+/*!
+  \defgroup pydal DAL :: Python module
+  \ingroup DAL
+  \brief Python bindings to the C++ library
+
+  <ul>
+    <li>\ref dal_bindings_new
+    <li>\ref dal_bindings_usage
+  </ul>
+
+  \section dal_bindings_new Creating new bindings
+
+  How to create bindings for a new C++ class:
+
+  <ol>
+    <li>Add function prototype to <tt>pydal.h</tt>:
+    \code
+    //! Bindings for DAL::Angle
+    void export_Angle ();
+    \endcode
+    <li>Call to the previously defined function from <tt>pydal.cc</tt>:
+    \code
+    export_Angle ();  
+    \endcode
+    <li>Implement the function wrapping the C++ class:
+    \code
+#include <Angle.h>
+
+void export_Angle ()
+{
+  //________________________________________________________
+  // Specialisation of overloaded methods
+
+  void (Angle::*summary1)() 
+    = &Angle::summary;
+  void (Angle::*summary2)(std::ostream &) 
+    = &Angle::summary;
+
+  //________________________________________________________
+  // Bindings for class and its methods
+
+  bpl::class_<Angle>("Angle")
+    // Construction
+    .def( bpl::init<>())
+    .def( bpl::init<double const &, bool const &>())
+    .def( bpl::init<Angle>())
+    // Parameter access
+    .def("setAngle", &Angle::setAngle, "Set the angle.")
+    .def("rad",      &Angle::rad,      "Get the angle in radian.")
+    .def("deg",      &Angle::deg,      "Get the angle in degrees.")
+    .def("hms",      &Angle::hms,      "Get the angle as formatted string (HH:MM:SS)")
+    .def("className",
+	 &Angle::className,
+	 "Get the name of the class.")
+    // Methods
+    .def("summary",
+	 summary1,
+	 "Summary of the object's internal parameters and status.")
+    .def("summary",
+	 summary2,
+	 "Summary of the object's internal parameters and status.")
+    ;
+}
+    \endcode
+    In order to reduce compile time, the wrapping functions are distributed
+    w.r.t. the DAL module the class resides in. In the above example the
+    function will be implemented in <tt>pydal_coordinates.cc</tt> as the class
+    DAL::Angle is part of the \e coordinates module.
+  </ol>
+    
+  \section dal_bindings_usage Usage of the Python bindings    
+
+  Typical python usage of the <b><i>pydal</i></b> module might look like this:
+
+<ol>
+  <li>Working with a MeasurementSet:
+  \code
+  import sys
+  import pydal as dal
+  from pylab import *
+
+  msds= dal.dalDataset()
+  if ( msds.open(sys.argv[1]) ):
+	sys.exit(1)
+
+  tablename = "MAIN";
+
+  msds.setFilter("UVW")
+  title("UV coverage for\n" + sys.argv[1] )
+
+  maintable = msds.openTable( tablename )
+
+  # get the UVW column
+  uvw_column = maintable.getColumn("UVW")
+
+  # get the data from the column
+  data = uvw_column.data()
+
+  # plot the data
+  xlabel("U(-U)")
+  ylabel("V(-V)")
+  plot(data[0],data[1],'r,',-(data[0]),-(data[1]),'b,')
+  show()
+  \endcode
+</ol>
+
+*/
