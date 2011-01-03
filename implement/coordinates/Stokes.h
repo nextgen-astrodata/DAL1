@@ -136,7 +136,7 @@ namespace DAL { // Namespace DAL -- begin
     // === Parameter access =====================================================
 
     //! Get the type of the Stokes component
-    inline Stokes::Component type () {
+    inline Stokes::Component type () const {
       return component_p->first;
     }
 
@@ -147,7 +147,7 @@ namespace DAL { // Namespace DAL -- begin
     bool setType (std::string const &name);
 
     //! Get the name of the Stokes component
-    inline std::string name () {
+    inline std::string name () const {
       return component_p->second;
     }
 
