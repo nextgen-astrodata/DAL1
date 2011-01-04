@@ -39,6 +39,14 @@ using DAL::BF_StokesDataset;
   \author Lars B&auml;hren
  
   \date 2010/12/05
+
+  The generated HDF5 file will have the following structure:
+  \verbatim
+  tBF_StokesDataset.h5
+  |-- StokesI
+  |-- StokesQ
+  `-- StokesU
+  \endverbatim
 */
 
 //_______________________________________________________________________________
@@ -55,7 +63,7 @@ int test_constructors (std::string const &filename)
   cout << "\n[tBF_StokesDataset::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
-  std::string nameDataset ("StokesI");
+  std::string nameDataset;
   std::vector<hsize_t> shape (2);
 
   shape[0] = 100;
@@ -95,6 +103,7 @@ int test_constructors (std::string const &filename)
 
   cout << "[2] Testing BF_StokesDataset(hid_t, string) ..." << endl;
   try {
+    nameDataset = "StokesI";
     BF_StokesDataset stokes (fileID, nameDataset);
     //
     stokes.summary(); 
@@ -109,6 +118,7 @@ int test_constructors (std::string const &filename)
   cout << "[3] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>) ..."
 	    << endl;
   try {
+    nameDataset = "StokesI";
     BF_StokesDataset stokes (fileID, nameDataset, shape);
     //
     stokes.summary(); 
@@ -124,7 +134,6 @@ int test_constructors (std::string const &filename)
 	    << endl;
   try {
     nameDataset = "StokesQ";
-    //
     BF_StokesDataset stokes (fileID, nameDataset, shape, DAL::Stokes::Q);
     //
     stokes.summary(); 
@@ -236,17 +245,106 @@ int test_attributes (std::string const &filename)
 }
 
 //_______________________________________________________________________________
+//                                                                      test_data
+
+int test_data (std::string const &filename)
+{
+  cout << "\n[tBF_StokesDataset::test_data]\n" << endl;
+
+  int nofFailedTests (0);
+
+  //________________________________________________________
+  // Open HDF5 file to work with
+  
+  hid_t fileID = H5Fopen (filename.c_str(),
+			  H5F_ACC_RDWR,
+			  H5P_DEFAULT);
+  
+  /* test of file creation was successful */
+  if (H5Iis_valid(fileID)) {
+    cout << "-- Successfully opened file " << filename << endl;
+  } else {
+    cerr << "-- ERROR: Failed to open file " << filename << endl;
+    return -1;
+  }
+  
+  //________________________________________________________
+  // Create new dataset to work with
+
+  cout << "--> Create new dataset to work with ..." << endl;
+
+  std::string nameDataset ("StokesU");
+  std::vector<hsize_t> shape (2);
+
+  shape[0] = 100;
+  shape[1] = 2048;
+  
+  BF_StokesDataset stokes (fileID,
+			   nameDataset,
+			   shape,
+			   DAL::Stokes::U);
+  stokes.summary();
+
+  //________________________________________________________
+  // Write data 
+
+  cout << "--> Setting up markers for write access ..." << endl;
+
+  unsigned int nofDatapoints;
+  std::vector<int> start (2,0);
+  std::vector<int> stride;
+  std::vector<int> count;
+  std::vector<int> block (2,0);
+
+  {
+    int nofSteps  = 10;
+    block[0]      = 1;
+    block[1]      = shape[1];
+    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    float *data  = new float [nofDatapoints];
+
+    cout << "-- start        = " << start << endl;
+    cout << "-- count        = " << count << endl;
+    cout << "-- block        = " << block << endl;
+    cout << "-- # datapoints = " << nofDatapoints << endl;
+
+    for (int step(0); step<nofSteps; ++step) {
+      // update position markers
+      start[0] = step;
+      // update data array values
+      for (unsigned int n(0); n<nofDatapoints; ++n) {
+	data[n] = step;
+      }
+      // write data to dataset
+      cout << "-> writing datablock " << step << "/" << nofSteps << " ..." << endl;
+      stokes.writeData (data,start,block);
+    }
+
+    delete [] data;
+  }
+  
+  //________________________________________________________
+  // Close HDF5 file used for testing
+
+  H5Fclose(fileID);
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                           main
 
 int main ()
 {
   int nofFailedTests (0);
   std::string filename ("tBF_StokesDataset.h5");
-
+  
   // Test for the constructor(s)
   nofFailedTests += test_constructors (filename);
   // Test access to the attributes
   nofFailedTests += test_attributes (filename);
+  // Test read/write access to the data
+  nofFailedTests += test_data (filename);
 
   return nofFailedTests;
 }
