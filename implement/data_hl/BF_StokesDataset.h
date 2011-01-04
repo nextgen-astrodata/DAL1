@@ -80,21 +80,21 @@ namespace DAL { // Namespace DAL -- begin
         <td>\f$ (X,Y) \f$</td>
         <td>fcomplex</td>
         <td>2 x 32 bit IEEE floating point</td>
-	<td>(H5T_STD_B32BE,H5T_STD_B32BE)</td>
+	<td>(H5T_NATIVE_FLOAT,H5T_NATIVE_FLOAT)</td>
       </tr>
       <tr>
         <td>Coherent Stokes</td>
         <td>\f$ (I,Q,U,V) \f$</td>
         <td>float</td>
         <td>32 bit IEEE floating point</td>
-	<td>H5T_STD_B32BE</td>
+	<td>H5T_NATIVE_FLOAT</td>
       </tr>
       <tr>
         <td>Incoherent Stokes</td>
         <td>\f$ (I,Q,U,V) \f$</td>
         <td>float</td>
         <td>32 bit IEEE floating point</td>
-	<td>H5T_STD_B32BE</td>
+	<td>H5T_NATIVE_FLOAT</td>
       </tr>
     </table>
     
@@ -122,7 +122,7 @@ namespace DAL { // Namespace DAL -- begin
 		      std::string const &name,
 		      std::vector<hsize_t> const &shape,
 		      DAL::Stokes::Component const &component=DAL::Stokes::I,
-		      hid_t const &datatype=H5T_STD_B32BE);
+		      hid_t const &datatype=H5T_NATIVE_FLOAT);
     
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
