@@ -136,6 +136,109 @@
     |-- FLOAT_ATTRS    = { 1.0, 2.0, 3.0 }
     \endverbatim
 
+    <li>Create a (HDF5) integer array within a dataset:
+    \code
+    #include <dal/dalDataset.h>
+    
+    DAL::dalDataset ds;
+    ds.open( FILENAME );
+
+    // define dimensions of array
+    vector<int> dims;
+    dims.push_back(4);
+    dims.push_back(5);
+    dims.push_back(6);
+    vector<int> cdims;
+
+    int data[4*5*6];
+    for (int gg=0; gg<(4*5*6); gg++) {
+      data[gg] = gg;
+    }
+
+    DAL::dalArray * array = ds.createIntArray ("int_array",
+                                               dims,
+                                               data,
+					       cdims );
+    array->close();
+    delete array;
+    \endcode
+
+    <li>Create a (HDF5) group:
+    \code
+    #include <dal/dalDataset.h>
+    
+    DAL::dalDataset ds;
+    ds.open( FILENAME );
+
+    DAL::dalGroup * group = ds.createGroup( "group" );
+    group->close();
+    delete group;
+    \endcode
+
+    <li>Get a list of groups in a file:
+    \code
+    #include <dal/dalDataset.h>
+    
+    DAL::dalDataset ds;
+    ds.open( FILENAME );
+
+    vector<string> groupnames = ds.getGroupNames();
+
+    ds.close();
+    \endcode
+
+    <li>Get a list of members of a group:
+    \code
+    #include <dal/dalDataset.h>
+    
+    DAL::dalDataset ds;
+    ds.open( FILENAME );
+
+    dalGroup * mygroup = ds.openGroup( "groupname" );
+    vector<string> memnames = mygroup->getMemberNames();
+
+    ds.close();
+    \endcode
+
+    <li>Open an existing group:
+    \code
+    #include <dal/dalDataset.h>
+    
+    DAL::dalDataset * ds = new dalDataset;
+    ds->open( "somefile.h5" );
+    dalGroup * mygroup = ds->openGroup( "groupname" );
+    \endcode
+
+    <li>Read an attribute from a dataset:
+    \code
+    #include <dal/dalDataset.h>
+    
+    DAL::dalDataset ds;
+    ds.open( FILENAME );
+
+    std::string attr_name("INT_ATTR");
+    int iattr = 0;
+
+    ds.getAttribute( attr_name, iattr );
+
+    ds.close();
+    \endcode
+
+    <li>Read a array dimensions:
+    \code
+    uint ret = 0;
+
+    DAL::dalDataset ds;
+    ds.open( FILENAME );
+
+    DAL::dalArray * array = ds.openArray( "int_array" );
+
+    std::vector<int> dims =  array->dims();
+
+    array->close;
+    delete array;
+    \endcode
+
   </ol>
 
 */
