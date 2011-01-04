@@ -146,9 +146,9 @@ namespace DAL { // Namespace DAL -- begin
     os << "[BF_StokesDataset] Summary of internal parameters."  << std::endl;
     os << "-- Stokes component       = " << itsStokesComponent.name() << std::endl;
     os << "-- Dataset name           = " << itsName             << std::endl;
+    os << "-- Dataset ID             = " << location_p          << std::endl;
 
     if (location_p) {
-      os << "-- Dataset ID             = " << location_p          << std::endl;
       os << "-- Dataspace ID           = " << dataspaceID()       << std::endl;
       os << "-- Datatype ID            = " << datatypeID()        << std::endl;
       os << "-- Dataset rank           = " << rank()              << std::endl;
