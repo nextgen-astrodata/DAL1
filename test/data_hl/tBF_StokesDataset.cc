@@ -52,7 +52,7 @@ using DAL::BF_StokesDataset;
 */
 int test_constructors (std::string const &filename)
 {
-  std::cout << "\n[tBF_StokesDataset::test_constructors]\n" << endl;
+  cout << "\n[tBF_StokesDataset::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   std::string nameDataset ("StokesI");
@@ -80,7 +80,7 @@ int test_constructors (std::string const &filename)
   //________________________________________________________
   // Test 1: Default constructor
 
-  std::cout << "[1] Testing BF_StokesDataset() ..." << endl;
+  cout << "[1] Testing BF_StokesDataset() ..." << endl;
   try {
     BF_StokesDataset stokes;
     //
@@ -93,7 +93,7 @@ int test_constructors (std::string const &filename)
   //________________________________________________________
   // Test 2: Argumented constructor
 
-  std::cout << "[2] Testing BF_StokesDataset(hid_t, string) ..." << endl;
+  cout << "[2] Testing BF_StokesDataset(hid_t, string) ..." << endl;
   try {
     BF_StokesDataset stokes (fileID, nameDataset);
     //
@@ -106,7 +106,7 @@ int test_constructors (std::string const &filename)
   //________________________________________________________
   // Test 3: Argumented constructor
 
-  std::cout << "[3] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>) ..."
+  cout << "[3] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>) ..."
 	    << endl;
   try {
     BF_StokesDataset stokes (fileID, nameDataset, shape);
@@ -120,7 +120,7 @@ int test_constructors (std::string const &filename)
   //________________________________________________________
   // Test 4: Argumented constructor
 
-  std::cout << "[4] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>, Stokes::Component) ..."
+  cout << "[4] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>, Stokes::Component) ..."
 	    << endl;
   try {
     nameDataset = "StokesQ";
@@ -146,7 +146,7 @@ int test_constructors (std::string const &filename)
 
 int test_attributes (std::string const &filename)
 {
-  std::cout << "\n[tBF_StokesDataset::test_attributes]\n" << endl;
+  cout << "\n[tBF_StokesDataset::test_attributes]\n" << endl;
 
   int nofFailedTests (0);
   std::string nameDataset ("StokesI");
@@ -170,14 +170,58 @@ int test_attributes (std::string const &filename)
   BF_StokesDataset stokes (fileID, nameDataset);
   int nofChannels;
   int nofSubbands;
+  std::string groupType;
+  std::string dataType;
+  std::string stokesComponent;
 
   cout << "[1] Testing getAttribute(string, T) ..." << endl;
   try {
-    stokes.getAttribute ("NOF_CHANNELS", nofChannels);
-    stokes.getAttribute ("NOF_SUBBANDS", nofSubbands);
+    stokes.getAttribute ("GROUPTYPE",        groupType);
+    stokes.getAttribute ("DATATYPE",         dataType);
+    stokes.getAttribute ("NOF_CHANNELS",     nofChannels);
+    stokes.getAttribute ("NOF_SUBBANDS",     nofSubbands);
+    stokes.getAttribute ("STOKES_COMPONENT", stokesComponent);
     
-    std::cout << "-- NOF_CHANNELS = " << nofChannels << std::endl;
-    std::cout << "-- NOF_SUBBANDS = " << nofSubbands << std::endl;
+    cout << "-- GROUPTYPE        = " << groupType       << endl;
+    cout << "-- DATATYPE         = " << dataType        << endl;
+    cout << "-- NOF_CHANNELS     = " << nofChannels     << endl;
+    cout << "-- NOF_SUBBANDS     = " << nofSubbands     << endl;
+    cout << "-- STOKES_COMPONENT = " << stokesComponent << endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[2] Testing setAttribute(string, T) ..." << endl;
+  try {
+    
+    /* New values for the attributes */
+    groupType       += "_new";
+    dataType        += "_new";
+    nofChannels     += 1;
+    nofSubbands     += 1;
+    stokesComponent += "_new";
+
+    /* Set new attribute values */
+    stokes.setAttribute ("GROUPTYPE",        groupType);
+    stokes.setAttribute ("DATATYPE",         dataType);
+    stokes.setAttribute ("NOF_CHANNELS",     nofChannels);
+    stokes.setAttribute ("NOF_SUBBANDS",     nofSubbands);
+    stokes.setAttribute ("STOKES_COMPONENT", stokesComponent);
+
+    /* Get updated attributes values ... */
+    stokes.getAttribute ("GROUPTYPE",        groupType);
+    stokes.getAttribute ("DATATYPE",         dataType);
+    stokes.getAttribute ("NOF_CHANNELS",     nofChannels);
+    stokes.getAttribute ("NOF_SUBBANDS",     nofSubbands);
+    stokes.getAttribute ("STOKES_COMPONENT", stokesComponent);
+
+    /* ... and display them */
+    cout << "-- GROUPTYPE        = " << groupType       << endl;
+    cout << "-- DATATYPE         = " << dataType        << endl;
+    cout << "-- NOF_CHANNELS     = " << nofChannels     << endl;
+    cout << "-- NOF_SUBBANDS     = " << nofSubbands     << endl;
+    cout << "-- STOKES_COMPONENT = " << stokesComponent << endl;
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
