@@ -68,6 +68,16 @@
   structures the project may use during in situ processing by way of producing
   a final standard Coordinates Group.
 
+  - DAL::Angle
+  - DAL::RaDec
+  - DAL::Stokes
+  - DAL::Coordinate
+  - DAL::CoordinateInterface
+    - DAL::DirectionCoordinate
+    - DAL::LinearCoordinate
+    - DAL::TabularCoordinate
+    - DAL::StokesCoordinate
+
   \section dal_icd_003 Beam-Formed Data (LOFAR-USG-ICD-003)
 
   This document sets forth a formal data interface specification for LOFAR
@@ -79,7 +89,13 @@
   coherently added to form sets of smaller beams, each generating a time-series
   voltage sum. Alternatively, beams can also be incoherently added to create
   total intensities. Beamforming at the station level is required to reduce the
-  raw digitized data rate per station from 0.5 Tb/s to approximately 3.1 Gb/s. 
+  raw digitized data rate per station from 0.5 Tb/s to approximately 3.1 Gb/s.
+
+  - DAL::BF_RootGroup
+  - DAL::BF_ProcessingHistory
+  - DAL::BF_SubArrayPointing
+  - DAL::BF_BeamGroup
+  - DAL::BF_StokesDataset
 
   \section dal_icd_004 Radio Sky Image Cubes (LOFAR-USG-ICD-004)
 
@@ -90,6 +106,8 @@
   and should not be inferred as, a specification for any data structures the
   project may use during in situ processing by way of producing a final
   standard LOFAR Sky Image file.
+
+  - DAL::Sky_RootGroup
 
   \section dal_icd_005 File Naming Conventions (LOFAR-USG-ICD-005)
 
@@ -141,6 +159,8 @@
   specification for RM Synthesis cube data products only and in no way implies,
   and should not be inferred as, a specification for any data structures the
   project may use during in situ processing by way of producing a final
-  standard RM Synthesis cube file. 
+  standard RM Synthesis cube file.
+
+  - DAL::RM_RootGroup
 
 */

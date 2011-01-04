@@ -8,7 +8,8 @@
   \brief Core classes of the Data Access Library
 
   <ul>
-    <li>\ref dal_primary_classes
+    <li>\ref dal_module_core_classes
+    <li>\ref dal_module_core_examples
   </ul>
 
   The DAL is designed, generally, around a superset of the features of the
@@ -17,7 +18,7 @@
   HDF5 supports all of the above, including groups, as well as metadata in the
   form of attributes.
 
-  \section dal_primary_classes Primary classes
+  \section dal_module_core_classes Primary classes
 
   <ul>
     <li>\b DAL::dalDataset <br>
@@ -27,9 +28,9 @@
     metadata.
   
     <li>\b DAL::dalGroup <br>
-  At the moment, the group object within the DAL is unique to HDF5. A group may
-  contain sub\-groups, arrays or tables. Additionally, attributes can be attached
-  to a group object.
+    At the moment, the group object within the DAL is unique to HDF5. A group may
+    contain sub-groups, arrays or tables. Additionally, attributes can be attached
+    to a group object.
   
     <li>\b DAL::dalTable <br>
     DAL tables can be located at the root level of a file, or within a group. A
@@ -52,5 +53,89 @@
     The filter object can be applied to CASA tables before opening. In the future,
     the same syntax may become available for HDF5 and FITS.
   </ul>
+
+  \section dal_module_core_examples Examples working with the core classes
+
+  <ol>
+
+    <li>Create and close a new HDF5 file:
+    \code
+    #include <dal/dalDataset.h>
+    
+    DAL::dalDataset * ds = NULL;
+    ds = new DAL::dalDataset( FILENAME, "HDF5" );
+
+    ds->close();
+
+    delete ds;
+    \endcode
+
+    <li>Open and close an existing file:
+    \code
+    #include <dal/dalDataset.h>
+    
+    DAL::dalDataset ds;
+
+    ds.open( FILENAME );
+    ds.close();
+    \endcode
+
+    <li>Set attributes in a (HDF5) dataset:
+    \code
+    #include <dal/dalDataset.h>
+    
+    DAL::dalDataset ds;
+    ds.open( FILENAME );
+
+    std::string sval = "string test value";
+    ds.setAttribute( "STRING_ATTR", sval );
+
+    std::vector<std::string> svals;
+    svals.push_back("string");
+    svals.push_back("vector");
+    svals.push_back("test");
+    ds.setAttribute_string( "STRING_ATTRS", svals );
+
+    int ival = 1;
+    ds.setAttribute( "INT_ATTR", &ival );
+
+    int ivals[] = { 1, 2, 3 };
+    ds.setAttribute( "INT_ATTRS", ivals, 3 );
+
+    uint uival = 2;
+    ds.setAttribute( "UINT_ATTR", &uival );
+
+    uint uivals[] = { 1, 2, 3};
+    ds.setAttribute( "UINT_ATTRS", uivals, 3 );
+
+    float fval = 3.0;
+    ds.setAttribute( "FLOAT_ATTR", &fval );
+
+    float fvals[] = { 1.0, 2.0, 3.0 };
+    ds.setAttribute( "FLOAT_ATTRS", fvals, 3 );
+
+    double dval = 3.0;
+    ds.setAttribute( "DOUBLE_ATTR", &dval );
+
+    double dvals[] = { 1.0, 2.0, 3.0 };
+    ds.setAttribute( "DOUBLE_ATTRS", dvals, 3 );
+
+    ds.close();
+    \endcode
+    Once the above operations are completed, the HDF5 file will have the following
+    structure and contents:
+    \verbatim
+    .
+    |-- STRING_ATTR    = "string test value"
+    |-- STRING_ATTRS   = {"string","vector","test"}
+    |-- INT_ATTR       = 1
+    |-- INT_ATTRS      = { 1, 2, 3 }
+    |-- UINT_ATTR      = 2
+    |-- UINT_ATTRS     = { 1, 2, 3 }
+    |-- FLOAT_ATTR     = 3.0
+    |-- FLOAT_ATTRS    = { 1.0, 2.0, 3.0 }
+    \endverbatim
+
+  </ol>
 
 */
