@@ -47,7 +47,8 @@ using DAL::BF_StokesDataset;
   |-- StokesQ
   |-- StokesU.001
   |-- StokesU.002
-  `-- StokesU.003
+  |-- StokesU.003
+  `-- StokesU.004
   \endverbatim
 */
 
@@ -335,7 +336,7 @@ int test_data (std::string const &filename)
 	data[n] = step;
       }
       // write data to dataset
-      stokes.writeData (data,start,block);
+      stokes.writeData (data, start, block);
     }
     
     delete [] data;
@@ -348,6 +349,7 @@ int test_data (std::string const &filename)
   try {
     nameDataset   = "StokesU.002";
     nofSteps      = 20;
+    start[1]      = 0;
     block[0]      = shape[0]/nofSteps;
     block[1]      = shape[1];
     nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
@@ -370,11 +372,12 @@ int test_data (std::string const &filename)
       for (unsigned int n(0); n<nofDatapoints; ++n) {
 	data[n] = step;
       }
-      // write data to dataset
+      // feedback
       cout << "-> writing datablock " << step << "/" << nofSteps
 	   << " starting from " << start
 	   << " ..." << endl;
-      stokes.writeData (data,start,block);
+      // write data to dataset
+      stokes.writeData (data, start, block);
     }
 
     delete [] data;
@@ -382,7 +385,85 @@ int test_data (std::string const &filename)
     std::cerr << message << endl;
     nofFailedTests++;
   }
-  
+
+  cout << "[3] Test writing single columns to dataset ..." << endl;
+  try {
+    nameDataset   = "StokesU.003";
+    nofSteps      = shape[1];
+    start[0]      = 0;
+    block[0]      = shape[0];
+    block[1]      = shape[1]/nofSteps;
+    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    float *data   = new float [nofDatapoints];
+
+    cout << "-- Dataset name = " << nameDataset << endl;
+    cout << "-- Shape        = " << shape    << endl;
+    cout << "-- nof. steps   = " << nofSteps << endl;
+    cout << "-- block        = " << block    << endl;
+
+    BF_StokesDataset stokes (fileID,
+			     nameDataset,
+			     shape,
+			     DAL::Stokes::U);
+    
+    for (int step(0); step<nofSteps; ++step) {
+      // set position marker
+      start[1] = step*block[1];
+      // update data array values
+      for (unsigned int n(0); n<nofDatapoints; ++n) {
+	data[n] = step;
+      }
+      // write data to dataset
+      stokes.writeData (data, start, block);
+    }
+    
+    delete [] data;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  cout << "[4] Test writing multiple columns to dataset ..." << endl;
+  try {
+    nameDataset   = "StokesU.004";
+    nofSteps      = 16;
+    start[0]      = 0;
+    block[0]      = shape[0];
+    block[1]      = shape[1]/nofSteps;
+    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    float *data   = new float [nofDatapoints];
+
+    cout << "-- Dataset name = " << nameDataset << endl;
+    cout << "-- Shape        = " << shape    << endl;
+    cout << "-- nof. steps   = " << nofSteps << endl;
+    cout << "-- block        = " << block    << endl;
+
+    BF_StokesDataset stokes (fileID,
+			     nameDataset,
+			     shape,
+			     DAL::Stokes::U);
+    
+    for (int step(0); step<nofSteps; ++step) {
+      // set position marker
+      start[1] = step*block[1];
+      // update data array values
+      for (unsigned int n(0); n<nofDatapoints; ++n) {
+	data[n] = step;
+      }
+      // feedback
+      cout << "-> writing datablock " << step << "/" << nofSteps
+	   << " starting from " << start
+	   << " ..." << endl;
+      // write data to dataset
+      stokes.writeData (data, start, block);
+    }
+    
+    delete [] data;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
   //________________________________________________________
   // Close HDF5 file used for testing
 
