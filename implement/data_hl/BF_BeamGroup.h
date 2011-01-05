@@ -55,8 +55,8 @@ namespace DAL { // Namespace DAL -- begin
     <ul type="square">
       <li>LOFAR Data Format ICDs:
       <ul>
-	<li>Beam-Formed Data (LOFAR-USG-ICD-003)
-	<li>Naming conventions (LOFAR-USG-ICD-005)
+        <li>\ref dal_icd_003
+	<li>\ref dal_icd_005
       </ul>
       <li>Components of the LOFAR user software:
       <ul>
@@ -73,9 +73,16 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Synopsis</h3>
 
     \verbatim
-    Beam000
-    |-- CoordinatesGroup
-    `-- ProcessingHistory
+    .
+    |-- Beam000                         Group
+    |   |-- CoordinatesGroup            Group
+    |   |-- ProcessingHistory           Group
+    |   |-- Stokes0                     Dataset
+    |   |-- Stokes1                     Dataset
+    |   |-- Stokes2                     Dataset
+    |   `-- Stokes3                     Dataset
+    |-- Beam001                         Group
+    |
     \endverbatim
     
     <h3>Example(s)</h3>

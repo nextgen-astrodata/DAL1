@@ -50,7 +50,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>LOFAR Data Format ICD: Beam-Formed Data (LOFAR-USG-ICD-003)
+      <li>\ref dal_icd_003
       <li>DAL::Stokes -- Components of a Stokes coordinate.
       <li>DAL::BF_BeamGroup -- High-level interface to the station beam of a BF
           dataset.

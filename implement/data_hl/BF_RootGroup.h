@@ -55,8 +55,8 @@ namespace DAL { // Namespace DAL -- begin
     <ul type="square">
       <li>LOFAR Data Format ICDs:
       <ul>
-	<li>Beam-Formed Data (LOFAR-USG-ICD-003)
-	<li>Naming conventions (LOFAR-USG-ICD-005)
+      <li>\ref dal_icd_003
+      <li>\ref dal_icd_005
       </ul>
       <li>Components of the LOFAR user software:
       <ul>
