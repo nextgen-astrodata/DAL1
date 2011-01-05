@@ -45,7 +45,9 @@ using DAL::BF_StokesDataset;
   tBF_StokesDataset.h5
   |-- StokesI
   |-- StokesQ
-  `-- StokesU
+  |-- StokesU.001
+  |-- StokesU.002
+  `-- StokesU.003
   \endverbatim
 */
 
@@ -54,6 +56,8 @@ using DAL::BF_StokesDataset;
 
 /*!
   \brief Test constructors for a new BF_StokesDataset object
+
+  \param filename -- Name of the HDF5 file to be employed for testing.
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
@@ -153,6 +157,14 @@ int test_constructors (std::string const &filename)
 //_______________________________________________________________________________
 //                                                                test_attributes
 
+/*!
+  \brief Test access to the attributes
+
+  \param filename -- Name of the HDF5 file to be employed for testing.
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
 int test_attributes (std::string const &filename)
 {
   cout << "\n[tBF_StokesDataset::test_attributes]\n" << endl;
@@ -247,6 +259,14 @@ int test_attributes (std::string const &filename)
 //_______________________________________________________________________________
 //                                                                      test_data
 
+/*!
+  \brief Test read/write access to the data
+
+  \param filename -- Name of the HDF5 file to be employed for testing.
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
 int test_data (std::string const &filename)
 {
   cout << "\n[tBF_StokesDataset::test_data]\n" << endl;
@@ -273,54 +293,94 @@ int test_data (std::string const &filename)
 
   cout << "--> Create new dataset to work with ..." << endl;
 
-  std::string nameDataset ("StokesU");
+  std::string nameDataset;
   std::vector<hsize_t> shape (2);
-
-  shape[0] = 100;
-  shape[1] = 2048;
-  
-  BF_StokesDataset stokes (fileID,
-			   nameDataset,
-			   shape,
-			   DAL::Stokes::U);
-  stokes.summary();
-
-  //________________________________________________________
-  // Write data 
-
-  cout << "--> Setting up markers for write access ..." << endl;
-
-  unsigned int nofDatapoints;
   std::vector<int> start (2,0);
   std::vector<int> stride;
   std::vector<int> count;
   std::vector<int> block (2,0);
+  int nofSteps;
+  unsigned int nofDatapoints;
 
-  {
-    int nofSteps  = 10;
-    block[0]      = 1;
+  shape[0] = 100;
+  shape[1] = 2048;
+
+  //________________________________________________________
+  // Write data 
+
+  cout << "[1] Test writing single rows to dataset ..." << endl;
+  try {
+    nameDataset   = "StokesU.001";
+    nofSteps      = shape[0];
+    block[0]      = shape[0]/nofSteps;
     block[1]      = shape[1];
     nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
-    float *data  = new float [nofDatapoints];
+    float *data   = new float [nofDatapoints];
 
-    cout << "-- start        = " << start << endl;
-    cout << "-- count        = " << count << endl;
-    cout << "-- block        = " << block << endl;
-    cout << "-- # datapoints = " << nofDatapoints << endl;
+    cout << "-- Dataset name = " << nameDataset << endl;
+    cout << "-- Shape        = " << shape    << endl;
+    cout << "-- nof. steps   = " << nofSteps << endl;
+    cout << "-- block        = " << block    << endl;
 
+    BF_StokesDataset stokes (fileID,
+			     nameDataset,
+			     shape,
+			     DAL::Stokes::U);
+    
     for (int step(0); step<nofSteps; ++step) {
-      // update position markers
-      start[0] = step;
+      // set position marker
+      start[0] = step*block[0];
       // update data array values
       for (unsigned int n(0); n<nofDatapoints; ++n) {
 	data[n] = step;
       }
       // write data to dataset
-      cout << "-> writing datablock " << step << "/" << nofSteps << " ..." << endl;
+      stokes.writeData (data,start,block);
+    }
+    
+    delete [] data;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[2] Test writing multiple rows to dataset ..." << endl;
+  try {
+    nameDataset   = "StokesU.002";
+    nofSteps      = 20;
+    block[0]      = shape[0]/nofSteps;
+    block[1]      = shape[1];
+    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
+    float *data   = new float [nofDatapoints];
+
+    cout << "-- Dataset name = " << nameDataset << endl;
+    cout << "-- Shape        = " << shape    << endl;
+    cout << "-- nof. steps   = " << nofSteps << endl;
+    cout << "-- block        = " << block    << endl;
+
+    BF_StokesDataset stokes (fileID,
+			     nameDataset,
+			     shape,
+			     DAL::Stokes::U);
+    
+    for (int step(0); step<nofSteps; ++step) {
+      // set position marker
+      start[0] = step*block[0];
+      // update data array values
+      for (unsigned int n(0); n<nofDatapoints; ++n) {
+	data[n] = step;
+      }
+      // write data to dataset
+      cout << "-> writing datablock " << step << "/" << nofSteps
+	   << " starting from " << start
+	   << " ..." << endl;
       stokes.writeData (data,start,block);
     }
 
     delete [] data;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
   }
   
   //________________________________________________________
