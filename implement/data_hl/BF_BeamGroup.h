@@ -75,12 +75,35 @@ namespace DAL { // Namespace DAL -- begin
     \verbatim
     .
     |-- Beam000                         Group
-    |   |-- CoordinatesGroup            Group
+    |   |-- GROUPTYPE                   Attr.               string
+    |   |-- TARGET                      Attr.               array<string,1>
+    |   |-- NOF_STATIONS                Attr.               int
+    |   |-- STATIONS_LIST               Attr.               array<string,1>
+    |   |-- POINT_RA                    Attr.               double
+    |   |-- POINT_DEC                   Attr.               double
+    |   |-- POSITION_OFFSET_RA          Attr.               double
+    |   |-- POSITION_OFFSET_DEC         Attr.               double
+    |   |-- PB_DIAMETER_RA              Attr.               float
+    |   |-- PB_DIAMETER_DEC             Attr.               float
+    |   |-- PB_CENTER_FREQUENCY         Attr.               double
+    |   |-- PB_CENTER_FREQUENCY_UNIT    Attr.               string
+    |   |-- FOLDED_DATA                 Attr.               bool
+    |   |-- FOLD_PERIOD                 Attr.               float
+    |   |-- FOLD_PERIOD_UNIT            Attr.               string
+    |   |-- DEDISPERSION                Attr.               string
+    |   |-- DISPERSION_MEASURE          Attr.               float
+    |   |-- DISPERSION_MEASURE_UNIT     Attr.               string
+    |   |-- BARYCENTER                  Attr.               bool
+    |   |-- NOF_STOKES                  Attr.               int
+    |   |-- STOKES_COMPONENTS           Attr.               array<string,1>
+    |   |-- COMPLEX_VOLTAGE             Attr.               bool
+    |   |-- SIGNAL_SUM                  Attr.               string
+    |   |-- COORDINATES                 Group
     |   |-- ProcessingHistory           Group
-    |   |-- Stokes0                     Dataset
-    |   |-- Stokes1                     Dataset
-    |   |-- Stokes2                     Dataset
-    |   `-- Stokes3                     Dataset
+    |   |-- STOKES_0                    Dataset
+    |   |-- STOKES_1                    Dataset
+    |   |-- STOKES_2                    Dataset
+    |   `-- STOKES_3                    Dataset
     |-- Beam001                         Group
     |
     \endverbatim
