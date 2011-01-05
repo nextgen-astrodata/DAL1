@@ -66,6 +66,18 @@ namespace DAL { // Namespace DAL -- begin
     data are not summed, then there are four Stokes tables -- \f$ (I, Q, U, V) \f$
     or \f$ (XX, XY, YX, YY) \f$ -- one per polarization, containing all the channel
     intensities per subbeam.
+
+    \verbatim
+    .                         Dataset
+    |-- GROUPTYPE             Attribute           string
+    |-- DATATYPE              Attribute           string
+    |-- STOKES_COMPONENT      Attribute           string
+    |-- NOF_SUBBANDS          Attribute           int
+    |-- NOF_CHANNELS          Attribute           int
+    \endverbatim
+
+    The datatype of the elements stored within the dataset depends on the Stokes
+    component to be recorded:
     
     <table>
       <tr>
