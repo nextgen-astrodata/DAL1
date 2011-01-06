@@ -74,6 +74,7 @@ namespace DAL { // Namespace DAL -- begin
 				      unsigned int const &nofChannels,
 				      DAL::Stokes::Component const &component,
 				      hid_t const &datatype)
+    : HDF5Dataset()
   {
     init (component,
 	  nofSubbands,
@@ -84,20 +85,20 @@ namespace DAL { // Namespace DAL -- begin
   //                                                             BF_StokesDataset
   
   /*!
-    \param location     -- Identifier for the location at which the dataset is
+    \param location    -- Identifier for the location at which the dataset is
            about to be created.
-    \param name         -- Name of the dataset.
-    \param nofSubbands  -- Number of sub-bands.
-    \param nofChannels  -- Number of channels within the subbands.
-    \param nofTimesteps -- Number of steps along the time axis.
-    \param component    -- Stokes component stored within the dataset
-    \param datatype     -- Datatype for the elements within the Dataset
+    \param name        -- Name of the dataset.
+    \param nofTimebins -- Number of bins along the time axis.
+    \param nofSubbands -- Number of sub-bands.
+    \param nofChannels -- Number of channels within the subbands.
+    \param component   -- Stokes component stored within the dataset
+    \param datatype    -- Datatype for the elements within the Dataset
   */
   BF_StokesDataset::BF_StokesDataset (hid_t const &location,
 				      std::string const &name,
+				      unsigned int const &nofTimebins,
 				      unsigned int const &nofSubbands,
 				      unsigned int const &nofChannels,
-				      unsigned int const &nofTimesteps,
 				      DAL::Stokes::Component const &component,
 				      hid_t const &datatype)
   {
@@ -110,26 +111,28 @@ namespace DAL { // Namespace DAL -- begin
   //                                                             BF_StokesDataset
   
   /*!
-    \param location  -- Identifier for the location at which the dataset is about
-           to be created.
-    \param name      -- Name of the dataset.
-    \param shape     -- [time, freq] Shape of the dataset.
-    \param component -- Stokes component stored within the dataset
-    \param datatype  -- Datatype for the elements within the Dataset
+    \param location    -- Identifier for the location at which the dataset is
+           about to be created.
+    \param name        -- Name of the dataset.
+    \param shape       -- Shape of the dataset.
+    \param component   -- Stokes component stored within the dataset
+    \param datatype    -- Datatype for the elements within the Dataset
   */
   BF_StokesDataset::BF_StokesDataset (hid_t const &location,
 				      std::string const &name,
 				      std::vector<hsize_t> const &shape,
 				      DAL::Stokes::Component const &component,
 				      hid_t const &datatype)
-    : HDF5Dataset (location,
-		   name,
-		   shape,
-		   datatype)
+    : HDF5Dataset(location,
+		  name,
+		  shape,
+		  datatype)
   {
-    init (component);
+    init (component,
+	  1,
+	  shape[1]);
   }
-  
+
   //_____________________________________________________________________________
   //                                                             BF_StokesDataset
   
@@ -198,12 +201,12 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- nof. channels          = " << nofChannels()       << std::endl;
     os << "-- Dataset name           = " << itsName             << std::endl;
     os << "-- Dataset ID             = " << location_p          << std::endl;
-
+    os << "-- Dataspace ID           = " << dataspaceID()       << std::endl;
+    os << "-- Datatype ID            = " << datatypeID()        << std::endl;
+    os << "-- Dataset rank           = " << rank()              << std::endl;
+    os << "-- Dataset shape          = " << shape()             << std::endl;
+    
     if (location_p) {
-      os << "-- Dataspace ID           = " << dataspaceID()       << std::endl;
-      os << "-- Datatype ID            = " << datatypeID()        << std::endl;
-      os << "-- Dataset rank           = " << rank()              << std::endl;
-      os << "-- Dataset shape          = " << shape()             << std::endl;
       os << "-- Layout of the raw data = " << itsLayout           << std::endl;
       os << "-- Chunk size             = " << itsChunking         << std::endl;
       os << "-- nof. datapoints        = " << nofDatapoints()     << std::endl;

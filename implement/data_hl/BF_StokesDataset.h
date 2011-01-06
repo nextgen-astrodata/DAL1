@@ -72,8 +72,9 @@ namespace DAL { // Namespace DAL -- begin
     |-- GROUPTYPE             Attribute           string
     |-- DATATYPE              Attribute           string
     |-- STOKES_COMPONENT      Attribute           string
+    |-- NOF_TIMEBINS          Attribute           int
     |-- NOF_SUBBANDS          Attribute           int
-    |-- NOF_CHANNELS          Attribute           int
+    `-- NOF_CHANNELS          Attribute           array<int,1>
     \endverbatim
 
     The datatype of the elements stored within the dataset depends on the Stokes
@@ -109,6 +110,77 @@ namespace DAL { // Namespace DAL -- begin
 	<td>H5T_NATIVE_FLOAT</td>
       </tr>
     </table>
+
+    The shape of the dataset is determined by
+    - the number of time bins (\c NOF_TIMEBINS),
+    - the number of sub-bands (\c NOF_SUBBANDS),
+    - the number of channels per sub-band (\c NOF_CHANNELS)
+
+    Mapping of input variables onto internal parameters describing organization
+    and shape of the dataset:
+
+    <table>
+      <tr>
+        <td class="indexkey">nofTimebins</td>
+        <td class="indexkey">nofSubbands</td>
+        <td class="indexkey">nofChannels</td>
+        <td class="indexkey">shape</td>
+        <td class="indexkey">\f$ N_{\rm Time} \f$</td>
+        <td class="indexkey">\f$ N_{\rm Bands} \f$</td>
+        <td class="indexkey">\f$ N_{\rm Channels} \f$</td>
+        <td class="indexkey">\f$ N_{\rm Shape} \f$</td>
+      </tr>
+      <tr>
+        <td>yes</td>
+        <td>yes</td>
+        <td>yes</td>
+        <td>--</td>
+        <td>nofTimebins</td>
+        <td>nofSubbands</td>
+        <td>nofChannels</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>yes</td>
+        <td>--</td>
+        <td>yes</td>
+        <td>--</td>
+        <td>nofTimebins</td>
+        <td>1</td>
+        <td>nofChannels</td>
+        <td>[nofTimebins,nofChannels]</td>
+      </tr>
+      <tr>
+        <td>--</td>
+        <td>yes</td>
+        <td>yes</td>
+        <td>--</td>
+        <td>1</td>
+        <td>nofSubbands</td>
+        <td>nofChannels</td>
+        <td>[1,nofSubbands*nofChannels]</td>
+      </tr>
+      <tr>
+        <td>--</td>
+        <td>--</td>
+        <td>yes</td>
+        <td>--</td>
+        <td>1</td>
+        <td>1</td>
+        <td>nofChannels</td>
+        <td>[1,nofChannels]</td>
+      </tr>
+      <tr>
+        <td>--</td>
+        <td>--</td>
+        <td>--</td>
+        <td>yes</td>
+        <td>shape[0]</td>
+        <td>1</td>
+        <td>shape[1]</td>
+        <td>shape</td>
+      </tr>
+    </table>
     
     <h3>Example(s)</h3>
     
@@ -142,9 +214,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
 		      std::string const &name,
+		      unsigned int const &nofTimebins,
 		      unsigned int const &nofSubbands,
 		      unsigned int const &nofChannels,
-		      unsigned int const &nofTimesteps,
 		      DAL::Stokes::Component const &component=DAL::Stokes::I,
 		      hid_t const &datatype=H5T_NATIVE_FLOAT);
     

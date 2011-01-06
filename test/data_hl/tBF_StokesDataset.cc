@@ -71,8 +71,8 @@ int test_constructors (std::string const &filename)
   std::string nameDataset;
   std::vector<hsize_t> shape (2);
 
-  shape[0] = 100;
-  shape[1] = 1024;
+  shape[0] = 100;    // Time bins
+  shape[1] = 1024;   // Frequency bins
   
   //________________________________________________________
   // Create HDF5 file to work with
@@ -307,7 +307,7 @@ int test_data (std::string const &filename)
   shape[1] = 2048;
 
   //________________________________________________________
-  // Write data 
+  // Test 1
 
   cout << "[1] Test writing single rows to dataset ..." << endl;
   try {
@@ -345,6 +345,9 @@ int test_data (std::string const &filename)
     nofFailedTests++;
   }
   
+  //________________________________________________________
+  // Test 2
+
   cout << "[2] Test writing multiple rows to dataset ..." << endl;
   try {
     nameDataset   = "StokesU.002";
@@ -386,6 +389,9 @@ int test_data (std::string const &filename)
     nofFailedTests++;
   }
 
+  //________________________________________________________
+  // Test 3
+
   cout << "[3] Test writing single columns to dataset ..." << endl;
   try {
     nameDataset   = "StokesU.003";
@@ -422,6 +428,9 @@ int test_data (std::string const &filename)
     std::cerr << message << endl;
     nofFailedTests++;
   }
+
+  //________________________________________________________
+  // Test 4
 
   cout << "[4] Test writing multiple columns to dataset ..." << endl;
   try {
@@ -463,6 +472,11 @@ int test_data (std::string const &filename)
     std::cerr << message << endl;
     nofFailedTests++;
   }
+
+  //________________________________________________________
+  // Test 5
+
+  cout << "[5] Test extending the number of rows in the dataset ..." << endl;
 
   //________________________________________________________
   // Close HDF5 file used for testing
