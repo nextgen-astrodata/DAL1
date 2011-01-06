@@ -117,6 +117,8 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Stokes component stored inside this dataset
     DAL::Stokes itsStokesComponent;
+    //! Number of channels within the subbands
+    std::vector<unsigned int> itsNofChannels;
     
   public:
     
@@ -129,6 +131,23 @@ namespace DAL { // Namespace DAL -- begin
     BF_StokesDataset (hid_t const &location,
 		      std::string const &name);
 
+    //! Argumented constructor, creating a new Stokes dataset
+    BF_StokesDataset (hid_t const &location,
+		      std::string const &name,
+		      unsigned int const &nofSubbands,
+		      unsigned int const &nofChannels,
+		      DAL::Stokes::Component const &component=DAL::Stokes::I,
+		      hid_t const &datatype=H5T_NATIVE_FLOAT);
+    
+    //! Argumented constructor, creating a new Stokes dataset
+    BF_StokesDataset (hid_t const &location,
+		      std::string const &name,
+		      unsigned int const &nofSubbands,
+		      unsigned int const &nofChannels,
+		      unsigned int const &nofTimesteps,
+		      DAL::Stokes::Component const &component=DAL::Stokes::I,
+		      hid_t const &datatype=H5T_NATIVE_FLOAT);
+    
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
 		      std::string const &name,
@@ -155,6 +174,16 @@ namespace DAL { // Namespace DAL -- begin
     BF_StokesDataset& operator= (BF_StokesDataset const &other); 
     
     // === Parameter access =====================================================
+
+    //! Get the number of sub-bands
+    inline unsigned int nofSubbands () const {
+      return itsNofChannels.size();
+    }
+
+    //! Get the number of channels per sub-band
+    inline std::vector<unsigned int> nofChannels () const {
+      return itsNofChannels;
+    }
     
     /*!
       \brief Get the name of the class
@@ -193,10 +222,12 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Initialize the object's internal parameters
     void init ();
-
+    
     //! Initialize the object's internal parameters
-    void init (DAL::Stokes::Component const &component);
-
+    void init (DAL::Stokes::Component const &component,
+	       unsigned int const &nofSubbands=0,
+	       unsigned int const &nofChannels=0);
+    
     //! Set up the list of attributes attached to the structure
     inline void setAttributes () {
       attributes_p.clear();

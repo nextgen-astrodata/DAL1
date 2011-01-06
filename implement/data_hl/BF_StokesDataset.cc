@@ -60,10 +60,60 @@ namespace DAL { // Namespace DAL -- begin
   //                                                             BF_StokesDataset
   
   /*!
+    \param location    -- Identifier for the location at which the dataset is about
+           to be created.
+    \param name        -- Name of the dataset.
+    \param nofSubbands -- Number of sub-bands.
+    \param nofChannels -- Number of channels within the subbands.
+    \param component   -- Stokes component stored within the dataset
+    \param datatype    -- Datatype for the elements within the Dataset
+  */
+  BF_StokesDataset::BF_StokesDataset (hid_t const &location,
+				      std::string const &name,
+				      unsigned int const &nofSubbands,
+				      unsigned int const &nofChannels,
+				      DAL::Stokes::Component const &component,
+				      hid_t const &datatype)
+  {
+    init (component,
+	  nofSubbands,
+	  nofChannels);
+  }
+
+  //_____________________________________________________________________________
+  //                                                             BF_StokesDataset
+  
+  /*!
+    \param location     -- Identifier for the location at which the dataset is
+           about to be created.
+    \param name         -- Name of the dataset.
+    \param nofSubbands  -- Number of sub-bands.
+    \param nofChannels  -- Number of channels within the subbands.
+    \param nofTimesteps -- Number of steps along the time axis.
+    \param component    -- Stokes component stored within the dataset
+    \param datatype     -- Datatype for the elements within the Dataset
+  */
+  BF_StokesDataset::BF_StokesDataset (hid_t const &location,
+				      std::string const &name,
+				      unsigned int const &nofSubbands,
+				      unsigned int const &nofChannels,
+				      unsigned int const &nofTimesteps,
+				      DAL::Stokes::Component const &component,
+				      hid_t const &datatype)
+  {
+    init (component,
+	  nofSubbands,
+	  nofChannels);
+  }
+
+  //_____________________________________________________________________________
+  //                                                             BF_StokesDataset
+  
+  /*!
     \param location  -- Identifier for the location at which the dataset is about
            to be created.
     \param name      -- Name of the dataset.
-    \param shape     -- Shape of the dataset.
+    \param shape     -- [time, freq] Shape of the dataset.
     \param component -- Stokes component stored within the dataset
     \param datatype  -- Datatype for the elements within the Dataset
   */
@@ -145,6 +195,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     os << "[BF_StokesDataset] Summary of internal parameters."  << std::endl;
     os << "-- Stokes component       = " << itsStokesComponent.name() << std::endl;
+    os << "-- nof. channels          = " << nofChannels()       << std::endl;
     os << "-- Dataset name           = " << itsName             << std::endl;
     os << "-- Dataset ID             = " << location_p          << std::endl;
 
@@ -168,43 +219,64 @@ namespace DAL { // Namespace DAL -- begin
 
   void BF_StokesDataset::init ()
   {
+    itsNofChannels.clear();
+
     /* Set up the list of attributes attached to the structure */
     setAttributes();
 
     /* Assign Stokes component parameter based on STOKES_COMPONENT attribute. */
     if (H5Iis_valid(location_p)) {
       std::string stokesComponent;
+      unsigned int nofSubbands;
+      unsigned int nofChannels;
       
       if ( h5get_attribute (location_p, "STOKES_COMPONENT", stokesComponent) ) {
 	itsStokesComponent.setType(stokesComponent);
       }
+
+      if ( h5get_attribute (location_p, "NOF_SUBBANDS", nofSubbands) ) {
+	/* Store the number of sub-bands */
+	itsNofChannels.resize(nofSubbands);
+	/* Reyrieve number of channels per sub-band */
+	if ( h5get_attribute (location_p, "NOF_CHANNELS", nofChannels) ) {
+	  itsNofChannels = std::vector<unsigned int>(nofSubbands,nofChannels);
+	}
+      }
+      
     }
   }
   
   //_____________________________________________________________________________
   //                                                                         init
-  
-  void BF_StokesDataset::init (DAL::Stokes::Component const &component)
+
+  /*!
+    \param nofSubbands -- Number of sub-bands.
+    \param nofChannels -- Number of channels within the subbands.
+    \param component   -- Stokes component stored within the dataset
+  */
+  void BF_StokesDataset::init (DAL::Stokes::Component const &component,
+			       unsigned int const &nofSubbands,
+			       unsigned int const &nofChannels)
   {
     /* Set up the list of attributes attached to the structure */
     setAttributes();
 
-    /* Store which Stokes component is represented */
+    /* Store information on Stokes component and frequency channels */
     itsStokesComponent = DAL::Stokes(component);
+    itsNofChannels     = std::vector<unsigned int>(nofSubbands,nofChannels);
 
     /* Initiaize attributes attached to the dataset */
     if (H5Iis_valid(location_p)) {
       std::string grouptype       = "Data";
       std::string datatype        = "float";
       std::string stokesComponent = itsStokesComponent.name();
-      int nofSubbands             = shape()[0];
-      int nofChannels             = shape()[1];
+      unsigned int nofSubbands    = itsNofChannels.size();
 
-      h5set_attribute (location_p, "GROUPTYPE",         grouptype       );
-      h5set_attribute (location_p, "DATATYPE",          datatype        );
-      h5set_attribute (location_p, "STOKES_COMPONENT",  stokesComponent );
-      h5set_attribute (location_p, "NOF_SUBBANDS",      nofSubbands     );
-      h5set_attribute (location_p, "NOF_CHANNELS",      nofChannels     );
+      h5set_attribute (location_p, "GROUPTYPE",         grouptype         );
+      h5set_attribute (location_p, "DATATYPE",          datatype          );
+      h5set_attribute (location_p, "STOKES_COMPONENT",  stokesComponent   );
+      h5set_attribute (location_p, "NOF_SUBBANDS",      nofSubbands       );
+      h5set_attribute (location_p, "NOF_CHANNELS",      itsNofChannels[0] );
     }
     
   }

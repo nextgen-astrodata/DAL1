@@ -33,6 +33,7 @@
 #include <HDF5CommonInterface.h>
 #include <CoordinatesGroup.h>
 #include <BF_ProcessingHistory.h>
+#include <BF_StokesDataset.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -117,6 +118,8 @@ namespace DAL { // Namespace DAL -- begin
     std::map<std::string,BF_ProcessingHistory> itsProcessingHistory;
     //! Coordinates group
     std::map<std::string,CoordinatesGroup> itsCoordinates;
+    //! Stokes datasets
+    std::map<std::string,BF_StokesDataset> itsStokesDatasets;
 
   public:
     
@@ -138,6 +141,11 @@ namespace DAL { // Namespace DAL -- begin
     ~BF_BeamGroup ();
     
     // === Parameter access =====================================================
+
+    //! Get the number of Stokes datasets embedded inside this group
+    inline unsigned int nofStokesDatasets () const {
+      return itsStokesDatasets.size();
+    }
     
     /*!
       \brief Get the name of the class
@@ -175,6 +183,9 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Open the coordinates group
     bool openCoordinatesGroup (bool const &create=true);
+
+    //! Open an existing Stokes dataset
+    bool openStokesDataset (std::string const &name);
     
   protected:
     

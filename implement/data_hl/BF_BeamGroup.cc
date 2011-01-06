@@ -303,6 +303,50 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
+  //                                                         openCoordinatesGroup
+
+  /*!
+    \param name    -- Name of the Stokes dataset to be opened.
+    \return status -- Satus of the operation; returns \e false in case the
+            dataset does not exist and/or cannot be opened.
+   */
+  bool BF_BeamGroup::openStokesDataset (std::string const &name)
+  {
+    bool status (true);
+    std::map<std::string,BF_StokesDataset>::iterator it;
+
+    /* Check if the requested dataset is opened already. */
+
+    it = itsStokesDatasets.find(name);
+
+    if (it == itsStokesDatasets.end()) {
+      /* If the iterator points towards the end of the map, the dataset has not
+	 been opened yet. Check if a dataset of given name does exit. */
+      if (H5Iis_valid(location_p)) {
+	/* Try opening Stokes dataset */
+	BF_StokesDataset stokes (location_p, name);
+	/* Check if opening the dataset was successful */
+	if (stokes.hasValidID()) {
+	  itsStokesDatasets[name] = stokes;
+	} else {
+	  std::cerr << "[BF_BeamGroup::openStokesDataset]"
+		    << " No such dataset " << name << "!"
+		    << std::endl;
+	  status = false;
+	}
+      } else {
+	std::cerr << "[BF_BeamGroup::openStokesDataset]"
+		  << " Object not connect to valid HDF5 group!"
+		  << std::endl;
+	status = false;
+      }
+    }
+
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
   //                                                                      getName
   
   /*!
