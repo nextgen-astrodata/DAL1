@@ -88,7 +88,7 @@ namespace DAL { // Namespace DAL -- begin
     \param location    -- Identifier for the location at which the dataset is
            about to be created.
     \param name        -- Name of the dataset.
-    \param nofTimebins -- Number of bins along the time axis.
+    \param nofSamples  -- Number of bins along the time axis.
     \param nofSubbands -- Number of sub-bands.
     \param nofChannels -- Number of channels within the subbands.
     \param component   -- Stokes component stored within the dataset
@@ -96,7 +96,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   BF_StokesDataset::BF_StokesDataset (hid_t const &location,
 				      std::string const &name,
-				      unsigned int const &nofTimebins,
+				      unsigned int const &nofSamples,
 				      unsigned int const &nofSubbands,
 				      unsigned int const &nofChannels,
 				      DAL::Stokes::Component const &component,
@@ -182,6 +182,75 @@ namespace DAL { // Namespace DAL -- begin
     return *this;
   }
   
+  // ============================================================================
+  //
+  //  Parameter access
+  //
+  // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                   nofSamples
+
+  /*!
+    \return nofSamples -- The number of bins along the time axis.
+  */
+  unsigned int BF_StokesDataset::nofSamples ()
+  {
+    if (itsShape.empty()) {
+      return 0;
+    } else {
+      return itsShape[0];
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                               nofFrequencies
+
+  /*!
+    \return nofFrequencies -- The number of bins along the frequency axis.
+  */
+  unsigned int BF_StokesDataset::nofFrequencies ()
+  {
+    if (itsShape.empty()) {
+      if (itsNofChannels.empty()) {
+	return 0;
+      } else {
+	unsigned int nelem (1);
+	for (unsigned int n(0); n<itsNofChannels.size(); ++n) {
+	  nelem *= itsNofChannels[n];
+	}
+	return nelem;
+      }
+    } else {
+      return itsShape[1];
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                     setShape
+  
+  /*!
+    \param nofSamples  -- Number of bins along the time axis.
+    \param nofSubbands -- Number of sub-bands.
+    \param nofChannels -- Number of channels within the subbands.
+  */
+  bool BF_StokesDataset::setShape (unsigned int const &nofSamples,
+				   unsigned int const &nofSubbands,
+				   unsigned int const &nofChannels)
+  {
+    bool status (true);
+    
+    /* Check the number of sub-bands */
+    
+    if (nofSubbands>0) {
+      itsNofChannels = std::vector<unsigned int> (nofSubbands,nofChannels);
+    } else {
+      status = false;
+    }
+
+    return status;
+  }
+
   // ============================================================================
   //
   //  Methods

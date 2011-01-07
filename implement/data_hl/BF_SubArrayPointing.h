@@ -40,7 +40,7 @@ namespace DAL { // Namespace DAL -- begin
     \ingroup DAL
     \ingroup data_hl
     
-    \brief High-level interface to the Primary Pointing Direction of a BF dataset
+    \brief High-level interface to the Sub-Array pointing group of Beam-Formed Data
     
     \author Lars B&auml;hren
 

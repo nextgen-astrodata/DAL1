@@ -39,7 +39,7 @@ namespace DAL { // Namespace DAL -- begin
     \ingroup DAL
     \ingroup data_hl
     
-    \brief Brief description for class BF_StokesDataset
+    \brief High-level interface to the Stokes dataset of Beam-Formed Data
     
     \author Lars B&auml;hren
 
@@ -72,7 +72,7 @@ namespace DAL { // Namespace DAL -- begin
     |-- GROUPTYPE             Attribute           string
     |-- DATATYPE              Attribute           string
     |-- STOKES_COMPONENT      Attribute           string
-    |-- NOF_TIMEBINS          Attribute           int
+    |-- NOF_SAMPLES           Attribute           int
     |-- NOF_SUBBANDS          Attribute           int
     `-- NOF_CHANNELS          Attribute           array<int,1>
     \endverbatim
@@ -112,7 +112,7 @@ namespace DAL { // Namespace DAL -- begin
     </table>
 
     The shape of the dataset is determined by
-    - the number of time bins (\c NOF_TIMEBINS),
+    - the number of time bins (\c NOF_SAMPLES),
     - the number of sub-bands (\c NOF_SUBBANDS),
     - the number of channels per sub-band (\c NOF_CHANNELS)
 
@@ -121,11 +121,11 @@ namespace DAL { // Namespace DAL -- begin
 
     <table>
       <tr>
-        <td class="indexkey">nofTimebins</td>
+        <td class="indexkey">nofSamples</td>
         <td class="indexkey">nofSubbands</td>
         <td class="indexkey">nofChannels</td>
         <td class="indexkey">shape</td>
-        <td class="indexkey">\f$ N_{\rm Time} \f$</td>
+        <td class="indexkey">\f$ N_{\rm Samples} \f$</td>
         <td class="indexkey">\f$ N_{\rm Bands} \f$</td>
         <td class="indexkey">\f$ N_{\rm Channels} \f$</td>
         <td class="indexkey">\f$ N_{\rm Shape} \f$</td>
@@ -135,7 +135,7 @@ namespace DAL { // Namespace DAL -- begin
         <td>yes</td>
         <td>yes</td>
         <td>--</td>
-        <td>nofTimebins</td>
+        <td>nofSamples</td>
         <td>nofSubbands</td>
         <td>nofChannels</td>
         <td></td>
@@ -145,10 +145,10 @@ namespace DAL { // Namespace DAL -- begin
         <td>--</td>
         <td>yes</td>
         <td>--</td>
-        <td>nofTimebins</td>
+        <td>nofSamples</td>
         <td>1</td>
         <td>nofChannels</td>
-        <td>[nofTimebins,nofChannels]</td>
+        <td>[nofSamples,nofChannels]</td>
       </tr>
       <tr>
         <td>--</td>
@@ -214,7 +214,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
 		      std::string const &name,
-		      unsigned int const &nofTimebins,
+		      unsigned int const &nofSamples,
 		      unsigned int const &nofSubbands,
 		      unsigned int const &nofChannels,
 		      DAL::Stokes::Component const &component=DAL::Stokes::I,
@@ -247,6 +247,12 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Parameter access =====================================================
 
+    //! Get the number of bins along the time axis.
+    unsigned int nofSamples ();
+    
+    //! Get the number of bins along the frequency axis.
+    unsigned int nofFrequencies ();
+    
     //! Get the number of sub-bands
     inline unsigned int nofSubbands () const {
       return itsNofChannels.size();
@@ -255,6 +261,16 @@ namespace DAL { // Namespace DAL -- begin
     //! Get the number of channels per sub-band
     inline std::vector<unsigned int> nofChannels () const {
       return itsNofChannels;
+    }
+    
+    //! Get the number of channels per sub-band
+    inline unsigned int nofChannels (unsigned int const &subband)
+    {
+      if (itsNofChannels.size()<subband) {
+	return 0;
+      } else {
+	return itsNofChannels[subband];
+      }
     }
     
     /*!
@@ -307,8 +323,31 @@ namespace DAL { // Namespace DAL -- begin
       attributes_p.insert("GROUPTYPE");
       attributes_p.insert("DATATYPE");
       attributes_p.insert("STOKES_COMPONENT");
+      attributes_p.insert("NOF_SAMPLES");
       attributes_p.insert("NOF_SUBBANDS");
       attributes_p.insert("NOF_CHANNELS");
+    }
+
+    //! Set the shape of the data array
+    inline bool setShape (unsigned int const &nofChannels) {
+      return setShape (1, nofChannels);
+    }
+    //! Set the shape of the data array
+    inline bool setShape (unsigned int const &nofSubbands,
+			  unsigned int const &nofChannels) {
+      return setShape (1, nofSubbands, nofChannels);
+    }
+    //! Set the shape of the data array
+    bool setShape (unsigned int const &nofSamples,
+		   unsigned int const &nofSubbands,
+		   unsigned int const &nofChannels);
+    //! Set the shape of the data array
+    inline bool setShape (std::vector<unsigned int> const &nofChannels) {
+      if (nofChannels.size()>1) {
+	return setShape (nofChannels[0], 1, nofChannels[1]);
+      } else {
+	return false;
+      }
     }
     
     //! Unconditional deletion 

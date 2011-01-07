@@ -43,7 +43,7 @@ namespace DAL { // Namespace DAL -- begin
     \ingroup DAL
     \ingroup data_hl
     
-    \brief High-level interface to the station beam of a BF dataset
+    \brief High-level interface to the Beam group of Beam-Formed Data
     
     \author Lars B&auml;hren
 

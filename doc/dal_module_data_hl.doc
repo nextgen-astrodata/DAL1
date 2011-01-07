@@ -96,7 +96,7 @@
   |-- GROUPTYPE             Attribute           string
   |-- DATATYPE              Attribute           string
   |-- STOKES_COMPONENT      Attribute           string
-  |-- NOF_TIMEBINS          Attribute           int
+  |-- NOF_SAMPLES           Attribute           int
   |-- NOF_SUBBANDS          Attribute           int
   `-- NOF_CHANNELS          Attribute           array<int,1>
   \endverbatim
