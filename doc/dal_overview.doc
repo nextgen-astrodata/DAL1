@@ -8,8 +8,8 @@
   \defgroup DAL Data Access Library (DAL)
 
   <ul>
-    <li>\ref dal_coding_guidelines
-    <li>\ref dal_coding_cpp
+    <li>\subpage dal_coding_guidelines
+    <li>\subpage dal_coding_cpp
   </ul>
 
   <h3>Synopsis</h3>
