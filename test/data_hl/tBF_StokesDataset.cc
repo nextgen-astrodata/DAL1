@@ -44,6 +44,10 @@ using DAL::BF_StokesDataset;
   The generated HDF5 file will have the following structure:
   \verbatim
   tBF_StokesDataset.h5
+  |-- Dataset.002
+  |-- Dataset.003
+  |-- Dataset.004
+  |-- Dataset.006
   |-- StokesI
   |-- StokesQ
   |-- StokesU.001
@@ -73,12 +77,17 @@ int test_HDF5Dataset (hid_t const &fileID)
   std::string name;
   unsigned int rank;
 
+  /*_______________________________________________________________________
+    Simplest constructor for HDF5Dataset will only open existing dataset,
+    as parameters for the creation of a new one are not available.
+  */
+
   cout << "[1] Testing HDF5Dataset(hid_t, string) ..." << endl;
   try {
     name = "Dataset.001";
     //
-    DAL::HDF5Dataset (fileID,
-		      name);
+    DAL::HDF5Dataset dataset (fileID,
+			      name);
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -98,9 +107,9 @@ int test_HDF5Dataset (hid_t const &fileID)
     //
     std::vector<hsize_t> shape (rank,sidelength);
     //
-    DAL::HDF5Dataset (fileID,
-		      name,
-		      shape);
+    DAL::HDF5Dataset dataset (fileID,
+			      name,
+			      shape);
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -119,10 +128,10 @@ int test_HDF5Dataset (hid_t const &fileID)
     std::vector<hsize_t> shape (rank,sidelength);
     std::vector<hsize_t> chunk (rank,1000);
     //
-    DAL::HDF5Dataset (fileID,
-		      name,
-		      shape,
-		      chunk);
+    DAL::HDF5Dataset dataset (fileID,
+			      name,
+			      shape,
+			      chunk);
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -141,15 +150,56 @@ int test_HDF5Dataset (hid_t const &fileID)
     std::vector<hsize_t> shape (rank,sidelength);
     hid_t datatype = H5T_NATIVE_INT;
     //
-    DAL::HDF5Dataset (fileID,
-		      name,
-		      shape,
-		      datatype);
+    DAL::HDF5Dataset dataset (fileID,
+			      name,
+			      shape,
+			      datatype);
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  /*_______________________________________________________________________
+    Use the simple version of the HDF5Dataset::open method to a) access a
+    non-existing and b) an existing dataset within the file.
+  */
+
+  cout << "[5] Testing HDF5Dataset::open(hid_t, string)" << endl;
+  try {
+    DAL::HDF5Dataset dataset;
+
+    // try to open non-existing dataset
+    dataset.open (fileID, "Dataset.005");
+
+    // try to open existing dataset
+    dataset.open (fileID, "Dataset.002");
+    
+    cout << "--> successfully opened dataset " << dataset.name() << endl;
+
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
   
+  /*_______________________________________________________________________
+    Use the simple version of the HDF5Dataset::open method to a) access a
+    non-existing and b) an existing dataset within the file.
+  */
+
+  cout << "[6] Testing HDF5Dataset::open(hid_t, string, vector<hsize_t>)" << endl;
+  try {
+    std::vector<hsize_t> shape (rank,sidelength);
+
+    DAL::HDF5Dataset dataset;
+    dataset.open (fileID, "Dataset.006", shape);
+
+    cout << "--> successfully opened dataset " << dataset.name() << endl;
+
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
   return nofFailedTests;
 }
 
