@@ -46,7 +46,7 @@ namespace DAL { // Namespace DAL -- begin
     \param rank -- Rank of the dataset, i.e. the number of array axes.
   */
   HDF5Hyperslab::HDF5Hyperslab (int const &rank)
-    : rank_p (rank)
+    : itsRank (rank)
   {
     init();
   }
@@ -67,7 +67,7 @@ namespace DAL { // Namespace DAL -- begin
     
     setStart (start);
     setBlock (block);
-    selection_p = selection;
+    itsSelection = selection;
   }
   
   //_____________________________________________________________________________
@@ -90,7 +90,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     init();
     
-    selection_p = selection;
+    itsSelection = selection;
 
     setStart  (start);
     setBlock  (block);
@@ -119,10 +119,10 @@ namespace DAL { // Namespace DAL -- begin
   
   void HDF5Hyperslab::destroy ()
   {
-    start_p.clear();
-    stride_p.clear();
-    count_p.clear();
-    block_p.clear();
+    itsStart.clear();
+    itsStride.clear();
+    itsCount.clear();
+    itsBlock.clear();
   }
   
   // ============================================================================
@@ -148,17 +148,17 @@ namespace DAL { // Namespace DAL -- begin
   
   void HDF5Hyperslab::copy (HDF5Hyperslab const &other)
   {
-    start_p.clear();
-    stride_p.clear();
-    count_p.clear();
-    block_p.clear();
+    itsStart.clear();
+    itsStride.clear();
+    itsCount.clear();
+    itsBlock.clear();
 
-    rank_p      = other.rank_p;
-    start_p     = other.start_p;
-    stride_p    = other.stride_p;
-    count_p     = other.count_p;
-    block_p     = other.block_p;
-    selection_p = other.selection_p;
+    itsRank      = other.itsRank;
+    itsStart     = other.itsStart;
+    itsStride    = other.itsStride;
+    itsCount     = other.itsCount;
+    itsBlock     = other.itsBlock;
+    itsSelection = other.itsSelection;
   }
 
   // ============================================================================
@@ -178,21 +178,21 @@ namespace DAL { // Namespace DAL -- begin
     /* Check if input is empty vector; in that case clear the internally stored
        value. */
     if (start.empty()) {
-      start_p.clear();
+      itsStart.clear();
       return status;
     } else {
       /* Check if rank has been initialized. */
-      if (rank_p<0) {
-	rank_p = nelem;
+      if (itsRank<0) {
+	itsRank = nelem;
       }
     }
 
     /* Process non-empty input vector. */
-    if (nelem == rank_p) {
-      start_p = start;
-    } else if (nelem > rank_p) {
-      for (int n(0); n< rank_p; ++n) {
-	start_p[n] = start[n];
+    if (nelem == itsRank) {
+      itsStart = start;
+    } else if (nelem > itsRank) {
+      for (int n(0); n< itsRank; ++n) {
+	itsStart[n] = start[n];
       }
     } else {
       std::cerr << "[HDF5Hyperslab::setStart] Input array has too few elements!"
@@ -222,21 +222,21 @@ namespace DAL { // Namespace DAL -- begin
     /* Check if input is empty vector; in that case clear the internally stored
        value. */
     if (stride.empty()) {
-      stride_p.clear();
+      itsStride.clear();
       return status;
     } else {
       /* Check if rank has been initialized. */
-      if (rank_p<0) {
-	rank_p = nelem;
+      if (itsRank<0) {
+	itsRank = nelem;
       }
     }
 
     /* Process non-empty input vector. */
-    if (nelem == rank_p) {
-      stride_p = stride;
-    } else if (nelem > rank_p) {
-      for (int n(0); n< rank_p; ++n) {
-	stride_p[n] = stride[n];
+    if (nelem == itsRank) {
+      itsStride = stride;
+    } else if (nelem > itsRank) {
+      for (int n(0); n< itsRank; ++n) {
+	itsStride[n] = stride[n];
       }
     } else {
       std::cerr << "[HDF5Hyperslab::setStride] Input array has too few elements!"
@@ -258,21 +258,21 @@ namespace DAL { // Namespace DAL -- begin
     /* Check if input is empty vector; in that case clear the internally stored
        value. */
     if (count.empty()) {
-      count_p.clear();
+      itsCount.clear();
       return status;
     } else {
       /* Check if rank has been initialized. */
-      if (rank_p<0) {
-	rank_p = nelem;
+      if (itsRank<0) {
+	itsRank = nelem;
       }
     }
 
     /* Process non-empty input vector. */
-    if (nelem == rank_p) {
-      count_p = count;
-    } else if (nelem > rank_p) {
-      for (int n(0); n< rank_p; ++n) {
-	count_p[n] = count[n];
+    if (nelem == itsRank) {
+      itsCount = count;
+    } else if (nelem > itsRank) {
+      for (int n(0); n< itsRank; ++n) {
+	itsCount[n] = count[n];
       }
     } else {
       std::cerr << "[HDF5Hyperslab::setCount] Input array has too few elements!"
@@ -292,20 +292,20 @@ namespace DAL { // Namespace DAL -- begin
     int nelem = block.size();
 
     /* First check if the rank information has been initialized */
-    if (rank_p<0) {
-      rank_p = nelem;
+    if (itsRank<0) {
+      itsRank = nelem;
     }
     
     if (block.empty()) {
-      block_p.clear();
-      block_p.resize(rank_p);
+      itsBlock.clear();
+      itsBlock.resize(itsRank);
     }
     
-    if (nelem == rank_p) {
-      block_p = block;
-    } else if (nelem > rank_p) {
-      for (int n(0); n< rank_p; ++n) {
-	block_p[n] = block[n];
+    if (nelem == itsRank) {
+      itsBlock = block;
+    } else if (nelem > itsRank) {
+      for (int n(0); n< itsRank; ++n) {
+	itsBlock[n] = block[n];
       }
     } else {
       std::cerr << "[HDF5Hyperslab::setBlock] Input array has too few elements!"
@@ -325,25 +325,25 @@ namespace DAL { // Namespace DAL -- begin
   */
   std::vector<int> HDF5Hyperslab::gap ()
   {
-    std::vector<int> val (rank_p);
+    std::vector<int> val (itsRank);
     
-    if (stride_p.empty()) {
-      for (int n(0); n<rank_p; ++n) {
+    if (itsStride.empty()) {
+      for (int n(0); n<itsRank; ++n) {
 	val[n] = 1;
       }
     } else {
-      for (int n(0); n<rank_p; ++n) {
-	val[n] = stride_p[n];
+      for (int n(0); n<itsRank; ++n) {
+	val[n] = itsStride[n];
       }
     }
     
-    if (block_p.empty()) {
-      for (int n(0); n<rank_p; ++n) {
+    if (itsBlock.empty()) {
+      for (int n(0); n<itsRank; ++n) {
 	val[n] -= 1;
       }
     } else {
-      for (int n(0); n<rank_p; ++n) {
-	val[n] -= block_p[n];
+      for (int n(0); n<itsRank; ++n) {
+	val[n] -= itsBlock[n];
       }
     }
     
@@ -365,25 +365,25 @@ namespace DAL { // Namespace DAL -- begin
     int nelem = gap.size();
     bool status (true);
     
-    if (nelem == rank_p) {
+    if (nelem == itsRank) {
       
-      if (stride_p.empty()) {
-	stride_p.resize(nelem);
+      if (itsStride.empty()) {
+	itsStride.resize(nelem);
       }
       
-      if (block_p.empty()) {
+      if (itsBlock.empty()) {
 	for (int n(0); n<nelem; ++n) {
-	  stride_p[n] = 1 + gap[n];
+	  itsStride[n] = 1 + gap[n];
 	}
       } else {
 	for (int n(0); n<nelem; ++n) {
-	  stride_p[n] = block_p[n] + gap[n];
+	  itsStride[n] = itsBlock[n] + gap[n];
 	}
       }
       
     } else {
       std::cerr << "[HDF5Hyperslab::setGap] Rank mismatch!" << std::endl;
-      std::cerr << "-- Rank : " << rank_p << std::endl;
+      std::cerr << "-- Rank : " << itsRank << std::endl;
       std::cerr << "-- Gap  : " << gap    << std::endl;
       status = false;
     }
@@ -400,11 +400,11 @@ namespace DAL { // Namespace DAL -- begin
   void HDF5Hyperslab::summary (std::ostream &os)
   {
     os << "[HDF5Hyperslab] Summary of internal parameters." << std::endl;
-    os << "-- Rank            = " << rank_p          << std::endl;
-    os << "-- Start           = " << start_p         << std::endl;
-    os << "-- Stride          = " << stride_p        << std::endl;
-    os << "-- Count           = " << count_p         << std::endl;
-    os << "-- Block           = " << block_p         << std::endl;
+    os << "-- Rank            = " << itsRank          << std::endl;
+    os << "-- Start           = " << itsStart         << std::endl;
+    os << "-- Stride          = " << itsStride        << std::endl;
+    os << "-- Count           = " << itsCount         << std::endl;
+    os << "-- Block           = " << itsBlock         << std::endl;
     os << "-- End position    = " << end()           << std::endl;
     os << "-- nof. datapoints = " << nofDatapoints() << std::endl;
   }
@@ -420,12 +420,12 @@ namespace DAL { // Namespace DAL -- begin
   
   void HDF5Hyperslab::init ()
   {
-    rank_p      = -1;
-    selection_p = H5S_SELECT_SET;
-    start_p.clear();
-    stride_p.clear();
-    count_p.clear();
-    block_p.clear();
+    itsRank     = -1;
+    itsSelection = H5S_SELECT_SET;
+    itsStart.clear();
+    itsStride.clear();
+    itsCount.clear();
+    itsBlock.clear();
   }
   
   //_____________________________________________________________________________
@@ -444,11 +444,11 @@ namespace DAL { // Namespace DAL -- begin
 				    bool const &resizeDataset)
   {
     return setHyperslab (location,
-			 selection_p,
-			 start_p,
-			 stride_p,
-			 count_p,
-			 block_p,
+			 itsSelection,
+			 itsStart,
+			 itsStride,
+			 itsCount,
+			 itsBlock,
 			 resizeDataset);
   }
 
@@ -472,11 +472,11 @@ namespace DAL { // Namespace DAL -- begin
   {
     return setHyperslab (datasetID,
 			 dataspaceID,
-			 selection_p,
-			 start_p,
-			 stride_p,
-			 count_p,
-			 block_p,
+			 itsSelection,
+			 itsStart,
+			 itsStride,
+			 itsCount,
+			 itsBlock,
 			 resizeDataset);
   }
 
@@ -848,8 +848,8 @@ namespace DAL { // Namespace DAL -- begin
   
   unsigned int HDF5Hyperslab::nofDatapoints ()
   {
-    return nofDatapoints (count_p,
-			  block_p);
+    return nofDatapoints (itsCount,
+			  itsBlock);
   }
   
   //_____________________________________________________________________________
@@ -905,10 +905,10 @@ namespace DAL { // Namespace DAL -- begin
 
   std::vector<hsize_t> HDF5Hyperslab::end ()
   {
-    return end (start_p,
-		stride_p,
-		count_p,
-		block_p);
+    return end (itsStart,
+		itsStride,
+		itsCount,
+		itsBlock);
   }
 
   //_____________________________________________________________________________

@@ -268,17 +268,17 @@ namespace DAL { // Namespace DAL -- begin
   class HDF5Hyperslab {
 
     //! Rank of the dataset
-    int rank_p;
+    int itsRank;
     //! Offset of the starting element of the specified hyperslab
-    std::vector<int> start_p;
+    std::vector<int> itsStart;
     //! Number of elements to separate each element or block to be selected
-    std::vector<int> stride_p;
+    std::vector<int> itsStride;
     //! The number of elements or blocks to select along each dimension
-    std::vector<int> count_p;
+    std::vector<int> itsCount;
     //! The size of the block selected from the dataspace
-    std::vector<int> block_p;
+    std::vector<int> itsBlock;
     //! Selection operator
-    H5S_seloper_t selection_p;
+    H5S_seloper_t itsSelection;
     
   public:
     
@@ -328,12 +328,12 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Get the rank of the array to which the hyperslab is applied
     inline int rank () const {
-      return rank_p;
+      return itsRank;
     }
 
     //! Get the offset of the starting element of the specified hyperslab
     inline std::vector<int> start () const {
-      return start_p;
+      return itsStart;
     }
 
     //! Set the offset of the starting element of the specified hyperslab
@@ -341,7 +341,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Get the number of elements to separate each element or block to be selected
     inline std::vector<int> stride () const {
-      return stride_p;
+      return itsStride;
     }
 
     //! Set the number of elements to separate each element or block to be selected
@@ -349,7 +349,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Get the number of elements or blocks to select along each dimension
     inline std::vector<int> count () const {
-      return count_p;
+      return itsCount;
     }
 
     //! Set the number of elements or blocks to select along each dimension
@@ -357,7 +357,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Get the size of the element block selected from the dataspace
     inline std::vector<int> block () const {
-      return block_p;
+      return itsBlock;
     }
 
     //! Set the size of the element block selected from the dataspace
@@ -371,7 +371,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Get the selection operator
     inline H5S_seloper_t selection () const {
-      return selection_p;
+      return itsSelection;
     }
     
     //! Set the selection operator
