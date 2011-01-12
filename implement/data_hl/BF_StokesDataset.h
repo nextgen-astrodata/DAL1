@@ -348,6 +348,10 @@ namespace DAL { // Namespace DAL -- begin
 	return false;
       }
     }
+    //! Initialize the internal parameters 
+    bool init (DAL::Stokes::Component const &component,
+	       unsigned int const &nofSamples,
+	       std::vector<unsigned int> const &nofChannels);
     
     //! Unconditional deletion 
     void destroy(void);

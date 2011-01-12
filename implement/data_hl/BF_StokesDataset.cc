@@ -74,7 +74,8 @@ namespace DAL { // Namespace DAL -- begin
 				      unsigned int const &nofChannels,
 				      DAL::Stokes::Component const &component,
 				      hid_t const &datatype)
-    : HDF5Dataset()
+    : HDF5Dataset(location,
+		  name)
   {
     init (component,
 	  nofSubbands,
@@ -101,8 +102,11 @@ namespace DAL { // Namespace DAL -- begin
 				      unsigned int const &nofChannels,
 				      DAL::Stokes::Component const &component,
 				      hid_t const &datatype)
+    : HDF5Dataset(location,
+		  name)
   {
     init (component,
+	  nofSamples,
 	  nofSubbands,
 	  nofChannels);
   }
@@ -309,26 +313,50 @@ namespace DAL { // Namespace DAL -- begin
 			       unsigned int const &nofSubbands,
 			       unsigned int const &nofChannels)
   {
-    bool status (true);
+    if (nofSubbands>0) {
+      std::vector<unsigned int> tmp (nofSubbands,nofChannels);
+      return init (component, nofSamples, tmp);
+    } else {
+      return false;
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                         init
 
+  /*!
+    \param component   -- Stokes component stored within the dataset
+    \param nofSamples  -- Number of bins along the time axis.
+    \param nofChannels -- Number of channels within the individual subbands.
+
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
+  */
+  bool BF_StokesDataset::init (DAL::Stokes::Component const &component,
+			       unsigned int const &nofSamples,
+			       std::vector<unsigned int> const &nofChannels)
+  {
+    bool status (true);
+    
     /* Set up the list of attributes attached to the structure */
     setAttributes();
     
     /* Store Stokes component information */
     itsStokesComponent = DAL::Stokes(component);
 
-    /* Stores variables defining shape of the data array */
-    if (nofSubbands>0) {
-      itsNofChannels = std::vector<unsigned int> (nofSubbands,nofChannels);
-    } else {
-      return false;
-    }
-
     if (nofSamples>0) {
-      itsShape.resize(2);
-      itsShape[0] = nofSamples;
-      itsShape[1] = DAL::product(itsNofChannels);
+      if (!nofChannels.empty()) {
+	itsShape.resize(2);
+	itsShape[0] = nofSamples;
+	itsShape[1] = DAL::product(itsNofChannels);
+      } else {
+	std::cerr << "[BF_StokesDataset::init] nof. subbands must be >0 !"
+		  << std::endl;
+	return false;
+      }
     } else {
+      std::cerr << "[BF_StokesDataset::init] nof. samples must be >0 !"
+		<< std::endl;
       return false;
     }
 
@@ -344,15 +372,25 @@ namespace DAL { // Namespace DAL -- begin
 	nofSamples = itsShape[0];
       }
 
-      h5set_attribute (location_p, "GROUPTYPE",         grouptype       );
-      h5set_attribute (location_p, "DATATYPE",          datatype        );
-      h5set_attribute (location_p, "STOKES_COMPONENT",  stokesComponent );
-      h5set_attribute (location_p, "NOF_SAMPLES",       nofSamples      );
-      h5set_attribute (location_p, "NOF_SUBBANDS",      nofSubbands     );
-      h5set_attribute (location_p, "NOF_CHANNELS",      itsNofChannels  );
+#ifdef DEBUGGING_MESSAGES
+      std::cout << "[BF_StokesDataset::init]" << std::endl;
+      std::cout << "-- Input variables:" << std::endl;
+      std::cout << " --> nofSamples  = " << nofSamples  << std::endl;
+      std::cout << " --> nofChannels = " << nofChannels << std::endl;
+      std::cout << "-- Internal variables:" << std::endl;
+      std::cout << " --> Shape       = " << itsShape << std::endl;
+      std::cout << " --> nof samples = " << itsNofChannels << std::endl;
+#endif
+
+      h5set_attribute (location_p, "GROUPTYPE",        grouptype       );
+      h5set_attribute (location_p, "DATATYPE",         datatype        );
+      h5set_attribute (location_p, "STOKES_COMPONENT", stokesComponent );
+      h5set_attribute (location_p, "NOF_SAMPLES",      nofSamples      );
+      h5set_attribute (location_p, "NOF_SUBBANDS",     nofSubbands     );
+      h5set_attribute (location_p, "NOF_CHANNELS",     itsNofChannels  );
     }
 
     return status;
   }
-    
+  
 } // Namespace DAL -- end
