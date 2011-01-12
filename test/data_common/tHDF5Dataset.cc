@@ -167,10 +167,16 @@ bool find_dataset (std::string const &filename,
   |-- Data1D             ...  Dataset
   |-- Data2D             ...  Dataset
   |-- Data3D             ...  Dataset
-  `-- Group              ...  Group
-      |-- Data1D         ...  Dataset
-      |-- Data2D         ...  Dataset
-      `-- Data3D         ...  Dataset
+  |-- Group              ...  Group
+  |   |-- Array1D        ...  Dataset
+  |   |-- Data1D         ...  Dataset
+  |   |-- Data2D         ...  Dataset
+  |   `-- Data3D         ...  Dataset
+  `-- Hyperslabs         ...  Group
+      |-- test0          ...  Dataset
+      |-- test1          ...  Dataset
+      |-- test2          ...  Dataset
+      `-- test3          ...  Dataset
   \endverbatim
 
   \param filename -- Name of the HDF5 file, within which the datasets are being

@@ -155,11 +155,11 @@ namespace DAL {
       if (vec.empty()) {
 	return T(0);
       } else {
-	T prod (1);
+	T tmp (1);
 	for (size_t n(0); n<vec.size(); ++n) {
-	  prod *= vec[n];
+	  tmp *= vec[n];
 	}
-	return prod;
+	return tmp;
       }
     }
   

@@ -38,6 +38,21 @@ namespace DAL {
     \param location  -- Identifier for the location at which the dataset is about
            to be created.
     \param name      -- Name of the dataset.
+  */
+  HDF5Dataset::HDF5Dataset (hid_t const &location,
+			    std::string const &name)
+  {
+    init ();
+    open (location, name, false);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                  HDF5Dataset
+  
+  /*!
+    \param location  -- Identifier for the location at which the dataset is about
+           to be created.
+    \param name      -- Name of the dataset.
     \param shape     -- Shape of the dataset.
     \param datatype  -- Datatype for the elements within the Dataset
   */
@@ -154,13 +169,18 @@ namespace DAL {
   
   //_____________________________________________________________________________
   //                                                                         init
-  
+
+  /*!
+    Initialization of internal parameters to default values. HDF5 identifiers 
+    (location, dataspace, datatype) are set to "-1", to later be able to probe,
+    whether the ID points to a valid HDF5 object.
+  */
   void HDF5Dataset::init ()
   {
     itsName        = "Dataset";
-    location_p     = 0;
-    itsDataspace   = 0;
-    itsDatatype    = 0;
+    location_p     = -1;
+    itsDataspace   = -1;
+    itsDatatype    = -1;
     itsLayout      = H5D_COMPACT;
     itsShape.clear();
     itsChunking.clear();
@@ -189,7 +209,10 @@ namespace DAL {
     
     /* Set up the list of attributes attached to the group */
     setAttributes();
-    
+
+    //______________________________________________________
+    // Try opening existing dataset
+   
     if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
       // Open the dataset
       location_p = H5Dopen (location,
@@ -207,27 +230,18 @@ namespace DAL {
       location_p = 0;
     }
     
+    //______________________________________________________
+    // Try creating dataset, if not yet existing
+
     if (location_p > 0) {
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
-      if (create && itsDataspace && itsDatatype) {
-	location_p = H5Dcreate2 (location,
-				 itsName.c_str(),
-				 itsDatatype,
-				 itsDataspace,
-				 H5P_DEFAULT,
-				 H5P_DEFAULT,
-				 H5P_DEFAULT);
-	/* If creation was sucessful, add attributes with default values */
-	if (location_p > 0) {
-	  /* write attribute attached to the dataset */
-	} else {
-	  std::cerr << "[HDF5Dataset::open] Failed to create dataset "
-		    << name
-		    << std::endl;
-	  status = false;
-	}
+      if (create) {
+	status = open (location,
+		       itsName,
+		       itsShape,
+		       itsDatatype);
       } else {
 	std::cerr << "[HDF5Dataset::open] Failed to open dataset "
 		  << name
@@ -263,6 +277,10 @@ namespace DAL {
 			  hid_t const &datatype)
   {
     std::vector<hsize_t> chunksize;
+
+    if (!itsChunking.empty()) {
+      chunksize = itsChunking;
+    }
     
     return open (location,
 		 name,
@@ -305,7 +323,7 @@ namespace DAL {
     hsize_t dims [rank];
     hsize_t maxdims [rank];
     hsize_t chunkdims [rank];
-    hid_t dcpl;
+    hid_t creationProperties;
     herr_t h5error;
 
     for (int n(0); n<rank; ++n) {
@@ -316,21 +334,21 @@ namespace DAL {
 
     itsDataspace = H5Screate_simple (rank, dims, maxdims);
     // Create the dataset creation property list
-    dcpl  = H5Pcreate (H5P_DATASET_CREATE);
+    creationProperties  = H5Pcreate (H5P_DATASET_CREATE);
     // Set the chunk size
-    h5error     = H5Pset_chunk (dcpl, rank, chunkdims);
+    h5error     = H5Pset_chunk (creationProperties, rank, chunkdims);
     // Create the Dataset
     location_p  = H5Dcreate2 (location,
 			      itsName.c_str(),
 			      itsDatatype,
 			      itsDataspace,
 			      H5P_DEFAULT,
-			      dcpl,
+			      creationProperties,
 			      H5P_DEFAULT);
     
     // Release HDF5 object identifiers
-    if (H5Iis_valid(dcpl)) {
-      H5Pclose (dcpl);
+    if (H5Iis_valid(creationProperties)) {
+      H5Pclose (creationProperties);
     } else {
       status = false;
     }

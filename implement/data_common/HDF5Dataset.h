@@ -279,10 +279,7 @@ namespace DAL {
     
     //! Argumented constructor
     HDF5Dataset (hid_t const &location,
-		 std::string const &name) {
-      init ();
-      open (location,name,false);
-    }
+		 std::string const &name);
     
     //! Argumented constructor
     HDF5Dataset (hid_t const &location,
