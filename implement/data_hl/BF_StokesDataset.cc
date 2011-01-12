@@ -309,6 +309,8 @@ namespace DAL { // Namespace DAL -- begin
 			       unsigned int const &nofSubbands,
 			       unsigned int const &nofChannels)
   {
+    bool status (true);
+
     /* Set up the list of attributes attached to the structure */
     setAttributes();
     
@@ -349,7 +351,8 @@ namespace DAL { // Namespace DAL -- begin
       h5set_attribute (location_p, "NOF_SUBBANDS",      nofSubbands     );
       h5set_attribute (location_p, "NOF_CHANNELS",      itsNofChannels  );
     }
-    
+
+    return status;
   }
     
 } // Namespace DAL -- end
