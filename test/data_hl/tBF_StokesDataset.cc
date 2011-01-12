@@ -69,10 +69,13 @@ int test_constructors (std::string const &filename)
 
   int nofFailedTests (0);
   std::string nameDataset;
+  unsigned int nofSamples  = 1000;
+  unsigned int nofSubbands = 36;
+  unsigned int nofChannels = 512;
   std::vector<hsize_t> shape (2);
 
-  shape[0] = 100;    // Time bins
-  shape[1] = 1024;   // Frequency bins
+  shape[0] = nofSamples;
+  shape[1] = nofSubbands*nofChannels;
   
   //________________________________________________________
   // Create HDF5 file to work with
@@ -138,7 +141,7 @@ int test_constructors (std::string const &filename)
   cout << "[4] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>, Stokes::Component) ..."
 	    << endl;
   try {
-    nameDataset = "StokesQ";
+    nameDataset = "StokesQ.001";
     BF_StokesDataset stokes (fileID, nameDataset, shape, DAL::Stokes::Q);
     //
     stokes.summary(); 
@@ -147,6 +150,25 @@ int test_constructors (std::string const &filename)
     nofFailedTests++;
   }
   
+  //________________________________________________________
+  // Test 5: Argumented constructor
+
+  cout << "[5] Testing BF_StokesDataset() ..." << endl;
+  try {
+    nameDataset = "StokesQ.002";
+    BF_StokesDataset stokes (fileID,
+			     nameDataset,
+			     nofSamples,
+			     nofSubbands,
+			     nofChannels,
+			     DAL::Stokes::Q);
+    //
+    stokes.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
   //________________________________________________________
   // Close HDF5 file used for testing
 

@@ -226,31 +226,6 @@ namespace DAL { // Namespace DAL -- begin
     }
   }
   
-  //_____________________________________________________________________________
-  //                                                                     setShape
-  
-  /*!
-    \param nofSamples  -- Number of bins along the time axis.
-    \param nofSubbands -- Number of sub-bands.
-    \param nofChannels -- Number of channels within the subbands.
-  */
-  bool BF_StokesDataset::setShape (unsigned int const &nofSamples,
-				   unsigned int const &nofSubbands,
-				   unsigned int const &nofChannels)
-  {
-    bool status (true);
-    
-    /* Check the number of sub-bands */
-    
-    if (nofSubbands>0) {
-      itsNofChannels = std::vector<unsigned int> (nofSubbands,nofChannels);
-    } else {
-      status = false;
-    }
-
-    return status;
-  }
-
   // ============================================================================
   //
   //  Methods
@@ -325,17 +300,35 @@ namespace DAL { // Namespace DAL -- begin
     \param nofSubbands -- Number of sub-bands.
     \param nofChannels -- Number of channels within the subbands.
     \param component   -- Stokes component stored within the dataset
+
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
   */
-  void BF_StokesDataset::init (DAL::Stokes::Component const &component,
+  bool BF_StokesDataset::init (DAL::Stokes::Component const &component,
+			       unsigned int const &nofSamples,
 			       unsigned int const &nofSubbands,
 			       unsigned int const &nofChannels)
   {
     /* Set up the list of attributes attached to the structure */
     setAttributes();
-
-    /* Store information on Stokes component and frequency channels */
+    
+    /* Store Stokes component information */
     itsStokesComponent = DAL::Stokes(component);
-    itsNofChannels     = std::vector<unsigned int>(nofSubbands,nofChannels);
+
+    /* Stores variables defining shape of the data array */
+    if (nofSubbands>0) {
+      itsNofChannels = std::vector<unsigned int> (nofSubbands,nofChannels);
+    } else {
+      return false;
+    }
+
+    if (nofSamples>0) {
+      itsShape.resize(2);
+      itsShape[0] = nofSamples;
+      itsShape[1] = DAL::product(itsNofChannels);
+    } else {
+      return false;
+    }
 
     /* Initiaize attributes attached to the dataset */
     if (H5Iis_valid(location_p)) {
@@ -343,12 +336,18 @@ namespace DAL { // Namespace DAL -- begin
       std::string datatype        = "float";
       std::string stokesComponent = itsStokesComponent.name();
       unsigned int nofSubbands    = itsNofChannels.size();
+      unsigned int nofSamples     = 0;
 
-      h5set_attribute (location_p, "GROUPTYPE",         grouptype         );
-      h5set_attribute (location_p, "DATATYPE",          datatype          );
-      h5set_attribute (location_p, "STOKES_COMPONENT",  stokesComponent   );
-      h5set_attribute (location_p, "NOF_SUBBANDS",      nofSubbands       );
-      h5set_attribute (location_p, "NOF_CHANNELS",      itsNofChannels[0] );
+      if (!itsShape.empty()) {
+	nofSamples = itsShape[0];
+      }
+
+      h5set_attribute (location_p, "GROUPTYPE",         grouptype       );
+      h5set_attribute (location_p, "DATATYPE",          datatype        );
+      h5set_attribute (location_p, "STOKES_COMPONENT",  stokesComponent );
+      h5set_attribute (location_p, "NOF_SAMPLES",       nofSamples      );
+      h5set_attribute (location_p, "NOF_SUBBANDS",      nofSubbands     );
+      h5set_attribute (location_p, "NOF_CHANNELS",      itsNofChannels  );
     }
     
   }

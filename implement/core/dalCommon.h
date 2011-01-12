@@ -147,6 +147,38 @@ namespace DAL {
   //  Array operations
   //
   // ============================================================================
+
+  //! Get product of elements within the array
+  template <class T>
+    T product (const std::vector<T> &vec)
+    {
+      if (vec.empty()) {
+	return T(0);
+      } else {
+	T prod (1);
+	for (size_t n(0); n<vec.size(); ++n) {
+	  prod *= vec[n];
+	}
+	return prod;
+      }
+    }
+  
+  //! Get sum of elements within the array
+  template <class T>
+    T sum (const std::vector<T> &vec)
+    {
+      T nelem (0);
+      
+      if (vec.empty()) {
+	return nelem;
+      } else {
+	for (size_t n(0); n<vec.size(); ++n) {
+	  nelem += vec[n];
+	}
+      }
+      
+      return nelem;
+    }
   
   //_____________________________________________________________________________
   //                                                               IdentityMatrix

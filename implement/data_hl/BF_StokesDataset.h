@@ -308,14 +308,6 @@ namespace DAL { // Namespace DAL -- begin
 
   private:
 
-    //! Initialize the object's internal parameters
-    void init ();
-    
-    //! Initialize the object's internal parameters
-    void init (DAL::Stokes::Component const &component,
-	       unsigned int const &nofSubbands=0,
-	       unsigned int const &nofChannels=0);
-    
     //! Set up the list of attributes attached to the structure
     inline void setAttributes () {
       attributes_p.clear();
@@ -328,23 +320,30 @@ namespace DAL { // Namespace DAL -- begin
       attributes_p.insert("NOF_CHANNELS");
     }
 
-    //! Set the shape of the data array
-    inline bool setShape (unsigned int const &nofChannels) {
-      return setShape (1, nofChannels);
+    //! Initialize the object's internal parameters
+    void init ();
+    
+    //! Initialize the internal parameters 
+    inline bool init (DAL::Stokes::Component const &component,
+		      unsigned int const &nofChannels) {
+      return init (component, 1, nofChannels);
     }
-    //! Set the shape of the data array
-    inline bool setShape (unsigned int const &nofSubbands,
-			  unsigned int const &nofChannels) {
-      return setShape (1, nofSubbands, nofChannels);
+    //! Initialize the internal parameters 
+    inline bool init (DAL::Stokes::Component const &component,
+		      unsigned int const &nofSubbands,
+		      unsigned int const &nofChannels) {
+      return init (component, 1, nofSubbands, nofChannels);
     }
-    //! Set the shape of the data array
-    bool setShape (unsigned int const &nofSamples,
-		   unsigned int const &nofSubbands,
-		   unsigned int const &nofChannels);
-    //! Set the shape of the data array
-    inline bool setShape (std::vector<unsigned int> const &nofChannels) {
+    //! Initialize the internal parameters 
+    bool init (DAL::Stokes::Component const &component,
+	       unsigned int const &nofSamples,
+	       unsigned int const &nofSubbands,
+	       unsigned int const &nofChannels);
+    //! Initialize the internal parameters 
+    inline bool init (DAL::Stokes::Component const &component,
+		      std::vector<unsigned int> const &nofChannels) {
       if (nofChannels.size()>1) {
-	return setShape (nofChannels[0], 1, nofChannels[1]);
+	return init (component, nofChannels[0], 1, nofChannels[1]);
       } else {
 	return false;
       }
@@ -358,4 +357,4 @@ namespace DAL { // Namespace DAL -- begin
 } // Namespace DAL -- end
 
 #endif /* BF_STOKESDATASET_H */
-  
+
