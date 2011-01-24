@@ -201,6 +201,7 @@ int test_dalDataset (std::string const &filename)
   \file tdal_fits.cc
 
   \ingroup DAL
+  \ingroup core
 
   \brief A collection of tests to work with FITS type data
 

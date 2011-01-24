@@ -31,6 +31,7 @@
 #include <dalCommon.h>
 #include <HDF5CommonInterface.h>
 #include <HDF5Hyperslab.h>
+#include <HDF5Object.h>
 
 #define H5S_CHUNKSIZE_MAX  ((uint32_t)(-1))  /* (4GB - 1) */
 
@@ -59,6 +60,7 @@ namespace DAL {
 
     <ul type="square">
       <li>DAL::HDF5Hyperslab
+      <li>DAL::HDF5Object
     </ul>
 
     <h3>Synopsis</h3>
@@ -273,9 +275,7 @@ namespace DAL {
     // === Construction =========================================================
     
     //! Default constuctor
-    HDF5Dataset () {
-      init ();
-    }
+    HDF5Dataset ();
     
     //! Argumented constructor
     HDF5Dataset (hid_t const &location,
@@ -342,23 +342,23 @@ namespace DAL {
     // === Public Methods =======================================================
     
     //! Open the dataset
-    bool open (hid_t const &location,
-	       std::string const &name,
-	       bool const &create=false);
+    virtual bool open (hid_t const &location,
+		       std::string const &name,
+		       bool const &create=false);
     
     //! Open the dataset
-    bool open (hid_t const &location,
-	       std::string const &name,
-	       std::vector<hsize_t> const &shape,
-	       std::vector<hsize_t> const &chunksize,
-	       hid_t const &datatype=H5T_NATIVE_DOUBLE);
-
+    virtual bool open (hid_t const &location,
+		       std::string const &name,
+		       std::vector<hsize_t> const &shape,
+		       std::vector<hsize_t> const &chunksize,
+		       hid_t const &datatype=H5T_NATIVE_DOUBLE);
+    
     //! Open the dataset
-    bool open (hid_t const &location,
-	       std::string const &name,
-	       std::vector<hsize_t> const &shape,
-	       hid_t const &datatype=H5T_NATIVE_DOUBLE);
-
+    virtual bool open (hid_t const &location,
+		       std::string const &name,
+		       std::vector<hsize_t> const &shape,
+		       hid_t const &datatype=H5T_NATIVE_DOUBLE);
+    
     //! Get the Hyperslabs for the dataspace attached to the dataset
     inline std::vector<DAL::HDF5Hyperslab> hyperslabs () const {
       return itsHyperslab;
@@ -574,6 +574,7 @@ namespace DAL {
     //! Open the structures embedded within the current one
     inline bool openEmbedded (bool const &create) {
       bool status = create;
+      status = true;
       return status;
     }
     //! Set the size of chunks for the raw data of a chunked layout dataset. 

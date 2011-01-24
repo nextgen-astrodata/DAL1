@@ -59,15 +59,14 @@ namespace DAL { // Namespace DAL -- begin
     <ul type="square">
       <li>LOFAR Data Format ICDs:
       <ul>
-        <li>LOFAR Data Format ICD: TBB Time-Series Data (LOFAR-USG-ICD-001)
-	<li>LOFAR Data Format ICD: Representations of World Coordinates
-	(LOFAR-USG-ICD-002)
-	<li>LOFAR Data Format ICD: Beam-Formed Data (LOFAR-USG-ICD-003)
-	<li>LOFAR Data Format ICD: Radio Sky Image Cubes (LOFAR-USG-ICD-004)
-	<li>LOFAR Data Format ICD: File Naming Conventions (LOFAR-USG-ICD-005)
-	<li>LOFAR Data Format ICD: Dynamic Spectrum Data (LOFAR-USG-ICD-006)
-	<li>LOFAR Data Format ICD: Visibility Data (LOFAR-USG-ICD-007)
-	<li>LOFAR Data Format ICD: Rotation Measure Synthesis Cubes (LOFAR-USG-ICD-008)
+        <li>\ref dal_icd_001
+        <li>\ref dal_icd_002
+        <li>\ref dal_icd_003
+        <li>\ref dal_icd_004
+        <li>\ref dal_icd_005
+        <li>\ref dal_icd_006
+        <li>\ref dal_icd_007
+        <li>\ref dal_icd_008
       </ul>
       <li>Components of the LOFAR user software:
       <ul>

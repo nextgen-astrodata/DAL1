@@ -10,6 +10,17 @@
   <ul>
     <li>\subpage dal_coding_guidelines
     <li>\subpage dal_coding_cpp
+    <li>\subpage dal_data_formats
+    <ul>
+      <li>\ref dal_icd_001
+      <li>\ref dal_icd_002
+      <li>\ref dal_icd_003
+      <li>\ref dal_icd_004
+      <li>\ref dal_icd_005
+      <li>\ref dal_icd_006
+      <li>\ref dal_icd_007
+      <li>\ref dal_icd_008
+    </ul>
   </ul>
 
   <h3>Synopsis</h3>

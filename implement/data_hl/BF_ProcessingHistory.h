@@ -45,24 +45,17 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2009/11/26
 
-    \test tBF_ProcessingHistory.cpp
+    \test tBF_ProcessingHistory.cc
     
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>LOFAR Data Format ICDs:
-      <ul>
-	<li>Beam-Formed Data (LOFAR-USG-ICD-003)
-	<li>Naming conventions (LOFAR-USG-ICD-005)
-      </ul>
-      <li>Components of the LOFAR user software:
-      <ul>
-        <li>Filename -- Class to filenames matching convention
-        <li>CommonAttributes -- Collection of attributes common to all LOFAR
-	datasets
-	<li>HDF5CommonInterface -- Common functionality for the high-level
-	interfaces to the datasets
-      </ul>
+      <li>\ref dal_icd_003
+      <li>Filename -- Class to filenames matching convention
+      <li>CommonAttributes -- Collection of attributes common to all LOFAR
+          datasets
+      <li>HDF5CommonInterface -- Common functionality for the high-level
+          interfaces to the datasets
     </ul>
     
     <h3>Synopsis</h3>
@@ -105,11 +98,7 @@ namespace DAL { // Namespace DAL -- begin
       summary (std::cout);
     }
 
-    /*!
-      \brief Provide a summary of the internal status
-
-      \param os -- Output stream to which the summary is written.
-    */
+    //! Provide a summary of the internal status
     void summary (std::ostream &os);    
 
     // === Methods ==============================================================
@@ -119,8 +108,10 @@ namespace DAL { // Namespace DAL -- begin
 	       std::string const &name,
 	       bool const &create=true);
 
-  protected:
-    
+  private:
+
+    //! Initialize internal paramaters to default values
+    void init ();
     //! Open the structures embedded within the current one
     bool openEmbedded (bool const &create);
     //! Set up the list of attributes attached to the structure

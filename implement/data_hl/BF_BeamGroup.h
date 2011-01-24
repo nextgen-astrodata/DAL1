@@ -100,7 +100,7 @@ namespace DAL { // Namespace DAL -- begin
     |   |-- COMPLEX_VOLTAGE             Attr.               bool
     |   |-- SIGNAL_SUM                  Attr.               string
     |   |-- COORDINATES                 Group
-    |   |-- ProcessingHistory           Group
+    |   |-- PROCESSING_HISTORY          Group
     |   |-- STOKES_0                    Dataset
     |   |-- STOKES_1                    Dataset
     |   |-- STOKES_2                    Dataset
@@ -177,12 +177,6 @@ namespace DAL { // Namespace DAL -- begin
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=true);
-
-    //! Open the processing history group
-    bool openProcessingHistory (bool const &create=true);
-
-    //! Open the coordinates group
-    bool openCoordinatesGroup (bool const &create=true);
 
     //! Open an existing Stokes dataset
     bool openStokesDataset (std::string const &name);

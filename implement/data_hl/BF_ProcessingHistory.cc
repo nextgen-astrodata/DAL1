@@ -36,7 +36,7 @@ namespace DAL { // Namespace DAL -- begin
   
   BF_ProcessingHistory::BF_ProcessingHistory ()
   {
-    location_p = 0;
+    init ();
   }
   
   //_____________________________________________________________________________
@@ -46,7 +46,7 @@ namespace DAL { // Namespace DAL -- begin
 					      bool const &create)
   {
     std::string name ("ProcessingHistory");
-
+    
     open (location,
 	  name,
 	  create);
@@ -83,10 +83,14 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      summary
   
+  /*!
+    \param os -- Output stream to which the summary is written.
+  */
   void BF_ProcessingHistory::summary (std::ostream &os)
   {
     os << "[BF_ProcessingHistory] Summary of internal parameters." << std::endl;
-    os << "-- Location ID = " << location_p << std::endl;
+    os << "-- Location ID = " << location_p   << std::endl;
+    os << "-- Attributes  = " << attributes() << std::endl;
   }
   
   // ============================================================================
@@ -95,6 +99,12 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  void BF_ProcessingHistory::init ()
+  {
+    location_p = -1;
+    setAttributes ();
+  }
+
   //_____________________________________________________________________________
   //                                                                setAttributes
   
@@ -103,8 +113,8 @@ namespace DAL { // Namespace DAL -- begin
     attributes_p.clear();
 
     attributes_p.insert("GROUPTYPE");
-    attributes_p.insert("OBSPARSET");
-    attributes_p.insert("PRESTOLOG");
+    attributes_p.insert("PARSET_OBS");
+    attributes_p.insert("LOG_PRESTO");
     attributes_p.insert("PARFILE");
   }
 
@@ -123,13 +133,13 @@ namespace DAL { // Namespace DAL -- begin
             an error was encountered.
   */
   bool BF_ProcessingHistory::open (hid_t const &location,
-			std::string const &name,
-			bool const &create)
+				   std::string const &name,
+				   bool const &create)
   {
     bool status (true);
 
-    /* Set up the list of attributes attached to the root group */
-    setAttributes();
+    /* Basic initialization */
+    init ();
 
     /* Try to open the group: get list of groups attached to 'location' and
        check if 'name' is part of it.
@@ -143,6 +153,7 @@ namespace DAL { // Namespace DAL -- begin
     }
       
     if (location_p > 0) {
+      status = openEmbedded(create);
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
@@ -154,12 +165,12 @@ namespace DAL { // Namespace DAL -- begin
 				H5P_DEFAULT);
 	/* If creation was sucessful, add attributes with default values */
 	if (location_p > 0) {
-	  std::string string_group ("ProcessingHistory");
+	  std::string string_group ("ProcessHist");
 	  // write the attributes
-	  h5set_attribute (location_p, "GROUPTYPE", string_group);
-	  h5set_attribute (location_p, "OBSPARSET", false);
-	  h5set_attribute (location_p, "PRESTOLOG", false);
-	  h5set_attribute (location_p, "PARFILE",   false);
+	  h5set_attribute (location_p, "GROUPTYPE",  string_group);
+	  h5set_attribute (location_p, "PARSET_OBS", false);
+	  h5set_attribute (location_p, "LOG_PRESTO", false);
+	  h5set_attribute (location_p, "PARFILE",    false);
 	} else {
 	  std::cerr << "[BF_ProcessingHistory::open] Failed to create group "
 		    << name
@@ -180,6 +191,10 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
+  /*!
+    \return status -- Status of the operation; return \e false in case an error 
+            was encountered.
+   */
   bool BF_ProcessingHistory::openEmbedded (bool const &create)
   {
     bool status = create;

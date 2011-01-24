@@ -53,7 +53,7 @@ using DAL::HDF5Hyperslab;
 // ==============================================================================
 
 //_______________________________________________________________________________
-//                                                                    test_create
+//                                                                   find_dataset
 
 /*!
   \brief Find a dataset within the HDF5 file \e filename
@@ -185,7 +185,7 @@ bool find_dataset (std::string const &filename,
   \return nofFailedTests -- The number of failed tests encountered within this
           functions.
 */
-int test_create (std::string const &filename)
+int test_create (hid_t const &fileID)
 {
   cout << "\n[tHDF5Datatset::test_create]\n" << endl;
 
@@ -196,10 +196,6 @@ int test_create (std::string const &filename)
   //________________________________________________________
   // Create the file to work with
 
-  hid_t fileID = H5Fcreate (filename.c_str(),
-			    H5F_ACC_TRUNC,
-			    H5P_DEFAULT,
-			    H5P_DEFAULT);
   hid_t groupID = H5Gcreate (fileID,
 			     groupname.c_str(),
 			     H5P_DEFAULT,
@@ -362,7 +358,6 @@ int test_create (std::string const &filename)
   //________________________________________________________
   // Close the file
   
-  H5Fclose(fileID);
   H5Gclose (groupID);
   
   return nofFailedTests;
@@ -1180,20 +1175,42 @@ int main (int argc,
   //________________________________________________________
   // Run the tests
 
-  // Test constructors for a HDF5Dataset object
-  nofFailedTests += test_create (filename);
-  // Test access R/W access to 1-dim data arrays
-  nofFailedTests += test_array1d (filename);
-  // Test access R/W access to 2-dim data arrays
-  nofFailedTests += test_array2d (filename);
-  // Test the effect of the various Hyperslab parameters
-  nofFailedTests += test_hyperslab (filename);
-  // Test expansion of extendable datasets
-  nofFailedTests += test_extension (filename);
+  // // Test access R/W access to 1-dim data arrays
+  // nofFailedTests += test_array1d (filename);
+  // // Test access R/W access to 2-dim data arrays
+  // nofFailedTests += test_array2d (filename);
+  // // Test the effect of the various Hyperslab parameters
+  // nofFailedTests += test_hyperslab (filename);
+  // // Test expansion of extendable datasets
+  // nofFailedTests += test_extension (filename);
 
-  if (haveDataset) {
-    nofFailedTests += test_openDataset (filename);
+  // if (haveDataset) {
+  //   nofFailedTests += test_openDataset (filename);
+  // }
+
+  //________________________________________________________
+  // Create HDF5 file to work with
+  
+  hid_t fileID = H5Fcreate (filename.c_str(),
+			    H5F_ACC_TRUNC,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT);
+  
+  /* If file creation was successful, run the tests. */
+  if (H5Iis_valid(fileID)) {
+    
+    // Test constructors for a HDF5Dataset object
+    nofFailedTests += test_create (fileID);
+    
+  } else {
+    cerr << "-- ERROR: Failed to open file " << filename << endl;
+    return -1;
   }
   
+  //________________________________________________________
+  // close HDF5 file
+  
+  H5Fclose(fileID);
+
   return nofFailedTests;
 }

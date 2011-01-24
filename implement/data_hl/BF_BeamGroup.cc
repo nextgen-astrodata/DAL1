@@ -111,10 +111,6 @@ namespace DAL { // Namespace DAL -- begin
        << std::endl;
     }
 
-    if (itsCoordinates.size() > 0) {
-    os << "-- Location ID CoordinatesGroup  = " << coord->second.locationID()
-       << std::endl;
-    }
   }
   
   // ============================================================================
@@ -266,44 +262,23 @@ namespace DAL { // Namespace DAL -- begin
 			  location_p,
 			  H5G_GROUP);
 
-    /* Open the processing history group */
-    status = openProcessingHistory (create);
-    /* Open coordinates group */
-    status = openCoordinatesGroup (create);
-
-    return status;
-  }
-
-  //_____________________________________________________________________________
-  //                                                        openProcessingHistory
-  
-  bool BF_BeamGroup::openProcessingHistory (bool const &create)
-  {
-    bool status (true);
+    /*________________________________________________________________
+      Open the processing history group
+    */
 
     if (itsProcessingHistory.size() == 0 && location_p > 0) {
       itsProcessingHistory["ProcessingHistory"] = BF_ProcessingHistory (location_p,create);
     }
 
-    return status;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                         openCoordinatesGroup
-  
-  bool BF_BeamGroup::openCoordinatesGroup (bool const &create)
-  {
-    bool status (true);
+    /*________________________________________________________________
+      Open the coordinates group
+    */
 
-    if (itsCoordinates.size() == 0 && location_p > 0) {
-      itsCoordinates["CoordinatesGroup"] = CoordinatesGroup (location_p,create);
-    }
-    
     return status;
   }
 
   //_____________________________________________________________________________
-  //                                                         openCoordinatesGroup
+  //                                                            openStokesDataset
 
   /*!
     \param name    -- Name of the Stokes dataset to be opened.

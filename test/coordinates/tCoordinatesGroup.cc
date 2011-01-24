@@ -30,8 +30,9 @@ using DAL::CoordinatesGroup;
   \file tCoordinatesGroup.cc
 
   \ingroup DAL
+  \ingroup coordinates
 
-  \brief A collection of test routines for the CoordinatesGroup class
+  \brief A collection of test routines for the DAL::CoordinatesGroup class
  
   \author Lars B&auml;hren
  
@@ -47,14 +48,14 @@ using DAL::CoordinatesGroup;
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_constructors ()
+int test_constructors (hid_t const &fileID)
 {
   std::cout << "\n[tCoordinatesGroup::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
-  std::string filename ("tCoordinatesGroup.h5");
+  std::string groupname ("Coordinates");
   
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  std::cout << "[1] Testing CoordinatesGroup() ..." << std::endl;
   try {
     CoordinatesGroup coord;
     coord.summary(); 
@@ -63,17 +64,19 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  std::cout << "[2] Testing argumented constructor ..." << std::endl;
+  std::cout << "[2] Testing CoordinatesGroup(hid_t) ..." << std::endl;
   try {
-    // create HDF5 file to which the StationBeam group is getting attached
-    hid_t fileID = H5Fcreate (filename.c_str(),
-			      H5F_ACC_TRUNC,
-			      H5P_DEFAULT,
-			      H5P_DEFAULT);
-    // create system log inside the root level of the HDF5 file
-    CoordinatesGroup coords (fileID,true);
-    // release file handle
-    H5Fclose (fileID);
+    CoordinatesGroup coord (fileID);
+    coord.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[3] Testing CoordinatesGroup(hid_t,string) ..." << std::endl;
+  try {
+    CoordinatesGroup coord (fileID,groupname);
+    coord.summary(); 
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
@@ -83,7 +86,7 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
-//                                                                        test_io
+//                                                                   test_methods
 
 /*!
   \brief Test reading/writing of the cordinates group to a file
@@ -91,9 +94,41 @@ int test_constructors ()
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_io ()
+int test_methods (hid_t const &fileID)
 {
+  std::cout << "\n[tCoordinatesGroup::test_methods]\n" << std::endl;
+
   int nofFailedTests (0);
+  CoordinatesGroup coord;
+
+  cout << "[1] Testing setReferenceLocation() ... " << endl;
+  try {
+    unsigned int nelem (3);
+    std::vector<double> value (nelem,1);
+    std::vector<std::string> units (nelem,"m");
+    std::string frame ("Cartesian");
+    
+    coord.setReferenceLocation (value, units, frame);
+    coord.summary();
+
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  cout << "[2] Testing setReferenceTime() ... " << endl;
+  try {
+    double value      = 123456;
+    std::string units = "s";
+    std::string frame = "UTC";
+    
+    coord.setReferenceTime (value, units, frame);
+    coord.summary();
+
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
 
   return nofFailedTests;
 }
@@ -104,12 +139,33 @@ int test_io ()
 int main ()
 {
   int nofFailedTests (0);
-
-  // Test for the constructor(s)
-  nofFailedTests += test_constructors ();
+  std::string filename ("tCoordinatesGroup.h5");
   
-  // Test reading/writing of the cordinates group to a file
-  nofFailedTests += test_io ();
+  //________________________________________________________
+  // Create HDF5 file to work with
+  
+  hid_t fileID = H5Fcreate (filename.c_str(),
+			    H5F_ACC_TRUNC,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT);
+  
+  /* If file creation was successful, run the tests. */
+  if (H5Iis_valid(fileID)) {
+    
+    // Test for the constructor(s)
+    nofFailedTests += test_constructors (fileID);
+    // Test reading/writing of the cordinates group to a file
+    nofFailedTests += test_methods (fileID);
+    
+  } else {
+    cerr << "-- ERROR: Failed to open file " << filename << endl;
+    return -1;
+  }
+  
+  //________________________________________________________
+  // close HDF5 file
+  
+  H5Fclose(fileID);
 
   return nofFailedTests;
 }

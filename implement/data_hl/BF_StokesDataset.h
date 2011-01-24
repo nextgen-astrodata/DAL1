@@ -46,6 +46,8 @@ namespace DAL { // Namespace DAL -- begin
     \date 2010/12/05
 
     \test tBF_StokesDataset.cc
+
+    \todo NOF_CHANNELS attribute not yet written properly.
     
     <h3>Prerequisite</h3>
     
@@ -305,9 +307,27 @@ namespace DAL { // Namespace DAL -- begin
     inline DAL::Stokes::Component stokesComponentType () const {
       return itsStokesComponent.type();
     }
-
+    
+    //! Open Stokes dataset
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       bool const &create=false);
+    
+    //! Open (new) Stokes dataset
+    bool open (hid_t const &location,
+	       DAL::Stokes::Component const &component,
+	       unsigned int const &nofSamples,
+	       unsigned int const &nofSubbands,
+	       unsigned int const &nofChannels);
+    
+    //! Open (new) Stokes dataset
+    bool open (hid_t const &location,
+	       DAL::Stokes::Component const &component,
+	       unsigned int const &nofSamples,
+	       std::vector<unsigned int> const &nofChannels);
+    
   private:
-
+    
     //! Set up the list of attributes attached to the structure
     inline void setAttributes () {
       attributes_p.clear();
@@ -324,35 +344,29 @@ namespace DAL { // Namespace DAL -- begin
     void init ();
     
     //! Initialize the internal parameters 
-    inline bool init (DAL::Stokes::Component const &component,
+    inline bool init (hid_t const &location,
+		      DAL::Stokes::Component const &component,
 		      unsigned int const &nofChannels) {
-      return init (component, 1, nofChannels);
+      return open (location, component, 1, nofChannels);
     }
     //! Initialize the internal parameters 
-    inline bool init (DAL::Stokes::Component const &component,
+    inline bool open (hid_t const &location,
+		      DAL::Stokes::Component const &component,
 		      unsigned int const &nofSubbands,
 		      unsigned int const &nofChannels) {
-      return init (component, 1, nofSubbands, nofChannels);
+      return open (location, component, 1, nofSubbands, nofChannels);
     }
     //! Initialize the internal parameters 
-    bool init (DAL::Stokes::Component const &component,
-	       unsigned int const &nofSamples,
-	       unsigned int const &nofSubbands,
-	       unsigned int const &nofChannels);
-    //! Initialize the internal parameters 
-    inline bool init (DAL::Stokes::Component const &component,
+    inline bool init (hid_t const &location,
+		      DAL::Stokes::Component const &component,
 		      std::vector<unsigned int> const &nofChannels) {
       if (nofChannels.size()>1) {
-	return init (component, nofChannels[0], 1, nofChannels[1]);
+	return open (location, component, nofChannels[0], 1, nofChannels[1]);
       } else {
 	return false;
       }
     }
-    //! Initialize the internal parameters 
-    bool init (DAL::Stokes::Component const &component,
-	       unsigned int const &nofSamples,
-	       std::vector<unsigned int> const &nofChannels);
-    
+
     //! Unconditional deletion 
     void destroy(void);
     

@@ -8,6 +8,9 @@ project (DAL)
 ## Minimum required version of CMake to configure the project
 cmake_minimum_required (VERSION 2.8)
 
+## Custom CMake scripts
+include (${PROJECT_SOURCE_DIR}/CMakeMacros.cmake)
+
 ## ==============================================================================
 ##
 ##  CMake configuration settings

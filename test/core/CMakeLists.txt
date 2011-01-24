@@ -36,6 +36,8 @@ endforeach (src)
 foreach (_test
     tdalBaseTypes
     tdalCommon
+    tdalCommon_operators
+    tdalCommon_tbb
     tdalConversions
     tEnumerations
     tdalFileType
@@ -54,6 +56,17 @@ if (dataset_tbb AND dataset_beamformed)
   add_test (tdalCommon_bf tdalCommon ${dataset_tbb} ${dataset_beamformed})
 endif (dataset_tbb AND dataset_beamformed)
 
+## tHDF5Object ___________________________________
+
+find_file (HDF5OBJECT_H5 tHDF5Object.h5
+  PATHS ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+
+if (HDF5OBJECT_H5)
+  add_test (tHDF5Object tHDF5Object ${HDF5OBJECT_H5})
+else (HDF5OBJECT_H5)
+  add_test (tHDF5Object tHDF5Object)
+endif (HDF5OBJECT_H5)
 
 ## tdalDataset ___________________________________
 

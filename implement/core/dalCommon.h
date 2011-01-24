@@ -70,6 +70,8 @@ using std::endl;
   \author Joseph Masters, Lars B&auml;hren
 
   \test tdalCommon.cc
+  \test tdalCommon_operators.cc
+  \test tdalCommon_tbb.cc
 
   <h3>Prerequisite</h3>
 
@@ -163,7 +165,12 @@ namespace DAL {
       }
     }
   
-  //! Get sum of elements within the array
+  /*!
+    \brief Get sum of elements within the array
+    \param vec  -- Input vector/array of which the sum of the elements is
+           computed.
+    \return sum -- Sum of the elements in the input \e vec
+  */
   template <class T>
     T sum (const std::vector<T> &vec)
     {
@@ -393,7 +400,7 @@ namespace DAL {
 			      H5P_DEFAULT);
     }
     else {
-      std::cerr << "ERROR: Attribute '" << name << "' does not exist." << endl;
+      cerr << "ERROR: Attribute '" << name << "' does not exist." << endl;
       return DAL::FAIL;
     }
     
@@ -402,7 +409,7 @@ namespace DAL {
       status = h5get_attribute (attribute_id, value);
     }
     else {
-      std::cerr << "[h5get_attribute] No valid ID for attribute "
+      cerr << "[h5get_attribute] No valid ID for attribute "
 		<< name
 		<< endl;
       status = false;
@@ -544,7 +551,7 @@ namespace DAL {
     /* Check if location_id points to a valid HDF5 object */
 
     if (!H5Iis_valid(location_id)) {
-      std::cerr << "[dalCommon::h5set_attribute]"
+      cerr << "[dalCommon::h5set_attribute]"
 		<< " Unable to set attribute - invalid object identifier!"
 		<< std::endl;
       return false;
@@ -562,7 +569,7 @@ namespace DAL {
       // Create the ddataspace attached to the attribute
       dataspace_id  = H5Screate_simple( 1, dims, maxdims );
       if ( dataspace_id < 0 ) {
-	std::cerr << "ERROR: Could not set attribute '" << name
+	cerr << "ERROR: Could not set attribute '" << name
 		  << "' dataspace.\n";
 	return false;
       }
@@ -570,14 +577,14 @@ namespace DAL {
       attribute_id = H5Acreate( location_id, name.c_str(),
 				datatype, dataspace_id, 0, 0 );
       if ( attribute_id < 0 ) {
-	std::cerr << "ERROR: Could not create attribute '" << name
+	cerr << "ERROR: Could not create attribute '" << name
 		  << "'.\n";
 	return false;
       }
     }
     
     if ( H5Awrite(attribute_id, datatype, value) < 0 ) {
-      std::cerr << "ERROR: Could not write attribute '" << name << "'.\n";
+      cerr << "ERROR: Could not write attribute '" << name << "'.\n";
       return false;
     }
     
@@ -836,8 +843,8 @@ namespace DAL {
 */
 template <typename T>
 std::ostream& show (std::ostream& os,
-		     T start,
-		     T end)
+		    T start,
+		    T end)
 {
   T it;
   

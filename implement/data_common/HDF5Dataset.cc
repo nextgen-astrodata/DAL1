@@ -34,6 +34,14 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                  HDF5Dataset
 
+  HDF5Dataset::HDF5Dataset ()
+  {
+    init ();
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                  HDF5Dataset
+  
   /*!
     \param location  -- Identifier for the location at which the dataset is about
            to be created.
@@ -105,14 +113,12 @@ namespace DAL {
   
   HDF5Dataset::~HDF5Dataset ()
   {
-    /* Close dataspace identifier */
-    if (H5Iis_valid(itsDatatype)) {
-      H5Tclose (itsDatatype);
-    }
-    /* Close dataspace */
-    if (H5Iis_valid(itsDataspace)) {
-      H5Sclose (itsDataspace);
-    }
+    itsShape.clear();
+    itsChunking.clear();
+    itsHyperslab.clear();
+
+    HDF5Object::close (itsDatatype);
+    HDF5Object::close (itsDataspace);
   }
   
   // ============================================================================
@@ -135,12 +141,18 @@ namespace DAL {
     size_t rank  = shape.size();
 
     // Store the shape of the dataset ______________________
-    
-    if (itsShape.empty() || itsShape.size() != rank) {
-      itsShape.resize(rank);
+
+    if (shape.empty()) {
+      std::cerr << "[HDF5Dataset::setShape] Provided shape parameter empty!"
+		<< std::endl;
+      return false;
+    } else {
+      if (itsShape.empty() || itsShape.size() != rank) {
+	itsShape.resize(rank);
+      }
+      
+      itsShape = shape;
     }
-    
-    itsShape = shape;
     
     // Store the chunksize of the dataset __________________
     
@@ -157,7 +169,7 @@ namespace DAL {
     }
     
     adjustChunksize();
-    
+
     return status;
   }
   
@@ -212,12 +224,13 @@ namespace DAL {
 
     //______________________________________________________
     // Try opening existing dataset
-   
-    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
-      // Open the dataset
-      location_p = H5Dopen (location,
-			    name.c_str(),
-			    H5P_DEFAULT);
+    
+    location_p = HDF5Object::open (location,
+				   name,
+				   H5P_DEFAULT);
+    
+    /* Check if opening of the dataset was successful */
+    if (H5Iis_valid(location_p)) {
       // Assign internal parameters
       itsName      = name;
       itsDataspace = H5Dget_space (location_p);
@@ -227,13 +240,15 @@ namespace DAL {
       // Retrieve the size of chunks for the raw data
       status = getChunksize ();
     } else {
-      location_p = 0;
+      std::cerr << "[HDF5Dataset::open] Error opening dataset "
+		<< name << std::endl;
+      status = false;
     }
     
     //______________________________________________________
     // Try creating dataset, if not yet existing
-
-    if (location_p > 0) {
+    
+    if (H5Iis_valid(location_p)) {
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
@@ -250,14 +265,6 @@ namespace DAL {
       }
     }
     
-    // Open embedded groups
-    if (status) {
-      status = openEmbedded (create);
-    } else {
-      std::cerr << "[HDF5Dataset::open] Skip opening embedded groups!"
-		<< std::endl;
-    }
- 
     return status;
   }
   
@@ -309,16 +316,21 @@ namespace DAL {
     bool status (true);
 
     //____________________________________________
-    // Update internal parameters
-
-    itsName     = name;
-    itsDatatype = H5Tcopy (datatype);
-
-    setShape (shape, chunksize);
-
+    // Check input parameters
+    
+    if (shape.empty()) {
+      std::cerr << "[HDF5Dataset::open] Undefined dataset shape!" << std::endl;
+      return false;
+    } else {
+      itsName     = name;
+      itsDatatype = H5Tcopy (datatype);
+      
+      setShape (shape, chunksize);
+    }
+    
     //____________________________________________
     // Create Dataspace
-
+    
     int rank = shape.size();
     hsize_t dims [rank];
     hsize_t maxdims [rank];
@@ -332,12 +344,18 @@ namespace DAL {
       chunkdims[n] = itsChunking[n];
     }
 
+    // Set up the dataspace
     itsDataspace = H5Screate_simple (rank, dims, maxdims);
+    if (!H5Iis_valid(itsDataspace)) {
+      std::cerr << "[HDF5Dataset::open] Failed to create dataspace!"
+		  << std::endl;
+      return false;
+    }
     // Create the dataset creation property list
     creationProperties  = H5Pcreate (H5P_DATASET_CREATE);
     // Set the chunk size
     h5error     = H5Pset_chunk (creationProperties, rank, chunkdims);
-    // Create the Dataset
+    // Create the Dataset ...
     location_p  = H5Dcreate2 (location,
 			      itsName.c_str(),
 			      itsDatatype,
@@ -345,6 +363,12 @@ namespace DAL {
 			      H5P_DEFAULT,
 			      creationProperties,
 			      H5P_DEFAULT);
+    // ... and check it
+    if (!H5Iis_valid(location_p)) {
+      std::cerr << "[HDF5Dataset::open] Failed to create dataset!"
+		  << std::endl;
+      return false;
+    }
     
     // Release HDF5 object identifiers
     if (H5Iis_valid(creationProperties)) {
@@ -361,15 +385,19 @@ namespace DAL {
 
   bool HDF5Dataset::getChunksize ()
   {
-    bool status (true);
-    hid_t propertyID (0);
-    int rank (itsShape.size());
+    bool status      = true;
+    hid_t propertyID = 0;
+    int rank         = itsShape.size();
     int nofAxes (rank);
     hsize_t chunksize[rank];
 
     /* Get the creation property list for the dataset */
-    propertyID = H5Dget_create_plist (location_p);
-
+    if (H5Iis_valid(location_p)) {
+      propertyID = H5Dget_create_plist (location_p);
+    } else {
+      return false;
+    }
+    
     /* Return the layout of the raw data for a dataset. */
     if (H5Iis_valid(propertyID)) {
       itsLayout = H5Pget_layout (propertyID);
@@ -425,12 +453,9 @@ namespace DAL {
 
     /* Check for chunk larger than can be represented in 32-bits */
     if (chunkSize > (uint64_t)0xffffffff) {
-      std::cerr << "[HDF5Dataset::adjustChunksize] Adjusting chunking from "
-		<< itsChunking;
       for (size_t n(0); n<rank; ++n) {
 	itsChunking[n] /= 2;
       }
-      std::cerr << " -> " << itsChunking << std::endl;
       adjustChunksize ();
     }
 

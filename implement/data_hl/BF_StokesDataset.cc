@@ -35,7 +35,6 @@ namespace DAL { // Namespace DAL -- begin
   //                                                             BF_StokesDataset
   
   BF_StokesDataset::BF_StokesDataset ()
-    : HDF5Dataset()
   {
     init();
   }
@@ -50,10 +49,9 @@ namespace DAL { // Namespace DAL -- begin
   */
   BF_StokesDataset::BF_StokesDataset (hid_t const &location,
 				      std::string const &name)
-    : HDF5Dataset(location,
-		  name)
   {
     init();
+    open (location, name);
   }
   
   //_____________________________________________________________________________
@@ -74,10 +72,12 @@ namespace DAL { // Namespace DAL -- begin
 				      unsigned int const &nofChannels,
 				      DAL::Stokes::Component const &component,
 				      hid_t const &datatype)
-    : HDF5Dataset(location,
-		  name)
   {
-    init (component,
+    itsName     = name;
+    itsDatatype = datatype;
+
+    open (location,
+	  component,
 	  nofSubbands,
 	  nofChannels);
   }
@@ -102,10 +102,12 @@ namespace DAL { // Namespace DAL -- begin
 				      unsigned int const &nofChannels,
 				      DAL::Stokes::Component const &component,
 				      hid_t const &datatype)
-    : HDF5Dataset(location,
-		  name)
   {
-    init (component,
+    itsName     = name;
+    itsDatatype = datatype;
+
+    open (location,
+	  component,
 	  nofSamples,
 	  nofSubbands,
 	  nofChannels);
@@ -118,7 +120,7 @@ namespace DAL { // Namespace DAL -- begin
     \param location    -- Identifier for the location at which the dataset is
            about to be created.
     \param name        -- Name of the dataset.
-    \param shape       -- Shape of the dataset.
+    \param shape       -- [nofSamples,nofChannels] Shape of the dataset.
     \param component   -- Stokes component stored within the dataset
     \param datatype    -- Datatype for the elements within the Dataset
   */
@@ -127,14 +129,17 @@ namespace DAL { // Namespace DAL -- begin
 				      std::vector<hsize_t> const &shape,
 				      DAL::Stokes::Component const &component,
 				      hid_t const &datatype)
-    : HDF5Dataset(location,
-		  name,
-		  shape,
-		  datatype)
   {
-    init (component,
-	  1,
-	  shape[1]);
+    /* Store parameters */
+    itsName     = name;
+    itsDatatype = datatype;
+
+    std::vector<unsigned int> nofChannels (1, shape[1]);
+
+    open (location,      // HDF5 object ID
+	  component,     // Component name
+	  shape[0],      // nof. samples
+	  nofChannels);  // nof. channels
   }
 
   //_____________________________________________________________________________
@@ -244,15 +249,17 @@ namespace DAL { // Namespace DAL -- begin
   */
   void BF_StokesDataset::summary (std::ostream &os)
   {
+    std::string stokesComponent = itsStokesComponent.name();
+
     os << "[BF_StokesDataset] Summary of internal parameters."  << std::endl;
-    os << "-- Stokes component       = " << itsStokesComponent.name() << std::endl;
-    os << "-- nof. channels          = " << nofChannels()       << std::endl;
-    os << "-- Dataset name           = " << itsName             << std::endl;
-    os << "-- Dataset ID             = " << location_p          << std::endl;
-    os << "-- Dataspace ID           = " << dataspaceID()       << std::endl;
-    os << "-- Datatype ID            = " << datatypeID()        << std::endl;
-    os << "-- Dataset rank           = " << rank()              << std::endl;
-    os << "-- Dataset shape          = " << shape()             << std::endl;
+    os << "-- Stokes component       = " << stokesComponent  << std::endl;
+    os << "-- nof. channels          = " << nofChannels()    << std::endl;
+    os << "-- Dataset name           = " << itsName          << std::endl;
+    os << "-- Dataset ID             = " << location_p       << std::endl;
+    os << "-- Dataspace ID           = " << dataspaceID()    << std::endl;
+    os << "-- Datatype ID            = " << datatypeID()     << std::endl;
+    os << "-- Dataset rank           = " << rank()           << std::endl;
+    os << "-- Dataset shape          = " << shape()          << std::endl;
     
     if (location_p) {
       os << "-- Layout of the raw data = " << itsLayout           << std::endl;
@@ -268,13 +275,16 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         init
 
+  /*
+    Initialization of object's internal parameters to default values.
+  */
   void BF_StokesDataset::init ()
   {
     itsNofChannels.clear();
-
+    
     /* Set up the list of attributes attached to the structure */
     setAttributes();
-
+    
     /* Assign Stokes component parameter based on STOKES_COMPONENT attribute. */
     if (H5Iis_valid(location_p)) {
       std::string stokesComponent;
@@ -298,33 +308,66 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                                         init
+  //                                                                         open
 
   /*!
+    \param location -- Identifier of the location to which the to be opened
+           structure is attached.
+    \param name   -- Name of the structure (file, group, dataset, etc.) to be
+           opened.
+    \param create -- Create the corresponding data structure, if it does not 
+           exist yet?
+    
+    \return status -- Status of the operation; returns <tt>false</tt> in case
+            an error was encountered.
+  */
+  bool BF_StokesDataset::open (hid_t const &location,
+			       std::string const &name,
+			       bool const &create)
+  {
+    bool status = HDF5Dataset::open (location, name, create);
+
+    if (status) {
+      init ();
+    }
+
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                         open
+
+  /*!
+    \param location    -- Identifier for the location at which the dataset is about
+           to be created.
+    \param component   -- Stokes component stored within the dataset
+    \param nofSamples  -- 
     \param nofSubbands -- Number of sub-bands.
     \param nofChannels -- Number of channels within the subbands.
-    \param component   -- Stokes component stored within the dataset
 
     \return status -- Status of the operation; returns \e false in case an error
             was encountered.
   */
-  bool BF_StokesDataset::init (DAL::Stokes::Component const &component,
+  bool BF_StokesDataset::open (hid_t const &location,
+			       DAL::Stokes::Component const &component,
 			       unsigned int const &nofSamples,
 			       unsigned int const &nofSubbands,
 			       unsigned int const &nofChannels)
   {
     if (nofSubbands>0) {
       std::vector<unsigned int> tmp (nofSubbands,nofChannels);
-      return init (component, nofSamples, tmp);
+      return open (location, component, nofSamples, tmp);
     } else {
       return false;
     }
   }
   
   //_____________________________________________________________________________
-  //                                                                         init
+  //                                                                         open
 
   /*!
+    \param location    -- Identifier for the location at which the dataset is about
+           to be created.
     \param component   -- Stokes component stored within the dataset
     \param nofSamples  -- Number of bins along the time axis.
     \param nofChannels -- Number of channels within the individual subbands.
@@ -332,62 +375,70 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns \e false in case an error
             was encountered.
   */
-  bool BF_StokesDataset::init (DAL::Stokes::Component const &component,
+  bool BF_StokesDataset::open (hid_t const &location,
+			       DAL::Stokes::Component const &component,
 			       unsigned int const &nofSamples,
 			       std::vector<unsigned int> const &nofChannels)
   {
     bool status (true);
-    
-    /* Set up the list of attributes attached to the structure */
+    std::vector<hsize_t> shape (2,1);
+
+    /*________________________________________________________________
+      Set up attributes attached to the dataset
+    */
     setAttributes();
-    
-    /* Store Stokes component information */
     itsStokesComponent = DAL::Stokes(component);
 
-    if (nofSamples>0) {
-      if (!nofChannels.empty()) {
-	itsShape.resize(2);
-	itsShape[0] = nofSamples;
-	itsShape[1] = DAL::product(itsNofChannels);
-      } else {
-	std::cerr << "[BF_StokesDataset::init] nof. subbands must be >0 !"
-		  << std::endl;
-	return false;
-      }
+    /*________________________________________________________________
+      Process the parameters defining the (initial) shape of the 
+      dataset.
+    */
+
+    /* Time axis of the dataset */
+    if (nofSamples>1) {
+      shape[0] = nofSamples;
     } else {
-      std::cerr << "[BF_StokesDataset::init] nof. samples must be >0 !"
-		<< std::endl;
-      return false;
+      shape[0] = 1;
     }
 
-    /* Initiaize attributes attached to the dataset */
+    /* Frequency axis of the dataset */
+    if (nofChannels.empty()) {
+      itsNofChannels.resize(1);
+      itsNofChannels[0] = 1;
+      shape[1]          = 1;
+    } else {
+      itsNofChannels.clear();
+      itsNofChannels = nofChannels;
+      for (unsigned int n(0); n<nofChannels.size(); ++n) {
+	shape[1] += nofChannels[n];
+      }
+    }
+
+    /* Open/create dataset */
+    status = HDF5Dataset::open (location, itsName, shape);
+
+    /* Initialize attributes attached to the dataset */
     if (H5Iis_valid(location_p)) {
       std::string grouptype       = "Data";
       std::string datatype        = "float";
       std::string stokesComponent = itsStokesComponent.name();
-      unsigned int nofSubbands    = itsNofChannels.size();
-      unsigned int nofSamples     = 0;
-
-      if (!itsShape.empty()) {
-	nofSamples = itsShape[0];
-      }
-
+      std::vector<unsigned int> channels = itsNofChannels;
+      unsigned int subbands              = channels.size();
+      
 #ifdef DEBUGGING_MESSAGES
       std::cout << "[BF_StokesDataset::init]" << std::endl;
-      std::cout << "-- Input variables:" << std::endl;
-      std::cout << " --> nofSamples  = " << nofSamples  << std::endl;
-      std::cout << " --> nofChannels = " << nofChannels << std::endl;
-      std::cout << "-- Internal variables:" << std::endl;
-      std::cout << " --> Shape       = " << itsShape << std::endl;
-      std::cout << " --> nof samples = " << itsNofChannels << std::endl;
+      std::cout << "-- GROUPTYPE    = " << grouptype << std::endl;
+      std::cout << "-- DATATYPE     = " << datatype  << std::endl;
+      std::cout << "-- NOF_SUBBANDS = " << subbands  << std::endl;
+      std::cout << "-- NOF_CHANNELS = " << channels  << std::endl;
 #endif
-
+      
       h5set_attribute (location_p, "GROUPTYPE",        grouptype       );
       h5set_attribute (location_p, "DATATYPE",         datatype        );
       h5set_attribute (location_p, "STOKES_COMPONENT", stokesComponent );
-      h5set_attribute (location_p, "NOF_SAMPLES",      nofSamples      );
-      h5set_attribute (location_p, "NOF_SUBBANDS",     nofSubbands     );
-      h5set_attribute (location_p, "NOF_CHANNELS",     itsNofChannels  );
+      h5set_attribute (location_p, "NOF_SAMPLES",      itsShape[0]     );
+      h5set_attribute (location_p, "NOF_SUBBANDS",     subbands        );
+      h5set_attribute (location_p, "NOF_CHANNELS",     channels  );
     }
 
     return status;

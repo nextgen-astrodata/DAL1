@@ -48,7 +48,9 @@ using DAL::BF_StokesDataset;
   |-- Dataset.003
   |-- Dataset.004
   |-- Dataset.006
-  |-- StokesI
+  |-- Dataset.007
+  |-- StokesI.002
+  |-- StokesI.003
   |-- StokesQ
   |-- StokesU.001
   |-- StokesU.002
@@ -63,6 +65,12 @@ using DAL::BF_StokesDataset;
 /*!
   \brief A few additional tests for working with the DAL::HDF5Dataset class
 
+  As the core functionality of the DAL::BF_StokesDataset class -- to deal with
+  a HDF5 dataset object -- is inherited from the DAL::HDF5Dataset class, we need
+  to ensure the additional parameters, which are part of the Stokes dataet, are
+  translated properly into the corresponding parameters dealing with the
+  underlying HDF5 object.
+
   \param fileID -- Object identifier for the HDF5 file to work with
 
   \return nofFailedTests -- The number of failed tests encountered within this
@@ -73,9 +81,10 @@ int test_HDF5Dataset (hid_t const &fileID)
   cout << "\n[tBF_StokesDataset::test_HDF5Dataset]\n" << endl;
   
   int nofFailedTests (0);
+  bool status (true);
   hsize_t sidelength (100000);
   std::string name;
-  unsigned int rank;
+  unsigned int rank (2);
 
   /*_______________________________________________________________________
     Simplest constructor for HDF5Dataset will only open existing dataset,
@@ -88,6 +97,7 @@ int test_HDF5Dataset (hid_t const &fileID)
     //
     DAL::HDF5Dataset dataset (fileID,
 			      name);
+    dataset.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -103,13 +113,13 @@ int test_HDF5Dataset (hid_t const &fileID)
   cout << "[2] Testing HDF5Dataset(hid_t, string, vector<hsize_t>) ..." << endl;
   try {
     name = "Dataset.002";
-    rank = 2;
     //
     std::vector<hsize_t> shape (rank,sidelength);
     //
     DAL::HDF5Dataset dataset (fileID,
 			      name,
 			      shape);
+    dataset.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -123,7 +133,6 @@ int test_HDF5Dataset (hid_t const &fileID)
        << endl;
   try {
     name = "Dataset.003";
-    rank = 2;
     //
     std::vector<hsize_t> shape (rank,sidelength);
     std::vector<hsize_t> chunk (rank,1000);
@@ -132,6 +141,7 @@ int test_HDF5Dataset (hid_t const &fileID)
 			      name,
 			      shape,
 			      chunk);
+    dataset.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -145,7 +155,6 @@ int test_HDF5Dataset (hid_t const &fileID)
        << endl;
   try {
     name = "Dataset.004";
-    rank = 2;
     //
     std::vector<hsize_t> shape (rank,sidelength);
     hid_t datatype = H5T_NATIVE_INT;
@@ -154,6 +163,7 @@ int test_HDF5Dataset (hid_t const &fileID)
 			      name,
 			      shape,
 			      datatype);
+    dataset.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -166,16 +176,31 @@ int test_HDF5Dataset (hid_t const &fileID)
 
   cout << "[5] Testing HDF5Dataset::open(hid_t, string)" << endl;
   try {
-    DAL::HDF5Dataset dataset;
+    DAL::HDF5Dataset dataset2;
+    DAL::HDF5Dataset dataset5;
 
     // try to open non-existing dataset
-    dataset.open (fileID, "Dataset.005");
+    name   = "Dataset.005";
+    status = dataset5.open (fileID, name);
 
-    // try to open existing dataset
-    dataset.open (fileID, "Dataset.002");
+    if (status) {
+      cout << "--> [FAIL] Successfully opened dataset " << name << endl;
+      nofFailedTests++;
+    } else {
+      cout << "--> [OK] Faild to open dataset " << name << " - expected." << endl;
+    }
     
-    cout << "--> successfully opened dataset " << dataset.name() << endl;
-
+    // try to open existing dataset
+    name  = "Dataset.002";
+    status = dataset2.open (fileID, name);
+    
+    if (status) {
+      cout << "--> [OK] Successfully opened dataset " << name << endl;
+    } else {
+      cout << "--> [FAIL] Faild to open dataset " << name << endl;
+      nofFailedTests++;
+    }
+    
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -188,12 +213,43 @@ int test_HDF5Dataset (hid_t const &fileID)
 
   cout << "[6] Testing HDF5Dataset::open(hid_t, string, vector<hsize_t>)" << endl;
   try {
-    std::vector<hsize_t> shape (rank,sidelength);
-
+    std::vector<hsize_t> shape (rank, sidelength);
     DAL::HDF5Dataset dataset;
-    dataset.open (fileID, "Dataset.006", shape);
 
-    cout << "--> successfully opened dataset " << dataset.name() << endl;
+    name   = "Dataset.006";
+    status = dataset.open (fileID, name, shape);
+
+    if (status) {
+      cout << "--> [OK] Successfully opened dataset " << name << endl;
+    } else {
+      cout << "--> [FAIL] Faild to open dataset " << name << endl;
+      nofFailedTests++;
+    }
+
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  /*_______________________________________________________________________
+    Explicitely specify chunking dimensions for dataset.
+  */
+
+  cout << "[7] Testing HDF5Dataset::open(hid_t, string, vector<hsize_t>, vector<hsize_t>)" << endl;
+  try {
+    std::vector<hsize_t> shape (rank, sidelength);
+    std::vector<hsize_t> chunk (rank, 1000);
+    DAL::HDF5Dataset dataset;
+
+    name   = "Dataset.007";
+    status = dataset.open (fileID, name, shape, chunk);
+
+    if (status) {
+      cout << "--> [OK] uccessfully opened dataset " << name << endl;
+    } else {
+      cout << "--> [FAIL] Failed to open dataset " << name << endl;
+      nofFailedTests++;
+    }
 
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -218,19 +274,25 @@ int test_constructors (hid_t const &fileID)
 {
   cout << "\n[tBF_StokesDataset::test_constructors]\n" << endl;
 
+  if (!H5Iis_valid(fileID)) {
+    cerr << "--> Invalid file -- skipping tests!" << endl;
+    return 0;
+  }
+
   int nofFailedTests (0);
   std::string nameDataset;
   unsigned int nofSamples  = 1000;
   unsigned int nofSubbands = 36;
-  unsigned int nofChannels = 512;
+  unsigned int nofChannels = 128;
   std::vector<hsize_t> shape (2);
 
   shape[0] = nofSamples;
   shape[1] = nofSubbands*nofChannels;
   
-  //________________________________________________________
-  // Test 1: Default constructor
-
+  /*_______________________________________________________________________
+    Test 1: Default constructor (no dataset created)
+  */
+  
   cout << "[1] Testing BF_StokesDataset() ..." << endl;
   try {
     BF_StokesDataset stokes;
@@ -241,27 +303,36 @@ int test_constructors (hid_t const &fileID)
     nofFailedTests++;
   }
   
-  //________________________________________________________
-  // Test 2: Argumented constructor
-
+  /*_______________________________________________________________________
+    Test 2: Argumented constructor to open existing dataset
+            Use constuctor on a non-existing dataset; if not enough
+	    parameters are defined to create a new dataset, the resulting
+	    object will not be connected to any valid dataset.
+  */
+  
   cout << "[2] Testing BF_StokesDataset(hid_t, string) ..." << endl;
   try {
-    nameDataset = "StokesI";
-    BF_StokesDataset stokes (fileID, nameDataset);
-    //
-    stokes.summary(); 
+    nameDataset = "Dataset.001";
+    BF_StokesDataset data1 (fileID, nameDataset);
+    data1.summary(); 
+    /* Point constructor to existing dataset */
+    nameDataset = "Dataset.002";
+    BF_StokesDataset data2 (fileID, nameDataset);
+    data2.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
   
-  //________________________________________________________
-  // Test 3: Argumented constructor
+  /*_______________________________________________________________________
+    Test 3: Argumented constructor, containing minimal required parameters
+            for creation of a new dataset.
+  */
 
   cout << "[3] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>) ..."
 	    << endl;
   try {
-    nameDataset = "StokesI";
+    nameDataset = "StokesI.003";
     BF_StokesDataset stokes (fileID, nameDataset, shape);
     //
     stokes.summary(); 
@@ -269,15 +340,19 @@ int test_constructors (hid_t const &fileID)
     std::cerr << message << endl;
     nofFailedTests++;
   }
-  
-  //________________________________________________________
-  // Test 4: Argumented constructor
+
+  /*_______________________________________________________________________
+    Test 4: Argumented constructor.
+  */
 
   cout << "[4] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>, Stokes::Component) ..."
 	    << endl;
   try {
     nameDataset = "StokesQ.001";
-    BF_StokesDataset stokes (fileID, nameDataset, shape, DAL::Stokes::Q);
+    BF_StokesDataset stokes (fileID,
+			     nameDataset,
+			     shape,
+			     DAL::Stokes::Q);
     //
     stokes.summary(); 
   } catch (std::string message) {
@@ -285,8 +360,9 @@ int test_constructors (hid_t const &fileID)
     nofFailedTests++;
   }
   
-  //________________________________________________________
-  // Test 5: Argumented constructor
+  /*_______________________________________________________________________
+    Test 5: Argumented constructor.
+  */
 
   cout << "[5] Testing BF_StokesDataset() ..." << endl;
   try {
@@ -641,6 +717,12 @@ int test_data (hid_t const &fileID)
 //_______________________________________________________________________________
 //                                                                           main
 
+/*!
+  \brief Main routine of the test program
+
+  \return nofFailedTests -- The number of failed tests encountered within and
+          identified by this test program.
+*/
 int main ()
 {
   int nofFailedTests (0);
@@ -654,21 +736,19 @@ int main ()
 			    H5P_DEFAULT,
 			    H5P_DEFAULT);
   
-  /* test of file creation was successful */
+  /* If file creation was successful, run the tests. */
   if (H5Iis_valid(fileID)) {
-    
-    /* If file creation was successful, run the tests. */
-
-    // Test for the constructor(s)
-    nofFailedTests += test_constructors (fileID);
-    // Test access to the attributes
-    nofFailedTests += test_attributes (fileID);
-    // Test read/write access to the data
-    nofFailedTests += test_data (fileID);
 
     // Additional tests for working with the DAL::HDF5Dataset class
-    nofFailedTests += test_HDF5Dataset (fileID);
+    // nofFailedTests += test_HDF5Dataset (fileID);
     
+    // Test for the constructor(s)
+    nofFailedTests += test_constructors (fileID);
+    // // Test access to the attributes
+    // nofFailedTests += test_attributes (fileID);
+    // // Test read/write access to the data
+    // nofFailedTests += test_data (fileID);
+
   } else {
     cerr << "-- ERROR: Failed to open file " << filename << endl;
     return -1;

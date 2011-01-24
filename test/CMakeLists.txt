@@ -4,32 +4,6 @@
 
 ## ==============================================================================
 ##
-##  Common settings for all test programs
-##
-## ==============================================================================
-
-set (CMAKE_CXX_FLAGS "-W -Wall")
-
-macro (build_test arg_source arg_link arg_run)
-  ## get the name of the file without the extension
-  get_filename_component (_file ${arg_source} NAME_WE)
-  ## compiler instructions
-  add_executable(${_file} ${_file}.cc)
-  ## linker instructions
-  target_link_libraries (${_file} ${arg_link})
-  ## installation instructions
-  install (TARGETS ${_file}
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    )
-  ## run the test?
-  if (arg_run)
-    add_test (${_file} ${_file})
-  endif (arg_run)
-endmacro (build_test)
-
-## ==============================================================================
-##
 ##  Build the test programs
 ##
 ## ==============================================================================
@@ -107,7 +81,7 @@ if (HAVE_CASACORE)
       if (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
 	## list of source files
 	foreach (src
-	    tMS_dal 
+	    tdal_MS 
 	    tcasacore_hdf5
 	    tcasacore_images
 	    tcasacore_images2
@@ -151,13 +125,12 @@ if (DAL_ENABLE_TESTING)
   ## [1] simple tests which do not require sample data
 
   add_test (tdal tdal)
-  add_test (tEnumerations tEnumerations)
 
   ## -----------------------------------------------------------------
   ## [3] Processing tests which require sample datasets
   
   if (dataset_ms)
-    add_test (tMS_dal tMS_dal ${dataset_ms} ${dataset_ms}.h5)
+    add_test (tdal_MS tdal_MS ${dataset_ms} ${dataset_ms}.h5)
   else (dataset_ms)
     message (STATUS "Unable to find MS dataset; skipping tests.")
   endif (dataset_ms)

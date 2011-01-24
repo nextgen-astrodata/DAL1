@@ -54,25 +54,17 @@ using DAL::BF_BeamGroup;
 /*!
   \brief Test constructors for a new BF_BeamGroup object
 
+  \param fileID -- Object identifier for the HDF5 file to work with
+
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_constructors (std::string const &filename)
+int test_constructors (hid_t const &fileID)
 {
   cout << "\n[tBF_BeamGroup::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
 
- // Open HDF5 file _________________________________________
-
-  cout << "-- opening file " << filename << " ..." << endl;
-  hid_t fileID = H5Fcreate (filename.c_str(),
-			    H5F_ACC_TRUNC,
-			    H5P_DEFAULT,
-			    H5P_DEFAULT);
-  
-  // Perform the tests _____________________________________
-  
   cout << "[1] Testing default constructor ..." << endl;
   try {
     BF_BeamGroup beam;
@@ -101,22 +93,15 @@ int test_constructors (std::string const &filename)
 
   cout << "[3] Testing copy constructor ..." << endl;
   try {
-    if (fileID>0) {
-      BF_BeamGroup beam (fileID,10,true);
-      beam.summary();
-      //
-      BF_BeamGroup beamCopy (beam);
-      beamCopy.summary();
-    }
-    H5Fclose (fileID);
+    BF_BeamGroup beam (fileID,10,true);
+    beam.summary();
+    //
+    BF_BeamGroup beamCopy (beam);
+    beamCopy.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
-
-  // Release HDF5 file object ______________________________
-
-  if (H5Iis_valid(fileID)) { H5Fclose (fileID); }
   
   return nofFailedTests;
 }
@@ -127,10 +112,12 @@ int test_constructors (std::string const &filename)
 /*!
   \brief Test access to the attributes attached to the Beam group
 
+  \param fileID -- Object identifier for the HDF5 file to work with
+
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_attributes (std::string const &filename)
+int test_attributes (hid_t const &fileID)
 {
   cout << "\n[tBF_BeamGroup::test_attributes]\n" << endl;
 
@@ -139,19 +126,8 @@ int test_attributes (std::string const &filename)
   std::set<std::string> names;
   std::set<std::string>::iterator it;
 
-  // Open HDF5 file and beam group _________________________
-
-  cout << "-- opening file " << filename << " ..." << endl;
-  hid_t fileID = H5Fopen (filename.c_str(),
-			  H5F_ACC_RDWR,
-			  H5P_DEFAULT);
-
-  if (fileID > 0) {
-    DAL::h5get_names (names,fileID,H5G_GROUP);
-  } else {
-    std::cerr << "Skipping tests - unable to open file." << endl;
-    return -1;
-  }
+  /* Get list of groups attached to the file */
+  DAL::h5get_names (names, fileID, H5G_GROUP);
 
   if (names.size() > 0) {
     it = names.begin();
@@ -215,10 +191,6 @@ int test_attributes (std::string const &filename)
   cout << " -- POINT_RA            = " << pointRA           << endl;
   cout << " -- POINT_DEC           = " << pointDEC          << endl;
 
-  // Release HDF5 file object ______________________________
-
-  if (H5Iis_valid(fileID)) H5Fclose (fileID);
-  
   return nofFailedTests;
 }
 
@@ -228,31 +200,22 @@ int test_attributes (std::string const &filename)
 /*!
   \brief Test usage of std::map<std::string,DAL::BF_BeamGroup>
 
+  \param fileID -- Object identifier for the HDF5 file to work with
+
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_map (std::string const &filename)
+int test_map (hid_t const &fileID)
 {
   cout << "\n[tBF_BeamGroup::test_map]\n" << endl;
 
   int nofFailedTests (0);
   std::set<std::string> names;
   std::set<std::string>::iterator it;
-
-  // Open HDF5 file and beam group _________________________
-
-  cout << "-- opening file " << filename << " ..." << endl;
-  hid_t fileID = H5Fopen (filename.c_str(),
-			  H5F_ACC_RDWR,
-			  H5P_DEFAULT);
-
-  if (fileID > 0) {
-    DAL::h5get_names (names,fileID,H5G_GROUP);
-  } else {
-    std::cerr << "Skipping tests - unable to open file." << endl;
-    return -1;
-  }
-
+  
+  /* Get list of groups attached to the file */
+  DAL::h5get_names (names, fileID, H5G_GROUP);
+  
   std::string groupType;
   std::vector<std::string> target;
   
@@ -262,7 +225,7 @@ int test_map (std::string const &filename)
   if (names.size() > 0) {
     std::vector<DAL::BF_BeamGroup> beams (1);
     // open Beam group
-    it             = names.begin();
+    it = names.begin();
     BF_BeamGroup beam (fileID, *it);
     beams[0] = beam;
     // get attribute values
@@ -302,27 +265,50 @@ int test_map (std::string const &filename)
     return -1;
   }
 
-  // Release HDF5 file object ______________________________
-
-  if (H5Iis_valid(fileID)) H5Fclose (fileID);
-  
   return nofFailedTests;
 }
 
 //_______________________________________________________________________________
 //                                                                           main
 
+/*!
+  \brief Main routine of the test program
+
+  \return nofFailedTests -- The number of failed tests encountered within and
+          identified by this test program.
+*/
 int main ()
 {
   int nofFailedTests (0);
   std::string filename ("tBF_BeamGroup.h5");
-
-  // Test for the constructor(s)
-  nofFailedTests += test_constructors (filename);
-  // Test access to the attributes
-  nofFailedTests += test_attributes (filename);
-  // Test usage of std::map<std::string,DAL::BF_BeamGroup>
-  nofFailedTests += test_map(filename);
+  
+  //________________________________________________________
+  // Create HDF5 file to work with
+  
+  hid_t fileID = H5Fcreate (filename.c_str(),
+			    H5F_ACC_TRUNC,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT);
+  
+  /* If file creation was successful, run the tests. */
+  if (H5Iis_valid(fileID)) {
+    
+    // Test for the constructor(s)
+    nofFailedTests += test_constructors (fileID);
+    // Test access to the attributes
+    nofFailedTests += test_attributes (fileID);
+    // Test usage of std::map<std::string,DAL::BF_BeamGroup>
+    nofFailedTests += test_map (fileID);
+    
+  } else {
+    cerr << "-- ERROR: Failed to open file " << filename << endl;
+    return -1;
+  }
+  
+  //________________________________________________________
+  // close HDF5 file
+  
+  H5Fclose(fileID);
 
   return nofFailedTests;
 }

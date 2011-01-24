@@ -1,0 +1,215 @@
+
+/*!
+  \page dal_data_formats DAL :: Interface control documents (ICD)
+  
+  <ul>
+    <li>\ref dal_icd_001
+    <li>\ref dal_icd_002
+    <li>\ref dal_icd_003
+    <li>\ref dal_icd_004
+    <li>\ref dal_icd_005
+    <li>\ref dal_icd_006
+    <li>\ref dal_icd_007
+    <li>\ref dal_icd_008
+  </ul>
+
+  \section dal_icd_001 TBB Time-Series Data (LOFAR-USG-ICD-001)
+
+  This document describes the internal structure of and the interface to the
+  LOFAR time series data. Time series data – i.e. the digitized voltage output,
+  as received by the individual LOFAR dipoles – represent the primary input
+  data to the UHECR (Ultra-High-Energy Cosmic Rays) analysis pipeline(s) and
+  have to be considered as the most basic form in which the received radio
+  signals are present within the LOFAR system.
+
+  \verbatim
+  OBSERVATION
+  |-- SysLog                                ...  Group
+  |-- STATION{NNN}                          ...  Group
+  |   |-- STATION_TRIGGER                   ...  Group
+  |   |-- STATION_CALIBRATION               ...  Group
+  |   |   |-- GAIN_CURVE                    ...  Group
+  |   |   |   |-- COORDINATE0               ...  Group
+  |   |   |   `-- DATA                      ...  Dataset      [1D, complex]
+  |   |   |-- NOISE_CURVE                   ...  Group
+  |   |   |   |-- COORDINATE0               ...  Group
+  |   |   |   `-- DATA                      ...  Dataset      [1D, complex]
+  |   |   `-- BEAM_SHAPE                    ...  Group
+  |   |   |   |-- COORDINATE0               ...  Group
+  |   |   |   |-- COORDINATE1               ...  Group
+  |   |   |   `-- DATA                      ...  Dataset      [3D, complex]
+  |   |-- DIPOLE{NNNMMMLLL}                 ...  Group
+  |   |   |-- STATION_CALIBRATION           ...  Group
+  |   |   |   |-- GAIN_CURVE                ...  Group
+  |   |   |   |   |-- COORDINATE0           ...  Group
+  |   |   |   |   `-- DATA                  ...  Dataset      [1D, complex]
+  |   |   |   |-- NOISE_CURVE               ...  Group
+  |   |   |   |   |-- COORDINATE0           ...  Group
+  |   |   |   |   `-- DATA                  ...  Dataset      [1D, complex]
+  |   |   |   `-- BEAM_SHAPE                ...  Group
+  |   |   |   |   |-- COORDINATE0           ...  Group
+  |   |   |   |   |-- COORDINATE1           ...  Group
+  |   |   |   |   `-- DATA                  ...  Dataset      [3D, complex]
+  |   |   `-- DIPOLE_DATA                   ...  Dataset      [1D, short]
+  \endverbatim
+  
+  \section dal_icd_002 Representations of World Coordinates (LOFAR-USG-ICD-002)
+
+  This document sets forth a formal data interface specification for LOFAR
+  data products. The specification applies to data structures produced by
+  various LOFAR processing pipelines that will be called Coordinates Group.
+  This is a specification for Coordinates group data products only and in no
+  way implies, and should not be inferred as, a specification for any data
+  structures the project may use during in situ processing by way of producing
+  a final standard Coordinates Group.
+
+  - DAL::Angle
+  - DAL::RaDec
+  - DAL::Stokes
+  - DAL::Coordinate
+  - DAL::CoordinateInterface
+    - DAL::DirectionCoordinate
+    - DAL::LinearCoordinate
+    - DAL::TabularCoordinate
+    - DAL::StokesCoordinate
+  - DAL::CoordinatesGroup
+
+  \section dal_icd_003 Beam-Formed Data (LOFAR-USG-ICD-003)
+
+  This document sets forth a formal data interface specification for LOFAR
+  beam-formed data products. The specification applies to data structures
+  produced by various LOFAR processing pipelines that will be called LOFAR
+  Beam-Formed (BF) data.
+
+  LOFAR beams can be formed where signals from antennae and/or stations are
+  coherently added to form sets of smaller beams, each generating a time-series
+  voltage sum. Alternatively, beams can also be incoherently added to create
+  total intensities. Beamforming at the station level is required to reduce the
+  raw digitized data rate per station from 0.5 Tb/s to approximately 3.1 Gb/s.
+
+  \verbatim
+  .
+  |-- Beam000                         Group
+  |   |-- GROUPTYPE                   Attr.               string
+  |   |-- TARGET                      Attr.               array<string,1>
+  |   |-- NOF_STATIONS                Attr.               int
+  |   |-- STATIONS_LIST               Attr.               array<string,1>
+  |   |-- POINT_RA                    Attr.               double
+  |   |-- POINT_DEC                   Attr.               double
+  |   |-- POSITION_OFFSET_RA          Attr.               double
+  |   |-- POSITION_OFFSET_DEC         Attr.               double
+  |   |-- PB_DIAMETER_RA              Attr.               float
+  |   |-- PB_DIAMETER_DEC             Attr.               float
+  |   |-- PB_CENTER_FREQUENCY         Attr.               double
+  |   |-- PB_CENTER_FREQUENCY_UNIT    Attr.               string
+  |   |-- FOLDED_DATA                 Attr.               bool
+  |   |-- FOLD_PERIOD                 Attr.               float
+  |   |-- FOLD_PERIOD_UNIT            Attr.               string
+  |   |-- DEDISPERSION                Attr.               string
+  |   |-- DISPERSION_MEASURE          Attr.               float
+  |   |-- DISPERSION_MEASURE_UNIT     Attr.               string
+  |   |-- BARYCENTER                  Attr.               bool
+  |   |-- NOF_STOKES                  Attr.               int
+  |   |-- STOKES_COMPONENTS           Attr.               array<string,1>
+  |   |-- COMPLEX_VOLTAGE             Attr.               bool
+  |   |-- SIGNAL_SUM                  Attr.               string
+  |   |-- COORDINATES                 Group
+  |   |   |-- GROUPTYPE               Attr.
+  |   |   |-- COORDINATE_0            Group
+  |   |   `-- COORDINATE_1            Group
+  |   |-- PROCESSING_HISTORY          Group
+  |   |-- STOKES_0                    Dataset
+  |   |   |-- GROUPTYPE               Attr.               string
+  |   |   |-- DATATYPE                Attr.               string
+  |   |   |-- STOKES_COMPONENT        Attr.               string
+  |   |   |-- NOF_SAMPLES             Attr.               int
+  |   |   |-- NOF_SUBBANDS            Attr.               int
+  |   |   `-- NOF_CHANNELS            Attr.               array<int,1>
+  |   |-- STOKES_1                    Dataset
+  |   |-- STOKES_2                    Dataset
+  |   `-- STOKES_3                    Dataset
+  |-- Beam001                         Group
+  |
+  \endverbatim
+
+  The data format is implemented through the following DAL classes:
+
+  - DAL::BF_RootGroup
+  - DAL::BF_ProcessingHistory
+  - DAL::BF_SubArrayPointing
+  - DAL::BF_BeamGroup
+  - DAL::BF_StokesDataset
+
+  \section dal_icd_004 Radio Sky Image Cubes (LOFAR-USG-ICD-004)
+
+  This document sets forth a formal data interface specification for LOFAR data
+  products. The specification applies to data structures produced by various
+  LOFAR processing pipelines that will be called LOFAR Sky Image. This is a
+  specification for LOFAR Sky Image data products only and in no way implies,
+  and should not be inferred as, a specification for any data structures the
+  project may use during in situ processing by way of producing a final
+  standard LOFAR Sky Image file.
+
+  The data format is implemented through the following DAL classes:
+
+  - DAL::Sky_RootGroup
+
+  \section dal_icd_005 File Naming Conventions (LOFAR-USG-ICD-005)
+
+  - DAL::Filename
+
+  \section dal_icd_006 Dynamic Spectrum Data (LOFAR-USG-ICD-006)
+
+  This interface control document (ICD) describes the data format for LOFAR
+  dynamic spectrum data. It was derived from the ICDs describing Beam-Formed
+  Data (ICD-003) and Sky Images (ICD-004).
+
+  A LOFAR Dynamic Spectrum Data file will be the data hosting structure for
+  dynamic spectrum data produced by LOFAR, irrespective of their scientific
+  purpose. It is one of the tasks of the LOFAR project to define and describe
+  the structure of the LOFAR Dynamic Spectrum Data file format.
+
+  \verbatim
+  OBSERVATION
+  |-- SysLog
+  |-- DynSpec001
+  |   |-- Coordinates
+  |   |   |-- LinearCoord
+  |   |   |-- TabularCoord
+  |   |   `-- StokesCoord
+  |   |-- Data
+  |   |-- Event
+  |   |-- ProcessHist
+  |
+  |-- DynSpecNNN
+  |   |
+  |
+  |-- TiledDynSpec/
+  |
+  \endverbatim
+
+  \section dal_icd_007 Visibility Data (LOFAR-USG-ICD-007)
+
+  This document sets forth a formal data interface specification for LOFAR data
+  products. The specification applies to data structures produced by various
+  LOFAR processing pipelines that will be called LOFAR UV Visibility. This is a
+  specification for LOFAR UV Visibility data products only and in no way
+  implies, and should not be inferred as, a specification for any data
+  structures the project may use during in situ processing by way of producing
+  a final standard LOFAR UV Visibility file.
+
+  \section dal_icd_008 Rotation Measure Synthesis Cubes (LOFAR-USG-ICD-008)
+
+  This document sets forth a formal data interface specification for LOFAR data
+  products. The specification applies to data structures produced by various
+  LOFAR processing pipelines that will be called RM Synthesis cube. This is a
+  specification for RM Synthesis cube data products only and in no way implies,
+  and should not be inferred as, a specification for any data structures the
+  project may use during in situ processing by way of producing a final
+  standard RM Synthesis cube file.
+
+  The data format is implemented through the following DAL classes:
+
+  - DAL::RM_RootGroup
+
+*/

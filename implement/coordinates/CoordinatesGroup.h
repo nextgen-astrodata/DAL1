@@ -29,9 +29,10 @@
 #include <string>
 
 // DAL header files
-#include <HDF5CommonInterface.h>
+#include <HDF5Object.h>
 #include <DirectionCoordinate.h>
 #include <LinearCoordinate.h>
+#include <TabularCoordinate.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -52,18 +53,11 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>LOFAR Data Format ICDs:
-      <ul>
-	<li>LOFAR Data Format ICD: Representations of World Coordinates
-	(LOFAR-USG-ICD-002)
-	<li>LOFAR Data Format ICD: Beam-Formed Data (LOFAR-USG-ICD-003)
-	<li>LOFAR Data Format ICD: LOFAR Sky Image (LOFAR-USG-ICD-004)
-      </ul>
-      <li>Components of the LOFAR user software:
-      <ul>
-	<li>HDF5CommonInterface -- Common functionality for the high-level
-	interfaces to the datasets
-      </ul>
+      <li>\ref dal_icd_002
+      <li>\ref dal_icd_003
+      <li>\ref dal_icd_004
+      <li>HDF5CommonInterface -- Common functionality for the high-level
+      interfaces to the datasets
     </ul>
     
     \todo addCoordinate -- add a further coordinate object to the coordinates group.
@@ -80,33 +74,50 @@ namespace DAL { // Namespace DAL -- begin
     container to collect coordinate descriptions as attached to an image or
     some other LOFAR data-set.
 
+    \verbatim
+    .                                 Group
+    |-- GROUPTYPE                     Attr.          string
+    |-- REF_LOCATION_VALUE            Attr.          array<double,1>
+    |-- REF_LOCATION_UNIT             Attr.          array<string,1>
+    |-- REF_LOCATION_FRAME            Attr.          array<string,1>
+    |-- REF_TIME_VALUE                Attr.          double
+    |-- REF_TIME_UNIT                 Attr.          string
+    |-- REF_TIME_FRAME                Attr.          string
+    |-- NOF_COORDINATES               Attr.          int
+    |-- NOF_AXES                      Attr.          int
+    |-- COORDINATE_TYPES              Attr.          array<string,1>
+    |-- COORDINATE0                   Group
+    |   ...
+    `-- COORDINATE{N}                 Group
+    \endverbatim
+
     <h3>Example(s)</h3>
     
   */  
-  class CoordinatesGroup : public HDF5CommonInterface {
+  class CoordinatesGroup {
+
+    std::set<std::string> itsAttributes;
 
     //! Group type descriptor
     std::string itsGroupType;
     //! Reference location value
-    std::vector<double> refLocationValue_p;
+    std::vector<double> itsRefLocationValue;
     //! Reference location unit
-    std::vector<std::string> refLocationUnit_p;
+    std::vector<std::string> itsRefLocationUnits;
     //! Reference location frame
-    std::string refLocationFrame_p;
+    std::string itsRefLocationFrame;
     //! Reference time value
-    double refTimeValue_p;
+    double itsRefTimeValue;
     //! Reference time unit
-    std::string refTimeUnit_p;
+    std::string itsRefTimeUnits;
     //! Reference time frame
-    std::string refTimeFrame_p;
-    //! nof. embedded coordinate objects
-    int nofCoordinates_p;
+    std::string itsRefTimeFrame;
     //! nof. coordinate axes
-    int nofAxes_p;
+    int itsNofAxes;
     //! Container for book-keeping on the embedded coordinate objects
     std::vector<std::string> itsCoordinateTypes;
     //! Container for the coordinate objects embedded within this group
-    std::vector<Coordinate*> coordinates_p;
+    std::vector<Coordinate> itsCoordinates;
     
   public:
     
@@ -116,9 +127,12 @@ namespace DAL { // Namespace DAL -- begin
     CoordinatesGroup ();
     
     //! Argumented constructor
-    CoordinatesGroup (hid_t const &location,
-		      bool const &create);
+    CoordinatesGroup (hid_t const &location);
     
+    //! Argumented constructor
+    CoordinatesGroup (hid_t const &location,
+		      std::string const &name);
+
     // === Destruction =========================================================
     
     //! Default destructor
@@ -126,6 +140,36 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Parameter access =====================================================
     
+    //! Get the group type identifier
+    inline std::string groupType () const {
+      return itsGroupType;
+    }
+
+    //! Get the reference location
+    bool referenceLocation (std::vector<double> &value,
+			    std::vector<std::string> &units,
+			    std::string &frame);
+    //! Set the reference location
+    bool setReferenceLocation (std::vector<double> const &value,
+			       std::vector<std::string> const &units,
+			       std::string const &frame);
+
+    //! Get the reference time
+    bool referenceTime (double &value,
+			std::string &units,
+			std::string &frame);
+    //! Set the reference time
+    bool setReferenceTime (double const &value,
+			   std::string const &units,
+			   std::string const &frame);
+
+    //! Get the nof. embedded coordinate objects
+    inline int nofCoordinates () const {
+      return itsCoordinates.size();
+    }
+    //! Get the nof. coordinate axes
+    int nofAxes ();
+
     /*!
       \brief Get the name of the class
       
@@ -139,64 +183,24 @@ namespace DAL { // Namespace DAL -- begin
     inline void summary () {
       summary (std::cout);
     }
-    
-    /*!
-      \brief Provide a summary of the internal status
-      
-      \param os -- Output stream to which the summary is written.
-    */
+    //! Provide a summary of the internal status
     void summary (std::ostream &os);    
     
     // === Methods ==============================================================
-    
-    //! Open the file containing the beamformed data.
-    bool open (hid_t const &location,
-	       std::string const &name,
-	       bool const &create=true);
-    //! Get the group type identifier
-    inline std::string groupType () const {
-      return itsGroupType;
-    }
-    //! Get the reference location value
-    inline std::vector<double> refLocationValue () const {
-      return refLocationValue_p;
-    }
-    //! Get the reference location unit
-    inline std::vector<std::string> refLocationUnit () const {
-      return refLocationUnit_p;
-    }
-    //! Get the reference location frame identifier
-    inline std::string refLocationFrame () const {
-      return refLocationFrame_p;
-    }
-    //! Get the reference time value
-    inline double refTimeValue () const {
-      return refTimeValue_p;
-    }
-    //! Get the reference time unit
-    inline std::string refTimeUnit () const {
-      return refTimeUnit_p;
-    }
-    //! Get the reference time frame identifier
-    inline std::string refTimeFrame () const {
-      return refTimeFrame_p;
-    }
 
-    //! Get the nof. embedded coordinate objects
-    inline int nofCoordinates () const {
-      return nofCoordinates_p;
-    }
-    //! Get the nof. coordinate axes
-    inline int nofAxes () const {
-      return nofAxes_p;
-    }
+    //! Read coordinates group from HDF5 file
+    bool h5read (hid_t const &location);
 
-  protected:
-    
-    //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
-    //! Set up the list of attributes attached to the structure
-    void setAttributes ();
+    //! Read coordinates group from HDF5 file
+    bool h5read (hid_t const &location,
+		 std::string const &name);
+
+    //! Write coordinates group to HDF5 file
+    bool h5write (hid_t const &location);
+
+    //! Write coordinates group to HDF5 file
+    bool h5write (hid_t const &location,
+		  std::string const &name);
     
   private:
 
@@ -204,10 +208,6 @@ namespace DAL { // Namespace DAL -- begin
     bool init ();
     //! Unconditional deletion 
     void destroy(void);
-    //! Read the values of the attributes from the dataset
-    bool readAttributes ();
-    //! Write the values of the attributes to the dataset
-    bool writeAttributes ();
     
   }; // Class CoordinatesGroup -- end
   

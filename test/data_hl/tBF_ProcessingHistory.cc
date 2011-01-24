@@ -50,12 +50,11 @@ using DAL::BF_ProcessingHistory;
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_constructors ()
+int test_constructors (hid_t const &fileID)
 {
   std::cout << "\n[tBF_ProcessingHistory::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
-  std::string filename ("tBF_ProcessingHistory.h5");
 
   std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
@@ -68,15 +67,8 @@ int test_constructors ()
   
   std::cout << "[2] Testing argumented constructor ..." << std::endl;
   try {
-    // create HDF5 file to which the BF_ProcessingHistory group is getting attached
-    hid_t fileID = H5Fcreate (filename.c_str(),
-			      H5F_ACC_TRUNC,
-			      H5P_DEFAULT,
-			      H5P_DEFAULT);
-    // create system log inside the root level of the HDF5 file
-    BF_ProcessingHistory log (fileID,true);
-    // release file handle
-    H5Fclose (fileID);
+    BF_ProcessingHistory log (fileID, true);
+    log.summary();
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
@@ -88,12 +80,40 @@ int test_constructors ()
 //_______________________________________________________________________________
 //                                                                           main
 
+/*!
+  \brief Main routine of the test program
+
+  \return nofFailedTests -- The number of failed tests encountered within and
+          identified by this test program.
+*/
 int main ()
 {
   int nofFailedTests (0);
+  std::string filename ("tBF_ProcessingHistory.h5");
   
-  // Test for the constructor(s)
-  nofFailedTests += test_constructors ();
+  //________________________________________________________
+  // Create HDF5 file to work with
   
+  hid_t fileID = H5Fcreate (filename.c_str(),
+			    H5F_ACC_TRUNC,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT);
+  
+  /* If file creation was successful, run the tests. */
+  if (H5Iis_valid(fileID)) {
+
+    // Test for the constructor(s)
+    nofFailedTests += test_constructors (fileID);
+
+  } else {
+    cerr << "-- ERROR: Failed to open file " << filename << endl;
+    return -1;
+  }
+  
+  //________________________________________________________
+  // close HDF5 file
+  
+  H5Fclose(fileID);
+
   return nofFailedTests;
 }
