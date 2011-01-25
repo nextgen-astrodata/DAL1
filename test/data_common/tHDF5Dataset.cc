@@ -38,7 +38,7 @@
 #include <string>
 
 #include <dalCommon.h>
-#include "HDF5Dataset.h"
+#include <HDF5Dataset.h>
 
 using std::cerr;
 using std::cout;

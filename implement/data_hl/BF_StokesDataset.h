@@ -47,16 +47,10 @@ namespace DAL { // Namespace DAL -- begin
 
     \test tBF_StokesDataset.cc
 
-    \todo NOF_CHANNELS attribute not yet written properly.
-    
     <h3>Prerequisite</h3>
     
     <ul type="square">
       <li>\ref dal_icd_003
-      <li>DAL::Stokes -- Components of a Stokes coordinate.
-      <li>DAL::BF_BeamGroup -- High-level interface to the station beam of a BF
-          dataset.
-      <li>DAL::BF_SubArrayPointing
     </ul>
     
     <h3>Synopsis</h3>
