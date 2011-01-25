@@ -53,11 +53,45 @@ namespace DAL { // Namespace DAL -- begin
     
     <h3>Prerequisite</h3>
     
+    <h3>Synopsis</h3>
+
+    Given the fact that sometimes even simple inspection operations on an HDF5 
+    object may require multiple HDF5 library calls, the attempt was made to wrap
+    some of the frequently required operations in a simpler to use form.
+
     <ul type="square">
       <li>H5I: Identifier Interface of the HDF5 library. These functions
       provides tools for working with object identifiers and object names.
+
       <li>H5L: Link Interface of the HDF5 library. These functions create and
       manipulate links in an HDF5 group
+
+      The main functions utilized/wrapped are:
+
+      <ul>
+        <li>\c H5Literate -- Iterates through links in a group.
+	\code
+	herr_t H5Literate (hid_t group_id,
+	                   H5_index_t index_type,
+			   H5_iter_order_t order,
+			   hsize_t *idx,
+			   H5L_iterate_t op,
+			   void *op_data ) 
+	\endcode
+	H5Literate iterates through the links in a group, specified by
+	\c group_id, in the order of the specified index, \c index_type,
+	using a user-defined callback routine \c op. \c H5Literate does not
+	recursively follow links into subgroups of the specified group.
+	
+	The protoype of the callback function op is as follows:
+	\code
+	herr_t (*H5L_iterate_t) (hid_t g_id,
+	                         const char *name,
+				 const H5L_info_t *info,
+				 void *op_data ) 
+	\endcode
+      </ul>
+
       <li>H5O: Object Interface of the HDF5 library. The Object interface, H5O,
       functions manipulate objects in an HDF5 file. This interface is designed
       to be used in conjunction with the Links interface (H5L).
@@ -95,15 +129,6 @@ namespace DAL { // Namespace DAL -- begin
 	Two parameters are used to establish the iteration: \c index_type and
 	\c order. 
       </ul>
-    </ul>
-    
-    <h3>Synopsis</h3>
-
-    <ul>
-      <li><b>Static functions.</b> Given the fact that sometimes even simple
-      inspection operations on HDF5 object may require multiple HDF5 library
-      calls, the attempt was made to wrap some of the frequently required
-      operations in a simpler to use form.
     </ul>
     
     <h3>Example(s)</h3>
