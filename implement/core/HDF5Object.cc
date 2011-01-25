@@ -577,6 +577,34 @@ namespace DAL { // Namespace DAL -- begin
       return 0;
     }
   }
+
+  //_____________________________________________________________________________
+  //                                                                         open
+
+  /*!
+    \param location -- Identifier of the HDF5 object, for which the information
+           is being extracted.
+  */
+  std::set<std::string> HDF5Object::attributes (hid_t const &location)
+  {
+    std::set<std::string> names;
+    
+    if (H5Iis_valid(location)) {
+
+      herr_t status;
+      hsize_t *idx;
+
+      status = H5Literate (location,
+			   H5_INDEX_NAME,
+			   H5_ITER_NATIVE,
+			   idx,
+			   callBack_showAttributes,
+			   NULL);
+
+    }
+    
+    return names;
+  }
   
   //_____________________________________________________________________________
   //                                                                         open
