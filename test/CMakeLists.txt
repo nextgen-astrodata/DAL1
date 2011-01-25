@@ -45,7 +45,6 @@ foreach (src ${tests})
       ${CASA_LIBRARIES}
       ${CFITSIO_LIBRARIES}
       ${dal_link_libraries}
-      ${HAVE_MALLOC_DEBUG}
       )
   else (HAVE_CASA OR HAVE_CASACORE)
     target_link_libraries(${src} dal)

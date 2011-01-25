@@ -19,7 +19,6 @@ foreach (src ${tests_core})
     ${CASA_LIBRARIES}
     ${CFITSIO_LIBRARIES}
     ${dal_link_libraries}
-    ${HAVE_MALLOC_DEBUG}
     )
   ## installation instructions
   install (TARGETS ${src}

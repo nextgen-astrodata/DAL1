@@ -19,7 +19,6 @@ foreach (src ${tests_hdf5})
     ${CASA_LIBRARIES}
     ${CFITSIO_LIBRARIES}
     ${dal_link_libraries}
-    ${HAVE_MALLOC_DEBUG}
     )
   ## Instructions for running the test
   add_test (${src} ${src})
