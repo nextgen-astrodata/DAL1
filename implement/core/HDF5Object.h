@@ -283,9 +283,17 @@ namespace DAL { // Namespace DAL -- begin
 		       hid_t const &access=H5P_DEFAULT);
     //! Closes an object in an HDF5 file.
     static herr_t close (hid_t const &location);
+
+    // === Call-back functions ==================================================
+
+    //! Show attributes attached to \e location
+    static herr_t callBack_showAttributes (hid_t location,
+					   const char *name,
+					   const H5L_info_t *info,
+					   void *op_data=NULL);
     
   private:
-
+    
     //! Unconditional copying
     void copy (HDF5Object const &other);
     
@@ -297,4 +305,4 @@ namespace DAL { // Namespace DAL -- begin
 } // Namespace DAL -- end
 
 #endif /* HDF5OBJECT_H */
-  
+

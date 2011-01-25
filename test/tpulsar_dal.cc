@@ -96,9 +96,10 @@ int main()
     }
   b0_sb2->appendRows( data, BUFSIZE );
 
-
-  /* Beam 1 -------------------------------------------------------*/
-
+  /*__________________________________________________________________
+    Create table for beam 1
+  */
+  
   dalGroup * beam001 = ds->createGroup( "beam001" );
   dalTable * b1_sb0 = ds->createTable( "sb0", "beam001" );
   b1_sb0->addColumn( "data", dal_FLOAT, 256 );
@@ -133,9 +134,10 @@ int main()
     }
   b1_sb2->appendRows( data, BUFSIZE );
 
-
-  /* Beam 2 -------------------------------------------------------*/
-
+  /*__________________________________________________________________
+    Create table for beam 2
+  */
+  
   dalGroup * beam002 = ds->createGroup( "beam002" );
   dalTable * b2_sb0 = ds->createTable( "sb0", "beam002" );
   b2_sb0->addColumn( "data", dal_FLOAT, 256 );

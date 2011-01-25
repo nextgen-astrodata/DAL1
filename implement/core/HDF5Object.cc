@@ -729,5 +729,40 @@ namespace DAL { // Namespace DAL -- begin
 
     return status;
   }
+
+  // ============================================================================
+  //
+  //  Call-back functions (used by H5Literate)
+  //
+  // ============================================================================
+
+  /*!
+    \param location -- Group that serves as root of the iteration; same value as
+           the \e H5Lvisit \c location parameter.
+    \param name     -- Name of link, relative to \c location, being examined at
+           current step of the iteration.
+    \param info     -- \c H5L_info_t struct containing information regarding 
+           that link.
+    \param op_data  -- User-defined pointer to data required by the application
+           in processing the link; a pass-through of the \c op_data pointer
+	   provided with the \e H5Lvisit function call.
+
+    \return status -- The possible return values from the callback function,
+            and the effect of each, are as follows: 
+   */
+  herr_t HDF5Object::callBack_showAttributes (hid_t location,
+					      const char *name,
+					      const H5L_info_t *info,
+					      void *op_data)
+  {
+    herr_t status (0);
+    
+    if (objectType(location,name) == H5I_ATTR) {
+      std::cout << "-- Found attribute " << name << std::endl;
+    }
+    
+    return status;
+  }
+  
   
 } // Namespace DAL -- end
