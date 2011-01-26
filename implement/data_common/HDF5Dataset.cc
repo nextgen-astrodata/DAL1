@@ -43,8 +43,8 @@ namespace DAL {
   //                                                                  HDF5Dataset
   
   /*!
-    \param location  -- Identifier for the location at which the dataset is about
-           to be created.
+    \param location  -- Object identifier for the location below which the
+           dataset \c name is to be found.
     \param name      -- Name of the dataset.
   */
   HDF5Dataset::HDF5Dataset (hid_t const &location,
@@ -219,15 +219,18 @@ namespace DAL {
   {
     bool status (true);
     
-    /* Set up the list of attributes attached to the group */
+    /* Set up list of attributes */
     setAttributes();
-
-    //______________________________________________________
-    // Try opening existing dataset
     
-    location_p = HDF5Object::open (location,
-				   name,
-				   H5P_DEFAULT);
+    if (H5Iis_valid(location)) {
+      location_p = H5Dopen (location,
+			    name.c_str(),
+			    H5P_DEFAULT);
+    } else {
+      std::cerr << "[HDF5Dataset::open]"
+		<< " Identifier does not point to valid object!"
+		<< std::endl;
+    }
     
     /* Check if opening of the dataset was successful */
     if (H5Iis_valid(location_p)) {

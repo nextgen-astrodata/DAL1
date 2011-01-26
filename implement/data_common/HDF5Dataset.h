@@ -277,7 +277,7 @@ namespace DAL {
     //! Default constuctor
     HDF5Dataset ();
     
-    //! Argumented constructor
+    //! Argumented constructor to open existing dataset
     HDF5Dataset (hid_t const &location,
 		 std::string const &name);
     
