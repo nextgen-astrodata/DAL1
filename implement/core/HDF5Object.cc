@@ -663,6 +663,7 @@ namespace DAL { // Namespace DAL -- begin
 	  switch (otype) {
 	  case H5I_FILE:
 	    objectID = H5Fopen (name.c_str(),
+				H5F_ACC_RDWR,
 				access);
 	    break;
 	  case H5I_DATASET:
