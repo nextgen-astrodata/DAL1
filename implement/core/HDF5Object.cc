@@ -662,12 +662,16 @@ namespace DAL { // Namespace DAL -- begin
 	  
 	  switch (otype) {
 	  case H5I_FILE:
-	    objectID = H5Fopen (location,
-				name.c_str(),
+	    objectID = H5Fopen (name.c_str(),
 				access);
 	    break;
 	  case H5I_DATASET:
 	    objectID = H5Dopen (location,
+				name.c_str(),
+				access);
+	    break;
+	  case H5I_GROUP:
+	    objectID = H5Gopen (location,
 				name.c_str(),
 				access);
 	    break;
