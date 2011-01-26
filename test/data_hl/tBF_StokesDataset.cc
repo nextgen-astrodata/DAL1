@@ -102,7 +102,7 @@ int test_HDF5Dataset (hid_t const &fileID)
     std::cerr << message << endl;
     nofFailedTests++;
   }
-  
+
   /*_______________________________________________________________________
     If unset, the chunking size will be initialized with the overall shape
     of the dataset to be created; if however the resulting chunking size
@@ -196,6 +196,7 @@ int test_HDF5Dataset (hid_t const &fileID)
     
     if (status) {
       cout << "--> [OK] Successfully opened dataset " << name << endl;
+      dataset2.summary();
     } else {
       cout << "--> [FAIL] Faild to open dataset " << name << endl;
       nofFailedTests++;
@@ -221,6 +222,7 @@ int test_HDF5Dataset (hid_t const &fileID)
 
     if (status) {
       cout << "--> [OK] Successfully opened dataset " << name << endl;
+      dataset.summary();
     } else {
       cout << "--> [FAIL] Faild to open dataset " << name << endl;
       nofFailedTests++;
@@ -246,6 +248,7 @@ int test_HDF5Dataset (hid_t const &fileID)
 
     if (status) {
       cout << "--> [OK] uccessfully opened dataset " << name << endl;
+      dataset.summary();
     } else {
       cout << "--> [FAIL] Failed to open dataset " << name << endl;
       nofFailedTests++;
@@ -312,7 +315,7 @@ int test_constructors (hid_t const &fileID)
   
   cout << "[2] Testing BF_StokesDataset(hid_t, string) ..." << endl;
   try {
-    nameDataset = "Dataset.001";
+    nameDataset = "Stokes002.I";
     BF_StokesDataset data1 (fileID, nameDataset);
     data1.summary(); 
     /* Point constructor to existing dataset */
@@ -332,7 +335,7 @@ int test_constructors (hid_t const &fileID)
   cout << "[3] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>) ..."
 	    << endl;
   try {
-    nameDataset = "StokesI.003";
+    nameDataset = "Stokes003.I";
     BF_StokesDataset stokes (fileID, nameDataset, shape);
     //
     stokes.summary(); 
@@ -348,7 +351,7 @@ int test_constructors (hid_t const &fileID)
   cout << "[4] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>, Stokes::Component) ..."
 	    << endl;
   try {
-    nameDataset = "StokesQ.001";
+    nameDataset = "Stokes004.Q";
     BF_StokesDataset stokes (fileID,
 			     nameDataset,
 			     shape,
@@ -366,7 +369,7 @@ int test_constructors (hid_t const &fileID)
 
   cout << "[5] Testing BF_StokesDataset() ..." << endl;
   try {
-    nameDataset = "StokesQ.002";
+    nameDataset = "Stokes005.Q";
     BF_StokesDataset stokes (fileID,
 			     nameDataset,
 			     nofSamples,
@@ -740,7 +743,7 @@ int main ()
   if (H5Iis_valid(fileID)) {
 
     // Additional tests for working with the DAL::HDF5Dataset class
-    // nofFailedTests += test_HDF5Dataset (fileID);
+    nofFailedTests += test_HDF5Dataset (fileID);
     
     // Test for the constructor(s)
     nofFailedTests += test_constructors (fileID);
