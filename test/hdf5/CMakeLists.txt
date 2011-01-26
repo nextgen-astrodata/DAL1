@@ -4,6 +4,19 @@
 
 file (GLOB tests_hdf5 tHDF5*.cc h5*.c h5*.cc ex_table*.c)
 
+## Test programs available through the HDF group website
+
+set (hdf5_test_programs
+  h5ex_g_compact.c
+  h5ex_g_corder.c
+  h5ex_g_create.c
+  h5ex_g_intermediate.c
+  h5ex_g_iterate.c
+  h5ex_g_phase.c
+  h5ex_g_traverse.c
+  h5ex_g_visit.c
+  )
+
 ##_______________________________________________________________________________
 ##                                                     Build/Install instructions
 
