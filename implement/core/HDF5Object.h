@@ -290,10 +290,10 @@ namespace DAL { // Namespace DAL -- begin
     // === Call-back functions ==================================================
 
     //! Show attributes attached to \e location
-    static herr_t callBack_showAttributes (hid_t location,
-					   const char *name,
-					   const H5L_info_t *info,
-					   void *op_data=NULL);
+    static herr_t H5Literate_showAttributes (hid_t location,
+					     const char *name,
+					     const H5L_info_t *info,
+					     void *op_data=NULL);
     
   private:
     

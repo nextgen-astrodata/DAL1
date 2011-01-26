@@ -592,15 +592,14 @@ namespace DAL { // Namespace DAL -- begin
     if (H5Iis_valid(location)) {
 
       herr_t status;
-      hsize_t *idx;
 
       status = H5Literate (location,
 			   H5_INDEX_NAME,
 			   H5_ITER_NATIVE,
-			   idx,
-			   callBack_showAttributes,
+			   NULL,
+			   H5Literate_showAttributes,
 			   NULL);
-
+      
     }
     
     return names;
@@ -778,10 +777,10 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- The possible return values from the callback function,
             and the effect of each, are as follows: 
    */
-  herr_t HDF5Object::callBack_showAttributes (hid_t location,
-					      const char *name,
-					      const H5L_info_t *info,
-					      void *op_data)
+  herr_t HDF5Object::H5Literate_showAttributes (hid_t location,
+						const char *name,
+						const H5L_info_t *info,
+						void *op_data)
   {
     herr_t status (0);
     
