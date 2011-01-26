@@ -651,12 +651,31 @@ namespace DAL { // Namespace DAL -- begin
 				      access);
 	if (errInfo>0) {
 	  /*__________________________________________________________
-	    In case of the previous tests have been passed, finally
-	    open the object; the objectID then is returned.
+	    H5Oopen opens the object in the same manner as
+	    H5Gopen, H5Topen, and H5Dopen. However, H5Oopen does not
+	    require the type of object to be known beforehand. This
+	    can be useful with user-defined links, for instance, when
+	    only a path may be known. H5Oopen cannot be used to open
+	    a dataspace, attribute, property list, or file. 
 	  */
-	  objectID = H5Oopen (location,
-			      name.c_str(),
-			      access);
+	  H5I_type_t otype = objectType (location, name);
+	  
+	  switch (otype) {
+	  case H5I_FILE:
+	    objectID = H5Fopen (location,
+				name.c_str(),
+				access);
+	    break;
+	  case H5I_DATASET:
+	    objectID = H5Dopen (location,
+				name.c_str(),
+				access);
+	    break;
+	  default:
+	    objectID = H5Oopen (location,
+				name.c_str(),
+				access);
+	  };
 	} else {
 	  objectID = -1;
 	}
