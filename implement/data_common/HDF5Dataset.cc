@@ -223,13 +223,24 @@ namespace DAL {
     setAttributes();
     
     if (H5Iis_valid(location)) {
-      location_p = H5Dopen (location,
-			    name.c_str(),
-			    H5P_DEFAULT);
+      htri_t errExists = H5Lexists (location,
+				    name.c_str(),
+				    H5P_DEFAULT);
+      if (errExists>0) {
+	location_p = H5Dopen (location,
+			      name.c_str(),
+			      H5P_DEFAULT);
+      } else {
+	std::cerr << "[HDF5Dataset::open]"
+		  << " Object " << name << " not found at provided location!"
+		  << std::endl;
+	return false;
+      }
     } else {
       std::cerr << "[HDF5Dataset::open]"
 		<< " Identifier does not point to valid object!"
 		<< std::endl;
+      return false;
     }
     
     /* Check if opening of the dataset was successful */
