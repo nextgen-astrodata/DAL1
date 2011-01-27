@@ -80,7 +80,7 @@ uint test_hdf5_datafile (std::string const &filename,
   */
   cout << "[3] Set attributes attached to HDF5 dataset ..." << endl;
   try {
-    dalDataset ds (filename.c_str(), "HDF5" );
+    dalDataset ds (filename);
     ds.summary();
     
     std::string sval = "string test value";

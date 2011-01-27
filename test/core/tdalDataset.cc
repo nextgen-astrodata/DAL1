@@ -98,15 +98,64 @@ int test_constructors (std::string const &filename,
   \brief filename -- Name of the dataset to be created and used for the test
 */
 int test_attributes (std::string const &filename,
-			std::string const dalType)
+		     std::string const dalType)
 {
   std::cout << "\n[tdalDataset::test_attributes]\n" << std::endl;
-
-  int nofFailedTests (0);
-
+  
+  int nofFailedTests = 0;
+  int nelem          = 5;
+  
   /* Open the dataset to work with */
-  DAL::dalDataset dataset (filename.c_str());
-  dataset.summary();
+  DAL::dalDataset ds (filename);
+  ds.summary();
+
+  /*__________________________________________________________________
+    Test 1: Integer-type attributes
+  */
+
+  // cout << "[1] Integer-type attributes ..." << endl;
+  // try {
+  //   int var        = 1;
+  //   int varArray[] = {1,2,3,4,5};
+
+  //   ds.setAttribute ("ATTRIBUTE_INT", var);
+  //   ds.setAttribute ("ATTRIBUTE_INT_ARRAY", varArray, nelem);
+  // } catch (std::string message) {
+  //   std::cerr << message << std::endl;
+  //   nofFailedTests++;
+  // }
+  
+  /*__________________________________________________________________
+    Test 2: Float-type attributes
+  */
+
+  // cout << "[2] Float-type attributes ..." << endl;
+  // try {
+  //   float var        = 0.1;
+  //   float varArray[] = {0.1, 0.2, 0.3, 0.4, 0.5};
+
+  //   ds.setAttribute ("ATTRIBUTE_FLOAT", var);
+  //   ds.setAttribute ("ATTRIBUTE_FLOAT_ARRAY", varArray, nelem);
+  // } catch (std::string message) {
+  //   std::cerr << message << std::endl;
+  //   nofFailedTests++;
+  // }
+  
+  /*__________________________________________________________________
+    Test 3: Double-type attributes
+  */
+
+  // cout << "[3] Double-type attributes ..." << endl;
+  // try {
+  //   double var        = 0.1;
+  //   double varArray[] = {0.1, 0.2, 0.3, 0.4, 0.5};
+
+  //   ds.setAttribute ("ATTRIBUTE_DOUBLE", var);
+  //   ds.setAttribute ("ATTRIBUTE_DOUBLE_ARRAY", varArray, nelem);
+  // } catch (std::string message) {
+  //   std::cerr << message << std::endl;
+  //   nofFailedTests++;
+  // }
   
   return nofFailedTests;
 }
