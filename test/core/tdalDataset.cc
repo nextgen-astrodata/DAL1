@@ -54,10 +54,9 @@ int test_constructors (std::string const &filename,
 
   int nofFailedTests (0);
 
-  std::cout << "[1] Default constructor..." << std::endl;
+  std::cout << "[1] Testing dalDataset() ..." << std::endl;
   try {
     DAL::dalDataset dataset;
-    //
     dataset.summary();
   }
   catch (std::string message) {
@@ -65,11 +64,10 @@ int test_constructors (std::string const &filename,
     nofFailedTests++;
   }
   
-  std::cout << "[2] Argumented constructor..." << std::endl;
+  std::cout << "[2] Testing dalDataset(string,string) ..." << std::endl;
   try {
     DAL::dalDataset dataset (filename.c_str(),
 			     dalType);
-    //
     dataset.summary();
   }
   catch (std::string message) {
@@ -132,23 +130,29 @@ int test_setAttributes (std::string const &filename,
   return nofFailedTests;
 }
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                           main
 
+/*!
+  \brief Main routine of the test program
+
+  \return nofFailedTests -- The number of failed tests encountered within and
+          identified by this test program.
+*/
 int main (int argc,char *argv[])
 {
-  int nofFailedTests (0);
-  std::string filename;
-  std::string dalType ("HDF5");
+  int nofFailedTests   = 0;
+  bool haveDataset     = false;
+  std::string dalType  = "HDF5";
+  std::string filename = "tdalDataset.h5";
+  std::string dataset;
 
   //________________________________________________________
   // Process parameters from the command line
   
   if (argc > 1) {
-    filename = std::string(argv[1]);
-  }
-  else {
-    std::cout << "[tdalDataset] Missing name of input test file." << std::endl;
-    return(DAL::FAIL);
+    dataset     = std::string(argv[1]);
+    haveDataset = true;
   }
 
   if (argc > 2) {
@@ -160,11 +164,11 @@ int main (int argc,char *argv[])
 
   nofFailedTests += test_constructors(filename,dalType);
   
-  if (nofFailedTests == 0) {
+  if (haveDataset) {
     // Test access to the parameters of the object
-    nofFailedTests += test_parameters (filename,dalType);
+    nofFailedTests += test_parameters (dataset,dalType);
     // Test writing attributes to the dataset
-    nofFailedTests += test_setAttributes (filename,dalType);
+    nofFailedTests += test_setAttributes (dataset,dalType);
   }
   
   return nofFailedTests;

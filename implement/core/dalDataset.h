@@ -26,6 +26,7 @@
 
 #include "dalFileType.h"
 #include "dalGroup.h"
+#include "HDF5Object.h"
 
 namespace DAL {
   
@@ -104,8 +105,6 @@ namespace DAL {
     
     //! File pointer (can be HDF5, FITS or CASA MS)
     void * pFile_p;
-    //! File type
-    dalFileType filetype_p;
     //! "HDF5", "MSCASA" or "FITS"; for example
     std::string type;
     //! Dataset name
@@ -119,7 +118,7 @@ namespace DAL {
     
 #ifdef HAVE_CASA
     casa::MeasurementSet * ms; // CASA measurement set pointer
-    casa::MSReader * ms_reader; // CASA measurement set reader pointer
+    casa::MSReader * itsMSReader; // CASA measurement set reader pointer
     casa::Vector<casa::String> ms_tables; // vector of CASA MS tables
 #endif
     
@@ -293,6 +292,8 @@ namespace DAL {
     void init (const char * filename,
 	       std::string filetype,
 	       const bool &overwrite);
+    //! Unconditional deletion of internal parameters
+    bool destroy ();
     //! Try to open HDF5 file
     bool openFITS (const char * fname);
     //! Try to open FITS file

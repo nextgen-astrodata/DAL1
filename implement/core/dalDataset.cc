@@ -98,14 +98,15 @@ namespace DAL {
 	      std::cerr << "ERROR: Could not close file '" << filename << "'.\n";
 	    
 	    /* if it does reopen it as an hdf5 file */
-	    if ( ( h5fh_p = H5Fopen(filename, H5F_ACC_RDWR, H5P_DEFAULT ) ) > 0 )
-	      std::cerr << "SUCCESS: Opened file '" << filename << "'.\n";
-	    else
-	      {
-		std::cerr << "ERROR: There was a problem opening the file '"
-			  << filename << "'.\n";
-		exit(9);
-	      }
+	    
+	    h5fh_p = H5Fopen (filename, H5F_ACC_RDWR, H5P_DEFAULT );
+
+	    if (!H5Iis_valid(h5fh_p)) {
+	      std::cerr << "ERROR: There was a problem opening the file '"
+			<< filename << "'.\n";
+	      exit(9);
+	    }
+	    
 	  }
 	
 	pFile_p = &h5fh_p;
@@ -140,15 +141,34 @@ namespace DAL {
   
   dalDataset::~dalDataset()
   {
-    /* Release file pointer */
+    destroy ();
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                      destroy
+  
+  bool dalDataset::destroy()
+  {
+    bool status (true);
+
+    /* Release pointer of casacore objects */
+    
+#ifdef HAVE_CASA
+    if (ms != NULL)           { ms          = NULL;  }
+    if (itsMSReader != NULL)  { itsMSReader = NULL;  }
+#endif
+    
+    /* Release HDF5 object handler */
+
+    DAL::HDF5Object::close(h5fh_p);
+
+    /* Release generic file pointer */
+
     if (pFile_p != NULL) {
       pFile_p = NULL;
     }
 
-    /* Release HDF5 object identifier */
-    if (H5Iis_valid(h5fh_p)) {
-      H5Fclose (h5fh_p);
-    }
+    return status;
   }
   
   // ============================================================================
@@ -162,9 +182,17 @@ namespace DAL {
   
   void dalDataset::init()
   {
-    init ("UNDEFINED",
-	  "UNDEFINED",
-	  false);
+    pFile_p     = NULL;
+    type        = "UNDEFINED";
+    name        = "UNDEFINED";
+    overwrite_p = false;
+    filter      = dalFilter();
+    h5fh_p      = 0;
+
+#ifdef HAVE_CASA
+    ms        = NULL;
+    itsMSReader = NULL;
+#endif
   }
 
   //_____________________________________________________________________________
@@ -181,13 +209,11 @@ namespace DAL {
 			 std::string filetype,
 			 const bool &overwrite)
   {
+    /* Initialize internal data with default values */
+    init ();
+
 #ifdef PYTHON
     Py_Initialize();
-#endif
-
-#ifdef HAVE_CASA
-    ms        = NULL;
-    ms_reader = NULL;
 #endif
 
     pFile_p     = NULL;
@@ -353,7 +379,7 @@ namespace DAL {
                 casa::Path realFileName = link.followSymLink();
                 ms        = new casa::MeasurementSet( realFileName.absoluteName() );
                 pFile_p   = &ms;
-                ms_reader = new casa::MSReader( *ms );
+                itsMSReader = new casa::MSReader( *ms );
                 name      = fname;
                 return DAL::SUCCESS;
               }
@@ -361,7 +387,7 @@ namespace DAL {
               {
                 ms        = new casa::MeasurementSet( fname );
                 pFile_p   = &ms;
-                ms_reader = new casa::MSReader( *ms );
+                itsMSReader = new casa::MSReader( *ms );
                 name      = fname;
                 return DAL::SUCCESS;
               }
@@ -383,32 +409,7 @@ namespace DAL {
   */
   bool dalDataset::close()
   {
-    bool status (true);
-
-    std::cout << "[dalDataset::close]" << std::endl;
-    std::cout << "-- Dataset type     = " << getType()       << std::endl << std::flush;
-    std::cout << "-- Dataset name     = " << getName()       << std::endl << std::flush;
-    std::cout << "-- HDF5 file handle = " << getFileHandle() << std::endl << std::flush;
-    std::cout << "-- HDF5 group ID    = " << getId()         << std::endl << std::flush;
-    
-    if ( type == MSCASATYPE ) {
-#ifdef HAVE_CASA
-      delete ms;
-#else
-      std::cerr << "ERROR: CASA support not enabled.\n";
-      status = false;
-#endif
-    }
-    else if ( type == H5TYPE ) {
-      if (H5Iis_valid(h5fh_p)) {
-	H5Oclose (h5fh_p);
-      } else {
-	status = false;
-      }
-      
-    }
-    
-    return status;
+    return destroy();
   }
   
   //_____________________________________________________________________________
@@ -744,7 +745,7 @@ namespace DAL {
     if ( type == MSCASATYPE )
       {
 #ifdef HAVE_CASA
-        ms_tables = ms_reader->tables();
+        ms_tables = itsMSReader->tables();
         unsigned int nelem (ms_tables.nelements());
 
         // list the names of the tables
@@ -1012,9 +1013,9 @@ namespace DAL {
 #ifdef HAVE_CASA
         dalTable * lt = new dalTable( MSCASATYPE );
         if ( filter.isSet() )
-          lt->openTable( tablename, ms_reader, &filter );
+          lt->openTable( tablename, itsMSReader, &filter );
         else
-          lt->openTable( tablename, ms_reader );
+          lt->openTable( tablename, itsMSReader );
         return lt;
 #else
         std::cerr << "CASA support not enabled.\n";

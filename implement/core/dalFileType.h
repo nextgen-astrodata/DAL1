@@ -61,6 +61,8 @@ namespace DAL { // Namespace DAL -- begin
       FITS,
       //! CASA MeasurementSet -- low-level access handled through casacore library
       MSCASA,
+      //! CASA PagedImage -- low-level access handled through casacore library
+      CASA_IMAGE,
       //! Undefined type of file
       UNDEFINED
     };

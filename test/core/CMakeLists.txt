@@ -41,6 +41,7 @@ foreach (_test
     tEnumerations
     tdalFileType
     tdalArray
+    tdalDataset
     tdalFilter
     tdalGroup
     tDatabase
