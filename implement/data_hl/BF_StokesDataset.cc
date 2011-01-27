@@ -153,6 +153,9 @@ namespace DAL { // Namespace DAL -- begin
     : HDF5Dataset (other)
   {
     *this = other;
+
+    itsNofChannels.clear();
+    itsNofChannels = other.itsNofChannels;
   }
   
   // ============================================================================
@@ -167,7 +170,9 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   void BF_StokesDataset::destroy ()
-  {;}
+  {
+    itsNofChannels.clear();
+  }
   
   // ============================================================================
   //

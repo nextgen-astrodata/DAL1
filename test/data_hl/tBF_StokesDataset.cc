@@ -401,13 +401,23 @@ int test_attributes (hid_t const &fileID)
 {
   cout << "\n[tBF_StokesDataset::test_attributes]\n" << endl;
 
-  int nofFailedTests (0);
-  std::string nameDataset ("StokesI");
+  if (!H5Iis_valid(fileID)) {
+    cerr << "--> Invalid file -- skipping tests!" << endl;
+    return 0;
+  }
 
-  // Open dataset
+  int nofFailedTests (0);
+
+  /* Open dataset to work with */
+  std::string nameDataset ("Stokes005.Q");
   BF_StokesDataset stokes (fileID, nameDataset);
-  int nofChannels;
+  stokes.summary();
+
+  return 0;
+
+  /* Variable for reading in attributes */
   int nofSubbands;
+  std::vector<int> nofChannels;
   std::string groupType;
   std::string dataType;
   std::string stokesComponent;
@@ -430,41 +440,6 @@ int test_attributes (hid_t const &fileID)
     nofFailedTests++;
   }
 
-  cout << "[2] Testing setAttribute(string, T) ..." << endl;
-  try {
-    
-    /* New values for the attributes */
-    groupType       += "_new";
-    dataType        += "_new";
-    nofChannels     += 1;
-    nofSubbands     += 1;
-    stokesComponent += "_new";
-
-    /* Set new attribute values */
-    stokes.setAttribute ("GROUPTYPE",        groupType);
-    stokes.setAttribute ("DATATYPE",         dataType);
-    stokes.setAttribute ("NOF_CHANNELS",     nofChannels);
-    stokes.setAttribute ("NOF_SUBBANDS",     nofSubbands);
-    stokes.setAttribute ("STOKES_COMPONENT", stokesComponent);
-
-    /* Get updated attributes values ... */
-    stokes.getAttribute ("GROUPTYPE",        groupType);
-    stokes.getAttribute ("DATATYPE",         dataType);
-    stokes.getAttribute ("NOF_CHANNELS",     nofChannels);
-    stokes.getAttribute ("NOF_SUBBANDS",     nofSubbands);
-    stokes.getAttribute ("STOKES_COMPONENT", stokesComponent);
-
-    /* ... and display them */
-    cout << "-- GROUPTYPE        = " << groupType       << endl;
-    cout << "-- DATATYPE         = " << dataType        << endl;
-    cout << "-- NOF_CHANNELS     = " << nofChannels     << endl;
-    cout << "-- NOF_SUBBANDS     = " << nofSubbands     << endl;
-    cout << "-- STOKES_COMPONENT = " << stokesComponent << endl;
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
-  }
-  
   return nofFailedTests;
 }
 
@@ -742,13 +717,13 @@ int main ()
   /* If file creation was successful, run the tests. */
   if (H5Iis_valid(fileID)) {
 
-    // Additional tests for working with the DAL::HDF5Dataset class
-    nofFailedTests += test_HDF5Dataset (fileID);
+    // // Additional tests for working with the DAL::HDF5Dataset class
+    // nofFailedTests += test_HDF5Dataset (fileID);
     
     // Test for the constructor(s)
     nofFailedTests += test_constructors (fileID);
-    // // Test access to the attributes
-    // nofFailedTests += test_attributes (fileID);
+    // Test access to the attributes
+    nofFailedTests += test_attributes (fileID);
     // // Test read/write access to the data
     // nofFailedTests += test_data (fileID);
 
