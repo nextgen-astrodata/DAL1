@@ -76,7 +76,9 @@ int test_constructors (std::string const &filename,
 {
   cout << "\n[tHDF5Object::test_constructors]\n" << endl;
 
-  int nofFailedTests (0);
+  int nofFailedTests      = 0;
+  std::string nameGroup   = "GROUP";
+  std::string nameDataset = "DATASET_2D_NATIVE_INT";
   
   cout << "[1] Testing HDF5Object() ..." << endl;
   try {
@@ -100,10 +102,12 @@ int test_constructors (std::string const &filename,
   
   cout << "[3] Testing HDF5Object(hid_t,string) ..." << endl;
   try {
-    HDF5Object h5group (fileID,"GROUP");
-    HDF5Object h5dataset (fileID,"DATASET_2D_NATIVE_INT");
-    //
+    cout << "--> opening group " << nameGroup << " ..." << endl;
+    HDF5Object h5group (fileID, nameGroup);
     h5group.summary(); 
+    //
+    cout << "--> opening dataset " << nameDataset << " ..." << endl;
+    HDF5Object h5dataset (fileID, nameDataset);
     h5dataset.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
