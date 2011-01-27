@@ -256,6 +256,8 @@ namespace DAL { // Namespace DAL -- begin
 				  std::string const &name);
     //! Get object type as name/string.
     static std::string objectName (hid_t const &location);
+    //! Returns the datatype class identifier.
+    static H5T_class_t datatypeClass (hid_t const &location);
     //! Retrieves the metadata for an object specified by \e location.
     static H5O_info_t objectInfo  (hid_t const &location);
     //! Object address in file

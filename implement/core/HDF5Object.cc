@@ -372,7 +372,16 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                   objectType
   
   /*!
-    \param location -- Object identifier whose type is to be determined.
+    \param location -- Object identifier whose type is to be determined. Valid
+           types returned by the function are
+	   - H5I_FILE -- File
+	   - H5I_GROUP -- Group
+	   - H5I_DATATYPE -- Datatype
+	   - H5I_DATASPACE -- Dataspace
+	   - H5I_DATASET -- Dataset
+	   - H5I_ATTR -- Attribute
+	   - H5I_BADID -- Invalid identifier, returned by the function if no
+	   valid type can be determined or the identifier submitted is invalid
     \return type    -- Object type if successful; otherwise H5I_BADID. 
   */
   H5I_type_t HDF5Object::objectType (hid_t const &location)
@@ -428,6 +437,59 @@ namespace DAL { // Namespace DAL -- begin
       }
     }
     
+    return result;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                   objectInfo
+  
+  /*!
+    \return class -- Returns datatype class identifier if successful; otherwise
+    \c H5T_NO_CLASS (-1). 
+    
+    Valid class identifiers, as defined in \c H5Tpublic.h, are:
+
+    * H5T_INTEGER
+    * H5T_FLOAT
+    * H5T_STRING
+    * H5T_BITFIELD
+    * H5T_OPAQUE
+    * H5T_COMPOUND
+    * H5T_REFERENCE
+    * H5T_ENUM
+    * H5T_VLEN
+    * H5T_ARRAY 
+
+    Note that the library returns H5T_STRING for both fixed-length and
+    variable-length strings. 
+  */
+  H5T_class_t HDF5Object::datatypeClass (hid_t const &location)
+  {
+    H5T_class_t result;
+
+    switch (objectType (location)) {
+    case H5I_ATTR:
+      {
+	hid_t atype = H5Aget_type (location);
+	result      = H5Tget_class (atype);
+	H5Tclose (atype);
+      }
+      break;
+    case H5I_DATASET:
+      {
+	hid_t atype = H5Dget_type (location);
+	result      = H5Tget_class (atype);
+	H5Tclose (atype);
+      }
+      break;
+    case H5I_DATATYPE:
+      result = H5Tget_class (location);
+      break;
+    default:
+      result = H5T_NO_CLASS;
+      break;
+    };
+
     return result;
   }
 
