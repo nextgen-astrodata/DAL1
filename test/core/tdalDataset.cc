@@ -54,6 +54,11 @@ int test_constructors (std::string const &filename,
 
   int nofFailedTests (0);
 
+  /*__________________________________________________________________
+    Test 1: Default constructor. The created object is not connected 
+            to a dataset/-file.
+  */
+
   std::cout << "[1] Testing dalDataset() ..." << std::endl;
   try {
     DAL::dalDataset dataset;
@@ -64,10 +69,16 @@ int test_constructors (std::string const &filename,
     nofFailedTests++;
   }
   
-  std::cout << "[2] Testing dalDataset(string,string) ..." << std::endl;
+  /*__________________________________________________________________
+    Test 2: Argumented constructor, proving the necessary set of 
+            parameters for the creation of a dataset/-file.
+   */
+
+  std::cout << "[2] Testing dalDataset(string,string,bool) ..." << std::endl;
   try {
     DAL::dalDataset dataset (filename.c_str(),
-			     dalType);
+			     dalType,
+			     true);
     dataset.summary();
   }
   catch (std::string message) {
@@ -78,55 +89,25 @@ int test_constructors (std::string const &filename,
   return nofFailedTests;
 }
 
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                test_attributes
 
 /*!
-  \brief Test the various methods which provide access to internal parameters
-  
-  \param filename -- Name of the input HDF5 data file
-  \param dalType  -- Type of the dataset to open
-  
-  \return nofFailedTests -- The number of failed tests encountered within this
-          function
-*/
-int test_parameters (std::string const &filename,
-		     std::string const dalType)
-{
-  std::cout << "\n[tdalDataset::test_parameters]\n" << std::endl;
-
-  int nofFailedTests (0);
-  DAL::dalDataset dataset (filename.c_str(),dalType);
-
-  try {
-    std::cout << "-- getId ()         = " << dataset.getId ()         << std::endl;
-    std::cout << "-- getType ()       = " << dataset.getType ()       << std::endl;
-    std::cout << "-- getName ()       = " << dataset.getName ()       << std::endl;
-    std::cout << "-- getFileHandle () = " << dataset.getFileHandle () << std::endl;
-  }
-  catch (std::string message) {
-    std::cerr << message << std::endl;
-    nofFailedTests++;
-  }
-  
-  return nofFailedTests;
-}
-
-// ------------------------------------------------------------------------------
-
-/*!
-  \brief Test writing attributes to the dataset
+  \brief Test creation of and access to attributes
 
   \brief filename -- Name of the dataset to be created and used for the test
 */
-int test_setAttributes (std::string const &filename,
+int test_attributes (std::string const &filename,
 			std::string const dalType)
 {
-  std::cout << "\n[tdalDataset::test_setAttributes]\n" << std::endl;
+  std::cout << "\n[tdalDataset::test_attributes]\n" << std::endl;
 
   int nofFailedTests (0);
-  DAL::dalDataset dataset (filename.c_str(),dalType);
 
-
+  /* Open the dataset to work with */
+  DAL::dalDataset dataset (filename.c_str());
+  dataset.summary();
+  
   return nofFailedTests;
 }
 
@@ -139,7 +120,7 @@ int test_setAttributes (std::string const &filename,
   \return nofFailedTests -- The number of failed tests encountered within and
           identified by this test program.
 */
-int main (int argc,char *argv[])
+int main (int argc, char *argv[])
 {
   int nofFailedTests   = 0;
   bool haveDataset     = false;
@@ -162,14 +143,10 @@ int main (int argc,char *argv[])
   //________________________________________________________
   // Run the tests
 
-  nofFailedTests += test_constructors(filename,dalType);
-  
-  if (haveDataset) {
-    // Test access to the parameters of the object
-    nofFailedTests += test_parameters (dataset,dalType);
-    // Test writing attributes to the dataset
-    nofFailedTests += test_setAttributes (dataset,dalType);
-  }
+  //! Test constructors for dalDataset object
+  nofFailedTests += test_constructors(filename, dalType);
+  //! Test creation of and access to attributes
+  nofFailedTests += test_attributes (filename, dalType);
   
   return nofFailedTests;
 }

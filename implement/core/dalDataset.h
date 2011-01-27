@@ -24,7 +24,6 @@
 #ifndef DALDATASET_H
 #define DALDATASET_H
 
-#include "dalFileType.h"
 #include "dalGroup.h"
 #include "HDF5Object.h"
 
@@ -128,6 +127,9 @@ namespace DAL {
     
     //! Default constructor
     dalDataset();
+
+    //! Argumented constructor
+    dalDataset (std::string const &filename);
 
     //! Argumented constructor
     dalDataset (const char * name,

@@ -49,6 +49,20 @@ namespace DAL {
   //                                                                   dalDataset
   
   /*!
+    \param filename -- Name of the dataset to be opened.
+  */
+  dalDataset::dalDataset (std::string const &filename)
+  {
+    /* Initialize internal parameters ... */
+    init ();
+    /* ... and try to open the file. */
+    open (filename.c_str());
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                   dalDataset
+  
+  /*!
     \param filename  -- The name of the dataset/file to open.
     \param filetype  -- Type of file to open ("HDF5", "MSCASA", etc.).
     \param overwrite -- Overwrite existing file if one already exists for name
@@ -340,14 +354,43 @@ namespace DAL {
   //                                                                         open
 
   /*!
-    \param filename The name of the file to open.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
+    \param filename  -- The name of the file to open.
+    \return bool     -- Status of the operation, either DAL::FAIL or
+            DAL::SUCCESS.
   */
-  bool dalDataset::open (const char * fname)
+  bool dalDataset::open (const char * filename)
   {
+    bool status (true);
     std::string lcltype;
+
+    /*!_______________________________________________________________
+      Generic check whether or not the provided name points to a file
+      that is accessable.
+    */
+
+    std::ifstream infile;
+    infile.open (filename, std::ifstream::in);
     
-    if ( DAL::SUCCESS == openFITS( fname ) ) {
+    if (infile.is_open() && infile.good()) {
+      status = true;
+    } else {
+      status = false;
+    }
+    infile.close();
+
+    if (!status) {
+      std::cerr << "[dalDataset::open] Low-level test to open file "
+		<< std::string(filename)
+		<< " failed!"
+		<< std::endl;
+      return false;
+    }
+    
+    /*!_______________________________________________________________
+      Try opening file using the supported underlying libraries.
+    */
+
+    if ( DAL::SUCCESS == openFITS( filename ) ) {
       // store the type of the dataset
       lcltype = FITSTYPE;
       type    = lcltype;
@@ -356,42 +399,41 @@ namespace DAL {
 		<< "yet supported.  Sorry." << endl;
       return DAL::SUCCESS;
     }
-    else if ( (h5fh_p = openHDF5( fname )) >= 0 )
+    else if ( (h5fh_p = openHDF5( filename )) >= 0 )
       {
         pFile_p = &h5fh_p;
         lcltype = H5TYPE;
         type = lcltype;
-        name = fname;
+        name = filename;
         return DAL::SUCCESS;
       }
     else
       {
 #ifdef HAVE_CASA
-        try
-          {
-            lcltype = MSCASATYPE;
-            type = lcltype;
-            casa::File msfile( fname );
-            // first treat it as a symbolic link
-            if ( msfile.isSymLink() )
-              {
-                casa::SymLink link( msfile );
-                casa::Path realFileName = link.followSymLink();
-                ms        = new casa::MeasurementSet( realFileName.absoluteName() );
-                pFile_p   = &ms;
-                itsMSReader = new casa::MSReader( *ms );
-                name      = fname;
-                return DAL::SUCCESS;
-              }
-            else // treat it as a regular file
-              {
-                ms        = new casa::MeasurementSet( fname );
-                pFile_p   = &ms;
-                itsMSReader = new casa::MSReader( *ms );
-                name      = fname;
-                return DAL::SUCCESS;
-              }
-          }
+        try {
+	  lcltype = MSCASATYPE;
+	  type = lcltype;
+	  casa::File msfile( filename );
+	  // first treat it as a symbolic link
+	  if ( msfile.isSymLink() )
+	    {
+	      casa::SymLink link( msfile );
+	      casa::Path realFileName = link.followSymLink();
+	      ms        = new casa::MeasurementSet( realFileName.absoluteName() );
+	      pFile_p   = &ms;
+	      itsMSReader = new casa::MSReader( *ms );
+	      name      = filename;
+	      return DAL::SUCCESS;
+	    }
+	  else // treat it as a regular file
+	    {
+	      ms        = new casa::MeasurementSet( filename );
+	      pFile_p   = &ms;
+	      itsMSReader = new casa::MSReader( *ms );
+	      name      = filename;
+	      return DAL::SUCCESS;
+	    }
+	}
         catch (casa::AipsError x) {
 	  return DAL::FAIL;
 	}
@@ -400,10 +442,10 @@ namespace DAL {
 #endif
       }
   }
-
+  
   //_____________________________________________________________________________
   //                                                                        close
-
+  
   /*!
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
