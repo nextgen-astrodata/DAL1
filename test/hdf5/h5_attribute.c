@@ -45,7 +45,7 @@
 #define ADIM1  2
 #define ADIM2  3
 #define ANAME  "Float attribute"      /* Name of the array attribute */
-#define ANAMES "Character attribute" /* Name of the string attribute */
+#define nameAttributeString "Character attribute" /* Name of the string attribute */
 
 //! Operator function
 static herr_t attr_info (hid_t loc_id,
@@ -62,7 +62,7 @@ int main (void)
   hid_t   fid;                 /* Dataspace identifier */
   hid_t   attr1, attr2, attr3; /* Attribute identifiers */
   hid_t   attr;
-  hid_t   aid1, aid2, aid3;    /* Attribute dataspace identifiers */
+  hid_t   dataspace1, aid2, dataspace3;    /* Attribute dataspace identifiers */
   hid_t   atype, atype_mem;    /* Attribute type */
   H5T_class_t  type_class;
   
@@ -115,13 +115,13 @@ int main (void)
   /*
    * Create dataspace for the first attribute.
    */
-  aid1 = H5Screate(H5S_SIMPLE);
-  ret  = H5Sset_extent_simple(aid1, ARANK, adim, NULL);
+  dataspace1 = H5Screate(H5S_SIMPLE);
+  ret  = H5Sset_extent_simple(dataspace1, ARANK, adim, NULL);
   
   /*
    * Create array attribute.
    */
-  attr1 = H5Acreate2(dataset, ANAME, H5T_NATIVE_FLOAT, aid1, H5P_DEFAULT, H5P_DEFAULT);
+  attr1 = H5Acreate2(dataset, ANAME, H5T_NATIVE_FLOAT, dataspace1, H5P_DEFAULT, H5P_DEFAULT);
   
   /*
    * Write array attribute.
@@ -143,11 +143,16 @@ int main (void)
   /*
    * Create string attribute.
    */
-  aid3  = H5Screate(H5S_SCALAR);
-  atype = H5Tcopy(H5T_C_S1);
+  dataspace3 = H5Screate(H5S_SCALAR);
+  atype      = H5Tcopy(H5T_C_S1);
   H5Tset_size(atype, 5);
   H5Tset_strpad(atype,H5T_STR_NULLTERM);
-  attr3 = H5Acreate2(dataset, ANAMES, atype, aid3, H5P_DEFAULT, H5P_DEFAULT);
+  attr3 = H5Acreate2 (dataset,
+		      nameAttributeString,
+		      atype,
+		      dataspace3,
+		      H5P_DEFAULT,
+		      H5P_DEFAULT);
   
   /*
    * Write string attribute.
@@ -157,9 +162,9 @@ int main (void)
   /*
    * Close attribute and file dataspaces, and datatype.
    */
-  ret = H5Sclose(aid1);
+  ret = H5Sclose(dataspace1);
   ret = H5Sclose(aid2);
-  ret = H5Sclose(aid3);
+  ret = H5Sclose(dataspace3);
   ret = H5Sclose(fid);
   ret = H5Tclose(atype);
   

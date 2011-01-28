@@ -1050,8 +1050,7 @@ namespace DAL {
 		<< "' size." << std::endl;
       return false;
     }
-    
-    
+
     if (H5Aexists(location_id,name.c_str())) {
       attribute_id = H5Aopen (location_id,
 			      name.c_str(),
@@ -1059,12 +1058,12 @@ namespace DAL {
     }
     else {
       dataspace_id = H5Screate_simple(1, dims, 0);
-      if ( dataspace_id < 0 )
-	{
-	  std::cerr << "ERROR: Could not set attribute '" << name
-		    << "' dataspace.\n";
-	  return false;
-	}
+      if ( dataspace_id < 0 ) {
+	std::cerr << "[h5set_attribute] Failed to create dataspace for attribute "
+		  << name
+		  << std::endl;
+	return false;
+      }
       
       attribute_id = H5Acreate( location_id,
 				name.c_str(),
