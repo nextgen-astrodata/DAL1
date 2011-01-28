@@ -51,13 +51,11 @@ using DAL::HDF5Attribute;
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_static_functions ()
+int test_static_functions (hid_t const &location)
 {
   std::cout << "\n[tHDF5Attribute::test_static_functions]\n" << std::endl;
 
   int nofFailedTests = 0;
-
-  hid_t location     = 123456789;
   std::string name   = "Attribute";
 
   cout << "[1] Testing setAttribute(hid_t,string,T) ..." << endl;
@@ -84,29 +82,36 @@ int test_static_functions ()
     unsigned int nelem (5);
     std::vector<int> valInt (nelem, 1);
     std::vector<short> valShort (nelem, 2);
+    std::vector<long> valLong (nelem, 2);
     std::vector<float> valFloat (nelem, 0.5);
     std::vector<double> valDouble (nelem, 0.25);
     std::vector<std::string> valString (nelem, "bla");
     
-    HDF5Attribute::setAttribute (location, "AttributeIntVector",    valInt);
-    HDF5Attribute::setAttribute (location, "AttributeShortVector",  valShort);
-    HDF5Attribute::setAttribute (location, "AttributeFloatVector",  valFloat);
-    HDF5Attribute::setAttribute (location, "AttributeDoubleVector", valDouble);
-    HDF5Attribute::setAttribute (location, "AttributeStringVector", valString);
+    HDF5Attribute::setAttribute (location, "AttributeVectorInt",    valInt);
+    HDF5Attribute::setAttribute (location, "AttributeVectorShort",  valShort);
+    HDF5Attribute::setAttribute (location, "AttributeVectorLong",   valLong);
+    HDF5Attribute::setAttribute (location, "AttributeVectorFloat",  valFloat);
+    HDF5Attribute::setAttribute (location, "AttributeVectorDouble", valDouble);
+    HDF5Attribute::setAttribute (location, "AttributeVectorString", valString);
   } catch (std::string message) {
     ++nofFailedTests;
   }
 
   cout << "[3] Testing setAttribute(hid_t,string,T*,uint) ..." << endl;
   try {
-    unsigned int nelem = 5;
-    int valInt[]       = {1,1,1,1,1};
-    float valFloat[]   = {0.5,0.5,0.5,0.5,0.5};
-    double valDouble[] = {0.25,0.25,0.25,0.25,0.25};
+    unsigned int nelem      = 5;
+    int valInt[]            = {1,1,1,1,1};
+    int valShort[]          = {2,2,2,2,2};
+    int valLong[]           = {3,3,3,3,3};
+    float valFloat[]        = {0.5,0.5,0.5,0.5,0.5};
+    double valDouble[]      = {0.25,0.25,0.25,0.25,0.25};
+    std::string valString[] = {"a","bb","ccc","dddd","eeeee"};
 
-    HDF5Attribute::setAttribute (location, "AttributeIntArray",    valInt,    nelem);
-    HDF5Attribute::setAttribute (location, "AttributeFloatArray",  valFloat,  nelem);
-    HDF5Attribute::setAttribute (location, "AttributeDoubleArray", valDouble, nelem);
+    HDF5Attribute::setAttribute (location, "AttributeArrayInt",    valInt,    nelem);
+    HDF5Attribute::setAttribute (location, "AttributeArrayShort",  valShort,  nelem);
+    HDF5Attribute::setAttribute (location, "AttributeArrayLong",   valLong,   nelem);
+    HDF5Attribute::setAttribute (location, "AttributeArrayFloat",  valFloat,  nelem);
+    HDF5Attribute::setAttribute (location, "AttributeArrayDouble", valDouble, nelem);
   } catch (std::string message) {
     ++nofFailedTests;
   }
@@ -123,7 +128,7 @@ int test_static_functions ()
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_constructors ()
+int test_constructors (hid_t const &location)
 {
   std::cout << "\n[tHDF5Attribute::test_constructors]\n" << std::endl;
 
@@ -153,12 +158,40 @@ int test_constructors ()
 */
 int main ()
 {
-  int nofFailedTests = 0;
+  int nofFailedTests   = 0;
+  std::string filename = "tHDF5Attribute.h5";
 
-  // Test for static methods
-  nofFailedTests += test_static_functions ();
-  // Test for the constructor(s)
-  nofFailedTests += test_constructors ();
+  //________________________________________________________
+  // Open/create HDF5 file to work with
+  
+  hid_t fileID = H5Fcreate (filename.c_str(),
+			    H5F_ACC_TRUNC,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT);
+  
+  //________________________________________________________
+  // Run the tests
+  
+  if (H5Iis_valid(fileID)) {
 
+    cout << "[tHDF5Attribute] Successfully opened " << filename << std::endl;
+    
+    // Test for static methods
+    nofFailedTests += test_static_functions (fileID);
+    // Test for the constructor(s)
+    nofFailedTests += test_constructors (fileID);
+
+  } else {
+    std::cerr << "[tHDF5Attribute] Failed to open file " << filename << std::endl;
+    return -1;
+  }
+  
+  //________________________________________________________
+  // close HDF5 file
+  
+  if (H5Iis_valid(fileID)) {
+    H5Fclose(fileID);
+  }
+  
   return nofFailedTests;
 }

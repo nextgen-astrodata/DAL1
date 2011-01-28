@@ -139,8 +139,9 @@ namespace DAL { // Namespace DAL -- begin
     
     /*!
       \brief Set attribute
-      \param location
-      \param name
+      \param location -- HDF5 identifier for the object to which the attribute
+             is attached.
+      \param name    -- Name of the attribute.
       \param data    -- Data value(s) to be assigned to the attribute
       \param size    -- nof. element in the data array.
       \return status -- Status of the operation
@@ -152,26 +153,96 @@ namespace DAL { // Namespace DAL -- begin
 				unsigned int const &size,
 				hid_t const &datatype)
       {
-	bool status = true;
+	bool status       = true;
+	hid_t   attribute = 0;
+	hid_t   dataspace = 0;
+	hsize_t dims[1]   = { size };
+	hsize_t *maxdims  = 0;
+	herr_t h5err      = 0;
+
+	/*____________________________________________________________
+	  Check if attribute 'name' already exits at the given
+	  'location'; if this is not the case, we need to create the 
+	  attribute.
+	*/
+
+	switch (HDF5Object::objectType(location,name)) {
+	case H5I_ATTR:
+	  attribute = H5Aopen (location,
+			       name.c_str(),
+			       H5P_DEFAULT);
+	  break;
+	case H5I_BADID:
+	  {
+	    /* Create dataspace for the attribute */
+	    dataspace = H5Screate_simple (1, dims, maxdims );
+	    if (H5Iis_valid(dataspace)) {
+	      /* Create the attribute itself ... */
+	      attribute = H5Acreate (location,
+				     name.c_str(),
+				     datatype,
+				     dataspace,
+				     0,
+				     0);
+	      /* ... and check if creation was successful */
+	      if (H5Iis_valid(attribute)) {
+		status = true;
+	      } else {
+		std::cerr << "[HDF5Attribute::setAttribute]"
+			  << " H5Acreate() failed to create attribute "
+			  << name
+			  << std::endl;
+		status = false;
+	      }
+	    } else {
+	      std::cerr << "[HDF5Attribute::setAttribute]"
+			<< " H5Screate_simple() failed to create dataspace!"
+			<< std::endl;
+	      status = false;
+	    }
+	  }
+	  break;
+	default:
+	  status = false;
+	  break;
+	};
+
+	/*____________________________________________________________
+	  H5Awrite() returns a non-negative value if successful;
+	  otherwise returns a negative value. 
+	  Datatype conversion takes place at the time of a read or
+	  write and is automatic. See the Data Conversion section of
+	  "The Data Type Interface (H5T)" in the "HDF5 User's Guide"
+	  for a discussion of data conversion, including the range of
+	  conversions currently supported by the HDF5 libraries. 
+	*/
 	
-	cout << "[HDF5Attribute::setAttribute]" << endl;
-	cout << "-- Location   = " << location << endl;
-	cout << "-- Name       = " << name     << endl;
-	cout << "-- Data size  = " << size     << endl;
-	cout << "-- Data type  = " << datatype << endl;
-	cout << "-- Data array = [";
-	for (unsigned int n=0; n<size; ++n) {
-	  cout << " " << data[n];
+	if (status) {
+	  /* Write the data to the attribute ... */
+	  h5err = H5Awrite (attribute, datatype, data);
+	  /* ... and check the return value of the operation */
+	  if (h5err<0) {
+	    std::cerr << "[HDF5Attribute::setAttribute]"
+		      << " H5Awrite() failed to write attribute!"
+		      << std::endl;
+	    status = false;
+	  }
 	}
-	cout << " ]" << endl;
+
+	/*____________________________________________________________
+	  Release HDF5 object handles
+	*/
+	HDF5Object::close (dataspace);
+	HDF5Object::close (attribute);
 	
 	return status;
       }
     
     /*!
       \brief Set attribute
-      \param location
-      \param name
+      \param location -- HDF5 identifier for the object to which the attribute
+             is attached.
+      \param name    -- Name of the attribute.
       \param data    -- Data value(s) to be assigned to the attribute
       \param size    -- nof. element in the data array.
       \return status -- Status of the operation
@@ -184,8 +255,9 @@ namespace DAL { // Namespace DAL -- begin
     
     /*!
       \brief Set attribute
-      \param location
-      \param name
+      \param location -- HDF5 identifier for the object to which the attribute
+             is attached.
+      \param name    -- Name of the attribute.
       \param data    -- Data value(s) to be assigned to the attribute
       \return status -- Status of the operation
     */
@@ -199,8 +271,9 @@ namespace DAL { // Namespace DAL -- begin
     
     /*!
       \brief Set attribute
-      \param location
-      \param name
+      \param location -- HDF5 identifier for the object to which the attribute
+             is attached.
+      \param name    -- Name of the attribute.
       \param data    -- Data value(s) to be assigned to the attribute
       \return status -- Status of the operation
     */
