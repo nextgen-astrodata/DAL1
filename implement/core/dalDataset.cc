@@ -528,19 +528,10 @@ namespace DAL {
                                  const short * data,
                                  int size )
   {
-    if (H5Iis_valid(h5fh_p)) {
-      return h5set_attribute (H5T_NATIVE_SHORT,
-			      h5fh_p,
-			      attrname,
-			      data,
-			      size);
-    }
-    else {
-      std::cout << "[dalDataset::setAttribute]"
-		<< " Unable to set attribute - invalid object identifier!"
-		<< std::endl;
-      return false;
-    }
+    return HDF5Attribute::setAttribute (h5fh_p,
+					attrname,
+					data,
+					size);
   }
   
   //_____________________________________________________________________________
@@ -557,19 +548,10 @@ namespace DAL {
                                  const int * data,
                                  int size )
   {
-    if (H5Iis_valid(h5fh_p)) {
-      return h5set_attribute (H5T_NATIVE_INT,
-			      h5fh_p,
-			      attrname,
-			      data,
-			      size);
-    }
-    else {
-      std::cerr << "[dalDataset::setAttribute]"
-		<< " Unable to set attribute - invalid object identifier!"
-		<< std::endl;
-      return false;
-    }
+    return HDF5Attribute::setAttribute (h5fh_p,
+					attrname,
+					data,
+					size);
   }
   
   //_____________________________________________________________________________
@@ -588,9 +570,17 @@ namespace DAL {
                                  int size )
   {
 #ifdef HAVE_LONG_LONG
-    return h5set_attribute( H5T_NATIVE_LLONG, h5fh_p, attrname, data, size );
+    return HDF5Attribute::setAttribute (h5fh_p,
+					attrname,
+					data,
+					size,
+					H5T_NATIVE_LLONG);
 #else
-    return h5set_attribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
+    return HDF5Attribute::setAttribute (h5fh_p,
+					attrname,
+					data,
+					size,
+					H5T_NATIVE_LONG);
 #endif
   }
 #else
@@ -598,7 +588,10 @@ namespace DAL {
                                  const long * data,
                                  int size )
   {
-    return h5set_attribute( H5T_NATIVE_LONG, h5fh_p, attrname, data, size );
+    return HDF5Attribute::setAttribute (h5fh_p,
+					attrname,
+					data,
+					size);
   }
 #endif
 
@@ -616,7 +609,11 @@ namespace DAL {
                                  const uint * data,
                                  int size )
   {
-    return h5set_attribute( H5T_NATIVE_UINT, h5fh_p, attrname, data, size );
+    return HDF5Attribute::setAttribute (h5fh_p,
+					attrname,
+					data,
+					size,
+					H5T_NATIVE_UINT);
   }
 
   //_____________________________________________________________________________
@@ -633,7 +630,11 @@ namespace DAL {
                                  const float * data,
                                  int size )
   {
-    return h5set_attribute( H5T_NATIVE_FLOAT, h5fh_p, attrname, data, size );
+    return HDF5Attribute::setAttribute (h5fh_p,
+					attrname,
+					data,
+					size,
+					H5T_NATIVE_FLOAT);
   }
 
   //_____________________________________________________________________________
@@ -650,7 +651,11 @@ namespace DAL {
                                  const double * data,
                                  int size )
   {
-    return h5set_attribute( H5T_NATIVE_DOUBLE, h5fh_p, attrname, data, size );
+    return HDF5Attribute::setAttribute (h5fh_p,
+					attrname,
+					data,
+					size,
+					H5T_NATIVE_DOUBLE);
   }
 
   //_____________________________________________________________________________
@@ -664,7 +669,9 @@ namespace DAL {
   bool dalDataset::setAttribute( std::string attrname,
                                  std::string data )
   {
-    return h5setAttribute_string( h5fh_p, attrname, &data, 1 );
+    return HDF5Attribute::setAttribute (h5fh_p,
+					attrname,
+					data);
   }
 
   //_____________________________________________________________________________
@@ -697,55 +704,9 @@ namespace DAL {
   bool dalDataset::setAttribute_string( std::string attrname,
                                         std::vector<std::string> data )
   {
-    hid_t aid, atype, att;
-    int size = data.size();
-
-    const char *string_att[ size ];
-    for (int ii=0; ii<size; ii++)
-      string_att[ii] = (data[ii]).c_str();
-
-    hsize_t dims[] = { size };
-
-    if ( ( aid  = H5Screate_simple (1, dims, NULL) ) < 0 )
-      {
-        std::cerr << "ERROR: Could not create dataspace.\n";
-        return DAL::FAIL;
-      }
-
-    if ( ( atype = H5Tcopy(H5T_C_S1) ) < 0 )
-      {
-        std::cerr << "ERROR: Could not copy attribute datatype.\n";
-        return DAL::FAIL;
-      }
-
-    if ( H5Tset_size( atype, H5T_VARIABLE ) < 0 )
-      {
-        std::cerr << "ERROR: Could not set attribute size.\n";
-        return DAL::FAIL;
-      }
-
-    hid_t root;
-    if ( ( root = H5Gopen1( h5fh_p, "/") ) < 0 )
-      {
-        std::cerr << "ERROR: Could not open group.\n";
-        return DAL::FAIL;
-      }
-
-    if ( ( att = H5Acreate1(root, attrname.c_str(), atype, aid, H5P_DEFAULT) )
-         < 0 )
-      {
-        std::cerr << "ERROR: Could not create attribute '" << attrname << ".\n";
-        return DAL::FAIL;
-      }
-
-    if ( H5Awrite(att, atype, string_att ) < 0 )
-      {
-        std::cerr << "ERROR: could not set attribute " << attrname << endl;
-        return DAL::FAIL;
-      }
-
-    return DAL::SUCCESS;
-
+    return HDF5Attribute::setAttribute (h5fh_p,
+					attrname,
+					data);
   }
 
   //_____________________________________________________________________________
