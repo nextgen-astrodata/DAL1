@@ -24,13 +24,9 @@
 #ifndef DALTABLE_H
 #define DALTABLE_H
 
-#ifndef DALFILTER_H
+#include "HDF5Attribute.h"
 #include "dalFilter.h"
-#endif
-
-#ifndef DALCOLUMN_H
 #include "dalColumn.h"
-#endif
 
 namespace DAL {
   

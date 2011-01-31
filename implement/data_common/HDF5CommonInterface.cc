@@ -144,9 +144,8 @@ namespace DAL { // Namespace DAL -- begin
   //                                                              removeAttribute
 
   /*!
-    \return status -- Returns <tt>True</tt> if the element of <i>name</i>
-            was removed from the set, <tt>False</tt> is the set did not contain
-	    an element <i>name</i>.
+    \return status -- Returns \e true if the element of \c name was removed from
+            the set, \e false is the set did not contain an element \c name.
   */
   bool HDF5CommonInterface::removeAttribute (std::string const &name)
   {
@@ -239,16 +238,15 @@ namespace DAL { // Namespace DAL -- begin
   
   bool HDF5CommonInterface::open (hid_t const &location)
   {
-    bool status (true);
-    bool absolutePath (false);
-    herr_t h5error;
+    bool status       = true;
+    bool absolutePath = false;
     std::string filename;
     std::string dataset;
     
     // Get name of file and dataset ________________________
     
     status  = DAL::h5get_filename (filename, location);
-    status *= DAL::h5get_name (dataset, location,absolutePath);
+    status *= DAL::h5get_name (dataset, location, absolutePath);
     
     if (status) {
       // open the file
@@ -261,9 +259,9 @@ namespace DAL { // Namespace DAL -- begin
 			  H5P_DEFAULT);
       }
       // open the dataset
-      status = open (fileID,dataset,false);
+      status = open (fileID, dataset, false);
       // release file handler
-      h5error = H5Fclose (fileID);
+      HDF5Object::close (fileID);
     }
     
     return status;

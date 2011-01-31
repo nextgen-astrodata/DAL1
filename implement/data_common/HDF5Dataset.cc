@@ -119,6 +119,7 @@ namespace DAL {
 
     HDF5Object::close (itsDatatype);
     HDF5Object::close (itsDataspace);
+    HDF5Object::close (location_p);
   }
   
   // ============================================================================
@@ -214,8 +215,8 @@ namespace DAL {
     \param create -- Create the corresponding data structure, if it does not 
            exist yet?
     
-    \return status -- Status of the operation; returns <tt>false</tt> in case
-            an error was encountered.
+    \return status -- Status of the operation; returns \c false in case an error
+            was encountered.
   */
   bool HDF5Dataset::open (hid_t const &location,
 			  std::string const &name,
@@ -224,10 +225,12 @@ namespace DAL {
     bool status  = true;
     htri_t h5err = 0;
 
-    /* Set up list of attributes */
-    setAttributes();
-    
+    /*________________________________________________________________
+      Try opening existing dataset
+    */
+
     if (H5Iis_valid(location)) {
+      /* Check if link for dataset exists */
       h5err = H5Lexists (location,
 			 name.c_str(),
 			 H5P_DEFAULT);
@@ -251,7 +254,8 @@ namespace DAL {
 		    << name << std::endl;
 	  status = false;
 	}
-      } else {
+      }   //   END -- H5Lexists(location,name)
+      else {
 	std::cerr << "[HDF5Dataset::open]"
 		  << " Object " << name << " not found at provided location!"
 		  << std::endl;
@@ -263,7 +267,7 @@ namespace DAL {
 		<< std::endl;
       return false;
     }
-    
+
     //______________________________________________________
     // Try creating dataset, if not yet existing
     
@@ -296,6 +300,8 @@ namespace DAL {
     \param name     -- Name of the dataset.
     \param shape    -- Shape of the dataset.
     \param datatype -- Datatype for the elements within the Dataset
+    \return status  -- Status of the operation; returns \c false in case an error
+            was encountered.
   */
   bool HDF5Dataset::open (hid_t const &location,
 			  std::string const &name,
@@ -325,6 +331,8 @@ namespace DAL {
     \param shape     -- Shape of the dataset.
     \param chunksize -- Chunk size for extendible array.
     \param datatype  -- Datatype for the elements within the Dataset
+    \return status   -- Status of the operation; returns \c false in case an
+            error was encountered.
   */
   bool HDF5Dataset::open (hid_t const &location,
 			  std::string const &name,
@@ -402,12 +410,16 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                 getChunksize
 
+  /*!
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered.
+  */
   bool HDF5Dataset::getChunksize ()
   {
     bool status      = true;
     hid_t propertyID = 0;
     int rank         = itsShape.size();
-    int nofAxes (rank);
+    int nofAxes      = rank;
     hsize_t chunksize[rank];
 
     /* Get the creation property list for the dataset */
@@ -424,7 +436,7 @@ namespace DAL {
       std::cerr << "[HDF5Dataset::getChunksize]"
 		<< " Failed to get creation property list for the dataset!"
 		<< std::endl;
-      status = false;
+      return false;
     }
     
     /* Retrieve the size of chunks for the raw data of a chunked layout dataset */
@@ -684,6 +696,12 @@ namespace DAL {
 					  HDF5Hyperslab &slab)
   {
     return writeData (data, slab, H5T_NATIVE_LONG);
+  }
+  
+  template <> bool HDF5Dataset::writeData (long long const data[],
+					  HDF5Hyperslab &slab)
+  {
+    return writeData (data, slab, H5T_NATIVE_LLONG);
   }
   
   template <> bool HDF5Dataset::writeData (float const data[],

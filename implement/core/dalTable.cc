@@ -1412,7 +1412,7 @@ namespace DAL {
 			       short const * data,
                                int size )
   {
-    return h5set_attribute( H5T_NATIVE_SHORT, tableID_p, attrname, data, size );
+    return HDF5Attribute::setAttribute (tableID_p, attrname, data, size);
   }
   
   //_____________________________________________________________________________
@@ -1434,7 +1434,7 @@ namespace DAL {
 			       int const * data,
                                int size )
   {
-    return h5set_attribute( H5T_NATIVE_INT, tableID_p, attrname, data, size );
+    return HDF5Attribute::setAttribute (tableID_p, attrname, data, size);
   }
   
   //_____________________________________________________________________________
@@ -1456,7 +1456,7 @@ namespace DAL {
                                uint const * data,
                                int size )
   {
-    return h5set_attribute( H5T_NATIVE_UINT, tableID_p, attrname, data, size );
+    return HDF5Attribute::setAttribute (tableID_p, attrname, data, size);
   }
   
   //_____________________________________________________________________________
@@ -1464,8 +1464,6 @@ namespace DAL {
   
   /*!
     \brief Add a long attribute.
-
-    Add a long attribute to the table.
 
     \param attrname The name of the attribute you wish to add.
     \param data The value of the attribute you wish to add.
@@ -1477,7 +1475,7 @@ namespace DAL {
 			       long const * data,
                                int size )
   {
-    return h5set_attribute( H5T_NATIVE_LONG, tableID_p, attrname, data, size );
+    return HDF5Attribute::setAttribute (tableID_p, attrname, data, size);
   }
   
   //_____________________________________________________________________________
@@ -1498,7 +1496,7 @@ namespace DAL {
 			       float const * data,
                                int size )
   {
-    return h5set_attribute( H5T_NATIVE_FLOAT, tableID_p, attrname, data, size );
+    return HDF5Attribute::setAttribute (tableID_p, attrname, data, size);
   }
   
   //_____________________________________________________________________________
@@ -1520,7 +1518,7 @@ namespace DAL {
 			       double const * data,
                                int size )
   {
-    return h5set_attribute( H5T_NATIVE_DOUBLE, tableID_p, attrname, data, size );
+    return HDF5Attribute::setAttribute (tableID_p, attrname, data, size);
   }
   
   //_____________________________________________________________________________

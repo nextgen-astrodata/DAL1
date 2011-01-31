@@ -283,25 +283,25 @@ namespace DAL { // Namespace DAL -- begin
 	std::vector<float> vectF (1,0.0);
 	std::vector<double> vectD (1,0.0);
 	//
-	h5set_attribute (location_p,"FILENAME",                  name        );
- 	h5set_attribute (location_p,"CREATE_OFFLINE_ONLINE",     true        );
- 	h5set_attribute (location_p,"BF_FORMAT",                 undefined   );
-	h5set_attribute (location_p,"BF_VERSION",                undefined   );
-	h5set_attribute (location_p,"EXPTIME_START_UTC",         undefined   );
-	h5set_attribute (location_p,"EXPTIME_STOP_UTC",          undefined   );
-	h5set_attribute (location_p,"EXPTIME_START_MJD",         undefined   );
-	h5set_attribute (location_p,"EXPTIME_STOP_MJD",          undefined   );
-	h5set_attribute (location_p,"EXPTIME_START_TAI",         undefined   );
-	h5set_attribute (location_p,"EXPTIME_STOP_TAI",          undefined   );
-	h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME",    float(0.0)  );
-	h5set_attribute (location_p,"OBS_DATATYPE",              undefined   );
-	h5set_attribute (location_p,"PRIMARY_POINTING_DIAMETER", float(0.0)  );
-	h5set_attribute (location_p,"BANDWIDTH",                 double(0.0) );
-	h5set_attribute (location_p,"BEAM_DIAMETER",             float(0.0)  );
-	h5set_attribute (location_p,"WEATHER_TEMPERATURE",       vectF       );
-	h5set_attribute (location_p,"WEATHER_HUMIDITY",          vectF       );
-	h5set_attribute (location_p,"SYSTEM_TEMPERATURE",        vectF       );
-	h5set_attribute (location_p,"NOF_PRIMARY_BEAMS",         int(0)      );
+	HDF5Attribute::setAttribute (location_p,"FILENAME",                  name        );
+ 	HDF5Attribute::setAttribute (location_p,"CREATE_OFFLINE_ONLINE",     true        );
+ 	HDF5Attribute::setAttribute (location_p,"BF_FORMAT",                 undefined   );
+	HDF5Attribute::setAttribute (location_p,"BF_VERSION",                undefined   );
+	HDF5Attribute::setAttribute (location_p,"EXPTIME_START_UTC",         undefined   );
+	HDF5Attribute::setAttribute (location_p,"EXPTIME_STOP_UTC",          undefined   );
+	HDF5Attribute::setAttribute (location_p,"EXPTIME_START_MJD",         undefined   );
+	HDF5Attribute::setAttribute (location_p,"EXPTIME_STOP_MJD",          undefined   );
+	HDF5Attribute::setAttribute (location_p,"EXPTIME_START_TAI",         undefined   );
+	HDF5Attribute::setAttribute (location_p,"EXPTIME_STOP_TAI",          undefined   );
+	HDF5Attribute::setAttribute (location_p,"TOTAL_INTEGRATION_TIME",    float(0.0)  );
+	HDF5Attribute::setAttribute (location_p,"OBS_DATATYPE",              undefined   );
+	HDF5Attribute::setAttribute (location_p,"PRIMARY_POINTING_DIAMETER", float(0.0)  );
+	HDF5Attribute::setAttribute (location_p,"BANDWIDTH",                 double(0.0) );
+	HDF5Attribute::setAttribute (location_p,"BEAM_DIAMETER",             float(0.0)  );
+	HDF5Attribute::setAttribute (location_p,"WEATHER_TEMPERATURE",       vectF       );
+	HDF5Attribute::setAttribute (location_p,"WEATHER_HUMIDITY",          vectF       );
+	HDF5Attribute::setAttribute (location_p,"SYSTEM_TEMPERATURE",        vectF       );
+	HDF5Attribute::setAttribute (location_p,"NOF_PRIMARY_BEAMS",         int(0)      );
 	/* Read back in the common attributes after storing default values */
 	commonAttributes_p.h5read(location_p);
       } else {
@@ -372,11 +372,11 @@ namespace DAL { // Namespace DAL -- begin
   //                                                          openPrimaryPointing
   
   /*!
-    \param pointingID -- 
-    \param create    -- 
+    \param pointingID -- ID of the sub-array pointing group.
+    \param create     -- Create new group, if not existing yet?
   */
   bool BF_RootGroup::openPrimaryPointing (unsigned int const &pointingID,
-					bool const &create)
+					  bool const &create)
   {
     bool status (true);
     htri_t validLocation = H5Iis_valid(location_p);
@@ -390,10 +390,14 @@ namespace DAL { // Namespace DAL -- begin
       // check if the station beam group indeed exists
       if (it == primaryPointings_p.end()) {
 	// open/create the station beam group
-	primaryPointings_p[name] = BF_SubArrayPointing (location_p,pointingID,create);
+	primaryPointings_p[name] = BF_SubArrayPointing (location_p,
+							pointingID,
+							create);
 	// attributes for book-keeping
 	nofPrimaryBeams = primaryPointings_p.size();
-	h5set_attribute (location_p, "NOF_PRIMARY_BEAMS", nofPrimaryBeams);
+	HDF5Attribute::setAttribute (location_p,
+				     "NOF_PRIMARY_BEAMS",
+				     nofPrimaryBeams);
       }
     }
     else {

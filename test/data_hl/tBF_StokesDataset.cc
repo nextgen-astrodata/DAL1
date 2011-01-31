@@ -80,11 +80,25 @@ int test_HDF5Dataset (hid_t const &fileID)
 {
   cout << "\n[tBF_StokesDataset::test_HDF5Dataset]\n" << endl;
   
-  int nofFailedTests (0);
-  bool status (true);
-  hsize_t sidelength (100000);
+  int nofFailedTests = 0;
+  bool status        = true;
+  hsize_t sidelength = 100000;
+  unsigned int rank  = 2;
   std::string name;
-  unsigned int rank (2);
+
+  /*_______________________________________________________________________
+    Test for the default constructor to check if all internal parameters
+    are being initialized.
+  */
+
+  cout << "[0] Testing HDF5Dataset() ..." << endl;
+  try {
+    DAL::HDF5Dataset dataset;
+    dataset.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
 
   /*_______________________________________________________________________
     Simplest constructor for HDF5Dataset will only open existing dataset,
@@ -102,6 +116,8 @@ int test_HDF5Dataset (hid_t const &fileID)
     std::cerr << message << endl;
     nofFailedTests++;
   }
+
+  return 0;
 
   /*_______________________________________________________________________
     If unset, the chunking size will be initialized with the overall shape
@@ -277,17 +293,12 @@ int test_constructors (hid_t const &fileID)
 {
   cout << "\n[tBF_StokesDataset::test_constructors]\n" << endl;
 
-  if (!H5Iis_valid(fileID)) {
-    cerr << "--> Invalid file -- skipping tests!" << endl;
-    return 0;
-  }
-
-  int nofFailedTests (0);
-  std::string nameDataset;
+  int nofFailedTests       = 0;
   unsigned int nofSamples  = 1000;
   unsigned int nofSubbands = 36;
   unsigned int nofChannels = 128;
   std::vector<hsize_t> shape (2);
+  std::string nameDataset;
 
   shape[0] = nofSamples;
   shape[1] = nofSubbands*nofChannels;
@@ -401,12 +412,7 @@ int test_attributes (hid_t const &fileID)
 {
   cout << "\n[tBF_StokesDataset::test_attributes]\n" << endl;
 
-  if (!H5Iis_valid(fileID)) {
-    cerr << "--> Invalid file -- skipping tests!" << endl;
-    return 0;
-  }
-
-  int nofFailedTests (0);
+  int nofFailedTests = 0;
 
   /* Open dataset to work with */
   std::string nameDataset ("Stokes005.Q");
@@ -422,6 +428,10 @@ int test_attributes (hid_t const &fileID)
   std::string dataType;
   std::string stokesComponent;
 
+  /*__________________________________________________________________
+    Test 1: Read in the attribute values
+  */
+  
   cout << "[1] Testing getAttribute(string, T) ..." << endl;
   try {
     stokes.getAttribute ("GROUPTYPE",        groupType);
@@ -703,8 +713,8 @@ int test_data (hid_t const &fileID)
 */
 int main ()
 {
-  int nofFailedTests (0);
-  std::string filename ("tBF_StokesDataset.h5");
+  int nofFailedTests   = 0;
+  std::string filename = "tBF_StokesDataset.h5";
 
   //________________________________________________________
   // Create HDF5 file to work with
@@ -717,13 +727,13 @@ int main ()
   /* If file creation was successful, run the tests. */
   if (H5Iis_valid(fileID)) {
 
-    // // Additional tests for working with the DAL::HDF5Dataset class
-    // nofFailedTests += test_HDF5Dataset (fileID);
+    // Additional tests for working with the DAL::HDF5Dataset class
+    nofFailedTests += test_HDF5Dataset (fileID);
     
-    // Test for the constructor(s)
-    nofFailedTests += test_constructors (fileID);
-    // Test access to the attributes
-    nofFailedTests += test_attributes (fileID);
+    // // Test for the constructor(s)
+    // nofFailedTests += test_constructors (fileID);
+    // // Test access to the attributes
+    // nofFailedTests += test_attributes (fileID);
     // // Test read/write access to the data
     // nofFailedTests += test_data (fileID);
 
