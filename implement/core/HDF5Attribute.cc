@@ -173,6 +173,23 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
+  //                                                   setAttribute(unsigned int)
+  
+  //! Set attribute of type (unsigned int)
+  template <>
+  bool HDF5Attribute::setAttribute (hid_t const &location,
+				    std::string const &name,
+				    unsigned int const *data,
+				    unsigned int const &size)
+  {
+    return setAttribute (location,
+			 name,
+			 data,
+			 size,
+			 H5T_NATIVE_UINT);
+  }
+
+  //_____________________________________________________________________________
   //                                                          setAttribute(short)
   
   //! Set attribute of type (short)
@@ -204,6 +221,57 @@ namespace DAL { // Namespace DAL -- begin
 			 data,
 			 size,
 			 H5T_NATIVE_LONG);
+  }
+
+  //_____________________________________________________________________________
+  //                                                  setAttribute(unsigned long)
+  
+  //! Set attribute of type (long)
+  template <>
+  bool HDF5Attribute::setAttribute (hid_t const &location,
+				    std::string const &name,
+				    unsigned long const *data,
+				    unsigned int const &size)
+  {
+    return setAttribute (location,
+			 name,
+			 data,
+			 size,
+			 H5T_NATIVE_ULONG);
+  }
+
+  //_____________________________________________________________________________
+  //                                                      setAttribute(long long)
+  
+  //! Set attribute of type (long long)
+  template <>
+  bool HDF5Attribute::setAttribute (hid_t const &location,
+				    std::string const &name,
+				    long long const *data,
+				    unsigned int const &size)
+  {
+    return setAttribute (location,
+			 name,
+			 data,
+			 size,
+			 H5T_NATIVE_LLONG);
+  }
+
+  //_____________________________________________________________________________
+  //                                             setAttribute(unsigned long long)
+  
+  //! Set attribute of type (unsigned long long)
+  template <>
+  bool HDF5Attribute::setAttribute (hid_t const &location,
+				    std::string const &name,
+				    unsigned long long const *data,
+				    unsigned int const &size)
+  {
+    return setAttribute (location,
+			 name,
+			 data,
+			 size,
+			 H5T_NATIVE_ULLONG);
   }
 
   //_____________________________________________________________________________
@@ -311,7 +379,8 @@ namespace DAL { // Namespace DAL -- begin
     /*________________________________________________________________
       Feedback
     */
-    
+
+#ifdef DEBUGGING_MESSAGES    
     std::cout << "[HDF5Attribute::setAttribute]"      << std::endl;
     std::cout << "-- Location ID     = " << location  << std::endl;
     std::cout << "-- Attribute name  = " << name      << std::endl;
@@ -324,6 +393,7 @@ namespace DAL { // Namespace DAL -- begin
       std::cout << " " << data[n];
     }
     std::cout << " ]" << std::endl;
+#endif
     
     /*____________________________________________________________
       H5Awrite() returns a non-negative value if successful;
