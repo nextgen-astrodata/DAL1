@@ -1275,11 +1275,11 @@ int main (int argc,
     // Test opening the previously created datasets
     nofFailedTests += test_open (fileID);
     
-    // // Test access R/W access to 1-dim data arrays
-    // nofFailedTests += test_array1d (fileID);
+    // Test access R/W access to 1-dim data arrays
+    nofFailedTests += test_array1d (fileID);
     
-    // // Test access R/W access to 2-dim data arrays
-    // nofFailedTests += test_array2d (fileID);
+    // Test access R/W access to 2-dim data arrays
+    nofFailedTests += test_array2d (fileID);
 
     // // Test the effect of the various Hyperslab parameters
     // nofFailedTests += test_hyperslab (fileID);
