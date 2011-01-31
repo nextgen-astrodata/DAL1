@@ -601,7 +601,7 @@ namespace DAL {
 		     HDF5Hyperslab &slab,
 		     hid_t const &datatype)
       {
-	bool status (true);
+	bool status = status;
 	
 	/* Set the Hyperslab for the dataspace attached to a dataset */
 	status = setHyperslab (slab, false);
@@ -614,7 +614,7 @@ namespace DAL {
 	  std::vector<int> stride = slab.stride();
 	  std::vector<int> block  = slab.block();
 	  /* Setup the memory space */
-	  for (unsigned int n(0); n<nelem; ++n) {
+	  for (unsigned int n=0; n<nelem; ++n) {
 	    dimensions[n] = block[n];
 	  }
 	  hid_t memorySpace = H5Screate_simple (nelem,
@@ -628,7 +628,7 @@ namespace DAL {
 			     H5P_DEFAULT,
 			     data);
 	  /* Release HDF5 object identifier */
-	  H5Sclose (memorySpace);
+	  HDF5Object::close (memorySpace);
 	} else {
 	  std::cerr << "[HDF5Dataset::readData] Failed to properly set up Hyperslab!"
 		    << std::endl;
@@ -651,7 +651,7 @@ namespace DAL {
 		      HDF5Hyperslab &slab,
 		      hid_t const &datatype)
       {
-	bool status (true);
+	bool status = true;
 
 	// Set the Hyperslab selection _____________________
 
@@ -700,20 +700,12 @@ namespace DAL {
 	      }
 	    }
 	  }
-	  
+
 	  hid_t memspace = H5Screate_simple (nelem,
 					     dims,
 					     dims);
 	  
 	  // Write data to dataset _________________________
-	  
-#ifdef DEBUGGING_MESSAGES
-	  std::cout << "-- data = [ " 
-		    << data[0] << " , "
-		    << data[1] << " , "
-		    << data[2] << " , "
-		    << data[3] << " .. ]" << std::endl << std::flush;
-#endif	  
 	  
 	  h5error = H5Dwrite (location_p,
 			      datatype,
@@ -722,8 +714,10 @@ namespace DAL {
 			      H5P_DEFAULT,
 			      data);
 	  
-	  /* /\* Release HDF5 object identifier *\/ */
-	  /* H5Sclose (memspace); */
+
+	  // Release memory space __________________________
+	  
+	  HDF5Object::close (H5Sclose (memspace));
 	} else {
 	  std::cerr << "[HDF5Dataset::writeDate] Failed to properly set up Hyperslab!"
 		    << std::endl;

@@ -25,6 +25,7 @@
 #define ATTRIBUTESINTERFACE_H
 
 #include <dalCommon.h>
+#include <HDF5Attribute.h>
 
 namespace DAL { // Namespace DAL -- begin
   

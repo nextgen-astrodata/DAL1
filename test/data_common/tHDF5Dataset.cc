@@ -223,7 +223,7 @@ int test_create (hid_t const &fileID)
 {
   cout << "\n[tHDF5Datatset::test_create]\n" << endl;
 
-  int nofFailedTests (0);
+  int nofFailedTests = 0;
   std::string name;
   std::string groupname ("DATASETS");
 
@@ -403,14 +403,14 @@ int test_array1d (hid_t const &fileID)
 {
   cout << "\n[tHDF5Datatset::test_array1d]\n" << endl;
 
-  int nofFailedTests (0);
-  unsigned int nofSteps;
-  unsigned int nofDatapoints;
+  int nofFailedTests         = 0;
+  unsigned int nofSteps      = 1;
+  unsigned int nofDatapoints = 1;
+  std::string name           = "Array1D";
 
   //________________________________________________________
   // Open/Create dataset to work with
 
-  std::string name ("Array1D");
   std::vector<hsize_t> shape (1,1024);
   std::vector<int> start;
   std::vector<int> stride;
@@ -438,11 +438,11 @@ int test_array1d (hid_t const &fileID)
     nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
     double *data  = new double [nofDatapoints];
     
-    for (unsigned int step(0); step<nofSteps; ++step) {
+    for (unsigned int step=0; step<nofSteps; ++step) {
       // set the starting position
       start[0] = step*shape[0]/nofSteps;
       // assign data values to be written to the dataset
-      for (int n(0); n<block[0]*count[0]; ++n) {
+      for (int n=0; n<block[0]*count[0]; ++n) {
 	data[n] = step+1;
       }
       // summary
@@ -462,7 +462,11 @@ int test_array1d (hid_t const &fileID)
     std::cerr << message << endl;
     ++nofFailedTests;
   }
-  
+
+  /*__________________________________________________________________
+    Test 2: Read back in the data from the previously created dataset.
+   */
+
   cout << "[2] Read data from 1D dataset ..." << endl;
   try {
     start.resize(shape.size());
@@ -474,7 +478,7 @@ int test_array1d (hid_t const &fileID)
     nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
     double *data  = new double [nofDatapoints];
     
-    for (unsigned int step(0); step<nofSteps; ++step) {
+    for (unsigned int step=0; step<nofSteps; ++step) {
       // set the starting position
       start[0] = step*shape[0]/nofSteps;
       // summary
@@ -501,45 +505,6 @@ int test_array1d (hid_t const &fileID)
     ++nofFailedTests;
   }
   
-  cout << "[3] Read data from 1D dataset ..." << endl;
-  try {
-    start.resize(shape.size());
-    count.resize(shape.size());
-    block.resize(shape.size());
-
-    nofSteps      = 8;
-    count[0]      = 2;
-    block[0]      = shape[0]/(count[0]*nofSteps);
-    nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
-    double *data  = new double [nofDatapoints];
-
-    for (unsigned int step(0); step<nofSteps; ++step) {
-      // set the starting position
-      start[0] = step*shape[0]/nofSteps;
-      // summary
-      cout << "\tStart = "  << start
-	   << "\tCount = "  << count
-	   << "\tBlock = "  << block
-	   << "\t# data = " << nofDatapoints
-	   << endl;
-      // Write the data
-      dataset.readData (data,start,block);
-      // Show the data
-      cout << "[";
-      for (int n(0); n<block[0]*count[0]; ++n) {
-	cout << " " << data[n];
-      }
-      cout << " ]" << endl;
-    }
-
-    // release allocated memory
-    delete [] data;
-    
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    ++nofFailedTests;
-  }
-
   return nofFailedTests;
 }
 
@@ -1065,9 +1030,9 @@ int test_extension (std::string const &filename)
 int main (int argc,
           char *argv[])
 {
-  int nofFailedTests (0);
-  bool haveDataset (true);
-  std::string filename ("tHDF5Dataset.h5");
+  int nofFailedTests   = 0;
+  bool haveDataset     = false;
+  std::string filename = "tHDF5Dataset.h5";
 
   //________________________________________________________
   // Process parameters from the command line
@@ -1090,20 +1055,20 @@ int main (int argc,
   /* If file creation was successful, run the tests. */
   if (H5Iis_valid(fileID)) {
     
-    // Test constructors for a HDF5Dataset object
-    nofFailedTests += test_create (fileID);
+    // // Test constructors for a HDF5Dataset object
+    // nofFailedTests += test_create (fileID);
 
-    // Test opening the previously created datasets
-    nofFailedTests += test_open (fileID);
+    // // Test opening the previously created datasets
+    // nofFailedTests += test_open (fileID);
 
     // Test access R/W access to 1-dim data arrays
     nofFailedTests += test_array1d (fileID);
 
-    // Test access R/W access to 2-dim data arrays
-    nofFailedTests += test_array2d (fileID);
+    // // Test access R/W access to 2-dim data arrays
+    // nofFailedTests += test_array2d (fileID);
 
-    // Test the effect of the various Hyperslab parameters
-    nofFailedTests += test_hyperslab (fileID);
+    // // Test the effect of the various Hyperslab parameters
+    // nofFailedTests += test_hyperslab (fileID);
 
     // // Test expansion of extendable datasets
     // nofFailedTests += test_extension (fileID);

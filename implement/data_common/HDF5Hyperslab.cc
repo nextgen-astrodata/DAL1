@@ -46,9 +46,10 @@ namespace DAL { // Namespace DAL -- begin
     \param rank -- Rank of the dataset, i.e. the number of array axes.
   */
   HDF5Hyperslab::HDF5Hyperslab (int const &rank)
-    : itsRank (rank)
   {
     init();
+
+    itsRank = rank;
   }
   
   //_____________________________________________________________________________
@@ -420,7 +421,7 @@ namespace DAL { // Namespace DAL -- begin
   
   void HDF5Hyperslab::init ()
   {
-    itsRank     = -1;
+    itsRank      = -1;
     itsSelection = H5S_SELECT_SET;
     itsStart.clear();
     itsStride.clear();

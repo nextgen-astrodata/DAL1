@@ -304,9 +304,11 @@ namespace DAL { // Namespace DAL -- begin
 				std::vector<std::string> const &name,
 				T const &data)
       {
+	bool status = true;
 	for (unsigned int n=0; n<name.size(); ++n) {
-	  return setAttribute (location, name[n], &data, 1);
+	  status *= setAttribute (location, name[n], &data, 1);
 	}
+	return status;
       }
     
   private:

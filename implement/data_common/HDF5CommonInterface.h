@@ -214,7 +214,9 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Destruction ==========================================================
 
-    virtual ~HDF5CommonInterface () {};
+    virtual ~HDF5CommonInterface () {
+      attributes_p.clear();
+    };
 
     // === Operators ============================================================
 
@@ -470,9 +472,9 @@ namespace DAL { // Namespace DAL -- begin
 	  /* Check if the attribute name is valid */
 	  if (haveAttribute(name)) {
 	    /* Forward the function call to perform the actual write */
-	    return h5set_attribute (location_p,
-				    name,
-				    val);
+	    return HDF5Attribute::setAttribute (location_p,
+						name,
+						val);
 	  } else {
 	    std::cerr << "[HDF5CommonInterface::setAttribute]"
 		      << " Invalid attribute name " << name

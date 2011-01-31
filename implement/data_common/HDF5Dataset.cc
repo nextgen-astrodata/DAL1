@@ -137,8 +137,8 @@ namespace DAL {
   bool HDF5Dataset::setShape (std::vector<hsize_t> const &shape,
 			      std::vector<hsize_t> const &chunksize)
   {
-    bool status  = true;
-    size_t rank  = shape.size();
+    bool status = true;
+    size_t rank = shape.size();
 
     // Store the shape of the dataset ______________________
 
@@ -189,6 +189,10 @@ namespace DAL {
   */
   void HDF5Dataset::init ()
   {
+    /* Variables defined by base class */
+    location_p = 0;
+    attributes_p.clear();
+    /* Variables defined by this class */
     itsName        = "Dataset";
     location_p     = -1;
     itsDataspace   = -1;
@@ -217,19 +221,36 @@ namespace DAL {
 			  std::string const &name,
 			  bool const &create)
   {
-    bool status (true);
-    
+    bool status  = true;
+    htri_t h5err = 0;
+
     /* Set up list of attributes */
     setAttributes();
     
     if (H5Iis_valid(location)) {
-      htri_t errExists = H5Lexists (location,
-				    name.c_str(),
-				    H5P_DEFAULT);
-      if (errExists>0) {
+      h5err = H5Lexists (location,
+			 name.c_str(),
+			 H5P_DEFAULT);
+      if (h5err>0) {
+	/* Open existing dataset */
 	location_p = H5Dopen (location,
 			      name.c_str(),
 			      H5P_DEFAULT);
+	/* Check if opening of the dataset was successful */
+	if (H5Iis_valid(location_p)) {
+	  // Assign internal parameters
+	  itsName      = name;
+	  itsDataspace = H5Dget_space (location_p);
+	  itsDatatype  = H5Dget_type (location_p);
+	  // Get the shape of the dataset array
+	  DAL::h5get_dataspace_shape(location_p, itsShape);
+	  // Retrieve the size of chunks for the raw data
+	  status = getChunksize ();
+	} else {
+	  std::cerr << "[HDF5Dataset::open] Error opening dataset "
+		    << name << std::endl;
+	  status = false;
+	}
       } else {
 	std::cerr << "[HDF5Dataset::open]"
 		  << " Object " << name << " not found at provided location!"
@@ -241,22 +262,6 @@ namespace DAL {
 		<< " Identifier does not point to valid object!"
 		<< std::endl;
       return false;
-    }
-    
-    /* Check if opening of the dataset was successful */
-    if (H5Iis_valid(location_p)) {
-      // Assign internal parameters
-      itsName      = name;
-      itsDataspace = H5Dget_space (location_p);
-      itsDatatype  = H5Dget_type (location_p);
-      // Get the shape of the dataset array
-      DAL::h5get_dataspace_shape(location_p, itsShape);
-      // Retrieve the size of chunks for the raw data
-      status = getChunksize ();
-    } else {
-      std::cerr << "[HDF5Dataset::open] Error opening dataset "
-		<< name << std::endl;
-      status = false;
     }
     
     //______________________________________________________
@@ -506,40 +511,38 @@ namespace DAL {
   bool HDF5Dataset::setHyperslab (HDF5Hyperslab &slab,
 				  bool const &resizeDataset)
   {
-    bool status (true);
+    bool status = true;
 
-    if (H5Iis_valid(location_p) && H5Iis_valid(itsDataspace)) {
-      
-      /* Assign the Hyperslab selection */
-      status = slab.setHyperslab (location_p,
-				  itsDataspace,
-				  resizeDataset);
-#ifdef DEBUGGING_MESSAGES
-      {
-	std::vector<hsize_t> posStart;
-	std::vector<hsize_t> posEnd;
-	HDF5Hyperslab::getBoundingBox (itsDataspace, posStart, posEnd);
-	std::cout << "-- Bounding box = " << posStart << " .. " << posEnd << std::endl;
+    if (H5Iis_valid(location_p)) {
+      if (H5Iis_valid(itsDataspace)) {
+	
+	/*____________________________________________________________
+	  Assign the Hyperslab selection
+	*/
+	status = slab.setHyperslab (location_p,
+				    itsDataspace,
+				    resizeDataset);
+	/* Book-keeping: store the assigned hyperslab for later inspection. */
+	
+	switch (slab.selection()) {
+	case H5S_SELECT_SET:
+	  itsHyperslab.empty();
+	  itsHyperslab.push_back(slab);
+	  break;
+	default:
+	  itsHyperslab.push_back(slab);
+	  break;
+	};
+	
+	/* As the dataset might have been resized, the "shape" parameter needs to be
+	   updated to the current value.
+	*/
+	DAL::h5get_dataspace_shape(location_p, itsShape);
+      } else {
+	std::cerr << "[HDF5Dataset::setHyperslab]"
+		  << " Unable to select hyperslab - invalid HDF5 dataspace!"
+		  << std::endl;
       }
-#endif
-      
-      /* Book-keeping: store the assigned hyperslab for later inspection. */
-      
-      switch (slab.selection()) {
-      case H5S_SELECT_SET:
-	itsHyperslab.empty();
-	itsHyperslab.push_back(slab);
-	break;
-      default:
-	itsHyperslab.push_back(slab);
-	break;
-      };
-      
-      /* As the dataset might have been resized, the "shape" parameter needs to be
-	 updated to the current value.
-      */
-      DAL::h5get_dataspace_shape(location_p, itsShape);
-      
     } else {
       std::cerr << "[HDF5Dataset::setHyperslab]"
 		<< " Unable to select hyperslab - invalid HDF5 object!"
@@ -548,7 +551,7 @@ namespace DAL {
     
     return status;
   }
-
+  
   //_____________________________________________________________________________
   //                                                                 setHyperslab
   
@@ -604,6 +607,12 @@ namespace DAL {
   
   /// @cond TEMPLATE_SPECIALIZATIONS
   
+  template <> bool HDF5Dataset::readData (bool data[],
+					  HDF5Hyperslab &slab)
+  {
+    return readData (data, slab, H5T_NATIVE_HBOOL);
+  }
+  
   template <> bool HDF5Dataset::readData (int data[],
 					  HDF5Hyperslab &slab)
   {
@@ -626,6 +635,12 @@ namespace DAL {
 					  HDF5Hyperslab &slab)
   {
     return readData (data, slab, H5T_NATIVE_LONG);
+  }
+  
+  template <> bool HDF5Dataset::readData (long long data[],
+					  HDF5Hyperslab &slab)
+  {
+    return readData (data, slab, H5T_NATIVE_LLONG);
   }
   
   template <> bool HDF5Dataset::readData (float data[],

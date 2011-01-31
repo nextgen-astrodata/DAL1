@@ -793,7 +793,7 @@ namespace DAL { // Namespace DAL -- begin
    */
   herr_t HDF5Object::close (hid_t const &location)
   {
-    herr_t status (-1);
+    herr_t status = -1;
 
     if (H5Iis_valid(location)) {
       H5I_type_t otype = objectType (location);

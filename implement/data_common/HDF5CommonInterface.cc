@@ -35,7 +35,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     if (hasValidID()) {
       // Close the object
-      H5Oclose (location_p);
+      HDF5Object::close(location_p);
       // Decrement reference count for the object
       if (H5Iis_valid(location_p)) {
 	H5Idec_ref(location_p);
@@ -231,15 +231,7 @@ namespace DAL { // Namespace DAL -- begin
   
   std::string HDF5CommonInterface::objectName ()
   {
-    std::string name;
-
-    if (H5Iis_valid(location_p)) {
-      h5get_name (name,location_p);
-    } else {
-      name = "";
-    }
-
-    return name;
+    return HDF5Object::objectName (location_p);
   }
   
   //_____________________________________________________________________________

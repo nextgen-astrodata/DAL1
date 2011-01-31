@@ -169,11 +169,11 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
     
-    DAL::h5set_attribute( groupID, "PROJECT_ID",       itsProjectID );
-    DAL::h5set_attribute( groupID, "PROJECT_TITLE",    itsProjectTitle );
-    DAL::h5set_attribute( groupID, "PROJECT_PI",       itsProjectPI );
-    DAL::h5set_attribute( groupID, "PROJECT_CO_I",     itsProjectCoI );
-    DAL::h5set_attribute( groupID, "PROJECT_CONTACT",  itsProjectContact );
+    HDF5Attribute::setAttribute (groupID, "PROJECT_ID",      itsProjectID );
+    HDF5Attribute::setAttribute (groupID, "PROJECT_TITLE",   itsProjectTitle );
+    HDF5Attribute::setAttribute (groupID, "PROJECT_PI",      itsProjectPI );
+    HDF5Attribute::setAttribute (groupID, "PROJECT_CO_I",    itsProjectCoI );
+    HDF5Attribute::setAttribute (groupID, "PROJECT_CONTACT", itsProjectContact );
     
     return status;
   }
