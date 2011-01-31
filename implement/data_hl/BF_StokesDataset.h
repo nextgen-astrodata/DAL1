@@ -28,6 +28,7 @@
 #include <iostream>
 #include <string>
 
+#include <HDF5Attribute.h>
 #include <HDF5Dataset.h>
 #include <Stokes.h>
 

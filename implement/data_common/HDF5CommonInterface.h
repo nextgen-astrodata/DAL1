@@ -35,6 +35,7 @@
 
 // DAL header files
 #include <dalCommon.h>
+#include <HDF5Attribute.h>
 #include <CommonAttributes.h>
 
 namespace DAL { // Namespace DAL -- begin
@@ -434,9 +435,9 @@ namespace DAL { // Namespace DAL -- begin
 	  /* Check if the attribute name is valid */
 	  if (haveAttribute(name)) {
 	    /* Forward the function call to perform the actual write */
-	    return h5set_attribute (location_p,
-				    name,
-				    val);
+	    return HDF5Attribute::setAttribute (location_p,
+						name,
+						val);
 	  } else {
 	    std::cerr << "[HDF5CommonInterface::setAttribute]"
 		      << " Invalid attribute name " << name

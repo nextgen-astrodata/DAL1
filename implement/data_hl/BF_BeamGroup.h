@@ -30,6 +30,7 @@
 #include <map>
 
 // DAL header files
+#include <HDF5Attribute.h>
 #include <HDF5CommonInterface.h>
 #include <CoordinatesGroup.h>
 #include <BF_ProcessingHistory.h>

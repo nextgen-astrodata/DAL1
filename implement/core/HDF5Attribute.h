@@ -161,52 +161,58 @@ namespace DAL { // Namespace DAL -- begin
 	herr_t h5err      = 0;
 
 	/*____________________________________________________________
+	  Basic checks for reference location and attribute name.
+	*/
+	
+	if (H5Iis_valid(location)) {
+	  h5err = H5Aexists (location,
+			     name.c_str());
+	} else {
+	  std::cerr << "[HDF5Attribute::setAttribute]"
+		    << " No valid HDF5 object found at reference location!"
+		    << std::endl;
+	  return false;
+	}
+	
+	/*____________________________________________________________
 	  Check if attribute 'name' already exits at the given
 	  'location'; if this is not the case, we need to create the 
 	  attribute.
 	*/
-
-	switch (HDF5Object::objectType(location,name)) {
-	case H5I_ATTR:
+	
+	if (h5err>0) {
 	  attribute = H5Aopen (location,
 			       name.c_str(),
 			       H5P_DEFAULT);
-	  break;
-	case H5I_BADID:
-	  {
-	    /* Create dataspace for the attribute */
-	    dataspace = H5Screate_simple (1, dims, maxdims );
-	    if (H5Iis_valid(dataspace)) {
-	      /* Create the attribute itself ... */
-	      attribute = H5Acreate (location,
-				     name.c_str(),
-				     datatype,
-				     dataspace,
-				     0,
-				     0);
-	      /* ... and check if creation was successful */
-	      if (H5Iis_valid(attribute)) {
-		status = true;
-	      } else {
-		std::cerr << "[HDF5Attribute::setAttribute]"
-			  << " H5Acreate() failed to create attribute "
-			  << name
-			  << std::endl;
-		status = false;
-	      }
+	} else {
+	  /* Create dataspace for the attribute */
+	  dataspace = H5Screate_simple (1, dims, maxdims );
+	  if (H5Iis_valid(dataspace)) {
+	    /* Create the attribute itself ... */
+	    attribute = H5Acreate (location,
+				   name.c_str(),
+				   datatype,
+				   dataspace,
+				   0,
+				   0);
+	    /* ... and check if creation was successful */
+	    if (H5Iis_valid(attribute)) {
+	      status = true;
 	    } else {
 	      std::cerr << "[HDF5Attribute::setAttribute]"
-			<< " H5Screate_simple() failed to create dataspace!"
+			<< " H5Acreate() failed to create attribute "
+			<< name
 			<< std::endl;
 	      status = false;
 	    }
+	  } else {
+	    std::cerr << "[HDF5Attribute::setAttribute]"
+		      << " H5Screate_simple() failed to create dataspace!"
+		      << std::endl;
+	    status = false;
 	  }
-	  break;
-	default:
-	  status = false;
-	  break;
-	};
-
+	}
+	
 	/*____________________________________________________________
 	  H5Awrite() returns a non-negative value if successful;
 	  otherwise returns a negative value. 
@@ -283,6 +289,24 @@ namespace DAL { // Namespace DAL -- begin
 				T const &data)
       {
 	return setAttribute (location, name, &data, 1);
+      }
+    
+    /*!
+      \brief Set multiple attributes to the same value.
+      \param location -- HDF5 identifier for the object to which the attribute
+             is attached.
+      \param name    -- Names of the attribute.
+      \param data    -- Data value(s) to be assigned to the attribute
+      \return status -- Status of the operation
+    */
+    template <class T>
+      static bool setAttribute (hid_t const &location,
+				std::vector<std::string> const &name,
+				T const &data)
+      {
+	for (unsigned int n=0; n<name.size(); ++n) {
+	  return setAttribute (location, name[n], &data, 1);
+	}
       }
     
   private:

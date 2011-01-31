@@ -116,6 +116,12 @@ int test_static_functions (hid_t const &location)
     ++nofFailedTests;
   }
 
+  cout << "[4] Update values of attributes ..." << endl;
+  try {
+  } catch (std::string message) {
+    ++nofFailedTests;
+  }
+
   return nofFailedTests;
 }
   
@@ -156,7 +162,7 @@ int test_constructors (hid_t const &location)
   \return nofFailedTests -- The number of failed tests encountered within and
           identified by this test program.
 */
-int main ()
+int main (int argc, char *argv[])
 {
   int nofFailedTests   = 0;
   std::string filename = "tHDF5Attribute.h5";

@@ -198,32 +198,36 @@ namespace DAL { // Namespace DAL -- begin
 	if (location_p > 0) {
 	  std::string grouptype ("Beam");
 	  std::string undefined ("UNDEFINED");
+	  double dzero (0.0);
 	  bool ok (false);
 	  std::vector<std::string> stations (1,undefined);
 	  std::vector<std::string> stokes (1,undefined);
+	  std::vector<std::string> attributesDouble;
+	  //
+	  attributesDouble.push_back("POINT_RA");
+	  attributesDouble.push_back("POINT_DEC");
+	  attributesDouble.push_back("POSITION_OFFSET_RA");
+	  attributesDouble.push_back("POSITION_OFFSET_DEC");
+	  attributesDouble.push_back("PB_DIAMETER_RA");
+	  attributesDouble.push_back("PB_DIAMETER_DEC");
+	  attributesDouble.push_back("PB_CENTER_FREQUENCY");
 	  // write the attributes
-	  h5set_attribute (location_p,"GROUPTYPE",                grouptype   );
-	  h5set_attribute (location_p,"TARGET",                   undefined   );
-	  h5set_attribute (location_p,"NOF_STATIONS",             int(0)      );
-	  h5set_attribute (location_p,"STATIONS_LIST",            stations    );
-	  h5set_attribute (location_p,"POINT_RA",                 double(0.0) );
-	  h5set_attribute (location_p,"POINT_DEC",                double(0.0) );
-	  h5set_attribute (location_p,"POSITION_OFFSET_RA",       double(0.0) );
-	  h5set_attribute (location_p,"POSITION_OFFSET_DEC",      double(0.0) );
-	  h5set_attribute (location_p,"PB_DIAMETER_RA",           double(0.0) );
-	  h5set_attribute (location_p,"PB_DIAMETER_DEC",          double(0.0) );
-	  h5set_attribute (location_p,"PB_CENTER_FREQUENCY",      double(0.0) );
-	  h5set_attribute (location_p,"PB_CENTER_FREQUENCY_UNIT", undefined   );
-	  h5set_attribute (location_p,"FOLDED_DATA",              ok          );
-	  h5set_attribute (location_p,"FOLD_PERIOD",              float(0.0)  );
-	  h5set_attribute (location_p,"FOLD_PERIOD_UNIT",         undefined   );
-	  h5set_attribute (location_p,"DEDISPERSION",             undefined   );
-	  h5set_attribute (location_p,"DISPERSION_MEASURE",       float(0.0)  );
- 	  h5set_attribute (location_p,"DISPERSION_MEASURE_UNIT",  undefined   );
- 	  h5set_attribute (location_p,"BARYCENTER",               ok          );
- 	  h5set_attribute (location_p,"STOKES_COMPONENTS",        stokes      );
- 	  h5set_attribute (location_p,"COMPLEX_VOLTAGE",          ok          );
-	  h5set_attribute (location_p,"SIGNAL_SUM",               undefined   );
+	  HDF5Attribute::setAttribute (location_p,"GROUPTYPE",                grouptype   );
+	  HDF5Attribute::setAttribute (location_p,"TARGET",                   undefined   );
+	  HDF5Attribute::setAttribute (location_p,"NOF_STATIONS",             int(0)      );
+	  HDF5Attribute::setAttribute (location_p,"STATIONS_LIST",            stations    );
+	  HDF5Attribute::setAttribute (location_p, attributesDouble, dzero );
+	  HDF5Attribute::setAttribute (location_p,"PB_CENTER_FREQUENCY_UNIT", undefined   );
+	  HDF5Attribute::setAttribute (location_p,"FOLDED_DATA",              ok          );
+	  HDF5Attribute::setAttribute (location_p,"FOLD_PERIOD",              float(0.0)  );
+	  HDF5Attribute::setAttribute (location_p,"FOLD_PERIOD_UNIT",         undefined   );
+	  HDF5Attribute::setAttribute (location_p,"DEDISPERSION",             undefined   );
+	  HDF5Attribute::setAttribute (location_p,"DISPERSION_MEASURE",       float(0.0)  );
+ 	  HDF5Attribute::setAttribute (location_p,"DISPERSION_MEASURE_UNIT",  undefined   );
+ 	  HDF5Attribute::setAttribute (location_p,"BARYCENTER",               ok          );
+ 	  HDF5Attribute::setAttribute (location_p,"STOKES_COMPONENTS",        stokes      );
+ 	  HDF5Attribute::setAttribute (location_p,"COMPLEX_VOLTAGE",          ok          );
+	  HDF5Attribute::setAttribute (location_p,"SIGNAL_SUM",               undefined   );
 	} else {
 	  std::cerr << "[BF_BeamGroup::open] Failed to create group "
 		    << name

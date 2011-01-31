@@ -56,6 +56,7 @@
 #include <string>
 
 #include <dalCommon.h>
+#include <HDF5Attribute.h>
 #include <HDF5Dataset.h>
 
 using std::cerr;
