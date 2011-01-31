@@ -209,6 +209,217 @@ bool set_attributes (DAL::HDF5Dataset &data,
 // ==============================================================================
 
 //_______________________________________________________________________________
+//                                                              test_constructors
+
+/*!
+  \brief Test the various constructors for an HDF5Dataset object
+
+  \param fileID -- Object identifier for the HDF5 file to work with
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_constructors (hid_t const &fileID)
+{
+  cout << "\n[tHDF5Dataset::test_constructors]\n" << endl;
+  
+  int nofFailedTests = 0;
+  bool status        = true;
+  hsize_t sidelength = 100000;
+  unsigned int rank  = 2;
+  std::string name;
+
+  /*_______________________________________________________________________
+    Test for the default constructor to check if all internal parameters
+    are being initialized.
+  */
+
+  cout << "[0] Testing HDF5Dataset() ..." << endl;
+  try {
+    DAL::HDF5Dataset dataset;
+    dataset.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  /*_______________________________________________________________________
+    Simplest constructor for HDF5Dataset will only open existing dataset,
+    as parameters for the creation of a new one are not available.
+  */
+
+  cout << "[1] Testing HDF5Dataset(hid_t, string) ..." << endl;
+  try {
+    name = "Dataset.001";
+    //
+    DAL::HDF5Dataset dataset (fileID,
+			      name);
+    dataset.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  /*_______________________________________________________________________
+    If unset, the chunking size will be initialized with the overall shape
+    of the dataset to be created; if however the resulting chunking size
+    exceeds limit for chunks to be buffered, the chunking dimensions are
+    adjusted automatically.
+  */
+
+  cout << "[2] Testing HDF5Dataset(hid_t, string, vector<hsize_t>) ..." << endl;
+  try {
+    name = "Dataset.002";
+    //
+    std::vector<hsize_t> shape (rank,sidelength);
+    //
+    DAL::HDF5Dataset dataset (fileID,
+			      name,
+			      shape);
+    dataset.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  /*_______________________________________________________________________
+    Create new dataset, explicitely specifying the chunking dimensions.
+  */
+
+  cout << "[3] Testing HDF5Dataset(hid_t, string, vector<hsize_t>, vector<hsize_t>) ..."
+       << endl;
+  try {
+    name = "Dataset.003";
+    //
+    std::vector<hsize_t> shape (rank,sidelength);
+    std::vector<hsize_t> chunk (rank,1000);
+    //
+    DAL::HDF5Dataset dataset (fileID,
+			      name,
+			      shape,
+			      chunk);
+    dataset.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  /*_______________________________________________________________________
+    Specify datatype of the individual array elements
+  */
+
+  cout << "[4] Testing HDF5Dataset(hid_t, string, vector<hsize_t>, hid_t) ..."
+       << endl;
+  try {
+    name = "Dataset.004";
+    //
+    std::vector<hsize_t> shape (rank,sidelength);
+    hid_t datatype = H5T_NATIVE_INT;
+    //
+    DAL::HDF5Dataset dataset (fileID,
+			      name,
+			      shape,
+			      datatype);
+    dataset.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  /*_______________________________________________________________________
+    Use the simple version of the HDF5Dataset::open method to a) access a
+    non-existing and b) an existing dataset within the file.
+  */
+
+  cout << "[5] Testing HDF5Dataset::open(hid_t, string)" << endl;
+  try {
+    DAL::HDF5Dataset dataset2;
+    DAL::HDF5Dataset dataset5;
+
+    // try to open non-existing dataset
+    name   = "Dataset.005";
+    status = dataset5.open (fileID, name);
+
+    if (status) {
+      cout << "--> [FAIL] Successfully opened dataset " << name << endl;
+      nofFailedTests++;
+    } else {
+      cout << "--> [OK] Faild to open dataset " << name << " - expected." << endl;
+    }
+    
+    // try to open existing dataset
+    name  = "Dataset.002";
+    status = dataset2.open (fileID, name);
+    
+    if (status) {
+      cout << "--> [OK] Successfully opened dataset " << name << endl;
+      dataset2.summary();
+    } else {
+      cout << "--> [FAIL] Faild to open dataset " << name << endl;
+      nofFailedTests++;
+    }
+    
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  /*_______________________________________________________________________
+    Use the simple version of the HDF5Dataset::open method to a) access a
+    non-existing and b) an existing dataset within the file.
+  */
+
+  cout << "[6] Testing HDF5Dataset::open(hid_t, string, vector<hsize_t>)" << endl;
+  try {
+    std::vector<hsize_t> shape (rank, sidelength);
+    DAL::HDF5Dataset dataset;
+
+    name   = "Dataset.006";
+    status = dataset.open (fileID, name, shape);
+
+    if (status) {
+      cout << "--> [OK] Successfully opened dataset " << name << endl;
+      dataset.summary();
+    } else {
+      cout << "--> [FAIL] Faild to open dataset " << name << endl;
+      nofFailedTests++;
+    }
+
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  /*_______________________________________________________________________
+    Explicitely specify chunking dimensions for dataset.
+  */
+
+  cout << "[7] Testing HDF5Dataset::open(hid_t, string, vector<hsize_t>, vector<hsize_t>)" << endl;
+  try {
+    std::vector<hsize_t> shape (rank, sidelength);
+    std::vector<hsize_t> chunk (rank, 1000);
+    DAL::HDF5Dataset dataset;
+
+    name   = "Dataset.007";
+    status = dataset.open (fileID, name, shape, chunk);
+
+    if (status) {
+      cout << "--> [OK] uccessfully opened dataset " << name << endl;
+      dataset.summary();
+    } else {
+      cout << "--> [FAIL] Failed to open dataset " << name << endl;
+      nofFailedTests++;
+    }
+
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                                    test_create
 
 /*!
@@ -1055,15 +1266,18 @@ int main (int argc,
   /* If file creation was successful, run the tests. */
   if (H5Iis_valid(fileID)) {
     
-    // // Test constructors for a HDF5Dataset object
-    // nofFailedTests += test_create (fileID);
-
-    // // Test opening the previously created datasets
-    // nofFailedTests += test_open (fileID);
-
-    // Test access R/W access to 1-dim data arrays
-    nofFailedTests += test_array1d (fileID);
-
+    // Test the various constructors for an HDF5Dataset object
+    nofFailedTests += test_constructors (fileID);
+    
+    // Test constructors for a HDF5Dataset object
+    nofFailedTests += test_create (fileID);
+    
+    // Test opening the previously created datasets
+    nofFailedTests += test_open (fileID);
+    
+    // // Test access R/W access to 1-dim data arrays
+    // nofFailedTests += test_array1d (fileID);
+    
     // // Test access R/W access to 2-dim data arrays
     // nofFailedTests += test_array2d (fileID);
 
