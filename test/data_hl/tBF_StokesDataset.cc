@@ -117,8 +117,6 @@ int test_HDF5Dataset (hid_t const &fileID)
     nofFailedTests++;
   }
 
-  return 0;
-
   /*_______________________________________________________________________
     If unset, the chunking size will be initialized with the overall shape
     of the dataset to be created; if however the resulting chunking size
