@@ -531,7 +531,8 @@ namespace DAL {
     return HDF5Attribute::setAttribute (h5fh_p,
 					attrname,
 					data,
-					size);
+					size,
+					H5T_NATIVE_SHORT);
   }
   
   //_____________________________________________________________________________
@@ -551,7 +552,8 @@ namespace DAL {
     return HDF5Attribute::setAttribute (h5fh_p,
 					attrname,
 					data,
-					size);
+					size,
+					H5T_NATIVE_INT);
   }
   
   //_____________________________________________________________________________

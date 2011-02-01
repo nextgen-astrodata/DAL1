@@ -432,26 +432,9 @@ namespace DAL { // Namespace DAL -- begin
       inline bool setAttribute (std::string const &name,
 				T const &val)
       {
-	/* Check if connected to a file */
-	if (location_p > 0) {
-	  /* Check if the attribute name is valid */
-	  if (haveAttribute(name)) {
-	    /* Forward the function call to perform the actual write */
-	    return HDF5Attribute::setAttribute (location_p,
-						name,
-						val);
-	  } else {
-	    std::cerr << "[HDF5CommonInterface::setAttribute]"
-		      << " Invalid attribute name " << name
-		      << std::endl;
-	    return false;
-	  }
-	} else {
-	  std::cerr << "[HDF5CommonInterface::setAttribute]"
-		    << " No connection to dataset or file!"
-		    << std::endl;
-	  return false;
-	}
+	return HDF5Attribute::setAttribute (location_p,
+					    name,
+					    val);
       }
     
     /*!
@@ -467,26 +450,10 @@ namespace DAL { // Namespace DAL -- begin
       inline bool setAttribute (std::string const &name,
 				std::vector<T> const &val)
       {
-	/* Check if connected to a file */
-	if (location_p > 0) {
-	  /* Check if the attribute name is valid */
-	  if (haveAttribute(name)) {
-	    /* Forward the function call to perform the actual write */
-	    return HDF5Attribute::setAttribute (location_p,
-						name,
-						val);
-	  } else {
-	    std::cerr << "[HDF5CommonInterface::setAttribute]"
-		      << " Invalid attribute name " << name
-		      << std::endl;
-	    return false;
-	  }
-	} else {
-	  std::cerr << "[HDF5CommonInterface::setAttribute]"
-		    << " No connection to dataset or file!"
-		    << std::endl;
-	  return false;
-	}
+	return HDF5Attribute::setAttribute (location_p,
+					    name,
+					    &val[0],
+					    val.size());
       }
 
 #ifdef HAVE_CASA
@@ -503,26 +470,9 @@ namespace DAL { // Namespace DAL -- begin
       inline bool setAttribute (std::string const &name,
 				casa::Vector<T> const &val)
       {
-	/* Check if connected to a file */
-	if (location_p > 0) {
-	  /* Check if the attribute name is valid */
-	  if (haveAttribute(name)) {
-	    /* Forward the function call to perform the actual write */
-	    return h5set_attribute (location_p,
-				    name,
-				    val);
-	  } else {
-	    std::cerr << "[HDF5CommonInterface::setAttribute]"
-		      << " Invalid attribute name " << name
-		      << std::endl;
-	    return false;
-	  }
-	} else {
-	  std::cerr << "[HDF5CommonInterface::setAttribute]"
-		    << " No connection to dataset or file!"
-		    << std::endl;
-	  return false;
-	}
+	return HDF5Attribute::setAttribute(location_p,
+					   name,
+					   val);
       }
 #endif
 

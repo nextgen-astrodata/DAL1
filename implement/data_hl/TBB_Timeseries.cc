@@ -277,7 +277,7 @@ namespace DAL {  // Namespace DAL -- begin
 	CommonAttributes attr;
 	attr.h5write(location_p);
 	//
-	h5set_attribute (location_p, "FILENAME", name );
+	HDF5Attribute::setAttribute (location_p, "FILENAME", name );
       } else {
 	std::cerr << "[TBB_Timeseries::open] Failed to open file "
 		  << name

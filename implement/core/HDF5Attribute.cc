@@ -154,6 +154,8 @@ namespace DAL { // Namespace DAL -- begin
   //  Static methods
   //
   // ============================================================================
+
+  /// @cond TEMPLATE_SPECIALIZATIONS
   
   //_____________________________________________________________________________
   //                                                            setAttribute(int)
@@ -165,11 +167,7 @@ namespace DAL { // Namespace DAL -- begin
 				    int const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location,
-			 name,
-			 data,
-			 size,
-			 H5T_NATIVE_INT);
+    return setAttribute (location, name, data, size, H5T_NATIVE_INT);
   }
 
   //_____________________________________________________________________________
@@ -182,11 +180,7 @@ namespace DAL { // Namespace DAL -- begin
 				    bool const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location,
-			 name,
-			 data,
-			 size,
-			 H5T_NATIVE_HBOOL);
+    return setAttribute (location, name, data, size, H5T_NATIVE_HBOOL);
   }
 
   //_____________________________________________________________________________
@@ -396,13 +390,14 @@ namespace DAL { // Namespace DAL -- begin
 	status = false;
       }
     }
-    
+
     /*____________________________________________________________
       H5Awrite() returns a non-negative value if successful;
       otherwise returns a negative value. 
     */
     
     if (status) {
+      datatype = H5Aget_type(attribute);
       /* Write the data to the attribute ... */
       h5err = H5Awrite (attribute, datatype, data);
       /* ... and check the return value of the operation */
@@ -423,5 +418,7 @@ namespace DAL { // Namespace DAL -- begin
     
     return status;
   }
+  
+  /// @endcond
   
 } // Namespace DAL -- end

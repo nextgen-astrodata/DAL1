@@ -263,11 +263,11 @@ namespace DAL { // Namespace DAL -- begin
 	/* Write the additional attributes attached to the root group */
 	std::string undefined ("UNDEFINED");
 	//
-	h5set_attribute (location_p,"IMGROUPS",    bool(false) );
-	h5set_attribute (location_p,"NOF_IMAGES",  int(0)      );
-	h5set_attribute (location_p,"TARGET_RA",   float(0.0)  );
-	h5set_attribute (location_p,"TARGET_DEC",  float(0.0)  );
-	h5set_attribute (location_p,"INPUT_FILE",  undefined   );
+	HDF5Attribute::setAttribute (location_p,"IMGROUPS",    bool(false) );
+	HDF5Attribute::setAttribute (location_p,"NOF_IMAGES",  int(0)      );
+	HDF5Attribute::setAttribute (location_p,"TARGET_RA",   float(0.0)  );
+	HDF5Attribute::setAttribute (location_p,"TARGET_DEC",  float(0.0)  );
+	HDF5Attribute::setAttribute (location_p,"INPUT_FILE",  undefined   );
 	/* Read back in the common attributes after storing default values */
 	commonAttributes_p.h5read(location_p);
       } else {

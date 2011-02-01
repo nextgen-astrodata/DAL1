@@ -62,6 +62,7 @@
 using std::cerr;
 using std::cout;
 using std::endl;
+using DAL::HDF5Attribute;
 using DAL::HDF5Dataset;
 using DAL::HDF5Hyperslab;
 
@@ -187,17 +188,13 @@ bool find_dataset (std::string const &filename,
 bool set_attributes (DAL::HDF5Dataset &data,
 		     std::vector<hsize_t> const &shape)
 {
-  bool status = true;
-
-  /* Register the attributes */
-  status *= data.addAttribute ("NAME");
-  status *= data.addAttribute ("RANK");
-  status *= data.addAttribute ("SHAPE");
+  bool status    = true;
+  hid_t location = data.objectID();
 
   /* Write values of the attributes */
-  data.setAttribute ("NAME",  data.name()       );
-  data.setAttribute ("RANK",  int(shape.size()) );
-  data.setAttribute ("SHAPE", shape             );
+  HDF5Attribute::setAttribute (location, "NAME",  data.name()       );
+  HDF5Attribute::setAttribute (location, "RANK",  int(shape.size()) );
+  HDF5Attribute::setAttribute (location, "SHAPE", shape             );
   
   return status;
 }
@@ -961,10 +958,6 @@ int test_hyperslab (hid_t const &fileID)
     DAL::HDF5Dataset dataset (groupID, "test1", shape);
     set_attributes (dataset, shape);
 
-    dataset.addAttributes (attributes);
-    dataset.setAttribute ("start",start);
-    dataset.setAttribute ("block",block);
-
     dataset.writeData (data,start,block);
     
     delete [] data;
@@ -1001,12 +994,6 @@ int test_hyperslab (hid_t const &fileID)
     
     HDF5Dataset dataset (groupID, "test2", shape);
     HDF5Hyperslab slab (start,stride,count,block);
-
-    dataset.addAttributes (attributes);
-    dataset.setAttribute ("start",start);
-    dataset.setAttribute ("stride",stride);
-    dataset.setAttribute ("count",count);
-    dataset.setAttribute ("block",block);
 
     dataset.writeData (data,slab);
 

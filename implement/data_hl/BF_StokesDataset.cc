@@ -260,21 +260,21 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- Stokes component       = " << stokesComponent  << std::endl;
     os << "-- nof. channels          = " << nofChannels()    << std::endl;
     os << "-- Dataset name           = " << itsName          << std::endl;
-    os << "-- Dataset ID             = " << location_p       << std::endl;
+    os << "-- Dataset ID             = " << itsLocation       << std::endl;
     os << "-- Dataspace ID           = " << dataspaceID()    << std::endl;
     os << "-- Datatype ID            = " << datatypeID()     << std::endl;
     os << "-- Dataset rank           = " << rank()           << std::endl;
     os << "-- Dataset shape          = " << shape()          << std::endl;
     
-    if (location_p) {
+    if (itsLocation) {
       os << "-- Layout of the raw data = " << itsLayout           << std::endl;
       os << "-- Chunk size             = " << itsChunking         << std::endl;
       os << "-- nof. datapoints        = " << nofDatapoints()     << std::endl;
       os << "-- nof. active hyperslabs = " << itsHyperslab.size() << std::endl;
     }
 
-    os << "-- nof. attributes        = " << attributes_p.size() << std::endl;
-    os << "-- Attributes             = " << attributes_p        << std::endl;
+    os << "-- nof. attributes        = " << itsAttributes.size() << std::endl;
+    os << "-- Attributes             = " << itsAttributes        << std::endl;
   }
   
   //_____________________________________________________________________________
@@ -291,20 +291,20 @@ namespace DAL { // Namespace DAL -- begin
     setAttributes();
     
     /* Assign Stokes component parameter based on STOKES_COMPONENT attribute. */
-    if (H5Iis_valid(location_p)) {
+    if (H5Iis_valid(itsLocation)) {
       std::string stokesComponent;
       unsigned int nofSubbands;
       unsigned int nofChannels;
       
-      if ( h5get_attribute (location_p, "STOKES_COMPONENT", stokesComponent) ) {
+      if ( h5get_attribute (itsLocation, "STOKES_COMPONENT", stokesComponent) ) {
 	itsStokesComponent.setType(stokesComponent);
       }
 
-      if ( h5get_attribute (location_p, "NOF_SUBBANDS", nofSubbands) ) {
+      if ( h5get_attribute (itsLocation, "NOF_SUBBANDS", nofSubbands) ) {
 	/* Store the number of sub-bands */
 	itsNofChannels.resize(nofSubbands);
 	/* Reyrieve number of channels per sub-band */
-	if ( h5get_attribute (location_p, "NOF_CHANNELS", nofChannels) ) {
+	if ( h5get_attribute (itsLocation, "NOF_CHANNELS", nofChannels) ) {
 	  itsNofChannels = std::vector<unsigned int>(nofSubbands,nofChannels);
 	}
       }
@@ -423,7 +423,7 @@ namespace DAL { // Namespace DAL -- begin
     status = HDF5Dataset::open (location, itsName, shape);
 
     /* Initialize attributes attached to the dataset */
-    if (H5Iis_valid(location_p)) {
+    if (H5Iis_valid(itsLocation)) {
       std::string grouptype       = "Data";
       std::string datatype        = "float";
       std::string stokesComponent = itsStokesComponent.name();
@@ -438,12 +438,12 @@ namespace DAL { // Namespace DAL -- begin
       std::cout << "-- NOF_CHANNELS = " << channels  << std::endl;
 #endif
       
-      HDF5Attribute::setAttribute (location_p, "GROUPTYPE",        grouptype       );
-      HDF5Attribute::setAttribute (location_p, "DATATYPE",         datatype        );
-      HDF5Attribute::setAttribute (location_p, "STOKES_COMPONENT", stokesComponent );
-      HDF5Attribute::setAttribute (location_p, "NOF_SAMPLES",      itsShape[0]     );
-      HDF5Attribute::setAttribute (location_p, "NOF_SUBBANDS",     subbands        );
-      HDF5Attribute::setAttribute (location_p, "NOF_CHANNELS",     channels        );
+      HDF5Attribute::setAttribute (itsLocation, "GROUPTYPE",        grouptype       );
+      HDF5Attribute::setAttribute (itsLocation, "DATATYPE",         datatype        );
+      HDF5Attribute::setAttribute (itsLocation, "STOKES_COMPONENT", stokesComponent );
+      HDF5Attribute::setAttribute (itsLocation, "NOF_SAMPLES",      itsShape[0]     );
+      HDF5Attribute::setAttribute (itsLocation, "NOF_SUBBANDS",     subbands        );
+      HDF5Attribute::setAttribute (itsLocation, "NOF_CHANNELS",     channels        );
     }
 
     return status;

@@ -22,6 +22,7 @@
  ***************************************************************************/
 
 #include <dalCommon.h>
+#include <HDF5Attribute.h>
 #include <HDF5Common.h>
 #include <Enumerations.h>
 
@@ -252,9 +253,9 @@ int test_create_file ()
       std::string attribute_name ("ATTR");
       uint attribute_value (1);
 
-      if (DAL::h5set_attribute (file_id,
-                                attribute_name,
-                                attribute_value))
+      if (HDF5Attribute::setAttribute (file_id,
+				       attribute_name,
+				       attribute_value))
         {
           cout << "-- Successfully created attribute." << endl;
         }

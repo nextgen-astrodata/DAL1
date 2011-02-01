@@ -1,9 +1,5 @@
-
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
- *   Copyright (C) 2010                                                    *
+/***************************************************************************
+ *   Copyright (C) 2011                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -22,37 +18,36 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef TBB_STATIONTRIGGER_H
-#define TBB_STATIONTRIGGER_H
+#ifndef HDF5DATATYPE_H
+#define HDF5DATATYPE_H
 
 // Standard library header files
 #include <iostream>
+#include <map>
 #include <string>
 
-#include <HDF5CommonInterface.h>
+// DAL header files
+#include "HDF5Object.h"
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class TBB_StationTrigger
+    \class HDF5Datatype
     
-    \ingroup DAL
-    \ingroup data_hl
+    \ingroup core
     
-    \brief Container for the parameters generated from the station trigger
+    \brief Brief description for class HDF5Datatype
     
     \author Lars B&auml;hren
 
-    \date 2010/01/19
+    \date 2011/01/31
 
-    \test tTBB_StationTrigger.cc
+    \test tHDF5Datatype.cc
     
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>LOFAR Data Format ICD: TBB Time-series data (LOFAR-USG-ICD-001)
-      <li>DAL::HDF5CommonInterface
-      <li>DAL::TBB_Timeseries
+      <li>[start filling in your text here]
     </ul>
     
     <h3>Synopsis</h3>
@@ -60,77 +55,75 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class TBB_StationTrigger : public HDF5CommonInterface {
-    
+  class HDF5Datatype : public HDF5Object {
+
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    TBB_StationTrigger ();
+    HDF5Datatype ();
     
-    //! Argumented constructor
-    TBB_StationTrigger (hid_t const &location,
-		      std::string const &name="StationTrigger",
-		      bool const &create=true);
+    //! Copy constructor
+    HDF5Datatype (HDF5Datatype const &other);
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~TBB_StationTrigger ();
+    ~HDF5Datatype ();
     
     // === Operators ============================================================
     
-    /*!
-      \brief Overloading of the copy operator
-      
-      \param other -- Another TBB_StationTrigger object from which to make a copy.
-    */
-    TBB_StationTrigger& operator= (TBB_StationTrigger const &other); 
+    //! Overloading of the copy operator
+    HDF5Datatype& operator= (HDF5Datatype const &other); 
     
     // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class
-      
-      \return className -- The name of the class, `TBB_StationTrigger`.
+      \return className -- The name of the class, HDF5Datatype.
     */
     inline std::string className () const {
-      return "TBB_StationTrigger";
+      return "HDF5Datatype";
     }
+
     //! Provide a summary of the object's internal parameters and status
     inline void summary () {
       summary (std::cout);
     }
+
     //! Provide a summary of the object's internal parameters and status
     void summary (std::ostream &os);    
 
     // === Methods ==============================================================
-
-    //! Get the name of the group
-    static std::string getName () {
-      return "StationTrigger";
-    }
     
-    //! Open a station group
-    bool open (hid_t const &location,
-	       std::string const &name,
-	       bool const &create=true);
+    
+    
+    // === Static methods =======================================================
+    
+    //! Get map of datatypes and their corresponding name
+    static std::map<hid_t,std::string> datatypesMap ();
 
+    //! Get list of available datatypes
+    static std::vector<hid_t> datatypes ();
+
+    //! Get list of names corresponding to datatypes
+    static std::vector<std::string> datatypeNames ();
+
+    //! Get name for the datatype
+    static std::string datatypeName (hid_t const &dtype);
+    
   private:
-
-    //! Set up the list of attributes attached to the structure
-    void setAttributes ();
-    //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    
     //! Unconditional copying
-    void copy (TBB_StationTrigger const &other);
+    void copy (HDF5Datatype const &other);
+    
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class TBB_StationTrigger -- end
+  }; // Class HDF5Datatype -- end
   
 } // Namespace DAL -- end
 
-#endif /* TBB_STATIONTRIGGER_H */
+#endif /* HDF5DATATYPE_H */
   

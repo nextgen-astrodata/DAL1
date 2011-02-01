@@ -51,6 +51,65 @@ namespace DAL { // Namespace DAL -- begin
     </ul>
     
     <h3>Synopsis</h3>
+
+    In order for derived classes to provide access to attributes attached to e.g.
+    a group or a dataset, the following methods should be implemented:
+    <ol>
+      <li>Create/set attribute.
+      \code
+      // Create attribute / Get attribute value
+      template <class T>
+      inline bool setAttribute (std::string const &name,
+				T const *data,
+				unsigned int const &size)
+      {
+        return HDF5Attribute::getAttribute (location, name, data, size);
+      }
+
+      // Create attribute / Get attribute value
+      template <class T>
+      inline bool getAttribute (std::string const &name,
+				std::vector<T> &data)
+      {
+        return HDF5Attribute::getAttribute (location, name, &data[0], data.size());
+      }
+
+      // Create attribute / Get attribute value
+      template <class T>
+      inline bool setAttribute (std::string const &name,
+				T const &data)
+      {
+	return HDF5Attribute::setAttribute (location, name, &data, 1);
+      }
+      \endcode
+      <li>Get attribute value:
+      \code
+      // Get attribute value
+      template <class T>
+      inline bool getAttribute (std::string const &name,
+				T *data,
+				unsigned int const &size)
+      {
+        return HDF5Attribute::getAttribute (location, name, data, size);
+      }
+      
+      // Get attribute value
+      template <class T>
+      inline bool getAttribute (std::string const &name,
+				std::vector<T> &data)
+      {
+        return HDF5Attribute::getAttribute (location, name, &data[0], data.size());
+      }
+      
+      // Get attribute value
+      template <class T>
+      inline bool getAttribute (std::string const &name,
+				T &data)
+      {
+         return HDF5Attribute::getAttribute (location, name, &data, 1);
+      }
+      \endcode
+    </ol>
     
     <h3>Example(s)</h3>
     
@@ -136,9 +195,108 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     // === Static methods =======================================================
+
+    /*!
+      \brief Get attribute value
+      \param location -- HDF5 identifier for the object to which the attribute
+             is attached.
+      \param name    -- Name of the attribute.
+      \param data    -- Data value(s) of the attribute
+      \param size    -- nof. element in the data array.
+      \return status -- Status of the operation; returns \e false in case an
+              error was encountered.
+    */
+    template <class T>
+      static bool getAttribute (hid_t const &location,
+				std::string const &name,
+				T *data,
+				unsigned int &size)
+      {
+	bool status       = true;
+	hid_t   attribute = 0;
+	hid_t   dataspace = 0;
+	hid_t   datatype  = 0;
+	hsize_t dims[1]   = { size };
+	hsize_t *maxdims  = 0;
+	herr_t h5err      = 0;
+
+	/*____________________________________________________________
+	  Basic checks for reference location and attribute name.
+	*/
+	
+	if (H5Iis_valid(location)) {
+	  h5err = H5Aexists (location,
+			     name.c_str());
+	} else {
+	  std::cerr << "[HDF5Attribute::getAttribute]"
+		    << " No valid HDF5 object found at reference location!"
+		    << std::endl;
+	  return false;
+	}
+
+	/*____________________________________________________________
+	  If attribute has been found at reference location, open it.
+	  If opening has been successful, extract datatype and
+	  dataspace.
+	*/
+	if (h5err>0) {
+	  attribute = H5Aopen (location,
+			       name.c_str(),
+			       H5P_DEFAULT);
+
+	  if (H5Iis_valid(attribute)) {
+	    datatype = H5Aget_type (attribute);
+	  } else {
+	    std::cerr << "[HDF5Attribute::getAttribute]"
+		      << " Failed to open attribute " << name << std::endl;
+	    return false;
+	  }
+	} else {
+	}
+	
+	return status;
+      }
+    
     
     /*!
-      \brief Set attribute
+      \brief Get attribute value
+      \param location -- HDF5 identifier for the object to which the attribute
+             is attached.
+      \param name    -- Name of the attribute.
+      \param data    -- Data value(s) to be assigned to the attribute
+      \return status -- Status of the operation; returns \e false in case an
+              error was encountered.
+    */
+    template <class T>
+      static bool getAttribute (hid_t const &location,
+			 std::string const &name,
+			 std::vector<T> &data)
+      {
+	unsigned int nelem;
+	return getAttribute (location, name, &data[0], nelem);
+      }
+    
+    /*!
+      \brief Get attribute value
+      \param location -- HDF5 identifier for the object to which the attribute
+             is attached.
+      \param name    -- Name of the attribute.
+      \param data    -- Data value(s) to be assigned to the attribute
+      \return status -- Status of the operation; returns \e false in case an
+              error was encountered.
+    */
+    template <class T>
+      static bool getAttribute (hid_t const &location,
+				std::string const &name,
+				T &data)
+      {
+	unsigned int nelem;
+	return getAttribute (location, name, &data, nelem);
+      }
+    
+
+    /*!
+      \brief Set attribute value
       \param location -- HDF5 identifier for the object to which the attribute
              is attached.
       \param name    -- Name of the attribute.
@@ -159,7 +317,7 @@ namespace DAL { // Namespace DAL -- begin
 	hsize_t dims[1]   = { size };
 	hsize_t *maxdims  = 0;
 	herr_t h5err      = 0;
-
+	
 	/*____________________________________________________________
 	  Basic checks for reference location and attribute name.
 	*/
@@ -245,7 +403,7 @@ namespace DAL { // Namespace DAL -- begin
       }
     
     /*!
-      \brief Set attribute
+      \brief Set attribute value
       \param location -- HDF5 identifier for the object to which the attribute
              is attached.
       \param name    -- Name of the attribute.
@@ -258,6 +416,25 @@ namespace DAL { // Namespace DAL -- begin
 				std::string const &name,
 				T const *data,
 				unsigned int const &size);
+
+#ifdef HAVE_CASA
+    /*!
+      \brief Set attribute
+      \param location -- HDF5 identifier for the object to which the attribute
+             is attached.
+      \param name    -- Name of the attribute.
+      \param data    -- Data value(s) to be assigned to the attribute
+      \return status -- Status of the operation
+    */
+    template <class T>
+      static bool setAttribute (hid_t const &location,
+				std::string const &name,
+				casa::Vector<T> const &data)
+      {
+	return setAttribute (location, name, &data[0], data.nelements());
+      }
+    
+#endif
     
     /*!
       \brief Set attribute

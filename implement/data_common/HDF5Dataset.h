@@ -29,9 +29,8 @@
 #include <vector>
 
 #include <dalCommon.h>
-#include <HDF5CommonInterface.h>
 #include <HDF5Hyperslab.h>
-#include <HDF5Object.h>
+#include <HDF5Attribute.h>
 
 #define H5S_CHUNKSIZE_MAX  ((uint32_t)(-1))  /* (4GB - 1) */
 
@@ -251,7 +250,7 @@ namespace DAL {
     </ol>
     
   */
-  class HDF5Dataset : public HDF5CommonInterface {
+  class HDF5Dataset : public HDF5Object {
 
   protected:
 
@@ -378,16 +377,31 @@ namespace DAL {
 
     //! Get the address in the file, expressed in bytes from the beginning of the file. 
     inline haddr_t offset () {
-      if (H5Iis_valid(location_p)) {
-	return H5Dget_offset (location_p);
-      } else {
-	return HADDR_UNDEF;
-      }
+      return offset (itsLocation);
+    }
+
+    // === Create/set attributes ================================================
+
+    template <class T>
+    inline bool getAttribute (std::string const &name,
+                              T *data,
+                              unsigned int const &size)
+    {
+      return HDF5Attribute::getAttribute (itsLocation, name, data, size);
     }
     
-    //! Get the datatype class identifier. 
-    inline H5T_class_t datatypeClass () {
-      return datatypeClass (itsDatatype);
+    template <class T>
+    inline bool getAttribute (std::string const &name,
+                              std::vector<T> &data)
+    {
+      return HDF5Attribute::getAttribute (itsLocation, name, &data[0], data.size());
+    }
+    
+    template <class T>
+    inline bool getAttribute (std::string const &name,
+                              T &data)
+    {
+      return HDF5Attribute::getAttribute (itsLocation, name, &data, 1);
     }
     
     // === Read the data ========================================================
@@ -539,19 +553,8 @@ namespace DAL {
 
     // === Static methods =======================================================
     
-    /*!
-      \brief Get the datatype class identifier.
-      \return class -- H5T_INTEGER, H5T_FLOAT, H5T_STRING, H5T_BITFIELD,
-              H5T_OPAQUE, H5T_COMPOUND, H5T_REFERENCE, H5T_ENUM, H5T_VLEN,
-	      H5T_ARRAY.
-    */
-    static H5T_class_t datatypeClass (hid_t const &location) {
-      if (H5Iis_valid(location)) {
-	return H5Tget_class (location);
-      } else {
-	return H5T_NO_CLASS;
-      }
-    }
+    //! Returns the address in the file of the dataset \c location.
+    static haddr_t offset (hid_t const &location);
     
     // === Summary ==============================================================
     
@@ -567,16 +570,6 @@ namespace DAL {
     
     //! Initialize the internal parameters
     void init ();
-    //! Set up the list of attributes attached to the dataset
-    inline void setAttributes () {
-      attributes_p.clear();
-    }
-    //! Open the structures embedded within the current one
-    inline bool openEmbedded (bool const &create) {
-      bool status = create;
-      status = true;
-      return status;
-    }
     //! Set the size of chunks for the raw data of a chunked layout dataset. 
     bool setShape (std::vector<hsize_t> const &shape,
 		   std::vector<hsize_t> const &chunksize);
@@ -621,7 +614,7 @@ namespace DAL {
 						dimensions,
 						NULL);
 	  /* Read the data from the dataset */
-	  h5error = H5Dread (location_p,
+	  h5error = H5Dread (itsLocation,
 			     datatype,
 			     memorySpace,
 			     itsDataspace,
@@ -707,7 +700,7 @@ namespace DAL {
 	  
 	  // Write data to dataset _________________________
 	  
-	  h5error = H5Dwrite (location_p,
+	  h5error = H5Dwrite (itsLocation,
 			      datatype,
 			      memspace,
 			      itsDataspace,

@@ -307,7 +307,7 @@ namespace DAL { // Namespace DAL -- begin
 	/* Try opening Stokes dataset */
 	BF_StokesDataset stokes (location_p, name);
 	/* Check if opening the dataset was successful */
-	if (stokes.hasValidID()) {
+	if (stokes.objectType() == H5I_DATASET) {
 	  itsStokesDatasets[name] = stokes;
 	} else {
 	  std::cerr << "[BF_BeamGroup::openStokesDataset]"

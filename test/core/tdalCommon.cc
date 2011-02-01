@@ -879,44 +879,6 @@ int test_beamformed (std::string const &infile)
 }
 
 //_______________________________________________________________________________
-//                                                           test_hdf5_inspection
-
-/*!
-  \brief Test the various functions for inspection of a HDF5 file
-  
-  \return nofFailedTests -- The number of failed tests encountered within this
-          function
-*/
-int test_hdf5_inspection ()
-{
-  cout << "\n[tdalCommon::test_hdf5_inspection]\n" << endl;
-
-  int nofFailedTests (0);
-  std::string filename ("tdalCommon.h5");
-  std::set<std::string> names;
-
-  hid_t fileID = H5Fopen (filename.c_str(),
-			  H5F_ACC_RDWR,
-			  H5P_DEFAULT);
-  
-  if (fileID < 0) {
-    cerr << "Failed to open file " << filename << endl;
-    return 1;
-  }
-  
-  cout << "[1] Get names of the groups attached to the root group ..." << endl;
-  try {
-    DAL::h5get_names(names,fileID);
-  }
-  catch (std::string message) {
-    cerr << message << endl;
-    ++nofFailedTests;
-  }
-  
-  return nofFailedTests;
-}
-
-//_______________________________________________________________________________
 //                                                                           main
 
 /*!
@@ -937,8 +899,6 @@ int main ()
   nofFailedTests += test_iterators ();
   // Test access to HDF5 attributes
   nofFailedTests += test_hdf5_attributes ();
-  // // Test the various functions for inspection of a HDF5 file
-  // nofFailedTests += test_hdf5_inspection ();
   
   return nofFailedTests;
 }

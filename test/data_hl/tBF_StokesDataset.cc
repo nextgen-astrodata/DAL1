@@ -432,11 +432,11 @@ int test_attributes (hid_t const &fileID)
   
   cout << "[1] Testing getAttribute(string, T) ..." << endl;
   try {
-    stokes.getAttribute ("GROUPTYPE",        groupType);
-    stokes.getAttribute ("DATATYPE",         dataType);
-    stokes.getAttribute ("NOF_CHANNELS",     nofChannels);
-    stokes.getAttribute ("NOF_SUBBANDS",     nofSubbands);
-    stokes.getAttribute ("STOKES_COMPONENT", stokesComponent);
+    // stokes.getAttribute ("GROUPTYPE",        groupType);
+    // stokes.getAttribute ("DATATYPE",         dataType);
+    // stokes.getAttribute ("NOF_CHANNELS",     nofChannels);
+    // stokes.getAttribute ("NOF_SUBBANDS",     nofSubbands);
+    // stokes.getAttribute ("STOKES_COMPONENT", stokesComponent);
     
     cout << "-- GROUPTYPE        = " << groupType       << endl;
     cout << "-- DATATYPE         = " << dataType        << endl;

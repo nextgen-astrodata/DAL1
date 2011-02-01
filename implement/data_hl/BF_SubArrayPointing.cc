@@ -184,29 +184,29 @@ namespace DAL { // Namespace DAL -- begin
 	  std::string usecond ("us");
 	  std::vector<std::string> stationsList (1,"UNDEFINED");
 	  // write the attributes
-	  h5set_attribute (location_p,"GROUPTYPE",                grouptype   );
-	  h5set_attribute (location_p,"NOF_STATIONS",             int(0)      );
-	  h5set_attribute (location_p,"STATIONS_LIST",            stationsList);
-	  h5set_attribute (location_p,"POINT_RA",                 double(0.0) );
-	  h5set_attribute (location_p,"POINT_DEC",                double(0.0) );
-	  h5set_attribute (location_p,"TRACKING",                 tracking    );
-	  h5set_attribute (location_p,"POINT_ALTITUDE",           double(0.0) );
-	  h5set_attribute (location_p,"POINT_AZIMUTH",            double(0.0) );
-	  h5set_attribute (location_p,"CLOCK_RATE",               double(0.0) );
-	  h5set_attribute (location_p,"CLOCK_RATE_UNIT",          mhz         );
-	  h5set_attribute (location_p,"NOF_SAMPLES",              int(0)      );
-	  h5set_attribute (location_p,"SAMPLING_RATE",            double(0.0) );
-	  h5set_attribute (location_p,"SAMPLING_RATE_UNIT",       mhz         );
-	  h5set_attribute (location_p,"SAMPLING_TIME",            float(0.0)  );
-	  h5set_attribute (location_p,"SAMPLING_TIME_UNIT",       usecond     );
-	  h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME",   double(0.0) );
-	  h5set_attribute (location_p,"TOTAL_INTEGRATION_TIME_UNIT", second   );
-	  h5set_attribute (location_p,"CHANNELS_PER_SUBBAND",     int(0)      );
-	  h5set_attribute (location_p,"SUBBAND_WIDTH",            double(0.0) );
-	  h5set_attribute (location_p,"SUBBAND_WIDTH_UNIT",       mhz         );
-	  h5set_attribute (location_p,"CHANNEL_WIDTH",            double(0.0) );
-	  h5set_attribute (location_p,"CHANNEL_WIDTH_UNIT",       mhz         );
-	  h5set_attribute (location_p,"NOF_BEAMS",                int(0)      );
+	  HDF5Attribute::setAttribute (location_p,"GROUPTYPE",                grouptype   );
+	  HDF5Attribute::setAttribute (location_p,"NOF_STATIONS",             int(0)      );
+	  HDF5Attribute::setAttribute (location_p,"STATIONS_LIST",            stationsList);
+	  HDF5Attribute::setAttribute (location_p,"POINT_RA",                 double(0.0) );
+	  HDF5Attribute::setAttribute (location_p,"POINT_DEC",                double(0.0) );
+	  HDF5Attribute::setAttribute (location_p,"TRACKING",                 tracking    );
+	  HDF5Attribute::setAttribute (location_p,"POINT_ALTITUDE",           double(0.0) );
+	  HDF5Attribute::setAttribute (location_p,"POINT_AZIMUTH",            double(0.0) );
+	  HDF5Attribute::setAttribute (location_p,"CLOCK_RATE",               double(0.0) );
+	  HDF5Attribute::setAttribute (location_p,"CLOCK_RATE_UNIT",          mhz         );
+	  HDF5Attribute::setAttribute (location_p,"NOF_SAMPLES",              int(0)      );
+	  HDF5Attribute::setAttribute (location_p,"SAMPLING_RATE",            double(0.0) );
+	  HDF5Attribute::setAttribute (location_p,"SAMPLING_RATE_UNIT",       mhz         );
+	  HDF5Attribute::setAttribute (location_p,"SAMPLING_TIME",            float(0.0)  );
+	  HDF5Attribute::setAttribute (location_p,"SAMPLING_TIME_UNIT",       usecond     );
+	  HDF5Attribute::setAttribute (location_p,"TOTAL_INTEGRATION_TIME",   double(0.0) );
+	  HDF5Attribute::setAttribute (location_p,"TOTAL_INTEGRATION_TIME_UNIT", second   );
+	  HDF5Attribute::setAttribute (location_p,"CHANNELS_PER_SUBBAND",     int(0)      );
+	  HDF5Attribute::setAttribute (location_p,"SUBBAND_WIDTH",            double(0.0) );
+	  HDF5Attribute::setAttribute (location_p,"SUBBAND_WIDTH_UNIT",       mhz         );
+	  HDF5Attribute::setAttribute (location_p,"CHANNEL_WIDTH",            double(0.0) );
+	  HDF5Attribute::setAttribute (location_p,"CHANNEL_WIDTH_UNIT",       mhz         );
+	  HDF5Attribute::setAttribute (location_p,"NOF_BEAMS",                int(0)      );
 	} else {
 	  std::cerr << "[BF_SubArrayPointing::open] Failed to create group "
 		    << name
@@ -276,7 +276,7 @@ namespace DAL { // Namespace DAL -- begin
       itsBeams[name] = beam;
       // book-keeping
       int nofBeams = itsBeams.size();
-      h5set_attribute (location_p,"NOF_BEAMS",nofBeams);
+      HDF5Attribute::setAttribute (location_p,"NOF_BEAMS",nofBeams);
     } else {
       std::cerr << "[BF_SubArrayPointing::openBeam] Not connected to dataset."
 		<< std::endl;

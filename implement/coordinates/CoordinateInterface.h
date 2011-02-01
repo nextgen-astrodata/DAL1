@@ -26,6 +26,7 @@
 
 /* DAL header files */
 #include <dalCommon.h>
+#include <HDF5Attribute.h>
 #include "Coordinate.h"
 
 /* casacore header files */

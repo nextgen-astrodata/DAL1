@@ -35,6 +35,7 @@ namespace DAL {
   //                                                                  HDF5Dataset
 
   HDF5Dataset::HDF5Dataset ()
+    : HDF5Object ()
   {
     init ();
   }
@@ -119,7 +120,6 @@ namespace DAL {
 
     HDF5Object::close (itsDatatype);
     HDF5Object::close (itsDataspace);
-    HDF5Object::close (location_p);
   }
   
   // ============================================================================
@@ -190,12 +190,8 @@ namespace DAL {
   */
   void HDF5Dataset::init ()
   {
-    /* Variables defined by base class */
-    location_p = 0;
-    attributes_p.clear();
-    /* Variables defined by this class */
     itsName        = "Dataset";
-    location_p     = -1;
+    itsLocation     = -1;
     itsDataspace   = -1;
     itsDatatype    = -1;
     itsLayout      = H5D_COMPACT;
@@ -236,17 +232,17 @@ namespace DAL {
 			 H5P_DEFAULT);
       if (h5err>0) {
 	/* Open existing dataset */
-	location_p = H5Dopen (location,
+	itsLocation = H5Dopen (location,
 			      name.c_str(),
 			      H5P_DEFAULT);
 	/* Check if opening of the dataset was successful */
-	if (H5Iis_valid(location_p)) {
+	if (H5Iis_valid(itsLocation)) {
 	  // Assign internal parameters
 	  itsName      = name;
-	  itsDataspace = H5Dget_space (location_p);
-	  itsDatatype  = H5Dget_type (location_p);
+	  itsDataspace = H5Dget_space (itsLocation);
+	  itsDatatype  = H5Dget_type (itsLocation);
 	  // Get the shape of the dataset array
-	  DAL::h5get_dataspace_shape(location_p, itsShape);
+	  DAL::h5get_dataspace_shape(itsLocation, itsShape);
 	  // Retrieve the size of chunks for the raw data
 	  status = getChunksize ();
 	} else {
@@ -271,7 +267,7 @@ namespace DAL {
     //______________________________________________________
     // Try creating dataset, if not yet existing
     
-    if (H5Iis_valid(location_p)) {
+    if (H5Iis_valid(itsLocation)) {
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
@@ -383,7 +379,7 @@ namespace DAL {
     // Set the chunk size
     h5error     = H5Pset_chunk (creationProperties, rank, chunkdims);
     // Create the Dataset ...
-    location_p  = H5Dcreate2 (location,
+    itsLocation  = H5Dcreate2 (location,
 			      itsName.c_str(),
 			      itsDatatype,
 			      itsDataspace,
@@ -391,7 +387,7 @@ namespace DAL {
 			      creationProperties,
 			      H5P_DEFAULT);
     // ... and check it
-    if (!H5Iis_valid(location_p)) {
+    if (!H5Iis_valid(itsLocation)) {
       std::cerr << "[HDF5Dataset::open] Failed to create dataset!"
 		  << std::endl;
       return false;
@@ -423,8 +419,8 @@ namespace DAL {
     hsize_t chunksize[rank];
 
     /* Get the creation property list for the dataset */
-    if (H5Iis_valid(location_p)) {
-      propertyID = H5Dget_create_plist (location_p);
+    if (H5Iis_valid(itsLocation)) {
+      propertyID = H5Dget_create_plist (itsLocation);
     } else {
       return false;
     }
@@ -525,13 +521,13 @@ namespace DAL {
   {
     bool status = true;
 
-    if (H5Iis_valid(location_p)) {
+    if (H5Iis_valid(itsLocation)) {
       if (H5Iis_valid(itsDataspace)) {
 	
 	/*____________________________________________________________
 	  Assign the Hyperslab selection
 	*/
-	status = slab.setHyperslab (location_p,
+	status = slab.setHyperslab (itsLocation,
 				    itsDataspace,
 				    resizeDataset);
 	/* Book-keeping: store the assigned hyperslab for later inspection. */
@@ -549,7 +545,7 @@ namespace DAL {
 	/* As the dataset might have been resized, the "shape" parameter needs to be
 	   updated to the current value.
 	*/
-	DAL::h5get_dataspace_shape(location_p, itsShape);
+	DAL::h5get_dataspace_shape(itsLocation, itsShape);
       } else {
 	std::cerr << "[HDF5Dataset::setHyperslab]"
 		  << " Unable to select hyperslab - invalid HDF5 dataspace!"
@@ -619,24 +615,28 @@ namespace DAL {
   
   /// @cond TEMPLATE_SPECIALIZATIONS
   
+  //! Read data of type \c bool (H5T_NATIVE_HBOOL)
   template <> bool HDF5Dataset::readData (bool data[],
 					  HDF5Hyperslab &slab)
   {
     return readData (data, slab, H5T_NATIVE_HBOOL);
   }
   
+  //! Read data of type \c int (H5T_NATIVE_INT)
   template <> bool HDF5Dataset::readData (int data[],
 					  HDF5Hyperslab &slab)
   {
     return readData (data, slab, H5T_NATIVE_INT);
   }
   
+  //! Read data of type \c uint (H5T_NATIVE_UINT)
   template <> bool HDF5Dataset::readData (uint data[],
 					  HDF5Hyperslab &slab)
   {
     return readData (data, slab, H5T_NATIVE_UINT);
   }
   
+  //! Read data of type \c short (H5T_NATIVE_SHORT)
   template <> bool HDF5Dataset::readData (short data[],
 					  HDF5Hyperslab &slab)
   {
@@ -728,7 +728,7 @@ namespace DAL {
   {
     os << "[HDF5Dataset] Summary of internal parameters"        << std::endl;
     os << "-- Dataset name           = " << itsName             << std::endl;
-    os << "-- Dataset ID             = " << location_p          << std::endl;
+    os << "-- Dataset ID             = " << itsLocation         << std::endl;
     os << "-- Dataspace ID           = " << itsDataspace        << std::endl;
     os << "-- Datatype ID            = " << itsDatatype         << std::endl;
     os << "-- Dataset rank           = " << rank()              << std::endl;
@@ -737,6 +737,29 @@ namespace DAL {
     os << "-- Chunk size             = " << itsChunking         << std::endl;
     os << "-- nof. datapoints        = " << nofDatapoints()     << std::endl;
     os << "-- nof. active hyperslabs = " << itsHyperslab.size() << std::endl;
+  }
+  
+  // ============================================================================
+  //
+  //  Static functions
+  //
+  // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                                       offset
+  
+  /*!
+    \param location -- Dataset identifier.
+    \return offset  -- Returns the offset in bytes; otherwise returns
+            \c HADDR_UNDEF, a negative value. 
+  */
+  haddr_t HDF5Dataset::offset (hid_t const &location)
+  {
+    if (objectType(location) == H5I_DATASET) {
+      return H5Dget_offset (location);
+    } else {
+      return HADDR_UNDEF;
+    }
   }
   
 } // end namespace DAL

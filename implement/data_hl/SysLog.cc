@@ -148,7 +148,7 @@ namespace DAL { // Namespace DAL -- begin
 	if (location_p > 0) {
 	  std::string string_group ("SysLog");
 	  // write the attributes
-	  h5set_attribute (location_p, "GROUPTYPE", string_group);
+	  HDF5Attribute::setAttribute (location_p, "GROUPTYPE", string_group);
 	} else {
 	  std::cerr << "[SysLog::open] Failed to create group "
 		    << name

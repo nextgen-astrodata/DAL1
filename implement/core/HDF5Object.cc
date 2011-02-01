@@ -448,19 +448,19 @@ namespace DAL { // Namespace DAL -- begin
     \c H5T_NO_CLASS (-1). 
     
     Valid class identifiers, as defined in \c H5Tpublic.h, are:
-
-    * H5T_INTEGER
-    * H5T_FLOAT
-    * H5T_STRING
-    * H5T_BITFIELD
-    * H5T_OPAQUE
-    * H5T_COMPOUND
-    * H5T_REFERENCE
-    * H5T_ENUM
-    * H5T_VLEN
-    * H5T_ARRAY 
-
-    Note that the library returns H5T_STRING for both fixed-length and
+    <ul>
+      <li>\c H5T_INTEGER
+      <li>\c H5T_FLOAT
+      <li>\c H5T_STRING
+      <li>\c H5T_BITFIELD
+      <li>\c H5T_OPAQUE
+      <li>\c H5T_COMPOUND
+      <li>\c H5T_REFERENCE
+      <li>\c H5T_ENUM
+      <li>\c H5T_VLEN
+      <li>\c H5T_ARRAY 
+    </ul>
+    Note that the library returns \c H5T_STRING for both fixed-length and
     variable-length strings. 
   */
   H5T_class_t HDF5Object::datatypeClass (hid_t const &location)

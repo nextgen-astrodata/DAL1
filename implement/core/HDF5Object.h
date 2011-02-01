@@ -179,6 +179,10 @@ namespace DAL { // Namespace DAL -- begin
     inline std::string name () {
       return name (itsLocation);
     }
+    //! Get the object identifier
+    inline hid_t objectID () const {
+      return itsLocation;
+    }
     //! Get object type
     inline H5I_type_t objectType () {
       return objectType (itsLocation);

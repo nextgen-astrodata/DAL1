@@ -84,7 +84,6 @@ if (HAVE_CASACORE)
 	    tcasacore_hdf5
 	    tcasacore_images
 	    tcasacore_images2
-	    tLOFAR_Image
 	    )
 	  ## compiler instructions
 	  add_executable (${src} ${src}.cc)

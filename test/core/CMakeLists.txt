@@ -76,6 +76,14 @@ else (HDF5OBJECT_H5)
   add_test (tHDF5Attribute tHDF5Attribute)
 endif (HDF5OBJECT_H5)
 
+## tHDF5Datatype _________________________________
+
+if (HDF5OBJECT_H5)
+  add_test (tHDF5Datatype tHDF5Datatype ${HDF5OBJECT_H5})
+else (HDF5OBJECT_H5)
+  add_test (tHDF5Datatype tHDF5Datatype)
+endif (HDF5OBJECT_H5)
+
 ## tdalDataset ___________________________________
 
 if (dataset_ms)

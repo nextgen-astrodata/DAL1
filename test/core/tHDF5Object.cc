@@ -114,6 +114,24 @@ int test_constructors (std::string const &filename,
     nofFailedTests++;
   }
   
+  /*__________________________________________________________________
+    Test 4: Copy constructor
+   */
+  
+  cout << "[4] Testing HDF5Object(HDF5Object) ..." << endl;
+  try {
+    std::cout << "--> creating object 1 ..." << std::endl;
+    HDF5Object group1 (fileID, nameGroup);
+    group1.summary();
+    //
+    std::cout << "--> creating object 2 ..." << std::endl;
+    HDF5Object group2 (group1);
+    group2.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 

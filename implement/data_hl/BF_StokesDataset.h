@@ -184,6 +184,8 @@ namespace DAL { // Namespace DAL -- begin
   */  
   class BF_StokesDataset : public HDF5Dataset {
 
+    //! Set of attributes attached to the dataset
+    std::set<std::string> itsAttributes;
     //! Stokes component stored inside this dataset
     DAL::Stokes itsStokesComponent;
     //! Number of channels within the subbands
@@ -325,14 +327,14 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Set up the list of attributes attached to the structure
     inline void setAttributes () {
-      attributes_p.clear();
+      itsAttributes.clear();
 
-      attributes_p.insert("GROUPTYPE");
-      attributes_p.insert("DATATYPE");
-      attributes_p.insert("STOKES_COMPONENT");
-      attributes_p.insert("NOF_SAMPLES");
-      attributes_p.insert("NOF_SUBBANDS");
-      attributes_p.insert("NOF_CHANNELS");
+      itsAttributes.insert("GROUPTYPE");
+      itsAttributes.insert("DATATYPE");
+      itsAttributes.insert("STOKES_COMPONENT");
+      itsAttributes.insert("NOF_SAMPLES");
+      itsAttributes.insert("NOF_SUBBANDS");
+      itsAttributes.insert("NOF_CHANNELS");
     }
 
     //! Initialize the object's internal parameters
