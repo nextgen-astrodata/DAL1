@@ -158,6 +158,19 @@ namespace DAL { // Namespace DAL -- begin
   /// @cond TEMPLATE_SPECIALIZATIONS
   
   //_____________________________________________________________________________
+  //                                                           setAttribute(char)
+  
+  //! Set attribute of type (char)
+  template <>
+  bool HDF5Attribute::setAttribute (hid_t const &location,
+				    std::string const &name,
+				    char const *data,
+				    unsigned int const &size)
+  {
+    return setAttribute (location, name, data, size, H5T_NATIVE_CHAR);
+  }
+
+  //_____________________________________________________________________________
   //                                                            setAttribute(int)
   
   //! Set attribute of type (int)
@@ -193,11 +206,7 @@ namespace DAL { // Namespace DAL -- begin
 				    unsigned int const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location,
-			 name,
-			 data,
-			 size,
-			 H5T_NATIVE_UINT);
+    return setAttribute (location, name, data, size, H5T_NATIVE_UINT);
   }
 
   //_____________________________________________________________________________
@@ -210,11 +219,7 @@ namespace DAL { // Namespace DAL -- begin
 				    short const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location,
-			 name,
-			 data,
-			 size,
-			 H5T_NATIVE_SHORT);
+    return setAttribute (location, name, data, size, H5T_NATIVE_SHORT);
   }
 
   //_____________________________________________________________________________

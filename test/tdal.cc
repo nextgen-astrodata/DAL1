@@ -421,6 +421,7 @@ uint open_and_close_hdf5_group (std::string const &filename)
 uint set_attribute_hdf5_group (std::string const &filename)
 {
   uint ret = 0;
+  std::string name;
 
   dalDataset ds;
 
@@ -431,8 +432,9 @@ uint set_attribute_hdf5_group (std::string const &filename)
   if ( NULL == group )
     ret++;
 
-  std::string sval = "string test value";
-  if ( DAL::FAIL == group->setAttribute( "STRING_ATTR", sval ) )
+  name             = "STRING_ATTR";
+  std::vector<std::string> sval (1,"string test value");
+  if ( DAL::FAIL == group->setAttribute( name, sval ) )
     ret = false;
 
   std::string svals[]= {"string","array","test"};

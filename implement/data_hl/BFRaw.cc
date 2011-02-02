@@ -892,7 +892,7 @@ namespace DAL {
     beamGroup->setAttribute( "RA", &ra_val, 1 );
     beamGroup->setAttribute( "DEC", &dec_val, 1 );
     
-    int n_subbands[] = { header.nrSubbands };
+    std::vector<int> n_subbands (1, header.nrSubbands);
     beamGroup->setAttribute( "NUMBER_OF_SUBBANDS", n_subbands );
     
     delete beamGroup;

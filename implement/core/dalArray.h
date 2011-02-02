@@ -25,6 +25,7 @@
 #define DALARRAY_H
 
 #include "dalBaseTypes.h"
+#include "HDF5Attribute.h"
 
 namespace DAL {
   
@@ -53,7 +54,7 @@ namespace DAL {
   protected:
     
     //! HDF5 object ID for array
-    hid_t datasetID_p;
+    hid_t itsDatasetID;
     //! HDF5 object ID for file
     hid_t itsFileID;
     //! Name of the array
@@ -81,7 +82,7 @@ namespace DAL {
     bool close();
     //! Get the array ID.
     inline hid_t getId() {
-      return datasetID_p;
+      return itsDatasetID;
     }
     //! Get the rank of the array, i.e. the number of dimensions
     inline int getRank () const {
@@ -112,30 +113,66 @@ namespace DAL {
       \return bool -- DAL::FAIL or DAL::SUCCESS
     */
     template <class T>
-      bool getAttribute( std::string attrname,
+      bool getAttribute (std::string attrname,
 			 T &value )
       {
-        return h5get_attribute( datasetID_p, attrname, value );
+        return h5get_attribute( itsDatasetID, attrname, value );
       }
     
-    //! Set attribute of \e char type
-    bool setAttribute( std::string attrname, char * data, int size=1 );
-    //! Set attribute of \e short type
-    bool setAttribute( std::string attrname, short * data, int size=1 );
-    //! Set attribute of \e int type
-    bool setAttribute( std::string attrname, int * data, int size=1 );
-    //! Set attribute of \e uint type
-    bool setAttribute( std::string attrname, uint * data, int size=1 );
-    //! Set attribute of \e long type
-    bool setAttribute( std::string attrname, long * data, int size=1 );
-    //! Set attribute of \e float type
-    bool setAttribute( std::string attrname, float * data, int size=1 );
-    //! Set attribute of \e double type
-    bool setAttribute( std::string attrname, double * data, int size=1 );
-    //! Set attribute of \e string type
-    bool setAttribute( std::string attrname, std::string data );
-    //! Set attribute of \e string array type
-    bool setAttribute( std::string attrname, std::string * data, int size=1 );
+    /*!
+      \brief Set attribute attached to array
+      \param name --  The name of the attribute you want to create.
+      \param data --  The value of the attribute you want to create.
+      \param size -- Optional parameter specifying the array size of the
+             attribute. Default is scalar.
+      \return bool -- Status of the operation; returns \e false in case an
+              error was encountered.
+   */
+    template <class T>
+      bool setAttribute (std::string name,
+			 T * data,
+			 int size=1 )
+      {
+	return HDF5Attribute::setAttribute (itsDatasetID,
+					    name,
+					    data,
+					    size);
+      }
+    
+    /*!
+      \brief Set attribute attached to array
+      \param name --  The name of the attribute you want to create.
+      \param data --  The value of the attribute you want to create.
+      \return bool -- Status of the operation; returns \e false in case an
+              error was encountered.
+    */
+    template <class T>
+      bool setAttribute (std::string name,
+			 std::vector<T> const &data)
+      {
+	return HDF5Attribute::setAttribute (itsDatasetID,
+					    name,
+					    &data[0],
+					    data.size());
+      }
+
+    /*!
+      \brief Set attribute attached to array
+      \param name --  The name of the attribute you want to create.
+      \param data --  The value of the attribute you want to create.
+      \return bool -- Status of the operation; returns \e false in case an
+              error was encountered.
+    */
+    template <class T>
+      bool setAttribute (std::string name,
+			 T const &data)
+      {
+	return HDF5Attribute::setAttribute (itsDatasetID,
+					    name,
+					    &data,
+					    1);
+      }
+
     //! Increase the dimensions of the array.
     bool extend (vector<int> dims);
     //! Write \e data of type \e short.
@@ -161,22 +198,14 @@ namespace DAL {
     
     bpl::numeric::array ria_boost( std::string arrayname );
     
-    //! Set attribute of type \e char
-    bool setAttribute_char (std::string attrname, char data);
-    //! Set attribute of type \e short
-    bool setAttribute_short( std::string attrname, short data );
-    //! Set attribute of type \e int
-    bool setAttribute_int( std::string attrname, int data );
-    //! Set attribute of type \e uint
-    bool setAttribute_uint( std::string attrname, uint data );
-    //! Set attribute of type \e long
-    bool setAttribute_long( std::string attrname, long data );
-    //! Set attribute of type \e float
-    bool setAttribute_float( std::string attrname, float data );
-    //! Set attribute of type \e double
-    bool setAttribute_double( std::string attrname, double data );
-    //! Set attribute of type \e string
-    bool setAttribute_string( std::string attrname, std::string data );
+    bool setAttribute_char   (std::string name, char data);
+    bool setAttribute_short  (std::string const &name, short const &data);
+    bool setAttribute_int    (std::string const &name, int const &data);
+    bool setAttribute_uint   (std::string const &name, uint const &data);
+    bool setAttribute_long   (std::string const &name, long const &data);
+    bool setAttribute_float  (std::string const &name, float const &data);
+    bool setAttribute_double (std::string const &name, double const &data);
+    bool setAttribute_string (std::string name, std::string data );
     bool setAttribute_char_vector( std::string attrname, bpl::list data );
     bool setAttribute_short_vector( std::string attrname, bpl::list data );
     //! Set attribute of type \e vector<int>

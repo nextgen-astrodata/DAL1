@@ -3,6 +3,9 @@
 ## $Id:: CMakeLists.txt 3828 2009-12-09 12:37:42Z baehren                       $
 ## ------------------------------------------------------------------------------
 
+##_______________________________________________________________________________
+## Installation of bash scripts
+
 find_program (bash_executable bash ${bin_locations})
 
 if (bash_executable)

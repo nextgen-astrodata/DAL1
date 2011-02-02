@@ -1379,8 +1379,6 @@ namespace DAL {
   /*!
     \brief Add a character attribute.
 
-    Add a character attribute to the table.
-
     \param attrname The name of the attribute you wish to add.
     \param data The value of the attribute you wish to add.
     \param size An optional parameter specifiying the array size of the

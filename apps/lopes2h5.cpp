@@ -110,18 +110,18 @@ int main (int argc, char *argv[])
 
   dalGroup * stationGroup = dataset->createGroup( "Station" );
 
-  string telescope = "LOFAR";
-  string observer = "I.B. User";
-  string project = "Cosmic Rays";
-  string observation_id = "1287";
-  string observation_mode = "Normal";
+  std::vector<string> telescope        (1, "LOFAR"       );
+  std::vector<string> observer         (1, "I.B. User"   );
+  std::vector<string> project          (1, "Cosmic Rays" );
+  std::vector<string> observation_id   (1, "1287"        );
+  std::vector<string> observation_mode (1, "Normal");
 
   // Add attributes to "Station" group
-  stationGroup->setAttribute("TELESCOPE", telescope );
-  stationGroup->setAttribute("OBSERVER", observer );
-  stationGroup->setAttribute("PROJECT", project );
-  stationGroup->setAttribute("OBS_ID", observation_id );
-  stationGroup->setAttribute("OBS_MODE", observation_mode );
+  stationGroup->setAttribute ("TELESCOPE", telescope );
+  stationGroup->setAttribute ("OBSERVER",  observer );
+  stationGroup->setAttribute ("PROJECT",   project );
+  stationGroup->setAttribute ("OBS_ID",    observation_id );
+  stationGroup->setAttribute ("OBS_MODE",  observation_mode );
   /**************************************************************************/
   std::string filename ("UNDEFINED");
 

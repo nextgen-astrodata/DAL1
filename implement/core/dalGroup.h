@@ -55,9 +55,9 @@ namespace DAL {
     //! Filter associated with group
     dalFilter * filter;
     //! HDF5 file ID
-    hid_t file_id;
+    hid_t itsFileID;
     //! HDF5 group ID
-    hid_t group_id;
+    hid_t itsGroupID;
     //! HDF5 error code
     herr_t status;
     
@@ -77,16 +77,18 @@ namespace DAL {
     ~dalGroup();
 
     // === Parameter access =====================================================
-
+    
     //! Get the name of the group
-    std::string getName();
+    inline std::string getName() const {
+      return groupname_p;
+    }
     //! Set the name of the group
     bool setName( string gname );
     //! Retrieve the identifier for the group.
     hid_t getId();
-
+    
     // === Methods ==============================================================
-
+    
     //! Open an existing group.
     int open ( void * file, std::string groupname);
     //! Close the group
@@ -141,25 +143,53 @@ namespace DAL {
     template <class T>
       bool getAttribute( std::string attrname, T &value )
       {
-	if (H5Iis_valid(group_id)) {
-	  return h5get_attribute( group_id, attrname, value );
+	if (H5Iis_valid(itsGroupID)) {
+	  return h5get_attribute( itsGroupID, attrname, value );
 	} else {
 	  return false;
 	}
       }
     
-    bool setAttribute ( std::string attrname, char * data, int size=1 );
-    bool setAttribute ( std::string attrname, short * data, int size=1 );
-    bool setAttribute ( std::string attrname, int * data, int size=1 );
-    bool setAttribute ( std::string attrname, uint * data, int size=1 );
-    bool setAttribute ( std::string attrname, long * data, int size=1 );
-    bool setAttribute ( std::string attrname, float * data, int size=1 );
-    bool setAttribute ( std::string attrname, double * data, int size=1 );
-    bool setAttribute ( std::string attrname, std::string data );
-    bool setAttribute ( std::string attrname, std::string * data, int size=1 );
+    /*!
+      \brief Set attribute attached to group
+      \param name --  The name of the attribute you want to create.
+      \param data --  The value of the attribute you want to create.
+      \param size -- Optional parameter specifying the array size of the
+             attribute. Default is scalar.
+      \return bool -- Status of the operation; returns \e false in case an
+              error was encountered.
+   */
+    template <class T>
+      bool setAttribute (std::string const &name,
+			 T const &data,
+			 unsigned int const &size=1)
+      {
+	return HDF5Attribute::setAttribute (itsGroupID,
+					    name,
+					    data,
+					    size);
+      }
     
+    /*!
+      \brief Set attribute attached to group
+      \param name --  The name of the attribute you want to create.
+      \param data --  The value of the attribute you want to create.
+      \return bool -- Status of the operation; returns \e false in case an
+              error was encountered.
+   */
+    template <class T>
+      bool setAttribute (std::string const &name,
+			 std::vector<T> const &data)
+      {
+	return HDF5Attribute::setAttribute (itsGroupID,
+					    name,
+					    &data[0],
+					    data.size());
+      }
+    
+    //! Create new group \c gname
     dalGroup * createGroup( const char * gname );
-
+    
     // === Boost.Python wrappers ================================================
 
 #ifdef PYTHON
@@ -169,14 +199,14 @@ namespace DAL {
     
     bpl::numeric::array ria_boost( std::string arrayname );
     
-    bool setAttribute_char( std::string attrname, char data );
-    bool setAttribute_short( std::string attrname, short data );
-    bool setAttribute_int( std::string attrname, int data );
-    bool setAttribute_uint( std::string attrname, uint data );
-    bool setAttribute_long( std::string attrname, long data );
-    bool setAttribute_float( std::string attrname, float data );
-    bool setAttribute_double( std::string attrname, double data );
-    bool setAttribute_string( std::string attrname, std::string data );
+    bool setAttribute_char   (std::string const &name, char const &data);
+    bool setAttribute_short  (std::string const &name, short const &data);
+    bool setAttribute_int    (std::string const &name, int const &data);
+    bool setAttribute_uint   (std::string const &name, uint const &data);
+    bool setAttribute_long   (std::string const &name, long const &data);
+    bool setAttribute_float  (std::string const &name, float const &data);
+    bool setAttribute_double (std::string const &name, double const &data);
+    bool setAttribute_string (std::string const &name, std::string const &data);
     bool setAttribute_char_vector( std::string attrname, bpl::list data );
     bool setAttribute_short_vector( std::string attrname, bpl::list data );
     bool setAttribute_int_vector( std::string attrname, bpl::list data );

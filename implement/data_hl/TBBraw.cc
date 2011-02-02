@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Andreas Horneffer (A.Horneffer@astro.ru.nl)                           *
  *   Lars B"ahren (bahren@astron.nl)                                       *
@@ -90,8 +87,8 @@ namespace DAL {  // Namespace DAL -- begin
     do_dataCRC_p       = false;
 
     fixTimes_p           = 2;
-    nofProcessed_p       = 0;
     nofDiscardedHeader_p = 0;
+    nofProcessed_p       = 0;
 
     //initialize the buffers
     int i;
@@ -424,7 +421,7 @@ namespace DAL {  // Namespace DAL -- begin
   {
     int i            = 0;
     int stationIndex = -1;
-    int dipoleIndex  = -1;
+    int numDipole  = -1;
     unsigned int stationID, dipoleID;
     
     // find the corresponding staion index
@@ -451,14 +448,14 @@ namespace DAL {  // Namespace DAL -- begin
         return -1;
       };
     // find an empty dipole index
-    for (dipoleIndex=0; dipoleIndex<MAX_NO_DIPOLES; dipoleIndex++)
+    for (numDipole=0; numDipole<MAX_NO_DIPOLES; numDipole++)
       {
-        if (dipoleBuf[dipoleIndex].array == NULL)
+        if (dipoleBuf[numDipole].array == NULL)
           {
             break;
           };
       };
-    if (dipoleIndex == MAX_NO_DIPOLES)
+    if (numDipole == MAX_NO_DIPOLES)
       {
         cerr << "TBBraw::createNewDipole: Buffer \"dipoleBuf\" is full, cannot create new dipole!" <<endl;
         return -1;
@@ -472,15 +469,15 @@ namespace DAL {  // Namespace DAL -- begin
     
     char newDipoleIDstr[10];
     sprintf(newDipoleIDstr, "%03d%03d%03d", headerp->stationid, headerp->rspid, headerp->rcuid);
-    dipoleBuf[dipoleIndex].array =  //see next line
+    dipoleBuf[numDipole].array =  //see next line
       stationBuf[stationIndex].group->createShortArray( newDipoleIDstr, firstdims, nodata, cdims );
 
     dipoleID = headerp->stationid*1000000 + headerp->rspid*1000 + headerp->rcuid;
-    dipoleBuf[dipoleIndex].ID = dipoleID;
-    dipoleBuf[dipoleIndex].dimensions.resize(1);
-    dipoleBuf[dipoleIndex].dimensions[0] = 1;
-    dipoleBuf[dipoleIndex].starttime = headerp->time;
-    dipoleBuf[dipoleIndex].startsamplenum = headerp->sample_nr;
+    dipoleBuf[numDipole].ID = dipoleID;
+    dipoleBuf[numDipole].dimensions.resize(1);
+    dipoleBuf[numDipole].dimensions[0] = 1;
+    dipoleBuf[numDipole].starttime = headerp->time;
+    dipoleBuf[numDipole].startsamplenum = headerp->sample_nr;
 
     unsigned int sid                 = headerp->stationid;
     unsigned int rsp                 = headerp->rspid;
@@ -488,41 +485,43 @@ namespace DAL {  // Namespace DAL -- begin
     double sf                        = headerp->sample_freq;
     unsigned int samples_per_frame   = headerp->n_samples_per_frame;
     unsigned int nyquist_zone        = 1;
-    double antenna_position_value[3] = { 0., 0., 0. };
-    string antenna_position_unit[3]  = { "m", "m", "m" };
+    std::vector<double> antenna_position_value (3, 0.0);
+    std::vector<string> antenna_position_unit  (3, "m");
 
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(STATION_ID), &sid );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(RSP_ID), &rsp );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(RCU_ID), &rcu );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(TIME),
-        &(dipoleBuf[dipoleIndex].starttime) );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(SAMPLE_NUMBER),
-        &(dipoleBuf[dipoleIndex].startsamplenum) );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(SAMPLES_PER_FRAME), &samples_per_frame );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(ANTENNA_POSITION_VALUE),
-        antenna_position_value, 3 );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(ANTENNA_POSITION_UNIT),
-        antenna_position_unit, 3 );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(ANTENNA_POSITION_FRAME),
-        std::string("ITRF") );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(ANTENNA_ORIENTATION_VALUE),
-        antenna_position_value, 3 );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(ANTENNA_ORIENTATION_UNIT),
-        antenna_position_unit, 3 );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(ANTENNA_ORIENTATION_FRAME),
-        std::string("ITRF") );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(FEED), std::string("UNDEFINED") );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(NYQUIST_ZONE),
+    dipoleBuf[numDipole].array->setAttribute ("STATION_ID", &sid );
+    dipoleBuf[numDipole].array->setAttribute ("RSP_ID",     &rsp );
+    dipoleBuf[numDipole].array->setAttribute ("RCU_ID",     &rcu );
+    dipoleBuf[numDipole].array->setAttribute ("TIME",
+						&(dipoleBuf[numDipole].starttime) );
+    dipoleBuf[numDipole].array->setAttribute ("SAMPLE_NUMBER",
+						&(dipoleBuf[numDipole].startsamplenum) );
+    dipoleBuf[numDipole].array->setAttribute ("SAMPLES_PER_FRAME",
+						&samples_per_frame );
+    dipoleBuf[numDipole].array->setAttribute ("ANTENNA_POSITION_VALUE",
+						antenna_position_value );
+    dipoleBuf[numDipole].array->setAttribute ("ANTENNA_POSITION_UNIT",
+						antenna_position_unit );
+    dipoleBuf[numDipole].array->setAttribute( attribute_name(ANTENNA_POSITION_FRAME),
+						std::vector<string>(1,"ITRF") );
+    dipoleBuf[numDipole].array->setAttribute ("ANTENNA_ORIENTATION_VALUE",
+						antenna_position_value);
+    dipoleBuf[numDipole].array->setAttribute ("ANTENNA_ORIENTATION_UNIT",
+						antenna_position_unit );
+    dipoleBuf[numDipole].array->setAttribute( attribute_name(ANTENNA_ORIENTATION_FRAME),
+						std::vector<string>(1,"ITRF") );
+    dipoleBuf[numDipole].array->setAttribute( attribute_name(FEED),
+						std::vector<string>(1,"UNDEFINED") );
+    dipoleBuf[numDipole].array->setAttribute( attribute_name(NYQUIST_ZONE),
         &nyquist_zone );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(SAMPLE_FREQUENCY_VALUE), &sf, 1 );
-    dipoleBuf[dipoleIndex].array->setAttribute( attribute_name(SAMPLE_FREQUENCY_UNIT),
-        std::string("MHz") );
+    dipoleBuf[numDipole].array->setAttribute( attribute_name(SAMPLE_FREQUENCY_VALUE), &sf, 1 );
+    dipoleBuf[numDipole].array->setAttribute( attribute_name(SAMPLE_FREQUENCY_UNIT),
+        std::vector<string>(1,"MHz") );
 #ifdef DEBUGGING_MESSAGES
     /* Feedback */
     cout << "CREATED New dipole group: " << newDipoleIDstr << endl;
 #endif
 
-    return dipoleIndex;
+    return numDipole;
   };
 
   //_____________________________________________________________________________
@@ -558,36 +557,38 @@ namespace DAL {  // Namespace DAL -- begin
     
     stationBuf[stationIndex].ID = headerp->stationid;
     
-    double trigger_offset[1]             = { 0 };
-    int triggered_antennas[1]            = { 0 };
-    double station_position_value[3]     = { 0, 0, 0 };
-    string station_position_unit[3]      = { "m", "m", "m" };
-    string station_position_frame        = "ITRF";
+    std::vector<string> observationMode        (1, "Transient");
+    std::vector<string> triggerType            (1, "UNDEFINED");
+    std::vector<double> triggerOffset          (1, 0.0);
+    std::vector<int> triggeredAntennas         (1, 0);
+    std::vector<double> stationPositionValue   (3,0.0);
+    std::vector<string> station_position_unit  (3, "m");
+    std::vector<string> station_position_frame (1, "ITRF");
     double beam_direction_value[2]       = { 0, 90 };
-    string beam_direction_unit[2]        = { "deg", "deg"};
-    string beam_direction_frame          = "AZEL";
+    std::vector<string> beamDirectionUnit    (2, "deg");
+    std::vector<string> beam_direction_frame (1, "AZEL");
     
     // Add attributes to "Station" group
-    stationBuf[stationIndex].group->setAttribute( attribute_name(STATION_POSITION_VALUE),
-						  station_position_value, 3 );
-    stationBuf[stationIndex].group->setAttribute( attribute_name(STATION_POSITION_UNIT),
-						  station_position_unit, 3 );
-    stationBuf[stationIndex].group->setAttribute( attribute_name(STATION_POSITION_FRAME),
+    stationBuf[stationIndex].group->setAttribute( "STATION_POSITION_VALUE",
+						  stationPositionValue);
+    stationBuf[stationIndex].group->setAttribute( "STATION_POSITION_UNIT",
+						  station_position_unit);
+    stationBuf[stationIndex].group->setAttribute( "STATION_POSITION_FRAME",
 						  station_position_frame );
     stationBuf[stationIndex].group->setAttribute( attribute_name(BEAM_DIRECTION_VALUE),
 						  beam_direction_value, 2 );
-    stationBuf[stationIndex].group->setAttribute( attribute_name(BEAM_DIRECTION_UNIT),
-						  beam_direction_unit, 2 );
+    stationBuf[stationIndex].group->setAttribute( "BEAM_DIRECTION_UNIT",
+						  beamDirectionUnit);
     stationBuf[stationIndex].group->setAttribute( attribute_name(BEAM_DIRECTION_FRAME),
 						  beam_direction_frame );
     stationBuf[stationIndex].group->setAttribute( attribute_name(TRIGGER_TYPE),
-						  string("UNDEFINED") );
+						  triggerType );
     stationBuf[stationIndex].group->setAttribute( attribute_name(TRIGGER_OFFSET),
-						  trigger_offset );
-    stationBuf[stationIndex].group->setAttribute( attribute_name(TRIGGERED_ANTENNAS),
-						  triggered_antennas);
+						  triggerOffset );
+    stationBuf[stationIndex].group->setAttribute( "TRIGGERED_ANTENNAS",
+						  triggeredAntennas);
     stationBuf[stationIndex].group->setAttribute( attribute_name(OBSERVATION_MODE),
-						  string("Transient") );
+						  observationMode );
     return stationIndex;
   };
   
@@ -667,15 +668,5 @@ namespace DAL {  // Namespace DAL -- begin
     */
     return true;
   };
-
-
-  // ============================================================================
-  //
-  //
-  //
-  // ============================================================================
-
-
-
 
 } // Namespace DAL -- end

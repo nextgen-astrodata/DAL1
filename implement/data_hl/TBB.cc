@@ -50,16 +50,11 @@ namespace DAL {
         delete dataset;
         dataset = new dalDataset( filename.c_str(), "HDF5" );
 
-        dataset->setAttribute( attribute_name(TELESCOPE),
-                               telescope_p );
-        dataset->setAttribute( attribute_name(OBSERVER),
-                               observer_p );
-        dataset->setAttribute( attribute_name(PROJECT),
-                               project_p );
-        dataset->setAttribute( attribute_name(OBSERVATION_ID),
-                               observation_id_p );
-        dataset->setAttribute( attribute_name(OBSERVATION_MODE),
-                               observationMode_p );
+        dataset->setAttribute ("TELESCOPE",         telescope_p       );
+        dataset->setAttribute ("OBSERVER",          observer_p        );
+        dataset->setAttribute ("PROJECT",           project_p         );
+        dataset->setAttribute ("OBSERVATION_ID",    observation_id_p  );
+        dataset->setAttribute ("OBSERVATION_MODE",  observationMode_p );
 
       }
     else
@@ -751,48 +746,44 @@ namespace DAL {
     //this function has become
   };
 
-  // ------------------------------------------------------------- makeNewStation
+  //_____________________________________________________________________________
+  //                                                               makeNewStation
 
-  void TBB::makeNewStation(char * newStationstr, TBB_Header * headerPtr)
+  void TBB::makeNewStation (char * newStationstr,
+			    TBB_Header * headerPtr)
   {
     stations.push_back( newStationstr );
     stationGroup_p = dataset->createGroup( newStationstr );
 
-    double trigger_offset[1]             = { 0 };
-    int triggered_antennas[1]            = { 0 };
-    double station_position_value[3]     = { 0, 0, 0 };
-    std::string station_position_unit[3] = { "m", "m", "m" };
-    std::string station_position_frame   = "ITRF";
+    std::vector<double> stationPositionValue (3, 0.0);
+    std::vector<string> stationPositionUnit  (3, "m");
+    std::vector<string> stationPositionFrame (1, "ITRF");
     double beam_direction_value[2]       = { 0, 90 };
-    std::string beam_direction_unit[2]   = { "deg", "deg"};
-    std::string beam_direction_frame     = "AZEL";
+    std::vector<string> beamDirectionUnit    (2, "deg");
+    std::vector<string> beamDirectionFrame (1, "AZEL");
+    // Trigger information
+    std::vector<string> triggerType          (1, "UNDEFINED");
+    std::vector<double> triggerOffset        (1, 0.0);
+    std::vector<int> triggeredAntennas       (1, 0);
 
     // Add attributes to "Station" group
-    stationGroup_p->setAttribute( attribute_name(STATION_POSITION_VALUE),
-                                  station_position_value, 3 );
-    stationGroup_p->setAttribute( attribute_name(STATION_POSITION_UNIT),
-                                  station_position_unit, 3 );
-    stationGroup_p->setAttribute( attribute_name(STATION_POSITION_FRAME),
-                                  station_position_frame );
-    stationGroup_p->setAttribute( attribute_name(BEAM_DIRECTION_VALUE),
-                                  beam_direction_value, 2 );
-    stationGroup_p->setAttribute( attribute_name(BEAM_DIRECTION_UNIT),
-                                  beam_direction_unit, 2 );
-    stationGroup_p->setAttribute( attribute_name(BEAM_DIRECTION_FRAME),
-                                  beam_direction_frame );
-    stationGroup_p->setAttribute( attribute_name(TRIGGER_TYPE),
-                                  std::string("UNDEFINED") );
-    stationGroup_p->setAttribute( attribute_name(TRIGGER_OFFSET),
-                                  trigger_offset );
-    stationGroup_p->setAttribute( attribute_name(TRIGGERED_ANTENNAS),
-                                  triggered_antennas);
+    stationGroup_p->setAttribute ("STATION_POSITION_VALUE", stationPositionValue  );
+    stationGroup_p->setAttribute ("STATION_POSITION_UNIT",  stationPositionValue  );
+    stationGroup_p->setAttribute ("STATION_POSITION_FRAME", stationPositionFrame  );
+    stationGroup_p->setAttribute ("BEAM_DIRECTION_VALUE",   beam_direction_value, 2 );
+    stationGroup_p->setAttribute ("BEAM_DIRECTION_UNIT",    beamDirectionUnit     );
+    stationGroup_p->setAttribute ("BEAM_DIRECTION_FRAME",   beamDirectionFrame    );
+    stationGroup_p->setAttribute ("TRIGGER_TYPE",           triggerType);
+    stationGroup_p->setAttribute ("TRIGGER_OFFSET",         triggerOffset );
+    stationGroup_p->setAttribute ("TRIGGERED_ANTENNAS",     triggeredAntennas);
+
     if ( 0 == headerPtr->n_freq_bands ) {
-      stationGroup_p->setAttribute( attribute_name(OBSERVATION_MODE),
-				    std::string("Transient") );
+      stationGroup_p->setAttribute ("OBSERVATION_MODE",
+				    std::vector<string>(1,"Transient") );
     }
     else {
-      stationGroup_p->setAttribute( attribute_name(OBSERVATION_MODE),
-				    std::string("Sub-band") );
+      stationGroup_p->setAttribute ("OBSERVATION_MODE",
+				    std::vector<string>(1,"Sub-band") );
     };
     
     
@@ -806,8 +797,15 @@ namespace DAL {
 
   };
 
-  // ------------------------------------------------------------ makeNewDipole
+  //_____________________________________________________________________________
+  //                                                                makeNewDipole
 
+  /*!
+    \param newuid          -- Name of the dipole dataset.
+    \param stationGroupPtr -- Pointer to the station group to which the new
+           dataset will be attached.
+    \param headerPtr       -- Pointer to struct with header information.
+  */
   void TBB::makeNewDipole (string newuid,
 			   dalGroup * stationGroupPtr,
 			   TBB_Header * headerPtr)
@@ -828,45 +826,41 @@ namespace DAL {
 								firstdims,
 								nodata,
 								cdims );
-      stationGroupPtr->setAttribute( attribute_name(OBSERVATION_MODE),
-				     std::string("Sub-band") );
+      stationGroupPtr->setAttribute ("OBSERVATION_MODE",
+				     std::vector<string>(1,"Sub-band") );
     }
     
-    unsigned int sid = headerPtr->stationid;
-    unsigned int rsp = headerPtr->rspid;
-    unsigned int rcu = headerPtr->rcuid;
-    double sf = headerPtr->sample_freq;
-    unsigned int time                    = headerPtr->time;
-    unsigned int samp_num                = headerPtr->sample_nr;
-    unsigned int samples_per_frame       = headerPtr->n_samples_per_frame;
-    unsigned int nyquist_zone            = 1;
-    double antenna_position_value[3]     = { 0, 0, 0 };
-    std::string antenna_position_unit[3] = { "m", "m", "m" };
+    std::vector<unsigned int> sid        (1, headerPtr->stationid   );
+    std::vector<unsigned int> rsp        (1, headerPtr->rspid       );
+    std::vector<unsigned int> rcu        (1, headerPtr->rcuid       );
+    std::vector<double> sampleFreqValue  (1, headerPtr->sample_freq );
+    std::vector<string> sampleFreqUnit   (1, "MHz"                  );
+    std::vector<unsigned int> time       (1, headerPtr->time        );
+    std::vector<unsigned int> samp_num   (1, headerPtr->sample_nr   );
+    std::vector<unsigned int> samples_per_frame (1, headerPtr->n_samples_per_frame );
+    std::vector<unsigned int> nyquistZone       (1, 1);
+    std::vector<double> antennaPositionValue    (3, 0.0);
+    std::vector<string> antennaPositionUnit     (3, "m");
+    std::vector<string> antennaPositionFrame    (1, "ITRF");
+    std::vector<string> feed                    (1, "UNDEFINED");
     
-    dipoleArray_p->setAttribute( attribute_name(STATION_ID), &sid );
-    dipoleArray_p->setAttribute( attribute_name(RSP_ID), &rsp );
-    dipoleArray_p->setAttribute( attribute_name(RCU_ID), &rcu );
-    dipoleArray_p->setAttribute( attribute_name(TIME), &time );
-    dipoleArray_p->setAttribute( attribute_name(SAMPLE_NUMBER), &samp_num );
-    dipoleArray_p->setAttribute( attribute_name(SAMPLES_PER_FRAME), &samples_per_frame );
-    dipoleArray_p->setAttribute( attribute_name(ANTENNA_POSITION_VALUE),
-                                 antenna_position_value, 3 );
-    dipoleArray_p->setAttribute( attribute_name(ANTENNA_POSITION_UNIT),
-                                 antenna_position_unit, 3 );
-    dipoleArray_p->setAttribute( attribute_name(ANTENNA_POSITION_FRAME),
-                                 std::string("ITRF") );
-    dipoleArray_p->setAttribute( attribute_name(ANTENNA_ORIENTATION_VALUE),
-                                 antenna_position_value, 3 );
-    dipoleArray_p->setAttribute( attribute_name(ANTENNA_ORIENTATION_UNIT),
-                                 antenna_position_unit, 3 );
-    dipoleArray_p->setAttribute( attribute_name(ANTENNA_ORIENTATION_FRAME),
-                                 std::string("ITRF") );
-    dipoleArray_p->setAttribute( attribute_name(FEED), std::string("UNDEFINED") );
-    dipoleArray_p->setAttribute( attribute_name(NYQUIST_ZONE),
-                                 &nyquist_zone );
-    dipoleArray_p->setAttribute( attribute_name(SAMPLE_FREQUENCY_VALUE), &sf, 1 );
-    dipoleArray_p->setAttribute( attribute_name(SAMPLE_FREQUENCY_UNIT),
-                                 std::string("MHz") );
+    dipoleArray_p->setAttribute ("STATION_ID",                sid                  );
+    dipoleArray_p->setAttribute ("RSP_ID",                    rsp                  );
+    dipoleArray_p->setAttribute ("RCU_ID",                    rcu                  );
+    dipoleArray_p->setAttribute ("TIME",                      time                 );
+    dipoleArray_p->setAttribute ("SAMPLE_NUMBER",             samp_num             );
+    dipoleArray_p->setAttribute ("SAMPLES_PER_FRAME",         samples_per_frame    );
+    dipoleArray_p->setAttribute ("ANTENNA_POSITION_VALUE",    antennaPositionValue );
+    dipoleArray_p->setAttribute ("ANTENNA_POSITION_UNIT",     antennaPositionUnit  );
+    dipoleArray_p->setAttribute ("ANTENNA_POSITION_FRAME",    antennaPositionFrame );
+    dipoleArray_p->setAttribute ("ANTENNA_ORIENTATION_VALUE", antennaPositionValue );
+    dipoleArray_p->setAttribute ("ANTENNA_ORIENTATION_UNIT",  antennaPositionUnit  );
+    dipoleArray_p->setAttribute ("ANTENNA_ORIENTATION_FRAME", antennaPositionFrame );
+    dipoleArray_p->setAttribute ("FEED",                      feed                 );
+    dipoleArray_p->setAttribute ("NYQUIST_ZONE",              nyquistZone          );
+    dipoleArray_p->setAttribute ("SAMPLE_FREQUENCY_VALUE",    sampleFreqValue      );
+    dipoleArray_p->setAttribute ("SAMPLE_FREQUENCY_UNIT",     sampleFreqUnit       );
+
 #ifdef DEBUGGING_MESSAGES
     /* Feedback */
     std::cout << "CREATED New dipole group: " << newuid << std::endl;

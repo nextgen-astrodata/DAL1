@@ -38,7 +38,7 @@ namespace DAL {
   
   dalArray::dalArray()
   {
-    datasetID_p = 0;
+    itsDatasetID = 0;
     itsFileID   = 0;
     itsRank     = 0;
     datatype    = "UNKNOWN";
@@ -61,10 +61,10 @@ namespace DAL {
     hid_t * lclfile = (hid_t*)voidfile;  // H5File object
     itsFileID       = *lclfile;          // get the file handle
 
-    if ( ( datasetID_p = H5Dopen( itsFileID, name.c_str(), H5P_DEFAULT ) ) < 0 )
+    if ( ( itsDatasetID = H5Dopen( itsFileID, name.c_str(), H5P_DEFAULT ) ) < 0 )
       std::cerr << "ERROR: could not open array '" << arrayname << "'.\n";
 
-    return( datasetID_p );
+    return( itsDatasetID );
   }
 
   //_____________________________________________________________________________
@@ -75,7 +75,7 @@ namespace DAL {
   */
   bool dalArray::close()
   {
-    if ( H5Dclose(datasetID_p) < 0 ) {
+    if ( H5Dclose(itsDatasetID) < 0 ) {
       std::cerr << "ERROR: dalArray::close() failed.\n";
       return DAL::FAIL;
     }
@@ -127,7 +127,7 @@ namespace DAL {
     hid_t dataspace      = 0;
     
     /* Select a hyperslab  */
-    if ( ( filespace = H5Dget_space( datasetID_p ) ) < 0 )
+    if ( ( filespace = H5Dget_space( itsDatasetID ) ) < 0 )
       {
         std::cerr << "ERROR: Could not get filespace for array.\n";
         return DAL::FAIL;
@@ -150,7 +150,7 @@ namespace DAL {
       }
 
     /* Write the data to the hyperslab  */
-    if ( H5Dwrite( datasetID_p,
+    if ( H5Dwrite( itsDatasetID,
 		   H5T_NATIVE_INT,
 		   dataspace,
 		   filespace,
@@ -192,7 +192,7 @@ namespace DAL {
     hid_t dataspace      = 0;
     
     /* Select a hyperslab  */
-    if ( ( filespace = H5Dget_space( datasetID_p ) ) < 0 )
+    if ( ( filespace = H5Dget_space( itsDatasetID ) ) < 0 )
       {
         std::cerr << "ERROR: Could not get filespace for array.\n";
         return DAL::FAIL;
@@ -215,7 +215,7 @@ namespace DAL {
       }
 
     /* Write the data to the hyperslab  */
-    if ( H5Dwrite (datasetID_p, H5T_NATIVE_SHORT, dataspace, filespace,
+    if ( H5Dwrite (itsDatasetID, H5T_NATIVE_SHORT, dataspace, filespace,
                    H5P_DEFAULT, data ) < 0 )
       {
         std::cerr << "ERROR: Could not write short array.\n";
@@ -252,7 +252,7 @@ namespace DAL {
     hid_t complex_id     = 0;
 
     /* Select a hyperslab  */
-    if ( ( filespace = H5Dget_space( datasetID_p ) ) < 0 )
+    if ( ( filespace = H5Dget_space( itsDatasetID ) ) < 0 )
       {
         std::cerr << "ERROR: Could not get filespace for array.\n";
         return DAL::FAIL;
@@ -297,7 +297,7 @@ namespace DAL {
       }
 
     /* Write the data to the hyperslab  */
-    if ( H5Dwrite( datasetID_p, complex_id, filespace, filespace,
+    if ( H5Dwrite( itsDatasetID, complex_id, filespace, filespace,
                    H5P_DEFAULT, data ) < 0 )
       {
         std::cerr << "ERROR: Could not write complex<float> array.\n";
@@ -331,7 +331,7 @@ namespace DAL {
     hid_t filespace      = 0;
     hid_t complex_id     = 0;
 
-    if ( ( filespace = H5Dget_space( datasetID_p ) ) < 0 )
+    if ( ( filespace = H5Dget_space( itsDatasetID ) ) < 0 )
       {
         std::cerr << "ERROR: Could not get filespace for array.\n";
         return DAL::FAIL;
@@ -377,7 +377,7 @@ namespace DAL {
       }
 
     /* Write the data to the hyperslab  */
-    if ( H5Dwrite( datasetID_p, complex_id, filespace, filespace,
+    if ( H5Dwrite( itsDatasetID, complex_id, filespace, filespace,
                    H5P_DEFAULT, data ) < 0 )
       {
         std::cerr << "ERROR: Could not write complex<Int16> array.\n";
@@ -400,8 +400,8 @@ namespace DAL {
   {
     vector<int> return_values;
     
-    if (H5Iis_valid(datasetID_p)) {
-      hid_t dataspace = H5Dget_space( datasetID_p );    /* dataspace identifier */
+    if (H5Iis_valid(itsDatasetID)) {
+      hid_t dataspace = H5Dget_space( itsDatasetID );    /* dataspace identifier */
       int32_t rank        = H5Sget_simple_extent_ndims(dataspace);
       hsize_t  dims_out[rank];
       
@@ -433,7 +433,7 @@ namespace DAL {
     for ( uint32_t ii=0; ii < rank; ii++ )
       lcldims[ ii ] = newdims[ ii ];
 
-    if ( H5Dextend( datasetID_p, lcldims ) )
+    if ( H5Dextend( itsDatasetID, lcldims ) )
       {
         std::cerr << "ERROR: Could not extend array dimensions.\n";
         return DAL::FAIL;
@@ -458,7 +458,7 @@ namespace DAL {
       The following function calls the attr_info function for each
        attribute associated with the object.
      */
-    if ( H5Aiterate1( datasetID_p, NULL, attr_info, NULL ) < 0 ) {
+    if ( H5Aiterate1( itsDatasetID, NULL, attr_info, NULL ) < 0 ) {
       std::cerr << "ERROR: Could not iterate over array attributes.\n";
       return DAL::FAIL;
     }
@@ -466,152 +466,6 @@ namespace DAL {
     return DAL::SUCCESS;
   }
   
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \brief Add a char attribute.
-
-    Add a char attribute to the array.
-
-    \param attrname The name of the attribute you want to add.
-    \param data The value of the attribute you want to add.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-   */
-  bool dalArray::setAttribute( std::string attrname, char * data, int size )
-  {
-    return h5set_attribute( H5T_NATIVE_CHAR, datasetID_p, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \brief Add a short integer attribute.
-
-    Add a short integer attribute to the array.
-
-    \param attrname The name of the attribute you want to add.
-    \param data The value of the attribute you want to add.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-   */
-  bool dalArray::setAttribute( std::string attrname, short * data, int size )
-  {
-    return h5set_attribute( H5T_NATIVE_SHORT, datasetID_p, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \brief Add an integer attribute.
-
-    Add an integer attribute to the array.
-
-    \param attrname The name of the attribute you want to add.
-    \param data The value of the attribute you want to add.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-   */
-  bool dalArray::setAttribute( std::string attrname, int * data, int size )
-  {
-    return h5set_attribute( H5T_NATIVE_INT, datasetID_p, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \brief Add a unsigned integer attribute.
-
-    Add a unsigned integer attribute to the array.
-
-    \param attrname The name of the attribute you want to add.
-    \param data The value of the attribute you want to add.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-   */
-  bool dalArray::setAttribute( std::string attrname, uint * data, int size )
-  {
-    return h5set_attribute( H5T_NATIVE_UINT, datasetID_p, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \brief Add a long integer attribute.
-
-    Add a long integer attribute to the array.
-
-    \param attrname The name of the attribute you want to add.
-    \param data The value of the attribute you want to add.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-   */
-  bool dalArray::setAttribute( std::string attrname, long * data, int size )
-  {
-    return h5set_attribute( H5T_NATIVE_LONG, datasetID_p, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \brief Add a floating point attribute.
-
-    Add a floating point attribute to the array.
-
-    \param attrname The name of the attribute you want to add.
-    \param data The value of the attribute you want to add.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-   */
-  bool dalArray::setAttribute( std::string attrname, float * data, int size )
-  {
-    return h5set_attribute( H5T_NATIVE_FLOAT, datasetID_p, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \brief Add a double precision floating point attribute.
-
-    Add a double precision floating point attribute to the array.
-
-    \param attrname The name of the attribute you want to add.
-    \param data The value of the attribute you want to add.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-   */
-  bool dalArray::setAttribute( std::string attrname, double * data, int size )
-  {
-    return h5set_attribute( H5T_NATIVE_DOUBLE, datasetID_p, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                          setAttribute_string
-
-  /*!
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalArray::setAttribute( std::string attrname, std::string data )
-  {
-    return h5setAttribute_string( datasetID_p, attrname, &data, 1 );
-  }
-
-  //_____________________________________________________________________________
-  //                                                          setAttribute_string
-
-  /*!
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalArray::setAttribute( std::string attrname, std::string * data,
-                               int size )
-  {
-    return h5setAttribute_string( datasetID_p, attrname, data, size );
-  }
-
   // ------------------------------------------------------------ dalIntArray
   
   /********************************************************************
@@ -694,7 +548,7 @@ namespace DAL {
             std::cerr << "ERROR: Could not set array chunk size.\n";
           }
 
-        if ( ( datasetID_p = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
+        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
                                       dataspace, cparms) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array.\n";
@@ -709,7 +563,7 @@ namespace DAL {
             std::cerr << "ERROR: Could not set array dataspace.\n";
           }
 
-        if ( ( datasetID_p = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
+        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
                                       dataspace, H5P_DEFAULT ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array.\n";
@@ -717,7 +571,7 @@ namespace DAL {
       }
 
     // write the data
-    if ( H5Dwrite( datasetID_p, datatype, dataspace, dataspace, H5P_DEFAULT,
+    if ( H5Dwrite( itsDatasetID, datatype, dataspace, dataspace, H5P_DEFAULT,
                    data) < 0 )
       {
         std::cerr << "ERROR: Could not write array.\n";
@@ -889,7 +743,7 @@ namespace DAL {
             std::cerr << "ERROR: Could not set array chunk size.\n";
           }
 
-        if ( ( datasetID_p = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
+        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
                                       dataspace, cparms ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array.\n";
@@ -904,7 +758,7 @@ namespace DAL {
             std::cerr << "ERROR: Could not set array dataspace.\n";
           }
 
-        if ( ( datasetID_p = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
+        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
                                       dataspace, H5P_DEFAULT ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array.\n";
@@ -912,7 +766,7 @@ namespace DAL {
       }
 
     // write the data
-    if ( H5Dwrite( datasetID_p, datatype, dataspace, dataspace, H5P_DEFAULT,
+    if ( H5Dwrite( itsDatasetID, datatype, dataspace, dataspace, H5P_DEFAULT,
                    data ) < 0 )
       {
         std::cerr << "ERROR: Could not write array.\n";
@@ -1040,7 +894,7 @@ namespace DAL {
                       << arrayname << "'.\n";
           }
 
-        if ( ( datasetID_p = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
+        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
                                       dataspace, cparms) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array '" << arrayname << "'.\n";
@@ -1055,7 +909,7 @@ namespace DAL {
                       << arrayname << "'.\n";
           }
 
-        if ( ( datasetID_p = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
+        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
                                       dataspace, H5P_DEFAULT ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array '" << arrayname << "'.\n";
@@ -1064,7 +918,7 @@ namespace DAL {
       }
 
     // write the data
-    if ( H5Dwrite( datasetID_p, datatype, dataspace, dataspace, H5P_DEFAULT,
+    if ( H5Dwrite( itsDatasetID, datatype, dataspace, dataspace, H5P_DEFAULT,
                    data ) < 0 )
       {
         std::cerr << "ERROR: Could not write array '" << arrayname << "'\n";
@@ -1192,7 +1046,7 @@ namespace DAL {
                       << arrayname << "'.\n";
           }
 
-        if ( ( datasetID_p = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
+        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
                                       dataspace, cparms ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array '" << arrayname << "'.\n";
@@ -1207,7 +1061,7 @@ namespace DAL {
                       << arrayname << "'.\n";
           }
 
-        if ( ( datasetID_p = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
+        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
                                       dataspace, H5P_DEFAULT ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array '" << arrayname << "'.\n";
@@ -1216,7 +1070,7 @@ namespace DAL {
       }
 
     // write the data
-    if ( H5Dwrite( datasetID_p, datatype, dataspace, dataspace, H5P_DEFAULT,
+    if ( H5Dwrite( itsDatasetID, datatype, dataspace, dataspace, H5P_DEFAULT,
                    data) < 0 )
       {
         std::cerr << "ERROR: Could not write array '" << arrayname << "'\n";
@@ -1270,45 +1124,58 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                           setAttribute_short
   
-  bool dalArray::setAttribute_short( std::string attrname, short data )
+  bool dalArray::setAttribute_short (std::string const &name,
+				     short const &data)
   {
-    return setAttribute( attrname, &data );
+    return HDF5Attribute::setAttribute (itsDatasetID, name, data);
   }
   
   //_____________________________________________________________________________
   //                                                             setAttribute_int
-  
-  bool dalArray::setAttribute_int( std::string attrname, int data )
+
+  /*!
+    \brief Set attribute of type \e int
+  */
+  bool dalArray::setAttribute_int (std::string const &name,
+				   int const &data)
   {
-    return setAttribute( attrname, &data );
+    return HDF5Attribute::setAttribute (itsDatasetID, name, data);
   }
   
   //_____________________________________________________________________________
   //                                                            setAttribute_uint
   
-  //! Set attribute of type \e uint
-  bool dalArray::setAttribute_uint (std::string attrname,
-				    uint data)
+  /*!
+    \brief Set attribute of type \e uint
+  */
+  bool dalArray::setAttribute_uint (std::string const &name,
+				   uint const &data)
   {
-    return setAttribute( attrname, &data );
+    return HDF5Attribute::setAttribute (itsDatasetID, name, data);
   }
-  //! Set attrubute of type \e long
-  bool dalArray::setAttribute_long (std::string attrname,
-				    long data)
+
+  //_____________________________________________________________________________
+  //                                                            setAttribute_long
+  
+  /*!
+    \brief Set attribute of type \e long
+  */
+  bool dalArray::setAttribute_long (std::string const &name,
+				    long const &data)
   {
-    return setAttribute( attrname, &data );
+    return HDF5Attribute::setAttribute (itsDatasetID, name, data);
   }
   //! Set attribute of type \e float
-  bool dalArray::setAttribute_float (std::string attrname,
-				     float data)
+  bool dalArray::setAttribute_float (std::string const &name,
+				     float const &data)
   {
-    return setAttribute( attrname, &data );
+    return HDF5Attribute::setAttribute (itsDatasetID, name, data);
   }
   //! Set attribute of type \e double
-  bool dalArray::setAttribute_double (std::string attrname,
-				      double data)
+  bool dalArray::setAttribute_double (std::string const &name,
+				      double const &data)
   {
-    return setAttribute( attrname, &data );
+    return HDF5Attribute::setAttribute (itsDatasetID, name, data);
   }
   //! Set attribute of type \e string
   bool dalArray::setAttribute_string (std::string attrname,

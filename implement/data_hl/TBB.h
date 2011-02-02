@@ -365,7 +365,9 @@ namespace DAL {
       //! Check if the group for a given station exists within the HDF5 file
       void stationCheck();
       void makeOutputHeader();
+      //! Create new station group
       void makeNewStation(char *, TBB_Header *);
+      //! Create new dipole dataset
       void makeNewDipole(string, dalGroup *, TBB_Header *);
       bool transientMode();
       void fixDate();

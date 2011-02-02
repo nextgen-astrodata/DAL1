@@ -57,11 +57,11 @@ namespace DAL {
 
     hid_t * lclfile = (hid_t*)voidfile; // H5File object
     file            = lclfile;
-    file_id         = *lclfile;  // get the file handle
+    itsFileID         = *lclfile;  // get the file handle
 
     groupname_p    = gname;
     groupname_full = "/" + stringify(gname);
-    if ( ( group_id = H5Gcreate( file_id, groupname_full.c_str(),  H5P_DEFAULT,
+    if ( ( itsGroupID = H5Gcreate( itsFileID, groupname_full.c_str(),  H5P_DEFAULT,
                                  H5P_DEFAULT, H5P_DEFAULT ) ) < 0 )
       {
         std::cerr << "ERROR: Could not create group'" << groupname_full
@@ -85,7 +85,7 @@ namespace DAL {
   {
     init();
     
-    if ( ( group_id = H5Gcreate( location_id, gname, H5P_DEFAULT, H5P_DEFAULT,
+    if ( ( itsGroupID = H5Gcreate( location_id, gname, H5P_DEFAULT, H5P_DEFAULT,
                                  H5P_DEFAULT ) ) < 0 )
       {
         std::cerr << "ERROR: Could not create group'" << string( gname )
@@ -107,18 +107,18 @@ namespace DAL {
   {
     hid_t * lclfile = (hid_t*)voidfile; // H5File object
     file            = lclfile;
-    file_id         = *lclfile;  // get the file handle
+    itsFileID         = *lclfile;  // get the file handle
     groupname_p     = gname;
 
     groupname_full = "/" + groupname_p;
-    if ( ( group_id = H5Gopen1( file_id, groupname_full.c_str() ) ) < 0 )
+    if ( ( itsGroupID = H5Gopen1( itsFileID, groupname_full.c_str() ) ) < 0 )
       {
         std::cerr << "ERROR: Could not create group'" << groupname_full
                   << "'.\n";
         return 0;
       }
 
-    return( group_id );
+    return( itsGroupID );
   }
 
   //_____________________________________________________________________________
@@ -126,12 +126,12 @@ namespace DAL {
 
   bool dalGroup::close()
   {
-    if ( 0 != group_id ) {
-      if ( H5Gclose(group_id) < 0 ) {
+    if ( 0 != itsGroupID ) {
+      if ( H5Gclose(itsGroupID) < 0 ) {
 	std::cerr << "ERROR: dalGroup::close() failed.\n";
 	return DAL::FAIL;
       }
-      group_id = 0;
+      itsGroupID = 0;
     }
     return DAL::SUCCESS;
   }
@@ -144,11 +144,11 @@ namespace DAL {
   
   dalGroup::~dalGroup()
   {
-    if ( 0 != group_id ) {
-      if ( H5Gclose(group_id) < 0 ) {
+    if ( 0 != itsGroupID ) {
+      if ( H5Gclose(itsGroupID) < 0 ) {
 	std::cerr << "ERROR: dalGroup::close() failed.\n";
       }
-      group_id = 0;
+      itsGroupID = 0;
     }
   }
   
@@ -166,7 +166,7 @@ namespace DAL {
   */
   hid_t dalGroup::getId()
   {
-    return group_id;
+    return itsGroupID;
   }
   
   // ============================================================================
@@ -182,8 +182,8 @@ namespace DAL {
     groupname_full = "UNKNOWN";
     group          = NULL;
     filter         = NULL;
-    file_id        = 0;
-    group_id       = 0;
+    itsFileID        = 0;
+    itsGroupID       = 0;
     status         = 0;
   }
   
@@ -197,8 +197,8 @@ namespace DAL {
   {
     os << "[dalGroup] Summary of object properties"  << endl;
     
-    os << "-- File ID            = " << file_id     << std::endl;
-    os << "-- Group ID           = " << group_id    << std::endl;
+    os << "-- File ID            = " << itsFileID     << std::endl;
+    os << "-- Group ID           = " << itsGroupID    << std::endl;
     os << "-- Group name         = " << groupname_p << std::endl;
     os << "-- Status             = " << status      << std::endl;
     
@@ -259,8 +259,8 @@ namespace DAL {
   {
     vector<string> member_names;
     
-    if (H5Iis_valid(file_id)) {
-      H5Giterate (file_id,
+    if (H5Iis_valid(itsFileID)) {
+      H5Giterate (itsFileID,
 		  groupname_full.c_str(),
 		  NULL,
 		  dalGroup_file_info,
@@ -313,7 +313,7 @@ namespace DAL {
                               vector<int> cdims )
   {
     dalShortArray * la;
-    la = new dalShortArray( group_id, arrayname, dims, data, cdims );
+    la = new dalShortArray( itsGroupID, arrayname, dims, data, cdims );
     return la;
   }
 
@@ -342,7 +342,7 @@ namespace DAL {
                             vector<int> cdims )
   {
     dalIntArray * la;
-    la = new dalIntArray( group_id, arrayname, dims, data, cdims );
+    la = new dalIntArray( itsGroupID, arrayname, dims, data, cdims );
     return la;
   }
 
@@ -370,7 +370,7 @@ namespace DAL {
                               vector<int> cdims )
   {
     dalFloatArray * la;
-    la = new dalFloatArray( group_id, arrayname, dims, data, cdims );
+    la = new dalFloatArray( itsGroupID, arrayname, dims, data, cdims );
     return la;
   }
 
@@ -399,7 +399,7 @@ namespace DAL {
                                      std::vector<int> cdims )
   {
     dalComplexArray_float32 * la;
-    la = new dalComplexArray_float32( group_id, arrayname, dims, data, cdims );
+    la = new dalComplexArray_float32( itsGroupID, arrayname, dims, data, cdims );
     return la;
   }
 
@@ -428,193 +428,12 @@ namespace DAL {
                                      std::vector<int> cdims )
   {
     dalComplexArray_int16 * la;
-    la = new dalComplexArray_int16( group_id, arrayname, dims, data, cdims );
+    la = new dalComplexArray_int16( itsGroupID, arrayname, dims, data, cdims );
     return la;
   }
 
-  //_____________________________________________________________________________
-  //                                                                      getName
-
-  /*!
-    \return The name of the group.
-  */
-  string dalGroup::getName ()
-  {
-    return groupname_p;
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \brief Define a char attribute.
-
-    Define a char attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalGroup::setAttribute (std::string attrname,
-			       char * data,
-			       int size)
-  {
-    return h5set_attribute( H5T_NATIVE_CHAR, group_id, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \brief Define a short attribute.
-
-    Define a short attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalGroup::setAttribute( std::string attrname, short * data, int size )
-  {
-    return h5set_attribute( H5T_NATIVE_SHORT, group_id, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \brief Define a integer attribute.
-
-    Define a integer attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalGroup::setAttribute( std::string attrname, int * data, int size )
-  {
-    return h5set_attribute( H5T_NATIVE_INT, group_id, attrname, data, size );
-  }
-
-  // ---------------------------------------------- setAttribute
-
-  /*!
-    \brief Define a unsigned integer attribute.
-
-    Define a unsigned integer attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalGroup::setAttribute( std::string attrname, uint * data, int size )
-  {
-    return h5set_attribute( H5T_NATIVE_UINT, group_id, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \brief Define a long integer attribute.
-
-    Define a long integer attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalGroup::setAttribute( std::string attrname, long * data, int size )
-  {
-    return h5set_attribute( H5T_NATIVE_LONG, group_id, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \brief Define a floating point attribute.
-
-    Define a floating point attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalGroup::setAttribute( std::string attrname, float * data, int size )
-  {
-    return h5set_attribute( H5T_NATIVE_FLOAT, group_id, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \brief Define a double precision floating point attribute.
-
-    Define a double precision floating point attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalGroup::setAttribute( std::string attrname, double * data, int size )
-  {
-    return h5set_attribute( H5T_NATIVE_DOUBLE, group_id, attrname, data, size );
-  }
-
-  //_____________________________________________________________________________
-  //                                                                 setAttribute
-
-  /*!
-    \brief Define a string attribute.
-
-    Define a string attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalGroup::setAttribute( std::string attrname, std::string data )
-  {
-    return h5setAttribute_string( group_id, attrname, &data, 1 );
-  }
-
-  // ---------------------------------------------- setAttribute_string
-
-  /*!
-    \brief Define a string attribute.
-
-    Define a string attribute.
-
-    \param attrname The name of the attribute you want to create.
-    \param data The value of the attribute you want to create.
-    \param size Optional parameter specifying the array size of the
-                attribute.  Default is scalar.
-    \return bool -- DAL::FAIL or DAL::SUCCESS
-  */
-  bool dalGroup::setAttribute( std::string attrname, std::string * data,
-                               int size )
-  {
-    return h5setAttribute_string( group_id, attrname, data, size );
-  }
-
   // ---------------------------------------------------------- createGroup
-
+  
   /*!
     \brief Create a new group.
 
@@ -626,7 +445,7 @@ namespace DAL {
   dalGroup * dalGroup::createGroup( const char * gname )
   {
     dalGroup * lg = NULL;
-    lg = new dalGroup( group_id, gname );
+    lg = new dalGroup( itsGroupID, gname );
     return lg;
   }
 
@@ -708,7 +527,7 @@ namespace DAL {
     hid_t  status;
 
     // get the dataspace
-    lclfile = H5Dopen1( group_id, arrayname.c_str() );
+    lclfile = H5Dopen1( itsGroupID, arrayname.c_str() );
     hid_t filespace = H5Dget_space(lclfile);
 
     // what is the rank of the array?
@@ -737,7 +556,7 @@ namespace DAL {
     int * data = NULL;
     data = new int[size];
 
-    status = H5LTread_dataset_int( group_id, arrayname.c_str(), data );
+    status = H5LTread_dataset_int( itsGroupID, arrayname.c_str(), data );
 
 #ifdef DEBUGGING_MESSAGES
     for (int ii=0; ii<size; ii++)
@@ -781,37 +600,69 @@ namespace DAL {
     return array;
   }
 
-  bool dalGroup::setAttribute_char( std::string attrname, char data )
+  bool dalGroup::setAttribute_char (std::string const &name,
+				    char const &data)
   {
-    return setAttribute( attrname, &data );
+    return HDF5Attribute::setAttribute (itsGroupID,
+					name,
+					&data,
+					1);
   }
-  bool dalGroup::setAttribute_short( std::string attrname, short data )
+  bool dalGroup::setAttribute_short (std::string const &name,
+				     short const &data)
   {
-    return setAttribute( attrname, &data );
+    return HDF5Attribute::setAttribute (itsGroupID,
+					name,
+					&data,
+					1);
   }
-  bool dalGroup::setAttribute_int( std::string attrname, int data )
+  bool dalGroup::setAttribute_int (std::string const &name,
+				   int const &data)
   {
-    return setAttribute( attrname, &data );
+    return HDF5Attribute::setAttribute (itsGroupID,
+					name,
+					&data,
+					1);
   }
-  bool dalGroup::setAttribute_uint( std::string attrname, uint data )
+  bool dalGroup::setAttribute_uint (std::string const &name,
+				    uint const &data)
   {
-    return setAttribute( attrname, &data );
+    return HDF5Attribute::setAttribute (itsGroupID,
+					name,
+					&data,
+					1);
   }
-  bool dalGroup::setAttribute_long( std::string attrname, long data )
+  bool dalGroup::setAttribute_long (std::string const &name,
+				    long const &data)
   {
-    return setAttribute( attrname, &data );
+    return HDF5Attribute::setAttribute (itsGroupID,
+					name,
+					&data,
+					1);
   }
-  bool dalGroup::setAttribute_float( std::string attrname, float data )
+  bool dalGroup::setAttribute_float (std::string const &name,
+				     float const &data)
   {
-    return setAttribute( attrname, &data );
+    return HDF5Attribute::setAttribute (itsGroupID,
+					name,
+					&data,
+					1);
   }
-  bool dalGroup::setAttribute_double( std::string attrname, double data )
+  bool dalGroup::setAttribute_double (std::string const &name,
+				      double const &data)
   {
-    return setAttribute( attrname, &data );
+    return HDF5Attribute::setAttribute (itsGroupID,
+					name,
+					&data,
+					1);
   }
-  bool dalGroup::setAttribute_string( std::string attrname, std::string data )
+  bool dalGroup::setAttribute_string (std::string const &name,
+				      std::string const &data)
   {
-    return setAttribute( attrname, &data );
+    return HDF5Attribute::setAttribute (itsGroupID,
+					name,
+					&data,
+					1);
   }
   bool dalGroup::setAttribute_char_vector (std::string attrname, bpl::list data )
   {
@@ -914,7 +765,7 @@ namespace DAL {
   bpl::numeric::array dalGroup::getAttribute_float_boost ( std::string attrname )
   {
   	 std::vector<float> value;
-     h5get_attribute( group_id, attrname.c_str(), value );
+     h5get_attribute( itsGroupID, attrname.c_str(), value );
      std::cerr << value << std::endl;
      std::vector<int> dims;
      dims.push_back( value.size() );
@@ -940,7 +791,7 @@ namespace DAL {
   bpl::numeric::array dalGroup::getAttribute_double_boost ( std::string attrname )
   {
   	 std::vector<double> value;
-     h5get_attribute( group_id, attrname.c_str(), value );
+     h5get_attribute( itsGroupID, attrname.c_str(), value );
      std::cerr << value << std::endl;
      std::vector<int> dims;
      dims.push_back( value.size() );
@@ -951,7 +802,7 @@ namespace DAL {
   bpl::numeric::array dalGroup::getAttribute_long_boost ( std::string attrname )
   {
   	 std::vector<long> value;
-     h5get_attribute( group_id, attrname.c_str(), value );
+     h5get_attribute( itsGroupID, attrname.c_str(), value );
      std::cerr << value << std::endl;
      std::vector<int> dims;
      dims.push_back( value.size() );
@@ -962,7 +813,7 @@ namespace DAL {
   bpl::numeric::array dalGroup::getAttribute_short_boost ( std::string attrname )
   {
   	 std::vector<short> value;
-     h5get_attribute( group_id, attrname.c_str(), value );
+     h5get_attribute( itsGroupID, attrname.c_str(), value );
      std::cerr << value << std::endl;
      std::vector<int> dims;
      dims.push_back( value.size() );
@@ -973,7 +824,7 @@ namespace DAL {
   bpl::numeric::array dalGroup::getAttribute_int_boost ( std::string attrname )
   {
   	 std::vector<int> value;
-     h5get_attribute( group_id, attrname.c_str(), value );
+     h5get_attribute( itsGroupID, attrname.c_str(), value );
      std::cerr << value << std::endl;
      std::vector<int> dims;
      dims.push_back( value.size() );
@@ -984,7 +835,7 @@ namespace DAL {
   bpl::numeric::array dalGroup::getAttribute_uint_boost ( std::string attrname )
   {
   	 std::vector<uint> value;
-     h5get_attribute( group_id, attrname.c_str(), value );
+     h5get_attribute( itsGroupID, attrname.c_str(), value );
      std::cerr << value << std::endl;
      std::vector<int> dims;
      dims.push_back( value.size() );
@@ -996,7 +847,7 @@ namespace DAL {
   {
      bpl::list data;
   	 std::vector<string> value;
-     h5get_attribute( group_id, attrname.c_str(), value );
+     h5get_attribute( itsGroupID, attrname.c_str(), value );
      std::cerr << value << std::endl;
      std::vector<int> dims;
      dims.push_back( value.size() );
