@@ -9,7 +9,7 @@ User Software is from the SVN repository
 
 As an alternative you also can clone from the respository on Github
 
-  git://github.com/lbaehren/lofarsoft.git lofarsoft
+  git://github.com/lbaehren/DAL.git DAL
 
 Once checkout from the repository is complete, you can change into the "build"
 directory to run the bootstrap script.

@@ -132,6 +132,11 @@ namespace DAL { // Namespace DAL -- begin
     //! Default constructor
     HDF5Attribute ();
     
+    //! Argumented constructor
+    HDF5Attribute (hid_t const &location,
+		   std::string const &name,
+		   hid_t const &access=H5P_DEFAULT);
+    
     //! Copy constructor
     HDF5Attribute (HDF5Attribute const &other);
     

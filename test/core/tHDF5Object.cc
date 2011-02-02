@@ -76,9 +76,10 @@ int test_constructors (std::string const &filename,
 {
   cout << "\n[tHDF5Object::test_constructors]\n" << endl;
 
-  int nofFailedTests      = 0;
-  std::string nameGroup   = "GROUP";
-  std::string nameDataset = "DATASET_2D_NATIVE_INT";
+  int nofFailedTests        = 0;
+  std::string nameGroup     = "GROUP";
+  std::string nameDataset   = "DATASET_2D_NATIVE_INT";
+  std::string nameAttribute = "ATTRIBUTE_SINGLE_INT";
   
   cout << "[1] Testing HDF5Object() ..." << endl;
   try {
@@ -109,6 +110,10 @@ int test_constructors (std::string const &filename,
     cout << "--> opening dataset " << nameDataset << " ..." << endl;
     HDF5Object h5dataset (fileID, nameDataset);
     h5dataset.summary(); 
+    //
+    cout << "--> opening attribute " << nameAttribute << " ..." << endl;
+    HDF5Object h5attribute (fileID, nameAttribute);
+    h5attribute.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -156,10 +161,15 @@ int test_staticMethods (std::string const &filename,
     std::map<H5I_type_t,std::string> objectsMap = HDF5Object::objectTypesMap();
     std::vector<H5I_type_t> objectTypes         = HDF5Object::objectTypes();
     std::vector<std::string> objectNames        = HDF5Object::objectNames();
-    
-    cout << "-- nof object types = " << objectsMap.size() << endl;
-    cout << "-- Object types     = " << objectTypes << endl;
-    cout << "-- Object names     = " << objectNames << endl;
+    unsigned int nofTypes                       = objectsMap.size();
+
+    cout << "-- nof object types = " << nofTypes << endl;
+
+    for (unsigned int n=0; n<nofTypes; ++n) {
+      cout << " [ " << objectTypes[n] << "  ->  " << objectNames[n] << " ]"
+	   << endl;
+    }
+
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;

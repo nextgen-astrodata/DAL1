@@ -234,13 +234,21 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::map<H5I_type_t,std::string> data;
 
-    data[H5I_FILE]      = "H5I_FILE";
-    data[H5I_GROUP]     = "H5I_GROUP";
-    data[H5I_DATATYPE]  = "H5I_DATATYPE";
-    data[H5I_DATASPACE] = "H5I_DATASPACE";
-    data[H5I_DATASET]   = "H5I_DATASET";
-    data[H5I_ATTR]      = "H5I_ATTR";
-    data[H5I_BADID]     = "H5I_BADID";
+    data[H5I_UNINIT]      = "H5I_UNINIT";       /* uninitialized type        */
+    data[H5I_BADID]       = "H5I_BADID";        /* invalid Type              */
+    data[H5I_FILE]        = "H5I_FILE";         /* File object type          */
+    data[H5I_GROUP]       = "H5I_GROUP";        /* Group object type         */
+    data[H5I_DATATYPE]    = "H5I_DATATYPE";     /* Datatype object type      */
+    data[H5I_DATASPACE]   = "H5I_DATASPACE";    /* Dataspace object type     */
+    data[H5I_DATASET]     = "H5I_DATASET";      /* Dataset object type       */
+    data[H5I_ATTR]        = "H5I_ATTR";         /* Attribute object type     */
+    data[H5I_REFERENCE]   = "H5I_REFERENCE";    /* Reference object type     */
+    data[H5I_VFL]         = "H5I_VFL";          /* Virtual file layer type   */
+    data[H5I_GENPROP_CLS] = "H5I_GENPROP_CLS";  /* Generic property list class */
+    data[H5I_GENPROP_LST] = "H5I_GENPROP_LST";  /* Generic property lists      */
+    data[H5I_ERROR_CLASS] = "H5I_ERROR_CLASS";  /* error classes               */
+    data[H5I_ERROR_MSG]   = "H5I_ERROR_MSG";    /* error messages              */
+    data[H5I_ERROR_STACK] = "H5I_ERROR_STACK";  /* error stacks                */
     
     return data;
   }
@@ -288,6 +296,18 @@ namespace DAL { // Namespace DAL -- begin
   
   /*!
     \param location -- Object identifier whose name is to be determined.
+    \return name    -- Name of the object identified by \c location.
+
+    \b Note: Interestingly enough the underlying HDF5 library calls -- though
+    intended for the same task -- a) have different signatures and b) will not
+    work on all types of objects:
+    \code
+    ssize_t H5Iget_name( hid_t location, char *buffer, size_t size )
+    ssize_t H5Fget_name (hid_t location, char *buffer, size_t size ) 
+    ssize_t H5Aget_name (hid_t location, size_t size, char *buffer ) 
+    \endcode
+    The present method addresses these short-comings, providing a generic
+    interface to retrieve the name of the object.
   */
   std::string HDF5Object::name (hid_t const &location)
   {
@@ -307,6 +327,9 @@ namespace DAL { // Namespace DAL -- begin
       switch (varObjectType) {
       case H5I_FILE:
 	length = H5Fget_name (location, buffer, bufferSize);
+	break;
+      case H5I_ATTR:
+	length = H5Aget_name (location, bufferSize, buffer);
 	break;
       default:
 	length = H5Iget_name (location, buffer, bufferSize);
@@ -330,6 +353,9 @@ namespace DAL { // Namespace DAL -- begin
 	switch (varObjectType) {
 	case H5I_FILE:
 	  length = H5Fget_name (location, buffer, bufferSize);
+	  break;
+	case H5I_ATTR:
+	  length = H5Aget_name (location, bufferSize, buffer);
 	  break;
 	default:
 	  length = H5Iget_name (location, buffer, bufferSize);
@@ -374,13 +400,13 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param location -- Object identifier whose type is to be determined. Valid
            types returned by the function are
-	   - H5I_FILE -- File
-	   - H5I_GROUP -- Group
-	   - H5I_DATATYPE -- Datatype
-	   - H5I_DATASPACE -- Dataspace
-	   - H5I_DATASET -- Dataset
-	   - H5I_ATTR -- Attribute
-	   - H5I_BADID -- Invalid identifier, returned by the function if no
+	   - \c H5I_FILE -- File
+	   - \c H5I_GROUP -- Group
+	   - \c H5I_DATATYPE -- Datatype
+	   - \c H5I_DATASPACE -- Dataspace
+	   - \c H5I_DATASET -- Dataset
+	   - \c H5I_ATTR -- Attribute
+	   - \c H5I_BADID -- Invalid identifier, returned by the function if no
 	   valid type can be determined or the identifier submitted is invalid
     \return type    -- Object type if successful; otherwise H5I_BADID. 
   */
@@ -389,10 +415,10 @@ namespace DAL { // Namespace DAL -- begin
     std::map<H5I_type_t,string> data         = objectTypesMap();
     std::map<H5I_type_t,string>::iterator it = data.find(H5Iget_type(location));
     
-    if (it!=data.end()) {
-      return it->first;
-    } else {
+    if (it==data.end()) {
       return H5I_BADID;
+    } else {
+      return it->first;
     }
   }
 
@@ -408,33 +434,45 @@ namespace DAL { // Namespace DAL -- begin
   H5I_type_t HDF5Object::objectType (hid_t const &location,
 				     std::string const &name)
   {
-    H5I_type_t result = objectType(location);
-    
-    if (result != H5I_BADID) {
+    H5I_type_t result = H5I_BADID;
+    htri_t status     = H5Iis_valid(location);
 
+    if (status>0) {
       /*______________________________________________________________
 	H5Lexists allows an application to determine whether the link
 	name exists in the group or file specified with loc_id. The
 	link may be of any type; only the presence of a link with that
 	name is checked. Returns TRUE or FALSE if successful; otherwise
 	returns a negative value. 
+	However, H5Lexists will not detected an attribute, such that
+	an extra check is required.
       */
-      htri_t status = H5Lexists (location,
-				 name.c_str(),
-				 H5P_DEFAULT); 
+      
+      status = H5Aexists (location, name.c_str());
       
       if (status>0) {
-	/* Open the object ... */
-	hid_t id = H5Oopen (location,
-			    name.c_str(),
-			    H5P_DEFAULT);
-	/* ... to extact its type */
-	result = objectType (id);
-	/* close object */
-	close (id);
+	result = H5I_ATTR;
       } else {
-	result = H5I_BADID;
+	status = H5Lexists (location, name.c_str(), H5P_DEFAULT); 
+	if (status>0) {
+	  /* Open the object ... */
+	  hid_t id = H5Oopen (location,
+			      name.c_str(),
+			      H5P_DEFAULT);
+	  /* ... to extact its type */
+	  result = objectType (id);
+	  /* close object */
+	  close (id);
+	} else {
+	  std::cerr << "[HDF5Object::objectType] Failed to get object type!"
+		    << std::endl;
+	  result = H5I_BADID;
+	}
       }
+    }   //   END -- if(H5Iis_valid(location))
+    else {
+      std::cerr << "[HDF5Object::objectType] Invalid object identifier!"
+		<< std::endl;
     }
     
     return result;
@@ -633,16 +671,20 @@ namespace DAL { // Namespace DAL -- begin
   hsize_t HDF5Object::nofAttributes (hid_t const &location)
   {
     if (H5Iis_valid(location)) {
-      H5O_info_t info = objectInfo (location);
-      return info.num_attrs;
+      if (objectType(location)==H5I_ATTR) {
+	return  0;
+      } else {
+	H5O_info_t info = objectInfo (location);
+	return info.num_attrs;
+      }
     } else {
       return 0;
     }
   }
-
+  
   //_____________________________________________________________________________
   //                                                                         open
-
+  
   /*!
     \param location -- Identifier of the HDF5 object, for which the information
            is being extracted.
@@ -689,55 +731,57 @@ namespace DAL { // Namespace DAL -- begin
     hid_t objectID (-1);
     
     if (H5Iis_valid(location)) {
-      /*______________________________________________________________
-	H5Lexists allows an application to determine whether the link
-	name exists in the group or file specified with location. The
-	link may be of any type; only the presence of a link with that
-	name is checked. Returns TRUE or FALSE if successful;
-	otherwise returns a negative value. 
+      /*____________________________________________________________
+	H5Oopen opens the object in the same manner as H5Gopen,
+	H5Topen, and H5Dopen. However, H5Oopen does not require the
+	type of object to be known beforehand. This can be useful
+	with user-defined links, for instance, when only a path may
+	be known. H5Oopen cannot be used to open a dataspace,
+	attribute, property list, or file. 
       */
-      htri_t errExists = H5Lexists (location,
-				    name.c_str(),
-				    access);
-      if (errExists>0) {
-	/*____________________________________________________________
-	  H5Oopen opens the object in the same manner as H5Gopen,
-	  H5Topen, and H5Dopen. However, H5Oopen does not require the
-	  type of object to be known beforehand. This can be useful
-	  with user-defined links, for instance, when only a path may
-	  be known. H5Oopen cannot be used to open a dataspace,
-	  attribute, property list, or file. 
-	*/
-	H5I_type_t otype = objectType (location, name);
-	
-	switch (otype) {
-	case H5I_FILE:
-	  objectID = H5Fopen (name.c_str(),
-			      H5F_ACC_RDWR,
-			      access);
-	  break;
-	case H5I_DATASET:
-	  objectID = H5Dopen (location,
-			      name.c_str(),
-			      access);
-	  break;
-	case H5I_GROUP:
-	  objectID = H5Gopen (location,
-			      name.c_str(),
-			      access);
-	  break;
-	default:
-	  objectID = H5Oopen (location,
-			      name.c_str(),
-			      access);
-	};
-	
-      } else {
-	std::cout << "[HDF5Object::open] No object " << name
-		  << " found at given location!"
+      H5I_type_t otype = objectType (location, name);
+      
+      switch (otype) {
+      case H5I_ATTR:
+	objectID = H5Aopen (location,
+			    name.c_str(),
+			    access);
+	break;
+      case H5I_DATASET:
+	objectID = H5Dopen (location,
+			    name.c_str(),
+			    access);
+	break;
+      case H5I_DATASPACE:
+	std::cerr << "[HDF5Object::open] Unable to open object "
+		  << name
+		  << " - type is dataspace!"
 		  << std::endl;
 	objectID = -1;
-      }
+	break;
+      case H5I_GROUP:
+	objectID = H5Gopen (location,
+			    name.c_str(),
+			    access);
+	break;
+      case H5I_FILE:
+	objectID = H5Fopen (name.c_str(),
+			    H5F_ACC_RDWR,
+			    access);
+	break;
+      case H5I_BADID:
+	std::cerr << "[HDF5Object::open] Unable to open object "
+		  << name
+		  << " - invalid identifier!"
+		  << std::endl;
+	objectID = -1;
+	break;
+      default:
+	objectID = H5Oopen (location,
+			    name.c_str(),
+			    access);
+      };
+      
     }   //   END -- H5Iis_valid(location)
     else {
       objectID = -1;

@@ -28,6 +28,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 using DAL::HDF5Attribute;
+using DAL::HDF5Object;
 
 /*!
   \file tHDF5Attribute.cc
@@ -53,7 +54,7 @@ using DAL::HDF5Attribute;
 */
 int test_static_functions (hid_t const &location)
 {
-  std::cout << "\n[tHDF5Attribute::test_static_functions]\n" << std::endl;
+  std::cout << "\n[tHDF5Attribute::test_static_functions]\n" << endl;
 
   int nofFailedTests = 0;
   std::string name   = "Attribute";
@@ -241,17 +242,42 @@ int test_static_functions (hid_t const &location)
 */
 int test_constructors (hid_t const &location)
 {
-  std::cout << "\n[tHDF5Attribute::test_constructors]\n" << std::endl;
+  std::cout << "\n[tHDF5Attribute::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
   
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  cout << "-- nof. attributes = " << HDF5Object::nofAttributes(location) << endl;
+
+  /*__________________________________________________________________
+    Test 1: Test for the default constructor
+  */
+
+  std::cout << "[1] Testing HDF5Attribute() ..." << endl;
   try {
-    HDF5Attribute newObject;
+    HDF5Attribute attr;
     //
-    newObject.summary(); 
+    attr.summary(); 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  /*__________________________________________________________________
+    Test 2: Testing argumented constructor
+  */
+
+  std::cout << "[2] Testing HDF5Attribute(hid_t,string) ..." << endl;
+  try {
+    HDF5Attribute attrInt (location, "AttributeInt");
+    attrInt.summary(); 
+    //
+    HDF5Attribute attrFloat (location, "AttributeFloat");
+    attrFloat.summary(); 
+    //
+    HDF5Attribute attrDouble (location, "AttributeDouble");
+    attrDouble.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
     nofFailedTests++;
   }
   
@@ -287,11 +313,12 @@ int main (int argc, char *argv[])
 
     // Test for static methods
     nofFailedTests += test_static_functions (fileID);
+
     // Test for the constructor(s)
     nofFailedTests += test_constructors (fileID);
-
+    
   } else {
-    std::cerr << "[tHDF5Attribute] Failed to open file " << filename << std::endl;
+    std::cerr << "[tHDF5Attribute] Failed to open file " << filename << endl;
     return -1;
   }
     

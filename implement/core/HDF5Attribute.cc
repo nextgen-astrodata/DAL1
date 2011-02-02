@@ -35,6 +35,21 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   /*!
+    \param location -- File or group identifier.
+    \param name     -- Path to the object, relative to \c location.
+    \param access   -- Access property list identifier for the link pointing to
+           the object.
+  */
+  HDF5Attribute::HDF5Attribute (hid_t const &location,
+				std::string const &name,
+				hid_t const &access)
+    : HDF5Object ()
+  {
+    init ();
+    open (location, name, access);
+  }
+
+  /*!
     \param other -- Another HDF5Property object from which to create this new
            one.
   */
@@ -126,28 +141,38 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
 
+  /*!
+    \param location -- File or group identifier.
+    \param name     -- Path to the object, relative to \c location.
+    \param access   -- Access property list identifier for the link pointing to
+           the object.
+    \return status  -- Status of the operation; returns \e false in case an error
+            was encountered.
+  */
   bool HDF5Attribute::open (hid_t const &location,
 			    std::string const &name,
 			    hid_t const &access)
   {
     bool status = true;
     itsLocation = HDF5Object::open (location, name, access);
-
+    
     if (H5Iis_valid(itsLocation)) {
       /* Local variables */
-      hsize_t sdim[64];
+      hsize_t sdim[128];
       /* Retrieve attribute information */
       itsDatatype  = H5Aget_type(itsLocation);
       itsDataspace = H5Aget_space(itsLocation);
       itsRank      = H5Sget_simple_extent_ndims(itsDataspace);
       itsStatus    = H5Sget_simple_extent_dims(itsDataspace, sdim, NULL);
     } else {
-      return false;
+      std::cerr << "[HDF5Attribute::open] Failed to open object "
+		<< name << "!"
+		<< std::endl;
+      status = false;
     }
-
+    
     return status;
   }
-  
   
   // ============================================================================
   //
