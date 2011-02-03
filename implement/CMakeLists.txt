@@ -105,6 +105,11 @@ add_library(dal STATIC ${dal_sources})
 
 target_link_libraries(dal ${dal_link_libraries})
 
+set_target_properties (dal
+  PROPERTIES
+  LINKER_LANGUAGE CXX
+  )
+
 ## ------------------------------------------------------------------------------
 ## Build the library for the Python bindings, "pydal"
 

@@ -26,15 +26,15 @@
 
 // Standard library header files
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <set>
 #include <string>
+#include <vector>
 
 #ifdef HAVE_HDF5
 #include <hdf5.h>
 #endif
-
-#include <dalCommon.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -63,6 +63,12 @@ namespace DAL { // Namespace DAL -- begin
     <ul type="square">
       <li>H5I: Identifier Interface of the HDF5 library. These functions
       provides tools for working with object identifiers and object names.
+
+      \code
+      htri_t H5Iis_valid( hid_t obj_id )
+      H5I_type_t H5Iget_type( hid_t obj_id )
+      int H5Iget_ref( hid_t obj_id )
+      \endcode
 
       <li>H5L: Link Interface of the HDF5 library. These functions create and
       manipulate links in an HDF5 group
@@ -264,6 +270,9 @@ namespace DAL { // Namespace DAL -- begin
     static H5T_class_t datatypeClass (hid_t const &location);
     //! Retrieves the metadata for an object specified by \e location.
     static H5O_info_t objectInfo  (hid_t const &location);
+    //! Retrieves the metadata for object \c name at \c location
+    static H5O_info_t objectInfo  (hid_t const &location,
+				  std::string const &name);
     //! Object address in file
     static haddr_t objectAddress (hid_t const &location);
     //! Get reference count of object

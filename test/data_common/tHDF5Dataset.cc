@@ -1241,6 +1241,8 @@ int main (int argc,
     filename    = argv[1];
     haveDataset = true;
   }
+  
+  std::cout << "[tHDF5Dataset] Output HDF5 file = " << filename << std::endl;
 
   //________________________________________________________
   // Create HDF5 file to work with

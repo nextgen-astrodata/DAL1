@@ -728,8 +728,8 @@ int main ()
     // Additional tests for working with the DAL::HDF5Dataset class
     nofFailedTests += test_HDF5Dataset (fileID);
     
-    // // Test for the constructor(s)
-    // nofFailedTests += test_constructors (fileID);
+    // Test for the constructor(s)
+    nofFailedTests += test_constructors (fileID);
     // // Test access to the attributes
     // nofFailedTests += test_attributes (fileID);
     // // Test read/write access to the data

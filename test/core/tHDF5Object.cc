@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2011                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -25,6 +22,7 @@
 
 // Namespace usage
 using DAL::HDF5Object;
+using std::cerr;
 using std::cout;
 using std::endl;
 
@@ -63,6 +61,79 @@ using std::endl;
 */
 
 //_______________________________________________________________________________
+//                                                                      test_hdf5
+
+/*!
+  \brief Test underlying HDF5 functions being wrapped
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_hdf5 (hid_t const &location)
+{
+  cout << "\n[tHDF5Object::test_hdf5]\n" << endl;
+  
+  int nofFailedTests = 0;
+  std::string nameDataset   = "DATASET_2D_NATIVE_INT";
+  std::string nameAttribute = "ATTRIBUTE_SINGLE_INT";
+
+  /*__________________________________________________________________
+    Test 1: Testing H5Lexists(hid_t,string) on existing group
+  */
+  
+  cout << "[1] Testing H5Lexists(hid_t,string) ..." << endl;
+  {
+    std::string name = "GROUP";
+    htri_t status    = H5Lexists (location, name.c_str(), H5P_DEFAULT);
+    //
+    std::cout << "-- location  = " << location  << std::endl;
+    std::cout << "-- name      = " << name      << std::endl;
+    std::cout << "-- H5Lexists = " << status    << std::endl;
+  }
+  
+  /*__________________________________________________________________
+    Test 2: Testing H5Lexists(hid_t,string) on missing group
+  */
+  
+  cout << "[2] Testing H5Lexists(hid_t,string) on missing group ..." << endl;
+  {
+    std::string name = "MISSING_GROUP";
+    htri_t status    = H5Lexists (location, name.c_str(), H5P_DEFAULT);
+    //
+    std::cout << "-- location  = " << location  << std::endl;
+    std::cout << "-- name      = " << name      << std::endl;
+    std::cout << "-- H5Lexists = " << status    << std::endl;
+  }
+  
+  /*__________________________________________________________________
+    Test 3: Testing H5Iget_type(hid_t) on existing object
+  */
+  
+  cout << "[3] Testing H5Iget_type(hid_t) ..." << endl;
+  {
+    H5I_type_t status = H5Iget_type (location);
+    //
+    std::cout << "-- location    = " << location  << std::endl;
+    std::cout << "-- H5Iget_type = " << status    << std::endl;
+  }
+  
+  /*__________________________________________________________________
+    Test 4: Testing H5Iget_type(hid_t) on invalid object
+  */
+  
+  cout << "[4] Testing H5Iget_type(hid_t) on invalid object ..." << endl;
+  {
+    hid_t testID      = 0;
+    H5I_type_t status = H5Iget_type (testID);
+    //
+    std::cout << "-- location    = " << testID    << std::endl;
+    std::cout << "-- H5Iget_type = " << status    << std::endl;
+  }
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                              test_constructors
 
 /*!
@@ -81,15 +152,24 @@ int test_constructors (std::string const &filename,
   std::string nameDataset   = "DATASET_2D_NATIVE_INT";
   std::string nameAttribute = "ATTRIBUTE_SINGLE_INT";
   
+  /*__________________________________________________________________
+    Test 1: Default constructor - created object not connected to HDF5
+            object.
+  */
+  
   cout << "[1] Testing HDF5Object() ..." << endl;
   try {
     HDF5Object newObject;
     //
     newObject.summary(); 
   } catch (std::string message) {
-    std::cerr << message << endl;
+    std::cerr << message << std::endl;
     nofFailedTests++;
   }
+  
+  /*__________________________________________________________________
+    Test 2: Open HDF5 file.
+  */
   
   cout << "[2] Testing HDF5Object(string) ..." << endl;
   try {
@@ -100,6 +180,11 @@ int test_constructors (std::string const &filename,
     std::cerr << message << endl;
     nofFailedTests++;
   }
+  
+  /*__________________________________________________________________
+    Test 3: Open objects - group, dataset, attribute - within file.
+            Also try opening non-existing object. 
+  */
   
   cout << "[3] Testing HDF5Object(hid_t,string) ..." << endl;
   try {
@@ -113,7 +198,12 @@ int test_constructors (std::string const &filename,
     //
     cout << "--> opening attribute " << nameAttribute << " ..." << endl;
     HDF5Object h5attribute (fileID, nameAttribute);
-    h5attribute.summary(); 
+    h5attribute.summary();
+    //
+    std::string attr ("MISSING_GROUP");
+    cout << "--> try opening attribute " << attr << " ..." << endl;
+    HDF5Object h5attr (fileID, attr);
+    h5attr.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -121,7 +211,7 @@ int test_constructors (std::string const &filename,
   
   /*__________________________________________________________________
     Test 4: Copy constructor
-   */
+  */
   
   cout << "[4] Testing HDF5Object(HDF5Object) ..." << endl;
   try {
@@ -152,31 +242,39 @@ int test_constructors (std::string const &filename,
 int test_staticMethods (std::string const &filename,
 			hid_t const &fileID)
 {
-  cout << "\n[tHDF5Object::test_staticMethods]\n" << endl;
+  std::cout << "\n[tHDF5Object::test_staticMethods]\n" << std::endl;
   
-  int nofFailedTests (0);
+  int nofFailedTests = 0;
+  std::string name   = "";
   
-  cout << "[1] Get general object type information ..." << endl;
+  /*__________________________________________________________________
+    Test 1: Obtain general type information, which does not require
+            interaction with an actual HDF5 object.
+  */
+  
+  std::cout << "[1] Get general object type information ..." << std::endl;
   try {
     std::map<H5I_type_t,std::string> objectsMap = HDF5Object::objectTypesMap();
     std::vector<H5I_type_t> objectTypes         = HDF5Object::objectTypes();
     std::vector<std::string> objectNames        = HDF5Object::objectNames();
-    unsigned int nofTypes                       = objectsMap.size();
-
-    cout << "-- nof object types = " << nofTypes << endl;
-
-    for (unsigned int n=0; n<nofTypes; ++n) {
-      cout << " [ " << objectTypes[n] << "  ->  " << objectNames[n] << " ]"
-	   << endl;
+    std::map<H5I_type_t,std::string>::iterator it;
+    
+    std::cout << "-- nof object types = " << objectsMap.size() << std::endl;
+    
+    for (it=objectsMap.begin(); it!=objectsMap.end(); ++it) {
+      cout << " [ " << it->first << "  ->  " << it->second << " ]" << endl;
     }
-
   } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
+    std::cerr << message << std::endl;
+    ++nofFailedTests;
   }
-
-  cout << "[2] Retrieve object information ..." << endl;
-  try {
+  
+  /*__________________________________________________________________
+    Test 2: Retrieve information on an exiting valid HDF5 object
+  */
+  
+  cout << "[2] Retrieve information on valid object ID ..." << endl;
+  {
     cout << "-- Name              = " << HDF5Object::name(fileID)             << endl;
     cout << "-- Object type       = " << HDF5Object::objectType(fileID)       << endl;
     cout << "-- Object name       = " << HDF5Object::objectName(fileID)       << endl;
@@ -187,67 +285,96 @@ int test_staticMethods (std::string const &filename,
     cout << "-- Change time       = " << HDF5Object::changeTime(fileID)       << endl;
     cout << "-- Birth time        = " << HDF5Object::birthTime(fileID)        << endl;
     cout << "-- nof. attributes   = " << HDF5Object::nofAttributes(fileID)    << endl;
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
   }
 
-  cout << "[3] Test generic open/close functions with existing group ..." << endl;
-  try {
-    std::string groupName   = "GROUP";
+  /*__________________________________________________________________
+    Test 3: Attempt retrieving information from an invalid object
+            identifier - all static functions need to be able to exit
+	    gracefully under such circumstances.
+  */
+  
+  std::cout << "[3] Retrieve information from an invalid object ID ..." << std::endl;
+  {
+    hid_t id = 0;
 
-    hid_t id = HDF5Object::open (fileID, groupName);
+    cout << "-- Name              = " << HDF5Object::name(id)             << endl;
+    cout << "-- Object type       = " << HDF5Object::objectType(id)       << endl;
+    cout << "-- Object name       = " << HDF5Object::objectName(id)       << endl;
+    cout << "-- Object address    = " << HDF5Object::objectAddress(id)    << endl;
+    cout << "-- Reference count   = " << HDF5Object::referenceCount(id)   << endl;
+    cout << "-- Access time       = " << HDF5Object::accessTime(id)       << endl;
+    cout << "-- Modification time = " << HDF5Object::modificationTime(id) << endl;
+    cout << "-- Change time       = " << HDF5Object::changeTime(id)       << endl;
+    cout << "-- Birth time        = " << HDF5Object::birthTime(id)        << endl;
+    cout << "-- nof. attributes   = " << HDF5Object::nofAttributes(id)    << endl;
+  }
 
-    if (id) {
+  /*__________________________________________________________________
+    Test 4: Test the generic open(hid_t,string) function on an 
+            existing group inside the test file.
+  */
+  
+  cout << "[4] Test generic open/close functions with existing group ..." << endl;
+  {
+    name     = "GROUP";
+    hid_t id = HDF5Object::open (0, name);
+
+    if (H5Iis_valid(id)) {
       cout << "-- Name            = " << HDF5Object::name(id)          << endl;
       cout << "-- Object type     = " << HDF5Object::objectType(id)    << endl;
       cout << "-- Object name     = " << HDF5Object::objectName(id)    << endl;
       cout << "-- Object address  = " << HDF5Object::objectAddress(id) << endl;
       cout << "-- nof. attributes = " << HDF5Object::nofAttributes(id) << endl;
     } else {
-      std::cerr << "-- Failed to open group " << groupName << endl;
+      std::cerr << "-- Failed to open group " << name << endl;
     }
     
     HDF5Object::close (id);
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
   }
   
-  cout << "[4] Test generic open/close functions with missing group ..." << endl;
-  try {
-    std::string groupName   = "GROUP2";
-
-    hid_t id = HDF5Object::open (fileID, groupName);
-
-    if (id) {
-      cout << "-- Name            = " << HDF5Object::name(id)          << endl;
-      cout << "-- Object type     = " << HDF5Object::objectType(id)    << endl;
-      cout << "-- Object name     = " << HDF5Object::objectName(id)    << endl;
-      cout << "-- Object address  = " << HDF5Object::objectAddress(id) << endl;
-      cout << "-- nof. attributes = " << HDF5Object::nofAttributes(id) << endl;
+  /*__________________________________________________________________
+    Test 5: 
+  */
+  
+  std::cout << "[5] Test generic open/close functions with missing group ..."
+	    << std::endl;
+  {
+    name     = "MISSING_GROUP";
+    hid_t id = HDF5Object::open (fileID, name);
+    
+    if (H5Iis_valid(id)) {
+      std::cout << "-- Name            = " << HDF5Object::name(id)          << endl;
+      std::cout << "-- Object type     = " << HDF5Object::objectType(id)    << endl;
+      std::cout << "-- Object name     = " << HDF5Object::objectName(id)    << endl;
+      std::cout << "-- Object address  = " << HDF5Object::objectAddress(id) << endl;
+      std::cout << "-- nof. attributes = " << HDF5Object::nofAttributes(id) << endl;
     } else {
-      std::cerr << "-- Failed to open group " << groupName << endl;
+      std::cerr << "-- Failed to open group " << name << endl;
     }
     
     HDF5Object::close (id);
-  } catch (std::string message) {
-    std::cerr << message << endl;
-    nofFailedTests++;
   }
+
+  /*__________________________________________________________________
+    Test 6: 
+  */
   
-  cout << "[5] Test generic open/close functions with existing dataset ..." << endl;
+  cout << "[6] Test generic open/close functions with existing dataset ..." << endl;
   try {
     std::string datasetName = "DATASET_2D_NATIVE_INT";
 
     hid_t id = HDF5Object::open (fileID, datasetName);
 
-    cout << "-- Name            = " << HDF5Object::name(id)          << endl;
-    cout << "-- Object type     = " << HDF5Object::objectType(id)    << endl;
-    cout << "-- Object name     = " << HDF5Object::objectName(id)    << endl;
-    cout << "-- Object address  = " << HDF5Object::objectAddress(id) << endl;
-    cout << "-- nof. attributes = " << HDF5Object::nofAttributes(id) << endl;
-
+    if (H5Iis_valid(id)) {
+      cout << "-- Name            = " << HDF5Object::name(id)          << endl;
+      cout << "-- Object type     = " << HDF5Object::objectType(id)    << endl;
+      cout << "-- Object name     = " << HDF5Object::objectName(id)    << endl;
+      cout << "-- Object address  = " << HDF5Object::objectAddress(id) << endl;
+      cout << "-- nof. attributes = " << HDF5Object::nofAttributes(id) << endl;
+    } else {
+      std::cerr << "-- Failed to open dataset " << datasetName << endl;
+    }
+    
     HDF5Object::close (id);
   } catch (std::string message) {
     std::cerr << message << endl;
@@ -268,8 +395,8 @@ int test_staticMethods (std::string const &filename,
 */
 int main (int argc, char *argv[])
 {
-  int nofFailedTests = 0;
-  std::string filename;
+  int nofFailedTests   = 0;
+  std::string filename = "tHDF5Object.h5";
 
   //________________________________________________________
   // Process parameters from the command line
@@ -294,6 +421,9 @@ int main (int argc, char *argv[])
   if (H5Iis_valid(fileID)) {
 
     cout << "[tHDF5Object] Successfully opened " << filename << std::endl;
+
+    // Test underlying HDF5 functions being wrapped
+    nofFailedTests += test_hdf5 (fileID);
     
     // Test for the constructor(s)
     nofFailedTests += test_constructors (filename, fileID);

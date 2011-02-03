@@ -21,12 +21,11 @@
 #ifndef HDF5ATTRIBUTE_H
 #define HDF5ATTRIBUTE_H
 
-// Standard library header files
-#include <iostream>
-#include <string>
-
-// DAL header files
 #include "HDF5Object.h"
+
+#ifdef HAVE_CASA
+#include <casa/Arrays/Vector.h>
+#endif
 
 namespace DAL { // Namespace DAL -- begin
   

@@ -23,8 +23,6 @@
 
 #include <HDF5Object.h>
 
-using std::string;
-
 namespace DAL { // Namespace DAL -- begin
   
   // ============================================================================
@@ -37,15 +35,15 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                   HDF5Object
   
   HDF5Object::HDF5Object ()
-    : itsLocation (-1)
-  {;}
+  {
+    itsLocation = -1;
+  }
   
   //_____________________________________________________________________________
   //                                                                   HDF5Object
   
   HDF5Object::HDF5Object (std::string const &filename,
 			  hid_t const &access)
-    : itsLocation (-1)
   {
     open (filename, access);
   }
@@ -60,7 +58,7 @@ namespace DAL { // Namespace DAL -- begin
            the object.
   */
   HDF5Object::HDF5Object (hid_t const &location,
-			  string const &name,
+			  std::string const &name,
 			  hid_t const &access)
   {
     itsLocation = open (location, name, access);
@@ -71,6 +69,7 @@ namespace DAL { // Namespace DAL -- begin
            one.
   */
   HDF5Object::HDF5Object (HDF5Object const &other)
+    : itsLocation (-1)
   {
     copy (other);
   }
@@ -234,16 +233,16 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::map<H5I_type_t,std::string> data;
 
-    data[H5I_UNINIT]      = "H5I_UNINIT";       /* uninitialized type        */
-    data[H5I_BADID]       = "H5I_BADID";        /* invalid Type              */
-    data[H5I_FILE]        = "H5I_FILE";         /* File object type          */
-    data[H5I_GROUP]       = "H5I_GROUP";        /* Group object type         */
-    data[H5I_DATATYPE]    = "H5I_DATATYPE";     /* Datatype object type      */
-    data[H5I_DATASPACE]   = "H5I_DATASPACE";    /* Dataspace object type     */
-    data[H5I_DATASET]     = "H5I_DATASET";      /* Dataset object type       */
-    data[H5I_ATTR]        = "H5I_ATTR";         /* Attribute object type     */
-    data[H5I_REFERENCE]   = "H5I_REFERENCE";    /* Reference object type     */
-    data[H5I_VFL]         = "H5I_VFL";          /* Virtual file layer type   */
+    data[H5I_UNINIT]      = "H5I_UNINIT";       /* uninitialized type          */
+    data[H5I_BADID]       = "H5I_BADID";        /* invalid Type                */
+    data[H5I_FILE]        = "H5I_FILE";         /* File object type            */
+    data[H5I_GROUP]       = "H5I_GROUP";        /* Group object type           */
+    data[H5I_DATATYPE]    = "H5I_DATATYPE";     /* Datatype object type        */
+    data[H5I_DATASPACE]   = "H5I_DATASPACE";    /* Dataspace object type       */
+    data[H5I_DATASET]     = "H5I_DATASET";      /* Dataset object type         */
+    data[H5I_ATTR]        = "H5I_ATTR";         /* Attribute object type       */
+    data[H5I_REFERENCE]   = "H5I_REFERENCE";    /* Reference object type       */
+    data[H5I_VFL]         = "H5I_VFL";          /* Virtual file layer type     */
     data[H5I_GENPROP_CLS] = "H5I_GENPROP_CLS";  /* Generic property list class */
     data[H5I_GENPROP_LST] = "H5I_GENPROP_LST";  /* Generic property lists      */
     data[H5I_ERROR_CLASS] = "H5I_ERROR_CLASS";  /* error classes               */
@@ -261,8 +260,8 @@ namespace DAL { // Namespace DAL -- begin
   */
   std::vector<H5I_type_t> HDF5Object::objectTypes ()
   {
-    std::map<H5I_type_t,string> data = objectTypesMap();
-    std::map<H5I_type_t,string>::iterator it;
+    std::map<H5I_type_t,std::string> data = objectTypesMap();
+    std::map<H5I_type_t,std::string>::iterator it;
     std::vector<H5I_type_t> vec;
 
     for (it=data.begin(); it!=data.end(); ++it) {
@@ -280,8 +279,8 @@ namespace DAL { // Namespace DAL -- begin
   */
   std::vector<std::string> HDF5Object::objectNames ()
   {
-    std::map<H5I_type_t,string> data = objectTypesMap();
-    std::map<H5I_type_t,string>::iterator it;
+    std::map<H5I_type_t,std::string> data = objectTypesMap();
+    std::map<H5I_type_t,std::string>::iterator it;
     std::vector<std::string> vec;
 
     for (it=data.begin(); it!=data.end(); ++it) {
@@ -384,8 +383,8 @@ namespace DAL { // Namespace DAL -- begin
    */
   std::string HDF5Object::objectName (hid_t const &location)
   {
-    std::map<H5I_type_t,string> data         = objectTypesMap();
-    std::map<H5I_type_t,string>::iterator it = data.find(H5Iget_type(location));
+    std::map<H5I_type_t,std::string> data         = objectTypesMap();
+    std::map<H5I_type_t,std::string>::iterator it = data.find(H5Iget_type(location));
     
     if (it!=data.end()) {
       return it->second;
@@ -412,8 +411,8 @@ namespace DAL { // Namespace DAL -- begin
   */
   H5I_type_t HDF5Object::objectType (hid_t const &location)
   {
-    std::map<H5I_type_t,string> data         = objectTypesMap();
-    std::map<H5I_type_t,string>::iterator it = data.find(H5Iget_type(location));
+    std::map<H5I_type_t,std::string> data         = objectTypesMap();
+    std::map<H5I_type_t,std::string>::iterator it = data.find(H5Iget_type(location));
     
     if (it==data.end()) {
       return H5I_BADID;
@@ -435,9 +434,14 @@ namespace DAL { // Namespace DAL -- begin
 				     std::string const &name)
   {
     H5I_type_t result = H5I_BADID;
-    htri_t status     = H5Iis_valid(location);
 
-    if (status>0) {
+    /*______________________________________________________________
+      H5Iis_valid(hid_t) determines whether an identifier is valid. 
+      Returns TRUE if 'location' is valid and FALSE if invalid.
+      Otherwise returns a negative value. 
+    */
+
+    if (H5Iis_valid(location)) {
       /*______________________________________________________________
 	H5Lexists allows an application to determine whether the link
 	name exists in the group or file specified with loc_id. The
@@ -448,22 +452,37 @@ namespace DAL { // Namespace DAL -- begin
 	an extra check is required.
       */
       
-      status = H5Aexists (location, name.c_str());
+      htri_t isAttribute = H5Aexists (location, name.c_str());
+      htri_t isLink      = H5Lexists (location, name.c_str(), H5P_DEFAULT); 
       
-      if (status>0) {
-	result = H5I_ATTR;
-      } else {
-	status = H5Lexists (location, name.c_str(), H5P_DEFAULT); 
-	if (status>0) {
-	  /* Open the object ... */
-	  hid_t id = H5Oopen (location,
-			      name.c_str(),
-			      H5P_DEFAULT);
-	  /* ... to extact its type */
-	  result = objectType (id);
-	  /* close object */
-	  close (id);
+      if (isAttribute) {
+	/* Open attribute for verification */
+	hid_t id = H5Aopen (location, name.c_str(), H5P_DEFAULT);
+	if (H5Iis_valid(id)) {
+	  result = H5I_ATTR;
 	} else {
+	  result = H5I_BADID;
+	}
+	H5Aclose (id);
+      } else {
+	if (isLink) {
+	  /* [1] Open object */
+	  hid_t id = H5Oopen (location,
+	  		      name.c_str(),
+	  		      H5P_DEFAULT);
+	  /* [2] Get object type */
+	  if (H5Iis_valid(id)) {
+	    result = H5Iget_type (id);
+	  } else {
+	    std::cerr << "[HDF5Object::objectType] Failed to open object "
+	  	      << name
+	  	      << std::endl;
+	    result = H5I_BADID;
+	  }
+	  /* [3] Close object */
+	  HDF5Object::close (id);
+	}   //   END -- if (isLink>0)
+	else {
 	  std::cerr << "[HDF5Object::objectType] Failed to get object type!"
 		    << std::endl;
 	  result = H5I_BADID;
@@ -471,8 +490,9 @@ namespace DAL { // Namespace DAL -- begin
       }
     }   //   END -- if(H5Iis_valid(location))
     else {
-      std::cerr << "[HDF5Object::objectType] Invalid object identifier!"
-		<< std::endl;
+      // std::cerr << "[HDF5Object::objectType] Invalid object identifier!"
+      // 		<< std::endl;
+      result = H5I_BADID;
     }
     
     return result;
@@ -556,6 +576,37 @@ namespace DAL { // Namespace DAL -- begin
 
     return info;
   }
+
+  //_____________________________________________________________________________
+  //                                                                   objectInfo
+
+  /*!
+    \param location -- File or group identifier.
+    \param name     -- Path to the object, relative to \c location.
+    \return info    -- Struct with metadata for the object
+  */
+  H5O_info_t HDF5Object::objectInfo  (hid_t const &location,
+				      std::string const &name)
+  {
+    H5O_info_t info;
+
+    if (H5Iis_valid(location)) {
+      herr_t status = H5Oget_info_by_name (location,
+					   name.c_str(),
+					   &info,
+					   H5P_DEFAULT);
+
+      /* Returns a non-negative value if successful; otherwise returns a
+	 negative value. */
+      if (status<0){
+	std::cerr << "[HDF5Object::objectInfo] Error retrieving object info!"
+		  << std::endl;
+      }
+    }
+
+    return info;
+  }
+
   
   //_____________________________________________________________________________
   //                                                                objectAddress
@@ -704,6 +755,9 @@ namespace DAL { // Namespace DAL -- begin
 			   H5Literate_showAttributes,
 			   NULL);
       
+    } else {
+      std::cerr << "[HDF5Object::attributes] Invalid object identifier!"
+		<< std::endl;
     }
     
     return names;
@@ -728,8 +782,6 @@ namespace DAL { // Namespace DAL -- begin
 			  std::string const &name,
 			  hid_t const &access)
   {
-    hid_t objectID (-1);
-    
     if (H5Iis_valid(location)) {
       /*____________________________________________________________
 	H5Oopen opens the object in the same manner as H5Gopen,
@@ -743,51 +795,48 @@ namespace DAL { // Namespace DAL -- begin
       
       switch (otype) {
       case H5I_ATTR:
-	objectID = H5Aopen (location,
-			    name.c_str(),
-			    access);
+	return H5Aopen (location,
+			name.c_str(),
+			access);
 	break;
       case H5I_DATASET:
-	objectID = H5Dopen (location,
-			    name.c_str(),
-			    access);
+	return H5Dopen (location,
+			name.c_str(),
+			access);
 	break;
       case H5I_DATASPACE:
 	std::cerr << "[HDF5Object::open] Unable to open object "
 		  << name
 		  << " - type is dataspace!"
 		  << std::endl;
-	objectID = -1;
+	return -1;
 	break;
       case H5I_GROUP:
-	objectID = H5Gopen (location,
-			    name.c_str(),
-			    access);
+	return H5Gopen (location,
+			name.c_str(),
+			access);
 	break;
       case H5I_FILE:
-	objectID = H5Fopen (name.c_str(),
-			    H5F_ACC_RDWR,
-			    access);
+	return H5Fopen (name.c_str(),
+			H5F_ACC_RDWR,
+			access);
 	break;
       case H5I_BADID:
 	std::cerr << "[HDF5Object::open] Unable to open object "
 		  << name
 		  << " - invalid identifier!"
 		  << std::endl;
-	objectID = -1;
+	return -1;
 	break;
       default:
-	objectID = H5Oopen (location,
-			    name.c_str(),
-			    access);
-      };
-      
+	return H5Oopen (location,
+			name.c_str(),
+			access);
+      };   //   END -- switch (otype)
     }   //   END -- H5Iis_valid(location)
     else {
-      objectID = -1;
+      return -1;
     }
-    
-    return objectID;
   }
   
   //_____________________________________________________________________________
@@ -840,7 +889,8 @@ namespace DAL { // Namespace DAL -- begin
     herr_t status = -1;
 
     if (H5Iis_valid(location)) {
-      H5I_type_t otype = objectType (location);
+
+      H5I_type_t otype = H5Iget_type (location);
       
       /* _____________________________________________________________
 	 WARNING: H5Oclose is not used to close a dataspace,
@@ -867,11 +917,23 @@ namespace DAL { // Namespace DAL -- begin
       case H5I_ATTR:
 	status = H5Aclose (location);
 	break;
+      case H5I_GENPROP_LST:
+	status = H5Pclose (location);
+	  break;
+      case H5I_BADID:
+	status = -1;
+	break;
       default:
 	status = H5Oclose (location);
 	break;
-      }
+      };   //  END -- switch (otype)
+    }   //   END -- if (H5Iis_valid(location))
+#ifdef DEBUGGING_MESSAGES
+    else {
+      std::cerr << "[HDF5Object::close] Invalid object identifier!"
+		<< std::endl;
     }
+#endif
 
     return status;
   }
@@ -903,10 +965,11 @@ namespace DAL { // Namespace DAL -- begin
   {
     herr_t status (0);
     
-    if (objectType(location,name) == H5I_ATTR) {
-      std::cout << "-- Found attribute " << name << std::endl;
-    }
-    
+    std::cout << "-- Location ID   = " << location   << std::endl;
+    std::cout << "-- Relative link = " << name       << std::endl;
+    std::cout << "-- Object type   = " << info->type << std::endl;
+
+
     return status;
   }
   

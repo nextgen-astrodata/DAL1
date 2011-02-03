@@ -20,6 +20,10 @@ foreach (src ${tests_core})
     ${CFITSIO_LIBRARIES}
     ${dal_link_libraries}
     )
+  set_target_properties(${src}
+                        PROPERTIES
+			LINKER_LANGUAGE CXX
+			)
   ## installation instructions
   install (TARGETS ${src}
     RUNTIME DESTINATION bin

@@ -21,12 +21,6 @@
 #ifndef HDF5DATATYPE_H
 #define HDF5DATATYPE_H
 
-// Standard library header files
-#include <iostream>
-#include <map>
-#include <string>
-
-// DAL header files
 #include "HDF5Object.h"
 
 namespace DAL { // Namespace DAL -- begin
@@ -34,6 +28,7 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \class HDF5Datatype
     
+    \ingroup DAL
     \ingroup core
     
     \brief Brief description for class HDF5Datatype
