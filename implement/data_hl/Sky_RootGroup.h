@@ -105,10 +105,22 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Methods ==============================================================
     
-    
-    
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       bool const &create);
+
   private:
+
+    void setAttributes ()
+    {
+      attributes_p.clear();
+    }
     
+    bool openEmbedded (bool const &create)
+    {
+      return create;
+    }
+
     //! Unconditional copying
     void copy (Sky_RootGroup const &other);
     

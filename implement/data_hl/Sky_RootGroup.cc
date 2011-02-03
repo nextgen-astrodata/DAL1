@@ -109,6 +109,19 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  
+  bool Sky_RootGroup::open (hid_t const &location,
+			    std::string const &name,
+			    bool const &create)
+  {
+    bool status = true;
 
+    std::cout << "[Sky_RootGroup::open]" << std::endl;
+    std::cout << "-- Location ID    = " << location << std::endl;
+    std::cout << "-- Group name     = " << name     << std::endl;
+    std::cout << "-- Create object? = " << create   << std::endl;
+
+    return status;
+  }
+  
+  
 } // Namespace DAL -- end

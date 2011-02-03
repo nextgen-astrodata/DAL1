@@ -1,9 +1,6 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
- *   Copyright (C) 2010                                                  *
- *   Lars Baehren (<mail>)                                                     *
+/***************************************************************************
+ *   Copyright (C) 2010                                                    *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <data_hl/Sky_RootGroup.h>
+#include <Sky_RootGroup.h>
 
 // Namespace usage
 using DAL::Sky_RootGroup;
@@ -29,11 +26,12 @@ using DAL::Sky_RootGroup;
 /*!
   \file tSky_RootGroup.cc
 
+  \ingroup DAL
   \ingroup data_hl
 
-  \brief A collection of test routines for the Sky_RootGroup class
+  \brief A collection of test routines for the DAL::Sky_RootGroup class
  
-  \author Lars Baehren
+  \author Lars B&auml;hren
  
   \date 2010/10/19
 */
