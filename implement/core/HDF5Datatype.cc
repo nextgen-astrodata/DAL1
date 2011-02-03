@@ -81,6 +81,7 @@ namespace DAL { // Namespace DAL -- begin
   
   void HDF5Datatype::copy (HDF5Datatype const &other)
   {
+    itsLocation = other.itsLocation;
   }
 
   // ============================================================================

@@ -58,7 +58,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class Sky_RootGroup {
+  class Sky_RootGroup : public HDF5CommonInterface {
     
   public:
     

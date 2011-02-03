@@ -39,6 +39,7 @@ namespace DAL { // Namespace DAL -- begin
            one.
   */
   Sky_RootGroup::Sky_RootGroup (Sky_RootGroup const &other)
+    : HDF5CommonInterface(other)
   {
     copy (other);
   }
@@ -80,6 +81,9 @@ namespace DAL { // Namespace DAL -- begin
   
   void Sky_RootGroup::copy (Sky_RootGroup const &other)
   {
+    if (H5Iis_valid(other.location_p)) {
+      location_p = -1;
+    }
   }
 
   // ============================================================================

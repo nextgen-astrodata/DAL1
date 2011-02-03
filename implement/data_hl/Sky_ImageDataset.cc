@@ -80,7 +80,11 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                         copy
   
   void Sky_ImageDataset::copy (Sky_ImageDataset const &other)
-  {;}
+  {
+    if (H5Iis_valid(other.itsLocation)) {
+      itsLocation = -1;
+    }
+}
 
   // ============================================================================
   //
