@@ -8,20 +8,6 @@
 ##
 ## ==============================================================================
 
-if (DAL_COMPILER_WARNINGS)
-  set(CMAKE_CXX_FLAGS "-W -g -Wall")
-endif (DAL_COMPILER_WARNINGS)
-
-add_definitions (
-  -DMPICH_IGNORE_CXX_SEEK
-  -D_FILE_OFFSET_BITS=64
-  -D_LARGEFILE64_SOURCE
-  -D_LARGEFILE_SOURCE
-  -fPIC
-  -fpermissive
-  -ftemplate-depth-100
-  )
-
 if (HAVE_CASA OR HAVE_CASACORE)
   add_definitions (
     -DHAVE_CASA
@@ -105,16 +91,14 @@ add_library(dal STATIC ${dal_sources})
 
 target_link_libraries(dal ${dal_link_libraries})
 
-set_target_properties (dal
-  PROPERTIES
-  LINKER_LANGUAGE CXX
-  )
-
-## ------------------------------------------------------------------------------
+## ==============================================================================
+##
 ## Build the library for the Python bindings, "pydal"
+##
+## ==============================================================================
 
 if (DAL_PYTHON_BINDINGS)
-
+  
   ##______________________________________________
   ## Source files with the wrapping code
 
@@ -181,8 +165,11 @@ if (DAL_PYTHON_BINDINGS)
   
 endif (DAL_PYTHON_BINDINGS)
 
-## ------------------------------------------------------------------------------
-## Installation
+## ==============================================================================
+##
+##  Installation instructions
+##
+## ==============================================================================
 
 ## installation of libraries
 

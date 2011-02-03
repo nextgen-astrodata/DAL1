@@ -49,17 +49,19 @@ option (DAL_DEBUGGING_MESSAGES "Print debugging information?"                 NO
 option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"         NO  )
 
 ##__________________________________________________________
-## Handle option: testing mode on/off
+## Handle option: testing mode
 
 if (DAL_ENABLE_DASHBOARD OR DAL_ENABLE_TESTING)
   ## Include CTest module
   include (CTest)
   include (FindTestDatasets)
   enable_testing()
+  ## Control parameters for running the tests
+  set (DART_TESTING_TIMEOUT 500)
 endif (DAL_ENABLE_DASHBOARD OR DAL_ENABLE_TESTING)
 
 ##__________________________________________________________
-## Handle option: verbose mode during configuration on/off
+## Handle option: verbose mode during configuration?
 
 if (NOT DAL_VERBOSE_CONFIGURE)
   set (BOOST_FIND_QUIETLY     YES )
@@ -79,7 +81,7 @@ if (NOT DAL_VERBOSE_CONFIGURE)
 endif (NOT DAL_VERBOSE_CONFIGURE)
 
 ##__________________________________________________________
-## Handle option: debugging messages on/off
+## Handle option: debugging messages?
 
 if (DAL_DEBUGGING_MESSAGES)
   add_definitions (-DDEBUGGING_MESSAGES)
@@ -88,6 +90,30 @@ endif (DAL_DEBUGGING_MESSAGES)
 if (HAVE_OPNEMP)
   add_definitions (-DHAVE_OPNEMP)
 endif (HAVE_OPNEMP)
+
+##__________________________________________________________
+## Handle option: Enable standard set of compiler warnings?
+
+if (DAL_COMPILER_WARNINGS)
+  set(CMAKE_CXX_FLAGS "-W -g -Wall")
+endif (DAL_COMPILER_WARNINGS)
+
+add_definitions (
+  -DMPICH_IGNORE_CXX_SEEK
+  -D_FILE_OFFSET_BITS=64
+  -D_LARGEFILE64_SOURCE
+  -D_LARGEFILE_SOURCE
+  -fPIC
+  -fpermissive
+  -ftemplate-depth-100
+  )
+
+## See comment on http://gcc.gnu.org/bugzilla/show_bug.cgi?id=41645
+if (APPLE)
+  add_definitions (
+    -D_GLIBCXX_FULLY_DYNAMIC_STRING
+    )
+endif (APPLE)
 
 ## ==============================================================================
 ##
