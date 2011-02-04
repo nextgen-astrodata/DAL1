@@ -26,6 +26,7 @@
 
 // Standard library header files
 #include <iostream>
+#include <map>
 #include <string>
 
 namespace DAL { // Namespace DAL -- begin
@@ -55,22 +56,23 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Underlying file type
     enum Type {
+      //! Undefined type of file
+      UNDEFINED,
       //! HDF5 file -- low-level access handled through HDF5 library
       HDF5,
       //! FITS file -- low-level access handled through CFITSIO library
       FITS,
       //! CASA MeasurementSet -- low-level access handled through casacore library
       MSCASA,
+      CASA_MS,
       //! CASA PagedImage -- low-level access handled through casacore library
-      CASA_IMAGE,
-      //! Undefined type of file
-      UNDEFINED
+      CASA_IMAGE
     };
 
   private:
 
     //! Type of the data file
-    dalFileType::Type type_p;
+    dalFileType::Type itsType;
 
   public:
     
@@ -111,7 +113,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Get file type
     inline dalFileType::Type type () {
-      return type_p;
+      return itsType;
     }
 
     //! Set the file type
@@ -144,13 +146,16 @@ namespace DAL { // Namespace DAL -- begin
     */
     void summary (std::ostream &os);    
 
-    // === Methods ==============================================================
+    // === Static methods =======================================================
+
+    //! Get map of types and their corresponding name
+    static std::map<dalFileType::Type,std::string> mapOfTypes ();
     
     //! Get file type
-    static dalFileType::Type type (std::string const &fileTypeName);
+    static dalFileType::Type getType (std::string const &name);
 
     //! Convert type to name
-    static std::string name (dalFileType::Type const &fileType);
+    static std::string getName (dalFileType::Type const &fileType);
     
   private:
     

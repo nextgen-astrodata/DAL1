@@ -21,7 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <dalFileType.h>
+#include "dalFileType.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -36,7 +36,7 @@ namespace DAL { // Namespace DAL -- begin
 
   dalFileType::dalFileType ()
   {
-    type_p = DAL::dalFileType::UNDEFINED;
+    itsType = DAL::dalFileType::UNDEFINED;
   }
   
   //_____________________________________________________________________________
@@ -52,12 +52,15 @@ namespace DAL { // Namespace DAL -- begin
 
   dalFileType::dalFileType (std::string const &filetypeName)
   {
-    type_p = type (filetypeName);
+    itsType = getType (filetypeName);
   }
   
   //_____________________________________________________________________________
   //                                                                  dalFileType
 
+  /*!
+    \param other -- Another dalFileType object from which to create this new one.
+  */
   dalFileType::dalFileType (dalFileType const &other)
   {
     copy (other);
@@ -100,7 +103,7 @@ namespace DAL { // Namespace DAL -- begin
   
   void dalFileType::copy (dalFileType const &other)
   {
-    type_p = other.type_p;
+    itsType = other.itsType;
   }
 
   // ============================================================================
@@ -122,7 +125,7 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
 
     try {
-      type_p = filetype;
+      itsType = filetype;
     } catch (std::string message) {
       std::cerr << "[dalFileType::setType] Failed to set type! Invalid value."
 		<< std::endl;
@@ -142,7 +145,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   bool dalFileType::setType (std::string const &filetypeName)
   {
-    dalFileType::Type filetype = type (filetypeName);
+    dalFileType::Type filetype = getType (filetypeName);
     return setType (filetype);
   }
 
@@ -158,36 +161,57 @@ namespace DAL { // Namespace DAL -- begin
 
   // ============================================================================
   //
-  //  Methods
+  //  Public methods 
   //
   // ============================================================================
 
-  //_____________________________________________________________________________
-  //                                                                         type
-  
-  dalFileType::Type dalFileType::type (std::string const &fileTypeName)
-  {
-    dalFileType::Type filetype = dalFileType::UNDEFINED;
-
-    if (fileTypeName == "HDF5") {
-      filetype = dalFileType::HDF5;
-    } else if (fileTypeName == "FITS") {
-      filetype = dalFileType::FITS;
-    } else if (fileTypeName == "MSCASA") {
-      filetype = dalFileType::MSCASA;
-    } else {
-      filetype = dalFileType::UNDEFINED;
-    }
-
-    return filetype;
-  }
-  
   //_____________________________________________________________________________
   //                                                                         name
   
   std::string dalFileType::name ()
   {
-    return name (type_p);
+    return getName (itsType);
+  }
+
+  // ============================================================================
+  //
+  //  Static methods 
+  //
+  // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                                   mapOfTypes
+  
+  std::map<dalFileType::Type,std::string> dalFileType::mapOfTypes ()
+  {
+    std::map<dalFileType::Type,std::string> result;
+
+    result[HDF5]       = "HDF5";
+    result[FITS]       = "FITS";
+    result[MSCASA]     = "MSCASA";
+    result[CASA_MS]    = "CASA_MS";
+    result[CASA_IMAGE] = "CASA_IMAGE";
+    result[UNDEFINED]  = "UNDEFINED";
+
+    return result;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                         type
+  
+  dalFileType::Type dalFileType::getType (std::string const &name)
+  {
+    std::map<dalFileType::Type,std::string> typesMap     = mapOfTypes ();
+    std::map<dalFileType::Type,std::string>::iterator it = typesMap.begin();
+    dalFileType::Type result                             = it->first;
+
+    for (it=typesMap.begin(); it!=typesMap.end(); ++it) {
+      if (it->second == name) {
+	result = it->first;
+      }
+    }
+
+    return result;
   }
 
   //_____________________________________________________________________________
@@ -197,28 +221,19 @@ namespace DAL { // Namespace DAL -- begin
     \param fileType -- File type to convert to corresponding string
     \return name    -- File type name.
   */
-  std::string dalFileType::name (dalFileType::Type const &fileType)
+  std::string dalFileType::getName (dalFileType::Type const &fileType)
   {
-    std::string name;
-    
-    switch (fileType) {
-    case dalFileType::HDF5:
-      name = "HDF5";
-      break;
-    case dalFileType::FITS:
-      name = "FITS";
-      break;
-    case dalFileType::MSCASA:
-      name = "MSCASA";
-      break;
-    default:
-      name = "UNDEFINED";
-      break;
-    };
-    
-    return name;
+    std::map<dalFileType::Type,std::string> typesMap     = mapOfTypes ();
+    std::map<dalFileType::Type,std::string>::iterator it = typesMap.find(fileType);
+    std::string result;
+
+    if (it==typesMap.end()) {
+      result = typesMap.begin()->second;
+    } else {
+      result = it->second;
+    }
+
+    return result;
   }
-
-
 
 } // Namespace DAL -- end

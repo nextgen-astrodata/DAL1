@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: tNewClass.cc 3179 2009-10-14 13:20:10Z baehren                  $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -34,12 +31,74 @@ using DAL::dalFileType;
   \ingroup DAL
   \ingroup core
 
-  \brief A collection of test routines for the dalFileType class
+  \brief A collection of test routines for the DAL::dalFileType class
  
   \author Lars B&auml;hren
  
   \date 2010/04/07
 */
+
+//_______________________________________________________________________________
+//                                                          test_static_functions
+
+/*!
+  \brief Test for the static methods provided by the class
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_static_functions ()
+{
+  cout << "\n[tdalFileType::test_static_functions]\n" << endl;
+
+  int nofFailedTests (0);
+  std::map<dalFileType::Type,std::string>::iterator it;
+
+  //__________________________________________________________________
+  // Test 1
+
+  std::cout << "[1] Testing mapOfTypes() ..." << std::endl;
+  {
+    std::map<dalFileType::Type,std::string> typesMap = dalFileType::mapOfTypes ();
+
+    for (it=typesMap.begin(); it!=typesMap.end(); ++it) {
+      std::cout << " [ " << it->first << "  ->  " << it->second << " ]" << std::endl;
+    }
+  }
+
+  //__________________________________________________________________
+  // Test 2
+
+  std::cout << "[2] Testing getName() ..." << std::endl;
+  {
+    std::map<dalFileType::Type,std::string> typesMap = dalFileType::mapOfTypes ();
+
+    for (it=typesMap.begin(); it!=typesMap.end(); ++it) {
+      std::cout << " [ "
+		<< it->first << "  ->  "
+		<< dalFileType::getName(it->first)
+		<< " ]" << std::endl;
+    }
+  }
+
+  //__________________________________________________________________
+  // Test 3
+
+  std::cout << "[3] Testing getType() ..." << std::endl;
+  {
+    std::map<dalFileType::Type,std::string> typesMap = dalFileType::mapOfTypes ();
+
+    for (it=typesMap.begin(); it!=typesMap.end(); ++it) {
+      std::cout << " [ "
+		<< it->second << "  ->  "
+		<< dalFileType::getType(it->second)
+		<< " ]" << std::endl;
+    }
+  }
+
+  
+  return nofFailedTests;
+}
 
 //_______________________________________________________________________________
 //                                                              test_constructors
@@ -157,6 +216,9 @@ int test_parameters ()
 int main ()
 {
   int nofFailedTests (0);
+
+  // Test for the static methods provided by the class
+  nofFailedTests += test_static_functions ();
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
