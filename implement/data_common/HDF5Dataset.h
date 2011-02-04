@@ -594,7 +594,7 @@ namespace DAL {
 		     HDF5Hyperslab &slab,
 		     hid_t const &datatype)
       {
-	bool status = status;
+	bool status (true);
 	
 	/* Set the Hyperslab for the dataspace attached to a dataset */
 	status = setHyperslab (slab, false);
@@ -603,7 +603,7 @@ namespace DAL {
 	  /* Local variables */
 	  unsigned int nelem (rank());
 	  hsize_t dimensions[nelem];
-	  herr_t h5error;
+	  herr_t h5error (0);
 	  std::vector<int> stride = slab.stride();
 	  std::vector<int> block  = slab.block();
 	  /* Setup the memory space */

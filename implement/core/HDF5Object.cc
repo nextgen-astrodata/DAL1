@@ -969,6 +969,11 @@ namespace DAL { // Namespace DAL -- begin
     std::cout << "-- Relative link = " << name       << std::endl;
     std::cout << "-- Object type   = " << info->type << std::endl;
 
+    if (op_data!=NULL) {
+      std::cout << "-- op_data array = true" << std::endl;
+    } else {
+      std::cout << "-- op_data array = false" << std::endl;
+    }
 
     return status;
   }
