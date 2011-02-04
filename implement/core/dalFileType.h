@@ -149,7 +149,7 @@ namespace DAL { // Namespace DAL -- begin
     // === Static methods =======================================================
 
     //! Get map of types and their corresponding name
-    static std::map<dalFileType::Type,std::string> mapOfTypes ();
+    static std::map<dalFileType::Type,std::string> getMap ();
     
     //! Get file type
     static dalFileType::Type getType (std::string const &name);

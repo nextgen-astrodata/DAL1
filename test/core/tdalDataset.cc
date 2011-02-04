@@ -101,9 +101,11 @@ int test_attributes (std::string const &filename,
 		     std::string const dalType)
 {
   std::cout << "\n[tdalDataset::test_attributes]\n" << std::endl;
-  
+  std::cout << "-- Filename      = " << filename << std::endl;
+  std::cout << "-- DAL file type = " << dalType  << std::endl;
+
   int nofFailedTests = 0;
-  int nelem          = 5;
+  // int nelem          = 5;
   
   /* Open the dataset to work with */
   DAL::dalDataset ds (filename);

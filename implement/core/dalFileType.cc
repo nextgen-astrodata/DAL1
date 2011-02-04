@@ -180,9 +180,9 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
 
   //_____________________________________________________________________________
-  //                                                                   mapOfTypes
+  //                                                                       getMap
   
-  std::map<dalFileType::Type,std::string> dalFileType::mapOfTypes ()
+  std::map<dalFileType::Type,std::string> dalFileType::getMap ()
   {
     std::map<dalFileType::Type,std::string> result;
 
@@ -201,7 +201,7 @@ namespace DAL { // Namespace DAL -- begin
   
   dalFileType::Type dalFileType::getType (std::string const &name)
   {
-    std::map<dalFileType::Type,std::string> typesMap     = mapOfTypes ();
+    std::map<dalFileType::Type,std::string> typesMap     = getMap ();
     std::map<dalFileType::Type,std::string>::iterator it = typesMap.begin();
     dalFileType::Type result                             = it->first;
 
@@ -223,7 +223,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   std::string dalFileType::getName (dalFileType::Type const &fileType)
   {
-    std::map<dalFileType::Type,std::string> typesMap     = mapOfTypes ();
+    std::map<dalFileType::Type,std::string> typesMap     = getMap ();
     std::map<dalFileType::Type,std::string>::iterator it = typesMap.find(fileType);
     std::string result;
 

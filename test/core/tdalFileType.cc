@@ -57,9 +57,9 @@ int test_static_functions ()
   //__________________________________________________________________
   // Test 1
 
-  std::cout << "[1] Testing mapOfTypes() ..." << std::endl;
+  std::cout << "[1] Testing getMap() ..." << std::endl;
   {
-    std::map<dalFileType::Type,std::string> typesMap = dalFileType::mapOfTypes ();
+    std::map<dalFileType::Type,std::string> typesMap = dalFileType::getMap ();
 
     for (it=typesMap.begin(); it!=typesMap.end(); ++it) {
       std::cout << " [ " << it->first << "  ->  " << it->second << " ]" << std::endl;
@@ -71,7 +71,7 @@ int test_static_functions ()
 
   std::cout << "[2] Testing getName() ..." << std::endl;
   {
-    std::map<dalFileType::Type,std::string> typesMap = dalFileType::mapOfTypes ();
+    std::map<dalFileType::Type,std::string> typesMap = dalFileType::getMap ();
 
     for (it=typesMap.begin(); it!=typesMap.end(); ++it) {
       std::cout << " [ "
@@ -86,7 +86,7 @@ int test_static_functions ()
 
   std::cout << "[3] Testing getType() ..." << std::endl;
   {
-    std::map<dalFileType::Type,std::string> typesMap = dalFileType::mapOfTypes ();
+    std::map<dalFileType::Type,std::string> typesMap = dalFileType::getMap ();
 
     for (it=typesMap.begin(); it!=typesMap.end(); ++it) {
       std::cout << " [ "
