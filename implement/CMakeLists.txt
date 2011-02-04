@@ -43,13 +43,6 @@ endif (HAVE_CASA OR HAVE_CASACORE)
 
 ## ==============================================================================
 ##
-##  External libraries to link against
-##
-## ==============================================================================
-
-
-## ==============================================================================
-##
 ##  Build the library, "libdal"
 ##
 ## ==============================================================================
@@ -91,6 +84,11 @@ add_library(dal STATIC ${dal_sources})
 
 target_link_libraries(dal ${dal_link_libraries})
 
+set_target_properties (dal
+  PROPERTIES
+  COMPILE_FLAGS "-fpermissive -ftemplate-depth-100"
+  )
+
 ## ==============================================================================
 ##
 ## Build the library for the Python bindings, "pydal"
@@ -98,71 +96,7 @@ target_link_libraries(dal ${dal_link_libraries})
 ## ==============================================================================
 
 if (DAL_PYTHON_BINDINGS)
-  
-  ##______________________________________________
-  ## Source files with the wrapping code
-
-  file (GLOB pydal_sources bindings/*.cc)
-  
-  ##______________________________________________
-  ## Compiler instructions
-  
-  remove_definitions (-dynamiclib -install_name)
-
-  include_directories (
-    ${NUM_UTIL_INCLUDES}
-    )
-  
-  add_library(pydal MODULE
-    ${dal_sources}
-    ${pydal_sources}
-    )
-  
-  ##______________________________________________
-  ## linker instructions
-  
-  target_link_libraries(pydal
-    ${dal_link_libraries}
-    ${PYTHON_LIBRARIES}
-    ${BOOST_LIBRARIES}
-    ${NUM_UTIL_LIBRARIES}
-    ${CFITSIO_LIBRARIES}
-    ${WCSLIB_LIBRARIES}
-    ${LAPACK_LIBRARIES}
-    ${HAVE_LIBDL}
-    ${HAVE_LIBPTHREAD}
-    ${HAVE_LIBUTIL}
-    )
-  
-  ##______________________________________________
-  ## Additional target properties
-  
-  if (APPLE)
-    set_target_properties (pydal
-      PROPERTIES
-      PREFIX ""
-      SUFFIX .so
-      COMPILE_FLAGS "-DPYTHON -fpermissive"
-      LINK_FLAGS "-fPIC -flat_namespace"
-      )
-  else (APPLE)
-    set_target_properties (pydal
-      PROPERTIES
-      PREFIX ""
-      SUFFIX .so
-      COMPILE_FLAGS -DPYTHON
-      LINK_FLAGS "-fPIC -shared"
-      )
-  endif (APPLE)
-  
-  ##______________________________________________
-  ## Installation instructions
-  
-  install (
-    TARGETS pydal
-    LIBRARY DESTINATION lib/python
-    )
-  
+  add_subdirectory (bindings)
 endif (DAL_PYTHON_BINDINGS)
 
 ## ==============================================================================

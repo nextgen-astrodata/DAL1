@@ -25,9 +25,11 @@
   \author Joseph Masters, Lars B&auml;hren
 */
 
-#include <dal.h>
 #include <cassert>
 #include <string>
+
+#include <dal.h>
+#include <dalDataset.h>
 
 using std::cout;
 using std::endl;

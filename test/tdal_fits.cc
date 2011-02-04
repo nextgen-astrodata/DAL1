@@ -22,99 +22,18 @@
  ***************************************************************************/
 
 #include <dal.h>
+#include <dalDataset.h>
 
 using namespace DAL;
 
-using std::endl;
-
-// ------------------------------------------------------------------------------
-
-/*!
-  \brief Test opening an existing file and extracting some information from it
-
-  This function contains a number of very basic tests for directly interacting
-  the CFITSIO library (which in turn is used as underlying engine by the classes
-  of the DAL):
-  - open an existing FITS file
-  - create a new FITS file containing a primary image
-  - extract keyword values from the FITS header
-
-  \param filename -- The name of the FITS file to use for testing
-
-  \return nofFailedTests -- The number of failed tests encountered with this
-          function
-*/
-int test_FITS (std::string const &filename)
-{
-  std::cout << "\n[tdal_fits::test_FITS]\n" << std::endl;
-
-  int nofFailedTests = 0;
-  int status         = 0;
-
-  std::cout << "[1] Opening FITS file for reading ..." << std::endl;
-  try
-    {
-      fitsfile *fptr;
-      fits_open_file(&fptr, filename.c_str(), READWRITE, &status);
-      //
-      std::cout << "-- Filename = " << filename << std::endl;
-      std::cout << "-- Status   = " << status   << std::endl;
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
-  std::cout << "[2] Creating FITS with primary array image" << std::endl;
-  try
-    {
-      long nelem (1024);
-      long naxis (2);
-      long naxes[2] = {nelem,nelem};
-      long nelements (nelem*nelem);
-      long fpixel (1);
-      float pixels[nelem][nelem];
-
-      std::cout << "-- Create new file ..." << std::endl;
-      fitsfile *fptr;
-      fits_create_file (&fptr, "!testimage1.fits", &status);
-
-      std::cout << "-- Create the primary array image ..." << std::endl;
-      fits_create_img (fptr, FLOAT_IMG, naxis, naxes, &status);
-
-      std::cout << "-- Fill the pixel value array ..." << std::endl;
-      for (int nx(0); nx<nelem; nx++)
-        {
-          for (int ny(0); ny<nelem; ny++)
-            {
-              pixels[ny][nx] = 1.0*(nx+ny);
-            }
-        }
-
-      std::cout << "-- Write the pixel value to the file ..." << std::endl;
-      fits_write_img(fptr, TFLOAT, fpixel, nelements, pixels[0], &status);
-
-      std::cout << "-- Close FITS file ..." << std::endl;
-      fits_close_file(fptr, &status);
-    }
-  catch (std::string message)
-    {
-      std::cerr << message << std::endl;
-      nofFailedTests++;
-    }
-
-
-  return nofFailedTests;
-}
-
-// ------------------------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                                test_dalDataset
 
 /*!
   \brief Test wrapping access to the FITS file through the DAL::dalDataset class
-
+  
   \param filename -- The name of the FITS file to use for testing
-
+  
   \return nofFailedTests -- The number of failed tests encountered with this
           function
 */
@@ -208,24 +127,18 @@ int test_dalDataset (std::string const &filename)
   \author Joseph Masters, Lars B&auml;hren
  */
 
-int main (int argc,
-          char *argv[])
+int main (int argc, char *argv[])
 {
-  int nofFailedTests = 0;
+  int nofFailedTests   = 0;
+  bool haveDataset     = false;
+  std::string filename = "tdal_FITS.fits";
 
   /* Check parameter provided from the command line */
-  if ( argc < 2 )
-    {
-      cout << "[tdal_fits] Too few parameters..." << endl << endl;
-      cout << "The first parameter is a fits dataset path and name." << endl;
-      cout << endl;
-      return DAL::FAIL;
-    }
-
-  std::string filename (argv[1]);
-
-  nofFailedTests += test_FITS (filename);
-
+  if ( argc>1 ) {
+    filename    = std::string(argv[1]);
+    haveDataset = true;
+  }
+  
   return nofFailedTests;
 }
 

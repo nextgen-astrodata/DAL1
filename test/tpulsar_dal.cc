@@ -31,9 +31,8 @@
   \author Joseph Masters
 */
 
-#ifndef DAL_H
 #include <dal.h>
-#endif
+#include <dalDataset.h>
 
 #define FILENAME "./tpulsar.h5"
 

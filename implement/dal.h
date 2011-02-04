@@ -162,27 +162,7 @@
 //_______________________________________________________________________________
 //                                                               DAL header files
 
-#ifndef DALCOMMON_H
-#include "dalCommon.h"
-#endif
-
-#ifndef BEAMFORMED_H
-#include "BeamFormed.h"
-#endif
-
-#ifndef DALDATASET_H
-#include "dalDataset.h"
-#endif
-
-#ifdef HAVE_MYSQL
-#ifndef DATABASE_H
-#include "Database.h"
-#endif
-#endif
-
-#ifndef TBB_TIMESERIES_H
-#include "TBB_Timeseries.h"
-#endif
+#include <dalCommon.h>
 
 #ifndef TBB_STATIONGROUP_H
 #include "TBB_StationGroup.h"

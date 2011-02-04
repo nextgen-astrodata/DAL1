@@ -38,6 +38,7 @@
 */
 
 #include <dal.h>
+#include <dalDataset.h>
 
 using namespace casa;
 using namespace DAL;

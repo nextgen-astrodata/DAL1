@@ -103,8 +103,6 @@ add_definitions (
   -D_LARGEFILE64_SOURCE
   -D_LARGEFILE_SOURCE
   -fPIC
-  -fpermissive
-  -ftemplate-depth-100
   )
 
 ## See comment on http://gcc.gnu.org/bugzilla/show_bug.cgi?id=41645

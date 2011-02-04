@@ -31,6 +31,8 @@
 */
 
 #include <dal.h>
+#include <dalDataset.h>
+#include <BeamSubband.h>
 
 using DAL::dalDataset;
 using DAL::dalGroup;

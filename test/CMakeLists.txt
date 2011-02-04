@@ -149,6 +149,9 @@ if (DAL_ENABLE_TESTING)
   if (dataset_fits)
     add_test (tdal_fits tdal_fits ${dataset_fits})
   endif (dataset_fits)
+  if (dataset_fits)
+    add_test (tdal_fits tdal_fits)
+  endif (dataset_fits)
 
   ## -----------------------------------------------------------------
   ## [7] Python scripts

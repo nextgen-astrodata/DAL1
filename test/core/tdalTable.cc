@@ -32,6 +32,7 @@
 
 #include <dal.h>
 #include <dalCommon.h>
+#include <dalDataset.h>
 
 //_______________________________________________________________________________
 //                                                                      test_H5TB
