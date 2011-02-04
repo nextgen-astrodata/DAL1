@@ -163,6 +163,10 @@ namespace DAL {
     void createTable (void * voidfile,
 		      string tablename,
 		      string groupname);
+    //! Get the number of columns in the table
+    inline unsigned int nofColumns () const {
+      return columns.size();
+    }
     //! Get a column object
     dalColumn * getColumn_complexInt16( string colname );
     //! Get a column object
@@ -184,8 +188,11 @@ namespace DAL {
     void setFilter( string columns, string conditions );
     void appendRow( void * data );
     void appendRows( void * data, long number_of_rows );
+    //! List the column of the table
     std::vector<std::string> listColumns();
+    //! Read rows from the table
     void readRows( void * data_out, long start, long stop, long buffersize=0 );
+    //! Get attribute attached to the table
     void * getAttribute( string attrname );
     
     // ---------------------------------------------------------- getAttribute

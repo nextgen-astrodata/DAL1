@@ -387,6 +387,10 @@ if (WCSLIB_LIBRARIES)
   list (APPEND dal_link_libraries ${WCSLIB_LIBRARIES})
 endif (WCSLIB_LIBRARIES)
 
+if (HAVE_LIBPTHREAD)
+  list (APPEND dal_link_libraries ${HAVE_LIBPTHREAD})
+endif (HAVE_LIBPTHREAD)
+
 if (HAVE_LIBDL)
   list (APPEND dal_link_libraries ${HAVE_LIBDL})
 endif (HAVE_LIBDL)
@@ -394,10 +398,6 @@ endif (HAVE_LIBDL)
 if (HAVE_LIBM)
   list (APPEND dal_link_libraries ${HAVE_LIBM})
 endif (HAVE_LIBM)
-
-if (HAVE_LIBPTHREAD)
-  list (APPEND dal_link_libraries ${HAVE_LIBPTHREAD})
-endif (HAVE_LIBPTHREAD)
 
 if (HAVE_LIBUTIL)
   list (APPEND dal_link_libraries ${HAVE_LIBUTIL})

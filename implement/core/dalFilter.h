@@ -42,9 +42,9 @@ namespace DAL {
   class dalFilter {
 
     //! Table filter std::string
-    std::string filterstring_p;
+    std::string itsFilterString;
     //! File type: MSCASA, HDF5, FITS, etc.
-    dalFileType filetype_p;
+    dalFileType itsFiletype;
     //! Book-keeping whether a filter is set or not.
     bool filterIsSet_p;
     
@@ -72,18 +72,18 @@ namespace DAL {
     // === Methods ==============================================================
 
     //! Restrict the opening of a table to particular columns.
-    bool set (std::string columns);
+    bool set (std::string const &selection);
 
     //! Restrict the opening of a table to particular columns.
-    bool set (std::vector<std::string> const &columns);
+    bool set (std::vector<std::string> const &selection);
 
     //! Restrict the opening of a table to particular columns and conditions.
-    void set (std::string columns,
-	      std::string conditions);
+    void set (std::string const &columns,
+	      std::string const &conditions);
 
     //! Get the type of the file
     inline std::string filetype () {
-      return filetype_p.name();
+      return itsFiletype.name();
     }
 
     //! Declare the type of the file
@@ -99,7 +99,7 @@ namespace DAL {
 
     //! Retrieve the filter string.
     inline std::string get () {
-      return filterstring_p;
+      return itsFilterString;
     }
 
     //! Provide a summary of the internal status

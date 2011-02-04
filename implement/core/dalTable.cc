@@ -60,7 +60,7 @@ namespace DAL {
 #ifdef HAVE_CASA
       casaTable_p = new casa::Table;
 #else
-      std::cerr << "CASA support not enabled." << endl;
+      std::cerr << "CASA support not enabled." << std::endl;
 #endif
     }
   }
@@ -98,22 +98,20 @@ namespace DAL {
   */
   void dalTable::summary(std::ostream &os)
   {
-    unsigned int nofColumns = columns.size();
-    
     os << "\n[dalTable] Summary of object properties"  << endl;
 
     if (name != "") {
-      os << "-- Table name    = " << name << std::endl;
-      os << "-- Table type    = " << type << std::endl;
+      os << "-- Table name    = " << name              << std::endl;
+      os << "-- Table type    = " << type              << std::endl;
       os << "-- nof. rows     = " << getNumberOfRows() << std::endl;
-      os << "-- nof. columns  = " << nofColumns << std::endl;
+      os << "-- nof. columns  = " << nofColumns()      << std::endl;
     }
     
     /* If the table contains a non-zero number of columns, list their names.
      */
-    if (nofColumns > 0) {
+    if (!columns.empty()) {
       os << "-- Column names  = [";
-      for (unsigned int n(0); n<nofColumns; n++)
+      for (unsigned int n=0; n<columns.size(); ++n)
 	{
 	  os << " " << columns[n].getName();
 	}

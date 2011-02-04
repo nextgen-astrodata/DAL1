@@ -47,9 +47,12 @@ int test_constructors ()
   std::cout << "\n[tdalDataset::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
-  std::string fileType ("H5TYPE");
   std::string columns ("Data");
 
+  /*__________________________________________________________________
+    Test 1: Default constructor
+  */
+  
   std::cout << "[1] Testing dalFilter() ..." << std::endl;
   try {
     DAL::dalFilter filter;
@@ -61,11 +64,17 @@ int test_constructors ()
     nofFailedTests++;
   }
 
+  /*__________________________________________________________________
+    Test 2: Default constructor
+  */
+  
   std::cout << "[2] Testing dalFilter(string) ..." << std::endl;
   try {
-    DAL::dalFilter filter (fileType,columns);
+    DAL::dalFilter filterHDF5 ("HDF5", columns);
+    filterHDF5.summary();
     //
-    filter.summary();
+    DAL::dalFilter filterMS ("MSCASA", columns);
+    filterMS.summary();
   }
   catch (std::string message) {
     std::cerr << message << std::endl;

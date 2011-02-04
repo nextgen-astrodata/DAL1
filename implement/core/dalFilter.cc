@@ -21,9 +21,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DALFILTER_H
 #include "dalFilter.h"
-#endif
 
 namespace DAL {
 
@@ -129,8 +127,8 @@ namespace DAL {
 
   void dalFilter::init ()
   {
-    filterstring_p = "";
-    filetype_p     = dalFileType();
+    itsFilterString = "";
+    itsFiletype     = dalFileType();
     filterIsSet_p         = false;
   }
 
@@ -139,21 +137,31 @@ namespace DAL {
   
   /*!
     \param columns A comma-separated list of the column names that you
-                   want to pass the filter (i.e. "TIME,DATA,ANTENNA").
-   */
-  bool dalFilter::set ( std::string cols )
+           want to pass the filter (i.e. "TIME,DATA,ANTENNA").
+    \return status -- Status of the operation; returns \e false in case an error
+            was encountered, e.g. because the operation is not supported for the
+	    file type.
+  */
+  bool dalFilter::set (std::string const &cols)
   {
-    bool status (true);
+    bool status         = true;
+    std::string message = "[dalFilter::set]";
     
-    switch (filetype_p.type()) {
+    switch (itsFiletype.type()) {
     case dalFileType::MSCASA:
-      filterstring_p = "Select " + cols + " from $1";
-      filterIsSet_p         = true;
+      itsFilterString = "Select " + cols + " from $1";
+      filterIsSet_p   = true;
       break;
     default:
-      std::cerr << "Operation not yet supported for type: "
-		<< filetype_p.name() << ". Sorry.\n";
-      status = false;
+      {
+	status = false;
+	/* Assemble error mesage */
+	message += "Operation not yet supported for type: ";
+	message += itsFiletype.name();
+	message += ". Sorry.";
+	/* Write error message */
+	std::cerr << message << std::endl;
+      }
       break;
     };
     
@@ -192,18 +200,20 @@ namespace DAL {
     \param conditions A list of the conditions you want to apply.
                       (i.e. "ANTENNA1=1 AND ANTENNA2=10")
    */
-  void dalFilter::set (std::string cols,
-		       std::string conditions)
+  void dalFilter::set (std::string const &cols,
+		       std::string const &conditions)
   {
-    switch (filetype_p.type()) {
+    switch (itsFiletype.type()) {
     case dalFileType::MSCASA:
       break;
-        filterstring_p = "Select " + cols + " from $1 where " + conditions;
+        itsFilterString = "Select " + cols + " from $1 where " + conditions;
         filterIsSet_p         = true;
     default:
+      {
       std::cerr << "Operation not yet supported for type: " 
-		<< filetype_p.name()
+		<< itsFiletype.name()
 		<< ". Sorry.\n";
+      }
       break;
     };
   }
@@ -216,7 +226,7 @@ namespace DAL {
    */
   bool dalFilter::setFiletype (std::string const &type)
   {
-    filetype_p = dalFileType (type);
+    itsFiletype = dalFileType (type);
     return true;
   }
 
@@ -225,7 +235,7 @@ namespace DAL {
   
   bool dalFilter::setFiletype (DAL::dalFileType const &type)
   {
-    filetype_p = type;
+    itsFiletype = type;
     return true;
   }
 
@@ -235,8 +245,8 @@ namespace DAL {
   void dalFilter::summary (std::ostream &os)
   {
     os << "[dalFilter] Summary of internal parameters."   << std::endl;
-    os << "-- Filter string = " << filterstring_p         << std::endl;
-    os << "-- File type     = " << filetype_p.name()      << std::endl;
+    os << "-- Filter string = " << itsFilterString         << std::endl;
+    os << "-- File type     = " << itsFiletype.name()      << std::endl;
     os << "-- Filter is set = " << filterIsSet_p          << std::endl;
   }
   

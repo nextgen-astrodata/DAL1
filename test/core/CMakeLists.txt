@@ -50,7 +50,8 @@ foreach (_test
     tdalGroup
     tDatabase
     tValMatrix
-    testCFITSIO
+    test_CFITSIO
+    test_std_cerr
     )
   add_test (${_test} ${_test})
 endforeach (_test)
