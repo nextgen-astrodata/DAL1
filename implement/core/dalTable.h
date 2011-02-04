@@ -78,7 +78,8 @@ namespace DAL {
     casa::ROTableColumn * casa_column;
 #endif
     
-    void h5addColumn_setup (std::string const column_name,
+    //! Setup for adding another column to an HDF5 table
+    bool h5addColumn_setup (std::string const &column_name,
 			    bool &removedummy);
     void h5addColumn_insert (uint const & indims,
 			     std::string const & colname,

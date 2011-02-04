@@ -829,37 +829,76 @@ namespace DAL {
     \param column_name -- Name of the column to be added
     \param removedummy -- Remove dummy column
   */
-  void dalTable::h5addColumn_setup (std::string const column_name,
+  bool dalTable::h5addColumn_setup (std::string const &column_name,
                                     bool &removedummy)
   {
-    // make sure the column name isn't blank
+    herr_t h5err (0);
+
+    /*________________________________________________________________
+      Make sure the column name isn't blank; is this is not the case
+      retrieve basic table information.
+    */
+
     if ( 0 == column_name.length() ) {
       std::cerr << "WARNING: Trying to add column without a name.\n";
-      return;
+      return false;
+    } else {
+      /* 
+	 Returns a non-negative value if successful; otherwise returns
+	 a negative value. 
+      */
+      h5err = H5TBget_table_info (fileID_p,
+				  name.c_str(),
+				  &nfields,
+				  &nofRecords_p);
+      if (h5err<0) {
+	std::cerr << "[dalTable::h5addColumn_setup]"
+		  << " Failed to retrieve information about table!" 
+		  << std::endl;
+	return false;
+      }
     }
     
-    // retrieve table information
-    H5TBget_table_info (fileID_p,
-			name.c_str(),
-			&nfields,
-			&nofRecords_p);
-    
-    /* Allocate space for the column/field names and retrieve them from
-       the table */
+    /*________________________________________________________________
+      Allocate space for the column/field names and retrieve them from
+       the table
+    */
+
     field_names = (char**)malloc( nfields * sizeof(char*) );
+
     for (unsigned int ii=0; ii<nfields; ii++) {
       field_names[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
     }
-    status = H5TBget_field_info( fileID_p, name.c_str(), field_names, NULL,
-                                 NULL, NULL );
     
-    // check to make sure column doesn't already exist
+    /*________________________________________________________________
+      Retrieve information about targetted field within the table.
+      
+      Returns a non-negative value if successful; otherwise returns a
+      negative value.
+    */
+    h5err = H5TBget_field_info (fileID_p,
+				name.c_str(),
+				field_names,
+				NULL,
+				NULL,
+				NULL);
+    if (h5err<0) {
+      std::cerr << "[dalTable::h5addColumn_setup]"
+		<< " Failed to retrieve information about table field!" 
+		<< std::endl;
+      return false;
+    }
+
+    /*________________________________________________________________
+      Check to make sure column doesn't already exist
+    */
+
     for (unsigned int ii=0; ii<nfields; ii++) {
       if (0 == strcmp( column_name.c_str(), field_names[ii] )) {
 	std::cerr << "WARNING: Cannot create column \'"
 		  << column_name.c_str()
 		  <<	"\'. Column already exists." << endl;
-	return;
+	return false;
       }
       else if (0 == strcmp("000dummy000",field_names[ii])) {
 	removedummy = true;
@@ -870,6 +909,8 @@ namespace DAL {
       free(field_names[ii]);
     }
     free(field_names);
+
+    return true;
   }
   
   //_____________________________________________________________________________

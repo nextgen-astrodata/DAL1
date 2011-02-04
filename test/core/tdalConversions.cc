@@ -110,7 +110,7 @@ int test_convertTime ()
 
   cout << "[1] Testing dalConversion::julday() ..." << endl;
   try {
-    time_t seconds;
+    time_t seconds        = 0;
     long intmjd           = 0;
     long double fracmjd   = 0;
     long double julianDay = 0;

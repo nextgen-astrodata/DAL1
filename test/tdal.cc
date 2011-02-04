@@ -48,6 +48,8 @@ uint test_hdf5_datafile (std::string const &filename,
 			 std::string const &groupname)
 {
   cout << "\n[tdal::test_hdf5_datafile]\n" << endl;
+  cout << "-- Filename  = " << filename    << endl;
+  cout << "-- Groupname = " << groupname   << endl;
 
   uint status = 0;
   
@@ -170,11 +172,8 @@ uint test_hdf5_datafile (std::string const &filename,
 */
 uint create_hdf5_integer_array (std::string const &filename)
 {
-  uint ret = 0;
-
-  dalDataset ds;
-
-  ds = dalDataset (filename.c_str(), "HDF5" );
+  uint ret (0);
+  dalDataset ds (filename.c_str(), "HDF5" );
 
   // define dimensions of array
   vector<int> dims;
@@ -183,8 +182,13 @@ uint create_hdf5_integer_array (std::string const &filename)
   dims.push_back(6);
   vector<int> cdims;
 
-  int data[4*5*6];
-  for (int gg=0; gg<(4*5*6); gg++)
+  unsigned int nelem (1);
+  for (unsigned int n=0; n<dims.size(); ++n) {
+    nelem *= dims[n];
+  } 
+
+  int data[nelem];
+  for (unsigned int gg=0; gg<nelem; gg++)
     data[gg] = gg;
 
   dalArray * array = ds.createIntArray( "int_array", dims, data, cdims );
