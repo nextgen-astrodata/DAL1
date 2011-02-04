@@ -55,10 +55,6 @@ using std::endl;
 #include <measures/Measures/MPosition.h>
 #endif
 
-#ifdef HAVE_MPATROL
-#include <mpatrol.h>
-#endif
-  
 /*!
   \file dalCommon.h
 

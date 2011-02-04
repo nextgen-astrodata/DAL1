@@ -74,7 +74,6 @@ if (NOT DAL_VERBOSE_CONFIGURE)
   set (NUMPY_FIND_QUIETLY     YES )
   set (NUM_UTIL_FIND_QUIETLY  YES )
   set (PYTHON_FIND_QUIETLY    YES )
-  set (MPATROL_FIND_QUIETLY   YES )
   set (MPI_FIND_QUIETLY       YES )
   set (MYSQL_FIND_QUIETLY     YES )
   set (WCSLIB_FIND_QUIETLY    YES )
@@ -129,19 +128,19 @@ set (NO_DEFAULT_PATH YES)
 set (dal_cmake_modules
   Boost
   CASACORE
-  CFITSIO
   GFortran
-  GSL
   HDF5
   LAPACK
   LOFAR
-  MPatrol
   MPI
   MySQL
-  WCSLIB
   )
 
 include_find_module (${dal_cmake_modules} ${DAL_VERBOSE_CONFIGURE})
+
+include (cmake/FindCFITSIO.cmake)
+include (cmake/FindGSL.cmake)
+include (cmake/FindWCSLIB.cmake)
 
 ##__________________________________________________________
 ## Type sizes
@@ -268,12 +267,12 @@ else (HAVE_CASACORE)
   message (STATUS "[DAL] Missing or incomplete installation of casacore!")
 endif (HAVE_CASACORE)
 
-if (HAVE_CFITSIO)
+if (CFITSIO_FOUND)
   include_directories (${CFITSIO_INCLUDES})
   add_definitions (-DHAVE_CFITSIO)
-else (HAVE_CFITSIO)
+else (CFITSIO_FOUND)
   message (STATUS "[DAL] Missing or incomplete installation of CFITSIO!")
-endif (HAVE_CFITSIO)
+endif (CFITSIO_FOUND)
 
 if (HAVE_HDF5)
   include_directories (${HDF5_INCLUDES})
@@ -296,15 +295,19 @@ if (HAVE_MYSQL)
   add_definitions (-DHAVE_MYSQL)
 endif (HAVE_MYSQL)
 
-if (HAVE_GSL)
+if (GSL_FOUND)
   include_directories (${GSL_INCLUDES})
   add_definitions (-DHAVE_GSL)
-endif (HAVE_GSL)
+else (GSL_FOUND)
+  message (STATUS "[DAL] Disabling support for using GSL!")
+endif (GSL_FOUND)
 
-if (HAVE_WCSLIB)
+if (WCSLIB_FOUND)
   include_directories (${WCSLIB_INCLUDES})
   add_definitions (-DHAVE_WCSLIB)
-endif (HAVE_WCSLIB)
+else (WCSLIB_FOUND)
+  message (STATUS "[DAL] Disabling support for using WCSLIB!")
+endif (WCSLIB_FOUND)
 
 ##__________________________________________________________
 ## Option: Generation of Python bindings (pydal)
@@ -511,8 +514,8 @@ message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}" 
 message (STATUS " Enable Dashboard server          = ${DAL_ENABLE_DASHBOARD}"   )
 message (STATUS " Enable Python bindings           = ${DAL_PYTHON_BINDINGS}"    )
 message (STATUS " Enable code using casacore       = ${HAVE_CASACORE}"          )
-message (STATUS " Enable code using CFITSIO        = ${HAVE_CFITSIO}"           )
-message (STATUS " Enable code using GSL            = ${HAVE_GSL}"               )
+message (STATUS " Enable code using CFITSIO        = ${CFITSIO_FOUND}"          )
+message (STATUS " Enable code using GSL            = ${GSL_FOUND}"              )
 message (STATUS " Enable code using HDF5           = ${HAVE_HDF5}"              )
 message (STATUS " .. Version                       = ${HDF5_VERSION}"           )
 message (STATUS " .. Parallel I/O                  = ${HDF5_IS_PARALLEL}"       )
@@ -523,6 +526,7 @@ message (STATUS " .. MPI compile flags             = ${MPI_COMPILE_FLAGS}"      
 message (STATUS " .. MPI linking flags             = ${MPI_LINK_FLAGS}"         )
 message (STATUS " Enable code using MySQL          = ${HAVE_MYSQL}"             )
 message (STATUS " Enable code using OpenMP         = ${HAVE_OPENMP}"            )
+message (STATUS " Enable code using WCSLIB         = ${WCSLIB_FOUND}"           )
 
 if (DAL_VERBOSE_CONFIGURE)
   message (STATUS "+------------------------------------------------------------+")
@@ -537,8 +541,6 @@ if (DAL_VERBOSE_CONFIGURE)
   message (STATUS " Python library           = ${PYTHON_LIBRARIES}")
   message (STATUS " MySQL includes           = ${MYSQL_INCLUDES}")
   message (STATUS " MySQL libraries          = ${MYSQL_LIBRARIES}")
-  message (STATUS " WCSLIB includes          = ${WCSLIB_INCLUDES}")
-  message (STATUS " WCSLIB library           = ${WCSLIB_LIBRARIES}")
 endif (DAL_VERBOSE_CONFIGURE)
 
 message (STATUS "+------------------------------------------------------------+")

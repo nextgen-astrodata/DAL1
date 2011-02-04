@@ -245,7 +245,7 @@ int test_staticMethods (std::string const &filename,
   std::cout << "\n[tHDF5Object::test_staticMethods]\n" << std::endl;
   
   int nofFailedTests = 0;
-  std::string name   = "";
+  std::string name   = filename;
   
   /*__________________________________________________________________
     Test 1: Obtain general type information, which does not require
