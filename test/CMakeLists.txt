@@ -29,7 +29,6 @@ set (tests
   tdal
   tdal_fits
   tpulsar_dal
-  tTBB
   )
 
 ## Build instructions
@@ -134,16 +133,6 @@ if (DAL_ENABLE_TESTING)
   endif (dataset_ms)
   
   ## -----------------------------------------------------------------
-  ## [4] Tests using HDF5-based time-series dataset
-  
-  if (dataset_tbb)
-    add_test (tTBB_test1 tTBB tTBB.h5)
-    add_test (tTBB_test2 tTBB tTBB.h5 ${dataset_tbb})
-  else (dataset_tbb)
-    message (STATUS "Unable to find LOFAR time-series dataset; skipping tests.")
-  endif (dataset_tbb)
-  
-  ## -----------------------------------------------------------------
   ## [6] Tests using FITS file format data
   
   if (dataset_fits)
@@ -156,18 +145,10 @@ if (DAL_ENABLE_TESTING)
   ## -----------------------------------------------------------------
   ## [7] Python scripts
   
-  file (GLOB have_dal_tests dal_tests.py)
   file (GLOB have_datacube datacube.py)
   file (GLOB have_uv_coverage uv_coverage.py)
   file (GLOB have_baseline_intensity baseline_intensity.py)
 
-  ## basic test of Python wrappers
-  add_test (dal_tests1 ${have_dal_tests})
-  ## basic test of Python wrappers
-  if (PYTHON_EXECUTABLE)
-    add_test (dal_tests2 ${PYTHON_EXECUTABLE} ${have_dal_tests})
-  endif (PYTHON_EXECUTABLE)
-  
   if (dataset_ms)
     ## show the coverage in the (u,v) plane
     add_test (datacube ${PYTHON_EXECUTABLE} ${have_datacube} ${dataset_ms} ${dataset_ms}.out 1 1 0)

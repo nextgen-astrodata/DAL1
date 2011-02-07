@@ -69,6 +69,8 @@ endforeach (_test)
 ## Tests using TBB datasets
 
 if (dataset_tbb)
+  add_test (tTBB_test1 tTBB tTBB.h5)
+  add_test (tTBB_test2 tTBB tTBB.h5 ${dataset_tbb})
   add_test (tTBB_DipoleDataset ${BASH_EXCUTABLE} tTBB_DipoleDataset.sh)
   add_test (tTBB_StationGroup ${BASH_EXCUTABLE} tTBB_StationGroup.sh)
   add_test (tTBB_Timeseries ${BASH_EXCUTABLE} tTBB_Timeseries.sh)

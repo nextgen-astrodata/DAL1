@@ -3,7 +3,7 @@
 
 file (GLOB pydal_tests *.py)
 
-## 
+## Test instructions
 
 foreach (_pydal_test ${pydal_tests})
   ## get filename components

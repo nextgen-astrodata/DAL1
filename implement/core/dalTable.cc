@@ -1061,7 +1061,7 @@ namespace DAL {
 	return;
       }
       if ((*dims) > 1) {
-	field_type = H5Tarray_create1( h5type, 1, dims, NULL );
+	field_type = H5Tarray_create( h5type, 1, dims);
       } else {
 	field_type = h5type;
       }

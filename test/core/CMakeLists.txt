@@ -64,31 +64,15 @@ endif (dataset_tbb AND dataset_beamformed)
 
 ## tHDF5Object ___________________________________
 
-find_file (HDF5OBJECT_H5 tHDF5Object.h5
-  PATHS ${CMAKE_CURRENT_SOURCE_DIR}
-  )
-
-if (HDF5OBJECT_H5)
-  add_test (tHDF5Object tHDF5Object ${HDF5OBJECT_H5})
-else (HDF5OBJECT_H5)
-  add_test (tHDF5Object tHDF5Object)
-endif (HDF5OBJECT_H5)
-
-## tHDF5Attribute ________________________________
-
-if (HDF5OBJECT_H5)
-  add_test (tHDF5Attribute tHDF5Attribute ${HDF5OBJECT_H5})
-else (HDF5OBJECT_H5)
+if (EXISTS ${HAVE_tHDF5Object.h5})
+  add_test (tHDF5Object    tHDF5Object    ${HAVE_tHDF5Object.h5} )
+  add_test (tHDF5Attribute tHDF5Attribute ${HAVE_tHDF5Object.h5} )
+  add_test (tHDF5Datatype  tHDF5Datatype  ${HAVE_tHDF5Object.h5} )
+else (EXISTS ${HAVE_tHDF5Object.h5})
+  add_test (tHDF5Object    tHDF5Object)
   add_test (tHDF5Attribute tHDF5Attribute)
-endif (HDF5OBJECT_H5)
-
-## tHDF5Datatype _________________________________
-
-if (HDF5OBJECT_H5)
-  add_test (tHDF5Datatype tHDF5Datatype ${HDF5OBJECT_H5})
-else (HDF5OBJECT_H5)
-  add_test (tHDF5Datatype tHDF5Datatype)
-endif (HDF5OBJECT_H5)
+  add_test (tHDF5Datatype  tHDF5Datatype)
+endif (EXISTS ${HAVE_tHDF5Object.h5})
 
 ## tdalDataset ___________________________________
 
