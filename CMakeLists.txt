@@ -8,30 +8,6 @@ project (DAL)
 ## Minimum required version of CMake to configure the project
 cmake_minimum_required (VERSION 2.8)
 
-## Custom CMake scripts
-include (${PROJECT_SOURCE_DIR}/CMakeMacros.cmake)
-
-## ==============================================================================
-##
-##  CMake configuration settings
-##
-## ==============================================================================
-
-find_path (LUS_ROOT devel_common/cmake/CMakeSettings.cmake
-  PATHS 
-  ${PROJECT_SOURCE_DIR}
-  ${PROJECT_SOURCE_DIR}/..
-  ${PROJECT_SOURCE_DIR}/../..
-  ${PROJECT_SOURCE_DIR}/../../..
-  $ENV{LOFARSOFT}
-  )
-
-if (LUS_ROOT)
-  include (${LUS_ROOT}/devel_common/cmake/CMakeSettings.cmake)
-else (LUS_ROOT)
-  message (FATAL_ERROR "Unable to locate additional CMake scripts!")
-endif (LUS_ROOT)
-
 ## ==============================================================================
 ##
 ##  Options
@@ -54,7 +30,6 @@ option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"         NO
 if (DAL_ENABLE_DASHBOARD OR DAL_ENABLE_TESTING)
   ## Include CTest module
   include (CTest)
-  include (FindTestDatasets)
   enable_testing()
   ## Control parameters for running the tests
   set (DART_TESTING_TIMEOUT 500)
@@ -71,6 +46,8 @@ if (NOT DAL_VERBOSE_CONFIGURE)
   set (GSL_FIND_QUIETLY       YES )
   set (HDF5_FIND_QUIETLY      YES )
   set (LAPACK_FIND_QUIETLY    YES )
+  set (LOFAR_FIND_QUIETLY     YES )
+  set (MPI_FIND_QUIETLY       YES )
   set (NUMPY_FIND_QUIETLY     YES )
   set (NUM_UTIL_FIND_QUIETLY  YES )
   set (PYTHON_FIND_QUIETLY    YES )
@@ -85,10 +62,6 @@ endif (NOT DAL_VERBOSE_CONFIGURE)
 if (DAL_DEBUGGING_MESSAGES)
   add_definitions (-DDEBUGGING_MESSAGES)
 endif (DAL_DEBUGGING_MESSAGES)
-
-if (HAVE_OPNEMP)
-  add_definitions (-DHAVE_OPNEMP)
-endif (HAVE_OPNEMP)
 
 ##__________________________________________________________
 ## Handle option: Enable standard set of compiler warnings?
@@ -105,12 +78,12 @@ add_definitions (
   -fPIC
   )
 
-## See comment on http://gcc.gnu.org/bugzilla/show_bug.cgi?id=41645
-if (APPLE)
-  add_definitions (
-    -D_GLIBCXX_FULLY_DYNAMIC_STRING
-    )
-endif (APPLE)
+##__________________________________________________________
+## Handle option: Compatibility macros to version 2
+
+if (DAL_HDF5_MACROS)
+  add_definitions (-DHDF5_MACROS_VERS2)
+endif (DAL_HDF5_MACROS)
 
 ## ==============================================================================
 ##
@@ -119,68 +92,10 @@ endif (APPLE)
 ## ==============================================================================
 
 include (CPack)
-include (IncludeFindModule)
-
-set (NO_DEFAULT_PATH YES)
-
-set (dal_cmake_modules
-  Boost
-  CASACORE
-  GFortran
-  HDF5
-  LAPACK
-  LOFAR
-  MPI
-  MySQL
-  )
-
-include_find_module (${dal_cmake_modules} ${DAL_VERBOSE_CONFIGURE})
-
-include (cmake/FindCFITSIO.cmake)
-include (cmake/FindGSL.cmake)
-include (cmake/FindWCSLIB.cmake)
-
-##__________________________________________________________
-## Type sizes
-
-if (DAL_VERBOSE_CONFIGURE)
-  message (STATUS "Size of void*     = ${CMAKE_SIZEOF_VOID_P}")
-  message (STATUS "Size of short     = ${SIZEOF_SHORT}")
-  message (STATUS "Size of int       = ${SIZEOF_INT}")
-  message (STATUS "Size of float     = ${SIZEOF_FLOAT}")
-  message (STATUS "Size of double    = ${SIZEOF_DOUBLE}")
-  message (STATUS "Size of long      = ${SIZEOF_LONG}")
-  message (STATUS "Size of long int  = ${SIZEOF_LONG_INT}")
-  message (STATUS "Size of long long = ${SIZEOF_LONG_LONG}")
-  message (STATUS "Size of uint      = ${SIZEOF_UINT}")
-  message (STATUS "Size of int32_t   = ${SIZEOF_INT32_T}")
-  message (STATUS "Size of int64_t   = ${SIZEOF_INT64_T}")
-  message (STATUS "Size of uint32_t  = ${SIZEOF_UINT32_T}")
-  message (STATUS "Size of uint64_t  = ${SIZEOF_UINT64_T}")
-endif (DAL_VERBOSE_CONFIGURE)
-
-if (SIZEOF_LONG_LONG)
-  add_definitions (-DHAVE_LONG_LONG)
-endif (SIZEOF_LONG_LONG)
-
-if (CMAKE_SIZEOF_VOID_P)
-  if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
-    message (STATUS "Adding compiler flag -DWORDSIZE_IS_64")
-    add_definitions (-DWORDSIZE_IS_64)
-  endif (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
-endif (CMAKE_SIZEOF_VOID_P)
+include (${DAL_SOURCE_DIR}/cmake/CheckForExternalPackages.cmake)
 
 ##__________________________________________________________
 ## PYTHON (we use custom module in place of FindPythonLibs)
-
-if (NOT HAVE_PYTHON)
-  include (FindPython)
-  include (FindNumPy)
-  include (FindNumUtil)
-endif (NOT HAVE_PYTHON)
-
-## ---------------------------------------------------------
-## optional external packages (required for Python bindings)
 
 ## We need to be a bit careful with the Boost and Python libraries; appending
 ## the Boost libraries only makes sense, if there is already a list of Python
@@ -249,65 +164,6 @@ include_directories (
   )
 
 ##__________________________________________________________
-## Header files of external packages
-
-if (HAVE_BOOST)
-  include_directories (${BOOST_INCLUDES} ${BOOST_INCLUDES}/boost)
-  add_definitions (-DHAVE_BOOST)
-else (HAVE_BOOST)
-  message (STATUS "[DAL] Missing or incomplete installation of Boost!")
-endif (HAVE_BOOST)
-
-if (HAVE_CASACORE)
-  include_directories (${CASACORE_INCLUDES})
-  add_definitions (-DHAVE_CASA)
-else (HAVE_CASACORE)
-  message (STATUS "[DAL] Missing or incomplete installation of casacore!")
-endif (HAVE_CASACORE)
-
-if (CFITSIO_FOUND)
-  include_directories (${CFITSIO_INCLUDES})
-  add_definitions (-DHAVE_CFITSIO)
-else (CFITSIO_FOUND)
-  message (STATUS "[DAL] Missing or incomplete installation of CFITSIO!")
-endif (CFITSIO_FOUND)
-
-if (HAVE_HDF5)
-  include_directories (${HDF5_INCLUDES})
-  add_definitions (-DHAVE_HDF5)
-  ## check individual header files: hdf5_hl.h
-  if (NOT HAVE_HDF5_HDF5_HL_H)
-    message (STATUS "[DAL] HDF5 installation incomplete: missing hdf5_hl.h")
-  endif (NOT HAVE_HDF5_HDF5_HL_H)
-else (HAVE_HDF5)
-  message (STATUS "[DAL] HDF5 installation incomplete!")
-endif (HAVE_HDF5)
-
-if (LOFAR_FOUND)
-  include_directories (${LOFAR_INCLUDES})
-  add_definitions (-DHAVE_LOFAR)
-endif (LOFAR_FOUND)
-
-if (HAVE_MYSQL)
-  include_directories (${MYSQL_INCLUDES})
-  add_definitions (-DHAVE_MYSQL)
-endif (HAVE_MYSQL)
-
-if (GSL_FOUND)
-  include_directories (${GSL_INCLUDES})
-  add_definitions (-DHAVE_GSL)
-else (GSL_FOUND)
-  message (STATUS "[DAL] Disabling support for using GSL!")
-endif (GSL_FOUND)
-
-if (WCSLIB_FOUND)
-  include_directories (${WCSLIB_INCLUDES})
-  add_definitions (-DHAVE_WCSLIB)
-else (WCSLIB_FOUND)
-  message (STATUS "[DAL] Disabling support for using WCSLIB!")
-endif (WCSLIB_FOUND)
-
-##__________________________________________________________
 ## Option: Generation of Python bindings (pydal)
 
 if (DAL_PYTHON_BINDINGS)
@@ -316,7 +172,7 @@ if (DAL_PYTHON_BINDINGS)
   
   file (WRITE ${PROJECT_BINARY_DIR}/CMakeTmp/CMakeLists.txt
     "project (TestForPythonBindings)
-     cmake_minimum_required(VERSION 2.5)
+     cmake_minimum_required(VERSION 2.6)
      include_directories (${PYTHON_INCLUDES})
      include_directories (${BOOST_INCLUDES})
      include_directories (${NUMPY_INCLUDES})
@@ -342,13 +198,6 @@ if (DAL_PYTHON_BINDINGS)
   endif (DAL_PYTHON_BINDINGS)
   
 endif (DAL_PYTHON_BINDINGS)
-
-##__________________________________________________________
-## Option: Compatibility macros to version 2
-
-if (DAL_HDF5_MACROS)
-  add_definitions (-DHDF5_MACROS_VERS2)
-endif (DAL_HDF5_MACROS)
 
 ## =============================================================================
 ##
@@ -447,42 +296,6 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH YES)
 
 ## =============================================================================
 ##
-##  Creation of tar-archive
-##
-## =============================================================================
-
-find_program (tar_executable tar   ${bin_locations} )
-find_program (gzip_executable gzip ${bin_locations} )
-
-if (tar_executable AND gzip_executable)
-
-  add_custom_target (tar_archive
-    COMMENT "Creating tar-archive for DAL and required packages."
-    WORKING_DIRECTORY ${LUS_ROOT}
-    COMMAND ${tar_executable} -cvf dal.tar --exclude .svn CMakeLists.txt
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn devel_common
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn release/release_area.txt
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn build/build.sh
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/cmake
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/flex
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/bison
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/wcslib
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/cfitsio
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/hdf5
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/casacore
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/plplot
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/boost
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn external/python
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn src/DAL
-    COMMAND ${tar_executable} -rvf dal.tar --exclude .svn src/contrib/data_inspection
-    COMMAND ${gzip_executable} dal.tar
-    COMMAND mv dal.tar.gz ${DAL_BINARY_DIR}/dal.tgz
-    )
- 
-endif (tar_executable AND gzip_executable)
-
-## =============================================================================
-##
 ##  Project sub-directories
 ##
 ## =============================================================================
@@ -497,48 +310,3 @@ endif (DAL_BUILD_TESTS)
 if (DAL_BUILD_APPS)
   add_subdirectory (apps)
 endif (DAL_BUILD_APPS)
-
-## =============================================================================
-##
-##  Feedback
-##
-## =============================================================================
-
-message (STATUS "+============================================================+")
-message (STATUS "| DAL: Summary of configuration settings                     |")
-message (STATUS "+------------------------------------------------------------+")
-message (STATUS " Python version                   = ${PYTHON_VERSION}"         )
-message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}" )
-message (STATUS " Enable Dashboard server          = ${DAL_ENABLE_DASHBOARD}"   )
-message (STATUS " Enable Python bindings           = ${DAL_PYTHON_BINDINGS}"    )
-message (STATUS " Enable code using casacore       = ${HAVE_CASACORE}"          )
-message (STATUS " Enable code using CFITSIO        = ${CFITSIO_FOUND}"          )
-message (STATUS " Enable code using GSL            = ${GSL_FOUND}"              )
-message (STATUS " Enable code using HDF5           = ${HAVE_HDF5}"              )
-message (STATUS " .. Version                       = ${HDF5_VERSION}"           )
-message (STATUS " .. Parallel I/O                  = ${HDF5_IS_PARALLEL}"       )
-message (STATUS " .. Compatibility macros          = ${DAL_HDF5_MACROS}"        )
-message (STATUS " Enable code using MPI            = ${MPI_FOUND}"              )
-message (STATUS " .. MPI compiler                  = ${MPI_COMPILER}"           )
-message (STATUS " .. MPI compile flags             = ${MPI_COMPILE_FLAGS}"      )
-message (STATUS " .. MPI linking flags             = ${MPI_LINK_FLAGS}"         )
-message (STATUS " Enable code using MySQL          = ${HAVE_MYSQL}"             )
-message (STATUS " Enable code using OpenMP         = ${HAVE_OPENMP}"            )
-message (STATUS " Enable code using WCSLIB         = ${WCSLIB_FOUND}"           )
-
-if (DAL_VERBOSE_CONFIGURE)
-  message (STATUS "+------------------------------------------------------------+")
-  message (STATUS " Boost includes           = ${BOOST_INCLUDES}")
-  message (STATUS " Boost library            = ${BOOST_LIBRARIES}")
-  message (STATUS " HDF5 includes            = ${HDF5_INCLUDES}")
-  message (STATUS " HDF5 library             = ${HDF5_LIBRARIES}")
-  message (STATUS " LAPACK library           = ${LAPACK_LIBRARIES}")
-  message (STATUS " Python includes          = ${PYTHON_INCLUDES}")
-  message (STATUS " NumPy includes           = ${NUMPY_INCLUDES}")
-  message (STATUS " num_util includes        = ${NUM_UTIL_INCLUDES}")
-  message (STATUS " Python library           = ${PYTHON_LIBRARIES}")
-  message (STATUS " MySQL includes           = ${MYSQL_INCLUDES}")
-  message (STATUS " MySQL libraries          = ${MYSQL_LIBRARIES}")
-endif (DAL_VERBOSE_CONFIGURE)
-
-message (STATUS "+------------------------------------------------------------+")

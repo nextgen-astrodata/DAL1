@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2008 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -25,6 +22,7 @@
 #define DATABASE_H
 
 #include <string>
+
 #ifdef HAVE_MYSQL
 #include <mysql/mysql.h>
 #endif
@@ -37,40 +35,76 @@ namespace DAL {
   
   /*!
     \class Database
+
     \ingroup DAL
     \ingroup core
+
     \brief Class to allow database connections
+
+    \author Joseph Masters, Lars B&auml;hren
   */
   class Database {
     
     //! The name of the server to connect to
-    std::string server_p;
+    std::string itsServerName;
     //! The user name
-    std::string username;
+    std::string itsUserName;
     //! The user password
-    std::string password;
+    std::string itsPassword;
     //! The port number to which to connect (if required)
-    std::string port_p;
+    std::string itsPortNumber;
     //! The name of the database to work with
-    std::string database;
+    std::string itsDatabaseName;
     
 #ifdef HAVE_MYSQL
     //! Connector to the database
-    MYSQL *conn;
+    MYSQL *itsDatabaseConnector;
     //! Result from database query
     MYSQL_RES *res;
     MYSQL_ROW row;
 #endif
     
   public:
+
+    // === Construction =========================================================
     
     // Constructor
     Database( std::string const& server,
 	      std::string const& username,
 	      std::string const& password,
 	      std::string const& database );
+
     //! Destructor
     ~Database();
+
+    // === Parameter access =====================================================
+
+    //! The name of the server to connect to
+    inline std::string serverName () const {
+      return itsServerName;
+    }
+
+    //! The user name
+    inline std::string userName () const {
+      return itsUserName;
+    }
+
+    //! The user password
+    inline std::string password () const {
+      return itsPassword;
+    }
+
+    //! The port number to which to connect (if required)
+    inline std::string portNumber () const {
+      return itsPortNumber;
+    }
+
+    //! The name of the database to work with
+    inline std::string database () const {
+      return itsDatabaseName;
+    }
+
+    // === Public methods =======================================================
     
     //! Query the database
     bool query(std::string const & querystr);

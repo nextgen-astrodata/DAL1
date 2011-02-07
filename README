@@ -29,6 +29,20 @@ Once the bootstrap script has finished run
 
 
 _________________________________________________________________________________
+>>> External dependencies
+
+* HDF5 library (http://www.hdfgroup.org/HDF5)
+
+* WCSLIB (http://www.atnf.csiro.au/people/mcalabre/WCS)
+
+* CFITSIO (http://heasarc.gsfc.nasa.gov/fitsio)
+
+* CASACORE (http://code.google.com/p/casacore)
+
+* Boost C++ Libraries (http://www.boost.org)
+
+
+_________________________________________________________________________________
 >>> DAL components
 
 * C++ library (libdal)

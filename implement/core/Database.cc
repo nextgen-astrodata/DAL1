@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2008 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -42,29 +39,29 @@ namespace DAL {
     \param password -- Database password.
     \param database -- Name of database.
   */
-  Database::Database( std::string const& lcl_server,
-                      std::string const& lcl_username,
-                      std::string const& lcl_password,
-                      std::string const& lcl_database )
+  Database::Database( std::string const& server,
+                      std::string const& username,
+                      std::string const& password,
+                      std::string const& database)
   {
-    server_p = lcl_server;
-    username = lcl_username;
-    password = lcl_password;
-    database = lcl_database;
-    port_p   = "";
+    itsServerName   = server;
+    itsUserName     = username;
+    itsPassword     = password;
+    itsDatabaseName = database;
+    itsPortNumber   = "";
     
 #ifdef HAVE_MYSQL
-    conn = mysql_init(NULL);
+    itsDatabaseConnector = mysql_init(NULL);
     
     /* Connect to database */
-    if ( !mysql_real_connect(conn,
-			     server_p.c_str(),
-                             username.c_str(),
-			     password.c_str(),
-                             database.c_str(),
+    if ( !mysql_real_connect(itsDatabaseConnector,
+			     itsServerName.c_str(),
+                             itsUserName.c_str(),
+			     itsPassword.c_str(),
+                             itsDatabaseName.c_str(),
 			     0, NULL, 0))
       {
-        fprintf(stderr, "%s\n", mysql_error(conn));
+        fprintf(stderr, "%s\n", mysql_error(itsDatabaseConnector));
       }
 #endif
 
@@ -76,10 +73,10 @@ namespace DAL {
   Database::~Database()
   {
 #ifdef HAVE_MYSQL
-    if (conn)
+    if (itsDatabaseConnector)
       {
         /* close connection */
-        mysql_close(conn);
+        mysql_close(itsDatabaseConnector);
       }
 #endif
   }
@@ -101,13 +98,13 @@ namespace DAL {
   {
 #ifdef HAVE_MYSQL
     /* send SQL query */
-    if (mysql_query(conn, querystr.c_str()))
+    if (mysql_query(itsDatabaseConnector, querystr.c_str()))
       {
-        fprintf(stderr, "%s\n", mysql_error(conn));
+        fprintf(stderr, "%s\n", mysql_error(itsDatabaseConnector));
         return DAL::FAIL;
       }
 
-    res = mysql_use_result(conn);
+    res = mysql_use_result(itsDatabaseConnector);
 
     /* For now we print the result the screen, but in the future we most
        likely want to put the result into a data struct for use as input
@@ -133,12 +130,11 @@ namespace DAL {
   void Database::summary (std::ostream &os)
   {
     os << "[Database] Summary of internal parameters." << std::endl;
-
-    os << "-- The name of the server = " << server_p << std::endl;
-    os << "-- Database user name     = " << username << std::endl;
-    os << "-- Database user password = " << password << std::endl;
-    os << "-- Port number on server  = " << port_p   << std::endl;
-    os << "-- Name of the database   = " << database << std::endl;
+    os << "-- The name of the server = " << itsServerName   << std::endl;
+    os << "-- Database user name     = " << itsUserName     << std::endl;
+    os << "-- Database user password = " << itsPassword     << std::endl;
+    os << "-- Port number on server  = " << itsPortNumber   << std::endl;
+    os << "-- Name of the database   = " << itsDatabaseName << std::endl;
   }
   
 } // end namespace DAL
