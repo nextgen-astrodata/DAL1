@@ -816,16 +816,16 @@ namespace DAL {
                 of the array.
     \param chnkdims Specifies the chunk size for extendible arrays.
   */
-  dalComplexArray_float32::dalComplexArray_float32(hid_t obj_id,
-						   string arrayname,
-						   vector<int> dims,
-						   std::complex<float> data[],
-						   vector<int> chnkdims )
+  dalComplexArray_float32::dalComplexArray_float32 (hid_t obj_id,
+						    string arrayname,
+						    vector<int> dims,
+						    std::complex<float> data[],
+						    vector<int> chnkdims )
   {
     // declare a few h5 variables
-    hid_t datatype  = 0;
-    hid_t dataspace = 0;
-    name = arrayname;  // set the private name variable to the array name
+    hid_t datatype   = 0;
+    hid_t dataspace  = 0;
+    name             = arrayname;  // set the private name variable to the array name
     hid_t complex_id = 0;
     
     // determine the rank from the size of the dimensions vector
@@ -835,18 +835,16 @@ namespace DAL {
     hsize_t chunk_dims[ rank ];  // declare chunk dimensions c-array
 
     // set the c-array dimensions and maxiumum dimensions
-    for (unsigned int ii=0; ii<rank; ii++)
-      {
-        mydims[ii] = dims[ii];  // vector to c-array
-        maxdims[ii] = H5S_UNLIMITED;
-      }
-
+    for (unsigned int ii=0; ii<rank; ii++) {
+      mydims[ii] = dims[ii];  // vector to c-array
+      maxdims[ii] = H5S_UNLIMITED;
+    }
+    
     // set the c-array chunk dimensions from the chunk dims vector
-    for (unsigned int ii=0; ii<chnkdims.size(); ii++)
-      {
-        chunk_dims[ii] = chnkdims[ii];
-      }
-
+    for (unsigned int ii=0; ii<chnkdims.size(); ii++) {
+      chunk_dims[ii] = chnkdims[ii];
+    }
+    
     // create a new hdf5 datatype for complex values
     if ( ( complex_id = H5Tcreate( H5T_COMPOUND, sizeof(DAL::Complex_Float32 )) )
          < 0 )
@@ -893,12 +891,18 @@ namespace DAL {
             std::cerr << "ERROR: Could not set chunk size for '"
                       << arrayname << "'.\n";
           }
-
-        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
-                                      dataspace, cparms) ) < 0 )
-          {
-            std::cerr << "ERROR: Could not create array '" << arrayname << "'.\n";
-          }
+	
+	/* create dataset */
+	itsDatasetID = H5Dcreate (obj_id,
+				  arrayname.c_str(),
+				  datatype,
+				  dataspace,
+				  cparms,
+				  H5P_DEFAULT,
+				  H5P_DEFAULT);
+        if (itsDatasetID< 0) {
+	  std::cerr << "ERROR: Could not create array '" << arrayname << "'.\n";
+	}
       }
     // otherwise, write the data this way
     else
@@ -921,24 +925,23 @@ namespace DAL {
     if ( H5Dwrite( itsDatasetID, datatype, dataspace, dataspace, H5P_DEFAULT,
                    data ) < 0 )
       {
-        std::cerr << "ERROR: Could not write array '" << arrayname << "'\n";
+        std::cerr << "ERROR: Could not write array '" << arrayname << "'"
+		  << std::endl;
       }
-
+    
     // close local hdf5 objects
-    if ( H5Sclose( dataspace ) < 0 )
-      {
-        std::cerr << "ERROR: Could not close dataspace for '"
-                  << arrayname << "'.\n";
-      }
-
-    if ( H5Tclose( datatype ) < 0 )
-      {
-        std::cerr << "ERROR: Could not close datatype for '"
-                  << arrayname << "'.\n";
-      }
-
+    if ( H5Sclose( dataspace ) < 0 ) {
+      std::cerr << "ERROR: Could not close dataspace for '" << arrayname << "'"
+		<< std::endl;
+    }
+    
+    if ( H5Tclose( datatype ) < 0 ) {
+      std::cerr << "ERROR: Could not close datatype for '" << arrayname << "'"
+		<< std::endl;
+    }
+    
   }
-
+  
 // ---------------------------------------------------- dalComplexArray_int16
   /********************************************************************
    *  dalComplexArray_int16 constructor creates an n-dimensional

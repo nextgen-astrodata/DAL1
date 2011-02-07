@@ -801,8 +801,8 @@ namespace DAL {
     filter.set(columns,conditions);
   }
 
-
-  // ---------------------------------------------------------- createArray
+  //_____________________________________________________________________________
+  //                                                                  createArray
 
   /*!
     \param arrayname The name of the array you want to create.
@@ -810,40 +810,61 @@ namespace DAL {
                        data you want to include in the array.
     \return dalArray * pointer to an array object.
    */
-  dalArray * dalDataset::createArray( std::string arrayname,
+  dalArray * dalDataset::createArray (std::string arrayname,
                                       dalData * data_object )
   {
-    std::vector<int> cdims;
-    std::complex<float> * cdata;
     long indx   = 0;
     long mysize = 1;
+    std::vector<int> cdims;
 
-    for (unsigned int ll=0; ll<data_object->shape.size(); ll++)
+    /*________________________________________________________________
+      Get the number of data array elements
+    */
+
+    for (unsigned int ll=0; ll<data_object->shape.size(); ll++) {
       mysize *= data_object->shape[ll];
+    }
 
-    cdata = new std::complex<float>[ mysize ];
-    for (int xx=0; xx<data_object->shape[0]; xx++)
-      for (int yy=0; yy<data_object->shape[1]; yy++)
-        for (int zz=0; zz<data_object->shape[2]; zz++)
-          {
-            indx = data_object->c_index(xx,yy,zz);
-            cdata[ indx ] = *( (std::complex<float>*)data_object->get(xx,yy,zz) );
-          }
+    /*________________________________________________________________
+      Copy the data
+    */
 
+    std::complex<float> * cdata = new std::complex<float>[mysize];
+
+    try {
+
+      int xx=0;
+      int yy=0;
+      int zz=0;
+      
+      for (xx=0; xx<data_object->shape[0]; xx++) {
+	for (yy=0; yy<data_object->shape[1]; yy++) {
+	  for (zz=0; zz<data_object->shape[2]; zz++) {
+	    indx = data_object->c_index(xx,yy,zz);
+	    cdata[ indx ] = *( (std::complex<float>*)data_object->get(xx,yy,zz) );
+	  }   //   END -- zz
+	}   //   END -- yy
+      }   //   END -- xx
+      
+    } catch (std::string message) {
+      std::cerr << "[dalDataset::createArray]" << message << std::endl;
+    }
+    
     if ( dal_COMPLEX == data_object->datatype() )
-      return createComplexFloatArray( arrayname, data_object->shape,
-                                      cdata, cdims );
-    else
-      {
-// ADD MORE DATATYPES HERE!
-        std::cerr << "ERROR: " << data_object->datatype()
-                  << "is not yet supported.\n";
-        return NULL;
-      }
+      return createComplexFloatArray (arrayname,
+				      data_object->shape,
+                                      cdata,
+				      cdims);
+    else {
+      // ADD MORE DATATYPES HERE!
+      std::cerr << "ERROR: " << data_object->datatype()
+		<< "is not yet supported.\n";
+      return NULL;
+    }
   }
-
-
-  // -------------------------------------------------------- createIntArray
+  
+  //_____________________________________________________________________________
+  //                                                               createIntArray
 
   /****************************************************************
    *  Create an Integer array of N dimensions
@@ -862,16 +883,15 @@ namespace DAL {
                                          int data[],
                                          std::vector<int> cdims )
   {
-    if ( type == H5TYPE )
-      {
-        dalIntArray * la = new dalIntArray( h5fh_p, arrayname, dims,
-                                            data, cdims );
-        return la;
-      }
+    if ((type == H5TYPE) && (H5Iis_valid(h5fh_p))) {
+      dalIntArray * la = new dalIntArray( h5fh_p, arrayname, dims,
+					  data, cdims );
+      return la;
+    }
     else if ( type == FITSTYPE )
       {
         std::cerr <<
-                  "dalDataset::createIntArray FITS Type not yet supported.\n";
+	  "dalDataset::createIntArray FITS Type not yet supported.\n";
         return NULL;
       }
     else
@@ -882,13 +902,12 @@ namespace DAL {
       }
   }
 
-  // ----------------------------------------------------- createFloatArray
+  //_____________________________________________________________________________
+  //                                                             createFloatArray
 
-  /****************************************************************
-   *  Create an Float array of N dimensions
-   *
-   *****************************************************************/
   /*!
+    Create an array of N dimensions of type \c float
+
     \param arrayname The name of the array you want to create.
     \param dims A vector containing the dimensions of the array.
     \param data An array of floating point values.
@@ -897,15 +916,19 @@ namespace DAL {
     \return dalArray * pointer to an array object.
      */
   dalArray *
-  dalDataset::createFloatArray( std::string arrayname, std::vector<int> dims,
-                                float data[], std::vector<int> cdims )
+  dalDataset::createFloatArray (std::string arrayname,
+				std::vector<int> dims,
+                                float data[],
+				std::vector<int> cdims)
   {
-    if ( type == H5TYPE )
-      {
-        dalFloatArray * la =
-          new dalFloatArray( h5fh_p, arrayname, dims, data, cdims );
-        return la;
-      }
+    if ((type == H5TYPE) && (H5Iis_valid(h5fh_p))) {
+      dalFloatArray * la = new dalFloatArray (h5fh_p,
+					      arrayname,
+					      dims,
+					      data,
+					      cdims);
+      return la;
+    }
     else
       {
         std::cerr << "(dalDataset::createFloatArray) Filetype \'" << type
@@ -913,15 +936,13 @@ namespace DAL {
         return NULL;
       }
   }
-
-  // ----------------------------------------------- createComplexFloatArray
-
-  /****************************************************************
-   *  Create an Copmlex array of N dimensions
-   *
-   *****************************************************************/
+  
+  //_____________________________________________________________________________
+  //                                                      createComplexFloatArray
 
   /*!
+    Create an array of N dimensions of type \c complex<float>
+
     \brief Create a new extendible complex floating point array in the
            root group.
     \param arrayname The name of the array you want to create.
@@ -937,41 +958,41 @@ namespace DAL {
                                        std::complex<float> data[],
                                        std::vector<int> cdims )
   {
-    if ( type == H5TYPE )
-      {
-        dalComplexArray_float32 * la =
-          new dalComplexArray_float32( h5fh_p, arrayname, dims, data, cdims );
-        return la;
-      }
-    else
-      {
-        std::cerr << "(dalDataset::createComplexArray) Filetype \'" << type
-                  << "\' not yet supported.\n";
-        return NULL;
-      }
+    if (type == H5TYPE) {
+      dalComplexArray_float32 * la = new dalComplexArray_float32 (h5fh_p,
+								  arrayname,
+								  dims,
+								  data,
+								  cdims);
+      return la;
+    }
+    else {
+      std::cerr << "(dalDataset::createComplexArray) Filetype \'" << type
+		<< "\' not yet supported.\n";
+      return NULL;
+    }
   }
-
-  // ---------------------------------------------------------- createTable
-
-  /****************************************************************
-   *  Creates a table at the highest level of a dataset
-   *
-   *****************************************************************/
+  
+  //_____________________________________________________________________________
+  //                                                                  createTable
 
   /*!
-    \param tablename
-    \return dalTable
+    Creates a table at the highest level of a dataset
+
+    \param tablename -- Name of the table to be created.
+    \return dalTable -- Pointer to the created table object.
   */
   dalTable * dalDataset::createTable( std::string tablename )
   {
-    if ( type == H5TYPE ) {
+    if (type == H5TYPE) {
       dalTable * lt = new dalTable( H5TYPE );
       lt->createTable( pFile_p, tablename, "/" );
       return lt;
     }
     else {
-      std::cerr << "(dalDataset::createTable) Filetype \'" << type
-		<< "\' not yet supported.\n";
+      std::cerr << "[dalDataset::createTable] Unsupported filetype "
+		<< type
+		<< std::endl;
       return NULL;
     }
   }
@@ -990,23 +1011,21 @@ namespace DAL {
   dalTable * dalDataset::createTable( std::string tablename,
                                       std::string groupname )
   {
-    if ( type == H5TYPE )
-      {
-        dalTable * lt = new dalTable( H5TYPE );
-        lt->createTable( pFile_p, tablename, groupname );
-        return lt;
-      }
-    else
-      {
-        std::cerr << "(dalDataset::createTable) Filetype \'" << type
-                  << "\' not yet supported.\n";
-        return NULL;
-      }
+    if ((type == H5TYPE) && (H5Iis_valid(h5fh_p))) {
+      dalTable * lt = new dalTable( H5TYPE );
+      lt->createTable( pFile_p, tablename, groupname );
+      return lt;
+    }
+    else {
+      std::cerr << "(dalDataset::createTable) Filetype \'" << type
+		<< "\' not yet supported.\n";
+      return NULL;
+    }
   }
-
+  
   //_____________________________________________________________________________
   //                                                                    openTable
-
+  
   /*!
     \param tablename The name of the table you want to open
     \return dalTable * A pointer to a table object.
