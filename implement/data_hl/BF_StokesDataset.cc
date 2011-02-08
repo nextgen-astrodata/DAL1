@@ -73,6 +73,9 @@ namespace DAL { // Namespace DAL -- begin
     itsName     = name;
     itsDatatype = datatype;
 
+    std::cout << "[BF_StokesDataset(hid_t,string,uint,uint,Stokes::Component,hid_t]"
+	      << std::endl;
+
     open (location,
 	  component,
 	  nofSubbands,
@@ -103,12 +106,50 @@ namespace DAL { // Namespace DAL -- begin
     itsName     = name;
     itsDatatype = datatype;
 
+    std::cout << "[BF_StokesDataset(hid_t,string,uint,uint,uint,Stokes::Component,hid_t]"
+	      << std::endl;
+
     open (location,
 	  component,
 	  nofSamples,
 	  nofSubbands,
 	  nofChannels);
   }
+
+  //_____________________________________________________________________________
+  //                                                             BF_StokesDataset
+  
+  /*!
+    \param location    -- Identifier for the location at which the dataset is
+           about to be created.
+    \param name        -- Name of the dataset.
+    \param nofSamples  -- Number of bins along the time axis.
+    \param nofChannels -- Number of channels within the individual subbands.
+    \param component   -- Stokes component stored within the dataset
+    \param datatype    -- Datatype for the elements within the Dataset
+  */
+  BF_StokesDataset::BF_StokesDataset (hid_t const &location,
+				      std::string const &name,
+				      unsigned int const &nofSamples,
+				      std::vector<unsigned int> const &nofChannels,
+				      DAL::Stokes::Component const &component,
+				      hid_t const &datatype)
+  {
+    itsName     = name;
+    itsDatatype = datatype;
+
+    std::cout << "[BF_StokesDataset] Constructor arguments:" << std::endl;
+    std::cout << "-- location    = " << location    << std::endl;
+    std::cout << "-- name        = " << name        << std::endl;
+    std::cout << "-- nofSamples  = " << nofSamples  << std::endl;
+    std::cout << "-- nofChannels = " << nofChannels << std::endl;
+
+    open (location,
+    	  component,
+    	  nofSamples,
+    	  nofChannels);
+  }
+
 
   //_____________________________________________________________________________
   //                                                             BF_StokesDataset

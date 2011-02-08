@@ -373,10 +373,12 @@ int test_constructors (hid_t const &fileID)
   }
   
   /*_______________________________________________________________________
-    Test 5: Argumented constructor.
+    Test 5: Argumented constructor providing individual values for the
+            number of bins along the time axis, the number of frequency
+	    bands and the number of frequency channels per frequency band.
   */
 
-  cout << "[5] Testing BF_StokesDataset() ..." << endl;
+  cout << "[5] Testing BF_StokesDataset(hid_t,string,uint,uint,uint,Stokes::Component) ..." << endl;
   try {
     nameDataset = "Stokes005.Q";
     BF_StokesDataset stokes (fileID,
@@ -384,6 +386,35 @@ int test_constructors (hid_t const &fileID)
 			     nofSamples,
 			     nofSubbands,
 			     nofChannels,
+			     DAL::Stokes::Q);
+    //
+    stokes.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
+  /*_______________________________________________________________________
+    Test 6: Argumented constructor providing individual values for the
+            number of bins along the time axis, the number of frequency
+	    bands and the number of frequency channels per frequency band.
+  */
+
+  cout << "[6] Testing BF_StokesDataset(hid_t,string,uint,vector<uint>,Stokes::Component) ..." << endl;
+  try {
+    vector<unsigned int> channels (nofSubbands);
+    nameDataset = "Stokes006.Q";
+
+    /* Assign number of channels per sub-band */
+    for (unsigned int n=0; n<nofSubbands; ++n) {
+      channels[n] = 10+n;
+    }
+
+    /* Create object */
+    BF_StokesDataset stokes (fileID,
+			     nameDataset,
+			     nofSamples,
+			     channels,
 			     DAL::Stokes::Q);
     //
     stokes.summary(); 
