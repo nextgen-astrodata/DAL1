@@ -106,9 +106,6 @@ namespace DAL { // Namespace DAL -- begin
     itsName     = name;
     itsDatatype = datatype;
 
-    std::cout << "[BF_StokesDataset(hid_t,string,uint,uint,uint,Stokes::Component,hid_t]"
-	      << std::endl;
-
     open (location,
 	  component,
 	  nofSamples,
@@ -137,12 +134,6 @@ namespace DAL { // Namespace DAL -- begin
   {
     itsName     = name;
     itsDatatype = datatype;
-
-    std::cout << "[BF_StokesDataset] Constructor arguments:" << std::endl;
-    std::cout << "-- location    = " << location    << std::endl;
-    std::cout << "-- name        = " << name        << std::endl;
-    std::cout << "-- nofSamples  = " << nofSamples  << std::endl;
-    std::cout << "-- nofChannels = " << nofChannels << std::endl;
 
     open (location,
     	  component,
