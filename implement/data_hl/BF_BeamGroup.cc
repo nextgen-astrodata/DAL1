@@ -287,46 +287,55 @@ namespace DAL { // Namespace DAL -- begin
   //                                                            openStokesDataset
 
   /*!
-    \param name    -- Name of the Stokes dataset to be opened.
-    \return status -- Satus of the operation; returns \e false in case the
-            dataset does not exist and/or cannot be opened.
-   */
-  bool BF_BeamGroup::openStokesDataset (std::string const &name)
+    \param name        -- Name of the dataset.
+    \param nofSamples  -- Number of bins along the time axis.
+    \param nofSubbands -- Number of sub-bands.
+    \param nofChannels -- Number of channels within the subbands.
+    \param component   -- Stokes component stored within the dataset
+    \param datatype    -- Datatype for the elements within the Dataset
+    \return status     -- Status of the operation; returns \e false in case an
+            error was encountered.
+  */
+  bool BF_BeamGroup::openStokesDataset (std::string const &name,
+					unsigned int const &nofSamples,
+					unsigned int const &nofSubbands,
+					unsigned int const &nofChannels,
+					DAL::Stokes::Component const &component,
+					hid_t const &datatype)
   {
-    bool status (true);
-    std::map<std::string,BF_StokesDataset>::iterator it;
-
-    /* Check if the requested dataset is opened already. */
-
-    it = itsStokesDatasets.find(name);
-
-    if (it == itsStokesDatasets.end()) {
-      /* If the iterator points towards the end of the map, the dataset has not
-	 been opened yet. Check if a dataset of given name does exit. */
-      if (H5Iis_valid(location_p)) {
-	/* Try opening Stokes dataset */
-	BF_StokesDataset stokes (location_p, name);
-	/* Check if opening the dataset was successful */
-	if (stokes.objectType() == H5I_DATASET) {
-	  itsStokesDatasets[name] = stokes;
-	} else {
-	  std::cerr << "[BF_BeamGroup::openStokesDataset]"
-		    << " No such dataset " << name << "!"
-		    << std::endl;
-	  status = false;
-	}
-      } else {
-	std::cerr << "[BF_BeamGroup::openStokesDataset]"
-		  << " Object not connect to valid HDF5 group!"
-		  << std::endl;
-	status = false;
-      }
-    }
-
-
-    return status;
+    /* Put input parameters into proper format to be forwarded */
+    std::vector<unsigned int> channels (nofSubbands,nofChannels);
+    /* Open/create Stokes dataset. */
+    return openStokesDataset (name,
+			      nofSamples,
+			      channels,
+			      component,
+			      datatype);
   }
 
+  //_____________________________________________________________________________
+  //                                                            openStokesDataset
+
+  /*!
+    \param name        -- Name of the dataset.
+    \param nofSamples  -- Number of bins along the time axis.
+    \param nofChannels -- Number of channels within the subbands.
+    \param component   -- Stokes component stored within the dataset
+    \param datatype    -- Datatype for the elements within the Dataset
+    \return status     -- Status of the operation; returns \e false in case an
+            error was encountered.
+  */
+  bool BF_BeamGroup::openStokesDataset (std::string const &name,
+					unsigned int const &nofSamples,
+					std::vector<unsigned int> const &nofChannels,
+					DAL::Stokes::Component const &component,
+					hid_t const &datatype)
+  {
+    bool status = true;
+
+    return status;
+  } 
+  
   //_____________________________________________________________________________
   //                                                                      getName
   
