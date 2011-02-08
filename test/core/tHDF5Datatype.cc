@@ -112,8 +112,10 @@ int test_static_functions ()
 
     for (unsigned int n=0; n<types.size(); ++n) {
       cout << " [ " 
-	   << types[n] << "  ->  " 
-	   << HDF5Datatype::datatypeName(types[n]) << " ]" 
+	   << types[n]
+	   << "  ->  " << HDF5Datatype::datatype(types[n])
+	   << "  ->  " << HDF5Datatype::datatypeName(types[n])
+	   << " ]" 
 	   << endl;
     }
 

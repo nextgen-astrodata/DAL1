@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "HDF5Attribute.h"
+#include "HDF5Datatype.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -180,6 +181,57 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
 
+  //_____________________________________________________________________________
+  //                                                                   attributes
+  
+  /*!
+    \param location -- Identifier of the HDF5 object, for which the information
+           is being extracted.
+  */
+  std::set<std::string> HDF5Attribute::attributes (hid_t const &location)
+  {
+    std::set<std::string> names;
+    
+    if (H5Iis_valid(location)) {
+
+      herr_t status   = 0;
+      hid_t attribute = 0;
+      hid_t datatype  = 0;
+      hsize_t nofAttr = nofAttributes (location);
+      
+      if (nofAttr>0) {
+
+	for (hsize_t n=0; n<nofAttr; ++n) {
+	  attribute = H5Aopen_by_idx (location,
+				      ".",
+				      H5_INDEX_CRT_ORDER,
+				      H5_ITER_INC,
+				      n,
+				      H5P_DEFAULT,
+				      H5P_DEFAULT);
+	  // Get the type of the attribute and its class
+	  datatype = H5Aget_type(attribute);
+	  /* Feedback */
+	  std::cout << "index=" << n 
+		    << ", objectType=" << objectType(attribute)
+		    << ", objectName=" << objectName(attribute)
+		    << ", attribute="  << attribute
+		    << ", datatype="   << HDF5Datatype::datatypeName(attribute)
+		    << ", dataclass="  << HDF5Object::datatypeClass(attribute)
+		    << std::endl;
+	  /* Release object handlers */
+	  status = H5Aclose(attribute);
+	  status = H5Tclose(datatype);
+	}
+      }
+    } else {
+      std::cerr << "[HDF5Object::attributes] Invalid object identifier!"
+		<< std::endl;
+    }
+    
+    return names;
+  }
+  
   /// @cond TEMPLATE_SPECIALIZATIONS
   
   //_____________________________________________________________________________

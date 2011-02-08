@@ -737,36 +737,6 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                         open
   
   /*!
-    \param location -- Identifier of the HDF5 object, for which the information
-           is being extracted.
-  */
-  std::set<std::string> HDF5Object::attributes (hid_t const &location)
-  {
-    std::set<std::string> names;
-    
-    if (H5Iis_valid(location)) {
-
-      herr_t status;
-
-      status = H5Literate (location,
-			   H5_INDEX_NAME,
-			   H5_ITER_NATIVE,
-			   NULL,
-			   H5Literate_showAttributes,
-			   NULL);
-      
-    } else {
-      std::cerr << "[HDF5Object::attributes] Invalid object identifier!"
-		<< std::endl;
-    }
-    
-    return names;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                         open
-  
-  /*!
     Generic method to open up an HDF5 object; uses several layers of checks --
     e.g. through \c H5Lexists and \c H5Lget_info -- before actually attempting
     to open object of given \e name attached to a \e location.

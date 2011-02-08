@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2011                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -21,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <dalCommon.h>
 #include <HDF5Attribute.h>
 
 // Namespace usage
@@ -42,6 +40,57 @@ using DAL::HDF5Object;
  
   \date 2011/01/27
 */
+
+// ==============================================================================
+//
+//  Playground
+//
+// ==============================================================================
+
+/*!
+  \brief Get attribute value
+  \param location -- HDF5 identifier for the object to which the attribute
+         is attached.
+  \param name    -- Name of the attribute.
+  \param data    -- Data value(s) of the attribute
+  \param size    -- nof. element in the data array.
+  \return status -- Status of the operation; returns \e false in case an
+          error was encountered.
+*/
+template <class T> 
+bool get (hid_t const &location,
+	  std::string const &name,
+	  T *data,
+	  unsigned int &size=1) 
+{
+  bool status = true;
+
+  return status;
+}
+
+template <class T>
+bool get (hid_t const &location,
+	  std::string const &name,
+	  std::vector<T> &data)
+{
+  bool status        = true;
+  unsigned int nelem = data.size();
+
+  data.resize(2*nelem);
+
+  std::cout << "-- location   = " << location    << std::endl;
+  std::cout << "-- name       = " << name        << std::endl;
+  std::cout << "-- size (old) = " << nelem       << std::endl;
+  std::cout << "-- size (new) = " << data.size() << std::endl;
+
+  return status;
+}
+
+// ==============================================================================
+//
+//  Test routines
+//
+// ==============================================================================
 
 //_______________________________________________________________________________
 //                                                          test_static_functions
@@ -203,11 +252,52 @@ int test_static_functions (hid_t const &location)
   }
 
   /*__________________________________________________________________
-    Test 7: Create / Set attributes from casa::Vector<T>
+    Test 7: Get number, names and types of attributes
+  */
+  
+  cout << "[7] Get number, names and types of attributes ..." << endl;
+  try {
+    cout << "-- nof attributes  = " << HDF5Object::nofAttributes(location) << endl;
+    cout << "-- Attribute names = " << HDF5Attribute::attributes(location) << endl;
+  } catch (std::string message) {
+    ++nofFailedTests;
+  }
+
+  /*__________________________________________________________________
+    Test 8: Get attribute storing atomic value.
+  */
+
+  cout << "[8] Testing getAttribute(hid_t,string,&T) ..." << endl;
+  try {
+    int valInt            = 0;
+    int valShort          = 0;
+    int valLong           = 0;
+    float valFloat        = 0.0;
+    float valDouble       = 0.0;
+    std::string valString = "UNDEFINED";
+    
+    // HDF5Attribute::getAttribute (location, "AttributeInt",    valInt);
+    // HDF5Attribute::setAttribute (location, "AttributeShort",  valShort);
+    // HDF5Attribute::setAttribute (location, "AttributeLong",   valLong);
+    // HDF5Attribute::setAttribute (location, "AttributeFloat",  valFloat);
+    // HDF5Attribute::setAttribute (location, "AttributeDouble", valDouble);
+    // HDF5Attribute::setAttribute (location, "AttributeString", valString);
+
+    std::cout << "-- AttributeInt    = " << valInt     << std::endl;
+    std::cout << "-- AttributeShort  = " << valShort   << std::endl;
+    std::cout << "-- AttributeLong   = " << valLong    << std::endl;
+    std::cout << "-- AttributeFloat  = " << valFloat   << std::endl;
+    std::cout << "-- AttributeDouble = " << valDouble  << std::endl;
+  } catch (std::string message) {
+    ++nofFailedTests;
+  }
+
+  /*__________________________________________________________________
+    Test 8: Create / Set attributes from casa::Vector<T>
   */
 
 #ifdef HAVE_CASA
-  cout << "[7] Testing setAttribute(hid_t,string,casa::Vector<T>) ..." << endl;
+  cout << "[8] Testing setAttribute(hid_t,string,casa::Vector<T>) ..." << endl;
   try {
     unsigned int nelem (10);
     casa::Vector<int> valInt (nelem, 1);
@@ -299,6 +389,13 @@ int main (int argc, char *argv[])
   std::string filename = "tHDF5Attribute.h5";
 
   //________________________________________________________
+  // Process command line parameters
+
+  if (argc>1) {
+    filename = argv[1];
+  }
+
+  //________________________________________________________
   // Open/create HDF5 file to work with
   
   hid_t fileID = H5Fcreate (filename.c_str(),
@@ -313,7 +410,6 @@ int main (int argc, char *argv[])
 
     // Test for static methods
     nofFailedTests += test_static_functions (fileID);
-
     // Test for the constructor(s)
     nofFailedTests += test_constructors (fileID);
     

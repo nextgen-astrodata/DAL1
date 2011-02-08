@@ -200,6 +200,9 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Static methods =======================================================
 
+    //! Name of attributes attached to the object
+    static std::set<std::string> attributes (hid_t const &location);
+
     /*!
       \brief Get attribute value
       \param location -- HDF5 identifier for the object to which the attribute
@@ -216,13 +219,14 @@ namespace DAL { // Namespace DAL -- begin
 				T *data,
 				unsigned int &size)
       {
-	bool status       = true;
-	hid_t   attribute = 0;
-	hid_t   dataspace = 0;
-	hid_t   datatype  = 0;
-	hsize_t dims[1]   = { size };
-	hsize_t *maxdims  = 0;
-	herr_t h5err      = 0;
+	bool status          = true;
+	hid_t attribute      = 0;
+	hid_t dataspace      = 0;
+	hid_t datatype       = 0;
+	hid_t nativeDatatype = 0;
+	hsize_t dims[1]      = { size };
+	hsize_t *maxdims     = 0;
+	herr_t h5err         = 0;
 
 	/*____________________________________________________________
 	  Basic checks for reference location and attribute name.
@@ -255,8 +259,15 @@ namespace DAL { // Namespace DAL -- begin
 		      << " Failed to open attribute " << name << std::endl;
 	    return false;
 	  }
-	} else {
+	}   //  END -- H5Aexists(location,name)
+	else {
 	}
+
+	std::cout << "[HDF5Attribute::getAttribute]" << std::endl;
+	std::cout << "-- Location ID         = " << location  << std::endl;
+	std::cout << "-- Attribute name      = " << name      << std::endl;
+	std::cout << "-- Attribute ID        = " << attribute << std::endl;
+	std::cout << "-- Datatype ID         = " << datatype  << std::endl;
 	
 	return status;
       }
@@ -273,11 +284,13 @@ namespace DAL { // Namespace DAL -- begin
     */
     template <class T>
       static bool getAttribute (hid_t const &location,
-			 std::string const &name,
-			 std::vector<T> &data)
+				std::string const &name,
+				std::vector<T> &data)
       {
-	unsigned int nelem;
-	return getAttribute (location, name, &data[0], nelem);
+	unsigned int nelem = data.size();
+	bool status        = getAttribute (location, name, &data[0], nelem);
+
+	return status;
       }
     
     /*!
@@ -294,8 +307,16 @@ namespace DAL { // Namespace DAL -- begin
 				std::string const &name,
 				T &data)
       {
-	unsigned int nelem;
-	return getAttribute (location, name, &data, nelem);
+	unsigned int nelem = 1;
+	bool status        = getAttribute (location, name, &data, nelem);
+
+	/* Check the size of te returned data */
+	if (nelem>1) {
+	  std::cerr << "[HDF5Attribute::getAttribute]"
+		    << " Attribute not of single value - returned data incomplete!"
+		    << std::endl;
+	}
+	return status;
       }
     
 

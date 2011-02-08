@@ -287,8 +287,6 @@ namespace DAL { // Namespace DAL -- begin
     static time_t birthTime (hid_t const &location);
     //! nof. attributes attached to the object
     static hsize_t nofAttributes (hid_t const &location);
-    //! Name of attributes attached to the object
-    std::set<std::string> attributes (hid_t const &location);
     
     //! Open an object in an HDF5 file
     static hid_t open (hid_t const &location,

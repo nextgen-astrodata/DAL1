@@ -410,17 +410,15 @@ int test_attributes (hid_t const &fileID)
 {
   cout << "\n[tBF_StokesDataset::test_attributes]\n" << endl;
 
-  int nofFailedTests = 0;
+  int nofFailedTests      = 0;
+  std::string nameDataset = "Stokes005.Q";
 
   /* Open dataset to work with */
-  std::string nameDataset ("Stokes005.Q");
   BF_StokesDataset stokes (fileID, nameDataset);
   stokes.summary();
 
-  return 0;
-
   /* Variable for reading in attributes */
-  int nofSubbands;
+  std::vector<int> nofSubbands;
   std::vector<int> nofChannels;
   std::string groupType;
   std::string dataType;
@@ -445,7 +443,7 @@ int test_attributes (hid_t const &fileID)
     cout << "-- STOKES_COMPONENT = " << stokesComponent << endl;
   } catch (std::string message) {
     std::cerr << message << endl;
-    nofFailedTests++;
+    ++nofFailedTests;
   }
 
   return nofFailedTests;
@@ -732,8 +730,8 @@ int main ()
     nofFailedTests += test_constructors (fileID);
     // // Test access to the attributes
     // nofFailedTests += test_attributes (fileID);
-    // // Test read/write access to the data
-    // nofFailedTests += test_data (fileID);
+    // Test read/write access to the data
+    nofFailedTests += test_data (fileID);
 
   } else {
     cerr << "-- ERROR: Failed to open file " << filename << endl;

@@ -106,7 +106,10 @@ namespace DAL { // Namespace DAL -- begin
     static std::vector<std::string> datatypeNames ();
 
     //! Get name for the datatype
-    static std::string datatypeName (hid_t const &dtype);
+    static hid_t datatype (hid_t const &id);
+    
+    //! Get name for the datatype
+    static std::string datatypeName (hid_t const &id);
     
   private:
     

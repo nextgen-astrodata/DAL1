@@ -115,6 +115,21 @@ namespace DAL { // Namespace DAL -- begin
     std::map<hid_t,std::string> result;
 
     /*________________________________________________________________
+      Datatype class identifiers
+    */
+
+    result[H5T_INTEGER]   = "H5T_INTEGER";
+    result[H5T_FLOAT]     = "H5T_FLOAT";
+    result[H5T_STRING]    = "H5T_STRING";
+    result[H5T_BITFIELD]  = "H5T_BITFIELD";
+    result[H5T_OPAQUE]    = "H5T_OPAQUE";
+    result[H5T_COMPOUND]  = "H5T_COMPOUND";
+    result[H5T_REFERENCE] = "H5T_REFERENCE";
+    result[H5T_ENUM]      = "H5T_ENUM";
+    result[H5T_VLEN]      = "H5T_VLEN";
+    result[H5T_ARRAY]     = "H5T_ARRAY";
+
+    /*________________________________________________________________
       IEEE floating point datatypes
     */
 
@@ -290,18 +305,38 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
+  //                                                                     datatype
+  
+  hid_t HDF5Datatype::datatype (hid_t const &id)
+  {
+    hid_t result                             = -1;
+    std::map<hid_t,std::string> typesMap     = datatypesMap();
+    std::map<hid_t,std::string>::iterator it = typesMap.find(id);
+
+    if (it==typesMap.end()) {
+      std::cerr << "[HDF5Datatype::datatype]"
+		<< " Unrecognized datatype!"
+		<< std::endl;
+    } else {
+      result = it->first;
+    }
+
+    return result;
+  }
+
+  //_____________________________________________________________________________
   //                                                                 datatypeName
   
   /*!
     \param dtype -- Datatype for which to retrieve the name. In case the 
            identifier does not point to a datatype, but an Attribute or Dataset,
 	   the datatype of the latter is retrieved.
-   */
-  std::string HDF5Datatype::datatypeName (hid_t const &dtype)
+  */
+  std::string HDF5Datatype::datatypeName (hid_t const &id)
   {
     std::string name                         = "UNDEFINED";
     std::map<hid_t,std::string> typesMap     = datatypesMap();
-    std::map<hid_t,std::string>::iterator it = typesMap.find(dtype);
+    std::map<hid_t,std::string>::iterator it = typesMap.find(id);
 
     /*________________________________________________________________
       If the type cannot be identified using the types-map, check if 
@@ -312,14 +347,17 @@ namespace DAL { // Namespace DAL -- begin
 
     if (it==typesMap.end()) {
 
-      H5I_type_t otype = HDF5Object::objectType (dtype);
+      H5I_type_t otype = HDF5Object::objectType (id);
+      hid_t datatype   = 0;
 
       switch (otype) {
       case H5I_ATTR:
-	name = datatypeName(H5Aget_type(dtype));
+	datatype = H5Aget_type(id);
+	name     = datatypeName(datatype);
 	break;
       case H5I_DATASET:
-	name = datatypeName(H5Dget_type(dtype));
+	datatype = H5Dget_type(id);
+	name     = datatypeName(datatype);
 	break;
       default:
 	std::cout << "[HDF5Datatype::datatypeName]"
