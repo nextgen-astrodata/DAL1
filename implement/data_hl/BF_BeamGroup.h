@@ -55,21 +55,8 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>LOFAR Data Format ICDs:
-      <ul>
-        <li>\ref dal_icd_003
-	<li>\ref dal_icd_005
-      </ul>
-      <li>Components of the LOFAR user software:
-      <ul>
-        <li>Filename -- Class to filenames matching convention
-        <li>CommonAttributes -- Collection of attributes common to all LOFAR
-	datasets
-	<li>HDF5CommonInterface -- Common functionality for the high-level
-	interfaces to the datasets
-	<li>CoordinatesGroup
-	<li>BF_ProcessingHistory
-      </ul>
+      <li>\ref dal_icd_003
+      <li>\ref dal_icd_005
     </ul>
     
     <h3>Synopsis</h3>

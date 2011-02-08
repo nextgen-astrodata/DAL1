@@ -332,6 +332,50 @@ namespace DAL { // Namespace DAL -- begin
 					hid_t const &datatype)
   {
     bool status = true;
+    std::map<std::string,BF_StokesDataset>::iterator it = itsStokesDatasets.find(name);
+
+    /*________________________________________________________________
+      Check input parameters.
+    */    
+
+    if (nofChannels.empty()) {
+      std::cerr << "[BF_BeamGroup::openStokesDataset]"
+		<< " Empty array of frequency channels!"
+		<< std::endl;
+      return false;
+    }
+
+    /*________________________________________________________________
+      Check if dataset of given name does exist already; if this is
+      is the case, abort in order to avoid corrupting dataset.
+    */
+
+    if (it==itsStokesDatasets.end()) {
+      std::cout << "[BF_BeamGroup::openStokesDataset]"
+		<< " No dataset " << name << " available yet - creating it now!"
+		<< std::endl;
+    } else {
+      std::cout << "[BF_BeamGroup::openStokesDataset]"
+		<< " Found existing dataset " << name << "!"
+		<< std::endl;
+      return false;
+    }
+    
+    /*________________________________________________________________
+      Create new Stokes dataset.
+    */    
+
+    itsStokesDatasets[name] = BF_StokesDataset (location_p,
+						name,
+						nofSamples,
+						nofChannels,
+						component,
+						datatype);
+    
+    /*________________________________________________________________
+      Check if creation of dataset was successful; is this was not the
+      case, make sure no entry is made in the internal map.
+    */    
 
     return status;
   } 
