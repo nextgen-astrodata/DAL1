@@ -23,7 +23,6 @@ if (LUS_ROOT)
       FindBoost
       FindCASACORE
       FindGFortran
-      FindLOFAR
       FindPython
       FindNumPy
       FindNumUtil
@@ -40,6 +39,7 @@ foreach (_dalcmake
     FindGSL
     FindHDF5
     FindLAPACK
+    FindLOFAR
     FindMySQL
     FindWCSLIB
     )

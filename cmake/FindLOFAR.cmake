@@ -20,57 +20,54 @@
 # |   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                 |
 # +-----------------------------------------------------------------------------+
 
-# - Check for the presence of LAPACK
+# - Check for the presence of LOFAR
 #
-# The following variables are set when LAPACK is found:
-#  LAPACK_FOUND      = Set to true, if all components of LAPACK have been found.
-#  LAPACK_INCLUDES   = Include path for the header files of LAPACK
-#  LAPACK_LIBRARIES  = Link these to use LAPACK
-#  LAPACK_LFLAGS     = Linker flags (optional)
+# The following variables are set when LOFAR is found:
+#  LOFAR_FOUND      = Set to true, if all components of LOFAR
+#                         have been found.
+#  LOFAR_INCLUDES   = Include path for the header files of LOFAR
+#  LOFAR_LIBRARIES  = Link these to use LOFAR
+#  LOFAR_LFLAGS     = Linker flags (optional)
 
-if (NOT LAPACK_FOUND)
+if (NOT LOFAR_FOUND)
     
   ##_____________________________________________________________________________
   ## Check for the header files
   
-  set (LAPACK_INCLUDES "")
-
-  find_path (LAPACK_CLAPACK_H clapack.h
+  find_path (LOFAR_INCLUDES Parset.h
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
-    PATH_SUFFIXES include
+    PATH_SUFFIXES include include/Interface Interface
+    HINTS ENV LOFARROOT
     )
 
-  if (LAPACK_CLAPACK_H)
-    list (APPEND LAPACK_INCLUDES ${LAPACK_CLAPACK_H})
-  endif (LAPACK_CLAPACK_H)
-  
   ##_____________________________________________________________________________
-  ## Check for the libraries (lapack cblas blas atlas)
+  ## Check for the library
   
-  set (LAPACK_LIBRARIES "")
+  set (LOFAR_LIBRARIES "")
 
-  foreach (_lapack_lib lapack cblas blas atlas)
+  foreach (_lofar_lib common interface)
     
     ## Convert library name to CMake variable
-    string (TOUPPER ${_lapack_lib} _lapack_var)
+    string (TOUPPER ${_lofar_lib} _lofar_var)
 
     ## Search for the library
-    find_library (LAPACK_${_lapack_var}_LIBRARY ${_lapack_lib}
+    find_library (LOFAR_${_lofar_var}_LIBRARY ${_lofar_lib}
       PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
       PATH_SUFFIXES lib
+      HINTS ENV LOFARROOT
       )
-
-    ## If library was found, add it to the list of libraries
-    if (LAPACK_${_lapack_var}_LIBRARY)
-      list (APPEND LAPACK_LIBRARIES ${LAPACK_${_lapack_var}_LIBRARY})
-    endif (LAPACK_${_lapack_var}_LIBRARY)
     
-  endforeach (_lapack_lib)
-  
+    ## If library was found, add it to the list of libraries
+    if (LOFAR_${_lofar_var}_LIBRARY)
+      list (APPEND LOFAR_LIBRARIES ${LOFAR_${_lofar_var}_LIBRARY})
+    endif (LOFAR_${_lofar_var}_LIBRARY)
+    
+  endforeach (_lofar_lib)
+
   ##_____________________________________________________________________________
   ## Check for the executable
   
-#  find_program (LAPACK_EXECUTABLE <package name>
+#  find_program (LOFAR_EXECUTABLE <package name>
 #    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
 #    PATH_SUFFIXES bin
 #    )
@@ -78,38 +75,40 @@ if (NOT LAPACK_FOUND)
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
   
-  if (LAPACK_INCLUDES AND LAPACK_LIBRARIES)
-    set (LAPACK_FOUND TRUE)
-  else (LAPACK_INCLUDES AND LAPACK_LIBRARIES)
-    set (LAPACK_FOUND FALSE)
-    if (NOT LAPACK_FIND_QUIETLY)
-      if (NOT LAPACK_INCLUDES)
-	message (STATUS "Unable to find LAPACK header files!")
-      endif (NOT LAPACK_INCLUDES)
-      if (NOT LAPACK_LIBRARIES)
-	message (STATUS "Unable to find LAPACK library files!")
-      endif (NOT LAPACK_LIBRARIES)
-    endif (NOT LAPACK_FIND_QUIETLY)
-  endif (LAPACK_INCLUDES AND LAPACK_LIBRARIES)
+  if (LOFAR_INCLUDES AND LOFAR_LIBRARIES)
+    set (LOFAR_FOUND TRUE)
+  else (LOFAR_INCLUDES AND LOFAR_LIBRARIES)
+    set (LOFAR_FOUND FALSE)
+    if (NOT LOFAR_FIND_QUIETLY)
+      if (NOT LOFAR_INCLUDES)
+	message (STATUS "Unable to find LOFAR header files!")
+      endif (NOT LOFAR_INCLUDES)
+      if (NOT LOFAR_LIBRARIES)
+	message (STATUS "Unable to find LOFAR library files!")
+      endif (NOT LOFAR_LIBRARIES)
+    endif (NOT LOFAR_FIND_QUIETLY)
+  endif (LOFAR_INCLUDES AND LOFAR_LIBRARIES)
   
-  if (LAPACK_FOUND)
-    if (NOT LAPACK_FIND_QUIETLY)
-      message (STATUS "Found components for LAPACK")
-      message (STATUS "LAPACK_INCLUDES  = ${LAPACK_INCLUDES}")
-      message (STATUS "LAPACK_LIBRARIES = ${LAPACK_LIBRARIES}")
-    endif (NOT LAPACK_FIND_QUIETLY)
-  else (LAPACK_FOUND)
-    if (LAPACK_FIND_REQUIRED)
-      message (FATAL_ERROR "Could not find LAPACK!")
-    endif (LAPACK_FIND_REQUIRED)
-  endif (LAPACK_FOUND)
+  if (LOFAR_FOUND)
+    if (NOT LOFAR_FIND_QUIETLY)
+      message (STATUS "Found components for LOFAR")
+      message (STATUS "LOFAR_INCLUDES  = ${LOFAR_INCLUDES}")
+      message (STATUS "LOFAR_LIBRARIES = ${LOFAR_LIBRARIES}")
+    endif (NOT LOFAR_FIND_QUIETLY)
+  else (LOFAR_FOUND)
+    if (LOFAR_FIND_REQUIRED)
+      message (FATAL_ERROR "Could not find LOFAR!")
+    endif (LOFAR_FIND_REQUIRED)
+  endif (LOFAR_FOUND)
   
   ##_____________________________________________________________________________
   ## Mark advanced variables
   
   mark_as_advanced (
-    LAPACK_INCLUDES
-    LAPACK_LIBRARIES
+    LOFAR_INCLUDES
+    LOFAR_LIBRARIES
+    LOFAR_COMMON_LIBRARY
+    LOFAR_INTERFACE_LIBRARY
     )
   
-endif (NOT LAPACK_FOUND)
+endif (NOT LOFAR_FOUND)
