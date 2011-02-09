@@ -3,30 +3,19 @@ ________________________________________________________________________________
 >>> Getting the source code
 
 The offical address to obtain a working copy of the DAL as part of the LOFAR 
-User Software is from the SVN repository
+User Software (LUS) is from the SVN repository
 
   svn co http://usg.lofar.org/svn/code/trunk lofarsoft
 
-As an alternative you also can clone from the respository on Github
+However as of begin 2011 we are preparing to make the DAL a stand-alone software
+package, which no longer is tied to the LUS. More information can be found on
+the following web-sites and -pages:
 
-  git://github.com/lbaehren/DAL.git DAL
+* https://github.com/lbaehren/DAL (Git code repository)
 
-Once checkout from the repository is complete, you can change into the "build"
-directory to run the bootstrap script.
+* http://usg.lofar.org/doxygen/group___d_a_l.html (Doxygen source documentation)
 
-  cd build
-  ./bootstrap
-
-The the main job of the bootstrap script is to check whether or not a recent
-enough version of CMake (www.cmake.org) is installed on your system; if the found
-installation is too old or not available at all, a build from the provided
-sources is triggered and the resulting executables will be installed into
-"release/bin" (which of course then should be in your PATH).
-
-Once the bootstrap script has finished run
-
-  make dal
-
+* http://svn.astron.nl/CDash/index.php?project=DAL (Testing dashobard)
 
 _________________________________________________________________________________
 >>> External dependencies
