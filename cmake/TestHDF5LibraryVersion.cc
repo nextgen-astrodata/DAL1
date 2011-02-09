@@ -1,20 +1,13 @@
 
 #include <iostream>
-#include <hdf5.h>
+#include <H5public.h>
 
 int main ()
 {
-  unsigned int versionMajor;
-  unsigned int versionMinor;
-  unsigned int versionRelease;
 
-  herr_t h5err = H5get_libversion (&versionMajor,
-				   &versionMinor,
-				   &versionRelease);
+  std::cout << "H5_VERS_MAJOR " << H5_VERS_MAJOR << std::endl;
+  std::cout << "H5_VERS_MINOR " << H5_VERS_MINOR << std::endl;
+  std::cout << "H5_VERS_RELEASE " << H5_VERS_RELEASE << std::endl;
 
-  std::cout << "HDF5_Version_Major   = [" << versionMajor   << "]"<< std::endl;
-  std::cout << "HDF5_Version_Minor   = [" << versionMinor   << "]"<< std::endl;
-  std::cout << "HDF5_Version_Release = [" << versionRelease << "]"<< std::endl;
-
-  return h5err;
+  return 1;
 }

@@ -258,7 +258,7 @@ endif (HAVE_MYSQL)
 
 ## Parallel IO usage requires MPI to be Linked and Included
 
-if (MPI_FOUND AND HDF5_IS_PARALLEL)
+if (MPI_FOUND AND HDF5_HAVE_PARALLEL_IO)
   ## compiler flags
   if (MPI_COMPILE_FLAGS)
     add_definitions (${MPI_COMPILE_FLAGS})
@@ -272,7 +272,7 @@ if (MPI_FOUND AND HDF5_IS_PARALLEL)
   if (MPI_EXTRA_LIBRARY)
     list (APPEND dal_link_libraries ${MPI_EXTRA_LIBRARY})
   endif (MPI_EXTRA_LIBRARY)
-endif (MPI_FOUND AND HDF5_IS_PARALLEL)
+endif (MPI_FOUND AND HDF5_HAVE_PARALLEL_IO)
 
 ## =============================================================================
 ##
