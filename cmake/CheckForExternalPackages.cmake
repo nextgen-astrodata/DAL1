@@ -23,7 +23,6 @@ if (LUS_ROOT)
       FindBoost
       FindCASACORE
       FindGFortran
-      FindLAPACK
       FindLOFAR
       FindPython
       FindNumPy
@@ -33,7 +32,6 @@ if (LUS_ROOT)
   endforeach (_luscmake)
 endif (LUS_ROOT)
 
-
 ##__________________________________________________________
 ##                                      Custom CMake modules
 
@@ -41,6 +39,7 @@ foreach (_dalcmake
     FindCFITSIO
     FindGSL
     FindHDF5
+    FindLAPACK
     FindMySQL
     FindWCSLIB
     )
