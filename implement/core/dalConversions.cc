@@ -38,38 +38,23 @@ namespace DAL { // Namespace DAL -- begin
                       long &intmjd,
                       long double &fracmjd)
   {
+    struct tm *ptr = gmtime(&seconds);
+    assert (ptr);
+
     long double dayfrac = 0;
     long double jd      = 0;
-    long double sec     = 0;
-    int year            = 0;
-    int yday            = 0;
-    int hour            = 0;
-    int min             = 0;
+    int year            = ptr->tm_year;
+    int yday            = ptr->tm_yday + 1;
+    int hour            = ptr->tm_hour;
+    int min             = ptr->tm_min;
+    long double sec     = (long double)ptr->tm_sec;
     unsigned int nd     = 0;
-    struct tm *ptr      = 0;
-    
-    ptr = gmtime(&seconds);
-    assert (ptr);
-    
-    hour = ptr->tm_hour;
-    min  = ptr->tm_min;
-    sec  = (long double)ptr->tm_sec;
-    year = ptr->tm_year;
-    yday = ptr->tm_yday + 1;
 
-#ifdef DEBUGGING_MESSAGES
-    std::cout << "[DAL::julday]" << std::endl;
-    std::cout << "-- year = " << year << std::endl;
-    std::cout << "-- hour = " << hour << std::endl;
-    std::cout << "-- min  = " << min  << std::endl;
-    std::cout << "-- sec  = " << sec  << std::endl;
-#endif
-    
-    dayfrac = ( (sec/60.0L + (long double) min)/60.0L + \
-                (long double)hour)/24.0L;
-    nd = year * 365;
-    nd += (year - 1)/4;
-    nd += yday + 2415020;
+    // fraction of day
+    dayfrac = ( (sec/60.0L + (long double) min)/60.0L + (long double)hour)/24.0L;
+    nd      = year * 365;
+    nd     += (year - 1)/4;
+    nd     += yday + 2415020;
     
     intmjd  = nd - 2400001;
     fracmjd = dayfrac;
@@ -77,7 +62,9 @@ namespace DAL { // Namespace DAL -- begin
     jd = (long double)nd + dayfrac - 0.5L;
 
     // release allocated memory
-    delete ptr;
+    if (ptr!=NULL) {
+      delete ptr;
+    }
     
     return jd;
   }

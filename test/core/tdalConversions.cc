@@ -55,7 +55,7 @@ using std::endl;
 */
 int test_convertString ()
 {
-  std::cout << "\n[tdalConversions::test_convertString]\n" << std::endl;
+  cout << "\n[tdalConversions::test_convertString]\n" << endl;
 
   int nofFailedTests (0);
   
@@ -104,7 +104,7 @@ int test_convertString ()
 */
 int test_convertTime ()
 {
-  std::cout << "\n[tdalConversions::test_convertTime]\n" << std::endl;
+  cout << "\n[tdalConversions::test_convertTime]\n" << endl;
 
   int nofFailedTests (0);
 
@@ -138,12 +138,12 @@ int test_convertTime ()
 */
 int test_convertVector ()
 {
-  std::cout << "\n[tdalConversions::test_convertVector]\n" << std::endl;
+  cout << "\n[tdalConversions::test_convertVector]\n" << endl;
 
   int nofFailedTests (0);
   unsigned int nelem (10);
   
-  std::cout << "[1] Convert std::vector<int> to casa::Vector<T> ..." << std::endl;
+  cout << "[1] Convert std::vector<int> to casa::Vector<T> ..." << endl;
   try {
     std::vector<int> vectorInt (nelem);
     casa::Vector<int> VectorInt;
@@ -166,11 +166,11 @@ int test_convertVector ()
     cout << "-- <int> -> <double> : " << vectorInt << " -> " << VectorDouble << endl;
 
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
-  std::cout << "[2] Convert std::vector<float> to casa::Vector<T> ..." << std::endl;
+  cout << "[2] Convert std::vector<float> to casa::Vector<T> ..." << endl;
   try {
     std::vector<float> vectorFloat (nelem);
     casa::Vector<int> VectorInt;
@@ -192,11 +192,11 @@ int test_convertVector ()
     cout << "-- <float> -> <float>  : " << vectorFloat << " -> " << VectorFloat  << endl;
     cout << "-- <float> -> <double> : " << vectorFloat << " -> " << VectorDouble << endl;
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
-  std::cout << "[3] Convert std::vector<double> to casa::Vector<T> ..." << std::endl;
+  cout << "[3] Convert std::vector<double> to casa::Vector<T> ..." << endl;
   try {
     std::vector<double> vectorDouble (nelem);
     casa::Vector<int> VectorInt;
@@ -218,7 +218,7 @@ int test_convertVector ()
     cout << "-- <float> -> <float>  : " << vectorDouble << " -> " << VectorFloat  << endl;
     cout << "-- <float> -> <double> : " << vectorDouble << " -> " << VectorDouble << endl;
   } catch (std::string message) {
-    std::cerr << message << std::endl;
+    cerr << message << endl;
     nofFailedTests++;
   }
   
