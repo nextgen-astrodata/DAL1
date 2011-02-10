@@ -47,7 +47,6 @@ if (NOT MYSQL_FOUND)
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib lib/mysql
     )
-
   if (MYSQL_MYSQLCLIENT_LIBRARY)
     list (APPEND MYSQL_LIBRARIES ${MYSQL_MYSQLCLIENT_LIBRARY})
   endif (MYSQL_MYSQLCLIENT_LIBRARY)
@@ -55,10 +54,10 @@ if (NOT MYSQL_FOUND)
   ##_____________________________________________________________________________
   ## Check for the executable
   
-#  find_program (MYSQL_EXECUTABLE <package name>
-#    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
-#    PATH_SUFFIXES bin
-#    )
+  find_program (MYSQL_CONFIG_EXECUTABLE mysql_config
+    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATH_SUFFIXES bin share share/mysql share/mysql/bin
+    )
   
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found

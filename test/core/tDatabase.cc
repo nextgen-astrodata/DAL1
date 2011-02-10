@@ -31,6 +31,8 @@
   \date 2010/03/21
 */
 
+#include <iostream>
+
 #ifdef HAVE_MYSQL
 
 #include <dal.h>
@@ -108,6 +110,8 @@ int main (int argc,
 
 int main ()
 {
+  std::cerr << "[tDatabase] MySQL not available on system - skipping test!"
+	    << std::endl;
   return 0;
 }
 

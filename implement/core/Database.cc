@@ -94,7 +94,7 @@ namespace DAL {
     \brief Query the database.
     \param querystr Query string to send to database.
   */
-  bool Database::query( std::string const & querystr )
+  bool Database::query (std::string const & querystr)
   {
 #ifdef HAVE_MYSQL
     /* send SQL query */
