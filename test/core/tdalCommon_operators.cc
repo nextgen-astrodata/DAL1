@@ -189,10 +189,20 @@ int test_operators ()
 //_______________________________________________________________________________
 //                                                                           main
 
-int main (int argc,
-          char *argv[])
+/*!
+  \brief Main routine of the test program
+
+  \return nofFailedTests -- The number of failed tests encountered within and
+          identified by this test program.
+*/
+int main (int argc, char *argv[])
 {
-  int nofFailedTests (0);
+  int nofFailedTests   = 0;
+  std::string filename = "tdalCommon.h5";
+
+  if (argc>1) {
+    filename = argv[1];
+  }
 
   nofFailedTests += test_operators ();
 

@@ -74,6 +74,9 @@ namespace DAL { // Namespace DAL -- begin
   
   void RM_SourceTable::copy (RM_SourceTable const &other)
   {
+    itsTableColumns.clear();
+
+    itsTableColumns = other.itsTableColumns;
   }
 
   // ============================================================================

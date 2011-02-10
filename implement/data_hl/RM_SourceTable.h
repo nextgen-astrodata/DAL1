@@ -27,6 +27,7 @@
 // Standard library header files
 #include <iostream>
 #include <string>
+#include <vector>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -56,6 +57,9 @@ namespace DAL { // Namespace DAL -- begin
     
   */  
   class RM_SourceTable {
+
+    //! Name of the table columns
+    std::vector<std::string> itsTableColumns;
     
   public:
     
@@ -79,6 +83,15 @@ namespace DAL { // Namespace DAL -- begin
     RM_SourceTable& operator= (RM_SourceTable const &other); 
     
     // === Parameter access =====================================================
+
+    //! Name of the table columns
+    inline std::vector<std::string> tableColumns () const {
+      return itsTableColumns;
+    }
+
+    inline unsigned int nofColumns () const {
+      return itsTableColumns.size();
+    }
     
     /*!
       \brief Get the name of the class
