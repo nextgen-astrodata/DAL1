@@ -156,10 +156,7 @@ namespace DAL { // Namespace DAL -- begin
     */
     void summary (std::ostream &os);    
 
-    // === Methods ==============================================================
-
-    //! Convert beam index to name of the HDF5 group
-    static std::string getName (unsigned int const &index);
+    // === Public methods =======================================================
 
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
@@ -180,7 +177,12 @@ namespace DAL { // Namespace DAL -- begin
 			    std::vector<unsigned int> const &nofChannels,
 			    DAL::Stokes::Component const &component=DAL::Stokes::I,
 			    hid_t const &datatype=H5T_NATIVE_FLOAT);
+
+    // === Static methods =======================================================
     
+    //! Convert beam index to name of the HDF5 group
+    static std::string getName (unsigned int const &index);
+
   protected:
     
     //! Open the structures embedded within the current one

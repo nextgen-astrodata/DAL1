@@ -328,6 +328,11 @@ namespace DAL { // Namespace DAL -- begin
 	       unsigned int const &nofSamples,
 	       std::vector<unsigned int> const &nofChannels);
     
+    // === Static methods =======================================================
+    
+    //! Convert dataset index to name of the HDF5 dataset
+    static std::string getName (unsigned int const &index);
+
   private:
     
     //! Set up the list of attributes attached to the structure

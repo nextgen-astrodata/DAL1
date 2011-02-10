@@ -63,34 +63,46 @@ int test_constructors (hid_t const &fileID)
 {
   cout << "\n[tBF_BeamGroup::test_constructors]\n" << endl;
 
-  int nofFailedTests (0);
-
-  cout << "[1] Testing default constructor ..." << endl;
+  int nofFailedTests = 0;
+  
+  /*__________________________________________________________________
+    Test 1: Default constructor.
+  */
+  
+  cout << "[1] Testing BF_BeamGroup() ..." << endl;
   try {
     BF_BeamGroup beam;
     beam.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
-    nofFailedTests++;
+    ++nofFailedTests;
   }
   
-  cout << "[2] Testing argumented constructor ..." << endl;
+  /*__________________________________________________________________
+    Test 2: Argumented constructor, providing identifier for reference
+            location, beam ID and switch whether or not to create
+	    group if not existing yet.
+  */
+  
+  cout << "[2] Testing BF_BeamGroup(hid_t,uint,bool) ..." << endl;
   try {
-    if (fileID>0) {
-      BF_BeamGroup beam1 (fileID,1,true);
-      beam1.summary();
-      //
-      BF_BeamGroup beam2 (fileID,2,true);
-      beam2.summary();
-      //
-      BF_BeamGroup beam3 (fileID,3,true);
-      beam3.summary();
-    }
+    BF_BeamGroup beam1 (fileID,1,true);
+    beam1.summary();
+    //
+    BF_BeamGroup beam2 (fileID,2,true);
+    beam2.summary();
+    //
+    BF_BeamGroup beam3 (fileID,3,true);
+    beam3.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
 
+  /*__________________________________________________________________
+    Test 3: Create object as copy from another object.
+  */
+  
   cout << "[3] Testing copy constructor ..." << endl;
   try {
     BF_BeamGroup beam (fileID,10,true);
@@ -98,6 +110,35 @@ int test_constructors (hid_t const &fileID)
     //
     BF_BeamGroup beamCopy (beam);
     beamCopy.summary();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  /*__________________________________________________________________
+    Test 4: Create series of beam groups, which are collected within
+            a std::map container.
+  */
+
+  std::cout << "[4] Testing std::map<std::string,DAL::BF_BeamGroup> ..." << endl;
+  try {
+    unsigned int nofBeams = 10;
+    unsigned int num      = 0;
+    std::string name;
+    std::map<std::string,DAL::BF_BeamGroup> beams;
+    // std::map<std::string,DAL::BF_BeamGroup>::iterator it;
+
+    for (unsigned int n=0; n<nofBeams; ++n) {
+      // get the name of the beam group
+      num  = 100+n;
+      name = BF_BeamGroup::getName (num);
+      // create new beam group
+      std::cout << "-- creating new beam group " << name << " ..." << endl;
+      beams[name] = DAL::BF_BeamGroup (fileID, num, true);
+    }
+    
+    /* Summary */
+    std::cout << "--> Created " << beams.size() << " map entries." << endl;
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -195,76 +236,61 @@ int test_attributes (hid_t const &fileID)
 }
 
 //_______________________________________________________________________________
-//                                                                       test_map
+//                                                             test_StokesDataset
 
 /*!
-  \brief Test usage of std::map<std::string,DAL::BF_BeamGroup>
+  \brief Test creation of and access to Stokes datasets
 
   \param fileID -- Object identifier for the HDF5 file to work with
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_map (hid_t const &fileID)
+int test_StokesDataset (hid_t const &fileID)
 {
-  cout << "\n[tBF_BeamGroup::test_map]\n" << endl;
+  cout << "\n[tBF_BeamGroup::test_StokesDataset]\n" << endl;
 
-  int nofFailedTests (0);
-  std::set<std::string> names;
-  std::set<std::string>::iterator it;
-  
-  /* Get list of groups attached to the file */
-  DAL::h5get_names (names, fileID, H5G_GROUP);
-  
-  std::string groupType;
-  std::vector<std::string> target;
-  
-  // std::vector<DAL::BF_BeamGroup> _______________________
-  
-  cout << "[1] Test using std::vector<DAL::BF_BeamGroup> ..." << endl;
-  if (names.size() > 0) {
-    std::vector<DAL::BF_BeamGroup> beams (1);
-    // open Beam group
-    it = names.begin();
-    BF_BeamGroup beam (fileID, *it);
-    beams[0] = beam;
-    // get attribute values
-    beams[0].getAttribute ("GROUPTYPE",groupType);
-    beams[0].getAttribute ("TARGET",target);
-    // summary
-    beams[0].summary();
-    cout << "-- nof beams                     = " << beams.size() << endl;
-    cout << "-- Attribute GROUPTYPE           = " << groupType    << endl;
-    cout << "-- Attribute TARGET              = " << target       << endl;
-  }
-  
-  // std::map<std::string,DAL::BF_BeamGroup> ______________
+  int nofFailedTests = 0;
+  bool status        = true;
+  std::string name   = BF_BeamGroup::getName (1);
 
-  cout << "[2] Test using std::map<std::string,DAL::BF_BeamGroup> ..." << endl;
-  if (names.size() > 0) {
-    std::map<std::string,DAL::BF_BeamGroup> beams;
-    std::map<std::string,DAL::BF_BeamGroup>::iterator itMap;
-    
-    for (it=names.begin(); it!=names.end(); ++it) {
-      // open Beam group
-      BF_BeamGroup beam (fileID, *it);
-      beams[*it] = beam;
-      // get pointer to the created group
-      itMap = beams.find(*it);
-      itMap->second.summary();
-      // get attribute values
-      itMap->second.getAttribute ("GROUPTYPE",groupType);
-      itMap->second.getAttribute ("TARGET",target);
-      //
-      cout << "-- nof beams                     = " << beams.size() << endl;
-      cout << "-- Attribute GROUPTYPE           = " << groupType    << endl;
-      cout << "-- Attribute TARGET              = " << target       << endl;
-    }
-  } else {
-    std::cerr << "Skipping tests - no station group found." << endl;
-    return -1;
-  }
-
+  /*__________________________________________________________________
+    Open the beam group to which the Stokes datasets will be attached
+  */
+  
+  BF_BeamGroup beam (fileID, name);
+  beam.summary();
+  
+  /*__________________________________________________________________
+    Set up variables required for the creation of a Stokes dataset
+  */
+  
+  unsigned int nofSamples  = 1000;
+  unsigned int nofSubbands = 36;
+  unsigned int nofChannels = 128;
+  
+  status = beam.openStokesDataset ("Stokes000",
+				   nofSamples,
+				   nofSubbands,
+				   nofChannels,
+				   DAL::Stokes::I);
+  status = beam.openStokesDataset ("Stokes001",
+				   nofSamples,
+				   nofSubbands,
+				   nofChannels,
+				   DAL::Stokes::Q);
+  status = beam.openStokesDataset ("Stokes002",
+				   nofSamples,
+				   nofSubbands,
+				   nofChannels,
+				   DAL::Stokes::U);
+  status = beam.openStokesDataset ("Stokes003",
+				   nofSamples,
+				   nofSubbands,
+				   nofChannels,
+				   DAL::Stokes::V);
+  beam.summary();
+  
   return nofFailedTests;
 }
 
@@ -297,9 +323,8 @@ int main ()
     nofFailedTests += test_constructors (fileID);
     // Test access to the attributes
     nofFailedTests += test_attributes (fileID);
-    // Test usage of std::map<std::string,DAL::BF_BeamGroup>
-    nofFailedTests += test_map (fileID);
-    
+    // Test creation of and access to Stokes datasets
+    nofFailedTests += test_StokesDataset (fileID);
   } else {
     cerr << "-- ERROR: Failed to open file " << filename << endl;
     return -1;

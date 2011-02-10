@@ -103,14 +103,10 @@ namespace DAL { // Namespace DAL -- begin
     coord = itsCoordinates.begin();
 
     os << "[BF_BeamGroup] Summary of internal parameters." << std::endl;
-    os << "-- Location ID                   = " << location_p
-       << std::endl;
-
-    if (itsProcessingHistory.size() > 0) {
-    os << "-- Location ID ProcessingHistory = " << hist->second.locationID()
-       << std::endl;
-    }
-
+    os << "-- Location ID   = " << location_p << std::endl;
+    os << "-- Group name    = " << HDF5Object::name(location_p) << std::endl;
+    os << "-- nof. datasets = " << itsStokesDatasets.size()     << std::endl;
+    
   }
   
   // ============================================================================
@@ -177,9 +173,9 @@ namespace DAL { // Namespace DAL -- begin
        check if 'name' is part of it.
     */
     if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
-      location_p = H5Gopen2 (location,
-			     name.c_str(),
-			     H5P_DEFAULT);
+      location_p = H5Gopen (location,
+			    name.c_str(),
+			    H5P_DEFAULT);
     } else {
       location_p = 0;
     }
@@ -260,16 +256,28 @@ namespace DAL { // Namespace DAL -- begin
   
   bool BF_BeamGroup::openEmbedded (bool const &create)
   {
-    bool status (true);
-    std::set<std::string> groupnames;
+    bool status = true;
+    std::set<std::string>::iterator it;
+    std::set<std::string> groups;
+    std::set<std::string> datasets;
     
-    /* Retrieve the names of the groups attached to the StationBeam group */
-    status = h5get_names (groupnames,
-			  location_p,
-			  H5G_GROUP);
-
     /*________________________________________________________________
-      Open the processing history group
+      Extract the names of the groups and datasets attached to this 
+      beam group.
+    */
+    
+    if (H5Iis_valid(location_p)) {
+      status = h5get_names (groups,   location_p, H5G_GROUP   );
+      status = h5get_names (datasets, location_p, H5G_DATASET );
+    } else {
+      std::cerr << "[BF_BeamGroup::openEmbedded]"
+		<< " No connection to valid HDF5 object!"
+		<< std::endl;
+      return false;
+    }
+    
+    /*________________________________________________________________
+      Open groups with processing history and coordinate information.
     */
 
     if (itsProcessingHistory.size() == 0 && location_p > 0) {
@@ -277,9 +285,15 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     /*________________________________________________________________
-      Open the coordinates group
+      Open Stokes datasets.
     */
 
+    if (!datasets.empty()) {
+      for (it=datasets.begin(); it!=datasets.end(); ++it) {
+	itsStokesDatasets[*it] = BF_StokesDataset (location_p, *it);
+      }
+    }
+    
     return status;
   }
 
@@ -351,9 +365,7 @@ namespace DAL { // Namespace DAL -- begin
     */
 
     if (it==itsStokesDatasets.end()) {
-      std::cout << "[BF_BeamGroup::openStokesDataset]"
-		<< " No dataset " << name << " available yet - creating it now!"
-		<< std::endl;
+      status = true;
     } else {
       std::cout << "[BF_BeamGroup::openStokesDataset]"
 		<< " Found existing dataset " << name << "!"
@@ -371,7 +383,7 @@ namespace DAL { // Namespace DAL -- begin
 						nofChannels,
 						component,
 						datatype);
-    
+
     /*________________________________________________________________
       Check if creation of dataset was successful; is this was not the
       case, make sure no entry is made in the internal map.

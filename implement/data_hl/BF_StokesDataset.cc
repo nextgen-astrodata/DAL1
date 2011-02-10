@@ -477,5 +477,33 @@ namespace DAL { // Namespace DAL -- begin
 
     return status;
   }
+
+  // ============================================================================
+  //
+  //  Static methods
+  //
+  // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                      getName
+  
+  /*!
+    \param index -- Index identifying the beam.
+    \return name -- The name of the beam group, <tt>Stokes<index></tt>
+  */
+  std::string BF_StokesDataset::getName (unsigned int const &index)
+  {
+    char uid[10];
+    sprintf(uid,
+            "%03d",
+	    index);
+    
+    std::string name (uid);
+    
+    name = "Stokes" + name;
+    
+    return name;
+  }
+  
   
 } // Namespace DAL -- end

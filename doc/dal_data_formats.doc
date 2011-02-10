@@ -125,9 +125,10 @@
   |   |   |-- NOF_SAMPLES             Attr.               int
   |   |   |-- NOF_SUBBANDS            Attr.               int
   |   |   `-- NOF_CHANNELS            Attr.               array<int,1>
-  |   |-- STOKES_1                    Dataset
-  |   |-- STOKES_2                    Dataset
-  |   `-- STOKES_3                    Dataset
+  |   |-- Stokes000                   Dataset
+  |   |-- Stokes001                   Dataset
+  |   |-- Stokes002                   Dataset
+  |   `-- Stokes003                   Dataset
   |-- Beam001                         Group
   |
   \endverbatim
@@ -153,6 +154,7 @@
   The data format is implemented through the following DAL classes:
 
   - DAL::Sky_RootGroup
+  - DAL::Sky_ImageDataset
 
   \section dal_icd_005 File Naming Conventions (LOFAR-USG-ICD-005)
 
