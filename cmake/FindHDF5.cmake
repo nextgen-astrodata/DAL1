@@ -100,7 +100,7 @@ if (NOT HDF5_FOUND)
   endif (HDF5_HDF5_CPP_LIBRARY)
 
   ##_____________________________________________________________________________
-  ## Check for the executable
+  ## Check for the executables
   
   find_program (H5CHECK_EXECUTABLE h5check
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
