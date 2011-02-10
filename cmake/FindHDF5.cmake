@@ -35,6 +35,13 @@
 #  HDF5_HDF5_LIBRARY    = libhdf5
 #  HDF5_HDF5_HL_LIBRARY = libhdf5_hl
 #  HDF5_LFLAGS          = Linker flags (optional)
+#
+# Further inspection of the characteristics of the located HDF5 library
+# installation can be done based on the entries and definitions in H5pubconf.h:
+#
+#  H5_PACKAGE_VERSION    - Define to the version of this package.
+#  H5_USE_16_API_DEFAULT - Define using v1.6 public API symbols by default.
+#
 
 if (NOT HDF5_FOUND)
     
