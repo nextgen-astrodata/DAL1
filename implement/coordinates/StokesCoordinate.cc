@@ -306,8 +306,9 @@ namespace DAL {  // Namespace DAL -- begin
   {
     hid_t groupID (0);
     
-    groupID = H5Gopen1 (locationID,
-                        name.c_str());
+    groupID = H5Gopen (locationID,
+		       name.c_str(),
+		       H5P_DEFAULT);
     
     if (groupID) {
       read_hdf5 (groupID);

@@ -145,13 +145,13 @@ namespace DAL { // Namespace DAL -- begin
        check if 'name' is part of it.
     */
     if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
-      location_p = H5Gopen2 (location,
-			     name.c_str(),
-			     H5P_DEFAULT);
+      location_p = H5Gopen (location,
+			    name.c_str(),
+			    H5P_DEFAULT);
     } else {
       location_p = 0;
     }
-      
+    
     if (location_p > 0) {
       status = openEmbedded(create);
       status = true;

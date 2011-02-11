@@ -331,11 +331,8 @@ namespace DAL { // Namespace DAL -- begin
   bool CommonAttributes::h5read (hid_t const &locationID,
 				 std::string const &name)
   {
-    bool status (true);
-    hid_t groupID (0);
-    
-    groupID = H5Gopen1 (locationID,
-                        name.c_str());
+    bool status   = true;
+    hid_t groupID = H5Gopen (locationID, name.c_str(), H5P_DEFAULT);
     
     if (groupID) {
       status = h5read (groupID);

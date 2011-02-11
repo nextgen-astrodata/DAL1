@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2006                                                    *
  *   Joseph Masters (jmasters@science.uva.nl)                              *
  *   :ars B"ahren (bahren@astron.nl)                                       *
@@ -1281,7 +1278,7 @@ namespace DAL {
     sscanf(id.c_str(),"%3c%*6c",stid);
     char datasetname[18];
     sprintf( datasetname, "Station%c%c%c/%s", stid[0],stid[1],stid[2],id.c_str());
-    hid_t dataset = H5Dopen1( h5fh_p, datasetname );
+    hid_t dataset = H5Dopen ( h5fh_p, datasetname, H5P_DEFAULT );
     hid_t filespace = H5Dget_space( dataset );
     if (filespace < 0)
       {
@@ -1584,7 +1581,7 @@ namespace DAL {
     hid_t  status;
 
     // get the dataspace
-    lclfile = H5Dopen1(h5fh_p, arrayname.c_str());
+    lclfile = H5Dopen (h5fh_p, arrayname.c_str(), H5P_DEFAULT);
     hid_t filespace = H5Dget_space(lclfile);
 
     // what is the rank of the array?
@@ -1620,7 +1617,7 @@ namespace DAL {
     hid_t status;
     
     // get the dataspace
-    lclfile = H5Dopen1(h5fh_p, arrayname.c_str());
+    lclfile = H5Dopen (h5fh_p, arrayname.c_str(), H5P_DEFAULT);
     hid_t filespace = H5Dget_space(lclfile);
     
     // what is the rank of the array?

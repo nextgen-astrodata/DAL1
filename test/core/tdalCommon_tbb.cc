@@ -178,7 +178,7 @@ int test_timeseries (hid_t const &fileID)
     // Open up the first station group
     if (status) {
       cout << "-- Station groups = " << names << endl;
-      groupID = H5Gopen1 (fileID,names[0].c_str());
+      groupID = H5Gopen (fileID, names[0].c_str(), H5P_DEFAULT);
     }
     // If opening of group failed, do not continue
     if (groupID < 0) {
@@ -243,7 +243,7 @@ int test_timeseries (hid_t const &fileID)
     // Open up the first station group
     if (status) {
       cout << "-- Dipole datasets = " << names << endl;
-      datasetID = H5Dopen1 (groupID, names[0].c_str());
+      datasetID = H5Dopen (groupID, names[0].c_str(), H5P_DEFAULT);
     }
     // Check if dataset was opened successfully
     if (datasetID < 0) {

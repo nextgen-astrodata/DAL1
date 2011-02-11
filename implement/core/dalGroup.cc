@@ -111,7 +111,7 @@ namespace DAL {
     groupname_p     = gname;
 
     groupname_full = "/" + groupname_p;
-    if ( ( itsGroupID = H5Gopen1( itsFileID, groupname_full.c_str() ) ) < 0 )
+    if ( ( itsGroupID = H5Gopen ( itsFileID, groupname_full.c_str(), H5P_DEFAULT ) ) < 0 )
       {
         std::cerr << "ERROR: Could not create group'" << groupname_full
                   << "'.\n";
@@ -527,7 +527,7 @@ namespace DAL {
     hid_t  status;
 
     // get the dataspace
-    lclfile = H5Dopen1( itsGroupID, arrayname.c_str() );
+    lclfile = H5Dopen ( itsGroupID, arrayname.c_str(), H5P_DEFAULT );
     hid_t filespace = H5Dget_space(lclfile);
 
     // what is the rank of the array?

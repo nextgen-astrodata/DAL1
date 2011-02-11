@@ -110,12 +110,12 @@ int main (void)
    * Now reopen the file and group in the file.
    */
   file = H5Fopen(H5FILE_NAME, H5F_ACC_RDWR, H5P_DEFAULT);
-  grp  = H5Gopen2(file, "Data", H5P_DEFAULT);
+  grp  = H5Gopen(file, "Data", H5P_DEFAULT);
   
   /*
    * Access "Compressed_Data" dataset in the group.
    */
-  dataset = H5Dopen2(grp, "Compressed_Data", H5P_DEFAULT);
+  dataset = H5Dopen(grp, "Compressed_Data", H5P_DEFAULT);
   if( dataset < 0) printf(" Dataset 'Compressed-Data' is not found. \n");
   printf("\"/Data/Compressed_Data\" dataset is open \n");
   
@@ -133,7 +133,7 @@ int main (void)
    * We can access "Compressed_Data" dataset using created
    * hard link "Data_new".
    */
-  dataset = H5Dopen2(file, "/Data_new/Compressed_Data", H5P_DEFAULT);
+  dataset = H5Dopen(file, "/Data_new/Compressed_Data", H5P_DEFAULT);
   if( dataset < 0) printf(" Dataset is not found. \n");
   printf("\"/Data_new/Compressed_Data\" dataset is open \n");
   
@@ -225,7 +225,7 @@ static herr_t group_info (hid_t loc_id,
   /*
    * Open the datasets using their names.
    */
-  datasetID = H5Dopen2(loc_id, name, H5P_DEFAULT);
+  datasetID = H5Dopen (loc_id, name, H5P_DEFAULT);
   
   /*
    * Display dataset name.

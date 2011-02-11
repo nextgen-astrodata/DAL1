@@ -697,7 +697,7 @@ namespace DAL {
       file = lclfile;
       fileID_p = *lclfile;  // get the file handle
       
-      tableID_p = H5Dopen1 ( fileID_p, name.c_str() );
+      tableID_p = H5Dopen ( fileID_p, name.c_str(), H5P_DEFAULT );
     }
     else {
       std::cerr << "dalTable::openTable operation not supported for type "
@@ -811,7 +811,7 @@ namespace DAL {
                                  fill, compress, data );
         delete [] fill;
         fill = NULL;
-        tableID_p = H5Dopen1( fileID_p, tablename.c_str() );
+        tableID_p = H5Dopen ( fileID_p, tablename.c_str(), H5P_DEFAULT );
       }
     else
       {
