@@ -379,7 +379,7 @@ namespace DAL {
     // Set the chunk size
     h5error     = H5Pset_chunk (creationProperties, rank, chunkdims);
     // Create the Dataset ...
-    itsLocation  = H5Dcreate2 (location,
+    itsLocation  = H5Dcreate (location,
 			      itsName.c_str(),
 			      itsDatatype,
 			      itsDataspace,

@@ -159,15 +159,19 @@ if (NOT HDF5_FOUND)
     ## Run of test program successful?
     if (HDF5_VERSION_RUN_RESULT)
 
-      ## Extract major version
+      ## Library version _________________________
+
       string(REGEX REPLACE "H5_VERS_MAJOR ([0-9]+).*" "\\1" HDF5_VERSION_MAJOR ${HDF5_VERSION_OUTPUT})
-      ## Extract minor version
       string(REGEX REPLACE ".*H5_VERS_MINOR ([0-9]+).*" "\\1" HDF5_VERSION_MINOR ${HDF5_VERSION_OUTPUT})
-      ## Extract release version
       string(REGEX REPLACE ".*H5_VERS_RELEASE ([0-9]+).*" "\\1" HDF5_VERSION_RELEASE ${HDF5_VERSION_OUTPUT})
 
-      ## Support for parallel I/O?
+      ## Support for parallel I/O? _______________
+
       string(REGEX REPLACE ".*H5_HAVE_PARALLEL ([0-9]+).*" "\\1" HDF5_HAVE_PARALLEL_IO ${HDF5_VERSION_OUTPUT})
+
+      ## Default API version _____________________
+
+      string(REGEX REPLACE ".*H5_USE_16_API_DEFAULT ([0-9]+).*" "\\1" HDF5_USE_16_API_DEFAULT ${HDF5_VERSION_OUTPUT})
 
     else (HDF5_VERSION_RUN_RESULT)
       message (STATUS "[HDF5] Failed to run TestHDF5Library!")

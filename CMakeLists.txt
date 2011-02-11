@@ -19,7 +19,6 @@ option (DAL_BUILD_APPS         "Build the applications?"                      YE
 option (DAL_ENABLE_TESTING     "Build the test programs?"                     YES )
 option (DAL_ENABLE_DASHBOARD   "Send a build report to the Dashboard server?" YES )
 option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?"    ON  )
-option (DAL_HDF5_MACROS        "HDF5 compatibility macros version"            YES )
 option (DAL_PYTHON_BINDINGS    "Create python bindings?"                      YES )
 option (DAL_DEBUGGING_MESSAGES "Print debugging information?"                 NO  )
 option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"         NO  )
@@ -81,9 +80,9 @@ add_definitions (
 ##__________________________________________________________
 ## Handle option: Compatibility macros to version 2
 
-if (DAL_HDF5_MACROS)
-  add_definitions (-DHDF5_MACROS_VERS2)
-endif (DAL_HDF5_MACROS)
+if (HDF5_USE_16_API_DEFAULT)
+  add_definitions (-DH5_USE_16_API_DEFAULT=0)
+endif (HDF5_USE_16_API_DEFAULT)
 
 ## ==============================================================================
 ##

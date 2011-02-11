@@ -496,14 +496,16 @@ namespace DAL {
                 of the array.
     \param chnkdims Specifies the chunk size for extendible arrays.
    */
-  dalIntArray::dalIntArray( hid_t obj_id, string arrayname,
-                            vector<int> dims, int data[], vector<int> chnkdims )
+  dalIntArray::dalIntArray( hid_t obj_id,
+			    string arrayname,
+                            vector<int> dims,
+			    int data[],
+			    vector<int> chnkdims)
   {
     hid_t datatype  = 0;
-    hid_t dataspace = 0;  // declare a few h5 variables
-
-    name = arrayname;  // set the private name variable to the array name
-
+    hid_t dataspace = 0;
+    name            = arrayname;
+    
     // determine the rank from the size of the dimensions vector
     unsigned int rank = dims.size();
     hsize_t mydims[rank];  // declare a dimensions c-array
@@ -511,50 +513,51 @@ namespace DAL {
     hsize_t chunk_dims[ rank ];  // declare chunk dimensions c-array
 
     // set the c-array dimensions and maxiumum dimensions
-    for (unsigned int ii=0; ii<rank; ii++)
-      {
-        mydims[ii] = dims[ii];  // vector to c-array
-        maxdims[ii] = H5S_UNLIMITED;
-      }
-
+    for (unsigned int ii=0; ii<rank; ii++) {
+      mydims[ii] = dims[ii];  // vector to c-array
+      maxdims[ii] = H5S_UNLIMITED;
+    }
+    
     // set the c-array chunk dimensions from the chunk dims vector
-    for (unsigned int ii=0; ii<chnkdims.size(); ii++)
-      {
-        chunk_dims[ii] = chnkdims[ii];
-      }
-
+    for (unsigned int ii=0; ii<chnkdims.size(); ii++) {
+      chunk_dims[ii] = chnkdims[ii];
+    }
+    
     // set the datatype to write
-    if ( ( datatype = H5Tcopy(H5T_NATIVE_INT) ) < 0 )
-      {
-        std::cerr << "ERROR: Could not set array datatype.\n";
-      }
-
+    if ( ( datatype = H5Tcopy(H5T_NATIVE_INT) ) < 0 ) {
+      std::cerr << "ERROR: Could not set array datatype.\n";
+    }
+    
     // if there are chunk dimensions, write the data this way
-    if ( chnkdims.size()>0 )
-      {
-        if ( ( dataspace = H5Screate_simple(rank,mydims,maxdims) ) < 0 )
-          {
-            std::cerr << "ERROR: Could not set array dataspace.\n";
-          }
-
-        hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
-        if ( cparms < 0 )
-          {
-            std::cerr << "ERROR: Could not set array propertylist.\n";
-          }
-
-        if ( H5Pset_chunk( cparms, rank, chunk_dims ) < 0 )
-          {
-            std::cerr << "ERROR: Could not set array chunk size.\n";
-          }
-
-        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
-                                      dataspace, cparms) ) < 0 )
-          {
-            std::cerr << "ERROR: Could not create array.\n";
-          }
-
-      }
+    if ( chnkdims.size()>0 ) {
+      if ( ( dataspace = H5Screate_simple(rank,mydims,maxdims) ) < 0 )
+	{
+	  std::cerr << "ERROR: Could not set array dataspace.\n";
+	}
+      
+      hid_t cparms = H5Pcreate( H5P_DATASET_CREATE );
+      if ( cparms < 0 )
+	{
+	  std::cerr << "ERROR: Could not set array propertylist.\n";
+	}
+      
+      if ( H5Pset_chunk( cparms, rank, chunk_dims ) < 0 )
+	{
+	  std::cerr << "ERROR: Could not set array chunk size.\n";
+	}
+      
+      if ( ( itsDatasetID = H5Dcreate (obj_id,
+				       arrayname.c_str(),
+				       datatype,
+				       dataspace,
+				       H5P_DEFAULT,
+				       cparms,
+				       H5P_DEFAULT) ) < 0 )
+	{
+	  std::cerr << "ERROR: Could not create array.\n";
+	}
+      
+    }
     // otherwise, write the data this way
     else
       {
@@ -563,8 +566,8 @@ namespace DAL {
             std::cerr << "ERROR: Could not set array dataspace.\n";
           }
 
-        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
-                                      dataspace, H5P_DEFAULT ) ) < 0 )
+        if ( ( itsDatasetID = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+                                      dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array.\n";
           }
@@ -743,8 +746,8 @@ namespace DAL {
             std::cerr << "ERROR: Could not set array chunk size.\n";
           }
 
-        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
-                                      dataspace, cparms ) ) < 0 )
+        if ( ( itsDatasetID = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+                                      dataspace, H5P_DEFAULT, cparms, H5P_DEFAULT ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array.\n";
           }
@@ -758,8 +761,8 @@ namespace DAL {
             std::cerr << "ERROR: Could not set array dataspace.\n";
           }
 
-        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
-                                      dataspace, H5P_DEFAULT ) ) < 0 )
+        if ( ( itsDatasetID = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+                                      dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array.\n";
           }
@@ -913,8 +916,8 @@ namespace DAL {
                       << arrayname << "'.\n";
           }
 
-        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
-                                      dataspace, H5P_DEFAULT ) ) < 0 )
+        if ( ( itsDatasetID = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+                                      dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array '" << arrayname << "'.\n";
           }
@@ -1049,8 +1052,8 @@ namespace DAL {
                       << arrayname << "'.\n";
           }
 
-        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
-                                      dataspace, cparms ) ) < 0 )
+        if ( ( itsDatasetID = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+                                      dataspace, H5P_DEFAULT, cparms, H5P_DEFAULT ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array '" << arrayname << "'.\n";
           }
@@ -1064,8 +1067,8 @@ namespace DAL {
                       << arrayname << "'.\n";
           }
 
-        if ( ( itsDatasetID = H5Dcreate1( obj_id, arrayname.c_str(), datatype,
-                                      dataspace, H5P_DEFAULT ) ) < 0 )
+        if ( ( itsDatasetID = H5Dcreate( obj_id, arrayname.c_str(), datatype,
+                                      dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT ) ) < 0 )
           {
             std::cerr << "ERROR: Could not create array '" << arrayname << "'.\n";
           }
