@@ -13,11 +13,11 @@ add_subdirectory (core)
 add_subdirectory (data_common)
 add_subdirectory (data_hl)
 
-if (HAVE_CASACORE AND LAPACK_LAPACK_LIBRARY)
+if (CASACORE_FOUND AND LAPACK_LAPACK_LIBRARY)
   add_subdirectory (coordinates)
-else (HAVE_CASACORE AND LAPACK_LAPACK_LIBRARY)
+else (CASACORE_FOUND AND LAPACK_LAPACK_LIBRARY)
   message (STATUS "[DAL] Skipping tests in test/coordinates.")
-endif (HAVE_CASACORE AND LAPACK_LAPACK_LIBRARY)
+endif (CASACORE_FOUND AND LAPACK_LAPACK_LIBRARY)
 
 if (DAL_PYTHON_BINDINGS)
   add_subdirectory (bindings)
@@ -37,7 +37,7 @@ foreach (src ${tests})
   ## executable and its source
   add_executable(${src} ${src}.cc)
   ## libraries against which to link
-  if (HAVE_CASA OR HAVE_CASACORE)
+  if (HAVE_CASA OR CASACORE_FOUND)
     target_link_libraries(${src}
       ${CASA_LIBRARIES}
       dal
@@ -45,9 +45,9 @@ foreach (src ${tests})
       ${CFITSIO_LIBRARIES}
       ${dal_link_libraries}
       )
-  else (HAVE_CASA OR HAVE_CASACORE)
+  else (HAVE_CASA OR CASACORE_FOUND)
     target_link_libraries(${src} dal)
-  endif (HAVE_CASA OR HAVE_CASACORE)
+  endif (HAVE_CASA OR CASACORE_FOUND)
 endforeach (src)
 
 ## ------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ endforeach (src)
 
 ## [1] casacore
 
-if (HAVE_CASA OR HAVE_CASACORE)
+if (HAVE_CASA OR CASACORE_FOUND)
   ## additional compiler flags
   add_definitions (-DHAVE_CASA)
   foreach (src tMeasurementSets)
@@ -67,13 +67,13 @@ if (HAVE_CASA OR HAVE_CASACORE)
     ## installation
     list (APPEND tests ${src})
   endforeach (src)
-else (HAVE_CASA OR HAVE_CASACORE)
+else (HAVE_CASA OR CASACORE_FOUND)
   message (STATUS "Skipping test programs that require casacore!")
-endif (HAVE_CASA OR HAVE_CASACORE)
+endif (HAVE_CASA OR CASACORE_FOUND)
 
 ## [2] casacore & HDF5
 
-if (HAVE_CASACORE)
+if (CASACORE_FOUND)
   if (HDF5_FOUND)
     if (GFORTRAN_LIBRARIES)
       if (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
@@ -106,9 +106,9 @@ if (HAVE_CASACORE)
   else (HDF5_FOUND)
     message (STATUS "[DAL] Skipping tests - missing HDF5.")
   endif (HDF5_FOUND)
-else (HAVE_CASACORE)
+else (CASACORE_FOUND)
   message (STATUS "[DAL] Skipping tests - missing casacore.")
-endif (HAVE_CASACORE)
+endif (CASACORE_FOUND)
 
 ## ==============================================================================
 ##

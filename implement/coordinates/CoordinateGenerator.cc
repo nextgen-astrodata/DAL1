@@ -222,8 +222,8 @@ namespace DAL { // Namespace DAL -- begin
   bool CoordinateGenerator::makeCoordinate (casa::DirectionCoordinate &coord,
 					    casa::MDirection::Types const &refcode,
 					    casa::Projection::Type const &projection,
-					    Vector<Quantum<double> > const &refValue,
-					    Vector<Quantum<double> > const &increment,
+					    Vector<casa::Quantum<double> > const &refValue,
+					    Vector<casa::Quantum<double> > const &increment,
 					    Vector<double> const &refPixel)
   {
     bool status (true);

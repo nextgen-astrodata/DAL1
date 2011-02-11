@@ -30,14 +30,13 @@
 #include <string>
 #include <vector>
 
+#include <dal_config.h>
+#include <dalCommon.h>
+
 #ifdef HAVE_CASA
 #ifndef WCSLIB_GETWCSTAB
 #define WCSLIB_GETWCSTAB 1
 #endif
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Quanta/Quantum.h>
 #include <coordinates/Coordinates/ObsInfo.h>
 #include <coordinates/Coordinates/Coordinate.h>
 #include <coordinates/Coordinates/DirectionCoordinate.h>
@@ -46,11 +45,8 @@
 #include <coordinates/Coordinates/SpectralCoordinate.h>
 #include <coordinates/Coordinates/TabularCoordinate.h>
 
-using casa::Quantum;
 using casa::Vector;
 #endif
-
-#include <dalCommon.h>
 
 namespace DAL { // Namespace DAL -- begin
   

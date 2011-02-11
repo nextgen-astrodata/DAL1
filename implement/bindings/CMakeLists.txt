@@ -22,7 +22,7 @@
   ##______________________________________________
   ## linker instructions
   
-  target_link_libraries(pydal
+  target_link_libraries (pydal
     ${dal_link_libraries}
     ${PYTHON_LIBRARIES}
     ${BOOST_LIBRARIES}

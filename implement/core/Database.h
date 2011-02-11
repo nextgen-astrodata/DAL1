@@ -23,13 +23,7 @@
 
 #include <string>
 
-#ifdef HAVE_MYSQL
-#include <mysql/mysql.h>
-#endif
-
-#ifndef DAL_H
-#include "dal.h"
-#endif
+#include <dalBaseTypes.h>
 
 namespace DAL {
   

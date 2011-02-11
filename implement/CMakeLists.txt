@@ -8,13 +8,7 @@
 ##
 ## ==============================================================================
 
-if (HAVE_CASA OR HAVE_CASACORE)
-  add_definitions (
-    -DHAVE_CASA
-    # -- compiler flags utilized in the source code --
-    -DAIPS_STDLIB
-    -DAIPS_AUTO_STL
-    )
+if (HAVE_CASA OR CASACORE_FOUND)
   IF (APPLE)
     ## definition common to apple architectures
     add_definitions (
@@ -39,7 +33,7 @@ if (HAVE_CASA OR HAVE_CASACORE)
       add_definitions (-DAIPS_64B)
     endif (NOT CMAKE_SYSTEM_PROCESSOR MATCHES powerpc)
   endif (APPLE)
-endif (HAVE_CASA OR HAVE_CASACORE)
+endif (HAVE_CASA OR CASACORE_FOUND)
 
 ## ==============================================================================
 ##

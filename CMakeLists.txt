@@ -56,13 +56,6 @@ if (NOT DAL_VERBOSE_CONFIGURE)
 endif (NOT DAL_VERBOSE_CONFIGURE)
 
 ##__________________________________________________________
-## Handle option: debugging messages?
-
-if (DAL_DEBUGGING_MESSAGES)
-  add_definitions (-DDEBUGGING_MESSAGES)
-endif (DAL_DEBUGGING_MESSAGES)
-
-##__________________________________________________________
 ## Handle option: Enable standard set of compiler warnings?
 
 if (DAL_COMPILER_WARNINGS)
@@ -76,6 +69,12 @@ add_definitions (
   -D_LARGEFILE_SOURCE
   -fPIC
   )
+
+if (DAL_DEBUGGING_MESSAGES)
+  set (DEBUGGING_MESSAGES 1)
+else (DAL_DEBUGGING_MESSAGES)
+  set (DEBUGGING_MESSAGES 0)
+endif (DAL_DEBUGGING_MESSAGES)
 
 ## ==============================================================================
 ##
@@ -145,6 +144,7 @@ endif (NOT NUM_UTIL_INCLUDES)
 ## Header files of the DAL itself
 
 include_directories (
+  ${DAL_BINARY_DIR}
   ${DAL_SOURCE_DIR}/implement
   ${DAL_SOURCE_DIR}/implement/core
   ${DAL_SOURCE_DIR}/implement/coordinates

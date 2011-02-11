@@ -1,0 +1,118 @@
+
+#ifndef DAL_CONFIG_H
+#define DAL_CONFIG_H
+
+// ==============================================================================
+//
+//  Handling of DAL options
+//
+// ==============================================================================
+
+/* Print debugging information? */
+#cmakedefine DEBUGGING_MESSAGES
+
+// ==============================================================================
+//
+//  Compiler flags
+//
+// ==============================================================================
+
+/* Define to 1 if we have the BOOST library */
+#cmakedefine HAVE_BOOST
+
+/* Define to 1 if we have the CFITSIO library */
+#cmakedefine HAVE_CFITSIO
+
+/* Define to 1 if we have the CASACORE/CASA library */
+#cmakedefine HAVE_CASA
+
+/* Define to 1 if we have the GSL library */
+#cmakedefine HAVE_GSL
+
+/* Define to 1 if we have a working installation of the HDF5 library */
+#cmakedefine HAVE_HDF5
+
+  /* ## compiler flags */
+  /* add_definitions (-DH5_USE_16_API_DEFAULT=0) */
+
+/* Define to 1 if we have the LOFAR library */
+#cmakedefine HAVE_LOFAR
+
+/*
+  Define to 1 if we have the MySQL library
+  MYSQL_INCLUDES = ${MYSQL_INCLUDES}
+*/
+#cmakedefine HAVE_MYSQL
+
+/* Define to 1 if we have the OPENMP library */
+#cmakedefine HAVE_OPENMP
+
+/* Define to 1 if we have the WCSLIB library */
+#cmakedefine HAVE_WCSLIB
+
+// ==============================================================================
+//
+//  External header files
+//
+// ==============================================================================
+
+/* HDF5 header files */
+
+#ifdef HAVE_HDF5
+#include <hdf5.h>
+#include <hdf5_hl.h>
+#endif
+
+/* casacore header files */
+
+#ifdef HAVE_CASA
+#define AIPS_STDLIB 1
+#define AIPS_AUTO_STL 1
+#include <casa/aips.h>
+#include <casa/aipstype.h>
+#include <casa/complex.h>
+#include <casa/Arrays.h>
+#include <casa/Arrays/IPosition.h>
+#include <casa/Arrays/Matrix.h>
+#include <casa/Arrays/Vector.h>
+#include <casa/BasicSL/String.h>
+#include <casa/BasicMath/Math.h>
+#include <casa/Quanta/Quantum.h>
+#include <ms/MeasurementSets.h>
+#include <ms/MeasurementSets/MSReader.h>
+#include <tables/Tables.h>
+#include <tables/Tables/Table.h>
+#include <tables/Tables/ScalarColumn.h>
+#include <tables/Tables/TableParse.h>
+#include <tables/Tables/TableKeyword.h>
+#endif
+
+#ifdef HAVE_MYSQL
+#include <mysql/mysql.h>
+#endif
+
+// ==============================================================================
+//
+//  Type definitions
+//
+// ==============================================================================
+
+namespace DAL {
+
+  const bool SUCCESS = true;
+  const bool FAIL    = false;
+  
+  typedef unsigned char         UInt8;
+  typedef unsigned short       UInt16;
+  typedef short                 Int16;
+  typedef unsigned int         UInt32;
+  typedef int                   Int32;
+  typedef float               Float32;
+  typedef long long             Int64;
+  typedef unsigned long long   UInt64;
+  typedef double              Float64;
+   
+}   //   END -- namespace DAL
+
+#endif
+

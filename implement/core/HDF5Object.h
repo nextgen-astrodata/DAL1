@@ -32,9 +32,7 @@
 #include <string>
 #include <vector>
 
-#ifdef HAVE_HDF5
-#include <hdf5.h>
-#endif
+#include <dal_config.h>
 
 namespace DAL { // Namespace DAL -- begin
   

@@ -38,6 +38,8 @@
 #include <iostream>
 #include <string>
 
+#include <dal_config.h>
+
 #ifdef HAVE_CFITSIO
 #include <fitsio.h>
 #endif

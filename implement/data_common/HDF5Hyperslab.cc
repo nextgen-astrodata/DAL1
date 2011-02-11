@@ -802,18 +802,6 @@ namespace DAL { // Namespace DAL -- begin
       }
     }
     
-#ifdef DEBUGGING_MESSAGES
-    std::cout << "-- start          = " << start << " -> "
-	      << toSTring(tmpStart,nelem) << std::endl;
-    std::cout << "-- Have stride    = " << haveStride << std::endl;
-    std::cout << "-- stride         = " << stride << " -> "
-	      << toSTring(tmpStride,nelem) << std::endl;
-    std::cout << "-- Have count     = " << haveCount  << std::endl;
-    std::cout << "-- count          = " << count << " -> "
-	      << toSTring(tmpCount,nelem) << std::endl;
-    std::cout << "-- Have block     = " << haveBlock  << std::endl;
-#endif
-    
     // Select hyperslab from dataspace _____________________
     
     /* Assign the Hyperslab selection to the dataspace. */

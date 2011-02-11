@@ -47,28 +47,7 @@
 #include <complex>  // for complex datatypes
 #include <time.h>   // for local time conversion
 
-/* HDF5 header files */
-#ifdef HAVE_HDF5
-#include <hdf5.h>
-#include <hdf5_hl.h>
-#endif
-
-/* casacore header files */
-#ifdef HAVE_CASA
-#include <casa/aips.h>
-#include <casa/BasicMath/Math.h>
-#include <casa/Arrays.h>
-#include <casa/Arrays/IPosition.h>
-#include <ms/MeasurementSets.h>
-#include <ms/MeasurementSets/MSReader.h>
-#include <casa/aipstype.h>
-#include <casa/complex.h>
-#include <tables/Tables.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/TableParse.h>
-#include <tables/Tables/TableKeyword.h>
-#endif
+#include <dal_config.h>
 
 #ifdef HAVE_CFITSIO
 extern "C"
@@ -102,9 +81,6 @@ namespace DAL {
   const std::string FITSTYPE   = "FITS";
   const std::string MSCASATYPE = "MSCASA";
   
-  const bool SUCCESS = true;
-  const bool FAIL    = false;
-  
   const std::string dal_CHAR          = "dalCHAR";
   const std::string dal_STRING        = "dalSTRING";
   const std::string dal_BOOL          = "dalBOOL";
@@ -121,18 +97,6 @@ namespace DAL {
   const std::string dal_DCOMPLEX      = "dalDCOMPLEX";
   const std::string dal_COMPLEX_CHAR  = "dalCOMPLEX_CHAR";
   const std::string dal_COMPLEX_SHORT = "dalCOMPLEX_SHORT";
-
-  // === Type definitions =======================================================
-  
-  typedef unsigned char         UInt8;
-  typedef unsigned short       UInt16;
-  typedef short                 Int16;
-  typedef unsigned int         UInt32;
-  typedef int                   Int32;
-  typedef float               Float32;
-  typedef long long             Int64;
-  typedef unsigned long long   UInt64;
-  typedef double              Float64;
 
   // === Structs ================================================================
   

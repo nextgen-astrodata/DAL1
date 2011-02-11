@@ -22,7 +22,6 @@ if (LUS_ROOT)
       CMakeSettings
       FindTestDatasets
       FindBoost
-      FindCASACORE
       FindGFortran
       FindPython
       FindNumPy
@@ -30,12 +29,15 @@ if (LUS_ROOT)
       )
     include (${LUS_ROOT}/devel_common/cmake/${_luscmake}.cmake)
   endforeach (_luscmake)
+  ##
+  set (CASACORE_FOUND ${HAVE_CASACORE})
 endif (LUS_ROOT)
 
 ##__________________________________________________________
 ##                                      Custom CMake modules
 
 foreach (_dalcmake
+    FindCasacore
     FindCFITSIO
     FindGSL
     FindHDF5
@@ -65,65 +67,55 @@ endif (CMAKE_SIZEOF_VOID_P)
 ##                                     External header files
 
 if (HAVE_BOOST)
-  include_directories (${BOOST_INCLUDES} ${BOOST_INCLUDES}/boost)
-  add_definitions (-DHAVE_BOOST)
+  include_directories (${BOOST_INCLUDES}/boost)
 else (HAVE_BOOST)
   message (STATUS "[DAL] Missing or incomplete installation of Boost!")
 endif (HAVE_BOOST)
 
-if (HAVE_CASACORE)
-  include_directories (${CASACORE_INCLUDES})
-  add_definitions (-DHAVE_CASA)
-else (HAVE_CASACORE)
-  message (STATUS "[DAL] Missing or incomplete installation of casacore!")
-endif (HAVE_CASACORE)
-
-if (CFITSIO_FOUND)
-  include_directories (${CFITSIO_INCLUDES})
-  add_definitions (-DHAVE_CFITSIO)
-else (CFITSIO_FOUND)
-  message (STATUS "[DAL] Missing or incomplete installation of CFITSIO!")
-endif (CFITSIO_FOUND)
-
 if (HDF5_FOUND AND HDF5_HDF5_HL_LIBRARY)
-  ## include directories
-  include_directories (${HDF5_INCLUDES})
-  ## compiler flags
-  add_definitions (-DHAVE_HDF5)
   if (HDF5_USE_16_API_DEFAULT)
     add_definitions (-DH5_USE_16_API_DEFAULT=0)
   endif (HDF5_USE_16_API_DEFAULT)
-else (HDF5_FOUND AND HDF5_HDF5_HL_LIBRARY)
-  message (STATUS "[DAL] HDF5 installation incomplete!")
 endif (HDF5_FOUND AND HDF5_HDF5_HL_LIBRARY)
 
-if (LOFAR_FOUND)
-  include_directories (${LOFAR_INCLUDES})
-  add_definitions (-DHAVE_LOFAR)
-endif (LOFAR_FOUND)
+foreach (_external
+    BOOST
+    CASA
+    CFITSIO
+    GSL
+    HDF5
+    LOFAR
+    MYSQL
+    WCSLIB
+    )
 
-if (MYSQL_FOUND)
-  include_directories (${MYSQL_INCLUDES})
-  add_definitions (-DHAVE_MYSQL)
-endif (MYSQL_FOUND)
+  if (${_external}_FOUND OR HAVE_${_external})
 
-if (GSL_FOUND)
-  include_directories (${GSL_INCLUDES})
-  add_definitions (-DHAVE_GSL)
-else (GSL_FOUND)
-  message (STATUS "[DAL] Disabling support for using GSL!")
-endif (GSL_FOUND)
+    ## variable mapping
+    set (HAVE_${_external} TRUE)
+    
+    ## include directories
+    include_directories (${${_external}_INCLUDES})
 
-if (HAVE_OPNEMP)
-  add_definitions (-DHAVE_OPNEMP)
-endif (HAVE_OPNEMP)
+  endif (${_external}_FOUND OR HAVE_${_external})
+  
+endforeach (_external)
 
-if (WCSLIB_FOUND)
-  include_directories (${WCSLIB_INCLUDES})
-  add_definitions (-DHAVE_WCSLIB)
-else (WCSLIB_FOUND)
-  message (STATUS "[DAL] Disabling support for using WCSLIB!")
-endif (WCSLIB_FOUND)
+## ==============================================================================
+##
+##  Configure file
+##
+##  Any occurrences of #cmakedefine VAR will be replaced with either #define VAR
+##  or /* #undef VAR */ depending on the setting of VAR in CMake. Any occurrences
+##  of #cmakedefine01 VAR will be replaced with either #define VAR 1 or
+##  #define VAR 0 depending on whether VAR evaluates to TRUE or FALSE in CMake
+##
+## ==============================================================================
+
+configure_file (
+  ${DAL_SOURCE_DIR}/cmake/dal_config.h.in
+  ${DAL_BINARY_DIR}/dal_config.h
+  )
 
 ## ==============================================================================
 ##
@@ -138,7 +130,7 @@ message (STATUS " Python version                   = ${PYTHON_VERSION}"         
 message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}"  )
 message (STATUS " Enable Dashboard server          = ${DAL_ENABLE_DASHBOARD}"    )
 message (STATUS " Enable Python bindings           = ${DAL_PYTHON_BINDINGS}"     )
-message (STATUS " Enable code using casacore       = ${HAVE_CASACORE}"           )
+message (STATUS " Enable code using casacore       = ${CASACORE_FOUND}"          )
 message (STATUS " Enable code using CFITSIO        = ${CFITSIO_FOUND}"           )
 message (STATUS " Enable code using GSL            = ${GSL_FOUND}"               )
 message (STATUS " Enable code using HDF5           = ${HDF5_FOUND}"              )

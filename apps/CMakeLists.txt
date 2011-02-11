@@ -25,7 +25,7 @@ set (apps_link_libraries dal)
 ##____________________________________________________________________
 ## Applications which require casacore
 
-if (HAVE_CASA OR HAVE_CASACORE)
+if (HAVE_CASA OR CASACORE_FOUND)
   ## source files
   list (APPEND tests msread)
   list (APPEND tests ms2h5)
@@ -34,9 +34,9 @@ if (HAVE_CASA OR HAVE_CASACORE)
   list (APPEND apps_link_libraries
     ${dal_link_libraries}
     )
-else (HAVE_CASA OR HAVE_CASACORE)
+else (HAVE_CASA OR CASACORE_FOUND)
   message (STATUS "[DAL] Unable to build applications: msread, ms2h5")
-endif (HAVE_CASA OR HAVE_CASACORE)
+endif (HAVE_CASA OR CASACORE_FOUND)
 
 ##____________________________________________________________________
 ## Applications which require Boost
