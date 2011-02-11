@@ -130,89 +130,57 @@ if (NOT HDF5_FOUND)
     )
 
   ##_____________________________________________________________________________
-  ## Determine library version
+  ## Test HDF5 library for:
+  ##  - library version <major.minor.release>
+  ##  - parallel I/O support
+  ##  - default API version
   
   if (HDF5_INCLUDES AND HDF5_LIBRARIES)
     ## Locate test program
-    find_file (HAVE_TestHDF5LibraryVersion TestHDF5LibraryVersion.cc
+    find_file (HAVE_TestHDF5Library TestHDF5Library.cc
       PATHS ${PROJECT_SOURCE_DIR}
       PATH_SUFFIXES cmake Modules
       )
     ## Test for library version
-    if (HAVE_TestHDF5LibraryVersion)
+    if (HAVE_TestHDF5Library)
       ## Build and run test program
       try_run(HDF5_VERSION_RUN_RESULT HDF5_VERSION_COMPILE_RESULT
 	${PROJECT_BINARY_DIR}
-	${HAVE_TestHDF5LibraryVersion}
+	${HAVE_TestHDF5Library}
 	CMAKE_FLAGS -DLINK_LIBRARIES:STRING=${HDF5_LIBRARIES}
 	COMPILE_DEFINITIONS -I${HDF5_INCLUDES}
 	RUN_OUTPUT_VARIABLE HDF5_VERSION_OUTPUT
 	)
-      ## Evaluate test results
-      if (HDF5_VERSION_COMPILE_RESULT)
-	if (HDF5_VERSION_RUN_RESULT)
-	  ## Extract major version
-	  string(REGEX REPLACE "H5_VERS_MAJOR ([0-9]+).*" "\\1" HDF5_VERSION_MAJOR ${HDF5_VERSION_OUTPUT})
-	  ## Extract minor version
-	  string(REGEX REPLACE ".*H5_VERS_MINOR ([0-9]+).*" "\\1" HDF5_VERSION_MINOR ${HDF5_VERSION_OUTPUT})
-	  ## Extract release version
-	  string(REGEX REPLACE ".*H5_VERS_RELEASE ([0-9]+).*" "\\1" HDF5_VERSION_RELEASE ${HDF5_VERSION_OUTPUT})
-	else (HDF5_VERSION_RUN_RESULT)
-	  message (STATUS "[HDF5] Failed to run TestHDF5LibraryVersion!")
-	endif (HDF5_VERSION_RUN_RESULT)
-      else (HDF5_VERSION_COMPILE_RESULT)
-	message (STATUS "[HDF5] Failed to compile TestHDF5LibraryVersion!")
-      endif (HDF5_VERSION_COMPILE_RESULT)
-    else (HAVE_TestHDF5LibraryVersion)
-      set (HDF5_VERSION_MAJOR   "-1" )
-      set (HDF5_VERSION_MINOR   "-1" )
-      set (HDF5_VERSION_RELEASE "-1" )
-    endif (HAVE_TestHDF5LibraryVersion)
-  else (HDF5_INCLUDES AND HDF5_LIBRARIES)
+    endif (HAVE_TestHDF5Library)
+  endif (HDF5_INCLUDES AND HDF5_LIBRARIES)
+  
+  ## Comile of test program successful?
+  if (HDF5_VERSION_COMPILE_RESULT)
+    ## Run of test program successful?
+    if (HDF5_VERSION_RUN_RESULT)
+
+      ## Extract major version
+      string(REGEX REPLACE "H5_VERS_MAJOR ([0-9]+).*" "\\1" HDF5_VERSION_MAJOR ${HDF5_VERSION_OUTPUT})
+      ## Extract minor version
+      string(REGEX REPLACE ".*H5_VERS_MINOR ([0-9]+).*" "\\1" HDF5_VERSION_MINOR ${HDF5_VERSION_OUTPUT})
+      ## Extract release version
+      string(REGEX REPLACE ".*H5_VERS_RELEASE ([0-9]+).*" "\\1" HDF5_VERSION_RELEASE ${HDF5_VERSION_OUTPUT})
+
+      ## Support for parallel I/O?
+      string(REGEX REPLACE ".*H5_HAVE_PARALLEL ([0-9]+).*" "\\1" HDF5_HAVE_PARALLEL_IO ${HDF5_VERSION_OUTPUT})
+
+    else (HDF5_VERSION_RUN_RESULT)
+      message (STATUS "[HDF5] Failed to run TestHDF5Library!")
+    endif (HDF5_VERSION_RUN_RESULT)
+  else (HDF5_VERSION_COMPILE_RESULT)
+    message (STATUS "[HDF5] Failed to compile TestHDF5Library!")
     set (HDF5_VERSION_MAJOR   "-1" )
     set (HDF5_VERSION_MINOR   "-1" )
     set (HDF5_VERSION_RELEASE "-1" )
-  endif (HDF5_INCLUDES AND HDF5_LIBRARIES)
-
-  set (HDF5_VERSION "${HDF5_VERSION_MAJOR}.${HDF5_VERSION_MINOR}.${HDF5_VERSION_RELEASE}")
-  
-  ##_____________________________________________________________________________
-  ## HDF5 compiled with parallel IO support?
-
-  if (HDF5_INCLUDES AND HDF5_LIBRARIES)
-    ## Locate test program
-    find_file (HAVE_TestHDF5ParallelSupport TestHDF5ParallelSupport.cc
-      PATHS ${PROJECT_SOURCE_DIR}
-      PATH_SUFFIXES cmake Modules
-      )
-    ## Test for parallel IO support
-    if (HAVE_TestHDF5ParallelSupport)
-      ## Build and run test program
-      try_run(HDF5_PARALLEL_RUN_RESULT HDF5_PARALLEL_COMPILE_RESULT
-	${PROJECT_BINARY_DIR}
-	${HAVE_TestHDF5ParallelSupport}
-	CMAKE_FLAGS -DLINK_LIBRARIES:STRING=${HDF5_LIBRARIES}
-	COMPILE_DEFINITIONS -I${HDF5_INCLUDES}
-	OUTPUT_VARIABLE HDF5_PARALLEL_OUTPUT_VARIABLE
-	)
-      ## Evaluate test results
-      if (HDF5_PARALLEL_COMPILE_RESULT)
-	if (HDF5_PARALLEL_RUN_RESULT)
-	  set (HDF5_HAVE_PARALLEL_IO TRUE)
-	else (HDF5_PARALLEL_RUN_RESULT)
-	  set (HDF5_HAVE_PARALLEL_IO FALSE)
-	endif (HDF5_PARALLEL_RUN_RESULT)
-      else (HDF5_PARALLEL_COMPILE_RESULT)
-	message (STATUS "[HDF5] Failed to compile test program!")
-      endif (HDF5_PARALLEL_COMPILE_RESULT)
-      
-    else (HAVE_TestHDF5ParallelSupport)
-      message (STATUS "Unable to check parallel IO support!")
-      set (HDF5_HAVE_PARALLEL_IO FALSE)
-    endif (HAVE_TestHDF5ParallelSupport)
-  else (HDF5_INCLUDES AND HDF5_LIBRARIES)
     set (HDF5_HAVE_PARALLEL_IO FALSE)
-  endif (HDF5_INCLUDES AND HDF5_LIBRARIES)
+  endif (HDF5_VERSION_COMPILE_RESULT)
+  
+  set (HDF5_VERSION "${HDF5_VERSION_MAJOR}.${HDF5_VERSION_MINOR}.${HDF5_VERSION_RELEASE}")
   
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
