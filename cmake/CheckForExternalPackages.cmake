@@ -3,6 +3,7 @@
 ##                                    Standard CMake modules
 
 include (FindMPI)
+include (FindOpenMP)
 
 ##__________________________________________________________
 ##                                         LUS CMake modules
@@ -149,13 +150,11 @@ message (STATUS " .. MPI compiler                  = ${MPI_COMPILER}"           
 message (STATUS " .. MPI compile flags             = ${MPI_COMPILE_FLAGS}"       )
 message (STATUS " .. MPI linking flags             = ${MPI_LINK_FLAGS}"          )
 message (STATUS " Enable code using MySQL          = ${MYSQL_FOUND}"             )
-message (STATUS " Enable code using OpenMP         = ${HAVE_OPENMP}"             )
+message (STATUS " Enable code using OpenMP         = ${OPENMP_FOUND}"            )
 message (STATUS " Enable code using WCSLIB         = ${WCSLIB_FOUND}"            )
 
 if (DAL_VERBOSE_CONFIGURE)
   message (STATUS "+------------------------------------------------------------+")
-  message (STATUS " Boost includes           = ${BOOST_INCLUDES}     ")
-  message (STATUS " Boost library            = ${BOOST_LIBRARIES}    ")
   message (STATUS " LAPACK library           = ${LAPACK_LIBRARIES}   ")
   message (STATUS " Python includes          = ${PYTHON_INCLUDES}    ")
   message (STATUS " NumPy includes           = ${NUMPY_INCLUDES}     ")
