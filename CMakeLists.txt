@@ -77,13 +77,6 @@ add_definitions (
   -fPIC
   )
 
-##__________________________________________________________
-## Handle option: Compatibility macros to version 2
-
-if (HDF5_USE_16_API_DEFAULT)
-  add_definitions (-DH5_USE_16_API_DEFAULT=0)
-endif (HDF5_USE_16_API_DEFAULT)
-
 ## ==============================================================================
 ##
 ##  External dependencies
