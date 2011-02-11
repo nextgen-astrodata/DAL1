@@ -343,13 +343,13 @@ int test_setHyperslab (std::string const &filename)
     dims[1]     = size;
     dims[2]     = size;
     dataspaceID = H5Screate_simple (rank, dims, NULL);
-    datasetID   = H5Dcreate2 (fileID,
-			      datasetName.c_str(),
-			      H5T_STD_I32LE,
-			      dataspaceID,
-			      H5P_DEFAULT,
-			      H5P_DEFAULT,
-			      H5P_DEFAULT);
+    datasetID   = H5Dcreate (fileID,
+			     datasetName.c_str(),
+			     H5T_STD_I32LE,
+			     dataspaceID,
+			     H5P_DEFAULT,
+			     H5P_DEFAULT,
+			     H5P_DEFAULT);
     
     if (H5Iis_valid(datasetID)) {
       DAL::h5get_dataspace_shape (datasetID,shape);

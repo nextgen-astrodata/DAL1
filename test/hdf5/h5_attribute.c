@@ -105,23 +105,34 @@ int main (void)
   /*
    * Create the dataset in the file.
    */
-  dataset = H5Dcreate2(file, "Dataset", H5T_NATIVE_INT, fid, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+  dataset = H5Dcreate (file,
+		       "Dataset",
+		       H5T_NATIVE_INT,
+		       fid,
+		       H5P_DEFAULT,
+		       H5P_DEFAULT,
+		       H5P_DEFAULT);
   
   /*
    * Write data to the dataset.
    */
-  ret = H5Dwrite(dataset, H5T_NATIVE_INT, H5S_ALL , H5S_ALL, H5P_DEFAULT, vector);
+  ret = H5Dwrite (dataset, H5T_NATIVE_INT, H5S_ALL , H5S_ALL, H5P_DEFAULT, vector);
   
   /*
    * Create dataspace for the first attribute.
    */
-  dataspace1 = H5Screate(H5S_SIMPLE);
-  ret  = H5Sset_extent_simple(dataspace1, ARANK, adim, NULL);
+  dataspace1 = H5Screate (H5S_SIMPLE);
+  ret        = H5Sset_extent_simple (dataspace1, ARANK, adim, NULL);
   
   /*
    * Create array attribute.
    */
-  attr1 = H5Acreate2(dataset, ANAME, H5T_NATIVE_FLOAT, dataspace1, H5P_DEFAULT, H5P_DEFAULT);
+  attr1 = H5Acreate (dataset,
+		     ANAME,
+		     H5T_NATIVE_FLOAT,
+		     dataspace1,
+		     H5P_DEFAULT,
+		     H5P_DEFAULT);
   
   /*
    * Write array attribute.
@@ -131,9 +142,13 @@ int main (void)
   /*
    * Create scalar attribute.
    */
-  aid2  = H5Screate(H5S_SCALAR);
-  attr2 = H5Acreate2(dataset, "Integer attribute", H5T_NATIVE_INT, aid2,
-                     H5P_DEFAULT, H5P_DEFAULT);
+  aid2  = H5Screate (H5S_SCALAR);
+  attr2 = H5Acreate (dataset,
+		     "Integer attribute",
+		     H5T_NATIVE_INT, 
+		     aid2,
+                     H5P_DEFAULT,
+		     H5P_DEFAULT);
   
   /*
    * Write scalar attribute.
@@ -147,12 +162,12 @@ int main (void)
   atype      = H5Tcopy(H5T_C_S1);
   H5Tset_size(atype, 5);
   H5Tset_strpad(atype,H5T_STR_NULLTERM);
-  attr3 = H5Acreate2 (dataset,
-		      nameAttributeString,
-		      atype,
-		      dataspace3,
-		      H5P_DEFAULT,
-		      H5P_DEFAULT);
+  attr3 = H5Acreate (dataset,
+		     nameAttributeString,
+		     atype,
+		     dataspace3,
+		     H5P_DEFAULT,
+		     H5P_DEFAULT);
   
   /*
    * Write string attribute.
@@ -193,7 +208,7 @@ int main (void)
   /*
    * Open the dataset.
    */
-  dataset = H5Dopen2(file, "Dataset", H5P_DEFAULT);
+  dataset = H5Dopen (file, "Dataset", H5P_DEFAULT);
   
   /*
    * Attach to the scalar attribute using attribute name, then read and
