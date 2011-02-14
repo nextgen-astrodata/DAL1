@@ -33,9 +33,9 @@ if (NOT MYSQL_FOUND)
   ##_____________________________________________________________________________
   ## Check for the header files
   
-  find_path (MYSQL_INCLUDES mysql/mysql.h
+  find_path (MYSQL_INCLUDES mysql.h
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
-    PATH_SUFFIXES include
+    PATH_SUFFIXES include include/mysql
     )
   
   ##_____________________________________________________________________________
@@ -43,13 +43,35 @@ if (NOT MYSQL_FOUND)
 
   set (MYSQL_LIBRARIES "")
 
-  find_library (MYSQL_MYSQLCLIENT_LIBRARY mysqlclient
+  ## libmysqlclient
+
+  find_library (MYSQL_MYSQLCLIENT_LIBRARY libmysqlclient.a mysqlclient
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib lib/mysql
     )
   if (MYSQL_MYSQLCLIENT_LIBRARY)
     list (APPEND MYSQL_LIBRARIES ${MYSQL_MYSQLCLIENT_LIBRARY})
   endif (MYSQL_MYSQLCLIENT_LIBRARY)
+
+  ## libmysqlservices
+
+  find_library (MYSQL_MYSQLSERVICES_LIBRARY libmysqlservices.a mysqlservices
+    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATH_SUFFIXES lib lib/mysql
+    )
+  if (MYSQL_MYSQLSERVICES_LIBRARY)
+    list (APPEND MYSQL_LIBRARIES ${MYSQL_MYSQLSERVICES_LIBRARY})
+  endif (MYSQL_MYSQLSERVICES_LIBRARY)
+
+  ## libmysql
+  
+  find_library (MYSQL_MYSQL_LIBRARY mysql libmysql.a
+    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATH_SUFFIXES lib lib/mysql
+    )
+  if (MYSQL_MYSQL_LIBRARY)
+    list (APPEND MYSQL_LIBRARIES ${MYSQL_MYSQL_LIBRARY})
+  endif (MYSQL_MYSQL_LIBRARY)
   
   ##_____________________________________________________________________________
   ## Check for the executable
@@ -63,33 +85,6 @@ if (NOT MYSQL_FOUND)
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES bin share share/mysql share/mysql/bin
     )
-  
-  ##_____________________________________________________________________________
-  ## Test MqSQL installation for:
-  
-  if (MYSQL_INCLUDES AND MYSQL_LIBRARIES)
-    ## Locate test program
-    find_file (HAVE_TestMySQL TestMySQL.cc
-      PATHS ${PROJECT_SOURCE_DIR}
-      PATH_SUFFIXES cmake Modules
-      )
-    ## Build and run test program
-    if (HAVE_TestMySQL)
-      try_run(MYSQL_RUN_RESULT MYSQL_COMPILE_RESULT
-	${PROJECT_BINARY_DIR}
-	${HAVE_TestMySQL}
-	CMAKE_FLAGS -DLINK_LIBRARIES:STRING=${MYSQL_LIBRARIES}
-	COMPILE_DEFINITIONS -I${MYSQL_INCLUDES}
-	RUN_OUTPUT_VARIABLE MYSQL_RUN_OUTPUT
-	)
-      ## Feedback from test
-      message (STATUS "MYSQL_COMPILE_RESULT = ${MYSQL_COMPILE_RESULT}")
-      message (STATUS "MYSQL_RUN_RESULT     = ${MYSQL_RUN_RESULT}")
-      message (STATUS "MYSQL_RUN_OUTPUT     = ${MYSQL_RUN_OUTPUT}")
-    else (HAVE_TestMySQL)
-      message (STATUS "[MySQL] Unable to find test program TestMySQL.cc!")
-    endif (HAVE_TestMySQL)
-  endif (MYSQL_INCLUDES AND MYSQL_LIBRARIES)
   
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
@@ -111,7 +106,9 @@ if (NOT MYSQL_FOUND)
   if (MYSQL_FOUND)
     if (NOT MYSQL_FIND_QUIETLY)
       message (STATUS "Found components for MYSQL")
-      message (STATUS "MYSQL_INCLUDES  = ${MYSQL_INCLUDES}")
+      message (STATUS "MYSQL_VERSION   = ${MYSQL_VERSION}  ")
+      message (STATUS "MYSQL_PORT      = ${MYSQL_PORT}     ")
+      message (STATUS "MYSQL_INCLUDES  = ${MYSQL_INCLUDES} ")
       message (STATUS "MYSQL_LIBRARIES = ${MYSQL_LIBRARIES}")
     endif (NOT MYSQL_FIND_QUIETLY)
   else (MYSQL_FOUND)
@@ -121,11 +118,83 @@ if (NOT MYSQL_FOUND)
   endif (MYSQL_FOUND)
   
   ##_____________________________________________________________________________
+  ## Test MqSQL installation for:
+  ## - version number
+  ## - port number
+
+  if (MYSQL_CONFIG_EXECUTABLE)
+
+    ## Determine version number
+    execute_process(
+      COMMAND ${MYSQL_CONFIG_EXECUTABLE} --version
+      RESULT_VARIABLE MYSQL_VERSION_RESULT_VARIABLE
+      OUTPUT_VARIABLE MYSQL_VERSION_OUTPUT_VARIABLE
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+
+    if (MYSQL_VERSION_OUTPUT_VARIABLE)
+      set (MYSQL_VERSION ${MYSQL_VERSION_OUTPUT_VARIABLE})
+    else (MYSQL_VERSION_OUTPUT_VARIABLE)
+      set (MYSQL_VERSION 0)
+    endif (MYSQL_VERSION_OUTPUT_VARIABLE)
+    
+    ## Determine port number
+    execute_process(
+      COMMAND ${MYSQL_CONFIG_EXECUTABLE} --port
+      RESULT_VARIABLE MYSQL_PORT_RESULT_VARIABLE
+      OUTPUT_VARIABLE MYSQL_PORT_OUTPUT_VARIABLE
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+
+    if (MYSQL_PORT_OUTPUT_VARIABLE)
+      set (MYSQL_PORT ${MYSQL_PORT_OUTPUT_VARIABLE})
+    else (MYSQL_PORT_OUTPUT_VARIABLE)
+      set (MYSQL_PORT 0)
+    endif (MYSQL_PORT_OUTPUT_VARIABLE)
+
+  endif (MYSQL_CONFIG_EXECUTABLE)
+  
+  if (MYSQL_FOUND)
+    ## Locate test program
+    find_file (HAVE_TestMySQL TestMySQL.cc
+      PATHS ${PROJECT_SOURCE_DIR}
+      PATH_SUFFIXES cmake Modules
+      )
+    ## Build and run test program
+    if (HAVE_TestMySQL)
+      try_run(MYSQL_RUN_RESULT MYSQL_COMPILE_RESULT
+	${PROJECT_BINARY_DIR}
+	${HAVE_TestMySQL}
+	CMAKE_FLAGS -DLINK_LIBRARIES:STRING=${MYSQL_LIBRARIES}
+	COMPILE_DEFINITIONS -I${MYSQL_INCLUDES}
+	COMPILE_OUTPUT_VARIABLE MYSQL_COMPILE_OUTPUT
+	RUN_OUTPUT_VARIABLE MYSQL_RUN_OUTPUT
+	)
+    else (HAVE_TestMySQL)
+      message (STATUS "[MySQL] Unable to find test program TestMySQL.cc!")
+    endif (HAVE_TestMySQL)
+  endif (MYSQL_FOUND)
+  
+  ## Comile of test program successful?
+  if (MYSQL_VERSION_COMPILE_RESULT)
+    ## Run of test program successful?
+    if (MYSQL_VERSION_RUN_RESULT)
+    else (MYSQL_VERSION_RUN_RESULT)
+      message (STATUS "[MySQL] Failed to run TestMySQL!")
+      set (MYSQL_FOUND FALSE)
+    endif (MYSQL_VERSION_RUN_RESULT)
+  else (MYSQL_VERSION_COMPILE_RESULT)
+    message (STATUS "[MySQL] Failed to compile TestMySQL!")
+    set (MYSQL_FOUND FALSE)
+  endif (MYSQL_VERSION_COMPILE_RESULT)
+  
+  ##_____________________________________________________________________________
   ## Mark advanced variables
   
   mark_as_advanced (
     MYSQL_INCLUDES
     MYSQL_LIBRARIES
+    MYSQL_MYSQL_LIBRARY
     MYSQL_MYSQLCLIENT_LIBRARY
     )
   

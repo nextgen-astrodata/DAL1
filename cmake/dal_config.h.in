@@ -107,7 +107,9 @@ extern "C"
 // MySQL header files
 
 #ifdef HAVE_MYSQL
-#include <mysql/mysql.h>
+#cmakedefine MYSQL_VERSION "${MYSQL_VERSION}"
+#cmakedefine MYSQL_PORT "${MYSQL_PORT}"
+#include <mysql.h>
 #endif
 
 //__________________________________________________________
