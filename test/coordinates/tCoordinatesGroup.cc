@@ -98,7 +98,8 @@ int test_methods (hid_t const &fileID)
 {
   std::cout << "\n[tCoordinatesGroup::test_methods]\n" << std::endl;
 
-  int nofFailedTests (0);
+  int nofFailedTests = 0;
+  bool status        = true;
   CoordinatesGroup coord;
 
   cout << "[1] Testing setReferenceLocation() ... " << endl;
@@ -125,6 +126,14 @@ int test_methods (hid_t const &fileID)
     coord.setReferenceTime (value, units, frame);
     coord.summary();
 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+
+  cout << "[3] Testing h5write() ... " << endl;
+  try {
+    status = coord.h5write (fileID);
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
