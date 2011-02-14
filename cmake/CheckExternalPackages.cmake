@@ -160,6 +160,11 @@ configure_file (
   ${DAL_BINARY_DIR}/dal_config.h
   )
 
+install (FILES ${DAL_BINARY_DIR}/dal_config.h
+  DESTINATION include/dal
+  )
+
+
 ## ==============================================================================
 ##
 ##  Feedback
