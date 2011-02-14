@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2008 by Joseph Masters & Alwin de Jong                  *
  *   J.S.Masters@uva.nl                                                    *
  *   jong@astron.nl                                                        *
@@ -289,7 +286,8 @@ namespace DAL {
 		return true;
   }
 
-  // ---------------------------------------------------------------- openRawFile
+  //_____________________________________________________________________________
+  //                                                                  openRawFile
 
   void BFRaw::openRawFile( const char* filename )
   {
@@ -305,7 +303,8 @@ namespace DAL {
     rawfile->seekg(0, std::ios::beg);
   }
   
-  // ---------------------------------------------------------- readRawFileHeader
+  //_____________________________________________________________________________
+  //                                                            readRawFileHeader
 
   void BFRaw::readRawFileHeader()
   {
@@ -317,8 +316,9 @@ namespace DAL {
       }
     
 #ifdef DEBUGGING_MESSAGES
-    printf("size of file header: %lu\n", sizeof(header));
-    cout << "read pointer position: " << rawfile->tellg() << endl;
+    std::cout << "[BFRaw::readRawFileHeader]" << std::endl;
+    std::cout << "-- Size of file header   = " << sizeof(header)   << std::endl;
+    std::cout << "-- Read pointer position = " << rawfile->tellg() << std::endl;
 #endif
     
     // swap values when necessary
