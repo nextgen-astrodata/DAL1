@@ -25,7 +25,6 @@
 #include <BFRawFormat.h>
 #include "bf2h5.h"
 
-extern const char *WRITER_SOFTWARE_VERSION;
 using namespace DAL;
 using std::vector;
 using std::string;
@@ -226,8 +225,6 @@ void HDF5Writer::createHDF5File (const LOFAR::RTCP::Parset *ps)
   dataset.setAttribute( "SYSTEM_VERSION",  string("") );
   dataset.setAttribute( "TARGET", string("") );
   dataset.setAttribute( "TELESCOPE", string("LOFAR") );
-  std::cout << WRITER_SOFTWARE_VERSION << std::endl;
-  dataset.setAttribute( "WRITER_SOFTWARE_VERSION", string(WRITER_SOFTWARE_VERSION) );
   /*
     dataset.setAttribute( "NUMBER_OF_STATIONS", &n_stations );
     dataset.setAttribute( "STATION_LIST", string(header.station) );

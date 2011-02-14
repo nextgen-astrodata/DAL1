@@ -23,8 +23,6 @@
 
 #define DEBUGGING_MESSAGES
 
-extern const char *WRITER_SOFTWARE_VERSION = "4.0-offline";
-
 #include <iostream> // for cout
 #include <iomanip>  // for cout field width
 #include <fstream>  // for file handle
@@ -35,6 +33,7 @@ extern const char *WRITER_SOFTWARE_VERSION = "4.0-offline";
 #include <boost/program_options/detail/cmdline.hpp>
 
 #include "bf2h5.h"
+#include "HDF5Writer.h"
 
 namespace bpo = boost::program_options;
 
@@ -94,17 +93,11 @@ int main (int argc, char *argv[])
     ("port,P", bpo::value<uint>(), "Port number to accept beam formed raw data from")
     //("downsample", "Downsampling of the original data")
     ("intensity", "Compute total intensity")
-    ("version", "Show bf2h5 version information")
     ("noninteractive", "non-interactive mode, automatically overwrites output file if it exists")
     ;
   
   bpo::variables_map vm;
   bpo::store (bpo::parse_command_line(argc,argv,desc), vm);
-  
-  if (vm.count("version")) {
-    std::cout << "bf2h5 version: " << WRITER_SOFTWARE_VERSION << std::endl;
-    return 0;
-  }
   
   if (vm.count("help") || argc == 1) {
     std::cout << "\n" << desc << endl;

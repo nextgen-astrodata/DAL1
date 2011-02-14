@@ -89,16 +89,22 @@ public:
   void createHDF5File (const LOFAR::RTCP::Parset *ps);
 #endif
 
-  bool start(void); // starts the separate writing thread
-  void writeSubband(long int blockNr, uint8_t subband, float *calculator_data); // adds a datablock for writing
+  //! Start the separate writing thread
+  bool start(void);
+  //! Add a datablock for writing
+  void writeSubband(long int blockNr, uint8_t subband, float *calculator_data);
   void openRawFile( const char* filename );
-  bool dataLeft(void); // checks if the writer still has something left to write
-  bool stop(void); // stops the writing thread
+  //! Check if the writer still has something left to write
+  bool dataLeft(void);
+  //! Stop the writing thread
+  bool stop(void);
   void showStatus(void);
   
  private:
 
+  //! Get the data for the currently processed block
   bool getDataForCurrentBlock(void);
+  //! Check if the currently processed block is complete
   void checkIfBlockComplete(void);
   void startNextBlock(void);
   //! Thread to perform the writing of the data
