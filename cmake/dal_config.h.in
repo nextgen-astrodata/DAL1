@@ -44,6 +44,9 @@
 */
 #cmakedefine HAVE_MYSQL
 
+/* Define to 1 if we have the NumUtil library */
+#cmakedefine HAVE_NUMUTIL
+
 /* Define to 1 if we have the OPENMP library */
 #cmakedefine HAVE_OPENMP
 
@@ -56,18 +59,21 @@
 //
 // ==============================================================================
 
-/* HDF5 header files */
+//__________________________________________________________
+// HDF5 header files
 
 #ifdef HAVE_HDF5
 #include <hdf5.h>
 #include <hdf5_hl.h>
 #endif
 
-/* casacore header files */
+//__________________________________________________________
+// casacore header files
 
 #ifdef HAVE_CASA
-#define AIPS_STDLIB 1
-#define AIPS_AUTO_STL 1
+/* #define AIPS_STDLIB 1 */
+/* #define AIPS_AUTO_STL 1 */
+/* #define AIPS_NO_LEA_MALLOC 1 */
 #include <casa/aips.h>
 #include <casa/aipstype.h>
 #include <casa/complex.h>
@@ -87,8 +93,37 @@
 #include <tables/Tables/TableKeyword.h>
 #endif
 
+//__________________________________________________________
+// CFITSIO header files
+
+#ifdef HAVE_CFITSIO
+extern "C"
+{
+#include <fitsio.h>
+}
+#endif
+
+//__________________________________________________________
+// MySQL header files
+
 #ifdef HAVE_MYSQL
 #include <mysql/mysql.h>
+#endif
+
+//__________________________________________________________
+// Header files for Python bindings
+
+#ifdef PYTHON
+// Boost.Python headers
+#include <boost/python.hpp>
+#include <boost/python.hpp>
+#include <boost/python/object.hpp>
+#include <boost/python/list.hpp>
+#include <boost/python/extract.hpp>
+// NumUtil headers
+#ifdef HAVE_NUMUTIL
+#include <num_util.h>
+#endif
 #endif
 
 // ==============================================================================
@@ -102,15 +137,71 @@ namespace DAL {
   const bool SUCCESS = true;
   const bool FAIL    = false;
   
-  typedef unsigned char         UInt8;
-  typedef unsigned short       UInt16;
-  typedef short                 Int16;
-  typedef unsigned int         UInt32;
-  typedef int                   Int32;
-  typedef float               Float32;
-  typedef long long             Int64;
-  typedef unsigned long long   UInt64;
-  typedef double              Float64;
+  typedef unsigned char              UInt8;
+  typedef unsigned short            UInt16;
+  typedef short                      Int16;
+  typedef unsigned int              UInt32;
+  typedef int                        Int32;
+  typedef float                    Float32;
+  typedef long long                  Int64;
+  typedef unsigned long long        UInt64;
+  typedef double                   Float64;
+
+  //! Complex number composed of two 8-bit unsigned integers
+  struct Complex_UInt8 {
+    UInt8 real;
+    UInt8 imag;
+  };
+
+  //! Complex number composed of two 16-bit unsigned integers
+  struct Complex_UInt16 {
+    UInt16 real;
+    UInt16 imag;
+  };
+
+  //! Complex number composed of two 32-bit unsigned integers
+  struct Complex_UInt32 {
+    UInt32 real;
+    UInt32 imag;
+  };
+
+  //! Complex number composed of two 16-bit integers
+  struct Complex_Int16 {
+    Int16 real;
+    Int16 imag;
+  };
+
+  //! Complex number composed of two 32-bit integers
+  struct Complex_Int32 {
+    Int32 real;
+    Int32 imag;
+  };
+
+  //! Complex number composed of two 64-bit integers
+  struct Complex_Int64 {
+    Int64 real;
+    Int64 imag;
+  };
+
+  //! Complex number composed of two 32-bit floats 
+  struct Complex_Float32 {
+    Float32 real;
+    Float32 imag;
+  };
+
+  //! Complex number composed of two 64-bit floats 
+  struct Complex_Float64 {
+    Float64 real;
+    Float64 imag;
+  };
+
+  struct Complex_Char {
+    char real;  // real part
+    char imag;  // imaginary part
+  };
+
+  typedef Complex_Float32    Complex_Float;
+  typedef Complex_Float64   Complex_Double;
    
 }   //   END -- namespace DAL
 

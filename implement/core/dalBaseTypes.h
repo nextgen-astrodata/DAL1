@@ -49,28 +49,16 @@
 
 #include <dal_config.h>
 
-#ifdef HAVE_CFITSIO
-extern "C"
-  {
-#include <fitsio.h>
-  }
-#endif
-
 /*
    if creating python bindings
 */
 #ifdef PYTHON
 #include <Python.h>
-#include <boost/python.hpp>
-#include <boost/python/object.hpp>
-#include <boost/python/list.hpp>
-#include <boost/python/extract.hpp>
 namespace bpl = boost::python;
-#include <num_util.h>
 #endif
 
 // CHUNK_SIZE arbitrarily chosen, more research needed on this feature
-const int32_t CHUNK_SIZE = 5000;
+const int32_t CHUNK_SIZE        = 5000;
 const int32_t MAX_COL_NAME_SIZE = 256;
 
 namespace DAL {
@@ -98,67 +86,6 @@ namespace DAL {
   const std::string dal_COMPLEX_CHAR  = "dalCOMPLEX_CHAR";
   const std::string dal_COMPLEX_SHORT = "dalCOMPLEX_SHORT";
 
-  // === Structs ================================================================
-  
-  //! Complex number composed of two 8-bit unsigned integers
-  struct Complex_UInt8 {
-    UInt8 real;
-    UInt8 imag;
-  };
-
-  //! Complex number composed of two 16-bit unsigned integers
-  struct Complex_UInt16 {
-    UInt16 real;
-    UInt16 imag;
-  };
-
-  //! Complex number composed of two 32-bit unsigned integers
-  struct Complex_UInt32 {
-    UInt32 real;
-    UInt32 imag;
-  };
-
-  //! Complex number composed of two 16-bit integers
-  struct Complex_Int16 {
-    Int16 real;
-    Int16 imag;
-  };
-
-  //! Complex number composed of two 32-bit integers
-  struct Complex_Int32 {
-    Int32 real;
-    Int32 imag;
-  };
-
-  //! Complex number composed of two 64-bit integers
-  struct Complex_Int64 {
-    Int64 real;
-    Int64 imag;
-  };
-
-  //! Complex number composed of two 32-bit floats 
-  struct Complex_Float32 {
-    Float32 real;
-    Float32 imag;
-  };
-
-  //! Complex number composed of two 64-bit floats 
-  struct Complex_Float64 {
-    Float64 real;
-    Float64 imag;
-  };
-
-  struct Complex_Char {
-    char real;  // real part
-    char imag;  // imaginary part
-  };
-
-  //________________________________________________________
-  // Additional type definitions
-  
-  typedef Complex_Float32 Complex_Float;
-  typedef Complex_Float64 Complex_Double;
-  
 } // DAL namespace
 
 #ifndef CONVERT_H

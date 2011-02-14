@@ -201,7 +201,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
-		      std::string const &name,
+		      unsigned int const &index,
 		      unsigned int const &nofSubbands,
 		      unsigned int const &nofChannels,
 		      DAL::Stokes::Component const &component=DAL::Stokes::I,
@@ -209,7 +209,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
-		      std::string const &name,
+		      unsigned int const &index,
 		      unsigned int const &nofSamples,
 		      unsigned int const &nofSubbands,
 		      unsigned int const &nofChannels,
@@ -218,7 +218,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
-		      std::string const &name,
+		      unsigned int const &index,
 		      unsigned int const &nofSamples,
 		      std::vector<unsigned int> const &nofChannels,
 		      DAL::Stokes::Component const &component=DAL::Stokes::I,
@@ -226,7 +226,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
-		      std::string const &name,
+		      unsigned int const &index,
 		      std::vector<hsize_t> const &shape,
 		      DAL::Stokes::Component const &component=DAL::Stokes::I,
 		      hid_t const &datatype=H5T_NATIVE_FLOAT);

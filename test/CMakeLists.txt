@@ -58,7 +58,6 @@ endforeach (src)
 
 if (HAVE_CASA OR CASACORE_FOUND)
   ## additional compiler flags
-  add_definitions (-DHAVE_CASA)
   foreach (src tMeasurementSets)
     ## compiler instructions
     add_executable (${src} ${src}.cc)

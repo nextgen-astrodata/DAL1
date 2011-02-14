@@ -22,10 +22,7 @@ if (LUS_ROOT)
       CMakeSettings
       FindTestDatasets
       FindBoost
-      FindGFortran
       FindPython
-      FindNumPy
-      FindNumUtil
       )
     include (${LUS_ROOT}/devel_common/cmake/${_luscmake}.cmake)
   endforeach (_luscmake)
@@ -39,11 +36,14 @@ endif (LUS_ROOT)
 foreach (_dalcmake
     FindCasacore
     FindCFITSIO
+    FindGFortran
     FindGSL
     FindHDF5
     FindLAPACK
     FindLOFAR
     FindMySQL
+    FindNumPy
+    FindNumUtil
     FindWCSLIB
     )
   include (${DAL_SOURCE_DIR}/cmake/${_dalcmake}.cmake)
@@ -66,12 +66,6 @@ endif (CMAKE_SIZEOF_VOID_P)
 ##__________________________________________________________
 ##                                     External header files
 
-if (HAVE_BOOST)
-  include_directories (${BOOST_INCLUDES}/boost)
-else (HAVE_BOOST)
-  message (STATUS "[DAL] Missing or incomplete installation of Boost!")
-endif (HAVE_BOOST)
-
 if (HDF5_FOUND AND HDF5_HDF5_HL_LIBRARY)
   if (HDF5_USE_16_API_DEFAULT)
     add_definitions (-DH5_USE_16_API_DEFAULT=0)
@@ -84,8 +78,10 @@ foreach (_external
     CFITSIO
     GSL
     HDF5
+    LAPACK
     LOFAR
     MYSQL
+    NUMUTIL
     WCSLIB
     )
 
@@ -100,6 +96,53 @@ foreach (_external
   endif (${_external}_FOUND OR HAVE_${_external})
   
 endforeach (_external)
+
+## ==============================================================================
+##
+##  Python bindings
+##
+## ==============================================================================
+
+## We need to be a bit careful with the Boost and Python libraries; appending
+## the Boost libraries only makes sense, if there is already a list of Python
+## libraries. Furthermore we need to make sure not to have libboost_python in
+## in the list, because this requires for the presence of the Python library.
+
+if (BOOST_LIBRARIES)
+  if (PYTHON_LIBRARIES)
+    list (APPEND PYTHON_LIBRARIES ${BOOST_LIBRARIES})
+  else (PYTHON_LIBRARIES)
+    ## Clean up the list of Boost libraries
+    foreach (lib ${BOOST_LIBRARIES})
+      string (REGEX MATCH ^.*python.* have_libboost_python ${lib})
+      if (have_libboost_python)
+	list (REMOVE_ITEM BOOST_LIBRARIES ${have_libboost_python})
+      endif (have_libboost_python)
+    endforeach (lib)
+    ## Add the libraries
+    set (PYTHON_LIBRARIES ${BOOST_LIBRARIES})
+  endif (PYTHON_LIBRARIES)
+endif (BOOST_LIBRARIES)
+
+## Effect of dependencies on build options; if we are unable to locate all the
+## required components to generate the Python bindings to the DAL, we have to 
+## disable this option - otherwise we won't be able to properly build the test
+## programs and applications.
+
+if (NOT HAVE_BOOST)
+  set (DAL_PYTHON_BINDINGS FALSE)
+  message (STATUS "[DAL] Unable to generate Python bindings; missing Boost++ headers!")
+endif (NOT HAVE_BOOST)
+
+if (NOT HAVE_PYTHON) 
+  set (DAL_PYTHON_BINDINGS FALSE)
+  message (STATUS "[DAL] Unable to generate Python bindings; missing Python headers!")
+endif (NOT HAVE_PYTHON)
+
+if (NOT NUMUTIL_INCLUDES) 
+  set (DAL_PYTHON_BINDINGS FALSE)
+  message (STATUS "[DAL] Unable to generate Python bindings; missing num_util headers!")
+endif (NOT NUMUTIL_INCLUDES)
 
 ## ==============================================================================
 ##
@@ -126,10 +169,12 @@ configure_file (
 message (STATUS "+============================================================+" )
 message (STATUS "| DAL: Summary of configuration settings                     |" )
 message (STATUS "+------------------------------------------------------------+" )
-message (STATUS " Python version                   = ${PYTHON_VERSION}"          )
+message (STATUS " Build and enable test programs   = ${DAL_ENABLE_TESTING}"      )
 message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}"  )
-message (STATUS " Enable Dashboard server          = ${DAL_ENABLE_DASHBOARD}"    )
 message (STATUS " Enable Python bindings           = ${DAL_PYTHON_BINDINGS}"     )
+message (STATUS " .. Python version                = ${PYTHON_VERSION}"          )
+message (STATUS " .. Python NumUtils package       = ${NUMUTIL_FOUND}"           )
+message (STATUS " Enable code using Boost++        = ${BOOST_FOUND}"             )
 message (STATUS " Enable code using casacore       = ${CASACORE_FOUND}"          )
 message (STATUS " Enable code using CFITSIO        = ${CFITSIO_FOUND}"           )
 message (STATUS " Enable code using GSL            = ${GSL_FOUND}"               )
@@ -149,8 +194,7 @@ if (DAL_VERBOSE_CONFIGURE)
   message (STATUS "+------------------------------------------------------------+")
   message (STATUS " LAPACK library           = ${LAPACK_LIBRARIES}   ")
   message (STATUS " Python includes          = ${PYTHON_INCLUDES}    ")
-  message (STATUS " NumPy includes           = ${NUMPY_INCLUDES}     ")
-  message (STATUS " num_util includes        = ${NUM_UTIL_INCLUDES}  ")
+  message (STATUS " num_util includes        = ${NUMUTIL_INCLUDES}   ")
   message (STATUS " Python library           = ${PYTHON_LIBRARIES}   ")
   message (STATUS " Types sizes:                                     ")
   message (STATUS " .. void*                 = ${CMAKE_SIZEOF_VOID_P}")

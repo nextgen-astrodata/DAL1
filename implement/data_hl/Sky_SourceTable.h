@@ -18,31 +18,31 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef SKY_IMAGEDATASET_H
-#define SKY_IMAGEDATASET_H
+#ifndef SKY_SOURCETABLE_H
+#define SKY_SOURCETABLE_H
 
 // Standard library header files
 #include <iostream>
 #include <string>
 
-// DAL header files
-#include <HDF5Dataset.h>
+/* DAL header files */
+#include <dal_config.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class Sky_ImageDataset
+    \class Sky_SourceTable
     
     \ingroup DAL
     \ingroup data_hl
     
-    \brief Brief description for class Sky_ImageDataset
+    \brief Brief description for class Sky_SourceTable
     
     \author Lars B&auml;hren
 
-    \date 2011/02/01
+    \date 2011/02/14
 
-    \test tSky_ImageDataset.cc
+    \test tSky_SourceTable.cc
     
     <h3>Prerequisite</h3>
     
@@ -55,36 +55,36 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class Sky_ImageDataset : public HDF5Dataset {
+  class Sky_SourceTable {
     
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    Sky_ImageDataset ();
+    Sky_SourceTable ();
     
     //! Copy constructor
-    Sky_ImageDataset (Sky_ImageDataset const &other);
+    Sky_SourceTable (Sky_SourceTable const &other);
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~Sky_ImageDataset ();
+    ~Sky_SourceTable ();
     
     // === Operators ============================================================
     
     //! Overloading of the copy operator
-    Sky_ImageDataset& operator= (Sky_ImageDataset const &other); 
+    Sky_SourceTable& operator= (Sky_SourceTable const &other); 
     
     // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class
-      \return className -- The name of the class, Sky_ImageDataset.
+      \return className -- The name of the class, Sky_SourceTable.
     */
     inline std::string className () const {
-      return "Sky_ImageDataset";
+      return "Sky_SourceTable";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -99,17 +99,21 @@ namespace DAL { // Namespace DAL -- begin
     
     
     
+    // === Static methods =======================================================
+    
+    
+    
   private:
     
     //! Unconditional copying
-    void copy (Sky_ImageDataset const &other);
+    void copy (Sky_SourceTable const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class Sky_ImageDataset -- end
+  }; // Class Sky_SourceTable -- end
   
 } // Namespace DAL -- end
 
-#endif /* SKY_IMAGEDATASET_H */
+#endif /* SKY_SOURCETABLE_H */
   

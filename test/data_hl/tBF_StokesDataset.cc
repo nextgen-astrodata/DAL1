@@ -52,10 +52,10 @@ using DAL::BF_StokesDataset;
   |-- StokesI.002
   |-- StokesI.003
   |-- StokesQ
-  |-- StokesU.001
-  |-- StokesU.002
-  |-- StokesU.003
-  `-- StokesU.004
+  |-- Stokes101
+  |-- Stokes102
+  |-- Stokes103
+  `-- Stokes104
   \endverbatim
 */
 
@@ -292,6 +292,7 @@ int test_constructors (hid_t const &fileID)
   cout << "\n[tBF_StokesDataset::test_constructors]\n" << endl;
 
   int nofFailedTests       = 0;
+  unsigned int index       = 0;
   unsigned int nofSamples  = 1000;
   unsigned int nofSubbands = 36;
   unsigned int nofChannels = 128;
@@ -324,7 +325,8 @@ int test_constructors (hid_t const &fileID)
   
   cout << "[2] Testing BF_StokesDataset(hid_t, string) ..." << endl;
   try {
-    nameDataset = "Stokes002.I";
+    index       = 2;
+    nameDataset = BF_StokesDataset::getName(index);
     BF_StokesDataset data1 (fileID, nameDataset);
     data1.summary(); 
     /* Point constructor to existing dataset */
@@ -344,8 +346,9 @@ int test_constructors (hid_t const &fileID)
   cout << "[3] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>) ..."
 	    << endl;
   try {
-    nameDataset = "Stokes003.I";
-    BF_StokesDataset stokes (fileID, nameDataset, shape);
+    index       = 3;
+    nameDataset = BF_StokesDataset::getName(index);
+    BF_StokesDataset stokes (fileID, index, shape);
     //
     stokes.summary(); 
   } catch (std::string message) {
@@ -360,9 +363,10 @@ int test_constructors (hid_t const &fileID)
   cout << "[4] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>, Stokes::Component) ..."
 	    << endl;
   try {
-    nameDataset = "Stokes004.Q";
+    index       = 4;
+    nameDataset = BF_StokesDataset::getName(index);
     BF_StokesDataset stokes (fileID,
-			     nameDataset,
+			     index,
 			     shape,
 			     DAL::Stokes::Q);
     //
@@ -380,9 +384,10 @@ int test_constructors (hid_t const &fileID)
 
   cout << "[5] Testing BF_StokesDataset(hid_t,string,uint,uint,uint,Stokes::Component) ..." << endl;
   try {
-    nameDataset = "Stokes005.Q";
+    index       = 5;
+    nameDataset = BF_StokesDataset::getName(index);
     BF_StokesDataset stokes (fileID,
-			     nameDataset,
+			     index,
 			     nofSamples,
 			     nofSubbands,
 			     nofChannels,
@@ -403,7 +408,8 @@ int test_constructors (hid_t const &fileID)
   cout << "[6] Testing BF_StokesDataset(hid_t,string,uint,vector<uint>,Stokes::Component) ..." << endl;
   try {
     vector<unsigned int> channels (nofSubbands);
-    nameDataset = "Stokes006.Q";
+    index       = 6;
+    nameDataset = BF_StokesDataset::getName(index);
 
     /* Assign number of channels per sub-band */
     for (unsigned int n=0; n<nofSubbands; ++n) {
@@ -412,7 +418,7 @@ int test_constructors (hid_t const &fileID)
 
     /* Create object */
     BF_StokesDataset stokes (fileID,
-			     nameDataset,
+			     index,
 			     nofSamples,
 			     channels,
 			     DAL::Stokes::Q);
@@ -442,7 +448,7 @@ int test_attributes (hid_t const &fileID)
   cout << "\n[tBF_StokesDataset::test_attributes]\n" << endl;
 
   int nofFailedTests      = 0;
-  std::string nameDataset = "Stokes005.Q";
+  std::string nameDataset = "Stokes005";
 
   /* Open dataset to work with */
   BF_StokesDataset stokes (fileID, nameDataset);
@@ -502,7 +508,7 @@ int test_data (hid_t const &fileID)
 
   cout << "--> Create new dataset to work with ..." << endl;
 
-  std::string nameDataset;
+  unsigned int index = 0;
   std::vector<hsize_t> shape (2);
   std::vector<int> start (2,0);
   std::vector<int> stride;
@@ -519,20 +525,19 @@ int test_data (hid_t const &fileID)
 
   cout << "[1] Test writing single rows to dataset ..." << endl;
   try {
-    nameDataset   = "StokesU.001";
+    index         = 101;
     nofSteps      = shape[0];
     block[0]      = shape[0]/nofSteps;
     block[1]      = shape[1];
     nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
     float *data   = new float [nofDatapoints];
 
-    cout << "-- Dataset name = " << nameDataset << endl;
     cout << "-- Shape        = " << shape    << endl;
     cout << "-- nof. steps   = " << nofSteps << endl;
     cout << "-- block        = " << block    << endl;
 
     BF_StokesDataset stokes (fileID,
-			     nameDataset,
+			     index,
 			     shape,
 			     DAL::Stokes::U);
     
@@ -558,7 +563,7 @@ int test_data (hid_t const &fileID)
 
   cout << "[2] Test writing multiple rows to dataset ..." << endl;
   try {
-    nameDataset   = "StokesU.002";
+    index         = 102;
     nofSteps      = 20;
     start[1]      = 0;
     block[0]      = shape[0]/nofSteps;
@@ -566,13 +571,12 @@ int test_data (hid_t const &fileID)
     nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
     float *data   = new float [nofDatapoints];
 
-    cout << "-- Dataset name = " << nameDataset << endl;
     cout << "-- Shape        = " << shape    << endl;
     cout << "-- nof. steps   = " << nofSteps << endl;
     cout << "-- block        = " << block    << endl;
 
     BF_StokesDataset stokes (fileID,
-			     nameDataset,
+			     index,
 			     shape,
 			     DAL::Stokes::U);
     
@@ -602,7 +606,7 @@ int test_data (hid_t const &fileID)
 
   cout << "[3] Test writing single columns to dataset ..." << endl;
   try {
-    nameDataset   = "StokesU.003";
+    index         = 103;
     nofSteps      = shape[1];
     start[0]      = 0;
     block[0]      = shape[0];
@@ -610,13 +614,12 @@ int test_data (hid_t const &fileID)
     nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
     float *data   = new float [nofDatapoints];
 
-    cout << "-- Dataset name = " << nameDataset << endl;
     cout << "-- Shape        = " << shape    << endl;
     cout << "-- nof. steps   = " << nofSteps << endl;
     cout << "-- block        = " << block    << endl;
 
     BF_StokesDataset stokes (fileID,
-			     nameDataset,
+			     index,
 			     shape,
 			     DAL::Stokes::U);
     
@@ -642,7 +645,7 @@ int test_data (hid_t const &fileID)
 
   cout << "[4] Test writing multiple columns to dataset ..." << endl;
   try {
-    nameDataset   = "StokesU.004";
+    index         = 104;
     nofSteps      = 16;
     start[0]      = 0;
     block[0]      = shape[0];
@@ -650,13 +653,12 @@ int test_data (hid_t const &fileID)
     nofDatapoints = DAL::HDF5Hyperslab::nofDatapoints (count,block);
     float *data   = new float [nofDatapoints];
 
-    cout << "-- Dataset name = " << nameDataset << endl;
     cout << "-- Shape        = " << shape    << endl;
     cout << "-- nof. steps   = " << nofSteps << endl;
     cout << "-- block        = " << block    << endl;
 
     BF_StokesDataset stokes (fileID,
-			     nameDataset,
+			     index,
 			     shape,
 			     DAL::Stokes::U);
     
@@ -686,7 +688,7 @@ int test_data (hid_t const &fileID)
 
   cout << "[5] Test extending the number of rows in the dataset ..." << endl;
   try {
-    nameDataset   = "StokesU.005";
+    index         = 105;
     nofSteps      = 16;
     start[0]      = 0;
     block[0]      = shape[0];
@@ -695,13 +697,12 @@ int test_data (hid_t const &fileID)
     float *data   = new float [nofDatapoints];
     nofSteps     *= 2;
 
-    cout << "-- Dataset name = " << nameDataset << endl;
     cout << "-- Shape        = " << shape    << endl;
     cout << "-- nof. steps   = " << nofSteps << endl;
     cout << "-- block        = " << block    << endl;
 
     BF_StokesDataset stokes (fileID,
-			     nameDataset,
+			     index,
 			     shape,
 			     DAL::Stokes::U);
     

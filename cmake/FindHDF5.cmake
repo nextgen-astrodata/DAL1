@@ -141,9 +141,8 @@ if (NOT HDF5_FOUND)
       PATHS ${PROJECT_SOURCE_DIR}
       PATH_SUFFIXES cmake Modules
       )
-    ## Test for library version
+    ## Build and run test program
     if (HAVE_TestHDF5Library)
-      ## Build and run test program
       try_run(HDF5_VERSION_RUN_RESULT HDF5_VERSION_COMPILE_RESULT
 	${PROJECT_BINARY_DIR}
 	${HAVE_TestHDF5Library}

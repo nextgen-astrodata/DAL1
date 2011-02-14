@@ -64,13 +64,13 @@ namespace DAL { // Namespace DAL -- begin
     \param datatype    -- Datatype for the elements within the Dataset
   */
   BF_StokesDataset::BF_StokesDataset (hid_t const &location,
-				      std::string const &name,
+				      unsigned int const &index,
 				      unsigned int const &nofSubbands,
 				      unsigned int const &nofChannels,
 				      DAL::Stokes::Component const &component,
 				      hid_t const &datatype)
   {
-    itsName     = name;
+    itsName     = getName(index);
     itsDatatype = datatype;
 
     std::cout << "[BF_StokesDataset(hid_t,string,uint,uint,Stokes::Component,hid_t]"
@@ -96,14 +96,14 @@ namespace DAL { // Namespace DAL -- begin
     \param datatype    -- Datatype for the elements within the Dataset
   */
   BF_StokesDataset::BF_StokesDataset (hid_t const &location,
-				      std::string const &name,
+				      unsigned int const &index,
 				      unsigned int const &nofSamples,
 				      unsigned int const &nofSubbands,
 				      unsigned int const &nofChannels,
 				      DAL::Stokes::Component const &component,
 				      hid_t const &datatype)
   {
-    itsName     = name;
+    itsName     = getName(index);
     itsDatatype = datatype;
 
     open (location,
@@ -126,13 +126,13 @@ namespace DAL { // Namespace DAL -- begin
     \param datatype    -- Datatype for the elements within the Dataset
   */
   BF_StokesDataset::BF_StokesDataset (hid_t const &location,
-				      std::string const &name,
+				      unsigned int const &index,
 				      unsigned int const &nofSamples,
 				      std::vector<unsigned int> const &nofChannels,
 				      DAL::Stokes::Component const &component,
 				      hid_t const &datatype)
   {
-    itsName     = name;
+    itsName     = getName(index);
     itsDatatype = datatype;
 
     open (location,
@@ -154,13 +154,12 @@ namespace DAL { // Namespace DAL -- begin
     \param datatype    -- Datatype for the elements within the Dataset
   */
   BF_StokesDataset::BF_StokesDataset (hid_t const &location,
-				      std::string const &name,
+				      unsigned int const &index,
 				      std::vector<hsize_t> const &shape,
 				      DAL::Stokes::Component const &component,
 				      hid_t const &datatype)
   {
-    /* Store parameters */
-    itsName     = name;
+    itsName     = getName(index);
     itsDatatype = datatype;
 
     std::vector<unsigned int> nofChannels (1, shape[1]);

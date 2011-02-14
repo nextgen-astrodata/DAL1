@@ -164,7 +164,7 @@ namespace DAL { // Namespace DAL -- begin
 	       bool const &create=true);
 
     //! Open an existing Stokes dataset
-    bool openStokesDataset (std::string const &name,
+    bool openStokesDataset (unsigned int const &index,
 			    unsigned int const &nofSamples,
 			    unsigned int const &nofSubbands,
 			    unsigned int const &nofChannels,
@@ -172,7 +172,7 @@ namespace DAL { // Namespace DAL -- begin
 			    hid_t const &datatype=H5T_NATIVE_FLOAT);
 
     //! Open an existing Stokes dataset
-    bool openStokesDataset (std::string const &name,
+    bool openStokesDataset (unsigned int const &index,
 			    unsigned int const &nofSamples,
 			    std::vector<unsigned int> const &nofChannels,
 			    DAL::Stokes::Component const &component=DAL::Stokes::I,

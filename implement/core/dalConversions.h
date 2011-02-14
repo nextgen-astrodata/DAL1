@@ -43,7 +43,6 @@
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>
 namespace bpl = boost::python;
-#include <num_util.h>
 #endif
 
 /*!

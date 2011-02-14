@@ -54,10 +54,42 @@ if (NOT MYSQL_FOUND)
   ##_____________________________________________________________________________
   ## Check for the executable
   
+  find_program (MYSQL_MYSQL_EXECUTABLE mysql
+    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATH_SUFFIXES bin share share/mysql share/mysql/bin
+    )
+  
   find_program (MYSQL_CONFIG_EXECUTABLE mysql_config
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES bin share share/mysql share/mysql/bin
     )
+  
+  ##_____________________________________________________________________________
+  ## Test MqSQL installation for:
+  
+  if (MYSQL_INCLUDES AND MYSQL_LIBRARIES)
+    ## Locate test program
+    find_file (HAVE_TestMySQL TestMySQL.cc
+      PATHS ${PROJECT_SOURCE_DIR}
+      PATH_SUFFIXES cmake Modules
+      )
+    ## Build and run test program
+    if (HAVE_TestMySQL)
+      try_run(MYSQL_RUN_RESULT MYSQL_COMPILE_RESULT
+	${PROJECT_BINARY_DIR}
+	${HAVE_TestMySQL}
+	CMAKE_FLAGS -DLINK_LIBRARIES:STRING=${MYSQL_LIBRARIES}
+	COMPILE_DEFINITIONS -I${MYSQL_INCLUDES}
+	RUN_OUTPUT_VARIABLE MYSQL_RUN_OUTPUT
+	)
+      ## Feedback from test
+      message (STATUS "MYSQL_COMPILE_RESULT = ${MYSQL_COMPILE_RESULT}")
+      message (STATUS "MYSQL_RUN_RESULT     = ${MYSQL_RUN_RESULT}")
+      message (STATUS "MYSQL_RUN_OUTPUT     = ${MYSQL_RUN_OUTPUT}")
+    else (HAVE_TestMySQL)
+      message (STATUS "[MySQL] Unable to find test program TestMySQL.cc!")
+    endif (HAVE_TestMySQL)
+  endif (MYSQL_INCLUDES AND MYSQL_LIBRARIES)
   
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found

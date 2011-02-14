@@ -310,7 +310,7 @@ namespace DAL { // Namespace DAL -- begin
     \return status     -- Status of the operation; returns \e false in case an
             error was encountered.
   */
-  bool BF_BeamGroup::openStokesDataset (std::string const &name,
+  bool BF_BeamGroup::openStokesDataset (unsigned int const &index,
 					unsigned int const &nofSamples,
 					unsigned int const &nofSubbands,
 					unsigned int const &nofChannels,
@@ -320,7 +320,7 @@ namespace DAL { // Namespace DAL -- begin
     /* Put input parameters into proper format to be forwarded */
     std::vector<unsigned int> channels (nofSubbands,nofChannels);
     /* Open/create Stokes dataset. */
-    return openStokesDataset (name,
+    return openStokesDataset (index,
 			      nofSamples,
 			      channels,
 			      component,
@@ -339,13 +339,14 @@ namespace DAL { // Namespace DAL -- begin
     \return status     -- Status of the operation; returns \e false in case an
             error was encountered.
   */
-  bool BF_BeamGroup::openStokesDataset (std::string const &name,
+  bool BF_BeamGroup::openStokesDataset (unsigned int const &index,
 					unsigned int const &nofSamples,
 					std::vector<unsigned int> const &nofChannels,
 					DAL::Stokes::Component const &component,
 					hid_t const &datatype)
   {
     bool status = true;
+    std::string name = BF_StokesDataset::getName(index);
     std::map<std::string,BF_StokesDataset>::iterator it = itsStokesDatasets.find(name);
 
     /*________________________________________________________________
@@ -378,7 +379,7 @@ namespace DAL { // Namespace DAL -- begin
     */    
 
     itsStokesDatasets[name] = BF_StokesDataset (location_p,
-						name,
+						index,
 						nofSamples,
 						nofChannels,
 						component,

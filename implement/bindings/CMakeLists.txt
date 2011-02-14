@@ -11,7 +11,7 @@
   remove_definitions (-dynamiclib -install_name)
 
   include_directories (
-    ${NUM_UTIL_INCLUDES}
+    ${NUMUTIL_INCLUDES}
     )
   
   add_library(pydal MODULE
@@ -26,13 +26,11 @@
     ${dal_link_libraries}
     ${PYTHON_LIBRARIES}
     ${BOOST_LIBRARIES}
-    ${NUM_UTIL_LIBRARIES}
+    ${NUMUTIL_LIBRARIES}
     ${CFITSIO_LIBRARIES}
     ${WCSLIB_LIBRARIES}
     ${LAPACK_LIBRARIES}
-    ${HAVE_LIBDL}
     ${HAVE_LIBPTHREAD}
-    ${HAVE_LIBUTIL}
     )
   
   ##______________________________________________

@@ -18,6 +18,18 @@ the following web-sites and -pages:
 * http://svn.astron.nl/CDash/index.php?project=DAL (Testing dashobard)
 
 _________________________________________________________________________________
+>>> Organization of the source code
+
+The components of the DAL is organized into the following directory structure:
+
+ DAL
+ |-- implement           ..   Library source code for libdal and pydal.
+ |-- test                ..   Test programs for library C++ classes.
+ |-- apps                ..   Application programs build on top of the library.
+ |-- doc                 ..   Documentation to be processed by Doxygen.
+ `-- data                ..   Reference data sets used for rest programs.
+
+_________________________________________________________________________________
 >>> External dependencies
 
 * HDF5 library (http://www.hdfgroup.org/HDF5)
@@ -29,6 +41,8 @@ ________________________________________________________________________________
 * CASACORE (http://code.google.com/p/casacore)
 
 * Boost C++ Libraries (http://www.boost.org)
+
+* Python (http://www.python.org)
 
 
 _________________________________________________________________________________
