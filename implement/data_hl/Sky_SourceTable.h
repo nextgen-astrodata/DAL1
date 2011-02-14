@@ -24,6 +24,7 @@
 // Standard library header files
 #include <iostream>
 #include <string>
+#include <map>
 
 /* DAL header files */
 #include <dal_config.h>
@@ -56,6 +57,11 @@ namespace DAL { // Namespace DAL -- begin
     
   */  
   class Sky_SourceTable {
+
+    //! nof. rows in the table
+    unsigned int itsNofRows;
+    //! nof. columns in the table
+    unsigned int itsNofColumns;
     
   public:
     

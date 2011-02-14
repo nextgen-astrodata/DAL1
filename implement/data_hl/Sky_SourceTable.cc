@@ -79,7 +79,10 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                         copy
   
   void Sky_SourceTable::copy (Sky_SourceTable const &other)
-  {;}
+  {
+    itsNofRows    = other.itsNofRows;
+    itsNofColumns = other.itsNofColumns;
+  }
 
   // ============================================================================
   //
