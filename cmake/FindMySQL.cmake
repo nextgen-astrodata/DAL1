@@ -36,12 +36,15 @@ if (NOT MYSQL_FOUND)
   set (MYSQL_PORT     0     )
   set (MYSQL_FOUND    FALSE )
     
+  if (NOT MYSQL_ROOT_DIR)
+    set (MYSQL_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+  endif (NOT MYSQL_ROOT_DIR)
+  
   ##_____________________________________________________________________________
   ## Check for the header files
   
   find_path (MYSQL_INCLUDES mysql.h
-    HINTS ${MYSQL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${MYSQL_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/mysql
     )
   
@@ -53,8 +56,7 @@ if (NOT MYSQL_FOUND)
   ## libmysqlclient
 
   find_library (MYSQL_MYSQLCLIENT_LIBRARY libmysqlclient.a mysqlclient
-    HINTS ${MYSQL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${MYSQL_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES lib lib/mysql
     )
   if (MYSQL_MYSQLCLIENT_LIBRARY)
@@ -64,8 +66,7 @@ if (NOT MYSQL_FOUND)
   ## libmysqlservices
 
   find_library (MYSQL_MYSQLSERVICES_LIBRARY libmysqlservices.a mysqlservices
-    HINTS ${MYSQL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${MYSQL_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES lib lib/mysql
     )
   if (MYSQL_MYSQLSERVICES_LIBRARY)
@@ -75,8 +76,7 @@ if (NOT MYSQL_FOUND)
   ## libmysql
   
   find_library (MYSQL_MYSQL_LIBRARY mysql libmysql.a
-    HINTS ${MYSQL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${MYSQL_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES lib lib/mysql
     )
   if (MYSQL_MYSQL_LIBRARY)
@@ -87,14 +87,12 @@ if (NOT MYSQL_FOUND)
   ## Check for the executable
   
   find_program (MYSQL_MYSQL_EXECUTABLE mysql
-    HINTS ${MYSQL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${MYSQL_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES bin share share/mysql share/mysql/bin
     )
   
   find_program (MYSQL_CONFIG_EXECUTABLE mysql_config
-    HINTS ${MYSQL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${MYSQL_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES bin share share/mysql share/mysql/bin
     )
   

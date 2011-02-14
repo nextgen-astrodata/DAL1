@@ -30,13 +30,17 @@
 
 if (NOT LAPACK_FOUND)
     
+  if (NOT LAPACK_ROOT_DIR)
+    set (LAPACK_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+  endif (NOT LAPACK_ROOT_DIR)
+  
   ##_____________________________________________________________________________
   ## Check for the header files
   
   set (LAPACK_INCLUDES "")
 
   find_path (LAPACK_CLAPACK_H clapack.h
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${LAPACK_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include
     )
 
@@ -56,10 +60,10 @@ if (NOT LAPACK_FOUND)
 
     ## Search for the library
     find_library (LAPACK_${_lapack_var}_LIBRARY ${_lapack_lib}
-      PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+      PATHS ${LAPACK_ROOT_DIR} /sw /usr /usr/local /opt/local
       PATH_SUFFIXES lib
       )
-
+    
     ## If library was found, add it to the list of libraries
     if (LAPACK_${_lapack_var}_LIBRARY)
       list (APPEND LAPACK_LIBRARIES ${LAPACK_${_lapack_var}_LIBRARY})
@@ -71,7 +75,7 @@ if (NOT LAPACK_FOUND)
   ## Check for the executable
   
 #  find_program (LAPACK_EXECUTABLE <package name>
-#    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+#    PATHS ${LAPACK_ROOT_DIR} /sw /usr /usr/local /opt/local
 #    PATH_SUFFIXES bin
 #    )
   
