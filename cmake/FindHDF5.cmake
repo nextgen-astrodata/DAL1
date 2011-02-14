@@ -49,21 +49,25 @@ if (NOT HDF5_FOUND)
   ## Check for the header files
   
   find_path (HDF5_INCLUDES hdf5.h hdf5_hl.h
+    HINTS ${HDF5_ROOT_DIR}
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include include/hdf5
     )
   
   find_path (HAVE_HDF5_HDF5_H hdf5.h
+    HINTS ${HDF5_ROOT_DIR}
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include include/hdf5
     )
   
   find_path (HAVE_HDF5_H5LT_H H5LT.h
+    HINTS ${HDF5_ROOT_DIR}
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include include/hdf5
     )
   
   find_path (HAVE_HDF5_HDF5_HL_H hdf5_hl.h
+    HINTS ${HDF5_ROOT_DIR}
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include include/hdf5
     )
@@ -76,6 +80,7 @@ if (NOT HDF5_FOUND)
   ## Core library (libhdf5)
   
   find_library (HDF5_HDF5_LIBRARY hdf5
+    HINTS ${HDF5_ROOT_DIR}
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib hdf5/lib
     )
@@ -87,6 +92,7 @@ if (NOT HDF5_FOUND)
   ## High level interface (libhdf5_hl)
   
   FIND_LIBRARY (HDF5_HDF5_HL_LIBRARY hdf5_hl
+    HINTS ${HDF5_ROOT_DIR}
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib hdf5/lib
     )
@@ -98,6 +104,7 @@ if (NOT HDF5_FOUND)
   ## C++ interface (libhdf5_cpp)
   
   FIND_LIBRARY (HDF5_HDF5_CPP_LIBRARY hdf5_cpp
+    HINTS ${HDF5_ROOT_DIR}
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib hdf5/lib
     )
@@ -110,21 +117,25 @@ if (NOT HDF5_FOUND)
   ## Check for the executables
   
   find_program (H5CHECK_EXECUTABLE h5check
+    HINTS ${HDF5_ROOT_DIR}
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES bin
     )
   
   find_program (H5DUMP_EXECUTABLE h5dump 
+    HINTS ${HDF5_ROOT_DIR}
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES bin
     )
   
   find_program (H5LS_EXECUTABLE h5ls 
+    HINTS ${HDF5_ROOT_DIR}
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES bin
     )
   
   find_program (H5STAT_EXECUTABLE h5stat 
+    HINTS ${HDF5_ROOT_DIR}
     PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES bin
     )
