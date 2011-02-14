@@ -29,6 +29,12 @@
 #  MYSQL_LFLAGS     = Linker flags (optional)
 
 if (NOT MYSQL_FOUND)
+
+  ## Initialize variables
+
+  set (MYSQL_VERSION  0     )
+  set (MYSQL_PORT     0     )
+  set (MYSQL_FOUND    FALSE )
     
   ##_____________________________________________________________________________
   ## Check for the header files
