@@ -24,7 +24,7 @@ foreach (_dalcmake
     WCSLIB
     )
 
-  message (STATUS "Checking for package ${_dalcmake} ...")
+  message (STATUS "Checking for package ${_dalcmake}")
 
   ## Generate uppercase version of package name
   string (TOUPPER ${_dalcmake} _var)
