@@ -160,6 +160,7 @@ message (STATUS " Build and enable test programs   = ${DAL_ENABLE_TESTING}"     
 message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}"    )
 message (STATUS " Enable code using Boost++        = ${BOOST_FOUND}"               )
 message (STATUS "  .. Library version              = ${BOOST_VERSION}"             )
+message (STATUS "  .. Include directory            = ${BOOST_INCLUDES}"            )
 message (STATUS " Enable code using casacore       = ${CASACORE_FOUND}"            )
 message (STATUS " Enable code using CFITSIO        = ${CFITSIO_FOUND}"             )
 message (STATUS " Enable code using GSL            = ${GSL_FOUND}"                 )
