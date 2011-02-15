@@ -5,18 +5,24 @@ project (DAL)
 ## Minimum required version of CMake to configure the project
 cmake_minimum_required (VERSION 2.8)
 
+## Packaging
+include (CPack)
+set (CPACK_PACKAGE_VERSION             "0.1.0"               )
+set (CPACK_PACKAGE_VENDOR              "LOFAR"               )
+set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Data Access Library" )
+
 ## ==============================================================================
 ##
 ##  Options
 ##
 ## ==============================================================================
 
-option (DAL_BUILD_APPS         "Build the applications?"                      YES )
-option (DAL_ENABLE_TESTING     "Build and enable test programs?"              YES )
-option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?"    ON  )
-option (DAL_PYTHON_BINDINGS    "Create python bindings?"                      YES )
-option (DAL_DEBUGGING_MESSAGES "Print debugging information?"                 NO  )
-option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"         NO  )
+option (DAL_BUILD_APPS         "Build the applications?"                    YES )
+option (DAL_ENABLE_TESTING     "Build and enable test programs?"            YES )
+option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?"  ON  )
+option (DAL_PYTHON_BINDINGS    "Create python bindings?"                    YES )
+option (DAL_DEBUGGING_MESSAGES "Print debugging information?"               NO  )
+option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"       NO  )
 
 ##__________________________________________________________
 ## Handle option: testing mode
@@ -76,7 +82,6 @@ endif (DAL_DEBUGGING_MESSAGES)
 ##
 ## ==============================================================================
 
-include (CPack)
 include (${DAL_SOURCE_DIR}/cmake/CheckExternalPackages.cmake)
 
 ## ==============================================================================
