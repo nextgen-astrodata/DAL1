@@ -30,21 +30,20 @@
 
 if (NOT MYSQL_FOUND)
 
-  ## Initialize variables
-
-  set (MYSQL_VERSION  0     )
-  set (MYSQL_PORT     0     )
-  set (MYSQL_FOUND    FALSE )
-    
   if (NOT MYSQL_ROOT_DIR)
     set (MYSQL_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   endif (NOT MYSQL_ROOT_DIR)
   
+  set (MYSQL_VERSION  0     )
+  set (MYSQL_PORT     0     )
+  set (MYSQL_FOUND    FALSE )
+    
   ##_____________________________________________________________________________
   ## Check for the header files
   
   find_path (MYSQL_INCLUDES mysql.h
-    PATHS ${MYSQL_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${MYSQL_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/mysql
     )
   
@@ -56,7 +55,8 @@ if (NOT MYSQL_FOUND)
   ## libmysqlclient
 
   find_library (MYSQL_MYSQLCLIENT_LIBRARY libmysqlclient.a mysqlclient
-    PATHS ${MYSQL_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${MYSQL_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES lib lib/mysql
     )
   if (MYSQL_MYSQLCLIENT_LIBRARY)
@@ -66,7 +66,8 @@ if (NOT MYSQL_FOUND)
   ## libmysqlservices
 
   find_library (MYSQL_MYSQLSERVICES_LIBRARY libmysqlservices.a mysqlservices
-    PATHS ${MYSQL_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${MYSQL_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES lib lib/mysql
     )
   if (MYSQL_MYSQLSERVICES_LIBRARY)
@@ -76,7 +77,8 @@ if (NOT MYSQL_FOUND)
   ## libmysql
   
   find_library (MYSQL_MYSQL_LIBRARY mysql libmysql.a
-    PATHS ${MYSQL_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${MYSQL_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES lib lib/mysql
     )
   if (MYSQL_MYSQL_LIBRARY)
@@ -87,12 +89,14 @@ if (NOT MYSQL_FOUND)
   ## Check for the executable
   
   find_program (MYSQL_MYSQL_EXECUTABLE mysql
-    PATHS ${MYSQL_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${MYSQL_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES bin share share/mysql share/mysql/bin
     )
   
   find_program (MYSQL_CONFIG_EXECUTABLE mysql_config
-    PATHS ${MYSQL_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${MYSQL_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES bin share share/mysql share/mysql/bin
     )
   

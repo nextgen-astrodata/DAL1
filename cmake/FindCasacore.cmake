@@ -69,7 +69,8 @@ if (NOT CASACORE_FOUND)
   ## Check for the header files
   
   find_path (CASACORE_INCLUDES ${CASACORE_HEADERS}
-    PATHS ${CASACORE_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${CASACORE_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/casacore
     )
 
@@ -86,7 +87,8 @@ if (NOT CASACORE_FOUND)
     ## Search for the library
     find_library (CASACORE_${_casacore_var}_LIBRARY
       NAMES casa_${_casacore_lib} ${_casacore_lib}
-      PATHS ${CASACORE_ROOT_DIR} /sw /usr /usr/local /opt/local
+      HINTS ${CASACORE_ROOT_DIR}
+      PATHS /sw /usr /usr/local /opt/local
       PATH_SUFFIXES lib
       )
 

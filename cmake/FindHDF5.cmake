@@ -49,26 +49,35 @@ if (NOT HDF5_FOUND)
     set (HDF5_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   endif (NOT HDF5_ROOT_DIR)
 
+  set (HDF5_VERSION_MAJOR   0      )
+  set (HDF5_VERSION_MINOR   0      )
+  set (HDF5_VERSION_RELEASE 0      )
+  set (HDF5_HAVE_PARALLEL_IO FALSE )
+  
   ##_____________________________________________________________________________
   ## Check for the header files
   
   find_path (HDF5_INCLUDES hdf5.h hdf5_hl.h
-    PATHS ${HDF5_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${HDF5_ROOT_DIR} 
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/hdf5
     )
   
   find_path (HAVE_HDF5_HDF5_H hdf5.h
-    PATHS ${HDF5_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${HDF5_ROOT_DIR} 
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/hdf5
     )
   
   find_path (HAVE_HDF5_H5LT_H H5LT.h
-    PATHS ${HDF5_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${HDF5_ROOT_DIR} 
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/hdf5
     )
   
   find_path (HAVE_HDF5_HDF5_HL_H hdf5_hl.h
-    PATHS ${HDF5_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${HDF5_ROOT_DIR} 
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/hdf5
     )
 
@@ -77,59 +86,50 @@ if (NOT HDF5_FOUND)
   
   set (HDF5_LIBRARIES "")
 
-  ## Core library (libhdf5)
-  
-  find_library (HDF5_HDF5_LIBRARY hdf5
-    PATHS ${HDF5_ROOT_DIR} /sw /usr /usr/local /opt/local
-    PATH_SUFFIXES lib hdf5/lib
-    )
-  
-  if (HDF5_HDF5_LIBRARY)
-    set (HDF5_LIBRARIES ${HDF5_HDF5_LIBRARY})
-  endif (HDF5_HDF5_LIBRARY)
-  
-  ## High level interface (libhdf5_hl)
-  
-  FIND_LIBRARY (HDF5_HDF5_HL_LIBRARY hdf5_hl
-    PATHS ${HDF5_ROOT_DIR} /sw /usr /usr/local /opt/local
-    PATH_SUFFIXES lib hdf5/lib
-    )
-  
-  if (HDF5_HDF5_HL_LIBRARY)
-    list (APPEND HDF5_LIBRARIES ${HDF5_HDF5_HL_LIBRARY})
-  endif (HDF5_HDF5_HL_LIBRARY)
-  
-  ## C++ interface (libhdf5_cpp)
-  
-  FIND_LIBRARY (HDF5_HDF5_CPP_LIBRARY hdf5_cpp
-    PATHS ${HDF5_ROOT_DIR} /sw /usr /usr/local /opt/local
-    PATH_SUFFIXES lib hdf5/lib
-    )
-  
-  if (HDF5_HDF5_CPP_LIBRARY)
-    list (APPEND HDF5_LIBRARIES ${HDF5_HDF5_CPP_LIBRARY})
-  endif (HDF5_HDF5_CPP_LIBRARY)
+  foreach (_libHDF5 hdf5 hdf5_hl hdf5_cpp z)
 
+    ## Convert library name to CMake variable
+    string (TOUPPER ${_libHDF5} _varHDF5)
+    
+    ## Search for the library
+    find_library (HDF5_${_varHDF5}_LIBRARY 
+      NAMES ${_libHDF5}
+      HINTS ${HDF5_ROOT_DIR} 
+      PATHS /sw /usr /usr/local /opt/local
+      PATH_SUFFIXES lib hdf5/lib
+      )
+    
+    ## Update library list
+    if (HDF5_${_varHDF5}_LIBRARY)
+      list (APPEND HDF5_LIBRARIES ${HDF5_${_varHDF5}_LIBRARY})
+    endif (HDF5_${_varHDF5}_LIBRARY)
+
+  endforeach (_libHDF5)
+  
   ##_____________________________________________________________________________
   ## Check for the executables
   
   find_program (H5CHECK_EXECUTABLE h5check
-    PATHS ${HDF5_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${HDF5_ROOT_DIR} 
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES bin
     )
   
   find_program (H5DUMP_EXECUTABLE h5dump 
-    PATHS ${HDF5_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${HDF5_ROOT_DIR} 
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES bin
     )
   
   find_program (H5LS_EXECUTABLE h5ls 
-    PATHS ${HDF5_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${HDF5_ROOT_DIR} 
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES bin
     )
   
   find_program (H5STAT_EXECUTABLE h5stat 
-    PATHS ${HDF5_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${HDF5_ROOT_DIR} 
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES bin
     )
 
@@ -143,7 +143,7 @@ if (NOT HDF5_FOUND)
     ## Locate test program
     find_file (HAVE_TestHDF5Library TestHDF5Library.cc
       PATHS ${PROJECT_SOURCE_DIR}
-      PATH_SUFFIXES cmake Modules
+      PATH_SUFFIXES cmake devel_common/cmake Modules
       )
     ## Build and run test program
     if (HAVE_TestHDF5Library)
@@ -181,10 +181,6 @@ if (NOT HDF5_FOUND)
     endif (HDF5_VERSION_RUN_RESULT)
   else (HDF5_VERSION_COMPILE_RESULT)
     message (STATUS "[HDF5] Failed to compile TestHDF5Library!")
-    set (HDF5_VERSION_MAJOR   "-1" )
-    set (HDF5_VERSION_MINOR   "-1" )
-    set (HDF5_VERSION_RELEASE "-1" )
-    set (HDF5_HAVE_PARALLEL_IO FALSE)
   endif (HDF5_VERSION_COMPILE_RESULT)
   
   set (HDF5_VERSION "${HDF5_VERSION_MAJOR}.${HDF5_VERSION_MINOR}.${HDF5_VERSION_RELEASE}")
@@ -226,6 +222,7 @@ if (NOT HDF5_FOUND)
     HDF5_INCLUDES
     HDF5_LIBRARIES
     HDF5_HAVE_PARALLEL_IO
+    HDF5_USE_16_API_DEFAULT
     )
   
 endif (NOT HDF5_FOUND)

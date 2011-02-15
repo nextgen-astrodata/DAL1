@@ -24,6 +24,8 @@ foreach (_dalcmake
     WCSLIB
     )
 
+  message (STATUS "Checking for package ${_dalcmake} ...")
+
   ## Generate uppercase version of package name
   string (TOUPPER ${_dalcmake} _var)
   ## Provide potential root directory of package
@@ -38,6 +40,8 @@ foreach (_dalcmake
     
     ## include directories
     include_directories (${${_var}_INCLUDES})
+
+    message (STATUS "Checking for package ${_dalcmake} - Success")
 
   endif (${_var}_FOUND OR HAVE_${_var})
 
@@ -137,13 +141,14 @@ message (STATUS " CMAKE_INSTALL_PREFIX             = ${CMAKE_INSTALL_PREFIX}"   
 message (STATUS " Build and enable test programs   = ${DAL_ENABLE_TESTING}"        )
 message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}"    )
 message (STATUS " Enable code using Boost++        = ${BOOST_FOUND}"               )
-message (STATUS "  .. Library version              = ${BOOST_VERSION}"             )
-message (STATUS "  .. Include directory            = ${BOOST_INCLUDES}"            )
+message (STATUS " .. Library version               = ${BOOST_VERSION}"             )
+message (STATUS " .. Include directory             = ${BOOST_INCLUDES}"            )
 message (STATUS " Enable code using casacore       = ${CASACORE_FOUND}"            )
 message (STATUS " Enable code using CFITSIO        = ${CFITSIO_FOUND}"             )
 message (STATUS " Enable code using GSL            = ${GSL_FOUND}"                 )
 message (STATUS " Enable code using HDF5           = ${HDF5_FOUND}"                )
 message (STATUS " .. Library version               = ${HDF5_VERSION}"              )
+message (STATUS " .. Include directory             = ${HDF5_INCLUDES}"             )
 message (STATUS " .. Parallel I/O                  = ${HDF5_HAVE_PARALLEL_IO}"     )
 message (STATUS " .. 1.6 API default               = ${HDF5_USE_16_API_DEFAULT}"   )
 message (STATUS " Enable code using MPI            = ${MPI_FOUND}"                 )
@@ -165,10 +170,6 @@ message (STATUS " Enable code using WCSLIB         = ${WCSLIB_FOUND}"           
 message (STATUS "+------------------------------------------------------------+"   )
 
 if (DAL_VERBOSE_CONFIGURE)
-  message (STATUS " LAPACK library           = ${LAPACK_LIBRARIES}   ")
-  message (STATUS " Python includes          = ${PYTHON_INCLUDES}    ")
-  message (STATUS " num_util includes        = ${NUMUTIL_INCLUDES}   ")
-  message (STATUS " Python library           = ${PYTHON_LIBRARIES}   ")
   message (STATUS " Types sizes:                                     ")
   message (STATUS " .. void*                 = ${CMAKE_SIZEOF_VOID_P}")
   message (STATUS " .. short                 = ${SIZEOF_SHORT}       ")

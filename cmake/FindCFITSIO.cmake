@@ -38,7 +38,8 @@ if (NOT CFITSIO_FOUND)
   ## Check for the header files
   
   find_path (CFITSIO_INCLUDES fitsio.h fitsio2.h
-    PATHS ${CFITSIO_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${CFITSIO_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/fitsio include/cfitsio
     )
   
@@ -46,7 +47,8 @@ if (NOT CFITSIO_FOUND)
   ## Check for the library
   
   find_library (CFITSIO_LIBRARIES cfitsio
-    PATHS ${CFITSIO_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${CFITSIO_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES lib
     )
   
