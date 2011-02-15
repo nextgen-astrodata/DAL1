@@ -6,29 +6,6 @@ include (FindMPI)
 include (FindOpenMP)
 
 ##__________________________________________________________
-##                                         LUS CMake modules
-
-find_path (LUS_ROOT devel_common/cmake/CMakeSettings.cmake
-  PATHS 
-  ${DAL_SOURCE_DIR}
-  ${DAL_SOURCE_DIR}/..
-  ${DAL_SOURCE_DIR}/../..
-  ${DAL_SOURCE_DIR}/../../..
-  $ENV{LOFARSOFT}
-  )
-
-if (LUS_ROOT)
-  foreach (_luscmake
-      CMakeSettings
-      FindTestDatasets
-      )
-    include (${LUS_ROOT}/devel_common/cmake/${_luscmake}.cmake)
-  endforeach (_luscmake)
-  ##
-  set (CASACORE_FOUND ${HAVE_CASACORE})
-endif (LUS_ROOT)
-
-##__________________________________________________________
 ##                                      Custom CMake modules
 
 foreach (_dalcmake
@@ -156,6 +133,7 @@ install (FILES ${DAL_BINARY_DIR}/dal_config.h
 message (STATUS "+============================================================+"   )
 message (STATUS "| DAL: Summary of configuration settings                     |"   )
 message (STATUS "+------------------------------------------------------------+"   )
+message (STATUS " CMAKE_INSTALL_PREFIX             = ${CMAKE_INSTALL_PREFIX}"      )
 message (STATUS " Build and enable test programs   = ${DAL_ENABLE_TESTING}"        )
 message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}"    )
 message (STATUS " Enable code using Boost++        = ${BOOST_FOUND}"               )
