@@ -29,6 +29,10 @@
 #  CASACORE_LFLAGS     = Linker flags (optional)
 
 if (NOT CASACORE_FOUND)
+
+  if (NOT CASACORE_ROOT_DIR)
+    set (CASACORE_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+  endif (NOT CASACORE_ROOT_DIR)
   
   set (CASACORE_MODULES
     casa
@@ -65,8 +69,7 @@ if (NOT CASACORE_FOUND)
   ## Check for the header files
   
   find_path (CASACORE_INCLUDES ${CASACORE_HEADERS}
-    HINTS ${CASACORE_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${CASACORE_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/casacore
     )
 
@@ -82,9 +85,8 @@ if (NOT CASACORE_FOUND)
 
     ## Search for the library
     find_library (CASACORE_${_casacore_var}_LIBRARY
-      HINTS ${CASACORE_ROOT_DIR}
       NAMES casa_${_casacore_lib} ${_casacore_lib}
-      PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+      PATHS ${CASACORE_ROOT_DIR} /sw /usr /usr/local /opt/local
       PATH_SUFFIXES lib
       )
 

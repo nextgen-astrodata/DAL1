@@ -32,11 +32,15 @@
 
 if (NOT GSL_FOUND)
     
+  if (NOT GSL_ROOT_DIR)
+    set (GSL_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+  endif (NOT GSL_ROOT_DIR)
+
   ##_____________________________________________________________________________
   ## Check for the header files
   
   find_path (GSL_INCLUDES gsl_version.h gsl_sys.h gsl_nan.h
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${GSL_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/gsl
     )
   
@@ -48,7 +52,7 @@ if (NOT GSL_FOUND)
   ## libgsl
   
   find_library (GSL_GSL_LIBRARY gsl
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${GSL_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES lib
     )
   
@@ -59,7 +63,7 @@ if (NOT GSL_FOUND)
   ## libgsl
   
   find_library (GSL_GSLCBLAS_LIBRARY gslcblas
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${GSL_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES lib lib/gsl
     )
   
@@ -71,7 +75,7 @@ if (NOT GSL_FOUND)
   ## Check for the executable
   
   find_program (GSL_CONFIG_EXECUTABLE gsl-config
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${GSL_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES bin bin/gsl
     )
   

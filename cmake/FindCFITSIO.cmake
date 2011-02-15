@@ -29,13 +29,16 @@
 #  CFITSIO_LFLAGS     = Linker flags (optional)
 
 if (NOT CFITSIO_FOUND)
-    
+
+  if (NOT CFITSIO_ROOT_DIR)
+    set (CFITSIO_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+  endif (NOT CFITSIO_ROOT_DIR)
+
   ##_____________________________________________________________________________
   ## Check for the header files
   
   find_path (CFITSIO_INCLUDES fitsio.h fitsio2.h
-    HINTS ${CFITSIO_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${CFITSIO_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/fitsio include/cfitsio
     )
   
@@ -43,8 +46,7 @@ if (NOT CFITSIO_FOUND)
   ## Check for the library
   
   find_library (CFITSIO_LIBRARIES cfitsio
-    HINTS ${CFITSIO_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${CFITSIO_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES lib
     )
   

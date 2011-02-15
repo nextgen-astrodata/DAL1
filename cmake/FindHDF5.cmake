@@ -48,7 +48,7 @@ if (NOT HDF5_FOUND)
   if (NOT HDF5_ROOT_DIR)
     set (HDF5_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   endif (NOT HDF5_ROOT_DIR)
-  
+
   ##_____________________________________________________________________________
   ## Check for the header files
   

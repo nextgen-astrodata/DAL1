@@ -29,12 +29,16 @@
 #  WCSLIB_LFLAGS     = Linker flags (optional)
 
 if (NOT WCSLIB_FOUND)
-    
+
+  if (NOT WCSLIB_ROOT_DIR)
+    set (WCSLIB_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+  endif (NOT WCSLIB_ROOT_DIR)
+
   ##_____________________________________________________________________________
   ## Check for the header files
   
   find_path (WCSLIB_INCLUDES wcs.h
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${WCSLIB_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/wcs include/wcslib include/wcslib-4.4.4
     )
   
@@ -42,7 +46,7 @@ if (NOT WCSLIB_FOUND)
   ## Check for the library
   
   find_library (WCSLIB_LIBRARIES wcs
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${WCSLIB_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES lib
     )
   
