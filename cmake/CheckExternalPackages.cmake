@@ -21,7 +21,6 @@ if (LUS_ROOT)
   foreach (_luscmake
       CMakeSettings
       FindTestDatasets
-      FindPython
       )
     include (${LUS_ROOT}/devel_common/cmake/${_luscmake}.cmake)
   endforeach (_luscmake)
@@ -44,6 +43,7 @@ foreach (_dalcmake
     MySQL
     NumPy
     NumUtil
+    Python
     WCSLIB
     )
 
@@ -178,6 +178,7 @@ message (STATUS " .. libmysqlclient                = ${MYSQL_MYSQLCLIENT_LIBRARY
 message (STATUS " .. libmysqlservices              = ${MYSQL_MYSQLSERVICES_LIBRARY}" )
 message (STATUS " Enable Python bindings           = ${DAL_PYTHON_BINDINGS}"       )
 message (STATUS " .. Python version                = ${PYTHON_VERSION}"            )
+message (STATUS " .. Python API version            = ${PYTHON_API_VERSION}"        )
 message (STATUS " .. Python NumUtils package       = ${NUMUTIL_FOUND}"             )
 message (STATUS " Enable code using OpenMP         = ${OPENMP_FOUND}"              )
 message (STATUS " Enable code using WCSLIB         = ${WCSLIB_FOUND}"              )
