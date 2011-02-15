@@ -36,6 +36,10 @@ if (NOT BOOST_FOUND)
   if (NOT BOOST_ROOT_DIR)
     set (BOOST_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   endif (NOT BOOST_ROOT_DIR)
+
+  set (BOOST_VERSION_MAJOR  0 )
+  set (BOOST_VERSION_MINOR  0 )
+  set (BOOST_VERSION_PATCH  0 )
   
   set (BOOST_MODULES
     date_time
@@ -97,6 +101,50 @@ if (NOT BOOST_FOUND)
   ## Clean up the list of include directories
   list (REMOVE_DUPLICATES BOOST_INCLUDES)
   
+  ##_____________________________________________________________________________
+  ## Test Boost library for:
+  ##  - library version <major.minor.release>
+
+  if (BOOST_INCLUDES AND BOOST_LIBRARIES)
+    ## Locate test program
+    find_file (HAVE_TestBoostLibrary TestBoostLibrary.cc
+      PATHS ${PROJECT_SOURCE_DIR}
+      PATH_SUFFIXES cmake Modules
+      )
+    ## Build and run test program
+    if (HAVE_TestBoostLibrary)
+      try_run(BOOST_VERSION_RUN_RESULT BOOST_VERSION_COMPILE_RESULT
+	${PROJECT_BINARY_DIR}
+	${HAVE_TestBoostLibrary}
+#	CMAKE_FLAGS -DLINK_LIBRARIES:STRING=${BOOST_LIBRARIES}
+	COMPILE_DEFINITIONS -I${BOOST_INCLUDES}
+	RUN_OUTPUT_VARIABLE BOOST_VERSION_OUTPUT
+	)
+    endif (HAVE_TestBoostLibrary)
+  endif (BOOST_INCLUDES AND BOOST_LIBRARIES)
+  
+  ## Comile of test program successful?
+  if (BOOST_VERSION_COMPILE_RESULT)
+    ## Run of test program successful?
+    if (BOOST_VERSION_RUN_RESULT)
+      
+      ## Library version _________________________
+      
+      string(REGEX REPLACE "BOOST_VERSION ([0-9]+).*" "\\1" BOOST_VERSION ${BOOST_VERSION_OUTPUT})
+      string(REGEX REPLACE ".*BOOST_VERSION_MAJOR ([0-9]+).*" "\\1" BOOST_VERSION_MAJOR ${BOOST_VERSION_OUTPUT})
+      string(REGEX REPLACE ".*BOOST_VERSION_MINOR ([0-9]+).*" "\\1" BOOST_VERSION_MINOR ${BOOST_VERSION_OUTPUT})
+      string(REGEX REPLACE ".*BOOST_VERSION_PATCH ([0-9]+).*" "\\1" BOOST_VERSION_PATCH ${BOOST_VERSION_OUTPUT})
+
+    else (BOOST_VERSION_RUN_RESULT)
+      message (STATUS "[Boost] Failed to run TestBoostLibrary!")
+    endif (BOOST_VERSION_RUN_RESULT)
+  else (BOOST_VERSION_COMPILE_RESULT)
+    message (STATUS "[Boost] Failed to compile TestBoostLibrary!")
+  endif (BOOST_VERSION_COMPILE_RESULT)
+
+  ## Assemble full version of library
+  set (BOOST_VERSION "${BOOST_VERSION_MAJOR}.${BOOST_VERSION_MINOR}.${BOOST_VERSION_PATCH}")
+
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
   
