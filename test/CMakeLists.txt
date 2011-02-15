@@ -10,14 +10,9 @@
 
 add_subdirectory (hdf5)
 add_subdirectory (core)
+add_subdirectory (coordinates)
 add_subdirectory (data_common)
 add_subdirectory (data_hl)
-
-if (CASACORE_FOUND AND LAPACK_LAPACK_LIBRARY)
-  add_subdirectory (coordinates)
-else (CASACORE_FOUND AND LAPACK_LAPACK_LIBRARY)
-  message (STATUS "[DAL] Skipping tests in test/coordinates.")
-endif (CASACORE_FOUND AND LAPACK_LAPACK_LIBRARY)
 
 if (DAL_PYTHON_BINDINGS)
   add_subdirectory (bindings)
