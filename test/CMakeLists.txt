@@ -28,7 +28,6 @@ endif (DAL_PYTHON_BINDINGS)
 set (tests
   tdal
   tdal_fits
-  tpulsar_dal
   )
 
 ## Build instructions
