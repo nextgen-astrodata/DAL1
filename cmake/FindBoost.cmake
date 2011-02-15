@@ -23,11 +23,13 @@
 # - Check for the presence of BOOST
 #
 # The following variables are set when BOOST is found:
-#  BOOST_FOUND      = Set to true, if all components of BOOST
-#                         have been found.
-#  BOOST_INCLUDES   = Include path for the header files of BOOST
-#  BOOST_LIBRARIES  = Link these to use BOOST
-#  BOOST_LFLAGS     = Linker flags (optional)
+#  BOOST_FOUND         = Set to true, if all components of BOOST have been found.
+#  BOOST_INCLUDES      = Include path for the header files of BOOST
+#  BOOST_LIBRARIES     = Link these to use BOOST
+#  BOOST_VERSION       = Boost library version <major>.<minor>.<patch>
+#  BOOST_VERSION_MAJOR = Boost library major version.
+#  BOOST_VERSION_MINOR = Boost library minor version.
+#  BOOST_VERSION_PATCH = Boost library patch version.
 
 if (NOT BOOST_FOUND)
 
@@ -116,7 +118,6 @@ if (NOT BOOST_FOUND)
       try_run(BOOST_VERSION_RUN_RESULT BOOST_VERSION_COMPILE_RESULT
 	${PROJECT_BINARY_DIR}
 	${HAVE_TestBoostLibrary}
-#	CMAKE_FLAGS -DLINK_LIBRARIES:STRING=${BOOST_LIBRARIES}
 	COMPILE_DEFINITIONS -I${BOOST_INCLUDES}
 	RUN_OUTPUT_VARIABLE BOOST_VERSION_OUTPUT
 	)
