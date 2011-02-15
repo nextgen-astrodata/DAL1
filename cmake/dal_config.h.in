@@ -64,6 +64,8 @@
 #ifdef H5_USE_16_API_DEFAULT
 #define H5_USE_16_API_DEFAULT 0
 #endif
+/* Activation of casacore code */
+#define CASA_HDF5_H
 /* Header files to be included */
 #include <hdf5.h>
 #include <hdf5_hl.h>
