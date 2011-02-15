@@ -21,7 +21,6 @@ if (LUS_ROOT)
   foreach (_luscmake
       CMakeSettings
       FindTestDatasets
-      FindBoost
       FindPython
       )
     include (${LUS_ROOT}/devel_common/cmake/${_luscmake}.cmake)
@@ -34,19 +33,36 @@ endif (LUS_ROOT)
 ##                                      Custom CMake modules
 
 foreach (_dalcmake
-    FindCasacore
-    FindCFITSIO
-    FindGFortran
-    FindGSL
-    FindHDF5
-    FindLAPACK
-    FindLOFAR
-    FindMySQL
-    FindNumPy
-    FindNumUtil
-    FindWCSLIB
+    Boost
+    Casacore
+    CFITSIO
+    GFortran
+    GSL
+    HDF5
+    LAPACK
+    LOFAR
+    MySQL
+    NumPy
+    NumUtil
+    WCSLIB
     )
-  include (${DAL_SOURCE_DIR}/cmake/${_dalcmake}.cmake)
+
+  ## Generate uppercase version of package name
+  string (TOUPPER ${_dalcmake} _var)
+
+  ## Include CMake find script
+  include (${DAL_SOURCE_DIR}/cmake/Find${_dalcmake}.cmake)
+
+  if (${_var}_FOUND OR HAVE_${_var})
+
+    ## variable mapping
+    set (HAVE_${_var} TRUE)
+    
+    ## include directories
+    include_directories (${${_var}_INCLUDES})
+
+  endif (${_var}_FOUND OR HAVE_${_var})
+
 endforeach (_dalcmake)
 
 ##__________________________________________________________
@@ -62,40 +78,6 @@ if (CMAKE_SIZEOF_VOID_P)
     add_definitions (-DWORDSIZE_IS_64)
   endif (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 endif (CMAKE_SIZEOF_VOID_P)
-
-##__________________________________________________________
-##                                     External header files
-
-if (HDF5_FOUND AND HDF5_HDF5_HL_LIBRARY)
-  if (HDF5_USE_16_API_DEFAULT)
-    add_definitions (-DH5_USE_16_API_DEFAULT=0)
-  endif (HDF5_USE_16_API_DEFAULT)
-endif (HDF5_FOUND AND HDF5_HDF5_HL_LIBRARY)
-
-foreach (_external
-    BOOST
-    CASA
-    CFITSIO
-    GSL
-    HDF5
-    LAPACK
-    LOFAR
-    MYSQL
-    NUMUTIL
-    WCSLIB
-    )
-
-  if (${_external}_FOUND OR HAVE_${_external})
-
-    ## variable mapping
-    set (HAVE_${_external} TRUE)
-    
-    ## include directories
-    include_directories (${${_external}_INCLUDES})
-
-  endif (${_external}_FOUND OR HAVE_${_external})
-  
-endforeach (_external)
 
 ## ==============================================================================
 ##
@@ -164,7 +146,6 @@ install (FILES ${DAL_BINARY_DIR}/dal_config.h
   DESTINATION include/dal
   )
 
-
 ## ==============================================================================
 ##
 ##  Feedback
@@ -180,6 +161,7 @@ message (STATUS " Enable Python bindings           = ${DAL_PYTHON_BINDINGS}"    
 message (STATUS " .. Python version                = ${PYTHON_VERSION}"            )
 message (STATUS " .. Python NumUtils package       = ${NUMUTIL_FOUND}"             )
 message (STATUS " Enable code using Boost++        = ${BOOST_FOUND}"               )
+message (STATUS "  .. Include directory            = ${BOOST_INCLUDES}"            )
 message (STATUS " Enable code using casacore       = ${CASACORE_FOUND}"            )
 message (STATUS " Enable code using CFITSIO        = ${CFITSIO_FOUND}"             )
 message (STATUS " Enable code using GSL            = ${GSL_FOUND}"                 )
