@@ -37,9 +37,9 @@ if (NOT WCSLIB_FOUND)
   ##_____________________________________________________________________________
   ## Check for the header files
   
-  find_path (WCSLIB_INCLUDES wcs.h
+  find_path (WCSLIB_INCLUDES wcs/wcs.h wcslib/wcs.h
     PATHS ${WCSLIB_ROOT_DIR} /sw /usr /usr/local /opt/local
-    PATH_SUFFIXES include include/wcs include/wcslib include/wcslib-4.4.4
+    PATH_SUFFIXES include
     )
   
   ##_____________________________________________________________________________
