@@ -54,57 +54,38 @@ endforeach (src)
 ## Test which require additional external libraries (and thereby should be
 ## considered optional)
 
-## [1] casacore
-
-if (HAVE_CASA OR CASACORE_FOUND)
-  ## additional compiler flags
-  foreach (src tMeasurementSets)
-    ## compiler instructions
-    add_executable (${src} ${src}.cc)
-    ## linker instructions
-    target_link_libraries (${src} dal ${dal_link_libraries})
-    ## installation
-    list (APPEND tests ${src})
-  endforeach (src)
-else (HAVE_CASA OR CASACORE_FOUND)
-  message (STATUS "Skipping test programs that require casacore!")
-endif (HAVE_CASA OR CASACORE_FOUND)
-
-## [2] casacore & HDF5
+## casacore
 
 if (CASACORE_FOUND)
-  if (HDF5_FOUND)
-    if (GFORTRAN_LIBRARIES)
-      if (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
-	## list of source files
-	foreach (src
-	    tdal_MS 
-	    tcasacore_hdf5
-	    tcasacore_images
-	    tcasacore_images2
-	    )
-	  ## compiler instructions
-	  add_executable (${src} ${src}.cc)
-	  ## linker instructions
-	  target_link_libraries (${src}
-	    dal
-	    ${dal_link_libraries}
-	    ${GFORTRAN_LIBRARIES}
-	    )
-	  ## installation
-	  list (APPEND tests ${src})
-	  ## testing
-	  if (DAL_ENABLE_TESTING)
-	    add_test (${src} ${src})
-	  endif (DAL_ENABLE_TESTING)
-	endforeach (src)
-      else (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
-	message (STATUS "[DAL] Skipping tests - missing LAPACK.")
-      endif (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
-    endif (GFORTRAN_LIBRARIES)
-  else (HDF5_FOUND)
-    message (STATUS "[DAL] Skipping tests - missing HDF5.")
-  endif (HDF5_FOUND)
+  if (GFORTRAN_LIBRARIES)
+    if (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
+      ## list of source files
+      foreach (src
+	  tdal_MS 
+	  tcasacore_hdf5
+	  tcasacore_images
+	  tcasacore_images2
+	  tcasacore_ms
+	  )
+	## compiler instructions
+	add_executable (${src} ${src}.cc)
+	## linker instructions
+	target_link_libraries (${src}
+	  dal
+	  ${dal_link_libraries}
+	  ${GFORTRAN_LIBRARIES}
+	  )
+	## installation
+	list (APPEND tests ${src})
+	## testing
+	if (DAL_ENABLE_TESTING)
+	  add_test (${src} ${src})
+	endif (DAL_ENABLE_TESTING)
+      endforeach (src)
+    else (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
+      message (STATUS "[DAL] Skipping tests - missing LAPACK.")
+    endif (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
+  endif (GFORTRAN_LIBRARIES)
 else (CASACORE_FOUND)
   message (STATUS "[DAL] Skipping tests - missing casacore.")
 endif (CASACORE_FOUND)
@@ -119,9 +100,9 @@ if (DAL_ENABLE_TESTING)
   
   ## -----------------------------------------------------------------
   ## [1] simple tests which do not require sample data
-
+  
   add_test (tdal tdal)
-
+  
   ## -----------------------------------------------------------------
   ## [3] Processing tests which require sample datasets
   
