@@ -76,23 +76,14 @@
 /* #define AIPS_STDLIB 1 */
 /* #define AIPS_AUTO_STL 1 */
 /* #define AIPS_NO_LEA_MALLOC 1 */
-#include <casa/aips.h>
-#include <casa/aipstype.h>
-#include <casa/complex.h>
 #include <casa/Arrays.h>
-#include <casa/Arrays/IPosition.h>
 #include <casa/Arrays/Matrix.h>
 #include <casa/Arrays/Vector.h>
 #include <casa/BasicSL/String.h>
 #include <casa/BasicMath/Math.h>
 #include <casa/Quanta/Quantum.h>
-#include <ms/MeasurementSets.h>
-#include <ms/MeasurementSets/MSReader.h>
 #include <tables/Tables.h>
 #include <tables/Tables/Table.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/TableParse.h>
-#include <tables/Tables/TableKeyword.h>
 #endif
 
 //__________________________________________________________

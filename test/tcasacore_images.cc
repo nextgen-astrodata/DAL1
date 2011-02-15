@@ -28,6 +28,7 @@
 
 /* casacore header files */
 #include <casa/Arrays.h>
+#include <casa/Quanta/Quantum.h>
 #include <coordinates/Coordinates/CoordinateSystem.h>
 #include <coordinates/Coordinates/Projection.h>
 #include <coordinates/Coordinates/DirectionCoordinate.h>

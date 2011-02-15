@@ -37,7 +37,8 @@ namespace DAL {
 
     \brief Represents the file containing all sub-structures (tables, arrays, etc.)
 
-    \author Joseph Masters, Lars B&auml;hren
+    \author Joseph Masters
+    \author Lars B&auml;hren
 
     \test tdalDataset.cc
     

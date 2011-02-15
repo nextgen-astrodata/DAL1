@@ -27,13 +27,8 @@
 #include <string>
 #include <iostream>
 
-#include <casa/aips.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/ArrayIO.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Vector.h>
-
 // Custom header files
+#include <dal_config.h>
 #include <lopesevent.h>
 
 using std::cerr;
@@ -122,7 +117,7 @@ namespace DAL {  // Namespace DAL -- begin
   private:
     
     //! filename (incl. path) of the file to be read
-    std::string filename_p;
+    std::string itsFilename;
     //! Is this object attached to a file?
     bool attached_p;
     //! Pointer to the (header-)data
@@ -154,8 +149,8 @@ namespace DAL {  // Namespace DAL -- begin
       \brief Get the name of the data file.
       \return filename -- Name of the data file
     */
-    inline std::string filename () {
-      return filename_p;
+    inline std::string filename () const {
+      return itsFilename;
     }
     
     /*!

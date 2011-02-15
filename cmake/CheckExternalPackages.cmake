@@ -49,7 +49,8 @@ foreach (_dalcmake
 
   ## Generate uppercase version of package name
   string (TOUPPER ${_dalcmake} _var)
-
+  ## Provide potential root directory of package
+  set (${_var}_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   ## Include CMake find script
   include (${DAL_SOURCE_DIR}/cmake/Find${_dalcmake}.cmake)
 
@@ -157,11 +158,7 @@ message (STATUS "| DAL: Summary of configuration settings                     |"
 message (STATUS "+------------------------------------------------------------+"   )
 message (STATUS " Build and enable test programs   = ${DAL_ENABLE_TESTING}"        )
 message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}"    )
-message (STATUS " Enable Python bindings           = ${DAL_PYTHON_BINDINGS}"       )
-message (STATUS " .. Python version                = ${PYTHON_VERSION}"            )
-message (STATUS " .. Python NumUtils package       = ${NUMUTIL_FOUND}"             )
 message (STATUS " Enable code using Boost++        = ${BOOST_FOUND}"               )
-message (STATUS "  .. Include directory            = ${BOOST_INCLUDES}"            )
 message (STATUS " Enable code using casacore       = ${CASACORE_FOUND}"            )
 message (STATUS " Enable code using CFITSIO        = ${CFITSIO_FOUND}"             )
 message (STATUS " Enable code using GSL            = ${GSL_FOUND}"                 )
@@ -179,6 +176,9 @@ message (STATUS " .. Port number                   = ${MYSQL_PORT}"             
 message (STATUS " .. libmysql                      = ${MYSQL_MYSQL_LIBRARY}"       )
 message (STATUS " .. libmysqlclient                = ${MYSQL_MYSQLCLIENT_LIBRARY}" )
 message (STATUS " .. libmysqlservices              = ${MYSQL_MYSQLSERVICES_LIBRARY}" )
+message (STATUS " Enable Python bindings           = ${DAL_PYTHON_BINDINGS}"       )
+message (STATUS " .. Python version                = ${PYTHON_VERSION}"            )
+message (STATUS " .. Python NumUtils package       = ${NUMUTIL_FOUND}"             )
 message (STATUS " Enable code using OpenMP         = ${OPENMP_FOUND}"              )
 message (STATUS " Enable code using WCSLIB         = ${WCSLIB_FOUND}"              )
 message (STATUS "+------------------------------------------------------------+"   )

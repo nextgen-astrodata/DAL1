@@ -22,7 +22,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <LOPES_EventFile.h>
+#include "LOPES_EventFile.h"
 
 namespace DAL {  // Namespace DAL -- begin
   
@@ -49,7 +49,7 @@ namespace DAL {  // Namespace DAL -- begin
   void LOPES_EventFile::init()
   {
     nofAntennas_p = 0;
-    filename_p    = "";
+    itsFilename   = "";
     attached_p    = false;
     headerpoint_p = (lopesevent_v1*)malloc(LOPESEV_HEADERSIZE);
   }
@@ -171,7 +171,7 @@ namespace DAL {  // Namespace DAL -- begin
 		channeldata_p(sample,antenna) = tmppoint[sample];
 	      }
 	  };
-	filename_p = filename;
+	itsFilename = filename;
 	attached_p = true;
       }
     catch (std::string message)
@@ -243,7 +243,7 @@ namespace DAL {  // Namespace DAL -- begin
   void LOPES_EventFile::summary (std::ostream &os)
   {
     // data available as individual data elements
-    os << "-- Filename                        : " << filename_p            << endl;
+    os << "-- Filename                        : " << itsFilename           << endl;
     os << "-- Object attached to file?          " << attached_p            << endl;
     os << "-- nof. antennas in the file       : " << nofAntennas()         << endl;
     os << "-- Antenna IDs                     : " << AntennaIDs_p          << endl;

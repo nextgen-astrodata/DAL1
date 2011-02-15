@@ -24,8 +24,10 @@
 #ifndef DALCOLUMN_H
 #define DALCOLUMN_H
 
-#ifndef DALDATA_H
 #include "dalData.h"
+
+#ifdef HAVE_CASA
+#include <tables/Tables/ScalarColumn.h>
 #endif
 
 namespace DAL {
