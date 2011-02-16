@@ -85,6 +85,11 @@ above.
   cmake ..
   make
 
+The default installation location is "/usr/local"; if you want to change this,
+you can tell CMake so by using
+
+  cmake -DCMAKE_INSTALL_PREFIX=<installation prefix> ..
+
 If you want to submit test test results - from configuration, build and running
 the test programs - you can do so by executing
 
