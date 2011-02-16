@@ -1,21 +1,41 @@
 
+Contents:
+
+  - Getting the source code
+  - Organization of the source code
+  - External dependencies
+  - Configuration and build
+  - Coding conventions
+
 _________________________________________________________________________________
 >>> Getting the source code
 
-The offical address to obtain a working copy of the DAL as part of the LOFAR 
-User Software (LUS) is from the SVN repository
+As of Feb 15, 2001 there are two ways in which to retrieve, build and install the
+DAL:
 
-  svn co http://usg.lofar.org/svn/code/trunk lofarsoft
+  1. From the original source repository on Github.
 
-However as of begin 2011 we are preparing to make the DAL a stand-alone software
-package, which no longer is tied to the LUS. More information can be found on
-the following web-sites and -pages:
+     In order to build the DAL as a stand-alone library, clone directly from the
+     repository on Github:
+     
+     git clone https://github.com/lbaehren/DAL.git DAL
 
-* https://github.com/lbaehren/DAL (Git code repository)
+  2. As part of the LOFAR User Software (LUS).
 
-* http://usg.lofar.org/doxygen/group___d_a_l.html (Doxygen source documentation)
+     If you want (or need) to use the DAL as part of the LUS software collection,
+     check out a working copy of the code base from the LUS Subversion repository
 
-* http://svn.astron.nl/CDash/index.php?project=DAL (Testing dashobard)
+     svn co http://usg.lofar.org/svn/code/trunk lofarsoft
+
+     Once the checkout is complete (assuming bash as shell):
+
+     cd lofarsoft
+     export LOFARSOFT=`pwd`
+     . ./devel_common/scripts/init.sh
+     cd build
+     ./bootstrap
+     make dal
+
 
 _________________________________________________________________________________
 >>> Organization of the source code
@@ -49,20 +69,30 @@ ________________________________________________________________________________
 
 * Python (http://www.python.org)
 
-
 _________________________________________________________________________________
->>> DAL components
+>>> Configuration and build
 
-* C++ library (libdal)
+The DAL uses the CMake (www.cmake.org) Cross-Platform Makefile Generator for 
+configuration and control of the build.
 
-  The main component of the DAL is a C++ library, which can be used by an
-  application programmer to gain access to a number of LOFAR standard data
-  products.
+Once your checkout from the Git repository is complete you will have a directory
+structure on disk as described in section "Organization of the source code"
+above.
 
-* Python module (pydal)
+  cd DAL
+  mkdir build
+  cd build
+  cmake ..
+  make
 
-  The functionality of the C++ library is exposed to the Python environment
-  a thin layer of bindings, using Boost.Python.
+If you want to submit test test results - from configuration, build and running
+the test programs - you can do so by executing
+
+  make Experimental
+
+from within the build directory. The collected results will be published at 
+
+  http://svn.astron.nl/CDash/index.php?project=DAL
 
 _________________________________________________________________________________
 >>> Coding conventions
