@@ -3,9 +3,11 @@
 ## Set up variables which will be filled in when parsing the input file for the
 ## Doxygen configuration
 
-set ( DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
-set ( DOXYGEN_CREATE_SUBDIRS   NO                          )
-set ( DOXYGEN_REPEAT_BRIEF     NO                          )
+set ( DOXYGEN_OUTPUT_DIRECTORY  ${CMAKE_CURRENT_BINARY_DIR} )
+set ( DOXYGEN_CREATE_SUBDIRS    NO                          )
+set ( DOXYGEN_REPEAT_BRIEF      NO                          )
+set ( DOXYGEN_GENERATE_TREEVIEW NO                          )
+set ( DOXYGEN_HTML_FOOTER       ${CMAKE_CURRENT_SOURCE_DIR}/html_footer.html )
 
 ## Generate Doxygen configuration file
 
