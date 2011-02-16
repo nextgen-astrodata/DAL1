@@ -10,6 +10,7 @@
 
 include (FindMPI)
 include (FindOpenMP)
+include (FindDoxygen)
 
 ##____________________________________________________________________
 ##                                                Custom CMake modules
@@ -68,7 +69,7 @@ if (CMAKE_SIZEOF_VOID_P)
 endif (CMAKE_SIZEOF_VOID_P)
 
 ##____________________________________________________________________
-##                                                    System libraries
+##                                          System libraries and tools
 
 find_library (DL_LIBRARY
   NAMES dl
