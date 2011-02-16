@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
@@ -72,7 +69,7 @@ int test_constructors ()
 //_______________________________________________________________________________
 //                                                               test_coordinates
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 
 /*!
   \brief Test generation of the various coordinate objects
@@ -245,7 +242,7 @@ int main ()
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   // Test generation of various coordinates
   nofFailedTests += test_coordinates ();
 #endif

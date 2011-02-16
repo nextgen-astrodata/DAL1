@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: tHDF5Common.cpp 2022 2008-09-26 12:06:09Z baehren               $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2008                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -25,7 +22,7 @@
 #include <Enumerations.h>
 #include <dalDataset.h>
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <casa/Arrays/Vector.h>
 #include <casa/BasicSL/String.h>
 #endif
@@ -63,7 +60,7 @@ using std::endl;
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 int test_casacore_variables ()
 {
   cout << "\n[tdalCommon::test_operators]\n" << endl;
@@ -464,7 +461,7 @@ int test_hdf5_attributes ()
   //__________________________________________________________________
   // Write attributes from casa::Vector<T>
   
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   cout << "[5] Set attributes of type casa::Vector<T> ..." << endl;
   try {
     cout << "-- Attribute of type casa::Vector<bool> ..." << endl;
@@ -891,7 +888,7 @@ int main ()
 {
   int nofFailedTests (0);
   
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   nofFailedTests += test_casacore_variables ();
 #endif
   

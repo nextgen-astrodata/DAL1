@@ -123,11 +123,11 @@ namespace DAL {
   public:
 
     //! Argumented constructor
-    BFRaw ( string const& name,
-	    bool doIntensity=false,
-	    bool doDownsample=false,
-	    bool doChannelization=false,
-	    int factor=1 );
+    BFRaw (std::string const& name,
+	   bool doIntensity=false,
+	   bool doDownsample=false,
+	   bool doChannelization=false,
+	   int factor=1 );
     //! Destruction
     ~BFRaw();
     
@@ -137,7 +137,7 @@ namespace DAL {
     //! Provide a summary of the object's properties
     void summary (std::ostream &os);
     //! Get the name of the output file
-    inline string outfile () const { return outputfilename; }
+    inline std::string outfile () const { return outputfilename; }
     //! Set up the socket connection to the server
     bool connectsocket( const char * portnumber );
     //! Create HDF5 file from the raw data

@@ -27,7 +27,7 @@
 // DAL header files
 #include <CoordinateInterface.h>
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <coordinates/Coordinates/DirectionCoordinate.h>
 #endif
 
@@ -170,7 +170,7 @@ namespace DAL {   // Namespace DAL -- begin
 		     std::string const &name);
 #endif
     
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     //! Create coordinate from casa::Coordinate object
     void importCoordinate (casa::DirectionCoordinate const &coord);
     //! Create casa::Coordinate object from coordinate parameters

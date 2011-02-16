@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: tNewClass.cc 3179 2009-10-14 13:20:10Z baehren                  $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -419,7 +416,7 @@ int test_attributes (std::string const &filename)
 
   // Read attributes into casa::Record _____________________
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 
   std::cout << "[2] Read attributes into casa::Record ..." << std::endl;
   if (names.size() > 0) {

@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2007                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -402,7 +399,7 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                             station_position
   
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   casa::MPosition TBB_StationGroup::station_position ()
   {
     return DAL::h5get_position (location_p,
@@ -561,7 +558,7 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                sample_offset
   
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   casa::Vector<int> TBB_StationGroup::sample_offset (uint const &refAntenna)
   {
     uint nofDipoles              = nofDipoleDatasets();
@@ -600,7 +597,7 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                             antenna_position
   
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   casa::Vector<casa::MPosition> TBB_StationGroup::antenna_position ()
   {
     uint n (0);
@@ -655,7 +652,7 @@ namespace DAL {  // Namespace DAL -- begin
     \return dataset_ids -- Vector with a list of the identifiers to the
             HDF5 dataset objects within this station group.
   */
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   casa::Vector<hid_t> TBB_StationGroup::datasetIDs ()
   {
     uint n (0);
@@ -691,7 +688,7 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
   
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   
   //_____________________________________________________________________________
   //                                                                     readData

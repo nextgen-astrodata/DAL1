@@ -164,7 +164,7 @@ namespace DAL {
 
     /* Release pointer of casacore objects */
     
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     if (ms != NULL)           { ms          = NULL;  }
     if (itsMSReader != NULL)  { itsMSReader = NULL;  }
 #endif
@@ -200,7 +200,7 @@ namespace DAL {
     filter      = dalFilter();
     h5fh_p      = 0;
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     ms        = NULL;
     itsMSReader = NULL;
 #endif
@@ -406,7 +406,7 @@ namespace DAL {
       }
     else
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         try {
 	  lcltype = MSCASATYPE;
 	  type = lcltype;
@@ -746,7 +746,7 @@ namespace DAL {
     std::vector<std::string> tabs;
     if ( type == MSCASATYPE )
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         ms_tables = itsMSReader->tables();
         unsigned int nelem (ms_tables.nelements());
 
@@ -1031,7 +1031,7 @@ namespace DAL {
   {
     if ( type == MSCASATYPE )
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         dalTable * lt = new dalTable( MSCASATYPE );
         if ( filter.isSet() )
           lt->openTable( tablename, itsMSReader, &filter );
@@ -1183,7 +1183,7 @@ namespace DAL {
     switch (statbuf.type)
       {
       case H5G_GROUP:
-        (*(vector<std::string>*)opdata).push_back( std::string(name) );
+        (*(std::vector<std::string>*)opdata).push_back( std::string(name) );
         break;
       case H5G_DATASET:
       case H5G_TYPE:

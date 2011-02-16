@@ -26,7 +26,7 @@
 
 #include <dalCommon.h>
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <casa/Arrays/Vector.h>
 #endif
 
@@ -308,7 +308,7 @@ namespace DAL { // Namespace DAL -- begin
 	return false;
       }
     }
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     /*!
       \brief Get diagonal elements of the matrix.
       \retval diag -- Vector with the diagonal elements of the matrix.

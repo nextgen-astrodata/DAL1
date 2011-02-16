@@ -27,7 +27,7 @@
 // DAL header files
 #include "CoordinateInterface.h"
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <coordinates/Coordinates/TabularCoordinate.h>
 #endif
 
@@ -280,7 +280,7 @@ namespace DAL {  // Namespace DAL -- begin
     }
 #endif
     
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     //! Create coordinate from casa::Coordinate object
     void importCoordinate (casa::TabularCoordinate const &coord);
     //! Create casa::Coordinate object from coordinate parameters

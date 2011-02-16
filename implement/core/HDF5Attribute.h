@@ -23,7 +23,7 @@
 
 #include "HDF5Object.h"
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <casa/Arrays/Vector.h>
 #endif
 
@@ -442,7 +442,7 @@ namespace DAL { // Namespace DAL -- begin
 				T const *data,
 				unsigned int const &size);
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     /*!
       \brief Set attribute
       \param location -- HDF5 identifier for the object to which the attribute

@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2007 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -96,7 +93,7 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                                    dalColumn
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   /*!
     \param table A casa table object.
     \param colname Name of the column.
@@ -132,7 +129,7 @@ namespace DAL {
 
   void dalColumn::close()
   {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     delete casa_column;
 #endif
   }
@@ -146,7 +143,7 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                              getCasaDataType
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 
   std::string dalColumn::getCasaDataType ()
   {
@@ -201,7 +198,7 @@ namespace DAL {
   {
     if ( MSCASATYPE == filetype )
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         return getCasaDataType();
 #else
         std::cerr << "ERROR: CASA not enabled [dalColumn::getDataType()]\n";
@@ -226,7 +223,7 @@ namespace DAL {
   {
     if ( MSCASATYPE == filetype )
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         if ( casa_col_desc.isScalar() )
           return true;
         else
@@ -258,7 +255,7 @@ namespace DAL {
   {
     if ( MSCASATYPE == filetype )
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         if ( casa_col_desc.isArray() )
           return true;
         else
@@ -286,12 +283,12 @@ namespace DAL {
 
     \return A vector of integers specifying the shape of the column.
   */
-  vector<int> dalColumn::shape()
+  std::vector<int> dalColumn::shape()
   {
-    vector<int> shape_vals;
+    std::vector<int> shape_vals;
     if ( MSCASATYPE == filetype )
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         if ( isArray() )
           {
             //std::cerr << casa_column->shapeColumn();
@@ -338,7 +335,7 @@ namespace DAL {
   {
     if ( MSCASATYPE == filetype )
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         if ( isArray() )
           return casa_column->ndimColumn();
         else
@@ -401,7 +398,7 @@ namespace DAL {
   {
     if ( MSCASATYPE == filetype )
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         num_of_rows = casa_column->nrow();
         return num_of_rows;
 #else
@@ -433,7 +430,7 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                              CasaData_scalar
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 
   dalData * dalColumn::CasaData_scalar( )
   {
@@ -494,7 +491,7 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                               CasaData_array
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 
   dalData * dalColumn::CasaData_array( )
   {
@@ -640,7 +637,7 @@ namespace DAL {
             return NULL;
           }
 	
-        vector<int> shape(1);
+        std::vector<int> shape(1);
 	
         data_object = new dalData( filetype, dal_COMPLEX_SHORT,
                                    shape, length );
@@ -665,7 +662,7 @@ namespace DAL {
 	  return NULL;
 	}
       
-      vector<int> shape(1);
+      std::vector<int> shape(1);
       
       data_object = new dalData( filetype, dal_FLOAT, shape, length );
       data_object->data = (float *)data;
@@ -704,7 +701,7 @@ namespace DAL {
   {
     if ( MSCASATYPE == filetype )
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         try
           {
             if ( isScalar() )
@@ -869,11 +866,11 @@ namespace DAL {
   
   bpl::tuple dalColumn::shape_boost()
   {
-    vector<int> lclvals;
+    std::vector<int> lclvals;
     lclvals = shape();
     bpl::list lcllist;
     
-    vector<int>::iterator iter;
+    std::vector<int>::iterator iter;
     for (iter=lclvals.begin(); iter < lclvals.end(); iter++) {
       lcllist.append(*iter);
     }
@@ -904,7 +901,7 @@ namespace DAL {
   bpl::numeric::array dalColumn::data_boost3( int64_t offset, int32_t length )
   {
     if ( MSCASATYPE == filetype ) {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
       
       if ( "unknown" == casa_datatype )
 	{
@@ -1056,7 +1053,7 @@ namespace DAL {
 	  bpl::numeric::array nadata(tmp_list);
 	  return nadata;
 	}
-#endif // HAVE_CASA
+#endif // DAL_WITH_CASA
     }
     else if ( H5TYPE == filetype ) {
       std::cerr << "ERROR: hdf5 not supported [dalColumn.data - python]\n";

@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2007 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -26,7 +23,7 @@
 
 #include "dalData.h"
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <tables/Tables/ScalarColumn.h>
 #endif
 
@@ -64,7 +61,7 @@ namespace DAL {
     
     dalData * data_object;  // object to hold column data
     
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     
     std::string casa_datatype;  // column datatype
     
@@ -126,7 +123,7 @@ namespace DAL {
    dalColumn( std::string colname,
 	       std::string coltype );
     
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     //! Create a new column object from a CASA table.
     dalColumn (casa::Table table,
 	       std::string colname);
@@ -152,7 +149,7 @@ namespace DAL {
     bool isArray();
     //! Is the column a scalar?
     bool isScalar();
-    vector<int> shape();
+    std::vector<int> shape();
     //! Get the number of dimensions of the column.
     int ndims();
     //! Get the number of rows in the column.

@@ -13,7 +13,7 @@ foreach (src ${tests_data_common})
   ## compiler instructions
   add_executable(${src} ${src}.cc)
   ## linker instructions
-  if (HAVE_CASA OR CASACORE_FOUND)
+  if (CASA_FOUND OR CASACORE_FOUND)
     target_link_libraries(${src}
       ${CASA_LIBRARIES}
       dal
@@ -21,9 +21,9 @@ foreach (src ${tests_data_common})
       ${CFITSIO_LIBRARIES}
       ${dal_link_libraries}
       )
-  else (HAVE_CASA OR CASACORE_FOUND)
+  else (CASA_FOUND OR CASACORE_FOUND)
     target_link_libraries(${src} dal)
-  endif (HAVE_CASA OR CASACORE_FOUND)
+  endif (CASA_FOUND OR CASACORE_FOUND)
   ## installation instructions
   install (TARGETS ${src}
   RUNTIME DESTINATION bin

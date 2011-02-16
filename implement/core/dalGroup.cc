@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2006 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -88,7 +85,7 @@ namespace DAL {
     if ( ( itsGroupID = H5Gcreate( location_id, gname, H5P_DEFAULT, H5P_DEFAULT,
                                  H5P_DEFAULT ) ) < 0 )
       {
-        std::cerr << "ERROR: Could not create group'" << string( gname )
+        std::cerr << "ERROR: Could not create group'" << std::string( gname )
                   << "'.\n";
       }
   }
@@ -236,7 +233,7 @@ namespace DAL {
     switch (statbuf.type)
       {
       case H5G_DATASET:
-        (*(vector<string>*)opdata).push_back( std::string(name) );
+        (*(std::vector<std::string>*)opdata).push_back( std::string(name) );
         break;
       case H5G_GROUP:
       case H5G_TYPE:
@@ -255,9 +252,9 @@ namespace DAL {
             the group contains no members or is invalid itself, an empty list will
 	    be returned.
   */
-  vector<string> dalGroup::getMemberNames ()
+  std::vector<std::string> dalGroup::getMemberNames ()
   {
-    vector<string> member_names;
+    std::vector<std::string> member_names;
     
     if (H5Iis_valid(itsFileID)) {
       H5Giterate (itsFileID,
@@ -307,10 +304,10 @@ namespace DAL {
     \return dalArray * A pointer to an array object.
   */
   dalArray *
-  dalGroup::createShortArray( string arrayname,
-                              vector<int> dims,
+  dalGroup::createShortArray( std::string arrayname,
+                              std::vector<int> dims,
                               short data[],
-                              vector<int> cdims )
+                              std::vector<int> cdims )
   {
     dalShortArray * la;
     la = new dalShortArray( itsGroupID, arrayname, dims, data, cdims );
@@ -336,10 +333,10 @@ namespace DAL {
     \return dalArray * A pointer to an array object.
   */
   dalArray *
-  dalGroup::createIntArray( string arrayname,
-                            vector<int> dims,
+  dalGroup::createIntArray( std::string arrayname,
+                            std::vector<int> dims,
                             int data[],
-                            vector<int> cdims )
+                            std::vector<int> cdims )
   {
     dalIntArray * la;
     la = new dalIntArray( itsGroupID, arrayname, dims, data, cdims );
@@ -364,10 +361,10 @@ namespace DAL {
     \return dalArray * A pointer to an array object.
   */
   dalArray *
-  dalGroup::createFloatArray( string arrayname,
-                              vector<int> dims,
+  dalGroup::createFloatArray( std::string arrayname,
+                              std::vector<int> dims,
                               float data[],
-                              vector<int> cdims )
+                              std::vector<int> cdims )
   {
     dalFloatArray * la;
     la = new dalFloatArray( itsGroupID, arrayname, dims, data, cdims );
@@ -393,8 +390,8 @@ namespace DAL {
     \return dalArray * A pointer to an array object.
   */
   dalArray *
-  dalGroup::createComplexFloatArray( string arrayname,
-                                     vector<int> dims,
+  dalGroup::createComplexFloatArray( std::string arrayname,
+                                     std::vector<int> dims,
                                      std::complex<float> data[],
                                      std::vector<int> cdims )
   {
@@ -422,8 +419,8 @@ namespace DAL {
     \return dalArray * A pointer to an array object.
   */
   dalArray *
-  dalGroup::createComplexShortArray( string arrayname,
-                                     vector<int> dims,
+  dalGroup::createComplexShortArray( std::string arrayname,
+                                     std::vector<int> dims,
                                      std::complex<Int16> data[],
                                      std::vector<int> cdims )
   {
@@ -467,8 +464,8 @@ namespace DAL {
                                        bpl::list pydims,
                                        bpl::list pydata )
   {
-    vector<int> dims;
-    vector<int> chnkdims;
+    std::vector<int> dims;
+    std::vector<int> chnkdims;
 
     for (int ii=0; ii<bpl::len(pydims); ii++)
       dims.push_back(bpl::extract<int>(pydims[ii]));
@@ -498,8 +495,8 @@ namespace DAL {
                                        bpl::list pydims,
                                        bpl::list pydata )
   {
-    vector<int> dims;
-    vector<int> chnkdims;
+    std::vector<int> dims;
+    std::vector<int> chnkdims;
 
     for (int ii=0; ii<bpl::len(pydims); ii++)
       dims.push_back(bpl::extract<int>(pydims[ii]));
@@ -574,13 +571,13 @@ namespace DAL {
 
 // ------------------------------------------------------------ cfa_boost_list
 
-  dalArray * dalGroup::cfa_boost_list( string arrayname,
+  dalArray * dalGroup::cfa_boost_list( std::string arrayname,
                                        bpl::list pydims,
                                        bpl::list pydata )
   {
 
-    vector<int> dims;
-    vector<int> chnkdims;
+    std::vector<int> dims;
+    std::vector<int> chnkdims;
 
     for (int ii=0; ii<bpl::len(pydims); ii++)
       dims.push_back(bpl::extract<int>(pydims[ii]));
@@ -845,19 +842,19 @@ namespace DAL {
   }
   bpl::list dalGroup::getAttribute_string_boost ( std::string attrname )
   {
-     bpl::list data;
-  	 std::vector<string> value;
-     h5get_attribute( itsGroupID, attrname.c_str(), value );
-     std::cerr << value << std::endl;
-     std::vector<int> dims;
-     dims.push_back( value.size() );
-  	        
-     for ( uint ii=0; ii < value.size() ; ii++ )
-        data.append( value[ii].c_str() );
-
-     return data;
+    bpl::list data;
+    std::vector<std::string> value;
+    h5get_attribute( itsGroupID, attrname.c_str(), value );
+    std::cerr << value << std::endl;
+    std::vector<int> dims;
+    dims.push_back( value.size() );
+    
+    for ( uint ii=0; ii < value.size() ; ii++ )
+      data.append( value[ii].c_str() );
+    
+    return data;
   }
-
+  
 #endif // end #ifdef PYTHON
-
+  
 } // end namespace DAL

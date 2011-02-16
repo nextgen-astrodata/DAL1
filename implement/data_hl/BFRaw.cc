@@ -91,7 +91,7 @@ namespace DAL {
     \param doChannelization -- Compute channelization of the original data
     \param factor           -- Downsampling factor
   */
-  BFRaw::BFRaw( string const& filename,
+  BFRaw::BFRaw (std::string const& filename,
 		bool doIntensity,
 		bool doDownsample,
 		bool doChannelization,
@@ -798,7 +798,7 @@ namespace DAL {
     
     // root-level headers
     int n_stations = 1;
-    vector<string> srcvec;
+    std::vector<std::string> srcvec;
     srcvec.push_back( "" );
     int main_beam_diam      = 0;
     int bandwidth           = 0; // Total bandwidth (MHz)

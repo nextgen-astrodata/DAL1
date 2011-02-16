@@ -1,9 +1,6 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
- *   Copyright (C) 2011                                                  *
- *   Lars Baehren (<mail>)                                                     *
+/***************************************************************************
+ *   Copyright (C) 2011                                                    *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <data_hl/Sky_ImageDataset.h>
+#include <Sky_ImageDataset.h>
 
 // Namespace usage
 using DAL::Sky_ImageDataset;

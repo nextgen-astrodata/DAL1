@@ -1,25 +1,22 @@
-/*------------------------------------------------------------------------*
-| $Id::                                                                 $ |
-*-------------------------------------------------------------------------*
-***************************************************************************
-*   Copyright (C) 2007 by Joseph Masters                                  *
-*   jmasters@science.uva.nl                                               *
-*                                                                         *
-*   This program is free software; you can redistribute it and/or modify  *
-*   it under the terms of the GNU General Public License as published by  *
-*   the Free Software Foundation; either version 2 of the License, or     *
-*   (at your option) any later version.                                   *
-*                                                                         *
-*   This program is distributed in the hope that it will be useful,       *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
-*   GNU General Public License for more details.                          *
-*                                                                         *
-*   You should have received a copy of the GNU General Public License     *
-*   along with this program; if not, write to the                         *
-*   Free Software Foundation, Inc.,                                       *
-*   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
-***************************************************************************/
+/***************************************************************************
+ *   Copyright (C) 2007 by Joseph Masters                                  *
+ *   jmasters@science.uva.nl                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 
 #ifndef DALTABLE_H
 #include "dalTable.h"
@@ -57,7 +54,7 @@ namespace DAL {
     firstrecord = true;
     
     if ( type == MSCASATYPE ) {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
       casaTable_p = new casa::Table;
 #else
       std::cerr << "CASA support not enabled." << std::endl;
@@ -78,7 +75,7 @@ namespace DAL {
   {
     delete filter;
     if ( type == MSCASATYPE ) {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
       delete casaTable_p;
 #endif
     }
@@ -143,7 +140,7 @@ namespace DAL {
   dalColumn * dalTable::getColumn ( std::string colname )
   {
     if ( type == MSCASATYPE ) {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
       // using the dalColumn class
       dalColumn * lclcol = NULL;
       lclcol = new dalColumn( *casaTable_p, colname );
@@ -191,7 +188,7 @@ namespace DAL {
   dalColumn * dalTable::getColumn_Float32( std::string colname )
   {
     if ( type == MSCASATYPE ) {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
       // using the dalColumn class
       dalColumn * lclcol = NULL;
       lclcol = new dalColumn( *casaTable_p, colname );
@@ -234,7 +231,7 @@ namespace DAL {
   {
     if ( type == MSCASATYPE )
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         // using the dalColumn class
         dalColumn * lclcol = NULL;
         lclcol = new dalColumn( *casaTable_p, colname );
@@ -274,7 +271,7 @@ namespace DAL {
   {
     if ( type == MSCASATYPE )
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         // using the dalColumn class
         dalColumn * lclcol = NULL;
         lclcol = new dalColumn( *casaTable_p, colname );
@@ -357,7 +354,7 @@ namespace DAL {
   {
     if ( type == MSCASATYPE )
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         // using the dalColumn class
         dalColumn lclcol;
         lclcol = dalColumn( *casaTable_p, colname );
@@ -564,7 +561,7 @@ namespace DAL {
     if ( type == MSCASATYPE )
       {
         // print the name of the table
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         std::cerr << "CASA table name: " << casaTable_p->tableName() << endl;
 #else
         std::cerr << "CASA support not enabled." << endl;
@@ -577,7 +574,7 @@ namespace DAL {
       }
   }
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 
   //_____________________________________________________________________________
   //                                                                    openTable
@@ -588,7 +585,7 @@ namespace DAL {
   void dalTable::openTable( std::string tablename )
   {
     if ( type == MSCASATYPE ) {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
       if ( filter->isSet() ) {
 	try {
 	  *casaTable_p = casa::Table( tablename );
@@ -628,7 +625,7 @@ namespace DAL {
                             casa::MSReader * reader)
   {
     if ( type == MSCASATYPE ) {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
       try {
 	*casaTable_p = reader->table( tablename );
       }
@@ -658,7 +655,7 @@ namespace DAL {
                             dalFilter * filter )
   {
     if ( type == MSCASATYPE ) {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
       try {
 	*casaTable_p = reader->table( tablename );
 	*casaTable_p = casa::tableCommand( filter->get(),
@@ -743,7 +740,7 @@ namespace DAL {
       std::cerr << endl;
     }
     else if ( type == MSCASATYPE ) {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
       casa::TableDesc td = casaTable_p->tableDesc();
       std::cerr << td.columnNames() << endl;
 #else
@@ -1603,7 +1600,7 @@ namespace DAL {
   {
     std::vector<std::string> colnames;
     colnames.clear();
-
+    
     if ( type == H5TYPE ) {
       size_t * field_sizes = NULL;
       size_t * field_offsets = NULL;
@@ -1635,7 +1632,7 @@ namespace DAL {
     }
     else if ( type == MSCASATYPE )
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         casa::TableDesc td = casaTable_p->tableDesc();
         casa::Vector<casa::String> names = td.columnNames();
         casa::Array<casa::String> myarray = names;
@@ -1653,6 +1650,7 @@ namespace DAL {
       return colnames;
     }
     
+    return colnames;
   }
   
   //_____________________________________________________________________________
@@ -1750,7 +1748,7 @@ namespace DAL {
       }
   }
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   // ---------------------------------------------------------- findAttribute
 
   /*!
@@ -1855,7 +1853,7 @@ namespace DAL {
       }
     else if ( type == MSCASATYPE )
       {
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
         casa::TableRecord table_rec = casaTable_p->keywordSet();
         casa::String dtype = GetKeywordType(attrname);
         if (dtype == "Float")
@@ -1889,7 +1887,7 @@ namespace DAL {
     return NULL;
   }
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 
   // ---------------------------------------------------------- GetKeyword
 
@@ -2161,7 +2159,7 @@ namespace DAL {
         return "unknown";
       };
   }
-#endif // HAVE_CASA
+#endif // DAL_WITH_CASA
 
   /************************************************************************
    *
@@ -2460,7 +2458,7 @@ namespace DAL {
     return setAttribute( attrname, &data );
   }
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 
   //_____________________________________________________________________________
   //                                                                ot_nonMStable
@@ -2486,7 +2484,7 @@ namespace DAL {
     setFilter( columns, conditions );
   }
 
-#endif // HAVE_CASA
+#endif // DAL_WITH_CASA
 
   bool dalTable::setAttribute_char_vector (std::string attrname, bpl::list data )
   {

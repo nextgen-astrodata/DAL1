@@ -10,9 +10,9 @@ set(CMAKE_CXX_FLAGS "-W -Wall")
 ##
 ## ==============================================================================
 
-#if (LOFAR_FOUND)
+if (LOFAR_FOUND)
   add_subdirectory (bf2h5)
-#endif (LOFAR_FOUND)
+endif (LOFAR_FOUND)
 
 ##____________________________________________________________________
 ## Applications with no further external dependencies
@@ -25,7 +25,7 @@ set (apps_link_libraries dal)
 ##____________________________________________________________________
 ## Applications which require casacore
 
-if (HAVE_CASA OR CASACORE_FOUND)
+if (CASA_FOUND OR CASACORE_FOUND)
   ## source files
   list (APPEND tests msread)
   list (APPEND tests ms2h5)
@@ -34,9 +34,9 @@ if (HAVE_CASA OR CASACORE_FOUND)
   list (APPEND apps_link_libraries
     ${dal_link_libraries}
     )
-else (HAVE_CASA OR CASACORE_FOUND)
+else (CASA_FOUND OR CASACORE_FOUND)
   message (STATUS "[DAL] Unable to build applications: msread, ms2h5")
-endif (HAVE_CASA OR CASACORE_FOUND)
+endif (CASA_FOUND OR CASACORE_FOUND)
 
 ##____________________________________________________________________
 ## Applications which require Boost

@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2007 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -128,11 +125,11 @@ namespace DAL {
          */
         if (nofSubbands() > 0)
           {
-            vector<string> memberNames   = group_p->getMemberNames();
-            std::vector<hid_t> ids       = tableIDs();
-            std::vector<hsize_t> fields  = nofTableFields();
-            std::vector<long> rows       = nofTableRows();
-            std::vector<int> frequencies = center_frequencies();
+	    std::vector<std::string> memberNames = group_p->getMemberNames();
+            std::vector<hid_t> ids          = tableIDs();
+            std::vector<hsize_t> fields     = nofTableFields();
+            std::vector<long> rows          = nofTableRows();
+            std::vector<int> frequencies    = center_frequencies();
             //
             os << "-- Subband table names ...... : " << memberNames << endl;
             os << "-- Subband table HDF5 IDs     : " << ids         << endl;
@@ -176,7 +173,7 @@ namespace DAL {
     /* [2] Set up list of objects handling subband data */
     
     try {
-      std::vector<string> tableNames = group_p->getMemberNames();
+      std::vector<std::string> tableNames = group_p->getMemberNames();
       unsigned int nofSubbands  = tableNames.size();
       
       if (nofSubbands>0)
@@ -240,8 +237,8 @@ namespace DAL {
   {
     dalTable * table;
     /* Get the list of Subband-tables contained in this group */
-    vector<string> memberNames = group_p->getMemberNames();
-
+    std::vector<std::string> memberNames = group_p->getMemberNames();
+    
     table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
 
     return table;
@@ -477,7 +474,7 @@ namespace DAL {
     dalColumn * col;
     dalData * data;
 
-    vector<string> memberNames = group_p->getMemberNames();
+    std::vector<std::string> memberNames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
     if ( !table )
@@ -509,16 +506,15 @@ namespace DAL {
    \param length The number of cells to retrieve.
    \return intensities squared Array of intensities squared
    */
-  float *
-  BeamGroup::getIntensitySquared( int &subband,
-						  int &start,
-						  int &length )
+  float * BeamGroup::getIntensitySquared( int &subband,
+					  int &start,
+					  int &length )
   {
-	  dalTable * table;
+    dalTable * table;
 	  dalColumn * col;
 	  dalData * data;
 	  
-	  vector<string> memberNames = group_p->getMemberNames();
+	  std::vector<std::string> memberNames = group_p->getMemberNames();
 	  
 	  table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
 	  if ( !table )
@@ -555,12 +551,11 @@ namespace DAL {
                                     int &length,
                                     std::vector< std::complex<short> > &values )
   {
-    std::complex<short> * xx = NULL;
-    dalTable * table    = NULL;
-    dalColumn * col     = NULL;
-    dalData * data      = NULL;
-
-    std::vector<string> memberNames = group_p->getMemberNames();
+    std::complex<short> * xx             = NULL;
+    dalTable * table                     = NULL;
+    dalColumn * col                      = NULL;
+    dalData * data                       = NULL;
+    std::vector<std::string> memberNames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
     if ( !table )
@@ -599,12 +594,11 @@ namespace DAL {
                                     int &length,
                                     std::vector< std::complex<short> > &values )
   {
-    std::complex<short> * yy = NULL;
-    dalTable * table = NULL;
-    dalColumn * col = NULL;
-    dalData * data = NULL;
-
-    std::vector<string> memberNames = group_p->getMemberNames();
+    std::complex<short> * yy             = NULL;
+    dalTable * table                     = NULL;
+    dalColumn * col                      = NULL;
+    dalData * data                       = NULL;
+    std::vector<std::string> memberNames = group_p->getMemberNames();
 
     table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
     if ( !table )

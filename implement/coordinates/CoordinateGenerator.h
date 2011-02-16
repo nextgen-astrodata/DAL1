@@ -33,7 +33,7 @@
 #include <dal_config.h>
 #include <dalCommon.h>
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #ifndef WCSLIB_GETWCSTAB
 #define WCSLIB_GETWCSTAB 1
 #endif
@@ -155,7 +155,7 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Static methods =======================================================
     
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     
     //___________________________________________________________________________
     //                                     Creation of observation info container

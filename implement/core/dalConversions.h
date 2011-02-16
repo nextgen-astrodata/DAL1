@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
@@ -32,7 +29,7 @@
 #include <vector>
 #include <assert.h>
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <casa/Arrays/Vector.h>
 #endif
 
@@ -142,7 +139,7 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   
   /*!
     \brief Convert std::vector<T> to casac::Vector<T>

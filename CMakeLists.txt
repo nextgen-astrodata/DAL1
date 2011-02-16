@@ -149,9 +149,9 @@ endif (DAL_PYTHON_BINDINGS)
 
 set (dal_link_libraries "")
 
-if (HAVE_LIBZ)
-  list (APPEND dal_link_libraries ${HAVE_LIBZ})
-endif (HAVE_LIBZ)
+if (Z_LIBRARY)
+  list (APPEND dal_link_libraries ${Z_LIBRARY})
+endif (Z_LIBRARY)
 
 if (CASA_LIBRARIES)
   list (APPEND dal_link_libraries ${CASA_LIBRARIES})
@@ -183,19 +183,21 @@ if (MYSQL_FOUND)
   list (APPEND dal_link_libraries ${MYSQL_LIBRARIES})
 endif (MYSQL_FOUND)
 
-if (NOT APPLE)
-  if (UTIL_LIBRARY)
-    list (APPEND dal_link_libraries ${UTIL_LIBRARY})
-  endif (UTIL_LIBRARY)
-  
-  if (DL_LIBRARY)
-    list (APPEND dal_link_libraries ${DL_LIBRARY})
-  endif (DL_LIBRARY)
-  
-  if (HAVE_LIBM)
-    list (APPEND dal_link_libraries ${HAVE_LIBM})
-  endif (HAVE_LIBM)
-endif (NOT APPLE)
+if (UNIX)
+  if (NOT APPLE)
+    if (UTIL_LIBRARY)
+      list (APPEND dal_link_libraries ${UTIL_LIBRARY})
+    endif (UTIL_LIBRARY)
+    
+    if (DL_LIBRARY)
+      list (APPEND dal_link_libraries ${DL_LIBRARY})
+    endif (DL_LIBRARY)
+    
+    if (M_LIBRARY)
+      list (APPEND dal_link_libraries ${M_LIBRARY})
+    endif (M_LIBRARY)
+  endif (NOT APPLE)
+endif (UNIX)
 
 ## Parallel IO usage requires MPI to be Linked and Included
 
@@ -214,6 +216,10 @@ if (MPI_FOUND AND HDF5_HAVE_PARALLEL_IO)
     list (APPEND dal_link_libraries ${MPI_EXTRA_LIBRARY})
   endif (MPI_EXTRA_LIBRARY)
 endif (MPI_FOUND AND HDF5_HAVE_PARALLEL_IO)
+
+## Clean up the list of limk libraries
+
+list (REMOVE_DUPLICATES dal_link_libraries)
 
 ## =============================================================================
 ##

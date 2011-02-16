@@ -28,7 +28,7 @@
 #include <Stokes.h>
 #include <CoordinateInterface.h>
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <coordinates/Coordinates/StokesCoordinate.h>
 #endif
 
@@ -138,7 +138,7 @@ namespace DAL {  // Namespace DAL -- begin
 		     std::string const &name);
 #endif
     
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     //! Create coordinate from casa::Coordinate object
     bool read_casa (casa::StokesCoordinate const &coord);
     //! Create casa::Coordinate object from coordinate parameters

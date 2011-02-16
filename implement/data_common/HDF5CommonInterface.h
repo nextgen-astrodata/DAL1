@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: NewClass.h 2286 2009-02-03 10:50:48Z baehren                    $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -29,7 +26,7 @@
 #include <string>
 
 // casacore header files
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <casa/Arrays/Vector.h>
 #endif
 
@@ -382,7 +379,7 @@ namespace DAL { // Namespace DAL -- begin
 	}
       }
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     /*!
       \brief Get the value of an attribute
       
@@ -456,7 +453,7 @@ namespace DAL { // Namespace DAL -- begin
 					    val.size());
       }
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     /*!
       \brief Set the value of an attribute
       

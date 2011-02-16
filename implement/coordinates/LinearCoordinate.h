@@ -28,7 +28,7 @@
 #include <CoordinateInterface.h>
 
 // casacore header files
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <coordinates/Coordinates/LinearCoordinate.h>
 #endif
 
@@ -106,7 +106,7 @@ namespace DAL {  // Namespace DAL -- begin
 		      std::vector<double> const &refPixel,
 		      std::vector<double> const &increment,
 		      std::vector<double> const &pc);
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     //! Construction from casa::LinearCoordinate object
     LinearCoordinate (casa::LinearCoordinate const &coord) {
       read_casa (coord);
@@ -172,7 +172,7 @@ namespace DAL {  // Namespace DAL -- begin
 		     std::string const &name);
 #endif
     
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     //! Create coordinate from casa::Coordinate object
     void read_casa (casa::LinearCoordinate const &coord);
     //! Create casa::Coordinate object from coordinate parameters

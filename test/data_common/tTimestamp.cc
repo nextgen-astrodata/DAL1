@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2006                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -26,7 +23,7 @@
 #include <math.h>
 
 /* casacore header files */
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <casa/OS/Time.h>
 #endif
 
@@ -77,7 +74,7 @@ int test_common ()
 //_______________________________________________________________________________
 //                                                                      test_Time
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 
 /*!
   \brief Test working with casa/OS/Time class
@@ -230,7 +227,7 @@ int main ()
   // Test a few common operations which are required
   nofFailedTests += test_common();
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   // Test working time the casacore Time class
   nofFailedTests += test_Time ();
 #endif

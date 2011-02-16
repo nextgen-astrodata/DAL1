@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2007                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -297,7 +294,7 @@ int test_attributes (std::string const &filename)
     {
       std::string trigger_type;
       double trigger_offset;
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 //       casa::Vector<uint> triggered_antennas;
       casa::Vector<double> station_position_value;
       casa::Vector<casa::String> station_position_unit;
@@ -749,7 +746,7 @@ int main (int argc,
 
     // Specific tests which require casacore
     
-// #ifdef HAVE_CASA
+// #ifdef DAL_WITH_CASA
 //     nofFailedTests += test_export2record (filename);
 // #endif
     

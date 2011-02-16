@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2008                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -25,7 +22,7 @@
 #define TBB_TIMESERIES_H
 
 // casacore header files
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <casa/BasicSL/String.h>
 #endif
 
@@ -250,7 +247,7 @@ namespace DAL {  // Namespace DAL -- begin
     
     // === Parameter access - station group =====================================
     
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     //! Get the type of trigger causing the dump of the TBB data
     casa::Vector<casa::String> trigger_type ();
     //! Time offset from the trigger reference time
@@ -320,7 +317,7 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get the Nyquist zone for the A/D conversion
     std::vector<uint> nyquist_zone ();
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     //! Retrieve a block of ADC values per dipole
     bool readData (casa::Matrix<double> &data,
 		   int const &start=0,

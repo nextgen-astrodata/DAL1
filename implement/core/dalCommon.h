@@ -43,7 +43,7 @@ using std::endl;
 #include <dalConversions.h>
 #include <Enumerations.h>
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <casa/Arrays/IPosition.h>
 #include <casa/Arrays/Vector.h>
 #include <casa/Quanta/Quantum.h>
@@ -684,7 +684,7 @@ namespace DAL {
   //_____________________________________________________________________________
   // Passing of attribute values using casacore array classes
   
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   
   //! Get the shape of a dataset
   bool h5get_dataset_shape (hid_t const &attribute_id,
@@ -816,7 +816,7 @@ namespace DAL {
       cout << "-- Has the image a mask?    : " << image.hasPixelMask()     << endl;
     }
   
-#endif  // HAVE_CASA
+#endif  // DAL_WITH_CASA
     
 } // namespace DAL
 

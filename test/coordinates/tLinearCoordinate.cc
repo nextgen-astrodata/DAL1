@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: tNewClass.cc 2286 2009-02-03 10:50:48Z baehren                  $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -481,7 +478,7 @@ int test_hdf5 (std::string const &filename="tLinearCoordinate.h5")
 //_______________________________________________________________________________
 //                                                                      test_casa
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 
 int test_casa ()
 {
@@ -506,7 +503,7 @@ int main ()
   // Test access to the internal paramters
   nofFailedTests += test_parameters();
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   // Test writing coordinate information to HDF5 file
   nofFailedTests += test_casa();
 #endif

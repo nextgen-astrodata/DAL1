@@ -24,6 +24,8 @@
 #ifndef DALGROUP_H
 #define DALGROUP_H
 
+#include <vector>
+
 #include "dalTable.h"
 #include "dalArray.h"
 #include "dalShortArray.h"
@@ -48,9 +50,9 @@ namespace DAL {
     //! File handler, can be HDF5File, FITS, MS
     void * file;
     //! Name of the group
-    string groupname_p;
+    std::string groupname_p;
     //! Full name of the group
-    string groupname_full;
+    std::string groupname_full;
     void * group;
     //! Filter associated with group
     dalFilter * filter;
@@ -83,7 +85,7 @@ namespace DAL {
       return groupname_p;
     }
     //! Set the name of the group
-    bool setName( string gname );
+    bool setName( std::string gname );
     //! Retrieve the identifier for the group.
     hid_t getId();
     

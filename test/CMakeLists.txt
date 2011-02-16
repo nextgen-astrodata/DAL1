@@ -31,7 +31,7 @@ foreach (src ${tests})
   ## executable and its source
   add_executable(${src} ${src}.cc)
   ## libraries against which to link
-  if (HAVE_CASA OR CASACORE_FOUND)
+  if (CASA_FOUND OR CASACORE_FOUND)
     target_link_libraries(${src}
       ${CASA_LIBRARIES}
       dal
@@ -39,9 +39,9 @@ foreach (src ${tests})
       ${CFITSIO_LIBRARIES}
       ${dal_link_libraries}
       )
-  else (HAVE_CASA OR CASACORE_FOUND)
+  else (CASA_FOUND OR CASACORE_FOUND)
     target_link_libraries(${src} dal)
-  endif (HAVE_CASA OR CASACORE_FOUND)
+  endif (CASA_FOUND OR CASACORE_FOUND)
 endforeach (src)
 
 ## ------------------------------------------------------------------------------

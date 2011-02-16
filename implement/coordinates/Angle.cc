@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
@@ -153,9 +150,9 @@ namespace DAL { // Namespace DAL -- begin
     \param rad  -- Vector with angles given in radian
     \return deg -- Vector with angles given in degree
   */
-  vector<double> Angle::rad2deg (vector<double> const &rad)
+  std::vector<double> Angle::rad2deg (std::vector<double> const &rad)
   {
-    vector<double> deg (rad.size());
+    std::vector<double> deg (rad.size());
     for (unsigned int n(0); n<rad.size(); n++) {
       deg[n] = rad2deg(rad[n]);
     }
@@ -195,10 +192,10 @@ namespace DAL { // Namespace DAL -- begin
     
     \return rad -- Vector with angles given in radian
   */
-  vector<double> Angle::deg2rad (vector<double> const &deg)
+  std::vector<double> Angle::deg2rad (std::vector<double> const &deg)
   {
     unsigned nelem = deg.size();
-    vector<double> rad (nelem);
+    std::vector<double> rad (nelem);
     for (unsigned int n(0); n<nelem; n++) {
       rad[n] = deg2rad(deg[n]);
     }

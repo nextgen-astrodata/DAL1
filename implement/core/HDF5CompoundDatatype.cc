@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2009                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Copyright (C) 2010                                                    *
+ *   Lars Baehren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,64 +18,69 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DATATYPE_H
-#include "DataType.h"
-#endif
+#include "HDF5CompoundDatatype.h"
 
-namespace DAL   // Namespace DAL -- begin
-  {
-
+namespace DAL { // Namespace DAL -- begin
+  
   // ============================================================================
   //
   //  Construction
   //
   // ============================================================================
-
-  DataType::DataType (DataType::Types const &type)
-  {
-    setType (type);
-  }
-
-  DataType::DataType (DataType const &other)
+  
+  HDF5CompoundDatatype::HDF5CompoundDatatype ()
+  {;}
+  
+  /*!
+    \param other -- Another HDF5Property object from which to create this new
+           one.
+  */
+  HDF5CompoundDatatype::HDF5CompoundDatatype (HDF5CompoundDatatype const &other)
   {
     copy (other);
   }
-
+  
   // ============================================================================
   //
   //  Destruction
   //
   // ============================================================================
-
-  DataType::~DataType ()
+  
+  HDF5CompoundDatatype::~HDF5CompoundDatatype ()
   {
     destroy();
   }
-
-  void DataType::destroy ()
-  {
-    ;
-  }
-
+  
+  void HDF5CompoundDatatype::destroy ()
+  {;}
+  
   // ============================================================================
   //
   //  Operators
   //
   // ============================================================================
-
-  DataType& DataType::operator= (DataType const &other)
+  
+  //_____________________________________________________________________________
+  //                                                                    operator=
+  
+  /*!
+    \param other -- Another HDF5CompoundDatatype object from which to make a copy.
+  */
+  HDF5CompoundDatatype& HDF5CompoundDatatype::operator= (HDF5CompoundDatatype const &other)
   {
-    if (this != &other)
-      {
-        destroy ();
-        copy (other);
-      }
+    if (this != &other) {
+      destroy ();
+      copy (other);
+    }
     return *this;
   }
-
-  void DataType::copy (DataType const &other)
+  
+  //_____________________________________________________________________________
+  //                                                                         copy
+  
+  void HDF5CompoundDatatype::copy (HDF5CompoundDatatype const &other)
   {
-    type_p = other.type_p;
+    itsDatatype = other.itsDatatype;
   }
 
   // ============================================================================
@@ -83,76 +88,24 @@ namespace DAL   // Namespace DAL -- begin
   //  Parameters
   //
   // ============================================================================
-
-  //_____________________________________________________________________________
-  //                                                                         name
-
-  std::string DataType::name ()
-  {
-    std::string typeName;
-
-    switch (type_p)
-      {
-      case DataType::VIS:
-        typeName="VIS";
-        break;
-      case DataType::SKY:
-        typeName="SKY";
-        break;
-      case DataType::RMC:
-        typeName="RMC";
-        break;
-      case DataType::RMM:
-        typeName="RMM";
-        break;
-      case DataType::DYS:
-        typeName="DYS";
-        break;
-      case DataType::CRC:
-        typeName="CRC";
-        break;
-      case DataType::BFS:
-        typeName="BFS";
-        break;
-      case DataType::BFT:
-        typeName="BFT";
-        break;
-      case DataType::TBB:
-        typeName="TBB";
-        break;
-      };
-
-    return typeName;
-  }
-
+  
   //_____________________________________________________________________________
   //                                                                      summary
-
-  void DataType::summary (std::ostream &os)
+  
+  /*!
+    \param os -- Output stream to which the summary is written.
+  */
+  void HDF5CompoundDatatype::summary (std::ostream &os)
   {
-    os << "[DataType] Summary of internal parameters." << std::endl;
-    os << "-- Type           = " << type() << std::endl;
-    os << "-- Name           = " << name() << std::endl;
-    os << "-- Is Visibility? = " << isVisibility() << std::endl;
+    os << "[HDF5CompoundDatatype] Summary of internal parameters." << std::endl;
   }
-
+  
   // ============================================================================
   //
   //  Methods
   //
   // ============================================================================
-
-  bool DataType::isVisibility ()
-  {
-    switch (type_p)
-      {
-      case DataType::VIS:
-        return true;
-        break;
-      default:
-        return false;
-        break;
-      };
-  }
+  
+  
 
 } // Namespace DAL -- end

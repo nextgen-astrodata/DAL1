@@ -47,7 +47,7 @@ namespace DAL {
     //! Number of dimensions
     int itsRank;
     //! Array datatype identifier
-    string datatype;
+    std::string datatype;
     //! HDF5 return status
     herr_t status;
     
@@ -58,7 +58,7 @@ namespace DAL {
     //! HDF5 object ID for file
     hid_t itsFileID;
     //! Name of the array
-    string name;
+    std::string name;
     
   public:
 
@@ -70,14 +70,14 @@ namespace DAL {
     // === Parameter access =====================================================
 
     //! Retrieve the dimensions of an array
-    vector<int> dims();
+    std::vector<int> dims();
     //! Retrieve the name of an array
     inline std::string getName() {
       return name;
     }
     //! Open an existing array.
     int open (void * file,
-	      string arrayname);
+	      std::string arrayname);
     //! Close an existing array.
     bool close();
     //! Get the array ID.
@@ -174,7 +174,7 @@ namespace DAL {
       }
 
     //! Increase the dimensions of the array.
-    bool extend (vector<int> dims);
+    bool extend (std::vector<int> dims);
     //! Write \e data of type \e short.
     bool write(int offset, short data[], int arraysize);
     //! Write \e data of type \e int.
@@ -236,13 +236,13 @@ namespace DAL {
 
     //! Argumented constructor
     dalIntArray (hid_t obj_id,
-		 string arrayname,
-		 vector<int> dims,
+		 std::string arrayname,
+		 std::vector<int> dims,
 		 int data[],
-		 vector<int>chnkdims );
+		 std::vector<int>chnkdims );
     //! Read array data from object \e obj_id
     int * readIntArray (hid_t obj_id,
-			string arrayname);
+			std::string arrayname);
   };
   
   /*!
@@ -258,10 +258,10 @@ namespace DAL {
 
     //! Argumented constructor
     dalFloatArray (hid_t obj_id,
-		   string arrayname,
-		   vector<int> dims,
+		   std::string arrayname,
+		   std::vector<int> dims,
 		   float data[],
-		   vector<int>chnkdims);
+		   std::vector<int>chnkdims);
   };
   
   /*!
@@ -276,10 +276,10 @@ namespace DAL {
     
     //! Argumented constructor
     dalComplexArray_float32( hid_t objfile,
-			     string arrayname,
-			     vector<int> dims,
+			     std::string arrayname,
+			     std::vector<int> dims,
 			     std::complex<float> data[],
-			     vector<int>chnkdims);
+			     std::vector<int>chnkdims);
   };
   
   /*!
@@ -293,10 +293,11 @@ namespace DAL {
   public:
 
     //! Argumented constructor
-    dalComplexArray_int16( hid_t objfile, string arrayname,
-			   vector<int> dims,
+    dalComplexArray_int16( hid_t objfile,
+			   std::string arrayname,
+			   std::vector<int> dims,
 			   std::complex<Int16> data[],
-			   vector<int>chnkdims);
+			   std::vector<int>chnkdims);
   };
   
 } // end namespace DAL

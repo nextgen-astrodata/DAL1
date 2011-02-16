@@ -395,7 +395,7 @@ namespace DAL { // Namespace DAL -- begin
 
     // Methods which require casacore ______________________
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     //! Retrieve common attributes using csac::Record as container
     bool getAttributes (casa::Record &rec);
 #endif 

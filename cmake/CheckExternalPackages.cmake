@@ -34,24 +34,24 @@ foreach (_dalcmake
   message (STATUS "Checking for package ${_dalcmake}")
 
   ## Generate uppercase version of package name
-  string (TOUPPER ${_dalcmake} _var)
+  string (TOUPPER ${_dalcmake} _dalcmake_var)
   ## Provide potential root directory of package
-  set (${_var}_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+  set (${_dalcmake_var}_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   ## Include CMake find script
   include (${DAL_SOURCE_DIR}/cmake/Find${_dalcmake}.cmake)
 
-  if (${_var}_FOUND OR HAVE_${_var})
+  if (${_dalcmake_var}_FOUND OR HAVE_${_dalcmake_var})
 
     ## variable mapping
-    set (HAVE_${_var}     TRUE)
-    set (DAL_WITH_${_var} TRUE)
+    set (HAVE_${_dalcmake_var}     TRUE)
+    set (DAL_WITH_${_dalcmake_var} TRUE)
     
     ## include directories
-    include_directories (${${_var}_INCLUDES})
+    include_directories (${${_dalcmake_var}_INCLUDES})
 
     message (STATUS "Checking for package ${_dalcmake} - Success")
 
-  endif (${_var}_FOUND OR HAVE_${_var})
+  endif (${_dalcmake_var}_FOUND OR HAVE_${_dalcmake_var})
 
 endforeach (_dalcmake)
 
@@ -79,8 +79,22 @@ find_library (DL_LIBRARY
   PATH_SUFFIXES lib
   )
 
+find_library (M_LIBRARY
+  NAMES m
+  HINTS ${CMAKE_INSTALL_PREFIX} 
+  PATHS /sw /usr /usr/local /opt/local
+  PATH_SUFFIXES lib
+  )
+
 find_library (UTIL_LIBRARY
   NAMES util
+  HINTS ${CMAKE_INSTALL_PREFIX} 
+  PATHS /sw /usr /usr/local /opt/local
+  PATH_SUFFIXES lib
+  )
+
+find_library (Z_LIBRARY
+  NAMES z
   HINTS ${CMAKE_INSTALL_PREFIX} 
   PATHS /sw /usr /usr/local /opt/local
   PATH_SUFFIXES lib

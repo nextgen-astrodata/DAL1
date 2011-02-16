@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: pywrapper.cc 4184 2010-02-18 14:14:48Z baehren                  $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -138,7 +135,7 @@ void export_dalColumn ()
     .def( "data", &dalColumn::data_boost3,
 	  "Returns the column data into a numpy array.  With three parameters, \n"
 	  "it returns N elements beginning at offset O [data(O,N)]." )
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     .def( "getDataType", &dalColumn::getDataType,
 	  "Return the datatype of the column (casa only)." )
     .def( "ndims", &dalColumn::ndims,
@@ -457,7 +454,7 @@ void export_dalTable ()
 	  "Return true if the attribute exists for the table." )
     .def( "getNumberOfRows", &dalTable::getNumberOfRows,
 	  "Return the number of rows in the table." )
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     .def( "openTable", &dalTable::ot_nonMStable,
 	  "Open a casa table." )
     .def( "getName", &dalTable::getName,

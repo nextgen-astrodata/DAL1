@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2007 by Lars B"ahren                                    *
  *   bahren@astron.nl                                                      *
  *                                                                         *
@@ -28,12 +25,13 @@
 #include <iostream>
 
 // Custom header files
-#include <dal_config.h>
+#include <dalCommon.h>
 #include <lopesevent.h>
 
 using std::cerr;
 using std::cout;
 using std::endl;
+using std::string;
 
 namespace DAL {  // Namespace DAL -- begin
   

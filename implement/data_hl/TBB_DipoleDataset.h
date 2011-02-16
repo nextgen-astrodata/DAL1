@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2008                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -26,7 +23,7 @@
 
 #include <string>
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <casa/aips.h>
 #include <casa/Arrays/ArrayIO.h>
 #include <casa/Arrays/Vector.h>
@@ -201,7 +198,7 @@ namespace DAL {  // Namespace DAL -- begin
     /* 	     int const &nofSamples, */
     /* 	     std::vector<short> &data); */
     
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     
     //! Get the antenna position as a measure
     casa::MPosition antenna_position ();

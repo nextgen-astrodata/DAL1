@@ -1,29 +1,24 @@
-/*-------------------------------------------------------------------------*
-  | $Id::                                                                 $ |
-  *-------------------------------------------------------------------------*
-  ***************************************************************************
-  *   Copyright (C) 2007 by Joseph Masters                                  *
-  *   jmasters@science.uva.nl                                               *
-  *                                                                         *
-  *   This program is free software; you can redistribute it and/or modify  *
-  *   it under the terms of the GNU General Public License as published by  *
-  *   the Free Software Foundation; either version 2 of the License, or     *
-  *   (at your option) any later version.                                   *
-  *                                                                         *
-  *   This program is distributed in the hope that it will be useful,       *
-  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
-  *   GNU General Public License for more details.                          *
-  *                                                                         *
-  *   You should have received a copy of the GNU General Public License     *
-  *   along with this program; if not, write to the                         *
-  *   Free Software Foundation, Inc.,                                       *
-  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
-  ***************************************************************************/
+/***************************************************************************
+ *   Copyright (C) 2007 by Joseph Masters                                  *
+ *   jmasters@science.uva.nl                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 
-#ifndef DALARRAY_H
 #include "dalArray.h"
-#endif
 
 namespace DAL {
 
@@ -55,7 +50,7 @@ namespace DAL {
     \return An identifier for the array.
   */
   int dalArray::open( void * voidfile,
-                      string arrayname )
+                      std::string arrayname )
   {
     name            = arrayname;         // array name
     hid_t * lclfile = (hid_t*)voidfile;  // H5File object
@@ -396,9 +391,9 @@ namespace DAL {
   /*!
     \return dims -- The dimensions of the array
    */
-  vector<int> dalArray::dims()
+  std::vector<int> dalArray::dims()
   {
-    vector<int> return_values;
+    std::vector<int> return_values;
     
     if (H5Iis_valid(itsDatasetID)) {
       hid_t dataspace = H5Dget_space( itsDatasetID );    /* dataspace identifier */
@@ -425,7 +420,7 @@ namespace DAL {
                 should normally be followed by a write.
     \return bool -- DAL::FAIL or DAL::SUCCESS
   */
-  bool dalArray::extend( vector<int> newdims )
+  bool dalArray::extend( std::vector<int> newdims )
   {
     uint32_t rank = newdims.size();
     hsize_t lcldims[ rank ];
@@ -497,10 +492,10 @@ namespace DAL {
     \param chnkdims Specifies the chunk size for extendible arrays.
    */
   dalIntArray::dalIntArray( hid_t obj_id,
-			    string arrayname,
-                            vector<int> dims,
+			    std::string arrayname,
+                            std::vector<int> dims,
 			    int data[],
-			    vector<int> chnkdims)
+			    std::vector<int> chnkdims)
   {
     hid_t datatype  = 0;
     hid_t dataspace = 0;
@@ -605,7 +600,8 @@ namespace DAL {
     \param arrayname The name of the array you want to read.
     \return Pointer to array data.
    */
-  int * dalIntArray::readIntArray( hid_t obj_id, string arrayname )
+  int * dalIntArray::readIntArray (hid_t obj_id,
+				   std::string arrayname)
   {
 
     hid_t filespace  = 0;
@@ -694,8 +690,11 @@ namespace DAL {
                 of the array.
     \param chnkdims Specifies the chunk size for extendible arrays.
    */
-  dalFloatArray::dalFloatArray( hid_t obj_id, string arrayname,
-                                vector<int> dims, float data[], vector<int> chnkdims )
+  dalFloatArray::dalFloatArray( hid_t obj_id,
+				std::string arrayname,
+                                std::vector<int> dims,
+				float data[],
+				std::vector<int> chnkdims )
   {
     hid_t datatype  = 0;
     hid_t dataspace = 0;  // declare a few h5 variables
@@ -820,10 +819,10 @@ namespace DAL {
     \param chnkdims Specifies the chunk size for extendible arrays.
   */
   dalComplexArray_float32::dalComplexArray_float32 (hid_t obj_id,
-						    string arrayname,
-						    vector<int> dims,
+						    std::string arrayname,
+						    std::vector<int> dims,
 						    std::complex<float> data[],
-						    vector<int> chnkdims )
+						    std::vector<int> chnkdims )
   {
     // declare a few h5 variables
     hid_t datatype   = 0;
@@ -975,10 +974,10 @@ namespace DAL {
     \param chnkdims Specifies the chunk size for extendible arrays.
   */
   dalComplexArray_int16::dalComplexArray_int16 (hid_t obj_id,
-						string arrayname,
-						vector<int> dims,
+						std::string arrayname,
+						std::vector<int> dims,
 						std::complex<Int16> data[],
-						vector<int> chnkdims )
+						std::vector<int> chnkdims )
   {
     // declare a few h5 variables
     hid_t datatype  = 0;

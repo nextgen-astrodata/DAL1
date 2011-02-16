@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
@@ -60,7 +57,7 @@ int test_convertString ()
   int nofFailedTests (0);
   
   cout << "[1] Test basic conversion between std::string and casa::String" << endl;
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   try {
     std::string stdString;
     casa::String casaString;

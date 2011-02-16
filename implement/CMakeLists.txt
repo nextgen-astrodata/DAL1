@@ -8,7 +8,7 @@
 ##
 ## ==============================================================================
 
-if (HAVE_CASA OR CASACORE_FOUND)
+if (CASA_FOUND OR CASACORE_FOUND)
   IF (APPLE)
     ## definition common to apple architectures
     add_definitions (
@@ -33,7 +33,7 @@ if (HAVE_CASA OR CASACORE_FOUND)
       add_definitions (-DAIPS_64B)
     endif (NOT CMAKE_SYSTEM_PROCESSOR MATCHES powerpc)
   endif (APPLE)
-endif (HAVE_CASA OR CASACORE_FOUND)
+endif (CASA_FOUND OR CASACORE_FOUND)
 
 ## ==============================================================================
 ##

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Joseph Masters                                  *
- *   jmasters@science.uva.nl                                               *
+ *   Copyright (C) 2010                                                    *
+ *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,85 +18,91 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
+#include "FileAccessProperties.h"
 
-#include "dal.h"
-#include "bindings/pydal.h"
-
-/*!
-  \file pydal.cc
-
-  \ingroup DAL
-  \ingroup pydal
-
-  \brief Python bindings for the C++ layer of the Data Acccess Library
-
-  \author Joseph Masters, Lars B&auml;hren
-
-  <h3>Synopsis</h3>
-
-*/
-
-BOOST_PYTHON_MODULE(pydal)
-{
-  bpl::scope().attr("__doc__") =
-    "Routines for python bindings to the data access library (DAL)."
-    ;
-  
-  import_array();
-  bpl::numeric::array::set_module_and_type("numpy", "ndarray");
-    
-  // ============================================================================
-  //
-  //  [core] Core classes
-  //
-  // ============================================================================
-
-  export_dalCommon();
-  export_dalArray ();
-  export_dalColumn ();
-  export_dalData ();
-  export_dalDataset ();
-  export_dalGroup ();
-  export_dalTable ();  
-
-  // ============================================================================
-  //
-  //  [coordinates] Representations of World Coordinates
-  //
-  // ============================================================================
-
-  export_Angle ();  
-  export_RaDec ();
-  export_Stokes ();  
-  export_Coordinate ();
-
-  // ============================================================================
-  //
-  //  [data_common] Common dataset support
-  //
-  // ============================================================================
-  
-  export_Filename ();
-  export_CommonAttributes ();
-  export_CommonAttributesProject ();
-  export_CommonAttributesObservation ();
-  export_Timestamp ();
-  export_SAS_Settings ();
-  export_HDF5Hyperslab ();
+namespace DAL { // Namespace DAL -- begin
   
   // ============================================================================
   //
-  //  [data_hl] High-level interfaces to specific data
+  //  Construction
   //
   // ============================================================================
   
-  export_BeamFormed ();
-  export_BeamGroup ();
-  export_BF_BeamGroup ();
-  export_TBB_Timeseries ();
-  export_TBB_StationGroup ();
-  export_TBB_DipoleDataset ();  
-  export_LOPES_EventFile ();
+  FileAccessProperties::FileAccessProperties ()
+  {;}
   
-}
+  /*!
+    \param other -- Another HDF5Property object from which to create this new
+           one.
+  */
+  FileAccessProperties::FileAccessProperties (FileAccessProperties const &other)
+  {
+    copy (other);
+  }
+  
+  // ============================================================================
+  //
+  //  Destruction
+  //
+  // ============================================================================
+  
+  FileAccessProperties::~FileAccessProperties ()
+  {
+    destroy();
+  }
+  
+  void FileAccessProperties::destroy ()
+  {;}
+  
+  // ============================================================================
+  //
+  //  Operators
+  //
+  // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                    operator=
+  
+  FileAccessProperties& FileAccessProperties::operator= (FileAccessProperties const &other)
+  {
+    if (this != &other) {
+      destroy ();
+      copy (other);
+    }
+    return *this;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                         copy
+  
+  void FileAccessProperties::copy (FileAccessProperties const &other)
+  {
+    itsAccessProperties = other.itsAccessProperties;
+  }
+
+  // ============================================================================
+  //
+  //  Parameters
+  //
+  // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                      summary
+  
+  /*!
+    \param os -- Output stream to which the summary is written.
+  */
+  void FileAccessProperties::summary (std::ostream &os)
+  {
+    os << "[FileAccessProperties] Summary of internal parameters." << std::endl;
+  }
+  
+  // ============================================================================
+  //
+  //  Methods
+  //
+  // ============================================================================
+  
+  
+
+} // Namespace DAL -- end

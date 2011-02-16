@@ -29,7 +29,7 @@
 #cmakedefine DAL_WITH_CFITSIO
 
 /* Define to 1 if we have the CASACORE/CASA library */
-#cmakedefine HAVE_CASA
+#cmakedefine DAL_WITH_CASACORE
 
 /* Define to 1 if we have the GSL library */
 #cmakedefine DAL_WITH_GSL
@@ -79,7 +79,8 @@
 //__________________________________________________________
 // casacore header files
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASACORE
+#define DAL_WITH_CASA
 /* #define AIPS_STDLIB 1 */
 /* #define AIPS_AUTO_STL 1 */
 /* #define AIPS_NO_LEA_MALLOC 1 */

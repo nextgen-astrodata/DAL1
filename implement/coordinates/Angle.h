@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
@@ -142,7 +139,7 @@ namespace DAL { // Namespace DAL -- begin
     static void rad2deg (double &deg,
 		  double const &rad);
     //! Convert radian to degrees
-    static vector<double> rad2deg (vector<double> const &rad);
+    static std::vector<double> rad2deg (std::vector<double> const &rad);
 
     /* Convert degree to radian */
     
@@ -152,8 +149,8 @@ namespace DAL { // Namespace DAL -- begin
     static void deg2rad (double &rad,
 			 double const &deg);
     //! Convert radian to degrees
-    static vector<double> deg2rad (vector<double> const &deg);
-
+    static std::vector<double> deg2rad (std::vector<double> const &deg);
+    
     /* Convert angle to formatted string */
     
     //! Convert angle to formatted string (H:M:S)
@@ -170,14 +167,14 @@ namespace DAL { // Namespace DAL -- begin
     static std::string rad2hms (double const &rad);
     //! Convert angle (in rad) to formatted string (H:M:S)
     static void rad2hms (std::string &hms,
-		  double const &rad);
+			 double const &rad);
     
     //! Convert angle (in deg) to formatted string (H:M:S)
     static std::string deg2hms (double const &deg);
     //! Convert angle (in deg) to formatted string (H:M:S)
     static void deg2hms (std::string &hms,
 			 double const &deg);
-
+    
   private:
     
     //! Unconditional deletion 

@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: tHDF5Common.cpp 2022 2008-09-26 12:06:09Z baehren               $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2008                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -25,7 +22,7 @@
 #include <Enumerations.h>
 #include <dalDataset.h>
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <casa/Arrays/Vector.h>
 #include <casa/BasicSL/String.h>
 #endif
@@ -310,7 +307,7 @@ int test_timeseries (hid_t const &fileID)
   //__________________________________________________________________
   // Test retrieval of positions and directions as Measures
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   try {
     casa::MPosition station_position;
     casa::MPosition antenna_position;

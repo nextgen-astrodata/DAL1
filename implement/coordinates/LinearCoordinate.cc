@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -334,7 +331,7 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    read_casa
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   void LinearCoordinate::read_casa (casa::LinearCoordinate const &coord) 
   {
     /* Get the number of axes associated with the coordinate */
@@ -372,7 +369,7 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   write_casa
   
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   void LinearCoordinate::write_casa (casa::LinearCoordinate &coord) 
   {
     casa::Vector<casa::String> names (nofAxes_p);

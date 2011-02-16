@@ -179,7 +179,7 @@ if (NOT CASACORE_FOUND)
 
   ## Compatibility variables
 
-  set (HAVE_CASA        CASACORE_FOUND        )
+  set (CASA_FOUND       ${CASACORE_FOUND}     )
   set (CASA_INCLUDES    ${CASACORE_INCLUDES}  )
   set (CASA_LIBRARIES   ${CASACORE_LIBRARIES} )
   

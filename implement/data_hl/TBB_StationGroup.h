@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2007                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -29,7 +26,7 @@
 #include <map>
 #include <string>
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #include <casa/Arrays/ArrayIO.h>
 #include <casa/Arrays/Matrix.h>
 #include <measures/Measures/MDirection.h>
@@ -250,7 +247,7 @@ namespace DAL {   // Namespace DAL -- begin
       }
     
     //! Get attributes <tt>name</tt> from the embedded dipole datasets
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     template <typename T>
       bool getAttributes (std::string const &name,
 			  casa::Vector<T> &result)
@@ -328,7 +325,7 @@ namespace DAL {   // Namespace DAL -- begin
     //
     // ============================================================================
     
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     
     //! Get the positions of all antennas in the station
     casa::Vector<casa::MPosition> antennaPositions ();

@@ -296,7 +296,7 @@ int test_static_functions (hid_t const &location)
     Test 8: Create / Set attributes from casa::Vector<T>
   */
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   cout << "[8] Testing setAttribute(hid_t,string,casa::Vector<T>) ..." << endl;
   try {
     unsigned int nelem (10);

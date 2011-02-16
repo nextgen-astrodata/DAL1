@@ -31,7 +31,7 @@
 #include <string>
 #include <vector>
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
 #ifndef WCSLIB_GETWCSTAB
 #define WCSLIB_GETWCSTAB 1
 #endif
@@ -160,7 +160,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Is this a tabular coordinate?
     static bool isTabular (Coordinate::Type const &type);
 
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
     //! Get the type of a reference system from its name
     static casa::MDirection::Types systemType (casa::String const &refcode) {
       // Local variables

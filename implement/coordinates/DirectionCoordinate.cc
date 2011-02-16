@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -337,7 +334,7 @@ namespace DAL {   // Namespace DAL -- begin
     //___________________________________________________________________________
     //                                                           exportCoordinate
   
-#ifdef HAVE_CASA
+#ifdef DAL_WITH_CASA
   void DirectionCoordinate::exportCoordinate (casa::DirectionCoordinate &coord)
   {
     casa::MDirection::Types system    = Coordinate::systemType(system_p);
