@@ -1,12 +1,18 @@
 
-##__________________________________________________________
-##                                    Standard CMake modules
+## ==============================================================================
+##
+##  System inspection
+##
+## ==============================================================================
+
+##____________________________________________________________________
+##                                              Standard CMake modules
 
 include (FindMPI)
 include (FindOpenMP)
 
-##__________________________________________________________
-##                                      Custom CMake modules
+##____________________________________________________________________
+##                                                Custom CMake modules
 
 foreach (_dalcmake
     Boost
@@ -47,8 +53,8 @@ foreach (_dalcmake
 
 endforeach (_dalcmake)
 
-##__________________________________________________________
-##                                                Type sizes
+##____________________________________________________________________
+##                                                          Type sizes
 
 if (SIZEOF_LONG_LONG)
   add_definitions (-DHAVE_LONG_LONG)
@@ -60,6 +66,23 @@ if (CMAKE_SIZEOF_VOID_P)
     add_definitions (-DWORDSIZE_IS_64)
   endif (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 endif (CMAKE_SIZEOF_VOID_P)
+
+##____________________________________________________________________
+##                                                    System libraries
+
+find_library (DL_LIBRARY
+  NAMES dl
+  HINTS ${CMAKE_INSTALL_PREFIX} 
+  PATHS /sw /usr /usr/local /opt/local
+  PATH_SUFFIXES lib
+  )
+
+find_library (UTIL_LIBRARY
+  NAMES util
+  HINTS ${CMAKE_INSTALL_PREFIX} 
+  PATHS /sw /usr /usr/local /opt/local
+  PATH_SUFFIXES lib
+  )
 
 ## ==============================================================================
 ##

@@ -2,14 +2,14 @@
 ## Name of the project
 project (DAL)
 
+## Project release version
+set (DAL_VERSION_MAJOR 0)
+set (DAL_VERSION_MINOR 1)
+set (DAL_VERSION_PATCH 0)
+set (DAL_VERSION "${DAL_VERSION_MAJOR}.${DAL_VERSION_MINOR}.${DAL_VERSION_PATCH}")
+
 ## Minimum required version of CMake to configure the project
 cmake_minimum_required (VERSION 2.8)
-
-## Packaging
-include (CPack)
-set (CPACK_PACKAGE_VERSION             "0.1.0"               )
-set (CPACK_PACKAGE_VENDOR              "LOFAR"               )
-set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Data Access Library" )
 
 ## ==============================================================================
 ##
@@ -184,13 +184,13 @@ if (HAVE_MYSQL)
 endif (HAVE_MYSQL)
 
 if (NOT APPLE)
-  if (HAVE_LIBUTIL)
-    list (APPEND dal_link_libraries ${HAVE_LIBUTIL})
-  endif (HAVE_LIBUTIL)
+  if (UTIL_LIBRARY)
+    list (APPEND dal_link_libraries ${UTIL_LIBRARY})
+  endif (UTIL_LIBRARY)
   
-  if (HAVE_LIBDL)
-    list (APPEND dal_link_libraries ${HAVE_LIBDL})
-  endif (HAVE_LIBDL)
+  if (DL_LIBRARY)
+    list (APPEND dal_link_libraries ${DL_LIBRARY})
+  endif (DL_LIBRARY)
   
   if (HAVE_LIBM)
     list (APPEND dal_link_libraries ${HAVE_LIBM})
@@ -251,3 +251,27 @@ endif (DAL_ENABLE_TESTING)
 if (DAL_BUILD_APPS)
   add_subdirectory (apps)
 endif (DAL_BUILD_APPS)
+
+
+## =============================================================================
+##
+##  Packaging
+##
+## =============================================================================
+
+include (CPack)
+
+## Package description
+SET (CPACK_PACKAGE_NAME "DAL")
+SET (CPACK_PACKAGE_VENDOR "DAL developers team")
+set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Data Access Library (DAL)")
+
+# Full version number
+set (VERSION                     ${DAL_VERSION}       )
+set (CPACK_PACKAGE_VERSION_MAJOR ${DAL_VERSION_MAJOR} )
+set (CPACK_PACKAGE_VERSION_MINOR ${DAL_VERSION_MINOR} )
+set (CPACK_PACKAGE_VERSION_PATCH ${DAL_VERSION_PATCH} )
+
+## Package generator settings
+SET (CPACK_SOURCE_GENERATOR "TGZ" )
+SET (CPACK_SOURCE_PACKAGE_FILE_NAME "dal-${DAL_VERSION}")
