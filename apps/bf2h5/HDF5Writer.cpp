@@ -35,7 +35,7 @@ using std::string;
 //
 // ==============================================================================
 
-#ifdef HAVE_LOFAR
+#ifdef DAL_WITH_LOFAR
 HDF5Writer::HDF5Writer (BF2H5 *parent,
 			const string &output_file,
 			const LOFAR::RTCP::Parset *ps, 
@@ -92,7 +92,7 @@ HDF5Writer::~HDF5Writer()
 //
 // ==============================================================================
 
-#ifdef HAVE_LOFAR
+#ifdef DAL_WITH_LOFAR
 
 void HDF5Writer::createHDF5File (const LOFAR::RTCP::Parset *ps)
 {

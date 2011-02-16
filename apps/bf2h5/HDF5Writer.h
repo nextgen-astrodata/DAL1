@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: TBB_Timeseries.h 4783 2010-04-28 09:49:12Z baehren              $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Alwin de Jong <jong@astron.nl>                                        *
  *                                                                         *
@@ -34,7 +31,7 @@
 #include <vector>
 
 // LOFAR header files
-#ifdef HAVE_LOFAR
+#ifdef DAL_WITH_LOFAR
 #include <Interface/Parset.h>
 #endif
 
@@ -70,7 +67,7 @@ public:
 
   // === Construction ===========================================================
 
-#ifdef HAVE_LOFAR
+#ifdef DAL_WITH_LOFAR
   HDF5Writer (BF2H5 *parent,
 	      const std::string &output_file,
 	      const LOFAR::RTCP::Parset *ps,
@@ -84,7 +81,7 @@ public:
   
   // === Methods ================================================================
 
-#ifdef HAVE_LOFAR
+#ifdef DAL_WITH_LOFAR
   //! Create HDF5 output dataset
   void createHDF5File (const LOFAR::RTCP::Parset *ps);
 #endif

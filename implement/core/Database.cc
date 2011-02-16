@@ -48,7 +48,7 @@ namespace DAL {
     itsDatabaseName = database;
     itsPortNumber   = "";
     
-#ifdef HAVE_MYSQL
+#ifdef DAL_WITH_MYSQL
     itsDatabaseConnector = mysql_init(NULL);
     
     /* Connect to database */
@@ -70,7 +70,7 @@ namespace DAL {
   
   Database::~Database()
   {
-#ifdef HAVE_MYSQL
+#ifdef DAL_WITH_MYSQL
     if (itsDatabaseConnector)
       {
         /* close connection */
@@ -94,7 +94,7 @@ namespace DAL {
   */
   bool Database::query (std::string const & querystr)
   {
-#ifdef HAVE_MYSQL
+#ifdef DAL_WITH_MYSQL
     /* send SQL query */
     if (mysql_query(itsDatabaseConnector, querystr.c_str()))
       {
@@ -136,5 +136,3 @@ namespace DAL {
   }
   
 } // end namespace DAL
-
-// #endif // HAVE_MYSQL

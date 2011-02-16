@@ -29,7 +29,7 @@
 #include <map>
 
 // LOFAR header files
-#ifdef HAVE_LOFAR
+#ifdef DAL_WITH_LOFAR
 #include <Interface/Parset.h>
 #endif
 
@@ -189,7 +189,7 @@ class BF2H5 {
   std::string EpochUTC;
   std::string EpochDate;
   
-#ifdef HAVE_LOFAR
+#ifdef DAL_WITH_LOFAR
   const LOFAR::RTCP::Parset *itsParset;
 #endif 
 };

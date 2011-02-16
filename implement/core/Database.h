@@ -50,7 +50,7 @@ namespace DAL {
     //! The name of the database to work with
     std::string itsDatabaseName;
     
-#ifdef HAVE_MYSQL
+#ifdef DAL_WITH_MYSQL
     //! Connector to the database
     MYSQL *itsDatabaseConnector;
     //! Result from database query

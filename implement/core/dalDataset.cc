@@ -125,7 +125,7 @@ namespace DAL {
     }
     else if ( filetype == FITSTYPE )
       {
-#ifdef HAVE_CFITSIO
+#ifdef DAL_WITH_CFITSIO
         fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
         int status;
         fits_create_file(&fptr, filename, &status); /*create new file*/
@@ -273,7 +273,7 @@ namespace DAL {
   bool dalDataset::openFITS ( const char * fname )
   {
     
-#ifdef HAVE_CFITSIO
+#ifdef DAL_WITH_CFITSIO
     
     fitsfile * fptr = NULL;
     int status      = 0;  /* MUST initialize status */

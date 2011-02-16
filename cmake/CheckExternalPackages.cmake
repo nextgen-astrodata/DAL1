@@ -43,7 +43,8 @@ foreach (_dalcmake
   if (${_var}_FOUND OR HAVE_${_var})
 
     ## variable mapping
-    set (HAVE_${_var} TRUE)
+    set (HAVE_${_var}     TRUE)
+    set (DAL_WITH_${_var} TRUE)
     
     ## include directories
     include_directories (${${_var}_INCLUDES})

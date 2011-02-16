@@ -67,7 +67,7 @@ BF2H5::BF2H5 (const std::string &outfile,
     itsDoDownSample = false;
   }
 
-#ifdef HAVE_LOFAR
+#ifdef DAL_WITH_LOFAR
   // create parset
   itsParset = new LOFAR::RTCP::Parset(parset_filename.c_str());
 #endif
@@ -88,7 +88,7 @@ BF2H5::~BF2H5()
     delete [] *it;
   }
 
-#ifdef HAVE_LOFAR
+#ifdef DAL_WITH_LOFAR
   delete itsParset;
 #endif
 }
@@ -240,7 +240,7 @@ void BF2H5::start (bool const &verbose)
 		  << BFMainHeader.nrSamplesPerSubband         << std::endl;
 	std::cout << "-- BFMainHeader.nrSubbands          = "
 		  << BFMainHeader.nrSubbands                  << std::endl;
-#ifdef HAVE_LOFAR
+#ifdef DAL_WITH_LOFAR
 	std::cout << "-- parset:nrSubbandSamples          = "
 		  << itsParset->nrSubbandSamples()            << std::endl;
 	std::cout << "-- parset.nrSubbands                = "
@@ -258,7 +258,7 @@ void BF2H5::start (bool const &verbose)
 						  BFMainHeader.nrSubbands,
 						  getNrSamplesPerSubband());
 	// Start the writer
-#ifdef HAVE_LOFAR
+#ifdef DAL_WITH_LOFAR
         itsWriter = new HDF5Writer (this,
 				    outputFile,
 				    itsParset,

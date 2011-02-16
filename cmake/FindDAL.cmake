@@ -53,13 +53,46 @@ if (NOT DAL_FOUND)
     )
   
   ##_____________________________________________________________________________
-  ## Check for the executable
+  ## Check for the executable(s)
   
-#  find_program (DAL_EXECUTABLE <package name>
-#    HINTS ${DAL_ROOT_DIR}
-#    PATHS /sw /usr /usr/local /opt/local
-#    PATH_SUFFIXES bin
-#    )
+  foreach (_dal_executable
+      lopes2h5
+      msread
+      ms2h5
+      tbb2h5
+      )
+
+    ## try to locate the executable
+    find_program (DAL_${_dal_executable}_EXECUTABLE ${_dal_executable}
+      HINTS ${DAL_ROOT_DIR}
+      PATHS /sw /usr /usr/local /opt/local
+      PATH_SUFFIXES bin
+      )
+    
+  endforeach (_dal_executable)
+  
+  ##_____________________________________________________________________________
+  ## Test DAL library for:
+  ##  - library version <major.minor.release>
+  ##  - registered external packages (e.g. casacore, HDF5, etc.)
+  
+  if (DAL_INCLUDES AND DAL_LIBRARIES)
+    ## Locate test program
+    find_file (HAVE_TestDALLibrary TestDALLibrary.cc
+      PATHS ${PROJECT_SOURCE_DIR}
+      PATH_SUFFIXES cmake devel_common/cmake Modules
+      )
+    ## Build and run test program
+    if (HAVE_TestDALLibrary)
+      try_run(DAL_VERSION_RUN_RESULT DAL_VERSION_COMPILE_RESULT
+	${PROJECT_BINARY_DIR}
+	${HAVE_TestDALLibrary}
+#	CMAKE_FLAGS -DLINK_LIBRARIES:STRING=${DAL_LIBRARIES}
+	COMPILE_DEFINITIONS -I${DAL_INCLUDES}
+	RUN_OUTPUT_VARIABLE DAL_VERSION_OUTPUT
+	)
+    endif (HAVE_TestDALLibrary)
+  endif (DAL_INCLUDES AND DAL_LIBRARIES)
   
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found

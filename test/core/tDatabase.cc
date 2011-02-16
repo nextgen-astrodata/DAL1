@@ -32,9 +32,6 @@
 */
 
 #include <iostream>
-
-#ifdef HAVE_MYSQL
-
 #include <dal.h>
 #include <Database.h>
 
@@ -105,14 +102,3 @@ int main (int argc,
   
   return nofFailedTests;
 }
-
-#else
-
-int main ()
-{
-  std::cerr << "[tDatabase] MySQL not available on system - skipping test!"
-	    << std::endl;
-  return 0;
-}
-
-#endif

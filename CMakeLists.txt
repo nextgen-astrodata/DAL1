@@ -179,9 +179,9 @@ if (HAVE_LIBPTHREAD)
   list (APPEND dal_link_libraries ${HAVE_LIBPTHREAD})
 endif (HAVE_LIBPTHREAD)
 
-if (HAVE_MYSQL)
+if (MYSQL_FOUND)
   list (APPEND dal_link_libraries ${MYSQL_LIBRARIES})
-endif (HAVE_MYSQL)
+endif (MYSQL_FOUND)
 
 if (NOT APPLE)
   if (UTIL_LIBRARY)

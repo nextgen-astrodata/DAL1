@@ -1,26 +1,23 @@
-/*-------------------------------------------------------------------------*
-| $Id::                                                                 $ |
-*-------------------------------------------------------------------------*
-***************************************************************************
-*   Copyright (C) 2007 by Joseph Masters & Alwin de Jong                  *
-*   jmasters@science.uva.nl                                               *
-*   jong@astron.nl                                                        *
-*                                                                         *
-*   This program is free software; you can redistribute it and/or modify  *
-*   it under the terms of the GNU General Public License as published by  *
-*   the Free Software Foundation; either version 2 of the License, or     *
-*   (at your option) any later version.                                   *
-*                                                                         *
-*   This program is distributed in the hope that it will be useful,       *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
-*   GNU General Public License for more details.                          *
-*                                                                         *
-*   You should have received a copy of the GNU General Public License     *
-*   along with this program; if not, write to the                         *
-*   Free Software Foundation, Inc.,                                       *
-*   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
-***************************************************************************/
+/***************************************************************************
+ *   Copyright (C) 2007 by Joseph Masters & Alwin de Jong                  *
+ *   jmasters@science.uva.nl                                               *
+ *   jong@astron.nl                                                        *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 
 /*!
   \file bf2h5.cpp
@@ -50,12 +47,12 @@
 
   Command line interface:
   \verbatim
-  -D [ --factor ] arg   Downsample with this integer factor
+  -D [ --factor  ] arg  Downsample with this integer factor
   -H [ --help ]         Show help messages
-  -I [ --infile ] arg   Name of the input file
+  -I [ --infile  ] arg  Name of the input file
   -O [ --outfile ] arg  Name of the output dataset
-	--version							Show version information
-  --intensity           Compute total intensity
+	--version	Show version information
+	--intensity     Compute total intensity
   \endverbatim
 
   If \e --intensity or \e --factor is set, the output file will contain
@@ -93,7 +90,8 @@ const static char *version = "2.0";
 #include <complex>  // for complex datatypes
 #include <assert.h>
 #include <fstream>
-#ifdef HAVE_GSL
+
+#ifdef DAL_WITH_GSL
 #include <gsl/gsl_fft_complex.h> // for fft's during channelization
 #endif
 #include <new>

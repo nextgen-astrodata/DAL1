@@ -4,9 +4,14 @@
 
 // ==============================================================================
 //
-//  Handling of DAL options
+//  Package information
 //
 // ==============================================================================
+
+#define DAL_VERSION "${DAL_VERSION}"
+#define DAL_VERSION_MAJOR ${DAL_VERSION_MAJOR}
+#define DAL_VERSION_MINOR ${DAL_VERSION_MINOR}
+#define DAL_VERSION_PATCH ${DAL_VERSION_PATCH}
 
 /* Print debugging information? */
 #cmakedefine DEBUGGING_MESSAGES
@@ -18,37 +23,37 @@
 // ==============================================================================
 
 /* Define to 1 if we have the BOOST library */
-#cmakedefine HAVE_BOOST
+#cmakedefine DAL_WITH_BOOST
 
 /* Define to 1 if we have the CFITSIO library */
-#cmakedefine HAVE_CFITSIO
+#cmakedefine DAL_WITH_CFITSIO
 
 /* Define to 1 if we have the CASACORE/CASA library */
 #cmakedefine HAVE_CASA
 
 /* Define to 1 if we have the GSL library */
-#cmakedefine HAVE_GSL
+#cmakedefine DAL_WITH_GSL
 
 /* Define to 1 if we have a working installation of the HDF5 library */
 #cmakedefine HAVE_HDF5
 
 /* Define to 1 if we have the LOFAR library */
-#cmakedefine HAVE_LOFAR
+#cmakedefine DAL_WITH_LOFAR
 
 /*
   Define to 1 if we have the MySQL library
   MYSQL_INCLUDES = ${MYSQL_INCLUDES}
 */
-#cmakedefine HAVE_MYSQL
+#cmakedefine DAL_WITH_MYSQL
 
 /* Define to 1 if we have the NumUtil library */
-#cmakedefine HAVE_NUMUTIL
+#cmakedefine DAL_WITH_NUMUTIL
 
 /* Define to 1 if we have the OPENMP library */
-#cmakedefine HAVE_OPENMP
+#cmakedefine DAL_WITH_OPENMP
 
 /* Define to 1 if we have the WCSLIB library */
-#cmakedefine HAVE_WCSLIB
+#cmakedefine DAL_WITH_WCSLIB
 
 // ==============================================================================
 //
@@ -91,7 +96,7 @@
 //__________________________________________________________
 // CFITSIO header files
 
-#ifdef HAVE_CFITSIO
+#ifdef DAL_WITH_CFITSIO
 extern "C"
 {
 #include <fitsio.h>
@@ -101,7 +106,7 @@ extern "C"
 //__________________________________________________________
 // MySQL header files
 
-#ifdef HAVE_MYSQL
+#ifdef DAL_WITH_MYSQL
 #cmakedefine MYSQL_VERSION "${MYSQL_VERSION}"
 #cmakedefine MYSQL_PORT "${MYSQL_PORT}"
 #include <mysql.h>
@@ -118,7 +123,7 @@ extern "C"
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>
 // NumUtil headers
-#ifdef HAVE_NUMUTIL
+#ifdef DAL_WITH_NUMUTIL
 #include <num_util.h>
 #endif
 #endif
