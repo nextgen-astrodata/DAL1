@@ -192,7 +192,7 @@ namespace DAL {
             following C-type ordering of the matrix elements.
     \param sidelength -- Sidelength of the matrix, \f$ N \f$.
            \f[ I_{1} = \left[ 1 \right] , \quad
-               I_{2} = \left[ \begin{array}{cc} 1 & 0 \\ 0 & 1 end{array} \right] \f]
+               I_{2} = \left[ \begin{array}{cc} 1 & 0 \\ 0 & 1 \end{array} \right] \f]
   */
   template <class T> void IdentityMatrix (std::vector<T> &data,
 					  unsigned int const &sidelength)
