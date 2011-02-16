@@ -54,15 +54,25 @@ typedef struct LFFE_ROW {
 	double w;
 } LFFE_ROW;
 
+/*!
+  \class LFFE
+  \ingroup DAL
+  \author Joseph Masters
+ */
 class LFFE {
-private:
-	LFFE_ROW row[500];
-public:
-	int get_ant1(int n);
-	int get_ant2(int n);
-	dalcomplex get_data(int n, int polarization, int channel);
-	double get_time(int n);
-	double get_u(int n);
-	double get_v(int n);
-	double get_w(int n);
+
+  LFFE_ROW row[500];
+  
+ public:
+
+  //! Get data for antenna 1
+  int get_ant1(int n);
+  //! Get data for antenna 2
+  int get_ant2(int n);
+  //! Get complex data for given \e polarization and \e channel
+  dalcomplex get_data (int n, int polarization, int channel);
+  double get_time(int n);
+  double get_u(int n);
+  double get_v(int n);
+  double get_w(int n);
 };
