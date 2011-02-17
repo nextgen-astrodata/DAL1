@@ -46,7 +46,7 @@ if (NOT BOOST_FOUND)
   set (BOOST_MODULES
     date_time
     filesystem
-    graph
+#    graph
     iostreams
     math_c99
     math_c99f
