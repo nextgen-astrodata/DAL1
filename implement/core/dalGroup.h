@@ -29,6 +29,7 @@
 #include "dalTable.h"
 #include "dalArray.h"
 #include "dalShortArray.h"
+#include "dalComplexArray_int16.h"
 
 namespace DAL {
   

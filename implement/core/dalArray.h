@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2007 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -41,7 +38,6 @@ namespace DAL {
     
     The dalArray object holds an n-dimensional array of a single datatype.
   */
-  
   class dalArray {
     
     //! Number of dimensions
@@ -280,24 +276,6 @@ namespace DAL {
 			     std::vector<int> dims,
 			     std::complex<float> data[],
 			     std::vector<int>chnkdims);
-  };
-  
-  /*!
-    \class dalComplexArray_int16
-    \ingroup DAL
-    \ingroup  core
-    \brief Represents an n-dimensional array of type \e complex<int16>
-  */
-  class dalComplexArray_int16: public dalArray {
-    
-  public:
-
-    //! Argumented constructor
-    dalComplexArray_int16( hid_t objfile,
-			   std::string arrayname,
-			   std::vector<int> dims,
-			   std::complex<Int16> data[],
-			   std::vector<int>chnkdims);
   };
   
 } // end namespace DAL
