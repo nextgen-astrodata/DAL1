@@ -175,9 +175,9 @@ if (WCSLIB_LIBRARIES)
   list (APPEND dal_link_libraries ${WCSLIB_LIBRARIES})
 endif (WCSLIB_LIBRARIES)
 
-if (HAVE_LIBPTHREAD)
-  list (APPEND dal_link_libraries ${HAVE_LIBPTHREAD})
-endif (HAVE_LIBPTHREAD)
+if (PTHREAD_LIBRARY)
+  list (APPEND dal_link_libraries ${PTHREAD_LIBRARY})
+endif (PTHREAD_LIBRARY)
 
 if (MYSQL_FOUND)
   list (APPEND dal_link_libraries ${MYSQL_LIBRARIES})
@@ -217,7 +217,7 @@ if (MPI_FOUND AND HDF5_HAVE_PARALLEL_IO)
   endif (MPI_EXTRA_LIBRARY)
 endif (MPI_FOUND AND HDF5_HAVE_PARALLEL_IO)
 
-## Clean up the list of limk libraries
+## Clean up the list of link libraries
 
 list (REMOVE_DUPLICATES dal_link_libraries)
 

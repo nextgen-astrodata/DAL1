@@ -86,6 +86,13 @@ find_library (M_LIBRARY
   PATH_SUFFIXES lib
   )
 
+find_library (PTHREAD_LIBRARY
+  NAMES pthread
+  HINTS ${CMAKE_INSTALL_PREFIX} 
+  PATHS /sw /usr /usr/local /opt/local
+  PATH_SUFFIXES lib
+  )
+
 find_library (UTIL_LIBRARY
   NAMES util
   HINTS ${CMAKE_INSTALL_PREFIX} 

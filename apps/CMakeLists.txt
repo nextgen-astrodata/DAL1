@@ -34,6 +34,8 @@ if (CASA_FOUND OR CASACORE_FOUND)
   list (APPEND apps_link_libraries
     ${dal_link_libraries}
     )
+  ## remove duplicates from the list of link libraries
+  list (REMOVE_DUPLICATES apps_link_libraries)
 else (CASA_FOUND OR CASACORE_FOUND)
   message (STATUS "[DAL] Unable to build applications: msread, ms2h5")
 endif (CASA_FOUND OR CASACORE_FOUND)
