@@ -92,7 +92,7 @@ if (NOT HDF5_FOUND)
     string (TOUPPER ${_libHDF5} _varHDF5)
     
     ## Search for the library
-    find_library (HDF5_${_varHDF5}_LIBRARY 
+    find_library (HDF5_${_varHDF5}_LIBRARY
       NAMES ${_libHDF5}
       HINTS ${HDF5_ROOT_DIR} 
       PATHS /sw /usr /usr/local /opt/local
@@ -105,7 +105,7 @@ if (NOT HDF5_FOUND)
     endif (HDF5_${_varHDF5}_LIBRARY)
 
   endforeach (_libHDF5)
-  
+
   ##_____________________________________________________________________________
   ## Check for the executables
   
@@ -140,8 +140,12 @@ if (NOT HDF5_FOUND)
   ##  - default API version
   
   if (HDF5_INCLUDES AND HDF5_LIBRARIES)
-    ## Locate test program
+    ## Locate test programs
     find_file (HAVE_TestHDF5Library TestHDF5Library.cc
+      PATHS ${PROJECT_SOURCE_DIR}
+      PATH_SUFFIXES cmake devel_common/cmake Modules
+      )
+    find_file (HAVE_TestHDF5API TestHDF5API.cc
       PATHS ${PROJECT_SOURCE_DIR}
       PATH_SUFFIXES cmake devel_common/cmake Modules
       )
@@ -184,6 +188,30 @@ if (NOT HDF5_FOUND)
   endif (HDF5_VERSION_COMPILE_RESULT)
   
   set (HDF5_VERSION "${HDF5_VERSION_MAJOR}.${HDF5_VERSION_MINOR}.${HDF5_VERSION_RELEASE}")
+
+  ## Test the API version
+  
+  if (HAVE_TestHDF5API)
+    ## Try to compile and run using 1.6 API as default
+    try_run(HDF5_API_RUN_RESULT HDF5_API_COMPILE_RESULT
+      ${PROJECT_BINARY_DIR}
+      ${HAVE_TestHDF5API}
+      CMAKE_FLAGS -DLINK_LIBRARIES:STRING=${HDF5_LIBRARIES}
+      COMPILE_DEFINITIONS -I${HDF5_INCLUDES}
+      COMPILE_OUTPUT_VARIABLE HDF5_API_COMPILE_OUTPUT
+      RUN_OUTPUT_VARIABLE HDF5_API_RUN_OUTPUT
+      )
+    ## Process test output
+    if (HDF5_API_COMPILE_RESULT)
+      if (HDF5_API_RUN_RESULT)
+      else (HDF5_API_RUN_RESULT)
+	message (STATUS "[HDF5] Failed to run TestHDF5API!")
+      endif (HDF5_API_RUN_RESULT)
+    else (HDF5_API_COMPILE_RESULT)
+      message (STATUS "[HDF5] Failed to compile TestHDF5API!")
+      message (STATUS "${HDF5_API_COMPILE_OUTPUT}")
+    endif (HDF5_API_COMPILE_RESULT)
+  endif (HAVE_TestHDF5API)
   
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found

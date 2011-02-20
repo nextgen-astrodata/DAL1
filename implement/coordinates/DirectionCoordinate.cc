@@ -194,7 +194,7 @@ namespace DAL {   // Namespace DAL -- begin
     latpole_p         = 0.0;
   }
   
-#ifdef HAVE_HDF5
+#ifdef DAL_WITH_HDF5
   
   //_____________________________________________________________________________
   //                                                                    read_hdf5

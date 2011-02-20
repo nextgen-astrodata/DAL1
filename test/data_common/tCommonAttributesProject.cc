@@ -186,7 +186,7 @@ int main ()
   // Test access to internal parameters
   nofFailedTests += test_parameters ();
 
-#ifdef HAVE_HDF5
+#ifdef DAL_WITH_HDF5
   nofFailedTests += test_hdf5 ();
 #endif
 

@@ -586,7 +586,7 @@ namespace DAL {   // Namespace DAL -- begin
       os << "-- PC               = " << pc_p          << std::endl;
     }
     
-#ifdef HAVE_HDF5
+#ifdef DAL_WITH_HDF5
     //! Write the coordinate object to a HDF5 file
     virtual void write_hdf5 (hid_t const &locationID) = 0;
     

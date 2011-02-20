@@ -35,7 +35,7 @@
 #cmakedefine DAL_WITH_GSL
 
 /* Define to 1 if we have a working installation of the HDF5 library */
-#cmakedefine HAVE_HDF5
+#cmakedefine DAL_WITH_HDF5
 
 /* Define to 1 if we have the LOFAR library */
 #cmakedefine DAL_WITH_LOFAR
@@ -64,7 +64,7 @@
 //__________________________________________________________
 // HDF5 header files
 
-#ifdef HAVE_HDF5
+#ifdef DAL_WITH_HDF5
 /* Use 1.8 API as default */
 #ifdef H5_USE_16_API_DEFAULT
 #define H5_USE_16_API_DEFAULT 0

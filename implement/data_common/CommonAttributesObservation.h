@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -246,7 +243,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Provide a summary of the object's internal parameters and status
     void summary (std::ostream &os);    
     
-#ifdef HAVE_HDF5
+#ifdef DAL_WITH_HDF5
     //! Write the attributes to a HDF5 file
     bool h5write (hid_t const &groupID);
     

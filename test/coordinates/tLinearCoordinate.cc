@@ -294,7 +294,7 @@ int test_parameters ()
 //_______________________________________________________________________________
 //                                                                      test_hdf5
 
-#ifdef HAVE_HDF5
+#ifdef DAL_WITH_HDF5
 
 int test_hdf5 (std::string const &filename="tLinearCoordinate.h5")
 {
@@ -508,7 +508,7 @@ int main ()
   nofFailedTests += test_casa();
 #endif
 
-#ifdef HAVE_HDF5
+#ifdef DAL_WITH_HDF5
   // Test writing coordinate information to HDF5 file
   nofFailedTests += test_hdf5();
 #endif

@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -122,7 +119,7 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get the Stokes component names represented by the coordinate
     std::vector<std::string> stokesNames ();
     
-#ifdef HAVE_HDF5
+#ifdef DAL_WITH_HDF5
     //! Read the coordinate object from a HDF5 file
     void read_hdf5 (hid_t const &groupID);
     

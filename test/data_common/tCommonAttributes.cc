@@ -170,7 +170,7 @@ int test_attributes ()
 
   // Write attributes to HDF5 file _________________________
 
-#ifdef HAVE_HDF5
+#ifdef DAL_WITH_HDF5
   
   cout << "[4] Write attributes to file ..." << endl;
   try {

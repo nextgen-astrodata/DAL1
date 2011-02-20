@@ -65,7 +65,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                             CommonAttributes
   
-#ifdef HAVE_HDF5    
+#ifdef DAL_WITH_HDF5    
   CommonAttributes::CommonAttributes (hid_t const &locationID)
   {
     // Initialize parameters to default values
@@ -256,7 +256,7 @@ namespace DAL { // Namespace DAL -- begin
     itsNotes               = undefined;
   }
   
-#ifdef HAVE_HDF5
+#ifdef DAL_WITH_HDF5
   
   //_____________________________________________________________________________
   //                                                                      h5write

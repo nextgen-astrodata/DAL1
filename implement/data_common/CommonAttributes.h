@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -145,7 +142,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Argumented constructor
     CommonAttributes (CommonAttributesObservation const &attributesObservation);
 
-#ifdef HAVE_HDF5
+#ifdef DAL_WITH_HDF5
     //! Argumented constructor
     CommonAttributes (hid_t const &locationID);
 #endif
@@ -377,7 +374,7 @@ namespace DAL { // Namespace DAL -- begin
 
     // Methods which require HDF5 __________________________
 
-#ifdef HAVE_HDF5
+#ifdef DAL_WITH_HDF5
     //! Write the attributes to a HDF5 file
     bool h5write (hid_t const &groupID);
     

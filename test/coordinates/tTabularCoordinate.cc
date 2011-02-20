@@ -303,7 +303,7 @@ int main ()
   // Test public methods
   nofFailedTests += test_methods ();
 
-#ifdef HAVE_HDF5
+#ifdef DAL_WITH_HDF5
   // Test the various methods
   nofFailedTests += test_hdf5();
 #endif

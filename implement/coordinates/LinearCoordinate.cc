@@ -205,7 +205,7 @@ namespace DAL {  // Namespace DAL -- begin
 				       Coordinate::LINEAR);
   }
   
-#ifdef HAVE_HDF5
+#ifdef DAL_WITH_HDF5
   
   //_____________________________________________________________________________
   //                                                                    read_hdf5
