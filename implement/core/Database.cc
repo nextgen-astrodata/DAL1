@@ -30,6 +30,18 @@ namespace DAL {
 
   //_____________________________________________________________________________
   //                                                                     Database
+
+  Database::Database ()
+  {
+    itsServerName   = "";
+    itsUserName     = "";
+    itsPassword     = "";
+    itsDatabaseName = "";
+    itsPortNumber   = "";
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                     Database
   
   /*!
     \param server   -- Name of the server to connect to.

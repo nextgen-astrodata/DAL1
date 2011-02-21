@@ -61,6 +61,9 @@ namespace DAL {
   public:
 
     // === Construction =========================================================
+
+    // Default constructor
+    Database ();
     
     // Constructor
     Database( std::string const& server,
