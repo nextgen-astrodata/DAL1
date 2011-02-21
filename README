@@ -1,11 +1,30 @@
 
 Contents:
 
+  - Introduction
   - Getting the source code
   - Organization of the source code
   - External dependencies
   - Configuration and build
   - Coding conventions
+
+_________________________________________________________________________________
+>>> Introduction
+
+The LOFAR (www.lofar.org) project has set up a moderated majordomo email list,
+called "nextgen-astrodata@astron.nl". Interested parties are encouraged to sign
+up via majordomo@anstron.nl with “subscribe nextgen-astrodata” as the only text
+in the body of the message.
+
+We would like to bring together scientists and developers struggling with large
+and complex datasets as well as those groups currently exploring HDF5 (www.hdfgroup.org)
+implementations. Ultimately we would like to see these formats grow into a true
+set of standards for radio data that can meet the demands of the next generation
+of radio observatories as well as the non-radio community such as LSST and other
+future missions. We feel that the time is ripe to solve this issue across
+wavelengths and projects.  HDF5 is mature and is being used extensively in
+science, and now as the format for the LOFAR data products.
+
 
 _________________________________________________________________________________
 >>> Getting the source code
@@ -63,15 +82,15 @@ The components of the DAL is organized into the following directory structure:
 _________________________________________________________________________________
 >>> External dependencies
 
-* HDF5 library (http://www.hdfgroup.org/HDF5)
+* HDF5 library, >=1.8.3 (http://www.hdfgroup.org/HDF5)
 
-* WCSLIB (http://www.atnf.csiro.au/people/mcalabre/WCS)
+* WCSLIB, >=4.2 (http://www.atnf.csiro.au/people/mcalabre/WCS)
 
-* CFITSIO (http://heasarc.gsfc.nasa.gov/fitsio)
+* CFITSIO, >=3.0 (http://heasarc.gsfc.nasa.gov/fitsio)
 
 * CASACORE (http://code.google.com/p/casacore)
 
-* Boost C++ Libraries (http://www.boost.org)
+* Boost C++ Libraries, >=1.40.0 (http://www.boost.org)
 
 * Python (http://www.python.org)
 
@@ -101,7 +120,7 @@ required 3-party packages (such as Boost, HDF5, etc.), but if you are using
 a custom version installed at a non-standard location, you might need to aid
 CMake in finding all required components:
 
-  cmake -DHDF5_ROOT_DIR=<basedir of HDF5 install>) -DCASACORE_ROOT_DIR=<basedir of casacore install> ..
+  cmake -DHDF5_ROOT_DIR=<basedir of HDF5 install> -DCASACORE_ROOT_DIR=<basedir of casacore install> ..
 
 If you want to submit test test results - from configuration, build and running
 the test programs - you can do so by executing
