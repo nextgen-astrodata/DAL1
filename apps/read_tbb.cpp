@@ -18,17 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifndef DAL_H
-#include <dal.h>
-#endif
-
-#ifndef DALDATASET_H
+#include <dal_config.h>
 #include <dalDataset.h>
-#endif
 
 int main(int argc, char *argv[])
 {

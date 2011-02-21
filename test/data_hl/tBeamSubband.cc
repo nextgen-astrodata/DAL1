@@ -31,7 +31,6 @@
   \date 2008/09/28
 */
 
-#include <dal.h>
 #include <dalDataset.h>
 #include <BeamSubband.h>
 

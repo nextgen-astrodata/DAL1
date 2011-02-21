@@ -18,11 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <dal.h>
-
-#ifndef TBB_H
-#include "TBB.h"
-#endif
+#include <dal_config.h>
+#include <TBB.h>
 
 // Namespace usage
 using std::cerr;

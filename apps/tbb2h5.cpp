@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2007 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -141,13 +138,8 @@
   </ul>
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifndef TBB_H
-#include "TBB.h"
-#endif
+#include <dal_config.h>
+#include <TBB.h>
 
 #include <boost/program_options.hpp>
 #include <boost/program_options/cmdline.hpp>

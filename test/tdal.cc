@@ -28,7 +28,6 @@
 #include <cassert>
 #include <string>
 
-#include <dal.h>
 #include <dalDataset.h>
 
 using std::cout;

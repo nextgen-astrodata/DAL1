@@ -40,11 +40,7 @@
 
 #include <fstream>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <dal.h>
+#include <dal_config.h>
 #include <dalDataset.h>
 #include <dalGroup.h>
 #include <TBB.h>

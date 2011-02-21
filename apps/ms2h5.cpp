@@ -33,21 +33,9 @@
   \date 12-04-06
 */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifndef DAL_H
-#include <dal.h>
-#endif
-
-#ifndef DALDATASET_H
+#include <dal_config.h>
 #include <dalDataset.h>
-#endif
-
-#ifndef DALGROUP_H
 #include <dalGroup.h>
-#endif
 
 using namespace DAL;
 

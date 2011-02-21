@@ -20,7 +20,6 @@
 
 #include <iostream>
 
-#include <dal.h>
 #include <dalDataset.h>
 #include <TBB_StationGroup.h>
 

@@ -30,7 +30,6 @@
   \date 2008/09/22
 */
 
-#include <dal.h>
 #include <dalCommon.h>
 #include <dalDataset.h>
 
