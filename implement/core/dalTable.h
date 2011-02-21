@@ -27,6 +27,7 @@
 
 #ifdef DAL_WITH_CASA
 #include <ms/MeasurementSets/MSReader.h>
+#include <tables/Tables.h>
 #endif
 
 namespace DAL {

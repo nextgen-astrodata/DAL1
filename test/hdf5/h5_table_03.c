@@ -14,7 +14,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
-#include <dal_config.h>
+#include <hdf5.h>
 #include <stdlib.h>
 
 /*!

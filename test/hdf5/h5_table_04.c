@@ -13,7 +13,7 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <dal_config.h>
+#include <hdf5.h>
 #include <stdlib.h>
 
 /*-------------------------------------------------------------------------
