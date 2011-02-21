@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -86,7 +83,7 @@ namespace DAL { // Namespace DAL -- begin
     //! nof. columns in the matrix, \f$ N_{\rm cols} \f$
     size_t nofColumns_p;
     //! Matrix data
-    std::valarray<T> data_p;
+    std::valarray<T> itsData;
     
   public:
     
@@ -97,7 +94,7 @@ namespace DAL { // Namespace DAL -- begin
       {
 	nofRows_p    = 0;
 	nofColumns_p = 0;
-	data_p       = std::valarray<T>();
+	itsData       = std::valarray<T>();
       };
     /*!
       \brief Argumented constructor
@@ -116,7 +113,7 @@ namespace DAL { // Namespace DAL -- begin
 	  nofRows_p    = nofRows;
 	  nofColumns_p = nofColumns;
 	}
-	data_p.resize(nofRows*nofColumns);
+	itsData.resize(nofRows*nofColumns);
       }
     
     /*!
@@ -131,7 +128,7 @@ namespace DAL { // Namespace DAL -- begin
       {
 	nofRows_p    = nofRows;
 	nofColumns_p = nofColumns;
-	data_p.resize(nofRows*nofColumns,value);
+	itsData.resize(nofRows*nofColumns,value);
       }
     
     //! Copy constructor
@@ -220,40 +217,40 @@ namespace DAL { // Namespace DAL -- begin
     //! Get the matrix elements of row \e n.
     inline std::valarray<T> row (size_t const &n) 
       {
-	return data_p[std::slice(n*nofColumns_p,nofColumns_p,1)];
+	return itsData[std::slice(n*nofColumns_p,nofColumns_p,1)];
       }
     //! Set the matrix elements of row \e n to the value \e val.
     inline void setRow (size_t const &n,
 			T const &val) 
       {
-	data_p[std::slice(n*nofColumns_p,nofColumns_p,1)] = val;
+	itsData[std::slice(n*nofColumns_p,nofColumns_p,1)] = val;
       }
     //! Sum of all matrix elements, \f$ S = \sum_{i,j} a_{ij} \f$
     inline T sum () const {
-      return data_p.sum();
+      return itsData.sum();
     }
     //! Maximum of all matrix elements
     inline T min () const {
-      if (data_p.size()==0) {
+      if (itsData.size()==0) {
 	return 0;
       } else {
-	return data_p.min();
+	return itsData.min();
       }
     }
     //! Minimum of all matrix elements
     inline T max () const {
-      if (data_p.size()==0) {
+      if (itsData.size()==0) {
 	return 0;
       } else {
-	return data_p.max();
+	return itsData.max();
       }
     }
     //! Assign running numbr to matrix elements
     inline void indgen () {
-      size_t nelem = data_p.size();
+      size_t nelem = itsData.size();
       if (nelem!=0) {
 	for (size_t n(0); n<nelem; ++n) {
-	  data_p[n] = n;
+	  itsData[n] = n;
 	}
       }
     }
@@ -264,7 +261,7 @@ namespace DAL { // Namespace DAL -- begin
     */
     inline bool isSquare () const
     {
-      if (data_p.empty()) {
+      if (itsData.empty()) {
 	return false;
       } else {
 	if (nofRows_p==nofColumns_p) {
@@ -283,8 +280,8 @@ namespace DAL { // Namespace DAL -- begin
     inline bool setDiagonal (T const &val)
     {
       if (isSquare()) {
-	for (size_t n(0); n<nofRows_p; +n) {
-	  data_p[n*nofColumns_p+n] = val;
+	for (size_t n=0; n<nofRows_p; ++n) {
+	  itsData[n*nofColumns_p+n] = val;
 	}
       } else {
 	return false;
@@ -300,8 +297,8 @@ namespace DAL { // Namespace DAL -- begin
     {
       if (isSquare()) {
 	diag.resize(nofRows_p);
-	for (size_t n(0); n<nofRows_p; +n) {
-	  diag[n] = data_p[n*nofColumns_p+n];
+	for (size_t n(0); n<nofRows_p; ++n) {
+	  diag[n] = itsData[n*nofColumns_p+n];
 	}
 	return true;
       } else {
@@ -320,7 +317,7 @@ namespace DAL { // Namespace DAL -- begin
       if (isSquare()) {
 	diag.resize(nofRows_p);
 	for (size_t n(0); n<nofRows_p; +n) {
-	  diag(n) = data_p[n*nofColumns_p+n];
+	  diag(n) = itsData[n*nofColumns_p+n];
 	}
 	return true;
       } else {
@@ -341,7 +338,7 @@ namespace DAL { // Namespace DAL -- begin
     {
       nofRows_p    = other.nofRows_p;
       nofColumns_p = other.nofColumns_p;
-      data_p       = other.data_p;
+      itsData      = other.itsData;
     }
     
     //! Unconditional deletion 
