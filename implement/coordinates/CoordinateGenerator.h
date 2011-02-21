@@ -31,9 +31,6 @@
 #include <dalCommon.h>
 
 #ifdef DAL_WITH_CASA
-#ifndef WCSLIB_GETWCSTAB
-#define WCSLIB_GETWCSTAB 1
-#endif
 #include <coordinates/Coordinates/ObsInfo.h>
 #include <coordinates/Coordinates/Coordinate.h>
 #include <coordinates/Coordinates/DirectionCoordinate.h>

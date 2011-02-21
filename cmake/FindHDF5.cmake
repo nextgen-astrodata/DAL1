@@ -189,30 +189,6 @@ if (NOT HDF5_FOUND)
   
   set (HDF5_VERSION "${HDF5_VERSION_MAJOR}.${HDF5_VERSION_MINOR}.${HDF5_VERSION_RELEASE}")
 
-  ## Test the API version
-  
-  if (HAVE_TestHDF5API)
-    ## Try to compile and run using 1.6 API as default
-    try_run(HDF5_API_RUN_RESULT HDF5_API_COMPILE_RESULT
-      ${PROJECT_BINARY_DIR}
-      ${HAVE_TestHDF5API}
-      CMAKE_FLAGS -DLINK_LIBRARIES:STRING=${HDF5_LIBRARIES}
-      COMPILE_DEFINITIONS -I${HDF5_INCLUDES}
-      COMPILE_OUTPUT_VARIABLE HDF5_API_COMPILE_OUTPUT
-      RUN_OUTPUT_VARIABLE HDF5_API_RUN_OUTPUT
-      )
-    ## Process test output
-    if (HDF5_API_COMPILE_RESULT)
-      if (HDF5_API_RUN_RESULT)
-      else (HDF5_API_RUN_RESULT)
-	message (STATUS "[HDF5] Failed to run TestHDF5API!")
-      endif (HDF5_API_RUN_RESULT)
-    else (HDF5_API_COMPILE_RESULT)
-      message (STATUS "[HDF5] Failed to compile TestHDF5API!")
-      message (STATUS "${HDF5_API_COMPILE_OUTPUT}")
-    endif (HDF5_API_COMPILE_RESULT)
-  endif (HAVE_TestHDF5API)
-  
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
   
