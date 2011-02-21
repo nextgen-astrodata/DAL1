@@ -18,41 +18,52 @@
 
 // ==============================================================================
 //
+//  System information
+//
+// ==============================================================================
+
+#cmakedefine CMAKE_SYSTEM "${CMAKE_SYSTEM}"
+#cmakedefine CMAKE_SYSTEM_VERSION "${CMAKE_SYSTEM_VERSION}"
+#cmakedefine CMAKE_SYSTEM_PROCESSOR "${CMAKE_SYSTEM_PROCESSOR}"
+
+// ==============================================================================
+//
 //  Compiler flags
 //
 // ==============================================================================
 
-/* Define to 1 if we have the BOOST library */
+/* Define if we have the BOOST library */
 #cmakedefine DAL_WITH_BOOST
 
-/* Define to 1 if we have the CFITSIO library */
+/* Define if we have the CFITSIO library */
 #cmakedefine DAL_WITH_CFITSIO
 
-/* Define to 1 if we have the CASACORE/CASA library */
+/* Define if we have the CASACORE/CASA library */
 #cmakedefine DAL_WITH_CASACORE
 
-/* Define to 1 if we have the GSL library */
+/* Define if we have the GSL library */
 #cmakedefine DAL_WITH_GSL
 
-/* Define to 1 if we have a working installation of the HDF5 library */
+/* Define if we have a working installation of the HDF5 library */
 #cmakedefine DAL_WITH_HDF5
 
-/* Define to 1 if we have the LOFAR library */
+/* Define if we have the LOFAR library */
 #cmakedefine DAL_WITH_LOFAR
 
 /*
-  Define to 1 if we have the MySQL library
+  Define if we have the MySQL library
+  MYSQL_VERSION  = ${MYSQL_VERSION}
   MYSQL_INCLUDES = ${MYSQL_INCLUDES}
 */
 #cmakedefine DAL_WITH_MYSQL
 
-/* Define to 1 if we have the NumUtil library */
+/* Define if we have the NumUtil library */
 #cmakedefine DAL_WITH_NUMUTIL
 
-/* Define to 1 if we have the OPENMP library */
+/* Define if we have the OPENMP library */
 #cmakedefine DAL_WITH_OPENMP
 
-/* Define to 1 if we have the WCSLIB library */
+/* Define if we have the WCSLIB library */
 #cmakedefine DAL_WITH_WCSLIB
 
 // ==============================================================================
@@ -131,12 +142,13 @@ extern "C"
 
 // ==============================================================================
 //
-//  Type definitions
+//  Definition of constants and types
 //
 // ==============================================================================
 
 namespace DAL {
 
+  const double PI    = 3.1415926535897932384626433832795;
   const bool SUCCESS = true;
   const bool FAIL    = false;
   
