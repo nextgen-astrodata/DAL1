@@ -101,37 +101,6 @@ if (NOT MYSQL_FOUND)
     )
   
   ##_____________________________________________________________________________
-  ## Actions taken when all components have been found
-  
-  if (MYSQL_INCLUDES AND MYSQL_LIBRARIES)
-    set (MYSQL_FOUND TRUE)
-  else (MYSQL_INCLUDES AND MYSQL_LIBRARIES)
-    set (MYSQL_FOUND FALSE)
-    if (NOT MYSQL_FIND_QUIETLY)
-      if (NOT MYSQL_INCLUDES)
-	message (STATUS "Unable to find MYSQL header files!")
-      endif (NOT MYSQL_INCLUDES)
-      if (NOT MYSQL_LIBRARIES)
-	message (STATUS "Unable to find MYSQL library files!")
-      endif (NOT MYSQL_LIBRARIES)
-    endif (NOT MYSQL_FIND_QUIETLY)
-  endif (MYSQL_INCLUDES AND MYSQL_LIBRARIES)
-  
-  if (MYSQL_FOUND)
-    if (NOT MYSQL_FIND_QUIETLY)
-      message (STATUS "Found components for MYSQL")
-      message (STATUS "MYSQL_VERSION   = ${MYSQL_VERSION}  ")
-      message (STATUS "MYSQL_PORT      = ${MYSQL_PORT}     ")
-      message (STATUS "MYSQL_INCLUDES  = ${MYSQL_INCLUDES} ")
-      message (STATUS "MYSQL_LIBRARIES = ${MYSQL_LIBRARIES}")
-    endif (NOT MYSQL_FIND_QUIETLY)
-  else (MYSQL_FOUND)
-    if (MYSQL_FIND_REQUIRED)
-      message (FATAL_ERROR "Could not find MYSQL!")
-    endif (MYSQL_FIND_REQUIRED)
-  endif (MYSQL_FOUND)
-  
-  ##_____________________________________________________________________________
   ## Test MqSQL installation for:
   ## - version number
   ## - port number
@@ -168,7 +137,7 @@ if (NOT MYSQL_FOUND)
 
   endif (MYSQL_CONFIG_EXECUTABLE)
   
-  if (MYSQL_FOUND)
+  if (MYSQL_INCLUDES AND MYSQL_LIBRARIES)
     ## Locate test program
     find_file (HAVE_TestMySQL TestMySQL.cc
       PATHS ${PROJECT_SOURCE_DIR}
@@ -187,7 +156,7 @@ if (NOT MYSQL_FOUND)
     else (HAVE_TestMySQL)
       message (STATUS "[MySQL] Unable to find test program TestMySQL.cc!")
     endif (HAVE_TestMySQL)
-  endif (MYSQL_FOUND)
+  endif (MYSQL_INCLUDES AND MYSQL_LIBRARIES)
   
   ## Comile of test program successful?
   if (MYSQL_VERSION_COMPILE_RESULT)
@@ -195,12 +164,41 @@ if (NOT MYSQL_FOUND)
     if (MYSQL_VERSION_RUN_RESULT)
     else (MYSQL_VERSION_RUN_RESULT)
       message (STATUS "[MySQL] Failed to run TestMySQL!")
-      set (MYSQL_FOUND FALSE)
     endif (MYSQL_VERSION_RUN_RESULT)
   else (MYSQL_VERSION_COMPILE_RESULT)
     message (STATUS "[MySQL] Failed to compile TestMySQL!")
-    set (MYSQL_FOUND FALSE)
   endif (MYSQL_VERSION_COMPILE_RESULT)
+  
+  ##_____________________________________________________________________________
+  ## Actions taken when all components have been found
+  
+  if (MYSQL_INCLUDES AND MYSQL_LIBRARIES)
+    set (MYSQL_FOUND TRUE)
+  else (MYSQL_INCLUDES AND MYSQL_LIBRARIES)
+    set (MYSQL_FOUND FALSE)
+    if (NOT MYSQL_FIND_QUIETLY)
+      if (NOT MYSQL_INCLUDES)
+	message (STATUS "Unable to find MYSQL header files!")
+      endif (NOT MYSQL_INCLUDES)
+      if (NOT MYSQL_LIBRARIES)
+	message (STATUS "Unable to find MYSQL library files!")
+      endif (NOT MYSQL_LIBRARIES)
+    endif (NOT MYSQL_FIND_QUIETLY)
+  endif (MYSQL_INCLUDES AND MYSQL_LIBRARIES)
+  
+  if (MYSQL_FOUND)
+    if (NOT MYSQL_FIND_QUIETLY)
+      message (STATUS "Found components for MYSQL")
+      message (STATUS "MYSQL_VERSION   = ${MYSQL_VERSION}  ")
+      message (STATUS "MYSQL_PORT      = ${MYSQL_PORT}     ")
+      message (STATUS "MYSQL_INCLUDES  = ${MYSQL_INCLUDES} ")
+      message (STATUS "MYSQL_LIBRARIES = ${MYSQL_LIBRARIES}")
+    endif (NOT MYSQL_FIND_QUIETLY)
+  else (MYSQL_FOUND)
+    if (MYSQL_FIND_REQUIRED)
+      message (FATAL_ERROR "Could not find MYSQL!")
+    endif (MYSQL_FIND_REQUIRED)
+  endif (MYSQL_FOUND)
   
   ##_____________________________________________________________________________
   ## Mark advanced variables
