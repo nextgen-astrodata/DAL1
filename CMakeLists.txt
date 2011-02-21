@@ -249,10 +249,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH YES)
 
 add_subdirectory (implement)
 add_subdirectory (data)
-
-if (DOXYGEN_FOUND)
-  add_subdirectory (doc)
-endif (DOXYGEN_FOUND)
+add_subdirectory (doc)
 
 if (DAL_ENABLE_TESTING)
   add_subdirectory (test)
