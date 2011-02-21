@@ -79,7 +79,7 @@ namespace DAL { // Namespace DAL -- begin
   template <class T> class ValMatrix {
 
     //! nof. rows in the matrix, \f$ N_{\rm rows} \f$
-    size_t nofRows_p;
+    size_t itsNofRows;
     //! nof. columns in the matrix, \f$ N_{\rm cols} \f$
     size_t nofColumns_p;
     //! Matrix data
@@ -92,9 +92,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Default constructor
     ValMatrix ()
       {
-	nofRows_p    = 0;
+	itsNofRows   = 0;
 	nofColumns_p = 0;
-	itsData       = std::valarray<T>();
+	itsData      = std::valarray<T>();
       };
     /*!
       \brief Argumented constructor
@@ -107,10 +107,10 @@ namespace DAL { // Namespace DAL -- begin
 	       size_t const &nofColumns=0)
       {
 	if (nofColumns==0) {
-	  nofRows_p    = nofRows;
+	  itsNofRows   = nofRows;
 	  nofColumns_p = nofRows;
 	} else {
-	  nofRows_p    = nofRows;
+	  itsNofRows   = nofRows;
 	  nofColumns_p = nofColumns;
 	}
 	itsData.resize(nofRows*nofColumns);
@@ -126,7 +126,7 @@ namespace DAL { // Namespace DAL -- begin
 	       size_t const &nofColumns,
 	       T const &value)
       {
-	nofRows_p    = nofRows;
+	itsNofRows   = nofRows;
 	nofColumns_p = nofColumns;
 	itsData.resize(nofRows*nofColumns,value);
       }
@@ -161,15 +161,15 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Get the number of elements in the matrix
     inline size_t size () const {
-      return nofRows_p*nofColumns_p;
+      return nofElements();
     }
     //! Get the number of elements in the matrix
     inline size_t nofElements () const {
-      return nofRows_p*nofColumns_p;
+      return itsNofRows*nofColumns_p;
     }
     //! Get the number of rows in the matrix
     inline size_t nofRows () const {
-      return nofRows_p;
+      return itsNofRows;
     }
     //! Get the number columns in the matrix
     inline size_t nofColumns () const {
@@ -181,7 +181,7 @@ namespace DAL { // Namespace DAL -- begin
     */
     inline std::vector<size_t> shape () const {
       std::vector<size_t> nelem (2);
-      nelem[0] = nofRows_p;
+      nelem[0] = itsNofRows;
       nelem[1] = nofColumns_p;
       return nelem;
     }
@@ -264,7 +264,7 @@ namespace DAL { // Namespace DAL -- begin
       if (itsData.empty()) {
 	return false;
       } else {
-	if (nofRows_p==nofColumns_p) {
+	if (itsNofRows==nofColumns_p) {
 	  return true;
 	} else {
 	  return false;
@@ -280,7 +280,7 @@ namespace DAL { // Namespace DAL -- begin
     inline bool setDiagonal (T const &val)
     {
       if (isSquare()) {
-	for (size_t n=0; n<nofRows_p; ++n) {
+	for (size_t n=0; n<itsNofRows; ++n) {
 	  itsData[n*nofColumns_p+n] = val;
 	}
       } else {
@@ -296,8 +296,8 @@ namespace DAL { // Namespace DAL -- begin
     inline bool diagonal (std::vector<T> &diag)
     {
       if (isSquare()) {
-	diag.resize(nofRows_p);
-	for (size_t n(0); n<nofRows_p; ++n) {
+	diag.resize(itsNofRows);
+	for (size_t n(0); n<itsNofRows; ++n) {
 	  diag[n] = itsData[n*nofColumns_p+n];
 	}
 	return true;
@@ -315,8 +315,8 @@ namespace DAL { // Namespace DAL -- begin
     inline bool diagonal (casa::Vector<T> &diag)
     {
       if (isSquare()) {
-	diag.resize(nofRows_p);
-	for (size_t n(0); n<nofRows_p; +n) {
+	diag.resize(itsNofRows);
+	for (size_t n(0); n<itsNofRows; +n) {
 	  diag(n) = itsData[n*nofColumns_p+n];
 	}
 	return true;
@@ -336,7 +336,7 @@ namespace DAL { // Namespace DAL -- begin
     */
     void copy (ValMatrix const &other)
     {
-      nofRows_p    = other.nofRows_p;
+      itsNofRows   = other.itsNofRows;
       nofColumns_p = other.nofColumns_p;
       itsData      = other.itsData;
     }
