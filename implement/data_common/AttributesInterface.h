@@ -72,7 +72,7 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     //! Destructor
-    ~AttributesInterface ();
+    virtual ~AttributesInterface ();
     
     // === Operators ============================================================
     

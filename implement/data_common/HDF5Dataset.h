@@ -293,7 +293,7 @@ namespace DAL {
     // === Destruction ==========================================================
     
     // Destructor
-    ~HDF5Dataset ();
+    virtual ~HDF5Dataset ();
     
     // === Parameter access =====================================================
     
