@@ -40,3 +40,10 @@ endif (DOXYGEN_FOUND)
 ##
 ## ==============================================================================
 
+if (PDFLATEX_COMPILER)
+  ## process LaTeX input into PDF directly
+else (PDFLATEX_COMPILER)
+  if (LATEX_COMPILER AND DVIPS_CONVERTER)
+    ## process LaTeX input -> DVI -> PS
+  endif (LATEX_COMPILER AND DVIPS_CONVERTER)
+endif (PDFLATEX_COMPILER)
