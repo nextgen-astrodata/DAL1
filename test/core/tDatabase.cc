@@ -58,7 +58,17 @@ int test_constructors (std::string const &server="pc-swinbank",
 
   int nofFailedTests (0);
 
-  std::cout << "[1] Argumented constructor..." << std::endl;
+  std::cout << "[1] Default constructor..." << std::endl;
+  try {
+    DAL::Database db;
+    db.summary();
+  }
+  catch (std::string message) {
+    std::cerr << message << std::endl;
+    ++nofFailedTests;
+  }
+  
+  std::cout << "[2] Argumented constructor..." << std::endl;
   try {
     // Create object
     DAL::Database db (server, name, passwd, database);
