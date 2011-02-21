@@ -39,7 +39,7 @@ if (NOT GSL_FOUND)
   ##_____________________________________________________________________________
   ## Check for the header files
   
-  find_path (GSL_INCLUDES gsl_version.h gsl_sys.h gsl_nan.h
+  find_path (GSL_INCLUDES gsl/gsl_version.h gsl/gsl_sys.h gsl/gsl_nan.h
     PATHS ${GSL_ROOT_DIR} /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/gsl
     )
