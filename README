@@ -18,23 +18,29 @@ DAL:
      In order to build the DAL as a stand-alone library, clone directly from the
      repository on Github:
      
-     git clone https://github.com/lbaehren/DAL.git DAL
+       git clone https://github.com/lbaehren/DAL.git DAL
+
+     Once your checkout from the Git repository is complete, follow the
+     instructions as described in the section "Configuration and build" below.
 
   2. As part of the LOFAR User Software (LUS).
 
      If you want (or need) to use the DAL as part of the LUS software collection,
      check out a working copy of the code base from the LUS Subversion repository
 
-     svn co http://usg.lofar.org/svn/code/trunk lofarsoft
+       svn co http://usg.lofar.org/svn/code/trunk lofarsoft
 
      Once the checkout is complete (assuming bash as shell):
 
-     cd lofarsoft
-     export LOFARSOFT=`pwd`
-     . ./devel_common/scripts/init.sh
-     cd build
-     ./bootstrap
-     make dal
+       cd lofarsoft
+       export LOFARSOFT=`pwd`
+       . ./devel_common/scripts/init.sh
+       cd build
+       ./bootstrap
+       make dal
+
+     By default build of the DAL willbe carried out from a source tar-archive
+     which comes as part of the software collection.
 
 
 _________________________________________________________________________________
@@ -89,6 +95,13 @@ The default installation location is "/usr/local"; if you want to change this,
 you can tell CMake so by using
 
   cmake -DCMAKE_INSTALL_PREFIX=<installation prefix> ..
+
+While the CMake scripts will check a number of standard locations for the 
+required 3-party packages (such as Boost, HDF5, etc.), but if you are using 
+a custom version installed at a non-standard location, you might need to aid
+CMake in finding all required components:
+
+  cmake -DHDF5_ROOT_DIR=<basedir of HDF5 install>) -DCASACORE_ROOT_DIR=<basedir of casacore install> ..
 
 If you want to submit test test results - from configuration, build and running
 the test programs - you can do so by executing
