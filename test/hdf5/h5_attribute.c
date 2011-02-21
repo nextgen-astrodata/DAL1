@@ -33,7 +33,7 @@
 
 #include <stdlib.h>
 
-#include "hdf5.h"
+#include <dal_config.h>
 
 #define H5FILE_NAME "Attributes.h5"
 

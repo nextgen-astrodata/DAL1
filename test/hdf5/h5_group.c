@@ -24,7 +24,7 @@
   in the root group and in the created group.
 */
 
-#include "hdf5.h"
+#include <dal_config.h>
 
 #define H5FILE_NAME    "group.h5"
 #define RANK    2

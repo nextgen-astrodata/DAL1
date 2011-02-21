@@ -1,4 +1,5 @@
-#include <hdf5.h>
+
+#include <dal_config.h>
 #include <stdlib.h>
 
 #define FILE        "vlstra.h5"
