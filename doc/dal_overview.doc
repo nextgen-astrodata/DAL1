@@ -5,23 +5,105 @@
 // ==============================================================================
 
 /*!
-  \defgroup DAL Data Access Library (DAL)
+  \mainpage Data Access Library (DAL)
+
+  \section dal_toc Table of contents
 
   <ul>
+    <li>\ref dal_intro
+    <li>\ref dal_codebase
     <li>\subpage dal_coding_guidelines
-    <li>\subpage dal_coding_cpp
     <li>\subpage dal_data_formats
-    <ul>
-      <li>\ref dal_icd_001
-      <li>\ref dal_icd_002
-      <li>\ref dal_icd_003
-      <li>\ref dal_icd_004
-      <li>\ref dal_icd_005
-      <li>\ref dal_icd_006
-      <li>\ref dal_icd_007
-      <li>\ref dal_icd_008
-    </ul>
   </ul>
+
+\section dal_intro Introduction
+
+\subsection dal_nextgen Next-generation astronomical data
+
+The size and complexity of astronomical data are growing at relentless rates.
+This increase is especially apparent in the radio community as evidenced by the 
+data challenges faced by many of the SKA pathfinders and other major radio
+telescopes such as LOFAR, EVLA, ALMA, ASKAP, MeerKAT, MWA, LWA and eMERLIN.
+Enormous data rates are also becoming a challenge for large optical projects
+that are currently ramping up including Pan-Starrs and LSST. As progress towards
+meeting these challenges, ASTRON and the LOFAR project are currently exploring
+the use of the Hierarchical Data Format, version 5 (HDF5) for LOFAR radio data
+encapsulation.
+
+The LOFAR (www.lofar.org) project has set up a moderated majordomo email list,
+called "nextgen-astrodata@astron.nl". Interested parties are encouraged to sign
+up via majordomo@anstron.nl with “subscribe nextgen-astrodata” as the only text
+in the body of the message.
+
+We would like to bring together scientists and developers struggling with large
+and complex datasets as well as those groups currently exploring HDF5 (www.hdfgroup.org)
+implementations. Ultimately we would like to see these formats grow into a true
+set of standards for radio data that can meet the demands of the next generation
+of radio observatories as well as the non-radio community such as LSST and other
+future missions. We feel that the time is ripe to solve this issue across
+wavelengths and projects.  HDF5 is mature and is being used extensively in
+science, and now as the format for the LOFAR data products.
+
+\subsection dal_overview DAL overview
+
+The Data Access Library (DAL) is a library that abstracts the underlying file
+format from the user when working with radio astronomy data. Underlying formats
+may include HDF5, AIPS++/CASA tables, FITS or specific raw formats. This library
+is available to both the C/C++ developer and the Python user via the "pydal"
+module.
+
+Officially, the DAL supports three file types:
+
+<ol>
+  <li>HDF5 <br>
+   Hierarchical Data Format Version 5 (HDF5), is a relatively recent format
+   designed with particular attention to efficient operation on extremely large
+   data sets.  HDF5 is the intended format for LOFAR data products.
+   HDF5 is organized much like a unix file system.  The internal structure consists
+   of a root group, '/', which may recursively contain subgroups.  Each of these
+   groups may, in turn, contain other groups or n-dimensional arrays of simple or
+   complex datatypes.  HDF5 tables are particular case of a HDF5 array and thus are
+   treated in a similar manner.  Almost all objects in a HDF5 file can hold
+   associated metadata in the form of an attribute.
+   HDF5 files can be both read and written by the DAL.
+
+  <li>CASA Tables <br>
+   CASA Tables in general, and Measurement Sets in particular, are the primary data
+   product of the Westerbork Synthesis Radio Telescope (WSRT).  As WSRT is also
+   based at ASTRON (where there is a large community of experienced CASA users),
+   there is naturally a strong interest and advantage in building upon this
+   expertise for LOFAR. <br>
+   CASA tables can currently be read, but not written, by the DAL.
+
+  <li>FITS <br>
+   FITS is the standard astronomical image format.  Among its advantages for
+   inclusion in the DAL is its widespread use and extensive toolset.  Among its
+   limitations is the fact that it was not designed for large and complex
+   datasets. <br>
+   FITS is the lowest of priority of the three supported formats and currently
+   has almost no actual support in the DAL.
+</ol>
+
+At present, each of these file types have varying levels of support.
+
+\section dal_codebase Organization of the source code
+
+The components of the DAL is organized into the following directory structure:
+
+\verbatim
+ DAL
+ |-- implement           ..   Library source code for libdal and pydal.
+ |   |-- core            ..   Core library classes
+ |   |-- coordinates     ..   Representation of world coordinates
+ |   |-- data_common     ..   Common functionality for datasets
+ |   |-- data_hl         ..   High-level interfaces to datasets
+ |   `-- bindings        ..   Bindings to scripting languages
+ |-- test                ..   Test programs for library C++ classes.
+ |-- apps                ..   Application programs build on top of the library.
+ |-- doc                 ..   Documentation.
+ `-- data                ..   Reference data sets used for rest programs.
+\endverbatim
+
 */
 
 // ==============================================================================
@@ -29,6 +111,10 @@
 //  Group definitions
 //
 // ==============================================================================
+
+/*!
+  \defgroup DAL Data Access Library (DAL)
+*/
 
 //_______________________________________________________________________________
 //                                                                    coordinates
