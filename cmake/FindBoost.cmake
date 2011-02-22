@@ -80,6 +80,10 @@ if (NOT BOOST_FOUND)
     ## Convert library name to CMake variable
     string (TOUPPER ${_module} _boost_var)
 
+    ## Initialize the entries to store path information
+    set (BOOST_${_boost_var}_INCLUDES "")
+    set (BOOST_${_boost_var}_LIBRARY  "")
+
     ## Search for the include directory
     find_path (BOOST_${_boost_var}_INCLUDES boost/${_module}.hpp
       HINTS ${BOOST_ROOT_DIR}
