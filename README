@@ -118,7 +118,7 @@ The components of the DAL is organized into the following directory structure:
  |   `-- bindings        ..   Bindings to scripting languages
  |-- test                ..   Test programs for library C++ classes.
  |-- apps                ..   Application programs build on top of the library.
- |-- doc                 ..   Documentation to be processed by Doxygen.
+ |-- doc                 ..   Documentation.
  `-- data                ..   Reference data sets used for rest programs.
 
 
@@ -158,10 +158,10 @@ you can tell CMake so by using
 
   cmake -DCMAKE_INSTALL_PREFIX=<installation prefix> ..
 
-While the CMake scripts will check a number of standard locations for the 
-required 3-party packages (such as Boost, HDF5, etc.), but if you are using 
-a custom version installed at a non-standard location, you might need to aid
-CMake in finding all required components:
+The CMake scripts will check a number of standard locations for the required
+3-party packages (such as Boost, HDF5, etc.), but if you are using a custom
+version installed at a non-standard location, you might need to aid CMake in
+finding all required components:
 
   cmake -DHDF5_ROOT_DIR=<basedir of HDF5 install> -DCASACORE_ROOT_DIR=<basedir of casacore install> ..
 
@@ -188,5 +188,5 @@ ________________________________________________________________________________
   itsLength - private data member
   length    - local variable or function parameter
 
-* Pointers should be marked by a leading "p"; e.g. "pShape" or -- in the case
-  of a private variable "pShape_p".
+* Pointers should be marked by a trailing "_p"; e.g. a dynamically allocated
+  array of "data" would become  "itsData_p".
