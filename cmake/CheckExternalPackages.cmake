@@ -16,21 +16,26 @@ include (FindOpenMP)
 ##____________________________________________________________________
 ##                                                Custom CMake modules
 
-foreach (_dalcmake
-    Boost
-    Casacore
-    CFITSIO
-    GFortran
-    GSL
-    HDF5
-    LAPACK
-    LOFAR
-    MySQL
-    NumPy
-    NumUtil
-    Python
-    WCSLIB
-    )
+set (_dalCMakeModules
+  Boost
+  Casacore
+  CFITSIO
+  GFortran
+  GSL
+  HDF5
+  LAPACK
+  LOFAR
+  NumPy
+  NumUtil
+  Python
+  WCSLIB
+  )
+
+if (DAL_WITH_MYSQL)
+  list (APPEND _dalCMakeModules MySql)
+endif (DAL_WITH_MYSQL)
+
+foreach (_dalcmake ${_dalCMakeModules} )
 
   message (STATUS "Checking for package ${_dalcmake}")
 
@@ -201,12 +206,14 @@ message (STATUS " Enable code using MPI            = ${MPI_FOUND}"              
 message (STATUS " .. MPI compiler                  = ${MPI_COMPILER}"              )
 message (STATUS " .. MPI compile flags             = ${MPI_COMPILE_FLAGS}"         )
 message (STATUS " .. MPI linking flags             = ${MPI_LINK_FLAGS}"            )
+if (DAL_WITH_MYSQL)
 message (STATUS " Enable code using MySQL          = ${MYSQL_FOUND}"               )
 message (STATUS " .. Library version               = ${MYSQL_VERSION}"             )
 message (STATUS " .. Port number                   = ${MYSQL_PORT}"                )
 message (STATUS " .. libmysql                      = ${MYSQL_MYSQL_LIBRARY}"       )
 message (STATUS " .. libmysqlclient                = ${MYSQL_MYSQLCLIENT_LIBRARY}" )
 message (STATUS " .. libmysqlservices              = ${MYSQL_MYSQLSERVICES_LIBRARY}" )
+endif (DAL_WITH_MYSQL)
 message (STATUS " Enable Python bindings           = ${DAL_PYTHON_BINDINGS}"       )
 message (STATUS " .. Python version                = ${PYTHON_VERSION}"            )
 message (STATUS " .. Python API version            = ${PYTHON_API_VERSION}"        )

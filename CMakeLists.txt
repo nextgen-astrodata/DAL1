@@ -24,6 +24,8 @@ option (DAL_PYTHON_BINDINGS    "Create python bindings?"                    YES 
 option (DAL_DEBUGGING_MESSAGES "Print debugging information?"               NO  )
 option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"       NO  )
 
+option (DAL_WITH_MYSQL         "Build with support for MySQL database?"     NO  )
+
 ##__________________________________________________________
 ## Handle option: testing mode
 
