@@ -55,7 +55,7 @@ if (HAVE_BOOST)
     ${CFITSIO_LIBRARIES}
     ${PYTHON_LIBRARIES}
     )
-1else (HAVE_BOOST)
+else (HAVE_BOOST)
   message (STATUS "[DAL] Unable to build applications: bf2h5_old, tbb2h5")
 endif (HAVE_BOOST)
 
