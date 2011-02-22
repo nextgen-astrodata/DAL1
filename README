@@ -133,27 +133,15 @@ In general CMake cache entries are passed through the
 command line syntax. The following options/cache variables can be used to 
 configure the DAL build:
 
-  Installation prefix:
+  DAL installation prefix:                        -D CMAKE_INSTALL_PREFIX=<path>
 
-    -D CMAKE_INSTALL_PREFIX=<path>
+  Enable/disable code debugging messages:         -D DAL_DEBUGGING_MESSAGES={YES|NO}
 
-  Enable/disable code debugging messages:
+  Build with support for MySQL database:          -D DAL_WITH_MYSQL={YES|NO}
 
-    -D DAL_DEBUGGING_MESSAGES={YES|NO}
+  Root directory of Boost++ library install:      -D BOOST_ROOT_DIR=<path>
 
-  Build with support for MySQL database:
+  Root directory of casacore library install:     -D CASACORE_ROOT_DIR=<path>
 
-    -D DAL_WITH_MYSQL={YES|NO}
-
-  Root directory of the Boost++ library installation:
-
-    -D BOOST_ROOT_DIR=<path>
-
-  Root directory of the casacore library installation:
-
-    -D CASACORE_ROOT_DIR=<path>
-
-  Root directory of the HDF5 library installation:
-
-    -D HDF5_ROOT_DIR=<path>
+  Root directory of HDF5 library install:         -D HDF5_ROOT_DIR=<path>
 
