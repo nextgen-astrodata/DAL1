@@ -23,6 +23,7 @@
 
 // Standard library header files
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #include <HDF5Attribute.h>
@@ -62,7 +63,7 @@ namespace DAL { // Namespace DAL -- begin
     intensities per subbeam.
 
     \verbatim
-    .                         Dataset
+    STOKES_{N}                Dataset
     |-- GROUPTYPE             Attribute           string
     |-- DATATYPE              Attribute           string
     |-- STOKES_COMPONENT      Attribute           string

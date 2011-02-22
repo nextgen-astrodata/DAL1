@@ -488,20 +488,15 @@ namespace DAL { // Namespace DAL -- begin
   
   /*!
     \param index -- Index identifying the beam.
-    \return name -- The name of the beam group, <tt>Stokes<index></tt>
+    \return name -- The name of the beam group, <tt>STOKES_<index></tt>
   */
   std::string BF_StokesDataset::getName (unsigned int const &index)
   {
-    char uid[10];
-    sprintf(uid,
-            "%03d",
-	    index);
-    
-    std::string name (uid);
-    
-    name = "Stokes" + name;
-    
-    return name;
+    std::stringstream ss;
+
+    ss << "STOKES_" << index;
+
+    return ss.str();
   }
   
   

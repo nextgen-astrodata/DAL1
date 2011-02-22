@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: NewClass.h 2286 2009-02-03 10:50:48Z baehren                    $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -63,7 +60,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \verbatim
     .
-    |-- Beam000                         Group
+    |-- BEAM_000                        Group
     |   |-- GROUPTYPE                   Attr.               string
     |   |-- TARGET                      Attr.               array<string,1>
     |   |-- NOF_STATIONS                Attr.               int
@@ -93,7 +90,7 @@ namespace DAL { // Namespace DAL -- begin
     |   |-- STOKES_1                    Dataset
     |   |-- STOKES_2                    Dataset
     |   `-- STOKES_3                    Dataset
-    |-- Beam001                         Group
+    |-- BEAM_001                        Group
     |
     \endverbatim
     
