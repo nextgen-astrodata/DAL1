@@ -188,6 +188,7 @@ message (STATUS " CMAKE_INSTALL_PREFIX             = ${CMAKE_INSTALL_PREFIX}"   
 message (STATUS " Build and enable test programs   = ${DAL_ENABLE_TESTING}"        )
 message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}"    )
 message (STATUS " Enable code using Boost++        = ${BOOST_FOUND}"               )
+message (STATUS " .. Installation root             = ${BOOST_ROOT_DIR}"            )
 message (STATUS " .. Library version               = ${BOOST_VERSION}"             )
 message (STATUS " .. Include directory             = ${BOOST_INCLUDES}"            )
 message (STATUS " Enable code using casacore       = ${CASACORE_FOUND}"            )

@@ -181,6 +181,7 @@ if (NOT BOOST_FOUND)
   ## Mark advanced variables
   
   mark_as_advanced (
+    BOOST_ROOT_DIR
     BOOST_INCLUDES
     BOOST_LIBRARIES
     )
