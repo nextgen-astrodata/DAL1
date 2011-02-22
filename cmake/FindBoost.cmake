@@ -80,10 +80,6 @@ if (NOT BOOST_FOUND)
     ## Convert library name to CMake variable
     string (TOUPPER ${_module} _boost_var)
 
-    ## Initialize the entries to store path information
-    set (BOOST_${_boost_var}_INCLUDES "")
-    set (BOOST_${_boost_var}_LIBRARY  "")
-
     ## Search for the include directory
     find_path (BOOST_${_boost_var}_INCLUDES boost/${_module}.hpp
       HINTS ${BOOST_ROOT_DIR}
@@ -133,7 +129,7 @@ if (NOT BOOST_FOUND)
   ## Comile of test program successful?
   if (BOOST_VERSION_COMPILE_RESULT)
     ## Run of test program successful?
-    if (BOOST_VERSION_RUN_RESULT)
+    if (BOOST_VERSION_RUN_RESULT AND BOOST_VERSION_OUTPUT)
       
       ## Library version _________________________
       
@@ -142,9 +138,9 @@ if (NOT BOOST_FOUND)
       string(REGEX REPLACE ".*BOOST_VERSION_MINOR ([0-9]+).*" "\\1" BOOST_VERSION_MINOR ${BOOST_VERSION_OUTPUT})
       string(REGEX REPLACE ".*BOOST_VERSION_PATCH ([0-9]+).*" "\\1" BOOST_VERSION_PATCH ${BOOST_VERSION_OUTPUT})
 
-    else (BOOST_VERSION_RUN_RESULT)
+    else (BOOST_VERSION_RUN_RESULT AND BOOST_VERSION_OUTPUT)
       message (STATUS "[Boost] Failed to run TestBoostLibrary!")
-    endif (BOOST_VERSION_RUN_RESULT)
+    endif (BOOST_VERSION_RUN_RESULT AND BOOST_VERSION_OUTPUT)
   else (BOOST_VERSION_COMPILE_RESULT)
     message (STATUS "[Boost] Failed to compile TestBoostLibrary!")
   endif (BOOST_VERSION_COMPILE_RESULT)
@@ -172,6 +168,7 @@ if (NOT BOOST_FOUND)
   if (BOOST_FOUND)
     if (NOT BOOST_FIND_QUIETLY)
       message (STATUS "Found components for BOOST")
+      message (STATUS "BOOST_ROOT_DIR  = ${BOOST_ROOT_DIR}")
       message (STATUS "BOOST_INCLUDES  = ${BOOST_INCLUDES}")
       message (STATUS "BOOST_LIBRARIES = ${BOOST_LIBRARIES}")
     endif (NOT BOOST_FIND_QUIETLY)

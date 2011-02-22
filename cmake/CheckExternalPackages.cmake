@@ -36,8 +36,6 @@ foreach (_dalcmake
 
   ## Generate uppercase version of package name
   string (TOUPPER ${_dalcmake} _dalcmake_var)
-  ## Provide potential root directory of package
-  set (${_dalcmake_var}_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   ## Include CMake find script
   include (${DAL_SOURCE_DIR}/cmake/Find${_dalcmake}.cmake)
 
