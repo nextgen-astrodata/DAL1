@@ -124,5 +124,36 @@ The CMake scripts will check a number of standard locations for the required
 version installed at a non-standard location, you might need to aid CMake in
 finding all required components:
 
-  cmake -DHDF5_ROOT_DIR=<basedir of HDF5 install> -DCASACORE_ROOT_DIR=<basedir of casacore install> ..
+  cmake -DHDF5_ROOT_DIR=<basedir of HDF5 install> ..
+
+In general CMake cache entries are passed through the 
+
+  -D <var>:<type>=<value>     or      -D <var>=<value>
+
+command line syntax. The following options/cache variables can be used to 
+configure the DAL build:
+
+  Installation prefix:
+
+    -D CMAKE_INSTALL_PREFIX=<path>
+
+  Enable/disable code debugging messages:
+
+    -D DAL_DEBUGGING_MESSAGES={YES|NO}
+
+  Build with support for MySQL database:
+
+    -D DAL_WITH_MYSQL={YES|NO}
+
+  Root directory of the Boost++ library installation:
+
+    -D BOOST_ROOT_DIR=<path>
+
+  Root directory of the casacore library installation:
+
+    -D CASACORE_ROOT_DIR=<path>
+
+  Root directory of the HDF5 library installation:
+
+    -D HDF5_ROOT_DIR=<path>
 
