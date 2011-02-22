@@ -51,7 +51,7 @@ namespace DAL {  // Namespace DAL -- begin
     <h3>Prerequisite</h3>
 
     <ul type="square">
-      <li>Structure of the \ref dal_formats_tbb
+      <li>\ref dal_icd_001
       <li>Classes handling the entities further down in the hierarchy of the
       dataset:
       <ul>

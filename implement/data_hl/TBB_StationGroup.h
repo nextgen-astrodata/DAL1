@@ -55,17 +55,11 @@ namespace DAL {   // Namespace DAL -- begin
     <h3>Prerequisite</h3>
 
     <ul type="square">
-      <li>Definition of the LOFAR time-series data format
+      <li>\ref dal_icd_001
       <li>DAL::TBB_Timeseries
       <li>DAL::TBB_StationTrigger
       <li>DAL::TBB_DipoleDataset
     </ul>
-
-    <h3>Synopsis</h3>
-
-    <ol>
-      <li>Structure of the \ref dal_formats_tbb
-    </ol>
 
     <h3>Example(s)</h3>
 

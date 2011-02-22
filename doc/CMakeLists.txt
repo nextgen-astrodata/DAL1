@@ -15,7 +15,10 @@ if (DOXYGEN_FOUND)
   set ( DOXYGEN_REPEAT_BRIEF      NO                          )
   set ( DOXYGEN_GENERATE_TREEVIEW NO                          )
   set ( DOXYGEN_GENERATE_MAN      NO                          )
+  set ( DOXYGEN_GENERATE_TODOLIST YES                         )
+  set ( DOXYGEN_GENERATE_TESTLIST YES                         )
   set ( DOXYGEN_HTML_FOOTER       ${CMAKE_CURRENT_SOURCE_DIR}/html_footer.html )
+  set ( DOXYGEN_WARN_LOGFILE      ${CMAKE_CURRENT_BINARY_DIR}/doxygen.log )
   
   ## Generate Doxygen configuration file
   

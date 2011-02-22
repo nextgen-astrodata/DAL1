@@ -273,7 +273,7 @@ namespace DAL {  // Namespace DAL -- begin
       
       Creating more than one file with one instance of TBBraw is deprecated!
       Destroy the TBBraw object and create a new one instead!
-      Currently only creates new files, and fails if a file with \t filename
+      Currently only creates new files, and fails if a file with \c filename
       already exists.
     */
     bool open_file ();
@@ -293,7 +293,7 @@ namespace DAL {  // Namespace DAL -- begin
       
       Creating more than one file with one instance of TBBraw is deprecated!
       Destroy the TBBraw object and create a new one instead!
-      Currently only creates new files, and fails if a file with \t filename
+      Currently only creates new files, and fails if a file with \c filename
       already exists.
     */
     bool open_file(std::string const &filename,
