@@ -11,8 +11,10 @@
 
   <ul>
     <li>\ref dal_intro
-    <li>\ref dal_install
+    <li>\subpage dal_install
     <li>\subpage dal_coding_guidelines
+    <li>\subpage dal_coding_cpp
+    <li>\subpage dal_testing
     <li>\subpage dal_data_formats
   </ul>
 

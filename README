@@ -126,11 +126,3 @@ finding all required components:
 
   cmake -DHDF5_ROOT_DIR=<basedir of HDF5 install> -DCASACORE_ROOT_DIR=<basedir of casacore install> ..
 
-If you want to submit test test results - from configuration, build and running
-the test programs - you can do so by executing
-
-  make Experimental
-
-from within the build directory. The collected results will be published at 
-
-  http://svn.astron.nl/CDash/index.php?project=DAL

@@ -2,44 +2,7 @@
 
 /*!
 
-\page dal_coding_cpp DAL :: Coding against the C++ interface
-
-<hr>
-
-  - \ref dal_code_tree
-  - \ref dal_compile_link
-  - \ref dal_library_classes
-
-<hr>
-
-\section dal_code_tree Organization of the code tree
-
-\verbatim
-lofarsoft
-|-- data
-|-- doc
-|-- release
-|-- build
-|-- devel_common
-|-- external
-`-- src
-    |-- contrib
-    |-- CR-Tools
-    |-- DAL                 <-- you are here
-    |   |-- apps
-    |   |-- doc
-    |   |-- implement
-    |   `-- test
-    `-- pybdsm
-\endverbatim
-
-  - \b apps holds the source code for application executables, such as 
-  tools (e.g. tbb2h5.cpp) for the creation of the various standard data products. 
-  - \b test contains the source code for the various test programs (e.g.
-  tdal.cpp or tdalDataset.cpp) which can be used to check the functionality of
-  the library classes.
-
-<hr>
+\page dal_coding_cpp Coding examples: C++
 
 \section dal_compile_link Compile and link against the DAL
 

@@ -7,6 +7,7 @@
     <li>\ref dal_get_sources
     <li>\ref dal_codebase
     <li>\ref dal_external_packages
+    <li>\ref dal_configure_build
   </ul>
 
   \section dal_get_sources Getting the source code
@@ -25,7 +26,7 @@
     \endverbatim
 
     Once your checkout from the Git repository is complete, follow the
-    instructions as described in the section "Configuration and build" below.
+    instructions as described in the section \ref dal_configure_build below.
 
     <li>As part of the LOFAR User Software (LUS).
 
@@ -127,5 +128,37 @@
       <td>http://www.stack.nl/~dimitri/doxygen</td>
     </tr>
   </table>
+
+  \section dal_configure_build Configuration and build
+
+  The DAL uses the CMake (http://www.cmake.org) Cross-Platform Makefile Generator
+  for configuration and control of the build.
+
+  Once your checkout from the Git repository is complete you will have a directory
+  structure on disk as described in section \ref dal_codebase above.
+
+  \verbatim
+  cd DAL
+  mkdir build
+  cd build
+  cmake ..
+  make
+  \endverbatim
+
+  The default installation location is "/usr/local"; if you want to change this,
+  you can tell CMake so by using
+
+  \verbatim
+  cmake -DCMAKE_INSTALL_PREFIX=<installation prefix> ..
+  \endverbatim
+
+  The CMake scripts will check a number of standard locations for the required
+  3-party packages (such as Boost, HDF5, etc.), but if you are using a custom
+  version installed at a non-standard location, you might need to aid CMake in
+  finding all required components:
+
+  \verbatim
+  cmake -DHDF5_ROOT_DIR=<basedir of HDF5 install> -DCASACORE_ROOT_DIR=<basedir of casacore install> ..
+  \endverbatim
 
  */

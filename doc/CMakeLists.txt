@@ -14,6 +14,7 @@ if (DOXYGEN_FOUND)
   set ( DOXYGEN_CREATE_SUBDIRS    NO                          )
   set ( DOXYGEN_REPEAT_BRIEF      NO                          )
   set ( DOXYGEN_GENERATE_TREEVIEW NO                          )
+  set ( DOXYGEN_GENERATE_MAN      NO                          )
   set ( DOXYGEN_HTML_FOOTER       ${CMAKE_CURRENT_SOURCE_DIR}/html_footer.html )
   
   ## Generate Doxygen configuration file
