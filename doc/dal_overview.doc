@@ -11,7 +11,7 @@
 
   <ul>
     <li>\ref dal_intro
-    <li>\ref dal_codebase
+    <li>\ref dal_install
     <li>\subpage dal_coding_guidelines
     <li>\subpage dal_data_formats
   </ul>
@@ -85,24 +85,6 @@ Officially, the DAL supports three file types:
 </ol>
 
 At present, each of these file types have varying levels of support.
-
-\section dal_codebase Organization of the source code
-
-The components of the DAL is organized into the following directory structure:
-
-\verbatim
- DAL
- |-- implement           ..   Library source code for libdal and pydal.
- |   |-- core            ..   Core library classes
- |   |-- coordinates     ..   Representation of world coordinates
- |   |-- data_common     ..   Common functionality for datasets
- |   |-- data_hl         ..   High-level interfaces to datasets
- |   `-- bindings        ..   Bindings to scripting languages
- |-- test                ..   Test programs for library C++ classes.
- |-- apps                ..   Application programs build on top of the library.
- |-- doc                 ..   Documentation.
- `-- data                ..   Reference data sets used for rest programs.
-\endverbatim
 
 */
 
