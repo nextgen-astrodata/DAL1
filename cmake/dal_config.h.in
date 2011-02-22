@@ -237,7 +237,6 @@
 
 #ifdef DAL_WITH_MYSQL
 #cmakedefine MYSQL_VERSION "${MYSQL_VERSION}"
-#cmakedefine MYSQL_PORT "${MYSQL_PORT}"
 #include <mysql.h>
 #endif
 
