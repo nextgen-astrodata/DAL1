@@ -29,8 +29,10 @@
 #include <vector>
 
 #ifdef DAL_WITH_CASA
-#include <coordinates/Coordinates/Projection.h>
 #include <measures/Measures/MDirection.h>
+#ifdef DAL_WITH_WCSLIB
+#include <coordinates/Coordinates/Projection.h>
+#endif
 #endif
 
 namespace DAL { // Namespace DAL -- begin
@@ -155,6 +157,7 @@ namespace DAL { // Namespace DAL -- begin
     static bool isTabular (Coordinate::Type const &type);
 
 #ifdef DAL_WITH_CASA
+#ifdef DAL_WITH_WCSLIB
     //! Get the type of a reference system from its name
     static casa::MDirection::Types systemType (casa::String const &refcode) {
       // Local variables
@@ -171,6 +174,7 @@ namespace DAL { // Namespace DAL -- begin
       casa::Projection prj;	
       return prj.type(refcode);
     }
+#endif
 #endif
 
   private:

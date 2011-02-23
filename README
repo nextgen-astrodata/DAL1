@@ -143,5 +143,9 @@ configure the DAL build:
 
   Root directory of casacore library install:     -D CASACORE_ROOT_DIR=<path>
 
+  Root directory of CFITSIO library install:      -D CFITSIO_ROOT_DIR=<path>
+
+  Root directory of WCSLIB library install:       -D WCSLIB_ROOT_DIR=<path>
+
   Root directory of HDF5 library install:         -D HDF5_ROOT_DIR=<path>
 
