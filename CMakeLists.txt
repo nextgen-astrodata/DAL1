@@ -94,6 +94,12 @@ if (NOT HDF5_FOUND)
   message (SEND_ERROR "[DAL] Missing HDF5 library installation!")
 endif (NOT HDF5_FOUND)
 
+if (CASACORE_FOUND)
+  if (NOT WCSLIB_FOUND)
+    message (SEND_ERROR "[DAL] Missing WCSLIB library installation!")
+  endif (NOT WCSLIB_FOUND)
+endif (CASACORE_FOUND)
+
 ## ==============================================================================
 ##
 ##  Include directories
