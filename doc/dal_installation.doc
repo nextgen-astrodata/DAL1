@@ -161,4 +161,46 @@
   cmake -DHDF5_ROOT_DIR=<basedir of HDF5 install> -DCASACORE_ROOT_DIR=<basedir of casacore install> ..
   \endverbatim
 
+  \section dal_install_configurations Installation configurations
+
+  <ol>
+
+    <li>Self-contained structure:
+    \verbatim
+    . dal
+    ├── bin
+    ├── include
+    ├── lib
+    └── share
+        ├── doc
+	│   ├── html
+        │   └── tutorials
+        ├── xml
+        └── macros
+    \endverbatim
+    This variant is based on suggestion made by Pim, to have the DAL with all
+    its components installed into a single, self-contained directory.
+
+    <li>Embedding into standard directory structure:
+    \verbatim
+    .                         DAL_PREFIX
+    ├── bin                   DAL_PREFIX_BIN      = $DAL_PREFIX/bin
+    ├── include
+    │   └── dal               DAL_PREFIX_INCLUDE  = $DAL_PREFIX/include/dal
+    ├── lib
+    │   └── dal               DAL_PREFIX_LIB      = $DAL_PREFIX/lib/dal
+    │       └── python
+    └── share
+        └── dal               DAL_PREFIX_SHARE    = $DAL_PREFIX/share/dal
+            ├── doc
+            ├── xml
+            └── macros
+    \endverbatim
+    This variant is more in line with the installation configuration of most
+    packages inspected; this no only holds for small packages conatining a few
+    header files and libraries, but also large packages such as e.g. Boost++
+    and Root.
+  </ol>
+
+
  */
