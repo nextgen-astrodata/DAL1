@@ -188,6 +188,7 @@ message (STATUS "+============================================================+"
 message (STATUS "| DAL: Summary of configuration settings                     |"   )
 message (STATUS "+------------------------------------------------------------+"   )
 message (STATUS " CMAKE_INSTALL_PREFIX             = ${CMAKE_INSTALL_PREFIX}"      )
+message (STATUS " CMAKE_INSTALL_RPATH              = ${CMAKE_INSTALL_RPATH}"       )
 message (STATUS " Build and enable test programs   = ${DAL_ENABLE_TESTING}"        )
 message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}"    )
 message (STATUS " Enable code using Boost++        = ${BOOST_FOUND}"               )
