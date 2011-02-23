@@ -18,7 +18,6 @@ foreach (src ${tests_data_common})
       ${CASA_LIBRARIES}
       dal
       ${CASA_LIBRARIES}
-      ${CFITSIO_LIBRARIES}
       ${dal_link_libraries}
       )
   else (CASA_FOUND OR CASACORE_FOUND)

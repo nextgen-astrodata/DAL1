@@ -21,17 +21,25 @@
   
   ##______________________________________________
   ## linker instructions
-  
-  target_link_libraries (pydal
+
+  set (pydal_link_libraries
     ${dal_link_libraries}
     ${PYTHON_LIBRARIES}
     ${BOOST_LIBRARIES}
     ${NUMUTIL_LIBRARIES}
-    ${CFITSIO_LIBRARIES}
-    ${WCSLIB_LIBRARIES}
     ${LAPACK_LIBRARIES}
     ${HAVE_LIBPTHREAD}
     )
+
+  if (CFITSIO_LIBRARIES)
+    list (APPEND pydal_link_libraries ${CFITSIO_LIBRARIES})
+  endif (CFITSIO_LIBRARIES)
+  
+  if (WCSLIB_LIBRARIES)
+    list (APPEND pydal_link_libraries ${WCSLIB_LIBRARIES})
+  endif (WCSLIB_LIBRARIES)
+  
+  target_link_libraries (pydal ${pydal_link_libraries} )
   
   ##______________________________________________
   ## Additional target properties

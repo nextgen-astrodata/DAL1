@@ -30,7 +30,6 @@ foreach (src ${tests_hdf5})
   target_link_libraries(${src}
     dal
     ${CASA_LIBRARIES}
-    ${CFITSIO_LIBRARIES}
     ${dal_link_libraries}
     )
   ## Instructions for running the test

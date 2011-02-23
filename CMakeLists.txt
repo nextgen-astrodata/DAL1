@@ -84,7 +84,21 @@ endif (DAL_DEBUGGING_MESSAGES)
 ##
 ## ==============================================================================
 
+## Try to resolve external dependencies ...
+
 include (${DAL_SOURCE_DIR}/cmake/CheckExternalPackages.cmake)
+
+## ... and check if this indeed has been successful
+
+if (NOT HDF5_FOUND)
+  message (SEND_ERROR "[DAL] Missing HDF5 library installation!")
+endif (NOT HDF5_FOUND)
+
+if (CASACORE_FOUND)
+  if (NOT WCSLIB_FOUND)
+    message (SEND_ERROR "[DAL] Missing WCSLIB library installation!")
+  endif (NOT WCSLIB_FOUND)
+endif (CASACORE_FOUND)
 
 ## ==============================================================================
 ##
@@ -161,8 +175,6 @@ endif (CASA_LIBRARIES)
 
 if (HDF5_LIBRARIES)
   list (APPEND dal_link_libraries ${HDF5_LIBRARIES})
-else (HDF5_LIBRARIES)
-  message (FATAL_ERROR "[DAL] Missing HDF5 library file(s)!")
 endif (HDF5_LIBRARIES)
 
 if (LAPACK_LIBRARIES)
