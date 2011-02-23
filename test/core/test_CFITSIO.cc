@@ -40,6 +40,8 @@
 
 #include <dal_config.h>
 
+#ifdef DAL_WITH_CFITSIO
+
 //_______________________________________________________________________________
 //                                                                test_create_new
 
@@ -159,3 +161,15 @@ int main (int argc, char *argv[])
   
   return nofFailedTests;
 }
+
+#else 
+
+int main ()
+{
+  std::cerr << "[test_CFITSIO] DAL build without support for CFITSIO - skipping test!"
+	    << std::endl;
+
+  return -1;
+}
+
+#endif 

@@ -49,7 +49,6 @@ foreach (_test
     tdalGroup
     tDatabase
     tValMatrix
-    test_CFITSIO
     test_std_cerr
     )
   add_test (${_test} ${_test})
@@ -99,3 +98,8 @@ else (dataset_beamformed)
   add_test (tdalTable2 tdalTable)
 endif (dataset_beamformed)
 
+## test_CFITSIO __________________________________
+
+if (CFITSIO_FOUND)
+  add_test (test_CFITSIO test_CFITSIO)
+endif (CFITSIO_FOUND)
