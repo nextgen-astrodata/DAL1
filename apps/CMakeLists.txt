@@ -52,7 +52,6 @@ if (HAVE_BOOST)
   # boost_python won't work on some platforms unless libpython is also linked.
   list (APPEND apps_link_libraries
     ${BOOST_LIBRARIES}
-    ${CFITSIO_LIBRARIES}
     ${PYTHON_LIBRARIES}
     )
 else (HAVE_BOOST)

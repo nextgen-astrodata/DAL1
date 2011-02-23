@@ -17,7 +17,6 @@ foreach (src ${tests_core})
     ${CASA_LIBRARIES}
     dal
     ${CASA_LIBRARIES}
-    ${CFITSIO_LIBRARIES}
     ${dal_link_libraries}
     )
   set_target_properties(${src}
