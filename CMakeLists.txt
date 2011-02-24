@@ -78,6 +78,14 @@ else (DAL_DEBUGGING_MESSAGES)
   set (DEBUGGING_MESSAGES 0)
 endif (DAL_DEBUGGING_MESSAGES)
 
+## =============================================================================
+##
+##  Installation settings
+##
+## =============================================================================
+
+include (${DAL_SOURCE_DIR}/cmake/InstallationSettings.cmake)
+
 ## ==============================================================================
 ##
 ##  External dependencies
@@ -234,26 +242,6 @@ endif (MPI_FOUND AND HDF5_HAVE_PARALLEL_IO)
 ## Clean up the list of link libraries
 
 list (REMOVE_DUPLICATES dal_link_libraries)
-
-## =============================================================================
-##
-##  Installation
-##
-## =============================================================================
-
-# skip the full RPATH for the build tree
-set (CMAKE_SKIP_BUILD_RPATH YES)
-
-# when building, use the install RPATH already
-# (so it doesn't need to relink when installing)
-set (CMAKE_BUILD_WITH_INSTALL_RPATH YES)
-
-# the RPATH to be used when installing
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-
-# add the automatically determined parts of the RPATH
-# which point to directories outside the build tree to the install RPATH
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH YES)
 
 ## =============================================================================
 ##
