@@ -25,9 +25,13 @@
 The size and complexity of astronomical data are growing at relentless rates.
 This increase is especially apparent in the radio community as evidenced by the 
 data challenges faced by many of the SKA pathfinders and other major radio
-telescopes such as LOFAR, EVLA, ALMA, ASKAP, MeerKAT, MWA, LWA and eMERLIN.
+telescopes such as <a href="http://www.lofar.org">LOFAR</a>,
+<a href="http://science.nrao.edu/evla">EVLA</a>,
+<a href="http://science.nrao.edu/alma">ALMA</a>, ASKAP, MeerKAT, MWA, LWA and eMERLIN.
 Enormous data rates are also becoming a challenge for large optical projects
-that are currently ramping up including Pan-Starrs and LSST. As progress towards
+that are currently ramping up including
+<a href="http://pan-starrs.ifa.hawaii.edu">Pan-Starrs</a> and
+<a href="http://www.lsst.org">LSST</a>. As progress towards
 meeting these challenges, ASTRON and the LOFAR project are currently exploring
 the use of the Hierarchical Data Format, version 5 (HDF5) for LOFAR radio data
 encapsulation.
