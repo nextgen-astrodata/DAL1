@@ -170,7 +170,7 @@ can be found in the HTML documentation generated using Doxygen:
 
   cd build
   cmake ..
-  make Doc
+  make Documentation
 
 Point your web-browser to
 

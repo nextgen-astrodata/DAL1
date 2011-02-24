@@ -1,4 +1,6 @@
 
+ADD_CUSTOM_TARGET (Documentation ALL)
+
 ## ==============================================================================
 ##
 ##  Doxygen documentation for source code
@@ -29,7 +31,7 @@ if (DOXYGEN_FOUND)
   
   ## Define target to build documentation
   
-  add_custom_target (Doc ALL
+  add_custom_target (DocumentationDoxygen
     ${DOXYGEN_EXECUTABLE} Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating Doxygen code documentation ..."
@@ -37,6 +39,8 @@ if (DOXYGEN_FOUND)
     ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
     ${CMAKE_CURRENT_SOURCE_DIR}/dal_installation.doc
     )
+
+  add_dependencies (Documentation DocumentationDoxygen)
 
   ## Installation of source code documentation
 

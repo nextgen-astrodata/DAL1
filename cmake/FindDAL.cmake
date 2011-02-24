@@ -32,14 +32,18 @@
 # In order to maintain compatibility with the Filesystem Hierarchy Standard (FHS)
 # the following default installation layout has been defined:
 #
-#   /opt
-#   └── dal                       DAL_INSTALL_PREFIX        = DAL_ROOT_DIR
-#       ├── bin                   DAL_INSTALL_BINDIR
-#       ├── include               DAL_INSTALL_INCLUDEDIR
-#       ├── lib                   DAL_INSTALL_LIBDIR
-#       └── share                 DAL_INSTALL_DATAROOTDIR
-#           └── doc               DAL_INSTALL_DOCDIR
-#               └── html
+# /opt
+# └── dal                          DAL_INSTALL_PREFIX
+#     ├── bin                      DAL_INSTALL_BINDIR
+#     ├── include                  DAL_INSTALL_INCLUDEDIR
+#     │   ├── coordinates
+#     │   ├── core
+#     │   ├── data_common
+#     │   └── data_hl
+#     ├── lib                      DAL_INSTALL_INCLUDEDIR
+#     └── share                    DAL_INSTALL_DATAROOTDIR
+#         └── doc                  DAL_INSTALL_DOCDIR
+#             └── html
 #
 
 if (NOT DAL_FOUND)
@@ -51,20 +55,51 @@ if (NOT DAL_FOUND)
   ##_____________________________________________________________________________
   ## Check for the header files
   
-  find_path (DAL_INCLUDES dal_config.h dalCommon.h
+  find_path (DAL_INCLUDES dal_config.h
     HINTS ${DAL_ROOT_DIR}
     PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/dal
     )
+
+  ## core/dalDataset.h
+
+  find_path (DAL_DALDATASET_H core/dalDataset.h
+    HINTS ${DAL_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt/local
+    PATH_SUFFIXES include include/dal
+    )
+  if (DAL_DALDATASET_H)
+    list (APPEND DAL_INCLUDES ${DAL_DALDATASET_H})
+  endif (DAL_DALDATASET_H)
+  
+  ## core/dalDataset.h
+
+  find_path (DAL_COORDINATE_H coordinates/Coordinate.h
+    HINTS ${DAL_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt/local
+    PATH_SUFFIXES include include/dal
+    )
+  if (DAL_COORDINATE_H)
+    list (APPEND DAL_INCLUDES ${DAL_COORDINATE_H})
+  endif (DAL_COORDINATE_H)
+
+  ## Remove duplicate entries
+
+  list (REMOVE_DUPLICATES DAL_INCLUDES)
   
   ##_____________________________________________________________________________
   ## Check for the library
+
+  set (DAL_LIBRARIES "")
   
-  find_library (DAL_LIBRARIES dal
+  find_library (DAL_DAL_LIBRARY dal
     HINTS ${DAL_ROOT_DIR}
     PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES lib lib/dal
     )
+  if (DAL_DAL_LIBRARY)
+    list (APPEND DAL_LIBRARIES ${DAL_DAL_LIBRARY})
+  endif (DAL_DAL_LIBRARY)
   
   ##_____________________________________________________________________________
   ## Check for the executable(s)
@@ -74,6 +109,7 @@ if (NOT DAL_FOUND)
       msread
       ms2h5
       tbb2h5
+      TBBraw2h5
       )
 
     ## try to locate the executable
