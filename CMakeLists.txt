@@ -302,7 +302,6 @@ message (STATUS " .. DAL_INSTALL_INCLUDEDIR        = ${DAL_INSTALL_INCLUDEDIR}" 
 message (STATUS " .. DAL_INSTALL_LIBDIR            = ${DAL_INSTALL_LIBDIR}"        )
 message (STATUS " .. DAL_INSTALL_DATAROOTDIR       = ${DAL_INSTALL_DATAROOTDIR}"   )
 message (STATUS " .. DAL_INSTALL_DOCDIR            = ${DAL_INSTALL_DOCDIR}"        )
-message (STATUS " .. DAL_INSTALL_HTMLDIR           = ${DAL_INSTALL_HTMLDIR}"       )
 message (STATUS " Build and enable test programs   = ${DAL_ENABLE_TESTING}"        )
 message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}"    )
 message (STATUS " Enable code using Boost++        = ${BOOST_FOUND}"               )
