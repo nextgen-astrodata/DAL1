@@ -43,11 +43,35 @@ if (NOT PYTHON_FOUND)
   
   ##_____________________________________________________________________________
   ## Check for the header files
-  
-  find_path (PYTHON_INCLUDES Python.h patchlevel.h modsupport.h
+
+  find_path (PYTHON_INCLUDES patchlevel.h modsupport.h
     PATHS ${PYTHON_ROOT_DIR} /sw /usr /usr/local /opt/local
-    PATH_SUFFIXES include
+    PATH_SUFFIXES include include/python include/python2.7 include/python2.6
     )
+  
+  ## include path for: Python.h
+
+  find_path (PYTHON_PYTHON_H Python.h
+    PATHS ${PYTHON_ROOT_DIR} /sw /usr /usr/local /opt/local
+    PATH_SUFFIXES include include/python include/python2.7 include/python2.6
+    )
+  if (PYTHON_PYTHON_H)
+    list (APPEND PYTHON_INCLUDES ${PYTHON_PYTHON_H})
+  endif (PYTHON_PYTHON_H)
+  
+  ## include path for: pyconfig.h
+
+  find_path (PYTHON_PYCONFIG_H pyconfig.h
+    PATHS ${PYTHON_ROOT_DIR} /sw /usr /usr/local /opt/local
+    PATH_SUFFIXES include include/python include/python2.7 include/python2.6
+    )
+  if (PYTHON_PYCONFIG_H)
+    list (APPEND PYTHON_INCLUDES ${PYTHON_PYCONFIG_H})
+  endif (PYTHON_PYCONFIG_H)
+
+  ## clean up the list of include directories
+  
+  list (REMOVE_DUPLICATES PYTHON_INCLUDES)
   
   ##_____________________________________________________________________________
   ## Check for the library

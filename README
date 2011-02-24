@@ -6,6 +6,7 @@ CONTENTS:
   - Organization of the source code
   - External dependencies
   - Configuration and build
+  - Installation
 
 _________________________________________________________________________________
 >>> Introduction
@@ -84,19 +85,22 @@ The components of the DAL is organized into the following directory structure:
 _________________________________________________________________________________
 >>> External dependencies
 
-* CMake, >=2.6 (www.cmake.org)
+To build the DAL from the sources you need a number of installed software
+packages and utilities:
 
-* HDF5 library, >=1.8.3 (www.hdfgroup.org/HDF5)
+  * CMake, >=2.6 (www.cmake.org)
 
-* WCSLIB, >=4.2 (www.atnf.csiro.au/people/mcalabre/WCS)
+  * HDF5 library, >=1.8.3 (www.hdfgroup.org/HDF5)
 
-* CFITSIO, >=3.0 (heasarc.gsfc.nasa.gov/fitsio)
+  * WCSLIB, >=4.2 (www.atnf.csiro.au/people/mcalabre/WCS)
 
-* CASACORE (code.google.com/p/casacore)
+  * CFITSIO, >=3.0 (heasarc.gsfc.nasa.gov/fitsio)
 
-* Boost C++ Libraries, >=1.40.0 (www.boost.org)
+  * CASACORE (code.google.com/p/casacore)
 
-* Python (www.python.org)
+  * Boost C++ Libraries, >=1.40.0 (www.boost.org)
+
+  * Python (www.python.org)
 
 _________________________________________________________________________________
 >>> Configuration and build
@@ -117,7 +121,7 @@ above.
 The default installation location is "/usr/local"; if you want to change this,
 you can tell CMake so by using
 
-  cmake -DCMAKE_INSTALL_PREFIX=<installation prefix> ..
+  cmake -DDAL_INSTALL_PREFIX=<installation prefix> ..
 
 The CMake scripts will check a number of standard locations for the required
 3-party packages (such as Boost, HDF5, etc.), but if you are using a custom
@@ -133,7 +137,7 @@ In general CMake cache entries are passed through the
 command line syntax. The following options/cache variables can be used to 
 configure the DAL build:
 
-  DAL installation prefix:                        -D CMAKE_INSTALL_PREFIX=<path>
+  DAL installation prefix:                        -D DAL_INSTALL_PREFIX=<path>
 
   Enable/disable code debugging messages:         -D DAL_DEBUGGING_MESSAGES={YES|NO}
 
@@ -149,3 +153,20 @@ configure the DAL build:
 
   Root directory of HDF5 library install:         -D HDF5_ROOT_DIR=<path>
 
+
+_________________________________________________________________________________
+>>> Installation
+
+In to install the DAL you will have to run
+
+  make install
+
+from within the build directory. Depending on whether you are installing into a
+local directory or into a system-directory, appropriate permissions might be
+required.
+
+CMAKE_INSTALL_PREFIX          ..   Installation prefix (default: /usr/local/dal)
+|-- bin                       ..   Executable programs
+|-- doc                       ..   Documentation
+|-- include                   ..   Header files
+`-- lib                       ..   Libraries
