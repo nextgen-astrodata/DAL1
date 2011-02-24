@@ -23,10 +23,24 @@
 # - Check for the presence of DAL
 #
 # The following variables are set when DAL is found:
-#  DAL_FOUND      = Set to true, if all components of DAL have been found.
-#  DAL_INCLUDES   = Include path for the header files of DAL
-#  DAL_LIBRARIES  = Link these to use DAL
-#  DAL_LFLAGS     = Linker flags (optional)
+#
+#   DAL_FOUND      = Set to true, if all components of DAL have been found.
+#   DAL_INCLUDES   = Include path for the header files of DAL
+#   DAL_LIBRARIES  = Link these to use DAL
+#   DAL_LFLAGS     = Linker flags (optional)
+#
+# In order to maintain compatibility with the Filesystem Hierarchy Standard (FHS)
+# the following default installation layout has been defined:
+#
+#   /opt
+#   └── dal                       DAL_INSTALL_PREFIX        = DAL_ROOT_DIR
+#       ├── bin                   DAL_INSTALL_BINDIR
+#       ├── include               DAL_INSTALL_INCLUDEDIR
+#       ├── lib                   DAL_INSTALL_LIBDIR
+#       └── share                 DAL_INSTALL_DATAROOTDIR
+#           └── doc               DAL_INSTALL_DOCDIR
+#               └── html
+#
 
 if (NOT DAL_FOUND)
     
@@ -49,7 +63,7 @@ if (NOT DAL_FOUND)
   find_library (DAL_LIBRARIES dal
     HINTS ${DAL_ROOT_DIR}
     PATHS /sw /usr /usr/local /opt/local
-    PATH_SUFFIXES lib
+    PATH_SUFFIXES lib lib/dal
     )
   
   ##_____________________________________________________________________________
@@ -66,7 +80,7 @@ if (NOT DAL_FOUND)
     find_program (DAL_${_dal_executable}_EXECUTABLE ${_dal_executable}
       HINTS ${DAL_ROOT_DIR}
       PATHS /sw /usr /usr/local /opt/local
-      PATH_SUFFIXES bin
+      PATH_SUFFIXES bin bin/dal
       )
     
   endforeach (_dal_executable)

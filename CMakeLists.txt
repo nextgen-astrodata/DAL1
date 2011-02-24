@@ -17,14 +17,14 @@ cmake_minimum_required (VERSION 2.8)
 ##
 ## ==============================================================================
 
-option (DAL_BUILD_APPS         "Build the applications?"                    YES )
-option (DAL_ENABLE_TESTING     "Build and enable test programs?"            YES )
-option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?"  ON  )
-option (DAL_PYTHON_BINDINGS    "Create python bindings?"                    YES )
-option (DAL_DEBUGGING_MESSAGES "Print debugging information?"               NO  )
-option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"       NO  )
-
-option (DAL_WITH_MYSQL         "Build with support for MySQL database?"     NO  )
+option (DAL_BUILD_APPS         "Build the applications?"                     YES )
+option (DAL_ENABLE_TESTING     "Build and enable test programs?"             YES )
+option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?"   ON  )
+option (DAL_PYTHON_BINDINGS    "Create python bindings?"                     YES )
+option (DAL_DEBUGGING_MESSAGES "Print debugging information?"                NO  )
+option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"        NO  )
+option (DAL_WITH_MYSQL         "Build with support for MySQL database?"      NO  )
+option (DAL_LOFARSOFT_INSTALL  "Install as part of the LOFAR User Software?" NO  )
 
 ##__________________________________________________________
 ## Handle option: testing mode
