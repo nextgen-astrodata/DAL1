@@ -8,6 +8,7 @@
     <li>\ref dal_codebase
     <li>\ref dal_external_packages
     <li>\ref dal_configure_build
+    <li>\ref dal_install_configurations
   </ul>
 
   \section dal_get_sources Getting the source code
@@ -117,7 +118,7 @@
     </tr>
     <tr>
       <td>Python</td>
-      <td>??</td>
+      <td>>= 2.6</td>
       <td>optional, required for Python bindings</td>
       <td>http://www.python.org</td>
     </tr>
@@ -145,12 +146,12 @@
   make
   \endverbatim
 
-  The default installation location is "/usr/local"; if you want to change this,
+  The default installation location is "/opt/dal"; if you want to change this,
   you can tell CMake so by using
-
   \verbatim
-  cmake -DCMAKE_INSTALL_PREFIX=<installation prefix> ..
+  cmake -DDAL_INSTALL_PREFIX=<installation prefix> ..
   \endverbatim
+  For further details consult section \ref dal_install_configurations below
 
   The CMake scripts will check a number of standard locations for the required
   3-party packages (such as Boost, HDF5, etc.), but if you are using a custom
@@ -161,46 +162,111 @@
   cmake -DHDF5_ROOT_DIR=<basedir of HDF5 install> -DCASACORE_ROOT_DIR=<basedir of casacore install> ..
   \endverbatim
 
+  In general CMake cache entries are passed through the 
+
+  \verbatim
+  -D <var>:<type>=<value>
+  \endverbatim
+
+  command line syntax. The following options/cache variables can be used to 
+  configure the DAL build:
+
+  <table>
+    <tr>
+      <td class="indexkey">Description</td>
+      <td class="indexkey">Command-line option</td>
+    </tr>
+    <tr>
+      <td>DAL installation prefix</td>
+      <td><tt>-D DAL_INSTALL_PREFIX=<path></tt></td>
+    </tr>
+    <tr>
+      <td>Enable/disable code debugging messages</td>
+      <td><tt>-D DAL_WITH_MYSQL={YES|NO}</tt></td>
+    </tr>
+    <tr>
+      <td>Root directory of Boost++ library install</td>
+      <td><tt>-D BOOST_ROOT_DIR=<path></tt></td>
+    </tr>
+    <tr>
+      <td>Root directory of casacore library install</td>
+      <td><tt>-D CFITSIO_ROOT_DIR=<path></tt></td>
+    </tr>
+    <tr>
+      <td>Root directory of CFITSIO library install</td>
+      <td><tt>-D CFITSIO_ROOT_DIR=<path></tt></td>
+    </tr>
+    <tr>
+      <td>Root directory of HDF5 library install</td>
+      <td><tt>-D HDF5_ROOT_DIR=<path></tt></td>
+    </tr>
+    <tr>
+      <td>Root directory of Python install</td>
+      <td><tt>-D PYTHON_ROOT_DIR=<path></tt></td>
+    </tr>
+    <tr>
+      <td>Root directory of WCSLIB library install</td>
+      <td><tt>-D WCSLIB_ROOT_DIR=<path></tt></td>
+    </tr>
+  </table>
+
   \section dal_install_configurations Installation configurations
+
+  In order to allow for the necessary amount of fine-tuning, we need the
+  equivalent of commonly use configuration and install options:
+
+  \verbatim
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+  --bindir=DIR            user executables [EPREFIX/bin]
+  --libdir=DIR            object code libraries [EPREFIX/lib]
+  --includedir=DIR        C header files [PREFIX/include]
+  --datarootdir=DIR       read-only arch.-independent data root [PREFIX/share]
+  --datadir=DIR           read-only architecture-independent data [DATAROOTDIR]
+  --mandir=DIR            man documentation [DATAROOTDIR/man]
+  --docdir=DIR            documentation root [DATAROOTDIR/doc/PACKAGE]
+  \endverbatim
+
+  The specific choice of configuration and install options will depent on the 
+  circumstances and permissions:
 
   <ol>
 
-    <li>Self-contained structure:
-    \verbatim
-    . dal
-    ├── bin
-    ├── include
-    ├── lib
-    └── share
-        ├── doc
-	│   ├── html
-        │   └── tutorials
-        ├── xml
-        └── macros
-    \endverbatim
-    This variant is based on suggestion made by Pim, to have the DAL with all
-    its components installed into a single, self-contained directory.
+    <li>In order to maintain compatibility with the
+    <a href="http://www.pathname.com/fhs">Filesystem Hierarchy Standard</a> (FHS)
+    the following <b>default installation layout</b> has been defined:
 
-    <li>Embedding into standard directory structure:
     \verbatim
-    .                         DAL_PREFIX
-    ├── bin                   DAL_PREFIX_BIN      = $DAL_PREFIX/bin
+    /opt
+    └── dal                       DAL_INSTALL_PREFIX       
+        ├── bin                   DAL_INSTALL_BINDIR       = DAL_INSTALL_PREFIX/bin
+        ├── include               DAL_INSTALL_INCLUDEDIR   = DAL_INSTALL_PREFIX/include
+        ├── lib                   DAL_INSTALL_LIBDIR       = DAL_INSTALL_PREFIX/lib
+        └── share                 DAL_INSTALL_DATAROOTDIR  = DAL_INSTALL_PREFIX/share
+            └── doc               DAL_INSTALL_DOCDIR       = DAL_INSTALL_DATAROOTDIR/doc
+                └── html
+    \endverbatim
+
+    <li>However a user might decide to rather embed the installation of the DAL into
+    a pre-existing filesystem structure, such as \c sw or \c /usr/local. In that 
+    case:
+
+    \verbatim
+    .                         DAL_INSTALL_PREFIX
+    ├── bin                   DAL_INSTALL_BINDIR       [DAL_INSTALL_PREFIX/bin]
     ├── include
-    │   └── dal               DAL_PREFIX_INCLUDE  = $DAL_PREFIX/include/dal
-    ├── lib
-    │   └── dal               DAL_PREFIX_LIB      = $DAL_PREFIX/lib/dal
-    │       └── python
+    │   └── dal               DAL_INSTALL_INCLUDEDIR   [DAL_INSTALL_PREFIX/include/dal]
+    ├── lib                   DAL_INSTALL_LIBDIR       [DAL_INSTALL_PREFIX/lib]
     └── share
-        └── dal               DAL_PREFIX_SHARE    = $DAL_PREFIX/share/dal
+        └── dal               DAL_INSTALL_DATAROOTDIR  [DAL_INSTALL_PREFIX/share/dal]
             ├── doc
             ├── xml
             └── macros
     \endverbatim
     This variant is more in line with the installation configuration of most
-    packages inspected; this no only holds for small packages conatining a few
-    header files and libraries, but also large packages such as e.g. Boost++
-    and Root.
+    packages inspected; this no only holds for small packages containing a few
+    header files and libraries, but also large packages such as e.g. the 
+    <a href="http://www.boost.org">Boost C++ libraries</a> and
+    <a href="http://root.cern.ch">Root</a>.
   </ol>
-
 
  */

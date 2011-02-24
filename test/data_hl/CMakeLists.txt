@@ -23,8 +23,8 @@ foreach (src ${tests_data_hl})
   endif (CASA_FOUND OR CASACORE_FOUND)
   ## installation instructions
   install (TARGETS ${src}
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
     )
 endforeach (src)
 

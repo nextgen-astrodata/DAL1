@@ -103,13 +103,13 @@ endif (DAL_PYTHON_BINDINGS)
 
 install (
   TARGETS dal
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${DAL_INSTALL_LIBDIR}
   )
 
 ## installation of header files
 
-install (FILES ${dal_headers}
-  DESTINATION include/dal
+install (FILES ${dal_headers} ${DAL_BINARY_DIR}/dal_config.h
+  DESTINATION ${DAL_INSTALL_INCLUDEDIR}
   )

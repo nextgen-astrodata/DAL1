@@ -5,8 +5,8 @@ CONTENTS:
   - Getting the source code
   - Organization of the source code
   - External dependencies
-  - Configuration and build
-  - Installation
+  - Configuration, build and installation
+  - Further reading
 
 _________________________________________________________________________________
 >>> Introduction
@@ -90,6 +90,8 @@ packages and utilities:
 
   * CMake, >=2.6 (www.cmake.org)
 
+  * Doxygen, >=1.6 (http://www.stack.nl/~dimitri/doxygen)
+
   * HDF5 library, >=1.8.3 (www.hdfgroup.org/HDF5)
 
   * WCSLIB, >=4.2 (www.atnf.csiro.au/people/mcalabre/WCS)
@@ -100,10 +102,10 @@ packages and utilities:
 
   * Boost C++ Libraries, >=1.40.0 (www.boost.org)
 
-  * Python (www.python.org)
+  * Python, >= 2.6 (www.python.org)
 
 _________________________________________________________________________________
->>> Configuration and build
+>>> Configuration, build and installation
 
 The DAL uses the CMake (www.cmake.org) Cross-Platform Makefile Generator for 
 configuration and control of the build.
@@ -121,7 +123,7 @@ above.
 The default installation location is "/usr/local"; if you want to change this,
 you can tell CMake so by using
 
-  cmake -DDAL_INSTALL_PREFIX=<installation prefix> ..
+  cmake -D DAL_INSTALL_PREFIX=<installation prefix> ..
 
 The CMake scripts will check a number of standard locations for the required
 3-party packages (such as Boost, HDF5, etc.), but if you are using a custom
@@ -129,33 +131,6 @@ version installed at a non-standard location, you might need to aid CMake in
 finding all required components:
 
   cmake -DHDF5_ROOT_DIR=<basedir of HDF5 install> ..
-
-In general CMake cache entries are passed through the 
-
-  -D <var>:<type>=<value>     or      -D <var>=<value>
-
-command line syntax. The following options/cache variables can be used to 
-configure the DAL build:
-
-  DAL installation prefix:                        -D DAL_INSTALL_PREFIX=<path>
-
-  Enable/disable code debugging messages:         -D DAL_DEBUGGING_MESSAGES={YES|NO}
-
-  Build with support for MySQL database:          -D DAL_WITH_MYSQL={YES|NO}
-
-  Root directory of Boost++ library install:      -D BOOST_ROOT_DIR=<path>
-
-  Root directory of casacore library install:     -D CASACORE_ROOT_DIR=<path>
-
-  Root directory of CFITSIO library install:      -D CFITSIO_ROOT_DIR=<path>
-
-  Root directory of WCSLIB library install:       -D WCSLIB_ROOT_DIR=<path>
-
-  Root directory of HDF5 library install:         -D HDF5_ROOT_DIR=<path>
-
-
-_________________________________________________________________________________
->>> Installation
 
 In to install the DAL you will have to run
 
@@ -165,8 +140,36 @@ from within the build directory. Depending on whether you are installing into a
 local directory or into a system-directory, appropriate permissions might be
 required.
 
-CMAKE_INSTALL_PREFIX          ..   Installation prefix (default: /usr/local/dal)
-|-- bin                       ..   Executable programs
-|-- doc                       ..   Documentation
-|-- include                   ..   Header files
-`-- lib                       ..   Libraries
+In order to maintain compatibility with the Filesystem Hierarchy Standard (FHS)
+the following default installation layout has been defined:
+
+/opt
+└── dal                       DAL_INSTALL_PREFIX       
+    ├── bin                   DAL_INSTALL_BINDIR       = DAL_INSTALL_PREFIX/bin
+    ├── include               DAL_INSTALL_INCLUDEDIR   = DAL_INSTALL_PREFIX/include
+    ├── lib                   DAL_INSTALL_LIBDIR       = DAL_INSTALL_PREFIX/lib
+    └── share                 DAL_INSTALL_DATAROOTDIR  = DAL_INSTALL_PREFIX/share
+        └── doc               DAL_INSTALL_DOCDIR       = DAL_INSTALL_DATAROOTDIR/doc
+            └── html
+
+
+_________________________________________________________________________________
+>>> Further reading
+
+Further detailed information regarding
+
+  - configuration options
+  - installation options
+  - organization of the code base
+  - library modules
+
+can be found in the HTML documentation generated using Doxygen:
+
+  cd build
+  cmake ..
+  make Doc
+
+Point your web-browser to
+
+  build/doc/html/index.html
+

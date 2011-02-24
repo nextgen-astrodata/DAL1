@@ -67,6 +67,5 @@
   
   install (
     TARGETS pydal
-    LIBRARY DESTINATION lib/python
+    LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
     )
-  

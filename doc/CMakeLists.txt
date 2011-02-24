@@ -29,11 +29,20 @@ if (DOXYGEN_FOUND)
   
   ## Define target to build documentation
   
-  add_custom_target (Doc
+  add_custom_target (Doc ALL
     ${DOXYGEN_EXECUTABLE} Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating Doxygen code documentation ..."
-    SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+    SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/dal_installation.doc
+    )
+
+  ## Installation of source code documentation
+
+  install (
+    DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}/html
+    DESTINATION ${DAL_INSTALL_DOCDIR}
     )
   
 endif (DOXYGEN_FOUND)

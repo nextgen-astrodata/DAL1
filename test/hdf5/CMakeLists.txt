@@ -36,7 +36,7 @@ foreach (src ${tests_hdf5})
   add_test (${src} ${src})
   ## Instructions for installation of the executable
   install (TARGETS ${src}
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
     )
 endforeach (src)

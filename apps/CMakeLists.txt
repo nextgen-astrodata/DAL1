@@ -121,8 +121,8 @@ endif (DAL_ENABLE_TESTING)
 ## ==============================================================================
 
 install (TARGETS ${tests}
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
   )
 
 ## scripts
@@ -130,6 +130,6 @@ install (TARGETS ${tests}
 file (GLOB python_scripts *.py)
 
 install (FILES ${python_scripts}
-  DESTINATION bin
+  DESTINATION ${DAL_INSTALL_BINDIR}
   PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE OWNER_READ GROUP_READ WORLD_READ
 )
