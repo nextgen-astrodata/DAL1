@@ -786,11 +786,12 @@ namespace DAL {  // Namespace DAL -- begin
   
 #else
   
-  // --------------------------------------------------------------- trigger_type
+  //_____________________________________________________________________________
+  //                                                                 trigger_type
 
   std::vector<std::string> TBB_Timeseries::trigger_type ()
   {
-    uint nofStations = groups_p.size();
+    uint nofStations = stationGroups_p.size();
     std::vector<std::string> trigger (nofStations);
     std::map<std::string,TBB_StationGroup>::iterator it;
     int n (0);
@@ -803,7 +804,8 @@ namespace DAL {  // Namespace DAL -- begin
     return trigger;
   }
 
-  // ------------------------------------------------------------- trigger_offset
+  //_____________________________________________________________________________
+  //                                                               trigger_offset
 
   std::vector<double> TBB_Timeseries::trigger_offset ()
   {

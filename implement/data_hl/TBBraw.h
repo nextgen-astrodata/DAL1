@@ -34,6 +34,9 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
+using std::string;
+using std::vector;
+
 // casacore header files
 #ifdef DAL_WITH_CASA
 #include <casa/Arrays/Array.h>
@@ -128,7 +131,7 @@ namespace DAL {  // Namespace DAL -- begin
       //! pointer to the corresponding array
       dalArray * array;
       //! dimension (size) of the array
-      vector<int> dimensions;
+      std::vector<int> dimensions;
       /*! time and samplenumer of the first element in the array
 	(used to calculate array offsets).
       */

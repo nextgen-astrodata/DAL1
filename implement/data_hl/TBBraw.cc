@@ -463,8 +463,8 @@ namespace DAL {  // Namespace DAL -- begin
     
     // Now we have the station and dipole index -> create the dipole
     
-    vector<int> firstdims(1,0);
-    vector<int> cdims(1,CHUNK_SIZE);
+    std::vector<int> firstdims(1,0);
+    std::vector<int> cdims(1,CHUNK_SIZE);
     short nodata[0];
     
     char newDipoleIDstr[10];
