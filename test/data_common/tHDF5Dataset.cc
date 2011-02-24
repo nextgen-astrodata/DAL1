@@ -52,9 +52,9 @@
 #include <iostream>
 #include <string>
 
-#include <dalCommon.h>
-#include <HDF5Attribute.h>
-#include <HDF5Dataset.h>
+#include <core/dalCommon.h>
+#include <core/HDF5Attribute.h>
+#include <data_common/HDF5Dataset.h>
 
 using std::cerr;
 using std::cout;

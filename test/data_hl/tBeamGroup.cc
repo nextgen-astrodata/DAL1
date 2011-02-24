@@ -34,21 +34,10 @@
   DAL::BeamSubband.
 */
 
-#ifndef DALCOMMON_H
-#include <dalCommon.h>
-#endif
-
-#ifndef DALDATASET_H
-#include <dalDataset.h>
-#endif
-
-#ifndef BEAMFORMED_H
-#include <BeamFormed.h>
-#endif
-
-#ifndef BEAMGROUP_H
-#include <BeamGroup.h>
-#endif
+#include <core/dalCommon.h>
+#include <core/dalDataset.h>
+#include <data_hl/BeamFormed.h>
+#include <data_hl/BeamGroup.h>
 
 using std::cout;
 using std::endl;

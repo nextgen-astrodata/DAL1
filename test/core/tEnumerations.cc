@@ -21,9 +21,7 @@
 #include <iostream>
 #include <string>
 
-#ifndef ENUMERATIONS_H
-#include <Enumerations.h>
-#endif
+#include <core/Enumerations.h>
 
 using std::cout;
 using std::endl;

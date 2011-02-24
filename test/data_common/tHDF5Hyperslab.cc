@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <HDF5Dataset.h>
-#include <HDF5Hyperslab.h>
+#include <data_common/HDF5Dataset.h>
+#include <data_common/HDF5Hyperslab.h>
 
 // Namespace usage
 using std::cerr;

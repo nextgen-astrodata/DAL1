@@ -20,8 +20,8 @@
 
 #include <iostream>
 
-#include <dalDataset.h>
-#include <TBB_StationGroup.h>
+#include <core/dalDataset.h>
+#include <data_hl/TBB_StationGroup.h>
 
 #include <casa/Arrays/ArrayIO.h>
 #include <casa/Arrays/Vector.h>

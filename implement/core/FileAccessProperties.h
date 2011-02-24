@@ -24,7 +24,7 @@
 #ifndef FILEACCESSPROPERTIES_H
 #define FILEACCESSPROPERTIES_H
 
-#include "HDF5Object.h"
+#include <core/HDF5Object.h>
 
 namespace DAL { // Namespace DAL -- begin
   

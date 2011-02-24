@@ -21,7 +21,7 @@
 #ifndef VALMATRIX_H
 #define VALMATRIX_H
 
-#include <dalCommon.h>
+#include <core/dalCommon.h>
 
 #ifdef DAL_WITH_CASA
 #include <casa/Arrays/Vector.h>

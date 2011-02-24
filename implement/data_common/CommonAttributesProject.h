@@ -21,7 +21,7 @@
 #ifndef COMMONATTRIBUTESPROJECT_H
 #define COMMONATTRIBUTESPROJECT_H
 
-#include "AttributesInterface.h"
+#include <data_common/AttributesInterface.h>
 
 namespace DAL { // Namespace DAL -- begin
   

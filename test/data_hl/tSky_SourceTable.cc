@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <Sky_SourceTable.h>
+#include <data_hl/Sky_SourceTable.h>
 
 // Namespace usage
 using DAL::Sky_SourceTable;

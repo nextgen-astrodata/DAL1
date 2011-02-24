@@ -29,9 +29,9 @@
 #include <string>
 
 // DAL header files
-#include <HDF5CommonInterface.h>
-#include <Filename.h>
-#include <SysLog.h>
+#include <data_common/HDF5CommonInterface.h>
+#include <data_common/Filename.h>
+#include <data_hl/SysLog.h>
 
 namespace DAL { // Namespace DAL -- begin
   

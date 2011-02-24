@@ -18,9 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DATATYPE_H
-#include "DataType.h"
-#endif
+#include <core/DataType.h>
 
 namespace DAL   // Namespace DAL -- begin
   {

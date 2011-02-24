@@ -19,11 +19,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef BFRAW_H
-#include "BFRaw.h"
-#endif
-
 #include <signal.h>
+
+#include <data_hl/BFRaw.h>
 
 /*
 dataStruct * channelize( dataStruct * data,

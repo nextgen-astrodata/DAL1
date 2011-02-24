@@ -28,8 +28,8 @@
 #include <iostream>
 #include <string>
 
-#include <CoordinatesGroup.h>
-#include <HDF5CommonInterface.h>
+#include <coordinates/CoordinatesGroup.h>
+#include <data_common/HDF5CommonInterface.h>
 
 namespace DAL { // Namespace DAL -- begin
   

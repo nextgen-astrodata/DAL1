@@ -27,8 +27,7 @@
 #include <string>
 #include <vector>
 
-#include <dal_config.h>
-#include <dalCommon.h>
+#include <core/dalCommon.h>
 
 #ifdef DAL_WITH_CASA
 #include <coordinates/Coordinates/ObsInfo.h>

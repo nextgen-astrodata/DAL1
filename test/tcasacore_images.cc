@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: tHDF5Common.cpp 2022 2008-09-26 12:06:09Z baehren               $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2008                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -35,9 +32,6 @@
 #include <images/Images/HDF5Image.h>
 #include <images/Images/PagedImage.h>
 #include <images/Images/ImageFITSConverter.h>
-
-/* DAL header files */
-// #include <dalCommon.h>
 
 using std::cout;
 using std::cerr;

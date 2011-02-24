@@ -26,7 +26,7 @@
 #include <map>
 #include <string>
 
-#include <dalCommon.h>
+#include <core/dalCommon.h>
 
 namespace DAL { // Namespace DAL -- begin
   

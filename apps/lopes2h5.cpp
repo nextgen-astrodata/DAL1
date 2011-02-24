@@ -40,11 +40,10 @@
 
 #include <fstream>
 
-#include <dal_config.h>
-#include <dalDataset.h>
-#include <dalGroup.h>
-#include <TBB.h>
-#include <LOPES_EventFile.h>
+#include <core/dalDataset.h>
+#include <core/dalGroup.h>
+#include <data_hl/TBB.h>
+#include <data_hl/LOPES_EventFile.h>
 
 using namespace DAL;
 

@@ -21,7 +21,7 @@
 #ifndef HDF5DATATYPE_H
 #define HDF5DATATYPE_H
 
-#include "HDF5Object.h"
+#include <core/HDF5Object.h>
 
 namespace DAL { // Namespace DAL -- begin
   

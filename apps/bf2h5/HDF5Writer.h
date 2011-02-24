@@ -37,7 +37,7 @@
 
 // DAL header files
 #include <core/dalCommon.h>
-#include <dalDataset.h>
+#include <core/dalDataset.h>
 
 // map key = blockNr, second.first = subband, second.second = pointer to data floats to write
 typedef std::map<long int, std::deque<std::pair<uint8_t, float *> > > writeMap;

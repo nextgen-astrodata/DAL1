@@ -22,8 +22,8 @@
 #define STOKESCOORDINATE_H
 
 // DAL header files
-#include <Stokes.h>
-#include <CoordinateInterface.h>
+#include <coordinates/Stokes.h>
+#include <coordinates/CoordinateInterface.h>
 
 #ifdef DAL_WITH_CASA
 #include <coordinates/Coordinates/StokesCoordinate.h>

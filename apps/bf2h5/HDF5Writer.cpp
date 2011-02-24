@@ -21,9 +21,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "HDF5Writer.h"
-#include <BFRawFormat.h>
 #include "bf2h5.h"
+#include "HDF5Writer.h"
+#include <data_hl/BFRawFormat.h>
 
 using namespace DAL;
 using std::vector;

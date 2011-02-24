@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "HDF5CompoundDatatype.h"
+#include <core/HDF5CompoundDatatype.h>
 
 namespace DAL { // Namespace DAL -- begin
   

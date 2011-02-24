@@ -26,9 +26,9 @@
 #include <fcntl.h>
 #include <sstream>
 
-#include <boost/thread.hpp>
+#include <data_hl/TBBraw.h>
 
-#include "TBBraw.h"
+#include <boost/thread.hpp>
 
 /*!
   \file TBBraw2h5.cpp

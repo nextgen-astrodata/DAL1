@@ -26,10 +26,10 @@
 #include <string>
 
 // DAL header files
-#include <HDF5Object.h>
-#include <DirectionCoordinate.h>
-#include <LinearCoordinate.h>
-#include <TabularCoordinate.h>
+#include <core/HDF5Object.h>
+#include <coordinates/DirectionCoordinate.h>
+#include <coordinates/LinearCoordinate.h>
+#include <coordinates/TabularCoordinate.h>
 
 namespace DAL { // Namespace DAL -- begin
   

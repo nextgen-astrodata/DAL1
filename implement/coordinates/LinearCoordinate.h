@@ -22,7 +22,7 @@
 #define LINEARCOORDINATE_H
 
 // DAL header files
-#include <CoordinateInterface.h>
+#include <coordinates/CoordinateInterface.h>
 
 // casacore header files
 #ifdef DAL_WITH_CASA

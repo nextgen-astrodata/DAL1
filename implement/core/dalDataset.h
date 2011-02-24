@@ -21,8 +21,8 @@
 #ifndef DALDATASET_H
 #define DALDATASET_H
 
-#include "dalGroup.h"
-#include "HDF5Object.h"
+#include <core/dalGroup.h>
+#include <core/HDF5Object.h>
 
 namespace DAL {
   

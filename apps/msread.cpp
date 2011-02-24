@@ -33,9 +33,8 @@
   \date 12-04-06
 */
 
-#include <dal_config.h>
-#include <dalDataset.h>
-#include <dalGroup.h>
+#include <core/dalDataset.h>
+#include <core/dalGroup.h>
 
 using namespace DAL;
 

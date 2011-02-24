@@ -31,9 +31,7 @@
   \date 12-04-07
 */
 
-#ifndef BEAMFORMED_H
-#include <BeamFormed.h>
-#endif
+#include <data_hl/BeamFormed.h>
 
 using std::cout;
 using std::endl;

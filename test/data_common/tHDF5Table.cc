@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <HDF5Table.h>
+#include <data_common/HDF5Table.h>
 
 // Namespace usage
 using DAL::HDF5Table;

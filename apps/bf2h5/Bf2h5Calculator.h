@@ -29,7 +29,7 @@
 #include <deque>
 #include <string>
 
-#include <BFRawFormat.h>
+#include <data_hl/BFRawFormat.h>
 
 class BF2H5;
 //                 block                               subband       pointer to data

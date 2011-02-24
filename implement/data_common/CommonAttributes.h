@@ -29,11 +29,11 @@
 #include <vector>
 
 // DAL header files
-#include <Filename.h>
-#include <HDF5CommonInterface.h>
-#include <AttributesInterface.h>
-#include <CommonAttributesProject.h>
-#include <CommonAttributesObservation.h>
+#include <data_common/Filename.h>
+#include <data_common/HDF5CommonInterface.h>
+#include <data_common/AttributesInterface.h>
+#include <data_common/CommonAttributesProject.h>
+#include <data_common/CommonAttributesObservation.h>
 
 namespace DAL { // Namespace DAL -- begin
   

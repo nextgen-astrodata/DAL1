@@ -31,9 +31,7 @@
   \date 2008/09/21
 */
 
-#ifndef DALDATASET_H
-#include <dalDataset.h>
-#endif
+#include <core/dalDataset.h>
 
 //_______________________________________________________________________________
 //                                                              test_constructors

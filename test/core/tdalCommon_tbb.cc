@@ -18,9 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <dalCommon.h>
-#include <Enumerations.h>
-#include <dalDataset.h>
+#include <core/dalCommon.h>
+#include <core/Enumerations.h>
+#include <core/dalDataset.h>
 
 #ifdef DAL_WITH_CASA
 #include <casa/Arrays/Vector.h>

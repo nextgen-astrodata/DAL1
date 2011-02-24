@@ -22,9 +22,9 @@
 #define COORDINATEINTERFACE_H
 
 /* DAL header files */
-#include <dalCommon.h>
-#include <HDF5Attribute.h>
-#include "Coordinate.h"
+#include <core/dalCommon.h>
+#include <core/HDF5Attribute.h>
+#include <coordinates/Coordinate.h>
 
 /* casacore header files */
 #ifdef DAL_WITH_CASA

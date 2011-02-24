@@ -21,8 +21,8 @@
 #ifndef DALARRAY_H
 #define DALARRAY_H
 
-#include "dalBaseTypes.h"
-#include "HDF5Attribute.h"
+#include <core/dalBaseTypes.h>
+#include <core/HDF5Attribute.h>
 
 namespace DAL {
   

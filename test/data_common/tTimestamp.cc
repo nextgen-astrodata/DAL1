@@ -27,7 +27,7 @@
 #include <casa/OS/Time.h>
 #endif
 
-#include <Timestamp.h>
+#include <data_common/Timestamp.h>
 
 using std::endl;
 using DAL::Timestamp;

@@ -138,8 +138,7 @@
   </ul>
 */
 
-#include <dal_config.h>
-#include <TBB.h>
+#include <data_hl/TBB.h>
 
 #include <boost/program_options.hpp>
 #include <boost/program_options/cmdline.hpp>

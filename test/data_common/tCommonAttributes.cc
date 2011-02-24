@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <CommonAttributes.h>
+#include <data_common/CommonAttributes.h>
 
 // Namespace usage
 using std::cout;

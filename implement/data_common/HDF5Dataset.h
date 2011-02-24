@@ -25,9 +25,9 @@
 #include <string>
 #include <vector>
 
-#include <dalCommon.h>
-#include <HDF5Hyperslab.h>
-#include <HDF5Attribute.h>
+#include <core/dalCommon.h>
+#include <core/HDF5Attribute.h>
+#include <data_common/HDF5Hyperslab.h>
 
 #define H5S_CHUNKSIZE_MAX  ((uint32_t)(-1))  /* (4GB - 1) */
 

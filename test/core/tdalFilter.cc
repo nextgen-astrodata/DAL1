@@ -31,7 +31,7 @@
   \date 2010/03/11
 */
 
-#include <dalFilter.h>
+#include <core/dalFilter.h>
 
 //_______________________________________________________________________________
 //                                                              test_constructors

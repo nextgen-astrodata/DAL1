@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <TBB_Timeseries.h>
+#include <data_hl/TBB_Timeseries.h>
 
 using std::cout;
 using std::endl;

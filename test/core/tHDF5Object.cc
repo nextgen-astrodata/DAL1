@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <dalCommon.h>
-#include <HDF5Object.h>
+#include <core/dalCommon.h>
+#include <core/HDF5Object.h>
 
 // Namespace usage
 using DAL::HDF5Object;

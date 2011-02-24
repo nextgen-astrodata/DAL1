@@ -18,10 +18,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <dal_config.h>
-
 #include <fstream>
-#include <LOPES_EventFile.h>
+
+#include <dal_config.h>
+#include <data_hl/LOPES_EventFile.h>
 
 /*!
   \file tLOPES_EventFile.cc

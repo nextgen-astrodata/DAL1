@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2008                                                    *
  *   Joseph Masters <jmasters@science.uva.nl>                              *
  *   Lars B"ahren (bahren@astron.nl)                                       *
@@ -25,13 +22,8 @@
 #ifndef BEAMSUBBAND_H
 #define BEAMSUBBAND_H
 
-#ifndef DALDATASET_H
-#include <dalDataset.h>
-#endif
-
-#ifndef DALTABLE_H
-#include <dalTable.h>
-#endif
+#include <core/dalDataset.h>
+#include <core/dalTable.h>
 
 namespace DAL
   {

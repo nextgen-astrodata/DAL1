@@ -22,7 +22,7 @@
 #define ATTRIBUTESOBSERVATION_H
 
 // Standard library header files
-#include <AttributesInterface.h>
+#include <data_common/AttributesInterface.h>
 
 namespace DAL { // Namespace DAL -- begin
   

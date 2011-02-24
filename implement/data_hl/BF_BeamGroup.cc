@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <BF_BeamGroup.h>
+#include <data_hl/BF_BeamGroup.h>
 
 namespace DAL { // Namespace DAL -- begin
   

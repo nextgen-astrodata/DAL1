@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <dalCommon.h>
-#include <Coordinate.h>
+#include <core/dalCommon.h>
+#include <coordinates/Coordinate.h>
 
 // Namespace usage
 using std::cout;

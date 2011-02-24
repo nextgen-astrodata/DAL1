@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2007 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -23,8 +20,8 @@
 #ifndef DALFILTER_H
 #define DALFILTER_H
 
-#include "dalBaseTypes.h"
-#include "dalFileType.h"
+#include <core/dalBaseTypes.h>
+#include <core/dalFileType.h>
 
 namespace DAL {
   

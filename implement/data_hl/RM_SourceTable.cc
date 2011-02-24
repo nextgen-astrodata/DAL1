@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <RM_SourceTable.h>
+#include <data_hl/RM_SourceTable.h>
 
 namespace DAL { // Namespace DAL -- begin
   

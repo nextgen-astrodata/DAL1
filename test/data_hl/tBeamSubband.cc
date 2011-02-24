@@ -31,8 +31,8 @@
   \date 2008/09/28
 */
 
-#include <dalDataset.h>
-#include <BeamSubband.h>
+#include <core/dalDataset.h>
+#include <data_hl/BeamSubband.h>
 
 using DAL::dalDataset;
 using DAL::dalGroup;

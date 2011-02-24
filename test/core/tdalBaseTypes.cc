@@ -31,7 +31,7 @@
   \date 2010/04/07
 */
 
-#include <dalBaseTypes.h>
+#include <core/dalBaseTypes.h>
 
 using std::cout;
 using std::endl;

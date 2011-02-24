@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <RaDec.h>
+#include <coordinates/RaDec.h>
 
 // Namespace usage
 using std::cout;

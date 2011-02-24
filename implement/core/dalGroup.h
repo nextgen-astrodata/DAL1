@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2007 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -26,10 +23,10 @@
 
 #include <vector>
 
-#include "dalTable.h"
-#include "dalArray.h"
-#include "dalShortArray.h"
-#include "dalComplexArray_int16.h"
+#include <core/dalTable.h>
+#include <core/dalArray.h>
+#include <core/dalShortArray.h>
+#include <core/dalComplexArray_int16.h>
 
 namespace DAL {
   

@@ -21,7 +21,7 @@
 #ifndef DALCOLUMN_H
 #define DALCOLUMN_H
 
-#include "dalData.h"
+#include <core/dalData.h>
 
 #ifdef DAL_WITH_CASA
 #include <tables/Tables/ScalarColumn.h>

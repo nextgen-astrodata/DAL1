@@ -26,11 +26,11 @@
 #include <casa/BasicSL/String.h>
 #endif
 
-#include <CommonAttributes.h>
-#include <HDF5CommonInterface.h>
-#include <SysLog.h>
-#include <TBB_StationGroup.h>
-#include <TBB_StationTrigger.h>
+#include <data_common/CommonAttributes.h>
+#include <data_common/HDF5CommonInterface.h>
+#include <data_hl/SysLog.h>
+#include <data_hl/TBB_StationGroup.h>
+#include <data_hl/TBB_StationTrigger.h>
 
 namespace DAL {  // Namespace DAL -- begin
 

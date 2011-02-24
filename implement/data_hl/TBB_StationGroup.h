@@ -32,9 +32,9 @@
 #include <measures/Measures/MDirection.h>
 #endif
 
-#include <HDF5CommonInterface.h>
-#include <TBB_DipoleDataset.h>
-#include <TBB_StationTrigger.h>
+#include <data_common/HDF5CommonInterface.h>
+#include <data_hl/TBB_DipoleDataset.h>
+#include <data_hl/TBB_StationTrigger.h>
 
 namespace DAL {   // Namespace DAL -- begin
 

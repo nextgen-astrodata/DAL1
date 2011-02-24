@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <CommonAttributes.h>
-#include <BF_ProcessingHistory.h>
+#include <data_common/CommonAttributes.h>
+#include <data_hl/BF_ProcessingHistory.h>
 
 // Namespace usage
 using DAL::CommonAttributes;

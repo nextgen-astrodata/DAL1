@@ -24,12 +24,6 @@
 #ifndef BFRAW_H
 #define BFRAW_H
 
-#define DEBUGGING_MESSAGES
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 // socket headers
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,9 +34,9 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-#include <dalDataset.h>
-#include <BFRawFormat.h>
-#include <Angle.h>
+#include <core/dalDataset.h>
+#include <coordinates/Angle.h>
+#include <data_hl/BFRawFormat.h>
 
 #define _OPENMP
 

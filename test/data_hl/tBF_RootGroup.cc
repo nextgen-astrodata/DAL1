@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <CommonAttributes.h>
-#include <BF_RootGroup.h>
+#include <data_common/CommonAttributes.h>
+#include <data_hl/BF_RootGroup.h>
 
 // Namespace usage
 using std::cerr;

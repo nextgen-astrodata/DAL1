@@ -18,9 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DALCOLUMN_H
-#include "dalColumn.h"
-#endif
+#include <core/dalColumn.h>
 
 namespace DAL {
 

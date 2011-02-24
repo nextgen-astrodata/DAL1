@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2007 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -48,6 +45,8 @@
 #include <time.h>   // for local time conversion
 
 #include <dal_config.h>
+#include <core/convert.h>
+#include <core/dalCommon.h>
 
 /*
    if creating python bindings
@@ -60,40 +59,5 @@ namespace bpl = boost::python;
 // CHUNK_SIZE arbitrarily chosen, more research needed on this feature
 const int32_t CHUNK_SIZE        = 5000;
 const int32_t MAX_COL_NAME_SIZE = 256;
-
-namespace DAL {
-
-  // === Constant global variables ==============================================
-  
-  const std::string H5TYPE     = "HDF5";
-  const std::string FITSTYPE   = "FITS";
-  const std::string MSCASATYPE = "MSCASA";
-  
-  const std::string dal_CHAR          = "dalCHAR";
-  const std::string dal_STRING        = "dalSTRING";
-  const std::string dal_BOOL          = "dalBOOL";
-  
-  const std::string dal_SHORT         = "dalSHORT";
-  const std::string dal_INT           = "dalINT";
-  const std::string dal_UINT          = "dalINT";
-  const std::string dal_LONG          = "dalLONG";
-  
-  const std::string dal_FLOAT         = "dalFLOAT";
-  const std::string dal_DOUBLE        = "dalDOUBLE";
-  
-  const std::string dal_COMPLEX       = "dalCOMPLEX";
-  const std::string dal_DCOMPLEX      = "dalDCOMPLEX";
-  const std::string dal_COMPLEX_CHAR  = "dalCOMPLEX_CHAR";
-  const std::string dal_COMPLEX_SHORT = "dalCOMPLEX_SHORT";
-
-} // DAL namespace
-
-#ifndef CONVERT_H
-#include <convert.h>  // for stringify function
-#endif
-
-#ifndef DALCOMMON_H
-#include <dalCommon.h>
-#endif
 
 #endif // DALBASETYPES_H

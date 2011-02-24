@@ -21,7 +21,7 @@
 #ifndef DALDATA_H
 #define DALDATA_H
 
-#include "dalBaseTypes.h"
+#include <core/dalBaseTypes.h>
 
 namespace DAL {
   

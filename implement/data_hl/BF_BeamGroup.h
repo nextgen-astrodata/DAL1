@@ -27,11 +27,11 @@
 #include <map>
 
 // DAL header files
-#include <HDF5Attribute.h>
-#include <HDF5CommonInterface.h>
-#include <CoordinatesGroup.h>
-#include <BF_ProcessingHistory.h>
-#include <BF_StokesDataset.h>
+#include <core/HDF5Attribute.h>
+#include <coordinates/CoordinatesGroup.h>
+#include <data_common/HDF5CommonInterface.h>
+#include <data_hl/BF_ProcessingHistory.h>
+#include <data_hl/BF_StokesDataset.h>
 
 namespace DAL { // Namespace DAL -- begin
   

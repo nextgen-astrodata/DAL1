@@ -31,7 +31,7 @@
   \date 2010/02/16
 */
 
-#include <dalArray.h>
+#include <core/dalArray.h>
 
 //_______________________________________________________________________________
 //                                                              test_constructors

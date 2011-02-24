@@ -29,8 +29,8 @@
 #include <netdb.h>
 #include <sys/socket.h>
 
-#include <BFRawFormat.h>
-#include <Angle.h>
+#include <coordinates/Angle.h>
+#include <data_hl/BFRawFormat.h>
 
 // Forward declarations
 class fstream;

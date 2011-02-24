@@ -22,7 +22,7 @@
 #define TABULARCOORDINATE_H
 
 // DAL header files
-#include "CoordinateInterface.h"
+#include <coordinates/CoordinateInterface.h>
 
 #ifdef DAL_WITH_CASA
 #include <coordinates/Coordinates/TabularCoordinate.h>

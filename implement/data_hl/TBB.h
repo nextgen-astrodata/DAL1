@@ -24,10 +24,6 @@
 #ifndef TBB_H
 #define TBB_H
 
-#ifndef DALDATASET_H
-#include <dalDataset.h>
-#endif
-
 // socket headers
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,6 +34,8 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <fstream>
+
+#include <core/dalDataset.h>
 
 #define ETHEREAL_HEADER_LENGTH = 46;
 #define FIRST_EXTRA_HDR_LENGTH = 40;

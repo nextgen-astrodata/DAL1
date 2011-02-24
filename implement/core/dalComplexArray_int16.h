@@ -21,7 +21,7 @@
 #ifndef DALCOMPLEXARRAY_INT16_H
 #define DALCOMPLEXARRAY_INT16_H
 
-#include "dalArray.h"
+#include <core/dalArray.h>
 
 namespace DAL {
   

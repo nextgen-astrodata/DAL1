@@ -36,9 +36,9 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-#include <dalBaseTypes.h>
-#include <dalConversions.h>
-#include <Enumerations.h>
+#include <core/dalBaseTypes.h>
+#include <core/dalConversions.h>
+#include <core/Enumerations.h>
 
 #ifdef DAL_WITH_CASA
 #include <casa/Arrays/IPosition.h>

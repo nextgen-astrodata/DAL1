@@ -32,7 +32,7 @@
 */
 
 #include <iostream>
-#include <Database.h>
+#include <core/Database.h>
 
 //_______________________________________________________________________________
 //                                                              test_constructors

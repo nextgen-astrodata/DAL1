@@ -18,9 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DALGROUP_H
-#include "dalGroup.h"
-#endif
+#include <core/dalGroup.h>
 
 namespace DAL {
   

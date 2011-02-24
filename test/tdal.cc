@@ -28,7 +28,7 @@
 #include <cassert>
 #include <string>
 
-#include <dalDataset.h>
+#include <core/dalDataset.h>
 
 using std::cout;
 using std::endl;

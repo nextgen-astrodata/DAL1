@@ -21,9 +21,9 @@
 #ifndef DALTABLE_H
 #define DALTABLE_H
 
-#include "HDF5Attribute.h"
-#include "dalFilter.h"
-#include "dalColumn.h"
+#include <core/HDF5Attribute.h>
+#include <core/dalFilter.h>
+#include <core/dalColumn.h>
 
 #ifdef DAL_WITH_CASA
 #include <ms/MeasurementSets/MSReader.h>

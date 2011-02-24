@@ -21,11 +21,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "StationBeamReader.h"
 #include <iostream> // for cout,cerr etc.
 #include <fstream> // for file mode
 #include <signal.h> // for time-out on socket
+
 #include "bf2h5.h"
+#include "StationBeamReader.h"
 
 using std::cerr;
 using std::cout;

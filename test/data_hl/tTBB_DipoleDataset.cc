@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <dalCommon.h>
-#include <TBB_DipoleDataset.h>
+#include <core/dalCommon.h>
+#include <data_hl/TBB_DipoleDataset.h>
 
 // Namespace usage
 using DAL::TBB_DipoleDataset;

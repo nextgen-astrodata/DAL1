@@ -29,7 +29,7 @@
 #include <string>
 
 // DAL header files
-#include <HDF5CommonInterface.h>
+#include <data_common/HDF5CommonInterface.h>
 
 namespace DAL { // Namespace DAL -- begin
   

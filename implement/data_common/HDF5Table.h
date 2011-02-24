@@ -25,9 +25,9 @@
 #include <iostream>
 #include <string>
 
-#include <dalCommon.h>
-#include <HDF5CommonInterface.h>
-#include <HDF5Dataset.h>
+#include <core/dalCommon.h>
+#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5Dataset.h>
 
 namespace DAL { // Namespace DAL -- begin
   

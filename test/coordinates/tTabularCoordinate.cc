@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <TabularCoordinate.h>
+#include <coordinates/TabularCoordinate.h>
 
 using std::cerr;
 using std::cout;

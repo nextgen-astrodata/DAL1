@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <Enumerations.h>
-#include <TBB_StationGroup.h>
+#include <core/Enumerations.h>
+#include <data_hl/TBB_StationGroup.h>
 
 using std::cout;
 using std::endl;

@@ -30,8 +30,8 @@
   \date 2008/09/22
 */
 
-#include <dalCommon.h>
-#include <dalDataset.h>
+#include <core/dalCommon.h>
+#include <core/dalDataset.h>
 
 //_______________________________________________________________________________
 //                                                                      test_H5TB

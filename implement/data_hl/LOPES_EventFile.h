@@ -25,8 +25,8 @@
 #include <iostream>
 
 // Custom header files
-#include <dalCommon.h>
-#include <lopesevent.h>
+#include <core/dalCommon.h>
+#include <data_hl/lopesevent.h>
 
 using std::cerr;
 using std::cout;

@@ -79,10 +79,6 @@
 
 const static char *version = "2.0";
 
-#ifndef BFRAW_H
-#include "BFRaw.h"
-#endif
-
 // reading a complete binary file
 #include <iostream> // for cout
 #include <iomanip>  // for cout field width
@@ -90,6 +86,8 @@ const static char *version = "2.0";
 #include <complex>  // for complex datatypes
 #include <assert.h>
 #include <fstream>
+
+#include <data_hl/BFRaw.h>
 
 #ifdef DAL_WITH_GSL
 #include <gsl/gsl_fft_complex.h> // for fft's during channelization

@@ -40,9 +40,9 @@
 #endif
 
 // DAL header files
-#include <dalCommon.h>
-#include <dalDataset.h>
-#include <CommonAttributes.h>
+#include <core/dalCommon.h>
+#include <core/dalDataset.h>
+#include <data_common/CommonAttributes.h>
 
 namespace DAL {  // Namespace DAL -- begin
   

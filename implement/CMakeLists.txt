@@ -1,6 +1,3 @@
-##------------------------------------------------------------------------------
-## $Id::                                                                       $
-##------------------------------------------------------------------------------
 
 ## ==============================================================================
 ##
@@ -42,33 +39,42 @@ endif (CASA_FOUND OR CASACORE_FOUND)
 ## ==============================================================================
 
 ##__________________________________________________________
-## Define the list of modules
-
-set (dal_modules
-  core
-  coordinates
-  data_common
-  data_hl
-  )
-
-##__________________________________________________________
-## Lists of source and header files
-
-file (GLOB dal_headers *.h)
-
-##__________________________________________________________
 ## Process the contents of the modules directories
+##
+##  .
+##  ├── bindings
+##  ├── coordinates
+##  ├── core
+##  ├── data_common
+##  └── data_hl
+##
 
-foreach (dal_module ${dal_modules})
+foreach (dal_module
+    core
+    coordinates
+    data_common
+    data_hl
+    )
+  
   ## Add include paths
   include_directories (${DAL_SOURCE_DIR}/implement/${dal_module})
+  
   ## list of source files for this module
   FILE (GLOB dal_${dal_module}_sources ${dal_module}/*.cc ${dal_module}/*.tcc)
-  ## list of header files for this module
-  FILE (GLOB dal_${dal_module}_headers ${dal_module}/*.h)
+  
+  
   ## expand the list of source files
   list (APPEND dal_sources ${dal_${dal_module}_sources})
   list (APPEND dal_headers ${dal_${dal_module}_headers})
+
+  ## Installation of module header files
+
+  FILE (GLOB dal_${dal_module}_headers ${dal_module}/*.h)
+  
+  install (FILES ${dal_${dal_module}_headers}
+    DESTINATION ${DAL_INSTALL_INCLUDEDIR}/${dal_module}
+    )
+  
 endforeach (dal_module)
 
 ##____________________________________________________________________

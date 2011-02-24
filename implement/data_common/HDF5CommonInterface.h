@@ -31,9 +31,9 @@
 #endif
 
 // DAL header files
-#include <dalCommon.h>
-#include <HDF5Attribute.h>
-#include <CommonAttributes.h>
+#include <core/dalCommon.h>
+#include <core/HDF5Attribute.h>
+#include <data_common/CommonAttributes.h>
 
 namespace DAL { // Namespace DAL -- begin
   

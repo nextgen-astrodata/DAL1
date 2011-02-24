@@ -23,9 +23,7 @@
 #define NO_IMPORT_ARRAY
 #endif
 
-#ifndef DALDATA_H
-#include "dalData.h"
-#endif
+#include <core/dalData.h>
 
 namespace DAL {
 

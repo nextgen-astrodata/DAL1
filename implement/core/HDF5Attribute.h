@@ -21,7 +21,7 @@
 #ifndef HDF5ATTRIBUTE_H
 #define HDF5ATTRIBUTE_H
 
-#include "HDF5Object.h"
+#include <core/HDF5Object.h>
 
 #ifdef DAL_WITH_CASA
 #include <casa/Arrays/Vector.h>

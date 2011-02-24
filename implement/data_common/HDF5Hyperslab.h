@@ -27,8 +27,7 @@
 #include <vector>
 
 // DAL header files
-#include <dal_config.h>
-#include <dalCommon.h>
+#include <core/dalCommon.h>
 
 namespace DAL { // Namespace DAL -- begin
   

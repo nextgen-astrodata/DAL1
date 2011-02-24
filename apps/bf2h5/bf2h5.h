@@ -37,7 +37,7 @@
 #include "HDF5Writer.h"
 #include "Bf2h5Calculator.h"
 #include "StationBeamReader.h"
-#include <BFRawFormat.h>
+#include <data_hl/BFRawFormat.h>
 
 #define DEBUGGING_MESSAGES
 

@@ -38,7 +38,7 @@
   \endverbatim
 */
 
-#include <dalDataset.h>
+#include <core/dalDataset.h>
 
 using namespace casa;
 using namespace DAL;

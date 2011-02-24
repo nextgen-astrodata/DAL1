@@ -24,7 +24,7 @@
 #include <casa/HDF5/HDF5File.h>
 #include <casa/HDF5/HDF5Record.h>
 
-#include <TBB_Timeseries.h>
+#include <data_hl/TBB_Timeseries.h>
 
 using std::cerr;
 using std::cout;

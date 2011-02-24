@@ -22,9 +22,9 @@
  ***************************************************************************/
 
 /*!
-    \file convert.h
-    \ingroup DAL
-    \ingroup core
+  \file convert.h
+  \ingroup DAL
+  \ingroup core
 */
 
 #ifndef CONVERT_H
@@ -37,9 +37,9 @@
 #include <stdexcept>
 
 class BadConversion : public std::runtime_error
-  {
-  public:
-    BadConversion(const std::string& s)
+{
+ public:
+ BadConversion(const std::string& s)
         : std::runtime_error(s)
     { }
   };

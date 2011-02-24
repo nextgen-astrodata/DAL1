@@ -22,7 +22,7 @@
 #define HDF5COMPOUNDDATATYPE_H
 
 // DAL header files
-#include "HDF5Datatype.h"
+#include <core/HDF5Datatype.h>
 
 namespace DAL { // Namespace DAL -- begin
   

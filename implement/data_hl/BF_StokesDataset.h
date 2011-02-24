@@ -26,9 +26,9 @@
 #include <sstream>
 #include <string>
 
-#include <HDF5Attribute.h>
-#include <HDF5Dataset.h>
-#include <Stokes.h>
+#include <core/HDF5Attribute.h>
+#include <coordinates/Stokes.h>
+#include <data_common/HDF5Dataset.h>
 
 namespace DAL { // Namespace DAL -- begin
   

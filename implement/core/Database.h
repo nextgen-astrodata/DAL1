@@ -23,7 +23,7 @@
 
 #include <string>
 
-#include <dalBaseTypes.h>
+#include <core/dalBaseTypes.h>
 
 namespace DAL {
   

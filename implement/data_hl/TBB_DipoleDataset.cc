@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <TBB_DipoleDataset.h>
+#include <data_hl/TBB_DipoleDataset.h>
 
 using std::cerr;
 using std::cout;

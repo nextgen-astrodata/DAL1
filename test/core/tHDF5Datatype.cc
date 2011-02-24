@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <HDF5Datatype.h>
+#include <core/HDF5Datatype.h>
 
 // Namespace usage
 using std::cout;

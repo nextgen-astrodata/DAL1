@@ -21,8 +21,8 @@
 #ifndef BEAMFORMED_H
 #define BEAMFORMED_H
 
-#include <CommonAttributes.h>
-#include <BeamGroup.h>
+#include <data_common/CommonAttributes.h>
+#include <data_hl/BeamGroup.h>
 
 namespace DAL {
   
