@@ -1,8 +1,6 @@
 /*!
   \page dal_hdf5_examples HDF5 Library examples
 
-  \defgroup HDF5 HDF5 Library examples
-
   \section dal_hdf5_attributes Attribute Examples: 
 
   <ol>
