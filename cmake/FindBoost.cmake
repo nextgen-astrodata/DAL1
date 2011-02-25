@@ -91,7 +91,7 @@ if (NOT BOOST_FOUND)
     endif (BOOST_${_boost_var}_INCLUDES)
     
     ## Search for the library
-    find_library (BOOST_${_boost_var}_LIBRARY boost_${_module}
+    find_library (BOOST_${_boost_var}_LIBRARY boost_${_module}-mt boost_${_module}
       HINTS ${BOOST_ROOT_DIR}
       PATHS /sw /usr /usr/local /opt/local
       PATH_SUFFIXES lib
