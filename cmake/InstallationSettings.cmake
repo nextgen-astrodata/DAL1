@@ -12,38 +12,42 @@
 #
 ## ==============================================================================
 
-## Set installation prefix
+if (LUS_INSTALL_PREFIX)
 
-if (DAL_INSTALL_PREFIX)
-  set (CMAKE_INSTALL_PREFIX ${DAL_INSTALL_PREFIX} CACHE PATH
+  set (CMAKE_INSTALL_PREFIX ${LUS_INSTALL_PREFIX} CACHE PATH
     "CMake installation area."
     FORCE
     )
-else (DAL_INSTALL_PREFIX)
-  set (DAL_INSTALL_PREFIX "/opt/dal")
-  set (CMAKE_INSTALL_PREFIX ${DAL_INSTALL_PREFIX} CACHE PATH
-    "CMake installation area."
-    FORCE
-    )
-endif (DAL_INSTALL_PREFIX)
-
-if (DAL_LOFARSOFT_INSTALL)
 
   ## Installation conforming to setup for LOFAR User Software (LUS)
+  set (DAL_INSTALL_PREFIX       "${LUS_INSTALL_PREFIX}"                )
   set (DAL_INSTALL_BINDIR       "${CMAKE_INSTALL_PREFIX}/bin"          )
   set (DAL_INSTALL_INCLUDEDIR   "${CMAKE_INSTALL_PREFIX}/include/dal"  )
   set (DAL_INSTALL_LIBDIR       "${CMAKE_INSTALL_PREFIX}/lib"          )
   set (DAL_INSTALL_DATAROOTDIR  "${CMAKE_INSTALL_PREFIX}/share"        )
   set (DAL_INSTALL_DOCDIR       "${DAL_INSTALL_DATAROOTDIR}/doc"       )
 
-else (DAL_LOFARSOFT_INSTALL)
+else (LUS_INSTALL_PREFIX)
 
   ## Configuration for stand-alone installation
-
+  
+  if (DAL_INSTALL_PREFIX)
+    set (CMAKE_INSTALL_PREFIX ${DAL_INSTALL_PREFIX} CACHE PATH
+      "CMake installation area."
+      FORCE
+      )
+  else (DAL_INSTALL_PREFIX)
+    set (DAL_INSTALL_PREFIX "/opt/dal")
+    set (CMAKE_INSTALL_PREFIX ${DAL_INSTALL_PREFIX} CACHE PATH
+      "CMake installation area."
+      FORCE
+      )
+  endif (DAL_INSTALL_PREFIX)
+  
   if (NOT DAL_INSTALL_BINDIR)
     set (DAL_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}/bin" )
   endif (NOT DAL_INSTALL_BINDIR)
-
+  
   if (NOT DAL_INSTALL_INCLUDEDIR)
     set (DAL_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/include" )
   endif (NOT DAL_INSTALL_INCLUDEDIR)
@@ -54,13 +58,13 @@ else (DAL_LOFARSOFT_INSTALL)
   
   if (NOT DAL_INSTALL_DATAROOTDIR)
     set (DAL_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_PREFIX}/share" )
-  endif (DAL_INSTALL_DATAROOTDIR)
+  endif (NOT DAL_INSTALL_DATAROOTDIR)
   
   if (NOT DAL_INSTALL_DOCDIR)
     set (DAL_INSTALL_DOCDIR "${DAL_INSTALL_DATAROOTDIR}/doc" )
-  endif (DAL_INSTALL_DOCDIR)
+  endif (NOT DAL_INSTALL_DOCDIR)
   
-endif (DAL_LOFARSOFT_INSTALL)
+endif (LUS_INSTALL_PREFIX)
 
 ## ==============================================================================
 

@@ -24,7 +24,6 @@ option (DAL_PYTHON_BINDINGS    "Create python bindings?"                     YES
 option (DAL_DEBUGGING_MESSAGES "Print debugging information?"                NO  )
 option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"        NO  )
 option (DAL_WITH_MYSQL         "Build with support for MySQL database?"      NO  )
-option (DAL_LOFARSOFT_INSTALL  "Install as part of the LOFAR User Software?" NO  )
 
 ##__________________________________________________________
 ## Handle option: testing mode
@@ -305,7 +304,6 @@ message (STATUS " .. DAL_INSTALL_DOCDIR            = ${DAL_INSTALL_DOCDIR}"     
 message (STATUS " Build and enable test programs   = ${DAL_ENABLE_TESTING}"        )
 message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}"    )
 message (STATUS " Enable code using Boost++        = ${BOOST_FOUND}"               )
-message (STATUS " .. Installation root             = ${BOOST_ROOT_DIR}"            )
 message (STATUS " .. Library version               = ${BOOST_VERSION}"             )
 message (STATUS " .. Include directory             = ${BOOST_INCLUDES}"            )
 message (STATUS " Enable code using casacore       = ${CASACORE_FOUND}"            )
