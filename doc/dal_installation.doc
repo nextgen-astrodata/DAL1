@@ -231,42 +231,69 @@
 
   <ol>
 
-    <li>In order to maintain compatibility with the
-    <a href="http://www.pathname.com/fhs">Filesystem Hierarchy Standard</a> (FHS)
-    the following <b>default installation layout</b> has been defined:
+    <li><b>Default settings.</b> <br>
+     In order to maintain compatibility with the
+     <a href="http://www.pathname.com/fhs">Filesystem Hierarchy Standard</a>
+     (FHS) the following <b>default installation layout</b> -- that is if no
+     further command line parameter has been provided -- has been defined:
+     \verbatim
+     /opt
+      └── dal                       DAL_INSTALL_PREFIX       
+         ├── bin                   DAL_INSTALL_BINDIR       = DAL_INSTALL_PREFIX/bin
+         ├── include               DAL_INSTALL_INCLUDEDIR   = DAL_INSTALL_PREFIX/include
+         ├── lib                   DAL_INSTALL_LIBDIR       = DAL_INSTALL_PREFIX/lib
+         └── share                 DAL_INSTALL_DATAROOTDIR  = DAL_INSTALL_PREFIX/share
+             └── doc               DAL_INSTALL_DOCDIR       = DAL_INSTALL_DATAROOTDIR/doc
+                 └── html
+     \endverbatim
 
-    \verbatim
-    /opt
-    └── dal                       DAL_INSTALL_PREFIX       
-        ├── bin                   DAL_INSTALL_BINDIR       = DAL_INSTALL_PREFIX/bin
-        ├── include               DAL_INSTALL_INCLUDEDIR   = DAL_INSTALL_PREFIX/include
-        ├── lib                   DAL_INSTALL_LIBDIR       = DAL_INSTALL_PREFIX/lib
-        └── share                 DAL_INSTALL_DATAROOTDIR  = DAL_INSTALL_PREFIX/share
-            └── doc               DAL_INSTALL_DOCDIR       = DAL_INSTALL_DATAROOTDIR/doc
-                └── html
-    \endverbatim
+    <li><b>Custom installation prefix.</b> <br>
+     In order to root the above described directory structure at a different
+     location with in the file-system (e.g. "/usr/local"), use
+     \verbatim
+     -D DAL_INSTALL_PREFIX=<prefix>
+     \endverbatim
+     The resulting installation -- unless also specifying some of the individual
+     directories -- wil look as follows:
+     \verbatim
+     /usr/local                         DAL_INSTALL_PREFIX
+     ├── bin                            DAL_INSTALL_BINDIR
+     ├── include
+     │   └── dal                        DAL_INSTALL_INCLUDEDIR
+     │       ├── coordinates
+     │       ├── core
+     │       ├── data_common
+     │       └── data_hl
+     ├── lib                            DAL_INSTALL_LIBDIR
+     └── share
+         └── dal                        DAL_INSTALL_DATAROOTDIR
+	     └── doc                    DAL_INSTALL_DOCDIR
+	         └── html
+     \endverbatim
 
-    <li>However a user might decide to rather embed the installation of the DAL into
-    a pre-existing filesystem structure, such as \c sw or \c /usr/local. In that 
-    case:
-
-    \verbatim
-    .                         DAL_INSTALL_PREFIX
-    ├── bin                   DAL_INSTALL_BINDIR       [DAL_INSTALL_PREFIX/bin]
-    ├── include
-    │   └── dal               DAL_INSTALL_INCLUDEDIR   [DAL_INSTALL_PREFIX/include/dal]
-    ├── lib                   DAL_INSTALL_LIBDIR       [DAL_INSTALL_PREFIX/lib]
-    └── share
-        └── dal               DAL_INSTALL_DATAROOTDIR  [DAL_INSTALL_PREFIX/share/dal]
-            ├── doc
-            ├── xml
-            └── macros
-    \endverbatim
-    This variant is more in line with the installation configuration of most
-    packages inspected; this no only holds for small packages containing a few
-    header files and libraries, but also large packages such as e.g. the 
-    <a href="http://www.boost.org">Boost C++ libraries</a> and
-    <a href="http://root.cern.ch">Root</a>.
+    <li><b>Installation as part of the LUS.</b> <br>
+     In order to simplify installation of the DAL as part of the LOFAR User
+     Software distribution, a preset has been defined which can be used through
+     \code
+     -D LUS_INSTALL_PREFIX=<prefix>
+     \endcode
+     where <prefix>=$LOFARSOFT/release. The resulting installation will look as
+     follows:
+     \verbatim
+     $LOFARSOFT/release                 DAL_INSTALL_PREFIX
+     ├── bin                            DAL_INSTALL_BINDIR
+     ├── include
+     │   └── dal                        DAL_INSTALL_INCLUDEDIR
+     │       ├── coordinates
+     │       ├── core
+     │       ├── data_common
+     │       └── data_hl
+     ├── lib                            DAL_INSTALL_LIBDIR
+     └── share
+         └── dal                        DAL_INSTALL_DATAROOTDIR
+	     └── doc                    DAL_INSTALL_DOCDIR
+	         └── html
+     \endverbatim
   </ol>
 
  */
