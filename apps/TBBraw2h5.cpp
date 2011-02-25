@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                   $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Andreas Horneffer (A.Horneffer@astro.ru.nl)                           *
  *                                                                         *
@@ -28,7 +25,23 @@
 
 #include <data_hl/TBBraw.h>
 
-#include <boost/thread.hpp>
+//includes for networking
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+//includes for threading
+#include <boost/thread/thread.hpp>
+#include <boost/thread/mutex.hpp>
+//includes for the commandline options
+#include <boost/program_options.hpp>
+#include <boost/program_options/cmdline.hpp>
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/detail/cmdline.hpp>
+namespace bpo = boost::program_options;
+
+// #include <boost/thread.hpp>
 
 /*!
   \file TBBraw2h5.cpp
@@ -128,27 +141,9 @@
 
 */
 
-//includes for networking
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-//includes for threading
-#include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
-//includes for the commandline options
-#include <boost/program_options.hpp>
-#include <boost/program_options/cmdline.hpp>
-#include <boost/program_options/options_description.hpp>
-#include <boost/program_options/detail/cmdline.hpp>
-namespace bpo = boost::program_options;
-
-using namespace DAL;
-
 //Global variables
 //! (pointer to) the TBBraw object we are writing to.
-TBBraw *tbb;
+DAL::TBBraw *tbb;
 
 //!size of the buffer for the UDP-datagram
 // 1 byte larger than the frame size
@@ -329,30 +324,41 @@ void socketReaderThread(int port, string ip, double startTimeout,
   return;
 };
 
+//_______________________________________________________________________________
+//                                                                readFromSockets
 
-// -----------------------------------------------------------------
 /*!
   \brief Read the TBB-data from several udp sockets
 
-  \param ports -- Vector with UDP port numbers to read data from
-  \param ip -- Hostname (ip-address) to bind to (not used!)
-  \param startTimeout -- Timeout when opening socket connection [in sec]
-  \param readTimeout -- Timeout while reading from the socket [in sec]
-  \param verbose -- Produce more output
-  \param waitForAllPorts -- Wait until all reader-threads have received some data (Or kill the threads that got no data)
+  \param ports           -- Vector with UDP port numbers to read data from
+  \param ip              -- Hostname (ip-address) to bind to (not used!)
+  \param startTimeout    -- Timeout when opening socket connection [in sec]
+  \param readTimeout     -- Timeout while reading from the socket [in sec]
+  \param verbose         -- Produce more output
+  \param waitForAllPorts -- Wait until all reader-threads have received some
+         data (Or kill the threads that got no data)
 
-  \return \t true if successful
+  \return status -- Returns \t true if successful, \e false in case an error
+          was encountered.
 */
-bool readFromSockets(std::vector<int> ports, string ip, float startTimeout,
-		     float readTimeout, bool verbose=false, bool waitForAllPorts=false)
+bool readFromSockets (std::vector<int> ports,
+		      string ip,
+		      float startTimeout,
+		      float readTimeout,
+		      bool verbose=false,
+		      bool waitForAllPorts=false)
 {
-  uint i;
+  unsigned int i = 0;
+
+  //________________________________________________________
   // initialize the buffer
-  terminateThreads=false;
-  maxCachedFrames = maxWaitingFrames = 0;
-  inBufProcessID = inBufStorID =0;
-  noRunning = 0;
-  inputBuffer_p = new char[(input_buffer_size*UDP_PACKET_BUFFER_SIZE)];
+
+  terminateThreads = false;
+  maxCachedFrames  = maxWaitingFrames = 0;
+  inBufProcessID   = inBufStorID =0;
+  noRunning        = 0;
+  inputBuffer_p    = new char[(input_buffer_size*UDP_PACKET_BUFFER_SIZE)];
+
   if (inputBuffer_p == NULL) {
     cerr << "TBBraw2h5::readFromSockets: Failed to allocate input buffer!" <<endl;
     return false;
@@ -367,7 +373,7 @@ bool readFromSockets(std::vector<int> ports, string ip, float startTimeout,
   for (i=0; i < ports.size(); i++) {
     readerThreads[i] = new boost::thread(boost::bind(socketReaderThread, ports[i], ip,
 						     startTimeout, readTimeout, verbose, false));
-    if (readerThreads[i]->joinable() ) {
+    if (readerThreads[i]->boost::thread::joinable() ) {
       noRunning++;
     } else {
       cout << "TBBraw2h5::readFromSockets: Failed to start reader thread for port :" << ports[i] << endl;
@@ -423,7 +429,9 @@ bool readFromSockets(std::vector<int> ports, string ip, float startTimeout,
   return true;
 };
 
-// -----------------------------------------------------------------
+//_______________________________________________________________________________
+//                                                        readStationsFromSockets
+
 /*!
   \brief Read the TBB-data of several stations and from several udp sockets
 
@@ -438,40 +446,62 @@ bool readFromSockets(std::vector<int> ports, string ip, float startTimeout,
   Compared to \t readFromSockets() this function generates less (usefull)
   debug output. So the other (old) version should stay around.
 */
-bool readStationsFromSockets(std::vector<int> ports, string ip, float startTimeout,
-			     float readTimeout, string outFileBase, bool verbose=false)
+bool readStationsFromSockets (std::vector<int> ports,
+			      std::string ip,
+			      float startTimeout,
+			      float readTimeout,
+			      std::string outFileBase,
+			      bool verbose=false)
 {
-  uint i;
-  // initialize the buffer
-  terminateThreads=false;
-  maxCachedFrames = maxWaitingFrames = 0;
-  inBufProcessID = inBufStorID =0;
-  noRunning = 0;
-  inputBuffer_p = new char[(input_buffer_size*UDP_PACKET_BUFFER_SIZE)];
+  unsigned int i = 0;
+
+  //________________________________________________________
+  // Initialize the buffer
+
+  terminateThreads = false;
+  maxCachedFrames  = 0;
+  maxWaitingFrames = 0;
+  inBufProcessID   = 0;
+  inBufStorID      = 0;
+  noRunning        = 0;
+  inputBuffer_p    = new char[(input_buffer_size*UDP_PACKET_BUFFER_SIZE)];
+  
   if (inputBuffer_p == NULL) {
-    cerr << "TBBraw2h5::readStationsFromSockets: Failed to allocate input buffer!" <<endl;
+    std::cerr << "TBBraw2h5::readStationsFromSockets: Failed to allocate input buffer!"
+	      << std::endl;
     return false;
   } else if (verbose) {
-    cout << "TBBraw2h5::readStationsFromSockets: Allocated " << input_buffer_size*UDP_PACKET_BUFFER_SIZE
+    cout << "TBBraw2h5::readStationsFromSockets: Allocated "
+	 << input_buffer_size*UDP_PACKET_BUFFER_SIZE
 	 << " bytes for the input buffer." << endl;
   };
 
-  // get and initialize memory for the TBB pointers
-  int lasttimes[256];  
-  int runnumbers[256];  
-  TBBraw **TBBfiles;
-  TBBfiles = new TBBraw* [256]; 
-  for (i=0; i<256; i++) {
+  //________________________________________________________
+  // Get and initialize memory for the TBB pointers
+
+  unsigned int nofTBBfiles = 256;
+  int lasttimes[nofTBBfiles];  
+  int runnumbers[nofTBBfiles];  
+  DAL::TBBraw **TBBfiles = new DAL::TBBraw* [nofTBBfiles]; 
+
+  for (i=0; i<nofTBBfiles; i++) {
     TBBfiles[i]   = NULL;
     runnumbers[i] = 0;
   }
 
-  // start the reader-threads
-  boost::thread **readerThreads;
-  readerThreads = new boost::thread*[ports.size()];
+  //________________________________________________________
+  // Start the reader-threads
+
+  boost::thread **readerThreads = new boost::thread*[ports.size()];
+
   for (i=0; i < ports.size(); i++) {
-    readerThreads[i] = new boost::thread(boost::bind(socketReaderThread, ports[i], ip,
-						     startTimeout, readTimeout, verbose, true));
+    readerThreads[i] = new boost::thread (boost::bind(socketReaderThread,
+						      ports[i],
+						      ip,
+						      startTimeout,
+						      readTimeout,
+						      verbose,
+						      true));
     if (readerThreads[i]->joinable() ) {
       noRunning++;
     } else {
@@ -482,17 +512,25 @@ bool readStationsFromSockets(std::vector<int> ports, string ip, float startTimeo
     };
   };
 
-  // look for and process incoming data
-  int processingID, tmpint;
+  //________________________________________________________
+  // Look for and process incoming data
+
+  int processingID = 0;
+  int tmpint       = 0;
+  int amWaiting    = 0;
   unsigned char stationId;
   char * bufferPointer;
-  int amWaiting=0;
+  std::ostringstream outfile;
+  
   while ((noRunning>0) || (inBufStorID != inBufProcessID) )  {
     if (inBufStorID == inBufProcessID)  {
       if (verbose && ((amWaiting%100)==1) ) {
-	cout << "TBBraw2h5::readStationsFromSockets: Status report: Buffer is empty! waiting." << endl;
-	cout << "  Status: inBufStorID:" << inBufStorID << " inBufProcessID: " << inBufProcessID
-	     << " noRunning: " << noRunning << " waiting for: " << amWaiting*0.10 << " sec."<< endl;
+	std::cout << "[TBBraw2h5::readStationsFromSockets]"
+		  << " Status report: Buffer is empty! waiting." << std::endl;
+	std::cout << "-- inBufStorID       = " << inBufStorID    << std::endl;
+	std::cout << "-- inBufProcessID    = " << inBufProcessID << std::endl;
+	std::cout << "-- noRunning         = " << noRunning      << std::endl;
+	std::cout << "-- Wait interval [s] = " << amWaiting*0.10 << std::endl;
       };
       amWaiting++;
       usleep(100000);
@@ -519,9 +557,9 @@ bool readStationsFromSockets(std::vector<int> ports, string ip, float startTimeo
       processingID -= input_buffer_size;
     };
     bufferPointer = (inputBuffer_p + (processingID*UDP_PACKET_BUFFER_SIZE));
-    stationId = TBBraw::getStationId(bufferPointer);
+    stationId = DAL::TBBraw::getStationId(bufferPointer);
     if ( (TBBfiles[stationId] == NULL) || 
-	 (TBBraw::getDataTime(bufferPointer) > (lasttimes[stationId]+ceil(readTimeout)) ) ){
+	 (DAL::TBBraw::getDataTime(bufferPointer) > (lasttimes[stationId]+ceil(readTimeout)) ) ){
       if (TBBfiles[stationId] != NULL) {
 	if (verbose) {
 	  TBBfiles[stationId]->summary();
@@ -529,10 +567,9 @@ bool readStationsFromSockets(std::vector<int> ports, string ip, float startTimeo
 	delete TBBfiles[stationId];
 	TBBfiles[stationId] = NULL;
       };
-      std::ostringstream outfile;
       outfile << outFileBase << "-" << int(stationId) << "-" << runnumbers[stationId] << ".h5";
       runnumbers[stationId]++;
-      TBBfiles[stationId] = new TBBraw(outfile.str());
+      TBBfiles[stationId] = new DAL::TBBraw(outfile.str());
       if ( !TBBfiles[stationId]->isConnected() ) {
 	cout << "TBBraw2h5::readStationsFromSockets: Failed to open output file:" 
 	     << outfile.str() << endl;
@@ -540,31 +577,37 @@ bool readStationsFromSockets(std::vector<int> ports, string ip, float startTimeo
       };       
     };
     if ( TBBfiles[stationId]->processTBBrawBlock(bufferPointer, UDP_PACKET_BUFFER_SIZE) ){ 
-      lasttimes[stationId] = TBBraw::getDataTime(bufferPointer);
+      lasttimes[stationId] = DAL::TBBraw::getDataTime(bufferPointer);
     };
     inBufProcessID = processingID;    
   };
 
-
+  // Release allocated memory
   delete [] TBBfiles;
-  terminateThreads=true;
+
+  terminateThreads = true;
+
   return true;
 }
 
+//_______________________________________________________________________________
+//                                                                   readFromFile
 
-// -----------------------------------------------------------------
 /*!
   \brief Read the TBB-data from a file
 
   \param infile -- Path to the input file.
   \param verbose -- Produce more output
 
-  \return \t true if successful
+  \return status -- Returns \e true if successful
 */
-bool readFromFile(string infile, bool verbose=false)
+bool readFromFile (string infile,
+		   bool verbose=false)
 {
+  int i         = 0;
+  int numblocks = 0;
+  int size      = 0;
   struct stat filestat;
-  int i, numblocks, size;
   char buffer[TBB_FRAME_SIZE];
 
   stat(infile.c_str(), &filestat);
@@ -602,58 +645,67 @@ bool readFromFile(string infile, bool verbose=false)
   return true;
 };
 
-// -----------------------------------------------------------------
-// Main routine
+//_______________________________________________________________________________
+//                                                                   readFromFile
+
 int main(int argc, char *argv[])
 {
   std::string infile;
-  std::string outfile("test-TBBraw"),outfileOrig;
-  std::string ip("All Hosts");
-  //  int port;
+  std::string outfileOrig;
   vector<int> ports;
-  bool verboseMode(false);
-  float timeoutStart(0);
-  float timeoutRead(.5);
-  int fixTransientTimes(2);
-  int doCheckCRC(1);
-  int socketmode(-1);
-  bool keepRunning(false);
-  bool waitForAll(false);
-  bool multipeStations(false);
-  int runNumber(0);
+  std::string outfile   = "test-TBBraw";
+  std::string ip        = "All Hosts";
+  bool verboseMode      = false;
+  float timeoutStart    = 0.0;
+  float timeoutRead     = 0.5;
+  int fixTransientTimes = 2;
+  int doCheckCRC        = 1;
+  int socketmode        = -1;
+  bool keepRunning      = false;
+  bool waitForAll       = false;
+  bool multipeStations  = false;
+  int runNumber         = 0;
 
   input_buffer_size = 50000;
-  
 
   bpo::options_description desc ("[TBBraw2h5] Available command line options");
 
+  //________________________________________________________
+  // Define command line options
+  
   desc.add_options ()
-  ("help,H", "Show help messages")
-  ("outfile,O",bpo::value<std::string>(), "Name of the output dataset")
-  ("infile,I", bpo::value<std::string>(), "Name of the input file, Mutually exclusive to -P")
-  ("port,P", bpo::value< vector<int> >(), "Port numbers to accept data from; Can be specified multiple times; Mutually exclusive to -I")
-  ("ip", bpo::value<std::string>(), "Hostname/IP address on which to accept the data (not implemented)")
-  ("timeoutStart,S", bpo::value<float>(), "Time-out when opening socket connection, [sec].")
-  ("timeoutRead,R", bpo::value<float>(), "Time-out when while reading from socket, [sec].")
-  ("fixTimes,F", bpo::value<int>(), "Fix broken time-stamps old style (1), new style (2, default), or not (0)")
-  ("doCheckCRC,C", bpo::value<int>(), "Check the CRCs: (0) no check, (1,default) check header.")
-  ("bufferSize,B", bpo::value<int>(), "Size of the input buffer, [frames] (default=50000, about 100MB).")
-  ("keepRunning,K", "Keep running, i.e. process more than one event by restarting the procedure.")
-  ("waitForAll,W", "Wait until (some) data was received on all ports.")
-  ("multipeStations,M", "Process data from multiple stations into seperate files. (implies -K)")
-  ("verbose,V", "Verbose mode on")
-  ;
-
-
+    ("help,H",
+     "Show help messages")
+    ("outfile,O",
+     bpo::value<std::string>(),
+     "Name of the output dataset")
+    ("infile,I",
+     bpo::value<std::string>(),
+     "Name of the input file, Mutually exclusive to -P")
+    ("port,P",
+     bpo::value< vector<int> >(),
+     "Port numbers to accept data from; Can be specified multiple times; Mutually exclusive to -I")
+    ("ip", bpo::value<std::string>(), "Hostname/IP address on which to accept the data (not implemented)")
+    ("timeoutStart,S", bpo::value<float>(), "Time-out when opening socket connection, [sec].")
+    ("timeoutRead,R", bpo::value<float>(), "Time-out when while reading from socket, [sec].")
+    ("fixTimes,F", bpo::value<int>(), "Fix broken time-stamps old style (1), new style (2, default), or not (0)")
+    ("doCheckCRC,C", bpo::value<int>(), "Check the CRCs: (0) no check, (1,default) check header.")
+    ("bufferSize,B", bpo::value<int>(), "Size of the input buffer, [frames] (default=50000, about 100MB).")
+    ("keepRunning,K", "Keep running, i.e. process more than one event by restarting the procedure.")
+    ("waitForAll,W", "Wait until (some) data was received on all ports.")
+    ("multipeStations,M", "Process data from multiple stations into seperate files. (implies -K)")
+    ("verbose,V", "Verbose mode on")
+    ;
+  
   bpo::variables_map vm;
   bpo::store (bpo::parse_command_line(argc,argv,desc), vm);
-
+  
   if (vm.count("help") || argc == 1)
     {
       cout << "\n" << desc << endl;
       return 0;
     }
-
+  
   if (vm.count("verbose"))
     {
       verboseMode=true;
@@ -807,7 +859,7 @@ int main(int argc, char *argv[])
     // -----------------------------------------------------------------
     // Generate TBBraw object and open output file
     
-    tbb = new TBBraw(outfile);
+    tbb = new DAL::TBBraw(outfile);
     if ( !tbb->isConnected() )
       {
 	cout << "[TBBraw2h5] Failed to open output file." << endl;

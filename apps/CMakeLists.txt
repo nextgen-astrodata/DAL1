@@ -44,17 +44,20 @@ endif (CASA_FOUND OR CASACORE_FOUND)
 ## Applications which require Boost
 
 if (HAVE_BOOST)
-  ## source files
-  list (APPEND tests bf2h5_old)
-  list (APPEND tests tbb2h5)
-  list (APPEND tests TBBraw2h5)
-  ## linker instructions
-  # boost_python won't work on some platforms unless libpython is also linked.
-  list (APPEND apps_link_libraries
-    ${BOOST_LIBRARIES}
-    )
+  if (BOOST_THREAD_LIBRARY)
+    ## source files
+    list (APPEND tests bf2h5_old)
+    list (APPEND tests tbb2h5)
+    list (APPEND tests TBBraw2h5)
+    ## linker instructions
+    list (APPEND apps_link_libraries
+      ${BOOST_LIBRARIES}
+      )
+  else (BOOST_THREAD_LIBRARY)
+    message (STATUS "[DAL] Missing Boost++ thread library!")
+  endif (BOOST_THREAD_LIBRARY)
 else (HAVE_BOOST)
-  message (STATUS "[DAL] Unable to build applications: bf2h5_old, tbb2h5")
+  message (STATUS "[DAL] Missing Boost++ -- unable to build applications!")
 endif (HAVE_BOOST)
 
 ##____________________________________________________________________
