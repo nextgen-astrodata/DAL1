@@ -120,7 +120,7 @@ above.
   cmake ..
   make
 
-The default installation location is "/usr/local"; if you want to change this,
+The default installation location is "/opt/dal"; if you want to change this,
 you can tell CMake so by using
 
   cmake -D DAL_INSTALL_PREFIX=<installation prefix> ..
@@ -144,17 +144,41 @@ In order to maintain compatibility with the Filesystem Hierarchy Standard (FHS)
 the following default installation layout has been defined:
 
 /opt
-└── dal
-    ├── bin
-    ├── include
+└── dal                            CMAKE_INSTALL_PREFIX   = DAL_INSTALL_PREFIX
+    ├── bin                        DAL_INSTALL_BINDIR     = DAL_INSTALL_PREFIX/bin
+    ├── include                    DAL_INSTALL_INCLUDEDIR = DAL_INSTALL_PREFIX/include
     │   ├── coordinates
     │   ├── core
     │   ├── data_common
     │   └── data_hl
-    ├── lib
+    ├── lib                        DAL_INSTALL_LIBDIR     = DAL_INSTALL_PREFIX/lib
     └── share
         └── doc
             └── html
+
+However the installation configuration can be tailored depending on your personal
+needs:
+
+  1. Default settings.
+
+     If no further command line parameter are provided, the installation will be
+     done according to the above described structure.
+
+  2. Custom installation prefix.
+
+     In order to root the above described directory structure at a different
+     location with in the file-system (e.g. "/usr/local"), use
+
+       -D DAL_INSTALL_PREFIX=<prefix>
+
+  3. Installation as part of the LUS.
+
+     In order to simplify installation of the DAL as part of the LOFAR User
+     Software distribution, a preset has been defined which can be used through
+
+       -D LUS_INSTALL_PREFIX=<prefix>
+
+     where <prefix>=$LOFARSOFT/release
 
 _________________________________________________________________________________
 >>> Further reading
