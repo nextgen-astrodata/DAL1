@@ -28,17 +28,38 @@ else (DAL_INSTALL_PREFIX)
 endif (DAL_INSTALL_PREFIX)
 
 if (DAL_LOFARSOFT_INSTALL)
+
+  ## Installation conforming to setup for LOFAR User Software (LUS)
   set (DAL_INSTALL_BINDIR       "${CMAKE_INSTALL_PREFIX}/bin"          )
   set (DAL_INSTALL_INCLUDEDIR   "${CMAKE_INSTALL_PREFIX}/include/dal"  )
   set (DAL_INSTALL_LIBDIR       "${CMAKE_INSTALL_PREFIX}/lib"          )
   set (DAL_INSTALL_DATAROOTDIR  "${CMAKE_INSTALL_PREFIX}/share"        )
   set (DAL_INSTALL_DOCDIR       "${DAL_INSTALL_DATAROOTDIR}/doc"       )
+
 else (DAL_LOFARSOFT_INSTALL)
-  set (DAL_INSTALL_BINDIR       "${CMAKE_INSTALL_PREFIX}/bin"          )
-  set (DAL_INSTALL_INCLUDEDIR   "${CMAKE_INSTALL_PREFIX}/include"      )
-  set (DAL_INSTALL_LIBDIR       "${CMAKE_INSTALL_PREFIX}/lib"          )
-  set (DAL_INSTALL_DATAROOTDIR  "${CMAKE_INSTALL_PREFIX}/share"        )
-  set (DAL_INSTALL_DOCDIR       "${DAL_INSTALL_DATAROOTDIR}/doc"       )
+
+  ## Configuration for stand-alone installation
+
+  if (NOT DAL_INSTALL_BINDIR)
+    set (DAL_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}/bin" )
+  endif (NOT DAL_INSTALL_BINDIR)
+
+  if (NOT DAL_INSTALL_INCLUDEDIR)
+    set (DAL_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/include" )
+  endif (NOT DAL_INSTALL_INCLUDEDIR)
+  
+  if (NOT DAL_INSTALL_LIBDIR)
+    set (DAL_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/lib" )
+  endif (NOT DAL_INSTALL_LIBDIR)
+  
+  if (NOT DAL_INSTALL_DATAROOTDIR)
+    set (DAL_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_PREFIX}/share" )
+  endif (DAL_INSTALL_DATAROOTDIR)
+  
+  if (NOT DAL_INSTALL_DOCDIR)
+    set (DAL_INSTALL_DOCDIR "${DAL_INSTALL_DATAROOTDIR}/doc" )
+  endif (DAL_INSTALL_DOCDIR)
+  
 endif (DAL_LOFARSOFT_INSTALL)
 
 ## ==============================================================================
