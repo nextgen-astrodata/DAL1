@@ -166,8 +166,8 @@ needs:
 
   2. Custom installation prefix.
 
-     In order to root the above described directory structure at a different
-     location with in the file-system (e.g. "/usr/local"), use
+     In order to install into an existing standard directory structure -- such
+     such as e.g. "/usr/local" -- use
 
        -D DAL_INSTALL_PREFIX=<prefix>
 
@@ -179,6 +179,9 @@ needs:
        -D LUS_INSTALL_PREFIX=<prefix>
 
      where <prefix>=$LOFARSOFT/release
+
+For further details and additional configuration options, consult the Doxygen-based
+documentation.
 
 _________________________________________________________________________________
 >>> Further reading

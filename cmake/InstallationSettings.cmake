@@ -29,40 +29,67 @@ if (LUS_INSTALL_PREFIX)
 
 else (LUS_INSTALL_PREFIX)
 
-  ## Configuration for stand-alone installation
-  
   if (DAL_INSTALL_PREFIX)
+
+    ## Custom installation configuration
+    
     set (CMAKE_INSTALL_PREFIX ${DAL_INSTALL_PREFIX} CACHE PATH
       "CMake installation area."
       FORCE
       )
+    
+    if (NOT DAL_INSTALL_BINDIR)
+      set (DAL_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}/bin" )
+    endif (NOT DAL_INSTALL_BINDIR)
+    
+    if (NOT DAL_INSTALL_INCLUDEDIR)
+      set (DAL_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/include/dal" )
+    endif (NOT DAL_INSTALL_INCLUDEDIR)
+    
+    if (NOT DAL_INSTALL_LIBDIR)
+      set (DAL_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/lib" )
+    endif (NOT DAL_INSTALL_LIBDIR)
+    
+    if (NOT DAL_INSTALL_DATAROOTDIR)
+      set (DAL_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_PREFIX}/share/dal" )
+    endif (NOT DAL_INSTALL_DATAROOTDIR)
+    
+    if (NOT DAL_INSTALL_DOCDIR)
+      set (DAL_INSTALL_DOCDIR "${DAL_INSTALL_DATAROOTDIR}/doc" )
+    endif (NOT DAL_INSTALL_DOCDIR)
+    
   else (DAL_INSTALL_PREFIX)
+
+    ## Default installation configuration
+    
     set (DAL_INSTALL_PREFIX "/opt/dal")
+    
     set (CMAKE_INSTALL_PREFIX ${DAL_INSTALL_PREFIX} CACHE PATH
       "CMake installation area."
       FORCE
       )
+    
+    if (NOT DAL_INSTALL_BINDIR)
+      set (DAL_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}/bin" )
+    endif (NOT DAL_INSTALL_BINDIR)
+    
+    if (NOT DAL_INSTALL_INCLUDEDIR)
+      set (DAL_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/include" )
+    endif (NOT DAL_INSTALL_INCLUDEDIR)
+    
+    if (NOT DAL_INSTALL_LIBDIR)
+      set (DAL_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/lib" )
+    endif (NOT DAL_INSTALL_LIBDIR)
+    
+    if (NOT DAL_INSTALL_DATAROOTDIR)
+      set (DAL_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_PREFIX}/share" )
+    endif (NOT DAL_INSTALL_DATAROOTDIR)
+    
+    if (NOT DAL_INSTALL_DOCDIR)
+      set (DAL_INSTALL_DOCDIR "${DAL_INSTALL_DATAROOTDIR}/doc" )
+    endif (NOT DAL_INSTALL_DOCDIR)
+    
   endif (DAL_INSTALL_PREFIX)
-  
-  if (NOT DAL_INSTALL_BINDIR)
-    set (DAL_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}/bin" )
-  endif (NOT DAL_INSTALL_BINDIR)
-  
-  if (NOT DAL_INSTALL_INCLUDEDIR)
-    set (DAL_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/include" )
-  endif (NOT DAL_INSTALL_INCLUDEDIR)
-  
-  if (NOT DAL_INSTALL_LIBDIR)
-    set (DAL_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/lib" )
-  endif (NOT DAL_INSTALL_LIBDIR)
-  
-  if (NOT DAL_INSTALL_DATAROOTDIR)
-    set (DAL_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_PREFIX}/share" )
-  endif (NOT DAL_INSTALL_DATAROOTDIR)
-  
-  if (NOT DAL_INSTALL_DOCDIR)
-    set (DAL_INSTALL_DOCDIR "${DAL_INSTALL_DATAROOTDIR}/doc" )
-  endif (NOT DAL_INSTALL_DOCDIR)
   
 endif (LUS_INSTALL_PREFIX)
 
