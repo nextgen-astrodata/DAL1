@@ -44,7 +44,7 @@ endif (CASA_FOUND OR CASACORE_FOUND)
 ## Applications which require Boost
 
 if (HAVE_BOOST)
-  if (BOOST_THREAD_LIBRARY)
+  if (BOOST_WITH_THREAD)
     ## source files
     list (APPEND tests bf2h5_old)
     list (APPEND tests tbb2h5)
@@ -53,9 +53,9 @@ if (HAVE_BOOST)
     list (APPEND apps_link_libraries
       ${BOOST_LIBRARIES}
       )
-  else (BOOST_THREAD_LIBRARY)
-    message (STATUS "[DAL] Missing Boost++ thread library!")
-  endif (BOOST_THREAD_LIBRARY)
+  else (BOOST_WITH_THREAD)
+    message (STATUS "[DAL] Missing Boost++ thread library support!")
+  endif (BOOST_WITH_THREAD)
 else (HAVE_BOOST)
   message (STATUS "[DAL] Missing Boost++ -- unable to build applications!")
 endif (HAVE_BOOST)

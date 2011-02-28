@@ -1,6 +1,4 @@
 # +-----------------------------------------------------------------------------+
-# | $Id::                                                                     $ |
-# +-----------------------------------------------------------------------------+
 # |   Copyright (C) 2007                                                        |
 # |   Lars B"ahren (bahren@astron.nl)                                           |
 # |                                                                             |
@@ -39,9 +37,10 @@ if (NOT BOOST_FOUND)
     set (BOOST_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   endif (NOT BOOST_ROOT_DIR)
 
-  set (BOOST_VERSION_MAJOR  0 )
-  set (BOOST_VERSION_MINOR  0 )
-  set (BOOST_VERSION_PATCH  0 )
+  set (BOOST_VERSION_MAJOR  0     )
+  set (BOOST_VERSION_MINOR  0     )
+  set (BOOST_VERSION_PATCH  0     )
+  set (BOOST_WITH_THREAD    FALSE )
   
   set (BOOST_MODULES
     date_time
@@ -108,23 +107,22 @@ if (NOT BOOST_FOUND)
   ##_____________________________________________________________________________
   ## Test Boost library for:
   ##  - library version <major.minor.release>
-
-  if (BOOST_INCLUDES AND BOOST_LIBRARIES)
-    ## Locate test program
-    find_file (HAVE_TestBoostLibrary TestBoostLibrary.cc
-      PATHS ${PROJECT_SOURCE_DIR}
-      PATH_SUFFIXES cmake Modules
+  ##  - usage of thread library
+  
+  ## Locate test program
+  find_file (HAVE_TestBoostLibrary TestBoostLibrary.cc
+    PATHS ${PROJECT_SOURCE_DIR}
+    PATH_SUFFIXES cmake Modules
+    )
+  
+  if (BOOST_INCLUDES AND BOOST_LIBRARIES AND HAVE_TestBoostLibrary)
+    try_run(BOOST_VERSION_RUN_RESULT BOOST_VERSION_COMPILE_RESULT
+      ${PROJECT_BINARY_DIR}
+      ${HAVE_TestBoostLibrary}
+      COMPILE_DEFINITIONS -I${BOOST_INCLUDES}
+      RUN_OUTPUT_VARIABLE BOOST_VERSION_OUTPUT
       )
-    ## Build and run test program
-    if (HAVE_TestBoostLibrary)
-      try_run(BOOST_VERSION_RUN_RESULT BOOST_VERSION_COMPILE_RESULT
-	${PROJECT_BINARY_DIR}
-	${HAVE_TestBoostLibrary}
-	COMPILE_DEFINITIONS -I${BOOST_INCLUDES}
-	RUN_OUTPUT_VARIABLE BOOST_VERSION_OUTPUT
-	)
-    endif (HAVE_TestBoostLibrary)
-  endif (BOOST_INCLUDES AND BOOST_LIBRARIES)
+  endif (BOOST_INCLUDES AND BOOST_LIBRARIES AND HAVE_TestBoostLibrary)
   
   ## Comile of test program successful?
   if (BOOST_VERSION_COMPILE_RESULT)
@@ -148,6 +146,30 @@ if (NOT BOOST_FOUND)
   ## Assemble full version of library
   set (BOOST_VERSION "${BOOST_VERSION_MAJOR}.${BOOST_VERSION_MINOR}.${BOOST_VERSION_PATCH}")
 
+  ## Test support of thread library
+  
+  if (BOOST_INCLUDES AND BOOST_LIBRARIES AND HAVE_TestBoostLibrary)
+    try_run(BOOST_THREAD_RUN_RESULT BOOST_THREAD_COMPILE_RESULT
+      ${PROJECT_BINARY_DIR}
+      ${HAVE_TestBoostLibrary}
+      CMAKE_FLAGS -DLINK_LIBRARIES:STRING=${BOOST_THREAD_LIBRARY}
+      COMPILE_DEFINITIONS -I${BOOST_INCLUDES} -DTEST_BOOST_THREAD
+      COMPILE_OUTPUT_VARIABLE BOOST_THREAD_COMPILE_OUTPUT
+      RUN_OUTPUT_VARIABLE BOOST_THREAD_RUN_OUTPUT
+      )
+  endif (BOOST_INCLUDES AND BOOST_LIBRARIES AND HAVE_TestBoostLibrary)
+  
+  if (BOOST_THREAD_COMPILE_RESULT)
+    if (BOOST_THREAD_RUN_RESULT)
+      set (BOOST_WITH_THREAD TRUE)
+    else (BOOST_THREAD_RUN_RESULT)
+      message (STATUS "[Boost] Failed to run TestBoostLibrary with thread support!")
+    endif (BOOST_THREAD_RUN_RESULT)
+  else (BOOST_THREAD_COMPILE_RESULT)
+    message (STATUS "[Boost] Failed to compile TestBoostLibrary with thread support!")
+    message (${BOOST_THREAD_COMPILE_OUTPUT})
+  endif (BOOST_THREAD_COMPILE_RESULT)
+  
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
   
@@ -168,9 +190,10 @@ if (NOT BOOST_FOUND)
   if (BOOST_FOUND)
     if (NOT BOOST_FIND_QUIETLY)
       message (STATUS "Found components for BOOST")
-      message (STATUS "BOOST_ROOT_DIR  = ${BOOST_ROOT_DIR}")
-      message (STATUS "BOOST_INCLUDES  = ${BOOST_INCLUDES}")
-      message (STATUS "BOOST_LIBRARIES = ${BOOST_LIBRARIES}")
+      message (STATUS "BOOST_ROOT_DIR  = ${BOOST_ROOT_DIR}"  )
+      message (STATUS "BOOST_VERSION   = ${BOOST_VERSION}"   )
+      message (STATUS "BOOST_INCLUDES  = ${BOOST_INCLUDES}"  )
+      message (STATUS "BOOST_LIBRARIES = ${BOOST_LIBRARIES}" )
     endif (NOT BOOST_FIND_QUIETLY)
   else (BOOST_FOUND)
     if (BOOST_FIND_REQUIRED)
@@ -183,6 +206,7 @@ if (NOT BOOST_FOUND)
   
   mark_as_advanced (
     BOOST_ROOT_DIR
+    BOOST_VERSION
     BOOST_INCLUDES
     BOOST_LIBRARIES
     )

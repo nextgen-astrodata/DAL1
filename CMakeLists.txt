@@ -306,6 +306,7 @@ message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}" 
 message (STATUS " Enable code using Boost++        = ${BOOST_FOUND}"               )
 message (STATUS " .. Library version               = ${BOOST_VERSION}"             )
 message (STATUS " .. Include directory             = ${BOOST_INCLUDES}"            )
+message (STATUS " .. Thread support enabled?       = ${BOOST_WITH_THREAD}"         )
 message (STATUS " Enable code using casacore       = ${CASACORE_FOUND}"            )
 message (STATUS " Enable code using CFITSIO        = ${CFITSIO_FOUND}"             )
 message (STATUS " Enable code using GSL            = ${GSL_FOUND}"                 )
