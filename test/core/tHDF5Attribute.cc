@@ -93,6 +93,61 @@ bool get (hid_t const &location,
 // ==============================================================================
 
 //_______________________________________________________________________________
+//                                                                   test_H5Aread
+
+int test_H5Aread (hid_t const &location)
+{
+  std::cout << "\n[tHDF5Attribute::test_H5Aread]\n" << endl;
+  
+  int nofFailedTests = 0;
+  hid_t attributeID  = 0;
+  htri_t h5err       = 0;
+  std::string name   = "AttributeVectorInt";
+
+  /*________________________________________________________
+    Check if attribute of given 'name' is attached to object
+  */
+  h5err = H5Aexists (location, name.c_str());
+
+  if (h5err) {
+    std::cout << "-- Found attribute " << name << std::endl;
+  } else {
+    std::cout << "-- Unable to find attribute " << name << " !" << std::endl;
+    return nofFailedTests;
+  }
+
+  attributeID = H5Aopen (location, name.c_str(), H5P_DEFAULT);
+
+  /*________________________________________________________
+    Retrieve properties of the attribute
+  */
+  
+  hsize_t storageSize = H5Aget_storage_size (attributeID);
+  hid_t dataspaceID   = H5Aget_space (attributeID);
+  hid_t datatypeID    = H5Aget_type(attributeID);
+
+  /* Properties of the dataspace */
+  htri_t isSimple = H5Sis_simple (dataspaceID);
+
+  std::cout << "-- Attribute name     = " << name        << std::endl;
+  std::cout << "-- Attribute ID       = " << attributeID << std::endl;
+  std::cout << "-- Dataspace ID       = " << dataspaceID << std::endl;
+  std::cout << "-- Datatype ID        = " << datatypeID  << std::endl;
+  std::cout << "-- Storage size       = " << storageSize << std::endl;
+  std::cout << "-- Dataspace is simple? " << isSimple << std::endl;
+  
+  /*________________________________________________________
+    Release HDF5 object identifiers
+  */
+  
+  H5Sclose (dataspaceID);
+  H5Tclose (datatypeID);
+  H5Aclose (attributeID);
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                          test_static_functions
 
 /*!
@@ -410,6 +465,10 @@ int main (int argc, char *argv[])
 
     // Test for static methods
     nofFailedTests += test_static_functions (fileID);
+
+    // Test usage of basic HDF5 library functions
+    nofFailedTests += test_H5Aread (fileID);
+
     // Test for the constructor(s)
     nofFailedTests += test_constructors (fileID);
     
