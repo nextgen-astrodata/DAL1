@@ -1,7 +1,7 @@
 
-foreach (_dal_data
-    tHDF5Object.h5
-    )
+file (GLOB dal_exampledata_hdf5 *.h5)
+
+foreach ( _dal_data ${dal_exampledata_hdf5} )
 
   ## Get filename components
   get_filename_component (_dataset_name      ${_dal_data} NAME_WE)

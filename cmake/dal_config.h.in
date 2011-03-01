@@ -216,6 +216,13 @@
 #endif
 
 //__________________________________________________________
+// CFITSIO header files
+
+#ifdef DAL_WITH_CFITSIO
+#include <fitsio.h>
+#endif
+
+//__________________________________________________________
 // casacore header files
 
 #ifdef DAL_WITH_CASACORE
@@ -223,16 +230,7 @@
 /* #define AIPS_STDLIB 1 */
 /* #define AIPS_AUTO_STL 1 */
 /* #define AIPS_NO_LEA_MALLOC 1 */
-#endif
-
-//__________________________________________________________
-// CFITSIO header files
-
-#ifdef DAL_WITH_CFITSIO
-/* extern "C" */
-/* { */
-#include <fitsio.h>
-/* } */
+#else
 #endif
 
 //__________________________________________________________

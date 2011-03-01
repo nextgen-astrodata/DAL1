@@ -134,7 +134,7 @@ int test_H5Aread (hid_t const &location)
   std::cout << "-- Dataspace ID       = " << dataspaceID << std::endl;
   std::cout << "-- Datatype ID        = " << datatypeID  << std::endl;
   std::cout << "-- Storage size       = " << storageSize << std::endl;
-  std::cout << "-- Dataspace is simple? " << isSimple << std::endl;
+  std::cout << "-- Dataspace is simple? " << isSimple    << std::endl;
   
   /*________________________________________________________
     Release HDF5 object identifiers
