@@ -127,9 +127,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class HDF5Dataspace -- end
+  }; // END -- class HDF5Dataspace
   
-} // Namespace DAL -- end
+} // END -- namespace DAL
 
 #endif /* HDF5DATASPACE_H */
   

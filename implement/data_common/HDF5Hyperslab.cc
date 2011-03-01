@@ -693,7 +693,7 @@ namespace DAL { // Namespace DAL -- begin
     herr_t h5error;
 
     /* Get shape and rank of the dataspace */
-    DAL::h5get_dataspace_shape (datasetID,shape);
+    HDF5Dataspace::shape (datasetID,shape);
     nelem = shape.size();
     
     /* Start position m1*/
@@ -1057,7 +1057,7 @@ namespace DAL { // Namespace DAL -- begin
       }
       
       /* Retrieve the shape of the dataspace */
-      DAL::h5get_dataspace_shape (dataspaceID,shape);
+      HDF5Dataspace::shape (dataspaceID,shape);
       if (shape.empty()) {
 	std::cerr << "[HDF5Hyperslab::getBoundingBox]"
 		  << " Failed to retrieve shape of dataspace!." << std::endl;

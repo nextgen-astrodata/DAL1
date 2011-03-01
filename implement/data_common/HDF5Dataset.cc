@@ -239,7 +239,7 @@ namespace DAL {
 	  itsDataspace = H5Dget_space (itsLocation);
 	  itsDatatype  = H5Dget_type (itsLocation);
 	  // Get the shape of the dataset array
-	  DAL::h5get_dataspace_shape(itsLocation, itsShape);
+	  HDF5Dataspace::shape (itsLocation, itsShape);
 	  // Retrieve the size of chunks for the raw data
 	  status = getChunksize ();
 	} else {
@@ -542,7 +542,7 @@ namespace DAL {
 	/* As the dataset might have been resized, the "shape" parameter needs to be
 	   updated to the current value.
 	*/
-	DAL::h5get_dataspace_shape(itsLocation, itsShape);
+	HDF5Dataspace::shape(itsLocation, itsShape);
       } else {
 	std::cerr << "[HDF5Dataset::setHyperslab]"
 		  << " Unable to select hyperslab - invalid HDF5 dataspace!"

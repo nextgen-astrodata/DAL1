@@ -38,6 +38,7 @@ using std::endl;
 #include <core/dalBaseTypes.h>
 #include <core/dalConversions.h>
 #include <core/Enumerations.h>
+#include <core/HDF5Dataspace.h>
 
 #ifdef DAL_WITH_CASA
 #include <casa/Arrays/IPosition.h>
@@ -284,10 +285,6 @@ namespace DAL {
   bool h5rename_attribute (hid_t const &location_id,
 			   std::string const &oldName,
 			   std::string const &newName);
-  //! Get the shape of the dataspace associated with the attribute
-  bool h5get_dataspace_shape (hid_t const &attribute_id,
-                              std::vector<hsize_t> &shape,
-                              bool const &maxdims=false);
   //! Set attribute of type \e string
   bool h5setAttribute_string( hid_t const &obj_id,
                               std::string attrname,
@@ -423,7 +420,7 @@ namespace DAL {
       if (H5Iis_valid(attribute_id)) {
 	datatype_id        = H5Aget_type (attribute_id);
 	native_datatype_id = H5Tget_native_type(datatype_id, H5T_DIR_ASCEND);
-	status             = h5get_dataspace_shape (attribute_id,shape);
+	status             = HDF5Dataspace::shape (attribute_id,shape);
       } else {
 	return false;
       }
@@ -678,10 +675,6 @@ namespace DAL {
   bool h5get_dataset_shape (hid_t const &attribute_id,
                             casa::IPosition &shape,
                             bool const &maxdims=false);
-  //! Get the shape of the dataspace associated with the attribute
-  bool h5get_dataspace_shape (hid_t const &attribute_id,
-                              casa::IPosition &shape,
-                              bool const &maxdims=false);
   //! Get the value of an attribute attached to a group or dataset
   template <typename T>
     bool h5get_attribute (hid_t const &location,

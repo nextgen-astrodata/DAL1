@@ -28,6 +28,7 @@
 
 // DAL header files
 #include <core/dalCommon.h>
+#include <core/HDF5Dataspace.h>
 
 namespace DAL { // Namespace DAL -- begin
   

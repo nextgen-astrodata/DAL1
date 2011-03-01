@@ -349,7 +349,7 @@ int test_setHyperslab (std::string const &filename)
 			     H5P_DEFAULT);
     
     if (H5Iis_valid(datasetID)) {
-      DAL::h5get_dataspace_shape (datasetID,shape);
+      DAL::HDF5Dataspace::shape (datasetID,shape);
       //
       cout << "-- Opened dataset " << datasetName << endl;
       cout << "-- Shape = " << shape << endl;

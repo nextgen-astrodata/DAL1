@@ -464,7 +464,7 @@ namespace DAL {  // Namespace DAL -- begin
     bool status (create);
     std::vector<hsize_t> shape;
     
-    status = h5get_dataspace_shape(location_p,shape);
+    status = HDF5Dataspace::shape (location_p,shape);
 
     if (status && shape.size() > 0) {
       status *= setAttribute("DATA_LENGTH",shape[0]);
