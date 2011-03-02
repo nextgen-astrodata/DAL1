@@ -9,11 +9,39 @@
 
 \section dal_compile_link Compile and link against the DAL
 
-The minimum include statement to be put into your code if you want to use 
-functionality of the DAL from a C++ program is:
-\code
-#include <dal/dal.h>
-\endcode
+<ol>
+  <li>The minimum include statement to be put into your code if you want to use
+  functionality of the DAL from a C++ program is:
+  \code
+  #include <dal_config.h>
+  \endcode
+  If a specific functionality is required:
+  \code
+  #include <core/HDF5Attribute.h>
+  #include <coredinates/CoordinatesGroup.h>
+  #include <data_common/CommonAttributes.h>
+  #include <data_hl/Sky_RootGroup.h>
+  \endcode
+  <li>In order to build you application against the DAL using CMake, your
+  \c CMakeLists.txt file should look someting like this:
+  \code
+  # load the CMake module to locate header files and library
+  include (FindDAL)
+
+  if (DAL_FOUND)
+
+    ## add the location of the DAL header files to your include path
+    include_dirctories (${DAL_INCLUDES})
+
+    ## compiler instructions for executable
+    add_executable (myprog myprog.cc)
+
+    ## linker instructions for executable
+    target_link_libraries (myprog ${DAL_LIBRARIES})
+ 
+  endif (DAL_FOUND)
+  \endcode
+</ol>
 
 \subsection dal_coding_dalDataset Class dalDataset
 
