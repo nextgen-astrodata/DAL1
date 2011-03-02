@@ -48,6 +48,28 @@ namespace DAL { // Namespace DAL -- begin
     \test tHDF5Object.cc
     
     <h3>Prerequisite</h3>
+
+    <ul>
+      <li>\b Groups<br>
+      A group associates names with objects and provides a mechanism for
+      mapping a name to an object. Since all objects appear in at least one
+      group (with the possible exception of the root object) and since objects
+      can have names in more than one group, the set of all objects in an HDF5
+      file is a directed graph. The internal nodes (nodes with out-degree
+      greater than zero) must be groups while the leaf nodes (nodes with
+      out-degree zero) are either empty groups or objects of some other type.
+      Exactly one object in every non-empty file is the root object. The root
+      object always has a positive in-degree because it is pointed to by the
+      file super block. 
+      <li>\b Attributes <br>
+      Because attributes are intended to be small objects, large datasets
+      intended as additional information for a primary dataset should be stored
+      as supplemental datasets in a group with the primary dataset. Attributes
+      can then be attached to the group containing everything to indicate a
+      particular type of dataset with supplemental datasets is located in the
+      group. How small is "small" is not defined by the library and is up to
+      the user’s interpretation. 
+    </ul>
     
     <h3>Synopsis</h3>
 
