@@ -441,23 +441,32 @@ int test_constructors (hid_t const &location)
 int main (int argc, char *argv[])
 {
   int nofFailedTests   = 0;
+  hid_t fileID         = 0;
   std::string filename = "tHDF5Attribute.h5";
+  bool haveDataset     = false;
 
   //________________________________________________________
   // Process command line parameters
 
   if (argc>1) {
-    filename = argv[1];
+    filename    = argv[1];
+    haveDataset = true;
   }
 
   //________________________________________________________
   // Open/create HDF5 file to work with
   
-  hid_t fileID = H5Fcreate (filename.c_str(),
-			    H5F_ACC_TRUNC,
-			    H5P_DEFAULT,
-			    H5P_DEFAULT);
-
+  if (haveDataset) {
+    fileID = H5Fopen (filename.c_str(),
+		      H5F_ACC_RDWR,
+		      H5P_DEFAULT);
+  } else {
+    fileID = H5Fcreate (filename.c_str(),
+			H5F_ACC_TRUNC,
+			H5P_DEFAULT,
+			H5P_DEFAULT);
+  }
+  
   //________________________________________________________
   // Run the tests
   
