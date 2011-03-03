@@ -199,6 +199,12 @@ can be found in the HTML documentation generated using Doxygen:
   cmake ..
   make Documentation
 
+If you are having trouble with unresolved package dependencies, you can configure
+for generation of documentation only:
+
+  cmake -DDOCUMENTATION_ONLY=YES ..
+  make
+
 Point your web-browser to
 
   build/doc/html/index.html

@@ -17,7 +17,8 @@ cmake_minimum_required (VERSION 2.8)
 ##
 ## ==============================================================================
 
-option (DAL_BUILD_APPS         "Build the applications?"                     YES )
+option (DOCUMENTATION_ONLY     "Configure for building documentation only?"  NO  )
+option (DAL_ENABLE_APPS        "Build the applications?"                     YES )
 option (DAL_ENABLE_TESTING     "Build and enable test programs?"             YES )
 option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?"   ON  )
 option (DAL_PYTHON_BINDINGS    "Create python bindings?"                     YES )
@@ -91,21 +92,25 @@ include (${DAL_SOURCE_DIR}/cmake/InstallationSettings.cmake)
 ##
 ## ==============================================================================
 
-## Try to resolve external dependencies ...
-
-include (${DAL_SOURCE_DIR}/cmake/CheckExternalPackages.cmake)
-
-## ... and check if this indeed has been successful
-
-if (NOT HDF5_FOUND)
-  message (SEND_ERROR "[DAL] Missing HDF5 library installation!")
-endif (NOT HDF5_FOUND)
-
-if (CASACORE_FOUND)
-  if (NOT WCSLIB_FOUND)
-    message (SEND_ERROR "[DAL] Missing WCSLIB library installation!")
-  endif (NOT WCSLIB_FOUND)
-endif (CASACORE_FOUND)
+if (NOT DOCUMENTATION_ONLY)
+  
+  ## Try to resolve external dependencies ...
+  
+  include (${DAL_SOURCE_DIR}/cmake/CheckExternalPackages.cmake)
+  
+  ## ... and check if this indeed has been successful
+  
+  if (NOT HDF5_FOUND)
+    message (SEND_ERROR "[DAL] Missing HDF5 library installation!")
+  endif (NOT HDF5_FOUND)
+  
+  if (CASACORE_FOUND)
+    if (NOT WCSLIB_FOUND)
+      message (SEND_ERROR "[DAL] Missing WCSLIB library installation!")
+    endif (NOT WCSLIB_FOUND)
+  endif (CASACORE_FOUND)
+  
+endif (NOT DOCUMENTATION_ONLY)
 
 ## ==============================================================================
 ##
@@ -127,7 +132,7 @@ include_directories (
 ##__________________________________________________________
 ## Option: Generation of Python bindings (pydal)
 
-if (DAL_PYTHON_BINDINGS)
+if (DAL_PYTHON_BINDINGS AND NOT DOCUMENTATION_ONLY)
   
   ## Try to compile test program
   
@@ -155,7 +160,7 @@ if (DAL_PYTHON_BINDINGS)
       message (STATUS "[DAL] Test compilation of Python bindings failed; disabling")
   endif (DAL_PYTHON_BINDINGS)
   
-endif (DAL_PYTHON_BINDINGS)
+endif (DAL_PYTHON_BINDINGS AND NOT DOCUMENTATION_ONLY)
 
 ## =============================================================================
 ##
@@ -244,18 +249,22 @@ list (REMOVE_DUPLICATES dal_link_libraries)
 ##
 ## =============================================================================
 
-add_subdirectory (implement)
-add_subdirectory (data)
 add_subdirectory (doc)
 
-if (DAL_ENABLE_TESTING)
-  add_subdirectory (test)
-endif (DAL_ENABLE_TESTING)
-
-if (DAL_BUILD_APPS)
-  add_subdirectory (apps)
-endif (DAL_BUILD_APPS)
-
+if (NOT DOCUMENTATION_ONLY)
+  
+  add_subdirectory (implement)
+  add_subdirectory (data)
+  
+  if (DAL_ENABLE_TESTING)
+    add_subdirectory (test)
+  endif (DAL_ENABLE_TESTING)
+  
+  if (DAL_ENABLE_APPS)
+    add_subdirectory (apps)
+  endif (DAL_ENABLE_APPS)
+  
+endif (NOT DOCUMENTATION_ONLY)
 
 ## =============================================================================
 ##
@@ -303,6 +312,10 @@ message (STATUS " .. DAL_INSTALL_DATAROOTDIR       = ${DAL_INSTALL_DATAROOTDIR}"
 message (STATUS " .. DAL_INSTALL_DOCDIR            = ${DAL_INSTALL_DOCDIR}"        )
 message (STATUS " Build and enable test programs   = ${DAL_ENABLE_TESTING}"        )
 message (STATUS " Print debugging messages         = ${DAL_DEBUGGING_MESSAGES}"    )
+message (STATUS " Build documentation only?        = ${DOCUMENTATION_ONLY}"        )
+
+if (NOT DOCUMENTATION_ONLY)
+
 message (STATUS " Enable code using Boost++        = ${BOOST_FOUND}"               )
 message (STATUS " .. Library version               = ${BOOST_VERSION}"             )
 message (STATUS " .. Include directory             = ${BOOST_INCLUDES}"            )
@@ -352,3 +365,5 @@ if (DAL_VERBOSE_CONFIGURE)
   message (STATUS " .. uint64_t              = ${SIZEOF_UINT64_T}    ")
   message (STATUS "+------------------------------------------------------------+")
 endif (DAL_VERBOSE_CONFIGURE)
+
+endif (NOT DOCUMENTATION_ONLY)
