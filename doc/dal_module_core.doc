@@ -3,7 +3,7 @@
 //                                                                           core
 
 /*!
-  \defgroup core DAL :: Core library classes
+  \defgroup core Core library classes
   \ingroup DAL
   \brief Core classes of the Data Access Library
 

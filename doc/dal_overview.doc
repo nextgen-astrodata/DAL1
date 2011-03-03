@@ -15,6 +15,14 @@
     <li>\subpage dal_coding_guidelines
     <li>\subpage dal_coding_cpp
     <li>\subpage dal_testing
+    <li>\ref DAL
+    <ul>
+      <li>\ref core [\c core]
+      <li>\ref coordinates [\c coordinates]
+      <li>\ref data_common [\c data_common]
+      <li>\ref data_hl [\c data_hl]
+      <li>\ref dal_apps [\c apps]
+    </ul>
     <li>\subpage dal_data_formats
   </ul>
 
@@ -108,7 +116,7 @@ At present, each of these file types have varying levels of support.
 //                                                                    coordinates
 
 /*!
-  \defgroup coordinates DAL :: Coordinates
+  \defgroup coordinates Representations of World Coordinates
   \ingroup DAL
   \brief Coordinates that serve to locate a measurement in some multidimensional parameter space
 
@@ -131,7 +139,7 @@ At present, each of these file types have varying levels of support.
 //                                                                    data_common
 
 /*!
-  \defgroup data_common DAL :: Dataset support - common functionality
+  \defgroup data_common Dataset support - common functionality
   \ingroup DAL
   \brief Common (low-level) support for the various types of datasets
 
@@ -150,7 +158,7 @@ At present, each of these file types have varying levels of support.
 //                                                                           apps
 
 /*!
-  \defgroup dal_apps DAL :: Application collection
+  \defgroup dal_apps Application collection
   \ingroup DAL
   \brief Application programs build in top of the DAL 
 */
