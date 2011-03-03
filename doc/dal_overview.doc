@@ -21,6 +21,7 @@
       <li>\ref coordinates [\c coordinates]
       <li>\ref data_common [\c data_common]
       <li>\ref data_hl [\c data_hl]
+      <li>\ref pydal [\c bindings]
       <li>\ref dal_apps [\c apps]
     </ul>
     <li>\subpage dal_data_formats

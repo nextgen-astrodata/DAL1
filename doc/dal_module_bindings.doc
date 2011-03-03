@@ -3,7 +3,7 @@
 //                                                                       bindings
 
 /*!
-  \defgroup pydal DAL :: Python module
+  \defgroup pydal Bindings to the Python language
   \ingroup DAL
   \brief Python bindings to the C++ library
 
