@@ -148,7 +148,7 @@ if (NOT BOOST_FOUND)
 
   ## Test support of thread library
   
-  if (BOOST_INCLUDES AND BOOST_LIBRARIES AND HAVE_TestBoostLibrary)
+  if (BOOST_INCLUDES AND BOOST_THREAD_LIBRARY AND HAVE_TestBoostLibrary)
     try_run(BOOST_THREAD_RUN_RESULT BOOST_THREAD_COMPILE_RESULT
       ${PROJECT_BINARY_DIR}
       ${HAVE_TestBoostLibrary}
@@ -157,15 +157,18 @@ if (NOT BOOST_FOUND)
       COMPILE_OUTPUT_VARIABLE BOOST_THREAD_COMPILE_OUTPUT
       RUN_OUTPUT_VARIABLE BOOST_THREAD_RUN_OUTPUT
       )
-  endif (BOOST_INCLUDES AND BOOST_LIBRARIES AND HAVE_TestBoostLibrary)
+  endif (BOOST_INCLUDES AND BOOST_THREAD_LIBRARY AND HAVE_TestBoostLibrary)
   
   if (BOOST_THREAD_COMPILE_RESULT)
     if (BOOST_THREAD_RUN_RESULT)
-      set (BOOST_WITH_THREAD TRUE)
+      message (STATUS "[Boost] Thread support enabled.")
+      set (BOOST_WITH_THREAD YES)
     else (BOOST_THREAD_RUN_RESULT)
+      set (BOOST_WITH_THREAD NO)
       message (STATUS "[Boost] Failed to run TestBoostLibrary with thread support!")
     endif (BOOST_THREAD_RUN_RESULT)
   else (BOOST_THREAD_COMPILE_RESULT)
+    set (BOOST_WITH_THREAD NO)
     message (STATUS "[Boost] Failed to compile TestBoostLibrary with thread support!")
     message (${BOOST_THREAD_COMPILE_OUTPUT})
   endif (BOOST_THREAD_COMPILE_RESULT)

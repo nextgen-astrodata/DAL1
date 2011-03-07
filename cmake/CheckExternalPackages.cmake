@@ -8,7 +8,6 @@
 ##____________________________________________________________________
 ##                                              Standard CMake modules
 
-include (FindDoxygen)
 include (FindLATEX)
 include (FindMPI)
 include (FindOpenMP)

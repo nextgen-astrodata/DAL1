@@ -1,4 +1,6 @@
 
+include (FindDoxygen)
+
 ADD_CUSTOM_TARGET (Documentation ALL)
 
 ## ==============================================================================
@@ -48,6 +50,12 @@ if (DOXYGEN_FOUND)
     DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}/html
     DESTINATION ${DAL_INSTALL_DOCDIR}
     )
+  
+else (DOXYGEN_FOUND)
+  
+  if (DOCUMENTATION_ONLY)
+    message (FATAL_ERROR "Documentation only selected, but no Doxygen - install first and rerun CMake!")
+  endif (DOCUMENTATION_ONLY)
   
 endif (DOXYGEN_FOUND)
 

@@ -175,6 +175,48 @@ namespace DAL { // Namespace DAL -- begin
 			    DAL::Stokes::Component const &component=DAL::Stokes::I,
 			    hid_t const &datatype=H5T_NATIVE_FLOAT);
 
+    /*!
+      \brief Write \c data to Stokes dataset identified by \c index.
+      \param index   -- Index of the Stokes dataset.
+      \param data    -- Array with the data to be written.
+      \param start   -- Start position from which on the \c data are supposed to
+             be written.
+      \param block   -- Shape of the \c data array.
+      \return status -- Status of the operation; returns \e false in case an
+              error was encountered, e.g. because the Stokes dataset the data 
+	      were supposed to be written to does not exit.
+    */
+    template <class T>
+      bool writeData (unsigned int const &index,
+		      T const data[],
+		      std::vector<int> const &start,
+		      std::vector<int> const &block)
+      {
+	bool status      = true;
+	std::string name = getName (index);
+	std::map<std::string,BF_StokesDataset>::iterator it;
+
+	/*____________________________________________________________
+	  Check if the Stokes dataset exists and is available; if this
+	  is the case forward the function call to actually write the
+	  data.
+	*/
+
+	it = itsStokesDatasets.find(name);
+	if (it==itsStokesDatasets.end()) {
+	  std::cerr << "[BF_BeamGroup::writeData] No such dataset "
+		    << name 
+		    << " - unable to write data!"
+		    << std::endl;
+	  status = false;
+	} else {
+	  /* write the data through BF_StokesDataset::writeData() */
+	  status = it->second.writeData(data,start,block);
+	}
+
+	return status;
+      }
+    
     // === Static methods =======================================================
     
     //! Convert beam index to name of the HDF5 group

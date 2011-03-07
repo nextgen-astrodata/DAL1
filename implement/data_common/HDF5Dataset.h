@@ -512,7 +512,9 @@ namespace DAL {
     /*!
       \brief Write the data
       \param data    -- Array with the data to be written.
-      \param block   -- Shape of the data array.
+      \param start   -- Start position from which on the \c data are supposed to
+             be written.
+      \param block   -- Shape of the \c data array.
       \return status -- Status of the operation; returns \e false in case an
               error was encountered.
     */
