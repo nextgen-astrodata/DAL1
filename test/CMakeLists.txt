@@ -2,6 +2,12 @@
 ## $Id::                                                                        $
 ## ------------------------------------------------------------------------------
 
+find_file (HAVE_RUNTEST_SH runTests.sh ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(HAVE_RUNTEST_SH)
+  file (COPY ${HAVE_RUNTEST_SH} DESTINATION ${DAL_BINARY_DIR})
+endif (HAVE_RUNTEST_SH)
+
 ## ==============================================================================
 ##
 ##  Build the test programs
