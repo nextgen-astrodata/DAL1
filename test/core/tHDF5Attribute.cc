@@ -279,14 +279,11 @@ int test_static_functions (hid_t const &location)
 
   cout << "[8] Testing getAttribute(hid_t,string,vector<T>) ..." << endl;
   try {
-    std::vector<int> valInt;
-    std::vector<short> valShort;
-    std::vector<long> valLong;
-    // float valFloat        = 0.0;
-    // float valDouble       = 0.0;
-    // std::string valString = "UNDEFINED";
+    unsigned int nelem = 0;
+    int * arrInt;
+    std::vector<int> vecInt;
     
-    HDF5Attribute::getAttribute (location, "AttributeArrayInt", valInt);
+    HDF5Attribute::getAttribute (location, "AttributeArrayInt", arrInt, nelem);
     // HDF5Attribute::setAttribute (location, "AttributeShort",  valShort);
     // HDF5Attribute::setAttribute (location, "AttributeLong",   valLong);
     // HDF5Attribute::setAttribute (location, "AttributeFloat",  valFloat);
@@ -298,6 +295,13 @@ int test_static_functions (hid_t const &location)
     // std::cout << "-- AttributeLong   = " << valLong    << std::endl;
     // std::cout << "-- AttributeFloat  = " << valFloat   << std::endl;
     // std::cout << "-- AttributeDouble = " << valDouble  << std::endl;
+
+    /* release allocated memory */
+    if (arrInt != NULL) {
+      std::cout << "-- Attribute size = " << size << std::endl;
+
+      delete [] arrInt;
+    }
 
   } catch (std::string message) {
     std::cerr << message << std::endl;
