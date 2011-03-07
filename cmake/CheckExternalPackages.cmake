@@ -12,6 +12,10 @@ include (FindLATEX)
 include (FindMPI)
 include (FindOpenMP)
 
+if (MPI_INCLUDE_PATH)
+  include_directories (${MPI_INCLUDE_PATH})
+endif (MPI_INCLUDE_PATH)
+
 ##____________________________________________________________________
 ##                                                Custom CMake modules
 
