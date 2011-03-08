@@ -21,6 +21,7 @@
 #ifndef ACCESSPROPERTIES_H
 #define ACCESSPROPERTIES_H
 
+#include <dal_config.h>
 #include <core/HDF5Object.h>
 
 namespace DAL { // Namespace DAL -- begin
@@ -50,26 +51,67 @@ namespace DAL { // Namespace DAL -- begin
     Available file access property flags:
 
     <ul>
-      <li>\b HDF5
+      <li>\b HDF5 <br>
       These are the bits that can be passed to the `flags' argument of
-      H5Fcreate() and H5Fopen(). Use the bit-wise OR operator (|) to combine
+      \c H5Fcreate() and \c H5Fopen(). Use the bit-wise OR operator (|) to combine
       them as needed.  As a side effect, they call H5check_version() to make sure
       that the application is compiled with a version of the hdf5 header files
       which are compatible with the library to which the application is linked.
       We're assuming that these constants are used rather early in the hdf5
       session.
       \code
-      #define H5F_ACC_RDONLY  (H5CHECK 0x0000u)       //  absence of rdwr => rd-only
-      #define H5F_ACC_RDWR    (H5CHECK 0x0001u)       //  open for read and write
-      #define H5F_ACC_TRUNC   (H5CHECK 0x0002u)       //  overwrite existing files
-      #define H5F_ACC_EXCL    (H5CHECK 0x0004u)       //  fail if file already exists
-      #define H5F_ACC_DEBUG   (H5CHECK 0x0008u)       //  print debug info
-      #define H5F_ACC_CREAT   (H5CHECK 0x0010u)       //  create non-existing files
+      //____________________________________________________
+      // H5Fpublic.h
+
+      #define H5F_ACC_RDONLY  (H5CHECK 0x0000u)     //  absence of rdwr => rd-only
+      #define H5F_ACC_RDWR    (H5CHECK 0x0001u)     //  open for read and write
+      #define H5F_ACC_TRUNC   (H5CHECK 0x0002u)     //  overwrite existing files
+      #define H5F_ACC_EXCL    (H5CHECK 0x0004u)     //  fail if file already exists
+      #define H5F_ACC_DEBUG   (H5CHECK 0x0008u)     //  print debug info
+      #define H5F_ACC_CREAT   (H5CHECK 0x0010u)     //  create non-existing files
       \endcode
+      Four access modes address these concerns, with H5Fcreate and H5Fopen each
+      accepting two of them:
+      <ul>
+        <li>\c H5Fcreate accepts \c H5F_ACC_TRUNC or \c H5F_ACC_EXCL.
+	<li>\c H5Fopen accepts \c H5F_ACC_RDONLY or \c H5F_ACC_RDWR.
+      </ul>
+      For more detailed information see chapter 3 ("The HDF5 File") of the
+      <i>HDF5 User's Guide</i>.
       
-      <li>\b CFITSIO
+      <li>\b CFITSIO <br>
       The iomode parameter defines the read/write access allowed in the file and can
-      have values of READONLY (0) and READWRITE (1).
+      have values of:
+      \code
+      #define READONLY 0
+      #define READWRITE 1
+      \endcode
+
+      <li>\b casacore
+
+      <li>\b mirlib
+
+      \code
+      //____________________________________________________
+      // dio.c
+      
+      if     (!strcmp(status,"read"))    flags = O_RDONLY;
+      else if(!strcmp(status,"write"))   flags = O_CREAT|O_TRUNC|O_RDWR;
+      else if(!strcmp(status,"append"))  flags = O_CREAT|O_RDWR;
+
+      //____________________________________________________
+      // hio.c
+      
+      #define ITEM_READ     0x1
+      #define ITEM_WRITE    0x2
+      #define ITEM_SCRATCH  0x4
+      #define ITEM_APPEND   0x8
+      #define ACCESS_MODE (ITEM_READ|ITEM_WRITE|ITEM_SCRATCH|ITEM_APPEND)
+      
+      #define RDWR_UNKNOWN 0
+      #define RDWR_RDONLY  1
+      #define RDWR_RDWR    
+      \endcode
     </ul>
     
     <h3>Example(s)</h3>
