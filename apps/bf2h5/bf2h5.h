@@ -25,6 +25,8 @@
 #include <string>
 #include <map>
 
+#include <dal_config.h>
+
 // LOFAR header files
 #ifdef DAL_WITH_LOFAR
 #include <Interface/Parset.h>

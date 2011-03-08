@@ -30,14 +30,16 @@
 #include <time.h>
 #include <vector>
 
+// DAL header files
+#include <dal_config.h>
+#include <core/dalCommon.h>
+#include <core/dalDataset.h>
+
 // LOFAR header files
 #ifdef DAL_WITH_LOFAR
 #include <Interface/Parset.h>
 #endif
 
-// DAL header files
-#include <core/dalCommon.h>
-#include <core/dalDataset.h>
 
 // map key = blockNr, second.first = subband, second.second = pointer to data floats to write
 typedef std::map<long int, std::deque<std::pair<uint8_t, float *> > > writeMap;
