@@ -175,6 +175,10 @@ namespace DAL { // Namespace DAL -- begin
 			    DAL::Stokes::Component const &component=DAL::Stokes::I,
 			    hid_t const &datatype=H5T_NATIVE_FLOAT);
 
+    //! Retrieve a specific Stokes dataset
+    bool getStokesDataset (BF_StokesDataset &dataset,
+			   unsigned int const &index);
+
     /*!
       \brief Write \c data to Stokes dataset identified by \c index.
       \param index   -- Index of the Stokes dataset.

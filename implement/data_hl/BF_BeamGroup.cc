@@ -298,7 +298,7 @@ namespace DAL { // Namespace DAL -- begin
   //                                                            openStokesDataset
 
   /*!
-    \param name        -- Name of the dataset.
+    \param index       -- ID of the Stokes dataset to be created.
     \param nofSamples  -- Number of bins along the time axis.
     \param nofSubbands -- Number of sub-bands.
     \param nofChannels -- Number of channels within the subbands.
@@ -328,7 +328,7 @@ namespace DAL { // Namespace DAL -- begin
   //                                                            openStokesDataset
 
   /*!
-    \param name        -- Name of the dataset.
+    \param index       -- ID of the Stokes dataset to be created.
     \param nofSamples  -- Number of bins along the time axis.
     \param nofChannels -- Number of channels within the subbands.
     \param component   -- Stokes component stored within the dataset
@@ -389,6 +389,32 @@ namespace DAL { // Namespace DAL -- begin
 
     return status;
   } 
+
+  //_____________________________________________________________________________
+  //                                                             getStokesDataset
+
+  /*!
+    \retval dataset -- BF_StokesDataset object corresponding to \c index.
+    \param index    -- ID of the Stokes dataset to be created.
+    \return status  -- Status of the operation; returns \e false in case an error
+            was encountered, e.g. because there is no dataset corresponding to
+	    the provided \c index.
+   */
+  bool BF_BeamGroup::getStokesDataset (BF_StokesDataset &dataset,
+				       unsigned int const &index)
+  {
+    bool status      = true;
+    std::string name = getName (index);
+    std::map<std::string,BF_StokesDataset>::iterator it = itsStokesDatasets.find(name);
+
+    if (it==itsStokesDatasets.end()) {
+      std::cerr << "[BF_BeamGroup::getStokesDataset]"
+		<< " Unable to find Stokes dataset " << name << std::endl;
+      status = false;
+    }
+
+    return status;
+  }
   
   //_____________________________________________________________________________
   //                                                                      getName
