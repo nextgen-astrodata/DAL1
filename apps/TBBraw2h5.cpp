@@ -23,6 +23,7 @@
 #include <fcntl.h>
 #include <sstream>
 
+#include <dal_config.h>
 #include <data_hl/TBBraw.h>
 
 //includes for networking
@@ -40,8 +41,6 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/detail/cmdline.hpp>
 namespace bpo = boost::program_options;
-
-// #include <boost/thread.hpp>
 
 /*!
   \file TBBraw2h5.cpp
@@ -183,24 +182,31 @@ boost::mutex writeMutex;
 
   \return \t true if successful
 */
-void socketReaderThread(int port, string ip, double startTimeout,
-                        double readTimeout, bool verbose, bool stayConnected=false)
+void socketReaderThread (int port,
+			 string ip,
+			 double startTimeout,
+			 double readTimeout,
+			 bool verbose,
+			 bool stayConnected=false)
 {
   // Create the main socket
-  int main_socket;
+  int main_socket = 0;
   fd_set readSet;
   struct timeval TimeoutWait, TimeoutRead, NullTimeout;
-  TimeoutRead.tv_sec = floor(readTimeout);
+
+  TimeoutRead.tv_sec  = floor(readTimeout);
   TimeoutRead.tv_usec = (readTimeout-TimeoutRead.tv_sec)*1e6;
-  NullTimeout.tv_sec = NullTimeout.tv_usec =0;
-  main_socket = socket(PF_INET, SOCK_DGRAM, 0);
-  if (main_socket<0)
-    {
-      cerr << "TBBraw2h5::socketReaderThread:"<<port<<": Failed to create the main socket."<<endl;
-      boost::mutex::scoped_lock lock(writeMutex);
-      noRunning--;
-      return;
-    };
+  NullTimeout.tv_sec  = NullTimeout.tv_usec =0;
+  main_socket         = socket(PF_INET, SOCK_DGRAM, 0);
+
+  if (main_socket<0) {
+    cerr << "[TBBraw2h5::socketReaderThread] " << port
+	 << " : Failed to create the main socket."<<endl;
+    boost::mutex::scoped_lock lock(writeMutex);
+    noRunning--;
+    return;
+  };
+  
   //Create a sockaddr_in to describe the local port
   sockaddr_in local_info;
   local_info.sin_family = AF_INET;

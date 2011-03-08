@@ -3,7 +3,8 @@
 #include <boost/version.hpp>
 
 #ifdef TEST_BOOST_THREAD
-#include <boost/thread.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/thread/mutex.hpp>
 #endif 
 
 int main ()
@@ -29,6 +30,7 @@ int main ()
 #ifdef TEST_BOOST_THREAD
   boost::thread _myThread;
   _myThread.join();
+  _myThread.boost::thread::joinable();
 #endif 
   
   return 1;
