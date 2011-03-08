@@ -10,26 +10,26 @@ set (bf2h5_sources
   bf2h5.cpp
   )
 
-if (BOOST_PROGRAM_OPTIONS_LIBRARY AND BOOST_DATE_TIME_LIBRARY)
-
-  ## Compiler instructions
-  add_executable (bf2h5 ${bf2h5_sources})
-  
-  ## Linker instructions
-  target_link_libraries (bf2h5
-    dal
-    ${HDF5_LIBRARIES}
-    ${LOFAR_LIBRARIES}
-    ${BOOST_PROGRAM_OPTIONS_LIBRARY}
-    ${BOOST_DATE_TIME_LIBRARY}
-    )
-  
-  ## Installation instructions
-  install (TARGETS bf2h5
-    RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
-    LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
-    )
-  
-else (BOOST_PROGRAM_OPTIONS_LIBRARY AND BOOST_DATE_TIME_LIBRARY)
-  message (STATUS "[DAL] Unable to build bf2h5 -- missing external dependencies.")
-endif (BOOST_PROGRAM_OPTIONS_LIBRARY AND BOOST_DATE_TIME_LIBRARY)
+if (BOOST_PROGRAM_OPTIONS_LIBRARY)
+  if (BOOST_DATE_TIME_LIBRARY)
+    ## Compiler instructions
+    add_executable (bf2h5 ${bf2h5_sources})
+    ## Linker instructions
+    target_link_libraries (bf2h5
+      dal
+      ${HDF5_LIBRARIES}
+      ${LOFAR_LIBRARIES}
+      ${BOOST_PROGRAM_OPTIONS_LIBRARY}
+      ${BOOST_DATE_TIME_LIBRARY}
+      )
+    ## Installation instructions
+    install (TARGETS bf2h5
+      RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
+      LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
+      )
+  else (BOOST_DATE_TIME_LIBRARY)
+    message (STATUS "[DAL] Unable to build bf2h5 -- Boost data_time library!")
+  endif (BOOST_DATE_TIME_LIBRARY)
+else (BOOST_PROGRAM_OPTIONS_LIBRARY)
+  message (STATUS "[DAL] Unable to build bf2h5 -- Boost program_options library!")
+endif (BOOST_PROGRAM_OPTIONS_LIBRARY)
