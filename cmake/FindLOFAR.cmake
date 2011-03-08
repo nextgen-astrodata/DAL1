@@ -1,6 +1,4 @@
 # +-----------------------------------------------------------------------------+
-# | $Id::                                                                     $ |
-# +-----------------------------------------------------------------------------+
 # |   Copyright (C) 2007                                                        |
 # |   Lars B"ahren (bahren@astron.nl)                                           |
 # |                                                                             |
@@ -23,21 +21,26 @@
 # - Check for the presence of LOFAR
 #
 # The following variables are set when LOFAR is found:
-#  LOFAR_FOUND      = Set to true, if all components of LOFAR
-#                         have been found.
+#  LOFAR_FOUND      = Set to true, if all components of LOFAR have been found.
 #  LOFAR_INCLUDES   = Include path for the header files of LOFAR
 #  LOFAR_LIBRARIES  = Link these to use LOFAR
 #  LOFAR_LFLAGS     = Linker flags (optional)
 
 if (NOT LOFAR_FOUND)
     
+  set (LOFAR_FOUND FALSE)
+
+  if (NOT LOFAR_ROOT_DIR)
+    set (LOFAR_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+  endif (NOT LOFAR_ROOT_DIR)
+
   ##_____________________________________________________________________________
   ## Check for the header files
   
-  find_path (LOFAR_INCLUDES Parset.h
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
-    PATH_SUFFIXES include include/Interface Interface
-    HINTS ENV LOFARROOT
+  find_path (LOFAR_INCLUDES Interface/Parset.h
+    HINTS ${LOFAR_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATH_SUFFIXES include lofar/include
     )
 
   ##_____________________________________________________________________________
@@ -52,9 +55,9 @@ if (NOT LOFAR_FOUND)
 
     ## Search for the library
     find_library (LOFAR_${_lofar_var}_LIBRARY ${_lofar_lib}
-      PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
-      PATH_SUFFIXES lib
-      HINTS ENV LOFARROOT
+      HINTS ${LOFAR_ROOT_DIR}
+      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+      PATH_SUFFIXES lib lofar/lib
       )
     
     ## If library was found, add it to the list of libraries
@@ -92,6 +95,7 @@ if (NOT LOFAR_FOUND)
   if (LOFAR_FOUND)
     if (NOT LOFAR_FIND_QUIETLY)
       message (STATUS "Found components for LOFAR")
+      message (STATUS "LOFAR_ROOT_DIR  = ${LOFAR_ROOT_DIR}")
       message (STATUS "LOFAR_INCLUDES  = ${LOFAR_INCLUDES}")
       message (STATUS "LOFAR_LIBRARIES = ${LOFAR_LIBRARIES}")
     endif (NOT LOFAR_FIND_QUIETLY)
@@ -105,6 +109,7 @@ if (NOT LOFAR_FOUND)
   ## Mark advanced variables
   
   mark_as_advanced (
+    LOFAR_ROOT_DIR
     LOFAR_INCLUDES
     LOFAR_LIBRARIES
     LOFAR_COMMON_LIBRARY

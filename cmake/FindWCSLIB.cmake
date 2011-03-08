@@ -1,6 +1,4 @@
 # +-----------------------------------------------------------------------------+
-# | $Id::                                                                     $ |
-# +-----------------------------------------------------------------------------+
 # |   Copyright (C) 2007                                                        |
 # |   Lars B"ahren (bahren@astron.nl)                                           |
 # |                                                                             |
@@ -29,6 +27,8 @@
 #  WCSLIB_LFLAGS     = Linker flags (optional)
 
 if (NOT WCSLIB_FOUND)
+  
+  set (WCSLIB_FOUND FALSE)
 
   if (NOT WCSLIB_ROOT_DIR)
     set (WCSLIB_ROOT_DIR ${CMAKE_INSTALL_PREFIX})

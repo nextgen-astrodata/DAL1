@@ -81,7 +81,9 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                         copy
   
   void HDF5Dataspace::copy (HDF5Dataspace const &other)
-  {;}
+  {
+    itsLocation = other.itsLocation;
+  }
 
   // ============================================================================
   //
