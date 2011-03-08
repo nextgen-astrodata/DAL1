@@ -895,7 +895,7 @@ namespace DAL { // Namespace DAL -- begin
 	break;
       };   //  END -- switch (otype)
     }   //   END -- if (H5Iis_valid(location))
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     else {
       std::cerr << "[HDF5Object::close] Invalid object identifier!"
 		<< std::endl;

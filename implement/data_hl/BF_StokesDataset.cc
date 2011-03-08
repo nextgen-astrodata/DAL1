@@ -458,7 +458,7 @@ namespace DAL { // Namespace DAL -- begin
       std::vector<unsigned int> channels = itsNofChannels;
       unsigned int subbands              = channels.size();
       
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
       std::cout << "[BF_StokesDataset::init]" << std::endl;
       std::cout << "-- GROUPTYPE    = " << grouptype << std::endl;
       std::cout << "-- DATATYPE     = " << datatype  << std::endl;

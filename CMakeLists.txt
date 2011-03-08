@@ -72,12 +72,6 @@ add_definitions (
   -fPIC
   )
 
-if (DAL_DEBUGGING_MESSAGES)
-  set (DEBUGGING_MESSAGES 1)
-else (DAL_DEBUGGING_MESSAGES)
-  set (DEBUGGING_MESSAGES 0)
-endif (DAL_DEBUGGING_MESSAGES)
-
 ## =============================================================================
 ##
 ##  Installation settings

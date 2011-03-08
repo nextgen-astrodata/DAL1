@@ -143,7 +143,7 @@ namespace DAL {
       dalColumn * lclcol = NULL;
       lclcol = new dalColumn( *casaTable_p, colname );
       
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
       lclcol->getType();
       if ( lclcol->isScalar() )
 	std::cerr << colname << " is SCALAR" << endl;
@@ -190,7 +190,7 @@ namespace DAL {
       // using the dalColumn class
       dalColumn * lclcol = NULL;
       lclcol = new dalColumn( *casaTable_p, colname );
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
       lclcol->getType();
       if ( lclcol->isScalar() )
 	std::cerr << colname << " is SCALAR" << endl;
@@ -233,7 +233,7 @@ namespace DAL {
         // using the dalColumn class
         dalColumn * lclcol = NULL;
         lclcol = new dalColumn( *casaTable_p, colname );
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
         lclcol->getType();
         if ( lclcol->isScalar() )
           std::cerr << colname << " is SCALAR" << endl;
@@ -273,7 +273,7 @@ namespace DAL {
         // using the dalColumn class
         dalColumn * lclcol = NULL;
         lclcol = new dalColumn( *casaTable_p, colname );
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
         lclcol->getType();
         if ( lclcol->isScalar() )
           std::cerr << colname << " is SCALAR" << endl;
@@ -357,7 +357,7 @@ namespace DAL {
         dalColumn lclcol;
         lclcol = dalColumn( *casaTable_p, colname );
         lclcol.getType();
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
         if ( lclcol.isScalar() )
           std::cerr << colname << " is SCALAR" << endl;
         if ( lclcol.isArray() )
@@ -377,13 +377,13 @@ namespace DAL {
         casa::Bool isarray = col_desc.isArray();
         if ( casa::True == isarray )
           {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
             std::cerr << "YES" << endl;
 #endif
             casa::uInt ndimcol;
             ndimcol = column.ndimColumn();
             casa::IPosition shape = column.shape(1);
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
             std::cerr << "  Number of global dims: " << ndimcol << endl;
             std::cerr << "  Shape: " << shape << endl;
 #endif
@@ -391,7 +391,7 @@ namespace DAL {
               {
               case casa::TpComplex:
               {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
                 std::cerr << "Data type is Complex." << endl;
 #endif
                 casa::ROArrayColumn<casa::Complex>
@@ -400,14 +400,14 @@ namespace DAL {
                 casa::IPosition start (2,polarization,0)/*, length (1,1)*/;
                 casa::Slicer slicer (start/*, length*/);
                 array_vals_comp = arcolumn.getColumn( slicer );
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
                 std::cerr << "number of dims: " << array_vals_comp.ndim() << endl;
                 std::cerr << "shape: " << array_vals_comp.shape() << endl;
                 std::cerr << "size: " << array_vals_comp.size() << endl;
 #endif
                 std::vector< std::complex< float > > valvec;
                 array_vals_comp.tovector( valvec );
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
                 std::cerr << valvec[0] << valvec[1] << valvec[2] << endl;
                 std::cerr << "vector size: " << valvec.size() << endl;
                 std::cerr << "Polarization number: " << polarization << endl;
@@ -439,14 +439,14 @@ namespace DAL {
                 casa::IPosition start (1,cell)/*, length (1,1)*/;
                 casa::Slicer slicer (start/*, length*/);
                 array_vals_dbl = arcolumn.getColumn( slicer );
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
                 std::cerr << "number of dims: " << array_vals_dbl.ndim() << endl;
                 std::cerr << "shape: " << array_vals_dbl.shape() << endl;
                 std::cerr << "size: " << array_vals_dbl.size() << endl;
 #endif
                 std::vector<double> valvec;
                 array_vals_dbl.tovector( valvec );
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
                 std::cerr << "vector size: " << valvec.size() << endl;
                 std::cerr << "Data from cell number: " << cell << endl;
 #endif
@@ -458,7 +458,7 @@ namespace DAL {
                 break;
               case casa::TpInt:
               {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
                 std::cerr << "Data type is Int." << endl;
 #endif
                 int * value = new int[100];
@@ -531,7 +531,7 @@ namespace DAL {
           }
 
         casa::TableRecord table_rec = column.keywordSet();
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
         std::cerr << "Number of fields: " << table_rec.nfields() << endl;
         std::cerr << "Datatype: " << col_desc.dataType() << endl;
 #endif
@@ -1902,7 +1902,7 @@ namespace DAL {
   casa::Bool dalTable::GetKeyword(casa::String const KeywordName,
                                   casa::String *result)
   {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cerr << "dalTable::GetKeyword called for " << KeywordName << endl;
 #endif
     try
@@ -1938,7 +1938,7 @@ namespace DAL {
   casa::Bool dalTable::GetKeyword(casa::String const KeywordName,
                                   casa::Double *result)
   {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cerr << "dalTable::GetKeyword called for " << KeywordName << endl;
 #endif
     try
@@ -1974,7 +1974,7 @@ namespace DAL {
   casa::Bool dalTable::GetKeyword(casa::String const KeywordName,
                                   casa::Float *result)
   {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cerr << "dalTable::GetKeyword called for " << KeywordName << endl;
 #endif
     try
@@ -2010,7 +2010,7 @@ namespace DAL {
   casa::Bool dalTable::GetKeyword(casa::String const KeywordName,
                                   casa::DComplex *result)
   {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cerr << "dalTable::GetKeyword called for " << KeywordName << endl;
 #endif
     try
@@ -2046,7 +2046,7 @@ namespace DAL {
   casa::Bool dalTable::GetKeyword(casa::String const KeywordName,
                                   casa::Array<casa::Double> *result)
   {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cerr << "dalTable::GetKeyword called for " << KeywordName << endl;
 #endif
     try
@@ -2082,7 +2082,7 @@ namespace DAL {
   casa::Bool dalTable::GetKeyword(casa::String const KeywordName,
                                   casa::Array<casa::DComplex> *result)
   {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cerr << "dalTable::GetKeyword called for " << KeywordName << endl;
 #endif
     try
@@ -2185,7 +2185,7 @@ namespace DAL {
   //! Wrapper for appendRow (hdf5)
   bool dalTable::append_row_boost( bpl::object data )
   {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     printf("list size: %d\n",PyList_Size( data.ptr() ) );
 #endif
     return append_rows_boost(data,1);

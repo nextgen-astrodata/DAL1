@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009 by Alwin de Jong                                   *
  *   jong@astron.nl                                                        *
  *                                                                         *
@@ -110,7 +107,7 @@ namespace DAL { // Namespace DAL -- begin
   void Bf2h5Calculator::allocateMemory(void) {
     // allocate memory for output data buffers
     try {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
       std::cout << "Allocating " << nrOfSubbands * itsSingleSubbandNrOutputSamples * sizeof(float) << " bytes for downsampled data..." << std::endl;
 #endif
       
@@ -209,7 +206,7 @@ namespace DAL { // Namespace DAL -- begin
     bool bResult (true);
     int status;
     void *thread_result;
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     cout << "Stopping the calculator" << endl;
 #endif 
     pthread_mutex_lock (&calculationMapMutex);

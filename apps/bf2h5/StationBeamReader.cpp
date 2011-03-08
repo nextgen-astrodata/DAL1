@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: TBB_Timeseries.h 4783 2010-04-28 09:49:12Z baehren              $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Alwin de Jong <jong@astron.nl>                                        *
  *                                                                         *
@@ -123,7 +120,7 @@ namespace DAL { // Namespace DAL -- begin
 
   void StationBeamReader::finishReading (void)
   {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     cout << "StationBeamReader::finishReading, now closing socket connection" << endl;
 #endif
     
@@ -169,7 +166,7 @@ namespace DAL { // Namespace DAL -- begin
     // Step 3 Bind the socket to the port
     if (-1 == bind(server_socket, (sockaddr *) &incoming_addr, sizeof(incoming_addr)))
       {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
 	cerr << "StationBeamReader::connectSocket: ERROR socket bind failed" << endl;
 #endif
 	close(server_socket);
@@ -179,7 +176,7 @@ namespace DAL { // Namespace DAL -- begin
     // Step 4 listen for incoming connections
     if (-1 == listen(server_socket,5))
       {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
 	cerr << "StationBeamReader::connectSocket: ERROR listen failed" << endl;
 #endif
 	close(server_socket);
@@ -187,13 +184,13 @@ namespace DAL { // Namespace DAL -- begin
       }
     int old_server_socket = server_socket;
     if (-1 == (server_socket = accept(server_socket, 0, 0))) {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
       cerr << "StationBeamReader::connectSocket: ERROR accept failed" << endl;
 #endif
       close(server_socket);
       return false;
     }
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     cout << "StationBeamReader::connectSocket: socket connected" << endl;
 #endif
     close(old_server_socket);
@@ -208,7 +205,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     if (socketmode) {
       if (recvfrom(server_socket, reinterpret_cast<char *>(&header), sizeof(header),0,  (sockaddr *) &incoming_addr, &socklen) < static_cast<int>(sizeof(header))) {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
 	cerr << "ERROR reading main header from socket" << endl;
 #endif
 	close(server_socket);
@@ -218,14 +215,14 @@ namespace DAL { // Namespace DAL -- begin
     else { // file mode
       if ( !rawfile->read ( reinterpret_cast<char *>(&header), sizeof(header) ))
 	{
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
 	  cerr << "ERROR reading main header from file" << endl;
 	  cerr << "read pointer position: " << rawfile->tellg() << endl;
 #endif
 	  return false;
 	}
       
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
       cout << "size of main header: " << sizeof(header) << endl;
       cout << "read pointer position: " << rawfile->tellg() << endl;
 #endif
@@ -236,7 +233,7 @@ namespace DAL { // Namespace DAL -- begin
       swapHeaderEndians(header);
     }
     
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     printHeaderParameters(header);
 #endif
     
@@ -265,7 +262,7 @@ namespace DAL { // Namespace DAL -- begin
 	return false;
       }
       else {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
 	cerr << "ERROR, receiving the first data block samples" << endl;
 #endif
 	return false;
@@ -276,7 +273,7 @@ namespace DAL { // Namespace DAL -- begin
       return false;
     }
     else {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
       cerr << "ERROR, receiving the first data block header" << endl;
 #endif
       //throw "Error, receiving the first data block header";
@@ -313,7 +310,7 @@ namespace DAL { // Namespace DAL -- begin
       return false;
     }
     else {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
       cerr << "ERROR, receiving data block header" << endl;
 #endif
       //throw "Error, receiving the first data block header";

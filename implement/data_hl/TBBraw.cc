@@ -148,7 +148,7 @@ namespace DAL {  // Namespace DAL -- begin
         cout << "TBBraw::open_file: Creating new dataset " << filename << endl;
         if (dataset_p != NULL)
           {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
             cout << "TBBraw::open_file: Opening a file for the second time. This is deprecated." << endl;
 #endif
             /* We are already connected to a file, so delete everything, and
@@ -516,7 +516,7 @@ namespace DAL {  // Namespace DAL -- begin
     dipoleBuf[numDipole].array->setAttribute( attribute_name(SAMPLE_FREQUENCY_VALUE), &sf, 1 );
     dipoleBuf[numDipole].array->setAttribute( attribute_name(SAMPLE_FREQUENCY_UNIT),
         std::vector<string>(1,"MHz") );
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     /* Feedback */
     cout << "CREATED New dipole group: " << newDipoleIDstr << endl;
 #endif
@@ -626,7 +626,7 @@ namespace DAL {  // Namespace DAL -- begin
     //calculate the writeOffset from time of first block and this block
     int writeOffset= (headerp->sample_nr-dipoleBuf[index].startsamplenum)+
                      ((headerp->time-dipoleBuf[index].starttime)*headerp->sample_freq*1000000);
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     uint sid, rsp, rcu;
     dipoleBuf[index].array->getAttribute( attribute_name(STATION_ID), sid );
     dipoleBuf[index].array->getAttribute( attribute_name(RSP_ID), rsp );
@@ -643,7 +643,7 @@ namespace DAL {  // Namespace DAL -- begin
         //extend array if neccessary.
         if ((writeOffset+ headerp->n_samples_per_frame)> dipoleBuf[index].dimensions[0])
           {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
             cout << "extending array to:" << writeOffset+ headerp->n_samples_per_frame
                  << " from:" << dipoleBuf[index].dimensions[0] << endl;
 #endif
@@ -651,7 +651,7 @@ namespace DAL {  // Namespace DAL -- begin
             dipoleBuf[index].array->extend(dipoleBuf[index].dimensions);
           };
         dipoleBuf[index].array->write(writeOffset, sdata, headerp->n_samples_per_frame );
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
       }
     else
       {

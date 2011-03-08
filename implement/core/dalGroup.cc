@@ -528,7 +528,7 @@ namespace DAL {
     // what is the rank of the array?
     hid_t data_rank = H5Sget_simple_extent_ndims(filespace);
     hsize_t dims[ data_rank ];
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cerr << "data rank: " << data_rank << endl;
 #endif
     status = H5Sget_simple_extent_dims(filespace, dims, NULL);
@@ -537,14 +537,14 @@ namespace DAL {
     std::vector<int> dimsvec;
     for (int ii=0; ii<data_rank; ii++)
       {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
         std::cerr << "dims["  << ii << "]: " << dims[ii] << endl;
 #endif
         size *= dims[ii];
         dimsvec.push_back( dims[ii] );
       }
 
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cerr << "size: " << size << endl;
 #endif
 
@@ -553,7 +553,7 @@ namespace DAL {
 
     status = H5LTread_dataset_int( itsGroupID, arrayname.c_str(), data );
 
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     for (int ii=0; ii<size; ii++)
       {
         std::cerr << data[ii] << endl;

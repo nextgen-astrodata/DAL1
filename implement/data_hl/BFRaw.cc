@@ -276,7 +276,7 @@ namespace DAL {
 				close(server_socket);
 				return false;
 		}
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
 		cout << "socket connected" << endl;
 #endif
 		close(old_server_socket);
@@ -313,7 +313,7 @@ namespace DAL {
         cout << "read pointer position: " << rawfile->tellg() << endl;
       }
     
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cout << "[BFRaw::readRawFileHeader]" << std::endl;
     std::cout << "-- Size of file header   = " << sizeof(header)   << std::endl;
     std::cout << "-- Read pointer position = " << rawfile->tellg() << std::endl;
@@ -360,7 +360,7 @@ namespace DAL {
     ds_size = header.nrSamplesPerSubband / downsample_factor;
     if ( doDownsample_p ) { // if downsampling
       try {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
 	std::cout << "Allocating " << ds_size * sizeof(Float32) << " bytes for downsampled data..." << std::endl;
 #endif
 	ds_data = new Float32[ ds_size ];
@@ -384,7 +384,7 @@ namespace DAL {
       }
     }
     
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     printf("Magic number: %8X\n",header.magic);
     printf("bits per sample: %u\n",header.bitsPerSample);
     printf("Polarizations : %u\n",header.nrPolarizations);
@@ -464,7 +464,7 @@ namespace DAL {
     
     dataSize = header.nrSamplesPerSubband*header.nrSubbands;
     
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     cout << "Allocating " << sizeof(Sample) * dataSize << " bytes for input databuffer" << endl;
 #endif
     sampledata = new Sample[ dataSize ]; // sample contains 8 bytes
@@ -474,7 +474,7 @@ namespace DAL {
     //			totalintensity = NULL;
     ds_size = header.nrSamplesPerSubband / downsample_factor; // the number of samples in the output downsampled data buffer
     if ( doDownsample_p ) { // if downsampling
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
       std::cout << "Allocating " << ds_size * sizeof(Float32) << " bytes for output downsampled databuffer" << std::endl;
 #endif
       try {
@@ -487,7 +487,7 @@ namespace DAL {
     }
     else {
       if ( DO_FLOAT32_INTENSITY ) {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
 	std::cout << "Allocating " << header.nrSamplesPerSubband * sizeof(Float32) << " bytes for output intensity databuffer" << std::endl;
 #endif
 	try {
@@ -501,7 +501,7 @@ namespace DAL {
     }
     
     
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     printf("Magic number: %8X\n",header.magic);
     printf("bits per sample: %u\n",header.bitsPerSample);
     printf("Polarizations : %u\n",header.nrPolarizations);
@@ -703,7 +703,7 @@ namespace DAL {
 	//	subbandFirstSampleIdx = subband * header.nrSamplesPerSubband;// * 4 * header.bitsPerSample/8; // index is the byte index to the first sample of a subband
 	//	std::cout << "subbandIndex = " << subbandFirstSampleIdx << std::endl;
 	/*
-	  #ifdef DEBUGGING_MESSAGES
+	  #ifdef DAL_DEBUGGING_MESSAGES
 	  cout << "sampledata[0].xx: " << sampledata[0].xx << ", sampledata[0].yy: " << sampledata[0].yy <<  "sampledata[10].xx: " << sampledata[10].xx << ", sampledata[10].yy: " << sampledata[10].yy << endl;
 	  #endif
 	*/
@@ -807,7 +807,7 @@ namespace DAL {
     if (!doDownsample_p) {
       total_number_of_samples = nrOfBlocks * header.nrSamplesPerSubband;
     }
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cout << "total_number_of_samples = " << total_number_of_samples << std::endl;
 #endif
     //		double sampling_time   = header.sampleRate;
@@ -895,7 +895,7 @@ namespace DAL {
     
     delete beamGroup;
     
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cerr << "CREATED New beam group: " << std::string(beamstr) << std::endl;
     std::cerr << "   " << header.nrSubbands << " subbands" << std::endl;
 #endif
@@ -943,7 +943,7 @@ namespace DAL {
 
   void BFRaw::processBlocks()
   {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cout << "Starting to process blocks" << std::endl;
 #endif
     // int16_t nseconds = 	20;
@@ -965,7 +965,7 @@ namespace DAL {
     char * buf        = NULL;
 
     try {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
       std::cout << "Allocating " << blocksize << " bytes (" << blocks 
 		<< " seconds)" << std::endl;
 #endif
@@ -982,7 +982,7 @@ namespace DAL {
     
     rawfile->read( buf, blocksize ); // read all datablocks
     
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     cerr << "read pointer position: " << rawfile->tellg() << endl;
     cerr << "bytes read:            " << rawfile->gcount() << endl;
 #endif
@@ -994,19 +994,19 @@ namespace DAL {
         retval = false;
       }
     
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     cerr << "blocksize " << blocksize << endl;
     cerr << "blocks    " << blocks << endl;
 #endif
     
     BlockHeader * pbuf = NULL;
     
-    /*#ifdef DEBUGGING_MESSAGES
+    /*#ifdef DAL_DEBUGGING_MESSAGES
       cout << " allocating " << sizeof(Sample) * header.nrSamplesPerSubband << " bytes for sample data." << endl;
       #endif*/
     for ( int blk=0 ; blk < blocks ; blk++ )
       {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
 	std::cout << "processing block " << blk << std::endl;
 #endif
         pbuf = reinterpret_cast<BlockHeader*>(&(buf[ blk * (blocksize/blocks) ]));
@@ -1081,7 +1081,7 @@ namespace DAL {
 
             Sample * sample = reinterpret_cast<Sample*>(&( buf[ index ]));
 /*
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
 cout << "sample[0].xx: " << sample[0].xx << ", sample[0].yy: " << sample[0].yy <<  "sample[10].xx: " << sample[10].xx << ", sample[10].yy: " << sample[10].yy << endl;
 #endif
 */
@@ -1138,7 +1138,7 @@ cout << "sample[0].xx: " << sample[0].xx << ", sample[0].yy: " << sample[0].yy <
     delete [] buf;
     buf = NULL;
 
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
 // if (!first_block) return false;
 #endif
 
@@ -1272,7 +1272,7 @@ cout << "sample[0].xx: " << sample[0].xx << ", sample[0].yy: " << sample[0].yy <
 						ds_data[samplecount] += ( (Float32)xx_intensity * (Float32)xx_intensity + (Float32)yy_intensity * (Float32)yy_intensity );
 //						ds_data[count] += (Float32)( xx_intensity * xx_intensity + yy_intensity * yy_intensity );
 							/*
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
 if ( (Float32)( xx_intensity * xx_intensity + yy_intensity * yy_intensity ) != 
 (Float32)xx_intensity * (Float32)xx_intensity + (Float32)yy_intensity * (Float32)yy_intensity ) {
 	std::cout << "xx_intensity = " << xx_intensity << ", yy_intensity = " << yy_intensity << ", xx^2+yy^2 = " << (Float32)( xx_intensity * xx_intensity + yy_intensity * yy_intensity ) << std::endl;
@@ -1281,7 +1281,7 @@ if ( (Float32)( xx_intensity * xx_intensity + yy_intensity * yy_intensity ) !=
 #endif
 */
 							/*
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
 						if (count == ds_size - 1) {
 							std::cout << "ds_data[" << count << "] = " << ds_data[count] << std::endl;
 						}

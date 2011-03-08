@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: TBB_Timeseries.h 4783 2010-04-28 09:49:12Z baehren              $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Alwin de Jong <jong@astron.nl>                                        *
  *                                                                         *
@@ -39,7 +36,7 @@
 #include "StationBeamReader.h"
 #include <data_hl/BFRawFormat.h>
 
-#define DEBUGGING_MESSAGES
+#define DAL_DEBUGGING_MESSAGES
 
 #define INITIAL_NR_OF_READ_BUFFERS 2
 

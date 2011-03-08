@@ -600,9 +600,9 @@ namespace DAL {
 	
 	if (status) {
 	  /* Local variables */
-	  unsigned int nelem (rank());
-	  hsize_t dimensions[nelem];
-	  herr_t h5error (0);
+	  herr_t h5error          = 0;
+	  unsigned int nelem      = rank();
+	  hsize_t * dimensions    = new hsize_t[nelem];
 	  std::vector<int> stride = slab.stride();
 	  std::vector<int> block  = slab.block();
 	  /* Setup the memory space */
@@ -619,6 +619,8 @@ namespace DAL {
 			     itsDataspace,
 			     H5P_DEFAULT,
 			     data);
+	  /* Release allocated memory */
+	  delete [] dimensions;
 	  /* Release HDF5 object identifier */
 	  HDF5Object::close (memorySpace);
 	} else {

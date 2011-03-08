@@ -395,7 +395,7 @@ int main(int argc, char *argv[])
 
           if ( tbb.transientMode() )
             {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
               cerr << "block " << counter << endl;
 #endif
               if ( !tbb.processTransientSocketDataBlock() )
@@ -450,7 +450,7 @@ int main(int argc, char *argv[])
               tbb.first_sample = false;
             }
 
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
           cerr << "block " << counter << endl;
 #endif
 

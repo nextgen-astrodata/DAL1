@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: TBB_Timeseries.h 4783 2010-04-28 09:49:12Z baehren              $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Alwin de Jong <jong@astron.nl>                                        *
  *                                                                         *
@@ -272,7 +269,7 @@ void HDF5Writer::createHDF5File (const LOFAR::RTCP::Parset *ps)
   delete [] cfName;
   delete beamGroup;
   
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
   std::cerr << "CREATED New beam group: " << string(beamstr) << std::endl;
   std::cerr << "   " << header.nrSubbands << " subbands" << std::endl;
 #endif
@@ -316,7 +313,7 @@ void HDF5Writer::createHDF5File (const LOFAR::RTCP::Parset *ps)
 bool HDF5Writer::start(void)
 {
   stopWriting = false;
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
   cout << "setting attribute EPOCH_UTC to " << itsParent->getEpochUTC() << endl;
   cout << "setting attribute EPOCH_DATE to " << itsParent->getEpochDate() << endl;	
 #endif
@@ -327,7 +324,7 @@ bool HDF5Writer::start(void)
     return true;
   }
   else {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     cout << "HDF5Writer::start, ERROR: main write thread could not be started" << endl;
 #endif
     return false;
@@ -343,7 +340,7 @@ bool HDF5Writer::stop (void)
   int status   = 0;
   void *thread_result;
 
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
   cout << "Stopping the writer" << endl;
 #endif 
 
@@ -457,7 +454,7 @@ void HDF5Writer::writeData (void)
     if (getDataForCurrentBlock()) {
       table[dataPair.first]->appendRows( dataPair.second, outputBlockSize );
       subbandReady[dataPair.first] = true;
-      /*#ifdef DEBUGGING_MESSAGES
+      /*#ifdef DAL_DEBUGGING_MESSAGES
 	cout << "HDF5Writer:Wrote subband " << static_cast<int>(dataPair.first) << " for data block " << currentBlockNr << endl;
 	#endif*/
       checkIfBlockComplete();

@@ -187,7 +187,7 @@ int main (int argc, char *argv[])
   //__________________________________________________________________
   // Parameter summary
 
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
   cout << "[tTBB]" << endl;
   cout << "-- Output file      = " << outfile << endl;
   cout << "-- Input file       = " << rawfile << endl;

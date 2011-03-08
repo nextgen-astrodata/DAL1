@@ -817,7 +817,7 @@ namespace DAL { // Namespace DAL -- begin
       /* Check if the selection was valid */
       htri_t errorCode;
       status = checkSelectionValid (dataspaceID,errorCode);
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
       /* Get the bounding of the selection */
       std::vector<hsize_t> posStart;
       std::vector<hsize_t> posEnd;

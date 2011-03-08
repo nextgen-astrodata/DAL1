@@ -143,7 +143,7 @@ void BF2H5::getTimeFromBlockHeader(void)
 
 bool BF2H5::allocateSampleBuffers(void)
 {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
   cout << "BF2H5::allocateSampleBuffers: allocating " << itsCurrentNrOfReadBuffers * oneBlockdataSize * sizeof(BFRawFormat::Sample) << " bytes for sample input data" << endl;
 #endif
   try {
@@ -194,7 +194,7 @@ bool BF2H5::switchReadBuffer (long int block_nr)
 
   // we didn't find a free read buffer, allocat a new buffer
   try {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     cout << "BF2H5::switchReadBuffer, Calculation not fast enough, adding read buffer no. " << static_cast<int>(itsCurrentNrOfReadBuffers) << " for block " << block_nr << endl;
 #endif
     BFRawFormat::Sample *pbuf = new BFRawFormat::Sample[oneBlockdataSize];
@@ -282,7 +282,7 @@ void BF2H5::start (bool const &verbose)
             while ((itsCalculator->stillProcessing()) || (itsWriter->dataLeft())) {
               cout << "[BF2H5::start] Still processing last received data..." << endl;
               /*
-		#ifdef DEBUGGING_MESSAGES
+		#ifdef DAL_DEBUGGING_MESSAGES
 		if (itsCalculator->stillProcessing()) {
 		cout << "calculator says it's still processing..." << endl;
 		cout << itsCalculator->whatAreYouDoing() << endl;

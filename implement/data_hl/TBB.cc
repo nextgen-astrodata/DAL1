@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2008 by Joseph Masters                                  *
  *   J.S.Masters@uva.nl                                                    *
  *                                                                         *
@@ -61,7 +58,7 @@ namespace DAL {
 
         stations = dataset->getGroupNames();
 
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
         for ( unsigned int ss = 0; ss < stations.size(); ss++ )
           {
             cerr << stations[ss] << " group exists." << endl;
@@ -230,7 +227,7 @@ namespace DAL {
     int time_sec  = std::floor(timeout);
     int time_usec = 1e06*(timeout - time_sec);
 
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cout << "[TBB::setTimeoutStart]" << std::endl;
     std::cout << "-- Timeout        = " << timeout   << std::endl;
     std::cout << "-- Timeout  [sec] = " << time_sec  << std::endl;
@@ -256,7 +253,7 @@ namespace DAL {
     int time_sec  = std::floor(timeout);
     int time_usec = 1e06*(timeout - time_sec);
 
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cout << "[TBB::setTimeoutRead]" << std::endl;
     std::cout << "-- Timeout        = " << timeout   << std::endl;
     std::cout << "-- Timeout  [sec] = " << time_sec  << std::endl;
@@ -414,7 +411,7 @@ namespace DAL {
       {
         rr = recvfrom( main_socket, buf, nbytes, 0,
                        (sockaddr *) &incoming_addr, &socklen);
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
         cout << "readRawSocketBlockHeader: Frame with " << rr << " bytes." << endl;
         if (rr == nbytes)
           {
@@ -498,7 +495,7 @@ namespace DAL {
 	return FAIL;
       };
     };
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     if (inBufStorID == inBufProcessID) {
       cerr << "TBB::readSocketBuffer: Empty buffer at end of method!" << endl;
       return FAIL;
@@ -556,7 +553,7 @@ namespace DAL {
     char *time_string=ctime(&sampleTime_p);
     time_string[strlen(time_string)-1]=0;   // remove \n
 
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     printf("Time:              : %s\n",time_string );
     printRawHeader();
 #endif
@@ -602,7 +599,7 @@ namespace DAL {
     char *time_string=ctime(&sampleTime_p);
     time_string[strlen(time_string)-1]=0;   // remove \n
 
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     printf("Time:              : %s\n",time_string );
     printRawHeader();
 #endif
@@ -859,7 +856,7 @@ namespace DAL {
     dipoleArray_p->setAttribute ("SAMPLE_FREQUENCY_VALUE",    sampleFreqValue      );
     dipoleArray_p->setAttribute ("SAMPLE_FREQUENCY_UNIT",     sampleFreqUnit       );
 
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     /* Feedback */
     std::cout << "CREATED New dipole group: " << newuid << std::endl;
 #endif
@@ -970,7 +967,7 @@ namespace DAL {
     dipoleArray_p->getAttribute( attribute_name(SAMPLE_NUMBER), startsamplenum );
     int writeOffset= (headerp_p->time-starttime)*headerp_p->sample_freq*1000000 +
                      (headerp_p->sample_nr-startsamplenum);
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     uint sid, rsp, rcu;
     dipoleArray_p->getAttribute( attribute_name(STATION_ID), sid );
     dipoleArray_p->getAttribute( attribute_name(RSP_ID), rsp );
@@ -987,7 +984,7 @@ namespace DAL {
         //extend array if neccessary.
         if ((writeOffset+ headerp_p->n_samples_per_frame)> dims[0])
           {
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
             cout << "extending array to:" << writeOffset+ headerp_p->n_samples_per_frame
                  << " from:" << dims << endl;
 #endif
@@ -996,7 +993,7 @@ namespace DAL {
           };
         dipoleArray_p->write(writeOffset, sdata, headerp_p->n_samples_per_frame );
         offset_p = dims[0];
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
       }
     else
       {
@@ -1045,7 +1042,7 @@ namespace DAL {
     dipoleArray_p->getAttribute( attribute_name(SAMPLE_NUMBER), startsamplenum );
     int writeOffset= (headerp_p->time-starttime)*headerp_p->sample_freq*1000000 +
                      (headerp_p->sample_nr-startsamplenum);
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     uint sid, rsp, rcu;
     dipoleArray_p->getAttribute( attribute_name(STATION_ID), sid );
     dipoleArray_p->getAttribute( attribute_name(RSP_ID), rsp );
@@ -1068,7 +1065,7 @@ namespace DAL {
           };
         dipoleArray_p->write(writeOffset, sdata, headerp_p->n_samples_per_frame );
         offset_p = dims[0];
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
       }
     else
       {

@@ -14,7 +14,7 @@
 #define DAL_VERSION_PATCH ${DAL_VERSION_PATCH}
 
 /* Print debugging information? */
-#cmakedefine DEBUGGING_MESSAGES
+#cmakedefine DAL_DEBUGGING_MESSAGES
 
 // ==============================================================================
 //

@@ -746,7 +746,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     // Feedback ____________________________________________
 
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
     std::cout << "[TBB_StationGroup::readData]" << std::endl;
     std::cout << " -- start            = " << start             << std::endl;
     std::cout << " -- selected dipoles = " << selectedDipoles() << std::endl;

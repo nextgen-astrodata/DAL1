@@ -739,7 +739,7 @@ namespace DAL {
 	// additional variables
 	hsize_t datatype_size         = H5Tget_size (datatype_id);
 
-#ifdef DEBUGGING_MESSAGES
+#ifdef DAL_DEBUGGING_MESSAGES
 	// output
 	std::cout << "[DAL::h5get_attribute]" << endl;
 	std::cout << "-- Attribute ID       = " << attribute_id  << endl;
