@@ -170,7 +170,9 @@ if (NOT BOOST_FOUND)
   else (BOOST_THREAD_COMPILE_RESULT)
     set (BOOST_WITH_THREAD NO)
     message (STATUS "[Boost] Failed to compile TestBoostLibrary with thread support!")
-    message (${BOOST_THREAD_COMPILE_OUTPUT})
+    if (DAL_VERBOSE_CONFIGURE)
+      message (${BOOST_THREAD_COMPILE_OUTPUT})
+    endif (DAL_VERBOSE_CONFIGURE)
   endif (BOOST_THREAD_COMPILE_RESULT)
   
   ##_____________________________________________________________________________
