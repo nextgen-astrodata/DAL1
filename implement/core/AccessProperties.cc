@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/FileAccessProperties.h>
+#include <core/AccessProperties.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -28,14 +28,14 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  FileAccessProperties::FileAccessProperties ()
+  AccessProperties::AccessProperties ()
   {;}
   
   /*!
     \param other -- Another HDF5Property object from which to create this new
            one.
   */
-  FileAccessProperties::FileAccessProperties (FileAccessProperties const &other)
+  AccessProperties::AccessProperties (AccessProperties const &other)
   {
     copy (other);
   }
@@ -46,12 +46,12 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  FileAccessProperties::~FileAccessProperties ()
+  AccessProperties::~AccessProperties ()
   {
     destroy();
   }
   
-  void FileAccessProperties::destroy ()
+  void AccessProperties::destroy ()
   {;}
   
   // ============================================================================
@@ -63,7 +63,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    operator=
   
-  FileAccessProperties& FileAccessProperties::operator= (FileAccessProperties const &other)
+  AccessProperties& AccessProperties::operator= (AccessProperties const &other)
   {
     if (this != &other) {
       destroy ();
@@ -75,7 +75,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
-  void FileAccessProperties::copy (FileAccessProperties const &other)
+  void AccessProperties::copy (AccessProperties const &other)
   {
     itsAccessProperties = other.itsAccessProperties;
   }
@@ -92,9 +92,9 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param os -- Output stream to which the summary is written.
   */
-  void FileAccessProperties::summary (std::ostream &os)
+  void AccessProperties::summary (std::ostream &os)
   {
-    os << "[FileAccessProperties] Summary of internal parameters." << std::endl;
+    os << "[AccessProperties] Summary of internal parameters." << std::endl;
   }
   
   // ============================================================================

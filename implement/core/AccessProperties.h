@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren <bahren@astron.nl>                                       *
  *                                                                         *
@@ -21,26 +18,26 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef FILEACCESSPROPERTIES_H
-#define FILEACCESSPROPERTIES_H
+#ifndef ACCESSPROPERTIES_H
+#define ACCESSPROPERTIES_H
 
 #include <core/HDF5Object.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class FileAccessProperties
+    \class AccessProperties
     
     \ingroup DAL
     \ingroup core
     
-    \brief Maintain file access properties
+    \brief Book-keeping of access properties
     
     \author Lars B&auml;hren
 
     \date 2010/10/19
 
-    \test tFileAccessProperties.cc
+    \test tAccessProperties.cc
     
     <h3>Prerequisite</h3>
     
@@ -78,7 +75,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class FileAccessProperties {
+  class AccessProperties {
 
     hid_t itsAccessProperties;
     
@@ -87,34 +84,34 @@ namespace DAL { // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    FileAccessProperties ();
+    AccessProperties ();
     
     //! Copy constructor
-    FileAccessProperties (FileAccessProperties const &other);
+    AccessProperties (AccessProperties const &other);
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~FileAccessProperties ();
+    ~AccessProperties ();
     
     // === Operators ============================================================
     
     /*!
       \brief Overloading of the copy operator
       
-      \param other -- Another FileAccessProperties object from which to make a copy.
+      \param other -- Another AccessProperties object from which to make a copy.
     */
-    FileAccessProperties& operator= (FileAccessProperties const &other); 
+    AccessProperties& operator= (AccessProperties const &other); 
     
     // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, FileAccessProperties.
+      \return className -- The name of the class, AccessProperties.
     */
     inline std::string className () const {
-      return "FileAccessProperties";
+      return "AccessProperties";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -132,14 +129,14 @@ namespace DAL { // Namespace DAL -- begin
   private:
     
     //! Unconditional copying
-    void copy (FileAccessProperties const &other);
+    void copy (AccessProperties const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class FileAccessProperties -- end
+  }; // Class AccessProperties -- end
   
 } // Namespace DAL -- end
 
-#endif /* FILEACCESSPROPERTIES_H */
+#endif /* ACCESSPROPERTIES_H */
   
