@@ -43,22 +43,32 @@ endif (CASA_FOUND OR CASACORE_FOUND)
 ##____________________________________________________________________
 ## Applications which require Boost
 
-if (HAVE_BOOST)
-  if (BOOST_WITH_THREAD)
-    ## source files
-    list (APPEND tests bf2h5_old)
-    list (APPEND tests tbb2h5)
-    list (APPEND tests TBBraw2h5)
-    ## linker instructions
-    list (APPEND apps_link_libraries
-      ${BOOST_LIBRARIES}
-      )
-  else (BOOST_WITH_THREAD)
-    message (STATUS "[DAL] Missing Boost++ thread library support!")
-  endif (BOOST_WITH_THREAD)
-else (HAVE_BOOST)
-  message (STATUS "[DAL] Missing Boost++ -- unable to build applications!")
-endif (HAVE_BOOST)
+if (BOOST_PROGRAM_OPTIONS_LIBRARY)
+  if (BOOST_THREAD_LIBRARY)
+    if (BOOST_WITH_THREAD)
+      ## compiler instructions
+      add_executable (bf2h5_old bf2h5_old.cpp)
+      add_executable (tbb2h5    tbb2h5.cpp   )
+      add_executable (TBBraw2h5 TBBraw2h5.cpp)
+      ## linker instructions
+      target_link_libraries (bf2h5_old
+	dal ${BOOST_PROGRAM_OPTIONS_LIBRARY} ${BOOST_THREAD_LIBRARY}
+	)
+      target_link_libraries (tbb2h5
+	dal ${BOOST_PROGRAM_OPTIONS_LIBRARY} ${BOOST_THREAD_LIBRARY}
+	)
+      target_link_libraries (TBBraw2h5
+	dal ${BOOST_PROGRAM_OPTIONS_LIBRARY} ${BOOST_THREAD_LIBRARY}
+	)
+    else (BOOST_WITH_THREAD)
+      message (STATUS "[DAL] Missing Boost++ thread library support!")
+    endif (BOOST_WITH_THREAD)
+  else (BOOST_THREAD_LIBRARY)
+    message (STATUS "[DAL] Unable to build apps -- Boost thread library!")
+  endif (BOOST_THREAD_LIBRARY)
+else (BOOST_PROGRAM_OPTIONS_LIBRARY)
+  message (STATUS "[DAL] Unable to build apps -- Boost program_options library!")
+endif (BOOST_PROGRAM_OPTIONS_LIBRARY)
 
 ##____________________________________________________________________
 ## Build the executables
