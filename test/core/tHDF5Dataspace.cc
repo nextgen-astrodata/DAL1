@@ -55,9 +55,19 @@ int test_constructors (hid_t const &location)
   
   cout << "[1] Testing HDF5Dataspace() ..." << endl;
   try {
-    HDF5Dataspace newObject;
+    HDF5Dataspace ds;
     //
-    newObject.summary(); 
+    ds.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[2] Testing HDF5Dataspace(hid_t) ..." << endl;
+  try {
+    HDF5Dataspace ds (location);
+    //
+    ds.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;

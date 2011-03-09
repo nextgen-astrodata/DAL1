@@ -32,6 +32,12 @@ namespace DAL { // Namespace DAL -- begin
     : HDF5Object()
   {;}
 
+  HDF5Dataspace::HDF5Dataspace (hid_t const &location)
+    : HDF5Object()
+  {
+    open (location);
+  }
+  
   /*!
     \param other -- Another HDF5Property object from which to create this new
            one.
@@ -108,12 +114,47 @@ namespace DAL { // Namespace DAL -- begin
   //  Public methods
   //
   // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                                         open
+  
+  /*!
+    \param location -- Location of the object of which to open the dataspace;
+           supported object types are \c DATASPACE, \c DATASET and \c ATTR.
+    \return status  -- Status of the operation; returns \e false in case an error
+            was encountered, e.g. because the \e location points to an invalid
+	    pbject or to an object with no dataspace attached.
+   */
+  bool HDF5Dataspace::open (hid_t const &location)
+  {
+    bool status = true;
+    
+    switch (HDF5Object::objectType(location)) {
+    case H5I_DATASPACE:
+      itsLocation = H5Scopy (location);
+      break;
+    case H5I_DATASET:
+      itsLocation = H5Dget_space (location);
+      break;
+    case H5I_ATTR:
+      itsLocation = H5Aget_space (location);
+      break;
+    default:
+      status = false;
+      break;
+    }
+    
+    return status;
+  }
   
   // ============================================================================
   //
   //  Static methods
   //
   // ============================================================================
+  
+  //_____________________________________________________________________________
+  //                                                                     isSimple
   
   /*!
     \param location -- HDF5 object identifier; can point to dataspace, dataset or
