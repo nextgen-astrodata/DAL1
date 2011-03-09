@@ -410,7 +410,10 @@ namespace DAL { // Namespace DAL -- begin
     if (it==itsStokesDatasets.end()) {
       std::cerr << "[BF_BeamGroup::getStokesDataset]"
 		<< " Unable to find Stokes dataset " << name << std::endl;
-      status = false;
+      dataset = BF_StokesDataset();
+      status  = false;
+    } else {
+      dataset = it->second;
     }
 
     return status;
@@ -427,9 +430,7 @@ namespace DAL { // Namespace DAL -- begin
   std::string BF_BeamGroup::getName (unsigned int const &index)
   {
     char uid[10];
-    sprintf(uid,
-            "%03d",
-	    index);
+    sprintf (uid, "%03d", index);
     
     std::string name (uid);
     

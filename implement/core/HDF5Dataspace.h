@@ -98,7 +98,10 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // === Public methods =======================================================
-    
+
+    //! Open dataspace (either directly or from host object)
+    bool open (hid_t const &location);
+
     //! Determines whether a dataspace is a simple dataspace.
     inline htri_t isSimple () {
       return isSimple (itsLocation);
