@@ -1,6 +1,4 @@
 # +-----------------------------------------------------------------------------+
-# | $Id::                                                                     $ |
-# +-----------------------------------------------------------------------------+
 # |   Copyright (C) 2007                                                        |
 # |   Lars B"ahren (bahren@astron.nl)                                           |
 # |                                                                             |
@@ -45,14 +43,16 @@ if (NOT PYTHON_FOUND)
   ## Check for the header files
 
   find_path (PYTHON_INCLUDES patchlevel.h modsupport.h
-    PATHS ${PYTHON_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${PYTHON_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include include/python include/python2.7 include/python2.6
     )
   
   ## include path for: Python.h
 
   find_path (PYTHON_PYTHON_H Python.h
-    PATHS ${PYTHON_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${PYTHON_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include include/python include/python2.7 include/python2.6
     )
   if (PYTHON_PYTHON_H)
@@ -62,7 +62,8 @@ if (NOT PYTHON_FOUND)
   ## include path for: pyconfig.h
 
   find_path (PYTHON_PYCONFIG_H pyconfig.h
-    PATHS ${PYTHON_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${PYTHON_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include include/python include/python2.7 include/python2.6
     )
   if (PYTHON_PYCONFIG_H)
@@ -77,7 +78,8 @@ if (NOT PYTHON_FOUND)
   ## Check for the library
   
   find_library (PYTHON_LIBRARIES python
-    PATHS ${PYTHON_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${PYTHON_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib
     )
   
@@ -85,7 +87,8 @@ if (NOT PYTHON_FOUND)
   ## Check for the executable
   
   find_program (PYTHON_EXECUTABLE python
-    PATHS ${PYTHON_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${PYTHON_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES bin
     )
   

@@ -39,7 +39,7 @@ if (NOT WCSLIB_FOUND)
   
   find_path (WCSLIB_INCLUDES wcs/wcs.h wcslib/wcs.h
     HINTS ${WCSLIB_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include
     )
   
@@ -48,7 +48,7 @@ if (NOT WCSLIB_FOUND)
   
   find_library (WCSLIB_LIBRARIES wcs
     HINTS ${WCSLIB_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib
     )
   
@@ -85,6 +85,7 @@ if (NOT WCSLIB_FOUND)
   ## Mark advanced variables
   
   mark_as_advanced (
+    WCSLIB_ROOT_DIR
     WCSLIB_INCLUDES
     WCSLIB_LIBRARIES
     )

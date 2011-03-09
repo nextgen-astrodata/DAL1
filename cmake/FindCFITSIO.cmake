@@ -1,6 +1,4 @@
 # +-----------------------------------------------------------------------------+
-# | $Id::                                                                     $ |
-# +-----------------------------------------------------------------------------+
 # |   Copyright (C) 2011                                                        |
 # |   Lars B"ahren (bahren@astron.nl)                                           |
 # |                                                                             |
@@ -39,7 +37,7 @@ if (NOT CFITSIO_FOUND)
   
   find_path (CFITSIO_INCLUDES fitsio.h fitsio2.h
     HINTS ${CFITSIO_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include include/fitsio include/cfitsio
     )
   
@@ -48,7 +46,7 @@ if (NOT CFITSIO_FOUND)
   
   find_library (CFITSIO_LIBRARIES cfitsio
     HINTS ${CFITSIO_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib
     )
   
@@ -85,6 +83,7 @@ if (NOT CFITSIO_FOUND)
   ## Mark advanced variables
   
   mark_as_advanced (
+    CFITSIO_ROOT_DIR
     CFITSIO_INCLUDES
     CFITSIO_LIBRARIES
     )

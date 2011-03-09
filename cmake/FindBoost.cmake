@@ -82,7 +82,7 @@ if (NOT BOOST_FOUND)
     ## Search for the include directory
     find_path (BOOST_${_boost_var}_INCLUDES boost/${_module}.hpp
       HINTS ${BOOST_ROOT_DIR}
-      PATHS /sw /usr /usr/local /opt/local
+      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
       PATH_SUFFIXES include include/boost
       )
     if (BOOST_${_boost_var}_INCLUDES)
@@ -92,7 +92,7 @@ if (NOT BOOST_FOUND)
     ## Search for the library
     find_library (BOOST_${_boost_var}_LIBRARY boost_${_module}-mt boost_${_module}
       HINTS ${BOOST_ROOT_DIR}
-      PATHS /sw /usr /usr/local /opt/local
+      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
       PATH_SUFFIXES lib
       )
     if (BOOST_${_boost_var}_LIBRARY)

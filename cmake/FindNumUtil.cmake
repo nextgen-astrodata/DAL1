@@ -1,6 +1,4 @@
 # +-----------------------------------------------------------------------------+
-# | $Id::                                                                     $ |
-# +-----------------------------------------------------------------------------+
 # |   Copyright (C) 2007                                                        |
 # |   Lars B"ahren (bahren@astron.nl)                                           |
 # |                                                                             |
@@ -29,12 +27,19 @@
 #  NUMUTIL_LFLAGS    = Linker flags (optional)
 
 if (NOT NUMUTIL_FOUND)
+
+  set (NUMUTIL_FOUND FALSE)
+
+  if (NOT NUMUTIL_ROOT_DIR)
+    set (NUMUTIL_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+  endif (NOT NUMUTIL_ROOT_DIR)
     
   ##_____________________________________________________________________________
   ## Check for the header files
   
   find_path (NUMUTIL_INCLUDES num_util.h
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    HINTS ${NUMUTIL_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include include/num_util include/python/num_util
     )
   
@@ -42,7 +47,8 @@ if (NOT NUMUTIL_FOUND)
   ## Check for the library
   
   find_library (NUMUTIL_LIBRARIES num_util
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    HINTS ${NUMUTIL_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib lib/python
     )
   
@@ -50,7 +56,8 @@ if (NOT NUMUTIL_FOUND)
   ## Check for the executable
   
 #  find_program (NUMUTIL_EXECUTABLE <package name>
-#    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+#    HINTS ${NUMUTIL_ROOT_DIR}
+#    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
 #    PATH_SUFFIXES bin
 #    )
   
@@ -87,6 +94,7 @@ if (NOT NUMUTIL_FOUND)
   ## Mark advanced variables
   
   mark_as_advanced (
+    NUMUTIL_ROOT_DIR
     NUMUTIL_INCLUDES
     NUMUTIL_LIBRARIES
     )

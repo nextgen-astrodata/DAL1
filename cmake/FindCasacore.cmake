@@ -68,7 +68,7 @@ if (NOT CASACORE_FOUND)
   
   find_path (CASACORE_INCLUDES ${CASACORE_HEADERS}
     HINTS ${CASACORE_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include include/casacore
     )
 
@@ -86,10 +86,10 @@ if (NOT CASACORE_FOUND)
     find_library (CASACORE_${_casacore_var}_LIBRARY
       NAMES casa_${_casacore_lib} ${_casacore_lib}
       HINTS ${CASACORE_ROOT_DIR}
-      PATHS /sw /usr /usr/local /opt/local
+      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
       PATH_SUFFIXES lib
       )
-
+    
     ## If library was found, add it to the list of libraries
     if (CASACORE_${_casacore_var}_LIBRARY)
       list (APPEND CASACORE_LIBRARIES ${CASACORE_${_casacore_var}_LIBRARY})
@@ -185,6 +185,7 @@ if (NOT CASACORE_FOUND)
   ## Mark advanced variables
   
   mark_as_advanced (
+    CASACORE_ROOT_DIR
     CASACORE_INCLUDES
     CASACORE_LIBRARIES
     CASACORE_CASA_LIBRARY

@@ -1,6 +1,4 @@
 # +-----------------------------------------------------------------------------+
-# | $Id::                                                                     $ |
-# +-----------------------------------------------------------------------------+
 # |   Copyright (C) 2007                                                        |
 # |   Lars B"ahren (bahren@astron.nl)                                           |
 # |                                                                             |
@@ -60,12 +58,12 @@ if (NOT DAL_FOUND)
     PATHS /sw /usr /usr/local /opt/local
     PATH_SUFFIXES include include/dal
     )
-
+  
   ## core/dalDataset.h
-
+  
   find_path (DAL_DALDATASET_H core/dalDataset.h
     HINTS ${DAL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include include/dal
     )
   if (DAL_DALDATASET_H)
@@ -73,18 +71,18 @@ if (NOT DAL_FOUND)
   endif (DAL_DALDATASET_H)
   
   ## core/dalDataset.h
-
+  
   find_path (DAL_COORDINATE_H coordinates/Coordinate.h
     HINTS ${DAL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include include/dal
     )
   if (DAL_COORDINATE_H)
     list (APPEND DAL_INCLUDES ${DAL_COORDINATE_H})
   endif (DAL_COORDINATE_H)
-
+  
   ## Remove duplicate entries
-
+  
   list (REMOVE_DUPLICATES DAL_INCLUDES)
   
   ##_____________________________________________________________________________
@@ -94,7 +92,7 @@ if (NOT DAL_FOUND)
   
   find_library (DAL_DAL_LIBRARY dal
     HINTS ${DAL_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib lib/dal
     )
   if (DAL_DAL_LIBRARY)
@@ -111,11 +109,11 @@ if (NOT DAL_FOUND)
       tbb2h5
       TBBraw2h5
       )
-
+    
     ## try to locate the executable
     find_program (DAL_${_dal_executable}_EXECUTABLE ${_dal_executable}
       HINTS ${DAL_ROOT_DIR}
-      PATHS /sw /usr /usr/local /opt/local
+      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
       PATH_SUFFIXES bin bin/dal
       )
     
@@ -178,6 +176,7 @@ if (NOT DAL_FOUND)
   ## Mark advanced variables
   
   mark_as_advanced (
+    DAL_ROOT_DIR
     DAL_INCLUDES
     DAL_LIBRARIES
     )

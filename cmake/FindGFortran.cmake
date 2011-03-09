@@ -1,6 +1,4 @@
 # +-----------------------------------------------------------------------------+
-# | $Id::                                                                     $ |
-# +-----------------------------------------------------------------------------+
 # |   Copyright (C) 2011                                                        |
 # |   Lars B"ahren (bahren@astron.nl)                                           |
 # |                                                                             |
@@ -29,12 +27,17 @@
 #  GFORTRAN_LFLAGS     = Linker flags (optional)
 
 if (NOT GFORTRAN_FOUND)
-    
+
+  if (NOT GFORTRAN_ROOT_DIR)
+    set (GFORTRAN_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+  endif (NOT GFORTRAN_ROOT_DIR)
+  
   ##_____________________________________________________________________________
   ## Check for the header files
   
   find_path (GFORTRAN_INCLUDES gfortran.h
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    HINTS ${GFORTRAN_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include
     )
   
@@ -42,7 +45,8 @@ if (NOT GFORTRAN_FOUND)
   ## Check for the library
   
   find_library (GFORTRAN_LIBRARIES gfortran
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    HINTS ${GFORTRAN_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib
     )
   
@@ -50,7 +54,8 @@ if (NOT GFORTRAN_FOUND)
   ## Check for the executable
   
   find_program (GFORTRAN_EXECUTABLE gfortran
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    HINTS ${GFORTRAN_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES bin
     )
   
@@ -87,6 +92,7 @@ if (NOT GFORTRAN_FOUND)
   ## Mark advanced variables
   
   mark_as_advanced (
+    GFORTRAN_ROOT_DIR
     GFORTRAN_INCLUDES
     GFORTRAN_LIBRARIES
     )

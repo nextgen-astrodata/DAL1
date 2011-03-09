@@ -40,7 +40,8 @@ if (NOT LAPACK_FOUND)
   set (LAPACK_INCLUDES "")
 
   find_path (LAPACK_CLAPACK_H clapack.h
-    PATHS ${LAPACK_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${LAPACK_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include
     )
 
@@ -60,7 +61,8 @@ if (NOT LAPACK_FOUND)
 
     ## Search for the library
     find_library (LAPACK_${_lapack_var}_LIBRARY ${_lapack_lib}
-      PATHS ${LAPACK_ROOT_DIR} /sw /usr /usr/local /opt/local
+      HINTS ${LAPACK_ROOT_DIR}
+      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
       PATH_SUFFIXES lib
       )
     
@@ -75,7 +77,8 @@ if (NOT LAPACK_FOUND)
   ## Check for the executable
   
 #  find_program (LAPACK_EXECUTABLE <package name>
-#    PATHS ${LAPACK_ROOT_DIR} /sw /usr /usr/local /opt/local
+#    HINTS ${LAPACK_ROOT_DIR}
+#    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
 #    PATH_SUFFIXES bin
 #    )
   
@@ -112,6 +115,7 @@ if (NOT LAPACK_FOUND)
   ## Mark advanced variables
   
   mark_as_advanced (
+    LAPACK_ROOT_DIR
     LAPACK_INCLUDES
     LAPACK_LIBRARIES
     )

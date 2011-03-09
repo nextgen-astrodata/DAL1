@@ -71,7 +71,8 @@ if (NOT LOFAR_FOUND)
   ## Check for the executable
   
 #  find_program (LOFAR_EXECUTABLE <package name>
-#    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+#    HINTS ${LOFAR_ROOT_DIR}
+#    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
 #    PATH_SUFFIXES bin
 #    )
   

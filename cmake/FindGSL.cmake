@@ -1,6 +1,4 @@
 # +-----------------------------------------------------------------------------+
-# | $Id::                                                                     $ |
-# +-----------------------------------------------------------------------------+
 # |   Copyright (C) 2011                                                        |
 # |   Lars B"ahren (bahren@astron.nl)                                           |
 # |                                                                             |
@@ -40,7 +38,8 @@ if (NOT GSL_FOUND)
   ## Check for the header files
   
   find_path (GSL_INCLUDES gsl/gsl_version.h gsl/gsl_sys.h gsl/gsl_nan.h
-    PATHS ${GSL_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${GSL_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES include include/gsl
     )
   
@@ -52,7 +51,8 @@ if (NOT GSL_FOUND)
   ## libgsl
   
   find_library (GSL_GSL_LIBRARY gsl
-    PATHS ${GSL_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${GSL_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib
     )
   
@@ -63,7 +63,8 @@ if (NOT GSL_FOUND)
   ## libgsl
   
   find_library (GSL_GSLCBLAS_LIBRARY gslcblas
-    PATHS ${GSL_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${GSL_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES lib lib/gsl
     )
   
@@ -75,7 +76,8 @@ if (NOT GSL_FOUND)
   ## Check for the executable
   
   find_program (GSL_CONFIG_EXECUTABLE gsl-config
-    PATHS ${GSL_ROOT_DIR} /sw /usr /usr/local /opt/local
+    HINTS ${GSL_ROOT_DIR}
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
     PATH_SUFFIXES bin bin/gsl
     )
   
@@ -112,6 +114,7 @@ if (NOT GSL_FOUND)
   ## Mark advanced variables
   
   mark_as_advanced (
+    GSL_ROOT_DIR
     GSL_INCLUDES
     GSL_LIBRARIES
     GSL_GSL_LIBRARY
