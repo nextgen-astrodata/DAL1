@@ -137,9 +137,11 @@ int test_convertVector ()
 {
   cout << "\n[tdalConversions::test_convertVector]\n" << endl;
 
-  int nofFailedTests (0);
-  unsigned int nelem (10);
+  int nofFailedTests = 0;
+  unsigned int nelem = 10;
   
+#ifdef DAL_WITH_CASA
+
   cout << "[1] Convert std::vector<int> to casa::Vector<T> ..." << endl;
   try {
     std::vector<int> vectorInt (nelem);
@@ -218,6 +220,9 @@ int test_convertVector ()
     cerr << message << endl;
     nofFailedTests++;
   }
+#else
+  std::cerr << "--> Missing casacore - skipping tests!" << std::endl;
+#endif
   
   return nofFailedTests;
 }
