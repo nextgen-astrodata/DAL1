@@ -35,9 +35,9 @@ namespace DAL { // Namespace DAL -- begin
                       long &intmjd,
                       long double &fracmjd)
   {
-    struct tm *ptr = gmtime(&seconds);
+    tm *ptr = gmtime(&seconds);
     assert (ptr);
-
+    
     long double dayfrac = 0;
     long double jd      = 0;
     int year            = ptr->tm_year;
@@ -46,7 +46,7 @@ namespace DAL { // Namespace DAL -- begin
     int min             = ptr->tm_min;
     long double sec     = (long double)ptr->tm_sec;
     unsigned int nd     = 0;
-
+    
     // fraction of day
     dayfrac = ( (sec/60.0L + (long double) min)/60.0L + (long double)hour)/24.0L;
     nd      = year * 365;
@@ -57,11 +57,11 @@ namespace DAL { // Namespace DAL -- begin
     fracmjd = dayfrac;
     
     jd = (long double)nd + dayfrac - 0.5L;
-
+    
     // release allocated memory
-    if (ptr!=NULL) {
-      delete ptr;
-    }
+    // if (ptr!=NULL) {
+    //   delete ptr;
+    // }
     
     return jd;
   }
