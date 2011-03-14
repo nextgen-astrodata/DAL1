@@ -189,6 +189,7 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Public methods =======================================================
 
+    //! Open attribute \c name attached to \c location.
     bool open (hid_t const &location,
 	       std::string const &name,
 	       hid_t const &access=H5P_DEFAULT);
@@ -219,14 +220,8 @@ namespace DAL { // Namespace DAL -- begin
 				T *data,
 				unsigned int &size)
       {
-	bool status          = true;
-	hid_t attribute      = 0;
-	hid_t dataspace      = 0;
-	hid_t datatype       = 0;
-	hid_t nativeDatatype = 0;
-	hsize_t dims[1]      = { size };
-	hsize_t *maxdims     = 0;
-	herr_t h5err         = 0;
+	bool status  = true;
+	herr_t h5err = 0;
 
 	/*____________________________________________________________
 	  Basic checks for reference location and attribute name.
@@ -247,28 +242,58 @@ namespace DAL { // Namespace DAL -- begin
 	  If opening has been successful, extract datatype and
 	  dataspace.
 	*/
+
+	hid_t attribute      = 0;
+	hid_t dataspace      = 0;
+	hid_t datatype       = 0;
+	/* hid_t nativeDatatype = 0; */
+	int rank             = 0;
+
 	if (h5err>0) {
 	  attribute = H5Aopen (location,
 			       name.c_str(),
 			       H5P_DEFAULT);
 
 	  if (H5Iis_valid(attribute)) {
-	    datatype = H5Aget_type (attribute);
+	    datatype  = H5Aget_type (attribute);
+	    dataspace = H5Aget_space(attribute);
+	    rank      = H5Sget_simple_extent_ndims(dataspace);
+	    
+	    if (rank>0) {
+	      hsize_t shape[rank];
+	      hsize_t maxDimensions[rank];
+	      size  = 1;
+	      h5err = H5Sget_simple_extent_dims (dataspace,
+						 shape,
+						 maxDimensions);
+	      for (int n=0; n<rank; ++n) {
+		size *= shape[n];
+	      }
+
+	      /* Adjust the size of the data array */
+	      if (data != NULL) {
+		delete [] data;
+	      }
+	      data = new T[size];
+	    } else {
+	      size = 0;
+	      return false;
+	    }
+
+	    // release HDF5 object identifiers
+	    H5Tclose(datatype);
+	    H5Sclose(dataspace);
+	    
 	  } else {
 	    std::cerr << "[HDF5Attribute::getAttribute]"
 		      << " Failed to open attribute " << name << std::endl;
-	    return false;
+	    status = false;
 	  }
-	}   //  END -- H5Aexists(location,name)
+	}   //  END -- (h5err>0)
 	else {
+	  status = false;
 	}
 
-	std::cout << "[HDF5Attribute::getAttribute]" << std::endl;
-	std::cout << "-- Location ID         = " << location  << std::endl;
-	std::cout << "-- Attribute name      = " << name      << std::endl;
-	std::cout << "-- Attribute ID        = " << attribute << std::endl;
-	std::cout << "-- Datatype ID         = " << datatype  << std::endl;
-	
 	return status;
       }
     
@@ -287,39 +312,81 @@ namespace DAL { // Namespace DAL -- begin
 				std::string const &name,
 				std::vector<T> &data)
       {
-	unsigned int nelem = data.size();
-	bool status        = getAttribute (location, name, &data[0], nelem);
+	bool status  = true;
+	herr_t h5err = 0;
 
-	return status;
-      }
-    
-    /*!
-      \brief Get attribute value
-      \param location -- HDF5 identifier for the object to which the attribute
-             is attached.
-      \param name    -- Name of the attribute.
-      \param data    -- Data value(s) to be assigned to the attribute
-      \return status -- Status of the operation; returns \e false in case an
-              error was encountered.
-    */
-    template <class T>
-      static bool getAttribute (hid_t const &location,
-				std::string const &name,
-				T &data)
-      {
-	unsigned int nelem = 1;
-	bool status        = getAttribute (location, name, &data, nelem);
-
-	/* Check the size of te returned data */
-	if (nelem>1) {
+	/*____________________________________________________________
+	  Basic checks for reference location and attribute name.
+	*/
+	
+	if (H5Iis_valid(location)) {
+	  h5err = H5Aexists (location,
+			     name.c_str());
+	} else {
 	  std::cerr << "[HDF5Attribute::getAttribute]"
-		    << " Attribute not of single value - returned data incomplete!"
+		    << " No valid HDF5 object found at reference location!"
 		    << std::endl;
+	  return false;
 	}
+
+	/*____________________________________________________________
+	  If attribute has been found at reference location, open it.
+	  If opening has been successful, extract datatype and
+	  dataspace.
+	*/
+
+	hid_t attribute      = 0;
+	hid_t dataspace      = 0;
+	hid_t datatype       = 0;
+	/* hid_t nativeDatatype = 0; */
+	int rank             = 0;
+	int size             = 0;
+
+	if (h5err>0) {
+	  attribute = H5Aopen (location,
+			       name.c_str(),
+			       H5P_DEFAULT);
+
+	  if (H5Iis_valid(attribute)) {
+	    datatype  = H5Aget_type (attribute);
+	    dataspace = H5Aget_space(attribute);
+	    rank      = H5Sget_simple_extent_ndims(dataspace);
+	    
+	    if (rank>0) {
+	      hsize_t shape[rank];
+	      hsize_t maxDimensions[rank];
+	      size  = 1;
+	      h5err = H5Sget_simple_extent_dims (dataspace,
+						 shape,
+						 maxDimensions);
+	      for (int n=0; n<rank; ++n) {
+		size *= shape[n];
+	      }
+
+	      /* Adjust the size of the data array */
+	      data.resize(size);
+	    } else {
+	      size = 0;
+	      return false;
+	    }
+
+	    // release HDF5 object identifiers
+	    H5Tclose(datatype);
+	    H5Sclose(dataspace);
+	    
+	  } else {
+	    std::cerr << "[HDF5Attribute::getAttribute]"
+		      << " Failed to open attribute " << name << std::endl;
+	    status = false;
+	  }
+	}   //  END -- (h5err>0)
+	else {
+	  status = false;
+	}
+
 	return status;
       }
     
-
     /*!
       \brief Set attribute value
       \param location -- HDF5 identifier for the object to which the attribute

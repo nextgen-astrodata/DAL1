@@ -502,5 +502,27 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   /// @endcond
+
+  // ============================================================================
+  //
+  //
+  //
+  // ============================================================================
+  
+  // template bool HDF5Attribute::setAttribute (hid_t const &location,
+  // 					     std::string const &name,
+  // 					     int const &data);
+  // template bool HDF5Attribute::setAttribute (hid_t const &location,
+  // 					     std::string const &name,
+  // 					     short const &data);
+  // template bool HDF5Attribute::setAttribute (hid_t const &location,
+  // 					     std::string const &name,
+  // 					     long const &data);
+  // template bool HDF5Attribute::setAttribute (hid_t const &location,
+  // 					     std::string const &name,
+  // 					     float const &data);
+  // template bool HDF5Attribute::setAttribute (hid_t const &location,
+  // 					     std::string const &name,
+  // 					     double const &data);
   
 } // Namespace DAL -- end
