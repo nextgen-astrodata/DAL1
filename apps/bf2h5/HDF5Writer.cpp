@@ -156,14 +156,13 @@ void HDF5Writer::createHDF5File (const LOFAR::RTCP::Parset *ps)
   dataset.setAttribute( "INPUT_FILESIZE", &file_byte_size );
   
   // number of stations
-  uint nrOfStations = ps->nrStations();
+  unsigned int nrOfStations = ps->nrStations();
   sstr.str("");
   sstr.clear();
   sstr << nrOfStations;
   strValue = sstr.str();
-  dataset.setAttribute( "NOF_STATIONS", strValue );
-  
-  dataset.setAttribute( "NOTES", string("") );
+  dataset.setAttribute( "NOF_STATIONS", strValue            );
+  dataset.setAttribute( "NOTES",        string("UNDEFINED") );
   
   // observationID
   sstr.str("");

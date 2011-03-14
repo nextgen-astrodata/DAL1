@@ -10,9 +10,9 @@ set(CMAKE_CXX_FLAGS "-W -Wall")
 ##
 ## ==============================================================================
 
-if (LOFAR_FOUND)
-  add_subdirectory (bf2h5)
-endif (LOFAR_FOUND)
+#if (LOFAR_FOUND)
+#  add_subdirectory (bf2h5)
+#endif (LOFAR_FOUND)
 
 ##____________________________________________________________________
 ## Applications with no further external dependencies

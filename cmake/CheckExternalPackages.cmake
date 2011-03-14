@@ -71,8 +71,9 @@ endif (SIZEOF_LONG_LONG)
 
 if (CMAKE_SIZEOF_VOID_P)
   if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
-    message (STATUS "Adding compiler flag -DWORDSIZE_IS_64")
-    add_definitions (-DWORDSIZE_IS_64)
+    set (WORDSIZE_IS_64 TRUE)
+  else (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
+    set (WORDSIZE_IS_64 FALSE)
   endif (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 endif (CMAKE_SIZEOF_VOID_P)
 
