@@ -129,30 +129,38 @@ include_directories (
 if (DAL_PYTHON_BINDINGS AND NOT DOCUMENTATION_ONLY)
   
   ## Try to compile test program
-  
-  file (WRITE ${PROJECT_BINARY_DIR}/CMakeTmp/CMakeLists.txt
-    "project (TestForPythonBindings)
+
+  if (PYTHON_INCLUDES)
+    
+    file (WRITE ${PROJECT_BINARY_DIR}/CMakeTmp/CMakeLists.txt
+      "project (TestForPythonBindings)
      cmake_minimum_required(VERSION 2.6)
      include_directories (${PYTHON_INCLUDES})
      include_directories (${BOOST_INCLUDES})
      include_directories (${NUMUTIL_INCLUDES} ${NUMUTIL_INCLUDES}/num_util)
      ADD_EXECUTABLE(TestForPythonBindings ${DAL_SOURCE_DIR}/cmake/TestPythonBindings.cc)
      TARGET_LINK_LIBRARIES(TestForPythonBindings ${PYTHON_LIBRARIES} ${NUMUTIL_LIBRARIES})"
-    )
+      )
+    
+    try_compile (DAL_PYTHON_BINDINGS
+      ${PROJECT_BINARY_DIR}/CMakeTmp
+      ${PROJECT_BINARY_DIR}/CMakeTmp
+      TestForPythonBindings
+      )
+    
+  else (PYTHON_INCLUDES)
+      message (STATUS "[DAL] Missing Python headers for test compile!")
+      set (DAL_PYTHON_BINDINGS FALSE)
+  endif (PYTHON_INCLUDES)
   
-  try_compile (DAL_PYTHON_BINDINGS
-    ${PROJECT_BINARY_DIR}/CMakeTmp
-    ${PROJECT_BINARY_DIR}/CMakeTmp
-    TestForPythonBindings
-    )
-
   ## Enable include directories of test compile succeeded
   
-  if (DAL_PYTHON_BINDINGS)
+  if (DAL_PYTHON_BINDINGS AND PYTHON_INCLUDES)
     include_directories (${PYTHON_INCLUDES})
-  else (DAL_PYTHON_BINDINGS)
+  else (DAL_PYTHON_BINDINGS AND PYTHON_INCLUDES)
       message (STATUS "[DAL] Test compilation of Python bindings failed; disabling")
-  endif (DAL_PYTHON_BINDINGS)
+      set (DAL_PYTHON_BINDINGS FALSE)
+  endif (DAL_PYTHON_BINDINGS AND PYTHON_INCLUDES)
   
 endif (DAL_PYTHON_BINDINGS AND NOT DOCUMENTATION_ONLY)
 
