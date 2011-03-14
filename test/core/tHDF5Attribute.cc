@@ -298,7 +298,7 @@ int test_static_functions (hid_t const &location)
 
     /* release allocated memory */
     if (arrInt != NULL) {
-      std::cout << "-- Attribute size = " << size << std::endl;
+      std::cout << "-- Attribute size = " << nelem << std::endl;
 
       delete [] arrInt;
     }
