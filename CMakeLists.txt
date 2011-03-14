@@ -317,6 +317,7 @@ message (STATUS " .. thread library               = ${BOOST_THREAD_LIBRARY}"    
 message (STATUS " .. program_options library      = ${BOOST_PROGRAM_OPTIONS_LIBRARY}")
 message (STATUS " .. Thread support enabled?      = ${BOOST_WITH_THREAD}"         )
 message (STATUS " Enable code using casacore      = ${CASACORE_FOUND}"            )
+message (STATUS " .. Include directory            = ${CASACORE_INCLUDES}"         )
 message (STATUS " Enable code using CFITSIO       = ${CFITSIO_FOUND}"             )
 message (STATUS " Enable code using GSL           = ${GSL_FOUND}"                 )
 message (STATUS " Enable code using HDF5          = ${HDF5_FOUND}"                )

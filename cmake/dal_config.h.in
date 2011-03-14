@@ -257,6 +257,15 @@
 #endif
 #endif
 
+//__________________________________________________________
+// Extra definitions for LOFAR 
+
+#ifdef DAL_WITH_LOFAR
+#ifdef DAL_WITH_BOOST
+#define HAVE_BOOST 1
+#endif
+#endif
+
 // ==============================================================================
 //
 //  Definition of constants and types
