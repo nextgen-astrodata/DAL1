@@ -122,7 +122,7 @@ find_library (Z_LIBRARY
 ## ==============================================================================
 
 if (DAL_PYTHON_BINDINGS)
-  include (TestPythonBindings.cmake)
+  include (${DAL_SOURCE_DIR}/cmake/TestPythonBindings.cmake)
 endif (DAL_PYTHON_BINDINGS)
 
 ## ==============================================================================

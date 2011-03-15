@@ -59,17 +59,6 @@ if (NOT PYTHON_FOUND)
     list (APPEND PYTHON_INCLUDES ${PYTHON_PYTHON_H})
   endif (PYTHON_PYTHON_H)
   
-  ## include path for: pyconfig.h
-
-  find_path (PYTHON_PYCONFIG_H pyconfig.h
-    HINTS ${PYTHON_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
-    PATH_SUFFIXES include include/python include/python2.7 include/python2.6
-    )
-  if (PYTHON_PYCONFIG_H)
-    list (APPEND PYTHON_INCLUDES ${PYTHON_PYCONFIG_H})
-  endif (PYTHON_PYCONFIG_H)
-
   ## clean up the list of include directories
   
   list (REMOVE_DUPLICATES PYTHON_INCLUDES)
