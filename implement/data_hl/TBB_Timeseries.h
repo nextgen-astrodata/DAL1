@@ -245,6 +245,13 @@ namespace DAL {  // Namespace DAL -- begin
     */
     uint nofDipoleDatasets ();
     
+    /*!
+      \brief Get the number of selected dipole datasets
+      
+      \return nofSelectedDatasets -- The number of selected dipole datasets
+    */
+    uint nofSelectedDatasets();
+    
     // === Parameter access - station group =====================================
     
 #ifdef DAL_WITH_CASA

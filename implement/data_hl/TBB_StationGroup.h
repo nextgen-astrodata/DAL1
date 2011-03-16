@@ -206,6 +206,15 @@ namespace DAL {   // Namespace DAL -- begin
       return datasets_p.size();
     }
     
+    /*!
+      \brief Get the number of selected dipole datasets
+      
+      \return nofSelectedDatasets -- The number of selected dipole datasets within this station group.
+    */
+    inline uint nofSelectedDatasets() {
+      return selectedDatasets_p.size();
+    }
+
     //! Get the groupname for a station identified by <tt>index</tt>
     static std::string getName (unsigned int const &index);
     
@@ -221,22 +230,22 @@ namespace DAL {   // Namespace DAL -- begin
 			  std::vector<T> &result)
       {
 	bool status (true);
-	
+
 	if (location_p > 0) {
-	  uint n(0);
 	  T tmp;
-	  std::map<std::string,TBB_DipoleDataset>::iterator it;
+	  std::map<std::string,iterDipoleDataset>::iterator it;
 	  
-	  result.resize(datasets_p.size());
+    // Clear output vector
+    result.clear();
 	  
-	  for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-	    it->second.getAttribute(name,tmp);
-	    result[n] = tmp;
-	    ++n;
+	  for (it=selectedDatasets_p.begin(); it!=selectedDatasets_p.end(); ++it) {
+	    it->second->second.getAttribute(name,tmp);
+	    result.push_back(tmp);
 	  }
 	} else {
 	  status = false;
 	}
+
 	return status;
       }
     
@@ -251,12 +260,12 @@ namespace DAL {   // Namespace DAL -- begin
 	if (location_p > 0) {
 	  uint n(0);
 	  T tmp;
-	  std::map<std::string,TBB_DipoleDataset>::iterator it;
+	  std::map<std::string,iterDipoleDataset>::iterator it;
 	  
-	  result.resize(datasets_p.size());
+	  result.resize(selectedDatasets_p.size());
 	  
-	  for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-	    it->second.getAttribute(name,tmp);
+	  for (it=selectedDatasets_p.begin(); it!=selectedDatasets_p.end(); ++it) {
+	    it->second->second.getAttribute(name,tmp);
 	    result(n) = tmp;
 	    ++n;
 	  }
