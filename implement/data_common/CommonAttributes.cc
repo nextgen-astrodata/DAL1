@@ -381,4 +381,28 @@ namespace DAL { // Namespace DAL -- begin
 
 #endif 
   
+  //_____________________________________________________________________________
+  //                                                          setObservationStart
+  
+  void CommonAttributes::setObservationStart (std::string const &startMJD,
+					      std::string const &startTAI,
+					      std::string const &startUTC)
+  {
+    itsAttributesObservation.setStartMJD (startMJD);
+    itsAttributesObservation.setStartTAI (startTAI);
+    itsAttributesObservation.setStartUTC (startUTC);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                            setObservationEnd
+  
+  void CommonAttributes::setObservationEnd (std::string const &endMJD,
+					    std::string const &endTAI,
+					    std::string const &endUTC)
+  {
+    itsAttributesObservation.setEndMJD (endMJD);
+    itsAttributesObservation.setEndTAI (endTAI);
+    itsAttributesObservation.setEndUTC (endUTC);
+  }
+  
 } // Namespace DAL -- end
