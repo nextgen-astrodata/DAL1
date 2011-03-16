@@ -39,47 +39,57 @@ if (NOT PYTHON_FOUND)
     set (PYTHON_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   endif (NOT PYTHON_ROOT_DIR)
   
-  ##_____________________________________________________________________________
-  ## Check for the header files
-
-  find_path (PYTHON_INCLUDES patchlevel.h modsupport.h
-    HINTS ${PYTHON_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
-    PATH_SUFFIXES include include/python include/python2.7 include/python2.6
-    )
+  foreach (_pythonRelease 2.7 2.6 2.5 2.4)
+    
+    ##___________________________________________________________________________
+    ## Check for the header files
+    
+    find_path (PYTHON_INCLUDES patchlevel.h modsupport.h
+      HINTS ${PYTHON_ROOT_DIR}
+      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+      PATH_SUFFIXES include/python${_pythonRelease} include/python include
+      NO_DEFAULT_PATH
+      )
+    
+    ## include path for: Python.h
+    
+    find_path (PYTHON_PYTHON_H Python.h
+      HINTS ${PYTHON_ROOT_DIR}
+      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+      PATH_SUFFIXES include/python${_pythonRelease} include/python include
+      NO_DEFAULT_PATH
+      )
+    if (PYTHON_PYTHON_H)
+      list (APPEND PYTHON_INCLUDES ${PYTHON_PYTHON_H})
+    endif (PYTHON_PYTHON_H)
+    
+    ## clean up the list of include directories
+    
+    list (REMOVE_DUPLICATES PYTHON_INCLUDES)
+    
+    ##___________________________________________________________________________
+    ## Check for the library
+    
+    find_library (PYTHON_LIBRARIES python${_pythonRelease} python
+      HINTS ${PYTHON_ROOT_DIR}
+      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+      PATH_SUFFIXES lib
+      NO_DEFAULT_PATH
+      )
+    
+    ##___________________________________________________________________________
+    ## Check for the executable
+    
+    find_program (PYTHON_EXECUTABLE python${_pythonRelease} python
+      HINTS ${PYTHON_ROOT_DIR}
+      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+      PATH_SUFFIXES bin
+      )
+    
+  endforeach (_pythonRelease)
   
-  ## include path for: Python.h
-
-  find_path (PYTHON_PYTHON_H Python.h
-    HINTS ${PYTHON_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
-    PATH_SUFFIXES include include/python include/python2.7 include/python2.6
-    )
-  if (PYTHON_PYTHON_H)
-    list (APPEND PYTHON_INCLUDES ${PYTHON_PYTHON_H})
-  endif (PYTHON_PYTHON_H)
+  ##+++++++++++++++++++++++++++++++++++++++++++++++++++
   
-  ## clean up the list of include directories
-  
-  list (REMOVE_DUPLICATES PYTHON_INCLUDES)
-  
-  ##_____________________________________________________________________________
-  ## Check for the library
-  
-  find_library (PYTHON_LIBRARIES python
-    HINTS ${PYTHON_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
-    PATH_SUFFIXES lib
-    )
-  
-  ##_____________________________________________________________________________
-  ## Check for the executable
-  
-  find_program (PYTHON_EXECUTABLE python
-    HINTS ${PYTHON_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
-    PATH_SUFFIXES bin
-    )
   
   ##_____________________________________________________________________________
   ## Test Python library for:

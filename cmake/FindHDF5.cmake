@@ -106,6 +106,22 @@ if (NOT HDF5_FOUND)
 
   ##_____________________________________________________________________________
   ## Check for the executables
+
+  ## Compilers
+
+  find_program (HDF5_C_COMPILER h5cc h5pcc
+    HINTS ${HDF5_ROOT_DIR} 
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATH_SUFFIXES bin
+    )
+  
+  find_program (HDF5_CXX_COMPILER h5c++ h5pc++
+    HINTS ${HDF5_ROOT_DIR} 
+    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATH_SUFFIXES bin
+    )
+  
+  ## HDF5 tools
   
   find_program (H5CHECK_EXECUTABLE h5check
     HINTS ${HDF5_ROOT_DIR} 
