@@ -28,6 +28,7 @@ set (_dalCMakeModules
   HDF5
   LAPACK
   LOFAR
+  MySQL
   NumPy
   NumUtil
   Python
@@ -44,6 +45,8 @@ foreach (_dalcmake ${_dalCMakeModules} )
 
   ## Generate uppercase version of package name
   string (TOUPPER ${_dalcmake} _dalcmake_var)
+  ## Initilize CMake varible indicating wether or not package was found
+  set (${_dalcmake_var}_FOUND FALSE)
   ## Include CMake find script
   include (${DAL_SOURCE_DIR}/cmake/Find${_dalcmake}.cmake)
 
