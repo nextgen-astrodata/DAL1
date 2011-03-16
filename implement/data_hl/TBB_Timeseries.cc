@@ -455,7 +455,22 @@ namespace DAL {  // Namespace DAL -- begin
       nofDatasets += it->second.nofDipoleDatasets();
     }
 
-     return nofDatasets;
+    return nofDatasets;
+  }
+
+  //_____________________________________________________________________________
+  //                                                            nofSelectedDatasets
+
+  uint TBB_Timeseries::nofSelectedDatasets ()
+  {
+    uint nofDatasets (0);
+    std::map<std::string,TBB_StationGroup>::iterator it;
+
+    for (it=stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
+      nofDatasets += it->second.nofSelectedDatasets();
+    }
+
+    return nofDatasets;
   }
 
   //_____________________________________________________________________________
@@ -856,14 +871,14 @@ namespace DAL {  // Namespace DAL -- begin
     uint n           = 0;
     uint station     = 0;
     uint dipole      = 0;
-    uint nofDipoles  = nofDipoleDatasets();
+    uint nofDipoles  = nofSelectedDatasets();
     std::vector<int> channelIDvalues (nofDipoles);
     std::vector<int> tmp;
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
       tmp        = (*it).second.dipoleNumbers();
-      nofDipoles = (*it).second.nofDipoleDatasets();
+      nofDipoles = (*it).second.nofSelectedDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	channelIDvalues[n] = tmp[dipole];
@@ -884,14 +899,14 @@ namespace DAL {  // Namespace DAL -- begin
     uint n           = 0;
     uint station     = 0;
     uint dipole      = 0;
-    uint nofDipoles  = nofDipoleDatasets();
+    uint nofDipoles  = nofSelectedDatasets();
     std::vector<uint> UnixTimes (nofDipoles);
     std::vector<uint> tmp;
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
       it->second.getAttributes("TIME",tmp);
-      nofDipoles = (*it).second.nofDipoleDatasets();
+      nofDipoles = (*it).second.nofSelectedDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	UnixTimes[n] = tmp[dipole];
@@ -912,14 +927,14 @@ namespace DAL {  // Namespace DAL -- begin
     uint n           = 0;
     uint station     = 0;
     uint dipole      = 0;
-    uint nofDipoles  = nofDipoleDatasets();
+    uint nofDipoles  = nofSelectedDatasets();
     std::vector<uint> samples (nofDipoles);
     std::vector<uint> tmp;
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
       it->second.getAttributes("SAMPLE_NUMBER",tmp);
-      nofDipoles = (*it).second.nofDipoleDatasets();
+      nofDipoles = (*it).second.nofSelectedDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	samples[n] = tmp[dipole];
@@ -940,14 +955,14 @@ namespace DAL {  // Namespace DAL -- begin
     uint n           = 0;
     uint station     = 0;
     uint dipole      = 0;
-    uint nofDipoles  = nofDipoleDatasets();
+    uint nofDipoles  = nofSelectedDatasets();
     std::vector<uint> values (nofDipoles);
     std::vector<uint> tmp;
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
       it->second.getAttributes("NYQUIST_ZONE",tmp);
-      nofDipoles = (*it).second.nofDipoleDatasets();
+      nofDipoles = (*it).second.nofSelectedDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	values[n] = tmp[dipole];
@@ -968,14 +983,14 @@ namespace DAL {  // Namespace DAL -- begin
     uint n           = 0;
     uint station     = 0;
     uint dipole      = 0;
-    uint nofDipoles  = nofDipoleDatasets();
+    uint nofDipoles  = nofSelectedDatasets();
     std::vector<double> values (nofDipoles);
     std::vector<double> tmp;
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
       it->second.getAttributes("SAMPLE_FREQUENCY_VALUE",tmp);
-      nofDipoles = (*it).second.nofDipoleDatasets();
+      nofDipoles = (*it).second.nofSelectedDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	values[n] = tmp[dipole];
@@ -996,14 +1011,14 @@ namespace DAL {  // Namespace DAL -- begin
     uint n           = 0;
     uint station     = 0;
     uint dipole      = 0;
-    uint nofDipoles  = nofDipoleDatasets();
+    uint nofDipoles  = nofSelectedDatasets();
     std::vector<std::string> units (nofDipoles);
     std::vector<std::string> tmp;
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
       it->second.getAttributes("SAMPLE_FREQUENCY_UNIT",tmp);
-      nofDipoles = (*it).second.nofDipoleDatasets();
+      nofDipoles = (*it).second.nofSelectedDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	units[n] = tmp[dipole];
@@ -1024,14 +1039,14 @@ namespace DAL {  // Namespace DAL -- begin
     uint n           = 0;
     uint station     = 0;
     uint dipole      = 0;
-    uint nofDipoles  = nofDipoleDatasets();
+    uint nofDipoles  = nofSelectedDatasets();
     std::vector<uint> dataLengths (nofDipoles);
     std::vector <uint> tmp;
     std::map<std::string,TBB_StationGroup>::iterator it;
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
       it->second.getAttributes("DATA_LENGTH",tmp);
-      nofDipoles = (*it).second.nofDipoleDatasets();
+      nofDipoles = (*it).second.nofSelectedDatasets();
       // go through the dipoles from an individual station
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	dataLengths[n] = tmp[dipole];
@@ -1048,7 +1063,7 @@ namespace DAL {  // Namespace DAL -- begin
 
   std::vector<int> TBB_Timeseries::sample_offset (uint const &refAntenna)
   {
-    uint nofDipoles              = nofDipoleDatasets();
+    uint nofDipoles              = nofSelectedDatasets();
     std::vector<uint> valTime   = time();
     std::vector<uint> valSample = sample_number();
     std::vector<int> offset (nofDipoles);
@@ -1177,7 +1192,7 @@ namespace DAL {  // Namespace DAL -- begin
     bool status (true);
     uint n           = 0;
     uint dipole      = 0;
-    uint nofDipoles  = nofDipoleDatasets();
+    uint nofDipoles  = nofSelectedDatasets();
     casa::Vector<casa::MFrequency> freq (nofDipoles);
     casa::Vector<casa::MFrequency> tmp;
     std::map<std::string,TBB_StationGroup>::iterator it;
@@ -1186,7 +1201,7 @@ namespace DAL {  // Namespace DAL -- begin
       /* Retrieve sample frequencies per station */
       status = (*it).second.sample_frequency(tmp);
       /* Determine number of dipoles within this station */
-      nofDipoles = (*it).second.nofDipoleDatasets();
+      nofDipoles = (*it).second.nofSelectedDatasets();
       /* Copy the data to the returned array */
       for (dipole=0; dipole<nofDipoles; dipole++) {
 	freq(n) = tmp(dipole);
