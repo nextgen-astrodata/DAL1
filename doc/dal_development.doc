@@ -1,30 +1,46 @@
+
 /*!
 
-\page dal_coding_guidelines Coding guidelines
+  \page dal_devel Developer guide
 
-\section dal_coding_conventions Basic coding conventions
+  <ul>
+    <li>\ref dal_devel_git
+    <li>\ref dal_devel_conventions
+    <li>\ref dal_devel_classes
+  </ul>
 
-No formal coding guidelines have been set up for the development of the DAL,
-though a few reasonable conventions shuold be adhered to in order to keep the 
-code readable and consistent:
+  \section dal_devel_git Working with Git
 
-<ol>
-  <li>All classes reside within the namespace "DAL".
+  <ul>
+    <li>Revert changes done to a file:
+    \code
+    git checkout -- <file>
+    \endcode
+  </ul>
 
-  <li>All source files contain a Doxygen-based documentation of their methods.
-  All classes/files are contained within the group "DAL".
+  \section dal_devel_conventions Coding conventions
 
-  <li>Private variables are indicated by the prefix "its", in order to distringuish
-  them from temporary/local variables, e.g.
+  No formal coding guidelines have been set up for the development of the DAL,
+  though a few reasonable conventions shuold be adhered to in order to keep the 
+  code readable and consistent:
 
-  \param itsLength - private data member
-  \param length    - local variable or function parameter
+  <ol>
+    <li>All classes reside within the namespace "DAL".
 
-  <li>Pointers should be marked by a trailing "_p"; e.g. a dynamically allocated
-  array of "data" would become  "itsData_p".
-</ol>
+    <li>All source files contain a Doxygen-based documentation of their methods.
+    All classes/files are contained within the group "DAL".
 
-\section dal_coding_classes Creating a new class
+    <li>Private variables are indicated by the prefix "its", in order to distringuish
+    them from temporary/local variables, e.g.
+    \code
+    \param itsLength - private data member
+    \param length    - local variable or function parameter
+    \endcode
+    <li>Pointers should be marked by a trailing "_p"; e.g. a dynamically allocated
+    array of "data" would become  "itsData_p".
+  </ol>
+
+\section dal_devel_classes Creating a new class
 
 <ul>
 
@@ -133,5 +149,6 @@ code readable and consistent:
   \endcode
 
 <ul>
+
 
 */
