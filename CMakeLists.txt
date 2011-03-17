@@ -305,7 +305,7 @@ message (STATUS " .. MPI linking flags            = ${MPI_LINK_FLAGS}"          
 message (STATUS " .. MPI library                  = ${MPI_LIBRARY}"               )
 endif (MPI_FOUND OR DAL_VERBOSE_CONFIGURE)
 
-message (STATUS " Enable code using MySQL         = ${MYSQL_FOUND}"               )
+message (STATUS " Enable code using MySQL         = ${DAL_WITH_MYSQL}"            )
 if (MYSQL_FOUND OR DAL_VERBOSE_CONFIGURE)
 message (STATUS " .. Library version              = ${MYSQL_VERSION}"             )
 message (STATUS " .. Port number                  = ${MYSQL_PORT}"                )
@@ -315,12 +315,14 @@ message (STATUS " .. libmysqlservices             = ${MYSQL_MYSQLSERVICES_LIBRAR
 endif (MYSQL_FOUND OR DAL_VERBOSE_CONFIGURE)
 
 message (STATUS " Enable Python bindings          = ${DAL_PYTHON_BINDINGS}"       )
+if (DAL_PYTHON_BINDINGS OR DAL_VERBOSE_CONFIGURE)
 message (STATUS " .. Python version               = ${PYTHON_VERSION}"            )
 message (STATUS " .. Python API version           = ${PYTHON_API_VERSION}"        )
 message (STATUS " .. Include directory            = ${PYTHON_INCLUDES}"           )
 message (STATUS " .. Python interpreter           = ${PYTHON_EXECUTABLE}"         )
 message (STATUS " .. Python library               = ${PYTHON_LIBRARIES}"          )
 message (STATUS " .. Python NumUtils package      = ${NUMUTIL_FOUND}"             )
+endif (DAL_PYTHON_BINDINGS OR DAL_VERBOSE_CONFIGURE)
 message (STATUS " Enable code using OpenMP        = ${OPENMP_FOUND}"              )
 message (STATUS " Enable code using WCSLIB        = ${WCSLIB_FOUND}"              )
 message (STATUS " Types sizes:                                     ")

@@ -28,7 +28,6 @@ set (_dalCMakeModules
   HDF5
   LAPACK
   LOFAR
-  MySQL
   NumPy
   NumUtil
   Python
@@ -36,7 +35,7 @@ set (_dalCMakeModules
   )
 
 if (DAL_WITH_MYSQL)
-  list (APPEND _dalCMakeModules MySql)
+  list (APPEND _dalCMakeModules MySQL)
 endif (DAL_WITH_MYSQL)
 
 foreach (_dalcmake ${_dalCMakeModules} )
