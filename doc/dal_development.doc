@@ -11,6 +11,13 @@
 
   \section dal_devel_git Working with Git
 
+  If you are looking at this document, the best chance is that you already know
+  a certain minimum about using <a href="http://git-scm.com">Git</a>, as chances
+  are good you have retrieve your working copy of the source code from cloning
+  off the DAL \e Git repository. However if this essentially is it, you will
+  need to learn a few basic program instructions and concepts to set up an
+  everyday work-flow when actively contributing to the development of the DAL.
+
   <ul>
     <li>Revert changes done to a file:
     \code
@@ -21,7 +28,7 @@
   \section dal_devel_conventions Coding conventions
 
   No formal coding guidelines have been set up for the development of the DAL,
-  though a few reasonable conventions shuold be adhered to in order to keep the 
+  though a few reasonable conventions should be adhered to in order to keep the 
   code readable and consistent:
 
   <ol>
