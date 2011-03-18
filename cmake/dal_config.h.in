@@ -59,7 +59,7 @@
 #cmakedefine DAL_WITH_LOFAR
 
 /*
-  Define if we have the MySQL library
+  Define if we have the MySQL library (for configuration inspection):
   MYSQL_VERSION  = ${MYSQL_VERSION}
   MYSQL_INCLUDES = ${MYSQL_INCLUDES}
 */
