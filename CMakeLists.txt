@@ -297,6 +297,8 @@ message (STATUS " .. HDF5 C compiler              = ${HDF5_C_COMPILER}"         
 message (STATUS " .. HDF5 C++ compiler            = ${HDF5_CXX_COMPILER}"         )
 endif (HDF5_FOUND OR DAL_VERBOSE_CONFIGURE)
 
+message (STATUS " Enable code using LAPACK        = ${LAPACK_FOUND}"              )
+
 message (STATUS " Enable code using MPI           = ${MPI_FOUND}"                 )
 if (MPI_FOUND OR DAL_VERBOSE_CONFIGURE)
 message (STATUS " .. MPI compiler                 = ${MPI_COMPILER}"              )
