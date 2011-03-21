@@ -47,13 +47,9 @@ if (BOOST_PROGRAM_OPTIONS_LIBRARY)
   if (BOOST_THREAD_LIBRARY)
     if (BOOST_WITH_THREAD)
       ## compiler instructions
-      add_executable (bf2h5_old bf2h5_old.cpp)
       add_executable (tbb2h5    tbb2h5.cpp   )
       add_executable (TBBraw2h5 TBBraw2h5.cpp)
       ## linker instructions
-      target_link_libraries (bf2h5_old
-	dal ${BOOST_PROGRAM_OPTIONS_LIBRARY} ${BOOST_THREAD_LIBRARY}
-	)
       target_link_libraries (tbb2h5
 	dal ${BOOST_PROGRAM_OPTIONS_LIBRARY} ${BOOST_THREAD_LIBRARY}
 	)
