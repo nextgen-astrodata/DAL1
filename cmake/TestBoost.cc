@@ -3,8 +3,13 @@
 #include <boost/version.hpp>
 
 #ifdef TEST_BOOST_THREAD
+/* Required header files*/
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
+/* Function to call */
+void hello() {
+  std::cout << "[TestBoost::hello] Hello world." << std::endl;
+}
 #endif 
 
 int main ()
@@ -28,7 +33,7 @@ int main ()
   */
   
 #ifdef TEST_BOOST_THREAD
-  boost::thread _myThread;
+  boost::thread _myThread (&hello);
   _myThread.join();
   _myThread.boost::thread::joinable();
 #endif 
