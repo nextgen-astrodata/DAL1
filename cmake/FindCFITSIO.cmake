@@ -51,15 +51,13 @@ if (NOT CFITSIO_FOUND)
     )
   
   ##_____________________________________________________________________________
-  ## Get library version information
-
-  include (TestCFITSIO)
-  
-  ##_____________________________________________________________________________
   ## Actions taken when all components have been found
   
   if (CFITSIO_INCLUDES AND CFITSIO_LIBRARIES)
+    ## Set library found
     set (CFITSIO_FOUND TRUE)
+    ## Get library version and configuration
+    include (TestCFITSIO)
   else (CFITSIO_INCLUDES AND CFITSIO_LIBRARIES)
     set (CFITSIO_FOUND FALSE)
     if (NOT CFITSIO_FIND_QUIETLY)
