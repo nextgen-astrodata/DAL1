@@ -5,6 +5,10 @@
 ##
 ## ==============================================================================
 
+## Adjust the module path 
+
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
 ##____________________________________________________________________
 ##                                              Standard CMake modules
 
@@ -47,7 +51,7 @@ foreach (_dalcmake ${_dalCMakeModules} )
   ## Initilize CMake varible indicating wether or not package was found
   set (${_dalcmake_var}_FOUND FALSE)
   ## Include CMake find script
-  include (${DAL_SOURCE_DIR}/cmake/Find${_dalcmake}.cmake)
+  include (Find${_dalcmake})
 
   if (${_dalcmake_var}_FOUND OR HAVE_${_dalcmake_var})
 

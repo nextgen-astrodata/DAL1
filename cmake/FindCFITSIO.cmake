@@ -51,6 +51,11 @@ if (NOT CFITSIO_FOUND)
     )
   
   ##_____________________________________________________________________________
+  ## Get library version information
+
+  include (TestCFITSIO)
+  
+  ##_____________________________________________________________________________
   ## Actions taken when all components have been found
   
   if (CFITSIO_INCLUDES AND CFITSIO_LIBRARIES)

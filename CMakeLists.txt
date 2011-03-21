@@ -9,7 +9,7 @@ set (DAL_VERSION_PATCH 0)
 set (DAL_VERSION "${DAL_VERSION_MAJOR}.${DAL_VERSION_MINOR}.${DAL_VERSION_PATCH}")
 
 ## Minimum required version of CMake to configure the project
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 2.6)
 
 ## ==============================================================================
 ##
@@ -284,7 +284,16 @@ message (STATUS " .. program_options library      = ${BOOST_PROGRAM_OPTIONS_LIBR
 message (STATUS " .. Thread support enabled?      = ${BOOST_WITH_THREAD}"         )
 message (STATUS " Enable code using casacore      = ${CASACORE_FOUND}"            )
 message (STATUS " .. Include directory            = ${CASACORE_INCLUDES}"         )
+
 message (STATUS " Enable code using CFITSIO       = ${CFITSIO_FOUND}"             )
+if (CFITSIO_FOUND OR DAL_VERBOSE_CONFIGURE)
+message (STATUS " .. Library version              = ${CFITSIO_VERSION}"           )
+message (STATUS " .. nof. I/O buffers to create   = ${CFITSIO_NIOBUF}"            )
+message (STATUS " .. Size per I/O buffer (byte)   = ${CFITSIO_IOBUFLEN}"          )
+message (STATUS " .. Maximal length of filename   = ${CFITSIO_FLEN_FILENAME}"     )
+message (STATUS " .. Maximal length of a keyword  = ${CFITSIO_FLEN_KEYWORD}"      )
+endif (CFITSIO_FOUND OR DAL_VERBOSE_CONFIGURE)
+
 message (STATUS " Enable code using GSL           = ${GSL_FOUND}"                 )
 
 message (STATUS " Enable code using HDF5          = ${HDF5_FOUND}"                )
