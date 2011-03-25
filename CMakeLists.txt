@@ -283,8 +283,8 @@ message (STATUS " Enable code using Boost++       = ${BOOST_FOUND}"             
 if (BOOST_FOUND OR DAL_VERBOSE_CONFIGURE)
 message (STATUS " .. Library version              = ${BOOST_VERSION}"             )
 message (STATUS " .. Include directory            = ${BOOST_INCLUDES}"            )
-message (STATUS " .. thread library               = ${BOOST_THREAD_LIBRARY}"      )
-message (STATUS " .. program_options library      = ${BOOST_PROGRAM_OPTIONS_LIBRARY}")
+message (STATUS " .. thread library               = ${Boost_THREAD_LIBRARY}"      )
+message (STATUS " .. program_options library      = ${Boost_PROGRAM_OPTIONS_LIBRARY}")
 message (STATUS " .. Thread support enabled?      = ${BOOST_WITH_THREAD}"         )
 endif (BOOST_FOUND OR DAL_VERBOSE_CONFIGURE)
 

@@ -31,17 +31,32 @@
 
 if (NOT BOOST_FOUND)
 
-  ## Initialization of variables
+  ## Initialization: search locations ______________________
 
   if (NOT BOOST_ROOT_DIR)
     set (BOOST_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   endif (NOT BOOST_ROOT_DIR)
 
+  list (APPEND BOOST_ROOT_DIR
+    /opt
+    /opt/local
+    /sw
+    /usr
+    /usr/local
+    /usr/X11R6
+    /opt/casa/local
+    /app/usg
+    )
+  
+  ## Initialization: Version and multithreading ____________
+  
   set (BOOST_VERSION_MAJOR  0     )
   set (BOOST_VERSION_MINOR  0     )
   set (BOOST_VERSION_PATCH  0     )
   set (BOOST_WITH_THREAD    FALSE )
   
+  ## Initialization: Boost modules to search for ___________
+
   set (BOOST_MODULES
     date_time
     filesystem
@@ -71,46 +86,23 @@ if (NOT BOOST_FOUND)
   ##_____________________________________________________________________________
   ## Check for header files and libraries
   
-  set (BOOST_INCLUDES "")
-  set (BOOST_LIBRARIES "")
+  foreach (BOOST_ROOT ${BOOST_ROOT_DIR})
 
-  ## Extra search for the header file containing version information
+    ## Call to the CMake's standard FindBoost.cmake module
+    find_package (Boost ${Boost_BASE_VERSION} COMPONENTS ${BOOST_MODULES})
 
-  find_path (BOOST_VERSION_HPP boost/version.hpp
-    HINTS ${BOOST_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
-    PATH_SUFFIXES include include/boost
-    )
+    if (Boost_FOUND)
+      ## Map basic variables ...
+      set (HAVE_BOOST       ${Boost_FOUND}        )
+      set (BOOST_FOUND      ${Boost_FOUND}        )
+      set (BOOST_LIBRARIES  ${Boost_LIBRARIES}    )
+      set (BOOST_INCLUDES   ${Boost_INCLUDE_DIRS} )
+      ## ... and exit the search
+      break ()
+    endif (Boost_FOUND)
 
-  ## Find header files for the individual modules
+  endforeach (BOOST_ROOT)
   
-  foreach (_module ${BOOST_MODULES})
-    
-    ## Convert library name to CMake variable
-    string (TOUPPER ${_module} _boost_var)
-
-    ## Search for the include directory
-    find_path (BOOST_${_boost_var}_INCLUDES boost/${_module}.hpp
-      HINTS ${BOOST_ROOT_DIR}
-      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
-      PATH_SUFFIXES include include/boost
-      )
-    if (BOOST_${_boost_var}_INCLUDES)
-      list (APPEND BOOST_INCLUDES ${BOOST_${_boost_var}_INCLUDES})
-    endif (BOOST_${_boost_var}_INCLUDES)
-    
-    ## Search for the library
-    find_library (BOOST_${_boost_var}_LIBRARY boost_${_module}-mt boost_${_module}
-      HINTS ${BOOST_ROOT_DIR}
-      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
-      PATH_SUFFIXES lib
-      )
-    if (BOOST_${_boost_var}_LIBRARY)
-      list (APPEND BOOST_LIBRARIES ${BOOST_${_boost_var}_LIBRARY})
-    endif (BOOST_${_boost_var}_LIBRARY)
-    
-  endforeach (_module)
-
   ## Clean up the list of include directories
   list (REMOVE_DUPLICATES BOOST_INCLUDES)
   

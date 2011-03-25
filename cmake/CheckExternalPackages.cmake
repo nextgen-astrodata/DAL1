@@ -5,67 +5,65 @@
 ##
 ## ==============================================================================
 
-## Adjust the module path 
+##____________________________________________________________________
+##                                                  CMake find modules
 
+## Adjust the module path 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-##____________________________________________________________________
-##                                              Standard CMake modules
-
-include (FindLATEX)
-include (FindMPI)
-include (FindOpenMP)
-
-if (MPI_INCLUDE_PATH)
-  include_directories (${MPI_INCLUDE_PATH})
-endif (MPI_INCLUDE_PATH)
-
-##____________________________________________________________________
-##                                                Custom CMake modules
-
-set (_dalCMakeModules
-  Boost
+## List of modules to be loaded in
+set (_cmakeModules
+  Boost_DAL
   Casacore
-  CFITSIO
+  CFITSIO_DAL
   GFortran
-  GSL
-  HDF5
-  LAPACK
+  GSL_DAL
+  HDF5_DAL
+  LAPACK_DAL
+  LATEX
   LOFAR
+  MPI
   NumPy
   NumUtil
-  Python
-  WCSLIB
+  OpenMP
+  Python_DAL
+  WCSLIB_DAL
   )
 
 if (DAL_WITH_MYSQL)
-  list (APPEND _dalCMakeModules MySQL)
+  list (APPEND _cmakeModules MySQL)
 endif (DAL_WITH_MYSQL)
 
-foreach (_dalcmake ${_dalCMakeModules} )
+foreach (_dalcmake ${_cmakeModules} )
 
   message (STATUS "Checking for package ${_dalcmake}")
 
   ## Generate uppercase version of package name
   string (TOUPPER ${_dalcmake} _dalcmake_var)
+  ## Strip "_DAL"
+  string(REPLACE "_DAL" "" _cmakeModuleVariable ${_dalcmake_var})
   ## Initilize CMake varible indicating wether or not package was found
   set (${_dalcmake_var}_FOUND FALSE)
   ## Include CMake find script
   include (Find${_dalcmake})
 
-  if (${_dalcmake_var}_FOUND OR HAVE_${_dalcmake_var})
+  if (${_cmakeModuleVariable}_FOUND OR HAVE_${_cmakeModuleVariable})
 
     ## variable mapping
-    set (HAVE_${_dalcmake_var}     TRUE)
-    set (DAL_WITH_${_dalcmake_var} TRUE)
+    set (HAVE_${_cmakeModuleVariable}      TRUE )
+    set (${_cmakeModuleVariable}_FOUND     TRUE )
+    set (DAL_WITH_${_cmakeModuleVariable}  TRUE )
     
     ## include directories
-    include_directories (${${_dalcmake_var}_INCLUDES})
-
+    include_directories (${${_cmakeModuleVariable}_INCLUDES})
+    if (${_cmakeModuleVariable}_INCLUDE_PATH)
+      include_directories (${${_cmakeModuleVariable}_INCLUDE_PATH})
+    endif (${_cmakeModuleVariable}_INCLUDE_PATH)
+    
     message (STATUS "Checking for package ${_dalcmake} - Success")
-
-  endif (${_dalcmake_var}_FOUND OR HAVE_${_dalcmake_var})
-
+    
+  endif (${_cmakeModuleVariable}_FOUND OR HAVE_${_cmakeModuleVariable})
+  
 endforeach (_dalcmake)
 
 ##____________________________________________________________________
