@@ -280,11 +280,14 @@ message (STATUS " Build documentation only?       = ${DOCUMENTATION_ONLY}"      
 if (NOT DOCUMENTATION_ONLY)
 
 message (STATUS " Enable code using Boost++       = ${BOOST_FOUND}"               )
+if (BOOST_FOUND OR DAL_VERBOSE_CONFIGURE)
 message (STATUS " .. Library version              = ${BOOST_VERSION}"             )
 message (STATUS " .. Include directory            = ${BOOST_INCLUDES}"            )
 message (STATUS " .. thread library               = ${BOOST_THREAD_LIBRARY}"      )
 message (STATUS " .. program_options library      = ${BOOST_PROGRAM_OPTIONS_LIBRARY}")
 message (STATUS " .. Thread support enabled?      = ${BOOST_WITH_THREAD}"         )
+endif (BOOST_FOUND OR DAL_VERBOSE_CONFIGURE)
+
 message (STATUS " Enable code using casacore      = ${CASACORE_FOUND}"            )
 message (STATUS " .. Include directory            = ${CASACORE_INCLUDES}"         )
 
