@@ -56,6 +56,11 @@ if (BOOST_PROGRAM_OPTIONS_LIBRARY)
       target_link_libraries (TBBraw2h5
 	dal ${BOOST_PROGRAM_OPTIONS_LIBRARY} ${BOOST_THREAD_LIBRARY}
 	)
+      ## Installation instructions
+      install (TARGETS tbb2h5 TBBraw2h5
+	RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
+	LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
+	)
     else (BOOST_WITH_THREAD)
       message (STATUS "[DAL] Missing Boost++ thread library support!")
     endif (BOOST_WITH_THREAD)
