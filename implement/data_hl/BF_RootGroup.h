@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: NewClass.h 2286 2009-02-03 10:50:48Z baehren                    $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -101,7 +98,28 @@ namespace DAL { // Namespace DAL -- begin
     |
     `-- SysLog
     \endverbatim
-    
+
+    <table>
+      <tr>
+        <td>BF_RootGroup</td>
+        <td>BF_SubArrayPointing</td>
+        <td>BF_BeamGroup</td>
+        <td>BF_StokesDataset</td>
+      </tr>
+      <tr>
+        <td>getStokesDataset(BF_StokesDataset,uint,uint,uint)</td>
+        <td>getStokesDataset(BF_StokesDataset,uint,uint)</td>
+        <td>getStokesDataset(BF_StokesDataset,uint)</td>
+        <td>--</td>
+      </tr>
+      <tr>
+        <td>getBeamGroup(uint,uint)</td>
+        <td>getBeamGroup(uint)</td>
+        <td>--</td>
+        <td>--</td>
+      </tr>
+    </table>
+
     <h3>Example(s)</h3>
 
     <ol>
