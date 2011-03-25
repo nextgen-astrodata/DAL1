@@ -65,7 +65,8 @@ if (NOT BOOST_FOUND)
   
   ## Prefer static libraries _______________________________
 
-  set(Boost_USE_STATIC_RUNTIME ON)
+  set (Boost_USE_STATIC_LIBS    ON )
+  set (Boost_USE_STATIC_RUNTIME ON )
 
   ## Initialization: Boost modules to search for ___________
 

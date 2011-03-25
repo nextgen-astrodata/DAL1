@@ -32,11 +32,14 @@ int main (int argc, char *argv[])
   bpo::options_description desc ("[dal-config] Available command line options");
 
   desc.add_options ()
-  ("help,H",  "Show help messages")
-  ("version", "Print version of DAL.")
-  ("version-major", "Print major version of DAL.")
-  ("version-minor", "Print minor version of DAL.")
-  ("version-patch", "Print path version of DAL.")
+  ("help,H",         "Show help messages")
+  ("all,A",          "Print all available information")
+  ("version",        "Print version of DAL.")
+  ("version-major",  "Print major version of DAL.")
+  ("version-minor",  "Print minor version of DAL.")
+  ("version-patch",  "Print patch version of DAL.")
+  ("version-cmake",  "Print full version of CMake used for build.")
+  ("version-system", "Print name of the system the DAL was built for.")
   ;
 
   bpo::variables_map vm;
@@ -49,6 +52,22 @@ int main (int argc, char *argv[])
   if (vm.count("help") || argc == 1) {
     std::cout << "\n" << desc << std::endl;
     return 0;
+  } else if (vm.count("all")) {
+    std::cout << "DAL version         : " << DAL_VERSION   << std::endl;
+    std::cout << "CMake version       : " << CMAKE_VERSION << std::endl;
+    std::cout << "System name/version : " << CMAKE_SYSTEM  << std::endl;
+  } else if (vm.count("version")) {
+    std::cout << "DAL version : " << DAL_VERSION << std::endl;
+  } else if (vm.count("version-major")) {
+    std::cout << "DAL major version : " << DAL_VERSION_MAJOR << std::endl;
+  } else if (vm.count("version-minor")) {
+    std::cout << "DAL minor version : " << DAL_VERSION_MINOR << std::endl;
+  } else if (vm.count("version-patch")) {
+    std::cout << "DAL patch version : " << DAL_VERSION_PATCH << std::endl;
+  } else if (vm.count("version-cmake")) {
+    std::cout << "CMake version : " << CMAKE_VERSION << std::endl;
+  } else if (vm.count("version-patch")) {
+    std::cout << "System name/version : " << CMAKE_SYSTEM << std::endl;
   }
   
   return status;

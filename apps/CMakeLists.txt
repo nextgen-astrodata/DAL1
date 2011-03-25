@@ -28,7 +28,14 @@ if (Boost_PROGRAM_OPTIONS_LIBRARY)
     LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
     )
   ## Testing
-  add_test (dal-config dal-config)
+  add_test (dal-config                dal-config)
+  add_test (dal-config-version        dal-config --version)
+  add_test (dal-config-all            dal-config --all)
+  add_test (dal-config-versionMajor   dal-config --version-major)
+  add_test (dal-config-versionMinor   dal-config --version-minor)
+  add_test (dal-config-versionPath    dal-config --version-patch)
+  add_test (dal-config-versionCMake   dal-config --version-cmake)
+  add_test (dal-config-versionSystem  dal-config --version-system)
 endif (Boost_PROGRAM_OPTIONS_LIBRARY)
 
 ##____________________________________________________________________
