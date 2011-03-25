@@ -15,6 +15,23 @@ set(CMAKE_CXX_FLAGS "-W -Wall")
 #endif (LOFAR_FOUND)
 
 ##____________________________________________________________________
+## Configuration overview
+
+if (Boost_PROGRAM_OPTIONS_LIBRARY)
+  ## Compiler instructions
+  add_executable (dal-config dal-config.cc)
+  ## Linker instructions
+  target_link_libraries (dal-config ${Boost_PROGRAM_OPTIONS_LIBRARY})
+  ## Installation
+  install (TARGETS dal-config
+    RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
+    )
+  ## Testing
+  add_test (dal-config dal-config)
+endif (Boost_PROGRAM_OPTIONS_LIBRARY)
+
+##____________________________________________________________________
 ## Applications with no further external dependencies
 
 ## source files
