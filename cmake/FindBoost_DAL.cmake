@@ -63,6 +63,10 @@ if (NOT BOOST_FOUND)
     set (Boost_FIND_QUIETLY  YES )
   endif (DAL_VERBOSE_CONFIGURE)
   
+  ## Prefer static libraries _______________________________
+
+  set(Boost_USE_STATIC_RUNTIME ON)
+
   ## Initialization: Boost modules to search for ___________
 
   set (BOOST_MODULES
