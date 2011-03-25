@@ -54,6 +54,14 @@ if (NOT BOOST_FOUND)
   set (BOOST_VERSION_MINOR  0     )
   set (BOOST_VERSION_PATCH  0     )
   set (BOOST_WITH_THREAD    FALSE )
+
+  ## Enable/diable verbosity mode __________________________
+  
+  if (DAL_VERBOSE_CONFIGURE)
+    set (Boost_FIND_QUIETLY  NO  )
+  else (DAL_VERBOSE_CONFIGURE)
+    set (Boost_FIND_QUIETLY  YES )
+  endif (DAL_VERBOSE_CONFIGURE)
   
   ## Initialization: Boost modules to search for ___________
 

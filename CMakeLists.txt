@@ -38,26 +38,6 @@ if (DAL_ENABLE_TESTING)
 endif (DAL_ENABLE_TESTING)
 
 ##__________________________________________________________
-## Handle option: verbose mode during configuration?
-
-if (NOT DAL_VERBOSE_CONFIGURE)
-  set (BOOST_FIND_QUIETLY     YES )
-  set (CASACORE_FIND_QUIETLY  YES )
-  set (CFITSIO_FIND_QUIETLY   YES )
-  set (GFORTRAN_FIND_QUIETLY  YES )
-  set (GSL_FIND_QUIETLY       YES )
-  set (HDF5_FIND_QUIETLY      YES )
-  set (LAPACK_FIND_QUIETLY    YES )
-  set (LOFAR_FIND_QUIETLY     YES )
-  set (MPI_FIND_QUIETLY       YES )
-  set (NUMUTIL_FIND_QUIETLY   YES )
-  set (PYTHON_FIND_QUIETLY    YES )
-  set (MPI_FIND_QUIETLY       YES )
-  set (MYSQL_FIND_QUIETLY     YES )
-  set (WCSLIB_FIND_QUIETLY    YES )
-endif (NOT DAL_VERBOSE_CONFIGURE)
-
-##__________________________________________________________
 ## Handle option: Enable standard set of compiler warnings?
 
 if (DAL_COMPILER_WARNINGS)

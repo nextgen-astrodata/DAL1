@@ -40,13 +40,21 @@ foreach (_dalcmake ${_cmakeModules} )
 
   ## Generate uppercase version of package name
   string (TOUPPER ${_dalcmake} _dalcmake_var)
-  ## Strip "_DAL"
+  ## Strip "_DAL" from module name for usage as internal variable
   string(REPLACE "_DAL" "" _cmakeModuleVariable ${_dalcmake_var})
   ## Initilize CMake varible indicating wether or not package was found
   set (${_dalcmake_var}_FOUND FALSE)
+  ## Enable/disable verbosity mode
+  if (DAL_VERBOSE_CONFIGURE)
+    set (${_cmakeModuleVariable}_FIND_QUIETLY NO )
+    set (${_dalcmake}_FIND_QUIETLY            NO )
+  else (DAL_VERBOSE_CONFIGURE)
+    set (${_cmakeModuleVariable}_FIND_QUIETLY YES )
+    set (${_dalcmake}_FIND_QUIETLY            YES )
+  endif (DAL_VERBOSE_CONFIGURE)
   ## Include CMake find script
   include (Find${_dalcmake})
-
+  
   if (${_cmakeModuleVariable}_FOUND OR HAVE_${_cmakeModuleVariable})
 
     ## variable mapping
