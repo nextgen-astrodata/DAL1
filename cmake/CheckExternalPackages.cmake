@@ -5,6 +5,17 @@
 ##
 ## ==============================================================================
 
+## Locations to search for required external components
+
+set (DAL_FIND_PATHS
+  /sw
+  /usr
+  /usr/local
+  /opt
+  /opt/local
+  ${CMAKE_INSTALL_PREFIX}
+)
+
 ##____________________________________________________________________
 ##                                                  CMake find modules
 
@@ -94,36 +105,31 @@ endif (CMAKE_SIZEOF_VOID_P)
 
 find_library (DL_LIBRARY
   NAMES dl
-  HINTS ${CMAKE_INSTALL_PREFIX} 
-  PATHS /sw /usr /usr/local /opt/local
+  PATHS ${DAL_FIND_PATHS}
   PATH_SUFFIXES lib
   )
 
 find_library (M_LIBRARY
   NAMES m
-  HINTS ${CMAKE_INSTALL_PREFIX} 
-  PATHS /sw /usr /usr/local /opt/local
+  PATHS ${DAL_FIND_PATHS}
   PATH_SUFFIXES lib
   )
 
 find_library (PTHREAD_LIBRARY
   NAMES pthread
-  HINTS ${CMAKE_INSTALL_PREFIX} 
-  PATHS /sw /usr /usr/local /opt/local
+  PATHS ${DAL_FIND_PATHS}
   PATH_SUFFIXES lib
   )
 
 find_library (UTIL_LIBRARY
   NAMES util
-  HINTS ${CMAKE_INSTALL_PREFIX} 
-  PATHS /sw /usr /usr/local /opt/local
+  PATHS ${DAL_FIND_PATHS}
   PATH_SUFFIXES lib
   )
 
 find_library (Z_LIBRARY
   NAMES z
-  HINTS ${CMAKE_INSTALL_PREFIX} 
-  PATHS /sw /usr /usr/local /opt/local
+  PATHS ${DAL_FIND_PATHS}
   PATH_SUFFIXES lib
   )
 

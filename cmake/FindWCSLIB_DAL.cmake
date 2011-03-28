@@ -39,7 +39,7 @@ if (NOT WCSLIB_FOUND)
   
   find_path (WCSLIB_INCLUDES wcs/wcs.h wcslib/wcs.h
     HINTS ${WCSLIB_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES include wcs/include wcslib/include
     )
   
@@ -48,7 +48,7 @@ if (NOT WCSLIB_FOUND)
   
   find_library (WCSLIB_LIBRARIES wcs
     HINTS ${WCSLIB_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES lib wcs/lib wcslib/lib
     )
   
