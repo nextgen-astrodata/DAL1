@@ -1,8 +1,6 @@
 
 ##_____________________________________________________________________________
-## Test Boost library for:
-##  - library version <major.minor.release>
-##  - usage of thread library
+## Test Boost library for library version <major.minor.release>
 
 ## Locate test program
 find_file (TEST_BOOST_CC TestBoost.cc
@@ -41,32 +39,36 @@ endif (BOOST_VERSION_COMPILE_RESULT)
 ## Assemble full version of library
 set (BOOST_VERSION "${BOOST_VERSION_MAJOR}.${BOOST_VERSION_MINOR}.${BOOST_VERSION_PATCH}")
 
-  ## Test support of thread library
-  
-  if (BOOST_INCLUDES AND Boost_THREAD_LIBRARY AND TEST_BOOST_CC)
-    try_run(BOOST_THREAD_RUN_RESULT BOOST_THREAD_COMPILE_RESULT
-      ${PROJECT_BINARY_DIR}
-      ${TEST_BOOST_CC}
-      CMAKE_FLAGS -DLINK_LIBRARIES:STRING=${Boost_THREAD_LIBRARY}
-      COMPILE_DEFINITIONS -I${BOOST_INCLUDES} -DTEST_BOOST_THREAD
-      COMPILE_OUTPUT_VARIABLE BOOST_THREAD_COMPILE_OUTPUT
-      RUN_OUTPUT_VARIABLE BOOST_THREAD_RUN_OUTPUT
-      )
-  endif (BOOST_INCLUDES AND Boost_THREAD_LIBRARY AND TEST_BOOST_CC)
-  
-  if (BOOST_THREAD_COMPILE_RESULT)
-    if (BOOST_THREAD_RUN_RESULT)
-      message (STATUS "[Boost] Thread support enabled.")
-      set (BOOST_WITH_THREAD YES)
-    else (BOOST_THREAD_RUN_RESULT)
-      set (BOOST_WITH_THREAD NO)
-      message (STATUS "[Boost] Failed to run TestBoost with thread support!")
-    endif (BOOST_THREAD_RUN_RESULT)
-  else (BOOST_THREAD_COMPILE_RESULT)
+##_____________________________________________________________________________
+## Test Boost library for library version <major.minor.release>
+
+
+## Test support of thread library
+
+if (BOOST_INCLUDES AND Boost_THREAD_LIBRARY AND TEST_BOOST_CC)
+  try_run(BOOST_THREAD_RUN_RESULT BOOST_THREAD_COMPILE_RESULT
+    ${PROJECT_BINARY_DIR}
+    ${TEST_BOOST_CC}
+    CMAKE_FLAGS -DLINK_LIBRARIES:STRING=${Boost_THREAD_LIBRARY}
+    COMPILE_DEFINITIONS -I${BOOST_INCLUDES} -DTEST_BOOST_THREAD
+    COMPILE_OUTPUT_VARIABLE BOOST_THREAD_COMPILE_OUTPUT
+    RUN_OUTPUT_VARIABLE BOOST_THREAD_RUN_OUTPUT
+    )
+endif (BOOST_INCLUDES AND Boost_THREAD_LIBRARY AND TEST_BOOST_CC)
+
+if (BOOST_THREAD_COMPILE_RESULT)
+  if (BOOST_THREAD_RUN_RESULT)
+    message (STATUS "[Boost] Thread support enabled.")
+    set (BOOST_WITH_THREAD YES)
+  else (BOOST_THREAD_RUN_RESULT)
     set (BOOST_WITH_THREAD NO)
-    message (STATUS "[Boost] Failed to compile TestBoost with thread support!")
-    if (DAL_VERBOSE_CONFIGURE)
-      message (${BOOST_THREAD_COMPILE_OUTPUT})
-    endif (DAL_VERBOSE_CONFIGURE)
-  endif (BOOST_THREAD_COMPILE_RESULT)
-  
+    message (STATUS "[Boost] Failed to run TestBoost with thread support!")
+  endif (BOOST_THREAD_RUN_RESULT)
+else (BOOST_THREAD_COMPILE_RESULT)
+  set (BOOST_WITH_THREAD NO)
+  message (STATUS "[Boost] Failed to compile TestBoost with thread support!")
+  if (DAL_VERBOSE_CONFIGURE)
+    message (${BOOST_THREAD_COMPILE_OUTPUT})
+  endif (DAL_VERBOSE_CONFIGURE)
+endif (BOOST_THREAD_COMPILE_RESULT)
+

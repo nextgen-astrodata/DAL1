@@ -69,25 +69,21 @@ endif (CASA_FOUND OR CASACORE_FOUND)
 
 if (Boost_PROGRAM_OPTIONS_LIBRARY)
   if (Boost_THREAD_LIBRARY)
-    if (BOOST_WITH_THREAD)
-      ## compiler instructions
-      add_executable (tbb2h5    tbb2h5.cpp   )
-      add_executable (TBBraw2h5 TBBraw2h5.cpp)
-      ## linker instructions
-      target_link_libraries (tbb2h5
-	dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY}
-	)
-      target_link_libraries (TBBraw2h5
-	dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY}
-	)
-      ## Installation instructions
-      install (TARGETS tbb2h5 TBBraw2h5
-	RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
-	LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
-	)
-    else (BOOST_WITH_THREAD)
-      message (STATUS "[DAL] Missing Boost++ thread library support!")
-    endif (BOOST_WITH_THREAD)
+    ## compiler instructions
+    add_executable (tbb2h5    tbb2h5.cpp   )
+    add_executable (TBBraw2h5 TBBraw2h5.cpp)
+    ## linker instructions
+    target_link_libraries (tbb2h5
+      dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY}
+      )
+    target_link_libraries (TBBraw2h5
+      dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY}
+      )
+    ## Installation instructions
+    install (TARGETS tbb2h5 TBBraw2h5
+      RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
+      LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
+      )
   else (Boost_THREAD_LIBRARY)
     message (STATUS "[DAL] Unable to build apps -- Boost thread library!")
   endif (Boost_THREAD_LIBRARY)
