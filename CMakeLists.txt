@@ -249,6 +249,7 @@ message (STATUS " System configuration:"                                        
 message (STATUS " .. CMAKE_SYSTEM                 = ${CMAKE_SYSTEM}"               )
 message (STATUS " .. CMAKE_SYSTEM_PROCESSOR       = ${CMAKE_SYSTEM_PROCESSOR}"     )
 message (STATUS " Installation configuration:"                                     )
+message (STATUS " .. DAL_VERSION                  = ${DAL_VERSION}"                )
 message (STATUS " .. DAL_INSTALL_PREFIX           = ${DAL_INSTALL_PREFIX}"         )
 message (STATUS " .. DAL_INSTALL_BINDIR           = ${DAL_INSTALL_BINDIR}"         )
 message (STATUS " .. DAL_INSTALL_INCLUDEDIR       = ${DAL_INSTALL_INCLUDEDIR}"     )
