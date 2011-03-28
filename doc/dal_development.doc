@@ -7,6 +7,7 @@
     <li>\ref dal_devel_git
     <li>\ref dal_devel_conventions
     <li>\ref dal_devel_classes
+    <li>\ref dal_devel_releases
   </ul>
 
   \section dal_devel_git Working with Git
@@ -155,7 +156,28 @@
    ***************************************************************************/
   \endcode
 
-<ul>
+  </ul>
 
+  \section dal_devel_releases Preparing a release
+
+  For an external user of the DAL we consider the following options when
+  when retrieving code directory from the repository:
+  <ol>
+    <li>Get current development version.
+    <li>Get latest release version.
+    <li>Get earlier release version.
+  </ol>
+
+  The first step in order to prepare a release is to create a tagged version 
+  on the special \e release branch:
+  \code
+  ## Check out the release branch and merge
+  git checkout release
+  git merge master
+  ## Tag the version
+  git tag -a v0.1.0 -m "DAL release, version 0.1.0"
+  ## Push the tags back to the origin repository
+  git push --tags
+  \endcode
 
 */
