@@ -82,8 +82,10 @@ if (NOT DAL_FOUND)
   endif (DAL_COORDINATE_H)
   
   ## Remove duplicate entries
-  
-  list (REMOVE_DUPLICATES DAL_INCLUDES)
+
+  if (DAL_INCLUDES)
+    list (REMOVE_DUPLICATES DAL_INCLUDES)
+  endif (DAL_INCLUDES)
   
   ##_____________________________________________________________________________
   ## Check for the library
