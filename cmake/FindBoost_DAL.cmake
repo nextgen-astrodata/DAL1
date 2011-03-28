@@ -50,10 +50,11 @@ if (NOT BOOST_FOUND)
   
   ## Initialization: Version and multithreading ____________
   
-  set (BOOST_VERSION_MAJOR  0     )
-  set (BOOST_VERSION_MINOR  0     )
-  set (BOOST_VERSION_PATCH  0     )
-  set (BOOST_WITH_THREAD    FALSE )
+  set (BOOST_VERSION_MAJOR  0      )
+  set (BOOST_VERSION_MINOR  0      )
+  set (BOOST_VERSION_PATCH  0      )
+  set (BOOST_WITH_THREAD    FALSE  )
+  set (Boost_BASE_VERSION   "1.40" )
 
   ## Enable/diable verbosity mode __________________________
   
