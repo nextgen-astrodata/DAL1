@@ -181,7 +181,9 @@ endif (MPI_FOUND AND HDF5_HAVE_PARALLEL_IO)
 
 ## Clean up the list of link libraries
 
-list (REMOVE_DUPLICATES dal_link_libraries)
+if (dal_link_libraries)
+  list (REMOVE_DUPLICATES dal_link_libraries)
+endif (dal_link_libraries)
 
 ## =============================================================================
 ##
