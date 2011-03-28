@@ -103,35 +103,17 @@ endif (CMAKE_SIZEOF_VOID_P)
 ##____________________________________________________________________
 ##                                          System libraries and tools
 
-find_library (DL_LIBRARY
-  NAMES dl
-  PATHS ${DAL_FIND_PATHS}
-  PATH_SUFFIXES lib
-  )
+foreach (_syslib dl m pthread util z)
 
-find_library (M_LIBRARY
-  NAMES m
-  PATHS ${DAL_FIND_PATHS}
-  PATH_SUFFIXES lib
-  )
+  string (TOUPPER ${_syslib} _syslibVar)
 
-find_library (PTHREAD_LIBRARY
-  NAMES pthread
-  PATHS ${DAL_FIND_PATHS}
-  PATH_SUFFIXES lib
-  )
-
-find_library (UTIL_LIBRARY
-  NAMES util
-  PATHS ${DAL_FIND_PATHS}
-  PATH_SUFFIXES lib
-  )
-
-find_library (Z_LIBRARY
-  NAMES z
-  PATHS ${DAL_FIND_PATHS}
-  PATH_SUFFIXES lib
-  )
+  find_library (${_syslibVar}_LIBRARY
+    NAMES ${_syslib}
+    PATHS ${DAL_FIND_PATHS}
+    PATH_SUFFIXES lib
+    )
+  
+endforeach (_syslib)
 
 ## ==============================================================================
 ##
