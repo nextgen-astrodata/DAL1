@@ -170,6 +170,39 @@
       \endverbatim
       </td>
     </tr>
+    <tr valign=top>
+      <td>When your feature branch has matured enough (though there is no reason
+      why not even due this earlier already), you should ensure no citical errors
+      are left when performing an experimental build.</td>
+      <td>
+      \verbatim
+      make Experimental
+      \endverbatim
+      </td>
+      <td></td>
+    </tr>
+    <tr valign=top>
+      <td>Push your changes back to the \e master branch, thereby publishing them
+      to be seen by others.</td>
+      <td>
+      \verbatim
+      git checkout master
+      git merge topic
+      \endverbatim
+      </td>
+      <td>
+      \verbatim
+      ...o----o...       ...o   *master
+               \           /
+                o----o----o      topic
+      \endverbatim
+      </td>
+    </tr>
+    <tr valign=top>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
   </table>
 
   \section dal_devel_releases Preparing a release
@@ -228,15 +261,27 @@
     set (DAL_VERSION_MINOR 1)
     set (DAL_VERSION_PATCH 1)
     \endcode
+    These changes now need to be committed:
+    \verbatim
+    git add CMakeLists.txt
+    git commit -m "DAL release, version 0.1.1"
+    \endverbatim
+    <li>Check out the \e release branch and pull in the previously staged
+    changes:
+    \verbatim
+    git checkout release
+    git merge nextRelease
+    \endverbatim
+    which results in
+    \verbatim
+    ...o----o----o----o            master
+        \
+         o----o                    nextRelease
+               \
+             ...o--------------o   release
+    \endverbatim
   </ol>
 
-  \verbatim
-  ...o----o----o----o            master
-      \       /
-       o----o                    nextRelease
-             \
-           ...o--------------o   release
-  \endverbatim
 
 
   \section dal_devel_conventions Coding conventions
