@@ -5,6 +5,7 @@
 ##
 ## ==============================================================================
 
+##____________________________________________________________________
 ## Locations to search for required external components
 
 set (DAL_FIND_PATHS
@@ -15,6 +16,21 @@ set (DAL_FIND_PATHS
   /opt/local
   ${CMAKE_INSTALL_PREFIX}
 )
+
+##____________________________________________________________________
+##                                          System libraries and tools
+
+foreach (_syslib dl m pthread util z)
+
+  string (TOUPPER ${_syslib} _syslibVar)
+
+  find_library (${_syslibVar}_LIBRARY
+    NAMES ${_syslib}
+    PATHS ${DAL_FIND_PATHS}
+    PATH_SUFFIXES lib
+    )
+  
+endforeach (_syslib)
 
 ##____________________________________________________________________
 ##                                                  CMake find modules
@@ -99,21 +115,6 @@ if (CMAKE_SIZEOF_VOID_P)
     set (WORDSIZE_IS_64 FALSE)
   endif (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 endif (CMAKE_SIZEOF_VOID_P)
-
-##____________________________________________________________________
-##                                          System libraries and tools
-
-foreach (_syslib dl m pthread util z)
-
-  string (TOUPPER ${_syslib} _syslibVar)
-
-  find_library (${_syslibVar}_LIBRARY
-    NAMES ${_syslib}
-    PATHS ${DAL_FIND_PATHS}
-    PATH_SUFFIXES lib
-    )
-  
-endforeach (_syslib)
 
 ## ==============================================================================
 ##
