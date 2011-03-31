@@ -116,18 +116,17 @@ namespace DAL { // Namespace DAL -- begin
 
       <li><b>NET Framework</b> (System.IO)
 
-      <ul>
-        <li>FileMode -- constant that determines how to open or create the file.
-	<li>FileAccess -- constant that determines how the file can be accessed
-	by the FileStream object. This gets the CanRead and CanWrite properties
-	of the FileStream object.
-      </ul>
-
       <a href="http://msdn.microsoft.com/en-us/library/system.io.filemode.aspx">FileMode
       parameters</a> control whether a file is overwritten, created, or
       opened, or some combination thereof. Use Open to open an existing file.
       To append to a file, use Append. To truncate a file or to create it if it
       does not exist, use Create.
+
+      A <a href="http://msdn.microsoft.com/en-us/library/4z36sx0f.aspx">FileAccess
+      parameter</a> is specified in many of the constructors for File,
+      FileInfo, FileStream, and other constructors where it is important to
+      control the kind of access users have to a file. Defines constants for
+      read, write, or read/write access to a file.
 
       <table border=0 width=95%>
         <tr valign=top>
@@ -182,15 +181,6 @@ namespace DAL { // Namespace DAL -- begin
 	  end of the file will throw an IOException and any attempt to read
 	  fails and throws an NotSupportedException.</td>
 	</tr>
-      </table>
-
-      A <a href="http://msdn.microsoft.com/en-us/library/4z36sx0f.aspx">FileAccess
-      parameter</a> is specified in many of the constructors for File,
-      FileInfo, FileStream, and other constructors where it is important to
-      control the kind of access users have to a file. Defines constants for
-      read, write, or read/write access to a file.
-
-      <table border=0 width=95%>
         <tr valign=top>
 	 <td class="indexkey" width=20%>FileAccess parameter</td>
 	 <td class="indexkey" width=75%>Description</td>
@@ -216,8 +206,8 @@ namespace DAL { // Namespace DAL -- begin
 
       <table border=0 width=95%>
         <tr valign=top>
-	 <td class="indexkey" width=15%>FileMode value</td>
-	 <td class="indexkey" width=80%>Description</td>
+	 <td class="indexkey" width=20%>FileMode parameter</td>
+	 <td class="indexkey" width=75%>Description</td>
 	</tr>
         <tr valign=top>
 	  <td>\c Append</td>
@@ -245,11 +235,8 @@ namespace DAL { // Namespace DAL -- begin
 	  <td>\c Truncate</td>
 	  <td>Truncates an existing file</td>
 	</tr>
-      </table>
-
-      <table border=0 width=95%>
         <tr valign=top>
-	 <td class="indexkey" width=15%>FileAccess value</td>
+	 <td class="indexkey" width=15%>FileAccess parameter</td>
 	 <td class="indexkey" width=80%>Description</td>
 	</tr>
         <tr valign=top>
