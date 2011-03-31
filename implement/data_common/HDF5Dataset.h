@@ -340,20 +340,20 @@ namespace DAL {
     //! Open the dataset
     virtual bool open (hid_t const &location,
 		       std::string const &name,
-		       bool const &create=false);
+		       bool const &createNew=false);
     
-    //! Open the dataset
-    virtual bool open (hid_t const &location,
-		       std::string const &name,
-		       std::vector<hsize_t> const &shape,
-		       std::vector<hsize_t> const &chunksize,
-		       hid_t const &datatype=H5T_NATIVE_DOUBLE);
+    //! Create the dataset
+    virtual bool create (hid_t const &location,
+			 std::string const &name,
+			 std::vector<hsize_t> const &shape,
+			 std::vector<hsize_t> const &chunksize,
+			 hid_t const &datatype=H5T_NATIVE_DOUBLE);
     
-    //! Open the dataset
-    virtual bool open (hid_t const &location,
-		       std::string const &name,
-		       std::vector<hsize_t> const &shape,
-		       hid_t const &datatype=H5T_NATIVE_DOUBLE);
+    //! Create the dataset
+    virtual bool create (hid_t const &location,
+			 std::string const &name,
+			 std::vector<hsize_t> const &shape,
+			 hid_t const &datatype=H5T_NATIVE_DOUBLE);
     
     //! Get the Hyperslabs for the dataspace attached to the dataset
     inline std::vector<DAL::HDF5Hyperslab> hyperslabs () const {
