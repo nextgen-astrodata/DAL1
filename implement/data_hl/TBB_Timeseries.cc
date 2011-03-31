@@ -1063,15 +1063,29 @@ namespace DAL {  // Namespace DAL -- begin
 
   std::vector<int> TBB_Timeseries::sample_offset (uint const &refAntenna)
   {
+    // Store current antenna selection
+    std::set<std::string> selection = selectedDipoles ();
+
+    // Select only the reference antenna
+    std::set<std::string> ref;
+    ref.insert(dipoleNames()[refAntenna]);
+    selectDipoles(ref);
+
+    int refTime = time()[0];
+    uint refSample = sample_number()[0];
+
+    // Restore antenna selection
+    selectDipoles(selection);
+    
     uint nofDipoles              = nofSelectedDatasets();
     std::vector<uint> valTime   = time();
     std::vector<uint> valSample = sample_number();
     std::vector<int> offset (nofDipoles);
 
     for (uint n(0); n<nofDipoles; n++) {
-      offset[n] = valTime[n]-valTime[refAntenna] + valSample[n]-valSample[refAntenna];
+      offset[n] = valTime[n]-refTime + valSample[n]-refSample;
     }
-    
+
     return offset;
   }
   
