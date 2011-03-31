@@ -73,7 +73,8 @@ namespace DAL { // Namespace DAL -- begin
       Four access modes address these concerns, with H5Fcreate and H5Fopen each
       accepting two of them:
       <ul>
-        <li>\c H5Fcreate accepts \c H5F_ACC_TRUNC or \c H5F_ACC_EXCL.
+        <li>\c H5Fcreate accepts \c H5F_ACC_TRUNC or \c H5F_ACC_EXCL. All newly
+	created files are opened for both reading and writing. 
 	<li>\c H5Fopen accepts \c H5F_ACC_RDONLY or \c H5F_ACC_RDWR.
       </ul>
       For more detailed information see chapter 3 ("The HDF5 File") of the
@@ -113,7 +114,14 @@ namespace DAL { // Namespace DAL -- begin
       #define RDWR_RDWR    
       \endcode
 
-      <li><b>NET Framework</b> (FileMode Enumeration, System.IO)
+      <li><b>NET Framework</b> (System.IO)
+
+      <ul>
+        <li>FileMode -- constant that determines how to open or create the file.
+	<li>FileAccess -- constant that determines how the file can be accessed
+	by the FileStream object. This gets the CanRead and CanWrite properties
+	of the FileStream object.
+      </ul>
 
       <a href="http://msdn.microsoft.com/en-us/library/system.io.filemode.aspx">FileMode
       parameters</a> control whether a file is overwritten, created, or
@@ -123,8 +131,8 @@ namespace DAL { // Namespace DAL -- begin
 
       <table border=0 width=95%>
         <tr valign=top>
-	 <td class="indexkey" width=15%>Member name</td>
-	 <td class="indexkey" width=80%>Description</td>
+	 <td class="indexkey" width=20%>FileMode parameter</td>
+	 <td class="indexkey" width=75%>Description</td>
 	</tr>
         <tr valign=top>
 	  <td>\c CreateNew</td>
@@ -175,6 +183,89 @@ namespace DAL { // Namespace DAL -- begin
 	  fails and throws an NotSupportedException.</td>
 	</tr>
       </table>
+
+      A <a href="http://msdn.microsoft.com/en-us/library/4z36sx0f.aspx">FileAccess
+      parameter</a> is specified in many of the constructors for File,
+      FileInfo, FileStream, and other constructors where it is important to
+      control the kind of access users have to a file. Defines constants for
+      read, write, or read/write access to a file.
+
+      <table border=0 width=95%>
+        <tr valign=top>
+	 <td class="indexkey" width=20%>FileAccess parameter</td>
+	 <td class="indexkey" width=75%>Description</td>
+	</tr>
+        <tr valign=top>
+	  <td>\c Read</td>
+	  <td>Read access to the file. Data can be read from the file. Combine
+	  with \c Write for read/write access.</td>
+	</tr>
+        <tr valign=top>
+	  <td>\c Write</td>
+	  <td>Write access to the file. Data can be written to the file. Combine
+	  with \c Read for read/write access.</td>
+	</tr>
+        <tr valign=top>
+	  <td>\c ReadWrite</td>
+	  <td>Read and write access to the file. Data can be written to and read
+	  from the file.</td>
+	</tr>
+      </table>
+
+      <li>\b C#
+
+      <table border=0 width=95%>
+        <tr valign=top>
+	 <td class="indexkey" width=15%>FileMode value</td>
+	 <td class="indexkey" width=80%>Description</td>
+	</tr>
+        <tr valign=top>
+	  <td>\c Append</td>
+	  <td>Opens the file and adds data. This should be used with the
+	  FileAccess Write Enumeration value.</td>
+	</tr>
+        <tr valign=top>
+	  <td>\c Create</td>
+	  <td>Creates a new file. Overwrites any existing file.</td>
+	</tr>
+        <tr valign=top>
+	  <td>\c CreateNew</td>
+	  <td>Creates a new file. If the file already exists, IOException is
+	  thrown.</td>
+	</tr>
+        <tr valign=top>
+	  <td>\c Open</td>
+	  <td>Opens an existing file</td>
+	</tr>
+        <tr valign=top>
+	  <td>\c OpenOrCreate</td>
+	  <td>Opens a new file. If there is no file, it creates a new file.</td>
+	</tr>
+        <tr valign=top>
+	  <td>\c Truncate</td>
+	  <td>Truncates an existing file</td>
+	</tr>
+      </table>
+
+      <table border=0 width=95%>
+        <tr valign=top>
+	 <td class="indexkey" width=15%>FileAccess value</td>
+	 <td class="indexkey" width=80%>Description</td>
+	</tr>
+        <tr valign=top>
+	  <td>\c Read</td>
+	  <td>Data can be read (retrieved) from the file</td>
+	</tr>
+        <tr valign=top>
+	  <td>\c ReadWrite</td>
+	  <td>Data can be added to and retrieved from the file</td>
+	</tr>
+        <tr valign=top>
+	  <td>\c Write</td>
+	  <td>Data can be added to the file</td>
+	</tr>
+      </table>
+
     </ul>
     
     <h3>Example(s)</h3>
