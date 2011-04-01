@@ -113,8 +113,67 @@ namespace DAL { // Namespace DAL -- begin
       #define RDWR_RDONLY  1
       #define RDWR_RDWR    
       \endcode
+      
+      <li><b>GNU C Library</b>
 
-      <li><b>NET Framework</b> (System.IO)
+      The file access modes allow a file descriptor to be used for reading,
+      writing, or both. (In the GNU system, they can also allow none of these,
+      and allow execution of the file as a program.) The access modes are chosen
+      when the file is opened, and never change.
+
+      <table border=0 width=95%>
+        <tr valign=top>
+	 <td class="indexkey" width=20%>File Access Modes</td>
+	 <td class="indexkey" width=75%>Description</td>
+	</tr>
+        <tr valign=top>
+	  <td>int O_RDONLY</td>
+	  <td>Open the file for read access.</td>
+	</tr>
+        <tr valign=top>
+	  <td>int O_WRONLY</td>
+	  <td>Open the file for write access.</td>
+	</tr>
+        <tr valign=top>
+	  <td>int O_RDWR</td>
+	  <td>Open the file for both reading and writing.</td>
+	</tr>
+        <tr valign=top>
+	 <td class="indexkey" width=20%>Open-time Flags</td>
+	 <td class="indexkey" width=75%>Description</td>
+	</tr>
+        <tr valign=top>
+	  <td>int O_CREAT</td>
+	  <td>If set, the file will be created if it doesn't already exist. </td>
+	</tr>
+        <tr valign=top>
+	  <td>int O_EXCL</td>
+	  <td>If both \c O_CREAT and \c O_EXCL are set, then open fails if the
+	  specified file already exists. This is guaranteed to never clobber an
+	  existing file. </td>
+	</tr>
+        <tr valign=top>
+	  <td>int O_TRUNC</td>
+	  <td>Truncate the file to zero length. This option is only useful for
+	  regular files, not special files such as directories or FIFOs. POSIX.1
+	  requires that you open the file for writing to use O_TRUNC. In BSD and
+	  GNU you must have permission to write the file to truncate it, but you
+	  need not open for write access. </td>
+	</tr>
+      </table>
+
+      In the GNU system (and not in other systems), \c O_RDONLY and
+      \c O_WRONLY are independent bits that can be bitwise-ORed together, and
+      it is valid for either bit to be set or clear. This means that \c O_RDWR
+      is the same as \c O_RDONLY|\c O_WRONLY. A file access mode of zero is
+      permissible; it allows no operations that do input or output to the file,
+      but does allow other operations such as fchmod. On the GNU system, since
+      “read-only” or “write-only” is a misnomer, \c fcntl.h defines additional
+      names for the file access modes. These names are preferred when writing
+      GNU-specific code. But most programs will want to be portable to other
+      POSIX.1 systems and should use the POSIX.1 names above instead. 
+
+      <li><b>.NET Framework</b> (System.IO)
 
       <a href="http://msdn.microsoft.com/en-us/library/system.io.filemode.aspx">FileMode
       parameters</a> control whether a file is overwritten, created, or
@@ -259,11 +318,29 @@ namespace DAL { // Namespace DAL -- begin
     
   */  
   class AccessProperties {
-
-    hid_t itsAccessProperties;
     
   public:
     
+    //! Object mode parameter
+    enum Mode {
+      //! Creates a new object. Overwrites any existing object.
+      Create,
+      //! Creates a new object. If the object already exists, an exception is thrown.
+      CreateNew,
+      //! Opens an existing object.
+      Open,
+      //! Opens a new object. If there is no object, it creates a new object. 
+      OpenOrCreate
+    };
+    
+    //! Object access parameter
+    enum Access {
+      //! 
+      Read,
+      ReadWrite,
+      Write
+    };
+
     // === Construction =========================================================
     
     //! Default constructor
@@ -305,12 +382,15 @@ namespace DAL { // Namespace DAL -- begin
     //! Provide a summary of the object's internal parameters and status
     void summary (std::ostream &os);    
 
-    // === Methods ==============================================================
+    // === Public methods =======================================================
     
     
     
   private:
     
+    AccessProperties::Mode itsMode;
+    AccessProperties::Access itsAccess;
+
     //! Unconditional copying
     void copy (AccessProperties const &other);
     
