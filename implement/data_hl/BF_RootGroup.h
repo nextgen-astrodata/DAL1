@@ -99,27 +99,6 @@ namespace DAL { // Namespace DAL -- begin
     `-- SysLog
     \endverbatim
 
-    <table>
-      <tr>
-        <td>BF_RootGroup</td>
-        <td>BF_SubArrayPointing</td>
-        <td>BF_BeamGroup</td>
-        <td>BF_StokesDataset</td>
-      </tr>
-      <tr>
-        <td>getStokesDataset(BF_StokesDataset,uint,uint,uint)</td>
-        <td>getStokesDataset(BF_StokesDataset,uint,uint)</td>
-        <td>getStokesDataset(BF_StokesDataset,uint)</td>
-        <td>--</td>
-      </tr>
-      <tr>
-        <td>getBeamGroup(uint,uint)</td>
-        <td>getBeamGroup(uint)</td>
-        <td>--</td>
-        <td>--</td>
-      </tr>
-    </table>
-
     <h3>Example(s)</h3>
 
     <ol>
@@ -179,7 +158,7 @@ namespace DAL { // Namespace DAL -- begin
     //! LOFAR common attributes attached to the root group of the dataset
     CommonAttributes commonAttributes_p;
     //! Primary Pointing Directions
-    std::map<std::string,BF_SubArrayPointing> primaryPointings_p;
+    std::map<std::string,BF_SubArrayPointing> itsSubarrayPointings;
     //! Container for system-wide logs
     std::map<std::string,SysLog> itsSystemLog;
 
@@ -246,7 +225,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Get the number of primary pointing direction objects
     inline unsigned int nofPrimaryPointings () const {
-      return primaryPointings_p.size();
+      return itsSubarrayPointings.size();
     }
 
     //! Get a primary pointing direction group
