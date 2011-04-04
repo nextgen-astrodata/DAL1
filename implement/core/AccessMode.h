@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ACCESSPROPERTIES_H
-#define ACCESSPROPERTIES_H
+#ifndef ACCESSMODE_H
+#define ACCESSMODE_H
 
 #include <dal_config.h>
 #include <core/HDF5Object.h>
@@ -27,7 +27,7 @@
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class AccessProperties
+    \class AccessMode
     
     \ingroup DAL
     \ingroup core
@@ -38,7 +38,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2010/10/19
 
-    \test tAccessProperties.cc
+    \test tAccessMode.cc
     
     <h3>Prerequisite</h3>
     
@@ -317,7 +317,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class AccessProperties {
+  class AccessMode {
     
   public:
     
@@ -335,43 +335,45 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Object access parameter
     enum Access {
-      //! 
+      //! Read access to the object
       Read,
+      //! Read and write access to the object
       ReadWrite,
+      //! Write access to the object
       Write
     };
 
     // === Construction =========================================================
     
     //! Default constructor
-    AccessProperties ();
+    AccessMode ();
     
     //! Copy constructor
-    AccessProperties (AccessProperties const &other);
+    AccessMode (AccessMode const &other);
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~AccessProperties ();
+    ~AccessMode ();
     
     // === Operators ============================================================
     
     /*!
       \brief Overloading of the copy operator
       
-      \param other -- Another AccessProperties object from which to make a copy.
+      \param other -- Another AccessMode object from which to make a copy.
     */
-    AccessProperties& operator= (AccessProperties const &other); 
+    AccessMode& operator= (AccessMode const &other); 
     
     // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, AccessProperties.
+      \return className -- The name of the class, AccessMode.
     */
     inline std::string className () const {
-      return "AccessProperties";
+      return "AccessMode";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -388,18 +390,18 @@ namespace DAL { // Namespace DAL -- begin
     
   private:
     
-    AccessProperties::Mode itsMode;
-    AccessProperties::Access itsAccess;
+    AccessMode::Mode itsMode;
+    AccessMode::Access itsAccess;
 
     //! Unconditional copying
-    void copy (AccessProperties const &other);
+    void copy (AccessMode const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class AccessProperties -- end
+  }; // Class AccessMode -- end
   
 } // Namespace DAL -- end
 
-#endif /* ACCESSPROPERTIES_H */
+#endif /* ACCESSMODE_H */
   

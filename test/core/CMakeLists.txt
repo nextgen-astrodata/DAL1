@@ -36,6 +36,7 @@ endforeach (src)
 ## Test with no further conditions required ______
 
 foreach (_test
+    tAccessMode
     tdalBaseTypes
     tdalCommon
     tdalCommon_operators

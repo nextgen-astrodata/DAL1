@@ -239,8 +239,11 @@ include (CPack)
 ## Create a release version
 
 add_custom_target (release
+  COMMAND git add CMakeCache.txt
+  COMMAND git commit -m "DAL release, version ${DAL_VERSION}"
   COMMAND make package_source
   WORKING_DIRECTORY ${DAL_BUILD_DIR}
+  COMMENT "... preparing DAL release, version ${DAL_VERSION} ..."
 )
 
 

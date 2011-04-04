@@ -18,18 +18,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/AccessProperties.h>
+#include <core/AccessMode.h>
 
 // Namespace usage
-using DAL::AccessProperties;
+using DAL::AccessMode;
 
 /*!
-  \file tAccessProperties.cc
+  \file tAccessMode.cc
 
   \ingroup DAL
   \ingroup core
 
-  \brief A collection of test routines for the AccessProperties class
+  \brief A collection of test routines for the AccessMode class
  
   \author <author>
  
@@ -40,20 +40,20 @@ using DAL::AccessProperties;
 //                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new AccessProperties object
+  \brief Test constructors for a new AccessMode object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
 int test_constructors ()
 {
-  std::cout << "\n[tAccessProperties::test_constructors]\n" << std::endl;
+  std::cout << "\n[tAccessMode::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
   
   std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
-    AccessProperties newObject;
+    AccessMode newObject;
     //
     newObject.summary(); 
   } catch (std::string message) {
