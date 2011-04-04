@@ -31,6 +31,7 @@ using DAL::Filename;
 using DAL::BF_RootGroup;
 using DAL::BF_SubArrayPointing;
 using DAL::BF_BeamGroup;
+using DAL::BF_StokesDataset;
 
 /*!
   \file tBF_BeamGroup.cc
@@ -262,31 +263,51 @@ int test_StokesDataset (hid_t const &fileID)
     Set up variables required for the creation of a Stokes dataset
   */
   
-  unsigned int nofSamples  = 1000;
-  unsigned int nofSubbands = 36;
-  unsigned int nofChannels = 128;
+  std::cout << "[1] Testing openStokesDataset() ..." << std::endl;
+  try {
+    unsigned int nofSamples  = 1000;
+    unsigned int nofSubbands = 36;
+    unsigned int nofChannels = 128;
+    
+    status = beam.openStokesDataset (0,
+				     nofSamples,
+				     nofSubbands,
+				     nofChannels,
+				     DAL::Stokes::I);
+    status = beam.openStokesDataset (1,
+				     nofSamples,
+				     nofSubbands,
+				     nofChannels,
+				     DAL::Stokes::Q);
+    status = beam.openStokesDataset (2,
+				     nofSamples,
+				     nofSubbands,
+				     nofChannels,
+				     DAL::Stokes::U);
+    status = beam.openStokesDataset (3,
+				     nofSamples,
+				     nofSubbands,
+				     nofChannels,
+				     DAL::Stokes::V);
+    beam.summary();
+    
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  /*__________________________________________________________________
+    Retrieve previously created Stokes dataset
+  */
 
-  status = beam.openStokesDataset (0,
-				   nofSamples,
-				   nofSubbands,
-				   nofChannels,
-				   DAL::Stokes::I);
-  status = beam.openStokesDataset (1,
-				   nofSamples,
-				   nofSubbands,
-				   nofChannels,
-				   DAL::Stokes::Q);
-  status = beam.openStokesDataset (2,
-				   nofSamples,
-				   nofSubbands,
-				   nofChannels,
-				   DAL::Stokes::U);
-  status = beam.openStokesDataset (3,
-				   nofSamples,
-				   nofSubbands,
-				   nofChannels,
-				   DAL::Stokes::V);
-  beam.summary();
+  std::cout << "[2] Testing getStokesDataset() ..." << std::endl;
+  try {
+    BF_StokesDataset stokes = beam.getStokesDataset(0);
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+
   
   return nofFailedTests;
 }
@@ -296,7 +317,7 @@ int test_StokesDataset (hid_t const &fileID)
 
 /*!
   \brief Main routine of the test program
-
+  
   \return nofFailedTests -- The number of failed tests encountered within and
           identified by this test program.
 */

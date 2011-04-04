@@ -394,14 +394,14 @@ namespace DAL { // Namespace DAL -- begin
   //                                                             getStokesDataset
 
   /*!
-    \param index    -- ID of the Stokes dataset to be created.
-    \return dataset -- BF_StokesDataset object corresponding to \c index; returns
-            empty object (as created by default constructor) in case there is no
-	    dataset corresponding to the provided \c index.
+    \param stokesID -- ID of the Stokes dataset to be created.
+    \return dataset -- BF_StokesDataset object corresponding to \c stokesID;
+            returns empty object (as created by default constructor) in case
+	    there is no dataset corresponding to the provided \c stokesID.
   */
-  BF_StokesDataset BF_BeamGroup::getStokesDataset (unsigned int const &index)
+  BF_StokesDataset BF_BeamGroup::getStokesDataset (unsigned int const &stokesID)
   {
-    std::string name = getName (index);
+    std::string name = getName (stokesID);
     std::map<std::string,BF_StokesDataset>::iterator it = itsStokesDatasets.find(name);
     
     if (it==itsStokesDatasets.end()) {
@@ -417,28 +417,27 @@ namespace DAL { // Namespace DAL -- begin
   //                                                             getStokesDataset
 
   /*!
-    \retval dataset -- Pointer to BF_StokesDataset object corresponding to \c index.
-    \param index    -- ID of the Stokes dataset to be created.
+    \retval dataset -- Pointer to BF_StokesDataset object corresponding to
+            \c stokesID.
+    \param stokesID -- ID of the Stokes dataset to be created.
     \return status  -- Status of the operation; returns \e false in case an error
             was encountered, e.g. because there is no dataset corresponding to
-	    the provided \c index.
+	    the provided \c stokesID.
   */
   bool BF_BeamGroup::getStokesDataset (BF_StokesDataset *dataset,
-				       unsigned int const &index)
+				       unsigned int const &stokesID)
   {
-    bool status      = true;
-    std::string name = getName (index);
+    std::string name = getName (stokesID);
     std::map<std::string,BF_StokesDataset>::iterator it = itsStokesDatasets.find(name);
     
     if (it==itsStokesDatasets.end()) {
       std::cerr << "[BF_BeamGroup::getStokesDataset]"
 		<< " Unable to find Stokes dataset " << name << std::endl;
-      status  = false;
+      return false;
     } else {
       dataset = &(it->second);
+      return true;
     }
-
-    return status;
   }
   
   //_____________________________________________________________________________

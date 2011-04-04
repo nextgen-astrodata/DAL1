@@ -285,6 +285,79 @@ namespace DAL { // Namespace DAL -- begin
     
     return status;
   }
+
+  //_____________________________________________________________________________
+  //                                                                 getBeamGroup
+  
+  BF_BeamGroup BF_SubArrayPointing::getBeamGroup (unsigned int const &beamID)
+  {
+    std::string name = getName (beamID);
+    std::map<std::string,BF_BeamGroup>::iterator it = itsBeams.find(name);
+    
+    if (it==itsBeams.end()) {
+      std::cerr << "[BF_SubArrayPointing::getBeamGroup]"
+		<< " Unable to find Beam group " << name << std::endl;
+      return BF_BeamGroup();
+    } else {
+      return it->second;
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                 getBeamGroup
+  
+  bool BF_SubArrayPointing::getBeamGroup (BF_BeamGroup *beam,
+					  unsigned int const &beamID)
+  {
+    std::string name = getName (beamID);
+    std::map<std::string,BF_BeamGroup>::iterator it = itsBeams.find(name);
+
+    if (it==itsBeams.end()) {
+      std::cerr << "[BF_SubArrayPointing::getBeamGroup]"
+		<< " Unable to find Beam group " << name << std::endl;
+      return false;
+    } else {
+      beam = &(it->second);
+      return true;
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                             getStokesDataset
+  
+  BF_StokesDataset BF_SubArrayPointing::getStokesDataset (unsigned int const &beamID,
+							  unsigned int const &stokesID)
+  {
+    std::string name = getName (beamID);
+    std::map<std::string,BF_BeamGroup>::iterator it = itsBeams.find(name);
+
+    if (it==itsBeams.end()) {
+      std::cerr << "[BF_SubArrayPointing::getStokesDataset]"
+		<< " Unable to find Beam group " << name << std::endl;
+      return BF_StokesDataset();
+    } else {
+      return it->second.getStokesDataset(stokesID);
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                             getStokesDataset
+  
+  bool BF_SubArrayPointing::getStokesDataset (BF_StokesDataset *dataset,
+					      unsigned int const &beamID,
+					      unsigned int const &stokesID)
+  {
+    std::string name = getName (beamID);
+    std::map<std::string,BF_BeamGroup>::iterator it = itsBeams.find(name);
+
+    if (it==itsBeams.end()) {
+      std::cerr << "[BF_SubArrayPointing::getStokesDataset]"
+		<< " Unable to find Beam group " << name << std::endl;
+      return false;
+    } else {
+      return it->second.getStokesDataset(dataset,stokesID);
+    }
+  }
   
   //_____________________________________________________________________________
   //                                                                      getName

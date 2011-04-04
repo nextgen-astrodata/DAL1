@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: NewClass.h 2286 2009-02-03 10:50:48Z baehren                    $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -132,7 +129,7 @@ namespace DAL { // Namespace DAL -- begin
     */
     void summary (std::ostream &os);    
 
-    // ------------------------------------------------------------------ Methods
+    // === Public methods =======================================================
 
     //! Convert PrimaryPointing index to name of the HDF5 group
     static std::string getName (unsigned int const &index);
@@ -150,6 +147,22 @@ namespace DAL { // Namespace DAL -- begin
     inline unsigned int nofBeams () {
       return itsBeams.size();
     }
+    
+    //! Retrieve a specific Beam group
+    BF_BeamGroup getBeamGroup (unsigned int const &beamID);
+    
+    //! Retrieve a specific Beam group
+    bool getBeamGroup (BF_BeamGroup *beam,
+		       unsigned int const &beamID);
+    
+    //! Retrieve a specific Stokes dataset
+    BF_StokesDataset getStokesDataset (unsigned int const &beamID,
+				       unsigned int const &stokesID);
+    
+    //! Retrieve a specific Stokes dataset
+    bool getStokesDataset (BF_StokesDataset *dataset,
+			   unsigned int const &beamID,
+			   unsigned int const &stokesID);
     
   protected:
     

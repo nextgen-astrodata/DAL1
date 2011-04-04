@@ -176,11 +176,11 @@ namespace DAL { // Namespace DAL -- begin
 			    hid_t const &datatype=H5T_NATIVE_FLOAT);
     
     //! Retrieve a specific Stokes dataset
-    bool getStokesDataset (BF_StokesDataset *dataset,
-			   unsigned int const &index);
+    BF_StokesDataset getStokesDataset (unsigned int const &stokesID);
     
     //! Retrieve a specific Stokes dataset
-    BF_StokesDataset getStokesDataset (unsigned int const &index);
+    bool getStokesDataset (BF_StokesDataset *dataset,
+			   unsigned int const &stokesID);
     
     /*!
       \brief Write \c data to Stokes dataset identified by \c index.
