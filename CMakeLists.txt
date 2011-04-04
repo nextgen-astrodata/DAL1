@@ -5,7 +5,7 @@ project (DAL)
 ## Project release version
 set (DAL_VERSION_MAJOR 0)
 set (DAL_VERSION_MINOR 1)
-set (DAL_VERSION_PATCH 2)
+set (DAL_VERSION_PATCH 3)
 set (DAL_VERSION "${DAL_VERSION_MAJOR}.${DAL_VERSION_MINOR}.${DAL_VERSION_PATCH}")
 
 ## Minimum required version of CMake to configure the project
@@ -236,16 +236,16 @@ SET (CPACK_SOURCE_PACKAGE_FILE_NAME "dal-${DAL_VERSION}")
 ## Load packaging tool
 include (CPack)
 
-## Create a release version
+## Create a release version (*some additional explanation still required here).
 
 add_custom_target (release
-  COMMAND git add CMakeCache.txt
-  COMMAND git commit -m "DAL release, version ${DAL_VERSION}"
+  COMMAND git add ${PROJECT_SOURCE_DIR}/CMakeLists.txt
+  COMMAND git commit -m "DAL relase, version ${DAL_VERSION}"
+  COMMAND git tag -a v${DAL_VERSION} -m "DAL release, version ${DAL_VERSION}"
   COMMAND make package_source
   WORKING_DIRECTORY ${DAL_BUILD_DIR}
   COMMENT "... preparing DAL release, version ${DAL_VERSION} ..."
 )
-
 
 ## ==============================================================================
 ##
