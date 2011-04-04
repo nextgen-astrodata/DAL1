@@ -448,7 +448,7 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     /* Open/create dataset */
-    status = HDF5Dataset::open (location, itsName, shape);
+    status = HDF5Dataset::create (location, itsName, shape);
 
     /* Initialize attributes attached to the dataset */
     if (H5Iis_valid(itsLocation)) {

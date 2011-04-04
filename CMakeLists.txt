@@ -244,8 +244,8 @@ add_custom_target (release
   COMMAND git tag -a v${DAL_VERSION} -m "DAL release, version ${DAL_VERSION}"
   COMMAND make package_source
   WORKING_DIRECTORY ${DAL_BUILD_DIR}
+  COMMENT "... preparing DAL release, version ${DAL_VERSION} ..."
 )
-
 
 ## ==============================================================================
 ##

@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/AccessProperties.h>
+#include <core/AccessMode.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -28,14 +28,14 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  AccessProperties::AccessProperties ()
+  AccessMode::AccessMode ()
   {;}
   
   /*!
     \param other -- Another HDF5Property object from which to create this new
            one.
   */
-  AccessProperties::AccessProperties (AccessProperties const &other)
+  AccessMode::AccessMode (AccessMode const &other)
   {
     copy (other);
   }
@@ -46,12 +46,12 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  AccessProperties::~AccessProperties ()
+  AccessMode::~AccessMode ()
   {
     destroy();
   }
   
-  void AccessProperties::destroy ()
+  void AccessMode::destroy ()
   {;}
   
   // ============================================================================
@@ -63,7 +63,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    operator=
   
-  AccessProperties& AccessProperties::operator= (AccessProperties const &other)
+  AccessMode& AccessMode::operator= (AccessMode const &other)
   {
     if (this != &other) {
       destroy ();
@@ -75,9 +75,10 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
-  void AccessProperties::copy (AccessProperties const &other)
+  void AccessMode::copy (AccessMode const &other)
   {
-    itsAccessProperties = other.itsAccessProperties;
+    itsMode   = other.itsMode;
+    itsAccess = other.itsAccess;
   }
 
   // ============================================================================
@@ -92,9 +93,9 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param os -- Output stream to which the summary is written.
   */
-  void AccessProperties::summary (std::ostream &os)
+  void AccessMode::summary (std::ostream &os)
   {
-    os << "[AccessProperties] Summary of internal parameters." << std::endl;
+    os << "[AccessMode] Summary of internal parameters." << std::endl;
   }
   
   // ============================================================================
