@@ -394,26 +394,48 @@ namespace DAL { // Namespace DAL -- begin
   //                                                             getStokesDataset
 
   /*!
-    \retval dataset -- BF_StokesDataset object corresponding to \c index.
+    \param index    -- ID of the Stokes dataset to be created.
+    \return dataset -- BF_StokesDataset object corresponding to \c index; returns
+            empty object (as created by default constructor) in case there is no
+	    dataset corresponding to the provided \c index.
+  */
+  BF_StokesDataset BF_BeamGroup::getStokesDataset (unsigned int const &index)
+  {
+    std::string name = getName (index);
+    std::map<std::string,BF_StokesDataset>::iterator it = itsStokesDatasets.find(name);
+    
+    if (it==itsStokesDatasets.end()) {
+      std::cerr << "[BF_BeamGroup::getStokesDataset]"
+		<< " Unable to find Stokes dataset " << name << std::endl;
+      return BF_StokesDataset();
+    } else {
+      return it->second;
+    }
+  }
+
+  //_____________________________________________________________________________
+  //                                                             getStokesDataset
+
+  /*!
+    \retval dataset -- Pointer to BF_StokesDataset object corresponding to \c index.
     \param index    -- ID of the Stokes dataset to be created.
     \return status  -- Status of the operation; returns \e false in case an error
             was encountered, e.g. because there is no dataset corresponding to
 	    the provided \c index.
-   */
-  bool BF_BeamGroup::getStokesDataset (BF_StokesDataset &dataset,
+  */
+  bool BF_BeamGroup::getStokesDataset (BF_StokesDataset *dataset,
 				       unsigned int const &index)
   {
     bool status      = true;
     std::string name = getName (index);
     std::map<std::string,BF_StokesDataset>::iterator it = itsStokesDatasets.find(name);
-
+    
     if (it==itsStokesDatasets.end()) {
       std::cerr << "[BF_BeamGroup::getStokesDataset]"
 		<< " Unable to find Stokes dataset " << name << std::endl;
-      dataset = BF_StokesDataset();
       status  = false;
     } else {
-      dataset = it->second;
+      dataset = &(it->second);
     }
 
     return status;
