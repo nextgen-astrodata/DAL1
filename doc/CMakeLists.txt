@@ -25,7 +25,7 @@ if (DOXYGEN_FOUND)
   set ( DOXYGEN_GENERATE_TESTLIST "YES"                                        )
   set ( DOXYGEN_IMAGE_PATH        ${CMAKE_CURRENT_SOURCE_DIR}/figures          )
   set ( DOXYGEN_HTML_FOOTER       ${CMAKE_CURRENT_SOURCE_DIR}/html_footer.html )
-  set ( DOXYGEN_LATEX_HEADER      ${CMAKE_CURRENT_SOURCE_DIR}/latex_header.tex )
+  set ( DOXYGEN_LATEX_HEADER      ${CMAKE_CURRENT_SOURCE_DIR}/Manual-latex-header.tex )
   set ( DOXYGEN_WARN_LOGFILE      ${CMAKE_CURRENT_BINARY_DIR}/doxygen.log )
   
   ## Generate Doxygen configuration file
@@ -78,7 +78,7 @@ if (DOXYGEN_FOUND)
   ## Create configuration file for Doxygen
   
   configure_file (
-    ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.Manual.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/Manual-Doxyfile.in
     ${CMAKE_CURRENT_BINARY_DIR}/manual/Doxyfile
     )
 
@@ -90,7 +90,7 @@ if (DOXYGEN_FOUND)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual
     COMMENT "Generating Manual ..."
     SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.Manual.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/Manual-Doxyfile.in
     ${Documentation_sources}
     )
 
