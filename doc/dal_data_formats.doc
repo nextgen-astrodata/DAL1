@@ -63,16 +63,18 @@
   structures the project may use during in situ processing by way of producing
   a final standard Coordinates Group.
 
-  - DAL::Angle
-  - DAL::RaDec
-  - DAL::Stokes
-  - DAL::Coordinate
-  - DAL::CoordinateInterface
+  <ul>
+    <li>DAL::Angle
+    <li>DAL::RaDec
+    <li>DAL::Stokes
+    <li>DAL::Coordinate
+    <li>DAL::CoordinateInterface
     - DAL::DirectionCoordinate
     - DAL::LinearCoordinate
     - DAL::TabularCoordinate
     - DAL::StokesCoordinate
-  - DAL::CoordinatesGroup
+    <li>DAL::CoordinatesGroup
+  </ul>
 
   \section dal_icd_003 Beam-Formed Data (LOFAR-USG-ICD-003)
 
@@ -135,11 +137,13 @@
 
   The data format is implemented through the following DAL classes:
 
-  - DAL::BF_RootGroup
-  - DAL::BF_ProcessingHistory
-  - DAL::BF_SubArrayPointing
-  - DAL::BF_BeamGroup
-  - DAL::BF_StokesDataset
+  <ul>
+    <li>DAL::BF_RootGroup
+    <li>DAL::BF_ProcessingHistory
+    <li>DAL::BF_SubArrayPointing
+    <li>DAL::BF_BeamGroup
+    <li>DAL::BF_StokesDataset
+  </ul>
 
   \section dal_icd_004 Radio Sky Image Cubes (LOFAR-USG-ICD-004)
 
@@ -168,13 +172,17 @@
 
   The data format is implemented through the following DAL classes:
 
-  - DAL::Sky_RootGroup
-  - DAL::Sky_ImageDataset
-  - DAL::Sky_SourceTable
+  <ul>
+    <li>DAL::Sky_RootGroup
+    <li>DAL::Sky_ImageDataset
+    <li>DAL::Sky_SourceTable
+  </ul>
 
   \section dal_icd_005 File Naming Conventions (LOFAR-USG-ICD-005)
 
-  - DAL::Filename
+  <ul>
+    <li>DAL::Filename
+  </ul>
 
   \section dal_icd_006 Dynamic Spectrum Data (LOFAR-USG-ICD-006)
 
@@ -228,6 +236,8 @@
 
   The data format is implemented through the following DAL classes:
 
-  - DAL::RM_RootGroup
+  <ul>
+    <li>DAL::RM_RootGroup
+  </ul>
 
 */

@@ -22,6 +22,7 @@ if (DOXYGEN_FOUND)
   set ( DOXYGEN_GENERATE_TODOLIST "YES"                       )
   set ( DOXYGEN_GENERATE_TESTLIST "YES"                       )
   set ( DOXYGEN_HTML_FOOTER       ${CMAKE_CURRENT_SOURCE_DIR}/html_footer.html )
+  set ( DOXYGEN_LATEX_HEADER      ${CMAKE_CURRENT_SOURCE_DIR}/latex_header.tex )
   set ( DOXYGEN_WARN_LOGFILE      ${CMAKE_CURRENT_BINARY_DIR}/doxygen.log )
   
   ## Generate Doxygen configuration file
@@ -65,10 +66,31 @@ endif (DOXYGEN_FOUND)
 ##
 ## ==============================================================================
 
-if (PDFLATEX_COMPILER)
-  ## process LaTeX input into PDF directly
-else (PDFLATEX_COMPILER)
-  if (LATEX_COMPILER AND DVIPS_CONVERTER)
-    ## process LaTeX input -> DVI -> PS
-  endif (LATEX_COMPILER AND DVIPS_CONVERTER)
-endif (PDFLATEX_COMPILER)
+if (DOXYGEN_FOUND)
+  
+  ## Create subdirectory 
+  
+  file (MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual)
+
+  ## Create configuration file for Doxygen
+  
+  configure_file (
+    ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.Manual.in
+    ${CMAKE_CURRENT_BINARY_DIR}/manual/Doxyfile
+    )
+
+  ## Generate Manual
+
+  add_custom_target (Manual
+    ${DOXYGEN_EXECUTABLE} Doxyfile
+    COMMAND make
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual
+    COMMENT "Generating Manual ..."
+    SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.Manual.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/dal_overview.doc
+    ${CMAKE_CURRENT_SOURCE_DIR}/dal_data_formats.doc
+    )
+  
+endif (DOXYGEN_FOUND)
+  

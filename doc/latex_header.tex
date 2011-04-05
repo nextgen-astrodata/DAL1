@@ -1,0 +1,35 @@
+\documentclass[a4paper,fontsize=10pt]{scrreprt}
+\usepackage{eurosym,latexsym,graphicx}
+\usepackage[colorlinks=true,urlcolor=cyan]{hyperref}
+\usepackage{listings}
+\usepackage[Glenn]{fncychap}
+\usepackage{fancyhdr}
+
+\lstloadlanguages{[ISO]C++}
+
+%%_______________________________________________________________________________
+%%                                                                    Definitions
+
+\pagestyle{empty}
+\advance\voffset -0.5cm
+\advance\textheight 3.0cm
+\advance\hoffset -1.3cm
+\advance\textwidth 2.6cm
+\setlength\parindent{0pt}
+
+%%_______________________________________________________________________________
+%%                                                              Begin of document
+
+\begin{document}
+
+\pagestyle{fancy}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+
+\title{DAL User Manual}
+\author{DAL development team}
+\date{\today}
+\maketitle{}
+
+\tableofcontents
