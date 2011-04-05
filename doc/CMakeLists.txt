@@ -3,6 +3,8 @@ include (FindDoxygen)
 
 ADD_CUSTOM_TARGET (Documentation ALL)
 
+file (GLOB Documentation_sources *.doc)
+
 ## ==============================================================================
 ##
 ##  Doxygen documentation for source code
@@ -23,7 +25,8 @@ if (DOXYGEN_FOUND)
   set ( DOXYGEN_GENERATE_TESTLIST "YES"                                        )
   set ( DOXYGEN_IMAGE_PATH        ${CMAKE_CURRENT_SOURCE_DIR}/figures          )
   set ( DOXYGEN_HTML_FOOTER       ${CMAKE_CURRENT_SOURCE_DIR}/html_footer.html )
-  set ( DOXYGEN_WARN_LOGFILE      ${CMAKE_CURRENT_BINARY_DIR}/doxygen.log      )
+  set ( DOXYGEN_LATEX_HEADER      ${CMAKE_CURRENT_SOURCE_DIR}/latex_header.tex )
+  set ( DOXYGEN_WARN_LOGFILE      ${CMAKE_CURRENT_BINARY_DIR}/doxygen.log )
   
   ## Generate Doxygen configuration file
   
@@ -40,7 +43,7 @@ if (DOXYGEN_FOUND)
     COMMENT "Generating Doxygen code documentation ..."
     SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/dal_installation.doc
+    ${Documentation_sources}
     )
 
   add_dependencies (Documentation DocumentationDoxygen)
@@ -66,10 +69,30 @@ endif (DOXYGEN_FOUND)
 ##
 ## ==============================================================================
 
-if (PDFLATEX_COMPILER)
-  ## process LaTeX input into PDF directly
-else (PDFLATEX_COMPILER)
-  if (LATEX_COMPILER AND DVIPS_CONVERTER)
-    ## process LaTeX input -> DVI -> PS
-  endif (LATEX_COMPILER AND DVIPS_CONVERTER)
-endif (PDFLATEX_COMPILER)
+if (DOXYGEN_FOUND)
+  
+  ## Create subdirectory 
+  
+  file (MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual)
+
+  ## Create configuration file for Doxygen
+  
+  configure_file (
+    ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.Manual.in
+    ${CMAKE_CURRENT_BINARY_DIR}/manual/Doxyfile
+    )
+
+  ## Generate Manual
+
+  add_custom_target (Manual
+    ${DOXYGEN_EXECUTABLE} Doxyfile
+    COMMAND make
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual
+    COMMENT "Generating Manual ..."
+    SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.Manual.in
+    ${Documentation_sources}
+    )
+  
+endif (DOXYGEN_FOUND)
+  

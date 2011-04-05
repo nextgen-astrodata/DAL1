@@ -238,13 +238,13 @@
      further command line parameter has been provided -- has been defined:
      \verbatim
      /opt
-      └── dal                       DAL_INSTALL_PREFIX       
-         ├── bin                   DAL_INSTALL_BINDIR       = DAL_INSTALL_PREFIX/bin
-         ├── include               DAL_INSTALL_INCLUDEDIR   = DAL_INSTALL_PREFIX/include
-         ├── lib                   DAL_INSTALL_LIBDIR       = DAL_INSTALL_PREFIX/lib
-         └── share                 DAL_INSTALL_DATAROOTDIR  = DAL_INSTALL_PREFIX/share
-             └── doc               DAL_INSTALL_DOCDIR       = DAL_INSTALL_DATAROOTDIR/doc
-                 └── html
+     `--dal                       DAL_INSTALL_PREFIX       
+        |-- bin                   DAL_INSTALL_BINDIR       = DAL_INSTALL_PREFIX/bin
+        |-- include               DAL_INSTALL_INCLUDEDIR   = DAL_INSTALL_PREFIX/include
+        |-- lib                   DAL_INSTALL_LIBDIR       = DAL_INSTALL_PREFIX/lib
+        `-- share                 DAL_INSTALL_DATAROOTDIR  = DAL_INSTALL_PREFIX/share
+            `-- doc               DAL_INSTALL_DOCDIR       = DAL_INSTALL_DATAROOTDIR/doc
+                `-- html
      \endverbatim
 
     <li><b>Custom installation prefix.</b> <br>
@@ -257,18 +257,18 @@
      directories -- wil look as follows:
      \verbatim
      /usr/local                         DAL_INSTALL_PREFIX
-     ├── bin                            DAL_INSTALL_BINDIR
-     ├── include
-     │   └── dal                        DAL_INSTALL_INCLUDEDIR
-     │       ├── coordinates
-     │       ├── core
-     │       ├── data_common
-     │       └── data_hl
-     ├── lib                            DAL_INSTALL_LIBDIR
-     └── share
-         └── dal                        DAL_INSTALL_DATAROOTDIR
-	     └── doc                    DAL_INSTALL_DOCDIR
-	         └── html
+     |-- bin                            DAL_INSTALL_BINDIR
+     |-- include
+     |   `-- dal                        DAL_INSTALL_INCLUDEDIR
+     |       |-- coordinates
+     |       |-- core
+     |       |-- data_common
+     |       `-- data_hl
+     |-- lib                            DAL_INSTALL_LIBDIR
+     `-- share
+         `-- dal                        DAL_INSTALL_DATAROOTDIR
+	     `-- doc                    DAL_INSTALL_DOCDIR
+	         `-- html
      \endverbatim
 
     <li><b>Installation as part of the LUS.</b> <br>
