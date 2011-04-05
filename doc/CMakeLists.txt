@@ -1,7 +1,7 @@
 
 include (FindDoxygen)
 
-ADD_CUSTOM_TARGET (Documentation ALL)
+add_custom_target (Documentation ALL)
 
 file (GLOB Documentation_sources *.doc)
 
@@ -93,6 +93,14 @@ if (DOXYGEN_FOUND)
     SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Manual-Doxyfile.in
     ${Documentation_sources}
+    )
+
+  ## Installation instructions
+
+  install (
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/manual/refman.pdf
+    DESTINATION ${DAL_INSTALL_DOCDIR}
+    RENAME UserManual-${DAL_VERSION}.pdf
     )
 
   ## Build target dependency
