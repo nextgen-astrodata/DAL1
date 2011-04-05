@@ -1,9 +1,7 @@
 
 include (FindDoxygen)
 
-add_custom_target (Documentation ALL)
-
-file (GLOB Documentation_sources *.doc)
+add_custom_target (Documentation)
 
 ## ==============================================================================
 ##
@@ -13,6 +11,10 @@ file (GLOB Documentation_sources *.doc)
 
 if (DOXYGEN_FOUND)
   
+  ## Generate list of source files
+
+  file (GLOB Documentation_sources *.doc)
+
   ## Set up variables which will be filled in when parsing the input file for the
   ## Doxygen configuration
   
@@ -34,25 +36,27 @@ if (DOXYGEN_FOUND)
     ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
     ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
     )
-  
+
   ## Define target to build documentation
   
-  add_custom_target (DocumentationDoxygen
-    ${DOXYGEN_EXECUTABLE} Doxyfile
+  add_custom_command (
+    OUTPUT html/index.html
+    COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile ${Documentation_sources}
     COMMENT "Generating Doxygen code documentation ..."
-    SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
-    ${Documentation_sources}
     )
-
-  add_dependencies (Documentation DocumentationDoxygen)
+  
+  add_custom_target (docReference ALL
+    DEPENDS html/index.html
+    )
 
   ## Installation of source code documentation
 
   install (
     DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}/html
     DESTINATION ${DAL_INSTALL_DOCDIR}
+    COMPONENT docReference
     )
   
 else (DOXYGEN_FOUND)
@@ -78,21 +82,24 @@ if (DOXYGEN_FOUND)
   ## Create configuration file for Doxygen
   
   configure_file (
-    ${CMAKE_CURRENT_SOURCE_DIR}/Manual-Doxyfile.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/DoxyfileManual.in
     ${CMAKE_CURRENT_BINARY_DIR}/manual/Doxyfile
     )
 
   ## Generate Manual
 
-  add_custom_target (Manual
-    ${DOXYGEN_EXECUTABLE} Doxyfile
+  add_custom_command (
+    OUTPUT refman.pdf
+    COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
     COMMAND pdflatex refman.tex
     COMMAND pdflatex refman.tex
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual
-    COMMENT "Generating Manual ..."
-    SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Manual-Doxyfile.in
-    ${Documentation_sources}
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile ${Documentation_sources}
+    COMMENT "Generating User Manual ..."
+    )
+  
+  add_custom_target (docManual ALL
+    DEPENDS refman.pdf
     )
 
   ## Installation instructions
@@ -100,6 +107,7 @@ if (DOXYGEN_FOUND)
   install (
     FILES ${CMAKE_CURRENT_BINARY_DIR}/manual/refman.pdf
     DESTINATION ${DAL_INSTALL_DOCDIR}
+    COMPONENT docManual
     RENAME UserManual-${DAL_VERSION}.pdf
     )
 
@@ -108,4 +116,3 @@ if (DOXYGEN_FOUND)
   add_dependencies (Documentation Manual)
   
 endif (DOXYGEN_FOUND)
-

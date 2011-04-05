@@ -18,7 +18,6 @@ cmake_minimum_required (VERSION 2.6)
 ## ==============================================================================
 
 option (DOCUMENTATION_ONLY     "Configure for building documentation only?"  NO  )
-option (DAL_ENABLE_APPS        "Build the applications?"                     YES )
 option (DAL_ENABLE_TESTING     "Build and enable test programs?"             YES )
 option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?"   ON  )
 option (DAL_PYTHON_BINDINGS    "Create python bindings?"                     YES )
@@ -197,14 +196,11 @@ if (NOT DOCUMENTATION_ONLY)
   
   add_subdirectory (implement)
   add_subdirectory (data)
+  add_subdirectory (apps)
   
   if (DAL_ENABLE_TESTING)
     add_subdirectory (test)
   endif (DAL_ENABLE_TESTING)
-  
-  if (DAL_ENABLE_APPS)
-    add_subdirectory (apps)
-  endif (DAL_ENABLE_APPS)
   
 endif (NOT DOCUMENTATION_ONLY)
 
