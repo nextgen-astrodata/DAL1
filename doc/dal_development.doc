@@ -5,11 +5,12 @@
 
   <ul>
     <li>\ref dal_devel_git
+    <li>\ref dal_devel_releases
     <li>\ref dal_devel_conventions
     <li>\ref dal_devel_classes
   </ul>
 
-  \section dal_devel_git Working with Git
+  \section dal_devel_git Basic Git Workflow
 
   If you are looking at this document, the best chance is that you already know
   a certain minimum about using <a href="http://git-scm.com">Git</a>, as chances
@@ -18,12 +19,270 @@
   need to learn a few basic program instructions and concepts to set up an
   everyday work-flow when actively contributing to the development of the DAL.
 
-  <ul>
-    <li>Revert changes done to a file:
+  \b Notation: This document uses ascii-art to depict commit history:
+
+  <table border=0>
+    <tr>
+      <td class="indexkey">Branch name</td>
+      <td class="indexkey">Branch name</td>
+      <td class="indexkey">Commit with parent in same branch</td>
+      <td class="indexkey">Commit with parent in another branch</td>
+      <td class="indexkey">Commit with two parents (merge)</td>
+      <td class="indexkey">Commit with arbitrary ancestry</td>
+    </tr>
+    <tr>
+      <td>
+      \verbatim
+      master
+      \endverbatim
+      </td>
+      <td>
+      \verbatim
+      *master
+      \endverbatim
+      </td>
+      <td>
+      \verbatim
+      ----o
+      \endverbatim
+      </td>
+      <td>
+      \verbatim
+      \
+       o
+      \endverbatim
+      </td>
+      <td>
+      \verbatim
+      ----o
+         /
+      \endverbatim
+      </td>
+      <td>
+      \verbatim
+      ...o
+      \endverbatim
+      </td>
+    </tr>
+  </table>
+
+  Topic branches generally consist of a linear sequence of commits forked off
+  an integration branch:
+  \verbatim
+  ...o                    master
+      \
+       o----o----o----o   topic
+  \endverbatim
+  Integration branches generally consist of a sequence of merge commits:
+  \verbatim
+          ...o      ...o     topic1
+              \         \
+  ...o----o----o----o----o   master
+         /         /
+     ...o      ...o          topic2
+  \endverbatim
+  
+  \b Disclaimer: Some basic techniques and concepts of the workflow described
+  here are derived from the <a href="http://public.kitware.com/Wiki/Git/Workflow/Topic">corresponding page on the Kitware Wiki</a>.
+
+  <table border=0 width=90%>
+    <tr>
+      <td class="indexkey">Description</td>
+      <td class="indexkey">Actions</td>
+      <td class="indexkey">Results</td>
+    </tr>
+    <tr valign=top>
+      <td>Update \e master to base work on the most recently integrated features.</td>
+      <td>
+      \verbatim
+      git checkout master
+      \endverbatim
+      </td>
+      <td>
+      \verbatim
+      ...o   *master
+      \endverbatim
+      </td>
+    </tr>
+    <tr valign=top>
+      <td></td>
+      <td>
+      \verbatim
+      git pull
+      \endverbatim
+      </td>
+      <td>
+      \verbatim
+      ...o----o   *master
+      \endverbatim
+      </td>
+    </tr>
+    <tr valign=top>
+      <td>
+        Create the local \e topic branch. Use a meaningful name for "topic".<br>
+	This is where the real work happens. Edit, stage, and commit files
+	repeatedly as needed for your work. 
+      </td>
+      <td>
+      \verbatim
+      git checkout -b topic
+      \endverbatim
+      </td>
+      <td>
+      \verbatim
+      ...o----o   master
+              ^  *topic
+      \endverbatim
+      </td>
+    </tr>
+    <tr valign=top>
+      <td>During this step, avoid the "urge to merge" from an integration
+      branch. Keep your commits focused on the topic at hand. </td>
+      <td>
+      \verbatim
+      edit <files>
+      git add -- <files>
+      git commit 
+      \endverbatim
+      </td>
+      <td>
+      \verbatim
+      ...o----o       master
+               \
+                o    *topic
+      \endverbatim
+      </td>
+    </tr>
+    <tr valign=top>
+      <td></td>
+      <td>
+      \verbatim
+      edit <files>
+      git add -- <files>
+      git commit 
+      \endverbatim
+      </td>
+      <td>
+      \verbatim
+      ...o----o            master
+               \
+                o----o    *topic
+      \endverbatim
+      </td>
+    </tr>
+    <tr valign=top>
+      <td>When your feature branch has matured enough (though there is no reason
+      why not even due this earlier already), you should ensure no citical errors
+      are left when performing an experimental build.</td>
+      <td>
+      \verbatim
+      make Experimental
+      \endverbatim
+      </td>
+      <td></td>
+    </tr>
+    <tr valign=top>
+      <td>Push your changes back to the \e master branch, thereby publishing them
+      to be seen by others.</td>
+      <td>
+      \verbatim
+      git checkout master
+      git merge topic
+      \endverbatim
+      </td>
+      <td>
+      \verbatim
+      ...o----o...       ...o   *master
+               \           /
+                o----o----o      topic
+      \endverbatim
+      </td>
+    </tr>
+    <tr valign=top>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </table>
+
+  \section dal_devel_releases Preparing a release
+
+  For an external user of the DAL we consider the following options when
+  when retrieving code directory from the repository:
+  <ol>
+    <li>Get current development version.
+    <li>Get latest release version.
+    <li>Get earlier release version.
+  </ol>
+
+  The first step in order to prepare a release is to create a tagged version 
+  on the special \e release branch:
+  \code
+  ## Check out the release branch and merge
+  git checkout release
+  git merge master
+  ## Tag the version
+  git tag -a v0.1.0 -m "DAL release, version 0.1.0"
+  ## Push the tags back to the origin repository
+  git push --tags
+  git push origin release
+  \endcode
+
+  <ol>
+    <li>Check out \e master branch
     \code
-    git checkout -- <file>
+    git checkout master
     \endcode
-  </ul>
+    such that
+    \verbatim
+    ...o     *master
+
+    ...o     release
+    \endverbatim
+    <li>From branch \e master checkout a new branch \e nextRelease
+    \code
+    git checkout -b nextRelease
+    \endcode
+    to accumulate the changes to be release
+    \verbatim
+    ...o       master
+        \
+         o     *nextRelease
+
+    ...o       release
+    \endverbatim
+    <li>Run the necessary tests to accept the current version as a release
+    candidate -- <b>this bit still needs to be defined, to come of with a
+    list of criteria</b>.
+    <li>Adjust the version information in the top-level \c CMakeLists.txt file:
+    \code
+    ## Project release version
+    set (DAL_VERSION_MAJOR 0)
+    set (DAL_VERSION_MINOR 1)
+    set (DAL_VERSION_PATCH 1)
+    \endcode
+    These changes now need to be committed:
+    \verbatim
+    git add CMakeLists.txt
+    git commit -m "DAL release, version 0.1.1"
+    \endverbatim
+    <li>Check out the \e release branch and pull in the previously staged
+    changes:
+    \verbatim
+    git checkout release
+    git merge nextRelease
+    \endverbatim
+    which results in
+    \verbatim
+    ...o----o----o----o            master
+        \
+         o----o                    nextRelease
+               \
+             ...o--------------o   release
+    \endverbatim
+  </ol>
+
+
 
   \section dal_devel_conventions Coding conventions
 
@@ -155,7 +414,6 @@
    ***************************************************************************/
   \endcode
 
-</ul>
-
+  </ul>
 
 */

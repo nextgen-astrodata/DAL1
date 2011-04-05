@@ -65,7 +65,9 @@ if (NOT PYTHON_FOUND)
     
     ## clean up the list of include directories
     
-    list (REMOVE_DUPLICATES PYTHON_INCLUDES)
+    if (PYTHON_INCLUDES)
+      list (REMOVE_DUPLICATES PYTHON_INCLUDES)
+    endif (PYTHON_INCLUDES)
     
     ##___________________________________________________________________________
     ## Check for the library

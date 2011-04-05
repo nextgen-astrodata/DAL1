@@ -5,7 +5,7 @@ project (DAL)
 ## Project release version
 set (DAL_VERSION_MAJOR 0)
 set (DAL_VERSION_MINOR 1)
-set (DAL_VERSION_PATCH 0)
+set (DAL_VERSION_PATCH 2)
 set (DAL_VERSION "${DAL_VERSION_MAJOR}.${DAL_VERSION_MINOR}.${DAL_VERSION_PATCH}")
 
 ## Minimum required version of CMake to configure the project
@@ -181,7 +181,9 @@ endif (MPI_FOUND AND HDF5_HAVE_PARALLEL_IO)
 
 ## Clean up the list of link libraries
 
-list (REMOVE_DUPLICATES dal_link_libraries)
+if (dal_link_libraries)
+  list (REMOVE_DUPLICATES dal_link_libraries)
+endif (dal_link_libraries)
 
 ## =============================================================================
 ##
@@ -213,10 +215,11 @@ endif (NOT DOCUMENTATION_ONLY)
 ## =============================================================================
 
 ## Package description
-SET (CPACK_PACKAGE_NAME                "DAL"                           )
-SET (CPACK_PACKAGE_VENDOR              "DAL developers team"           )
+set (CPACK_PACKAGE_NAME                "DAL"                           )
+set (CPACK_PACKAGE_VENDOR              "DAL developers team"           )
 set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Data Access Library (DAL)" )
-SET (CPACK_PACKAGE_DESCRIPTION_FILE    "${PROJECT_SOURCE_DIR}/README"  )
+set (CPACK_PACKAGE_DESCRIPTION_FILE    "${PROJECT_SOURCE_DIR}/README"  )
+set (CPACK_SOURCE_IGNORE_FILES         "${CMAKE_BINARY_DIR}/*;${PROJECT_SOURCE_DIR}/.git")
 
 # Full version number
 set (VERSION                     ${DAL_VERSION}       )
@@ -230,8 +233,15 @@ SET (CPACK_GENERATOR                "TGZ"    )
 SET (CPACK_SOURCE_GENERATOR         "TGZ"    )
 SET (CPACK_SOURCE_PACKAGE_FILE_NAME "dal-${DAL_VERSION}")
 
-# Load packaging tool
+## Load packaging tool
 include (CPack)
+
+## Create a release version
+
+add_custom_target (release
+  COMMAND make package_source
+  WORKING_DIRECTORY ${DAL_BUILD_DIR}
+)
 
 
 ## ==============================================================================
@@ -247,6 +257,7 @@ message (STATUS " System configuration:"                                        
 message (STATUS " .. CMAKE_SYSTEM                 = ${CMAKE_SYSTEM}"               )
 message (STATUS " .. CMAKE_SYSTEM_PROCESSOR       = ${CMAKE_SYSTEM_PROCESSOR}"     )
 message (STATUS " Installation configuration:"                                     )
+message (STATUS " .. DAL_VERSION                  = ${DAL_VERSION}"                )
 message (STATUS " .. DAL_INSTALL_PREFIX           = ${DAL_INSTALL_PREFIX}"         )
 message (STATUS " .. DAL_INSTALL_BINDIR           = ${DAL_INSTALL_BINDIR}"         )
 message (STATUS " .. DAL_INSTALL_INCLUDEDIR       = ${DAL_INSTALL_INCLUDEDIR}"     )

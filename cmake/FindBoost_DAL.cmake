@@ -37,6 +37,7 @@ if (NOT BOOST_FOUND)
     set (BOOST_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   endif (NOT BOOST_ROOT_DIR)
 
+  ## Locations where to search for Boost
   list (APPEND BOOST_ROOT_DIR
     /opt
     /opt/local
@@ -47,13 +48,16 @@ if (NOT BOOST_FOUND)
     /opt/casa/local
     /app/usg
     )
-  
+
+  ## Exclude automatic searching of system paths
+  set(Boost_NO_SYSTEM_PATHS TRUE)
+
   ## Initialization: Version and multithreading ____________
   
-  set (BOOST_VERSION_MAJOR  0     )
-  set (BOOST_VERSION_MINOR  0     )
-  set (BOOST_VERSION_PATCH  0     )
-  set (BOOST_WITH_THREAD    FALSE )
+  set (BOOST_VERSION_MAJOR  0      )
+  set (BOOST_VERSION_MINOR  0      )
+  set (BOOST_VERSION_PATCH  0      )
+  set (Boost_BASE_VERSION   "1.40" )
 
   ## Enable/diable verbosity mode __________________________
   
