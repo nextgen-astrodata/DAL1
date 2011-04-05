@@ -93,6 +93,10 @@ if (DOXYGEN_FOUND)
     ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.Manual.in
     ${Documentation_sources}
     )
+
+  ## Build target dependency
+
+  add_dependencies (Documentation Manual)
   
 endif (DOXYGEN_FOUND)
-  
+

@@ -606,6 +606,7 @@ WARN_LOGFILE           = ${DOXYGEN_WARN_LOGFILE}
 INPUT                  = ${PROJECT_SOURCE_DIR}/doc/dal_overview.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_installation.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_development.doc \
+                         ${PROJECT_SOURCE_DIR}/doc/dal_examples_cpp.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_testing.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_data_formats.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_module_core.doc
@@ -1213,7 +1214,7 @@ USE_PDFLATEX           = YES
 # running if errors occur, instead of asking the user for help.
 # This option is also used when generating formulas in HTML.
 
-LATEX_BATCHMODE        = NO
+LATEX_BATCHMODE        = YES
 
 # If LATEX_HIDE_INDICES is set to YES then doxygen will not
 # include the index chapters (such as File Index, Compound Index, etc.)

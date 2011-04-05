@@ -57,7 +57,6 @@
   \section dal_module_core_examples Examples working with the core classes
 
   <ol>
-
     <li>Create and close a new HDF5 file:
     \code
     #include <dal/dalDataset.h>

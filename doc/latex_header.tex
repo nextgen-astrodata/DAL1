@@ -1,9 +1,8 @@
 \documentclass[a4paper,fontsize=10pt]{scrartcl}
-\usepackage{eurosym,latexsym,graphicx,doxygen}
+\usepackage{eurosym,latexsym,graphicx}
 \usepackage[colorlinks=true,urlcolor=cyan]{hyperref}
 \usepackage{listings}
 \usepackage[Glenn]{fncychap}
-\usepackage{fancyhdr}
 
 \lstloadlanguages{[ISO]C++}
 
@@ -17,6 +16,8 @@
 \advance\textwidth 2.6cm
 \setlength\parindent{0pt}
 
+\usepackage{doxygen}
+
 %%_______________________________________________________________________________
 %%                                                              Begin of document
 
@@ -28,8 +29,8 @@
 \fancyfoot[R]{\thepage}
 
 \title{DAL User Manual}
-\author{DAL development team}
-\date{\today}
+\author{DAL development team \\ \small Lars~B\"ahren, Sven~Duscha, Joseph~Masters}
+\date{\normalsize\today}
 \maketitle{}
 
 \tableofcontents

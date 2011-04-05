@@ -45,13 +45,14 @@ meeting these challenges, ASTRON and the LOFAR project are currently exploring
 the use of the Hierarchical Data Format, version 5 (HDF5) for LOFAR radio data
 encapsulation.
 
-The LOFAR (www.lofar.org) project has set up a moderated majordomo email list,
-called "nextgen-astrodata@astron.nl". Interested parties are encouraged to sign
-up via majordomo@anstron.nl with “subscribe nextgen-astrodata” as the only text
-in the body of the message.
+The LOFAR (<a href="http://www.lofar.org">www.lofar.org</a>) project has set up a
+moderated majordomo email list, called "nextgen-astrodata@astron.nl". Interested
+parties are encouraged to sign up via majordomo@anstron.nl with
+"subscribe nextgen-astrodata" as the only text in the body of the message.
 
 We would like to bring together scientists and developers struggling with large
-and complex datasets as well as those groups currently exploring HDF5 (www.hdfgroup.org)
+and complex datasets as well as those groups currently exploring HDF5
+(<a href="http://www.hdfgroup.org">www.hdfgroup.org</a>)
 implementations. Ultimately we would like to see these formats grow into a true
 set of standards for radio data that can meet the demands of the next generation
 of radio observatories as well as the non-radio community such as LSST and other

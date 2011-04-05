@@ -84,13 +84,13 @@
       <td>CMake</td>
       <td>>=2.6</td>
       <td>required</td>
-      <td>http://www.cmake.org</td>
+      <td><a href="http://www.cmake.org">cmake.org</a></td>
     </tr>
     <tr>
       <td>HDF5</td>
       <td>>=1.8.3</td>
       <td>required</td>
-      <td>http://www.hdfgroup.org/HDF5</td>
+      <td><a href="http://www.hdfgroup.org/HDF5">hdfgroup.org</a></td>
     </tr>
     <tr>
       <td>casacore</td>
@@ -114,13 +114,13 @@
       <td>Boost++</td>
       <td>>=1.40.0</td>
       <td>optional, required for Python bindings</td>
-      <td>http://www.boost.org</td>
+      <td><a href="http://www.boost.org">boost.org</a></td>
     </tr>
     <tr>
       <td>Python</td>
       <td>>= 2.6</td>
       <td>optional, required for Python bindings</td>
-      <td>http://www.python.org</td>
+      <td><a href="http://www.python.org">python.org</a></td>
     </tr>
     <tr>
       <td>Doxygen</td>
@@ -281,18 +281,18 @@
      follows:
      \verbatim
      $LOFARSOFT/release                 DAL_INSTALL_PREFIX
-     ├── bin                            DAL_INSTALL_BINDIR
-     ├── include
-     │   └── dal                        DAL_INSTALL_INCLUDEDIR
-     │       ├── coordinates
-     │       ├── core
-     │       ├── data_common
-     │       └── data_hl
-     ├── lib                            DAL_INSTALL_LIBDIR
-     └── share
-         └── dal                        DAL_INSTALL_DATAROOTDIR
-	     └── doc                    DAL_INSTALL_DOCDIR
-	         └── html
+     |-- bin                            DAL_INSTALL_BINDIR
+     |-- include
+     |   `-- dal                        DAL_INSTALL_INCLUDEDIR
+     |       |-- coordinates
+     |       |-- core
+     |       |-- data_common
+     |       `-- data_hl
+     |-- lib                            DAL_INSTALL_LIBDIR
+     `-- share
+         `-- dal                        DAL_INSTALL_DATAROOTDIR
+	     `-- doc                    DAL_INSTALL_DOCDIR
+	         `-- html
      \endverbatim
   </ol>
 
