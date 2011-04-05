@@ -126,7 +126,7 @@
       <td>Doxygen</td>
       <td>>=1.6</td>
       <td>optional, required for source code documentation</td>
-      <td><a href="http://www.stack.nl/~dimitri/doxygen">stack.nl</a></td>
+      <td><a href="http://www.doxygen.org">doxygen.org</a></td>
     </tr>
   </table>
 

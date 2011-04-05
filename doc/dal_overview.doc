@@ -27,9 +27,9 @@
     <li>\subpage dal_data_formats
   </ul>
 
-\section dal_intro Introduction
+  \section dal_intro Introduction
 
-\subsection dal_nextgen Next-generation astronomical data
+  \subsection dal_nextgen Next-generation astronomical data
 
 The size and complexity of astronomical data are growing at relentless rates.
 This increase is especially apparent in the radio community as evidenced by the 
