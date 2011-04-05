@@ -117,7 +117,9 @@ if (NOT BOOST_FOUND)
   endforeach (BOOST_ROOT)
   
   ## Clean up the list of include directories
-  list (REMOVE_DUPLICATES BOOST_INCLUDES)
+  if (BOOST_INCLUDES)
+    list (REMOVE_DUPLICATES BOOST_INCLUDES)
+  endif (BOOST_INCLUDES)
   
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
