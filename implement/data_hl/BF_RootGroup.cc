@@ -93,7 +93,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     if (location_p > 0) {
       // clear maps with embedded objects
-      primaryPointings_p.clear();
+      itsSubarrayPointings.clear();
       itsSystemLog.clear();
       // release HDF5 object
       herr_t h5error;
@@ -159,7 +159,7 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- nof. attributes             = " << attributes_p.size()   << std::endl;
     os << "-- nof. primary pointings      = " << nofPrimaryPointings() << std::endl;
     os << "-- nof. SysLog groups          = " << itsSystemLog.size()       << std::endl;
-    os << "-- nof. PrimaryPointing groups = " << primaryPointings_p.size() << std::endl;
+    os << "-- nof. PrimaryPointing groups = " << itsSubarrayPointings.size() << std::endl;
 
     if (showAttributes) {
       os << "-- Attributes              = " << attributes_p          << std::endl;
@@ -243,7 +243,7 @@ namespace DAL { // Namespace DAL -- begin
     location_p  = location;
     itsFilename = name;
     setAttributes();
-    primaryPointings_p.clear();
+    itsSubarrayPointings.clear();
     itsSystemLog.clear();
     
     // Try to open the file ________________________________
@@ -383,15 +383,15 @@ namespace DAL { // Namespace DAL -- begin
       int nofPrimaryBeams;
       std::map<std::string,BF_SubArrayPointing>::iterator it;
       // convert station ID to group name
-      it   = primaryPointings_p.find(name);
+      it   = itsSubarrayPointings.find(name);
       // check if the station beam group indeed exists
-      if (it == primaryPointings_p.end()) {
+      if (it == itsSubarrayPointings.end()) {
 	// open/create the station beam group
-	primaryPointings_p[name] = BF_SubArrayPointing (location_p,
+	itsSubarrayPointings[name] = BF_SubArrayPointing (location_p,
 							pointingID,
 							create);
 	// attributes for book-keeping
-	nofPrimaryBeams = primaryPointings_p.size();
+	nofPrimaryBeams = itsSubarrayPointings.size();
 	HDF5Attribute::setAttribute (location_p,
 				     "NOF_PRIMARY_BEAMS",
 				     nofPrimaryBeams);
@@ -418,11 +418,11 @@ namespace DAL { // Namespace DAL -- begin
     if (location_p > 0 && H5Iis_valid(location_p)) {
       std::map<std::string,BF_SubArrayPointing>::iterator it;
       // convert station ID to group name
-      it = primaryPointings_p.find(name);
+      it = itsSubarrayPointings.find(name);
       // check if the station beam group indeed exists
-      if (it == primaryPointings_p.end()) {
+      if (it == itsSubarrayPointings.end()) {
 	// open the primary pointing direction group
-	primaryPointings_p[name] = BF_SubArrayPointing (location_p,name);
+	itsSubarrayPointings[name] = BF_SubArrayPointing (location_p,name);
       }
     }
     else {
@@ -460,9 +460,9 @@ namespace DAL { // Namespace DAL -- begin
 	std::map<std::string,BF_SubArrayPointing>::iterator it;
 	// get pointer to PrimaryPointing object
 	name = BF_SubArrayPointing::getName (pointingID);
-	it   = primaryPointings_p.find(name);
+	it   = itsSubarrayPointings.find(name);
 	// forward function call to open beam
-	if ( it != primaryPointings_p.end() ) {
+	if ( it != itsSubarrayPointings.end() ) {
 	  it->second.openBeam(beamID,create);
 	}
 	else {
@@ -502,9 +502,9 @@ namespace DAL { // Namespace DAL -- begin
       std::map<std::string,BF_SubArrayPointing>::iterator it;
       
       name = BF_SubArrayPointing::getName (pointingID);
-      it   = primaryPointings_p.find(name);
+      it   = itsSubarrayPointings.find(name);
 
-      if (it != primaryPointings_p.end()) {
+      if (it != itsSubarrayPointings.end()) {
 	pointing = it->second;
       } else {
 	std::cerr << "[BF_RootGroup::primaryPointing] No such group "
