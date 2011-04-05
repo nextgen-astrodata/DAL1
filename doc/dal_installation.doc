@@ -80,43 +80,43 @@
       <td class="indexkey">Status</td>
       <td class="indexkey">Download from...</td>
     </tr>
-    <tr>
+    <tr valign="top">
       <td>CMake</td>
       <td>>=2.6</td>
       <td>required</td>
       <td><a href="http://www.cmake.org">cmake.org</a></td>
     </tr>
-    <tr>
+    <tr valign="top">
       <td>HDF5</td>
       <td>>=1.8.3</td>
       <td>required</td>
       <td><a href="http://www.hdfgroup.org/HDF5">hdfgroup.org</a></td>
     </tr>
-    <tr>
+    <tr valign="top">
       <td>casacore</td>
       <td>??</td>
       <td>optional, required for MS</td>
-      <td>http://code.google.com/p/casacore</td>
+      <td><a href="http://code.google.com/p/casacore">code.google.com</a></td>
     </tr>
-    <tr>
+    <tr valign="top">
       <td>WCSLIB</td>
       <td>>=4.2</td>
       <td>optional, required for casacore</td>
-      <td>http://www.atnf.csiro.au/people/mcalabre/WCS</td>
+      <td><a href="http://www.atnf.csiro.au/people/mcalabre/WCS">atnf.csiro.au</a></td>
     </tr>
-    <tr>
+    <tr valign="top">
       <td>CFITSIO</td>
       <td>>=3.0</td>
       <td>optional, required for casacore</td>
-      <td>http://heasarc.gsfc.nasa.gov/fitsio</td>
+      <td><a href="http://heasarc.gsfc.nasa.gov/fitsio">heasarc.gsfc.nasa.gov</a></td>
     </tr>
-    <tr>
+    <tr valign="top">
       <td>Boost++</td>
       <td>>=1.40.0</td>
       <td>optional, required for Python bindings</td>
       <td><a href="http://www.boost.org">boost.org</a></td>
     </tr>
-    <tr>
+    <tr valign="top">
       <td>Python</td>
       <td>>= 2.6</td>
       <td>optional, required for Python bindings</td>
@@ -126,7 +126,7 @@
       <td>Doxygen</td>
       <td>>=1.6</td>
       <td>optional, required for source code documentation</td>
-      <td>http://www.stack.nl/~dimitri/doxygen</td>
+      <td><a href="http://www.stack.nl/~dimitri/doxygen">stack.nl</a></td>
     </tr>
   </table>
 

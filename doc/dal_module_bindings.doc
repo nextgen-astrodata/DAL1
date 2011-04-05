@@ -20,13 +20,13 @@
   directory <tt>implement/bindings</tt>:
   \verbatim
   implement/bindings/
-  ├── CMakeLists.txt
-  ├── pydal.cc
-  ├── pydal.h
-  ├── pydal_coordinates.cc
-  ├── pydal_core.cc
-  ├── pydal_data_common.cc
-  └── pydal_data_hl.cc
+  |-- CMakeLists.txt
+  |-- pydal.cc
+  |-- pydal.h
+  |-- pydal_coordinates.cc
+  |-- pydal_core.cc
+  |-- pydal_data_common.cc
+  `-- pydal_data_hl.cc
   \endverbatim
 
   The source code is organized as follows:
