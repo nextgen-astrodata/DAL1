@@ -86,7 +86,8 @@ if (DOXYGEN_FOUND)
 
   add_custom_target (Manual
     ${DOXYGEN_EXECUTABLE} Doxyfile
-    COMMAND make
+    COMMAND pdflatex refman.tex
+    COMMAND pdflatex refman.tex
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual
     COMMENT "Generating Manual ..."
     SOURCES
