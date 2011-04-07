@@ -863,6 +863,41 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
 
+#ifdef DAL_WITH_CASA
+
+  //_____________________________________________________________________________
+  //                                                                    antenna_position
+
+  casa::Vector<casa::MPosition> TBB_Timeseries::antenna_position ()
+  {
+    uint n           = 0;
+    uint station     = 0;
+    uint dipole      = 0;
+    uint nofDipoles  = nofSelectedDatasets();
+    casa::Vector<casa::MPosition> positions (nofDipoles);
+    casa::Vector<casa::MPosition> tmp;
+    std::map<std::string,TBB_StationGroup>::iterator it;
+
+    for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
+      std::cerr<<"station group"<<std::endl;
+      tmp        = (*it).second.antenna_position();
+      nofDipoles = (*it).second.nofSelectedDatasets();
+      std::cerr<<"starting dipole loop"<<std::endl;
+      // go through the dipoles from an individual station
+      for (dipole=0; dipole<nofDipoles; dipole++) {
+      std::cerr<<"dipole "<<dipole<<std::endl;
+	positions(n) = tmp[dipole];
+	n++;
+      }
+      // increment station counter
+      ++station;
+    }
+    
+    return positions;
+  }
+
+#endif
+
   //_____________________________________________________________________________
   //                                                                    channelID
 
