@@ -170,9 +170,9 @@ if (MPI_FOUND AND HDF5_HAVE_PARALLEL_IO)
     add_definitions (${MPI_COMPILE_FLAGS})
   endif (MPI_COMPILE_FLAGS)
   ## linker flags
-  if (MPI_LINK_FLAGS)
-    set (CMAKE_EXE_LINKER_FLAGS ${MPI_LINK_FLAGS} ${CMAKE_EXE_LINKER_FLAGS})
-  endif (MPI_LINK_FLAGS)
+#  if (MPI_LINK_FLAGS)
+#    set (CMAKE_EXE_LINKER_FLAGS ${MPI_LINK_FLAGS} ${CMAKE_EXE_LINKER_FLAGS})
+#  endif (MPI_LINK_FLAGS)
   ## link libraries
   if (MPI_LIBRARIES)
     list (APPEND dal_link_libraries ${MPI_LIBRARIES})
