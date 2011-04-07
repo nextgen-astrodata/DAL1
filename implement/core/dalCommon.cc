@@ -1535,8 +1535,8 @@ namespace DAL {
     
     if (location_id > 0) {
       bool status (true);
-      casa::Vector<double> values;
-      casa::Vector<casa::String> units;
+      std::vector<double> values;
+      std::vector<std::string> units;
       std::string refcode;
       
       // retrieve the numerical values of the position
@@ -1553,22 +1553,22 @@ namespace DAL {
 				refcode);
       
       if (status) {
-	if (values.nelements() == 3 && units.nelements() == 3) {
+	if (values.size() == 3 && units.size() == 3) {
 	  MPosition::Types tp;
 	  // Translate reference code into MPosition::Type
 	  status *= MPosition::getType (tp,refcode);
 	  
 	  switch (tp) {
 	  case MPosition::ITRF:
-	    obs = MPosition ( casa::MVPosition( values(0),
-						values(1),
-						values(2)),
+	    obs = MPosition ( casa::MVPosition( values[0],
+						values[1],
+						values[2]),
 			      MPosition::Ref(MPosition::ITRF));
 	    break;
 	  case MPosition::WGS84:
-	    obs = MPosition ( casa::MVPosition( casa::Quantity( values(0), units(0)),
-						casa::Quantity( values(1), units(1)),
-						casa::Quantity( values(2), units(2))),
+	    obs = MPosition ( casa::MVPosition( casa::Quantity( values[0], casa::String(units[0])),
+						casa::Quantity( values[1], casa::String(units[1])),
+						casa::Quantity( values[2], casa::String(units[2]))),
 			      MPosition::Ref(MPosition::WGS84));
 	    
 	    break;
