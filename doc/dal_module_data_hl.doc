@@ -6,5 +6,26 @@
   \defgroup data_hl Dataset support - high-level interfaces
   \ingroup DAL
   \brief High-level dataset interfaces to the various types of datasets
+
+  The C++ classes forming the high-level interface to the datasets as defined
+  through the \ref dal_data_formats are build on the following principles:
+  <ol>
+    <li><i>Class per object</i> -- For each object in the hierarchical data 
+    structure there is a corresponding C++ class, which closely matches the 
+    name of the object it implements.
+    <li><i>Recursive hierarchy navigation</i> -- When opening an object placed
+    somewhere the data structure, embedded underlying structure should be
+    detected and made accessible.
+    <li><i>Vertical accessibility</i>
+  </ol>
   
+  Retrival of an embedded object:
+
+  \code
+  BF_StokesDataset getStokesDataset (unsigned int const &stokesID);
+        
+  bool getStokesDataset (BF_StokesDataset *dataset,
+                         unsigned int const &stokesID);
+  \endcode
+
 */

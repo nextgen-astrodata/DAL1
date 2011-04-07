@@ -200,6 +200,10 @@ namespace DAL { // Namespace DAL -- begin
     BF_StokesDataset (hid_t const &location,
 		      std::string const &name);
 
+    //! Argumented constructor, opening an existing Stokes dataset
+    BF_StokesDataset (hid_t const &location,
+		      unsigned int const &index);
+
     //! Argumented constructor, creating a new Stokes dataset
     BF_StokesDataset (hid_t const &location,
 		      unsigned int const &index,

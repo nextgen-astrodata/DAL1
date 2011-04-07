@@ -50,6 +50,28 @@ namespace DAL { // Namespace DAL -- begin
     init();
     open (location, name);
   }
+
+  //_____________________________________________________________________________
+  //                                                             BF_StokesDataset
+  
+  /*!
+    \param location -- Identifier for the location at which the dataset is about
+           to be created.
+    \param index    -- Indentifier for the Stokes dataset.
+  */
+  BF_StokesDataset::BF_StokesDataset (hid_t const &location,
+				      unsigned int const &index)
+  {
+    init();
+    std::string name = getName (index);
+
+    std::cout << "BF_StokesDataset::BF_StokesDataset (hid_t,uint)" << std::endl;
+    std::cout << "-- location = " << location << std::endl;
+    std::cout << "-- index    = " << index    << std::endl;
+    std::cout << "-- name     = " << name     << std::endl;
+
+    open (location, name);
+  }
   
   //_____________________________________________________________________________
   //                                                             BF_StokesDataset
@@ -57,7 +79,7 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param location    -- Identifier for the location at which the dataset is about
            to be created.
-    \param name        -- Name of the dataset.
+    \param index       -- Indentifier for the Stokes dataset.
     \param nofSubbands -- Number of sub-bands.
     \param nofChannels -- Number of channels within the subbands.
     \param component   -- Stokes component stored within the dataset

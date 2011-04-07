@@ -343,8 +343,7 @@ int test_constructors (hid_t const &fileID)
   cout << "[3] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>) ..."
 	    << endl;
   try {
-    index       = 3;
-    nameDataset = BF_StokesDataset::getName(index);
+    index = 3;
     BF_StokesDataset stokes (fileID, index, shape);
     //
     stokes.summary(); 
@@ -360,8 +359,7 @@ int test_constructors (hid_t const &fileID)
   cout << "[4] Testing BF_StokesDataset(hid_t, string, vector<hsize_t>, Stokes::Component) ..."
 	    << endl;
   try {
-    index       = 4;
-    nameDataset = BF_StokesDataset::getName(index);
+    index = 4;
     BF_StokesDataset stokes (fileID,
 			     index,
 			     shape,
@@ -381,8 +379,7 @@ int test_constructors (hid_t const &fileID)
 
   cout << "[5] Testing BF_StokesDataset(hid_t,string,uint,uint,uint,Stokes::Component) ..." << endl;
   try {
-    index       = 5;
-    nameDataset = BF_StokesDataset::getName(index);
+    index = 5;
     BF_StokesDataset stokes (fileID,
 			     index,
 			     nofSamples,
@@ -426,6 +423,22 @@ int test_constructors (hid_t const &fileID)
     nofFailedTests++;
   }
 
+  /*_______________________________________________________________________
+    Test 7: Copy constructor
+  */
+
+  cout << "[7] Testing BF_StokesDataset(BF_StokesDataset) ..." << endl;
+  try {
+    index = 3;
+    // Create the first of the two objects ...
+    BF_StokesDataset stokes (fileID, index);
+    // ... and provide a summary
+    stokes.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 

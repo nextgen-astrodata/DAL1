@@ -300,14 +300,30 @@ int test_StokesDataset (hid_t const &fileID)
     Retrieve previously created Stokes dataset
   */
 
-  std::cout << "[2] Testing getStokesDataset() ..." << std::endl;
+  std::cout << "[2] Testing getStokesDataset(uint) ..." << std::endl;
   try {
     BF_StokesDataset stokes = beam.getStokesDataset(0);
+    stokes.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
 
+  // std::cout << "[3] Testing getStokesDataset(BF_StokesDataset*,uint) ..." << std::endl;
+  // try {
+  //   BF_StokesDataset *stokes;
+  //   // retrieve the Stokes dataset ...
+  //   status = beam.getStokesDataset(stokes,0);
+  //   // ... and display its properties
+  //   if (status) {
+  //     stokes->summary();
+  //   } else {
+  //     std::cerr << " --> Failed to retrieve Stokes dataset!" << std::endl;
+  //   }
+  // } catch (std::string message) {
+  //   std::cerr << message << endl;
+  //   nofFailedTests++;
+  // }
   
   return nofFailedTests;
 }

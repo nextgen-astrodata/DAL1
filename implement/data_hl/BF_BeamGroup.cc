@@ -401,7 +401,9 @@ namespace DAL { // Namespace DAL -- begin
   */
   BF_StokesDataset BF_BeamGroup::getStokesDataset (unsigned int const &stokesID)
   {
-    std::string name = getName (stokesID);
+    /* Convert ID to name */
+    std::string name = BF_StokesDataset::getName (stokesID);
+    /* Search for requested dataset */
     std::map<std::string,BF_StokesDataset>::iterator it = itsStokesDatasets.find(name);
     
     if (it==itsStokesDatasets.end()) {
@@ -427,7 +429,9 @@ namespace DAL { // Namespace DAL -- begin
   bool BF_BeamGroup::getStokesDataset (BF_StokesDataset *dataset,
 				       unsigned int const &stokesID)
   {
-    std::string name = getName (stokesID);
+    /* Convert ID to name */
+    std::string name = BF_StokesDataset::getName (stokesID);
+    /* Search for requested dataset */
     std::map<std::string,BF_StokesDataset>::iterator it = itsStokesDatasets.find(name);
     
     if (it==itsStokesDatasets.end()) {
