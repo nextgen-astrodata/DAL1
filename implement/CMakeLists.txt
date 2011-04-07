@@ -80,7 +80,11 @@ endforeach (dal_module)
 ##____________________________________________________________________
 ## Build the library
 
-add_library(dal STATIC ${dal_sources})
+if (DAL_SHARED_LIBRARY)
+  add_library(dal SHARED ${dal_sources})
+else (DAL_SHARED_LIBRARY)
+  add_library(dal STATIC ${dal_sources})
+endif (DAL_SHARED_LIBRARY)
 
 target_link_libraries(dal ${dal_link_libraries})
 

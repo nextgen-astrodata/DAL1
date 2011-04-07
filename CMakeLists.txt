@@ -18,6 +18,7 @@ cmake_minimum_required (VERSION 2.6)
 ## ==============================================================================
 
 option (DOCUMENTATION_ONLY     "Configure for building documentation only?"  NO  )
+option (DAL_SHARED_LIBRARY     "Build DAL as shared library?"                NO  )
 option (DAL_ENABLE_TESTING     "Build and enable test programs?"             YES )
 option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?"   ON  )
 option (DAL_PYTHON_BINDINGS    "Create python bindings?"                     YES )
@@ -264,6 +265,7 @@ message (STATUS " .. DAL_INSTALL_INCLUDEDIR       = ${DAL_INSTALL_INCLUDEDIR}"  
 message (STATUS " .. DAL_INSTALL_LIBDIR           = ${DAL_INSTALL_LIBDIR}"         )
 message (STATUS " .. DAL_INSTALL_DATAROOTDIR      = ${DAL_INSTALL_DATAROOTDIR}"    )
 message (STATUS " .. DAL_INSTALL_DOCDIR           = ${DAL_INSTALL_DOCDIR}"         )
+message (STATUS " Build shared library?           = ${DAL_SHARED_LIBRARY}"         )
 message (STATUS " Build and enable test programs  = ${DAL_ENABLE_TESTING}"         )
 message (STATUS " Print debugging messages        = ${DAL_DEBUGGING_MESSAGES}"     )
 message (STATUS " Build documentation only?       = ${DOCUMENTATION_ONLY}"         )
