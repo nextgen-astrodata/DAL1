@@ -40,7 +40,7 @@ endif (DAL_ENABLE_TESTING)
 ## Handle option: Enable standard set of compiler warnings?
 
 if (DAL_COMPILER_WARNINGS)
-  set(CMAKE_CXX_FLAGS "-W -g -Wall")
+  set(CMAKE_CXX_FLAGS "-W -Wall")
 endif (DAL_COMPILER_WARNINGS)
 
 add_definitions (
