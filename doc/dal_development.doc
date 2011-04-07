@@ -5,6 +5,7 @@
 
   <ul>
     <li>\ref dal_devel_git
+    <li>\ref dal_devel_cmake
     <li>\ref dal_devel_releases
     <li>\ref dal_devel_conventions
     <li>\ref dal_devel_classes
@@ -204,6 +205,32 @@
       <td></td>
     </tr>
   </table>
+
+  \section dal_devel_cmake Working with CMake
+
+  <ul>
+    <li>Add a library to the project using the specified source files:
+    \verbatim
+    add_library(<name> [STATIC | SHARED | MODULE]
+              [EXCLUDE_FROM_ALL]
+              source1 source2 ... sourceN)
+    \endverbatim
+    \c STATIC, \c SHARED, or \c MODULE may be given to specify the type of
+    library to be created. \c STATIC libraries are archives of object files for
+    use when linking other targets. \c SHARED libraries are linked dynamically
+    and loaded at runtime. \c MODULE libraries are plugins that are not linked
+    into other targets but may be loaded dynamically at runtime using
+    dlopen-like functionality. If no type is given explicitly the type is
+    \c STATIC or \c SHARED based on whether the current value of the variable
+    \c BUILD_SHARED_LIBS is true.
+
+    <li>Add an executable to the project using the specified source files:
+    \verbatim
+    add_executable(<name> [WIN32] [MACOSX_BUNDLE]
+                 [EXCLUDE_FROM_ALL]
+                 source1 source2 ... sourceN)
+    \endverbatim
+  </ul>
 
   \section dal_devel_releases Preparing a release
 
