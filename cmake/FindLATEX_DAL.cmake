@@ -47,6 +47,8 @@ if (NOT LATEX_FOUND)
       biblatex
       bibtex
       eps2eps
+      kpsepath
+      texhash
       )
 
     string (TOUPPER ${_latexExecutable} _latexVar)
@@ -61,9 +63,28 @@ if (NOT LATEX_FOUND)
   
   ##_____________________________________________________________________________
   ## Check for package style files
-  
-#  fncychap.sty  
 
+  set (_latexTestfile ${PROJECT_BINARY_DIR}/TestLATEX.tex)
+  
+  foreach (_latexPackage  
+      eurosym
+      latexsym
+      graphicx
+      makeidx
+      hyperref
+      listings
+      fncychap
+      )
+    
+    ## Generate LaTeX source file
+    file (WRITE  ${_latexTestfile} "\\documentclass[a4paper,fontsize=10pt]{scrartcl}"\n )
+    file (APPEND ${_latexTestfile} "\\usepackage{"${_latexPackage}}\n )
+    file (APPEND ${_latexTestfile} "\\begin{document}"\n )
+    file (APPEND ${_latexTestfile} "This is a simple test document."\n )
+    file (APPEND ${_latexTestfile} "\\end{document}"\n )
+
+  endforeach (_latexPackage)
+  
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
   
@@ -93,6 +114,7 @@ if (NOT LATEX_FOUND)
     LATEX_ROOT_DIR
     LATEX_EXECUTABLE
     DVIPS_EXECUTABLE
+    PDFLATEX_EXECUTABLE
     )
   
 endif (NOT LATEX_FOUND)
