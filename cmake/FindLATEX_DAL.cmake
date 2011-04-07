@@ -51,9 +51,9 @@ if (NOT LATEX_FOUND)
       texhash
       )
 
-    string (TOUPPER ${_latexExecutable} _latexVar)
+    string (TOUPPER ${_latexExecutable} _latexExecutableVar)
     
-    find_program (${_latexVar}_EXECUTABLE ${_latexExecutable}
+    find_program (${_latexExecutableVar}_EXECUTABLE ${_latexExecutable}
       HINTS ${LATEX_ROOT_DIR}
       PATHS ${DAL_FIND_PATHS}
       PATH_SUFFIXES bin
@@ -64,25 +64,48 @@ if (NOT LATEX_FOUND)
   ##_____________________________________________________________________________
   ## Check for package style files
 
-  set (_latexTestfile ${PROJECT_BINARY_DIR}/TestLATEX.tex)
+  set (_latexTest ${PROJECT_BINARY_DIR}/TestLATEX.tex)
   
   foreach (_latexPackage  
       eurosym
-      latexsym
       graphicx
-      makeidx
-      hyperref
-      listings
       fncychap
+      hyperref
+      latexsym
+      listings
+      makeidx
       )
+
+    message (STATUS "Checking for LaTeX package ${_latexPackage}")
+
+    string (TOUPPER ${_latexPackage} _latexPackageVar)
     
     ## Generate LaTeX source file
-    file (WRITE  ${_latexTestfile} "\\documentclass[a4paper,fontsize=10pt]{scrartcl}"\n )
-    file (APPEND ${_latexTestfile} "\\usepackage{"${_latexPackage}}\n )
-    file (APPEND ${_latexTestfile} "\\begin{document}"\n )
-    file (APPEND ${_latexTestfile} "This is a simple test document."\n )
-    file (APPEND ${_latexTestfile} "\\end{document}"\n )
+    file (WRITE  ${_latexTest} "\\documentclass[a4paper,fontsize=10pt]{scrartcl}"\n )
+    file (APPEND ${_latexTest} "\\usepackage{"${_latexPackage}}\n )
+    file (APPEND ${_latexTest} "\\begin{document}"\n )
+    file (APPEND ${_latexTest} "This is a simple test document."\n )
+    file (APPEND ${_latexTest} "\\end{document}"\n )
 
+    ## Run the test file through LaTeX
+    
+    execute_process(
+      COMMAND ${LATEX_EXECUTABLE} ${_latexTest}
+      TIMEOUT 5
+      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+      RESULT_VARIABLE _latexTestResult
+      OUTPUT_VARIABLE _latexTestOutput
+      ERROR_VARIABLE _latexTestError
+      )
+    
+    if (_latexTestResult)
+      set (LATEX_${_latexPackageVar}_PACKAGE FALSE)
+      message (STATUS "Checking for LaTeX package ${_latexPackage} - FAIL")
+    else (_latexTestResult)
+      set (LATEX_${_latexPackageVar}_PACKAGE TRUE)
+      message (STATUS "Checking for LaTeX package ${_latexPackage} - Success")
+    endif (_latexTestResult)
+    
   endforeach (_latexPackage)
   
   ##_____________________________________________________________________________

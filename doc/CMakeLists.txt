@@ -74,6 +74,8 @@ endif (DOXYGEN_FOUND)
 ## ==============================================================================
 
 if (DOXYGEN_FOUND AND LATEX_FOUND)
+
+  if (LATEX_FNCYCHAP_PACKAGE)
   
   ## Create subdirectory 
   
@@ -114,5 +116,11 @@ if (DOXYGEN_FOUND AND LATEX_FOUND)
   ## Build target dependency
 
   add_dependencies (Documentation Manual)
+
+  else (LATEX_FNCYCHAP_PACKAGE)
+
+    message (STATUS "Skipping generation of user manual - missing LaTeX package!")
+
+  endif (LATEX_FNCYCHAP_PACKAGE)
   
 endif (DOXYGEN_FOUND AND LATEX_FOUND)
