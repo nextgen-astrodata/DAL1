@@ -34,55 +34,51 @@ if (NOT LATEX_FOUND)
   endif (NOT LATEX_ROOT_DIR)
   
   ##_____________________________________________________________________________
-  ## Check for the header files
-  
-  find_path (LATEX_INCLUDES <header file(s)>
-    HINTS ${LATEX_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
-    PATH_SUFFIXES include
-    )
-  
-  ##_____________________________________________________________________________
-  ## Check for the library
-  
-  find_library (LATEX_LIBRARIES <package name>
-    HINTS ${LATEX_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
-    PATH_SUFFIXES lib
-    )
-  
-  ##_____________________________________________________________________________
   ## Check for the executable
+
+  foreach (_latexExecutable
+      latex
+      dvipdfmx
+      dvipdf
+      dvips
+      pdflatex
+      pstopdf
+      ps2pdf
+      biblatex
+      bibtex
+      eps2eps
+      )
+
+    string (TOUPPER ${_latexExecutable} _latexVar)
+    
+    find_program (${_latexVar}_EXECUTABLE ${_latexExecutable}
+      HINTS ${LATEX_ROOT_DIR}
+      PATHS ${DAL_FIND_PATHS}
+      PATH_SUFFIXES bin
+      )
+    
+  endforeach (_latexExecutable)
   
-  find_program (LATEX_EXECUTABLE <package name>
-    HINTS ${LATEX_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
-    PATH_SUFFIXES bin
-    )
+  ##_____________________________________________________________________________
+  ## Check for package style files
   
+#  fncychap.sty  
+
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
   
-  if (LATEX_INCLUDES AND LATEX_LIBRARIES)
+  if (LATEX_EXECUTABLE)
     set (LATEX_FOUND TRUE)
-  else (LATEX_INCLUDES AND LATEX_LIBRARIES)
+  else (LATEX_EXECUTABLE)
     set (LATEX_FOUND FALSE)
-    if (NOT LATEX_FIND_QUIETLY)
-      if (NOT LATEX_INCLUDES)
-	message (STATUS "Unable to find LATEX header files!")
-      endif (NOT LATEX_INCLUDES)
-      if (NOT LATEX_LIBRARIES)
-	message (STATUS "Unable to find LATEX library files!")
-      endif (NOT LATEX_LIBRARIES)
-    endif (NOT LATEX_FIND_QUIETLY)
-  endif (LATEX_INCLUDES AND LATEX_LIBRARIES)
+  endif (LATEX_EXECUTABLE)
   
   if (LATEX_FOUND)
     if (NOT LATEX_FIND_QUIETLY)
       message (STATUS "Found components for LATEX")
-      message (STATUS "LATEX_ROOT_DIR  = ${LATEX_ROOT_DIR}")
-      message (STATUS "LATEX_INCLUDES  = ${LATEX_INCLUDES}")
-      message (STATUS "LATEX_LIBRARIES = ${LATEX_LIBRARIES}")
+      message (STATUS "LATEX_ROOT_DIR   = ${LATEX_ROOT_DIR}")
+      message (STATUS "LATEX_EXECUTABLE = ${LATEX_EXECUTABLE}")
+      message (STATUS "DVIPS_EXECUTABLE = ${DVIPS_EXECUTABLE}")
     endif (NOT LATEX_FIND_QUIETLY)
   else (LATEX_FOUND)
     if (LATEX_FIND_REQUIRED)
@@ -95,8 +91,8 @@ if (NOT LATEX_FOUND)
   
   mark_as_advanced (
     LATEX_ROOT_DIR
-    LATEX_INCLUDES
-    LATEX_LIBRARIES
+    LATEX_EXECUTABLE
+    DVIPS_EXECUTABLE
     )
   
 endif (NOT LATEX_FOUND)

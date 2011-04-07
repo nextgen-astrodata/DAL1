@@ -267,6 +267,9 @@ message (STATUS " .. DAL_INSTALL_DOCDIR           = ${DAL_INSTALL_DOCDIR}"      
 message (STATUS " Build and enable test programs  = ${DAL_ENABLE_TESTING}"         )
 message (STATUS " Print debugging messages        = ${DAL_DEBUGGING_MESSAGES}"     )
 message (STATUS " Build documentation only?       = ${DOCUMENTATION_ONLY}"         )
+message (STATUS " .. LaTeX compiler               = ${LATEX_EXECUTABLE}"           )
+message (STATUS " .. dvips converter              = ${DVIPS_EXECUTABLE}"           )
+message (STATUS " .. PDFLaTeX compiler            = ${PDFLATEX_EXECUTABLE}"        )
 
 if (NOT DOCUMENTATION_ONLY)
 

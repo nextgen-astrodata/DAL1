@@ -73,7 +73,7 @@ endif (DOXYGEN_FOUND)
 ##
 ## ==============================================================================
 
-if (DOXYGEN_FOUND)
+if (DOXYGEN_FOUND AND LATEX_FOUND)
   
   ## Create subdirectory 
   
@@ -115,4 +115,4 @@ if (DOXYGEN_FOUND)
 
   add_dependencies (Documentation Manual)
   
-endif (DOXYGEN_FOUND)
+endif (DOXYGEN_FOUND AND LATEX_FOUND)
