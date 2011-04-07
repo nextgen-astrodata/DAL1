@@ -275,6 +275,8 @@ namespace DAL {  // Namespace DAL -- begin
     casa::Vector<casa::String> beam_direction_frame ();
     //! Get the direction of the station beam as casa::Measure
     casa::Vector<casa::MDirection> beam_direction ();
+    //! Get the antenna position of all selected datasets as casa::Measure
+    casa::Vector<casa::MPosition> antenna_position ();
 #else
     //! Get the type of trigger causing the dump of the TBB data
     std::vector<std::string> trigger_type ();

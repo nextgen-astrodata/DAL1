@@ -280,7 +280,7 @@ int test_static_functions (hid_t const &location)
   cout << "[8] Testing getAttribute(hid_t,string,vector<T>) ..." << endl;
   try {
     unsigned int nelem = 0;
-    int * arrInt;
+    int * arrInt       = NULL;
     std::vector<int> vecInt;
     
     HDF5Attribute::getAttribute (location, "AttributeArrayInt", arrInt, nelem);

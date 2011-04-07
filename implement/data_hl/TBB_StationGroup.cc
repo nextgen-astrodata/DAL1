@@ -601,11 +601,11 @@ namespace DAL {  // Namespace DAL -- begin
   casa::Vector<casa::MPosition> TBB_StationGroup::antenna_position ()
   {
     uint n (0);
-    std::map<std::string,TBB_DipoleDataset>::iterator it;
-    casa::Vector<casa::MPosition> position (datasets_p.size());
+    std::map<std::string,iterDipoleDataset>::iterator it;
+    casa::Vector<casa::MPosition> position (selectedDatasets_p.size());
 
-    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-      position(n) = it->second.antenna_position();
+    for (it=selectedDatasets_p.begin(); it!=selectedDatasets_p.end(); ++it) {
+      position(n) = (it->second)->second.antenna_position();
       ++n;
     }
     
@@ -636,10 +636,10 @@ namespace DAL {  // Namespace DAL -- begin
   std::vector<int> TBB_StationGroup::dipoleNumbers ()
   {
     std::vector<int> numbers;
-    std::map<std::string,TBB_DipoleDataset>::iterator it;
+    std::map<std::string,iterDipoleDataset>::iterator it;
 
-    for (it=datasets_p.begin(); it!=datasets_p.end(); ++it) {
-      numbers.push_back(it->second.dipoleNumber());
+    for (it=selectedDatasets_p.begin(); it!=selectedDatasets_p.end(); ++it) {
+      numbers.push_back((it->second)->second.dipoleNumber());
     }
 
     return numbers;
