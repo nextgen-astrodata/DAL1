@@ -50,6 +50,14 @@ add_custom_target (docReference ALL
   DEPENDS html/index.html
   )
 
+## Testing instructions
+
+add_test (
+  NAME docReference
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  COMMAND make docReference
+  )
+
 ## Installation of source code documentation
 
 install (
@@ -93,6 +101,14 @@ if (PDFLATEX_EXECUTABLE)
       
       add_custom_target (docManual ALL
 	DEPENDS refman.pdf
+	)
+      
+      ## Testing instructions
+      
+      add_test (
+	NAME docManual
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual
+	COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile; ${PDFLATEX_EXECUTABLE} refman.tex
 	)
       
       ## Installation instructions
