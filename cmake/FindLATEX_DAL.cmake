@@ -65,7 +65,7 @@ if (NOT LATEX_FOUND)
   ## Check for package style files
 
   set (_latexTest ${PROJECT_BINARY_DIR}/TestLATEX.tex)
-  
+
   foreach (_latexPackage  
       eurosym
       graphicx
@@ -74,10 +74,11 @@ if (NOT LATEX_FOUND)
       latexsym
       listings
       makeidx
+      ncychap
       )
-
+    
     message (STATUS "Checking for LaTeX package ${_latexPackage}")
-
+    
     string (TOUPPER ${_latexPackage} _latexPackageVar)
     
     ## Generate LaTeX source file
