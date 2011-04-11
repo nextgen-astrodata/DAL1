@@ -1,5 +1,13 @@
 
+## Find required packages for the generation of the documentation
+
+set (DOXYGEN_FIND_QUIETLY YES )
+set (LATEX_FIND_QUIETLY   YES )
+
 include (FindDoxygen)
+include (FindLATEX_DAL)
+
+## Define common top-level target
 
 add_custom_target (Documentation)
 
@@ -73,7 +81,7 @@ endif (DOXYGEN_FOUND)
 ##
 ## ==============================================================================
 
-if (DOXYGEN_FOUND AND LATEX_FOUND)
+if (DOXYGEN_EXECUTABLE AND PDFLATEX_EXECUTABLE)
 
   if (LATEX_FNCYCHAP_PACKAGE)
   
@@ -93,8 +101,8 @@ if (DOXYGEN_FOUND AND LATEX_FOUND)
   add_custom_command (
     OUTPUT refman.pdf
     COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
-    COMMAND pdflatex refman.tex
-    COMMAND pdflatex refman.tex
+    COMMAND ${PDFLATEX_EXECUTABLE} refman.tex
+    COMMAND ${PDFLATEX_EXECUTABLE} refman.tex
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile ${Documentation_sources}
     COMMENT "Generating User Manual ..."
@@ -123,4 +131,4 @@ if (DOXYGEN_FOUND AND LATEX_FOUND)
 
   endif (LATEX_FNCYCHAP_PACKAGE)
   
-endif (DOXYGEN_FOUND AND LATEX_FOUND)
+endif (DOXYGEN_EXECUTABLE AND PDFLATEX_EXECUTABLE)

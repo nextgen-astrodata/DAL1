@@ -47,7 +47,6 @@ set (_cmakeModules
   GSL_DAL
   HDF5_DAL
   LAPACK_DAL
-  LATEX_DAL
   LOFAR
   MPI
   NumPy
