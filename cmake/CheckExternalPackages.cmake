@@ -43,10 +43,12 @@ set (_cmakeModules
   Boost_DAL
   Casacore
   CFITSIO_DAL
+  Doxygen
   GFortran
   GSL_DAL
   HDF5_DAL
   LAPACK_DAL
+  LATEX_DAL
   LOFAR
   MPI
   NumPy

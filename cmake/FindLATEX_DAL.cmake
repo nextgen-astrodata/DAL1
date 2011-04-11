@@ -71,10 +71,11 @@ if (NOT LATEX_FOUND)
       graphicx
       fncychap
       hyperref
+      kvoptions
       latexsym
       listings
       makeidx
-      ncychap
+      url
       )
     
     message (STATUS "Checking for LaTeX package ${_latexPackage}")
