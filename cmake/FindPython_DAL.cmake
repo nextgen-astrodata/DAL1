@@ -86,6 +86,7 @@ if (NOT PYTHON_FOUND)
       HINTS ${PYTHON_ROOT_DIR}
       PATHS ${DAL_FIND_PATHS}
       PATH_SUFFIXES bin
+      NO_DEFAULT_PATH
       )
 
     ##___________________________________________________________________________
