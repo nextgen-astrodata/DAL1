@@ -97,6 +97,10 @@ foreach (_dalcmake ${_cmakeModules} )
     
     message (STATUS "Checking for package ${_dalcmake} - Success")
     
+  else (${_cmakeModuleVariable}_FOUND OR HAVE_${_cmakeModuleVariable})
+  
+    message (STATUS "Checking for package ${_dalcmake} - FAIL")
+
   endif (${_cmakeModuleVariable}_FOUND OR HAVE_${_cmakeModuleVariable})
   
 endforeach (_dalcmake)
