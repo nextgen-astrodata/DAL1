@@ -10,9 +10,6 @@
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>
 
-/* Num-Util header file(s) */
-#include <num_util.h>
-
 namespace bpl = boost::python;
 
 //_______________________________________________________________________________

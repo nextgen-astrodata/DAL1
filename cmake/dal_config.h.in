@@ -71,9 +71,6 @@
 */
 #cmakedefine DAL_WITH_MYSQL
 
-/* Define if we have the NumUtil library */
-#cmakedefine DAL_WITH_NUMUTIL
-
 /* Define if we have the OPENMP library */
 #cmakedefine DAL_WITH_OPENMP
 
@@ -257,10 +254,6 @@
 #include <boost/python/object.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>
-// NumUtil headers
-#ifdef DAL_WITH_NUMUTIL
-#include <num_util.h>
-#endif
 #endif
 
 //__________________________________________________________

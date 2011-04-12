@@ -24,7 +24,6 @@ int main ()
   std::cout << "DAL_WITH_HDF5 "     << DAL_WITH_HDF5     << std::endl;
   std::cout << "DAL_WITH_LOFAR "    << DAL_WITH_LOFAR    << std::endl;
   std::cout << "DAL_WITH_MYSQL "    << DAL_WITH_MYSQL    << std::endl;
-  std::cout << "DAL_WITH_NUMUTIL "  << DAL_WITH_NUMUTIL  << std::endl;
   std::cout << "DAL_WITH_OPENMP "   << DAL_WITH_OPENMP   << std::endl;
   std::cout << "DAL_WITH_WCSLIB "   << DAL_WITH_WCSLIB   << std::endl;
 
