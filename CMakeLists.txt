@@ -340,7 +340,6 @@ message (STATUS " .. libmysqlservices             = ${MYSQL_MYSQLSERVICES_LIBRAR
 endif (MYSQL_FOUND OR DAL_VERBOSE_CONFIGURE)
 
 message (STATUS " Enable Python bindings          = ${DAL_PYTHON_BINDINGS}"      )
-if (DAL_PYTHON_BINDINGS OR DAL_VERBOSE_CONFIGURE)
 message (STATUS " .. Python version               = ${PYTHON_VERSION}"           )
 message (STATUS " .. Python API version           = ${PYTHON_API_VERSION}"       )
 message (STATUS " .. Include directory            = ${PYTHON_INCLUDES}"          )
@@ -349,7 +348,6 @@ message (STATUS " .. Python library               = ${PYTHON_LIBRARIES}"        
 message (STATUS " .. Site-packages directory      = ${PYTHON_SITE_PACKAGES_DIR}" )
 message (STATUS " .. NumPy include directory      = ${NUMPY_INCLUDES}"           )
 message (STATUS " .. NumPy library                = ${NUMPY_LIBRARIES}"          )
-endif (DAL_PYTHON_BINDINGS OR DAL_VERBOSE_CONFIGURE)
 message (STATUS " Enable code using OpenMP        = ${OPENMP_FOUND}"             )
 message (STATUS " Enable code using WCSLIB        = ${WCSLIB_FOUND}"             )
 message (STATUS " Types sizes:                                     ")
