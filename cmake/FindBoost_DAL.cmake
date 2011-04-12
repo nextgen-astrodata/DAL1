@@ -88,7 +88,7 @@ if (NOT BOOST_FOUND)
     prg_exec_monitor
     program_options
     python
-    random
+#    random
     regex
     serialization
     signals

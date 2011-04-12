@@ -126,9 +126,9 @@ endif (CMAKE_SIZEOF_VOID_P)
 ##
 ## ==============================================================================
 
-#if (DAL_PYTHON_BINDINGS)
-#  include (${DAL_SOURCE_DIR}/cmake/TestPythonBindings.cmake)
-#endif (DAL_PYTHON_BINDINGS)
+if (NOT BOOST_FOUND)
+  set (DAL_PYTHON_BINDINGS FALSE)
+endif (NOT BOOST_FOUND)
 
 ## ==============================================================================
 ##
