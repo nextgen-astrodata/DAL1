@@ -52,7 +52,6 @@ set (_cmakeModules
   LOFAR
   MPI
   NumPy
-  NumUtil
   OpenMP
   Python_DAL
   WCSLIB_DAL

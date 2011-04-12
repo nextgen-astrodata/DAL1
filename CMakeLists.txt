@@ -345,7 +345,6 @@ message (STATUS " .. Python API version           = ${PYTHON_API_VERSION}"      
 message (STATUS " .. Include directory            = ${PYTHON_INCLUDES}"          )
 message (STATUS " .. Python interpreter           = ${PYTHON_EXECUTABLE}"        )
 message (STATUS " .. Python library               = ${PYTHON_LIBRARIES}"         )
-message (STATUS " .. Python NumUtils package      = ${NUMUTIL_FOUND}"            )
 endif (DAL_PYTHON_BINDINGS OR DAL_VERBOSE_CONFIGURE)
 message (STATUS " Enable code using OpenMP        = ${OPENMP_FOUND}"             )
 message (STATUS " Enable code using WCSLIB        = ${WCSLIB_FOUND}"             )
