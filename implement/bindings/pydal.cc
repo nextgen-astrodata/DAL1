@@ -20,8 +20,7 @@
 
 #define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
 
-#include "dal.h"
-#include "bindings/pydal.h"
+#include "pydal.h"
 
 /*!
   \file pydal.cc
