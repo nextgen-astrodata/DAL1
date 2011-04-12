@@ -46,7 +46,7 @@ if (NOT PYTHON_FOUND)
     
     find_path (PYTHON_INCLUDES patchlevel.h modsupport.h
       HINTS ${PYTHON_ROOT_DIR}
-      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+      PATHS ${DAL_FIND_PATHS}
       PATH_SUFFIXES include/python${_pythonRelease} include/python include
       NO_DEFAULT_PATH
       )
@@ -55,7 +55,7 @@ if (NOT PYTHON_FOUND)
     
     find_path (PYTHON_PYTHON_H Python.h
       HINTS ${PYTHON_ROOT_DIR}
-      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+      PATHS ${DAL_FIND_PATHS}
       PATH_SUFFIXES include/python${_pythonRelease} include/python include
       NO_DEFAULT_PATH
       )
@@ -74,7 +74,7 @@ if (NOT PYTHON_FOUND)
     
     find_library (PYTHON_LIBRARIES python${_pythonRelease} python
       HINTS ${PYTHON_ROOT_DIR}
-      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+      PATHS ${DAL_FIND_PATHS}
       PATH_SUFFIXES lib
       NO_DEFAULT_PATH
       )
@@ -84,14 +84,22 @@ if (NOT PYTHON_FOUND)
     
     find_program (PYTHON_EXECUTABLE python${_pythonRelease} python
       HINTS ${PYTHON_ROOT_DIR}
-      PATHS /sw /usr /usr/local /opt /opt/local ${CMAKE_INSTALL_PREFIX}
+      PATHS ${DAL_FIND_PATHS}
       PATH_SUFFIXES bin
       )
+
+    ##___________________________________________________________________________
+    ## Python packages
+    
+    get_filename_component (PYTHON_LIBRARY_DIR     ${PYTHON_LIBRARIES} PATH)
+    get_filename_component (PYTHON_EXECUTABLE_NAME ${PYTHON_EXECUTABLE} NAME)
+
+    set (PYTHON_SITE_PACKAGES_DIR ${PYTHON_LIBRARY_DIR}/${PYTHON_EXECUTABLE_NAME}/site-packages)
+
+    set (NUMPY_ROOT_DIR ${PYTHON_SITE_PACKAGES_DIR})
+    include (FindNumPy)
     
   endforeach (_pythonRelease)
-  
-  ##+++++++++++++++++++++++++++++++++++++++++++++++++++
-  
   
   ##_____________________________________________________________________________
   ## Test Python library for:

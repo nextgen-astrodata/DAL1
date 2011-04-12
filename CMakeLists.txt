@@ -9,7 +9,7 @@ set (DAL_VERSION_PATCH 5)
 set (DAL_VERSION "${DAL_VERSION_MAJOR}.${DAL_VERSION_MINOR}.${DAL_VERSION_PATCH}")
 
 ## Minimum required version of CMake to configure the project
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 2.8.3)
 
 ## ==============================================================================
 ##
@@ -346,6 +346,7 @@ message (STATUS " .. Python API version           = ${PYTHON_API_VERSION}"      
 message (STATUS " .. Include directory            = ${PYTHON_INCLUDES}"          )
 message (STATUS " .. Python interpreter           = ${PYTHON_EXECUTABLE}"        )
 message (STATUS " .. Python library               = ${PYTHON_LIBRARIES}"         )
+message (STATUS " .. Site-packages directory      = ${PYTHON_SITE_PACKAGES_DIR}" )
 message (STATUS " .. NumPy include directory      = ${NUMPY_INCLUDES}"           )
 message (STATUS " .. NumPy library                = ${NUMPY_LIBRARIES}"          )
 endif (DAL_PYTHON_BINDINGS OR DAL_VERBOSE_CONFIGURE)

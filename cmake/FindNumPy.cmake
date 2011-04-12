@@ -45,11 +45,17 @@ if (NOT NUMPY_FOUND)
     python/include
     python/core/include
     python/numpy/core/include
+    numpy/core/include
+    site-packages/numpy/core/include
     )
   
   ##_____________________________________________________________________________
   ## Check for the library
   
+  ## temporarily remove "lib" prefix when searching for the modules
+  set (_numpyLibPrefixes ${CMAKE_FIND_LIBRARY_PREFIXES})
+  set (CMAKE_FIND_LIBRARY_PREFIXES "")
+
   set (NUMPY_LIBRARIES "")
 
   foreach (_numpy_lib multiarray scalarmath)
@@ -63,6 +69,8 @@ if (NOT NUMPY_FOUND)
       PATHS ${DAL_FIND_PATHS}
       PATH_SUFFIXES
       lib
+      numpy/core
+      python/numpy/core
       lib/python/numpy/core
       )
     
@@ -72,14 +80,10 @@ if (NOT NUMPY_FOUND)
     endif (NUMPY_${_numpy_var}_LIBRARY)
     
   endforeach (_numpy_lib)
-  
-  ##_____________________________________________________________________________
-  ## Check for the executable
-  
-#  find_program (NUMPY_EXECUTABLE <package name>
-#    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
-#    PATH_SUFFIXES bin
-#    )
+
+  ## reinstate library prefixes
+  set (CMAKE_FIND_LIBRARY_PREFIXES ${_numpyLibPrefixes})
+
   
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found

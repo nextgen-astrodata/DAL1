@@ -9,7 +9,11 @@
   ## Compiler instructions
   
   remove_definitions (-dynamiclib -install_name)
-
+  
+  if (NUMPY_INCLUDES)
+    include_directories (${NUMPY_INCLUDES})
+  endif (NUMPY_INCLUDES)
+  
   add_library(pydal MODULE
     ${dal_sources}
     ${pydal_sources}
