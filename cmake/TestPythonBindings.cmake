@@ -20,11 +20,6 @@ if (NOT PYTHON_INCLUDES)
   message (STATUS "[DAL] Unable to generate Python bindings; missing Python headers!")
 endif (NOT PYTHON_INCLUDES)
 
-if (NOT NUMUTIL_INCLUDES) 
-  set (DAL_PYTHON_BINDINGS FALSE)
-  message (STATUS "[DAL] Unable to generate Python bindings; missing num_util headers!")
-endif (NOT NUMUTIL_INCLUDES)
-
 ## ==============================================================================
 ##
 ##  
@@ -38,9 +33,8 @@ if (DAL_PYTHON_BINDINGS)
      cmake_minimum_required(VERSION 2.6)
      include_directories (${PYTHON_INCLUDES})
      include_directories (${BOOST_INCLUDES})
-     include_directories (${NUMUTIL_INCLUDES} ${NUMUTIL_INCLUDES}/num_util)
      ADD_EXECUTABLE(TestForPythonBindings ${DAL_SOURCE_DIR}/cmake/TestPythonBindings.cc)
-     TARGET_LINK_LIBRARIES(TestForPythonBindings ${PYTHON_LIBRARIES} ${NUMUTIL_LIBRARIES})"
+     TARGET_LINK_LIBRARIES(TestForPythonBindings ${PYTHON_LIBRARIES})"
     )
   
   try_compile (DAL_PYTHON_BINDINGS
