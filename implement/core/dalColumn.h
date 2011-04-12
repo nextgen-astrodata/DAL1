@@ -23,6 +23,10 @@
 
 #include <core/dalData.h>
 
+#ifdef PYTHON
+#include <bindings/num_util.h>
+#endif
+
 #ifdef DAL_WITH_CASA
 #include <tables/Tables/ScalarColumn.h>
 #include <tables/Tables/ArrayColumn.h>

@@ -21,8 +21,7 @@
 #ifndef ACCESSMODE_H
 #define ACCESSMODE_H
 
-#include <dal_config.h>
-#include <core/HDF5Object.h>
+#include "HDF5Object.h"
 
 namespace DAL { // Namespace DAL -- begin
   
