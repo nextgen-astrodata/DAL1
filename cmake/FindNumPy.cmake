@@ -39,7 +39,7 @@ if (NOT NUMPY_FOUND)
   
   find_path (NUMPY_INCLUDES numpy/arrayobject.h numpy/ndarrayobject.h
     HINTS ${NUMPY_ROOT_DIR}
-    PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+    PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES
     include
     python/include
@@ -60,7 +60,7 @@ if (NOT NUMPY_FOUND)
     ## Search for the library
     find_library (NUMPY_${_numpy_var}_LIBRARY ${_numpy_lib}
       HINTS ${NUMPY_ROOT_DIR}
-      PATHS /sw /usr /usr/local /opt/local ${CMAKE_INSTALL_PREFIX}
+      PATHS ${DAL_FIND_PATHS}
       PATH_SUFFIXES
       lib
       lib/python/numpy/core
