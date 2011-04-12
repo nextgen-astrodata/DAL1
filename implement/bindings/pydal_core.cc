@@ -157,6 +157,100 @@ void export_dalColumn ()
 //
 // ==============================================================================
 
+bpl::numeric::array DAL::dalData::get_boost1()
+{
+  return get_boost3(0,-1);
+}
+
+bpl::numeric::array DAL::dalData::get_boost2( int32_t length )
+{
+  return get_boost3(0,length);
+}
+
+bpl::numeric::array DAL::dalData::get_boost3( int64_t offset, int32_t length )
+{
+  bpl::list data_list;
+  std::vector<int> mydims;
+  
+  unsigned int hh = 0;
+  
+  if (length>0) {
+    mydims.push_back(length);
+    hh=1;
+  }
+  for (; hh<shape.size(); hh++) {
+    mydims.push_back(shape[hh]);
+  }
+  
+  if ( dal_CHAR == dataType_p ) {
+    return num_util::makeNum( ((char*)data) + offset, mydims );
+  }
+  else if ( dal_BOOL == dataType_p ) {
+    return num_util::makeNum( ((unsigned char*)data) + offset, mydims );
+  }
+  else if ( dal_INT == dataType_p )
+    {
+      return num_util::makeNum( ((int*)data) + offset, mydims );
+    }
+  else if ( dal_FLOAT == dataType_p ) {
+    return num_util::makeNum(((float*)data)+offset,mydims);
+  }
+  else if ( dal_DOUBLE == dataType_p ) {
+    return num_util::makeNum(((double*)data)+offset,mydims);
+  }
+  else if ( dal_COMPLEX == dataType_p ) {
+    return num_util::makeNum(((std::complex<float>*)data)+offset,mydims);
+  }
+  else if ( dal_COMPLEX_CHAR == dataType_p ) {
+    return num_util::makeNum(((std::complex<char>*)data)+offset,mydims);
+  }
+  else if ( dal_COMPLEX_SHORT == dataType_p ) {
+    return num_util::makeNum(((std::complex<short>*)data)+offset,mydims);
+  }
+  else if ( dal_STRING == dataType_p ) {
+    bpl::list data_list;
+    
+    if ( 1 == shape.size() ) // 1D case
+      {
+	for (int ii=0; ii<nrows; ii++)
+	  {
+	    data_list.append( (*((std::string*)get(ii))) );
+	  }
+      }
+    else if ( 2 == shape.size() ) // 2D case
+      {
+	for ( int xx=0; xx<shape[0]; xx++)
+	  for ( int yy=0; yy<shape[1]; yy++)
+	    data_list.append( (*((std::string*)get(xx,yy))) );
+      }
+    else if ( 3 == shape.size() ) // 3D case
+      {
+	for ( int xx=0; xx<shape[0]; xx++)
+	  for ( int yy=0; yy<shape[1]; yy++)
+	    for ( int zz=0; zz<shape[2]; zz++)
+	      data_list.append( (*((std::string*)get(xx,yy,zz))) );
+      }
+    else {
+      std::cerr << "ERROR: string array rank > 3 not supported. "
+		<< "dalData::get_boost()\n";
+    }
+    
+    bpl::numeric::array narray = num_util::makeNum(data_list);
+    return narray;
+  }
+  else {
+    std::cerr << "ERROR:  Datatype '" << dataType_p
+	      << "' not yet supported.  (dalData::get_boost)\n";
+    
+    for (int ii=0; ii<1; ii++)
+      data_list.append(0);
+    
+    bpl::numeric::array nadata( data_list );
+    
+    return nadata;
+  }
+}
+
 void export_dalData () 
 {
   bpl::class_<dalData>("dalData")
