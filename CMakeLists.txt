@@ -9,7 +9,7 @@ set (DAL_VERSION_PATCH 5)
 set (DAL_VERSION "${DAL_VERSION_MAJOR}.${DAL_VERSION_MINOR}.${DAL_VERSION_PATCH}")
 
 ## Minimum required version of CMake to configure the project
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8)
 
 ## ==============================================================================
 ##
@@ -260,6 +260,7 @@ message (STATUS "=============================================================="
 message (STATUS "  DAL: Summary of configuration settings                      "   )
 message (STATUS "+------------------------------------------------------------+"   )
 message (STATUS " System configuration:"                                           )
+message (STATUS " .. CMAKE_VERSION                = ${CMAKE_VERSION}"              )
 message (STATUS " .. CMAKE_SYSTEM                 = ${CMAKE_SYSTEM}"               )
 message (STATUS " .. CMAKE_SYSTEM_PROCESSOR       = ${CMAKE_SYSTEM_PROCESSOR}"     )
 message (STATUS " Installation configuration:"                                     )
