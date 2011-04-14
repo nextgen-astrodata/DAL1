@@ -308,6 +308,32 @@ namespace DAL {  // Namespace DAL -- begin
     bool selectAllDipoles ();
     
     //  High-level access to data and attributes ___________
+    template <class T>
+    void getAttributes (std::string attr, std::vector<T> &out)
+    {
+      uint n           = 0;
+      uint station     = 0;
+      uint dipole      = 0;
+      uint nofDipoles  = nofSelectedDatasets();
+      std::vector<T> tmp;
+      std::map<std::string,TBB_StationGroup>::iterator it;
+
+      // Resize output vector
+      out.resize(nofDipoles);
+
+      for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
+        it->second.getAttributes(attr, tmp);
+        nofDipoles = (*it).second.nofSelectedDatasets();
+
+        // go through the dipoles from an individual station
+        for (dipole=0; dipole<nofDipoles; dipole++) {
+          out[n] = tmp[dipole];
+          n++;
+        }
+        // increment station counter
+        ++station;
+      }
+    }
     
     //! Get the values of TIME for all present datasets
     std::vector<uint> time ();
@@ -315,6 +341,10 @@ namespace DAL {  // Namespace DAL -- begin
     std::vector<uint> sample_number ();
     //! Get the values of DATA_LENGTH for all present datasets
     std::vector<uint> data_length ();
+    //! Get the values of CABLE_DELAY for all present cablesets
+    std::vector<double> cable_delay ();
+    //! Get the values of CABLE_DELAY_UNIT for all present cablesets
+    std::vector<std::string> cable_delay_unit ();
     //! Get the values of the ADC sample frequency
     std::vector<double> sample_frequency_value ();
     //! Get the unit of the ADC sample frequency

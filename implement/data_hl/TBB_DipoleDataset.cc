@@ -243,6 +243,8 @@ namespace DAL {  // Namespace DAL -- begin
     attributes_p.insert("SAMPLES_PER_FRAME");
     attributes_p.insert("DATA_LENGTH");
     attributes_p.insert("NYQUIST_ZONE");
+    attributes_p.insert("CABLE_DELAY");
+    attributes_p.insert("CABLE_DELAY_UNIT");
     attributes_p.insert("FEED");
     attributes_p.insert("ANTENNA_POSITION_VALUE");
     attributes_p.insert("ANTENNA_POSITION_UNIT");
