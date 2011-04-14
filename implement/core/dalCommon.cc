@@ -862,6 +862,7 @@ namespace DAL {
     hid_t datatype_id;
     hid_t native_datatype_id;
     std::vector<hsize_t> shape;
+    char *buffer;
     
     if (H5Iis_valid(attribute_id)) {
       datatype_id        = H5Aget_type (attribute_id);
@@ -872,16 +873,21 @@ namespace DAL {
     }
     
     if (shape.size() > 0) {
-      char * buffer[shape[0]];
+	    // additional variables
+	    hsize_t datatype_size         = H5Tget_size (datatype_id);
+      buffer = new char[shape[0]*datatype_size];
+
       // Read the attribute data from the file
       h5error = H5Aread(attribute_id,
 			native_datatype_id,
-			&buffer);
+			buffer);
+
       // Copy the retrieved data to the returned variable
       if (h5error == 0) {
 	value.resize(shape[0]);
+  std::string str = std::string(buffer);
 	for (uint n(0); n<shape[0]; n++) {
-	  value[n] = buffer[n];
+	  value[n] = str.substr(n*datatype_size, datatype_size);
 	}
       }
     }
@@ -1538,15 +1544,17 @@ namespace DAL {
       std::vector<double> values;
       std::vector<std::string> units;
       std::string refcode;
-      
+
       // retrieve the numerical values of the position
       status *= h5get_attribute(location_id,
 				value,
 				values);
+
       // retrieve the physical units of the position
       status *= h5get_attribute(location_id,
 				unit,
 				units);
+
       // retrieve the frame of the position
       status *= h5get_attribute(location_id,
 				frame,
