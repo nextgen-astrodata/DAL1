@@ -1049,8 +1049,52 @@ namespace DAL {  // Namespace DAL -- begin
     return offset;
   }
 
+  // -------------------------------------------------------------- alignment_reference_antenna
+  uint TBB_Timeseries::alignment_reference_antenna ()
+  {
+    // Store current antenna selection
+    std::set<std::string> selection = selectedDipoles();
+
+    // Select all dipoles to find overall best antenna for alignment
+    selectAllDipoles();
+
+    // Reference antenna for alignment
+    uint refAntenna = 0;
+    double current = 0.;
+
+    // Get TIME for each antenna
+    std::vector<uint> t = time();
+
+    // Get SAMPLE_NUMBER for each antenna
+    std::vector<uint> sn = sample_number();
+
+    // Get FREQUENCY_VALUE for each antenna
+    std::vector<double> f = sample_frequency_value();
+
+    // Find antenna that starts getting data last and use it as reference
+    double max = static_cast<double>(t[0])+(static_cast<double>(sn[0])/(f[0]*1.e6));
+
+    for (uint i=1; i<t.size(); ++i)
+    {
+      // WARNING this assumes frequency is in MHz this needs to be migrated
+      // to parrent class taking units into account.
+      current = static_cast<double>(t[i])+(static_cast<double>(sn[i])/(f[i]*1.e6));
+
+      if (current > max)
+      {
+        refAntenna = i;
+        max = current;
+      }
+    }
+
+    // Restore antenna selection
+    selectDipoles(selection);
+
+    return refAntenna;
+  }
+
   // -------------------------------------------------------------- maximum_read_length
-  uint TBB_Timeseries::maximum_read_length(uint const &refAntenna)
+  uint TBB_Timeseries::maximum_read_length (uint const &refAntenna)
   {
     std::vector<uint> length = data_length();
     std::vector<int> offset = sample_offset(refAntenna);
