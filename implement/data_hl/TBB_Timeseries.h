@@ -351,6 +351,8 @@ namespace DAL {  // Namespace DAL -- begin
     std::vector<std::string> sample_frequency_unit ();
     //! Time offset between the individual antennas in units of samples
     std::vector<int> sample_offset (uint const &refAntenna);
+    //! Maximum number of samples that can be read when offset with given reference antenna
+    uint maximum_read_length(uint const &refAntenna);
     //! Retrieve the list of channel IDs
     std::vector<int> channelID ();
     //! Get the Nyquist zone for the A/D conversion

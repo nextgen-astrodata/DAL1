@@ -1048,7 +1048,28 @@ namespace DAL {  // Namespace DAL -- begin
 
     return offset;
   }
-  
+
+  // -------------------------------------------------------------- maximum_read_length
+  uint TBB_Timeseries::maximum_read_length(uint const &refAntenna)
+  {
+    std::vector<uint> length = data_length();
+    std::vector<int> offset = sample_offset(refAntenna);
+
+    uint currentLength = 0;
+    uint maxLength = 0;
+
+    for (uint i=0; i<length.size(); ++i)
+    {
+      currentLength = length[i] - offset[i];
+
+      if (currentLength > maxLength)
+      {
+        maxLength = currentLength;
+      }
+    }
+
+    return maxLength;
+  }
 
   // ============================================================================
   //
