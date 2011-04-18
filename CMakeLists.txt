@@ -18,6 +18,7 @@ cmake_minimum_required (VERSION 2.8.3)
 ## ==============================================================================
 
 option (DOCUMENTATION_ONLY     "Configure for building documentation only?"  NO  )
+option (DAL_WITH_DOCUMENTATION "Generate documentation for the DAL?"         YES)
 option (DAL_SHARED_LIBRARY     "Build DAL as shared library?"                NO  )
 option (DAL_ENABLE_TESTING     "Build and enable test programs?"             YES )
 option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?"   ON  )
@@ -191,11 +192,13 @@ endif (dal_link_libraries)
 ##
 ## =============================================================================
 
-if (DOXYGEN_FOUND)
-  add_subdirectory (doc)
-else (DOXYGEN_FOUND)
-  message (STATUS "Skip generating documentstion - Doxygen not found!")
-endif (DOXYGEN_FOUND)
+if (DAL_WITH_DOCUMENTATION)
+  if (DOXYGEN_FOUND)
+    add_subdirectory (doc)
+  else (DOXYGEN_FOUND)
+    message (STATUS "Skip generating documentstion - Doxygen not found!")
+  endif (DOXYGEN_FOUND)
+endif (DAL_WITH_DOCUMENTATION)
 
 if (NOT DOCUMENTATION_ONLY)
   

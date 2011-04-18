@@ -181,6 +181,10 @@
       <td><tt>-D DAL_INSTALL_PREFIX=<path></tt></td>
     </tr>
     <tr>
+      <td>Generate documentation (API description and user's manual)</td>
+      <td>-D DAL_WITH_DOCUMENTATION={YES|NO}</td>
+    </tr>
+    <tr>
       <td>Enable/disable code debugging messages</td>
       <td><tt>-D DAL_WITH_MYSQL={YES|NO}</tt></td>
     </tr>
