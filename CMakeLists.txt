@@ -192,13 +192,13 @@ endif (dal_link_libraries)
 ##
 ## =============================================================================
 
+## Option: generate documentation?
+
 if (DAL_WITH_DOCUMENTATION)
-  if (DOXYGEN_FOUND)
-    add_subdirectory (doc)
-  else (DOXYGEN_FOUND)
-    message (STATUS "Skip generating documentstion - Doxygen not found!")
-  endif (DOXYGEN_FOUND)
+  add_subdirectory (doc)
 endif (DAL_WITH_DOCUMENTATION)
+
+## Option: only generate documentation?
 
 if (NOT DOCUMENTATION_ONLY)
   

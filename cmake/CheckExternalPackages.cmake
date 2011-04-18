@@ -122,13 +122,18 @@ endif (CMAKE_SIZEOF_VOID_P)
 
 ## ==============================================================================
 ##
-##  Python bindings
+##  Build options
 ##
 ## ==============================================================================
 
 if (NOT BOOST_FOUND)
   set (DAL_PYTHON_BINDINGS FALSE)
 endif (NOT BOOST_FOUND)
+
+if (NOT DOXYGEN_FOUND)
+  set (DAL_WITH_DOCUMENTATION FALSE)
+  message (STATUS "Skip generating documentstion - Doxygen not found!")
+endif (NOT DOXYGEN_FOUND)
 
 ## ==============================================================================
 ##
