@@ -31,12 +31,14 @@
 
 // DAL headers
 #include "pydal.h"
-#include <CommonAttributes.h>
-#include <CommonAttributesProject.h>
-#include <Filename.h>
-#include <HDF5Hyperslab.h>
-#include <Timestamp.h>
-#include <SAS_Settings.h>
+
+using DAL::CommonAttributes;
+using DAL::CommonAttributesProject;
+using DAL::CommonAttributesObservation;
+using DAL::Filename;
+using DAL::HDF5Hyperslab;
+using DAL::SAS_Settings;
+using DAL::Timestamp;
 
 //_____________________________________________________________________________
 //                                                             CommonAttributes

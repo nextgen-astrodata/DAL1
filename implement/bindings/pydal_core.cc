@@ -31,11 +31,13 @@
 
 // DAL headers
 #include "pydal.h"
-#include <dalArray.h>
-#include <dalData.h>
-#include <dalDataset.h>
-#include <dalGroup.h>
-#include <dalTable.h>
+
+// namespace usage
+using DAL::dalArray;
+using DAL::dalData;
+using DAL::dalDataset;
+using DAL::dalGroup;
+using DAL::dalTable;
 
 // ==============================================================================
 //
@@ -45,13 +47,44 @@
 
 void export_dalCommon ()
 {
-  def( "mjd2unix", &mjd2unix_boost,
+  def( "mjd2unix", &DAL::mjd2unix_boost,
        "Convert Modified Julian Date (mjd) to unix time.\n"
        "The Unix base date is MJD 40587 and 1 mjd Day = 24 hours \n"
        "or 1440 minutes or 86400 seconds so: \n"
        "(unix seconds) = (mjd seconds) - ( unix base date in seconds )." );
 //   def( "BigEndian", &BigEndian,
 //        "Test of the system is big endian." );
+}
+
+// ==============================================================================
+//
+//                                                                 dalConversions
+//
+// ==============================================================================
+
+namespace DAL {
+
+  /*!
+    - The Unix base date is MJD 40587.
+    - 1 mjd Day = 24 hours or 1440 minutes or 86400 seconds
+    - (unix seconds) = (mjd seconds) - ( unix base date in seconds )
+    
+    \param mjd_time The time as Modified Julian Date.
+  */
+bpl::numeric::array mjd2unix_boost ( bpl::numeric::array mjd_time )
+  {
+    int array_size           = bpl::len( mjd_time );
+    double unix_base_time    = 40587;
+    double seconds_per_day   = 86400;
+    double adjustment_factor = unix_base_time*seconds_per_day;
+
+    for ( int idx=0; idx < array_size; idx++ ) {
+      mjd_time[ idx ] = bpl::extract<double>( mjd_time[ idx ] ) - adjustment_factor;
+    }
+    
+    return mjd_time;
+  }
+
 }
 
 // ==============================================================================

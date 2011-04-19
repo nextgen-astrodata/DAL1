@@ -31,10 +31,11 @@
 
 // DAL headers
 #include "pydal.h"
-#include <Angle.h>
-#include <RaDec.h>
-#include <Stokes.h>
-#include <Coordinate.h>
+
+using DAL::Angle;
+using DAL::RaDec;
+using DAL::Stokes;
+using DAL::Coordinate;
 
 // ==============================================================================
 //

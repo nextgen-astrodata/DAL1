@@ -39,6 +39,13 @@
 #include <TBB_DipoleDataset.h>
 #include <LOPES_EventFile.h>
 
+using DAL::BeamFormed;
+using DAL::BeamGroup;
+using DAL::BF_BeamGroup;
+using DAL::LOPES_EventFile;
+using DAL::TBB_Timeseries;
+using DAL::TBB_DipoleDataset;
+using DAL::TBB_StationGroup;
 
 // ==============================================================================
 //

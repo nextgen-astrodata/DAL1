@@ -81,31 +81,5 @@ namespace DAL { // Namespace DAL -- begin
     // so (unix seconds) = (mjd seconds) - ( unix base date in seconds )
     return ( mjd_time - (40587.0 * 86400.0) );
   }
-
-  //_____________________________________________________________________________
-  //                                                               mjd2unix_boost
-  
-#ifdef PYTHON
-  /*!
-    - The Unix base date is MJD 40587.
-    - 1 mjd Day = 24 hours or 1440 minutes or 86400 seconds
-    - (unix seconds) = (mjd seconds) - ( unix base date in seconds )
-    
-    \param mjd_time The time as Modified Julian Date.
-  */
-  bpl::numeric::array mjd2unix_boost ( bpl::numeric::array mjd_time )
-  {
-    int array_size           = bpl::len( mjd_time );
-    double unix_base_time    = 40587;
-    double seconds_per_day   = 86400;
-    double adjustment_factor = unix_base_time*seconds_per_day;
-
-    for ( int idx=0; idx < array_size; idx++ ) {
-      mjd_time[ idx ] = bpl::extract<double>( mjd_time[ idx ] ) - adjustment_factor;
-    }
-    
-    return mjd_time;
-  }
-#endif
   
 } // Namespace DAL -- end

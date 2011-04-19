@@ -1,30 +1,27 @@
-/*------------------------------------------------------------------------*
-| $Id:: pywrapper.cc 4174 2010-02-17 11:48:38Z baehren                  $ |
-*-------------------------------------------------------------------------*
-***************************************************************************
-*   Copyright (C) 2007 by Joseph Masters                                  *
-*   jmasters@science.uva.nl                                               *
-*                                                                         *
-*   This program is free software; you can redistribute it and/or modify  *
-*   it under the terms of the GNU General Public License as published by  *
-*   the Free Software Foundation; either version 2 of the License, or     *
-*   (at your option) any later version.                                   *
-*                                                                         *
-*   This program is distributed in the hope that it will be useful,       *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
-*   GNU General Public License for more details.                          *
-*                                                                         *
-*   You should have received a copy of the GNU General Public License     *
-*   along with this program; if not, write to the                         *
-*   Free Software Foundation, Inc.,                                       *
-*   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
-***************************************************************************/
+/***************************************************************************
+ *   Copyright (C) 2007 by Joseph Masters                                  *
+ *   jmasters@science.uva.nl                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 
-#include <core/dalCommon.h>
+#ifndef PYDAL_H
+#define PYDAL_H
+
 #include "num_util.h"
-
-using namespace DAL;
 
 /*!
   \file pydal.h
@@ -42,13 +39,19 @@ using namespace DAL;
 
 // === core =====================================================================
 
-//! Bindings for the methods in dalCommon
-void export_dalCommon();
+#include <core/dalArray.h>
+#include <core/dalColumn.h>
+#include <core/dalData.h>
+#include <core/dalDataset.h>
+#include <core/dalGroup.h>
+#include <core/dalTable.h>
 
 //! Bindings for DAL::dalArray
 void export_dalArray ();
 //! Bindings for DAL::dalColumn
 void export_dalColumn ();
+//! Bindings for the methods in dalCommon
+void export_dalCommon();
 //! Bindings for DAL::dalData
 void export_dalData ();
 //! Bindings for DAL::dalDataset
@@ -60,6 +63,11 @@ void export_dalTable ();
 
 // === coordinates ==============================================================
 
+#include <coordinates/Angle.h>
+#include <coordinates/RaDec.h>
+#include <coordinates/Stokes.h>
+#include <coordinates/Coordinate.h>
+
 //! Bindings for DAL::Angle
 void export_Angle ();
 //! Bindings for DAL::RaDec
@@ -70,6 +78,13 @@ void export_Stokes ();
 void export_Coordinate ();
 
 // === data_common ==============================================================
+
+#include <data_common/CommonAttributes.h>
+#include <data_common/CommonAttributesProject.h>
+#include <data_common/Filename.h>
+#include <data_common/HDF5Hyperslab.h>
+#include <data_common/Timestamp.h>
+#include <data_common/SAS_Settings.h>
 
 //! Bindings for DAL::Filename
 void export_Filename ();
@@ -102,3 +117,5 @@ void export_TBB_StationGroup();
 void export_TBB_DipoleDataset();
 //! Bindings for DAL::LOPES_EventFile
 void export_LOPES_EventFile();
+
+#endif
