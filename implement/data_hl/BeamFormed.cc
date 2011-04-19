@@ -901,37 +901,4 @@ namespace DAL {
                                          data);
   }
 
-  // ============================================================================
-  //
-  //  Boost wrappers to allow some previously defined functions to be easily
-  //  called from a python prompt.
-  //
-  // ============================================================================
-
-#ifdef PYTHON
-
-  // ---------------------------------------------------------- summary_boost
-
-  void BeamFormed::summary_boost()
-  {
-    summary();
-  }
-
-  // ---------------------------------------------------------- beams_boost
-
-  bpl::list BeamFormed::beams_boost()
-  {
-    std::vector<std::string> beams_vec = beams();
-    return vector2list( beams_vec );
-  }
-
-  // ---------------------------------------------------------- source_boost
-
-  bpl::list BeamFormed::source_boost()
-  {
-    std::vector<std::string> source_vec = sources();
-    return vector2list( source_vec );
-  }
-#endif
-
 } // end namespace DAL

@@ -172,6 +172,121 @@ void export_TBB_DipoleDataset()
 //
 // ==============================================================================
 
+void BeamGroup::summary_boost()
+{
+  summary();
+}
+
+
+bpl::numeric::array BeamGroup::getIntensity_boost( int subband,
+						   int start,
+						   int length )
+{
+  float * values = NULL;
+  values = getIntensity( subband, start, length );
+  std::vector<int> mydims;
+  mydims.push_back( length );
+  bpl::numeric::array narray = num_util::makeNum( values, mydims );
+  delete [] values;
+  values = NULL;
+  return narray;
+}
+
+bpl::numeric::array BeamGroup::getIntensitySquared_boost( int subband,
+							  int start,
+							  int length )
+{
+  float * values = NULL;
+  values = getIntensitySquared( subband, start, length );
+  std::vector<int> mydims;
+  mydims.push_back( length );
+  bpl::numeric::array narray = num_util::makeNum( values, mydims );
+  delete [] values;
+  values = NULL;
+  return narray;
+}
+
+bpl::numeric::array BeamGroup::getSubbandData_X_boost( int subband,
+						       int start,
+						       int length )
+{
+  std::vector<std::complex<short> > values;
+  getSubbandData_X( subband, start, length, values );
+  
+  std::complex<float> * value_list;
+  value_list = new std::complex<float>[length];
+  
+  for (int ii=0; ii<length; ii++)
+    {
+      value_list[ii] = std::complex<float>(values[ii].real(),values[ii].imag());
+    }
+  std::vector<int> mydims;
+  mydims.push_back( length );
+  bpl::numeric::array narray = num_util::makeNum( value_list, mydims );
+  delete [] value_list;
+  value_list = NULL;
+  return narray;
+}
+
+bpl::numeric::array BeamGroup::getSubbandData_Y_boost( int subband,
+						       int start,
+						       int length )
+{
+  std::vector<std::complex<short> > values;
+  getSubbandData_Y( subband, start, length, values );
+  
+  std::complex<float> * value_list;
+  value_list = new std::complex<float>[length];
+  
+  for (int ii=0; ii<length; ii++)
+    {
+      value_list[ii] = std::complex<float>(values[ii].real(),values[ii].imag());
+    }
+  std::vector<int> mydims;
+  mydims.push_back( length );
+  bpl::numeric::array narray = num_util::makeNum( value_list, mydims );
+  delete [] value_list;
+  value_list = NULL;
+  return narray;
+}
+
+
+bpl::numeric::array BeamGroup::getSubbandData_XY_boost( int subband,
+							int start,
+							int length )
+{
+  std::vector< std::complex<short> > values_x;
+  std::vector< std::complex<short> >::iterator xvalit;
+  std::vector< std::complex<short> > values_y;
+  std::vector< std::complex<short> >::iterator yvalit;
+  values_x.clear();
+  values_y.clear();
+  getSubbandData_X( subband, start, length, values_x );
+  getSubbandData_Y( subband, start, length, values_y );
+  
+  bpl::list x_value_list;
+  bpl::list y_value_list;
+  bpl::list xy_value_list;
+  
+  for (xvalit=values_x.begin(); xvalit < values_x.end(); xvalit++)
+    {
+      std::complex<float> foo((*xvalit).real(),(*xvalit).imag());
+      x_value_list.append( foo );
+    }
+  for (yvalit=values_y.begin(); yvalit < values_y.end(); yvalit++)
+    {
+      std::complex<float> foo((*yvalit).real(),(*yvalit).imag());
+      y_value_list.append( foo );
+    }
+  
+  xy_value_list.append(x_value_list);
+  xy_value_list.append(y_value_list);
+  
+  bpl::numeric::array narray = num_util::makeNum( xy_value_list );
+  
+  return narray;
+}
+
 void export_BeamGroup ()
 {
   bpl::class_<BeamGroup>("BeamGroup")
@@ -200,8 +315,28 @@ void export_BeamGroup ()
     ;
 }
 
-//_______________________________________________________________________________
+// ==============================================================================
+//
 //                                                                     BeamFormed
+//
+// ==============================================================================
+
+void BeamFormed::summary_boost()
+{
+  summary();
+}
+
+bpl::list BeamFormed::beams_boost()
+{
+  std::vector<std::string> beams_vec = beams();
+  return vector2list( beams_vec );
+}
+
+bpl::list BeamFormed::source_boost()
+{
+  std::vector<std::string> source_vec = sources();
+  return vector2list( source_vec );
+}
 
 void export_BeamFormed ()
 {

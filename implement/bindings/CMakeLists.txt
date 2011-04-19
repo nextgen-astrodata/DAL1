@@ -3,7 +3,10 @@
   ##______________________________________________
   ## Source files with the wrapping code
 
-  file (GLOB pydal_sources *.cc)
+  file (GLOB pydal_sources 
+    *.cc
+    ${PROJECT_SOURCE_DIR}/implement/core/*.cc
+    )
   
   ##______________________________________________
   ## Compiler instructions
@@ -15,7 +18,6 @@
   endif (NUMPY_INCLUDES)
   
   add_library(pydal MODULE
-    ${dal_sources}
     ${pydal_sources}
     )
   
@@ -23,7 +25,7 @@
   ## linker instructions
 
   set (pydal_link_libraries
-    ${dal_link_libraries}
+    dal
     ${PYTHON_LIBRARIES}
     ${BOOST_LIBRARIES}
     ${LAPACK_LIBRARIES}
