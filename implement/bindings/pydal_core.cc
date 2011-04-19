@@ -61,6 +61,153 @@ void export_dalCommon ()
 //
 // ==============================================================================
 
+void DAL::dalArray::extend_boost (bpl::list pydims )
+{
+  std::vector<int> dims;
+  
+  for (int ii=0; ii<bpl::len(pydims); ii++) {
+    dims.push_back(bpl::extract<int>(pydims[ii]));
+  }
+  
+  extend( dims );
+}
+
+bool DAL::dalArray::setAttribute_char( std::string attrname,
+				       char data )
+{
+  return setAttribute( attrname, &data );
+}
+
+bool DAL::dalArray::setAttribute_short (std::string const &name,
+					short const &data)
+{
+  return HDF5Attribute::setAttribute (itsDatasetID, name, data);
+}
+
+bool DAL::dalArray::setAttribute_int (std::string const &name,
+				      int const &data)
+{
+  return HDF5Attribute::setAttribute (itsDatasetID, name, data);
+}
+
+bool DAL::dalArray::setAttribute_uint (std::string const &name,
+				       uint const &data)
+{
+  return HDF5Attribute::setAttribute (itsDatasetID, name, data);
+}
+
+bool DAL::dalArray::setAttribute_long (std::string const &name,
+				       long const &data)
+{
+  return HDF5Attribute::setAttribute (itsDatasetID, name, data);
+}
+
+bool DAL::dalArray::setAttribute_float (std::string const &name,
+					float const &data)
+{
+  return HDF5Attribute::setAttribute (itsDatasetID, name, data);
+}
+
+bool DAL::dalArray::setAttribute_double (std::string const &name,
+					 double const &data)
+{
+  return HDF5Attribute::setAttribute (itsDatasetID, name, data);
+}
+
+bool DAL::dalArray::setAttribute_string (std::string attrname,
+					 std::string data)
+{
+  return setAttribute( attrname, &data );
+}
+
+bool DAL::dalArray::setAttribute_char_vector (std::string attrname, bpl::list data )
+{
+  int size = bpl::len(data);
+  std::vector<char> mydata;
+  
+  for (int ii=0; ii<bpl::len(data); ii++)
+    mydata.push_back(bpl::extract<char>(data[ii]));
+  
+  return setAttribute (attrname, reinterpret_cast<char*>(&mydata[0]), size );
+}
+
+bool DAL::dalArray::setAttribute_short_vector (std::string attrname, bpl::list data )
+{
+  int size = bpl::len(data);
+  std::vector<short> mydata;
+  
+  for (int ii=0; ii<bpl::len(data); ii++)
+    mydata.push_back(bpl::extract<short>(data[ii]));
+  
+  return setAttribute (attrname, reinterpret_cast<short*>(&mydata[0]), size );
+}
+
+bool DAL::dalArray::setAttribute_int_vector (std::string attrname, bpl::list data )
+{
+  int size = bpl::len(data);
+  std::vector<int> mydata;
+  
+  for (int ii=0; ii<bpl::len(data); ii++)
+    mydata.push_back(bpl::extract<int>(data[ii]));
+  
+  return setAttribute (attrname, reinterpret_cast<int*>(&mydata[0]), size );
+}
+
+bool DAL::dalArray::setAttribute_uint_vector (std::string attrname, bpl::list data )
+{
+  int size = bpl::len(data);
+  std::vector<uint> mydata;
+  
+  for (int ii=0; ii<bpl::len(data); ii++)
+    mydata.push_back(bpl::extract<uint>(data[ii]));
+  
+  return setAttribute (attrname, reinterpret_cast<uint*>(&mydata[0]), size );
+}
+
+bool DAL::dalArray::setAttribute_long_vector (std::string attrname, bpl::list data )
+{
+  int size = bpl::len(data);
+  std::vector<long> mydata;
+  
+  for (int ii=0; ii<bpl::len(data); ii++)
+    mydata.push_back(bpl::extract<long>(data[ii]));
+  
+  return setAttribute (attrname, reinterpret_cast<long*>(&mydata[0]), size );
+}
+
+bool DAL::dalArray::setAttribute_float_vector (std::string attrname, bpl::list data )
+{
+  int size = bpl::len(data);
+  std::vector<float> mydata;
+  
+  for (int ii=0; ii<bpl::len(data); ii++)
+    mydata.push_back(bpl::extract<float>(data[ii]));
+  
+  return setAttribute (attrname, reinterpret_cast<float*>(&mydata[0]), size );
+}
+
+bool DAL::dalArray::setAttribute_double_vector (std::string attrname, bpl::list data )
+{
+  int size = bpl::len(data);
+  std::vector<double> mydata;
+  
+  for (int ii=0; ii<bpl::len(data); ii++)
+    mydata.push_back(bpl::extract<double>(data[ii]));
+  
+  return setAttribute (attrname, reinterpret_cast<double*>(&mydata[0]), size );
+}
+
+bool DAL::dalArray::setAttribute_string_vector (std::string attrname, bpl::list data )
+{
+  int size = bpl::len(data);
+  std::vector<std::string> mydata;
+  
+  for (int ii=0; ii<bpl::len(data); ii++)
+    mydata.push_back(bpl::extract<std::string>(data[ii]));
+  
+  return setAttribute (attrname, reinterpret_cast<std::string*>(&mydata[0]), size );
+}
+
 void export_dalArray ()
 {  
   bpl::class_<dalArray>("dalArray")
