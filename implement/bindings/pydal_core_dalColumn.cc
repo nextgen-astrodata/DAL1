@@ -24,7 +24,7 @@
   \ingroup DAL
   \ingroup pydal
 
-  \brief Python bindings for the dalColumn class
+  \brief Python bindings for the DAL::dalColumn class
 
   \author Lars B&auml;hren
 */
