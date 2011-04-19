@@ -213,8 +213,8 @@ namespace DAL { // Namespace DAL -- begin
 	  datatype = H5Aget_type(attribute);
 	  /* Feedback */
 	  std::cout << "index=" << n 
-		    << ", objectType=" << objectType(attribute)
-		    << ", objectName=" << objectName(attribute)
+ 		    << ", objectType=" << HDF5Object::objectType(attribute)
+		    << ", objectName=" << HDF5Object::objectName(attribute)
 		    << ", attribute="  << attribute
 		    << ", datatype="   << HDF5Datatype::datatypeName(attribute)
 		    << ", dataclass="  << HDF5Object::datatypeClass(attribute)

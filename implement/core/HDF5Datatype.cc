@@ -334,21 +334,20 @@ namespace DAL { // Namespace DAL -- begin
   */
   std::string HDF5Datatype::datatypeName (hid_t const &id)
   {
-    std::string name                         = "UNDEFINED";
+    H5I_type_t otype    = HDF5Object::objectType (id);
+    hid_t datatype      = 0;
+    std::string name    = "UNDEFINED";
     std::map<hid_t,std::string> typesMap     = datatypesMap();
     std::map<hid_t,std::string>::iterator it = typesMap.find(id);
-
+    
     /*________________________________________________________________
-      If the type cannot be identified using the types-map, check if 
-      the provided identifier points to an HDF5 object; it the latter
-      is the case, try retrieving its datatype before converting that
-      into a name.
-     */
+      Depending on the inspected HDF5 object, we need to extract the
+      identifier for the datatype first.
+    */
 
     if (it==typesMap.end()) {
 
-      H5I_type_t otype = HDF5Object::objectType (id);
-      hid_t datatype   = 0;
+      /* Unable to find datatype class directly ... */
 
       switch (otype) {
       case H5I_ATTR:
@@ -360,7 +359,7 @@ namespace DAL { // Namespace DAL -- begin
 	name     = datatypeName(datatype);
 	break;
       default:
-	std::cout << "[HDF5Datatype::datatypeName]"
+	std::cerr << "[HDF5Datatype::datatypeName]"
 		  << " Unable to determine datatype to retrieve name!"
 		  << std::endl;
 	break;
@@ -372,6 +371,5 @@ namespace DAL { // Namespace DAL -- begin
     
     return name;
   }
-  
   
 } // Namespace DAL -- end
