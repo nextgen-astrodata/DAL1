@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2010                                                    *
+ *   Copyright (C) 2011                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *

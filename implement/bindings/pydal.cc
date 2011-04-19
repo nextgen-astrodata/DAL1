@@ -22,6 +22,9 @@
 
 #include "pydal.h"
 
+#define PY_ARRAY_UNIQUE_SYMBOL PyArrayHandle
+#define NO_IMPORT_ARRAY
+
 /*!
   \file pydal.cc
 
