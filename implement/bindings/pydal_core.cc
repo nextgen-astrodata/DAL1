@@ -32,7 +32,6 @@
 // DAL headers
 #include "pydal.h"
 #include <dalArray.h>
-#include <dalColumn.h>
 #include <dalData.h>
 #include <dalDataset.h>
 #include <dalGroup.h>
@@ -250,52 +249,6 @@ void export_dalArray ()
     .def( "close", &dalArray::close,
           "Close an array." )
     ;
-}
-
-// ==============================================================================
-//
-//                                                                      dalColumn
-//
-// ==============================================================================
-
-void export_dalColumn ()
-{
-  bpl::class_<dalColumn>("dalColumn")
-    .def( bpl::init<>())
-    .def( bpl::init<string>())
-    .def( bpl::init<string,string>())
-    .def( "addMember", &dalColumn::addMember,
-	  "This method is useful for hdf5 files when creating a column \n"
-	  "with a compound datatype.  For example, use this method if an \n"
-	  "individual column needs to contain an int, a float, and a short." )
-    .def( "getName", &dalColumn::getName,
-	  "Return the name of the column." )
-    .def( "getSize", &dalColumn::getSize,
-	  "Return the size of the column for any 'normal'\n"
-	  "type (i.e. not compound)." )
-    .def( "data", &dalColumn::data_boost1,
-	  "Returns the column data into a numpy array.  With no parameters \n"
-	  "it tries to return the entire column." )
-    .def( "data", &dalColumn::data_boost2,
-	  "Returns the column data into a numpy array.  With one parameter, it \n"
-	  "returns N elements [data(N)]." )
-    .def( "data", &dalColumn::data_boost3,
-	  "Returns the column data into a numpy array.  With three parameters, \n"
-	  "it returns N elements beginning at offset O [data(O,N)]." )
-#ifdef DAL_WITH_CASA
-    .def( "getDataType", &dalColumn::getDataType,
-	  "Return the datatype of the column (casa only)." )
-    .def( "ndims", &dalColumn::ndims,
-	  "Return the number of column dimensions. (casa only)" )
-    .def( "shape", &dalColumn::shape_boost,
-	  "Return the shape of the column (casa only)" )
-    .def( "isScalar", &dalColumn::isScalar,
-	  "Returns true of the column is a scalar type." )
-    .def( "isArray", &dalColumn::isArray,
-	  "Returns true of the column is an array type." )
-#endif
-    ;
-  
 }
 
 // ==============================================================================
