@@ -112,8 +112,9 @@ int test_static_functions ()
     std::cout << "-- nof. datatypes = " << nofDatatypes << std::endl;
 
     for (unsigned int n=0; n<nofDatatypes; ++n) {
-      cout << " [ " 
-	   << types[n]
+      cout << " [ "
+	   << n
+	   << "  ->  " << types[n]
 	   << "  ->  " << HDF5Datatype::datatype(types[n])
 	   << "  ->  " << HDF5Datatype::datatypeName(types[n])
 	   << " ]" 
