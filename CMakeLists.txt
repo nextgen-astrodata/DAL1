@@ -246,7 +246,7 @@ add_custom_target (release
   COMMAND git add ${PROJECT_SOURCE_DIR}/CMakeLists.txt
   COMMAND git commit -m "DAL release, version ${DAL_VERSION}"
   COMMAND git tag -a v${DAL_VERSION} -m "DAL release, version ${DAL_VERSION}"
-  COMMAND git push --tags
+  COMMAND git push origin --tags
   COMMAND git push origin release
   COMMAND make package_source
   WORKING_DIRECTORY ${DAL_BUILD_DIR}
