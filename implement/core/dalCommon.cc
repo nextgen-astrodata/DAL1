@@ -760,6 +760,7 @@ namespace DAL {
 	  }
 	}
 	else {
+    // Allocate memory for buffer
     buffer = new char[datatype_size];
 	
 	  h5error = H5Aread(attribute_id,
@@ -768,6 +769,9 @@ namespace DAL {
 
 	  std::string tmp(buffer, datatype_size);
     value = tmp;
+
+    // Free memory buffer
+    delete buffer;
 	}
 
 	// // release allocated memory
@@ -782,7 +786,7 @@ namespace DAL {
     if (H5Iis_valid(datatype_id))        { H5Tclose (datatype_id);        }
     // clean up the error message buffer
     h5error = H5Eclear1();
-    
+
     return status;
   }
   

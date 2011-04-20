@@ -213,6 +213,7 @@ namespace DAL { // Namespace DAL -- begin
 
     virtual ~HDF5CommonInterface () {
       attributes_p.clear();
+      destroy();
     };
 
     // === Operators ============================================================
