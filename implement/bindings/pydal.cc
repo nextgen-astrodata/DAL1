@@ -45,6 +45,7 @@ BOOST_PYTHON_MODULE(pydal)
     "Routines for python bindings to the data access library (DAL)."
     ;
   
+  Py_Initialize();
   import_array();
   bpl::numeric::array::set_module_and_type("numpy", "ndarray");
     

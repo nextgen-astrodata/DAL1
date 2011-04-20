@@ -3,10 +3,7 @@
   ##______________________________________________
   ## Source files with the wrapping code
 
-  file (GLOB pydal_sources 
-    *.cc
-    ${PROJECT_SOURCE_DIR}/implement/core/*.cc
-    )
+  file (GLOB pydal_sources *.cc )
   
   ##______________________________________________
   ## Compiler instructions
