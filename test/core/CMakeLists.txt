@@ -63,17 +63,17 @@ endif (dataset_tbb AND dataset_beamformed)
 
 ## tHDF5Object ___________________________________
 
-if (EXISTS ${HAVE_tHDF5Object.h5})
+if (HAVE_tHDF5Object.h5)
   add_test (tHDF5Object    tHDF5Object    ${HAVE_tHDF5Object.h5} )
   add_test (tHDF5Attribute tHDF5Attribute ${HAVE_tHDF5Object.h5} )
   add_test (tHDF5Dataspace tHDF5Dataspace ${HAVE_tHDF5Object.h5} )
   add_test (tHDF5Datatype  tHDF5Datatype  ${HAVE_tHDF5Object.h5} )
-else (EXISTS ${HAVE_tHDF5Object.h5})
+else (HAVE_tHDF5Object.h5)
   add_test (tHDF5Object    tHDF5Object    )
   add_test (tHDF5Attribute tHDF5Attribute )
   add_test (tHDF5Dataspace tHDF5Dataspace )
   add_test (tHDF5Datatype  tHDF5Datatype  )
-endif (EXISTS ${HAVE_tHDF5Object.h5})
+endif (HAVE_tHDF5Object.h5)
 
 ## tdalDataset ___________________________________
 
