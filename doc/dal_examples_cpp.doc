@@ -7,7 +7,7 @@
     <li>\ref dal_coding_dalTable
   </ul>
 
-\section dal_compile_link Compile and link against the DAL
+  \section dal_compile_link Compile and link against the DAL
 
 <ol>
   <li>The minimum include statement to be put into your code if you want to use

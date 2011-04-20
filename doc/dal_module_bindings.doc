@@ -7,12 +7,6 @@
   \ingroup DAL
   \brief Python bindings to the C++ library
 
-  <ul>
-    <li>\ref dal_bindings_code
-    <li>\ref dal_bindings_new
-    <li>\ref dal_bindings_usage
-  </ul>
-
   \section dal_bindings_code Organization of the source code
 
   The major portion of the code to generate the Python bindings to the
@@ -103,40 +97,4 @@ void export_Angle ()
     DAL::Angle is part of the \e coordinates module.
   </ol>
     
-  \section dal_bindings_usage Usage of the Python bindings    
-
-  Typical python usage of the <b><i>pydal</i></b> module might look like this:
-
-<ol>
-  <li>Working with a MeasurementSet:
-  \code
-  import sys
-  import pydal as dal
-  from pylab import *
-
-  msds= dal.dalDataset()
-  if ( msds.open(sys.argv[1]) ):
-	sys.exit(1)
-
-  tablename = "MAIN";
-
-  msds.setFilter("UVW")
-  title("UV coverage for\n" + sys.argv[1] )
-
-  maintable = msds.openTable( tablename )
-
-  # get the UVW column
-  uvw_column = maintable.getColumn("UVW")
-
-  # get the data from the column
-  data = uvw_column.data()
-
-  # plot the data
-  xlabel("U(-U)")
-  ylabel("V(-V)")
-  plot(data[0],data[1],'r,',-(data[0]),-(data[1]),'b,')
-  show()
-  \endcode
-</ol>
-
 */
