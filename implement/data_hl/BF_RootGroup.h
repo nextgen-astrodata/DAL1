@@ -166,7 +166,7 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Construction =========================================================
     
-    //! Default constructor
+    //! Argumented constructor to open existing file
     BF_RootGroup (std::string const &filename);
     
     //! Argumented constructor
