@@ -85,34 +85,36 @@ int test_static_functions ()
     Test 1: 
   */
 
-  cout << "[1] Retrieve overview of datatypes ..." << endl;
+  cout << "[1] Get map of recognized dataypes ..." << endl;
   try {
     std::map<hid_t,std::string>::iterator it;
     std::map<hid_t,std::string> typesMap = HDF5Datatype::datatypesMap();
-    std::vector<hid_t>          types    = HDF5Datatype::datatypes();
     //
     for (it=typesMap.begin(); it!=typesMap.end(); ++it) {
       cout << " [ " << it->first << "  ->  " << it->second << " ]" << endl;
     }
     //
     typesMap.clear();
-    types.clear();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
 
   /*__________________________________________________________________
-    Test 2: 
+    Test 2: Get names for datatypes
   */
-
+  
   cout << "[2] Query datatypes ..." << endl;
   try {
-    std::vector<hid_t> types = HDF5Datatype::datatypes();
+    std::vector<hid_t> types  = HDF5Datatype::datatypes();
+    unsigned int nofDatatypes = types.size();
 
-    for (unsigned int n=0; n<types.size(); ++n) {
-      cout << " [ " 
-	   << types[n]
+    std::cout << "-- nof. datatypes = " << nofDatatypes << std::endl;
+
+    for (unsigned int n=0; n<nofDatatypes; ++n) {
+      cout << " [ "
+	   << n
+	   << "  ->  " << types[n]
 	   << "  ->  " << HDF5Datatype::datatype(types[n])
 	   << "  ->  " << HDF5Datatype::datatypeName(types[n])
 	   << " ]" 

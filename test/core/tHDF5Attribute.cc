@@ -437,11 +437,11 @@ int main (int argc, char *argv[])
     // Test for static methods
     nofFailedTests += test_static_functions (fileID);
 
-    // Test usage of basic HDF5 library functions
-    nofFailedTests += test_H5Aread (fileID);
+//     // Test usage of basic HDF5 library functions
+//     nofFailedTests += test_H5Aread (fileID);
 
-    // Test for the constructor(s)
-    nofFailedTests += test_constructors (fileID);
+//     // Test for the constructor(s)
+//     nofFailedTests += test_constructors (fileID);
     
   } else {
     std::cerr << "[tHDF5Attribute] Failed to open file " << filename << endl;
