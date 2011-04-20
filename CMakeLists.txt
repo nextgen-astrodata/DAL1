@@ -18,14 +18,17 @@ cmake_minimum_required (VERSION 2.8.3)
 ## ==============================================================================
 
 option (DOCUMENTATION_ONLY     "Configure for building documentation only?"  NO  )
-option (DAL_WITH_DOCUMENTATION "Generate documentation for the DAL?"         YES)
+option (DAL_WITH_DOCUMENTATION "Generate documentation for the DAL?"         YES )
 option (DAL_SHARED_LIBRARY     "Build DAL as shared library?"                NO  )
 option (DAL_ENABLE_TESTING     "Build and enable test programs?"             YES )
-option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?"   ON  )
+option (DAL_COMPILER_WARNINGS  "Enable standard set of compiler warnings?"   YES )
 option (DAL_PYTHON_BINDINGS    "Create python bindings?"                     YES )
 option (DAL_DEBUGGING_MESSAGES "Print debugging information?"                NO  )
 option (DAL_VERBOSE_CONFIGURE  "Verbose output during configuration?"        NO  )
 option (DAL_WITH_MYSQL         "Build with support for MySQL database?"      NO  )
+
+find_program (HOSTNAME_CMD NAMES hostname)
+exec_program (${HOSTNAME_CMD} ARGS OUTPUT_VARIABLE CMAKE_SYSTEM_HOSTNAME)
 
 ##__________________________________________________________
 ## Handle option: testing mode
@@ -263,9 +266,12 @@ message (STATUS "=============================================================="
 message (STATUS "  DAL: Summary of configuration settings                      "   )
 message (STATUS "+------------------------------------------------------------+"   )
 message (STATUS " System configuration:"                                           )
-message (STATUS " .. CMAKE_VERSION                = ${CMAKE_VERSION}"              )
-message (STATUS " .. CMAKE_SYSTEM                 = ${CMAKE_SYSTEM}"               )
-message (STATUS " .. CMAKE_SYSTEM_PROCESSOR       = ${CMAKE_SYSTEM_PROCESSOR}"     )
+message (STATUS " .. Hostname                     = ${CMAKE_SYSTEM_HOSTNAME}"      )
+message (STATUS " .. Processor type               = ${CMAKE_SYSTEM_PROCESSOR}"     )
+message (STATUS " .. CMake version                = ${CMAKE_VERSION}"              )
+message (STATUS " .. System name                  = ${CMAKE_SYSTEM}"               )
+message (STATUS " .. C++ compiler                 = ${CMAKE_CXX_COMPILER}"         )
+message (STATUS " .. C compiler                   = ${CMAKE_C_COMPILER}"           )
 message (STATUS " Installation configuration:"                                     )
 message (STATUS " .. DAL_VERSION                  = ${DAL_VERSION}"                )
 message (STATUS " .. DAL_INSTALL_PREFIX           = ${DAL_INSTALL_PREFIX}"         )
