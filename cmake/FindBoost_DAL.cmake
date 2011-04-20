@@ -39,25 +39,26 @@ if (NOT BOOST_FOUND)
 
   ## Locations where to search for Boost
   list (APPEND BOOST_ROOT_DIR
-    /opt
-    /opt/local
     /sw
     /usr
     /usr/local
-    /usr/X11R6
+    /opt
+    /opt/local
     /opt/casa/local
     /app/usg
+    ${CMAKE_INSTALL_PREFIX}
     )
-
+  
   ## Exclude automatic searching of system paths
   set(Boost_NO_SYSTEM_PATHS TRUE)
-
+  
   ## Initialization: Version and multithreading ____________
   
   set (BOOST_VERSION_MAJOR  0      )
   set (BOOST_VERSION_MINOR  0      )
   set (BOOST_VERSION_PATCH  0      )
   set (Boost_BASE_VERSION   "1.40" )
+  set (Boost_ADDITIONAL_VERSIONS "1.44.0" "1.45.0" "1.46.0" "1.46.1")
 
   ## Enable/diable verbosity mode __________________________
   
@@ -69,35 +70,15 @@ if (NOT BOOST_FOUND)
   
   ## Prefer static libraries _______________________________
 
-  set (Boost_USE_STATIC_LIBS    ON )
-  set (Boost_USE_STATIC_RUNTIME ON )
+  set (Boost_USE_STATIC_LIBS    NO  )
+  set (Boost_USE_STATIC_RUNTIME YES )
 
   ## Initialization: Boost modules to search for ___________
 
   set (BOOST_MODULES
-    date_time
-    filesystem
-#    graph
-    iostreams
-    math_c99
-    math_c99f
-    math_c99l
-    math_tr1
-    math_tr1f
-    math_tr1l
-    prg_exec_monitor
     program_options
     python
-#    random
-    regex
-    serialization
-    signals
-    system
-    test_exec_monitor
     thread
-    unit_test_framework
-    wave
-    wserialization
     )
   
   ##_____________________________________________________________________________
@@ -107,7 +88,7 @@ if (NOT BOOST_FOUND)
 
     ## Call to the CMake's standard FindBoost.cmake module
     find_package (Boost ${Boost_BASE_VERSION} COMPONENTS ${BOOST_MODULES})
-
+    
     if (Boost_FOUND)
       ## Map basic variables ...
       set (HAVE_BOOST       ${Boost_FOUND}        )
@@ -117,6 +98,12 @@ if (NOT BOOST_FOUND)
       ## ... and exit the search
       break ()
     endif (Boost_FOUND)
+
+    ## reset variables
+
+    set (Boost_FOUND "")
+    set (Boost_LIBRARIES "")
+    set (Boost_INCLUDE_DIRS "")
 
   endforeach (BOOST_ROOT)
   

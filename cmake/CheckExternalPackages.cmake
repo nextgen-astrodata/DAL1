@@ -90,7 +90,10 @@ foreach (_dalcmake ${_cmakeModules} )
     set (DAL_WITH_${_cmakeModuleVariable}  TRUE )
     
     ## include directories
-    include_directories (${${_cmakeModuleVariable}_INCLUDES})
+    if (${_cmakeModuleVariable}_INCLUDES)
+      include_directories (${${_cmakeModuleVariable}_INCLUDES})
+    endif (${_cmakeModuleVariable}_INCLUDES)
+    
     if (${_cmakeModuleVariable}_INCLUDE_PATH)
       include_directories (${${_cmakeModuleVariable}_INCLUDE_PATH})
     endif (${_cmakeModuleVariable}_INCLUDE_PATH)

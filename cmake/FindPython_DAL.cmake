@@ -107,8 +107,9 @@ if (NOT PYTHON_FOUND)
     ## Python packages
     
     set (PYTHON_SITE_PACKAGES_DIR
-      ${CMAKE_INSTALL_PREFIX}/lib/python${_pythonRelease}/site-packages
+      /usr/lib/pyshared/python${_pythonRelease}
       /sw/lib/python${_pythonRelease}/site-packages
+      ${CMAKE_INSTALL_PREFIX}/lib/python${_pythonRelease}/site-packages
       )
 
     set (NUMPY_ROOT_DIR ${PYTHON_SITE_PACKAGES_DIR})

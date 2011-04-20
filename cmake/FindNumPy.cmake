@@ -29,6 +29,7 @@
 if (NOT NUMPY_FOUND)
   
   set (NUMPY_FOUND FALSE)
+  set (NUMPY_INCLUDES "")
 
   if (NOT NUMPY_ROOT_DIR)
     set (NUMPY_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
@@ -37,7 +38,7 @@ if (NOT NUMPY_FOUND)
   ##_____________________________________________________________________________
   ## Check for the header files
   
-  find_path (NUMPY_INCLUDES numpy/arrayobject.h numpy/ndarrayobject.h
+  find_path (NUMPY_NUMPYCONFIG_H numpy/_numpyconfig.h
     HINTS ${NUMPY_ROOT_DIR}
     PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES
@@ -47,7 +48,13 @@ if (NOT NUMPY_FOUND)
     python/numpy/core/include
     numpy/core/include
     site-packages/numpy/core/include
+    NO_DEFAULT_PATH
     )
+
+  if (NUMPY_NUMPYCONFIG_H)
+    list (APPEND NUMPY_INCLUDES ${NUMPY_NUMPYCONFIG_H})
+    list (APPEND NUMPY_INCLUDES ${NUMPY_NUMPYCONFIG_H}/numpy)
+  endif (NUMPY_NUMPYCONFIG_H)
   
   ##_____________________________________________________________________________
   ## Check for the library
@@ -55,14 +62,14 @@ if (NOT NUMPY_FOUND)
   ## temporarily remove "lib" prefix when searching for the modules
   set (_numpyLibPrefixes ${CMAKE_FIND_LIBRARY_PREFIXES})
   set (CMAKE_FIND_LIBRARY_PREFIXES "")
-
+  
   set (NUMPY_LIBRARIES "")
-
+  
   foreach (_numpy_lib multiarray scalarmath)
     
     ## Convert library name to CMake variable
     string (TOUPPER ${_numpy_lib} _numpy_var)
-
+    
     ## Search for the library
     find_library (NUMPY_${_numpy_var}_LIBRARY ${_numpy_lib}
       HINTS ${NUMPY_ROOT_DIR}
