@@ -49,7 +49,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>Representations of World Coordinates. LOFAR-USG-ICD-002.
+      <li>\ref dal_icd_002
     </ul>
     
     <h3>Synopsis</h3>
