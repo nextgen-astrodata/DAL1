@@ -1,9 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 logdir=Testing/Temporary
 logfile=$logdir/LastTest.log
 FILES="tdalFilter test_std_cerr"
-#FILES="tHDF5Attribute tHDF5Dataset tBF_StokesDataset"
 
 ## ==============================================================================
 ##
