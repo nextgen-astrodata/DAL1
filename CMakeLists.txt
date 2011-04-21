@@ -5,7 +5,7 @@ project (DAL)
 ## Project release version
 set (DAL_VERSION_MAJOR 0)
 set (DAL_VERSION_MINOR 1)
-set (DAL_VERSION_PATCH 6)
+set (DAL_VERSION_PATCH 7)
 set (DAL_VERSION "${DAL_VERSION_MAJOR}.${DAL_VERSION_MINOR}.${DAL_VERSION_PATCH}")
 
 ## Minimum required version of CMake to configure the project
@@ -249,8 +249,8 @@ add_custom_target (release
   COMMAND git add ${PROJECT_SOURCE_DIR}/CMakeLists.txt
   COMMAND git commit -m "DAL release, version ${DAL_VERSION}"
   COMMAND git tag -a v${DAL_VERSION} -m "DAL release, version ${DAL_VERSION}"
-  COMMAND git push origin --tags
-  COMMAND git push origin release
+  COMMAND git push github --tags
+  COMMAND git push github release
   COMMAND make package_source
   WORKING_DIRECTORY ${DAL_BUILD_DIR}
   COMMENT "... preparing DAL release, version ${DAL_VERSION} ..."
