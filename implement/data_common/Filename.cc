@@ -116,10 +116,10 @@ namespace DAL { // Namespace DAL -- begin
   void Filename::copy (Filename const &other)
   {
     observationID_p       = other.observationID_p;
-    optionalDescription_p = other.optionalDescription_p;
-    filetype_p            = other.filetype_p;
+    itsOptionalDescriptor = other.itsOptionalDescriptor;
+    itsFiletype           = other.itsFiletype;
     extension_p           = other.extension_p;
-    path_p                = other.path_p;
+    itsPath                = other.itsPath;
   }
 
   // ============================================================================
@@ -142,7 +142,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   void Filename::setOptionalDescription (std::string const &optionalDescription)
   {
-    optionalDescription_p = optionalDescription;
+    itsOptionalDescriptor = optionalDescription;
   }
   
   //_____________________________________________________________________________
@@ -155,8 +155,8 @@ namespace DAL { // Namespace DAL -- begin
   {
     os << "[Filename] Summary of internal parameters."          << std::endl;
     os << "-- Observation ID       = " << observationID_p       << std::endl;
-    os << "-- Optional description = " << optionalDescription_p << std::endl;
-    os << "-- File type            = " << getName(filetype_p)   << std::endl;
+    os << "-- Optional description = " << itsOptionalDescriptor << std::endl;
+    os << "-- File type            = " << getName(itsFiletype)   << std::endl;
     os << "-- File extension       = " << getName(extension_p)  << std::endl;
     os << "-- Filename             = " << filename()            << std::endl;
     os << "-- File path            = " << path()                << std::endl;
@@ -174,10 +174,10 @@ namespace DAL { // Namespace DAL -- begin
   void Filename::init ()
   {
     observationID_p       = "";
-    optionalDescription_p = "";
-    filetype_p            = Filename::uv;
+    itsOptionalDescriptor = "";
+    itsFiletype           = Filename::uv;
     extension_p           = Filename::h5;
-    path_p                = "";
+    itsPath               = "";
   }
 
   //_____________________________________________________________________________
@@ -190,20 +190,20 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::string name ("");
 
-    if (fullpath && path_p != "") {
-      name += path_p;
+    if (fullpath && itsPath != "") {
+      name += itsPath;
       name += "/";
     }
 
     /* Construct the actual filename out of the individual components */
     name += "L";
     name += observationID_p;
-    if (optionalDescription_p != "") {
+    if (itsOptionalDescriptor != "") {
       name += "_";
-      name += optionalDescription_p;
+      name += itsOptionalDescriptor;
     }
     name += "_";
-    name += getName(filetype_p);
+    name += getName(itsFiletype);
     name += ".";
     name += getName (extension_p);
 
