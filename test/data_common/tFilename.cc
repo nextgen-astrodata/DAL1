@@ -52,6 +52,8 @@ int test_constructors ()
   cout << "\n[tFilename::test_constructors]\n" << endl;
 
   int nofFailedTests (0);
+  std::string observationID       = "1234567890";
+  std::string optionalDescription = "TBBraw";
   std::string path ("/tmp/lofarsoft");
   
   cout << "[1] Testing default constructor ..." << endl;
@@ -66,8 +68,8 @@ int test_constructors ()
   
   cout << "[2] Testing argumented constructor ..." << endl;
   try {
-    Filename file ("1234567890",
-		   "TBBraw",
+    Filename file (observationID,
+		   optionalDescription,
 		   Filename::tbb,
 		   Filename::h5);
     //
@@ -79,8 +81,8 @@ int test_constructors ()
   
   cout << "[3] Testing argumented constructor ..." << endl;
   try {
-    Filename file ("1234567890",
-		   "TBBraw",
+    Filename file (observationID,
+		   optionalDescription,
 		   Filename::tbb,
 		   Filename::h5,
 		   path);
@@ -93,8 +95,8 @@ int test_constructors ()
   
   cout << "[4] Testing copy constructor ..." << endl;
   try {
-    Filename file1 ("1234567890",
-		    "TBBraw",
+    Filename file1 (observationID,
+		    optionalDescription,
 		    Filename::tbb,
 		    Filename::h5,
 		    path);

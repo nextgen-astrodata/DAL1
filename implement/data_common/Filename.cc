@@ -118,7 +118,7 @@ namespace DAL { // Namespace DAL -- begin
     observationID_p       = other.observationID_p;
     itsOptionalDescriptor = other.itsOptionalDescriptor;
     itsFiletype           = other.itsFiletype;
-    extension_p           = other.extension_p;
+    itsExtension           = other.itsExtension;
     itsPath                = other.itsPath;
   }
 
@@ -157,7 +157,7 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- Observation ID       = " << observationID_p       << std::endl;
     os << "-- Optional description = " << itsOptionalDescriptor << std::endl;
     os << "-- File type            = " << getName(itsFiletype)   << std::endl;
-    os << "-- File extension       = " << getName(extension_p)  << std::endl;
+    os << "-- File extension       = " << getName(itsExtension)  << std::endl;
     os << "-- Filename             = " << filename()            << std::endl;
     os << "-- File path            = " << path()                << std::endl;
   }
@@ -176,7 +176,7 @@ namespace DAL { // Namespace DAL -- begin
     observationID_p       = "";
     itsOptionalDescriptor = "";
     itsFiletype           = Filename::uv;
-    extension_p           = Filename::h5;
+    itsExtension           = Filename::h5;
     itsPath               = "";
   }
 
@@ -205,7 +205,7 @@ namespace DAL { // Namespace DAL -- begin
     name += "_";
     name += getName(itsFiletype);
     name += ".";
-    name += getName (extension_p);
+    name += getName (itsExtension);
 
     return name;
   }

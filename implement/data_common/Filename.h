@@ -171,7 +171,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Marker for the contents of the file
     Filename::FileType itsFiletype;
     //! Extension of the file
-    Filename::FileExtension extension_p;
+    Filename::FileExtension itsExtension;
     //! Path to the location of the file
     std::string itsPath;
     
@@ -239,17 +239,17 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Get the file extension type
     inline FileExtension extension () const {
-      return extension_p;
+      return itsExtension;
     }
 
     //! Get the file extension name
     inline std::string extensionName () const {
-      return getName (extension_p);
+      return getName (itsExtension);
     }
     
     //! Set the file extension
     inline void setExtension (FileExtension const &extension) {
-      extension_p = extension;
+      itsExtension = extension;
     }
 
     //! Get the path to the file
