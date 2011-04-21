@@ -95,15 +95,15 @@ int test_constructors ()
   
   cout << "[4] Testing copy constructor ..." << endl;
   try {
-    Filename file1 (observationID,
-		    optionalDescription,
-		    Filename::tbb,
-		    Filename::h5,
-		    path);
-    file1.summary();
+    Filename fileOrig (observationID,
+		       optionalDescription,
+		       Filename::tbb,
+		       Filename::h5,
+		       path);
+    fileOrig.summary();
     //
-    Filename file2 (file1);
-    file2.summary();
+    Filename fileCopy (fileOrig);
+    fileCopy.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;

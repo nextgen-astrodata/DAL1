@@ -164,7 +164,7 @@ namespace DAL { // Namespace DAL -- begin
   
   // ============================================================================
   //
-  //  Methods
+  //  Public methods
   //
   // ============================================================================
   
@@ -210,6 +210,67 @@ namespace DAL { // Namespace DAL -- begin
     return name;
   }
 
+  // ============================================================================
+  //
+  //  Static methods
+  //
+  // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                                 extensionMap
+
+  std::map<Filename::FileExtension,std::string> Filename::extensionMap ()
+  {
+    std::map<Filename::FileExtension,std::string> extensions;
+
+    extensions[Filename::MS]     = "MS";
+    extensions[Filename::h5]     = "h5";
+    extensions[Filename::fits]   = "fits";
+    extensions[Filename::log]    = "log";
+    extensions[Filename::parset] = "parset";
+    extensions[Filename::lsm]    = "lsm";
+    extensions[Filename::IM]     = "IM";
+    extensions[Filename::PD]     = "PD";
+    extensions[Filename::vds]    = "vds";
+    extensions[Filename::gds]    = "gds";
+    extensions[Filename::conf]   = "conf";
+    extensions[Filename::raw]    = "raw";
+
+    return extensions;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                               extensionTypes
+
+  std::vector<Filename::FileExtension> Filename::extensionTypes ()
+  {
+    std::vector<Filename::FileExtension> result;
+    std::map<Filename::FileExtension,std::string> extensions = extensionMap();
+    std::map<Filename::FileExtension,std::string>::iterator it;
+
+    for (it=extensions.begin(); it!=extensions.end(); ++it) {
+      result.push_back(it->first);
+    }
+
+    return result;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                               extensionNames
+
+  std::vector<std::string> Filename::extensionNames ()
+  {
+    std::vector<std::string> result;
+    std::map<Filename::FileExtension,std::string> extensions = extensionMap();
+    std::map<Filename::FileExtension,std::string>::iterator it;
+
+    for (it=extensions.begin(); it!=extensions.end(); ++it) {
+      result.push_back(it->second);
+    }
+
+    return result;
+  }
+  
   //_____________________________________________________________________________
   //                                                                      getName
 
@@ -219,83 +280,87 @@ namespace DAL { // Namespace DAL -- begin
    */
   std::string Filename::getName (Filename::FileExtension const &extension)
   {
-    std::string name ("UNDEFINED");
-    
-    switch (extension) {
-    case MS:
-      name = "MS";
-      break;
-    case h5:
-      name = "h5";
-      break;
-    case fits:
-      name = "fits";
-      break;
-    case log:
-      name = "log";
-      break;
-    case parset:
-      name = "parset";
-      break;
-    case lsm:
-      name = "lsm";
-      break;
-    case IM:
-      name = "IM";
-      break;
-    case PD:
-      name = "PD";
-      break;
-    case vds:
-      name = "vds";
-      break;
-    case gds:
-      name = "gds";
-      break;
-    case conf:
-      name = "conf";
-      break;
-    };
-    
-    return name;
-  }
+    std::map<Filename::FileExtension,std::string> extensions = extensionMap();
+    std::map<Filename::FileExtension,std::string>::iterator it;
 
+    it = extensions.find(extension);
+
+    if (it==extensions.end()) {
+      return std::string ("UNDEFINED");
+    } else {
+      return it->second;
+    }
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                  filetypeMap
+  
+  std::map<Filename::FileType,std::string> Filename::filetypeMap ()
+  {
+    std::map<Filename::FileType,std::string> filetype;
+
+    filetype[Filename::uv]      = "uv";
+    filetype[Filename::sky]     = "sky";
+    filetype[Filename::rm]      = "rm";
+    filetype[Filename::nfi]     = "nfi";
+    filetype[Filename::dynspec] = "dynspec";
+    filetype[Filename::bf]      = "bf";
+    filetype[Filename::tbb]     = "tbb";
+
+    return filetype;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                filetypeTypes
+  
+  std::vector<Filename::FileType> Filename::filetypeTypes ()
+  {
+    std::vector<Filename::FileType> result;
+    std::map<Filename::FileType,std::string> filetypes = filetypeMap();
+    std::map<Filename::FileType,std::string>::iterator it;
+    
+    for (it=filetypes.begin(); it!=filetypes.end(); ++it) {
+      result.push_back(it->first);
+    }
+    
+    return result;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                filetypeNames
+  
+  std::vector<std::string> Filename::filetypeNames ()
+  {
+    std::vector<std::string> result;
+    std::map<Filename::FileType,std::string> filetypes = filetypeMap();
+    std::map<Filename::FileType,std::string>::iterator it;
+    
+    for (it=filetypes.begin(); it!=filetypes.end(); ++it) {
+      result.push_back(it->second);
+    }
+    
+    return result;
+  }
+  
   //_____________________________________________________________________________
   //                                                                      getName
-
+  
   /*!
     \param filetype -- Marker for the contents of the file.
     \return name    -- The marker for the contents of the file as string.
    */
   std::string Filename::getName (Filename::FileType const &filetype)
   {
-    std::string name ("UNDEFINED");
+    std::map<Filename::FileType,std::string> filetypes = filetypeMap();
+    std::map<Filename::FileType,std::string>::iterator it;
     
-    switch (filetype) {
-    case uv:
-      name = "uv";
-      break;
-    case sky:
-      name = "sky";
-      break;
-    case rm:
-      name = "rm";
-      break;
-    case nfi:
-      name = "nfi";
-      break;
-    case dynspec:
-      name = "dynspec";
-      break;
-    case bf:
-      name = "bf";
-      break;
-    case tbb:
-      name = "tbb";
-      break;
-    };
-
-    return name;
+    it = filetypes.find(filetype);
+    
+    if (it==filetypes.end()) {
+      return std::string ("UNDEFINED");
+    } else {
+      return it->second;
+    }
   }
   
 } // Namespace DAL -- end

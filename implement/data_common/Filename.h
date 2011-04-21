@@ -24,7 +24,9 @@
 // Standard library header files
 #include <iostream>
 #include <map>
+#include <set>
 #include <string>
+#include <vector>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -279,14 +281,28 @@ namespace DAL { // Namespace DAL -- begin
     //! Provide a summary of the internal status
     void summary (std::ostream &os);    
 
-    // === Methods ==============================================================
+    // === Public methods =======================================================
 
     //! Get the name of the file
     std::string filename (bool const &fullpath=false);
 
+    // === Static methods =======================================================
+
+    //! Get map of file extension types and names.
+    static std::map<Filename::FileExtension,std::string> extensionMap ();
+    //! Get array/vector with the extension types
+    static std::vector<Filename::FileExtension> extensionTypes ();
+    //! Get array/vector with the extension names
+    static std::vector<std::string> extensionNames ();
     //! Get the file extension as string
     static std::string getName (Filename::FileExtension const &extension);
-    
+
+    //! Get map of file-type types and names.
+    static std::map<Filename::FileType,std::string> filetypeMap ();
+    //! Get array/vector with the file-type types
+    static std::vector<Filename::FileType> filetypeTypes ();
+    //! Get array/vector with the file-type names
+    static std::vector<std::string> filetypeNames ();
     //! Get the file type as string
     static std::string getName (Filename::FileType const &filetype);
     
