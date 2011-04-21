@@ -46,7 +46,7 @@ add_custom_command (
   COMMENT "Generating Doxygen code documentation ..."
   )
 
-add_custom_target (docReference ALL
+add_custom_target (docReference
   DEPENDS html/index.html
   )
 
@@ -99,7 +99,7 @@ if (PDFLATEX_EXECUTABLE)
 	COMMENT "Generating User Manual ..."
 	)
       
-      add_custom_target (docManual ALL
+      add_custom_target (docManual
 	DEPENDS refman.pdf
 	)
       
