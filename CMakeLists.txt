@@ -243,18 +243,33 @@ SET (CPACK_SOURCE_PACKAGE_FILE_NAME "dal-${DAL_VERSION}")
 ## Load packaging tool
 include (CPack)
 
-## Create a release version (*some additional explanation still required here).
+## =============================================================================
+##
+##  Preparing release version
+##
+## =============================================================================
 
-add_custom_target (release
-  COMMAND git add ${PROJECT_SOURCE_DIR}/CMakeLists.txt
-  COMMAND git commit -m "DAL release, version ${DAL_VERSION}"
-  COMMAND git tag -a v${DAL_VERSION} -m "DAL release, version ${DAL_VERSION}"
-  COMMAND git push github --tags
-  COMMAND git push github release
-  COMMAND make package_source
-  WORKING_DIRECTORY ${DAL_BUILD_DIR}
-  COMMENT "... preparing DAL release, version ${DAL_VERSION} ..."
-)
+execute_process (
+  COMMAND git remote -v
+  COMMAND grep github
+  COMMAND grep push
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_REMOTE_ORIGIN
+  )
+string(REGEX MATCH [a-z]* GIT_REMOTE_ORIGIN ${GIT_REMOTE_ORIGIN})
+
+if (GIT_REMOTE_ORIGIN)
+  add_custom_target (release
+    COMMAND git add CMakeLists.txt
+    COMMAND git commit -m "DAL release, version ${DAL_VERSION}"
+    COMMAND git tag -a v${DAL_VERSION} -m "DAL release, version ${DAL_VERSION}"
+    COMMAND git push ${GIT_REMOTE_ORIGIN} --tags
+    COMMAND git push ${GIT_REMOTE_ORIGIN} release
+    COMMAND make package_source
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    COMMENT "... preparing DAL release, version ${DAL_VERSION} ..."
+    )
+endif (GIT_REMOTE_ORIGIN)
 
 ## ==============================================================================
 ##
