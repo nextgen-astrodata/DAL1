@@ -106,6 +106,16 @@ if (NOT BOOST_FOUND)
     set (Boost_INCLUDE_DIRS "")
 
   endforeach (BOOST_ROOT)
+
+  ## Additional check in case the header files were not found by the standard module
+
+  if (BOOST_LIBRARIES AND NOT BOOST_INCLUDES)
+    find_path (BOOST_INCLUDES boost/program_options.hpp boost/thread.hpp
+      HINTS ${BOOST_ROOT_DIR}
+      PATHS ${DAL_FIND_PATHS}
+      PATH_SUFFIXES include
+      )
+  endif (BOOST_LIBRARIES AND NOT BOOST_INCLUDES)
   
   ## Clean up the list of include directories
   if (BOOST_INCLUDES)
