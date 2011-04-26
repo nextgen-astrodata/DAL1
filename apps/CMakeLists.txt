@@ -79,6 +79,11 @@ if (Boost_PROGRAM_OPTIONS_LIBRARY)
     target_link_libraries (TBBraw2h5
       dal ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY}
       )
+    ## Additional target properties
+    set_target_properties (TBBraw2h5
+      PROPERTIES
+      COMPILE_FLAGS "-D_REENTRANT"
+      )
     ## Installation instructions
     install (TARGETS tbb2h5 TBBraw2h5
       RUNTIME DESTINATION ${DAL_INSTALL_BINDIR}
