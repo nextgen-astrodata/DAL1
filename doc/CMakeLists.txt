@@ -49,6 +49,15 @@ add_custom_target (docReference
   DEPENDS html/index.html
   )
 
+## Testing instructions
+if (CMAKE_VERSION VERSION_GREATER 2.8.4)
+  add_test (
+    NAME docReference
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMAND make docReference
+    )
+endif (CMAKE_VERSION VERSION_GREATER 2.8.4)
+
 ## Installation of source code documentation
 
 install (
@@ -95,12 +104,13 @@ if (PDFLATEX_EXECUTABLE)
 	)
       
       ## Testing instructions
-      
-      add_test (
-	NAME docManual
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual
-	COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile; ${PDFLATEX_EXECUTABLE} refman.tex
-	)
+      if (CMAKE_VERSION VERSION_GREATER 2.8.4)
+	add_test (
+	  NAME docManual
+	  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual
+	  COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile; ${PDFLATEX_EXECUTABLE} refman.tex
+	  )
+      endif (CMAKE_VERSION VERSION_GREATER 2.8.4)
       
       ## Installation instructions
       
