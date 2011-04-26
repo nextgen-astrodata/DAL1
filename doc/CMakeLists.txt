@@ -1,5 +1,4 @@
 
-
 ## Define common top-level target
 
 add_custom_target (Documentation)
@@ -48,14 +47,6 @@ add_custom_command (
 
 add_custom_target (docReference
   DEPENDS html/index.html
-  )
-
-## Testing instructions
-
-add_test (
-  NAME docReference
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  COMMAND make docReference
   )
 
 ## Installation of source code documentation
