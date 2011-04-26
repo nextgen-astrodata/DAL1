@@ -42,7 +42,7 @@ add_custom_command (
   OUTPUT html/index.html
   COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile ${Documentation_sources}
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile ${Documentation_sources} ${dal_sources}
   COMMENT "Generating Doxygen code documentation ..."
   )
 

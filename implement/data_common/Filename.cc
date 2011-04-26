@@ -154,10 +154,11 @@ namespace DAL { // Namespace DAL -- begin
   void Filename::summary (std::ostream &os)
   {
     os << "[Filename] Summary of internal parameters."          << std::endl;
+    os << "-- Prefix               = " << itsPrefix             << std::endl;
     os << "-- Observation ID       = " << observationID_p       << std::endl;
     os << "-- Optional description = " << itsOptionalDescriptor << std::endl;
-    os << "-- File type            = " << getName(itsFiletype)   << std::endl;
-    os << "-- File extension       = " << getName(itsExtension)  << std::endl;
+    os << "-- File type            = " << getName(itsFiletype)  << std::endl;
+    os << "-- File extension       = " << getName(itsExtension) << std::endl;
     os << "-- Filename             = " << filename()            << std::endl;
     os << "-- File path            = " << path()                << std::endl;
   }
@@ -173,6 +174,7 @@ namespace DAL { // Namespace DAL -- begin
 
   void Filename::init ()
   {
+    itsPrefix             = "L";
     observationID_p       = "";
     itsOptionalDescriptor = "";
     itsFiletype           = Filename::uv;
@@ -196,7 +198,7 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     /* Construct the actual filename out of the individual components */
-    name += "L";
+    name += itsPrefix;
     name += observationID_p;
     if (itsOptionalDescriptor != "") {
       name += "_";
