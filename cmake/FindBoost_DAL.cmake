@@ -57,7 +57,7 @@ if (NOT BOOST_FOUND)
   set (BOOST_VERSION_MAJOR  0      )
   set (BOOST_VERSION_MINOR  0      )
   set (BOOST_VERSION_PATCH  0      )
-  set (Boost_BASE_VERSION   "1.40" )
+  set (Boost_BASE_VERSION   "1.33" )
   set (Boost_ADDITIONAL_VERSIONS "1.44.0" "1.45.0" "1.46.0" "1.46.1")
 
   ## Enable/diable verbosity mode __________________________
