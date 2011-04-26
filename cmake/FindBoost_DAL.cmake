@@ -60,6 +60,10 @@ if (NOT BOOST_FOUND)
   set (Boost_BASE_VERSION   "1.33" )
   set (Boost_ADDITIONAL_VERSIONS "1.44.0" "1.45.0" "1.46.0" "1.46.1")
 
+  set (Boost_USE_MULTITHREADED  YES )
+  set (Boost_USE_STATIC_LIBS    NO  )
+  set (Boost_USE_STATIC_RUNTIME YES )
+
   ## Enable/diable verbosity mode __________________________
   
   if (DAL_VERBOSE_CONFIGURE)
@@ -68,11 +72,6 @@ if (NOT BOOST_FOUND)
     set (Boost_FIND_QUIETLY  YES )
   endif (DAL_VERBOSE_CONFIGURE)
   
-  ## Prefer static libraries _______________________________
-
-  set (Boost_USE_STATIC_LIBS    NO  )
-  set (Boost_USE_STATIC_RUNTIME YES )
-
   ## Initialization: Boost modules to search for ___________
 
   set (BOOST_MODULES

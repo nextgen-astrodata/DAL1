@@ -21,6 +21,8 @@ set (DAL_FIND_PATHS
 ##                                          System libraries and tools
 
 foreach (_syslib dl m pthread util z)
+  
+  message (STATUS "Checking for ${_syslib} library ...")
 
   string (TOUPPER ${_syslib} _syslibVar)
 
@@ -29,6 +31,12 @@ foreach (_syslib dl m pthread util z)
     PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES lib
     )
+  
+  if (${_syslibVar}_LIBRARY)
+    message (STATUS "Checking for ${_syslib} library - Success")
+  else (${_syslibVar}_LIBRARY)
+    message (STATUS "Checking for ${_syslib} library - FAIL")
+  endif (${_syslibVar}_LIBRARY)
   
 endforeach (_syslib)
 
