@@ -33,6 +33,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 //includes for threading
+#include <boost/bind.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
 //includes for the commandline options
@@ -377,8 +378,13 @@ bool readFromSockets (std::vector<int> ports,
   boost::thread **readerThreads;
   readerThreads = new boost::thread*[ports.size()];
   for (i=0; i < ports.size(); i++) {
-    readerThreads[i] = new boost::thread(boost::bind(socketReaderThread, ports[i], ip,
-						     startTimeout, readTimeout, verbose, false));
+    readerThreads[i] = new boost::thread(boost::bind(socketReaderThread,
+						     ports[i],
+						     ip,
+						     startTimeout,
+						     readTimeout,
+						     verbose,
+						     false));
     if (readerThreads[i]->boost::thread::joinable() ) {
       noRunning++;
     } else {
