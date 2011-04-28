@@ -247,7 +247,6 @@ namespace DAL
        ************************************************************************/
 #ifdef PYTHON
 
-      void summary_boost();
       bpl::numeric::array getIntensity_boost( int subband,
                                               int start,
                                               int length );

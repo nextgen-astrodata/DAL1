@@ -65,12 +65,33 @@ void export_dalCommon ()
 namespace DAL {
 
   //__________________________________________________________________
-  //                                                       vector2list
+  //                                                        array2list
 
+  /*!
+    \param data  -- Array data values
+    \param nelem -- Number of elements inside the array.
+    \return list -- Python list containing a copy of the \e data.
+   */
   template <class T>
-    bpl::list vector2list (std::vector<T> vec)
+  boost::python::list array2list (T *data,
+				  unsigned int const &nelem)
   {
-    bpl::list mylist;
+    boost::python::list mylist;
+    
+    for (unsigned int n=0; n<nelem; ++n) {
+      mylist.append(data[n]);
+    }      
+
+    return mylist;
+  }
+  
+  //__________________________________________________________________
+  //                                                       vector2list
+  
+  template <class T>
+  boost::python::list vector2list (std::vector<T> vec)
+  {
+    boost::python::list mylist;
     
     typename std::vector<T>::iterator it;
     for ( it=vec.begin(); it < vec.end(); it++ )
@@ -78,7 +99,7 @@ namespace DAL {
     
     return mylist;
   }
-
+  
   //__________________________________________________________________
   //                                                    mjd2unix_boost
 
