@@ -64,6 +64,24 @@ void export_dalCommon ()
 
 namespace DAL {
 
+  //__________________________________________________________________
+  //                                                       vector2list
+
+  template <class T>
+    bpl::list vector2list (std::vector<T> vec)
+  {
+    bpl::list mylist;
+    
+    typename std::vector<T>::iterator it;
+    for ( it=vec.begin(); it < vec.end(); it++ )
+      mylist.append( *it );
+    
+    return mylist;
+  }
+
+  //__________________________________________________________________
+  //                                                    mjd2unix_boost
+
   /*!
     - The Unix base date is MJD 40587.
     - 1 mjd Day = 24 hours or 1440 minutes or 86400 seconds

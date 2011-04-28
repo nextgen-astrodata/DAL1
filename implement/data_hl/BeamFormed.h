@@ -205,33 +205,9 @@ namespace DAL {
 			   int &start,
 			   int &length,
 			   std::vector<std::complex<short> > &data);
-    
-    /************************************************************************
-     *
-     * The following functions are boost wrappers to allow some previously
-     *   defined functions to be easily called from a python prompt.
-     *
-     ************************************************************************/
-#ifdef PYTHON
-    
-    // ---------------------------------------------------------- vector2list
-    
-    /* utility to turn a vector into a python list */
-    
-    template <class T>
-      bpl::list vector2list( std::vector<T> vec )
-      {
-        bpl::list mylist;
-	
-        typename std::vector<T>::iterator it;
-        for ( it=vec.begin(); it < vec.end(); it++ )
-          mylist.append( *it );
-	
-        return mylist;
-      }
 
-#endif // PYTHON
-
+    // === Private methods ======================================================
+    
   private:
 
     //! Initialize the object's internal parameters
