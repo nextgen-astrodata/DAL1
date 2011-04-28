@@ -137,13 +137,27 @@ endif (CMAKE_SIZEOF_VOID_P)
 ##
 ## ==============================================================================
 
+##____________________________________________________________________
+##                                                     Python bindings
+
+## Basic tests for the required external libraries
+
 if (NOT BOOST_FOUND)
   set (DAL_PYTHON_BINDINGS FALSE)
+  message (STATUS "[DAL] Unable to generate Python bindings; missing Boost++!")
 endif (NOT BOOST_FOUND)
+
+if (NOT PYTHON_FOUND)
+  set (DAL_PYTHON_BINDINGS FALSE)
+  message (STATUS "[DAL] Unable to generate Python bindings; missing Python!")
+endif (NOT PYTHON_FOUND)
+
+##____________________________________________________________________
+##                                                       Documentation
 
 if (NOT DOXYGEN_FOUND)
   set (DAL_WITH_DOCUMENTATION FALSE)
-  message (STATUS "Skip generating documentstion - Doxygen not found!")
+  message (STATUS "Skip generating documentation - Doxygen not found!")
 endif (NOT DOXYGEN_FOUND)
 
 ## ==============================================================================

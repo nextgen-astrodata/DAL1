@@ -58,7 +58,6 @@ if (NOT BOOST_FOUND)
   set (BOOST_VERSION_MINOR  0      )
   set (BOOST_VERSION_PATCH  0      )
   set (Boost_BASE_VERSION   "1.40" )
-  set (Boost_ADDITIONAL_VERSIONS "1.44.0" "1.45.0" "1.46.0" "1.46.1")
 
   set (Boost_USE_MULTITHREADED  YES )
   set (Boost_USE_STATIC_LIBS    NO  )
