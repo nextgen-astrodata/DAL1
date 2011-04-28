@@ -56,41 +56,33 @@ endforeach (src)
 ## Test which require additional external libraries (and thereby should be
 ## considered optional)
 
-## casacore
+if (CASACORE_FOUND AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
 
-if (CASACORE_FOUND)
-  if (GFORTRAN_LIBRARIES)
-    if (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
-      ## list of source files
-      foreach (src
-	  tdal_MS 
-	  tcasacore_hdf5
-	  tcasacore_images
-	  tcasacore_images2
-	  tcasacore_ms
-	  )
-	## compiler instructions
-	add_executable (${src} ${src}.cc)
-	## linker instructions
-	target_link_libraries (${src}
-	  dal
-	  ${dal_link_libraries}
-	  ${GFORTRAN_LIBRARIES}
-	  )
-	## installation
-	list (APPEND tests ${src})
-	## testing
-	if (DAL_ENABLE_TESTING)
-	  add_test (${src} ${src})
-	endif (DAL_ENABLE_TESTING)
-      endforeach (src)
-    else (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
-      message (STATUS "[DAL] Skipping tests - missing LAPACK.")
-    endif (LAPACK_LIBRARIES AND LAPACK_CBLAS_LIBRARY)
-  endif (GFORTRAN_LIBRARIES)
-else (CASACORE_FOUND)
-  message (STATUS "[DAL] Skipping tests - missing casacore.")
-endif (CASACORE_FOUND)
+  ## list of source files
+  foreach (src
+      tdal_MS 
+      tcasacore_hdf5
+      tcasacore_images
+      tcasacore_images2
+      tcasacore_ms
+      )
+    ## compiler instructions
+    add_executable (${src} ${src}.cc)
+    ## linker instructions
+    target_link_libraries (${src}
+      dal
+      ${dal_link_libraries}
+      ${GFORTRAN_LIBRARIES}
+      )
+    ## installation
+    list (APPEND tests ${src})
+    ## testing
+    if (DAL_ENABLE_TESTING)
+      add_test (${src} ${src})
+    endif (DAL_ENABLE_TESTING)
+  endforeach (src)
+
+endif (CASACORE_FOUND AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
 
 ## ==============================================================================
 ##
@@ -123,14 +115,14 @@ if (DAL_ENABLE_TESTING)
   if (dataset_fits)
     add_test (tdal_fits tdal_fits)
   endif (dataset_fits)
-
+  
   ## -----------------------------------------------------------------
   ## [7] Python scripts
   
   file (GLOB have_datacube datacube.py)
   file (GLOB have_uv_coverage uv_coverage.py)
   file (GLOB have_baseline_intensity baseline_intensity.py)
-
+  
   if (dataset_ms)
     ## show the coverage in the (u,v) plane
     add_test (datacube ${PYTHON_EXECUTABLE} ${have_datacube} ${dataset_ms} ${dataset_ms}.out 1 1 0)
