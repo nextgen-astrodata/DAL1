@@ -171,7 +171,16 @@ endif (NOT DOXYGEN_FOUND)
 ##
 ## ==============================================================================
 
+## Generate configure file
+
 configure_file (
   ${DAL_SOURCE_DIR}/cmake/dal_config.h.in
   ${DAL_BINARY_DIR}/dal_config.h
+  )
+
+## Installation instruction
+
+install (
+  FILES ${DAL_BINARY_DIR}/dal_config.h
+  DESTINATION ${DAL_INSTALL_INCLUDEDIR}
   )
