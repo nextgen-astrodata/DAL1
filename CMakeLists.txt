@@ -132,13 +132,13 @@ if (CASA_LIBRARIES)
   list (APPEND dal_link_libraries ${CASA_LIBRARIES})
 endif (CASA_LIBRARIES)
 
-if (HDF5_LIBRARIES)
-  list (APPEND dal_link_libraries ${HDF5_LIBRARIES})
-endif (HDF5_LIBRARIES)
-
 if (LAPACK_LIBRARIES)
   list (APPEND dal_link_libraries ${LAPACK_LIBRARIES})
 endif (LAPACK_LIBRARIES)
+
+if (HDF5_LIBRARIES)
+  list (APPEND dal_link_libraries ${HDF5_LIBRARIES})
+endif (HDF5_LIBRARIES)
 
 if (CFITSIO_LIBRARIES)
   list (APPEND dal_link_libraries ${CFITSIO_LIBRARIES})
@@ -347,8 +347,6 @@ message (STATUS " .. 1.6 API default              = ${HDF5_USE_16_API_DEFAULT}" 
 message (STATUS " .. HDF5 C compiler              = ${HDF5_C_COMPILER}"           )
 message (STATUS " .. HDF5 C++ compiler            = ${HDF5_CXX_COMPILER}"         )
 endif (HDF5_FOUND OR DAL_VERBOSE_CONFIGURE)
-
-message (STATUS " Enable code using LAPACK        = ${LAPACK_FOUND}"              )
 
 message (STATUS " Enable code using MPI           = ${MPI_FOUND}"                 )
 if (MPI_FOUND OR DAL_VERBOSE_CONFIGURE)

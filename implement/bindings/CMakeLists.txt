@@ -30,7 +30,6 @@ set (pydal_link_libraries
   dal
   ${PYTHON_LIBRARIES}
   ${BOOST_LIBRARIES}
-  ${LAPACK_LIBRARIES}
   ${HAVE_LIBPTHREAD}
   )
 
