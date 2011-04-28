@@ -236,7 +236,9 @@ void export_Filename ()
   
 void export_Timestamp () 
 {
-  /* Enumeration: Month of the year */
+  //__________________________________________________________________
+  // Enumeration: Month of the year
+
   bpl::enum_<Timestamp::Month>("Month")
     .value("Jan",Timestamp::Jan)
     .value("Feb",Timestamp::Feb)
@@ -251,6 +253,9 @@ void export_Timestamp ()
     .value("Nov",Timestamp::Nov)
     .value("Dec",Timestamp::Dec)
     ;
+
+  void (Timestamp::*setMonth1)(int const &)   = &Timestamp::setMonth;
+  void (Timestamp::*setMonth2)(Timestamp::Month const &) = &Timestamp::setMonth;
   
   bpl::class_<Timestamp>("Timestamp")
     .def( bpl::init<>())
@@ -261,9 +266,9 @@ void export_Timestamp ()
 	  "Set the numerical value of the year.")
     .def( "month", &Timestamp::month,
 	  "Get the numerical value of the month.")
-    .def( "setMonth", &Timestamp::setMonth1,
+    .def( "setMonth", setMonth1,
 	  "Set the numerical value of the month.")
-    .def( "setMonth", &Timestamp::setMonth2,
+    .def( "setMonth", setMonth2,
 	  "Set the numerical value of the month.")
     .def( "day", &Timestamp::day,
 	  "Get the numerical value of the day.")

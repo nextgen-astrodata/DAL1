@@ -370,18 +370,7 @@ namespace DAL { // Namespace DAL -- begin
       return out;
     }
 
-#ifdef PYTHON
-    //! [Boost.Python] Set the numerical value of the month
-    inline void setMonth1 (int const &month) {
-      setMonth (month);
-    }
-    //! [Boost.Python] Set the numerical value of the month
-    inline void setMonth2 (Month const &month) {
-      setMonth (month);
-    }
-#endif
-    
-    // ------------------------------------------------------------ private methods
+    // === Private methods ======================================================
     
   private:
     
