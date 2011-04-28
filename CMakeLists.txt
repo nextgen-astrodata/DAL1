@@ -64,37 +64,13 @@ add_definitions (
 
 ## =============================================================================
 ##
-##  Installation settings
+##  - Installation settings
+##  - External dependencies
 ##
-## =============================================================================
+## ==============================================================================
 
 include (${DAL_SOURCE_DIR}/cmake/InstallationSettings.cmake)
-
-## ==============================================================================
-##
-##  External dependencies
-##
-## ==============================================================================
-
-if (NOT DOCUMENTATION_ONLY)
-  
-  ## Try to resolve external dependencies ...
-  
-  include (${DAL_SOURCE_DIR}/cmake/CheckExternalPackages.cmake)
-  
-  ## ... and check if this indeed has been successful
-  
-  if (NOT HDF5_FOUND)
-    message (SEND_ERROR "[DAL] Missing HDF5 library installation!")
-  endif (NOT HDF5_FOUND)
-  
-  if (CASACORE_FOUND)
-    if (NOT WCSLIB_FOUND)
-      message (SEND_ERROR "[DAL] Missing WCSLIB library installation!")
-    endif (NOT WCSLIB_FOUND)
-  endif (CASACORE_FOUND)
-  
-endif (NOT DOCUMENTATION_ONLY)
+include (${DAL_SOURCE_DIR}/cmake/CheckExternalPackages.cmake)
 
 ## ==============================================================================
 ##

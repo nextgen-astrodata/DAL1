@@ -133,9 +133,23 @@ endif (CMAKE_SIZEOF_VOID_P)
 
 ## ==============================================================================
 ##
-##  Build options
+##  Build options: evaluation of the system inspection
 ##
 ## ==============================================================================
+
+if (NOT DOCUMENTATION_ONLY)
+  
+  if (NOT HDF5_FOUND)
+    message (SEND_ERROR "[DAL] Missing HDF5 library installation!")
+  endif (NOT HDF5_FOUND)
+  
+  if (CASACORE_FOUND)
+    if (NOT WCSLIB_FOUND)
+      message (SEND_ERROR "[DAL] Missing WCSLIB library installation!")
+    endif (NOT WCSLIB_FOUND)
+  endif (CASACORE_FOUND)
+  
+endif (NOT DOCUMENTATION_ONLY)
 
 ##____________________________________________________________________
 ##                                                     Python bindings
