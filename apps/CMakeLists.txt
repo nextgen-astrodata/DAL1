@@ -132,24 +132,6 @@ if (DAL_ENABLE_TESTING)
     add_test (tbb2h5_test12 tbb2h5 --infile ${dataset_tbb_raw} --outfile testdata.h5)
   endif (dataset_tbb_raw)
 
-  ## Test bf2h5_old with various command line parameters
-
-  add_test (bf2h5_old_test1 bf2h5_old)
-  add_test (bf2h5_old_test2 bf2h5_old -H)
-  add_test (bf2h5_old_test3 bf2h5_old --help)
-  add_test (bf2h5_old_test4 bf2h5_old --intensity)
-  
-  if (dataset_bf_raw)
-    add_test (bf2h5_old_test6 bf2h5_old -I ${dataset_bf_raw} -O testdata_bf.h5)
-    set_tests_properties (
-      bf2h5_old_test6
-      PROPERTIES
-      TIMEOUT 600
-      )
-  else (dataset_bf_raw)
-    message (STATUS "[DAL] Skipping bf2h5_old_test6 - no input file!")
-  endif (dataset_bf_raw)
-  
 endif (DAL_ENABLE_TESTING)
 
 ## ==============================================================================
