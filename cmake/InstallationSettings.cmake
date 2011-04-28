@@ -1,14 +1,14 @@
 
 ## ==============================================================================
 #
-#    .                           DAL_INSTALL_PREFIX       [/opt/dal]
-#    ├── bin                     DAL_INSTALL_BINDIR       [DAL_INSTALL_PREFIX/bin]
-#    ├── include                 DAL_INSTALL_INCLUDEDIR   [DAL_INSTALL_PREFIX/include]
-#    ├── lib                     DAL_INSTALL_LIBDIR       [DAL_INSTALL_PREFIX/lib]
-#    └── share                   DAL_INSTALL_DATAROOTDIR  [DAL_INSTALL_PREFIX/share]
-#        ├── doc                 DAL_INSTALL_DOCDIR       [DAL_INSTALL_DATAROOTDIR/doc]
-#        ├── xml
-#        └── macros
+#    .                       DAL_INSTALL_PREFIX       [/opt/dal]
+#    |-- bin                 DAL_INSTALL_BINDIR       [DAL_INSTALL_PREFIX/bin]
+#    |-- include             DAL_INSTALL_INCLUDEDIR   [DAL_INSTALL_PREFIX/include]
+#    |-- lib                 DAL_INSTALL_LIBDIR       [DAL_INSTALL_PREFIX/lib]
+#    `-- share               DAL_INSTALL_DATAROOTDIR  [DAL_INSTALL_PREFIX/share]
+#        |-- doc             DAL_INSTALL_DOCDIR       [DAL_INSTALL_DATAROOTDIR/doc]
+#        |-- xml
+#        `-- macros
 #
 ## ==============================================================================
 

@@ -23,12 +23,8 @@ foreach (dal_module
     data_hl
     )
   
-  ## Add include paths
-  include_directories (${DAL_SOURCE_DIR}/implement/${dal_module})
-  
   ## list of source files for this module
   FILE (GLOB dal_${dal_module}_sources ${dal_module}/*.cc)
-  
   
   ## expand the list of source files
   list (APPEND dal_sources ${dal_${dal_module}_sources})

@@ -31,13 +31,13 @@
 
 // DAL headers
 #include "pydal.h"
-#include <BeamFormed.h>
-#include <BeamGroup.h>
-#include <BF_BeamGroup.h>
-#include <TBB_Timeseries.h>
-#include <TBB_StationGroup.h>
-#include <TBB_DipoleDataset.h>
-#include <LOPES_EventFile.h>
+#include <data_hl/BeamFormed.h>
+#include <data_hl/BeamGroup.h>
+#include <data_hl/BF_BeamGroup.h>
+#include <data_hl/TBB_Timeseries.h>
+#include <data_hl/TBB_StationGroup.h>
+#include <data_hl/TBB_DipoleDataset.h>
+#include <data_hl/LOPES_EventFile.h>
 
 using DAL::BeamFormed;
 using DAL::BeamGroup;
