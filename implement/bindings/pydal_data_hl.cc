@@ -172,12 +172,6 @@ void export_TBB_DipoleDataset()
 //
 // ==============================================================================
 
-void BeamGroup::summary_boost()
-{
-  summary();
-}
-
-
 bpl::numeric::array BeamGroup::getIntensity_boost( int subband,
 						   int start,
 						   int length )
@@ -291,7 +285,6 @@ void export_BeamGroup ()
 {
   bpl::class_<BeamGroup>("BeamGroup")
     .def( bpl::init<>())
-    .def( "summary", &BeamGroup::summary_boost)
     .def( "fileID", &BeamGroup::fileID,
 	  "Get the HDF5 file handle ID")
     .def( "groupID", &BeamGroup::groupID,
@@ -321,34 +314,11 @@ void export_BeamGroup ()
 //
 // ==============================================================================
 
-void BeamFormed::summary_boost()
-{
-  summary();
-}
-
-bpl::list BeamFormed::beams_boost()
-{
-  std::vector<std::string> beams_vec = beams();
-  return vector2list( beams_vec );
-}
-
-bpl::list BeamFormed::source_boost()
-{
-  std::vector<std::string> source_vec = sources();
-  return vector2list( source_vec );
-}
-
 void export_BeamFormed ()
 {
   bpl::class_<BeamFormed>("BeamFormed")
     .def( bpl::init<>())
     .def( bpl::init<string>())
-    .def( "summary", &BeamFormed::summary_boost,
-	  "Print a summary of the file contents" )
-    .def( "beams", &BeamFormed::beams_boost,
-	  "Return a list of the beams" )
-    .def( "source", &BeamFormed::source_boost,
-	  "Return a list of the sources" )
     .def( "notes", &BeamFormed::notes,
 	  "Return the notes from the header" )
     .def( "filename", &BeamFormed::filename,

@@ -238,6 +238,7 @@ namespace DAL {
      *   defined functions to be easily called from a python prompt.
      *
      ************************************************************************/
+
 #ifdef PYTHON
     
     void ot_hdf5( void * voidfile, std::string tablename, std::string groupname );

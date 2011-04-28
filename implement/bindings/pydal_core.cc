@@ -71,20 +71,20 @@ namespace DAL {
     
     \param mjd_time The time as Modified Julian Date.
   */
-bpl::numeric::array mjd2unix_boost ( bpl::numeric::array mjd_time )
+  bpl::numeric::array mjd2unix_boost ( bpl::numeric::array mjd_time )
   {
     int array_size           = bpl::len( mjd_time );
     double unix_base_time    = 40587;
     double seconds_per_day   = 86400;
     double adjustment_factor = unix_base_time*seconds_per_day;
-
+    
     for ( int idx=0; idx < array_size; idx++ ) {
       mjd_time[ idx ] = bpl::extract<double>( mjd_time[ idx ] ) - adjustment_factor;
     }
     
     return mjd_time;
   }
-
+  
 }
 
 // ==============================================================================

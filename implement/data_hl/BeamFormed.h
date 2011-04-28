@@ -214,10 +214,6 @@ namespace DAL {
      ************************************************************************/
 #ifdef PYTHON
     
-    void summary_boost();
-    bpl::list beams_boost();
-    bpl::list source_boost();
-    
     // ---------------------------------------------------------- vector2list
     
     /* utility to turn a vector into a python list */
