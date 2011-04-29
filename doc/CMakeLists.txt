@@ -7,7 +7,7 @@
 
 ## Generate list of source files
 
-file (GLOB Documentation_sources *.doc)
+file (GLOB Documentation_sources *.doc *.tex *.in *.html)
 
 ## Set up variables which will be filled in when parsing the input file for the
 ## Doxygen configuration
