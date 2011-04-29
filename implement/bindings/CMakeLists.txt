@@ -28,6 +28,7 @@ add_library(pydal MODULE
 
 target_link_libraries (pydal
   dal
+  ${Boost_PYTHON_LIBRARY}
   ${PYTHON_LIBRARIES}
   )
 

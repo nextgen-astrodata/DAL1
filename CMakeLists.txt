@@ -125,7 +125,14 @@ if (WCSLIB_LIBRARIES)
 endif (WCSLIB_LIBRARIES)
 
 if (BOOST_LIBRARIES)
-  list (APPEND dal_link_libraries ${BOOST_LIBRARIES})
+  ## libboost_program_options
+  if (Boost_PROGRAM_OPTIONS_LIBRARY)
+    list (APPEND dal_link_libraries ${Boost_PROGRAM_OPTIONS_LIBRARY})
+  endif (Boost_PROGRAM_OPTIONS_LIBRARY)
+  ## libboost_thread
+  if (Boost_THREAD_LIBRARY)
+    list (APPEND dal_link_libraries ${Boost_THREAD_LIBRARY})
+  endif (Boost_THREAD_LIBRARY)
 endif (BOOST_LIBRARIES)
 
 if (PTHREAD_LIBRARY)
@@ -299,6 +306,7 @@ if (NOT DOCUMENTATION_ONLY)
 message (STATUS " Enable code using Boost++       = ${BOOST_FOUND}"               )
 message (STATUS " .. Library version              = ${BOOST_VERSION}"             )
 message (STATUS " .. Include directory            = ${BOOST_INCLUDES}"            )
+message (STATUS " .. python library               = ${Boost_PYTHON_LIBRARY}")
 message (STATUS " .. program_options library      = ${Boost_PROGRAM_OPTIONS_LIBRARY}")
 message (STATUS " .. thread library               = ${Boost_THREAD_LIBRARY}"      )
 message (STATUS " .. Thread support enabled?      = ${BOOST_WITH_THREAD}"         )
