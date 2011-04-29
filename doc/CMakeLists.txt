@@ -1,8 +1,4 @@
 
-## Define common top-level target
-
-add_custom_target (Documentation)
-
 ## ==============================================================================
 ##
 ##  Doxygen documentation for source code (HTML only)
@@ -121,10 +117,6 @@ if (PDFLATEX_EXECUTABLE)
 	RENAME UserManual-${DAL_VERSION}.pdf
 	)
       
-      ## Build target dependency
-      
-      add_dependencies (Documentation Manual)
-      
     else (LATEX_HYPERREF_PACKAGE)
       message (STATUS "Skipping generating user manual - missing LaTeX package hyperref!")
     endif (LATEX_HYPERREF_PACKAGE)
@@ -136,3 +128,19 @@ if (PDFLATEX_EXECUTABLE)
 else (PDFLATEX_EXECUTABLE)
   message (STATUS "Skipping generating user manual - missing pdfLaTeX!")
 endif (PDFLATEX_EXECUTABLE)
+
+## ==============================================================================
+##
+##  Collective target to build all available parts of documentation
+##
+## ==============================================================================
+
+if (TARGET docManual)
+  add_custom_target (Documentation
+    DEPENDS html/index.html refman.pdf
+    )
+else (TARGET docManual)
+  add_custom_target (Documentation
+    DEPENDS html/index.html
+    )
+endif (TARGET docManual)
