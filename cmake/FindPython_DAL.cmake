@@ -116,6 +116,17 @@ if (NOT PYTHON_FOUND)
     include (FindNumPy)
     
   endforeach (_pythonRelease)
+
+  ##_____________________________________________________________________________
+  # Find Python site-packages directory for installation
+
+  if (PYTHON_EXECUTABLE)
+  execute_process (
+    COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()"
+    OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  endif (PYTHON_EXECUTABLE)
   
   ##_____________________________________________________________________________
   ## Test Python library for:
