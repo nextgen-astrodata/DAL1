@@ -53,6 +53,7 @@ set (_cmakeModules
   CFITSIO_DAL
   Doxygen
   GFortran
+  Git
   GSL_DAL
   HDF5_DAL
   LAPACK_DAL

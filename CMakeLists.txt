@@ -235,27 +235,23 @@ include (CPack)
 ##
 ## =============================================================================
 
-execute_process (
-  COMMAND git remote -v
-  COMMAND grep github
-  COMMAND grep push
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-  OUTPUT_VARIABLE GIT_REMOTE_ORIGIN
-  )
-string(REGEX MATCH [a-z]* GIT_REMOTE_ORIGIN ${GIT_REMOTE_ORIGIN})
+if (GIT_FOUND)
+  
+  if (GIT_REMOTE_ORIGIN)
+    add_custom_target (release
+      COMMAND ${GIT_EXECUTABLE} add CMakeLists.txt
+      COMMAND ${GIT_EXECUTABLE} commit -m "DAL release, version ${DAL_VERSION}"
+      COMMAND ${GIT_EXECUTABLE} tag v${DAL_VERSION} -m "DAL release, version ${DAL_VERSION}"
+      COMMAND ${GIT_EXECUTABLE} push ${GIT_REMOTE_ORIGIN} --tags
+      COMMAND ${GIT_EXECUTABLE} push ${GIT_REMOTE_ORIGIN} release
+      COMMAND make package_source
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+      COMMENT "... preparing DAL release, version ${DAL_VERSION} ..."
+      )
+  endif (GIT_REMOTE_ORIGIN)
+  
+endif (GIT_FOUND)
 
-if (GIT_REMOTE_ORIGIN)
-  add_custom_target (release
-    COMMAND git add CMakeLists.txt
-    COMMAND git commit -m "DAL release, version ${DAL_VERSION}"
-    COMMAND git tag v${DAL_VERSION} -m "DAL release, version ${DAL_VERSION}"
-    COMMAND git push ${GIT_REMOTE_ORIGIN} --tags
-    COMMAND git push ${GIT_REMOTE_ORIGIN} release
-    COMMAND make package_source
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    COMMENT "... preparing DAL release, version ${DAL_VERSION} ..."
-    )
-endif (GIT_REMOTE_ORIGIN)
 
 ## ==============================================================================
 ##
@@ -273,6 +269,9 @@ message (STATUS " .. CMake version                = ${CMAKE_VERSION}"           
 message (STATUS " .. System name                  = ${CMAKE_SYSTEM}"               )
 message (STATUS " .. C++ compiler                 = ${CMAKE_CXX_COMPILER}"         )
 message (STATUS " .. C compiler                   = ${CMAKE_C_COMPILER}"           )
+message (STATUS " Version control configuration:"                                  )
+message (STATUS " .. Git version                  = ${GIT_VERSION}"                )
+message (STATUS " .. ID for the remote origin     = ${GIT_REMOTE_ORIGIN}"          )
 message (STATUS " Installation configuration:"                                     )
 message (STATUS " .. DAL_VERSION                  = ${DAL_VERSION}"                )
 message (STATUS " .. DAL_INSTALL_PREFIX           = ${DAL_INSTALL_PREFIX}"         )
