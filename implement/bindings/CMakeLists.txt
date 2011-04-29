@@ -26,14 +26,10 @@ add_library(pydal MODULE
 ##______________________________________________
 ## linker instructions
 
-set (pydal_link_libraries
+target_link_libraries (pydal
   dal
   ${PYTHON_LIBRARIES}
-  ${BOOST_LIBRARIES}
-  ${HAVE_LIBPTHREAD}
   )
-
-target_link_libraries (pydal ${pydal_link_libraries} )
 
 ##______________________________________________
 ## Additional target properties

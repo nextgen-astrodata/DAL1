@@ -124,6 +124,10 @@ if (WCSLIB_LIBRARIES)
   list (APPEND dal_link_libraries ${WCSLIB_LIBRARIES})
 endif (WCSLIB_LIBRARIES)
 
+if (BOOST_LIBRARIES)
+  list (APPEND dal_link_libraries ${BOOST_LIBRARIES})
+endif (BOOST_LIBRARIES)
+
 if (PTHREAD_LIBRARY)
   list (APPEND dal_link_libraries ${PTHREAD_LIBRARY})
 endif (PTHREAD_LIBRARY)
