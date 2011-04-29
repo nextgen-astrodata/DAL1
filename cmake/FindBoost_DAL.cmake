@@ -74,6 +74,7 @@ if (NOT BOOST_FOUND)
   ## Initialization: Boost modules to search for ___________
 
   set (BOOST_MODULES
+    date_time
     program_options
     python
     thread
