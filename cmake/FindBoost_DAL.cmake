@@ -60,9 +60,14 @@ if (NOT BOOST_FOUND)
   set (Boost_BASE_VERSION   "1.40" )
 
   set (Boost_USE_MULTITHREADED  YES )
-  set (Boost_USE_STATIC_LIBS    NO  )
   set (Boost_USE_STATIC_RUNTIME YES )
-
+  
+  if (APPLE)
+    set (Boost_USE_STATIC_LIBS YES )
+  else (APPLE)
+    set (Boost_USE_STATIC_LIBS NO )
+  endif (APPLE)
+  
   ## Enable/diable verbosity mode __________________________
   
   if (DAL_VERBOSE_CONFIGURE)
@@ -100,8 +105,8 @@ if (NOT BOOST_FOUND)
 
     ## reset variables
 
-    set (Boost_FOUND "")
-    set (Boost_LIBRARIES "")
+    set (Boost_FOUND        "")
+    set (Boost_LIBRARIES    "")
     set (Boost_INCLUDE_DIRS "")
 
   endforeach (BOOST_ROOT)
