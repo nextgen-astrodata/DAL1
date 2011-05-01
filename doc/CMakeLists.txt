@@ -1,9 +1,54 @@
 
 ## ==============================================================================
 ##
+##  Macro definitions
+##
+## ==============================================================================
+
+macro (add_doxygen_target nameTarget nameDoxyfile)
+  
+  if (DOXYGEN_FOUND)
+
+    ## Check for the Doxygen input file
+
+    set(DOXYFILE_IN_${nameTarget})
+    find_file(DOXYFILE_IN_${nameTarget} ${nameDoxyfile}.in
+      PATHS ${PROJECT_SOURCE_DIR}
+      PATH_SUFFIXES doc
+      )
+
+    ## Process Doxygen input file
+
+    if (DOXYFILE_IN_${name})
+      
+      add_custom_command(TARGET ${nameTarget}
+        POST_BUILD
+        COMMAND ${CMAKE_MAKE_PROGRAM}
+        WORKING_DIRECTORY "${DOXYFILE_OUTPUT_DIR}/${DOXYFILE_LATEX_DIR}")
+      
+    else (DOXYFILE_IN_${name})
+      add_custom_target (nameTarget
+	WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+	COMMENT "Unable to build target ${nameTarget} - missing Doxygen input file!"
+	)
+    endif (DOXYFILE_IN_${name})    
+    
+  else (DOXYGEN_FOUND)
+    add_custom_target (nameTarget
+      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+      COMMENT "Unable to build target ${nameTarget} - missing Doxygen!"
+      )
+  endif(DOXYGEN_FOUND)
+  
+endmacro ()
+
+## ==============================================================================
+##
 ##  Doxygen documentation for source code (HTML only)
 ##
 ## ==============================================================================
+
+add_doxygen_target (docAPI DoxyfileAPI)
 
 ## Generate list of source files
 
@@ -13,12 +58,6 @@ file (GLOB Documentation_sources *.doc *.tex *.in *.html)
 ## Doxygen configuration
 
 set ( DOXYGEN_OUTPUT_DIRECTORY  ${CMAKE_CURRENT_BINARY_DIR} )
-set ( DOXYGEN_CREATE_SUBDIRS    "NO"                        )
-set ( DOXYGEN_REPEAT_BRIEF      "NO"                        )
-set ( DOXYGEN_GENERATE_TREEVIEW "NO"                        )
-set ( DOXYGEN_GENERATE_MAN      "NO"                        )
-set ( DOXYGEN_GENERATE_TODOLIST "YES"                                        )
-set ( DOXYGEN_GENERATE_TESTLIST "YES"                                        )
 set ( DOXYGEN_IMAGE_PATH        ${CMAKE_CURRENT_SOURCE_DIR}/figures          )
 set ( DOXYGEN_HTML_FOOTER       ${CMAKE_CURRENT_SOURCE_DIR}/html_footer.html )
 set ( DOXYGEN_LATEX_HEADER      ${CMAKE_CURRENT_SOURCE_DIR}/Manual-latex-header.tex )
