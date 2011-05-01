@@ -6,37 +6,21 @@
 ## ==============================================================================
 
 ##__________________________________________________________
-## Process the contents of the modules directories
-##
-##  .
-##  ├── coordinates
-##  ├── core
-##  ├── data_common
-##  └── data_hl
-##
+## Assemble list of source files
 
-foreach (dal_module
-    core
-    coordinates
-    data_common
-    data_hl
-    )
-  
-  ## list of source files for this module
-  FILE (GLOB dal_${dal_module}_sources ${dal_module}/*.cc)
-  
-  ## expand the list of source files
-  list (APPEND dal_sources ${dal_${dal_module}_sources})
+FILE (GLOB dal_sources
+  core/*.cc
+  coordinates/*.cc
+  data_common/*.cc
+  data_hl/*.cc
+  )
 
-  ## Installation of module header files
-
-  FILE (GLOB dal_${dal_module}_headers ${dal_module}/*.h)
-  
-  install (FILES ${dal_${dal_module}_headers}
-    DESTINATION ${DAL_INSTALL_INCLUDEDIR}/${dal_module}
-    )
-  
-endforeach (dal_module)
+FILE (GLOB dal_headers
+  core/*.h
+  coordinates/*.h
+  data_common/*.h
+  data_hl/*.h
+  )
 
 ##____________________________________________________________________
 ## libdal: Compiler instructions
