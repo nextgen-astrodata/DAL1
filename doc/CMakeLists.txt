@@ -1,46 +1,25 @@
 
 ## ==============================================================================
 ##
-##  Macro definitions
+##  Common setting for documentation generation
 ##
 ## ==============================================================================
 
-macro (add_doxygen_target nameTarget nameDoxyfile)
-  
-  if (DOXYGEN_FOUND)
+## Generate list of source files
 
-    ## Check for the Doxygen input file
+file (GLOB documentationSources *.doc *.tex *.in *.html)
 
-    set(DOXYFILE_IN_${nameTarget})
-    find_file(DOXYFILE_IN_${nameTarget} ${nameDoxyfile}.in
-      PATHS ${PROJECT_SOURCE_DIR}
-      PATH_SUFFIXES doc
-      )
+list (APPEND documentationSources ${dalSources})
+list (APPEND documentationSources ${dalHeaders})
 
-    ## Process Doxygen input file
+## Set up variables which will be filled in when parsing the input file for the
+## Doxygen configuration
 
-    if (DOXYFILE_IN_${name})
-      
-      add_custom_command(TARGET ${nameTarget}
-        POST_BUILD
-        COMMAND ${CMAKE_MAKE_PROGRAM}
-        WORKING_DIRECTORY "${DOXYFILE_OUTPUT_DIR}/${DOXYFILE_LATEX_DIR}")
-      
-    else (DOXYFILE_IN_${name})
-      add_custom_target (nameTarget
-	WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-	COMMENT "Unable to build target ${nameTarget} - missing Doxygen input file!"
-	)
-    endif (DOXYFILE_IN_${name})    
-    
-  else (DOXYGEN_FOUND)
-    add_custom_target (nameTarget
-      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-      COMMENT "Unable to build target ${nameTarget} - missing Doxygen!"
-      )
-  endif(DOXYGEN_FOUND)
-  
-endmacro ()
+set ( DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}                         )
+set ( DOXYGEN_IMAGE_PATH       ${CMAKE_CURRENT_SOURCE_DIR}/figures                 )
+set ( DOXYGEN_HTML_FOOTER      ${CMAKE_CURRENT_SOURCE_DIR}/html_footer.html        )
+set ( DOXYGEN_LATEX_HEADER     ${CMAKE_CURRENT_SOURCE_DIR}/Manual-latex-header.tex )
+set ( DOXYGEN_WARN_LOGFILE     ${CMAKE_CURRENT_BINARY_DIR}/doxygen.log             )
 
 ## ==============================================================================
 ##
@@ -48,35 +27,20 @@ endmacro ()
 ##
 ## ==============================================================================
 
-add_doxygen_target (docAPI DoxyfileAPI)
-
-## Generate list of source files
-
-file (GLOB Documentation_sources *.doc *.tex *.in *.html)
-
-## Set up variables which will be filled in when parsing the input file for the
-## Doxygen configuration
-
-set ( DOXYGEN_OUTPUT_DIRECTORY  ${CMAKE_CURRENT_BINARY_DIR} )
-set ( DOXYGEN_IMAGE_PATH        ${CMAKE_CURRENT_SOURCE_DIR}/figures          )
-set ( DOXYGEN_HTML_FOOTER       ${CMAKE_CURRENT_SOURCE_DIR}/html_footer.html )
-set ( DOXYGEN_LATEX_HEADER      ${CMAKE_CURRENT_SOURCE_DIR}/Manual-latex-header.tex )
-set ( DOXYGEN_WARN_LOGFILE      ${CMAKE_CURRENT_BINARY_DIR}/doxygen.log )
-
 ## Generate Doxygen configuration file
 
 configure_file (
   ${CMAKE_CURRENT_SOURCE_DIR}/DoxyfileAPI.in
-  ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+  ${CMAKE_CURRENT_BINARY_DIR}/DoxyfileAPI
   )
 
 ## Define target to build documentation
 
 add_custom_command (
   OUTPUT html/index.html
-  COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
+  COMMAND ${DOXYGEN_EXECUTABLE} DoxyfileAPI
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile ${Documentation_sources} ${dalSources}
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/DoxyfileAPI ${documentationSources}
   COMMENT "Generating Doxygen code documentation ..."
   )
 
@@ -133,7 +97,7 @@ if (PDFLATEX_EXECUTABLE)
 	COMMAND ${PDFLATEX_EXECUTABLE} refman.tex
 	COMMAND ${PDFLATEX_EXECUTABLE} refman.tex
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual
-	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile ${Documentation_sources}
+	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile ${documentationSources}
 	COMMENT "Generating User Manual ..."
 	)
       
