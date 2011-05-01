@@ -83,10 +83,8 @@ include (${DAL_SOURCE_DIR}/cmake/CheckExternalPackages.cmake)
 
 include_directories (
   ${DAL_BINARY_DIR}
-  ${DAL_SOURCE_DIR}/implement
   ${DAL_SOURCE_DIR}/src
-  ${DAL_SOURCE_DIR}/test
-  ${DAL_SOURCE_DIR}/test/hdf5
+  ${DAL_SOURCE_DIR}/src/dal
   ${DAL_SOURCE_DIR}/apps
   )
 
@@ -199,14 +197,9 @@ endif (DAL_WITH_DOCUMENTATION)
 
 if (NOT DOCUMENTATION_ONLY)
   
-  add_subdirectory (implement)
   add_subdirectory (src)
   add_subdirectory (data)
   add_subdirectory (apps)
-  
-  if (DAL_ENABLE_TESTING)
-    add_subdirectory (test)
-  endif (DAL_ENABLE_TESTING)
   
 endif (NOT DOCUMENTATION_ONLY)
 
