@@ -455,7 +455,8 @@ namespace DAL {
     getSubbandData_Y (subband,start,length,values);
   }
 
-  // --------------------------------------------------------------- getIntensity
+  //_____________________________________________________________________________
+  //                                                                 getIntensity
 
   /*!
     \param subband Subband to get the data from.
@@ -464,39 +465,41 @@ namespace DAL {
     \return intensities Array of intensities
   */
   float *
-  BeamGroup::getIntensity( int &subband,
+  BeamGroup::getIntensity (int &subband,
                            int &start,
-                           int &length )
+                           int &length)
   {
     dalTable * table;
     dalColumn * col;
     dalData * data;
-
+    
     std::vector<std::string> memberNames = group_p->getMemberNames();
-
+    
     table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
-    if ( !table )
-      {
-        printf("ERROR: Subband %d does not exist for this beam\n", subband);
-        return NULL;
-      }
-
+    if ( !table ) {
+      std::cerr << "[BeamGroup::getIntensity] Subband " << subband
+		<< " does not exist for this beam."
+		<< std::endl;
+      return NULL;
+    }
+    
     col = table->getColumn_Float32("TOTAL_INTENSITY");
     data = col->data( start, length );
-    if ( !data )
-      {
-        printf("ERROR: Column TOTAL_INTENSITY does not exist for this subband\n");
-        return NULL;
-      }
-
+    if ( !data ) {
+     std::cerr << "[BeamGroup::getIntensity]"
+	       << " Column TOTAL_INTENSITY does not exist for this subband"
+	       << std::endl;
+      return NULL;
+    }
+    
     float * values;
     values = (float*)data->data;
-
+    
     return values;
   }
-
-	  
-  // -------------------------------------------------------- getIntensitySquared
+  
+  //_____________________________________________________________________________
+  //                                                          getIntensitySquared
   
   /*!
    \param subband Subband to get the data from.
@@ -509,35 +512,35 @@ namespace DAL {
 					  int &length )
   {
     dalTable * table;
-	  dalColumn * col;
-	  dalData * data;
-	  
-	  std::vector<std::string> memberNames = group_p->getMemberNames();
-	  
-	  table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
-	  if ( !table )
-	  {
-		  printf("ERROR: Subband %d does not exist for this beam\n", subband);
-		  return NULL;
-	  }
-	  
-	  col = table->getColumn_Float32("TOTAL_INTENSITY_SQUARED");
-	  data = col->data( start, length );
-	  if ( !data )
-	  {
-		  printf("ERROR: Column TOTAL_INTENSITY_SQUARED does not exist for this subband\n");
-		  return NULL;
-	  }
-	  
-	  float * values;
-	  values = (float*)data->data;
-	  
-	  return values;
+    dalColumn * col;
+    dalData * data;
+    
+    std::vector<std::string> memberNames = group_p->getMemberNames();
+    
+    table = dataset_p.openTable(memberNames[ subband ],group_p->getName());
+    if ( !table )
+      {
+	printf("ERROR: Subband %d does not exist for this beam\n", subband);
+	return NULL;
+      }
+    
+    col = table->getColumn_Float32("TOTAL_INTENSITY_SQUARED");
+    data = col->data( start, length );
+    if ( !data )
+      {
+	printf("ERROR: Column TOTAL_INTENSITY_SQUARED does not exist for this subband\n");
+	return NULL;
+      }
+    
+    float * values;
+    values = (float*)data->data;
+    
+    return values;
   }	  
   
-	  
-  // ---------------------------------------------------------- getSubbandData_X
-
+  //_____________________________________________________________________________
+  //                                                             getSubbandData_X
+  
   /*!
     \param subband -- Subband to get the data from.
     \param start   -- Start number of the cell in the column.
@@ -579,7 +582,8 @@ namespace DAL {
     delete table;
   }
 
-  // ---------------------------------------------------------- getSubbandData_Y
+  //_____________________________________________________________________________
+  //                                                             getSubbandData_Y
 
   /*!
     \param subband Subband to get the data from.
@@ -587,10 +591,10 @@ namespace DAL {
     \param length The number of cells to retrieve.
     \param Output character vector of values.
   */
-  void BeamGroup::getSubbandData_Y( int &subband,
+  void BeamGroup::getSubbandData_Y (int &subband,
                                     int &start,
                                     int &length,
-                                    std::vector< std::complex<short> > &values )
+                                    std::vector< std::complex<short> > &values)
   {
     std::complex<short> * yy             = NULL;
     dalTable * table                     = NULL;
@@ -623,7 +627,8 @@ namespace DAL {
     delete table;
   }
 
-  // ---------------------------------------------------------- getSubbandData_XY
+  //_____________________________________________________________________________
+  //                                                            getSubbandData_XY
 
   /*!
     \param subband   -- Subband to get the data from.
@@ -632,7 +637,7 @@ namespace DAL {
     \retval values_x -- Vector of X values.
     \retval values_y -- Vector of Y values.
   */
-  void BeamGroup::getSubbandData_XY( int &subband,
+  void BeamGroup::getSubbandData_XY (int &subband,
                                      int &start,
                                      int &length,
                                      std::vector< std::complex<short> > &values_x,
