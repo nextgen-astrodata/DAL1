@@ -24,7 +24,7 @@
 #include <core/dalBaseTypes.h>
 
 #ifdef PYTHON
-#include <bindings/num_util.h>
+#include <pydal/num_util.h>
 #endif
 
 namespace DAL {

@@ -84,6 +84,7 @@ include (${DAL_SOURCE_DIR}/cmake/CheckExternalPackages.cmake)
 include_directories (
   ${DAL_BINARY_DIR}
   ${DAL_SOURCE_DIR}/implement
+  ${DAL_SOURCE_DIR}/src
   ${DAL_SOURCE_DIR}/test
   ${DAL_SOURCE_DIR}/test/hdf5
   ${DAL_SOURCE_DIR}/apps

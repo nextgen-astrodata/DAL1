@@ -24,7 +24,7 @@
 #include <core/dalData.h>
 
 #ifdef PYTHON
-#include <bindings/num_util.h>
+#include <pydal/num_util.h>
 #endif
 
 #ifdef DAL_WITH_CASA
