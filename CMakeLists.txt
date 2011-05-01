@@ -199,6 +199,7 @@ endif (DAL_WITH_DOCUMENTATION)
 if (NOT DOCUMENTATION_ONLY)
   
   add_subdirectory (implement)
+  add_subdirectory (src)
   add_subdirectory (data)
   add_subdirectory (apps)
   

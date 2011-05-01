@@ -9,7 +9,6 @@
 ## Process the contents of the modules directories
 ##
 ##  .
-##  ├── bindings       (Python bindings only)
 ##  ├── coordinates
 ##  ├── core
 ##  ├── data_common
@@ -67,13 +66,3 @@ install (
   LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${DAL_INSTALL_LIBDIR}
   )
-
-## ==============================================================================
-##
-## Build the library for the Python bindings, "pydal"
-##
-## ==============================================================================
-
-if (DAL_PYTHON_BINDINGS)
-  add_subdirectory (bindings)
-endif (DAL_PYTHON_BINDINGS)
