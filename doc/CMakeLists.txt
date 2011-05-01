@@ -27,7 +27,7 @@ set ( DOXYGEN_WARN_LOGFILE      ${CMAKE_CURRENT_BINARY_DIR}/doxygen.log )
 ## Generate Doxygen configuration file
 
 configure_file (
-  ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/DoxyfileAPI.in
   ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
   )
 
@@ -37,7 +37,7 @@ add_custom_command (
   OUTPUT html/index.html
   COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile ${Documentation_sources} ${dal_sources}
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile ${Documentation_sources} ${dalSources}
   COMMENT "Generating Doxygen code documentation ..."
   )
 
@@ -56,11 +56,13 @@ endif (CMAKE_VERSION VERSION_GREATER 2.8.4)
 
 ## Installation of source code documentation
 
-install (
-  DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}/html
-  DESTINATION ${DAL_INSTALL_DOCDIR}
-  COMPONENT docReference
-  )
+#if (TARGET docReference)
+#  install (
+#    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
+#    DESTINATION ${DAL_INSTALL_DOCDIR}
+#    COMPONENT docReference
+#    )
+#endif (TARGET docReference)
 
 ## ==============================================================================
 ##
@@ -90,12 +92,15 @@ if (PDFLATEX_EXECUTABLE)
 	COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
 	COMMAND ${PDFLATEX_EXECUTABLE} refman.tex
 	COMMAND ${PDFLATEX_EXECUTABLE} refman.tex
+	COMMAND ${PDFLATEX_EXECUTABLE} refman.tex
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile ${Documentation_sources}
 	COMMENT "Generating User Manual ..."
 	)
       
-      add_custom_target (docManual
+      add_custom_target (
+	TARGET docManual
+	POST_BUILD
 	DEPENDS refman.pdf
 	)
       
@@ -111,9 +116,8 @@ if (PDFLATEX_EXECUTABLE)
       ## Installation instructions
       
       install (
-	FILES ${CMAKE_CURRENT_BINARY_DIR}/manual/refman.pdf
+	FILES refman.pdf
 	DESTINATION ${DAL_INSTALL_DOCDIR}
-	COMPONENT docManual
 	RENAME UserManual-${DAL_VERSION}.pdf
 	)
       
