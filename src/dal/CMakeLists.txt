@@ -1,34 +1,50 @@
 
 ## ==============================================================================
 ##
-##  Build the library, "libdal"
+##  libdal: Source & header files
 ##
 ## ==============================================================================
 
-##__________________________________________________________
-## Assemble list of source files
+foreach (dalModule
+    core
+    coordinates
+    data_common
+    data_hl
+    )
+  
+  ##________________________________________________________
+  ## List of library source files
 
-FILE (GLOB dal_sources
-  core/*.cc
-  coordinates/*.cc
-  data_common/*.cc
-  data_hl/*.cc
-  )
+  FILE (GLOB dal_${dalModule}_Sources ${dalModule}/*.cc)
 
-FILE (GLOB dal_headers
-  core/*.h
-  coordinates/*.h
-  data_common/*.h
-  data_hl/*.h
-  )
+  if (dal_${dalModule}_Sources)
+    list (APPEND dalSources ${dal_${dalModule}_Sources})
+  endif (dal_${dalModule}_Sources)
 
-##____________________________________________________________________
-## libdal: Compiler instructions
+  ##________________________________________________________
+  ## Installation of module header files
+  
+  FILE (GLOB dal_${dalModule}_Headers ${dalModule}/*.h)
+  
+  if (dal_${dalModule}_Headers)
+    install (
+      FILES ${dal_${dalModule}_Headers}
+      DESTINATION ${DAL_INSTALL_INCLUDEDIR}/${dalModule}
+      )
+  endif (dal_${dalModule}_Headers)
+  
+endforeach (dalModule)
+
+## ==============================================================================
+##
+##  libdal: Compiler instructions
+##
+## ==============================================================================
 
 if (DAL_SHARED_LIBRARY)
-  add_library(dal SHARED ${dal_sources})
+  add_library(dal SHARED ${dalSources})
 else (DAL_SHARED_LIBRARY)
-  add_library(dal STATIC ${dal_sources})
+  add_library(dal STATIC ${dalSources})
 endif (DAL_SHARED_LIBRARY)
 
 set_target_properties (dal
@@ -36,13 +52,19 @@ set_target_properties (dal
   COMPILE_FLAGS "-fpermissive -ftemplate-depth-100"
   )
 
-##____________________________________________________________________
-## libdal: Linker instructions
+## ==============================================================================
+##
+##  libdal: Linker instructions
+##
+## ==============================================================================
 
 target_link_libraries(dal ${dal_link_libraries})
 
-##____________________________________________________________________
-## libdal: Installation instructions
+## ==============================================================================
+##
+##  libdal: Installation instructions
+##
+## ==============================================================================
 
 install (
   TARGETS dal
