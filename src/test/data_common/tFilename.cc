@@ -56,7 +56,7 @@ int test_constructors ()
   std::string optionalDescription = "TBBraw";
   std::string path ("/tmp/lofarsoft");
   
-  cout << "[1] Testing default constructor ..." << endl;
+  cout << "[1] Testing Filename() ..." << endl;
   try {
     Filename file;
     //
@@ -66,7 +66,19 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[2] Testing argumented constructor ..." << endl;
+  cout << "[2] Testing Filename(string,FileType,FileExtension) ..." << endl;
+  try {
+    Filename file (observationID,
+		   Filename::tbb,
+		   Filename::h5);
+    //
+    file.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[3] Testing Filename(string,string,FileType,FileExtension) ..." << endl;
   try {
     Filename file (observationID,
 		   optionalDescription,
@@ -79,7 +91,8 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[3] Testing argumented constructor ..." << endl;
+  cout << "[4] Testing Filename(string,string,FileType,FileExtension,string) ..."
+       << endl;
   try {
     Filename file (observationID,
 		   optionalDescription,
@@ -93,7 +106,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[4] Testing copy constructor ..." << endl;
+  cout << "[5] Testing copy constructor ..." << endl;
   try {
     Filename fileOrig (observationID,
 		       optionalDescription,

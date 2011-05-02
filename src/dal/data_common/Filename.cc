@@ -41,6 +41,28 @@ namespace DAL { // Namespace DAL -- begin
 
   /*!
     \param observationID       -- Unique identifier for the observation
+    \param filetype            -- Marker for the contents of the file
+    \param extension           -- Extension of the file
+    \param path                -- Path to the location of the file
+  */
+  Filename::Filename (std::string const &observationID,
+		      FileType const &filetype,
+		      FileExtension const &extension,
+		      std::string const &path)
+  {
+    init ();
+    setObservationID (observationID);
+    setOptionalDescription ("");
+    setFiletype (filetype);
+    setExtension (extension);
+    setPath (path);
+  }
+
+  //_____________________________________________________________________________
+  //                                                                     Filename
+
+  /*!
+    \param observationID       -- Unique identifier for the observation
     \param optionalDescription -- Optional descriptors
     \param filetype            -- Marker for the contents of the file
     \param extension           -- Extension of the file
@@ -52,6 +74,7 @@ namespace DAL { // Namespace DAL -- begin
 		      FileExtension const &extension,
 		      std::string const &path)
   {
+    init ();
     setObservationID (observationID);
     setOptionalDescription (optionalDescription);
     setFiletype (filetype);
@@ -118,8 +141,8 @@ namespace DAL { // Namespace DAL -- begin
     observationID_p       = other.observationID_p;
     itsOptionalDescriptor = other.itsOptionalDescriptor;
     itsFiletype           = other.itsFiletype;
-    itsExtension           = other.itsExtension;
-    itsPath                = other.itsPath;
+    itsExtension          = other.itsExtension;
+    itsPath               = other.itsPath;
   }
 
   // ============================================================================

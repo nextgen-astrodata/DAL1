@@ -224,6 +224,12 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Argumented constructor
     Filename (std::string const &observationID,
+	      FileType const &filetype,
+	      FileExtension const &extension,
+	      std::string const &path="");
+    
+    //! Argumented constructor
+    Filename (std::string const &observationID,
 	      std::string const &optionalDescription,
 	      FileType const &filetype,
 	      FileExtension const &extension,
