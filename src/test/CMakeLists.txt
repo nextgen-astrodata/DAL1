@@ -88,10 +88,8 @@ endif (CASACORE_FOUND AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
 
 if (DAL_ENABLE_TESTING)
   
-  ## -----------------------------------------------------------------
-  ## [1] simple tests which do not require sample data
-  
   add_test (tdal tdal)
+  add_test (tDAL_HDF5 tDAL_HDF5)
   
   ## -----------------------------------------------------------------
   ## [3] Processing tests which require sample datasets
