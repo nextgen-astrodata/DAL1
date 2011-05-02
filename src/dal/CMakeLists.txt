@@ -37,9 +37,7 @@ foreach (dalModule
   ## Test programs for this module
   
   if (DAL_ENABLE_TESTING)
-    if (EXISTS ${dalModule}/test)
-      add_subdirectory (${dalModule}/test)
-    endif ()
+    add_subdirectory (${dalModule}/test)
   endif (DAL_ENABLE_TESTING)
   
 endforeach (dalModule)

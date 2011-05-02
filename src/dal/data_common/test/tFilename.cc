@@ -39,6 +39,32 @@ using DAL::Filename;
 */
 
 //_______________________________________________________________________________
+//                                                             test_staticMethods
+
+/*!
+  \brief Test the static methods
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_staticMethods ()
+{
+  cout << "\n[tFilename::test_staticMethods]\n" << endl;
+
+  int nofFailedTests (0);
+
+  std::cout << "[1] Testing Filename::extensionMap() ..." << std::endl;
+  try {
+    std::map<Filename::FileExtension,std::string> extensions = Filename::extensionMap();
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                              test_constructors
 
 /*!
@@ -178,6 +204,9 @@ int test_attributes ()
 int main ()
 {
   int nofFailedTests (0);
+
+  // Test the static methods
+  nofFailedTests += test_staticMethods ();
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
