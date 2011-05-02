@@ -12,9 +12,6 @@ include (${PROJECT_SOURCE_DIR}/cmake/UseDoxygen.cmake)
 
 file (GLOB documentationSources *.doc *.tex *.in *.html)
 
-list (APPEND documentationSources ${dalSources})
-list (APPEND documentationSources ${dalHeaders})
-
 ## Set up variables which will be filled in when parsing the input file for the
 ## Doxygen configuration
 
@@ -48,7 +45,7 @@ if (LATEX_EXECUTABLE)
   add_custom_command (
     OUTPUT ${DOXYGEN_OUTPUT_DIRECTORY}/index.html
     COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile${targetID}
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID} ${dalHeaders}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
 
@@ -103,3 +100,14 @@ if (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
   
 endif (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
 
+## ==============================================================================
+##
+##  Collective target to build documentation
+##
+## ==============================================================================
+
+if (TARGET docManual)
+  add_custom_target (Documentation
+    DEPENDS ${DOXYGEN_OUTPUT_DIRECTORY}/refman.pdf
+    )
+endif ()
