@@ -32,6 +32,15 @@ foreach (dalModule
       DESTINATION ${DAL_INSTALL_INCLUDEDIR}/${dalModule}
       )
   endif (dal_${dalModule}_Headers)
+
+  ##________________________________________________________
+  ## Test programs for this module
+  
+  if (DAL_ENABLE_TESTING)
+    if (EXISTS ${dalModule}/test)
+      add_subdirectory (${dalModule}/test)
+    endif ()
+  endif (DAL_ENABLE_TESTING)
   
 endforeach (dalModule)
 
