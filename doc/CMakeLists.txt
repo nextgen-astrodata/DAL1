@@ -29,7 +29,7 @@ set ( DOXYGEN_WARN_LOGFILE     ${CMAKE_CURRENT_BINARY_DIR}/doxygen.log          
 
 ## Process the inputs to the projects
 
-if (LATEX_EXECUTABLE)
+if (DOXYGEN_EXECUTABLE AND LATEX_EXECUTABLE)
   
   set (targetID                 "API")
   set (targetName               "doc${targetID}")
@@ -48,13 +48,13 @@ if (LATEX_EXECUTABLE)
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID} ${dalHeaders}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
-
+  
   ## Define target to build the documentation
   add_custom_target (${targetName}
     DEPENDS ${DOXYGEN_OUTPUT_DIRECTORY}/index.html
     )
   
-endif (LATEX_EXECUTABLE)
+endif (DOXYGEN_EXECUTABLE AND LATEX_EXECUTABLE)
 
 ## ==============================================================================
 ##
@@ -68,6 +68,10 @@ if (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
   set (targetName               "doc${targetID}")
   set (DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${targetName}")
   
+  if (NOT EXISTS ${DOXYGEN_OUTPUT_DIRECTORY})
+    file (MAKE_DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY})
+  endif (NOT EXISTS ${DOXYGEN_OUTPUT_DIRECTORY})
+  
   ## Generate Doxygen configuration time
   configure_file (
     ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile${targetID}.in
@@ -78,16 +82,15 @@ if (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
   add_custom_command (
     OUTPUT ${DOXYGEN_OUTPUT_DIRECTORY}/refman.pdf
     COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
-    COMMAND ${PDFLATEX_EXECUTABLE} refman
-    COMMAND ${PDFLATEX_EXECUTABLE} refman
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
     WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}
     )
 
   ## Define target to build the documentation
   add_custom_target (${targetName}
-    COMMAND make ${targetName}
     DEPENDS ${DOXYGEN_OUTPUT_DIRECTORY}/refman.pdf
+    COMMAND ${PDFLATEX_EXECUTABLE} refman
+    WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}
     )
   
   ## Installation instructions
