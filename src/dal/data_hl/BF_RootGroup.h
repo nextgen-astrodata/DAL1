@@ -102,11 +102,19 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
 
     <ol>
+      <li>Create new BF dataset file:
+      \code
+      // Construct filename from observation ID and filename extension
+      DAL::Filename filename ("1234567890",
+                              DAL::Filename::h5);
+      // Create BF root-group object for new file
+      BF_RootGroup bf (filename);
+      \endcode
       <li>Open an existing BF dataset \e filename:
       \code
-      std:string filename ("data.h5");
+      std:string name ("data.h5");
       
-      BF_RootGroup bf (filename);
+      BF_RootGroup bf (name);
       \endcode
       Once the dataset has been opened its contents can be accessed; to get a
       basic idea of the contents, use
