@@ -1,4 +1,13 @@
 
+## === Library header files =====================================================
+
+include_directories (
+  ${DAL_BINARY_DIR}
+  ${DAL_SOURCE_DIR}/src
+  ${DAL_SOURCE_DIR}/src/dal
+  ${DAL_SOURCE_DIR}/src/apps
+  )
+
 ## === Directories to build libraries ===========================================
 
 add_subdirectory (dal)

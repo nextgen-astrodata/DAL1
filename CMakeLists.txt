@@ -72,22 +72,6 @@ add_definitions (
 include (${DAL_SOURCE_DIR}/cmake/InstallationSettings.cmake)
 include (${DAL_SOURCE_DIR}/cmake/CheckExternalPackages.cmake)
 
-## ==============================================================================
-##
-##  Include directories
-##
-## ==============================================================================
-
-##__________________________________________________________
-## Header files of the DAL itself
-
-include_directories (
-  ${DAL_BINARY_DIR}
-  ${DAL_SOURCE_DIR}/src
-  ${DAL_SOURCE_DIR}/src/dal
-  ${DAL_SOURCE_DIR}/src/apps
-  )
-
 ## =============================================================================
 ##
 ##  List of external libraries against which to link; even though we really
