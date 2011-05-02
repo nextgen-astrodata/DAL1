@@ -14,8 +14,6 @@ endif (HAVE_RUNTEST_SH)
 ##
 ## ==============================================================================
 
-add_subdirectory (core)
-add_subdirectory (coordinates)
 add_subdirectory (data_hl)
 
 if (NOT HDF5_USE_16_API_DEFAULT)
