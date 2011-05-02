@@ -114,7 +114,18 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[2] Testing Filename(string,FileType,FileExtension) ..." << endl;
+  cout << "[2] Testing Filename(string,FileType) ..." << endl;
+  try {
+    Filename file (observationID,
+		   Filename::tbb);
+    //
+    file.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[3] Testing Filename(string,FileType,FileExtension) ..." << endl;
   try {
     Filename file (observationID,
 		   Filename::tbb,
@@ -126,7 +137,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[3] Testing Filename(string,string,FileType,FileExtension) ..." << endl;
+  cout << "[4] Testing Filename(string,string,FileType,FileExtension) ..." << endl;
   try {
     Filename file (observationID,
 		   optionalDescription,
@@ -139,7 +150,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[4] Testing Filename(string,string,FileType,FileExtension,string) ..."
+  cout << "[5] Testing Filename(string,string,FileType,FileExtension,string) ..."
        << endl;
   try {
     Filename file (observationID,
@@ -154,7 +165,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[5] Testing copy constructor ..." << endl;
+  cout << "[6] Testing copy constructor ..." << endl;
   try {
     Filename fileOrig (observationID,
 		       optionalDescription,

@@ -42,6 +42,21 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param observationID       -- Unique identifier for the observation
     \param filetype            -- Marker for the contents of the file
+  */
+  Filename::Filename (std::string const &observationID,
+		      FileType const &filetype)
+  {
+    init ();
+    setObservationID (observationID);
+    setFiletype (filetype);
+  }
+
+  //_____________________________________________________________________________
+  //                                                                     Filename
+
+  /*!
+    \param observationID       -- Unique identifier for the observation
+    \param filetype            -- Marker for the contents of the file
     \param extension           -- Extension of the file
     \param path                -- Path to the location of the file
   */
@@ -52,7 +67,6 @@ namespace DAL { // Namespace DAL -- begin
   {
     init ();
     setObservationID (observationID);
-    setOptionalDescription ("");
     setFiletype (filetype);
     setExtension (extension);
     setPath (path);
@@ -260,6 +274,7 @@ namespace DAL { // Namespace DAL -- begin
     extensions[Filename::gds]    = "gds";
     extensions[Filename::conf]   = "conf";
     extensions[Filename::raw]    = "raw";
+    extensions[Filename::incoherentstokes] = "incoherentstokes";
 
     return extensions;
   }
