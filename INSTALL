@@ -1,3 +1,19 @@
+The Data Access Library (DAL) uses the CMake cross-platform build system.
+Follow the instructions on `http://www.cmake.org` to install CMake.
 
-For installation instructions the section "Configuration and build"
-in the README file.
+- Go to the build directory:
+
+    mkdir build
+    cd build
+
+- Use CMake to generate platform specific Makefile's.
+
+    cmake ..
+
+- Build the library.
+
+    make
+
+- Install the library.
+
+    make install
