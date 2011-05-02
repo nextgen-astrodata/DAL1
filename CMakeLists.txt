@@ -85,7 +85,7 @@ include_directories (
   ${DAL_BINARY_DIR}
   ${DAL_SOURCE_DIR}/src
   ${DAL_SOURCE_DIR}/src/dal
-  ${DAL_SOURCE_DIR}/apps
+  ${DAL_SOURCE_DIR}/src/apps
   )
 
 ## =============================================================================
@@ -199,7 +199,6 @@ if (NOT DOCUMENTATION_ONLY)
   
   add_subdirectory (src)
   add_subdirectory (data)
-  add_subdirectory (apps)
   
 endif (NOT DOCUMENTATION_ONLY)
 

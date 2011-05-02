@@ -2,6 +2,7 @@
 ## === Directories to build libraries ===========================================
 
 add_subdirectory (dal)
+add_subdirectory (apps)
 
 if (DAL_PYTHON_BINDINGS)
   add_subdirectory (pydal)
