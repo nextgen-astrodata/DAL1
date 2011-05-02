@@ -5,6 +5,9 @@
 ##
 ## ==============================================================================
 
+## Load the the macro definition(s)
+include (${PROJECT_SOURCE_DIR}/cmake/UseDoxygen.cmake)
+
 ## Generate list of source files
 
 file (GLOB documentationSources *.doc *.tex *.in *.html)
@@ -27,127 +30,68 @@ set ( DOXYGEN_WARN_LOGFILE     ${CMAKE_CURRENT_BINARY_DIR}/doxygen.log          
 ##
 ## ==============================================================================
 
-## Generate Doxygen configuration file
+## Process the inputs to the projects
 
-configure_file (
-  ${CMAKE_CURRENT_SOURCE_DIR}/DoxyfileAPI.in
-  ${CMAKE_CURRENT_BINARY_DIR}/DoxyfileAPI
-  )
-
-## Define target to build documentation
-
-add_custom_command (
-  OUTPUT html/index.html
-  COMMAND ${DOXYGEN_EXECUTABLE} DoxyfileAPI
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/DoxyfileAPI ${documentationSources}
-  COMMENT "Generating Doxygen code documentation ..."
-  )
-
-add_custom_target (docReference
-  DEPENDS html/index.html
-  )
-
-## Testing instructions
-if (CMAKE_VERSION VERSION_GREATER 2.8.4)
-  add_test (
-    NAME docReference
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMAND make docReference
-    )
-endif (CMAKE_VERSION VERSION_GREATER 2.8.4)
-
-## Installation of source code documentation
-
-#if (TARGET docReference)
-#  install (
-#    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
-#    DESTINATION ${DAL_INSTALL_DOCDIR}
-#    COMPONENT docReference
-#    )
-#endif (TARGET docReference)
-
-## ==============================================================================
-##
-##  Manual  (LaTeX -> PDF)
-##
-## ==============================================================================
-
-if (PDFLATEX_EXECUTABLE)
-  if (LATEX_FNCYCHAP_PACKAGE)
-    if (LATEX_HYPERREF_PACKAGE)
-      
-      ## Create subdirectory 
-      
-      file (MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual)
-      
-      ## Create configuration file for Doxygen
-      
-      configure_file (
-	${CMAKE_CURRENT_SOURCE_DIR}/DoxyfileManual.in
-	${CMAKE_CURRENT_BINARY_DIR}/manual/Doxyfile
-	)
-      
-      ## Generate Manual
-      
-      add_custom_command (
-	OUTPUT refman.pdf
-	COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
-	COMMAND ${PDFLATEX_EXECUTABLE} refman.tex
-	COMMAND ${PDFLATEX_EXECUTABLE} refman.tex
-	COMMAND ${PDFLATEX_EXECUTABLE} refman.tex
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual
-	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile ${documentationSources}
-	COMMENT "Generating User Manual ..."
-	)
-      
-      add_custom_target (
-	TARGET docManual
-	POST_BUILD
-	DEPENDS refman.pdf
-	)
-      
-      ## Testing instructions
-      if (CMAKE_VERSION VERSION_GREATER 2.8.4)
-	add_test (
-	  NAME docManual
-	  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/manual
-	  COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile; ${PDFLATEX_EXECUTABLE} refman.tex
-	  )
-      endif (CMAKE_VERSION VERSION_GREATER 2.8.4)
-      
-      ## Installation instructions
-      
-      install (
-	FILES refman.pdf
-	DESTINATION ${DAL_INSTALL_DOCDIR}
-	RENAME UserManual-${DAL_VERSION}.pdf
-	)
-      
-    else (LATEX_HYPERREF_PACKAGE)
-      message (STATUS "Skipping generating user manual - missing LaTeX package hyperref!")
-    endif (LATEX_HYPERREF_PACKAGE)
-    
-  else (LATEX_FNCYCHAP_PACKAGE)
-    message (STATUS "Skipping generating user manual - missing LaTeX package fncychap!")
-  endif (LATEX_FNCYCHAP_PACKAGE)
+if (LATEX_EXECUTABLE)
   
-else (PDFLATEX_EXECUTABLE)
-  message (STATUS "Skipping generating user manual - missing pdfLaTeX!")
-endif (PDFLATEX_EXECUTABLE)
+  set (targetID                 "API")
+  set (targetName               "doc${targetID}")
+  set (DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${targetName}")
+  
+  ## Generate Doxygen configuration time
+  configure_file (
+    ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile${targetID}.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
+    )
+
+  ## Define custom command to 
+  add_custom_command (
+    OUTPUT ${DOXYGEN_OUTPUT_DIRECTORY}/index.html
+    COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile${targetID}
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+
+  ## Define target to build the documentation
+  add_custom_target (${targetName}
+    DEPENDS ${DOXYGEN_OUTPUT_DIRECTORY}/index.html
+    )
+  
+endif (LATEX_EXECUTABLE)
 
 ## ==============================================================================
 ##
-##  Collective target to build all available parts of documentation
+##  Doxygen documentation for source code (HTML only)
 ##
 ## ==============================================================================
 
-if (TARGET docManual)
-  add_custom_target (Documentation
-    DEPENDS html/index.html refman.pdf
+if (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
+
+  set (targetID                 "Manual")
+  set (targetName               "doc${targetID}")
+  set (DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${targetName}")
+  
+  ## Generate Doxygen configuration time
+  configure_file (
+    ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile${targetID}.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
     )
-else (TARGET docManual)
-  add_custom_target (Documentation
-    DEPENDS html/index.html
+  
+  ## Define target to build User Manual
+  add_custom_command (
+    OUTPUT doc${targetID}/refman.pdf
+    COMMAND make doc${targetID}
+    COMMAND make doc${targetID}
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
-endif (TARGET docManual)
+  add_custom_target(
+    Name doc${targetID}
+    COMMAND make doc${targetID}
+    DEPENDS make_doc${targetID}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    SOURCES ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
+    )
+  
+endif (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
+

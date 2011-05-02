@@ -51,7 +51,7 @@ PROJECT_LOGO           =
 # If a relative path is entered, it will be relative to the location
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = ${DOXYGEN_OUTPUT_DIRECTORY}/manual
+OUTPUT_DIRECTORY       = ${DOXYGEN_OUTPUT_DIRECTORY}
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create
 # 4096 sub-directories (in 2 levels) under the output directory of each output
@@ -820,7 +820,7 @@ GENERATE_HTML          = NO
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
 # put in front of it. If left blank `html' will be used as the default path.
 
-HTML_OUTPUT            = html
+HTML_OUTPUT            = ${DOXYGEN_OUTPUT_DIRECTORY}
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for
 # each generated HTML page (for example: .htm,.php,.asp). If it is left blank
@@ -1159,7 +1159,7 @@ GENERATE_LATEX         = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
 # put in front of it. If left blank `latex' will be used as the default path.
 
-LATEX_OUTPUT           = ${DOXYGEN_OUTPUT_DIRECTORY}/manual
+LATEX_OUTPUT           = ${DOXYGEN_OUTPUT_DIRECTORY}
 
 # The LATEX_CMD_NAME tag can be used to specify the LaTeX command name to be
 # invoked. If left blank `latex' will be used as the default command name.
@@ -1316,7 +1316,7 @@ GENERATE_XML           = NO
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
 # put in front of it. If left blank `xml' will be used as the default path.
 
-XML_OUTPUT             = xml
+XML_OUTPUT             = ${DOXYGEN_OUTPUT_DIRECTORY}
 
 # The XML_SCHEMA tag can be used to specify an XML schema,
 # which can be used by a validating XML parser to check the
