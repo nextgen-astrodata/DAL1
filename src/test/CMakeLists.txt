@@ -27,6 +27,7 @@ endif (DAL_PYTHON_BINDINGS)
 set (tests
   tdal
   tdal_fits
+  tDAL_HDF5
   )
 
 ## Build instructions

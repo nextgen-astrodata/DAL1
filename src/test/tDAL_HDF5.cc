@@ -24,15 +24,14 @@
 #include <lofar_config.h>
 #endif
 
-#define FILENAME        "test.h5"
 #define SAMPLES         1008
 #define CHANNELS        64
 #define SUBBANDS        60
 #define BLOCKS          10
 
+#include <data_common/CommonAttributes.h>
 #include <data_hl/BF_RootGroup.h>
 #include <data_hl/BF_StokesDataset.h>
-#include <data_common/CommonAttributes.h>
 #include <iostream>
 
 #include <data_common/CommonAttributes.h>
@@ -46,14 +45,23 @@ using boost::format;
 
 int main()
 {
-  const char * const filename = FILENAME;
+  
+  /* 
+   *  Create DAL::Filename object for generation of proper filename, matching
+   *  the rules as  defined in ICD-005.
+   */
+  DAL::Filename filename ("",
+			  "test",
+			  DAL::Filename::bf,
+			  DAL::Filename::h5);
+  
   const unsigned nrSamples = SAMPLES;
   const unsigned nrChannels = SUBBANDS * CHANNELS;
-
+  
   {
-    cout << "Creating file " << filename << endl;
-    DAL::BF_RootGroup rootGroup( filename );
-
+    cout << "Creating file " << filename.filename() << endl;
+    DAL::BF_RootGroup rootGroup (filename);
+    
     cout << "Creating primary pointing 0" << endl;
     rootGroup.openPrimaryPointing( 0, true );
 
@@ -66,9 +74,9 @@ int main()
   }
   
   {
-    cout << "Reopening file " << filename << endl;
-    hid_t fileID = H5Fcreate( filename, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT );
-    
+    DAL::BF_RootGroup rootGroup (filename.filename());
+
+    hid_t fileID = rootGroup.locationID();
     cout << "Creating stokes set 0" << endl;
     DAL::BF_StokesDataset stokesDataset(fileID, 0,
 					nrSamples,
