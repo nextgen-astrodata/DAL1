@@ -57,11 +57,11 @@ if (DOXYGEN_EXECUTABLE AND LATEX_EXECUTABLE)
     )
   
   ## Installation instructions
-  install(
-    DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}
-    DESTINATION ${DAL_INSTALL_DOCDIR}
-    COMPONENT ${targetName}
-    )
+#  install(
+#    DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}
+#    DESTINATION ${DAL_INSTALL_DOCDIR}
+#    COMPONENT ${targetName}
+#    )
   
 endif (DOXYGEN_EXECUTABLE AND LATEX_EXECUTABLE)
 
@@ -99,6 +99,7 @@ if (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
   ## Define target to build the documentation
   add_custom_target (${targetName}
     DEPENDS ${targetOutput}
+    COMMAND ${PDFLATEX_EXECUTABLE} refman
     COMMAND ${PDFLATEX_EXECUTABLE} refman
     WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}
     )
