@@ -55,7 +55,29 @@ int test_staticMethods ()
 
   std::cout << "[1] Testing Filename::extensionMap() ..." << std::endl;
   try {
-    std::map<Filename::FileExtension,std::string> extensions = Filename::extensionMap();
+    std::map<Filename::FileExtension,std::string> extension = Filename::extensionMap();
+
+    std::map<Filename::FileExtension,std::string>::iterator it;
+
+    for (it=extension.begin(); it!=extension.end(); ++it) {
+      std::cout << "  FileExtension[" << it->first << "] = " << it->second
+		<< std::endl;
+    }
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Testing Filename::filetypeMap() ..." << std::endl;
+  try {
+    std::map<Filename::FileType,std::string> filetype = Filename::filetypeMap();
+
+    std::map<Filename::FileType,std::string>::iterator it;
+
+    for (it=filetype.begin(); it!=filetype.end(); ++it) {
+      std::cout << "  FileType[" << it->first << "] = " << it->second
+		<< std::endl;
+    }
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;

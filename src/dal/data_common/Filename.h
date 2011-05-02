@@ -120,17 +120,23 @@ namespace DAL { // Namespace DAL -- begin
 
     <h3>Example(s)</h3>
     
-    \code
-    std::string observationID              = "123456789";
-    std::string optionalDescription        = "";
-    DAL::Filename::FileType filetype       = Filename::bf;
-    DAL::Filename::FileExtension extension = Filename::h5;
-
-    DAL::Filename filename (observationID,
-                            optionalDescription,
-			    filetype,
-			    extension);
-    \endcode
+    <ol>
+      <li>Simple example to generate filename for a HDF5-based BF dataset:
+      \code
+      // Set up the input parameters
+      std::string observationID              = "123456789";
+      DAL::Filename::FileType filetype       = Filename::bf;
+      DAL::Filename::FileExtension extension = Filename::h5;
+      
+      // Create object ...
+      DAL::Filename filename (observationID,
+                              filetype,
+                              extension);
+      // ... and retrieve filename
+      std::string name = filename.filename();
+      \endcode
+      The result will be: <tt>name = "L123456789_bf.h5"</tt>
+    </ol>
     
   */  
   class Filename {

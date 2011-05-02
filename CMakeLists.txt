@@ -171,12 +171,6 @@ endif (dal_link_libraries)
 ##
 ## =============================================================================
 
-## Option: generate documentation?
-
-if (DAL_WITH_DOCUMENTATION)
-  add_subdirectory (doc)
-endif (DAL_WITH_DOCUMENTATION)
-
 ## Option: only generate documentation?
 
 if (NOT DOCUMENTATION_ONLY)
@@ -185,6 +179,12 @@ if (NOT DOCUMENTATION_ONLY)
   add_subdirectory (data)
   
 endif (NOT DOCUMENTATION_ONLY)
+
+## Option: generate documentation?
+
+if (DAL_WITH_DOCUMENTATION)
+  add_subdirectory (doc)
+endif (DAL_WITH_DOCUMENTATION)
 
 ## =============================================================================
 ##

@@ -201,7 +201,7 @@ namespace DAL { // Namespace DAL -- begin
     observationID_p       = "";
     itsOptionalDescriptor = "";
     itsFiletype           = Filename::uv;
-    itsExtension           = Filename::h5;
+    itsExtension          = Filename::h5;
     itsPath               = "";
   }
 
