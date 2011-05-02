@@ -76,21 +76,20 @@ if (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
     ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile${targetID}.in
     ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
     )
-  
-  ## Define target to build User Manual
+
+  ## Define custom command to 
   add_custom_command (
-    OUTPUT doc${targetID}/refman.pdf
-    COMMAND make doc${targetID}
-    COMMAND make doc${targetID}
+    OUTPUT ${DOXYGEN_OUTPUT_DIRECTORY}/refman.pdf
+    COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
+    COMMAND ${PDFLATEX_EXECUTABLE} refman
+    COMMAND ${PDFLATEX_EXECUTABLE} refman
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}
     )
-  add_custom_target(
-    Name doc${targetID}
-    COMMAND make doc${targetID}
-    DEPENDS make_doc${targetID}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    SOURCES ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
+
+  ## Define target to build the documentation
+  add_custom_target (${targetName}
+    DEPENDS ${DOXYGEN_OUTPUT_DIRECTORY}/refman.pdf
     )
   
 endif (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
