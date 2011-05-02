@@ -31,6 +31,9 @@ if (NOT GIT_FOUND)
   if (NOT GIT_ROOT_DIR)
     set (GIT_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   endif (NOT GIT_ROOT_DIR)
+
+  set (GIT_VERSION       "" )
+  set (GIT_REMOTE_ORIGIN "" )
   
   ##_____________________________________________________________________________
   ## Check for the executable
@@ -72,7 +75,9 @@ if (NOT GIT_FOUND)
       OUTPUT_VARIABLE GIT_REMOTE_ORIGIN
       )
     
-    string(REGEX MATCH [a-z]* GIT_REMOTE_ORIGIN ${GIT_REMOTE_ORIGIN})
+    if (GIT_REMOTE_ORIGIN)
+      string(REGEX MATCH [a-z]* GIT_REMOTE_ORIGIN ${GIT_REMOTE_ORIGIN})
+    endif (GIT_REMOTE_ORIGIN)
     
   endif (GIT_EXECUTABLE)
   
