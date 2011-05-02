@@ -21,7 +21,6 @@ if (NOT HDF5_USE_16_API_DEFAULT)
 endif (NOT HDF5_USE_16_API_DEFAULT)
 
 if (DAL_PYTHON_BINDINGS)
-  add_subdirectory (bindings)
   add_subdirectory (python)
 endif (DAL_PYTHON_BINDINGS)
 

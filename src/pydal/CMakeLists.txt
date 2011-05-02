@@ -60,3 +60,8 @@ install (
   TARGETS pydal
   LIBRARY DESTINATION ${DAL_INSTALL_LIBDIR}
   )
+
+##______________________________________________
+## Test programs for this module
+
+add_subdirectory (test)
