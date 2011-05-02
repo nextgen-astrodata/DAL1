@@ -14,8 +14,6 @@ endif (HAVE_RUNTEST_SH)
 ##
 ## ==============================================================================
 
-add_subdirectory (data_hl)
-
 if (NOT HDF5_USE_16_API_DEFAULT)
   add_subdirectory (hdf5)
 endif (NOT HDF5_USE_16_API_DEFAULT)

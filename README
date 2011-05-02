@@ -69,17 +69,30 @@ ________________________________________________________________________________
 
 The components of the DAL is organized into the following directory structure:
 
- DAL
- |-- implement           ..   Library source code for libdal and pydal.
- |   |-- core            ..   Core library classes
- |   |-- coordinates     ..   Representation of world coordinates
- |   |-- data_common     ..   Common functionality for datasets
- |   |-- data_hl         ..   High-level interfaces to datasets
- |   `-- bindings        ..   Bindings to scripting languages
- |-- test                ..   Test programs for library C++ classes.
- |-- apps                ..   Application programs build on top of the library.
- |-- doc                 ..   Documentation.
- `-- data                ..   Reference data sets used for rest programs.
+  DAL
+  |-- build
+  |-- cmake
+  |-- data                     ..   Reference data sets used for rest programs.
+  |-- doc                      ..   Documentation.
+  |    `-- figures
+  `-- src
+        |-- apps               ..   Application programs build on top of the library.
+        |    `-- bf2h5
+        |-- dal
+        |    |-- core          ..   Core library classes
+        |    |    `-- test
+        |    |-- coordinates   ..   Representation of world coordinates
+        |    |    `-- test
+        |    |-- data_common   ..   Common functionality for datasets
+        |    |    `-- test
+        |    `-- data_hl       ..   High-level interfaces to datasets
+        |          `-- test
+        |-- pydal              ..   Bindings to the Python scripting language
+        |     `-- test
+        `-- test
+              |-- hdf5
+              |-- python
+              `-- swig
 
 
 _________________________________________________________________________________
