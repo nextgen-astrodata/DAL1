@@ -89,7 +89,16 @@ if (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
 
   ## Define target to build the documentation
   add_custom_target (${targetName}
+    COMMAND make ${targetName}
     DEPENDS ${DOXYGEN_OUTPUT_DIRECTORY}/refman.pdf
+    )
+  
+  ## Installation instructions
+  install(
+    FILES ${DOXYGEN_OUTPUT_DIRECTORY}/refman.pdf
+    DESTINATION ${DAL_INSTALL_DOCDIR}
+    COMPONENT ${targetName}
+    RENAME UserManual-${DAL_VERSION}.pdf
     )
   
 endif (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
