@@ -33,7 +33,7 @@ if (DOXYGEN_EXECUTABLE AND LATEX_EXECUTABLE)
   
   set (targetID                 "API")
   set (targetName               "doc${targetID}")
-  set (DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${targetName}")
+  set (DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html")
   
   ## Generate Doxygen configuration time
   configure_file (
@@ -52,6 +52,15 @@ if (DOXYGEN_EXECUTABLE AND LATEX_EXECUTABLE)
   ## Define target to build the documentation
   add_custom_target (${targetName}
     DEPENDS ${DOXYGEN_OUTPUT_DIRECTORY}/index.html
+    COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile${targetID}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+  
+  ## Installation instructions
+  install(
+    DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}
+    DESTINATION ${DAL_INSTALL_DOCDIR}
+    COMPONENT ${targetName}
     )
   
 endif (DOXYGEN_EXECUTABLE AND LATEX_EXECUTABLE)
@@ -111,6 +120,14 @@ endif (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE
 
 if (TARGET docManual)
   add_custom_target (Documentation
-    DEPENDS ${DOXYGEN_OUTPUT_DIRECTORY}/refman.pdf
+    COMMAND make docManual
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/docManual/refman.pdf
+    ${CMAKE_CURRENT_BINARY_DIR}/html/index.html
+    )
+else ()
+  add_custom_target (Documentation
+    DEPENDS
+    ${DOXYGEN_OUTPUT_DIRECTORY}/index.html
     )
 endif ()
