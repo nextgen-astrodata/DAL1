@@ -46,32 +46,43 @@ using boost::format;
 int main()
 {
   
-  /* 
-   *  Create DAL::Filename object for generation of proper filename, matching
-   *  the rules as  defined in ICD-005.
-   */
+  /*__________________________________________________________________
+    Create DAL::Filename object for generation of proper filename,
+    matching the rules as  defined in ICD-005.
+  */
+
   DAL::Filename filename ("",
 			  "test",
 			  DAL::Filename::bf,
 			  DAL::Filename::h5);
   
-  const unsigned nrSamples = SAMPLES;
+  const unsigned nrSamples  = SAMPLES;
   const unsigned nrChannels = SUBBANDS * CHANNELS;
   
+  /*__________________________________________________________________
+    Create new BF file.
+  */
+
+  std::cout << "[1] Create basic BF file structure ..." << std::endl;
   {
-    cout << "Creating file " << filename.filename() << endl;
+    cout << "-- Creating file " << filename.filename() << endl;
     DAL::BF_RootGroup rootGroup (filename);
     
-    cout << "Creating primary pointing 0" << endl;
-    rootGroup.openPrimaryPointing( 0, true );
+    cout << "-- Creating primary pointing 0" << endl;
+    rootGroup.openPrimaryPointing ( 0, true );
 
-    DAL::BF_SubArrayPointing sap = rootGroup.primaryPointing( 0 );
+    cout << "-- Creating tied-array beam 0" << endl;
+    rootGroup.openBeam ( 0, 0, true );
 
-    cout << "Creating tied-array beam 0" << endl;
-    sap.openBeam( 0, true );
-
-    cout << "Closing file" << endl;
+    cout << "-- Closing file" << endl;
   }
+
+  return 0;
+
+  /*__________________________________________________________________
+    Re-open the previously created BF file, before creating Stokes
+    dataset.
+  */
   
   {
     DAL::BF_RootGroup rootGroup (filename.filename());
