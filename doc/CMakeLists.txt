@@ -76,6 +76,7 @@ if (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
   set (targetID                 "Manual")
   set (targetName               "doc${targetID}")
   set (DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${targetName}")
+  set (targetOutput             "${DOXYGEN_OUTPUT_DIRECTORY}/refman.pdf")
   
   if (NOT EXISTS ${DOXYGEN_OUTPUT_DIRECTORY})
     file (MAKE_DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY})
@@ -89,7 +90,7 @@ if (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
 
   ## Define custom command to 
   add_custom_command (
-    OUTPUT ${DOXYGEN_OUTPUT_DIRECTORY}/refman.pdf
+    OUTPUT ${targetOutput}
     COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile${targetID}
     WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}
@@ -97,18 +98,18 @@ if (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
 
   ## Define target to build the documentation
   add_custom_target (${targetName}
-    DEPENDS ${DOXYGEN_OUTPUT_DIRECTORY}/refman.pdf
+    DEPENDS ${targetOutput}
     COMMAND ${PDFLATEX_EXECUTABLE} refman
     WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIRECTORY}
     )
   
   ## Installation instructions
-  install(
-    FILES ${DOXYGEN_OUTPUT_DIRECTORY}/refman.pdf
-    DESTINATION ${DAL_INSTALL_DOCDIR}
-    COMPONENT ${targetName}
-    RENAME UserManual-${DAL_VERSION}.pdf
-    )
+#  install(
+#    FILES ${targetOutput}
+#    DESTINATION ${DAL_INSTALL_DOCDIR}
+#    COMPONENT ${targetOutput}
+#    RENAME UserManual-${DAL_VERSION}.pdf
+#    )
   
 endif (PDFLATEX_EXECUTABLE AND LATEX_FNCYCHAP_PACKAGE AND LATEX_HYPERREF_PACKAGE)
 
