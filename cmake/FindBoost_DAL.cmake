@@ -59,6 +59,7 @@ if (NOT BOOST_FOUND)
   set (BOOST_VERSION_PATCH  0      )
   set (Boost_BASE_VERSION   "1.40" )
 
+  set (Boost_NO_SYSTEM_PATHS    YES )
   set (Boost_USE_MULTITHREADED  YES )
   set (Boost_USE_STATIC_RUNTIME YES )
   
