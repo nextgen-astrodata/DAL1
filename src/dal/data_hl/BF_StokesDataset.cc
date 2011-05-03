@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <data_hl/BF_StokesDataset.h>
+#include "BF_StokesDataset.h"
 
 namespace DAL { // Namespace DAL -- begin
   
