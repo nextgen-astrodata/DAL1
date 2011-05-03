@@ -773,7 +773,7 @@ int main ()
     // // Test access to the attributes
     // nofFailedTests += test_attributes (fileID);
     // Test read/write access to the data
-    nofFailedTests += test_data (fileID);
+    // nofFailedTests += test_data (fileID);
 
   } else {
     cerr << "-- ERROR: Failed to open file " << filename << endl;

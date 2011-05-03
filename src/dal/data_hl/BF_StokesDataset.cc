@@ -481,11 +481,13 @@ namespace DAL { // Namespace DAL -- begin
       unsigned int subbands              = channels.size();
       
 #ifdef DAL_DEBUGGING_MESSAGES
-      std::cout << "[BF_StokesDataset::init]" << std::endl;
-      std::cout << "-- GROUPTYPE    = " << grouptype << std::endl;
-      std::cout << "-- DATATYPE     = " << datatype  << std::endl;
-      std::cout << "-- NOF_SUBBANDS = " << subbands  << std::endl;
-      std::cout << "-- NOF_CHANNELS = " << channels  << std::endl;
+      std::cout << "[BF_StokesDataset::init]"                  << std::endl;
+      std::cout << "-- GROUPTYPE        = " << grouptype       << std::endl;
+      std::cout << "-- DATATYPE         = " << datatype        << std::endl;
+      std::cout << "-- STOKES_COMPONENT = " << stokesComponent << std::endl;
+      std::cout << "-- NOF_SAMPLES      = " << itsShape[0]     << std::endl;
+      std::cout << "-- NOF_SUBBANDS     = " << subbands        << std::endl;
+      std::cout << "-- NOF_CHANNELS     = " << channels        << std::endl;
 #endif
       
       HDF5Attribute::setAttribute (itsLocation, "GROUPTYPE",        grouptype       );
