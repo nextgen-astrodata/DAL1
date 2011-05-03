@@ -39,6 +39,35 @@ using DAL::HDF5Object;
   \author Lars B&auml;hren
  
   \date 2011/01/27
+
+  \verbatim
+  h5a_bool              bool
+  h5a_int               int
+  h5a_uint              uint
+  h5a_short             short
+  h5a_ushort            ushort
+  h5a_float             float
+  h5a_double            double
+  h5a_string            string
+
+  h5a_bool_vector       vector<bool>
+  h5a_int_vector        vector<int>
+  h5a_uint_vector       vector<uint>
+  h5a_short_vector      vector<short>
+  h5a_ushort_vector     vector<ushort>
+  h5a_float_vector      vector<float>
+  h5a_double_vector     vector<double>
+  h5a_string_vector     vector<string>
+
+  h5a_bool_array        bool*
+  h5a_int_array         int*
+  h5a_uint_array        uint*
+  h5a_short_array       short*
+  h5a_ushort_array      ushort*
+  h5a_float_array       float*
+  h5a_double_array      double*
+  h5a_string_array      string*
+  \endverbatim
 */
 
 // ==============================================================================
@@ -122,13 +151,15 @@ int test_static_functions (hid_t const &location)
   cout << "[1] Testing setAttribute(hid_t,string,T) ..." << endl;
   try {
     int valInt            = 1;
-    int valShort          = 2;
-    int valLong           = 3;
+    int valUint           = 2;
+    int valShort          = 3;
+    int valLong           = 4;
     float valFloat        = 0.5;
     float valDouble       = 0.25;
     std::string valString = "bla";
     
     HDF5Attribute::setAttribute (location, "AttributeInt",    valInt);
+    HDF5Attribute::setAttribute (location, "AttributeUint",   valUint);
     HDF5Attribute::setAttribute (location, "AttributeShort",  valShort);
     HDF5Attribute::setAttribute (location, "AttributeLong",   valLong);
     HDF5Attribute::setAttribute (location, "AttributeFloat",  valFloat);
@@ -146,14 +177,16 @@ int test_static_functions (hid_t const &location)
   cout << "[2] Testing setAttribute(hid_t,string,vector<T>) ..." << endl;
   try {
     unsigned int nelem = 3;
-    std::vector<int> valInt (nelem, 1);
-    std::vector<short> valShort (nelem, 2);
-    std::vector<long> valLong (nelem, 3);
-    std::vector<float> valFloat (nelem, 0.5);
+    std::vector<int> valInt       (nelem, 1);
+    std::vector<int> valUint      (nelem, 2);
+    std::vector<short> valShort   (nelem, 3);
+    std::vector<long> valLong     (nelem, 4);
+    std::vector<float> valFloat   (nelem, 0.5);
     std::vector<double> valDouble (nelem, 0.25);
     std::vector<std::string> valString (nelem, "bla");
     
     HDF5Attribute::setAttribute (location, "AttributeVectorInt",    valInt);
+    HDF5Attribute::setAttribute (location, "AttributeVectorUint",   valUint);
     HDF5Attribute::setAttribute (location, "AttributeVectorShort",  valShort);
     HDF5Attribute::setAttribute (location, "AttributeVectorLong",   valLong);
     HDF5Attribute::setAttribute (location, "AttributeVectorFloat",  valFloat);
@@ -171,13 +204,15 @@ int test_static_functions (hid_t const &location)
   try {
     unsigned int nelem      = 5;
     int valInt[]            = {1,1,1,1,1};
-    int valShort[]          = {2,2,2,2,2};
-    int valLong[]           = {3,3,3,3,3};
+    int valUint[]           = {2,2,2,2,2};
+    int valShort[]          = {3,3,3,3,3};
+    int valLong[]           = {4,4,4,4,4};
     float valFloat[]        = {0.5,0.5,0.5,0.5,0.5};
     double valDouble[]      = {0.25,0.25,0.25,0.25,0.25};
     std::string valString[] = {"a","bb","ccc","dddd","eeeee"};
 
     HDF5Attribute::setAttribute (location, "AttributeArrayInt",    valInt,    nelem);
+    HDF5Attribute::setAttribute (location, "AttributeArrayUint",   valUint,   nelem);
     HDF5Attribute::setAttribute (location, "AttributeArrayShort",  valShort,  nelem);
     HDF5Attribute::setAttribute (location, "AttributeArrayLong",   valLong,   nelem);
     HDF5Attribute::setAttribute (location, "AttributeArrayFloat",  valFloat,  nelem);
