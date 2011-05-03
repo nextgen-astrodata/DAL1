@@ -247,6 +247,7 @@ message (STATUS "+------------------------------------------------------------+"
 message (STATUS " System configuration:"                                           )
 message (STATUS " .. Hostname                     = ${CMAKE_SYSTEM_HOSTNAME}"      )
 message (STATUS " .. Processor type               = ${CMAKE_SYSTEM_PROCESSOR}"     )
+message (STATUS " .. CMake executable             = ${CMAKE_COMMAND}")
 message (STATUS " .. CMake version                = ${CMAKE_VERSION}"              )
 message (STATUS " .. System name                  = ${CMAKE_SYSTEM}"               )
 message (STATUS " .. C++ compiler                 = ${CMAKE_CXX_COMPILER}"         )
