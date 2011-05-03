@@ -381,7 +381,8 @@ namespace DAL {
 			      H5P_DEFAULT);
     }
     else {
-      cerr << "ERROR: Attribute '" << name << "' does not exist." << endl;
+      cerr << "[h5get_attribute] ERROR: Attribute '" << name
+	   << "' does not exist." << endl;
       return DAL::FAIL;
     }
     
@@ -390,9 +391,9 @@ namespace DAL {
       status = h5get_attribute (attribute_id, value);
     }
     else {
-      cerr << "[h5get_attribute] No valid ID for attribute "
-		<< name
-		<< endl;
+      cerr << "[h5get_attribute] ERROR: No valid ID for attribute "
+	   << name
+	   << endl;
       status = false;
     }
 
@@ -442,7 +443,7 @@ namespace DAL {
 	  }
 	}
 	else {
-	  cerr << "[h5get_attribute] Error reading value of attribute." << endl;
+	  cerr << "[h5get_attribute] ERROR: Failed reading value of attribute!" << endl;
 	  status = false;
 	}
         // release memory allocated for temporary buffer
@@ -450,7 +451,7 @@ namespace DAL {
         buffer = 0;
       }
       else {
-        cerr << "[h5get_attribute] Unsupported shape of attribute dataspace!"
+        cerr << "[h5get_attribute] ERROR: Unsupported shape of attribute dataspace!"
              << endl;
         status = false;
       }
@@ -550,22 +551,23 @@ namespace DAL {
       // Create the ddataspace attached to the attribute
       dataspace_id  = H5Screate_simple( 1, dims, maxdims );
       if ( dataspace_id < 0 ) {
-	cerr << "ERROR: Could not set attribute '" << name
-		  << "' dataspace.\n";
+	cerr << "[h5set_attribute] ERROR: Could not set attribute '" << name
+	     << "' dataspace.\n";
 	return false;
       }
       // Create the attribute itself
       attribute_id = H5Acreate( location_id, name.c_str(),
 				datatype, dataspace_id, 0, 0 );
       if ( attribute_id < 0 ) {
-	cerr << "ERROR: Could not create attribute '" << name
-		  << "'.\n";
+	cerr << "[h5set_attribute] ERROR: Could not create attribute '" << name
+	     << "'.\n";
 	return false;
       }
     }
     
     if ( H5Awrite(attribute_id, datatype, value) < 0 ) {
-      cerr << "ERROR: Could not write attribute '" << name << "'.\n";
+      cerr << "[h5set_attribute] ERROR: Could not write attribute '"
+	   << name << "'" << std::endl;
       return false;
     }
     
