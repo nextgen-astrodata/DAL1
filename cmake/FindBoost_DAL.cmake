@@ -39,12 +39,12 @@ if (NOT BOOST_FOUND)
 
   ## Locations where to search for Boost
   list (APPEND BOOST_ROOT_DIR
-    /sw
-    /usr
-    /usr/local
     /opt
     /opt/local
     /opt/casa/local
+    /sw
+    /usr
+    /usr/local
     /app/usg
     ${CMAKE_INSTALL_PREFIX}
     )
@@ -106,9 +106,14 @@ if (NOT BOOST_FOUND)
 
     ## reset variables
 
-    set (Boost_FOUND        "")
-    set (Boost_LIBRARIES    "")
-    set (Boost_INCLUDE_DIRS "")
+    unset (Boost_FOUND        CACHE)
+    unset (Boost_LIBRARIES    CACHE)
+    unset (Boost_INCLUDE_DIRS CACHE)
+
+    foreach (_boostModuleLibrary ${BOOST_MODULES})
+      string (TOUPPER ${_boostModuleLibrary} _boostModuleLibraryVar)
+      unset (Boost_${_boostModuleLibraryVar}_LIBRARY CACHE)
+    endforeach ()
 
   endforeach (BOOST_ROOT)
 
