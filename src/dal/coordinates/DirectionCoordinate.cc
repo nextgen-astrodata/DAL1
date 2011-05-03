@@ -313,20 +313,20 @@ namespace DAL {   // Namespace DAL -- begin
   void DirectionCoordinate::write_hdf5 (hid_t const &groupID)
   {
     /* Basic common parameters */
-    HDF5Attribute::setAttribute( groupID, "COORDINATE_TYPE",  name() );
-    HDF5Attribute::setAttribute( groupID, "NOF_AXES",         nofAxes_p );
-    HDF5Attribute::setAttribute( groupID, "AXIS_NAMES",       axisNames_p );
-    HDF5Attribute::setAttribute( groupID, "AXIS_UNITS",       axisUnits_p );
-    HDF5Attribute::setAttribute( groupID, "REFERENCE_PIXEL",  refPixel_p );
-    HDF5Attribute::setAttribute( groupID, "REFERENCE_VALUE",  refValue_p );
-    HDF5Attribute::setAttribute( groupID, "INCREMENT",        increment_p );
-    HDF5Attribute::setAttribute( groupID, "PC",               pc_p );
+    HDF5Attribute::write( groupID, "COORDINATE_TYPE",  name() );
+    HDF5Attribute::write( groupID, "NOF_AXES",         nofAxes_p );
+    HDF5Attribute::write( groupID, "AXIS_NAMES",       axisNames_p );
+    HDF5Attribute::write( groupID, "AXIS_UNITS",       axisUnits_p );
+    HDF5Attribute::write( groupID, "REFERENCE_PIXEL",  refPixel_p );
+    HDF5Attribute::write( groupID, "REFERENCE_VALUE",  refValue_p );
+    HDF5Attribute::write( groupID, "INCREMENT",        increment_p );
+    HDF5Attribute::write( groupID, "PC",               pc_p );
     /* Add-on for direction coordinate */
-    HDF5Attribute::setAttribute( groupID, "SYSTEM",           system_p );
-    HDF5Attribute::setAttribute( groupID, "PROJECTION",       projection_p );
-    HDF5Attribute::setAttribute( groupID, "PROJECTION_PARAM", projectionParam_p );
-    HDF5Attribute::setAttribute( groupID, "LONGPOLE",         longpole_p );
-    HDF5Attribute::setAttribute( groupID, "LATPOLE",          latpole_p );
+    HDF5Attribute::write( groupID, "SYSTEM",           system_p );
+    HDF5Attribute::write( groupID, "PROJECTION",       projection_p );
+    HDF5Attribute::write( groupID, "PROJECTION_PARAM", projectionParam_p );
+    HDF5Attribute::write( groupID, "LONGPOLE",         longpole_p );
+    HDF5Attribute::write( groupID, "LATPOLE",          latpole_p );
   }
     
 #endif

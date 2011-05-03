@@ -265,25 +265,25 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
     
-    HDF5Attribute::setAttribute( groupID, "GROUPTYPE",            itsGroupType );
-    HDF5Attribute::setAttribute( groupID, "FILENAME",             itsFilename );
-    HDF5Attribute::setAttribute( groupID, "FILETYPE",             itsFiletype );
-    HDF5Attribute::setAttribute( groupID, "FILEDATE",             itsFiledate );
-    HDF5Attribute::setAttribute( groupID, "TELESCOPE",            itsTelescope );
-    HDF5Attribute::setAttribute( groupID, "OBSERVER",             itsObserver );
+    HDF5Attribute::write( groupID, "GROUPTYPE",            itsGroupType );
+    HDF5Attribute::write( groupID, "FILENAME",             itsFilename );
+    HDF5Attribute::write( groupID, "FILETYPE",             itsFiletype );
+    HDF5Attribute::write( groupID, "FILEDATE",             itsFiledate );
+    HDF5Attribute::write( groupID, "TELESCOPE",            itsTelescope );
+    HDF5Attribute::write( groupID, "OBSERVER",             itsObserver );
 
     itsAttributesProject.h5write(groupID);
     itsAttributesObservation.h5write(groupID);
 
-    HDF5Attribute::setAttribute( groupID, "ANTENNA_SET",          itsAntennaSet );
-    HDF5Attribute::setAttribute( groupID, "FILTER_SELECTION",     itsFilterSelection );
-    HDF5Attribute::setAttribute( groupID, "CLOCK_FREQUENCY",      itsClockFrequency );
-    HDF5Attribute::setAttribute( groupID, "CLOCK_FREQUENCY_UNIT", itsClockFrequencyUnit );
-    HDF5Attribute::setAttribute( groupID, "TARGET",               itsTarget );
-    HDF5Attribute::setAttribute( groupID, "SYSTEM_VERSION",       itsSystemVersion );
-    HDF5Attribute::setAttribute( groupID, "PIPELINE_NAME",        itsPipelineName );
-    HDF5Attribute::setAttribute( groupID, "PIPELINE_VERSION",     itsPipelineVersion );
-    HDF5Attribute::setAttribute( groupID, "NOTES",                itsNotes );
+    HDF5Attribute::write( groupID, "ANTENNA_SET",          itsAntennaSet );
+    HDF5Attribute::write( groupID, "FILTER_SELECTION",     itsFilterSelection );
+    HDF5Attribute::write( groupID, "CLOCK_FREQUENCY",      itsClockFrequency );
+    HDF5Attribute::write( groupID, "CLOCK_FREQUENCY_UNIT", itsClockFrequencyUnit );
+    HDF5Attribute::write( groupID, "TARGET",               itsTarget );
+    HDF5Attribute::write( groupID, "SYSTEM_VERSION",       itsSystemVersion );
+    HDF5Attribute::write( groupID, "PIPELINE_NAME",        itsPipelineName );
+    HDF5Attribute::write( groupID, "PIPELINE_VERSION",     itsPipelineVersion );
+    HDF5Attribute::write( groupID, "NOTES",                itsNotes );
 
     return status;
   }

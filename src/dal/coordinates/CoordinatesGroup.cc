@@ -360,14 +360,14 @@ namespace DAL { // Namespace DAL -- begin
     bool status         = true;
     unsigned int ncoord = itsCoordinates.size();
 
-    status *= HDF5Attribute::setAttribute (location, "REF_LOCATION_VALUE", itsRefLocationValue );
-    status *= HDF5Attribute::setAttribute (location, "REF_LOCATION_UNIT",  itsRefLocationUnits );
-    status *= HDF5Attribute::setAttribute (location, "REF_LOCATION_FRAME", itsRefLocationFrame );
-    status *= HDF5Attribute::setAttribute (location, "REF_TIME_VALUE",     itsRefTimeValue     );
-    status *= HDF5Attribute::setAttribute (location, "REF_TIME_UNIT",      itsRefTimeUnits     );
-    status *= HDF5Attribute::setAttribute (location, "REF_TIME_FRAME",     itsRefTimeFrame     );
-    status *= HDF5Attribute::setAttribute (location, "NOF_COORDINATES",    ncoord              );
-    status *= HDF5Attribute::setAttribute (location, "NOF_AXES",           itsNofAxes          );
+    status *= HDF5Attribute::write (location, "REF_LOCATION_VALUE", itsRefLocationValue );
+    status *= HDF5Attribute::write (location, "REF_LOCATION_UNIT",  itsRefLocationUnits );
+    status *= HDF5Attribute::write (location, "REF_LOCATION_FRAME", itsRefLocationFrame );
+    status *= HDF5Attribute::write (location, "REF_TIME_VALUE",     itsRefTimeValue     );
+    status *= HDF5Attribute::write (location, "REF_TIME_UNIT",      itsRefTimeUnits     );
+    status *= HDF5Attribute::write (location, "REF_TIME_FRAME",     itsRefTimeFrame     );
+    status *= HDF5Attribute::write (location, "NOF_COORDINATES",    ncoord              );
+    status *= HDF5Attribute::write (location, "NOF_AXES",           itsNofAxes          );
 
     return status;
   }

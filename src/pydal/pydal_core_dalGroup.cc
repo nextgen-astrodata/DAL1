@@ -178,66 +178,66 @@ dalArray * dalGroup::cfa_boost_list( std::string arrayname,
 bool dalGroup::setAttribute_char (std::string const &name,
 				  char const &data)
 {
-  return HDF5Attribute::setAttribute (itsGroupID,
-				      name,
-				      &data,
-				      1);
+  return HDF5Attribute::write (itsGroupID,
+			       name,
+			       &data,
+			       1);
 }
 bool dalGroup::setAttribute_short (std::string const &name,
 				   short const &data)
 {
-  return HDF5Attribute::setAttribute (itsGroupID,
-				      name,
-				      &data,
-				      1);
+  return HDF5Attribute::write (itsGroupID,
+			       name,
+			       &data,
+			       1);
 }
 bool dalGroup::setAttribute_int (std::string const &name,
 				 int const &data)
 {
-  return HDF5Attribute::setAttribute (itsGroupID,
-				      name,
-				      &data,
-				      1);
+  return HDF5Attribute::write (itsGroupID,
+			       name,
+			       &data,
+			       1);
 }
 bool dalGroup::setAttribute_uint (std::string const &name,
 				  uint const &data)
 {
-  return HDF5Attribute::setAttribute (itsGroupID,
-				      name,
-				      &data,
-				      1);
+  return HDF5Attribute::write (itsGroupID,
+			       name,
+			       &data,
+			       1);
 }
 bool dalGroup::setAttribute_long (std::string const &name,
 				  long const &data)
 {
-  return HDF5Attribute::setAttribute (itsGroupID,
-				      name,
-				      &data,
-				      1);
+  return HDF5Attribute::write (itsGroupID,
+			       name,
+			       &data,
+			       1);
 }
 bool dalGroup::setAttribute_float (std::string const &name,
 				   float const &data)
 {
-  return HDF5Attribute::setAttribute (itsGroupID,
-				      name,
-				      &data,
-				      1);
+  return HDF5Attribute::write (itsGroupID,
+			       name,
+			       &data,
+			       1);
 }
 bool dalGroup::setAttribute_double (std::string const &name,
 				    double const &data)
 {
-  return HDF5Attribute::setAttribute (itsGroupID,
-				      name,
-				      &data,
-				      1);
+  return HDF5Attribute::write (itsGroupID,
+			       name,
+			       &data,
+			       1);
 }
 bool dalGroup::setAttribute_string (std::string const &name,
 				    std::string const &data)
 {
-  return HDF5Attribute::setAttribute (itsGroupID,
-				      name,
-				      &data,
-				      1);
+  return HDF5Attribute::write (itsGroupID,
+			       name,
+			       &data,
+			       1);
 }
 bool dalGroup::setAttribute_char_vector (std::string attrname, bpl::list data )
 {

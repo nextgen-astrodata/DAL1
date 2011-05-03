@@ -383,14 +383,14 @@ namespace DAL {  // Namespace DAL -- begin
 
   void StokesCoordinate::write_hdf5 (hid_t const &groupID)
   {
-    HDF5Attribute::setAttribute (groupID, "COORDINATE_TYPE",  name() );
-    HDF5Attribute::setAttribute (groupID, "NOF_AXES",         nofAxes_p );
-    HDF5Attribute::setAttribute (groupID, "AXIS_NAMES",       axisNames_p );
-    HDF5Attribute::setAttribute (groupID, "AXIS_UNITS",       axisUnits_p );
-    HDF5Attribute::setAttribute (groupID, "REFERENCE_PIXEL",  refPixel_p );
-    HDF5Attribute::setAttribute (groupID, "REFERENCE_VALUE",  refValue_p );
-    HDF5Attribute::setAttribute (groupID, "INCREMENT",        increment_p );
-    HDF5Attribute::setAttribute (groupID, "PC",               pc_p );
+    HDF5Attribute::write (groupID, "COORDINATE_TYPE",  name() );
+    HDF5Attribute::write (groupID, "NOF_AXES",         nofAxes_p );
+    HDF5Attribute::write (groupID, "AXIS_NAMES",       axisNames_p );
+    HDF5Attribute::write (groupID, "AXIS_UNITS",       axisUnits_p );
+    HDF5Attribute::write (groupID, "REFERENCE_PIXEL",  refPixel_p );
+    HDF5Attribute::write (groupID, "REFERENCE_VALUE",  refValue_p );
+    HDF5Attribute::write (groupID, "INCREMENT",        increment_p );
+    HDF5Attribute::write (groupID, "PC",               pc_p );
   }
 
 #endif

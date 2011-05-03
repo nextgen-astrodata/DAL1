@@ -152,37 +152,37 @@ bool DAL::dalArray::setAttribute_char( std::string attrname,
 bool DAL::dalArray::setAttribute_short (std::string const &name,
 					short const &data)
 {
-  return HDF5Attribute::setAttribute (itsDatasetID, name, data);
+  return HDF5Attribute::write (itsDatasetID, name, data);
 }
 
 bool DAL::dalArray::setAttribute_int (std::string const &name,
 				      int const &data)
 {
-  return HDF5Attribute::setAttribute (itsDatasetID, name, data);
+  return HDF5Attribute::write (itsDatasetID, name, data);
 }
 
 bool DAL::dalArray::setAttribute_uint (std::string const &name,
 				       uint const &data)
 {
-  return HDF5Attribute::setAttribute (itsDatasetID, name, data);
+  return HDF5Attribute::write (itsDatasetID, name, data);
 }
 
 bool DAL::dalArray::setAttribute_long (std::string const &name,
 				       long const &data)
 {
-  return HDF5Attribute::setAttribute (itsDatasetID, name, data);
+  return HDF5Attribute::write (itsDatasetID, name, data);
 }
 
 bool DAL::dalArray::setAttribute_float (std::string const &name,
 					float const &data)
 {
-  return HDF5Attribute::setAttribute (itsDatasetID, name, data);
+  return HDF5Attribute::write (itsDatasetID, name, data);
 }
 
 bool DAL::dalArray::setAttribute_double (std::string const &name,
 					 double const &data)
 {
-  return HDF5Attribute::setAttribute (itsDatasetID, name, data);
+  return HDF5Attribute::write (itsDatasetID, name, data);
 }
 
 bool DAL::dalArray::setAttribute_string (std::string attrname,

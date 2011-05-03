@@ -129,7 +129,7 @@ namespace DAL {
 			 T * data,
 			 int size=1 )
       {
-	return HDF5Attribute::setAttribute (itsDatasetID,
+	return HDF5Attribute::write (itsDatasetID,
 					    name,
 					    data,
 					    size);
@@ -146,7 +146,7 @@ namespace DAL {
       bool setAttribute (std::string name,
 			 std::vector<T> const &data)
       {
-	return HDF5Attribute::setAttribute (itsDatasetID,
+	return HDF5Attribute::write (itsDatasetID,
 					    name,
 					    &data[0],
 					    data.size());
@@ -163,7 +163,7 @@ namespace DAL {
       bool setAttribute (std::string name,
 			 T const &data)
       {
-	return HDF5Attribute::setAttribute (itsDatasetID,
+	return HDF5Attribute::write (itsDatasetID,
 					    name,
 					    &data,
 					    1);

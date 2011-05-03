@@ -166,11 +166,11 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
     
-    HDF5Attribute::setAttribute (groupID, "PROJECT_ID",      itsProjectID );
-    HDF5Attribute::setAttribute (groupID, "PROJECT_TITLE",   itsProjectTitle );
-    HDF5Attribute::setAttribute (groupID, "PROJECT_PI",      itsProjectPI );
-    HDF5Attribute::setAttribute (groupID, "PROJECT_CO_I",    itsProjectCoI );
-    HDF5Attribute::setAttribute (groupID, "PROJECT_CONTACT", itsProjectContact );
+    HDF5Attribute::write (groupID, "PROJECT_ID",      itsProjectID );
+    HDF5Attribute::write (groupID, "PROJECT_TITLE",   itsProjectTitle );
+    HDF5Attribute::write (groupID, "PROJECT_PI",      itsProjectPI );
+    HDF5Attribute::write (groupID, "PROJECT_CO_I",    itsProjectCoI );
+    HDF5Attribute::write (groupID, "PROJECT_CONTACT", itsProjectContact );
     
     return status;
   }

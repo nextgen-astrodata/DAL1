@@ -189,9 +189,9 @@ bool set_attributes (DAL::HDF5Dataset &data,
   hid_t location = data.objectID();
 
   /* Write values of the attributes */
-  HDF5Attribute::setAttribute (location, "NAME",  data.name()       );
-  HDF5Attribute::setAttribute (location, "RANK",  int(shape.size()) );
-  HDF5Attribute::setAttribute (location, "SHAPE", shape             );
+  HDF5Attribute::write (location, "NAME",  data.name()       );
+  HDF5Attribute::write (location, "RANK",  int(shape.size()) );
+  HDF5Attribute::write (location, "SHAPE", shape             );
   
   return status;
 }

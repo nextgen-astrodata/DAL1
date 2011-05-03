@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/HDF5Attribute.h>
-#include <core/HDF5Datatype.h>
+#include "HDF5Attribute.h"
+#include "HDF5Datatype.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -235,81 +235,81 @@ namespace DAL { // Namespace DAL -- begin
   /// @cond TEMPLATE_SPECIALIZATIONS
   
   //_____________________________________________________________________________
-  //                                                           setAttribute(char)
+  //                                                           write(char)
   
   //! Set attribute of type (char)
   template <>
-  bool HDF5Attribute::setAttribute (hid_t const &location,
+  bool HDF5Attribute::write (hid_t const &location,
 				    std::string const &name,
 				    char const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location, name, data, size, H5T_NATIVE_CHAR);
+    return write (location, name, data, size, H5T_NATIVE_CHAR);
   }
 
   //_____________________________________________________________________________
-  //                                                            setAttribute(int)
+  //                                                            write(int)
   
   //! Set attribute of type (int)
   template <>
-  bool HDF5Attribute::setAttribute (hid_t const &location,
+  bool HDF5Attribute::write (hid_t const &location,
 				    std::string const &name,
 				    int const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location, name, data, size, H5T_NATIVE_INT);
+    return write (location, name, data, size, H5T_NATIVE_INT);
   }
 
   //_____________________________________________________________________________
-  //                                                           setAttribute(bool)
+  //                                                           write(bool)
   
   //! Set attribute of type (bool)
   template <>
-  bool HDF5Attribute::setAttribute (hid_t const &location,
+  bool HDF5Attribute::write (hid_t const &location,
 				    std::string const &name,
 				    bool const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location, name, data, size, H5T_NATIVE_HBOOL);
+    return write (location, name, data, size, H5T_NATIVE_HBOOL);
   }
 
   //_____________________________________________________________________________
-  //                                                   setAttribute(unsigned int)
+  //                                                   write(unsigned int)
   
   //! Set attribute of type (unsigned int)
   template <>
-  bool HDF5Attribute::setAttribute (hid_t const &location,
+  bool HDF5Attribute::write (hid_t const &location,
 				    std::string const &name,
 				    unsigned int const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location, name, data, size, H5T_NATIVE_UINT);
+    return write (location, name, data, size, H5T_NATIVE_UINT);
   }
 
   //_____________________________________________________________________________
-  //                                                          setAttribute(short)
+  //                                                          write(short)
   
   //! Set attribute of type (short)
   template <>
-  bool HDF5Attribute::setAttribute (hid_t const &location,
+  bool HDF5Attribute::write (hid_t const &location,
 				    std::string const &name,
 				    short const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location, name, data, size, H5T_NATIVE_SHORT);
+    return write (location, name, data, size, H5T_NATIVE_SHORT);
   }
 
   //_____________________________________________________________________________
-  //                                                           setAttribute(long)
+  //                                                           write(long)
   
   //! Set attribute of type (long)
   template <>
-  bool HDF5Attribute::setAttribute (hid_t const &location,
+  bool HDF5Attribute::write (hid_t const &location,
 				    std::string const &name,
 				    long const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location,
+    return write (location,
 			 name,
 			 data,
 			 size,
@@ -317,16 +317,16 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                  setAttribute(unsigned long)
+  //                                                  write(unsigned long)
   
   //! Set attribute of type (long)
   template <>
-  bool HDF5Attribute::setAttribute (hid_t const &location,
+  bool HDF5Attribute::write (hid_t const &location,
 				    std::string const &name,
 				    unsigned long const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location,
+    return write (location,
 			 name,
 			 data,
 			 size,
@@ -334,16 +334,16 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                      setAttribute(long long)
+  //                                                      write(long long)
   
   //! Set attribute of type (long long)
   template <>
-  bool HDF5Attribute::setAttribute (hid_t const &location,
+  bool HDF5Attribute::write (hid_t const &location,
 				    std::string const &name,
 				    long long const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location,
+    return write (location,
 			 name,
 			 data,
 			 size,
@@ -351,16 +351,16 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                             setAttribute(unsigned long long)
+  //                                             write(unsigned long long)
   
   //! Set attribute of type (unsigned long long)
   template <>
-  bool HDF5Attribute::setAttribute (hid_t const &location,
+  bool HDF5Attribute::write (hid_t const &location,
 				    std::string const &name,
 				    unsigned long long const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location,
+    return write (location,
 			 name,
 			 data,
 			 size,
@@ -368,16 +368,16 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                          setAttribute(float)
+  //                                                          write(float)
   
   //! Set attribute of type (float)
   template <>
-  bool HDF5Attribute::setAttribute (hid_t const &location,
+  bool HDF5Attribute::write (hid_t const &location,
 				    std::string const &name,
 				    float const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location,
+    return write (location,
 			 name,
 			 data,
 			 size,
@@ -385,16 +385,16 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                         setAttribute(double)
+  //                                                         write(double)
   
   //! Set attribute of type (double)
   template <>
-  bool HDF5Attribute::setAttribute (hid_t const &location,
+  bool HDF5Attribute::write (hid_t const &location,
 				    std::string const &name,
 				    double const *data,
 				    unsigned int const &size)
   {
-    return setAttribute (location,
+    return write (location,
 			 name,
 			 data,
 			 size,
@@ -402,11 +402,11 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                    setAttribute(std::string)
+  //                                                    write(std::string)
   
   //! Set attribute of type (std::string)
   template <>
-  bool HDF5Attribute::setAttribute (hid_t const &location,
+  bool HDF5Attribute::write (hid_t const &location,
 				    std::string const &name,
 				    std::string const *data,
 				    unsigned int const &size)
@@ -427,7 +427,7 @@ namespace DAL { // Namespace DAL -- begin
       h5err = H5Aexists (location,
 			 name.c_str());
     } else {
-      std::cerr << "[HDF5Attribute::setAttribute]"
+      std::cerr << "[HDF5Attribute::write]"
 		<< " No valid HDF5 object found at reference location!"
 		<< std::endl;
       return false;
@@ -459,14 +459,14 @@ namespace DAL { // Namespace DAL -- begin
 	if (H5Iis_valid(attribute)) {
 	  status = true;
 	} else {
-	  std::cerr << "[HDF5Attribute::setAttribute]"
+	  std::cerr << "[HDF5Attribute::write]"
 		    << " H5Acreate() failed to create attribute "
 		    << name
 		    << std::endl;
 	  status = false;
 	}
       } else {
-	std::cerr << "[HDF5Attribute::setAttribute]"
+	std::cerr << "[HDF5Attribute::write]"
 		  << " H5Screate_simple() failed to create dataspace!"
 		  << std::endl;
 	status = false;
@@ -484,7 +484,7 @@ namespace DAL { // Namespace DAL -- begin
       h5err = H5Awrite (attribute, datatype, data);
       /* ... and check the return value of the operation */
       if (h5err<0) {
-	std::cerr << "[HDF5Attribute::setAttribute]"
+	std::cerr << "[HDF5Attribute::write]"
 		  << " H5Awrite() failed to write attribute!"
 		  << std::endl;
 	status = false;
@@ -503,26 +503,4 @@ namespace DAL { // Namespace DAL -- begin
   
   /// @endcond
 
-  // ============================================================================
-  //
-  //
-  //
-  // ============================================================================
-  
-  // template bool HDF5Attribute::setAttribute (hid_t const &location,
-  // 					     std::string const &name,
-  // 					     int const &data);
-  // template bool HDF5Attribute::setAttribute (hid_t const &location,
-  // 					     std::string const &name,
-  // 					     short const &data);
-  // template bool HDF5Attribute::setAttribute (hid_t const &location,
-  // 					     std::string const &name,
-  // 					     long const &data);
-  // template bool HDF5Attribute::setAttribute (hid_t const &location,
-  // 					     std::string const &name,
-  // 					     float const &data);
-  // template bool HDF5Attribute::setAttribute (hid_t const &location,
-  // 					     std::string const &name,
-  // 					     double const &data);
-  
 } // Namespace DAL -- end

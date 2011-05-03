@@ -212,17 +212,17 @@ namespace DAL { // Namespace DAL -- begin
 	  attributesString.push_back("SIGNAL_SUM");
 	  attributesString.push_back("PB_CENTER_FREQUENCY_UNIT");
 	  // write the attributes
-	  HDF5Attribute::setAttribute (location_p,"GROUPTYPE",          grouptype   );
-	  HDF5Attribute::setAttribute (location_p,"NOF_STATIONS",       int(0)      );
-	  HDF5Attribute::setAttribute (location_p,"STATIONS_LIST",      stations    );
-	  HDF5Attribute::setAttribute (location_p, attributesDouble,    double(0.0) );
-	  HDF5Attribute::setAttribute (location_p, attributesString,    undefined   );
-	  HDF5Attribute::setAttribute (location_p,"FOLDED_DATA",        ok          );
-	  HDF5Attribute::setAttribute (location_p,"FOLD_PERIOD",        float(0.0)  );
-	  HDF5Attribute::setAttribute (location_p,"DISPERSION_MEASURE", float(0.0)  );
- 	  HDF5Attribute::setAttribute (location_p,"BARYCENTER",         ok          );
- 	  HDF5Attribute::setAttribute (location_p,"STOKES_COMPONENTS",  stokes      );
- 	  HDF5Attribute::setAttribute (location_p,"COMPLEX_VOLTAGE",    ok          );
+	  HDF5Attribute::write (location_p,"GROUPTYPE",          grouptype   );
+	  HDF5Attribute::write (location_p,"NOF_STATIONS",       int(0)      );
+	  HDF5Attribute::write (location_p,"STATIONS_LIST",      stations    );
+	  HDF5Attribute::write (location_p, attributesDouble,    double(0.0) );
+	  HDF5Attribute::write (location_p, attributesString,    undefined   );
+	  HDF5Attribute::write (location_p,"FOLDED_DATA",        ok          );
+	  HDF5Attribute::write (location_p,"FOLD_PERIOD",        float(0.0)  );
+	  HDF5Attribute::write (location_p,"DISPERSION_MEASURE", float(0.0)  );
+ 	  HDF5Attribute::write (location_p,"BARYCENTER",         ok          );
+ 	  HDF5Attribute::write (location_p,"STOKES_COMPONENTS",  stokes      );
+ 	  HDF5Attribute::write (location_p,"COMPLEX_VOLTAGE",    ok          );
 	} else {
 	  std::cerr << "[BF_BeamGroup::open] Failed to create group "
 		    << name

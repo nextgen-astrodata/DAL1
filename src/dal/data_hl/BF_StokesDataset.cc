@@ -490,12 +490,12 @@ namespace DAL { // Namespace DAL -- begin
       std::cout << "-- NOF_CHANNELS     = " << channels        << std::endl;
 #endif
       
-      HDF5Attribute::setAttribute (itsLocation, "GROUPTYPE",        grouptype       );
-      HDF5Attribute::setAttribute (itsLocation, "DATATYPE",         datatype        );
-      HDF5Attribute::setAttribute (itsLocation, "STOKES_COMPONENT", stokesComponent );
-      HDF5Attribute::setAttribute (itsLocation, "NOF_SAMPLES",      itsShape[0]     );
-      HDF5Attribute::setAttribute (itsLocation, "NOF_SUBBANDS",     subbands        );
-      HDF5Attribute::setAttribute (itsLocation, "NOF_CHANNELS",     channels        );
+      HDF5Attribute::write (itsLocation, "GROUPTYPE",        grouptype       );
+      HDF5Attribute::write (itsLocation, "DATATYPE",         datatype        );
+      HDF5Attribute::write (itsLocation, "STOKES_COMPONENT", stokesComponent );
+      HDF5Attribute::write (itsLocation, "NOF_SAMPLES",      itsShape[0]     );
+      HDF5Attribute::write (itsLocation, "NOF_SUBBANDS",     subbands        );
+      HDF5Attribute::write (itsLocation, "NOF_CHANNELS",     channels        );
     }
 
     return status;

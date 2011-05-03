@@ -148,7 +148,7 @@ int test_static_functions (hid_t const &location)
     Test 1: Create/Set attribute storing atomic value.
   */
   
-  cout << "[1] Testing setAttribute(hid_t,string,T) ..." << endl;
+  cout << "[1] Testing write(hid_t,string,T) ..." << endl;
   try {
     int valInt            = 1;
     int valUint           = 2;
@@ -158,13 +158,13 @@ int test_static_functions (hid_t const &location)
     float valDouble       = 0.25;
     std::string valString = "bla";
     
-    HDF5Attribute::setAttribute (location, "AttributeInt",    valInt);
-    HDF5Attribute::setAttribute (location, "AttributeUint",   valUint);
-    HDF5Attribute::setAttribute (location, "AttributeShort",  valShort);
-    HDF5Attribute::setAttribute (location, "AttributeLong",   valLong);
-    HDF5Attribute::setAttribute (location, "AttributeFloat",  valFloat);
-    HDF5Attribute::setAttribute (location, "AttributeDouble", valDouble);
-    HDF5Attribute::setAttribute (location, "AttributeString", valString);
+    HDF5Attribute::write (location, "AttributeInt",    valInt);
+    HDF5Attribute::write (location, "AttributeUint",   valUint);
+    HDF5Attribute::write (location, "AttributeShort",  valShort);
+    HDF5Attribute::write (location, "AttributeLong",   valLong);
+    HDF5Attribute::write (location, "AttributeFloat",  valFloat);
+    HDF5Attribute::write (location, "AttributeDouble", valDouble);
+    HDF5Attribute::write (location, "AttributeString", valString);
   } catch (std::string message) {
     ++nofFailedTests;
   }
@@ -174,7 +174,7 @@ int test_static_functions (hid_t const &location)
             interface for std::vector<T>
   */
 
-  cout << "[2] Testing setAttribute(hid_t,string,vector<T>) ..." << endl;
+  cout << "[2] Testing write(hid_t,string,vector<T>) ..." << endl;
   try {
     unsigned int nelem = 3;
     std::vector<int> valInt       (nelem, 1);
@@ -185,13 +185,13 @@ int test_static_functions (hid_t const &location)
     std::vector<double> valDouble (nelem, 0.25);
     std::vector<std::string> valString (nelem, "bla");
     
-    HDF5Attribute::setAttribute (location, "AttributeVectorInt",    valInt);
-    HDF5Attribute::setAttribute (location, "AttributeVectorUint",   valUint);
-    HDF5Attribute::setAttribute (location, "AttributeVectorShort",  valShort);
-    HDF5Attribute::setAttribute (location, "AttributeVectorLong",   valLong);
-    HDF5Attribute::setAttribute (location, "AttributeVectorFloat",  valFloat);
-    HDF5Attribute::setAttribute (location, "AttributeVectorDouble", valDouble);
-    HDF5Attribute::setAttribute (location, "AttributeVectorString", valString);
+    HDF5Attribute::write (location, "AttributeVectorInt",    valInt);
+    HDF5Attribute::write (location, "AttributeVectorUint",   valUint);
+    HDF5Attribute::write (location, "AttributeVectorShort",  valShort);
+    HDF5Attribute::write (location, "AttributeVectorLong",   valLong);
+    HDF5Attribute::write (location, "AttributeVectorFloat",  valFloat);
+    HDF5Attribute::write (location, "AttributeVectorDouble", valDouble);
+    HDF5Attribute::write (location, "AttributeVectorString", valString);
   } catch (std::string message) {
     ++nofFailedTests;
   }
@@ -200,7 +200,7 @@ int test_static_functions (hid_t const &location)
     Test 3: Create/Set attribute storing array-type value
   */
   
-  cout << "[3] Testing setAttribute(hid_t,string,T*,uint) ..." << endl;
+  cout << "[3] Testing write(hid_t,string,T*,uint) ..." << endl;
   try {
     unsigned int nelem      = 5;
     int valInt[]            = {1,1,1,1,1};
@@ -211,13 +211,13 @@ int test_static_functions (hid_t const &location)
     double valDouble[]      = {0.25,0.25,0.25,0.25,0.25};
     std::string valString[] = {"a","bb","ccc","dddd","eeeee"};
 
-    HDF5Attribute::setAttribute (location, "AttributeArrayInt",    valInt,    nelem);
-    HDF5Attribute::setAttribute (location, "AttributeArrayUint",   valUint,   nelem);
-    HDF5Attribute::setAttribute (location, "AttributeArrayShort",  valShort,  nelem);
-    HDF5Attribute::setAttribute (location, "AttributeArrayLong",   valLong,   nelem);
-    HDF5Attribute::setAttribute (location, "AttributeArrayFloat",  valFloat,  nelem);
-    HDF5Attribute::setAttribute (location, "AttributeArrayDouble", valDouble, nelem);
-    HDF5Attribute::setAttribute (location, "AttributeArrayString", valString, nelem);
+    HDF5Attribute::write (location, "AttributeArrayInt",    valInt,    nelem);
+    HDF5Attribute::write (location, "AttributeArrayUint",   valUint,   nelem);
+    HDF5Attribute::write (location, "AttributeArrayShort",  valShort,  nelem);
+    HDF5Attribute::write (location, "AttributeArrayLong",   valLong,   nelem);
+    HDF5Attribute::write (location, "AttributeArrayFloat",  valFloat,  nelem);
+    HDF5Attribute::write (location, "AttributeArrayDouble", valDouble, nelem);
+    HDF5Attribute::write (location, "AttributeArrayString", valString, nelem);
   } catch (std::string message) {
     ++nofFailedTests;
   }
@@ -226,7 +226,7 @@ int test_static_functions (hid_t const &location)
     Test 4: Set/Update attributes
   */
 
-  cout << "[4] Updating attributes via setAttribute(hid_t,string,T) ..." << endl;
+  cout << "[4] Updating attributes via write(hid_t,string,T) ..." << endl;
   try {
     int valInt            = 10;
     int valShort          = 20;
@@ -235,12 +235,12 @@ int test_static_functions (hid_t const &location)
     float valDouble       = 0.025;
     std::string valString = "bladibla";
     
-    HDF5Attribute::setAttribute (location, "AttributeInt",    valInt);
-    HDF5Attribute::setAttribute (location, "AttributeShort",  valShort);
-    HDF5Attribute::setAttribute (location, "AttributeLong",   valLong);
-    HDF5Attribute::setAttribute (location, "AttributeFloat",  valFloat);
-    HDF5Attribute::setAttribute (location, "AttributeDouble", valDouble);
-    HDF5Attribute::setAttribute (location, "AttributeString", valString);
+    HDF5Attribute::write (location, "AttributeInt",    valInt);
+    HDF5Attribute::write (location, "AttributeShort",  valShort);
+    HDF5Attribute::write (location, "AttributeLong",   valLong);
+    HDF5Attribute::write (location, "AttributeFloat",  valFloat);
+    HDF5Attribute::write (location, "AttributeDouble", valDouble);
+    HDF5Attribute::write (location, "AttributeString", valString);
   } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
@@ -250,7 +250,7 @@ int test_static_functions (hid_t const &location)
     Test 5: Set/Update attributes
   */
 
-  cout << "[5] Updating attributes via setAttribute(hid_t,string,vector<T>) ..." << endl;
+  cout << "[5] Updating attributes via write(hid_t,string,vector<T>) ..." << endl;
   try {
     unsigned int nelem = 3;
     std::vector<int> valInt (nelem, 10);
@@ -260,12 +260,12 @@ int test_static_functions (hid_t const &location)
     std::vector<double> valDouble (nelem, 0.025);
     std::vector<std::string> valString (nelem, "bladibla");
     
-    HDF5Attribute::setAttribute (location, "AttributeVectorInt",    valInt);
-    HDF5Attribute::setAttribute (location, "AttributeVectorShort",  valShort);
-    HDF5Attribute::setAttribute (location, "AttributeVectorLong",   valLong);
-    HDF5Attribute::setAttribute (location, "AttributeVectorFloat",  valFloat);
-    HDF5Attribute::setAttribute (location, "AttributeVectorDouble", valDouble);
-    HDF5Attribute::setAttribute (location, "AttributeVectorString", valString);
+    HDF5Attribute::write (location, "AttributeVectorInt",    valInt);
+    HDF5Attribute::write (location, "AttributeVectorShort",  valShort);
+    HDF5Attribute::write (location, "AttributeVectorLong",   valLong);
+    HDF5Attribute::write (location, "AttributeVectorFloat",  valFloat);
+    HDF5Attribute::write (location, "AttributeVectorDouble", valDouble);
+    HDF5Attribute::write (location, "AttributeVectorString", valString);
   } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
@@ -275,7 +275,7 @@ int test_static_functions (hid_t const &location)
     Test 6: Set/Update attributes
   */
 
-  cout << "[6] Updating attributes via setAttribute(hid_t,string,T*,uint) ..." << endl;
+  cout << "[6] Updating attributes via write(hid_t,string,T*,uint) ..." << endl;
   try {
     unsigned int nelem      = 5;
     int valInt[]            = {10,10,10,10,10};
@@ -285,12 +285,12 @@ int test_static_functions (hid_t const &location)
     double valDouble[]      = {0.025,0.025,0.025,0.025,0.025};
     std::string valString[] = {"A","BB","CCC","DDDD","EEEEE"};
 
-    HDF5Attribute::setAttribute (location, "AttributeArrayInt",    valInt,    nelem);
-    HDF5Attribute::setAttribute (location, "AttributeArrayShort",  valShort,  nelem);
-    HDF5Attribute::setAttribute (location, "AttributeArrayLong",   valLong,   nelem);
-    HDF5Attribute::setAttribute (location, "AttributeArrayFloat",  valFloat,  nelem);
-    HDF5Attribute::setAttribute (location, "AttributeArrayDouble", valDouble, nelem);
-    HDF5Attribute::setAttribute (location, "AttributeArrayString", valString, nelem);
+    HDF5Attribute::write (location, "AttributeArrayInt",    valInt,    nelem);
+    HDF5Attribute::write (location, "AttributeArrayShort",  valShort,  nelem);
+    HDF5Attribute::write (location, "AttributeArrayLong",   valLong,   nelem);
+    HDF5Attribute::write (location, "AttributeArrayFloat",  valFloat,  nelem);
+    HDF5Attribute::write (location, "AttributeArrayDouble", valDouble, nelem);
+    HDF5Attribute::write (location, "AttributeArrayString", valString, nelem);
   } catch (std::string message) {
     ++nofFailedTests;
   }
@@ -319,11 +319,11 @@ int test_static_functions (hid_t const &location)
     std::vector<int> vecInt;
     
     HDF5Attribute::getAttribute (location, "AttributeArrayInt", arrInt, nelem);
-    // HDF5Attribute::setAttribute (location, "AttributeShort",  valShort);
-    // HDF5Attribute::setAttribute (location, "AttributeLong",   valLong);
-    // HDF5Attribute::setAttribute (location, "AttributeFloat",  valFloat);
-    // HDF5Attribute::setAttribute (location, "AttributeDouble", valDouble);
-    // HDF5Attribute::setAttribute (location, "AttributeString", valString);
+    // HDF5Attribute::write (location, "AttributeShort",  valShort);
+    // HDF5Attribute::write (location, "AttributeLong",   valLong);
+    // HDF5Attribute::write (location, "AttributeFloat",  valFloat);
+    // HDF5Attribute::write (location, "AttributeDouble", valDouble);
+    // HDF5Attribute::write (location, "AttributeString", valString);
 
     // std::cout << "-- AttributeInt    = " << valInt     << std::endl;
     // std::cout << "-- AttributeShort  = " << valShort   << std::endl;
@@ -348,7 +348,7 @@ int test_static_functions (hid_t const &location)
   */
 
 #ifdef DAL_WITH_CASA
-  cout << "[10] Testing setAttribute(hid_t,string,casa::Vector<T>) ..." << endl;
+  cout << "[10] Testing write(hid_t,string,casa::Vector<T>) ..." << endl;
   try {
     unsigned int nelem (10);
     casa::Vector<int> valInt (nelem, 1);
@@ -358,12 +358,12 @@ int test_static_functions (hid_t const &location)
     casa::Vector<double> valDouble (nelem, 0.25);
     casa::Vector<std::string> valString (nelem, "bla");
 
-    HDF5Attribute::setAttribute (location, "AttributeCASAInt",    valInt);
-    HDF5Attribute::setAttribute (location, "AttributeCASAShort",  valShort);
-    HDF5Attribute::setAttribute (location, "AttributeCASALong",   valLong);
-    HDF5Attribute::setAttribute (location, "AttributeCASAFloat",  valFloat);
-    HDF5Attribute::setAttribute (location, "AttributeCASADouble", valDouble);
-    HDF5Attribute::setAttribute (location, "AttributeCASAString", valString);
+    HDF5Attribute::write (location, "AttributeCASAInt",    valInt);
+    HDF5Attribute::write (location, "AttributeCASAShort",  valShort);
+    HDF5Attribute::write (location, "AttributeCASALong",   valLong);
+    HDF5Attribute::write (location, "AttributeCASAFloat",  valFloat);
+    HDF5Attribute::write (location, "AttributeCASADouble", valDouble);
+    HDF5Attribute::write (location, "AttributeCASAString", valString);
   } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;

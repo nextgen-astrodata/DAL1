@@ -19,7 +19,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/dalCommon.h>
+#include "dalCommon.h"
 
 #ifdef DAL_WITH_CASA
 using casa::MPosition;

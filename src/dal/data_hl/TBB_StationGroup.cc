@@ -261,17 +261,17 @@ namespace DAL {  // Namespace DAL -- begin
 	  std::vector<double> vectD (3,0.0);
 	  std::vector<std::string> vectUnits (3,undefined);
 	  // write the attributes
-	  HDF5Attribute::setAttribute (location_p,"GROUPTYPE",                grouptype   );
-	  HDF5Attribute::setAttribute (location_p,"STATION_POSITION_VALUE",   vectD       );
-	  HDF5Attribute::setAttribute (location_p,"STATION_POSITION_UNIT",    vectUnits   );
-	  HDF5Attribute::setAttribute (location_p,"STATION_POSITION_FRAME",   undefined   );
-	  HDF5Attribute::setAttribute (location_p,"BEAM_DIRECTION_VALUE",     vectD       );
-	  HDF5Attribute::setAttribute (location_p,"BEAM_DIRECTION_UNIT",      vectUnits   );
-	  HDF5Attribute::setAttribute (location_p,"BEAM_DIRECTION_FRAME",     undefined   );
- 	  HDF5Attribute::setAttribute (location_p,"TRIGGER_TYPE",             undefined   );
- 	  HDF5Attribute::setAttribute (location_p,"TRIGGER_OFFSET",           double(0.0) );
- 	  HDF5Attribute::setAttribute (location_p,"TRIGGERED_ANTENNAS",       triggered   );
-	  HDF5Attribute::setAttribute (location_p,"NOF_DIPOLES",              uint(0)     );
+	  HDF5Attribute::write (location_p,"GROUPTYPE",                grouptype   );
+	  HDF5Attribute::write (location_p,"STATION_POSITION_VALUE",   vectD       );
+	  HDF5Attribute::write (location_p,"STATION_POSITION_UNIT",    vectUnits   );
+	  HDF5Attribute::write (location_p,"STATION_POSITION_FRAME",   undefined   );
+	  HDF5Attribute::write (location_p,"BEAM_DIRECTION_VALUE",     vectD       );
+	  HDF5Attribute::write (location_p,"BEAM_DIRECTION_UNIT",      vectUnits   );
+	  HDF5Attribute::write (location_p,"BEAM_DIRECTION_FRAME",     undefined   );
+ 	  HDF5Attribute::write (location_p,"TRIGGER_TYPE",             undefined   );
+ 	  HDF5Attribute::write (location_p,"TRIGGER_OFFSET",           double(0.0) );
+ 	  HDF5Attribute::write (location_p,"TRIGGERED_ANTENNAS",       triggered   );
+	  HDF5Attribute::write (location_p,"NOF_DIPOLES",              uint(0)     );
 	} else {
 	  std::cerr << "[TBB_StationGroup::open] Failed to create group "
 		    << name

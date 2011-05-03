@@ -161,7 +161,7 @@ namespace DAL {  // Namespace DAL -- begin
         if (dataset_p != NULL) {
 	  hid_t groupID = dataset_p->getId();
 	  commonAttributes_p.h5write(groupID);
-	  HDF5Attribute::setAttribute (groupID,"FILENAME",filename_p);
+	  HDF5Attribute::write (groupID,"FILENAME",filename_p);
 	  return true;
 	}
         else {

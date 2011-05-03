@@ -380,7 +380,7 @@ namespace DAL {
     // === Create/set attributes ================================================
 
     template <class T>
-    inline bool getAttribute (std::string const &name,
+    inline bool readAttribute (std::string const &name,
                               T *data,
                               unsigned int const &size)
     {
@@ -388,14 +388,14 @@ namespace DAL {
     }
     
     template <class T>
-    inline bool getAttribute (std::string const &name,
+    inline bool readAttribute (std::string const &name,
                               std::vector<T> &data)
     {
       return HDF5Attribute::getAttribute (itsLocation, name, &data[0], data.size());
     }
     
     template <class T>
-    inline bool getAttribute (std::string const &name,
+    inline bool readAttribute (std::string const &name,
                               T &data)
     {
       return HDF5Attribute::getAttribute (itsLocation, name, &data, 1);

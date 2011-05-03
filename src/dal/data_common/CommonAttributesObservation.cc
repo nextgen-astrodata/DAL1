@@ -156,19 +156,19 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status (true);
     
-    HDF5Attribute::setAttribute(groupID, "OBSERVATION_ID",               itsObservationID);
-    HDF5Attribute::setAttribute(groupID, "OBSERVATION_START_MJD",        itsStartMJD);
-    HDF5Attribute::setAttribute(groupID, "OBSERVATION_START_TAI",        itsStartTAI);
-    HDF5Attribute::setAttribute(groupID, "OBSERVATION_START_UTC",        itsStartUTC);
-    HDF5Attribute::setAttribute(groupID, "OBSERVATION_END_MJD",          itsEndMJD);
-    HDF5Attribute::setAttribute(groupID, "OBSERVATION_END_TAI",          itsEndMJD);
-    HDF5Attribute::setAttribute(groupID, "OBSERVATION_END_UTC",          itsEndMJD);
-    HDF5Attribute::setAttribute(groupID, "OBSERVATION_NOF_STATIONS",     itsNofStations);
-    HDF5Attribute::setAttribute(groupID, "OBSERVATION_STATIONS_LIST",    itsStationsList);
-    HDF5Attribute::setAttribute(groupID, "OBSERVATION_FREQUENCY_MIN",    itsFrequencyMin);
-    HDF5Attribute::setAttribute(groupID, "OBSERVATION_FREQUENCY_MAX",    itsFrequencyMax);
-    HDF5Attribute::setAttribute(groupID, "OBSERVATION_FREQUENCY_CENTER", itsFrequencyCenter);
-    HDF5Attribute::setAttribute(groupID, "OBSERVATION_FREQUENCY_UNIT",   itsFrequencyUnit);
+    HDF5Attribute::write(groupID, "OBSERVATION_ID",               itsObservationID);
+    HDF5Attribute::write(groupID, "OBSERVATION_START_MJD",        itsStartMJD);
+    HDF5Attribute::write(groupID, "OBSERVATION_START_TAI",        itsStartTAI);
+    HDF5Attribute::write(groupID, "OBSERVATION_START_UTC",        itsStartUTC);
+    HDF5Attribute::write(groupID, "OBSERVATION_END_MJD",          itsEndMJD);
+    HDF5Attribute::write(groupID, "OBSERVATION_END_TAI",          itsEndMJD);
+    HDF5Attribute::write(groupID, "OBSERVATION_END_UTC",          itsEndMJD);
+    HDF5Attribute::write(groupID, "OBSERVATION_NOF_STATIONS",     itsNofStations);
+    HDF5Attribute::write(groupID, "OBSERVATION_STATIONS_LIST",    itsStationsList);
+    HDF5Attribute::write(groupID, "OBSERVATION_FREQUENCY_MIN",    itsFrequencyMin);
+    HDF5Attribute::write(groupID, "OBSERVATION_FREQUENCY_MAX",    itsFrequencyMax);
+    HDF5Attribute::write(groupID, "OBSERVATION_FREQUENCY_CENTER", itsFrequencyCenter);
+    HDF5Attribute::write(groupID, "OBSERVATION_FREQUENCY_UNIT",   itsFrequencyUnit);
     
     return status;
   }

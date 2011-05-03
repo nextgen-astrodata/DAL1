@@ -430,7 +430,7 @@ namespace DAL { // Namespace DAL -- begin
       inline bool setAttribute (std::string const &name,
 				T const &val)
       {
-	return HDF5Attribute::setAttribute (location_p,
+	return HDF5Attribute::write (location_p,
 					    name,
 					    val);
       }
@@ -448,12 +448,12 @@ namespace DAL { // Namespace DAL -- begin
       inline bool setAttribute (std::string const &name,
 				std::vector<T> const &val)
       {
-	return HDF5Attribute::setAttribute (location_p,
-					    name,
-					    &val[0],
-					    val.size());
+	return HDF5Attribute::write (location_p,
+				     name,
+				     &val[0],
+				     val.size());
       }
-
+    
 #ifdef DAL_WITH_CASA
     /*!
       \brief Set the value of an attribute
@@ -468,12 +468,12 @@ namespace DAL { // Namespace DAL -- begin
       inline bool setAttribute (std::string const &name,
 				casa::Vector<T> const &val)
       {
-	return HDF5Attribute::setAttribute(location_p,
-					   name,
-					   val);
+	return HDF5Attribute::write (location_p,
+				     name,
+				     val);
       }
 #endif
-
+    
     // === Private methods ======================================================
 
   private:

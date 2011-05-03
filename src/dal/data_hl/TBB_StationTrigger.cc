@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -198,23 +195,23 @@ namespace DAL { // Namespace DAL -- begin
 	  std::vector<int> vecInt (1,0);
 	  std::string simple ("simple");
 	  // write the attributes
-	  HDF5Attribute::setAttribute (location_p, "GROUPTYPE",                  grouptype     );
-	  HDF5Attribute::setAttribute (location_p, "TRIGGER_TYPE",               triggerType   );
-	  HDF5Attribute::setAttribute (location_p, "TRIGGER_SOURCE",             triggerSource );
-	  HDF5Attribute::setAttribute (location_p, "TRIGGER_TIME",               int(0)        );
-	  HDF5Attribute::setAttribute (location_p, "TRIGGER_SAMPLE_NUMBER",      int(0)        );
-	  HDF5Attribute::setAttribute (location_p, "PARAM_COINCIDENCE_CHANNELS", int(0)        );
-	  HDF5Attribute::setAttribute (location_p, "PARAM_COINCIDENCE_TIME",     float(0)      );
-	  HDF5Attribute::setAttribute (location_p, "PARAM_DIRECTION_FIT",        simple        );
-	  HDF5Attribute::setAttribute (location_p, "RCU_ID",                     vecInt        );
-	  HDF5Attribute::setAttribute (location_p, "TIME",                       vecInt        );
-	  HDF5Attribute::setAttribute (location_p, "SAMPLE_NUMBER",              vecInt        );
-	  HDF5Attribute::setAttribute (location_p, "PULSE_SUM",                  vecInt        );
-	  HDF5Attribute::setAttribute (location_p, "PULSE_WIDTH",                vecInt        );
-	  HDF5Attribute::setAttribute (location_p, "PULSE_PEAK",                 vecInt        );
-	  HDF5Attribute::setAttribute (location_p, "PULSE_POWER_PRE",            vecInt        );
-	  HDF5Attribute::setAttribute (location_p, "PULSE_POWER_POST",           vecInt        );
-	  HDF5Attribute::setAttribute (location_p, "NOF_MISSED_TRIGGERS",        vecInt        );
+	  HDF5Attribute::write (location_p, "GROUPTYPE",                  grouptype     );
+	  HDF5Attribute::write (location_p, "TRIGGER_TYPE",               triggerType   );
+	  HDF5Attribute::write (location_p, "TRIGGER_SOURCE",             triggerSource );
+	  HDF5Attribute::write (location_p, "TRIGGER_TIME",               int(0)        );
+	  HDF5Attribute::write (location_p, "TRIGGER_SAMPLE_NUMBER",      int(0)        );
+	  HDF5Attribute::write (location_p, "PARAM_COINCIDENCE_CHANNELS", int(0)        );
+	  HDF5Attribute::write (location_p, "PARAM_COINCIDENCE_TIME",     float(0)      );
+	  HDF5Attribute::write (location_p, "PARAM_DIRECTION_FIT",        simple        );
+	  HDF5Attribute::write (location_p, "RCU_ID",                     vecInt        );
+	  HDF5Attribute::write (location_p, "TIME",                       vecInt        );
+	  HDF5Attribute::write (location_p, "SAMPLE_NUMBER",              vecInt        );
+	  HDF5Attribute::write (location_p, "PULSE_SUM",                  vecInt        );
+	  HDF5Attribute::write (location_p, "PULSE_WIDTH",                vecInt        );
+	  HDF5Attribute::write (location_p, "PULSE_PEAK",                 vecInt        );
+	  HDF5Attribute::write (location_p, "PULSE_POWER_PRE",            vecInt        );
+	  HDF5Attribute::write (location_p, "PULSE_POWER_POST",           vecInt        );
+	  HDF5Attribute::write (location_p, "NOF_MISSED_TRIGGERS",        vecInt        );
 	} else {
 	  std::cerr << "[TBB_StationTrigger::open] Failed to create group "
 		    << name

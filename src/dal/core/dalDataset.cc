@@ -19,7 +19,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/dalDataset.h>
+#include "dalDataset.h"
 
 namespace DAL {
   
@@ -516,7 +516,7 @@ namespace DAL {
                                  const short * data,
                                  int size )
   {
-    return HDF5Attribute::setAttribute (h5fh_p,
+    return HDF5Attribute::write (h5fh_p,
 					attrname,
 					data,
 					size,
@@ -537,7 +537,7 @@ namespace DAL {
                                  const int * data,
                                  int size )
   {
-    return HDF5Attribute::setAttribute (h5fh_p,
+    return HDF5Attribute::write (h5fh_p,
 					attrname,
 					data,
 					size,
@@ -560,13 +560,13 @@ namespace DAL {
                                  int size )
   {
 #ifdef HAVE_LONG_LONG
-    return HDF5Attribute::setAttribute (h5fh_p,
+    return HDF5Attribute::write (h5fh_p,
 					attrname,
 					data,
 					size,
 					H5T_NATIVE_LLONG);
 #else
-    return HDF5Attribute::setAttribute (h5fh_p,
+    return HDF5Attribute::write (h5fh_p,
 					attrname,
 					data,
 					size,
@@ -578,7 +578,7 @@ namespace DAL {
                                  const long * data,
                                  int size )
   {
-    return HDF5Attribute::setAttribute (h5fh_p,
+    return HDF5Attribute::write (h5fh_p,
 					attrname,
 					data,
 					size);
@@ -599,7 +599,7 @@ namespace DAL {
                                  const uint * data,
                                  int size )
   {
-    return HDF5Attribute::setAttribute (h5fh_p,
+    return HDF5Attribute::write (h5fh_p,
 					attrname,
 					data,
 					size,
@@ -620,7 +620,7 @@ namespace DAL {
                                  const float * data,
                                  int size )
   {
-    return HDF5Attribute::setAttribute (h5fh_p,
+    return HDF5Attribute::write (h5fh_p,
 					attrname,
 					data,
 					size,
@@ -641,7 +641,7 @@ namespace DAL {
                                  const double * data,
                                  int size )
   {
-    return HDF5Attribute::setAttribute (h5fh_p,
+    return HDF5Attribute::write (h5fh_p,
 					attrname,
 					data,
 					size,
@@ -659,7 +659,7 @@ namespace DAL {
   bool dalDataset::setAttribute( std::string attrname,
                                  std::string data )
   {
-    return HDF5Attribute::setAttribute (h5fh_p,
+    return HDF5Attribute::write (h5fh_p,
 					attrname,
 					data);
   }
@@ -694,7 +694,7 @@ namespace DAL {
   bool dalDataset::setAttribute_string( std::string attrname,
                                         std::vector<std::string> data )
   {
-    return HDF5Attribute::setAttribute (h5fh_p,
+    return HDF5Attribute::write (h5fh_p,
 					attrname,
 					data);
   }

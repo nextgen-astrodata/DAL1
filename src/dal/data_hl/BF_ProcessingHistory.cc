@@ -164,10 +164,10 @@ namespace DAL { // Namespace DAL -- begin
 	if (location_p > 0) {
 	  std::string string_group ("ProcessHist");
 	  // write the attributes
-	  HDF5Attribute::setAttribute (location_p, "GROUPTYPE",  string_group);
-	  HDF5Attribute::setAttribute (location_p, "PARSET_OBS", false);
-	  HDF5Attribute::setAttribute (location_p, "LOG_PRESTO", false);
-	  HDF5Attribute::setAttribute (location_p, "PARFILE",    false);
+	  HDF5Attribute::write (location_p, "GROUPTYPE",  string_group);
+	  HDF5Attribute::write (location_p, "PARSET_OBS", false);
+	  HDF5Attribute::write (location_p, "LOG_PRESTO", false);
+	  HDF5Attribute::write (location_p, "PARFILE",    false);
 	} else {
 	  std::cerr << "[BF_ProcessingHistory::open] Failed to create group "
 		    << name

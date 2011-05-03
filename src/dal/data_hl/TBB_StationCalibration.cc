@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -177,7 +174,7 @@ namespace DAL { // Namespace DAL -- begin
 	if (location_p > 0) {
 	  std::string grouptype ("StationGroup");
 	  // write the attributes
-	  HDF5Attribute::setAttribute (location_p,"GROUPTYPE", grouptype);
+	  HDF5Attribute::write (location_p,"GROUPTYPE", grouptype);
 	} else {
 	  std::cerr << "[TBB_StationCalibration::open] Failed to create group "
 		    << name

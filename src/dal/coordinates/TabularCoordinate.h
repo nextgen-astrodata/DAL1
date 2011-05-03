@@ -206,12 +206,12 @@ namespace DAL {  // Namespace DAL -- begin
     //! Write the coordinate object to a HDF5 file
     void write_hdf5 (hid_t const &groupID)
     {
-      HDF5Attribute::setAttribute (groupID, "COORDINATE_TYPE", this->name() );
-      HDF5Attribute::setAttribute (groupID, "NOF_AXES",        this->nofAxes_p );
-      HDF5Attribute::setAttribute (groupID, "AXIS_NAMES",      this->axisNames_p );
-      HDF5Attribute::setAttribute (groupID, "AXIS_UNITS",      this->axisUnits_p );
-      HDF5Attribute::setAttribute (groupID, "PIXEL_VALUES",    this->itsPixelValues );
-      HDF5Attribute::setAttribute (groupID, "WORLD_VALUES",    this->itsWorldValues );
+      HDF5Attribute::write (groupID, "COORDINATE_TYPE", this->name() );
+      HDF5Attribute::write (groupID, "NOF_AXES",        this->nofAxes_p );
+      HDF5Attribute::write (groupID, "AXIS_NAMES",      this->axisNames_p );
+      HDF5Attribute::write (groupID, "AXIS_UNITS",      this->axisUnits_p );
+      HDF5Attribute::write (groupID, "PIXEL_VALUES",    this->itsPixelValues );
+      HDF5Attribute::write (groupID, "WORLD_VALUES",    this->itsWorldValues );
     }
     //___________________________________________________________________________
     //                                                                 write_hdf5

@@ -1444,7 +1444,7 @@ namespace DAL {
 			       short const * data,
                                int size )
   {
-    return HDF5Attribute::setAttribute (tableID_p, attrname, data, size);
+    return HDF5Attribute::write (tableID_p, attrname, data, size);
   }
   
   //_____________________________________________________________________________
@@ -1466,7 +1466,7 @@ namespace DAL {
 			       int const * data,
                                int size )
   {
-    return HDF5Attribute::setAttribute (tableID_p, attrname, data, size);
+    return HDF5Attribute::write (tableID_p, attrname, data, size);
   }
   
   //_____________________________________________________________________________
@@ -1488,7 +1488,7 @@ namespace DAL {
                                uint const * data,
                                int size )
   {
-    return HDF5Attribute::setAttribute (tableID_p, attrname, data, size);
+    return HDF5Attribute::write (tableID_p, attrname, data, size);
   }
   
   //_____________________________________________________________________________
@@ -1507,7 +1507,7 @@ namespace DAL {
 			       long const * data,
                                int size )
   {
-    return HDF5Attribute::setAttribute (tableID_p, attrname, data, size);
+    return HDF5Attribute::write (tableID_p, attrname, data, size);
   }
   
   //_____________________________________________________________________________
@@ -1528,7 +1528,7 @@ namespace DAL {
 			       float const * data,
                                int size )
   {
-    return HDF5Attribute::setAttribute (tableID_p, attrname, data, size);
+    return HDF5Attribute::write (tableID_p, attrname, data, size);
   }
   
   //_____________________________________________________________________________
@@ -1550,7 +1550,7 @@ namespace DAL {
 			       double const * data,
                                int size )
   {
-    return HDF5Attribute::setAttribute (tableID_p, attrname, data, size);
+    return HDF5Attribute::write (tableID_p, attrname, data, size);
   }
   
   //_____________________________________________________________________________

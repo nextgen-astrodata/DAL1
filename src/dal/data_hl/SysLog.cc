@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: NewClass.cc 1964 2008-09-06 17:52:38Z baehren                   $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -148,7 +145,7 @@ namespace DAL { // Namespace DAL -- begin
 	if (location_p > 0) {
 	  std::string string_group ("SysLog");
 	  // write the attributes
-	  HDF5Attribute::setAttribute (location_p, "GROUPTYPE", string_group);
+	  HDF5Attribute::write (location_p, "GROUPTYPE", string_group);
 	} else {
 	  std::cerr << "[SysLog::open] Failed to create group "
 		    << name

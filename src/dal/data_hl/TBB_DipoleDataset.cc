@@ -369,24 +369,24 @@ namespace DAL {  // Namespace DAL -- begin
 	  std::vector<double> vectDouble (3,0.0);
 	  std::vector<std::string> vectString (3,undefined);
 	  // write the attributes
-	  HDF5Attribute::setAttribute (location_p,"GROUPTYPE",                 grouptype   );
-	  HDF5Attribute::setAttribute (location_p,"STATION_ID",                uint (0)    );
-	  HDF5Attribute::setAttribute (location_p,"RSP_ID",                    uint (0)    );
-	  HDF5Attribute::setAttribute (location_p,"RCU_ID",                    uint (0)    );
-	  HDF5Attribute::setAttribute (location_p,"SAMPLE_FREQUENCY_VALUE",    double(0.0) );
-	  HDF5Attribute::setAttribute (location_p,"SAMPLE_FREQUENCY_UNIT",     undefined   );
-	  HDF5Attribute::setAttribute (location_p,"TIME",                      uint(0)     );
-	  HDF5Attribute::setAttribute (location_p,"SAMPLE_NUMBER",             uint(0)     );
-	  HDF5Attribute::setAttribute (location_p,"SAMPLES_PER_FRAME",         uint(0)     );
-	  HDF5Attribute::setAttribute (location_p,"DATA_LENGTH",               uint(0)     );
-	  HDF5Attribute::setAttribute (location_p,"NYQUIST_ZONE",              uint(0)     );
-	  HDF5Attribute::setAttribute (location_p,"FEED",                      undefined   );
-	  HDF5Attribute::setAttribute (location_p,"ANTENNA_POSITION_VALUE",    vectDouble  );
-	  HDF5Attribute::setAttribute (location_p,"ANTENNA_POSITION_UNIT",     vectString  );
-	  HDF5Attribute::setAttribute (location_p,"ANTENNA_POSITION_FRAME",    undefined   );
-	  HDF5Attribute::setAttribute (location_p,"ANTENNA_ORIENTATION_VALUE", vectDouble  );
-	  HDF5Attribute::setAttribute (location_p,"ANTENNA_ORIENTATION_UNIT",  vectString  );
-	  HDF5Attribute::setAttribute (location_p,"ANTENNA_ORIENTATION_FRAME", undefined   );
+	  HDF5Attribute::write (location_p,"GROUPTYPE",                 grouptype   );
+	  HDF5Attribute::write (location_p,"STATION_ID",                uint (0)    );
+	  HDF5Attribute::write (location_p,"RSP_ID",                    uint (0)    );
+	  HDF5Attribute::write (location_p,"RCU_ID",                    uint (0)    );
+	  HDF5Attribute::write (location_p,"SAMPLE_FREQUENCY_VALUE",    double(0.0) );
+	  HDF5Attribute::write (location_p,"SAMPLE_FREQUENCY_UNIT",     undefined   );
+	  HDF5Attribute::write (location_p,"TIME",                      uint(0)     );
+	  HDF5Attribute::write (location_p,"SAMPLE_NUMBER",             uint(0)     );
+	  HDF5Attribute::write (location_p,"SAMPLES_PER_FRAME",         uint(0)     );
+	  HDF5Attribute::write (location_p,"DATA_LENGTH",               uint(0)     );
+	  HDF5Attribute::write (location_p,"NYQUIST_ZONE",              uint(0)     );
+	  HDF5Attribute::write (location_p,"FEED",                      undefined   );
+	  HDF5Attribute::write (location_p,"ANTENNA_POSITION_VALUE",    vectDouble  );
+	  HDF5Attribute::write (location_p,"ANTENNA_POSITION_UNIT",     vectString  );
+	  HDF5Attribute::write (location_p,"ANTENNA_POSITION_FRAME",    undefined   );
+	  HDF5Attribute::write (location_p,"ANTENNA_ORIENTATION_VALUE", vectDouble  );
+	  HDF5Attribute::write (location_p,"ANTENNA_ORIENTATION_UNIT",  vectString  );
+	  HDF5Attribute::write (location_p,"ANTENNA_ORIENTATION_FRAME", undefined   );
 	} else {
 	  std::cerr << "[TBB_DipoleDataset::open] Failed to create group "
 		    << name

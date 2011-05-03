@@ -280,25 +280,25 @@ namespace DAL { // Namespace DAL -- begin
 	std::vector<float> vectF (1,0.0);
 	std::vector<double> vectD (1,0.0);
 	//
-	HDF5Attribute::setAttribute (location_p,"FILENAME",                  name        );
- 	HDF5Attribute::setAttribute (location_p,"CREATE_OFFLINE_ONLINE",     true        );
- 	HDF5Attribute::setAttribute (location_p,"BF_FORMAT",                 undefined   );
-	HDF5Attribute::setAttribute (location_p,"BF_VERSION",                undefined   );
-	HDF5Attribute::setAttribute (location_p,"EXPTIME_START_UTC",         undefined   );
-	HDF5Attribute::setAttribute (location_p,"EXPTIME_STOP_UTC",          undefined   );
-	HDF5Attribute::setAttribute (location_p,"EXPTIME_START_MJD",         undefined   );
-	HDF5Attribute::setAttribute (location_p,"EXPTIME_STOP_MJD",          undefined   );
-	HDF5Attribute::setAttribute (location_p,"EXPTIME_START_TAI",         undefined   );
-	HDF5Attribute::setAttribute (location_p,"EXPTIME_STOP_TAI",          undefined   );
-	HDF5Attribute::setAttribute (location_p,"TOTAL_INTEGRATION_TIME",    float(0.0)  );
-	HDF5Attribute::setAttribute (location_p,"OBS_DATATYPE",              undefined   );
-	HDF5Attribute::setAttribute (location_p,"PRIMARY_POINTING_DIAMETER", float(0.0)  );
-	HDF5Attribute::setAttribute (location_p,"BANDWIDTH",                 double(0.0) );
-	HDF5Attribute::setAttribute (location_p,"BEAM_DIAMETER",             float(0.0)  );
-	HDF5Attribute::setAttribute (location_p,"WEATHER_TEMPERATURE",       vectF       );
-	HDF5Attribute::setAttribute (location_p,"WEATHER_HUMIDITY",          vectF       );
-	HDF5Attribute::setAttribute (location_p,"SYSTEM_TEMPERATURE",        vectF       );
-	HDF5Attribute::setAttribute (location_p,"NOF_PRIMARY_BEAMS",         int(0)      );
+	HDF5Attribute::write (location_p,"FILENAME",                  name        );
+ 	HDF5Attribute::write (location_p,"CREATE_OFFLINE_ONLINE",     true        );
+ 	HDF5Attribute::write (location_p,"BF_FORMAT",                 undefined   );
+	HDF5Attribute::write (location_p,"BF_VERSION",                undefined   );
+	HDF5Attribute::write (location_p,"EXPTIME_START_UTC",         undefined   );
+	HDF5Attribute::write (location_p,"EXPTIME_STOP_UTC",          undefined   );
+	HDF5Attribute::write (location_p,"EXPTIME_START_MJD",         undefined   );
+	HDF5Attribute::write (location_p,"EXPTIME_STOP_MJD",          undefined   );
+	HDF5Attribute::write (location_p,"EXPTIME_START_TAI",         undefined   );
+	HDF5Attribute::write (location_p,"EXPTIME_STOP_TAI",          undefined   );
+	HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",    float(0.0)  );
+	HDF5Attribute::write (location_p,"OBS_DATATYPE",              undefined   );
+	HDF5Attribute::write (location_p,"PRIMARY_POINTING_DIAMETER", float(0.0)  );
+	HDF5Attribute::write (location_p,"BANDWIDTH",                 double(0.0) );
+	HDF5Attribute::write (location_p,"BEAM_DIAMETER",             float(0.0)  );
+	HDF5Attribute::write (location_p,"WEATHER_TEMPERATURE",       vectF       );
+	HDF5Attribute::write (location_p,"WEATHER_HUMIDITY",          vectF       );
+	HDF5Attribute::write (location_p,"SYSTEM_TEMPERATURE",        vectF       );
+	HDF5Attribute::write (location_p,"NOF_PRIMARY_BEAMS",         int(0)      );
 	/* Read back in the common attributes after storing default values */
 	commonAttributes_p.h5read(location_p);
       } else {
@@ -392,9 +392,9 @@ namespace DAL { // Namespace DAL -- begin
 							create);
 	// attributes for book-keeping
 	nofPrimaryBeams = itsSubarrayPointings.size();
-	HDF5Attribute::setAttribute (location_p,
-				     "NOF_PRIMARY_BEAMS",
-				     nofPrimaryBeams);
+	HDF5Attribute::write (location_p,
+			      "NOF_PRIMARY_BEAMS",
+			      nofPrimaryBeams);
       }
     }
     else {

@@ -164,10 +164,10 @@ namespace DAL {
 			 T const &data,
 			 unsigned int const &size=1)
       {
-	return HDF5Attribute::setAttribute (itsGroupID,
-					    name,
-					    data,
-					    size);
+	return HDF5Attribute::write (itsGroupID,
+				     name,
+				     data,
+				     size);
       }
     
     /*!
@@ -181,10 +181,10 @@ namespace DAL {
       bool setAttribute (std::string const &name,
 			 std::vector<T> const &data)
       {
-	return HDF5Attribute::setAttribute (itsGroupID,
-					    name,
-					    &data[0],
-					    data.size());
+	return HDF5Attribute::write (itsGroupID,
+				     name,
+				     &data[0],
+				     data.size());
       }
     
     //! Create new group \c gname
