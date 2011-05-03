@@ -39,12 +39,12 @@ if (NOT BOOST_FOUND)
 
   ## Locations where to search for Boost
   list (APPEND BOOST_ROOT_DIR
-    /opt
-    /opt/local
-    /opt/casa/local
     /sw
     /usr
     /usr/local
+    /opt
+    /opt/local
+    /opt/casa/local
     /app/usg
     ${CMAKE_INSTALL_PREFIX}
     )
