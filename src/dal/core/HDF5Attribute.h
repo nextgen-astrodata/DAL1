@@ -72,15 +72,15 @@ namespace DAL { // Namespace DAL -- begin
 				T const *data,
 				unsigned int const &size)
       {
-        return HDF5Attribute::getAttribute (location, name, data, size);
+        return HDF5Attribute::read (location, name, data, size);
       }
 
       // Create attribute / Get attribute value
       template <class T>
-      inline bool getAttribute (std::string const &name,
+      inline bool read (std::string const &name,
 				std::vector<T> &data)
       {
-        return HDF5Attribute::getAttribute (location, name, &data[0], data.size());
+        return HDF5Attribute::read (location, name, &data[0], data.size());
       }
 
       // Create attribute / Get attribute value
@@ -95,27 +95,27 @@ namespace DAL { // Namespace DAL -- begin
       \code
       // Get attribute value
       template <class T>
-      inline bool getAttribute (std::string const &name,
+      inline bool read (std::string const &name,
 				T *data,
 				unsigned int const &size)
       {
-        return HDF5Attribute::getAttribute (location, name, data, size);
+        return HDF5Attribute::read (location, name, data, size);
       }
       
       // Get attribute value
       template <class T>
-      inline bool getAttribute (std::string const &name,
+      inline bool read (std::string const &name,
 				std::vector<T> &data)
       {
-        return HDF5Attribute::getAttribute (location, name, &data[0], data.size());
+        return HDF5Attribute::read (location, name, &data[0], data.size());
       }
       
       // Get attribute value
       template <class T>
-      inline bool getAttribute (std::string const &name,
+      inline bool read (std::string const &name,
 				T &data)
       {
-         return HDF5Attribute::getAttribute (location, name, &data, 1);
+         return HDF5Attribute::read (location, name, &data, 1);
       }
       \endcode
     </ol>
@@ -225,7 +225,7 @@ namespace DAL { // Namespace DAL -- begin
               error was encountered.
     */
     template <class T>
-      static bool getAttribute (hid_t const &location,
+      static bool read (hid_t const &location,
 				std::string const &name,
 				T *data,
 				unsigned int &size)
@@ -241,7 +241,7 @@ namespace DAL { // Namespace DAL -- begin
 	  h5err = H5Aexists (location,
 			     name.c_str());
 	} else {
-	  std::cerr << "[HDF5Attribute::getAttribute]"
+	  std::cerr << "[HDF5Attribute::read]"
 		    << " No valid HDF5 object found at reference location!"
 		    << std::endl;
 	  return false;
@@ -295,7 +295,7 @@ namespace DAL { // Namespace DAL -- begin
 	    H5Sclose(dataspace);
 	    
 	  } else {
-	    std::cerr << "[HDF5Attribute::getAttribute]"
+	    std::cerr << "[HDF5Attribute::read]"
 		      << " Failed to open attribute " << name << std::endl;
 	    status = false;
 	  }
@@ -318,13 +318,13 @@ namespace DAL { // Namespace DAL -- begin
               error was encountered.
     */
     template <class T>
-      static bool getAttribute (hid_t const &location,
-				std::string const &name,
-				std::vector<T> &data)
+      static bool read (hid_t const &location,
+			std::string const &name,
+			std::vector<T> &data)
       {
 	bool status  = true;
 	herr_t h5err = 0;
-
+	
 	/*____________________________________________________________
 	  Basic checks for reference location and attribute name.
 	*/
@@ -333,7 +333,7 @@ namespace DAL { // Namespace DAL -- begin
 	  h5err = H5Aexists (location,
 			     name.c_str());
 	} else {
-	  std::cerr << "[HDF5Attribute::getAttribute]"
+	  std::cerr << "[HDF5Attribute::read]"
 		    << " No valid HDF5 object found at reference location!"
 		    << std::endl;
 	  return false;
@@ -385,7 +385,7 @@ namespace DAL { // Namespace DAL -- begin
 	    H5Sclose(dataspace);
 	    
 	  } else {
-	    std::cerr << "[HDF5Attribute::getAttribute]"
+	    std::cerr << "[HDF5Attribute::read]"
 		      << " Failed to open attribute " << name << std::endl;
 	    status = false;
 	  }
@@ -408,10 +408,10 @@ namespace DAL { // Namespace DAL -- begin
     */
     template <class T>
       static bool write (hid_t const &location,
-				std::string const &name,
-				T const *data,
-				unsigned int const &size,
-				hid_t const &datatype)
+			 std::string const &name,
+			 T const *data,
+			 unsigned int const &size,
+			 hid_t const &datatype)
       {
 	bool status       = true;
 	hid_t   attribute = 0;
@@ -515,10 +515,10 @@ namespace DAL { // Namespace DAL -- begin
     */
     template <class T>
       static bool write (hid_t const &location,
-				std::string const &name,
-				T const *data,
-				unsigned int const &size);
-
+			 std::string const &name,
+			 T const *data,
+			 unsigned int const &size);
+    
 #ifdef DAL_WITH_CASA
     /*!
       \brief Set attribute
@@ -530,8 +530,8 @@ namespace DAL { // Namespace DAL -- begin
     */
     template <class T>
       static bool write (hid_t const &location,
-				std::string const &name,
-				casa::Vector<T> const &data)
+			 std::string const &name,
+			 casa::Vector<T> const &data)
       {
 	return write (location, name, &data[0], data.nelements());
       }
@@ -564,8 +564,8 @@ namespace DAL { // Namespace DAL -- begin
     */
     template <class T>
       static bool write (hid_t const &location,
-				std::string const &name,
-				T const &data)
+			 std::string const &name,
+			 T const &data)
       {
 	return write (location, name, &data, 1);
       }
@@ -580,8 +580,8 @@ namespace DAL { // Namespace DAL -- begin
     */
     template <class T>
       static bool write (hid_t const &location,
-				std::vector<std::string> const &name,
-				T const &data)
+			 std::vector<std::string> const &name,
+			 T const &data)
       {
 	bool status = true;
 	for (unsigned int n=0; n<name.size(); ++n) {

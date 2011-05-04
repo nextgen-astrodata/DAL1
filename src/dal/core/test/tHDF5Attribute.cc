@@ -312,13 +312,13 @@ int test_static_functions (hid_t const &location)
     Test 8: Retrieve previously set attributes.
   */
 
-  cout << "[8] Testing getAttribute(hid_t,string,vector<T>) ..." << endl;
+  cout << "[8] Testing read(hid_t,string,vector<T>) ..." << endl;
   try {
     unsigned int nelem = 0;
     int * arrInt       = NULL;
     std::vector<int> vecInt;
     
-    HDF5Attribute::getAttribute (location, "AttributeArrayInt", arrInt, nelem);
+    HDF5Attribute::read (location, "AttributeArrayInt", arrInt, nelem);
     // HDF5Attribute::write (location, "AttributeShort",  valShort);
     // HDF5Attribute::write (location, "AttributeLong",   valLong);
     // HDF5Attribute::write (location, "AttributeFloat",  valFloat);
