@@ -26,7 +26,7 @@
 #include <map>
 #include <string>
 
-#include <core/dalCommon.h>
+#include "dalCommon.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -34,7 +34,7 @@ namespace DAL { // Namespace DAL -- begin
     \class HDF5Property
     
     \ingroup DAL
-    \ingroup data_common
+    \ingroup core
     
     \brief Brief description for class HDF5Property
     

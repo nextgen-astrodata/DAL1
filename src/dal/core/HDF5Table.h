@@ -25,7 +25,7 @@
 #include <iostream>
 #include <string>
 
-#include <core/dalCommon.h>
+#include "dalCommon.h"
 #include <data_common/HDF5CommonInterface.h>
 #include <data_common/HDF5Dataset.h>
 
@@ -35,7 +35,7 @@ namespace DAL { // Namespace DAL -- begin
     \class HDF5Table
     
     \ingroup DAL
-    \ingroup data_common
+    \ingroup core
     
     \brief Brief description for class HDF5Table
     
