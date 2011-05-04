@@ -224,7 +224,7 @@ namespace DAL { // Namespace DAL -- begin
 			std::string const &newName);
     
     /*!
-      \brief Get attribute value
+      \brief Read attribute value
       \param location -- HDF5 identifier for the object to which the attribute
              is attached.
       \param name    -- Name of the attribute.
@@ -318,7 +318,7 @@ namespace DAL { // Namespace DAL -- begin
     
     
     /*!
-      \brief Get attribute value
+      \brief Read attribute value
       \param location -- HDF5 identifier for the object to which the attribute
              is attached.
       \param name    -- Name of the attribute.
@@ -407,7 +407,7 @@ namespace DAL { // Namespace DAL -- begin
       }
     
     /*!
-      \brief Set attribute value
+      \brief Write attribute value
       \param location -- HDF5 identifier for the object to which the attribute
              is attached.
       \param name    -- Name of the attribute.
@@ -514,7 +514,7 @@ namespace DAL { // Namespace DAL -- begin
       }
     
     /*!
-      \brief Set attribute value
+      \brief Write attribute value
       \param location -- HDF5 identifier for the object to which the attribute
              is attached.
       \param name    -- Name of the attribute.
@@ -530,7 +530,7 @@ namespace DAL { // Namespace DAL -- begin
     
 #ifdef DAL_WITH_CASA
     /*!
-      \brief Set attribute
+      \brief Write attribute value
       \param location -- HDF5 identifier for the object to which the attribute
              is attached.
       \param name    -- Name of the attribute.
@@ -548,7 +548,7 @@ namespace DAL { // Namespace DAL -- begin
 #endif
     
     /*!
-      \brief Set attribute
+      \brief Write attribute value
       \param location -- HDF5 identifier for the object to which the attribute
              is attached.
       \param name    -- Name of the attribute.
@@ -564,7 +564,7 @@ namespace DAL { // Namespace DAL -- begin
       }
     
     /*!
-      \brief Set attribute
+      \brief Write attribute value
       \param location -- HDF5 identifier for the object to which the attribute
              is attached.
       \param name    -- Name of the attribute.
@@ -580,7 +580,7 @@ namespace DAL { // Namespace DAL -- begin
       }
     
     /*!
-      \brief Set multiple attributes to the same value.
+      \brief Write multiple attributes to the same value.
       \param location -- HDF5 identifier for the object to which the attribute
              is attached.
       \param name    -- Names of the attribute.
