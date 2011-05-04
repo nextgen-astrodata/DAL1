@@ -22,7 +22,7 @@
 #include <hdf5.h>
 
 /*!
-  \file h5_attribute_string
+  \file h5_attribute_string.cc
 
   \ingroup DAL
 
@@ -39,6 +39,8 @@ const int32_t MAX_COL_NAME_SIZE = 256;
 //                                                                 writeAttribute
 
 /*!
+  \brief Write attribute of type \e string.
+
   This routine is one of the original methods (\c h5setAttribute_string) written
   by Joe to handle writing string-type attributes. The main drawbacks of this 
   implementation are, that a) the \c data written to the attribute need to passed
@@ -115,6 +117,12 @@ bool writeAttribute (hid_t const &location,
 //_______________________________________________________________________________
 //                                                                           main
 
+/*!
+  \brief Main routine of the test program.
+
+  \return nofFailedTests -- nof. failed tests encountered within this test
+          program.
+ */
 int main (int argc, char *argv[])
 {
   int nofFailedTests   = 0;
