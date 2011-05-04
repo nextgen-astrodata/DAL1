@@ -281,10 +281,6 @@ namespace DAL {
   herr_t attr_info (hid_t loc_id,
                     const char *name,
                     void *opdata);
-  //! Rename an attribute
-  bool h5rename_attribute (hid_t const &location_id,
-			   std::string const &oldName,
-			   std::string const &newName);
   //! Set attribute of type \e string
   bool h5setAttribute_string( hid_t const &obj_id,
                               std::string attrname,

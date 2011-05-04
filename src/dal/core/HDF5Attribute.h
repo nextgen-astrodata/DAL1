@@ -213,7 +213,16 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Name of attributes attached to the object
     static std::set<std::string> attributes (hid_t const &location);
+    
+    //! Rename the attribute
+    static bool rename (hid_t const &location,
+			std::string const &newName);
 
+    //! Rename the attribute
+    static bool rename (hid_t const &location,
+			std::string const &oldName,
+			std::string const &newName);
+    
     /*!
       \brief Get attribute value
       \param location -- HDF5 identifier for the object to which the attribute

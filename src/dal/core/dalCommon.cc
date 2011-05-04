@@ -597,37 +597,6 @@ namespace DAL {
   }
   
   //_____________________________________________________________________________
-  //                                                           h5rename_attribute
-  
-  /*!
-    \param location_id -- Location identifier of the HDF5 object to which the 
-           attribute is attached.
-    \param oldName     -- Old/current name of the attribute.
-    \param newName     -- New name of the attribute.
-   */
-  bool h5rename_attribute (hid_t const &location_id,
-			   std::string const &oldName,
-			   std::string const &newName)
-  {
-    herr_t status (0);
-    
-    status = H5Arename (location_id,
-			oldName.c_str(),
-			newName.c_str());
-
-    if (status > 0) {
-      std::cerr << "[h5rename_attribute] Error renaming attribute "
-		<< oldName 
-		<< " -> "
-		<< newName
-		<< std::endl;
-      return false;
-    } else {
-      return true;
-    }
-  }
-  
-  //_____________________________________________________________________________
   //                                                        h5setAttribute_string
   
   /*!

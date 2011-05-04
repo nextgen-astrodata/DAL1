@@ -231,11 +231,92 @@ namespace DAL { // Namespace DAL -- begin
     
     return names;
   }
+
+  //_____________________________________________________________________________
+  //                                                                       rename
+  
+  /*!
+    \param location -- Object identifier for the attribute to be renamed.
+    \param newName  -- New name of the attribute.
+  */
+  bool HDF5Attribute::rename (hid_t const &location,
+			      std::string const &newName)
+  {
+    bool status = true;
+
+    if (H5Iis_valid(location)) {
+
+      /* Retrieve the name of the object */
+      std::string currenName = name (location);
+      
+      /* Returns a non-negative value if successful; otherwise returns a negative
+	 value. */
+      status = H5Arename (location,
+			  currenName.c_str(),
+			  newName.c_str());
+      
+      if (status > 0) {
+	std::cerr << "[HDF5Attribute::rename] Error renaming attribute "
+		  << currenName 
+		  << " -> "
+		  << newName
+		  << std::endl;
+	return false;
+      }
+      
+    } else {
+      std::cerr << "[HDF5Object::attributes] Invalid object identifier!"
+		<< std::endl;
+      status = false;
+    }
+
+    return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                       rename
+  
+  /*!
+    \param location -- Object identifier for the attribute to be renamed.
+    \param name     -- Current name of the attribute.
+    \param newName  -- New name of the attribute.
+  */
+  bool HDF5Attribute::rename (hid_t const &location,
+			      std::string const &name,
+			      std::string const &newName)
+  {
+    bool status = true;
+
+    if (H5Iis_valid(location)) {
+      
+      /* Returns a non-negative value if successful; otherwise returns a negative
+	 value. */
+      status = H5Arename (location,
+			  name.c_str(),
+			  newName.c_str());
+      
+      if (status > 0) {
+	std::cerr << "[HDF5Attribute::rename] Error renaming attribute "
+		  << name 
+		  << " -> "
+		  << newName
+		  << std::endl;
+	return false;
+      }
+      
+    } else {
+      std::cerr << "[HDF5Object::attributes] Invalid object identifier!"
+		<< std::endl;
+      status = false;
+    }
+
+    return status;
+  }
   
   /// @cond TEMPLATE_SPECIALIZATIONS
   
   //_____________________________________________________________________________
-  //                                                           write(char)
+  //                                                                  write(char)
   
   //! Set attribute of type (char)
   template <>
