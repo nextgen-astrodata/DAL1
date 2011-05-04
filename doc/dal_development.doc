@@ -1,13 +1,12 @@
 
 /*!
-
   \page dal_devel Developer guide
 
   <ul>
     <li>\ref dal_devel_git
     <li>\ref dal_devel_cmake
     <li>\ref dal_devel_releases
-    <li>\ref dal_devel_conventions
+    <li>\subpage dal_devel_conventions
     <li>\ref dal_devel_classes
   </ul>
 
@@ -309,31 +308,7 @@
     \endverbatim
   </ol>
 
-
-
-  \section dal_devel_conventions Coding conventions
-
-  No formal coding guidelines have been set up for the development of the DAL,
-  though a few reasonable conventions should be adhered to in order to keep the 
-  code readable and consistent:
-
-  <ol>
-    <li>All classes reside within the namespace "DAL".
-
-    <li>All source files contain a Doxygen-based documentation of their methods.
-    All classes/files are contained within the group "DAL".
-
-    <li>Private variables are indicated by the prefix "its", in order to distringuish
-    them from temporary/local variables, e.g.
-    \code
-    \param itsLength - private data member
-    \param length    - local variable or function parameter
-    \endcode
-    <li>Pointers should be marked by a trailing "_p"; e.g. a dynamically allocated
-    array of "data" would become  "itsData_p".
-  </ol>
-
-\section dal_devel_classes Creating a new class
+  \section dal_devel_classes Creating a new class
 
 <ul>
 

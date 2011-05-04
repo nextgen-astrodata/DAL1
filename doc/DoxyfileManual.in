@@ -606,6 +606,7 @@ WARN_LOGFILE           = ${DOXYGEN_WARN_LOGFILE}
 INPUT                  = ${PROJECT_SOURCE_DIR}/doc/dal_overview.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_installation.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_development.doc \
+                         ${PROJECT_SOURCE_DIR}/doc/dal_codingConventions.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_examples_cpp.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_examples_python.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_testing.doc \

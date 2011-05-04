@@ -13,6 +13,9 @@
     <li>\ref dal_intro
     <li>\subpage dal_install
     <li>\subpage dal_devel
+    <ul>
+      <li>\subpage dal_devel_conventions
+    </ul>
     <li>\subpage dal_coding_cpp
     <li>\subpage dal_coding_python
     <li>\subpage dal_testing
