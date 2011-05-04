@@ -602,8 +602,6 @@ namespace DAL {
   /*!
     \brief Add a string attribute.
     
-    Add a string attribute to the hdf5 object.
-    
     \param obj_id The hdf5 object identifier.
     \param attrname The name of the attribute you want to add.
     \param data The value of the attribute you want to add.
