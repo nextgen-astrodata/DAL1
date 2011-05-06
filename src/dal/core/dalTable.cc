@@ -1566,7 +1566,7 @@ namespace DAL {
   bool dalTable::setAttribute( std::string attrname,
                                std::string data )
   {
-    return h5setAttribute_string( tableID_p, attrname, &data, 1 );
+    return HDF5Attribute::write ( tableID_p, attrname, &data, 1 );
   }
 
   //_____________________________________________________________________________
@@ -1583,7 +1583,7 @@ namespace DAL {
 			       std::string const * data,
                                int size )
   {
-    return h5setAttribute_string( tableID_p, attrname, data, size );
+    return HDF5Attribute::write ( tableID_p, attrname, data, size );
   }
   
   //_____________________________________________________________________________

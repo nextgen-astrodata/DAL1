@@ -676,7 +676,7 @@ namespace DAL {
                                  const std::string * data,
                                  int size )
   {
-    return h5setAttribute_string ( h5fh_p, attrname, data, size );
+    return HDF5Attribute::write ( h5fh_p, attrname, data, size );
   }
 
   //_____________________________________________________________________________

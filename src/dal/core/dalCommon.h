@@ -38,6 +38,7 @@ using std::endl;
 #include <core/dalBaseTypes.h>
 #include <core/dalConversions.h>
 #include <core/Enumerations.h>
+#include <core/HDF5Attribute.h>
 #include <core/HDF5Dataspace.h>
 
 #ifdef DAL_WITH_CASA
@@ -60,7 +61,8 @@ using std::endl;
 
   \brief A collection of commonly used routines (for the Data Access Library)
 
-  \author Joseph Masters, Lars B&auml;hren
+  \author Joseph Masters
+  \author Lars B&auml;hren
 
   \test tdalCommon.cc
   \test tdalCommon_operators.cc
@@ -281,11 +283,6 @@ namespace DAL {
   herr_t attr_info (hid_t loc_id,
                     const char *name,
                     void *opdata);
-  //! Set attribute of type \e string
-  bool h5setAttribute_string( hid_t const &obj_id,
-                              std::string attrname,
-                              std::string const * data,
-                              int size );
 
   //_____________________________________________________________________________
   //                                                              h5get_attribute
@@ -515,62 +512,17 @@ namespace DAL {
             was encountered and detected.
   */
   template <typename T>
-  bool h5set_attribute (hid_t const &datatype,
-                        hid_t const &location_id,
-                        std::string name,
-                        T * value,
-                        int size)
-  {
-    hid_t   attribute_id = 0;
-    hid_t   dataspace_id = 0;
-    hsize_t dims[1]      = { size };
-    hsize_t *maxdims     = 0;
-
-    /* Check if location_id points to a valid HDF5 object */
-
-    if (!H5Iis_valid(location_id)) {
-      cerr << "[dalCommon::h5set_attribute]"
-		<< " Unable to set attribute - invalid object identifier!"
-		<< std::endl;
-      return false;
-    }
-    
-    /* Check if the attribute already exists; if this is the case we update
-     * the contents - otherwise we newly create the attribute.
-     */
-    if (H5Aexists(location_id,name.c_str())) {
-      attribute_id = H5Aopen (location_id,
-			      name.c_str(),
-			      H5P_DEFAULT);
-    }
-    else {
-      // Create the ddataspace attached to the attribute
-      dataspace_id  = H5Screate_simple( 1, dims, maxdims );
-      if ( dataspace_id < 0 ) {
-	cerr << "[h5set_attribute] ERROR: Could not set attribute '" << name
-	     << "' dataspace.\n";
-	return false;
-      }
-      // Create the attribute itself
-      attribute_id = H5Acreate( location_id, name.c_str(),
-				datatype, dataspace_id, 0, 0 );
-      if ( attribute_id < 0 ) {
-	cerr << "[h5set_attribute] ERROR: Could not create attribute '" << name
-	     << "'.\n";
-	return false;
-      }
-    }
-    
-    if ( H5Awrite(attribute_id, datatype, value) < 0 ) {
-      cerr << "[h5set_attribute] ERROR: Could not write attribute '"
-	   << name << "'" << std::endl;
-      return false;
-    }
-    
-    if (H5Iis_valid(attribute_id)) { H5Aclose (attribute_id); }
-    if (H5Iis_valid(dataspace_id)) { H5Sclose (dataspace_id); }
-    
-    return true;
+    bool h5set_attribute (hid_t const &datatype,
+			  hid_t const &location_id,
+			  std::string name,
+			  T * value,
+			  int size)
+    {
+      return DAL::HDF5Attribute::write (location_id,
+					name,
+					value,
+					size,
+					datatype);
   }
   
   //_____________________________________________________________________________

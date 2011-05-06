@@ -597,77 +597,6 @@ namespace DAL {
   }
   
   //_____________________________________________________________________________
-  //                                                        h5setAttribute_string
-  
-  /*!
-    \brief Add a string attribute.
-    
-    \param obj_id The hdf5 object identifier.
-    \param attrname The name of the attribute you want to add.
-    \param data The value of the attribute you want to add.
-    \param size The dimension of the attribute.
-    \return DAL::FAIL or DAL::SUCCESS
-   */
-  bool h5setAttribute_string (hid_t const &obj_id,
-                              std::string attrname,
-                              std::string const * data,
-                              int size )
-  {
-    hid_t att       = 0;
-    hid_t dataspace = 0;
-    hsize_t dims[1] = { size };
-
-    char ** string_attr = (char**)malloc( size * sizeof(char*) );
-    for ( int ii = 0; ii < size; ii++ ) {
-      string_attr[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
-      strcpy( string_attr[ii], data[ii].c_str() );
-    }
-    
-    hid_t type = H5Tcopy (H5T_C_S1);
-    if ( type < 0 ) {
-      std::cerr << "ERROR: Could not set attribute '" << attrname
-		<< "' type.\n";
-      return DAL::FAIL;
-    }
-    
-    if ( H5Tset_size(type, H5T_VARIABLE) < 0 ) {
-      std::cerr << "ERROR: Could not set attribute '" << attrname
-		<< "' size.\n";
-      return DAL::FAIL;
-    }
-    
-    dataspace = H5Screate_simple(1, dims, 0);
-    if ( dataspace < 0 ) {
-      std::cerr << "ERROR: Could not set attribute '" << attrname
-		<< "' dataspace.\n";
-      return DAL::FAIL;
-    }
-    
-    att = H5Acreate( obj_id, attrname.c_str(), type, dataspace, 0, 0 );
-    if ( att < 0 ) {
-      std::cerr << "ERROR: Could not create attribute '" << attrname << "'.\n";
-      return DAL::FAIL;
-    }
-    
-    if ( H5Awrite( att, type, string_attr ) < 0 ) {
-      std::cerr << "ERROR: Could not write attribute '" << attrname << "'.\n";
-      return DAL::FAIL;
-    }
-    
-    for ( int ii = 0; ii < size; ii++ ) {
-      free( string_attr[ii] );
-    }
-    free( string_attr );
-
-    /* release HDF5 handlers */
-    if (H5Iis_valid(att))       H5Aclose (att);
-    if (H5Iis_valid(dataspace)) H5Sclose (dataspace);
-    if (H5Iis_valid(type))      H5Tclose (type);
-    
-    return DAL::SUCCESS;
-  }
-  
-  //_____________________________________________________________________________
   // Get the value of an attribute attached to a group or dataset
   
   /*!
@@ -1181,16 +1110,20 @@ namespace DAL {
                         std::string * value,
                         int size)
   {
-    hid_t datatype = H5T_STRING;
-    return h5set_attribute (datatype,
-                            location_id,
-                            name,
-                            value,
-                            size);
+    // hid_t datatype = H5T_STRING;
+    // return h5set_attribute (datatype,
+    //                         location_id,
+    //                         name,
+    //                         value,
+    //                         size);
+    return DAL::HDF5Attribute::write (location_id,
+				      name,
+				      value,
+				      size);
   }
-
+  
   /// @endcond
-
+  
   // ============================================================================
   //
   // Access to HDF5 attributes through casacore (array) classes
