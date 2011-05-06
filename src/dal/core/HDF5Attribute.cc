@@ -321,176 +321,176 @@ namespace DAL { // Namespace DAL -- begin
   //! Set attribute of type (char)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
-				    std::string const &name,
-				    char const *data,
-				    unsigned int const &size)
+			     std::string const &name,
+			     char const *data,
+			     unsigned int const &size)
   {
     return write (location, name, data, size, H5T_NATIVE_CHAR);
   }
-
+  
   //_____________________________________________________________________________
-  //                                                            write(int)
+  //                                                                   write(int)
   
   //! Set attribute of type (int)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
-				    std::string const &name,
-				    int const *data,
-				    unsigned int const &size)
+			     std::string const &name,
+			     int const *data,
+			     unsigned int const &size)
   {
     return write (location, name, data, size, H5T_NATIVE_INT);
   }
-
+  
   //_____________________________________________________________________________
-  //                                                           write(bool)
+  //                                                                  write(bool)
   
   //! Set attribute of type (bool)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
-				    std::string const &name,
-				    bool const *data,
-				    unsigned int const &size)
+			     std::string const &name,
+			     bool const *data,
+			     unsigned int const &size)
   {
     return write (location, name, data, size, H5T_NATIVE_HBOOL);
   }
-
+  
   //_____________________________________________________________________________
-  //                                                   write(unsigned int)
+  //                                                          write(unsigned int)
   
   //! Set attribute of type (unsigned int)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
-				    std::string const &name,
-				    unsigned int const *data,
-				    unsigned int const &size)
+			     std::string const &name,
+			     unsigned int const *data,
+			     unsigned int const &size)
   {
     return write (location, name, data, size, H5T_NATIVE_UINT);
   }
 
   //_____________________________________________________________________________
-  //                                                          write(short)
+  //                                                                 write(short)
   
   //! Set attribute of type (short)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
-				    std::string const &name,
-				    short const *data,
-				    unsigned int const &size)
+			     std::string const &name,
+			     short const *data,
+			     unsigned int const &size)
   {
     return write (location, name, data, size, H5T_NATIVE_SHORT);
   }
 
   //_____________________________________________________________________________
-  //                                                           write(long)
+  //                                                                  write(long)
   
   //! Set attribute of type (long)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
-				    std::string const &name,
-				    long const *data,
-				    unsigned int const &size)
+			     std::string const &name,
+			     long const *data,
+			     unsigned int const &size)
   {
     return write (location,
-			 name,
-			 data,
-			 size,
-			 H5T_NATIVE_LONG);
+		  name,
+		  data,
+		  size,
+		  H5T_NATIVE_LONG);
   }
 
   //_____________________________________________________________________________
-  //                                                  write(unsigned long)
+  //                                                         write(unsigned long)
   
   //! Set attribute of type (long)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
-				    std::string const &name,
-				    unsigned long const *data,
-				    unsigned int const &size)
+			     std::string const &name,
+			     unsigned long const *data,
+			     unsigned int const &size)
   {
     return write (location,
-			 name,
-			 data,
-			 size,
-			 H5T_NATIVE_ULONG);
+		  name,
+		  data,
+		  size,
+		  H5T_NATIVE_ULONG);
   }
-
+  
   //_____________________________________________________________________________
-  //                                                      write(long long)
+  //                                                             write(long long)
   
   //! Set attribute of type (long long)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
-				    std::string const &name,
-				    long long const *data,
-				    unsigned int const &size)
+			     std::string const &name,
+			     long long const *data,
+			     unsigned int const &size)
   {
     return write (location,
-			 name,
-			 data,
-			 size,
-			 H5T_NATIVE_LLONG);
+		  name,
+		  data,
+		  size,
+		  H5T_NATIVE_LLONG);
   }
-
+  
   //_____________________________________________________________________________
-  //                                             write(unsigned long long)
+  //                                                    write(unsigned long long)
   
   //! Set attribute of type (unsigned long long)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
-				    std::string const &name,
-				    unsigned long long const *data,
-				    unsigned int const &size)
+			     std::string const &name,
+			     unsigned long long const *data,
+			     unsigned int const &size)
   {
     return write (location,
-			 name,
-			 data,
-			 size,
-			 H5T_NATIVE_ULLONG);
+		  name,
+		  data,
+		  size,
+		  H5T_NATIVE_ULLONG);
   }
 
   //_____________________________________________________________________________
-  //                                                          write(float)
+  //                                                                 write(float)
   
   //! Set attribute of type (float)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
-				    std::string const &name,
-				    float const *data,
-				    unsigned int const &size)
+			     std::string const &name,
+			     float const *data,
+			     unsigned int const &size)
   {
     return write (location,
-			 name,
-			 data,
-			 size,
-			 H5T_NATIVE_FLOAT);
+		  name,
+		  data,
+		  size,
+		  H5T_NATIVE_FLOAT);
   }
-
+  
   //_____________________________________________________________________________
   //                                                         write(double)
   
   //! Set attribute of type (double)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
-				    std::string const &name,
-				    double const *data,
-				    unsigned int const &size)
+			     std::string const &name,
+			     double const *data,
+			     unsigned int const &size)
   {
     return write (location,
-			 name,
-			 data,
-			 size,
-			 H5T_NATIVE_DOUBLE);
+		  name,
+		  data,
+		  size,
+		  H5T_NATIVE_DOUBLE);
   }
-
+  
   //_____________________________________________________________________________
-  //                                                    write(std::string)
+  //                                                           write(std::string)
   
   //! Set attribute of type (std::string)
   template <>
   bool HDF5Attribute::write (hid_t const &location,
-				    std::string const &name,
-				    std::string const *data,
-				    unsigned int const &size)
+			     std::string const &name,
+			     std::string const *data,
+			     unsigned int const &size)
   {
     bool status       = true;
     hid_t   attribute = 0;

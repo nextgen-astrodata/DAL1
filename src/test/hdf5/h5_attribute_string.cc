@@ -35,11 +35,19 @@
 
 const int32_t MAX_COL_NAME_SIZE = 256;
 
+// ==============================================================================
+//
+//  Test routines
+//
+// ==============================================================================
+
 //_______________________________________________________________________________
-//                                                                 writeAttribute
+//                                           test_dalCommon_h5setAttribute_string
 
 /*!
   \brief Write attribute of type \e string.
+
+  Original implementation: dalCommon::h5setAttribute_string
 
   This routine is one of the original methods (\c h5setAttribute_string) written
   by Joe to handle writing string-type attributes. The main drawbacks of this 
@@ -55,10 +63,10 @@ const int32_t MAX_COL_NAME_SIZE = 256;
   \return status  -- Status of the operation; returns \e false in case an error
           was encountered, e.g. failure to write the data.
 */
-bool writeAttribute (hid_t const &location,
-		     std::string attrname,
-		     std::string const * data,
-		     int size )
+bool test_dalCommon_h5setAttribute_string (hid_t const &location,
+					   std::string attrname,
+					   std::string const * data,
+					   int size )
 {
   hid_t att       = 0;
   hid_t dataspace = 0;
@@ -115,7 +123,202 @@ bool writeAttribute (hid_t const &location,
 }
 
 //_______________________________________________________________________________
-//                                                                           main
+//                                                                 writeAttribute
+
+/*!
+  \brief Set the value of an attribute attached to a group or dataset
+  
+  Original implementation: dalCommon::h5set_attribute
+
+  \param datatype    -- HDF5 datatype of the attribute
+  \param location_id -- HDF5 identifier of the attribute within the file
+  \param name        -- Name of the attribute
+  \param value       -- Value of the attribute
+  \param size        -- The size of the attribute
+  
+  \return status -- Status of the operation; returns \e false in case an error
+          was encountered and detected.
+*/
+bool writeAttribute (hid_t const &datatype,
+		     hid_t const &location_id,
+		     std::string name,
+		     std::string * value,
+		     int size)
+{
+  hid_t   attribute_id = 0;
+  hid_t   dataspace_id = 0;
+  hsize_t dims[1]      = { size };
+  hsize_t *maxdims     = 0;
+
+  /* Feedback */
+  std::cout << "[dalCommon::h5set_attribute]"     << std::endl;
+  std::cout << "-- Datatype       = " << datatype    << std::endl;
+  std::cout << "-- Location ID    = " << location_id << std::endl;
+  std::cout << "-- Attribute name = " << name        << std::endl;
+  
+  /* Check if location_id points to a valid HDF5 object */
+  
+  if (!H5Iis_valid(location_id)) {
+    std::cerr << "[dalCommon::h5set_attribute]"
+	 << " Unable to set attribute - invalid object identifier!"
+	 << std::endl;
+    return false;
+  }
+  
+  /* Check if the attribute already exists; if this is the case we update
+   * the contents - otherwise we newly create the attribute.
+   */
+  if (H5Aexists(location_id,name.c_str())) {
+    attribute_id = H5Aopen (location_id,
+			    name.c_str(),
+			    H5P_DEFAULT);
+  }
+  else {
+    // Create the ddataspace attached to the attribute
+    dataspace_id  = H5Screate_simple( 1, dims, maxdims );
+    if ( dataspace_id < 0 ) {
+      std::cerr << "[h5set_attribute] ERROR: Could not set attribute '" << name
+		<< "' dataspace.\n";
+      return false;
+    }
+    // Create the attribute itself
+    attribute_id = H5Acreate (location_id,
+			      name.c_str(),
+			      datatype,
+			      dataspace_id,
+			      0,
+			      0);
+    if ( attribute_id < 0 ) {
+      std::cerr << "[h5set_attribute] ERROR: Could not create attribute '" << name
+		<< "'.\n";
+      return false;
+    }
+  }
+  
+  if ( H5Awrite(attribute_id, datatype, value) < 0 ) {
+    std::cerr << "[h5set_attribute] ERROR: Could not write attribute '"
+	      << name << "'" << std::endl;
+    return false;
+  }
+  
+  if (H5Iis_valid(attribute_id)) { H5Aclose (attribute_id); }
+  if (H5Iis_valid(dataspace_id)) { H5Sclose (dataspace_id); }
+  
+  return true;
+}
+
+//_______________________________________________________________________________
+//                                                       test_HDF5Attribute_write
+
+/*!
+  Original implementation: HDF5Attribute::write
+
+  \param location -- Identifier to the HDF5 object.
+  \param name     -- Name of the attribute.
+  \param data     -- Array with the data written to the attribute.
+  \param size     -- Number of elements in the value array.
+*/
+bool test_HDF5Attribute_write (hid_t const &location,
+		     std::string const &name,
+		     std::string const *data,
+		     unsigned int const &size)
+{
+  bool status       = true;
+  hid_t   attribute = 0;
+  hid_t   dataspace = 0;
+  hid_t   datatype  = H5Tcopy (H5T_C_S1);
+  hsize_t dims[1]   = { size };
+  hsize_t *maxdims  = 0;
+  herr_t h5err      = 0;
+  
+  /*________________________________________________________________
+    Basic checks for reference location and attribute name.
+  */
+  
+  if (H5Iis_valid(location)) {
+    h5err = H5Aexists (location,
+		       name.c_str());
+  } else {
+    std::cerr << "[HDF5Attribute::write]"
+	      << " No valid HDF5 object found at reference location!"
+	      << std::endl;
+    return false;
+  }
+  
+  /*____________________________________________________________
+    Check if attribute 'name' already exits at the given
+    'location'; if this is not the case, we need to create the 
+    attribute.
+  */
+  
+  if (h5err>0) {
+    attribute = H5Aopen (location,
+			 name.c_str(),
+			 H5P_DEFAULT);
+  } else {
+    /* Create dataspace for the attribute */
+    h5err     = H5Tset_size (datatype, H5T_VARIABLE);
+    dataspace = H5Screate_simple (1, dims, maxdims );
+    if (H5Iis_valid(dataspace)) {
+      /* Create the attribute itself ... */
+      attribute = H5Acreate (location,
+			     name.c_str(),
+			     datatype,
+			     dataspace,
+			     0,
+			     0);
+      /* ... and check if creation was successful */
+      if (H5Iis_valid(attribute)) {
+	status = true;
+      } else {
+	std::cerr << "[HDF5Attribute::write]"
+		  << " H5Acreate() failed to create attribute "
+		  << name
+		  << std::endl;
+	status = false;
+      }
+    } else {
+      std::cerr << "[HDF5Attribute::write]"
+		<< " H5Screate_simple() failed to create dataspace!"
+		<< std::endl;
+      status = false;
+    }
+  }
+  
+  /*____________________________________________________________
+    H5Awrite() returns a non-negative value if successful;
+    otherwise returns a negative value. 
+  */
+  
+  if (status) {
+    datatype = H5Aget_type(attribute);
+    /* Write the data to the attribute ... */
+    h5err = H5Awrite (attribute, datatype, data);
+    /* ... and check the return value of the operation */
+    if (h5err<0) {
+      std::cerr << "[HDF5Attribute::write]"
+		<< " H5Awrite() failed to write attribute!"
+		<< std::endl;
+      status = false;
+    }
+  }
+  
+  /*____________________________________________________________
+    Release HDF5 object handles
+  */
+  H5Tclose (datatype);
+  H5Sclose (dataspace);
+  H5Aclose (attribute);
+  
+  return status;
+}
+
+
+// ==============================================================================
+//
+//  Main routine
+//
+// ==============================================================================
 
 /*!
   \brief Main routine of the test program.
@@ -127,8 +330,10 @@ int main (int argc, char *argv[])
 {
   int nofFailedTests   = 0;
   bool status          = true;
+  hid_t datatype       = H5T_STRING;
   hid_t fileID         = 0;
   std::string filename = "h5_attribute_string.h5";
+  std::string name;
   std::string data;
 
   //________________________________________________________
@@ -151,8 +356,17 @@ int main (int argc, char *argv[])
   
   if (H5Iis_valid(fileID)) {
 
-    data   = "Hello World";
-    status = writeAttribute (fileID, "String1",&data,1);
+    name   = "String1";
+    data   = "h5setAttribute_string";
+    status = test_dalCommon_h5setAttribute_string (fileID, name, &data, 1);
+    
+    // data   = "h5set_attribute";
+    // status = writeAttribute (datatype, fileID, "String2", &data, 1);
+
+    /* HDF5Attribute::write */
+    name = "String3";
+    data = "HDF5Attribute write";
+    status = test_HDF5Attribute_write (fileID, name, &data, 1);
     
   }
     
