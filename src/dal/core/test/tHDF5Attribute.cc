@@ -50,23 +50,32 @@ using DAL::HDF5Object;
   h5a_double            double
   h5a_string            string
 
-  h5a_bool_vector       vector<bool>
-  h5a_int_vector        vector<int>
-  h5a_uint_vector       vector<uint>
-  h5a_short_vector      vector<short>
-  h5a_ushort_vector     vector<ushort>
-  h5a_float_vector      vector<float>
-  h5a_double_vector     vector<double>
-  h5a_string_vector     vector<string>
+  h5a_array_bool        bool*
+  h5a_array_int         int*
+  h5a_array_uint        uint*
+  h5a_array_short       short*
+  h5a_array_ushort      ushort*
+  h5a_array_float       float*
+  h5a_array_double      double*
+  h5a_array_string      string*
 
-  h5a_bool_array        bool*
-  h5a_int_array         int*
-  h5a_uint_array        uint*
-  h5a_short_array       short*
-  h5a_ushort_array      ushort*
-  h5a_float_array       float*
-  h5a_double_array      double*
-  h5a_string_array      string*
+  h5a_vector_bool       vector<bool>
+  h5a_vector_int        vector<int>
+  h5a_vector_uint       vector<uint>
+  h5a_vector_short      vector<short>
+  h5a_vector_ushort     vector<ushort>
+  h5a_vector_float      vector<float>
+  h5a_vector_double     vector<double>
+  h5a_vector_string     vector<string>
+
+  h5a_bool_set          set<bool>
+  h5a_int_set           set<int>
+  h5a_uint_set          set<uint>
+  h5a_short_set         set<short>
+  h5a_ushort_set        set<ushort>
+  h5a_float_set         set<float>
+  h5a_double_set        set<double>
+  h5a_string_set        set<string>
   \endverbatim
 */
 
@@ -140,7 +149,7 @@ int test_H5Aread (hid_t const &location)
 */
 int test_static_functions (hid_t const &location)
 {
-  std::cout << "\n[tHDF5Attribute::test_static_functions]\n" << endl;
+  std::cout << "\n[tHDF5Attribute::test_static_functions]\n" << std::endl;
 
   int nofFailedTests = 0;
   
@@ -148,7 +157,7 @@ int test_static_functions (hid_t const &location)
     Test 1: Create/Set attribute storing atomic value.
   */
   
-  cout << "[1] Testing write(hid_t,string,T) ..." << endl;
+  std::cout << "[1] Testing write(hid_t,string,T) ..." << std::endl;
   try {
     int valInt            = 1;
     int valUint           = 2;
@@ -157,18 +166,20 @@ int test_static_functions (hid_t const &location)
     float valFloat        = 0.5;
     float valDouble       = 0.25;
     std::string valString = "bla";
-    
-    HDF5Attribute::write (location, "AttributeInt",    valInt);
-    HDF5Attribute::write (location, "AttributeUint",   valUint);
-    HDF5Attribute::write (location, "AttributeShort",  valShort);
-    HDF5Attribute::write (location, "AttributeLong",   valLong);
-    HDF5Attribute::write (location, "AttributeFloat",  valFloat);
-    HDF5Attribute::write (location, "AttributeDouble", valDouble);
-    HDF5Attribute::write (location, "AttributeString", valString);
+
+    std::cout << "-- Start writing attributes." << std::endl << std::flush;
+    HDF5Attribute::write (location, "h5a_int",    valInt);
+    HDF5Attribute::write (location, "h5a_uint",   valUint);
+    HDF5Attribute::write (location, "h5a_short",  valShort);
+    HDF5Attribute::write (location, "h5a_long",   valLong);
+    HDF5Attribute::write (location, "h5a_float",  valFloat);
+    HDF5Attribute::write (location, "h5a_double", valDouble);
+    HDF5Attribute::write (location, "h5a_string", valString);
+    std::cout << "-- Finished writing attributes." << std::endl << std::flush;
   } catch (std::string message) {
     ++nofFailedTests;
   }
-    
+
   /*__________________________________________________________________
     Test 2: Create/Set attribute storing array-type value, using
             interface for std::vector<T>
@@ -185,13 +196,15 @@ int test_static_functions (hid_t const &location)
     std::vector<double> valDouble (nelem, 0.25);
     std::vector<std::string> valString (nelem, "bla");
     
-    HDF5Attribute::write (location, "AttributeVectorInt",    valInt);
-    HDF5Attribute::write (location, "AttributeVectorUint",   valUint);
-    HDF5Attribute::write (location, "AttributeVectorShort",  valShort);
-    HDF5Attribute::write (location, "AttributeVectorLong",   valLong);
-    HDF5Attribute::write (location, "AttributeVectorFloat",  valFloat);
-    HDF5Attribute::write (location, "AttributeVectorDouble", valDouble);
-    HDF5Attribute::write (location, "AttributeVectorString", valString);
+    std::cout << "-- Start writing attributes." << std::endl << std::flush;
+    HDF5Attribute::write (location, "h5a_vector_int",    valInt);
+    HDF5Attribute::write (location, "h5a_vector_uint",   valUint);
+    HDF5Attribute::write (location, "h5a_vector_short",  valShort);
+    HDF5Attribute::write (location, "h5a_vector_long",   valLong);
+    HDF5Attribute::write (location, "h5a_vector_float",  valFloat);
+    HDF5Attribute::write (location, "h5a_vector_double", valDouble);
+    HDF5Attribute::write (location, "h5a_vector_string", valString);
+    std::cout << "-- Finished writing attributes." << std::endl << std::flush;
   } catch (std::string message) {
     ++nofFailedTests;
   }
@@ -211,13 +224,15 @@ int test_static_functions (hid_t const &location)
     double valDouble[]      = {0.25,0.25,0.25,0.25,0.25};
     std::string valString[] = {"a","bb","ccc","dddd","eeeee"};
 
-    HDF5Attribute::write (location, "AttributeArrayInt",    valInt,    nelem);
-    HDF5Attribute::write (location, "AttributeArrayUint",   valUint,   nelem);
-    HDF5Attribute::write (location, "AttributeArrayShort",  valShort,  nelem);
-    HDF5Attribute::write (location, "AttributeArrayLong",   valLong,   nelem);
-    HDF5Attribute::write (location, "AttributeArrayFloat",  valFloat,  nelem);
-    HDF5Attribute::write (location, "AttributeArrayDouble", valDouble, nelem);
-    HDF5Attribute::write (location, "AttributeArrayString", valString, nelem);
+    std::cout << "-- Start writing attributes." << std::endl << std::flush;
+    HDF5Attribute::write (location, "h5a_array_int",    valInt,    nelem);
+    HDF5Attribute::write (location, "h5a_array_uint",   valUint,   nelem);
+    HDF5Attribute::write (location, "h5a_array_short",  valShort,  nelem);
+    HDF5Attribute::write (location, "h5a_array_long",   valLong,   nelem);
+    HDF5Attribute::write (location, "h5a_array_float",  valFloat,  nelem);
+    HDF5Attribute::write (location, "h5a_array_double", valDouble, nelem);
+    HDF5Attribute::write (location, "h5a_array_string", valString, nelem);
+    std::cout << "-- Finished writing attributes." << std::endl << std::flush;
   } catch (std::string message) {
     ++nofFailedTests;
   }
@@ -235,12 +250,14 @@ int test_static_functions (hid_t const &location)
     float valDouble       = 0.025;
     std::string valString = "bladibla";
     
-    HDF5Attribute::write (location, "AttributeInt",    valInt);
-    HDF5Attribute::write (location, "AttributeShort",  valShort);
-    HDF5Attribute::write (location, "AttributeLong",   valLong);
-    HDF5Attribute::write (location, "AttributeFloat",  valFloat);
-    HDF5Attribute::write (location, "AttributeDouble", valDouble);
-    HDF5Attribute::write (location, "AttributeString", valString);
+    std::cout << "-- Start updating attributes." << std::endl << std::flush;
+    HDF5Attribute::write (location, "h5a_int",    valInt);
+    HDF5Attribute::write (location, "h5a_short",  valShort);
+    HDF5Attribute::write (location, "h5a_long",   valLong);
+    HDF5Attribute::write (location, "h5a_float",  valFloat);
+    HDF5Attribute::write (location, "h5a_double", valDouble);
+    HDF5Attribute::write (location, "h5a_string", valString);
+    std::cout << "-- Finished updating attributes." << std::endl << std::flush;
   } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
@@ -260,12 +277,14 @@ int test_static_functions (hid_t const &location)
     std::vector<double> valDouble (nelem, 0.025);
     std::vector<std::string> valString (nelem, "bladibla");
     
-    HDF5Attribute::write (location, "AttributeVectorInt",    valInt);
-    HDF5Attribute::write (location, "AttributeVectorShort",  valShort);
-    HDF5Attribute::write (location, "AttributeVectorLong",   valLong);
-    HDF5Attribute::write (location, "AttributeVectorFloat",  valFloat);
-    HDF5Attribute::write (location, "AttributeVectorDouble", valDouble);
-    HDF5Attribute::write (location, "AttributeVectorString", valString);
+    std::cout << "-- Start updating attributes." << std::endl << std::flush;
+    HDF5Attribute::write (location, "h5a_vector_int",    valInt);
+    HDF5Attribute::write (location, "h5a_vector_short",  valShort);
+    HDF5Attribute::write (location, "h5a_vector_long",   valLong);
+    HDF5Attribute::write (location, "h5a_vector_float",  valFloat);
+    HDF5Attribute::write (location, "h5a_vector_double", valDouble);
+    HDF5Attribute::write (location, "h5a_vector_string", valString);
+    std::cout << "-- Finished updating attributes." << std::endl << std::flush;
   } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
@@ -285,12 +304,12 @@ int test_static_functions (hid_t const &location)
     double valDouble[]      = {0.025,0.025,0.025,0.025,0.025};
     std::string valString[] = {"A","BB","CCC","DDDD","EEEEE"};
 
-    HDF5Attribute::write (location, "AttributeArrayInt",    valInt,    nelem);
-    HDF5Attribute::write (location, "AttributeArrayShort",  valShort,  nelem);
-    HDF5Attribute::write (location, "AttributeArrayLong",   valLong,   nelem);
-    HDF5Attribute::write (location, "AttributeArrayFloat",  valFloat,  nelem);
-    HDF5Attribute::write (location, "AttributeArrayDouble", valDouble, nelem);
-    HDF5Attribute::write (location, "AttributeArrayString", valString, nelem);
+    HDF5Attribute::write (location, "h5a_array_int",    valInt,    nelem);
+    HDF5Attribute::write (location, "h5a_array_short",  valShort,  nelem);
+    HDF5Attribute::write (location, "h5a_array_long",   valLong,   nelem);
+    HDF5Attribute::write (location, "h5a_array_long",  valFloat,  nelem);
+    HDF5Attribute::write (location, "h5a_array_double", valDouble, nelem);
+    HDF5Attribute::write (location, "h5a_array_string", valString, nelem);
   } catch (std::string message) {
     ++nofFailedTests;
   }
@@ -302,11 +321,13 @@ int test_static_functions (hid_t const &location)
   cout << "[7] Get number, names and types of attributes ..." << endl;
   try {
     cout << "-- nof attributes  = " << HDF5Object::nofAttributes(location) << endl;
-    cout << "-- Attribute names = " << HDF5Attribute::attributes(location) << endl;
+    // cout << "-- Attribute names = " << HDF5Attribute::attributes(location) << endl;
   } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
   }
+
+  return nofFailedTests;
 
   /*__________________________________________________________________
     Test 8: Retrieve previously set attributes.
@@ -316,14 +337,16 @@ int test_static_functions (hid_t const &location)
   try {
     unsigned int nelem = 0;
     int * arrInt       = NULL;
-    std::vector<int> vecInt;
+    short * arrShort   = NULL;
+    long * arrLong     = NULL;
+    float * arrFloat   = NULL;
+    double * arrDouble = NULL;
     
-    HDF5Attribute::read (location, "AttributeArrayInt", arrInt, nelem);
-    // HDF5Attribute::write (location, "AttributeShort",  valShort);
-    // HDF5Attribute::write (location, "AttributeLong",   valLong);
-    // HDF5Attribute::write (location, "AttributeFloat",  valFloat);
-    // HDF5Attribute::write (location, "AttributeDouble", valDouble);
-    // HDF5Attribute::write (location, "AttributeString", valString);
+    HDF5Attribute::read (location, "h5a_int",    arrInt,    nelem);
+    HDF5Attribute::read (location, "h5a_short",  arrShort,  nelem);
+    HDF5Attribute::read (location, "h5a_long",   arrLong,   nelem);
+    HDF5Attribute::read (location, "h5a_float",  arrFloat,  nelem);
+    HDF5Attribute::read (location, "h5a_double", arrDouble, nelem);
 
     // std::cout << "-- AttributeInt    = " << valInt     << std::endl;
     // std::cout << "-- AttributeShort  = " << valShort   << std::endl;

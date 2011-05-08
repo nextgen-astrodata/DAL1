@@ -324,12 +324,8 @@ int test_constructors (hid_t const &fileID)
   try {
     index       = 2;
     nameDataset = BF_StokesDataset::getName(index);
-    BF_StokesDataset data1 (fileID, nameDataset);
-    data1.summary(); 
-    /* Point constructor to existing dataset */
-    nameDataset = "Dataset.002";
-    BF_StokesDataset data2 (fileID, nameDataset);
-    data2.summary(); 
+    BF_StokesDataset stokes (fileID, nameDataset);
+    stokes.summary(); 
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
