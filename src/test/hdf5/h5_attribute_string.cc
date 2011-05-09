@@ -18,6 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 #include <hdf5.h>
 
@@ -71,10 +73,12 @@ bool test_dalCommon_h5setAttribute_string (hid_t const &location,
   hid_t att       = 0;
   hid_t dataspace = 0;
   hsize_t dims[1] = { size };
-  
-  char ** string_attr = (char**)malloc( size * sizeof(char*) );
+
+  /* Allocated memory */
+  char ** string_attr = (char**)std::malloc( size * sizeof(char*) );
+
   for ( int ii = 0; ii < size; ii++ ) {
-    string_attr[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
+    string_attr[ii] = (char*)std::malloc(MAX_COL_NAME_SIZE * sizeof(char));
     strcpy( string_attr[ii], data[ii].c_str() );
   }
   
@@ -110,9 +114,9 @@ bool test_dalCommon_h5setAttribute_string (hid_t const &location,
   }
   
   for ( int ii = 0; ii < size; ii++ ) {
-    free( string_attr[ii] );
+    std::free( string_attr[ii] );
   }
-  free( string_attr );
+  std::free( string_attr );
   
   /* release HDF5 handlers */
   if (H5Iis_valid(att))       H5Aclose (att);
