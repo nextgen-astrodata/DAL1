@@ -20,7 +20,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <iostream>
 #include <hdf5.h>
 
@@ -335,7 +335,6 @@ int main (int argc, char *argv[])
 {
   int nofFailedTests   = 0;
   bool status          = true;
-  hid_t datatype       = H5T_STRING;
   hid_t fileID         = 0;
   std::string filename = "h5_attribute_string.h5";
   std::string name;
@@ -366,7 +365,7 @@ int main (int argc, char *argv[])
     status = test_dalCommon_h5setAttribute_string (fileID, name, &data, 1);
     
     // data   = "h5set_attribute";
-    // status = writeAttribute (datatype, fileID, "String2", &data, 1);
+    // status = writeAttribute (H5T_STRING, fileID, "String2", &data, 1);
 
     /* HDF5Attribute::write */
     name = "String3";
