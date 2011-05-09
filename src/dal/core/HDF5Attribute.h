@@ -21,7 +21,7 @@
 #ifndef HDF5ATTRIBUTE_H
 #define HDF5ATTRIBUTE_H
 
-#include "HDF5Object.h"
+#include "HDF5Dataspace.h"
 
 #ifdef DAL_WITH_CASA
 #include <casa/Arrays/Vector.h>
@@ -244,11 +244,7 @@ namespace DAL { // Namespace DAL -- begin
 	*/
 
 	hid_t attribute      = 0;
-	hid_t dataspace      = 0;
-	hid_t datatype       = 0;
-	/* hid_t nativeDatatype = 0; */
-	int rank             = 0;
-	int size             = 0;
+	hid_t nativeDatatype = 0;
 
 	if (h5err>0) {
 	  attribute = H5Aopen (location,
@@ -256,14 +252,16 @@ namespace DAL { // Namespace DAL -- begin
 			       H5P_DEFAULT);
 
 	  if (H5Iis_valid(attribute)) {
-	    datatype  = H5Aget_type (attribute);
-	    dataspace = H5Aget_space(attribute);
-	    rank      = H5Sget_simple_extent_ndims(dataspace);
+	    
+	    hid_t datatype  = H5Aget_type (attribute);
+	    nativeDatatype  = H5Tget_native_type(datatype, H5T_DIR_ASCEND);
+	    hid_t dataspace = H5Aget_space(attribute);
+	    int rank        = H5Sget_simple_extent_ndims(dataspace);
 
 	    if (rank>0) {
 	      hsize_t shape[rank];
 	      hsize_t maxDimensions[rank];
-	      size  = 1;
+	      int size  = 1;
 	      h5err = H5Sget_simple_extent_dims (dataspace,
 						 shape,
 						 maxDimensions);
@@ -271,24 +269,22 @@ namespace DAL { // Namespace DAL -- begin
 		size *= shape[n];
 	      }
 	      
-	      /* Adjust the size of the data array */
-	      data.clear();
+	      /* Adjust size of array returning the attribute data */
 	      data.resize(size);
 
 	      /* Retrieve the attribute data */
-	      H5Aread (attribute,
-		       datatype,
-		       &data[0]);
+	      h5err = H5Aread (attribute,
+			       nativeDatatype,
+			       &data[0]);
+	      
 	    } else {
-	      size = 0;
 	      return false;
 	    }
 
-	    // release HDF5 object identifiers
-	    H5Tclose (datatype);
-	    H5Sclose (dataspace);
-	    H5Aclose (attribute);
-	    
+	    /* Release HDF5 object identifiers */
+	    if (H5Iis_valid(datatype))  { H5Tclose (datatype);  };
+	    if (H5Iis_valid(dataspace)) { H5Sclose (dataspace); };
+	    if (H5Iis_valid(attribute)) { H5Aclose (attribute); };
 	  } else {
 	    std::cerr << "[HDF5Attribute::read]"
 		      << " Failed to open attribute " << name << std::endl;

@@ -377,7 +377,11 @@ namespace DAL { // Namespace DAL -- begin
 			     short const *data,
 			     unsigned int const &size)
   {
-    return write (location, name, data, size, H5T_NATIVE_SHORT);
+    return write (location,
+		  name,
+		  data,
+		  size,
+		  H5T_NATIVE_SHORT);
   }
 
   //_____________________________________________________________________________

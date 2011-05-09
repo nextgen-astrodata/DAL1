@@ -94,14 +94,18 @@ std::string show (std::vector<T> const &data)
 {
   std::ostringstream output;
 
-  output << "[";
-
-  for (unsigned int n=0; n<data.size(); ++n) {
-    output << " " << data[n];
+  if (data.empty()) {
+    output << "[ ]";
+  } else {
+    output << "[";
+    
+    for (unsigned int n=0; n<data.size(); ++n) {
+      output << " " << data[n];
+    }
+    
+    output << " ]";
   }
-
-  output << " ]";
-
+  
   return output.str();
 }
 
@@ -186,11 +190,11 @@ int test_static_write (hid_t const &location)
   std::cout << "\n[1] Testing write(hid_t,string,T) ..." << std::endl;
   try {
     int valInt            = 1;
-    int valUint           = 2;
+    unsigned int valUint  = 2;
     int valShort          = 3;
     int valLong           = 4;
     float valFloat        = 0.5;
-    float valDouble       = 0.25;
+    double valDouble      = 0.25;
     std::string valString = "bla";
 
     std::cout << "-- Start writing attributes." << std::endl << std::flush;
@@ -214,12 +218,12 @@ int test_static_write (hid_t const &location)
   cout << "\n[2] Testing write(hid_t,string,vector<T>) ..." << endl;
   try {
     unsigned int nelem = 3;
-    std::vector<int> valInt       (nelem, 1);
-    std::vector<int> valUint      (nelem, 2);
-    std::vector<short> valShort   (nelem, 3);
-    std::vector<long> valLong     (nelem, 4);
-    std::vector<float> valFloat   (nelem, 0.5);
-    std::vector<double> valDouble (nelem, 0.25);
+    std::vector<int> valInt           (nelem, 1);
+    std::vector<unsigned int> valUint (nelem, 2);
+    std::vector<short> valShort       (nelem, 3);
+    std::vector<long> valLong         (nelem, 4);
+    std::vector<float> valFloat       (nelem, 0.5);
+    std::vector<double> valDouble     (nelem, 0.25);
     std::vector<std::string> valString (nelem, "bla");
     
     std::cout << "-- Start writing attributes." << std::endl << std::flush;
@@ -243,7 +247,7 @@ int test_static_write (hid_t const &location)
   try {
     unsigned int nelem      = 5;
     int valInt[]            = {1,1,1,1,1};
-    int valUint[]           = {2,2,2,2,2};
+    unsigned int valUint[]  = {2,2,2,2,2};
     int valShort[]          = {3,3,3,3,3};
     int valLong[]           = {4,4,4,4,4};
     float valFloat[]        = {0.5,0.5,0.5,0.5,0.5};
@@ -270,14 +274,16 @@ int test_static_write (hid_t const &location)
   cout << "\n[4] Updating attributes via write(hid_t,string,T) ..." << endl;
   try {
     int valInt            = 10;
-    int valShort          = 20;
-    int valLong           = 30;
+    int valUint           = 20;
+    int valShort          = 30;
+    int valLong           = 40;
     float valFloat        = 0.05;
     float valDouble       = 0.025;
     std::string valString = "bladibla";
     
     std::cout << "-- Start updating attributes." << std::endl << std::flush;
     HDF5Attribute::write (location, "h5a_int",    valInt);
+    HDF5Attribute::write (location, "h5a_uint",   valUint);
     HDF5Attribute::write (location, "h5a_short",  valShort);
     HDF5Attribute::write (location, "h5a_long",   valLong);
     HDF5Attribute::write (location, "h5a_float",  valFloat);
@@ -405,6 +411,7 @@ int test_static_read (hid_t const &location)
   cout << "\n[2] Testing read(hid_t,string,vector<T>) ..." << endl;
   try {
     std::vector<int> dataInt;
+    std::vector<unsigned int> dataUint;
     std::vector<short> dataShort;
     std::vector<long> dataLong;
     std::vector<float> dataFloat;
@@ -412,29 +419,31 @@ int test_static_read (hid_t const &location)
     // std::vector<std::string> dataString;
 
     HDF5Attribute::read (location, "h5a_int",          dataInt);
-    // HDF5Attribute::read (location, "h5a_short",        dataShort);
+    HDF5Attribute::read (location, "h5a_uint",         dataUint);
+    HDF5Attribute::read (location, "h5a_short",        dataShort);
     HDF5Attribute::read (location, "h5a_long",         dataLong);
     HDF5Attribute::read (location, "h5a_float",        dataFloat);
     HDF5Attribute::read (location, "h5a_double",       dataDouble);
     // HDF5Attribute::read (location, "h5a_string",       dataString);
 
-    std::cout << "-- h5a_int          = " << show(dataInt)    << std::endl;
-    // std::cout << "-- h5a_short        = " << show(dataShort) << std::endl;
-    std::cout << "-- h5a_long         = " << show(dataLong)   << std::endl;
-    std::cout << "-- h5a_float        = " << show(dataFloat)  << std::endl;
-    std::cout << "-- h5a_double       = " << show(dataDouble) << std::endl;
+    std::cout << "-- h5a_int           = " << show(dataInt)    << std::endl;
+    std::cout << "-- h5a_uint          = " << show(dataUint)   << std::endl;
+    std::cout << "-- h5a_short         = " << show(dataShort)  << std::endl;
+    std::cout << "-- h5a_long          = " << show(dataLong)   << std::endl;
+    std::cout << "-- h5a_float         = " << show(dataFloat)  << std::endl;
+    std::cout << "-- h5a_double        = " << show(dataDouble) << std::endl;
     // std::cout << "-- h5a_string       = " << show(dataString) << std::endl;
 
     HDF5Attribute::read (location, "h5a_vector_int",   dataInt);
-    // HDF5Attribute::read (location, "h5a_vector_short", dataShort);
+    HDF5Attribute::read (location, "h5a_vector_short", dataShort);
     HDF5Attribute::read (location, "h5a_vector_long",  dataLong);
     HDF5Attribute::read (location, "h5a_vector_float", dataFloat);
     HDF5Attribute::read (location, "h5a_vector_double", dataDouble);
 
-    std::cout << "-- h5a_vector_int   = " << show(dataInt)   << std::endl;
-    // std::cout << "-- h5a_vector_short = " << show(dataShort) << std::endl;
-    std::cout << "-- h5a_vector_long  = " << show(dataLong)  << std::endl;
-    std::cout << "-- h5a_vector_float = " << show(dataFloat)  << std::endl;
+    std::cout << "-- h5a_vector_int    = " << show(dataInt)   << std::endl;
+    std::cout << "-- h5a_vector_short  = " << show(dataShort) << std::endl;
+    std::cout << "-- h5a_vector_long   = " << show(dataLong)  << std::endl;
+    std::cout << "-- h5a_vector_float  = " << show(dataFloat)  << std::endl;
     std::cout << "-- h5a_vector_double = " << show(dataDouble)  << std::endl;
 
 
