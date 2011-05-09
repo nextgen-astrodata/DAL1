@@ -66,9 +66,11 @@ if (NOT LATEX_FOUND)
 
   set (_latexTest ${PROJECT_BINARY_DIR}/CMakeFiles/TestLATEX.tex)
 
-  foreach (_latexPackage  
+  foreach (_latexPackage
+      a4wide
       eurosym
       graphicx
+      fancyhdr
       fncychap
       hyperref
       kvoptions

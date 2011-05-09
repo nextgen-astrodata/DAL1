@@ -21,6 +21,20 @@ set ( DOXYGEN_HTML_FOOTER      ${CMAKE_CURRENT_SOURCE_DIR}/html_footer.html     
 set ( DOXYGEN_LATEX_HEADER     ${CMAKE_CURRENT_SOURCE_DIR}/Manual-latex-header.tex )
 set ( DOXYGEN_WARN_LOGFILE     ${CMAKE_CURRENT_BINARY_DIR}/doxygen.log             )
 
+## Extra LaTeX packages to use
+
+set (DOXYGEN_EXTRA_PACKAGES "")
+
+if (LATEX_A4WIDE_PACKAGE)
+  set (DOXYGEN_EXTRA_PACKAGES "a4wide")
+endif ()
+
+if (LATEX_FANCYHDR_PACKAGE)
+  set (DOXYGEN_EXTRA_PACKAGES "${DOXYGEN_EXTRA_PACKAGES} fancyhdr")
+endif ()
+
+
+
 ## ==============================================================================
 ##
 ##  Doxygen documentation for source code (HTML only)
