@@ -82,9 +82,12 @@ if (NOT BOOST_FOUND)
   set (BOOST_MODULES
     date_time
     program_options
-    python
     thread
     )
+  
+  if (DAL_PYTHON_BINDINGS)
+    list (APPEND BOOST_MODULES python)
+  endif(DAL_PYTHON_BINDINGS)
   
   ##_____________________________________________________________________________
   ## Check for header files and libraries
