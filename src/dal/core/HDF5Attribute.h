@@ -244,7 +244,6 @@ namespace DAL { // Namespace DAL -- begin
 	*/
 
 	hid_t attribute      = 0;
-	hid_t nativeDatatype = 0;
 
 	if (h5err>0) {
 	  attribute = H5Aopen (location,
@@ -253,10 +252,12 @@ namespace DAL { // Namespace DAL -- begin
 
 	  if (H5Iis_valid(attribute)) {
 	    
-	    hid_t datatype  = H5Aget_type (attribute);
-	    nativeDatatype  = H5Tget_native_type(datatype, H5T_DIR_ASCEND);
-	    hid_t dataspace = H5Aget_space(attribute);
-	    int rank        = H5Sget_simple_extent_ndims(dataspace);
+	    hid_t datatype            = H5Aget_type (attribute);
+	    hid_t nativeDatatype      = H5Tget_native_type(datatype, H5T_DIR_ASCEND);
+	    /* H5T_class_t datatypeClass = H5Tget_class (datatype); */
+	    /* htri_t is_variable_string = H5Tis_variable_str(datatype); */
+	    hid_t dataspace           = H5Aget_space(attribute);
+	    int rank                  = H5Sget_simple_extent_ndims(dataspace);
 
 	    if (rank>0) {
 	      hsize_t shape[rank];

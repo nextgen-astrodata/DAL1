@@ -274,11 +274,11 @@ int test_static_write (hid_t const &location)
   cout << "\n[4] Updating attributes via write(hid_t,string,T) ..." << endl;
   try {
     int valInt            = 10;
-    int valUint           = 20;
+    unsigned int valUint  = 20;
     int valShort          = 30;
     int valLong           = 40;
     float valFloat        = 0.05;
-    float valDouble       = 0.025;
+    double valDouble      = 0.025;
     std::string valString = "bladibla";
     
     std::cout << "-- Start updating attributes." << std::endl << std::flush;

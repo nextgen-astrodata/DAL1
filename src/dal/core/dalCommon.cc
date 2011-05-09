@@ -773,15 +773,15 @@ namespace DAL {
     }
     
     if (shape.size() > 0) {
-	    // additional variables
-	    hsize_t datatype_size         = H5Tget_size (datatype_id);
+      // additional variables
+      hsize_t datatype_size         = H5Tget_size (datatype_id);
       buffer = new char[shape[0]*datatype_size];
-
+      
       // Read the attribute data from the file
       h5error = H5Aread(attribute_id,
 			native_datatype_id,
 			buffer);
-
+      
       // Copy the retrieved data to the returned variable
       if (h5error == 0) {
 	value.resize(shape[0]);
