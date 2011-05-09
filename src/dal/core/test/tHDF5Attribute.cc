@@ -327,8 +327,6 @@ int test_static_functions (hid_t const &location)
     ++nofFailedTests;
   }
 
-  return nofFailedTests;
-
   /*__________________________________________________________________
     Test 8: Retrieve previously set attributes.
   */
@@ -342,17 +340,17 @@ int test_static_functions (hid_t const &location)
     float * arrFloat   = NULL;
     double * arrDouble = NULL;
     
-    HDF5Attribute::read (location, "h5a_int",    arrInt,    nelem);
-    HDF5Attribute::read (location, "h5a_short",  arrShort,  nelem);
-    HDF5Attribute::read (location, "h5a_long",   arrLong,   nelem);
-    HDF5Attribute::read (location, "h5a_float",  arrFloat,  nelem);
-    HDF5Attribute::read (location, "h5a_double", arrDouble, nelem);
+    // HDF5Attribute::read (location, "h5a_int",    arrInt,    nelem);
+    // HDF5Attribute::read (location, "h5a_short",  arrShort,  nelem);
+    // HDF5Attribute::read (location, "h5a_long",   arrLong,   nelem);
+    // HDF5Attribute::read (location, "h5a_float",  arrFloat,  nelem);
+    // HDF5Attribute::read (location, "h5a_double", arrDouble, nelem);
 
-    // std::cout << "-- AttributeInt    = " << valInt     << std::endl;
-    // std::cout << "-- AttributeShort  = " << valShort   << std::endl;
-    // std::cout << "-- AttributeLong   = " << valLong    << std::endl;
-    // std::cout << "-- AttributeFloat  = " << valFloat   << std::endl;
-    // std::cout << "-- AttributeDouble = " << valDouble  << std::endl;
+    // std::cout << "-- h5a_int    = " << show(arrInt,nelem)  << std::endl;
+    // std::cout << "-- h5a_short  = " << valShort   << std::endl;
+    // std::cout << "-- h5a_long   = " << valLong    << std::endl;
+    // std::cout << "-- h5a_float  = " << valFloat   << std::endl;
+    // std::cout << "-- h5a_double = " << valDouble  << std::endl;
 
     /* release allocated memory */
     if (arrInt != NULL) {

@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/dalData.h>
+#include "dalData.h"
 
 namespace DAL {
 
@@ -49,18 +49,22 @@ namespace DAL {
     \param lclshape The shape of the data object.
     \param lclnrows The number of rows in the data object.
    */
-  dalData::dalData(std::string lclfiletype, std::string lcldatatype,
-                   std::vector<int> lclshape, long lclnrows)
+  dalData::dalData (std::string lclfiletype,
+		    std::string lcldatatype,
+		    std::vector<int> lclshape,
+		    long lclnrows)
   {
     filetype_p = lclfiletype;
-    if ( MSCASATYPE == lclfiletype )
-      array_order = "fortran";
-    else if ( H5TYPE == lclfiletype )
-      array_order = "c";
     dataType_p = lcldatatype;
-    shape = lclshape;
-    nrows = lclnrows;
-    data = NULL;
+    shape      = lclshape;
+    nrows      = lclnrows;
+    data       = NULL;
+
+    if ( MSCASATYPE == lclfiletype ) {
+      array_order = "fortran";
+    } else if ( H5TYPE == lclfiletype ) {
+      array_order = "c";
+    }
   }
   
   // ============================================================================

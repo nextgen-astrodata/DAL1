@@ -69,18 +69,18 @@ namespace DAL { // Namespace DAL -- begin
       // Create attribute / Get attribute value
       template <class T>
       inline bool write (std::string const &name,
-				T const *data,
-				unsigned int const &size)
+			 T const *data,
+			 unsigned int const &size)
       {
-        return HDF5Attribute::read (location, name, data, size);
+        return HDF5Attribute::write (location, name, data, size);
       }
 
       // Create attribute / Get attribute value
       template <class T>
-      inline bool read (std::string const &name,
-				std::vector<T> &data)
+      inline bool write (std::string const &name,
+			 std::vector<T> &data)
       {
-        return HDF5Attribute::read (location, name, &data[0], data.size());
+        return HDF5Attribute::write (location, name, &data[0], data.size());
       }
 
       // Create attribute / Get attribute value
@@ -96,26 +96,9 @@ namespace DAL { // Namespace DAL -- begin
       // Get attribute value
       template <class T>
       inline bool read (std::string const &name,
-				T *data,
-				unsigned int const &size)
-      {
-        return HDF5Attribute::read (location, name, data, size);
-      }
-      
-      // Get attribute value
-      template <class T>
-      inline bool read (std::string const &name,
-				std::vector<T> &data)
+                        std::vector<T> &data)
       {
         return HDF5Attribute::read (location, name, &data[0], data.size());
-      }
-      
-      // Get attribute value
-      template <class T>
-      inline bool read (std::string const &name,
-				T &data)
-      {
-         return HDF5Attribute::read (location, name, &data, 1);
       }
       \endcode
     </ol>
@@ -222,100 +205,6 @@ namespace DAL { // Namespace DAL -- begin
     static bool rename (hid_t const &location,
 			std::string const &oldName,
 			std::string const &newName);
-    
-    /*!
-      \brief Read attribute value
-      \param location -- HDF5 identifier for the object to which the attribute
-             is attached.
-      \param name    -- Name of the attribute.
-      \param data    -- Data value(s) of the attribute
-      \param size    -- nof. element in the data array.
-      \return status -- Status of the operation; returns \e false in case an
-              error was encountered.
-    */
-    template <class T>
-      static bool read (hid_t const &location,
-				std::string const &name,
-				T *data,
-				unsigned int &size)
-      {
-	bool status  = true;
-	herr_t h5err = 0;
-
-	/*____________________________________________________________
-	  Basic checks for reference location and attribute name.
-	*/
-	
-	if (H5Iis_valid(location)) {
-	  h5err = H5Aexists (location,
-			     name.c_str());
-	} else {
-	  std::cerr << "[HDF5Attribute::read]"
-		    << " No valid HDF5 object found at reference location!"
-		    << std::endl;
-	  return false;
-	}
-
-	/*____________________________________________________________
-	  If attribute has been found at reference location, open it.
-	  If opening has been successful, extract datatype and
-	  dataspace.
-	*/
-
-	hid_t attribute      = 0;
-	hid_t dataspace      = 0;
-	hid_t datatype       = 0;
-	/* hid_t nativeDatatype = 0; */
-	int rank             = 0;
-
-	if (h5err>0) {
-	  attribute = H5Aopen (location,
-			       name.c_str(),
-			       H5P_DEFAULT);
-
-	  if (H5Iis_valid(attribute)) {
-	    datatype  = H5Aget_type (attribute);
-	    dataspace = H5Aget_space(attribute);
-	    rank      = H5Sget_simple_extent_ndims(dataspace);
-	    
-	    if (rank>0) {
-	      hsize_t shape[rank];
-	      hsize_t maxDimensions[rank];
-	      size  = 1;
-	      h5err = H5Sget_simple_extent_dims (dataspace,
-						 shape,
-						 maxDimensions);
-	      for (int n=0; n<rank; ++n) {
-		size *= shape[n];
-	      }
-
-	      /* Adjust the size of the data array */
-	      if (data != NULL) {
-		delete [] data;
-	      }
-	      data = new T[size];
-	    } else {
-	      size = 0;
-	      return false;
-	    }
-
-	    // release HDF5 object identifiers
-	    H5Tclose(datatype);
-	    H5Sclose(dataspace);
-	    
-	  } else {
-	    std::cerr << "[HDF5Attribute::read]"
-		      << " Failed to open attribute " << name << std::endl;
-	    status = false;
-	  }
-	}   //  END -- (h5err>0)
-	else {
-	  status = false;
-	}
-
-	return status;
-      }
-    
     
     /*!
       \brief Read attribute value
