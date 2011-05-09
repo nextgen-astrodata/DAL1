@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <iostream>
 #include <hdf5.h>
 
@@ -75,10 +76,10 @@ bool test_dalCommon_h5setAttribute_string (hid_t const &location,
   hsize_t dims[1] = { size };
 
   /* Allocated memory */
-  char ** string_attr = (char**)std::malloc( size * sizeof(char*) );
+  char ** string_attr = (char**)malloc( size * sizeof(char*) );
 
   for ( int ii = 0; ii < size; ii++ ) {
-    string_attr[ii] = (char*)std::malloc(MAX_COL_NAME_SIZE * sizeof(char));
+    string_attr[ii] = (char*)malloc(MAX_COL_NAME_SIZE * sizeof(char));
     strcpy( string_attr[ii], data[ii].c_str() );
   }
   
@@ -114,9 +115,9 @@ bool test_dalCommon_h5setAttribute_string (hid_t const &location,
   }
   
   for ( int ii = 0; ii < size; ii++ ) {
-    std::free( string_attr[ii] );
+    free( string_attr[ii] );
   }
-  std::free( string_attr );
+  free( string_attr );
   
   /* release HDF5 handlers */
   if (H5Iis_valid(att))       H5Aclose (att);
