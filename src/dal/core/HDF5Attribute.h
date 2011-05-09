@@ -259,7 +259,7 @@ namespace DAL { // Namespace DAL -- begin
 	    datatype  = H5Aget_type (attribute);
 	    dataspace = H5Aget_space(attribute);
 	    rank      = H5Sget_simple_extent_ndims(dataspace);
-	    
+
 	    if (rank>0) {
 	      hsize_t shape[rank];
 	      hsize_t maxDimensions[rank];
@@ -270,17 +270,24 @@ namespace DAL { // Namespace DAL -- begin
 	      for (int n=0; n<rank; ++n) {
 		size *= shape[n];
 	      }
-
+	      
 	      /* Adjust the size of the data array */
+	      data.clear();
 	      data.resize(size);
+
+	      /* Retrieve the attribute data */
+	      H5Aread (attribute,
+		       datatype,
+		       &data[0]);
 	    } else {
 	      size = 0;
 	      return false;
 	    }
 
 	    // release HDF5 object identifiers
-	    H5Tclose(datatype);
-	    H5Sclose(dataspace);
+	    H5Tclose (datatype);
+	    H5Sclose (dataspace);
+	    H5Aclose (attribute);
 	    
 	  } else {
 	    std::cerr << "[HDF5Attribute::read]"

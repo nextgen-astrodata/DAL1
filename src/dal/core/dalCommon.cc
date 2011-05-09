@@ -988,12 +988,10 @@ namespace DAL {
     \param size        -- The size of the attribute
   */
   {
-    hid_t datatype = H5T_NATIVE_DOUBLE;
-    return h5set_attribute (datatype,
-                            location_id,
-                            name,
-                            value,
-                            size);
+    return DAL::HDF5Attribute::write (location_id,
+				      name,
+				      value,
+				      size);
   }
 
   /*!
@@ -1008,12 +1006,6 @@ namespace DAL {
                         std::string * value,
                         int size)
   {
-    // hid_t datatype = H5T_STRING;
-    // return h5set_attribute (datatype,
-    //                         location_id,
-    //                         name,
-    //                         value,
-    //                         size);
     return DAL::HDF5Attribute::write (location_id,
 				      name,
 				      value,

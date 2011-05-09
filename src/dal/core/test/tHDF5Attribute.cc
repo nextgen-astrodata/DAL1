@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <sstream>
 #include <core/dalCommon.h>
 #include <core/HDF5Attribute.h>
 
@@ -78,6 +79,28 @@ using DAL::HDF5Object;
   h5a_string_set        set<string>
   \endverbatim
 */
+
+// ==============================================================================
+//
+//  Helper routines
+//
+// ==============================================================================
+
+template <class T>
+std::string show (std::vector<T> const &data)
+{
+  std::ostringstream output;
+
+  output << "[";
+
+  for (unsigned int n=0; n<data.size(); ++n) {
+    output << " " << data[n];
+  }
+
+  output << " ]";
+
+  return output.str();
+}
 
 // ==============================================================================
 //
@@ -333,31 +356,36 @@ int test_static_functions (hid_t const &location)
 
   cout << "[8] Testing read(hid_t,string,vector<T>) ..." << endl;
   try {
-    unsigned int nelem = 0;
-    int * arrInt       = NULL;
-    short * arrShort   = NULL;
-    long * arrLong     = NULL;
-    float * arrFloat   = NULL;
-    double * arrDouble = NULL;
-    
-    // HDF5Attribute::read (location, "h5a_int",    arrInt,    nelem);
-    // HDF5Attribute::read (location, "h5a_short",  arrShort,  nelem);
-    // HDF5Attribute::read (location, "h5a_long",   arrLong,   nelem);
-    // HDF5Attribute::read (location, "h5a_float",  arrFloat,  nelem);
-    // HDF5Attribute::read (location, "h5a_double", arrDouble, nelem);
+    std::vector<int> dataInt;
+    std::vector<short> dataShort;
+    std::vector<long> dataLong;
+    std::vector<float> dataFloat;
+    std::vector<double> dataDouble;
 
-    // std::cout << "-- h5a_int    = " << show(arrInt,nelem)  << std::endl;
-    // std::cout << "-- h5a_short  = " << valShort   << std::endl;
-    // std::cout << "-- h5a_long   = " << valLong    << std::endl;
-    // std::cout << "-- h5a_float  = " << valFloat   << std::endl;
-    // std::cout << "-- h5a_double = " << valDouble  << std::endl;
+    HDF5Attribute::read (location, "h5a_int",          dataInt);
+    // HDF5Attribute::read (location, "h5a_short",        dataShort);
+    HDF5Attribute::read (location, "h5a_long",         dataLong);
+    HDF5Attribute::read (location, "h5a_float",        dataFloat);
+    HDF5Attribute::read (location, "h5a_double",       dataDouble);
 
-    /* release allocated memory */
-    if (arrInt != NULL) {
-      std::cout << "-- Attribute size = " << nelem << std::endl;
+    std::cout << "-- h5a_int          = " << show(dataInt)    << std::endl;
+    // std::cout << "-- h5a_short        = " << show(dataShort) << std::endl;
+    std::cout << "-- h5a_long         = " << show(dataLong)   << std::endl;
+    std::cout << "-- h5a_float        = " << show(dataFloat)  << std::endl;
+    std::cout << "-- h5a_double       = " << show(dataDouble) << std::endl;
 
-      delete [] arrInt;
-    }
+    HDF5Attribute::read (location, "h5a_vector_int",   dataInt);
+    // HDF5Attribute::read (location, "h5a_vector_short", dataShort);
+    HDF5Attribute::read (location, "h5a_vector_long",  dataLong);
+    HDF5Attribute::read (location, "h5a_vector_float", dataFloat);
+    HDF5Attribute::read (location, "h5a_vector_double", dataDouble);
+
+    std::cout << "-- h5a_vector_int   = " << show(dataInt)   << std::endl;
+    // std::cout << "-- h5a_vector_short = " << show(dataShort) << std::endl;
+    std::cout << "-- h5a_vector_long  = " << show(dataLong)  << std::endl;
+    std::cout << "-- h5a_vector_float = " << show(dataFloat)  << std::endl;
+    std::cout << "-- h5a_vector_double = " << show(dataDouble)  << std::endl;
+
 
   } catch (std::string message) {
     std::cerr << message << std::endl;
