@@ -64,7 +64,7 @@ if (NOT LATEX_FOUND)
   ##_____________________________________________________________________________
   ## Check for package style files
 
-  set (_latexTest ${PROJECT_BINARY_DIR}/TestLATEX.tex)
+  set (_latexTest ${PROJECT_BINARY_DIR}/CMakeFiles/TestLATEX.tex)
 
   foreach (_latexPackage  
       eurosym
@@ -94,7 +94,7 @@ if (NOT LATEX_FOUND)
     execute_process(
       COMMAND ${LATEX_EXECUTABLE} ${_latexTest}
       TIMEOUT 5
-      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/CMakeFiles
       RESULT_VARIABLE _latexTestResult
       OUTPUT_VARIABLE _latexTestOutput
       ERROR_VARIABLE _latexTestError
