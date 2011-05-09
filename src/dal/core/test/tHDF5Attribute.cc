@@ -162,17 +162,17 @@ int test_H5Aread (hid_t const &location)
 }
 
 //_______________________________________________________________________________
-//                                                          test_static_functions
+//                                                              test_static_write
 
 /*!
-  \brief Test static functions provided by HDF5Attribute
+  \brief Test static functions to write attributes
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_static_functions (hid_t const &location)
+int test_static_write (hid_t const &location)
 {
-  std::cout << "\n[tHDF5Attribute::test_static_functions]\n" << std::endl;
+  std::cout << "\n[tHDF5Attribute::test_static_write]" << std::endl;
 
   int nofFailedTests = 0;
   
@@ -180,7 +180,7 @@ int test_static_functions (hid_t const &location)
     Test 1: Create/Set attribute storing atomic value.
   */
   
-  std::cout << "[1] Testing write(hid_t,string,T) ..." << std::endl;
+  std::cout << "\n[1] Testing write(hid_t,string,T) ..." << std::endl;
   try {
     int valInt            = 1;
     int valUint           = 2;
@@ -208,7 +208,7 @@ int test_static_functions (hid_t const &location)
             interface for std::vector<T>
   */
 
-  cout << "[2] Testing write(hid_t,string,vector<T>) ..." << endl;
+  cout << "\n[2] Testing write(hid_t,string,vector<T>) ..." << endl;
   try {
     unsigned int nelem = 3;
     std::vector<int> valInt       (nelem, 1);
@@ -236,7 +236,7 @@ int test_static_functions (hid_t const &location)
     Test 3: Create/Set attribute storing array-type value
   */
   
-  cout << "[3] Testing write(hid_t,string,T*,uint) ..." << endl;
+  cout << "\n[3] Testing write(hid_t,string,T*,uint) ..." << endl;
   try {
     unsigned int nelem      = 5;
     int valInt[]            = {1,1,1,1,1};
@@ -264,7 +264,7 @@ int test_static_functions (hid_t const &location)
     Test 4: Set/Update attributes
   */
 
-  cout << "[4] Updating attributes via write(hid_t,string,T) ..." << endl;
+  cout << "\n[4] Updating attributes via write(hid_t,string,T) ..." << endl;
   try {
     int valInt            = 10;
     int valShort          = 20;
@@ -290,7 +290,7 @@ int test_static_functions (hid_t const &location)
     Test 5: Set/Update attributes
   */
 
-  cout << "[5] Updating attributes via write(hid_t,string,vector<T>) ..." << endl;
+  cout << "\n[5] Updating attributes via write(hid_t,string,vector<T>) ..." << endl;
   try {
     unsigned int nelem = 3;
     std::vector<int> valInt (nelem, 10);
@@ -317,7 +317,7 @@ int test_static_functions (hid_t const &location)
     Test 6: Set/Update attributes
   */
 
-  cout << "[6] Updating attributes via write(hid_t,string,T*,uint) ..." << endl;
+  cout << "\n[6] Updating attributes via write(hid_t,string,T*,uint) ..." << endl;
   try {
     unsigned int nelem      = 5;
     int valInt[]            = {10,10,10,10,10};
@@ -338,66 +338,11 @@ int test_static_functions (hid_t const &location)
   }
 
   /*__________________________________________________________________
-    Test 7: Get number, names and types of attributes
-  */
-  
-  cout << "[7] Get number, names and types of attributes ..." << endl;
-  try {
-    cout << "-- nof attributes  = " << HDF5Object::nofAttributes(location) << endl;
-    // cout << "-- Attribute names = " << HDF5Attribute::attributes(location) << endl;
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    ++nofFailedTests;
-  }
-
-  /*__________________________________________________________________
-    Test 8: Retrieve previously set attributes.
-  */
-
-  cout << "[8] Testing read(hid_t,string,vector<T>) ..." << endl;
-  try {
-    std::vector<int> dataInt;
-    std::vector<short> dataShort;
-    std::vector<long> dataLong;
-    std::vector<float> dataFloat;
-    std::vector<double> dataDouble;
-
-    HDF5Attribute::read (location, "h5a_int",          dataInt);
-    // HDF5Attribute::read (location, "h5a_short",        dataShort);
-    HDF5Attribute::read (location, "h5a_long",         dataLong);
-    HDF5Attribute::read (location, "h5a_float",        dataFloat);
-    HDF5Attribute::read (location, "h5a_double",       dataDouble);
-
-    std::cout << "-- h5a_int          = " << show(dataInt)    << std::endl;
-    // std::cout << "-- h5a_short        = " << show(dataShort) << std::endl;
-    std::cout << "-- h5a_long         = " << show(dataLong)   << std::endl;
-    std::cout << "-- h5a_float        = " << show(dataFloat)  << std::endl;
-    std::cout << "-- h5a_double       = " << show(dataDouble) << std::endl;
-
-    HDF5Attribute::read (location, "h5a_vector_int",   dataInt);
-    // HDF5Attribute::read (location, "h5a_vector_short", dataShort);
-    HDF5Attribute::read (location, "h5a_vector_long",  dataLong);
-    HDF5Attribute::read (location, "h5a_vector_float", dataFloat);
-    HDF5Attribute::read (location, "h5a_vector_double", dataDouble);
-
-    std::cout << "-- h5a_vector_int   = " << show(dataInt)   << std::endl;
-    // std::cout << "-- h5a_vector_short = " << show(dataShort) << std::endl;
-    std::cout << "-- h5a_vector_long  = " << show(dataLong)  << std::endl;
-    std::cout << "-- h5a_vector_float = " << show(dataFloat)  << std::endl;
-    std::cout << "-- h5a_vector_double = " << show(dataDouble)  << std::endl;
-
-
-  } catch (std::string message) {
-    std::cerr << message << std::endl;
-    ++nofFailedTests;
-  }
-
-  /*__________________________________________________________________
-    Test 10: Create / Set attributes from casa::Vector<T>
+    Test 7: Create / Set attributes from casa::Vector<T>
   */
 
 #ifdef DAL_WITH_CASA
-  cout << "[10] Testing write(hid_t,string,casa::Vector<T>) ..." << endl;
+  cout << "\n[7] Testing write(hid_t,string,casa::Vector<T>) ..." << endl;
   try {
     unsigned int nelem (10);
     casa::Vector<int> valInt (nelem, 1);
@@ -418,6 +363,82 @@ int test_static_functions (hid_t const &location)
     ++nofFailedTests;
   }
 #endif
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                               test_static_read
+
+/*!
+  \brief Test static functions to read attributes
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_static_read (hid_t const &location)
+{
+  std::cout << "\n[tHDF5Attribute::test_static_read]" << std::endl;
+
+  int nofFailedTests = 0;
+  
+  /*__________________________________________________________________
+    Test 1: Get number, names and types of attributes
+  */
+  
+  cout << "\n[1] Get number, names and types of attributes ..." << endl;
+  try {
+    cout << "-- nof attributes  = " << HDF5Object::nofAttributes(location) << endl;
+    // cout << "-- Attribute names = " << HDF5Attribute::attributes(location) << endl;
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    ++nofFailedTests;
+  }
+
+  /*__________________________________________________________________
+    Test 2: Retrieve previously set attributes.
+  */
+
+  cout << "\n[2] Testing read(hid_t,string,vector<T>) ..." << endl;
+  try {
+    std::vector<int> dataInt;
+    std::vector<short> dataShort;
+    std::vector<long> dataLong;
+    std::vector<float> dataFloat;
+    std::vector<double> dataDouble;
+    // std::vector<std::string> dataString;
+
+    HDF5Attribute::read (location, "h5a_int",          dataInt);
+    // HDF5Attribute::read (location, "h5a_short",        dataShort);
+    HDF5Attribute::read (location, "h5a_long",         dataLong);
+    HDF5Attribute::read (location, "h5a_float",        dataFloat);
+    HDF5Attribute::read (location, "h5a_double",       dataDouble);
+    // HDF5Attribute::read (location, "h5a_string",       dataString);
+
+    std::cout << "-- h5a_int          = " << show(dataInt)    << std::endl;
+    // std::cout << "-- h5a_short        = " << show(dataShort) << std::endl;
+    std::cout << "-- h5a_long         = " << show(dataLong)   << std::endl;
+    std::cout << "-- h5a_float        = " << show(dataFloat)  << std::endl;
+    std::cout << "-- h5a_double       = " << show(dataDouble) << std::endl;
+    // std::cout << "-- h5a_string       = " << show(dataString) << std::endl;
+
+    HDF5Attribute::read (location, "h5a_vector_int",   dataInt);
+    // HDF5Attribute::read (location, "h5a_vector_short", dataShort);
+    HDF5Attribute::read (location, "h5a_vector_long",  dataLong);
+    HDF5Attribute::read (location, "h5a_vector_float", dataFloat);
+    HDF5Attribute::read (location, "h5a_vector_double", dataDouble);
+
+    std::cout << "-- h5a_vector_int   = " << show(dataInt)   << std::endl;
+    // std::cout << "-- h5a_vector_short = " << show(dataShort) << std::endl;
+    std::cout << "-- h5a_vector_long  = " << show(dataLong)  << std::endl;
+    std::cout << "-- h5a_vector_float = " << show(dataFloat)  << std::endl;
+    std::cout << "-- h5a_vector_double = " << show(dataDouble)  << std::endl;
+
+
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    ++nofFailedTests;
+  }
 
   return nofFailedTests;
 }
@@ -518,8 +539,11 @@ int main (int argc, char *argv[])
   
   if (H5Iis_valid(fileID)) {
 
-    // Test for static methods
-    nofFailedTests += test_static_functions (fileID);
+    // Test static functions to write attributes
+    nofFailedTests += test_static_write (fileID);
+
+    // Test static functions to read attributes
+    nofFailedTests += test_static_read (fileID);
 
 //     // Test usage of basic HDF5 library functions
 //     nofFailedTests += test_H5Aread (fileID);
