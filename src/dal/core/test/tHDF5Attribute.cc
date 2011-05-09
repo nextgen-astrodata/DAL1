@@ -41,6 +41,8 @@ using DAL::HDF5Object;
  
   \date 2011/01/27
 
+  We are using the following naming scheme for attributes attached to a group
+  or dataset, in order to reflect the data container they were written from:
   \verbatim
   h5a_bool              bool
   h5a_int               int
@@ -69,14 +71,15 @@ using DAL::HDF5Object;
   h5a_vector_double     vector<double>
   h5a_vector_string     vector<string>
 
-  h5a_bool_set          set<bool>
-  h5a_int_set           set<int>
-  h5a_uint_set          set<uint>
-  h5a_short_set         set<short>
-  h5a_ushort_set        set<ushort>
-  h5a_float_set         set<float>
-  h5a_double_set        set<double>
-  h5a_string_set        set<string>
+  h5a_set_bool          set<bool>
+  h5a_set_int           set<int>
+  h5a_set_uint          set<uint>
+  h5a_set_short         set<short>
+  h5a_set_ushort        set<ushort>
+  h5a_set_float         set<float>
+  h5a_set_double        set<double>
+  h5a_set_string        set<string>
+
   \endverbatim
 */
 
