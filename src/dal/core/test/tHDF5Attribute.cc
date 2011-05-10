@@ -44,43 +44,49 @@ using DAL::HDF5Object;
   We are using the following naming scheme for attributes attached to a group
   or dataset, in order to reflect the data container they were written from:
   \verbatim
-  h5a_bool              bool
-  h5a_int               int
-  h5a_uint              uint
-  h5a_short             short
-  h5a_ushort            ushort
-  h5a_float             float
-  h5a_double            double
-  h5a_string            string
+  h5a_short              short           H5T_NATIVE_SHORT
+  h5a_ushort             ushort          H5T_NATIVE_USHORT
+  h5a_int                int             H5T_NATIVE_INT
+  h5a_uint               uint            H5T_NATIVE_UINT
+  h5a_long               long            H5T_NATIVE_LONG
+  h5a_ulong              ulong           H5T_NATIVE_ULONG
+  h5a_llong              llong           H5T_NATIVE_LLONG
+  h5a_ullong             ullong          H5T_NATIVE_ULLONG
+  h5a_float              float           H5T_NATIVE_FLOAT
+  h5a_double             double          H5T_NATIVE_DOUBLE
+  h5a_bool               bool
+  h5a_string             string
 
-  h5a_array_bool        bool*
-  h5a_array_int         int*
-  h5a_array_uint        uint*
-  h5a_array_short       short*
-  h5a_array_ushort      ushort*
-  h5a_array_float       float*
-  h5a_array_double      double*
-  h5a_array_string      string*
+  h5a_array_bool         bool*
+  h5a_array_int          int*
+  h5a_array_uint         uint*
+  h5a_array_short        short*
+  h5a_array_ushort       ushort*
+  h5a_array_float        float*
+  h5a_array_double       double*
+  h5a_array_string       string*
 
-  h5a_vector_bool       vector<bool>
-  h5a_vector_int        vector<int>
-  h5a_vector_uint       vector<uint>
-  h5a_vector_short      vector<short>
-  h5a_vector_ushort     vector<ushort>
-  h5a_vector_float      vector<float>
-  h5a_vector_double     vector<double>
-  h5a_vector_string     vector<string>
+  h5a_vector_bool        vector<bool>
+  h5a_vector_int         vector<int>
+  h5a_vector_uint        vector<uint>
+  h5a_vector_short       vector<short>
+  h5a_vector_ushort      vector<ushort>
+  h5a_vector_float       vector<float>
+  h5a_vector_double      vector<double>
+  h5a_vector_string      vector<string>
 
-  h5a_set_bool          set<bool>
-  h5a_set_int           set<int>
-  h5a_set_uint          set<uint>
-  h5a_set_short         set<short>
-  h5a_set_ushort        set<ushort>
-  h5a_set_float         set<float>
-  h5a_set_double        set<double>
-  h5a_set_string        set<string>
-
+  h5a_set_bool           set<bool>
+  h5a_set_int            set<int>
+  h5a_set_uint           set<uint>
+  h5a_set_short          set<short>
+  h5a_set_ushort         set<ushort>
+  h5a_set_float          set<float>
+  h5a_set_double         set<double>
+  h5a_set_string         set<string>
   \endverbatim
+  The first column contains the name of the attribute, whereas the second column
+  lists the type of the data variable used as part of the test program.
+
 */
 
 // ==============================================================================
@@ -189,22 +195,26 @@ int test_static_write (hid_t const &location)
   
   std::cout << "\n[1] Testing write(hid_t,string,T) ..." << std::endl;
   try {
-    int valInt            = 1;
-    unsigned int valUint  = 2;
-    short valShort        = 3;
-    long valLong          = 4;
-    float valFloat        = 0.5;
-    double valDouble      = 0.25;
-    std::string valString = "bla";
+    short valShort           = 1;
+    unsigned short valUshort = 2;
+    int valInt               = 3;
+    unsigned int valUint     = 4;
+    long valLong             = 5;
+    unsigned long valUlong   = 6;
+    float valFloat           = 0.5;
+    double valDouble         = 0.25;
+    std::string valString    = "bla";
 
     std::cout << "-- Start writing attributes." << std::endl << std::flush;
-    HDF5Attribute::write (location, "h5a_int",    valInt);
-    HDF5Attribute::write (location, "h5a_uint",   valUint);
-    HDF5Attribute::write (location, "h5a_short",  valShort);
-    HDF5Attribute::write (location, "h5a_long",   valLong);
-    HDF5Attribute::write (location, "h5a_float",  valFloat);
-    HDF5Attribute::write (location, "h5a_double", valDouble);
-    HDF5Attribute::write (location, "h5a_string", valString);
+    HDF5Attribute::write (location, "h5a_short",   valShort);
+    HDF5Attribute::write (location, "h5a_ushort",  valUshort);
+    HDF5Attribute::write (location, "h5a_int",     valInt);
+    HDF5Attribute::write (location, "h5a_uint",    valUint);
+    HDF5Attribute::write (location, "h5a_long",    valLong);
+    HDF5Attribute::write (location, "h5a_ulong",   valUlong);
+    HDF5Attribute::write (location, "h5a_float",   valFloat);
+    HDF5Attribute::write (location, "h5a_double",  valDouble);
+    HDF5Attribute::write (location, "h5a_string",  valString);
     std::cout << "-- Finished writing attributes." << std::endl << std::flush;
   } catch (std::string message) {
     ++nofFailedTests;
@@ -273,22 +283,26 @@ int test_static_write (hid_t const &location)
 
   cout << "\n[4] Updating attributes via write(hid_t,string,T) ..." << endl;
   try {
-    int valInt            = 10;
-    unsigned int valUint  = 20;
-    short valShort        = 30;
-    long valLong          = 40;
-    float valFloat        = 0.05;
-    double valDouble      = 0.025;
-    std::string valString = "bladibla";
-    
+    short valShort           = 10;
+    unsigned short valUshort = 20;
+    int valInt               = 30;
+    unsigned int valUint     = 40;
+    long valLong             = 50;
+    unsigned long valUlong   = 60;
+    float valFloat           = 0.05;
+    double valDouble         = 0.025;
+    std::string valString    = "bladibla";
+
     std::cout << "-- Start updating attributes." << std::endl << std::flush;
-    HDF5Attribute::write (location, "h5a_int",    valInt);
-    HDF5Attribute::write (location, "h5a_uint",   valUint);
-    HDF5Attribute::write (location, "h5a_short",  valShort);
-    HDF5Attribute::write (location, "h5a_long",   valLong);
-    HDF5Attribute::write (location, "h5a_float",  valFloat);
-    HDF5Attribute::write (location, "h5a_double", valDouble);
-    HDF5Attribute::write (location, "h5a_string", valString);
+    HDF5Attribute::write (location, "h5a_short",   valShort);
+    HDF5Attribute::write (location, "h5a_ushort",  valUshort);
+    HDF5Attribute::write (location, "h5a_int",     valInt);
+    HDF5Attribute::write (location, "h5a_uint",    valUint);
+    HDF5Attribute::write (location, "h5a_long",    valLong);
+    HDF5Attribute::write (location, "h5a_ulong",   valUlong);
+    HDF5Attribute::write (location, "h5a_float",   valFloat);
+    HDF5Attribute::write (location, "h5a_double",  valDouble);
+    HDF5Attribute::write (location, "h5a_string",  valString);
     std::cout << "-- Finished updating attributes." << std::endl << std::flush;
   } catch (std::string message) {
     std::cerr << message << std::endl;
@@ -414,28 +428,34 @@ int test_static_read (hid_t const &location)
 
   cout << "\n[2] Testing read(hid_t,string,vector<T>) ..." << endl;
   try {
+    std::vector<short> valShort;
+    std::vector<unsigned short> valUshort;
     std::vector<int> valInt;
     std::vector<unsigned int> valUint;
-    std::vector<short> valShort;
     std::vector<long> valLong;
+    std::vector<unsigned long> valUlong;
     std::vector<float> valFloat;
     std::vector<double> valDouble;
     std::vector<std::string> valString;
 
     /* Read single-value attributes */
 
-    HDF5Attribute::read (location, "h5a_int",    valInt);
-    HDF5Attribute::read (location, "h5a_uint",   valUint);
-    HDF5Attribute::read (location, "h5a_short",  valShort);
-    HDF5Attribute::read (location, "h5a_long",   valLong);
-    HDF5Attribute::read (location, "h5a_float",  valFloat);
-    HDF5Attribute::read (location, "h5a_double", valDouble);
-    HDF5Attribute::read (location, "h5a_string", valString);
+    HDF5Attribute::read (location, "h5a_short",   valShort);
+    HDF5Attribute::read (location, "h5a_ushort",  valUshort);
+    HDF5Attribute::read (location, "h5a_int",     valInt);
+    HDF5Attribute::read (location, "h5a_uint",    valUint);
+    HDF5Attribute::read (location, "h5a_long",    valLong);
+    HDF5Attribute::read (location, "h5a_ulong",   valUlong);
+    HDF5Attribute::read (location, "h5a_float",   valFloat);
+    HDF5Attribute::read (location, "h5a_double",  valDouble);
+    HDF5Attribute::read (location, "h5a_string",  valString);
 
+    std::cout << "-- h5a_short         = " << show(valShort)  << std::endl;
+    std::cout << "-- h5a_ushort        = " << show(valUshort) << std::endl;
     std::cout << "-- h5a_int           = " << show(valInt)    << std::endl;
     std::cout << "-- h5a_uint          = " << show(valUint)   << std::endl;
-    std::cout << "-- h5a_short         = " << show(valShort)  << std::endl;
     std::cout << "-- h5a_long          = " << show(valLong)   << std::endl;
+    std::cout << "-- h5a_ulong         = " << show(valUlong)  << std::endl;
     std::cout << "-- h5a_float         = " << show(valFloat)  << std::endl;
     std::cout << "-- h5a_double        = " << show(valDouble) << std::endl;
     std::cout << "-- h5a_string        = " << show(valString) << std::endl;

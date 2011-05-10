@@ -394,6 +394,23 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
+  //                                                        write(unsigned short)
+  
+  //! Set attribute of type (unsigned short)
+  template <>
+  bool HDF5Attribute::write (hid_t const &location,
+			     std::string const &name,
+			     unsigned short const *data,
+			     unsigned int const &size)
+  {
+    return write (location,
+		  name,
+		  data,
+		  size,
+		  H5T_NATIVE_USHORT);
+  }
+
+  //_____________________________________________________________________________
   //                                                                  write(long)
   
   //! Set attribute of type (long)
