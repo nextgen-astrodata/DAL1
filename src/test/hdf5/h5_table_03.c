@@ -13,9 +13,9 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 #include <hdf5.h>
 #include <stdlib.h>
+#include "tHDF5_table.h"
 
 /*!
   \file h5_table_03.c
@@ -26,21 +26,11 @@
   - H5TBwrite_records
 */
 
-#define NFIELDS  (hsize_t)       5
-#define NRECORDS (hsize_t)       8
 #define NRECORDS_WRITE (hsize_t) 2
 #define TABLE_NAME               "table"
 
 int main( void )
 {
- typedef struct Particle
- {
-  char   name[16];
-  int    lati;
-  int    longi;
-  float  pressure;
-  double temperature;
- } Particle;
 
  Particle  dst_buf[NRECORDS];
 
@@ -59,9 +49,6 @@ int main( void )
                                sizeof( p.pressure),
                                sizeof( p.temperature)};
 
- /* Define field information */
- const char *field_names[NFIELDS]  =
- { "Name","Latitude", "Longitude", "Pressure", "Temperature" };
  /* Fill value particle */
  Particle   fill_data[1] =
 	{ {"no data",-1,-1, -99.0f, -99.0} };

@@ -15,6 +15,7 @@
 
 #include <hdf5.h>
 #include <stdlib.h>
+#include "tHDF5_table.h"
 
 /*!
   \file h5_table_02.c
@@ -25,36 +26,28 @@
   - H5TBappend_records
 */
 
-#define NFIELDS  (hsize_t)     5
-#define NRECORDS (hsize_t)     8
-#define NRECORDS_ADD (hsize_t) 2
-#define TABLE_NAME             "table"
+#define NRECORDS_ADD  (hsize_t)   2
+#define TABLE_NAME                "table"
 
 int main( void )
 {
- typedef struct Particle
- {
-  char   name[16];
-  int    lati;
-  int    longi;
-  float  pressure;
-  double temperature;
- } Particle;
 
- Particle  dst_buf[NRECORDS+NRECORDS_ADD];
+ Particle dst_buf[NRECORDS+NRECORDS_ADD];
 
-/* Define an array of Particles */
+ /*___________________________________________________________________
+   Define an array of Particles
+ */
  Particle  p_data[NRECORDS] = {
- {"zero",0,0, 0.0f, 0.0},
- {"one",10,10, 1.0f, 10.0},
- {"two",  20,20, 2.0f, 20.0},
- {"three",30,30, 3.0f, 30.0},
- {"four", 40,40, 4.0f, 40.0},
- {"five", 50,50, 5.0f, 50.0},
- {"six",  60,60, 6.0f, 60.0},
- {"seven",70,70, 7.0f, 70.0}
-  };
-
+   {"zero",0,0, 0.0f, 0.0},
+   {"one",10,10, 1.0f, 10.0},
+   {"two",  20,20, 2.0f, 20.0},
+   {"three",30,30, 3.0f, 30.0},
+   {"four", 40,40, 4.0f, 40.0},
+   {"five", 50,50, 5.0f, 50.0},
+   {"six",  60,60, 6.0f, 60.0},
+   {"seven",70,70, 7.0f, 70.0}
+ };
+ 
  /* Calculate the size and the offsets of our struct members in memory */
  size_t dst_size =  sizeof( Particle );
  size_t dst_offset[NFIELDS] = { HOFFSET( Particle, name ),
@@ -69,9 +62,6 @@ int main( void )
                                sizeof( p_data[0].pressure),
                                sizeof( p_data[0].temperature)};
 
- /* Define field information */
- const char *field_names[NFIELDS] =
- { "Name","Latitude", "Longitude", "Pressure", "Temperature" };
  hid_t      field_type[NFIELDS];
  hid_t      string_type;
  hid_t      file_id;
@@ -95,10 +85,19 @@ int main( void )
  field_type[3] = H5T_NATIVE_FLOAT;
  field_type[4] = H5T_NATIVE_DOUBLE;
 
- /* Create a new file using default properties. */
- file_id = H5Fcreate( "h5_table_02.h5", H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT );
+ /*___________________________________________________________________
+   Create a new file using default properties.
+ */
 
- /* make a table */
+ file_id = H5Fcreate ("h5_table_02.h5",
+		      H5F_ACC_TRUNC,
+		      H5P_DEFAULT,
+		      H5P_DEFAULT);
+
+ /*___________________________________________________________________
+   Make a table.
+ */
+
  status=H5TBmake_table ("Table Title",
 			file_id,
 			TABLE_NAME,
@@ -113,7 +112,10 @@ int main( void )
 			compress,
 			p_data);
 
- /* append two records */
+ /*___________________________________________________________________
+   Append two records.
+ */
+
  status=H5TBappend_records (file_id,
 			    TABLE_NAME,
 			    NRECORDS_ADD,
