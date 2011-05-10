@@ -99,7 +99,7 @@ std::string show (std::vector<T> const &data)
   } else {
     output << "[";
     
-    for (unsigned int n=0; n<data.size(); ++n) {
+    for (size_t n=0; n<data.size(); ++n) {
       output << " " << data[n];
     }
     
