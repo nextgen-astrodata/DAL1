@@ -14,9 +14,9 @@ endif (HAVE_RUNTEST_SH)
 ##
 ## ==============================================================================
 
-if (NOT HDF5_USE_16_API_DEFAULT)
+if (HDF5_FOUND AND NOT HDF5_USE_16_API_DEFAULT)
   add_subdirectory (hdf5)
-endif (NOT HDF5_USE_16_API_DEFAULT)
+endif (HDF5_FOUND AND NOT HDF5_USE_16_API_DEFAULT)
 
 if (DAL_PYTHON_BINDINGS)
   add_subdirectory (python)
