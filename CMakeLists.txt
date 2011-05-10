@@ -175,8 +175,8 @@ endif (dal_link_libraries)
 
 if (NOT DOCUMENTATION_ONLY)
   
-  add_subdirectory (src)
   add_subdirectory (data)
+  add_subdirectory (src)
   
 endif (NOT DOCUMENTATION_ONLY)
 

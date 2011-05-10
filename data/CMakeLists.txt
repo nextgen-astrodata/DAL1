@@ -9,7 +9,7 @@ if (dal_exampledata_hdf5)
     get_filename_component (_dataset_filename  ${_dal_data} NAME)
     get_filename_component (_dataset_name      ${_dal_data} NAME_WE)
     get_filename_component (_dataset_extension ${_dal_data} EXT)
-    
+
     message (STATUS "Checking for dataset ${_dataset_filename}")
     
     ## copy file to build directory
@@ -18,16 +18,16 @@ if (dal_exampledata_hdf5)
       )
     
     ## Set variable pointing to location of test data
-    find_file (HAVE_${_dataset_filename} ${_dataset_filename}
+    find_file (HAVE_${_dataset_name} ${_dataset_filename}
       PATHS ${CMAKE_CURRENT_BINARY_DIR}
       )
  
     ## Feedback
-    if (HAVE_${_dataset_filename})
+    if (HAVE_${_dataset_name})
       message (STATUS "Checking for dataset ${_dataset_filename} - Success")
-    else (HAVE_${_dataset_filename})
+    else (HAVE_${_dataset_name})
       message (STATUS "Checking for dataset ${_dataset_filename} - FAIL")
-    endif (HAVE_${_dataset_filename})
+    endif (HAVE_${_dataset_name})
     
   endforeach (_dal_data)
   
