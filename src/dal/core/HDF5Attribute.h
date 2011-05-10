@@ -243,45 +243,48 @@ namespace DAL { // Namespace DAL -- begin
 	  dataspace.
 	*/
 
-	hid_t attribute      = 0;
-
 	if (h5err>0) {
-	  attribute = H5Aopen (location,
-			       name.c_str(),
-			       H5P_DEFAULT);
-
+	  hid_t attribute = H5Aopen (location,
+				     name.c_str(),
+				     H5P_DEFAULT);
+	  
 	  if (H5Iis_valid(attribute)) {
-	    
-	    hid_t datatype            = H5Aget_type (attribute);
-	    hid_t nativeDatatype      = H5Tget_native_type(datatype, H5T_DIR_ASCEND);
-	    /* H5T_class_t datatypeClass = H5Tget_class (datatype); */
-	    /* htri_t is_variable_string = H5Tis_variable_str(datatype); */
-	    hid_t dataspace           = H5Aget_space(attribute);
-	    int rank                  = H5Sget_simple_extent_ndims(dataspace);
 
-	    if (rank>0) {
-	      hsize_t shape[rank];
-	      hsize_t maxDimensions[rank];
-	      int size  = 1;
-	      h5err = H5Sget_simple_extent_dims (dataspace,
-						 shape,
-						 maxDimensions);
-	      for (int n=0; n<rank; ++n) {
-		size *= shape[n];
+	    std::vector<hsize_t> dims;
+	    std::vector<hsize_t> dimsMax;
+	    
+	    h5err           = HDF5Dataspace::shape (attribute,dims,dimsMax);
+	    hid_t datatype  = H5Aget_type (attribute);
+	    hid_t dataspace = H5Aget_space(attribute);
+
+	    if (dims.size()>0) {
+
+	      hid_t nativeDatatype      = H5Tget_native_type(datatype, H5T_DIR_ASCEND);
+	      /* hsize_t datatypeSize      = H5Tget_size (datatype); */
+	      H5T_class_t datatypeClass = H5Tget_class (datatype);
+	      int size                  = 1;
+
+	      for (size_t n=0; n<dims.size(); ++n) {
+		size *= dims[n];
 	      }
 	      
 	      /* Adjust size of array returning the attribute data */
 	      data.resize(size);
-
-	      /* Retrieve the attribute data */
-	      h5err = H5Aread (attribute,
-			       nativeDatatype,
-			       &data[0]);
 	      
+	      /* Retrieve the attribute data */
+	      if (datatypeClass == H5T_STRING) {
+		std::cout << "[HDF5Attribute::read]"
+			  << " Attribute of type string - not yet supported!"
+			  << std::endl;
+	      } else {
+		h5err = H5Aread (attribute,
+				 nativeDatatype,
+				 &data[0]);
+	      }
 	    } else {
 	      return false;
 	    }
-
+	    
 	    /* Release HDF5 object identifiers */
 	    if (H5Iis_valid(datatype))  { H5Tclose (datatype);  };
 	    if (H5Iis_valid(dataspace)) { H5Sclose (dataspace); };

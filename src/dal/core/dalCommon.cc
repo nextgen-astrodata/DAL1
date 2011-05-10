@@ -774,7 +774,7 @@ namespace DAL {
     
     if (shape.size() > 0) {
       // additional variables
-      hsize_t datatype_size         = H5Tget_size (datatype_id);
+      hsize_t datatype_size = H5Tget_size (datatype_id);
       buffer = new char[shape[0]*datatype_size];
       
       // Read the attribute data from the file
@@ -785,7 +785,7 @@ namespace DAL {
       // Copy the retrieved data to the returned variable
       if (h5error == 0) {
 	value.resize(shape[0]);
-  std::string str = std::string(buffer);
+	std::string str = std::string(buffer);
 	for (uint n(0); n<shape[0]; n++) {
 	  value[n] = str.substr(n*datatype_size, datatype_size);
 	}
