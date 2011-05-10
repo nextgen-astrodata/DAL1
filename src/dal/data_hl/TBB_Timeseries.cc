@@ -607,10 +607,11 @@ namespace DAL {  // Namespace DAL -- begin
   //
   // ============================================================================
 
-#ifdef DAL_WITH_CASA
 
   //_____________________________________________________________________________
   //                                                                 trigger_type
+
+#ifdef DAL_WITH_CASA
 
   casa::Vector<casa::String> TBB_Timeseries::trigger_type ()
   {
@@ -627,8 +628,29 @@ namespace DAL {  // Namespace DAL -- begin
     return trigger;
   }
 
+#else 
+  
+  std::vector<std::string> TBB_Timeseries::trigger_type ()
+  {
+    unsigned int nofStations = stationGroups_p.size();
+    std::vector<std::string> trigger (nofStations);
+    std::map<std::string,TBB_StationGroup>::iterator it;
+    int n (0);
+
+    for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
+      it->second.getAttribute("TRIGGER_TYPE",trigger[n]);
+      ++n;
+    }
+
+    return trigger;
+  }
+  
+#endif
+  
   //_____________________________________________________________________________
   //                                                               trigger_offset
+
+#ifdef DAL_WITH_CASA
 
   casa::Vector<double> TBB_Timeseries::trigger_offset ()
   {

@@ -253,10 +253,15 @@ namespace DAL {  // Namespace DAL -- begin
     uint nofSelectedDatasets();
     
     // === Parameter access - station group =====================================
+
+    //! Get the type of trigger causing the dump of the TBB data
+#ifdef DAL_WITH_CASA
+    casa::Vector<casa::String> trigger_type ();
+#else
+    std::vector<std::string> trigger_type ();
+#endif
     
 #ifdef DAL_WITH_CASA
-    //! Get the type of trigger causing the dump of the TBB data
-    casa::Vector<casa::String> trigger_type ();
     //! Time offset from the trigger reference time
     casa::Vector<double> trigger_offset ();
     //! Get the values of the station position
@@ -278,8 +283,6 @@ namespace DAL {  // Namespace DAL -- begin
     //! Get the antenna position of all selected datasets as casa::Measure
     casa::Vector<casa::MPosition> antenna_position ();
 #else
-    //! Get the type of trigger causing the dump of the TBB data
-    std::vector<std::string> trigger_type ();
     //! Time offset from the trigger reference time
     std::vector<double> trigger_offset ();
     //! Get the reference codes for the frame of the station positions

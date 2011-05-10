@@ -29,12 +29,18 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                HDF5Attribute
+  
   HDF5Attribute::HDF5Attribute ()
     : HDF5Object ()
   {
     init ();
   }
 
+  //_____________________________________________________________________________
+  //                                                                HDF5Attribute
+  
   /*!
     \param location -- File or group identifier.
     \param name     -- Path to the object, relative to \c location.
@@ -50,6 +56,9 @@ namespace DAL { // Namespace DAL -- begin
     open (location, name, access);
   }
 
+  //_____________________________________________________________________________
+  //                                                                HDF5Attribute
+  
   /*!
     \param other -- Another HDF5Property object from which to create this new
            one.
