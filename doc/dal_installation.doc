@@ -13,45 +13,15 @@
 
   \section dal_get_sources Getting the source code
 
-  As of Feb 15, 2001 there are two ways in which to retrieve, build and install
-  the DAL:
+  As of Feb 15, 2001 the DAL can be cloned directly from the master repository
+  hosted on <a href="https://github.com">Github</a>:
 
-  <ol>
-    <li>From the original source repository on Github.
+  \verbatim 
+  git clone https://github.com/nextgen-astrodata/DAL.git DAL
+  \endverbatim
 
-    In order to build the DAL as a stand-alone library, clone directly from the
-    repository on Github:
-
-    \verbatim 
-    git clone https://github.com/nextgen-astrodata/DAL.git DAL
-    \endverbatim
-
-    Once your checkout from the Git repository is complete, follow the
-    instructions as described in the section \ref dal_configure_build below.
-
-    <li>As part of the LOFAR User Software (LUS).
-
-    If you want (or need) to use the DAL as part of the LUS software collection,
-    check out a working copy of the code base from the LUS Subversion repository
-
-    \verbatim
-    svn co http://usg.lofar.org/svn/code/trunk lofarsoft
-    \endverbatim   
-
-    Once the checkout is complete (assuming bash as shell):
-
-    \verbatim
-    cd lofarsoft
-    export LOFARSOFT=`pwd`
-    . ./devel_common/scripts/init.sh
-    cd build
-    ./bootstrap
-    make dal
-    \endverbatim
-
-    By default build of the DAL will be carried out from a source tar-archive
-    which comes as part of the software collection.
-  </ol>
+  Once your checkout from the Git repository is complete, follow the
+  instructions as described in the section \ref dal_configure_build below.
 
   \section dal_codebase Organization of the source code
 
@@ -66,7 +36,6 @@
   |    `-- figures
   `-- src
         |-- apps               ..   Application programs build on top of the library.
-        |    `-- bf2h5
         |-- dal
         |    |-- core          ..   Core library classes
         |    |    `-- test
