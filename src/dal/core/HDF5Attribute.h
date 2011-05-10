@@ -472,7 +472,8 @@ namespace DAL { // Namespace DAL -- begin
 			 std::string const &name,
 			 T const &data)
       {
-	return write (location, name, &data, 1);
+	T buffer[] = {data};
+	return write (location, name, buffer, 1);
       }
     
     /*!
@@ -489,8 +490,9 @@ namespace DAL { // Namespace DAL -- begin
 			 T const &data)
       {
 	bool status = true;
+	T buffer[]  = {data};
 	for (unsigned int n=0; n<name.size(); ++n) {
-	  status *= write (location, name[n], &data, 1);
+	  status *= write (location, name[n], buffer, 1);
 	}
 	return status;
       }
