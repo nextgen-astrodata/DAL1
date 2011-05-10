@@ -56,13 +56,12 @@ int test_constructors (std::string const &server="pc-swinbank",
   std::cout << "\n[tDatabase::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
-
+  
   std::cout << "[1] Default constructor..." << std::endl;
   try {
     DAL::Database db;
     db.summary();
-  }
-  catch (std::string message) {
+  } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
   }
@@ -71,12 +70,8 @@ int test_constructors (std::string const &server="pc-swinbank",
   try {
     // Create object
     DAL::Database db (server, name, passwd, database);
-    // Perform query
-    if ( DAL::FAIL == db.query("show tables;") ) {
-      ++nofFailedTests;
-    }
-  }
-  catch (std::string message) {
+    db.summary();
+  } catch (std::string message) {
     std::cerr << message << std::endl;
     ++nofFailedTests;
   }
@@ -90,10 +85,10 @@ int test_constructors (std::string const &server="pc-swinbank",
 int main (int argc,
           char *argv[])
 {
-  int nofFailedTests (0);
-  bool haveDataset (true);
-  std::string filename ("tHDF5Dataset.h5");
-
+  int nofFailedTests   = 0;
+  bool haveDataset     = false;
+  std::string filename = "tHDF5Dataset.h5";
+  
   //________________________________________________________
   // Process parameters from the command line
   

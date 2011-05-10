@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/Database.h>
+#include "Database.h"
 
 namespace DAL {
 
@@ -106,6 +106,8 @@ namespace DAL {
   */
   bool Database::query (std::string const & querystr)
   {
+    bool status = true;
+
 #ifdef DAL_WITH_MYSQL
     /* send SQL query */
     if (mysql_query(itsDatabaseConnector, querystr.c_str()))
@@ -124,14 +126,14 @@ namespace DAL {
     //  printf("%s \n", row[0]);
 
     mysql_free_result(res);
-
-    return DAL::SUCCESS;
 #else
     std::cerr << "[Database::query] Unable to send query \"" << querystr
 	      << "\" to database! Code disable due to missing MySQL!"
 	      << std::endl;
-    return DAL::FAIL;
+    status = false;
 #endif
+
+    return status;
   }
 
   //_____________________________________________________________________________

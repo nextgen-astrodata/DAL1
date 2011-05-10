@@ -21,8 +21,6 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#include <string>
-
 #include <core/dalBaseTypes.h>
 
 namespace DAL {
