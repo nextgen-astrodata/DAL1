@@ -610,6 +610,7 @@ INPUT                  = ${PROJECT_SOURCE_DIR}/doc/dal_overview.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_examples_cpp.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_examples_python.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_testing.doc \
+			 ${PROJECT_SOURCE_DIR}/doc/dal_devel_release.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_data_formats.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_module_core.doc \
                          ${PROJECT_SOURCE_DIR}/doc/dal_module_data_hl.doc \

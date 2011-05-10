@@ -15,6 +15,7 @@
     <li>\subpage dal_devel
     <ul>
       <li>\subpage dal_devel_conventions
+      <li>\subpage dal_devel_releases
     </ul>
     <li>\subpage dal_coding_cpp
     <li>\subpage dal_coding_python

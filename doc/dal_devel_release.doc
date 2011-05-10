@@ -1,0 +1,80 @@
+
+/*!
+  \page dal_devel_releases Preparing a release
+
+  For an external user of the DAL we consider the following options when
+  when retrieving code directory from the repository:
+  <ol>
+    <li>Get current development version.
+    <li>Get latest release version.
+    <li>Get earlier release version.
+  </ol>
+
+  The first step in order to prepare a release is to create a tagged version 
+  on the special \e release branch:
+  \code
+  ## Check out the release branch and merge
+  git checkout release
+  git merge master
+  ## Tag the version
+  git tag -a v0.1.0 -m "DAL release, version 0.1.0"
+  ## Push the tags back to the origin repository
+  git push --tags
+  git push origin release
+  \endcode
+
+  <ol>
+    <li>Check out \e master branch
+    \code
+    git checkout master
+    \endcode
+    such that
+    \verbatim
+    ...o     *master
+
+    ...o     release
+    \endverbatim
+    <li>From branch \e master checkout a new branch \e nextRelease
+    \code
+    git checkout -b nextRelease
+    \endcode
+    to accumulate the changes to be release
+    \verbatim
+    ...o       master
+        \
+         o     *nextRelease
+
+    ...o       release
+    \endverbatim
+    <li>Run the necessary tests to accept the current version as a release
+    candidate -- <b>this bit still needs to be defined, to come of with a
+    list of criteria</b>.
+    <li>Adjust the version information in the top-level \c CMakeLists.txt file:
+    \code
+    ## Project release version
+    set (DAL_VERSION_MAJOR 0)
+    set (DAL_VERSION_MINOR 1)
+    set (DAL_VERSION_PATCH 1)
+    \endcode
+    These changes now need to be committed:
+    \verbatim
+    git add CMakeLists.txt
+    git commit -m "DAL release, version 0.1.1"
+    \endverbatim
+    <li>Check out the \e release branch and pull in the previously staged
+    changes:
+    \verbatim
+    git checkout release
+    git merge nextRelease
+    \endverbatim
+    which results in
+    \verbatim
+    ...o----o----o----o            master
+        \
+         o----o                    nextRelease
+               \
+             ...o--------------o   release
+    \endverbatim
+  </ol>
+
+*/
