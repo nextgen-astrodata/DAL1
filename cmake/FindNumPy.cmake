@@ -27,14 +27,28 @@
 #  NUMPY_LFLAGS     = Linker flags (optional)
 
 if (NOT NUMPY_FOUND)
+
+  ## Initialize variables
   
-  set (NUMPY_FOUND FALSE)
-  set (NUMPY_INCLUDES "")
+  set (NUMPY_FOUND     FALSE )
+  set (NUMPY_INCLUDES  ""    )
+  set (NUMPY_LIBRARIES ""    )
+
+  ## Check for Python
+
+  if (NOT PYTHON_FOUND)
+    set (PYTHON_FIND_QUIETLY ${NUMPY_FIND_QUIETLY})
+    include (FindPython_DAL)
+  endif (NOT PYTHON_FOUND)
+
+  if (PYTHON_SITE_PACKAGES_DIR)
+    set (NUMPY_ROOT_DIR ${PYTHON_SITE_PACKAGES_DIR})
+  endif ()
 
   if (NOT NUMPY_ROOT_DIR)
     set (NUMPY_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   endif (NOT NUMPY_ROOT_DIR)
-  
+
   ##_____________________________________________________________________________
   ## Check for the header files
   
@@ -63,15 +77,13 @@ if (NOT NUMPY_FOUND)
   set (_numpyLibPrefixes ${CMAKE_FIND_LIBRARY_PREFIXES})
   set (CMAKE_FIND_LIBRARY_PREFIXES "")
   
-  set (NUMPY_LIBRARIES "")
-  
-  foreach (_numpy_lib multiarray scalarmath)
+  foreach (_numpyLibrary multiarray scalarmath)
     
     ## Convert library name to CMake variable
-    string (TOUPPER ${_numpy_lib} _numpy_var)
+    string (TOUPPER ${_numpyLibrary} _numpy_var)
     
     ## Search for the library
-    find_library (NUMPY_${_numpy_var}_LIBRARY ${_numpy_lib}
+    find_library (NUMPY_${_numpy_var}_LIBRARY ${_numpyLibrary}
       HINTS ${NUMPY_ROOT_DIR}
       PATHS ${DAL_FIND_PATHS}
       PATH_SUFFIXES
@@ -86,11 +98,49 @@ if (NOT NUMPY_FOUND)
       list (APPEND NUMPY_LIBRARIES ${NUMPY_${_numpy_var}_LIBRARY})
     endif (NUMPY_${_numpy_var}_LIBRARY)
     
-  endforeach (_numpy_lib)
+  endforeach (_numpyLibrary)
 
   ## reinstate library prefixes
   set (CMAKE_FIND_LIBRARY_PREFIXES ${_numpyLibPrefixes})
 
+  ##_____________________________________________________________________________
+  ## If NUMPY_INCLUDES and NUMPY_LIBRARIES can not be found in the paths,
+  ## use python interpreter itself to locate them
+  
+  if (NOT NUMPY_INCLUDES)
+#      execute_process (
+#	COMMAND ${PYTHON_EXECUTABLE}
+#        ARGS "-c 'import numpy; print numpy.get_include()'"
+#        OUTPUT_VARIABLE NUMPY_INCLUDES
+#        RETURN_VALUE NUMPY_NOT_FOUND )
+  
+#      if (NUMPY_INCLUDE_DIR MATCHES "numpy")
+#        set (NUMPY_FOUND TRUE)
+#      else (NUMPY_INCLUDE_DIR MATCHES "numpy")
+#        set (NUMPY_FOUND FALSE)
+#      endif (NUMPY_INCLUDE_DIR MATCHES "numpy")
+      
+      if (NUMPY_INCLUDE_DIR MATCHES "Traceback")
+      # Did not successfully include numpy
+        set(NUMPY_FOUND FALSE)
+      else (NUMPY_INCLUDE_DIR MATCHES "Traceback")
+      # successful
+        set (NUMPY_FOUND TRUE)
+        set (NUMPY_INCLUDE_DIR ${NUMPY_INCLUDE_DIR} CACHE PATH "Numpy include path")
+      endif (NUMPY_INCLUDE_DIR MATCHES "Traceback")
+  
+      if (NUMPY_FOUND)
+        if (NOT NUMPY_FIND_QUIETLY)
+          message (STATUS "Numpy headers found")
+        endif (NOT NUMPY_FIND_QUIETLY)
+      else (NUMPY_FOUND)
+        if (NUMPY_FIND_REQUIRED)
+          message (FATAL_ERROR "Numpy headers missing")
+        endif (NUMPY_FIND_REQUIRED)
+      endif (NUMPY_FOUND)
+  
+      mark_as_advanced (NUMPY_INCLUDE_DIR)
+  endif (NOT NUMPY_INCLUDES)  
   
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found

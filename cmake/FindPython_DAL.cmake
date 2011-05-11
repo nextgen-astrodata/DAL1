@@ -104,30 +104,33 @@ if (NOT PYTHON_FOUND)
       NO_DEFAULT_PATH
       )
 
-    ##___________________________________________________________________________
-    ## Python packages
-    
-    set (PYTHON_SITE_PACKAGES_DIR
-      /usr/lib/pyshared/python${_pythonRelease}
-      /sw/lib/python${_pythonRelease}/site-packages
-      /System/Library/Frameworks/Python.framework/Versions/${_pythonRelease}/Extras/lib/python
-      ${CMAKE_INSTALL_PREFIX}/lib/python${_pythonRelease}/site-packages
-      )
-
-    set (NUMPY_ROOT_DIR ${PYTHON_SITE_PACKAGES_DIR})
-    include (FindNumPy)
-    
   endforeach (_pythonRelease)
 
   ##_____________________________________________________________________________
   # Find Python site-packages directory for installation
 
   if (PYTHON_EXECUTABLE)
-  execute_process (
-    COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()"
-    OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
+    
+    execute_process (
+      COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()"
+      OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+    
+  else (PYTHON_EXECUTABLE)
+    
+    if (PYTHON_VERSION)
+      
+      set (_siteVersion "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
+      
+      set (PYTHON_SITE_PACKAGES_DIR
+	/usr/lib/pyshared/python${_siteVersion}
+	/sw/lib/python${_siteVersion}/site-packages
+	/System/Library/Frameworks/Python.framework/Versions/${_siteVersion}/Extras/lib/python
+	${CMAKE_INSTALL_PREFIX}/lib/python${_siteVersion}/site-packages
+	)
+    endif (PYTHON_VERSION)
+    
   endif (PYTHON_EXECUTABLE)
   
   ##_____________________________________________________________________________
@@ -173,7 +176,7 @@ if (NOT PYTHON_FOUND)
 
   ## Assemble full version of library
   set (PYTHON_VERSION "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}.${PYTHON_VERSION_MICRO}")
-  
+
   ##_____________________________________________________________________________
   ## Actions taken when all components have been found
   

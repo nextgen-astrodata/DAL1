@@ -19,6 +19,10 @@ if (NUMPY_INCLUDES)
   include_directories (${NUMPY_INCLUDES})
 endif (NUMPY_INCLUDES)
 
+if (PYTHON_INCLUDES)
+  include_directories (${PYTHON_INCLUDES})
+endif (PYTHON_INCLUDES)
+
 add_library(pydal MODULE
   ${pydal_sources}
   )

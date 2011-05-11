@@ -62,7 +62,6 @@ set (_cmakeModules
   MPI
   NumPy
   OpenMP
-  Python_DAL
   WCSLIB_DAL
   )
 
