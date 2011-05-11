@@ -30,10 +30,11 @@ if (NOT PYTHON_FOUND)
 
   ## Initialize variables
 
-  set (PYTHON_VERSION_MAJOR  0 )
-  set (PYTHON_VERSION_MINOR  0 )
-  set (PYTHON_VERSION_MICRO  0 )
-  set (PYTHON_API_VERSION    0 )
+  set (PYTHON_VERSION_MAJOR     0  )
+  set (PYTHON_VERSION_MINOR     0  )
+  set (PYTHON_VERSION_MICRO     0  )
+  set (PYTHON_API_VERSION       0  )
+  set (PYTHON_SITE_PACKAGES_DIR "" )
     
   if (NOT PYTHON_ROOT_DIR)
     set (PYTHON_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
@@ -109,6 +110,7 @@ if (NOT PYTHON_FOUND)
     set (PYTHON_SITE_PACKAGES_DIR
       /usr/lib/pyshared/python${_pythonRelease}
       /sw/lib/python${_pythonRelease}/site-packages
+      /System/Library/Frameworks/Python.framework/Versions/${_pythonRelease}/Extras/lib/python
       ${CMAKE_INSTALL_PREFIX}/lib/python${_pythonRelease}/site-packages
       )
 
