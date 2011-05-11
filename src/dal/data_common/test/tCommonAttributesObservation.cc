@@ -47,7 +47,7 @@ using DAL::CommonAttributesObservation;
 */
 int test_constructors ()
 {
-  std::cout << "\n[tCommonAttributesObservation::test_constructors]\n" << std::endl;
+  std::cout << "\n[tCommonAttributesObservation::test_constructors]" << std::endl;
 
   int nofFailedTests   = 0;
   std::string obsID    = "1234567890";
@@ -55,7 +55,7 @@ int test_constructors ()
   double freqMax       = 80;
   std::string freqUnit = "MHz";
   
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  std::cout << "\n[1] Testing default constructor ..." << std::endl;
   try {
     CommonAttributesObservation attr;
     //
@@ -65,7 +65,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  std::cout << "[2] Testing argumented constructor ..." << std::endl;
+  std::cout << "\n[2] Testing argumented constructor ..." << std::endl;
   try {
     CommonAttributesObservation attr (obsID);
     //
@@ -75,7 +75,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  std::cout << "[2] Testing argumented constructor ..." << std::endl;
+  std::cout << "\n[3] Testing argumented constructor ..." << std::endl;
   try {
     CommonAttributesObservation attr (obsID,
 				      freqMin,
@@ -83,6 +83,21 @@ int test_constructors ()
 				      freqUnit);
     //
     attr.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "\n[4] Testing copy constructor ..." << std::endl;
+  try {
+    CommonAttributesObservation attr (obsID,
+				      freqMin,
+				      freqMax,
+				      freqUnit);
+    attr.summary();
+    //
+    CommonAttributesObservation attrCopy (attr);
+    attrCopy.summary();
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
