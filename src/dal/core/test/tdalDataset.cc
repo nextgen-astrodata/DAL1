@@ -118,8 +118,8 @@ int test_attributes (std::string const &filename,
   //   int var        = 1;
   //   int varArray[] = {1,2,3,4,5};
 
-  //   ds.setAttribute ("ATTRIBUTE_INT", var);
-  //   ds.setAttribute ("ATTRIBUTE_INT_ARRAY", varArray, nelem);
+  //   ds.setAttribute ("h5a_int", var);
+  //   ds.setAttribute ("h5a_array_int", varArray, nelem);
   // } catch (std::string message) {
   //   std::cerr << message << std::endl;
   //   nofFailedTests++;
@@ -134,8 +134,8 @@ int test_attributes (std::string const &filename,
   //   float var        = 0.1;
   //   float varArray[] = {0.1, 0.2, 0.3, 0.4, 0.5};
 
-  //   ds.setAttribute ("ATTRIBUTE_FLOAT", var);
-  //   ds.setAttribute ("ATTRIBUTE_FLOAT_ARRAY", varArray, nelem);
+  //   ds.setAttribute ("h5a_float", var);
+  //   ds.setAttribute ("h5a_array_float", varArray, nelem);
   // } catch (std::string message) {
   //   std::cerr << message << std::endl;
   //   nofFailedTests++;

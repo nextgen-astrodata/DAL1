@@ -25,7 +25,6 @@ endif (DAL_PYTHON_BINDINGS)
 ## Set up list of source files
 
 set (tests
-  tdal
   tdal_fits
   tDAL_HDF5
   )
@@ -88,8 +87,6 @@ endif (CASACORE_FOUND AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
 
 if (DAL_ENABLE_TESTING)
   
-  add_test (tdal tdal)
-
   ## -----------------------------------------------------------------
   ## [1] Test program mimicing usage of DAL as part of LOFAR OLAP
   
@@ -104,7 +101,7 @@ if (DAL_ENABLE_TESTING)
   endif (H5LS_EXECUTABLE)
   
   ## -----------------------------------------------------------------
-  ## [3] Processing tests which require sample datasets
+  ## [2] Processing tests which require sample datasets
   
   if (dataset_ms)
     add_test (tdal_MS tdal_MS ${dataset_ms} ${dataset_ms}.h5)
@@ -113,7 +110,7 @@ if (DAL_ENABLE_TESTING)
   endif (dataset_ms)
   
   ## -----------------------------------------------------------------
-  ## [6] Tests using FITS file format data
+  ## [3] Tests using FITS file format data
   
   if (dataset_fits)
     add_test (tdal_fits tdal_fits ${dataset_fits})
