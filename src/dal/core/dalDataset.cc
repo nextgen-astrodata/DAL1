@@ -115,7 +115,7 @@ namespace DAL {
 	    
 	  }
 	
-	pFile_p = &h5fh_p;
+	itsFilePointer = &h5fh_p;
       }
     }
     else if ( filetype == FITSTYPE )
@@ -170,8 +170,8 @@ namespace DAL {
 
     /* Release generic file pointer */
 
-    if (pFile_p != NULL) {
-      pFile_p = NULL;
+    if (itsFilePointer != NULL) {
+      itsFilePointer = NULL;
     }
 
     return status;
@@ -188,7 +188,7 @@ namespace DAL {
   
   void dalDataset::init()
   {
-    pFile_p     = NULL;
+    itsFilePointer     = NULL;
     type        = "UNDEFINED";
     name        = "UNDEFINED";
     overwrite_p = false;
@@ -218,7 +218,7 @@ namespace DAL {
     /* Initialize internal data with default values */
     init ();
 
-    pFile_p     = NULL;
+    itsFilePointer     = NULL;
     name        = stringify (filename);
     type        = filetype;
     overwrite_p = overwrite;
@@ -389,7 +389,7 @@ namespace DAL {
     }
     else if ( (h5fh_p = openHDF5( filename )) >= 0 )
       {
-        pFile_p = &h5fh_p;
+        itsFilePointer = &h5fh_p;
         lcltype = H5TYPE;
         type = lcltype;
         name = filename;
@@ -408,7 +408,7 @@ namespace DAL {
 	      casa::SymLink link( msfile );
 	      casa::Path realFileName = link.followSymLink();
 	      ms        = new casa::MeasurementSet( realFileName.absoluteName() );
-	      pFile_p   = &ms;
+	      itsFilePointer   = &ms;
 	      itsMSReader = new casa::MSReader( *ms );
 	      name      = filename;
 	      return DAL::SUCCESS;
@@ -416,7 +416,7 @@ namespace DAL {
 	  else // treat it as a regular file
 	    {
 	      ms        = new casa::MeasurementSet( filename );
-	      pFile_p   = &ms;
+	      itsFilePointer   = &ms;
 	      itsMSReader = new casa::MSReader( *ms );
 	      name      = filename;
 	      return DAL::SUCCESS;
@@ -974,7 +974,7 @@ namespace DAL {
   {
     if (type == H5TYPE) {
       dalTable * lt = new dalTable( H5TYPE );
-      lt->createTable( pFile_p, tablename, "/" );
+      lt->createTable( itsFilePointer, tablename, "/" );
       return lt;
     }
     else {
@@ -1001,7 +1001,7 @@ namespace DAL {
   {
     if ((type == H5TYPE) && (H5Iis_valid(h5fh_p))) {
       dalTable * lt = new dalTable( H5TYPE );
-      lt->createTable( pFile_p, tablename, groupname );
+      lt->createTable( itsFilePointer, tablename, groupname );
       return lt;
     }
     else {
@@ -1037,7 +1037,7 @@ namespace DAL {
     else if ( type == H5TYPE )
       {
         dalTable * lt = new dalTable( H5TYPE );
-        lt->openTable( pFile_p, tablename, "/" );
+        lt->openTable( itsFilePointer, tablename, "/" );
         return lt;
       }
     else if ( type == FITSTYPE )
@@ -1074,7 +1074,7 @@ namespace DAL {
         dalTable * lt = new dalTable( H5TYPE );
         try
           {
-            lt->openTable( pFile_p, tablename, '/' + groupname );
+            lt->openTable( itsFilePointer, tablename, '/' + groupname );
           }
         catch (std::string message)
           {
@@ -1108,7 +1108,7 @@ namespace DAL {
     else if ( type == H5TYPE )
       {
         dalArray * la = new dalArray;
-        la->open( pFile_p, arrayname );
+        la->open( itsFilePointer, arrayname );
         return la;
       }
     else if ( type == FITSTYPE )
@@ -1139,7 +1139,7 @@ namespace DAL {
       dalArray * test = new dalArray;
       delete test;
       dalArray * la = new dalArray;
-      la->open( pFile_p, '/' + groupname + '/' + arrayname );
+      la->open( itsFilePointer, '/' + groupname + '/' + arrayname );
       return la;
     }
     else if ( type == FITSTYPE )
@@ -1223,7 +1223,7 @@ namespace DAL {
       {
         dalGroup * group = new dalGroup;
         //cerr << "Trying to open group " << groupname << endl;
-        int retval = group->open( pFile_p, groupname );
+        int retval = group->open( itsFilePointer, groupname );
         if ( retval < 0 )
           return NULL;
         else

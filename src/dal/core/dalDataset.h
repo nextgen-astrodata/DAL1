@@ -21,8 +21,8 @@
 #ifndef DALDATASET_H
 #define DALDATASET_H
 
-#include <core/dalGroup.h>
-#include <core/HDF5Object.h>
+#include "dalGroup.h"
+#include "HDF5Object.h"
 
 namespace DAL {
   
@@ -101,7 +101,7 @@ namespace DAL {
   class dalDataset {
     
     //! File pointer (can be HDF5, FITS or CASA MS)
-    void * pFile_p;
+    void * itsFilePointer;
     //! "HDF5", "MSCASA" or "FITS"; for example
     std::string type;
     //! Dataset name

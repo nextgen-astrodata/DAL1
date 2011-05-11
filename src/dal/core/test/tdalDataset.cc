@@ -39,18 +39,15 @@
 /*!
   \brief Test the various constructors for an object of type DAL::dalDataset
 
-  \param filename -- Name of the input HDF5 data file
-  \param dalType  -- Type of the dataset to open
-
   \return nofFailedTests -- The number of failed tests encountered within this
           function
 */
-int test_constructors (std::string const &filename,
-		       std::string const &dalType)
+int test_constructors (std::map<std::string,std::string> &filenames)
 {
   std::cout << "\n[tdalDataset::test_constructors]\n" << std::endl;
 
-  int nofFailedTests (0);
+  int nofFailedTests  = 0;
+  std::map<std::string,std::string>::iterator it;
 
   /*__________________________________________________________________
     Test 1: Default constructor. The created object is not connected 
@@ -74,10 +71,17 @@ int test_constructors (std::string const &filename,
 
   std::cout << "[2] Testing dalDataset(string,string,bool) ..." << std::endl;
   try {
-    DAL::dalDataset dataset (filename.c_str(),
-			     dalType,
-			     true);
-    dataset.summary();
+    for (it=filenames.begin(); it!=filenames.end(); ++it) {
+      // Display which type of dataset is being created
+      std::cout << "--> Creating dataset of type '" << it->first
+		<< "' ..." << std::endl;
+      // Create dataset
+      DAL::dalDataset dataset (it->second.c_str(),
+			       it->first.c_str(),
+			       true);
+      dataset.summary();
+    }
+    
   }
   catch (std::string message) {
     std::cerr << message << std::endl;
@@ -177,6 +181,11 @@ int main (int argc, char *argv[])
   std::string filename = "tdalDataset.h5";
   std::string dataset;
 
+  std::map<std::string,std::string> filenames;
+  filenames["HDF5"]   = "tdalDataset.h5";
+  filenames["FITS"]   = "tdalDataset.fits";
+  filenames["MSCASA"] = "tdalDataset.ms";
+
   //________________________________________________________
   // Process parameters from the command line
   
@@ -193,7 +202,7 @@ int main (int argc, char *argv[])
   // Run the tests
 
   //! Test constructors for dalDataset object
-  nofFailedTests += test_constructors(filename, dalType);
+  nofFailedTests += test_constructors(filenames);
   //! Test creation of and access to attributes
   nofFailedTests += test_attributes (filename, dalType);
   
