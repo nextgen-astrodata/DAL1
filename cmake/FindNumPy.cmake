@@ -41,13 +41,22 @@ if (NOT NUMPY_FOUND)
     include (FindPython_DAL)
   endif (NOT PYTHON_FOUND)
 
+  ## Hints for location where to search
+
   if (PYTHON_SITE_PACKAGES_DIR)
-    set (NUMPY_ROOT_DIR ${PYTHON_SITE_PACKAGES_DIR})
-  endif ()
+    list (APPEND NUMPY_ROOT_DIR ${PYTHON_SITE_PACKAGES_DIR})
+  endif (PYTHON_SITE_PACKAGES_DIR)
 
   if (NOT NUMPY_ROOT_DIR)
     set (NUMPY_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   endif (NOT NUMPY_ROOT_DIR)
+
+  ## Feedback
+
+  message (STATUS "PYTHON_EXECUTABLE        = ${PYTHON_EXECUTABLE}" )
+  message (STATUS "PYTHON_VERSION           = ${PYTHON_VERSION}"    )
+  message (STATUS "PYTHON_SITE_PACKAGES_DIR = ${PYTHON_SITE_PACKAGES_DIR}")
+  message (STATUS "NUMPY_ROOT_DIR           = ${NUMPY_ROOT_DIR}"    )
 
   ##_____________________________________________________________________________
   ## Check for the header files

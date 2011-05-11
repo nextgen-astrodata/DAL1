@@ -166,6 +166,11 @@ if (NOT PYTHON_FOUND)
   message (STATUS "[DAL] Unable to generate Python bindings; missing Python!")
 endif (NOT PYTHON_FOUND)
 
+if (NOT NUMPY_FOUND)
+  set (DAL_PYTHON_BINDINGS FALSE)
+  message (STATUS "[DAL] Unable to generate Python bindings; missing NumPy!")
+endif (NOT NUMPY_FOUND)
+
 ##____________________________________________________________________
 ##                                                       Documentation
 

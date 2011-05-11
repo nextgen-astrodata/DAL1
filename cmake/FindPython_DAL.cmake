@@ -109,29 +109,30 @@ if (NOT PYTHON_FOUND)
   ##_____________________________________________________________________________
   # Find Python site-packages directory for installation
 
+  ## Use Python itself, trying to import the package
+  
   if (PYTHON_EXECUTABLE)
-    
     execute_process (
       COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()"
-      OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
+      OUTPUT_VARIABLE PYTHON_SITE_PACKAGES_DIR
       OUTPUT_STRIP_TRAILING_WHITESPACE
       )
-    
-  else (PYTHON_EXECUTABLE)
-    
-    if (PYTHON_VERSION)
-      
-      set (_siteVersion "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
-      
-      set (PYTHON_SITE_PACKAGES_DIR
-	/usr/lib/pyshared/python${_siteVersion}
-	/sw/lib/python${_siteVersion}/site-packages
-	/System/Library/Frameworks/Python.framework/Versions/${_siteVersion}/Extras/lib/python
-	${CMAKE_INSTALL_PREFIX}/lib/python${_siteVersion}/site-packages
-	)
-    endif (PYTHON_VERSION)
-    
   endif (PYTHON_EXECUTABLE)
+  
+  ## Additional check in case the previous method failed
+  
+  if (NOT PYTHON_SITE_PACKAGES_DIR)
+    
+    set (_siteVersion "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
+    
+    set (PYTHON_SITE_PACKAGES_DIR
+      /usr/lib/pyshared/python${_siteVersion}
+      /sw/lib/python${_siteVersion}/site-packages
+      /System/Library/Frameworks/Python.framework/Versions/${_siteVersion}/Extras/lib/python
+      ${CMAKE_INSTALL_PREFIX}/lib/python${_siteVersion}/site-packages
+      )
+    
+  endif (NOT PYTHON_SITE_PACKAGES_DIR)
   
   ##_____________________________________________________________________________
   ## Test Python library for:
