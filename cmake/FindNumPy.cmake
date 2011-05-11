@@ -51,26 +51,26 @@ if (NOT NUMPY_FOUND)
     set (NUMPY_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
   endif (NOT NUMPY_ROOT_DIR)
 
-  ## Feedback
-
-  message (STATUS "PYTHON_EXECUTABLE        = ${PYTHON_EXECUTABLE}" )
-  message (STATUS "PYTHON_VERSION           = ${PYTHON_VERSION}"    )
-  message (STATUS "PYTHON_SITE_PACKAGES_DIR = ${PYTHON_SITE_PACKAGES_DIR}")
-  message (STATUS "NUMPY_ROOT_DIR           = ${NUMPY_ROOT_DIR}"    )
-
   ##_____________________________________________________________________________
   ## Check for the header files
+
+  set (_siteVersion "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
+
+  ## _numpyconfig.h
   
   find_path (NUMPY_NUMPYCONFIG_H numpy/_numpyconfig.h
     HINTS ${NUMPY_ROOT_DIR}
     PATHS ${DAL_FIND_PATHS}
     PATH_SUFFIXES
     include
+    core/include
+    numpy/core/include
+    site-packages/numpy/core/include
+    python${_siteVersion}/site-packages/numpy/core/include
+    lib/python${_siteVersion}/site-packages/numpy/core/include
     python/include
     python/core/include
     python/numpy/core/include
-    numpy/core/include
-    site-packages/numpy/core/include
     NO_DEFAULT_PATH
     )
 
@@ -78,7 +78,34 @@ if (NOT NUMPY_FOUND)
     list (APPEND NUMPY_INCLUDES ${NUMPY_NUMPYCONFIG_H})
     list (APPEND NUMPY_INCLUDES ${NUMPY_NUMPYCONFIG_H}/numpy)
   endif (NUMPY_NUMPYCONFIG_H)
-  
+
+  ## arrayobject.h
+
+  find_path (NUMPY_ARRAYOBJECT_H numpy/arrayobject.h
+    HINTS ${NUMPY_ROOT_DIR}
+    PATHS ${DAL_FIND_PATHS}
+    PATH_SUFFIXES
+    include
+    core/include
+    numpy/core/include
+    site-packages/numpy/core/include
+    python${_siteVersion}/site-packages/numpy/core/include
+    lib/python${_siteVersion}/site-packages/numpy/core/include
+    python/include
+    python/core/include
+    python/numpy/core/include
+    NO_DEFAULT_PATH
+    )
+
+  if (NUMPY_ARRAYOBJECT_H)
+    list (APPEND NUMPY_INCLUDES ${NUMPY_ARRAYOBJECT_H})
+    list (APPEND NUMPY_INCLUDES ${NUMPY_ARRAYOBJECT_H}/numpy)
+  endif (NUMPY_ARRAYOBJECT_H)
+
+  ## Clean up list of include directories
+
+  list (REMOVE_DUPLICATES NUMPY_INCLUDES)
+
   ##_____________________________________________________________________________
   ## Check for the library
   
@@ -96,10 +123,11 @@ if (NOT NUMPY_FOUND)
       HINTS ${NUMPY_ROOT_DIR}
       PATHS ${DAL_FIND_PATHS}
       PATH_SUFFIXES
-      lib
+      core
       numpy/core
-      python/numpy/core
-      lib/python/numpy/core
+      site-packages/numpy/core
+      python${_siteVersion}/site-packages/numpy/core
+      lib/python${_siteVersion}/site-packages/numpy/core
       )
     
     ## If library was found, add it to the list of libraries
