@@ -89,7 +89,19 @@ endif (CASACORE_FOUND AND GFORTRAN_LIBRARIES AND LAPACK_LIBRARIES)
 if (DAL_ENABLE_TESTING)
   
   add_test (tdal tdal)
+
+  ## -----------------------------------------------------------------
+  ## [1] Test program mimicing usage of DAL as part of LOFAR OLAP
+  
   add_test (tDAL_HDF5 tDAL_HDF5)
+  
+  if (H5DUMP_EXECUTABLE)
+    add_test (tDAL_HDF5_h5dump ${H5DUMP_EXECUTABLE} -A L_test_bf.h5)
+  endif (H5DUMP_EXECUTABLE)
+  
+  if (H5LS_EXECUTABLE)
+    add_test (tDAL_HDF5_h5ls ${H5LS_EXECUTABLE} -v L_test_bf.h5)
+  endif (H5LS_EXECUTABLE)
   
   ## -----------------------------------------------------------------
   ## [3] Processing tests which require sample datasets
