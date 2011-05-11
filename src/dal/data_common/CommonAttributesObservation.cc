@@ -28,25 +28,42 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                  CommonAttributesObservation
+
   CommonAttributesObservation::CommonAttributesObservation ()
   {
-    itsObservationID   = "UNDEFINED";
-    itsStartMJD        = "UNDEFINED";
-    itsStartTAI        = "UNDEFINED";
-    itsStartUTC        = "UNDEFINED";
-    itsEndMJD          = "UNDEFINED";
-    itsEndTAI          = "UNDEFINED";
-    itsEndUTC          = "UNDEFINED";
-    itsNofStations     = 0;
-    itsStationsList.clear();
-    itsFrequencyMin    = 0.0;
-    itsFrequencyMax    = 0.0;
-    itsFrequencyCenter = 0.0;
-    itsFrequencyUnit   = "UNDEFINED";
-
-    setAttributes();
+    init ();
   }
     
+  //_____________________________________________________________________________
+  //                                                  CommonAttributesObservation
+
+  CommonAttributesObservation::CommonAttributesObservation (std::string const &observationID)
+  {
+    init ();
+    itsObservationID = observationID;
+  }
+
+  //_____________________________________________________________________________
+  //                                                  CommonAttributesObservation
+
+  CommonAttributesObservation::CommonAttributesObservation (std::string const &observationID,
+							    double const &freqMin,
+							    double const &freqMax,
+							    std::string const &freqUnit)
+  {
+    // Initialize variables
+    init ();
+    // Store input parameters
+    itsObservationID = observationID;
+    itsFrequencyMin  = freqMin;
+    itsFrequencyMax  = freqMax;
+    itsFrequencyUnit = freqUnit;
+    // Set derived parameters
+    itsFrequencyCenter = (freqMin+freqMax)/2;
+  }
+  
   // ============================================================================
   //
   //  Destruction
@@ -119,6 +136,19 @@ namespace DAL { // Namespace DAL -- begin
   void CommonAttributesObservation::summary (std::ostream &os)
   {
     os << "[CommonAttributesObservation] Summary of internal parameters." << std::endl;
+    os << "-- Observation ID                = " << itsObservationID   << std::endl;
+    os << "-- Observation date (MJD) Start  = " << itsStartMJD        << std::endl;
+    os << "-- Observation date (MJD) End    = " << itsEndMJD          << std::endl;
+    os << "-- Observation date (TAI) Start  = " << itsStartTAI        << std::endl;
+    os << "-- Observation date (TAI) End    = " << itsEndTAI          << std::endl;
+    os << "-- Observation date (UTC) Start  = " << itsStartUTC        << std::endl;
+    os << "-- Observation date (UTC) End    = " << itsEndUTC          << std::endl;
+    os << "-- nof. stations participating   = " << itsNofStations     << std::endl;
+    os << "-- List of stations              = " << itsStationsList    << std::endl;
+    os << "-- Minimum observation frequency = " << itsFrequencyMin    << std::endl;
+    os << "-- Center observation frequency  = " << itsFrequencyCenter << std::endl;
+    os << "-- Maximum observation frequency = " << itsFrequencyMax    << std::endl;
+    os << "-- Observation frequency unit    = " << itsFrequencyUnit   << std::endl;
   }
   
   // ============================================================================
@@ -126,6 +156,28 @@ namespace DAL { // Namespace DAL -- begin
   //  Methods
   //
   // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                                         init
+  
+  void CommonAttributesObservation::init ()
+  {
+    itsObservationID   = "UNDEFINED";
+    itsStartMJD        = "UNDEFINED";
+    itsStartTAI        = "UNDEFINED";
+    itsStartUTC        = "UNDEFINED";
+    itsEndMJD          = "UNDEFINED";
+    itsEndTAI          = "UNDEFINED";
+    itsEndUTC          = "UNDEFINED";
+    itsNofStations     = 0;
+    itsStationsList.clear();
+    itsFrequencyMin    = 0.0;
+    itsFrequencyMax    = 0.0;
+    itsFrequencyCenter = 0.0;
+    itsFrequencyUnit   = "UNDEFINED";
+
+    setAttributes();
+  }
   
   //_____________________________________________________________________________
   //                                                                setAttributes

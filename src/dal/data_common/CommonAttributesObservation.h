@@ -87,6 +87,15 @@ namespace DAL { // Namespace DAL -- begin
     //! Default constructor
     CommonAttributesObservation ();
     
+    //! Argumented constructor
+    CommonAttributesObservation (std::string const &observationID);
+    
+    //! Argumented constructor
+    CommonAttributesObservation (std::string const &observationID,
+				 double const &freqMin,
+				 double const &freqMax,
+				 std::string const &freqUnit="Hz");
+    
     //! Copy constructor
     CommonAttributesObservation (CommonAttributesObservation const &other)
       : AttributesInterface (other)
@@ -252,6 +261,9 @@ namespace DAL { // Namespace DAL -- begin
 #endif    
 
   private:
+
+    //! Initialize internal parameters
+    void init ();
     
     //! Set the atttribute names
     void setAttributes ();

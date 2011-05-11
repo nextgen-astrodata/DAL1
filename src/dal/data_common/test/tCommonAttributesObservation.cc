@@ -26,11 +26,12 @@ using DAL::CommonAttributesObservation;
 /*!
   \file tCommonAttributesObservation.cc
 
+  \ingroup DAL
   \ingroup data_common
 
   \brief A collection of test routines for the CommonAttributesObservation class
  
-  \author Lars Baehren
+  \author Lars B&auml;hren
  
   \date 2010/12/03
 */
@@ -48,13 +49,40 @@ int test_constructors ()
 {
   std::cout << "\n[tCommonAttributesObservation::test_constructors]\n" << std::endl;
 
-  int nofFailedTests (0);
+  int nofFailedTests   = 0;
+  std::string obsID    = "1234567890";
+  double freqMin       = 30;
+  double freqMax       = 80;
+  std::string freqUnit = "MHz";
   
   std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
-    CommonAttributesObservation newObject;
+    CommonAttributesObservation attr;
     //
-    newObject.summary(); 
+    attr.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Testing argumented constructor ..." << std::endl;
+  try {
+    CommonAttributesObservation attr (obsID);
+    //
+    attr.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  std::cout << "[2] Testing argumented constructor ..." << std::endl;
+  try {
+    CommonAttributesObservation attr (obsID,
+				      freqMin,
+				      freqMax,
+				      freqUnit);
+    //
+    attr.summary(); 
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;

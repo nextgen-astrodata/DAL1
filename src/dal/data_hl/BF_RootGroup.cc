@@ -151,22 +151,19 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                      summary
   
   void BF_RootGroup::summary (std::ostream &os,
-			    bool const &showAttributes)
+			      bool const &showAttributes)
   {
     os << "[BF_RootGroup] Summary of internal parameters." << std::endl;
-    os << "-- Filename                    = " << itsFilename            << std::endl;
-    os << "-- Location ID                 = " << location_p            << std::endl;
-    os << "-- nof. attributes             = " << attributes_p.size()   << std::endl;
-    os << "-- nof. primary pointings      = " << nofPrimaryPointings() << std::endl;
-    os << "-- nof. SysLog groups          = " << itsSystemLog.size()       << std::endl;
-    os << "-- nof. PrimaryPointing groups = " << itsSubarrayPointings.size() << std::endl;
-
+    os << "-- Filename                  = " << itsFilename           << std::endl;
+    os << "-- Location ID               = " << location_p            << std::endl;
+    os << "-- nof. attributes           = " << attributes_p.size()   << std::endl;
+    os << "-- nof. SysLog groups        = " << itsSystemLog.size()   << std::endl;
+    os << "-- nof. primary pointings    = " << nofPrimaryPointings() << std::endl;
+    
     if (showAttributes) {
       os << "-- Attributes              = " << attributes_p          << std::endl;
     }
   }
-  
-  
   
   // ============================================================================
   //
