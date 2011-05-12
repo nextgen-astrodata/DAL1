@@ -40,60 +40,7 @@ if (NOT PYTHON_FOUND)
   endif (NOT PYTHON_ROOT_DIR)
   
   foreach (_pythonRelease 2.7 2.6 2.5 2.4)
-    
-    ##___________________________________________________________________________
-    ## Check for the header files
-    
-    find_path (PYTHON_INCLUDES patchlevel.h modsupport.h
-      HINTS ${PYTHON_ROOT_DIR}
-      PATHS
-      /Library/Frameworks/Python.framework/Versions/${_pythonRelease}
-      ${DAL_FIND_PATHS}
-      PATH_SUFFIXES
-      include/python${_pythonRelease}
-      include/python
-      include
-      NO_DEFAULT_PATH
-      )
-    
-    ## include path for: Python.h
-    
-    find_path (PYTHON_PYTHON_H Python.h
-      HINTS ${PYTHON_ROOT_DIR}
-      PATHS
-      /Library/Frameworks/Python.framework/Versions/${_pythonRelease}
-      ${DAL_FIND_PATHS}
-      PATH_SUFFIXES
-      include/python${_pythonRelease}
-      include/python
-      include
-      NO_DEFAULT_PATH
-      )
-    if (PYTHON_PYTHON_H)
-      list (APPEND PYTHON_INCLUDES ${PYTHON_PYTHON_H})
-    endif (PYTHON_PYTHON_H)
-    
-    ## clean up the list of include directories
-    
-    if (PYTHON_INCLUDES)
-      list (REMOVE_DUPLICATES PYTHON_INCLUDES)
-    endif (PYTHON_INCLUDES)
-    
-    ##___________________________________________________________________________
-    ## Check for the library
-    
-    find_library (PYTHON_LIBRARIES python${_pythonRelease} python
-      HINTS ${PYTHON_ROOT_DIR}
-      PATHS
-      /Library/Frameworks/Python.framework/Versions/${_pythonRelease}
-      ${DAL_FIND_PATHS}
-      PATH_SUFFIXES lib
-      NO_DEFAULT_PATH
-      )
-    
-    ##___________________________________________________________________________
-    ## Check for the executable
-    
+
     find_program (PYTHON_EXECUTABLE python${_pythonRelease} python
       HINTS ${PYTHON_ROOT_DIR}
       PATHS
@@ -103,7 +50,36 @@ if (NOT PYTHON_FOUND)
       NO_DEFAULT_PATH
       )
 
-  endforeach (_pythonRelease)
+  endforeach (_pythonRelease 2.7 2.6 2.5 2.4)
+
+  if (PYTHON_EXECUTABLE)
+    execute_process(
+      COMMAND ${PYTHON_EXECUTABLE} -c import\ distutils.sysconfig\;\ print\ distutils.sysconfig.get_config_vars\(\)['prefix']
+      RESULT_VARIABLE PYTHON_PREFIX_ERROR
+      OUTPUT_VARIABLE PYTHON_PREFIX
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    execute_process(
+      COMMAND ${PYTHON_EXECUTABLE} -c import\ distutils.sysconfig\;\ print\ distutils.sysconfig.get_python_version\(\)
+      RESULT_VARIABLE PYTHON_VER_ERROR
+      OUTPUT_VARIABLE PYTHON_VERSION
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    execute_process(
+      COMMAND ${PYTHON_EXECUTABLE} -c import\ distutils.sysconfig\;\ print\ distutils.sysconfig.get_python_inc\(\)
+      RESULT_VARIABLE PYTHON_INC_ERROR
+      OUTPUT_VARIABLE PYTHON_INCLUDES
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  endif (PYTHON_EXECUTABLE)
+
+  if (PYTHON_PREFIX)
+    find_library (PYTHON_LIBRARIES python${PYTHON_VERSION} python
+      PATHS ${PYTHON_PREFIX}
+      PATH_SUFFIXES lib
+      NO_DEFAULT_PATH
+      )
+  endif (PYTHON_PREFIX)
 
   ##_____________________________________________________________________________
   ## Test Python library for:
