@@ -19,7 +19,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <data_hl/TBBraw.h>
+#include "TBBraw.h"
 
 namespace DAL {  // Namespace DAL -- begin
   
@@ -110,6 +110,14 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    open_file
   
+  /*!
+    \param filename        -- Name of the file to open.
+    \param observer        -- Name(s) of the observer(s).
+    \param project         -- Name of the project.
+    \parma observation_id  -- Unique identifier for the observation.
+    \param filterSelection -- Filter selection for the frequency band.
+    \param telescope       -- Name of the telescope.
+  */
   bool TBBraw::open_file (std::string const &filename,
 			  std::string const &observer,
 			  std::string const &project,
@@ -118,10 +126,8 @@ namespace DAL {  // Namespace DAL -- begin
 			  std::string const &telescope)
   {
     filename_p = filename;
-    /* Store the common attributes attached to the root group of the file */
 
-    CommonAttributesProject attrProject = commonAttributes_p.attributesProject();
-    attrProject.setProjectTitle (project);
+    /* Store the common attributes attached to the root group of the file */
 
     CommonAttributesObservation attribObs = commonAttributes_p.attributesObservation();
     attribObs.setObservationID (observation_id);
@@ -129,6 +135,8 @@ namespace DAL {  // Namespace DAL -- begin
     commonAttributes_p.setObserver (observer);
     commonAttributes_p.setFilterSelection (filterSelection);
     commonAttributes_p.setTelescope(telescope);
+    commonAttributes_p.setProjectTitle (project);
+
     /* Open the file */
     return open_file();
   };

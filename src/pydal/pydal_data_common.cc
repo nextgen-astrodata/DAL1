@@ -33,7 +33,6 @@
 #include "pydal.h"
 
 using DAL::CommonAttributes;
-using DAL::CommonAttributesProject;
 using DAL::CommonAttributesObservation;
 using DAL::Filename;
 using DAL::HDF5Hyperslab;
@@ -66,37 +65,25 @@ void export_CommonAttributes ()
 	  "Get the name of the telescope.")
     .def( "setTelescope", &CommonAttributes::setTelescope,
 	  "Set the name of the telescope.")
-    ;
-}
-
-//_____________________________________________________________________________
-//                                                      CommonAttributesProject
-
-void export_CommonAttributesProject () 
-{
-  bpl::class_<CommonAttributesProject>("CommonAttributesProject")
-    .def( bpl::init<>())
-    .def( bpl::init<string,string,string,string,string>())
-    .def( bpl::init<CommonAttributesProject>())
-    .def( "projectID", &CommonAttributesProject::projectID,
+    .def( "projectID", &CommonAttributes::projectID,
 	  "Unique identifier for the project.")
-    .def( "setProjectID", &CommonAttributesProject::setProjectID,
+    .def( "setProjectID", &CommonAttributes::setProjectID,
 	  "Set unique identifier for the project.")
-    .def( "projectTitle", &CommonAttributesProject::projectTitle,
+    .def( "projectTitle", &CommonAttributes::projectTitle,
 	  "Get name/title of the project")
-    .def( "setProjectTitle", &CommonAttributesProject::setProjectTitle,
+    .def( "setProjectTitle", &CommonAttributes::setProjectTitle,
 	  "Set name/title of the project")
-    .def( "projectPI", &CommonAttributesProject::projectPI,
+    .def( "projectPI", &CommonAttributes::projectPI,
 	  "Get name of the project's principal investigator")
-    .def( "setProjectPI", &CommonAttributesProject::setProjectPI,
+    .def( "setProjectPI", &CommonAttributes::setProjectPI,
 	  "Set name of the project's principal investigator")
-    .def( "projectCoI", &CommonAttributesProject::projectCoI,
+    .def( "projectCoI", &CommonAttributes::projectCoI,
 	  "Get name(s) of the project's co-PI(s)")
-    .def( "setProjectCoI", &CommonAttributesProject::setProjectCoI,
+    .def( "setProjectCoI", &CommonAttributes::setProjectCoI,
 	  "Set name(s) of the project's co-PI(s)")
-    .def( "projectContact", &CommonAttributesProject::projectContact,
+    .def( "projectContact", &CommonAttributes::projectContact,
 	  "Get names/Email-addresses of the project's primary contact person(s)")
-    .def( "setProjectContact", &CommonAttributesProject::setProjectContact,
+    .def( "setProjectContact", &CommonAttributes::setProjectContact,
 	  "Set names/Email-addresses of the project's primary contact person(s)")
     ;
 }

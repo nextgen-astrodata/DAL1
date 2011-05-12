@@ -32,7 +32,6 @@
 #include <data_common/Filename.h>
 #include <data_common/HDF5CommonInterface.h>
 #include <data_common/AttributesInterface.h>
-#include <data_common/CommonAttributesProject.h>
 #include <data_common/CommonAttributesObservation.h>
 
 namespace DAL { // Namespace DAL -- begin
@@ -99,9 +98,20 @@ namespace DAL { // Namespace DAL -- begin
     std::string itsTelescope;
     //! Name(s) of the observer(s)
     std::string itsObserver;
+    /*________________________________________________________________
+      Common LOFAR attributes for description of project 
+    */
+    //! Unique identifier for the project
+    std::string itsProjectID;
+    //! Name of the project
+    std::string itsProjectTitle;
+    //! Name of the project's principal investigator
+    std::string itsProjectPI;
+    //! Name(s) of the project's co-PI(s)
+    std::string itsProjectCoI;
+    //! Names/Email-addresses of the project's primary contact person(s)
+    std::string itsProjectContact;
 
-    //! Common LOFAR attributes for description of project
-    CommonAttributesProject itsAttributesProject;
     //! Common LOFAR attributes for description of observation
     CommonAttributesObservation itsAttributesObservation;
 
@@ -135,9 +145,6 @@ namespace DAL { // Namespace DAL -- begin
     CommonAttributes (Filename const &filename,
 		      std::string const &filetype,
 		      std::string const &filedate);
-
-    //! Argumented constructor
-    CommonAttributes (CommonAttributesProject const &attributesProject);
 
     //! Argumented constructor
     CommonAttributes (CommonAttributesObservation const &attributesObservation);
@@ -230,13 +237,50 @@ namespace DAL { // Namespace DAL -- begin
       itsObserver = observer;
     }
 
-    //! Common LOFAR attributes for description of project
-    CommonAttributesProject attributesProject () const {
-      return itsAttributesProject;
+    //! Unique identifier for the project
+    inline std::string projectID () const {
+      return itsProjectID;
+    }
+    //! Set unique identifier for the project
+    inline void setProjectID (std::string const &id) {
+      itsProjectID = id;
     }
 
-    //! Common LOFAR attributes for description of project
-    void setAttributesProject (CommonAttributesProject const &attributesProject);
+    //! Name of the project
+    inline std::string projectTitle () const {
+      return itsProjectTitle;
+    }
+    //! Set name of the project
+    inline void setProjectTitle (std::string const &title) {
+      itsProjectTitle = title;
+    }
+
+    //! Name of the project's principal investigator
+    inline std::string projectPI () const {
+      return itsProjectPI;
+    }
+    //! Set name of the project's principal investigator
+    inline void setProjectPI (std::string const &projectPI) {
+      itsProjectPI = projectPI;
+    }
+
+    //! Name(s) of the project's co-PI(s)
+    inline std::string projectCoI () const {
+      return itsProjectCoI;
+    }
+    //! Set name(s) of the project's co-PI(s)
+    inline void setProjectCoI (std::string const &projectCoI) {
+      itsProjectCoI = projectCoI;
+    }
+
+    //! Get names/Email-addresses of the project's primary contact person(s)
+    inline std::string projectContact () const {
+      return itsProjectContact;
+    }
+    //! Set names/Email-addresses of the project's primary contact person(s)
+    inline void setProjectContact (std::string const &contact) {
+      itsProjectContact = contact;
+    }
     
     //! Common LOFAR attributes for description of project
     void setAttributesProject (std::string const &projectID,

@@ -126,9 +126,16 @@ namespace DAL { // Namespace DAL -- begin
     itsFiletype            = other.itsFiletype;
     itsFiledate            = other.itsFiledate;
     itsTelescope           = other.itsTelescope;
-
-    itsAttributesProject   = other.itsAttributesProject;
-
+    /*________________________________________________________________
+      Common LOFAR attributes for description of project 
+    */
+    itsProjectID      = other.itsProjectID;
+    itsProjectTitle   = other.itsProjectTitle;
+    itsProjectPI      = other.itsProjectPI;
+    itsProjectCoI     = other.itsProjectCoI;
+    itsProjectContact = other.itsProjectContact;
+    /*________________________________________________________________
+    */
     itsObserver            = other.itsObserver;
     itsAntennaSet          = other.itsAntennaSet;
     itsFilterSelection     = other.itsFilterSelection;
@@ -150,14 +157,6 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                         setAttributesProject
   
-  void CommonAttributes::setAttributesProject (CommonAttributesProject const &attributesProject)
-  {
-    itsAttributesProject = attributesProject;
-  }
-
-  //_____________________________________________________________________________
-  //                                                         setAttributesProject
-  
   /*!
     \param projectID      -- Unique identifier for the project
     \param projectTitle   -- Name of the project
@@ -172,13 +171,11 @@ namespace DAL { // Namespace DAL -- begin
 					       std::string const &projectCoI,
 					       std::string const &projectContact)
   {
-    CommonAttributesProject attributes (projectID,
-					projectTitle,
-					projectPI,
-					projectCoI,
-					projectContact);
-    
-    setAttributesProject (attributes);
+    setProjectID (projectID);
+    setProjectTitle (projectTitle);
+    setProjectPI (projectPI);
+    setProjectCoI (projectCoI);
+    setProjectContact (projectContact);
   }
   
   //_____________________________________________________________________________
@@ -271,10 +268,19 @@ namespace DAL { // Namespace DAL -- begin
     HDF5Attribute::write( groupID, "FILEDATE",             itsFiledate );
     HDF5Attribute::write( groupID, "TELESCOPE",            itsTelescope );
     HDF5Attribute::write( groupID, "OBSERVER",             itsObserver );
-
-    itsAttributesProject.h5write(groupID);
+    /*________________________________________________________________
+      Common LOFAR attributes for description of project 
+    */
+    HDF5Attribute::write( groupID, "PROJECT_ID",           itsProjectID );
+    HDF5Attribute::write( groupID, "PROJECT_TITLE",        itsProjectTitle );
+    HDF5Attribute::write( groupID, "PROJECT_PI",           itsProjectPI );
+    HDF5Attribute::write( groupID, "PROJECT_CO_I",         itsProjectCoI );
+    HDF5Attribute::write( groupID, "PROJECT_CONTACT",      itsProjectContact );
+    /*________________________________________________________________
+    */
     itsAttributesObservation.h5write(groupID);
-
+    /*________________________________________________________________
+    */
     HDF5Attribute::write( groupID, "ANTENNA_SET",          itsAntennaSet );
     HDF5Attribute::write( groupID, "FILTER_SELECTION",     itsFilterSelection );
     HDF5Attribute::write( groupID, "CLOCK_FREQUENCY",      itsClockFrequency );
@@ -305,8 +311,16 @@ namespace DAL { // Namespace DAL -- begin
     DAL::h5get_attribute( groupID, "FILEDATE",              itsFiledate );
     DAL::h5get_attribute( groupID, "TELESCOPE",             itsTelescope );
     DAL::h5get_attribute( groupID, "OBSERVER",              itsObserver );
-
-    itsAttributesProject.h5read (groupID);
+    /*________________________________________________________________
+      Common LOFAR attributes for description of project 
+    */
+    DAL::h5get_attribute( groupID, "PROJECT_ID",      itsProjectID );
+    DAL::h5get_attribute( groupID, "PROJECT_TITLE",   itsProjectTitle );
+    DAL::h5get_attribute( groupID, "PROJECT_PI",      itsProjectPI );
+    DAL::h5get_attribute( groupID, "PROJECT_CO_I",    itsProjectCoI );
+    DAL::h5get_attribute( groupID, "PROJECT_CONTACT", itsProjectContact );
+    /*________________________________________________________________
+    */
     itsAttributesObservation.h5read (groupID);
 
     DAL::h5get_attribute( groupID, "ANTENNA_SET",           itsAntennaSet );

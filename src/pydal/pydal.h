@@ -80,7 +80,6 @@ void export_Coordinate ();
 // === data_common ==============================================================
 
 #include <data_common/CommonAttributes.h>
-#include <data_common/CommonAttributesProject.h>
 #include <data_common/Filename.h>
 #include <data_common/HDF5Hyperslab.h>
 #include <data_common/Timestamp.h>
@@ -90,8 +89,6 @@ void export_Coordinate ();
 void export_Filename ();
 //! Bindings for DAL::CommonAttributes
 void export_CommonAttributes ();
-//! Bindings for DAL::CommonAttributesProject
-void export_CommonAttributesProject ();
 //! Bindings for DAL::CommonAttributesObservation
 void export_CommonAttributesObservation ();
 //! Bindings for DAL::Timestamp
