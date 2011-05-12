@@ -73,6 +73,16 @@ if (NOT PYTHON_FOUND)
     )
   endif (PYTHON_EXECUTABLE)
 
+  if (APPLE)
+    # When Python <= 2.6 is installed as a framework, then libpython isn't
+    # conveniently located in the directory given by Python as a prefix.
+    # Instead, try and guess the prefix based on the location of the
+    # executable.
+    get_filename_component (APPLE_PYTHON_PREFIX ${PYTHON_EXECUTABLE} PATH)
+    string (REPLACE "bin" "" APPLE_PYTHON_PREFIX ${APPLE_PYTHON_PREFIX})
+    set (PYTHON_PREFIX ${PYTHON_PREFIX} ${APPLE_PYTHON_PREFIX})
+  endif (APPLE)
+
   if (PYTHON_PREFIX)
     find_library (PYTHON_LIBRARIES python${PYTHON_VERSION} python
       PATHS ${PYTHON_PREFIX}
