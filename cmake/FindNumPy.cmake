@@ -23,198 +23,44 @@
 # The following variables are set when NUMPY is found:
 #  NUMPY_FOUND      = Set to true, if all components of NUMPY have been found.
 #  NUMPY_INCLUDES   = Include path for the header files of NUMPY
-#  NUMPY_LIBRARIES  = Link these to use NUMPY
-#  NUMPY_LFLAGS     = Linker flags (optional)
 
 if (NOT NUMPY_FOUND)
-
-  ## Initialize variables
-  
-  set (NUMPY_FOUND     FALSE )
-  set (NUMPY_INCLUDES  ""    )
-  set (NUMPY_LIBRARIES ""    )
-
-  ## Check for Python
 
   if (NOT PYTHON_FOUND)
     set (PYTHON_FIND_QUIETLY ${NUMPY_FIND_QUIETLY})
     include (FindPython_DAL)
   endif (NOT PYTHON_FOUND)
 
-  ## Hints for location where to search
+  set (NUMPY_FOUND FALSE)
+  set (NUMPY_INCLUDES "")
 
-  if (PYTHON_SITE_PACKAGES_DIR)
-    list (APPEND NUMPY_ROOT_DIR ${PYTHON_SITE_PACKAGES_DIR})
-  endif (PYTHON_SITE_PACKAGES_DIR)
-
-  if (NOT NUMPY_ROOT_DIR)
-    set (NUMPY_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
-  endif (NOT NUMPY_ROOT_DIR)
-
-  ##_____________________________________________________________________________
-  ## Check for the header files
-
-  set (_siteVersion "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
-
-  ## _numpyconfig.h
-  
-  find_path (NUMPY_NUMPYCONFIG_H numpy/_numpyconfig.h
-    HINTS ${NUMPY_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
-    PATH_SUFFIXES
-    include
-    core/include
-    numpy/core/include
-    site-packages/numpy/core/include
-    python${_siteVersion}/site-packages/numpy/core/include
-    lib/python${_siteVersion}/site-packages/numpy/core/include
-    python/include
-    python/core/include
-    python/numpy/core/include
-    NO_DEFAULT_PATH
+  if (PYTHON_EXECUTABLE)
+    execute_process(
+      COMMAND ${PYTHON_EXECUTABLE} -c import\ numpy\;\ print\ numpy.get_include\(\)
+      RESULT_VARIABLE NUMPY_FIND_ERROR
+      OUTPUT_VARIABLE NUMPY_INCLUDES
+      OUTPUT_STRIP_TRAILING_WHITESPACE
     )
+  endif (PYTHON_EXECUTABLE)
 
-  if (NUMPY_NUMPYCONFIG_H)
-    list (APPEND NUMPY_INCLUDES ${NUMPY_NUMPYCONFIG_H})
-    list (APPEND NUMPY_INCLUDES ${NUMPY_NUMPYCONFIG_H}/numpy)
-  endif (NUMPY_NUMPYCONFIG_H)
-
-  ## arrayobject.h
-
-  find_path (NUMPY_ARRAYOBJECT_H numpy/arrayobject.h
-    HINTS ${NUMPY_ROOT_DIR}
-    PATHS ${DAL_FIND_PATHS}
-    PATH_SUFFIXES
-    include
-    core/include
-    numpy/core/include
-    site-packages/numpy/core/include
-    python${_siteVersion}/site-packages/numpy/core/include
-    lib/python${_siteVersion}/site-packages/numpy/core/include
-    python/include
-    python/core/include
-    python/numpy/core/include
-    NO_DEFAULT_PATH
-    )
-
-  if (NUMPY_ARRAYOBJECT_H)
-    list (APPEND NUMPY_INCLUDES ${NUMPY_ARRAYOBJECT_H})
-    list (APPEND NUMPY_INCLUDES ${NUMPY_ARRAYOBJECT_H}/numpy)
-  endif (NUMPY_ARRAYOBJECT_H)
-
-  ## Clean up list of include directories
-
-  list (REMOVE_DUPLICATES NUMPY_INCLUDES)
-
-  ##_____________________________________________________________________________
-  ## Check for the library
-  
-  ## temporarily remove "lib" prefix when searching for the modules
-  set (_numpyLibPrefixes ${CMAKE_FIND_LIBRARY_PREFIXES})
-  set (CMAKE_FIND_LIBRARY_PREFIXES "")
-  
-  foreach (_numpyLibrary multiarray scalarmath)
-    
-    ## Convert library name to CMake variable
-    string (TOUPPER ${_numpyLibrary} _numpy_var)
-    
-    ## Search for the library
-    find_library (NUMPY_${_numpy_var}_LIBRARY ${_numpyLibrary}
-      HINTS ${NUMPY_ROOT_DIR}
-      PATHS ${DAL_FIND_PATHS}
-      PATH_SUFFIXES
-      core
-      numpy/core
-      site-packages/numpy/core
-      python${_siteVersion}/site-packages/numpy/core
-      lib/python${_siteVersion}/site-packages/numpy/core
-      )
-    
-    ## If library was found, add it to the list of libraries
-    if (NUMPY_${_numpy_var}_LIBRARY)
-      list (APPEND NUMPY_LIBRARIES ${NUMPY_${_numpy_var}_LIBRARY})
-    endif (NUMPY_${_numpy_var}_LIBRARY)
-    
-  endforeach (_numpyLibrary)
-
-  ## reinstate library prefixes
-  set (CMAKE_FIND_LIBRARY_PREFIXES ${_numpyLibPrefixes})
-
-  ##_____________________________________________________________________________
-  ## If NUMPY_INCLUDES and NUMPY_LIBRARIES can not be found in the paths,
-  ## use python interpreter itself to locate them
-  
-  if (NOT NUMPY_INCLUDES)
-#      execute_process (
-#	COMMAND ${PYTHON_EXECUTABLE}
-#        ARGS "-c 'import numpy; print numpy.get_include()'"
-#        OUTPUT_VARIABLE NUMPY_INCLUDES
-#        RETURN_VALUE NUMPY_NOT_FOUND )
-  
-#      if (NUMPY_INCLUDE_DIR MATCHES "numpy")
-#        set (NUMPY_FOUND TRUE)
-#      else (NUMPY_INCLUDE_DIR MATCHES "numpy")
-#        set (NUMPY_FOUND FALSE)
-#      endif (NUMPY_INCLUDE_DIR MATCHES "numpy")
-      
-      if (NUMPY_INCLUDE_DIR MATCHES "Traceback")
-      # Did not successfully include numpy
-        set(NUMPY_FOUND FALSE)
-      else (NUMPY_INCLUDE_DIR MATCHES "Traceback")
-      # successful
-        set (NUMPY_FOUND TRUE)
-        set (NUMPY_INCLUDE_DIR ${NUMPY_INCLUDE_DIR} CACHE PATH "Numpy include path")
-      endif (NUMPY_INCLUDE_DIR MATCHES "Traceback")
-  
-      if (NUMPY_FOUND)
-        if (NOT NUMPY_FIND_QUIETLY)
-          message (STATUS "Numpy headers found")
-        endif (NOT NUMPY_FIND_QUIETLY)
-      else (NUMPY_FOUND)
-        if (NUMPY_FIND_REQUIRED)
-          message (FATAL_ERROR "Numpy headers missing")
-        endif (NUMPY_FIND_REQUIRED)
-      endif (NUMPY_FOUND)
-  
-      mark_as_advanced (NUMPY_INCLUDE_DIR)
-  endif (NOT NUMPY_INCLUDES)  
-  
-  ##_____________________________________________________________________________
-  ## Actions taken when all components have been found
-  
-  if (NUMPY_INCLUDES AND NUMPY_LIBRARIES)
+  if (NOT NUMPY_FIND_ERROR)
     set (NUMPY_FOUND TRUE)
-  else (NUMPY_INCLUDES AND NUMPY_LIBRARIES)
+    if (NOT NUMPY_FIND_QUIETLY)
+      message (STATUS "Found components for NumPy")
+      message (STATUS "NUMPY_INCLUDES  = ${NUMPY_INCLUDES}")
+    endif (NOT NUMPY_FIND_QUIETLY)
+  else (NOT NUMPY_FIND_ERROR)
     set (NUMPY_FOUND FALSE)
     if (NOT NUMPY_FIND_QUIETLY)
-      if (NOT NUMPY_INCLUDES)
-	message (STATUS "Unable to find NUMPY header files!")
-      endif (NOT NUMPY_INCLUDES)
-      if (NOT NUMPY_LIBRARIES)
-	message (STATUS "Unable to find NUMPY library files!")
-      endif (NOT NUMPY_LIBRARIES)
+      message (FATAL_ERROR "Attempt to import NumPy failed!")
     endif (NOT NUMPY_FIND_QUIETLY)
-  endif (NUMPY_INCLUDES AND NUMPY_LIBRARIES)
-  
-  if (NUMPY_FOUND)
-    if (NOT NUMPY_FIND_QUIETLY)
-      message (STATUS "Found components for NUMPY")
-      message (STATUS "NUMPY_INCLUDES  = ${NUMPY_INCLUDES}")
-      message (STATUS "NUMPY_LIBRARIES = ${NUMPY_LIBRARIES}")
-    endif (NOT NUMPY_FIND_QUIETLY)
-  else (NUMPY_FOUND)
-    if (NUMPY_FIND_REQUIRED)
-      message (FATAL_ERROR "Could not find NUMPY!")
-    endif (NUMPY_FIND_REQUIRED)
-  endif (NUMPY_FOUND)
-  
+  endif (NOT NUMPY_FIND_ERROR)
+
   ##_____________________________________________________________________________
   ## Mark advanced variables
-  
+
   mark_as_advanced (
-    NUMPY_ROOT_DIR
     NUMPY_INCLUDES
-    NUMPY_LIBRARIES
     )
-  
+
 endif (NOT NUMPY_FOUND)
