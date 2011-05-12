@@ -13,10 +13,17 @@ if (dal_exampledata_hdf5)
     message (STATUS "Checking for dataset ${_dataset_filename}")
     
     ## copy file to build directory
-    file (COPY ${_dal_data}
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
-      )
-    
+    if (${CMAKE_VERSION} VERSION_LESS 2.8.4)
+      execute_process(
+	COMMAND cp ${_dal_data} .
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	)
+    else (${CMAKE_VERSION} VERSION_LESS 2.8.4)
+      file (COPY ${_dal_data}
+	DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+	)
+    endif(${CMAKE_VERSION} VERSION_LESS 2.8.4)
+
     ## Set variable pointing to location of test data
     find_file (HAVE_${_dataset_name} ${_dataset_filename}
       PATHS ${CMAKE_CURRENT_BINARY_DIR}
