@@ -185,12 +185,22 @@ namespace DAL { // Namespace DAL -- begin
   {
     os << "[CommonAttributes] Summary of internal parameters." << std::endl;
     
-    os << "-- GROUPTYPE              = " << itsGroupType            << std::endl;
-    os << "-- FILENAME               = " << itsFilename            << std::endl;
-    os << "-- FILETYPE               = " << itsFiletype             << std::endl;
-    os << "-- FILEDATE               = " << itsFiledate            << std::endl;
-    os << "-- TELESCOPE              = " << itsTelescope           << std::endl;
-    os << "-- OBSERVER               = " << itsObserver            << std::endl;
+    os << "-- GROUPTYPE              = " << itsGroupType       << std::endl;
+    os << "-- FILENAME               = " << itsFilename        << std::endl;
+    os << "-- FILETYPE               = " << itsFiletype        << std::endl;
+    os << "-- FILEDATE               = " << itsFiledate        << std::endl;
+    os << "-- TELESCOPE              = " << itsTelescope       << std::endl;
+    os << "-- OBSERVER               = " << itsObserver        << std::endl;
+    /*________________________________________________________________
+      Common LOFAR attributes for description of project 
+    */
+    os << "-- PROJECT_ID             = " << itsProjectID       << std::endl;
+    os << "-- PROJECT_TITLE          = " << itsProjectTitle    << std::endl;
+    os << "-- PROJECT_PI             = " << itsProjectPI       << std::endl;
+    os << "-- PROJECT_CO_I           = " << itsProjectCoI      << std::endl;
+    os << "-- PROJECT_CONTACT        = " << itsProjectContact  << std::endl;
+    /*________________________________________________________________
+     */
     os << "-- ANTENNA_SET            = " << itsAntennaSet           << std::endl;
     os << "-- FILTER_SELECTION       = " << itsFilterSelection      << std::endl;
     os << "-- CLOCK_FREQUENCY        = " << itsClockFrequency       << std::endl;
@@ -221,6 +231,11 @@ namespace DAL { // Namespace DAL -- begin
     itsAttributes.insert("FILEDATE");
     itsAttributes.insert("TELESCOPE");
     itsAttributes.insert("OBSERVER");
+    itsAttributes.insert("PROJECT_ID");
+    itsAttributes.insert("PROJECT_TITLE");
+    itsAttributes.insert("PROJECT_PI");
+    itsAttributes.insert("PROJECT_CO_I");
+    itsAttributes.insert("PROJECT_CONTACT");
     itsAttributes.insert("ANTENNA_SET");
     itsAttributes.insert("FILTER_SELECTION");
     itsAttributes.insert("CLOCK_FREQUENCY");
@@ -237,11 +252,16 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<std::string> stations (1,undefined);
     //
     itsGroupType           = "Root";
-    itsFilename           = undefined;
-    itsFiletype           = undefined;
-    itsFiledate           = undefined;
-    itsTelescope          = "LOFAR";
-    itsObserver           = undefined;
+    itsFilename            = undefined;
+    itsFiletype            = undefined;
+    itsFiledate            = undefined;
+    itsTelescope           = "LOFAR";
+    itsObserver            = undefined;
+    itsProjectID           = undefined;
+    itsProjectTitle        = undefined;
+    itsProjectPI           = undefined;
+    itsProjectCoI          = undefined;
+    itsProjectContact      = undefined;
     itsAntennaSet          = undefined;
     itsFilterSelection     = undefined;
     itsClockFrequency      = 0.0;
