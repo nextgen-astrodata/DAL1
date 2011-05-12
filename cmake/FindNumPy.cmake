@@ -26,7 +26,10 @@
 
 if (NOT NUMPY_FOUND)
 
-  include (FindPython_DAL)
+  if (NOT PYTHON_FOUND)
+    set (PYTHON_FIND_QUIETLY ${NUMPY_FIND_QUIETLY})
+    include (FindPython_DAL)
+  endif (NOT PYTHON_FOUND)
 
   set (NUMPY_FOUND FALSE)
   set (NUMPY_INCLUDES "")
