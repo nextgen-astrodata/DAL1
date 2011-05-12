@@ -34,38 +34,30 @@ if (NOT NUMPY_FOUND)
   if (PYTHON_EXECUTABLE)
     execute_process(
       COMMAND ${PYTHON_EXECUTABLE} -c import\ numpy\;\ print\ numpy.get_include\(\)
+      RESULT_VARIABLE NUMPY_FIND_ERROR
       OUTPUT_VARIABLE NUMPY_INCLUDES
       OUTPUT_STRIP_TRAILING_WHITESPACE
     )
   endif (PYTHON_EXECUTABLE)
 
-  if (NUMPY_INCLUDES)
+  if (NOT NUMPY_FIND_ERROR)
     set (NUMPY_FOUND TRUE)
-  else (NUMPY_INCLUDES)
-    set (NUMPY_FOUND FALSE)
     if (NOT NUMPY_FIND_QUIETLY)
-      if (NOT NUMPY_INCLUDES)
-	message (STATUS "Unable to find NUMPY header files!")
-      endif (NOT NUMPY_INCLUDES)
-    endif (NOT NUMPY_FIND_QUIETLY)
-  endif (NUMPY_INCLUDES)
-  
-  if (NUMPY_FOUND)
-    if (NOT NUMPY_FIND_QUIETLY)
-      message (STATUS "Found components for NUMPY")
+      message (STATUS "Found components for NumPy")
       message (STATUS "NUMPY_INCLUDES  = ${NUMPY_INCLUDES}")
     endif (NOT NUMPY_FIND_QUIETLY)
-  else (NUMPY_FOUND)
-    if (NUMPY_FIND_REQUIRED)
-      message (FATAL_ERROR "Could not find NUMPY!")
-    endif (NUMPY_FIND_REQUIRED)
-  endif (NUMPY_FOUND)
-  
+  else (NOT NUMPY_FIND_ERROR)
+    set (NUMPY_FOUND FALSE)
+    if (NOT NUMPY_FIND_QUIETLY)
+      message (FATAL_ERROR "Attempt to import NumPy failed!")
+    endif (NOT NUMPY_FIND_QUIETLY)
+  endif (NOT NUMPY_FIND_ERROR)
+
   ##_____________________________________________________________________________
   ## Mark advanced variables
-  
+
   mark_as_advanced (
     NUMPY_INCLUDES
     )
-  
+
 endif (NOT NUMPY_FOUND)
