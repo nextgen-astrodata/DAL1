@@ -41,7 +41,7 @@ if (NOT PYTHON_FOUND)
   
   foreach (_pythonRelease 2.7 2.6 2.5 2.4)
 
-    find_program (PYTHON_EXECUTABLE python${_pythonRelease} python
+    find_program (PYTHON_EXECUTABLE python python${_pythonRelease}
       HINTS ${PYTHON_ROOT_DIR}
       PATHS
       /Library/Frameworks/Python.framework/Versions/${_pythonRelease}
