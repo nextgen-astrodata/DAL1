@@ -1,15 +1,15 @@
 
 CONTENTS:
 
-  - Introduction
-  - Getting the source code
-  - Organization of the source code
-  - External dependencies
-  - Configuration, build and installation
-  - Further reading
+  1. Introduction
+  2. Getting the source code
+  3. Organization of the source code
+  4. External dependencies
+  5. Configuration, build and installation
+  6. Further reading
 
 _________________________________________________________________________________
->>> Introduction
+>>> 1. Introduction
 
 The size and complexity of astronomical data are growing at relentless rates.
 This increase is especially apparent in the radio community as evidenced by the 
@@ -29,7 +29,7 @@ module.
 
 
 _________________________________________________________________________________
->>> Getting the source code
+>>> 2. Getting the source code
 
 As of Feb 15, 2001 the DAL can be cloned directly from the master repository
 hosted on Github (http://github.com):
@@ -41,7 +41,7 @@ instructions as described in the section "Configuration and build" below.
 
 
 _________________________________________________________________________________
->>> Organization of the source code
+>>> 3. Organization of the source code
 
 The components of the DAL is organized into the following directory structure:
 
@@ -72,7 +72,7 @@ The components of the DAL is organized into the following directory structure:
 
 
 _________________________________________________________________________________
->>> External dependencies
+>>> 4. External dependencies
 
 To build the DAL from the sources you need a number of installed software
 packages and utilities:
@@ -94,7 +94,7 @@ packages and utilities:
   * Python, >= 2.6 (www.python.org)
 
 _________________________________________________________________________________
->>> Configuration, build and installation
+>>> 5. Configuration, build and installation
 
 The DAL uses the CMake (www.cmake.org) Cross-Platform Makefile Generator for 
 configuration and control of the build.
@@ -173,7 +173,7 @@ For further details and additional configuration options, consult the Doxygen-ba
 documentation.
 
 _________________________________________________________________________________
->>> Further reading
+>>> 6. Further reading
 
 Further detailed information regarding
 
