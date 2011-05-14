@@ -23,12 +23,14 @@
 #include <core/dalDataset.h>
 #include <data_hl/TBB_StationGroup.h>
 
+#ifdef DAL_WITH_CASACORE
 #include <casa/Arrays/ArrayIO.h>
 #include <casa/Arrays/Vector.h>
 #include <casa/BasicSL/String.h>
 #include <casa/Containers/Record.h>
 #include <casa/HDF5/HDF5File.h>
 #include <casa/HDF5/HDF5Record.h>
+#endif
 
 // Namespace usage
 using std::cerr;
@@ -405,6 +407,8 @@ int test_attributes (std::string const &filename)
 //_______________________________________________________________________________
 //                                                             test_export2record
 
+#ifdef DAL_WITH_CASACORE
+
 /*!
   \brief Test export of the attributes to a casa::Record container
 
@@ -499,6 +503,8 @@ int test_export2record (std::string const &filename)
   
   return nofFailedTests;
 }
+
+#endif
 
 //_______________________________________________________________________________
 //                                                                test_parameters
@@ -610,6 +616,8 @@ int test_parameters (std::string const &filename)
 //_______________________________________________________________________________
 //                                                                      test_data
 
+#ifdef DAL_WITH_CASACORE
+
 /*!
   \brief Test retrieval of the actual time-series data form the dipoles
   
@@ -708,6 +716,8 @@ int test_data (std::string const &filename)
   return nofFailedTests;
 }
 
+#endif
+
 //_______________________________________________________________________________
 //                                                                           main
 
@@ -740,14 +750,15 @@ int main (int argc,
     nofFailedTests += test_attributes (filename);
     // Test access to the parameters
     nofFailedTests += test_parameters (filename);
-    // Test access to the data
-    nofFailedTests += test_data (filename);
 
     // Specific tests which require casacore
     
-// #ifdef DAL_WITH_CASA
-//     nofFailedTests += test_export2record (filename);
-// #endif
+#ifdef DAL_WITH_CASACORE
+    // Test export of attributes to casa::Record
+    nofFailedTests += test_export2record (filename);
+    // Test access to the data
+    nofFailedTests += test_data (filename);
+#endif
     
   } else {
     cout << "\n[tTBB_StationGroup] Skipping tests with input dataset.\n"

@@ -18,11 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#ifdef DAL_WITH_CASACORE
 #include <casa/Arrays/ArrayIO.h>
 #include <casa/Arrays/Matrix.h>
 #include <casa/BasicSL/String.h>
 #include <casa/HDF5/HDF5File.h>
 #include <casa/HDF5/HDF5Record.h>
+#endif
 
 #include <data_hl/TBB_Timeseries.h>
 
@@ -189,6 +191,7 @@ int test_attributes (std::string const &filename)
     nofFailedTests++;
   }
 
+#ifdef DAL_WITH_CASACORE
   std::cout << "[2] Attributes attached to the station group ..." << endl;
   try {
     casa::Matrix<double>       stationPositionValue;
@@ -216,6 +219,7 @@ int test_attributes (std::string const &filename)
     std::cerr << message << endl;
     nofFailedTests++;
   }
+#endif
 
   return nofFailedTests;
 }
@@ -307,6 +311,8 @@ int test_methods (std::string const &filename)
 //_______________________________________________________________________________
 //                                                                      test_data
 
+#ifdef DAL_WITH_CASACORE
+
 /*!
   \brief Test retrieval of TBB data
 
@@ -389,6 +395,8 @@ int test_data (std::string const &filename)
   return nofFailedTests;
 }
 
+#endif
+
 //_______________________________________________________________________________
 //                                                                           main
 
@@ -423,8 +431,10 @@ int main (int argc,
     nofFailedTests += test_parameters (filename);
     // Test test various methods provided by the class
     nofFailedTests += test_methods (filename);
+#ifdef DAL_WITH_CASACORE
     // Test access to the data stored within the dipole datasets
     nofFailedTests += test_data (filename);
+#endif
   } else {
     std::cout << "\n[tTBB_Timeseries] Skipping tests with input dataset.\n"
 	      << endl;

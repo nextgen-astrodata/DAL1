@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
   if ( DAL::FAIL == ds.open( argv[1] ) )
     std::cerr << "ERROR: couldn't open file: " << argv[1] << std::endl;
 
-  string id = argv[2];
+  std::string id = argv[2];
   int start = 25;
   int length = 20;
   short data[length];
