@@ -48,6 +48,8 @@
 //_______________________________________________________________________________
 //                                                                    export_data
 
+#ifdef DAL_WITH_CASACORE
+
 /*!
   \brief Export the antenna-/channeldata to an ASCII-table
 
@@ -94,6 +96,8 @@ void export_data (std::string const &filename,
   std::cout << "done" << std::endl;
 
 }
+
+#endif
 
 //_______________________________________________________________________________
 //                                                                    export_data
@@ -154,6 +158,8 @@ void export_data (std::string const &filename,
 //_______________________________________________________________________________
 //                                                                   compare_data
 
+#ifdef DAL_WITH_CASACORE
+
 /*!
   \brief Element-by-element comparison of the data in the two arrays
 
@@ -182,6 +188,8 @@ void compare_data (casa::Vector<short> const &array1D,
       cout << "   This corresponds to " << (100.0*nofDifferent)/nelem << "% of the data." << endl;
     }
 }
+
+#endif
 
 //_______________________________________________________________________________
 //                                                              test_constructors
@@ -224,6 +232,8 @@ int test_constructors (std::string const &filename)
 
 //_______________________________________________________________________________
 //                                                               test_channeldata
+
+#ifdef DAL_WITH_CASACORE
 
 /*!
   \brief Test retrieving and working with the channeldata
@@ -357,8 +367,12 @@ int test_channeldata (std::string const &filename)
   return nofFailedTests;
 }
 
+#endif
+
 //_______________________________________________________________________________
 //                                                                test_statistics
+
+#ifdef DAL_WITH_CASACORE
 
 /*!
   \brief Generate some statistics for the input data
@@ -407,6 +421,8 @@ int test_statistics (std::string const &filename)
   return nofFailedTests;
 }
 
+#endif
+
 //_______________________________________________________________________________
 //                                                                           main
 
@@ -437,10 +453,14 @@ int main (int argc, char *argv[])
   if (haveDataset) {
     // Test the constructors for a LopesEvent object
     nofFailedTests += test_constructors (filename);
+
+#ifdef DAL_WITH_CASACORE
     // Test access to the data
     nofFailedTests += test_channeldata (filename);
     // Generate some statistics from the data
     nofFailedTests += test_statistics (filename);
+#endif
+
   }
   
   return nofFailedTests;
