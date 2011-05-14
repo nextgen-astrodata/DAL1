@@ -45,6 +45,8 @@ if (NOT PYTHON_FOUND)
       HINTS ${PYTHON_ROOT_DIR}
       PATHS
       /Library/Frameworks/Python.framework/Versions/${_pythonRelease}
+      /sw/Library/Frameworks/Python.framework/Versions/${_pythonRelease}
+      /opt/local/Library/Frameworks/Python.framework/Versions/${_pythonRelease}
       ${DAL_FIND_PATHS}
       PATH_SUFFIXES bin
       NO_DEFAULT_PATH

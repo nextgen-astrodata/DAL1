@@ -57,21 +57,6 @@ if (NOT NUMPY_FOUND)
     endif (NOT NUMPY_FIND_RESULT)
   endif (PYTHON_EXECUTABLE)
   
-  ## Follow-up check in case the above method failed
-  
-  if (NOT NUMPY_INCLUDES)
-    ## Version number used as part of the path
-    set (_siteVersion ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR})
-    ## Search for the header file
-    find_path (NUMPY_INCLUDES numpy/arrayobject.h
-      PATHS ${DAL_FIND_PATHS}
-      PATH_SUFFIXES
-      lib/python${_siteVersion}/site-packages/numpy/core/include
-      python${_siteVersion}/site-packages/numpy/core/include
-      site-packages/numpy/core/include
-      )
-  endif (NOT NUMPY_INCLUDES)
-
   ##_____________________________________________________________________________
   ## Actions taken after completing the search
 
