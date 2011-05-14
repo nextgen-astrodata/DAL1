@@ -119,13 +119,15 @@ namespace DAL {  // Namespace DAL -- begin
     //! Is this object attached to a file?
     bool attached_p;
     //! Pointer to the (header-)data
-    lopesevent *headerpoint_p;
+    lopesevent *itsHeaderData;
     //! Number of antennas in the event
     int nofAntennas_p;
+    //! Vector with the antenna IDs
+    std::vector<int> AntennaIDs_p;
+#ifdef DAL_WITH_CASACORE
     //! Matrix with the data itself
     casa::Matrix<short> channeldata_p;
-    //! Vector with the antenna IDs
-    casa::Vector<int> AntennaIDs_p;
+#endif 
     
   public:
     
@@ -175,6 +177,7 @@ namespace DAL {  // Namespace DAL -- begin
       return nofAntennas_p;
     }
     
+#ifdef DAL_WITH_CASACORE
     /*!
       \brief Get the number of data points stored
       
@@ -208,6 +211,7 @@ namespace DAL {  // Namespace DAL -- begin
     {
       return channeldata_p.column(channel);
     }
+#endif
     
     // === Methods ==============================================================
     
@@ -251,7 +255,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   inline unsigned int version ()
   {
-    return headerpoint_p->version;
+    return itsHeaderData->version;
   }
   
   /*!
@@ -261,7 +265,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   inline unsigned int length ()
   {
-    return headerpoint_p->length;
+    return itsHeaderData->length;
   }
   
   /*!
@@ -271,7 +275,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   inline unsigned int blocksize ()
   {
-    return headerpoint_p->blocksize;
+    return itsHeaderData->blocksize;
   }
   
   /*!
@@ -281,7 +285,7 @@ namespace DAL {  // Namespace DAL -- begin
   */
   inline int presync ()
   {
-    return headerpoint_p->presync;
+    return itsHeaderData->presync;
   }
   
   /*!
@@ -292,7 +296,7 @@ namespace DAL {  // Namespace DAL -- begin
     */
     inline unsigned int dataType ()
     {
-      return headerpoint_p->type;
+      return itsHeaderData->type;
     }
 
     /*!
@@ -302,7 +306,7 @@ namespace DAL {  // Namespace DAL -- begin
     */
     inline unsigned int eventClass ()
     {
-      return headerpoint_p->evclass;
+      return itsHeaderData->evclass;
     }
 
     /*!
@@ -312,7 +316,7 @@ namespace DAL {  // Namespace DAL -- begin
     */
     inline unsigned int observatory ()
     {
-      return headerpoint_p->observatory;
+      return itsHeaderData->observatory;
     }
 
     /*!
@@ -322,7 +326,7 @@ namespace DAL {  // Namespace DAL -- begin
     */
     inline unsigned int timestampJDR ()
     {
-      return headerpoint_p->JDR;
+      return itsHeaderData->JDR;
     }
 
     /*!
@@ -332,7 +336,7 @@ namespace DAL {  // Namespace DAL -- begin
     */
     inline unsigned int timestampTL ()
     {
-      return headerpoint_p->TL;
+      return itsHeaderData->TL;
     }
 
     /*!
@@ -342,7 +346,7 @@ namespace DAL {  // Namespace DAL -- begin
     */
     inline unsigned int timestampLTL ()
     {
-      return headerpoint_p->LTL;
+      return itsHeaderData->LTL;
     }
 
     // ------------------------------------------------------------------- Feedback
