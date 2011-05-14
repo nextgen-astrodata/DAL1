@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <data_hl/TBB_Timeseries.h>
+#include "TBB_Timeseries.h"
 
 using std::cout;
 using std::endl;
@@ -612,7 +612,6 @@ namespace DAL {  // Namespace DAL -- begin
   //                                                                 trigger_type
 
 #ifdef DAL_WITH_CASA
-
   casa::Vector<casa::String> TBB_Timeseries::trigger_type ()
   {
     uint nofStations = stationGroups_p.size();
@@ -627,12 +626,10 @@ namespace DAL {  // Namespace DAL -- begin
 
     return trigger;
   }
-
 #else 
-  
   std::vector<std::string> TBB_Timeseries::trigger_type ()
   {
-    unsigned int nofStations = stationGroups_p.size();
+    uint nofStations = stationGroups_p.size();
     std::vector<std::string> trigger (nofStations);
     std::map<std::string,TBB_StationGroup>::iterator it;
     int n (0);
@@ -644,14 +641,12 @@ namespace DAL {  // Namespace DAL -- begin
 
     return trigger;
   }
-  
 #endif
   
   //_____________________________________________________________________________
   //                                                               trigger_offset
 
 #ifdef DAL_WITH_CASA
-
   casa::Vector<double> TBB_Timeseries::trigger_offset ()
   {
     uint nofStations = nofStationGroups();
@@ -666,6 +661,24 @@ namespace DAL {  // Namespace DAL -- begin
 
     return trigger;
   }
+#else
+  std::vector<double> TBB_Timeseries::trigger_offset ()
+  {
+    uint nofStations = nofStationGroups();
+    std::vector<double> trigger (nofStations);
+    std::map<std::string,TBB_StationGroup>::iterator it;
+    int n (0);
+
+    for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
+      it->second.getAttribute("TRIGGER_OFFSET",trigger[n]);
+      ++n;
+    }
+
+    return trigger;
+  }
+#endif
+
+#ifdef DAL_WITH_CASA
 
   //_____________________________________________________________________________
   //                                                       station_position_value
@@ -705,26 +718,6 @@ namespace DAL {  // Namespace DAL -- begin
     }
     
     return units;
-  }
-
-  //_____________________________________________________________________________
-  //                                                       station_position_frame
-
-  casa::Vector<casa::String> TBB_Timeseries::station_position_frame ()
-  {
-    uint nofStations = nofStationGroups();
-    casa::Vector<casa::String> frame (nofStations);
-    std::map<std::string,TBB_StationGroup>::iterator it;
-    std::string tmp;
-    int n (0);
-
-    for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      it->second.getAttribute("STATION_POSITION_FRAME",tmp);
-      frame(n) = tmp;
-      ++n;
-    }
-
-    return frame;
   }
 
   //_____________________________________________________________________________
@@ -820,64 +813,46 @@ namespace DAL {  // Namespace DAL -- begin
 
     return directions;
   }
-  
-#else
-  
-  //_____________________________________________________________________________
-  //                                                                 trigger_type
-
-  std::vector<std::string> TBB_Timeseries::trigger_type ()
-  {
-    uint nofStations = stationGroups_p.size();
-    std::vector<std::string> trigger (nofStations);
-    std::map<std::string,TBB_StationGroup>::iterator it;
-    int n (0);
-
-    for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      trigger[n] = (*it).second.trigger_type();
-      ++n;
-    }
-
-    return trigger;
-  }
+#endif
 
   //_____________________________________________________________________________
-  //                                                               trigger_offset
+  //                                                       station_position_frame
 
-  std::vector<double> TBB_Timeseries::trigger_offset ()
+#ifdef DAL_WITH_CASA
+  casa::Vector<casa::String> TBB_Timeseries::station_position_frame ()
   {
     uint nofStations = nofStationGroups();
-    std::vector<double> trigger (nofStations);
+    casa::Vector<casa::String> frame (nofStations);
     std::map<std::string,TBB_StationGroup>::iterator it;
+    std::string tmp;
     int n (0);
 
     for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      trigger[n] = (*it).second.trigger_offset();
-      ++n;
-    }
-
-    return trigger;
-  }
-
-  // ----------------------------------------------------- station_position_frame
-
-  std::vector<std::string> TBB_Timeseries::station_position_frame ()
-  {
-    uint nofStations = nofStationGroups();
-    std::vector<std::string> frame (nofStations);
-    std::map<std::string,TBB_StationGroup>::iterator it;
-    int n (0);
-
-    for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
-      frame[n] = (*it).second.station_position_frame();
+      it->second.getAttribute("STATION_POSITION_FRAME",tmp);
+      frame(n) = tmp;
       ++n;
     }
 
     return frame;
   }
+#else
+  std::vector<std::string> TBB_Timeseries::station_position_frame ()
+  {
+    uint nofStations = nofStationGroups();
+    std::vector<std::string> frame (nofStations);
+    std::map<std::string,TBB_StationGroup>::iterator it;
+    std::string tmp;
+    int n (0);
 
+    for (it = stationGroups_p.begin(); it!=stationGroups_p.end(); ++it) {
+      it->second.getAttribute("STATION_POSITION_FRAME",tmp);
+      frame[n] = tmp;
+      ++n;
+    }
+
+    return frame;
+  }
 #endif
-
 
   // ============================================================================
   //
