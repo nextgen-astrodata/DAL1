@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2007 by Joseph Masters                                  *
  *   jmasters@science.uva.nl                                               *
  *                                                                         *
@@ -34,6 +31,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <fstream>
+#include <string>
 
 #include <core/dalDataset.h>
 
@@ -78,273 +76,272 @@ namespace DAL {
     <h3>Example(s)</h3>
 
   */
-  class TBB
+  class TBB {
+    
+    //___________________________________________________________________________
+    // Constant values and structures
+    
+    //! Structure for the storage of data for an individual antenna
+    struct AntennaStruct
     {
-
-      //___________________________________________________________________________
-      // Constant values and structures
-
-      //! Structure for the storage of data for an individual antenna
-      struct AntennaStruct
-        {
-          //! Counter for the frame number
-          unsigned int frameno;
-          //! Identifier for the RSP board
-          unsigned int rsp_id;
-          //! Identifier for the RCU board
-          unsigned int rcu_id;
-          //! Time for the first sample of the dipole dataset
-          unsigned int time;
-          //! Offset in number of samples
-          unsigned int sample_nr;
-          //! Number of samples sent within a frame of data
-          unsigned int samples_per_frame;
-          //! Type of antenna feed (dipole type)
-          char feed[16];
-          //! Antenna position
-          double ant_position[ 3 ];
-          //! Antenna orientation
-          double ant_orientation[ 3 ];
-          //! The data themselves
-          hvl_t data[1];
-        };
-
-      //! Structure storing the buffer which is getting written to output
-      struct writebuffer
-        {
-          AntennaStruct antenna;
-        };
-
-      //! Sample when using TBB in time-series mode
-      struct TransientSample
-        {
-          Int16 value;
-        };
-
-      //! Sample when using TBB in spectral mode
-      struct SpectralSample
-        {
-	  std::complex<Int16> value;
-        };
-
-      //! Structure storing metadata stored in the TBB header block
-      struct TBB_Header
-        {
-          //! The identifier to the station
-          unsigned char stationid;
-          //! The identifier for the RSP board
-          unsigned char rspid;
-          //! The identifier for the RCU board
-          unsigned char rcuid;
-          //! The sample frequency in the A/D conversion
-          unsigned char sample_freq;
-          UInt32 seqnr;
-          Int32 time;
-          UInt32 sample_nr;
-          //! The number of samples per frame
-          UInt16 n_samples_per_frame;
-          UInt16 n_freq_bands;
-          char bandsel[64];
-          Int16 spare;
-          UInt16 crc;
-        };
-
-      //! Name of the output HDF5 file
-      string name;
-      //! Name of the telescope
-      std::string telescope_p;
-      //! Name of the observer
-      std::string observer_p;
-      //! Name of the project
-      std::string project_p;
-      //! Observation ID
-      std::string observation_id_p;
-      //! Telescope observation mode
-      std::string observationMode_p;
-      //! Status tracking
-      int status;
-      UInt32 seqnrLast_p;
-      //! Is the system big-endian?
-      bool bigendian_p;
-      time_t sampleTime_p;  // For date
-      dalDataset * dataset;
-      std::vector<dalGroup> station;
-      fd_set readSet;
-      struct timeval timeoutStart_p;
-      struct timeval timeoutRead_p;
+      //! Counter for the frame number
+      unsigned int frameno;
+      //! Identifier for the RSP board
+      unsigned int rsp_id;
+      //! Identifier for the RCU board
+      unsigned int rcu_id;
+      //! Time for the first sample of the dipole dataset
+      unsigned int time;
+      //! Offset in number of samples
+      unsigned int sample_nr;
+      //! Number of samples sent within a frame of data
+      unsigned int samples_per_frame;
+      //! Type of antenna feed (dipole type)
+      char feed[16];
+      //! Antenna position
+      double ant_position[ 3 ];
+      //! Antenna orientation
+      double ant_orientation[ 3 ];
+      //! The data themselves
+      hvl_t data[1];
+    };
+    
+    //! Structure storing the buffer which is getting written to output
+    struct writebuffer
+    {
+      AntennaStruct antenna;
+    };
+    
+    //! Sample when using TBB in time-series mode
+    struct TransientSample
+    {
+      Int16 value;
+    };
+    
+    //! Sample when using TBB in spectral mode
+    struct SpectralSample
+    {
+      std::complex<Int16> value;
+    };
+    
+    //! Structure storing metadata stored in the TBB header block
+    struct TBB_Header
+    {
+      //! The identifier to the station
+      unsigned char stationid;
+      //! The identifier for the RSP board
+      unsigned char rspid;
+      //! The identifier for the RCU board
+      unsigned char rcuid;
+      //! The sample frequency in the A/D conversion
+      unsigned char sample_freq;
+      UInt32 seqnr;
+      Int32 time;
+      UInt32 sample_nr;
+      //! The number of samples per frame
+      UInt16 n_samples_per_frame;
+      UInt16 n_freq_bands;
+      char bandsel[64];
+      Int16 spare;
+      UInt16 crc;
+    };
+    
+    //! Name of the output HDF5 file
+    std::string name;
+    //! Name of the telescope
+    std::string telescope_p;
+    //! Name of the observer
+    std::string observer_p;
+    //! Name of the project
+    std::string itsProject;
+    //! Observation ID
+    std::string observation_id_p;
+    //! Telescope observation mode
+    std::string observationMode_p;
+    //! Status tracking
+    int status;
+    UInt32 seqnrLast_p;
+    //! Is the system big-endian?
+    bool bigendian_p;
+    time_t sampleTime_p;  // For date
+    dalDataset * dataset;
+    std::vector<dalGroup> station;
+    fd_set readSet;
+    struct timeval timeoutStart_p;
+    struct timeval timeoutRead_p;
 #ifdef USE_INPUT_BUFFER
-      //!pointers (array indices) for the last buffer processed and the last buffer written
-      int inBufProcessID,inBufStorID;
-      //!the Input Buffer
-      //    char inputBuffer_P[INPUT_BUFFER_SIZE][UDP_PACKET_BUFFER_SIZE];
-      char * inputBuffer_P;
-      //!pointer to the UDP-datagram
-      char *udpBuff_p;
-      //!maximum number of frames waiting in the vBuf while reading
-      int maxWaitingFrames;
+    //!pointers (array indices) for the last buffer processed and the last buffer written
+    int inBufProcessID,inBufStorID;
+    //!the Input Buffer
+    //    char inputBuffer_P[INPUT_BUFFER_SIZE][UDP_PACKET_BUFFER_SIZE];
+    char * inputBuffer_P;
+    //!pointer to the UDP-datagram
+    char *udpBuff_p;
+    //!maximum number of frames waiting in the vBuf while reading
+    int maxWaitingFrames;
 #else
-      //!buffer for the UDP-datagram
-      char udpBuff_p[UDP_PACKET_BUFFER_SIZE];
+    //!buffer for the UDP-datagram
+    char udpBuff_p[UDP_PACKET_BUFFER_SIZE];
 #endif
-      //!header of the TBB-frame
-      TBB_Header header;
-      //!header of the TBB-frame
-      TBB_Header *headerp_p;
-      int rr;
-      int main_socket;
-      struct sockaddr_in incoming_addr;
-      unsigned int socklen;
-      vector<string> stations;
-      dalGroup * stationGroup_p;
-      dalArray * dipoleArray_p;
-      vector<string> dipoles;
-      //! Definition of array dimensions (shape)
-      vector<int> dims;
-      int offset_p;
-      vector<int> cdims;
-      //! Name of the HDF5 group storing data for a station
-      //char * stationstr;
-      //! Unique identifier for an individual dipole
-      char uid[10];
+    //!header of the TBB-frame
+    TBB_Header header;
+    //!header of the TBB-frame
+    TBB_Header *headerp_p;
+    int rr;
+    int main_socket;
+    struct sockaddr_in incoming_addr;
+    unsigned int socklen;
+    std::vector<std::string> stations;
+    dalGroup * stationGroup_p;
+    dalArray * dipoleArray_p;
+    std::vector<std::string> dipoles;
+    //! Definition of array dimensions (shape)
+    std::vector<int> dims;
+    int offset_p;
+    std::vector<int> cdims;
+    //! Name of the HDF5 group storing data for a station
+    //char * stationstr;
+    //! Unique identifier for an individual dipole
+    char uid[10];
 #ifdef USE_INPUT_BUFFER
-      //! Read data from the socket and/or set udpBuff_p to next frame in buffer
-      int readSocketBuffer();
+    //! Read data from the socket and/or set udpBuff_p to next frame in buffer
+    int readSocketBuffer();
 #else
-      //! Read data from a socket
-      int readsocket( unsigned int nbytes,
-                      char* buf);
+    //! Read data from a socket
+    int readsocket( unsigned int nbytes,
+		    char* buf);
 #endif
-      UInt32 payload_crc;
-      TransientSample tran_sample;
-      SpectralSample spec_sample;
-      // for file i/o
-      std::ifstream::pos_type size;
-      unsigned char * memblock;
-      std::fstream * rawfile_p;
-      Int16 real_part, imag_part;
-
-    public:
-
-      bool first_sample;
+    UInt32 payload_crc;
+    TransientSample tran_sample;
+    SpectralSample spec_sample;
+    // for file i/o
+    std::ifstream::pos_type size;
+    unsigned char * memblock;
+    std::fstream * rawfile_p;
+    Int16 real_part, imag_part;
+    
+  public:
+    
+    bool first_sample;
 #ifdef USE_INPUT_BUFFER
-      int noFramesDropped;
+    int noFramesDropped;
 #endif
-      //___________________________________________________________________________
-      // Construction/Destruction
-
-      //! Constructor
-      TBB (string const &outfile);
-      //! Constructor
-      TBB (string const &outfile,
-           string const &telescope,
-           string const &observer,
-           string const &project);
-      //! Destructor
-      ~TBB();
-
-      //___________________________________________________________________________
-      // Parameter access
-
-      /*!
-        \brief Get the name of the telescope
-        \return telescope -- The name of the telescope
-      */
-      inline std::string telescope () const {
-	return telescope_p;
-      }
-      /*!
-        \brief Get the name of the observer
-        \return observer -- The name of the observer
-      */
-      inline std::string observer () const {
-	return observer_p;
-      }
-      /*!
-        \brief Get the name of the project
-        \return project -- The name of the project
-      */
-      inline std::string project () const {
-	return project_p;
-      }
-      //! Get the identifier for the observation
-      inline std::string observation_id () const {
-	return observation_id_p;
-      }
-      //! Set the telescope observation mode
-      inline std::string observation_mode () const {
-	return observationMode_p;
-      }
-      /*!
-        \brief Set the name of the telescope
-        \param telescope -- The name of the telescope
-      */
-      inline void setTelescope (std::string const &telescope) {
-        telescope_p = telescope;
-      }
-      /*!
-        \brief Set the name of the observer
-        \param observer -- The name of the observer
-      */
-      inline void setObserver (std::string const &observer) {
-        observer_p = observer;
-      }
-      /*!
-        \brief Set the name of the project
-        \param project -- The name of the project
-      */
-      inline void setProject (std::string const &project) {
-        project_p = project;
-      }
-      //! Set the identifier for the observation
-      inline void setObservation_id (std::string const &observation_id) {
-        observation_id_p = observation_id;
-      }
-      //! Set the telescope observation mode
-      inline void setObservation_mode (std::string const &observation_mode) {
-        observationMode_p = observation_mode;
-      }
-      
-      //! Get the time-out before dropping socket connection at connect
-      inline void timeoutStart (unsigned int &time_sec,
-                                unsigned int &time_usec)
-      {
-        time_sec  = timeoutStart_p.tv_sec;
-        time_usec = timeoutStart_p.tv_usec;
-      }
-      //! Set the time-out before dropping socket connection at connect
-      void setTimeoutStart (double const &timeout=-1.0);
-
-      //! Set the time-out before dropping socket connection at connect
-      inline void setTimeoutStart (unsigned int const &time_sec,
-                                   unsigned int const &time_usec)
-      {
-        timeoutStart_p.tv_sec  = time_sec;
-        timeoutStart_p.tv_usec = time_usec;
-      }
-
-      /*!
-        \brief Get the time-out before dropping socket connection while reading
-        \retval time_sec  --
-        \retval time_usec --
-      */
-      inline void timeoutRead (unsigned int &time_sec,
-                               unsigned int &time_usec)
-      {
-        time_sec  = timeoutRead_p.tv_sec;
-        time_usec = timeoutRead_p.tv_usec;
-      }
-
-      //! Set the time-out before dropping socket connection while reading
-      void setTimeoutRead (double const &timeout=1.0);
-
-      //! Set the time-out before dropping socket connection while reading
-      inline void setTimeoutRead (unsigned int const &time_sec,
-                                  unsigned int const &time_usec)
-      {
-        timeoutRead_p.tv_sec  = time_sec;
-        timeoutRead_p.tv_usec = time_usec;
-      }
-
+    //___________________________________________________________________________
+    // Construction/Destruction
+    
+    //! Constructor
+    TBB (std::string const &outfile);
+    //! Constructor
+    TBB (std::string const &outfile,
+	 std::string const &telescope,
+	 std::string const &observer,
+	 std::string const &project);
+    //! Destructor
+    ~TBB();
+    
+    //___________________________________________________________________________
+    // Parameter access
+    
+    /*!
+      \brief Get the name of the telescope
+      \return telescope -- The name of the telescope
+    */
+    inline std::string telescope () const {
+      return telescope_p;
+    }
+    /*!
+      \brief Get the name of the observer
+      \return observer -- The name of the observer
+    */
+    inline std::string observer () const {
+      return observer_p;
+    }
+    /*!
+      \brief Get the name of the project
+      \return project -- The name of the project
+    */
+    inline std::string project () const {
+      return itsProject;
+    }
+    //! Get the identifier for the observation
+    inline std::string observation_id () const {
+      return observation_id_p;
+    }
+    //! Set the telescope observation mode
+    inline std::string observation_mode () const {
+      return observationMode_p;
+    }
+    /*!
+      \brief Set the name of the telescope
+      \param telescope -- The name of the telescope
+    */
+    inline void setTelescope (std::string const &telescope) {
+      telescope_p = telescope;
+    }
+    /*!
+      \brief Set the name of the observer
+      \param observer -- The name of the observer
+    */
+    inline void setObserver (std::string const &observer) {
+      observer_p = observer;
+    }
+    /*!
+      \brief Set the name of the project
+      \param project -- The name of the project
+    */
+    inline void setProject (std::string const &project) {
+      itsProject = project;
+    }
+    //! Set the identifier for the observation
+    inline void setObservation_id (std::string const &observation_id) {
+      observation_id_p = observation_id;
+    }
+    //! Set the telescope observation mode
+    inline void setObservation_mode (std::string const &observation_mode) {
+      observationMode_p = observation_mode;
+    }
+    
+    //! Get the time-out before dropping socket connection at connect
+    inline void timeoutStart (unsigned int &time_sec,
+			      unsigned int &time_usec)
+    {
+      time_sec  = timeoutStart_p.tv_sec;
+      time_usec = timeoutStart_p.tv_usec;
+    }
+    //! Set the time-out before dropping socket connection at connect
+    void setTimeoutStart (double const &timeout=-1.0);
+    
+    //! Set the time-out before dropping socket connection at connect
+    inline void setTimeoutStart (unsigned int const &time_sec,
+				 unsigned int const &time_usec)
+    {
+      timeoutStart_p.tv_sec  = time_sec;
+      timeoutStart_p.tv_usec = time_usec;
+    }
+    
+    /*!
+      \brief Get the time-out before dropping socket connection while reading
+      \retval time_sec  --
+      \retval time_usec --
+    */
+    inline void timeoutRead (unsigned int &time_sec,
+			     unsigned int &time_usec)
+    {
+      time_sec  = timeoutRead_p.tv_sec;
+      time_usec = timeoutRead_p.tv_usec;
+    }
+    
+    //! Set the time-out before dropping socket connection while reading
+    void setTimeoutRead (double const &timeout=1.0);
+    
+    //! Set the time-out before dropping socket connection while reading
+    inline void setTimeoutRead (unsigned int const &time_sec,
+				unsigned int const &time_usec)
+    {
+      timeoutRead_p.tv_sec  = time_sec;
+      timeoutRead_p.tv_usec = time_usec;
+    }
+    
       //___________________________________________________________________________
       // Methods
 
@@ -366,9 +363,12 @@ namespace DAL {
       //! Create new station group
       void makeNewStation(char *, TBB_Header *);
       //! Create new dipole dataset
-      void makeNewDipole(string, dalGroup *, TBB_Header *);
+      void makeNewDipole (std::string, dalGroup *, TBB_Header *);
+      //! Was the data recorded in transients mode
       bool transientMode();
+      //! Fix the date
       void fixDate();
+      //! Fix the date
       void fixDateNew();
       bool processTransientSocketDataBlock();
       bool processSpectralSocketDataBlock();

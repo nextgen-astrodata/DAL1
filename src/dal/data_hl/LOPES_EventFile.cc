@@ -48,7 +48,7 @@ namespace DAL {  // Namespace DAL -- begin
     nofAntennas_p = 0;
     itsFilename   = "";
     attached_p    = false;
-    headerpoint_p = (lopesevent_v1*)malloc(LOPESEV_HEADERSIZE);
+    itsHeaderData = (lopesevent_v1*)malloc(LOPESEV_HEADERSIZE);
   }
   
   // ============================================================================
@@ -65,7 +65,7 @@ namespace DAL {  // Namespace DAL -- begin
   void LOPES_EventFile::destroy()
   {
     // release the memory allocated for the header structure
-    free(headerpoint_p);
+    free(itsHeaderData);
   }
   
   // ============================================================================
@@ -84,98 +84,91 @@ namespace DAL {  // Namespace DAL -- begin
   */
   bool LOPES_EventFile::attachFile (std::string filename)
   {
-    int i (0);
-    unsigned int ui (0);
-    unsigned int tmpchan (0);
-    unsigned int tmplen (0);
+    int i                = 0;
+    unsigned int ui      = 0;
+    unsigned int tmpchan = 0;
+    unsigned int tmplen  = 0;
     short *tmppoint;
     
     FILE *fd = fopen(filename.c_str(),"r");
-    if (fd == NULL)
-      {
-	cerr << "LOPESEventIn:attachFile: Can't open file: " << filename << endl;
-	return false;
-      };
+
+    if (fd == NULL) {
+      cerr << "LOPESEventIn:attachFile: Can't open file: " << filename << endl;
+      return false;
+    };
     attached_p = false;
-    ui = fread(headerpoint_p, 1, LOPESEV_HEADERSIZE, fd);
-    if ( (ui != LOPESEV_HEADERSIZE ) || (headerpoint_p->type != TIM40) )
-      {
-	cerr << "LOPESEventIn:attachFile: Inconsitent file: " << filename << endl;
+    ui = fread(itsHeaderData, 1, LOPESEV_HEADERSIZE, fd);
+    if ( (ui != LOPESEV_HEADERSIZE ) || (itsHeaderData->type != TIM40) ) {
+      cerr << "LOPESEventIn:attachFile: Inconsitent file: " << filename << endl;
+      fclose(fd);
+      return false;
+    };
+    nofAntennas_p =0;
+    fread(&tmpchan, 1, sizeof(unsigned int), fd);
+    while (!feof(fd)) {
+      fread(&tmplen, 1, sizeof(unsigned int), fd);
+      if (itsHeaderData->blocksize==0) {
+	itsHeaderData->blocksize = tmplen;
+      };
+      if (itsHeaderData->blocksize != tmplen) {
+	cerr << "LOPESEventIn:attachFile: Inconsitent file (different blocksizes): "
+	     << filename
+	     << endl;
 	fclose(fd);
 	return false;
       };
-    nofAntennas_p =0;
-    fread(&tmpchan, 1, sizeof(unsigned int), fd);
-    while (!feof(fd))
-      {
-	fread(&tmplen, 1, sizeof(unsigned int), fd);
-	if (headerpoint_p->blocksize==0)
-	  {
-	    headerpoint_p->blocksize = tmplen;
-	  };
-	if (headerpoint_p->blocksize != tmplen)
-	  {
-	    cerr << "LOPESEventIn:attachFile: Inconsitent file (different blocksizes): "
-		 << filename
-		 << endl;
-	    fclose(fd);
-	    return false;
-	  };
-	i = fseek(fd,tmplen*sizeof(short),SEEK_CUR);
-	if (i != 0)
-	  {
-	    cerr << "LOPESEventIn:attachFile: Inconsitent file (unexpected end): "
-		 << filename
-		 << " in channel " << tmpchan
-		 << " len:"        << tmplen
-		 << endl;
-	    fclose(fd);
-	    return false;
-	  };
-	nofAntennas_p++;
-	
-	//this will trigger eof condition after last channel;
-	fread(&tmpchan, 1, sizeof(unsigned int), fd);
-      };
-    try
-      {
-	AntennaIDs_p.resize(nofAntennas_p);
-	channeldata_p.resize(headerpoint_p->blocksize,nofAntennas_p);
-	tmppoint = (short*)malloc(headerpoint_p->blocksize*sizeof(short));
-	if (tmppoint == NULL)
-	  {
-	    cerr << "LOPESEventIn:attachFile: Error while allocating temporary memory " << endl;
-	    fclose(fd);
-	    return false;
-	    
-	  };
-	//    clearerr(fd);
-	
-	int antenna (0);
-	unsigned int sample (0);
-	
-	// this should reset the eof condition
-	fseek(fd,LOPESEV_HEADERSIZE,SEEK_SET);
-	for (antenna=0; antenna<nofAntennas_p; antenna++)
-	  {
-	    fread(&tmpchan, 1, sizeof(unsigned int), fd);
-	    fread(&tmplen, 1, sizeof(unsigned int), fd);
-	    AntennaIDs_p(antenna) = (int)tmpchan;
-	    fread(tmppoint, sizeof(short),headerpoint_p->blocksize , fd);
-	    // channel data for antenna i go into column i of the data array
-	    for (sample=0; sample<headerpoint_p->blocksize; sample++)
-	      {
-		channeldata_p(sample,antenna) = tmppoint[sample];
-	      }
-	  };
-	itsFilename = filename;
-	attached_p = true;
-      }
-    catch (std::string message)
-      {
-	cerr << "LOPESEventIn:attachFile: " << message << endl;
+      i = fseek(fd,tmplen*sizeof(short),SEEK_CUR);
+      if (i != 0) {
+	cerr << "LOPESEventIn:attachFile: Inconsitent file (unexpected end): "
+	     << filename
+	     << " in channel " << tmpchan
+	     << " len:"        << tmplen
+	     << endl;
+	fclose(fd);
 	return false;
       };
+      nofAntennas_p++;
+      
+      //this will trigger eof condition after last channel;
+      fread(&tmpchan, 1, sizeof(unsigned int), fd);
+    };
+    try {
+      AntennaIDs_p.resize(nofAntennas_p);
+#ifdef DAL_WITH_CASACORE
+      channeldata_p.resize(itsHeaderData->blocksize,nofAntennas_p);
+#endif
+      tmppoint = (short*)malloc(itsHeaderData->blocksize*sizeof(short));
+      if (tmppoint == NULL) {
+	cerr << "LOPESEventIn:attachFile: Error while allocating temporary memory " << endl;
+	fclose(fd);
+	return false;
+	
+      };
+      
+      int antenna (0);
+      
+      // this should reset the eof condition
+      fseek(fd,LOPESEV_HEADERSIZE,SEEK_SET);
+      for (antenna=0; antenna<nofAntennas_p; antenna++) {
+	fread(&tmpchan, 1, sizeof(unsigned int), fd);
+	fread(&tmplen, 1, sizeof(unsigned int), fd);
+	AntennaIDs_p[antenna] = (int)tmpchan;
+	fread(tmppoint, sizeof(short),itsHeaderData->blocksize , fd);
+	// channel data for antenna i go into column i of the data array
+#ifdef DAL_WITH_CASACORE
+	for (unsigned int sample=0; sample<itsHeaderData->blocksize; sample++)
+	  {
+	    channeldata_p(sample,antenna) = tmppoint[sample];
+	  }
+#endif
+      };
+      itsFilename = filename;
+      attached_p = true;
+    }
+    catch (std::string message) {
+      cerr << "LOPESEventIn:attachFile: " << message << endl;
+      return false;
+    };
     return true;
   }
   
@@ -201,6 +194,8 @@ namespace DAL {  // Namespace DAL -- begin
   short* LOPES_EventFile::data ()
   {
     short *data = NULL;
+
+#ifdef DAL_WITH_CASACORE
     unsigned int nofElements = channeldata_p.nelements();
     
     try {
@@ -209,8 +204,9 @@ namespace DAL {  // Namespace DAL -- begin
     }
     catch (std::string message) {
       std::cerr << "[LOPES_EventFile::channeldata] " << message << std::endl;
-    }
-    
+    }    
+#endif
+
     return data;
   }
   
@@ -220,6 +216,7 @@ namespace DAL {  // Namespace DAL -- begin
   void LOPES_EventFile::data (short *data,
 			      unsigned int const &channel)
   {
+#ifdef DAL_WITH_CASACORE
     // Retrieve the data for the selected channel
     casa::Vector<short> channeldata = LOPES_EventFile::channeldata(channel);
     
@@ -229,6 +226,7 @@ namespace DAL {  // Namespace DAL -- begin
       {
 	data[sample] = channeldata(sample);
       }
+#endif
   }
   
   // ============================================================================
@@ -244,8 +242,9 @@ namespace DAL {  // Namespace DAL -- begin
     os << "-- Object attached to file?          " << attached_p            << endl;
     os << "-- nof. antennas in the file       : " << nofAntennas()         << endl;
     os << "-- Antenna IDs                     : " << AntennaIDs_p          << endl;
+#ifdef DAL_WITH_CASACORE
     os << "-- Shape of the channel data array : " << channeldata_p.shape() << endl;
-    
+#endif    
     // data stored within the header-data structure
     os << "-- LOPES-Event version             : " << version()             << endl;
     os << "-- Length of the dataset [Bytes]   : " << length()              << endl;

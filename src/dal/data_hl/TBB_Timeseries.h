@@ -260,16 +260,19 @@ namespace DAL {  // Namespace DAL -- begin
 #else
     std::vector<std::string> trigger_type ();
 #endif
+
+    //! Time offset from the trigger reference time
+#ifdef DAL_WITH_CASA
+    casa::Vector<double> trigger_offset ();
+#else
+    std::vector<double> trigger_offset ();
+#endif
     
 #ifdef DAL_WITH_CASA
-    //! Time offset from the trigger reference time
-    casa::Vector<double> trigger_offset ();
     //! Get the values of the station position
     casa::Matrix<double> station_position_value ();
     //! Get the physical units of the station positions
     casa::Matrix<casa::String> station_position_unit ();
-    //! Get the reference codes for the frame of the station positions
-    casa::Vector<casa::String> station_position_frame ();
     //! Get the position of the station as a casa::Measure
     casa::Vector<casa::MPosition> station_position ();
     //! Get the values of the beam directions
@@ -282,10 +285,12 @@ namespace DAL {  // Namespace DAL -- begin
     casa::Vector<casa::MDirection> beam_direction ();
     //! Get the antenna position of all selected datasets as casa::Measure
     casa::Vector<casa::MPosition> antenna_position ();
-#else
-    //! Time offset from the trigger reference time
-    std::vector<double> trigger_offset ();
+#endif
+    
     //! Get the reference codes for the frame of the station positions
+#ifdef DAL_WITH_CASA
+    casa::Vector<casa::String> station_position_frame ();
+#else
     std::vector<std::string> station_position_frame ();
 #endif
     

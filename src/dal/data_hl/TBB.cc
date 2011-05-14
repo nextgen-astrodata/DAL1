@@ -34,39 +34,37 @@ namespace DAL {
   /*!
     \param filename -- Name of the output HDF5 dataset to create
   */
-  TBB::TBB( string const& filename )
-      : name (filename)
+  TBB::TBB (std::string const& filename )
+    : name (filename)
   {
     init ();
-
+    
     if ( FAIL == dataset->open( filename.c_str() ) )
       {
         cerr << "Creating new dataset " << filename << endl;
         delete dataset;
         dataset = new dalDataset( filename.c_str(), "HDF5" );
-
+	
         dataset->setAttribute ("TELESCOPE",         telescope_p       );
         dataset->setAttribute ("OBSERVER",          observer_p        );
-        dataset->setAttribute ("PROJECT",           project_p         );
+        dataset->setAttribute ("PROJECT",           itsProject        );
         dataset->setAttribute ("OBSERVATION_ID",    observation_id_p  );
         dataset->setAttribute ("OBSERVATION_MODE",  observationMode_p );
-
+	
       }
     else
       {
         cerr << "Dataset " << filename << " exists." << endl;
-
+	
         stations = dataset->getGroupNames();
-
+	
 #ifdef DAL_DEBUGGING_MESSAGES
         for ( unsigned int ss = 0; ss < stations.size(); ss++ )
           {
             cerr << stations[ss] << " group exists." << endl;
           }
 #endif
-
       }
-
   }
 
   //_____________________________________________________________________________
@@ -78,14 +76,14 @@ namespace DAL {
     \param observer  -- Name of the observer
     \param project   -- Name of the project
   */
-  TBB::TBB (string const &outfile,
-            string const &telescope,
-            string const &observer,
-            string const &project)
+  TBB::TBB (std::string const &outfile,
+            std::string const &telescope,
+            std::string const &observer,
+            std::string const &project)
       : name (outfile),
       telescope_p (telescope),
       observer_p (observer),
-      project_p (project)
+      itsProject (project)
   {
     headerp_p = &header;
   }
@@ -100,7 +98,7 @@ namespace DAL {
 
     telescope_p        = "LOFAR";
     observer_p         = "UNDEFINED";
-    project_p          = "UNDEFINED";
+    itsProject         = "UNDEFINED";
     observation_id_p   = "UNDEFINED";
     observationMode_p  = "UNDEFINED";
 
@@ -751,13 +749,13 @@ namespace DAL {
     stationGroup_p = dataset->createGroup( newStationstr );
 
     std::vector<double> stationPositionValue (3, 0.0);
-    std::vector<string> stationPositionUnit  (3, "m");
-    std::vector<string> stationPositionFrame (1, "ITRF");
+    std::vector<std::string> stationPositionUnit  (3, "m");
+    std::vector<std::string> stationPositionFrame (1, "ITRF");
     double beam_direction_value[2]       = { 0, 90 };
-    std::vector<string> beamDirectionUnit    (2, "deg");
-    std::vector<string> beamDirectionFrame (1, "AZEL");
+    std::vector<std::string> beamDirectionUnit    (2, "deg");
+    std::vector<std::string> beamDirectionFrame (1, "AZEL");
     // Trigger information
-    std::vector<string> triggerType          (1, "UNDEFINED");
+    std::vector<std::string> triggerType     (1, "UNDEFINED");
     std::vector<double> triggerOffset        (1, 0.0);
     std::vector<int> triggeredAntennas       (1, 0);
 
@@ -774,11 +772,11 @@ namespace DAL {
 
     if ( 0 == headerPtr->n_freq_bands ) {
       stationGroup_p->setAttribute ("OBSERVATION_MODE",
-				    std::vector<string>(1,"Transient") );
+				    std::vector<std::string>(1,"Transient") );
     }
     else {
       stationGroup_p->setAttribute ("OBSERVATION_MODE",
-				    std::vector<string>(1,"Sub-band") );
+				    std::vector<std::string>(1,"Sub-band") );
     };
     
     
@@ -801,11 +799,11 @@ namespace DAL {
            dataset will be attached.
     \param headerPtr       -- Pointer to struct with header information.
   */
-  void TBB::makeNewDipole (string newuid,
+  void TBB::makeNewDipole (std::string newuid,
 			   dalGroup * stationGroupPtr,
 			   TBB_Header * headerPtr)
   {
-    vector<int> firstdims;
+    std::vector<int> firstdims;
     firstdims.push_back( 0 );
 
     if ( 0 == headerPtr->n_freq_bands ) {
@@ -822,22 +820,22 @@ namespace DAL {
 								nodata,
 								cdims );
       stationGroupPtr->setAttribute ("OBSERVATION_MODE",
-				     std::vector<string>(1,"Sub-band") );
+				     std::vector<std::string>(1,"Sub-band") );
     }
     
-    std::vector<unsigned int> sid        (1, headerPtr->stationid   );
-    std::vector<unsigned int> rsp        (1, headerPtr->rspid       );
-    std::vector<unsigned int> rcu        (1, headerPtr->rcuid       );
-    std::vector<double> sampleFreqValue  (1, headerPtr->sample_freq );
-    std::vector<string> sampleFreqUnit   (1, "MHz"                  );
-    std::vector<unsigned int> time       (1, headerPtr->time        );
-    std::vector<unsigned int> samp_num   (1, headerPtr->sample_nr   );
+    std::vector<unsigned int> sid               (1, headerPtr->stationid   );
+    std::vector<unsigned int> rsp               (1, headerPtr->rspid       );
+    std::vector<unsigned int> rcu               (1, headerPtr->rcuid       );
+    std::vector<double> sampleFreqValue         (1, headerPtr->sample_freq );
+    std::vector<std::string> sampleFreqUnit     (1, "MHz"                  );
+    std::vector<unsigned int> time              (1, headerPtr->time        );
+    std::vector<unsigned int> samp_num          (1, headerPtr->sample_nr   );
     std::vector<unsigned int> samples_per_frame (1, headerPtr->n_samples_per_frame );
     std::vector<unsigned int> nyquistZone       (1, 1);
     std::vector<double> antennaPositionValue    (3, 0.0);
-    std::vector<string> antennaPositionUnit     (3, "m");
-    std::vector<string> antennaPositionFrame    (1, "ITRF");
-    std::vector<string> feed                    (1, "UNDEFINED");
+    std::vector<std::string> antennaPositionUnit     (3, "m");
+    std::vector<std::string> antennaPositionFrame    (1, "ITRF");
+    std::vector<std::string> feed                    (1, "UNDEFINED");
     
     dipoleArray_p->setAttribute ("STATION_ID",                sid                  );
     dipoleArray_p->setAttribute ("RSP_ID",                    rsp                  );
