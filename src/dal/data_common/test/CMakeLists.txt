@@ -47,5 +47,6 @@ if (H5DUMP_EXECUTABLE)
 endif (H5DUMP_EXECUTABLE)
 
 if (H5LS_EXECUTABLE)
-  add_test (tHDF5Dataset_h5ls ${H5LS_EXECUTABLE} -f -r tHDF5Dataset.h5)
+  add_test (tCommonAttributes_h5ls ${H5LS_EXECUTABLE} tCommonAttributes.h5)
+  add_test (tHDF5Dataset_h5ls      ${H5LS_EXECUTABLE} -f -r tHDF5Dataset.h5)
 endif (H5LS_EXECUTABLE)

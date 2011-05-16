@@ -98,7 +98,7 @@ int test_constructors ()
 }
 
 //_______________________________________________________________________________
-//                                                                test_attributes
+//                                                                   test_methods
 
 /*!
   \brief Test access to the individual attributes
@@ -106,9 +106,9 @@ int test_constructors ()
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_attributes ()
+int test_methods (std::string const &outfile)
 {
-  cout << "\n[tCommonAttributes::test_attributes]\n" << endl;
+  cout << "\n[tCommonAttributes::test_methods]" << endl;
 
   int nofFailedTests (0);
   DAL::Filename filename ("123456789","",DAL::Filename::uv,DAL::Filename::h5);
@@ -116,7 +116,7 @@ int test_attributes ()
 
   // Assign new values to the attributes ___________________
 
-  cout << "[1] Assign new values to the attributes ..." << endl;
+  cout << "\n[1] Assign new values to the attributes ..." << endl;
   try {
     std::vector<std::string> stations;
     stations.push_back("CS001");
@@ -127,14 +127,14 @@ int test_attributes ()
     attr.setFiletype ("tbb");
     attr.setFiledate ("2009-10-10T01:00:00.0");
     attr.setTelescope ("LOFAR");
-    // attr.setProjectID ("CR-2009-10-10");
-    // attr.setProjectTitle ("CR test observation");
-    // attr.setProjectPI ("Mr. CR");
-    // attr.setProjectCoI ("Mrs. CR");
-    // attr.setProjectContact ("cr@lofar.org");
+    attr.setProjectID ("CR-2009-10-10");
+    attr.setProjectTitle ("CR test observation");
+    attr.setProjectPI ("Mr. CR");
+    attr.setProjectCoI ("Mrs. CR");
+    attr.setProjectContact ("cr@lofar.org");
     attr.setObserver("Mr. LOFAR");
     // attr.setObservationID ("1234567890");
-    // attr.setAntennaSet ("LBA_X");
+    attr.setAntennaSet ("LBA_X");
     attr.setFilterSelection ("LBH_30_80");
     attr.setClockFrequency (200);
     attr.setClockFrequencyUnit ("MHz");
@@ -149,7 +149,7 @@ int test_attributes ()
     nofFailedTests++;
   }
 
-  cout << "[2] Show new values of the attributes ..." << endl;
+  cout << "\n[2] Show new values of the attributes ..." << endl;
   try {
     attr.summary();
   } catch (std::string message) {
@@ -157,7 +157,7 @@ int test_attributes ()
     nofFailedTests++;
   }
 
-  cout << "[3] Create a copy of the object storing the attributes ..." << endl;
+  cout << "\n[3] Create a copy of the object storing the attributes ..." << endl;
   try {
     CommonAttributes attrCopy (attr);
     //
@@ -171,12 +171,12 @@ int test_attributes ()
 
 #ifdef DAL_WITH_HDF5
   
-  cout << "[4] Write attributes to file ..." << endl;
+  cout << "\n[4] Write attributes to file ..." << endl;
   try {
     hid_t fileID (0);
     herr_t h5error (0);
     // create a new HDF5 file
-    fileID = H5Fcreate (filename.filename().c_str(),
+    fileID = H5Fcreate (outfile.c_str(),
 			H5F_ACC_TRUNC,
 			H5P_DEFAULT,
 			H5P_DEFAULT);
@@ -189,12 +189,12 @@ int test_attributes ()
     nofFailedTests++;
   }
 
-  cout << "[5] Read the attributes back in from file ..." << endl;
+  cout << "\n[5] Read the attributes back in from file ..." << endl;
   try {
     hid_t fileID (0);
     herr_t h5error (0);
     // open the file from which to read in the attributes
-    fileID = H5Fopen (filename.filename().c_str(),
+    fileID = H5Fopen (outfile.c_str(),
 		      H5F_ACC_RDWR,
 		      H5P_DEFAULT);
     // close the HDF5 file once we are done
@@ -203,7 +203,6 @@ int test_attributes ()
     std::cerr << message << endl;
     nofFailedTests++;
   }
-
 
 #endif
 
@@ -231,11 +230,12 @@ int test_attributes ()
 int main ()
 {
   int nofFailedTests (0);
+  std::string filename ("tCommonAttributes.h5");
   
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
   // Test access to the individual attributes
-  // nofFailedTests += test_attributes ();
+  nofFailedTests += test_methods (filename);
 
   return nofFailedTests;
 }
