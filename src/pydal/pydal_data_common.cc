@@ -166,7 +166,7 @@ void export_Filename ()
     ;
   
   /* Enumeration: File extension */
-  bpl::enum_<Filename::FileExtension>("FileExtension")
+  bpl::enum_<Filename::Extension>("Extension")
     .value("MS",Filename::MS)
     .value("h5",Filename::h5)
     .value("fits",Filename::fits)
@@ -188,7 +188,7 @@ void export_Filename ()
   bpl::class_<Filename>("Filename")
     // Construction
     .def( bpl::init<>())
-    .def( bpl::init<string,string,Filename::FileType,Filename::FileExtension>())
+    .def( bpl::init<string,string,Filename::FileType,Filename::Extension>())
     // Parameters
     .def( "observationID", &Filename::observationID,
 	  "Get the unique observation ID.")

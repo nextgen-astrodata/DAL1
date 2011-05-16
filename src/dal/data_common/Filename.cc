@@ -62,7 +62,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   Filename::Filename (std::string const &observationID,
 		      FileType const &filetype,
-		      FileExtension const &extension,
+		      Extension const &extension,
 		      std::string const &path)
   {
     init ();
@@ -85,7 +85,7 @@ namespace DAL { // Namespace DAL -- begin
   Filename::Filename (std::string const &observationID,
 		      std::string const &optionalDescription,
 		      FileType const &filetype,
-		      FileExtension const &extension,
+		      Extension const &extension,
 		      std::string const &path)
   {
     init ();
@@ -258,9 +258,9 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 extensionMap
 
-  std::map<Filename::FileExtension,std::string> Filename::extensionMap ()
+  std::map<Filename::Extension,std::string> Filename::extensionMap ()
   {
-    std::map<Filename::FileExtension,std::string> extensions;
+    std::map<Filename::Extension,std::string> extensions;
 
     extensions[Filename::MS]     = "MS";
     extensions[Filename::h5]     = "h5";
@@ -282,11 +282,11 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                               extensionTypes
 
-  std::vector<Filename::FileExtension> Filename::extensionTypes ()
+  std::vector<Filename::Extension> Filename::extensionTypes ()
   {
-    std::vector<Filename::FileExtension> result;
-    std::map<Filename::FileExtension,std::string> extensions = extensionMap();
-    std::map<Filename::FileExtension,std::string>::iterator it;
+    std::vector<Filename::Extension> result;
+    std::map<Filename::Extension,std::string> extensions = extensionMap();
+    std::map<Filename::Extension,std::string>::iterator it;
 
     for (it=extensions.begin(); it!=extensions.end(); ++it) {
       result.push_back(it->first);
@@ -301,8 +301,8 @@ namespace DAL { // Namespace DAL -- begin
   std::vector<std::string> Filename::extensionNames ()
   {
     std::vector<std::string> result;
-    std::map<Filename::FileExtension,std::string> extensions = extensionMap();
-    std::map<Filename::FileExtension,std::string>::iterator it;
+    std::map<Filename::Extension,std::string> extensions = extensionMap();
+    std::map<Filename::Extension,std::string>::iterator it;
 
     for (it=extensions.begin(); it!=extensions.end(); ++it) {
       result.push_back(it->second);
@@ -318,10 +318,10 @@ namespace DAL { // Namespace DAL -- begin
     \param extension -- Extension (suffix) of the file.
     \return name     -- Extension (suffix) of the file.
    */
-  std::string Filename::getName (Filename::FileExtension const &extension)
+  std::string Filename::getName (Filename::Extension const &extension)
   {
-    std::map<Filename::FileExtension,std::string> extensions = extensionMap();
-    std::map<Filename::FileExtension,std::string>::iterator it;
+    std::map<Filename::Extension,std::string> extensions = extensionMap();
+    std::map<Filename::Extension,std::string>::iterator it;
 
     it = extensions.find(extension);
 

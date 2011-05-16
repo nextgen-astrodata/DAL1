@@ -55,12 +55,12 @@ int test_staticMethods ()
 
   std::cout << "[1] Testing Filename::extensionMap() ..." << std::endl;
   try {
-    std::map<Filename::FileExtension,std::string> extension = Filename::extensionMap();
+    std::map<Filename::Extension,std::string> extension = Filename::extensionMap();
 
-    std::map<Filename::FileExtension,std::string>::iterator it;
+    std::map<Filename::Extension,std::string>::iterator it;
 
     for (it=extension.begin(); it!=extension.end(); ++it) {
-      std::cout << "  FileExtension[" << it->first << "] = " << it->second
+      std::cout << "  Extension[" << it->first << "] = " << it->second
 		<< std::endl;
     }
   } catch (std::string message) {
@@ -125,7 +125,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[3] Testing Filename(string,FileType,FileExtension) ..." << endl;
+  cout << "[3] Testing Filename(string,FileType,Extension) ..." << endl;
   try {
     Filename file (observationID,
 		   Filename::tbb,
@@ -137,7 +137,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[4] Testing Filename(string,string,FileType,FileExtension) ..." << endl;
+  cout << "[4] Testing Filename(string,string,FileType,Extension) ..." << endl;
   try {
     Filename file (observationID,
 		   optionalDescription,
@@ -150,7 +150,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[5] Testing Filename(string,string,FileType,FileExtension,string) ..."
+  cout << "[5] Testing Filename(string,string,FileType,Extension,string) ..."
        << endl;
   try {
     Filename file (observationID,
