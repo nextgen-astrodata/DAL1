@@ -124,8 +124,8 @@ namespace DAL { // Namespace DAL -- begin
       <li>Simple example to generate filename for a HDF5-based BF dataset:
       \code
       // Set up the input parameters
-      std::string observationID              = "123456789";
-      DAL::Filename::FileType filetype       = Filename::bf;
+      std::string observationID          = "123456789";
+      DAL::Filename::Type filetype       = Filename::bf;
       DAL::Filename::Extension extension = Filename::h5;
       
       // Create object ...
@@ -152,7 +152,7 @@ namespace DAL { // Namespace DAL -- begin
       will also signal the appropriate interface control document for
       further reference, should users find that necessary.
     */
-    enum FileType {
+    enum Type {
       /*! LOFAR visibility file containing correlation UV information. */
       uv,
       /*! Standard LOFAR Image cube containing RA, Dec, frequency and
@@ -217,7 +217,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Optional descriptors
     std::string itsOptionalDescriptor;
     //! Marker for the contents of the file
-    Filename::FileType itsFiletype;
+    Filename::Type itsFiletype;
     //! Extension of the file
     Filename::Extension itsExtension;
     //! Path to the location of the file
@@ -232,18 +232,18 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Argumented constructor
     Filename (std::string const &observationID,
-	      FileType const &filetype);
+	      Type const &filetype);
     
     //! Argumented constructor
     Filename (std::string const &observationID,
-	      FileType const &filetype,
+	      Type const &filetype,
 	      Extension const &extension,
 	      std::string const &path="");
     
     //! Argumented constructor
     Filename (std::string const &observationID,
 	      std::string const &optionalDescription,
-	      FileType const &filetype,
+	      Type const &filetype,
 	      Extension const &extension,
 	      std::string const &path="");
     
@@ -291,7 +291,7 @@ namespace DAL { // Namespace DAL -- begin
     void setOptionalDescription (std::string const &optionalDescription);
     
     //! Get the file type
-    inline FileType filetype () const {
+    inline Type filetype () const {
       return itsFiletype;
     }
     
@@ -301,7 +301,7 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Set the file type
-    inline void setFiletype (FileType const &filetype) {
+    inline void setFiletype (Type const &filetype) {
       itsFiletype = filetype;
     }
 
@@ -364,13 +364,13 @@ namespace DAL { // Namespace DAL -- begin
     static std::string getName (Filename::Extension const &extension);
 
     //! Get map of file-type types and names.
-    static std::map<Filename::FileType,std::string> filetypeMap ();
+    static std::map<Filename::Type,std::string> filetypeMap ();
     //! Get array/vector with the file-type types
-    static std::vector<Filename::FileType> filetypeTypes ();
+    static std::vector<Filename::Type> filetypeTypes ();
     //! Get array/vector with the file-type names
     static std::vector<std::string> filetypeNames ();
     //! Get the file type as string
-    static std::string getName (Filename::FileType const &filetype);
+    static std::string getName (Filename::Type const &filetype);
     
   private:
 

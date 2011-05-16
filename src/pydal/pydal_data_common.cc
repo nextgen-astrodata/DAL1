@@ -155,7 +155,7 @@ void export_CommonAttributesObservation ()
 void export_Filename ()
 {
   /* Enumeration: File type */
-  bpl::enum_<Filename::FileType>("FileType")
+  bpl::enum_<Filename::Type>("Type")
     .value("uv",Filename::uv)
     .value("sky",Filename::sky)
     .value("rm",Filename::rm)
@@ -188,7 +188,7 @@ void export_Filename ()
   bpl::class_<Filename>("Filename")
     // Construction
     .def( bpl::init<>())
-    .def( bpl::init<string,string,Filename::FileType,Filename::Extension>())
+    .def( bpl::init<string,string,Filename::Type,Filename::Extension>())
     // Parameters
     .def( "observationID", &Filename::observationID,
 	  "Get the unique observation ID.")
