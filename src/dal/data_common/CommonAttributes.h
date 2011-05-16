@@ -142,6 +142,9 @@ namespace DAL { // Namespace DAL -- begin
     CommonAttributes ();
     
     //! Argumented constructor
+    CommonAttributes (Filename const &filename);
+
+    //! Argumented constructor
     CommonAttributes (Filename const &filename,
 		      std::string const &filetype,
 		      std::string const &filedate);

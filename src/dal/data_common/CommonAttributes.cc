@@ -47,9 +47,23 @@ namespace DAL { // Namespace DAL -- begin
 
   /*!
     \param filename -- The name of the file.
+  */
+  CommonAttributes::CommonAttributes (Filename const &filename)
+  {
+    // Initialize parameters to default values
+    setAttributes ();
+    // Set provided parameter values
+    setFilename (filename);
+  }
+
+  //_____________________________________________________________________________
+  //                                                             CommonAttributes
+  
+  /*!
+    \param filename -- The name of the file.
     \param filetype -- The type of the file.
     \param filedate -- The file creation date.
-   */
+  */
   CommonAttributes::CommonAttributes (Filename const &filename,
 				      std::string const &filetype,
 				      std::string const &filedate)
