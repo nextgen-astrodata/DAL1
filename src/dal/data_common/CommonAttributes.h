@@ -142,6 +142,8 @@ namespace DAL { // Namespace DAL -- begin
     double itsFrequencyCenter;
     //! Observation frequency physical units
     std::string itsFrequencyUnit;
+    //! Number of bits per sample in the incoming data stream
+    int itsNofBitsPerSample;
     /*________________________________________________________________
      */
     //! Clock frequency (LOFAR: 200.0 or 160.0)
@@ -418,6 +420,10 @@ namespace DAL { // Namespace DAL -- begin
     //! Observation frequency physical units
     inline void setFrequencyUnit (std::string const &frequencyUnit) {
       itsFrequencyUnit = frequencyUnit;
+    }
+    //! Get the number of bits per sample in the incoming data stream
+    inline int nofBitsPerSample () const {
+      return itsNofBitsPerSample;
     }
     //! Set observation start date
     void setObservationStart (std::string const &startMJD,

@@ -226,19 +226,20 @@ namespace DAL { // Namespace DAL -- begin
     /*________________________________________________________________
       Common LOFAR attributes for description of observation
     */
-    os << "-- Observation ID                = " << itsObservationID   << std::endl;
-    os << "-- Observation date (MJD) Start  = " << itsStartMJD        << std::endl;
-    os << "-- Observation date (MJD) End    = " << itsEndMJD          << std::endl;
-    os << "-- Observation date (TAI) Start  = " << itsStartTAI        << std::endl;
-    os << "-- Observation date (TAI) End    = " << itsEndTAI          << std::endl;
-    os << "-- Observation date (UTC) Start  = " << itsStartUTC        << std::endl;
-    os << "-- Observation date (UTC) End    = " << itsEndUTC          << std::endl;
-    os << "-- nof. stations participating   = " << itsNofStations     << std::endl;
-    os << "-- List of stations              = " << itsStationsList    << std::endl;
-    os << "-- Minimum observation frequency = " << itsFrequencyMin    << std::endl;
-    os << "-- Center observation frequency  = " << itsFrequencyCenter << std::endl;
-    os << "-- Maximum observation frequency = " << itsFrequencyMax    << std::endl;
-    os << "-- Observation frequency unit    = " << itsFrequencyUnit   << std::endl;
+    os << "-- Observation ID                = " << itsObservationID    << std::endl;
+    os << "-- Observation date (MJD) Start  = " << itsStartMJD         << std::endl;
+    os << "-- Observation date (MJD) End    = " << itsEndMJD           << std::endl;
+    os << "-- Observation date (TAI) Start  = " << itsStartTAI         << std::endl;
+    os << "-- Observation date (TAI) End    = " << itsEndTAI           << std::endl;
+    os << "-- Observation date (UTC) Start  = " << itsStartUTC         << std::endl;
+    os << "-- Observation date (UTC) End    = " << itsEndUTC           << std::endl;
+    os << "-- nof. stations participating   = " << itsNofStations      << std::endl;
+    os << "-- List of stations              = " << itsStationsList     << std::endl;
+    os << "-- Minimum observation frequency = " << itsFrequencyMin     << std::endl;
+    os << "-- Center observation frequency  = " << itsFrequencyCenter  << std::endl;
+    os << "-- Maximum observation frequency = " << itsFrequencyMax     << std::endl;
+    os << "-- Observation frequency unit    = " << itsFrequencyUnit    << std::endl;
+    os << "-- Number of bits per sample     = " << itsNofBitsPerSample << std::endl;
     /*________________________________________________________________
      */
     os << "-- ANTENNA_SET            = " << itsAntennaSet           << std::endl;
@@ -289,6 +290,7 @@ namespace DAL { // Namespace DAL -- begin
     itsAttributes.insert("OBSERVATION_FREQUENCY_MAX");
     itsAttributes.insert("OBSERVATION_FREQUENCY_CENTER");
     itsAttributes.insert("OBSERVATION_FREQUENCY_UNIT");
+    itsAttributes.insert("OBSERVATION_NOF_BITS_PER_SAMPLE");
     itsAttributes.insert("ANTENNA_SET");
     itsAttributes.insert("FILTER_SELECTION");
     itsAttributes.insert("CLOCK_FREQUENCY");
@@ -327,7 +329,8 @@ namespace DAL { // Namespace DAL -- begin
     itsFrequencyMin        = 0.0;
     itsFrequencyMax        = 0.0;
     itsFrequencyCenter     = 0.0;
-    itsFrequencyUnit       = "UNDEFINED";
+    itsFrequencyUnit       = "Hz";
+    itsNofBitsPerSample    = 0;
     itsAntennaSet          = undefined;
     itsFilterSelection     = undefined;
     itsClockFrequency      = 0.0;
@@ -377,6 +380,7 @@ namespace DAL { // Namespace DAL -- begin
     HDF5Attribute::write(groupID, "OBSERVATION_FREQUENCY_MAX",    itsFrequencyMax);
     HDF5Attribute::write(groupID, "OBSERVATION_FREQUENCY_CENTER", itsFrequencyCenter);
     HDF5Attribute::write(groupID, "OBSERVATION_FREQUENCY_UNIT",   itsFrequencyUnit);
+    HDF5Attribute::write(groupID, "OBSERVATION_NOF_BITS_PER_SAMPLE", itsNofBitsPerSample);
     /*________________________________________________________________
     */
     HDF5Attribute::write( groupID, "ANTENNA_SET",          itsAntennaSet );
@@ -433,6 +437,7 @@ namespace DAL { // Namespace DAL -- begin
     DAL::h5get_attribute(groupID, "OBSERVATION_FREQUENCY_MAX",    itsFrequencyMax);
     DAL::h5get_attribute(groupID, "OBSERVATION_FREQUENCY_CENTER", itsFrequencyCenter);
     DAL::h5get_attribute(groupID, "OBSERVATION_FREQUENCY_UNIT",   itsFrequencyUnit);
+    DAL::h5get_attribute(groupID, "OBSERVATION_NOF_BITS_PER_SAMPLE", itsNofBitsPerSample);
     /*________________________________________________________________
      */
     DAL::h5get_attribute( groupID, "ANTENNA_SET",           itsAntennaSet );
