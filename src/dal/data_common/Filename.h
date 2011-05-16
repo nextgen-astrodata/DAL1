@@ -211,6 +211,7 @@ namespace DAL { // Namespace DAL -- begin
 
   private:
 
+    //! Prefix of the filename, preceeding the observation ID
     std::string itsPrefix;
     //! Unique identifier for the observation
     std::string observationID_p;
