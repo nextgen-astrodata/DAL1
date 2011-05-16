@@ -56,8 +56,6 @@ void export_CommonAttributes ()
 	  "Set the name of the file.")
     .def( "filetype", &CommonAttributes::filetype,
 	  "Get the type of the file.")
-    .def( "setFiletype", &CommonAttributes::setFiletype,
-	  "Set the type of the file.")
     .def( "filedate", &CommonAttributes::filedate,
 	  "Get the file creation date.")
     .def( "setFiledate", &CommonAttributes::setFiledate,

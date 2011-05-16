@@ -130,7 +130,6 @@ int test_methods (std::string const &outfile)
     stations.push_back("CS005");
 
     attr.setFilename (filename);
-    attr.setFiletype ("tbb");
     attr.setFiledate ("2009-10-10T01:00:00.0");
     attr.setTelescope ("LOFAR");
     attr.setProjectID ("CR-2009-10-10");

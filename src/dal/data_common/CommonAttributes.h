@@ -90,10 +90,10 @@ namespace DAL { // Namespace DAL -- begin
     std::string itsGroupType;
     //! File name
     std::string itsFilename;
-    //! File creation date, YYYY-MM-DDThh:mm:ss.s
-    std::string itsFiledate;
     //! File type
     std::string itsFiletype;
+    //! File creation date, YYYY-MM-DDThh:mm:ss.s
+    std::string itsFiledate;
     //! Name of the telescope ("LOFAR")
     std::string itsTelescope;
     //! Name(s) of the observer(s)
@@ -194,19 +194,15 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     //! Set the name of the file
-    inline void setFilename (Filename const &name) {
+    inline void setFilename (DAL::Filename const &name) {
       Filename tmp = name;
       itsFilename = tmp.filename();
+      itsFiletype = tmp.filetypeName();
     }
     
     //! Get the type of the file
     inline std::string filetype () const {
       return itsFiletype;
-    }
-    
-    //! Set the type of the file
-    inline void setFiletype (std::string const &filetype) {
-      itsFiletype = filetype;
     }
     
     //! Get the file creation date
