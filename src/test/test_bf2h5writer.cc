@@ -17,8 +17,6 @@
 //#  You should have received a copy of the GNU General Public License
 //#  along with this program; if not, write to the Free Software
 //#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-//#
-//#  $Id: $
 
 #ifdef DAL_WITH_LOFAR
 #include <lofar_config.h>
@@ -32,16 +30,37 @@
 #include <data_common/CommonAttributes.h>
 #include <data_hl/BF_RootGroup.h>
 #include <data_hl/BF_StokesDataset.h>
+
 #include <iostream>
-
-#include <data_common/CommonAttributes.h>
-
 #include <boost/format.hpp>
 #include <boost/multi_array.hpp>
 
 using namespace std;
 using namespace boost;
 using boost::format;
+
+//_______________________________________________________________________________
+//                                                            setCommonAttributes
+
+int setCommonAttributes (DAL::Filename const &filename)
+{
+  int nofFailedTests = 0;
+
+  DAL::CommonAttributes attributes (filename);
+
+  attributes.setTelescope      ("LOFAR");
+  attributes.setObserver       ("Pulsar observer");
+  attributes.setProjectID      ("Pulsar");
+  attributes.setProjectTitle   ("Pulsar survey");
+  attributes.setProjectPI      ("Mr. Pulsar");
+  attributes.setProjectCoI     ("Mrs. Pulsar");
+  attributes.setProjectContact ("pulsar@lofar.org");
+
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
+//                                                                           main
 
 int main()
 {
