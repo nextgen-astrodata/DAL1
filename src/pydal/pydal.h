@@ -89,8 +89,6 @@ void export_Coordinate ();
 void export_Filename ();
 //! Bindings for DAL::CommonAttributes
 void export_CommonAttributes ();
-//! Bindings for DAL::CommonAttributesObservation
-void export_CommonAttributesObservation ();
 //! Bindings for DAL::Timestamp
 void export_Timestamp ();
 //! Bindings for DAL::SAS_Settings

@@ -32,7 +32,6 @@
 #include <data_common/Filename.h>
 #include <data_common/HDF5CommonInterface.h>
 #include <data_common/AttributesInterface.h>
-#include <data_common/CommonAttributesObservation.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -86,6 +85,9 @@ namespace DAL { // Namespace DAL -- begin
   */  
   class CommonAttributes : public AttributesInterface {
 
+    //! Filename object, holding the various components making up the filename
+    Filename itsFilenameHolder;
+
     //! LOFAR group type ("Root")
     std::string itsGroupType;
     //! File name
@@ -111,10 +113,37 @@ namespace DAL { // Namespace DAL -- begin
     std::string itsProjectCoI;
     //! Names/Email-addresses of the project's primary contact person(s)
     std::string itsProjectContact;
-
-    //! Common LOFAR attributes for description of observation
-    CommonAttributesObservation itsAttributesObservation;
-
+    /*________________________________________________________________
+      Common LOFAR attributes for description of observation
+    */
+    //! Unique identifier for the observation
+    std::string itsObservationID;
+    //! Start date of the observation (MJD)
+    std::string itsStartMJD;
+    //! Start date of the observation (TAI)
+    std::string itsStartTAI;
+    //! Start date of the observation (UTC)
+    std::string itsStartUTC;
+    //! End date of the observation (MJD)
+    std::string itsEndMJD;
+    //! End date of the observation (TAI)
+    std::string itsEndTAI;
+    //! End date of the observation (UTC)
+    std::string itsEndUTC;
+    //! nof. stations used during the observation
+    int itsNofStations;
+    //! List of stations used during the observation
+    std::vector<std::string> itsStationsList;
+    //! Observation minimum frequency
+    double itsFrequencyMin;
+    //! Observation maximum frequency
+    double itsFrequencyMax;
+    //! Observation center frequency
+    double itsFrequencyCenter;
+    //! Observation frequency physical units
+    std::string itsFrequencyUnit;
+    /*________________________________________________________________
+     */
     //! Clock frequency (LOFAR: 200.0 or 160.0)
     double itsClockFrequency;
     //! Clock frequency physical unit
@@ -147,9 +176,6 @@ namespace DAL { // Namespace DAL -- begin
     //! Argumented constructor
     CommonAttributes (Filename const &filename,
 		      std::string const &filedate);
-    
-    //! Argumented constructor
-    CommonAttributes (CommonAttributesObservation const &attributesObservation);
     
 #ifdef DAL_WITH_HDF5
     //! Argumented constructor
@@ -187,54 +213,48 @@ namespace DAL { // Namespace DAL -- begin
     inline std::string groupType () const {
       return itsGroupType;
     }
-    
     //! Get the name of the file
     inline std::string filename () const {
       return itsFilename;
     }
-    
     //! Set the name of the file
-    inline void setFilename (DAL::Filename const &name) {
-      Filename tmp = name;
-      itsFilename = tmp.filename();
-      itsFiletype = tmp.filetypeName();
+    inline void setFilename (DAL::Filename const &filename) {
+      itsFilenameHolder = filename;
+      itsFilename       = itsFilenameHolder.filename();
+      itsFiletype       = itsFilenameHolder.filetypeName();
+      itsObservationID  = itsFilenameHolder.observationID();
     }
-    
     //! Get the type of the file
     inline std::string filetype () const {
       return itsFiletype;
     }
-    
     //! Get the file creation date
     inline std::string filedate () const {
       return itsFiledate;
     }
-
     //! Set the file creation date
     inline void setFiledate (std::string const &filedate) {
       itsFiledate = filedate;
     }
-
     //! Get the name of the telescope
     inline std::string telescope () const {
       return itsTelescope;
     }
-
     //! Set the name of the telescope
     inline void setTelescope (std::string const &telescope) {
       itsTelescope = telescope;
     }
-
     //! Get the name(s) of the observer(s)
     inline std::string observer () const {
       return itsObserver;
     }
-    
     //! Name(s) of the observer(s)
     inline void setObserver (std::string const &observer) {
       itsObserver = observer;
     }
-
+    /*________________________________________________________________
+      Common LOFAR attributes for description of project 
+    */
     //! Unique identifier for the project
     inline std::string projectID () const {
       return itsProjectID;
@@ -279,29 +299,141 @@ namespace DAL { // Namespace DAL -- begin
     inline void setProjectContact (std::string const &contact) {
       itsProjectContact = contact;
     }
-    
     //! Common LOFAR attributes for description of project
     void setAttributesProject (std::string const &projectID,
 			       std::string const &projectTitle,
 			       std::string const &projectPI,
 			       std::string const &projectCoI,
 			       std::string const &projectContact);
-    
-    //! Get common LOFAR attributes for description of observation
-    CommonAttributesObservation attributesObservation () const {
-      return itsAttributesObservation;
+    /*________________________________________________________________
+      Common LOFAR attributes for description of observation
+    */
+    //! Get unique identifier for the observation
+    inline std::string observationID () const {
+      return itsObservationID;
     }
-
+    //! Set unique identifier for the observation
+    inline void setObservationID (std::string const &id) {
+      Filename tmp (itsFilenameHolder);
+      tmp.setObservationID (id);
+      setFilename (tmp);
+    }
+    //! Get start date of the observation (MJD)
+    inline std::string startMJD () const {
+      return itsStartMJD;
+    }
+    //! Set start date of the observation (MJD)
+    inline void setStartMJD (std::string const &startMJD) {
+      itsStartMJD = startMJD;
+    }
+    //! Get start date of the observation (TAI)
+    inline std::string startTAI () const {
+      return itsStartTAI;
+    }
+    //! Set start date of the observation (TAI)
+    inline void setStartTAI (std::string const &startTAI) {
+      itsStartTAI = startTAI;
+    }
+    //! Get start date of the observation (UTC)
+    inline std::string startUTC () const {
+      return itsStartUTC;
+    }
+    //! Set start date of the observation (UTC)
+    inline void setStartUTC (std::string const &startUTC) {
+      itsStartUTC = startUTC;
+    }
+    //! Get end date of the observation (MJD)
+    inline std::string endMJD () const {
+      return itsEndMJD;
+    }
+    //! Set end date of the observation (MJD)
+    inline void setEndMJD (std::string const &endMJD) {
+      itsEndMJD = endMJD;
+    }
+    //! End date of the observation (TAI)
+    inline std::string endTAI () const {
+      return itsEndTAI;
+    }
+    //! End date of the observation (TAI)
+    inline void setEndTAI (std::string const &endTAI) {
+      itsEndTAI = endTAI;
+    }
+    //! End date of the observation (UTC)
+    inline std::string endUTC () const {
+      return itsEndUTC;
+    }
+    //! End date of the observation (UTC)
+    inline void setEndUTC (std::string const &endUTC) {
+      itsEndUTC = endUTC;
+    }
+    //! nof. stations used during the observation
+    inline int nofStations () const {
+      return itsNofStations;
+    }
+    //! List of stations used during the observation
+    inline std::vector<std::string> stationsList () const {
+      return itsStationsList;
+    }
+    //! List of stations used during the observation
+    inline void setStationsList (std::vector<std::string> const &stationsList) {
+      itsStationsList.clear();
+      if (stationsList.empty()) {
+	itsNofStations = 0;
+      } else {
+	itsNofStations = stationsList.size();
+	itsStationsList = stationsList;
+      }
+    }
+    //! Observation minimum frequency
+    inline double frequencyMin () const {
+      return itsFrequencyMin;
+    }
+    //! Observation minimum frequency
+    inline void setFrequencyMin (double const &frequencyMin) {
+      itsFrequencyMin = frequencyMin;
+    }
+    
+    //! Observation maximum frequency
+    inline double frequencyMax () const {
+      return itsFrequencyMax;
+    }
+    //! Observation maximum frequency
+    inline void setFrequencyMax (double const &frequencyMax) {
+      itsFrequencyMax = frequencyMax;
+    }
+    
+    //! Observation center frequency
+    inline double frequencyCenter () const {
+      return itsFrequencyCenter;
+    }
+    //! Observation center frequency
+    inline void setFrequencyCenter (double const &frequencyCenter) {
+      itsFrequencyCenter = frequencyCenter;
+    }
+    
+    //! Observation frequency physical units
+    inline std::string frequencyUnit () const {
+      return itsFrequencyUnit;
+    }
+    //! Observation frequency physical units
+    inline void setFrequencyUnit (std::string const &frequencyUnit) {
+      itsFrequencyUnit = frequencyUnit;
+    }
     //! Set observation start date
     void setObservationStart (std::string const &startMJD,
 			      std::string const &startTAI,
 			      std::string const &startUTC);
-
     //! Set observation end date
     void setObservationEnd (std::string const &endMJD,
 			    std::string const &endTAI,
 			    std::string const &endUTC);
-
+    //! Set maximum, minimum and unit of observation frequency
+    void setFrequency (double const &freqMin,
+		       double const &freqMax,
+		       std::string const &freqUnit="Hz");
+    /*________________________________________________________________
+      +++
+     */
     //! Get clock frequency (LOFAR: 200.0 or 160.0)
     inline double clockFrequency () const {
       return itsClockFrequency;

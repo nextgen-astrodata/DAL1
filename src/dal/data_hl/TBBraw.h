@@ -93,26 +93,21 @@ namespace DAL {  // Namespace DAL -- begin
     //! pointer to the dataset (i.e. the file itself)
     dalDataset * dataset_p;
     //! Filename
-    std::string filename_p;
+    std::string itsFilename;
     //! LOFAR common attributes attached to the root group of the file
-    CommonAttributes commonAttributes_p;
+    CommonAttributes itsCommonAttributes;
     //! Check the header-CRC
     bool do_headerCRC_p;
     //! Check the data-CRC
     bool do_dataCRC_p;
-    
     //! fix broken time-stamps?
     int fixTimes_p;
-    
     //! number of processed data block
-    int nofProcessed_p;
-    
+    int nofProcessed_p;    
     //! number of discarded data blocks with broken crc
     int nofDiscardedHeader_p;
-    
     //! am I big endian?
     bool bigendian_p;
-    
     //! buffer for the stations
     struct stationBufElem
     {
@@ -177,7 +172,7 @@ namespace DAL {  // Namespace DAL -- begin
       
       \return <tt>true</tt> if header-CRC is correct
     */
-    bool checkHeaderCRC(TBB_Header *headerp);
+    bool checkHeaderCRC (TBB_Header *headerp);
     
   public:
 
@@ -263,11 +258,11 @@ namespace DAL {  // Namespace DAL -- begin
     
     //! Get the LOFAR common attributes attached to the root level of the file
     inline CommonAttributes commonAttributes () const {
-      return commonAttributes_p;
+      return itsCommonAttributes;
     }
     
     
-    // ------------------------------------------------------------------ Methods
+    // === Public methods =======================================================
     
     /*!
       \brief Open (create) new file

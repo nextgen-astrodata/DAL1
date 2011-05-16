@@ -43,8 +43,8 @@ namespace DAL {  // Namespace DAL -- begin
   TBBraw::TBBraw (CommonAttributes const &commonAttributes)
   {
     init();
-    filename_p         = commonAttributes.filename();
-    commonAttributes_p = commonAttributes;
+    itsFilename         = commonAttributes.filename();
+    itsCommonAttributes = commonAttributes;
   }
   
   //_____________________________________________________________________________
@@ -79,8 +79,8 @@ namespace DAL {  // Namespace DAL -- begin
   
   void TBBraw::init ()
   {
-    filename_p         = "TBBraw.h5";
-    commonAttributes_p = CommonAttributes();
+    itsFilename         = "TBBraw.h5";
+    itsCommonAttributes = CommonAttributes();
     bigendian_p        = BigEndian();
     dataset_p          = NULL;
     do_headerCRC_p     = true;
@@ -125,17 +125,14 @@ namespace DAL {  // Namespace DAL -- begin
 			  std::string const &filterSelection,
 			  std::string const &telescope)
   {
-    filename_p = filename;
+    itsFilename = filename;
 
     /* Store the common attributes attached to the root group of the file */
-
-    CommonAttributesObservation attribObs = commonAttributes_p.attributesObservation();
-    attribObs.setObservationID (observation_id);
-
-    commonAttributes_p.setObserver (observer);
-    commonAttributes_p.setFilterSelection (filterSelection);
-    commonAttributes_p.setTelescope(telescope);
-    commonAttributes_p.setProjectTitle (project);
+    itsCommonAttributes.setObservationID (observation_id);
+    itsCommonAttributes.setObserver (observer);
+    itsCommonAttributes.setFilterSelection (filterSelection);
+    itsCommonAttributes.setTelescope(telescope);
+    itsCommonAttributes.setProjectTitle (project);
 
     /* Open the file */
     return open_file();
@@ -148,8 +145,8 @@ namespace DAL {  // Namespace DAL -- begin
   {
     struct stat filestat;
     // This doesn't work yet, as a DAL::Filename object cannot store a path
-    //std::string filename = commonAttributes_p.filename();
-    std::string filename = filename_p;
+    //std::string filename = itsCommonAttributes.filename();
+    std::string filename = itsFilename;
     
     if ((stat(filename.c_str(), &filestat) != 0) && (errno == ENOENT))
       {
@@ -168,8 +165,8 @@ namespace DAL {  // Namespace DAL -- begin
 	/* Set the attributes attached to the root group of the file. */
         if (dataset_p != NULL) {
 	  hid_t groupID = dataset_p->getId();
-	  commonAttributes_p.h5write(groupID);
-	  HDF5Attribute::write (groupID,"FILENAME",filename_p);
+	  itsCommonAttributes.h5write(groupID);
+	  HDF5Attribute::write (groupID,"FILENAME",itsFilename);
 	  return true;
 	}
         else {
