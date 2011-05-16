@@ -26,7 +26,7 @@
 #include <string>
 
 // DAL header files
-#include <data_common/HDF5Dataset.h>
+#include <core/HDF5Dataset.h>
 
 namespace DAL { // Namespace DAL -- begin
   

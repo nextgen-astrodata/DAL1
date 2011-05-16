@@ -26,7 +26,7 @@ endif (DAL_PYTHON_BINDINGS)
 
 set (tests
   tdal_fits
-  tDAL_HDF5
+  test_bf2h5writer
   )
 
 ## Build instructions
@@ -90,14 +90,14 @@ if (DAL_ENABLE_TESTING)
   ## -----------------------------------------------------------------
   ## [1] Test program mimicing usage of DAL as part of LOFAR OLAP
   
-  add_test (tDAL_HDF5 tDAL_HDF5)
+  add_test (test_bf2h5writer test_bf2h5writer)
   
   if (H5DUMP_EXECUTABLE)
-    add_test (tDAL_HDF5_h5dump ${H5DUMP_EXECUTABLE} -A L_test_bf.h5)
+    add_test (test_bf2h5writer_h5dump ${H5DUMP_EXECUTABLE} -A L_test_bf.h5)
   endif (H5DUMP_EXECUTABLE)
   
   if (H5LS_EXECUTABLE)
-    add_test (tDAL_HDF5_h5ls ${H5LS_EXECUTABLE} -v L_test_bf.h5)
+    add_test (test_bf2h5writer_h5ls ${H5LS_EXECUTABLE} -v L_test_bf.h5)
   endif (H5LS_EXECUTABLE)
   
   ## -----------------------------------------------------------------

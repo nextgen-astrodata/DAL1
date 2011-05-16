@@ -49,6 +49,7 @@ foreach (_test
     tdalFilter
     tdalGroup
     tDatabase
+    tHDF5Dataset
     tValMatrix
     test_std_cerr
     )
@@ -74,6 +75,10 @@ else (HAVE_tHDF5Object)
   add_test (tHDF5Dataspace tHDF5Dataspace )
   add_test (tHDF5Datatype  tHDF5Datatype  )
 endif (HAVE_tHDF5Object)
+
+if (H5LS_EXECUTABLE)
+  add_test (tHDF5Dataset_h5ls ${H5LS_EXECUTABLE} -f -r tHDF5Dataset.h5)
+endif (H5LS_EXECUTABLE)
 
 ## tdalDataset ___________________________________
 

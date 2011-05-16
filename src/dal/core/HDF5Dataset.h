@@ -25,8 +25,8 @@
 #include <string>
 #include <vector>
 
-#include <core/dalCommon.h>
-#include <core/HDF5Attribute.h>
+#include "dalCommon.h"
+#include "HDF5Attribute.h"
 #include <data_common/HDF5Hyperslab.h>
 
 #define H5S_CHUNKSIZE_MAX  ((uint32_t)(-1))  /* (4GB - 1) */
@@ -37,7 +37,7 @@ namespace DAL {
     \class HDF5Dataset
 
     \ingroup DAL
-    \ingroup data_common
+    \ingroup core
 
     \brief A class to encapsulate the operations required to work with a HDF5 dataset
 

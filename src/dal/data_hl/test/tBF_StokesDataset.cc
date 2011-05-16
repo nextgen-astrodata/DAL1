@@ -767,7 +767,7 @@ int main ()
     // Test for the constructor(s)
     nofFailedTests += test_constructors (fileID);
     // // Test access to the attributes
-    // nofFailedTests += test_attributes (fileID);
+    nofFailedTests += test_attributes (fileID);
     // Test read/write access to the data
     // nofFailedTests += test_data (fileID);
 

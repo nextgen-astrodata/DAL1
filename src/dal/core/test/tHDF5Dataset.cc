@@ -22,7 +22,7 @@
   \file tHDF5Dataset.cc
 
   \ingroup DAL
-  \ingroup data_common
+  \ingroup core
 
   \brief A collection of tests for working with the DAL::HDF5Dataset class
  
@@ -54,7 +54,7 @@
 
 #include <core/dalCommon.h>
 #include <core/HDF5Attribute.h>
-#include <data_common/HDF5Dataset.h>
+#include <core/HDF5Dataset.h>
 
 using std::cerr;
 using std::cout;
