@@ -146,12 +146,11 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Argumented constructor
     CommonAttributes (Filename const &filename,
-		      std::string const &filetype,
 		      std::string const &filedate);
-
+    
     //! Argumented constructor
     CommonAttributes (CommonAttributesObservation const &attributesObservation);
-
+    
 #ifdef DAL_WITH_HDF5
     //! Argumented constructor
     CommonAttributes (hid_t const &locationID);

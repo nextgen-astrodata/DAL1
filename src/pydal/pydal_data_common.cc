@@ -46,7 +46,8 @@ void export_CommonAttributes ()
 {
   bpl::class_<CommonAttributes>("CommonAttributes")
     .def( bpl::init<>())
-    .def( bpl::init<Filename,string,string>())
+    .def( bpl::init<Filename>())
+    .def( bpl::init<Filename,string>())
     .def( "groupType", &CommonAttributes::groupType,
 	  "Get the LOFAR group type.")
     .def( "filename", &CommonAttributes::filename,

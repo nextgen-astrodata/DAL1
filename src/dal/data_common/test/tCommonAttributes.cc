@@ -54,7 +54,7 @@ int test_constructors ()
   int nofFailedTests (0);
   DAL::Filename filename ("123456789","",DAL::Filename::uv,DAL::Filename::h5);
   
-  cout << "[1] Testing default constructor ..." << endl;
+  cout << "[1] Testing CommonAttributes() ..." << endl;
   try {
     CommonAttributes attributes;
     //
@@ -64,12 +64,20 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[2] Testing argumented constructor ..." << endl;
+  cout << "[2] Testing CommonAttributes(Filename) ..." << endl;
   try {
-    std::string filetype ("tbb");
+    CommonAttributes attributes (filename);
+    //
+    attributes.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
+  cout << "[3] Testing CommonAttributes(Filename,string) ..." << endl;
+  try {
     std::string filedate ("2009-10-10T00:00:00.0");
     CommonAttributes attributes (filename,
-				 filetype,
 				 filedate);
     //
     attributes.summary(); 
@@ -78,12 +86,10 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[3] Testing copy constructor ..." << endl;
+  cout << "[4] Testing copy constructor ..." << endl;
   try {
-    std::string filetype ("tbb");
     std::string filedate ("2009-10-10T00:00:00.0");
     CommonAttributes attributes (filename,
-				 filetype,
 				 filedate);
     attributes.summary();
     //
