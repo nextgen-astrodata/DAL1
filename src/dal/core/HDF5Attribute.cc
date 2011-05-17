@@ -360,7 +360,11 @@ namespace DAL { // Namespace DAL -- begin
 			     bool const *data,
 			     unsigned int const &size)
   {
-    return write (location, name, data, size, H5T_NATIVE_HBOOL);
+    return write (location,
+		  name,
+		  data,
+		  size,
+		  H5T_NATIVE_HBOOL);
   }
   
   //_____________________________________________________________________________

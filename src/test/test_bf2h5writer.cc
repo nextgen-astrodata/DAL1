@@ -70,7 +70,8 @@ int main()
     matching the rules as  defined in ICD-005.
   */
 
-  DAL::Filename filename ("",
+  std::string observationID ("1234567890");
+  DAL::Filename filename (observationID,
 			  "test",
 			  DAL::Filename::bf,
 			  DAL::Filename::h5);
@@ -79,23 +80,18 @@ int main()
   const unsigned nrChannels = SUBBANDS * CHANNELS;
   
   /*__________________________________________________________________
-    Create new BF file.
+    Create new BF file with basic structure.
   */
 
-  std::cout << "[1] Create basic BF file structure ..." << std::endl;
-  {
-    cout << "-- Creating file " << filename.filename() << endl;
-    DAL::BF_RootGroup rootGroup (filename);
-    
-    cout << "-- Creating primary pointing 0" << endl;
-    rootGroup.openPrimaryPointing ( 0, true );
-
-    cout << "-- Creating tied-array beam 0" << endl;
-    rootGroup.openBeam ( 0, 0, true );
-
-    cout << "-- Closing file" << endl;
-  }
-
+  std::cout << "[1] Creating new file " << filename.filename() << endl;
+  DAL::BF_RootGroup rootGroup (filename);
+  
+  // cout << "-- Creating primary pointing 0" << endl;
+  // rootGroup.openPrimaryPointing ( 0, true );
+  
+  // cout << "-- Creating tied-array beam 0" << endl;
+  // rootGroup.openBeam ( 0, 0, true );
+  
   return 0;
 
   /*__________________________________________________________________

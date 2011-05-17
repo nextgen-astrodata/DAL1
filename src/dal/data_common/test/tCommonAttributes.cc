@@ -112,7 +112,7 @@ int test_constructors ()
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_methods (std::string const &outfile)
+int test_methods (hid_t const &fileID)
 {
   cout << "\n[tCommonAttributes::test_methods]" << endl;
 
@@ -120,8 +120,10 @@ int test_methods (std::string const &outfile)
   DAL::Filename filename ("123456789","",DAL::Filename::uv,DAL::Filename::h5);
   CommonAttributes attr;
 
-  // Assign new values to the attributes ___________________
-
+  /*__________________________________________________________________
+    Assign values to the common attributes
+  */
+  
   cout << "\n[1] Assign new values to the attributes ..." << endl;
   try {
     std::vector<std::string> stations;
@@ -154,6 +156,10 @@ int test_methods (std::string const &outfile)
     nofFailedTests++;
   }
 
+  /*__________________________________________________________________
+    Show the new values of the attributes for later comparison
+  */
+  
   cout << "\n[2] Show new values of the attributes ..." << endl;
   try {
     attr.summary();
@@ -174,21 +180,9 @@ int test_methods (std::string const &outfile)
 
   // Write attributes to HDF5 file _________________________
 
-#ifdef DAL_WITH_HDF5
-  
   cout << "\n[4] Write attributes to file ..." << endl;
   try {
-    hid_t fileID (0);
-    herr_t h5error (0);
-    // create a new HDF5 file
-    fileID = H5Fcreate (outfile.c_str(),
-			H5F_ACC_TRUNC,
-			H5P_DEFAULT,
-			H5P_DEFAULT);
-    // write the attributes to the root group of the file
     attr.h5write (fileID);
-    // close the HDF5 file once we are done
-    h5error = H5Fclose (fileID);
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
@@ -196,22 +190,19 @@ int test_methods (std::string const &outfile)
 
   cout << "\n[5] Read the attributes back in from file ..." << endl;
   try {
-    hid_t fileID (0);
-    herr_t h5error (0);
-    // open the file from which to read in the attributes
-    fileID = H5Fopen (outfile.c_str(),
-		      H5F_ACC_RDWR,
-		      H5P_DEFAULT);
-    // close the HDF5 file once we are done
-    h5error = H5Fclose (fileID);
+    CommonAttributes attributeNew;
+    // read the attributes from the file ...
+    attributeNew.h5write (fileID);
+    // ... and display them
+    attributeNew.summary();
   } catch (std::string message) {
     std::cerr << message << endl;
     nofFailedTests++;
   }
 
-#endif
-
-  // Retrieve attributes through casa::Record ______________
+  /*__________________________________________________________________
+    Retrieve attributes through casa::Record
+  */
 
 #ifdef DAL_WITH_CASA
 
@@ -232,15 +223,58 @@ int test_methods (std::string const &outfile)
 //_______________________________________________________________________________
 //                                                                           main
 
-int main ()
+/*!
+  \brief Main routine of the test program
+
+  \return nofFailedTests -- The number of failed tests encountered within and
+          identified by this test program.
+*/
+int main (int argc, char *argv[])
 {
-  int nofFailedTests (0);
-  std::string filename ("tCommonAttributes.h5");
+  int nofFailedTests   = 0;
+  hid_t fileID         = 0;
+  std::string filename = "tCommonAttributes.h5";
+  bool haveDataset     = false;
+
+  //________________________________________________________
+  // Process command line parameters
+
+  if (argc>1) {
+    filename    = argv[1];
+    haveDataset = true;
+  }
+
+  //________________________________________________________
+  // Open/create HDF5 file to work with
+  
+  if (haveDataset) {
+    fileID = H5Fopen (filename.c_str(),
+		      H5F_ACC_RDWR,
+		      H5P_DEFAULT);
+  } else {
+    fileID = H5Fcreate (filename.c_str(),
+			H5F_ACC_TRUNC,
+			H5P_DEFAULT,
+			H5P_DEFAULT);
+  }
+  
+  //________________________________________________________
+  // Run the tests
   
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
-  // Test access to the individual attributes
-  nofFailedTests += test_methods (filename);
-
+  
+  if (H5Iis_valid(fileID)) {
+    // Test access to the individual attributes
+    nofFailedTests += test_methods (fileID);
+  }
+  
+  //________________________________________________________
+  // Release HDF5 objects
+  
+  if (H5Iis_valid(fileID)) {
+    H5Fclose(fileID);
+  }
+  
   return nofFailedTests;
 }

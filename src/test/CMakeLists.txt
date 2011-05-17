@@ -93,11 +93,11 @@ if (DAL_ENABLE_TESTING)
   add_test (test_bf2h5writer test_bf2h5writer)
   
   if (H5DUMP_EXECUTABLE)
-    add_test (test_bf2h5writer_h5dump ${H5DUMP_EXECUTABLE} -A L_test_bf.h5)
+    add_test (test_bf2h5writer_h5dump ${H5DUMP_EXECUTABLE} -A L1234567890_test_bf.h5)
   endif (H5DUMP_EXECUTABLE)
   
   if (H5LS_EXECUTABLE)
-    add_test (test_bf2h5writer_h5ls ${H5LS_EXECUTABLE} -v L_test_bf.h5)
+    add_test (test_bf2h5writer_h5ls ${H5LS_EXECUTABLE} -v L1234567890_test_bf.h5)
   endif (H5LS_EXECUTABLE)
   
   ## -----------------------------------------------------------------

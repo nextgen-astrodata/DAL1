@@ -209,48 +209,48 @@ namespace DAL { // Namespace DAL -- begin
   {
     os << "[CommonAttributes] Summary of internal parameters." << std::endl;
     
-    os << "-- GROUPTYPE              = " << itsGroupType       << std::endl;
-    os << "-- FILENAME               = " << itsFilename        << std::endl;
-    os << "-- FILETYPE               = " << itsFiletype        << std::endl;
-    os << "-- FILEDATE               = " << itsFiledate        << std::endl;
-    os << "-- TELESCOPE              = " << itsTelescope       << std::endl;
-    os << "-- OBSERVER               = " << itsObserver        << std::endl;
+    os << "-- GROUPTYPE                       = " << itsGroupType       << std::endl;
+    os << "-- FILENAME                        = " << itsFilename        << std::endl;
+    os << "-- FILETYPE                        = " << itsFiletype        << std::endl;
+    os << "-- FILEDATE                        = " << itsFiledate        << std::endl;
+    os << "-- TELESCOPE                       = " << itsTelescope       << std::endl;
+    os << "-- OBSERVER                        = " << itsObserver        << std::endl;
     /*________________________________________________________________
       Common LOFAR attributes for description of project 
     */
-    os << "-- PROJECT_ID             = " << itsProjectID       << std::endl;
-    os << "-- PROJECT_TITLE          = " << itsProjectTitle    << std::endl;
-    os << "-- PROJECT_PI             = " << itsProjectPI       << std::endl;
-    os << "-- PROJECT_CO_I           = " << itsProjectCoI      << std::endl;
-    os << "-- PROJECT_CONTACT        = " << itsProjectContact  << std::endl;
+    os << "-- PROJECT_ID                      = " << itsProjectID       << std::endl;
+    os << "-- PROJECT_TITLE                   = " << itsProjectTitle    << std::endl;
+    os << "-- PROJECT_PI                      = " << itsProjectPI       << std::endl;
+    os << "-- PROJECT_CO_I                    = " << itsProjectCoI      << std::endl;
+    os << "-- PROJECT_CONTACT                 = " << itsProjectContact  << std::endl;
     /*________________________________________________________________
       Common LOFAR attributes for description of observation
     */
-    os << "-- Observation ID                = " << itsObservationID    << std::endl;
-    os << "-- Observation date (MJD) Start  = " << itsStartMJD         << std::endl;
-    os << "-- Observation date (MJD) End    = " << itsEndMJD           << std::endl;
-    os << "-- Observation date (TAI) Start  = " << itsStartTAI         << std::endl;
-    os << "-- Observation date (TAI) End    = " << itsEndTAI           << std::endl;
-    os << "-- Observation date (UTC) Start  = " << itsStartUTC         << std::endl;
-    os << "-- Observation date (UTC) End    = " << itsEndUTC           << std::endl;
-    os << "-- nof. stations participating   = " << itsNofStations      << std::endl;
-    os << "-- List of stations              = " << itsStationsList     << std::endl;
-    os << "-- Minimum observation frequency = " << itsFrequencyMin     << std::endl;
-    os << "-- Center observation frequency  = " << itsFrequencyCenter  << std::endl;
-    os << "-- Maximum observation frequency = " << itsFrequencyMax     << std::endl;
-    os << "-- Observation frequency unit    = " << itsFrequencyUnit    << std::endl;
-    os << "-- Number of bits per sample     = " << itsNofBitsPerSample << std::endl;
+    os << "-- OBSERVATION_ID                  = " << itsObservationID    << std::endl;
+    os << "-- OBSERVATION_START_MJD           = " << itsStartMJD         << std::endl;
+    os << "-- OBSERVATION_END_MJD             = " << itsEndMJD           << std::endl;
+    os << "-- OBSERVATION_START_TAI           = " << itsStartTAI         << std::endl;
+    os << "-- OBSERVATION_END_TAI             = " << itsEndTAI           << std::endl;
+    os << "-- OBSERVATION_START_UTC           = " << itsStartUTC         << std::endl;
+    os << "-- OBSERVATION_END_UTC             = " << itsEndUTC           << std::endl;
+    os << "-- OBSERVATION_NOF_STATIONS        = " << itsNofStations      << std::endl;
+    os << "-- OBSERVATION_STATIONS_LIST       = " << itsStationsList     << std::endl;
+    os << "-- OBSERVATION_FREQUENCY_MIN       = " << itsFrequencyMin     << std::endl;
+    os << "-- OBSERVATION_FREQUENCY_CENTER    = " << itsFrequencyCenter  << std::endl;
+    os << "-- OBSERVATION_FREQUENCY_MAX       = " << itsFrequencyMax     << std::endl;
+    os << "-- OBSERVATION_FREQUENCY_UNIT      = " << itsFrequencyUnit    << std::endl;
+    os << "-- OBSERVATION_NOF_BITS_PER_SAMPLE = " << itsNofBitsPerSample << std::endl;
     /*________________________________________________________________
      */
-    os << "-- ANTENNA_SET            = " << itsAntennaSet           << std::endl;
-    os << "-- FILTER_SELECTION       = " << itsFilterSelection      << std::endl;
-    os << "-- CLOCK_FREQUENCY        = " << itsClockFrequency       << std::endl;
-    os << "-- CLOCK_FREQUENCY_UNIT   = " << itsClockFrequencyUnit   << std::endl;
-    os << "-- TARGET                 = " << itsTarget               << std::endl;
-    os << "-- SYSTEM_VERSION         = " << itsSystemVersion        << std::endl;
-    os << "-- PIPELINE_NAME          = " << pipelineName()         << std::endl;
-    os << "-- PIPELINE_VERSION       = " << pipelineVersion()      << std::endl;
-    os << "-- NOTES                  = " << itsNotes                << std::endl;
+    os << "-- ANTENNA_SET                     = " << antennaSet()         << std::endl;
+    os << "-- FILTER_SELECTION                = " << filterSelection()    << std::endl;
+    os << "-- CLOCK_FREQUENCY                 = " << clockFrequency()     << std::endl;
+    os << "-- CLOCK_FREQUENCY_UNIT            = " << clockFrequencyUnit() << std::endl;
+    os << "-- TARGET                          = " << target()             << std::endl;
+    os << "-- SYSTEM_VERSION                  = " << systemVersion()      << std::endl;
+    os << "-- PIPELINE_NAME                   = " << pipelineName()       << std::endl;
+    os << "-- PIPELINE_VERSION                = " << pipelineVersion()    << std::endl;
+    os << "-- NOTES                           = " << notes()              << std::endl;
   }
   
   // ============================================================================
@@ -325,7 +325,7 @@ namespace DAL { // Namespace DAL -- begin
     itsEndTAI              = undefined;
     itsEndUTC              = undefined;
     itsNofStations         = 0;
-    itsStationsList.clear();
+    itsStationsList        = std::vector<std::string> (1,undefined);
     itsFrequencyMin        = 0.0;
     itsFrequencyMax        = 0.0;
     itsFrequencyCenter     = 0.0;
@@ -347,51 +347,51 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      h5write
   
-  bool CommonAttributes::h5write (hid_t const &groupID)
+  bool CommonAttributes::h5write (hid_t const &id)
   {
     bool status (true);
     
-    HDF5Attribute::write( groupID, "GROUPTYPE",            itsGroupType );
-    HDF5Attribute::write( groupID, "FILENAME",             itsFilename );
-    HDF5Attribute::write( groupID, "FILETYPE",             itsFiletype );
-    HDF5Attribute::write( groupID, "FILEDATE",             itsFiledate );
-    HDF5Attribute::write( groupID, "TELESCOPE",            itsTelescope );
-    HDF5Attribute::write( groupID, "OBSERVER",             itsObserver );
+    HDF5Attribute::write (id, "GROUPTYPE", itsGroupType );
+    HDF5Attribute::write (id, "FILENAME",  itsFilename );
+    HDF5Attribute::write (id, "FILETYPE",  itsFiletype );
+    HDF5Attribute::write (id, "FILEDATE",  itsFiledate );
+    HDF5Attribute::write (id, "TELESCOPE", itsTelescope );
+    HDF5Attribute::write (id, "OBSERVER",  itsObserver );
     /*________________________________________________________________
       Common LOFAR attributes for description of project 
     */
-    HDF5Attribute::write( groupID, "PROJECT_ID",           itsProjectID );
-    HDF5Attribute::write( groupID, "PROJECT_TITLE",        itsProjectTitle );
-    HDF5Attribute::write( groupID, "PROJECT_PI",           itsProjectPI );
-    HDF5Attribute::write( groupID, "PROJECT_CO_I",         itsProjectCoI );
-    HDF5Attribute::write( groupID, "PROJECT_CONTACT",      itsProjectContact );
+    HDF5Attribute::write (id, "PROJECT_ID",      itsProjectID );
+    HDF5Attribute::write (id, "PROJECT_TITLE",   itsProjectTitle );
+    HDF5Attribute::write (id, "PROJECT_PI",      itsProjectPI );
+    HDF5Attribute::write (id, "PROJECT_CO_I",    itsProjectCoI );
+    HDF5Attribute::write (id, "PROJECT_CONTACT", itsProjectContact );
     /*________________________________________________________________
     */
-    HDF5Attribute::write(groupID, "OBSERVATION_ID",               itsObservationID);
-    HDF5Attribute::write(groupID, "OBSERVATION_START_MJD",        itsStartMJD);
-    HDF5Attribute::write(groupID, "OBSERVATION_START_TAI",        itsStartTAI);
-    HDF5Attribute::write(groupID, "OBSERVATION_START_UTC",        itsStartUTC);
-    HDF5Attribute::write(groupID, "OBSERVATION_END_MJD",          itsEndMJD);
-    HDF5Attribute::write(groupID, "OBSERVATION_END_TAI",          itsEndMJD);
-    HDF5Attribute::write(groupID, "OBSERVATION_END_UTC",          itsEndMJD);
-    HDF5Attribute::write(groupID, "OBSERVATION_NOF_STATIONS",     itsNofStations);
-    HDF5Attribute::write(groupID, "OBSERVATION_STATIONS_LIST",    itsStationsList);
-    HDF5Attribute::write(groupID, "OBSERVATION_FREQUENCY_MIN",    itsFrequencyMin);
-    HDF5Attribute::write(groupID, "OBSERVATION_FREQUENCY_MAX",    itsFrequencyMax);
-    HDF5Attribute::write(groupID, "OBSERVATION_FREQUENCY_CENTER", itsFrequencyCenter);
-    HDF5Attribute::write(groupID, "OBSERVATION_FREQUENCY_UNIT",   itsFrequencyUnit);
-    HDF5Attribute::write(groupID, "OBSERVATION_NOF_BITS_PER_SAMPLE", itsNofBitsPerSample);
+    HDF5Attribute::write (id, "OBSERVATION_ID",               itsObservationID);
+    HDF5Attribute::write (id, "OBSERVATION_START_MJD",        itsStartMJD);
+    HDF5Attribute::write (id, "OBSERVATION_START_TAI",        itsStartTAI);
+    HDF5Attribute::write (id, "OBSERVATION_START_UTC",        itsStartUTC);
+    HDF5Attribute::write (id, "OBSERVATION_END_MJD",          itsEndMJD);
+    HDF5Attribute::write (id, "OBSERVATION_END_TAI",          itsEndMJD);
+    HDF5Attribute::write (id, "OBSERVATION_END_UTC",          itsEndMJD);
+    HDF5Attribute::write (id, "OBSERVATION_NOF_STATIONS",     itsNofStations);
+    HDF5Attribute::write (id, "OBSERVATION_STATIONS_LIST",    itsStationsList);
+    HDF5Attribute::write (id, "OBSERVATION_FREQUENCY_MIN",    itsFrequencyMin);
+    HDF5Attribute::write (id, "OBSERVATION_FREQUENCY_MAX",    itsFrequencyMax);
+    HDF5Attribute::write (id, "OBSERVATION_FREQUENCY_CENTER", itsFrequencyCenter);
+    HDF5Attribute::write (id, "OBSERVATION_FREQUENCY_UNIT",   itsFrequencyUnit);
+    HDF5Attribute::write (id, "OBSERVATION_NOF_BITS_PER_SAMPLE", itsNofBitsPerSample);
     /*________________________________________________________________
     */
-    HDF5Attribute::write( groupID, "ANTENNA_SET",          itsAntennaSet );
-    HDF5Attribute::write( groupID, "FILTER_SELECTION",     itsFilterSelection );
-    HDF5Attribute::write( groupID, "CLOCK_FREQUENCY",      itsClockFrequency );
-    HDF5Attribute::write( groupID, "CLOCK_FREQUENCY_UNIT", itsClockFrequencyUnit );
-    HDF5Attribute::write( groupID, "TARGET",               itsTarget );
-    HDF5Attribute::write( groupID, "SYSTEM_VERSION",       itsSystemVersion );
-    HDF5Attribute::write( groupID, "PIPELINE_NAME",        itsPipelineName );
-    HDF5Attribute::write( groupID, "PIPELINE_VERSION",     itsPipelineVersion );
-    HDF5Attribute::write( groupID, "NOTES",                itsNotes );
+    HDF5Attribute::write (id, "ANTENNA_SET",          itsAntennaSet );
+    HDF5Attribute::write (id, "FILTER_SELECTION",     itsFilterSelection );
+    HDF5Attribute::write (id, "CLOCK_FREQUENCY",      itsClockFrequency );
+    HDF5Attribute::write (id, "CLOCK_FREQUENCY_UNIT", itsClockFrequencyUnit );
+    HDF5Attribute::write (id, "TARGET",               itsTarget );
+    HDF5Attribute::write (id, "SYSTEM_VERSION",       itsSystemVersion );
+    HDF5Attribute::write (id, "PIPELINE_NAME",        itsPipelineName );
+    HDF5Attribute::write (id, "PIPELINE_VERSION",     itsPipelineVersion );
+    HDF5Attribute::write (id, "NOTES",                itsNotes );
 
     return status;
   }

@@ -28,8 +28,8 @@
 // DAL header files
 #include <data_common/HDF5CommonInterface.h>
 #include <data_common/Filename.h>
-#include <data_hl/BF_SubArrayPointing.h>
-#include <data_hl/SysLog.h>
+#include "BF_SubArrayPointing.h"
+#include "SysLog.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -164,7 +164,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Name of the data file
     std::string itsFilename;
     //! LOFAR common attributes attached to the root group of the dataset
-    CommonAttributes commonAttributes_p;
+    CommonAttributes itsCommonAttributes;
     //! Primary Pointing Directions
     std::map<std::string,BF_SubArrayPointing> itsSubarrayPointings;
     //! Container for system-wide logs

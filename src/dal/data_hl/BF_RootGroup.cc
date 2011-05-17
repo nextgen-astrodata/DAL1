@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <data_hl/BF_RootGroup.h>
+#include "BF_RootGroup.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -117,10 +117,10 @@ namespace DAL { // Namespace DAL -- begin
   CommonAttributes BF_RootGroup::commonAttributes ()
   {
     if (location_p > 0) {
-      commonAttributes_p.h5read (location_p);
+      itsCommonAttributes.h5read (location_p);
     }
 
-    return commonAttributes_p;
+    return itsCommonAttributes;
   }
 
   //_____________________________________________________________________________
@@ -138,7 +138,7 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
 
     try {
-      commonAttributes_p = attributes;
+      itsCommonAttributes = attributes;
     } catch (std::string message) {
       std::cerr << "[BF_RootGroup::setCommonAttributes] " << message << std::endl;
       status = false;
@@ -181,7 +181,7 @@ namespace DAL { // Namespace DAL -- begin
     /* Set up the list of attributes attached to the root group */
     setAttributes();
     /* Try opening the file holding the dataset */
-    if (!open (0,commonAttributes_p.filename(),true)) {
+    if (!open (0,itsCommonAttributes.filename(),true)) {
       std::cerr << "[BF_RootGroup::init] Initialization of object failed!"
 		<< " Unable to access file holding the dataset!"
 		<< std::endl;
@@ -194,6 +194,8 @@ namespace DAL { // Namespace DAL -- begin
   void BF_RootGroup::setAttributes ()
   {
     attributes_p.clear();
+
+    attributes_p = itsCommonAttributes.attributes();
     
     attributes_p.insert("CREATE_OFFLINE_ONLINE");
     attributes_p.insert("BF_FORMAT");
@@ -262,7 +264,7 @@ namespace DAL { // Namespace DAL -- begin
     
     if (location_p > 0) {
       // Read the common LOFAR attributes
-      commonAttributes_p.h5read(location_p);
+      itsCommonAttributes.h5read(location_p);
     } else {
       /* If failed to open file, check if we are supposed to create one */
       if (create) {
@@ -271,14 +273,15 @@ namespace DAL { // Namespace DAL -- begin
 				H5P_DEFAULT,
 				H5P_DEFAULT);
 	/* Write LOFAR common attribute to the root group of the file */
-	commonAttributes_p.h5write(location_p);
+	itsCommonAttributes.h5write(location_p);
 	/* Write the additional attributes attached to the root group */
 	std::string undefined ("UNDEFINED");
 	std::vector<float> vectF (1,0.0);
 	std::vector<double> vectD (1,0.0);
+	bool trueBool (true);
 	//
 	HDF5Attribute::write (location_p,"FILENAME",                  name        );
- 	HDF5Attribute::write (location_p,"CREATE_OFFLINE_ONLINE",     true        );
+ 	HDF5Attribute::write (location_p,"CREATE_OFFLINE_ONLINE",     trueBool    );
  	HDF5Attribute::write (location_p,"BF_FORMAT",                 undefined   );
 	HDF5Attribute::write (location_p,"BF_VERSION",                undefined   );
 	HDF5Attribute::write (location_p,"EXPTIME_START_UTC",         undefined   );
@@ -297,7 +300,7 @@ namespace DAL { // Namespace DAL -- begin
 	HDF5Attribute::write (location_p,"SYSTEM_TEMPERATURE",        vectF       );
 	HDF5Attribute::write (location_p,"NOF_PRIMARY_BEAMS",         int(0)      );
 	/* Read back in the common attributes after storing default values */
-	commonAttributes_p.h5read(location_p);
+	itsCommonAttributes.h5read(location_p);
       } else {
 	std::cerr << "[BF_RootGroup::open] Failed to open file "
 		  << name
