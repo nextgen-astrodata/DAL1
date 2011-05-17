@@ -304,7 +304,6 @@ namespace DAL { // Namespace DAL -- begin
     itsAttributes.insert("NOTES");
     /* Default values of the attributes */
     std::string undefined ("UNDEFINED");
-    std::vector<std::string> stations (1,undefined);
     //
     itsGroupType           = "Root";
     itsFilename            = undefined;
@@ -347,6 +346,10 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                      h5write
   
+  /*!
+    \param id -- Object identifier for the HDF5 group or dataset to which the 
+           attributes will be attached.
+  */
   bool CommonAttributes::h5write (hid_t const &id)
   {
     bool status (true);
@@ -495,11 +498,11 @@ namespace DAL { // Namespace DAL -- begin
     bool status (true);
 
     try {
-      rec.define("FILENAME",      filename()   );
-      rec.define("FILETYPE",      filetype()   );
-      rec.define("FILEDATE",      filedate()   );
-      rec.define("TELESCOPE",     telescope()  );
-      rec.define("OBSERVER",      observer()   );
+      rec.define("FILENAME",   filename()   );
+      rec.define("FILETYPE",   filetype()   );
+      rec.define("FILEDATE",   filedate()   );
+      rec.define("TELESCOPE",  telescope()  );
+      rec.define("OBSERVER",   observer()   );
     } catch (casa::AipsError x) {
       cerr << "[CommonAttributes::getAttributes] "
 	   << "Error filling the record with attribute values!\n"

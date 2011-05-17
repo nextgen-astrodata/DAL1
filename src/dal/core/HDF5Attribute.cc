@@ -334,7 +334,11 @@ namespace DAL { // Namespace DAL -- begin
 			     char const *data,
 			     unsigned int const &size)
   {
-    return write (location, name, data, size, H5T_NATIVE_CHAR);
+    return write (location,
+		  name,
+		  data,
+		  size,
+		  H5T_NATIVE_CHAR);
   }
   
   //_____________________________________________________________________________
@@ -347,7 +351,11 @@ namespace DAL { // Namespace DAL -- begin
 			     int const *data,
 			     unsigned int const &size)
   {
-    return write (location, name, data, size, H5T_NATIVE_INT);
+    return write (location,
+		  name,
+		  data,
+		  size,
+		  H5T_NATIVE_INT);
   }
   
   //_____________________________________________________________________________
@@ -500,7 +508,7 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                         write(double)
+  //                                                                write(double)
   
   //! Set attribute of type (double)
   template <>
@@ -531,8 +539,19 @@ namespace DAL { // Namespace DAL -- begin
     hid_t   dataspace = 0;
     hid_t   datatype  = H5Tcopy (H5T_C_S1);
     hsize_t dims[1]   = { size };
-    hsize_t *maxdims  = 0;
-    herr_t h5err      = 0;
+    hsize_t *maxdims  = NULL;
+    herr_t  h5err     = 0;
+ 
+#ifdef DAL_DEBUGGING_MESSAGES   
+    std::cout << "[HDF5Attribute::write<string>()]" << std::endl;
+    std::cout << "-- location = " << location << std::endl;
+    std::cout << "-- name     = " << name     << std::endl;
+    std::cout << "-- data     = [";
+    for (unsigned int n=0; n<size; ++n) {
+      std::cout << " " << data[n];
+    }
+    std::cout << " ]" << std::endl;
+#endif
     
     /*________________________________________________________________
       Basic checks for reference location and attribute name.
@@ -568,8 +587,8 @@ namespace DAL { // Namespace DAL -- begin
 			       name.c_str(),
 			       datatype,
 			       dataspace,
-			       0,
-			       0);
+			       H5P_DEFAULT,
+			       H5P_DEFAULT);
 	/* ... and check if creation was successful */
 	if (H5Iis_valid(attribute)) {
 	  status = true;
@@ -614,6 +633,24 @@ namespace DAL { // Namespace DAL -- begin
     HDF5Object::close (attribute);
     
     return status;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                          write(vector<bool>)
+
+  template <>
+  bool HDF5Attribute::write (hid_t const &location,
+			     std::string const &name,
+			     std::vector<bool> const &data)
+  {
+    unsigned int size = data.size();
+    bool tmp[size];
+
+    for (size_t n=0; n<size; ++n) {
+      tmp[n] = data[n];
+    }
+
+    return write (location, name, tmp, size);
   }
   
   /// @endcond

@@ -831,175 +831,112 @@ namespace DAL {
                         bool * value,
                         int size)
   {
-    bool status;
-    int * data  = new int [size];
-    
-    for (int n(0); n<size; n++) {
-      data[n] = int(value[n]);
-    }
-    /* Forward the function call */
-    hid_t datatype = H5T_NATIVE_INT;
-    status = h5set_attribute (datatype,
-			      location_id,
-			      name,
-			      data,
-			      size);
-    // release allocated memory ...
-    delete [] data;
-    // ... before exiting function
-    return status;
+    return DAL::HDF5Attribute::write (location_id,
+				      name,
+				      value,
+				      size);
   }
-
-  /*!
-    \param location_id -- HDF5 identifier of the attribute within the file
-    \param name        -- Name of the attribute
-    \param value       -- Value of the attribute
-    \param size        -- The size of the attribute
-  */
+  /*_____________________________________________________________________________
+   *                                                         h5set_attribute<int>
+   */
   template <>
   bool h5set_attribute (hid_t const &location_id,
                         std::string name,
                         int * value,
                         int size)
   {
-    hid_t datatype = H5T_NATIVE_INT;
-    return h5set_attribute (datatype,
-                            location_id,
-                            name,
-                            value,
-                            size);
+    return DAL::HDF5Attribute::write (location_id,
+				      name,
+				      value,
+				      size);
   }
-
-  /*!
-    \param location_id -- HDF5 identifier of the attribute within the file
-    \param name        -- Name of the attribute
-    \param value       -- Value of the attribute
-    \param size        -- The size of the attribute
-  */
+  /*_____________________________________________________________________________
+   *                                                        h5set_attribute<uint>
+   */
   template <>
   bool h5set_attribute (hid_t const &location_id,
                         std::string name,
                         uint * value,
                         int size)
   {
-    hid_t datatype = H5T_NATIVE_UINT;
-    return h5set_attribute (datatype,
-                            location_id,
-                            name,
-                            value,
-                            size);
+    return DAL::HDF5Attribute::write (location_id,
+				      name,
+				      value,
+				      size);
   }
-
-  /*!
-    \param location_id -- HDF5 identifier of the attribute within the file
-    \param name        -- Name of the attribute
-    \param value       -- Value of the attribute
-    \param size        -- The size of the attribute
-  */
+  /*_____________________________________________________________________________
+   *                                                       h5set_attribute<short>
+   */
   template <>
   bool h5set_attribute (hid_t const &location_id,
                         std::string name,
                         short * value,
                         int size)
   {
-    hid_t datatype = H5T_NATIVE_SHORT;
-    return h5set_attribute (datatype,
-                            location_id,
-                            name,
-                            value,
-                            size);
+    return DAL::HDF5Attribute::write (location_id,
+				      name,
+				      value,
+				      size);
   }
-
-  /*!
-    \param location_id -- HDF5 identifier of the attribute within the file
-    \param name        -- Name of the attribute
-    \param value       -- Value of the attribute
-    \param size        -- The size of the attribute
-  */
+  /*_____________________________________________________________________________
+   *                                                        h5set_attribute<long>
+   */
   template <>
   bool h5set_attribute (hid_t const &location_id,
                         std::string name,
                         long * value,
                         int size)
   {
-    hid_t datatype = H5T_NATIVE_LONG;
-    return h5set_attribute (datatype,
-                            location_id,
-                            name,
-                            value,
-                            size);
+    return DAL::HDF5Attribute::write (location_id,
+				      name,
+				      value,
+				      size);
   }
-
-  /*!
-    \param location_id -- HDF5 identifier of the attribute within the file
-    \param name        -- Name of the attribute
-    \param value       -- Value of the attribute
-    \param size        -- The size of the attribute
-  */
+  /*_____________________________________________________________________________
+   *                                          h5set_attribute<unsigned long long>
+   */
   template <>
   bool h5set_attribute (hid_t const &location_id,
                         std::string name,
                         unsigned long long * value,
                         int size)
   {
-    hid_t datatype = H5T_NATIVE_ULLONG;
-    return h5set_attribute (datatype,
-                            location_id,
-                            name,
-                            value,
-                            size);
+    return DAL::HDF5Attribute::write (location_id,
+				      name,
+				      value,
+				      size);
   }
-
-  /*!
-    \param location_id -- HDF5 identifier of the attribute within the file
-    \param name        -- Name of the attribute
-    \param value       -- Value of the attribute
-    \param size        -- The size of the attribute
-  */
+  /*_____________________________________________________________________________
+   *                                                       h5set_attribute<float>
+   */
   template <>
   bool h5set_attribute (hid_t const &location_id,
                         std::string name,
                         float * value,
                         int size)
   {
-    hid_t datatype = H5T_NATIVE_FLOAT;
-    return h5set_attribute (datatype,
-                            location_id,
-                            name,
-                            value,
-                            size);
+    return DAL::HDF5Attribute::write (location_id,
+				      name,
+				      value,
+				      size);
   }
-
-  /*!
-    \param location_id -- HDF5 identifier of the attribute within the file
-    \param name        -- Name of the attribute
-    \param value       -- Value of the attribute
-    \param size        -- The size of the attribute
-  */
+  /*_____________________________________________________________________________
+   *                                                      h5set_attribute<double>
+   */
   template <>
   bool h5set_attribute (hid_t const &location_id,
                         std::string name,
                         double * value,
                         int size)
-  /*!
-    \param location_id -- HDF5 identifier of the attribute within the file
-    \param name        -- Name of the attribute
-    \param value       -- Value of the attribute
-    \param size        -- The size of the attribute
-  */
   {
     return DAL::HDF5Attribute::write (location_id,
 				      name,
 				      value,
 				      size);
   }
-
-  /*!
-    \param location_id -- HDF5 identifier of the attribute within the file
-    \param name        -- Name of the attribute
-    \param value       -- Value of the attribute
-    \param size        -- The size of the attribute
-  */
+  /*_____________________________________________________________________________
+   *                                                      h5set_attribute<string>
+   */
   template <>
   bool h5set_attribute (hid_t const &location_id,
                         std::string name,

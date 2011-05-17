@@ -488,11 +488,10 @@ namespace DAL {
                                  int size )
   {
     if (H5Iis_valid(h5fh_p)) {
-      return h5set_attribute (H5T_NATIVE_CHAR,
-			      h5fh_p,
-			      attrname,
-			      data,
-			      size);
+      return HDF5Attribute::write (h5fh_p,
+				   attrname,
+				   data,
+				   size);
     }
     else {
       std::cout << "[dalDataset::setAttribute]"

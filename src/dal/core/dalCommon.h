@@ -498,35 +498,6 @@ namespace DAL {
   
   //_____________________________________________________________________________
   //                                                              h5set_attribute
-  
-  /*!
-    \brief Set the value of an attribute attached to a group or dataset
-    
-    \param datatype    -- HDF5 datatype of the attribute
-    \param location_id -- HDF5 identifier of the attribute within the file
-    \param name        -- Name of the attribute
-    \param value       -- Value of the attribute
-    \param size        -- The size of the attribute
-
-    \return status -- Status of the operation; returns \e false in case an error
-            was encountered and detected.
-  */
-  template <typename T>
-    bool h5set_attribute (hid_t const &datatype,
-			  hid_t const &location_id,
-			  std::string name,
-			  T * value,
-			  int size)
-    {
-      return DAL::HDF5Attribute::write (location_id,
-					name,
-					value,
-					size,
-					datatype);
-  }
-  
-  //_____________________________________________________________________________
-  //                                                              h5set_attribute
 
   //! Set the value of an attribute attached to a group or dataset
   template <typename T>
@@ -545,21 +516,7 @@ namespace DAL {
 			  std::string name,
 			  std::vector<T> const &value)
     {
-      bool status (true);
-      int nelem = value.size();
-      T * data  = new T [nelem];
-      
-      for (int n(0); n<nelem; n++) {
-	data[n] = value[n];
-      }
-      
-      status = h5set_attribute (location_id,
-				name,
-				data,
-				nelem);
-      delete [] data;
-
-      return status;
+      return HDF5Attribute::write (location_id, name, value);
     }
   
   //_____________________________________________________________________________

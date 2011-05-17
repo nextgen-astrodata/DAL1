@@ -1423,7 +1423,7 @@ namespace DAL {
 			       char const * data,
                                int size )
   {
-    return h5set_attribute( H5T_NATIVE_CHAR, tableID_p, attrname, data, size );
+    return HDF5Attribute::write (tableID_p, attrname, data, size );
   }
 
   //_____________________________________________________________________________

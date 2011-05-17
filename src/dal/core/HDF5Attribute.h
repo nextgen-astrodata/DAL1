@@ -424,6 +424,39 @@ namespace DAL { // Namespace DAL -- begin
 			 T const *data,
 			 unsigned int const &size);
     
+    /*!
+      \brief Write attribute value
+      \param location -- HDF5 identifier for the object to which the attribute
+             is attached.
+      \param name    -- Name of the attribute.
+      \param data    -- Data value(s) to be assigned to the attribute
+      \return status -- Status of the operation
+    */
+    template <class T>
+      static bool write (hid_t const &location,
+			 std::string const &name,
+			 T const &data)
+      {
+	T buffer[] = {data};
+	return write (location, name, buffer, 1);
+      }
+    
+    /*!
+      \brief Write attribute value
+      \param location -- HDF5 identifier for the object to which the attribute
+             is attached.
+      \param name    -- Name of the attribute.
+      \param data    -- Data value(s) to be assigned to the attribute
+      \return status -- Status of the operation
+    */
+    template <class T>
+      static bool write (hid_t const &location,
+			 std::string const &name,
+			 std::vector<T> const &data)
+      {
+	return write (location, name, &data[0], data.size());
+      }
+    
 #ifdef DAL_WITH_CASA
     /*!
       \brief Write attribute value
@@ -442,39 +475,6 @@ namespace DAL { // Namespace DAL -- begin
       }
     
 #endif
-    
-    /*!
-      \brief Write attribute value
-      \param location -- HDF5 identifier for the object to which the attribute
-             is attached.
-      \param name    -- Name of the attribute.
-      \param data    -- Data value(s) to be assigned to the attribute
-      \return status -- Status of the operation
-    */
-    template <class T>
-      static bool write (hid_t const &location,
-			 std::string const &name,
-			 std::vector<T> const &data)
-      {
-	return write (location, name, &data[0], data.size());
-      }
-    
-    /*!
-      \brief Write attribute value
-      \param location -- HDF5 identifier for the object to which the attribute
-             is attached.
-      \param name    -- Name of the attribute.
-      \param data    -- Data value(s) to be assigned to the attribute
-      \return status -- Status of the operation
-    */
-    template <class T>
-      static bool write (hid_t const &location,
-			 std::string const &name,
-			 T const &data)
-      {
-	T buffer[] = {data};
-	return write (location, name, buffer, 1);
-      }
     
     /*!
       \brief Write multiple attributes to the same value.

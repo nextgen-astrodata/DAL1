@@ -195,6 +195,7 @@ int test_static_write (hid_t const &location)
   
   std::cout << "\n[1] Testing write(hid_t,string,T) ..." << std::endl;
   try {
+    bool valBool             = false;
     short valShort           = 1;
     unsigned short valUshort = 2;
     int valInt               = 3;
@@ -206,6 +207,7 @@ int test_static_write (hid_t const &location)
     std::string valString    = "bla";
 
     std::cout << "-- Start writing attributes." << std::endl << std::flush;
+    HDF5Attribute::write (location, "h5a_bool",    valBool);
     HDF5Attribute::write (location, "h5a_short",   valShort);
     HDF5Attribute::write (location, "h5a_ushort",  valUshort);
     HDF5Attribute::write (location, "h5a_int",     valInt);
@@ -228,6 +230,7 @@ int test_static_write (hid_t const &location)
   cout << "\n[2] Testing write(hid_t,string,vector<T>) ..." << endl;
   try {
     unsigned int nelem = 3;
+    std::vector<bool> valBool         (nelem, false);
     std::vector<int> valInt           (nelem, 1);
     std::vector<unsigned int> valUint (nelem, 2);
     std::vector<short> valShort       (nelem, 3);
@@ -237,6 +240,7 @@ int test_static_write (hid_t const &location)
     std::vector<std::string> valString (nelem, "bla");
     
     std::cout << "-- Start writing attributes." << std::endl << std::flush;
+    // HDF5Attribute::write (location, "h5a_vector_bool",   valBool);
     HDF5Attribute::write (location, "h5a_vector_int",    valInt);
     HDF5Attribute::write (location, "h5a_vector_uint",   valUint);
     HDF5Attribute::write (location, "h5a_vector_short",  valShort);
@@ -256,6 +260,7 @@ int test_static_write (hid_t const &location)
   cout << "\n[3] Testing write(hid_t,string,T*,uint) ..." << endl;
   try {
     unsigned int nelem      = 5;
+    int valBool[]           = {false,true,false,true,false};
     int valInt[]            = {1,1,1,1,1};
     unsigned int valUint[]  = {2,2,2,2,2};
     short valShort[]        = {3,3,3,3,3};
@@ -265,6 +270,7 @@ int test_static_write (hid_t const &location)
     std::string valString[] = {"a","bb","ccc","dddd","eeeee"};
 
     std::cout << "-- Start writing attributes." << std::endl << std::flush;
+    HDF5Attribute::write (location, "h5a_array_bool",   valBool,   nelem);
     HDF5Attribute::write (location, "h5a_array_int",    valInt,    nelem);
     HDF5Attribute::write (location, "h5a_array_uint",   valUint,   nelem);
     HDF5Attribute::write (location, "h5a_array_short",  valShort,  nelem);
