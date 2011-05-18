@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "Sky_ImageDataset.h"
+#include "InterfaceDataset.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -28,14 +28,14 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  Sky_ImageDataset::Sky_ImageDataset ()
-    : InterfaceDataset()
+  InterfaceDataset::InterfaceDataset ()
+    : HDF5Dataset()
   {
   }
   
-  Sky_ImageDataset::Sky_ImageDataset (hid_t const &location,
+  InterfaceDataset::InterfaceDataset (hid_t const &location,
 				      std::string const &name)
-    : InterfaceDataset(location,name)
+    : HDF5Dataset(location,name)
   {
   }
 
@@ -43,8 +43,8 @@ namespace DAL { // Namespace DAL -- begin
     \param other -- Another HDF5Property object from which to create this new
            one.
   */
-  Sky_ImageDataset::Sky_ImageDataset (Sky_ImageDataset const &other)
-    : InterfaceDataset (other)
+  InterfaceDataset::InterfaceDataset (InterfaceDataset const &other)
+    : HDF5Dataset (other)
   {
     copy (other);
   }
@@ -55,12 +55,12 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  Sky_ImageDataset::~Sky_ImageDataset ()
+  InterfaceDataset::~InterfaceDataset ()
   {
     destroy();
   }
   
-  void Sky_ImageDataset::destroy ()
+  void InterfaceDataset::destroy ()
   {;}
   
   // ============================================================================
@@ -73,9 +73,9 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                    operator=
   
   /*!
-    \param other -- Another Sky_ImageDataset object from which to make a copy.
+    \param other -- Another InterfaceDataset object from which to make a copy.
   */
-  Sky_ImageDataset& Sky_ImageDataset::operator= (Sky_ImageDataset const &other)
+  InterfaceDataset& InterfaceDataset::operator= (InterfaceDataset const &other)
   {
     if (this != &other) {
       destroy ();
@@ -87,7 +87,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
-  void Sky_ImageDataset::copy (Sky_ImageDataset const &other)
+  void InterfaceDataset::copy (InterfaceDataset const &other)
   {
     if (H5Iis_valid(other.itsLocation)) {
       itsLocation = -1;
@@ -106,9 +106,11 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param os -- Output stream to which the summary is written.
   */
-  void Sky_ImageDataset::summary (std::ostream &os)
+  void InterfaceDataset::summary (std::ostream &os)
   {
-    os << "[Sky_ImageDataset] Summary of internal parameters." << std::endl;
+    os << "[InterfaceDataset] Summary of internal parameters." << std::endl;
+    os << "-- GROUPTYPE = " << itsGroupType << std::endl;
+    os << "-- WCSINFO   = " << itsWCSinfo   << std::endl;
   }
   
   // ============================================================================
@@ -117,6 +119,20 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  // ============================================================================
+  //
+  //  Private methods
+  //
+  // ============================================================================
   
+  void InterfaceDataset::setAttributes ()
+  {
+    itsAttributes.clear();
+
+    itsAttributes.insert("GROUPTYPE");
+    itsAttributes.insert("WCSINFO");
+    itsAttributes.insert("DATASET_NOF_AXES");
+    itsAttributes.insert("DATASET_SHAPE");
+  }
 
 } // Namespace DAL -- end

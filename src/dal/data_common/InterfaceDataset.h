@@ -18,31 +18,31 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef SKY_IMAGEDATASET_H
-#define SKY_IMAGEDATASET_H
+#ifndef DATASETINTERFACE_H
+#define DATASETINTERFACE_H
 
 // Standard library header files
 #include <iostream>
 #include <string>
 
 // DAL header files
-#include <data_common/InterfaceDataset.h>
+#include <core/HDF5Dataset.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class Sky_ImageDataset
+    \class InterfaceDataset
     
     \ingroup DAL
-    \ingroup data_hl
+    \ingroup data_common
     
-    \brief Brief description for class Sky_ImageDataset
+    \brief Common interface for datasets using HDF5 for underlying storage
     
     \author Lars B&auml;hren
 
     \date 2011/02/01
 
-    \test tSky_ImageDataset.cc
+    \test tInterfaceDataset.cc
     
     <h3>Prerequisite</h3>
     
@@ -55,44 +55,57 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class Sky_ImageDataset : public InterfaceDataset {
+  class InterfaceDataset : public HDF5Dataset {
+
+  protected:
     
+    //! Set of attributes attached to the dataset
+    std::set<std::string> itsAttributes;
+    //! Group type descriptor
+    std::string itsGroupType;
+    //! Path to the coordinates group
+    std::string itsWCSinfo;
+
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    Sky_ImageDataset ();
+    InterfaceDataset ();
     
     //! Argumented constructor to open existing dataset
-    Sky_ImageDataset (hid_t const &location,
+    InterfaceDataset (hid_t const &location,
 		      std::string const &name);
     
     //! Argumented constructor to open existing dataset
-    Sky_ImageDataset (hid_t const &location,
+    InterfaceDataset (hid_t const &location,
 		      unsigned int const &index);
     
     //! Copy constructor
-    Sky_ImageDataset (Sky_ImageDataset const &other);
+    InterfaceDataset (InterfaceDataset const &other);
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~Sky_ImageDataset ();
+    ~InterfaceDataset ();
     
     // === Operators ============================================================
     
     //! Overloading of the copy operator
-    Sky_ImageDataset& operator= (Sky_ImageDataset const &other); 
+    InterfaceDataset& operator= (InterfaceDataset const &other); 
     
     // === Parameter access =====================================================
     
+    inline std::set<std::string> attributes () const {
+      return itsAttributes;
+    }
+
     /*!
       \brief Get the name of the class
-      \return className -- The name of the class, Sky_ImageDataset.
+      \return className -- The name of the class, InterfaceDataset.
     */
     inline std::string className () const {
-      return "Sky_ImageDataset";
+      return "InterfaceDataset";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -113,14 +126,14 @@ namespace DAL { // Namespace DAL -- begin
     void setAttributes ();
     
     //! Unconditional copying
-    void copy (Sky_ImageDataset const &other);
+    void copy (InterfaceDataset const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class Sky_ImageDataset -- end
+  }; // Class InterfaceDataset -- end
   
 } // Namespace DAL -- end
 
-#endif /* SKY_IMAGEDATASET_H */
+#endif /* DATASETINTERFACE_H */
   

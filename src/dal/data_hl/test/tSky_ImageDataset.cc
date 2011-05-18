@@ -26,6 +26,7 @@ using DAL::Sky_ImageDataset;
 /*!
   \file tSky_ImageDataset.cc
 
+  \ingroup DAL
   \ingroup data_hl
 
   \brief A collection of test routines for the Sky_ImageDataset class
