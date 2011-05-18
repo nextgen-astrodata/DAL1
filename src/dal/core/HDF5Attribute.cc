@@ -372,7 +372,7 @@ namespace DAL { // Namespace DAL -- begin
 		  name,
 		  data,
 		  size,
-		  H5T_NATIVE_HBOOL);
+		  H5T_NATIVE_INT);
   }
   
   //_____________________________________________________________________________
@@ -636,21 +636,32 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                          write(vector<bool>)
-
+  //                                                                  write(bool)
+  
+  /*!
+    \brief Template specialization for type \e bool
+  */
   template <>
+  bool HDF5Attribute::write (hid_t const &location,
+			     std::string const &name,
+			     bool const &data)
+  {
+    int buffer[] = {data};
+    return write (location, name, buffer, 1);
+  }
+
+  //_____________________________________________________________________________
+  //                                                          write(vector<bool>)
+  
   bool HDF5Attribute::write (hid_t const &location,
 			     std::string const &name,
 			     std::vector<bool> const &data)
   {
-    unsigned int size = data.size();
-    bool tmp[size];
-
-    for (size_t n=0; n<size; ++n) {
-      tmp[n] = data[n];
+    std::vector<int> buffer (data.size());
+    for (size_t n=0; n<data.size(); ++n) {
+      buffer[n] = data[n];
     }
-
-    return write (location, name, tmp, size);
+    return write (location, name, &buffer[0], data.size());
   }
   
   /// @endcond

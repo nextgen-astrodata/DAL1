@@ -240,7 +240,7 @@ int test_static_write (hid_t const &location)
     std::vector<std::string> valString (nelem, "bla");
     
     std::cout << "-- Start writing attributes." << std::endl << std::flush;
-    // HDF5Attribute::write (location, "h5a_vector_bool",   valBool);
+    HDF5Attribute::write (location, "h5a_vector_bool",   valBool);
     HDF5Attribute::write (location, "h5a_vector_int",    valInt);
     HDF5Attribute::write (location, "h5a_vector_uint",   valUint);
     HDF5Attribute::write (location, "h5a_vector_short",  valShort);

@@ -102,6 +102,13 @@ namespace DAL { // Namespace DAL -- begin
       }
       \endcode
     </ol>
+
+    \b Remarks: 
+
+    <ul>
+      <li>Since at the time of creating this class there is no proper \e bool
+      datatype, attributes of such type are being mapped onto \e int.
+    </ul>
     
     <h3>Example(s)</h3>
     
@@ -437,7 +444,7 @@ namespace DAL { // Namespace DAL -- begin
 			 std::string const &name,
 			 T const &data)
       {
-	T buffer[] = {data};
+	T buffer[] = {T(data)};
 	return write (location, name, buffer, 1);
       }
     
@@ -456,6 +463,10 @@ namespace DAL { // Namespace DAL -- begin
       {
 	return write (location, name, &data[0], data.size());
       }
+    //! Write attribute value of type \e bool
+    static bool write (hid_t const &location,
+		       std::string const &name,
+		       std::vector<bool> const &data);
     
 #ifdef DAL_WITH_CASA
     /*!
