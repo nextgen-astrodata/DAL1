@@ -31,7 +31,6 @@
 // DAL header files
 #include <data_common/Filename.h>
 #include <data_common/HDF5CommonInterface.h>
-#include <data_common/AttributesInterface.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -83,8 +82,10 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
 
   */  
-  class CommonAttributes : public AttributesInterface {
+  class CommonAttributes {
 
+    //! Attributes names
+    std::set<std::string> itsAttributes;
     //! Filename object, holding the various components making up the filename
     Filename itsFilenameHolder;
 
@@ -207,6 +208,11 @@ namespace DAL { // Namespace DAL -- begin
     CommonAttributes& operator= (CommonAttributes const &other); 
     
     // === Parameter access =====================================================
+
+    //! Attribute names
+    inline std::set<std::string> attributes () const {
+      return itsAttributes;
+    }
 
     /*!
       \brief Get the LOFAR group type
@@ -522,6 +528,11 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     // === Methods ==============================================================
+    
+    //! Is attribute of given \e name part of the group?
+    inline bool haveAttribute (std::string const &name) const {
+      return static_cast<bool>(itsAttributes.count(name));
+    }
     
     //! Get the value of an attribute
     template<class T >

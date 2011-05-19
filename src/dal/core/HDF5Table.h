@@ -27,7 +27,6 @@
 
 #include "dalCommon.h"
 #include "HDF5Dataset.h"
-#include <data_common/HDF5CommonInterface.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -295,10 +294,12 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class HDF5Table : public HDF5CommonInterface {
+  class HDF5Table : public HDF5Dataset {
     
+    //! Attributes names
+    std::set<std::string> itsAttributes;
     //! Table name
-    std::string tableName_p;
+    std::string itsName;
     //! Column names
     std::vector<std::string> columnNames_p;
     
@@ -322,7 +323,7 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Get the name of the table
     inline std::string tableName () const {
-      return tableName_p;
+      return itsName;
     }
     
     //! Get the name of the table columns

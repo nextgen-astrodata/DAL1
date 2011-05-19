@@ -75,7 +75,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     columnNames_p.resize(other.columnNames_p.size());
 
-    tableName_p   = other.tableName_p;
+    itsName   = other.itsName;
     columnNames_p = other.columnNames_p;
   }
 
@@ -91,7 +91,7 @@ namespace DAL { // Namespace DAL -- begin
   void HDF5Table::summary (std::ostream &os)
   {
     os << "[HDF5Table] Summary of internal parameters."  << std::endl;
-    os << "-- Table name   = " << tableName_p            << std::endl;
+    os << "-- Table name   = " << itsName            << std::endl;
     os << "-- Column names = " << columnNames_p          << std::endl;
   }
 
@@ -106,7 +106,7 @@ namespace DAL { // Namespace DAL -- begin
   
   void HDF5Table::init ()
   {
-    tableName_p = "";
+    itsName = "";
 
     columnNames_p.clear();
   }
@@ -116,12 +116,12 @@ namespace DAL { // Namespace DAL -- begin
   
   void HDF5Table::setAttributes ()
   {
-    attributes_p.clear();
+    itsAttributes.clear();
     
     /* Attributes of an Table Dataset */
-    attributes_p.insert("CLASS");
-    attributes_p.insert("VERSION");
-    attributes_p.insert("TITLE");
+    itsAttributes.insert("CLASS");
+    itsAttributes.insert("VERSION");
+    itsAttributes.insert("TITLE");
   }
 
   //_____________________________________________________________________________
@@ -138,11 +138,11 @@ namespace DAL { // Namespace DAL -- begin
     
     if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
       // Open the dataset
-      location_p = H5Dopen (location,
+      itsLocation = H5Dopen (location,
 			    name.c_str(),
 			    H5P_DEFAULT);
     } else {
-      location_p = 0;
+      itsLocation = 0;
     }
     
     return status;

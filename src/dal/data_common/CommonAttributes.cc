@@ -90,7 +90,6 @@ namespace DAL { // Namespace DAL -- begin
   //                                                             CommonAttributes
 
   CommonAttributes::CommonAttributes (CommonAttributes const &other)
-    : AttributesInterface (other)
   {
     copy (other);
   }
