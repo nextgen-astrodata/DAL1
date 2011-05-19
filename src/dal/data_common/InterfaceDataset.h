@@ -80,6 +80,12 @@ namespace DAL { // Namespace DAL -- begin
     //! Argumented constructor to open existing dataset
     InterfaceDataset (hid_t const &location,
 		      unsigned int const &index);
+
+    //! Argumented constructor to create new dataset
+    InterfaceDataset (hid_t const &location,
+		      std::string const &name,
+		      std::vector< hsize_t > const &shape,
+		      hid_t const &datatype=H5T_NATIVE_DOUBLE);
     
     //! Copy constructor
     InterfaceDataset (InterfaceDataset const &other);
@@ -96,10 +102,21 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Parameter access =====================================================
     
+    //! Attributes attached to the dataset
     inline std::set<std::string> attributes () const {
       return itsAttributes;
     }
 
+    //! Get the group type descriptor
+    inline std::string groupType () const {
+      return itsGroupType;
+    }
+
+    //! Get the path to the coordinates group
+    inline std::string wcsInfo () const {
+      return itsWCSinfo;
+    }
+    
     /*!
       \brief Get the name of the class
       \return className -- The name of the class, InterfaceDataset.

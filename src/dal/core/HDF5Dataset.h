@@ -322,6 +322,11 @@ namespace DAL {
       return itsShape.size();
     }
 
+    //! Get the number of axes (i.e. the rank) of the dataset
+    inline unsigned int nofAxes () const {
+      return itsShape.size();
+    }
+
     //! Get the nof. datapoints (i.e. array elements) of the dataset
     unsigned int nofDatapoints ();
     

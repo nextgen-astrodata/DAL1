@@ -39,6 +39,14 @@ namespace DAL { // Namespace DAL -- begin
   {
   }
 
+  InterfaceDataset::InterfaceDataset (hid_t const &location,
+				      std::string const &name,
+				      std::vector< hsize_t > const &shape,
+				      hid_t const &datatype)
+    : HDF5Dataset(location,name, shape, datatype)
+  {
+  }
+
   /*!
     \param other -- Another HDF5Property object from which to create this new
            one.
@@ -109,8 +117,10 @@ namespace DAL { // Namespace DAL -- begin
   void InterfaceDataset::summary (std::ostream &os)
   {
     os << "[InterfaceDataset] Summary of internal parameters." << std::endl;
-    os << "-- GROUPTYPE = " << itsGroupType << std::endl;
-    os << "-- WCSINFO   = " << itsWCSinfo   << std::endl;
+    os << "-- GROUPTYPE        = " << itsGroupType << std::endl;
+    os << "-- WCSINFO          = " << itsWCSinfo   << std::endl;
+    os << "-- DATASET_NOF_AXES = " << nofAxes()    << std::endl;
+    os << "-- DATASET_SHAPE    = " << shape()      << std::endl;
   }
   
   // ============================================================================
