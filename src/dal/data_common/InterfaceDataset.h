@@ -112,6 +112,11 @@ namespace DAL { // Namespace DAL -- begin
       return itsGroupType;
     }
 
+    //! Set the group type descriptor
+    inline void setGroupType (std::string const &grouptype) {
+      itsGroupType = grouptype;
+    }
+
     //! Get the path to the coordinates group
     inline std::string wcsInfo () const {
       return itsWCSinfo;
