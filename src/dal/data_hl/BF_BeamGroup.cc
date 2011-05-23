@@ -308,25 +308,28 @@ namespace DAL { // Namespace DAL -- begin
             error was encountered.
   */
   bool BF_BeamGroup::createStokesDataset (unsigned int const &index,
-					unsigned int const &nofSamples,
-					unsigned int const &nofSubbands,
-					unsigned int const &nofChannels,
-					DAL::Stokes::Component const &component,
-					hid_t const &datatype)
+					  unsigned int const &nofSamples,
+					  unsigned int const &nofSubbands,
+					  unsigned int const &nofChannels,
+					  DAL::Stokes::Component const &component,
+					  hid_t const &datatype,
+                                          bool const &truncate)
   {
     /* Put input parameters into proper format to be forwarded */
     std::vector<unsigned int> channels (nofSubbands,nofChannels);
     /* Open/create Stokes dataset. */
     return createStokesDataset (index,
-			      nofSamples,
-			      channels,
-			      component,
-			      datatype);
+				nofSamples,
+				channels,
+				component,
+				datatype,
+				truncate);
   }
-
+  
   //_____________________________________________________________________________
-  //                                                          createStokesDataset
 
+  //                                                          createStokesDataset
+  
   /*!
     \param index       -- ID of the Stokes dataset to be created.
     \param nofSamples  -- Number of bins along the time axis.
@@ -340,7 +343,8 @@ namespace DAL { // Namespace DAL -- begin
 					  unsigned int const &nofSamples,
 					  std::vector<unsigned int> const &nofChannels,
 					  DAL::Stokes::Component const &component,
-					  hid_t const &datatype)
+					  hid_t const &datatype,
+                                          bool const &truncate)
   {
     bool status = true;
     std::string name = BF_StokesDataset::getName(index);
@@ -359,29 +363,40 @@ namespace DAL { // Namespace DAL -- begin
 
     /*________________________________________________________________
       Check if dataset of given name does exist already; if this is
-      is the case, abort in order to avoid corrupting dataset.
+      the case, also take into account the 'truncate' parameter which
+      allows over-writing an existing dataset -- otherwise return
+      error.
     */
 
     if (it==itsStokesDatasets.end()) {
+      /* Dataset not yet opened */
       status = true;
     } else {
-      std::cout << "[BF_BeamGroup::createStokesDataset]"
-		<< " Found existing dataset " << name << "!"
-		<< std::endl;
-      return false;
+      if (truncate) {
+	/* Removing dataset from internal book-keeping */
+	itsStokesDatasets.erase(it);
+	/* Delete dataset */
+	H5Ldelete (location_p,
+		   name.c_str(),
+		   H5P_DEFAULT);
+	/* Update status for subsequent operations */
+	status = true;
+      } else {
+	status = false;
+      }
     }
     
     /*________________________________________________________________
       Create new Stokes dataset.
     */    
-
+    
     itsStokesDatasets[name] = BF_StokesDataset (location_p,
 						index,
 						nofSamples,
 						nofChannels,
 						component,
 						datatype);
-
+    
     /*________________________________________________________________
       Check if creation of dataset was successful; is this was not the
       case, make sure no entry is made in the internal map.
