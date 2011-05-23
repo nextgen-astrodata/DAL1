@@ -1,0 +1,56 @@
+
+/*!
+  \page dal_devel_bf Working with Beam-Formed Data
+
+  \section dal_devel_bf_icd Data format specification
+
+  The formal specification of the data format can be found in \ref dal_icd_003;
+  the document defines the hierarchical structure -- consisting of a number of
+  nested groups (much like directories on a UNIX-type system) with metadata 
+  attached -- meant to match the layout of the data processing.
+
+  \section dal_devel_bf_structure Creation of the file structure
+
+  The classes representing the individual elements of the hierarchical structure
+  are set up such, that recursive creation of structure elements is possible.
+  The figure below displays the various elements of the file structure, along
+  with the classes of the DAL representing these building blocks:
+
+  \verbatim
+  `-- Root group                                  BF_RootGroup
+      |-- System log                              
+      `-- Primary array pointing group            BF_SubArrayPointing
+          `-- Beam group                          BF_BeamGroup
+              `-- Stokes dataset                  BF_StokesDataset
+  \endverbatim
+  
+  \code
+  // Open an existing Stokes dataset from within a beam group
+  bool BF_BeamGroup::openStokesDataset (unsigned int const &stokesID);
+    
+  // Create a new Stokes dataset from within a beam group
+  bool BF_BeamGroup::createStokesDataset (unsigned int const &stokesID,
+                                          bool const &overwriteExisting=false);
+
+  // Open an existing Stokes dataset from within a root group
+  bool BF_SubArrayPointing::openStokesDataset (unsigned int const &beamID,
+                                               unsigned int const &stokesID);
+    
+  // Create a new Stokes dataset from within a root group
+  bool BF_SubArrayPointing::createStokesDataset (unsigned int const &beamID,
+                                                 unsigned int const &stokesID,
+                                                 bool const &overwriteExisting=false);
+
+  // Open an existing Stokes dataset from within a root group
+  bool BF_RootGroup::openStokesDataset (unsigned int const &pointingID,
+                                        unsigned int const &beamID,
+                                        unsigned int const &stokesID);
+    
+  // Create a new Stokes dataset from within a root group
+  bool BF_RootGroup::createStokesDataset (unsigned int const &pointingID,
+                                          unsigned int const &beamID,
+                                          unsigned int const &stokesID,
+                                          bool const &overwriteExisting=false);
+  \endcode
+
+*/

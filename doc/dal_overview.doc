@@ -16,10 +16,10 @@
     <ul>
       <li>\subpage dal_devel_conventions
       <li>\subpage dal_devel_releases
+      <li>\subpage dal_coding_cpp
+      <li>\subpage dal_coding_python
+      <li>\subpage dal_devel_bf
     </ul>
-    <li>\subpage dal_coding_cpp
-    <li>\subpage dal_coding_python
-    <li>\subpage dal_testing
     <li>\ref DAL
     <ul>
       <li>\ref core [\c core]
@@ -29,6 +29,7 @@
       <li>\ref pydal [\c bindings]
       <li>\ref dal_apps [\c apps]
     </ul>
+    <li>\subpage dal_testing
     <li>\subpage dal_data_formats
   </ul>		 
 
