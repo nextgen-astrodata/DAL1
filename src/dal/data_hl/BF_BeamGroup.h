@@ -163,6 +163,9 @@ namespace DAL { // Namespace DAL -- begin
     // Open an existing Stokes dataset from within a beam group
     bool openStokesDataset (unsigned int const &stokesID);
 
+    // Open an existing Stokes dataset from within a beam group
+    bool openStokesDataset (std::string const &name);
+
     // Create a new Stokes dataset from within a beam group
     bool createStokesDataset (unsigned int const &index,
 			      unsigned int const &nofSamples,

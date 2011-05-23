@@ -28,12 +28,14 @@
 
   \code
   // Open an existing Stokes dataset from within a beam group
+  bool BF_BeamGroup::openStokesDataset (std::string const &name);
+
+  // Open an existing Stokes dataset from within a beam group
   bool BF_BeamGroup::openStokesDataset (unsigned int const &stokesID);
-    
+
   // Create a new Stokes dataset from within a beam group
   bool BF_BeamGroup::createStokesDataset (unsigned int const &stokesID,
                                           bool const &overwriteExisting=false);
-
   \endcode
 
   Accessing (open/create) a Stokes dataset from within a primary pointing

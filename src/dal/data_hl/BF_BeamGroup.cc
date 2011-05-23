@@ -285,17 +285,57 @@ namespace DAL { // Namespace DAL -- begin
       Open Stokes datasets.
     */
 
-    if (!datasets.empty()) {
-      for (it=datasets.begin(); it!=datasets.end(); ++it) {
-	itsStokesDatasets[*it] = BF_StokesDataset (location_p, *it);
-      }
+    for (it=datasets.begin(); it!=datasets.end(); ++it) {
+      status *= openStokesDataset (*it);
     }
     
     return status;
   }
 
   //_____________________________________________________________________________
-  //                                                            createStokesDataset
+  //                                                            openStokesDataset
+
+  bool BF_BeamGroup::openStokesDataset (unsigned int const &stokesID)
+  {
+    /* Convert ID to name ... */
+    std::string name = BF_StokesDataset::getName (stokesID);
+    /* ... and try to open the dataset */
+    return openStokesDataset (name);
+  }
+
+  //_____________________________________________________________________________
+  //                                                            openStokesDataset
+
+  bool BF_BeamGroup::openStokesDataset (std::string const &name)
+  {
+    bool status (true);
+    std::map<std::string,BF_StokesDataset>::iterator it;
+
+    it = itsStokesDatasets.find(name);
+
+    /*
+     *  Check internal book-keeping; if the dataset has been opened already, we
+     *  can skip the additional tests.
+     */
+    if (it==itsStokesDatasets.end()) {
+      /* Dataset not yet opened */
+      if (H5Lexists (location_p, name.c_str(), H5P_DEFAULT)) {
+	/* Dataset exists, but not yet has been opened */
+	itsStokesDatasets[name] = BF_StokesDataset (location_p, name);
+      } else {
+	/* Dataset does not exist */
+	status = false;
+      }
+    } else {
+      /* Dataset exits and is opened already */
+      status = true;
+    }
+
+    return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                          createStokesDataset
 
   /*!
     \param index       -- ID of the Stokes dataset to be created.
@@ -327,7 +367,6 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-
   //                                                          createStokesDataset
   
   /*!
