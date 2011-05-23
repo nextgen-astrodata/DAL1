@@ -2,7 +2,7 @@
 
 logdir=Testing/Temporary
 logfile=$logdir/LastTest.log
-FILES="tdalFilter test_std_cerr"
+FILES="tHDF5Attribute test_bf2h5writer"
 
 ## ==============================================================================
 ##
