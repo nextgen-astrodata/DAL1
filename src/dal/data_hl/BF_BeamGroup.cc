@@ -295,7 +295,7 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                            openStokesDataset
+  //                                                            createStokesDataset
 
   /*!
     \param index       -- ID of the Stokes dataset to be created.
@@ -307,7 +307,7 @@ namespace DAL { // Namespace DAL -- begin
     \return status     -- Status of the operation; returns \e false in case an
             error was encountered.
   */
-  bool BF_BeamGroup::openStokesDataset (unsigned int const &index,
+  bool BF_BeamGroup::createStokesDataset (unsigned int const &index,
 					unsigned int const &nofSamples,
 					unsigned int const &nofSubbands,
 					unsigned int const &nofChannels,
@@ -317,7 +317,7 @@ namespace DAL { // Namespace DAL -- begin
     /* Put input parameters into proper format to be forwarded */
     std::vector<unsigned int> channels (nofSubbands,nofChannels);
     /* Open/create Stokes dataset. */
-    return openStokesDataset (index,
+    return createStokesDataset (index,
 			      nofSamples,
 			      channels,
 			      component,
@@ -325,7 +325,7 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                            openStokesDataset
+  //                                                          createStokesDataset
 
   /*!
     \param index       -- ID of the Stokes dataset to be created.
@@ -336,22 +336,22 @@ namespace DAL { // Namespace DAL -- begin
     \return status     -- Status of the operation; returns \e false in case an
             error was encountered.
   */
-  bool BF_BeamGroup::openStokesDataset (unsigned int const &index,
-					unsigned int const &nofSamples,
-					std::vector<unsigned int> const &nofChannels,
-					DAL::Stokes::Component const &component,
-					hid_t const &datatype)
+  bool BF_BeamGroup::createStokesDataset (unsigned int const &index,
+					  unsigned int const &nofSamples,
+					  std::vector<unsigned int> const &nofChannels,
+					  DAL::Stokes::Component const &component,
+					  hid_t const &datatype)
   {
     bool status = true;
     std::string name = BF_StokesDataset::getName(index);
     std::map<std::string,BF_StokesDataset>::iterator it = itsStokesDatasets.find(name);
-
+    
     /*________________________________________________________________
       Check input parameters.
     */    
 
     if (nofChannels.empty()) {
-      std::cerr << "[BF_BeamGroup::openStokesDataset]"
+      std::cerr << "[BF_BeamGroup::createStokesDataset]"
 		<< " Empty array of frequency channels!"
 		<< std::endl;
       return false;
@@ -365,7 +365,7 @@ namespace DAL { // Namespace DAL -- begin
     if (it==itsStokesDatasets.end()) {
       status = true;
     } else {
-      std::cout << "[BF_BeamGroup::openStokesDataset]"
+      std::cout << "[BF_BeamGroup::createStokesDataset]"
 		<< " Found existing dataset " << name << "!"
 		<< std::endl;
       return false;

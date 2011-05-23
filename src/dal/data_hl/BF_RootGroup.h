@@ -244,6 +244,17 @@ namespace DAL { // Namespace DAL -- begin
 		   unsigned int const &beamID,
 		   bool const &create=true);
 
+    //! Open an existing Stokes dataset
+    bool openStokesDataset (unsigned int const &pointingID,
+			    unsigned int const &beamID,
+			    unsigned int const &stokesID);
+    
+    //! Create a new Stokes dataset
+    bool createStokesDataset (unsigned int const &pointingID,
+			      unsigned int const &beamID,
+			      unsigned int const &stokesID,
+			      bool const &overwriteExisting=false);
+    
     //! Get the SysLog group
     SysLog sysLog ();
     

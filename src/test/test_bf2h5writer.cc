@@ -62,8 +62,8 @@ DAL::CommonAttributes commonAttributes (DAL::Filename const &filename)
 
 int main()
 {
-  const unsigned nrSamples = SAMPLES;
-  const unsigned nrChannels = SUBBANDS * CHANNELS;  
+  const unsigned nofSamples  = SAMPLES;
+  const unsigned nofChannels = SUBBANDS * CHANNELS;  
   
   /*__________________________________________________________________
     Create DAL::Filename object for generation of proper filename,
@@ -92,8 +92,8 @@ int main()
   std::cout << "-- Creating new file " << filename.filename() << endl;
   DAL::BF_RootGroup rootGroup (filename);
   
-  // cout << "-- Creating primary pointing 0" << endl;
-  // rootGroup.openPrimaryPointing ( 0, true );
+  cout << "-- Creating primary pointing 0" << endl;
+  rootGroup.openPrimaryPointing ( 0, true );
   
   // cout << "-- Creating tied-array beam 0" << endl;
   // rootGroup.openBeam ( 0, 0, true );
@@ -106,12 +106,10 @@ int main()
   */
   
   {
-    DAL::BF_RootGroup rootGroup (filename.filename());
-
     hid_t fileID = rootGroup.locationID();
     cout << "Creating stokes set 0" << endl;
     DAL::BF_StokesDataset stokesDataset(fileID, 0,
-					nrSamples,
+					nofSamples,
 					SUBBANDS,
 					CHANNELS,
 					DAL::Stokes::I );
@@ -126,18 +124,18 @@ int main()
         for (unsigned c = 0; c < CHANNELS; c++)
           samples[t][s][c] = t * s * c;
     
-    cout << "Creating hyperslab of " << nrSamples << " x " << nrChannels << endl;
+    cout << "Creating hyperslab of " << nofSamples << " x " << nofChannels << endl;
     
     vector<int> start(2), stride(2), count(2), block(2);
     
     start[0] = 0;
     stride[0] = samples.strides()[0]; // the sample dimension could be |2
-    count[0] = nrSamples;
+    count[0] = nofSamples;
     block[0] = 1;
     
     start[1] = 0;
     stride[1] = 1;
-    count[1] = nrChannels;
+    count[1] = nofChannels;
     block[1] = 1;
     
     DAL::HDF5Hyperslab hyperslab( start, stride, count, block );

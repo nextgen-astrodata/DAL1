@@ -444,8 +444,8 @@ namespace DAL { // Namespace DAL -- begin
     \param create     -- Create the group if it does not exist yet?
   */
   bool BF_RootGroup::openBeam (unsigned int const &pointingID,
-			     unsigned int const &beamID,
-			     bool const &create)
+			       unsigned int const &beamID,
+			       bool const &create)
   {
     bool status (true);
     htri_t validLocation = H5Iis_valid(location_p);
@@ -518,6 +518,23 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     return pointing;
+  }
+
+  //_____________________________________________________________________________
+  //                                                          createStokesDataset
+  
+  bool BF_RootGroup::openStokesDataset (unsigned int const &pointingID,
+					unsigned int const &beamID,
+					unsigned int const &stokesID)
+  {
+    bool status = true;
+
+    std::cout << "[BF_RootGroup::openStokesDataset]" << std::endl;
+    std::cout << "-- Primary array pointing ID = " << pointingID << std::endl;
+    std::cout << "-- Beam group ID             = " << beamID     << std::endl;
+    std::cout << "-- Stokes dataset ID         = " << stokesID   << std::endl;
+
+    return status;
   }
   
   //_____________________________________________________________________________
