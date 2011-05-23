@@ -118,8 +118,13 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     //! Get the path to the coordinates group
-    inline std::string wcsInfo () const {
+    inline std::string WCSinfo () const {
       return itsWCSinfo;
+    }
+    
+    //! Set the path to the coordinates group
+    inline void setWCSinfo (std::string const &WCSinfo) {
+      itsWCSinfo = WCSinfo;
     }
     
     /*!

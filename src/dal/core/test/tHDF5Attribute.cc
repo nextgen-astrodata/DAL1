@@ -54,7 +54,7 @@ using DAL::HDF5Object;
   h5a_ullong             ullong          H5T_NATIVE_ULLONG
   h5a_float              float           H5T_NATIVE_FLOAT
   h5a_double             double          H5T_NATIVE_DOUBLE
-  h5a_bool               bool
+  h5a_bool               bool            H5T_NATIVE_INT
   h5a_string             string
 
   h5a_array_bool         bool*
@@ -289,6 +289,7 @@ int test_static_write (hid_t const &location)
 
   cout << "\n[4] Updating attributes via write(hid_t,string,T) ..." << endl;
   try {
+    bool valBool             = true;
     short valShort           = 10;
     unsigned short valUshort = 20;
     int valInt               = 30;
@@ -300,6 +301,7 @@ int test_static_write (hid_t const &location)
     std::string valString    = "bladibla";
 
     std::cout << "-- Start updating attributes." << std::endl << std::flush;
+    HDF5Attribute::write (location, "h5a_bool",    valBool);
     HDF5Attribute::write (location, "h5a_short",   valShort);
     HDF5Attribute::write (location, "h5a_ushort",  valUshort);
     HDF5Attribute::write (location, "h5a_int",     valInt);
