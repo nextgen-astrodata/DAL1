@@ -369,27 +369,28 @@ namespace DAL { // Namespace DAL -- begin
            structure is attached.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
-    
+
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
   bool BF_StokesDataset::open (hid_t const &location,
-			       std::string const &name,
-			       bool const &create)
+			       std::string const &name)
   {
-    bool status = HDF5Dataset::open (location, name, create);
+    bool status = HDF5Dataset::open (location, name, false);
 
     if (status) {
       init ();
+    } else {
+      std::cerr << "[BF_StokesDataset::open]" 
+		<< " Failed to open dataset " << name << "; no such object!"
+		<< std::endl;
     }
 
     return status;
   }
   
   //_____________________________________________________________________________
-  //                                                                         open
+  //                                                                       create
 
   /*!
     \param location    -- Identifier for the location at which the dataset is about
@@ -411,14 +412,14 @@ namespace DAL { // Namespace DAL -- begin
   {
     if (nofSubbands>0) {
       std::vector<unsigned int> tmp (nofSubbands,nofChannels);
-      return create (location, component, nofSamples, tmp);
+      return create (location, component, nofSamples, tmp, overwriteExisting);
     } else {
       return false;
     }
   }
   
   //_____________________________________________________________________________
-  //                                                                         open
+  //                                                                       create
 
   /*!
     \param location    -- Identifier for the location at which the dataset is about
@@ -471,7 +472,10 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     /* Open/create dataset */
-    status = HDF5Dataset::create (location, itsName, shape, itsDatatype);
+    status = HDF5Dataset::create (location,
+				  itsName,
+				  shape,
+				  itsDatatype);
 
     /* Initialize attributes attached to the dataset */
     if (H5Iis_valid(itsLocation)) {

@@ -318,8 +318,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Open an existing Stokes dataset
     bool open (hid_t const &location,
-	       std::string const &name,
-	       bool const &create=false);
+	       std::string const &name);
     
     //! Create a new Stokes dataset
     bool create (hid_t const &location,
