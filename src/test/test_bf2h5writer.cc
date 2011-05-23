@@ -42,10 +42,8 @@ using boost::format;
 //_______________________________________________________________________________
 //                                                            setCommonAttributes
 
-int setCommonAttributes (DAL::Filename const &filename)
+DAL::CommonAttributes commonAttributes (DAL::Filename const &filename)
 {
-  int nofFailedTests = 0;
-
   DAL::CommonAttributes attributes (filename);
 
   attributes.setTelescope      ("LOFAR");
@@ -56,7 +54,7 @@ int setCommonAttributes (DAL::Filename const &filename)
   attributes.setProjectCoI     ("Mrs. Pulsar");
   attributes.setProjectContact ("pulsar@lofar.org");
 
-  return nofFailedTests;
+  return attributes;
 }
 
 //_______________________________________________________________________________
@@ -64,26 +62,34 @@ int setCommonAttributes (DAL::Filename const &filename)
 
 int main()
 {
+  const unsigned nrSamples = SAMPLES;
+  const unsigned nrChannels = SUBBANDS * CHANNELS;  
   
   /*__________________________________________________________________
     Create DAL::Filename object for generation of proper filename,
     matching the rules as  defined in ICD-005.
   */
-
+  
   std::string observationID ("1234567890");
   DAL::Filename filename (observationID,
 			  "test",
 			  DAL::Filename::bf,
 			  DAL::Filename::h5);
   
-  const unsigned nrSamples  = SAMPLES;
-  const unsigned nrChannels = SUBBANDS * CHANNELS;
-  
+  /*__________________________________________________________________
+    Set up the LOFAR Common Attributes, which will be attached to the
+    root group of the newly created file.
+  */
+
+  std::cout << "-- Setting up LOFAR Common Attributes ..." << std::endl;
+
+  DAL::CommonAttributes attributes = commonAttributes (filename);
+
   /*__________________________________________________________________
     Create new BF file with basic structure.
   */
-
-  std::cout << "[1] Creating new file " << filename.filename() << endl;
+  
+  std::cout << "-- Creating new file " << filename.filename() << endl;
   DAL::BF_RootGroup rootGroup (filename);
   
   // cout << "-- Creating primary pointing 0" << endl;
