@@ -98,12 +98,12 @@ namespace DAL { // Namespace DAL -- begin
     std::cout << "[BF_StokesDataset(hid_t,string,uint,uint,Stokes::Component,hid_t]"
 	      << std::endl;
 
-    open (location,
-	  component,
-	  nofSubbands,
-	  nofChannels);
+    create (location,
+	    component,
+	    nofSubbands,
+	    nofChannels);
   }
-
+  
   //_____________________________________________________________________________
   //                                                             BF_StokesDataset
   
@@ -128,11 +128,11 @@ namespace DAL { // Namespace DAL -- begin
     itsName     = getName(index);
     itsDatatype = datatype;
 
-    open (location,
-	  component,
-	  nofSamples,
-	  nofSubbands,
-	  nofChannels);
+    create (location,
+	    component,
+	    nofSamples,
+	    nofSubbands,
+	    nofChannels);
   }
 
   //_____________________________________________________________________________
@@ -157,12 +157,11 @@ namespace DAL { // Namespace DAL -- begin
     itsName     = getName(index);
     itsDatatype = datatype;
 
-    open (location,
-    	  component,
-    	  nofSamples,
-    	  nofChannels);
+    create (location,
+	    component,
+	    nofSamples,
+	    nofChannels);
   }
-
 
   //_____________________________________________________________________________
   //                                                             BF_StokesDataset
@@ -186,12 +185,12 @@ namespace DAL { // Namespace DAL -- begin
 
     std::vector<unsigned int> nofChannels (1, shape[1]);
 
-    open (location,      // HDF5 object ID
-	  component,     // Component name
-	  shape[0],      // nof. samples
-	  nofChannels);  // nof. channels
+    create (location,      // HDF5 object ID
+	    component,     // Component name
+	    shape[0],      // nof. samples
+	    nofChannels);  // nof. channels
   }
-
+  
   //_____________________________________________________________________________
   //                                                             BF_StokesDataset
   
@@ -403,15 +402,16 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns \e false in case an error
             was encountered.
   */
-  bool BF_StokesDataset::open (hid_t const &location,
-			       DAL::Stokes::Component const &component,
-			       unsigned int const &nofSamples,
-			       unsigned int const &nofSubbands,
-			       unsigned int const &nofChannels)
+  bool BF_StokesDataset::create (hid_t const &location,
+				 DAL::Stokes::Component const &component,
+				 unsigned int const &nofSamples,
+				 unsigned int const &nofSubbands,
+				 unsigned int const &nofChannels,
+				 bool const &overwriteExisting)
   {
     if (nofSubbands>0) {
       std::vector<unsigned int> tmp (nofSubbands,nofChannels);
-      return open (location, component, nofSamples, tmp);
+      return create (location, component, nofSamples, tmp);
     } else {
       return false;
     }
@@ -430,10 +430,11 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns \e false in case an error
             was encountered.
   */
-  bool BF_StokesDataset::open (hid_t const &location,
-			       DAL::Stokes::Component const &component,
-			       unsigned int const &nofSamples,
-			       std::vector<unsigned int> const &nofChannels)
+  bool BF_StokesDataset::create (hid_t const &location,
+				 DAL::Stokes::Component const &component,
+				 unsigned int const &nofSamples,
+				 std::vector<unsigned int> const &nofChannels,
+				 bool const &overwriteExisting)
   {
     bool status (true);
     std::vector<hsize_t> shape (2,1);

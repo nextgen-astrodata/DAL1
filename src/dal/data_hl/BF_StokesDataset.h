@@ -315,23 +315,25 @@ namespace DAL { // Namespace DAL -- begin
       return itsStokesComponent.type();
     }
     
-    //! Open Stokes dataset
+    //! Open an existing Stokes dataset
     bool open (hid_t const &location,
 	       std::string const &name,
 	       bool const &create=false);
     
-    //! Open (new) Stokes dataset
-    bool open (hid_t const &location,
-	       DAL::Stokes::Component const &component,
-	       unsigned int const &nofSamples,
-	       unsigned int const &nofSubbands,
-	       unsigned int const &nofChannels);
+    //! Create a new Stokes dataset
+    bool create (hid_t const &location,
+		 DAL::Stokes::Component const &component,
+		 unsigned int const &nofSamples,
+		 unsigned int const &nofSubbands,
+		 unsigned int const &nofChannels,
+		 bool const &overwriteExisting=false);
     
-    //! Open (new) Stokes dataset
-    bool open (hid_t const &location,
-	       DAL::Stokes::Component const &component,
-	       unsigned int const &nofSamples,
-	       std::vector<unsigned int> const &nofChannels);
+    //! Create a new Stokes dataset
+    bool create (hid_t const &location,
+		 DAL::Stokes::Component const &component,
+		 unsigned int const &nofSamples,
+		 std::vector<unsigned int> const &nofChannels,
+		 bool const &overwriteExisting=false);
     
     // === Static methods =======================================================
     
@@ -359,21 +361,21 @@ namespace DAL { // Namespace DAL -- begin
     inline bool init (hid_t const &location,
 		      DAL::Stokes::Component const &component,
 		      unsigned int const &nofChannels) {
-      return open (location, component, 1, nofChannels);
+      return create (location, component, 1, nofChannels);
     }
     //! Initialize the internal parameters 
-    inline bool open (hid_t const &location,
+    inline bool create (hid_t const &location,
 		      DAL::Stokes::Component const &component,
 		      unsigned int const &nofSubbands,
 		      unsigned int const &nofChannels) {
-      return open (location, component, 1, nofSubbands, nofChannels);
+      return create (location, component, 1, nofSubbands, nofChannels);
     }
     //! Initialize the internal parameters 
     inline bool init (hid_t const &location,
 		      DAL::Stokes::Component const &component,
 		      std::vector<unsigned int> const &nofChannels) {
       if (nofChannels.size()>1) {
-	return open (location, component, nofChannels[0], 1, nofChannels[1]);
+	return create (location, component, nofChannels[0], 1, nofChannels[1]);
       } else {
 	return false;
       }
