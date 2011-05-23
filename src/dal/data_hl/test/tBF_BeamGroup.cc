@@ -18,18 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <data_common/CommonAttributes.h>
-#include <data_hl/BF_RootGroup.h>
-#include <data_hl/BF_SubArrayPointing.h>
 #include <data_hl/BF_BeamGroup.h>
 
 // Namespace usage
 using std::cout;
 using std::endl;
-using DAL::CommonAttributes;
 using DAL::Filename;
-using DAL::BF_RootGroup;
-using DAL::BF_SubArrayPointing;
 using DAL::BF_BeamGroup;
 using DAL::BF_StokesDataset;
 
@@ -59,7 +53,7 @@ using DAL::BF_StokesDataset;
 */
 int test_constructors (hid_t const &fileID)
 {
-  cout << "\n[tBF_BeamGroup::test_constructors]\n" << endl;
+  cout << "\n[tBF_BeamGroup::test_constructors]" << endl;
 
   int nofFailedTests = 0;
   
@@ -67,7 +61,7 @@ int test_constructors (hid_t const &fileID)
     Test 1: Default constructor.
   */
   
-  cout << "[1] Testing BF_BeamGroup() ..." << endl;
+  cout << "\n[1] Testing BF_BeamGroup() ..." << endl;
   try {
     BF_BeamGroup beam;
     beam.summary();
@@ -82,7 +76,7 @@ int test_constructors (hid_t const &fileID)
 	    group if not existing yet.
   */
   
-  cout << "[2] Testing BF_BeamGroup(hid_t,uint,bool) ..." << endl;
+  cout << "\n[2] Testing BF_BeamGroup(hid_t,uint,bool) ..." << endl;
   try {
     BF_BeamGroup beam1 (fileID,1,true);
     beam1.summary();
@@ -156,80 +150,64 @@ int test_constructors (hid_t const &fileID)
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_attributes (hid_t const &fileID)
+int test_attributes (hid_t const &fileID,
+		     unsigned int const &beamID=1)
 {
-  cout << "\n[tBF_BeamGroup::test_attributes]\n" << endl;
+  cout << "\n[tBF_BeamGroup::test_attributes]" << endl;
 
   int nofFailedTests (0);
-  std::string groupname;
-  std::set<std::string> names;
-  std::set<std::string>::iterator it;
+  std::string groupname = BF_BeamGroup::getName (beamID);
 
-  /* Get list of groups attached to the file */
-  DAL::h5get_names (names, fileID, H5G_GROUP);
-
-  if (names.size() > 0) {
-    it = names.begin();
-    groupname = *it;
-  } else {
-    std::cerr << "Skipping tests - no station group found." << endl;
-    return -1;
-  }
-
-  cout << "-- opening Beam " << groupname << " ..." << endl;
+  /*__________________________________________________________________
+    Open beam group to work with.
+  */
+  
   BF_BeamGroup beam (fileID,groupname);
-
-  // Carry out the tests ___________________________________
-
-  std::string groupType;
-  std::vector<std::string> target;
-  int nofStations;
-  std::vector<std::string> stationsList;
-  double pointRA;
-  double pointDEC;
-  double positionOffsetRA;
-  double positionOffsetDEC;
-  double beamDiameterRA;
-  double beamDiameterDEC;
-
-  cout << "-- reading in attributes attached to group ..." << endl;
-
-  beam.getAttribute ("GROUPTYPE",groupType);
-  beam.getAttribute ("TARGET",target);
-  beam.getAttribute ("NOF_STATIONS",nofStations);
-  beam.getAttribute ("STATIONS_LIST",stationsList);
-  beam.getAttribute ("POINT_RA",pointRA);
-  beam.getAttribute ("POINT_DEC",pointDEC);
-  beam.getAttribute ("POSITION_OFFSET_RA",positionOffsetRA);
-  beam.getAttribute ("POSITION_OFFSET_DEC",positionOffsetDEC);
-  beam.getAttribute ("PB_DIAMETER_RA",beamDiameterRA);
-  beam.getAttribute ("PB_DIAMETER_DEC",beamDiameterDEC);
-
-  cout << " -- GROUPTYPE           = " << groupType         << endl;
-  cout << " -- TARGET              = " << target            << endl;
-  cout << " -- NOF_STATIONS        = " << nofStations       << endl;
-  cout << " -- STATIONS_LIST       = " << stationsList      << endl;
-  cout << " -- POINT_RA            = " << pointRA           << endl;
-  cout << " -- POINT_DEC           = " << pointDEC          << endl;
-  cout << " -- POSITION_OFFSET_RA  = " << positionOffsetRA  << endl;
-  cout << " -- POSITION_OFFSET_DEC = " << positionOffsetDEC << endl;
-  cout << " -- PB_DIAMETER_RA      = " << beamDiameterRA    << endl;
-  cout << " -- PB_DIAMETER_DEC     = " << beamDiameterDEC   << endl;
-
-  cout << "-- assigning new valeus to the attributes ..." << endl;
-
-  pointRA  = 45.0;
-  pointDEC = 45.0;
-
-  beam.setAttribute ("POINT_RA",pointRA);
-  beam.setAttribute ("POINT_DEC",pointDEC);
-
-  beam.getAttribute ("POINT_RA",pointRA);
-  beam.getAttribute ("POINT_DEC",pointDEC);
-
-  cout << " -- POINT_RA            = " << pointRA           << endl;
-  cout << " -- POINT_DEC           = " << pointDEC          << endl;
-
+  
+  /*__________________________________________________________________
+    Read attributes attached to the beam group.
+  */
+  
+  cout << "\n[1] Reading attributes attached to group " << groupname << endl;
+  try {
+    /* Local variables */
+    std::string groupType;
+    std::vector<std::string> target;
+    int nofStations;
+    std::vector<std::string> stationsList;
+    double pointRA;
+    double pointDEC;
+    double positionOffsetRA;
+    double positionOffsetDEC;
+    double beamDiameterRA;
+    double beamDiameterDEC;
+    /* Read attributes from HDF5 group */
+    beam.getAttribute ("GROUPTYPE",           groupType);
+    beam.getAttribute ("TARGET",              target);
+    beam.getAttribute ("NOF_STATIONS",        nofStations);
+    beam.getAttribute ("STATIONS_LIST",       stationsList);
+    beam.getAttribute ("POINT_RA",            pointRA);
+    beam.getAttribute ("POINT_DEC",           pointDEC);
+    beam.getAttribute ("POSITION_OFFSET_RA",  positionOffsetRA);
+    beam.getAttribute ("POSITION_OFFSET_DEC", positionOffsetDEC);
+    beam.getAttribute ("BEAM_DIAMETER_RA",    beamDiameterRA);
+    beam.getAttribute ("BEAM_DIAMETER_DEC",   beamDiameterDEC);
+    /* Display attribute values */
+    cout << " -- GROUPTYPE           = " << groupType         << endl;
+    cout << " -- TARGET              = " << target            << endl;
+    cout << " -- NOF_STATIONS        = " << nofStations       << endl;
+    cout << " -- STATIONS_LIST       = " << stationsList      << endl;
+    cout << " -- POINT_RA            = " << pointRA           << endl;
+    cout << " -- POINT_DEC           = " << pointDEC          << endl;
+    cout << " -- POSITION_OFFSET_RA  = " << positionOffsetRA  << endl;
+    cout << " -- POSITION_OFFSET_DEC = " << positionOffsetDEC << endl;
+    cout << " -- BEAM_DIAMETER_RA    = " << beamDiameterRA    << endl;
+    cout << " -- BEAM_DIAMETER_DEC   = " << beamDiameterDEC   << endl;
+  } catch (std::string message) {
+    std::cerr << message << endl;
+    nofFailedTests++;
+  }
+  
   return nofFailedTests;
 }
 
