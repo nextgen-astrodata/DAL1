@@ -353,29 +353,29 @@ namespace DAL { // Namespace DAL -- begin
 	  <td>Create</td>
 	  <td></td>
 	  <td></td>
-	  <td></td>
-	  <td>ACC_TRUNC</td>
+	  <td>H5Fcreate(...,ACC_TRUNC)</td>
+	  <td>Create</td>
 	</tr>
         <tr>
 	  <td>CreateNew</td>
 	  <td>O_CREAT & O_EXCL</td>
 	  <td></td>
-	  <td></td>
-	  <td>ACC_EXCL</td>
+	  <td>H5Fcreate(...,ACC_CREAT)</td>
+	  <td>CreateNew</td>
 	</tr>
         <tr>
 	  <td>Open</td>
 	  <td></td>
 	  <td></td>
 	  <td></td>
-	  <td></td>
+	  <td>Open</td>
 	</tr>
         <tr>
 	  <td>OpenOrCreate</td>
 	  <td></td>
 	  <td></td>
 	  <td></td>
-	  <td></td>
+	  <td>OpenOrCreate</td>
 	</tr>
       </table>
     */
