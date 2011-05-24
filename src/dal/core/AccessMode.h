@@ -24,6 +24,99 @@
 #include "HDF5Object.h"
 
 namespace DAL { // Namespace DAL -- begin
+  
+  /*!
+    \defgroup IO I/O settings & definitions
+    \brief I/O settings & definitions
+    \ingroup DAL
+  */
+  namespace IO {
+    
+    /*!
+      \brief Enumeration with file modes
+      \ingroup IO
+      
+      <center>
+      <table>
+        <tr>
+          <td class="indexkey">DAL</td>
+	  <td class="indexkey">GNU</td>
+	  <td class="indexkey">Qt</td>
+	  <td class="indexkey">HDF5</td>
+	  <td class="indexkey">C#</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::Create</td>
+	  <td>O_CREAT | O_TRUNC</td>
+	  <td></td>
+	  <td>H5Fcreate(...,ACC_TRUNC)</td>
+	  <td>Create</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::CreateNew</td>
+	  <td>O_CREAT | O_EXCL</td>
+	  <td></td>
+	  <td>H5Fcreate(...,ACC_CREAT)</td>
+	  <td>CreateNew</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::Open</td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
+	  <td>Open</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::OpenOrCreate</td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
+	  <td>OpenOrCreate</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::ReadOnly</td>
+	  <td>O_RDONLY</td>
+	  <td>_O_RDONLY</td>
+	  <td>ACC_RDONLY</td>
+	  <td>Read</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::ReadWrite</td>
+	  <td>O_RDWR</td>
+	  <td>_O_RDWR</td>
+	  <td>ACC_RDWR</td>
+	  <td>ReadWrite</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::WriteOnly</td>
+	  <td>O_WRONLY</td>
+	  <td>_O_WRONLY</td>
+	  <td>---</td>
+	  <td>Write</td>
+	</tr>
+      </table>
+      </center>
+    */
+    enum Mode {
+      //! Creates a new object. Overwrites any existing object.
+      Create       = 0x0000u,
+      //! Creates a new object. If the object already exists, an exception is thrown.
+      CreateNew    = 0x0001u,
+      //! Opens an existing object.
+      Open         = 0x0002u,
+      //! Opens a new object. If there is no object, it creates a new object. 
+      OpenOrCreate = 0x0004u,
+      //! Truncates an existing file.
+      Truncate     = 0x0008u,
+      //! Read access to the object.
+      ReadOnly     = 0x0010u,
+      //! Read and write access to the object.
+      ReadWrite    = 0x0020u,
+      //! Write access to the object.
+      WriteOnly    = 0x0040u
+    };
+
+  } // namespace IO
 
   /*!
     \class AccessMode
@@ -42,7 +135,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>[start filling in your text here]
+      <li>DAL::IO::Mode
     </ul>
     
     <h3>Synopsis</h3>
@@ -363,122 +456,8 @@ namespace DAL { // Namespace DAL -- begin
     
   */  
   class AccessMode {
-    
-    // === Public enumerations ==================================================
-    
-  public:
-    
-    /*!
-      \brief Object mode parameter
 
-      Based on the above, the following set of mode flags are implemented as
-      part of the DAL:
-      <center>
-      <table>
-        <tr>
-	  <td class="indexkey">DAL</td>
-	  <td class="indexkey">GNU</td>
-	  <td class="indexkey">Qt</td>
-	  <td class="indexkey">HDF5</td>
-	  <td class="indexkey">C#</td>
-	</tr>
-        <tr>
-	  <td>Create</td>
-	  <td>O_CREAT | O_TRUNC</td>
-	  <td></td>
-	  <td>H5Fcreate(...,ACC_TRUNC)</td>
-	  <td>Create</td>
-	</tr>
-        <tr>
-	  <td>CreateNew</td>
-	  <td>O_CREAT | O_EXCL</td>
-	  <td></td>
-	  <td>H5Fcreate(...,ACC_CREAT)</td>
-	  <td>CreateNew</td>
-	</tr>
-        <tr>
-	  <td>Open</td>
-	  <td></td>
-	  <td></td>
-	  <td></td>
-	  <td>Open</td>
-	</tr>
-        <tr>
-	  <td>OpenOrCreate</td>
-	  <td></td>
-	  <td></td>
-	  <td></td>
-	  <td>OpenOrCreate</td>
-	</tr>
-      </table>
-      </center>
-    */
-    enum Mode {
-      //! Creates a new object. Overwrites any existing object.
-      Create,
-      //! Creates a new object. If the object already exists, an exception is thrown.
-      CreateNew,
-      //! Opens an existing object.
-      Open,
-      //! Opens a new object. If there is no object, it creates a new object. 
-      OpenOrCreate
-    };
-    
-    /*!
-      \brief Object access parameter
-
-      Based on the above, the following set of acccess flags are implemented as
-      part of the DAL:
-      <center>
-      <table>
-        <tr>
-	  <td class="indexkey">DAL</td>
-	  <td class="indexkey">GNU</td>
-	  <td class="indexkey">Qt</td>
-	  <td class="indexkey">HDF5</td>
-	  <td class="indexkey">C#</td>
-	</tr>
-        <tr>
-	  <td>ReadOnly</td>
-	  <td>O_RDONLY</td>
-	  <td>_O_RDONLY</td>
-	  <td>ACC_RDONLY</td>
-	  <td>Read</td>
-	</tr>
-        <tr>
-	  <td>ReadWrite</td>
-	  <td>O_RDWR</td>
-	  <td>_O_RDWR</td>
-	  <td>ACC_RDWR</td>
-	  <td>ReadWrite</td>
-	</tr>
-        <tr>
-	  <td>WriteOnly</td>
-	  <td>O_WRONLY</td>
-	  <td>_O_WRONLY</td>
-	  <td>---</td>
-	  <td>Write</td>
-	</tr>
-      </table>
-      </center>
-    */    
-    enum Access {
-      //! Read access to the object
-      ReadOnly,
-      //! Read and write access to the object
-      ReadWrite,
-      //! Write access to the object
-      WriteOnly
-    };
-
-    // === Private variables ====================================================
-
-  private:
-
-    //! Object mode parameter
-    AccessMode::Mode itsMode;
-    //! Object access parameter
-    AccessMode::Access itsAccess;
+    DAL::IO::Mode itsMode;
 
   public:
     
@@ -507,13 +486,8 @@ namespace DAL { // Namespace DAL -- begin
     // === Parameter access =====================================================
     
     //! Get object mode parameter
-    inline AccessMode::Mode mode () const {
+    inline DAL::IO::Mode mode () const {
       return itsMode;
-    }
-
-    //! Get object access parameter
-    inline AccessMode::Access access () const {
-      return itsAccess;
     }
 
     /*!

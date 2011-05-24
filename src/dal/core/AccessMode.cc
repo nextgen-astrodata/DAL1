@@ -77,8 +77,7 @@ namespace DAL { // Namespace DAL -- begin
   
   void AccessMode::copy (AccessMode const &other)
   {
-    itsMode   = other.itsMode;
-    itsAccess = other.itsAccess;
+    itsMode = other.itsMode;
   }
 
   // ============================================================================
