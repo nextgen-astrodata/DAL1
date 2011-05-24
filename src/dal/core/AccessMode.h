@@ -491,6 +491,20 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     /*!
+      \brief Set object mode parameter
+      \param mode    -- Object mode parameter.
+      \return status -- Status of the operation.
+    */
+    inline bool setMode (DAL::IO::Mode const &mode) {
+      itsMode = mode;
+      return true;
+    }
+
+    bool addMode (DAL::IO::Mode const &mode);
+
+    bool removeMode (DAL::IO::Mode const &mode);
+
+    /*!
       \brief Get the name of the class
       
       \return className -- The name of the class, AccessMode.
