@@ -24,7 +24,7 @@
 #include "HDF5Object.h"
 
 namespace DAL { // Namespace DAL -- begin
-  
+
   /*!
     \class AccessMode
     
@@ -199,7 +199,14 @@ namespace DAL { // Namespace DAL -- begin
       GNU-specific code. But most programs will want to be portable to other
       POSIX.1 systems and should use the POSIX.1 names above instead.
 
-      <li>\b Qt
+      A (possible minor) variation on the above can be found on Darwin systems:
+      \code
+      #define O_CREAT         0x0200          // create if nonexistant
+      #define O_TRUNC         0x0400          // truncate to zero length
+      #define O_EXCL          0x0800          // error if already exists
+      \endcode
+      
+    <li>\b Qt
       
       \code
       // File I/O ---------------------------------------------------------
@@ -366,6 +373,7 @@ namespace DAL { // Namespace DAL -- begin
 
       Based on the above, the following set of mode flags are implemented as
       part of the DAL:
+      <center>
       <table>
         <tr>
 	  <td class="indexkey">DAL</td>
@@ -376,14 +384,14 @@ namespace DAL { // Namespace DAL -- begin
 	</tr>
         <tr>
 	  <td>Create</td>
-	  <td></td>
+	  <td>O_CREAT | O_TRUNC</td>
 	  <td></td>
 	  <td>H5Fcreate(...,ACC_TRUNC)</td>
 	  <td>Create</td>
 	</tr>
         <tr>
 	  <td>CreateNew</td>
-	  <td>O_CREAT & O_EXCL</td>
+	  <td>O_CREAT | O_EXCL</td>
 	  <td></td>
 	  <td>H5Fcreate(...,ACC_CREAT)</td>
 	  <td>CreateNew</td>
@@ -403,6 +411,7 @@ namespace DAL { // Namespace DAL -- begin
 	  <td>OpenOrCreate</td>
 	</tr>
       </table>
+      </center>
     */
     enum Mode {
       //! Creates a new object. Overwrites any existing object.
@@ -420,6 +429,7 @@ namespace DAL { // Namespace DAL -- begin
 
       Based on the above, the following set of acccess flags are implemented as
       part of the DAL:
+      <center>
       <table>
         <tr>
 	  <td class="indexkey">DAL</td>
@@ -450,6 +460,7 @@ namespace DAL { // Namespace DAL -- begin
 	  <td>Write</td>
 	</tr>
       </table>
+      </center>
     */    
     enum Access {
       //! Read access to the object
@@ -523,7 +534,7 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // === Public methods =======================================================
-    
+
     // === Static methods =======================================================
     
   private:
