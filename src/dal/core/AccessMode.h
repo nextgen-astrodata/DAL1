@@ -470,10 +470,12 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Parameter access =====================================================
     
+    //! Get object mode parameter
     inline AccessMode::Mode mode () const {
       return itsMode;
     }
 
+    //! Get object access parameter
     inline AccessMode::Access access () const {
       return itsAccess;
     }
