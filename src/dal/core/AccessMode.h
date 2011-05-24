@@ -59,22 +59,47 @@ namespace DAL { // Namespace DAL -- begin
       We're assuming that these constants are used rather early in the hdf5
       session.
       \code
-      //____________________________________________________
+      //____________________________________________________________________
       // H5Fpublic.h
 
-      #define H5F_ACC_RDONLY  (H5CHECK 0x0000u)     //  absence of rdwr => rd-only
-      #define H5F_ACC_RDWR    (H5CHECK 0x0001u)     //  open for read and write
-      #define H5F_ACC_TRUNC   (H5CHECK 0x0002u)     //  overwrite existing files
-      #define H5F_ACC_EXCL    (H5CHECK 0x0004u)     //  fail if file already exists
-      #define H5F_ACC_DEBUG   (H5CHECK 0x0008u)     //  print debug info
-      #define H5F_ACC_CREAT   (H5CHECK 0x0010u)     //  create non-existing files
+      #define H5F_ACC_RDONLY  (H5CHECK 0x0000u)     //  Absence of rdwr => rd-only
+      #define H5F_ACC_RDWR    (H5CHECK 0x0001u)     //  Open for read and write
+      #define H5F_ACC_TRUNC   (H5CHECK 0x0002u)     //  Overwrite existing files
+      #define H5F_ACC_EXCL    (H5CHECK 0x0004u)     //  Fail if file already exists
+      #define H5F_ACC_DEBUG   (H5CHECK 0x0008u)     //  Print debug info
+      #define H5F_ACC_CREAT   (H5CHECK 0x0010u)     //  Create non-existing files
       \endcode
-      Four access modes address these concerns, with H5Fcreate and H5Fopen each
-      accepting two of them:
+      Four access modes address these concerns, with \c H5Fcreate and \c H5Fopen
+      each accepting two of them:
       <ul>
-        <li>\c H5Fcreate accepts \c H5F_ACC_TRUNC or \c H5F_ACC_EXCL. All newly
-	created files are opened for both reading and writing. 
-	<li>\c H5Fopen accepts \c H5F_ACC_RDONLY or \c H5F_ACC_RDWR.
+        <li>\c H5Fcreate is the primary function for creating HDF5 files; it
+	creates a new HDF5 file with the specified name and property lists and
+	specifies whether an existing file of same name should be overwritten.
+
+	The name parameter specifies the name of the new file.
+
+	The flags parameter specifies whether an existing file is to be
+	overwritten. It should be set to either \c H5F_ACC_TRUNC to overwrite an
+	existing file or \c H5F_ACC_EXCL, instructing the function to fail if the
+	file already exists.
+
+	New files are always created in read-write mode, so the read-write and
+	read-only flags, \c H5F_ACC_RDWR and \c H5F_ACC_RDONLY, respectively,
+	are not relevant in this function. Further note that a specification of
+	\c H5F_ACC_RDONLY will be ignored; the file will be created in read-write
+	mode, regardless.
+
+	<li>\c H5Fopen is the primary function for accessing existing HDF5
+	files. This function opens the named file in the specified access mode
+	and with the specified access property list.
+
+	Note that \c H5Fopen does not create a file if it does not already exist.
+	The \e name parameter specifies the name of the file to be opened.
+
+	The flags parameter specifies whether the file will be opened in
+	read-write or read-only mode, \c H5F_ACC_RDWR or \c H5F_ACC_RDONLY,
+	respectively. More complex behaviors of file access are controlled
+	through the file-access property list.
       </ul>
       For more detailed information see chapter 3 ("The HDF5 File") of the
       <i>HDF5 User's Guide</i>.
@@ -499,7 +524,7 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Public methods =======================================================
     
-    
+    // === Static methods =======================================================
     
   private:
     
