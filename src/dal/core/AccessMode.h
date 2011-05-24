@@ -91,6 +91,8 @@ namespace DAL { // Namespace DAL -- begin
 
       <li>\b mirlib
 
+      Mirlib build on top of the GNU C Library file access flags:
+
       \code
       //____________________________________________________
       // dio.c
@@ -170,8 +172,21 @@ namespace DAL { // Namespace DAL -- begin
       “read-only” or “write-only” is a misnomer, \c fcntl.h defines additional
       names for the file access modes. These names are preferred when writing
       GNU-specific code. But most programs will want to be portable to other
-      POSIX.1 systems and should use the POSIX.1 names above instead. 
+      POSIX.1 systems and should use the POSIX.1 names above instead.
 
+      <li>\b Qt
+      
+      \code
+      // File I/O ---------------------------------------------------------
+      #define _O_RDONLY       0x0001
+      #define _O_RDWR         0x0002
+      #define _O_WRONLY       0x0004
+      #define _O_CREAT        0x0008
+      #define _O_TRUNC        0x0010
+      #define _O_APPEND       0x0020
+      #define _O_EXCL         0x0040
+      \endcode
+      
       <li><b>.NET Framework</b> (System.IO)
 
       <a href="http://msdn.microsoft.com/en-us/library/system.io.filemode.aspx">FileMode
@@ -194,17 +209,17 @@ namespace DAL { // Namespace DAL -- begin
         <tr valign=top>
 	  <td>\c CreateNew</td>
 	  <td>Specifies that the operating system should create a new file. This
-	  requires FileIOPermissionAccess::Write. If the file already exists, an
+	  requires <tt>FileIOPermissionAccess::Write</tt>. If the file already exists, an
 	  IOException is thrown.</td>
 	</tr>
         <tr valign=top>
 	  <td>\c Create</td>
 	  <td>Specifies that the operating system should create a new file. If
 	  the file already exists, it will be overwritten. This requires
-	  FileIOPermissionAccess::Write. System.IO.FileMode.Create is equivalent
-	  to requesting that if the file does not exist, use CreateNew; otherwise,
-	  use Truncate. If the file already exists but is a hidden file, an
-	  UnauthorizedAccessException is thrown.</td>
+	  <tt>FileIOPermissionAccess::Write</tt>. <tt>System.IO.FileMode.Create</tt>
+	  is equivalent to requesting that if the file does not exist, use
+	  \c CreateNew; otherwise, use \c Truncate. If the file already exists
+	  but is a hidden file, an \c UnauthorizedAccessException is thrown.</td>
 	</tr>
         <tr valign=top>
 	  <td>\c Open</td>
@@ -217,25 +232,25 @@ namespace DAL { // Namespace DAL -- begin
 	  <td>\c OpenOrCreate</td>
 	  <td>Specifies that the operating system should open a file if it
 	  exists; otherwise, a new file should be created. If the file is
-	  opened with FileAccess.Read, FileIOPermissionAccess::Read is required.
-	  If the file access is FileAccess.Write then FileIOPermissionAccess::Write
-	  is required. If the file is opened with FileAccess.ReadWrite, both
-	  FileIOPermissionAccess::Read and FileIOPermissionAccess::Write are
-	  required. If the file access is FileAccess.Append, then
-	  FileIOPermissionAccess::Append is required.</td>
+	  opened with <tt>FileAccess.Read</tt>, <tt>FileIOPermissionAccess::Read</tt> is required.
+	  If the file access is <tt>FileAccess.Write</tt> then <tt>FileIOPermissionAccess::Write</tt>
+	  is required. If the file is opened with <tt>FileAccess.ReadWrite</tt>, both
+	  <tt>FileIOPermissionAccess::Read</tt> and <tt>FileIOPermissionAccess::Write</tt> are
+	  required. If the file access is <tt>FileAccess.Append</tt>, then
+	  <tt>FileIOPermissionAccess::Append</tt> is required.</td>
 	</tr>
         <tr valign=top>
 	  <td>\c Truncate</td>
 	  <td>Specifies that the operating system should open an existing file.
 	  Once opened, the file should be truncated so that its size is zero
-	  bytes. This requires FileIOPermissionAccess::Write. Attempts to read
+	  bytes. This requires <tt>FileIOPermissionAccess::Write</tt>. Attempts to read
 	  from a file opened with Truncate cause an exception.</td>
 	</tr>
         <tr valign=top>
 	  <td>\c Append</td>
 	  <td>Opens the file if it exists and seeks to the end of the file, or
-	  creates a new file. FileMode.Append can only be used in conjunction
-	  with FileAccess.Write. Attempting to seek to a position before the
+	  creates a new file. <tt>FileMode.Append</tt> can only be used in conjunction
+	  with <tt>FileAccess.Write</tt>. Attempting to seek to a position before the
 	  end of the file will throw an IOException and any attempt to read
 	  fails and throws an NotSupportedException.</td>
 	</tr>
@@ -310,17 +325,60 @@ namespace DAL { // Namespace DAL -- begin
 	  <td>Data can be added to the file</td>
 	</tr>
       </table>
-
     </ul>
-    
+
     <h3>Example(s)</h3>
     
   */  
   class AccessMode {
     
+    // === Public enumerations ==================================================
+    
   public:
     
-    //! Object mode parameter
+    /*!
+      \brief Object mode parameter
+
+      Based on the above, the following set of mode flags are implemented as
+      part of the DAL:
+      <table>
+        <tr>
+	  <td class="indexkey">DAL</td>
+	  <td class="indexkey">GNU</td>
+	  <td class="indexkey">Qt</td>
+	  <td class="indexkey">HDF5</td>
+	  <td class="indexkey">C#</td>
+	</tr>
+        <tr>
+	  <td>Create</td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
+	  <td>ACC_TRUNC</td>
+	</tr>
+        <tr>
+	  <td>CreateNew</td>
+	  <td>O_CREAT & O_EXCL</td>
+	  <td></td>
+	  <td></td>
+	  <td>ACC_EXCL</td>
+	</tr>
+        <tr>
+	  <td>Open</td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
+	</tr>
+        <tr>
+	  <td>OpenOrCreate</td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
+	</tr>
+      </table>
+    */
     enum Mode {
       //! Creates a new object. Overwrites any existing object.
       Create,
@@ -332,16 +390,62 @@ namespace DAL { // Namespace DAL -- begin
       OpenOrCreate
     };
     
-    //! Object access parameter
+    /*!
+      \brief Object access parameter
+
+      Based on the above, the following set of acccess flags are implemented as
+      part of the DAL:
+      <table>
+        <tr>
+	  <td class="indexkey">DAL</td>
+	  <td class="indexkey">GNU</td>
+	  <td class="indexkey">Qt</td>
+	  <td class="indexkey">HDF5</td>
+	  <td class="indexkey">C#</td>
+	</tr>
+        <tr>
+	  <td>ReadOnly</td>
+	  <td>O_RDONLY</td>
+	  <td>_O_RDONLY</td>
+	  <td>ACC_RDONLY</td>
+	  <td>Read</td>
+	</tr>
+        <tr>
+	  <td>ReadWrite</td>
+	  <td>O_RDWR</td>
+	  <td>_O_RDWR</td>
+	  <td>ACC_RDWR</td>
+	  <td>ReadWrite</td>
+	</tr>
+        <tr>
+	  <td>WriteOnly</td>
+	  <td>O_WRONLY</td>
+	  <td>_O_WRONLY</td>
+	  <td>---</td>
+	  <td>Write</td>
+	</tr>
+      </table>
+    */    
     enum Access {
       //! Read access to the object
-      Read,
+      ReadOnly,
       //! Read and write access to the object
       ReadWrite,
       //! Write access to the object
-      Write
+      WriteOnly
     };
 
+    // === Private variables ====================================================
+
+  private:
+
+    //! Object mode parameter
+    AccessMode::Mode itsMode;
+    //! Object access parameter
+    AccessMode::Access itsAccess;
+
+  public:
+    
     // === Construction =========================================================
     
     //! Default constructor
@@ -366,6 +470,14 @@ namespace DAL { // Namespace DAL -- begin
     
     // === Parameter access =====================================================
     
+    inline AccessMode::Mode mode () const {
+      return itsMode;
+    }
+
+    inline AccessMode::Access access () const {
+      return itsAccess;
+    }
+
     /*!
       \brief Get the name of the class
       
@@ -389,9 +501,6 @@ namespace DAL { // Namespace DAL -- begin
     
   private:
     
-    AccessMode::Mode itsMode;
-    AccessMode::Access itsAccess;
-
     //! Unconditional copying
     void copy (AccessMode const &other);
     
