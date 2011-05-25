@@ -81,18 +81,18 @@ namespace DAL { // Namespace DAL -- begin
 	  <td>Read</td>
 	</tr>
         <tr>
-	  <td>DAL::IO::ReadWrite</td>
-	  <td>O_RDWR</td>
-	  <td>_O_RDWR</td>
-	  <td>ACC_RDWR</td>
-	  <td>ReadWrite</td>
-	</tr>
-        <tr>
 	  <td>DAL::IO::WriteOnly</td>
 	  <td>O_WRONLY</td>
 	  <td>_O_WRONLY</td>
 	  <td>---</td>
 	  <td>Write</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::ReadWrite</td>
+	  <td>O_RDWR</td>
+	  <td>_O_RDWR</td>
+	  <td>ACC_RDWR</td>
+	  <td>ReadWrite</td>
 	</tr>
       </table>
       </center>
@@ -110,10 +110,10 @@ namespace DAL { // Namespace DAL -- begin
       Truncate     = 0x0008u,
       //! Read access to the object.
       ReadOnly     = 0x0010u,
-      //! Read and write access to the object.
-      ReadWrite    = 0x0020u,
       //! Write access to the object.
-      WriteOnly    = 0x0040u
+      WriteOnly    = 0x0020u,
+      //! Read and write access to the object.
+      ReadWrite    = 0x0040u
     };
 
   } // namespace IO
@@ -524,6 +524,12 @@ namespace DAL { // Namespace DAL -- begin
     // === Public methods =======================================================
 
     // === Static methods =======================================================
+
+    static std::map<DAL::IO::Mode,std::string> modesMap ();
+
+    static std::vector<DAL::IO::Mode> modesType ();
+
+    static std::vector<std::string> modesName ();
     
   private:
     

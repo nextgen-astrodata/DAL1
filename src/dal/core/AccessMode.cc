@@ -99,10 +99,66 @@ namespace DAL { // Namespace DAL -- begin
   
   // ============================================================================
   //
-  //  Methods
+  //  Public methods
   //
   // ============================================================================
   
+  // ============================================================================
+  //
+  //  Static methods
+  //
+  // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                     modesMap
+
+  std::map<DAL::IO::Mode,std::string> AccessMode::modesMap ()
+  {
+    std::map<DAL::IO::Mode,std::string> modes;
+
+    modes[DAL::IO::Create]       = "Create";
+    modes[DAL::IO::CreateNew]    = "CreateNew";
+    modes[DAL::IO::Open]         = "Open";
+    modes[DAL::IO::OpenOrCreate] = "OpenOrCreate";
+    modes[DAL::IO::Truncate]     = "Truncate";
+
+    modes[DAL::IO::ReadOnly]     = "ReadOnly";
+    modes[DAL::IO::WriteOnly]    = "WriteOnly";
+    modes[DAL::IO::ReadWrite]    = "ReadWrite";
+
+    return modes;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                    modesType
+
+  std::vector<DAL::IO::Mode> AccessMode::modesType ()
+  {
+    std::map<DAL::IO::Mode,std::string> modes = modesMap();
+    std::map<DAL::IO::Mode,std::string>::iterator it;
+    std::vector<DAL::IO::Mode> types;
+
+    for (it=modes.begin(); it!=modes.end(); ++it) {
+      types.push_back(it->first);
+    } 
+
+    return types;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                    modesName
+
+  std::vector<std::string> AccessMode::modesName ()
+  {
+    std::map<DAL::IO::Mode,std::string> modes = modesMap();
+    std::map<DAL::IO::Mode,std::string>::iterator it;
+    std::vector<std::string> names;
+
+    for (it=modes.begin(); it!=modes.end(); ++it) {
+      names.push_back(it->second);
+    } 
+
+    return names;
+  }
 
 } // Namespace DAL -- end
