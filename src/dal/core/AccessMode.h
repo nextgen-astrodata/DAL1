@@ -29,118 +29,12 @@ namespace DAL { // Namespace DAL -- begin
     \defgroup IO I/O settings & definitions
     \brief I/O settings & definitions
     \ingroup DAL
-  */
-  namespace IO {
-    
-    /*!
-      \brief Enumeration with file modes
-      \ingroup IO
-      
-      <center>
-      <table>
-        <tr>
-          <td class="indexkey">DAL</td>
-	  <td class="indexkey">GNU</td>
-	  <td class="indexkey">Qt</td>
-	  <td class="indexkey">HDF5</td>
-	  <td class="indexkey">C#</td>
-	</tr>
-        <tr>
-	  <td>DAL::IO::Create</td>
-	  <td>O_CREAT | O_TRUNC</td>
-	  <td></td>
-	  <td>H5Fcreate(...,ACC_TRUNC)</td>
-	  <td>Create</td>
-	</tr>
-        <tr>
-	  <td>DAL::IO::CreateNew</td>
-	  <td>O_CREAT | O_EXCL</td>
-	  <td></td>
-	  <td>H5Fcreate(...,ACC_CREAT)</td>
-	  <td>CreateNew</td>
-	</tr>
-        <tr>
-	  <td>DAL::IO::Open</td>
-	  <td></td>
-	  <td></td>
-	  <td></td>
-	  <td>Open</td>
-	</tr>
-        <tr>
-	  <td>DAL::IO::OpenOrCreate</td>
-	  <td></td>
-	  <td></td>
-	  <td></td>
-	  <td>OpenOrCreate</td>
-	</tr>
-        <tr>
-	  <td>DAL::IO::ReadOnly</td>
-	  <td>O_RDONLY</td>
-	  <td>_O_RDONLY</td>
-	  <td>ACC_RDONLY</td>
-	  <td>Read</td>
-	</tr>
-        <tr>
-	  <td>DAL::IO::WriteOnly</td>
-	  <td>O_WRONLY</td>
-	  <td>_O_WRONLY</td>
-	  <td>---</td>
-	  <td>Write</td>
-	</tr>
-        <tr>
-	  <td>DAL::IO::ReadWrite</td>
-	  <td>O_RDWR</td>
-	  <td>_O_RDWR</td>
-	  <td>ACC_RDWR</td>
-	  <td>ReadWrite</td>
-	</tr>
-      </table>
-      </center>
-    */
-    enum Mode {
-      //! Creates a new object. Overwrites any existing object.
-      Create       = 0x0000u,
-      //! Creates a new object. If the object already exists, an exception is thrown.
-      CreateNew    = 0x0001u,
-      //! Opens an existing object.
-      Open         = 0x0002u,
-      //! Opens a new object. If there is no object, it creates a new object. 
-      OpenOrCreate = 0x0004u,
-      //! Truncates an existing file.
-      Truncate     = 0x0008u,
-      //! Read access to the object.
-      ReadOnly     = 0x0010u,
-      //! Write access to the object.
-      WriteOnly    = 0x0020u,
-      //! Read and write access to the object.
-      ReadWrite    = 0x0040u
-    };
 
-  } // namespace IO
-
-  /*!
-    \class AccessMode
-    
-    \ingroup DAL
-    \ingroup core
-    
-    \brief Book-keeping of access properties
-    
-    \author Lars B&auml;hren
-
-    \date 2010/10/19
-
-    \test tAccessMode.cc
-    
     <h3>Prerequisite</h3>
-    
-    <ul type="square">
-      <li>DAL::IO::Mode
-    </ul>
-    
-    <h3>Synopsis</h3>
 
-    Available file access property flags:
+    Given the intention of making the DAL an abstraction layer on top of a
+    number of lower-level access libraries, one of the issues need to be
+    addressed is the question of access flags/modes.
 
     <ul>
       <li>\b HDF5 <br>
@@ -451,6 +345,120 @@ namespace DAL { // Namespace DAL -- begin
 	</tr>
       </table>
     </ul>
+
+    <h3>Synopsis</h3>
+
+    \image html DAL_IO_Mode.png
+  */
+  namespace IO {
+    
+    /*!
+      \brief Enumeration with file modes
+      \ingroup IO
+      
+      <center>
+      <table>
+        <tr>
+          <td class="indexkey">DAL</td>
+	  <td class="indexkey">GNU</td>
+	  <td class="indexkey">Qt</td>
+	  <td class="indexkey">HDF5</td>
+	  <td class="indexkey">C#</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::Create</td>
+	  <td>O_CREAT | O_TRUNC</td>
+	  <td></td>
+	  <td>H5Fcreate(...,ACC_TRUNC)</td>
+	  <td>Create</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::CreateNew</td>
+	  <td>O_CREAT | O_EXCL</td>
+	  <td></td>
+	  <td>H5Fcreate(...,ACC_CREAT)</td>
+	  <td>CreateNew</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::Open</td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
+	  <td>Open</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::OpenOrCreate</td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
+	  <td>OpenOrCreate</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::ReadOnly</td>
+	  <td>O_RDONLY</td>
+	  <td>_O_RDONLY</td>
+	  <td>ACC_RDONLY</td>
+	  <td>Read</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::WriteOnly</td>
+	  <td>O_WRONLY</td>
+	  <td>_O_WRONLY</td>
+	  <td>---</td>
+	  <td>Write</td>
+	</tr>
+        <tr>
+	  <td>DAL::IO::ReadWrite</td>
+	  <td>O_RDWR</td>
+	  <td>_O_RDWR</td>
+	  <td>ACC_RDWR</td>
+	  <td>ReadWrite</td>
+	</tr>
+      </table>
+      </center>
+    */
+    enum Mode {
+      //! Creates a new object. Overwrites any existing object.
+      Create       = 0x0000u,
+      //! Creates a new object. If the object already exists, an exception is thrown.
+      CreateNew    = 0x0001u,
+      //! Opens an existing object.
+      Open         = 0x0002u,
+      //! Opens a new object. If there is no object, it creates a new object. 
+      OpenOrCreate = 0x0004u,
+      //! Truncates an existing file.
+      Truncate     = 0x0008u,
+      //! Read access to the object.
+      ReadOnly     = 0x0010u,
+      //! Write access to the object.
+      WriteOnly    = 0x0020u,
+      //! Read and write access to the object.
+      ReadWrite    = 0x0040u
+    };
+
+  } // namespace IO
+
+  /*!
+    \class AccessMode
+    
+    \ingroup DAL
+    \ingroup core
+    
+    \brief Book-keeping of access properties
+    
+    \author Lars B&auml;hren
+
+    \date 2010/10/19
+
+    \test tAccessMode.cc
+    
+    <h3>Prerequisite</h3>
+    
+    <ul type="square">
+      <li>DAL::IO::Mode
+    </ul>
+    
+    <h3>Synopsis</h3>
 
     <h3>Example(s)</h3>
     
