@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DATASETINTERFACE_H
-#define DATASETINTERFACE_H
+#ifndef DATASETBASE_H
+#define DATASETBASE_H
 
 // Standard library header files
 #include <iostream>
@@ -31,7 +31,7 @@
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class InterfaceDataset
+    \class DatasetBase
     
     \ingroup DAL
     \ingroup data_common
@@ -42,7 +42,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2011/02/01
 
-    \test tInterfaceDataset.cc
+    \test tDatasetBase.cc
     
     <h3>Prerequisite</h3>
     
@@ -55,7 +55,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class InterfaceDataset : public HDF5Dataset {
+  class DatasetBase : public HDF5Dataset {
 
   protected:
     
@@ -71,34 +71,34 @@ namespace DAL { // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    InterfaceDataset ();
+    DatasetBase ();
     
     //! Argumented constructor to open existing dataset
-    InterfaceDataset (hid_t const &location,
+    DatasetBase (hid_t const &location,
 		      std::string const &name);
     
     //! Argumented constructor to open existing dataset
-    InterfaceDataset (hid_t const &location,
+    DatasetBase (hid_t const &location,
 		      unsigned int const &index);
 
     //! Argumented constructor to create new dataset
-    InterfaceDataset (hid_t const &location,
+    DatasetBase (hid_t const &location,
 		      std::string const &name,
 		      std::vector< hsize_t > const &shape,
 		      hid_t const &datatype=H5T_NATIVE_DOUBLE);
     
     //! Copy constructor
-    InterfaceDataset (InterfaceDataset const &other);
+    DatasetBase (DatasetBase const &other);
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~InterfaceDataset ();
+    ~DatasetBase ();
     
     // === Operators ============================================================
     
     //! Overloading of the copy operator
-    InterfaceDataset& operator= (InterfaceDataset const &other); 
+    DatasetBase& operator= (DatasetBase const &other); 
     
     // === Parameter access =====================================================
     
@@ -129,10 +129,10 @@ namespace DAL { // Namespace DAL -- begin
     
     /*!
       \brief Get the name of the class
-      \return className -- The name of the class, InterfaceDataset.
+      \return className -- The name of the class, DatasetBase.
     */
     inline std::string className () const {
-      return "InterfaceDataset";
+      return "DatasetBase";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -153,14 +153,14 @@ namespace DAL { // Namespace DAL -- begin
     void setAttributes ();
     
     //! Unconditional copying
-    void copy (InterfaceDataset const &other);
+    void copy (DatasetBase const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class InterfaceDataset -- end
+  }; // Class DatasetBase -- end
   
 } // Namespace DAL -- end
 
-#endif /* DATASETINTERFACE_H */
-  
+#endif /* DatasetBase_H */
+

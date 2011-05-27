@@ -26,7 +26,7 @@
 #include <string>
 
 // DAL header files
-#include <data_common/InterfaceDataset.h>
+#include <data_common/DatasetBase.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -55,7 +55,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class Sky_ImageDataset : public InterfaceDataset {
+  class Sky_ImageDataset : public DatasetBase {
     
   public:
     

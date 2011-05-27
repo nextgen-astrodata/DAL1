@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "InterfaceDataset.h"
+#include "DatasetBase.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -28,18 +28,18 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  InterfaceDataset::InterfaceDataset ()
+  DatasetBase::DatasetBase ()
     : HDF5Dataset()
   {
   }
   
-  InterfaceDataset::InterfaceDataset (hid_t const &location,
+  DatasetBase::DatasetBase (hid_t const &location,
 				      std::string const &name)
     : HDF5Dataset(location,name)
   {
   }
 
-  InterfaceDataset::InterfaceDataset (hid_t const &location,
+  DatasetBase::DatasetBase (hid_t const &location,
 				      std::string const &name,
 				      std::vector< hsize_t > const &shape,
 				      hid_t const &datatype)
@@ -51,7 +51,7 @@ namespace DAL { // Namespace DAL -- begin
     \param other -- Another HDF5Property object from which to create this new
            one.
   */
-  InterfaceDataset::InterfaceDataset (InterfaceDataset const &other)
+  DatasetBase::DatasetBase (DatasetBase const &other)
     : HDF5Dataset (other)
   {
     copy (other);
@@ -63,12 +63,12 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  InterfaceDataset::~InterfaceDataset ()
+  DatasetBase::~DatasetBase ()
   {
     destroy();
   }
   
-  void InterfaceDataset::destroy ()
+  void DatasetBase::destroy ()
   {;}
   
   // ============================================================================
@@ -81,9 +81,9 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                    operator=
   
   /*!
-    \param other -- Another InterfaceDataset object from which to make a copy.
+    \param other -- Another DatasetBase object from which to make a copy.
   */
-  InterfaceDataset& InterfaceDataset::operator= (InterfaceDataset const &other)
+  DatasetBase& DatasetBase::operator= (DatasetBase const &other)
   {
     if (this != &other) {
       destroy ();
@@ -95,7 +95,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
-  void InterfaceDataset::copy (InterfaceDataset const &other)
+  void DatasetBase::copy (DatasetBase const &other)
   {
     if (H5Iis_valid(other.itsLocation)) {
       itsLocation = -1;
@@ -114,9 +114,9 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param os -- Output stream to which the summary is written.
   */
-  void InterfaceDataset::summary (std::ostream &os)
+  void DatasetBase::summary (std::ostream &os)
   {
-    os << "[InterfaceDataset] Summary of internal parameters." << std::endl;
+    os << "[DatasetBase] Summary of internal parameters." << std::endl;
     os << "-- GROUPTYPE        = " << itsGroupType << std::endl;
     os << "-- WCSINFO          = " << itsWCSinfo   << std::endl;
     os << "-- DATASET_NOF_AXES = " << nofAxes()    << std::endl;
@@ -135,7 +135,7 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  void InterfaceDataset::setAttributes ()
+  void DatasetBase::setAttributes ()
   {
     itsAttributes.clear();
 

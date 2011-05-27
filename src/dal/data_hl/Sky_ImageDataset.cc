@@ -29,13 +29,13 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   Sky_ImageDataset::Sky_ImageDataset ()
-    : InterfaceDataset()
+    : DatasetBase()
   {
   }
   
   Sky_ImageDataset::Sky_ImageDataset (hid_t const &location,
 				      std::string const &name)
-    : InterfaceDataset(location,name)
+    : DatasetBase(location,name)
   {
   }
 
@@ -44,7 +44,7 @@ namespace DAL { // Namespace DAL -- begin
            one.
   */
   Sky_ImageDataset::Sky_ImageDataset (Sky_ImageDataset const &other)
-    : InterfaceDataset (other)
+    : DatasetBase (other)
   {
     copy (other);
   }
