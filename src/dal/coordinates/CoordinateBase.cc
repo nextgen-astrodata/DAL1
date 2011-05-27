@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <coordinates/CoordinateInterface.h>
+#include <coordinates/CoordinateBase.h>
 
 namespace DAL {
   
@@ -26,12 +26,12 @@ namespace DAL {
   //                                                                         init
   
   template <>
-  void CoordinateInterface<std::string>::init (DAL::Coordinate const &coord,
-					       unsigned int const &nofAxes,
-					       DAL::Coordinate const &storageType)
+  void CoordinateBase<std::string>::init (DAL::Coordinate const &coord,
+					  unsigned int const &nofAxes,
+					  DAL::Coordinate const &storageType)
   {
     std::string undefined ("UNDEFINED");
-
+    
     /* Initialize the size of the internal arrays */
     
     axisNames_p.clear();

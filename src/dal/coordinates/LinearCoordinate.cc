@@ -101,7 +101,7 @@ namespace DAL {  // Namespace DAL -- begin
            one.
   */
   LinearCoordinate::LinearCoordinate (LinearCoordinate const &other)
-    : CoordinateInterface<double> (other)
+    : CoordinateBase<double> (other)
   {
     copy (other);
   }
@@ -200,9 +200,9 @@ namespace DAL {  // Namespace DAL -- begin
   {
     /* Initialize base class; no further initialization required, as no additional
        parameters are getting defined here. */
-    CoordinateInterface<double>::init (Coordinate::LINEAR,
-				       nofAxes,
-				       Coordinate::LINEAR);
+    CoordinateBase<double>::init (Coordinate::LINEAR,
+				  nofAxes,
+				  Coordinate::LINEAR);
   }
   
 #ifdef DAL_WITH_HDF5

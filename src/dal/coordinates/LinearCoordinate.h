@@ -22,7 +22,7 @@
 #define LINEARCOORDINATE_H
 
 // DAL header files
-#include <coordinates/CoordinateInterface.h>
+#include <coordinates/CoordinateBase.h>
 
 // casacore header files
 #ifdef DAL_WITH_CASA
@@ -81,7 +81,7 @@ namespace DAL {  // Namespace DAL -- begin
     <h3>Example(s)</h3>
 
   */
-  class LinearCoordinate : public CoordinateInterface<double> {
+  class LinearCoordinate : public CoordinateBase<double> {
     
   public:
     

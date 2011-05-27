@@ -22,7 +22,7 @@
 #define TABULARCOORDINATE_H
 
 // DAL header files
-#include <coordinates/CoordinateInterface.h>
+#include <coordinates/CoordinateBase.h>
 
 #ifdef DAL_WITH_CASA
 #include <coordinates/Coordinates/TabularCoordinate.h>
@@ -71,7 +71,7 @@ namespace DAL {  // Namespace DAL -- begin
     
   */
   template <class T>
-  class TabularCoordinate : public CoordinateInterface<T> {
+  class TabularCoordinate : public CoordinateBase<T> {
     
   public:
     
@@ -104,7 +104,7 @@ namespace DAL {  // Namespace DAL -- begin
       }
     //! Copy constructor
     TabularCoordinate (TabularCoordinate<T> const &other)
-      : CoordinateInterface<T> (other)
+      : CoordinateBase<T> (other)
       {
 	copy (other);
       }
@@ -308,12 +308,12 @@ namespace DAL {  // Namespace DAL -- begin
     {
       std::cout << "[TabularCoordinate<T>::init(string,string,vector,vector)]" << std::endl;
       /* Initialize base class */
-      CoordinateInterface<T>::init (Coordinate::TABULAR,
+      CoordinateBase<T>::init (Coordinate::TABULAR,
 				    1,
 				    Coordinate::TABULAR);
       
-      CoordinateInterface<T>::setAxisNames (axisNames);
-      CoordinateInterface<T>::setAxisUnits (axisUnits);
+      CoordinateBase<T>::setAxisNames (axisNames);
+      CoordinateBase<T>::setAxisUnits (axisUnits);
       setAxisValues (pixelValues, worldValues);
     }
     
