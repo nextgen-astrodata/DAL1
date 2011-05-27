@@ -18,18 +18,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/AccessMode.h>
+#include <core/IO_Mode.h>
 
 // Namespace usage
-using DAL::AccessMode;
+using DAL::IO_Mode;
 
 /*!
-  \file tAccessMode.cc
+  \file tIO_Mode.cc
 
   \ingroup DAL
   \ingroup core
 
-  \brief A collection of test routines for the AccessMode class
+  \brief A collection of test routines for the IO_Mode class
  
   \author <author>
  
@@ -40,20 +40,20 @@ using DAL::AccessMode;
 //                                                              test_constructors
 
 /*!
-  \brief Test constructors for a new AccessMode object
+  \brief Test constructors for a new IO_Mode object
 
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
 int test_constructors ()
 {
-  std::cout << "\n[tAccessMode::test_constructors]\n" << std::endl;
+  std::cout << "\n[tIO_Mode::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
   
   std::cout << "[1] Testing default constructor ..." << std::endl;
   try {
-    AccessMode newObject;
+    IO_Mode newObject;
     //
     newObject.summary(); 
   } catch (std::string message) {

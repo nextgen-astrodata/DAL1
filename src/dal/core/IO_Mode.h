@@ -18,18 +18,27 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef ACCESSMODE_H
-#define ACCESSMODE_H
+#ifndef IO_MODE_H
+#define IO_MODE_H
 
 #include "HDF5Object.h"
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \defgroup IO I/O settings & definitions
-    \brief I/O settings & definitions
+    \class IO_Mode
+    
     \ingroup DAL
+    \ingroup core
+    
+    \brief Book-keeping of access properties
+    
+    \author Lars B&auml;hren
 
+    \date 2010/10/19
+
+    \test tIO_Mode.cc
+    
     <h3>Prerequisite</h3>
 
     Given the intention of making the DAL an abstraction layer on top of a
@@ -349,12 +358,16 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Synopsis</h3>
 
     \image html DAL_IO_Mode.png
-  */
-  namespace IO {
+
+    <h3>Example(s)</h3>
     
+  */  
+  class IO_Mode {
+
+  public:
+
     /*!
       \brief Enumeration with file modes
-      \ingroup IO
       
       <center>
       <table>
@@ -417,7 +430,7 @@ namespace DAL { // Namespace DAL -- begin
       </table>
       </center>
     */
-    enum Mode {
+    enum Flags {
       //! Creates a new object. Overwrites any existing object.
       Create       = 0x0000u,
       //! Creates a new object. If the object already exists, an exception is thrown.
@@ -436,89 +449,63 @@ namespace DAL { // Namespace DAL -- begin
       ReadWrite    = 0x0040u
     };
 
-  } // namespace IO
+  private:
 
-  /*!
-    \class AccessMode
-    
-    \ingroup DAL
-    \ingroup core
-    
-    \brief Book-keeping of access properties
-    
-    \author Lars B&auml;hren
-
-    \date 2010/10/19
-
-    \test tAccessMode.cc
-    
-    <h3>Prerequisite</h3>
-    
-    <ul type="square">
-      <li>DAL::IO::Mode
-    </ul>
-    
-    <h3>Synopsis</h3>
-
-    <h3>Example(s)</h3>
-    
-  */  
-  class AccessMode {
-
-    DAL::IO::Mode itsMode;
+    //! Object I/O mode flags
+    IO_Mode::Flags itsFlags;
 
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    AccessMode ();
+    IO_Mode ();
     
     //! Copy constructor
-    AccessMode (AccessMode const &other);
+    IO_Mode (IO_Mode const &other);
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~AccessMode ();
+    ~IO_Mode ();
     
     // === Operators ============================================================
     
     /*!
       \brief Overloading of the copy operator
       
-      \param other -- Another AccessMode object from which to make a copy.
+      \param other -- Another IO_Mode object from which to make a copy.
     */
-    AccessMode& operator= (AccessMode const &other); 
+    IO_Mode& operator= (IO_Mode const &other); 
     
     // === Parameter access =====================================================
     
-    //! Get object mode parameter
-    inline DAL::IO::Mode mode () const {
-      return itsMode;
+    //! Get object I/O mode flags
+    inline IO_Mode::Flags flags () const {
+      return itsFlags;
     }
 
     /*!
-      \brief Set object mode parameter
-      \param mode    -- Object mode parameter.
+      \brief Set object I/O mode flag
+      \param mode    -- Object I/O mode flag
       \return status -- Status of the operation.
     */
-    inline bool setMode (DAL::IO::Mode const &mode) {
-      itsMode = mode;
+    inline bool setFlag (IO_Mode::Flags const &mode) {
+      itsFlags = mode;
       return true;
     }
 
-    bool addMode (DAL::IO::Mode const &mode);
+    bool addFlag (IO_Mode::Flags const &mode);
 
-    bool removeMode (DAL::IO::Mode const &mode);
+    bool removeFlag (IO_Mode::Flags const &mode);
 
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, AccessMode.
+      \return className -- The name of the class, IO_Mode.
     */
     inline std::string className () const {
-      return "AccessMode";
+      return "IO_Mode";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -531,25 +518,28 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Public methods =======================================================
 
+    //! Reset the object I/O mode flags
+    bool resetFlags ();
+
     // === Static methods =======================================================
 
-    static std::map<DAL::IO::Mode,std::string> modesMap ();
+    static std::map<IO_Mode::Flags,std::string> flagsMap ();
 
-    static std::vector<DAL::IO::Mode> modesType ();
+    static std::vector<IO_Mode::Flags> modesType ();
 
     static std::vector<std::string> modesName ();
     
   private:
     
     //! Unconditional copying
-    void copy (AccessMode const &other);
+    void copy (IO_Mode const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class AccessMode -- end
+  }; // Class IO_Mode -- end
   
 } // Namespace DAL -- end
 
-#endif /* ACCESSMODE_H */
+#endif /* IO_MODE_H */
   

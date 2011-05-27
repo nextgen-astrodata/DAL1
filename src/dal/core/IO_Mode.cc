@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <core/AccessMode.h>
+#include <core/IO_Mode.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -28,14 +28,14 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  AccessMode::AccessMode ()
+  IO_Mode::IO_Mode ()
   {;}
   
   /*!
     \param other -- Another HDF5Property object from which to create this new
            one.
   */
-  AccessMode::AccessMode (AccessMode const &other)
+  IO_Mode::IO_Mode (IO_Mode const &other)
   {
     copy (other);
   }
@@ -46,12 +46,12 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  AccessMode::~AccessMode ()
+  IO_Mode::~IO_Mode ()
   {
     destroy();
   }
   
-  void AccessMode::destroy ()
+  void IO_Mode::destroy ()
   {;}
   
   // ============================================================================
@@ -63,7 +63,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    operator=
   
-  AccessMode& AccessMode::operator= (AccessMode const &other)
+  IO_Mode& IO_Mode::operator= (IO_Mode const &other)
   {
     if (this != &other) {
       destroy ();
@@ -75,9 +75,9 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
-  void AccessMode::copy (AccessMode const &other)
+  void IO_Mode::copy (IO_Mode const &other)
   {
-    itsMode = other.itsMode;
+    itsFlags = other.itsFlags;
   }
 
   // ============================================================================
@@ -92,9 +92,9 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param os -- Output stream to which the summary is written.
   */
-  void AccessMode::summary (std::ostream &os)
+  void IO_Mode::summary (std::ostream &os)
   {
-    os << "[AccessMode] Summary of internal parameters." << std::endl;
+    os << "[IO_Mode] Summary of internal parameters." << std::endl;
   }
   
   // ============================================================================
@@ -110,35 +110,38 @@ namespace DAL { // Namespace DAL -- begin
   // ============================================================================
   
   //_____________________________________________________________________________
-  //                                                                     modesMap
+  //                                                                     flagsMap
 
-  std::map<DAL::IO::Mode,std::string> AccessMode::modesMap ()
+  /*!
+    \return flags -- 
+   */
+  std::map<IO_Mode::Flags,std::string> IO_Mode::flagsMap ()
   {
-    std::map<DAL::IO::Mode,std::string> modes;
+    std::map<IO_Mode::Flags,std::string> flags;
 
-    modes[DAL::IO::Create]       = "Create";
-    modes[DAL::IO::CreateNew]    = "CreateNew";
-    modes[DAL::IO::Open]         = "Open";
-    modes[DAL::IO::OpenOrCreate] = "OpenOrCreate";
-    modes[DAL::IO::Truncate]     = "Truncate";
+    flags[IO_Mode::Create]       = "Create";
+    flags[IO_Mode::CreateNew]    = "CreateNew";
+    flags[IO_Mode::Open]         = "Open";
+    flags[IO_Mode::OpenOrCreate] = "OpenOrCreate";
+    flags[IO_Mode::Truncate]     = "Truncate";
 
-    modes[DAL::IO::ReadOnly]     = "ReadOnly";
-    modes[DAL::IO::WriteOnly]    = "WriteOnly";
-    modes[DAL::IO::ReadWrite]    = "ReadWrite";
+    flags[IO_Mode::ReadOnly]     = "ReadOnly";
+    flags[IO_Mode::WriteOnly]    = "WriteOnly";
+    flags[IO_Mode::ReadWrite]    = "ReadWrite";
 
-    return modes;
+    return flags;
   }
 
   //_____________________________________________________________________________
   //                                                                    modesType
 
-  std::vector<DAL::IO::Mode> AccessMode::modesType ()
+  std::vector<IO_Mode::Flags> IO_Mode::modesType ()
   {
-    std::map<DAL::IO::Mode,std::string> modes = modesMap();
-    std::map<DAL::IO::Mode,std::string>::iterator it;
-    std::vector<DAL::IO::Mode> types;
+    std::map<IO_Mode::Flags,std::string> flags = flagsMap();
+    std::map<IO_Mode::Flags,std::string>::iterator it;
+    std::vector<IO_Mode::Flags> types;
 
-    for (it=modes.begin(); it!=modes.end(); ++it) {
+    for (it=flags.begin(); it!=flags.end(); ++it) {
       types.push_back(it->first);
     } 
 
@@ -148,13 +151,13 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                    modesName
 
-  std::vector<std::string> AccessMode::modesName ()
+  std::vector<std::string> IO_Mode::modesName ()
   {
-    std::map<DAL::IO::Mode,std::string> modes = modesMap();
-    std::map<DAL::IO::Mode,std::string>::iterator it;
+    std::map<IO_Mode::Flags,std::string> flags = flagsMap();
+    std::map<IO_Mode::Flags,std::string>::iterator it;
     std::vector<std::string> names;
 
-    for (it=modes.begin(); it!=modes.end(); ++it) {
+    for (it=flags.begin(); it!=flags.end(); ++it) {
       names.push_back(it->second);
     } 
 
