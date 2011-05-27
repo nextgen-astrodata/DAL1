@@ -50,6 +50,7 @@ foreach (_test
     tdalGroup
     tDatabase
     tHDF5Dataset
+    tHDF5Hyperslab
     tValMatrix
     test_std_cerr
     )

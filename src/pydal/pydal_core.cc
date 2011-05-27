@@ -38,6 +38,7 @@ using DAL::dalData;
 using DAL::dalDataset;
 using DAL::dalGroup;
 using DAL::dalTable;
+using DAL::HDF5Hyperslab;
 
 // ==============================================================================
 //
@@ -446,3 +447,45 @@ void export_dalData ()
     ;
 }
 
+// ==============================================================================
+//
+//                                                                  HDF5Hyperslab
+//
+// ==============================================================================
+
+void export_HDF5Hyperslab ()
+{
+  void (HDF5Hyperslab::*summary1)() 
+    = &HDF5Hyperslab::summary;
+  void (HDF5Hyperslab::*summary2)(std::ostream &) 
+    = &HDF5Hyperslab::summary;
+  
+  bpl::class_<HDF5Hyperslab>("HDF5Hyperslab")
+    .def( bpl::init<>())
+    .def( bpl::init<int const &>())
+    // Parameter access
+    .def( "shape", &HDF5Hyperslab::rank,
+	  "Get the rank of the array to which the hyperslab is applied.")
+    .def( "start", &HDF5Hyperslab::start,
+	  "Get the offset of the starting element of the specified hyperslab.")
+    .def( "setStart", &HDF5Hyperslab::setStart,
+	  "Set the offset of the starting element of the specified hyperslab.")
+    .def( "stride", &HDF5Hyperslab::stride,
+	  "Get the number of elements to separate each element or block.")
+    .def( "setStride", &HDF5Hyperslab::setStride,
+	  "Set the number of elements to separate each element or block.")
+    .def( "count", &HDF5Hyperslab::count,
+	  "Get the number of elements or blocks to select along each dimension.")
+    .def( "setCount", &HDF5Hyperslab::setCount,
+	  "Set the number of elements or blocks to select along each dimension.")
+    .def( "block", &HDF5Hyperslab::block,
+	  "Get the size of the element block selected from the dataspace.")
+    .def( "setBlock", &HDF5Hyperslab::setBlock,
+	  "Set the size of the element block selected from the dataspace.")
+    // Methods
+    .def( "className", &HDF5Hyperslab::className,
+	  "Get the name of the class.")
+    .def("summary", summary1)
+    .def("summary", summary2)
+    ; 
+}

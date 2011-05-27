@@ -39,7 +39,6 @@ add_test (tTimestamp tTimestamp)
 add_test (tFilename tFilename)
 add_test (tCommonAttributes tCommonAttributes)
 add_test (tSAS_Settings tSAS_Settings)
-add_test (tHDF5Hyperslab tHDF5Hyperslab)
 
 if (H5DUMP_EXECUTABLE)
   add_test (tCommonAttributes_h5dump ${H5DUMP_EXECUTABLE} tCommonAttributes.h5)

@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 #include <core/HDF5Dataset.h>
-#include <data_common/HDF5Hyperslab.h>
+#include <core/HDF5Hyperslab.h>
 
 // Namespace usage
 using std::cerr;
@@ -32,7 +32,7 @@ using DAL::HDF5Hyperslab;
   \file tHDF5Hyperslab.cc
 
   \ingroup DAL
-  \ingroup data_common
+  \ingroup core
 
   \brief A collection of test routines for the HDF5Hyperslab class
  

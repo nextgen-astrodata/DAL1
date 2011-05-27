@@ -45,6 +45,7 @@
 #include <core/dalDataset.h>
 #include <core/dalGroup.h>
 #include <core/dalTable.h>
+#include <core/HDF5Hyperslab.h>
 
 //! Bindings for DAL::dalArray
 void export_dalArray ();
@@ -60,6 +61,8 @@ void export_dalDataset ();
 void export_dalGroup ();
 //! Bindings for DAL::dalTable
 void export_dalTable ();
+//! Bindings for DAL::HDF5Hyperslab
+void export_HDF5Hyperslab ();
 
 // === coordinates ==============================================================
 
@@ -81,7 +84,6 @@ void export_Coordinate ();
 
 #include <data_common/CommonAttributes.h>
 #include <data_common/Filename.h>
-#include <data_common/HDF5Hyperslab.h>
 #include <data_common/Timestamp.h>
 #include <data_common/SAS_Settings.h>
 
@@ -93,8 +95,6 @@ void export_CommonAttributes ();
 void export_Timestamp ();
 //! Bindings for DAL::SAS_Settings
 void export_SAS_Settings ();
-//! Bindings for DAL::HDF5Hyperslab
-void export_HDF5Hyperslab ();
 
 // === data_hl ==================================================================
 
