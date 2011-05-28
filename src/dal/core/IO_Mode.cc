@@ -28,8 +28,35 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                                      IO_Mode
+  
   IO_Mode::IO_Mode ()
-  {;}
+  {
+    setFlag (IO_Mode::Open);
+    addFlag (IO_Mode::ReadOnly);
+  }
+
+  //_____________________________________________________________________________
+  //                                                                      IO_Mode
+  
+  IO_Mode::IO_Mode (IO_Mode::Flags const &flag)
+  {
+    itsFlags = flag;
+    verifyFlags (itsFlags,true);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                      IO_Mode
+  
+  IO_Mode::IO_Mode (int const &flags)
+  {
+    itsFlags = flags;
+    verifyFlags (itsFlags,true);
+  }
+
+  //_____________________________________________________________________________
+  //                                                                      IO_Mode
   
   /*!
     \param other -- Another HDF5Property object from which to create this new
@@ -94,7 +121,17 @@ namespace DAL { // Namespace DAL -- begin
   */
   void IO_Mode::summary (std::ostream &os)
   {
+    std::vector<std::string> names = flagDescriptions();
+    unsigned int nofNames          = names.size();
+
     os << "[IO_Mode] Summary of internal parameters." << std::endl;
+    os << "-- I/O mode value    = " << itsFlags << std::endl;
+
+    os << "-- Flag descriptions = [";
+    for (unsigned int n=0; n<nofNames; ++n) {
+      os << " " << names[n];
+    }
+    os << " ]" << std::endl;
   }
   
   // ============================================================================
@@ -103,6 +140,27 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
+  //_____________________________________________________________________________
+  //                                                             flagDescriptions
+
+  std::vector<std::string> IO_Mode::flagDescriptions ()
+  {
+    return flagDescriptions (itsFlags);
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                      addFlag
+
+  /*!
+    \param flag    -- 
+    \return status -- 
+  */
+  bool IO_Mode::addFlag (IO_Mode::Flags const &flag)
+  {
+    itsFlags = itsFlags | flag;
+    return verifyFlags (itsFlags);
+  }
+
   // ============================================================================
   //
   //  Static methods
@@ -133,9 +191,9 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                                    modesType
+  //                                                                    flagsType
 
-  std::vector<IO_Mode::Flags> IO_Mode::modesType ()
+  std::vector<IO_Mode::Flags> IO_Mode::flagsType ()
   {
     std::map<IO_Mode::Flags,std::string> flags = flagsMap();
     std::map<IO_Mode::Flags,std::string>::iterator it;
@@ -162,6 +220,55 @@ namespace DAL { // Namespace DAL -- begin
     } 
 
     return names;
+  }
+
+  //_____________________________________________________________________________
+  //                                                             flagDescriptions
+
+  std::vector<std::string> IO_Mode::flagDescriptions (IO_Mode::Flags const &flag)
+  {
+    return flagDescriptions(flag);
+  }
+
+  //_____________________________________________________________________________
+  //                                                             flagDescriptions
+
+  /*!
+    \param flags  -- 
+    \return names -- 
+  */
+  std::vector<std::string> IO_Mode::flagDescriptions (int const &flags)
+  {
+    std::map<IO_Mode::Flags,std::string> m = flagsMap();
+    std::map<IO_Mode::Flags,std::string>::iterator it;
+    std::vector<std::string> names;
+
+    for (it=m.begin(); it!=m.end(); ++it) {
+      /* Check if the flags is set */
+      if ( (flags & it->first) == it->first ) {
+	names.push_back(it->second);
+      }
+    }
+
+    return names;
+  }
+  
+  //_____________________________________________________________________________
+  //                                                                  verifyFlags
+
+  /*!
+    \param flags        -- 
+    \param correctFlags -- Attempt to correct the flags.
+    \return status      -- Status of the operation; returns \c false in case an
+            eror was encountered, i.e. the provided combination of flags is 
+	    considered to be incorrect.
+  */
+  bool IO_Mode::verifyFlags (int &flags,
+			     bool const &correctFlags)
+  {
+    bool status = true;
+
+    return status;
   }
 
 } // Namespace DAL -- end

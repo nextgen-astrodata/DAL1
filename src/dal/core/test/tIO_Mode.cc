@@ -37,6 +37,58 @@ using DAL::IO_Mode;
 */
 
 //_______________________________________________________________________________
+//                                                            test_static_methods
+
+/*!
+  \brief Test statc methods
+
+  \return nofFailedTests -- The number of failed tests encountered within this
+          function.
+*/
+int test_static_methods ()
+{
+  std::cout << "\n[tIO_Mode::test_static_methods]\n" << std::endl;
+
+  int nofFailedTests (0);
+
+  /*________________________________________________________
+    Test 1: Retrive of map containing the available flags
+   */
+  
+  std::cout << "[1] Testing IO_Mode::flagsMap() ..." << std::endl;
+  try {
+    std::map<IO_Mode::Flags,std::string> flags = IO_Mode::flagsMap();
+    std::map<IO_Mode::Flags,std::string>::iterator it;
+
+    for (it=flags.begin(); it!=flags.end(); ++it) {
+      std::cout << " [ " << it->first << " , " << it->second << " ]" << std::endl;
+    }
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  /*________________________________________________________
+    Test 1: Retrive array of flags
+   */
+  
+  std::cout << "[2] Testing IO_Mode::flagsType() ..." << std::endl;
+  try {
+    std::vector<IO_Mode::Flags> flags = IO_Mode::flagsType();
+    unsigned int nofFlags             = flags.size();
+
+    for (unsigned int n=0; n<nofFlags; ++n) {
+      std::cout << " [ " <<flags[n] << " ]" << std::endl;
+    }
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  return nofFailedTests;
+}
+
+//_______________________________________________________________________________
 //                                                              test_constructors
 
 /*!
@@ -50,12 +102,52 @@ int test_constructors ()
   std::cout << "\n[tIO_Mode::test_constructors]\n" << std::endl;
 
   int nofFailedTests (0);
+
+  /*________________________________________________________
+    Test 1: Default constructor
+  */
   
-  std::cout << "[1] Testing default constructor ..." << std::endl;
+  std::cout << "[1] Testing IO_Mode() ..." << std::endl;
   try {
-    IO_Mode newObject;
+    IO_Mode mode;
     //
-    newObject.summary(); 
+    mode.summary(); 
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  /*________________________________________________________
+    Test 2: Argumented constructor with single flag
+  */
+  
+  std::cout << "[2] Testing IO_Mode(IO_Mode::Flags) ..." << std::endl;
+  try {
+    std::vector<IO_Mode::Flags> flags = IO_Mode::flagsType ();
+
+    for (unsigned int n=0; n<flags.size(); ++n) {
+      IO_Mode mode (flags[n]);
+      mode.summary(); 
+    }
+  } catch (std::string message) {
+    std::cerr << message << std::endl;
+    nofFailedTests++;
+  }
+  
+  /*________________________________________________________
+    Test 3: Argumented constructor with multiple flags
+  */
+  
+  std::cout << "[2] Testing IO_Mode(IO_Mode::Flags) ..." << std::endl;
+  try {
+    IO_Mode mode1 (IO_Mode::Open|IO_Mode::ReadOnly);
+    mode1.summary(); 
+    //
+    IO_Mode mode2 (IO_Mode::Open|IO_Mode::ReadWrite);
+    mode2.summary(); 
+    //
+    IO_Mode mode3 (IO_Mode::Create|IO_Mode::WriteOnly);
+    mode3.summary(); 
   } catch (std::string message) {
     std::cerr << message << std::endl;
     nofFailedTests++;
@@ -76,6 +168,9 @@ int test_constructors ()
 int main ()
 {
   int nofFailedTests (0);
+
+  // Test for the static methods
+  nofFailedTests += test_static_methods ();
 
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();

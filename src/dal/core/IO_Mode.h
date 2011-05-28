@@ -431,28 +431,28 @@ namespace DAL { // Namespace DAL -- begin
       </center>
     */
     enum Flags {
-      //! Creates a new object. Overwrites any existing object.
-      Create       = 0x0000u,
-      //! Creates a new object. If the object already exists, an exception is thrown.
-      CreateNew    = 0x0001u,
       //! Opens an existing object.
-      Open         = 0x0002u,
+      Open         = 1,
       //! Opens a new object. If there is no object, it creates a new object. 
-      OpenOrCreate = 0x0004u,
+      OpenOrCreate = 2,
+      //! Creates a new object. Overwrites any existing object.
+      Create       = 4,
+      //! Creates a new object. If the object already exists, an exception is thrown.
+      CreateNew    = 8,
       //! Truncates an existing file.
-      Truncate     = 0x0008u,
+      Truncate     = 16,
       //! Read access to the object.
-      ReadOnly     = 0x0010u,
+      ReadOnly     = 32,
       //! Write access to the object.
-      WriteOnly    = 0x0020u,
+      WriteOnly    = 64,
       //! Read and write access to the object.
-      ReadWrite    = 0x0040u
+      ReadWrite    = 128
     };
 
   private:
 
     //! Object I/O mode flags
-    IO_Mode::Flags itsFlags;
+    int itsFlags;
 
   public:
     
@@ -460,6 +460,12 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Default constructor
     IO_Mode ();
+    
+    //! Argumented constructor
+    IO_Mode (IO_Mode::Flags const &flag);
+    
+    //! Argumented constructor
+    IO_Mode (int const &flags);
     
     //! Copy constructor
     IO_Mode (IO_Mode const &other);
@@ -481,7 +487,7 @@ namespace DAL { // Namespace DAL -- begin
     // === Parameter access =====================================================
     
     //! Get object I/O mode flags
-    inline IO_Mode::Flags flags () const {
+    inline int flags () const {
       return itsFlags;
     }
 
@@ -490,14 +496,20 @@ namespace DAL { // Namespace DAL -- begin
       \param mode    -- Object I/O mode flag
       \return status -- Status of the operation.
     */
-    inline bool setFlag (IO_Mode::Flags const &mode) {
-      itsFlags = mode;
+    inline bool setFlag (IO_Mode::Flags const &flag) {
+      itsFlags = flag;
       return true;
     }
 
-    bool addFlag (IO_Mode::Flags const &mode);
+    bool addFlag (IO_Mode::Flags const &flag);
 
-    bool removeFlag (IO_Mode::Flags const &mode);
+    bool removeFlag (IO_Mode::Flags const &flag);
+
+    bool readOnly (bool const &flagStatus=true);
+
+    bool writeOnly (bool const &flagStatus=true);
+
+    bool readWrite (bool const &flagStatus=true);
 
     /*!
       \brief Get the name of the class
@@ -518,16 +530,32 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Public methods =======================================================
 
+    //! Get the descriptions of the currently set flags
+    std::vector<std::string> flagDescriptions ();
+
     //! Reset the object I/O mode flags
     bool resetFlags ();
 
     // === Static methods =======================================================
 
+    //! Get map containing the available flags
     static std::map<IO_Mode::Flags,std::string> flagsMap ();
 
-    static std::vector<IO_Mode::Flags> modesType ();
+    //! Get array containing the available flag values
+    static std::vector<IO_Mode::Flags> flagsType ();
 
+    //! Get array containing the available flag names
     static std::vector<std::string> modesName ();
+
+    //! Get the descriptions of the set of flags
+    std::vector<std::string> flagDescriptions (IO_Mode::Flags const &flags);
+
+    //! Get the descriptions of the set of flags
+    std::vector<std::string> flagDescriptions (int const &flags);
+
+    //! Verify the I/O mode flags
+    static bool verifyFlags (int &flags,
+			     bool const &correctFlags=false);
     
   private:
     
