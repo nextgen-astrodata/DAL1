@@ -498,11 +498,23 @@ namespace DAL { // Namespace DAL -- begin
     */
     inline bool setFlag (IO_Mode::Flags const &flag) {
       itsFlags = flag;
-      return true;
+      return verifyFlags(itsFlags,true);
     }
 
+    /*!
+      \brief Set object I/O mode flags
+      \param mode    -- Object I/O mode flag
+      \return status -- Status of the operation.
+    */
+    inline bool setFlags (int const &flags) {
+      itsFlags = flags;
+      return verifyFlags(itsFlags,true);
+    }
+
+    //! Add flag to the current seetings
     bool addFlag (IO_Mode::Flags const &flag);
 
+    //! Remove flag from the current seetings
     bool removeFlag (IO_Mode::Flags const &flag);
 
     bool readOnly (bool const &flagStatus=true);

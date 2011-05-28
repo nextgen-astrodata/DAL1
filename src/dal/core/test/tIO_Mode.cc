@@ -138,7 +138,7 @@ int test_constructors ()
     Test 3: Argumented constructor with multiple flags
   */
   
-  std::cout << "[2] Testing IO_Mode(IO_Mode::Flags) ..." << std::endl;
+  std::cout << "[2] Testing IO_Mode(int) ..." << std::endl;
   try {
     IO_Mode mode1 (IO_Mode::Open|IO_Mode::ReadOnly);
     mode1.summary(); 

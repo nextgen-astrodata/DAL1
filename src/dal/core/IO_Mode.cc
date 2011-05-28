@@ -33,8 +33,9 @@ namespace DAL { // Namespace DAL -- begin
   
   IO_Mode::IO_Mode ()
   {
-    setFlag (IO_Mode::Open);
-    addFlag (IO_Mode::ReadOnly);
+    itsFlags = IO_Mode::Open | IO_Mode::ReadOnly;
+    // setFlag (IO_Mode::Open);
+    // addFlag (IO_Mode::ReadOnly);
   }
 
   //_____________________________________________________________________________
@@ -42,8 +43,7 @@ namespace DAL { // Namespace DAL -- begin
   
   IO_Mode::IO_Mode (IO_Mode::Flags const &flag)
   {
-    itsFlags = flag;
-    verifyFlags (itsFlags,true);
+    setFlag (flag);
   }
   
   //_____________________________________________________________________________
@@ -51,8 +51,7 @@ namespace DAL { // Namespace DAL -- begin
   
   IO_Mode::IO_Mode (int const &flags)
   {
-    itsFlags = flags;
-    verifyFlags (itsFlags,true);
+    setFlags (flags);
   }
 
   //_____________________________________________________________________________
@@ -159,6 +158,24 @@ namespace DAL { // Namespace DAL -- begin
   {
     itsFlags = itsFlags | flag;
     return verifyFlags (itsFlags);
+  }
+
+  //_____________________________________________________________________________
+  //                                                                   removeFlag
+  
+  bool IO_Mode::removeFlag (IO_Mode::Flags const &flag)
+  {
+    bool status = true;
+
+    /* Remove flag and verify that the resulting settings are ok */
+    itsFlags = itsFlags & (~flag);
+    status   = verifyFlags (itsFlags);
+    /* If settings are not ok, revert previous action */
+    if (!status) {
+      status = addFlag (flag);
+    }
+
+    return status;
   }
 
   // ============================================================================
