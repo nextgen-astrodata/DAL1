@@ -61,6 +61,8 @@ namespace DAL { // Namespace DAL -- begin
 
   protected:
     
+    //! I/O mode flags
+    IO_Mode itsFlags;
     //! Set of attributes attached to the dataset
     std::set<std::string> itsAttributes;
     //! Group type descriptor
@@ -160,6 +162,9 @@ namespace DAL { // Namespace DAL -- begin
     
   private:
     
+    //! Initialize internal parameters
+    void init ();
+
     //! Set up and initialize the list of attributes
     void setAttributes ();
     

@@ -211,6 +211,15 @@ namespace DAL { // Namespace DAL -- begin
   //  Private methods
   //
   // ============================================================================
+
+  void HDF5DatasetBase::init ()
+  {
+    setAttributes ();
+
+    itsFlags     = IO_Mode();
+    itsGroupType = "Dataset";
+    itsWCSinfo   = "";
+  }
   
   void HDF5DatasetBase::setAttributes ()
   {
