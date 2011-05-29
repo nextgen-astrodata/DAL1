@@ -274,8 +274,15 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                  verifyFlags
 
   /*!
+    Attempt to verify a given combination of I/O mode flags. While obviously
+    there is no 100% secure method to perform this in a completely generic
+    fashion, we at least try to cover the most basic setting conflicts -- e.g.
+    \c ReadOnly and \c WriteOnly are mutually exclusive.
+
     \param flags        -- I/O mode settings to be checked.
-    \param correctFlags -- Attempt to correct the flags.
+    \param correctFlags -- Attempt to correct the flags? If set to \c false, only
+           reporting will be done, in case a potential conflict has been
+	   disovered, but the provided \c flags will not be altered.
     \return status      -- Status of the operation; returns \c false in case an
             error was encountered, i.e. the provided combination of flags is 
 	    considered to be incorrect.
