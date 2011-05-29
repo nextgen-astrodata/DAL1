@@ -45,6 +45,7 @@
 #include <core/dalDataset.h>
 #include <core/dalGroup.h>
 #include <core/dalTable.h>
+#include <core/IO_Mode.h>
 #include <core/HDF5Hyperslab.h>
 
 //! Bindings for DAL::dalArray
@@ -61,6 +62,8 @@ void export_dalDataset ();
 void export_dalGroup ();
 //! Bindings for DAL::dalTable
 void export_dalTable ();
+//! Bindings for DAL::IO_Mode
+void export_IO_Mode ();
 //! Bindings for DAL::HDF5Hyperslab
 void export_HDF5Hyperslab ();
 

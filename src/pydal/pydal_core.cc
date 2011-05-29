@@ -38,6 +38,7 @@ using DAL::dalData;
 using DAL::dalDataset;
 using DAL::dalGroup;
 using DAL::dalTable;
+using DAL::IO_Mode;
 using DAL::HDF5Hyperslab;
 
 // ==============================================================================
@@ -444,6 +445,62 @@ void export_dalData ()
 	  "Get the data.")
     .def( "get", &dalData::get_boost3,
 	  "Get the data.")
+    ;
+}
+
+// ==============================================================================
+//
+//                                                                        IO_Mode
+//
+// ==============================================================================
+
+void export_IO_Mode ()
+{
+  //________________________________________________________
+  // Enumeration: I/O mode flags
+
+  bpl::enum_<IO_Mode::Flags>("Flags")
+    .value("ReadOnly",     IO_Mode::ReadOnly)
+    .value("ReadWrite",    IO_Mode::ReadWrite)
+    .value("WriteOnly",    IO_Mode::WriteOnly)
+    .value("Open",         IO_Mode::Open)
+    .value("OpenOrCreate", IO_Mode::OpenOrCreate)
+    .value("Create",       IO_Mode::Create)
+    .value("CreateNew",    IO_Mode::CreateNew)
+    .value("Truncate",     IO_Mode::Truncate)
+    ;
+  
+  //________________________________________________________
+  // Specialisation of overloaded methods
+
+  void (IO_Mode::*summary1)() 
+    = &IO_Mode::summary;
+  void (IO_Mode::*summary2)(std::ostream &) 
+    = &IO_Mode::summary;
+  
+  //________________________________________________________
+  // Bindings for class and its methods
+
+  bpl::class_<IO_Mode>("IO_Mode")
+    // Construction
+    .def( bpl::init<>())
+    .def( bpl::init<IO_Mode::Flags>())
+    .def( bpl::init<int>())
+    .def( bpl::init<IO_Mode>())
+    // Parameter access
+    .def("flags",
+	 &IO_Mode::flags,
+	 "Get object I/O mode flags.")
+    .def("className",
+	 &IO_Mode::className,
+	 "Get the name of the class.")
+    // Methods
+    .def("summary",
+	 summary1,
+	 "Summary of the object's internal parameters and status.")
+    .def("summary",
+	 summary2,
+	 "Summary of the object's internal parameters and status.")
     ;
 }
 
