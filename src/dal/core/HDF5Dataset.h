@@ -346,7 +346,7 @@ namespace DAL {
     //! Open the dataset
     virtual bool open (hid_t const &location,
 		       std::string const &name,
-		       IO_Mode const &modeFlags=IO_Mode(IO_Mode::Open));
+		       IO_Mode::Flags const &flags=IO_Mode::Open);
     
     //! Create the dataset
     virtual bool create (hid_t const &location,

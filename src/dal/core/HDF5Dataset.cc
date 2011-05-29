@@ -205,13 +205,14 @@ namespace DAL {
            structure is attached.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.
+    \param flags  -- I/O mode flags.
 
     \return status -- Status of the operation; returns \c false in case an error
             was encountered.
   */
   bool HDF5Dataset::open (hid_t const &location,
 			  std::string const &name,
-			  IO_Mode const &modeFlags)
+			  IO_Mode::Flags const &flags)
   {
     bool status  = true;
     htri_t h5err = 0;
@@ -265,23 +266,24 @@ namespace DAL {
     if (H5Iis_valid(itsLocation)) {
       status = true;
     } else {
+
       /* If failed to open the group, check if we are supposed to create one */
-      if (modeFlags.haveFlag(IO_Mode::Truncate)) {
+      switch (flags) {
+      case IO_Mode::Create:
+      case IO_Mode::Truncate:
 	status = create (location,
 			 itsName,
 			 itsShape,
 			 itsDatatype);
-      } else if (modeFlags.haveFlag(IO_Mode::Open)) {
-	status = create (location,
-			 itsName,
-			 itsShape,
-			 itsDatatype);
-      } else {
+	break;
+      default:
 	std::cerr << "[HDF5Dataset::open] Failed to open dataset "
 		  << name
 		  << std::endl;
 	status = false;
+	break;
       }
+
     }
     
     return status;
