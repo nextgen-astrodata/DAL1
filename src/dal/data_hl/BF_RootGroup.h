@@ -26,7 +26,7 @@
 #include <string>
 
 // DAL header files
-#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5GroupBase.h>
 #include <data_common/Filename.h>
 #include "BF_SubArrayPointing.h"
 #include "SysLog.h"
@@ -60,7 +60,7 @@ namespace DAL { // Namespace DAL -- begin
         <li>Filename -- Class to filenames matching convention
         <li>CommonAttributes -- Collection of attributes common to all LOFAR
 	datasets
-	<li>HDF5CommonInterface -- Common functionality for the high-level
+	<li>HDF5GroupBase -- Common functionality for the high-level
 	interfaces to the datasets
 	<li>BF_SubArrayPointing
 	<li>BF_StokesDataset
@@ -159,7 +159,7 @@ namespace DAL { // Namespace DAL -- begin
     </ol>
     
   */  
-  class BF_RootGroup : public HDF5CommonInterface {
+  class BF_RootGroup : public HDF5GroupBase {
 
     //! Name of the data file
     std::string itsFilename;

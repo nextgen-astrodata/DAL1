@@ -1,8 +1,4 @@
-
-/*-------------------------------------------------------------------------*
- | $Id::                                                                 $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -29,7 +25,7 @@
 #include <iostream>
 #include <string>
 
-#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5GroupBase.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -51,7 +47,7 @@ namespace DAL { // Namespace DAL -- begin
     
     <ul type="square">
       <li>LOFAR Data Format ICD: TBB Time-series data (LOFAR-USG-ICD-001)
-      <li>DAL::HDF5CommonInterface
+      <li>DAL::HDF5GroupBase
       <li>DAL::TBB_Timeseries
     </ul>
     
@@ -60,7 +56,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class TBB_StationTrigger : public HDF5CommonInterface {
+  class TBB_StationTrigger : public HDF5GroupBase {
     
   public:
     

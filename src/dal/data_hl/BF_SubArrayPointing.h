@@ -26,7 +26,7 @@
 #include <string>
 
 // DAL header files
-#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5GroupBase.h>
 #include <data_hl/BF_BeamGroup.h>
 
 namespace DAL { // Namespace DAL -- begin
@@ -58,7 +58,7 @@ namespace DAL { // Namespace DAL -- begin
         <li>Filename -- Class to filenames matching convention
         <li>CommonAttributes -- Collection of attributes common to all LOFAR
 	datasets
-	<li>HDF5CommonInterface -- Common functionality for the high-level
+	<li>HDF5GroupBase -- Common functionality for the high-level
 	interfaces to the datasets
       </ul>
     </ul>
@@ -80,7 +80,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class BF_SubArrayPointing : public HDF5CommonInterface {
+  class BF_SubArrayPointing : public HDF5GroupBase {
     
     //! Station beams
     std::map<std::string,BF_BeamGroup> itsBeams;

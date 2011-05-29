@@ -35,7 +35,7 @@ namespace DAL { // Namespace DAL -- begin
     \param filename -- Name of the dataset to open.
   */
   BF_RootGroup::BF_RootGroup (std::string const &filename)
-    : HDF5CommonInterface()
+    : HDF5GroupBase()
   {
     if (!open (0,filename,false)) {
       std::cerr << "[BF_RootGroup::BF_RootGroup] Failed to open file "
@@ -55,7 +55,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   BF_RootGroup::BF_RootGroup (DAL::Filename &infile,
 			  bool const &create)
-    : HDF5CommonInterface()
+    : HDF5GroupBase()
   {
     if (!open (0,infile.filename(),create)) {
       std::cerr << "[BF_RootGroup::BF_RootGroup] Failed to open file "
@@ -222,7 +222,7 @@ namespace DAL { // Namespace DAL -- begin
   
   /*!
     \param location -- Identifier of the location to which the to be opened
-           structure is attached; parameter inherited through HDF5CommonInterface,
+           structure is attached; parameter inherited through HDF5GroupBase,
 	   but not evaluated here.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.

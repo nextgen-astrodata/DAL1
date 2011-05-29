@@ -29,7 +29,7 @@
 // DAL header files
 #include <core/HDF5Attribute.h>
 #include <coordinates/CoordinatesGroup.h>
-#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5GroupBase.h>
 #include <data_hl/BF_ProcessingHistory.h>
 #include <data_hl/BF_StokesDataset.h>
 
@@ -97,7 +97,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class BF_BeamGroup : public HDF5CommonInterface {
+  class BF_BeamGroup : public HDF5GroupBase {
 
     //! Procesing history group
     std::map<std::string,BF_ProcessingHistory> itsProcessingHistory;

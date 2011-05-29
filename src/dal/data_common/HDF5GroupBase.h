@@ -18,8 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef HDF5COMMONINTERFACE_H
-#define HDF5COMMONINTERFACE_H
+#ifndef HDF5GROUPBASE_H
+#define HDF5GROUPBASE_H
 
 // Standard library header files
 #include <iostream>
@@ -38,7 +38,7 @@
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class HDF5CommonInterface
+    \class HDF5GroupBase
 
     \ingroup DAL
     \ingroup data_common
@@ -76,7 +76,7 @@ namespace DAL { // Namespace DAL -- begin
 
     <h3>Requirements for derived classes</h3>
 
-    The HDF5CommonInterface requires derived classes to implement the following
+    The HDF5GroupBase requires derived classes to implement the following
     methods:
 
     <ol>
@@ -181,7 +181,7 @@ namespace DAL { // Namespace DAL -- begin
       \endcode
     </ol>
   */  
-  class HDF5CommonInterface {
+  class HDF5GroupBase {
 
   protected:
 
@@ -211,7 +211,7 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Destruction ==========================================================
 
-    virtual ~HDF5CommonInterface () {
+    virtual ~HDF5GroupBase () {
       attributes_p.clear();
       destroy();
     };
@@ -219,7 +219,7 @@ namespace DAL { // Namespace DAL -- begin
     // === Operators ============================================================
 
     //! Copy operator
-    HDF5CommonInterface& operator= (HDF5CommonInterface const &other); 
+    HDF5GroupBase& operator= (HDF5GroupBase const &other); 
     
     // === Parameter accesss ====================================================
     
@@ -257,10 +257,10 @@ namespace DAL { // Namespace DAL -- begin
     /*!
       \brief Get the name of the class
       
-      \return className -- The name of the class, HDF5CommonInterface.
+      \return className -- The name of the class, HDF5GroupBase.
     */
     inline std::string className () const {
-      return "HDF5CommonInterface";
+      return "HDF5GroupBase";
     }
     //! Provide a summary of the internal status
     inline void summary () {
@@ -332,13 +332,13 @@ namespace DAL { // Namespace DAL -- begin
 					name,
 					val);
 	  } else {
-	    std::cerr << "[HDF5CommonInterface::getAttribute]"
+	    std::cerr << "[HDF5GroupBase::getAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[HDF5CommonInterface::getAttribute]"
+	  std::cerr << "[HDF5GroupBase::getAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -367,13 +367,13 @@ namespace DAL { // Namespace DAL -- begin
 					name,
 					val);
 	  } else {
-	    std::cerr << "[HDF5CommonInterface::getAttribute]"
+	    std::cerr << "[HDF5GroupBase::getAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[HDF5CommonInterface::getAttribute]"
+	  std::cerr << "[HDF5GroupBase::getAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -403,13 +403,13 @@ namespace DAL { // Namespace DAL -- begin
 					name,
 					val);
 	  } else {
-	    std::cerr << "[HDF5CommonInterface::getAttribute]"
+	    std::cerr << "[HDF5GroupBase::getAttribute]"
 		      << " Invalid attribute name " << name
 		      << std::endl;
 	    return false;
 	  }
 	} else {
-	  std::cerr << "[HDF5CommonInterface::getAttribute]"
+	  std::cerr << "[HDF5GroupBase::getAttribute]"
 		    << " No connection to dataset or file!"
 		    << std::endl;
 	  return false;
@@ -482,14 +482,14 @@ namespace DAL { // Namespace DAL -- begin
     void incrementRefCount ();
 
     //! Unconditional copying
-    void copy (HDF5CommonInterface const &other);
+    void copy (HDF5GroupBase const &other);
     
     //! Unconditional deletion 
     void destroy(void);
 
-  }; // Class HDF5CommonInterface -- end
+  }; // Class HDF5GroupBase -- end
   
 } // Namespace DAL -- end
 
-#endif /* HDF5COMMONINTERFACE_H */
+#endif /* HDF5GROUPBASE_H */
   

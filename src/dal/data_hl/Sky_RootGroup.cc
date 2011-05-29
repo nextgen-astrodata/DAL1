@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <data_hl/Sky_RootGroup.h>
+#include "Sky_RootGroup.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -36,7 +36,7 @@ namespace DAL { // Namespace DAL -- begin
            one.
   */
   Sky_RootGroup::Sky_RootGroup (Sky_RootGroup const &other)
-    : HDF5CommonInterface(other)
+    : HDF5GroupBase(other)
   {
     copy (other);
   }

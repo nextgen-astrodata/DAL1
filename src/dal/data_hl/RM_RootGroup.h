@@ -1,7 +1,4 @@
-/*-------------------------------------------------------------------------*
- | $Id:: NewClass.h 2286 2009-02-03 10:50:48Z baehren                    $ |
- *-------------------------------------------------------------------------*
- ***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2009                                                    *
  *   Lars B"ahren (bahren@astron.nl)                                       *
  *                                                                         *
@@ -29,7 +26,7 @@
 #include <string>
 
 // DAL header files
-#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5GroupBase.h>
 #include <data_common/Filename.h>
 #include <data_hl/SysLog.h>
 
@@ -62,7 +59,7 @@ namespace DAL { // Namespace DAL -- begin
         <li>Filename -- Class to filenames matching convention
         <li>CommonAttributes -- Collection of attributes common to all LOFAR
 	datasets
-	<li>HDF5CommonInterface -- Common functionality for the high-level
+	<li>HDF5GroupBase -- Common functionality for the high-level
 	interfaces to the datasets
 	<li>SysLog
       </ul>
@@ -121,7 +118,7 @@ namespace DAL { // Namespace DAL -- begin
     </ol>
     
   */  
-  class RM_RootGroup : public HDF5CommonInterface {
+  class RM_RootGroup : public HDF5GroupBase {
 
     //! Name of the data file
     std::string filename_p;

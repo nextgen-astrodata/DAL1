@@ -34,7 +34,7 @@
 #endif
 
 #include <core/Enumerations.h>
-#include <data_common/HDF5CommonInterface.h>
+#include <data_common/HDF5GroupBase.h>
 
 namespace DAL {  // Namespace DAL -- begin
 
@@ -90,7 +90,7 @@ namespace DAL {  // Namespace DAL -- begin
   </ul>
 
   */
-  class TBB_DipoleDataset : public HDF5CommonInterface {
+  class TBB_DipoleDataset : public HDF5GroupBase {
     
     //! Datatype identifier
     hid_t datatype_p;
