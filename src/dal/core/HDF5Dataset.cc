@@ -211,7 +211,7 @@ namespace DAL {
   */
   bool HDF5Dataset::open (hid_t const &location,
 			  std::string const &name,
-			  bool const &createNew)
+			  IO_Mode const &modeFlags)
   {
     bool status  = true;
     htri_t h5err = 0;
@@ -266,7 +266,12 @@ namespace DAL {
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
-      if (createNew) {
+      if (modeFlags.haveFlag(IO_Mode::Truncate)) {
+	status = create (location,
+			 itsName,
+			 itsShape,
+			 itsDatatype);
+      } else if (modeFlags.haveFlag(IO_Mode::Open)) {
 	status = create (location,
 			 itsName,
 			 itsShape,

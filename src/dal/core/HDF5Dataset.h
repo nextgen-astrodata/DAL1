@@ -28,6 +28,7 @@
 #include "dalCommon.h"
 #include "HDF5Attribute.h"
 #include "HDF5Hyperslab.h"
+#include "IO_Mode.h"
 
 #define H5S_CHUNKSIZE_MAX  ((uint32_t)(-1))  /* (4GB - 1) */
 
@@ -345,7 +346,7 @@ namespace DAL {
     //! Open the dataset
     virtual bool open (hid_t const &location,
 		       std::string const &name,
-		       bool const &createNew=false);
+		       IO_Mode const &modeFlags=IO_Mode(IO_Mode::Open));
     
     //! Create the dataset
     virtual bool create (hid_t const &location,

@@ -517,14 +517,16 @@ namespace DAL { // Namespace DAL -- begin
     //! Remove flag from the current seetings
     bool removeFlag (IO_Mode::Flags const &flag);
 
-    /*!
-      \brief Get the name of the class
-      
-      \return className -- The name of the class, IO_Mode.
-    */
-    inline std::string className () const {
-      return "IO_Mode";
-    }
+    //! Reset the object I/O mode flags
+    bool resetFlags ();
+
+    // === Public methods =======================================================
+
+    //! Get the descriptions of the currently set flags
+    std::vector<std::string> flagDescriptions ();
+
+    //! Check if a given \e flag is part of the I/O mode settings
+    bool haveFlag (IO_Mode::Flags const &flag);
 
     //! Provide a summary of the object's internal parameters and status
     inline void summary () {
@@ -534,13 +536,14 @@ namespace DAL { // Namespace DAL -- begin
     //! Provide a summary of the object's internal parameters and status
     void summary (std::ostream &os);    
 
-    // === Public methods =======================================================
-
-    //! Get the descriptions of the currently set flags
-    std::vector<std::string> flagDescriptions ();
-
-    //! Reset the object I/O mode flags
-    bool resetFlags ();
+    /*!
+      \brief Get the name of the class
+      
+      \return className -- The name of the class, IO_Mode.
+    */
+    inline std::string className () const {
+      return "IO_Mode";
+    }
 
     // === Static methods =======================================================
 

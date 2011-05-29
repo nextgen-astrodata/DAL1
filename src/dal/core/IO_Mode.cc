@@ -138,10 +138,26 @@ namespace DAL { // Namespace DAL -- begin
   //  Public methods
   //
   // ============================================================================
+
+  /*!
+    \param flag      -- Flag to check for.
+    \return haveFlag -- Returns \e true in case the \c flag is part of the I/O
+            mode settings, \e false in case it is not.
+  */
+  bool IO_Mode::haveFlag (IO_Mode::Flags const &flag)
+  {
+    IO_Mode::Flags tmp = flag;
+
+    if ( (itsFlags & tmp) == tmp ) {
+      return true;
+    } else {
+      return false;
+    } 
+  }
   
   //_____________________________________________________________________________
   //                                                             flagDescriptions
-
+  
   std::vector<std::string> IO_Mode::flagDescriptions ()
   {
     return flagDescriptions (itsFlags);
@@ -149,7 +165,7 @@ namespace DAL { // Namespace DAL -- begin
   
   //_____________________________________________________________________________
   //                                                                      addFlag
-
+  
   /*!
     \param flag    -- 
     \return status -- 

@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "DatasetBase.h"
+#include "HDF5DatasetBase.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -27,31 +27,45 @@ namespace DAL { // Namespace DAL -- begin
   //  Construction
   //
   // ============================================================================
+
+  //_____________________________________________________________________________
+  //                                                              HDF5DatasetBase
   
-  DatasetBase::DatasetBase ()
+  HDF5DatasetBase::HDF5DatasetBase ()
     : HDF5Dataset()
   {
   }
   
-  DatasetBase::DatasetBase (hid_t const &location,
-				      std::string const &name)
-    : HDF5Dataset(location,name)
+  //_____________________________________________________________________________
+  //                                                              HDF5DatasetBase
+  
+  HDF5DatasetBase::HDF5DatasetBase (hid_t const &location,
+				    std::string const &name,
+				    IO_Mode::Flags const &flags)
+    : HDF5Dataset()
   {
+    open (location, name, flags);
   }
-
-  DatasetBase::DatasetBase (hid_t const &location,
-				      std::string const &name,
-				      std::vector< hsize_t > const &shape,
-				      hid_t const &datatype)
+  
+  //_____________________________________________________________________________
+  //                                                              HDF5DatasetBase
+  
+  HDF5DatasetBase::HDF5DatasetBase (hid_t const &location,
+				    std::string const &name,
+				    std::vector< hsize_t > const &shape,
+				    hid_t const &datatype)
     : HDF5Dataset(location,name, shape, datatype)
   {
   }
-
+  
+  //_____________________________________________________________________________
+  //                                                              HDF5DatasetBase
+  
   /*!
     \param other -- Another HDF5Property object from which to create this new
            one.
   */
-  DatasetBase::DatasetBase (DatasetBase const &other)
+  HDF5DatasetBase::HDF5DatasetBase (HDF5DatasetBase const &other)
     : HDF5Dataset (other)
   {
     copy (other);
@@ -63,12 +77,12 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  DatasetBase::~DatasetBase ()
+  HDF5DatasetBase::~HDF5DatasetBase ()
   {
     destroy();
   }
   
-  void DatasetBase::destroy ()
+  void HDF5DatasetBase::destroy ()
   {;}
   
   // ============================================================================
@@ -81,9 +95,9 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                    operator=
   
   /*!
-    \param other -- Another DatasetBase object from which to make a copy.
+    \param other -- Another HDF5DatasetBase object from which to make a copy.
   */
-  DatasetBase& DatasetBase::operator= (DatasetBase const &other)
+  HDF5DatasetBase& HDF5DatasetBase::operator= (HDF5DatasetBase const &other)
   {
     if (this != &other) {
       destroy ();
@@ -95,7 +109,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
-  void DatasetBase::copy (DatasetBase const &other)
+  void HDF5DatasetBase::copy (HDF5DatasetBase const &other)
   {
     if (H5Iis_valid(other.itsLocation)) {
       itsLocation = -1;
@@ -114,9 +128,9 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param os -- Output stream to which the summary is written.
   */
-  void DatasetBase::summary (std::ostream &os)
+  void HDF5DatasetBase::summary (std::ostream &os)
   {
-    os << "[DatasetBase] Summary of internal parameters." << std::endl;
+    os << "[HDF5DatasetBase] Summary of internal parameters." << std::endl;
     os << "-- GROUPTYPE        = " << itsGroupType << std::endl;
     os << "-- WCSINFO          = " << itsWCSinfo   << std::endl;
     os << "-- DATASET_NOF_AXES = " << nofAxes()    << std::endl;
@@ -128,14 +142,77 @@ namespace DAL { // Namespace DAL -- begin
   //  Public methods
   //
   // ============================================================================
+
+  /*!  
+    \param location -- Identifier of the location to which the to be opened
+           structure is attached.
+    \param name   -- Name of the structure (file, group, dataset, etc.) to be
+           opened.
+    \param flags  -- I/O mode flags, defining whether the dataset is opened as
+           read-only or read-write.
+  */
+  bool HDF5DatasetBase::open (hid_t const &location,
+			      std::string const &name,
+			      IO_Mode::Flags const &flags)
+  {
+    /* Check the provided object identifier */
+    if (H5Iis_valid(location)) {
+      /* Check if link for dataset exists */
+      htri_t h5err = H5Lexists (location,
+				name.c_str(),
+				H5P_DEFAULT);
+      if (h5err>0) {
+	/* Open existing dataset */
+	itsLocation = H5Dopen (location,
+			       name.c_str(),
+			       H5P_DEFAULT);
+      } else {
+	std::cerr << "[HDF5DatasetBase::open]"
+		  << " Object " << name << " not found at provided location!"
+		  << std::endl;
+	return false;
+      }
+    } else {
+	std::cerr << "[HDF5DatasetBase::open] Invalid object identifier!"
+		  << std::endl;
+	return false;
+    }
+    
+    hid_t openflag;
+    
+    if ( (flags & IO_Mode::ReadOnly) == IO_Mode::ReadOnly ) {
+      openflag = H5F_ACC_RDONLY;
+    } else if ( (flags & IO_Mode::ReadWrite) == IO_Mode::ReadWrite ) {
+      openflag = H5F_ACC_RDWR;
+    } else {
+      openflag = H5F_ACC_RDONLY;
+    }
+
+    return true;
+  }
   
+  // ============================================================================
+  //
+  //  Static methods
+  //
+  // ============================================================================
+  
+  std::string HDF5DatasetBase::getName (unsigned int const &index)
+  {
+    std::stringstream ss;
+
+    ss << "Dataset_" << index;
+
+    return ss.str();
+  }
+
   // ============================================================================
   //
   //  Private methods
   //
   // ============================================================================
   
-  void DatasetBase::setAttributes ()
+  void HDF5DatasetBase::setAttributes ()
   {
     itsAttributes.clear();
 

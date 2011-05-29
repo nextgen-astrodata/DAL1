@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,36 +18,36 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef SKY_IMAGEDATASET_H
-#define SKY_IMAGEDATASET_H
+#ifndef ITS_DATASET_H
+#define ITS_DATASET_H
 
-// Standard library header files
+/* Standard library header files */
 #include <iostream>
 #include <string>
 
-// DAL header files
-#include <data_common/HDF5DatasetBase.h>
+/* DAL header files*/
+#include <data_comon/HDF5DatasetBase.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class Sky_ImageDataset
+    \class ITS_Dataset
     
     \ingroup DAL
     \ingroup data_hl
     
-    \brief Brief description for class Sky_ImageDataset
+    \brief Brief description for class ITS_Dataset
     
     \author Lars B&auml;hren
 
-    \date 2011/02/01
+    \date 2011-05-29
 
-    \test tSky_ImageDataset.cc
+    \test tITS_Dataset.cc
     
     <h3>Prerequisite</h3>
     
     <ul type="square">
-      <li>\ref dal_icd_004
+      <li>[start filling in your text here]
     </ul>
     
     <h3>Synopsis</h3>
@@ -55,44 +55,36 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class Sky_ImageDataset : public HDF5DatasetBase {
+  class ITS_Dataset : public HDF5DatasetBase {
     
   public:
     
     // === Construction =========================================================
     
     //! Default constructor
-    Sky_ImageDataset ();
-    
-    //! Argumented constructor to open existing dataset
-    Sky_ImageDataset (hid_t const &location,
-		      std::string const &name);
-    
-    //! Argumented constructor to open existing dataset
-    Sky_ImageDataset (hid_t const &location,
-		      unsigned int const &index);
+    ITS_Dataset ();
     
     //! Copy constructor
-    Sky_ImageDataset (Sky_ImageDataset const &other);
+    ITS_Dataset (ITS_Dataset const &other);
     
     // === Destruction ==========================================================
 
     //! Destructor
-    ~Sky_ImageDataset ();
+    ~ITS_Dataset ();
     
     // === Operators ============================================================
     
     //! Overloading of the copy operator
-    Sky_ImageDataset& operator= (Sky_ImageDataset const &other); 
+    ITS_Dataset& operator= (ITS_Dataset const &other); 
     
     // === Parameter access =====================================================
     
     /*!
       \brief Get the name of the class
-      \return className -- The name of the class, Sky_ImageDataset.
+      \return className -- The name of the class, ITS_Dataset.
     */
     inline std::string className () const {
-      return "Sky_ImageDataset";
+      return "ITS_Dataset";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -107,20 +99,21 @@ namespace DAL { // Namespace DAL -- begin
     
     
     
+    // === Static methods =======================================================
+    
+    
+    
   private:
-
-    //! Set up and initialize the list of attributes
-    void setAttributes ();
     
     //! Unconditional copying
-    void copy (Sky_ImageDataset const &other);
+    void copy (ITS_Dataset const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class Sky_ImageDataset -- end
+  }; // Class ITS_Dataset -- end
   
 } // Namespace DAL -- end
 
-#endif /* SKY_IMAGEDATASET_H */
+#endif /* ITS_DATASET_H */
   

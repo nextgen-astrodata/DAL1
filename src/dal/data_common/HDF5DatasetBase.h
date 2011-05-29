@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2011                                                    *
- *   Lars B"ahren (bahren@astron.nl)                                       *
+ *   Lars B"ahren (lbaehren@gmail.com)                                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,20 +18,22 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DATASETBASE_H
-#define DATASETBASE_H
+#ifndef HDF5DATASETBASE_H
+#define HDF5DATASETBASE_H
 
 // Standard library header files
 #include <iostream>
 #include <string>
+#include <sstream>
 
 // DAL header files
 #include <core/HDF5Dataset.h>
+#include <core/IO_Mode.h>
 
 namespace DAL { // Namespace DAL -- begin
   
   /*!
-    \class DatasetBase
+    \class HDF5DatasetBase
     
     \ingroup DAL
     \ingroup data_common
@@ -42,7 +44,7 @@ namespace DAL { // Namespace DAL -- begin
 
     \date 2011/02/01
 
-    \test tDatasetBase.cc
+    \test tHDF5DatasetBase.cc
     
     <h3>Prerequisite</h3>
     
@@ -55,7 +57,7 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Example(s)</h3>
     
   */  
-  class DatasetBase : public HDF5Dataset {
+  class HDF5DatasetBase : public HDF5Dataset {
 
   protected:
     
@@ -71,34 +73,35 @@ namespace DAL { // Namespace DAL -- begin
     // === Construction =========================================================
     
     //! Default constructor
-    DatasetBase ();
+    HDF5DatasetBase ();
     
     //! Argumented constructor to open existing dataset
-    DatasetBase (hid_t const &location,
-		      std::string const &name);
+    HDF5DatasetBase (hid_t const &location,
+		     std::string const &name,
+		     IO_Mode::Flags const &flags=IO_Mode::ReadOnly);
     
     //! Argumented constructor to open existing dataset
-    DatasetBase (hid_t const &location,
-		      unsigned int const &index);
-
+    HDF5DatasetBase (hid_t const &location,
+		     unsigned int const &index);
+    
     //! Argumented constructor to create new dataset
-    DatasetBase (hid_t const &location,
-		      std::string const &name,
-		      std::vector< hsize_t > const &shape,
-		      hid_t const &datatype=H5T_NATIVE_DOUBLE);
+    HDF5DatasetBase (hid_t const &location,
+		     std::string const &name,
+		     std::vector< hsize_t > const &shape,
+		     hid_t const &datatype=H5T_NATIVE_DOUBLE);
     
     //! Copy constructor
-    DatasetBase (DatasetBase const &other);
+    HDF5DatasetBase (HDF5DatasetBase const &other);
     
     // === Destruction ==========================================================
-
+    
     //! Destructor
-    ~DatasetBase ();
+    ~HDF5DatasetBase ();
     
     // === Operators ============================================================
     
     //! Overloading of the copy operator
-    DatasetBase& operator= (DatasetBase const &other); 
+    HDF5DatasetBase& operator= (HDF5DatasetBase const &other); 
     
     // === Parameter access =====================================================
     
@@ -129,10 +132,10 @@ namespace DAL { // Namespace DAL -- begin
     
     /*!
       \brief Get the name of the class
-      \return className -- The name of the class, DatasetBase.
+      \return className -- The name of the class, HDF5DatasetBase.
     */
     inline std::string className () const {
-      return "DatasetBase";
+      return "HDF5DatasetBase";
     }
 
     //! Provide a summary of the object's internal parameters and status
@@ -144,23 +147,31 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // === Public methods =======================================================
+
+    //! Open Dataset
+    bool open (hid_t const &location,
+	       std::string const &name,
+	       IO_Mode::Flags const &flags=IO_Mode::ReadOnly);
     
+    // === Static methods =======================================================
     
+    //! Convert dataset index to name of the HDF5 dataset
+    static std::string getName (unsigned int const &index);
     
   private:
-
+    
     //! Set up and initialize the list of attributes
     void setAttributes ();
     
     //! Unconditional copying
-    void copy (DatasetBase const &other);
+    void copy (HDF5DatasetBase const &other);
     
     //! Unconditional deletion 
     void destroy(void);
     
-  }; // Class DatasetBase -- end
+  }; // Class HDF5DatasetBase -- end
   
 } // Namespace DAL -- end
 
-#endif /* DatasetBase_H */
+#endif /* HDF5DATASETBASE_H */
 
