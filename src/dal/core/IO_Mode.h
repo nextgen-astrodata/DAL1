@@ -517,12 +517,6 @@ namespace DAL { // Namespace DAL -- begin
     //! Remove flag from the current seetings
     bool removeFlag (IO_Mode::Flags const &flag);
 
-    bool readOnly (bool const &flagStatus=true);
-
-    bool writeOnly (bool const &flagStatus=true);
-
-    bool readWrite (bool const &flagStatus=true);
-
     /*!
       \brief Get the name of the class
       
@@ -557,7 +551,7 @@ namespace DAL { // Namespace DAL -- begin
     static std::vector<IO_Mode::Flags> flagsType ();
 
     //! Get array containing the available flag names
-    static std::vector<std::string> modesName ();
+    static std::vector<std::string> flagsName ();
 
     //! Get the descriptions of the set of flags
     std::vector<std::string> flagDescriptions (IO_Mode::Flags const &flags);

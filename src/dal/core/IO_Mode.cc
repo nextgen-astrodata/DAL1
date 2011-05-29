@@ -224,9 +224,9 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                                    modesName
+  //                                                                    flagsName
 
-  std::vector<std::string> IO_Mode::modesName ()
+  std::vector<std::string> IO_Mode::flagsName ()
   {
     std::map<IO_Mode::Flags,std::string> flags = flagsMap();
     std::map<IO_Mode::Flags,std::string>::iterator it;
@@ -274,10 +274,10 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                  verifyFlags
 
   /*!
-    \param flags        -- 
+    \param flags        -- I/O mode settings to be checked.
     \param correctFlags -- Attempt to correct the flags.
     \return status      -- Status of the operation; returns \c false in case an
-            eror was encountered, i.e. the provided combination of flags is 
+            error was encountered, i.e. the provided combination of flags is 
 	    considered to be incorrect.
   */
   bool IO_Mode::verifyFlags (int &flags,
@@ -285,7 +285,35 @@ namespace DAL { // Namespace DAL -- begin
   {
     bool status = true;
 
+    /*______________________________________________________
+      Check settings containing 'ReadOnly'
+    */
+    
+    if ( (flags & IO_Mode::ReadOnly) == IO_Mode::ReadOnly ) {
+      
+      if ( (flags & IO_Mode::WriteOnly) == IO_Mode::WriteOnly ) {
+	std::cerr << "[IO_Mode::verifyFlags]"
+		  << " Can't be ReadOnly and WriteOnly at the same time!"
+		  << std::endl;
+	status = false;
+	if (correctFlags) {
+	  flags = flags & (~IO_Mode::WriteOnly);
+	}
+      }
+      
+      if ( (flags & IO_Mode::ReadWrite) == IO_Mode::ReadWrite ) {
+	std::cerr << "[IO_Mode::verifyFlags]"
+		  << " Can't be ReadOnly and ReadWrite at the same time!"
+		  << std::endl;
+	status = false;
+	if (correctFlags) {
+	  flags = flags & (~IO_Mode::ReadWrite);
+	}
+      }
+      
+    }
+    
     return status;
   }
-
+  
 } // Namespace DAL -- end

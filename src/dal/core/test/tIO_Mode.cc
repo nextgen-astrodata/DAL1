@@ -69,7 +69,7 @@ int test_static_methods ()
   }
   
   /*________________________________________________________
-    Test 1: Retrive array of flags
+    Test 2: Retrive array of flags
    */
   
   std::cout << "[2] Testing IO_Mode::flagsType() ..." << std::endl;
