@@ -53,8 +53,6 @@ namespace DAL { // Namespace DAL -- begin
       <li>\ref dal_icd_002
       <li>\ref dal_icd_003
       <li>\ref dal_icd_004
-      <li>HDF5CommonInterface -- Common functionality for the high-level
-      interfaces to the datasets
     </ul>
     
     \todo addCoordinate -- add a further coordinate object to the coordinates group.
