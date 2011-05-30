@@ -232,25 +232,25 @@ namespace DAL { // Namespace DAL -- begin
     bool openSubArrayPointing (unsigned int const &pointingID,
 			      IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
-    //! Get the number of primary pointing direction objects
-    inline unsigned int nofSubArrayPointings () const {
-      return itsSubarrayPointings.size();
-    }
-
-    //! Get a primary pointing direction group
-    BF_SubArrayPointing primaryPointing (unsigned int const &pointingID);
-
     //! Open a beam group
     bool openBeam (unsigned int const &pointingID,
 		   unsigned int const &beamID,
-		   bool const &create=true);
-
-    //! Open an existing Stokes dataset
+		   IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
+    //! Open a Stokes dataset
     bool openStokesDataset (unsigned int const &pointingID,
 			    unsigned int const &beamID,
 			    unsigned int const &stokesID,
 			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
+    //! Get the number of primary pointing direction objects
+    inline unsigned int nofSubArrayPointings () const {
+      return itsSubarrayPointings.size();
+    }
+    
+    //! Get a primary pointing direction group
+    BF_SubArrayPointing primaryPointing (unsigned int const &pointingID);
+
     //! Get the SysLog group
     SysLog sysLog ();
     

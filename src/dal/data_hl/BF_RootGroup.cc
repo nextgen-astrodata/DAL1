@@ -412,15 +412,17 @@ namespace DAL { // Namespace DAL -- begin
       If group is not opened yet, check if it exists; if yes
       then open it.
     */
-    
+
     if ( !groupIsOpen ) {
       if (groupExists) {
 	itsSubarrayPointings[name] = BF_SubArrayPointing (location_p,
 							  name);   
-      } else if (flags.flags() & IO_Mode::OpenOrCreate) {
+      } else if ( flags.flags() & IO_Mode::OpenOrCreate) {
 	itsSubarrayPointings[name] = BF_SubArrayPointing (location_p,
 							  pointingID,
 							  true);   
+      } else {
+	std::cout << "-- Skipped open/create of group " << name << "." << std::endl;
       }
     }
     
@@ -486,52 +488,44 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                     openBeam
   
   /*!
-    \param pointingID -- Identifier for the primary pointing direction.
+    \param pointingID -- Identifier for the sub-array pointing direction.
     \param beamID     -- Identifier for the beam within the primary pointing
            direction.
     \param create     -- Create the group if it does not exist yet?
   */
   bool BF_RootGroup::openBeam (unsigned int const &pointingID,
 			       unsigned int const &beamID,
-			       bool const &create)
+			       IO_Mode const &flags)
   {
-    bool status (true);
-    htri_t validLocation = H5Iis_valid(location_p);
-
-    if (location_p > 0 && validLocation) {
-      /* Open SubArrayPointing group */
-      status = openSubArrayPointing (pointingID, create);
-
-      /* Open Beam group */
-      if (status) {
-	std::string name;
-	std::map<std::string,BF_SubArrayPointing>::iterator it;
-	// get pointer to SubArrayPointing object
-	name = BF_SubArrayPointing::getName (pointingID);
-	it   = itsSubarrayPointings.find(name);
-	// forward function call to open beam
-	if ( it != itsSubarrayPointings.end() ) {
-	  it->second.openBeam(beamID,create);
-	}
-	else {
-	  std::cout << "[BF_RootGroup::openBeam] " << BF_BeamGroup::getName(beamID)
-		    << " already exists."
-		    << std::endl;
-	}
-      } else {
-	std::cerr << "[BF_RootGroup::openBeam] Failed to open StationGroup!"
-		  << std::endl;
-	status = false;
-      }
-    }  //  end -- (location_p>0)
-    else {
-      std::cerr << "[BF_RootGroup::openBeam] No connection to dataset!"
-		<< std::endl;
-      std::cerr << "-- Location ID       = " << location_p    << std::endl;
-      std::cerr << "-- Valid HDF5 object = " << validLocation << std::endl;
-      status = false;
-    }
+    bool status = true;
     
+    /*______________________________________________________
+      Open/Create primary array pointing group
+    */
+
+    status = openSubArrayPointing (pointingID,
+				   flags);
+    
+    /*______________________________________________________
+      Forward the function call to the next-lower
+      hierarchical level structure.
+    */
+    
+    std::string name;
+    std::map<std::string,BF_SubArrayPointing>::iterator it;
+    
+    name = BF_SubArrayPointing::getName (pointingID);
+    it   = itsSubarrayPointings.find(name);
+    
+    if (it==itsSubarrayPointings.end()) {
+      std::cerr << "[BF_RootGroup::openBeam]"
+		<< " Unable to open sub-array direction group " << name
+		<< std::endl;
+      status = false;
+    } else {
+      it->second.openBeam (beamID, flags);
+    }
+
     return status;
   }
 

@@ -98,13 +98,14 @@ int main()
   /*__________________________________________________________________
     Create primary array pointing groups with embedded beam groups.
   */
-
+  
   for (unsigned numPointing=0; numPointing<nofPointings; ++numPointing) {
-    // create sub-array pointing directions groups
-    rootGroup.openSubArrayPointing ( numPointing, true );
-    // create beam groups
     for (unsigned numBeam=0; numBeam<nofBeams; ++numBeam) {
-      rootGroup.openBeam ( numPointing, numBeam, true );
+      // progress message
+      std::cout << "-- openBeam (" << numPointing << "," << numBeam << ")"
+		<< std::endl;
+      // recursively open beam group
+      rootGroup.openBeam ( numPointing, numBeam );
     }
   }
   
