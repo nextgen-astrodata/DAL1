@@ -109,8 +109,6 @@ int main()
     }
   }
   
-  return 0;
-  
   /*__________________________________________________________________
     Re-open the previously created BF file, before creating Stokes
     dataset.
