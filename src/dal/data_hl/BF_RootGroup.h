@@ -26,10 +26,11 @@
 #include <string>
 
 // DAL header files
+#include <core/IO_Mode.h>
 #include <data_common/HDF5GroupBase.h>
 #include <data_common/Filename.h>
-#include "BF_SubArrayPointing.h"
-#include "SysLog.h"
+#include <data_hl/BF_SubArrayPointing.h>
+#include <data_hl/SysLog.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -179,19 +180,19 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor
     BF_RootGroup (DAL::Filename &infile,
-		bool const &create=true);
+		  bool const &create=true);
     
     //! Argumented constructor
     BF_RootGroup (CommonAttributes const &attributes,
-		bool const &create=true);
+		  bool const &create=true);
     
     // === Destruction ==========================================================
     
     //! Default destructor
     ~BF_RootGroup ();
     
-    // --------------------------------------------------------------- Parameters
-
+    // === Parameter access =====================================================
+    
     //! Get the set of common attributes attached to the root group of the file
     CommonAttributes commonAttributes ();
 
@@ -229,8 +230,8 @@ namespace DAL { // Namespace DAL -- begin
 
     //! Open a PrimaryPointing direction group
     bool openPrimaryPointing (unsigned int const &pointingID,
-			      bool const &create=true);
-
+			      IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
     //! Get the number of primary pointing direction objects
     inline unsigned int nofPrimaryPointings () const {
       return itsSubarrayPointings.size();
@@ -247,13 +248,8 @@ namespace DAL { // Namespace DAL -- begin
     //! Open an existing Stokes dataset
     bool openStokesDataset (unsigned int const &pointingID,
 			    unsigned int const &beamID,
-			    unsigned int const &stokesID);
-    
-    //! Create a new Stokes dataset
-    bool createStokesDataset (unsigned int const &pointingID,
-			      unsigned int const &beamID,
-			      unsigned int const &stokesID,
-			      bool const &overwriteExisting=false);
+			    unsigned int const &stokesID,
+			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Get the SysLog group
     SysLog sysLog ();

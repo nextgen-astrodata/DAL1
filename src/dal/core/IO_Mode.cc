@@ -149,7 +149,7 @@ namespace DAL { // Namespace DAL -- begin
     IO_Mode::Flags in = which;
     int tmp           = itsFlags;
 
-    if ( (tmp & in) == in ) {
+    if ( tmp & in ) {
       return true;
     } else {
       return false;
