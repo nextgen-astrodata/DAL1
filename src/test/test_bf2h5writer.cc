@@ -62,7 +62,10 @@ DAL::CommonAttributes commonAttributes (DAL::Filename const &filename)
 int main()
 {
   const unsigned nofSamples  = SAMPLES;
-  const unsigned nofChannels = SUBBANDS * CHANNELS;  
+  const unsigned nofChannels = SUBBANDS * CHANNELS;
+
+  const unsigned nofPointings = 5;
+  const unsigned nofBeams     = 10;
   
   /*__________________________________________________________________
     Create DAL::Filename object for generation of proper filename,
@@ -85,17 +88,25 @@ int main()
   DAL::CommonAttributes attributes = commonAttributes (filename);
 
   /*__________________________________________________________________
-    Create new BF file with basic structure.
+    Create new BF file.
   */
   
   std::cout << "-- Creating new file " << filename.filename() << endl;
   DAL::BF_RootGroup rootGroup (attributes);
   
-  cout << "-- Creating primary pointing 0" << endl;
-  rootGroup.openPrimaryPointing ( 0, true );
-  
-  cout << "-- Creating tied-array beam 0" << endl;
-  rootGroup.openBeam ( 0, 0, true );
+
+  /*__________________________________________________________________
+    Create primary array pointing groups with embedded beam groups.
+  */
+
+  for (unsigned numPointing=0; numPointing<nofPointings; ++numPointing) {
+    // create primary array poining group
+    rootGroup.openPrimaryPointing ( numPointing, true );
+    // create beam groups
+    for (unsigned numBeam=0; numBeam<nofBeams; ++numBeam) {
+      rootGroup.openBeam ( numPointing, numBeam, true );
+    }
+  }
   
   return 0;
   
@@ -107,7 +118,8 @@ int main()
   {
     hid_t fileID = rootGroup.locationID();
     cout << "Creating stokes set 0" << endl;
-    DAL::BF_StokesDataset stokesDataset(fileID, 0,
+    DAL::BF_StokesDataset stokesDataset(fileID,
+					0,
 					nofSamples,
 					SUBBANDS,
 					CHANNELS,
