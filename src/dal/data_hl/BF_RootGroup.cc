@@ -437,7 +437,7 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                          openSubArrayPointing
+  //                                                         openSubArrayPointing
   
   /*!
     \param name   -- Name of the primary array pointing group to be opened.

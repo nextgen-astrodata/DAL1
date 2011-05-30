@@ -258,30 +258,68 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param beamID -- Identifier for the Beam within the Primary Pointing 
            Direction group.
-    \param create -- 
+    \param flags  -- I/O mode flags.
   */
   bool BF_SubArrayPointing::openBeam (unsigned int const &beamID,
-				      bool const &create)
+				      IO_Mode const &flags)
   {
-    bool status          = true;
-    htri_t validLocation = H5Iis_valid(location_p);
-    std::string name     = BF_BeamGroup::getName (beamID);
+    bool status      = true;
+    bool groupIsOpen = false;
+    bool groupExists = false;
+    std::string name = BF_BeamGroup::getName (beamID);
+
+    /*______________________________________________________
+      Check object ID for sub-array pointing direction group
+    */
     
-    if (location_p > 0 && validLocation) {
-      // open Beam group
-      BF_BeamGroup beam (location_p,beamID,create);
-      itsBeams[name] = beam;
-      // book-keeping
-      int nofBeams = itsBeams.size();
-      HDF5Attribute::write (location_p,"NOF_BEAMS",nofBeams);
+    if ( H5Iis_valid(location_p) ) {
+      /* Check if the group has been opened already */
+      if ( itsBeams.find(name) == itsBeams.end() ) {
+	groupIsOpen = false;
+	/* Check if the group at least exists */
+	htri_t h5err = H5Lexists (location_p,
+				  name.c_str(),
+				  H5P_DEFAULT);
+	/* Inspect return value */
+	if (h5err>0) {
+	  groupExists = true;
+	} else {
+	  groupExists = false;
+	}
+      } else {
+	groupIsOpen = true;
+      }
     } else {
-      std::cerr << "[BF_SubArrayPointing::openBeam] Not connected to dataset."
+      std::cerr << "[BF_SubArrayPointing::openBeam]" 
+		<< " Invalid object ID!"
 		<< std::endl;
-      std::cerr << "-- Location ID       = " << location_p    << std::endl;
-      std::cerr << "-- Valid HDF5 object = " << validLocation << std::endl;
-      std::cerr << "-- Beam group        = " << name          << std::endl;
-      status = false;
+      return false;
     }
+    
+    /*______________________________________________________
+      If group is not opened yet, check if it exists; if yes
+      then open it.
+    */
+    
+    if ( !groupIsOpen ) {
+      if (groupExists) {
+	itsBeams[name] = BF_BeamGroup (location_p,
+				       name);   
+      } else if (flags.flags() & IO_Mode::OpenOrCreate) {
+	itsBeams[name] = BF_BeamGroup (location_p,
+				       beamID,
+				       true);   
+      }
+    }
+    
+    /*______________________________________________________
+      Internal book-keeping
+    */
+    
+    int nofBeams = itsBeams.size();
+    HDF5Attribute::write (location_p,
+			  "NOF_BEAMS",
+			  nofBeams);
     
     return status;
   }
@@ -336,8 +374,30 @@ namespace DAL { // Namespace DAL -- begin
 					       IO_Mode const &flags)
   {
     bool status = true;
-
     
+    /*______________________________________________________
+      Open/Create beam group
+    */
+    
+    status = openBeam (beamID, flags);
+    
+    /*______________________________________________________
+      Forward the function call to the next-lower
+      hierarchical level structure.
+    */
+    
+    std::string name;
+    std::map<std::string,BF_BeamGroup>::iterator it;
+    
+    name = BF_BeamGroup::getName (beamID);
+    it   = itsBeams.find(name);
+    
+    if (it==itsBeams.end()) {
+      status = false;
+    } else {
+      it->second.openStokesDataset (stokesID);
+    }
+
     return status;
   }
   
@@ -349,7 +409,7 @@ namespace DAL { // Namespace DAL -- begin
   {
     std::string name = BF_BeamGroup::getName (beamID);
     std::map<std::string,BF_BeamGroup>::iterator it = itsBeams.find(name);
-
+    
     if (it==itsBeams.end()) {
       std::cerr << "[BF_SubArrayPointing::getStokesDataset]"
 		<< " Unable to find Beam group " << name << std::endl;

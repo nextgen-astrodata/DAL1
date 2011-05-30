@@ -141,8 +141,8 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Open a beam group
     bool openBeam (unsigned int const &beamID,
-			 bool const &create=true);
-
+		   IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
     //! Get the number of embedded Beam object/groups
     inline unsigned int nofBeams () {
       return itsBeams.size();
