@@ -321,6 +321,25 @@ namespace DAL { // Namespace DAL -- begin
       return true;
     }
   }
+
+  //_____________________________________________________________________________
+  //                                                            openStokesDataset
+
+  /*!
+    \param beamID   -- 
+    \param stokesID -- 
+    \param flags    -- 
+    \return status  -- 
+   */
+  bool BF_SubArrayPointing::openStokesDataset (unsigned int const &beamID,
+					       unsigned int const &stokesID,
+					       IO_Mode const &flags)
+  {
+    bool status = true;
+
+    
+    return status;
+  }
   
   //_____________________________________________________________________________
   //                                                             getStokesDataset

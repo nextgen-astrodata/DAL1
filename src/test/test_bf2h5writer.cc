@@ -100,8 +100,8 @@ int main()
   */
 
   for (unsigned numPointing=0; numPointing<nofPointings; ++numPointing) {
-    // create primary array poining group
-    rootGroup.openPrimaryPointing ( numPointing, true );
+    // create sub-array pointing directions groups
+    rootGroup.openSubArrayPointing ( numPointing, true );
     // create beam groups
     for (unsigned numBeam=0; numBeam<nofBeams; ++numBeam) {
       rootGroup.openBeam ( numPointing, numBeam, true );

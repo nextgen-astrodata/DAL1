@@ -154,6 +154,12 @@ namespace DAL { // Namespace DAL -- begin
     //! Retrieve a specific Beam group
     bool getBeamGroup (BF_BeamGroup *beam,
 		       unsigned int const &beamID);
+
+
+    //! Open an existing Stokes dataset
+    bool openStokesDataset (unsigned int const &beamID,
+			    unsigned int const &stokesID,
+			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Retrieve a specific Stokes dataset
     BF_StokesDataset getStokesDataset (unsigned int const &beamID,

@@ -154,7 +154,7 @@ namespace DAL { // Namespace DAL -- begin
       The resulting structure within the file will be:
       \verbatim
       /                            ...  Root group
-      `-- PrimaryPointing010       ...  Primary pointing direction group
+      `-- SubArrayPointing010      ...  Sub-array pointing group
           `-- Beam003              ...  Beam group
       \endverbatim
     </ol>
@@ -166,7 +166,7 @@ namespace DAL { // Namespace DAL -- begin
     std::string itsFilename;
     //! LOFAR common attributes attached to the root group of the dataset
     CommonAttributes itsCommonAttributes;
-    //! Primary Pointing Directions
+    //! Sub-array pointing directions
     std::map<std::string,BF_SubArrayPointing> itsSubarrayPointings;
     //! Container for system-wide logs
     std::map<std::string,SysLog> itsSystemLog;
@@ -228,12 +228,12 @@ namespace DAL { // Namespace DAL -- begin
 	       std::string const &name,
 	       bool const &create=true);
 
-    //! Open a PrimaryPointing direction group
-    bool openPrimaryPointing (unsigned int const &pointingID,
+    //! Open a SubArrayPointing direction group
+    bool openSubArrayPointing (unsigned int const &pointingID,
 			      IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Get the number of primary pointing direction objects
-    inline unsigned int nofPrimaryPointings () const {
+    inline unsigned int nofSubArrayPointings () const {
       return itsSubarrayPointings.size();
     }
 
@@ -267,8 +267,8 @@ namespace DAL { // Namespace DAL -- begin
     void init (CommonAttributes const &attributes);
     //! Open a system log group
     bool openSysLog (bool const &create=true);
-    //! Open a PrimaryPointing direction group
-    bool openPrimaryPointing (std::string const &name);
+    //! Open a SubArrayPointing direction group
+    bool openSubArrayPointing (std::string const &name);
       
   }; // Class BF_RootGroup -- end
   

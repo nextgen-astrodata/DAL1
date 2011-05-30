@@ -23,6 +23,10 @@
           `-- Beam group                          BF_BeamGroup
               `-- Stokes dataset                  BF_StokesDataset
   \endverbatim
+
+  In order to allow for the recursive creation of the above structure, the
+  individual classes permit the creation of structures at hierarchical levels
+  below.
   
   Accessing (open/create) a Stokes dataset from within a beam group:
 

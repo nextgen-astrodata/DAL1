@@ -158,7 +158,7 @@ namespace DAL { // Namespace DAL -- begin
     os << "-- Location ID               = " << location_p            << std::endl;
     os << "-- nof. attributes           = " << attributes_p.size()   << std::endl;
     os << "-- nof. SysLog groups        = " << itsSystemLog.size()   << std::endl;
-    os << "-- nof. primary pointings    = " << nofPrimaryPointings() << std::endl;
+    os << "-- nof. primary pointings    = " << nofSubArrayPointings() << std::endl;
     
     if (showAttributes) {
       os << "-- Attributes              = " << attributes_p          << std::endl;
@@ -343,9 +343,9 @@ namespace DAL { // Namespace DAL -- begin
     /* ... and remove its name from the previously retrieved list */
     groups.erase("SysLog");
 
-    /* Open the PrimaryPointingDirection groups */
+    /* Open the SubArrayPointingDirection groups */
     for (it=groups.begin(); it!=groups.end(); ++it) {
-      status *= openPrimaryPointing (*it);
+      status *= openSubArrayPointing (*it);
     }
     
     return status;
@@ -366,13 +366,13 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                          openPrimaryPointing
+  //                                                          openSubArrayPointing
   
   /*!
     \param pointingID -- ID of the sub-array pointing group.
     \param flags      -- I/O mode flags.
   */
-  bool BF_RootGroup::openPrimaryPointing (unsigned int const &pointingID,
+  bool BF_RootGroup::openSubArrayPointing (unsigned int const &pointingID,
 					  IO_Mode const &flags)
   {
     bool status      = true;
@@ -402,7 +402,7 @@ namespace DAL { // Namespace DAL -- begin
 	groupIsOpen = true;
       }
     } else {
-      std::cerr << "[BF_RootGroup::openPrimaryPointing]" 
+      std::cerr << "[BF_RootGroup::openSubArrayPointing]" 
 		<< " Invalid object ID!"
 		<< std::endl;
       return false;
@@ -437,31 +437,47 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                          openPrimaryPointing
+  //                                                          openSubArrayPointing
   
   /*!
-    \param name   -- 
-    \param create -- 
+    \param name   -- Name of the primary array pointing group to be opened.
   */
-  bool BF_RootGroup::openPrimaryPointing (std::string const &name)
+  bool BF_RootGroup::openSubArrayPointing (std::string const &name)
   {
-    bool status (true);
+    bool status = true;
 
-    if (location_p > 0 && H5Iis_valid(location_p)) {
-      std::map<std::string,BF_SubArrayPointing>::iterator it;
-      // convert station ID to group name
-      it = itsSubarrayPointings.find(name);
-      // check if the station beam group indeed exists
-      if (it == itsSubarrayPointings.end()) {
-	// open the primary pointing direction group
-	itsSubarrayPointings[name] = BF_SubArrayPointing (location_p,name);
+    /*______________________________________________________
+      Check object ID for root group
+    */
+    
+    if ( H5Iis_valid(location_p) ) {
+      /* Check if the group has been opened already */
+      if ( itsSubarrayPointings.find(name) == itsSubarrayPointings.end() ) {
+	/* Check if the group at least exists */
+	htri_t h5err = H5Lexists (location_p,
+				  name.c_str(),
+				  H5P_DEFAULT);
+	/* Inspect return value */
+	if (h5err>0) {
+	  itsSubarrayPointings[name] = BF_SubArrayPointing (location_p,
+							    name);
+	}
       }
-    }
-    else {
-      std::cerr << "[BF_RootGroup::openPrimaryPointing] Not attached to file!"
+    } else {
+      std::cerr << "[BF_RootGroup::openSubArrayPointing]" 
+		<< " Invalid object ID!"
 		<< std::endl;
-      status = false;
+      return false;
     }
+    
+    /*______________________________________________________
+      Internal book-keeping
+    */
+    
+    int nofPrimaryBeams = itsSubarrayPointings.size();
+    HDF5Attribute::write (location_p,
+			  "NOF_PRIMARY_BEAMS",
+			  nofPrimaryBeams);
     
     return status;
   }
@@ -483,14 +499,14 @@ namespace DAL { // Namespace DAL -- begin
     htri_t validLocation = H5Iis_valid(location_p);
 
     if (location_p > 0 && validLocation) {
-      /* Open PrimaryPointing group */
-      status = openPrimaryPointing (pointingID, create);
+      /* Open SubArrayPointing group */
+      status = openSubArrayPointing (pointingID, create);
 
       /* Open Beam group */
       if (status) {
 	std::string name;
 	std::map<std::string,BF_SubArrayPointing>::iterator it;
-	// get pointer to PrimaryPointing object
+	// get pointer to SubArrayPointing object
 	name = BF_SubArrayPointing::getName (pointingID);
 	it   = itsSubarrayPointings.find(name);
 	// forward function call to open beam
@@ -561,13 +577,30 @@ namespace DAL { // Namespace DAL -- begin
 					IO_Mode const &flags)
   {
     bool status = true;
-
+    
     /*______________________________________________________
       Open/Create primary array pointing group
     */
 
-    status = openPrimaryPointing (pointingID,
-				  flags);
+    status = openSubArrayPointing (pointingID,
+				   flags);
+    
+    /*______________________________________________________
+      Forward the function call to the next-lower
+      hierarchical level structure.
+    */
+    
+    std::string name;
+    std::map<std::string,BF_SubArrayPointing>::iterator it;
+    
+    name = BF_SubArrayPointing::getName (pointingID);
+    it   = itsSubarrayPointings.find(name);
+    
+    if (it==itsSubarrayPointings.end()) {
+      status = false;
+    } else {
+      it->second.openStokesDataset (beamID, stokesID);
+    }
 
     return status;
   }
