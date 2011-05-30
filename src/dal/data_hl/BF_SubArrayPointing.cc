@@ -33,7 +33,8 @@ namespace DAL { // Namespace DAL -- begin
   
   BF_SubArrayPointing::BF_SubArrayPointing ()
   {
-    location_p = 0;
+    location_p   = 0;
+    itsGroupType = "SubArrayPointing";
   }
   
   //_____________________________________________________________________________
@@ -42,6 +43,7 @@ namespace DAL { // Namespace DAL -- begin
   BF_SubArrayPointing::BF_SubArrayPointing (hid_t const &location,
 					    std::string const &name)
   {
+    itsGroupType = "SubArrayPointing";
     open (location,name,false);
   }
   
@@ -52,6 +54,7 @@ namespace DAL { // Namespace DAL -- begin
 					    unsigned int const &index,
 					    bool const &create)
   {
+    itsGroupType = "SubArrayPointing";
     open (location,getName(index),create);
   }
   
@@ -174,14 +177,13 @@ namespace DAL { // Namespace DAL -- begin
 				H5P_DEFAULT);
 	/* If creation was sucessful, add attributes with default values */
 	if (location_p > 0) {
-	  std::string grouptype ("PrimaryPointingDirection");
 	  std::string mhz ("MHz");
 	  std::string tracking ("OFF");
 	  std::string second ("s");
 	  std::string usecond ("us");
 	  std::vector<std::string> stationsList (1,"UNDEFINED");
 	  // write the attributes
-	  HDF5Attribute::write (location_p,"GROUPTYPE",                grouptype   );
+	  HDF5Attribute::write (location_p,"GROUPTYPE",                itsGroupType);
 	  HDF5Attribute::write (location_p,"NOF_STATIONS",             int(0)      );
 	  HDF5Attribute::write (location_p,"STATIONS_LIST",            stationsList);
 	  HDF5Attribute::write (location_p,"POINT_RA",                 double(0.0) );
@@ -445,7 +447,7 @@ namespace DAL { // Namespace DAL -- begin
     \param index -- Index identifying the station beam.
     
     \return name -- The name of the station beam group,
-            <tt>PrimaryPointing<index></tt>
+            <tt>SubArrayPointing<index></tt>
   */
   std::string BF_SubArrayPointing::getName (unsigned int const &index)
   {
@@ -456,7 +458,7 @@ namespace DAL { // Namespace DAL -- begin
     
     std::string name (uid);
     
-    name = "PrimaryPointingDirection" + name;
+    name = "SUB_ARRAY_POINTING_" + name;
     
     return name;
   }

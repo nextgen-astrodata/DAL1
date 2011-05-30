@@ -191,6 +191,8 @@ namespace DAL { // Namespace DAL -- begin
     hid_t location_p;
     //! Names of the attributes attached to the structure
     std::set<std::string> attributes_p;
+    //! Group type descriptor
+    std::string itsGroupType;
 
     /* === Protected functions which define basic interface === */
 

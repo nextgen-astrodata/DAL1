@@ -94,12 +94,12 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Default constructor
     BF_SubArrayPointing (hid_t const &location,
-			std::string const &name);
+			 std::string const &name);
     
     //! Argumented constructor
     BF_SubArrayPointing (hid_t const &location,
-			unsigned int const &index,
-			bool const &create);
+			 unsigned int const &index,
+			 bool const &create);
     
     // === Destruction ==========================================================
     
@@ -131,7 +131,7 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Public methods =======================================================
 
-    //! Convert PrimaryPointing index to name of the HDF5 group
+    //! Convert Sub-array pointing direction index to name of the HDF5 group
     static std::string getName (unsigned int const &index);
 
     //! Open the file containing the beamformed data.

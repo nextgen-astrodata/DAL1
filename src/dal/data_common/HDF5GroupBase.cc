@@ -69,6 +69,7 @@ namespace DAL { // Namespace DAL -- begin
     // Copy variable values from other object
     location_p   = other.location_p;
     attributes_p = other.attributes_p;
+    itsGroupType = other.itsGroupType;
     // Book-keeping
     incrementRefCount ();
   }
@@ -290,7 +291,8 @@ namespace DAL { // Namespace DAL -- begin
   void HDF5GroupBase::summary (std::ostream &os)
   {
     os << "[HDF5GroupBase] Summary of internal parameters." << std::endl;
-    os << "-- Location ID = " << location_p                   << std::endl;
+    os << "-- Location ID   = " << location_p               << std::endl;
+    os << "-- Group type ID = " << itsGroupType             << std::endl;
   }
   
 } // Namespace DAL -- end
