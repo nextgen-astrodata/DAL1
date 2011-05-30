@@ -34,6 +34,7 @@ namespace DAL { // Namespace DAL -- begin
   HDF5DatasetBase::HDF5DatasetBase ()
     : HDF5Dataset()
   {
+    init ();
   }
   
   //_____________________________________________________________________________
@@ -41,9 +42,10 @@ namespace DAL { // Namespace DAL -- begin
   
   HDF5DatasetBase::HDF5DatasetBase (hid_t const &location,
 				    std::string const &name,
-				    IO_Mode::Flags const &flags)
+				    IO_Mode const &flags)
     : HDF5Dataset()
   {
+    init (flags);
     open (location, name, flags);
   }
   
@@ -151,9 +153,9 @@ namespace DAL { // Namespace DAL -- begin
     \param flags  -- I/O mode flags, defining whether the dataset is opened as
            read-only or read-write.
   */
-  bool HDF5DatasetBase::open (hid_t const &location,
-			      std::string const &name,
-			      IO_Mode::Flags const &flags)
+  bool HDF5DatasetBase::open (const hid_t &location,
+			      const std::string &name,
+			      const IO_Mode &flags)
   {
     /* Check the provided object identifier */
     if (H5Iis_valid(location)) {
@@ -162,6 +164,7 @@ namespace DAL { // Namespace DAL -- begin
 				name.c_str(),
 				H5P_DEFAULT);
       if (h5err>0) {
+	itsFlags = flags;
 	/* Open existing dataset */
 	itsLocation = H5Dopen (location,
 			       name.c_str(),
@@ -178,16 +181,6 @@ namespace DAL { // Namespace DAL -- begin
 	return false;
     }
     
-    hid_t openflag;
-    
-    if ( (flags & IO_Mode::ReadOnly) == IO_Mode::ReadOnly ) {
-      openflag = H5F_ACC_RDONLY;
-    } else if ( (flags & IO_Mode::ReadWrite) == IO_Mode::ReadWrite ) {
-      openflag = H5F_ACC_RDWR;
-    } else {
-      openflag = H5F_ACC_RDONLY;
-    }
-
     return true;
   }
   
@@ -212,14 +205,20 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
 
-  void HDF5DatasetBase::init ()
+  //_____________________________________________________________________________
+  //                                                                         init
+  
+  void HDF5DatasetBase::init (IO_Mode const &flags)
   {
     setAttributes ();
 
-    itsFlags     = IO_Mode();
+    itsFlags     = flags;
     itsGroupType = "Dataset";
     itsWCSinfo   = "";
   }
+  
+  //_____________________________________________________________________________
+  //                                                                setAttributes
   
   void HDF5DatasetBase::setAttributes ()
   {

@@ -526,7 +526,7 @@ namespace DAL { // Namespace DAL -- begin
     std::vector<std::string> flagDescriptions ();
 
     //! Check if a given \e flag is part of the I/O mode settings
-    bool haveFlag (IO_Mode::Flags const &flag);
+    bool haveFlag (IO_Mode::Flags const &which);
 
     //! Provide a summary of the object's internal parameters and status
     inline void summary () {
@@ -565,6 +565,10 @@ namespace DAL { // Namespace DAL -- begin
     //! Verify the I/O mode flags
     static bool verifyFlags (int &flags,
 			     bool const &correctFlags=false);
+
+#ifdef DAL_WITH_HDF5
+    hid_t flagH5Fcreate (int const &flags);
+#endif
     
   private:
     

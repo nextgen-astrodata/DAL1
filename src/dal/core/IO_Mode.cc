@@ -144,11 +144,12 @@ namespace DAL { // Namespace DAL -- begin
     \return haveFlag -- Returns \e true in case the \c flag is part of the I/O
             mode settings, \e false in case it is not.
   */
-  bool IO_Mode::haveFlag (IO_Mode::Flags const &flag)
+  bool IO_Mode::haveFlag (IO_Mode::Flags const &which)
   {
-    IO_Mode::Flags tmp = flag;
+    IO_Mode::Flags in = which;
+    int tmp           = itsFlags;
 
-    if ( (itsFlags & tmp) == tmp ) {
+    if ( (tmp & in) == in ) {
       return true;
     } else {
       return false;
@@ -338,5 +339,26 @@ namespace DAL { // Namespace DAL -- begin
     
     return status;
   }
+
+  //_____________________________________________________________________________
+  //                                                                flagH5Fcreate
+
+#ifdef DAL_WITH_HDF5
+  hid_t IO_Mode::flagH5Fcreate (int const &flags)
+  {
+    int tmp = flags;
+
+    if ( (tmp & IO_Mode::CreateNew) == IO_Mode::CreateNew ) {
+      return H5F_ACC_EXCL;
+    } else if ( (tmp & IO_Mode::Create) == IO_Mode::Create ) {
+      return H5F_ACC_TRUNC;
+    } else if ( (tmp & IO_Mode::Truncate) == IO_Mode::Truncate ) {
+      return H5F_ACC_TRUNC;
+    } else {
+      return H5F_ACC_EXCL;
+    }
+    
+  }
+#endif
   
 } // Namespace DAL -- end

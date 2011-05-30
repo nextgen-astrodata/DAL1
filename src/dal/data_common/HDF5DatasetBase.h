@@ -80,7 +80,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Argumented constructor to open existing dataset
     HDF5DatasetBase (hid_t const &location,
 		     std::string const &name,
-		     IO_Mode::Flags const &flags=IO_Mode::ReadOnly);
+		     IO_Mode const &flags=IO_Mode());
     
     //! Argumented constructor to open existing dataset
     HDF5DatasetBase (hid_t const &location,
@@ -151,9 +151,9 @@ namespace DAL { // Namespace DAL -- begin
     // === Public methods =======================================================
 
     //! Open Dataset
-    bool open (hid_t const &location,
-	       std::string const &name,
-	       IO_Mode::Flags const &flags=IO_Mode::ReadOnly);
+    bool open (const hid_t &location,
+	       const std::string &name,
+	       const IO_Mode &flags=IO_Mode());
     
     // === Static methods =======================================================
     
@@ -163,7 +163,7 @@ namespace DAL { // Namespace DAL -- begin
   private:
     
     //! Initialize internal parameters
-    void init ();
+    void init (IO_Mode const &flags=IO_Mode());
 
     //! Set up and initialize the list of attributes
     void setAttributes ();
