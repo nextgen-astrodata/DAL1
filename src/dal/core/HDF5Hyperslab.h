@@ -301,12 +301,7 @@ namespace DAL { // Namespace DAL -- begin
 		   std::vector<int> const &block,
 		   H5S_seloper_t const &selection=H5S_SELECT_SET);
 
-    /*!
-      \brief Copy constructor
-      
-      \param other -- Another HDF5Hyperslab object from which to create this new
-             one.
-    */
+    //! Copy constructor
     HDF5Hyperslab (HDF5Hyperslab const &other);
     
     // === Destruction ==========================================================

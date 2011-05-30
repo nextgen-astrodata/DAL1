@@ -99,6 +99,10 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                HDF5Hyperslab
 
+  /*!
+    \param other -- Another HDF5Hyperslab object from which to create this new
+           one.
+  */
   HDF5Hyperslab::HDF5Hyperslab (HDF5Hyperslab const &other)
   {
     copy (other);

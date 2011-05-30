@@ -52,11 +52,11 @@ using DAL::HDF5Hyperslab;
 */
 int test_constructors ()
 {
-  cout << "\n[tHDF5Hyperslab::test_constructors]\n" << endl;
+  cout << "\n[tHDF5Hyperslab::test_constructors]" << endl;
 
   int nofFailedTests (0);
   
-  cout << "[1] HDF5Hyperslab () ..." << endl;
+  cout << "\n[1] HDF5Hyperslab () ..." << endl;
   try {
     HDF5Hyperslab slab;
     //
@@ -66,7 +66,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[2] HDF5Hyperslab (rank) ..." << endl;
+  cout << "\n[2] HDF5Hyperslab (rank) ..." << endl;
   try {
     int rank (2);
     //
@@ -77,7 +77,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[3] HDF5Hyperslab (start,block) ..." << endl;
+  cout << "\n[3] HDF5Hyperslab (start,block) ..." << endl;
   try {
     int rank (2);
     std::vector<hsize_t> shape (rank);
@@ -98,7 +98,7 @@ int test_constructors ()
     nofFailedTests++;
   }
   
-  cout << "[4] HDF5Hyperslab (start,stride,count,block) ..." << endl;
+  cout << "\n[4] HDF5Hyperslab (start,stride,count,block) ..." << endl;
   try {
     int rank (2);
     std::vector<hsize_t> shape (rank);
@@ -133,7 +133,6 @@ int test_constructors ()
   
   return nofFailedTests;
 }
-
 
 //_______________________________________________________________________________
 //                                                          test_parameter_access
@@ -281,26 +280,12 @@ int test_static_functions ()
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_setHyperslab (std::string const &filename)
+int test_setHyperslab (hid_t const &fileID)
 {
   cout << "\n[tHDF5Hyperslab::test_setHyperslab]\n" << endl;
 
   int nofFailedTests (0);
 
-  //________________________________________________________
-  // Open the file to work with
-  
-  hid_t fileID = H5Fopen (filename.c_str(),
-			  H5F_ACC_RDWR,
-			  H5P_DEFAULT);
-  
-  if (H5Iis_valid(fileID)) {
-    cout << "-- Create file " << filename << endl;
-  } else {
-    cerr << "Failed to open file " << filename << endl;
-    return 0;
-  }
-  
   //________________________________________________________
   // Parameters for creating dataset
 
@@ -431,11 +416,6 @@ int test_setHyperslab (std::string const &filename)
 
   std::cout << std::flush;
 
-  //________________________________________________________
-  // Close the file
-
-  H5Fclose(fileID);
-  
   return nofFailedTests;
 }
 
@@ -456,7 +436,7 @@ int test_setHyperslab (std::string const &filename)
   \return nofFailedTests -- The number of failed tests encountered within this
           function.
 */
-int test_hdf5 (std::string const &filename)
+int test_hdf5 (hid_t const &fileID)
 {
   cout << "\n[tHDF5Hyperslab::test_hdf5]\n" << endl;
 
@@ -470,20 +450,6 @@ int test_hdf5 (std::string const &filename)
   hsize_t count[rank];
   unsigned int nofSteps (16);
 
-  //________________________________________________________
-  // Open the file to work with
-  
-  hid_t fileID = H5Fopen (filename.c_str(),
-			  H5F_ACC_RDWR,
-			  H5P_DEFAULT);
-  
-  if (H5Iis_valid(fileID)) {
-    cout << "-- Opened file " << filename << endl;
-  } else {
-    cerr << "Failed to open file " << filename << endl;
-    return 0;
-  }
-  
   //________________________________________________________
   // Create dataset to work with
 
@@ -624,7 +590,6 @@ int test_hdf5 (std::string const &filename)
   status = H5Dclose (datasetID);
   status = H5Sclose (dataspaceID);
   status = H5Sclose (memspace);
-  status = H5Fclose (fileID);
   cout << "Done." << std::endl << std::flush;
   
   return nofFailedTests;
@@ -636,40 +601,41 @@ int test_hdf5 (std::string const &filename)
 //! Main function
 int main ()
 {
-  int nofFailedTests (0);
-  std::string filename ("tHDF5Hyperslab.h5");
+  int nofFailedTests   = 0;
+  std::string filename = "tHDF5Hyperslab.h5";
 
   //________________________________________________________
   // Create HDF5 file to work with
 
-  // create new file
   hid_t fileID = H5Fcreate (filename.c_str(),
 			    H5F_ACC_TRUNC,
 			    H5P_DEFAULT,
 			    H5P_DEFAULT);
-  // check if file creation was successful
-  if (H5Iis_valid(fileID)) {
-    cout << "-- Created file " << filename << endl;
-  } else {
-    cerr << "Failed to open file " << filename << endl;
-    return 0;
-  }
-  // close file again
-  H5Fclose (fileID);
 
   //________________________________________________________
   // Run the tests
-  
+
   // Test for the constructor(s)
   nofFailedTests += test_constructors ();
   // Test the static methods
   nofFailedTests += test_parameter_access ();
   // Test the static methods
   nofFailedTests += test_static_functions ();
-  //! Test setting hyperslab selection for a dataset
-  nofFailedTests += test_setHyperslab (filename);
-  //! Test working with the low-level HDF5 library functions
-  nofFailedTests += test_hdf5 (filename);  
+  
+  /* Test routines working with HDF5 file */
 
+  if (H5Iis_valid(fileID)) {
+    //! Test setting hyperslab selection for a dataset
+    nofFailedTests += test_setHyperslab (fileID);
+    //! Test working with the low-level HDF5 library functions
+    nofFailedTests += test_hdf5 (fileID);  
+  } else {
+    cerr << "Failed to open file " << filename << endl;
+    return 0;
+  }
+  
+  // close file again
+  H5Fclose (fileID);
+  
   return nofFailedTests;
 }
