@@ -1,6 +1,6 @@
-//# tDAL_HDF5: Test DAL HDF5 routines
+//# test_bf2h5writer: Test DAL HDF5 routines
 //#
-//#  Copyright (C) 2001
+//#  Copyright (C) 2011
 //#  ASTRON (Netherlands Foundation for Research in Astronomy)
 //#  P.O.Box 2, 7990 AA Dwingeloo, The Netherlands, seg@astron.nl
 //#
@@ -27,7 +27,6 @@
 #define SUBBANDS        60
 #define BLOCKS          10
 
-#include <data_common/CommonAttributes.h>
 #include <data_hl/BF_RootGroup.h>
 #include <data_hl/BF_StokesDataset.h>
 
@@ -90,16 +89,16 @@ int main()
   */
   
   std::cout << "-- Creating new file " << filename.filename() << endl;
-  DAL::BF_RootGroup rootGroup (filename);
+  DAL::BF_RootGroup rootGroup (attributes);
   
   cout << "-- Creating primary pointing 0" << endl;
   rootGroup.openPrimaryPointing ( 0, true );
   
-  // cout << "-- Creating tied-array beam 0" << endl;
-  // rootGroup.openBeam ( 0, 0, true );
+  cout << "-- Creating tied-array beam 0" << endl;
+  rootGroup.openBeam ( 0, 0, true );
   
   return 0;
-
+  
   /*__________________________________________________________________
     Re-open the previously created BF file, before creating Stokes
     dataset.

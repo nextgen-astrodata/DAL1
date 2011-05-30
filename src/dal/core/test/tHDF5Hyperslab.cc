@@ -145,12 +145,12 @@ int test_constructors ()
 */
 int test_parameter_access ()
 {
-  cout << "\n[tHDF5Hyperslab::test_parameter_access]\n" << endl;
+  cout << "\n[tHDF5Hyperslab::test_parameter_access]" << endl;
 
   int nofFailedTests (0);
   int rank (3);
 
-  cout << "[1] HDF5Hyperslab::setStart(std::vector<int>) ..." << endl;
+  cout << "\n[1] HDF5Hyperslab::setStart(std::vector<int>) ..." << endl;
   try {
     std::vector<int> start (rank,100);
     //
@@ -163,7 +163,7 @@ int test_parameter_access ()
     nofFailedTests++;
   }
 
-  cout << "[2] HDF5Hyperslab::setStride(std::vector<int>) ..." << endl;
+  cout << "\n[2] HDF5Hyperslab::setStride(std::vector<int>) ..." << endl;
   try {
     std::vector<int> stride (rank,100);
     //
@@ -176,7 +176,7 @@ int test_parameter_access ()
     nofFailedTests++;
   }
 
-  cout << "[3] HDF5Hyperslab::setCount(std::vector<int>) ..." << endl;
+  cout << "\n[3] HDF5Hyperslab::setCount(std::vector<int>) ..." << endl;
   try {
     std::vector<int> count (rank,100);
     //
