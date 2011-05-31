@@ -33,9 +33,7 @@ namespace DAL { // Namespace DAL -- begin
   
   IO_Mode::IO_Mode ()
   {
-    itsFlags = IO_Mode::Open | IO_Mode::ReadOnly;
-    // setFlag (IO_Mode::Open);
-    // addFlag (IO_Mode::ReadOnly);
+    init();
   }
 
   //_____________________________________________________________________________
@@ -193,6 +191,15 @@ namespace DAL { // Namespace DAL -- begin
     }
 
     return status;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                   resetFlags
+  
+  bool IO_Mode::resetFlags ()
+  {
+    init();
+    return true;
   }
 
   // ============================================================================

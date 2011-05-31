@@ -567,20 +567,25 @@ namespace DAL { // Namespace DAL -- begin
     static std::vector<std::string> flagsName ();
 
     //! Get the descriptions of the set of flags
-    std::vector<std::string> flagDescriptions (IO_Mode::Flags const &flags);
-
+    static std::vector<std::string> flagDescriptions (IO_Mode::Flags const &flags);
+    
     //! Get the descriptions of the set of flags
-    std::vector<std::string> flagDescriptions (int const &flags);
-
+    static std::vector<std::string> flagDescriptions (int const &flags);
+    
     //! Verify the I/O mode flags
     static bool verifyFlags (int &flags,
 			     bool const &correctFlags=false);
-
+    
 #ifdef DAL_WITH_HDF5
     static hid_t flagH5Fcreate (int const &flags);
 #endif
     
   private:
+
+    //! Initialize internal parameters
+    inline void init () {
+      itsFlags = IO_Mode::Open | IO_Mode::ReadOnly;
+    }
     
     //! Unconditional copying
     void copy (IO_Mode const &other);
