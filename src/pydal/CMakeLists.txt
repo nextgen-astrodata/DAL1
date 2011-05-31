@@ -8,7 +8,20 @@
 ##______________________________________________
 ## Source files with the wrapping code
 
-file (GLOB pydal_sources *.cc)
+set (pydal_sources
+  num_util.cc
+  pydal.cc
+  pydal_conversions.cc
+  pydal_coordinates.cc
+  pydal_core.cc
+  pydal_core_dalArray.cc
+  pydal_core_dalColumn.cc
+  pydal_core_dalDataset.cc
+  pydal_core_dalGroup.cc
+  pydal_core_dalTable.cc
+  pydal_data_common.cc
+  pydal_data_hl.cc
+  )
 
 ##______________________________________________
 ## Compiler instructions
