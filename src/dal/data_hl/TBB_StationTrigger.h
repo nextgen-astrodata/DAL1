@@ -111,7 +111,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Open a station group
     bool open (hid_t const &location,
 	       std::string const &name,
-	       bool const &create=true);
+	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
 
   private:
 

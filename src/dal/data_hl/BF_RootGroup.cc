@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "BF_RootGroup.h"
+#include <data_hl/BF_RootGroup.h>
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -37,7 +37,7 @@ namespace DAL { // Namespace DAL -- begin
   BF_RootGroup::BF_RootGroup (std::string const &filename)
     : HDF5GroupBase()
   {
-    if (!open (0,filename,false)) {
+    if (!open (0,filename,IO_Mode(IO_Mode::Open))) {
       std::cerr << "[BF_RootGroup::BF_RootGroup] Failed to open file "
 		<< filename
 		<< std::endl;
@@ -46,18 +46,17 @@ namespace DAL { // Namespace DAL -- begin
   
   //_____________________________________________________________________________
   //                                                                 BF_RootGroup
-
+  
   /*!
     \param filename -- Filename object from which the actual file name of the
            dataset is derived.
-    \param create   -- Create the corresponding data structure, if it does not 
-           exist yet?
+    \param flags    -- I/O mode flags.
   */
   BF_RootGroup::BF_RootGroup (DAL::Filename &infile,
-			  bool const &create)
+			      IO_Mode const &flags)
     : HDF5GroupBase()
   {
-    if (!open (0,infile.filename(),create)) {
+    if (!open (0,infile.filename(),flags)) {
       std::cerr << "[BF_RootGroup::BF_RootGroup] Failed to open file "
 		<< infile.filename()
 		<< std::endl;
@@ -70,13 +69,12 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param attributes -- CommonAttributes object from which the actual file name
            of the dataset is extracted.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
+    \param flags      -- I/O mode flags.
   */
   BF_RootGroup::BF_RootGroup (CommonAttributes const &attributes,
-			  bool const &create)
+			      IO_Mode const &flags)
   {
-    if (!open (0,attributes.filename(),create)) {
+    if (!open (0,attributes.filename(),flags)) {
       std::cerr << "[BF_RootGroup::BF_RootGroup] Failed to open file "
 		<< attributes.filename()
 		<< std::endl;
@@ -226,17 +224,16 @@ namespace DAL { // Namespace DAL -- begin
 	   but not evaluated here.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
-    
+
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
   bool BF_RootGroup::open (hid_t const &location,
-			 std::string const &name,
-			 bool const &create)
+			   std::string const &name,
+			   IO_Mode const &flags)
   {
-    bool status (true);
+    bool fileExists    = false;
+    bool fileTruncated = false;
 
     // Initialize private variables ________________________
     location_p  = location;
@@ -244,80 +241,101 @@ namespace DAL { // Namespace DAL -- begin
     setAttributes();
     itsSubarrayPointings.clear();
     itsSystemLog.clear();
+
+    //----------------------------------------------------------------
+
+    /*______________________________________________________
+      Check if the file already exists
+    */
+
+    std::ifstream infile (name.c_str(), std::ifstream::in);
     
-    // Try to open the file ________________________________
-
-    std::ifstream infile;
-    infile.open (name.c_str(), std::ifstream::in);
-
     if (infile.is_open() && infile.good()) {
-      // If the file already exists, close it ...
-      infile.close();
-      // ... and open it as HDF5 file
-      location_p = H5Fopen (name.c_str(),
-			    H5F_ACC_RDWR,
-			    H5P_DEFAULT);
+      fileExists = true;
     } else {
-      infile.close();
-      location_p = 0;
+      fileExists = false;
+    }
+    infile.close();
+
+    /*______________________________________________________
+      Open or create file.
+    */
+    
+    if (fileExists) {
+      if ( flags.flags() & IO_Mode::Truncate ) {
+	/* Truncate existing file */
+	fileTruncated = true;
+	location_p    = H5Fcreate (name.c_str(),
+				   H5F_ACC_TRUNC,
+				   H5P_DEFAULT,
+				   H5P_DEFAULT);
+      } else if ( flags.flags() & IO_Mode::Create ) {
+	/* Truncate existing file */
+	fileTruncated = true;
+	location_p    = H5Fcreate (name.c_str(),
+				   H5F_ACC_TRUNC,
+				   H5P_DEFAULT,
+				   H5P_DEFAULT);
+      } else {
+	if ( flags.flags() & IO_Mode::ReadWrite ) {
+	  /* Open file as read/write */
+	  fileTruncated = false;
+	  location_p    = H5Fopen (name.c_str(),
+				   H5F_ACC_RDWR,
+				   H5P_DEFAULT);
+	} else {
+	  /* Open file as read-only */
+	  fileTruncated = false;
+	  location_p    = H5Fopen (name.c_str(),
+				   H5F_ACC_RDONLY,
+				   H5P_DEFAULT);
+	}
+      }
+    } else {
+      /* Create new file from scratch */
+      fileTruncated = true;
+      location_p    = H5Fcreate (name.c_str(),
+				 H5F_ACC_TRUNC,
+				 H5P_DEFAULT,
+				 H5P_DEFAULT);
     }
     
-    if (location_p > 0) {
-      // Read the common LOFAR attributes
+    //----------------------------------------------------------------
+    
+    if (fileTruncated) {
+      itsCommonAttributes.h5write(location_p);
+      /* Write the additional attributes attached to the root group */
+      bool valBool          = true;
+      float valFloat        = 0.0;
+      std::string undefined = "UNDEFINED";
+      std::vector<float> vectF (1,valFloat);
+      std::vector<double> vectD (1,0.0);
+      //
+      HDF5Attribute::write (location_p,"FILENAME",                  name        );
+      HDF5Attribute::write (location_p,"CREATE_OFFLINE_ONLINE",     valBool     );
+      HDF5Attribute::write (location_p,"BF_FORMAT",                 undefined   );
+      HDF5Attribute::write (location_p,"BF_VERSION",                undefined   );
+      HDF5Attribute::write (location_p,"EXPTIME_START_UTC",         undefined   );
+      HDF5Attribute::write (location_p,"EXPTIME_STOP_UTC",          undefined   );
+      HDF5Attribute::write (location_p,"EXPTIME_START_MJD",         undefined   );
+      HDF5Attribute::write (location_p,"EXPTIME_STOP_MJD",          undefined   );
+      HDF5Attribute::write (location_p,"EXPTIME_START_TAI",         undefined   );
+      HDF5Attribute::write (location_p,"EXPTIME_STOP_TAI",          undefined   );
+      HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",    valFloat    );
+      HDF5Attribute::write (location_p,"OBS_DATATYPE",              undefined   );
+      HDF5Attribute::write (location_p,"PRIMARY_POINTING_DIAMETER", valFloat    );
+      HDF5Attribute::write (location_p,"BANDWIDTH",                 double(0.0) );
+      HDF5Attribute::write (location_p,"BEAM_DIAMETER",             valFloat    );
+      HDF5Attribute::write (location_p,"WEATHER_TEMPERATURE",       vectF       );
+      HDF5Attribute::write (location_p,"WEATHER_HUMIDITY",          vectF       );
+      HDF5Attribute::write (location_p,"SYSTEM_TEMPERATURE",        vectF       );
+      HDF5Attribute::write (location_p,"NOF_PRIMARY_BEAMS",         int(0)      );
+      /* Read back in the common attributes after storing default values */
       itsCommonAttributes.h5read(location_p);
-    } else {
-      /* If failed to open file, check if we are supposed to create one */
-      if (create) {
-	location_p = H5Fcreate (name.c_str(),
-				H5F_ACC_TRUNC,
-				H5P_DEFAULT,
-				H5P_DEFAULT);
-	/* Write LOFAR common attribute to the root group of the file */
-	itsCommonAttributes.h5write(location_p);
-	/* Write the additional attributes attached to the root group */
-	std::string undefined ("UNDEFINED");
-	std::vector<float> vectF (1,0.0);
-	std::vector<double> vectD (1,0.0);
-	bool trueBool (true);
-	//
-	HDF5Attribute::write (location_p,"FILENAME",                  name        );
- 	HDF5Attribute::write (location_p,"CREATE_OFFLINE_ONLINE",     trueBool    );
- 	HDF5Attribute::write (location_p,"BF_FORMAT",                 undefined   );
-	HDF5Attribute::write (location_p,"BF_VERSION",                undefined   );
-	HDF5Attribute::write (location_p,"EXPTIME_START_UTC",         undefined   );
-	HDF5Attribute::write (location_p,"EXPTIME_STOP_UTC",          undefined   );
-	HDF5Attribute::write (location_p,"EXPTIME_START_MJD",         undefined   );
-	HDF5Attribute::write (location_p,"EXPTIME_STOP_MJD",          undefined   );
-	HDF5Attribute::write (location_p,"EXPTIME_START_TAI",         undefined   );
-	HDF5Attribute::write (location_p,"EXPTIME_STOP_TAI",          undefined   );
-	HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",    float(0.0)  );
-	HDF5Attribute::write (location_p,"OBS_DATATYPE",              undefined   );
-	HDF5Attribute::write (location_p,"PRIMARY_POINTING_DIAMETER", float(0.0)  );
-	HDF5Attribute::write (location_p,"BANDWIDTH",                 double(0.0) );
-	HDF5Attribute::write (location_p,"BEAM_DIAMETER",             float(0.0)  );
-	HDF5Attribute::write (location_p,"WEATHER_TEMPERATURE",       vectF       );
-	HDF5Attribute::write (location_p,"WEATHER_HUMIDITY",          vectF       );
-	HDF5Attribute::write (location_p,"SYSTEM_TEMPERATURE",        vectF       );
-	HDF5Attribute::write (location_p,"NOF_PRIMARY_BEAMS",         int(0)      );
-	/* Read back in the common attributes after storing default values */
-	itsCommonAttributes.h5read(location_p);
-      } else {
-	std::cerr << "[BF_RootGroup::open] Failed to open file "
-		  << name
-		  << std::endl;
-	status = false;
-      }
     }
     
     // Open embedded groups
-    if (status) {
-      status = openEmbedded (create);
-    } else {
-      std::cerr << "[BF_RootGroup::open] Skip opening embedded groups!"
-		<< std::endl;
-    }
- 
-    return status;
+    return openEmbedded ();
   }
   
   //_____________________________________________________________________________

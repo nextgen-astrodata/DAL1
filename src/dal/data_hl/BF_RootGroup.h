@@ -26,7 +26,6 @@
 #include <string>
 
 // DAL header files
-#include <core/IO_Mode.h>
 #include <data_common/HDF5GroupBase.h>
 #include <data_common/Filename.h>
 #include <data_hl/BF_SubArrayPointing.h>
@@ -180,11 +179,11 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor
     BF_RootGroup (DAL::Filename &infile,
-		  bool const &create=true);
+		  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Argumented constructor
     BF_RootGroup (CommonAttributes const &attributes,
-		  bool const &create=true);
+		  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     // === Destruction ==========================================================
     
@@ -226,11 +225,11 @@ namespace DAL { // Namespace DAL -- begin
     //! Open the file containing the beamformed data.
     bool open (hid_t const &location,
 	       std::string const &name,
-	       bool const &create=true);
-
+	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
     //! Open a SubArrayPointing direction group
     bool openSubArrayPointing (unsigned int const &pointingID,
-			      IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+			       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Open a beam group
     bool openBeam (unsigned int const &pointingID,
@@ -257,7 +256,7 @@ namespace DAL { // Namespace DAL -- begin
   protected:
     
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (bool const &create=true);
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 

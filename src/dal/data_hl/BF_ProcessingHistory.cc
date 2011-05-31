@@ -131,13 +131,13 @@ namespace DAL { // Namespace DAL -- begin
   */
   bool BF_ProcessingHistory::open (hid_t const &location,
 				   std::string const &name,
-				   bool const &create)
+				   IO_Mode const &flags)
   {
     bool status (true);
-
+    
     /* Basic initialization */
     init ();
-
+    
     /* Try to open the group: get list of groups attached to 'location' and
        check if 'name' is part of it.
     */
@@ -150,11 +150,12 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     if (location_p > 0) {
-      status = openEmbedded(create);
+      status = openEmbedded(true);
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
-      if (create) {
+      if ( (flags.flags() & IO_Mode::Create) ||
+	   (flags.flags() & IO_Mode::CreateNew) ) {
 	location_p = H5Gcreate (location,
 				name.c_str(),
 				H5P_DEFAULT,

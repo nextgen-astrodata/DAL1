@@ -21,7 +21,11 @@
 #ifndef IO_MODE_H
 #define IO_MODE_H
 
-#include "HDF5Object.h"
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+#include <dal_config.h>
 
 namespace DAL { // Namespace DAL -- begin
   

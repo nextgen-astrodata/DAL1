@@ -112,8 +112,8 @@ namespace DAL { // Namespace DAL -- begin
             an error was encountered.
   */
   bool SysLog::open (hid_t const &location,
-			std::string const &name,
-			bool const &create)
+		     std::string const &name,
+		     IO_Mode const &flags)
   {
     bool status (true);
 
@@ -135,7 +135,8 @@ namespace DAL { // Namespace DAL -- begin
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
-      if (create) {
+      if ( (flags.flags() & IO_Mode::Create) ||
+	   (flags.flags() & IO_Mode::CreateNew) ) {
 	location_p = H5Gcreate (location,
 				name.c_str(),
 				H5P_DEFAULT,

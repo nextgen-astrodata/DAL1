@@ -104,7 +104,7 @@ namespace DAL { // Namespace DAL -- begin
     
     bool open (hid_t const &location,
 	       std::string const &name,
-	       bool const &create);
+	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
 
   private:
 

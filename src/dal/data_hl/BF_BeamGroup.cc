@@ -162,15 +162,14 @@ namespace DAL { // Namespace DAL -- begin
            structure is attached.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
+    \param flags  -- I/O mode flags.
     
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
   */
   bool BF_BeamGroup::open (hid_t const &location,
 			   std::string const &name,
-			   bool const &create)
+			   IO_Mode const &flags)
   {
     bool status (true);
 
@@ -192,7 +191,8 @@ namespace DAL { // Namespace DAL -- begin
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
-      if (create) {
+      if ( (flags.flags() & IO_Mode::Create) ||
+	   (flags.flags() & IO_Mode::CreateNew) ) {
 	location_p = H5Gcreate (location,
 				name.c_str(),
 				H5P_DEFAULT,
@@ -250,7 +250,7 @@ namespace DAL { // Namespace DAL -- begin
     
     // Open embedded groups
     if (status) {
-      status = openEmbedded (create);
+      status = openEmbedded (true);
     } else {
       std::cerr << "[BF_StationBeam::open] Skip opening embedded groups!"
 		<< std::endl;

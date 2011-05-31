@@ -33,6 +33,7 @@
 // DAL header files
 #include <core/dalCommon.h>
 #include <core/HDF5Attribute.h>
+#include <core/HDF5Object.h>
 #include <data_common/CommonAttributes.h>
 
 namespace DAL { // Namespace DAL -- begin
@@ -310,8 +311,8 @@ namespace DAL { // Namespace DAL -- begin
     */
     virtual bool open (hid_t const &location,
 		       std::string const &name,
-		       bool const &create) = 0;
-
+		       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate)) = 0;
+    
     /*!
       \brief Get the value of an attribute
       

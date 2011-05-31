@@ -116,7 +116,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Open a station calibration group
     bool open (hid_t const &location,
-	       bool const &create=true);
+	       bool const &create);
 
   private:
     
@@ -126,7 +126,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Open a station calibration group
     bool open (hid_t const &location,
 	       std::string const &name,
-	       bool const &create=true);
+	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
 
     //! Open the structures embedded within the current one
     bool openEmbedded (bool const &create);

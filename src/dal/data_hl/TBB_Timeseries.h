@@ -299,7 +299,7 @@ namespace DAL {  // Namespace DAL -- begin
     //! Open the file containing the TBB time-series data.
     bool open (hid_t const &location,
 	       std::string const &name,
-	       bool const &create=true);
+	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Retrieve the list of dipole number contained within this data file
     std::vector<int> dipoleNumbers ();
     //! Retrieve the list of dipole names contained within this data file

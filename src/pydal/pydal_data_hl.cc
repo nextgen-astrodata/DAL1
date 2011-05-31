@@ -123,7 +123,7 @@ void export_TBB_DipoleDataset()
   bool (TBB_DipoleDataset::*open1)(hid_t const &)      = &TBB_DipoleDataset::open;
   bool (TBB_DipoleDataset::*open2)(hid_t const &,
 				   std::string const &,
-				   bool const &)       = &TBB_DipoleDataset::open;
+				   DAL::IO_Mode const &) = &TBB_DipoleDataset::open;
   bool (TBB_DipoleDataset::*open3)(hid_t const &,
 				   uint const &,
 				   uint const &,

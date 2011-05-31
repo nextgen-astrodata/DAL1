@@ -150,7 +150,7 @@ namespace DAL { // Namespace DAL -- begin
   */
   bool BF_SubArrayPointing::open (hid_t const &location,
 				  std::string const &name,
-				  bool const &create)
+				  IO_Mode const &flags)
   {
     bool status (true);
     
@@ -169,7 +169,8 @@ namespace DAL { // Namespace DAL -- begin
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
-      if (create) {
+      if ( (flags.flags() & IO_Mode::Create) ||
+	   (flags.flags() & IO_Mode::CreateNew) ) {
 	location_p = H5Gcreate (location,
 				name.c_str(),
 				H5P_DEFAULT,
@@ -222,7 +223,7 @@ namespace DAL { // Namespace DAL -- begin
     
     // Open embedded groups
     if (status) {
-      status = openEmbedded (create);
+      status = openEmbedded (true);
     } else {
       std::cerr << "[BF_SubArrayPointing::open] Skip opening embedded groups!"
 		<< std::endl;

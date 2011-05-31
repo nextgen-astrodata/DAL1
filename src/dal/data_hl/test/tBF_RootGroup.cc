@@ -75,9 +75,9 @@ int test_constructors ()
   
   cout << "[1] Testing construction with Filename ..." << endl;
   try {
-    BF_RootGroup dataset (file);
+    DAL::BF_RootGroup bf (file);
     //
-    dataset.summary();
+    bf.summary();
   } catch (std::string message) {
     cerr << message << endl;
     nofFailedTests++;
