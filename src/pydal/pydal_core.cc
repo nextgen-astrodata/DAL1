@@ -274,12 +274,12 @@ void export_IO_Mode ()
   //________________________________________________________
   // Specialisation of overloaded methods
 
-  // std::vector<std::string> (IO_Mode::*flagDescriptions1)() 
-  //   = &IO_Mode::flagDescriptions;
-  // std::vector<std::string> (IO_Mode::*flagDescriptions2)(IO_Mode::Flags const &) 
-  //   = &IO_Mode::flagDescriptions;
-  // std::vector<std::string> (IO_Mode::*flagDescriptions3)(int const &) 
-  //   = &IO_Mode::flagDescriptions;
+  // std::vector<std::string> (IO_Mode::*names1)() 
+  //   = &IO_Mode::names;
+  // std::vector<std::string> (IO_Mode::*names2)(IO_Mode::Flags const &) 
+  //   = &IO_Mode::names;
+  // std::vector<std::string> (IO_Mode::*names3)(int const &) 
+  //   = &IO_Mode::names;
   void (IO_Mode::*summary1)() 
     = &IO_Mode::summary;
   void (IO_Mode::*summary2)(std::ostream &) 
@@ -313,9 +313,9 @@ void export_IO_Mode ()
     .def("resetFlags",
 	 &IO_Mode::resetFlags,
 	 "Reset the object I/O mode flags.")
-    // .def("flagDescriptions",
-    // 	 &flagDescriptions1,
-    // 	 "Get the descriptions of the currently set flags.")
+    // .def("names",
+    // 	 &names1,
+    // 	 "Get array containing the available flag names.")
     .def("className",
 	 &IO_Mode::className,
 	 "Get the name of the class.")

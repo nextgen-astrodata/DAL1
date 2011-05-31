@@ -526,8 +526,8 @@ namespace DAL { // Namespace DAL -- begin
 
     // === Public methods =======================================================
 
-    //! Get the descriptions of the currently set flags
-    std::vector<std::string> flagDescriptions ();
+    //! Get array containing the available flag names
+    std::vector<std::string> names ();
 
     //! Check if a given \e flag is part of the I/O mode settings
     bool haveFlag (IO_Mode::Flags const &which);
@@ -566,11 +566,11 @@ namespace DAL { // Namespace DAL -- begin
     //! Get array containing the available flag names
     static std::vector<std::string> flagsName ();
 
-    //! Get the descriptions of the set of flags
-    static std::vector<std::string> flagDescriptions (IO_Mode::Flags const &flags);
+    //! Get array containing the flag names encoded in \c flags
+    static std::vector<std::string> names (IO_Mode::Flags const &flags);
     
-    //! Get the descriptions of the set of flags
-    static std::vector<std::string> flagDescriptions (int const &flags);
+    //! Get array containing the flag names encoded in \c flags
+    static std::vector<std::string> names (int const &flags);
     
     //! Verify the I/O mode flags
     static bool verifyFlags (int &flags,

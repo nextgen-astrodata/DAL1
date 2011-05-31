@@ -118,15 +118,15 @@ namespace DAL { // Namespace DAL -- begin
   */
   void IO_Mode::summary (std::ostream &os)
   {
-    std::vector<std::string> names = flagDescriptions();
-    unsigned int nofNames          = names.size();
+    std::vector<std::string> flagNames = names();
+    unsigned int nofNames              = flagNames.size();
 
     os << "[IO_Mode] Summary of internal parameters." << std::endl;
     os << "-- I/O mode value    = " << itsFlags << std::endl;
 
     os << "-- Flag descriptions = [";
     for (unsigned int n=0; n<nofNames; ++n) {
-      os << " " << names[n];
+      os << " " << flagNames[n];
     }
     os << " ]" << std::endl;
   }
@@ -155,11 +155,11 @@ namespace DAL { // Namespace DAL -- begin
   }
   
   //_____________________________________________________________________________
-  //                                                             flagDescriptions
+  //                                                                        names
   
-  std::vector<std::string> IO_Mode::flagDescriptions ()
+  std::vector<std::string> IO_Mode::names ()
   {
-    return flagDescriptions (itsFlags);
+    return names (itsFlags);
   }
   
   //_____________________________________________________________________________
@@ -264,21 +264,21 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                             flagDescriptions
+  //                                                                        names
 
-  std::vector<std::string> IO_Mode::flagDescriptions (IO_Mode::Flags const &flag)
+  std::vector<std::string> IO_Mode::names (IO_Mode::Flags const &flag)
   {
-    return flagDescriptions(flag);
+    return names(flag);
   }
 
   //_____________________________________________________________________________
-  //                                                             flagDescriptions
+  //                                                                        names
 
   /*!
     \param flags  -- 
     \return names -- 
   */
-  std::vector<std::string> IO_Mode::flagDescriptions (int const &flags)
+  std::vector<std::string> IO_Mode::names (int const &flags)
   {
     std::map<IO_Mode::Flags,std::string> m = flagsMap();
     std::map<IO_Mode::Flags,std::string>::iterator it;

@@ -113,9 +113,9 @@ namespace DAL { // Namespace DAL -- begin
     bool status = true;
     
     std::cout << "[Sky_RootGroup::open]" << std::endl;
-    std::cout << "-- Location ID    = " << location << std::endl;
-    std::cout << "-- Group name     = " << name     << std::endl;
-    std::cout << "-- I/O mode flags = " << flags.flagDescriptions() << std::endl;
+    std::cout << "-- Location ID    = " << location      << std::endl;
+    std::cout << "-- Group name     = " << name          << std::endl;
+    std::cout << "-- I/O mode flags = " << flags.names() << std::endl;
     
     return status;
   }
