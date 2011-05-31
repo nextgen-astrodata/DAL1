@@ -18,6 +18,31 @@
 //#  along with this program; if not, write to the Free Software
 //#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/*!
+  \file test_bf2h5writer.cc
+
+  \ingroup DAL
+  \ingroup data_hl
+
+  \brief Integrated test for the creation of BF data sets.
+ 
+  \author Jan David Mol
+  \author Lars B&auml;hren
+
+  <h3>Prerequisite</h3>
+  
+  <ul>
+    <li>DAL::BF_RootGroup -- High-level interface to the root-group of
+        Beam-Formed data.
+    <li>DAL::BF_SubArrayPointing -- High-level interface to the Sub-Array
+        pointing group of Beam-Formed data.
+    <li>DAL::BF_BeamGroup -- High-level interface to the Beam group of
+        Beam-Formed Data.
+    <li>DAL::BF_StokesDataset -- High-level interface to the Stokes dataset
+        of Beam-Formed Data.
+  </ul>
+*/
+
 #ifdef DAL_WITH_LOFAR
 #include <lofar_config.h>
 #endif
@@ -152,7 +177,7 @@ int main()
     count[1] = nofChannels;
     block[1] = 1;
     
-    DAL::HDF5Hyperslab hyperslab( start, stride, count, block );
+    DAL::HDF5Hyperslab hyperslab ( start, stride, count, block );
     hyperslab.summary( cout );
     
     for (unsigned i = 0; i < BLOCKS; i++ ) {

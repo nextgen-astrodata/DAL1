@@ -31,9 +31,7 @@ using DAL::IO_Mode;
 
   \brief A collection of test routines for the IO_Mode class
  
-  \author <author>
- 
-  \date <date>
+  \author Lars B&auml;hren
 */
 
 //_______________________________________________________________________________

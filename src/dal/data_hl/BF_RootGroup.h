@@ -46,6 +46,7 @@ namespace DAL { // Namespace DAL -- begin
     \date 2009/10/28
 
     \test tBF_RootGroup.cc
+    \test test_bf2h5writer.cc
     
     <h3>Prerequisite</h3>
     
