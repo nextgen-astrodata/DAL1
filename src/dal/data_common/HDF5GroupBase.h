@@ -477,10 +477,15 @@ namespace DAL { // Namespace DAL -- begin
       }
 #endif
     
-    // === Private methods ======================================================
-
+    // === Static methods ======================================================= 
+    
+    static bool open (hid_t &groupID,
+		      hid_t const &location,
+		      std::string const &name,
+		      IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
   private:
-
+    
     //! Increment the reference count for a HDF5 object
     void incrementRefCount ();
 

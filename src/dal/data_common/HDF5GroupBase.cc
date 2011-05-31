@@ -167,7 +167,7 @@ namespace DAL { // Namespace DAL -- begin
   
   // ============================================================================
   //
-  //  Methods
+  //  Public methods
   //
   // ============================================================================
 
@@ -293,6 +293,89 @@ namespace DAL { // Namespace DAL -- begin
     os << "[HDF5GroupBase] Summary of internal parameters." << std::endl;
     os << "-- Location ID   = " << location_p               << std::endl;
     os << "-- Group type ID = " << itsGroupType             << std::endl;
+  }
+
+  // ============================================================================
+  //
+  //  Public methods
+  //
+  // ============================================================================
+
+  bool HDF5GroupBase::open (hid_t &groupID,
+			    hid_t const &location,
+			    std::string const &name,
+			    IO_Mode const &flags)
+  {
+    bool groupExists    = false;
+    bool groupTruncated = false;
+    
+    /*______________________________________________________
+      Check if the provided location identifier points to a
+      valid object; if this is not the case abort. If the
+      location ID is ok, check if the group already exists.
+    */
+    
+    if ( H5Iis_valid(location) ) {
+      if ( HDF5Object::objectType (location, name) == H5I_GROUP ) {
+	groupExists = true;
+      } else {
+	groupExists = false;
+      }
+    } else {
+      std::cerr << "[HDF5GroupBase::open] Invalid location ID!" << std::endl;
+      groupID = 0;
+      return false;
+    }
+
+    /*______________________________________________________
+      Handle the different cases of I/O mode flags; use
+      recursive call of this function to handle recursive
+      relation of flags.
+    */
+    
+    if ( flags.flags() & IO_Mode::OpenOrCreate ) {
+      if (groupExists) {
+	return open (groupID,location,name,IO_Mode(IO_Mode::Open));
+      } else {
+	return open (groupID,location,name,IO_Mode(IO_Mode::Create));
+      }
+    }
+    else if ( flags.flags() & IO_Mode::Create ) {
+      if (groupExists) {
+	return open (groupID,location,name,IO_Mode(IO_Mode::Truncate));
+      } else {
+	return open (groupID,location,name,IO_Mode(IO_Mode::CreateNew));
+      }
+    }
+    else if ( flags.flags() & IO_Mode::Open ) {
+      if (groupExists) {
+	groupID        = H5Gopen (location, name.c_str(), H5P_DEFAULT);
+	groupTruncated = false;
+      } else {
+	groupID        = 0;
+	groupTruncated = false;
+      }
+    }
+    else if ( flags.flags() & IO_Mode::CreateNew ) {
+      if (groupExists) {
+	groupID        = 0;
+	groupTruncated = false;
+      } else {
+	groupID        = H5Gopen (location, name.c_str(), H5P_DEFAULT);
+	groupTruncated = false;
+      }
+    }
+    else if ( flags.flags() & IO_Mode::Truncate ) {
+      // Delete the group ...
+      H5Ldelete (location,
+		 name.c_str(),
+		 H5P_DEFAULT);
+      // ... and create it once more from scratch
+      groupID        = H5Gopen (location, name.c_str(), H5P_DEFAULT);
+      groupTruncated = true;
+    }
+    
+    return groupTruncated;
   }
   
 } // Namespace DAL -- end
