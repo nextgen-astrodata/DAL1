@@ -61,9 +61,6 @@ DAL::CommonAttributes commonAttributes (DAL::Filename const &filename)
 
 int main()
 {
-  const unsigned nofSamples  = SAMPLES;
-  const unsigned nofChannels = SUBBANDS * CHANNELS;
-
   const unsigned nofPointings = 5;
   const unsigned nofBeams     = 10;
   
@@ -103,13 +100,14 @@ int main()
   */
   
   for (unsigned numPointing=0; numPointing<nofPointings; ++numPointing) {
+    std::cout << "-- Pointing " <<  numPointing << ": [";
     for (unsigned numBeam=0; numBeam<nofBeams; ++numBeam) {
       // progress message
-      std::cout << "-- openBeam (" << numPointing << "," << numBeam << ")"
-		<< std::endl;
+      std::cout << " " << numBeam;
       // recursively open beam group
       rootGroup.openBeam ( numPointing, numBeam );
     }
+    std::cout << " ]" << std::endl;
   }
   
   /*__________________________________________________________________
@@ -117,6 +115,9 @@ int main()
     dataset.
   */
   
+  const unsigned nofSamples  = SAMPLES;
+  const unsigned nofChannels = SUBBANDS * CHANNELS;
+
   {
     hid_t fileID = rootGroup.locationID();
     cout << "Creating stokes set 0" << endl;

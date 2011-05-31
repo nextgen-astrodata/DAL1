@@ -311,64 +311,66 @@ namespace DAL { // Namespace DAL -- begin
   }
 
   //_____________________________________________________________________________
-  //                                                          createStokesDataset
+  //                                                            openStokesDataset
 
   /*!
-    \param index       -- ID of the Stokes dataset to be created.
+    \param stokesID    -- ID of the Stokes dataset to be created.
     \param nofSamples  -- Number of bins along the time axis.
     \param nofSubbands -- Number of sub-bands.
     \param nofChannels -- Number of channels within the subbands.
     \param component   -- Stokes component stored within the dataset
     \param datatype    -- Datatype for the elements within the Dataset
+    \param flags       -- I/o mode flags.
     \return status     -- Status of the operation; returns \e false in case an
             error was encountered.
   */
-  bool BF_BeamGroup::createStokesDataset (unsigned int const &index,
-					  unsigned int const &nofSamples,
-					  unsigned int const &nofSubbands,
-					  unsigned int const &nofChannels,
-					  DAL::Stokes::Component const &component,
-					  hid_t const &datatype,
-                                          bool const &truncate)
+  bool BF_BeamGroup::openStokesDataset (unsigned int const &stokesID,
+					unsigned int const &nofSamples,
+					unsigned int const &nofSubbands,
+					unsigned int const &nofChannels,
+					DAL::Stokes::Component const &component,
+					hid_t const &datatype,
+					IO_Mode const &flags)
   {
     /* Put input parameters into proper format to be forwarded */
     std::vector<unsigned int> channels (nofSubbands,nofChannels);
     /* Open/create Stokes dataset. */
-    return createStokesDataset (index,
-				nofSamples,
-				channels,
-				component,
-				datatype,
-				truncate);
+    return openStokesDataset (stokesID,
+			      nofSamples,
+			      channels,
+			      component,
+			      datatype,
+			      flags);
   }
   
   //_____________________________________________________________________________
-  //                                                          createStokesDataset
+  //                                                            openStokesDataset
   
   /*!
-    \param index       -- ID of the Stokes dataset to be created.
+    \param stokesID    -- ID of the Stokes dataset to be created.
     \param nofSamples  -- Number of bins along the time axis.
     \param nofChannels -- Number of channels within the subbands.
     \param component   -- Stokes component stored within the dataset
     \param datatype    -- Datatype for the elements within the Dataset
+    \param flags       -- I/o mode flags.
     \return status     -- Status of the operation; returns \e false in case an
             error was encountered.
   */
-  bool BF_BeamGroup::createStokesDataset (unsigned int const &index,
-					  unsigned int const &nofSamples,
-					  std::vector<unsigned int> const &nofChannels,
-					  DAL::Stokes::Component const &component,
-					  hid_t const &datatype,
-                                          bool const &truncate)
+  bool BF_BeamGroup::openStokesDataset (unsigned int const &stokesID,
+					unsigned int const &nofSamples,
+					std::vector<unsigned int> const &nofChannels,
+					DAL::Stokes::Component const &component,
+					hid_t const &datatype,
+					IO_Mode const &flags)
   {
     bool status = true;
-    std::string name = BF_StokesDataset::getName(index);
+    std::string name = BF_StokesDataset::getName(stokesID);
     std::map<std::string,BF_StokesDataset>::iterator it = itsStokesDatasets.find(name);
     
     /*________________________________________________________________
       Check input parameters.
     */    
-
+    
     if (nofChannels.empty()) {
       std::cerr << "[BF_BeamGroup::createStokesDataset]"
 		<< " Empty array of frequency channels!"
@@ -387,7 +389,9 @@ namespace DAL { // Namespace DAL -- begin
       /* Dataset not yet opened */
       status = true;
     } else {
-      if (truncate) {
+      if ( (flags.flags() & IO_Mode::OpenOrCreate) ||
+	   (flags.flags() & IO_Mode::Create) ||
+	   (flags.flags() & IO_Mode::Truncate) ) {
 	/* Removing dataset from internal book-keeping */
 	itsStokesDatasets.erase(it);
 	/* Delete dataset */
@@ -406,7 +410,7 @@ namespace DAL { // Namespace DAL -- begin
     */    
     
     itsStokesDatasets[name] = BF_StokesDataset (location_p,
-						index,
+						stokesID,
 						nofSamples,
 						nofChannels,
 						component,

@@ -247,26 +247,26 @@ int test_StokesDataset (hid_t const &fileID)
     unsigned int nofSubbands = 36;
     unsigned int nofChannels = 128;
     
-    status = beam.createStokesDataset (0,
-				       nofSamples,
-				       nofSubbands,
-				       nofChannels,
-				       DAL::Stokes::I);
-    status = beam.createStokesDataset (1,
-				       nofSamples,
-				       nofSubbands,
-				       nofChannels,
-				       DAL::Stokes::Q);
-    status = beam.createStokesDataset (2,
-				       nofSamples,
-				       nofSubbands,
-				       nofChannels,
-				       DAL::Stokes::U);
-    status = beam.createStokesDataset (3,
-				       nofSamples,
-				       nofSubbands,
-				       nofChannels,
-				       DAL::Stokes::V);
+    status = beam.openStokesDataset (0,
+				     nofSamples,
+				     nofSubbands,
+				     nofChannels,
+				     DAL::Stokes::I);
+    status = beam.openStokesDataset (1,
+				     nofSamples,
+				     nofSubbands,
+				     nofChannels,
+				     DAL::Stokes::Q);
+    status = beam.openStokesDataset (2,
+				     nofSamples,
+				     nofSubbands,
+				     nofChannels,
+				     DAL::Stokes::U);
+    status = beam.openStokesDataset (3,
+				     nofSamples,
+				     nofSubbands,
+				     nofChannels,
+				     DAL::Stokes::V);
     beam.summary();
     
   } catch (std::string message) {
@@ -277,7 +277,7 @@ int test_StokesDataset (hid_t const &fileID)
   /*__________________________________________________________________
     Retrieve previously created Stokes dataset
   */
-
+  
   std::cout << "[2] Testing getStokesDataset(uint) ..." << std::endl;
   try {
     BF_StokesDataset stokes = beam.getStokesDataset(0);

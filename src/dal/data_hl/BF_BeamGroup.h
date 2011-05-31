@@ -165,23 +165,23 @@ namespace DAL { // Namespace DAL -- begin
 
     // Open an existing Stokes dataset from within a beam group
     bool openStokesDataset (std::string const &name);
-
-    // Create a new Stokes dataset from within a beam group
-    bool createStokesDataset (unsigned int const &index,
-			      unsigned int const &nofSamples,
-			      unsigned int const &nofSubbands,
-			      unsigned int const &nofChannels,
-			      DAL::Stokes::Component const &component=DAL::Stokes::I,
-			      hid_t const &datatype=H5T_NATIVE_FLOAT,
-			      bool const &truncate=false);
     
-    //! Open an existing Stokes dataset
-    bool createStokesDataset (unsigned int const &index,
-			      unsigned int const &nofSamples,
-			      std::vector<unsigned int> const &nofChannels,
-			      DAL::Stokes::Component const &component=DAL::Stokes::I,
-			      hid_t const &datatype=H5T_NATIVE_FLOAT,
-			      bool const &truncate=false);
+    //! Create a new Stokes dataset from within a beam group
+    bool openStokesDataset (unsigned int const &stokesID,
+			    unsigned int const &nofSamples,
+			    unsigned int const &nofSubbands,
+			    unsigned int const &nofChannels,
+			    DAL::Stokes::Component const &component=DAL::Stokes::I,
+			    hid_t const &datatype=H5T_NATIVE_FLOAT,
+			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
+    //! Create a new Stokes dataset from within a beam group
+    bool openStokesDataset (unsigned int const &stokesID,
+			    unsigned int const &nofSamples,
+			    std::vector<unsigned int> const &nofChannels,
+			    DAL::Stokes::Component const &component=DAL::Stokes::I,
+			    hid_t const &datatype=H5T_NATIVE_FLOAT,
+			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Retrieve a specific Stokes dataset
     BF_StokesDataset getStokesDataset (unsigned int const &stokesID);

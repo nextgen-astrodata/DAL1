@@ -164,6 +164,8 @@ namespace DAL { // Namespace DAL -- begin
 
   protected:
 
+    //! I/O mode flags
+    IO_Mode itsFlags;
     //! HDF5 object identifier
     hid_t itsLocation;
     
@@ -175,7 +177,7 @@ namespace DAL { // Namespace DAL -- begin
     HDF5Object ();
     
     //! Argumented constructor
-    HDF5Object (std::string const &filename,
+    HDF5Object (std::string const &name,
 		IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Argumented constructor

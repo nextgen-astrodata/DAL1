@@ -368,11 +368,12 @@ namespace DAL { // Namespace DAL -- begin
   //                                                            openStokesDataset
 
   /*!
-    \param beamID   -- 
-    \param stokesID -- 
-    \param flags    -- 
-    \return status  -- 
-   */
+    \param beamID   -- Beam group index.
+    \param stokesID -- Stokes dataset index.
+    \param flags    -- I/O mode flags.
+    \return status  -- Status of the operation; returns \e false in case an
+            error was encountered.
+  */
   bool BF_SubArrayPointing::openStokesDataset (unsigned int const &beamID,
 					       unsigned int const &stokesID,
 					       IO_Mode const &flags)
@@ -404,7 +405,97 @@ namespace DAL { // Namespace DAL -- begin
 
     return status;
   }
+
+  //_____________________________________________________________________________
+  //                                                            openStokesDataset
+
+  /*!
+    \param beamID      -- ID of the beam group to be created.
+    \param stokesID    -- ID of the Stokes dataset to be created.
+    \param nofSamples  -- Number of bins along the time axis.
+    \param nofSubbands -- Number of sub-bands.
+    \param nofChannels -- Number of channels within the subbands.
+    \param component   -- Stokes component stored within the dataset
+    \param datatype    -- Datatype for the elements within the Dataset
+    \param flags       -- I/o mode flags.
+    \return status     -- Status of the operation; returns \e false in case an
+            error was encountered.
+  */
+  bool BF_SubArrayPointing::openStokesDataset (unsigned int const &beamID,
+					       unsigned int const &stokesID,
+					       unsigned int const &nofSamples,
+					       unsigned int const &nofSubbands,
+					       unsigned int const &nofChannels,
+					       DAL::Stokes::Component const &component,
+					       hid_t const &datatype,
+					       IO_Mode const &flags)
+  {
+    std::vector<unsigned int> channels (nofSubbands,nofChannels);
+    
+    return openStokesDataset (beamID,
+			      stokesID,
+			      nofSamples,
+			      channels,
+			      component,
+			      datatype,
+			      flags);
+  }
   
+  //_____________________________________________________________________________
+  //                                                            openStokesDataset
+  
+  /*!
+    \param beamID      -- ID of the beam group to be created.
+    \param stokesID    -- ID of the Stokes dataset to be created.
+    \param nofSamples  -- Number of bins along the time axis.
+    \param nofChannels -- Number of channels within the subbands.
+    \param component   -- Stokes component stored within the dataset
+    \param datatype    -- Datatype for the elements within the Dataset
+    \param flags       -- I/o mode flags.
+    \return status     -- Status of the operation; returns \e false in case an
+            error was encountered.
+  */
+  bool BF_SubArrayPointing::openStokesDataset (unsigned int const &beamID,
+					       unsigned int const &stokesID,
+					       unsigned int const &nofSamples,
+					       std::vector<unsigned int> const &nofChannels,
+					       DAL::Stokes::Component const &component,
+					       hid_t const &datatype,
+					       IO_Mode const &flags)
+  {
+    bool status = true;
+    
+    /*______________________________________________________
+      Open/Create beam group
+    */
+    
+    status = openBeam (beamID, flags);
+    
+    /*______________________________________________________
+      Forward the function call to the next-lower
+      hierarchical level structure.
+    */
+    
+    std::string name;
+    std::map<std::string,BF_BeamGroup>::iterator it;
+    
+    name = BF_BeamGroup::getName (beamID);
+    it   = itsBeams.find(name);
+    
+    if (it==itsBeams.end()) {
+      status = false;
+    } else {
+      status = it->second.openStokesDataset (stokesID,
+					     nofSamples,
+					     nofChannels,
+					     component,
+					     datatype,
+					     flags);
+    }
+    
+    return status;
+  }
+
   //_____________________________________________________________________________
   //                                                             getStokesDataset
   

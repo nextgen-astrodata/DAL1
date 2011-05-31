@@ -33,16 +33,22 @@ namespace DAL { // Namespace DAL -- begin
   
   HDF5Object::HDF5Object ()
   {
+    itsFlags    = IO_Mode();
     itsLocation = -1;
   }
   
   //_____________________________________________________________________________
   //                                                                   HDF5Object
-  
-  HDF5Object::HDF5Object (std::string const &filename,
+
+  /*!
+    \param name  -- Name of the object.
+    \param flags -- I/O mode flags.
+  */
+  HDF5Object::HDF5Object (std::string const &name,
 			  IO_Mode const &flags)
   {
-    itsLocation = openFile (filename, flags);
+    itsFlags    = flags;
+    itsLocation = openFile (name, flags);
   }
   
   //_____________________________________________________________________________
@@ -51,13 +57,13 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param location -- File or group identifier.
     \param name     -- Path to the object, relative to \c location.
-    \param access   -- Access property list identifier for the link pointing to
-           the object.
+    \param flags    -- I/O mode flags.
   */
   HDF5Object::HDF5Object (hid_t const &location,
 			  std::string const &name,
 			  IO_Mode const &flags)
   {
+    itsFlags    = flags;
     itsLocation = open (location, name, flags);
   }
   

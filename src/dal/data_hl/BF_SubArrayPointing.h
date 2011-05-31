@@ -162,6 +162,25 @@ namespace DAL { // Namespace DAL -- begin
 			    unsigned int const &stokesID,
 			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
+    //! Create a new Stokes dataset from within a beam group
+    bool openStokesDataset (unsigned int const &beamID,
+			    unsigned int const &stokesID,
+			    unsigned int const &nofSamples,
+			    unsigned int const &nofSubbands,
+			    unsigned int const &nofChannels,
+			    DAL::Stokes::Component const &component=DAL::Stokes::I,
+			    hid_t const &datatype=H5T_NATIVE_FLOAT,
+			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
+    //! Create a new Stokes dataset from within a beam group
+    bool openStokesDataset (unsigned int const &beamID,
+			    unsigned int const &stokesID,
+			    unsigned int const &nofSamples,
+			    std::vector<unsigned int> const &nofChannels,
+			    DAL::Stokes::Component const &component=DAL::Stokes::I,
+			    hid_t const &datatype=H5T_NATIVE_FLOAT,
+			    IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    
     //! Retrieve a specific Stokes dataset
     BF_StokesDataset getStokesDataset (unsigned int const &beamID,
 				       unsigned int const &stokesID);
