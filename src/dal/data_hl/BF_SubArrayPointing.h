@@ -66,14 +66,15 @@ namespace DAL { // Namespace DAL -- begin
     <h3>Synopsis</h3>
 
     \verbatim
-    PrimaryPointing001
-    |-- Beam000
+    SubArrayPointing000             ...  BF_SubArrayPointing
+    |-- Beam000                     ...  BF_BeamGroup
     |   |-- CoordinatesGroup
-    |   `-- ProcessingHistory
+    |   |-- ProcessingHistory
+    |   |-- Stokes0                 ...  BF_StokesDataset
+    |   |-- Stokes1
+    |   |-- Stokes2
+    |   `-- Stokes3
     |-- Beam001
-    |   |-- CoordinatesGroup
-    |   `-- ProcessingHistory
-    |-- Beam002
     |
     \endverbatim
     

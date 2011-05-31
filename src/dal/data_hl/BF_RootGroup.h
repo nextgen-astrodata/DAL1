@@ -84,10 +84,12 @@ namespace DAL { // Namespace DAL -- begin
 
     Basic hierarchical structure used DAL classes:
     \verbatim
-    /
-    |-- SubArrayPointing000
-    |   |-- Beam000
-    |   |   |-- Stokes0
+    /                                   ...  BF_RootGroup
+    |-- SubArrayPointing000             ...  BF_SubArrayPointing
+    |   |-- Beam000                     ...  BF_BeamGroup
+    |   |   |-- CoordinatesGroup
+    |   |   |-- ProcessingHistory
+    |   |   |-- Stokes0                 ...  BF_StokesDataset
     |   |   |-- Stokes1
     |   |   |-- Stokes2
     |   |   `-- Stokes3
