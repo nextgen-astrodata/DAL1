@@ -118,7 +118,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Argumented constructor
     BF_BeamGroup (hid_t const &location,
 		  unsigned int const &index,
-		  bool const &create);
+		  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     // === Destruction =========================================================
     
@@ -126,7 +126,7 @@ namespace DAL { // Namespace DAL -- begin
     ~BF_BeamGroup ();
     
     // === Parameter access =====================================================
-
+    
     //! Get the number of Stokes datasets embedded inside this group
     inline unsigned int nofStokesDatasets () const {
       return itsStokesDatasets.size();
@@ -240,7 +240,7 @@ namespace DAL { // Namespace DAL -- begin
   protected:
     
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 

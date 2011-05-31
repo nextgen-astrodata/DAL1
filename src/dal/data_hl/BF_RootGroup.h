@@ -258,7 +258,7 @@ namespace DAL { // Namespace DAL -- begin
   protected:
     
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create=true);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 
@@ -267,7 +267,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Initialize the internal settings of the object
     void init (CommonAttributes const &attributes);
     //! Open a system log group
-    bool openSysLog (bool const &create=true);
+    bool openSysLog (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Open a SubArrayPointing direction group
     bool openSubArrayPointing (std::string const &name);
       

@@ -129,7 +129,9 @@ namespace DAL { // Namespace DAL -- begin
 	       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
 
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate)) {
+      return flags.flags();
+    }
 
     //! Unconditional copying
     void copy (TBB_StationCalibration const &other);

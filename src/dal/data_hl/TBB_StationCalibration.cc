@@ -191,7 +191,7 @@ namespace DAL { // Namespace DAL -- begin
     
     // Open embedded groups
     if (status) {
-      status = openEmbedded (true);
+      status = openEmbedded (flags);
     } else {
       std::cerr << "[TBB_StationCalibration::open] Skip opening embedded groups!"
 		<< std::endl;
@@ -199,16 +199,5 @@ namespace DAL { // Namespace DAL -- begin
  
     return status;
   }
-  
-  //_____________________________________________________________________________
-  //                                                                 openEmbedded
-  
-  bool TBB_StationCalibration::openEmbedded (bool const &create)
-  {
-    bool status (create);
-    
-    return status;
-  }
-  
   
 } // Namespace DAL -- end

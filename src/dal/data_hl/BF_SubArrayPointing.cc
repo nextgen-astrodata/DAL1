@@ -44,7 +44,7 @@ namespace DAL { // Namespace DAL -- begin
 					    std::string const &name)
   {
     itsGroupType = "SubArrayPointing";
-    open (location,name,false);
+    open (location,name,IO_Mode(IO_Mode::Open));
   }
   
   //_____________________________________________________________________________
@@ -52,10 +52,10 @@ namespace DAL { // Namespace DAL -- begin
   
   BF_SubArrayPointing::BF_SubArrayPointing (hid_t const &location,
 					    unsigned int const &index,
-					    bool const &create)
+					    IO_Mode const &flags)
   {
     itsGroupType = "SubArrayPointing";
-    open (location,getName(index),create);
+    open (location,getName(index),flags);
   }
   
   // ============================================================================
@@ -169,7 +169,8 @@ namespace DAL { // Namespace DAL -- begin
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
-      if ( (flags.flags() & IO_Mode::Create) ||
+      if ( (flags.flags() & IO_Mode::OpenOrCreate) ||
+	   (flags.flags() & IO_Mode::Create) ||
 	   (flags.flags() & IO_Mode::CreateNew) ) {
 	location_p = H5Gcreate (location,
 				name.c_str(),
@@ -223,7 +224,7 @@ namespace DAL { // Namespace DAL -- begin
     
     // Open embedded groups
     if (status) {
-      status = openEmbedded (true);
+      status = openEmbedded (flags);
     } else {
       std::cerr << "[BF_SubArrayPointing::open] Skip opening embedded groups!"
 		<< std::endl;
@@ -235,13 +236,13 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool BF_SubArrayPointing::openEmbedded (bool const &create)
+  bool BF_SubArrayPointing::openEmbedded (IO_Mode const &flags)
   {
-    bool status (create);
+    bool status = flags.flags();
     std::set<std::string> groupnames;
     std::set<std::string>::iterator it;
     
-    /* Retrieve the names of the groups attached to the PrimaryPointing group */
+    /* Retrieve the names of the groups attached to the sub-array pointing group */
     status = h5get_names (groupnames,
 			  location_p,
 			  H5G_GROUP);
@@ -311,7 +312,7 @@ namespace DAL { // Namespace DAL -- begin
       } else if (flags.flags() & IO_Mode::OpenOrCreate) {
 	itsBeams[name] = BF_BeamGroup (location_p,
 				       beamID,
-				       true);   
+				       flags);   
       }
     }
     

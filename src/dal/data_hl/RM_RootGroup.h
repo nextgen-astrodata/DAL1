@@ -136,11 +136,11 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor
     RM_RootGroup (DAL::Filename &infile,
-		  bool const &create=true);
+		  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Argumented constructor
     RM_RootGroup (CommonAttributes const &attributes,
-		  bool const &create=true);
+		  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     // === Destruction ==========================================================
     
@@ -190,7 +190,7 @@ namespace DAL { // Namespace DAL -- begin
   protected:
     
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 
@@ -199,7 +199,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Initialize the internal settings of the object
     void init (CommonAttributes const &attributes);
     //! Open a system log group
-    bool openSysLog (bool const &create=true);
+    bool openSysLog (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
       
   }; // Class RM_RootGroup -- end
   

@@ -88,12 +88,15 @@ int main()
   DAL::CommonAttributes attributes = commonAttributes (filename);
 
   /*__________________________________________________________________
-    Create new BF file.
+    Create new BF file; we are using "IO_Mode::Truncate" in order to
+    always start with a freshly created file - otherwise previously 
+    created structure elements will remain in place.
   */
   
   std::cout << "-- Creating new file " << filename.filename() << endl;
-  DAL::BF_RootGroup rootGroup (attributes);
-  
+
+  DAL::BF_RootGroup rootGroup (attributes,
+			       DAL::IO_Mode(DAL::IO_Mode::Create));
 
   /*__________________________________________________________________
     Create primary array pointing groups with embedded beam groups.

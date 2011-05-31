@@ -206,7 +206,7 @@ namespace DAL { // Namespace DAL -- begin
       \return status -- Status of the operation; returns <tt>false</tt> in case
               an error was encountered.
     */
-    virtual bool openEmbedded (bool const &create) = 0;
+    virtual bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate)) = 0;
     //! Set up the list of attributes attached to the structure
     virtual void setAttributes () = 0;
 

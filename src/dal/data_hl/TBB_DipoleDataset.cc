@@ -404,7 +404,7 @@ namespace DAL {  // Namespace DAL -- begin
 
     // Open embedded groups
     if (status) {
-      status = openEmbedded (true);
+      status = openEmbedded ();
     } else {
       std::cerr << "[TBB_DipoleDataset::open] Skip opening embedded groups!"
 		<< std::endl;
@@ -462,9 +462,9 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool TBB_DipoleDataset::openEmbedded (bool const &create)
+  bool TBB_DipoleDataset::openEmbedded (IO_Mode const &flags)
   {
-    bool status (create);
+    bool status = flags.flags();
     std::vector<hsize_t> shape;
     
     status = HDF5Dataspace::shape (location_p,shape);

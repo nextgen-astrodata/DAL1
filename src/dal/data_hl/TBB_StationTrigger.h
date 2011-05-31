@@ -67,11 +67,11 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor
     TBB_StationTrigger (hid_t const &location,
-		      std::string const &name="StationTrigger",
-		      bool const &create=true);
+			std::string const &name="StationTrigger",
+			IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     // === Destruction ==========================================================
-
+    
     //! Destructor
     ~TBB_StationTrigger ();
     
@@ -118,7 +118,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate)) {
+      return flags.flags();
+    }
     //! Unconditional copying
     void copy (TBB_StationTrigger const &other);
     //! Unconditional deletion 

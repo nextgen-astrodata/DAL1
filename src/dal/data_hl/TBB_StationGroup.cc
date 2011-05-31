@@ -288,7 +288,7 @@ namespace DAL {  // Namespace DAL -- begin
     
     // Open embedded groups
     if (status) {
-      status = openEmbedded (true);
+      status = openEmbedded (flags);
     } else {
       std::cerr << "[TBB_StationGroup::open] Skip opening embedded groups!"
 		<< std::endl;
@@ -300,9 +300,9 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool TBB_StationGroup::openEmbedded (bool const &create)
+  bool TBB_StationGroup::openEmbedded (IO_Mode const &flags)
   {
-    bool status = create;
+    bool status = true;
 
     if (H5Iis_valid(location_p)) {
       std::set<std::string> groups;
@@ -320,7 +320,7 @@ namespace DAL {  // Namespace DAL -- begin
 
       stationTrigger_p = TBB_StationTrigger (location_p,
 					     TBB_StationTrigger::getName(),
-					     create);
+					     flags);
 
       // Open dipole datasets ______________________________
 

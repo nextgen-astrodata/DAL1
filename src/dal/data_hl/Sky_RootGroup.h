@@ -113,9 +113,9 @@ namespace DAL { // Namespace DAL -- begin
       attributes_p.clear();
     }
     
-    bool openEmbedded (bool const &create)
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate))
     {
-      return create;
+      return flags.flags();
     }
 
     //! Unconditional copying

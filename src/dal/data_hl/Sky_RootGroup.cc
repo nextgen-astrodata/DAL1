@@ -110,12 +110,11 @@ namespace DAL { // Namespace DAL -- begin
 			    std::string const &name,
 			    IO_Mode const &flags)
   {
-    bool status = true;
+    bool status = flags.flags();
     
     std::cout << "[Sky_RootGroup::open]" << std::endl;
     std::cout << "-- Location ID    = " << location      << std::endl;
     std::cout << "-- Group name     = " << name          << std::endl;
-    std::cout << "-- I/O mode flags = " << flags.names() << std::endl;
     
     return status;
   }

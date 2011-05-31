@@ -54,10 +54,10 @@ namespace DAL { // Namespace DAL -- begin
            exist yet?
   */
   RM_RootGroup::RM_RootGroup (DAL::Filename &infile,
-			      bool const &create)
+			      IO_Mode const &flags)
     : HDF5GroupBase()
   {
-    if (!open (0,infile.filename(),create)) {
+    if (!open (0,infile.filename(),flags)) {
       std::cerr << "[RM_RootGroup::RM_RootGroup] Failed to open file "
 		<< infile.filename()
 		<< std::endl;
@@ -74,9 +74,9 @@ namespace DAL { // Namespace DAL -- begin
            exist yet?
   */
   RM_RootGroup::RM_RootGroup (CommonAttributes const &attributes,
-			      bool const &create)
+			      IO_Mode const &flags)
   {
-    if (!open (0,attributes.filename(),create)) {
+    if (!open (0,attributes.filename(),flags)) {
       std::cerr << "[RM_RootGroup::RM_RootGroup] Failed to open file "
 		<< attributes.filename()
 		<< std::endl;
@@ -150,14 +150,14 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                      summary
   
   void RM_RootGroup::summary (std::ostream &os,
-			    bool const &showAttributes)
+			      bool const &showAttributes)
   {
     os << "[RM_RootGroup] Summary of internal parameters." << std::endl;
     os << "-- Filename                    = " << filename_p            << std::endl;
     os << "-- Location ID                 = " << location_p            << std::endl;
     os << "-- nof. attributes             = " << attributes_p.size()   << std::endl;
     os << "-- nof. SysLog groups          = " << sysLog_p.size()       << std::endl;
-
+    
     if (showAttributes) {
       os << "-- Attributes              = " << attributes_p          << std::endl;
     }
@@ -277,7 +277,7 @@ namespace DAL { // Namespace DAL -- begin
     
     // Open embedded groups
     if (status) {
-      status = openEmbedded (true);
+      status = openEmbedded (flags);
     } else {
       std::cerr << "[RM_RootGroup::open] Skip opening embedded groups!"
 		<< std::endl;
@@ -293,9 +293,9 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>False</tt> in case
             no primary pointing direction groups were found.
    */
-  bool RM_RootGroup::openEmbedded (bool const &create)
+  bool RM_RootGroup::openEmbedded (IO_Mode const &flags)
   {
-    bool status (true);
+    bool status = flags.flags();
     std::set<std::string> groups;
     std::set<std::string>::iterator it;
 
@@ -305,7 +305,7 @@ namespace DAL { // Namespace DAL -- begin
 			  H5G_GROUP);
     
     /* Open system log group ... */
-    status = openSysLog (create);
+    status = openSysLog (flags);
     /* ... and remove its name from the previously retrieved list */
     groups.erase("SysLog");
 
@@ -315,12 +315,12 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   openSysLog
   
-  bool RM_RootGroup::openSysLog (bool const &create)
+  bool RM_RootGroup::openSysLog (IO_Mode const &flags)
   {
-    bool status (true);
+    bool status = flags.flags();
 
     if (sysLog_p.size() == 0 && location_p > 0) {
-      sysLog_p["SysLog"] = SysLog (location_p,create);
+      sysLog_p["SysLog"] = SysLog (location_p,flags);
     }
     
     return status;

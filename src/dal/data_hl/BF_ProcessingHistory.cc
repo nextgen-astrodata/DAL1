@@ -40,13 +40,13 @@ namespace DAL { // Namespace DAL -- begin
   //                                                         BF_ProcessingHistory
   
   BF_ProcessingHistory::BF_ProcessingHistory (hid_t const &location,
-					      bool const &create)
+					      IO_Mode const &flags)
   {
     std::string name ("ProcessingHistory");
     
     open (location,
 	  name,
-	  create);
+	  flags);
   }
   
   // ============================================================================
@@ -123,8 +123,7 @@ namespace DAL { // Namespace DAL -- begin
            structure is attached.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
+    \param flags  -- I/O mode flags.
     
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
@@ -150,11 +149,12 @@ namespace DAL { // Namespace DAL -- begin
     }
     
     if (location_p > 0) {
-      status = openEmbedded(true);
+      status = openEmbedded();
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
-      if ( (flags.flags() & IO_Mode::Create) ||
+      if ( (flags.flags() & IO_Mode::OpenOrCreate) ||
+	   (flags.flags() & IO_Mode::Create) ||
 	   (flags.flags() & IO_Mode::CreateNew) ) {
 	location_p = H5Gcreate (location,
 				name.c_str(),
@@ -182,20 +182,6 @@ namespace DAL { // Namespace DAL -- begin
 	status = false;
       }
     }
-    
-    return status;
-  }
-  
-  //_____________________________________________________________________________
-  //                                                                 openEmbedded
-  
-  /*!
-    \return status -- Status of the operation; return \e false in case an error 
-            was encountered.
-   */
-  bool BF_ProcessingHistory::openEmbedded (bool const &create)
-  {
-    bool status = create;
     
     return status;
   }

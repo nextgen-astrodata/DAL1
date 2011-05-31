@@ -285,7 +285,7 @@ namespace DAL {  // Namespace DAL -- begin
     
     // Open embedded groups
     if (status) {
-      status = openEmbedded (true);
+      status = openEmbedded (flags);
     } else {
       std::cerr << "[TBB_Timeseries::open] Skip opening embedded groups!"
 		<< std::endl;
@@ -297,12 +297,12 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool TBB_Timeseries::openEmbedded (bool const &create)
+  bool TBB_Timeseries::openEmbedded (IO_Mode const &flags)
   {
     bool status (true);
 
     // Open system-wide logs _____________________
-    status *= openSysLog (create);
+    status *= openSysLog (flags);
 
     // Open the station groups ___________________
     status *= openStationGroups();
@@ -313,19 +313,12 @@ namespace DAL {  // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   openSysLog
   
-  bool TBB_Timeseries::openSysLog (bool const &create)
+  bool TBB_Timeseries::openSysLog (IO_Mode const &flags)
   {
-    bool status (true);
+    bool status           = flags.flags();
     std::string groupName = SysLog::getName();
 
-    if (H5Lexists (location_p, groupName.c_str(), H5P_DEFAULT)) {
-      sysLog_p[groupName] = SysLog (location_p,false);
-    }
-    else {
-      if (create) {
-	sysLog_p[groupName] = SysLog (location_p,false);
-      }
-    }
+    sysLog_p[groupName] = SysLog (location_p,flags);
     
     return status;
   }

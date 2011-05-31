@@ -48,7 +48,7 @@ namespace DAL { // Namespace DAL -- begin
   BF_BeamGroup::BF_BeamGroup (hid_t const &location,
 			      std::string const &name)
   {
-    open (location,name,false);
+    open (location,name,IO_Mode(IO_Mode::Open));
   }
   
   //_____________________________________________________________________________
@@ -57,13 +57,13 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param location -- Identifier of the object the beam group is attached to.
     \param index    -- 
-    \param create   -- 
+    \param flags    -- I/O mode flags.
   */
   BF_BeamGroup::BF_BeamGroup (hid_t const &location,
 			      unsigned int const &index,
-			      bool const &create)
+			      IO_Mode const &flags)
   {
-    open (location,getName(index),create);
+    open (location,getName(index),flags);
   }
   
   // ============================================================================
@@ -171,27 +171,36 @@ namespace DAL { // Namespace DAL -- begin
 			   std::string const &name,
 			   IO_Mode const &flags)
   {
-    bool status (true);
+    bool status = true;
 
-    /* Set up the list of attributes attached to the Beam group */
-    setAttributes();
-
-    /* Try to open the group: get list of groups attached to 'location' and
-       check if 'name' is part of it.
-    */
-    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
-      location_p = H5Gopen (location,
-			    name.c_str(),
-			    H5P_DEFAULT);
+    if ( H5Iis_valid(location) ) {
+      
+      /* Set up the list of attributes attached to the Beam group */
+      setAttributes();
+      
+      /* Try to open the group: get list of groups attached to 'location' and
+	 check if 'name' is part of it.
+      */
+      if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
+	location_p = H5Gopen (location,
+			      name.c_str(),
+			      H5P_DEFAULT);
+      } else {
+	location_p = 0;
+      }
     } else {
-      location_p = 0;
+      std::cerr << "[BF_BeamGroup::open]" 
+		<< " Invalid object ID!"
+		<< std::endl;
+      return false;
     }
-    
+
     if (location_p > 0) {
       status = true;
     } else {
       /* If failed to open the group, check if we are supposed to create one */
-      if ( (flags.flags() & IO_Mode::Create) ||
+      if ( (flags.flags() & IO_Mode::OpenOrCreate) ||
+	   (flags.flags() & IO_Mode::Create) ||
 	   (flags.flags() & IO_Mode::CreateNew) ) {
 	location_p = H5Gcreate (location,
 				name.c_str(),
@@ -250,7 +259,7 @@ namespace DAL { // Namespace DAL -- begin
     
     // Open embedded groups
     if (status) {
-      status = openEmbedded (true);
+      status = openEmbedded (flags);
     } else {
       std::cerr << "[BF_StationBeam::open] Skip opening embedded groups!"
 		<< std::endl;
@@ -494,7 +503,7 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                 openEmbedded
   
-  bool BF_BeamGroup::openEmbedded (bool const &create)
+  bool BF_BeamGroup::openEmbedded (IO_Mode const &flags)
   {
     bool status = true;
     std::set<std::string>::iterator it;
@@ -521,7 +530,8 @@ namespace DAL { // Namespace DAL -- begin
     */
 
     if (itsProcessingHistory.size() == 0 && location_p > 0) {
-      itsProcessingHistory["ProcessingHistory"] = BF_ProcessingHistory (location_p,create);
+      itsProcessingHistory["ProcessingHistory"] = BF_ProcessingHistory (location_p,
+									flags);
     }
 
     /*________________________________________________________________

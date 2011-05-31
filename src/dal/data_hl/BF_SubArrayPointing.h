@@ -100,7 +100,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Argumented constructor
     BF_SubArrayPointing (hid_t const &location,
 			 unsigned int const &index,
-			 bool const &create);
+			 IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     // === Destruction ==========================================================
     
@@ -176,7 +176,7 @@ namespace DAL { // Namespace DAL -- begin
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
 
   }; // Class BF_SubArrayPointing -- end
   

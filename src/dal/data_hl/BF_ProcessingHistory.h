@@ -72,7 +72,7 @@ namespace DAL { // Namespace DAL -- begin
     
     //! Argumented constructor
     BF_ProcessingHistory (hid_t const &location,
-			  bool const &create);
+			  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
 
     // === Destruction ==========================================================
     
@@ -110,7 +110,9 @@ namespace DAL { // Namespace DAL -- begin
     //! Initialize internal paramaters to default values
     void init ();
     //! Open the structures embedded within the current one
-    bool openEmbedded (bool const &create);
+    bool openEmbedded (IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate)) {
+      return flags.flags();
+    }
     //! Set up the list of attributes attached to the structure
     void setAttributes ();
 

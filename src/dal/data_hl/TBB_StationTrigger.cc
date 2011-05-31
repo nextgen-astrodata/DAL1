@@ -46,10 +46,10 @@ namespace DAL { // Namespace DAL -- begin
            opened.
   */
   TBB_StationTrigger::TBB_StationTrigger (hid_t const &location,
-				      std::string const &name,
-				      bool const &create)
+					  std::string const &name,
+					  IO_Mode const &flags)
   {
-    open (location, name, create);
+    open (location, name, flags);
   }
   
   // ============================================================================
@@ -228,7 +228,7 @@ namespace DAL { // Namespace DAL -- begin
     
     // Open embedded groups
     if (status) {
-      status = openEmbedded (true);
+      status = openEmbedded ();
     } else {
       std::cerr << "[TBB_StationTrigger::open] Skip opening embedded groups!"
 		<< std::endl;
@@ -237,15 +237,4 @@ namespace DAL { // Namespace DAL -- begin
     return status;
   }
   
-  //_____________________________________________________________________________
-  //                                                                 openEmbedded
-  
-  bool TBB_StationTrigger::openEmbedded (bool const &create)
-  {
-    bool status = create;
-    status      = true;
-    return status;
-  }
-
-
 } // Namespace DAL -- end

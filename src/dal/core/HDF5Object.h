@@ -300,8 +300,12 @@ namespace DAL { // Namespace DAL -- begin
     static hsize_t nofAttributes (hid_t const &location);
     
     //! Open HDF5 file
-    static hid_t open (std::string const &filename,
-		       IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    static hid_t openFile (std::string const &filename,
+			   IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
+    //! Open HDF5 file
+    static bool openFile (hid_t &fileID,
+			  std::string const &filename,
+			  IO_Mode const &flags=IO_Mode(IO_Mode::OpenOrCreate));
     
     //! Open an object in an HDF5 file
     static hid_t open (hid_t const &location,

@@ -152,11 +152,11 @@ namespace DAL { // Namespace DAL -- begin
 			      bool const &showAttributes)
   {
     os << "[BF_RootGroup] Summary of internal parameters." << std::endl;
-    os << "-- Filename                  = " << itsFilename           << std::endl;
-    os << "-- Location ID               = " << location_p            << std::endl;
-    os << "-- nof. attributes           = " << attributes_p.size()   << std::endl;
-    os << "-- nof. SysLog groups        = " << itsSystemLog.size()   << std::endl;
-    os << "-- nof. primary pointings    = " << nofSubArrayPointings() << std::endl;
+    os << "-- Filename                = " << itsFilename            << std::endl;
+    os << "-- Location ID             = " << location_p             << std::endl;
+    os << "-- nof. attributes         = " << attributes_p.size()    << std::endl;
+    os << "-- nof. SysLog groups      = " << itsSystemLog.size()    << std::endl;
+    os << "-- nof. primary pointings  = " << nofSubArrayPointings() << std::endl;
     
     if (showAttributes) {
       os << "-- Attributes              = " << attributes_p          << std::endl;
@@ -232,75 +232,21 @@ namespace DAL { // Namespace DAL -- begin
 			   std::string const &name,
 			   IO_Mode const &flags)
   {
-    bool fileExists    = false;
-    bool fileTruncated = false;
-
     // Initialize private variables ________________________
+
     location_p  = location;
     itsFilename = name;
     setAttributes();
     itsSubarrayPointings.clear();
     itsSystemLog.clear();
 
-    //----------------------------------------------------------------
+    // Open or create file _________________________________
 
-    /*______________________________________________________
-      Check if the file already exists
-    */
-
-    std::ifstream infile (name.c_str(), std::ifstream::in);
+    bool fileTruncated = HDF5Object::openFile (location_p,
+					       name,
+					       flags);
     
-    if (infile.is_open() && infile.good()) {
-      fileExists = true;
-    } else {
-      fileExists = false;
-    }
-    infile.close();
-
-    /*______________________________________________________
-      Open or create file.
-    */
-    
-    if (fileExists) {
-      if ( flags.flags() & IO_Mode::Truncate ) {
-	/* Truncate existing file */
-	fileTruncated = true;
-	location_p    = H5Fcreate (name.c_str(),
-				   H5F_ACC_TRUNC,
-				   H5P_DEFAULT,
-				   H5P_DEFAULT);
-      } else if ( flags.flags() & IO_Mode::Create ) {
-	/* Truncate existing file */
-	fileTruncated = true;
-	location_p    = H5Fcreate (name.c_str(),
-				   H5F_ACC_TRUNC,
-				   H5P_DEFAULT,
-				   H5P_DEFAULT);
-      } else {
-	if ( flags.flags() & IO_Mode::ReadWrite ) {
-	  /* Open file as read/write */
-	  fileTruncated = false;
-	  location_p    = H5Fopen (name.c_str(),
-				   H5F_ACC_RDWR,
-				   H5P_DEFAULT);
-	} else {
-	  /* Open file as read-only */
-	  fileTruncated = false;
-	  location_p    = H5Fopen (name.c_str(),
-				   H5F_ACC_RDONLY,
-				   H5P_DEFAULT);
-	}
-      }
-    } else {
-      /* Create new file from scratch */
-      fileTruncated = true;
-      location_p    = H5Fcreate (name.c_str(),
-				 H5F_ACC_TRUNC,
-				 H5P_DEFAULT,
-				 H5P_DEFAULT);
-    }
-    
-    //----------------------------------------------------------------
+    // Set attributes ______________________________________
     
     if (fileTruncated) {
       itsCommonAttributes.h5write(location_p);
@@ -334,7 +280,8 @@ namespace DAL { // Namespace DAL -- begin
       itsCommonAttributes.h5read(location_p);
     }
     
-    // Open embedded groups
+    // Open embedded groups ________________________________
+
     return openEmbedded ();
   }
   
@@ -345,26 +292,34 @@ namespace DAL { // Namespace DAL -- begin
     \return status -- Status of the operation; returns <tt>False</tt> in case
             no primary pointing direction groups were found.
    */
-  bool BF_RootGroup::openEmbedded (bool const &create)
+  bool BF_RootGroup::openEmbedded (IO_Mode const &flags)
   {
-    bool status (true);
-    std::set<std::string> groups;
-    std::set<std::string>::iterator it;
+    bool status = flags.flags();
 
-    /* Retrieve the names of the groups attached to the root group */
-    status = h5get_names (groups,
-			  location_p,
-			  H5G_GROUP);
-    
-    /* Open system log group ... */
-    status = openSysLog (create);
-    /* ... and remove its name from the previously retrieved list */
-    groups.erase("SysLog");
+    if (H5Iis_valid(location_p)) {
 
-    /* Open the SubArrayPointingDirection groups */
-    for (it=groups.begin(); it!=groups.end(); ++it) {
-      status *= openSubArrayPointing (*it);
+      std::set<std::string> groups;
+      std::set<std::string>::iterator it;
+
+      /* Retrieve the names of the groups attached to the root group */
+      status = h5get_names (groups,
+			    location_p,
+			    H5G_GROUP);
+      
+      /* Open system log group ... */
+      status = openSysLog ();
+      /* ... and remove its name from the previously retrieved list */
+      groups.erase("SysLog");
+      
+      /* Open the SubArrayPointingDirection groups */
+      for (it=groups.begin(); it!=groups.end(); ++it) {
+	status *= openSubArrayPointing (*it);
+      }
+      
+    } else {
+      status = false;
     }
+    
     
     return status;
   }
@@ -372,12 +327,12 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                   openSysLog
   
-  bool BF_RootGroup::openSysLog (bool const &create)
+  bool BF_RootGroup::openSysLog (IO_Mode const &flags)
   {
     bool status (true);
 
     if (itsSystemLog.size() == 0 && location_p > 0) {
-      itsSystemLog["SysLog"] = SysLog (location_p,create);
+      itsSystemLog["SysLog"] = SysLog (location_p,flags);
     }
     
     return status;
@@ -437,8 +392,7 @@ namespace DAL { // Namespace DAL -- begin
 							  name);   
       } else if ( flags.flags() & IO_Mode::OpenOrCreate) {
 	itsSubarrayPointings[name] = BF_SubArrayPointing (location_p,
-							  pointingID,
-							  true);   
+							  pointingID);   
       } else {
 	std::cout << "-- Skipped open/create of group " << name << "." << std::endl;
       }

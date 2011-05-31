@@ -42,7 +42,7 @@ namespace DAL { // Namespace DAL -- begin
   HDF5Object::HDF5Object (std::string const &filename,
 			  IO_Mode const &flags)
   {
-    itsLocation = open (filename, flags);
+    itsLocation = openFile (filename, flags);
   }
   
   //_____________________________________________________________________________
@@ -683,13 +683,35 @@ namespace DAL { // Namespace DAL -- begin
     \return fileID  -- HDF5 object identifier for the opened file; returns \e 0 
             in case the operation failed.
    */
-  hid_t HDF5Object::open (std::string const &filename,
+  hid_t HDF5Object::openFile (std::string const &filename,
 			  IO_Mode const &flags)
   {
-    hid_t fileID    = 0;
-    bool fileExists = false;
-    std::ifstream infile (filename.c_str(), std::ifstream::in);
+    hid_t fileID = 0;
 
+    /* Forward the function call */
+    open (fileID, filename, flags);
+
+    return fileID;
+  }
+
+  //_____________________________________________________________________________
+  //                                                                         open
+
+  /*!
+    \retvalfileID    --
+    \param filename  -- 
+    \param flags     --
+    \return fileTruncated -- Was the file truncated? Returns \e true is this 
+            was the case.
+  */
+  bool HDF5Object::openFile (hid_t &fileID,
+			     std::string const &filename,
+			     IO_Mode const &flags)
+  {
+    bool fileExists    = false;
+    bool fileTruncated = false; 
+    std::ifstream infile (filename.c_str(), std::ifstream::in);
+    
     /*______________________________________________________
       Check if the file already exists
     */
@@ -700,7 +722,7 @@ namespace DAL { // Namespace DAL -- begin
       fileExists = false;
     }
     infile.close();
-
+    
     /*______________________________________________________
       Open or create file.
     */
@@ -708,38 +730,43 @@ namespace DAL { // Namespace DAL -- begin
     if (fileExists) {
       if ( flags.flags() & IO_Mode::Truncate ) {
 	/* Truncate existing file */
-	fileID = H5Fcreate (filename.c_str(),
-			    H5F_ACC_TRUNC,
-			    H5P_DEFAULT,
-			    H5P_DEFAULT);
+	fileTruncated = true;
+	fileID        = H5Fcreate (filename.c_str(),
+				   H5F_ACC_TRUNC,
+				   H5P_DEFAULT,
+				   H5P_DEFAULT);
       } else if ( flags.flags() & IO_Mode::Create ) {
 	/* Truncate existing file */
-	fileID = H5Fcreate (filename.c_str(),
-			    H5F_ACC_TRUNC,
-			    H5P_DEFAULT,
-			    H5P_DEFAULT);
+	fileTruncated = true;
+	fileID        = H5Fcreate (filename.c_str(),
+				   H5F_ACC_TRUNC,
+				   H5P_DEFAULT,
+				   H5P_DEFAULT);
       } else {
 	if ( flags.flags() & IO_Mode::ReadWrite ) {
 	  /* Open file as read/write */
-	  fileID = H5Fopen (filename.c_str(),
-			    H5F_ACC_RDWR,
-			    H5P_DEFAULT);
+	  fileTruncated = false;
+	  fileID        = H5Fopen (filename.c_str(),
+				   H5F_ACC_RDWR,
+				   H5P_DEFAULT);
 	} else {
 	  /* Open file as read-only */
-	  fileID = H5Fopen (filename.c_str(),
-			    H5F_ACC_RDONLY,
-			    H5P_DEFAULT);
+	  fileTruncated = false;
+	  fileID        = H5Fopen (filename.c_str(),
+				   H5F_ACC_RDONLY,
+				   H5P_DEFAULT);
 	}
       }
     } else {
       /* Create new file from scratch */
-      fileID = H5Fcreate (filename.c_str(),
-			  H5F_ACC_TRUNC,
-			  H5P_DEFAULT,
-			  H5P_DEFAULT);
+      fileTruncated = true;
+      fileID        = H5Fcreate (filename.c_str(),
+				 H5F_ACC_TRUNC,
+				 H5P_DEFAULT,
+				 H5P_DEFAULT);
     }
-    
-    return fileID;
+
+    return fileTruncated;
   }
   
   //_____________________________________________________________________________
@@ -796,7 +823,7 @@ namespace DAL { // Namespace DAL -- begin
 			H5P_DEFAULT);
 	break;
       case H5I_FILE:
-	return open (name, flags);
+	return openFile (name, flags);
 	break;
       case H5I_BADID:
 	std::cerr << "[HDF5Object::open] Unable to open object "
