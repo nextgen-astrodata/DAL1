@@ -63,7 +63,8 @@ namespace DAL { // Namespace DAL -- begin
 			      unsigned int const &index,
 			      IO_Mode const &flags)
   {
-    open (location,getName(index),flags);
+    std::string name = getName(index);
+    open (location,name,flags);
   }
   
   // ============================================================================
@@ -171,100 +172,71 @@ namespace DAL { // Namespace DAL -- begin
 			   std::string const &name,
 			   IO_Mode const &flags)
   {
-    bool status = true;
+    bool status    = true;
+    bool truncated = HDF5GroupBase::open (location_p,
+					  location,
+					  name,
+					  flags);
+    
+    if ( H5Iis_valid(location_p) ) {
 
-    if ( H5Iis_valid(location) ) {
-      
-      /* Set up the list of attributes attached to the Beam group */
+      // List of recognized attributes _____________________
       setAttributes();
       
-      /* Try to open the group: get list of groups attached to 'location' and
-	 check if 'name' is part of it.
-      */
-      if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
-	location_p = H5Gopen (location,
-			      name.c_str(),
-			      H5P_DEFAULT);
-      } else {
-	location_p = 0;
+      if (truncated) {
+
+	// Initial values for the attributes _______________
+	
+	bool valBool           = false;
+	int valInt             = 0;
+	double valFloat        = 0.0;
+	double valDouble       = 0.0;
+	std::string grouptype  = "Beam";
+	std::string undefined  = "UNDEFINED";
+	std::string MHz        = "MHz";
+	std::string foldPeriod = "pc/cm^3";
+	std::vector<std::string> vectString (1,undefined);
+	
+	// Write attribute values __________________________
+	
+	HDF5Attribute::write (location_p,"GROUPTYPE",                  grouptype  );
+	HDF5Attribute::write (location_p,"TARGET",                     vectString );
+	HDF5Attribute::write (location_p,"NOF_STATIONS",               valInt     );
+	HDF5Attribute::write (location_p,"STATIONS_LIST",              vectString );
+	HDF5Attribute::write (location_p,"TRACKING",                   undefined  );
+	HDF5Attribute::write (location_p,"POINT_RA",                   valDouble  );
+	HDF5Attribute::write (location_p,"POINT_DEC",                  valDouble  );
+	HDF5Attribute::write (location_p,"POSITION_OFFSET_RA" ,        valDouble  );
+	HDF5Attribute::write (location_p,"POSITION_OFFSET_DEC",        valDouble  );
+	HDF5Attribute::write (location_p,"BEAM_DIAMETER_RA",           valFloat   );
+	HDF5Attribute::write (location_p,"BEAM_DIAMETER_DEC",          valFloat   );
+	HDF5Attribute::write (location_p,"BEAM_FREQUENCY_CENTER",      valDouble  );
+	HDF5Attribute::write (location_p,"BEAM_FREQUENCY_CENTER_UNIT", MHz        );
+	HDF5Attribute::write (location_p,"FOLDED_DATA",                valBool    );
+	HDF5Attribute::write (location_p,"FOLD_PERIOD",                valFloat   );
+	HDF5Attribute::write (location_p,"FOLD_PERIOD_UNIT",           foldPeriod );
+	HDF5Attribute::write (location_p,"DEDISPERSION",               undefined  );
+	HDF5Attribute::write (location_p,"DISPERSION_MEASURE",         valFloat   );
+	HDF5Attribute::write (location_p,"DISPERSION_MEASURE_UNIT",    undefined  );
+	HDF5Attribute::write (location_p,"BARYCENTER",                 valBool    );
+	HDF5Attribute::write (location_p,"NOF_STOKES",                 valInt     );
+	HDF5Attribute::write (location_p,"STOKES_COMPONENTS",          vectString );
+	HDF5Attribute::write (location_p,"COMPLEX_VOLTAGE",            valBool    );
+	HDF5Attribute::write (location_p,"SIGNAL_SUM",                 undefined  );
       }
+      
+      // Open embedded groups ______________________________
+      
+      status = openEmbedded (flags);
+      
     } else {
-      std::cerr << "[BF_BeamGroup::open]" 
-		<< " Invalid object ID!"
+      std::cerr << "[BF_BeamGroup::open]"
+		<< " Failed to open/create group " << name
 		<< std::endl;
       return false;
     }
-
-    if (location_p > 0) {
-      status = true;
-    } else {
-      /* If failed to open the group, check if we are supposed to create one */
-      if ( (flags.flags() & IO_Mode::OpenOrCreate) ||
-	   (flags.flags() & IO_Mode::Create) ||
-	   (flags.flags() & IO_Mode::CreateNew) ) {
-	location_p = H5Gcreate (location,
-				name.c_str(),
-				H5P_DEFAULT,
-				H5P_DEFAULT,
-				H5P_DEFAULT);
-	/* If creation was sucessful, add attributes with default values */
-	if (location_p > 0) {
-	  bool valBool           = false;
-	  int valInt             = 0;
-	  double valFloat        = 0.0;
-	  double valDouble       = 0.0;
-	  std::string grouptype  = "Beam";
-	  std::string undefined  = "UNDEFINED";
-	  std::string MHz        = "MHz";
-	  std::string foldPeriod = "pc/cm^3";
-	  std::vector<std::string> vectString (1,undefined);
-	  // write the attributes
-	  HDF5Attribute::write (location_p,"GROUPTYPE",                  grouptype  );
-	  HDF5Attribute::write (location_p,"TARGET",                     vectString );
-	  HDF5Attribute::write (location_p,"NOF_STATIONS",               valInt     );
-	  HDF5Attribute::write (location_p,"STATIONS_LIST",              vectString );
-	  HDF5Attribute::write (location_p,"TRACKING",                   undefined  );
-	  HDF5Attribute::write (location_p,"POINT_RA",                   valDouble  );
-	  HDF5Attribute::write (location_p,"POINT_DEC",                  valDouble  );
-	  HDF5Attribute::write (location_p,"POSITION_OFFSET_RA" ,        valDouble  );
-	  HDF5Attribute::write (location_p,"POSITION_OFFSET_DEC",        valDouble  );
-	  HDF5Attribute::write (location_p,"BEAM_DIAMETER_RA",           valFloat   );
-	  HDF5Attribute::write (location_p,"BEAM_DIAMETER_DEC",          valFloat   );
-	  HDF5Attribute::write (location_p,"BEAM_FREQUENCY_CENTER",      valDouble  );
-	  HDF5Attribute::write (location_p,"BEAM_FREQUENCY_CENTER_UNIT", MHz        );
-	  HDF5Attribute::write (location_p,"FOLDED_DATA",                valBool    );
-	  HDF5Attribute::write (location_p,"FOLD_PERIOD",                valFloat   );
-	  HDF5Attribute::write (location_p,"FOLD_PERIOD_UNIT",           foldPeriod );
-	  HDF5Attribute::write (location_p,"DEDISPERSION",               undefined  );
-	  HDF5Attribute::write (location_p,"DISPERSION_MEASURE",         valFloat   );
-	  HDF5Attribute::write (location_p,"DISPERSION_MEASURE_UNIT",    undefined  );
-	  HDF5Attribute::write (location_p,"BARYCENTER",                 valBool    );
-	  HDF5Attribute::write (location_p,"NOF_STOKES",                 valInt     );
-	  HDF5Attribute::write (location_p,"STOKES_COMPONENTS",          vectString );
-	  HDF5Attribute::write (location_p,"COMPLEX_VOLTAGE",            valBool    );
-	  HDF5Attribute::write (location_p,"SIGNAL_SUM",                 undefined  );
-	} else {
-	  std::cerr << "[BF_BeamGroup::open] Failed to create group "
-		    << name
-		    << std::endl;
-	  status = false;
-	}
-      } else {
-	std::cerr << "[BF_BeamGroup::open] Failed to open group "
-		  << name
-		  << std::endl;
-	status = false;
-      }
-    }
     
-    // Open embedded groups
-    if (status) {
-      status = openEmbedded (flags);
-    } else {
-      std::cerr << "[BF_StationBeam::open] Skip opening embedded groups!"
-		<< std::endl;
-    }
- 
+    
     return status;
   }
 

@@ -297,17 +297,25 @@ namespace DAL { // Namespace DAL -- begin
 
   // ============================================================================
   //
-  //  Public methods
+  //  Static methods
   //
   // ============================================================================
 
+  /*!
+    \retval groupID
+    \param location
+    \param name         -- Name of the group to be opened/created.
+    \param flags        -- I/O mode flags.
+    \return groupCreate -- Was \c H5Gcreate used in order to create the group
+            from scratch?
+    */
   bool HDF5GroupBase::open (hid_t &groupID,
 			    hid_t const &location,
 			    std::string const &name,
 			    IO_Mode const &flags)
   {
     bool groupExists    = false;
-    bool groupTruncated = false;
+    bool groupCreate = false;
     
     /*______________________________________________________
       Check if the provided location identifier points to a
@@ -316,11 +324,20 @@ namespace DAL { // Namespace DAL -- begin
     */
     
     if ( H5Iis_valid(location) ) {
-      if ( HDF5Object::objectType (location, name) == H5I_GROUP ) {
-	groupExists = true;
-      } else {
-	groupExists = false;
+
+      if ( H5Lexists (location, name.c_str(), H5P_DEFAULT) ) {
+	
+	H5O_info_t info;
+	H5Oget_info_by_name (location, name.c_str(), &info, H5P_DEFAULT);
+	/* Check if 'name' points to a group object */
+	if ( info.type == H5O_TYPE_GROUP ) {
+	  groupExists = true;
+	} else {
+	  groupExists = false;
+	}
+	
       }
+      
     } else {
       std::cerr << "[HDF5GroupBase::open] Invalid location ID!" << std::endl;
       groupID = 0;
@@ -349,20 +366,24 @@ namespace DAL { // Namespace DAL -- begin
     }
     else if ( flags.flags() & IO_Mode::Open ) {
       if (groupExists) {
-	groupID        = H5Gopen (location, name.c_str(), H5P_DEFAULT);
-	groupTruncated = false;
+	groupID     = H5Gopen (location, name.c_str(), H5P_DEFAULT);
+	groupCreate = false;
       } else {
-	groupID        = 0;
-	groupTruncated = false;
+	groupID     = 0;
+	groupCreate = false;
       }
     }
     else if ( flags.flags() & IO_Mode::CreateNew ) {
       if (groupExists) {
-	groupID        = 0;
-	groupTruncated = false;
+	groupID     = 0;
+	groupCreate = false;
       } else {
-	groupID        = H5Gopen (location, name.c_str(), H5P_DEFAULT);
-	groupTruncated = false;
+	groupCreate = true;
+	groupID     = H5Gcreate (location,
+				 name.c_str(),
+				 H5P_DEFAULT,
+				 H5P_DEFAULT,
+				 H5P_DEFAULT);
       }
     }
     else if ( flags.flags() & IO_Mode::Truncate ) {
@@ -371,11 +392,15 @@ namespace DAL { // Namespace DAL -- begin
 		 name.c_str(),
 		 H5P_DEFAULT);
       // ... and create it once more from scratch
-      groupID        = H5Gopen (location, name.c_str(), H5P_DEFAULT);
-      groupTruncated = true;
+      groupCreate = true;
+      groupID     = H5Gcreate (location,
+			       name.c_str(),
+			       H5P_DEFAULT,
+			       H5P_DEFAULT,
+			       H5P_DEFAULT);
     }
     
-    return groupTruncated;
+    return groupCreate;
   }
   
 } // Namespace DAL -- end

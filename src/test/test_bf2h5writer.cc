@@ -123,7 +123,7 @@ int main()
   /*__________________________________________________________________
     Create primary array pointing groups with embedded beam groups.
   */
-  
+
   for (unsigned numPointing=0; numPointing<nofPointings; ++numPointing) {
     std::cout << "-- Pointing " <<  numPointing << ": [";
     for (unsigned numBeam=0; numBeam<nofBeams; ++numBeam) {
@@ -134,7 +134,11 @@ int main()
     }
     std::cout << " ]" << std::endl;
   }
+
+  std::cout << "--> Finished opening sub-groups." << std::endl;
   
+  return 0;
+
   /*__________________________________________________________________
     Re-open the previously created BF file, before creating Stokes
     dataset.

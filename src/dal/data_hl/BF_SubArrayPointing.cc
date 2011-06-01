@@ -41,10 +41,11 @@ namespace DAL { // Namespace DAL -- begin
   //                                                          BF_SubArrayPointing
   
   BF_SubArrayPointing::BF_SubArrayPointing (hid_t const &location,
-					    std::string const &name)
+					    std::string const &name,
+					    IO_Mode const &flags)
   {
     itsGroupType = "SubArrayPointing";
-    open (location,name,IO_Mode(IO_Mode::Open));
+    open (location,name,flags);
   }
   
   //_____________________________________________________________________________
@@ -142,8 +143,7 @@ namespace DAL { // Namespace DAL -- begin
            structure is attached.
     \param name   -- Name of the structure (file, group, dataset, etc.) to be
            opened.
-    \param create -- Create the corresponding data structure, if it does not 
-           exist yet?
+    \param flags  -- I/O mode flags.
     
     \return status -- Status of the operation; returns <tt>false</tt> in case
             an error was encountered.
@@ -152,84 +152,66 @@ namespace DAL { // Namespace DAL -- begin
 				  std::string const &name,
 				  IO_Mode const &flags)
   {
-    bool status (true);
+    bool status    = true;
+    bool truncated = HDF5GroupBase::open (location_p,
+					  location,
+					  name,
+					  flags);
     
-    /* Set up the list of attributes attached to the root group */
-    setAttributes();
-    
-    if (H5Lexists (location, name.c_str(), H5P_DEFAULT)) {
-      location_p = H5Gopen (location,
-			    name.c_str(),
-			    H5P_DEFAULT);
-    } else {
-      location_p = 0;
-    }
+    if ( H5Iis_valid(location_p) ) {
 
-    if (location_p > 0) {
-      status = true;
-    } else {
-      /* If failed to open the group, check if we are supposed to create one */
-      if ( (flags.flags() & IO_Mode::OpenOrCreate) ||
-	   (flags.flags() & IO_Mode::Create) ||
-	   (flags.flags() & IO_Mode::CreateNew) ) {
-	location_p = H5Gcreate (location,
-				name.c_str(),
-				H5P_DEFAULT,
-				H5P_DEFAULT,
-				H5P_DEFAULT);
-	/* If creation was sucessful, add attributes with default values */
-	if (location_p > 0) {
-	  std::string mhz ("MHz");
-	  std::string tracking ("OFF");
-	  std::string second ("s");
-	  std::string usecond ("us");
-	  std::vector<std::string> stationsList (1,"UNDEFINED");
-	  // write the attributes
-	  HDF5Attribute::write (location_p,"GROUPTYPE",                itsGroupType);
-	  HDF5Attribute::write (location_p,"NOF_STATIONS",             int(0)      );
-	  HDF5Attribute::write (location_p,"STATIONS_LIST",            stationsList);
-	  HDF5Attribute::write (location_p,"POINT_RA",                 double(0.0) );
-	  HDF5Attribute::write (location_p,"POINT_DEC",                double(0.0) );
-	  HDF5Attribute::write (location_p,"TRACKING",                 tracking    );
-	  HDF5Attribute::write (location_p,"POINT_ALTITUDE",           double(0.0) );
-	  HDF5Attribute::write (location_p,"POINT_AZIMUTH",            double(0.0) );
-	  HDF5Attribute::write (location_p,"CLOCK_RATE",               double(0.0) );
-	  HDF5Attribute::write (location_p,"CLOCK_RATE_UNIT",          mhz         );
-	  HDF5Attribute::write (location_p,"NOF_SAMPLES",              int(0)      );
-	  HDF5Attribute::write (location_p,"SAMPLING_RATE",            double(0.0) );
-	  HDF5Attribute::write (location_p,"SAMPLING_RATE_UNIT",       mhz         );
-	  HDF5Attribute::write (location_p,"SAMPLING_TIME",            float(0.0)  );
-	  HDF5Attribute::write (location_p,"SAMPLING_TIME_UNIT",       usecond     );
-	  HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",   double(0.0) );
-	  HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME_UNIT", second   );
-	  HDF5Attribute::write (location_p,"CHANNELS_PER_SUBBAND",     int(0)      );
-	  HDF5Attribute::write (location_p,"SUBBAND_WIDTH",            double(0.0) );
-	  HDF5Attribute::write (location_p,"SUBBAND_WIDTH_UNIT",       mhz         );
-	  HDF5Attribute::write (location_p,"CHANNEL_WIDTH",            double(0.0) );
-	  HDF5Attribute::write (location_p,"CHANNEL_WIDTH_UNIT",       mhz         );
-	  HDF5Attribute::write (location_p,"NOF_BEAMS",                int(0)      );
-	} else {
-	  std::cerr << "[BF_SubArrayPointing::open] Failed to create group "
-		    << name
-		    << std::endl;
-	  status = false;
-	}
-      } else {
-	std::cerr << "[BF_SubArrayPointing::open] Failed to open group "
-		  << name
-		  << std::endl;
-	status = false;
+      // List of recognized attributes _____________________
+      setAttributes();
+      
+      if (truncated) {
+
+	// Initial values for the attributes _______________
+	
+	std::string mhz ("MHz");
+	std::string tracking ("OFF");
+	std::string second ("s");
+	std::string usecond ("us");
+	std::vector<std::string> stationsList (1,"UNDEFINED");
+	
+	// Write attribute values __________________________
+	
+	HDF5Attribute::write (location_p,"GROUPTYPE",                itsGroupType);
+	HDF5Attribute::write (location_p,"NOF_STATIONS",             int(0)      );
+	HDF5Attribute::write (location_p,"STATIONS_LIST",            stationsList);
+	HDF5Attribute::write (location_p,"POINT_RA",                 double(0.0) );
+	HDF5Attribute::write (location_p,"POINT_DEC",                double(0.0) );
+	HDF5Attribute::write (location_p,"TRACKING",                 tracking    );
+	HDF5Attribute::write (location_p,"POINT_ALTITUDE",           double(0.0) );
+	HDF5Attribute::write (location_p,"POINT_AZIMUTH",            double(0.0) );
+	HDF5Attribute::write (location_p,"CLOCK_RATE",               double(0.0) );
+	HDF5Attribute::write (location_p,"CLOCK_RATE_UNIT",          mhz         );
+	HDF5Attribute::write (location_p,"NOF_SAMPLES",              int(0)      );
+	HDF5Attribute::write (location_p,"SAMPLING_RATE",            double(0.0) );
+	HDF5Attribute::write (location_p,"SAMPLING_RATE_UNIT",       mhz         );
+	HDF5Attribute::write (location_p,"SAMPLING_TIME",            float(0.0)  );
+	HDF5Attribute::write (location_p,"SAMPLING_TIME_UNIT",       usecond     );
+	HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME",   double(0.0) );
+	HDF5Attribute::write (location_p,"TOTAL_INTEGRATION_TIME_UNIT", second   );
+	HDF5Attribute::write (location_p,"CHANNELS_PER_SUBBAND",     int(0)      );
+	HDF5Attribute::write (location_p,"SUBBAND_WIDTH",            double(0.0) );
+	HDF5Attribute::write (location_p,"SUBBAND_WIDTH_UNIT",       mhz         );
+	HDF5Attribute::write (location_p,"CHANNEL_WIDTH",            double(0.0) );
+	HDF5Attribute::write (location_p,"CHANNEL_WIDTH_UNIT",       mhz         );
+	HDF5Attribute::write (location_p,"NOF_BEAMS",                int(0)      );
       }
+
+      // Open embedded groups ______________________________
+
+      status = openEmbedded (flags);
+
+    } else {
+      std::cerr << "[BF_SubArrayPointing::open]"
+		<< " Failed to open/create group " << name
+		<< std::endl;
+      return false;
     }
     
-    // Open embedded groups
-    if (status) {
-      status = openEmbedded (flags);
-    } else {
-      std::cerr << "[BF_SubArrayPointing::open] Skip opening embedded groups!"
-		<< std::endl;
-    }
- 
+    
     return status;
   }
   
@@ -268,63 +250,24 @@ namespace DAL { // Namespace DAL -- begin
 				      IO_Mode const &flags)
   {
     bool status      = true;
-    bool groupIsOpen = false;
-    bool groupExists = false;
     std::string name = BF_BeamGroup::getName (beamID);
 
     /*______________________________________________________
-      Check object ID for sub-array pointing direction group
+      Check if the group has been opened already.
     */
-    
-    if ( H5Iis_valid(location_p) ) {
-      /* Check if the group has been opened already */
-      if ( itsBeams.find(name) == itsBeams.end() ) {
-	groupIsOpen = false;
-	/* Check if the group at least exists */
-	htri_t h5err = H5Lexists (location_p,
-				  name.c_str(),
-				  H5P_DEFAULT);
-	/* Inspect return value */
-	if (h5err>0) {
-	  groupExists = true;
-	} else {
-	  groupExists = false;
-	}
-      } else {
-	groupIsOpen = true;
-      }
-    } else {
-      std::cerr << "[BF_SubArrayPointing::openBeam]" 
-		<< " Invalid object ID!"
-		<< std::endl;
-      return false;
+
+    if ( itsBeams.find(name) == itsBeams.end() ) {
+      // open/create group
+      itsBeams[name] = BF_BeamGroup (location_p,
+				     beamID,
+				     flags);
+      // internal book-keeping
+      int nofBeams = itsBeams.size();
+      HDF5Attribute::write (location_p,
+			    "NOF_BEAMS",
+			    nofBeams);
     }
-    
-    /*______________________________________________________
-      If group is not opened yet, check if it exists; if yes
-      then open it.
-    */
-    
-    if ( !groupIsOpen ) {
-      if (groupExists) {
-	itsBeams[name] = BF_BeamGroup (location_p,
-				       name);   
-      } else if (flags.flags() & IO_Mode::OpenOrCreate) {
-	itsBeams[name] = BF_BeamGroup (location_p,
-				       beamID,
-				       flags);   
-      }
-    }
-    
-    /*______________________________________________________
-      Internal book-keeping
-    */
-    
-    int nofBeams = itsBeams.size();
-    HDF5Attribute::write (location_p,
-			  "NOF_BEAMS",
-			  nofBeams);
-    
+
     return status;
   }
 

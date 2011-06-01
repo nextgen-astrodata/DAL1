@@ -476,9 +476,10 @@ namespace DAL { // Namespace DAL -- begin
 				     val);
       }
 #endif
-    
-    // === Static methods ======================================================= 
-    
+
+    // === Static methods =======================================================
+
+    //! Open a group inside the structure
     static bool open (hid_t &groupID,
 		      hid_t const &location,
 		      std::string const &name,
