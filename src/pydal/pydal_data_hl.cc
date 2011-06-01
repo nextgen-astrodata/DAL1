@@ -34,6 +34,8 @@
 #include <data_hl/BeamFormed.h>
 #include <data_hl/BeamGroup.h>
 #include <data_hl/BF_BeamGroup.h>
+#include <data_hl/BF_RootGroup.h>
+#include <data_common/CommonAttributes.h>
 #include <data_hl/TBB_Timeseries.h>
 #include <data_hl/TBB_StationGroup.h>
 #include <data_hl/TBB_DipoleDataset.h>
@@ -42,6 +44,7 @@
 using DAL::BeamFormed;
 using DAL::BeamGroup;
 using DAL::BF_BeamGroup;
+using DAL::BF_RootGroup;
 using DAL::LOPES_EventFile;
 using DAL::TBB_Timeseries;
 using DAL::TBB_DipoleDataset;
@@ -66,6 +69,40 @@ void export_BF_BeamGroup ()
 	  "Get name of the class." )
     ;
 }
+
+
+// ==============================================================================
+//
+//                                                                   BF_RootGroup
+//
+// ==============================================================================
+
+void export_BF_RootGroup ()
+{
+   bpl::class_<BF_RootGroup>("BF_RootGroup", bpl::init<const string>())
+      // Argumented constructor 
+      .def( bpl::init<DAL::Filename, bool>())
+      .def( bpl::init<string const &>())
+      .def( bpl::init<string &>())
+      .def( bpl::init<DAL::CommonAttributes, bool>())     
+      // Access to internal parameters 
+      .def( "className", &BF_RootGroup::className, 
+      "Get name of the class" )
+      //void ( BF_RootGroup::*summary)() = &BF_RootGroup::summary)
+      .def( "CommonAttributes", &BF_RootGroup::commonAttributes, 
+      "Get the common attributes of the class." )      
+      ;
+      // Data access methods 
+      bool ( BF_RootGroup::*openBeam)(hid_t const &,
+               const string &,
+               bool const &) = &BF_RootGroup::openBeam;
+      /*
+      bool ( BF_RootGroup::*openStokesDataset)(hid_t const &,
+               uint const &,
+               bool const &) = &BF_RootGroup::openStokesDataset);
+      */
+}
+
 
 // ==============================================================================
 //
