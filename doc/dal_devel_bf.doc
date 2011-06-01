@@ -28,47 +28,6 @@
   individual classes permit the creation of structures at hierarchical levels
   below.
   
-  Accessing (open/create) a Stokes dataset from within a beam group:
-
-  \code
-  // Open an existing Stokes dataset from within a beam group
-  bool BF_BeamGroup::openStokesDataset (std::string const &name);
-
-  // Open an existing Stokes dataset from within a beam group
-  bool BF_BeamGroup::openStokesDataset (unsigned int const &stokesID);
-
-  // Create a new Stokes dataset from within a beam group
-  bool BF_BeamGroup::createStokesDataset (unsigned int const &stokesID,
-                                          bool const &overwriteExisting=false);
-  \endcode
-
-  Accessing (open/create) a Stokes dataset from within a primary pointing
-  direction group:
-
-  \code
-  // Open an existing Stokes dataset from within a primary pointing direction group
-  bool BF_SubArrayPointing::openStokesDataset (unsigned int const &beamID,
-                                               unsigned int const &stokesID);
-    
-  // Create a new Stokes dataset from within a root group
-  bool BF_SubArrayPointing::createStokesDataset (unsigned int const &beamID,
-                                                 unsigned int const &stokesID,
-                                                 bool const &overwriteExisting=false);
-  \endcode
-
-  Accessing (open/create) a Stokes dataset from within the root group:
-
-  \code
-  // Open an existing Stokes dataset from within a root group
-  bool BF_RootGroup::openStokesDataset (unsigned int const &pointingID,
-                                        unsigned int const &beamID,
-                                        unsigned int const &stokesID);
-    
-  // Create a new Stokes dataset from within a root group
-  bool BF_RootGroup::createStokesDataset (unsigned int const &pointingID,
-                                          unsigned int const &beamID,
-                                          unsigned int const &stokesID,
-                                          bool const &overwriteExisting=false);
-  \endcode
+  \image html BF_HDFView.png
 
 */
