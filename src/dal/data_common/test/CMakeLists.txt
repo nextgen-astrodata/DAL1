@@ -35,6 +35,7 @@ endforeach (src)
 
 ## C++ library
 
+add_test (tHDF5Quantity tHDF5Quantity)
 add_test (tTimestamp tTimestamp)
 add_test (tFilename tFilename)
 add_test (tCommonAttributes tCommonAttributes)
