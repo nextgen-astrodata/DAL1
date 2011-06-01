@@ -832,16 +832,14 @@ namespace DAL {
   /*!
     \param location_id -- Identifier of the structure within the file, to which
            the attribut is attached to.
-    \param value -- Identifier for the attribute storing the numerical value of
-           the quantity.
-    \param unit  -- Identifier for the attribute storing the physical unit of
-           the quantity
+    \param name        -- Name forming the base string of the attributes storing
+           the components of the quantity. Based on the \e name the attributes
+	   <tt><name>_VALUE</tt> and <tt><name>_UNIT</tt> are searched.
 
     \return quantity -- The physical quantity.
   */
   casa::Quantity h5get_quantity (hid_t const &location_id,
-				 Attributes const &value,
-				 Attributes const &unit)
+				 std::string const &name)
   {
     if (location_id > 0)
       {

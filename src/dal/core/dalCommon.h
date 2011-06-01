@@ -37,7 +37,6 @@ using std::endl;
 
 #include <core/dalBaseTypes.h>
 #include <core/dalConversions.h>
-#include <core/Enumerations.h>
 #include <core/HDF5Attribute.h>
 #include <core/HDF5Dataspace.h>
 
@@ -536,8 +535,7 @@ namespace DAL {
     }
   //! Get physical quantity attribute as casa::Quantity
   casa::Quantity h5get_quantity (hid_t const &location_id,
-				 DAL::Attributes const &value,
-				 DAL::Attributes const &unit);
+				 std::string const &name);
   //! Get a physical quantity describing a direction within a frame
   casa::MDirection h5get_direction (hid_t const &location_id,
                                     DAL::Attributes const &value,
