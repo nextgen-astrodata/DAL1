@@ -437,7 +437,7 @@ namespace DAL { // Namespace DAL -- begin
 				 std::vector<unsigned int> const &nofChannels,
 				 IO_Mode::Flags const &flags)
   {
-    bool status = flags.flags();
+    bool status = flags;
     std::vector<hsize_t> shape (2,1);
 
     /*________________________________________________________________
