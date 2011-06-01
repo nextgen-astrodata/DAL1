@@ -490,49 +490,6 @@ namespace DAL {
   }
   
   //_____________________________________________________________________________
-  //                                                              h5set_attribute
-
-  /*!
-    \param location_id -- HDF5 identifier of the attribute within the file
-    \param name        -- Name of the attribute
-    \param value       -- Value of the attribute
-  */
-  template <typename T>
-    bool h5set_attribute (hid_t location_id,
-			  std::string name,
-			  std::vector<T> const &value)
-    {
-      return HDF5Attribute::write (location_id, name, value);
-    }
-  
-  //_____________________________________________________________________________
-  //                                                              h5set_attribute
-  
-  /*!
-    \param location -- HDF5 identifier of the attribute within the file
-    \param name        -- Name of the attribute
-    \param value       -- Value of the attribute
-  */
-  template <typename T>
-    bool h5set_attribute (hid_t location,
-			  std::string name,
-			  T const &value)
-    {
-      bool status (true);
-      int nelem (1);
-      T * data = new T [nelem];
-      
-      data[0] = value;
-      status  = h5set_attribute (location,
-				 name,
-				 data,
-				 nelem);
-      delete [] data;
-      
-      return status;
-    }
-  
-  //_____________________________________________________________________________
   // Passing of attribute values using casacore array classes
   
 #ifdef DAL_WITH_CASA
@@ -617,13 +574,13 @@ namespace DAL {
 	data[n] = value(n);
       }
       
-      status = h5set_attribute (location_id,
-				name,
-				data,
-				nelem);
+      status = DAL::HDF5Attribute::write (location_id,
+					  name,
+					  data,
+					  nelem);
       
       delete [] data;
-
+      
       return status;
     }
   
