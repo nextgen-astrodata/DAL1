@@ -961,15 +961,15 @@ namespace DAL {
 
     //calculate the writeOffset from time of first block and this block
     uint starttime, startsamplenum;
-    dipoleArray_p->getAttribute( attribute_name(TIME), starttime );
-    dipoleArray_p->getAttribute( attribute_name(SAMPLE_NUMBER), startsamplenum );
+    dipoleArray_p->getAttribute( "TIME",          starttime );
+    dipoleArray_p->getAttribute( "SAMPLE_NUMBER", startsamplenum );
     int writeOffset= (headerp_p->time-starttime)*headerp_p->sample_freq*1000000 +
                      (headerp_p->sample_nr-startsamplenum);
 #ifdef DAL_DEBUGGING_MESSAGES
     uint sid, rsp, rcu;
-    dipoleArray_p->getAttribute( attribute_name(STATION_ID), sid );
-    dipoleArray_p->getAttribute( attribute_name(RSP_ID), rsp );
-    dipoleArray_p->getAttribute( attribute_name(RCU_ID), rcu );
+    dipoleArray_p->getAttribute( "STATION_ID", sid );
+    dipoleArray_p->getAttribute( "RSP_ID",     rsp );
+    dipoleArray_p->getAttribute( "RCU_ID",     rcu );
     std::cout << "Station: " << sid << " RSP: " << rsp << " RCU: " << rcu
               << " Sequence-Nr: " << headerp_p->seqnr << endl;
     std::cout << " starttime:"<< starttime << " startsamplenum:" << startsamplenum
@@ -1036,15 +1036,15 @@ namespace DAL {
 
     //calculate the writeOffset from time of first block and this block
     uint starttime, startsamplenum;
-    dipoleArray_p->getAttribute( attribute_name(TIME), starttime );
-    dipoleArray_p->getAttribute( attribute_name(SAMPLE_NUMBER), startsamplenum );
+    dipoleArray_p->getAttribute( "TIME", starttime );
+    dipoleArray_p->getAttribute( "SAMPLE_NUMBER", startsamplenum );
     int writeOffset= (headerp_p->time-starttime)*headerp_p->sample_freq*1000000 +
                      (headerp_p->sample_nr-startsamplenum);
 #ifdef DAL_DEBUGGING_MESSAGES
     uint sid, rsp, rcu;
-    dipoleArray_p->getAttribute( attribute_name(STATION_ID), sid );
-    dipoleArray_p->getAttribute( attribute_name(RSP_ID), rsp );
-    dipoleArray_p->getAttribute( attribute_name(RCU_ID), rcu );
+    dipoleArray_p->getAttribute( "STATION_ID", sid );
+    dipoleArray_p->getAttribute( "RSP_ID",     rsp );
+    dipoleArray_p->getAttribute( "RCU_ID",     rcu );
     std::cout << "Station: " << sid << " RSP: " << rsp << " RCU: " << rcu
               << " Sequence-Nr: " << headerp_p->seqnr << endl;
     std::cout << " starttime:"<< starttime << " startsamplenum:" << startsamplenum

@@ -26,6 +26,8 @@
 #include <string>
 #include <vector>
 
+#include <core/HDF5Object.h>
+
 namespace DAL { // Namespace DAL -- begin
   
   /*!
@@ -55,10 +57,21 @@ namespace DAL { // Namespace DAL -- begin
   */  
   class HDF5Quantity {
 
+  protected:
+
     //! Numerical value(s)
     std::vector<double> itsValues;
     //! Physical unit(s) associated with the value(s)
     std::vector<std::string> itsUnits;
+
+    //! Name of the quanity used a base for the attributes
+    std::string itsName;
+    //! Suffix appended to the attribute storing the value(s)
+    std::string itsValueSuffix;
+    //! Suffix appended to the attribute storing the unit(s)
+    std::string itsUnitSuffix;
+    //! Separator inserted betwen the base and the suffix of the name
+    std::string itsSeparator;
     
   public:
     
@@ -116,6 +129,50 @@ namespace DAL { // Namespace DAL -- begin
     bool setQuantity (std::vector<double> const &values,
 		      std::vector<std::string> const &units);
 
+    //! Get the name of the quanity used a base for the attributes. 
+    inline std::string name () const {
+      return itsName;
+    }
+    
+    //! Set the name of the quanity used a base for the attributes. 
+    inline bool name (std::string const &name) {
+      itsName = name;
+      return true;
+    }
+    
+    //! Get the suffix appended to the attribute storing the value(s) 
+    inline std::string valueSuffix () const {
+      return itsValueSuffix;
+    }
+    
+    //! Set the suffix appended to the attribute storing the value(s) 
+    inline bool setValueSuffix (std::string const &suffix) {
+      itsValueSuffix = suffix;
+      return true;
+    }
+    
+    //! Get the suffix appended to the attribute storing the unit(s) 
+    inline std::string unitSuffix () const {
+      return itsUnitSuffix;
+    }
+
+    //! Set the suffix appended to the attribute storing the unit(s) 
+    inline bool setUnitSuffix (std::string const &suffix) {
+      itsUnitSuffix = suffix;
+      return true;
+    }
+
+    //! Get the separator inserted betwen the base and the suffix of the name. 
+    inline std::string separator () const {
+      return itsSeparator;
+    }
+
+    //! Set the separator inserted betwen the base and the suffix of the name. 
+    inline bool separator (std::string const &separator) {
+      itsSeparator = separator;
+      return true;
+    }
+
     /*!
       \brief Get the name of the class
       \return className -- The name of the class, HDF5Quantity.
@@ -133,14 +190,21 @@ namespace DAL { // Namespace DAL -- begin
     void summary (std::ostream &os);    
 
     // === Public methods =======================================================
+
+    //! Write quantity to HDF5 file/group identified by \c location
+    bool write (hid_t const &location);
     
-    
+    //! Read quantity from HDF5 file/group identified by \c location
+    bool read (hid_t const &location);
     
     // === Static methods =======================================================
     
     
     
   private:
+
+    //! Initialize internal parameters
+    void init ();
     
     //! Unconditional copying
     void copy (HDF5Quantity const &other);

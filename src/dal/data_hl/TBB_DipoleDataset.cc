@@ -864,9 +864,9 @@ namespace DAL {  // Namespace DAL -- begin
   casa::MPosition TBB_DipoleDataset::antenna_position ()
   {
     return DAL::h5get_position (location_p,
-                                DAL::ANTENNA_POSITION_VALUE,
-                                DAL::ANTENNA_POSITION_UNIT,
-                                DAL::ANTENNA_POSITION_FRAME);
+                                "ANTENNA_POSITION_VALUE",
+                                "ANTENNA_POSITION_UNIT",
+                                "ANTENNA_POSITION_FRAME");
   }
 
   //_____________________________________________________________________________
@@ -876,8 +876,8 @@ namespace DAL {  // Namespace DAL -- begin
   { 
     if (location_p > 0) {
       freq = DAL::h5get_quantity (location_p,
-				  DAL::SAMPLE_FREQUENCY_VALUE,
-				  DAL::SAMPLE_FREQUENCY_UNIT);
+				  "SAMPLE_FREQUENCY_VALUE",
+				  "SAMPLE_FREQUENCY_UNIT");
       return true;
     }
     else {
@@ -894,8 +894,8 @@ namespace DAL {  // Namespace DAL -- begin
   {
     if (location_p > 0) {
       casa::Quantity qFreq = DAL::h5get_quantity (location_p,
-						  DAL::SAMPLE_FREQUENCY_VALUE,
-						  DAL::SAMPLE_FREQUENCY_UNIT);
+						  "SAMPLE_FREQUENCY_VALUE",
+						  "SAMPLE_FREQUENCY_UNIT");
       freq = casa::MFrequency (qFreq,
 			       casa::MFrequency::TOPO);
       return true;

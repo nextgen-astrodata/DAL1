@@ -839,7 +839,8 @@ namespace DAL {
     \return quantity -- The physical quantity.
   */
   casa::Quantity h5get_quantity (hid_t const &location_id,
-				 std::string const &name)
+				 std::string const &value,
+				 std::string const &unit)
   {
     if (location_id > 0)
       {
@@ -848,11 +849,11 @@ namespace DAL {
         std::string qUnit;
         // retrieve the value of the quantity
         status *= h5get_attribute(location_id,
-                                  attribute_name(value),
+                                  value,
                                   qValue);
         // retrieve the unit of the quantity
         status *= h5get_attribute(location_id,
-                                  attribute_name(unit),
+                                  unit,
                                   qUnit);
         // put together the Quantity object
         if (status) {
@@ -869,32 +870,10 @@ namespace DAL {
       return casa::Quantity();
     }
   }
-  
-  // ------------------------------------------------------------ h5get_direction
-  
-  /*!
-    \param location_id -- Identifier of the structure within the file, to which
-           the attribut is attached to.
-    \param value -- Identifier for the attribute storing the numerical value of
-           the quantity.
-    \param unit  -- Identifier for the attribute storing the physical unit of
-           the quantity
-    \param frame -- Identifier for the attribute storing the identifier for the
-           reference frame within which the physical quantity is defined.
 
-    \return direction -- The physical quantity.
-  */
-  casa::MDirection h5get_direction (hid_t const &location_id,
-				    Attributes const &value,
-				    Attributes const &unit,
-				    Attributes const &frame)
-  {
-    return h5get_direction (location_id,
-                            attribute_name(value),
-                            attribute_name(unit),
-                            attribute_name(frame));
-  }
-
+  //_____________________________________________________________________________
+  //                                                              h5get_direction
+  
   /*!
     \param location_id -- Identifier of the structure within the file, to which
            the attribut is attached to.
@@ -987,31 +966,9 @@ namespace DAL {
     
     return dir;
   }
-  
-  // ------------------------------------------------------------- h5get_position
-  
-  /*!
-    \param location_id -- Identifier of the structure within the file, to which
-           the attribut is attached to.
-    \param value -- Identifier for the attribute storing the numerical value of
-           the quantity.
-    \param unit  -- Identifier for the attribute storing the physical unit of
-           the quantity
-    \param frame -- Identifier for the attribute storing the identifier for the
-           reference frame within which the physical quantity is defined.
 
-    \return position -- The position as casa::Measure.
-  */
-  MPosition h5get_position (hid_t const &location_id,
-			    Attributes const &value,
-			    Attributes const &unit,
-			    Attributes const &frame)
-  {
-    return h5get_position (location_id,
-                           attribute_name(value),
-                           attribute_name(unit),
-                           attribute_name(frame));
-  }
+  //_____________________________________________________________________________
+  //                                                               h5get_position
   
   /*!
     \param location_id -- Identifier of the structure within the file, to which

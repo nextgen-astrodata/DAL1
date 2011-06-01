@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "HDF5Quantity.h"
+#include "HDF5Measure.h"
 
 namespace DAL { // Namespace DAL -- begin
   
@@ -28,34 +28,67 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  HDF5Quantity::HDF5Quantity ()
+  HDF5Measure::HDF5Measure ()
+    : HDF5Quantity()
   {
-    init ();
   }
   
-  HDF5Quantity::HDF5Quantity (double const &value,
-			      std::string const &unit)
+  /*!
+    \param value -- 
+    \param unit  -- 
+    \param frame -- 
+  */
+  HDF5Measure::HDF5Measure (double const &value,
+			    std::string const &unit,
+			    std::string const &frame)
+    : HDF5Quantity (value, unit)
   {
-    setQuantity (value, unit);
+    setFrame (frame);
   }
   
-  HDF5Quantity::HDF5Quantity (std::vector<double> const &values,
-			      std::string const &unit)
+  /*!
+    \param values -- 
+    \param unit   -- 
+    \param frame  -- 
+  */
+  HDF5Measure::HDF5Measure (std::vector<double> const &values,
+			    std::string const &unit,
+			    std::string const &frame)
+    : HDF5Quantity (values, unit)
   {
-    setQuantity (values, unit);
+    setFrame (frame);
   }
   
-  HDF5Quantity::HDF5Quantity (std::vector<double> const &values,
-			      std::vector<std::string> const &units)
+  /*!
+    \param values -- 
+    \param units  -- 
+    \param frame  -- 
+  */
+  HDF5Measure::HDF5Measure (std::vector<double> const &values,
+			    std::vector<std::string> const &units,
+			    std::string const &frame)
+    : HDF5Quantity (values, units)
   {
-    setQuantity (values, units);
+    setMeasure (values, units, frame);
+  }
+  
+  /*!
+    \param quantity -- 
+    \param frame    -- 
+  */
+  HDF5Measure::HDF5Measure (HDF5Quantity const &quantity,
+			    std::string const &frame)
+    : HDF5Quantity(quantity)
+  {
+    setFrame (frame);
   }
   
   /*!
     \param other -- Another HDF5Property object from which to create this new
            one.
   */
-  HDF5Quantity::HDF5Quantity (HDF5Quantity const &other)
+  HDF5Measure::HDF5Measure (HDF5Measure const &other)
+    : HDF5Quantity(other)
   {
     copy (other);
   }
@@ -66,12 +99,12 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  HDF5Quantity::~HDF5Quantity ()
+  HDF5Measure::~HDF5Measure ()
   {
     destroy();
   }
   
-  void HDF5Quantity::destroy ()
+  void HDF5Measure::destroy ()
   {;}
   
   // ============================================================================
@@ -84,9 +117,9 @@ namespace DAL { // Namespace DAL -- begin
   //                                                                    operator=
   
   /*!
-    \param other -- Another HDF5Quantity object from which to make a copy.
+    \param other -- Another HDF5Measure object from which to make a copy.
   */
-  HDF5Quantity& HDF5Quantity::operator= (HDF5Quantity const &other)
+  HDF5Measure& HDF5Measure::operator= (HDF5Measure const &other)
   {
     if (this != &other) {
       destroy ();
@@ -98,60 +131,52 @@ namespace DAL { // Namespace DAL -- begin
   //_____________________________________________________________________________
   //                                                                         copy
   
-  void HDF5Quantity::copy (HDF5Quantity const &other)
+  void HDF5Measure::copy (HDF5Measure const &other)
   {
-    itsValues.resize(other.itsValues.size());
-    itsValues = other.itsValues;
-
-    itsUnits.resize(other.itsUnits.size());
-    itsUnits = other.itsUnits;
-
-    itsName        = other.itsName;
-    itsValueSuffix = other.itsValueSuffix;
-    itsUnitSuffix  = other.itsUnitSuffix;
-    itsSeparator   = other.itsSeparator;
+    itsFrame       = other.itsFrame;
+    itsFrameSuffix = other.itsFrameSuffix;
   }
 
   // ============================================================================
   //
-  //  Parameter access
+  //  Parameters
   //
   // ============================================================================
   
-  bool HDF5Quantity::setQuantity (double const &value,
-				  std::string const &unit)
+  //_____________________________________________________________________________
+  //                                                                   setMeasure
+  
+  bool HDF5Measure::setMeasure (double const &value,
+				std::string const &unit,
+				std::string const &frame)
   {
-    itsValues.resize(1);
-    itsValues[0] = value;
-
-    itsUnits.resize(1);
-    itsUnits[0] = unit;
-
+    setQuantity (value,unit);
+    setFrame (frame);
     return true;
   }
   
-  bool HDF5Quantity::setQuantity (std::vector<double> const &values,
-				  std::string const &unit)
+  //_____________________________________________________________________________
+  //                                                                   setMeasure
+  
+  bool HDF5Measure::setMeasure (std::vector<double> const &values,
+				std::string const &unit,
+				std::string const &frame)
   {
-    std::vector<std::string> units (values.size(),unit);
-    return setQuantity (values,units);
+    setQuantity (values,unit);
+    setFrame (frame);
+    return true;
   }
   
-  bool HDF5Quantity::setQuantity (std::vector<double> const &values,
-				  std::vector<std::string> const &units)
+  //_____________________________________________________________________________
+  //                                                                   setMeasure
+  
+  bool HDF5Measure::setMeasure (std::vector<double> const &values,
+				std::vector<std::string> const &units,
+				std::string const &frame)
   {
-    if (values.size() == units.size()) {
-      // Value(s)
-      itsValues.resize(values.size());
-      itsValues = values;
-      // Unit(s)
-      itsUnits.resize(units.size());
-      itsUnits = units;
-      // return
-      return true;
-    } else {
-      return false;
-    }
+    setQuantity (values,units);
+    setFrame (frame);
+    return true;
   }
   
   //_____________________________________________________________________________
@@ -160,9 +185,9 @@ namespace DAL { // Namespace DAL -- begin
   /*!
     \param os -- Output stream to which the summary is written.
   */
-  void HDF5Quantity::summary (std::ostream &os)
+  void HDF5Measure::summary (std::ostream &os)
   {
-    os << "[HDF5Quantity] Summary of internal parameters." << std::endl;
+    os << "[HDF5Measure] Summary of internal parameters." << std::endl;
   }
   
   // ============================================================================
@@ -171,16 +196,7 @@ namespace DAL { // Namespace DAL -- begin
   //
   // ============================================================================
   
-  void HDF5Quantity::init ()
-  {
-    itsValues.clear();
-    itsUnits.clear();
-    
-    itsName        = "";
-    itsValueSuffix = "VALUE";
-    itsUnitSuffix  = "UNITS";
-    itsSeparator   = "_";
-  }
+  
 
   // ============================================================================
   //

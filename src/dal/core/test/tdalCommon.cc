@@ -19,7 +19,6 @@
  ***************************************************************************/
 
 #include <core/dalCommon.h>
-#include <core/Enumerations.h>
 #include <core/dalDataset.h>
 
 #ifdef DAL_WITH_CASA
