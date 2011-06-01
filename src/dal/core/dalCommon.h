@@ -558,32 +558,6 @@ namespace DAL {
                                   std::string const &value,
                                   std::string const &unit,
                                   std::string const &frame);
-  //! Set the value of an attribute from a casa::Vector<T>
-  template <typename T>
-    bool h5set_attribute (hid_t location_id,
-			  std::string name,
-			  casa::Vector<T> const &value)
-    {
-      bool status (true);
-      T * data;
-      int nelem = value.nelements();
-      
-      data = new T [nelem];
-      
-      for (int n(0); n<nelem; n++) {
-	data[n] = value(n);
-      }
-      
-      status = DAL::HDF5Attribute::write (location_id,
-					  name,
-					  data,
-					  nelem);
-      
-      delete [] data;
-      
-      return status;
-    }
-  
   /*!
     \brief Provide a summary of the properties of a casa::ImageInterface object
     
