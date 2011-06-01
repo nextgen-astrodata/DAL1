@@ -272,13 +272,6 @@ namespace DAL {
   //
   // ============================================================================
   
-  //! Provide a summary of an attribute's internal structure
-  void h5attribute_summary (hid_t const &location_id,
-			    std::string const &name,
-			    std::ostream &os=std::cout);
-  //! Provide a summary of an attribute's internal structure
-  void h5attribute_summary (hid_t const &attribute_id,
-			    std::ostream &os=std::cout);
   //! Print an attribute value. (Used with H5Aiterate).
   herr_t attr_info (hid_t loc_id,
                     const char *name,
@@ -499,13 +492,6 @@ namespace DAL {
   //_____________________________________________________________________________
   //                                                              h5set_attribute
 
-  //! Set the value of an attribute attached to a group or dataset
-  template <typename T>
-    bool h5set_attribute (hid_t const &location_id,
-			  std::string name,
-			  T * value,
-			  int size);
-  
   /*!
     \param location_id -- HDF5 identifier of the attribute within the file
     \param name        -- Name of the attribute
@@ -517,33 +503,6 @@ namespace DAL {
 			  std::vector<T> const &value)
     {
       return HDF5Attribute::write (location_id, name, value);
-    }
-  
-  //_____________________________________________________________________________
-  //                                                              h5set_attribute
-  
-  /*!
-    \param location_id -- HDF5 identifier of the attribute within the file
-    \param name        -- Name of the attribute
-    \param value       -- Value of the attribute
-  */
-  template <typename T>
-    bool h5set_attribute (hid_t location_id,
-			  std::string name,
-			  std::set<T> const &value)
-    {
-      std::vector<T> data (value.size());
-      typename std::set<T>::iterator itSet=value.begin();
-      typename std::vector<T>::iterator itVect=data.begin();
-      
-      for (; itSet!=value.end(); ++itSet) {
-	*itVect = *itSet;
-	++itVect;
-      }
-      
-      return h5set_attribute (location_id,
-			      name,
-			      data);
     }
   
   //_____________________________________________________________________________

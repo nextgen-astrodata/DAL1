@@ -467,6 +467,34 @@ namespace DAL { // Namespace DAL -- begin
     static bool write (hid_t const &location,
 		       std::string const &name,
 		       std::vector<bool> const &data);
+
+
+    /*!
+      \brief Write attribute value
+      \param location -- HDF5 identifier for the object to which the attribute
+             is attached.
+      \param name    -- Name of the attribute.
+      \param data    -- Data value(s) to be assigned to the attribute
+      \return status -- Status of the operation
+    */
+    template <class T>
+      bool write (hid_t const &location,
+		  std::string const &name,
+		  std::set<T> const &data)
+      {
+	std::vector<T> tmp (data.size());
+	typename std::set<T>::iterator itSet=data.begin();
+	typename std::vector<T>::iterator itVect=tmp.begin();
+	
+	for (; itSet!=data.end(); ++itSet) {
+	  *itVect = *itSet;
+	  ++itVect;
+	}
+	
+	return write (location,
+		      name,
+		      tmp);
+      }
     
 #ifdef DAL_WITH_CASA
     /*!
